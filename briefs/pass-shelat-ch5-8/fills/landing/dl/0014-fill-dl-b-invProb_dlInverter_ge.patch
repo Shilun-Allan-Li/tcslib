@@ -1,0 +1,188 @@
+From 47d7078dbad120a94c09bf82aeb5d790bab4c0b3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:52:58 +0000
+Subject: [PATCH 14/25] fill dl-b: invProb_dlInverter_ge
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 139 +++++++++++++++---
+ 1 file changed, 121 insertions(+), 18 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 7fda2137..d93a16f7 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -325,14 +325,38 @@ private theorem dlb_dlRoot_pow (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenera
+       rw [mul_inv_cancel_right]
+     rw [hge, sq_pow_div_four_succ hp3 ((pow_mem_QR_iff hp2 hg _).2 (even_two_mul _))]
+ 
+-/-- The perfect oracle on a power: `halfOracle g (g^a) = [2a < p − 1]` for `a < p − 1`
++/-- The perfect oracle on a power: `halfOracle g (g^a) = half_{p−1}(a)` for `a < p − 1`
+ (`dlog_expo`). -/
+-private theorem dlb_halfOracle_pow {g : (ZMod p)ˣ} (hg : IsGenerator g) {a : ℕ} (ha : a < p - 1) :
+-    halfOracle g (g ^ a) = decide (2 * a < p - 1) := by
++private theorem dlb_halfOracle_pow_eq {g : (ZMod p)ˣ} (hg : IsGenerator g) {a : ℕ}
++    (ha : a < p - 1) : halfOracle g (g ^ a) = halfBit (p - 1) (a : ZMod (p - 1)) := by
+   have h1 : g ^ a = expo g (a : ZMod (p - 1)) := by
+     unfold expo; rw [ZMod.val_cast_of_lt ha]
+-  unfold halfOracle halfBit
+-  rw [h1, dlog_expo hg, ZMod.val_cast_of_lt ha]
++  unfold halfOracle
++  rw [h1, dlog_expo hg]
++
++/-- The perfect oracle on a power, as a comparison: `halfOracle g (g^a) = [2a < p − 1]` for
++`a < p − 1`. -/
++private theorem dlb_halfOracle_pow {g : (ZMod p)ˣ} (hg : IsGenerator g) {a : ℕ} (ha : a < p - 1) :
++    halfOracle g (g ^ a) = decide (2 * a < p - 1) := by
++  rw [dlb_halfOracle_pow_eq hg ha]; unfold halfBit; rw [ZMod.val_cast_of_lt ha]
++
++/-- **The perfect oracle keeps the root `g^{⌊e/2⌋}`** (the step of `dlBits_pow`): for
++`e < p − 1`, the root kept by one round of Algorithm 84.2 on `g^e` is `g^{⌊e/2⌋}`, because the
++other root `−g^{⌊e/2⌋} = g^{⌊e/2⌋ + (p−1)/2}` lies in the upper half (`neg_pow_eq`). -/
++private theorem dlb_keep (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerator g) {e : ℕ}
++    (he : e < p - 1) :
++    (if halfOracle g (dlRoot g (g ^ e)) then dlRoot g (g ^ e) else -dlRoot g (g ^ e)) =
++      g ^ (e / 2) := by
++  have hp2 : p ≠ 2 := by rintro rfl; norm_num at hp3
++  obtain ⟨h2, hpos⟩ := two_mul_half (p := p) hp2
++  have ha : e / 2 < p - 1 := by omega
++  have hlow : halfOracle g (g ^ (e / 2)) = true := by
++    rw [dlb_halfOracle_pow hg ha]; simp; omega
++  rcases dlb_dlRoot_pow hp3 hg e with h | h
++  · rw [h, hlow, if_pos rfl]
++  · have hhi : halfOracle g (-(g ^ (e / 2))) = false := by
++      rw [neg_pow_eq hp2 hg, dlb_halfOracle_pow hg (by omega)]; simp; omega
++    rw [h, hhi, if_neg (by simp), neg_neg]
+ 
+ omit [NeZero (p - 1)] in
+ /-- **Correctness of Algorithm 84.2 with a perfect oracle** [PS10, p. 85, "we can iteratively
+@@ -359,18 +383,8 @@ theorem dlBits_pow (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerator g) {k e
+   | succ k ih =>
+     unfold dlBits
+     rw [dlLoop_succ]
+-    -- the perfect oracle keeps the root `g^{⌊e/2⌋}` (the other root has exponent
+-    -- `⌊e/2⌋ + (p−1)/2`, in the upper half)
+-    have hkeep : (if halfOracle g (dlRoot g (g ^ e)) then dlRoot g (g ^ e)
+-        else -dlRoot g (g ^ e)) = g ^ (e / 2) := by
+-      have ha : e / 2 < p - 1 := by omega
+-      have hlow : halfOracle g (g ^ (e / 2)) = true := by
+-        rw [dlb_halfOracle_pow hg ha]; simp; omega
+-      rcases dlb_dlRoot_pow hp3 hg e with h | h
+-      · rw [h, hlow, if_pos rfl]
+-      · have hhi : halfOracle g (-(g ^ (e / 2))) = false := by
+-          rw [neg_pow_eq hp2 hg, dlb_halfOracle_pow hg (by omega)]; simp; omega
+-        rw [h, hhi, if_neg (by simp), neg_neg]
++    -- the perfect oracle keeps the root `g^{⌊e/2⌋}`
++    have hkeep := dlb_keep hp3 hg he
+     -- the recursive call returns `⌊e/2⌋`, and the recorded bit is the parity of `e`
+     rw [hkeep, ← dlBits, ih (by omega) (by rw [pow_succ] at hk; omega)]
+     by_cases hq : g ^ e ∈ QR p
+@@ -649,6 +663,52 @@ noncomputable def dlInverter (g : (ZMod p)ˣ) {ρ : Type*} [Fintype ρ] (A : (ZM
+     (s T ℓ k : ℕ) : (ZMod p)ˣ → Fin T × (Fin k → Fin ℓ → ZMod (p - 1) × ρ) → ZMod (p - 1) :=
+   shiftInverter g (dlLoop g (majOracle g A ℓ) k) s T
+ 
++/-- The queries of Algorithm 84.2 along the *perfect path* (driven by `halfOracle`), which do
++not depend on the coins. -/
++private noncomputable def dlb_perf (g : (ZMod p)ˣ) (k : ℕ) (y : (ZMod p)ˣ) : Fin k → (ZMod p)ˣ :=
++  dlQueries g (fun y (_ : Unit) => halfOracle g y) k y (fun _ => ())
++
++omit [NeZero (p - 1)] in
++/-- If a noisy oracle answers correctly at each of the perfect path's queries, the noisy path's
++queries are the perfect path's (induction on the rounds, `dlQueries_zero`, `dlQueries_succ`). -/
++private theorem dlb_dlQueries_eq_perf (g : (ZMod p)ˣ) {κ : Type*} (O : (ZMod p)ˣ → κ → Bool) :
++    ∀ (k : ℕ) (y : (ZMod p)ˣ) (c : Fin k → κ),
++      (∀ j, O (dlb_perf g k y j) (c j) = halfOracle g (dlb_perf g k y j)) →
++        ∀ j, dlQueries g O k y c j = dlb_perf g k y j
++  | 0, _, _, _, j => j.elim0
++  | k + 1, y, c, h, j => by
++    have h0 := h 0
++    unfold dlb_perf at h0 ⊢
++    rw [dlQueries_zero] at h0
++    refine Fin.cases ?_ (fun j => ?_) j
++    · rw [dlQueries_zero, dlQueries_zero]
++    · rw [dlQueries_succ, dlQueries_succ, h0]
++      apply dlb_dlQueries_eq_perf g O k
++      intro j'
++      have hj := h j'.succ
++      unfold dlb_perf at hj ⊢
++      rw [dlQueries_succ] at hj
++      exact hj
++
++/-- Along the perfect path from `g^e` with `e < s ≤ (p−1)/2`, every query is `g^a` with `a` in
++the windows of `uprob_majOracle_ne_le`: the query of round `j` is `±g^{⌊e/2^{j+1}⌋}`
++(`dlb_dlRoot_pow`, `neg_pow_eq`, and `dlb_keep` for the path). -/
++private theorem dlb_perf_window (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerator g) {s : ℕ}
++    (hsh : s ≤ (p - 1) / 2) : ∀ (k e : ℕ), e < s → ∀ j : Fin k, ∃ a, a < p - 1 ∧
++      (a < s ∨ ((p - 1) / 2 ≤ a ∧ a < (p - 1) / 2 + s)) ∧ dlb_perf g k (g ^ e) j = g ^ a
++  | 0, _, _, j => j.elim0
++  | k + 1, e, he, j => by
++    have hp2 : p ≠ 2 := by rintro rfl; norm_num at hp3
++    obtain ⟨h2, hpos⟩ := two_mul_half (p := p) hp2
++    unfold dlb_perf
++    refine Fin.cases ?_ (fun j => ?_) j
++    · rw [dlQueries_zero]
++      rcases dlb_dlRoot_pow hp3 hg e with h | h
++      · exact ⟨e / 2, by omega, Or.inl (by omega), h⟩
++      · exact ⟨e / 2 + (p - 1) / 2, by omega, Or.inr (by omega), by rw [h, neg_pow_eq hp2 hg]⟩
++    · rw [dlQueries_succ, dlb_keep hp3 hg (by omega)]
++      exact dlb_perf_window hp3 hg hsh k (e / 2) (by omega) j
++
+ /-- **The concrete core of [PS10, Lemma 84.1]**: for `p ≡ 3 (mod 4)` prime, a generator `g`
+ of `Z_p^*` and a predictor `A` of `half_{p−1}` from `g^x` with success at least `1/2 + ε`, the
+ inverter `dlInverter g A s T ℓ k` recovers the discrete logarithm of a uniform `g^x` with
+@@ -669,7 +729,50 @@ theorem invProb_dlInverter_ge (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerat
+     (hA : 1 / 2 + ε ≤ predProb (expo g) (halfBit (p - 1)) A) {s T ℓ k : ℕ} (hs : 0 < s)
+     (hs4 : 4 * (s : ℝ) ≤ ε * ((p : ℝ) - 1)) (hT : p - 1 ≤ T * s) (hk : s ≤ 2 ^ k) (hℓ : 0 < ℓ) :
+     (1 - k / (ε ^ 2 * ℓ)) / T ≤ invProb (expo g) (dlInverter g A s T ℓ k) := by
+-  sorry
++  classical
++  have hp2 : p ≠ 2 := by rintro rfl; norm_num at hp3
++  obtain ⟨h2, hpos⟩ := two_mul_half (p := p) hp2
++  -- `ε ≤ 1/2` puts the window inside `[0, (p−1)/8]`
++  have hε2 := dlb_eps_le A hA
++  have hp8 : 8 * s ≤ p - 1 := by
++    have hcast : ((p : ℝ) - 1) = ((p - 1 : ℕ) : ℝ) := by
++      rw [Nat.cast_sub hp.out.one_le, Nat.cast_one]
++    have hp1 : (0 : ℝ) ≤ ((p - 1 : ℕ) : ℝ) := Nat.cast_nonneg _
++    rw [hcast] at hs4
++    have : (8 * s : ℝ) ≤ ((p - 1 : ℕ) : ℝ) := by nlinarith
++    exact_mod_cast this
++  unfold dlInverter
++  refine invProb_shiftInverter_ge hg _ hs hT fun e' he' => ?_
++  set O := majOracle g A ℓ with hO
++  have hbits : dlBits g k (g ^ e') = e' := dlBits_pow hp3 hg (by omega) (by omega)
++  -- failure forces a wrong majority at some perfect-path query
++  have hfail : ∀ c : Fin k → Fin ℓ → ZMod (p - 1) × ρ, ¬ dlLoop g O k (g ^ e') c = e' →
++      ∃ j ∈ (univ : Finset (Fin k)), O (dlb_perf g k (g ^ e') j) (c j) ≠
++        halfOracle g (dlb_perf g k (g ^ e') j) := by
++    intro c hc
++    by_contra hall
++    push_neg at hall
++    have hq := dlb_dlQueries_eq_perf g O k (g ^ e') c fun j => hall j (mem_univ j)
++    apply hc
++    refine (dlLoop_eq_dlBits g O k (g ^ e') c fun j => ?_).trans hbits
++    rw [hq j]
++    exact hall j (mem_univ j)
++  -- each round fails with probability at most `1/(ε² ℓ)`
++  have hround : ∀ j : Fin k, uprob (fun c : Fin k → Fin ℓ → ZMod (p - 1) × ρ =>
++      O (dlb_perf g k (g ^ e') j) (c j) ≠ halfOracle g (dlb_perf g k (g ^ e') j)) ≤
++        1 / (ε ^ 2 * ℓ) := by
++    intro j
++    obtain ⟨a, ha, haw, hqa⟩ := dlb_perf_window hp3 hg (by omega) k e' he' j
++    rw [(HardcoreBit.pushesUniform_eval j).uprob_eq
++      (fun c' => O (dlb_perf g k (g ^ e') j) c' ≠ halfOracle g (dlb_perf g k (g ^ e') j)), hqa,
++      dlb_halfOracle_pow_eq hg ha]
++    exact uprob_majOracle_ne_le hg A hε hA hs4 hℓ ha haw
++  have hunion := (uprob_mono hfail).trans ((uprob_exists_le univ _).trans
++    (sum_le_sum fun j _ => hround j))
++  rw [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul] at hunion
++  have hnot := uprob_not (fun c : Fin k → Fin ℓ → ZMod (p - 1) × ρ => dlLoop g O k (g ^ e') c = e')
++  have : (k : ℝ) * (1 / (ε ^ 2 * ℓ)) = k / (ε ^ 2 * ℓ) := by ring
++  linarith
+ 
+ end Concrete
+ 
+-- 
+2.43.0
+

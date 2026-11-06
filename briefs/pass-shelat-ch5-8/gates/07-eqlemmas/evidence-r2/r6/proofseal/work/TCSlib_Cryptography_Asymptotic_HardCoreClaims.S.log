@@ -1,0 +1,60 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreClaims.S.lean:85:2: error: Type mismatch
+  HardcoreBit.invProb_perfectInverter (𝓕.f n)
+    (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) h
+has type
+  invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.perfectInverter fun y r =>
+        A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) =
+    1
+but is expected to have type
+  invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.glInverter
+        (HardcoreBit.perfectRecover fun y r =>
+          A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r)) =
+    1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreClaims.S.lean:100:2: error: Type mismatch
+  HardcoreBit.invProb_majorityInverter (𝓕.f n)
+    (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) hε hT h
+has type
+  ε / 4 ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.majorityInverter
+        (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) T)
+but is expected to have type
+  ε / 4 ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.glInverter
+        (HardcoreBit.majorityRecover
+          (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) T))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreClaims.S.lean:174:9: error: Application type mismatch: The argument
+  HardcoreBit.invProb_guessInverter (𝓕.f n)
+    (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) hε hk h
+has type
+  ε / (4 * 2 ^ k) ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.guessInverter
+        (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) k)
+but is expected to have type
+  ε / (4 * 2 ^ k) ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.glInverter
+        (HardcoreBit.guessRecover
+          (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) k))
+in the application
+  And.intro
+    (HardcoreBit.invProb_guessInverter (𝓕.f n)
+      (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) hε hk h)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreClaims.S.lean:175:15: error: Type mismatch
+  HardcoreBit.invProb_guessInverter_cubic (𝓕.f n)
+    (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) hε hk hk' h
+has type
+  ε ^ 3 / (16 * ↑(𝓕.inLen.eval n)) ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.guessInverter
+        (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) k)
+but is expected to have type
+  ε ^ 3 / (16 * ↑(𝓕.inLen.eval n)) ≤
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.glInverter
+        (HardcoreBit.guessRecover
+          (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r) k))

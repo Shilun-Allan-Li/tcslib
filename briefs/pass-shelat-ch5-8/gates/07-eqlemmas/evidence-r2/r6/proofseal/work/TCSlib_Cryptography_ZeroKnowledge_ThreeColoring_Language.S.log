@@ -1,0 +1,17 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_Language.S.lean:292:2: error: Tactic `decide` failed for proposition
+  ∀ {a b : Fin 3},
+    a ≠ b →
+      (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨ (encColor a).getD 1 false ≠ (encColor b).getD 1 false
+because its `Decidable` instance
+  Nat.decidableForallFin fun a =>
+    ∀ {b : Fin 3},
+      a ≠ b →
+        (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨ (encColor a).getD 1 false ≠ (encColor b).getD 1 false
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `decEq`, `decidable_of_decidable_of_iff`, `decidable_of_iff`, `forall_prop_decidable`, `instDecidableEqBool`, `instDecidableEqFin`, `instDecidableEqNat`, `instDecidableNot`, `instDecidableOr`, `Bool.decEq`, `Nat.decEq`, `Nat.decidableBallLT`, and `Nat.decidableForallFin`, reduction got stuck at the `Decidable` instance
+  match (encColor ⟨0, ⋯⟩).getD 0 false, (encColor ⟨1, ⋯⟩).getD 0 false with
+  | false, false => isTrue ⋯
+  | false, true => isFalse ⋯
+  | true, false => isFalse ⋯
+  | true, true => isTrue ⋯

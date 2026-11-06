@@ -97,6 +97,12 @@ statistical ZK, while 3COL remains computational ZK with statistical sampling an
   time-derived bound and exposes no module-specific envelope (the contract implies the factor-two
   bound `⌊B/2⌋`, since the head starts and ends at 0).
 
+**M. Mathlib replacements (DL-21; user direction 2026-11-06).** The DUP and WRAP rows of
+`mathlib-overlap-nt.md` in `NumberTheory/*` and in files no fill owns: replace by the Mathlib
+statement (keep a load-bearing name as a one-line alias) or shorten the proof as the probe log
+shows. Rows in `Candidates/*` wait until those files' fills land. Statements change only where a
+definition becomes a Mathlib alias: list each old → new.
+
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
 only where an item says so.
 

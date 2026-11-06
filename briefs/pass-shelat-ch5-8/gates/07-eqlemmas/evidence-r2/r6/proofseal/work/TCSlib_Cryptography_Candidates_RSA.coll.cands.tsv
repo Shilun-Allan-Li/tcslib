@@ -1,0 +1,64 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime, Complexity.NUPPT.ofPolyTime	22
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inParam, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	43
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.inCoins, Complexity.NUPPT.polyTimeComputable_inAdvice	26
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, Complexity.pairSndD_pairEncode	46
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.advInput, Complexity.NUPPT.layout	37
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.ofPolyTimeUniform_uniform, TCSlib.Cryptography.TrapdoorCollection.mk	4
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb	16
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.coinsCongr, Complexity.NUPPT.coinsCongr_ofFn	22
+Complexity.NUPPT.coinsCongr	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.coinsCongr_ofFn, Complexity.NUPPT.runAt_coinsCongr	8
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.polyTimeComputable_inAdvice	6
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.polyTimeComputable_inArg	12
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.polyTimeComputable_inCoins	10
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.polyTimeComputable_inParam	10
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb	2
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.polyTimeComputable_layout	7
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.coins_ofPolyTime, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.ofPolyTimeUniform_uniform, Complexity.NUPPT.runAtL_ofPolyTimeUniform	8
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, Complexity.NUPPT.runAt_eq, TCSlib.Cryptography.Candidates.FactoringAssumption	21
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt_eq, TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb	16
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt_eq	4
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.output, Complexity.NUPPT.runAt, Complexity.NUPPT.runAt_eq	21
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.advice_length, Complexity.NUPPT.coinLen	49
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Negligible.add	5
+TCSlib.Cryptography.StatClose	TCSlib.Cryptography.Asymptotic.Sampling	direct	TCSlib.Cryptography.Collection.SampleClose	2
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	direct	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb, TCSlib.Cryptography.Candidates.samplePrimeL	18
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.decodeFin_ofFn, TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb	7
+TCSlib.Cryptography.firstHit	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.Candidates.samplePrimeL	11
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.Candidates.samplePrimeL	11
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.Collection.invProbAt, TCSlib.Cryptography.HardcoreBit.PushesUniform, TCSlib.Cryptography.HardcoreBit.pushesUniform_equiv	6
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.StatClose, TCSlib.Cryptography.uprob_comp_equiv, TCSlib.Cryptography.Candidates.FactoringAssumption	11
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	35
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairFstD, Complexity.NUPPT.coins_ofPolyTime	22
+TCSlib.Cryptography.Candidates.FactoringAssumption	TCSlib.Cryptography.Candidates.Factoring	direct		1
+TCSlib.Cryptography.Candidates.factorProb	TCSlib.Cryptography.Candidates.Factoring	direct	TCSlib.Cryptography.Candidates.FactoringAssumption	2
+TCSlib.Cryptography.Candidates.modExpStr	TCSlib.Cryptography.Candidates.Arithmetic	direct	TCSlib.Cryptography.Candidates.ArithmeticFP.modExp	8
+TCSlib.Cryptography.Candidates.modulusBits	TCSlib.Cryptography.Candidates.Factoring	deep	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb	2
+TCSlib.Cryptography.Candidates.natToBits	TCSlib.Cryptography.Candidates.Arithmetic	direct	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb, TCSlib.Cryptography.Candidates.length_natToList	43
+TCSlib.Cryptography.Candidates.natToList	TCSlib.Cryptography.Candidates.Arithmetic	direct	TCSlib.Cryptography.Candidates.length_natToList, TCSlib.Cryptography.Candidates.listToNat_natToList, TCSlib.Cryptography.Candidates.modExpStr	30
+TCSlib.Cryptography.Candidates.rejectBlocksL	TCSlib.Cryptography.Candidates.Concrete	direct	TCSlib.Cryptography.Candidates.rejectBlocksL_spec	3
+TCSlib.Cryptography.Candidates.samplePrimeL	TCSlib.Cryptography.Candidates.Factoring	direct		11
+TCSlib.Cryptography.Collection.SampleClose	TCSlib.Cryptography.Asymptotic.Collections	direct		1
+TCSlib.Cryptography.Collection.index	TCSlib.Cryptography.Asymptotic.Collections	direct	TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.invProbAt	3
+TCSlib.Cryptography.Collection.invProbAt	TCSlib.Cryptography.Asymptotic.Collections	direct		1
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct	TCSlib.Cryptography.HardcoreBit.pushesUniform_equiv	1
+TCSlib.Cryptography.NumberTheory.chunk	TCSlib.Cryptography.NumberTheory.Primality	deep	TCSlib.Cryptography.Candidates.samplePrimeL	11
+TCSlib.Cryptography.NumberTheory.listToNat	TCSlib.Cryptography.NumberTheory.Primality	direct	TCSlib.Cryptography.Candidates.listToNat_lt_two_pow, TCSlib.Cryptography.Candidates.listToNat_natToList, TCSlib.Cryptography.Candidates.modExpStr	46
+TCSlib.Cryptography.NumberTheory.samplePrime	TCSlib.Cryptography.NumberTheory.Primality	deep	TCSlib.Cryptography.Candidates.samplePrimeL	11
+TCSlib.Cryptography.NumberTheory.samplePrimeCoins	TCSlib.Cryptography.NumberTheory.Primality	direct		12
+TCSlib.Cryptography.TrapdoorCollection.OneWay	TCSlib.Cryptography.Asymptotic.Collections	direct		1
+TCSlib.Cryptography.Candidates.DistinctPrimes.default	TCSlib.Cryptography.Candidates.Concrete	direct		6
+TCSlib.Cryptography.Candidates.DistinctPrimes.p	TCSlib.Cryptography.Candidates.Concrete	direct	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb, TCSlib.Cryptography.Candidates.DistinctPrimes.mul_lt	35
+TCSlib.Cryptography.Candidates.DistinctPrimes.q	TCSlib.Cryptography.Candidates.Concrete	direct	TCSlib.Cryptography.Candidates.FactoringAssumption, TCSlib.Cryptography.Candidates.factorProb, TCSlib.Cryptography.Candidates.DistinctPrimes.mul_lt	35

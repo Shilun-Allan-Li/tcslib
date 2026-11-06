@@ -1,0 +1,168 @@
+From d54ee1dd524d91bc05507402250288cfba18d74b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:34:58 +0000
+Subject: [PATCH 08/24] Factoring: fill fmult_prod_strongOneWay
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 136 +++++++++++++++++-
+ 1 file changed, 135 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 878af127..d0046663 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -863,6 +863,123 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
+   have := (abs_le.1 habs).1
+   linarith
+ 
++/-- **The concrete chain of Theorem 36.3** [PS10, proof of Theorem 36.3]: for `n ≥ 2` and the
++machine `A''` of `exists_plantFactorer`, the inversion probability of the direct product is at
++most `(1/2)^n + 4n³ (Pr[A'' factors] + (1/2)^n + 2n/2^n)`. -/
++private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
++    (hA : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
++          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
++            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q)
++        - (1 / 2 : ℝ) ^ n ≤ factorProb A'' n) :
++    (fmult.prod fmultBlocks).invProbAt A n ≤
++      (1 / 2 : ℝ) ^ n + 4 * (n : ℝ) ^ 3 * (factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
++  classical
++  rw [FunFamily.invProbAt_prod_eq]
++  refine (invProbOpt_le_invProb _ _).trans ?_
++  have hB : (fun ys r => ((A.inverter n (fmultBlocks.eval n * fmult.inLen.eval n)
++      (fmultBlocks.eval n * fmult.outLen.eval n)
++      ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm ys) r).map
++        (FunFamily.blocks (fmultBlocks.eval n) (fmult.inLen.eval n))).getD default) =
++      prodInverter A n := by
++    have key : ∀ o : Option (Fin (fmultBlocks.eval n * (2 * n)) → Bool),
++        (o.map (FunFamily.blocks (fmultBlocks.eval n) (2 * n))).getD default =
++          FunFamily.blocks (fmultBlocks.eval n) (2 * n) (o.getD fun _ => false) := by
++      rintro (_ | x)
++      · rw [Option.map_none, Option.getD_none, Option.getD_none]
++        funext i j
++        rw [fac_blocks_apply]
++        rfl
++      · rw [Option.map_some, Option.getD_some, Option.getD_some]
++    funext ys r
++    unfold prodInverter
++    exact key _
++  rw [hB]
++  -- random-position planting with the good set "both blocks prime" (lemma C3)
++  have hplant : invProb (OneWay.prodFun (fmult.f n) (fmultBlocks.eval n)) (prodInverter A n) ≤
++      (1 - uprob (fac_PrimeBlocks n)) ^ (fmultBlocks.eval n) + (fmultBlocks.eval n : ℕ) *
++        uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
++          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++          fac_PrimeBlocks n z.1 ∧
++            fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) =
++              fmult.f n z.1) :=
++    invProb_prodFun_le_plant _ _ _
++  -- Claim 36.2: no good block among `4n³` with probability at most `(1/2)^n`
++  have hd := fac_density n hn
++  have h1 : (1 - uprob (fac_PrimeBlocks n)) ^ (fmultBlocks.eval n) ≤ (1 / 2 : ℝ) ^ n := by
++    rw [eval_fmultBlocks]
++    refine le_trans (pow_le_pow_left₀ (sub_nonneg.2 (uprob_le_one _)) (by linarith) _)
++      (claim_36_2_half_pow n (by omega))
++  -- the planted experiment on a good input is the planting factorer on a prime pair
++  let G : ℕ → ℕ → (Fin (fmultBlocks.eval n) × ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) ×
++      A.Coins n)) → Prop := fun p q c =>
++    bitsToNat (plantFactor (prodInverter A n) (natToBits (2 * n) (p * q)) c) = p ∨
++      bitsToNat (plantFactor (prodInverter A n) (natToBits (2 * n) (p * q)) c) = q
++  let S : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
++      ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) → Prop := fun z =>
++    fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) = fmult.f n z.1
++  have h2 : uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++        fac_PrimeBlocks n z.1 ∧ S z) ≤
++      uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => S (z.1.1, z.2)) := by
++    rw [uprob_and_eq_mul_subtype (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => fac_PrimeBlocks n z.1) S,
++      uprob_subtype_prod_eq (fac_PrimeBlocks n) S]
++    exact mul_le_of_le_one_left (uprob_nonneg _) (uprob_le_one _)
++  have h3 : uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => S (z.1.1, z.2)) ≤
++      uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) := by
++    apply uprob_mono
++    rintro ⟨a, c⟩ hS
++    have hp := a.2.1
++    have hq := a.2.2
++    have hf : fmult.f n a.1 = natToBits (2 * n)
++        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
++      rw [fmult_f, fac_fmultNat_of_prime hp hq]
++    change fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n a.1) c) = fmult.f n a.1
++      at hS
++    rw [hf] at hS
++    have := fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) _ hS
++    simp only [G]
++    unfold plantFactor
++    exact this
++  have h4 : uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
++      uprob (fun z : (Primes n × Primes n) × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) := by
++    refine (OneWay.uprob_congr ?_).trans
++      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl _)) _)
++    rintro ⟨a, c⟩
++    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
++    rw [(fac_goodEquiv_val n a).1, (fac_goodEquiv_val n a).2]
++  haveI : Nonempty (Fin (fmultBlocks.eval n)) := ⟨⟨0, by rw [eval_fmultBlocks]; positivity⟩⟩
++  have h5 := fac_uprob_primes_le n hn G
++  have h6 : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => G z.1.p z.1.q z.2) =
++      uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
++          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
++            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q) := by
++    apply OneWay.uprob_congr
++    intro z
++    simp only [G]
++    rw [modulusBits_eq]
++  have hm : ((fmultBlocks.eval n : ℕ) : ℝ) = 4 * (n : ℝ) ^ 3 := by
++    rw [eval_fmultBlocks]; push_cast; ring
++  have hm0 : (0 : ℝ) ≤ 4 * (n : ℝ) ^ 3 := by positivity
++  rw [hm] at hplant
++  have hchain : uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
++        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
++        fac_PrimeBlocks n z.1 ∧ S z) ≤ factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n := by
++    linarith
++  have := mul_le_mul_of_nonneg_left hchain hm0
++  linarith
++
+ /-- **Theorem 36.3** [PS10, Theorem 36.3]: under the factoring assumption (and the
+ arithmetic hypotheses), the direct product `f'((x₁, y₁), …, (x_{m_n}, y_{m_n})) =
+ (f_mult(x₁, y₁), …, f_mult(x_{m_n}, y_{m_n}))` with `m_n = 4n³` blocks is a strong one-way
+@@ -893,7 +1010,24 @@ factor (`uprob_mono`, `modulusBits_eq_fmult`); drop the diagonal by
+ infinitely many large `n`, contradicting `hF A''` through `not_negligible_iff`. -/
+ theorem fmult_prod_strongOneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
+     (fmult.prod fmultBlocks).StrongOneWay := by
+-  sorry
++  refine ⟨FunFamily.Easy.prod (fmult_easy H) fmultBlocks, fun A => ?_⟩
++  obtain ⟨A'', hA''⟩ := exists_plantFactorer H A
++  have hfac := (factoringAssumption_iff.1 hF) A''
++  have hneg : Negligible fun n : ℕ => (2 : ℝ)⁻¹ ^ n + 4 * ((n : ℝ) ^ 3 * factorProb A'' n) +
++      4 * ((n : ℝ) ^ 3 * (2 : ℝ)⁻¹ ^ n) + 8 * ((n : ℝ) ^ 4 * (2 : ℝ)⁻¹ ^ n) :=
++    ((negligible_two_pow_neg.add ((hfac.mul_pow 3).const_mul 4)).add
++      ((negligible_two_pow_neg.mul_pow 3).const_mul 4)).add
++      ((negligible_two_pow_neg.mul_pow 4).const_mul 8)
++  refine hneg.mono ⟨2, fun n hn => ?_⟩
++  have hk := fac_strong_key A A'' n hn (hA'' n (by omega))
++  have e : (1 / 2 : ℝ) ^ n + 4 * (n : ℝ) ^ 3 * (factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) =
++      (2 : ℝ)⁻¹ ^ n + 4 * ((n : ℝ) ^ 3 * factorProb A'' n) +
++        4 * ((n : ℝ) ^ 3 * (2 : ℝ)⁻¹ ^ n) + 8 * ((n : ℝ) ^ 4 * (2 : ℝ)⁻¹ ^ n) := by
++    rw [inv_pow, one_div_pow]
++    field_simp
++    ring
++  rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _)]
++  exact (hk.trans_eq e).trans (le_abs_self _)
+ 
+ /-! ## The factoring collection [PS10, Theorem 51.1] -/
+ 
+-- 
+2.43.0
+

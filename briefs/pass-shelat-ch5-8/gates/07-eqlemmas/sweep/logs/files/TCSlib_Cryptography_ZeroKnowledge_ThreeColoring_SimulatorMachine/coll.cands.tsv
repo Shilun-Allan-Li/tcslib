@@ -1,0 +1,82 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		32
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inArg	4
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inArg, Complexity.NUPPT.inCoins	6
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, Complexity.NUPPT.inCoins	6
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	12
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.Strategy.Efficient	5
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	5
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct		1
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct		2
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	5
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.simulate	1
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	5
+Complexity.NUPPT.simulate	TCSlib.Cryptography.ZeroKnowledge.Defs	direct		1
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	5
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	13
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.ColSimMachine.blockPoly, TCSlib.Cryptography.ColSimMachine.sim	5
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	12
+TCSlib.Cryptography.colCoinSlice	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	direct	TCSlib.Cryptography.ColSimMachine.sim	5
+TCSlib.Cryptography.colCommit	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.colIterations	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.colOpen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.edgeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.edgeIdxOfMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.edgeList	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.encColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.comStr, TCSlib.Cryptography.ColSimMachine.opnStr	12
+TCSlib.Cryptography.encColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.encColor, TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.comStr	12
+TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	10
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	12
+TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	12
+TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	12
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	12
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	32
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	32
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	32
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	32
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	32
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.simulate, TCSlib.Cryptography.Strategy.Efficient	32
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	32
+TCSlib.Cryptography.ColSimMachine.attemptNum	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct		2
+TCSlib.Cryptography.ColSimMachine.attemptStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.ColSimMachine.baseR	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	10
+TCSlib.Cryptography.ColSimMachine.blockPoly	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.sim	5
+TCSlib.Cryptography.ColSimMachine.chunk	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.comStr	5
+TCSlib.Cryptography.ColSimMachine.colorA	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	6
+TCSlib.Cryptography.ColSimMachine.colorB	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	6
+TCSlib.Cryptography.ColSimMachine.colorNum	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.opnStr	5
+TCSlib.Cryptography.ColSimMachine.comStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum	4
+TCSlib.Cryptography.ColSimMachine.countBits	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	14
+TCSlib.Cryptography.ColSimMachine.eIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.kPos	9
+TCSlib.Cryptography.ColSimMachine.edgePos	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.kPos	8
+TCSlib.Cryptography.ColSimMachine.kPos	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	8
+TCSlib.Cryptography.ColSimMachine.mE	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.eIdx	11
+TCSlib.Cryptography.ColSimMachine.nV	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.colorNum	15
+TCSlib.Cryptography.ColSimMachine.opnStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum	3
+TCSlib.Cryptography.ColSimMachine.pair6Equiv	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorA, TCSlib.Cryptography.ColSimMachine.colorB	10
+TCSlib.Cryptography.ColSimMachine.rVStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum	4
+TCSlib.Cryptography.ColSimMachine.rrStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	7
+TCSlib.Cryptography.ColSimMachine.sampleColorPair	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.ColSimMachine.sampleNum	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	9
+TCSlib.Cryptography.ColSimMachine.sim	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct		3
+TCSlib.Cryptography.ColSimMachine.simCoins	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct		1
+TCSlib.Cryptography.ColSimMachine.simColors	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	deep	TCSlib.Cryptography.ColSimMachine.sim	3
+TCSlib.Cryptography.ColSimMachine.vIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	8
+TCSlib.Cryptography.EncodingMachines.blockVal	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	9
+TCSlib.Cryptography.EncodingMachines.firstIdx	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.kPos	13
+TCSlib.Cryptography.EncodingMachines.trialIdx	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.colorNum, TCSlib.Cryptography.ColSimMachine.opnStr	9
+TCSlib.Cryptography.EnsembleLemmas.padL	TCSlib.Cryptography.Asymptotic.EnsemblesLemmas	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.chunk, TCSlib.Cryptography.ColSimMachine.comStr	7
+TCSlib.Cryptography.Strategy.Efficient	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		5
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.sim, TCSlib.Cryptography.Strategy.Efficient	8
+TCSlib.Cryptography.Strategy.ofNUPPT	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Strategy.Efficient	5
+TCSlib.Cryptography.View.encode	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ColSimMachine.attemptNum, TCSlib.Cryptography.ColSimMachine.sim	6

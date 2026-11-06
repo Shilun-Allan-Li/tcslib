@@ -1,0 +1,116 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/Encryption.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 44,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.prgScheme",
+   "TCSlib.Cryptography.prgScheme_encDist"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.prgScheme": [
+   [
+    431,
+    4,
+    "B",
+    "Type mismatch\n  LT.lt.le (P.expands n)\nhas type\n  n \u2264 P.stretch.eval n\nbut is expected to have type\n  n \u2264 P.stretch.eval ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).coinLen n)"
+   ]
+  ],
+  "TCSlib.Cryptography.prgScheme_encDist": [
+   [
+    438,
+    86,
+    "T",
+    "Application type mismatch: The argument\n  r.1\nhas type\n  (prgScheme P F hF hG).gen.Coins n\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  P.G n r.1"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.prgScheme": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    431
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  LT.lt.le (P.expands n)\nhas type\n  n \u2264 P.stretch.eval n\nbut is expected to have type\n  n \u2264 P.stretch.eval ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).coinLen n)"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Type mismatch",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Type mismatch",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Type mismatch",
+    "Complexity.PolyExpr.eval": "ev3: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.prgScheme_encDist": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    438
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r.1\nhas type\n  (prgScheme P F hF hG).gen.Coins n\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  P.G n r.1"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev4: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev5: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev6: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev7: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.prgScheme": [
+   "TCSlib.Cryptography.PrivateKeyScheme",
+   "TCSlib.Cryptography.polyTimeComputable_prgPadFun",
+   "TCSlib.Cryptography.prgPadFun",
+   "TCSlib.Cryptography.runAt_coinKey",
+   "TCSlib.Cryptography.runAt_prgPad",
+   "TCSlib.Cryptography.zipWith_xor_xor_self"
+  ],
+  "TCSlib.Cryptography.prgScheme_encDist": [
+   "TCSlib.Cryptography.PrivateKeyScheme",
+   "TCSlib.Cryptography.PrivateKeyScheme.encDist",
+   "TCSlib.Cryptography.padXor",
+   "TCSlib.Cryptography.polyTimeComputable_prgPadFun",
+   "TCSlib.Cryptography.prgPadFun",
+   "TCSlib.Cryptography.prgScheme",
+   "TCSlib.Cryptography.runAt_coinKey",
+   "TCSlib.Cryptography.runAt_prgPad",
+   "TCSlib.Cryptography.zipWith_xor_xor_self"
+  ]
+ },
+ "runs": 60,
+ "seconds": 148
+}

@@ -1,0 +1,222 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:171:59: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (A.wrap hpre hpost β b hβ p).coins = p.add A.coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:353:6: error: Application type mismatch: The argument
+  Fin.appendEquiv 1 (D.coinLen n)
+has type
+  (Fin 1 → ?m.54) × (Fin (D.coinLen n) → ?m.54) ≃ (Fin (1 + D.coinLen n) → ?m.54)
+but is expected to have type
+  (Fin 1 → Bool) × D.Coins n ≃ (owpPredMachine D flip).Coins n
+in the application
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:703:4: error: Application type mismatch: The argument
+  uprob_comp_equiv
+    ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79
+has type
+  (uprob fun a =>
+      ?m.79
+        (((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) a)) =
+    uprob ?m.79
+but is expected to have type
+  uprob ?m.65 =
+    uprob fun z =>
+      ∃ x',
+        (glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n) (𝓕.f n z.1) z.2 = some x' ∧
+          𝓕.f n x' = 𝓕.f n z.1
+in the application
+  Eq.trans
+    (uprob_comp_equiv (Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool) (Fin (𝓕.inLen.eval n) → Bool) (A.Coins n)) ?m.65)
+    (uprob_comp_equiv
+      ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:780:4: error: 'show' tactic failed, pattern
+  F.sample.coinLen n + L = S.coins.eval n
+is not definitionally equal to target
+  F.sample.coinLen n + L = S.coinLen n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:785:15: error: Function expected at
+  hclose
+but this term has type
+  F.SampleClose δ
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:778:70: error: unsolved goals
+F : Collection
+m : PolyExpr
+S : NUPPT
+hS : S.coins = F.sample.coins.add m
+hrun :
+  ∀ (n : ℕ) (i r : List Bool),
+    S.runAtL n i r =
+      pairEncode (F.sample.runAtL n i (List.take (F.sample.coinLen n) r)) (List.drop (F.sample.coinLen n) r)
+δ : ℕ → ℝ
+hclose : F.SampleClose δ
+n : ℕ
+r : F.gen.Coins n
+L : ℕ
+hL : L = m.eval n
+hlen : F.sample.coinLen n + L = S.coinLen n
+e : F.sample.Coins n × (Fin L → Bool) ≃ S.Coins n := (Fin.appendEquiv (F.sample.coinLen n) L).trans (finCastEquiv hlen)
+h0 : StatClose (fun s => s) (fun s => s) 0
+⊢ StatClose (fun s => glPadDecode F (F.index n r) L (S.runAt n (F.index n r) s)) (fun x => some x) (δ n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:863:4: error: Application type mismatch: The argument
+  uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102
+has type
+  (uprob fun a => ?m.102 (((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) a)) =
+    uprob ?m.102
+but is expected to have type
+  uprob ?m.88 =
+    uprob fun z =>
+      ∃ x',
+        F.decD (F.index n r)
+              ((glPadCollInvMachine A m).runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) =
+            some x' ∧
+          F.f (F.index n r) x' = F.f (F.index n r) z.1
+in the application
+  Eq.trans (uprob_comp_equiv (Equiv.prodAssoc (F.D (F.index n r)) (Fin (m.eval n) → Bool) (A.Coins n)) ?m.88)
+    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:900:2: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (A.reparam p).coins = A.coins.subst p
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:976:69: error: Function expected at
+  F.sample_uniform
+but this term has type
+  F.sample.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:973:53: error: unsolved goals
+F : Collection
+m : PolyExpr
+n : ℕ
+i : List Bool
+s : (NUPPT.ofPolyTimeUniform ⋯ (F.sample.coins.add m)).Coins n
+⊢ (NUPPT.ofPolyTime ⋯ (F.sample.coins.add m) (PolyExpr.const 0) (fun x => []) NUPPT.ofPolyTimeUniform._proof_1).runAt n
+      i s =
+    pairEncode
+      (F.sample.output
+        (pairEncode (pairEncode (pairEncode (List.replicate n true) i) (F.sample.advice n))
+          (List.take (F.sample.coins.eval n) (List.ofFn s))))
+      (List.drop (F.sample.coins.eval n) (List.ofFn s))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:974:13: warning: This simp argument is unused:
+  NUPPT.runAt
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.r̵u̵n̵A̵t̵,̵ ̵N̵U̵P̵P̵T̵.̵ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun, NUPPT.inParam,
+  ̲  ̲ ̲ ̲NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:974:51: warning: This simp argument is unused:
+  NUPPT.output_ofPolyTime
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, N̵U̵P̵P̵T̵.̵o̵u̵t̵p̵u̵t̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵glPadSampleFun, NUPPT.inParam, NUPPT.inArg,
+  ̲  ̲ ̲ ̲NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode, pairSndD_pairEncode,
+  ̲  ̲ ̲ ̲List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:975:4: warning: This simp argument is unused:
+  glPadSampleFun
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵g̵l̵P̵a̵d̵S̵a̵m̵p̵l̵e̵F̵u̵n̵,̵ ̵NUPPT.inParam,
+  ̲  ̲ ̲ ̲NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:975:20: warning: This simp argument is unused:
+  NUPPT.inParam
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲ N̵U̵P̵P̵T̵.̵i̵n̵P̵a̵r̵a̵m̵,̵  ̲ ̲NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:975:35: warning: This simp argument is unused:
+  NUPPT.inArg
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inA̵r̵g̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵Coins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:975:48: warning: This simp argument is unused:
+  NUPPT.inCoins
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inArg, NUPPT.i̵n̵C̵o̵i̵n̵s̵,̵ ̵N̵U̵P̵P̵T̵.̵advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:975:79: warning: This simp argument is unused:
+  NUPPT.layout
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, N̵U̵P̵P̵T̵.̵l̵a̵y̵o̵u̵t̵,̵
+  ̵ ̵ ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:976:4: warning: This simp argument is unused:
+  pairFstD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime, glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout, p̵a̵i̵r̵F̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵pairSndD_pairEncode,
+  ̲  ̲ ̲ ̲List.length_replicate, F.sample_uniform n, NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:976:25: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲ p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵  ̲ ̲List.length_replicate, F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCoreLemmas.S.lean:976:46: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen, NUPPT.runAtL]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

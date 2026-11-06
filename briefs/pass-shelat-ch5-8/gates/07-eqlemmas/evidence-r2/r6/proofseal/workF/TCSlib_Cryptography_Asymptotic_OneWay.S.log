@@ -1,0 +1,68 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:348:59: error: Type mismatch
+  PolyExpr.eval_mono B.coins (hle n)
+has type
+  B.coins.eval n ≤ B.coins.eval (𝓕.outLen.eval n)
+but is expected to have type
+  B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:469:2: error: Type mismatch
+  hFx n ((blocks (q.eval n) (𝓕.inLen.eval n)) x i)
+has type
+  F (NUPPT.advInput n (List.ofFn ((blocks (q.eval n) (𝓕.inLen.eval n)) x i))) =
+    List.ofFn (𝓕.f n ((blocks (q.eval n) (𝓕.inLen.eval n)) x i))
+but is expected to have type
+  F (pairEncode (List.replicate n true) (List.ofFn fun j => x (finProdFinEquiv (i, j)))) =
+    List.ofFn (OneWay.prodFun (𝓕.f n) (q.eval n) ((blocks (q.eval n) (𝓕.inLen.eval n)) x) i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:522:2: error: Type mismatch
+  congrFun hxs i
+has type
+  prodFun f q (B (prodFun f q (xs, r).1) (xs, r).2) i = prodFun f q (xs, r).1 i
+but is expected to have type
+  f (B (prodFun f q (xs, r).1) (xs, r).2 i) = f ((xs, r).1 i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:544:20: error: Function expected at
+  hμ
+but this term has type
+  Negligible fun n => ↑(p.eval n) * 2⁻¹ ^ n
+
+Note: Expected a function because this term is being applied to the argument
+  0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:544:9: error: Tactic `rcases` failed: `x✝ : ?m.291` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:628:91: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  FunFamily.blocks q ℓ = OneWay.blocksE q ℓ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:688:15: error: Type mismatch
+  hFx n a
+has type
+  F (NUPPT.advInput n (List.ofFn a)) = List.ofFn (𝓕.f n a)
+but is expected to have type
+  F (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (𝓕.f n a)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:785:52: error: Type mismatch
+  rfl
+has type
+  ?m.149 = ?m.149
+but is expected to have type
+  2 * ℓ + A'.coinLen n = A.coinLen n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:845:22: error: Function expected at
+  h.hard A
+but this term has type
+  Negligible fun n => 𝓕.invProbAt A n
+
+Note: Expected a function because this term is being applied to the argument
+  1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:845:9: error: Tactic `rcases` failed: `x✝ : ?m.18` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:859:4: error: Type mismatch
+  NUPPT.inArg_layout ?m.27 ?m.28 ?m.29 ?m.30
+has type
+  NUPPT.inArg (NUPPT.layout ?m.27 ?m.28 ?m.29 ?m.30) = ?m.28
+but is expected to have type
+  NUPPT.inArg (pairEncode (pairEncode (NUPPT.advInput n y) []) (List.ofFn r)) = y
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:893:22: error: Function expected at
+  h.hard A
+but this term has type
+  Negligible fun n => (FunFamily.ofString id PolyExpr.var).invProbAt A n
+
+Note: Expected a function because this term is being applied to the argument
+  0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_OneWay.S.lean:893:9: error: Tactic `rcases` failed: `x✝ : ?m.17` is not an inductive datatype

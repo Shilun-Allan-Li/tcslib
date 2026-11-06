@@ -1,0 +1,134 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:265:11: error: typeclass instance problem is stuck, it is often due to metavariables
+  Nonempty ?m.68
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:269:22: error: Function expected at
+  hε
+but this term has type
+  Negligible ε
+
+Note: Expected a function because this term is being applied to the argument
+  1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:269:9: error: Tactic `rcases` failed: `x✝ : ?m.76` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:391:15: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.185 ↔ ?m.185
+but is expected to have type
+  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔
+    owpPredictor (fun z r => D (e z) r) flip
+        (owpPair f
+          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+      (fun w => B w.1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:397:4: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|
+is not definitionally equal to the right-hand side
+  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+B : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+flip : Bool
+hflip :
+  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =
+    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r
+h1 :
+  predProb (⇑f) B (owpPredictorSnoc D flip) =
+    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)
+⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =
+    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:428:25: error: Invalid field `easy`: The environment does not contain `TCSlib.Cryptography.OneWayPermutation.easy`
+  hP
+has type
+  OneWayPermutation P
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:428:9: error: Tactic `rcases` failed: `x✝ : ?m.3` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:492:90: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:500:90: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:527:2: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb.{u_4, u_1, u_2} (fun s => (X s).1) D - acceptProb (fun z => id z.1) D|
+is not definitionally equal to the right-hand side
+  |(acceptProb.{u_4, u_1, max u_2 u_3} X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+
+σ : Type u_1
+γ : Type u_2
+δ : Type u_3
+ρ : Type u_4
+inst✝⁴ : Fintype σ
+inst✝³ : Fintype γ
+inst✝² : Fintype δ
+inst✝¹ : Nonempty δ
+inst✝ : Fintype ρ
+X : σ → γ × δ
+D : γ → ρ → Bool
+⊢ |acceptProb (fun s => (X s).1) D - acceptProb (fun z => id z.1) D| =
+    |(acceptProb X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:587:10: error: Tactic `rcases` failed: `left✝ : (PRG.oneBit G).Easy` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:648:6: error: 'show' tactic failed, pattern
+  Fin.init (Fin.snoc ((P.f n) x) (h n x)) = (P.f n) x
+is not definitionally equal to target
+  prgStep (oneBitStep fun x => Fin.snoc ((P.f n) x) (h n x)) x = (P.f n) x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:733:2: error: Tactic `rfl` failed: The left-hand side
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r))
+is not definitionally equal to the right-hand side
+  Fin.append (𝓕.f n x) r
+
+𝓕 : FunFamily
+n : ℕ
+x r : Fin (𝓕.inLen.eval n) → Bool
+⊢ (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) (HardcoreBit.glPad (𝓕.f n) (x, r)) = Fin.append (𝓕.f n x) r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:740:2: error: Tactic `rfl` failed: The left-hand side
+  HardcoreBit.glBit (x, r)
+is not definitionally equal to the right-hand side
+  HardcoreBit.ip x r
+
+𝓕 : FunFamily
+n : ℕ
+x r : Fin (𝓕.inLen.eval n) → Bool
+⊢ HardcoreBit.glBit (x, r) = HardcoreBit.ip x r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:764:83: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.31 ↔ ?m.31
+but is expected to have type
+  A (𝓕.glPad.f n x✝.1) x✝.2 = 𝓕.glBit n x✝.1 ↔
+    (fun y r => A ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r)
+        (HardcoreBit.glPad (𝓕.f n) ((splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) x✝).1)
+        ((splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) x✝).2 =
+      HardcoreBit.glBit ((splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) x✝).1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:788:14: error: Tactic `rfl` failed: The left-hand side
+  HardcoreBit.glPad (𝓕.f n) z
+is not definitionally equal to the right-hand side
+  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+
+case h
+𝓕 : FunFamily
+n : ℕ
+hf : Function.Bijective (𝓕.f n)
+z : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)
+⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:811:9: error: Tactic `rcases` failed: `x✝ : 𝓕.Easy` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:870:24: error: Function expected at
+  hBneg
+but this term has type
+  Negligible fun n => 𝓕.glPad.invProbAt B n
+
+Note: Expected a function because this term is being applied to the argument
+  (c + d + 1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_HardCore.S.lean:870:11: error: Tactic `rcases` failed: `x✝ : ?m.224` is not an inductive datatype

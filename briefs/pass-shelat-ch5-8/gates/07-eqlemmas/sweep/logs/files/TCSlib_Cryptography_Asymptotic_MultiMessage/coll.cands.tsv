@@ -1,0 +1,55 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform, TCSlib.Cryptography.PRG.Secure	13
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		4
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		6
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD	6
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.multiEncDist	14
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.ofPolyTimeUniform_uniform	3
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.mk	9
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.mk	9
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.PRG.Secure	1
+Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	3
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct		3
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct		2
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	7
+Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.ofPolyTimeUniform_uniform	7
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.mk	9
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.mk, TCSlib.Cryptography.PrivateKeyScheme.multiEncDist	9
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.mk	9
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	11
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	deep	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	3
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	8
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.PrivateKeyScheme.mk	3
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	6
+TCSlib.Cryptography.oracleDist	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.prfAdv	3
+TCSlib.Cryptography.prfAdv	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct		2
+TCSlib.Cryptography.randomFunction	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct	TCSlib.Cryptography.prfAdv	3
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform	1
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.distAdv, TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	9
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	14
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, Complexity.NUPPT.ofPolyTimeUniform_uniform	13
+TCSlib.Cryptography.Ensemble.Indist	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.Ensemble.Pseudorandom	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.Ensemble.uniform	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct		1
+TCSlib.Cryptography.OracleAdversary.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct		1
+TCSlib.Cryptography.PRG.Easy	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.PRG.Secure	TCSlib.Cryptography.Asymptotic.Pseudorandom	direct		1
+TCSlib.Cryptography.PRG.ensemble	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	TCSlib.Cryptography.Asymptotic.Encryption	direct		3
+TCSlib.Cryptography.PrivateKeyScheme.encodeList	TCSlib.Cryptography.Asymptotic.Encryption	direct	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure, TCSlib.Cryptography.PrivateKeyScheme.multiEncDist	6
+TCSlib.Cryptography.PrivateKeyScheme.multiEncDist	TCSlib.Cryptography.Asymptotic.Encryption	direct	TCSlib.Cryptography.PrivateKeyScheme.MultiMessageSecure	4
+TCSlib.Cryptography.QueryTree.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.OracleAdversary.BoundedBy	2
+TCSlib.Cryptography.QueryTree.eval	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.oracleDist, TCSlib.Cryptography.prfAdv	4

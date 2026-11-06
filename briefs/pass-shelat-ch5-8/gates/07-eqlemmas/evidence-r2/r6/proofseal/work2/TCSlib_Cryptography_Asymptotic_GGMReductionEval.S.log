@@ -1,0 +1,207 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:103:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val => false
+    | none => verdictOf (next s.1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:103:33: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some val✝ with
+      | some val => ret false
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some val✝ with
+  | some val => false
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+s : PureState n P
+val✝ : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some val✝ with
+        | some val => ret false
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some val✝ with
+    | some val => false
+    | none => verdictOf (next s.1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:114:12: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match none with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match none with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match none with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match none with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case none
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+⊢ evalLazy a
+      (simulate π ans
+        (match none with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match none with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match none with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match none with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:115:14: error: Tactic `rfl` failed: The left-hand side
+  evalLazy a
+    (simulate π ans
+      (match some x with
+      | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+      | none => ret (verdictOf (next s.1))))
+    s.2
+is not definitionally equal to the right-hand side
+  match some x with
+  | some val =>
+    evalLazy a
+      (simulate π ans
+        (buildTreeQ next b
+          (match some x with
+            | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+            | none => s).1))
+      (match some x with
+        | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+        | none => s).2
+  | none => verdictOf (next s.1)
+
+case some
+n : ℕ
+next : List ((Fin n → Bool) × (Fin n → Bool)) → List Bool
+P : Type
+inst✝ : DecidableEq P
+π : (Fin n → Bool) → P
+ans : (Fin n → Bool) → (Fin n → Bool) × (Fin n → Bool) → Fin n → Bool
+a : ℕ → (Fin n → Bool) × (Fin n → Bool)
+b : ℕ
+s : PureState n P
+x : Fin n → Bool
+⊢ evalLazy a
+      (simulate π ans
+        (match some x with
+        | some x => QueryTree.query x fun o => buildTreeQ next b (s.1 ++ [(x, o)])
+        | none => ret (verdictOf (next s.1))))
+      s.2 =
+    match some x with
+    | some val =>
+      evalLazy a
+        (simulate π ans
+          (buildTreeQ next b
+            (match some x with
+              | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+              | none => s).1))
+        (match some x with
+          | some x => (s.1 ++ [(x, ans x (a (List.idxOf (π x) (noteQuery s.2 (π x)))))], noteQuery s.2 (π x))
+          | none => s).2
+    | none => verdictOf (next s.1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:293:71: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  start (rawInput d) = encState d ([], []) 0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:383:2: error: Tactic `rfl` failed: The left-hand side
+  D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r))
+is not definitionally equal to the right-hand side
+  nextQ d s.1
+
+D : NUPPT
+q : PolyExpr
+n : ℕ
+d : Data D q n
+s : PureState n (Fin d.i → Bool)
+t : ℕ
+⊢ D.output (NUPPT.layout (List.replicate n true) (histEnc s.1) (D.advice n) (List.ofFn d.r)) = nextQ d s.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:543:2: error: Type mismatch
+  start_rawInput d
+has type
+  start (rawInput d) = encState d ([], []) 0
+but is expected to have type
+  StateLoop.orbit start (step E D q) (rawInput d) 0 = encState d (pureAt d hi 0) 0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:754:2: error: Tactic `rfl` failed: The left-hand side
+  rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c))
+is not definitionally equal to the right-hand side
+  rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+D : NUPPT
+q : PolyExpr
+i j : ℕ → ℕ
+n : ℕ
+y : List Bool
+c : (ggmRedMachine hE D q i j).Coins n
+⊢ rawFun E D q (pairEncode (pairEncode (NUPPT.advInput n y) (adviceOf D q i j n)) (List.ofFn c)) =
+    rawFun E D q (NUPPT.layout (List.replicate n true) y (adviceOf D q i j n) (List.ofFn c))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_Asymptotic_GGMReductionEval.S.lean:786:87: error: Type mismatch
+  rfl
+has type
+  ?m.209 = ?m.209
+but is expected to have type
+  ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r) (q.eval n) []) (q.eval n) ⟨i n, hi⟩
+      ⟨j n, hj⟩ z (W, r) =
+    concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])

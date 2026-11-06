@@ -1,0 +1,73 @@
+import TCSlib.Cryptography.Candidates.DiscreteLog
+import TCSlib.Cryptography.NumberTheory.QuadraticResidues
+import TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
+import Mathlib.NumberTheory.LegendreSymbol.Basic
+import Mathlib.GroupTheory.SpecificGroups.Cyclic
+
+/-! Seal probe, DL route (the imports of `Candidates/DiscreteLogHardcore`, the consumer of
+dl-b; `ElGamal` reads the same names): the readings through the new equation lemmas close with
+the definitions sealed. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+attribute [local irreducible] dlP dlM dlG ExpValid WellFormedIndex SafePrimeValid expF expEnc
+  ExpGroupGen.FullLengthExcept ExpGroupGen.DLHard ExpGroupGen.dlProb expCollection
+  natToList sizeStr divModStr xgcdStr
+
+example (a b c : List Bool) : dlP (pairEncode a (pairEncode b c)) = listToNat a := by
+  rw [dlP_eq, pairFstD_pairEncode]
+example (a b c : List Bool) : dlM (pairEncode a (pairEncode b c)) = listToNat b := by
+  rw [dlM_eq, pairSndD_pairEncode, pairFstD_pairEncode]
+example (a b c : List Bool) : dlG (pairEncode a (pairEncode b c)) = listToNat c := by
+  rw [dlG_eq, pairSndD_pairEncode, pairSndD_pairEncode]
+example {i : List Bool} (h : ExpValid i) : (dlP i).Prime := ((expValid_iff i).1 h).1
+example {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) :
+    ∃ a b c : List Bool, i = pairEncode a (pairEncode b c) := by
+  obtain ⟨a, b, c, hi, -⟩ := (wellFormedIndex_iff n i).1 h
+  exact ⟨a, b, c, hi⟩
+example {i : List Bool} (h : SafePrimeValid i) : dlP i = 2 * dlM i + 1 :=
+  ((safePrimeValid_iff i).1 h).2.2
+example (i : List Bool) (x : ZMod (expOrd i)) :
+    listToNat (expF i x) = dlG i ^ x.val % dlP i % 2 ^ dlW i := by
+  rw [expF_eq, listToNat_natToList_eq_mod]
+example (i : List Bool) (x : ZMod (expOrd i)) : listToNat (expEnc i x) = x.val % 2 ^ dlW i := by
+  rw [expEnc_eq, listToNat_natToList_eq_mod]
+example {V : List Bool → Prop} (G : ExpGroupGen V) (δ : ℕ → ℝ) (h : G.FullLengthExcept δ)
+    (n : ℕ) (hn : G.n₀ ≤ n) :
+    uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n :=
+  (G.fullLengthExcept_iff δ).1 h n hn
+example {V : List Bool → Prop} (G : ExpGroupGen V) (h : G.DLHard) (A : NUPPT) :
+    Negligible fun n => G.dlProb A n := G.dlHard_iff.1 h A
+example {V : List Bool → Prop} (G : ExpGroupGen V) (A : NUPPT) (n : ℕ) : G.dlProb A n ≤ 1 := by
+  haveI : Nonempty (G.gen.Coins n) := ⟨fun _ => false⟩
+  rw [ExpGroupGen.dlProb_eq]
+  exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (x : (expCollection H G hV).D i) (w : List Bool)
+    (h : (expCollection H G hV).f i x = w) : (expCollection H G hV).f i x = w := by
+  rw [expCollection_f] at h ⊢
+  exact h
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (x : (expCollection H G hV).D i) (w : List Bool)
+    (h : (expCollection H G hV).encD i x = w) : (expCollection H G hV).encD i x = w := by
+  rw [expCollection_encD] at h ⊢
+  exact h
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i w : List Bool) (h : (expCollection H G hV).decD i w = none) :
+    (expCollection H G hV).decD i w = none := by
+  rw [expCollection_decD] at h ⊢
+  exact h
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) :
+    (expCollection H G hV).gen.coins = (expGen G).coins := by rw [expCollection_gen]
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) :
+    (expCollection H G hV).sample.coins = (expSampler H).coins := by rw [expCollection_sample]
+example (k N : ℕ) : (natToList k N).length = k := by rw [natToList_eq, List.length_ofFn]
+example (w : List Bool) : (sizeStr w).length = Nat.size (listToNat w) := by
+  rw [sizeStr_eq, List.length_replicate]
+example (a b : List Bool) : pairSndD (divModStr (pairEncode a b)) =
+    natToList b.length (listToNat a % listToNat b) := by
+  rw [divModStr_pairEncode, pairSndD_pairEncode]
+example (a b : List Bool) : pairFstD (xgcdStr (pairEncode a b)) =
+    natToList b.length (Nat.gcd (listToNat a) (listToNat b)) := by
+  rw [xgcdStr_pairEncode, pairFstD_pairEncode]

@@ -1,0 +1,14 @@
+TCSlib_Cryptography_Asymptotic_Encryption/S0.lean:432:4: error: Type mismatch
+  LT.lt.le (P.expands n)
+has type
+  n ≤ P.stretch.eval n
+but is expected to have type
+  n ≤ P.stretch.eval ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).coinLen n)
+TCSlib_Cryptography_Asymptotic_Encryption/S0.lean:439:86: error: Application type mismatch: The argument
+  r.1
+has type
+  (prgScheme P F hF hG).gen.Coins n
+but is expected to have type
+  Fin n → Bool
+in the application
+  P.G n r.1

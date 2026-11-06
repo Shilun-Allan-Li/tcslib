@@ -1,0 +1,204 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 54,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.HardCore.bitHiding",
+   "TCSlib.Cryptography.bitCom_false_eq_owpGenPRG",
+   "TCSlib.Cryptography.exists_commitment_of_owp_hardCore",
+   "TCSlib.Cryptography.owpComStr_ofFn",
+   "TCSlib.Cryptography.owp_commitment"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.bitCom_false_eq_owpGenPRG": [
+   [
+    449,
+    59,
+    "T",
+    "Application type mismatch: The argument\n  i\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n r i"
+   ]
+  ],
+  "TCSlib.Cryptography.owpComStr_ofFn": [
+   [
+    526,
+    89,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin (owpComLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * n) \u2192 Bool\nin the application\n  (FunFamily.blocks n n) r"
+   ]
+  ],
+  "TCSlib.Cryptography.HardCore.bitHiding": [
+   [
+    643,
+    33,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ],
+  "TCSlib.Cryptography.owp_commitment": [
+   [
+    890,
+    60,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ],
+  "TCSlib.Cryptography.exists_commitment_of_owp_hardCore": [
+   [
+    900,
+    51,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.owpComStr_ofFn": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    526
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin (owpComLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * n) \u2192 Bool\nin the application\n  (FunFamily.blocks n n) r"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.HardCore.bitHiding": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    643
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.owp_commitment": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    890
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.exists_commitment_of_owp_hardCore": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    900
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.bitCom_false_eq_owpGenPRG": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PRG.oneBit",
+    "TCSlib.Cryptography.owpGenPRG"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    449
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  i\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n r i"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PRG.oneBit": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.owpGenPRG": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.owpComStr_ofFn": [
+   "TCSlib.Cryptography.bitCom",
+   "TCSlib.Cryptography.owpCom",
+   "TCSlib.Cryptography.owpComAt",
+   "TCSlib.Cryptography.owpComLen",
+   "TCSlib.Cryptography.owpComStr"
+  ],
+  "TCSlib.Cryptography.HardCore.bitHiding": [
+   "TCSlib.Cryptography.BitHiding",
+   "TCSlib.Cryptography.bitCom"
+  ],
+  "TCSlib.Cryptography.owp_commitment": [
+   "TCSlib.Cryptography.Commitment",
+   "TCSlib.Cryptography.bitCom",
+   "TCSlib.Cryptography.owpCom",
+   "TCSlib.Cryptography.owpComAt",
+   "TCSlib.Cryptography.owpComLen",
+   "TCSlib.Cryptography.owpComStr"
+  ],
+  "TCSlib.Cryptography.exists_commitment_of_owp_hardCore": [
+   "TCSlib.Cryptography.Commitment"
+  ],
+  "TCSlib.Cryptography.bitCom_false_eq_owpGenPRG": [
+   "TCSlib.Cryptography.bitCom"
+  ]
+ },
+ "runs": 36,
+ "seconds": 94
+}

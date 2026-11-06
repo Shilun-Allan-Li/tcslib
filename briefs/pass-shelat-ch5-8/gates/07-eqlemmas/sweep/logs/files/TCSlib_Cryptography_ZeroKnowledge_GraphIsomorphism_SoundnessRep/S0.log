@@ -1,0 +1,14 @@
+TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep/S0.lean:272:69: error: Application type mismatch: The argument
+  blocksEquiv N (1 + 1 * (N + 1) ^ 2)
+has type
+  (Fin N → Fin (1 + 1 * (N + 1) ^ 2) → Bool) ≃ (Fin (N * (1 + 1 * (N + 1) ^ 2)) → Bool)
+but is expected to have type
+  (Fin N → Fin (1 + 1 * (N + 1) ^ 2) → Bool) ≃ gniProtocolRep.V.Coins N
+in the application
+  (Equiv.piCongrRight fun x => tapeSplit (1 * (N + 1) ^ 2)).trans (blocksEquiv N (1 + 1 * (N + 1) ^ 2))
+TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep/S0.lean:276:25: error: Type mismatch
+  (blocksEquiv N (1 + 1 * (N + 1) ^ 2)) fun j => (tapeSplit (1 * (N + 1) ^ 2)) (b j, ts j)
+has type
+  Fin (N * (1 + 1 * (N + 1) ^ 2)) → Bool
+but is expected to have type
+  gniProtocolRep.V.Coins N

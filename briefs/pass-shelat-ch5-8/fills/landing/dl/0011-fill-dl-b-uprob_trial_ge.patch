@@ -1,0 +1,145 @@
+From 620bc7e0c988e94650947d6b47716bc8755ea4e1 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:48:22 +0000
+Subject: [PATCH 11/25] fill dl-b: uprob_trial_ge
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 113 +++++++++++++++++-
+ 1 file changed, 112 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 0b71b8eb..0f4a360c 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -400,6 +400,45 @@ def majOracle (g : (ZMod p)ˣ) {ρ : Type*} [Fintype ρ] (A : (ZMod p)ˣ → ρ
+   fun y c => HardcoreBit.majority fun i =>
+     decide (A (y * g ^ (c i).1.val) (c i).2 = halfBit (p - 1) (c i).1)
+ 
++/-- Counting through the canonical representative: if every `v < m` with `P v` lies in `S`,
++then `Pr_{r ← Z_m}[P r.val] ≤ |S|/m`. -/
++private theorem dlb_uprob_val_le (m : ℕ) [NeZero m] (P : ℕ → Prop) (S : Finset ℕ)
++    (h : ∀ v < m, P v → v ∈ S) : uprob (fun r : ZMod m => P r.val) ≤ (S.card : ℝ) / m := by
++  classical
++  rw [uprob_eq_card_filter, ZMod.card]
++  gcongr
++  refine Finset.card_le_card_of_injOn (fun r => r.val) (fun r hr => ?_) ?_
++  · simp only [coe_filter, mem_univ, true_and, Set.mem_setOf_eq] at hr
++    exact h _ (ZMod.val_lt r) hr
++  · intro a _ b _ hab; exact ZMod.val_injective m hab
++
++/-- The windows of `uprob_trial_ge` in `ℕ`: for `m = 2h`, an exponent `e < m` equal to `d`
++or `h + d` with `d < h`, and `v < m` outside `[h − d, h) ∪ [m − d, m)`, the half-bit of
++`(e + v) mod m` agrees with that of `v` exactly when `e` is in the lower half. -/
++private theorem dlb_window {m h e d v : ℕ} (hm : m = 2 * h) (hd : d < h)
++    (he : e = d ∨ e = h + d) (hv : v < m) (hS : v ∉ Ico (h - d) h ∪ Ico (m - d) m) :
++    ((2 * ((e + v) % m) < m ↔ 2 * v < m) ↔ 2 * e < m) := by
++  simp only [mem_union, mem_Ico, not_or, not_and, not_lt] at hS
++  by_cases hlt : e + v < m
++  · rw [Nat.mod_eq_of_lt hlt]; omega
++  · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]; omega
++
++
++/-- Multiplying a power: `g^e · g^{r.val} = expo g (e + r)` for `e < p − 1` and a generator. -/
++private theorem dlb_pow_mul_pow_val {g : (ZMod p)ˣ} (hg : IsGenerator g) {e : ℕ} (he : e < p - 1)
++    (r : ZMod (p - 1)) : g ^ e * g ^ r.val = expo g ((e : ZMod (p - 1)) + r) := by
++  unfold expo
++  rw [← pow_add, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt he,
++    show (e + r.val) % (p - 1) = (e + r.val) % orderOf g by rw [hg.orderOf_eq], pow_mod_orderOf]
++
++/-- A predictor's success is at most one, so its advantage `ε` is at most `1/2`. -/
++private theorem dlb_eps_le {g : (ZMod p)ˣ} {ρ : Type*} [Fintype ρ]
++    (A : (ZMod p)ˣ → ρ → Bool) {ε : ℝ} (hA : 1 / 2 + ε ≤ predProb (expo g) (halfBit (p - 1)) A) :
++    ε ≤ 1 / 2 := by
++  have := uprob_le_one fun z : ZMod (p - 1) × ρ => A (expo g z.1) z.2 = halfBit (p - 1) z.1
++  rw [← predProb_def] at this
++  linarith
++
+ /-- **One trial of the majority test is correct with probability at least `1/2 + ε/2`**
+ (Lem-84.1.3, [PS10, p. 86, "`Pr[noinc | low(y_{k−1})] ≤ 1/2 − ε + 2(ε/4) = 1/2 − ε/2`"]): if
+ `A` predicts `half_{p−1}` from `g^x` with probability at least `1/2 + ε` over uniform `x`, and
+@@ -420,7 +459,79 @@ theorem uprob_trial_ge {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*} [Finty
+     (he : e < s ∨ ((p - 1) / 2 ≤ e ∧ e < (p - 1) / 2 + s)) :
+     1 / 2 + ε / 2 ≤ uprob fun c : ZMod (p - 1) × ρ =>
+       decide (A (g ^ e * g ^ c.1.val) c.2 = halfBit (p - 1) c.1) = halfBit (p - 1) (e : ZMod (p - 1)) := by
+-  sorry
++  classical
++  have hε2 := dlb_eps_le A hA
++  have hp1 : (0 : ℝ) < ((p - 1 : ℕ) : ℝ) := by
++    have := NeZero.ne (p - 1); exact_mod_cast Nat.pos_of_ne_zero this
++  have hcast : ((p : ℝ) - 1) = ((p - 1 : ℕ) : ℝ) := by
++    rw [Nat.cast_sub hp.out.one_le, Nat.cast_one]
++  rw [hcast] at hs
++  -- `s ≥ 1` (a window is nonempty), hence `p − 1 ≥ 8` and `p` is odd
++  have hs1 : 1 ≤ s := by omega
++  have hp8 : 8 * s ≤ p - 1 := by
++    have : (8 * s : ℝ) ≤ ((p - 1 : ℕ) : ℝ) := by nlinarith
++    exact_mod_cast this
++  have hp2 : p ≠ 2 := by rintro rfl; omega
++  obtain ⟨h2, -⟩ := two_mul_half (p := p) hp2
++  set m := p - 1 with hm
++  set h := (p - 1) / 2 with hh
++  -- the predictor is uniform-coined; an empty coin type makes `hA` infeasible
++  rcases isEmpty_or_nonempty ρ with hρ | hρ
++  · exfalso
++    have h0 : predProb (expo g) (halfBit (p - 1)) A = 0 := by
++      rw [predProb_def, uprob_def, Fintype.card_eq_zero, Nat.cast_zero, div_zero]
++    have : (0 : ℝ) ≤ s := Nat.cast_nonneg s
++    nlinarith
++  -- the window parameter `d < s` with `e = d` or `e = h + d`
++  obtain ⟨d, hds, hed⟩ : ∃ d, d < s ∧ (e = d ∨ e = h + d) := by
++    rcases he with he | he
++    · exact ⟨e, he, Or.inl rfl⟩
++    · exact ⟨e - h, by omega, Or.inr (by omega)⟩
++  have hdh : d < h := by omega
++  -- the correct-prediction event, transported along `r ↦ e + r`
++  let correct : ZMod m × ρ → Prop := fun c =>
++    A (expo g ((e : ZMod m) + c.1)) c.2 = halfBit m ((e : ZMod m) + c.1)
++  let good : ZMod m → Prop := fun r =>
++    decide (halfBit m ((e : ZMod m) + r) = halfBit m r) = halfBit m (e : ZMod m)
++  have hcorr : uprob correct = predProb (expo g) (halfBit m) A := by
++    rw [predProb_def]
++    exact uprob_comp_equiv ((Equiv.addLeft (e : ZMod m)).prodCongr (Equiv.refl ρ))
++      (fun z : ZMod m × ρ => A (expo g z.1) z.2 = halfBit m z.1)
++  -- the bad set has at most `2d ≤ 2s` elements
++  have hbad : uprob (fun c : ZMod m × ρ => ¬ good c.1) ≤ ε / 2 := by
++    rw [uprob_fst (fun r => ¬ good r)]
++    let P : ℕ → Prop := fun v => ¬ ((2 * ((e + v) % m) < m ↔ 2 * v < m) ↔ 2 * e < m)
++    have hpt : ∀ r : ZMod m, ¬ good r → P r.val := by
++      intro r hr hiff
++      apply hr
++      simp only [good, halfBit, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt he']
++      rw [decide_eq_decide, decide_eq_decide]
++      exact hiff
++    refine (uprob_mono hpt).trans ((dlb_uprob_val_le m P (Ico (h - d) h ∪ Ico (m - d) m) ?_).trans ?_)
++    · intro v hv hP
++      by_contra hS
++      exact hP (dlb_window (by omega) hdh hed hv hS)
++    · have hc : (Ico (h - d) h ∪ Ico (m - d) m).card ≤ 2 * s := by
++        refine (card_union_le _ _).trans ?_
++        rw [Nat.card_Ico, Nat.card_Ico]; omega
++      rw [div_le_iff₀ hp1]
++      have : ((Ico (h - d) h ∪ Ico (m - d) m).card : ℝ) ≤ 2 * s := by exact_mod_cast hc
++      nlinarith
++  -- on `correct ∧ good` the vote is `half(e)`
++  have hsub : ∀ c : ZMod m × ρ, correct c → good c.1 →
++      decide (A (g ^ e * g ^ c.1.val) c.2 = halfBit m c.1) = halfBit m (e : ZMod m) := by
++    intro c hc hg'
++    rw [dlb_pow_mul_pow_val hg he', hc]
++    exact hg'
++  have hor : uprob correct ≤ uprob (fun c : ZMod m × ρ =>
++      decide (A (g ^ e * g ^ c.1.val) c.2 = halfBit m c.1) = halfBit m (e : ZMod m)) +
++      uprob (fun c : ZMod m × ρ => ¬ good c.1) := by
++    refine (uprob_mono fun c hc => ?_).trans (uprob_or_le _ _)
++    by_cases hg' : good c.1
++    · exact Or.inl (hsub c hc hg')
++    · exact Or.inr hg'
++  rw [hcorr] at hor
++  linarith
+ 
+ /-- **The majority test fails with probability at most `1/(ε² ℓ)`** (Alg-85.a, [PS10, p. 86,
+ "by setting the number of samples `ℓ = (1/ε)²`, then by the corollary of the Chernoff bound …
+-- 
+2.43.0
+

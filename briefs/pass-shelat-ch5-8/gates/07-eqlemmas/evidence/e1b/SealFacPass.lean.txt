@@ -1,0 +1,30 @@
+import TCSlib.Cryptography.Candidates.Arithmetic
+import TCSlib.Cryptography.Candidates.Concrete
+import TCSlib.Cryptography.Asymptotic.OneWay
+import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.NumberTheory.Primality
+
+/-! Seal probe, factoring route (the imports of `Candidates/Factoring`, consumer of unit fac):
+`Concrete` (P6) and `Primality` (P7) readings. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+attribute [local irreducible] encodeDistinctPrimes DistinctPrimes.p DistinctPrimes.q DistinctPrimes.default chunk natToList
+
+example (m : ℕ) (z : DistinctPrimes m) :
+    pairFstD (encodeDistinctPrimes m z) = natToList m z.p := by
+  rw [encodeDistinctPrimes_eq, pairFstD_pairEncode]
+example {n : ℕ} (z : DistinctPrimes n) : z.p < 2 ^ n := by
+  rw [DistinctPrimes.p_eq]; exact (z.1.1 : Fin (2 ^ n)).2
+example {n : ℕ} (z : DistinctPrimes n) : z.q < 2 ^ n := by
+  rw [DistinctPrimes.q_eq]; exact (z.1.2 : Fin (2 ^ n)).2
+example {n : ℕ} (hn : 2 ≤ n) :
+    (DistinctPrimes.default hn).p * (DistinctPrimes.default hn).q = 6 := by
+  rw [DistinctPrimes.default_p, DistinctPrimes.default_q]
+example (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) :
+    chunk T n r t i = r (finProdFinEquiv (t, i)) := chunk_apply T n r t i
+example (T n : ℕ) (r : Fin (T * n) → Bool) :
+    chunk T n r = fun t i => r (finProdFinEquiv (t, i)) := by
+  funext t i; rw [chunk_apply]
+example (n : ℕ) : natToList n 2 = List.ofFn (natToBits n 2) := natToList_eq n 2

@@ -1,0 +1,59 @@
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 84c089bf..34833468 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -177,7 +177,9 @@ noncomputable def invProbOpt {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : 
+     (A : β → ρ → Option α) : ℝ :=
+   uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
+ 
+-/-- The defining equation of `invProbOpt`. -/
++/-- The defining equation of `invProbOpt`:
++`invProbOpt f A = Pr_{(x, r)}[∃ x', A(f x, r) = some x' ∧ f x' = f x]`, over uniform
++`(x, r) ∈ α × ρ`. -/
+ theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
+     (A : β → ρ → Option α) :
+     invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+index 4c942110..79c41c5a 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+@@ -979,7 +979,7 @@ def glPadInvFun (T : TrapdoorCollection) (z : List Bool) : List Bool :=
+       (NUPPT.inCoins z)))
+     (pairSndD (pairSndD (NUPPT.inArg z)))
+ 
+-/-- The defining equation of `glPadInvFun`. -/
++/-- `glPadInvFun T z = ⟨Inv(1^n, ⟨t, y⟩; s), r⟩` on `z = ⟨⟨⟨1^n, ⟨t, ⟨y, r⟩⟩⟩, []⟩, s⟩`. -/
+ theorem glPadInvFun_eq (T : TrapdoorCollection) (z : List Bool) : glPadInvFun T z = pairEncode
+     (T.inv.output (NUPPT.layout (NUPPT.inParam z)
+       (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))) []
+diff --git a/TCSlib/Cryptography/Foundations/Experiments.lean b/TCSlib/Cryptography/Foundations/Experiments.lean
+index 6f044604..fc8fe103 100644
+--- a/TCSlib/Cryptography/Foundations/Experiments.lean
++++ b/TCSlib/Cryptography/Foundations/Experiments.lean
+@@ -83,19 +83,22 @@ noncomputable def distAdv (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Boo
+ Published so that other layers (the `Games` bridges) read the experiments through stated
+ equations rather than through their bodies. -/
+ 
+-/-- The defining equation of `invProb`. -/
++/-- The defining equation of `invProb`: `invProb f A = Pr_{(x, r)}[f(A(f x, r)) = f x]`, over
++uniform `(x, r) ∈ α × ρ`. -/
+ theorem invProb_def (f : α → β) (A : β → ρ → α) :
+     invProb f A = uprob fun z : α × ρ => f (A (f z.1) z.2) = f z.1 := rfl
+ 
+-/-- The defining equation of `predProb`. -/
++/-- The defining equation of `predProb`: `predProb f B A = Pr_{(x, r)}[A(f x, r) = B x]`, over
++uniform `(x, r) ∈ α × ρ`. -/
+ theorem predProb_def (f : α → β) (B : α → Bool) (A : β → ρ → Bool) :
+     predProb f B A = uprob fun z : α × ρ => A (f z.1) z.2 = B z.1 := rfl
+ 
+-/-- The defining equation of `acceptProb`. -/
++/-- The defining equation of `acceptProb`: `acceptProb X D = Pr_{(s, r)}[D(X s, r) = 1]`, over
++uniform `(s, r) ∈ σ × ρ`. -/
+ theorem acceptProb_def (X : σ → γ) (D : γ → ρ → Bool) :
+     acceptProb X D = uprob fun z : σ × ρ => D (X z.1) z.2 = true := rfl
+ 
+-/-- The defining equation of `distAdv`. -/
++/-- The defining equation of `distAdv`: `distAdv X Y D = |acceptProb X D - acceptProb Y D|`. -/
+ theorem distAdv_def (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
+     distAdv X Y D = |acceptProb X D - acceptProb Y D| := rfl
+ 

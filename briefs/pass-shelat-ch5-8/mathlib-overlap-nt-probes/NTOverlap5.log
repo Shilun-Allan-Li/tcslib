@@ -1,0 +1,109 @@
+# probe: Probe/NTOverlap5.lean (worktree @ 5f277163); command: ntoverlap-tools/run.sh Probe/NTOverlap5.lean (overlay LEAN_PATH as NTOverlap1)
+# date: 2026-11-06T03:16:12Z
+# ---- source ----
+     1	import TCSlib.Cryptography.Candidates.Factoring
+     2	import TCSlib.Cryptography.Candidates.RSA
+     3	import TCSlib.Cryptography.Candidates.Rabin
+     4	import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+     5	import TCSlib.Cryptography.Candidates.ElGamal
+     6	
+     7	/-! Probe NTOverlap5: which of the Mathlib names this audit recommends are reachable from the
+     8	candidate files' existing import closure (no new import). An `Unknown constant` error means
+     9	the name needs an added import (and that module's olean may be absent from the local cache). -/
+    10	
+    11	#check @IsCyclic.card_powMonoidHom_range
+    12	#check @IsCyclic.exists_generator
+    13	#check @IsCyclic.exists_ofOrder_eq_natCard
+    14	#check @orderOf_eq_card_of_forall_mem_zpowers
+    15	#check @pow_mod_natCard
+    16	#check @pow_injOn_Iio_orderOf
+    17	#check @pow_eq_pow_iff_modEq
+    18	#check @Subgroup.card_mul_index
+    19	#check @Subgroup.index_ker
+    20	#check @Subgroup.index_eq_one
+    21	#check @ZMod.pow_totient
+    22	#check @Nat.ModEq.pow_totient
+    23	#check @ZMod.euler_criterion_units
+    24	#check @ZMod.euler_criterion
+    25	#check @ZMod.pow_div_two_eq_neg_one_or_one
+    26	#check @ZMod.exists_sq_eq_neg_one_iff
+    27	#check @legendreSym.card_sqrts
+    28	#check @quadraticChar_card_sqrts
+    29	#check @ZMod.unitsEquivCoprime
+    30	#check @ZMod.finEquiv
+    31	#check @ZMod.chineseRemainder
+    32	#check @Nat.chineseRemainder
+    33	#check @ZMod.coe_mul_inv_eq_one
+    34	#check @Nat.gcd_eq_gcd_ab
+    35	#check @Nat.totient_mul
+    36	#check @Nat.totient_prime
+    37	#check @Nat.totient_eq_one_iff
+    38	#check @Nat.totient_even
+    39	#check @Nat.totient_mul_prod_primeFactors
+    40	#check @Nat.dvd_mul
+    41	#check @Nat.dvd_prime
+    42	#check @Nat.exists_eq_two_pow_mul_odd
+    43	#check @Units.sq_eq_sq_iff_eq_or_eq_neg
+    44	#check @ZMod.neg_one_ne_one
+    45	#check @Nat.primesBelow_card_eq_primeCounting'
+    46	#check @Nat.exists_prime_lt_and_le_two_mul
+    47	-- modules outside the closure (expected unknown):
+    48	#check @Nat.pow_totient_mod
+    49	#check @Subgroup.square
+    50	#check @legendreSym.quadratic_reciprocity
+    51	#check @jacobiSym.quadratic_reciprocity
+    52	#check @ZMod.isCyclic_units_prime
+    53	#check @Nat.ProbablePrime
+# ---- lean output ----
+IsCyclic.card_powMonoidHom_range : ∀ (G : Type u_1) [inst : CommGroup G] [hG : IsCyclic G] [Finite G] (d : ℕ),
+  Nat.card ↥(powMonoidHom d).range = Nat.card G / (Nat.card G).gcd d
+@IsCyclic.exists_generator : ∀ {α : Type u_1} [inst : Group α] [IsCyclic α], ∃ g, ∀ (x : α), x ∈ Subgroup.zpowers g
+@IsCyclic.exists_ofOrder_eq_natCard : ∀ {α : Type u_1} [inst : Group α] [h : IsCyclic α], ∃ g, orderOf g = Nat.card α
+@orderOf_eq_card_of_forall_mem_zpowers : ∀ {α : Type u_1} [inst : Group α] {g : α},
+  (∀ (x : α), x ∈ Subgroup.zpowers g) → orderOf g = Nat.card α
+@pow_mod_natCard : ∀ {G : Type u_1} [inst : Group G] (a : G) (n : ℕ), a ^ (n % Nat.card G) = a ^ n
+@pow_injOn_Iio_orderOf : ∀ {G : Type u_1} [inst : Monoid G] {x : G},
+  Set.InjOn (fun x_1 => x ^ x_1) (Set.Iio (orderOf x))
+@pow_eq_pow_iff_modEq : ∀ {G : Type u_1} [inst : LeftCancelMonoid G] {x : G} {m n : ℕ},
+  x ^ n = x ^ m ↔ n ≡ m [MOD orderOf x]
+@Subgroup.card_mul_index : ∀ {G : Type u_1} [inst : Group G] (H : Subgroup G), Nat.card ↥H * H.index = Nat.card G
+@Subgroup.index_ker : ∀ {G : Type u_1} {G' : Type u_2} [inst : Group G] [inst_1 : Group G'] (f : G →* G'),
+  f.ker.index = Nat.card ↥f.range
+@Subgroup.index_eq_one : ∀ {G : Type u_1} [inst : Group G] {H : Subgroup G}, H.index = 1 ↔ H = ⊤
+@ZMod.pow_totient : ∀ {n : ℕ} (x : (ZMod n)ˣ), x ^ n.totient = 1
+@Nat.ModEq.pow_totient : ∀ {x n : ℕ}, x.Coprime n → x ^ n.totient ≡ 1 [MOD n]
+ZMod.euler_criterion_units : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] (x : (ZMod p)ˣ), (∃ y, y ^ 2 = x) ↔ x ^ (p / 2) = 1
+ZMod.euler_criterion : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] {a : ZMod p}, a ≠ 0 → (IsSquare a ↔ a ^ (p / 2) = 1)
+ZMod.pow_div_two_eq_neg_one_or_one : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] {a : ZMod p},
+  a ≠ 0 → a ^ (p / 2) = 1 ∨ a ^ (p / 2) = -1
+@ZMod.exists_sq_eq_neg_one_iff : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)], IsSquare (-1) ↔ p % 4 ≠ 3
+legendreSym.card_sqrts : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)],
+  p ≠ 2 → ∀ (a : ℤ), ↑{x | x ^ 2 = ↑a}.toFinset.card = legendreSym p a + 1
+@quadraticChar_card_sqrts : ∀ {F : Type u_1} [inst : Field F] [inst_1 : Fintype F] [inst_2 : DecidableEq F],
+  ringChar F ≠ 2 → ∀ (a : F), ↑{x | x ^ 2 = a}.toFinset.card = (quadraticChar F) a + 1
+@ZMod.unitsEquivCoprime : {n : ℕ} → [NeZero n] → (ZMod n)ˣ ≃ { x // x.val.Coprime n }
+ZMod.finEquiv : (n : ℕ) → [NeZero n] → Fin n ≃+* ZMod n
+@ZMod.chineseRemainder : {m n : ℕ} → m.Coprime n → ZMod (m * n) ≃+* ZMod m × ZMod n
+@Nat.chineseRemainder : {m n : ℕ} → n.Coprime m → (a b : ℕ) → { k // k ≡ a [MOD n] ∧ k ≡ b [MOD m] }
+@ZMod.coe_mul_inv_eq_one : ∀ {n : ℕ} (x : ℕ), x.Coprime n → ↑x * (↑x)⁻¹ = 1
+Nat.gcd_eq_gcd_ab : ∀ (x y : ℕ), ↑(x.gcd y) = ↑x * x.gcdA y + ↑y * x.gcdB y
+@Nat.totient_mul : ∀ {m n : ℕ}, m.Coprime n → (m * n).totient = m.totient * n.totient
+@Nat.totient_prime : ∀ {p : ℕ}, Nat.Prime p → p.totient = p - 1
+@Nat.totient_eq_one_iff : ∀ {n : ℕ}, n.totient = 1 ↔ n = 1 ∨ n = 2
+@Nat.totient_even : ∀ {n : ℕ}, 2 < n → Even n.totient
+Nat.totient_mul_prod_primeFactors : ∀ (n : ℕ), n.totient * ∏ p ∈ n.primeFactors, p = n * ∏ p ∈ n.primeFactors, (p - 1)
+@Nat.dvd_mul : ∀ {k m n : ℕ}, k ∣ m * n ↔ ∃ k₁ k₂, k₁ ∣ m ∧ k₂ ∣ n ∧ k₁ * k₂ = k
+@Nat.dvd_prime : ∀ {p m : ℕ}, Nat.Prime p → (m ∣ p ↔ m = 1 ∨ m = p)
+@Nat.exists_eq_two_pow_mul_odd : ∀ {n : ℕ}, n ≠ 0 → ∃ k m, Odd m ∧ n = 2 ^ k * m
+@Units.sq_eq_sq_iff_eq_or_eq_neg : ∀ {R : Type u_1} [inst : CommRing R] [NoZeroDivisors R] {a b : Rˣ},
+  a ^ 2 = b ^ 2 ↔ a = b ∨ a = -b
+@ZMod.neg_one_ne_one : ∀ {n : ℕ} [Fact (2 < n)], -1 ≠ 1
+Nat.primesBelow_card_eq_primeCounting' : ∀ (n : ℕ), n.primesBelow.card = n.primeCounting'
+Probe/NTOverlap5.lean:46:8: error(lean.unknownIdentifier): Unknown constant `Nat.exists_prime_lt_and_le_two_mul`
+Probe/NTOverlap5.lean:48:8: error(lean.unknownIdentifier): Unknown constant `Nat.pow_totient_mod`
+Probe/NTOverlap5.lean:49:8: error(lean.unknownIdentifier): Unknown constant `Subgroup.square`
+Probe/NTOverlap5.lean:50:8: error(lean.unknownIdentifier): Unknown constant `legendreSym.quadratic_reciprocity`
+Probe/NTOverlap5.lean:51:8: error(lean.unknownIdentifier): Unknown identifier `jacobiSym.quadratic_reciprocity`
+Probe/NTOverlap5.lean:52:8: error(lean.unknownIdentifier): Unknown constant `ZMod.isCyclic_units_prime`
+Probe/NTOverlap5.lean:53:8: error(lean.unknownIdentifier): Unknown constant `Nat.ProbablePrime`
+EXIT=1

@@ -1,0 +1,22 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGLColl.S.lean:245:6: error: Type mismatch
+  glPredictorOf (A.precomp collPre_poly) n (mP.eval n) fun y => pairEncode i y
+has type
+  List Bool × (Fin (mP.eval n) → Bool) → (A.precomp collPre_poly).Coins n → Bool
+but is expected to have type
+  List Bool × (Fin (mP.eval n) → Bool) → A.Coins n → Bool
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGLColl.S.lean:318:22: error: Function expected at
+  hhard B
+but this term has type
+  Negligible fun n =>
+    uexp fun r =>
+      uprob fun z =>
+        ∃ x',
+          glPadDecode F (F.index n r) (L n r)
+                (B.runAt n (pairEncode (F.index n r) (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) =
+              some x' ∧
+            pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
+              pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)
+
+Note: Expected a function because this term is being applied to the argument
+  (2 * c + d + 1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGLColl.S.lean:318:9: error: Tactic `rcases` failed: `x✝ : ?m.149` is not an inductive datatype

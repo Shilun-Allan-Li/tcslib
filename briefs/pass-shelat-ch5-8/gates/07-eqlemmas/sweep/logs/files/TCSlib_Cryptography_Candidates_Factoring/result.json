@@ -1,0 +1,243 @@
+{
+ "file": "TCSlib/Cryptography/Candidates/Factoring.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 65,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Candidates.collectionFactorer_runAt",
+   "TCSlib.Cryptography.Candidates.fmult",
+   "TCSlib.Cryptography.Candidates.fmult_f",
+   "TCSlib.Cryptography.Candidates.fmult_inv_factor",
+   "TCSlib.Cryptography.Candidates.plantFactor",
+   "TCSlib.Cryptography.Candidates.prodInverter"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Candidates.fmult": [
+   [
+    152,
+    47,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (2 * n) \u2192 Bool\nin the application\n  (FunFamily.blocks 2 n) x"
+   ],
+   [
+    152,
+    86,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (2 * n) \u2192 Bool\nin the application\n  (FunFamily.blocks 2 n) x"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.fmult_f": [
+   [
+    162,
+    14,
+    "T",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.inLen.eval n) \u2192 Bool\nin the application\n  fmult.f n x"
+   ],
+   [
+    162,
+    18,
+    "T",
+    "Type mismatch\n  natToBits (2 * n) (fmultNat (bitsToNat ((FunFamily.blocks 2 n) x 0)) (bitsToNat ((FunFamily.blocks 2 n) x 1)))\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.outLen.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.fmult_inv_factor": [
+   [
+    177,
+    63,
+    "T",
+    "Application type mismatch: The argument\n  x'\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.inLen.eval n) \u2192 Bool\nin the application\n  fmult.f n x'"
+   ],
+   [
+    177,
+    68,
+    "T",
+    "Type mismatch\n  natToBits (2 * n) (p * q)\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.outLen.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.prodInverter": [
+   [
+    358,
+    6,
+    "B",
+    "Application type mismatch: The argument\n  (FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys\nhas type\n  Fin (fmultBlocks.eval n * (2 * n)) \u2192 Bool\nbut is expected to have type\n  Fin ((fmult.prod fmultBlocks).outLen.eval n) \u2192 Bool\nin the application\n  A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)\n    ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.plantFactor": [
+   [
+    376,
+    38,
+    "B",
+    "Application type mismatch: The argument\n  fmult.f n\nhas type\n  (Fin (fmult.inLen.eval n) \u2192 Bool) \u2192 Fin (fmult.outLen.eval n) \u2192 Bool\nbut is expected to have type\n  (Fin (2 * n) \u2192 Bool) \u2192 Fin (2 * n) \u2192 Bool\nin the application\n  OneWay.yaoTry (fmult.f n)"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.collectionFactorer_runAt": [
+   [
+    784,
+    100,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (collectionFactorer A).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pairEncode (List.replicate n true) y) r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Candidates.plantFactor": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    376
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  fmult.f n\nhas type\n  (Fin (fmult.inLen.eval n) \u2192 Bool) \u2192 Fin (fmult.outLen.eval n) \u2192 Bool\nbut is expected to have type\n  (Fin (2 * n) \u2192 Bool) \u2192 Fin (2 * n) \u2192 Bool\nin the application\n  OneWay.yaoTry (fmult.f n)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.fmult": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    152
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (2 * n) \u2192 Bool\nin the application\n  (FunFamily.blocks 2 n) x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.prodInverter": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.prod"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    358
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys\nhas type\n  Fin (fmultBlocks.eval n * (2 * n)) \u2192 Bool\nbut is expected to have type\n  Fin ((fmult.prod fmultBlocks).outLen.eval n) \u2192 Bool\nin the application\n  A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)\n    ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.prod": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.collectionFactorer_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    784
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (collectionFactorer A).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pairEncode (List.replicate n true) y) r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.fmult_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    162
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.inLen.eval n) \u2192 Bool\nin the application\n  fmult.f n x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.fmult_inv_factor": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    177
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x'\nhas type\n  Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  Fin (fmult.inLen.eval n) \u2192 Bool\nin the application\n  fmult.f n x'"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Candidates.plantFactor": [
+   "TCSlib.Cryptography.Candidates.fmult",
+   "TCSlib.Cryptography.Candidates.fmultBlocks",
+   "TCSlib.Cryptography.Candidates.fmultNat"
+  ],
+  "TCSlib.Cryptography.Candidates.fmult": [
+   "TCSlib.Cryptography.Candidates.fmultNat"
+  ],
+  "TCSlib.Cryptography.Candidates.prodInverter": [
+   "TCSlib.Cryptography.Candidates.fmult",
+   "TCSlib.Cryptography.Candidates.fmultBlocks",
+   "TCSlib.Cryptography.Candidates.fmultNat"
+  ],
+  "TCSlib.Cryptography.Candidates.collectionFactorer_runAt": [
+   "TCSlib.Cryptography.Candidates.collectionFactorer"
+  ],
+  "TCSlib.Cryptography.Candidates.fmult_f": [
+   "TCSlib.Cryptography.Candidates.fmult",
+   "TCSlib.Cryptography.Candidates.fmultNat"
+  ],
+  "TCSlib.Cryptography.Candidates.fmult_inv_factor": [
+   "TCSlib.Cryptography.Candidates.fmult",
+   "TCSlib.Cryptography.Candidates.fmultNat"
+  ]
+ },
+ "runs": 31,
+ "seconds": 99
+}

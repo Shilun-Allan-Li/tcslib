@@ -1,0 +1,97 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:134:85: error: Type mismatch
+  hs
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:135:85: error: Type mismatch
+  ho
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).output =
+    out
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).output =
+    out
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:146:74: error: Application type mismatch: The argument
+  hs
+has type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+in the application
+  And.intro hs
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:261:2: error: Type mismatch
+  ofFn_padFin_eq_take p w
+has type
+  List.ofFn (padFin p w) = List.take p (w ++ List.replicate p false)
+but is expected to have type
+  (List.ofFn fun i => w.getD (↑i) false) = List.take p (w ++ List.replicate p false)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:305:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:393:9: error: Tactic `rcases` failed: `x✝ : PolyTimeComputable fun y =>
+  pairEncode (pairEncode ((y.length + 1) ^ 3).bits (univCode y)) (univArg y)` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:452:9: error: Invalid `⟨...⟩` notation: The expected type `(fUniversal c).Easy` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:453:2: error: No goals to be solved
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:750:60: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:751:49: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:756:58: error: Application type mismatch: The argument
+  e
+has type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin ((fUniversal c).inLen.eval n) → Bool)
+in the application
+  e.prodCongr
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:758:38: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.341 ↔ ?m.341
+but is expected to have type
+  Invert w ↔
+    ∃ x',
+      A.runAt n (List.ofFn ((fUniversal c).f n (e' w).1)) (e' w).2 = List.ofFn x' ∧
+        (fUniversal c).f n x' = (fUniversal c).f n (e' w).1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:786:69: error: Application type mismatch: The argument
+  e (cf, w.1.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  padStr_eq_ofFn_fUniversal_f c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:788:72: error: Application type mismatch: The argument
+  e (cf, w.1.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  exists_preimage_of_fUniversal_eq c g Mg c₀ hMg hcode hdec hc₀ w.1.1 (e (cf, w.1.1))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Universal.S.lean:827:52: warning: unused variable `hc`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

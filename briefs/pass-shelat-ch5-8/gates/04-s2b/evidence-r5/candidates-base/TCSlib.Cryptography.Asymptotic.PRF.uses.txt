@@ -1,0 +1,62 @@
+Complexity.NUPPT.toOracleAdversary: Complexity.NUPPT.coinLen Complexity.NUPPT.runAt
+Complexity.NUPPT.toOracleAdversary_boundedBy: Complexity.NUPPT.coinLen Complexity.NUPPT.runAt TCSlib.Cryptography.OracleAdversary.BoundedBy TCSlib.Cryptography.QueryTree.BoundedBy
+Complexity.NUPPT.toOracleAdversary_eq: Complexity.NUPPT.coinLen Complexity.NUPPT.runAt
+TCSlib.Cryptography.OracleEnsemble: Complexity.PolyExpr.eval
+TCSlib.Cryptography.acceptProb_random_eq_lazy: Complexity.PolyExpr.eval TCSlib.Cryptography.acceptProb TCSlib.Cryptography.extendStream TCSlib.Cryptography.lazyDist TCSlib.Cryptography.oracleDist TCSlib.Cryptography.uexp TCSlib.Cryptography.uprob TCSlib.Cryptography.OracleAdversary.BoundedBy TCSlib.Cryptography.QueryTree.BoundedBy TCSlib.Cryptography.QueryTree.eval TCSlib.Cryptography.QueryTree.evalLazy
+TCSlib.Cryptography.buildTree_boundedBy: TCSlib.Cryptography.QueryTree.BoundedBy
+TCSlib.Cryptography.buildTree_eq_buildTreeQ: TCSlib.Cryptography.GGMRed.buildTreeQ TCSlib.Cryptography.GGMRed.queryOf TCSlib.Cryptography.GGMRed.verdictOf
+TCSlib.Cryptography.decodeOracleMove: Turing.pairDecode TCSlib.Cryptography.decodeFin
+TCSlib.Cryptography.decodeOracleMove_eq: Turing.pairDecode Turing.pairEncode TCSlib.Cryptography.decodeFin TCSlib.Cryptography.GGMRed.queryOf TCSlib.Cryptography.GGMRed.verdictOf
+TCSlib.Cryptography.encodeHist: Turing.pairEncode
+TCSlib.Cryptography.encodeHist_cons: Turing.pairEncode
+TCSlib.Cryptography.exists_ggmBitsDist_nuppt: Complexity.PolyTimeComputable Complexity.NUPPT.coinLen Complexity.NUPPT.distinguisher Complexity.NUPPT.runAt Complexity.PolyExpr.eval TCSlib.Cryptography.ggmBitsDist TCSlib.Cryptography.prgAdv TCSlib.Cryptography.splitHalves TCSlib.Cryptography.FunFamily.blocks TCSlib.Cryptography.GGMRed.buildTreeQ TCSlib.Cryptography.GGMRed.coinStr TCSlib.Cryptography.GGMRed.ggmRedMachine TCSlib.Cryptography.GGMRed.histEnc
+TCSlib.Cryptography.exists_ggmPRF_evaluator: Complexity.PolyTimeComputable Turing.pairEncode TCSlib.Cryptography.ggmBits TCSlib.Cryptography.ggmEval
+TCSlib.Cryptography.exists_prf_of_exists_prg: TCSlib.Cryptography.PRG.Secure
+TCSlib.Cryptography.ggmPRF: TCSlib.Cryptography.ggmBits
+TCSlib.Cryptography.ggmPRF_apply: TCSlib.Cryptography.ggmBits
+TCSlib.Cryptography.ggmPRF_prf: Complexity.PolyTimeComputable Complexity.NUPPT.coinLen Complexity.NUPPT.distinguisher Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.distAdv TCSlib.Cryptography.ggmBits TCSlib.Cryptography.ggmBitsDist TCSlib.Cryptography.oracleDist TCSlib.Cryptography.prfAdv TCSlib.Cryptography.prgAdv TCSlib.Cryptography.OracleAdversary.BoundedBy
+TCSlib.Cryptography.oracle_hybrid_lemma: TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist
+TCSlib.Cryptography.prfAdv_toOracleAdversary: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist TCSlib.Cryptography.prfAdv
+TCSlib.Cryptography.prfAdv_toOracleAdversary_zero: Complexity.NUPPT.coinLen Complexity.NUPPT.runAt TCSlib.Cryptography.prfAdv TCSlib.Cryptography.uprob TCSlib.Cryptography.QueryTree.eval
+TCSlib.Cryptography.thm_97_3_1: Complexity.PolyExpr.eval TCSlib.Cryptography.acceptProb TCSlib.Cryptography.ggm TCSlib.Cryptography.hybridProb TCSlib.Cryptography.oracleDist TCSlib.Cryptography.randomFunction TCSlib.Cryptography.splitHalves
+TCSlib.Cryptography.thm_97_3_2: TCSlib.Cryptography.distAdv TCSlib.Cryptography.ggmBitsDist TCSlib.Cryptography.ggmDist TCSlib.Cryptography.hybridProb TCSlib.Cryptography.prgAdv TCSlib.Cryptography.splitHalves TCSlib.Cryptography.OracleAdversary.BoundedBy
+TCSlib.Cryptography.two_mul_add_one_expands: Complexity.PolyExpr.eval
+TCSlib.Cryptography.DoublingPRG.casesOn: Complexity.PolyTimeComputable TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.DoublingPRG.easy: Complexity.PolyTimeComputable
+TCSlib.Cryptography.DoublingPRG.mk: Complexity.PolyTimeComputable TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.DoublingPRG.negligible_prgAdv: Complexity.NUPPT.coinLen Complexity.NUPPT.distinguisher Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.prgAdv TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.DoublingPRG.pseudorandom: TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.DoublingPRG.rec: Complexity.PolyTimeComputable TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.DoublingPRG.recOn: Complexity.PolyTimeComputable TCSlib.Cryptography.Ensemble.Pseudorandom
+TCSlib.Cryptography.GGMRed.queryOf: Turing.pairDecode TCSlib.Cryptography.decodeFin TCSlib.Cryptography.GGMRed.queryOf
+TCSlib.Cryptography.OracleEnsemble.Indist: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist
+TCSlib.Cryptography.OracleEnsemble.O: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.casesOn: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.keyed: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.keyed_O: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.mk: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.noConfusion: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.noConfusionType: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.random: Complexity.PolyExpr.eval TCSlib.Cryptography.randomFunction
+TCSlib.Cryptography.OracleEnsemble.random_O: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.rec: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.recOn: Complexity.PolyExpr.eval
+TCSlib.Cryptography.PRF.casesOn: Complexity.PolyTimeComputable Turing.pairEncode
+TCSlib.Cryptography.PRF.easy: Complexity.PolyTimeComputable Turing.pairEncode
+TCSlib.Cryptography.PRF.mk: Complexity.PolyTimeComputable Turing.pairEncode
+TCSlib.Cryptography.PRF.negligible_prfAdv: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist TCSlib.Cryptography.prfAdv
+TCSlib.Cryptography.PRF.rec: Complexity.PolyTimeComputable Turing.pairEncode
+TCSlib.Cryptography.PRF.recOn: Complexity.PolyTimeComputable Turing.pairEncode
+TCSlib.Cryptography.PRG.doubling: Complexity.PolyExpr.eval TCSlib.Cryptography.PRG.expand
+TCSlib.Cryptography.PRG.truncate: Complexity.PolyExpr.eval
+TCSlib.Cryptography.exists_prf_of_exists_prg.match_1_1: TCSlib.Cryptography.PRG.Secure
+TCSlib.Cryptography.lazyDist.congr_simp: TCSlib.Cryptography.lazyDist
+TCSlib.Cryptography.OracleEnsemble.Indist.refl: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.acceptProb TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist
+TCSlib.Cryptography.OracleEnsemble.Indist.symm: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.acceptProb TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist
+TCSlib.Cryptography.OracleEnsemble.Indist.trans: Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.acceptProb TCSlib.Cryptography.distAdv TCSlib.Cryptography.oracleDist
+TCSlib.Cryptography.OracleEnsemble.mk.inj: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.mk.injEq: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.mk.noConfusion: Complexity.PolyExpr.eval
+TCSlib.Cryptography.OracleEnsemble.mk.sizeOf_spec: Complexity.PolyExpr.eval
+TCSlib.Cryptography.PRG.Secure.doubling: Complexity.PolyTimeComputable Complexity.NUPPT.coinLen Complexity.NUPPT.distinguisher Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.prgAdv TCSlib.Cryptography.PRG.Secure TCSlib.Cryptography.PRG.expand TCSlib.Cryptography.PRG.oneBit
+TCSlib.Cryptography.PRG.Secure.truncate: Complexity.PolyTimeComputable Complexity.NUPPT.coinLen Complexity.NUPPT.distinguisher Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.prgAdv TCSlib.Cryptography.Ensemble.Pseudorandom TCSlib.Cryptography.PRG.Easy TCSlib.Cryptography.PRG.Secure TCSlib.Cryptography.PRG.ensemble TCSlib.Cryptography.PRG.oneBit

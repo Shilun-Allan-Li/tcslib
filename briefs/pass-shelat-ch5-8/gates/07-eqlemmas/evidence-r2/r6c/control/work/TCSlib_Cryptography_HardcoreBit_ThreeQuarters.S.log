@@ -1,0 +1,23 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_HardcoreBit_ThreeQuarters.S.lean:76:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.HardcoreBit.majorityInverter_eq`:
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_HardcoreBit_ThreeQuarters.S.lean:93:4: error: Type mismatch
+  PushesUniform.uprob_eq (PushesUniform.prodMap pushesUniform_id pushesUniform_fst) fun z => A (f x, z.1) z.2 = ip x z.1
+has type
+  (uprob fun ω => A (f x, (ω.1, ω.2.1).1) (ω.1, ω.2.1).2 = ip x (ω.1, ω.2.1).1) =
+    uprob fun z => A (f x, z.1) z.2 = ip x z.1
+but is expected to have type
+  (uprob fun w => A (f x, w.1) w.2.1 = ip x w.1) = secProb f A x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_HardcoreBit_ThreeQuarters.S.lean:99:4: error: Type mismatch
+  PushesUniform.uprob_eq (PushesUniform.prodMap (pushesUniform_xor (Pi.single i true)) pushesUniform_snd) fun z =>
+    A (f x, z.1) z.2 = ip x z.1
+has type
+  (uprob fun ω =>
+      A (f x, (ω.1 + Pi.single i true, ω.2.2).1) (ω.1 + Pi.single i true, ω.2.2).2 =
+        ip x (ω.1 + Pi.single i true, ω.2.2).1) =
+    uprob fun z => A (f x, z.1) z.2 = ip x z.1
+but is expected to have type
+  (uprob fun w => A (f x, w.1 + Pi.single i true) w.2.2 = ip x (w.1 + Pi.single i true)) = secProb f A x

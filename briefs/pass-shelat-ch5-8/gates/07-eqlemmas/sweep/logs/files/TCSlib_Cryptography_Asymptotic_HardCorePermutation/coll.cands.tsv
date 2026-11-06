@@ -1,0 +1,65 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.owpPredPre_poly	14
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.reparam, TCSlib.Cryptography.owpPredPre_poly	9
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.reparam, TCSlib.Cryptography.owpPredPre_poly	9
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.NUPPT.reparam, TCSlib.Cryptography.owpPredPre_poly	9
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	15
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.predictor, Complexity.NUPPT.runAt, TCSlib.Cryptography.HardCore	11
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.Coins, Complexity.NUPPT.predictor, Complexity.NUPPT.reparamCoins	11
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.PRG.Secure	5
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.reparam, TCSlib.Cryptography.owpPredPre_poly	8
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.reparam, TCSlib.Cryptography.owpPredPre_poly	9
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.reparam	8
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.reparam	8
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt	2
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.reparam	8
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.reparam	8
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	13
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.HardCore	4
+Complexity.NUPPT.reparam	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	direct		8
+Complexity.NUPPT.reparamCoins	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	direct		2
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.predictor, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.invProbAt	9
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	13
+Complexity.NUPPT.wrap	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	direct		6
+Complexity.NUPPT.wrapFun	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	Complexity.NUPPT.wrap	6
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	22
+Complexity.PolyExpr.subst	TCSlib.Complexity.Randomized.PolyExpr	deep	Complexity.NUPPT.reparam	8
+TCSlib.Cryptography.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	direct		2
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.HardCore, TCSlib.Cryptography.PRG.Secure	5
+TCSlib.Cryptography.OneWayPermutation	TCSlib.Cryptography.Asymptotic.OneWay	direct		3
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt	2
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.finCastEquiv	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	Complexity.NUPPT.reparamCoins	2
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct		2
+TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt	2
+TCSlib.Cryptography.owpPredPre	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	TCSlib.Cryptography.owpPredPre_poly	6
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.HardCore	6
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardCore, TCSlib.Cryptography.invProb, TCSlib.Cryptography.predProb	11
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, Complexity.NUPPT.reparam	16
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.reparam, TCSlib.Cryptography.HardCore	14
+TCSlib.Cryptography.Ensemble.Indist	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.Ensemble.Pseudorandom	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.Ensemble.uniform	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.FunFamily.Easy	TCSlib.Cryptography.Asymptotic.OneWay	direct		1
+TCSlib.Cryptography.FunFamily.glBit	TCSlib.Cryptography.Asymptotic.HardCore	direct		6
+TCSlib.Cryptography.FunFamily.glPad	TCSlib.Cryptography.Asymptotic.HardCore	direct	TCSlib.Cryptography.FunFamily.glBit	12
+TCSlib.Cryptography.FunFamily.invProbAt	TCSlib.Cryptography.Asymptotic.OneWay	direct		2
+TCSlib.Cryptography.HardcoreBit.glBit	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.FunFamily.glBit	6
+TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.FunFamily.glBit, TCSlib.Cryptography.FunFamily.glPad	12
+TCSlib.Cryptography.HardcoreBit.ip	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct	TCSlib.Cryptography.FunFamily.glBit	8
+TCSlib.Cryptography.PRG.Easy	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.PRG.Secure	TCSlib.Cryptography.Asymptotic.Pseudorandom	direct		1
+TCSlib.Cryptography.PRG.ensemble	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	1
+TCSlib.Cryptography.PermFamily.toFunFamily	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.OneWayPermutation	16

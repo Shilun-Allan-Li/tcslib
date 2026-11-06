@@ -1,0 +1,12 @@
+TCSlib_Cryptography_Games_Simulate/S0.lean:129:2: error: Type mismatch
+  impl₁ i
+has type
+  s₁.dom i → σ → OracleComp spec' (s₁.rng i × σ)
+but is expected to have type
+  (s₁.add s₂).dom (Sum.inl i) → σ → OracleComp spec' ((s₁.add s₂).rng (Sum.inl i) × σ)
+TCSlib_Cryptography_Games_Simulate/S0.lean:130:2: error: Type mismatch
+  impl₂ j
+has type
+  s₂.dom j → σ → OracleComp spec' (s₂.rng j × σ)
+but is expected to have type
+  (s₁.add s₂).dom (Sum.inr j) → σ → OracleComp spec' ((s₁.add s₂).rng (Sum.inr j) × σ)

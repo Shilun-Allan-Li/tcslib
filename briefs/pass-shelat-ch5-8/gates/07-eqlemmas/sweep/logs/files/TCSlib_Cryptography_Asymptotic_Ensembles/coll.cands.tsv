@@ -1,0 +1,33 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		1
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor, Complexity.NUPPT.runAt	7
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.predictor	7
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	direct	Complexity.NUPPT.predictor	5
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor, Complexity.NUPPT.runAt	6
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	direct		1
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	6
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor, Complexity.NUPPT.runAt	6
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.Coins	31
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct		4
+TCSlib.Cryptography.StatClose	TCSlib.Cryptography.Asymptotic.Sampling	direct		1
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv	7
+TCSlib.Cryptography.copies	TCSlib.Cryptography.Pseudorandom.Indistinguishability	direct		1
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct		6
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	direct		2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.StatClose, TCSlib.Cryptography.distAdv	9
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	1
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.predictor	7
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+TCSlib.Cryptography.HardcoreBit.PairwiseIndep	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	direct		1
+TCSlib.Cryptography.HardcoreBit.ind	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	direct		1

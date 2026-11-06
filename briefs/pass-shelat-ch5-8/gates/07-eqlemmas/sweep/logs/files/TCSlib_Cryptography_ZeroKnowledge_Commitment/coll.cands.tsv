@@ -1,0 +1,54 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	2
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	2
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	2
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.NUPPT.advInput, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	22
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	16
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	14
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.HardCore	4
+Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	direct		10
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	14
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.HardCore	3
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	14
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	14
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.coinLen, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.HardCore	23
+TCSlib.Cryptography.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	direct		3
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.HardCore	12
+TCSlib.Cryptography.OneWayPermutation	TCSlib.Cryptography.Asymptotic.OneWay	direct		3
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv	17
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct		13
+TCSlib.Cryptography.owpGenPRG	TCSlib.Cryptography.Asymptotic.HardCore	direct		1
+TCSlib.Cryptography.owpPredictor	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	deep	TCSlib.Cryptography.owpPredictorSnoc	1
+TCSlib.Cryptography.owpPredictorSnoc	TCSlib.Cryptography.Asymptotic.HardCore	direct		1
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	3
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.HardCore	4
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardCore, TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.distAdv	20
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	16
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.HardCore, TCSlib.Cryptography.FunFamily.Easy	10
+TCSlib.Cryptography.EnsembleLemmas.padL	TCSlib.Cryptography.Asymptotic.EnsemblesLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	1
+TCSlib.Cryptography.FunFamily.Easy	TCSlib.Cryptography.Asymptotic.OneWay	direct		1
+TCSlib.Cryptography.FunFamily.blocks	TCSlib.Cryptography.Asymptotic.OneWay	direct		3
+TCSlib.Cryptography.PRG.oneBit	TCSlib.Cryptography.Asymptotic.HardCore	deep	TCSlib.Cryptography.owpGenPRG	1
+TCSlib.Cryptography.PermFamily.toFunFamily	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.OneWayPermutation	5
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.arg	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	direct		1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	direct		1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₁	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₂	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₃	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.st	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	1
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.step	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	1

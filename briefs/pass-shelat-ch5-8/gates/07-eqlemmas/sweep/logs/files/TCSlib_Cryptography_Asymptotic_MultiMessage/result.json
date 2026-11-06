@@ -1,0 +1,133 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/MultiMessage.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 55,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.prfScheme",
+   "TCSlib.Cryptography.prfScheme_multiEncDist"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.prfScheme": [
+   [
+    516,
+    75,
+    "B",
+    "Application type mismatch: The argument\n  rg\nhas type\n  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  F n rg"
+   ],
+   [
+    516,
+    91,
+    "B",
+    "Application type mismatch: The argument\n  rg\nhas type\n  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  hFE n rg"
+   ],
+   [
+    517,
+    64,
+    "B",
+    "Tactic `rfl` failed: The left-hand side\n  (NUPPT.ofPolyTimeUniform \u22ef PolyExpr.var).coinLen n\nis not definitionally equal to the right-hand side\n  n\n\nF : (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin n \u2192 Bool\nE : List Bool \u2192 List Bool\nhE : PolyTimeComputable E\nhFE : \u2200 (n : \u2115) (s x : Fin n \u2192 Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)\nn : \u2115\nm : Fin n \u2192 Bool\nrg : (NUPPT."
+   ]
+  ],
+  "TCSlib.Cryptography.prfScheme_multiEncDist": [
+   [
+    548,
+    82,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (prfScheme F E hE hFE).gen.Coins n \u00d7 (Fin (q + 1) \u2192 (prfScheme F E hE hFE).enc.Coins n)\nbut is expected to have type\n  (Fin n \u2192 Bool) \u00d7 (Fin (q + 1) \u2192 Fin n \u2192 Bool)\nin the application\n  prfEncReal (F n) m r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.prfScheme": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    516,
+    517
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  rg\nhas type\n  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n\nbut is expected to have type\n  Fin n \u2192 Bool\nin the application\n  F n rg"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev3: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.prfScheme_multiEncDist": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    548
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (prfScheme F E hE hFE).gen.Coins n \u00d7 (Fin (q + 1) \u2192 (prfScheme F E hE hFE).enc.Coins n)\nbut is expected to have type\n  (Fin n \u2192 Bool) \u00d7 (Fin (q + 1) \u2192 Fin n \u2192 Bool)\nin the application\n  prfEncReal (F n) m r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev4: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev5: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev6: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev7: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.prfScheme": [
+   "TCSlib.Cryptography.polyTimeComputable_prfDecFun",
+   "TCSlib.Cryptography.polyTimeComputable_prfEncFun",
+   "TCSlib.Cryptography.prfDecFun",
+   "TCSlib.Cryptography.prfDecWF",
+   "TCSlib.Cryptography.prfEncFun",
+   "TCSlib.Cryptography.runAt_prfDec",
+   "TCSlib.Cryptography.runAt_prfEnc",
+   "TCSlib.Cryptography.zipWith_xor_xor_self"
+  ],
+  "TCSlib.Cryptography.prfScheme_multiEncDist": [
+   "TCSlib.Cryptography.encodeTuple",
+   "TCSlib.Cryptography.polyTimeComputable_prfDecFun",
+   "TCSlib.Cryptography.polyTimeComputable_prfEncFun",
+   "TCSlib.Cryptography.prfDecFun",
+   "TCSlib.Cryptography.prfDecWF",
+   "TCSlib.Cryptography.prfEncFun",
+   "TCSlib.Cryptography.prfEncReal",
+   "TCSlib.Cryptography.prfScheme",
+   "TCSlib.Cryptography.runAt_prfDec",
+   "TCSlib.Cryptography.runAt_prfEnc",
+   "TCSlib.Cryptography.zipWith_xor_xor_self"
+  ]
+ },
+ "runs": 69,
+ "seconds": 176
+}

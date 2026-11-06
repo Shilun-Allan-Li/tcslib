@@ -1,0 +1,56 @@
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Asymptotic.PublicKey
+
+/-! Seal probe (pass): the three restated statements elaborate, and the two PublicKey proofs go
+through, with the foreign definitions they previously needed made irreducible. -/
+
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Candidates Complexity
+
+attribute [local irreducible] TCSlib.Cryptography.Candidates.expCollection
+  TCSlib.Cryptography.Candidates.fullDLCollection
+  TCSlib.Cryptography.Collection.glPad TCSlib.Cryptography.PermCollection.glPad
+  TCSlib.Cryptography.TrapdoorCollection.glPad
+
+-- 1. fullDLCollection_hardCore (restated): the statement elaborates sealed and is the library's.
+example (H : ArithmeticFP) (G : FullGroupGen)
+    (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
+    (fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x) :=
+  fullDLCollection_hardCore H G hbig hDL
+
+-- 2. glPad_tdpBitScheme_singleBitSecure (restated): statement and proof (verbatim) sealed.
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay)
+    (E : (T.glPad m henc).toCollection.PredEvaluator
+      fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) :
+    ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc)
+    (hT.glPad_hardCore_domEquiv m henc)
+
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay)
+    (E : (T.glPad m henc).toCollection.PredEvaluator
+      fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) :
+    ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+  hT.glPad_tdpBitScheme_singleBitSecure m henc E
+
+-- 3. exists_glPad_singleBitSecure (restated): statement and proof (verbatim) sealed.
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) :
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator
+        fun i z => T.glBit i (T.glPad_domEquiv m henc i z),
+      ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+  let ⟨E⟩ := (hT.glPad_hardCore_domEquiv m henc).nonempty_predEvaluator
+  ⟨E, hT.glPad_tdpBitScheme_singleBitSecure m henc E⟩
+
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) :
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator
+        fun i z => T.glBit i (T.glPad_domEquiv m henc i z),
+      ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+  hT.exists_glPad_singleBitSecure m henc

@@ -1,0 +1,108 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 56,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.GI.gniTapes",
+   "TCSlib.Cryptography.GI.gniTapes_apply"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.GI.gniTapes": [
+   [
+    271,
+    69,
+    "B",
+    "Application type mismatch: The argument\n  blocksEquiv N (1 + 1 * (N + 1) ^ 2)\nhas type\n  (Fin N \u2192 Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool) \u2243 (Fin (N * (1 + 1 * (N + 1) ^ 2)) \u2192 Bool)\nbut is expected to have type\n  (Fin N \u2192 Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool) \u2243 gniProtocolRep.V.Coins N\nin the application\n  (Equiv.piCongrRight fun x => tapeSplit (1 * (N + 1) ^ 2)).trans (blocksEquiv N (1 + 1 * (N + 1) ^ 2))"
+   ]
+  ],
+  "TCSlib.Cryptography.GI.gniTapes_apply": [
+   [
+    275,
+    25,
+    "T",
+    "Type mismatch\n  (blocksEquiv N (1 + 1 * (N + 1) ^ 2)) fun j => (tapeSplit (1 * (N + 1) ^ 2)) (b j, ts j)\nhas type\n  Fin (N * (1 + 1 * (N + 1) ^ 2)) \u2192 Bool\nbut is expected to have type\n  gniProtocolRep.V.Coins N"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.GI.gniTapes": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "Complexity.PolyExpr.normal",
+    "TCSlib.Cryptography.GI.gniProtocolRep",
+    "TCSlib.Cryptography.GI.gniVerifierRep",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    271
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  blocksEquiv N (1 + 1 * (N + 1) ^ 2)\nhas type\n  (Fin N \u2192 Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool) \u2243 (Fin (N * (1 + 1 * (N + 1) ^ 2)) \u2192 Bool)\nbut is expected to have type\n  (Fin N \u2192 Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool) \u2243 gniProtocolRep.V.Coins N\nin the application\n  (Equiv.piCongrRight fun x => tapeSplit (1 * (N + 1) ^ 2)).trans (blocksEquiv N (1 + 1 * (N + 1) ^ 2))"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.normal": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.GI.gniProtocolRep": "ev2: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.GI.gniVerifierRep": "ev3: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev4: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.GI.gniTapes_apply": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "Complexity.PolyExpr.normal",
+    "TCSlib.Cryptography.GI.gniProtocolRep",
+    "TCSlib.Cryptography.GI.gniVerifierRep",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    275
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  (blocksEquiv N (1 + 1 * (N + 1) ^ 2)) fun j => (tapeSplit (1 * (N + 1) ^ 2)) (b j, ts j)\nhas type\n  Fin (N * (1 + 1 * (N + 1) ^ 2)) \u2192 Bool\nbut is expected to have type\n  gniProtocolRep.V.Coins N"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev5: FAILS without it: Type mismatch",
+    "Complexity.PolyExpr.normal": "ev6: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.gniProtocolRep": "ev7: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.gniVerifierRep": "ev8: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev9: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.GI.gniTapes": [
+   "TCSlib.Cryptography.GI.blocksEquiv"
+  ],
+  "TCSlib.Cryptography.GI.gniTapes_apply": [
+   "TCSlib.Cryptography.GI.blocksEquiv",
+   "TCSlib.Cryptography.GI.gniTapes"
+  ]
+ },
+ "runs": 77,
+ "seconds": 202
+}

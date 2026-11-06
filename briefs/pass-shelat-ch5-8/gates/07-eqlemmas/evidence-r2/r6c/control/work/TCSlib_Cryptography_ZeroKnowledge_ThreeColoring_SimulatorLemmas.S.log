@@ -1,0 +1,14 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorLemmas.S.lean:413:2: error: Type mismatch
+  fun T => abs_uprob_truncAttempts_sub_le att view hθ hnone hsome N T
+has type
+  ∀ (T : Option α → Prop), |(uprob fun w => T (truncAttempts att N w)) - uprob fun u => T (some (view u))| ≤ θ ^ N
+but is expected to have type
+  StatClose (truncAttempts att N) (fun u => some (view u)) (θ ^ N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_SimulatorLemmas.S.lean:561:83: error: Type mismatch
+  hgap
+has type
+  |acceptProb (hybStd H Wa N 0) D - acceptProb (hybStd H Wa N N) D| / ↑N ≤
+    |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D|
+but is expected to have type
+  distAdv (hybStd H Wa N 0) (hybStd H Wa N N) D / ↑N ≤
+    |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D|

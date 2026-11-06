@@ -1,0 +1,94 @@
+'TCSlib.Cryptography.Candidates.statClose_sampleUnitL' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_rsaGenRaw' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rsaSampler_spec' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.rsaCollection_sampleClose' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rsaCollection_invProbAt_le' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rsaCollection_oneWay' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_rsaFromFactorRaw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.factorProb_le_rsaProb' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.rsa_imp_factoring' depends on axioms: [propext, Classical.choice, Quot.sound]
+SOURCES TCSlib.Cryptography.Candidates.statClose_sampleUnitL: [(TCSlib.Cryptography.Candidates.statClose_rejectBlocksL,
+  TCSlib.Cryptography.Candidates.Concrete)]
+SOURCES TCSlib.Cryptography.Candidates.polyTimeComputable_rsaGenRaw: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr: []
+SOURCES TCSlib.Cryptography.Candidates.rsaSampler_spec: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.rsaCollection_sampleClose: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring),
+ (TCSlib.Cryptography.Candidates.statClose_rejectBlocksL, TCSlib.Cryptography.Candidates.Concrete)]
+SOURCES TCSlib.Cryptography.Candidates.rsaCollection_invProbAt_le: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring),
+ (TCSlib.Cryptography.Candidates.statClose_rejectBlocksL, TCSlib.Cryptography.Candidates.Concrete),
+ (TCSlib.Cryptography.Candidates.statClose_samplePrimeL_pair, TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.rsaCollection_oneWay: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring),
+ (TCSlib.Cryptography.Candidates.statClose_rejectBlocksL, TCSlib.Cryptography.Candidates.Concrete),
+ (TCSlib.Cryptography.Candidates.statClose_samplePrimeL_pair, TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.polyTimeComputable_rsaFromFactorRaw: []
+SOURCES TCSlib.Cryptography.Candidates.factorProb_le_rsaProb: []
+SOURCES TCSlib.Cryptography.Candidates.rsa_imp_factoring: []
+SOURCES TCSlib.Cryptography.Candidates.rsaTrapdoor_oneWay: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring),
+ (TCSlib.Cryptography.Candidates.statClose_rejectBlocksL, TCSlib.Cryptography.Candidates.Concrete),
+ (TCSlib.Cryptography.Candidates.statClose_samplePrimeL_pair, TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.rsaGen: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.rsaCollection: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring)]
+SOURCES TCSlib.Cryptography.Candidates.rsaTrapdoor: [(TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,
+  TCSlib.Cryptography.Candidates.Factoring)]
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_index
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_invProbAt_le
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_oneWay
+SWEEP-SORRY TCSlib.Cryptography.Candidates.statClose_sampleUnitL
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_perm
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_eval
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_eval
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_domEquiv
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_domEquiv_uprob
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_sample
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaGen
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_domEquiv_uprob
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_inv
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_encD
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_decD
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_encD
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_f
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection.congr_simp
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_sampleClose
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_oneWay
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaCollection_gen
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_gen
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_sample
+SWEEP-SORRY TCSlib.Cryptography.Candidates.polyTimeComputable_rsaGenRaw
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaGen_runAt
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaSampler_spec
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaInv_spec
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_decD
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_domEquiv
+SWEEP-SORRY TCSlib.Cryptography.Candidates.rsaTrapdoor_f
+SWEEP TCSlib.Cryptography.Candidates.RSA: 158 constants, 32 with sorryAx
+[rc=0 time=45s]

@@ -1,0 +1,34 @@
+From c5a81bb834901f72b6e661c2764d0432b77d5812 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 18:48:47 +0000
+Subject: [PATCH 13/24] Factoring: #210 round-6 landing edit in
+ fac_prodInverter_eq_yaoB
+
+`prodInverter`'s body now calls the inverter at the lengths
+`fmultBlocks.eval n * (2 * n)` (#210 round 6), so the `rcases` that restates it names those
+lengths instead of `(fmult.prod fmultBlocks).inLen/outLen.eval n`. One line; the
+`FunFamily.prod` reading of the review's finding 2 goes with it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index d60a74af..b79e1c46 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -721,8 +721,7 @@ private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
+     prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
+   unfold prodInverter at hp ⊢
+   rw [OneWay.yaoB_apply]
+-  rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
+-      ((fmult.prod fmultBlocks).outLen.eval n)
++  rcases hx : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
+       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
+   · rw [hx, Option.getD_none, fac_blocks_apply, fac_blocks_apply, fac_bitsToNat_false] at hp
+     exact absurd hp Nat.not_prime_zero
+-- 
+2.43.0
+

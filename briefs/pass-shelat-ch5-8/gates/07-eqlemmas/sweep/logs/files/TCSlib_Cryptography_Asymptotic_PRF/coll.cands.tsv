@@ -1,0 +1,67 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	TCSlib.Cryptography.PRG.Secure	17
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.GGMRed.buildTreeQ, TCSlib.Cryptography.GGMRed.queryOf	3
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt, TCSlib.Cryptography.Ensemble.Pseudorandom	20
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt, TCSlib.Cryptography.Ensemble.Pseudorandom	12
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.runAt, TCSlib.Cryptography.Ensemble.Pseudorandom	17
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.Ensemble.Pseudorandom, TCSlib.Cryptography.PRG.Secure	11
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt, TCSlib.Cryptography.Ensemble.Pseudorandom	12
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisher, TCSlib.Cryptography.Ensemble.Pseudorandom, TCSlib.Cryptography.PRG.Secure	12
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt, TCSlib.Cryptography.Ensemble.Pseudorandom	12
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.coinLen, Complexity.NUPPT.runAt	40
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.Ensemble.Pseudorandom, TCSlib.Cryptography.PRG.Secure	12
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv, TCSlib.Cryptography.hybridProb, TCSlib.Cryptography.prfAdv	19
+TCSlib.Cryptography.challengeStream	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	deep	TCSlib.Cryptography.ggmBitsDist	2
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.GGMRed.buildTreeQ, TCSlib.Cryptography.GGMRed.queryOf	3
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.prfAdv, TCSlib.Cryptography.prgAdv, TCSlib.Cryptography.Ensemble.Pseudorandom	17
+TCSlib.Cryptography.extendStream	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	direct	TCSlib.Cryptography.ggmBitsDist	3
+TCSlib.Cryptography.ggm	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBits	2
+TCSlib.Cryptography.ggmBits	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct		2
+TCSlib.Cryptography.ggmBitsDist	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct		2
+TCSlib.Cryptography.ggmDist	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBitsDist	2
+TCSlib.Cryptography.hybridOracle	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.hybridProb	2
+TCSlib.Cryptography.hybridProb	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct		2
+TCSlib.Cryptography.lazyDist	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	direct		1
+TCSlib.Cryptography.levelAdv	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBitsDist	2
+TCSlib.Cryptography.oneBitStep	TCSlib.Cryptography.Asymptotic.HardCore	deep	TCSlib.Cryptography.PRG.expand	1
+TCSlib.Cryptography.oracleDist	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.hybridProb, TCSlib.Cryptography.prfAdv	8
+TCSlib.Cryptography.pairSel	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBits, TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.hybridProb	5
+TCSlib.Cryptography.prefixAt	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.hybridProb	3
+TCSlib.Cryptography.prfAdv	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct		3
+TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	direct		3
+TCSlib.Cryptography.prgExt	TCSlib.Cryptography.Pseudorandom.Generators	deep	TCSlib.Cryptography.PRG.expand	1
+TCSlib.Cryptography.prgStep	TCSlib.Cryptography.Pseudorandom.Generators	deep	TCSlib.Cryptography.PRG.expand	1
+TCSlib.Cryptography.randomFunction	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct	TCSlib.Cryptography.prfAdv	4
+TCSlib.Cryptography.splitHalves	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct	TCSlib.Cryptography.ggmBits, TCSlib.Cryptography.ggmBitsDist	5
+TCSlib.Cryptography.tableDist	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	deep	TCSlib.Cryptography.ggmBitsDist	2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.distAdv, TCSlib.Cryptography.hybridProb	19
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.runAt	20
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	17
+TCSlib.Cryptography.Ensemble.Indist	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.Ensemble.Pseudorandom, TCSlib.Cryptography.PRG.Secure	9
+TCSlib.Cryptography.Ensemble.Pseudorandom	TCSlib.Cryptography.Asymptotic.Ensembles	direct	TCSlib.Cryptography.PRG.Secure	9
+TCSlib.Cryptography.Ensemble.uniform	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.Ensemble.Pseudorandom, TCSlib.Cryptography.PRG.Secure	9
+TCSlib.Cryptography.GGMRed.buildTreeQ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct		1
+TCSlib.Cryptography.GGMRed.queryOf	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.buildTreeQ	2
+TCSlib.Cryptography.GGMRed.verdictOf	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.buildTreeQ	2
+TCSlib.Cryptography.OracleAdversary.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct		3
+TCSlib.Cryptography.PRG.Easy	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.PRG.Secure	TCSlib.Cryptography.Asymptotic.Pseudorandom	direct		3
+TCSlib.Cryptography.PRG.ensemble	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.PRG.expand	TCSlib.Cryptography.Asymptotic.HardCore	direct		1
+TCSlib.Cryptography.PRG.oneBit	TCSlib.Cryptography.Asymptotic.HardCore	direct		1
+TCSlib.Cryptography.QueryTree.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.OracleAdversary.BoundedBy	4
+TCSlib.Cryptography.QueryTree.eval	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	deep	TCSlib.Cryptography.hybridProb, TCSlib.Cryptography.oracleDist, TCSlib.Cryptography.prfAdv	8
+TCSlib.Cryptography.QueryTree.evalLazy	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	deep	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.lazyDist	3
+TCSlib.Cryptography.QueryTree.noteQuery	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	deep	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.lazyDist	3
+TCSlib.Cryptography.QueryTree.simulate	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	deep	TCSlib.Cryptography.ggmBitsDist	2

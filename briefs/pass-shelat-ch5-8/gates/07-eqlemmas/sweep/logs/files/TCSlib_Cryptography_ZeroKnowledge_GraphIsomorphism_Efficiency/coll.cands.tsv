@@ -1,0 +1,58 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		26
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inArg, Complexity.NUPPT.inParam, TCSlib.Cryptography.GI.giProver	19
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inArg, Complexity.NUPPT.inCoins, TCSlib.Cryptography.GI.giVerifier	19
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairFstD, Complexity.pairSndD, Complexity.NUPPT.inCoins	25
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.StateLoop.orbit, TCSlib.Cryptography.GI.ilayout, TCSlib.Cryptography.Strategy.Efficient	13
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	3
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	3
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct		3
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		4
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.GI.ilayout	6
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	3
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	3
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	3
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct		1
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier	2
+Complexity.StateLoop.orbit	TCSlib.Complexity.Randomized.Build.StateLoop	direct		2
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.coinTable	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.giVerifier	2
+TCSlib.Cryptography.decPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.giVerifier	8
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.GI.Riso, TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.giVerifier	8
+TCSlib.Cryptography.encPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.GI.Riso, TCSlib.Cryptography.GI.giProver	8
+TCSlib.Cryptography.fisherYates	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.permBits	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.permFromCoins	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.permGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.GI.Riso, TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.giVerifier	8
+TCSlib.Cryptography.permTrials	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.samplePerm	3
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	26
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	26
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	26
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	26
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	26
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.Strategy.Efficient	29
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	26
+TCSlib.Cryptography.GI.Riso	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct		2
+TCSlib.Cryptography.GI.decGraphAt	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct	TCSlib.Cryptography.GI.gniVerifier	4
+TCSlib.Cryptography.GI.giProver	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct		1
+TCSlib.Cryptography.GI.giVerifier	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct		1
+TCSlib.Cryptography.GI.gniVerifier	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct		1
+TCSlib.Cryptography.GI.ilayout	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct		6
+TCSlib.Cryptography.GI.instanceG₀	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	deep	TCSlib.Cryptography.GI.gniVerifier	1
+TCSlib.Cryptography.GI.instanceG₁	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	deep	TCSlib.Cryptography.GI.gniVerifier	1
+TCSlib.Cryptography.GI.instanceVertexCount	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	deep	TCSlib.Cryptography.GI.giVerifier, TCSlib.Cryptography.GI.gniVerifier, TCSlib.Cryptography.GI.wellFormedInstance	4
+TCSlib.Cryptography.GI.samplePerm	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct	TCSlib.Cryptography.GI.giProver, TCSlib.Cryptography.GI.gniVerifier	3
+TCSlib.Cryptography.GI.wellFormedInstance	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	direct	TCSlib.Cryptography.GI.giVerifier, TCSlib.Cryptography.GI.gniVerifier	4
+TCSlib.Cryptography.Strategy.Efficient	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		3
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.GI.ilayout, TCSlib.Cryptography.Strategy.Efficient	9
+TCSlib.Cryptography.Strategy.ofNUPPT	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Strategy.Efficient	3

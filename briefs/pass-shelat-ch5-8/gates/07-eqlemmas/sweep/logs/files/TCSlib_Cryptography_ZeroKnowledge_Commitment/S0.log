@@ -1,0 +1,40 @@
+TCSlib_Cryptography_ZeroKnowledge_Commitment/S0.lean:450:59: error: Application type mismatch: The argument
+  i
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n r i
+TCSlib_Cryptography_ZeroKnowledge_Commitment/S0.lean:527:89: error: Application type mismatch: The argument
+  r
+has type
+  Fin (owpComLen.eval n) → Bool
+but is expected to have type
+  Fin (n * n) → Bool
+in the application
+  (FunFamily.blocks n n) r
+TCSlib_Cryptography_ZeroKnowledge_Commitment/S0.lean:644:33: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+TCSlib_Cryptography_ZeroKnowledge_Commitment/S0.lean:891:60: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+TCSlib_Cryptography_ZeroKnowledge_Commitment/S0.lean:901:51: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h

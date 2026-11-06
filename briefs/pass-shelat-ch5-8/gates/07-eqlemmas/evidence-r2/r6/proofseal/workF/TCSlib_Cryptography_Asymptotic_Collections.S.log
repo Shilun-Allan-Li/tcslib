@@ -1,0 +1,129 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:565:6: error: Type mismatch
+  fun s => some s
+has type
+  ?m.45 → Option ?m.45
+but is expected to have type
+  (𝓕.toCollection F hF hspec).sample.Coins i.length → Option ((𝓕.toCollection F hF hspec).D i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:625:30: error: Application type mismatch: The argument
+  fun c => ?m.17
+has type
+  (c : ?m.15) → ?m.18 c
+but is expected to have type
+  Negligible fun x => 0
+in the application
+  And.intro fun c => ?m.17
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:625:39: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:636:9: error: Tactic `rcases` failed: `x✝ : 𝓕.Easy` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:665:4: error: 'show' tactic failed, pattern
+  pairSndD
+      (NUPPT.inArg (NUPPT.layout (List.replicate n true) (pairEncode (List.replicate n true) y) [] (List.ofFn r))) =
+    y
+is not definitionally equal to target
+  pairSndD
+      (NUPPT.inArg
+        (pairEncode (pairEncode (NUPPT.advInput n (pairEncode (List.replicate n true) y)) []) (List.ofFn r))) =
+    y
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:668:22: error: Function expected at
+  h.hard B
+but this term has type
+  Negligible fun n => ((ofString id PolyExpr.var).toCollection F hF hspec).invProbAt B n
+
+Note: Expected a function because this term is being applied to the argument
+  0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:668:9: error: Tactic `rcases` failed: `x✝ : ?m.70` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:811:46: error: unsolved goals
+G : Collection
+n : ℕ
+r₁ : G.gen.Coins n
+r₂ : G.sample.Coins n
+⊢ (List.ofFn r₁).length = G.gen.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:811:72: error: Function expected at
+  G.gen_uniform
+but this term has type
+  G.gen.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:809:91: error: unsolved goals
+G : Collection
+n : ℕ
+r₁ : G.gen.Coins n
+r₂ : G.sample.Coins n
+⊢ pairFstD (G.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r₁))) =
+    pairFstD
+      (G.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) (G.gen.advice n)) (List.ofFn r₁)))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:818:62: error: unsolved goals
+G : Collection
+n : ℕ
+r₁ : G.gen.Coins n
+r₂ : G.sample.Coins n
+⊢ (List.ofFn r₁).length = G.gen.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:820:6: error: Function expected at
+  G.sample_uniform
+but this term has type
+  G.sample.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:816:93: error: unsolved goals
+G : Collection
+n : ℕ
+r₁ : G.gen.Coins n
+r₂ : G.sample.Coins n
+⊢ pairEncode (G.index n r₁)
+      (G.eval
+        (pairEncode (G.index n r₁)
+          (G.sample.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) (G.index n r₁)) []) (List.ofFn r₂))))) =
+    pairEncode (G.index n r₁)
+      (G.eval
+        (pairEncode (G.index n r₁)
+          (G.sample.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) (G.index n r₁)) (G.sample.advice n))
+              (List.ofFn r₂)))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:918:75: error: Function expected at
+  G.sample_uniform
+but this term has type
+  G.sample.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:913:89: error: unsolved goals
+G : Collection
+L : PolyExpr
+A' : NUPPT
+n : ℕ
+y : List Bool
+ρ : (G.collInverter L A').Coins n
+⊢ G.sample.output
+      (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairFstD y)) [])
+        (List.drop (G.gen.coins.eval n)
+          (A'.output
+            (pairEncode
+              (pairEncode (pairEncode (List.replicate n true) (padStr L (List.replicate n true) (y ++ [true])))
+                (A'.advice n))
+              (List.ofFn ρ))))) =
+    G.sample.output
+      (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairFstD y)) (G.sample.advice n))
+        (List.drop (G.gen.coins.eval n)
+          (A'.output
+            (pairEncode
+              (pairEncode (pairEncode (List.replicate n true) (padStr L (List.replicate n true) (y ++ [true])))
+                (A'.advice n))
+              (List.ofFn ρ)))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:1046:77: warning: This simp argument is unused:
+  Prod.map_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [P, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply, P̵r̵o̵d̵.̵m̵a̵p̵_̵a̵p̵p̵l̵y̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵Equiv.refl_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_Asymptotic_Collections.S.lean:1047:6: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [P, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply, Prod.map_apply,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

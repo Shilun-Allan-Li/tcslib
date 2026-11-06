@@ -1,0 +1,14 @@
+TCSlib_Cryptography_Asymptotic_Ensembles/S0.lean:222:11: error: Type mismatch
+  (blocks (t.eval n) (ℓ.eval n)).symm (Cryptography.copies (t.eval n) (X.X n) s)
+has type
+  Fin (t.eval n * ℓ.eval n) → Bool
+but is expected to have type
+  Fin ((t.mul ℓ).eval n) → Bool
+TCSlib_Cryptography_Asymptotic_Ensembles/S0.lean:228:23: error: Application type mismatch: The argument
+  i
+has type
+  Fin (t.eval n * ℓ.eval n)
+but is expected to have type
+  Fin ((t.mul ℓ).eval n)
+in the application
+  (copies t X).X n s i

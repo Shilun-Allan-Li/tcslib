@@ -1,0 +1,8 @@
+# seal candidates for TCSlib.Cryptography.Games.Machines (74 constants walked)
+# format: <candidate>	<defining module>	<direct | inst:<transparent instance/abbrev> | stmt:<used lemma, statement> | src:<lemma named in a simp/rw list, statement> | aux:<unsealable helper, body>>	<declarations of the file using it>
+# 4 candidates sealed by the seal line; 0 already `[irreducible]` globally (sealed by construction, listed as `# already-irreducible:`)
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.NUPPT.toCompOn, Complexity.NUPPT.toCompOn_costBoundedBy, Complexity.NUPPT.toCompOn_eq, TCSlib.Cryptography.Games.MachineCodec.encodeLog, TCSlib.Cryptography.Games.MachineCodec.encodeLog_cons
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	inst:Complexity.NUPPT.Coins	Complexity.NUPPT.toComp, Complexity.NUPPT.toCompOn, Complexity.NUPPT.toCompOn_costBoundedBy, Complexity.NUPPT.toCompOn_eq, Complexity.NUPPT.toComp_costBoundedBy, Complexity.NUPPT.toComp_eq
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.toComp, Complexity.NUPPT.toCompOn, Complexity.NUPPT.toCompOn_costBoundedBy, Complexity.NUPPT.toCompOn_eq, Complexity.NUPPT.toComp_costBoundedBy, Complexity.NUPPT.toComp_eq
+TCSlib.Cryptography.Games.OracleComp.CostBoundedBy	TCSlib.Cryptography.Games.OracleComp	direct, stmt:TCSlib.Cryptography.Games.OracleComp.costBoundedBy_query	Complexity.NUPPT.toCompOn_costBoundedBy, Complexity.NUPPT.toComp_costBoundedBy, TCSlib.Cryptography.Games.buildComp_costBoundedBy
+TCSlib.Cryptography.Games.OracleComp.bind	(r3 hand-picked)	r3	-

@@ -1,0 +1,40 @@
+TCSlib_Cryptography_Asymptotic_MultiMessage/S0.lean:517:75: error: Application type mismatch: The argument
+  rg
+has type
+  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n
+but is expected to have type
+  Fin n → Bool
+in the application
+  F n rg
+TCSlib_Cryptography_Asymptotic_MultiMessage/S0.lean:517:91: error: Application type mismatch: The argument
+  rg
+has type
+  (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n
+but is expected to have type
+  Fin n → Bool
+in the application
+  hFE n rg
+TCSlib_Cryptography_Asymptotic_MultiMessage/S0.lean:518:64: error: Tactic `rfl` failed: The left-hand side
+  (NUPPT.ofPolyTimeUniform ⋯ PolyExpr.var).coinLen n
+is not definitionally equal to the right-hand side
+  n
+
+F : (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hFE : ∀ (n : ℕ) (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)
+n : ℕ
+m : Fin n → Bool
+rg : (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD PolyExpr.var).Coins n
+re : (NUPPT.ofPolyTimeUniform ⋯ PolyExpr.var).Coins n
+rd : (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.const 0)).Coins n
+h : E (pairEncode (List.ofFn rg) (List.ofFn re)) = List.ofFn (F n sorry sorry)
+⊢ (NUPPT.ofPolyTimeUniform ⋯ PolyExpr.var).coinLen n = n
+TCSlib_Cryptography_Asymptotic_MultiMessage/S0.lean:549:82: error: Application type mismatch: The argument
+  r
+has type
+  (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)
+but is expected to have type
+  (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool)
+in the application
+  prfEncReal (F n) m r

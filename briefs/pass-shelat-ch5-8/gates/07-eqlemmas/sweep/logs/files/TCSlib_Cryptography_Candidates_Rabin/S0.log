@@ -1,0 +1,32 @@
+TCSlib_Cryptography_Candidates_Rabin/S0.lean:295:4: error: Application type mismatch: The argument
+  ?m.21
+has type
+  3 ≠ 2
+but is expected to have type
+  (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15).p ≠ 2
+in the application
+  RabinParams.mk (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15) ?m.21
+TCSlib_Cryptography_Candidates_Rabin/S0.lean:300:19: error: Application type mismatch: The argument
+  ?m.39
+has type
+  3 % 4 = 3
+but is expected to have type
+  (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24).p % 4 = 3
+in the application
+  RabinParams.mk (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24) ?m.39
+TCSlib_Cryptography_Candidates_Rabin/S0.lean:312:68: error: Application type mismatch: The argument
+  h.right.right.right.right.right.left
+has type
+  P p
+but is expected to have type
+  P (DistinctPrimes.p ⟨(⟨⟨p, ⋯⟩, ⋯⟩, ⟨⟨q, ⋯⟩, ⋯⟩), ⋯⟩)
+in the application
+  RabinParams.mk ⟨(⟨⟨p, ⋯⟩, ⋯⟩, ⟨⟨q, ⋯⟩, ⋯⟩), ⋯⟩ ⋯
+TCSlib_Cryptography_Candidates_Rabin/S0.lean:1067:84: error: Application type mismatch: The argument
+  r
+has type
+  (rabinBlumInverter H A).Coins n
+but is expected to have type
+  A.Coins n
+in the application
+  A.runAt n N r

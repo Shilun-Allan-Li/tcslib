@@ -1,0 +1,30 @@
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+index bf7fbbd1..303488f3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+@@ -343,6 +343,10 @@ def edgeMsg (e : ℕ) : List Bool := List.replicate e true
+ (every string names an edge when `E ≠ ∅`). -/
+ def edgeIdxOfMsg (m : ℕ) (w : List Bool) : ℕ := w.length % m
+ 
++/-- REVIEW STUB (scratch only) of #210's next-round lemma: the defining equation of
++`edgeIdxOfMsg`. -/
++theorem edgeIdxOfMsg_eq (m : ℕ) (w : List Bool) : edgeIdxOfMsg m w = w.length % m := rfl
++
+ /-- The challenge `1^e` decodes to `e` when `e < m`. -/
+ @[simp] theorem edgeIdxOfMsg_edgeMsg {m e : ℕ} (he : e < m) : edgeIdxOfMsg m (edgeMsg e) = e := by
+   simp [edgeIdxOfMsg, edgeMsg, Nat.mod_eq_of_lt he]
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index ad5cf0b0..2a4dbf46 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -102,6 +102,10 @@ open Complexity Turing
+ projection after `i` second projections. -/
+ def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
+ 
++/-- REVIEW STUB (scratch only) of #210's next-round lemma: the defining equation of
++`msgAt`. -/
++theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
++
+ /-- `msgAt` reads the `i`-th message of an encoded list. -/
+ theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
+     msgAt (Strategy.encodeMsgs l) i = l[i] := by

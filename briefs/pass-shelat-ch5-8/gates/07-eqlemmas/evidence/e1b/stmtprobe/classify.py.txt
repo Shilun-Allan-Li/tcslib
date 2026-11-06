@@ -1,0 +1,35 @@
+"""classify.py <lean file> <log>: for each error in <log>, the enclosing declaration and whether the
+error lies in its statement (before the top-level `:=`/`where`) or in its body."""
+import sys, re
+src = open(sys.argv[1], encoding='utf-8').read(); log = open(sys.argv[2], encoding='utf-8').read()
+lines = src.split('\n')
+off = [0]
+for l in lines: off.append(off[-1] + len(l) + 1)
+DECL = re.compile(r'^(@\[[^\]]*\]\s*)?((private|protected|noncomputable|nonrec)\s+)*(theorem|lemma|def|abbrev|instance|structure)\s+([^\s(:{\[]*)')
+decls = []
+for k, l in enumerate(lines):
+    m = DECL.match(l)
+    if m:
+        st = off[k]; i = st + m.end(); d = 0; end = None
+        while i < len(src):
+            if src.startswith('--', i): i = src.index('\n', i); continue
+            if src.startswith('/-', i): i = src.index('-/', i) + 2; continue
+            c = src[i]
+            if c in '([{⟨': d += 1
+            elif c in ')]}⟩': d -= 1
+            elif d == 0 and (src.startswith(':=', i) or re.match(r'\swhere\b', src[i-1:i+6]) or (src.startswith('\n  |', i))):
+                end = i; break
+            i += 1
+        decls.append((st, end or st, m.group(4), m.group(5) or '(anon)', k + 1))
+seen = {}
+for m in re.finditer(r'^[^\n]*?\.lean:(\d+):(\d+): error[^\n]*\n?([^\n]*)', log, re.M):
+    ln, col = int(m.group(1)), int(m.group(2)); pos = off[ln - 1] + col
+    enc = [d for d in decls if d[0] <= pos]
+    if not enc: continue
+    st, end, kind, name, dl = enc[-1]
+    where = 'STATEMENT' if pos < end else 'body'
+    msg = m.group(0).split('error', 1)[1][:110].replace('\n', ' ')
+    key = (name, where)
+    if key not in seen: seen[key] = (kind, dl, ln, msg)
+for (name, where), (kind, dl, ln, msg) in seen.items():
+    print(f'{where}\t{kind} {name}\tdecl@{dl}\terr@{ln}\t{msg}')

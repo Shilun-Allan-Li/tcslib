@@ -1,0 +1,40 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, TCSlib.Cryptography.FunFamily.Easy	3
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	deep	Complexity.polyTimeComputable_pairTakePoly	1
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	deep	Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_pairTakePoly	2
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_pairTakePoly	2
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, TCSlib.Cryptography.FunFamily.Easy, TCSlib.Cryptography.FunFamily.invProbAt	14
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.FunFamily.Easy, TCSlib.Cryptography.FunFamily.invProbAt	14
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt_eq, TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	8
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.exists_split, Complexity.NUPPT.runAtL, Complexity.NUPPT.runAt_eq	6
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt_eq, TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.exists_split, Complexity.NUPPT.runAt_eq	2
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.exists_split, Complexity.NUPPT.runAtL, Complexity.NUPPT.runAt_eq	6
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.polyTimeComputable_pairTakePoly, TCSlib.Cryptography.FunFamily.Easy, TCSlib.Cryptography.FunFamily.LengthRegular	30
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	direct		2
+Complexity.PolyExpr.subst	TCSlib.Complexity.Randomized.PolyExpr	direct		4
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct		1
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+TCSlib.Cryptography.padStr	TCSlib.Cryptography.Asymptotic.CollectionsLemmas	direct	TCSlib.Cryptography.polyTimeComputable_padStr	3
+TCSlib.Cryptography.splitCoins	TCSlib.Cryptography.Asymptotic.CollectionsHelpers	direct	TCSlib.Cryptography.ofFn_splitCoins_symm	2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.FunFamily.invProbAt, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.CodeTM.toFinTM	TCSlib.Complexity.TuringMachine.Encoding	direct	Turing.exists_codeTM	2
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	direct	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.computesFunInTime_iff	5
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	direct	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.ComputesFunInTime	5
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.ComputesFunInTime	5
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.ComputesFunInTime	5
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.ComputesFunInTime	5
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL	10
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairTakePoly, Turing.FinTM.ComputesFunInTime	5
+TCSlib.Cryptography.FunFamily.Easy	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.FunFamily.StrongOneWay.mk	3
+TCSlib.Cryptography.FunFamily.LengthRegular	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.FunFamily.ofFn_ofString_apply	2
+TCSlib.Cryptography.FunFamily.invProbAt	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob, TCSlib.Cryptography.FunFamily.StrongOneWay.hard	6
+TCSlib.Cryptography.FunFamily.ofString	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.FunFamily.ofFn_ofString_apply	2

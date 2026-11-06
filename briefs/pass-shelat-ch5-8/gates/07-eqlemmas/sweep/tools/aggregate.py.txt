@@ -1,0 +1,72 @@
+"""aggregate.py <workdir> <files.txt> <outdir>: collect every <workdir>/<tag>/result.json into
+<outdir>/reads.tsv, <outdir>/files.tsv (per-file status), <outdir>/by-definition.tsv and
+<outdir>/instances.tsv (foreign instances/abbrevs/private/aux constants met, not sealed)."""
+import json, os, sys
+from collections import defaultdict
+W, FILES, OUT = sys.argv[1:4]
+os.makedirs(OUT, exist_ok=True)
+files = [l.strip() for l in open(FILES) if l.strip()]
+rows = ["file\tdeclaration\tkind\tforeign definition(s)\tdefining file\tminimal-unseal evidence\tdecl kind\tlines\tsealed error (first)\tevidence logs"]
+frows = ["file\tstatus\tcontrol(unsealed stmt-only)\tcandidates\tdirect\tdeep\tsealed-plain\tstatement reads\tdef-body reads\tunresolved\tunminimised\tlean runs\tseconds"]
+byd = defaultdict(list)
+inst = defaultdict(lambda: [set(), '', ''])
+defmod = {}
+for f in files:
+    tag = f.replace('/', '_')[:-5]
+    d = os.path.join(W, tag)
+    p = os.path.join(d, 'result.json')
+    if not os.path.exists(p):
+        frows.append(f"{f}\tNOT-RUN"); continue
+    r = json.load(open(p))
+    mod = {}
+    nd = ndeep = 0
+    cp = os.path.join(d, 'coll.cands.tsv')
+    if os.path.exists(cp):
+        for l in open(cp):
+            q = l.rstrip('\n').split('\t')
+            if len(q) >= 3:
+                mod[q[0]] = q[1].replace('.', '/') + '.lean'
+                if q[2] == 'direct': nd += 1
+                else: ndeep += 1
+    tp = os.path.join(d, 'coll.transparent.tsv')
+    if os.path.exists(tp):
+        for l in open(tp):
+            q = l.rstrip('\n').split('\t')
+            if len(q) >= 3:
+                inst[q[0]][0].add(f); inst[q[0]][1] = q[1]; inst[q[0]][2] = q[2].replace('.', '/') + '.lean'
+    ns = nb = 0
+    for D, x in sorted(r.get('reads', {}).items()):
+        regs = x['regions']
+        cat = 'statement' if 'T' in regs else ('def-body' if 'B' in regs else 'cascade?')
+        if x['kind'] in ('theorem', 'lemma', 'example', 'structure', 'class', 'inductive'): cat = 'statement'
+        if cat == 'statement': ns += 1
+        else: nb += 1
+        fe = x.get('first_error')
+        if fe: e0 = f"[{fe[0]}] " + fe[1].split('\n')[0][:160]
+        else:
+            errs = r.get('sealed_errors', {}).get(D, [])
+            e0 = errs[0][3].split('\n')[0][:160] if errs else ''
+        ev = '; '.join(f"{n}: {v}" for n, v in x['evidence'].items())
+        ev = f"final run passes with unseal {{{', '.join(x['names'])}}} around this declaration only; " + ev
+        if 'T' in regs and 'B' in regs: cat = 'statement+def-body'
+        rows.append(f"{f}\t{D}\t{cat}\t{', '.join(x['names'])}\t{', '.join(sorted({mod.get(n, '?') for n in x['names']}))}\t{ev}\t{x['kind']}\t{','.join(map(str, x['lines']))}\t{e0}\tlogs/files/{tag}/ (S0.log, final.log, trials.log, result.json)")
+        for n in x['names']:
+            byd[n].append((f, D, cat, x['kind']))
+    cu = r.get('control_unsealed', {})
+    frows.append(f"{f}\t{r['status']}\t{'ok' if cu.get('ok') else 'ERRORS ' + str(cu.get('failing')) + str(cu.get('other'))}\t{r.get('candidates')}\t{nd}\t{ndeep}\t"
+                 f"{'pass' if r.get('sealed_plain', {}).get('ok') else 'fail ' + str(len(r.get('sealed_plain', {}).get('failing', [])))}\t{ns}\t{nb}\t"
+                 f"{r.get('unresolved', [])}\t{r.get('unminimised', [])}\t{r.get('runs')}\t{r.get('seconds')}")
+    for n, m in mod.items():
+        defmod[n] = m
+open(os.path.join(OUT, 'reads.tsv'), 'w').write('\n'.join(rows) + '\n')
+open(os.path.join(OUT, 'files.tsv'), 'w').write('\n'.join(frows) + '\n')
+br = ["foreign definition\tdefining file\tstatement reads\tdef-body reads\tfiles\tdeclarations"]
+for n, L in sorted(byd.items(), key=lambda kv: (-len(kv[1]), kv[0])):
+    st = sum(1 for x in L if x[2].startswith('statement')); db = len(L) - st
+    br.append(f"{n}\t{defmod.get(n, '?')}\t{st}\t{db}\t{', '.join(sorted({x[0] for x in L}))}\t{', '.join(x[1] + ' (' + x[2] + ')' for x in L)}")
+open(os.path.join(OUT, 'by-definition.tsv'), 'w').write('\n'.join(br) + '\n')
+ir = ["constant\tkind\tdefining file\tnumber of swept files meeting it\tfiles"]
+for n, (fs, k, m) in sorted(inst.items(), key=lambda kv: (kv[1][1], kv[0])):
+    ir.append(f"{n}\t{k}\t{m}\t{len(fs)}\t{', '.join(sorted(fs))}")
+open(os.path.join(OUT, 'instances.tsv'), 'w').write('\n'.join(ir) + '\n')
+print(len(rows) - 1, 'reads;', len(byd), 'definitions')

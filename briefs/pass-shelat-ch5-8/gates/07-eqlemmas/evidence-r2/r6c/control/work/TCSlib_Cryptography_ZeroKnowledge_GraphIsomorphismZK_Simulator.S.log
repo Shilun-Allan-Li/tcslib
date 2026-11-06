@@ -1,0 +1,28 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.S.lean:164:34: error: Type mismatch
+  getD_padSq n w (finProdFinEquiv (u, v)).isLt
+has type
+  (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+but is expected to have type
+  decGraphAt n (padSq n w) u v = decGraphAt n w u v
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.S.lean:183:2: error: Tactic `rfl` failed: The left-hand side
+  decGraph w
+is not definitionally equal to the right-hand side
+  ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+
+w : List Bool
+⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.S.lean:254:9: error: Tactic `rcases` failed: `hV' : V'.Efficient` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.S.lean:437:4: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD simX_poly))
+has type
+  PolyTimeComputable fun x => List.replicate ((pairFstD ∘ simX) x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator.S.lean:456:89: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform hF (simCoins V')).coins = simCoins V'
+in the application
+  And.intro rfl

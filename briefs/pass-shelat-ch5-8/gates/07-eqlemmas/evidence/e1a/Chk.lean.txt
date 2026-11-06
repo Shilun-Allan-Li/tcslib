@@ -1,0 +1,7 @@
+import TCSlib.Cryptography.Asymptotic.Collections
+open TCSlib.Cryptography
+#check @TrapdoorCollection.toCollection
+#print TrapdoorCollection.toCollection
+example (T : TrapdoorCollection) (i : List Bool) : T.toCollection.D i = T.D i := by with_reducible rfl
+set_option pp.explicit true in
+#check fun (T : TrapdoorCollection) (i : List Bool) => T.D i

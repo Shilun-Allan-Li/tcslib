@@ -1,0 +1,65 @@
+# olean copy rev-dlc-oleans: restore to base 16a7d02d (review dl-c, 2026-11-06T15:36:36Z)
+worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-rev-dlc HEAD=16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1
+source of the copy: fill-rsa-oleans = base + rsa fill's RSA.lean; rsa head 35c1abee23ef6a677af2e55313f7477594589587 differs from the base only in:
+   TCSlib/Cryptography/Candidates/RSA.lean | 1709 ++++++++++++++++++++++++++++++-
+   1 file changed, 1672 insertions(+), 37 deletions(-)
+## step 1: RSA and its downstream in inputs/dl-c/order.txt (tools/downin.py), rebuilt at the base
+  TCSlib/Cryptography/Candidates/RSA rc=0 9s errors=0 sorry=10
+  TCSlib/Cryptography/Candidates/Rabin rc=0 7s errors=0 sorry=19
+  TCSlib/Cryptography/Candidates rc=0 3s errors=0 sorry=0
+  # done 2026-11-06T15:32:21Z
+## step 2: ElGamal + facade at the base, then the 36 modules of Checks' closure that were missing or stale in the copy (tools/treecheck.py)
+  TCSlib/Cryptography/Candidates/ElGamal rc=0 4s errors=0 sorry=7
+  TCSlib/Cryptography/Candidates rc=0 3s errors=0 sorry=0
+  TCSlib/Complexity/Randomized rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/NumberTheory rc=0 2s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/EncodingMachines rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/Encoding rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/Interaction rc=0 2s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/Defs rc=0 7s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness rc=0 6s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK rc=0 6s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/Commitment rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties rc=0 7s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol rc=0 7s errors=0 sorry=2
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas rc=0 5s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator rc=0 6s errors=0 sorry=1
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring rc=0 2s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/NPLemmas rc=0 4s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/NP rc=0 10s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge/Encryption rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/ZeroKnowledge rc=0 3s errors=0 sorry=0
+  # done 2026-11-06T15:36:08Z
+## step 3: consistency
+  treecheck over the closure of audits/pass-shelat/Checks + Candidates + ElGamal (418 modules):
+    NOT-YET audits/pass-shelat/Checks
+    closure 418 modules, 0 problems
+  ElGamal.olean rebuilt at the base vs the original tree (built at the base) and the rsa review's base olean:
+    134fd8000c02e5fd7d936774c482f8d894e1bf2903a25dd62c5c9ad76a58a1cd  rev-dlc-oleans/TCSlib/Cryptography/Candidates/ElGamal.olean
+    134fd8000c02e5fd7d936774c482f8d894e1bf2903a25dd62c5c9ad76a58a1cd  fill-rsa-oleans/TCSlib/Cryptography/Candidates/ElGamal.olean
+    134fd8000c02e5fd7d936774c482f8d894e1bf2903a25dd62c5c9ad76a58a1cd  review-rsa/olean-side/TCSlib/Cryptography/Candidates/ElGamal.olean
+  => identical: the ElGamal olean is deterministic in its sources and imports, so the copy's upstream closure of ElGamal (incl. DiscreteLog, Concrete, Ensembles) is the base's.
+  RSA.olean now differs from fill-rsa-oleans (base vs rsa fill); Rabin, DiscreteLog, Concrete, DiscreteLogHardcore are identical to the original copy's (base) oleans:
+    RSA 51054bb794a541b0 orig 9b6b5565a5a8f16a
+    Rabin 2eb7db46a2b9c299 orig 2eb7db46a2b9c299
+    DiscreteLog ebd16ec38ca30ca0 orig ebd16ec38ca30ca0
+    Concrete 701f3133386bbfb9 orig 701f3133386bbfb9
+    DiscreteLogHardcore 678a7c21f820d97f orig 678a7c21f820d97f

@@ -1,0 +1,554 @@
+From 9aa04815fc4b87a814b7ac2d13cf91c07d876ad2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 14:50:19 +0000
+Subject: [PATCH 18/24] RSA: fill polyTimeComputable_rsaGenRaw
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/RSA.lean | 501 ++++++++++++++++++++----
+ 1 file changed, 425 insertions(+), 76 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index 5618f7ad..d0ae5baa 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -395,6 +395,20 @@ private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Copr
+   rw [Nat.Coprime, ← Nat.gcd_rec]
+   exact Nat.gcd_one_right N
+ 
++/-- The fallback of the unit sampler is a unit: for `N > 0`, the value
++`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
++the default, `rsa_one_mod_spec`). -/
++private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
++    (sampleUnitL N k B T r).getD (1 % N) < N ∧
++      Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
++  cases h : sampleUnitL N k B T r with
++  | some v =>
++    rw [Option.getD_some]
++    exact sampleUnitL_spec h
++  | none =>
++    rw [Option.getD_none]
++    exact rsa_one_mod_spec hN
++
+ /-- The units of `Z_N` are the accepted values of the unit test below `2^k` (for `N ≤ 2^k`):
+ `x ↦ x.val`, with inverse `v ↦ ZMod.unitOfCoprime v` (`ZMod.val_lt`,
+ `ZMod.val_coe_unit_coprime`, `ZMod.natCast_zmod_val`, `ZMod.val_natCast`). -/
+@@ -624,48 +638,6 @@ def rsaGenOut (m : ℕ) (r : List Bool) : List Bool :=
+ `rsaGenOut` at the parameter `n` read from `1^n` on the coins. -/
+ def rsaGenRaw (z : List Bool) : List Bool := rsaGenOut (NUPPT.inParam z).length (NUPPT.inCoins z)
+ 
+-/-- **The generator is polynomial-time** [PS10, Theorem 53.2, "the set `I` is easy to
+-sample"] given the arithmetic bundle.
+-
+-**Proof sketch.** Cut the coins at the unary lengths `1^{2m³}` (`polyTimeComputable_pairTakePoly`
+-/`_pairDropPoly samplePrimeCoins` on `⟨1^m, r⟩`, with `1^m = 1^{max n 2}` by
+-`polyTimeComputable_unaryPoly`); each prime is the `iterateFind` loop of
+-`NumberTheory.exists_samplePrime_nuppt` with the test `H.prime`; the validity test is two
+-`H.prime` calls, a `pairEq` test and two `H.le` comparisons with `1^m`, the fallback a
+-constant (`polyTimeComputable_ite`; the fallback prime `2` of a failed `samplePrimeL` run is a
+-constant numeral, P7-7); `N` is `H.mul`; `Φ(N) = (p−1)(q−1)` by two decrements `H.sub` on
+-`⟨p, [true]⟩`, `⟨q, [true]⟩` (`listToNat_subStr`) and `H.mul`; the unary bit length
+-`1^{Nat.size Φ}` is `H.size` (run-3 audit P7-1); the rejection loop (`sampleUnitL =
+-rejectBlocksL`) is `polyTimeComputable_iterateFind` over the blocks of `1^{B(m)}` bits, each
+-trial reading `Nat.size Φ` bits (`polyTimeComputable_pairTakePoly var` on
+-`⟨1^{Nat.size Φ}, block⟩`) with the tests `H.le` and `H.xgcd` (`gcd = 1`), and `d` is the
+-second component of `xgcdStr ⟨e, Φ⟩`; pair the numerals. -/
+-theorem polyTimeComputable_rsaGenRaw (H : ArithmeticFP) : PolyTimeComputable rsaGenRaw := by
+-  sorry
+-
+-/-- **The RSA generator** `Gen(1^n) = ⟨⟨N, e⟩, ⟨N, d⟩⟩` as a uniform `NUPPT`
+-[PS10, Theorem 57.2, "`[(N, e), d] ← Gen(1^n)`"].
+-
+-**Deviation (run-3 audit P3-5):** the trapdoor is `⟨N, d⟩` where the text's is `d`, because
+-`TrapdoorCollection.inv_spec` hands the inverter `⟨t, y⟩` without the index (the literal
+-`Inv((i, t), y)` form of Definition 56.1 (6) was not adopted); `N` is therefore carried in the
+-trapdoor. -/
+-noncomputable def rsaGen (H : ArithmeticFP) : NUPPT :=
+-  NUPPT.ofPolyTimeUniform (polyTimeComputable_rsaGenRaw H) rsaGenCoins
+-
+-/-- The activation of the generator: `rsaGenOut n` on the coins. -/
+-theorem rsaGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n) :
+-    (rsaGen H).runAt n [] r = rsaGenOut n (List.ofFn r) := by
+-  rw [NUPPT.runAt_eq]
+-  unfold rsaGen
+-  rw [NUPPT.runAtL_ofPolyTimeUniform]
+-  simp [rsaGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
+-
+-/-- The string function of the domain sampler on the raw layout `⟨⟨⟨1^n, ⟨N, e⟩⟩, α⟩, r⟩`:
+-`unitSampleStr` on the modulus numeral. -/
+-def rsaSampleRaw (z : List Bool) : List Bool :=
+-  unitSampleStr (pairFstD (NUPPT.inArg z)) (NUPPT.inParam z).length (NUPPT.inCoins z)
+-
+ /-! ### The unit sampler as a trial loop (helpers of `polyTimeComputable_unitSampleStr`)
+ 
+ The loop is an instance of the public repetition host `polyTimeComputable_iterateFind`; its
+@@ -1003,26 +975,11 @@ private theorem rsa_usStart_poly (H : ArithmeticFP) {f : List Bool → List Bool
+     (((polyTimeComputable_unaryPoly rsaTrials).comp NUPPT.polyTimeComputable_inParam).pairEncode
+       NUPPT.polyTimeComputable_inCoins))
+ 
+-/-- **The unit sampler is polynomial-time** [PS10, Theorem 53.2, "the set `D_i` is also
+-easy to sample"]: for any polynomial-time projection `f` of the raw input to the modulus
+-numeral, `z ↦ unitSampleStr (f z) n (coins z)` is polynomial-time (shared by the RSA and
+-Rabin samplers).
+-
+-**Proof sketch.** The unary bit length `1^{Nat.size N}` of `N = f z` is `H.size` (run-3
+-audit P7-1), and `1^{B(n)}`, `1^{T(n)}` are `polyTimeComputable_unaryPoly`. The trial loop
+-(`sampleUnitL = rejectBlocksL`) is the repetition host `polyTimeComputable_iterateFind` on the
+-state `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨counter, coins⟩⟩` from `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨1^{T(n)}, r⟩⟩`:
+-each step drops one counter token and one block of `B(n)` coins
+-(`polyTimeComputable_pairDropPoly var`), each trial reads the first `k` coins
+-(`polyTimeComputable_pairTakePoly var` on `⟨1^k, coins⟩`) and is accepted iff the counter is
+-nonempty, the value is below `N` (`H.le`), and the numeral of `gcd(v, N)` — which `xgcdStr`
+-returns at the width of `w` — reads `≤ 1` and `≥ 1` (two `H.le` tests against `[true]`); the
+-payload is the block behind a marker. The search over `|x| + 1 ≥ T(n)` rounds is the search of
+-`sampleUnitL` (the counter stops it at `T(n)`). The output is the remainder of
+-`H.divMod ⟨b, w⟩`, a numeral of the width of `w`, where `b` is the accepted block, or `[true]`
+-when no trial is accepted (`polyTimeComputable_isNil`, `polyTimeComputable_ite`): an accepted
+-`v < N` is its own remainder, and the fallback is `1 mod N`. -/
+-theorem polyTimeComputable_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
++/-- **The unit sampler is polynomial-time** (the proof of `polyTimeComputable_unitSampleStr`,
++stated here so that the generator can use it): for a polynomial-time `f`,
++`z ↦ unitSampleStr (f z) |inParam z| (inCoins z)` is polynomial-time (see the public statement
++for the proof sketch). -/
++private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
+     (hf : PolyTimeComputable f) :
+     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
+   -- the trial loop on the start state (the repetition host)
+@@ -1062,6 +1019,412 @@ theorem polyTimeComputable_unitSampleStr (H : ArithmeticFP) {f : List Bool → L
+   rw [e] at hq
+   exact hq
+ 
++/-! ### The generator as a string computation (helpers of `polyTimeComputable_rsaGenRaw`)
++
++On `y = ⟨1^M, r⟩` with `M = max n 2`: the two prime runs (S1), the validity test (`H.prime`,
++`H.le`), the fallback words `⟦2⟧ = [true, false]`, `⟦3⟧ = [true, true]`, `N` and `Φ` (`H.mul`,
++`H.sub`), the exponent (the unit sampler on a re-laid-out input), `d` (`H.xgcd`), and the
++`2M`-bit numerals as remainders modulo the all-ones word `1^{2M}` (`H.divMod`). -/
++
++/-- The all-ones numeral `1^k` reads as `2^k − 1`. -/
++private theorem rsa_listToNat_ones (k : ℕ) : listToNat (List.replicate k true) = 2 ^ k - 1 := by
++  induction k with
++  | zero => rw [List.replicate_zero, rsa_listToNat_nil]; rfl
++  | succ k ih =>
++    rw [List.replicate_succ', listToNat_eq, List.foldl_append, ← listToNat_eq, ih]
++    have := Nat.one_le_two_pow (n := k)
++    simp only [List.foldl_cons, List.foldl_nil, if_true, pow_succ]
++    omega
++
++/-- The numeral `[true, false]` reads as `2`. -/
++private theorem rsa_listToNat_two : listToNat [true, false] = 2 := by
++  rw [listToNat_eq]
++  rfl
++
++/-- The numeral `[true, true]` reads as `3`. -/
++private theorem rsa_listToNat_three : listToNat [true, true] = 3 := by
++  rw [listToNat_eq]
++  rfl
++
++/-- The product numeral reads as the product: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧`. -/
++private theorem rsa_listToNat_mulStr (a b : List Bool) :
++    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
++  rw [mulStr_pairEncode, listToNat_natToList]
++  rw [pow_add]
++  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b)
++
++/-- **Width normalization**: the remainder of `⟦x⟧` modulo the all-ones word `1^k` is the
++`k`-bit numeral of `⟦x⟧` when `⟦x⟧ < 2^k − 1`. -/
++private theorem rsa_norm (x : List Bool) (k : ℕ) (h : listToNat x < 2 ^ k - 1) :
++    pairSndD (divModStr (pairEncode x (List.replicate k true))) = natToList k (listToNat x) := by
++  rw [divModStr_pairEncode, pairSndD_pairEncode, List.length_replicate, rsa_listToNat_ones,
++    Nat.mod_eq_of_lt h]
++
++/-- A function equal pointwise to a polynomial-time one is polynomial-time. -/
++private theorem rsa_ptc_congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
++    (e : ∀ x, f x = g x) : PolyTimeComputable g := by
++  rw [show g = f from (funext e).symm]
++  exact h
++
++/-- The first prime run: `samplePrimeL M` on the first `L = 2M³` coins of `y = ⟨1^M, r⟩`. -/
++private def rsa_gP (y : List Bool) : List Bool :=
++  samplePrimeL (pairFstD y).length ((pairSndD y).take (samplePrimeCoins.eval (pairFstD y).length))
++
++/-- The second prime run: `samplePrimeL M` on the next `L` coins of `y = ⟨1^M, r⟩`. -/
++private def rsa_gQ (y : List Bool) : List Bool :=
++  samplePrimeL (pairFstD y).length
++    (((pairSndD y).drop (samplePrimeCoins.eval (pairFstD y).length)).take
++      (samplePrimeCoins.eval (pairFstD y).length))
++
++/-- The validity test of the two runs: both prime, distinct (two comparisons), and at most
++`⟦1^M⟧ = 2^M − 1`. -/
++private def rsa_gValid (y : List Bool) : Bool :=
++  decide (listToNat (rsa_gP y)).Prime && (decide (listToNat (rsa_gQ y)).Prime &&
++    (!(decide (listToNat (rsa_gP y) ≤ listToNat (rsa_gQ y)) &&
++        decide (listToNat (rsa_gQ y) ≤ listToNat (rsa_gP y))) &&
++      (decide (listToNat (rsa_gP y) ≤ listToNat (pairFstD y)) &&
++        decide (listToNat (rsa_gQ y) ≤ listToNat (pairFstD y)))))
++
++/-- The first prime word: the run if valid, the fallback `⟦2⟧` otherwise. -/
++private def rsa_gPw (y : List Bool) : List Bool := if rsa_gValid y then rsa_gP y else [true, false]
++
++/-- The second prime word: the run if valid, the fallback `⟦3⟧` otherwise. -/
++private def rsa_gQw (y : List Bool) : List Bool := if rsa_gValid y then rsa_gQ y else [true, true]
++
++/-- The word of `Φ = (p − 1)(q − 1)`. -/
++private def rsa_gPhi (y : List Bool) : List Bool :=
++  mulStr (pairEncode (subStr (pairEncode (rsa_gPw y) [true])) (subStr (pairEncode (rsa_gQw y) [true])))
++
++/-- The exponent word: the unit sampler modulo `Φ` at parameter `M` on the coins after the two
++prime runs. -/
++private def rsa_gE (y : List Bool) : List Bool :=
++  unitSampleStr (rsa_gPhi y) (pairFstD y).length
++    ((pairSndD y).drop ((PolyExpr.mul (.const 2) samplePrimeCoins).eval (pairFstD y).length))
++
++/-- The `2M`-bit normalization of a word: its remainder modulo `1^{2M}`. -/
++private def rsa_gNorm (y x : List Bool) : List Bool :=
++  pairSndD (divModStr (pairEncode x
++    (List.replicate ((PolyExpr.mul (.const 2) .var).eval (pairFstD y).length) true)))
++
++/-- The generator's output computed from `y = ⟨1^M, r⟩`:
++`⟨⟨⟦N⟧_{2M}, ⟦e⟧_{2M}⟩, ⟨⟦N⟧_{2M}, ⟦d⟧_{2M}⟩⟩`. -/
++private def rsa_genCore (y : List Bool) : List Bool :=
++  pairEncode
++    (pairEncode (rsa_gNorm y (mulStr (pairEncode (rsa_gPw y) (rsa_gQw y)))) (rsa_gNorm y (rsa_gE y)))
++    (pairEncode (rsa_gNorm y (mulStr (pairEncode (rsa_gPw y) (rsa_gQw y))))
++      (rsa_gNorm y (pairSndD (xgcdStr (pairEncode (rsa_gE y) (rsa_gPhi y))))))
++
++/-- The first prime run is polynomial-time (S1 on `⟨1^M, r.take L⟩`). -/
++private theorem rsa_gP_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gP := by
++  have hA : PolyTimeComputable fun y => pairEncode (pairFstD y)
++      ((pairSndD y).take (samplePrimeCoins.eval (pairFstD y).length)) :=
++    polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairTakePoly samplePrimeCoins)
++  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
++  rw [pairFstD_pairEncode, pairSndD_pairEncode, rsa_gP]
++
++/-- The second prime run is polynomial-time (S1 on `⟨1^M, (r.drop L).take L⟩`). -/
++private theorem rsa_gQ_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gQ := by
++  have hD : PolyTimeComputable fun y => pairEncode (pairFstD y)
++      ((pairSndD y).drop (samplePrimeCoins.eval (pairFstD y).length)) :=
++    polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairDropPoly samplePrimeCoins)
++  have hT := rsa_comp (polyTimeComputable_pairTakePoly samplePrimeCoins) hD
++  have hA := polyTimeComputable_pairFstD.pairEncode hT
++  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [rsa_gQ]
++
++/-- A primality test `[⟦a x⟧ prime]` of a polynomial-time word is polynomial-time (`H.prime`,
++read through `primeStr_eq`). -/
++private theorem rsa_prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
++    (ha : PolyTimeComputable a) :
++    PolyTimeComputable fun x => [decide (listToNat (a x)).Prime] := by
++  have h := rsa_comp H.prime ha
++  rw [primeStr_eq] at h
++  exact h
++
++/-- The validity test is polynomial-time. -/
++private theorem rsa_gValid_poly (H : ArithmeticFP) : PolyTimeComputable fun y => [rsa_gValid y] := by
++  have hP := rsa_gP_poly H
++  have hQ := rsa_gQ_poly H
++  have t1 := rsa_prime_poly H hP
++  have t2 := rsa_prime_poly H hQ
++  have t3 := rsa_le_poly H hP hQ
++  have t4 := rsa_le_poly H hQ hP
++  have t5 := rsa_le_poly H hP polyTimeComputable_pairFstD
++  have t6 := rsa_le_poly H hQ polyTimeComputable_pairFstD
++  have t34 := polyTimeComputable_not (polyTimeComputable_and
++    (p := fun y => decide (listToNat (rsa_gP y) ≤ listToNat (rsa_gQ y)))
++    (q := fun y => decide (listToNat (rsa_gQ y) ≤ listToNat (rsa_gP y))) t3 t4)
++  have t56 := polyTimeComputable_and
++    (p := fun y => decide (listToNat (rsa_gP y) ≤ listToNat (pairFstD y)))
++    (q := fun y => decide (listToNat (rsa_gQ y) ≤ listToNat (pairFstD y))) t5 t6
++  have t3456 := polyTimeComputable_and
++    (p := fun y => !(decide (listToNat (rsa_gP y) ≤ listToNat (rsa_gQ y)) &&
++        decide (listToNat (rsa_gQ y) ≤ listToNat (rsa_gP y))))
++    (q := fun y => decide (listToNat (rsa_gP y) ≤ listToNat (pairFstD y)) &&
++        decide (listToNat (rsa_gQ y) ≤ listToNat (pairFstD y))) t34 t56
++  have t23456 := polyTimeComputable_and
++    (p := fun y => decide (listToNat (rsa_gQ y)).Prime) t2 t3456
++  have h := polyTimeComputable_and
++    (p := fun y => decide (listToNat (rsa_gP y)).Prime) t1 t23456
++  unfold rsa_gValid
++  exact h
++
++/-- The two prime words are polynomial-time (`polyTimeComputable_ite`). -/
++private theorem rsa_gPw_poly (H : ArithmeticFP) :
++    PolyTimeComputable rsa_gPw ∧ PolyTimeComputable rsa_gQw := by
++  constructor
++  · have h := polyTimeComputable_ite (p := rsa_gValid) (f := rsa_gP) (g := fun _ => [true, false])
++      (rsa_gValid_poly H) (rsa_gP_poly H) (polyTimeComputable_const _)
++    unfold rsa_gPw
++    exact h
++  · have h := polyTimeComputable_ite (p := rsa_gValid) (f := rsa_gQ) (g := fun _ => [true, true])
++      (rsa_gValid_poly H) (rsa_gQ_poly H) (polyTimeComputable_const _)
++    unfold rsa_gQw
++    exact h
++
++/-- The word of `Φ` is polynomial-time (`H.sub`, `H.mul`). -/
++private theorem rsa_gPhi_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gPhi := by
++  have h1 := rsa_comp H.sub ((rsa_gPw_poly H).1.pairEncode (polyTimeComputable_const [true]))
++  have h2 := rsa_comp H.sub ((rsa_gPw_poly H).2.pairEncode (polyTimeComputable_const [true]))
++  have h := rsa_comp H.mul (h1.pairEncode h2)
++  unfold rsa_gPhi
++  exact h
++
++/-- The exponent word is polynomial-time: the unit sampler on the re-laid-out input
++`layout 1^M ⟦Φ⟧ [] (r.drop 2L)` (`rsa_ptc_unitSampleStr`, `NUPPT.polyTimeComputable_layout`). -/
++private theorem rsa_gE_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gE := by
++  have hl := NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD (rsa_gPhi_poly H)
++    (polyTimeComputable_const []) (polyTimeComputable_pairDropPoly (.mul (.const 2) samplePrimeCoins))
++  refine rsa_ptc_congr (rsa_comp (rsa_ptc_unitSampleStr H NUPPT.polyTimeComputable_inArg) hl)
++    fun y => ?_
++  rw [NUPPT.inArg_layout, NUPPT.inParam_layout, NUPPT.inCoins_layout, rsa_gE]
++
++/-- The normalization of a polynomial-time word is polynomial-time (`H.divMod`,
++`polyTimeComputable_unaryPoly`). -/
++private theorem rsa_gNorm_poly (H : ArithmeticFP) {x : List Bool → List Bool}
++    (hx : PolyTimeComputable x) : PolyTimeComputable fun y => rsa_gNorm y (x y) := by
++  have ho := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) polyTimeComputable_pairFstD
++  have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.divMod (hx.pairEncode ho))
++  unfold rsa_gNorm
++  exact h
++
++/-- The generator's string computation is polynomial-time. -/
++private theorem rsa_genCore_poly (H : ArithmeticFP) : PolyTimeComputable rsa_genCore := by
++  have hN := rsa_comp H.mul ((rsa_gPw_poly H).1.pairEncode (rsa_gPw_poly H).2)
++  have hD := rsa_comp polyTimeComputable_pairSndD
++    (rsa_comp H.xgcd ((rsa_gE_poly H).pairEncode (rsa_gPhi_poly H)))
++  have h := ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H (rsa_gE_poly H))).pairEncode
++    ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H hD))
++  unfold rsa_genCore
++  exact h
++
++/-- **The string computation is the generator**: on `⟨1^{max n 2}, r⟩` it outputs
++`rsaGenOut n r`.
++
++**Proof sketch.** With `M = max n 2` and `L = 2M³`, `rsa_gP`, `rsa_gQ` are the two prime runs
++of `rsaGenParams`, and the validity test is its condition (`⟦1^M⟧ = 2^M − 1`; two comparisons
++for `p ≠ q`), so the prime words read as the primes of the parameters (`default_p`,
++`default_q` on the fallback). Then `⟦N⟧ = pq` (`rsa_listToNat_mulStr`), `⟦Φ⟧ = (p−1)(q−1) =
++Φ(pq)` (`listToNat_subStr`, `DistinctPrimes.totient_mul`), the exponent word reads as
++`e = sampleUnitL … .getD 1` (`unitSampleStr_eq`, `1 % Φ = 1` as `Φ ≥ 2`), `d` is the inverse
++(`xgcdStr_pairEncode`), and each of `N, e, d < 2^{2M} − 1` is normalized to its `2M`-bit numeral
++(`rsa_norm`). -/
++private theorem rsa_genCore_spec (n : ℕ) (r : List Bool) :
++    rsa_genCore (pairEncode (List.replicate (max n 2) true) r) = rsaGenOut n r := by
++  have hy1 : pairFstD (pairEncode (List.replicate (max n 2) true) r) = List.replicate (max n 2) true :=
++    pairFstD_pairEncode _ _
++  have hy2 : pairSndD (pairEncode (List.replicate (max n 2) true) r) = r := pairSndD_pairEncode _ _
++  have hP : rsa_gP (pairEncode (List.replicate (max n 2) true) r) =
++      samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2))) := by
++    rw [rsa_gP, hy1, hy2, List.length_replicate]
++  have hQ : rsa_gQ (pairEncode (List.replicate (max n 2) true) r) =
++      samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
++        (samplePrimeCoins.eval (max n 2))) := by
++    rw [rsa_gQ, hy1, hy2, List.length_replicate]
++  have hones : listToNat (pairFstD (pairEncode (List.replicate (max n 2) true) r)) =
++      2 ^ max n 2 - 1 := by
++    rw [hy1, rsa_listToNat_ones]
++  have hvalid : rsa_gValid (pairEncode (List.replicate (max n 2) true) r) =
++      decide ((listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2))))).Prime ∧
++        (listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
++          (samplePrimeCoins.eval (max n 2))))).Prime ∧
++        listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2)))) ≠
++          listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
++            (samplePrimeCoins.eval (max n 2)))) ∧
++        listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2)))) < 2 ^ max n 2 ∧
++        listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
++          (samplePrimeCoins.eval (max n 2)))) < 2 ^ max n 2) := by
++    rw [rsa_gValid, hP, hQ, hones]
++    have h2 : 1 ≤ 2 ^ max n 2 := Nat.one_le_two_pow
++    generalize listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2)))) = a
++    generalize listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
++      (samplePrimeCoins.eval (max n 2)))) = b
++    generalize 2 ^ max n 2 = t at h2 ⊢
++    rw [Bool.eq_iff_iff]
++    by_cases ha : a.Prime <;> by_cases hb : b.Prime <;> simp only [ha, hb, decide_true,
++      decide_false, Bool.true_and, Bool.false_and, true_and, false_and, Bool.and_eq_true,
++      Bool.not_eq_true', Bool.and_eq_false_iff, decide_eq_true_eq, decide_eq_false_iff_not,
++      Bool.false_eq_true]
++    constructor
++    · intro h
++      omega
++    · intro h
++      omega
++  have hzp : (rsaGenParams n r).z.p = listToNat (rsa_gPw (pairEncode (List.replicate (max n 2) true) r)) ∧
++      (rsaGenParams n r).z.q = listToNat (rsa_gQw (pairEncode (List.replicate (max n 2) true) r)) := by
++    rw [rsa_gPw, rsa_gQw, hvalid, hP, hQ]
++    unfold rsaGenParams
++    dsimp only
++    split
++    · next hc =>
++      rw [if_pos (decide_eq_true hc), if_pos (decide_eq_true hc), DistinctPrimes.p_eq,
++        DistinctPrimes.q_eq]
++      exact ⟨rfl, rfl⟩
++    · next hc =>
++      rw [if_neg (fun h => hc (of_decide_eq_true h)), if_neg (fun h => hc (of_decide_eq_true h)),
++        DistinctPrimes.default_p,
++        DistinctPrimes.default_q, rsa_listToNat_two, rsa_listToNat_three]
++      exact ⟨rfl, rfl⟩
++  generalize hy : pairEncode (List.replicate (max n 2) true) r = y at hy1 hy2 hP hQ hones hvalid hzp
++  -- the modulus, `Φ`, `e` and `d` read from the words
++  have hN : listToNat (mulStr (pairEncode (rsa_gPw y) (rsa_gQw y))) = (rsaGenParams n r).N := by
++    rw [rsa_listToNat_mulStr, ← hzp.1, ← hzp.2]
++    rfl
++  have hPhi : listToNat (rsa_gPhi y) =
++      Nat.totient ((rsaGenParams n r).z.p * (rsaGenParams n r).z.q) := by
++    rw [rsa_gPhi, rsa_listToNat_mulStr, listToNat_subStr, listToNat_subStr, rsa_listToNat_one,
++      ← hzp.1, ← hzp.2, DistinctPrimes.totient_mul]
++  have hΦ1 := (rsaGenParams n r).z.one_lt_totient
++  have he : listToNat (rsa_gE y) = (rsaGenParams n r).e := by
++    have hv := rsa_getD_spec (N := listToNat (rsa_gPhi y)) (by omega) (Nat.size (listToNat (rsa_gPhi y)))
++      (rsaBlock.eval (pairFstD y).length) (rsaTrials.eval (pairFstD y).length)
++      ((pairSndD y).drop ((PolyExpr.mul (.const 2) samplePrimeCoins).eval (pairFstD y).length))
++    rw [rsa_gE, unitSampleStr_eq, listToNat_natToList (hv.1.trans (listToNat_lt_two_pow _)), hPhi,
++      hy1, hy2, List.length_replicate, Nat.mod_eq_of_lt hΦ1, PolyExpr.eval_mul, PolyExpr.eval_const]
++    rfl
++  have hd : listToNat (pairSndD (xgcdStr (pairEncode (rsa_gE y) (rsa_gPhi y)))) =
++      (rsaGenParams n r).d := by
++    have hlt : (((rsaGenParams n r).e : ZMod (Nat.totient ((rsaGenParams n r).z.p *
++        (rsaGenParams n r).z.q)))⁻¹).val < 2 ^ (rsa_gPhi y).length :=
++      (ZMod.val_lt _).trans (hPhi ▸ listToNat_lt_two_pow _)
++    rw [xgcdStr_pairEncode, pairSndD_pairEncode, he, hPhi, listToNat_natToList hlt]
++    rfl
++  -- the bound `N < 2^{2M} − 1`
++  have hNb : (rsaGenParams n r).N < 2 ^ (2 * max n 2) - 1 := by
++    have hp := (rsaGenParams n r).z.p_lt
++    have hq := (rsaGenParams n r).z.q_lt
++    have h4 : 4 ≤ 2 ^ max n 2 :=
++      (Nat.pow_le_pow_right (by norm_num) (le_max_right n 2)).trans_eq' (by norm_num)
++    have hsq : 2 ^ (2 * max n 2) = 2 ^ max n 2 * 2 ^ max n 2 := by rw [two_mul, pow_add]
++    rw [hsq]
++    show (rsaGenParams n r).z.p * (rsaGenParams n r).z.q < _
++    obtain ⟨b, hb⟩ : ∃ b, 2 ^ max n 2 = b + 1 := ⟨2 ^ max n 2 - 1, by omega⟩
++    rw [hb] at hp hq h4 ⊢
++    have hpq := Nat.mul_le_mul (Nat.le_of_lt_succ hp) (Nat.le_of_lt_succ hq)
++    have hexp : (b + 1) * (b + 1) = b * b + 2 * b + 1 := by ring
++    rw [hexp]
++    generalize (rsaGenParams n r).z.p * (rsaGenParams n r).z.q = x at hpq ⊢
++    generalize b * b = w at hpq ⊢
++    omega
++  have hΦN : Nat.totient ((rsaGenParams n r).z.p * (rsaGenParams n r).z.q) ≤ (rsaGenParams n r).N :=
++    Nat.totient_le _
++  have hnorm : ∀ x, listToNat x < 2 ^ (2 * max n 2) - 1 →
++      rsa_gNorm y x = natToList (2 * max n 2) (listToNat x) := by
++    intro x hx
++    rw [rsa_gNorm, hy1, List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const,
++      PolyExpr.eval_var, rsa_norm x _ hx]
++  rw [rsa_genCore, hnorm _ (hN ▸ hNb), hnorm _ (he ▸ ((rsaGenParams n r).e_lt.trans_le hΦN).trans hNb),
++    hnorm _ (hd ▸ ((rsaGenParams n r).d_lt.trans_le hΦN).trans hNb), hN, he, hd, rsaGenOut,
++    rsaIndexOf, rsaTrapOf]
++
++/-- **The generator is polynomial-time** [PS10, Theorem 53.2, "the set `I` is easy to
++sample"] given the arithmetic bundle.
++
++**Proof sketch.** First `1^m` with `m = max n 2`: `1^n` unless `n ≤ 1`, where it is `11`
++(`polyTimeComputable_lenLe`, `polyTimeComputable_unaryPoly`, `polyTimeComputable_ite`); the rest
++runs on `⟨1^m, r⟩`. Cut the coins at the unary lengths `1^{2m³}`
++(`polyTimeComputable_pairTakePoly`/`_pairDropPoly samplePrimeCoins`); each prime is S1
++(`polyTimeComputable_samplePrimeL` with `H.prime`); the validity test is two `H.prime` calls,
++two `H.le` comparisons for `p ≠ q` and two `H.le` comparisons with `⟦1^m⟧ = 2^m − 1` for
++`p, q < 2^m`, and the fallback words are the constants `⟦2⟧ = 10`, `⟦3⟧ = 11`
++(`polyTimeComputable_ite`); `N` is `H.mul`; `Φ(N) = (p−1)(q−1)` by two decrements `H.sub` on
++`⟨p, [true]⟩`, `⟨q, [true]⟩` (`listToNat_subStr`) and `H.mul`; `e` is
++`polyTimeComputable_unitSampleStr` on the re-laid-out input `layout 1^m ⟦Φ⟧ [] (r.drop 4m³)`
++(`NUPPT.polyTimeComputable_layout`; its fallback `1 % Φ = 1` as `Φ ≥ 2`); `d` is the second
++component of `xgcdStr ⟨e, Φ⟩`; each of `N, e, d < 2^{2m} − 1` becomes its `2m`-bit numeral as the
++remainder of `H.divMod` modulo the all-ones word `1^{2m}`; pair the numerals. -/
++theorem polyTimeComputable_rsaGenRaw (H : ArithmeticFP) : PolyTimeComputable rsaGenRaw := by
++  -- `1^{max n 2}`: `1^n` unless `n ≤ 1` (`polyTimeComputable_lenLe` against `[true]`)
++  have hle : PolyTimeComputable fun z => [decide ((NUPPT.inParam z).length ≤ 1)] := by
++    refine rsa_ptc_congr (rsa_comp polyTimeComputable_lenLe
++      ((polyTimeComputable_const [true]).pairEncode NUPPT.polyTimeComputable_inParam)) fun z => ?_
++    rw [pairFstD_pairEncode, pairSndD_pairEncode, List.length_singleton]
++  have hun : PolyTimeComputable fun z => List.replicate (NUPPT.inParam z).length true := by
++    refine rsa_ptc_congr (rsa_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam)
++      fun z => ?_
++    rw [PolyExpr.eval_var]
++  have hu := polyTimeComputable_ite (p := fun z => decide ((NUPPT.inParam z).length ≤ 1))
++    (f := fun _ => [true, true]) (g := fun z => List.replicate (NUPPT.inParam z).length true)
++    hle (polyTimeComputable_const _) hun
++  have h := rsa_comp (rsa_genCore_poly H) (hu.pairEncode NUPPT.polyTimeComputable_inCoins)
++  refine rsa_ptc_congr h fun z => ?_
++  have hm : (if decide ((NUPPT.inParam z).length ≤ 1) then [true, true]
++      else List.replicate (NUPPT.inParam z).length true) =
++      List.replicate (max (NUPPT.inParam z).length 2) true := by
++    by_cases h1 : (NUPPT.inParam z).length ≤ 1
++    · rw [if_pos (decide_eq_true h1), max_eq_right (by omega)]
++      rfl
++    · rw [if_neg (by simpa using h1), max_eq_left (by omega)]
++  rw [hm, rsa_genCore_spec, rsaGenRaw]
++
++/-- **The RSA generator** `Gen(1^n) = ⟨⟨N, e⟩, ⟨N, d⟩⟩` as a uniform `NUPPT`
++[PS10, Theorem 57.2, "`[(N, e), d] ← Gen(1^n)`"].
++
++**Deviation (run-3 audit P3-5):** the trapdoor is `⟨N, d⟩` where the text's is `d`, because
++`TrapdoorCollection.inv_spec` hands the inverter `⟨t, y⟩` without the index (the literal
++`Inv((i, t), y)` form of Definition 56.1 (6) was not adopted); `N` is therefore carried in the
++trapdoor. -/
++noncomputable def rsaGen (H : ArithmeticFP) : NUPPT :=
++  NUPPT.ofPolyTimeUniform (polyTimeComputable_rsaGenRaw H) rsaGenCoins
++
++/-- The activation of the generator: `rsaGenOut n` on the coins. -/
++theorem rsaGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n) :
++    (rsaGen H).runAt n [] r = rsaGenOut n (List.ofFn r) := by
++  rw [NUPPT.runAt_eq]
++  unfold rsaGen
++  rw [NUPPT.runAtL_ofPolyTimeUniform]
++  simp [rsaGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
++
++/-- The string function of the domain sampler on the raw layout `⟨⟨⟨1^n, ⟨N, e⟩⟩, α⟩, r⟩`:
++`unitSampleStr` on the modulus numeral. -/
++def rsaSampleRaw (z : List Bool) : List Bool :=
++  unitSampleStr (pairFstD (NUPPT.inArg z)) (NUPPT.inParam z).length (NUPPT.inCoins z)
++
++/-- **The unit sampler is polynomial-time** [PS10, Theorem 53.2, "the set `D_i` is also
++easy to sample"]: for any polynomial-time projection `f` of the raw input to the modulus
++numeral, `z ↦ unitSampleStr (f z) n (coins z)` is polynomial-time (shared by the RSA and
++Rabin samplers).
++
++**Proof sketch.** The unary bit length `1^{Nat.size N}` of `N = f z` is `H.size` (run-3
++audit P7-1), and `1^{B(n)}`, `1^{T(n)}` are `polyTimeComputable_unaryPoly`. The trial loop
++(`sampleUnitL = rejectBlocksL`) is the repetition host `polyTimeComputable_iterateFind` on the
++state `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨counter, coins⟩⟩` from `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨1^{T(n)}, r⟩⟩`:
++each step drops one counter token and one block of `B(n)` coins
++(`polyTimeComputable_pairDropPoly var`), each trial reads the first `k` coins
++(`polyTimeComputable_pairTakePoly var` on `⟨1^k, coins⟩`) and is accepted iff the counter is
++nonempty, the value is below `N` (`H.le`), and the numeral of `gcd(v, N)` — which `xgcdStr`
++returns at the width of `w` — reads `≤ 1` and `≥ 1` (two `H.le` tests against `[true]`); the
++payload is the block behind a marker. The search over `|x| + 1 ≥ T(n)` rounds is the search of
++`sampleUnitL` (the counter stops it at `T(n)`). The output is the remainder of
++`H.divMod ⟨b, w⟩`, a numeral of the width of `w`, where `b` is the accepted block, or `[true]`
++when no trial is accepted (`polyTimeComputable_isNil`, `polyTimeComputable_ite`): an accepted
++`v < N` is its own remainder, and the fallback is `1 mod N`. -/
++theorem polyTimeComputable_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
++    (hf : PolyTimeComputable f) :
++    PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
++  exact rsa_ptc_unitSampleStr H hf
++
+ /-- The domain sampler of the RSA collection is polynomial-time. -/
+ theorem polyTimeComputable_rsaSampleRaw (H : ArithmeticFP) : PolyTimeComputable rsaSampleRaw :=
+   polyTimeComputable_unitSampleStr H (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg)
+@@ -1140,20 +1503,6 @@ theorem rsaInv_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
+   unfold rsaEnc rsaEncVal
+   rw [if_pos hv, hlen]
+ 
+-/-- The fallback of the unit sampler is a unit: for `N > 0`, the value
+-`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
+-the default, `rsa_one_mod_spec`). -/
+-private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+-    (sampleUnitL N k B T r).getD (1 % N) < N ∧
+-      Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
+-  cases h : sampleUnitL N k B T r with
+-  | some v =>
+-    rw [Option.getD_some]
+-    exact sampleUnitL_spec h
+-  | none =>
+-    rw [Option.getD_none]
+-    exact rsa_one_mod_spec hN
+-
+ /-- The activation of the domain sampler: `rsaSampler` on the index `i` is `unitSampleStr` on
+ the modulus numeral `pairFstD i` (`NUPPT.runAtL_ofPolyTimeUniform` and the layout equations). -/
+ private theorem rsa_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+-- 
+2.43.0
+

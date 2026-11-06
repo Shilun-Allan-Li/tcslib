@@ -1,0 +1,107 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inAdvice, TCSlib.Cryptography.ggmEval_ofFn_walk, TCSlib.Cryptography.GGMRed.acc	67
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.inAdvice, Complexity.NUPPT.inArg_layout	65
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairFstD, Complexity.pairSndD, Complexity.pairSndD_pairEncode	81
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.layout, TCSlib.Cryptography.ggmEval_ofFn_walk	63
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, Complexity.NUPPT.distinguisher.eq_1	3
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.coinLen_eq, Complexity.NUPPT.coinsEquivPoly	27
+Complexity.NUPPT.coinsEquivPoly	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.coinsEquivPoly_ofFn	2
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	direct	Complexity.NUPPT.distinguisher.eq_1	1
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.advD, TCSlib.Cryptography.GGMRed.ans	42
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.inArg_layout, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.chal	24
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.inCoins_layout, TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans	41
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	48
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.inArg_layout, Complexity.NUPPT.inCoins_layout, TCSlib.Cryptography.GGMRed.acc	41
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.coins_ofPolyTime	3
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans	34
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt_eq, Complexity.NUPPT.distinguisher.eq_1	3
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt_eq	1
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.output, Complexity.NUPPT.runAt, TCSlib.Cryptography.GGMRed.acc	34
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.advice_length, Complexity.NUPPT.coinLen_eq	77
+Complexity.StateLoop.gstep	TCSlib.Complexity.Randomized.Build.StateLoop	deep	TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.stateLoopFun	6
+Complexity.StateLoop.orbit	TCSlib.Complexity.Randomized.Build.StateLoop	direct	Complexity.StateLoop.orbit_succ, TCSlib.Cryptography.GGMRed.stateLoopFun_eval	8
+TCSlib.Cryptography.challengeStream	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	direct	TCSlib.Cryptography.ggmBitsDist	4
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.decodeFin_ofFn, TCSlib.Cryptography.length_eq_of_decodeFin_eq_some, TCSlib.Cryptography.GGMRed.buildTreeQ	18
+TCSlib.Cryptography.extendStream	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	direct	TCSlib.Cryptography.challengeStream, TCSlib.Cryptography.ggmBitsDist	5
+TCSlib.Cryptography.ggmBitsDist	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct		1
+TCSlib.Cryptography.ggmDist	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBitsDist	1
+TCSlib.Cryptography.ggmEval	TCSlib.Cryptography.Asymptotic.PRFLemmas	direct	TCSlib.Cryptography.ggmEval_ofFn_walk, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.hist'	17
+TCSlib.Cryptography.ggmStep	TCSlib.Cryptography.Asymptotic.PRFLemmas	deep	TCSlib.Cryptography.ggmEval, TCSlib.Cryptography.ggmEval_ofFn_walk, TCSlib.Cryptography.GGMRed.ans	17
+TCSlib.Cryptography.levelAdv	TCSlib.Cryptography.Pseudorandom.Functions.GGM	deep	TCSlib.Cryptography.ggmBitsDist	1
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	direct		2
+TCSlib.Cryptography.pairSel	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.ggmEval_ofFn_walk	4
+TCSlib.Cryptography.prefixAt	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.ofFn_prefixAt	3
+TCSlib.Cryptography.selHalf	TCSlib.Cryptography.Asymptotic.PRFLemmas	direct	TCSlib.Cryptography.ggmEval, TCSlib.Cryptography.ggmEval_ofFn_walk, TCSlib.Cryptography.GGMRed.ans	18
+TCSlib.Cryptography.splitHalves	TCSlib.Cryptography.Pseudorandom.Functions.GGM	direct	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.ggmEval_ofFn_walk	17
+TCSlib.Cryptography.tableDist	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	deep	TCSlib.Cryptography.ggmBitsDist	1
+TCSlib.Cryptography.walk	TCSlib.Cryptography.Asymptotic.PRFLemmas	deep	TCSlib.Cryptography.ggmEval_ofFn_walk	1
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.output, Complexity.NUPPT.runAt	36
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime, TCSlib.Cryptography.GGMRed.rawFun_poly	6
+TCSlib.Cryptography.FunFamily.blocks	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.drop_take_ofFn_blocks	8
+TCSlib.Cryptography.GGMRed.acc	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	15
+TCSlib.Cryptography.GGMRed.advD	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	35
+TCSlib.Cryptography.GGMRed.ans	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.hist', TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.step	17
+TCSlib.Cryptography.GGMRed.bound	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	8
+TCSlib.Cryptography.GGMRed.buildTreeQ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct		4
+TCSlib.Cryptography.GGMRed.chal	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	24
+TCSlib.Cryptography.GGMRed.cnt	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.eqJ	30
+TCSlib.Cryptography.GGMRed.cnt'	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.step	16
+TCSlib.Cryptography.GGMRed.coinsAll	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	41
+TCSlib.Cryptography.GGMRed.coinsD	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	34
+TCSlib.Cryptography.GGMRed.coinsRest	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	38
+TCSlib.Cryptography.GGMRed.eqJ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	22
+TCSlib.Cryptography.GGMRed.fresh	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.hist', TCSlib.Cryptography.GGMRed.lab	22
+TCSlib.Cryptography.GGMRed.hist	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	35
+TCSlib.Cryptography.GGMRed.hist'	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.step	16
+TCSlib.Cryptography.GGMRed.histEnc	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.length_histEnc	11
+TCSlib.Cryptography.GGMRed.inS	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt	49
+TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.advD, TCSlib.Cryptography.GGMRed.ans	60
+TCSlib.Cryptography.GGMRed.isQ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.out, TCSlib.Cryptography.GGMRed.rawFun	19
+TCSlib.Cryptography.GGMRed.lab	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.hist', TCSlib.Cryptography.GGMRed.rawFun	18
+TCSlib.Cryptography.GGMRed.look	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.lookAcc	TCSlib.Cryptography.Asymptotic.GGMReduction	deep	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.lookOut	TCSlib.Cryptography.Asymptotic.GGMReduction	deep	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.lookStep	TCSlib.Cryptography.Asymptotic.GGMReduction	deep	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.lookup	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.ltJ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.move	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	33
+TCSlib.Cryptography.GGMRed.mul1	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	24
+TCSlib.Cryptography.GGMRed.mul2	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	24
+TCSlib.Cryptography.GGMRed.notFound	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	22
+TCSlib.Cryptography.GGMRed.out	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	8
+TCSlib.Cryptography.GGMRed.pairs	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.paramU	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt'	48
+TCSlib.Cryptography.GGMRed.pfx	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	24
+TCSlib.Cryptography.GGMRed.query	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	25
+TCSlib.Cryptography.GGMRed.queryOf	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.buildTreeQ	17
+TCSlib.Cryptography.GGMRed.rawFun	TCSlib.Cryptography.Asymptotic.GGMReduction	direct		6
+TCSlib.Cryptography.GGMRed.rnd	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.step	19
+TCSlib.Cryptography.GGMRed.seeds	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	23
+TCSlib.Cryptography.GGMRed.start	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	14
+TCSlib.Cryptography.GGMRed.stateLoopFun	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	6
+TCSlib.Cryptography.GGMRed.step	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun	15
+TCSlib.Cryptography.GGMRed.tbl	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	25
+TCSlib.Cryptography.GGMRed.tbl'	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.rawFun, TCSlib.Cryptography.GGMRed.step	16
+TCSlib.Cryptography.GGMRed.tblEnc	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.lookup_tblOf	8
+TCSlib.Cryptography.GGMRed.tblOf	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.tblOf_append_single	8
+TCSlib.Cryptography.GGMRed.un2	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.fresh, TCSlib.Cryptography.GGMRed.hist'	26
+TCSlib.Cryptography.GGMRed.unI	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.cnt', TCSlib.Cryptography.GGMRed.hist'	26
+TCSlib.Cryptography.GGMRed.unJ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.eqJ, TCSlib.Cryptography.GGMRed.fresh	25
+TCSlib.Cryptography.GGMRed.unQ	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.acc, TCSlib.Cryptography.GGMRed.rawFun	16
+TCSlib.Cryptography.GGMRed.verdictOf	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.buildTreeQ, TCSlib.Cryptography.GGMRed.out, TCSlib.Cryptography.GGMRed.rawFun	12
+TCSlib.Cryptography.GGMRed.vstr	TCSlib.Cryptography.Asymptotic.GGMReduction	direct	TCSlib.Cryptography.GGMRed.ans, TCSlib.Cryptography.GGMRed.hist', TCSlib.Cryptography.GGMRed.lab	19
+TCSlib.Cryptography.QueryTree.evalLazy	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	direct	TCSlib.Cryptography.ggmBitsDist	4
+TCSlib.Cryptography.QueryTree.noteQuery	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	direct	TCSlib.Cryptography.ggmBitsDist, TCSlib.Cryptography.QueryTree.evalLazy, TCSlib.Cryptography.QueryTree.noteQuery_of_mem	9
+TCSlib.Cryptography.QueryTree.simulate	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.ggmBitsDist	4

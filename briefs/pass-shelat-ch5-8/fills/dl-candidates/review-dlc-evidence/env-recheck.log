@@ -1,0 +1,26 @@
+# environment re-check after the coordinator's note (col-a reviewer: fill-rsa-oleans incomplete; rsa worker writing Candidates/* during copies) 2026-11-06T15:46:02Z
+original tree: last olean write 2026-11-06 15:15:11 (Candidates.olean); this copy was taken at ~15:31, after it (cp -a; mtimes above in the session log)
+order-list modules missing in the copy: none (every module of inputs/dl-c/order.txt has a nonempty olean)
+Checks closure: 36 modules missing/stale were built from base sources before (base-restore.log)
+## rebuild of Candidates/* from base sources, hash before -> after
+  TCSlib/Cryptography/Candidates/Arithmetic before=5fe934f2f15a1782 after=5fe934f2f15a1782 orig=5fe934f2f15a1782
+  TCSlib/Cryptography/Candidates/Concrete before=701f3133386bbfb9 after=701f3133386bbfb9 orig=701f3133386bbfb9
+  TCSlib/Cryptography/Candidates/Factoring before=15e0672e0bbdb000 after=15e0672e0bbdb000 orig=15e0672e0bbdb000
+  TCSlib/Cryptography/Candidates/RSA before=51054bb794a541b0 after=51054bb794a541b0 orig=9b6b5565a5a8f16a
+  TCSlib/Cryptography/Candidates/Rabin before=2eb7db46a2b9c299 after=2eb7db46a2b9c299 orig=2eb7db46a2b9c299
+  TCSlib/Cryptography/Candidates/DiscreteLog before=ebd16ec38ca30ca0 after=ebd16ec38ca30ca0 orig=ebd16ec38ca30ca0
+  TCSlib/Cryptography/Candidates/DiscreteLogHardcore before=678a7c21f820d97f after=678a7c21f820d97f orig=678a7c21f820d97f
+  TCSlib/Cryptography/Candidates/Arithmetic rc=0 3s errors=0 sorry=0
+  TCSlib/Cryptography/Candidates/Concrete rc=0 5s errors=0 sorry=1
+  TCSlib/Cryptography/Candidates/Factoring rc=0 4s errors=0 sorry=10
+  TCSlib/Cryptography/Candidates/RSA rc=0 8s errors=0 sorry=10
+  TCSlib/Cryptography/Candidates/Rabin rc=0 7s errors=0 sorry=19
+  TCSlib/Cryptography/Candidates/DiscreteLog rc=0 4s errors=0 sorry=6
+  TCSlib/Cryptography/Candidates/DiscreteLogHardcore rc=0 4s errors=0 sorry=7
+  # done 2026-11-06T15:46:37Z
+  ElGamal at base: TCSlib/Cryptography/Candidates/ElGamal rc=0 4s errors=0 sorry=7 hash=134fd8000c02e5fd (orig base hash 134fd8000c02e5fd)
+## head re-check after the rebuild (module-checks2.log)
+  === TCSlib/Cryptography/Candidates/ElGamal rc=0 13s
+  === TCSlib/Cryptography/Candidates rc=0 2s
+  === audits/pass-shelat/Checks rc=0 122s
+  every Candidates olean rebuilt from base sources is byte-identical to the one the earlier checks used, so module-checks.log, axioms.log, the integration replay and the seal runs stand on a base tree; sorry counts per module equal inputs/dl-c/base-sorries.txt rows (Concrete 1, Factoring 10, RSA 10, Rabin 19, DiscreteLog 6, DiscreteLogHardcore 7, ElGamal 7 at base)

@@ -1,0 +1,33 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/r2fix/probes/R201ControlSealed.lean:17:46: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  z
+has type
+  (P.glPad m henc).toCollection.1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/r2fix/probes/R201ControlSealed.lean:20:89: error: Type mismatch
+  (x, r)
+has type
+  P.D i × (Fin (P.encD i default).length → Bool)
+but is expected to have type
+  (P.glPad m henc).D i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/r2fix/probes/R201ControlSealed.lean:25:68: error: Application type mismatch: The argument
+  z
+has type
+  (P.glPad m henc).D i
+but is expected to have type
+  P.D i × ?m.9
+in the application
+  ((P.perm i).prodCongr (Equiv.refl ?m.9)) z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/r2fix/probes/R201ControlSealed.lean:31:2: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (P.glPad m henc).perm i =
+    ((P.glPad_domEquiv m henc i).trans ((P.perm i).prodCongr (Equiv.refl (Fin (P.encD i default).length → Bool)))).trans
+      (P.glPad_domEquiv m henc i).symm
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/r2fix/probes/R201ControlSealed.lean:35:67: error: Type mismatch
+  z
+has type
+  (P.glPad m henc).D i
+but is expected to have type
+  P.D i × (Fin (P.encD i default).length → Bool)
+rc=1

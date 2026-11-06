@@ -979,7 +979,7 @@ def glPadInvFun (T : TrapdoorCollection) (z : List Bool) : List Bool :=
       (NUPPT.inCoins z)))
     (pairSndD (pairSndD (NUPPT.inArg z)))
 
-/-- The defining equation of `glPadInvFun`. -/
+/-- `glPadInvFun T z = ⟨Inv(1^n, ⟨t, y⟩; s), r⟩` on `z = ⟨⟨⟨1^n, ⟨t, ⟨y, r⟩⟩⟩, []⟩, s⟩`. -/
 theorem glPadInvFun_eq (T : TrapdoorCollection) (z : List Bool) : glPadInvFun T z = pairEncode
     (T.inv.output (NUPPT.layout (NUPPT.inParam z)
       (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))) []

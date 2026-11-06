@@ -1,0 +1,57 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		20
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.ColMachines.argM, TCSlib.Cryptography.ColMachines.argX, TCSlib.Cryptography.ColMachines.argZ	23
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.ColMachines.argM, TCSlib.Cryptography.ColMachines.argX, TCSlib.Cryptography.ColMachines.argZ	24
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	20
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, TCSlib.Cryptography.ColMachines.argM	24
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.ColMachines.ilayout	16
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.ColMachines.argM, TCSlib.Cryptography.ColMachines.argX, TCSlib.Cryptography.ColMachines.argZ	16
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		5
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct	TCSlib.Cryptography.ColMachines.ilayout	12
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct		7
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	7
+TCSlib.Cryptography.decColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		4
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		10
+TCSlib.Cryptography.edgeList	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.edgeCount	4
+TCSlib.Cryptography.edgeOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		1
+TCSlib.Cryptography.encColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.padColor, TCSlib.Cryptography.ColMachines.permTable, TCSlib.Cryptography.ColMachines.tableOfIdx	6
+TCSlib.Cryptography.encColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.encColor, TCSlib.Cryptography.padColor, TCSlib.Cryptography.ColMachines.permTable	6
+TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	direct		1
+TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		2
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.padColor	2
+TCSlib.Cryptography.perm3Equiv	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.samplePerm3, TCSlib.Cryptography.ColMachines.tableOfIdx	6
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	7
+TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		2
+TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	7
+TCSlib.Cryptography.samplePerm3	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		5
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	7
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	20
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	20
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	20
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	20
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	20
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	20
+TCSlib.Cryptography.ColMachines.argM	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		7
+TCSlib.Cryptography.ColMachines.argX	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		13
+TCSlib.Cryptography.ColMachines.argZ	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		2
+TCSlib.Cryptography.ColMachines.colorFromTable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		1
+TCSlib.Cryptography.ColMachines.colorVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		2
+TCSlib.Cryptography.ColMachines.countTrue	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct	TCSlib.Cryptography.ColMachines.nthTrue	3
+TCSlib.Cryptography.ColMachines.encColorOfVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		1
+TCSlib.Cryptography.ColMachines.firstTrial	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.sampleVal	3
+TCSlib.Cryptography.ColMachines.histLen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		2
+TCSlib.Cryptography.ColMachines.ilayout	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		11
+TCSlib.Cryptography.ColMachines.natOfBits	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.sampleVal	3
+TCSlib.Cryptography.ColMachines.nthTrue	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		2
+TCSlib.Cryptography.ColMachines.padTo	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		3
+TCSlib.Cryptography.ColMachines.permTable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct	TCSlib.Cryptography.ColMachines.tableOfIdx	2
+TCSlib.Cryptography.ColMachines.sampleVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		3
+TCSlib.Cryptography.ColMachines.tableOfIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		1
+TCSlib.Cryptography.EncodingMachines.firstIdx	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	direct	TCSlib.Cryptography.ColMachines.histLen, TCSlib.Cryptography.ColMachines.nthTrue, TCSlib.Cryptography.ColMachines.sampleVal	8
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ColMachines.ilayout	11

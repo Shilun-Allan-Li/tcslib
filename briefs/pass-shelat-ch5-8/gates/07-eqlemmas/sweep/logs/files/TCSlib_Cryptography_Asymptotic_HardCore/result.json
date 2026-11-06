@@ -1,0 +1,483 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 47,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.FunFamily.glBit",
+   "TCSlib.Cryptography.FunFamily.glBit_append",
+   "TCSlib.Cryptography.FunFamily.glInverter",
+   "TCSlib.Cryptography.FunFamily.glPad",
+   "TCSlib.Cryptography.FunFamily.glPad_f",
+   "TCSlib.Cryptography.FunFamily.predProb_glPad",
+   "TCSlib.Cryptography.PRG.oneBit",
+   "TCSlib.Cryptography.PRG.oneBit_G",
+   "TCSlib.Cryptography.PermFamily.iterPRG",
+   "TCSlib.Cryptography.PermFamily.iterPRG_eq_expand",
+   "TCSlib.Cryptography.cor_81_7",
+   "TCSlib.Cryptography.owpGenPRG_G_castSucc",
+   "TCSlib.Cryptography.owpGenPRG_G_last",
+   "TCSlib.Cryptography.owp_hardcore_prg"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.PRG.oneBit": [
+   [
+    217,
+    7,
+    "B",
+    "Type mismatch\n  G\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + 1) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add (PolyExpr.const 1)).eval n) \u2192 Bool"
+   ],
+   [
+    218,
+    15,
+    "B",
+    "Type mismatch\n  Nat.lt_succ_self n\nhas type\n  n < n.succ\nbut is expected to have type\n  n < (PolyExpr.var.add (PolyExpr.const 1)).eval n"
+   ]
+  ],
+  "TCSlib.Cryptography.PRG.oneBit_G": [
+   [
+    226,
+    48,
+    "T",
+    "Type mismatch\n  G n s\nhas type\n  Fin (n + 1) \u2192 Bool\nbut is expected to have type\n  Fin ((oneBit G).stretch.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.owpGenPRG_G_castSucc": [
+   [
+    235,
+    59,
+    "T",
+    "Application type mismatch: The argument\n  i.castSucc\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n s i.castSucc"
+   ]
+  ],
+  "TCSlib.Cryptography.owpGenPRG_G_last": [
+   [
+    240,
+    47,
+    "T",
+    "Application type mismatch: The argument\n  Fin.last n\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n s (Fin.last n)"
+   ]
+  ],
+  "TCSlib.Cryptography.owp_hardcore_prg": [
+   [
+    330,
+    60,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ],
+  "TCSlib.Cryptography.PermFamily.iterPRG": [
+   [
+    524,
+    15,
+    "B",
+    "Type mismatch\n  Nat.lt_succ_of_le (h\u2113 n)\nhas type\n  n < (\u2113.eval n).succ\nbut is expected to have type\n  n < (\u2113.add (PolyExpr.const 1)).eval n"
+   ]
+  ],
+  "TCSlib.Cryptography.PermFamily.iterPRG_eq_expand": [
+   [
+    533,
+    16,
+    "T",
+    "Type mismatch\n  Nat.lt_succ_of_le (h\u2113 n)\nhas type\n  n < (\u2113.eval n).succ\nbut is expected to have type\n  n < (\u2113.add (PolyExpr.const 1)).eval n"
+   ]
+  ],
+  "TCSlib.Cryptography.cor_81_7": [
+   [
+    550,
+    85,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.glPad": [
+   [
+    568,
+    89,
+    "B",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin ((\ud835\udcd5.inLen.add \ud835\udcd5.inLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.inLen.eval n) (\ud835\udcd5.inLen.eval n)).symm z"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.glBit": [
+   [
+    573,
+    89,
+    "B",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.inLen.eval n) (\ud835\udcd5.inLen.eval n)).symm z"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.glInverter": [
+   [
+    581,
+    89,
+    "B",
+    "Application type mismatch: The argument\n  y\nhas type\n  Fin (\ud835\udcd5.glPad.outLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.outLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)).symm y"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.glPad_f": [
+   [
+    585,
+    16,
+    "T",
+    "Application type mismatch: The argument\n  Fin.append x r\nhas type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nin the application\n  \ud835\udcd5.glPad.f n (Fin.append x r)"
+   ],
+   [
+    585,
+    35,
+    "T",
+    "Type mismatch\n  Fin.append (\ud835\udcd5.f n x) r\nhas type\n  Fin (\ud835\udcd5.outLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.outLen.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.glBit_append": [
+   [
+    593,
+    14,
+    "T",
+    "Application type mismatch: The argument\n  Fin.append x r\nhas type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nin the application\n  \ud835\udcd5.glBit n (Fin.append x r)"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.predProb_glPad": [
+   [
+    605,
+    22,
+    "T",
+    "Application type mismatch: The argument\n  (Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)) y\nhas type\n  Fin (\ud835\udcd5.outLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.outLen.eval n) \u2192 Bool\nin the application\n  A ((Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)) y)"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.PermFamily.iterPRG": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    524
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  Nat.lt_succ_of_le (h\u2113 n)\nhas type\n  n < (\u2113.eval n).succ\nbut is expected to have type\n  n < (\u2113.add (PolyExpr.const 1)).eval n"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.PermFamily.iterPRG_eq_expand": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    533
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  Nat.lt_succ_of_le (h\u2113 n)\nhas type\n  n < (\u2113.eval n).succ\nbut is expected to have type\n  n < (\u2113.add (PolyExpr.const 1)).eval n"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.PRG.oneBit_G": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    226
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  G n s\nhas type\n  Fin (n + 1) \u2192 Bool\nbut is expected to have type\n  Fin ((oneBit G).stretch.eval n) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.glBit": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    573
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.inLen.eval n) (\ud835\udcd5.inLen.eval n)).symm z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.glInverter": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    581
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  y\nhas type\n  Fin (\ud835\udcd5.glPad.outLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.outLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)).symm y"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.PRG.oneBit": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    217,
+    218
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  G\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (n + 1) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin ((PolyExpr.var.add (PolyExpr.const 1)).eval n) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.glPad": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    568
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin ((\ud835\udcd5.inLen.add \ud835\udcd5.inLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (Fin.appendEquiv (\ud835\udcd5.inLen.eval n) (\ud835\udcd5.inLen.eval n)).symm z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.glBit_append": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    593
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  Fin.append x r\nhas type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nin the application\n  \ud835\udcd5.glBit n (Fin.append x r)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.owpGenPRG_G_castSucc": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    235
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  i.castSucc\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n s i.castSucc"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.owpGenPRG_G_last": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    240
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  Fin.last n\nhas type\n  Fin (n + 1)\nbut is expected to have type\n  Fin ((owpGenPRG P h).stretch.eval n)\nin the application\n  (owpGenPRG P h).G n s (Fin.last n)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.glPad_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    585
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  Fin.append x r\nhas type\n  Fin (\ud835\udcd5.inLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.inLen.eval n) \u2192 Bool\nin the application\n  \ud835\udcd5.glPad.f n (Fin.append x r)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.cor_81_7": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    550
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.predProb_glPad": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    605
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)) y\nhas type\n  Fin (\ud835\udcd5.outLen.eval n + \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin (\ud835\udcd5.glPad.outLen.eval n) \u2192 Bool\nin the application\n  A ((Fin.appendEquiv (\ud835\udcd5.outLen.eval n) (\ud835\udcd5.inLen.eval n)) y)"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.owp_hardcore_prg": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    330
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.PermFamily.iterPRG": [],
+  "TCSlib.Cryptography.PermFamily.iterPRG_eq_expand": [
+   "TCSlib.Cryptography.PRG.expand",
+   "TCSlib.Cryptography.PermFamily.iterPRG",
+   "TCSlib.Cryptography.oneBitStep"
+  ],
+  "TCSlib.Cryptography.PRG.oneBit_G": [
+   "TCSlib.Cryptography.PRG.oneBit"
+  ],
+  "TCSlib.Cryptography.FunFamily.glBit": [
+   "TCSlib.Cryptography.FunFamily.glPad"
+  ],
+  "TCSlib.Cryptography.FunFamily.glInverter": [
+   "TCSlib.Cryptography.FunFamily.glPad"
+  ],
+  "TCSlib.Cryptography.PRG.oneBit": [],
+  "TCSlib.Cryptography.FunFamily.glPad": [],
+  "TCSlib.Cryptography.FunFamily.glBit_append": [
+   "TCSlib.Cryptography.FunFamily.glBit",
+   "TCSlib.Cryptography.FunFamily.glPad"
+  ],
+  "TCSlib.Cryptography.owpGenPRG_G_castSucc": [
+   "TCSlib.Cryptography.PRG.oneBit",
+   "TCSlib.Cryptography.owpGenPRG"
+  ],
+  "TCSlib.Cryptography.owpGenPRG_G_last": [
+   "TCSlib.Cryptography.PRG.oneBit",
+   "TCSlib.Cryptography.owpGenPRG"
+  ],
+  "TCSlib.Cryptography.FunFamily.glPad_f": [
+   "TCSlib.Cryptography.FunFamily.glPad"
+  ],
+  "TCSlib.Cryptography.cor_81_7": [
+   "TCSlib.Cryptography.HardCore",
+   "TCSlib.Cryptography.PermFamily.iterPRG"
+  ],
+  "TCSlib.Cryptography.FunFamily.predProb_glPad": [
+   "TCSlib.Cryptography.FunFamily.glBit",
+   "TCSlib.Cryptography.FunFamily.glPad"
+  ],
+  "TCSlib.Cryptography.owp_hardcore_prg": [
+   "TCSlib.Cryptography.HardCore",
+   "TCSlib.Cryptography.PRG.oneBit",
+   "TCSlib.Cryptography.owpGenPRG"
+  ]
+ },
+ "runs": 39,
+ "seconds": 103
+}

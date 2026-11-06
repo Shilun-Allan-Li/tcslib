@@ -1,0 +1,116 @@
+From 1b4e1100ab46e6f0940516fc2be2b5f25e7b6596 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 14:45:28 +0000
+Subject: [PATCH 21/25] ElGamal: fill egDecStr_apply and elGamal_correct
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjbdigRAJ9GynaUSPx
+---
+ TCSlib/Cryptography/Candidates/ElGamal.lean | 84 ++++++++++++++++++++-
+ 1 file changed, 82 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index 831c042a..43842de7 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -1258,7 +1258,22 @@ theorem egDecStr_apply (pstr t a c₁ c₂ : List Bool) (hp : 0 < listToNat pstr
+       natToList pstr.length (listToNat c₂ *
+         (((listToNat c₁ ^ listToNat a % listToNat pstr : ℕ) : ZMod (listToNat pstr))⁻¹).val %
+           listToNat pstr) := by
+-  sorry
++  have hp2 : listToNat pstr < 2 ^ pstr.length := listToNat_lt_two_pow pstr
++  haveI : NeZero (listToNat pstr) := ⟨hp.ne'⟩
++  have he : listToNat (natToList pstr.length (listToNat c₁ ^ listToNat a % listToNat pstr)) =
++      listToNat c₁ ^ listToNat a % listToNat pstr :=
++    listToNat_natToList ((Nat.mod_lt _ hp).trans hp2)
++  have hi : listToNat (natToList pstr.length
++      ((((listToNat c₁ ^ listToNat a % listToNat pstr : ℕ) : ZMod (listToNat pstr))⁻¹).val)) =
++      (((listToNat c₁ ^ listToNat a % listToNat pstr : ℕ) : ZMod (listToNat pstr))⁻¹).val :=
++    listToNat_natToList ((ZMod.val_lt _).trans hp2)
++  unfold egDecStr
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [modExpStr_pairEncode, xgcdStr_pairEncode, pairSndD_pairEncode, he, mulStr_pairEncode, hi,
++    divModStr_pairEncode, pairSndD_pairEncode, length_natToList]
++  rw [listToNat_natToList]
++  rw [pow_add]
++  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow c₂) ((ZMod.val_lt _).trans hp2)
+ 
+ /-- **El Gamal** [PS10, Algorithm 106.2] from a safe-prime instance generator `G` (used for
+ `(p, q)` only) and the arithmetic bundle: `Gen(1^n) = ⟨⟨⟨p, ⟨q, h⟩⟩, h^a⟩, ⟨⟨p, ⟨q, h⟩⟩, a⟩⟩` with
+@@ -1296,7 +1311,72 @@ theorem elGamal_correct (H : ArithmeticFP) (G : SafePrimeGen) {n : ℕ} (hn : G.
+     decodeFin n (egDecStr (pairEncode (pairSndD ((egGen H G).runAt n [] rg))
+       ((egEnc H).runAt n (pairEncode (pairFstD ((egGen H G).runAt n [] rg)) (natToList n m)) re))) =
+       some (natToBits n m) := by
+-  sorry
++  -- the first coin segment is a coin string of the safe-prime generator
++  have hlen : ((List.ofFn rg).take (G.gen.coinLen n)).length = G.gen.coinLen n := by
++    rw [List.length_take, List.length_ofFn]
++    simp only [NUPPT.coinLen_eq, egGen, NUPPT.coins_ofPolyTimeUniform, egGenCoins, PolyExpr.eval_add]
++    omega
++  obtain ⟨r', hr'⟩ : ∃ r' : G.gen.Coins n, List.ofFn r' = (List.ofFn rg).take (G.gen.coinLen n) :=
++    ⟨fun j => ((List.ofFn rg).take (G.gen.coinLen n)).get (Fin.cast hlen.symm j),
++      List.ext_get (by rw [List.length_ofFn, hlen]) (fun k h1 h2 => by simp)⟩
++  have hv := G.valid n r' hn
++  obtain ⟨a, b, c, ho, ha, hb, -⟩ := (wellFormedIndex_iff n _).1 (G.wellFormed n r' hn)
++  rw [ho] at hv
++  simp only [safePrimeValid_iff, expValid_iff, dlP_eq, dlM_eq, pairFstD_pairEncode,
++    pairSndD_pairEncode] at hv
++  have hpp : (listToNat a).Prime := hv.1.1
++  have hqp : (listToNat b).Prime := hv.2.1
++  have hpq : listToNat a = 2 * listToNat b + 1 := hv.2.2
++  haveI : Fact (listToNat a).Prime := ⟨hpp⟩
++  have hp2n : listToNat a < 2 ^ n := ha ▸ listToNat_lt_two_pow a
++  have hp0 : 0 < listToNat a := hpp.pos
++  -- the keys
++  rw [egGen_runAt, ← hr', ← NUPPT.runAt_eq, ho] at hm ⊢
++  simp only [egGenParts, pairFstD_pairEncode, pairSndD_pairEncode, dlP_eq, dlM_eq] at hm ⊢
++  generalize hr₁ : ((List.ofFn rg).drop (G.gen.coinLen n)).take (n * n) = r₁ at hm ⊢
++  generalize hr₂ : (List.ofFn rg).drop (G.gen.coinLen n + n * n) = r₂ at hm ⊢
++  have hg0 := egUnit_pos n (listToNat a) r₁
++  have hgp := egUnit_lt hpp.two_le n r₁
++  generalize hg : egUnit n (listToNat a) r₁ = g at hm ⊢ hg0 hgp
++  have hx : (sampleBelowL (listToNat b) (Nat.size (listToNat b)) n n r₂).getD 0 < listToNat a := by
++    rcases hs : sampleBelowL (listToNat b) (Nat.size (listToNat b)) n n r₂ with _ | v
++    · exact hp0
++    · have := sampleBelowL_lt hs
++      rw [Option.getD_some]
++      omega
++  generalize (sampleBelowL (listToNat b) (Nat.size (listToNat b)) n n r₂).getD 0 = x at hm ⊢ hx
++  -- the message lies below `p`
++  have hmp : m < listToNat a := by
++    unfold egCanon at hm
++    split_ifs at hm with hc
++    · exact hc.2.1
++    · rw [← hm]
++      exact hpp.one_lt
++  -- the ciphertext
++  rw [egEnc_runAt]
++  unfold egEncParts
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, dlP_eq, dlM_eq, dlG_eq]
++  have hh : g ^ 2 % listToNat a < listToNat a := Nat.mod_lt _ hp0
++  rw [listToNat_natToList (hh.trans hp2n), listToNat_natToList ((Nat.mod_lt _ hp0).trans hp2n),
++    listToNat_natToList (hmp.trans hp2n), hm]
++  generalize ((sampleBelowL (listToNat b) (Nat.size (listToNat b)) n n (List.ofFn re)).getD 0) = y
++  -- the decryption
++  rw [egDecStr_apply _ _ _ _ _ hp0, listToNat_natToList ((Nat.mod_lt _ hp0).trans hp2n),
++    listToNat_natToList ((Nat.mod_lt _ hp0).trans hp2n), listToNat_natToList (hx.trans hp2n), ha]
++  -- in `Z_p`: `(h^x)^y · m · ((h^y)^x)⁻¹ = m`
++  have hgz : ((g : ℕ) : ZMod (listToNat a)) ≠ 0 := by
++    rw [Ne, ZMod.natCast_eq_zero_iff]
++    exact Nat.not_dvd_of_pos_of_lt hg0 hgp
++  have key : (((g ^ 2 % listToNat a) ^ x % listToNat a) ^ y * m % listToNat a *
++      ((((g ^ 2 % listToNat a) ^ y % listToNat a) ^ x % listToNat a : ℕ) :
++        ZMod (listToNat a))⁻¹.val % listToNat a : ℕ) = ((m : ℕ) : ZMod (listToNat a)) := by
++    push_cast [ZMod.natCast_mod, ZMod.natCast_zmod_val]
++    rw [← pow_mul, ← pow_mul, ← pow_mul, ← pow_mul, mul_comm x y, mul_comm _ (m : ZMod (listToNat a)),
++      mul_assoc, mul_inv_cancel₀ (pow_ne_zero _ hgz), mul_one]
++  have hval := congrArg ZMod.val key
++  rw [ZMod.val_natCast, ZMod.val_natCast, Nat.mod_eq_of_lt (Nat.mod_lt _ hp0),
++    Nat.mod_eq_of_lt hmp] at hval
++  rw [hval, natToList_eq, decodeFin_ofFn]
+ 
+ /-! ## The derived instance generator and Theorem 107.3 -/
+ 
+-- 
+2.43.0
+

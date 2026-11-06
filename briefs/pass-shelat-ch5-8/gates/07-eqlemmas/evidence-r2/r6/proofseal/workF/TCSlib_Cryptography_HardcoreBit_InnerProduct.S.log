@@ -1,0 +1,25 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_HardcoreBit_InnerProduct.S.lean:158:9: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.100
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_HardcoreBit_InnerProduct.S.lean:209:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.HardcoreBit.perfectInverter_eq`:
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_HardcoreBit_InnerProduct.S.lean:221:36: error: Application type mismatch: The argument
+  h
+has type
+  predProb (glPad f) glBit A = 1
+but is expected to have type
+  uprob ?m.29 = 1
+in the application
+  forall_of_uprob_eq_one h
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/workF/TCSlib_Cryptography_HardcoreBit_InnerProduct.S.lean:220:88: error: unsolved goals
+n : ℕ
+β : Type u_1
+ρ : Type u_3
+inst✝ : Fintype ρ
+f : (Fin n → Bool) → β
+A : β × (Fin n → Bool) → ρ → Bool
+h : predProb (glPad f) glBit A = 1
+⊢ invProb (glPad f) (perfectInverter A) = 1

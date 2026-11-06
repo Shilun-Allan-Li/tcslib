@@ -1,0 +1,69 @@
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:153:47: error: Application type mismatch: The argument
+  x
+has type
+  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:153:86: error: Application type mismatch: The argument
+  x
+has type
+  Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+but is expected to have type
+  Fin (2 * n) → Bool
+in the application
+  (FunFamily.blocks 2 n) x
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:163:14: error: Application type mismatch: The argument
+  x
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n x
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:163:18: error: Type mismatch
+  natToBits (2 * n) (fmultNat (bitsToNat ((FunFamily.blocks 2 n) x 0)) (bitsToNat ((FunFamily.blocks 2 n) x 1)))
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.outLen.eval n) → Bool
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:178:63: error: Application type mismatch: The argument
+  x'
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.inLen.eval n) → Bool
+in the application
+  fmult.f n x'
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:178:68: error: Type mismatch
+  natToBits (2 * n) (p * q)
+has type
+  Fin (2 * n) → Bool
+but is expected to have type
+  Fin (fmult.outLen.eval n) → Bool
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:359:6: error: Application type mismatch: The argument
+  (FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys
+has type
+  Fin (fmultBlocks.eval n * (2 * n)) → Bool
+but is expected to have type
+  Fin ((fmult.prod fmultBlocks).outLen.eval n) → Bool
+in the application
+  A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+    ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys)
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:377:38: error: Application type mismatch: The argument
+  fmult.f n
+has type
+  (Fin (fmult.inLen.eval n) → Bool) → Fin (fmult.outLen.eval n) → Bool
+but is expected to have type
+  (Fin (2 * n) → Bool) → Fin (2 * n) → Bool
+in the application
+  OneWay.yaoTry (fmult.f n)
+TCSlib_Cryptography_Candidates_Factoring/S0.lean:785:100: error: Application type mismatch: The argument
+  r
+has type
+  (collectionFactorer A).Coins n
+but is expected to have type
+  A.Coins n
+in the application
+  A.runAt n (pairEncode (List.replicate n true) y) r

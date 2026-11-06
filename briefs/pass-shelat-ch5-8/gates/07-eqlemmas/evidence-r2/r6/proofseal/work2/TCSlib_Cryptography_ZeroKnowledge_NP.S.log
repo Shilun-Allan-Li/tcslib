@@ -1,0 +1,32 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_NP.S.lean:155:2: error: Invalid `⟨...⟩` notation: The expected type `L ≤ₚ L'` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_NP.S.lean:255:9: error: Tactic `rcases` failed: `hS : S.Efficient` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_NP.S.lean:292:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+μ : ℕ → ℝ
+hμ : Negligible μ
+φ : ℕ → ℕ
+hφ : ∀ (N : ℕ), N ≤ φ N
+⊢ Negligible fun N => μ (φ N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_NP.S.lean:438:44: error: Application type mismatch: The argument
+  le_rfl
+has type
+  ?m.253 ≤ ?m.253
+but is expected to have type
+  { next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+      (f x).length ≤
+    P'.coinLen x.length
+in the application
+  coinTrunc ⋯
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_NP.S.lean:501:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+L L' : Language Bool
+R R' : List Bool → List Bool → Prop
+f : List Bool → List Bool
+w : List Bool → List Bool → List Bool
+p : PolyExpr
+h : LevinReduction L L' R R' f w p
+π : Protocol
+hzk : ZK π R'
+⊢ ZK (π.pullback f w p) R

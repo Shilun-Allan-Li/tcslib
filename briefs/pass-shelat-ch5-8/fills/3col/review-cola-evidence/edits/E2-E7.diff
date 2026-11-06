@@ -1,0 +1,156 @@
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
+index e79ac49e..b53c6983 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound.lean
+@@ -175,19 +175,16 @@ theorem blockRead_eq (b K C : ℕ) (h : K * b ≤ C) (r : Fin C → Bool) (t : F
+         _ ≤ C := h⟩ := rfl
+ 
+ /-- **The blocks of a uniform tape are independent and uniform**: `blockRead` is the restriction
+-to the first `K b` bits (`GIZK.pushesUniform_castLE`) followed by the bijection
+-`(Fin (K b) → Bool) ≃ (Fin K → Fin b → Bool)` (`finProdFinEquiv`, `Equiv.curry`). -/
++to the first `K b` bits (`GIZK.pushesUniform_castLE`) followed by the blockwise bijection
++`EnsembleLemmas.blocks K b : (Fin (K b) → Bool) ≃ (Fin K → Fin b → Bool)`
++(`EnsembleLemmas.blocks_apply`). -/
+ theorem pushesUniform_blockRead (b K C : ℕ) (h : K * b ≤ C) :
+     HardcoreBit.PushesUniform (blockRead b K C h) := by
+-  let e : (Fin (K * b) → Bool) ≃ (Fin K → Fin b → Bool) :=
+-    (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
+-  have he : ∀ s : Fin (K * b) → Bool, ∀ t j, e s t j = s (finProdFinEquiv (t, j)) := by
+-    intro s t j
+-    rfl
+-  have hc := (GIZK.pushesUniform_castLE (B := Bool) h).comp (HardcoreBit.pushesUniform_equiv e)
++  have hc := (GIZK.pushesUniform_castLE (B := Bool) h).comp
++    (HardcoreBit.pushesUniform_equiv (EnsembleLemmas.blocks K b))
+   convert hc using 1
+   funext r t j
+-  rw [he, blockRead_eq]
++  rw [EnsembleLemmas.blocks_apply, blockRead_eq]
+   congr 1
+   apply Fin.ext
+   simp only [Fin.coe_castLE, finProdFinEquiv_apply_val]
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
+index 2630312e..2675b942 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
+@@ -124,20 +124,6 @@ private noncomputable def scanTest (x y : List Bool) : Bool :=
+     decide (firstIdx (badEntry x y (Nat.sqrt x.length)) (Nat.sqrt x.length * Nat.sqrt x.length) =
+       Nat.sqrt x.length * Nat.sqrt x.length)
+ 
+-/-- Exclusive or of two one-bit tests is polynomial-time (private copy of
+-`Complexity.polyTimeComputable_xor` of `Complexity/ClassP/BinaryArith/Basic.lean`, which is
+-not upstream of this file: `polyTimeComputable_ite` on the first test). -/
+-private theorem colRep_xor_poly {p q : List Bool → Bool}
+-    (hp : PolyTimeComputable (fun x => [p x])) (hq : PolyTimeComputable (fun x => [q x])) :
+-    PolyTimeComputable (fun x => [p x ^^ q x]) :=
+-  ptc_congr (polyTimeComputable_ite hp (polyTimeComputable_not hq) hq) fun x => by
+-    cases p x <;> cases q x <;> rfl
+-
+-/-- Two Booleans with exclusive or `false` are equal. -/
+-private theorem eq_of_xor_eq_false {a b : Bool} (h : (a ^^ b) = false) : a = b := by
+-  revert h
+-  cases a <;> cases b <;> decide
+-
+ /-- The well-formedness test as a length test: `x = encGraph G` for `⟨n, G⟩ = decGraph x` iff
+ `|x| = (√|x|)²` (`encGraph_decGraph_eq_take`, `decGraph_fst`, `Nat.sqrt_le`). -/
+ private theorem wf_iff (x : List Bool) :
+@@ -193,12 +179,12 @@ private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
+       have hb := hgood i hi
+       rw [badVertex, Bool.or_eq_false_iff] at hb
+       rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit0 i hi]
+-      exact eq_of_xor_eq_false hb.1
++      exact bne_eq_false_iff_eq.1 hb.1
+     · have hi : i < N := by omega
+       have hb := hgood i hi
+       rw [badVertex, Bool.or_eq_false_iff] at hb
+       rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit1 i hi]
+-      exact eq_of_xor_eq_false hb.2
++      exact bne_eq_false_iff_eq.1 hb.2
+ 
+ /-- The properness test: for a graph `G` on `N` vertices whose entry `(u, v)` is bit `v + N u`
+ of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge.
+@@ -260,7 +246,8 @@ private theorem scanTest_iff (x y : List Bool) :
+ /-! ### Polynomial time -/
+ 
+ /-- The badly-encoded-vertex test is polynomial-time on `⟨1^i, z⟩` for `y = snd z`
+-(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`). -/
++(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`,
++`StateLoop.xor_poly`). -/
+ private theorem badVertex_poly :
+     PolyTimeComputable fun w => [badVertex (pairSndD (pairSndD w)) (pairFstD w).length] := by
+   have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
+@@ -272,8 +259,8 @@ private theorem badVertex_poly :
+   have hb1 := getBit_poly hY (unaryAdd_poly h2I (unaryConst_poly 1))
+   have hd0 := eqTest_poly (divNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+   have hd1 := eqTest_poly (modNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+-  refine ptc_congr (polyTimeComputable_or (colRep_xor_poly hb0 hd0)
+-    (colRep_xor_poly hb1 hd1)) fun w => ?_
++  refine ptc_congr (polyTimeComputable_or (StateLoop.xor_poly hb0 hd0)
++    (StateLoop.xor_poly hb1 hd1)) fun w => ?_
+   rw [badVertex, divNum_eq, modNum_eq]
+ 
+ /-- The monochromatic-edge test is polynomial-time on `⟨1^j, z⟩` for `x = fst z`, `y = snd z`,
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index d1df0045..3225dec4 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -25,7 +25,8 @@ sequential repetition (soundness error `(1 - 1/|E|)^{n|E|} ≤ e^{-n}`, Claim-12
+ zero-knowledge half is `ThreeColoring/Simulator.lean`; the machine infrastructure behind the
+ efficiency theorems (the parties as polynomial-time string functions of the interactive
+ layout) is `ThreeColoring/Machines.lean`, `ThreeColoring/Parties.lean` and
+-`ThreeColoring/ProtocolProofs.lean`.
++`ThreeColoring/ProtocolProofs.lean`; the decider of `R_3COL` is `ThreeColoring/ColRepWitness.lean`,
++and the generic lemmas of the `n|E|`-fold protocol are `ThreeColoring/ColRepSound.lean`.
+ 
+ Graphs are the Boolean relations `Graph n` of `Encoding.lean`; a 3-colouring is a map
+ `Fin n → Fin 3`, proper when the endpoints of every edge receive different colours; the edges
+@@ -905,13 +906,19 @@ witnesses have length `2n ≤ 2|x|`, and the relation is decided in polynomial t
+ re-encoding the decoded graph and colouring and checking every edge.
+ 
+ **Proof sketch.** `mem_iff` is `mem_L3COL_iff`; `bounded` with `p := 2 · var`
+-(`length_encColoring`, `length_encGraph`, `n ≤ n²`); `decidable` with
++(`length_encColoring`, `length_encGraph`, `n ≤ n²`); `decidable` is `ColRep.R3COL_decidable`
++(`ThreeColoring/ColRepWitness.lean`) with
+ `T ⟨x, y⟩ := decide (x = encGraph (decGraph x).2 ∧ y = encColoring (decColoring n y) ∧
+-ProperColoring (decGraph x).2 (decColoring n y))`, correct by `decGraph_encGraph` and
+-`decColoring_encColoring`, and polynomial-time by `polyTimeComputable_pairEq` on the
+-re-encodings (`polyTimeComputable_blockMap`, `polyTimeComputable_iterateEmit`) and a scan of
+-the `n²` entries for the colouring test (`polyTimeComputable_iterate` with an accumulated
+-conjunction). -/
++ProperColoring (decGraph x).2 (decColoring n y))` (`ColRep.r3colTest`), correct by `R3COL_iff`,
++`decGraph_encGraph` and `decColoring_encColoring`. It is polynomial-time because it agrees with a
++scan form, with `n = √|x|` (`ColRep.decGraph_fst`): `|x| = n²`
++(`ColMachines.encGraph_decGraph_eq_take`); `|y| = 2n` and no vertex `i < n` whose bits `2i`,
++`2i + 1` differ from those of its colour value (`getD_encColoring_two_mul`,
++`getD_encColoring_two_mul_add_one`, `ColMachines.decColoring_val`); no set entry `j < n²` whose
++endpoints `j / n`, `j % n` have equal colour values (`ProperColoring_iff`,
++`ColMachines.decGraph_apply`). Each "no" is a bounded search `EncodingMachines.firstIdx` that
++finds nothing (`firstIdx_eq_iff`, `polyTimeComputable_firstIdx`), over tests built from
++`getBit_poly`, `ColMachines.colorVal_poly` and unary arithmetic. -/
+ theorem R3COL_witnessRelation : WitnessRelation L3COL R3COL := by
+   refine ⟨mem_L3COL_iff, ⟨.mul (.const 2) .var, ?_⟩, ?_⟩
+   · rintro x y ⟨n, G, c, rfl, rfl, -⟩
+@@ -1300,14 +1307,16 @@ protocol's `n|E|`.
+ 
+ **Proof sketch.** Completeness as in `col_efficientProverProofErr`, iteration by iteration
+ (the verifier's history is `[com_0, opn_0, …]` and the parity bookkeeping of `colProverRep`
+-/ `colVerifierRep` reproduces one iteration on each coin block, `exec_succ`; the empty
+-messages beyond `n|E|` iterations are ignored). Soundness with
+-`ε N := Real.exp (-(Nat.sqrt N)) + N² (1/2)^N + 2⁻¹^N` (strict clause): for `x = encGraph G`
+-not colourable with `n ≥ 2`, fix the prover's coins, condition on all `n|E|` edge samplers
+-being uniform (`statClose_sampleEdgeIdx` per block, `StatClose.prod` iterated,
+-`StatClose.abs_uprob_sub_le_prod`, union cost `n|E| (1/2)^{|x|} ≤ |x|² (1/2)^{|x|}`), and apply
+-`uprob_col_cheat_le` with `k = n|E|`, `comF i` the prover's commitment of iteration `i` (a
+-function of the earlier challenges through `exec`) and `opnF i` its opening: the acceptance
++/ `colVerifierRep` reproduces one iteration on each coin block, `exec_succ`, through the generic
++`ColRep.exec_four_mul`; the empty messages beyond `n|E|` iterations are ignored). Soundness with
++`ε N := Real.exp (-(Nat.sqrt N)) + N² (1/2)^N + 2⁻¹^N` (strict clause): if `x` is ill formed,
++or `n < 2`, the verdict is `[false]` on every tape; for `x = encGraph G` not colourable with
++`n ≥ 2`, fix the prover's coins, condition on all `n|E|` edge samplers being uniform
++(`statClose_sampleEdgeIdx` per block, `OneWay.statClose_pi` over the coin blocks:
++`ColRep.statClose_edgeBlocks`; `StatClose.abs_uprob_sub_le_prod`, union cost
++`n|E| (1/2)^{|x|} ≤ |x|² (1/2)^{|x|}`), and apply `uprob_col_cheat_le` with `k = n|E|`, `comF i`
++the prover's commitment of iteration `i` (a function of the earlier challenges through `exec`,
++`ColRep.exec_four_mul` and `ColRep.chView`) and `opnF i` its opening: the acceptance
+ probability is at most `(1 - 1/|E|)^{n|E|} ≤ e^{-n}` (`one_sub_inv_pow_mul_le_exp`) with
+ `n = Nat.sqrt |x|` (`length_encGraph`, `Nat.sqrt_eq`). Negligibility:
+ `negligible_exp_neg_sqrt_div` with `C = 1`, `Negligible.mul_pow negligible_two_pow_neg 2`,

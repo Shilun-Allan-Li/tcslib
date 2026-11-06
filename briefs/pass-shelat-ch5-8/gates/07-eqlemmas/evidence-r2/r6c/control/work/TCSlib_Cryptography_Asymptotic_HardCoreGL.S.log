@@ -1,0 +1,119 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:370:61: error: Type mismatch
+  rfl
+has type
+  ?m.367 = ?m.367
+but is expected to have type
+  pairEncode (pairEncode (List.replicate m true) (List.ofFn (betaOf ⟨t, ht'⟩.modNat))) (blocksStr s) =
+    SelXor.input m (betaOf ⟨t, ht'⟩.modNat) s
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:490:8: error: Invalid `⟨...⟩` notation: The expected type `PolyTimeComputable unaryMulFun` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:752:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  List.take (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex)
+in the target expression
+  glMajFun
+      (pairEncode (List.replicate (2 ^ k n - 1) true)
+        (glVotesFun A
+          (GLLoop.input
+            (GLLoop.fixed (List.replicate n true) Y (A.advice n) (List.replicate (mP.eval n) true)
+              (List.replicate (k n) true) (List.replicate (A.coins.eval n) true)
+              (List.take (k n * mP.eval n) (List.ofFn r)) (List.take (k n) (List.drop (k n * mP.eval n) (List.ofFn r))))
+            (GLLoop.glTable (mP.eval n) (k n)) (List.drop (k n) (List.drop (k n * mP.eval n) (List.ofFn r)))))) =
+    List.ofFn fun i =>
+      HardcoreBit.majority fun j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j))
+
+A : NUPPT
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+n : ℕ
+Y : List Bool
+s : Fin (k n) → Fin (mP.eval n) → Bool
+b : Fin (k n) → Bool
+cs : Fin (mP.eval n * (2 ^ k n - 1)) → Fin (A.coinLen n) → Bool
+ex : List Bool
+r : (glMachine A mP K k hk).Coins n
+hr : List.ofFn r = blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex
+hM : 0 < 2 ^ k n - 1 ∨ mP.eval n = 0
+h1 : List.take (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex) = blocksStr s
+h2 :
+  List.drop (k n * mP.eval n) (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex) = List.ofFn b ++ (blocksStr cs ++ ex)
+⊢ glMajFun
+      (pairEncode (List.replicate (2 ^ k n - 1) true)
+        (glVotesFun A
+          (GLLoop.input
+            (GLLoop.fixed (List.replicate n true) Y (A.advice n) (List.replicate (mP.eval n) true)
+              (List.replicate (k n) true) (List.replicate (A.coins.eval n) true)
+              (List.take (k n * mP.eval n) (List.ofFn r)) (List.take (k n) (List.drop (k n * mP.eval n) (List.ofFn r))))
+            (GLLoop.glTable (mP.eval n) (k n)) (List.drop (k n) (List.drop (k n * mP.eval n) (List.ofFn r)))))) =
+    List.ofFn fun i =>
+      HardcoreBit.majority fun j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:744:51: warning: This simp argument is unused:
+  hr
+
+Hint: Omit it from the simp argument list.
+  simp only [GLRaw.uM, GLRaw.adv, GLRaw.α, GLRaw.uk, GLRaw.tbl, GLRaw.um, GLRaw.ur, GLRaw.ukm,
+      GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+      NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
+      List.length_replicate, unaryMulFun_pairEncode,̵ ̵h̵r̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:848:2: error: Tactic `rfl` failed: The left-hand side
+  List.ofFn ((blocksEquiv k m).symm s) ++
+    (List.ofFn b ++
+      (List.ofFn
+          ((blocksEquiv (m * (2 ^ k - 1)) (A.coinLen n)).symm
+            ((blocksEquivX m (2 ^ k - 1) (A.Coins n)).symm
+              (((Equiv.refl (Fin m)).arrowCongr ((nesubsetEquiv k).arrowCongr (Equiv.refl (A.Coins n)))) c))) ++
+        List.ofFn ex))
+is not definitionally equal to the right-hand side
+  blocksStr s ++ (List.ofFn b ++ (blocksStr (glBlocks A n m k c) ++ List.ofFn ex))
+
+A : NUPPT
+n m k Q : ℕ
+hQ : k * m + (k + m * (2 ^ k - 1) * A.coinLen n) ≤ Q
+ex : Fin (Q - (k * m + (k + m * (2 ^ k - 1) * A.coinLen n))) → Bool
+s : Fin k → Fin m → Bool
+b : Fin k → Bool
+c : Fin m → HardcoreBit.NESubset k → A.Coins n
+⊢ List.ofFn ((blocksEquiv k m).symm s) ++
+      (List.ofFn b ++
+        (List.ofFn
+            ((blocksEquiv (m * (2 ^ k - 1)) (A.coinLen n)).symm
+              ((blocksEquivX m (2 ^ k - 1) (A.Coins n)).symm
+                (((Equiv.refl (Fin m)).arrowCongr ((nesubsetEquiv k).arrowCongr (Equiv.refl (A.Coins n)))) c))) ++
+          List.ofFn ex)) =
+    blocksStr s ++ (List.ofFn b ++ (blocksStr (glBlocks A n m k c) ++ List.ofFn ex))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_HardCoreGL.S.lean:890:2: error: Tactic `rfl` failed: The left-hand side
+  ∑ x ∈ ↑L, b x ^^
+    decide
+      (A₁.runAtL n (pairEncode (enc y) (List.ofFn (∑ x ∈ ↑L, s x + Pi.single i true))) (List.ofFn (c i L)) = [true])
+is not definitionally equal to the right-hand side
+  ∑ x ∈ ↑L, b x +
+    decide
+      (A₁.runAtL n (pairEncode (enc y) (List.ofFn (∑ t ∈ ↑L, s t + Pi.single i true))) (List.ofFn (c i L)) = [true])
+
+A₁ : NUPPT
+iP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+n : ℕ
+hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0
+β : Type u_1
+enc : β → List Bool
+y : β
+ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool
+s : Fin (k n) → Fin (iP.eval n) → Bool
+b : Fin (k n) → Bool
+c : Fin (iP.eval n) → HardcoreBit.NESubset (k n) → A₁.Coins n
+i : Fin (iP.eval n)
+L : HardcoreBit.NESubset (k n)
+hdiv : (finProdFinEquiv (i, (nesubsetEquiv (k n)) L)).divNat = i
+hmod : (finProdFinEquiv (i, (nesubsetEquiv (k n)) L)).modNat = (nesubsetEquiv (k n)) L
+⊢ (∑ x ∈ ↑L, b x ^^
+      decide
+        (A₁.runAtL n (pairEncode (enc y) (List.ofFn (∑ x ∈ ↑L, s x + Pi.single i true))) (List.ofFn (c i L)) =
+          [true])) =
+    ∑ x ∈ ↑L, b x +
+      decide
+        (A₁.runAtL n (pairEncode (enc y) (List.ofFn (∑ t ∈ ↑L, s t + Pi.single i true))) (List.ofFn (c i L)) = [true])

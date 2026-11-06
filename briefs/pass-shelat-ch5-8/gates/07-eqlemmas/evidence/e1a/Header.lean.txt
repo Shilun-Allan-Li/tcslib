@@ -1,0 +1,16 @@
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.GGMReductionEval
+import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.OneWayFunctions.Amplification
+import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.InformationTheory.StatisticalDistance
+
+set_option autoImplicit false
+
+open Complexity Turing TCSlib.Cryptography
+
+/-! Seal probe (equation-lemma PR, worker E1a). Each section seals the definitions of one
+lemma group with `attribute [local irreducible]` and reads them as a consumer would. -/

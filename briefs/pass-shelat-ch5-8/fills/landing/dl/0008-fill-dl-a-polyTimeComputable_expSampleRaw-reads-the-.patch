@@ -1,0 +1,31 @@
+From d939885594cdaa9f600466d8695a641802f6a308 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:28:20 +0000
+Subject: [PATCH 08/25] fill dl-a: polyTimeComputable_expSampleRaw reads the
+ orbit polynomial by simp only
+
+`rw [PolyExpr.eval_const]` rewrote only the first constant, leaving `(const 4).eval`
+to close by defeq; the rule-10 seal (PolyExpr.eval irreducible) caught it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/DiscreteLog.lean | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 0fdc5f19..e59792dc 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -924,7 +924,7 @@ theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable
+   -- the trial loop (the repetition lemma, `n` rounds suffice: `R = var`)
+   have hF := polyTimeComputable_iterateFind dla_ssStep_poly (dla_ssAcc_poly H) dla_ssOut_poly
+     PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
+-      rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+       exact dla_length_ssStep_iterate_le x i)
+   -- the accepted block (marker dropped), `[]` on failure
+   have hb := polyTimeComputable_tail.comp (hF.comp (dla_ssStart_poly H))
+-- 
+2.43.0
+

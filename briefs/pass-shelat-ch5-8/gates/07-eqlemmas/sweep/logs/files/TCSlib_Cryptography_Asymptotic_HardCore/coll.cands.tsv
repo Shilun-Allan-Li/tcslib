@@ -1,0 +1,47 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	TCSlib.Cryptography.PRG.Secure	6
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	6
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	6
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	6
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	direct		3
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	6
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	6
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	TCSlib.Cryptography.FunFamily.f, TCSlib.Cryptography.PRG.G, TCSlib.Cryptography.PRG.Secure	25
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.PRG.Secure	6
+TCSlib.Cryptography.OneWayPermutation	TCSlib.Cryptography.Asymptotic.OneWay	direct		2
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.prgAdv, TCSlib.Cryptography.PRG.Secure	6
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.prgAdv, TCSlib.Cryptography.PRG.Secure	6
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct		1
+TCSlib.Cryptography.owpPredictor	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	direct		2
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct		5
+TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	direct		3
+TCSlib.Cryptography.prgExt	TCSlib.Cryptography.Pseudorandom.Generators	direct		2
+TCSlib.Cryptography.prgExtRed	TCSlib.Cryptography.Pseudorandom.Generators	direct		2
+TCSlib.Cryptography.prgStep	TCSlib.Cryptography.Pseudorandom.Generators	deep	TCSlib.Cryptography.prgExt, TCSlib.Cryptography.prgExtRed	4
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.invProb, TCSlib.Cryptography.predProb, TCSlib.Cryptography.prgAdv	11
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.predictor, TCSlib.Cryptography.PRG.Secure	7
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, TCSlib.Cryptography.PRG.Secure	6
+TCSlib.Cryptography.Ensemble.Indist	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.Ensemble.Pseudorandom	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.Ensemble.uniform	TCSlib.Cryptography.Asymptotic.Ensembles	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.HardcoreBit.glBit	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		2
+TCSlib.Cryptography.HardcoreBit.glInverter	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		2
+TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		3
+TCSlib.Cryptography.HardcoreBit.ip	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct	TCSlib.Cryptography.HardcoreBit.glBit	3
+TCSlib.Cryptography.PRG.Easy	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.PRG.Secure	TCSlib.Cryptography.Asymptotic.Pseudorandom	direct		3
+TCSlib.Cryptography.PRG.ensemble	TCSlib.Cryptography.Asymptotic.Pseudorandom	deep	TCSlib.Cryptography.PRG.Secure	3
+TCSlib.Cryptography.PermFamily.toFunFamily	TCSlib.Cryptography.Asymptotic.OneWay	deep	TCSlib.Cryptography.OneWayPermutation	2

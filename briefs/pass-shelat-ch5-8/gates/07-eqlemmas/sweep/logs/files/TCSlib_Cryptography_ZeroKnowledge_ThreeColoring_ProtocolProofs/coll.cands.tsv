@@ -1,0 +1,93 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		4
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	7
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	7
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.multiCom, TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.ilayout	12
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.ColMachines.ilayout	4
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	8
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	direct		2
+TCSlib.Cryptography.ProperColoring	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		1
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	4
+TCSlib.Cryptography.decColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		1
+TCSlib.Cryptography.decColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.decColor	2
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		6
+TCSlib.Cryptography.edgeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		2
+TCSlib.Cryptography.edgeIdxOfMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		1
+TCSlib.Cryptography.edgeList	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.edgeAt, TCSlib.Cryptography.edgeCount	7
+TCSlib.Cryptography.edgeMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		2
+TCSlib.Cryptography.encColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.padColor, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.encColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.encColor, TCSlib.Cryptography.padColor, TCSlib.Cryptography.ColMachines.proverRepStr	5
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		1
+TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	direct		1
+TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		2
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.padColor	2
+TCSlib.Cryptography.perm3Equiv	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.samplePerm3, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	3
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	4
+TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		3
+TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	4
+TCSlib.Cryptography.samplePerm3	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct		1
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform	1
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.sampleEdgeIdx, TCSlib.Cryptography.samplePerm3	4
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	4
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	4
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	4
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	4
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	4
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	4
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	4
+TCSlib.Cryptography.ColMachines.LOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.argM	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.argX	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.argZ	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.blk	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.checkRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.verifierRepStr	1
+TCSlib.Cryptography.ColMachines.checkStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	direct	TCSlib.Cryptography.ColMachines.verifierRepStr, TCSlib.Cryptography.ColMachines.verifierStr	3
+TCSlib.Cryptography.ColMachines.colBits	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.colorFromTable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.colorVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.ColMachines.comAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.commitStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.countTrue	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.ColMachines.eOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.verifierStr	1
+TCSlib.Cryptography.ColMachines.eRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.verifierRepStr	1
+TCSlib.Cryptography.ColMachines.encColorOfVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.verifierRepStr, TCSlib.Cryptography.ColMachines.verifierStr	3
+TCSlib.Cryptography.ColMachines.firstTrial	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.histLen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.verifierRepStr	2
+TCSlib.Cryptography.ColMachines.ilayout	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	direct		4
+TCSlib.Cryptography.ColMachines.mOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.nOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.natOfBits	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.nthTrue	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.ColMachines.openStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.padTo	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.ColMachines.permTable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.proverCoinsOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr	1
+TCSlib.Cryptography.ColMachines.proverRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	direct		1
+TCSlib.Cryptography.ColMachines.proverStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	direct	TCSlib.Cryptography.ColMachines.proverRepStr	2
+TCSlib.Cryptography.ColMachines.sampleVal	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr, TCSlib.Cryptography.ColMachines.verifierRepStr	4
+TCSlib.Cryptography.ColMachines.tableOfIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.tblOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	2
+TCSlib.Cryptography.ColMachines.verdictRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.verifierRepStr	1
+TCSlib.Cryptography.ColMachines.verdictStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	deep	TCSlib.Cryptography.ColMachines.verifierStr	1
+TCSlib.Cryptography.ColMachines.verifierRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	direct		1
+TCSlib.Cryptography.ColMachines.verifierStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	direct		1
+TCSlib.Cryptography.EncodingMachines.firstIdx	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	deep	TCSlib.Cryptography.ColMachines.checkStr, TCSlib.Cryptography.ColMachines.proverRepStr, TCSlib.Cryptography.ColMachines.proverStr	5
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct		1
+TCSlib.Cryptography.Strategy.Efficient	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		4
+TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		1
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.multiCom, TCSlib.Cryptography.ColMachines.ilayout, TCSlib.Cryptography.Strategy.Efficient	9
+TCSlib.Cryptography.Strategy.ofNUPPT	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Strategy.Efficient	4

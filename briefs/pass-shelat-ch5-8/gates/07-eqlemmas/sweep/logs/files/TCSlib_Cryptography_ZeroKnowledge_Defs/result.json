@@ -1,0 +1,60 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/Defs.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 49,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.PerfectZKAbort"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.PerfectZKAbort": [
+   [
+    214,
+    81,
+    "B",
+    "Application type mismatch: The argument\n  r\nhas type\n  (\u03c0.withV V').ExecCoins \u03c0.P x\nbut is expected to have type\n  (\u03c0.withV V').ExecCoins (\u03c0.withV V').P x\nin the application\n  (\u03c0.withV V').viewV x y z r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.PerfectZKAbort": {
+   "names": [
+    "TCSlib.Cryptography.Protocol.withV"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    214
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (\u03c0.withV V').ExecCoins \u03c0.P x\nbut is expected to have type\n  (\u03c0.withV V').ExecCoins (\u03c0.withV V').P x\nin the application\n  (\u03c0.withV V').viewV x y z r"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Protocol.withV": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.PerfectZKAbort": [
+   "Complexity.NUPPT.simulate"
+  ]
+ },
+ "runs": 14,
+ "seconds": 37
+}

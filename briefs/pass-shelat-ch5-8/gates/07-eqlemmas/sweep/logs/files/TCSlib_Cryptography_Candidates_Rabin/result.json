@@ -1,0 +1,171 @@
+{
+ "file": "TCSlib/Cryptography/Candidates/Rabin.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 64,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Candidates.blumDefault",
+   "TCSlib.Cryptography.Candidates.oddDefault",
+   "TCSlib.Cryptography.Candidates.rabinBlumInverter_runAt",
+   "TCSlib.Cryptography.Candidates.rabinGenParams"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Candidates.oddDefault": [
+   [
+    294,
+    4,
+    "B",
+    "Application type mismatch: The argument\n  ?m.21\nhas type\n  3 \u2260 2\nbut is expected to have type\n  (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15).p \u2260 2\nin the application\n  RabinParams.mk (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15) ?m.21"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.blumDefault": [
+   [
+    299,
+    19,
+    "B",
+    "Application type mismatch: The argument\n  ?m.39\nhas type\n  3 % 4 = 3\nbut is expected to have type\n  (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24).p % 4 = 3\nin the application\n  RabinParams.mk (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24) ?m.39"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.rabinGenParams": [
+   [
+    311,
+    68,
+    "B",
+    "Application type mismatch: The argument\n  h.right.right.right.right.right.left\nhas type\n  P p\nbut is expected to have type\n  P (DistinctPrimes.p \u27e8(\u27e8\u27e8p, \u22ef\u27e9, \u22ef\u27e9, \u27e8\u27e8q, \u22ef\u27e9, \u22ef\u27e9), \u22ef\u27e9)\nin the application\n  RabinParams.mk \u27e8(\u27e8\u27e8p, \u22ef\u27e9, \u22ef\u27e9, \u27e8\u27e8q, \u22ef\u27e9, \u22ef\u27e9), \u22ef\u27e9 \u22ef"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.rabinBlumInverter_runAt": [
+   [
+    1066,
+    84,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (rabinBlumInverter H A).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n N r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Candidates.rabinGenParams": {
+   "names": [
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    311
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h.right.right.right.right.right.left\nhas type\n  P p\nbut is expected to have type\n  P (DistinctPrimes.p \u27e8(\u27e8\u27e8p, \u22ef\u27e9, \u22ef\u27e9, \u27e8\u27e8q, \u22ef\u27e9, \u22ef\u27e9), \u22ef\u27e9)\nin the application\n  RabinParams.mk \u27e8(\u27e8\u27e8p, \u22ef\u27e9, \u22ef\u27e9, \u27e8\u27e8q, \u22ef\u27e9, \u22ef\u27e9), \u22ef\u27e9 \u22ef"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.oddDefault": {
+   "names": [
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    294
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  ?m.21\nhas type\n  3 \u2260 2\nbut is expected to have type\n  (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15).p \u2260 2\nin the application\n  RabinParams.mk (smallDistinctPrimes m Nat.prime_three Nat.prime_five ?m.13 ?m.14 ?m.15) ?m.21"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.rabinBlumInverter_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    1066
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (rabinBlumInverter H A).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n N r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.blumDefault": {
+   "names": [
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    299
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  ?m.39\nhas type\n  3 % 4 = 3\nbut is expected to have type\n  (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24).p % 4 = 3\nin the application\n  RabinParams.mk (smallDistinctPrimes m Nat.prime_three ?m.21 ?m.22 ?m.23 ?m.24) ?m.39"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.p": "ev2: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Candidates.DistinctPrimes.q": "ev3: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Candidates.rabinGenParams": [
+   "TCSlib.Cryptography.Candidates.RabinParams",
+   "TCSlib.Cryptography.Candidates.rabinPrimeCoins",
+   "TCSlib.Cryptography.Candidates.rabinTrials",
+   "TCSlib.Cryptography.Candidates.samplePrimePL"
+  ],
+  "TCSlib.Cryptography.Candidates.oddDefault": [
+   "TCSlib.Cryptography.Candidates.RabinParams",
+   "TCSlib.Cryptography.Candidates.smallDistinctPrimes"
+  ],
+  "TCSlib.Cryptography.Candidates.rabinBlumInverter_runAt": [
+   "TCSlib.Cryptography.Candidates.blumInvNat",
+   "TCSlib.Cryptography.Candidates.polyTimeComputable_rabinRootRaw",
+   "TCSlib.Cryptography.Candidates.rabinBlumInverter",
+   "TCSlib.Cryptography.Candidates.rabinRootRaw",
+   "TCSlib.Cryptography.Candidates.rabinRootStep"
+  ],
+  "TCSlib.Cryptography.Candidates.blumDefault": [
+   "TCSlib.Cryptography.Candidates.RabinParams",
+   "TCSlib.Cryptography.Candidates.oddDefault",
+   "TCSlib.Cryptography.Candidates.smallDistinctPrimes"
+  ]
+ },
+ "runs": 39,
+ "seconds": 140
+}

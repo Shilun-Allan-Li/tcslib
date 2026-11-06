@@ -1,0 +1,19 @@
+TCSlib_Cryptography_Asymptotic_PublicKey/fx0.lean:706:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (tdpGen ?T).runAt ?n [] ?r
+in the target expression
+  T.tdpDecFun E.H
+      (pairEncode (pairSndD (T.tdpGen.runAt n [] rg))
+        ((T.tdpEnc E).runAt n (pairEncode (pairFstD (T.tdpGen.runAt n [] rg)) [b]) re)) =
+    [b]
+
+T : TrapdoorCollection
+h : (i : List Bool) → T.D i → Bool
+E : T.PredEvaluator h
+n : ℕ
+b : Bool
+rg : T.tdpGen.Coins n
+re : (T.tdpEnc E).Coins n
+⊢ T.tdpDecFun E.H
+      (pairEncode (pairSndD (T.tdpGen.runAt n [] rg))
+        ((T.tdpEnc E).runAt n (pairEncode (pairFstD (T.tdpGen.runAt n [] rg)) [b]) re)) =
+    [b]

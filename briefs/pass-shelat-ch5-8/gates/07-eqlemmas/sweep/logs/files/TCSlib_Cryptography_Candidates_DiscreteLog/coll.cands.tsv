@@ -1,0 +1,46 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.ofPolyTimeUniform, TCSlib.Cryptography.Collection.mk	8
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inParam, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	15
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inCoins, TCSlib.Cryptography.Candidates.modExpStr	7
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, Complexity.NUPPT.inParam	17
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	35
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.Collection.mk	16
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAt, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	29
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	29
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		2
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct		2
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.ofPolyTimeUniform	4
+Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	direct		4
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index	30
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.index, TCSlib.Cryptography.Collection.invProbAt	29
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.output, Complexity.NUPPT.runAt, TCSlib.Cryptography.Collection.SampleClose	30
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.coinLen, Complexity.NUPPT.ofPolyTimeUniform	33
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct		5
+TCSlib.Cryptography.StatClose	TCSlib.Cryptography.Asymptotic.Sampling	direct	TCSlib.Cryptography.Collection.SampleClose	2
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	direct		2
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct		2
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.Collection.invProbAt	3
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.StatClose, TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.invProbAt	9
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTimeUniform, TCSlib.Cryptography.Collection.mk	8
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	10
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	10
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	10
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	10
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	37
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT._sizeOf_inst, Complexity.NUPPT.ofPolyTimeUniform	10
+TCSlib.Cryptography.Candidates.modExpStr	TCSlib.Cryptography.Candidates.Arithmetic	direct		1
+TCSlib.Cryptography.Candidates.natToBits	TCSlib.Cryptography.Candidates.Arithmetic	deep	TCSlib.Cryptography.Candidates.modExpStr, TCSlib.Cryptography.Candidates.natToList	8
+TCSlib.Cryptography.Candidates.natToList	TCSlib.Cryptography.Candidates.Arithmetic	direct	TCSlib.Cryptography.Candidates.modExpStr	8
+TCSlib.Cryptography.Candidates.rejectBlocksL	TCSlib.Cryptography.Candidates.Concrete	direct		1
+TCSlib.Cryptography.Collection.SampleClose	TCSlib.Cryptography.Asymptotic.Collections	direct		1
+TCSlib.Cryptography.Collection.index	TCSlib.Cryptography.Asymptotic.Collections	direct	TCSlib.Cryptography.Collection.SampleClose, TCSlib.Cryptography.Collection.invProbAt	5
+TCSlib.Cryptography.Collection.invProbAt	TCSlib.Cryptography.Asymptotic.Collections	direct		1
+TCSlib.Cryptography.NumberTheory.listToNat	TCSlib.Cryptography.NumberTheory.Primality	direct	TCSlib.Cryptography.Candidates.modExpStr, TCSlib.Cryptography.Candidates.rejectBlocksL	10

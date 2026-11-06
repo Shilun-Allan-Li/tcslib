@@ -1,0 +1,8 @@
+TCSlib_Cryptography_Asymptotic_PublicKeyLemmas/S0.lean:764:4: error: Application type mismatch: The argument
+  Fin.appendEquiv 1 (D.coinLen n)
+has type
+  (Fin 1 → ?m.14) × (Fin (D.coinLen n) → ?m.14) ≃ (Fin (1 + D.coinLen n) → ?m.14)
+but is expected to have type
+  (Fin 1 → Bool) × D.Coins n ≃ (tdpPredictor D flip).Coins n
+in the application
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))

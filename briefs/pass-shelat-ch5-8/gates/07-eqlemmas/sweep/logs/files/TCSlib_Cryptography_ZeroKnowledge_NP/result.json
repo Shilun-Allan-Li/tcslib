@@ -1,0 +1,131 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/NP.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 98,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.outV_pullback_cheat",
+   "TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp",
+   "TCSlib.Cryptography.zk_proof_of_owp_levinReduction"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.outV_pullback_cheat": [
+   [
+    364,
+    76,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (\u03c0.pullback f w p).ExecCoins P' x\nbut is expected to have type\n  (Fin\n        ({ next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen\n          (f x).length) \u2192\n      Bool) \u00d7\n    (Fin ((\u03c0.V.pullback f (fun x z => z) p).coinLen x.length) \u2192 Bool)\nin the application\n  Prod.map (coinTrunc \u22ef) (co"
+   ]
+  ],
+  "TCSlib.Cryptography.zk_proof_of_owp_levinReduction": [
+   [
+    615,
+    51,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ],
+  "TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp": [
+   [
+    756,
+    51,
+    "T",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.outV_pullback_cheat": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    364
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (\u03c0.pullback f w p).ExecCoins P' x\nbut is expected to have type\n  (Fin\n        ({ next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen\n          (f x).length) \u2192\n      Bool) \u00d7\n    (Fin ((\u03c0.V.pullback f (fun x z => z) p).coinLen x.length) \u2192 Bool)\nin the application\n  Prod.map (coinTrunc \u22ef) (co"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.zk_proof_of_owp_levinReduction": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    615
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    756
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  h\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily h"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.outV_pullback_cheat": [
+   "TCSlib.Cryptography.Protocol.pullback",
+   "TCSlib.Cryptography.Strategy.pullback",
+   "TCSlib.Cryptography.coinLen_le_coinLen_pullback"
+  ],
+  "TCSlib.Cryptography.zk_proof_of_owp_levinReduction": [
+   "TCSlib.Cryptography.LevinReduction"
+  ],
+  "TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp": [
+   "TCSlib.Cryptography.LevinNPHard",
+   "TCSlib.Cryptography.LevinReduction"
+  ]
+ },
+ "runs": 34,
+ "seconds": 85
+}

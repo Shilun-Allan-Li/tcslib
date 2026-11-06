@@ -1,0 +1,52 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		1
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		9
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		5
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairFstD, Complexity.pairSndD	10
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.Strategy.Efficient	6
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.Protocol.outV	2
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	direct		4
+TCSlib.Cryptography.StatClose	TCSlib.Cryptography.Asymptotic.Sampling	direct		2
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.coinTable	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		2
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		6
+TCSlib.Cryptography.decPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		8
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		19
+TCSlib.Cryptography.encPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		5
+TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Protocol.outV	2
+TCSlib.Cryptography.fisherYates	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Protocol.outV	2
+TCSlib.Cryptography.permBits	TCSlib.Cryptography.Asymptotic.Permutations	direct		2
+TCSlib.Cryptography.permFromCoins	TCSlib.Cryptography.Asymptotic.Permutations	direct		1
+TCSlib.Cryptography.permGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct		22
+TCSlib.Cryptography.permTrials	TCSlib.Cryptography.Asymptotic.Permutations	direct		2
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform	1
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.StatClose	5
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	1
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	TCSlib.Cryptography.Strategy.Efficient	1
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	1
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct		1
+TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		2
+TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Protocol.outV	2
+TCSlib.Cryptography.Strategy.Efficient	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		1
+TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Protocol.outV	2
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.Strategy.Efficient	2
+TCSlib.Cryptography.Strategy.ofNUPPT	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Strategy.Efficient	1

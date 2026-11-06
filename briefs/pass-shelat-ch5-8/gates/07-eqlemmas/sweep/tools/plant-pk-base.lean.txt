@@ -1,0 +1,14 @@
+/-- control: the BASE (pre-#210) statement of `glPad_tdpBitScheme_singleBitSecure`. -/
+example {T : TrapdoorCollection}
+    (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) :
+    ((T.glPad m henc).tdpBitScheme E).SingleBitSecure := sorry
+
+/-- control: the BASE (pre-#210) statement of `exists_glPad_singleBitSecure`. -/
+example {T : TrapdoorCollection}
+    (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) :
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit,
+      ((T.glPad m henc).tdpBitScheme E).SingleBitSecure := sorry

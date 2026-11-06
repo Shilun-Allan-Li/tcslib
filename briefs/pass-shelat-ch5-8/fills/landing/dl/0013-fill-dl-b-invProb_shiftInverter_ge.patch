@@ -1,0 +1,76 @@
+From 2cb507689527f53c3c7fef703c0668614d1030ca Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:51:12 +0000
+Subject: [PATCH 13/25] fill dl-b: invProb_shiftInverter_ge
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 44 ++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 87d3998d..7fda2137 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -584,6 +584,20 @@ def shiftInverter (g : (ZMod p)ˣ) {ρ' : Type*} (B₀ : (ZMod p)ˣ → ρ' →
+     (ZMod p)ˣ → Fin T × ρ' → ZMod (p - 1) :=
+   fun y c => ((B₀ (y * (g ^ (c.1.val * s))⁻¹) c.2 : ℕ) : ZMod (p - 1)) + ((c.1.val * s : ℕ) : ZMod (p - 1))
+ 
++/-- The range reduction on a correct guess: if `t = ⌊x/s⌋` and `B₀` recovers `x mod s` from
++`g^{x mod s}`, the shifted inverter outputs `x`. -/
++private theorem dlb_shiftInverter_eq (g : (ZMod p)ˣ) {ρ' : Type*} (B₀ : (ZMod p)ˣ → ρ' → ℕ)
++    {s T : ℕ} (x : ZMod (p - 1)) (t : Fin T) (c : ρ') (ht : t.val = x.val / s)
++    (hB : B₀ (g ^ (x.val % s)) c = x.val % s) :
++    shiftInverter g B₀ s T (expo g x) (t, c) = x := by
++  unfold shiftInverter expo
++  have hsplit : g ^ x.val * (g ^ (t.val * s))⁻¹ = g ^ (x.val % s) := by
++    rw [ht, show g ^ x.val = g ^ (x.val / s * s) * g ^ (x.val % s) by
++      rw [← pow_add, Nat.div_add_mod' x.val s]]
++    rw [mul_comm (g ^ (x.val / s * s)) (g ^ (x.val % s)), mul_assoc, mul_inv_cancel, mul_one]
++  simp only
++  rw [hsplit, hB, ht, ← Nat.cast_add, Nat.mod_add_div' x.val s, ZMod.natCast_zmod_val]
++
+ /-- **The range reduction succeeds with probability at least `(1 − δ)/T`** (Lem-84.1.4): if
+ `B₀` recovers every exponent `e' < s` from `g^{e'}` with probability at least `1 − δ`, and
+ `T s ≥ p − 1`, then `shiftInverter g B₀ s T` inverts `expo g` with probability at least
+@@ -599,7 +613,35 @@ theorem invProb_shiftInverter_ge {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ' : Ty
+     (B₀ : (ZMod p)ˣ → ρ' → ℕ) {s T : ℕ} (hs : 0 < s) (hT : p - 1 ≤ T * s) {δ : ℝ}
+     (h : ∀ e' < s, 1 - δ ≤ uprob fun c : ρ' => B₀ (g ^ e') c = e') :
+     (1 - δ) / T ≤ invProb (expo g) (shiftInverter g B₀ s T) := by
+-  sorry
++  classical
++  rw [invProb_def]
++  rcases Nat.eq_zero_or_pos T with hT0 | hT0
++  · rw [hT0, Nat.cast_zero, div_zero]; exact uprob_nonneg _
++  -- the event "correct guess and `B₀` succeeds" implies inversion
++  let good : ZMod (p - 1) × (Fin T × ρ') → Prop := fun z =>
++    z.2.1.val = z.1.val / s ∧ B₀ (g ^ (z.1.val % s)) z.2.2 = z.1.val % s
++  refine le_trans ?_ (uprob_mono (p := good) (q := fun z : ZMod (p - 1) × (Fin T × ρ') =>
++    expo g (shiftInverter g B₀ s T (expo g z.1) z.2) = expo g z.1) fun z hz => ?_)
++  rotate_left
++  · obtain ⟨x, t, c⟩ := z
++    rw [dlb_shiftInverter_eq g B₀ x t c hz.1 hz.2]
++  rw [uprob_prod]
++  -- each section has probability at least `(1/T)(1 − δ)`
++  have hsec : ∀ x : ZMod (p - 1), (1 - δ) / T ≤ uprob fun b : Fin T × ρ' => good (x, b) := by
++    intro x
++    have hq : x.val / s < T := by
++      have := ZMod.val_lt x
++      exact Nat.div_lt_of_lt_mul (by rw [mul_comm]; omega)
++    have h1 : uprob (fun b : Fin T × ρ' => good (x, b)) =
++        uprob (fun t : Fin T => t = ⟨x.val / s, hq⟩) * uprob (fun c : ρ' => B₀ (g ^ (x.val % s)) c = x.val % s) := by
++      rw [← HardcoreBit.uprob_prod_and]
++      congr 1; funext b
++      simp only [good, Fin.ext_iff]
++    rw [h1, OneWay.uprob_eq_one_div_card, Fintype.card_fin, div_eq_mul_inv, one_div, mul_comm]
++    gcongr
++    exact h _ (Nat.mod_lt _ hs)
++  calc (1 - δ) / T = uexp (fun _ : ZMod (p - 1) => (1 - δ) / (T : ℝ)) := (HardcoreBit.uexp_const _).symm
++    _ ≤ _ := HardcoreBit.uexp_mono hsec
+ 
+ /-- **The inverter `B` of [PS10, Lemma 84.1]**: the range reduction applied to the loop of
+ Algorithm 84.2 driven by the majority test with `ℓ` trials per round and `k` rounds. -/
+-- 
+2.43.0
+

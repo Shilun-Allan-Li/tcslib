@@ -1,0 +1,194 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:37:87: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:42:51: error: Application type mismatch: The argument
+  z
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+in the application
+  P.toFunFamily.glPad.f m z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:48:4: error: Application type mismatch: The argument
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y
+has type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+in the application
+  A ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:52:54: error: Application type mismatch: The argument
+  i
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n r i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:58:88: error: Type mismatch
+  w
+has type
+  Fin (p.eval n + A.coinLen n) → Bool
+but is expected to have type
+  (A.wrap hpre hpost β b hβ p).Coins n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:62:2: error: Type mismatch
+  (coinBlocks n (S.enc.coinLen n)) v
+has type
+  Fin (n * S.enc.coinLen n) → Bool
+but is expected to have type
+  S.bitwise.enc.Coins n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:67:4: error: Application type mismatch: The argument
+  Fin.appendEquiv 1 (D.coinLen n)
+has type
+  (Fin 1 → ?m.14) × (Fin (D.coinLen n) → ?m.14) ≃ (Fin (1 + D.coinLen n) → ?m.14)
+but is expected to have type
+  (Fin 1 → Bool) × D.Coins n ≃ (tdpPredictor D flip).Coins n
+in the application
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:71:32: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:75:2: error: Type mismatch
+  GI.tapeSplit (1 * (N + 1) ^ 2)
+has type
+  Bool × (Fin (1 * (N + 1) ^ 2) → Bool) ≃ (Fin (1 + 1 * (N + 1) ^ 2) → Bool)
+but is expected to have type
+  Bool × (Fin (1 * (N + 1) ^ 2) → Bool) ≃ GI.gniProtocol.V.Coins N
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:76:52: error: Type mismatch
+  (Equiv.funUnique (Fin 1) Bool).symm
+has type
+  Bool ≃ (Fin 1 → Bool)
+but is expected to have type
+  Bool ≃ GI.giProtocol.V.Coins N
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:79:2: error: Type mismatch
+  Equiv.prodComm ?m.3 ?m.4
+has type
+  ?m.3 × ?m.4 ≃ ?m.4 × ?m.3
+but is expected to have type
+  (Fin x.length → Bool) × P'.Coins x.length ≃ GI.giProtocolRep.ExecCoins P' x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:85:4: error: Application type mismatch: The argument
+  (FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys
+has type
+  Fin (fmultBlocks.eval n * (2 * n)) → Bool
+but is expected to have type
+  Fin ((fmult.prod fmultBlocks).outLen.eval n) → Bool
+in the application
+  A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+    ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:86:60: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  fmultWeakPoly.eval n = 8 * (n + 1) ^ 2
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:87:81: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:89:89: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  encodeDistinctPrimes m z = pairEncode (natToList m ↑↑(↑z).1) (natToList m ↑↑(↑z).2)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:92:75: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  msgAt w i = pairFstD (pairSndD^[i] w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:93:69: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  edgeIdxOfMsg m w = w.length % m
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:97:66: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (PRG.expand G ℓ hℓ).stretch = ℓ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:99:22: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype (?m.24 n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:101:88: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (GGMRed.coinPoly D q).eval n = q.eval n * n + (q.eval n * (2 * n) + D.coinLen n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:103:67: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  pairSndD z = (Option.map Prod.snd (pairDecode z)).getD []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:110:31: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  OneWay.yaoB inLen outLen m A' n ys r j =
+    OneWay.padTrue (inLen.eval n)
+      (List.drop (↑j * inLen.eval n) (A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:111:65: error: Function expected at
+  h
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:116:61: error: Type mismatch
+  Equiv.refl ?m.9
+has type
+  ?m.9 ≃ ?m.9
+but is expected to have type
+  (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃ (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:120:2: error: Type mismatch
+  Equiv.refl ?m.17
+has type
+  ?m.17 ≃ ?m.17
+but is expected to have type
+  (Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool) ≃
+    (Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:126:26: error: Application type mismatch: The argument
+  i
+has type
+  Fin ((PRG.expand G ℓ hℓ).stretch.eval n)
+but is expected to have type
+  Fin (ℓ.eval n)
+in the application
+  PRG.expand_G G ℓ hℓ n s i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:131:2: error: 'show' tactic failed, pattern
+  pairFstD ((rsaGen H).runAt n [] r) = ?m.8
+is not definitionally equal to target
+  (rsaCollection H).index n r = rsaIndexOf (max n 2) (rsaGenParams n (List.ofFn r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:140:2: error: Invalid field `easy`: The environment does not contain `TCSlib.Cryptography.OneWayPermutation.easy`
+  hP
+has type
+  OneWayPermutation P
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:144:93: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  HardcoreBit.perfectInverter A = HardcoreBit.glInverter (HardcoreBit.perfectRecover A)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6b/probes/Final6Control.lean:146:88: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  owpPredictor D flip y c = ((if D (y.1, y.2, c.1) c.2 = true then c.1 else !c.1) ^^ flip)
+rc=1

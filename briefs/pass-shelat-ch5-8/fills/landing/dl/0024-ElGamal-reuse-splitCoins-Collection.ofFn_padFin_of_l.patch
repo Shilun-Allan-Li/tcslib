@@ -1,0 +1,122 @@
+From c47523848b4508b828e720c190779905fe797153 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 15:18:02 +0000
+Subject: [PATCH 24/25] ElGamal: reuse splitCoins, Collection.ofFn_padFin_of_le
+ and statClose_of_uprob_ne in the dl-c helpers
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjbdigRAJ9GynaUSPx
+---
+ TCSlib/Cryptography/Candidates/ElGamal.lean | 64 ++++++++++-----------
+ 1 file changed, 30 insertions(+), 34 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index 54203ccc..c10330a8 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -1189,8 +1189,8 @@ private theorem dlc_poly_egEncParts (H : ArithmeticFP) {u pk m r : List Bool →
+ `H.le` for `0 < m < p`, `polyTimeComputable_ite` for the canonicalisation); the product by
+ `H.mul` and the reduction modulo `p` by `H.divMod`; width-`n` padding by
+ `polyTimeComputable_unaryPoly`/`_blockMap`; pair. -/
+-theorem polyTimeComputable_egEncRaw (H : ArithmeticFP) : PolyTimeComputable egEncRaw :=
+-  dlc_poly_egEncParts H NUPPT.polyTimeComputable_inParam
++theorem polyTimeComputable_egEncRaw (H : ArithmeticFP) : PolyTimeComputable egEncRaw := by
++  exact dlc_poly_egEncParts H NUPPT.polyTimeComputable_inParam
+     (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg)
+     (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg) NUPPT.polyTimeComputable_inCoins
+ 
+@@ -1572,26 +1572,34 @@ noncomputable def egGroupGen (H : ArithmeticFP) (G : SafePrimeGen) : SafePrimeGe
+ 
+ /-! ### Helpers of `elGamal_secure` (unit dl-c) -/
+ 
+-/-- Splitting a coin string `Fin L → Bool` with `L = a + b` into its two segments
+-(`Fin.appendEquiv` after the length cast). -/
++/-- A coin string read along a length cast. -/
++private def dlc_castEquiv {a L : ℕ} (h : a = L) : (Fin a → Bool) ≃ (Fin L → Bool) :=
++  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
++
++/-- The cast keeps the coin string. -/
++private theorem dlc_castEquiv_ofFn {a L : ℕ} (h : a = L) (u : Fin a → Bool) :
++    List.ofFn (dlc_castEquiv h u) = List.ofFn u := by
++  subst h
++  rfl
++
++/-- Splitting a coin string `Fin L → Bool` with `L = a + b` into its two segments: the length
++cast, then `TCSlib.Cryptography.splitCoins`. -/
+ private def dlc_splitEquiv {L a b : ℕ} (h : L = a + b) :
+     (Fin L → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
+-  (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)).trans (Fin.appendEquiv a b).symm
++  (dlc_castEquiv h).trans (splitCoins a b)
+ 
+-/-- The coin string of two joined segments is the concatenation of their coin strings. -/
++/-- The coin string of two joined segments is the concatenation of their coin strings
++(`ofFn_splitCoins_symm`). -/
+ private theorem dlc_splitEquiv_symm_ofFn {L a b : ℕ} (h : L = a + b) (u : Fin a → Bool)
+     (v : Fin b → Bool) : List.ofFn ((dlc_splitEquiv h).symm (u, v)) = List.ofFn u ++ List.ofFn v := by
+   subst h
+-  rw [← List.ofFn_fin_append]
+-  rfl
++  exact ofFn_splitCoins_symm a b u v
+ 
+-/-- Padding a string of the right length is lossless: `List.ofFn (padFin ℓ w) = w` for `|w| = ℓ`. -/
++/-- Padding a string of the right length is lossless: `List.ofFn (padFin ℓ w) = w` for `|w| = ℓ`
++(`Collection.ofFn_padFin_of_le`). -/
+ private theorem dlc_ofFn_padFin {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
+     List.ofFn (padFin ℓ w) = w := by
+-  subst h
+-  have h1 := padFin_ofFn (fun i : Fin w.length => w.get i)
+-  rw [List.ofFn_get] at h1
+-  rw [h1, List.ofFn_get]
++  rw [Collection.ofFn_padFin_of_le h.le, h, Nat.sub_self, List.replicate_zero, List.append_nil]
+ 
+ /-- The public key `⟨i, X⟩` read from a DDH tuple `⟨i, ⟨X, ⟨Y, Z⟩⟩⟩`. -/
+ private def dlc_tuplePk (t : List Bool) : List Bool := pairEncode (pairFstD t) (pairFstD (pairSndD t))
+@@ -1657,19 +1665,17 @@ private theorem dlc_exists_ddhDist (H : ArithmeticFP) (M D : NUPPT) (b : Bool) :
+     List.drop_left' (List.length_ofFn), hM', hD', NUPPT.runAt_eq, NUPPT.runAt_eq]
+   simp only [id, pairSndD_pairEncode, NUPPT.advInput_eq, pairFstD_pairEncode, List.length_replicate]
+ 
+-/-- Two events that agree outside `C` have probabilities within `Pr[C]`. -/
++/-- Two events that agree outside `C` have probabilities within `Pr[C]` (`statClose_of_uprob_ne`
++on the indicators). -/
+ private theorem dlc_abs_uprob_sub_le_of_iff {Ω : Type*} [Fintype Ω] {A B C : Ω → Prop}
+     (h : ∀ ω, ¬ C ω → (A ω ↔ B ω)) : |uprob A - uprob B| ≤ uprob C := by
+-  have key : ∀ {A B : Ω → Prop}, (∀ ω, ¬ C ω → (A ω ↔ B ω)) → uprob A ≤ uprob B + uprob C := by
+-    intro A B h
+-    refine (uprob_mono fun ω hA => ?_).trans (uprob_or_le B C)
+-    by_cases hc : C ω
+-    · exact Or.inr hc
+-    · exact Or.inl ((h ω hc).1 hA)
+-  have h1 := key h
+-  have h2 := key (A := B) (B := A) fun ω hc => (h ω hc).symm
+-  rw [abs_sub_le_iff]
+-  constructor <;> linarith
++  classical
++  have hs := (statClose_of_uprob_ne (fun ω => decide (A ω)) (fun ω => decide (B ω))).abs_uprob_sub_le
++    (fun v => v = true)
++  simp only [decide_eq_true_eq] at hs
++  refine hs.trans (uprob_mono fun ω hne => ?_)
++  by_contra hc
++  exact hne (decide_eq_decide.2 (h ω hc))
+ 
+ /-- **At most two square roots of `1` among `1, …, p − 1`**: `(x + 1)² ≡ 1 (mod p)` forces
+ `x = 0` or `x = p − 2` (`p ∣ x (x + 2)`, `Nat.Prime.dvd_mul`). -/
+@@ -1833,16 +1839,6 @@ private theorem dlc_abs_uexp_sub_le {α : Type*} [Fintype α] [Nonempty α] {f g
+       fun a => (abs_le.1 (h a)).2
+     rwa [HardcoreBit.uexp_const] at this
+ 
+-/-- A coin string read along a length cast. -/
+-private def dlc_castEquiv {a L : ℕ} (h : a = L) : (Fin a → Bool) ≃ (Fin L → Bool) :=
+-  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+-
+-/-- The cast keeps the coin string. -/
+-private theorem dlc_castEquiv_ofFn {a L : ℕ} (h : a = L) (u : Fin a → Bool) :
+-    List.ofFn (dlc_castEquiv h u) = List.ofFn u := by
+-  subst h
+-  rfl
+-
+ /-- The coin count of El Gamal's `Gen`: `G`'s coins, then `n · n` for `g` and `n · n` for `a`. -/
+ private theorem dlc_egGen_coinLen (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
+     (egGen H G).coinLen n = G.gen.coinLen n + (n * n + n * n) := by
+-- 
+2.43.0
+

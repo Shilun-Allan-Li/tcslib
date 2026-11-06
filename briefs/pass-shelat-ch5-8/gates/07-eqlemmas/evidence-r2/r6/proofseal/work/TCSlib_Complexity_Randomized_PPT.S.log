@@ -1,0 +1,133 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:184:2: error: Type mismatch
+  fun z => output_spec A z
+has type
+  ∀ (z : List Bool), A.M.ComputesInTime z (A.output z) (A.timeBound z.length)
+but is expected to have type
+  A.M.ComputesFunInTime A.output A.timeBound
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:189:2: error: Invalid `⟨...⟩` notation: The expected type `PolyTimeComputable A.output` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:326:24: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.6 x
+in the application
+  Classical.choose hf
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:327:48: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.10 x
+in the application
+  Classical.choose_spec hf
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:328:71: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.17 x
+in the application
+  Classical.choose_spec hf
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:333:94: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.28 x
+in the application
+  Classical.choose_spec hf
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:333:26: error: Function expected at
+  Classical.choose_spec ?m.30
+but this term has type
+  ?m.24 (Classical.choose ?m.30)
+
+Note: Expected a function because this term is being applied to the argument
+  z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:333:48: error: Application type mismatch: The argument
+  Classical.choose_spec ?m.29
+has type
+  ?m.26 (Classical.choose ?m.29)
+but is expected to have type
+  ∃ x, ?m.24 x
+in the application
+  Classical.choose_spec (Classical.choose_spec ?m.29)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:341:73: error: Application type mismatch: The argument
+  hf
+has type
+  PolyTimeComputable f
+but is expected to have type
+  ∃ x, ?m.24 x
+in the application
+  Classical.choose_spec hf
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:341:5: error: Function expected at
+  Classical.choose_spec ?m.26
+but this term has type
+  ?m.20 (Classical.choose ?m.26)
+
+Note: Expected a function because this term is being applied to the argument
+  z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:341:27: error: Application type mismatch: The argument
+  Classical.choose_spec ?m.25
+has type
+  ?m.22 (Classical.choose ?m.25)
+but is expected to have type
+  ∃ x, ?m.20 x
+in the application
+  Classical.choose_spec (Classical.choose_spec ?m.25)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:343:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).coins
+is not definitionally equal to the right-hand side
+  coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:346:57: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).coins = coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:362:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).adv
+is not definitionally equal to the right-hand side
+  adv
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:365:53: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).adv = adv
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:367:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTime hf coins adv advice hα).advice
+is not definitionally equal to the right-hand side
+  advice
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:370:59: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (ofPolyTime hf coins adv advice hα).advice = advice
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:387:74: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (ofPolyTimeUniform hf coins).advice x✝ = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:394:0: error: Not a definitional equality: the left-hand side
+  (ofPolyTimeUniform hf coins).coins
+is not definitionally equal to the right-hand side
+  coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:396:71: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (ofPolyTimeUniform hf coins).coins = coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_Randomized_PPT.S.lean:427:74: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (ofPolyTimeUniform hF coins).coins = coins
+in the application
+  And.intro rfl

@@ -1,0 +1,2278 @@
+diff --git a/TCSlib/Complexity/Randomized/Closure.lean b/TCSlib/Complexity/Randomized/Closure.lean
+index 468cb1ed..93a54b41 100644
+--- a/TCSlib/Complexity/Randomized/Closure.lean
++++ b/TCSlib/Complexity/Randomized/Closure.lean
+@@ -104,6 +104,23 @@ def inAdvice (z : List Bool) : List Bool := pairSndD (pairFstD z)
+ /-- The coin slot of a raw input. -/
+ def inCoins (z : List Bool) : List Bool := pairSndD z
+ 
++/-- The defining equation of `layout`:
++`layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r`. -/
++theorem layout_eq (u y α r : List Bool) :
++    layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r := rfl
++
++/-- The defining equation of `inParam`: `inParam z = pairFstD (pairFstD (pairFstD z))`. -/
++theorem inParam_eq (z : List Bool) : inParam z = pairFstD (pairFstD (pairFstD z)) := rfl
++
++/-- The defining equation of `inArg`: `inArg z = pairSndD (pairFstD (pairFstD z))`. -/
++theorem inArg_eq (z : List Bool) : inArg z = pairSndD (pairFstD (pairFstD z)) := rfl
++
++/-- The defining equation of `inAdvice`: `inAdvice z = pairSndD (pairFstD z)`. -/
++theorem inAdvice_eq (z : List Bool) : inAdvice z = pairSndD (pairFstD z) := rfl
++
++/-- The defining equation of `inCoins`: `inCoins z = pairSndD z`. -/
++theorem inCoins_eq (z : List Bool) : inCoins z = pairSndD z := rfl
++
+ /-- The parameter slot of a layout. -/
+ @[simp] theorem inParam_layout (u y α r : List Bool) : inParam (layout u y α r) = u := by
+   simp [inParam, layout]
+@@ -122,7 +139,9 @@ def inCoins (z : List Bool) : List Bool := pairSndD z
+ 
+ /-- An activation is the output on the layout `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/
+ theorem runAtL_eq_output_layout (A : NUPPT) (n : ℕ) (y r : List Bool) :
+-    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := rfl
++    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := by
++  rw [runAtL_eq, advInput_eq]
++  rfl
+ 
+ /-- The parameter projection is polynomial-time. -/
+ theorem polyTimeComputable_inParam : PolyTimeComputable inParam :=
+@@ -217,7 +236,7 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
+   refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
++  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+ /-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
+ inventory Claim-26.3(a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
+@@ -242,7 +261,7 @@ theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
+     (ptc_comp hpost polyTimeComputable_pairSndD)
+   refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
+   rw [hB, pairSndD_pairEncode]
+-  simp [advInput]
++  simp [advInput_eq]
+ 
+ /-- **Parameter change `n ↦ p(n)`** [PS10, §2.1, implicit; inventory Claim-26.3]: for an
+ `NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p`
+@@ -267,7 +286,7 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
+   refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
+     rfl, fun hA n => hA _, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
++  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+ /-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform)
+ [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`, `φ` with `φ n ≤ p n`,
+@@ -306,7 +325,7 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+   refine ⟨ofPolyTime hF (A.coins.subst p) _
+     (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv, rfl, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+-  simp [runAtL, advInput, coinLen, layout, inArg, inAdvice, inCoins]
++  simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
+ 
+ /-- **Hard-wiring advice** [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`
+ and a polynomially bounded family `β n` there is an `NUPPT` `B` with the same coins that
+@@ -336,7 +355,7 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+   refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv, rfl,
+     fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
++  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+ /-- **Extra coins passed as data** [PS10, §2.1, implicit; inventory Claim-26.3(c)]: for an
+ `NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins`
+@@ -360,7 +379,7 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
+   refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length, rfl, rfl,
+     fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
++  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+ /-- **Sequential composition with input pass-through and fresh coins** [PS10, §2.1, implicit;
+ inventory Claim-26.3(b), (c), (e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT`
+@@ -403,7 +422,7 @@ theorem exists_seq (A B : NUPPT) :
+   · show combineAdvice (A.advice n) (B.advice n) = []
+     rw [hA n, hB n, combineAdvice_nil]
+   · rw [runAtL_ofPolyTime]
+-    simp [runAtL, advInput, coinLen, layout, inParam, inArg, inAdvice, inCoins]
++    simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+ /-- **From "computes with probability one" to FP** [PS10, Definition 24.6; the direction
+ "a PPT computing `f` gives a polynomial-time evaluator" behind Deviation 3]: if a uniform
+@@ -426,9 +445,9 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
+   funext z
+   have hz := h (pairFstD z).length (pairSndD z) (fun _ => true)
+   have hadv := hA (pairFstD z).length
+-  simp only [runAt, List.ofFn_const] at hz
++  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
+   rw [← hz]
+-  simp [layout, advInput, coinLen, hadv]
++  simp [layout, advInput_eq, coinLen_eq, hadv]
+ 
+ end NUPPT
+ 
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index 3416d340..babc4e8c 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -159,6 +159,9 @@ def timeBound (m : ℕ) : ℕ := A.Ct * (m + 1) ^ A.ct
+ /-- The number of coins of `A` at parameter `n`. -/
+ def coinLen (n : ℕ) : ℕ := A.coins.eval n
+ 
++/-- The defining equation of `coinLen`: `A.coinLen n = A.coins.eval n`. -/
++theorem coinLen_eq (n : ℕ) : A.coinLen n = A.coins.eval n := rfl
++
+ /-- The advice-length bound of `A` at parameter `n`. -/
+ def adviceLen (n : ℕ) : ℕ := A.adv.eval n
+ 
+@@ -198,6 +201,11 @@ theorem output_length_le (z : List Bool) : (A.output z).length ≤ A.timeBound z
+ exactly as the text writes `A(1^n, y)` [PS10, Definition 27.3]. -/
+ def advInput (n : ℕ) (y : List Bool) : List Bool := pairEncode (List.replicate n true) y
+ 
++/-- The defining equation of `advInput`: `advInput n y = pairEncode (List.replicate n true) y`
++(the pair `⟨1^n, y⟩`). -/
++theorem advInput_eq (n : ℕ) (y : List Bool) :
++    advInput n y = pairEncode (List.replicate n true) y := rfl
++
+ /-- The length of the adversary input `⟨1^n, y⟩` is `2n + 2 + |y|`. -/
+ theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 * n + 2 + y.length := by
+   simp [advInput, length_pairEncode]
+@@ -217,6 +225,11 @@ chapters 3–4 hand the machine a coin string of the right length as a list). -/
+ def runAtL (n : ℕ) (y r : List Bool) : List Bool :=
+   A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)
+ 
++/-- The defining equation of `runAtL`:
++`A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)`. -/
++theorem runAtL_eq (n : ℕ) (y r : List Bool) :
++    A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r) := rfl
++
+ /-- The typed activation is the untyped one on `List.ofFn r`. -/
+ theorem runAt_eq (n : ℕ) (y : List Bool) (r : A.Coins n) :
+     A.runAt n y r = A.runAtL n y (List.ofFn r) := rfl
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index f80ac042..41c22632 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -77,6 +77,12 @@ open Complexity Turing Finset
+ def decodeFin (ℓ : ℕ) (w : List Bool) : Option (Fin ℓ → Bool) :=
+   if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none
+ 
++/-- The defining equation of `decodeFin`: `decodeFin ℓ w` is `some` of the bits of `w` when
++`|w| = ℓ`, and `none` otherwise. -/
++theorem decodeFin_eq (ℓ : ℕ) (w : List Bool) :
++    decodeFin ℓ w = if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none :=
++  rfl
++
+ /-- Pad with `false` or truncate a string to exactly `ℓ` bits (the output convention of
+ samplers, where no failure is possible). -/
+ def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
+@@ -126,6 +132,11 @@ def _root_.Complexity.NUPPT.distinguisher (A : NUPPT) (n m : ℕ) :
+ def _root_.Complexity.NUPPT.distinguisherL (A : NUPPT) (n : ℕ) : List Bool → A.Coins n → Bool :=
+   fun w r => decide (A.runAt n w r = [true])
+ 
++/-- The defining equation of `distinguisherL`:
++`A.distinguisherL n w r = decide (A.runAt n w r = [true])`. -/
++theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
++    (r : A.Coins n) : A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
++
+ /-- `A(1^n, y)` as a predictor of a bit: the same verdict convention as a distinguisher
+ [PS10, Definitions 75.2 and 78.3]. -/
+ def _root_.Complexity.NUPPT.predictor (A : NUPPT) (n m : ℕ) :
+diff --git a/TCSlib/Cryptography/Asymptotic/Collections.lean b/TCSlib/Cryptography/Asymptotic/Collections.lean
+index e585cb26..6af94275 100644
+--- a/TCSlib/Cryptography/Asymptotic/Collections.lean
++++ b/TCSlib/Cryptography/Asymptotic/Collections.lean
+@@ -181,6 +181,10 @@ namespace Collection
+ /-- The index `i` output by `Gen(1^n; r)`: the first component of `⟨i, t⟩`. -/
+ def index (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairFstD (F.gen.runAt n [] r)
+ 
++/-- The defining equation of `index`: `F.index n r = pairFstD (F.gen.runAt n [] r)`. -/
++theorem index_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
++    F.index n r = pairFstD (F.gen.runAt n [] r) := rfl
++
+ /-- The trapdoor `t` output by `Gen(1^n; r)`: the second component [PS10, Definition 56.1 (2)]. -/
+ def trap (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairSndD (F.gen.runAt n [] r)
+ 
+@@ -194,6 +198,11 @@ def SampleClose (F : Collection) (δ : ℕ → ℝ) : Prop :=
+     StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
+       (fun x : F.D (F.index n r) => some x) (δ n)
+ 
++/-- The defining property of `SampleClose` (its body: closeness of every decoded sampler). -/
++theorem sampleClose_iff (F : Collection) (δ : ℕ → ℝ) : F.SampleClose δ ↔ ∀ n (r : F.gen.Coins n),
++    StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
++      (fun x : F.D (F.index n r) => some x) (δ n) := Iff.rfl
++
+ /-- The inversion experiment of [PS10, Definition 41.1 (4)]:
+ `Pr[i ← Gen(1^n); x ← D_i; y ← f_i(x) : f_i(A(1^n, i, y)) = y]`: the average over the
+ generator's coins of the probability, over the ideal uniform `x ∈ D_i` and the coins of `A`,
+@@ -208,6 +217,12 @@ noncomputable def invProbAt (F : Collection) (A : NUPPT) (n : ℕ) : ℝ :=
+           (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧
+         F.f (F.index n r) x' = F.f (F.index n r) z.1
+ 
++/-- The defining equation of `invProbAt` (its body: the averaged inversion probability). -/
++theorem invProbAt_eq (F : Collection) (A : NUPPT) (n : ℕ) :
++    F.invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n =>
++      ∃ x', F.decD (F.index n r) (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2)
++        = some x' ∧ F.f (F.index n r) x' = F.f (F.index n r) z.1 := rfl
++
+ /-- A *collection of one-way functions* [PS10, Definition 41.1]: the sampler is negligibly
+ close to uniform (clause (2)) and every non-uniform PPT inverts with negligible probability
+ (clause (4)); clauses (1) and (3) are the data of `Collection`. -/
+@@ -234,6 +249,20 @@ def HardCore (F : Collection) (h : ∀ i, F.D i → Bool) : Prop :=
+         A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 = h (F.index n r) z.1)
+       ≤ 1 / 2 + ε n
+ 
++/-- The defining property of `HardCore`: a polynomial-time evaluator `H ⟨i, encD_i x⟩ = [h i x]`,
++and every `A` predicts `h_i(x)` from `⟨i, f_i(x)⟩` with probability `≤ 1/2 + ε(n)`,
++`ε` negligible. -/
++theorem hardCore_iff (F : Collection) (h : ∀ i, F.D i → Bool) :
++    F.HardCore h ↔
++      (∃ H : List Bool → List Bool, PolyTimeComputable H ∧
++          ∀ i x, H (pairEncode i (F.encD i x)) = [h i x]) ∧
++        ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
++          uexp (fun r : F.gen.Coins n =>
++            uprob fun z : F.D (F.index n r) × A.Coins n =>
++              A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 =
++                h (F.index n r) z.1)
++            ≤ 1 / 2 + ε n := Iff.rfl
++
+ /-! ### Unfolding and sanity lemmas -/
+ 
+ /-- The encoding of `D_i` is injective (it has the left inverse `decD i`). -/
+@@ -311,6 +340,10 @@ structure PermCollection extends Collection where
+ is one-way. -/
+ def PermCollection.OneWay (P : PermCollection) : Prop := P.toCollection.OneWay
+ 
++/-- The defining property of `PermCollection.OneWay`: `P.OneWay ↔ P.toCollection.OneWay`. -/
++theorem PermCollection.oneWay_iff (P : PermCollection) : P.OneWay ↔ P.toCollection.OneWay :=
++  Iff.rfl
++
+ /-- `f_i` is injective on `D_i`: the composite of the injective encoding and a bijection. -/
+ theorem PermCollection.f_injective (P : PermCollection) (i : List Bool) :
+     Function.Injective (P.f i) := by
+@@ -347,6 +380,21 @@ structure TrapdoorCollection extends PermCollection where
+ bound "`≤ e(k)`" is `ε(n)` (source error). -/
+ def TrapdoorCollection.OneWay (T : TrapdoorCollection) : Prop := T.toCollection.OneWay
+ 
++/-- The defining property of `TrapdoorCollection.OneWay`: `T.OneWay ↔ T.toCollection.OneWay`. -/
++theorem TrapdoorCollection.oneWay_iff (T : TrapdoorCollection) :
++    T.OneWay ↔ T.toCollection.OneWay := Iff.rfl
++
++/-- **The domain of the underlying collection** (ruling "published domain equivalence",
++2026-11-06): `T.toCollection.D i ≃ T.D i`, the identity (`T.toCollection` is the parent
++projection, so its fields are those of `T`). A generic bridge for the concrete trapdoor
++collections, whose own domain equivalences start from `T.D i`. -/
++def TrapdoorCollection.toCollection_domEquiv (T : TrapdoorCollection) (i : List Bool) :
++    T.toCollection.D i ≃ T.D i := Equiv.refl _
++
++/-- The domain bridge of a trapdoor collection is the identity. -/
++theorem TrapdoorCollection.toCollection_domEquiv_apply (T : TrapdoorCollection) (i : List Bool)
++    (x : T.toCollection.D i) : T.toCollection_domEquiv i x = x := rfl
++
+ /-- **The trapdoor inverter wins the inversion game on every `y`** (sanity for
+ [PS10, Definition 56.1 (6)], decode level; the string level is `TrapdoorCollection.eval_inv`):
+ its decoded answer `x'` satisfies `f_i(x') = encD i y`. -/
+@@ -439,6 +487,47 @@ noncomputable def toCollection : Collection where
+     intro s
+     exact ⟨s, decodeFin_ofFn s, hspec n s⟩
+ 
++/-- **The published domain of `toCollection`** (ruling "published domain equivalence",
++2026-11-06): `D_i ≃ {0,1}^{inLen |i|}`, the identity on the definition. Consumers read the
++domain of `𝓕.toCollection F hF hspec` through it, not by reducing the field `D`. -/
++def toCollection_domEquiv (i : List Bool) :
++    (𝓕.toCollection F hF hspec).D i ≃ (Fin (𝓕.inLen.eval i.length) → Bool) := Equiv.refl _
++
++/-- The domain equivalence of `toCollection` is the identity on the definition. -/
++theorem toCollection_domEquiv_apply (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
++    𝓕.toCollection_domEquiv F hF hspec i x = x := rfl
++
++/-- The encoding of `toCollection` through its domain equivalence `e`:
++`encD_i x = List.ofFn (e x)`. -/
++theorem toCollection_encD (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
++    (𝓕.toCollection F hF hspec).encD i x = List.ofFn (𝓕.toCollection_domEquiv F hF hspec i x) := rfl
++
++/-- The decoder of `toCollection` through its domain equivalence `e`:
++`decD_i w = e⁻¹ <$> decodeFin (inLen |i|) w`. -/
++theorem toCollection_decD (i w : List Bool) :
++    (𝓕.toCollection F hF hspec).decD i w =
++      (decodeFin (𝓕.inLen.eval i.length) w).map (𝓕.toCollection_domEquiv F hF hspec i).symm := by
++  show decodeFin (𝓕.inLen.eval i.length) w = _
++  cases decodeFin (𝓕.inLen.eval i.length) w <;> rfl
++
++/-- The function of `toCollection` through its domain equivalence `e`:
++`f_i x = List.ofFn (f_{|i|} (e x))`. -/
++theorem toCollection_f (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
++    (𝓕.toCollection F hF hspec).f i x =
++      List.ofFn (𝓕.f i.length (𝓕.toCollection_domEquiv F hF hspec i x)) := rfl
++
++/-- The index generator of `toCollection`: the coinless machine `1^n ↦ ⟨1^n, []⟩`. -/
++theorem toCollection_gen : (𝓕.toCollection F hF hspec).gen = NUPPT.ofPolyTimeUniform
++    (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const [])) (.const 0) := rfl
++
++/-- The sampler of `toCollection`: the machine returning its `inLen n` coins. -/
++theorem toCollection_sample_eq : (𝓕.toCollection F hF hspec).sample =
++    NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen := rfl
++
++/-- The evaluator of `toCollection`: `F` on `⟨1^{|i|}, x⟩` for the input `⟨i, x⟩`. -/
++theorem toCollection_eval (z : List Bool) : (𝓕.toCollection F hF hspec).eval z =
++    F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)) := rfl
++
+ /-- The index generated by `toCollection` is `1^n`. -/
+ theorem toCollection_index (n : ℕ) (r : (𝓕.toCollection F hF hspec).gen.Coins n) :
+     (𝓕.toCollection F hF hspec).index n r = List.replicate n true := by
+diff --git a/TCSlib/Cryptography/Asymptotic/Encryption.lean b/TCSlib/Cryptography/Asymptotic/Encryption.lean
+index 8bbd58f4..5d2f94e1 100644
+--- a/TCSlib/Cryptography/Asymptotic/Encryption.lean
++++ b/TCSlib/Cryptography/Asymptotic/Encryption.lean
+@@ -225,6 +225,25 @@ theorem encDist_apply (S : PrivateKeyScheme) (n : ℕ) (m : Fin n → Bool)
+ theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
+     encodeList (m :: ms) = pairEncode m (encodeList ms) := rfl
+ 
++/-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
++theorem encodeList_nil : encodeList [] = [] := rfl
++
++/-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
++encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/
++theorem multiEncDist_apply (S : PrivateKeyScheme) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
++    (r : S.gen.Coins n × (Fin (q + 1) → S.enc.Coins n)) :
++    S.multiEncDist n q m r = encodeList (List.ofFn fun i =>
++      S.enc.runAt n (pairEncode (S.gen.runAt n [] r.1) (List.ofFn (m i))) (r.2 i)) := rfl
++
++/-- The defining property of `MultiMessageSecure`: for every `D` and `q` some negligible `ε`
++bounds `D`'s advantage between the encryptions of any two message vectors `m, m'` of
++`q(n) + 1` messages under one key. -/
++theorem multiMessageSecure_iff (S : PrivateKeyScheme) :
++    S.MultiMessageSecure ↔ ∀ (D : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
++      ∀ n (m m' : Fin (q.eval n + 1) → Fin n → Bool),
++        distAdv (S.multiEncDist n (q.eval n) m) (S.multiEncDist n (q.eval n) m')
++          (D.distinguisherL n) ≤ ε n := Iff.rfl
++
+ /-- The first two components of the encoding of a tuple with at least two entries. -/
+ theorem firstTwo_encodeList_ofFn {k : ℕ} (hk : 1 < k) (f : Fin k → List Bool) :
+     pairFstD (encodeList (List.ofFn f)) = f ⟨0, by omega⟩ ∧
+diff --git a/TCSlib/Cryptography/Asymptotic/Ensembles.lean b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+index b4a411a9..cdd05d45 100644
+--- a/TCSlib/Cryptography/Asymptotic/Ensembles.lean
++++ b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+@@ -153,6 +153,14 @@ def uniform (ℓ : PolyExpr) : Ensemble ℓ where
+   σ n := Fin (ℓ.eval n) → Bool
+   X _ := id
+ 
++/-- Field equation of the uniform ensemble: the seed type at `n` is `{0,1}^{ℓ(n)}`. -/
++theorem uniform_σ (ℓ : PolyExpr) (n : ℕ) : (uniform ℓ).σ n = (Fin (ℓ.eval n) → Bool) := rfl
++
++/-- Field equation of the uniform ensemble: the sampler at `n` is the identity on seeds, read
++along `uniform_σ`. -/
++theorem uniform_X (ℓ : PolyExpr) (n : ℕ) (x : (uniform ℓ).σ n) :
++    (uniform ℓ).X n x = cast (uniform_σ ℓ n) x := rfl
++
+ /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
+ polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
+ `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
+@@ -185,6 +193,9 @@ def IndistLit (X Y : Ensemble ℓ) : Prop :=
+ ensemble `{U_{ℓ(n)}}`. -/
+ def Pseudorandom (X : Ensemble ℓ) : Prop := Indist X (uniform ℓ)
+ 
++/-- The defining property of `Pseudorandom`: `X.Pseudorandom ↔ Indist X (uniform ℓ)`. -/
++theorem pseudorandom_iff (X : Ensemble ℓ) : X.Pseudorandom ↔ Indist X (uniform ℓ) := Iff.rfl
++
+ /-- The image ensemble `{M(X_n)}` of [PS10, Lemma 71.5]: at parameter `n`, draw a seed of `X`
+ and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)` bits. The
+ output length `ℓ'` is an explicit syntactic polynomial so that the padding is itself
+diff --git a/TCSlib/Cryptography/Asymptotic/GGMReduction.lean b/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
+index c3800a6e..ad6cc4f2 100644
+--- a/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
++++ b/TCSlib/Cryptography/Asymptotic/GGMReduction.lean
+@@ -92,10 +92,20 @@ def queryOf (ℓ₁ : ℕ) (w : List Bool) : Option (Fin ℓ₁ → Bool) :=
+   | some ([false], x) => decodeFin ℓ₁ x
+   | _ => none
+ 
++/-- The defining equation of `queryOf`: `decodeFin ℓ₁ x` when `w` decodes as `⟨[false], x⟩`,
++`none` otherwise. -/
++theorem queryOf_eq (ℓ₁ : ℕ) (w : List Bool) :
++    queryOf ℓ₁ w = match pairDecode w with
++      | some ([false], x) => decodeFin ℓ₁ x
++      | _ => none := rfl
++
+ /-- The verdict read off a machine output that is not a query: `true` iff the output is the
+ two-bit string `[true, true]`. -/
+ def verdictOf (w : List Bool) : Bool := decide (w = [true, true])
+ 
++/-- The defining equation of `verdictOf`: `verdictOf w = decide (w = [true, true])`. -/
++theorem verdictOf_eq (w : List Bool) : verdictOf w = decide (w = [true, true]) := rfl
++
+ /-- The query tree of a next-query string function `next` with budget `b` from the history
+ `hist` (`Option` form of `buildTree`): a verdict stops, a query within budget becomes a node,
+ a query at budget `0` is the forced verdict `false`. -/
+@@ -129,6 +139,13 @@ theorem buildTreeQ_succ {ℓ₁ ℓ₂ : ℕ} (next : List ((Fin ℓ₁ → Bool
+ def histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
+   h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) []
+ 
++/-- The defining equation of `histEnc`: the right fold of `⟨⟨x, o⟩, acc⟩` over the history,
++starting from `[]`. -/
++theorem histEnc_eq {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
++    histEnc h =
++      h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) [] :=
++  rfl
++
+ /-- Pairing distributes over a concatenation in the second component. -/
+ theorem pairEncode_append_right (a b c : List Bool) :
+     pairEncode a (b ++ c) = pairEncode a b ++ c := by
+diff --git a/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean b/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean
+index f9c00440..c72e3c97 100644
+--- a/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean
++++ b/TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean
+@@ -244,6 +244,13 @@ def coinStr : List Bool :=
+     (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
+       List.ofFn d.r)
+ 
++/-- The defining equation of `coinStr`: the seed blocks, then the pair blocks, then `D`'s
++coins. -/
++theorem coinStr_eq : coinStr d =
++    List.ofFn ((FunFamily.blocks (q.eval n) n).symm d.W.1) ++
++      (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
++        List.ofFn d.r) := rfl
++
+ /-- The raw input of the machine at parameter `n`: `⟨⟨⟨1^n, z⟩, ⟨⟨1^i, 1^j⟩, α_D⟩⟩, coins⟩`. -/
+ def rawInput : List Bool :=
+   NUPPT.layout (List.replicate n true) (List.ofFn d.z)
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+index cf45e6d0..68336e6a 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+@@ -188,6 +188,70 @@ theorem glPad_decD_eq (m : PolyExpr)
+     dsimp only
+     cases F.decD i a <;> cases decodeFin (F.encD i default).length b <;> rfl
+ 
++variable {F} in
++/-- **The published domain of the padded collection** (ruling "published domain equivalence",
++2026-11-06): `D'_i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition.
++Consumers read the domain of `F.glPad m henc` through it, not by reducing the field `D`. -/
++def glPad_domEquiv (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) :
++    (F.glPad m henc).D i ≃ F.D i × (Fin (F.encD i default).length → Bool) :=
++  Equiv.refl _
++
++variable {F} in
++/-- The domain equivalence of the padded collection is the identity on the definition. -/
++theorem glPad_domEquiv_apply (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (F.glPad m henc).D i) : glPad_domEquiv m henc i z = z := rfl
++
++variable {F} in
++/-- The encoding of the padded collection through its domain equivalence `e`:
++`encD'_i z = ⟨encD_i (e z).1, (e z).2⟩`. -/
++theorem glPad_encD (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (F.glPad m henc).D i) :
++    (F.glPad m henc).encD i z =
++      pairEncode (F.encD i (glPad_domEquiv m henc i z).1)
++        (List.ofFn (glPad_domEquiv m henc i z).2) := rfl
++
++variable {F} in
++/-- The decoder of the padded collection through its domain equivalence `e`:
++`decD'_i w = e⁻¹ <$> glPadDecode F i |encD_i(default)| w`. -/
++theorem glPad_decD (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i w : List Bool) :
++    (F.glPad m henc).decD i w =
++      (glPadDecode F i (F.encD i default).length w).map (glPad_domEquiv m henc i).symm := by
++  rw [glPad_decD_eq]
++  cases glPadDecode F i (F.encD i default).length w <;> rfl
++
++variable {F} in
++/-- The function of the padded collection through its domain equivalence `e`:
++`g_i z = ⟨f_i (e z).1, (e z).2⟩`. -/
++theorem glPad_f_domEquiv (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (F.glPad m henc).D i) :
++    (F.glPad m henc).f i z =
++      pairEncode (F.f i (glPad_domEquiv m henc i z).1)
++        (List.ofFn (glPad_domEquiv m henc i z).2) := rfl
++
++variable {F} in
++/-- The sampler of the padded collection: `ofPolyTimeUniform` of `glPadSampleFun F` with
++`Sample.coins + m` coins. -/
++theorem glPad_sample (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
++    (F.glPad m henc).sample =
++      NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) := rfl
++
++variable {F} in
++/-- The evaluator of the padded collection: `⟨i, ⟨x, r⟩⟩ ↦ ⟨eval ⟨i, x⟩, r⟩`. -/
++theorem glPad_eval (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (w : List Bool) :
++    (F.glPad m henc).eval w =
++      pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
++        (pairSndD (pairSndD w)) := rfl
++
+ /-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
+ if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
+ indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
+@@ -292,6 +356,28 @@ theorem PermCollection.glPad_toCollection (P : PermCollection) (m : PolyExpr)
+     (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
+     (P.glPad m henc).toCollection = P.toCollection.glPad m henc := rfl
+ 
++/-- **The published domain of the padded permutation collection**:
++`(P.glPad m henc).D i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition. -/
++def PermCollection.glPad_domEquiv (P : PermCollection) (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
++    (i : List Bool) :
++    (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool) :=
++  Equiv.refl _
++
++/-- The domain equivalence of the padded permutation collection is the identity. -/
++theorem PermCollection.glPad_domEquiv_apply (P : PermCollection) (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (P.glPad m henc).D i) : P.glPad_domEquiv m henc i z = z := rfl
++
++/-- The permutation of the padded permutation collection through its domain equivalence `e`:
++`e⁻¹ ∘ (perm_i × id) ∘ e`. -/
++theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
++    (i : List Bool) :
++    (P.glPad m henc).perm i = ((P.glPad_domEquiv m henc i).trans
++      ((P.perm i).prodCongr (Equiv.refl _))).trans (P.glPad_domEquiv m henc i).symm :=
++  rfl
++
+ /-- **The padded permutation collection is one-way** when the original is (collection form of
+ [PS10, Theorem 87.3] for Definition 55.1). -/
+ theorem PermCollection.OneWay.glPad {P : PermCollection} (m : PolyExpr)
+@@ -334,6 +420,25 @@ theorem TrapdoorCollection.glPad_toPermCollection (T : TrapdoorCollection) (m :
+     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
+     (T.glPad m henc).toPermCollection = T.toPermCollection.glPad m henc := rfl
+ 
++/-- **The published domain of the padded trapdoor collection**:
++`(T.glPad m henc).D i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition. -/
++def TrapdoorCollection.glPad_domEquiv (T : TrapdoorCollection) (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
++    (i : List Bool) :
++    (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool) :=
++  Equiv.refl _
++
++/-- The domain equivalence of the padded trapdoor collection is the identity. -/
++theorem TrapdoorCollection.glPad_domEquiv_apply (T : TrapdoorCollection) (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (T.glPad m henc).D i) : T.glPad_domEquiv m henc i z = z := rfl
++
++/-- The trapdoor inverter of the padded trapdoor collection: `ofPolyTimeUniform` of
++`glPadInvFun T` with the coins of `T.inv`. -/
++theorem TrapdoorCollection.glPad_inv (T : TrapdoorCollection) (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
++    (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins := rfl
++
+ /-- **The padded trapdoor collection is one-way** when the original is ([PS10, Theorem 87.3]
+ for Definition 56.1 (5)). -/
+ theorem TrapdoorCollection.OneWay.glPad {T : TrapdoorCollection} (m : PolyExpr)
+@@ -350,4 +455,14 @@ theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : P
+     (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=
+   Collection.OneWay.glPad_hardCore m henc h
+ 
++/-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**, the predicate read through the
++published domain equivalence `e = T.glPad_domEquiv m henc`: `z ↦ ⟨(e z).1, (e z).2⟩` is
++hard-core for `T.glPad m henc` (the form of `glPad_hardCore` that a consumer states without
++reducing the domain of `T.glPad`; `e` is the identity). -/
++theorem TrapdoorCollection.OneWay.glPad_hardCore_domEquiv {T : TrapdoorCollection} (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
++    (h : T.OneWay) :
++    (T.glPad m henc).toCollection.HardCore fun i z => T.glBit i (T.glPad_domEquiv m henc i z) :=
++  h.glPad_hardCore m henc
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWay.lean b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+index 7ac5de06..8b88af5c 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWay.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+@@ -110,6 +110,13 @@ def Easy (𝓕 : FunFamily) : Prop :=
+   ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+     ∀ n (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+ 
++/-- The defining property of `Easy`: `𝓕.Easy` iff some polynomial-time `F` satisfies
++`F ⟨1^n, x⟩ = f n x` (as strings) for every `n` and every `x`. -/
++theorem easy_iff (𝓕 : FunFamily) :
++    𝓕.Easy ↔ ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
++      ∀ n (x : Fin (𝓕.inLen.eval n) → Bool),
++        F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x) := Iff.rfl
++
+ /-- The inversion probability of the machine `A` against `𝓕` at parameter `n`:
+ `Pr[x ← {0,1}^{inLen n}; y ← f(x); r : f(A(1^n, y; r)) = y]` with the output of `A` decoded as
+ an `inLen n`-bit string [PS10, Definitions 27.3 and 28.4, the displayed experiment].
+diff --git a/TCSlib/Cryptography/Asymptotic/PublicKey.lean b/TCSlib/Cryptography/Asymptotic/PublicKey.lean
+index d6086804..5b87580d 100644
+--- a/TCSlib/Cryptography/Asymptotic/PublicKey.lean
++++ b/TCSlib/Cryptography/Asymptotic/PublicKey.lean
+@@ -953,30 +953,36 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+ reading of [PS10, Theorem 104.4] with the hard-core bit supplied by Goldreich–Levin
+ ([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
+ with encoding length `m(n)` at generated indices, the scheme of Algorithm 104.3 for the padded
+-collection `T.glPad m` with the predicate `⟨x, r⟩` is single-bit secure (given its predicate
+-evaluator, which always exists: `OneWay.exists_glPad_singleBitSecure`). The cost of `henc`: no
+-candidate of the library satisfies it as parametrized (see `Collection.glPad`). -/
++collection `T.glPad m` with the predicate `⟨x, r⟩` (read through the published domain
++equivalence `T.glPad_domEquiv`) is single-bit secure (given its predicate evaluator, which always
++exists: `OneWay.exists_glPad_singleBitSecure`). The cost of `henc`: no candidate of the library
++satisfies it as parametrized (see `Collection.glPad`). -/
+ theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection}
+     (m : PolyExpr)
+     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+-    (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) :
++    (hT : T.OneWay)
++    (E : (T.glPad m henc).toCollection.PredEvaluator
++      fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) :
+     ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+-  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc) (hT.glPad_hardCore m henc)
++  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc)
++    (hT.glPad_hardCore_domEquiv m henc)
+ 
+ /-- **Trapdoor permutations give a secure single-bit public-key encryption scheme**, without a
+ supplied evaluator — the text's reading of [PS10, Theorem 104.4] through Goldreich–Levin
+ ([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
+ with encoding length `m(n)` at generated indices (`henc`; see `Collection.glPad` for its cost),
+-some predicate evaluator `E` of `⟨x, r⟩` on `T.glPad m` makes the scheme of Algorithm 104.3
+-single-bit secure. The evaluator comes from the hard-core predicate
+-(`Collection.HardCore.nonempty_predEvaluator`, canonical decoding). -/
++some predicate evaluator `E` of `⟨x, r⟩` (read through `T.glPad_domEquiv`) on `T.glPad m` makes
++the scheme of Algorithm 104.3 single-bit secure. The evaluator comes from the hard-core predicate
++(`TrapdoorCollection.OneWay.glPad_hardCore_domEquiv`, `Collection.HardCore.nonempty_predEvaluator`,
++canonical decoding). -/
+ theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection}
+     (m : PolyExpr)
+     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+     (hT : T.OneWay) :
+-    ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit,
++    ∃ E : (T.glPad m henc).toCollection.PredEvaluator
++        fun i z => T.glBit i (T.glPad_domEquiv m henc i z),
+       ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+-  let ⟨E⟩ := (hT.glPad_hardCore m henc).nonempty_predEvaluator
++  let ⟨E⟩ := (hT.glPad_hardCore_domEquiv m henc).nonempty_predEvaluator
+   ⟨E, hT.glPad_tdpBitScheme_singleBitSecure m henc E⟩
+ 
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Asymptotic/Sampling.lean b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+index 614318c8..211981f0 100644
+--- a/TCSlib/Cryptography/Asymptotic/Sampling.lean
++++ b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+@@ -123,6 +123,12 @@ section StatClose
+ 
+ variable {σ τ υ γ γ' : Type*} [Fintype σ] [Fintype τ] [Fintype υ]
+ 
++/-- The defining property of `StatClose`: `StatClose X Y δ` iff
++`|Pr_s[T (X s)] − Pr_t[T (Y t)]| ≤ δ` for every test set `T`. -/
++theorem statClose_iff (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
++    StatClose X Y δ ↔ ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
++  Iff.rfl
++
+ /-- Unfolding: for a `δ`-close pair the probability of any test set moves by at most `δ`. -/
+ theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+     (T : γ → Prop) : |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
+@@ -455,6 +461,12 @@ section FirstHit
+ 
+ variable {α : Type*} (E : α → Prop) [DecidablePred E] {T : ℕ}
+ 
++/-- The defining equation of `firstHit`: the first draw satisfying `E`,
++`firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none`. -/
++theorem firstHit_eq (xs : Fin T → α) :
++    firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none :=
++  rfl
++
+ /-- No hit exactly when no draw satisfies `E`. -/
+ theorem firstHit_eq_none_iff (xs : Fin T → α) : firstHit E xs = none ↔ ∀ t, ¬ E (xs t) := by
+   unfold firstHit
+diff --git a/TCSlib/Cryptography/Candidates/Arithmetic.lean b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+index 20e5eaeb..cd006c00 100644
+--- a/TCSlib/Cryptography/Candidates/Arithmetic.lean
++++ b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+@@ -87,6 +87,10 @@ def natToBits (k N : ℕ) : Fin k → Bool := fun i => N.testBit (k - 1 - i)
+ /-- The `k`-bit binary numeral of `N` as a string (most significant bit first). -/
+ def natToList (k N : ℕ) : List Bool := List.ofFn (natToBits k N)
+ 
++/-- The defining equation of `natToList`: `natToList k N = List.ofFn (natToBits k N)`, the
++string of the `k`-bit numeral of `N`. -/
++theorem natToList_eq (k N : ℕ) : natToList k N = List.ofFn (natToBits k N) := rfl
++
+ /-- `natToList` has length `k`. -/
+ @[simp] theorem length_natToList (k N : ℕ) : (natToList k N).length = k := by
+   simp [natToList]
+@@ -288,6 +292,11 @@ theorem mulStr_natToList (k l M N : ℕ) (hM : M < 2 ^ k) (hN : N < 2 ^ l) :
+     subStr (pairEncode a b) = natToList a.length (listToNat a - listToNat b) := by
+   simp [subStr]
+ 
++/-- The defining equation of `sizeStr`: `sizeStr w = 1^{Nat.size (listToNat w)}`, the bit length
++of the number read from `w`, in unary. -/
++theorem sizeStr_eq (w : List Bool) :
++    sizeStr w = List.replicate (Nat.size (listToNat w)) true := rfl
++
+ /-- `sizeStr w` is the unary bit length of the number read from `w`. -/
+ @[simp] theorem length_sizeStr (w : List Bool) : (sizeStr w).length = Nat.size (listToNat w) := by
+   simp [sizeStr]
+@@ -332,6 +341,21 @@ theorem listToNat_subStr (a b : List Bool) :
+   rw [subStr_pairEncode]
+   exact listToNat_natToList (lt_of_le_of_lt (Nat.sub_le _ _) (listToNat_lt_two_pow a))
+ 
++/-- `divModStr` on an encoded pair: `divModStr ⟨a, b⟩ = ⟨⟦a / b⟧_{|a|}, ⟦a mod b⟧_{|b|}⟩`, the
++quotient as an `|a|`-bit and the remainder as a `|b|`-bit numeral (`a / 0 = 0`, `a mod 0 = a`). -/
++theorem divModStr_pairEncode (a b : List Bool) :
++    divModStr (pairEncode a b) = pairEncode (natToList a.length (listToNat a / listToNat b))
++      (natToList b.length (listToNat a % listToNat b)) := by
++  simp [divModStr]
++
++/-- `xgcdStr` on an encoded pair: `xgcdStr ⟨a, b⟩ = ⟨⟦gcd(a, b)⟧_{|b|}, ⟦(a : Z_b)⁻¹⟧_{|b|}⟩`, the
++gcd and the residue of `ZMod.inv` of `a` modulo `b`, both as `|b|`-bit numerals. -/
++theorem xgcdStr_pairEncode (a b : List Bool) :
++    xgcdStr (pairEncode a b) = pairEncode (natToList b.length (Nat.gcd (listToNat a) (listToNat b)))
++      (natToList b.length ((listToNat a : ZMod (listToNat b))⁻¹).val) := by
++  unfold xgcdStr
++  rw [pairFstD_pairEncode, pairSndD_pairEncode]
++
+ /-- `leStr` on an encoded pair. -/
+ @[simp] theorem leStr_pairEncode (a b : List Bool) :
+     leStr (pairEncode a b) = [decide (listToNat a ≤ listToNat b)] := by
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index 938af1fa..b23bae9e 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -366,9 +366,17 @@ variable {n : ℕ}
+ /-- The first prime `p`. -/
+ def p (z : DistinctPrimes n) : ℕ := z.1.1.1
+ 
++/-- The defining equation of `DistinctPrimes.p`: `z.p` is the value of the first prime of the
++pair, `z.p = ((z.1.1 : Fin (2^n)) : ℕ)`. -/
++theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ) := rfl
++
+ /-- The second prime `q`. -/
+ def q (z : DistinctPrimes n) : ℕ := z.1.2.1
+ 
++/-- The defining equation of `DistinctPrimes.q`: `z.q` is the value of the second prime of the
++pair, `z.q = ((z.1.2 : Fin (2^n)) : ℕ)`. -/
++theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ) := rfl
++
+ /-- `p` is prime. -/
+ theorem p_prime (z : DistinctPrimes n) : z.p.Prime := z.1.1.2
+ 
+@@ -447,6 +455,12 @@ def default (hn : 2 ≤ n) : DistinctPrimes n :=
+     ⟨⟨3, lt_of_lt_of_le (by norm_num) ((Nat.pow_le_pow_right (by norm_num) hn).trans_eq' rfl)⟩,
+       Nat.prime_three⟩), (by norm_num : (2 : ℕ) ≠ 3)⟩
+ 
++/-- The first prime of the default pair is `2`: `(DistinctPrimes.default hn).p = 2`. -/
++theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2 := rfl
++
++/-- The second prime of the default pair is `3`: `(DistinctPrimes.default hn).q = 3`. -/
++theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3 := rfl
++
+ end DistinctPrimes
+ 
+ /-! ### Encoding pairs of distinct primes -/
+@@ -465,6 +479,11 @@ def decodeDistinctPrimes (m : ℕ) (w : List Bool) : Option (DistinctPrimes m) :
+ def encodeDistinctPrimes (m : ℕ) (z : DistinctPrimes m) : List Bool :=
+   pairEncode (natToList m z.p) (natToList m z.q)
+ 
++/-- The defining equation of `encodeDistinctPrimes`:
++`encodeDistinctPrimes m z = ⟨⟦p⟧_m, ⟦q⟧_m⟩`, the pair of the `m`-bit numerals of the two primes. -/
++theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
++    encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q) := rfl
++
+ /-- Decoding inverts encoding. -/
+ theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
+     decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z := by
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index b7fbd309..641263bc 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -117,13 +117,25 @@ open Complexity Turing NumberTheory Finset
+ /-- The prime `p` read from the index `⟨p, ⟨m, g⟩⟩`. -/
+ def dlP (i : List Bool) : ℕ := listToNat (pairFstD i)
+ 
++/-- The defining equation of `dlP`: `dlP i = listToNat (pairFstD i)`, the number read from the
++first component of `⟨p, ⟨m, g⟩⟩`. -/
++theorem dlP_eq (i : List Bool) : dlP i = listToNat (pairFstD i) := rfl
++
+ /-- The group order `m` read from the index `⟨p, ⟨m, g⟩⟩` (the domain of the exponentiation
+ is `Z_m`; `m = q` for the prime-order groups, `m = p − 1` for `Z_p^*`). -/
+ def dlM (i : List Bool) : ℕ := listToNat (pairFstD (pairSndD i))
+ 
++/-- The defining equation of `dlM`: `dlM i = listToNat (pairFstD (pairSndD i))`, the number read
++from the middle component of `⟨p, ⟨m, g⟩⟩`. -/
++theorem dlM_eq (i : List Bool) : dlM i = listToNat (pairFstD (pairSndD i)) := rfl
++
+ /-- The generator `g` read from the index `⟨p, ⟨m, g⟩⟩`. -/
+ def dlG (i : List Bool) : ℕ := listToNat (pairSndD (pairSndD i))
+ 
++/-- The defining equation of `dlG`: `dlG i = listToNat (pairSndD (pairSndD i))`, the number read
++from the last component of `⟨p, ⟨m, g⟩⟩`. -/
++theorem dlG_eq (i : List Bool) : dlG i = listToNat (pairSndD (pairSndD i)) := rfl
++
+ /-- The numeral width of an index: the width of the numeral of `p` (all group elements are
+ encoded with this width). -/
+ def dlW (i : List Bool) : ℕ := (pairFstD i).length
+@@ -133,6 +145,13 @@ def dlW (i : List Bool) : ℕ := (pairFstD i).length
+ def WellFormedIndex (n : ℕ) (i : List Bool) : Prop :=
+   ∃ a b c : List Bool, i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n
+ 
++/-- Unfolding `WellFormedIndex`: `i` is well formed at `n` iff `i = ⟨a, ⟨b, c⟩⟩` for three
++`n`-bit strings `a`, `b`, `c`. -/
++theorem wellFormedIndex_iff (n : ℕ) (i : List Bool) :
++    WellFormedIndex n i ↔ ∃ a b c : List Bool,
++      i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n :=
++  Iff.rfl
++
+ /-- The width of a well-formed index is `n`. -/
+ theorem WellFormedIndex.dlW_eq {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) : dlW i = n := by
+   obtain ⟨a, b, c, rfl, ha, -, -⟩ := h
+@@ -156,6 +175,13 @@ def ExpValid (i : List Bool) : Prop :=
+   (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
+     orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i
+ 
++/-- Unfolding `ExpValid`: `i` is valid iff `p` is prime, `0 < m < p`, `0 < g < p` and `g` has
++order `m` in `Z_p` (with `p = dlP i`, `m = dlM i`, `g = dlG i`). -/
++theorem expValid_iff (i : List Bool) :
++    ExpValid i ↔ (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
++      orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i :=
++  Iff.rfl
++
+ noncomputable instance : DecidablePred ExpValid := fun _ => inferInstanceAs (Decidable (_ ∧ _))
+ 
+ /-- The order of the domain at an index: `m` for a valid index and `1` otherwise (so that the
+@@ -207,6 +233,11 @@ theorem orderOf_expUnit {i : List Bool} (h : ExpValid i) : orderOf (expUnit h) =
+ /-- The string encoding of `x ∈ Z_m`: its residue as a numeral of the index width. -/
+ noncomputable def expEnc (i : List Bool) (x : ZMod (expOrd i)) : List Bool := natToList (dlW i) x.val
+ 
++/-- The defining equation of `expEnc`: `expEnc i x = ⟦x.val⟧_{dlW i}`, the residue of `x` as a
++numeral of the index width. -/
++theorem expEnc_eq (i : List Bool) (x : ZMod (expOrd i)) : expEnc i x = natToList (dlW i) x.val :=
++  rfl
++
+ /-- The decoder of `Z_m`: a numeral of the index width reading as a number below `m`. -/
+ noncomputable def expDec (i : List Bool) (w : List Bool) : Option (ZMod (expOrd i)) :=
+   if w.length = dlW i ∧ listToNat w < expOrd i then some ((listToNat w : ℕ) : ZMod (expOrd i))
+@@ -232,6 +263,11 @@ theorem expEnc_of_expDec {i w : List Bool} {x : ZMod (expOrd i)} (h : expDec i w
+ noncomputable def expF (i : List Bool) (x : ZMod (expOrd i)) : List Bool :=
+   natToList (dlW i) (dlG i ^ x.val % dlP i)
+ 
++/-- The defining equation of `expF`: `expF i x = ⟦g^x mod p⟧_{dlW i}`, the numeral of
++`dlG i ^ x.val % dlP i` of the index width. -/
++theorem expF_eq (i : List Bool) (x : ZMod (expOrd i)) :
++    expF i x = natToList (dlW i) (dlG i ^ x.val % dlP i) := rfl
++
+ /-- The evaluator of the exponentiation collection on `⟨⟨p, ⟨m, g⟩⟩, x⟩`: one modular
+ exponentiation `modExpStr ⟨g, ⟨x, p⟩⟩` [PS10, Theorem 52.3, "it is easy to evaluate"]. -/
+ def expEval (z : List Bool) : List Bool :=
+@@ -334,6 +370,13 @@ cryptographic assumption (contrary to D10 / deviation 15, strict PPT with `2^{-n
+ def FullLengthExcept (δ : ℕ → ℝ) : Prop :=
+   ∀ n, G.n₀ ≤ n → uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n
+ 
++/-- Unfolding `FullLengthExcept`: `G.FullLengthExcept δ` iff for every `n ≥ n₀` the probability
++over the generator's coins that `p < 2^{n−1}` is at most `δ n`. -/
++theorem fullLengthExcept_iff (δ : ℕ → ℝ) :
++    G.FullLengthExcept δ ↔ ∀ n, G.n₀ ≤ n →
++      uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n :=
++  Iff.rfl
++
+ /-- **The discrete-log experiment** [PS10, Assumption 52.2]:
+ `Pr[i ← Gen(1^n); x ← Z_m : A(1^n, ⟨i, g^x⟩) = x]`, the average over the generator's coins
+ of the probability, over the ideal uniform `x ∈ Z_m` and the coins of `A`, that the answer of
+@@ -348,12 +391,27 @@ noncomputable def dlProb (A : NUPPT) (n : ℕ) : ℝ :=
+         decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
+           bitsToNat x = z.1.val
+ 
++/-- The defining equation of `dlProb`: `G.dlProb A n` is the average over the generator's coins
++`r` of the probability, over `x ∈ Z_m` and the coins of `A`, that `A`'s answer on
++`⟨Gen(1^n; r), g^x⟩` decodes to an `n`-bit numeral reading as `x`. -/
++theorem dlProb_eq (A : NUPPT) (n : ℕ) :
++    G.dlProb A n = uexp fun r : G.gen.Coins n =>
++      uprob fun z : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n =>
++        ∃ x : Fin n → Bool,
++          decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
++            bitsToNat x = z.1.val :=
++  rfl
++
+ /-- **Discrete-log hardness relative to the generator**: every non-uniform PPT solves the
+ discrete-log experiment with negligible probability. The safe-prime instance is
+ [PS10, Assumption 52.2] (`DLAssumption`); the full-group instance is the assumption of
+ [PS10, Lemma 84.1] (`DiscreteLogHardcore`). -/
+ def DLHard : Prop := ∀ A : NUPPT, Negligible fun n => G.dlProb A n
+ 
++/-- Unfolding `DLHard`: `G.DLHard` iff `n ↦ G.dlProb A n` is negligible for every non-uniform
++PPT `A`. -/
++theorem dlHard_iff : G.DLHard ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n := Iff.rfl
++
+ /-- The discrete-log probability is nonnegative. -/
+ theorem dlProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ G.dlProb A n := by
+   unfold dlProb uexp
+@@ -588,6 +646,59 @@ noncomputable def expCollection {V : List Bool → Prop} (H : ArithmeticFP) (G :
+   eval_spec := expEval_spec
+   sample_spec := expSampler_spec H G hV
+ 
++/-- **The domain of the exponentiation collection is `Z_m`**: the published equivalence
++`(expCollection H G hV).D i ≃ ZMod (expOrd i)` (the identity). It is the interface to the
++domain: elements of `D i` are read through it (`expCollection_f`, `expCollection_encD`,
++`expCollection_decD`), so no statement needs the collection to reduce at the type level, and
++uniform statements over `D i` transport along it (`uprob_comp_equiv`,
++`StatClose.comp_equiv_right`). -/
++def expCollection_domEquiv {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) (i : List Bool) :
++    (expCollection H G hV).D i ≃ ZMod (expOrd i) :=
++  Equiv.refl _
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_m`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = expCollection_domEquiv H G hV i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem expCollection_domEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) (i : List Bool)
++    (P : ZMod (expOrd i) → Prop) :
++    uprob (fun x : (expCollection H G hV).D i => P (expCollection_domEquiv H G hV i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the exponentiation collection is `expF`, read through the domain
++equivalence: `(expCollection H G hV).f i x = expF i (expCollection_domEquiv H G hV i x)`. -/
++theorem expCollection_f {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
++    (expCollection H G hV).f i x = expF i (expCollection_domEquiv H G hV i x) := rfl
++
++/-- The encoder of the exponentiation collection is `expEnc`, read through the domain
++equivalence: `(expCollection H G hV).encD i x = expEnc i (expCollection_domEquiv H G hV i x)`. -/
++theorem expCollection_encD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
++    (expCollection H G hV).encD i x = expEnc i (expCollection_domEquiv H G hV i x) := rfl
++
++/-- The decoder of the exponentiation collection is `expDec`, carried back along the domain
++equivalence:
++`(expCollection H G hV).decD i w = (expDec i w).map (expCollection_domEquiv H G hV i).symm`. -/
++theorem expCollection_decD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) (i w : List Bool) :
++    (expCollection H G hV).decD i w = (expDec i w).map (expCollection_domEquiv H G hV i).symm := by
++  show expDec i w = _
++  cases expDec i w <;> rfl
++
++/-- The index generator of the exponentiation collection is `expGen G`. -/
++theorem expCollection_gen {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).gen = expGen G := rfl
++
++/-- The domain sampler of the exponentiation collection is `expSampler H`. -/
++theorem expCollection_sample {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).sample = expSampler H := rfl
++
++/-- The evaluator of the exponentiation collection is `expEval`. -/
++theorem expCollection_eval {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
++    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).eval = expEval := rfl
++
+ /-- The index generated by the exponentiation collection from `n₀` on is the instance
+ generator's output. -/
+ theorem expCollection_index {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+@@ -665,6 +776,11 @@ theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : Ex
+ def SafePrimeValid (i : List Bool) : Prop :=
+   ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1
+ 
++/-- Unfolding `SafePrimeValid`: `i` is a safe-prime instance iff it is valid, `m` is prime and
++`p = 2m + 1`. -/
++theorem safePrimeValid_iff (i : List Bool) :
++    SafePrimeValid i ↔ ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1 := Iff.rfl
++
+ /-- A safe-prime instance is a valid instance. -/
+ theorem SafePrimeValid.expValid {i : List Bool} (h : SafePrimeValid i) : ExpValid i := h.1
+ 
+@@ -698,6 +814,56 @@ error 8) and the parameter `k` as `n`; the range `G_q` is encoded as residues mo
+ noncomputable def dlCollection (H : ArithmeticFP) (G : SafePrimeGen) : Collection :=
+   expCollection H G fun _ h => h.expValid
+ 
++/-- **The domain of `DL` is `Z_q`**: the published equivalence
++`(dlCollection H G).D i ≃ ZMod (expOrd i)` (the identity), the interface to the domain
++(`dlCollection_f`, `dlCollection_encD`, `dlCollection_decD`; see `expCollection_domEquiv`). -/
++def dlCollection_domEquiv (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool) :
++    (dlCollection H G).D i ≃ ZMod (expOrd i) :=
++  expCollection_domEquiv H G (fun _ h => h.expValid) i
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_q`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = dlCollection_domEquiv H G i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem dlCollection_domEquiv_uprob (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
++    (P : ZMod (expOrd i) → Prop) :
++    uprob (fun x : (dlCollection H G).D i => P (dlCollection_domEquiv H G i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of `DL` is `expF`, read through the domain equivalence:
++`(dlCollection H G).f i x = expF i (dlCollection_domEquiv H G i x)`. -/
++theorem dlCollection_f (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
++    (x : (dlCollection H G).D i) :
++    (dlCollection H G).f i x = expF i (dlCollection_domEquiv H G i x) :=
++  expCollection_f H G (fun _ h => h.expValid) i x
++
++/-- The encoder of `DL` is `expEnc`, read through the domain equivalence:
++`(dlCollection H G).encD i x = expEnc i (dlCollection_domEquiv H G i x)`. -/
++theorem dlCollection_encD (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
++    (x : (dlCollection H G).D i) :
++    (dlCollection H G).encD i x = expEnc i (dlCollection_domEquiv H G i x) :=
++  expCollection_encD H G (fun _ h => h.expValid) i x
++
++/-- The decoder of `DL` is `expDec`, carried back along the domain equivalence:
++`(dlCollection H G).decD i w = (expDec i w).map (dlCollection_domEquiv H G i).symm`. -/
++theorem dlCollection_decD (H : ArithmeticFP) (G : SafePrimeGen) (i w : List Bool) :
++    (dlCollection H G).decD i w = (expDec i w).map (dlCollection_domEquiv H G i).symm :=
++  expCollection_decD H G (fun _ h => h.expValid) i w
++
++/-- The index generator of `DL` is `expGen G`. -/
++theorem dlCollection_gen (H : ArithmeticFP) (G : SafePrimeGen) :
++    (dlCollection H G).gen = expGen G :=
++  expCollection_gen H G (fun _ h => h.expValid)
++
++/-- The domain sampler of `DL` is `expSampler H`. -/
++theorem dlCollection_sample (H : ArithmeticFP) (G : SafePrimeGen) :
++    (dlCollection H G).sample = expSampler H :=
++  expCollection_sample H G (fun _ h => h.expValid)
++
++/-- The evaluator of `DL` is `expEval`. -/
++theorem dlCollection_eval (H : ArithmeticFP) (G : SafePrimeGen) :
++    (dlCollection H G).eval = expEval :=
++  expCollection_eval H G (fun _ h => h.expValid)
++
+ /-- The index generated by `DL` from `n₀` on is the instance generator's output `⟨p, ⟨q, g⟩⟩`. -/
+ theorem dlCollection_index (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : G.gen.Coins n)
+     (hn : G.n₀ ≤ n) : (dlCollection H G).index n r = G.gen.runAt n [] r :=
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 8c1cc2b3..f7ed761d 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -484,6 +484,58 @@ def FullDLAssumption (G : FullGroupGen) : Prop := G.DLHard
+ noncomputable def fullDLCollection (H : ArithmeticFP) (G : FullGroupGen) : Collection :=
+   expCollection H G fun _ h => h.expValid
+ 
++/-- **The domain of the full-group collection is `Z_{p−1}`**: the published equivalence
++`(fullDLCollection H G).D i ≃ ZMod (expOrd i)` (the identity), the interface to the domain
++(`fullDLCollection_f`, `fullDLCollection_encD`, `fullDLCollection_decD`; see
++`expCollection_domEquiv`). -/
++def fullDLCollection_domEquiv (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) :
++    (fullDLCollection H G).D i ≃ ZMod (expOrd i) :=
++  expCollection_domEquiv H G (fun _ h => h.expValid) i
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_{p−1}`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = fullDLCollection_domEquiv H G i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem fullDLCollection_domEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
++    (P : ZMod (expOrd i) → Prop) :
++    uprob (fun x : (fullDLCollection H G).D i => P (fullDLCollection_domEquiv H G i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the full-group collection is `expF`, read through the domain equivalence:
++`(fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x)`. -/
++theorem fullDLCollection_f (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
++    (x : (fullDLCollection H G).D i) :
++    (fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x) :=
++  expCollection_f H G (fun _ h => h.expValid) i x
++
++/-- The encoder of the full-group collection is `expEnc`, read through the domain equivalence:
++`(fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x)`. -/
++theorem fullDLCollection_encD (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
++    (x : (fullDLCollection H G).D i) :
++    (fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x) :=
++  expCollection_encD H G (fun _ h => h.expValid) i x
++
++/-- The decoder of the full-group collection is `expDec`, carried back along the domain
++equivalence:
++`(fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm`. -/
++theorem fullDLCollection_decD (H : ArithmeticFP) (G : FullGroupGen) (i w : List Bool) :
++    (fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm :=
++  expCollection_decD H G (fun _ h => h.expValid) i w
++
++/-- The index generator of the full-group collection is `expGen G`. -/
++theorem fullDLCollection_gen (H : ArithmeticFP) (G : FullGroupGen) :
++    (fullDLCollection H G).gen = expGen G :=
++  expCollection_gen H G (fun _ h => h.expValid)
++
++/-- The domain sampler of the full-group collection is `expSampler H`. -/
++theorem fullDLCollection_sample (H : ArithmeticFP) (G : FullGroupGen) :
++    (fullDLCollection H G).sample = expSampler H :=
++  expCollection_sample H G (fun _ h => h.expValid)
++
++/-- The evaluator of the full-group collection is `expEval`. -/
++theorem fullDLCollection_eval (H : ArithmeticFP) (G : FullGroupGen) :
++    (fullDLCollection H G).eval = expEval :=
++  expCollection_eval H G (fun _ h => h.expValid)
++
+ /-- The full-group collection is one-way under the full-group discrete-log assumption
+ ([PS10, Theorem 52.3] for `Z_p^*`): `expCollection_oneWay`. -/
+ theorem fullDLCollection_oneWay (H : ArithmeticFP) (G : FullGroupGen) (hDL : FullDLAssumption G) :
+@@ -545,7 +597,8 @@ Repair (run-3 audit P8-2): the hypothesis `hbig : G.FullLength` (full length on
+ string, not known to be satisfiable) became `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`; the
+ proof discards the short-prime coins, which contribute at most `δ n` to the good-instance set.
+ 
+-**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`.
++**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`,
++read through `fullDLCollection_encD`.
+ *Hard:* by contradiction with `not_negligible_iff` (through the quantifier form
+ `Ensemble.indist_iff_exists_negligible`-style of `HardCore`): suppose `A : NUPPT` has
+ `1/2 + n^{-c} ≤ E_r[Pr_{x, ρ}[A(1^n, ⟨i, f_i x⟩) = half_i x]]` for infinitely many `n ≥ n₀`.
+@@ -554,11 +607,12 @@ a set of coins of probability `≥ ε` has per-instance success `≥ 1/2 + ε`;
+ with `p < 2^{n−1}` (probability `≤ δ n` by `hbig`, and `δ n ≤ ε/2` for large `n` since `δ` is
+ negligible) leaves a *good* set of probability `≥ ε/2` (`uprob_not`, `uprob_or_le`). At such an
+ index `i = ⟨p, ⟨p−1, g⟩⟩` (valid, `dlW i = n`, `p ≡ 3 (mod 4)`, `2^{n−1} ≤ p < 2^n` on the good
+-set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`expOrd_of_valid`), `f_i x` is the numeral of
++set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`fullDLCollection_domEquiv` with
++`fullDLCollection_domEquiv_uprob`, `expOrd_of_valid`), `f_i x` is the numeral of
+ `expo g_u x` with `g_u := expUnit` a generator (`orderOf_expUnit`, `IsGenerator` by
+ `orderOf_eq_card_of_forall_mem_zpowers`-converse `zpowers_eq_top_of_prime_card`-free counting:
+-`Nat.card_zpowers`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so `A`'s per-instance
+-success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
++`Nat.card_zpowers`; `fullDLCollection_f`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so
++`A`'s per-instance success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
+ `A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`.
+ Apply `invProb_dlInverter_ge` with `ε := n^{-c}/2`, `s := ⌊(p−1)/(8n^c)⌋` (so `4s ≤ ε(p−1)`),
+ `T := ⌈(p−1)/s⌉` (so `Ts ≥ p − 1`), `k := n` (`s ≤ p − 1 < 2^n`) and `ℓ := 16 n^{2c+1}`
+@@ -591,7 +645,7 @@ of uniform (`statClose_sampleBelowL`, with `0 < T < 2^n` and `0 < p − 1 < 2^n`
+ for infinitely many `n`, an inverse polynomial, contradicting `hDL B` via `not_negligible_iff`. -/
+ theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
+     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
+-    (fullDLCollection H G).HardCore halfPred := by
++    (fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x) := by
+   sorry
+ 
+ end TCSlib.Cryptography.Candidates
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 0566c08f..912aeb50 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -203,6 +203,11 @@ theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
+ input handed to the factoring adversary (and the value `f_mult(p, q)`). -/
+ def modulusBits (n : ℕ) (z : DistinctPrimes n) : Fin (2 * n) → Bool := natToBits (2 * n) (z.p * z.q)
+ 
++/-- The defining equation of `modulusBits`: `modulusBits n z = natToBits (2n) (pq)`, the
++`2n`-bit numeral of the modulus. -/
++theorem modulusBits_eq (n : ℕ) (z : DistinctPrimes n) :
++    modulusBits n z = natToBits (2 * n) (z.p * z.q) := rfl
++
+ /-- `modulusBits` is `f_mult` at `(p, q)`: `fmultNat p q = pq` since neither prime is `1`. -/
+ theorem modulusBits_eq_fmult (n : ℕ) (z : DistinctPrimes n) :
+     modulusBits n z = natToBits (2 * n) (fmultNat z.p z.q) := by
+@@ -222,6 +227,14 @@ noncomputable def factorProb (A : NUPPT) (n : ℕ) : ℝ :=
+     ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
+       (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q)
+ 
++/-- The defining equation of `factorProb`: `factorProb A n` is the probability, over a uniform
++pair `z` of distinct primes of `Π_n` and the coins of `A`, that `A`'s answer on the `2n`-bit
++modulus `modulusBits n z` is an `n`-bit numeral reading as `z.p` or `z.q`. -/
++theorem factorProb_eq (A : NUPPT) (n : ℕ) :
++    factorProb A n = uprob fun w : DistinctPrimes n × A.Coins n =>
++      ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
++        (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q) := rfl
++
+ /-- **The factoring assumption** [PS10, Assumption 30.1]: every non-uniform PPT `A`
+ factors `N = pq`, for a uniform pair of distinct primes `p, q ∈ Π_n`, with negligible
+ probability.
+@@ -456,6 +469,65 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
+   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
+     (natToBits n 2))
+ 
++/-- **One truncated run of `SamplePrime(n)` is polynomial-time** [PS10, Algorithm 50.16 and
++Lemma 51.17] given a primality test: on `⟨u, r⟩` with `n = |u|`, the `n`-bit output
++`samplePrimeL n r` (the first prime among the first `2n²` blocks of `n` bits of `r`, padded with
++zeros to `2n² · n` bits, and the numeral `natToList n 2` of the prime `2` on failure) is
++polynomial-time computable. Shared statement S1 of the factoring fill (decision D1 (A)): used by
++`polyTimeComputable_samplePairRaw` and by `polyTimeComputable_rsaGenRaw` (`RSA.lean`).
++
++**Proof sketch.** Use `NumberTheory.exists_samplePrime_nuppt hP` (`hP` in its form by
++`primeStr_eq`) as a black box: it is a uniform machine `A` with `samplePrimeCoins` coins whose
++activation on the coin list `List.ofFn r'`, `r' : Fin (2n² · n) → Bool`, is
++`((samplePrime n (2n²) (chunk (2n²) n r')).map List.ofFn).getD []`. Do not re-derive its
++`iterateFind` loop. (1) Pad the coins to `2n² · n` bits: `polyTimeComputable_padStr
++samplePrimeCoins` maps `⟨u, r⟩` to `List.ofFn (padFin (2n² · n) r)` (`ofFn_padFin_eq_padStr`,
++`eval_samplePrimeCoins`). (2) Run `A` on the layout `⟨⟨⟨1^n, []⟩, []⟩, coins⟩`, with `1^n`
++computed from `u` (`polyTimeComputable_unaryPoly var`), through `NUPPT.polyTimeComputable_output`
++and `NUPPT.polyTimeComputable_layout` (`NUPPT.runAtL_eq_output_layout`); its output is the
++accepted block as a list, or `[]` when no block is prime. (3) For `n ≥ 1` an accepted block
++has `n` bits, so the output is `[]` exactly on failure (for `n = 0` both sides are `[]`):
++test emptiness against the constant `[]` (`polyTimeComputable_lenEq`) and branch
++(`polyTimeComputable_ite`) between the output and the fallback numeral
++`natToList n 2 = 0^{n−2}10`, a string of unary-polynomial length computed from `1^n`
++(`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The three pieces agree with
++`samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
++theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
++    PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
++  sorry
++
++/-- **Two independent runs of `SamplePrime(n)` are close to a uniform pair of distinct primes**
++[PS10, Lemma 51.17 and Theorem 51.1, "sample two random prime numbers"]: for `n ≥ 2`, the
++values of `samplePrimeL n` on the two halves of `2 · (2n² · n)` uniform coins are within
++statistical distance `2 · (1/2)^n + 2n/2^n` of `(p, q)` for a uniform pair of distinct primes of
++`Π_n`. Shared statement S2 of the factoring fill (decision D1 (A)): used by
++`factoringCollection_sampleClose` and by `rsaCollection_invProbAt_le` (`RSA.lean`, step (ii)).
++
++**Proof sketch.** Write `L = 2n² · n`. (1) The halves `(List.ofFn s).take L` and
++`(List.ofFn s).drop L` are `List.ofFn` of the two halves of `s` under the splitting bijection
++`(Fin (2L) → Bool) ≃ (Fin L → Bool) × (Fin L → Bool)` (`uprob_comp_equiv`), which pushes the
++uniform coins to a uniform pair of independent halves. (2) On a half `r : Fin L → Bool`,
++`padFin L (List.ofFn r) = r` (`padFin_ofFn`), and `chunk (2n²) n r` is `r` read through
++`finProdFinEquiv` (`chunk_apply`), a bijection, so the blocks are uniform; and
++`listToNat (List.ofFn b) = bitsToNat b` (`bitsToNat_eq_listToNat`). So each value is
++`bitsToNat ((samplePrime n (2n²) xs).getD (natToBits n 2))` for uniform blocks `xs`. (3) The
++fallback reads as the prime `2` (`bitsToNat_natToBits`, `2 < 2^n`, `Nat.prime_two`), so
++`NumberTheory.statClose_samplePrime n (2n²)` applies to each run: within
++`(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (the bound of `uprob_samplePrime_none_le_two_pow`) of the
++uniform `n`-bit prime, carried to `ℕ` by the injective `bitsToNat` (`StatClose.map`; the
++uniform prime block is the uniform element of `Primes n`). (4) `StatClose.prod` puts the two
++runs together: the pair is within `2 · (1/2)^n` of `(p, q)` for independent uniform
++`p, q ∈ Π_n`. (5) That pair and `(z.p, z.q)` for a uniform `z : DistinctPrimes n` differ only on
++the diagonal `p = q`, of probability `1/|Π_n|` (`uprob_diag`), at most `2n/2^n`
++(`one_div_card_primes_le`); conclude by `StatClose.trans`. -/
++theorem statClose_samplePrimeL_pair (n : ℕ) (hn : 2 ≤ n) :
++    StatClose (fun s : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
++        (listToNat (samplePrimeL n ((List.ofFn s).take (2 * n ^ 2 * n))),
++          listToNat (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
++      (fun z : DistinctPrimes n => (z.p, z.q))
++      (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
++  sorry
++
+ /-- The output of the collection's sampler from two sampled blocks `a`, `b`: the pair of
+ `m`-bit numerals of the two numbers they read as, when these are distinct primes below `2^m`,
+ and the canonical default pair `encodeDistinctPrimes m default = ⟨2, 3⟩` otherwise (the D10
+@@ -601,6 +673,63 @@ noncomputable def factoringCollection (H : ArithmeticFP) : Collection where
+     rw [mulStr_natToList _ _ _ _ z.p_lt z.q_lt, two_mul]
+   sample_spec := factoringSampler_spec H
+ 
++/-- **The domain of the factoring collection is `DistinctPrimes (max |i| 2)`**: the published
++equivalence `(factoringCollection H).D i ≃ DistinctPrimes (max i.length 2)` (the identity). It is
++the interface to the domain: elements of `D i` are read through it (`factoringCollection_f`,
++`factoringCollection_encD`, `factoringCollection_decD`), so no statement needs the collection to
++reduce at the type level, and uniform statements over `D i` transport along it
++(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
++def factoringCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
++    (factoringCollection H).D i ≃ DistinctPrimes (max i.length 2) :=
++  Equiv.refl _
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on
++`DistinctPrimes (max |i| 2)`, `Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with
++`φ = factoringCollection_domEquiv H i` (`uprob_comp_equiv`), the form in which uniform
++statements over the domain are read. -/
++theorem factoringCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
++    (P : DistinctPrimes (max i.length 2) → Prop) :
++    uprob (fun x : (factoringCollection H).D i => P (factoringCollection_domEquiv H i x)) =
++      uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the factoring collection, read through the domain equivalence: with
++`z = factoringCollection_domEquiv H i x`,
++`(factoringCollection H).f i x = ⟦z.p · z.q⟧_{2 max |i| 2}`. -/
++theorem factoringCollection_f (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
++    (factoringCollection H).f i x = natToList (2 * max i.length 2)
++      ((factoringCollection_domEquiv H i x).p * (factoringCollection_domEquiv H i x).q) := rfl
++
++/-- The encoder of the factoring collection is `encodeDistinctPrimes`, read through the domain
++equivalence: `(factoringCollection H).encD i x = encodeDistinctPrimes (max |i| 2) z` with
++`z = factoringCollection_domEquiv H i x`. -/
++theorem factoringCollection_encD (H : ArithmeticFP) (i : List Bool)
++    (x : (factoringCollection H).D i) :
++    (factoringCollection H).encD i x =
++      encodeDistinctPrimes (max i.length 2) (factoringCollection_domEquiv H i x) := rfl
++
++/-- The decoder of the factoring collection is `decodeDistinctPrimes`, carried back along the
++domain equivalence: `(factoringCollection H).decD i w =
++(decodeDistinctPrimes (max i.length 2) w).map (factoringCollection_domEquiv H i).symm`. -/
++theorem factoringCollection_decD (H : ArithmeticFP) (i w : List Bool) :
++    (factoringCollection H).decD i w =
++      (decodeDistinctPrimes (max i.length 2) w).map (factoringCollection_domEquiv H i).symm := by
++  show decodeDistinctPrimes (max i.length 2) w = _
++  cases decodeDistinctPrimes (max i.length 2) w <;> rfl
++
++/-- The index generator of the factoring collection is `factoringGen`. -/
++theorem factoringCollection_gen (H : ArithmeticFP) : (factoringCollection H).gen = factoringGen :=
++  rfl
++
++/-- The domain sampler of the factoring collection is `factoringSampler H`. -/
++theorem factoringCollection_sample (H : ArithmeticFP) :
++    (factoringCollection H).sample = factoringSampler H := rfl
++
++/-- The evaluator of the factoring collection is multiplication on the second component:
++`(factoringCollection H).eval z = mulStr (pairSndD z)`. -/
++theorem factoringCollection_eval (H : ArithmeticFP) (z : List Bool) :
++    (factoringCollection H).eval z = mulStr (pairSndD z) := rfl
++
+ /-- The index generated by the factoring collection is `1^n`. -/
+ theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
+     (r : (factoringCollection H).gen.Coins n) :
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index e2379a32..0b198b2d 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -335,14 +335,24 @@ theorem rsaEnc_of_rsaDec {i w : List Bool} {x : (ZMod (rsaMod i))ˣ} (h : rsaDec
+ length of any modulus `N < 2^{2 max(n,2)}`). -/
+ def rsaBlock : PolyExpr := .mul (.const 2) (.add .var (.const 2))
+ 
++/-- `rsaBlock` evaluates to `B(n) = 2(n + 2)`. -/
++theorem eval_rsaBlock (n : ℕ) : rsaBlock.eval n = 2 * (n + 2) := rfl
++
+ /-- The number of trials `T(n) = (4n + 8) n` of the rejection samplers: with acceptance rate
+ at least `1/(2 ⌈log₂ N⌉) ≥ 1/(4n + 8)` per trial (`NumberTheory.le_totient_mul_log_succ`,
+ C9), the failure probability is at most `e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). -/
+ def rsaTrials : PolyExpr := .mul (.add (.mul (.const 4) .var) (.const 8)) .var
+ 
++/-- `rsaTrials` evaluates to `T(n) = (4n + 8) n`. -/
++theorem eval_rsaTrials (n : ℕ) : rsaTrials.eval n = (4 * n + 8) * n := rfl
++
+ /-- The coins of the domain sampler: `T(n)` blocks of `B(n)` bits. -/
+ def rsaSampleCoins : PolyExpr := .mul rsaTrials rsaBlock
+ 
++/-- `rsaSampleCoins` evaluates to `T(n) · B(n)`. -/
++theorem eval_rsaSampleCoins (n : ℕ) : rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n :=
++  rfl
++
+ /-- The coins of the generator: two `SamplePrime` runs and one unit sampler. -/
+ def rsaGenCoins : PolyExpr := .add (.mul (.const 2) samplePrimeCoins) rsaSampleCoins
+ 
+@@ -356,11 +366,48 @@ Repair (run-3 audit P7-6): an instance of the shared sampler (closeness:
+ def sampleUnitL (N k B T : ℕ) (r : List Bool) : Option ℕ :=
+   rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r
+ 
++/-- The defining equation of `sampleUnitL`: block rejection sampling with the test
++`v < N ∧ gcd(v, N) = 1`, i.e.
++`sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r`. -/
++theorem sampleUnitL_eq (N k B T : ℕ) (r : List Bool) :
++    sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r := rfl
++
+ /-- A sampled value is below `N` and coprime to `N`. -/
+ theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUnitL N k B T r = some v) :
+     v < N ∧ Nat.Coprime v N :=
+   (rejectBlocksL_spec h).1
+ 
++/-- **The unit sampler is close to uniform** [PS10, Theorem 53.2, "sample a random element from
++`Z*_{Φ(N)}`" and "the set `D_i` is also easy to sample"]: for a modulus `N ≥ 1` of bit length
++`k = Nat.size N ≤ B(n)`, the sampler `sampleUnitL N k B(n) T(n)` on `T(n) · B(n)` uniform coins,
++with the fallback `1 mod N`, outputs a number within statistical distance `e^{-n}` of the
++residue of a uniform unit of `Z_N`. Shared statement S3 of the factoring fill (decision D1 (A)):
++used by `rsaCollection_sampleClose`, `rsaCollection_invProbAt_le` (step (i), at the modulus
++`Φ(N)`) and the Rabin samplers and reductions (`Rabin.lean`).
++
++**Proof sketch.** (1) `sampleUnitL N k B T` is `rejectBlocksL` with the test
++`v < N ∧ Nat.Coprime v N` (`sampleUnitL_eq`); apply `statClose_rejectBlocksL` with `k ≤ B(n)`
++(`hk`), `T = T(n)` and the default `d = 1 % N`, which passes the test (`Nat.mod_lt`; `1` is
++coprime to `N`, and for `N = 1` the default `0` is coprime to `1`) and is below `2^k`
++(`d < N < 2^k`, `Nat.lt_size_self`). It gives closeness `(1 − Pr_{v < 2^k}[v < N ∧ gcd(v, N) = 1])^{T(n)}` to the uniform element of
++`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1}` read as a number. (2) Transport that target to
++`x ↦ (x : ZMod N).val` on `(ZMod N)ˣ` along the value-preserving bijection
++`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1} ≃ (ZMod N)ˣ` (`ZMod.unitOfCoprime`; inverse by
++`ZMod.val_lt`, `ZMod.val_coe_unit_coprime`, and `N < 2^k`; `StatClose.comp_equiv_right`).
++(3) The acceptance probability is `Φ(N)/2^k` (`uprob_eq_card_filter` and the same bijection).
++`2^k ≤ 2N` by the minimality of `Nat.size` (`Nat.size_le`: `N < 2^{k−1}` would give
++`Nat.size N ≤ k − 1`), and `N ≤ Φ(N) · (log₂ N + 1) ≤ Φ(N) · k`
++(`NumberTheory.le_totient_mul_log_succ`; `2^{log₂ N} ≤ N < 2^k`, `Nat.pow_log_le_self`), so
++`Φ(N)/2^k ≥ 1/(2k) ≥ 1/(4n + 8)` by `hk` and `B(n) = 2(n + 2)` (`eval_rsaBlock`). (4) Hence the
++distance is at most `(1 − 1/(4n + 8))^{(4n + 8) n} ≤ e^{-n}` (`eval_rsaTrials`,
++`one_sub_one_div_pow_le_exp_neg`); conclude by `StatClose.mono`. -/
++theorem statClose_sampleUnitL (n N : ℕ) [NeZero N] (hk : Nat.size N ≤ rsaBlock.eval n) :
++    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
++        (sampleUnitL N (Nat.size N) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
++          (1 % N))
++      (fun x : (ZMod N)ˣ => (x : ZMod N).val) (Real.exp (-(n : ℝ))) := by
++  sorry
++
+ /-- The string function of the domain sampler on the modulus numeral `w` at parameter `n`
+ with coins `r`: a unit modulo `N = listToNat w` by rejection (`sampleUnitL` with the bit
+ length `Nat.size N` of `N`), written as a numeral of the width of `w`; the fallback `1 mod N`
+@@ -370,6 +417,14 @@ def unitSampleStr (w : List Bool) (n : ℕ) (r : List Bool) : List Bool :=
+     ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n) r).getD
+       (1 % listToNat w))
+ 
++/-- The defining equation of `unitSampleStr`: the sampled unit modulo `N = listToNat w`
++(fallback `1 mod N`) as a numeral of the width of `w`,
++`unitSampleStr w n r = ⟦(sampleUnitL N (Nat.size N) B(n) T(n) r).getD (1 % N)⟧_{|w|}`. -/
++theorem unitSampleStr_eq (w : List Bool) (n : ℕ) (r : List Bool) :
++    unitSampleStr w n r = natToList w.length
++      ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n)
++        r).getD (1 % listToNat w)) := rfl
++
+ /-- The parameters output by the RSA generator at parameter `m`: distinct primes `p, q ∈ Π_m`,
+ an exponent `e < Φ(N)` coprime to `Φ(N)` and its inverse `d < Φ(N)`, `ed ≡ 1 (mod Φ(N))`
+ [PS10, Theorem 57.2, `[(N, e), d] ← Gen(1^n)`]. -/
+@@ -661,9 +716,104 @@ noncomputable def rsaTrapdoor (H : ArithmeticFP) : TrapdoorCollection where
+   inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
+   inv_spec := rsaInv_spec H
+ 
++/-- **The domain of the RSA trapdoor collection is `Z_N^*`**: the published equivalence
++`(rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ` (the identity). It is the interface to the domain:
++elements of `D i` are read through it (`rsaTrapdoor_f`, `rsaTrapdoor_encD`, `rsaTrapdoor_decD`,
++`rsaTrapdoor_perm`), so no statement needs the collection to reduce at the type level, and
++uniform statements over `D i` transport along it (`uprob_comp_equiv`,
++`StatClose.comp_equiv_right`). -/
++def rsaTrapdoor_domEquiv (H : ArithmeticFP) (i : List Bool) :
++    (rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ :=
++  Equiv.refl _
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem rsaTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
++    (P : (ZMod (rsaMod i))ˣ → Prop) :
++    uprob (fun x : (rsaTrapdoor H).D i => P (rsaTrapdoor_domEquiv H i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the RSA trapdoor collection is `rsaF`, read through the domain equivalence:
++`(rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x)`. -/
++theorem rsaTrapdoor_f (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
++    (rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x) := rfl
++
++/-- The encoder of the RSA trapdoor collection is `rsaEnc`, read through the domain
++equivalence: `(rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x)`. -/
++theorem rsaTrapdoor_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
++    (rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x) := rfl
++
++/-- The decoder of the RSA trapdoor collection is `rsaDec`, carried back along the domain
++equivalence: `(rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm`. -/
++theorem rsaTrapdoor_decD (H : ArithmeticFP) (i w : List Bool) :
++    (rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm := by
++  show rsaDec i w = _
++  cases rsaDec i w <;> rfl
++
++/-- The permutation of the RSA trapdoor collection is `rsaPermAt` (`x ↦ x^e`), read through the
++domain equivalence: with `φ = rsaTrapdoor_domEquiv H i`,
++`(rsaTrapdoor H).perm i x = φ.symm (rsaPermAt i (φ x))`. -/
++theorem rsaTrapdoor_perm (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
++    (rsaTrapdoor H).perm i x =
++      (rsaTrapdoor_domEquiv H i).symm (rsaPermAt i (rsaTrapdoor_domEquiv H i x)) := rfl
++
++/-- The index generator of the RSA trapdoor collection is `rsaGen H`. -/
++theorem rsaTrapdoor_gen (H : ArithmeticFP) : (rsaTrapdoor H).gen = rsaGen H := rfl
++
++/-- The domain sampler of the RSA trapdoor collection is `rsaSampler H`. -/
++theorem rsaTrapdoor_sample (H : ArithmeticFP) : (rsaTrapdoor H).sample = rsaSampler H := rfl
++
++/-- The evaluator of the RSA trapdoor collection is `rsaEval`. -/
++theorem rsaTrapdoor_eval (H : ArithmeticFP) : (rsaTrapdoor H).eval = rsaEval := rfl
++
++/-- The trapdoor inverter of the RSA trapdoor collection is `rsaInv H`. -/
++theorem rsaTrapdoor_inv (H : ArithmeticFP) : (rsaTrapdoor H).inv = rsaInv H := rfl
++
+ /-- **The RSA collection** [PS10, Theorem 53.2]: the collection underlying `rsaTrapdoor`. -/
+ noncomputable def rsaCollection (H : ArithmeticFP) : Collection := (rsaTrapdoor H).toCollection
+ 
++/-- **The domain of the RSA collection is `Z_N^*`**: the published equivalence
++`(rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ`, that of the underlying trapdoor collection
++(`rsaTrapdoor_domEquiv`); the interface to the domain (`rsaCollection_f`,
++`rsaCollection_encD`, `rsaCollection_decD`). -/
++def rsaCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
++    (rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ :=
++  rsaTrapdoor_domEquiv H i
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaCollection_domEquiv H i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem rsaCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
++    (P : (ZMod (rsaMod i))ˣ → Prop) :
++    uprob (fun x : (rsaCollection H).D i => P (rsaCollection_domEquiv H i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the RSA collection is `rsaF`, read through the domain equivalence:
++`(rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x)`. -/
++theorem rsaCollection_f (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
++    (rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x) := rsaTrapdoor_f H i x
++
++/-- The encoder of the RSA collection is `rsaEnc`, read through the domain equivalence:
++`(rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x)`. -/
++theorem rsaCollection_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
++    (rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x) := rsaTrapdoor_encD H i x
++
++/-- The decoder of the RSA collection is `rsaDec`, carried back along the domain equivalence:
++`(rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm`. -/
++theorem rsaCollection_decD (H : ArithmeticFP) (i w : List Bool) :
++    (rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm :=
++  rsaTrapdoor_decD H i w
++
++/-- The index generator of the RSA collection is `rsaGen H`. -/
++theorem rsaCollection_gen (H : ArithmeticFP) : (rsaCollection H).gen = rsaGen H := rfl
++
++/-- The domain sampler of the RSA collection is `rsaSampler H`. -/
++theorem rsaCollection_sample (H : ArithmeticFP) : (rsaCollection H).sample = rsaSampler H := rfl
++
++/-- The evaluator of the RSA collection is `rsaEval`. -/
++theorem rsaCollection_eval (H : ArithmeticFP) : (rsaCollection H).eval = rsaEval := rfl
++
+ /-- The index generated by the RSA collection is `⟨N, e⟩` of `rsaGenParams`. -/
+ theorem rsaCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rsaCollection H).gen.Coins n) :
+     (rsaCollection H).index n r = rsaIndexOf _ (rsaGenParams n (List.ofFn r)) := by
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index a0a19227..65ac6e32 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -490,6 +490,52 @@ noncomputable def rabinCollection (H : ArithmeticFP) : Collection where
+   eval_spec := rabinEval_spec
+   sample_spec := rabinSampler_spec H
+ 
++/-- **The domain of the Rabin collection is `Z_N^*`**: the published equivalence
++`(rabinCollection H).D i ≃ (ZMod (rabinMod i))ˣ` (the identity). It is the interface to the
++domain: elements of `D i` are read through it (`rabinCollection_f`, `rabinCollection_encD`,
++`rabinCollection_decD`), so no statement needs the collection to reduce at the type level, and
++uniform statements over `D i` transport along it (`uprob_comp_equiv`,
++`StatClose.comp_equiv_right`). -/
++def rabinCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
++    (rabinCollection H).D i ≃ (ZMod (rabinMod i))ˣ :=
++  Equiv.refl _
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinCollection_domEquiv H i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem rabinCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
++    (P : (ZMod (rabinMod i))ˣ → Prop) :
++    uprob (fun x : (rabinCollection H).D i => P (rabinCollection_domEquiv H i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the Rabin collection is `rabinF`, read through the domain equivalence:
++`(rabinCollection H).f i x = rabinF i (rabinCollection_domEquiv H i x)`. -/
++theorem rabinCollection_f (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
++    (rabinCollection H).f i x = rabinF i (rabinCollection_domEquiv H i x) := rfl
++
++/-- The encoder of the Rabin collection is `rabinEnc`, read through the domain equivalence:
++`(rabinCollection H).encD i x = rabinEnc i (rabinCollection_domEquiv H i x)`. -/
++theorem rabinCollection_encD (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
++    (rabinCollection H).encD i x = rabinEnc i (rabinCollection_domEquiv H i x) := rfl
++
++/-- The decoder of the Rabin collection is `rabinDec`, carried back along the domain
++equivalence:
++`(rabinCollection H).decD i w = (rabinDec i w).map (rabinCollection_domEquiv H i).symm`. -/
++theorem rabinCollection_decD (H : ArithmeticFP) (i w : List Bool) :
++    (rabinCollection H).decD i w = (rabinDec i w).map (rabinCollection_domEquiv H i).symm := by
++  show rabinDec i w = _
++  cases rabinDec i w <;> rfl
++
++/-- The index generator of the Rabin collection is `oddGen H`. -/
++theorem rabinCollection_gen (H : ArithmeticFP) : (rabinCollection H).gen = oddGen H := rfl
++
++/-- The domain sampler of the Rabin collection is `rabinSampler H`. -/
++theorem rabinCollection_sample (H : ArithmeticFP) : (rabinCollection H).sample = rabinSampler H :=
++  rfl
++
++/-- The evaluator of the Rabin collection is `rabinEval`. -/
++theorem rabinCollection_eval (H : ArithmeticFP) : (rabinCollection H).eval = rabinEval := rfl
++
+ /-- The index generated by the Rabin collection is the numeral of `N`. -/
+ theorem rabinCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rabinCollection H).gen.Coins n) :
+     (rabinCollection H).index n r = rabinIndexOf _ (rabinGenParams (· ≠ 2) oddDefault n (List.ofFn r)) := by
+@@ -876,6 +922,65 @@ noncomputable def rabinBlumTrapdoor (H : ArithmeticFP) : TrapdoorCollection wher
+   inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
+   inv_spec := blumInv_spec H
+ 
++/-- **The domain of the Blum Rabin collection is `QR_N`**: the published equivalence
++`(rabinBlumTrapdoor H).D i ≃ QR (blumMod i)` (the identity). It is the interface to the
++domain: elements of `D i` are read through it (`rabinBlumTrapdoor_f`, `rabinBlumTrapdoor_encD`,
++`rabinBlumTrapdoor_decD`, `rabinBlumTrapdoor_perm`), so no statement needs the collection to
++reduce at the type level, and uniform statements over `D i` transport along it
++(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
++def rabinBlumTrapdoor_domEquiv (H : ArithmeticFP) (i : List Bool) :
++    (rabinBlumTrapdoor H).D i ≃ QR (blumMod i) :=
++  Equiv.refl _
++
++/-- **The domain equivalence carries the uniform distribution**: for `P` on `QR_N`,
++`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinBlumTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
++the form in which uniform statements over the domain are read. -/
++theorem rabinBlumTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
++    (P : QR (blumMod i) → Prop) :
++    uprob (fun x : (rabinBlumTrapdoor H).D i => P (rabinBlumTrapdoor_domEquiv H i x)) = uprob P :=
++  uprob_comp_equiv _ P
++
++/-- The function of the Blum Rabin collection is `blumF`, read through the domain equivalence:
++`(rabinBlumTrapdoor H).f i x = blumF i (rabinBlumTrapdoor_domEquiv H i x)`. -/
++theorem rabinBlumTrapdoor_f (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).D i) :
++    (rabinBlumTrapdoor H).f i x = blumF i (rabinBlumTrapdoor_domEquiv H i x) := rfl
++
++/-- The encoder of the Blum Rabin collection is `blumEnc`, read through the domain equivalence:
++`(rabinBlumTrapdoor H).encD i x = blumEnc i (rabinBlumTrapdoor_domEquiv H i x)`. -/
++theorem rabinBlumTrapdoor_encD (H : ArithmeticFP) (i : List Bool)
++    (x : (rabinBlumTrapdoor H).D i) :
++    (rabinBlumTrapdoor H).encD i x = blumEnc i (rabinBlumTrapdoor_domEquiv H i x) := rfl
++
++/-- The decoder of the Blum Rabin collection is `blumDec`, carried back along the domain
++equivalence:
++`(rabinBlumTrapdoor H).decD i w = (blumDec i w).map (rabinBlumTrapdoor_domEquiv H i).symm`. -/
++theorem rabinBlumTrapdoor_decD (H : ArithmeticFP) (i w : List Bool) :
++    (rabinBlumTrapdoor H).decD i w = (blumDec i w).map (rabinBlumTrapdoor_domEquiv H i).symm := by
++  show blumDec i w = _
++  cases blumDec i w <;> rfl
++
++/-- The permutation of the Blum Rabin collection is `blumPermAt` (`x ↦ x²` on `QR_N`), read
++through the domain equivalence: with `φ = rabinBlumTrapdoor_domEquiv H i`,
++`(rabinBlumTrapdoor H).perm i x = φ.symm (blumPermAt i (φ x))`. -/
++theorem rabinBlumTrapdoor_perm (H : ArithmeticFP) (i : List Bool)
++    (x : (rabinBlumTrapdoor H).D i) :
++    (rabinBlumTrapdoor H).perm i x =
++      (rabinBlumTrapdoor_domEquiv H i).symm (blumPermAt i (rabinBlumTrapdoor_domEquiv H i x)) :=
++  rfl
++
++/-- The index generator of the Blum Rabin collection is `blumGen H`. -/
++theorem rabinBlumTrapdoor_gen (H : ArithmeticFP) : (rabinBlumTrapdoor H).gen = blumGen H := rfl
++
++/-- The domain sampler of the Blum Rabin collection is `blumSampler H`. -/
++theorem rabinBlumTrapdoor_sample (H : ArithmeticFP) :
++    (rabinBlumTrapdoor H).sample = blumSampler H := rfl
++
++/-- The evaluator of the Blum Rabin collection is `rabinEval`. -/
++theorem rabinBlumTrapdoor_eval (H : ArithmeticFP) : (rabinBlumTrapdoor H).eval = rabinEval := rfl
++
++/-- The trapdoor inverter of the Blum Rabin collection is `blumInv H`. -/
++theorem rabinBlumTrapdoor_inv (H : ArithmeticFP) : (rabinBlumTrapdoor H).inv = blumInv H := rfl
++
+ /-- The index generated by the Blum Rabin collection is the numeral of `N`. -/
+ theorem rabinBlumTrapdoor_index (H : ArithmeticFP) (n : ℕ) (r : (rabinBlumTrapdoor H).gen.Coins n) :
+     (rabinBlumTrapdoor H).index n r =
+diff --git a/TCSlib/Cryptography/Foundations/Negligible.lean b/TCSlib/Cryptography/Foundations/Negligible.lean
+index 9cec03b1..f7086edc 100644
+--- a/TCSlib/Cryptography/Foundations/Negligible.lean
++++ b/TCSlib/Cryptography/Foundations/Negligible.lean
+@@ -57,6 +57,11 @@ definition. -/
+ def Negligible (μ : ℕ → ℝ) : Prop :=
+   ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c
+ 
++/-- The defining property of `Negligible`: `Negligible μ` iff for every `c` there is `n₀` with
++`|μ n| < 1 / n^c` for all `n ≥ n₀`. -/
++theorem negligible_iff (μ : ℕ → ℝ) :
++    Negligible μ ↔ ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c := Iff.rfl
++
+ /-- A function `μ` is noticeable when there are `c` and `n₀` with `μ n > 1 / n^c` for all
+ `n ≥ n₀`. [Gar26, Definition 1.3]. -/
+ def Noticeable (μ : ℕ → ℝ) : Prop :=
+diff --git a/TCSlib/Cryptography/HardcoreBit/Basic.lean b/TCSlib/Cryptography/HardcoreBit/Basic.lean
+index 9d4b3e10..a039599a 100644
+--- a/TCSlib/Cryptography/HardcoreBit/Basic.lean
++++ b/TCSlib/Cryptography/HardcoreBit/Basic.lean
+@@ -172,6 +172,11 @@ on `γ`: every average over `γ` equals the average of its composite with `π`.
+ def PushesUniform (π : Ω → γ) : Prop :=
+   ∀ F : γ → ℝ, uexp (fun ω => F (π ω)) = uexp F
+ 
++/-- The defining property of `PushesUniform`: `PushesUniform π` iff
++`uexp (F ∘ π) = uexp F` for every `F : γ → ℝ`. -/
++theorem pushesUniform_iff (π : Ω → γ) :
++    PushesUniform π ↔ ∀ F : γ → ℝ, uexp (fun ω => F (π ω)) = uexp F := Iff.rfl
++
+ /-- A map pushing uniform to uniform preserves the probability of every event. -/
+ theorem PushesUniform.uprob_eq {π : Ω → γ} (h : PushesUniform π) (p : γ → Prop) :
+     uprob (fun ω => p (π ω)) = uprob p := by
+diff --git a/TCSlib/Cryptography/NumberTheory/Primality.lean b/TCSlib/Cryptography/NumberTheory/Primality.lean
+index 1c496b08..9cdf119e 100644
+--- a/TCSlib/Cryptography/NumberTheory/Primality.lean
++++ b/TCSlib/Cryptography/NumberTheory/Primality.lean
+@@ -682,6 +682,16 @@ def chunk (T n : ℕ) (r : Fin (T * n) → Bool) : Fin T → Fin n → Bool := f
+       _ = ((t : ℕ) + 1) * n := by ring
+       _ ≤ T * n := Nat.mul_le_mul_right n ht⟩
+ 
++/-- The defining equation of `chunk`: bit `i` of block `t` is the coin at position `t·n + i`,
++i.e. `chunk T n r t i = r (finProdFinEquiv (t, i))` (`chunk` is `r` read through the
++row-major bijection `Fin T × Fin n ≃ Fin (T · n)`). -/
++theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) :
++    chunk T n r t i = r (finProdFinEquiv (t, i)) := by
++  unfold chunk
++  congr 1
++  ext
++  simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
++
+ /-! #### The `SamplePrime` state loop -/
+ 
+ /-- The step of the `SamplePrime` loop on the state word `⟨1^n, s⟩`: discard the first `n`
+diff --git a/TCSlib/Cryptography/OneWayFunctions/Amplification.lean b/TCSlib/Cryptography/OneWayFunctions/Amplification.lean
+index 011d1f81..2225463c 100644
+--- a/TCSlib/Cryptography/OneWayFunctions/Amplification.lean
++++ b/TCSlib/Cryptography/OneWayFunctions/Amplification.lean
+@@ -74,6 +74,11 @@ variable {α β ρ : Type*} [Fintype α] [DecidableEq β] [Fintype ρ] {q : ℕ}
+ def prodFun (f : α → β) (q : ℕ) (xs : Fin q → α) : Fin q → β :=
+   fun i => f (xs i)
+ 
++omit [Fintype α] [DecidableEq β] in
++/-- The defining equation of `prodFun`: `prodFun f q xs i = f (xs i)`. -/
++theorem prodFun_apply (f : α → β) (q : ℕ) (xs : Fin q → α) (i : Fin q) :
++    prodFun f q xs i = f (xs i) := rfl
++
+ /-- One iteration of the inverter of [Gar26, Figure 2.2] on challenge `y`, with coins
+ `c = (i, xs, r)`: plant `y` at position `i` of `(f(x₁), …, f(x_q))`, call `B` with coins
+ `r`, and return the `i`-th component of its answer. (The test `f(xᵢ') = y` is made by
+@@ -85,6 +90,13 @@ def yaoTry (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (y : 
+     (c : Fin q × (Fin q → α) × ρ) : α :=
+   B (Function.update (prodFun f q c.2.1) c.1 y) c.2.2 c.1
+ 
++omit [Fintype α] [DecidableEq β] [Fintype ρ] in
++/-- The defining equation of `yaoTry`: with coins `c = (i, xs, r)`,
++`yaoTry f B y c = B ((f(x₁), …, f(x_q))[i ↦ y]) r i`. -/
++theorem yaoTry_eq (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (y : β)
++    (c : Fin q × (Fin q → α) × ρ) :
++    yaoTry f B y c = B (Function.update (prodFun f q c.2.1) c.1 y) c.2.2 c.1 := rfl
++
+ /-- The inverter `A` of [Gar26, Figure 2.2], repeated `T` times with independent coins: run
+ `yaoTry` for `t = 0, …, T - 1` and return the first answer that is a preimage of `y`, or
+ the default input (the source's `⊥`) if none is.
+diff --git a/TCSlib/Cryptography/Pseudorandom/Generators.lean b/TCSlib/Cryptography/Pseudorandom/Generators.lean
+index 69f40cb3..3aa59efe 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Generators.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Generators.lean
+@@ -73,6 +73,10 @@ asymptotic layer. -/
+ noncomputable def prgAdv [Fintype γ] (G : σ → γ) (D : γ → ρ → Bool) : ℝ :=
+   distAdv G (id : γ → γ) D
+ 
++/-- The defining equation of `prgAdv`: `prgAdv G D = distAdv G id D`. -/
++theorem prgAdv_eq [Fintype γ] (G : σ → γ) (D : γ → ρ → Bool) :
++    prgAdv G D = distAdv G (id : γ → γ) D := rfl
++
+ /-- Re-encoding the output of a generator by a bijection `e` does not change PRG
+ advantages: the advantage of `D` against `e ∘ G` is that of `D ∘ e` against `G`. -/
+ theorem prgAdv_comp_equiv [Fintype γ] [Fintype δ] (e : γ ≃ δ) (G : σ → γ)
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+index 8e81839e..b68e38c5 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+@@ -159,6 +159,17 @@ def ZK (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
+         distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
+           (D.distinguisherL x.length) ≤ ε x.length
+ 
++/-- The defining property of `ZK`: `ZK π R` iff for every efficient `V'` there is a uniform
++simulator `S` such that for every `Lz` and every distinguisher `D` some negligible `ε` bounds
++`distAdv (view of V' in P(x, y) ↔ V'(x, z)) (S(x, z)) (D at |x|) ≤ ε(|x|)` for all `x`, `y` with
++`R x y`, and `z` with `|z| ≤ Lz(|x|)`. -/
++theorem ZK_iff (π : Protocol) (R : List Bool → List Bool → Prop) :
++    ZK π R ↔ ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧
++      ∀ (Lz : PolyExpr) (D : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
++        ∀ x y z, R x y → z.length ≤ Lz.eval x.length →
++          distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
++            (D.distinguisherL x.length) ≤ ε x.length := Iff.rfl
++
+ /-- Statistical zero-knowledge of `π` for `R` with error `δ(|x|)` (Def-122.a, campaign
+ addition needed for the truncated simulators): for every efficient `V'` there is a uniform PPT
+ simulator whose output on `(x, z)` is `StatClose` (every test set, sup form) within `δ(|x|)`
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean b/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
+index f1249525..5435da75 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
+@@ -232,6 +232,41 @@ def encColoring {n : ℕ} (c : Fin n → Fin 3) : List Bool :=
+     let b := (finProdFinEquiv.symm k).2
+     if b = 0 then decide ((c i).val / 2 = 1) else decide ((c i).val % 2 = 1)
+ 
++/-- The defining equation of `encColoring`: bit `k = (i, b)` (`finProdFinEquiv`) of the
++`2n`-bit encoding is `[c i / 2 = 1]` for `b = 0` and `[c i % 2 = 1]` for `b = 1`. -/
++theorem encColoring_eq {n : ℕ} (c : Fin n → Fin 3) :
++    encColoring c = List.ofFn fun k : Fin (n * 2) =>
++      if (finProdFinEquiv.symm k).2 = 0 then decide ((c (finProdFinEquiv.symm k).1).val / 2 = 1)
++      else decide ((c (finProdFinEquiv.symm k).1).val % 2 = 1) := rfl
++
++/-- **The bits of an encoded colouring**: bit `finProdFinEquiv (i, b)` of `encColoring c` is
++`[c i / 2 = 1]` for `b = 0` and `[c i % 2 = 1]` for `b = 1`. -/
++theorem getD_encColoring {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) (b : Fin 2) :
++    (encColoring c).getD (finProdFinEquiv (i, b)) false =
++      if b = 0 then decide ((c i).val / 2 = 1) else decide ((c i).val % 2 = 1) := by
++  have hk : (finProdFinEquiv (i, b) : ℕ) < (List.ofFn fun k : Fin (n * 2) =>
++      if (finProdFinEquiv.symm k).2 = 0 then decide ((c (finProdFinEquiv.symm k).1).val / 2 = 1)
++      else decide ((c (finProdFinEquiv.symm k).1).val % 2 = 1)).length := by
++    rw [List.length_ofFn]
++    exact (finProdFinEquiv (i, b)).isLt
++  rw [encColoring_eq, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk, Option.getD_some,
++    List.getElem_ofFn]
++  simp only [Fin.eta, Equiv.symm_apply_apply]
++
++/-- Bit `2i` of `encColoring c` is the high bit `[c i / 2 = 1]` of the colour of vertex `i`. -/
++theorem getD_encColoring_two_mul {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) :
++    (encColoring c).getD (2 * i) false = decide ((c i).val / 2 = 1) := by
++  have h := getD_encColoring c i 0
++  rw [finProdFinEquiv_apply_val] at h
++  simpa using h
++
++/-- Bit `2i + 1` of `encColoring c` is the low bit `[c i % 2 = 1]` of the colour of vertex `i`. -/
++theorem getD_encColoring_two_mul_add_one {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) :
++    (encColoring c).getD (2 * i + 1) false = decide ((c i).val % 2 = 1) := by
++  have h := getD_encColoring c i 1
++  rw [finProdFinEquiv_apply_val] at h
++  simpa [Nat.add_comm] using h
++
+ /-- The total decoding of a `3`-colouring of `Fin n`: the two bits of vertex `i` are read with
+ default `false` and combined modulo `3`. -/
+ def decColoring (n : ℕ) (w : List Bool) : Fin n → Fin 3 := fun i =>
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+index b6f95458..39321c20 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+@@ -122,6 +122,9 @@ namespace Strategy
+ /-- The number of random bits of a strategy at common-input length `n`. -/
+ def coinLen (S : Strategy) (n : ℕ) : ℕ := S.coins.eval n
+ 
++/-- The defining equation of `coinLen`: `S.coinLen n = S.coins.eval n`. -/
++theorem coinLen_eq (S : Strategy) (n : ℕ) : S.coinLen n = S.coins.eval n := rfl
++
+ /-- The random tape of a strategy at common-input length `n`: `coinLen n` uniform bits. -/
+ abbrev Coins (S : Strategy) (n : ℕ) : Type := Fin (S.coinLen n) → Bool
+ 
+@@ -173,6 +176,12 @@ def Efficient (S : Strategy) : Prop :=
+   ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
+     ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
+ 
++/-- The defining property of `Efficient`: `S.Efficient` iff some uniform `NUPPT` `A` with
++`S.coins = A.coins` computes every next message: `S.next x z r hist = (ofNUPPT A).next …`. -/
++theorem efficient_iff (S : Strategy) :
++    S.Efficient ↔ ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
++      ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist := Iff.rfl
++
+ /-- Non-vacuity of `Strategy.Efficient`: the strategy of a uniform machine is efficient. -/
+ theorem ofNUPPT_efficient (A : NUPPT) (hA : A.Uniform) : (ofNUPPT A).Efficient :=
+   ⟨A, hA, rfl, fun _ _ _ _ => rfl⟩
+@@ -280,6 +289,12 @@ distinguishers and produced by simulators in the zero-knowledge definitions). -/
+ def View.encode (v : View) : List Bool :=
+   pairEncode (pairEncode v.x v.z) (pairEncode v.r (Strategy.encodeMsgs v.received))
+ 
++/-- The defining equation of `View.encode` on a constructed view:
++`View.encode ⟨x, z, r, msgs⟩ = ⟨⟨x, z⟩, ⟨r, encodeMsgs msgs⟩⟩`. -/
++theorem View.encode_mk (x z r : List Bool) (received : List (List Bool)) :
++    View.encode ⟨x, z, r, received⟩ =
++      pairEncode (pairEncode x z) (pairEncode r (Strategy.encodeMsgs received)) := rfl
++
+ /-- The output of a party on a view [PS10, §4.4, `out(v)`] (Def-115.d): its next-message
+ function on the complete history. -/
+ def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
+@@ -395,6 +410,15 @@ def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bo
+ def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+ 
++/-- The view of the verifier `V'` in `π.withV V'`: the common input, `z`, `V'`'s tape and the
++messages `V'` received in the execution of `π.P` against `V'` (the analogue of `outV_withV`). -/
++theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool)
++    (r : (π.withV V').ExecCoins (π.withV V').P x) :
++    (π.withV V').viewV x y z r =
++      ⟨x, z, List.ofFn r.2,
++        (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
++          (π.rounds.eval x.length)).2⟩ := rfl
++
+ /-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
+ (Def-115.b). -/
+ def viewP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+index 8e77b389..4e82d8e3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+@@ -85,6 +85,11 @@ of every edge receive different colours (`c : Fin n → Fin 3`, colours `{1, 2,
+ def ProperColoring {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Prop :=
+   ∀ u v, G u v = true → c u ≠ c v
+ 
++/-- The defining property of `ProperColoring`: `ProperColoring G c` iff `c u ≠ c v` for every
++edge `G u v = true`. -/
++theorem ProperColoring_iff {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) :
++    ProperColoring G c ↔ ∀ u v, G u v = true → c u ≠ c v := Iff.rfl
++
+ instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColoring G c) := by
+   unfold ProperColoring
+   infer_instance
+@@ -116,6 +121,12 @@ def R3COL (x y : List Bool) : Prop :=
+   ∃ (n : ℕ) (G : Graph n) (c : Fin n → Fin 3),
+     x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c
+ 
++/-- The defining property of `R3COL`: `R3COL x y` iff `x = encGraph G` and `y = encColoring c`
++for some graph `G` on `n` vertices and some proper 3-colouring `c` of `G`. -/
++theorem R3COL_iff (x y : List Bool) :
++    R3COL x y ↔ ∃ (n : ℕ) (G : Graph n) (c : Fin n → Fin 3),
++      x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c := Iff.rfl
++
+ /-- `x ∈ 3COL` iff `x` has a witness for `R_3COL`. -/
+ theorem mem_L3COL_iff (x : List Bool) : x ∈ L3COL ↔ ∃ y, R3COL x y := by
+   constructor
+@@ -290,6 +301,11 @@ position `t k + j`), the first accepted value in `Fin m` (`rejectionSample`, D10
+ def sampleIdx (m k T : ℕ) (r : List Bool) : Option (Fin m) :=
+   rejectionSample m k T fun t j => r.getD (t * k + j) false
+ 
++/-- The defining equation of `sampleIdx`: `rejectionSample` on the trials
++`(t, j) ↦ r.getD (t k + j) false`. -/
++theorem sampleIdx_eq_rejectionSample (m k T : ℕ) (r : List Bool) :
++    sampleIdx m k T r = rejectionSample m k T fun t j => r.getD (t * k + j) false := rfl
++
+ /-- The six permutations of the three colours enumerated by `Fin 6`. -/
+ noncomputable def perm3Equiv : Fin 6 ≃ Equiv.Perm (Fin 3) :=
+   (Fintype.equivFinOfCardEq (by rw [Fintype.card_perm, Fintype.card_fin]; rfl)).symm
+@@ -359,6 +375,13 @@ private theorem sampleIdx_ofFn (m k T : ℕ) (r : Fin (T * k) → Bool) :
+   funext t j
+   exact ofFn_getD_tape r t j
+ 
++/-- **The tape lemma of `sampleIdx`** (public form): on a tape of exactly `T k` bits,
++`sampleIdx` is `rejectionSample` on the trial table `(t, j) ↦ r (finProdFinEquiv (t, j))`, bit
++`j` of trial `t` being tape bit `t k + j`. -/
++theorem sampleIdx_ofFn_eq_rejectionSample (m k T : ℕ) (r : Fin (T * k) → Bool) :
++    sampleIdx m k T (List.ofFn r) = rejectionSample m k T fun t j => r (finProdFinEquiv (t, j)) :=
++  sampleIdx_ofFn m k T r
++
+ /-- The permutation sampler is within `(1/4)^T` of a uniform permutation of the colours (D10).
+ 
+ **Proof sketch.** `statClose_rejectionSample 6 3 T` (with `6 ≤ 2³`) gives closeness
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+index 81750d48..1a27cc2e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+@@ -48,6 +48,12 @@ This file holds the generic pieces (the parties themselves as string functions a
+ * colours as numbers: `decColoring`, `decColor` and `encColor` numerically (`colorVal`,
+   `encColorOfVal`, `colorFromTable`).
+ 
++## Main definitions
++
++* `ColMachines.ilayout`, `argX`, `argZ`, `argM`, `padTo`, `countTrue`, `nthTrue`, `natOfBits`,
++  `firstTrial`, `sampleVal`, `permTable`, `tableOfIdx`, `colorFromTable`, `colorVal`,
++  `encColorOfVal` — the layout, padding, counting and sampler models, colours as numbers.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.ColMachines.polyTimeComputable_loopState'`,
+@@ -90,8 +96,9 @@ theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+ 
+ /-- **Counted loops bounded along the genuine orbit:** `EncodingMachines.polyTimeComputable_loopState`
+ with the length bound required only of the states `loopState upd init x i`, `i ≤ N x`
+-(the update may lengthen arbitrary words). Same proof: a state loop
+-(`EncodingMachines.polyTimeComputable_stateFind`, data in `EncodingMachines.CountLoop`). -/
++(the update may lengthen arbitrary words). **Proof sketch.** Same proof: a state loop
++(`EncodingMachines.polyTimeComputable_stateFind`, data in `EncodingMachines.CountLoop`) whose
++states `⟨1^i, loopState upd init x i⟩` (`CountLoop.orbit_eq`) are bounded by `hstate`. -/
+ theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
+     (hupd : PolyTimeComputable upd) (hinit : PolyTimeComputable init)
+     {N : List Bool → ℕ} (hN : PolyTimeComputable fun x => List.replicate (N x) true)
+@@ -146,9 +153,10 @@ theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
+ 
+ /-- **Concatenating loops over a data-dependent range:** if the chunk `E z i` is a
+ polynomial-time function of `⟨1^i, z⟩` and the range `n z` is a unary function, then
+-`z ↦ E z 0 ++ ⋯ ++ E z (n z - 1)` is polynomial-time computable (an instance of
+-`Complexity.polyTimeComputable_iterateEmit` on the counter step `EncodingMachines.cstep`, as
+-`EncodingMachines.polyTimeComputable_of_getD`). -/
++`z ↦ E z 0 ++ ⋯ ++ E z (n z - 1)` is polynomial-time computable. **Proof sketch.** An instance of
++`Complexity.polyTimeComputable_iterateEmit` on the counter step `EncodingMachines.cstep` (as
++`EncodingMachines.polyTimeComputable_of_getD`), emitting `E z i` while `i < n z`
++(`flatMap_range_ite`). -/
+ theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+     (hE : PolyTimeComputable fun w => E (pairSndD w) (pairFstD w).length)
+     {n : List Bool → ℕ} (hn : PolyTimeComputable fun z => List.replicate (n z) true) :
+@@ -177,8 +185,9 @@ theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
+   rw [flatMap_range_ite, min_eq_right hN]
+ 
+ /-- **The iterated second projection** `pairSndD^[i z] (s z)` is polynomial-time for a
+-polynomial-time `s` and a unary `i`: a counted loop whose states never exceed `|s z|`
+-(`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
++polynomial-time `s` and a unary `i`. **Proof sketch.** A counted loop
++(`polyTimeComputable_loopState'`) whose `j`-th state is `pairSndD^[j] (s z)`, never longer than
++`|s z|` (`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+ theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+     {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
+     PolyTimeComputable fun z => pairSndD^[i z] (s z) := by
+@@ -330,8 +339,10 @@ def countTrue (x : List Bool) : ℕ → ℕ
+   | 0 => 0
+   | j + 1 => countTrue x j + (x.getD j false).toNat
+ 
++/-- No bits are counted in the empty prefix. -/
+ @[simp] theorem countTrue_zero (x : List Bool) : countTrue x 0 = 0 := rfl
+ 
++/-- The count of the first `j + 1` bits adds bit `j`. -/
+ @[simp] theorem countTrue_succ (x : List Bool) (j : ℕ) :
+     countTrue x (j + 1) = countTrue x j + (x.getD j false).toNat := rfl
+ 
+@@ -355,9 +366,9 @@ theorem countTrue_mono (x : List Bool) {i j : ℕ} (h : i ≤ j) : countTrue x i
+       exact (ih (by omega)).trans (Nat.le_add_right _ _)
+     · rw [show i = j + 1 by omega]
+ 
+-/-- The unary bit count of a prefix of a polynomial-time word is polynomial-time: a counted
+-loop appending a token for each set bit (`polyTimeComputable_loopState'`, states of length
+-`countTrue ≤ N`). -/
++/-- The unary bit count of a prefix of a polynomial-time word is polynomial-time.
++**Proof sketch.** A counted loop appending a token for each set bit
++(`polyTimeComputable_loopState'`; state `i` is `1^{countTrue (s z) i}`, of length `≤ i ≤ N`). -/
+ theorem countTrue_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+     {N : List Bool → ℕ} (hN : PolyTimeComputable fun z => List.replicate (N z) true) :
+     PolyTimeComputable fun z => List.replicate (countTrue (s z) (N z)) true := by
+@@ -594,8 +605,10 @@ def natOfBits (s : List Bool) (b : ℕ) : ℕ → ℕ
+   | 0 => 0
+   | j + 1 => 2 * natOfBits s b j + (s.getD (b + j) false).toNat
+ 
++/-- The empty window reads as `0`. -/
+ @[simp] theorem natOfBits_zero (s : List Bool) (b : ℕ) : natOfBits s b 0 = 0 := rfl
+ 
++/-- Reading one more bit doubles the value and adds the bit. -/
+ @[simp] theorem natOfBits_succ (s : List Bool) (b j : ℕ) :
+     natOfBits s b (j + 1) = 2 * natOfBits s b j + (s.getD (b + j) false).toNat := rfl
+ 
+@@ -622,9 +635,9 @@ theorem bitsToNat_eq_natOfBits (s : List Bool) (b : ℕ) :
+       2 * natOfBits s b k + (s.getD (b + k) false).toNat
+     cases s.getD (b + k) false <;> rfl
+ 
+-/-- **Reading a window as a number is polynomial-time** when `2^k` is polynomially bounded:
+-a counted loop doubling the accumulator and adding the next bit (`polyTimeComputable_loopState'`,
+-states `1^{natOfBits} < 1^{2^k}`). -/
++/-- **Reading a window as a number is polynomial-time** when `2^k` is polynomially bounded.
++**Proof sketch.** A counted loop doubling the accumulator and adding the next bit
++(`polyTimeComputable_loopState'`, states `1^{natOfBits} < 1^{2^k}`, `natOfBits_lt`). -/
+ theorem natOfBits_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+     {b : List Bool → ℕ} (hb : PolyTimeComputable fun z => List.replicate (b z) true)
+     {k : List Bool → ℕ} (hk : PolyTimeComputable fun z => List.replicate (k z) true)
+@@ -658,7 +671,8 @@ theorem natOfBits_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+   rw [hclosed]
+ 
+ /-- `List.findSome?` over `finRange T` of a test-and-value function returns the value at the
+-first accepted index (`firstIdx`), `none` if no index below `T` is accepted. -/
++first accepted index (`firstIdx`), `none` if no index below `T` is accepted. **Proof sketch.**
++Split `finRange T` at `firstIdx` (`q_firstIdx`, `firstIdx_min`), or none is accepted. -/
+ theorem findSome?_finRange_eq {α : Type*} {T : ℕ} (f : Fin T → Option α) (q : ℕ → Bool)
+     (v : ℕ → α) (hf : ∀ t : Fin T, f t = if q t then some (v t) else none) :
+     (List.finRange T).findSome? f =
+@@ -719,8 +733,8 @@ theorem map_val_sampleIdx_getD (m k T : ℕ) (s : List Bool) (d : ℕ) :
+   split_ifs <;> rfl
+ 
+ /-- **The rejection sampler is polynomial-time** (in unary, when `2^k` is polynomially
+-bounded): the first accepted trial by `polyTimeComputable_firstIdx` with the window test
+-`natOfBits_poly`, then the value at that trial. -/
++bounded). **Proof sketch.** The first accepted trial by `polyTimeComputable_firstIdx` with the
++window test `natOfBits_poly`, then the value at that trial (`polyTimeComputable_ite`). -/
+ theorem sampleVal_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
+     {m : List Bool → ℕ} (hm : PolyTimeComputable fun z => List.replicate (m z) true)
+     {k : List Bool → ℕ} (hk : PolyTimeComputable fun z => List.replicate (k z) true)
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean
+index 73af5b28..adcd0791 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean
+@@ -28,6 +28,15 @@ numeric models of `ThreeColoring/Machines.lean` and the unary FP toolkit of
+   `sampleEdgeIdx`, `edgeOf`), which is what `ThreeColoring/ProtocolProofs.lean` uses to identify
+   them with the next-message functions of `Protocol.lean`.
+ 
++## Main definitions
++
++* `TCSlib.Cryptography.ColMachines.proverStr`, `ColMachines.commitStr`, `ColMachines.openStr` —
++  the one-iteration prover as a string function.
++* `TCSlib.Cryptography.ColMachines.verifierStr`, `ColMachines.eOf`, `ColMachines.checkStr`,
++  `ColMachines.verdictStr` — the one-iteration verifier.
++* `TCSlib.Cryptography.ColMachines.proverRepStr`, `ColMachines.verifierRepStr` — the parties of
++  the `n|E|`-fold protocol.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.ColMachines.proverStr_poly`, `ColMachines.verifierStr_poly`,
+@@ -214,7 +223,14 @@ noncomputable def checkStr (L n m : ℕ) (x com opn : List Bool) (e : ℕ) : Boo
+     Com (pairEncode (padTo n (encColorOfVal a)) ri) = pairFstD (pairSndD^[j / n] com) ∧
+     Com (pairEncode (padTo n (encColorOfVal b)) rj) = pairFstD (pairSndD^[j % n] com) ∧ a ≠ b)
+ 
+-/-- The check is polynomial-time in its (polynomial-time, unary) components. -/
++/-- The check is polynomial-time in its (polynomial-time, unary) components.
++
++**Proof sketch.** The edge position `j = nthTrue x (n²) (e mod m)` is unary by `modNum_poly`
++and `nthTrue_poly`, its endpoints `j / n`, `j mod n` by `divNum_poly`, `modNum_poly`; the two
++colours by `colorVal_poly` and the randomness by the pair projections. The five conjuncts are
++`eqTest_poly` on the randomness lengths, `polyTimeComputable_pairEq` of `Com` on the padded
++openings against the selected commitments (`padTo_poly`, `iterSnd_poly`), and `not_poly` of
++`eqTest_poly` on the colours, combined by `polyTimeComputable_and`. -/
+ theorem checkStr_poly (hCom : PolyTimeComputable Com)
+     {L n m : List Bool → ℕ} (hL : PolyTimeComputable fun w => List.replicate (L w) true)
+     (hn : PolyTimeComputable fun w => List.replicate (n w) true)
+@@ -308,7 +324,13 @@ noncomputable def proverRepStr (w : List Bool) : List Bool :=
+       [] (((NUPPT.inCoins w).drop (h / 2 * c)).take c))
+   else []
+ 
+-/-- The prover of the repeated protocol is polynomial-time when `Com` is. -/
++/-- The prover of the repeated protocol is polynomial-time when `Com` is.
++
++**Proof sketch.** The iteration `t = histLen / 2` and the parity test are unary arithmetic on
++`histLen_poly` (`divNum_poly`, `modNum_poly`); the coin block is a drop and a truncation of the
++coin slot (`polyTimeComputable_pairDropPoly`, `truncate_poly`); the last message is
++`iterSnd_poly`; the layout is `NUPPT.polyTimeComputable_layout`, the one-iteration prover
++`proverStr_poly`; and the test `t < n m` is `ltTest_poly` with `polyTimeComputable_ite`. -/
+ theorem proverRepStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (proverRepStr Com ℓ) := by
+   have hh := histLen_poly.comp argM_poly
+   have ht : PolyTimeComputable fun w => List.replicate (histLen (argM w) / 2) true := by
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index 84e5e0a0..ad5cf0b0 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -121,6 +121,11 @@ def colCommit (Com : List Bool → List Bool) (n ℓn : ℕ) (c' : Fin n → Fin
+     (r : Fin n → Fin ℓn → Bool) : List Bool :=
+   multiCom Com (fun i => padColor n (c' i)) r
+ 
++/-- The defining equation of `colCommit`: `multiCom Com (fun i => padColor n (c' i)) r`. -/
++theorem colCommit_eq (Com : List Bool → List Bool) (n ℓn : ℕ) (c' : Fin n → Fin 3)
++    (r : Fin n → Fin ℓn → Bool) :
++    colCommit Com n ℓn c' r = multiCom Com (fun i => padColor n (c' i)) r := rfl
++
+ /-- The prover's opening message of [PS10, Protocol 127.5] for the edge `p = (i, j)`:
+ `⟨⟨c'_i, r_i⟩, ⟨c'_j, r_j⟩⟩`. -/
+ def colOpen {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
+@@ -128,6 +133,11 @@ def colOpen {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bo
+   pairEncode (pairEncode (encColor (c' p.1)) (List.ofFn (r p.1)))
+     (pairEncode (encColor (c' p.2)) (List.ofFn (r p.2)))
+ 
++/-- The defining equation of `colOpen`: `⟨⟨encColor (c' i), r_i⟩, ⟨encColor (c' j), r_j⟩⟩`. -/
++theorem colOpen_eq {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
++    colOpen c' r p = pairEncode (pairEncode (encColor (c' p.1)) (List.ofFn (r p.1)))
++      (pairEncode (encColor (c' p.2)) (List.ofFn (r p.2))) := rfl
++
+ /-- The verifier's check of one iteration of [PS10, Protocol 127.5] on the edge of index `e`,
+ the commitment message `com` and the opening `opn = ⟨⟨a, r_i⟩, ⟨b, r_j⟩⟩`: the randomness has
+ length `ℓ(n)`, both openings match the commitments, and `a ≠ b`.
+@@ -422,6 +432,10 @@ noncomputable def colProver (Com : List Bool → List Bool) (ℓ : PolyExpr) : S
+       | some p => colOpen c' rr p
+       | none => []
+ 
++/-- The coin polynomial of `colProver Com ℓ` is `3 n + n ℓ(n)`. -/
++theorem colProver_coins (Com : List Bool → List Bool) (ℓ : PolyExpr) :
++    (colProver Com ℓ).coins = .add (.mul (.const 3) .var) (.mul .var ℓ) := rfl
++
+ /-- The verifier of one iteration of [PS10, Protocol 127.5] (Prot-127.5): it samples the
+ edge index `e ← [|E|]` from its tape (`sampleEdgeIdx` with `|x|` trials); on the commitment
+ message it sends `1^e`; on the complete history `[com, opn]` it outputs `[true]` iff `x` is
+@@ -451,17 +465,41 @@ noncomputable def colProtocol (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+   rounds := .const 3
+   verifierFirst := false
+ 
++/-- The prover of `colProtocol Com ℓ` is `colProver Com ℓ`. -/
++theorem colProtocol_P (Com : List Bool → List Bool) (ℓ : PolyExpr) :
++    (colProtocol Com ℓ).P = colProver Com ℓ := rfl
++
++/-- The verifier of `colProtocol Com ℓ` is `colVerifier Com ℓ`. -/
++theorem colProtocol_V (Com : List Bool → List Bool) (ℓ : PolyExpr) :
++    (colProtocol Com ℓ).V = colVerifier Com ℓ := rfl
++
++/-- `colProtocol Com ℓ` exchanges three messages. -/
++theorem colProtocol_rounds (Com : List Bool → List Bool) (ℓ : PolyExpr) :
++    (colProtocol Com ℓ).rounds = .const 3 := rfl
++
++/-- In `colProtocol Com ℓ` the prover moves first. -/
++theorem colProtocol_verifierFirst (Com : List Bool → List Bool) (ℓ : PolyExpr) :
++    (colProtocol Com ℓ).verifierFirst = false := rfl
++
+ /-! ### The `n|E|`-fold protocol (Prot-127.5, repeated) -/
+ 
+ /-- The `t`-th block of `c` bits of a tape (the coins of iteration `t` of the repeated
+ protocol). -/
+ def colCoinSlice (c t : ℕ) (r : List Bool) : List Bool := (r.drop (t * c)).take c
+ 
++/-- The defining equation of `colCoinSlice`: `colCoinSlice c t r = (r.drop (t c)).take c`. -/
++theorem colCoinSlice_eq (c t : ℕ) (r : List Bool) :
++    colCoinSlice c t r = (r.drop (t * c)).take c := rfl
++
+ /-- The number of iterations of the repeated protocol on `x`: `n |E|` [PS10, Protocol 127.5,
+ "repeat the procedure `n|E|` times"], with `|E| = edgeCount G` the number of ordered edge
+ pairs (for the text's simple graph `2n|E|` iterations; run-3 audit P11-3). -/
+ def colIterations (x : List Bool) : ℕ := (decGraph x).1 * edgeCount (decGraph x).2
+ 
++/-- The defining equation of `colIterations`: `n |E|` for `(n, G) = decGraph x`. -/
++theorem colIterations_eq (x : List Bool) :
++    colIterations x = (decGraph x).1 * edgeCount (decGraph x).2 := rfl
++
+ /-- The prover of the `n|E|`-fold protocol: iteration `t = hist.length / 2` (it has received
+ the challenges and the empty verifier messages of the earlier iterations) runs `colProver`
+ on the `t`-th block of `3|x| + |x| ℓ(|x|)` coins; after the `n|E|` iterations it sends `[]`. -/
+@@ -664,6 +702,36 @@ private theorem colProver_next_cons_of (Com : List Bool → List Bool) (ℓ : Po
+   dsimp only
+   rw [edgeAt_eq_some_of_pos G hm]
+ 
++/-- **The prover's commitments** (public form) on an input decoding to `⟨n, G⟩`: `colCommit` of
++`i ↦ π (c i)`, `π = samplePerm3 |x| (r.take (3|x|))`, `r_i j = r.getD (3|x| + i ℓ(n) + j) false`. -/
++theorem colProver_next_nil (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool}
++    {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (y r : List Bool) :
++    (colProver Com ℓ).next x y r [] = colCommit Com n (ℓ.eval n)
++      (fun i => samplePerm3 x.length (r.take (3 * x.length)) (decColoring n y i))
++      (fun i j => r.getD (3 * x.length + i * ℓ.eval n + j) false) :=
++  colProver_next_nil_of Com ℓ hx y r
++
++/-- **The prover's opening** (public form) on `⟨n, G⟩` with an edge: on `w :: h` it opens the edge
++of index `edgeIdxOfMsg |E| w` (`colOpen`), with `π` and `r_i` as in `colProver_next_nil`. -/
++theorem colProver_next_cons (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool}
++    {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (hm : 0 < edgeCount G) (y r w : List Bool)
++    (h : List (List Bool)) :
++    (colProver Com ℓ).next x y r (w :: h) = colOpen
++      (fun i => samplePerm3 x.length (r.take (3 * x.length)) (decColoring n y i))
++      (fun (i : Fin n) (j : Fin (ℓ.eval n)) => r.getD (3 * x.length + i * ℓ.eval n + j) false)
++      (edgeOf G ⟨edgeIdxOfMsg (edgeCount G) w % edgeCount G, Nat.mod_lt _ hm⟩) :=
++  colProver_next_cons_of Com ℓ hx hm y r w h
++
++/-- **The prover on an edgeless graph** `⟨n, G⟩`: on a history `w :: h` it sends `[]`. -/
++theorem colProver_next_cons_of_edgeCount_eq_zero (Com : List Bool → List Bool) (ℓ : PolyExpr)
++    {x : List Bool} {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (hm : edgeCount G = 0)
++    (y r w : List Bool) (h : List (List Bool)) :
++    (colProver Com ℓ).next x y r (w :: h) = [] := by
++  simp only [colProver]
++  rw [hx]
++  dsimp only
++  rw [(edgeAt_eq_none_iff G _).2 hm]
++
+ /-- The verdict of one iteration against any prover `P'`: the verifier's activation on the
+ two prover messages, the second being the reply to the challenge. -/
+ private theorem colProtocol_outV (Com : List Bool → List Bool) (ℓ : PolyExpr) (P' : Strategy)
+@@ -719,7 +787,12 @@ private theorem uprob_check_uniform_le {Com : List Bool → List Bool} {ℓ : Po
+   exact he
+ 
+ /-- **Soundness of one iteration** [PS10, Proposition 127.6]: for `x ∉ 3COL` and any prover,
+-the verifier rejects with probability at least `1 - (1 - 1/|x| + (1/2)^{|x|})`. -/
++the verifier rejects with probability at least `1 - (1 - 1/|x| + (1/2)^{|x|})`.
++
++**Proof sketch.** Bound acceptance (`uprob_not`, `colProtocol_outV`): if `x` is ill formed or
++`n < 2`, `V` always rejects; otherwise fix the prover's coins (`exists_proverCoins_le`), make
++the edge `(1/2)^{|x|}`-close to uniform (`statClose_sampleEdgeIdx`, `StatClose.uprob_le_add`),
++and a uniform edge passes with probability `≤ 1 - 1/|E|` (`uprob_check_uniform_le`), `|E| ≤ |x|`. -/
+ private theorem colProtocol_sound {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ)
+     (x : List Bool) (hx : x ∉ L3COL) (P' : Strategy) (z : List Bool) :
+     1 - (1 - 1 / (x.length : ℝ) + (1 / 2 : ℝ) ^ x.length) ≤
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+index ab4796e9..d5aae556 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+@@ -24,6 +24,14 @@ main file closes each efficiency theorem by `ColProofs.…`, which type-checks b
+ shadows are proof devices, not public API; any divergence from the frozen definitions of the
+ main file makes the main file fail to type-check, so it cannot go unnoticed.
+ 
++## Main definitions
++
++* `TCSlib.Cryptography.ColProofs.colProver`, `ColProofs.colVerifier`, `ColProofs.colProtocol`,
++  `ColProofs.colProverRep`, `ColProofs.colVerifierRep`, `ColProofs.colProtocolRep` and their
++  ingredients (`msgAt`, `colCommit`, `colOpen`, `colVerify`, `colWellFormed`, `colCoinSlice`,
++  `colIterations`) — verbatim shadows of the definitions of `Protocol.lean`.
++* `TCSlib.Cryptography.ColProofs.finOneEquiv` — `Fin m ≃ (Fin 1 → Fin m) × Unit`.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.ColProofs.colProver_next_eq`, `ColProofs.colVerifier_next_eq`,
+@@ -200,7 +208,15 @@ theorem colVerify_eq_checkStr (Com : List Bool → List Bool) (L : ℕ) (x com o
+   simp only [msgAt, padColor, ofFn_padFin, encColor_eq_ofVal, decColor_val, h1, h2, ne_eq,
+     Fin.ext_iff]
+ 
+-/-- The verifier's message of one iteration is `verifierStr` of the layout. -/
++/-- The verifier's message of one iteration is `verifierStr` of the layout.
++
++**Proof sketch.** Case on the history: `[]`, `[com]`, `[com, opn]` or longer. The encoded
++history (`argM_ilayout`, `Strategy.encodeMsgs_cons`) is empty only for `[]`, and its iterated
++second projections are empty after one, two or three steps exactly in the other cases
++(`pairSndD_pairEncode`, `pairEncode_ne_nil`), which selects the branch of `verifierStr`. On
++`[com]` the challenge is `edgeMsg` of `eOf_ilayout`; on `[com, opn]` the verdict is
++`verdictStr` by the layout lemmas, `encGraph_decGraph_eq_take` for well-formedness and
++`colVerify_eq_checkStr` when the graph has an edge; otherwise both send `[false]`. -/
+ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
+     (hist : List (List Bool)) :
+     (colVerifier Com ℓ).next x z r hist = verifierStr Com ℓ (ilayout x z hist r) := by
+@@ -248,7 +264,14 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x
+     rw [verifierStr, if_neg c1, if_neg c2, if_neg c3]
+     rfl
+ 
+-/-- The repeated prover's message is `proverRepStr` of the layout. -/
++/-- The repeated prover's message is `proverRepStr` of the layout.
++
++**Proof sketch.** Unfold `colProverRep` (`show`) and `proverRepStr`; the layout lemmas
++(`argM_ilayout`, `histLen_encodeMsgs`, `nOf_ilayout`, `mOf_ilayout`, `inCoins_ilayout`) and
++the coin count `proverCoinsOf` make the iteration test and the coin block agree. Inside the
++iteration, `colProver_next_eq` turns the one-iteration prover into `proverStr`; the history
++`[]` or `[last message]` matches by parity, with the last message read by
++`getD_eq_pairFstD_iterate`. -/
+ theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y r : List Bool)
+     (hist : List (List Bool)) :
+     (colProverRep Com ℓ).next x y r hist = proverRepStr Com ℓ (ilayout x y hist r) := by
+@@ -275,7 +298,14 @@ theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x
+     · rw [if_neg h2, if_neg h2, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, hlast]
+   · rw [if_neg h1, if_neg h1]
+ 
+-/-- The repeated verifier's message is `verifierRepStr` of the layout. -/
++/-- The repeated verifier's message is `verifierRepStr` of the layout.
++
++**Proof sketch.** Unfold `colVerifierRep` (`show`) and `verifierRepStr` and split on the parity
++of `|hist|`, the iteration test and the final length `2|x|²`. Odd histories send the challenge
++`edgeMsg` of `eRep_ilayout`; the final history sends the verdict, which matches `verdictRepStr`
++by the layout lemmas, `encGraph_decGraph_eq_take` and, with an edge, `firstIdx_eq_iff` turning
++the search for a failed iteration into the universal check (`checkRep`, `eRep_ilayout`,
++`getD_eq_pairFstD_iterate`, `colVerify_eq_checkStr`); every other history sends `[]`. -/
+ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
+     (hist : List (List Bool)) :
+     (colVerifierRep Com ℓ).next x z r hist = verifierRepStr Com ℓ (ilayout x z hist r) := by
+diff --git a/TCSlib/InformationTheory/StatisticalDistance.lean b/TCSlib/InformationTheory/StatisticalDistance.lean
+index bf24b2b2..8ce6712c 100644
+--- a/TCSlib/InformationTheory/StatisticalDistance.lean
++++ b/TCSlib/InformationTheory/StatisticalDistance.lean
+@@ -45,6 +45,9 @@ variable {α : Type*} [Fintype α]
+ `½ ∑ |p a - q a|`. [Vad12, §6.1] -/
+ noncomputable def statDist (p q : FinDist α) : ℝ := (1 / 2) * ∑ a, |p a - q a|
+ 
++/-- The defining equation of `statDist`: `statDist p q = ½ ∑ₐ |p a - q a|`. -/
++theorem statDist_eq (p q : FinDist α) : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
++
+ theorem statDist_nonneg (p q : FinDist α) : 0 ≤ statDist p q := by
+   refine mul_nonneg (by norm_num) (sum_nonneg fun _ _ => abs_nonneg _)
+ 

@@ -1,0 +1,71 @@
+From ed80c205ccad1d9f7ef7536f3872d12eb04f4ddd Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:07:21 +0000
+Subject: [PATCH 02/25] fill dl-a: statClose_sampleBelowL
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The corollary route of gate 03f1 review M2: sampleBelowL_eq_rejectBlocksL, then
+statClose_rejectBlocksL (· < m) (Nat.size m) n n with d = 0, the target moved along
+Fin m ≃ {v : Fin (2^k) // v < m}, and (1 − m/2^k)^n ≤ (1/2)^n from 2^k ≤ 2m.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/Candidates/DiscreteLog.lean  | 39 ++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 74683820..226ddaf6 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -610,7 +610,44 @@ target along the value-preserving bijection `{v : Fin (2^k) // v < m} ≃ Fin m`
+ theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+     StatClose (fun b : Fin (n * n) → Bool => (sampleBelowL m (Nat.size m) n n (List.ofFn b)).getD 0)
+       (fun x : Fin m => (x : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+-  sorry
++  have hkn : Nat.size m ≤ n := Nat.size_le.2 hmn
++  have hmk : m < 2 ^ Nat.size m := Nat.lt_size_self m
++  -- `2^k ≤ 2m`: the top bit of `m` is bit `k − 1`
++  have hk2 : 2 ^ Nat.size m ≤ 2 * m := by
++    have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
++    have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
++    calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
++          rw [← pow_succ', Nat.sub_add_cancel hpos]
++      _ ≤ 2 * m := Nat.mul_le_mul_left 2 h1
++  -- the block sampler with the test `v < m` and the default `0`
++  have h := statClose_rejectBlocksL (· < m) (Nat.size m) n n hkn (d := 0) hm
++    (Nat.pow_pos two_pos)
++  -- the uniform element of `{v < 2^k | v < m}` is the uniform element of `Fin m`
++  let e : Fin m ≃ {v : Fin (2 ^ Nat.size m) // (v : ℕ) < m} :=
++    { toFun := fun x => ⟨⟨x.val, lt_trans x.2 hmk⟩, x.2⟩
++      invFun := fun v => ⟨v.1.val, v.2⟩
++      left_inv := fun _ => rfl
++      right_inv := fun _ => rfl }
++  have h' := h.comp_equiv_right e
++  -- the acceptance probability is `m / 2^k ≥ 1/2`
++  have hacc : uprob (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m) = m / 2 ^ Nat.size m := by
++    rw [← uprob_comp_equiv (bitsEquiv (Nat.size m)) (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m)]
++    simp only [bitsEquiv_val]
++    exact uprob_bitsToNat_lt hmk.le
++  rw [hacc] at h'
++  have hpow : (1 - (m : ℝ) / 2 ^ Nat.size m) ^ n ≤ (1 / 2 : ℝ) ^ n := by
++    have h2k : (0 : ℝ) < 2 ^ Nat.size m := by positivity
++    have hm' : (m : ℝ) ≤ 2 ^ Nat.size m := by exact_mod_cast hmk.le
++    have h2' : (2 : ℝ) ^ Nat.size m ≤ 2 * m := by exact_mod_cast hk2
++    apply pow_le_pow_left₀
++    · rw [sub_nonneg, div_le_one h2k]
++      exact hm'
++    · have : (1 / 2 : ℝ) ≤ m / 2 ^ Nat.size m := by
++        rw [div_le_div_iff₀ (by norm_num) h2k]
++        linarith
++      linarith
++  rw [sampleBelowL_eq_rejectBlocksL]
++  exact h'.mono hpow
+ 
+ /-- The string function of the domain sampler on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`: a number
+ below the order `m` read from the index, by rejection over `n` trials of `n`-bit blocks
+-- 
+2.43.0
+

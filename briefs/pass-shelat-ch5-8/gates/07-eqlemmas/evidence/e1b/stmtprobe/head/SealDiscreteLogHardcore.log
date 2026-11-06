@@ -1,0 +1,66 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:321:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:359:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:382:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:410:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:437:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:497:2: error: Type mismatch
+  expCollection_domEquiv H G ⋯ i
+has type
+  (expCollection H G ⋯).D i ≃ ZMod (expOrd i)
+but is expected to have type
+  (fullDLCollection H G).D i ≃ ZMod (expOrd i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:504:48: error: Application type mismatch: The argument
+  x
+has type
+  (fullDLCollection H G).D i
+but is expected to have type
+  (expCollection H G ⋯).D i
+in the application
+  expCollection_f H G (fun x h => FullGroupValid.expValid h) i x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:511:51: error: Application type mismatch: The argument
+  x
+has type
+  (fullDLCollection H G).D i
+but is expected to have type
+  (expCollection H G ⋯).D i
+in the application
+  expCollection_encD H G (fun x h => FullGroupValid.expValid h) i x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:517:2: error: Type mismatch
+  expCollection_decD H G (fun x h => FullGroupValid.expValid h) i w
+has type
+  (expCollection H G ⋯).decD i w = Option.map (⇑(expCollection_domEquiv H G ⋯ i).symm) (expDec i w)
+but is expected to have type
+  (fullDLCollection H G).decD i w = Option.map (⇑(fullDLCollection_domEquiv H G i).symm) (expDec i w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:522:2: error: Type mismatch
+  expCollection_gen H G fun x h => FullGroupValid.expValid h
+has type
+  (expCollection H G ⋯).gen = expGen G
+but is expected to have type
+  (fullDLCollection H G).gen = expGen G
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:527:2: error: Type mismatch
+  expCollection_sample H G fun x h => FullGroupValid.expValid h
+has type
+  (expCollection H G ⋯).sample = expSampler H
+but is expected to have type
+  (fullDLCollection H G).sample = expSampler H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:532:2: error: Type mismatch
+  expCollection_eval H G fun x h => FullGroupValid.expValid h
+has type
+  (expCollection H G ⋯).eval = expEval
+but is expected to have type
+  (fullDLCollection H G).eval = expEval
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:538:2: error: Type mismatch
+  expCollection_oneWay H G (fun x h => FullGroupValid.expValid h) hDL
+has type
+  (expCollection H G ⋯).OneWay
+but is expected to have type
+  (fullDLCollection H G).OneWay
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:573:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealDiscreteLogHardcore.lean:641:36: error: Application type mismatch: The argument
+  halfPred
+has type
+  (i : List Bool) → ZMod (expOrd i) → Bool
+but is expected to have type
+  (i : List Bool) → (fullDLCollection H G).D i → Bool
+in the application
+  (fullDLCollection H G).HardCore halfPred

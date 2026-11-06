@@ -1,0 +1,34 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		3
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		3
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct		3
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	3
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD	3
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.fisherYates	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.permBits	TCSlib.Cryptography.Asymptotic.Permutations	direct		1
+TCSlib.Cryptography.permFromCoins	TCSlib.Cryptography.Asymptotic.Permutations	direct		1
+TCSlib.Cryptography.permTrials	TCSlib.Cryptography.Asymptotic.Permutations	direct		1
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform	1
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.permFromCoins	1
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	3
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	3
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	3
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable	3
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	3
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	3
+TCSlib.Cryptography.EncodingMachines.firstIdx	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	deep	TCSlib.Cryptography.EncodingMachines.isBij, TCSlib.Cryptography.EncodingMachines.permInvNum, TCSlib.Cryptography.EncodingMachines.permNum	4
+TCSlib.Cryptography.EncodingMachines.isBij	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	direct	TCSlib.Cryptography.EncodingMachines.permInvNum, TCSlib.Cryptography.EncodingMachines.permNum	3
+TCSlib.Cryptography.EncodingMachines.permInvNum	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	direct		1
+TCSlib.Cryptography.EncodingMachines.permNum	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	direct		1
+TCSlib.Cryptography.EncodingMachines.rowFirst	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	deep	TCSlib.Cryptography.EncodingMachines.isBij, TCSlib.Cryptography.EncodingMachines.permInvNum, TCSlib.Cryptography.EncodingMachines.permNum	4
+TCSlib.Cryptography.EncodingMachines.rowInv	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	deep	TCSlib.Cryptography.EncodingMachines.isBij, TCSlib.Cryptography.EncodingMachines.permInvNum, TCSlib.Cryptography.EncodingMachines.permNum	3
+TCSlib.Cryptography.EncodingMachines.rowMap	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	direct	TCSlib.Cryptography.EncodingMachines.isBij, TCSlib.Cryptography.EncodingMachines.permInvNum, TCSlib.Cryptography.EncodingMachines.permNum	4
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct		1

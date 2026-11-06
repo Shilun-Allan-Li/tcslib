@@ -1,0 +1,94 @@
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.GGMReductionEval
+import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.OneWayFunctions.Amplification
+import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.InformationTheory.StatisticalDistance
+import TCSlib.Cryptography.HardcoreBit.Basic
+import TCSlib.Cryptography.Asymptotic.Ensembles
+#print axioms Complexity.NUPPT.inAdvice_eq
+#print axioms Complexity.NUPPT.inArg_eq
+#print axioms Complexity.NUPPT.inCoins_eq
+#print axioms Complexity.NUPPT.inParam_eq
+#print axioms Complexity.NUPPT.layout_eq
+#print axioms Complexity.NUPPT.advInput_eq
+#print axioms Complexity.NUPPT.coinLen_eq
+#print axioms Complexity.NUPPT.runAtL_eq
+#print axioms Complexity.NUPPT.distinguisherL_eq
+#print axioms TCSlib.Cryptography.decodeFin_eq
+#print axioms TCSlib.Cryptography.Collection.hardCore_iff
+#print axioms TCSlib.Cryptography.Collection.index_eq
+#print axioms TCSlib.Cryptography.Collection.invProbAt_eq
+#print axioms TCSlib.Cryptography.Collection.sampleClose_iff
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_decD
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_domEquiv
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_domEquiv_apply
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_encD
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_eval
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_f
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_gen
+#print axioms TCSlib.Cryptography.FunFamily.toCollection_sample_eq
+#print axioms TCSlib.Cryptography.PermCollection.oneWay_iff
+#print axioms TCSlib.Cryptography.TrapdoorCollection.oneWay_iff
+#print axioms TCSlib.Cryptography.TrapdoorCollection.toCollection_domEquiv
+#print axioms TCSlib.Cryptography.TrapdoorCollection.toCollection_domEquiv_apply
+#print axioms TCSlib.Cryptography.PrivateKeyScheme.encodeList_nil
+#print axioms TCSlib.Cryptography.PrivateKeyScheme.multiEncDist_apply
+#print axioms TCSlib.Cryptography.PrivateKeyScheme.multiMessageSecure_iff
+#print axioms TCSlib.Cryptography.Ensemble.pseudorandom_iff
+#print axioms TCSlib.Cryptography.Ensemble.uniform_X
+#print axioms TCSlib.Cryptography.Ensemble.uniform_σ
+#print axioms TCSlib.Cryptography.GGMRed.histEnc_eq
+#print axioms TCSlib.Cryptography.GGMRed.queryOf_eq
+#print axioms TCSlib.Cryptography.GGMRed.verdictOf_eq
+#print axioms TCSlib.Cryptography.GGMRed.coinStr_eq
+#print axioms TCSlib.Cryptography.Collection.glPad_decD
+#print axioms TCSlib.Cryptography.Collection.glPad_domEquiv
+#print axioms TCSlib.Cryptography.Collection.glPad_domEquiv_apply
+#print axioms TCSlib.Cryptography.Collection.glPad_encD
+#print axioms TCSlib.Cryptography.Collection.glPad_eval
+#print axioms TCSlib.Cryptography.Collection.glPad_f_domEquiv
+#print axioms TCSlib.Cryptography.Collection.glPad_sample
+#print axioms TCSlib.Cryptography.PermCollection.glPad_domEquiv
+#print axioms TCSlib.Cryptography.PermCollection.glPad_domEquiv_apply
+#print axioms TCSlib.Cryptography.PermCollection.glPad_perm
+#print axioms TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv
+#print axioms TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv_apply
+#print axioms TCSlib.Cryptography.TrapdoorCollection.glPad_inv
+#print axioms TCSlib.Cryptography.FunFamily.easy_iff
+#print axioms TCSlib.Cryptography.firstHit_eq
+#print axioms TCSlib.Cryptography.statClose_iff
+#print axioms TCSlib.Cryptography.negligible_iff
+#print axioms TCSlib.Cryptography.HardcoreBit.pushesUniform_iff
+#print axioms TCSlib.Cryptography.OneWay.prodFun_apply
+#print axioms TCSlib.Cryptography.OneWay.yaoTry_eq
+#print axioms TCSlib.Cryptography.prgAdv_eq
+#print axioms TCSlib.Cryptography.ZK_iff
+#print axioms TCSlib.Cryptography.encColoring_eq
+#print axioms TCSlib.Cryptography.getD_encColoring
+#print axioms TCSlib.Cryptography.getD_encColoring_two_mul
+#print axioms TCSlib.Cryptography.getD_encColoring_two_mul_add_one
+#print axioms TCSlib.Cryptography.Protocol.viewV_withV
+#print axioms TCSlib.Cryptography.Strategy.coinLen_eq
+#print axioms TCSlib.Cryptography.Strategy.efficient_iff
+#print axioms TCSlib.Cryptography.View.encode_mk
+#print axioms TCSlib.Cryptography.ProperColoring_iff
+#print axioms TCSlib.Cryptography.R3COL_iff
+#print axioms TCSlib.Cryptography.sampleIdx_eq_rejectionSample
+#print axioms TCSlib.Cryptography.sampleIdx_ofFn_eq_rejectionSample
+#print axioms TCSlib.Cryptography.colCoinSlice_eq
+#print axioms TCSlib.Cryptography.colCommit_eq
+#print axioms TCSlib.Cryptography.colIterations_eq
+#print axioms TCSlib.Cryptography.colOpen_eq
+#print axioms TCSlib.Cryptography.colProtocol_P
+#print axioms TCSlib.Cryptography.colProtocol_V
+#print axioms TCSlib.Cryptography.colProtocol_rounds
+#print axioms TCSlib.Cryptography.colProtocol_verifierFirst
+#print axioms TCSlib.Cryptography.colProver_coins
+#print axioms TCSlib.Cryptography.colProver_next_cons
+#print axioms TCSlib.Cryptography.colProver_next_cons_of_edgeCount_eq_zero
+#print axioms TCSlib.Cryptography.colProver_next_nil
+#print axioms TCSlib.InformationTheory.statDist_eq

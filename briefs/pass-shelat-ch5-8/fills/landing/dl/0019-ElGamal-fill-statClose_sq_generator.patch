@@ -1,0 +1,106 @@
+From 2f9f2f8249edc2daa79da789fbf2e087e9576163 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 14:41:48 +0000
+Subject: [PATCH 19/25] ElGamal: fill statClose_sq_generator
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjbdigRAJ9GynaUSPx
+---
+ TCSlib/Cryptography/Candidates/ElGamal.lean | 74 ++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index f4891048..885a8a9e 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -210,6 +210,74 @@ theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
+   rw [abs_sub_le_iff]
+   constructor <;> linarith
+ 
++/-- **Removing one point moves every probability by at most `1/|α|`** (the counting step of
++`statClose_sq_generator`): the uniform element of `α` and the uniform element of `α ∖ {a}` give
++an event probabilities `t/N` and `s/(N − 1)` with `s ≤ t ≤ s + 1` and `s ≤ N − 1`. -/
++private theorem dlc_abs_uprob_sub_uprob_ne_le {α : Type*} [Fintype α] [DecidableEq α] (a : α)
++    (T : α → Prop) :
++    |uprob T - uprob (fun y : {y : α // y ≠ a} => T y)| ≤ 1 / (Fintype.card α : ℝ) := by
++  classical
++  have hcs : Fintype.card {y : α // y ≠ a} = Fintype.card α - 1 := by
++    rw [Fintype.card_subtype_compl, Fintype.card_subtype_eq]
++  rw [uprob_eq_card_filter, uprob_eq_card_filter, hcs]
++  set N := Fintype.card α with hN
++  set t := (univ.filter T).card with ht
++  set s := (univ.filter fun y : {y : α // y ≠ a} => T y).card with hs
++  -- `s` counts `T ∖ {a}`
++  have hs' : s = (univ.filter fun y : α => T y ∧ y ≠ a).card := by
++    rw [hs, ← Fintype.card_subtype, ← Fintype.card_subtype]
++    exact Fintype.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter (fun y => y ≠ a) T |>.trans
++      (Equiv.subtypeEquivRight fun y => and_comm))
++  have hst : s ≤ t := by
++    rw [hs']
++    exact card_le_card fun y hy => by simp only [mem_filter] at hy ⊢; exact ⟨hy.1, hy.2.1⟩
++  have hts : t ≤ s + 1 := by
++    rw [hs']
++    have hsub : univ.filter T ⊆ insert a (univ.filter fun y : α => T y ∧ y ≠ a) := by
++      intro y hy
++      simp only [mem_filter, mem_univ, true_and, mem_insert] at hy ⊢
++      by_cases h : y = a
++      · exact Or.inl h
++      · exact Or.inr ⟨hy, h⟩
++    exact (card_le_card hsub).trans (card_insert_le _ _)
++  have hN1 : 1 ≤ N := Fintype.card_pos_iff.2 ⟨a⟩
++  have hsN : s ≤ N - 1 := by
++    rw [hs, ← hcs]
++    exact card_le_univ _
++  rcases Nat.lt_or_ge N 2 with h2 | h2
++  · -- `N = 1`: the punctured type is empty
++    have h1 : N = 1 := by omega
++    rw [h1, Nat.sub_self, Nat.cast_zero, div_zero, sub_zero, Nat.cast_one, div_one, div_one,
++      abs_of_nonneg (Nat.cast_nonneg _)]
++    have : t ≤ 1 := by
++      rw [ht]
++      exact (card_le_univ _).trans h1.le
++    exact_mod_cast this
++  · have hNr : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
++    have hN1r : (0 : ℝ) < ((N - 1 : ℕ) : ℝ) := by exact_mod_cast (show 0 < N - 1 by omega)
++    have hcast : ((N - 1 : ℕ) : ℝ) = (N : ℝ) - 1 := by rw [Nat.cast_sub hN1, Nat.cast_one]
++    have hstr : (s : ℝ) ≤ t := by exact_mod_cast hst
++    have htsr : (t : ℝ) ≤ s + 1 := by exact_mod_cast hts
++    have hsNr : (s : ℝ) ≤ (N : ℝ) - 1 := by rw [← hcast]; exact_mod_cast hsN
++    rw [abs_sub_le_iff]
++    constructor
++    · -- `t/N ≤ (s+1)/N ≤ s/(N−1) + 1/N`
++      have h1 : (t : ℝ) / N ≤ (s + 1) / N := div_le_div_of_nonneg_right htsr hNr.le
++      have h2 : (s : ℝ) / N ≤ s / ((N - 1 : ℕ) : ℝ) := by
++        rw [hcast] at hN1r ⊢
++        exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hN1r (by linarith)
++      rw [add_div] at h1
++      linarith
++    · -- `s/(N−1) ≤ (s+1)/N ≤ t/N + 1/N`
++      have h1 : (s : ℝ) / ((N - 1 : ℕ) : ℝ) ≤ (s + 1) / N := by
++        rw [hcast] at hN1r ⊢
++        rw [div_le_div_iff₀ hN1r hNr]
++        nlinarith
++      have h2 : ((s : ℝ) + 1) / N ≤ t / N + 1 / N := by
++        rw [← add_div]
++        exact div_le_div_of_nonneg_right (by linarith) hNr.le
++      linarith
++
+ /-- **The square of a uniform unit is within `1/q` of a uniform generator of `G_q`**
+ (Claim-107.a, missing in the text): the uniform element of `G_q` (`pushesUniform_sqTo_safe`)
+ and the uniform element of `G_q ∖ {1}` (the text's "`y ← Gen_q`") are within statistical
+@@ -221,7 +289,11 @@ distance `1/q`.
+ along `pushesUniform_sqTo_safe` (`PushesUniform.uprob_eq`). -/
+ theorem statClose_sq_generator {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hpq : p = 2 * q + 1) :
+     StatClose (sqTo p) (fun y : {y : QR p // y ≠ 1} => (y : QR p)) (1 / (q : ℝ)) := by
+-  sorry
++  rw [statClose_iff]
++  intro T
++  rw [(pushesUniform_sqTo_safe hpq).uprob_eq T]
++  have h := dlc_abs_uprob_sub_uprob_ne_le (1 : QR p) T
++  rwa [← Nat.card_eq_fintype_card, card_QR_safe hpq] at h
+ 
+ /-! ## The DDH assumption [PS10, Assumption 105.1] -/
+ 
+-- 
+2.43.0
+
