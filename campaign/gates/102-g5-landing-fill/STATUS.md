@@ -16,3 +16,7 @@
   invariant's prose). Both fixed on #211 (`3a261ba2`; the standing re-point rule); NZ-1 recorded.
   `replay-lg7` passed (3 modules, 0 `sorry`) at `e7e78aaf`; the seal (44), controls (91/91),
   axioms, freeze, lint and screen re-run (`evidence/round2/`). `pack-r2.md`.
+- 2026-11-06: round 2 staged (`outbox/gates/102-g5-landing-fill-r2-gate/`, exchange commit `9a9fd310`):
+  bundle `102-g5-landing-fill-r2-bundle.md`, 34 sections, SHA-256
+  `ebc8fc93f33feea0bbfb1057a71ba0d3d9d0a053b2d3859a515b0365c927b83c`; Lean from `e7e78aaf`.
+  Findings file `g5-landing-fill-r2-findings.md`. **Ready to dispatch.**
