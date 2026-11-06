@@ -218,7 +218,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
       m * uprob (fun z : α × (Fin m × ((Fin m → α) × ρ)) =>
         G z.1 ∧ f (yaoTry f B (f z.1) z.2) = f z.1) := by
   classical
-  unfold invProb
+  rw [invProb_def]
   calc uprob (fun z : (Fin m → α) × ρ =>
         prodFun f m (B (prodFun f m z.1) z.2) = prodFun f m z.1)
       ≤ uprob (fun z : (Fin m → α) × ρ => (∀ i, ¬ G (z.1 i)) ∨

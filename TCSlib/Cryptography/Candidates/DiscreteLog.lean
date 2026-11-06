@@ -414,7 +414,8 @@ theorem dlHard_iff : G.DLHard ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A 
 
 /-- The discrete-log probability is nonnegative. -/
 theorem dlProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ G.dlProb A n := by
-  unfold dlProb uexp
+  unfold dlProb
+  rw [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun z _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The discrete-log probability is at most one. -/

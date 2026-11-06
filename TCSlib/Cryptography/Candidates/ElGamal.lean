@@ -428,8 +428,8 @@ theorem GroupPKScheme.Secure.const {S : GroupPKScheme} (h : S.Secure) (m₀ m₁
   let e : S.gen.Coins n × S.enc.Coins n ≃
       S.gen.Coins n × ((constSelector m₀ m₁ b hb).Coins n × S.enc.Coins n) :=
     Equiv.prodCongr (Equiv.refl _) (Equiv.uniqueProd _ _).symm
-  unfold distAdv
-  rw [← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) false),
+  rw [distAdv_def, distAdv_def,
+    ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) false),
     ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) true)]
   have h0 : (fun r : S.gen.Coins n × S.enc.Coins n => pairEncode (pairFstD (S.gen.runAt n [] r.1))
         (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] r.1)) (m₀ n)) r.2)) =

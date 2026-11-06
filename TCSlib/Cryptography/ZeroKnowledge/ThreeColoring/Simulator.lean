@@ -569,11 +569,11 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
   refine ⟨k, ep.1, ep.2, ?_⟩
   have h0 : acceptProb (colSimTruncW Com ℓn G c V N) D =
       acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0) D := by
-    unfold acceptProb
+    simp only [acceptProb_def]
     exact congrArg uprob (funext fun z => by rw [← colSimHyb_zero Com ℓn G c V N z.1]; rfl)
   have hN' : acceptProb (colSimTruncH Com ℓn G c V N) D =
       acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N N) D := by
-    unfold acceptProb
+    simp only [acceptProb_def]
     exact congrArg uprob (funext fun z => by rw [← colSimHyb_self Com ℓn G c V N z.1]; rfl)
   calc distAdv (colSimTruncW Com ℓn G c V N) (colSimTruncH Com ℓn G c V N) D / N
       = distAdv (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0)

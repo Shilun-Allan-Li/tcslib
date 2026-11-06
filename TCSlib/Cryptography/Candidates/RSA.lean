@@ -123,13 +123,15 @@ theorem rsaAssumption_iff : RSAAssumption ↔ ∀ A : NUPPT, Negligible fun n =>
 
 /-- The RSA probability is nonnegative. -/
 theorem rsaProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ rsaProb A n := by
-  unfold rsaProb uexp
+  unfold rsaProb
+  rw [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun z _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The RSA probability is at most one. -/
 theorem rsaProb_le_one (A : NUPPT) (n : ℕ) : rsaProb A n ≤ 1 := by
   rcases isEmpty_or_nonempty (DistinctPrimes n) with h | h
-  · unfold rsaProb uexp
+  · unfold rsaProb
+    rw [uexp_def]
     simp
   · unfold rsaProb
     exact (OneWay.uexp_mono fun z => uprob_le_one _).trans (OneWay.uexp_const 1).le
@@ -137,7 +139,8 @@ theorem rsaProb_le_one (A : NUPPT) (n : ℕ) : rsaProb A n ≤ 1 := by
 /-- At the degenerate parameters `n < 2` the RSA experiment is empty. -/
 theorem rsaProb_eq_zero_of_lt (A : NUPPT) {n : ℕ} (hn : n < 2) : rsaProb A n = 0 := by
   haveI := DistinctPrimes.isEmpty_of_lt hn
-  unfold rsaProb uexp
+  unfold rsaProb
+  rw [uexp_def]
   simp
 
 /-! ## The RSA permutation [PS10, Theorem 54.3] -/
