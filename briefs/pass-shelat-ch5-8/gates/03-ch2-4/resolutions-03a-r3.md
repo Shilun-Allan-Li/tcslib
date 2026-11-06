@@ -7,4 +7,4 @@
 
 | Finding | Severity | Resolution |
 |---|---|---|
-| R3-N1 | note | **Recorded.** The repair is five comment blocks (the module comment and four declaration docstrings) in three files, not "four docstrings" as the pack said; the round 2 → 3 comparison also contains #204's two  corrections. No Lean change needed. |
+| R3-N1 | note | **Recorded.** The repair is five comment blocks (the module comment and four declaration docstrings) in three files, not "four docstrings" as the pack said; the round 2 → 3 comparison also contains #204's two `OneWay.lean` corrections. No Lean change needed. |
