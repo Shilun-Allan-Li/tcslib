@@ -1,0 +1,53 @@
+From c47db33f48815ec1b67ce8bd1e4840bfafcc0543 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:55:41 +0000
+Subject: [PATCH 6/6] fill dl-b: polyTimeComputable_halfStr
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 21 ++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index d93a16f7..6bed54ed 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -947,6 +947,19 @@ theorem halfStr_spec (i : List Bool) (x : ZMod (expOrd i)) :
+   simp only [halfStr, pairFstD_pairEncode, pairSndD_pairEncode,
+     listToNat_natToList (val_lt_two_pow_dlW i x)]
+ 
++/-- `halfStr` as a composite of bundle operations: `[¬ (⌊p/2⌋ ≤ x)]`, with `⌊p/2⌋` the quotient
++of `divModStr ⟨p, ⟦2⟧_2⟩` and the comparison `leStr`. -/
++private theorem dlb_halfStr_eq (z : List Bool) :
++    halfStr z = [!((leStr (pairEncode (pairFstD (divModStr (pairEncode (pairFstD (pairFstD z))
++      (natToList 2 2)))) (pairSndD z))).headD false)] := by
++  have h2 : listToNat (natToList 2 2) = 2 := listToNat_natToList (by norm_num)
++  rw [divModStr_pairEncode, pairFstD_pairEncode, h2, leStr_pairEncode,
++    listToNat_natToList (lt_of_le_of_lt (Nat.div_le_self _ _) (listToNat_lt_two_pow _))]
++  unfold halfStr
++  simp only [List.headD_cons, List.cons.injEq, and_true]
++  rw [← decide_not, decide_eq_decide]
++  omega
++
+ /-- **`half_{p−1}` is polynomial-time computable** (Lem-84.1.0) given the arithmetic bundle.
+ 
+ **Proof sketch.** `2x + 2 ≤ p ⟺ ¬ (p / 2 ≤ x)`: `p / 2` is the quotient of `divModStr ⟨p, 1 0⟩`
+@@ -955,7 +968,13 @@ theorem halfStr_spec (i : List Bool) (x : ZMod (expOrd i)) :
+ negation of a one-bit string is `polyTimeComputable_ite` on `polyTimeComputable_pairEq` with
+ `[true]`. -/
+ theorem polyTimeComputable_halfStr (H : ArithmeticFP) : PolyTimeComputable halfStr := by
+-  sorry
++  have hp := polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD
++  have hdm := H.divMod.comp (hp.pairEncode (polyTimeComputable_const (natToList 2 2)))
++  have hle := H.le.comp ((polyTimeComputable_pairFstD.comp hdm).pairEncode polyTimeComputable_pairSndD)
++  have hb := polyTimeComputable_not (polyTimeComputable_headD.comp hle)
++  refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hb
++  rw [dlb_halfStr_eq]
++  simp only [Function.comp_apply]
+ 
+ /-- **Lemma 84.1** [PS10, Lemma 84.1]: under the discrete-log assumption in `Z_p^*` (and the
+ arithmetic hypotheses), `half_{p−1}` is a hard-core predicate for the exponentiation
+-- 
+2.43.0
+

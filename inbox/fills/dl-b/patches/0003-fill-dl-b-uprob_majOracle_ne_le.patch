@@ -1,0 +1,46 @@
+From ce8bd1892755b2d64ef7892e6c63d3d796d57ea7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:49:20 +0000
+Subject: [PATCH 3/6] fill dl-b: uprob_majOracle_ne_le
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 21 ++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 0f4a360c..87d3998d 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -555,7 +555,26 @@ theorem uprob_majOracle_ne_le {g : (ZMod p)ˣ} (hg : IsGenerator g) {ρ : Type*}
+     (he : e < s ∨ ((p - 1) / 2 ≤ e ∧ e < (p - 1) / 2 + s)) :
+     uprob (fun c : Fin ℓ → ZMod (p - 1) × ρ =>
+       majOracle g A ℓ (g ^ e) c ≠ halfBit (p - 1) (e : ZMod (p - 1))) ≤ 1 / (ε ^ 2 * ℓ) := by
+-  sorry
++  classical
++  -- the per-trial "correct vote" bit, a function of one coordinate
++  let H : ZMod (p - 1) × ρ → Bool := fun z =>
++    decide (decide (A (g ^ e * g ^ z.1.val) z.2 = halfBit (p - 1) z.1) = halfBit (p - 1) (e : ZMod (p - 1)))
++  let X : Fin ℓ → (Fin ℓ → ZMod (p - 1) × ρ) → Bool := fun i c => H (c i)
++  have hX : HardcoreBit.PairwiseIndep X :=
++    HardcoreBit.PairwiseUniform.pairwiseIndep HardcoreBit.pairwiseUniform_eval (fun _ => H)
++  have hp' : ∀ i, 1 / 2 + ε / 2 ≤ uprob (fun c => X i c = true) := by
++    intro i
++    rw [(HardcoreBit.pushesUniform_eval i).uprob_eq (fun z => H z = true)]
++    simp only [H, decide_eq_true_eq]
++    exact uprob_trial_ge hg A hA hs he' he
++  have hcard : 0 < Fintype.card (Fin ℓ) := by rw [Fintype.card_fin]; exact hℓ
++  have key := HardcoreBit.uprob_majority_fails_le hX (by positivity : (0 : ℝ) < ε / 2) hcard hp'
++  rw [Fintype.card_fin] at key
++  refine (uprob_mono fun c hc => ?_).trans (key.trans (le_of_eq ?_))
++  · unfold majOracle at hc
++    have := HardcoreBit.two_mul_card_le_of_majority_ne _ _ hc
++    simpa [X, H] using this
++  · ring
+ 
+ /-- **The range reduction** (Lem-84.1.4, [PS10, p. 85, "such an algorithm suffices to solve the
+ discrete log problem, since we can guess and map any instance into this range" — never
+-- 
+2.43.0
+

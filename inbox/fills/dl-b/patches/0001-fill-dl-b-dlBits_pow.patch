@@ -1,0 +1,94 @@
+From 58f3e2dc877a6546172127eb1fe79e7a7707fc96 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:44:58 +0000
+Subject: [PATCH 1/6] fill dl-b: dlBits_pow
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Candidates/DiscreteLogHardcore.lean       | 62 ++++++++++++++++++-
+ 1 file changed, 61 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 6500cd9f..0b71b8eb 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -301,6 +301,39 @@ theorem dlLoop_eq_dlBits (g : (ZMod p)ˣ) {κ : Type*} (O : (ZMod p)ˣ → κ 
+     rw [dlQueries_succ, h0] at hj
+     exact hj
+ 
++omit [NeZero (p - 1)] in
++/-- The root step on a power of a generator: `dlRoot g (g^e)` is `g^{⌊e/2⌋}` or its negative
++(for `p ≡ 3 (mod 4)`). For even `e` the root is taken of `g^e = g^{2⌊e/2⌋}`, for odd `e` of
++`g^e · g⁻¹ = g^{2⌊e/2⌋}`, a square (`pow_mem_QR_iff`) whose root squares back to it
++(`sq_pow_div_four_succ`), so `sq_eq_pow_two_mul_iff` applies. -/
++private theorem dlb_dlRoot_pow (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerator g) (e : ℕ) :
++    dlRoot g (g ^ e) = g ^ (e / 2) ∨ dlRoot g (g ^ e) = -(g ^ (e / 2)) := by
++  have hp2 : p ≠ 2 := by rintro rfl; norm_num at hp3
++  rw [← sq_eq_pow_two_mul_iff]
++  unfold dlRoot
++  by_cases hq : g ^ e ∈ QR p
++  · rw [if_pos hq, sq_pow_div_four_succ hp3 hq]
++    have he : Even e := (pow_mem_QR_iff hp2 hg e).1 hq
++    rw [Nat.two_mul_div_two_of_even he]
++  · rw [if_neg hq]
++    have he : ¬ Even e := fun h => hq ((pow_mem_QR_iff hp2 hg e).2 h)
++    have hodd : e = 2 * (e / 2) + 1 := by
++      obtain ⟨k, hk⟩ := Nat.not_even_iff_odd.1 he
++      omega
++    have hge : g ^ e * g⁻¹ = g ^ (2 * (e / 2)) := by
++      conv_lhs => rw [hodd, pow_succ]
++      rw [mul_inv_cancel_right]
++    rw [hge, sq_pow_div_four_succ hp3 ((pow_mem_QR_iff hp2 hg _).2 (even_two_mul _))]
++
++/-- The perfect oracle on a power: `halfOracle g (g^a) = [2a < p − 1]` for `a < p − 1`
++(`dlog_expo`). -/
++private theorem dlb_halfOracle_pow {g : (ZMod p)ˣ} (hg : IsGenerator g) {a : ℕ} (ha : a < p - 1) :
++    halfOracle g (g ^ a) = decide (2 * a < p - 1) := by
++  have h1 : g ^ a = expo g (a : ZMod (p - 1)) := by
++    unfold expo; rw [ZMod.val_cast_of_lt ha]
++  unfold halfOracle halfBit
++  rw [h1, dlog_expo hg, ZMod.val_cast_of_lt ha]
++
+ omit [NeZero (p - 1)] in
+ /-- **Correctness of Algorithm 84.2 with a perfect oracle** [PS10, p. 85, "we can iteratively
+ divide, take square roots, and then choose the root with smaller discrete log until we
+@@ -318,7 +351,34 @@ is odd, `g^e ∉ QR_p`, the loop divides by `g` (`g^e · g⁻¹ = g^{e−1}`, ev
+ same argument gives `2((e−1)/2) + 1 = e`. -/
+ theorem dlBits_pow (hp3 : p % 4 = 3) {g : (ZMod p)ˣ} (hg : IsGenerator g) {k e : ℕ}
+     (he : e < p - 1) (hk : e < 2 ^ k) : dlBits g k (g ^ e) = e := by
+-  sorry
++  have hp2 : p ≠ 2 := by rintro rfl; norm_num at hp3
++  obtain ⟨h2, hpos⟩ := two_mul_half (p := p) hp2
++  haveI : NeZero (p - 1) := ⟨by omega⟩
++  induction k generalizing e with
++  | zero => simp at hk; subst hk; rfl
++  | succ k ih =>
++    unfold dlBits
++    rw [dlLoop_succ]
++    -- the perfect oracle keeps the root `g^{⌊e/2⌋}` (the other root has exponent
++    -- `⌊e/2⌋ + (p−1)/2`, in the upper half)
++    have hkeep : (if halfOracle g (dlRoot g (g ^ e)) then dlRoot g (g ^ e)
++        else -dlRoot g (g ^ e)) = g ^ (e / 2) := by
++      have ha : e / 2 < p - 1 := by omega
++      have hlow : halfOracle g (g ^ (e / 2)) = true := by
++        rw [dlb_halfOracle_pow hg ha]; simp; omega
++      rcases dlb_dlRoot_pow hp3 hg e with h | h
++      · rw [h, hlow, if_pos rfl]
++      · have hhi : halfOracle g (-(g ^ (e / 2))) = false := by
++          rw [neg_pow_eq hp2 hg, dlb_halfOracle_pow hg (by omega)]; simp; omega
++        rw [h, hhi, if_neg (by simp), neg_neg]
++    -- the recursive call returns `⌊e/2⌋`, and the recorded bit is the parity of `e`
++    rw [hkeep, ← dlBits, ih (by omega) (by rw [pow_succ] at hk; omega)]
++    by_cases hq : g ^ e ∈ QR p
++    · rw [if_pos hq]
++      have := Nat.two_mul_div_two_of_even ((pow_mem_QR_iff hp2 hg e).1 hq); omega
++    · rw [if_neg hq]
++      obtain ⟨j, hj⟩ := Nat.not_even_iff_odd.1 (fun h => hq ((pow_mem_QR_iff hp2 hg e).2 h))
++      omega
+ 
+ /-! ### The majority test of p. 85 and the range reduction -/
+ 
+-- 
+2.43.0
+
