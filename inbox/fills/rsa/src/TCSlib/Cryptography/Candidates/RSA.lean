@@ -2674,7 +2674,35 @@ Theorem 55.2]: `Pr[A factors N] ≤ Pr[A' breaks RSA]`.
 and `factorProb A n = uexp_z Pr_r[A factors | z]` (`uprob_prod`). -/
 theorem factorProb_le_rsaProb (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
     factorProb A n ≤ rsaProb (rsaFromFactorer H A) n := by
-  sorry
+  rw [factorProb_eq, uprob_prod]
+  unfold rsaProb
+  apply OneWay.uexp_mono
+  intro z
+  set φ := rsaFromFactorer_coinsEquiv H A n
+  -- reorder the coordinates: `(ω, (e, y)) ↦ (e, (y, φ⁻¹ ω))`
+  let E : A.Coins n × ((ZMod (Nat.totient (z.p * z.q)))ˣ × (ZMod (z.p * z.q))ˣ) ≃
+      (ZMod (Nat.totient (z.p * z.q)))ˣ × ((ZMod (z.p * z.q))ˣ × (rsaFromFactorer H A).Coins n) :=
+    (Equiv.prodComm _ _).trans ((Equiv.prodAssoc _ _ _).trans
+      (Equiv.prodCongr (Equiv.refl _) (Equiv.prodCongr (Equiv.refl _) φ.symm)))
+  refine le_of_le_of_eq ?_ (uprob_comp_equiv E _)
+  rw [← uprob_fst (β := (ZMod (Nat.totient (z.p * z.q)))ˣ × (ZMod (z.p * z.q))ˣ)]
+  apply uprob_mono
+  rintro ⟨ω, eU, y⟩ ⟨x, hx, hpq⟩
+  rw [NUPPT.inverter_eq_some_iff] at hx
+  have hs : listToNat (A.runAt n (natToList (2 * n) (z.p * z.q)) ω) = z.p ∨
+      listToNat (A.runAt n (natToList (2 * n) (z.p * z.q)) ω) = z.q := by
+    rw [natToList_eq, ← modulusBits_eq, hx, ← bitsToNat_eq_listToNat]
+    exact hpq
+  have he : (eU : ZMod (Nat.totient (z.p * z.q))).val < 2 ^ (2 * n) :=
+    (ZMod.val_lt _).trans ((Nat.totient_le _).trans_lt z.mul_lt)
+  have hy : (y : ZMod (z.p * z.q)).val < 2 ^ (2 * n) := (ZMod.val_lt _).trans z.mul_lt
+  show ∃ x : Fin (2 * n) → Bool, decodeFin (2 * n) ((rsaFromFactorer H A).runAt n
+      (rsaInput n z eU y) (φ.symm ω)) = some x ∧
+    ((bitsToNat x : ℕ) : ZMod (z.p * z.q)) ^ (eU : ZMod (Nat.totient (z.p * z.q))).val =
+      (y : ZMod (z.p * z.q))
+  rw [rsaInput, rsaFromFactorer_runAt, Equiv.apply_symm_apply, listToNat_natToList z.mul_lt,
+    listToNat_natToList he, listToNat_natToList hy]
+  exact rsaFromFactorStep_correct z hs (ZMod.val_coe_unit_coprime eU) y
 
 /-- **Theorem 55.2** [PS10, Theorem 55.2]: the RSA assumption implies the factoring
 assumption (under the arithmetic hypotheses).
