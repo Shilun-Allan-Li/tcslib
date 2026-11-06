@@ -1,0 +1,77 @@
+rvprobe/g5sweep/TtB.lean:12:54: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:14:48: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:16:52: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact rfl
+Try this:
+  [apply] exact rfl
+rvprobe/g5sweep/TtB.lean:27:26: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Option.ne_none_iff_exists'.mp h
+Try this:
+  [apply] exact ne_of_mem_of_not_mem hx hn
+Try this:
+  [apply] exact rfl
+rvprobe/g5sweep/TtB.lean:39:44: error: `exact?` could not close the goal.
+rvprobe/g5sweep/TtB.lean:41:41: error: `exact?` could not close the goal.
+rvprobe/g5sweep/TtB.lean:44:62: error: `exact?` could not close the goal.
+rvprobe/g5sweep/TtB.lean:47:44: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:51:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Fin.val_ne_of_ne ht
+Try this:
+  [apply] exact Option.toList_map
+rvprobe/g5sweep/TtB.lean:61:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Finset.card_nsmul_le_sum s (fun i => f i) 2 h
+Try this:
+  [apply] exact Eq.symm (Finset.sum_range_induction (fun k => 2) (HMul.hMul 2) rfl n fun k => congrFun rfl)
+rvprobe/g5sweep/TtB.lean:69:59: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact rfl
+rvprobe/g5sweep/TtB.lean:74:60: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:78:57: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:81:71: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact StrictMonoOn.injOn h
+Try this:
+  [apply] exact Finset.card_le_card_of_injOn f hf hi
+rvprobe/g5sweep/TtB.lean:94:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:98:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Nat.exists_eq_add_one.mpr h
+rvprobe/g5sweep/TtB.lean:104:50: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:106:50: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Finset.card_fin k
+rvprobe/g5sweep/TtB.lean:111:71: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:113:62: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Nat.pow_succ'
+Try this:
+  [apply] exact Int.pow_succ' 2 i
+rvprobe/g5sweep/TtB.lean:122:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:125:66: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:128:64: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:131:73: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:134:53: error: found a proof, but the corresponding tactic failed:
+  (expose_names; exact Eq.symm ((fun {M} [AddMonoid M] [IsLeftCancelAdd M] {a b} => left_eq_add.mpr) rfl))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] exact rfl
+rvprobe/g5sweep/TtB.lean:140:40: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:143:49: error: `exact?` could not close the goal.
+rvprobe/g5sweep/TtB.lean:147:66: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/g5sweep/TtB.lean:150:67: error: found a proof, but the corresponding tactic failed:
+  (expose_names; exact Eq.symm ((fun {M} [AddMonoid M] [IsLeftCancelAdd M] {a b} => left_eq_add.mpr) rfl))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+rvprobe/g5sweep/TtB.lean:153:40: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Int.one_le_abs hp
+Try this:
+  [apply] exact Eq.symm (Nat.mul_assoc k a b)
+Try this:
+  [apply] exact Nat.exists_eq_succ_of_ne_zero h
+-- exit=1, 55 s (snapshot oleans-lnth)

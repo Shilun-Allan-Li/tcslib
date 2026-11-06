@@ -659,9 +659,30 @@ unfolded their decider table and repeated its two-line proof
 
 All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
 one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
-replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates. The
-other closings by `decide_eq_decide.mpr Iff.rfl` in the library (`InputAccess:551`, the lemma
-itself) are not members. **Retired on #208's merge.**
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates.
+
+**Widened by kind (2026-11-06):** every proof that re-derives one of `InputAccess`'s two
+published readings, `indicator_inputLenLang` or `indicator_inputBitLang`
+(`y.getD a false` on `pairEncode y (bits a)`), by unfolding the language and
+`indicator_indexLang_pairEncode`. The first search matched only the `decide_eq_decide` closing;
+its simp-set variants are five more members: `PathWalkMachine`'s `pathOr_len` and `pathOr_bit`,
+`PathHardRegs`' `orc_bit`, and both halves of `Mult`'s private `mult_queries`. **Ruled (the
+user, 2026-11-06): re-point all five in #208**, done at `0140aee2`. A grep of every code line
+naming `inputBitLang` or `inputLenLang` finds no other unfolding: `TQBFARM/Machine`'s and
+`Codec/Run`'s `orc_bit`/`orc_len` and `QueryReshape`'s `drop_bit`/`drop_len` already cite the
+lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
+`drop_lang_pair`, `comp_lang_pair` and `transport`; `PathHardDecide`'s `qLang` step) read other
+languages, which have no published reading; they are not members. Census after widening: one
+declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
+
+**NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
+a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
+(`Turing.FinTM.not_computesInTime_zero`, `TuringMachine/Finite`) and cited where it applies. Its
+nondeterministic analogue (`Cfg.init` is live, so `N.tm.HaltsWithin z 0` fails) has no public
+lemma and is proved twice: `ClassNP/ExhaustiveReplay`'s private `xr_not_haltsWithin_zero` and an
+inline step of `ClassNP/NDNormalForm` (`hpos`, through `runWith_nil`, `initCfg_eq` and
+`Cfg.init_state`). One member in each file. **Proposed disposition:** the dedup window (12.2c):
+publish `NDTM.not_haltsWithin_zero` beside the NDTM run equations and re-point both.
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
@@ -958,6 +979,9 @@ design that waits for him.
 `SeamLayout` 3 of 36 (8.3%), `Catalog` 4 of 505, `Primitives` 4 of 285, `Loop` 1 of 205, `Encoding`
 1 of 61. The one-fifth rule is not reached. **Disposition:** the dedup window (12.2c): a public
 `MultiTapeTM.runFrom_one` in a non-vendored module, and the 17 sites re-pointed.
+**+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
+identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
+the window.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1338,6 +1362,10 @@ inline twelve times, unfolding `zoneRowPre` with `funext_iff`, `Cfg.mapState_wor
   equation, so they are this 12.2c item, with `zoneRowPre_congr` and `zoneRowPre_mapState_iff`
   as its canonical statements. (Gate 97's pre-dispatch sweep, `evidence/sweep/README.md`, called
   `zs_rowPre_mapState` "RN-1's kind"; by RN-1's scope it belongs here.)
+- **G5 (#211, gate 102; the review's F4):** `TwoTapes` does not cite the pair. Each phase starts at
+  a configuration built at the phase's own state type (`tt_cfg_rowPre`), and each endpoint is
+  converted by `tt_mapState_eq_cfg` through `zoneRowPre_iff` and RN-1's `Cfg.mapState_eq_of_fields`;
+  nothing re-derives the state-independence. Not a member; the maintainer accepts the route.
 
 Census (inline steps inside declarations, counted as RN-1's are; members over all declarations,
 as the style lint counts them, at `20e7fc75`): `ZoneRebalance` 14 of 875 (1.6%: the twelve sites
