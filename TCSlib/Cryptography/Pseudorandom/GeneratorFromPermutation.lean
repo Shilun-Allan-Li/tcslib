@@ -89,6 +89,12 @@ and `predProb_owpPredictor_true` covers the negative sign. -/
 def owpPredictor (D : α × β × Bool → ρ → Bool) (flip : Bool) : α × β → Bool × ρ → Bool :=
   fun y c => xor (if D (y.1, y.2, c.1) c.2 then c.1 else !c.1) flip
 
+/-- The defining equation of `owpPredictor`:
+`owpPredictor D flip y c = (if D(y, c₁; c₂) then c₁ else ¬c₁) ⊕ flip`. -/
+theorem owpPredictor_apply (D : α × β × Bool → ρ → Bool) (flip : Bool) (y : α × β)
+    (c : Bool × ρ) :
+    owpPredictor D flip y c = xor (if D (y.1, y.2, c.1) c.2 then c.1 else !c.1) flip := rfl
+
 /-- The uniform distribution on `α × β × Bool` is the even mixture of the generator's
 output `H_0` and its flipped version `H_1'`: `Pr[D(U) = 1]` is the average of
 `Pr[D(H_0) = 1]` and `Pr[D(H_1') = 1]`. [Gar26, proof of Theorem 3.2], the identities

@@ -202,6 +202,11 @@ def perfectInverter (A : β × (Fin n → Bool) → ρ → Bool) :
     β × (Fin n → Bool) → (Fin n → ρ) → (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (perfectRecover A)
 
+/-- The defining equation of `perfectInverter`:
+`perfectInverter A = glInverter (perfectRecover A)`. -/
+theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) :
+    perfectInverter A = glInverter (perfectRecover A) := rfl
+
 /-- The super simple case of Goldreich–Levin: if `A` predicts `B(x, r) = ⟨x, r⟩` from
 `g(x, r) = f(x) ‖ r` with probability `1`, then `perfectInverter A` inverts `g` with
 probability `1`. [Gar26, Theorem 2.3, super simple case].

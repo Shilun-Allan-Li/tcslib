@@ -369,20 +369,26 @@ def fmultBlocks : PolyExpr := .mul (.const 4) (.pow .var 3)
 theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := by
   rw [FunFamily.prod_inLen, PolyExpr.eval_mul, eval_fmultBlocks, fmult_inLen]
 
+/-- The output length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴`. -/
+theorem fmult_prod_outLen (n : ℕ) :
+    (fmult.prod fmultBlocks).outLen.eval n = 4 * n ^ 3 * (2 * n) := by
+  rw [FunFamily.prod_outLen, PolyExpr.eval_mul, eval_fmultBlocks, fmult_outLen]
+
 /-- **The total inverter of the direct product** induced by the machine `A` at parameter
 `n`: encode the tuple of `m_n` values as a `8n⁴`-bit string (`FunFamily.blocks`), run
 `A(1^n, ·)`, decode the answer as a tuple of `m_n` inputs, the all-zero tuple on a
-wrong-length answer (the default of `invProbOpt_le_invProb`). -/
+wrong-length answer (the default of `invProbOpt_le_invProb`). Both lengths of the direct
+product are `m_n · 2n` (`fmult_prod_inLen`, `fmult_prod_outLen`). -/
 noncomputable def prodInverter (A : NUPPT) (n : ℕ) :
     (Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) → A.Coins n →
       (Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) :=
   fun ys r => FunFamily.blocks (fmultBlocks.eval n) (2 * n)
-    ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+    ((A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD (fun _ => false))
 
-/-- **`prodInverter` with the direct product's lengths read as `m_n · 2n`**: decode
-`A(1^n, ys; r)` as a string of `m_n · 2n` bits (the all-zero string on a wrong length) and split
-it into `m_n` blocks of `2n` bits (`FunFamily.blocks`). -/
+/-- **The defining equation of `prodInverter`**: decode `A(1^n, ys; r)` as a string of
+`m_n · 2n` bits (the all-zero string on a wrong length) and split it into `m_n` blocks of `2n`
+bits (`FunFamily.blocks`). -/
 theorem prodInverter_eq (A : NUPPT) (n : ℕ) (ys : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool))
     (r : A.Coins n) :
     prodInverter A n ys r = FunFamily.blocks (fmultBlocks.eval n) (2 * n)

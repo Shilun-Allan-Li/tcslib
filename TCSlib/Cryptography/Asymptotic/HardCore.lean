@@ -423,9 +423,10 @@ with `c : A.Coins n ≃ Bool × D.Coins n` the coin split (`Fin.consEquiv`), so
 so `0 ≤ prgAdv ≤ ε n` for all `n` and `Negligible.mono` closes `PRG.secure_iff`. -/
 theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (hP : OneWayPermutation P) (hh : P.HardCore h) : (owpGenPRG P h).Secure := by
-  obtain ⟨F, hF, hFx⟩ := hP.easy
+  obtain ⟨F, hF, hFx⟩ := hP.evaluator
   obtain ⟨H, hH, hHx⟩ := hh.easy
-  refine ⟨exists_owpGenEvaluator P h hF hH hFx hHx, fun D => ?_⟩
+  rw [PRG.secure_iff]
+  refine ⟨(PRG.easy_iff _).2 (exists_owpGenEvaluator P h hF hH hFx hHx), fun D => ?_⟩
   have hflip : ∀ n, ∃ flip : Bool,
       predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) flip) =
         1 / 2 + prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
@@ -439,11 +440,13 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
   have h2 := hflip n
   have h3 : predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) (flip n)) =
       predProb (P.f n) (h n) (fun y (c : Bool × D.Coins n) =>
-        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := rfl
+        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) :=
+    congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, h2] at h1
   show |prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1))| ≤ |ε n|
-  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
-    abs_nonneg _
+  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) := by
+    rw [prgAdv_eq, distAdv_def]
+    exact abs_nonneg _
   rw [abs_of_nonneg h4]
   exact le_trans (by linarith) (le_abs_self _)
 
@@ -495,7 +498,8 @@ theorem PRG.expand_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (�
 theorem PRG.expand_G_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
     (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool)
     (i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)) :
-    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
+    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) :=
+  PRG.expand_G G ℓ hℓ n s i
 
 /-- The hybrid-`k` reduction of [PS10, Lemma 80.5] (the machine `M(y)` of the proof) in the
 text's seed-first convention: on `T ∈ {0,1}^{n+1}` read `(b, X) := (T_{n+1}, T_1 ⋯ T_n)`, draw
@@ -758,8 +762,10 @@ theorem predProb_glPad {ρ : Type*} [Fintype ρ] (n : ℕ)
       predProb (HardcoreBit.glPad (𝓕.f n)) HardcoreBit.glBit
         (fun y r => A ((𝓕.glPad_outEquiv n).symm
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) := by
-  unfold predProb
-  exact uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) fun _ => Iff.rfl
+  rw [predProb_def, predProb_def]
+  exact uprob_eq_of_equiv
+    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm.prodCongr (Equiv.refl ρ))
+    fun _ => Iff.rfl
 
 /-- **Bridge to the concrete setting (inversion)**: the inversion probability of the family
 inverter `glInverter n R` against the family `g` equals that of the concrete
@@ -907,52 +913,6 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
     linarith
 
 end FunFamily
-
-/-- The input length of `g = glPad` of a permutation family at `m` is `m + m`. -/
-theorem PermFamily.glPad_inLen_eval (P : PermFamily) (m : ℕ) :
-    P.toFunFamily.glPad.inLen.eval m = m + m := by
-  rw [FunFamily.glPad_inLen_eval, P.toFunFamily_inLen_eval]
-
-/-- The output length of `g = glPad` of a permutation family at `m` is `m + m`. -/
-theorem PermFamily.glPad_outLen_eval (P : PermFamily) (m : ℕ) :
-    P.toFunFamily.glPad.outLen.eval m = m + m := by
-  rw [FunFamily.glPad_outLen_eval, P.toFunFamily_outLen_eval, P.toFunFamily_inLen_eval]
-
-/-- **The inputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
-equivalence `{0,1}^{inLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along `PermFamily.glPad_inLen_eval`),
-through which the balanced permutation of `Asymptotic/HardCorePermutation.lean` reads `g`. -/
-def PermFamily.glPad_inEquiv (P : PermFamily) (m : ℕ) :
-    (Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
-  Equiv.arrowCongr (finCongr (P.glPad_inLen_eval m)) (Equiv.refl Bool)
-
-/-- **The outputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
-equivalence `{0,1}^{outLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along
-`PermFamily.glPad_outLen_eval`). -/
-def PermFamily.glPad_outEquiv (P : PermFamily) (m : ℕ) :
-    (Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
-  Equiv.arrowCongr (finCongr (P.glPad_outLen_eval m)) (Equiv.refl Bool)
-
-/-- The input equivalence keeps the string: `List.ofFn (P.glPad_inEquiv m z) = List.ofFn z`. -/
-theorem PermFamily.glPad_inEquiv_ofFn (P : PermFamily) (m : ℕ)
-    (z : Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) :
-    List.ofFn (P.glPad_inEquiv m z) = List.ofFn z :=
-  (List.ofFn_congr (P.glPad_inLen_eval m) z).symm
-
-/-- The inverse input equivalence keeps the string. -/
-theorem PermFamily.glPad_inEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
-    List.ofFn ((P.glPad_inEquiv m).symm z) = List.ofFn z := by
-  rw [← P.glPad_inEquiv_ofFn m, Equiv.apply_symm_apply]
-
-/-- The output equivalence keeps the string: `List.ofFn (P.glPad_outEquiv m y) = List.ofFn y`. -/
-theorem PermFamily.glPad_outEquiv_ofFn (P : PermFamily) (m : ℕ)
-    (y : Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) :
-    List.ofFn (P.glPad_outEquiv m y) = List.ofFn y :=
-  (List.ofFn_congr (P.glPad_outLen_eval m) y).symm
-
-/-- The inverse output equivalence keeps the string. -/
-theorem PermFamily.glPad_outEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (y : Fin (m + m) → Bool) :
-    List.ofFn ((P.glPad_outEquiv m).symm y) = List.ofFn y := by
-  rw [← P.glPad_outEquiv_ofFn m, Equiv.apply_symm_apply]
 
 /-- **Goldreich–Levin** [PS10, Theorem 87.3; GL89]: if `f` is a strong one-way function then
 `g(x, r) = (f(x), r)` is a strong one-way function and `h(x, r) = ⟨x, r⟩` is a hard-core

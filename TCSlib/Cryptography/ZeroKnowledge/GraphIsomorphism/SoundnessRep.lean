@@ -275,8 +275,10 @@ noncomputable def gniTapes (N : ℕ) :
 /-- The tape of `gniTapes` is the tape of blocks of the split blocks. -/
 theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) :
     List.ofFn (gniTapes N (b, ts)) =
-      List.ofFn (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j))) :=
-  (List.ofFn_congr (gniProtocolRep_V_coinLen N).symm _).symm
+      List.ofFn (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j))) := by
+  unfold gniTapes
+  exact (List.ofFn_congr (gniProtocolRep_V_coinLen N).symm
+    (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j)))).symm
 
 /-- Coin block `j < N` of the tape `gniTapes N (b, ts)` is `b_j` followed by the sampler tape
 `ts_j`. -/

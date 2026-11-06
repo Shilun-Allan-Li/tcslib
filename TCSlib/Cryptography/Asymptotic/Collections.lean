@@ -829,12 +829,12 @@ private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
     convert h using 1
     funext z
     simp
-  refine ⟨_, hF, fun n x => ?_⟩
+  refine (FunFamily.easy_iff _).2 ⟨_, hF, fun n x => ?_⟩
   have hx : List.ofFn x =
       List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).1 ++
         List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).2 := by
     rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply, owfCoinsEquiv_ofFn]
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, owfFamily]
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, owfFamily]
   rw [hx, owfRawStr_eq, ← ofFn_padFin_eq_padStr, List.length_replicate]
 
 /-! ### The collection inverter built from an inverter of `g` -/
@@ -998,39 +998,42 @@ moves from the sampled `x` to the ideal uniform `x` at the cost `δ n`; on `some
 `P` is the collection event (`uprob_congr`). -/
 private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ : ℕ → ℝ}
     (hδ : G.SampleClose δ) (n : ℕ) (r₁ : G.gen.Coins n) :
-    uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
+    uprob (fun v : G.sample.Coins n × A'.Coins n =>
+      ∃ w : Fin ((G.owfFamily L).inLen.eval n) → Bool,
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
           ((G.owfCoinsEquiv n).symm
             ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
-              List.ofFn z' ∧
-      (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+              List.ofFn w ∧
+      (G.owfFamily L).f n w =
         (G.owfFamily L).f n
             ((G.owfCoinsEquiv n).symm
               ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
     uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x', G.decD (G.index n r₁)
         ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) + δ n := by
-  let P : Option (G.D (G.index n r₁)) → A'.Coins n → Prop := fun o ρ => ∃ x, o = some x ∧
+  let Pev : Option (G.D (G.index n r₁)) → A'.Coins n → Prop := fun o ρ => ∃ x, o = some x ∧
     ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
       (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
       ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
       G.f (G.index n r₁) x' = G.f (G.index n r₁) x
-  have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod P)).2
-  have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
+  have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod Pev)).2
+  have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n =>
+      ∃ w : Fin ((G.owfFamily L).inLen.eval n) → Bool,
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
           ((G.owfCoinsEquiv n).symm
             ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
-              List.ofFn z' ∧
-      (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+              List.ofFn w ∧
+      (G.owfFamily L).f n w =
         (G.owfFamily L).f n
             ((G.owfCoinsEquiv n).symm
               ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
       uprob (fun v : G.sample.Coins n × A'.Coins n =>
-        P (G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) v.1)) v.2) := by
+        Pev (G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) v.1)) v.2) := by
     refine uprob_mono fun v hv => ?_
-    obtain ⟨z', hz', hg⟩ := hv
-    exact G.collInverter_success L hL A' n r₁ v.1 v.2 z' hz' hg
-  have h2 : uprob (fun z : G.D (G.index n r₁) × A'.Coins n => P (some z.1) z.2) =
+    obtain ⟨w, hw, hg⟩ := hv
+    exact G.collInverter_success L hL A' n r₁ v.1 v.2 (G.owfCoinsEquiv n w)
+      (by rw [owfCoinsEquiv_ofFn]; exact hw) (by rw [Equiv.symm_apply_apply]; exact hg)
+  have h2 : uprob (fun z : G.D (G.index n r₁) × A'.Coins n => Pev (some z.1) z.2) =
       uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x',
         G.decD (G.index n r₁) ((G.collInverter L A').runAt n
           (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
@@ -1038,7 +1041,7 @@ private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ 
     refine Eq.trans ?_ (uprob_comp_equiv ((Equiv.refl (G.D (G.index n r₁))).prodCongr
       (NUPPT.coinsCongr (G.coins_collInverter L A') n).symm) _)
     refine OneWay.uprob_congr fun z => ?_
-    simp only [P, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply, Prod.map_apply,
+    simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,
       Equiv.refl_apply]
     exact Iff.rfl
   linarith

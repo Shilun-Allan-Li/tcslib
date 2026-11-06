@@ -228,14 +228,15 @@ private theorem zkSim_runAt (S : PrivateKeyScheme) (n : ℕ) (r₁ : S.gen.Coins
     (r₂ : S.enc.Coins n) :
     (zkSim S).runAt n [] (zkSimCoins S n (r₁, r₂)) = S.encDist n (fun _ => false) (r₁, r₂) := by
   have ht : (List.ofFn r₁ ++ List.ofFn r₂).take (S.gen.coins.eval n) = List.ofFn r₁ :=
-    List.take_left' (by simp [NUPPT.coinLen])
+    List.take_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])
   have hd : (List.ofFn r₁ ++ List.ofFn r₂).drop (S.gen.coins.eval n) = List.ofFn r₂ :=
-    List.drop_left' (by simp [NUPPT.coinLen])
+    List.drop_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])
   rw [NUPPT.runAt_eq, ofFn_zkSimCoins]
   unfold zkSim
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform n, S.enc_uniform n, zkSimFun,
-    NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [encDist_apply, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.advInput_eq,
+    S.gen_uniform.advice_eq n, S.enc_uniform.advice_eq n, zkSimFun, NUPPT.layout_eq,
+    NUPPT.inParam_eq, NUPPT.inCoins_eq, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, ht, hd, zipWith_xor_self, List.ofFn_const]
 
 /-- The output distribution of the simulator is the ciphertext distribution of `0^n`: every

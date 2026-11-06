@@ -80,6 +80,7 @@ theorem thm_87_3_1 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ)
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r)) = 1 := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
+  rw [← HardcoreBit.perfectInverter_eq]
   exact HardcoreBit.invProb_perfectInverter _ _ h
 
 /-- **The less simplified case** [PS10, §3.4.3, Algorithm 88.5; inventory Thm-87.3.2]: if `A`
@@ -95,6 +96,7 @@ theorem thm_87_3_2 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) T)) := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
+  rw [← HardcoreBit.majorityInverter_eq]
   exact HardcoreBit.invProb_majorityInverter _ _ hε hT h
 
 /-- **The good set is large** [PS10, §3.4.3; inventory Thm-87.3.3]: if `A` predicts `⟨x, r⟩`
@@ -169,6 +171,7 @@ theorem thm_87_3_9 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n
               (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) k))) := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
+  rw [← HardcoreBit.guessInverter_eq]
   exact ⟨HardcoreBit.invProb_guessInverter _ _ hε hk h,
     fun hk' => HardcoreBit.invProb_guessInverter_cubic _ _ hε hk hk' h⟩
 

@@ -556,6 +556,13 @@ def multiDist (Gen Enc : NUPPT) (n N Lc : ℕ) (m : Fin N → Fin Lc → Bool) :
   fun z => pairEncode (pairFstD (Gen.runAt n [] z.1)) (encodeList (List.ofFn fun i =>
     Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] z.1)) (List.ofFn (m i))) (z.2 i)))
 
+/-- The defining equation of `multiDist`: `⟨pk, ⟨Enc_pk(m_1; r_1), …, Enc_pk(m_N; r_N)⟩⟩`. -/
+theorem multiDist_eq (Gen Enc : NUPPT) (n N Lc : ℕ) (m : Fin N → Fin Lc → Bool)
+    (z : Gen.Coins n × (Fin N → Enc.Coins n)) :
+    multiDist Gen Enc n N Lc m z = pairEncode (pairFstD (Gen.runAt n [] z.1)) (encodeList
+      (List.ofFn fun i => Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] z.1)) (List.ofFn (m i)))
+        (z.2 i))) := rfl
+
 /-- **The hybrid bound on string samples**: if every planting distinguisher (on the string
 sample `⟨pk, c⟩`, with the tuple encoded by `encodeList`) has advantage at most `t` between the
 single encryptions of `m_j` and `m'_j`, then `Dst` has advantage at most `N · t` between the

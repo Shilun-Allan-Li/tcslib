@@ -238,7 +238,8 @@ noncomputable def giBitEquiv (N : ℕ) : Bool ≃ giProtocol.V.Coins N :=
 theorem ofFn_giBitEquiv (N : ℕ) (b : Bool) : List.ofFn (giBitEquiv N b) = [b] := by
   unfold giBitEquiv
   rw [Equiv.trans_apply]
-  refine (List.ofFn_congr (giProtocol_V_coinLen N).symm _).symm.trans ?_
+  refine (List.ofFn_congr (giProtocol_V_coinLen N).symm
+    ((Equiv.funUnique (Fin 1) Bool).symm b)).symm.trans ?_
   show List.ofFn (fun _ : Fin 1 => b) = [b]
   rw [List.ofFn_succ, List.ofFn_zero]
 

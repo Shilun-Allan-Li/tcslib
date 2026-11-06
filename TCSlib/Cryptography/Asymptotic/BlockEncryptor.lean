@@ -272,6 +272,11 @@ def decListEmit (Dc : List Bool → List Bool) (w : List Bool) : List Bool :=
 def decListFun (Dc : List Bool → List Bool) (x : List Bool) : List Bool :=
   (List.range (x.length + 1)).flatMap fun i => decListEmit Dc (decListStep^[i] x)
 
+/-- The defining equation of `decListFun`: the emissions of rounds `0, …, |x|`, concatenated. -/
+theorem decListFun_eq (Dc : List Bool → List Bool) (x : List Bool) :
+    decListFun Dc x =
+      (List.range (x.length + 1)).flatMap fun i => decListEmit Dc (decListStep^[i] x) := rfl
+
 /-- **Unfolding of the tuple decryptor**: with `k ≥ |l|` rounds on `⟨sk, encodeList l⟩` the
 emissions concatenate to `l.flatMap (fun c => Dc ⟨sk, c⟩)`.
 
@@ -348,6 +353,9 @@ theorem decListFun_poly {Dc : List Bool → List Bool} (hD : PolyTimeComputable 
 
 /-- The `i`-th segment of `B` coins of a coin string. -/
 def coinBlock (B i : ℕ) (r : List Bool) : List Bool := (r.drop (i * B)).take B
+
+/-- The defining equation of `coinBlock`: `coinBlock B i r = (r.drop (i·B)).take B`. -/
+theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B := rfl
 
 /-- `blockList` with one-bit blocks and enough fuel on an `n`-bit message is the list of the `n`
 bit encryptions with the consecutive coin segments.
