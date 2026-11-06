@@ -246,13 +246,6 @@ private theorem dp_clr {l l' : DpLb c} {r : Fin 25} (h : dpD c l = .clr r l') {v
       (some l', Function.update v r 0, none) :=
   AReach.step ⟨dp_pre (Or.inr (Or.inl ⟨r, l', h⟩)), hv⟩ (by rw [astep_clr h]; exact AReach.refl _)
 
-/-- Writing a value at most `B` keeps every register at most `B`. -/
-private theorem dp_bd {n : ℕ} {v : Fin n → ℕ} (hv : ∀ s, v s ≤ B) {r : Fin n} {a : ℕ}
-    (ha : a ≤ B) : ∀ s, Function.update v r a s ≤ B := fun s => by
-  rw [Function.update_apply]
-  split_ifs
-  exacts [ha, hv s]
-
 end Steps
 
 /-! ## The register file
@@ -373,7 +366,7 @@ private theorem dp_cb_run (f : Bool) : ∀ j i (hi : i < 21), i + j = 20 → ∀
     rw [show dpCbEx (c := c) f ⟨i, hi⟩ = .cb f ⟨i + 1, by omega⟩ from
       dif_pos (by show i + 1 < 21; omega)] at r1
     refine r1.trans (reach_of_eq (ih (i + 1) (by omega) (by omega) _
-      (dp_bd hv (Nat.zero_le _))) ?_)
+      (register_update_le _ _ _ _ hv (Nat.zero_le _))) ?_)
     congr 2
     funext r
     simp only [Function.update_apply, Fin.ext_iff, Fin.val_mk]
@@ -403,7 +396,7 @@ private theorem dp_cT_run (f : Bool) : ∀ j i (hi : i < c), i + j + 1 = c → �
     have e18 : Function.update v 19 (v 19 + v 18) 18 = v 18 :=
       Function.update_of_ne (by decide) _ _
     refine r1.trans (reach_of_eq (ih (i + 1) (by omega) (by omega) _
-      (by rw [Function.update_of_ne (by decide)]; exact hZ) (dp_bd hv (by nlinarith))
+      (by rw [Function.update_of_ne (by decide)]; exact hZ) (register_update_le _ _ _ _ hv (by nlinarith))
       (by rw [e18, Function.update_self]; nlinarith)) ?_)
     rw [e18, Function.update_self, Function.update_idem]
     congr 3
@@ -475,7 +468,7 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
     show o1 0 + s = s from by simp [ho1]] at r2
   -- `T := s + ℓ`
   set o2 := Function.update o1 0 s with ho2
-  have o2b : ∀ i, o2 i ≤ B := dp_bd o1b (by omega)
+  have o2b : ∀ i, o2 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
   have r3 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.cL f) (src := 22) (dst := 18) (fun _ => rfl)
     (by decide) (by decide) (by decide) (v := dpSt (fun _ => 0) o2)
     (by rw [dpSt_own _ _ 24 6 rfl, ho2, Function.update_of_ne (by decide)]; exact o1Z)
@@ -487,13 +480,13 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
     Function.update_idem] at r3
   -- `T := s + ℓ + 1`
   set o3 := Function.update o1 0 (s + ℓ) with ho3
-  have o3b : ∀ i, o3 i ≤ B := dp_bd o1b (by omega)
+  have o3b : ∀ i, o3 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
   have r4 := dp_inc (c := c) (o := o) (x := x) (l := .tInc f) rfl (dpSt_bd b0 o3b)
   rw [dpSt_own _ _ 18 0 rfl, dpSt_upd_own _ _ 18 0 rfl, ho3, Function.update_self,
     Function.update_idem, show dpCt0 (c := c) f = .cT f ⟨0, hc⟩ 0 from dif_pos hc] at r4
   -- `W := c · T`
   set o4 := Function.update o1 0 (s + ℓ + 1) with ho4
-  have o4b : ∀ i, o4 i ≤ B := dp_bd o1b (by omega)
+  have o4b : ∀ i, o4 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
   have o4T : o4 0 = s + ℓ + 1 := Function.update_self _ _ _
   have o4W : o4 1 = 0 := by rw [ho4, Function.update_of_ne (by decide)]; rfl
   have r5 := dp_cT_run (c := c) (o := o) (x := x) (B := B) f (c - 1) 0 hc (by omega)
@@ -506,7 +499,7 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
     zero_add, dpSt_upd_own _ _ 19 1 rfl] at r5
   -- the block's `rs := s`
   set o5 := Function.update o4 1 w with ho5
-  have o5b : ∀ i, o5 i ≤ B := dp_bd o4b hwB
+  have o5b : ∀ i, o5 i ≤ B := register_update_le _ _ _ _ o4b hwB
   have o5S : o5 5 = s := by
     rw [ho5, ho4, Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
     exact o1S
@@ -526,26 +519,26 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
   simp only [zero_add] at r6
   -- the block's `rw := w`
   set b1 : Fin 18 → ℕ := Function.update (fun _ => 0) rs s with hb1
-  have b1b : ∀ r, b1 r ≤ B := dp_bd b0 (by omega)
+  have b1b : ∀ r, b1 r ≤ B := register_update_le _ _ _ _ b0 (by omega)
   have r7 := dp_clr (c := c) (o := o) (x := x) (l := .zW f) rfl (dpSt_bd b1b o5b)
   rw [dpSt_upd_ρ] at r7
   have r8 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.bW f) (src := 19) (dst := dpρ rw)
     (fun _ => rfl) (dpρ_ne rw (by decide)).symm (by decide) (dpρ_ne rw (by decide)) (Z5 _)
-    (dpSt_bd (dp_bd (r := rw) b1b (Nat.zero_le _)) o5b)
+    (dpSt_bd (register_update_le _ rw _ _ b1b (Nat.zero_le _)) o5b)
     (by rw [dpSt_ρ, dpSt_own _ _ 19 1 rfl, o5W, Function.update_self]; omega)
   rw [dpSt_ρ, dpSt_own _ _ 19 1 rfl, o5W, Function.update_self, zero_add, dpSt_upd_ρ,
     Function.update_idem] at r8
   -- the block's `rK := 1`
   set b2 := Function.update b1 rw w with hb2
-  have b2b : ∀ r, b2 r ≤ B := dp_bd b1b hwB
+  have b2b : ∀ r, b2 r ≤ B := register_update_le _ _ _ _ b1b hwB
   have r9 := dp_clr (c := c) (o := o) (x := x) (l := .zK f) rfl (dpSt_bd b2b o5b)
   rw [dpSt_upd_ρ] at r9
   have r10 := dp_inc (c := c) (o := o) (x := x) (l := .kOne f) rfl
-    (dpSt_bd (dp_bd (r := rK) b2b (Nat.zero_le _)) o5b)
+    (dpSt_bd (register_update_le _ rK _ _ b2b (Nat.zero_le _)) o5b)
   rw [dpSt_ρ, Function.update_self, zero_add, dpSt_upd_ρ, Function.update_idem] at r10
   -- `C := w`
   set b3 := Function.update b2 rK 1 with hb3
-  have b3b : ∀ r, b3 r ≤ B := dp_bd b2b (by omega)
+  have b3b : ∀ r, b3 r ≤ B := register_update_le _ _ _ _ b2b (by omega)
   have r11 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.cC f) (src := 19) (dst := 20) (fun _ => rfl)
     (by decide) (by decide) (by decide) (Z5 _) (dpSt_bd b3b o5b)
     (by rw [dpSt_own _ _ 20 2 rfl, dpSt_own _ _ 19 1 rfl, o5W, o5C]; omega)
@@ -553,7 +546,7 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
     dpSt_upd_own _ _ 20 2 rfl] at r11
   -- the block's `rK := 2 ^ w`
   set o6 := Function.update o5 2 w with ho6
-  have o6b : ∀ i, o6 i ≤ B := dp_bd o5b hwB
+  have o6b : ∀ i, o6 i ≤ B := register_update_le _ _ _ _ o5b hwB
   have r12 := dp_shl (c := c) (o := o) (x := x) (k := DpLb.sh f) (ex := .zU f) (fun _ => rfl)
     (v := dpSt b3 o6)
     (by rw [dpSt_own _ _ 24 6 rfl, ho6, Function.update_of_ne (by decide)]; exact o5Z)
@@ -566,19 +559,19 @@ private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List B
   -- the block's `rU`, `rV`, `rM := 0`
   set b4 := Function.update b2 rK (2 ^ w) with hb4
   set o7 := Function.update o5 2 0 with ho7
-  have b4b : ∀ r, b4 r ≤ B := dp_bd b2b hB
-  have o7b : ∀ i, o7 i ≤ B := dp_bd o5b (Nat.zero_le _)
+  have b4b : ∀ r, b4 r ≤ B := register_update_le _ _ _ _ b2b hB
+  have o7b : ∀ i, o7 i ≤ B := register_update_le _ _ _ _ o5b (Nat.zero_le _)
   have r13 := dp_clr (c := c) (o := o) (x := x) (l := .zU f) rfl (dpSt_bd b4b o7b)
   rw [dpSt_upd_ρ] at r13
   have r14 := dp_clr (c := c) (o := o) (x := x) (l := .zV f) rfl
-    (dpSt_bd (dp_bd (r := rU) b4b (Nat.zero_le _)) o7b)
+    (dpSt_bd (register_update_le _ rU _ _ b4b (Nat.zero_le _)) o7b)
   rw [dpSt_upd_ρ] at r14
   have r15 := dp_clr (c := c) (o := o) (x := x) (l := .zM f) rfl
-    (dpSt_bd (dp_bd (r := rV) (dp_bd (r := rU) b4b (Nat.zero_le _)) (Nat.zero_le _)) o7b)
+    (dpSt_bd (register_update_le _ rV _ _ (register_update_le _ rU _ _ b4b (Nat.zero_le _)) (Nat.zero_le _)) o7b)
   rw [dpSt_upd_ρ] at r15
   refine ⟨_, r1.trans (r2.trans (r3.trans (r4.trans (r5.trans (r6.trans (r7.trans (r8.trans
     (r9.trans (r10.trans (r11.trans (r12.trans (r13.trans (r14.trans r15))))))))))))),
-    fun r => dpSt_ρ _ _ r, ?_, ?_, ?_, dpSt_bd (dp_bd (r := rM) (dp_bd (r := rV) (dp_bd (r := rU) b4b (Nat.zero_le _))
+    fun r => dpSt_ρ _ _ r, ?_, ?_, ?_, dpSt_bd (register_update_le _ rM _ _ (register_update_le _ rV _ _ (register_update_le _ rU _ _ b4b (Nat.zero_le _))
       (Nat.zero_le _)) (Nat.zero_le _)) o7b⟩
   · rw [dpSt_own _ _ 22 4 rfl, ho7, ho5, ho4, Function.update_of_ne (by decide),
       Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
@@ -745,7 +738,7 @@ private theorem dp_body {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
       exact ih (s + 1) _ (by omega) (by omega) (by omega)
         (by rw [Function.update_of_ne (by decide)]; exact e1)
         (by rw [Function.update_self, e2]) (by rw [Function.update_of_ne (by decide)]; exact e3)
-        (dp_bd e4 (by rw [e2]; exact hsB))
+        (register_update_le _ _ _ _ e4 (by rw [e2]; exact hsB))
 
 open Classical in
 /-- **`D`'s run**: from `scan` with all registers clear, `D` answers `x ∈ L` through register
@@ -774,17 +767,17 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (fun m _ => indicator_inputLenLang x m) B hnB (fun _ => 0) (fun _ => Nat.zero_le _)
     (Nat.zero_le _)
   have b1 : ∀ r, Function.update (fun _ : Fin 25 => 0) 21 x.length r ≤ B :=
-    dp_bd (fun _ => Nat.zero_le _) hnB
+    register_update_le _ _ _ _ (fun _ => Nat.zero_le _) hnB
   refine (r1.mono fun _ h => h).halt ((dp_inc (l := .lInc) rfl b1).halt ?_)
   rw [Function.update_of_ne (by decide), zero_add]
-  have b2 := dp_bd (r := 22) b1 (show 1 ≤ B by omega)
+  have b2 := register_update_le _ 22 _ _ b1 (show 1 ≤ B by omega)
   have e21 : Function.update (Function.update (fun _ : Fin 25 => 0) 21 x.length) 22 1 21 =
       x.length := by
     rw [Function.update_of_ne (by decide), Function.update_self]
   refine (Codec.halvCount_loop (dpD (codeK N + 1)) (dpOrc N) x 21 22 (by decide) .hz .hh .hi .sOne
     rfl rfl rfl B _ b2 (by rw [Function.update_self, e21]; omega)).halt ?_
   rw [Function.update_self, e21]
-  have b3 := dp_bd (r := 22) (dp_bd (r := 21) b2 (Nat.zero_le _)) hlB
+  have b3 := register_update_le _ 22 _ _ (register_update_le _ 21 _ _ b2 (Nat.zero_le _)) hlB
   refine (dp_inc (l := .sOne) rfl b3).halt ?_
   rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
     Function.update_of_ne (by decide), Function.update_of_ne (by decide), zero_add]
@@ -794,7 +787,7 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (by rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
       Function.update_of_ne (by decide), Function.update_of_ne (by decide),
       Function.update_of_ne (by decide)])
-    (dp_bd b3 (by omega))
+    (register_update_le _ _ _ _ b3 (by omega))
 
 /-! ## The contract -/
 
