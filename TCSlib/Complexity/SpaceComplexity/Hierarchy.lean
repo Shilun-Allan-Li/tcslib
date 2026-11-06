@@ -8,6 +8,10 @@ import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.TimeHierarchy.CodePrefix
 import TCSlib.Complexity.TimeHierarchy.Diagonal
 import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.ClassNP.PClosure
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -19,13 +23,10 @@ set_option autoImplicit false
 [AB09, §4.1.3, Theorem 4.8] with the space-bounded universal machine of
 [AB09, Exercise 4.1] (its forward clause, as the book states it), the
 strictness corollary `L ⊊ PSPACE` on the p. 92 chain, and `SPACE(n+1) ≠ NP`
-([AB09, Exercise 3.2], restated with the positive normalization per the P0
-convention — `AroraBarakChapters3-4Plan.md` §2.4). Phase P4.3; on 2026-10-12
-`space_universal` was restated forward-only and `space_hierarchy`'s sketch
-moved to the window route (`machine-library-design.md` §16b item 3,
-`backlog.md` RD-3; statement gate passed 2026-10-13), and on 2026-10-13
-`space_universal` was strengthened to the addend-free `C · s`, whose hosts
-(H3, H5 and `U₀`) passed their statement gate on 2026-10-14.
+([AB09, Exercise 3.2], stated with the positive normalization). The universal
+machine statement has a forward clause with the addend-free bound `C · s`;
+the hierarchy uses a fixed self-application universal machine inside a
+space-bounded configuration window.
 
 ## Design
 
@@ -41,11 +42,10 @@ moved to the window route (`machine-library-design.md` §16b item 3,
   within constant-factor space. Overruns and divergence are unconstrained, so
   the machine tests no budget, runs no clock and replays nothing. Its space
   bound is Exercise 4.1's `C_α · t`, with no addend: the simulated input, a
-  suffix of its input, is read through H5's bounded-prefix ruler device
+  suffix of its input, is read through the bounded-prefix ruler device
   (`Turing.exists_rulerHostTM`), a unary ruler of the header's length, which
-  the bound absorbs because every qualifying run visits a cell (strengthened
-  2026-10-13 from a `+ logSpace n` addend).
-* **The hierarchy takes the window route** (design §16b item 3): the
+  the bound absorbs because every qualifying run visits a cell.
+* **The hierarchy takes the window route**: the
   diagonalizer runs one fixed self-application universal machine `U₀` in a
   window of radius `a · g(n)` on the configuration-record rows
   (`Build/CfgRecord.lean`, `Build/RecordTable.lean`), stopped by a
@@ -55,16 +55,13 @@ moved to the window route (`machine-library-design.md` §16b item 3,
   tracks the simulated input head in unary on its fourth tape, which uses one
   plus the largest simulated input position reached, `Θ(n + 1)` cells on a
   full scan, so it cannot guarantee `O(S(n))` space uniformly for sublinear
-  `S` (Finding B, recorded in the sketches).
+  `S`.
 * **Both bounds space-constructible**, as in the book; `g`'s witness drives
   the window radius and the clock width, and of `f` the proof uses only the
-  bundled floor `1 ≤ logSpace n ≤ f n` (round-1 confirmed, recorded in the
-  sketch).
-* Facade wiring: root-wired while the P4.1 gate was live; the
-  `SpaceComplexity.lean` facade has carried this module since that gate
-  closed.
+  bundled floor `1 ≤ logSpace n ≤ f n`.
+* The `SpaceComplexity.lean` facade imports this module.
 
-## Main results (all sorried; phase-P4.3 statements)
+## Main results
 
 * `Complexity.space_universal` — [AB09, Exercise 4.1], forward clause
   (restated 2026-10-12; addend-free `C · s` since 2026-10-13).
@@ -160,9 +157,29 @@ theorem space_universal :
               ≤ C * s := by
   sorry
 
+/-- The inclusion half: `hfg` at `A = 1` from some `N` on, and `g`'s floor below `N`.
+[AB09, Theorem 4.8, inclusion]
+
+**Proof sketch.** Bound the finitely many exceptional values by their supremum. The positive
+floor of `g` absorbs that supremum into one constant, and `SPACE.mono_const` applies. -/
+private lemma sph_inclusion {f g : ℕ → ℕ} (hg : SpaceConstructible g)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) : SPACE f ⊆ SPACE g := by
+  obtain ⟨N, hN⟩ := hfg 1
+  have hfloor : ∀ n, 1 ≤ g n := fun n =>
+    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff g).mp hg).1 n)
+  set F := (Finset.range N).sup f with hF
+  refine SPACE.mono_const (a := F + 1) fun n => ?_
+  by_cases hn : N ≤ n
+  · have := hN n hn
+    calc f n ≤ g n := by simpa using this
+      _ ≤ (F + 1) * g n := Nat.le_mul_of_pos_left _ (Nat.succ_pos _)
+  · have hle : f n ≤ F := Finset.le_sup (f := f) (Finset.mem_range.mpr (by omega))
+    calc f n ≤ F + 1 := by omega
+      _ = (F + 1) * 1 := (Nat.mul_one _).symm
+      _ ≤ (F + 1) * g n := Nat.mul_le_mul_left _ (hfloor n)
+
 /-- **The space hierarchy theorem** ([AB09, Theorem 4.8]; [SHL65] through
-[AB09]; spec, fill pending — phase P4.3, sketch moved to the window route
-2026-10-12 by design §16b item 3, RD-3 statement gate passed 2026-10-13): for
+[AB09]): for
 space-constructible `f` and `g`, if every constant multiple of `f` is
 eventually below `g` (that is, `f = o(g)`), then `SPACE f ⊊ SPACE g`.
 Constant-factor hypothesis — no square and no logarithmic term, by a
@@ -170,9 +187,8 @@ universal simulation with constant-factor space overhead (the
 self-application universal `U₀` of the sketch, the sibling of
 `Complexity.space_universal`); both constructibility hypotheses are the
 book's, and the proof uses `g`'s witness and floor but, of `f`'s, only the
-bundled floor (recorded here, seeded to the audit). Positivity of both bounds
-is automatic from the bundled `logSpace` floor, so the P0 zero-bound
-convention needs no side condition.
+bundled floor. Positivity of both bounds is automatic from the bundled
+`logSpace` floor, so the zero-bound convention needs no side condition.
 
 **Proof sketch.** *Inclusion.* `hfg` at `A = 1` gives `f n ≤ g n` from some
 `N` on; below `N` each `f n` is at most `F := max_{n<N} f n` times
@@ -184,9 +200,9 @@ convention needs no side condition.
 `α` from the doubled prefix (the chapter-1 startup, `Turing.universalCanonTM`),
 returns its input head to the origin, and simulates the coded machine on `x`
 itself — self-application, so no `preTM` copy is needed — with its own input
-head as the simulated one (H5's native device: the simulated input is all of
+head as the simulated one (the native device: the simulated input is all of
 `U₀`'s input, so its left boundary is a real blank and no position is stored)
-and the H2 step block on the canonical table. Its forward ledger: for each
+and the step block on the canonical table. Its forward ledger: for each
 `α` a constant `C_α` such that whenever the coded machine halts on `x` with
 some output, having visited at most `s` cells, `U₀` halts on `x` with the
 same output, having visited at most `C_α · (s + 1)` cells
@@ -195,7 +211,7 @@ with the native device in place of the bounded-prefix ruler, so no header
 ruler is needed; only this direction is used.
 
 *The diagonalizer `D`.* On input `x` with `n = |x|`, over the record alphabet:
-(i) validate the input (`Turing.inputFoldTM`, R8.5d; decision O6), so that
+(i) validate the input (`Turing.inputFoldTM`), so that
 `D`'s space is bounded on foreign rich inputs, as
 `Turing.FinTM.alphabet_reduction_spaceUsed` requires, and compute
 `bits (g n)` by `g`'s witness, captured on a work tape, in `O(g n)` cells;
@@ -203,14 +219,14 @@ ruler is needed; only this direction is used.
 (`a = 1` suffices, the code-dependent constant being paid by the hypothesis
 below; a power of two costs only low zero digits) and write `U₀`'s initial
 record on `x` at radius `r`, tagged with the empty-output summary
-(`Turing.exists_recordInitTM`); (iii) run the H3 windowed runner: each round
+(`Turing.exists_recordInitTM`); (iii) run the configuration-count windowed runner: each round
 tests the record for a halted state (`Turing.exists_recordTestTM`), else
 applies one step of `U₀` (`Turing.exists_recordStepTM`, whose `no` verdict
 is the window exit), the tag updated by the three-valued output summary
 `Turing.outSummary` (append-compatible, `Turing.outSummary_append_congr`;
-coded in `Fin 3` by design §12.8a decision O4), so the emitted word is
-never buffered (W1). The rounds are driven by the configuration-count clock,
-the rich counter loop (`Turing.counterLoopTMVia`, §12.7 and R8.0b) on an
+coded in `Fin 3`), so the emitted word is never buffered. The rounds are driven by
+the configuration-count clock,
+the rich counter loop (`Turing.counterLoopTMVia`) on an
 all-`true` word of width `W = |Q₀| + posWidth n + 3 · k₀ · (2r + 1) + 1`,
 where `Q₀` and `k₀` are `U₀`'s states and tape count. Its value `2^W - 1`
 exceeds `Turing.FinTM.configBound U₀ n r`, which is at most
@@ -224,7 +240,7 @@ input. Its cells are the witness's `O(g n)`, the record's
 rows' `O(record length)` scratch and the clock's `W`: all `O(g n)` with
 constants depending only on `U₀` and `g`'s witness, **uniformly in the code
 part of `x`**, because the window, not `U₀`'s constant, bounds the
-simulation (round-1 finding 5); the `posWidth n = O(logSpace n)` terms are
+simulation; the `posWidth n = O(logSpace n)` terms are
 absorbed by `g`'s floor. After the alphabet reduction, the language `L_D`
 that `D` decides lies in `SPACE g`.
 
@@ -251,13 +267,12 @@ visited (`Turing.MultiTapeTM.mem_visited_of_ne_none`); and the halt comes by
 step `configBound U₀ n r` (`ComputesInTime.of_spaceUsed_le` at the bound
 `r`), before the clock runs out. So the runner stops at `U₀`'s halted record,
 whose summary is `accept` exactly when `x ∈ L_D`, and `D` answers the
-opposite: `x ∈ L_D ↔ x ∉ L_D`, a contradiction. Fill obligations, named in
-the host vocabulary of design §14: `U₀` with its forward ledger (the H2 step
-block at one coded work tape, H5's native input device, the chapter-1
-startup), a public row as H2's named consumer, not a private host of this
-proof; the H3 windowed runner at `U₀` with the output-summary tag, over the
-record rows `exists_recordInitTM` (record-table row 18; row 17,
-`exists_recordTemplateTM`, beneath it), `exists_recordTestTM` and
+opposite: `x ∈ L_D ↔ x ∉ L_D`, a contradiction. The construction uses
+`U₀` with its forward ledger (the step block at one coded work tape, the
+native input device and the chapter-1 startup); the configuration-count
+windowed runner at `U₀` with the output-summary tag, over the record rows
+`exists_recordInitTM` (with `exists_recordTemplateTM` beneath it),
+`exists_recordTestTM` and
 `exists_recordStepTM`, clocked by `counterLoopTMVia`; the radius and
 clock-width phases (`g`'s witness captured, radius digits, width expansion);
 the window-containment lemma from the visited-interval facts; the space
@@ -271,12 +286,12 @@ theorem space_hierarchy (f g : ℕ → ℕ) (hf : SpaceConstructible f)
   sorry
 
 /-- **`L ⊊ PSPACE`** — the strict step of the p. 92 chain ([AB09, §4.3.2,
-"the hierarchy theorems imply `L ⊊ PSPACE`"]; spec, fill pending).
+"the hierarchy theorems imply `L ⊊ PSPACE`"]).
 
 **Proof sketch.** `Complexity.space_hierarchy` at `f := logSpace`,
 `g := fun n => n + 1` (both constructible — the received
 `Complexity.spaceConstructible_logSpace` and
-`Complexity.spaceConstructible_linear` of phase P4.1; domination:
+`Complexity.spaceConstructible_linear`; domination:
 `A · logSpace n ≤ n + 1` eventually, a logarithm-versus-identity
 inequality), then `SPACE (n + 1) ⊆ PSPACE`
 (`Complexity.space_poly_subset_PSPACE` at degree one) and strictness
@@ -285,8 +300,8 @@ theorem LOGSPACE_ssubset_PSPACE : LOGSPACE ⊂ PSPACE := by
   sorry
 
 /-- **`SPACE(n + 1) ≠ NP`** ([AB09, Exercise 3.2], stated at the positive
-normalization `n + 1` per the P0 convention — the literal `SPACE(n)` is the
-zero-work-tape class; spec, fill pending). Neither inclusion between the
+normalization `n + 1` — the literal `SPACE(n)` is the zero-work-tape class).
+Neither inclusion between the
 two classes is claimed, matching the book's remark.
 
 **Proof sketch.** Suppose `SPACE (n + 1) = NP`. `NP` is closed downward
@@ -295,7 +310,7 @@ obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
 bounded form, named for the brief). Padding transfers space bounds down:
 for `L ∈ SPACE (n² + 1)`, the padded language
 `L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate (|x|²) true)}` —
-membership restricted to padded members of `L` (round-2 finding 5); padded
+membership restricted to padded members of `L`; padded
 length exactly `m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
 length (validate, then run the `L`-decider on the first component; the pad
 supplies the room — the chapter-2 padding-cluster discipline,
