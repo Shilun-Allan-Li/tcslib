@@ -1,0 +1,62 @@
+### /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean start 2026-11-06T21:49:45+00:00
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:118:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:123:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:128:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+  hp
+  hq
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp hq in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2401:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlP i = listToNat (pairFstD i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2403:62: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  A.coinLen n = A.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2407:23: error: Type mismatch
+  h
+has type
+  ∀ (T : γ → Prop), |(uprob fun s => T (X s)) - uprob fun t => T (Y t)| ≤ d
+but is expected to have type
+  StatClose X Y d
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2409:98: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  sampleBelowL m k B T r = rejectBlocksL (fun x => x < m) k B T r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2412:2: error: Type mismatch
+  polyTimeComputable_iterateFind dlc_ssStep_poly (dlc_ssAcc_poly H) dlc_ssOut_poly PolyExpr.var
+    (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 4)) fun x i x_1 => ?m.11
+has type
+  PolyTimeComputable fun x =>
+    match List.find? (fun i => dlc_ssAcc (dlc_ssStep^[i] x)) (List.range (PolyExpr.var.eval x.length + 1)) with
+    | some i => dlc_ssOut (dlc_ssStep^[i] x)
+    | none => []
+but is expected to have type
+  PolyTimeComputable dlc_ssLoop
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean:2418:107: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  splitCoins a b =
+    (finSumFinEquiv.symm.arrowCongr (Equiv.refl Bool)).trans (Equiv.sumArrowEquivProdArrow (Fin a) (Fin b) Bool)
+### /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-dl/seal-6c/ControlElGamalSealed.lean rc=1 13s
