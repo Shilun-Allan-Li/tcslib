@@ -2078,6 +2078,7 @@ private theorem rabin_statClose_diag (P : ℕ → Prop) [DecidablePred P] {n : �
     StatClose (fun e : rabin_C P n × rabin_C P n =>
         rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))
       (fun t : rabin_RDP P n => t.1) (1 / Fintype.card (rabin_C P n)) := by
+  rw [statClose_iff]
   intro T
   set Dn : rabin_C P n × rabin_C P n → Prop := fun e => ((e.1 : Fin (2 ^ n)) : ℕ) ≠ ((e.2 : Fin (2 ^ n)) : ℕ)
   have hz : ∀ e (h : Dn e), rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)) =
@@ -2778,7 +2779,7 @@ private theorem rabin_listToNat_cPow (pw yw : List Bool) :
 private theorem rabin_listToNat_cInv (pw qw : List Bool) :
     listToNat (rabin_cInv pw qw) = ((listToNat qw : ZMod (listToNat pw))⁻¹).val := by
   have hz : listToNat ([false] ++ pw) = listToNat pw := by
-    rw [show [false] = natToList 1 0 by rw [natToList_eq]; rfl, rabin_listToNat_zeros_append]
+    rw [rabin_listToNat_append, show listToNat [false] = 0 by rw [listToNat_eq]; rfl, zero_mul, zero_add]
   rw [rabin_cInv, xgcdStr_pairEncode, pairSndD_pairEncode, hz]
   apply listToNat_natToList
   rw [List.length_append, List.length_singleton]
@@ -3297,7 +3298,7 @@ private theorem rabin_pushesUniform_prod {Ω γ ρ : Type*} [Fintype Ω] [Fintyp
     {π : Ω → γ} (h : HardcoreBit.PushesUniform π) (P : γ → ρ → Prop) :
     uprob (fun w : Ω × ρ => P (π w.1) w.2) = uprob (fun w : γ × ρ => P w.1 w.2) := by
   rw [uprob_prod, uprob_prod]
-  exact h (fun a => uprob (fun b => P a b))
+  exact (HardcoreBit.pushesUniform_iff π).1 h (fun a => uprob (fun b => P a b))
 
 /-- A Blum pair's index is a valid Blum index. -/
 private theorem rabin_blumValid_idx {n : ℕ} (z : DistinctPrimes n) (hp3 : z.p % 4 = 3)
