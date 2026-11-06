@@ -1,0 +1,37 @@
+From 2029a1be49c6ba94c39a6b784890787592f464d4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 03:39:02 +0000
+Subject: [PATCH] NTimeHierarchy: the Status paragraph after NF and E-D landed
+
+Both contracts the hierarchy was proved from are now proved (E-D's
+exists_diagonalizer, #188; NF's exists_codeNDTM_accepts_linear, #191), so
+the module docstring no longer calls them sorry. Docstring only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5MM3PtshNwvNBXBw
+---
+ TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+index 87f207da..99dada9d 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+@@ -38,10 +38,10 @@ Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
+ **Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved, from the
+ interpreter core `Turing.exists_ndInterpreterCore`
+ (`TCSlib.Complexity.TuringMachine.NDCodeSimulator`), and the exponential decider from it. The
+-hierarchy `Complexity.ntime_hierarchy` is proved from two contracts that are still `sorry`: the
+-diagonalizer `Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
+-`Turing.FinNDTM.exists_codeNDTM_accepts_linear`. The two corollaries are proved from the
+-hierarchy.
++hierarchy `Complexity.ntime_hierarchy` is proved from the diagonalizer
++`Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
++`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, both proved, and the two corollaries are proved
++from the hierarchy: all of them rest on the standard axioms alone.
+ 
+ ## Design (declared deviations, each for the audit)
+ 
+-- 
+2.43.0
+
