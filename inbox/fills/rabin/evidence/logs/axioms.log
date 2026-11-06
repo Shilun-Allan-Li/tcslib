@@ -1,0 +1,122 @@
+'TCSlib.Cryptography.Candidates.oddFactorProb_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.blumFactorProb_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.blumFactoring_of_factoring' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_oddGenRaw' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_blumGenRaw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinSampler_spec' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinCollection_sampleClose' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_rabinFactorRaw' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinCollection_invProbAt_le' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinCollection_oneWay' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_blumInvRaw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.blumInv_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.blumSampler_spec' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_sampleClose' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_invProbAt_le' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_oneWay' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.polyTimeComputable_rabinRootRaw' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.blumFactorProb_le_invProbAt' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.blumFactoring_of_rabinBlum_oneWay' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+TCSlib.Cryptography.Candidates.oddFactorProb_le
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.blumFactorProb_le
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.blumFactoring_of_factoring
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.polyTimeComputable_oddGenRaw
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.polyTimeComputable_blumGenRaw
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.rabinSampler_spec
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+TCSlib.Cryptography.Candidates.rabinCollection_sampleClose
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL]
+TCSlib.Cryptography.Candidates.polyTimeComputable_rabinFactorRaw
+  TYPE: []
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+TCSlib.Cryptography.Candidates.rabinCollection_invProbAt_le
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL]
+TCSlib.Cryptography.Candidates.rabinCollection_oneWay
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL]
+TCSlib.Cryptography.Candidates.polyTimeComputable_blumInvRaw
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.blumInv_spec
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.blumSampler_spec
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_sampleClose
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL]
+TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_invProbAt_le
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL]
+TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_oneWay
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_sampleUnitL,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL]
+TCSlib.Cryptography.Candidates.polyTimeComputable_rabinRootRaw
+  TYPE: []
+  ALL:  []
+TCSlib.Cryptography.Candidates.blumFactorProb_le_invProbAt
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL]
+TCSlib.Cryptography.Candidates.blumFactoring_of_rabinBlum_oneWay
+  TYPE: [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr]
+  ALL:  [TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr,
+ TCSlib.Cryptography.Candidates.statClose_rejectBlocksL]
+rc=0 secs=32

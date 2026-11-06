@@ -1,0 +1,350 @@
+From 1e1134e9a53fc7297da5adb96684a6bf2def6c05 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 22:09:20 +0000
+Subject: [PATCH 11/12] Rabin: proof sketches for the filled targets and the
+ long private helpers
+
+---
+ TCSlib/Cryptography/Candidates/Rabin.lean | 207 +++++++++++++++-------
+ 1 file changed, 144 insertions(+), 63 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index 394d54e9..ed9f0680 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -331,7 +331,12 @@ theorem blumFactorProb_le (hD : BlumDensity) (A : NUPPT) {n : ℕ} (hn : 6 ≤ n
+ 
+ /-- **Factoring is hard on Blum integers** under the factoring assumption and the density
+ hypothesis: `blumFactorProb_le`, `hF A`, `Negligible.mul_pow`, `Negligible.const_mul`,
+-`Negligible.mono` (threshold `6`). -/
++`Negligible.mono` (threshold `6`).
++
++**Proof sketch.** For every `A`, `factorProb A` is negligible (`factoringAssumption_iff`, P14),
++hence so is `n ↦ 64 · (n² · factorProb A n)` (`Negligible.mul_pow`, `Negligible.const_mul`); for
++`n ≥ 6`, `0 ≤ blumFactorProb A n ≤ 64 n² factorProb A n` (`blumFactorProb_le`, `uprob_nonneg`),
++and `Negligible.mono` concludes (`blumFactoringAssumption_iff`). -/
+ theorem blumFactoring_of_factoring (hD : BlumDensity) (hF : FactoringAssumption) :
+     BlumFactoringAssumption := by
+   rw [blumFactoringAssumption_iff]
+@@ -942,7 +947,13 @@ private theorem rabin_gC2_poly : PolyTimeComputable rabin_gC2 := by
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   rw [pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, rabin_gC2]
+ 
+-/-- **The generator's string computation is polynomial-time** (two restricted prime samplers, `polyTimeComputable_pairEq`, `_not`, `_ite`, the padded fallbacks, `H.mul`). -/
++/-- **The generator's string computation is polynomial-time**.
++
++**Proof sketch.** The two prime words are `rabin_spOut_poly` on `1^{max n 3}` (`rabin_gU_poly`)
++and the coin segments (`rabin_gC1_poly`, `rabin_gC2_poly`); the validity test is
++`polyTimeComputable_pairEq` on the two words, negated (`polyTimeComputable_not`); each output
++prime is `polyTimeComputable_ite` between the sampled word and the padded fallback
++(`rabin_pad_poly`); `N` is `H.mul`, and the triple is assembled by `pairEncode`. -/
+ private theorem rabin_genCore_poly (H : ArithmeticFP) {acc0 : List Bool → Bool}
+     (hacc0 : PolyTimeComputable fun w => [acc0 w]) (ds1 ds2 : List Bool) :
+     PolyTimeComputable (rabin_genCore acc0 ds1 ds2) := by
+@@ -1457,8 +1468,12 @@ private theorem rabin_negligible_delta :
+ 
+ /-- **S3 at a generated index, decoded**: at the index `⟦N⟧_{2m}` of Rabin parameters,
+ `rabinDec i (unitSampleStr i n s)` on uniform coins is within `e^{-n}` of the uniform unit of
+-`Z_N` (`statClose_sampleUnitL` at `N = rabinMod i`, then `StatClose.map` through
+-`v ↦ rabinDec i ⟦v⟧_{2m}`, which sends `x.val` to `some x` by `rabinDec_rabinEnc`). -/
++`Z_N`.
++
++**Proof sketch.** `statClose_sampleUnitL` at `N = rabinMod i` (`= pq`), mapped by
++`StatClose.map` through `v ↦ rabinDec i ⟦v⟧_{2m}`; the sampler side is the decoded
++`unitSampleStr` (`unitSampleStr_eq`, `listToNat_rabinIndexOf`), and the ideal side sends `x.val`
++to `some x` (`rabinEnc`, `rabinDec_rabinEnc`). -/
+ private theorem rabin_statClose_dec {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) (n : ℕ)
+     (hk : Nat.size (R.z.p * R.z.q) ≤ rsaBlock.eval n) :
+     StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+@@ -1931,7 +1946,19 @@ private noncomputable def rabin_F (A : NUPPT) (n : ℕ) (z : DistinctPrimes n) :
+   uprob fun c : A.Coins n => ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n z) c = some x ∧
+     (bitsToNat x = z.p ∨ bitsToNat x = z.q)
+ 
+-/-- **The core of the Rabin reduction** at one pair of distinct odd primes. -/
++/-- **The core of the Rabin reduction** at one pair of distinct odd primes: for any decoder
++`dec` of `Z_{pq}^*` that is canonical on numerals, the probability over a uniform unit `x` and
++the coins of `A` that `A(1^n, ⟨⟦N⟧, ⟦x²⟧⟩)` decodes to a square root of `x²` is at most
++`2 F + 2e^{-n}`, `F` the factoring success of `A' = rabinFactorer H A` at the pair.
++
++**Proof sketch.** (a) The symmetry lemma `rabin_symmetry` (odd `p ≠ q`) bounds the root event by
++twice the event "the root `z` differs from `±x`". (b) Then `gcd((x − z).val, N) ∈ {p, q}`
++(`gcd_sub_eq_prime_of_sq_eq_sq`), and `rabinFactorStep` on the value `x.val` and the answer
++outputs its `n`-bit numeral (`val_units_pow`, `ZMod.natCast_zmod_val`). (c) S3
++(`statClose_sampleUnitL` at `N`, `StatClose.abs_uprob_sub_le_prod`) replaces the ideal `x` by the
++sampled one at cost `e^{-n}`. (d) The sampled experiment is `A'`'s factoring success: its coins
++split as the unit sampler's coins and `A`'s (`rabin_fCoinsEquiv`, `rabinFactorer_runAt`,
++`NUPPT.inverter_eq_some_iff`). -/
+ private theorem rabin_core (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : DistinctPrimes n)
+     (hp2 : z.p ≠ 2) (hq2 : z.q ≠ 2) (dec : List Bool → Option (ZMod (z.p * z.q))ˣ)
+     (hdec : ∀ w x, dec w = some x → listToNat w = (x : ZMod (z.p * z.q)).val) :
+@@ -2038,7 +2065,14 @@ private def rabin_diagEquiv (P : ℕ → Prop) (n : ℕ) :
+   left_inv e := rfl
+   right_inv t := rfl
+ 
+-/-- **The diagonal of the uniform class pair**: the selection `rabin_zOf z0` of a uniform pair of class primes is within `1/|C|` of the uniform distinct class pair (the uniform pair off the diagonal is the uniform distinct pair, `rabin_diagEquiv`, `uprob_and_eq_mul_subtype`; the diagonal has probability `1/|C|`, `uprob_diag`). -/
++/-- **The diagonal of the uniform class pair**: the selection `rabin_zOf z0` of a uniform pair
++of class primes is within `1/|C|` of the uniform distinct class pair.
++
++**Proof sketch.** Off the diagonal `D` the selection is the pair itself, and the uniform pair
++conditioned on `D` is the uniform distinct class pair (`rabin_diagEquiv`, `uprob_comp_equiv`).
++With `Pr[T ∘ sel] ≤ Pr[D ∧ T ∘ sel] + Pr[¬D]` and `Pr[D ∧ T ∘ sel] = Pr[D] Pr_D[T] ≥ Pr_D[T] − Pr[¬D]`
++(`uprob_and_eq_mul_subtype`, `uprob_not`), both sides differ by at most `Pr[¬D] = 1/|C|`
++(`uprob_diag`). -/
+ private theorem rabin_statClose_diag (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (z0 : DistinctPrimes n)
+     [Nonempty (rabin_C P n)] :
+     StatClose (fun e : rabin_C P n × rabin_C P n =>
+@@ -2095,7 +2129,12 @@ private theorem rabin_uprob_C (P : ℕ → Prop) [DecidablePred P] (n : ℕ) :
+   push_cast
+   rfl
+ 
+-/-- **One restricted prime sampler** (`statClose_rejectBlocksL` with the class test): with density `|C|/2^n ≥ 1/(4n)` and `4n²` trials it is within `(1 − 1/(4n))^{4n·n} ≤ e^{-n}` of the uniform class prime (`one_sub_one_div_pow_le_exp_neg`). -/
++/-- **One restricted prime sampler** is within `e^{-n}` of the uniform class prime.
++
++**Proof sketch.** `statClose_rejectBlocksL` with the class test and `k = B = n`, `T = 4n²`; the
++acceptance probability is `|C|/2^n ≥ 1/(4n)` (`rabin_uprob_C`, the density `hC`), so the
++distance is at most `(1 − 1/(4n))^{4n·n} ≤ e^{-n}` (`pow_le_pow_left₀`,
++`one_sub_one_div_pow_le_exp_neg`). -/
+ private theorem rabin_statClose_sampler (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (hn : 1 ≤ n)
+     (hC : 2 ^ n ≤ 4 * n * Fintype.card (rabin_C P n)) {d : ℕ} (hd : d.Prime ∧ P d) (hdk : d < 2 ^ n) :
+     StatClose (fun r : Fin (4 * n ^ 2 * n) → Bool =>
+@@ -2173,8 +2212,11 @@ private theorem rabin_genCoinsEquiv_ofFn (G : NUPPT) (hG : G.coins = rabinGenCoi
+   exact List.ofFn_fin_append _ _
+ 
+ /-- **The primes of a Rabin generator**: the two restricted samplers' values `(a, b)` if they
+-differ, the fallback pair otherwise (`rabinGenParams`; its other tests hold for every value,
+-`rabin_samplePrimePL_spec`). -/
++differ, the fallback pair otherwise.
++
++**Proof sketch.** Both values are primes of the class below `2^m` (`rabin_samplePrimePL_spec`),
++so the test of `rabinGenParams` holds iff `a ≠ b`; split on it and read the primes through
++`DistinctPrimes.p_eq`/`q_eq`. -/
+ private theorem rabin_genParams_pq (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams P (max m 3))
+     (m : ℕ) (r : List Bool) :
+     ((rabinGenParams P dflt m r).z.p, (rabinGenParams P dflt m r).z.q) =
+@@ -2210,8 +2252,14 @@ private theorem rabin_zOf_pq {n : ℕ} (z0 : DistinctPrimes n) (ab : ℕ × ℕ)
+ private def rabin_idx {n : ℕ} (z : DistinctPrimes n) : List Bool := natToList (2 * n) (z.p * z.q)
+ 
+ /-- **The index of a Rabin generator on split coins** (`n ≥ 3`): the numeral of `pq` for the
+-selection `rabin_zOf z0` of the two restricted samplers' values, where `z0` carries the fallback
+-pair. -/
++selection `rabin_X P z0 s` of the two restricted samplers' values, where `z0` carries the
++fallback pair.
++
++**Proof sketch.** With `max n 3 = n` the segments of `ofFn s₁ ++ ofFn s₂` are `ofFn s₁` and
++`ofFn s₂` (`List.take_left'`, `List.drop_left'`, `List.take_of_length_le`); each sampled numeral
++reads as the sampler's value, a class prime below `2^n` (`rabin_samplePrimePL_spec`); the
++generator's primes (`rabin_genParams_pq`) and the selection's (`rabin_zOf_pq`) then agree, since
++both tests reduce to `a ≠ b`. -/
+ private theorem rabin_genIndex (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams P (max m 3))
+     {n : ℕ} (hn : 3 ≤ n) (z0 : DistinctPrimes n) (h1 : z0.p = (dflt n).z.p) (h2 : z0.q = (dflt n).z.q)
+     (s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool)) :
+@@ -2342,8 +2390,11 @@ private theorem rabin_inner_odd (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : Di
+     rw [rabin_unitsCongr_val, ← rabin_enc_of_dec ha, rabinEnc]
+     exact listToNat_natToList (lt_of_lt_of_le (ZMod.val_lt _) (rabinMod_le _))
+ 
+-/-- The odd-prime density: `2^n ≤ 4n · #{p ∈ Π_n : p ≠ 2}` for `n ≥ 2` (from
+-`two_pow_le_two_mul_card_primes`, `|Π_n| ≥ 2` and `Fintype.card_subtype_compl`). -/
++/-- The odd-prime density: `2^n ≤ 4n · #{p ∈ Π_n : p ≠ 2}` for `n ≥ 2`.
++
++**Proof sketch.** `#{p ≠ 2} = |Π_n| − #{p = 2} ≥ |Π_n| − 1` (`Equiv.subtypeSubtypeEquivSubtypeInter`,
++`Fintype.card_subtype_compl`), `|Π_n| ≥ 2` (the primes `2`, `3`), so
++`2^n ≤ 2n|Π_n| ≤ 4n(|Π_n| − 1)` (`two_pow_le_two_mul_card_primes`). -/
+ private theorem rabin_card_odd (n : ℕ) (hn : 2 ≤ n) :
+     2 ^ n ≤ 4 * n * Fintype.card (rabin_C (· ≠ 2) n) := by
+   have h := two_pow_le_two_mul_card_primes n hn
+@@ -2387,24 +2438,26 @@ private def rabin_z35 {n : ℕ} (hn : 3 ≤ n) : DistinctPrimes n :=
+ `n ≥ 3`, the inversion probability of `A` against the Rabin collection is at most twice the
+ factoring probability of `A'` on odd moduli plus the statistical error.
+ 
+-**Proof sketch.** At a generated index `N = pq` (`rabinCollection_index`), the domain is
+-`Z_N^*` and `f_N(x)` is the numeral of `(x²).val` (`val_units_pow`), so the event is "`A`
+-decodes to a root of `x²`". With `Z(y, r) := rabinDec N (A(1^n, ⟨N, y⟩; r))`, the
+-symmetry lemma `rabin_symmetry` (odd `p ≠ q`) shows that with probability at least half of it the
+-root `z` differs from `±x`, and then `gcd((x − z).val, N) ∈ {p, q}`
+-(`NumberTheory.gcd_sub_eq_prime_of_sq_eq_sq`), which `rabinFactorStep` outputs as an
+-`n`-bit numeral (`rabinFactorer_runAt`, `NUPPT.inverter_eq_some_iff`, `natToBits_bitsToNat`).
+-The unit `x` of `A'` is sampled by `unitSampleStr` within `e^{-n}` of uniform
+-(`statClose_rejectBlocksL`, as in `rsaCollection_sampleClose`; `StatClose.abs_uprob_sub_le_prod`),
+-paid twice through the factor `2` of the symmetry step, and the law of `N` under `oddGen` is
+-within `2e^{-n} + 4n/2^n` of the uniform *distinct* odd pair: each restricted sampler is
+-`statClose_rejectBlocksL` with the fallback prime of `oddDefault` and the odd-prime density
+-`(|Π_n| − 1)/2^n ≥ 1/(4n)` for `n ≥ 3` (`two_pow_le_two_mul_card_primes`), `4n²` trials
+-(`one_sub_one_div_pow_le_exp_neg`), then `StatClose.prod` and `StatClose.map` through the
+-validity test, whose pushforward of the uniform odd pair differs from the uniform distinct odd
+-pair by the diagonal `uprob_diag` on the restricted class, `1/(P − 1) ≤ 2/P` (`P ≥ 2`) with
+-`one_div_card_primes_le` (run-3 audit P7-3); `uexp_prod`/`uprob_prod` reorganize the coins
+-(total `rabinErr n`). -/
++**Proof sketch.** The generator's coins split into the two prime segments
++(`rabin_genCoinsEquiv`, `HardcoreBit.uexp_comp_equiv`), and the index is `⟦pq⟧_{2n}` for the
++selection of the two restricted samplers' values (`rabinCollection_index`, `rabin_genIndex`).
++(i) The law of that selection is within `2e^{-n} + 4n/2^n` of the uniform distinct odd pair: each
++restricted sampler is `statClose_rejectBlocksL` with the fallback prime of `oddDefault` and the
++odd-prime density `#{p ≠ 2}/2^n ≥ 1/(4n)` for `n ≥ 2` (`two_pow_le_two_mul_card_primes`), `4n²`
++trials (`one_sub_one_div_pow_le_exp_neg`), then `StatClose.prod`, `StatClose.map` through the
++selection, and the diagonal of the uniform odd pair, `1/(P − 1) ≤ 4n/2^n` (`uprob_diag`; run-3
++audit P7-3; `rabin_pairLaw`). The inversion probability at an index is a probability over coins
++depending on the index, so its average moves by at most that distance (`rabin_uexp_le`, the
++uniform-family device). (ii) At a uniform distinct odd pair the domain is `Z_N^*`, `f_N(x)` is
++the numeral of `x²` (`val_units_pow`), and the event is "`A` decodes to a root of `x²`". With
++`Z(y, r) := rabinDec N (A(1^n, ⟨N, y⟩; r))` transported to `Z_{pq}^*`, the symmetry lemma
++`rabin_symmetry` (odd `p ≠ q`) bounds it by twice the event "the root differs from `±x`", and
++then `gcd((x − z).val, N) ∈ {p, q}` (`NumberTheory.gcd_sub_eq_prime_of_sq_eq_sq`), which
++`rabinFactorStep` outputs as an `n`-bit numeral (`rabinFactorer_runAt`,
++`NUPPT.inverter_eq_some_iff`, `bitsToNat_natToBits`). The unit `x` of `A'` is sampled by
++`unitSampleStr` within `e^{-n}` of uniform (S3, `StatClose.abs_uprob_sub_le_prod`), paid twice
++through the factor `2` (`rabin_core`). (iii) Averaging over the pair, `uprob_prod` gives
++`2 · oddFactorProb (rabinFactorer H A) n + 2e^{-n}`; with (i) the total error is `rabinErr n`. -/
+ theorem rabinCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 3 ≤ n) :
+     (rabinCollection H).invProbAt A n ≤ 2 * oddFactorProb (rabinFactorer H A) n + rabinErr n := by
+   set z0 := rabin_z35 hn with hz0d
+@@ -2761,7 +2814,13 @@ private theorem rabin_listToNat_crtW (pw qw yw : List Bool) :
+     rw [← rabin_listToNat_mulStr]
+     exact (listToNat_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+ 
+-/-- The CRT word is polynomial-time (`H.divMod`, `H.add`, `H.modExp`, `H.xgcd`, `H.mul`), each step in applied form and folded by `unfold`. -/
++/-- The CRT word is polynomial-time.
++
++**Proof sketch.** Each word is one bundle field on pairs of earlier words, in applied form
++(`rabin_comp`) and folded into its definition by `unfold`: the exponent (`H.divMod`, `H.add`),
++the power (`H.modExp`, with the zero padding `rabin_zpad_poly`), the inverse (`H.xgcd` behind
++`polyTimeComputable_prepend [false]`), the summands and `N` (`H.mul`), the sum (`H.add`) and
++the final residue (`H.divMod`). -/
+ private theorem rabin_crtW_poly (H : ArithmeticFP) {fp fq fy : List Bool → List Bool}
+     (hp : PolyTimeComputable fp) (hq : PolyTimeComputable fq) (hy : PolyTimeComputable fy) :
+     PolyTimeComputable fun z => rabin_crtW (fp z) (fq z) (fy z) := by
+@@ -2863,12 +2922,15 @@ private theorem rabin_blumInvNat_cast_right {p q : ℕ} [NeZero q] (hcop : p.Cop
+   rw [ZMod.coe_mul_inv_eq_one _ hcop, mul_one]
+ 
+ /-- **The CRT formula is the residue root** (the route of `blumInv_spec`, without reading
+-`blumSqrt`): for a Blum modulus `M = pq` and `y ∈ QR_M`, the unit
+-`s = crtUnits⁻¹(y_p^{p/4+1}, y_q^{q/4+1})` is a residue (`pow_div_four_succ_mem_QR`,
+-`mem_QR_mul_iff`) with `s² = y` (`sq_pow_div_four_succ`, `sq_crtUnits_symm`), and its residue is
+-`blumInvNat p q y.val`: both reduce to the same pair modulo `p` and `q` (`crtUnits_fst`/`_snd`,
+-the two lemmas above), hence agree modulo `pq` by injectivity of `ZMod.chineseRemainder`.
+-Stated for a modulus `M` equal to `pq` so that it applies at `blumMod i`. -/
++`blumSqrt`): for a Blum modulus `M = pq` and `y ∈ QR_M` there is a residue `s` with `s² = y`
++whose residue is `blumInvNat p q y.val`.
++
++**Proof sketch.** Take `s = crtUnits⁻¹(y_p^{p/4+1}, y_q^{q/4+1})`: it is a residue
++(`pow_div_four_succ_mem_QR`, `mem_QR_mul_iff`) with `s² = y` (`sq_pow_div_four_succ`,
++`sq_crtUnits_symm`), and the CRT sum reduces modulo `p` and `q` to the same pair
++(`rabin_blumInvNat_cast_left`/`_right`, `crtUnits_fst`/`_snd`, `ZMod.cast_eq_val`), hence agrees
++with `s` modulo `pq` by injectivity of `ZMod.chineseRemainder` (`ZMod.val_natCast`). Stated for
++a modulus `M` equal to `pq` (`subst`) so that it applies at `blumMod i`. -/
+ private theorem rabin_blumInvNat_spec {p q : ℕ} [hp : Fact p.Prime] [hq : Fact q.Prime] (hpq : p ≠ q)
+     (hp3 : p % 4 = 3) (hq3 : q % 4 = 3) (M : ℕ) (hM : M = p * q) (y : (ZMod M)ˣ) (hy : y ∈ QR M) :
+     ∃ x : (ZMod M)ˣ, x ∈ QR M ∧ x ^ 2 = y ∧ (x : ZMod M).val = blumInvNat p q (y : ZMod M).val := by
+@@ -3153,10 +3215,12 @@ private theorem rabin_pushesUniform_sqTo {p q : ℕ} [Fact p.Prime] [Fact q.Prim
+   exact pushesUniform_sqTo hpq hp2 hq2
+ 
+ /-- **The Blum sampler at a generated index, decoded, is within `e^{-n}` of uniform on
+-`QR_N`**: S3 at `N = blumMod i = pq` mapped through `v ↦ blumDec i ⟦v² mod N⟧` sends the uniform
+-unit `x` to `some (sqTo x)` (`val_units_pow`, `blumDec_blumEnc`); squaring pushes uniform units
+-to uniform residues (`pushesUniform_sqTo`, `statClose_of_pushesUniform`), and
+-`StatClose.trans` adds `0`. -/
++`QR_N`**.
++
++**Proof sketch.** S3 at `N = blumMod i = pq` mapped through `v ↦ blumDec i ⟦v² mod N⟧` sends
++the uniform unit `x` to `some (sqTo x)` (`val_units_pow`, `blumDec_blumEnc`); squaring pushes
++uniform units to uniform residues (`pushesUniform_sqTo`, `statClose_of_pushesUniform`,
++`StatClose.map`), and `StatClose.trans` adds `0`. -/
+ private theorem rabin_statClose_blumDec (m : ℕ) (R : RabinParams (· % 4 = 3) m) (n : ℕ)
+     (hk : Nat.size (R.z.p * R.z.q) ≤ rsaBlock.eval n) :
+     StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+@@ -3356,8 +3420,13 @@ private theorem rabin_coins_blumGen (H : ArithmeticFP) :
+ 
+ /-- **The Blum generator's law, averaged** (`n ≥ 3`, `BlumDensity`): an average over the
+ generator's index of a probability `Pr[Q i]` differs from the average at the uniform distinct
+-Blum pair by at most `2e^{-n} + 4n/2^n`, in both directions (`rabin_pairLaw`, `rabin_genIndex`,
+-`rabin_uexp_le`). -/
++Blum pair by at most `2e^{-n} + 4n/2^n`, in both directions.
++
++**Proof sketch.** Split the generator's coins into the two prime segments
++(`rabin_genCoinsEquiv`, `HardcoreBit.uexp_comp_equiv`); the index is `rabin_idx` of the
++selection `rabin_X` (`rabinBlumTrapdoor_index`, `rabin_genIndex`, fallback `(3, 7)`); the pair law
++(`rabin_pairLaw` with `rabin_card_blum`) and `rabin_uexp_le` applied to it and to its symmetric
++give both inequalities. -/
+ private theorem rabin_blum_uexp (H : ArithmeticFP) (hD : BlumDensity) {n : ℕ} (hn : 3 ≤ n)
+     (Aux : List Bool → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) :
+     |uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>
+@@ -3401,17 +3470,16 @@ Algorithm 62.9]: for `n ≥ 3` and under the density hypothesis, the inversion p
+ `A` against `rabinBlumTrapdoor` is at most twice the Blum factoring probability of `A'`
+ plus the statistical error.
+ 
+-**Proof sketch.** As `rabinCollection_invProbAt_le`: the ideal `x ← QR_N` gives `y = x²`
+-uniform on `QR_N` (squaring is a bijection of `QR_N`, `blumPermAt`), and the reduction's
+-`y = r²` for a uniform unit `r` has the same law (`pushesUniform_sqTo`); the answer `z` of
+-`A` decodes to a residue root of `y`, and `rabin_symmetry` (with `Z` the decoded answer,
+-coerced to `Z_N^*`) gives `z ∉ {±r}` half the time, hence a factor by
+-`gcd_sub_eq_prime_of_sq_eq_sq`. The law of `N` under `blumGen` is within `2e^{-n} + 4n/2^n`
+-of the uniform distinct Blum pair by `statClose_rejectBlocksL` with the fallback prime of
+-`blumDefault` and the density `hD` (acceptance `≥ 1/(4n)` per trial, `4n²` trials,
+-`one_sub_one_div_pow_le_exp_neg`), `StatClose.prod`, `StatClose.map` through the validity test
+-and the diagonal `1/B ≤ 4n/2^n` from `hD` (`uprob_diag`; run-3 audit P7-3); the unit sampler's
+-`e^{-n}` is paid twice (total `rabinErr n`). -/
++**Proof sketch.** As `rabinCollection_invProbAt_le`, with the generator's law first: the law of
++the selected Blum pair is within `2e^{-n} + 4n/2^n` of the uniform distinct Blum pair
++(`rabin_pairLaw` with the fallback `(3, 7)` of `blumDefault`, the density `hD` for the
++acceptance `≥ 1/(4n)` per trial and the diagonal `1/B ≤ 4n/2^n`; `rabin_blum_uexp`). At a
++uniform distinct Blum pair, reparametrize the ideal `y ← QR_N` by `w = y²` (squaring is a
++bijection of `QR_N`, `blumPermAt`): `A` receives `w` and wins iff it answers a residue root of
++`w` (`blumF_perm`, `blumDec_blumEnc`); the uniform residue `w` is the square `r²` of a uniform
++unit (`pushesUniform_sqTo`), and `rabin_core` (`rabin_symmetry`, `gcd_sub_eq_prime_of_sq_eq_sq`,
++S3 with its `e^{-n}` paid twice) bounds the success by `2F + 2e^{-n}` (`rabin_inner_blum`); then
++`uprob_prod` and the total error `rabinErr n`. -/
+ theorem rabinBlumTrapdoor_invProbAt_le (H : ArithmeticFP) (hD : BlumDensity) (A : NUPPT) {n : ℕ}
+     (hn : 3 ≤ n) :
+     (rabinBlumTrapdoor H).toCollection.invProbAt A n ≤
+@@ -3444,7 +3512,14 @@ Blum primes and the arithmetic hypotheses, the Rabin collection on Blum integers
+ `rabinBlumTrapdoor_invProbAt_le`, `blumFactoring_of_factoring hD hF`, `negligible_rabinErr`
+ and `Negligible.mono` (sampling: `rabinBlumTrapdoor_sampleClose`).
+ 
+-**Deviation:** factoring assumption restricted to Blum moduli through the density hypothesis. -/
++**Deviation:** factoring assumption restricted to Blum moduli through the density hypothesis.
++
++**Proof sketch.** Through `TrapdoorCollection.oneWay_iff` (P2): sampling is
++`rabinBlumTrapdoor_sampleClose`; for every `A` and `n ≥ 3`,
++`0 ≤ invProbAt A n ≤ 2 · blumFactorProb (rabinFactorer H A) n + rabinErr n`
++(`rabinBlumTrapdoor_invProbAt_le`, `Collection.invProbAt_nonneg`), negligible by
++`blumFactoring_of_factoring hD hF` (`blumFactoringAssumption_iff`), `Negligible.const_mul`,
++`negligible_rabinErr` and `Negligible.add`; conclude by `Negligible.mono`. -/
+ theorem rabinBlumTrapdoor_oneWay (H : ArithmeticFP) (hD : BlumDensity) (hF : FactoringAssumption) :
+     (rabinBlumTrapdoor H).OneWay := by
+   rw [TrapdoorCollection.oneWay_iff]
+@@ -3510,7 +3585,12 @@ private theorem rabin_rOut_eq (A : NUPPT) (z : List Bool) : rabin_rOut A z = rab
+   · rw [if_pos (by simpa using hc), if_pos hc, rabin_trunc_eq, rabin_listToNat_crtW, hQ]
+   · rw [if_neg (by simpa using hc), if_neg hc]
+ 
+-/-- The root finder's string computation is polynomial-time (`A.polyTimeComputable_output` on `NUPPT.polyTimeComputable_layout`, `H.divMod`, `H.mul`, two `H.le`, `rabin_crtW_poly`, `polyTimeComputable_ite`). -/
++/-- The root finder's string computation is polynomial-time.
++
++**Proof sketch.** The answer of `A` on the re-laid-out input (`A.polyTimeComputable_output`,
++`NUPPT.polyTimeComputable_layout`), the cofactor (`H.divMod`), the product (`H.mul`) and the
++test (two `H.le`, `polyTimeComputable_and`), the truncated CRT word (`rabin_crtW_poly`,
++`rabin_trunc_poly`), selected by `polyTimeComputable_ite`; each folded by `unfold`. -/
+ private theorem rabin_rOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rabin_rOut A) := by
+   have hw := NUPPT.polyTimeComputable_inArg
+   have hN := rabin_comp polyTimeComputable_pairFstD hw
+@@ -3674,12 +3754,13 @@ private theorem rabin_inner_inv (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : Di
+ probability of `rabinBlumInverter A` plus the statistical error.
+ 
+ **Proof sketch.** When `A(1^n, N; r)` reads as `p` or `q`, `q' = N / p'` is the other prime
+-and `blumInvNat p' q' y.val = (blumSqrt y).val` (the CRT argument of `blumInv_spec`), the
+-residue root of `y`, which `blumDec` decodes and which is `(blumPermAt N).symm y`; hence
+-`A'` wins for every `y` (`rabinBlumInverter_runAt`, `rabinBlumInverter_coinsEquiv`,
+-`uprob_mono`). The ideal uniform Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the
+-generator's law (`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
+-`StatClose.abs_uprob_sub_le_prod`, `uexp_prod`; run-3 audit P7-3). -/
++and `blumInvNat p' q' y.val` is the residue of a residue root of `y` (the CRT argument of
++`blumInv_spec`, `rabin_blumInvNat_spec`), which `blumDec` decodes to a preimage of `y`
++(`blumDec_blumEnc`, `blumF_perm`); hence `A'` wins for every `y` (`rabinBlumInverter_runAt`,
++`rabinBlumInverter_coinsEquiv`, `uprob_fst`, `uprob_mono`; `rabin_inner_inv`), and averaging
++over the uniform distinct Blum pair gives `blumFactorProb A n` (`uprob_prod`). The ideal uniform
++Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the generator's law (`rabin_blum_uexp`:
++`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n`; run-3 audit P7-3). -/
+ theorem blumFactorProb_le_invProbAt (H : ArithmeticFP) (hD : BlumDensity) (A : NUPPT) {n : ℕ}
+     (hn : 3 ≤ n) :
+     blumFactorProb A n ≤ (rabinBlumTrapdoor H).toCollection.invProbAt (rabinBlumInverter H A) n + rabinErr n := by
+-- 
+2.43.0
+
