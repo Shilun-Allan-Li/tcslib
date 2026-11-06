@@ -181,6 +181,10 @@ namespace Collection
 /-- The index `i` output by `Gen(1^n; r)`: the first component of `⟨i, t⟩`. -/
 def index (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairFstD (F.gen.runAt n [] r)
 
+/-- The defining equation of `index`: `F.index n r = pairFstD (F.gen.runAt n [] r)`. -/
+theorem index_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
+    F.index n r = pairFstD (F.gen.runAt n [] r) := rfl
+
 /-- The trapdoor `t` output by `Gen(1^n; r)`: the second component [PS10, Definition 56.1 (2)]. -/
 def trap (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairSndD (F.gen.runAt n [] r)
 
@@ -193,6 +197,11 @@ def SampleClose (F : Collection) (δ : ℕ → ℝ) : Prop :=
   ∀ n (r : F.gen.Coins n),
     StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
       (fun x : F.D (F.index n r) => some x) (δ n)
+
+/-- The defining property of `SampleClose` (its body: closeness of every decoded sampler). -/
+theorem sampleClose_iff (F : Collection) (δ : ℕ → ℝ) : F.SampleClose δ ↔ ∀ n (r : F.gen.Coins n),
+    StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
+      (fun x : F.D (F.index n r) => some x) (δ n) := Iff.rfl
 
 /-- The inversion experiment of [PS10, Definition 41.1 (4)]:
 `Pr[i ← Gen(1^n); x ← D_i; y ← f_i(x) : f_i(A(1^n, i, y)) = y]`: the average over the
@@ -207,6 +216,12 @@ noncomputable def invProbAt (F : Collection) (A : NUPPT) (n : ℕ) : ℝ :=
       ∃ x', F.decD (F.index n r)
           (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧
         F.f (F.index n r) x' = F.f (F.index n r) z.1
+
+/-- The defining equation of `invProbAt` (its body: the averaged inversion probability). -/
+theorem invProbAt_eq (F : Collection) (A : NUPPT) (n : ℕ) :
+    F.invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n =>
+      ∃ x', F.decD (F.index n r) (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2)
+        = some x' ∧ F.f (F.index n r) x' = F.f (F.index n r) z.1 := rfl
 
 /-- A *collection of one-way functions* [PS10, Definition 41.1]: the sampler is negligibly
 close to uniform (clause (2)) and every non-uniform PPT inverts with negligible probability

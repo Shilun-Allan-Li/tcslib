@@ -28,6 +28,15 @@ numeric models of `ThreeColoring/Machines.lean` and the unary FP toolkit of
   `sampleEdgeIdx`, `edgeOf`), which is what `ThreeColoring/ProtocolProofs.lean` uses to identify
   them with the next-message functions of `Protocol.lean`.
 
+## Main definitions
+
+* `TCSlib.Cryptography.ColMachines.proverStr`, `ColMachines.commitStr`, `ColMachines.openStr` —
+  the one-iteration prover as a string function.
+* `TCSlib.Cryptography.ColMachines.verifierStr`, `ColMachines.eOf`, `ColMachines.checkStr`,
+  `ColMachines.verdictStr` — the one-iteration verifier.
+* `TCSlib.Cryptography.ColMachines.proverRepStr`, `ColMachines.verifierRepStr` — the parties of
+  the `n|E|`-fold protocol.
+
 ## Main results
 
 * `TCSlib.Cryptography.ColMachines.proverStr_poly`, `ColMachines.verifierStr_poly`,
@@ -214,7 +223,14 @@ noncomputable def checkStr (L n m : ℕ) (x com opn : List Bool) (e : ℕ) : Boo
     Com (pairEncode (padTo n (encColorOfVal a)) ri) = pairFstD (pairSndD^[j / n] com) ∧
     Com (pairEncode (padTo n (encColorOfVal b)) rj) = pairFstD (pairSndD^[j % n] com) ∧ a ≠ b)
 
-/-- The check is polynomial-time in its (polynomial-time, unary) components. -/
+/-- The check is polynomial-time in its (polynomial-time, unary) components.
+
+**Proof sketch.** The edge position `j = nthTrue x (n²) (e mod m)` is unary by `modNum_poly`
+and `nthTrue_poly`, its endpoints `j / n`, `j mod n` by `divNum_poly`, `modNum_poly`; the two
+colours by `colorVal_poly` and the randomness by the pair projections. The five conjuncts are
+`eqTest_poly` on the randomness lengths, `polyTimeComputable_pairEq` of `Com` on the padded
+openings against the selected commitments (`padTo_poly`, `iterSnd_poly`), and `not_poly` of
+`eqTest_poly` on the colours, combined by `polyTimeComputable_and`. -/
 theorem checkStr_poly (hCom : PolyTimeComputable Com)
     {L n m : List Bool → ℕ} (hL : PolyTimeComputable fun w => List.replicate (L w) true)
     (hn : PolyTimeComputable fun w => List.replicate (n w) true)
@@ -308,7 +324,13 @@ noncomputable def proverRepStr (w : List Bool) : List Bool :=
       [] (((NUPPT.inCoins w).drop (h / 2 * c)).take c))
   else []
 
-/-- The prover of the repeated protocol is polynomial-time when `Com` is. -/
+/-- The prover of the repeated protocol is polynomial-time when `Com` is.
+
+**Proof sketch.** The iteration `t = histLen / 2` and the parity test are unary arithmetic on
+`histLen_poly` (`divNum_poly`, `modNum_poly`); the coin block is a drop and a truncation of the
+coin slot (`polyTimeComputable_pairDropPoly`, `truncate_poly`); the last message is
+`iterSnd_poly`; the layout is `NUPPT.polyTimeComputable_layout`, the one-iteration prover
+`proverStr_poly`; and the test `t < n m` is `ltTest_poly` with `polyTimeComputable_ite`. -/
 theorem proverRepStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (proverRepStr Com ℓ) := by
   have hh := histLen_poly.comp argM_poly
   have ht : PolyTimeComputable fun w => List.replicate (histLen (argM w) / 2) true := by

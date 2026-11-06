@@ -57,6 +57,11 @@ definition. -/
 def Negligible (μ : ℕ → ℝ) : Prop :=
   ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c
 
+/-- The defining property of `Negligible`: `Negligible μ` iff for every `c` there is `n₀` with
+`|μ n| < 1 / n^c` for all `n ≥ n₀`. -/
+theorem negligible_iff (μ : ℕ → ℝ) :
+    Negligible μ ↔ ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c := Iff.rfl
+
 /-- A function `μ` is noticeable when there are `c` and `n₀` with `μ n > 1 / n^c` for all
 `n ≥ n₀`. [Gar26, Definition 1.3]. -/
 def Noticeable (μ : ℕ → ℝ) : Prop :=

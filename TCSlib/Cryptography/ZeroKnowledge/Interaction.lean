@@ -122,6 +122,9 @@ namespace Strategy
 /-- The number of random bits of a strategy at common-input length `n`. -/
 def coinLen (S : Strategy) (n : ℕ) : ℕ := S.coins.eval n
 
+/-- The defining equation of `coinLen`: `S.coinLen n = S.coins.eval n`. -/
+theorem coinLen_eq (S : Strategy) (n : ℕ) : S.coinLen n = S.coins.eval n := rfl
+
 /-- The random tape of a strategy at common-input length `n`: `coinLen n` uniform bits. -/
 abbrev Coins (S : Strategy) (n : ℕ) : Type := Fin (S.coinLen n) → Bool
 
@@ -172,6 +175,12 @@ systems require it, ruling G3-3 of gate 03). -/
 def Efficient (S : Strategy) : Prop :=
   ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
     ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
+
+/-- The defining property of `Efficient`: `S.Efficient` iff some uniform `NUPPT` `A` with
+`S.coins = A.coins` computes every next message: `S.next x z r hist = (ofNUPPT A).next …`. -/
+theorem efficient_iff (S : Strategy) :
+    S.Efficient ↔ ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
+      ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist := Iff.rfl
 
 /-- Non-vacuity of `Strategy.Efficient`: the strategy of a uniform machine is efficient. -/
 theorem ofNUPPT_efficient (A : NUPPT) (hA : A.Uniform) : (ofNUPPT A).Efficient :=
@@ -279,6 +288,12 @@ structure View where
 distinguishers and produced by simulators in the zero-knowledge definitions). -/
 def View.encode (v : View) : List Bool :=
   pairEncode (pairEncode v.x v.z) (pairEncode v.r (Strategy.encodeMsgs v.received))
+
+/-- The defining equation of `View.encode` on a constructed view:
+`View.encode ⟨x, z, r, msgs⟩ = ⟨⟨x, z⟩, ⟨r, encodeMsgs msgs⟩⟩`. -/
+theorem View.encode_mk (x z r : List Bool) (received : List (List Bool)) :
+    View.encode ⟨x, z, r, received⟩ =
+      pairEncode (pairEncode x z) (pairEncode r (Strategy.encodeMsgs received)) := rfl
 
 /-- The output of a party on a view [PS10, §4.4, `out(v)`] (Def-115.d): its next-message
 function on the complete history. -/
@@ -394,6 +409,15 @@ def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bo
 (Def-115.b). -/
 def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+
+/-- The view of the verifier `V'` in `π.withV V'`: the common input, `z`, `V'`'s tape and the
+messages `V'` received in the execution of `π.P` against `V'` (the analogue of `outV_withV`). -/
+theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool)
+    (r : (π.withV V').ExecCoins (π.withV V').P x) :
+    (π.withV V').viewV x y z r =
+      ⟨x, z, List.ofFn r.2,
+        (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+          (π.rounds.eval x.length)).2⟩ := rfl
 
 /-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
 (Def-115.b). -/

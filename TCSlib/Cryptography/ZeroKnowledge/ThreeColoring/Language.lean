@@ -85,6 +85,11 @@ of every edge receive different colours (`c : Fin n → Fin 3`, colours `{1, 2, 
 def ProperColoring {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Prop :=
   ∀ u v, G u v = true → c u ≠ c v
 
+/-- The defining property of `ProperColoring`: `ProperColoring G c` iff `c u ≠ c v` for every
+edge `G u v = true`. -/
+theorem ProperColoring_iff {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) :
+    ProperColoring G c ↔ ∀ u v, G u v = true → c u ≠ c v := Iff.rfl
+
 instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColoring G c) := by
   unfold ProperColoring
   infer_instance
@@ -115,6 +120,12 @@ def L3COL : Language Bool := {x | ∃ (n : ℕ) (G : Graph n), x = encGraph G �
 def R3COL (x y : List Bool) : Prop :=
   ∃ (n : ℕ) (G : Graph n) (c : Fin n → Fin 3),
     x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c
+
+/-- The defining property of `R3COL`: `R3COL x y` iff `x = encGraph G` and `y = encColoring c`
+for some graph `G` on `n` vertices and some proper 3-colouring `c` of `G`. -/
+theorem R3COL_iff (x y : List Bool) :
+    R3COL x y ↔ ∃ (n : ℕ) (G : Graph n) (c : Fin n → Fin 3),
+      x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c := Iff.rfl
 
 /-- `x ∈ 3COL` iff `x` has a witness for `R_3COL`. -/
 theorem mem_L3COL_iff (x : List Bool) : x ∈ L3COL ↔ ∃ y, R3COL x y := by
@@ -290,6 +301,11 @@ position `t k + j`), the first accepted value in `Fin m` (`rejectionSample`, D10
 def sampleIdx (m k T : ℕ) (r : List Bool) : Option (Fin m) :=
   rejectionSample m k T fun t j => r.getD (t * k + j) false
 
+/-- The defining equation of `sampleIdx`: `rejectionSample` on the trials
+`(t, j) ↦ r.getD (t k + j) false`. -/
+theorem sampleIdx_eq_rejectionSample (m k T : ℕ) (r : List Bool) :
+    sampleIdx m k T r = rejectionSample m k T fun t j => r.getD (t * k + j) false := rfl
+
 /-- The six permutations of the three colours enumerated by `Fin 6`. -/
 noncomputable def perm3Equiv : Fin 6 ≃ Equiv.Perm (Fin 3) :=
   (Fintype.equivFinOfCardEq (by rw [Fintype.card_perm, Fintype.card_fin]; rfl)).symm
@@ -358,6 +374,13 @@ private theorem sampleIdx_ofFn (m k T : ℕ) (r : Fin (T * k) → Bool) :
   congr 1
   funext t j
   exact ofFn_getD_tape r t j
+
+/-- **The tape lemma of `sampleIdx`** (public form): on a tape of exactly `T k` bits,
+`sampleIdx` is `rejectionSample` on the trial table `(t, j) ↦ r (finProdFinEquiv (t, j))`, bit
+`j` of trial `t` being tape bit `t k + j`. -/
+theorem sampleIdx_ofFn_eq_rejectionSample (m k T : ℕ) (r : Fin (T * k) → Bool) :
+    sampleIdx m k T (List.ofFn r) = rejectionSample m k T fun t j => r (finProdFinEquiv (t, j)) :=
+  sampleIdx_ofFn m k T r
 
 /-- The permutation sampler is within `(1/4)^T` of a uniform permutation of the colours (D10).
 

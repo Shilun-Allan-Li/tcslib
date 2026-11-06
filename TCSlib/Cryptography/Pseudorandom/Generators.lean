@@ -73,6 +73,10 @@ asymptotic layer. -/
 noncomputable def prgAdv [Fintype γ] (G : σ → γ) (D : γ → ρ → Bool) : ℝ :=
   distAdv G (id : γ → γ) D
 
+/-- The defining equation of `prgAdv`: `prgAdv G D = distAdv G id D`. -/
+theorem prgAdv_eq [Fintype γ] (G : σ → γ) (D : γ → ρ → Bool) :
+    prgAdv G D = distAdv G (id : γ → γ) D := rfl
+
 /-- Re-encoding the output of a generator by a bijection `e` does not change PRG
 advantages: the advantage of `D` against `e ∘ G` is that of `D ∘ e` against `G`. -/
 theorem prgAdv_comp_equiv [Fintype γ] [Fintype δ] (e : γ ≃ δ) (G : σ → γ)

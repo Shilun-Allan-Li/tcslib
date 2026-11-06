@@ -123,6 +123,12 @@ section StatClose
 
 variable {σ τ υ γ γ' : Type*} [Fintype σ] [Fintype τ] [Fintype υ]
 
+/-- The defining property of `StatClose`: `StatClose X Y δ` iff
+`|Pr_s[T (X s)] − Pr_t[T (Y t)]| ≤ δ` for every test set `T`. -/
+theorem statClose_iff (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
+    StatClose X Y δ ↔ ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
+  Iff.rfl
+
 /-- Unfolding: for a `δ`-close pair the probability of any test set moves by at most `δ`. -/
 theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
     (T : γ → Prop) : |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
@@ -454,6 +460,12 @@ def firstHit {α : Type*} (E : α → Prop) [DecidablePred E] {T : ℕ} (xs : Fi
 section FirstHit
 
 variable {α : Type*} (E : α → Prop) [DecidablePred E] {T : ℕ}
+
+/-- The defining equation of `firstHit`: the first draw satisfying `E`,
+`firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none`. -/
+theorem firstHit_eq (xs : Fin T → α) :
+    firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none :=
+  rfl
 
 /-- No hit exactly when no draw satisfies `E`. -/
 theorem firstHit_eq_none_iff (xs : Fin T → α) : firstHit E xs = none ↔ ∀ t, ¬ E (xs t) := by

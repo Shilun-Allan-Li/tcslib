@@ -159,6 +159,9 @@ def timeBound (m : ℕ) : ℕ := A.Ct * (m + 1) ^ A.ct
 /-- The number of coins of `A` at parameter `n`. -/
 def coinLen (n : ℕ) : ℕ := A.coins.eval n
 
+/-- The defining equation of `coinLen`: `A.coinLen n = A.coins.eval n`. -/
+theorem coinLen_eq (n : ℕ) : A.coinLen n = A.coins.eval n := rfl
+
 /-- The advice-length bound of `A` at parameter `n`. -/
 def adviceLen (n : ℕ) : ℕ := A.adv.eval n
 
@@ -198,6 +201,11 @@ theorem output_length_le (z : List Bool) : (A.output z).length ≤ A.timeBound z
 exactly as the text writes `A(1^n, y)` [PS10, Definition 27.3]. -/
 def advInput (n : ℕ) (y : List Bool) : List Bool := pairEncode (List.replicate n true) y
 
+/-- The defining equation of `advInput`: `advInput n y = pairEncode (List.replicate n true) y`
+(the pair `⟨1^n, y⟩`). -/
+theorem advInput_eq (n : ℕ) (y : List Bool) :
+    advInput n y = pairEncode (List.replicate n true) y := rfl
+
 /-- The length of the adversary input `⟨1^n, y⟩` is `2n + 2 + |y|`. -/
 theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 * n + 2 + y.length := by
   simp [advInput, length_pairEncode]
@@ -216,6 +224,11 @@ def runAt (n : ℕ) (y : List Bool) (r : A.Coins n) : List Bool :=
 chapters 3–4 hand the machine a coin string of the right length as a list). -/
 def runAtL (n : ℕ) (y r : List Bool) : List Bool :=
   A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)
+
+/-- The defining equation of `runAtL`:
+`A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)`. -/
+theorem runAtL_eq (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r) := rfl
 
 /-- The typed activation is the untyped one on `List.ofFn r`. -/
 theorem runAt_eq (n : ℕ) (y : List Bool) (r : A.Coins n) :

@@ -225,6 +225,25 @@ theorem encDist_apply (S : PrivateKeyScheme) (n : ℕ) (m : Fin n → Bool)
 theorem encodeList_cons (m : List Bool) (ms : List (List Bool)) :
     encodeList (m :: ms) = pairEncode m (encodeList ms) := rfl
 
+/-- Unfolding of the list encoding on the empty list: `encodeList [] = []`. -/
+theorem encodeList_nil : encodeList [] = [] := rfl
+
+/-- Unfolding of the multi-message ciphertext sampler: the `encodeList` of the `q + 1`
+encryptions `Enc(1^n, ⟨k, m_i⟩; s_i)` under the key `k = Gen(1^n; r.1)`, `s_i = r.2 i`. -/
+theorem multiEncDist_apply (S : PrivateKeyScheme) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
+    (r : S.gen.Coins n × (Fin (q + 1) → S.enc.Coins n)) :
+    S.multiEncDist n q m r = encodeList (List.ofFn fun i =>
+      S.enc.runAt n (pairEncode (S.gen.runAt n [] r.1) (List.ofFn (m i))) (r.2 i)) := rfl
+
+/-- The defining property of `MultiMessageSecure`: for every `D` and `q` some negligible `ε`
+bounds `D`'s advantage between the encryptions of any two message vectors `m, m'` of
+`q(n) + 1` messages under one key. -/
+theorem multiMessageSecure_iff (S : PrivateKeyScheme) :
+    S.MultiMessageSecure ↔ ∀ (D : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n (m m' : Fin (q.eval n + 1) → Fin n → Bool),
+        distAdv (S.multiEncDist n (q.eval n) m) (S.multiEncDist n (q.eval n) m')
+          (D.distinguisherL n) ≤ ε n := Iff.rfl
+
 /-- The first two components of the encoding of a tuple with at least two entries. -/
 theorem firstTwo_encodeList_ofFn {k : ℕ} (hk : 1 < k) (f : Fin k → List Bool) :
     pairFstD (encodeList (List.ofFn f)) = f ⟨0, by omega⟩ ∧

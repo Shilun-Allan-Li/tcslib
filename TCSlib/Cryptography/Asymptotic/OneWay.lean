@@ -110,6 +110,13 @@ def Easy (𝓕 : FunFamily) : Prop :=
   ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
     ∀ n (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
 
+/-- The defining property of `Easy`: `𝓕.Easy` iff some polynomial-time `F` satisfies
+`F ⟨1^n, x⟩ = f n x` (as strings) for every `n` and every `x`. -/
+theorem easy_iff (𝓕 : FunFamily) :
+    𝓕.Easy ↔ ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+      ∀ n (x : Fin (𝓕.inLen.eval n) → Bool),
+        F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x) := Iff.rfl
+
 /-- The inversion probability of the machine `A` against `𝓕` at parameter `n`:
 `Pr[x ← {0,1}^{inLen n}; y ← f(x); r : f(A(1^n, y; r)) = y]` with the output of `A` decoded as
 an `inLen n`-bit string [PS10, Definitions 27.3 and 28.4, the displayed experiment].

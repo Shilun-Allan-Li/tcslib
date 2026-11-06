@@ -172,6 +172,11 @@ on `γ`: every average over `γ` equals the average of its composite with `π`. 
 def PushesUniform (π : Ω → γ) : Prop :=
   ∀ F : γ → ℝ, uexp (fun ω => F (π ω)) = uexp F
 
+/-- The defining property of `PushesUniform`: `PushesUniform π` iff
+`uexp (F ∘ π) = uexp F` for every `F : γ → ℝ`. -/
+theorem pushesUniform_iff (π : Ω → γ) :
+    PushesUniform π ↔ ∀ F : γ → ℝ, uexp (fun ω => F (π ω)) = uexp F := Iff.rfl
+
 /-- A map pushing uniform to uniform preserves the probability of every event. -/
 theorem PushesUniform.uprob_eq {π : Ω → γ} (h : PushesUniform π) (p : γ → Prop) :
     uprob (fun ω => p (π ω)) = uprob p := by
