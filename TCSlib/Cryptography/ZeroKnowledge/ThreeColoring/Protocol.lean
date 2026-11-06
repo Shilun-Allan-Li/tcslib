@@ -7,6 +7,7 @@ import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs
 import TCSlib.Cryptography.ZeroKnowledge.Commitment
 import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColRepWitness
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -920,7 +921,7 @@ theorem R3COL_witnessRelation : WitnessRelation L3COL R3COL := by
     rw [length_encColoring, length_encGraph, PolyExpr.eval_mul, PolyExpr.eval_const,
       PolyExpr.eval_var]
     nlinarith [Nat.zero_le n]
-  · sorry
+  · exact ColRep.R3COL_decidable
 
 /-- **One iteration of [PS10, Protocol 127.5] is an interactive proof for `3COL` with
 efficient prover and soundness error `1 - 1/|x| + (1/2)^{|x|}`** [PS10, Proposition 127.6,
