@@ -1580,6 +1580,35 @@ private theorem tt_forward_run (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk
     refine ⟨h1, ?_⟩
     rw [h2, hc, heq, ho]
 
+/-- **Every completed output of the zone machine is an encoded output of `M`** [HS66; AB09,
+§1.7].
+
+**Proof sketch.** If `M` never halted on `x`, the first `t' + 1` rounds would run live for at
+least `2 (t' + 1)` steps (`tt_cs_run`, `tt_T_ge`), so the zone machine would be live at `t'`.
+Hence `M` halts at some time with some output `v`; then the zone machine halts with
+`v.map Sum.inl` (`tt_forward_run`), and a completed output is unique
+(`Turing.FinTM.ComputesInTime.output_unique`). -/
+private theorem tt_converse (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) (o' : List (ZoneSym M.k)) (t' : ℕ)
+    (h : (tt_HS M F hk).ComputesInTime (x.map Sum.inl) o' t') :
+    ∃ (t : ℕ) (v : List Bool), M.ComputesInTime x v t ∧ o' = v.map Sum.inl := by
+  by_cases hhalt : ∃ s, (tt_c M x s).state = none
+  · obtain ⟨s, hs⟩ := hhalt
+    have hM : M.ComputesInTime x (tt_c M x s).output s :=
+      (computesInTime_iff M x _ s).2 ⟨hs, rfl⟩
+    obtain ⟨_, -, -, -, hHS⟩ := tt_forward_run M F hk x _ s hM
+    exact ⟨s, _, hM, h.output_unique hHS⟩
+  · exfalso
+    push_neg at hhalt
+    have hseg := tt_cs_run M F hk x (t' + 1) (hhalt _)
+    have hsum : 2 * (t' + 1) ≤ ∑ r ∈ Finset.range (t' + 1), tt_T M F x r := by
+      calc 2 * (t' + 1) = ∑ _r ∈ Finset.range (t' + 1), 2 := by
+            rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id, Nat.mul_comm]
+        _ ≤ _ := Finset.sum_le_sum fun r _ => tt_T_ge M F x r (hhalt r)
+    obtain ⟨hs, -⟩ := (computesInTime_iff _ _ _ _).1 h
+    rw [tt_HS_init] at hs
+    exact (segment_iff _ _ _ _ _ _).1 hseg |>.2.1 t' (by omega) (Set.mem_singleton_iff.mpr hs)
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
