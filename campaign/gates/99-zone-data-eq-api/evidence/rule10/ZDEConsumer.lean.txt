@@ -1,0 +1,52 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+
+set_option autoImplicit false
+
+/-! Gate 99's consumer probe (a probe record, not library code): the brief review's failing sealed
+proofs, re-done with the published `zoneRebalanceData_eq` and `zoneExtendData_eq`, under the same
+seal of the data maps and the pure layer. -/
+
+namespace Turing
+
+section Sealed
+
+attribute [local irreducible] zoneRebalanceData zoneExtendData zoneTrackStepData
+  zoneRebalanceIndex zoneTrackTape zoneRebalance zoneShiftIndex ZoneContents.extend
+
+/-- The rebalanced track's contents, at `D.1` (the review's S1, which failed with `_snd`). -/
+theorem zde_rebalanced {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  rw [zoneRebalanceData_eq]
+  simp only [Function.update_self]
+
+/-- Another track is kept (the review's S4). -/
+theorem zde_other {k : ℕ} (dir : Bool) (t t' : Fin k) (h : t' ≠ t) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t') p = zoneTrackTape (D.2 t') p := by
+  rw [zoneRebalanceData_eq]
+  simp only [Function.update_of_ne h]
+
+/-- The extension keeps the represented tape (the review's S5). -/
+theorem zde_extend {k : ℕ} (D : ZoneData k) (t : Fin k) (p : ℤ) :
+    zoneTrackTape ((zoneExtendData D).2 t) p = zoneTrackTape (D.2 t) p := by
+  rw [zoneExtendData_eq]
+  exact congrFun (zoneTrackTape_extend (D.2 t)) p
+
+/-- The rebalanced track's represented tape moves right (the review's S6, with no hypothesis). -/
+theorem zde_move {k : ℕ} (t : Fin k) (D : ZoneData k) (p : ℤ)
+    (h : zoneShiftIndex true (D.2 t) < D.1)
+    (hl : ∀ j (hj : j < zoneShiftIndex true (D.2 t)),
+      ((D.2 t).left ⟨j, by omega⟩).length = zoneCapacity j)
+    (hroom : ((D.2 t).left ⟨zoneShiftIndex true (D.2 t), h⟩).length +
+      2 ^ (zoneShiftIndex true (D.2 t) - 1) ≤ zoneCapacity (zoneShiftIndex true (D.2 t))) :
+    zoneTrackTape ((zoneRebalanceData true t D).2 t) p = zoneTrackTape (D.2 t) (p + 1) := by
+  rw [zoneRebalanceData_eq]
+  simp only [Function.update_self]
+  exact zoneTrackTape_rebalance_right (D.2 t) h hl hroom p
+
+end Sealed
+
+end Turing
+
+#print axioms Turing.zoneRebalanceData_eq
+#print axioms Turing.zoneExtendData_eq

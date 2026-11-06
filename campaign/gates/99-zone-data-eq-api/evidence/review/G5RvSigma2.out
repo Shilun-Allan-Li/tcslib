@@ -1,0 +1,40 @@
+rvprobe/g5review/G5RvSigma2.lean:34:2: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  zoneTrackTape (zoneRebalance dir (D.snd t)) p = zoneTrackTape (zoneRebalance dir (D.snd t)) p
+rvprobe/g5review/G5RvSigma2.lean:40:4: error: Application type mismatch: The argument
+  heq_of_eq (funext ?m.31)
+has type
+  ?m.27 ≍ ?m.28
+but is expected to have type
+  (zoneRebalanceData dir t D).snd ≍ ⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd
+in the application
+  Sigma.ext (zoneRebalanceData_fst dir t D) (heq_of_eq (funext ?m.31))
+rvprobe/g5review/G5RvSigma2.lean:46:26: error: Application type mismatch: The argument
+  zoneRebalanceData_snd dir t D
+has type
+  ∀ (a : Fin k), (zoneRebalanceData dir t D).snd a = Function.update D.snd t (zoneRebalance dir (D.snd t)) a
+but is expected to have type
+  ∀ (x : ?m.22), ?m.24 x = ?m.25 x
+in the application
+  funext (zoneRebalanceData_snd dir t D)
+rvprobe/g5review/G5RvSigma2.lean:50:85: error: unsolved goals
+k : ℕ
+dir : Bool
+t t' : Fin k
+h : t' ≠ t
+D : ZoneData k
+p : ℤ
+⊢ zoneTrackTape (D.snd t') p = zoneTrackTape (D.snd t') p
+rvprobe/g5review/G5RvSigma2.lean:56:26: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  zoneTrackTape (ZoneContents.extend ?z)
+in the target expression
+  zoneTrackTape (D.snd t).extend p = zoneTrackTape (D.snd t) p
+
+k : ℕ
+D : ZoneData k
+t : Fin k
+p : ℤ
+⊢ zoneTrackTape (D.snd t).extend p = zoneTrackTape (D.snd t) p

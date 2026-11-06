@@ -1,0 +1,69 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+
+set_option autoImplicit false
+
+/-! Review probe (read-only scratch): can a consumer reach the per-track contents of the data
+maps through their published `simps` fields when the maps are sealed (brief rule 10)? -/
+
+namespace Turing
+
+/-! ### Controls, unsealed: the Sigma-level equations hold and close from the field lemmas -/
+
+theorem rvCtlA {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ :=
+  Sigma.ext (zoneRebalanceData_fst dir t D) (heq_of_eq (zoneRebalanceData_snd dir t D))
+
+theorem rvCtlE {k : ℕ} (D : ZoneData k) :
+    zoneExtendData D = ⟨D.1 + 1, fun t => (D.2 t).extend⟩ :=
+  Sigma.ext (zoneExtendData_fst D) (heq_of_eq (zoneExtendData_snd D))
+
+section Sealed
+
+attribute [local irreducible] zoneRebalanceData zoneExtendData zoneTrackStepData
+  zoneRebalanceIndex zoneTrackTape zoneRebalance zoneShiftIndex ZoneContents.extend
+
+/-- S1: the Sigma equation through `Sigma.ext` and `heq_of_eq`. -/
+theorem rvS1 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ :=
+  Sigma.ext (zoneRebalanceData_fst dir t D) (heq_of_eq (zoneRebalanceData_snd dir t D))
+
+/-- S2: the Sigma equation, rewriting the second component. -/
+theorem rvS2 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ := by
+  refine Sigma.ext (zoneRebalanceData_fst dir t D) ?_
+  rw [zoneRebalanceData_snd]
+  exact HEq.rfl
+
+/-- S3: the represented tape of the rebalanced track, by `rw`. -/
+theorem rvS3 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  rw [zoneRebalanceData_snd, Function.update_self]
+
+/-- S4: the same by `simp only`. -/
+theorem rvS4 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  simp only [zoneRebalanceData_snd, Function.update_self]
+
+/-- S5: the extension's Sigma equation through `Sigma.ext` and `heq_of_eq`. -/
+theorem rvS5 {k : ℕ} (D : ZoneData k) :
+    zoneExtendData D = ⟨D.1 + 1, fun t => (D.2 t).extend⟩ :=
+  Sigma.ext (zoneExtendData_fst D) (heq_of_eq (zoneExtendData_snd D))
+
+/-- S6: once a Sigma equation is available, the represented tape follows by rewriting the
+whole data value (shows what an escalated `zoneRebalanceData_eq` would buy). -/
+theorem rvS6 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ)
+    (hA : zoneRebalanceData dir t D =
+      ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  rw [hA, Function.update_self]
+
+/-- S7: the track-step index under the seal, through the published equation. -/
+theorem rvS7 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceIndex dir t D ≤ D.1 := zoneRebalanceIndex_le dir t D
+
+end Sealed
+
+end Turing
