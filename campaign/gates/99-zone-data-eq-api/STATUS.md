@@ -10,3 +10,4 @@
   `44c0b904bfec182e69c504f5a4ba5e3ecf75a63182e4c12c41e8064a189aa2a2`; Lean from `f866f314`, records
   from `66f40de528bc43fbd92cefad2042459293cd8520`. The auditor pushes
   `zone-data-eq-api-findings.md` to the exchange inbox (the new protocol).
+- 2026-11-06: **dispatched** (the user).
