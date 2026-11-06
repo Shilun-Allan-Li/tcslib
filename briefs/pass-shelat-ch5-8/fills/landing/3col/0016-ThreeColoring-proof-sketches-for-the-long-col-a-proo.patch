@@ -1,0 +1,77 @@
+From e0f0453b00b93abaa84c9c1ccb78921a697e55e4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 15:01:53 +0000
+Subject: [PATCH 16/18] ThreeColoring: proof sketches for the long col-a proofs
+ (style lint)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTmrbSR5LDiZRddy8fY
+---
+ .../ThreeColoring/ColRepWitness.lean            | 17 +++++++++++++----
+ .../ZeroKnowledge/ThreeColoring/Protocol.lean   | 15 +++++++++++----
+ 2 files changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
+index ad58604c..2630312e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean
+@@ -153,8 +153,13 @@ private theorem wf_iff (x : List Bool) :
+     exact (List.take_of_length_le h.le).symm
+ 
+ /-- The colouring test: `y` is the encoding of the colouring it decodes to on `N` vertices iff
+-`|y| = 2N` and no vertex below `N` is badly encoded (`getD_encColoring_two_mul`,
+-`getD_encColoring_two_mul_add_one`, `decColoring_val`, `firstIdx_eq_iff`). -/
++`|y| = 2N` and no vertex below `N` is badly encoded.
++
++**Proof sketch.** Bits `2i`, `2i + 1` of the re-encoding are the bits of the colour value
++`colorVal y i` (`getD_encColoring_two_mul`, `getD_encColoring_two_mul_add_one`,
++`decColoring_val`). (→) Rewrite `y` by the hypothesis in those bits: every exclusive or vanishes.
++(←) Compare the two lists entrywise (`List.ext_getElem`) at `k = 2i` and `k = 2i + 1`, `i < N`,
++where a vanishing exclusive or (`firstIdx_eq_iff`) gives the equality of the bits. -/
+ private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
+     y = encColoring (decColoring N y) ↔ y.length = n * 2 ∧ firstIdx (badVertex y) n = n := by
+   subst hn
+@@ -196,8 +201,12 @@ private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
+       exact eq_of_xor_eq_false hb.2
+ 
+ /-- The properness test: for a graph `G` on `N` vertices whose entry `(u, v)` is bit `v + N u`
+-of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge
+-(`ProperColoring_iff`, `decColoring_val`, `firstIdx_eq_iff`, `Nat.mod_add_div`). -/
++of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge.
++
++**Proof sketch.** Colours are compared through their values (`decColoring_val`, `Fin.ext`).
++(→) A set position `j < N²` is the edge `(j / N, j % N)` (`Nat.mod_add_div`), whose colours
++differ (`ProperColoring_iff`). (←) An edge `(u, v)` is position `v + N u < N²`, whose quotient
++and remainder by `N` are `u` and `v`, and which is not monochromatic (`firstIdx_eq_iff`). -/
+ private theorem proper_iff {N n : ℕ} (hn : N = n) (G : Graph N) (x y : List Bool)
+     (hG : ∀ u v : Fin N, G u v = x.getD (v + N * u) false) :
+     ProperColoring G (decColoring N y) ↔ firstIdx (badEntry x y n) (n * n) = n * n := by
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index e29e3d67..419e1c20 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -1063,10 +1063,17 @@ private theorem colRep_views (Com : List Bool → List Bool) (ℓ : PolyExpr) {x
+ 
+ /-! ### The `n|E|`-fold protocol: completeness -/
+ 
+-/-- **The honest `n|E|`-fold execution accepts** on every pair of tapes: in every iteration
+-`t < n|E|` the prover commits on coin block `t` and opens the challenged edge
+-(`colRep_views`, `colRep_proverRep_next`, `colProver_next_nil`, `colProver_next_cons`), which
+-passes `colVerify` (`colVerify_honest`). -/
++/-- **The honest `n|E|`-fold execution accepts** on every pair of tapes [PS10, proof of
++Proposition 127.6, "completeness follows by inspection"] (Claim-127.e, repeated).
++
++**Proof sketch.** The verdict is the verifier's activation on its view after `4|x|²` moves
++(`colRep_outV`, `colRep_views`, `colRep_verifierRep_next_end`): `x` is well formed
++(`colWellFormed_encGraph`); if `E = ∅` it accepts outright, and otherwise `n ≥ 2`
++(`ColProofs.two_le_of_edge`) and in every iteration `t < n|E|` the prover, on its view of `2t`
++or `2t + 1` messages, runs `colProver` on coin block `t` (`colRep_proverRep_next`): it commits
++(`colProver_next_nil`) and opens the challenged edge (`colProver_next_cons`,
++`edgeIdxOfMsg_edgeMsg`), which passes `colVerify` (`colVerify_honest`,
++`ColMachines.edgeAt_eq_some_of_pos`). -/
+ private theorem colRep_outV_honest {Com : List Bool → List Bool} {ℓ : PolyExpr} {n : ℕ}
+     {G : Graph n} {c : Fin n → Fin 3} (hc : ProperColoring G c) (z : List Bool)
+     (r : (colProtocolRep Com ℓ).ExecCoins (colProtocolRep Com ℓ).P (encGraph G)) :
+-- 
+2.43.0
+

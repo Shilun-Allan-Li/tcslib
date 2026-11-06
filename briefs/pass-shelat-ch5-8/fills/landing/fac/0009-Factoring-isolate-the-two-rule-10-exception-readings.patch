@@ -1,0 +1,156 @@
+From 4cb3d82d36142930f9ff6d62e94ce033cd7c0888 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:38:10 +0000
+Subject: [PATCH 09/24] Factoring: isolate the two rule-10 exception readings
+ (yaoB, Uniform); sketches for long private helpers; negligible_iff
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 67 ++++++++++++++++---
+ 1 file changed, 59 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index d0046663..acf6211d 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -435,7 +435,12 @@ private theorem fac_goodEquiv_val (n : ℕ) (x : {x : Fin (2 * n) → Bool // fa
+ 
+ /-- **From uniform prime pairs to uniform distinct prime pairs**: for any event `G` of the two
+ primes and auxiliary coins, `Pr_{Π_n × Π_n}[G] ≤ Pr_{distinct}[G] + 2n/2^n`
+-(`uprob_le_uprob_subtype_add`, `uprob_subtype_prod_eq`, `uprob_diag`, `one_div_card_primes_le`). -/
++(`uprob_le_uprob_subtype_add`, `uprob_subtype_prod_eq`, `uprob_diag`, `one_div_card_primes_le`).
++
++**Proof sketch.** Condition on `E = (p ≠ q)`: `Pr[G] ≤ Pr[G | E] + Pr[¬E]`. The conditioned
++experiment, with the auxiliary coins carried along (`uprob_subtype_prod_eq`), is the experiment
++on `DistinctPrimes n` (its components read through `DistinctPrimes.p_eq`/`q_eq`); `¬E` depends on
++the pair only (`uprob_fst`) and is the diagonal, of probability `1/|Π_n| ≤ 2n/2^n`. -/
+ private theorem fac_uprob_primes_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (hn : 2 ≤ n)
+     (G : ℕ → ℕ → ρ → Prop) :
+     uprob (fun z : (Primes n × Primes n) × ρ =>
+@@ -478,7 +483,16 @@ private theorem fac_fmultNat_of_prime {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+ 
+ /-- **The concrete step of Theorem 33.5** [PS10, proof of Theorem 33.5, `A''`]: if `A` inverts
+ `f_mult` at parameter `n ≥ 2` with probability above `1 − 1/q(n)`, then `A'' = oneCallFactorer A`
+-factors a uniform pair of distinct primes with probability at least `1/2 − 2n/2^n`. -/
++factors a uniform pair of distinct primes with probability at least `1/2 − 2n/2^n`.
++
++**Proof sketch.** Let `S` be the inversion event on `(x, r)` and `E` "both blocks of `x` prime",
++`Pr[E] ≥ 1/(4n²)` (`fac_density`). Conditioning (`one_sub_div_le_uprob_subtype`) gives
++`Pr[S | E] ≥ 1 − 4n²/(8(n+1)²) ≥ 1/2`. On `S ∧ E`, with `p, q` the two blocks,
++`f_mult(x) = ⟦pq⟧_{2n}` and block `0` of the preimage is `p` or `q` (`fmult_inv_factor`), which is
++what `A''` returns (`oneCallFactorer_runAtL`, `fac_ofFn_halves`, the coins through
++`oneCallFactorer_coinsEquiv`). The good subtype is `Π_n × Π_n` (`fac_goodEquiv`), and dropping
++the diagonal costs `2n/2^n` (`fac_uprob_primes_le`); the experiment on distinct primes is
++`factorProb A'' n` (`modulusBits_eq`). -/
+ private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
+     (h : 1 - 1 / (fmultWeakPoly.eval n : ℝ) < fmult.invProbAt A n) :
+     1 / 2 - 2 * n / 2 ^ n ≤ factorProb (oneCallFactorer A) n := by
+@@ -593,7 +607,7 @@ diagonal by `uprob_le_uprob_subtype_add` with `E' = (p ≠ q)`, `uprob_diag` and
+ `n ≥ 6`, contradicting `hF A''` by `not_negligible_iff` (`c = 1`). -/
+ theorem fmult_weakOneWay (H : ArithmeticFP) (hF : FactoringAssumption) : fmult.WeakOneWay := by
+   refine ⟨fmult_easy H, fmultWeakPoly, fun n => by rw [eval_fmultWeakPoly]; positivity, fun A => ?_⟩
+-  obtain ⟨n₁, hn₁⟩ := (factoringAssumption_iff.1 hF) (oneCallFactorer A) 2
++  obtain ⟨n₁, hn₁⟩ := (negligible_iff _).1 ((factoringAssumption_iff.1 hF) (oneCallFactorer A)) 2
+   refine ⟨max n₁ 6, fun n hn => ?_⟩
+   have hn6 : 6 ≤ n := le_of_max_le_right hn
+   have hsmall : factorProb (oneCallFactorer A) n < 1 / 4 := by
+@@ -691,6 +705,15 @@ private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i :
+   funext j
+   exact OneWay.blocksE_apply q ℓ x i j
+ 
++/-- **Reading `OneWay.yaoB`** (rule-10 exception: `OneWay.yaoB` has no published equation; this is
++the requested shared lemma `yaoB_apply`, proved by `rfl` from its body): block `j` of the padded
++answer is the `inLen(n)` bits of `A'`'s answer after `j · inLen(n)` bits, padded with `true`. -/
++private theorem fac_yaoB_apply (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ)
++    (ys : Fin (m.eval n) → Fin (outLen.eval n) → Bool) (r : A'.Coins n) (j : Fin (m.eval n)) :
++    OneWay.yaoB inLen outLen m A' n ys r j = OneWay.padTrue (inLen.eval n)
++      ((A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
++        (j * inLen.eval n)) := rfl
++
+ /-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
+ answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
+ padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
+@@ -699,7 +722,7 @@ private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
+     (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :
+     prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
+   unfold prodInverter at hp ⊢
+-  rw [OneWay.yaoB]
++  rw [fac_yaoB_apply]
+   rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
+       ((fmult.prod fmultBlocks).outLen.eval n)
+       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
+@@ -865,7 +888,18 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
+ 
+ /-- **The concrete chain of Theorem 36.3** [PS10, proof of Theorem 36.3]: for `n ≥ 2` and the
+ machine `A''` of `exists_plantFactorer`, the inversion probability of the direct product is at
+-most `(1/2)^n + 4n³ (Pr[A'' factors] + (1/2)^n + 2n/2^n)`. -/
++most `(1/2)^n + 4n³ (Pr[A'' factors] + (1/2)^n + 2n/2^n)`.
++
++**Proof sketch.** `FunFamily.invProbAt_prod_eq` and `invProbOpt_le_invProb` bound the inversion
++probability by `invProb (prodFun f_mult (4n³)) (prodInverter A n)` (the default answer is the
++all-`false` tuple, `fac_blocks_apply`). Random-position planting with the good set "both blocks
++prime" (`invProb_prodFun_le_plant`) bounds this by `(1 − Pr[G])^{4n³} + 4n³ Pr[G ∧ planted
++success]`; the first term is at most `(1 − 1/(4n²))^{4n³} ≤ (1/2)^n` (`fac_density`,
++`claim_36_2_half_pow`). The second probability is at most the conditioned one
++(`uprob_and_eq_mul_subtype`, `uprob_subtype_prod_eq`), on which a planted success is a factor
++(`fmult_inv_factor`, `plantFactor`); the good subtype is `Π_n × Π_n` (`fac_goodEquiv`), the
++diagonal costs `2n/2^n` (`fac_uprob_primes_le`), and on distinct primes the event is the left side
++of `exists_plantFactorer`, at most `factorProb A'' n + (1/2)^n`. -/
+ private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
+     (hA : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+           ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+@@ -1044,6 +1078,11 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
+   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
+     (natToBits n 2))
+ 
++/-- **Reading `NUPPT.Uniform`** (rule-10 exception: its published reading `NUPPT.uniform_iff` /
++`NUPPT.Uniform.advice_eq` is in `Randomized/NonUniform.lean`, outside this module's imports): a
++uniform machine has empty advice at every parameter. -/
++private theorem fac_uniform_advice {A : NUPPT} (hA : A.Uniform) (n : ℕ) : A.advice n = [] := hA n
++
+ /-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
+ (`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
+ private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
+@@ -1127,7 +1166,7 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
+   have hrun : A.output (NUPPT.layout (List.replicate (pairFstD z).length true) [] []
+       (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) = A.runAtL (pairFstD z).length []
+       (List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) := by
+-    rw [NUPPT.runAtL_eq_output_layout, hAu (pairFstD z).length, hpad]
++    rw [NUPPT.runAtL_eq_output_layout, fac_uniform_advice hAu (pairFstD z).length, hpad]
+   rw [hrun, hA]
+   unfold samplePrimeL
+   rcases hs : samplePrime (pairFstD z).length (2 * (pairFstD z).length ^ 2)
+@@ -1167,7 +1206,14 @@ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
+ 
+ /-- **One run of `samplePrimeL` is close to a uniform prime**: for `n ≥ 2`, the value of
+ `samplePrimeL n` on `2n² · n` uniform coins is within `(1/2)^n` of a uniform element of `Π_n`
+-(steps (2)–(3) of the sketch of `statClose_samplePrimeL_pair`). -/
++(steps (2)–(3) of the sketch of `statClose_samplePrimeL_pair`).
++
++**Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
++`bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
++reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
++`StatClose.map bitsToNat`; `chunk` is a bijection (`fac_chunkEquiv`, `comp_equiv_left`), the
++uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
++`(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
+ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+     StatClose (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r)))
+       (fun p : Primes n => ((p.1 : Fin (2 ^ n)) : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+@@ -1196,7 +1242,12 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+   exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
+ 
+ /-- **Dropping the diagonal**: a uniform pair of `Π_n × Π_n` is within `2n/2^n` of a uniform pair of
+-*distinct* primes (`uprob_le_uprob_subtype_add` both ways, `uprob_diag`, `one_div_card_primes_le`). -/
++*distinct* primes (`uprob_le_uprob_subtype_add` both ways, `uprob_diag`, `one_div_card_primes_le`).
++
++**Proof sketch.** For a test `T` let `a = Pr[T]` on `Π_n × Π_n`, `b = Pr[T | p ≠ q]` (the
++experiment on `DistinctPrimes n`, `p_eq`/`q_eq`) and `d = Pr[p = q]`. Dropping the conditioning
++gives `a ≤ b + d`, and the same for the complement of `T` gives `b ≤ a + d` (`uprob_not`); and
++`d = 1/|Π_n| ≤ 2n/2^n` (`uprob_diag`, `one_div_card_primes_le`). -/
+ private theorem fac_statClose_diag (n : ℕ) (hn : 2 ≤ n) :
+     StatClose (fun w : Primes n × Primes n => (((w.1.1 : Fin (2 ^ n)) : ℕ), ((w.2.1 : Fin (2 ^ n)) : ℕ)))
+       (fun z : DistinctPrimes n => (z.p, z.q)) (2 * n / 2 ^ n) := by
+-- 
+2.43.0
+

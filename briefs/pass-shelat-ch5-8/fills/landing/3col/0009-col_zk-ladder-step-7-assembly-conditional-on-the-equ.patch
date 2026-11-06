@@ -1,0 +1,407 @@
+From 8b8b4dc899869031dd1d05ecb696a36063cfe011 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:51:31 +0000
+Subject: [PATCH 09/18] col_zk ladder: step 7 assembly, conditional on the
+ equations of msgAt and edgeIdxOfMsg (E-API); col_zk docstring R2-1 and M3
+ edits
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../ThreeColoring/ColZKLemmas.lean            |   7 +
+ .../ThreeColoring/Simulator.lean              | 347 +++++++++++++++++-
+ 2 files changed, 350 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index 176d532f..59e91ee7 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -202,6 +202,13 @@ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype
+       distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
+   rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
+ 
++/-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
++theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
++    (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D ≤ 1 :=
++  distAdv_le_of_statClose X Y (fun T => abs_sub_le_iff.2
++    ⟨by linarith [uprob_le_one fun s => T (X s), uprob_nonneg fun t => T (Y t)],
++      by linarith [uprob_le_one fun t => T (Y t), uprob_nonneg fun s => T (X s)]⟩) D
++
+ /-! ### Tapes as lists -/
+ 
+ /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 385917c1..4e793179 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -1213,6 +1213,344 @@ theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+     positivity
+   exact hμn.trans_le (one_div_le_one_div_of_le hNpos hNc)
+ 
++/-! ### The assembly of `col_zk` (conditional on two published equations) -/
++
++section ColZKAssembly
++
++variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
++
++/-- **The planted attempt is the hiding view on the planted advice**, conditional on the
++equations `msgAt w i = pairFstD (pairSndD^[i] w)` and `edgeIdxOfMsg m w = |w| % m`, which are
++not published (E-API): with the endpoint commitments, the planted opening and the later attempts'
++outcome `post` hard-wired, `ColZK.hidingView` computes the planted attempt's encoded outcome.
++
++**Proof sketch.** `ColZK.hidingView_plantedAdv_none`; the spliced message lists agree entry by
++entry (the two endpoints, then `msgAt` through the first hypothesis), and the restart tests agree
++through the second. -/
++private theorem colZK_planted_eq
++    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
++    (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
++    (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) (z : List Bool)
++    (e₀ : Fin (edgeCount G)) (π₀ : Equiv.Perm (Fin 3))
++    (w : ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
++      V'.Coins (encGraph G).length) (post cv : List Bool) :
++    ColZK.hidingView V' (ColZK.plantedAdv (encGraph G) z (List.ofFn w.2) n (edgeOf G e₀).1
++        (edgeOf G e₀).2
++        (Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).1))))
++          (List.ofFn (w.1.2 (edgeOf G e₀).1))))
++        (Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).2))))
++          (List.ofFn (w.1.2 (edgeOf G e₀).2))))
++        (edgeCount G) e₀ (colOpen (fun i => π₀ (c i)) w.1.2 (edgeOf G e₀)) post none) cv =
++      (colSimAttemptPlanted Com (ℓ.eval n) G c
++          (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]) e₀ π₀ cv w).elim post
++        fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩ := by
++  rw [ColZK.hidingView_plantedAdv_none]
++  unfold colSimAttemptPlanted
++  dsimp only
++  have hcom : (List.ofFn fun i : Fin n => if (i : ℕ) = ((edgeOf G e₀).1 : ℕ) then
++      Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).1))))
++        (List.ofFn (w.1.2 (edgeOf G e₀).1)))
++      else if (i : ℕ) = ((edgeOf G e₀).2 : ℕ) then
++        Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).2))))
++          (List.ofFn (w.1.2 (edgeOf G e₀).2)))
++      else pairFstD (pairSndD^[i] cv)) =
++      List.ofFn fun i : Fin n => if i = (edgeOf G e₀).1 ∨ i = (edgeOf G e₀).2 then
++        Com (pairEncode (List.ofFn (padColor n (π₀ (c i)))) (List.ofFn (w.1.2 i)))
++      else msgAt cv i := by
++    congr 1
++    funext i
++    by_cases h1 : i = (edgeOf G e₀).1
++    · rw [if_pos (congrArg Fin.val h1), if_pos (Or.inl h1), h1]
++    · by_cases h2 : i = (edgeOf G e₀).2
++      · rw [if_neg (fun h => h1 (Fin.ext h)), if_pos (congrArg Fin.val h2), if_pos (Or.inr h2), h2]
++      · rw [if_neg (fun h => h1 (Fin.ext h)), if_neg (fun h => h2 (Fin.ext h)),
++          if_neg (by rintro (h | h) <;> contradiction), hmsg]
++  rw [hcom, ← hidx]
++  split_ifs <;> rfl
++
++/-- An opening has `3 ℓ(n) + 20` bits (`colOpen_eq`, two-bit colours `ColMachines.encColor_eq`). -/
++private theorem colZK_length_colOpen {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool)
++    (p : Fin n × Fin n) : (colOpen c' r p).length = 3 * ℓn + 20 := by
++  rw [colOpen_eq, length_pairEncode, length_pairEncode, length_pairEncode, ColMachines.encColor_eq,
++    ColMachines.encColor_eq, List.length_ofFn, List.length_ofFn]
++  simp only [List.length_cons, List.length_nil]
++  ring
++
++/-- The encoded view of a successful attempt is polynomially bounded: at most
++`4|x| + 2|z| + 2|r_V| + 2 n (2 C (2n + 3 + ℓ(n))^d + 2) + 2 (3 ℓ(n) + 20) + 12` bits. -/
++private theorem colZK_length_view_le {C d : ℕ} (hCd : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ d)
++    {n ℓn L : ℕ} (x z : List Bool) (ρ : Fin L → Bool) (c' : Fin n → Fin 3)
++    (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
++    (View.encode ⟨x, z, List.ofFn ρ, [colCommit Com n ℓn c' r, colOpen c' r p]⟩).length ≤
++      4 * x.length + 2 * z.length + 2 * L + 2 * (n * (2 * (C * (2 * n + 3 + ℓn) ^ d) + 2)) +
++        2 * (3 * ℓn + 20) + 12 := by
++  have hc := length_multiCom_le hCd (fun i => padColor n (c' i)) r
++  rw [View.encode_mk, length_pairEncode, length_pairEncode, length_pairEncode,
++    Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, length_pairEncode,
++    length_pairEncode, List.length_ofFn, colZK_length_colOpen, colCommit_eq]
++  simp only [List.length_nil]
++  omega
++
++/-- A success of `S'` or `S''` is a view of the attempt's own commitment and opening. -/
++private theorem colZK_attempt_some {n ℓn : ℕ} {G : Graph n} {ρ : Type*} {V : List Bool → ρ → List Bool}
++    {c : Fin n → Fin 3} {w : ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin ℓn → Bool)) × ρ}
++    {u : ColView ρ}
++    (h : colSimAttemptH Com ℓn G c V w = some u ∨ colSimAttemptW Com ℓn G c V w = some u) :
++    ∃ (c' : Fin n → Fin 3) (p : Fin n × Fin n), u = (w.2, colCommit Com n ℓn c' w.1.2, colOpen c' w.1.2 p) := by
++  rcases h with h | h
++  · unfold colSimAttemptH at h
++    dsimp only at h
++    split_ifs at h
++    exact ⟨_, _, (Option.some.inj h).symm⟩
++  · unfold colSimAttemptW at h
++    dsimp only at h
++    split_ifs at h
++    exact ⟨_, _, (Option.some.inj h).symm⟩
++
++/-- **The case `m > 0` of `col_zk`** (conditional on the equations of `msgAt` and
++`edgeIdxOfMsg`): `D`'s advantage is at most
++`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`. -/
++private theorem colZK_planted_case
++    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
++    (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
++    {C d : ℕ} (hCd : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ d) (V' : Strategy) (D : NUPPT)
++    (b : PolyExpr) (εB : ℕ → ℝ)
++    (hBd : ∀ n (v v' : Fin n → Fin n → Bool) (adv : List Bool), adv.length ≤ b.eval n →
++      distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v r)
++        (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
++        (fun cv d => D.distinguisherL (n * n) (ColZK.hidingView V' adv cv) d) ≤ εB n)
++    {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (c : Fin n → Fin 3) (hc : ProperColoring G c)
++    (z : List Bool) (M : ℕ) (hM1 : 1 ≤ M) (hMx : n * n ≤ M) (hMz : z.length ≤ M)
++    (hMρ : V'.coinLen (encGraph G).length ≤ M)
++    (hMA : C * (2 * n + 3 + ℓ.eval n) ^ d ≤ M) (hMo : 3 * ℓ.eval n + 20 ≤ M)
++    (hMv : 4 * (n * n) + 2 * z.length + 2 * V'.coinLen (encGraph G).length +
++      2 * (n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ d) + 2)) + 2 * (3 * ℓ.eval n + 20) + 12 ≤ M)
++    (hb : 15 * (2 * M + 2) ≤ b.eval n) :
++    distAdv (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
++        (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
++          colSim Com ℓ V' (encGraph G) z (List.ofFn r))
++        (D.distinguisherL (encGraph G).length) ≤
++      (1 / 4 : ℝ) ^ (encGraph G).length +
++        ((n * edgeCount G : ℕ) : ℝ) * ((1 / 2 : ℝ) ^ (encGraph G).length +
++          (1 / 4 : ℝ) ^ (encGraph G).length) +
++        ((n * edgeCount G : ℕ) : ℝ) * εB n + Real.exp (-(n : ℝ)) := by
++  set N := (encGraph G).length with hN
++  have hNn : N = n * n := length_encGraph G
++  set m := edgeCount G with hmdef
++  set K := n * m with hK
++  have hn : 0 < n := (edgeOf G ⟨0, hm⟩).1.pos
++  have hKpos : 0 < K := Nat.mul_pos hn hm
++  set V : List Bool → V'.Coins N → List Bool := fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]
++    with hV
++  set enc : ColView (V'.Coins N) → List Bool :=
++    fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩ with henc
++  set D' : Option (ColView (V'.Coins N)) → D.Coins N → Bool :=
++    fun o r => D.distinguisherL N (o.elim [] enc) r with hD'
++  -- the closeness steps
++  have h2 := distAdv_le_of_statClose _ _ (statClose_colRealView (Com := Com) (ℓ := ℓ) V' G c hc z)
++    (D.distinguisherL N)
++  have h3 := distAdv_le_of_statClose _ _
++    (statClose_colSim_colSimTrunc (Com := Com) (ℓ := ℓ) V' G hm z).symm (D.distinguisherL N)
++  have hW : distAdv (colSimTruncW Com (ℓ.eval n) G c V K) (colSimTrunc Com (ℓ.eval n) G V K) D' ≤ 0 :=
++    distAdv_le_of_statClose _ _ (fun T => by
++      rw [uprob_colSimTruncW_eq Com (ℓ.eval n) G hc V K T, sub_self, abs_zero]) D'
++  have hH := distAdv_le_of_statClose _ _ (statClose_colSimTruncH Com (ℓ.eval n) G hm c V K).symm D'
++  have hexp : (1 - 1 / (m : ℝ)) ^ K ≤ Real.exp (-(n : ℝ)) := one_sub_inv_pow_mul_le_exp m n hm
++  -- the hybrid step with its reduction fixed
++  obtain ⟨k, e₀, π₀, w₀, hk⟩ := exists_colSimRed_fixCoins (Com := Com) (ℓ := ℓ) G hm c V K hKpos D'
++  set pre := firstSome fun t : Fin K =>
++    if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) else none with hpre
++  set post := firstSome fun t : Fin K =>
++    if k < t then colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) else none with hpost
++  set adv := ColZK.plantedAdv (encGraph G) z (List.ofFn (w₀ k).2) n (edgeOf G e₀).1 (edgeOf G e₀).2
++    (Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).1))))
++      (List.ofFn ((w₀ k).1.2 (edgeOf G e₀).1))))
++    (Com (pairEncode (List.ofFn (padColor n (π₀ (c (edgeOf G e₀).2))))
++      (List.ofFn ((w₀ k).1.2 (edgeOf G e₀).2))))
++    m e₀ (colOpen (fun i => π₀ (c i)) (w₀ k).1.2 (edgeOf G e₀)) (post.elim [] enc) (pre.map enc)
++    with hadv
++  have hopt : ∀ cv, (pre <|> colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ k) <|> post).elim
++      [] enc = ColZK.hidingView V' adv cv := by
++    intro cv
++    rw [hadv]
++    cases pre with
++    | some v => exact (ColZK.hidingView_plantedAdv_some _ _ _ _ _ _ _ _ _ _ _ _ _ _ _).symm
++    | none =>
++      refine Eq.trans ?_ (colZK_planted_eq (Com := Com) (ℓ := ℓ) hmsg hidx V' G c z e₀ π₀ (w₀ k)
++        (post.elim [] enc) cv).symm
++      cases colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ k) <;> rfl
++  have hred : (fun cv c' => colSimRed Com (ℓ.eval n) G c V K k e₀ π₀ D' cv (w₀, c')) =
++      fun cv c' => D.distinguisherL N (ColZK.hidingView V' adv cv) c' := by
++    funext cv c'
++    rw [colSimRed_fixed_eq, ← hpre, ← hpost, hD']
++    dsimp only
++    rw [hopt]
++  -- the advice is short
++  have hmN : m ≤ n * n := (ColMachines.edgeCount_eq G (encGraph G)
++    (fun u v => (encGraph_getD G u v).symm)).trans_le (ColMachines.countTrue_le _ _)
++  have hview : ∀ (t : Fin K) (u : ColView (V'.Coins N)),
++      (colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) = some u ∨
++        colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) = some u) → (enc u).length ≤ M := by
++    intro t u hu
++    obtain ⟨c', p, rfl⟩ := colZK_attempt_some hu
++    refine (colZK_length_view_le hCd _ _ _ c' _ p).trans ?_
++    omega
++  have hA : ∀ i : Fin n, (Com (pairEncode (List.ofFn (padColor n (π₀ (c i))))
++      (List.ofFn ((w₀ k).1.2 i)))).length ≤ M := by
++    intro i
++    refine (hCd _).trans (le_trans (le_of_eq ?_) hMA)
++    rw [length_pairEncode, List.length_ofFn, List.length_ofFn]
++    ring_nf
++  have hlen : adv.length ≤ b.eval n := by
++    refine (ColZK.length_plantedAdv_le hM1 (by rw [← hN, hNn]; exact hMx) hMz
++      (by rw [List.length_ofFn]; exact hMρ) ((Nat.le_mul_self n).trans hMx)
++      (((edgeOf G e₀).1.isLt.le.trans (Nat.le_mul_self n)).trans hMx)
++      (((edgeOf G e₀).2.isLt.le.trans (Nat.le_mul_self n)).trans hMx) (hA _) (hA _)
++      (hmN.trans hMx) ((e₀.isLt.le.trans hmN).trans hMx)
++      ((le_of_eq (colZK_length_colOpen _ _ _)).trans hMo) ?_ ?_).trans hb
++    · cases hp : post with
++      | none => exact Nat.zero_le _
++      | some u =>
++        obtain ⟨t, -, ht⟩ := List.exists_of_findSome?_eq_some hp
++        split_ifs at ht
++        exact hview t u (Or.inr ht)
++    · intro v hv
++      cases hp : pre with
++      | none => rw [hp] at hv; exact absurd hv (Option.noConfusion)
++      | some u =>
++        rw [hp, Option.map_some, Option.some.injEq] at hv
++        subst hv
++        obtain ⟨t, -, ht⟩ := List.exists_of_findSome?_eq_some hp
++        split_ifs at ht
++        exact hview t u (Or.inl ht)
++  have hgap : distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
++        multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
++      (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
++      (fun cv c' => colSimRed Com (ℓ.eval n) G c V K k e₀ π₀ D' cv (w₀, c')) ≤ εB n := by
++    rw [hred, ColZK.distAdv_distinguisherL_congr D hNn]
++    exact hBd n _ _ adv hlen
++  have hKr : (0 : ℝ) < K := by exact_mod_cast hKpos
++  have hHW : distAdv (colSimTruncW Com (ℓ.eval n) G c V K) (colSimTruncH Com (ℓ.eval n) G c V K) D' ≤
++      K * εB n := by
++    have := hk.trans hgap
++    rwa [div_le_iff₀ hKr, mul_comm] at this
++  -- the triangle inequality along real, honest, `S''`, `S'`, `S`, simulator
++  rw [distAdv_def] at h2 h3 hW hH hHW ⊢
++  have e1 : acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
++      some (colRealView Com (ℓ.eval n) G c V w)) D' =
++      acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
++        (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N) := rfl
++  have e2 : acceptProb (colSimTrunc Com (ℓ.eval n) G V K) D' =
++      acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc) (D.distinguisherL N) := rfl
++  rw [e1] at hH
++  rw [e2] at hW
++  calc _ ≤ _ := abs_sub_le _ (acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
++        V'.Coins N => (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N)) _
++    _ ≤ _ := add_le_add h2 (abs_sub_le _ (acceptProb (colSimTruncH Com (ℓ.eval n) G c V K) D') _)
++    _ ≤ _ := add_le_add le_rfl (add_le_add hH
++        (abs_sub_le _ (acceptProb (colSimTruncW Com (ℓ.eval n) G c V K) D') _))
++    _ ≤ _ := add_le_add le_rfl (add_le_add le_rfl (add_le_add (by rw [abs_sub_comm]; exact hHW)
++        (abs_sub_le _ (acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc)
++          (D.distinguisherL N)) _)))
++    _ ≤ (1 / 4 : ℝ) ^ N + ((1 - 1 / (m : ℝ)) ^ K + (K * εB n + (0 +
++        (K : ℝ) * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N)))) :=
++      add_le_add le_rfl (add_le_add le_rfl (add_le_add le_rfl (add_le_add hW h3)))
++    _ ≤ _ := by linarith [hexp]
++
++
++
++/-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
++conditional because the step-5 identification needs these two published equations, E-API). -/
++private theorem colZK_zk_of_eqs
++    (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
++    (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
++    (hC : Commitment Com ℓ) : ZK (colProtocol Com ℓ) R3COL := by
++  rw [ZK_iff]
++  intro V' hV'
++  obtain ⟨S, hSu, hSc, hSsim⟩ := exists_colSimulator hC.easy ℓ V' hV'
++  refine ⟨S, hSu, fun Lz D => ?_⟩
++  obtain ⟨C, d, hCd⟩ := hC.easy.output_length_le
++  -- a bound on every field of the reductions' advice, as a polynomial in the vertex count
++  let PA : PolyExpr := .mul (.const C) (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) d)
++  let Pv : PolyExpr := .add (.add (.add (.add (.add (.mul (.const 4) (.mul .var .var))
++      (.mul (.const 2) (Lz.subst (.mul .var .var)))) (.mul (.const 2) (V'.coins.subst (.mul .var .var))))
++      (.mul (.const 2) (.mul .var (.add (.mul (.const 2) PA) (.const 2)))))
++      (.mul (.const 2) (.add (.mul (.const 3) ℓ) (.const 20)))) (.const 12)
++  let PM : PolyExpr := .add (.add Pv PA) (.add .var (.const 1))
++  let b : PolyExpr := .mul (.const 15) (.add (.mul (.const 2) PM) (.const 2))
++  have hPM : ∀ n, PM.eval n = 4 * (n * n) + 2 * Lz.eval (n * n) + 2 * V'.coins.eval (n * n) +
++      2 * (n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ d) + 2)) + 2 * (3 * ℓ.eval n + 20) + 12 +
++      C * (2 * n + 3 + ℓ.eval n) ^ d + (n + 1) := fun n => by
++    simp only [PM, Pv, PA, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
++      PolyExpr.eval_var, PolyExpr.eval_pow, PolyExpr.eval_subst]
++  have hb : ∀ n, b.eval n = 15 * (2 * PM.eval n + 2) := fun n => by
++    simp only [b, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
++  obtain ⟨εB, hεB, hεB0, hBd⟩ := ColZK.exists_hidingView_bound hC hV' D b
++  refine ⟨fun N : ℕ => (N : ℝ) ^ 2 * εB (Nat.sqrt N) + Real.exp (-(Nat.sqrt N : ℝ)) +
++      (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) + (1 / 4 : ℝ) ^ N,
++    ColZK.negligible_colZKErr (Negligible.comp_sqrt hεB), ?_⟩
++  intro x y z hxy hz
++  obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff x y).1 hxy
++  have hNn : (encGraph G).length = n * n := length_encGraph G
++  have hsq : Nat.sqrt (encGraph G).length = n := by rw [hNn, Nat.sqrt_eq]
++  -- the simulator's seed is the ladder's tape
++  have hlenS : (colSimCoins ℓ V').eval (encGraph G).length = S.coinLen (encGraph G).length := by rw [NUPPT.coinLen_eq, hSc]
++  have hsim : acceptProb (S.simulate (encGraph G) z) (D.distinguisherL (encGraph G).length) =
++      acceptProb (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
++        colSim Com ℓ V' (encGraph G) z (List.ofFn r)) (D.distinguisherL (encGraph G).length) := by
++    rw [← acceptProb_comp_equiv (Equiv.arrowCongr (finCongr hlenS) (Equiv.refl Bool))]
++    congr 1
++    funext r
++    rw [hSsim]
++    congr 1
++    exact (List.ofFn_congr hlenS r).symm
++  beta_reduce
++  rw [distAdv_def, hsim, ← distAdv_def, hsq]
++  have hε0 : 0 ≤ εB n := hεB0 n
++  have hp : 0 ≤ (1 / 2 : ℝ) ^ (encGraph G).length + (1 / 4 : ℝ) ^ (encGraph G).length := by positivity
++  rcases Nat.eq_zero_or_pos n with rfl | hn
++  · -- no vertices: the advantage is at most `1 ≤ ε 0 = 2`
++    refine (ColZK.distAdv_le_one _ _ _).trans ?_
++    have hN0 : (encGraph G).length = 0 := hNn
++    rw [hN0]
++    norm_num
++  have hN1 : (1 : ℝ) ≤ ((encGraph G).length : ℝ) ^ 2 := by
++    have : 1 ≤ (encGraph G).length := hNn ▸ Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero hn.ne' hn.ne')
++    exact one_le_pow₀ (by exact_mod_cast this)
++  have hzM : z.length ≤ Lz.eval (n * n) := hNn ▸ hz
++  have hρ : V'.coinLen (encGraph G).length = V'.coins.eval (n * n) := by rw [Strategy.coinLen_eq, hNn]
++  rcases Nat.eq_zero_or_pos (edgeCount G) with hm | hm
++  · -- no edges: one multi-value hiding gap (R2-1)
++    obtain ⟨π₀, rV, h6⟩ := exists_colZK_edgeless (Com := Com) (ℓ := ℓ) V' hn G hm c z D
++    have hlen : (ColZK.edgelessAdv (encGraph G) z (List.ofFn rV)).length ≤ b.eval n := by
++      refine (ColZK.length_edgelessAdv_le (M := PM.eval n) (by rw [hPM, ← hNn]; omega)
++        (by rw [hPM]; omega) (by rw [List.length_ofFn, hρ, hPM]; omega)).trans ?_
++      rw [hb]
++      omega
++    have hgap := hBd n (fun i => padColor n (π₀ (c i))) (fun _ => padColor n 0) _ hlen
++    rw [← ColZK.distAdv_distinguisherL_congr D hNn] at hgap
++    simp only [ColZK.hidingView_edgelessAdv] at hgap
++    have hεN := mul_le_mul_of_nonneg_right hN1 hε0
++    have he := Real.exp_nonneg (-(n : ℝ))
++    have hpN := mul_nonneg (sq_nonneg ((encGraph G).length : ℝ)) hp
++    linarith
++  · -- with edges: the hybrid chain
++    have hmN : edgeCount G ≤ n * n := (ColMachines.edgeCount_eq G (encGraph G)
++      (fun u v => (encGraph_getD G u v).symm)).trans_le (ColMachines.countTrue_le _ _)
++    have h7 := colZK_planted_case hmsg hidx hCd V' D b εB hBd G hm c hc z (PM.eval n)
++      (by rw [hPM]; omega) (by rw [hPM]; omega) (by rw [hPM]; omega) (by rw [hρ, hPM]; omega)
++      (by rw [hPM]; omega) (by rw [hPM]; omega) (by rw [hρ, hPM]; omega) (by rw [hb])
++    have hKN : ((n * edgeCount G : ℕ) : ℝ) ≤ ((encGraph G).length : ℝ) ^ 2 := by
++      have : n * edgeCount G ≤ (encGraph G).length ^ 2 := by
++        rw [sq, hNn]
++        exact Nat.mul_le_mul ((Nat.le_mul_self n)) hmN
++      exact_mod_cast this
++    have h1 := mul_le_mul_of_nonneg_right hKN hε0
++    have h2 := mul_le_mul_of_nonneg_right hKN hp
++    linarith
++
++end ColZKAssembly
++
+ /-- **One iteration of [PS10, Protocol 127.5] is zero-knowledge for `R_3COL`** [PS10,
+ Proposition 128.8 and Proposition 127.6, zero-knowledge half] (Prop-128.8, Prop-127.6 (b)):
+ for a commitment scheme `(Com, ℓ)`, for every efficient verifier `V'` there is a uniform PPT
+@@ -1240,8 +1578,8 @@ randomness and `V'`'s tape, and `StatClose.map`. `exec_succ` three times, `decGr
+ If `m > 0`:
+ (2) `colSim` is within `K((1/2)^{|x|} + (1/4)^{|x|})` of `colSimTrunc … K`, with uniform
+ `(e'_t, (a_t, b_t))` read from disjoint fields of the `t`-th block (`statClose_sampleEdgeIdx`,
+-`statClose_sampleColorPair` — the colour-pair analogue of `statClose_samplePerm3`, still to be
+-added: the fill ladder's first step, gate 03g review M3 — and `StatClose.prod` over the blocks).
++`statClose_sampleColorPair` — the colour-pair analogue of `statClose_samplePerm3` — and
++`StatClose.prod` over the blocks).
+ (3) `uprob_colSimTruncW_eq`.
+ (4) `exists_colSimRed_ge` with `N := K` gives `k, e₀, π₀` with
+ `distAdv truncW truncH D' ≤ K · distAdv X Y (colSimRed … k e₀ π₀ D')`.
+@@ -1266,8 +1604,9 @@ vectors. Hard-wire `x`, `z`, the case, `ρ_k`, `e₀`, the two endpoint commitme
+ (`Strategy.Efficient`) and `D` at parameter `n²` on `B`'s coins (`NUPPT.exists_reparam_advice`,
+ `φ n = n²`). Its acceptance probabilities on `multiCom` samples are the fixed reduction's (coin
+ transport along `finCongr`). `hC.multiHiding var B` gives a negligible `ε_B ≥ 0` (it bounds a
+-`distAdv` at every `n`), so the hiding terms are at most
+-`K ε_B n ≤ n³ ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)` for `n ≥ 1`.
++`distAdv` at every `n`). The hiding term is `K ε_B n ≤ n³ ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)` if
++`m > 0`, and one gap `ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)` if `m = 0` and `n ≥ 1` (gate 03g round 2,
++R2-1); in both cases `max(1, K) ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)`.
+ 
+ Put `ε N := N² ε_B (Nat.sqrt N) + exp (−Nat.sqrt N) + N² ((1/2)^N + (1/4)^N) + (1/4)^N`. It is
+ negligible by `Negligible.comp_sqrt`, `Negligible.mul_pow`, `negligible_exp_neg_sqrt_div`
+-- 
+2.43.0
+

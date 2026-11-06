@@ -1,0 +1,73 @@
+From 00f88b46b06f74ccfcf3ec322e47de5c42358c5a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:56:31 +0000
+Subject: [PATCH 10/18] col_zk ladder: read acceptProb, StatClose and
+ ProperColoring through their published equations (rule-10 seal)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../ZeroKnowledge/ThreeColoring/ColZKLemmas.lean       |  3 ++-
+ .../ZeroKnowledge/ThreeColoring/Simulator.lean         | 10 ++++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index 59e91ee7..776e9a56 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -176,6 +176,7 @@ theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fint
+     ∃ k₀ : κ, |acceptProb X D - acceptProb Y D| ≤ distAdv (fun s => X (k₀, s)) Y D := by
+   have hX : acceptProb X D = uexp fun k => acceptProb (fun s => X (k, s)) D := by
+     rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc κ σ ρ).symm, uprob_prod]
++    simp only [acceptProb_def]
+     rfl
+   obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
+     acceptProb (fun s => X (k, s)) D - acceptProb Y D
+@@ -205,7 +206,7 @@ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype
+ /-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
+ theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+     (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D ≤ 1 :=
+-  distAdv_le_of_statClose X Y (fun T => abs_sub_le_iff.2
++  distAdv_le_of_statClose X Y ((statClose_iff X Y 1).2 fun T => abs_sub_le_iff.2
+     ⟨by linarith [uprob_le_one fun s => T (X s), uprob_nonneg fun t => T (Y t)],
+       by linarith [uprob_le_one fun t => T (Y t), uprob_nonneg fun s => T (X s)]⟩) D
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 4e793179..14769149 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -1048,7 +1048,7 @@ theorem exists_colZK_edgeless (V' : Strategy) {n : ℕ} (hn : 1 ≤ n) (G : Grap
+   set N := (encGraph G).length with hN
+   have hNn : N = n * n := length_encGraph G
+   have hnN : n ≤ N := hNn ▸ Nat.le_mul_self n
+-  have hc : ProperColoring G c := fun u v huv => by
++  have hc : ProperColoring G c := (ProperColoring_iff G c).2 fun u v huv => by
+     have hmem := (mem_edgeList_iff G (u, v)).2 huv
+     rw [List.length_eq_zero_iff.1 hm] at hmem
+     exact absurd hmem List.not_mem_nil
+@@ -1352,7 +1352,7 @@ private theorem colZK_planted_case
+   have h3 := distAdv_le_of_statClose _ _
+     (statClose_colSim_colSimTrunc (Com := Com) (ℓ := ℓ) V' G hm z).symm (D.distinguisherL N)
+   have hW : distAdv (colSimTruncW Com (ℓ.eval n) G c V K) (colSimTrunc Com (ℓ.eval n) G V K) D' ≤ 0 :=
+-    distAdv_le_of_statClose _ _ (fun T => by
++    distAdv_le_of_statClose _ _ ((statClose_iff _ _ _).2 fun T => by
+       rw [uprob_colSimTruncW_eq Com (ℓ.eval n) G hc V K T, sub_self, abs_zero]) D'
+   have hH := distAdv_le_of_statClose _ _ (statClose_colSimTruncH Com (ℓ.eval n) G hm c V K).symm D'
+   have hexp : (1 - 1 / (m : ℝ)) ^ K ≤ Real.exp (-(n : ℝ)) := one_sub_inv_pow_mul_le_exp m n hm
+@@ -1439,9 +1439,11 @@ private theorem colZK_planted_case
+   have e1 : acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+       some (colRealView Com (ℓ.eval n) G c V w)) D' =
+       acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+-        (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N) := rfl
++        (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N) := by
++    rw [acceptProb_def, acceptProb_def]
+   have e2 : acceptProb (colSimTrunc Com (ℓ.eval n) G V K) D' =
+-      acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc) (D.distinguisherL N) := rfl
++      acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc) (D.distinguisherL N) := by
++    rw [acceptProb_def, acceptProb_def]
+   rw [e1] at hH
+   rw [e2] at hW
+   calc _ ≤ _ := abs_sub_le _ (acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
+-- 
+2.43.0
+

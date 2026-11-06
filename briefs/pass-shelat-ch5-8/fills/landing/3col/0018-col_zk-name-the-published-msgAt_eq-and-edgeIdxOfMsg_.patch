@@ -1,0 +1,37 @@
+From 2b3485d0184277fbab3a08ba74a7888e57004f3b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 21:38:24 +0000
+Subject: [PATCH 18/18] col_zk: name the published `msgAt_eq` and
+ `edgeIdxOfMsg_eq` in `colZK_planted_eq`'s docstring
+
+Docstring sync only (policy section 3): the two equations are published, so the
+docstring names them without referring to a review round.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../ZeroKnowledge/ThreeColoring/Simulator.lean            | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 78137140..b15fac63 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -1223,10 +1223,10 @@ section ColZKAssembly
+ variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+ 
+ /-- **The planted attempt is the hiding view on the planted advice**, conditional on the
+-equations `msgAt w i = pairFstD (pairSndD^[i] w)` and `edgeIdxOfMsg m w = |w| % m` (published
+-as `msgAt_eq` and `edgeIdxOfMsg_eq` by PR #210's next round; missing at the fill's base, E-API):
+-with the endpoint commitments, the planted opening and the later attempts' outcome `post`
+-hard-wired, `ColZK.hidingView` computes the planted attempt's encoded outcome.
++equations `msgAt w i = pairFstD (pairSndD^[i] w)` and `edgeIdxOfMsg m w = |w| % m` (the
++published `msgAt_eq` and `edgeIdxOfMsg_eq`, which `col_zk` passes): with the endpoint
++commitments, the planted opening and the later attempts' outcome `post` hard-wired,
++`ColZK.hidingView` computes the planted attempt's encoded outcome.
+ 
+ **Proof sketch.** `ColZK.hidingView_plantedAdv_none`; the spliced message lists agree entry by
+ entry (the two endpoints, then `msgAt` through the first hypothesis), and the restart tests agree
+-- 
+2.43.0
+

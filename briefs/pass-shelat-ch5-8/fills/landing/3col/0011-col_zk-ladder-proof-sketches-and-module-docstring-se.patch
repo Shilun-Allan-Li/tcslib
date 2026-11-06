@@ -1,0 +1,136 @@
+From 6d9ce02a9df61f4e86bdec19c0302a319c4675a5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 13:04:46 +0000
+Subject: [PATCH 11/18] col_zk ladder: proof sketches and module docstring
+ sections (style lint)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../ThreeColoring/ColZKLemmas.lean            | 20 ++++++++++++++---
+ .../ThreeColoring/ColZKMachine.lean           | 12 ++++++++--
+ .../ThreeColoring/Simulator.lean              | 22 +++++++++++++++++--
+ 3 files changed, 47 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index 776e9a56..7cbf666e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -19,12 +19,21 @@ Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean
+ fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
+ function (`negligible_colZKErr`, `colZK_attempts_le`).
+ 
++## Main definitions
++
++* None: this file holds lemmas only.
++
+ ## Main results
+ 
+ * `TCSlib.Cryptography.ColZK.pushesUniform_restrict` — restricting a uniform table along an
+   injective map gives a uniform table.
+-* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable` — a prefix and an `n × k` table at an
+-  offset of a uniform tape are independent and uniform.
++* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable`, `pushesUniform_blockFields` — disjoint
++  fields of a uniform tape are independent and uniform.
++* `TCSlib.Cryptography.ColZK.exists_fixSeed`, `distAdv_seed_to_coins`,
++  `acceptProb_comp_pushesUniform` — averaging over seeds.
++* `TCSlib.Cryptography.ColZK.findSome?_finRange_split_lt` — a first-success search split at an
++  index.
++* `TCSlib.Cryptography.ColZK.negligible_colZKErr` — the error of `col_zk` is negligible.
+ 
+ ## References
+ 
+@@ -300,7 +309,12 @@ theorem findSome?_finRange_split {α : Type*} {N : ℕ} (f : Fin N → Option α
+ 
+ /-- **The first success splits at `k` into masked searches**: the search over `List.finRange N`
+ is the search masked to the indices before `k`, else entry `k`, else the search masked to the
+-indices after `k` (`findSome?_finRange_split` three times; the masks select the parts). -/
++indices after `k`.
++
++**Proof sketch.** Split all three searches at `k` (`findSome?_finRange_split`). On the indices
++before `k` the first mask is the identity and the second is `none`; on those after `k` the
++reverse; at `k` both masks are `none`. The searches of `none` are `none`
++(`List.findSome?_eq_none_iff`), and the remaining `<|>` chain is the original one. -/
+ theorem findSome?_finRange_split_lt {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
+     (List.finRange N).findSome? f =
+       (((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then f t else none) <|> f k <|>
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean
+index 73c998ab..4ec18cb7 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean
+@@ -40,6 +40,8 @@ coins (`distAdv_distinguisherL_reparam`).
+ * `TCSlib.Cryptography.ColZK.exists_colHidingRed` — the fixed hiding reduction is an `NUPPT`.
+ * `TCSlib.Cryptography.ColZK.distAdv_distinguisherL_reparam` — the two-parameter coin
+   transport (requested shared lemma).
++* `TCSlib.Cryptography.ColZK.exists_hidingView_bound` — the hiding bound for all the fixed
++  reductions at once (the worst data at each `n`, `Commitment.multiHiding`).
+ 
+ ## References
+ 
+@@ -84,7 +86,9 @@ def hidingView (V' : Strategy) (adv cv : List Bool) : List Bool :=
+     else pairFstD (pairSndD^[13] adv)
+   else pairFstD (pairSndD^[14] adv)
+ 
+-/-- The defining equation of `hidingView` (its docstring's formula). -/
++/-- The defining equation of `hidingView` (its docstring's formula).
++
++**Proof sketch.** By definition (`rfl`). -/
+ theorem hidingView_eq (V' : Strategy) (adv cv : List Bool) :
+     hidingView V' adv cv =
+       if pairFstD (pairSndD^[3] adv) = [] then
+@@ -371,7 +375,11 @@ theorem length_edgelessAdv_le {M : ℕ} {x z ρ : List Bool} (hx : x.length ≤
+   exacts [hx, hz, hρ, Nat.zero_le _]
+ 
+ /-- The planted advice is short: at most `15 (2M + 2)` bits when each of its fields has at most
+-`M` bits (`CommitmentLemmas.length_encodeMsgs_le`). -/
++`M` bits.
++
++**Proof sketch.** `CommitmentLemmas.length_encodeMsgs_le` on the fifteen fields of
++`plantedAdv_eq`: the unary fields have their numbers as lengths (`List.length_replicate`), the
++flags at most one bit, and the optional earlier outcome is empty or bounded by `hpre`. -/
+ theorem length_plantedAdv_le {M : ℕ} {x z ρ A₁ A₂ opn post : List Bool} {n p₁ p₂ m e₀ : ℕ}
+     {pre : Option (List Bool)} (h1 : 1 ≤ M) (hx : x.length ≤ M) (hz : z.length ≤ M)
+     (hρ : ρ.length ≤ M) (hn : n ≤ M) (hp₁ : p₁ ≤ M) (hp₂ : p₂ ≤ M) (hA₁ : A₁.length ≤ M)
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 14769149..bb757ae3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -1309,7 +1309,16 @@ private theorem colZK_attempt_some {n ℓn : ℕ} {G : Graph n} {ρ : Type*} {V
+ 
+ /-- **The case `m > 0` of `col_zk`** (conditional on the equations of `msgAt` and
+ `edgeIdxOfMsg`): `D`'s advantage is at most
+-`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`. -/
++`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`.
++
++**Proof sketch.** Steps (1)–(5) of `col_zk`'s sketch along the chain real view, honest typed
++view, `S''`, `S'`, `S`, simulator (triangle inequality, `distAdv_def`, `abs_sub_le`):
++`statClose_colRealView` (`(1/4)^{|x|}`), `statClose_colSimTruncH` with
++`one_sub_inv_pow_mul_le_exp` (`e^{−n}`), `exists_colSimRed_fixCoins` with `N := K` (`K` times the
++fixed reduction's gap), `uprob_colSimTruncW_eq` (exact) and `statClose_colSim_colSimTrunc`. By
++`colSimRed_fixed_eq` and `colZK_planted_eq` the fixed reduction is `cv ↦ D(hidingView adv cv)`
++for the planted advice `adv`, whose fields are bounded by `M` (`colZK_length_view_le`,
++`colZK_attempt_some`), so its gap is at most `ε_B n`. -/
+ private theorem colZK_planted_case
+     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
+     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
+@@ -1462,7 +1471,16 @@ private theorem colZK_planted_case
+ 
+ 
+ /-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
+-conditional because the step-5 identification needs these two published equations, E-API). -/
++conditional because the step-5 identification needs these two published equations, E-API).
++
++**Proof sketch.** `ZK_iff`; `S` from `exists_colSimulator` (its seed is the ladder's tape along
++`NUPPT.coinLen_eq`). A polynomial `M(n)` bounds every field of the reductions' advice (R2-2), and
++`ColZK.exists_hidingView_bound` with `b := 15 (2M + 2)` gives a negligible `ε_B ≥ 0`. Put
++`ε N := N² ε_B (√N) + e^{−√N} + N² ((1/2)^N + (1/4)^N) + (1/4)^N`, negligible by
++`ColZK.negligible_colZKErr` and `Negligible.comp_sqrt`. For `x = encGraph G`: if `n = 0` the
++advantage is at most `1 ≤ ε 0 = 2`; if `m = 0` it is at most `(1/4)^N + ε_B n`
++(`exists_colZK_edgeless`, `ColZK.hidingView_edgelessAdv`); if `m > 0` it is the bound of
++`colZK_planted_case`; in both cases `≤ ε N` since `max(1, K) ≤ N²` and `√N = n`. -/
+ private theorem colZK_zk_of_eqs
+     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
+     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
+-- 
+2.43.0
+
