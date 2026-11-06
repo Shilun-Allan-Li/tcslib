@@ -952,23 +952,128 @@ theorem polyTimeComputable_blumInvRaw (H : ArithmeticFP) : PolyTimeComputable bl
 noncomputable def blumInv (H : ArithmeticFP) : NUPPT :=
   NUPPT.ofPolyTimeUniform (polyTimeComputable_blumInvRaw H) (.const 0)
 
+/-- `blumInvNat` modulo `p`: the CRT sum reduces to `y^{p/4+1}` (`ZMod.coe_mul_inv_eq_one`; the
+second summand carries the factor `p`). -/
+private theorem rabin_blumInvNat_cast_left {p q : ℕ} [NeZero p] (hcop : q.Coprime p) (y : ℕ) :
+    ((y ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+        y ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val) : ℕ) : ZMod p) = (y : ZMod p) ^ (p / 4 + 1) := by
+  simp only [Nat.cast_add, Nat.cast_mul, ZMod.natCast_mod, Nat.cast_pow, ZMod.natCast_self,
+    ZMod.natCast_zmod_val, zero_mul, mul_zero, add_zero]
+  rw [ZMod.coe_mul_inv_eq_one _ hcop, mul_one]
+
+/-- `blumInvNat` modulo `q`: the CRT sum reduces to `y^{q/4+1}`. -/
+private theorem rabin_blumInvNat_cast_right {p q : ℕ} [NeZero q] (hcop : p.Coprime q) (y : ℕ) :
+    ((y ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+        y ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val) : ℕ) : ZMod q) = (y : ZMod q) ^ (q / 4 + 1) := by
+  simp only [Nat.cast_add, Nat.cast_mul, ZMod.natCast_mod, Nat.cast_pow, ZMod.natCast_self,
+    ZMod.natCast_zmod_val, zero_mul, mul_zero, zero_add]
+  rw [ZMod.coe_mul_inv_eq_one _ hcop, mul_one]
+
+/-- **The CRT formula is the residue root** (the route of `blumInv_spec`, without reading
+`blumSqrt`): for a Blum modulus `M = pq` and `y ∈ QR_M`, the unit
+`s = crtUnits⁻¹(y_p^{p/4+1}, y_q^{q/4+1})` is a residue (`pow_div_four_succ_mem_QR`,
+`mem_QR_mul_iff`) with `s² = y` (`sq_pow_div_four_succ`, `sq_crtUnits_symm`), and its residue is
+`blumInvNat p q y.val`: both reduce to the same pair modulo `p` and `q` (`crtUnits_fst`/`_snd`,
+the two lemmas above), hence agree modulo `pq` by injectivity of `ZMod.chineseRemainder`.
+Stated for a modulus `M` equal to `pq` so that it applies at `blumMod i`. -/
+private theorem rabin_blumInvNat_spec {p q : ℕ} [hp : Fact p.Prime] [hq : Fact q.Prime] (hpq : p ≠ q)
+    (hp3 : p % 4 = 3) (hq3 : q % 4 = 3) (M : ℕ) (hM : M = p * q) (y : (ZMod M)ˣ) (hy : y ∈ QR M) :
+    ∃ x : (ZMod M)ˣ, x ∈ QR M ∧ x ^ 2 = y ∧ (x : ZMod M).val = blumInvNat p q (y : ZMod M).val := by
+  subst hM
+  have h := coprime_of_ne hpq
+  obtain ⟨h1, h2⟩ := (mem_QR_mul_iff h y).1 hy
+  refine ⟨(crtUnits h).symm ((crtUnits h y).1 ^ (p / 4 + 1), (crtUnits h y).2 ^ (q / 4 + 1)), ?_, ?_, ?_⟩
+  · rw [mem_QR_mul_iff h, MulEquiv.apply_symm_apply]
+    exact ⟨pow_div_four_succ_mem_QR h1, pow_div_four_succ_mem_QR h2⟩
+  · exact sq_crtUnits_symm h (sq_pow_div_four_succ hp3 h1) (sq_pow_div_four_succ hq3 h2)
+  · set s := (crtUnits h).symm ((crtUnits h y).1 ^ (p / 4 + 1), (crtUnits h y).2 ^ (q / 4 + 1))
+    set S := (y : ZMod (p * q)).val ^ (p / 4 + 1) % p * (q * ((q : ZMod p)⁻¹).val) +
+        (y : ZMod (p * q)).val ^ (q / 4 + 1) % q * (p * ((p : ZMod q)⁻¹).val)
+    have hs1 : (((s : ZMod (p * q))).cast : ZMod p) = ((y : ZMod (p * q)).val : ZMod p) ^ (p / 4 + 1) := by
+      rw [← crtUnits_fst h s, MulEquiv.apply_symm_apply, Units.val_pow_eq_pow_val, crtUnits_fst,
+        ZMod.cast_eq_val]
+    have hs2 : (((s : ZMod (p * q))).cast : ZMod q) = ((y : ZMod (p * q)).val : ZMod q) ^ (q / 4 + 1) := by
+      rw [← crtUnits_snd h s, MulEquiv.apply_symm_apply, Units.val_pow_eq_pow_val, crtUnits_snd,
+        ZMod.cast_eq_val]
+    have hS : ((S : ℕ) : ZMod (p * q)) = (s : ZMod (p * q)) := by
+      apply (ZMod.chineseRemainder h).injective
+      refine Prod.ext ?_ ?_
+      · have e1 : ∀ u : ZMod (p * q), (ZMod.chineseRemainder h u).1 = (u.cast : ZMod p) :=
+          fun u => Prod.fst_zmod_cast u
+        rw [e1, e1, hs1, ZMod.cast_natCast (dvd_mul_right p q)]
+        exact rabin_blumInvNat_cast_left h.symm _
+      · have e2 : ∀ u : ZMod (p * q), (ZMod.chineseRemainder h u).2 = (u.cast : ZMod q) :=
+          fun u => Prod.snd_zmod_cast u
+        rw [e2, e2, hs2, ZMod.cast_natCast (dvd_mul_left q p)]
+        exact rabin_blumInvNat_cast_right h _
+    rw [blumInvNat, ← hS, ZMod.val_natCast]
+
+/-- The activation of the trapdoor inverter on `⟨t, y⟩` (`NUPPT.runAtL_ofPolyTimeUniform`). -/
+private theorem rabin_blumInv_runAt (H : ArithmeticFP) (n : ℕ) (t y : List Bool)
+    (s : (blumInv H).Coins n) :
+    (blumInv H).runAt n (pairEncode t y) s =
+      natToList y.length (blumInvNat (listToNat (pairFstD t)) (listToNat (pairSndD t)) (listToNat y)) := by
+  rw [NUPPT.runAt_eq]
+  unfold blumInv
+  rw [NUPPT.runAtL_ofPolyTimeUniform]
+  simp only [blumInvRaw, NUPPT.inArg_eq, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- A generated Blum index is valid. -/
+private theorem rabin_blumValid_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
+    BlumValid (rabinIndexOf m R) := by
+  have hp := R.z.p_prime.two_le
+  have hq := R.z.q_prime.two_le
+  rw [blumValid_iff, listToNat_rabinIndexOf]
+  refine ⟨R.z.p, Finset.mem_range.2 ?_, R.z.q, Finset.mem_range.2 ?_, R.z.p_prime, R.z.q_prime,
+    R.z.p_ne_q, R.hp, R.hq, rfl⟩
+  · nlinarith
+  · nlinarith
+
+/-- The domain modulus at a generated Blum index is `N = pq`. -/
+private theorem rabin_blumMod_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
+    blumMod (rabinIndexOf m R) = R.z.p * R.z.q := by
+  rw [blumMod_of_valid (rabin_blumValid_indexOf m R), listToNat_rabinIndexOf]
+
 /-- **The inverter decodes to the residue root** at every generated Blum index (the clause
 `inv_spec` of `TrapdoorCollection`, [PS10, Theorem 63.10 (6)]).
 
 **Proof sketch.** By `blumGen_runAt` the index is the numeral of `N = pq` and the trapdoor
-`⟨p, q⟩` (`encodeDistinctPrimes`), with `p ≠ q` Blum primes (`rabinGenParams`), so the index
-is `BlumValid`; `blumEnc i y` is the numeral of `y.val`. The inverter returns the numeral of
-`blumInvNat p q y.val`, which equals `(blumSqrt y).val`: the CRT formula `s` satisfies
-`s ≡ y^{(p+1)/4} (mod p)` and `s ≡ y^{(q+1)/4} (mod q)` (`ZMod.coe_mul_inv_eq_one`,
-`crtUnits_fst`/`crtUnits_snd`), hence `s = crtUnits⁻¹(a, b)` by injectivity of `crtUnits`
-(`ZMod.chineseRemainder`); `blumSqrt_mem_QR` puts it in `QR_N`, so `blumDec` decodes it
-(`blumDec_blumEnc`), and `(blumPermAt i).symm y = blumSqrt y` by `eq_blumSqrt_of_sq_eq`
-(`Equiv.ofBijective_symm_apply_apply`). -/
+`⟨p, q⟩` (`encodeDistinctPrimes_eq`, `DistinctPrimes.p_eq`), with `p ≠ q` Blum primes
+(`rabinGenParams`), so the index is `BlumValid` and `blumMod i = N`; `blumEnc i y` is the numeral
+of `y.val`. The inverter returns the numeral of `blumInvNat p q y.val`. Without reading
+`blumSqrt`: the CRT value `s = crtUnits⁻¹(y_p^{p/4+1}, y_q^{q/4+1})` is a residue
+(`pow_div_four_succ_mem_QR`, `mem_QR_mul_iff`) with `s² = y` (`sq_pow_div_four_succ`,
+`sq_crtUnits_symm`), and `blumInvNat p q y.val = s.val` because both reduce to the same residues
+modulo `p` and `q` (`ZMod.coe_mul_inv_eq_one`, `crtUnits_fst`/`crtUnits_snd`, injectivity of
+`ZMod.chineseRemainder`). Then `(blumPermAt i).symm y = s` since `blumPermAt i s = s² = y`
+(`Equiv.symm_apply_eq`, `Equiv.ofBijective_apply`, `coe_sqTo`), and the inverter's string is
+`blumEnc i s`, which `blumDec` decodes to `s` (`blumDec_blumEnc`). -/
 theorem blumInv_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
     (y : QR (blumMod (pairFstD ((blumGen H).runAt n [] r)))) (s : (blumInv H).Coins n) :
     blumDec _ ((blumInv H).runAt n (pairEncode (pairSndD ((blumGen H).runAt n [] r)) (blumEnc _ y)) s) =
       some ((blumPermAt _).symm y) := by
-  sorry
+  revert y
+  rw [blumGen_runAt, rabinGenOut, pairFstD_pairEncode, pairSndD_pairEncode]
+  generalize rabinGenParams (· % 4 = 3) blumDefault n (List.ofFn r) = R
+  intro y
+  have hV := rabin_blumValid_indexOf _ R
+  have hM := rabin_blumMod_indexOf _ R
+  rw [rabin_blumInv_runAt, encodeDistinctPrimes_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    listToNat_natToList R.z.p_lt, listToNat_natToList R.z.q_lt]
+  have hyv : listToNat (blumEnc (rabinIndexOf _ R) y) =
+      ((y : (ZMod (blumMod (rabinIndexOf _ R)))ˣ) : ZMod (blumMod (rabinIndexOf _ R))).val := by
+    rw [blumEnc, blumEncVal, if_pos hV]
+    exact listToNat_natToList (blum_val_lt_two_pow _ y)
+  have hlen : (blumEnc (rabinIndexOf _ R) y).length = (rabinIndexOf _ R).length := length_natToList _ _
+  obtain ⟨x, hxQ, hx2, hxv⟩ := rabin_blumInvNat_spec R.z.p_ne_q R.hp R.hq _ hM
+    (y : (ZMod (blumMod (rabinIndexOf _ R)))ˣ) y.2
+  rw [hyv, hlen, ← hxv]
+  have hsymm : (blumPermAt (rabinIndexOf _ R)).symm y = ⟨x, hxQ⟩ := by
+    rw [Equiv.symm_apply_eq, blumPermAt, dif_pos hV, Equiv.ofBijective_apply]
+    apply Subtype.ext
+    rw [coe_sqTo]
+    exact hx2.symm
+  rw [hsymm, ← blumDec_blumEnc _ ⟨x, hxQ⟩, blumEnc, blumEncVal, if_pos hV]
 
 /-- The activation of the Blum sampler: the residue of the square of the unit sampler's value,
 as a numeral of the index width (`modExpStr_pairEncode`). -/
@@ -990,22 +1095,6 @@ private theorem rabin_blumEnc_of_dec {i w : List Bool} {x : QR (blumMod i)}
   rw [blumDec] at h; split_ifs at h with hv hw hq hw' <;> rw [← Option.some.inj h, blumEnc, blumEncVal]
   · rw [if_pos hv, ZMod.coe_unitOfCoprime, natToList_val_natCast hw.1 hw.2.1]
   · rw [if_neg hv, hw']
-
-/-- A generated Blum index is valid. -/
-private theorem rabin_blumValid_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
-    BlumValid (rabinIndexOf m R) := by
-  have hp := R.z.p_prime.two_le
-  have hq := R.z.q_prime.two_le
-  rw [blumValid_iff, listToNat_rabinIndexOf]
-  refine ⟨R.z.p, Finset.mem_range.2 ?_, R.z.q, Finset.mem_range.2 ?_, R.z.p_prime, R.z.q_prime,
-    R.z.p_ne_q, R.hp, R.hq, rfl⟩
-  · nlinarith
-  · nlinarith
-
-/-- The domain modulus at a generated Blum index is `N = pq`. -/
-private theorem rabin_blumMod_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
-    blumMod (rabinIndexOf m R) = R.z.p * R.z.q := by
-  rw [blumMod_of_valid (rabin_blumValid_indexOf m R), listToNat_rabinIndexOf]
 
 /-- **The `QR_N` sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2), Theorem 63.10 (3)]; repair of the run-3 audit,
