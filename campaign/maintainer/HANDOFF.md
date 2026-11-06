@@ -203,7 +203,7 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    `Codec/Langs`, `ISGen.InitM`/`AccM` deleted and re-pointed; WL-1 moved beside `WalkLe` in
    `PathWalk` as `Complexity.walkLe_succ_iff`, after #216 merges.
    **Next roadmap tracks, all three in parallel:** F6 (U2's harvest, then the fill), the book-form
-   Thm 3.1 statement phase, and Ladner's statement phase. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
+   Thm 3.1 statement phase, and Ladner's statement phase (plan: `campaign/items/roadmap3/PLAN.md`). **Ruled (the user, 2026-11-06, on the plan's §(e)):** (1) the U2 harvest's rows go in a **new `Build/` module** (not in place in `UniversalK`), harvest before RO-1's `UniversalK` edits (RO-1 then re-points the published row); (2) in `Hierarchy.lean`, after H lands, **E-PAD's continuation of `SPACE_linear_ne_NP` first**, F6's fill after; (3) book-form Thm 3.1 lands **after #211 merges**, admission-free, **with** `time_hierarchy_book_of_pos`; (4) Ladner: **LD-1 to LD-7 as recommended**; LD-8 (Exercise 3.6's parts against the book) is the maintainer's check before docstrings. Still open: D-F6-3 (F6's startup route), to decide after the harvest's consumer probe. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
    NZ-1 is #217 (acknowledged; it also carries gate 102 r2's two majors). CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
