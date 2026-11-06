@@ -1,0 +1,15 @@
+# untyped `have h := <term>` / `obtain ... := <term>` whose term heads with a core/Mathlib name,
+# and which a later step (within 8 lines) rewrites with `at h` or transports by `▸`
+224: have hle := Nat.mul_le_mul_left W (show r.val + 1 ≤ w.length by omega)
+231: have he := Nat.mod_add_div (W * (r.val + 1) - 1) W
+    -> 232: rw [hd] at he
+261: have he := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)
+301: have hspos := List.length_pos_iff.mpr hsne
+1022: obtain rfl : p = 0 := le_antisymm h1 h0
+1646: obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlive
+2089: obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlv
+2287: obtain ⟨b, hb⟩ := Option.ne_none_iff_exists'.mp hne
+2361: obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp hcs
+2920: obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp (hok' 0).1
+3056: obtain ⟨w, hw, hh, ho⟩ := FinNDTM.acceptsWithin_iff.mp hN
+# 11 library-headed untyped haves/obtains

@@ -115,8 +115,8 @@ replay below chained from it with only its own PR.
 
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `bbf69680` (round 2's repair `dfc3e990`, the library sweep's `49c4d0f7`, a merge of the campaign after #196) | `replay-lnf4` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
-| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 **dispatched** 2026-11-06 (45 sections) | merge when it closes; then G5's fill brief |
+| #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
+| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 round 1 did not close (0/1/1: SG-1, acknowledged by the user for 12.2c; the screen trees); round 2 **dispatched** 2026-11-06 (39 sections) | merge when it closes; then G5's fill brief |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
@@ -131,7 +131,7 @@ at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
-(#202's merged tree) and `oleans-lnf4` (#191's). Once #191 or #202 merges, its snapshot is the
+(#202's merged tree) and `oleans-lnf5` (#191's). Once #191 or #202 merges, its snapshot is the
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
@@ -166,7 +166,7 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
-   kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1 and WC-1
+   kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
 5. **The deferred cleanup of public-facing docstrings** (WORKFLOW §2): about 280 campaign labels in
    existing Lean text, and E-D's frozen proof sketch (F9).

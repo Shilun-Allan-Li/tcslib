@@ -602,6 +602,31 @@ lines with its docstring. The one-fifth rule is not reached. **The API PR is #16
 corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired. **Retired
 (2026-10-26):** #167 merged as `4c8c2e7e`; `zr_pinLoop` cites `Round.iterate_seq`.
 
+**SG-1, segment concatenation over a private segment predicate** (gate 98's finding 1,
+2026-11-06). Two private predicates restate `Turing.Segment` (`Build/Contract/Basic`) at fixed
+parameters, and each has its own concatenation lemma re-proving `Segment.trans`:
+- `ClassNP/Tautology`'s `tautDualSegment c d t` is `Segment tautDualTM.tm {some .anchor}
+  (fun _ => True) c d t`; `tautDual_segment_add` repeats `Segment.trans`'s endpoint and
+  forbidden-prefix argument (the v3 screen pairs it with `Segment.trans`, 91/168, 54%);
+- `Build/CounterLoop`'s `counterSpan` is a segment from `z` to its run endpoint over
+  `{some .done, some .escape}`, whose head relation combines the counter head's interval and the
+  body heads' `R`; `counter_span_append` repeats `Segment.trans`, then `Segment.mono` for the
+  two relations.
+
+Both predate #202 (the API PR whose gate found them); #202 adds no member. **ACKNOWLEDGED by kind
+(the user, 2026-11-06):** every private predicate that restates `Turing.Segment` at fixed
+parameters, with its concatenation lemma. **Cleanup owner and window:** the maintainer, in the
+dedup window (12.2c): a bridge `tautDualSegment c d t ↔ Segment …` (and the same for
+`counterSpan`), then `Segment.trans`/`Segment.mono` through it, deleting both concatenation
+lemmas. **Census** (gate 98's, each member counted once per file; the source side included):
+- `Build/Contract/Basic`, the public source: **1 of 93 (1.1%)**, `Segment.trans`, 20 lines;
+- `ClassNP/Tautology`: **1 of 93 (1.1%)**, `tautDual_segment_add`, 12 lines. The file has no other
+  recorded member;
+- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. With IW-1's
+  `counterPatch`, the file's recorded total is **2 of 79 (2.5%)**.
+
+**The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
@@ -1090,6 +1115,13 @@ It also found two rewrite chains that are each one lemma: `List.length_take` wit
 `nf_prefix_last` and `nf_sweep_record` proved the same completion of the parser's prefix array;
 it is now one private, `nf_update_last`. #191's commit `49c4d0f7` repairs all of them, with no
 statement change. No family; no member remains.
+
+**Gate 95's round-3 major 1**: one more member, which the sweep's candidate list missed because it
+is an untyped `have`. `nf_display_firstStop`'s `he` (`Nat.mod_add_div`, then the zero remainder)
+re-proved `Nat.mul_div_cancel'`; #191's commit `698dcdf5` cites it. The sweep now also takes every
+untyped `have`/`obtain` on a core or Mathlib term with a later rewrite `at` it (gate 95,
+`evidence/round4/sweep/`); the one other such site, `nf_display_flag`'s `hm`, has no library
+statement. No family; no member remains.
 
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
