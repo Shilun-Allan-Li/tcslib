@@ -1,4 +1,4 @@
-# Fill col-a: REPORT (checkpoint 1, interim)
+# Fill col-a: REPORT (checkpoint 2, interim)
 
 - **Unit:** col-a (`ThreeColoring/Protocol.lean`; helpers `ThreeColoring/ColRep*.lean`).
 - **Base:** `16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1` (head of PR #210, branch
@@ -10,10 +10,11 @@
 | Target | Status |
 |---|---|
 | `R3COL_witnessRelation`, `decidable` clause | **filled** (`exact ColRep.R3COL_decidable`; helper `ThreeColoring/ColRepWitness.lean`) |
-| `colRep_efficientProverProof` | in progress |
+| `colRep_efficientProverProof` | **filled** (helper `ThreeColoring/ColRepSound.lean`; private `colRep_*` lemmas in `Protocol.lean`) |
 
-`Protocol.lean` and `ColRepWitness.lean` check with zero errors; `Protocol.lean`'s only `sorry`
-warning is `colRep_efficientProverProof`.
+`Protocol.lean`, `ColRepWitness.lean` and `ColRepSound.lean` check with zero errors and no
+warnings. Still to do before the final push: the rule-10 seal, the downstream sweep, axiom prints,
+lint, the reuse screen and the full report. Checkpoint 1: exchange commit `b3d467f`.
 
 ## Environment (addendum items 1–3)
 
