@@ -629,6 +629,18 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
+**The window (2026-11-06):** `CounterLoop`'s member is retired by #215 (`57939a97`: a private bridge
+`counterSpan_iff_segment`; `counter_span_append` deleted; its three uses through `Segment.trans`
+and `Segment.mono`). The scope search found a **third member**, `Robustness/SingleTape`'s private
+`DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (7 uses). `Tautology`'s and
+`SingleTape`'s members need a new import of `Build/Contract/Basic` (cycle-free; it adds that one
+module to each closure): **parked for the user's ruling.** Also found, not counted: `Primitives`'
+`splitSafe`/`splitSafe_add` and `Catalog`'s `f2_splitSafe`/`f2_splitSafe_add` restate
+`Turing.SafeSegment` (a sibling `SafeSegment` family, for the user); `SAT`'s `sat_guard_add` and
+`Hardness`' `clA5_guard_add` re-prove the cut half of `Segment.trans` with no predicate. If
+`tautDual_segment_add` is deleted, `blueprint/src/chapter/Complexity/ClassNP/Tautology.tex:981`
+changes with it.
+
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
 `m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
