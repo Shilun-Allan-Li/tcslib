@@ -1625,7 +1625,11 @@ private theorem tt_rsum_succ {ℓ : ℕ} (z : ZoneContents ℓ) (n : ℕ) (hn : 
 /-- **Below the scanned index, the side total is extreme** [AB09, §1.7]: under fullness, below
 the scanned index `j` of a move in direction `dir` the feeding zones are empty, so the right
 zones of levels `< n ≤ j` hold nothing (a right move) or everything (a left move:
-`2^{n+1} − 2` cells). -/
+`2^{n+1} − 2` cells).
+
+**Proof sketch.** Induction on `n`: the level `n < j` is empty on the feeding side
+(`Turing.zoneShiftIndex_empty`), so by fullness its right zone holds `0` cells (a right move) or
+the whole capacity `2 · 2^n` (a left move), and `2^{n+1} − 2 + 2^{n+1} = 2^{n+2} − 2`. -/
 private theorem tt_rsum_low {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ) (hz : tt_full z) (n : ℕ)
     (hn : n ≤ zoneShiftIndex dir z) (hnℓ : n ≤ ℓ) :
     tt_rsum z n = if dir then 0 else 2 ^ (n + 1) - 2 := by
@@ -1845,8 +1849,8 @@ private theorem tt_trackStep_rsum {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneDa
   · have hlt' : zoneRebalanceIndex dir t D < D.1 := by rwa [zoneRebalanceIndex_eq]
     rw [zoneTrackStepData_of_lt dir t hlt', zoneRebalanceData_eq]
     simp only [if_pos hlt, Function.update_self]
-    refine ⟨fun n hn hj => (hreb _ (hD t) hlt n hn).1 hj, fun n hn hj => (hreb _ (hD t) hlt n hn).2 hj,
-      ?_, fun t' ht' => ?_, trivial⟩
+    refine ⟨fun n hn hj => (hreb _ (hD t) hlt n hn).1 hj,
+      fun n hn hj => (hreb _ (hD t) hlt n hn).2 hj, ?_, fun t' ht' => ?_, trivial⟩
     · rw [(hreb _ (hD t) hlt D.1 le_rfl).2 hlt, add_zero]
     · rw [Function.update_of_ne ht', add_zero]
       exact ⟨fun _ _ => rfl, rfl⟩
@@ -1855,7 +1859,9 @@ private theorem tt_trackStep_rsum {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneDa
       le_antisymm (zoneShiftIndex_le dir (D.2 t)) (not_lt.mp hlt)
     have hidx' := zoneShiftIndex_extend dir (D.2 t) hidx
     have hfull' := tt_full_extend _ (hD t)
-    have hlt₂ : zoneShiftIndex dir (D.2 t).extend < D.1 + 1 := by rw [hidx']; exact Nat.lt_succ_self _
+    have hlt₂ : zoneShiftIndex dir (D.2 t).extend < D.1 + 1 := by
+      rw [hidx']
+      exact Nat.lt_succ_self _
     rw [zoneTrackStepData_of_not_lt dir t hlt', zoneRebalanceData_eq, zoneExtendData_eq]
     simp only [if_neg hlt, Function.update_self]
     refine ⟨fun n hn _ => (hreb _ hfull' hlt₂ n (by omega)).1 (by rw [hidx']; exact hn),
