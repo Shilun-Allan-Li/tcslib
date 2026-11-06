@@ -1,0 +1,70 @@
+rvprobe/g5review/G5RvSigma.lean:14:55: error: Application type mismatch: The argument
+  zoneRebalanceData_snd dir t D
+has type
+  ∀ (a : Fin k), (zoneRebalanceData dir t D).snd a = Function.update D.snd t (zoneRebalance dir (D.snd t)) a
+but is expected to have type
+  (zoneRebalanceData dir t D).snd = ⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd
+in the application
+  heq_of_eq (zoneRebalanceData_snd dir t D)
+rvprobe/g5review/G5RvSigma.lean:18:46: error: Application type mismatch: The argument
+  zoneExtendData_snd D
+has type
+  ∀ (t : Fin k), (zoneExtendData D).snd t = (D.snd t).extend
+but is expected to have type
+  (zoneExtendData D).snd = ⟨D.fst + 1, fun t => (D.snd t).extend⟩.snd
+in the application
+  heq_of_eq (zoneExtendData_snd D)
+rvprobe/g5review/G5RvSigma.lean:28:55: error: Application type mismatch: The argument
+  zoneRebalanceData_snd dir t D
+has type
+  ∀ (a : Fin k), (zoneRebalanceData dir t D).snd a = Function.update D.snd t (zoneRebalance dir (D.snd t)) a
+but is expected to have type
+  ?m.23 = ?m.24
+in the application
+  heq_of_eq (zoneRebalanceData_snd dir t D)
+rvprobe/g5review/G5RvSigma.lean:34:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (zoneRebalanceData ?dir ?t ?D).snd ?a
+in the target expression
+  (zoneRebalanceData dir t D).snd ≍ ⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd
+
+k : ℕ
+dir : Bool
+t : Fin k
+D : ZoneData k
+⊢ (zoneRebalanceData dir t D).snd ≍ ⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd
+rvprobe/g5review/G5RvSigma.lean:40:53: error: unsolved goals
+k : ℕ
+dir : Bool
+t : Fin k
+D : ZoneData k
+p : ℤ
+⊢ zoneTrackTape (zoneRebalance dir (D.snd t)) p = zoneTrackTape (zoneRebalance dir (D.snd t)) p
+rvprobe/g5review/G5RvSigma.lean:46:53: error: unsolved goals
+k : ℕ
+dir : Bool
+t : Fin k
+D : ZoneData k
+p : ℤ
+⊢ zoneTrackTape (zoneRebalance dir (D.snd t)) p = zoneTrackTape (zoneRebalance dir (D.snd t)) p
+rvprobe/g5review/G5RvSigma.lean:52:46: error: Application type mismatch: The argument
+  zoneExtendData_snd D
+has type
+  ∀ (t : Fin k), (zoneExtendData D).snd t = (D.snd t).extend
+but is expected to have type
+  ?m.25 = ?m.26
+in the application
+  heq_of_eq (zoneExtendData_snd D)
+rvprobe/g5review/G5RvSigma.lean:61:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Function.update ?f ?a ?v ?a
+in the target expression
+  zoneTrackTape (⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd t) p =
+    zoneTrackTape (zoneRebalance dir (D.snd t)) p
+
+k : ℕ
+dir : Bool
+t : Fin k
+D : ZoneData k
+p : ℤ
+hA : zoneRebalanceData dir t D = ⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩
+⊢ zoneTrackTape (⟨D.fst, Function.update D.snd t (zoneRebalance dir (D.snd t))⟩.snd t) p =
+    zoneTrackTape (zoneRebalance dir (D.snd t)) p
