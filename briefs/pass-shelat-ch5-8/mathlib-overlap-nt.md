@@ -319,3 +319,20 @@ above uses names already in scope.
   (both PARTIAL, not probed).
 - `exact?` cannot see modules outside its imports. Coverage there rests on the greps quoted in
   the rows. `NumberTheory/LSeries/PrimesInAP` was read but not compiled.
+
+## Addendum (2026-11-06): newer Mathlib
+
+Checked against Mathlib `master` at `94f43000e8ad6602fb9c2fdf979eb9c9e1e1dbad` (2026-11-06), which
+needs Lean `v4.36.0-rc2`; our pin is `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e` (2025-11-14, Lean
+`v4.25.0`). New since the pin, relevant here:
+- `Mathlib/NumberTheory/Chebyshev.lean`: Chebyshev's `θ`, `ψ` and the explicit lower bounds
+  `Chebyshev.theta_ge`, `Chebyshev.psi_ge` and `Chebyshev.pi_ge`
+  (`(n log 2 − log (n+1)) / log n ≤ π n`). This would replace TCSlib's own Chebyshev lower bound
+  (`NumberTheory/Chebyshev.lean`).
+- `Mathlib/NumberTheory/CarmichaelNumber.lean`: `Nat.IsCarmichael` and Korselt's criterion
+  (`Nat.isCarmichael_iff_korselt`). TCSlib's private `not_prime_pow_of_forall_pow` is related.
+- Still absent on `master`: a totient lower bound (`φ N ≳ N / log N`), Miller–Rabin
+  (strong pseudoprimes, the liar bound), and the four square roots mod `pq`.
+
+Using these needs a Mathlib bump, which is repository-wide (the `main` branch's pin, eleven Lean
+minor versions). Recorded as ledger row DL-22, to be paid at that bump.
