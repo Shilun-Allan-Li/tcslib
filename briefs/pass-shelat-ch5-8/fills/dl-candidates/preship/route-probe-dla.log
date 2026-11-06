@@ -1,0 +1,138 @@
+# Route probe, dl-a: statClose_sampleBelowL as a corollary of statClose_rejectBlocksL
+
+Worktree HEAD: 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (statClose_rejectBlocksL is sorried there and taken as given).
+Checked alone with scripts/lean_check_tree.sh (PATH with ~/.elan/bin, TCSLIB_OLEANS=filldl-oleans).
+
+Result: Probe/RouteDLA.lean compiles with 0 errors and 0 warnings (rc=0). The corollary statClose_sampleBelowL_route has the target's statement verbatim
+and is proved under the seal `attribute [local irreducible] rejectBlocksL sampleBelowL StatClose uprob listToNat firstHit bitsToNat bitsEquiv
+HardcoreBit.PushesUniform Nat.size`, using only sampleBelowL_eq_rejectBlocksL, statClose_rejectBlocksL, StatClose.comp_equiv_right, StatClose.mono,
+uprob_comp_equiv, bitsEquiv_val, uprob_bitsToNat_lt, OneWay.uprob_congr and Mathlib (Nat.size_le, Nat.lt_size_self, Nat.size_pos, Nat.lt_size).
+Controls: control 0 (before the seal) reads rejectBlocksL by rfl and succeeds; controls 1 and 2 (after the seal) assert with fail_if_success that
+rfl on rejectBlocksL and a lambda introduction of StatClose fail, and pass; Probe/RouteDLAControl.lean repeats control 1 without fail_if_success
+and reports the expected error (rc=1). Axioms of the corollary: propext, sorryAx, Classical.choice, Quot.sound; sorryAx comes only from the
+sorried statClose_rejectBlocksL. Nothing is missing for this route.
+
+## Probe/RouteDLA.lean
+import TCSlib.Cryptography.Candidates.DiscreteLog
+
+/-!
+Route probe (dl-a): `statClose_sampleBelowL`'s statement proved as a corollary of
+`statClose_rejectBlocksL` (sorried in the tree, taken as given) through
+`sampleBelowL_eq_rejectBlocksL`, with every definition the proof could unfold sealed.
+-/
+
+namespace TCSlib.Cryptography.Candidates
+
+open Complexity Turing NumberTheory Finset
+
+/-- Control 0 (before the seal): `rejectBlocksL` unfolds by `rfl`. -/
+example (m k B T : ℕ) (r : List Bool) :
+    rejectBlocksL (· < m) k B T r = (List.range T).findSome? fun t =>
+      if listToNat ((r.drop (t * B)).take k) < m then some (listToNat ((r.drop (t * B)).take k))
+      else none := rfl
+
+-- The seal: every other-file TCSlib definition the proof could read, the file's own
+-- `sampleBelowL` (read only through its equation), and Mathlib's `Nat.size`.
+attribute [local irreducible] rejectBlocksL sampleBelowL StatClose uprob listToNat firstHit
+  bitsToNat bitsEquiv HardcoreBit.PushesUniform Nat.size
+
+/-- Control 1 (seal active): the same `rfl` fails once `rejectBlocksL` is sealed; the published
+equation still closes it. -/
+example (m k B T : ℕ) (r : List Bool) :
+    rejectBlocksL (· < m) k B T r = (List.range T).findSome? fun t =>
+      if listToNat ((r.drop (t * B)).take k) < m then some (listToNat ((r.drop (t * B)).take k))
+      else none := by
+  fail_if_success exact rfl
+  exact rejectBlocksL_eq _ _ _ _ _
+
+/-- Control 2 (seal active): `StatClose` cannot be introduced as a function once sealed. -/
+example (X : Fin 1 → ℕ) : StatClose X X 0 := by
+  fail_if_success exact fun T => by simp
+  exact StatClose.refl X
+
+/-- The corollary, sealed. -/
+theorem statClose_sampleBelowL_route {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+    StatClose (fun b : Fin (n * n) → Bool => (sampleBelowL m (Nat.size m) n n (List.ofFn b)).getD 0)
+      (fun x : Fin m => (x : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+  -- `k = Nat.size m ≤ n`, `m ≤ 2^k ≤ 2m`
+  have hkn : Nat.size m ≤ n := Nat.size_le.2 hmn
+  have hmk : m ≤ 2 ^ Nat.size m := (Nat.lt_size_self m).le
+  have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
+  have hk2 : 2 ^ Nat.size m ≤ 2 * m := by
+    have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
+    have h2 : 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
+      rw [← pow_succ']; congr 1; omega
+    omega
+  -- the block sampler's closeness, with the default `0`
+  have h := statClose_rejectBlocksL (· < m) (Nat.size m) n n hkn (d := 0) hm (Nat.two_pow_pos _)
+  -- transport the target along `Fin m ≃ {v : Fin (2^k) // v < m}`
+  let e : Fin m ≃ {v : Fin (2 ^ Nat.size m) // (v : ℕ) < m} :=
+    { toFun := fun x => ⟨⟨x.val, lt_of_lt_of_le x.2 hmk⟩, x.2⟩
+      invFun := fun v => ⟨v.1.val, v.2⟩
+      left_inv := fun _ => rfl
+      right_inv := fun _ => rfl }
+  have h' := h.comp_equiv_right e
+  -- the acceptance probability `m / 2^k`
+  have hacc : uprob (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m) = m / 2 ^ Nat.size m := by
+    rw [← uprob_comp_equiv (bitsEquiv (Nat.size m)) (fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m),
+      ← uprob_bitsToNat_lt hmk]
+    exact OneWay.uprob_congr fun b => by rw [bitsEquiv_val]
+  -- `(1 − m/2^k)^n ≤ (1/2)^n`
+  have hbound : (1 - uprob fun v : Fin (2 ^ Nat.size m) => (v : ℕ) < m) ^ n ≤ (1 / 2 : ℝ) ^ n := by
+    rw [hacc]
+    have h2k : (0 : ℝ) < 2 ^ Nat.size m := by positivity
+    have hmk' : (m : ℝ) ≤ 2 ^ Nat.size m := by exact_mod_cast hmk
+    have hk2' : (2 : ℝ) ^ Nat.size m ≤ 2 * m := by exact_mod_cast hk2
+    apply pow_le_pow_left₀
+    · rw [sub_nonneg, div_le_one h2k]; exact hmk'
+    · have : (1 / 2 : ℝ) ≤ m / 2 ^ Nat.size m := by
+        rw [div_le_div_iff₀ (by norm_num) h2k]; linarith
+      linarith
+  rw [sampleBelowL_eq_rejectBlocksL]
+  exact h'.mono hbound
+
+end TCSlib.Cryptography.Candidates
+
+## Lean output, Probe/RouteDLA (verbatim; empty = no messages)
+
+## Probe/RouteDLAControl.lean
+import Probe.RouteDLA
+
+/-! Raw control for the route probe: under the same seal, reading `rejectBlocksL` by `rfl` must
+fail (this file is expected to report one error), and the axioms of the sealed corollary. -/
+
+namespace TCSlib.Cryptography.Candidates
+
+open Complexity Turing NumberTheory Finset
+
+attribute [local irreducible] rejectBlocksL sampleBelowL StatClose uprob listToNat firstHit
+  bitsToNat bitsEquiv HardcoreBit.PushesUniform Nat.size
+
+example (m k B T : ℕ) (r : List Bool) :
+    rejectBlocksL (· < m) k B T r = (List.range T).findSome? fun t =>
+      if listToNat ((r.drop (t * B)).take k) < m then some (listToNat ((r.drop (t * B)).take k))
+      else none := rfl
+
+#print axioms statClose_sampleBelowL_route
+
+end TCSlib.Cryptography.Candidates
+
+## Lean output, Probe/RouteDLAControl (verbatim)
+Probe/RouteDLAControl.lean:16:19: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  rejectBlocksL (fun x => x < m) k B T r =
+    List.findSome?
+      (fun t =>
+        if listToNat (List.take k (List.drop (t * B) r)) < m then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+'TCSlib.Cryptography.Candidates.statClose_sampleBelowL_route' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+FAIL(Probe/RouteDLAControl): lean exited with status 1
+FAIL(Probe/RouteDLAControl): error diagnostics reported
+FAIL(Probe/RouteDLAControl): no fresh .olean produced

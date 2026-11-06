@@ -1,10 +1,9 @@
 # Gate 03f1 ([PS10] ch. 2–4, discrete log, its hard-core bit, ElGamal): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch once [Shilun-Allan-Li/tcslib#201](https://github.com/Shilun-Allan-Li/tcslib/pull/201) merges** (re-staged 2026-11-05 at that PR's head, the gate 03a + 03c repairs; first staged at `a3c5fa8b`; the evidence is under `evidence/f1/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the discrete-log candidate (the assumption
+`0c348ff94cacf24d96d99078c9dd9e328530c8d2` (the head of #201; its Lean files are what the branch holds once #201 merges). This pack covers the discrete-log candidate (the assumption
 and the collection), its hard-core bit, ElGamal, and the concrete samplers they use.
 - **This pack gates fills.** Its files hold **21 `sorry`s**. By the user's ruling of 2026-11-05 they
   will be filled after this pack closes, discrete log first, because ch. 5–8 cites the DL candidate
@@ -22,6 +21,13 @@ page − 12. This pack needs:
 - §3.11 (pp. 105–107);
 - Claim 36.2 (p. 36);
 - Claim 62.2 (p. 62).
+
+## Changes since the first staging (repairs of the interface packs; check them, do not re-find them)
+
+The pin moved from `a3c5fa8b` to the head of the gate 03a + 03c repair PR. Changes in or near this pack's files:
+- **G3-1** (gate 03b major, merged in #198): `Collection` gained the field `encD_decD`, which makes decoding canonical. `expCollection` proves it by `expEnc_of_expDec` (`DiscreteLog.lean`). The numeral lemmas `natToList_length_listToNat` and `natToList_val_natCast` are in `Arithmetic.lean` (context). `encodeDistinctPrimes_of_decode` is in `Concrete.lean`.
+- **Gate 03a #12:** `DiscreteLog.lean` imports `Randomized.{Closure, NonUniform, Repetition}` instead of the facade `TCSlib.Complexity.Randomized`. No statement changes.
+- **Gate 03l, major 1:** the axiom attestation below prints every public theorem and lemma of this pack's files, not only `Checks.lean`'s headlines.
 
 ## Brief for the auditor
 
@@ -56,9 +62,25 @@ Do not give a blanket approval.
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `0c348ff94cacf24d96d99078c9dd9e328530c8d2` (evidence under `evidence/f1/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 89 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   39 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 150 prints of every public theorem and lemma in this pack's files:
+   116 use only the standard axioms, and 34 depend on `sorryAx`; any other axiom is listed
+   in the log.
+3. **Admissions** (`admissions.txt`): 21 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 5 files.
+
+The replay is the 416-module replay at `af91d53a` overlaid with the re-check of the 98 modules
+downstream of #201's changes at its head (`evidence-repairs/03ac/replay.log`); each line of
+`replay.log` is the newest check of its module. The closure is smaller than at the first staging
+because 03a's repair narrowed facade imports (`Randomized` → its three files).
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
-- the axiom prints of this pack's headlines;
+- the axiom prints of every public theorem and lemma of this pack's files;
 - **admissions:** the 21 `sorry`s, listed by declaration:
   - `DiscreteLog`: 6;
   - `DiscreteLogHardcore`: 7;

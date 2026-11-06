@@ -37,7 +37,7 @@ This file supplies everything that does not depend on the repetition lemma itsel
   their polynomial-time proofs and the closed forms of the orbits (namespaces
   `Complexity.StateLoop.IterLoop` and `Complexity.StateLoop.EmitLoop`).
 
-The four string loops (`MajLoop`, `XorLoop`, `EqLoop`, `BlockLoop`) are in
+The four string loops (`MajLoop`, `XorLoop`, `EqLoop`, `BlockMapLoop`) are in
 `TCSlib.Complexity.Randomized.Build.StringLoops`; the assembly through
 `Complexity.polyTimeComputable_iterateFind` and the six public theorems live in
 `TCSlib.Complexity.Randomized.Repetition`.
@@ -195,9 +195,23 @@ fits the bound `B|fst w|`, else stay. -/
 def gstep (step : List Bool → List Bool) (B : PolyExpr) (w : List Bool) : List Bool :=
   if (step w).length ≤ B.eval (pairFstD w).length then pairEncode (pairFstD w) (step w) else w
 
+/-- The guarded step: `gstep step B w = ⟨fst w, step w⟩` if `|step w| ≤ B|fst w|`, and `w`
+otherwise. -/
+theorem gstep_eq (step : List Bool → List Bool) (B : PolyExpr) (w : List Bool) :
+    gstep step B w =
+      if (step w).length ≤ B.eval (pairFstD w).length then pairEncode (pairFstD w) (step w)
+      else w :=
+  rfl
+
 /-- The bound `3n + 2 + B(n)` on the guarded orbit of an arbitrary word of length `n`. -/
 def gstepBound (B : PolyExpr) : PolyExpr :=
   .add (.mul (.const 3) .var) (.add (.const 2) B)
+
+/-- The orbit bound evaluates to `(gstepBound B).eval n = 3n + 2 + B(n)`. -/
+theorem gstepBound_eval (B : PolyExpr) (n : ℕ) : (gstepBound B).eval n = 3 * n + 2 + B.eval n := by
+  simp only [gstepBound, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+    PolyExpr.eval_var]
+  omega
 
 /-- The guarded step is polynomial-time: `Complexity.polyTimeComputable_ite` on the length
 test `|step w| ≤ |1^{B|fst w|}|` (`lenLe_comp`, `unaryPoly_comp`), the pairing of the first
@@ -279,17 +293,35 @@ namespace IterLoop
 /-- The initial state `⟨[], x⟩`: empty counter, orbit point `x`. -/
 def start (x : List Bool) : List Bool := pairEncode [] x
 
+/-- The initial state is `start x = ⟨[], x⟩`. -/
+theorem start_eq (x : List Bool) : start x = pairEncode [] x :=
+  rfl
+
 /-- The step on the state word `⟨x, ⟨cnt, s⟩⟩`: append a token to the counter and advance the
 orbit point, giving `⟨true :: cnt, g s⟩`. -/
 def step (g : List Bool → List Bool) (w : List Bool) : List Bool :=
   pairEncode (true :: pairFstD (pairSndD w)) (g (pairSndD (pairSndD w)))
 
+/-- The step is `step g w = ⟨true :: fst (snd w), g (snd (snd w))⟩`. -/
+theorem step_eq (g : List Bool → List Bool) (w : List Bool) :
+    step g w = pairEncode (true :: pairFstD (pairSndD w)) (g (pairSndD (pairSndD w))) :=
+  rfl
+
 /-- The acceptance test on `⟨x, ⟨cnt, s⟩⟩`: the counter has reached `R|x|`. -/
 def acc (R : PolyExpr) (w : List Bool) : Bool :=
   decide (R.eval (pairFstD w).length ≤ (pairFstD (pairSndD w)).length)
 
+/-- The acceptance test is `acc R w = decide (R|fst w| ≤ |fst (snd w)|)`. -/
+theorem acc_eq (R : PolyExpr) (w : List Bool) :
+    acc R w = decide (R.eval (pairFstD w).length ≤ (pairFstD (pairSndD w)).length) :=
+  rfl
+
 /-- The output on `⟨x, ⟨cnt, s⟩⟩`: the orbit point `s`. -/
 def out (w : List Bool) : List Bool := pairSndD (pairSndD w)
+
+/-- The output is `out w = snd (snd w)`. -/
+theorem out_eq (w : List Bool) : out w = pairSndD (pairSndD w) :=
+  rfl
 
 /-- The initial state is polynomial-time. -/
 theorem start_poly : PolyTimeComputable start :=
@@ -312,7 +344,7 @@ theorem acc_poly (R : PolyExpr) : PolyTimeComputable fun w => [acc R w] := by
 theorem out_poly : PolyTimeComputable out :=
   polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
 
-/-- The closed form of the orbit: `⟨1^i, g^[i] x⟩`. -/
+/-- After `i` rounds the state is `⟨1^i, g^[i] x⟩`. -/
 theorem orbit_eq (g : List Bool → List Bool) (x : List Bool) (i : ℕ) :
     orbit start (step g) x i = pairEncode (List.replicate i true) (g^[i] x) := by
   induction i with
@@ -328,21 +360,41 @@ namespace EmitLoop
 /-- The initial state `⟨[], ⟨x, []⟩⟩`: empty counter, orbit point `x`, empty accumulator. -/
 def start (x : List Bool) : List Bool := pairEncode [] (pairEncode x [])
 
+/-- The initial state is `start x = ⟨[], ⟨x, []⟩⟩`. -/
+theorem start_eq (x : List Bool) : start x = pairEncode [] (pairEncode x []) :=
+  rfl
+
 /-- The step on `⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`: `⟨true :: cnt, ⟨g s, a ++ emit s⟩⟩`. -/
 def step (g emit : List Bool → List Bool) (w : List Bool) : List Bool :=
   pairEncode (true :: pairFstD (pairSndD w))
     (pairEncode (g (pairFstD (pairSndD (pairSndD w))))
       (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))))
 
+/-- The step is `step g emit w = ⟨true :: c, ⟨g s, a ++ emit s⟩⟩` for
+`w = ⟨x, ⟨c, ⟨s, a⟩⟩⟩` (`c = fst (snd w)`, `s = fst (snd (snd w))`, `a = snd (snd (snd w))`). -/
+theorem step_eq (g emit : List Bool → List Bool) (w : List Bool) :
+    step g emit w =
+      pairEncode (true :: pairFstD (pairSndD w))
+        (pairEncode (g (pairFstD (pairSndD (pairSndD w))))
+          (pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))))) :=
+  rfl
+
 /-- The output on `⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`: `a ++ emit s`. -/
 def out (emit : List Bool → List Bool) (w : List Bool) : List Bool :=
   pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w)))
 
-/-- The orbit point of the state word. -/
+/-- The output is `out emit w = a ++ emit s` for `w = ⟨x, ⟨c, ⟨s, a⟩⟩⟩`. -/
+theorem out_eq (emit : List Bool → List Bool) (w : List Bool) :
+    out emit w = pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))) :=
+  rfl
+
+/-- The map `w ↦ fst (snd (snd w))` (the orbit point `s` of the state word
+`⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`) is polynomial-time computable. -/
 theorem point_poly : PolyTimeComputable fun w => pairFstD (pairSndD (pairSndD w)) :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The accumulator of the state word. -/
+/-- The map `w ↦ snd (snd (snd w))` (the accumulator `a` of the state word
+`⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`) is polynomial-time computable. -/
 theorem accum_poly : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
@@ -362,7 +414,7 @@ theorem out_poly {emit : List Bool → List Bool} (hemit : PolyTimeComputable em
     PolyTimeComputable (out emit) :=
   accum_poly.append (hemit.comp point_poly)
 
-/-- The closed form of the orbit: `⟨1^i, ⟨g^[i] x, emit x ++ ⋯ ++ emit (g^[i-1] x)⟩⟩`. -/
+/-- After `i` rounds the state is `⟨1^i, ⟨g^[i] x, emit x ++ ⋯ ++ emit (g^[i-1] x)⟩⟩`. -/
 theorem orbit_eq (g emit : List Bool → List Bool) (x : List Bool) (i : ℕ) :
     orbit start (step g emit) x i =
       pairEncode (List.replicate i true)

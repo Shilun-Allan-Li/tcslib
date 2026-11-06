@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.Formulas.CNFEncoding
 import TCSlib.Complexity.ClassNP.NP
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.TuringMachine.Build.ModuleHost
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.List.MinMax
 
@@ -3779,26 +3780,6 @@ private lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     exact ih (by omega)
 
-/-- A padded halting run can be cut at its first halt without changing any
-endpoint field. This is the local instance of the engine's minimal-halt
-argument: use `Nat.find` and the absorbing-halt law. -/
-private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
-    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
-    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
-      tm.runFrom cfg u = tm.runFrom cfg t := by
-  classical
-  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
-  have hu := Nat.find_spec h
-  have hle := Nat.find_min' h hhalt
-  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
-  · by_contra hn
-    have hz : Nat.find h = 0 := by omega
-    rw [hz, MultiTapeTM.runFrom_zero] at hu
-    exact hstart hu
-  · symm
-    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
-
 /-- The appender has a full clean return, in linear time in the native input
 and existing word. Both input and work heads return to their canonical origins.
 **Proof sketch.** Compose seek, copy, work rewind, and the audited native
@@ -3831,7 +3812,7 @@ private lemma satAppend_clean (x w : List Bool) :
     rw [hc, hr, hn]
     refine Cfg.ext rfl rfl ?_ rfl rfl
     funext i; fin_cases i; rfl
-  obtain ⟨u, hu, hut, hg, heq⟩ := sat_call_first_halt satAppendTM.tm
+  obtain ⟨u, hu, hut, hg, heq⟩ := ModuleHost.first_halt satAppendTM.tm
     (Cfg.ofWords (input := x) (0 : Fin 5) (stateWord 1 w)) _ (by simp [Cfg.ofWords])
     (by rw [he])
   refine ⟨u, hu, ?_, hg, heq.trans he⟩
@@ -3839,147 +3820,10 @@ private lemma satAppend_clean (x w : List Bool) :
   simp only [List.length_append] at hut
   omega
 
-/-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/
-private def satPadAction {k K : ℕ} {S : Type} (a : Action k Bool S) : Action K Bool S :=
-  ⟨a.inputTape, fun i => if h : i.val < k then a.workTapes ⟨i.val, h⟩ else (none, 0),
-    a.output, a.state⟩
-
-/-- All modules share tape zero; a positive source bank is padded on the right. -/
-private def satPadTM (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K) : FinTM Bool where
-  k := K
-  State := M.State
-  tm := { q₀ := M.tm.q₀
-          tr := fun q inp work => satPadAction (M.tm.tr q inp
-            (fun i => work ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩)) }
-
-/-- Configuration embedding for the shared bank; the padding is genuinely blank. -/
-private def satPadCfg {k K : ℕ} {S : Type} {x : List Bool}
-    (c : Cfg k Bool S x) : Cfg K Bool S x :=
-  ⟨c.state, c.inputPos,
-    fun i => if h : i.val < k then c.workTapes ⟨i.val, h⟩ else fun _ => none,
-    fun i => if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else 0, c.output⟩
-
-/-- Padding commutes with a transition, including writes at arbitrary cells.
-**Proof sketch.** Split each work index by membership in the source bank;
-the inactive branch neither writes nor moves. -/
-private lemma satPad_apply {k K : ℕ} {S : Type} {x : List Bool}
-    (a : Action k Bool S) (c : Cfg k Bool S x) :
-    (satPadAction (K := K) a).apply (satPadCfg c) = satPadCfg (a.apply c) := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases h : i.val < k <;> simp [satPadAction, satPadCfg, Action.apply, h]
-  · funext i
-    by_cases h : i.val < k <;> simp [satPadAction, satPadCfg, Action.apply, h]
-
-/-- The padded source observes exactly its original work symbols. -/
-private lemma satPad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
-    {x : List Bool} (c : Cfg M.k Bool M.State x) (t : ℕ) :
-    (satPadTM M K hk).tm.runFrom (satPadCfg c) t = satPadCfg (M.tm.runFrom c t) := by
-  apply MultiTapeTM.runFrom_comm_of_step
-  intro c
-  cases hs : c.state with
-  | none => simp [MultiTapeTM.step, satPadCfg, hs]
-  | some q =>
-    have hw : (fun i : Fin M.k => (satPadCfg (K := K) c).workTapeSymbols
-        ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
-      funext i; simp [satPadCfg, Cfg.workTapeSymbols, i.isLt]
-    have hstate : (satPadCfg (K := K) c).state = some q := hs
-    simp only [MultiTapeTM.step, hstate, hs]
-    change (satPadAction (M.tm.tr q c.inputSymbol _)).apply _ = _
-    rw [hw]
-    exact satPad_apply _ _
-
-/-- Positive tape count makes the padded seam the same canonical state word. -/
-private lemma satPad_seam {k K : ℕ} {S : Type} {x : List Bool}
-    (hk : 0 < k) (q : S) (w out : List Bool) :
-    satPadCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) =
-      {Cfg.ofWords (input := x) q (stateWord K w) with output := out} := by
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext i z
-    by_cases hi : i.val < k
-    · simp [satPadCfg, Cfg.ofWords, stateWord, hi]
-    · have hn : i.val ≠ 0 := by omega
-      simp [satPadCfg, Cfg.ofWords, stateWord, hi, hn, FinTM.bufferTape]
-  · funext i
-    by_cases hi : i.val < k <;> simp [satPadCfg, Cfg.ofWords, hi]
-
-/-- Convert a first-positive-exit module into a halting source for `emit_run`.
-The Boolean release flag ensures even an entry equal to exit executes once. -/
-private def satStopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where
-  k := C.k
-  State := Bool × C.State
-  tm := { q₀ := (false, entry)
-          tr := fun q inp work =>
-            if q.1 = true ∧ q.2 = exit then FinTM.controlAction 0 none
-            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, ·)} }
-
-/-- Release-flag embedding preserves all physical fields of a call. -/
-private def satStopCfg {k : ℕ} {S : Type} {x : List Bool}
-    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool × S) x :=
-  ⟨c.state.map (b, ·), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
-
-/-- Before the designated positive exit, the stopped source takes the same
-physical step as the module and raises the release flag. -/
-private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
-    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)
-    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :
-    (satStopTM C entry exit).tm.step (satStopCfg b c) = satStopCfg true (C.tm.step c) := by
-  cases hs : c.state with
-  | none => exact False.elim (hlive hs)
-  | some q =>
-    have hq : ¬(b = true ∧ q = exit) := by
-      rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step, satStopCfg, hs, Option.map_some]
-    simp only [satStopTM, hq, ↓reduceIte]
-    rfl
-
-/-- Live endpoints force every earlier module state to be live. -/
-private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
-    (ht : (tm.runFrom c t).state ≠ none) :
-    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  intro u hu hh
-  have he : tm.runFrom c t = tm.runFrom c u := by
-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
-  exact ht (by rw [he]; exact hh)
-
-/-- Stop a clean call one silent step after its certified first positive exit.
-**Proof sketch.** Induct on prefixes, keeping the release flag false only at
-time zero. The supplied guard prevents early stopping; a final silent halt
-retains every canonical seam field and every emitted bit. -/
-private lemma satStop_clean (C : FinTM Bool) (entry exit : C.State)
-    (x arg result out : List Bool) (t : ℕ) (ht : 0 < t)
-    (hg : ∀ v, 0 < v → v < t → (C.tm.runFrom
-      (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit)
-    (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-      {Cfg.ofWords exit (stateWord C.k result) with output := out}) :
-    (satStopTM C entry exit).tm.runFrom
-      (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) =
-      {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
-  let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
-  have hl := sat_live_prefix C.tm c t (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
-  have hp : ∀ v, v ≤ t → (satStopTM C entry exit).tm.runFrom (satStopCfg false c) v =
-      satStopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
-    intro v
-    induction v with
-    | zero => intro _; rfl
-    | succ v ih =>
-      intro hv
-      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
-        satStop_step C entry exit _ _ (hl v (by omega)) (by
-          intro hn
-          exact hg v (Nat.pos_of_ne_zero (of_decide_eq_true hn)) (by omega)),
-        MultiTapeTM.runFrom_succ_eq_step']
-      rfl
-  have hi : Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg) = satStopCfg false c := rfl
-  rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
-  have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
-  rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step, satStopTM, satStopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]
-
-/-- Six finite modules form the streaming body: startup append and install,
-then the recurring pack, append, emit, and install calls. -/
-private abbrev SatHostState (M : Fin 6 → FinTM Bool) := Unit ⊕ (Σ i, (M i).State)
+/-! The six modules of the streaming body (startup append and install, then the recurring
+pack, append, emit and install calls) run in the public clean-module host
+`Turing.ModuleHost.hostTM` (`TCSlib.Complexity.TuringMachine.Build.ModuleHost`, harvested from
+this file's former private module layer), with one control state, the loop anchor `inl ()`. -/
 
 /-- A module's return destination; startup install and step install return to
 the unique loop anchor. The other calls continue to the next finite module. -/
@@ -3987,220 +3831,22 @@ private def satHostNext (i : Fin 6) : Option (Fin 6) :=
   if i = 0 then some 1 else if i = 2 then some 3 else if i = 3 then some 4
   else if i = 4 then some 5 else none
 
-/-- A named entry state inside the finite body. -/
-private def satHostEntry (M : Fin 6 → FinTM Bool) (i : Fin 6) : SatHostState M :=
-  .inr ⟨i, (M i).tm.q₀⟩
-
 /-- Resolve a finite module's return, with no additional tape operation. -/
-private def satHostRet (M : Fin 6 → FinTM Bool) (i : Fin 6) : SatHostState M :=
+private def satHostRet (M : Fin 6 → FinTM Bool) (i : Fin 6) : ModuleHost.State Unit M :=
   match satHostNext i with
-  | some j => satHostEntry M j
+  | some j => ModuleHost.entry M j
   | none => .inl ()
 
-/-- The actual finite controller. All modules use the same padded work bank,
-so the clean-call contracts restore scratch before each next call. `emitAction`
-forwards the halting transition as well as ordinary transitions. -/
-private def satHostTM (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K) : FinTM Bool where
-  k := K
-  State := SatHostState M
-  tm := {
-    q₀ := satHostEntry M 0
-    tr := fun q inp work => match q with
-      | .inl _ => FinTM.controlAction 0 (some (satHostEntry M 2))
-      | .inr ⟨i, s⟩ => emitAction (fun s => .inr ⟨i, s⟩) (satHostRet M i)
-          ((satPadTM (M i) K (hk i)).tm.tr s inp work) }
-
-/-- Forwarding a padded clean configuration produces the host's canonical
-seam with precisely the supplied output prefix. Positive tape count is used
-only to identify the real tape-zero word. -/
-private lemma satHost_seam (M : Fin 6 → FinTM Bool) (K : ℕ) (i : Fin 6)
-    (hp : 0 < (M i).k) (x w pre out : List Bool) (q : (M i).State)
-    (state : Option (M i).State) :
-    emitCfg (fun s => (Sum.inr ⟨i, s⟩ : SatHostState M)) (satHostRet M i) pre
-      (satPadCfg (K := K) {Cfg.ofWords (input := x) q (stateWord (M i).k w)
-        with state := state, output := out}) =
-      {Cfg.ofWords (((state.map (fun s => (Sum.inr ⟨i, s⟩ : SatHostState M))).getD (satHostRet M i)))
-        (stateWord K w) with output := pre ++ out} := by
-  have h := satPad_seam (K := K) (x := x) hp q w out
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapes) h
-  · exact congrArg (fun c : Cfg K Bool (M i).State x => c.workTapePos) h
-
-/-- Run one clean module inside the body, forwarding exactly its output.
-**Proof sketch.** Padding preserves the source run. The audited `emit_run`
-then transfers every live prefix and the halting endpoint; live prefixes
-always remain in that module's state summand, hence cannot hit the anchor. -/
-private lemma satHost_call (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
-    (i : Fin 6) (hp : 0 < (M i).k) (x arg result out pre : List Bool)
-    (q : (M i).State) (t : ℕ)
-    (hg : ∀ v < t, ¬((M i).tm.runFrom
-      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) v).Halted)
-    (he : (M i).tm.runFrom
-      (Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)) t =
-      {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) :
-    (∀ v < t, ((satHostTM M K hk).tm.runFrom
-      {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} v).state
-        ≠ some (.inl ())) ∧
-    (satHostTM M K hk).tm.runFrom
-      {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} t =
-      {Cfg.ofWords (satHostRet M i) (stateWord K result) with output := pre ++ out} := by
-  let c := Cfg.ofWords (input := x) (M i).tm.q₀ (stateWord (M i).k arg)
-  let emb : (M i).State → SatHostState M := fun s => .inr ⟨i, s⟩
-  have hinit : emitCfg emb (satHostRet M i) pre (satPadCfg (K := K) c) =
-      {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} := by
-    simpa [emb, c, satHostEntry] using
-      satHost_seam M K i hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
-  have hrun (v : ℕ) (hv : v ≤ t) :
-      (satHostTM M K hk).tm.runFrom
-        {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} v =
-        emitCfg emb (satHostRet M i) pre (satPadCfg ((M i).tm.runFrom c v)) := by
-    rw [← hinit]
-    rw [emit_run (satPadTM (M i) K (hk i)).tm (satHostTM M K hk).tm emb (satHostRet M i)
-      (by intros; rfl) pre _ v (by
-        intro u hu
-        rw [satPad_run]
-        exact hg u (by omega))]
-    rw [satPad_run]
-  constructor
-  · intro v hv
-    rw [hrun v (Nat.le_of_lt hv)]
-    have hl := hg v hv
-    cases hs : ((M i).tm.runFrom c v).state with
-    | none => exact False.elim (hl hs)
-    | some s => simp [emitCfg, satPadCfg, hs, emb]
-  · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
-    exact satHost_seam M K i hp x result pre out q none
-
-/-- Joining two guarded segments preserves the first-return guard when the
-intermediate seam is also outside the anchor. -/
-private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)
-    (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)
-    (he : tm.runFrom c a = d)
-    (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
-    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  intro v hv
-  by_cases h : v < a
-  · exact ha v h
-  · have hva : a ≤ v := by omega
-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
-    exact hb (v - a) (by omega)
-
-/-- Uniform clean-module contract: a first halt with a prescribed replacement
-word and emitted chunk, over every untouched native input. -/
-private def SatClean (M : FinTM Bool) (result emit : List Bool → List Bool) (B : ℕ → ℕ) : Prop :=
-  0 < M.k ∧ ∀ x arg : List Bool, ∃ t, 0 < t ∧ t ≤ B arg.length ∧
-    (∀ v < t, ¬(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).Halted) ∧
-    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t =
-      {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with state := none, output := emit arg}
-
-/-- Turn a clean-call bridge contract into the uniform first-halting form.
-**Proof sketch.** The release wrapper stops one step after the positive exit;
-minimal-halt cutting retains its entire clean configuration. -/
-private lemma satClean_stop (C : FinTM Bool) (entry exit : C.State)
-    (result emit : List Bool → List Bool) (B : ℕ → ℕ) (hk : 0 < C.k)
-    (h : ∀ x arg : List Bool, ∃ t ≤ B arg.length, 0 < t ∧
-      (∀ v, 0 < v → v < t → (C.tm.runFrom
-        (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state ≠ some exit) ∧
-      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
-        {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) :
-    SatClean (satStopTM C entry exit) result emit (fun n => B n + 1) := by
-  refine ⟨hk, fun x arg => ?_⟩
-  obtain ⟨t, hb, ht, hg, he⟩ := h x arg
-  have hs := satStop_clean C entry exit x arg (result arg) (emit arg) t ht hg he
-  obtain ⟨u, hu, hut, hguard, hend⟩ := sat_call_first_halt (satStopTM C entry exit).tm
-    (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hs])
-  refine ⟨u, hu, by dsimp only; omega, hguard, ?_⟩
-  simpa only [satStopTM, Cfg.ofWords] using hend.trans hs
-
-/-- The bridge overhead is bounded by one monomial of degree one higher.
-**Proof sketch.** Output length is bounded by source time; `n+1` and both
-source-time terms fit the larger power. The last unit pays for stopping. -/
-private lemma sat_bridge_bound (c A d n len : ℕ) (hlen : len ≤ A * (n + 1) ^ d) :
-    c * (A * (n + 1) ^ d + n + len + 1) + 1 ≤
-      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by
-  have hd := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d ≤ d + 1 by omega))
-  simp only [Nat.succ_eq_add_one] at hd
-  have hn : n + 1 ≤ (n + 1) ^ (d + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 ≤ d + 1 by omega)
-  have h1 : 1 ≤ (n + 1) ^ (d + 1) := by omega
-  calc
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by
-      apply Nat.add_le_add_right
-      apply Nat.mul_le_mul_left
-      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]
-      omega
-    _ ≤ c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _
-    _ = _ := by ring
-
-/-- Every polynomial word computation has a clean first-halting install
-module with a polynomial budget on the argument length. -/
-private lemma satClean_install {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, SatClean M f (fun _ => []) (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_installCallTM F f _ hF
-  -- The bridge's result length depends on the word, so enlarge it pointwise
-  -- to source time before putting it in the uniform argument-length budget.
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := satClean_stop C entry exit f (fun _ => [])
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      refine ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, ?_⟩
-      exact he)
-  refine ⟨satStopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (sat_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
-
-/-- The emit-mode counterpart preserves the argument and forwards the exact
-computed chunk. Its polynomial budget includes cleanup and the final halt. -/
-private lemma satClean_emit {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
-    ∃ M A d, SatClean M id f (fun n => A * (n + 1) ^ d) := by
-  obtain ⟨F, A, d, hF⟩ := hf
-  obtain ⟨C, entry, exit, c, hk, hc⟩ := FinTM.exists_emitCallTM F f _ hF
-  have hlen (arg : List Bool) : (f arg).length ≤ A * (arg.length + 1) ^ d := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hF arg)).2
-    simpa only [ho] using F.tm.output_length_le arg (A * (arg.length + 1) ^ d)
-  have hstop := satClean_stop C entry exit id f
-    (fun n => c * (A * (n + 1) ^ d + n + A * (n + 1) ^ d + 1)) hk (by
-      intro x arg
-      obtain ⟨t, ht, hp, hg, he⟩ := hc x arg
-      exact ⟨t, ht.trans (Nat.mul_le_mul_left c (by have := hlen arg; omega)), hp, hg, he⟩)
-  refine ⟨satStopTM C entry exit, c * (2 * A + 1) + 1, d + 1, hk, fun x arg => ?_⟩
-  obtain ⟨t, hp, ht, hg, he⟩ := hstop.2 x arg
-  exact ⟨t, hp, ht.trans (sat_bridge_bound c A d arg.length _ (Nat.le_refl _)), hg, he⟩
+/-- The table of the body's one control state, the loop anchor: a stationary dispatch into the
+request-packing module. -/
+private def satHostCtrl (M : Fin 6 → FinTM Bool) (K : ℕ) :
+    Unit → Option Bool → (Fin K → Option Bool) → Action K Bool (ModuleHost.State Unit M) :=
+  fun _ _ _ => FinTM.controlAction 0 (some (ModuleHost.entry M 2))
 
 /-- Pairing length, used to charge every request to the original input. -/
 private lemma satPair_length (u v : List Bool) :
     (pairEncode u v).length = 2 * u.length + v.length + 2 := by
   simp [pairEncode, List.length_flatMap, Nat.mul_comm] <;> omega
-
-/-- Every polynomial on a linearly bounded request fits the common power. -/
-private lemma sat_request_budget (A d D n m : ℕ) (hd : d ≤ D)
-    (hm : m + 1 ≤ 32 * (n + 1)) :
-    A * (m + 1) ^ d ≤ A * (32 * (n + 1)) ^ D := by
-  apply Nat.mul_le_mul_left
-  exact (Nat.pow_le_pow_left hm d).trans
-    (Nat.pow_le_pow_right (by omega) hd)
-
-/-- Specialize a clean module to one call site in the finite host. -/
-private lemma satHost_clean (M : Fin 6 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
-    (i : Fin 6) (f g : List Bool → List Bool) (B : ℕ → ℕ)
-    (h : SatClean (M i) f g B) (x arg pre : List Bool) :
-    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
-      (∀ v < t, ((satHostTM M K hk).tm.runFrom
-        {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} v).state
-          ≠ some (.inl ())) ∧
-      (satHostTM M K hk).tm.runFrom
-        {Cfg.ofWords (input := x) (satHostEntry M i) (stateWord K arg) with output := pre} t =
-        {Cfg.ofWords (satHostRet M i) (stateWord K (f arg)) with output := pre ++ g arg} := by
-  obtain ⟨t, hp, ht, hg, he⟩ := h.2 x arg
-  obtain ⟨hguard, hend⟩ := satHost_call M K hk i h.1 x arg (f arg) (g arg) pre (M i).tm.q₀ t hg he
-  exact ⟨t, hp, ht, hguard, hend⟩
 
 /-- The full normalized emitter is polynomial-time computable.
 **Proof sketch.** Build four clean modules for startup, request packing, chunk
@@ -4211,19 +3857,22 @@ the canonical state word left on tape zero. Request sizes are linear in the
 original input, so one common polynomial bounds all calls and cleanup. Invoke
 `exists_emitLoopTM` with `R n = n`, then use the exact chunk-table identity. -/
 private lemma satReduction_poly : PolyTimeComputable satReduction := by
-  obtain ⟨S, aS, dS, hS⟩ := satClean_install satStreamStart_poly
-  obtain ⟨P, aP, dP, hP⟩ := satClean_install
+  obtain ⟨S, aS, dS, hS⟩ := ModuleHost.clean_install satStreamStart_poly
+  obtain ⟨P, aP, dP, hP⟩ := ModuleHost.clean_install
     (sat_pt_pair polyTimeComputable_id (sat_pt_const []))
-  obtain ⟨E, aE, dE, hE⟩ := satClean_emit satReqEmit_poly
-  obtain ⟨I, aI, dI, hI⟩ := satClean_install satReqStep_poly
+  obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit satReqEmit_poly
+  obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install satReqStep_poly
   obtain ⟨F, aF, hF⟩ := FinTM.computesFunInTime_lengthBits
   let M : Fin 6 → FinTM Bool := fun i => match i.val with
     | 0 => satAppendTM | 1 => S | 2 => P | 3 => satAppendTM | 4 => E | _ => I
   let K := 1 + S.k + P.k + E.k + I.k
   have hk : ∀ i, (M i).k ≤ K := by
     intro i; fin_cases i <;> simp [M, K, satAppendTM] <;> omega
-  let H := satHostTM M K hk
+  let H := ModuleHost.hostTM M K hk (satHostCtrl M K) (satHostRet M) (ModuleHost.entry M 0)
   let anchor : H.State := .inl ()
+  have hcall := ModuleHost.host_call M K hk (satHostCtrl M K) (satHostRet M) (ModuleHost.entry M 0)
+  have hclean :=
+    ModuleHost.host_clean M K hk (satHostCtrl M K) (satHostRet M) (ModuleHost.entry M 0)
   let D := dS + dP + dE + dI + 1
   let A := aS + aP + aE + aI + aF + 200
   let pow (n : ℕ) := (32 * (n + 1)) ^ D
@@ -4232,11 +3881,11 @@ private lemma satReduction_poly : PolyTimeComputable satReduction := by
     have h := Nat.pow_le_pow_right (show 0 < 32 * (n + 1) by omega) (show 1 ≤ D by dsimp [D]; omega)
     simp only [Nat.pow_one] at h
     exact (by omega : n + 1 ≤ 32 * (n + 1)).trans h
-  have hret0 : satHostRet M 0 = satHostEntry M 1 := rfl
+  have hret0 : satHostRet M 0 = ModuleHost.entry M 1 := rfl
   have hret1 : satHostRet M 1 = anchor := rfl
-  have hret2 : satHostRet M 2 = satHostEntry M 3 := rfl
-  have hret3 : satHostRet M 3 = satHostEntry M 4 := rfl
-  have hret4 : satHostRet M 4 = satHostEntry M 5 := rfl
+  have hret2 : satHostRet M 2 = ModuleHost.entry M 3 := rfl
+  have hret3 : satHostRet M 3 = ModuleHost.entry M 4 := rfl
+  have hret4 : satHostRet M 4 = ModuleHost.entry M 5 := rfl
   have hret5 : satHostRet M 5 = anchor := rfl
   have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
       (∀ v < t, (H.tm.runFrom (H.tm.initCfg x) v).state ≠ some anchor) ∧
@@ -4244,22 +3893,25 @@ private lemma satReduction_poly : PolyTimeComputable satReduction := by
         Cfg.ofWords anchor (stateWord H.k (satStreamWord (satStreamStart x))) := by
     intro x
     obtain ⟨ta, hapos, hat, hag, hae⟩ := satAppend_clean x []
-    have hac := satHost_call M K hk 0 (by simp [M, satAppendTM]) x [] x [] []
+    have hac := hcall 0 (by simp [M, satAppendTM]) x [] x [] []
       (0 : Fin 5) ta hag (by simpa using hae)
     obtain ⟨haGuard, haEnd⟩ := hac
-    have hi : H.tm.initCfg x = Cfg.ofWords (satHostEntry M 0) (stateWord K []) := by
-      refine Cfg.ext rfl rfl ?_ rfl rfl
+    have hi : H.tm.initCfg x = Cfg.ofWords (ModuleHost.entry M 0) (stateWord K []) := by
+      refine Cfg.ext ?_ rfl ?_ rfl rfl
+      · exact congrArg some (ModuleHost.hostTM_tm_q₀ M K hk (satHostCtrl M K) (satHostRet M)
+          (ModuleHost.entry M 0))
       funext i z; simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord, FinTM.bufferTape]
-    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 0) (stateWord K [])) ta =
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord K [])) ta =
       Cfg.ofWords (satHostRet M 0) (stateWord K x) at haEnd
     rw [hret0] at haEnd
-    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := satHost_clean M K hk 1
+    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := hclean 1
       (fun x => satStreamWord (satStreamStart x)) (fun _ => [])
       (fun n => aS * (n + 1) ^ dS) (by simpa [M] using hS) x x []
-    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 1) (stateWord K x)) ts =
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 1) (stateWord K x)) ts =
       Cfg.ofWords (satHostRet M 1) (stateWord K (satStreamWord (satStreamStart x))) at hsEnd
     rw [hret1] at hsEnd
-    have hsB := sat_request_budget aS dS D x.length x.length (by dsimp [D]; omega) (by omega)
+    have hsB := ModuleHost.request_budget aS dS D (32 * (x.length + 1)) x.length
+      (by dsimp [D]; omega) (by omega)
     have hp := hpow x.length
     refine ⟨ta + ts, ?_, ?_, ?_⟩
     · dsimp only [T, A, pow]
@@ -4268,7 +3920,8 @@ private lemma satReduction_poly : PolyTimeComputable satReduction := by
       dsimp only [pow] at hp
       omega
     · rw [hi]
-      exact sat_guard_add H.tm anchor _ _ ta ts haGuard haEnd hsGuard
+      exact ModuleHost.guard_add H.tm anchor _ _ ta ts (fun v hv => haGuard v hv ()) haEnd
+        (fun v hv => hsGuard v hv ())
     · rw [hi, MultiTapeTM.runFrom_add, haEnd, hsEnd]
       rfl
   have hround : ∀ x w : List Bool, satStreamInv x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
@@ -4290,46 +3943,56 @@ private lemma satReduction_poly : PolyTimeComputable satReduction := by
     have hemit : satReqEmit req = satStreamEmit x w := by
       simpa [req, w, satStreamEmit, satStreamRead_word] using (satReq_round x s).2
     have hdispatch : H.tm.step (Cfg.ofWords (input := x) anchor (stateWord K w)) =
-        Cfg.ofWords (satHostEntry M 2) (stateWord K w) := by
-      change (FinTM.controlAction 0 (some (satHostEntry M 2))).apply _ = _
+        Cfg.ofWords (ModuleHost.entry M 2) (stateWord K w) := by
+      rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ () rfl]
+      change (FinTM.controlAction 0 (some (ModuleHost.entry M 2))).apply _ = _
       simp [FinTM.controlAction, Action.apply, Cfg.ofWords]
       exact ⟨rfl, rfl⟩
-    obtain ⟨tp, hppos, hpt, hpGuard, hpEnd⟩ := satHost_clean M K hk 2
+    obtain ⟨tp, hppos, hpt, hpGuard, hpEnd⟩ := hclean 2
       (fun w => pairEncode w []) (fun _ => []) (fun n => aP * (n + 1) ^ dP)
       (by simpa [M, id_eq] using hP) x w []
-    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w)) tp =
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord K w)) tp =
       Cfg.ofWords (satHostRet M 2) (stateWord K packed) at hpEnd
     rw [hret2] at hpEnd
     obtain ⟨ta, hapos, hat, hag, hae⟩ := satAppend_clean x packed
-    obtain ⟨haGuard, haEnd⟩ := satHost_call M K hk 3 (by simp [M, satAppendTM])
+    obtain ⟨haGuard, haEnd⟩ := hcall 3 (by simp [M, satAppendTM])
       x packed req [] [] (0 : Fin 5) ta hag (by simpa [hpa] using hae)
-    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 3) (stateWord K packed)) ta =
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 3) (stateWord K packed))
+      ta =
       Cfg.ofWords (satHostRet M 3) (stateWord K req) at haEnd
     rw [hret3] at haEnd
-    obtain ⟨te, hepos, het, heGuard, heEnd⟩ := satHost_clean M K hk 4 id satReqEmit
+    obtain ⟨te, hepos, het, heGuard, heEnd⟩ := hclean 4 id satReqEmit
       (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x req []
-    change H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 4) (stateWord K req)) te =
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 4) (stateWord K req)) te =
       {Cfg.ofWords (satHostRet M 4) (stateWord K req) with output := satReqEmit req} at heEnd
     rw [hret4] at heEnd
-    obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := satHost_clean M K hk 5 satReqStep (fun _ => [])
+    obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := hclean 5 satReqStep (fun _ => [])
       (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x req (satReqEmit req)
     change H.tm.runFrom
-      {Cfg.ofWords (input := x) (satHostEntry M 5) (stateWord K req) with output := satReqEmit req} ti =
+      {Cfg.ofWords (input := x) (ModuleHost.entry M 5) (stateWord K req) with
+        output := satReqEmit req} ti =
       {Cfg.ofWords (satHostRet M 5) (stateWord K (satReqStep req)) with output := satReqEmit req ++ []} at hiEnd
     rw [List.append_nil, hret5] at hiEnd
-    have hpB := sat_request_budget aP dP D x.length w.length (by dsimp [D]; omega) (by omega)
-    have heB := sat_request_budget aE dE D x.length req.length (by dsimp [D]; omega) (by omega)
-    have hiB := sat_request_budget aI dI D x.length req.length (by dsimp [D]; omega) (by omega)
+    have hpB := ModuleHost.request_budget aP dP D (32 * (x.length + 1)) w.length
+      (by dsimp [D]; omega) (by omega)
+    have heB := ModuleHost.request_budget aE dE D (32 * (x.length + 1)) req.length
+      (by dsimp [D]; omega) (by omega)
+    have hiB := ModuleHost.request_budget aI dI D (32 * (x.length + 1)) req.length
+      (by dsimp [D]; omega) (by omega)
     have hpow' := hpow x.length
-    have hpAE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))
-        (tp + ta) = Cfg.ofWords (satHostEntry M 4) (stateWord K req) := by
+    have hpAE : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord K w))
+        (tp + ta) = Cfg.ofWords (ModuleHost.entry M 4) (stateWord K req) := by
       rw [MultiTapeTM.runFrom_add, hpEnd, haEnd]
-    have hpAguard := sat_guard_add H.tm anchor _ _ tp ta hpGuard hpEnd haGuard
-    have hpAEguard := sat_guard_add H.tm anchor _ _ (tp + ta) te hpAguard hpAE heGuard
-    have hpAEE : H.tm.runFrom (Cfg.ofWords (input := x) (satHostEntry M 2) (stateWord K w))
-        (tp + ta + te) = {Cfg.ofWords (satHostEntry M 5) (stateWord K req) with output := satReqEmit req} := by
+    have hpAguard := ModuleHost.guard_add H.tm anchor _ _ tp ta (fun v hv => hpGuard v hv ())
+      hpEnd (fun v hv => haGuard v hv ())
+    have hpAEguard := ModuleHost.guard_add H.tm anchor _ _ (tp + ta) te hpAguard hpAE
+      (fun v hv => heGuard v hv ())
+    have hpAEE : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord K w))
+        (tp + ta + te) =
+        {Cfg.ofWords (ModuleHost.entry M 5) (stateWord K req) with output := satReqEmit req} := by
       rw [MultiTapeTM.runFrom_add, hpAE, heEnd]
-    have hguard := sat_guard_add H.tm anchor _ _ (tp + ta + te) ti hpAEguard hpAEE hiGuard
+    have hguard := ModuleHost.guard_add H.tm anchor _ _ (tp + ta + te) ti hpAEguard hpAEE
+      (fun v hv => hiGuard v hv ())
     refine ⟨(tp + ta + te + ti) + 1, by omega, ?_, ?_, ?_⟩
     · dsimp only [T, A, pow]
       simp only [Nat.add_mul]

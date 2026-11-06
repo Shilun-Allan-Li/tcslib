@@ -1,0 +1,37 @@
+# Statement diff: decls.py (copied from g03l-fix) over every changed .lean file, BASE=092083cd10be7a284db4e97fcf42eddb8296edf7 vs HEAD=73751f5747d8c0a57aba9939cac8bb16f87ba2ba
+# Normalized statement text (comments stripped) of every public declaration, compared by full name.
+
+## Summary: 10 added, 2 changed, 0 removed
+
+## Added
+- Turing.ModuleHost.Clean.envelope (theorem, TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:239)
+    theorem Clean.envelope {M : FinTM Bool} {result emit : List Bool → List Bool} {B : ℕ → ℕ} (h : Clean M result emit B) (x arg : List Bool) (v : ℕ) (j : Fin M.k) :
+- Turing.ModuleHost.host_call_envelope (theorem, TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:567)
+    theorem host_call_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K) (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M)) (ret : Fin n → State C M) (q₀ : State C M) (i : Fin n) (x arg pre : List Bool) (t : ℕ) : ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).workTapePos j| ≤ (t : ℤ)
+- Turing.ModuleHost.host_clean_envelope (theorem, TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:642)
+    theorem host_clean_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K) (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M)) (ret : Fin n → State C M) (q₀ : State C M) (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ) (h : Clean (M i) f g B) (x arg pre : List Bool) : ∃ t, 0 < t ∧ t ≤ B arg.length ∧ (∀ v < t, ∀ c : C, ((hostTM M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state ≠ some (.inl c)) ∧ (hostTM M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t = {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} ∧ ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).workTapePos j| ≤ (B arg.length : ℤ)
+- TCSlib.Cryptography.Candidates.rejectBlocksL_eq (theorem, TCSlib/Cryptography/Candidates/Concrete.lean:525)
+    theorem rejectBlocksL_eq (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List Bool) : rejectBlocksL E k B T r = (List.range T).findSome? fun t => if E (listToNat ((r.drop (t * B)).take k)) then some (listToNat ((r.drop (t * B)).take k)) else none
+- TCSlib.Cryptography.Candidates.sampleBelowL_eq_rejectBlocksL (theorem, TCSlib/Cryptography/Candidates/DiscreteLog.lean:476)
+    theorem sampleBelowL_eq_rejectBlocksL (m k B T : ℕ) : sampleBelowL m k B T = rejectBlocksL (· < m) k B T
+- TCSlib.Cryptography.AbortRetry.attempt_eq (theorem, TCSlib/Cryptography/ZeroKnowledge/Defs.lean:315)
+    theorem attempt_eq (S : NUPPT) (w : List Bool) (t : ℕ) : attempt S w t = S.output (NUPPT.layout (NUPPT.inParam w) (NUPPT.inArg w) [] (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take (S.coinLen (NUPPT.inParam w).length)))
+- TCSlib.Cryptography.AbortRetry.retry_eq (theorem, TCSlib/Cryptography/ZeroKnowledge/Defs.lean:334)
+    theorem retry_eq (S : NUPPT) (w : List Bool) : retry S w = if firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length < (NUPPT.inParam w).length then attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length) else []
+- TCSlib.Cryptography.AbortRetry.retry_eq_attempt (theorem, TCSlib/Cryptography/ZeroKnowledge/Defs.lean:347)
+    theorem retry_eq_attempt {S : NUPPT} {w : List Bool} {i : ℕ} (hi : i < (NUPPT.inParam w).length) (hne : attempt S w i ≠ []) (hmin : ∀ j < i, attempt S w j = []) : retry S w = attempt S w i
+- TCSlib.Cryptography.AbortRetry.retry_eq_nil (theorem, TCSlib/Cryptography/ZeroKnowledge/Defs.lean:359)
+    theorem retry_eq_nil {S : NUPPT} {w : List Bool} (h : ∀ t < (NUPPT.inParam w).length, attempt S w t = []) : retry S w = []
+- TCSlib.Cryptography.Protocol.proverBounded_iff (theorem, TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:338)
+    theorem proverBounded_iff (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : π.ProverBounded R B ↔ ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+
+## Changed (both by ruling R-03e-r2-1 (A), item C #4)
+- TCSlib.Cryptography.zk_proof_of_witnessRelation (TCSlib/Cryptography/ZeroKnowledge/NP.lean:679->682)
+    OLD: theorem zk_proof_of_witnessRelation (h3 : LevinNPHard L3COL R3COL) {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) {L : Language Bool} {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) : ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr), (∀ N, N ≤ p.eval N) ∧ EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧ ZK ((colProtocol Com ℓ).pullback f w p) R ∧ EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N)
+    NEW: theorem zk_proof_of_witnessRelation (h3 : LevinNPHard L3COL R3COL) {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) {L : Language Bool} {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) : ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr), LevinReduction L L3COL R R3COL f w p ∧ (∀ N, N ≤ p.eval N) ∧ EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧ ZK ((colProtocol Com ℓ).pullback f w p) R ∧ EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N)
+- TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp (TCSlib/Cryptography/ZeroKnowledge/NP.lean:698->701)
+    OLD: theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL) (how : ∃ P : PermFamily, OneWayPermutation P) {L : Language Bool} {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) : ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧ ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr), (∀ N, N ≤ p.eval N) ∧ EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧ ZK ((colProtocol Com ℓ).pullback f w p) R ∧ EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N)
+    NEW: theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL) (how : ∃ P : PermFamily, OneWayPermutation P) {L : Language Bool} {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) : ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧ ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr), LevinReduction L L3COL R R3COL f w p ∧ (∀ N, N ≤ p.eval N) ∧ EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧ ZK ((colProtocol Com ℓ).pullback f w p) R ∧ EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N)
+
+## Removed
+(none)

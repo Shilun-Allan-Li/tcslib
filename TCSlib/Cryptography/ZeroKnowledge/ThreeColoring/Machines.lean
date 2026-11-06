@@ -48,6 +48,12 @@ This file holds the generic pieces (the parties themselves as string functions a
 * colours as numbers: `decColoring`, `decColor` and `encColor` numerically (`colorVal`,
   `encColorOfVal`, `colorFromTable`).
 
+## Main definitions
+
+* `ColMachines.ilayout`, `argX`, `argZ`, `argM`, `padTo`, `countTrue`, `nthTrue`, `natOfBits`,
+  `firstTrial`, `sampleVal`, `permTable`, `tableOfIdx`, `colorFromTable`, `colorVal`,
+  `encColorOfVal` — the layout, padding, counting and sampler models, colours as numbers.
+
 ## Main results
 
 * `TCSlib.Cryptography.ColMachines.polyTimeComputable_loopState'`,
@@ -90,8 +96,9 @@ theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
 
 /-- **Counted loops bounded along the genuine orbit:** `EncodingMachines.polyTimeComputable_loopState`
 with the length bound required only of the states `loopState upd init x i`, `i ≤ N x`
-(the update may lengthen arbitrary words). Same proof: a state loop
-(`EncodingMachines.polyTimeComputable_stateFind`, data in `EncodingMachines.CountLoop`). -/
+(the update may lengthen arbitrary words). **Proof sketch.** Same proof: a state loop
+(`EncodingMachines.polyTimeComputable_stateFind`, data in `EncodingMachines.CountLoop`) whose
+states `⟨1^i, loopState upd init x i⟩` (`CountLoop.orbit_eq`) are bounded by `hstate`. -/
 theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
     (hupd : PolyTimeComputable upd) (hinit : PolyTimeComputable init)
     {N : List Bool → ℕ} (hN : PolyTimeComputable fun x => List.replicate (N x) true)
@@ -123,8 +130,9 @@ theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
     intro x
     rw [CountLoop.orbit_eq]
     simp [CountLoop.acc]
-  have h := polyTimeComputable_stateFind (CountLoop.start_poly hinit) (CountLoop.step_poly hupd)
-    (CountLoop.acc_poly hN) CountLoop.out_poly (PolyExpr.normal C c) _ N hNR hbound hfirst hlast
+  have h := EncodingMachines.polyTimeComputable_stateFind (CountLoop.start_poly hinit)
+    (CountLoop.step_poly hupd) (CountLoop.acc_poly hN) CountLoop.out_poly (PolyExpr.normal C c) _ N
+    hNR hbound hfirst hlast
   convert h using 1
   funext x
   rw [CountLoop.orbit_eq]
@@ -145,9 +153,10 @@ theorem flatMap_range_ite (E : ℕ → List Bool) (L : ℕ) :
 
 /-- **Concatenating loops over a data-dependent range:** if the chunk `E z i` is a
 polynomial-time function of `⟨1^i, z⟩` and the range `n z` is a unary function, then
-`z ↦ E z 0 ++ ⋯ ++ E z (n z - 1)` is polynomial-time computable (an instance of
-`Complexity.polyTimeComputable_iterateEmit` on the counter step `EncodingMachines.cstep`, as
-`EncodingMachines.polyTimeComputable_of_getD`). -/
+`z ↦ E z 0 ++ ⋯ ++ E z (n z - 1)` is polynomial-time computable. **Proof sketch.** An instance of
+`Complexity.polyTimeComputable_iterateEmit` on the counter step `EncodingMachines.cstep` (as
+`EncodingMachines.polyTimeComputable_of_getD`), emitting `E z i` while `i < n z`
+(`flatMap_range_ite`). -/
 theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
     (hE : PolyTimeComputable fun w => E (pairSndD w) (pairFstD w).length)
     {n : List Bool → ℕ} (hn : PolyTimeComputable fun z => List.replicate (n z) true) :
@@ -176,8 +185,9 @@ theorem polyTimeComputable_flatMap_range {E : List Bool → ℕ → List Bool}
   rw [flatMap_range_ite, min_eq_right hN]
 
 /-- **The iterated second projection** `pairSndD^[i z] (s z)` is polynomial-time for a
-polynomial-time `s` and a unary `i`: a counted loop whose states never exceed `|s z|`
-(`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
+polynomial-time `s` and a unary `i`. **Proof sketch.** A counted loop
+(`polyTimeComputable_loopState'`) whose `j`-th state is `pairSndD^[j] (s z)`, never longer than
+`|s z|` (`Complexity.StateLoop.length_pairFstD_add_pairSndD_le`). -/
 theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {i : List Bool → ℕ} (hi : PolyTimeComputable fun z => List.replicate (i z) true) :
     PolyTimeComputable fun z => pairSndD^[i z] (s z) := by
@@ -329,8 +339,10 @@ def countTrue (x : List Bool) : ℕ → ℕ
   | 0 => 0
   | j + 1 => countTrue x j + (x.getD j false).toNat
 
+/-- No bits are counted in the empty prefix. -/
 @[simp] theorem countTrue_zero (x : List Bool) : countTrue x 0 = 0 := rfl
 
+/-- The count of the first `j + 1` bits adds bit `j`. -/
 @[simp] theorem countTrue_succ (x : List Bool) (j : ℕ) :
     countTrue x (j + 1) = countTrue x j + (x.getD j false).toNat := rfl
 
@@ -354,9 +366,9 @@ theorem countTrue_mono (x : List Bool) {i j : ℕ} (h : i ≤ j) : countTrue x i
       exact (ih (by omega)).trans (Nat.le_add_right _ _)
     · rw [show i = j + 1 by omega]
 
-/-- The unary bit count of a prefix of a polynomial-time word is polynomial-time: a counted
-loop appending a token for each set bit (`polyTimeComputable_loopState'`, states of length
-`countTrue ≤ N`). -/
+/-- The unary bit count of a prefix of a polynomial-time word is polynomial-time.
+**Proof sketch.** A counted loop appending a token for each set bit
+(`polyTimeComputable_loopState'`; state `i` is `1^{countTrue (s z) i}`, of length `≤ i ≤ N`). -/
 theorem countTrue_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {N : List Bool → ℕ} (hN : PolyTimeComputable fun z => List.replicate (N z) true) :
     PolyTimeComputable fun z => List.replicate (countTrue (s z) (N z)) true := by
@@ -593,8 +605,10 @@ def natOfBits (s : List Bool) (b : ℕ) : ℕ → ℕ
   | 0 => 0
   | j + 1 => 2 * natOfBits s b j + (s.getD (b + j) false).toNat
 
+/-- The empty window reads as `0`. -/
 @[simp] theorem natOfBits_zero (s : List Bool) (b : ℕ) : natOfBits s b 0 = 0 := rfl
 
+/-- Reading one more bit doubles the value and adds the bit. -/
 @[simp] theorem natOfBits_succ (s : List Bool) (b j : ℕ) :
     natOfBits s b (j + 1) = 2 * natOfBits s b j + (s.getD (b + j) false).toNat := rfl
 
@@ -621,9 +635,9 @@ theorem bitsToNat_eq_natOfBits (s : List Bool) (b : ℕ) :
       2 * natOfBits s b k + (s.getD (b + k) false).toNat
     cases s.getD (b + k) false <;> rfl
 
-/-- **Reading a window as a number is polynomial-time** when `2^k` is polynomially bounded:
-a counted loop doubling the accumulator and adding the next bit (`polyTimeComputable_loopState'`,
-states `1^{natOfBits} < 1^{2^k}`). -/
+/-- **Reading a window as a number is polynomial-time** when `2^k` is polynomially bounded.
+**Proof sketch.** A counted loop doubling the accumulator and adding the next bit
+(`polyTimeComputable_loopState'`, states `1^{natOfBits} < 1^{2^k}`, `natOfBits_lt`). -/
 theorem natOfBits_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {b : List Bool → ℕ} (hb : PolyTimeComputable fun z => List.replicate (b z) true)
     {k : List Bool → ℕ} (hk : PolyTimeComputable fun z => List.replicate (k z) true)
@@ -657,7 +671,8 @@ theorem natOfBits_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
   rw [hclosed]
 
 /-- `List.findSome?` over `finRange T` of a test-and-value function returns the value at the
-first accepted index (`firstIdx`), `none` if no index below `T` is accepted. -/
+first accepted index (`firstIdx`), `none` if no index below `T` is accepted. **Proof sketch.**
+Split `finRange T` at `firstIdx` (`q_firstIdx`, `firstIdx_min`), or none is accepted. -/
 theorem findSome?_finRange_eq {α : Type*} {T : ℕ} (f : Fin T → Option α) (q : ℕ → Bool)
     (v : ℕ → α) (hf : ∀ t : Fin T, f t = if q t then some (v t) else none) :
     (List.finRange T).findSome? f =
@@ -718,8 +733,8 @@ theorem map_val_sampleIdx_getD (m k T : ℕ) (s : List Bool) (d : ℕ) :
   split_ifs <;> rfl
 
 /-- **The rejection sampler is polynomial-time** (in unary, when `2^k` is polynomially
-bounded): the first accepted trial by `polyTimeComputable_firstIdx` with the window test
-`natOfBits_poly`, then the value at that trial. -/
+bounded). **Proof sketch.** The first accepted trial by `polyTimeComputable_firstIdx` with the
+window test `natOfBits_poly`, then the value at that trial (`polyTimeComputable_ite`). -/
 theorem sampleVal_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
     {m : List Bool → ℕ} (hm : PolyTimeComputable fun z => List.replicate (m z) true)
     {k : List Bool → ℕ} (hk : PolyTimeComputable fun z => List.replicate (k z) true)

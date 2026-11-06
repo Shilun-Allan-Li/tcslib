@@ -446,8 +446,9 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
     EfficientProverProofErr giProtocolRep Liso Riso (fun N => (2 : ℝ)⁻¹ ^ N) where
   efficientV := hV
   complete := by
+    refine ⟨.var, ?_⟩
     rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
-    exact ⟨encPerm σ, fun z => giRep_complete hσ z⟩
+    exact ⟨encPerm σ, giProverRep_length_le _ _, fun z => giRep_complete hσ z⟩
   sound := by
     intro x hx P' z
     by_cases hwf : wellFormedInstance x = true
@@ -473,6 +474,8 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
       have : (0 : ℝ) ≤ (2 : ℝ)⁻¹ ^ x.length := by positivity
       linarith
   efficientP := hP
+  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
+    giProverRep_length_le x y r hist⟩
   completeWitness := by
     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
     exact giRep_complete hσ z

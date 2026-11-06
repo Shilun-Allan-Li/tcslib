@@ -78,8 +78,11 @@ run-3 audit P3-1).
 * `TCSlib.Cryptography.predProb_pkPredictor_false`, `predProb_pkPredictor_true`,
   `exists_pkPredictor` — Lem-104.a (proved from [Gar26, Theorem 3.2]).
 * `TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme_singleBitSecure` — [PS10, Theorem 104.4];
-  `TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure` — the text's hypothesis
-  "trapdoor permutations exist" through Goldreich–Levin.
+  `TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure`,
+  `TrapdoorCollection.OneWay.exists_glPad_singleBitSecure` — the text's hypothesis
+  "trapdoor permutations exist" through Goldreich–Levin (given `henc`).
+* `TCSlib.Cryptography.Collection.HardCore.nonempty_predEvaluator` — every hard-core predicate
+  has a predicate evaluator (canonical decoding).
 
 ## References
 
@@ -527,10 +530,11 @@ theorem PublicKeyScheme.Secure.multiMessageSecure {S : PublicKeyScheme} (h : S.S
 /-! ## Algorithm 104.3: a single-bit scheme from a trapdoor permutation with a hard-core bit -/
 
 /-- A **polynomial-time evaluator of a predicate on a collection**: `H ⟨i, w⟩ = [h_i(x)]` for
-every string `w` that decodes to `x ∈ D_i` (the efficiency clause of `Collection.HardCore`
-strengthened from canonical encodings to all decodable strings, since the outputs of the
-sampler and of the trapdoor inverter need not be canonical; the field `Collection.sample_spec`
-plays the same role for `eval`). -/
+every string `w` that decodes to `x ∈ D_i` (the efficiency clause of `Collection.HardCore`,
+stated on every decodable string, such as the outputs of the sampler and of the trapdoor
+inverter). Since
+decoding is canonical (`Collection.encD_decD`, gate 03b ruling G3-1), every hard-core predicate
+has one (`Collection.HardCore.nonempty_predEvaluator`). -/
 structure Collection.PredEvaluator (F : Collection) (h : ∀ i, F.D i → Bool) where
   /-- The evaluator. -/
   H : List Bool → List Bool
@@ -538,6 +542,14 @@ structure Collection.PredEvaluator (F : Collection) (h : ∀ i, F.D i → Bool) 
   poly : PolyTimeComputable H
   /-- `H ⟨i, w⟩ = [h_i x]` whenever `w` decodes to `x`. -/
   spec : ∀ i w x, F.decD i w = some x → H (pairEncode i w) = [h i x]
+
+/-- **Every hard-core predicate has a predicate evaluator**: the evaluator of `Collection.HardCore`,
+correct on encodings, is correct on every decodable string under canonical decoding
+(`Collection.HardCore.evaluator`). -/
+theorem Collection.HardCore.nonempty_predEvaluator {F : Collection} {h : ∀ i, F.D i → Bool}
+    (hh : F.HardCore h) : Nonempty (F.PredEvaluator h) :=
+  let ⟨H, hH, hspec⟩ := hh.evaluator
+  ⟨⟨H, hH, hspec⟩⟩
 
 namespace TrapdoorCollection
 
@@ -796,7 +808,9 @@ hard-core predicate for it.
 
 **Deviation:** the hypothesis includes the hard-core predicate `hHC` (the text's "if trapdoor
 permutations exist" omits it; `TrapdoorCollection.OneWay.glPad_hardCore` supplies one from
-trapdoor permutations alone, see `OneWay.glPad_tdpBitScheme_singleBitSecure`); the proof's "`D`"
+trapdoor permutations whose generated indices encode elements in exactly `m(n)` bits (`henc`,
+which no candidate of the library satisfies as parametrized; see `Collection.glPad`), see
+`OneWay.exists_glPad_singleBitSecure`); the proof's "`D`"
 in the display after the prediction lemma is the predictor `A`.
 
 **Proof sketch.** Fix a non-uniform PPT `D`; let `μ n` be its advantage between
@@ -939,13 +953,36 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
 reading of [PS10, Theorem 104.4] with the hard-core bit supplied by Goldreich–Levin
 ([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
 with encoding length `m(n)` at generated indices, the scheme of Algorithm 104.3 for the padded
-collection `T.glPad m` with the predicate `⟨x, r⟩` is single-bit secure (given its predicate
-evaluator). -/
+collection `T.glPad m` with the predicate `⟨x, r⟩` (read through the published domain
+equivalence `T.glPad_domEquiv`) is single-bit secure (given its predicate evaluator, which always
+exists: `OneWay.exists_glPad_singleBitSecure`). The cost of `henc`: no candidate of the library
+satisfies it as parametrized (see `Collection.glPad`). -/
 theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection}
     (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
-    (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) :
+    (hT : T.OneWay)
+    (E : (T.glPad m henc).toCollection.PredEvaluator
+      fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) :
     ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
-  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc) (hT.glPad_hardCore m henc)
+  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc)
+    (hT.glPad_hardCore_domEquiv m henc)
+
+/-- **Trapdoor permutations give a secure single-bit public-key encryption scheme**, without a
+supplied evaluator — the text's reading of [PS10, Theorem 104.4] through Goldreich–Levin
+([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
+with encoding length `m(n)` at generated indices (`henc`; see `Collection.glPad` for its cost),
+some predicate evaluator `E` of `⟨x, r⟩` (read through `T.glPad_domEquiv`) on `T.glPad m` makes
+the scheme of Algorithm 104.3 single-bit secure. The evaluator comes from the hard-core predicate
+(`TrapdoorCollection.OneWay.glPad_hardCore_domEquiv`, `Collection.HardCore.nonempty_predEvaluator`,
+canonical decoding). -/
+theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection}
+    (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) :
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator
+        fun i z => T.glBit i (T.glPad_domEquiv m henc i z),
+      ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
+  let ⟨E⟩ := (hT.glPad_hardCore_domEquiv m henc).nonempty_predEvaluator
+  ⟨E, hT.glPad_tdpBitScheme_singleBitSecure m henc E⟩
 
 end TCSlib.Cryptography

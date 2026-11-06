@@ -92,9 +92,19 @@ def queryOf (ℓ₁ : ℕ) (w : List Bool) : Option (Fin ℓ₁ → Bool) :=
   | some ([false], x) => decodeFin ℓ₁ x
   | _ => none
 
+/-- The defining equation of `queryOf`: `decodeFin ℓ₁ x` when `w` decodes as `⟨[false], x⟩`,
+`none` otherwise. -/
+theorem queryOf_eq (ℓ₁ : ℕ) (w : List Bool) :
+    queryOf ℓ₁ w = match pairDecode w with
+      | some ([false], x) => decodeFin ℓ₁ x
+      | _ => none := rfl
+
 /-- The verdict read off a machine output that is not a query: `true` iff the output is the
 two-bit string `[true, true]`. -/
 def verdictOf (w : List Bool) : Bool := decide (w = [true, true])
+
+/-- The defining equation of `verdictOf`: `verdictOf w = decide (w = [true, true])`. -/
+theorem verdictOf_eq (w : List Bool) : verdictOf w = decide (w = [true, true]) := rfl
 
 /-- The query tree of a next-query string function `next` with budget `b` from the history
 `hist` (`Option` form of `buildTree`): a verdict stops, a query within budget becomes a node,
@@ -128,6 +138,13 @@ theorem buildTreeQ_succ {ℓ₁ ℓ₂ : ℕ} (next : List ((Fin ℓ₁ → Bool
 `encodeHist` of `TCSlib.Cryptography.Asymptotic.PRF`). -/
 def histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
   h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) []
+
+/-- The defining equation of `histEnc`: the right fold of `⟨⟨x, o⟩, acc⟩` over the history,
+starting from `[]`. -/
+theorem histEnc_eq {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
+    histEnc h =
+      h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) [] :=
+  rfl
 
 /-- Pairing distributes over a concatenation in the second component. -/
 theorem pairEncode_append_right (a b c : List Bool) :

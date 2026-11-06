@@ -1,0 +1,30 @@
+# supplementary: automatic candidates + the r3 hand-picked names they lack (r3cross.txt), same entries
+  not in the automatic list: TCSlib/Cryptography/Games/Machines.lean TCSlib.Cryptography.Games.OracleComp.bind
+  not in the automatic list: TCSlib/Cryptography/Games/Bridges/Machines.lean Complexity.NUPPT.toCompOn
+  not in the automatic list: TCSlib/Cryptography/Games/Bridges/Machines.lean TCSlib.Cryptography.Games.OracleComp.bind
+  not in the automatic list: TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean TCSlib.Cryptography.Games.OracleComp.bind
+  not in the automatic list: TCSlib/Cryptography/Asymptotic/PRF.lean TCSlib.Cryptography.Games.OracleComp.bind
+  not in the automatic list: TCSlib/Cryptography/Games/Bridges/Strategies.lean TCSlib.Cryptography.Protocol.transcript
+74 names in the r3 table (13 files); 6 not in the automatic lists
+TCSlib/Cryptography/Asymptotic/PRF.lean: candidates=44; unsealed for 17 named declaration(s) PASS (rc=0, error lines=0)
+   unseal TCSlib.Cryptography.DoublingPRG.negligible_prgAdv (lines 437-443): Complexity.PolyExpr.eval
+   unseal TCSlib.Cryptography.OracleEnsemble.Indist.symm (lines 329-341): TCSlib.Cryptography.distAdv
+   unseal TCSlib.Cryptography.OracleEnsemble.Indist.trans (lines 343-364): TCSlib.Cryptography.distAdv
+   unseal TCSlib.Cryptography.OracleEnsemble.random_O (lines 141-144): TCSlib.Cryptography.randomFunction
+   unseal TCSlib.Cryptography.PRF (lines 378-393): Complexity.PolyExpr.eval
+   unseal TCSlib.Cryptography.PRF.negligible_prfAdv (lines 404-411): Complexity.PolyExpr.eval TCSlib.Cryptography.prfAdv
+   unseal TCSlib.Cryptography.PRG.Secure.doubling (lines 493-515): Complexity.PolyExpr.eval TCSlib.Cryptography.Ensemble.Pseudorandom TCSlib.Cryptography.PRG.expand TCSlib.Cryptography.prgAdv
+   unseal TCSlib.Cryptography.PRG.Secure.truncate (lines 472-491): Complexity.PolyExpr.eval TCSlib.Cryptography.Ensemble.Pseudorandom TCSlib.Cryptography.PRG.Easy TCSlib.Cryptography.PRG.Secure TCSlib.Cryptography.PRG.ensemble TCSlib.Cryptography.PRG.oneBit TCSlib.Cryptography.prgAdv
+   unseal TCSlib.Cryptography.PRG.doubling (lines 457-463): Complexity.PolyExpr.eval TCSlib.Cryptography.PRG.expand
+   unseal TCSlib.Cryptography.PRG.doubling_apply (lines 465-470): TCSlib.Cryptography.PRG.expand
+   unseal TCSlib.Cryptography.decodeOracleMove_eq (lines 585-624): TCSlib.Cryptography.GGMRed.queryOf TCSlib.Cryptography.GGMRed.verdictOf Turing.pairDecode
+   unseal TCSlib.Cryptography.doublingEnsemble (lines 415-420): Complexity.PolyExpr.eval
+   unseal TCSlib.Cryptography.exists_ggmBitsDist_nuppt (lines 648-707): Complexity.NUPPT.coinLen Complexity.PolyExpr.eval TCSlib.Cryptography.GGMRed.coinStr TCSlib.Cryptography.GGMRed.ggmRedMachine TCSlib.Cryptography.GGMRed.histEnc
+   unseal TCSlib.Cryptography.ggmPRF_prf (lines 731-801): Complexity.PolyExpr.eval TCSlib.Cryptography.Negligible TCSlib.Cryptography.prfAdv TCSlib.Cryptography.prgAdv
+   unseal TCSlib.Cryptography.prfAdv_toOracleAdversary (lines 395-402): Complexity.PolyExpr.eval TCSlib.Cryptography.prfAdv
+   unseal TCSlib.Cryptography.thm_97_3_1 (lines 554-566): Complexity.PolyExpr.eval TCSlib.Cryptography.ggmBits
+   unseal TCSlib.Cryptography.two_mul_add_one_expands (lines 450-455): Complexity.PolyExpr.eval
+TCSlib/Cryptography/Games/Bridges/Machines.lean: candidates=12 PASS (rc=0, error lines=0)
+TCSlib/Cryptography/Games/Bridges/Strategies.lean: candidates=14 PASS (rc=0, error lines=0)
+TCSlib/Cryptography/Games/Machines.lean: candidates=5 PASS (rc=0, error lines=0)
+TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean: candidates=1 PASS (rc=0, error lines=0)

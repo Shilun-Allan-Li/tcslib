@@ -1,0 +1,1963 @@
+diff --git a/TCSlib/Cryptography/Asymptotic/MultiMessage.lean b/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+index 394fd28b..e8cde0a8 100644
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+@@ -144,7 +144,7 @@ def multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
+   fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
+ 
+ omit [Fintype ρ] in
+-/-- `multiMsgAdv m D` makes exactly `q + 1` queries. -/
++/-- `multiMsgAdv m D` makes at most `q + 1` queries. -/
+ theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
+     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
+     (multiMsgAdv m D).BoundedBy (q + 1) :=
+@@ -464,8 +464,8 @@ theorem runAt_prfDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
+   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+   simp [prfDecFun, prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc]
+ 
+-/-- On a ciphertext `w` that is not a pair of `n`-bit strings, the decryption machine outputs
+-`⊥`: a string that decodes to no `n`-bit message. -/
++/-- On a ciphertext `w` whose two projections `pairFstD w` and `pairSndD w` are not both `n` bits
++long, the decryption machine outputs `⊥`: a string that decodes to no `n`-bit message. -/
+ theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : PolyTimeComputable E)
+     (coins : PolyExpr) (n : ℕ) (k w : List Bool)
+     (hw : ¬ ((pairFstD w).length = n ∧ (pairSndD w).length = n))
+diff --git a/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean b/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
+index afc7b269..c89380bc 100644
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
+@@ -296,7 +296,8 @@ theorem flatMap_const_replicate {α : Type*} (n : ℕ) : ∀ L : List α,
+     rw [List.flatMap_cons, flatMap_const_replicate n L, List.length_cons, Nat.succ_mul, add_comm,
+       List.replicate_add]
+ 
+-/-- The two components of a history block: the query and the answer. -/
++/-- The query component of a history block: `pairFstD (pairFstD (histBlock p))` is the query
++`p.1`. -/
+ theorem pairFstD_pairFstD_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
+     pairFstD (pairFstD (histBlock p)) = List.ofFn p.1 := by
+   simp [histBlock]
+@@ -375,7 +376,8 @@ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
+       zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
+ 
+ /-- A string of `q·s` bits read as `q` chunks of `s` bits: chunk `i` is block `i` of
+-`FunFamily.blocks` (private copy of the lemma of `Asymptotic/EnsemblesLemmas.lean`). -/
++`FunFamily.blocks` (a public duplicate of `EnsembleLemmas.take_drop_ofFn_blocks` in
++`Asymptotic/EnsemblesLemmas.lean`). -/
+ theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
+     ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
+   have hle : i * s + s ≤ q * s := by
+@@ -616,8 +618,9 @@ by closure under efficient operations we contradict the pseudorandomness propert
+ non-uniform PPT `D` (a distinguisher of encoded ciphertext tuples), a budget polynomial `q` and
+ message vectors `v n ∈ ({0,1}^n)^{q(n)+1}`, there is a non-uniform PPT `B` whose coins at `n`
+ are, up to a bijection `φ`, the `q(n) + 1` points `ρ` and the coins `c` of `D`, and whose
+-query tree with budget `q(n) + 1` run against any oracle `g` asks `ρ₀, …, ρ_{q(n)}` and
+-outputs `D`'s verdict on the encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c`.
++query tree with budget `q(n) + 1`, evaluated against any oracle `g`, gives `D`'s verdict on the
++encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c` (an equality of outputs; the sequence of
++queries is not part of the statement).
+ 
+ **Proof sketch.** `B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of
+ `exists_withAdvice` (advice `⟨maskOf (v n), 1^{q(n)+1}⟩`) of `exists_seq` of `D ∘ preFun`
+diff --git a/TCSlib/Cryptography/Asymptotic/PRF.lean b/TCSlib/Cryptography/Asymptotic/PRF.lean
+index c36beb40..d305cd99 100644
+--- a/TCSlib/Cryptography/Asymptotic/PRF.lean
++++ b/TCSlib/Cryptography/Asymptotic/PRF.lean
+@@ -201,6 +201,18 @@ nested pair `⟨⟨x₁, y₁⟩, ⟨⟨x₂, y₂⟩, ⟨…, []⟩⟩⟩`. -/
+ def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
+   h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) []
+ 
++/-- The empty history is encoded as the empty string: `encodeHist [] = []`. -/
++theorem encodeHist_nil {ℓ₁ ℓ₂ : ℕ} :
++    encodeHist ([] : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) = [] :=
++  rfl
++
++/-- A history is encoded pair by pair:
++`encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h)`. -/
++theorem encodeHist_cons {ℓ₁ ℓ₂ : ℕ} (p : (Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))
++    (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
++    encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h) :=
++  rfl
++
+ /-- The query tree of a next-query function `next` (the machine's move on a history) with the
+ query budget `q`, started from the history `hist`: a verdict stops; a query within budget
+ becomes a `query` node whose continuation appends the answer to the history; a query when the
+@@ -214,6 +226,38 @@ def buildTree {ℓ₁ ℓ₂ : ℕ} (next : List ((Fin ℓ₁ → Bool) × (Fin
+     | .ret b => .ret b
+     | .query x => .query x (fun o => buildTree next q (hist ++ [(x, o)]))
+ 
++section BuildTree
++
++variable {ℓ₁ ℓ₂ : ℕ} {next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁}
++  {hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))}
++
++/-- With the budget spent, a verdict stops the tree: `buildTree next 0 hist = ret b` when
++`next hist = ret b`. -/
++theorem buildTree_zero_of_ret {b : Bool} (h : next hist = .ret b) :
++    buildTree next 0 hist = .ret b := by
++  rw [buildTree, h]
++
++/-- With the budget spent, a query gives the forced verdict `false`:
++`buildTree next 0 hist = ret false` when `next hist = query x`. -/
++theorem buildTree_zero_of_query {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
++    buildTree next 0 hist = .ret false := by
++  rw [buildTree, h]
++
++/-- Within budget, a verdict stops the tree: `buildTree next (q + 1) hist = ret b` when
++`next hist = ret b`. -/
++theorem buildTree_succ_of_ret {q : ℕ} {b : Bool} (h : next hist = .ret b) :
++    buildTree next (q + 1) hist = .ret b := by
++  rw [buildTree, h]
++
++/-- Within budget, a query becomes a query node whose continuation appends the answer:
++`buildTree next (q + 1) hist = query x (fun o => buildTree next q (hist ++ [(x, o)]))` when
++`next hist = query x`. -/
++theorem buildTree_succ_of_query {q : ℕ} {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
++    buildTree next (q + 1) hist = .query x (fun o => buildTree next q (hist ++ [(x, o)])) := by
++  rw [buildTree, h]
++
++end BuildTree
++
+ /-- The tree built with budget `q` makes at most `q` queries, from every starting history. -/
+ theorem buildTree_boundedBy {ℓ₁ ℓ₂ : ℕ}
+     (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
+@@ -236,6 +280,16 @@ def _root_.Complexity.NUPPT.toOracleAdversary (D : NUPPT) (n ℓ₁ ℓ₂ q : 
+     OracleAdversary (D.Coins n) (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool) :=
+   fun r => buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []
+ 
++/-- The tree of `D` on the coins `r` is built from the empty history, the next move being `D`'s
++output on the encoded history, decoded:
++`D.toOracleAdversary n ℓ₁ ℓ₂ q r =
++buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []`. -/
++theorem _root_.Complexity.NUPPT.toOracleAdversary_eq (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ)
++    (r : D.Coins n) :
++    D.toOracleAdversary n ℓ₁ ℓ₂ q r =
++      buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q [] :=
++  rfl
++
+ /-- The oracle adversary of a next-query machine with budget `q` makes at most `q` queries on
+ every coin string (the hypothesis `BoundedBy` of `ggm_prfAdv_le` and `exists_ggmBits_dist`).
+ Induction on the budget (`buildTree_boundedBy`). -/
+diff --git a/TCSlib/Cryptography/Games/Advantage.lean b/TCSlib/Cryptography/Games/Advantage.lean
+index 79d2107f..1012c334 100644
+--- a/TCSlib/Cryptography/Games/Advantage.lean
++++ b/TCSlib/Cryptography/Games/Advantage.lean
+@@ -62,10 +62,20 @@ open Finset ProbComp
+ /-- The probability that the game `G` outputs `true`. -/
+ noncomputable def accept (G : ProbComp Bool) : ℝ := prob G (· = true)
+ 
++/-- The acceptance probability is the probability of the output `true`:
++`accept G = prob G (· = true)`. -/
++theorem accept_eq (G : ProbComp Bool) : accept G = prob G (· = true) :=
++  rfl
++
+ /-- The **distinguishing advantage** between two games: `|Pr[G₀ = 1] − Pr[G₁ = 1]|`.
+ [PS10, §3.1] -/
+ noncomputable def advantage (G₀ G₁ : ProbComp Bool) : ℝ := |accept G₀ - accept G₁|
+ 
++/-- The distinguishing advantage is the absolute gap of the acceptance probabilities:
++`advantage G₀ G₁ = |accept G₀ - accept G₁|`. -/
++theorem advantage_eq (G₀ G₁ : ProbComp Bool) : advantage G₀ G₁ = |accept G₀ - accept G₁| :=
++  rfl
++
+ /-- An acceptance probability is nonnegative. -/
+ theorem accept_nonneg (G : ProbComp Bool) : 0 ≤ accept G := prob_nonneg G _
+ 
+@@ -121,6 +131,12 @@ is `b`: the prediction experiment `b ← {0,1}; t ← X^b : A(t) = b` of [PS10,
+ noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
+   (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))
+ 
++/-- The guess-the-bit game samples `b`, runs `G b` and outputs whether it returned `b`:
++`guessGame G = (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))`. -/
++theorem guessGame_eq (G : Bool → ProbComp Bool) :
++    guessGame G = (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b)) :=
++  rfl
++
+ /-- The **guess-the-bit advantage**: how far the winning probability is from `½`. -/
+ noncomputable def guessAdv (G : Bool → ProbComp Bool) : ℝ := |accept (guessGame G) - 1 / 2|
+ 
+diff --git a/TCSlib/Cryptography/Games/BitCodec.lean b/TCSlib/Cryptography/Games/BitCodec.lean
+index 884cf73b..2e89dc94 100644
+--- a/TCSlib/Cryptography/Games/BitCodec.lean
++++ b/TCSlib/Cryptography/Games/BitCodec.lean
+@@ -32,12 +32,16 @@ It is the shared codec of every prong's statements, and the T0 definitions of th
+ * `Games.bitSpec din dout`: `k` oracles on fixed-length bit strings.
+ * `Games.decodeIdx`, `Games.decodeBitMove`: decoding of an oracle index and of a machine output as
+   a move.
++* `Games.encodeBitMove`: the canonical word of a move.
+ * `Games.bitCodec din dout dα`: the codec.
+ 
+ ## Main results
+ 
+ * `Games.decodeIdx_replicate`, `Games.decodeBitMove_query`, `Games.decodeBitMove_ret`: the
+   well-formed encodings decode as intended.
++* `Games.decodeIdx_eq_some_iff`, `Games.decodeBitMove_eq_query_iff`: only the canonical words
++  decode as an index or a query.
++* `Games.decodeBitMove_of_not_canonical`: every other word decodes to the all-`false` output.
+ 
+ ## References
+ 
+@@ -56,20 +60,67 @@ variable {k : ℕ}
+ abbrev bitSpec (din dout : Fin k → ℕ) : OracleSpec (Fin k) :=
+   ⟨fun i => Fin (din i) → Bool, fun i => Fin (dout i) → Bool⟩
+ 
+-/-- Decoding of an oracle index written in unary: `1^i` with `i < k` is `i`. -/
++/-- Oracle `i` of `bitSpec din dout` takes `din i`-bit strings. -/
++theorem bitSpec_dom (din dout : Fin k → ℕ) (i : Fin k) :
++    (bitSpec din dout).dom i = (Fin (din i) → Bool) :=
++  rfl
++
++/-- Oracle `i` of `bitSpec din dout` answers with `dout i`-bit strings. -/
++theorem bitSpec_rng (din dout : Fin k → ℕ) (i : Fin k) :
++    (bitSpec din dout).rng i = (Fin (dout i) → Bool) :=
++  rfl
++
++/-- Decoding of an oracle index written in unary: `1^i` with `i < k` is `i`; every other word
++(one containing `false`, or of length at least `k`) is `none`. -/
+ def decodeIdx (k : ℕ) (iw : List Bool) : Option (Fin k) :=
+-  if h : iw.length < k then some ⟨iw.length, h⟩ else none
++  if h : iw.length < k ∧ iw = List.replicate iw.length true then some ⟨iw.length, h.1⟩ else none
+ 
+ /-- The unary code of an index decodes to it. -/
+ theorem decodeIdx_replicate (i : Fin k) : decodeIdx k (List.replicate i true) = some i := by
+   unfold decodeIdx
+-  have h : (List.replicate (i : ℕ) true).length < k := by simp
++  have h : (List.replicate (i : ℕ) true).length < k ∧
++      List.replicate (i : ℕ) true =
++        List.replicate (List.replicate (i : ℕ) true).length true := by
++    simp
+   rw [dif_pos h]
+   exact congrArg some (Fin.ext (by simp))
+ 
++/-- **Exactly the unary codes decode**, each to its index:
++`decodeIdx k iw = some i ↔ iw = 1^i`. -/
++theorem decodeIdx_eq_some_iff {iw : List Bool} {i : Fin k} :
++    decodeIdx k iw = some i ↔ iw = List.replicate i true := by
++  refine ⟨fun h => ?_, fun h => h ▸ decodeIdx_replicate i⟩
++  unfold decodeIdx at h
++  split_ifs at h with hw
++  rw [Option.some.injEq] at h
++  rw [← h]
++  exact hw.2
++
++/-- **Every other word is rejected:** `decodeIdx k iw = none` exactly when `iw` is the unary code
++of no index below `k`. -/
++theorem decodeIdx_eq_none_iff {iw : List Bool} :
++    decodeIdx k iw = none ↔ ∀ i : Fin k, iw ≠ List.replicate i true := by
++  constructor
++  · intro h i hi
++    rw [decodeIdx_eq_some_iff.2 hi] at h
++    exact Option.some_ne_none i h
++  · intro h
++    cases hd : decodeIdx k iw with
++    | none => rfl
++    | some i => exact absurd (decodeIdx_eq_some_iff.1 hd) (h i)
++
+ /-- The default output: the all-`false` string. -/
+ def zeroBits (d : ℕ) : Fin d → Bool := fun _ => false
+ 
++/-- Every bit of the default output is `false`: `zeroBits d j = false`. -/
++theorem zeroBits_apply (d : ℕ) (j : Fin d) : zeroBits d j = false :=
++  rfl
++
++/-- The default output, written as a string, is `d` copies of `false`:
++`List.ofFn (zeroBits d) = List.replicate d false`. -/
++theorem ofFn_zeroBits (d : ℕ) : List.ofFn (zeroBits d) = List.replicate d false := by
++  rw [show zeroBits d = fun _ => false from rfl, List.ofFn_const]
++
+ /-- Decoding of a machine output as a move against `bitSpec din dout` with `dα`-bit outputs:
+ `⟨[false], ⟨1^i, x⟩⟩` with `i < k` and `|x| = din i` is the query `x` to oracle `i`;
+ `⟨[true], a⟩` with `|a| = dα` is the output `a`; anything else is the output `zeroBits dα`. -/
+@@ -92,6 +143,26 @@ def decodeBitMove (din dout : Fin k → ℕ) (dα : ℕ) (w : List Bool) :
+     | none => .ret (zeroBits dα)
+   | _ => .ret (zeroBits dα)
+ 
++/-- **The canonical word of a move:** the query `x` to oracle `i` is `⟨[false], ⟨1^i, x⟩⟩`, and
++the output `a` is `⟨[true], a⟩`. `decodeBitMove` inverts it (`decodeBitMove_encodeBitMove`). -/
++def encodeBitMove (din dout : Fin k → ℕ) (dα : ℕ) :
++    Move (bitSpec din dout) (Fin dα → Bool) → List Bool
++  | .query i x => pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x))
++  | .ret a => pairEncode [true] (List.ofFn a)
++
++/-- The canonical word of a query:
++`encodeBitMove din dout dα (query i x) = ⟨[false], ⟨1^i, x⟩⟩`. -/
++theorem encodeBitMove_query (din dout : Fin k → ℕ) (dα : ℕ) (i : Fin k)
++    (x : Fin (din i) → Bool) :
++    encodeBitMove din dout dα (.query i x) =
++      pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x)) :=
++  rfl
++
++/-- The canonical word of an output: `encodeBitMove din dout dα (ret a) = ⟨[true], a⟩`. -/
++theorem encodeBitMove_ret (din dout : Fin k → ℕ) (dα : ℕ) (a : Fin dα → Bool) :
++    encodeBitMove din dout dα (.ret a) = pairEncode [true] (List.ofFn a) :=
++  rfl
++
+ /-- **The codec of bit-string oracles:** moves decoded by `decodeBitMove`, a log entry
+ `(i, x, y)` encoded as `⟨1^i, ⟨x, y⟩⟩`, and the all-`false` output when the budget runs out. -/
+ def bitCodec (din dout : Fin k → ℕ) (dα : ℕ) :
+@@ -101,6 +172,35 @@ def bitCodec (din dout : Fin k → ℕ) (dα : ℕ) :
+     pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2))
+   timeout := zeroBits dα
+ 
++/-- The codec decodes moves with `decodeBitMove`: `(bitCodec din dout dα).decodeMove w =
++decodeBitMove din dout dα w`. -/
++theorem bitCodec_decodeMove (din dout : Fin k → ℕ) (dα : ℕ) (w : List Bool) :
++    (bitCodec din dout dα).decodeMove w = decodeBitMove din dout dα w :=
++  rfl
++
++/-- The codec encodes the log entry `(i, x, y)` as `⟨1^i, ⟨x, y⟩⟩`. -/
++theorem bitCodec_encodeEntry (din dout : Fin k → ℕ) (dα : ℕ)
++    (e : Σ i, (bitSpec din dout).dom i × (bitSpec din dout).rng i) :
++    (bitCodec din dout dα).encodeEntry e =
++      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
++  rfl
++
++/-- When the budget runs out, the codec's output is all-`false`:
++`(bitCodec din dout dα).timeout = zeroBits dα`. -/
++theorem bitCodec_timeout (din dout : Fin k → ℕ) (dα : ℕ) :
++    (bitCodec din dout dα).timeout = zeroBits dα :=
++  rfl
++
++/-- The codec's log encoding does not depend on the output length: `bitCodec din dout dα` and
++`bitCodec din dout dα'` encode every log alike. -/
++theorem encodeLog_bitCodec (din dout : Fin k → ℕ) (dα dα' : ℕ) (h : QueryLog (bitSpec din dout)) :
++    (bitCodec din dout dα).encodeLog h = (bitCodec din dout dα').encodeLog h := by
++  induction h with
++  | nil => rw [MachineCodec.encodeLog_nil, MachineCodec.encodeLog_nil]
++  | cons e h ih =>
++    rw [MachineCodec.encodeLog_cons, MachineCodec.encodeLog_cons, ih, bitCodec_encodeEntry,
++      bitCodec_encodeEntry]
++
+ /-- A well-formed query decodes as the query. -/
+ theorem decodeBitMove_query (din dout : Fin k → ℕ) (dα : ℕ) (i : Fin k)
+     (x : Fin (din i) → Bool) :
+@@ -113,4 +213,96 @@ theorem decodeBitMove_ret (din dout : Fin k → ℕ) (dα : ℕ) (a : Fin dα 
+     decodeBitMove din dout dα (pairEncode [true] (List.ofFn a)) = .ret a := by
+   simp [decodeBitMove, pairDecode_pairEncode, decodeFin_ofFn]
+ 
++/-- A decoded `ℓ`-bit string is the string itself (read through `decodeFin`'s published lemmas
++only). -/
++private theorem eq_ofFn_of_decodeFin {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}
++    (h : decodeFin ℓ w = some x) : w = List.ofFn x := by
++  have hw := length_eq_of_decodeFin_eq_some h
++  subst hw
++  have h' := decodeFin_ofFn (fun j : Fin w.length => w.get j)
++  rw [List.ofFn_get, h, Option.some.injEq] at h'
++  rw [h']
++  exact (List.ofFn_get w).symm
++
++/-- **Only the canonical query word decodes as a query:** `decodeBitMove din dout dα w` is the
++query `x` to oracle `i` exactly when `w = ⟨[false], ⟨1^i, x⟩⟩` (the converse of
++`decodeBitMove_query`).
++
++**Proof sketch.** Follow `decodeBitMove`'s branches: only the branch in which the tag is `[false]`,
++the rest parses as a pair, the index word decodes and the payload has the right length returns a
++query. There, each successful parse determines its input: a parsed pair is the pairing of its parts
++(`eq_pairEncode_of_pairDecode`), a decoded index word is `1^i` (`decodeIdx_eq_some_iff`), and a
++decoded payload is `List.ofFn x`. -/
++theorem decodeBitMove_eq_query_iff {din dout : Fin k → ℕ} {dα : ℕ} {w : List Bool} {i : Fin k}
++    {x : Fin (din i) → Bool} :
++    decodeBitMove din dout dα w = .query i x ↔
++      w = pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x)) := by
++  refine ⟨fun h => ?_, fun h => h ▸ decodeBitMove_query din dout dα i x⟩
++  unfold decodeBitMove at h
++  split at h
++  · rename_i rest hw
++    split at h
++    · rename_i iw xw hr
++      split at h
++      · rename_i j hj
++        split at h
++        · rename_i x' hx
++          cases h
++          rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_pairEncode_of_pairDecode _ _ _ hr,
++            decodeIdx_eq_some_iff.1 hj, eq_ofFn_of_decodeFin hx]
++        · cases h
++      · cases h
++    · cases h
++  · split at h <;> cases h
++  · cases h
++
++/-- **The default:** a word that is neither a canonical query `⟨[false], ⟨1^i, x⟩⟩` nor a
++canonical output `⟨[true], a⟩` decodes to the output `zeroBits dα`. With `decodeBitMove_query`
++and `decodeBitMove_ret` this determines `decodeBitMove` on every word.
++
++**Proof sketch.** Follow `decodeBitMove`'s branches. Every branch but two returns `zeroBits dα`.
++In the query branch, the successful parses make `w` a canonical query word, as in
++`decodeBitMove_eq_query_iff`, against `hq`; in the output branch, they make `w` a canonical output
++word, against `hr`. -/
++theorem decodeBitMove_of_not_canonical {din dout : Fin k → ℕ} {dα : ℕ} {w : List Bool}
++    (hq : ∀ (i : Fin k) (x : Fin (din i) → Bool),
++      w ≠ pairEncode [false] (pairEncode (List.replicate i true) (List.ofFn x)))
++    (hr : ∀ a : Fin dα → Bool, w ≠ pairEncode [true] (List.ofFn a)) :
++    decodeBitMove din dout dα w = .ret (zeroBits dα) := by
++  unfold decodeBitMove
++  split
++  · rename_i rest hw
++    split
++    · rename_i iw xw hr'
++      split
++      · rename_i j hj
++        split
++        · rename_i x hx
++          refine absurd ?_ (hq j x)
++          rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_pairEncode_of_pairDecode _ _ _ hr',
++            decodeIdx_eq_some_iff.1 hj, eq_ofFn_of_decodeFin hx]
++        · rfl
++      · rfl
++    · rfl
++  · rename_i aw hw
++    split
++    · rename_i a ha
++      refine absurd ?_ (hr a)
++      rw [eq_pairEncode_of_pairDecode _ _ _ hw, eq_ofFn_of_decodeFin ha]
++    · rfl
++  · rfl
++
++/-- **Canonical words decode to their move:** `decodeBitMove (encodeBitMove m) = m`. -/
++theorem decodeBitMove_encodeBitMove (din dout : Fin k → ℕ) (dα : ℕ)
++    (m : Move (bitSpec din dout) (Fin dα → Bool)) :
++    decodeBitMove din dout dα (encodeBitMove din dout dα m) = m := by
++  cases m with
++  | query i x => exact decodeBitMove_query din dout dα i x
++  | ret a => exact decodeBitMove_ret din dout dα a
++
++/-- Distinct moves have distinct canonical words. -/
++theorem encodeBitMove_injective (din dout : Fin k → ℕ) (dα : ℕ) :
++    Function.Injective (encodeBitMove din dout dα) := fun m m' h => by
++  rw [← decodeBitMove_encodeBitMove din dout dα m, h, decodeBitMove_encodeBitMove]
++
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Bridges.lean b/TCSlib/Cryptography/Games/Bridges.lean
+index b5a89e37..d16deb6f 100644
+--- a/TCSlib/Cryptography/Games/Bridges.lean
++++ b/TCSlib/Cryptography/Games/Bridges.lean
+@@ -25,7 +25,9 @@ model and to the ch. 2–4 layer.
+ 
+ * `Games.Machines`: machines as oracle computations (`NUPPT.toComp`, `NUPPT.toCompOn`).
+ * `Games.BitCodec`: bit-string oracles and their machine codec (`bitSpec`, `bitCodec`).
+-* `Games.Efficiency`: polynomial-time handlers and the efficiency target T1 (the efficiency fill).
++* `Games.Efficiency`: polynomial-time handlers (adversary input, queries, finalization) and the
++  efficiency targets T1 and T2, with their companions (adversaries without input; T4, the bridge
++  to the ch. 2–4 next-query machines) (the efficiency fill).
+ * `Games.Bridges.QueryTree`: the concrete layer's query trees, which *are* one-oracle computations
+   (item F-1); their evaluation, simulation and query bounds are the framework's.
+ * `Games.Bridges.Experiments`: the concrete layer's experiments (`invProb`, `predProb`,
+diff --git a/TCSlib/Cryptography/Games/Bridges/Experiments.lean b/TCSlib/Cryptography/Games/Bridges/Experiments.lean
+index 3b209800..5346a5a4 100644
+--- a/TCSlib/Cryptography/Games/Bridges/Experiments.lean
++++ b/TCSlib/Cryptography/Games/Bridges/Experiments.lean
+@@ -108,6 +108,13 @@ noncomputable def acceptGame [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty 
+     (D : γ → ρ → Bool) : ProbComp Bool :=
+   (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r)
+ 
++/-- The acceptance game samples the seed `s`, then the coins `r`, and outputs `D (X s) r`:
++`acceptGame X D = (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r)`. -/
++theorem acceptGame_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X : σ → γ)
++    (D : γ → ρ → Bool) :
++    acceptGame X D = (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r) :=
++  rfl
++
+ /-- **Acceptance as a game:** `acceptProb X D` is the acceptance probability of `acceptGame X D`.
+ [Gar26, Defs 3.2 and 3.4] -/
+ theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X : σ → γ)
+@@ -115,8 +122,8 @@ theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X :
+   have h : acceptGame X D =
+       (fun z : σ × ρ => D (X z.1) z.2) <$>
+         ((sample σ).bind fun s => (sample ρ).bind fun r => .pure (s, r)) := by
+-    simp only [acceptGame, OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
+-  rw [acceptProb_def, accept, h, prob_eq_expect, expect_map, ← prob_eq_expect
++    simp only [acceptGame_eq, OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
++  rw [acceptProb_def, accept_eq, h, prob_eq_expect, expect_map, ← prob_eq_expect
+     (p := fun z : σ × ρ => D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]
+ 
+ /-- **Distinguishing as a game:** `distAdv X Y D` is the advantage between the acceptance games
+@@ -124,6 +131,6 @@ of `X` and of `Y`. [Gar26, Defs 3.2 and 3.4] -/
+ theorem distAdv_eq [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ] [Fintype ρ] [Nonempty ρ]
+     (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
+     distAdv X Y D = advantage (acceptGame X D) (acceptGame Y D) := by
+-  rw [distAdv_def, advantage, acceptProb_eq, acceptProb_eq]
++  rw [distAdv_def, advantage_eq, acceptProb_eq, acceptProb_eq]
+ 
+ end TCSlib.Cryptography.Games.Bridge
+diff --git a/TCSlib/Cryptography/Games/Bridges/Machines.lean b/TCSlib/Cryptography/Games/Bridges/Machines.lean
+index 9030b32a..95aece6c 100644
+--- a/TCSlib/Cryptography/Games/Bridges/Machines.lean
++++ b/TCSlib/Cryptography/Games/Bridges/Machines.lean
+@@ -50,24 +50,70 @@ def singleCodec (ℓ₁ ℓ₂ : ℕ) :
+   encodeEntry e := pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)
+   timeout := false
+ 
++/-- The codec decodes a move with `decodeOracleMove`, the query `x` becoming a query to the sole
++oracle `()`: `(singleCodec ℓ₁ ℓ₂).decodeMove w` is `query () x` when `decodeOracleMove ℓ₁ w` is
++`query x`, and `ret b` when it is `ret b`. -/
++theorem singleCodec_decodeMove (ℓ₁ ℓ₂ : ℕ) (w : List Bool) :
++    (singleCodec ℓ₁ ℓ₂).decodeMove w = match decodeOracleMove ℓ₁ w with
++      | .query x => .query () x
++      | .ret b => .ret b :=
++  rfl
++
++/-- The codec encodes the log entry `(x, y)` as `⟨x, y⟩`, as `encodeHist` does. -/
++theorem singleCodec_encodeEntry (ℓ₁ ℓ₂ : ℕ)
++    (e : Σ u, (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).dom u ×
++      (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).rng u) :
++    (singleCodec ℓ₁ ℓ₂).encodeEntry e = pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2) :=
++  rfl
++
++/-- When the budget runs out, the codec's verdict is `false`. -/
++theorem singleCodec_timeout (ℓ₁ ℓ₂ : ℕ) : (singleCodec ℓ₁ ℓ₂).timeout = false :=
++  rfl
++
+ /-- The ch. 2–4 history of a one-oracle log: the list of its (query, answer) pairs. -/
+ def toHist {ℓ₁ ℓ₂ : ℕ} (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) :
+     List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) :=
+   h.map fun e => (e.2.1, e.2.2)
+ 
++/-- The empty log has the empty history: `toHist [] = []`. -/
++theorem toHist_nil {ℓ₁ ℓ₂ : ℕ} :
++    toHist ([] : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) = [] :=
++  rfl
++
++/-- The history of `e :: h` starts with `e`'s (query, answer) pair:
++`toHist (e :: h) = (e.2.1, e.2.2) :: toHist h`. -/
++theorem toHist_cons {ℓ₁ ℓ₂ : ℕ}
++    (e : Σ u, (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).dom u ×
++      (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).rng u)
++    (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) :
++    toHist (e :: h) = (e.2.1, e.2.2) :: toHist h :=
++  rfl
++
++/-- The history of `h ++ [e]` ends with `e`'s (query, answer) pair:
++`toHist (h ++ [e]) = toHist h ++ [(e.2.1, e.2.2)]`. -/
++theorem toHist_append_singleton {ℓ₁ ℓ₂ : ℕ}
++    (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)))
++    (e : Σ u, (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).dom u ×
++      (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)).rng u) :
++    toHist (h ++ [e]) = toHist h ++ [(e.2.1, e.2.2)] := by
++  rw [toHist, toHist, List.map_append, List.map_singleton]
++
+ /-- The codec's log encoding is the ch. 2–4 history encoding. -/
+ theorem encodeLog_singleCodec {ℓ₁ ℓ₂ : ℕ}
+     (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) :
+     (singleCodec ℓ₁ ℓ₂).encodeLog h = encodeHist (toHist h) := by
+   induction h with
+-  | nil => rfl
++  | nil => rw [MachineCodec.encodeLog_nil, toHist_nil, encodeHist_nil]
+   | cons e h ih =>
+-    simp only [MachineCodec.encodeLog, List.foldr_cons, toHist, List.map_cons, encodeHist] at ih ⊢
+-    rw [ih]
+-    rfl
++    rw [MachineCodec.encodeLog_cons, toHist_cons, encodeHist_cons, ih, singleCodec_encodeEntry]
+ 
+ /-- One step of the correspondence: the framework's computation from a log is the ch. 2–4 tree
+-from the corresponding history. -/
++from the corresponding history.
++
++**Proof sketch.** Induction on the budget. Both builders branch on the same move `next (toHist
++hist)`, by their case equations (`buildComp_zero_of_ret`, …, `buildTree_succ_of_query`): a verdict
++or a spent budget gives the same leaf, and a query gives a query node on both sides whose
++continuations agree by induction, since `toHist` of the extended log is the extended history. -/
+ theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
+     (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
+     ∀ (q : ℕ) (hist : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))),
+@@ -76,18 +122,20 @@ theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
+           | .ret b => .ret b) false q hist =
+         buildTree next q (toHist hist)
+   | 0, hist => by
+-    unfold buildComp buildTree
+-    cases next (toHist hist) <;> rfl
++    cases hn : next (toHist hist) with
++    | ret b => rw [buildComp_zero_of_ret (a := b) (by simp only [hn]), buildTree_zero_of_ret hn]
++    | query x =>
++      rw [buildComp_zero_of_query (i := ()) (x := x) (by simp only [hn]),
++        buildTree_zero_of_query hn]
+   | q + 1, hist => by
+-    unfold buildComp buildTree
+     cases hn : next (toHist hist) with
+-    | ret b => rfl
++    | ret b => rw [buildComp_succ_of_ret (a := b) (by simp only [hn]), buildTree_succ_of_ret hn]
+     | query x =>
+-      dsimp only
+-      congr 1
+-      funext y
+-      rw [buildComp_singleCodec next q]
+-      simp [toHist]
++      rw [buildComp_succ_of_query (i := ()) (x := x) (by simp only [hn]),
++        buildTree_succ_of_query hn]
++      refine congrArg (OracleComp.query (spec := singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)) () x)
++        (funext fun y => ?_)
++      rw [buildComp_singleCodec next q, toHist_append_singleton]
+ 
+ /-- **The ch. 2–4 decoder is an instance:** the oracle adversary `D.toOracleAdversary` of a
+ next-query machine is its computation under `singleCodec`. So
+@@ -103,10 +151,7 @@ theorem toComp_singleCodec (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) (r : D.Coins n)
+         | .query x => Move.query () x
+         | .ret b => Move.ret b) := by
+     funext hist
+-    rw [encodeLog_singleCodec]
+-    rfl
+-  simp only [NUPPT.toComp, NUPPT.toOracleAdversary]
+-  rw [hnext]
+-  exact h
++    rw [encodeLog_singleCodec, singleCodec_decodeMove]
++  rw [NUPPT.toComp_eq, NUPPT.toOracleAdversary_eq, hnext, singleCodec_timeout, h, toHist_nil]
+ 
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Bridges/QueryTree.lean b/TCSlib/Cryptography/Games/Bridges/QueryTree.lean
+index be625b1e..420fe18e 100644
+--- a/TCSlib/Cryptography/Games/Bridges/QueryTree.lean
++++ b/TCSlib/Cryptography/Games/Bridges/QueryTree.lean
+@@ -66,6 +66,18 @@ def OracleComp.evalFn {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng
+   | .pure a => a
+   | .query i x k => evalFn f (k (f i x))
+ 
++/-- A return evaluates to its value: `(pure a).evalFn f = a`. -/
++theorem OracleComp.evalFn_pure {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng i) (a : α) :
++    (OracleComp.pure a : OracleComp spec α).evalFn f = a :=
++  rfl
++
++/-- A query evaluates as its continuation on the answer `f i x`:
++`(query i x k).evalFn f = (k (f i x)).evalFn f`. -/
++theorem OracleComp.evalFn_query {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng i)
++    (i : ι) (x : spec.dom i) (k : spec.rng i → OracleComp spec α) :
++    (OracleComp.query i x k).evalFn f = (k (f i x)).evalFn f :=
++  rfl
++
+ /-- **Deterministic implementations evaluate:** simulating `c` with the stateless implementation
+ that answers by the function `f` returns `c`'s output under `f` and leaves the state unchanged. -/
+ theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+@@ -73,8 +85,11 @@ theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : Oracle
+     simulate (QueryImpl.ofComp (σ := σ) (spec' := spec') fun i x => .pure (f i x)) c s =
+       .pure (c.evalFn f, s) := by
+   induction c with
+-  | pure a => rfl
+-  | query i x k ih => exact ih (f i x)
++  | pure a => rw [simulate_pure, OracleComp.evalFn_pure]
++  | query i x k ih =>
++    rw [simulate_query, QueryImpl.ofComp_apply, OracleComp.pure_bind, OracleComp.pure_bind,
++      OracleComp.evalFn_query]
++    exact ih (f i x)
+ 
+ namespace Bridge
+ 
+@@ -83,14 +98,24 @@ a one-oracle computation, with `f`. -/
+ theorem eval_eq_evalFn (f : I → O) (t : TCSlib.Cryptography.QueryTree I O α) :
+     t.eval f = OracleComp.evalFn (fun _ => f) t := by
+   induction t using TCSlib.Cryptography.QueryTree.induct with
+-  | ret a => rfl
+-  | query x k ih => exact ih (f x)
++  | ret a => rw [TCSlib.Cryptography.QueryTree.eval_ret, OracleComp.evalFn_pure]
++  | query x k ih =>
++    rw [TCSlib.Cryptography.QueryTree.eval_query, OracleComp.evalFn_query]
++    exact ih (f x)
+ 
+ /-- The implementation corresponding to `QueryTree.simulate π ans`: a query `x` is answered by
+ asking `π x` of the new oracle and returning `ans x` of the answer; no state is used. -/
+ def treeImpl (π : I → I') (ans : I → O' → O) : QueryImpl (singleSpec I O) σ (singleSpec I' O') :=
+   QueryImpl.ofComp fun _ x => (OracleComp.call () (π x)).bind fun o' => .pure (ans x o')
+ 
++/-- The implementation answers the query `x` by asking `π x` and returning `ans x` of the answer,
++with the state `s` unchanged:
++`treeImpl π ans u x s = query () (π x) (fun o' => pure (ans x o', s))`. -/
++theorem treeImpl_apply (π : I → I') (ans : I → O' → O) (u : Unit) (x : I) (s : σ) :
++    treeImpl (σ := σ) π ans u x s = OracleComp.query () (π x) fun o' => .pure (ans x o', s) := by
++  rw [treeImpl, QueryImpl.ofComp_apply, OracleComp.bind_assoc, OracleComp.call_bind]
++  simp only [OracleComp.pure_bind]
++
+ /-- **Garg's simulation is the framework's:** the tree `t.simulate π ans` is the framework's
+ simulation of `t` by `treeImpl π ans`, with the (unchanged) state dropped.
+ 
+@@ -100,12 +125,11 @@ theorem simulate_eq (π : I → I') (ans : I → O' → O) (t : TCSlib.Cryptogra
+     (s : σ) :
+     t.simulate π ans = (simulate (treeImpl π ans) t s).bind fun p => .pure p.1 := by
+   induction t using TCSlib.Cryptography.QueryTree.induct with
+-  | ret a => rfl
++  | ret a =>
++    rw [TCSlib.Cryptography.QueryTree.simulate_ret, simulate_pure, OracleComp.pure_bind]
+   | query x k ih =>
+-    show OracleComp.query () (π x) (fun o' => (k (ans x o')).simulate π ans) = _
+-    simp only [simulate_query, treeImpl, QueryImpl.ofComp, ih, OracleComp.bind_assoc,
+-      OracleComp.pure_bind]
+-    rfl
++    rw [TCSlib.Cryptography.QueryTree.simulate_query, simulate_query, treeImpl_apply]
++    simp only [OracleComp.query_bind, OracleComp.pure_bind, ih]
+ 
+ /-- **Query bounds are the framework's:** a tree makes at most `q` queries exactly when it is
+ cost-bounded by `q` with every query costing one. -/
+diff --git a/TCSlib/Cryptography/Games/Bridges/Strategies.lean b/TCSlib/Cryptography/Games/Bridges/Strategies.lean
+index 08c76916..ef5461de 100644
+--- a/TCSlib/Cryptography/Games/Bridges/Strategies.lean
++++ b/TCSlib/Cryptography/Games/Bridges/Strategies.lean
+@@ -74,6 +74,12 @@ def turnParty (next : List Msg → Msg) : ℕ → List Msg → Party Msg Msg Msg
+         | 0 => .pure (next M)
+         | k' + 1 => turnParty next k' (M ++ [y])
+ 
++/-- With no moves left, the embedded party returns `next M`: `turnParty next 0 M = pure (next M)`.
++-/
++theorem turnParty_zero (next : List Msg → Msg) (M : List Msg) :
++    turnParty next 0 M = .pure (next M) :=
++  rfl
++
+ /-- The embedded party **while waiting**, with `k` moves left (the other party's next one
+ included) and received history `M`. On the other party's message `y` it takes its turn with
+ `k − 1` moves left; on `none` (the other party has returned) it returns `next M`. -/
+@@ -83,6 +89,22 @@ def waitParty (next : List Msg → Msg) (k : ℕ) (M : List Msg) : Option Msg 
+     | 0 => .pure (next M)
+     | k' + 1 => turnParty next k' (M ++ [y])
+ 
++/-- Waiting, on `none` (the other party has returned), the embedded party returns `next M`. -/
++theorem waitParty_none (next : List Msg → Msg) (k : ℕ) (M : List Msg) :
++    waitParty next k M none = .pure (next M) :=
++  rfl
++
++/-- Waiting with no moves left, a reply off schedule is ignored and the party returns `next M`. -/
++theorem waitParty_some_zero (next : List Msg → Msg) (M : List Msg) (y : Msg) :
++    waitParty next 0 M (some y) = .pure (next M) :=
++  rfl
++
++/-- Waiting with `k + 1` moves left, on the reply `y` the party appends it and takes its turn with
++`k` moves left: `waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y])`. -/
++theorem waitParty_some_succ (next : List Msg → Msg) (k : ℕ) (M : List Msg) (y : Msg) :
++    waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y]) :=
++  rfl
++
+ /-- On its turn with `k + 1` moves left, the embedded party sends `next M` and then waits with
+ `k` moves left. -/
+ theorem turnParty_succ (next : List Msg → Msg) (k : ℕ) (M : List Msg) :
+@@ -96,6 +118,16 @@ def alt (nF nG : List Msg → Msg) : ℕ → List Msg → List Msg → List Msg
+   | 0, MF, MG => (MF, MG)
+   | k + 1, MF, MG => (alt nG nF k (MG ++ [nF MF]) MF).swap
+ 
++/-- With no moves left, the histories are unchanged: `alt nF nG 0 MF MG = (MF, MG)`. -/
++theorem alt_zero (nF nG : List Msg → Msg) (MF MG : List Msg) : alt nF nG 0 MF MG = (MF, MG) :=
++  rfl
++
++/-- `alt`'s step at the front: `F` sends `nF MF` to `G`, then the roles are exchanged:
++`alt nF nG (k + 1) MF MG = (alt nG nF k (MG ++ [nF MF]) MF).swap`. -/
++theorem alt_succ (nF nG : List Msg → Msg) (k : ℕ) (MF MG : List Msg) :
++    alt nF nG (k + 1) MF MG = (alt nG nF k (MG ++ [nF MF]) MF).swap :=
++  rfl
++
+ /-- `alt`'s step at the back: after `k + 1` moves, the last move is `F`'s when `k` is even (its
+ message, computed on its history, is appended to `G`'s), and `G`'s when `k` is odd. This is D8's
+ `exec_succ` shape.
+@@ -135,14 +167,16 @@ theorem exec_turnParty : ∀ (k : ℕ) (nF nG : List Msg → Msg) (MF MG : List
+       .pure (.done (nF (alt nF nG k MF MG).1) (nG (alt nF nG k MF MG).2)) := by
+   intro k
+   induction k with
+-  | zero => intro nF nG MF MG; rfl
++  | zero =>
++    intro nF nG MF MG
++    simp only [turnParty_zero, Party.exec_zero, Party.step_pure, OracleComp.pure_bind,
++      Sum.elim_inl, Party.endWith_eq, waitParty_none, Party.close_pure, Option.elim_some,
++      alt_zero]
+   | succ k ih =>
+     intro nF nG MF MG
+-    rw [turnParty_succ, Party.exec_succ]
+-    show (Party.exec k (turnParty nG k (MG ++ [nF MF])) (waitParty nF k MF)).bind
+-      (fun r => .pure r.swap) = _
+-    rw [ih nG nF (MG ++ [nF MF]) MF]
+-    rfl
++    simp only [turnParty_succ, Party.exec_succ, Party.step_send, OracleComp.pure_bind,
++      Sum.elim_inr, waitParty_some_succ, ih, ExecOutcome.swap_done, alt_succ, Prod.fst_swap,
++      Prod.snd_swap]
+ 
+ /-- **D8's `exec` is `alt`:** after `k` moves from the empty histories, the messages received by
+ `P` and by `V` are `alt`'s, with the first mover chosen by `vFirst`.
+@@ -156,11 +190,13 @@ theorem exec_eq_alt (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
+       if vFirst then (alt (V.next x zV rV) (P.next x zP rP) k [] []).swap
+       else alt (P.next x zP rP) (V.next x zV rV) k [] [] := by
+   induction k with
+-  | zero => cases vFirst <;> rfl
++  | zero =>
++    cases vFirst <;>
++      simp only [exec_zero, alt_zero, Bool.false_eq_true, ↓reduceIte, Prod.swap_prod_mk]
+   | succ k ih =>
+     rw [exec_succ, ih]
+     cases vFirst <;> simp only [Bool.false_eq_true, ↓reduceIte] <;> rw [alt_succ_last] <;>
+-      rcases Nat.mod_two_eq_zero_or_one k with h | h <;> simp [moverIsV, h]
++      rcases Nat.mod_two_eq_zero_or_one k with h | h <;> simp [moverIsV_true, moverIsV_false, h]
+ 
+ /-- **A protocol's embedded execution returns D8's outputs:** for fixed tapes, running the first
+ mover's embedding on its turn against the other's waiting embedding, with fuel the number of
+@@ -180,12 +216,11 @@ theorem exec_strategies (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π
+         else .done (π.outP x y z r) (π.outV π.P x y z r)) := by
+   have hT := exec_eq_alt π.P π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+     (π.rounds.eval x.length)
+-  simp only [Protocol.outP, Protocol.outV, Protocol.transcriptWith]
++  simp only [Protocol.outP_eq, Protocol.outV_eq, Protocol.transcriptWith_eq]
+   cases hv : π.verifierFirst
+   · simp only [hv, Bool.false_eq_true, ↓reduceIte] at hT ⊢
+     rw [exec_turnParty, hT]
+   · simp only [hv, ↓reduceIte] at hT ⊢
+-    rw [exec_turnParty, hT]
+-    rfl
++    rw [exec_turnParty, hT, Prod.fst_swap, Prod.snd_swap]
+ 
+ end TCSlib.Cryptography.Games.Bridge
+diff --git a/TCSlib/Cryptography/Games/Efficiency.lean b/TCSlib/Cryptography/Games/Efficiency.lean
+index 8c55fbbc..aeb8cff4 100644
+--- a/TCSlib/Cryptography/Games/Efficiency.lean
++++ b/TCSlib/Cryptography/Games/Efficiency.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ -/
+ import TCSlib.Cryptography.Games.BitCodec
+ import TCSlib.Cryptography.Games.Probability
++import TCSlib.Cryptography.Games.Bridges.Machines
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -18,33 +19,76 @@ hardness assumptions, which quantify over machines (`Complexity.NUPPT`), apply t
+ `briefs/pass-shelat-ch5-8/design/S2b-efficiency.md`. The template is Frederick Dehmel's GGM
+ reduction machine (`Asymptotic/GGMReduction*.lean`), whose loop `GGMRed.stateLoopFun` is reused.
+ 
+-**Status: skeleton.** The definitions (T0) are final. The statements of T1 and T2 are frozen at the
+-issue of the fill brief (`briefs/pass-shelat-ch5-8/fills/efficiency/`). Their proofs are the fill's.
++**Status: skeleton.** The definitions (T0) are final. The statements of T1, T2 and T4 and of the
++companion `exists_toCompOn_of_toComp` are frozen at the issue of the fill brief
++(`briefs/pass-shelat-ch5-8/fills/efficiency/`). Their proofs are the fill's.
++
++## The shape of a reduction
++
++A handler describes everything a reduction does around one run of the adversary. At parameter
++`n` the reduction has an input `z` and a seed `ω` (its own coins). Every function of the handler
++reads them from the **context** `⟨1^n, ⟨z, ω⟩⟩` (`seedIn`):
++1. **the adversary's input** is a polynomial-time function of the context (`advIn`), for example
++   a public key built from `z` and `ω`; the adversary runs as `A.toCompOn` on it;
++2. **each query** of the adversary is answered from the handler's state, by the handler alone
++   (`PolyHandler`) or with queries to the reduction's own oracles (`InteractiveHandler`);
++3. **the reduction's output** is computed from the context, the final state and the adversary's
++   output: by a polynomial-time function (`PolyHandler.out`), or by a last phase that may itself
++   query the reduction's oracles, within its own budget (`InteractiveHandler.finish`).
+ 
+ ## Fixed lengths
+ 
+ Every length is an explicit polynomial in the parameter `n`: queries and answers (`din i`,
+-`dout i`), the adversary's output (`dα`), and the handler's state and seed. This bounds every
+-history, which the guarded state loop needs.
++`dout i`), the adversary's output (`dα`), the handler's state and seed, and, for an interactive
++handler, the reduction's output. This bounds every history, which the guarded state loop needs.
++
++## Scope
++
++* **Covered:** a reduction that runs one adversary once, on an input computed from its own,
++  answers the adversary's queries with or without its own oracles, and post-processes the final
++  state and the adversary's output (with further oracle queries if it is interactive). T1 makes
++  the machine's output exactly the finalized output; T2 makes the machine's computation exactly
++  the simulation followed by the finalization, with the budgets added.
++* **Adversaries without input** are adversaries with an input they ignore
++  (`exists_toCompOn_of_toComp`).
++* **Reductions to a pseudorandom function** reach `OracleEnsemble.Indist` through T4: an oracle
++  machine against one bit-string oracle with a one-bit output is, on evaluations, a next-query
++  machine of the ch. 2–4 layer (`NUPPT.toOracleAdversary`).
++* **Non-uniform handlers** (for example one that runs a non-uniform distinguisher) receive their
++  advice through the input `z`; it is hard-wired into the machine afterwards
++  (`NUPPT.exists_withAdvice`, with `NUPPT.exists_comp` to re-pair the input).
++* **Not covered:** reductions that rewind the adversary or run it more than once, and variable
++  lengths.
+ 
+ ## Main definitions
+ 
++* `Games.seedIn n z ω`: the context `⟨1^n, ⟨z, ω⟩⟩`.
+ * `Games.PolyHandler k din dout`: a polynomial-time handler for `k` bit-string oracles, with its
+-  state and seed lengths and initial state.
++  state and seed lengths, initial state, adversary input and finalization.
+ * `Games.PolyHandler.answer`, `Games.PolyHandler.impl`: its answers, and its semantics as a
+-  stateful `QueryImpl` that asks no oracle, at parameter `n`, reduction input `z` and seed `ω`.
++  stateful `QueryImpl` that asks no oracle, at parameter `n`, reduction input `z` and seed `ω`;
++  `PolyHandler.advInput` and `PolyHandler.result`: the adversary's input and the reduction's
++  output.
+ * `Games.InteractiveHandler`, `InteractiveHandler.call`, `InteractiveHandler.impl`: a
+   polynomial-time handler that may itself query outer bit-string oracles, up to `perCall(n)`
+-  times per inner query, and its semantics as a `QueryImpl` of the inner oracles by the outer ones.
++  times per inner query, and its semantics as a `QueryImpl` of the inner oracles by the outer ones;
++  `InteractiveHandler.advInput` and `InteractiveHandler.finish`: the adversary's input and the
++  finalization, with up to `finCall(n)` outer queries.
+ 
+ ## Main results
+ 
+-* `Games.exists_handlerMachine` (T1, the fill's target): a machine adversary run against a
+-  polynomial-time handler is a machine.
+-* `Games.exists_interactiveHandlerMachine` (T2, the fill's target): a machine adversary run
+-  against an interactive handler is an oracle machine against the outer oracles, with budget
+-  `q(n) · perCall(n)`. The reductions that forward or answer queries with their own oracle need it
+-  (the PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
++* `Games.exists_handlerMachine` (T1, the fill's target): a reduction with a polynomial-time
++  handler is a machine, whose output is exactly the finalized output of the simulation.
++* `Games.exists_interactiveHandlerMachine` (T2, the fill's target): a reduction with an
++  interactive handler is an oracle machine against the outer oracles, with budget
++  `q(n) · perCall(n) + finCall(n)`, whose computation is exactly the simulation followed by the
++  finalization. The reductions that forward or answer queries with their own oracle need it (the
++  PRF MAC's distinguisher, hash-and-sign's forger, the CPA and CCA reductions).
++* `Games.exists_toCompOn_of_toComp` (the fill's target): a machine without input is a machine
++  with an input that it ignores, with the same coins.
++* `Games.exists_toOracleAdversary_of_bitCodec` (T4, the fill's target): an oracle machine
++  against one `bitCodec` oracle with a one-bit output, on the empty input, evaluates as a
++  next-query machine of the ch. 2–4 layer.
+ 
+ ## References
+ 
+@@ -62,10 +106,32 @@ variable {k : ℕ}
+ abbrev bitSpecAt (din dout : Fin k → PolyExpr) (n : ℕ) : OracleSpec (Fin k) :=
+   bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)
+ 
++/-- The bit-string oracles at parameter `n` are `bitSpec` of the evaluated lengths:
++`bitSpecAt din dout n = bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)`. -/
++theorem bitSpecAt_eq (din dout : Fin k → PolyExpr) (n : ℕ) :
++    bitSpecAt din dout n = bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n) :=
++  rfl
++
++/-- The **context** of a reduction at parameter `n`, with the reduction's input `z` and its seed
++`ω`: the string `⟨1^n, ⟨z, ω⟩⟩`. Every function of a handler reads it. -/
++def seedIn (n : ℕ) (z ω : List Bool) : List Bool :=
++  pairEncode (List.replicate n true) (pairEncode z ω)
++
++/-- The context is `⟨1^n, ⟨z, ω⟩⟩`:
++`seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω)`. -/
++theorem seedIn_eq (n : ℕ) (z ω : List Bool) :
++    seedIn n z ω = pairEncode (List.replicate n true) (pairEncode z ω) :=
++  rfl
++
+ /-- A **polynomial-time handler** for `k` bit-string oracles with query lengths `din` and answer
+-lengths `dout`. The function `run` is polynomial-time. On `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩` (the
+-parameter, the reduction's input `z`, its seed `ω`, the state `s`, and the query `x` to oracle
+-`i`), it returns `⟨y, s'⟩`: the answer and the new state. -/
++lengths `dout`: a reduction that runs the adversary once and answers its queries by itself. Its
++three functions are polynomial-time, and each reads the context `⟨1^n, ⟨z, ω⟩⟩` (`seedIn`: the
++parameter, the reduction's input `z` and its seed `ω`):
++- `advIn` maps the context to the adversary's input;
++- `run` answers one query: on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩` (the context, the state `s`, and
++  the query `x` to oracle `i`), it returns `⟨y, s'⟩`, the answer and the new state;
++- `out` maps `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, a⟩⟩` (the context, the final state and the adversary's output)
++  to the reduction's output. -/
+ structure PolyHandler (k : ℕ) (din dout : Fin k → PolyExpr) where
+   /-- The length of the state. -/
+   stateLen : PolyExpr
+@@ -77,6 +143,16 @@ structure PolyHandler (k : ℕ) (din dout : Fin k → PolyExpr) where
+   run : List Bool → List Bool
+   /-- It is polynomial-time computable. -/
+   poly : PolyTimeComputable run
++  /-- The adversary's input, as a function of the context `⟨1^n, ⟨z, ω⟩⟩` (for example a public
++  key built from `z` and the seed). For an adversary without input it is ignored. -/
++  advIn : List Bool → List Bool
++  /-- The adversary's input is polynomial-time computable. -/
++  advIn_poly : PolyTimeComputable advIn
++  /-- The finalization: the reduction's output, as a function of `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, a⟩⟩` (the
++  context, the final state `s` and the adversary's output `a`). -/
++  out : List Bool → List Bool
++  /-- The finalization is polynomial-time computable. -/
++  out_poly : PolyTimeComputable out
+ 
+ namespace PolyHandler
+ 
+@@ -88,8 +164,48 @@ def input (n : ℕ) (z : List Bool) (ω : List Bool) (s : List Bool) (i : Fin k)
+   pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
+     (pairEncode s (pairEncode (List.replicate i true) x))
+ 
+-/-- The handler's answer and new state, decoded with fixed lengths. A malformed output gives the
+-all-`false` answer and state (a total default; well-behaved handlers never produce one). -/
++/-- The handler's input string is `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩`. -/
++theorem input_eq (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :
++    input n z ω s i x =
++      pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++        (pairEncode s (pairEncode (List.replicate i true) x)) :=
++  rfl
++
++/-- The adversary's input at parameter `n`, for the reduction input `z` and the seed `ω`: `advIn`
++of the context `⟨1^n, ⟨z, ω⟩⟩`. -/
++def advInput (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) : List Bool :=
++  H.advIn (seedIn n z (List.ofFn ω))
++
++/-- The adversary's input is `advIn` of the context:
++`H.advInput n z ω = H.advIn (seedIn n z (List.ofFn ω))`. -/
++theorem advInput_eq (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) :
++    H.advInput n z ω = H.advIn (seedIn n z (List.ofFn ω)) :=
++  rfl
++
++/-- The reduction's output at parameter `n`, for the reduction input `z` and the seed `ω`, when
++the final state is `s` and the adversary's output is `a`: `out` of
++`⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, a⟩⟩`. -/
++def result (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) : List Bool :=
++  H.out (pairEncode (seedIn n z (List.ofFn ω)) (pairEncode (List.ofFn s) (List.ofFn a)))
++
++/-- The reduction's output is `out` of the context, the final state and the adversary's output:
++`H.result n z ω s a = H.out (pairEncode (seedIn n z (List.ofFn ω))
++(pairEncode (List.ofFn s) (List.ofFn a)))`. -/
++theorem result_eq (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) :
++    H.result n z ω s a =
++      H.out (pairEncode (seedIn n z (List.ofFn ω)) (pairEncode (List.ofFn s) (List.ofFn a))) :=
++  rfl
++
++/-- The handler's answer and new state, decoded with fixed lengths. If `run`'s output is not a
++pair, both are all-`false`; otherwise each component of the wrong length is replaced by
++all-`false` independently (a total default; well-behaved handlers never produce one). An
++interactive handler defaults jointly instead (`InteractiveHandler`). -/
+ def answer (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
+     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
+     (x : Fin ((din i).eval n) → Bool) :
+@@ -99,6 +215,44 @@ def answer (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
+     ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _))
+   | none => (zeroBits _, zeroBits _)
+ 
++section Answer
++
++variable (H : PolyHandler k din dout) {n : ℕ} {z : List Bool} {ω : Fin (H.seedLen.eval n) → Bool}
++  {s : Fin (H.stateLen.eval n) → Bool} {i : Fin k} {x : Fin ((din i).eval n) → Bool}
++
++/-- If `run`'s output is not a pair, the answer and the new state are all-`false`. -/
++theorem answer_of_pairDecode_eq_none
++    (h : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) = none) :
++    H.answer n z ω s i x = (zeroBits _, zeroBits _) := by
++  unfold answer
++  rw [h]
++
++/-- If `run`'s output is the pair `⟨yw, sw⟩`, the answer is `yw` and the new state `sw`, each
++decoded with its fixed length and all-`false` if that length is wrong:
++`H.answer n z ω s i x = ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _))`.
++-/
++theorem answer_of_pairDecode_eq_some {yw sw : List Bool}
++    (h : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) =
++      some (yw, sw)) :
++    H.answer n z ω s i x =
++      ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _)) := by
++  unfold answer
++  rw [h]
++
++/-- **A well-formed output:** if `run` returns `⟨y, s'⟩` with `y` and `s'` of the fixed lengths,
++the answer is `y` and the new state `s'`. -/
++theorem answer_of_run_eq {y : Fin ((dout i).eval n) → Bool} {s' : Fin (H.stateLen.eval n) → Bool}
++    (h : H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)) =
++      pairEncode (List.ofFn y) (List.ofFn s')) :
++    H.answer n z ω s i x = (y, s') := by
++  have h' : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) =
++      some (List.ofFn y, List.ofFn s') := by
++    rw [h, pairDecode_pairEncode]
++  rw [answer_of_pairDecode_eq_some H h', decodeFin_ofFn, decodeFin_ofFn, Option.getD_some,
++    Option.getD_some]
++
++end Answer
++
+ /-- The handler as an implementation of the bit-string oracles at parameter `n`, for the
+ reduction input `z` and seed `ω`: it keeps its state and asks no oracle (the non-interactive
+ case). -/
+@@ -107,35 +261,52 @@ def impl (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
+     QueryImpl (bitSpecAt din dout n) (Fin (H.stateLen.eval n) → Bool) unifSpec :=
+   fun i x s => .pure (H.answer n z ω s i x)
+ 
++/-- The handler answers the query `x` to oracle `i` in state `s` with no coins and no queries:
++`H.impl n z ω i x s = pure (H.answer n z ω s i x)`. -/
++theorem impl_apply (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
++    (s : Fin (H.stateLen.eval n) → Bool) :
++    H.impl n z ω i x s = .pure (H.answer n z ω s i x) :=
++  rfl
++
+ end PolyHandler
+ 
+ /-- **T1 (the efficiency fill's target; non-interactive handlers).** For a machine adversary `A`
+ with query budget `q` and `dα`-bit outputs against `k` bit-string oracles, and a polynomial-time
+ handler `H`, there is a machine `B` and, at every parameter, a bijection `φ` from (the handler's
+-seed, `A`'s coins) to `B`'s coins, such that `B`'s output on input `z` and coins `φ (ω, r)` is
+-`A`'s output when `A`'s queries are answered by `H` (input `z`, seed `ω`), from `H`'s initial
+-state.
++seed, `A`'s coins) to `B`'s coins, with the following property. Run `A` on the input
++`H.advInput n z ω`, answer its queries by `H` (input `z`, seed `ω`) from `H`'s initial state, and
++let `a` be `A`'s output and `s` the final state. Then `B`'s output on input `z` with coins
++`φ (ω, r)` is exactly the reduction's output `H.result n z ω s a`.
+ 
+ **Proof sketch** (the fill's; route note §"The route", steps 1–4 without the log replay):
+-1. `B`'s round function, on `⟨1^n, z, ω, r, history, state⟩`, runs `A`'s next-move function on
+-   the encoded history (`NUPPT.polyTimeComputable_output`), decodes the move (`decodeBitMove`), and
+-   either feeds the query to `H.run` (polynomial-time by `H.poly`), appending the answer and the new
+-   state, or stops with `A`'s output.
+-2. `GGMRed.stateLoopFun` runs at most `q(n) + 1` rounds; `stateLoopFun_poly` makes it
++1. `B`'s first step computes `A`'s input `H.advIn (seedIn n z ω)` (polynomial-time by
++   `H.advIn_poly`; so its length is polynomial in `n + |z|`), and keeps it in the loop state.
++2. `B`'s round function, on `⟨1^n, z, ω, r, A's input, history, state⟩`, runs `A`'s next-move
++   function on `⟨A's input, encoded history⟩` (`NUPPT.polyTimeComputable_output`), decodes the
++   move (`decodeBitMove`, read through `decodeBitMove_eq_query_iff` and
++   `decodeBitMove_of_not_canonical`), and either feeds the query to `H.run` (polynomial-time by
++   `H.poly`), appending the answer and the new state, or stops with `A`'s output and the state.
++3. `GGMRed.stateLoopFun` runs at most `q(n) + 1` rounds; `stateLoopFun_poly` makes it
+    polynomial-time, given that the histories stay below a polynomial (all lengths are fixed).
+-3. `B := NUPPT.ofPolyTime` of the loop, with the coins split as `(ω, r)` by `exists_split`
++   The loop's result `(a, s)` is finalized by `H.out` on `⟨seedIn n z ω, ⟨s, a⟩⟩`
++   (polynomial-time by `H.out_poly`).
++4. `B := NUPPT.ofPolyTime` of the composite, with the coins split as `(ω, r)` by `exists_split`
+    (`Complexity/Randomized/Closure.lean`).
+-4. The functional equation: by induction on the remaining budget, the loop's state after `t`
+-   rounds is the simulation's state after `t` queries (`buildComp`'s unfolding against
+-   `simulate_query`); `stateLoopFun_eval` reads off the output. -/
++5. The functional equation: by induction on the remaining budget, the loop's state after `t`
++   rounds is the simulation's state after `t` queries (`toCompOn_eq` and `buildComp`'s case
++   lemmas against `simulate_query`, `PolyHandler.impl_apply` and the `answer` lemmas);
++   `stateLoopFun_eval` reads off `(a, s)`, and `result_eq` the output. -/
+ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → PolyExpr)
+     (dα : PolyExpr) (H : PolyHandler k din dout) :
+     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
+       ∀ (z : List Bool) (ω : Fin (H.seedLen.eval n) → Bool) (r : A.Coins n),
+-        ∃ s, simulate (H.impl n z ω)
+-            (A.toComp (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
+-              n (q.eval n) r) (H.init n) =
+-          .pure (padFin (dα.eval n) (B.runAt n z (φ (ω, r))), s) := by
++        ∃ (a : Fin (dα.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool),
++          simulate (H.impl n z ω)
++              (A.toCompOn
++                (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
++                n (q.eval n) (H.advInput n z ω) r) (H.init n) = .pure (a, s) ∧
++            B.runAt n z (φ (ω, r)) = H.result n z ω s a := by
+   sorry
+ 
+ /-! ### Interactive handlers (T2) -/
+@@ -143,11 +314,23 @@ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → P
+ variable {k' : ℕ}
+ 
+ /-- A **polynomial-time interactive handler** for `k` inner bit-string oracles that may itself
+-query `k'` outer bit-string oracles. One inner query `x` to oracle `i` is answered in up to
+-`perCall(n)` rounds of `run`. In each round, `run` sees
+-`⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, where `L` is the outer log of the call so far (encoded as
+-`bitCodec` encodes logs), and returns a move in `bitCodec`'s format: a query `⟨[false], ⟨1^j, x'⟩⟩`
+-to outer oracle `j`, or the answer `⟨[true], y ‖ s'⟩` (the inner answer, then the new state). -/
++query `k'` outer bit-string oracles. Like `PolyHandler`, it computes the adversary's input from
++the context `⟨1^n, ⟨z, ω⟩⟩` (`advIn`); it answers the adversary's queries (`run`), and computes the
++reduction's output in a last phase (`finRun`), both with outer queries.
++
++One inner query `x` to oracle `i` is answered with at most `perCall(n)` outer queries, in at most
++`perCall(n) + 1` rounds of `run` (the last returns the answer or, with the budget spent, is cut off
++with the default). In each round, `run` sees `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, where `L` is
++the outer log of the call so far (encoded as `bitCodec` encodes logs), and returns a move in
++`bitCodec`'s format: a query `⟨[false], ⟨1^j, x'⟩⟩` to outer oracle `j`, or the answer
++`⟨[true], y ‖ s'⟩` (the inner answer, then the new state). A malformed round output, including a
++payload `y ‖ s'` of the wrong total length, gives the all-`false` answer and state together (a
++joint default, unlike `PolyHandler.answer`, which defaults each component separately).
++
++The finalization works the same way on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (the final state, the
++adversary's output and the outer log of the finalization so far), with at most `finCall(n)` outer
++queries; it returns the reduction's `outLen(n)`-bit output as `⟨[true], b⟩`, the all-`false`
++output on a malformed round output or a spent budget. -/
+ structure InteractiveHandler (k : ℕ) (din dout : Fin k → PolyExpr) (k' : ℕ)
+     (din' dout' : Fin k' → PolyExpr) where
+   /-- The length of the state. -/
+@@ -162,6 +345,20 @@ structure InteractiveHandler (k : ℕ) (din dout : Fin k → PolyExpr) (k' : ℕ
+   run : List Bool → List Bool
+   /-- It is polynomial-time computable. -/
+   poly : PolyTimeComputable run
++  /-- The adversary's input, as a function of the context `⟨1^n, ⟨z, ω⟩⟩`. For an adversary
++  without input it is ignored. -/
++  advIn : List Bool → List Bool
++  /-- The adversary's input is polynomial-time computable. -/
++  advIn_poly : PolyTimeComputable advIn
++  /-- The length of the reduction's output. -/
++  outLen : PolyExpr
++  /-- The bound on the outer queries of the finalization. -/
++  finCall : PolyExpr
++  /-- One round of the finalization, as a string function: on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` it
++  returns an outer query `⟨[false], ⟨1^j, x'⟩⟩` or the reduction's output `⟨[true], b⟩`. -/
++  finRun : List Bool → List Bool
++  /-- The finalization's round is polynomial-time computable. -/
++  finRun_poly : PolyTimeComputable finRun
+ 
+ namespace InteractiveHandler
+ 
+@@ -172,9 +369,29 @@ def input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) : List Bo
+   pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
+     (pairEncode s (pairEncode (pairEncode (List.replicate i true) x) L))
+ 
+-/-- **One call** of the handler on the inner query `x` to oracle `i` in state `s`: up to
+-`perCall(n)` rounds against the outer oracles. A malformed round output is the all-`false`
+-answer and state (`decodeBitMove`'s default), and so is an exhausted budget. -/
++/-- The handler's input string for one round is `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
++theorem input_eq (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
++    input n z ω s i x L =
++      pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
++        (pairEncode s (pairEncode (pairEncode (List.replicate i true) x) L)) :=
++  rfl
++
++/-- The adversary's input at parameter `n`, for the reduction input `z` and the seed `ω`: `advIn`
++of the context `⟨1^n, ⟨z, ω⟩⟩`. -/
++def advInput (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) : List Bool :=
++  H.advIn (seedIn n z (List.ofFn ω))
++
++/-- The adversary's input is `advIn` of the context:
++`H.advInput n z ω = H.advIn (seedIn n z (List.ofFn ω))`. -/
++theorem advInput_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) :
++    H.advInput n z ω = H.advIn (seedIn n z (List.ofFn ω)) :=
++  rfl
++
++/-- **One call** of the handler on the inner query `x` to oracle `i` in state `s`: at most
++`perCall(n)` outer queries, in at most `perCall(n) + 1` rounds of `run`. A malformed round output
++is the all-`false` answer and state (`decodeBitMove`'s default), and so is an exhausted budget. -/
+ def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
+     (x : Fin ((din i).eval n) → Bool) :
+@@ -184,6 +401,21 @@ def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List B
+         ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
+     (zeroBits _) (H.perCall.eval n) []
+ 
++/-- One call is `buildComp` of the handler's rounds, from the empty outer log, with budget
++`perCall(n)` and the all-`false` result when it runs out: `H.call n z ω s i x =
++buildComp (fun L => decodeBitMove _ _ _ (H.run (input … L))) (zeroBits _) (H.perCall.eval n) []`.
++-/
++theorem call_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
++    (x : Fin ((din i).eval n) → Bool) :
++    H.call n z ω s i x =
++      buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          ((dout i).eval n + H.stateLen.eval n)
++          (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)
++            ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
++        (zeroBits _) (H.perCall.eval n) [] :=
++  rfl
++
+ /-- The interactive handler as an implementation of the inner oracles by the outer ones, at
+ parameter `n`, reduction input `z` and seed `ω`: one `call` per inner query, its result split
+ into the answer and the new state. -/
+@@ -193,38 +425,150 @@ def impl (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List B
+   fun i x s => (H.call n z ω s i x).bind fun w =>
+     .pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j))
+ 
++/-- The inner query `x` to oracle `i` in state `s` is answered by one `call`, whose result is
++split into the answer (its first `dout i` bits) and the new state (the rest):
++`H.impl n z ω i x s = (H.call n z ω s i x).bind fun w =>
++pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j))`. -/
++theorem impl_apply (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
++    (s : Fin (H.stateLen.eval n) → Bool) :
++    H.impl n z ω i x s =
++      (H.call n z ω s i x).bind fun w =>
++        .pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j)) :=
++  rfl
++
++/-- The input string of one round of the finalization: `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`, with the
++final state `s`, the adversary's output `a` and the outer log `L` of the finalization so far. -/
++def finInput (n : ℕ) (z ω s a L : List Bool) : List Bool :=
++  pairEncode (seedIn n z ω) (pairEncode s (pairEncode a L))
++
++/-- The input string of one round of the finalization is `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩`:
++`finInput n z ω s a L = pairEncode (seedIn n z ω) (pairEncode s (pairEncode a L))`. -/
++theorem finInput_eq (n : ℕ) (z ω s a L : List Bool) :
++    finInput n z ω s a L = pairEncode (seedIn n z ω) (pairEncode s (pairEncode a L)) :=
++  rfl
++
++/-- **The finalization** in the final state `s`, after the adversary's output `a`: the
++reduction's `outLen(n)`-bit output, computed with at most `finCall(n)` outer queries, in at most
++`finCall(n) + 1` rounds of `finRun`. A malformed round output is the all-`false` output
++(`decodeBitMove`'s default), and so is an exhausted budget. -/
++def finish (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) : OracleComp (bitSpecAt din' dout' n) (Fin (H.outLen.eval n) → Bool) :=
++  buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++      (H.outLen.eval n)
++      (H.finRun (finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++        ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
++    (zeroBits _) (H.finCall.eval n) []
++
++/-- The finalization is `buildComp` of its rounds, from the empty outer log, with budget
++`finCall(n)` and the all-`false` output when it runs out: `H.finish n z ω s a =
++buildComp (fun L => decodeBitMove _ _ _ (H.finRun (finInput … L))) (zeroBits _)
++(H.finCall.eval n) []`. -/
++theorem finish_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
++    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ}
++    (a : Fin d → Bool) :
++    H.finish n z ω s a =
++      buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
++          (H.outLen.eval n)
++          (H.finRun (finInput n z (List.ofFn ω) (List.ofFn s) (List.ofFn a)
++            ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
++        (zeroBits _) (H.finCall.eval n) [] :=
++  rfl
++
+ end InteractiveHandler
+ 
+ /-- **T2 (the efficiency fill's target; interactive handlers).** For a machine adversary `A`
+ with query budget `q` and `dα`-bit outputs against `k` bit-string oracles, and an interactive
+ handler `H` answering them through `k'` outer oracles, there is an oracle machine `B` against the
+-outer oracles, with budget `q(n) · perCall(n)`, and at every parameter a bijection `φ` from
+-(`H`'s seed, `A`'s coins) to `B`'s coins, such that `B` on input `z` with coins `φ (ω, r)` is, as
+-an oracle computation, `A`'s computation simulated by `H` (input `z`, seed `ω`) from `H`'s initial
+-state, outputs only.
++outer oracles, with budget `q(n) · perCall(n) + finCall(n)`, and at every parameter a bijection
++`φ` from (`H`'s seed, `A`'s coins) to `B`'s coins, with the following property. `B` on input `z`
++with coins `φ (ω, r)` is, as an oracle computation, exactly the reduction: `A` run on the input
++`H.advInput n z ω`, its queries answered by `H` (input `z`, seed `ω`) from `H`'s initial state,
++followed by `H`'s finalization on the final state and `A`'s output.
+ 
+ **Proof sketch** (the fill's; route note §"The route", with the log replay).
+-1. `B`'s next-move function, on `⟨z, outer log⟩`, replays: it splits the outer log into the
+-   calls of `H`. Within each call, it reruns `H.run` round by round, and between calls it reruns
+-   `A`'s next-move function on the inner log rebuilt from the calls' answers. It stops at the first
+-   pending outer query (and asks it) or at `A`'s output (and returns it). Every length is fixed,
+-   so each replay is polynomial (`stateLoopFun_poly`, as in T1).
++1. `B`'s next-move function, on `⟨z, outer log⟩` with coins `(ω, r)`, first computes `A`'s input
++   `H.advIn (seedIn n z ω)` (`H.advIn_poly`). It then replays: it splits the outer log into the
++   calls of `H` and the finalization. Within each call it reruns `H.run` round by round, and
++   between calls it reruns `A`'s next-move function on `⟨A's input, inner log⟩`, the inner log
++   rebuilt from the calls' answers. Once `A` returns `a` (or meets its own budget), it reruns
++   `H.finRun` on `⟨seedIn n z ω, ⟨s, ⟨a, L⟩⟩⟩` with the rest `L` of the log. It stops at the first
++   pending outer query (and asks it) or at the finalization's output (and returns its canonical
++   word, `encodeBitMove`). Every length is fixed, so each replay is polynomial
++   (`stateLoopFun_poly`, as in T1).
+ 2. `B`'s budget suffices: each of `A`'s at most `q(n)` queries costs at most `perCall(n)` outer
+-   queries (`buildComp_costBoundedBy`), so `B` never meets its own timeout before `A` or a call
+-   does, and it mirrors both defaults.
++   queries and the finalization at most `finCall(n)` (`buildComp_costBoundedBy`,
++   `simulate_costBoundedBy`, `CostBoundedBy.bind`), so `B` never meets its own timeout before
++   the reduction ends, and it mirrors every default of `A`, of a call and of the finalization.
+ 3. The functional equation: by induction on the outer log, the two computation trees agree node
+-   by node (`simulate_query`, `buildComp`'s unfolding). Coins split as `(ω, r)` by
+-   `exists_split`. -/
++   by node (`simulate_query`, `impl_apply`, `call_eq`, `finish_eq`, `toCompOn_eq`, `buildComp`'s
++   case lemmas, `decodeBitMove_encodeBitMove`). Coins split as `(ω, r)` by `exists_split`. -/
+ theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
+     (din dout : Fin k → PolyExpr) (din' dout' : Fin k' → PolyExpr) (dα : PolyExpr)
+     (H : InteractiveHandler k din dout k' din' dout') :
+     ∃ B : NUPPT, ∀ n : ℕ, ∃ φ : (Fin (H.seedLen.eval n) → Bool) × A.Coins n ≃ B.Coins n,
+       ∀ (z : List Bool) (ω : Fin (H.seedLen.eval n) → Bool) (r : A.Coins n),
+         (simulate (H.impl n z ω)
+-            (A.toComp (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
+-              n (q.eval n) r) (H.init n)).bind (fun res => .pure res.1) =
+-          B.toCompOn (bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (dα.eval n))
+-            n (q.eval n * H.perCall.eval n) z (φ (ω, r)) := by
++            (A.toCompOn (bitCodec (fun i => (din i).eval n) (fun i => (dout i).eval n) (dα.eval n))
++              n (q.eval n) (H.advInput n z ω) r) (H.init n)).bind
++            (fun res => H.finish n z ω res.2 res.1) =
++          B.toCompOn
++            (bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) (H.outLen.eval n))
++            n (q.eval n * H.perCall.eval n + H.finCall.eval n) z (φ (ω, r)) := by
++  sorry
++
++/-! ### Companions: adversaries without input, and the bridge to pseudorandom functions (T4) -/
++
++/-- **A machine without input is a machine with an input that it ignores.** For every machine
++`A` there is a machine `A'` with the same coins whose computation on any input `x` is `A`'s
++computation, for every codec and budget, the coins related by a bijection `φ`. So T1 and T2,
++stated for adversaries with input, cover adversaries without one.
++
++**Proof sketch.** `A'` is `NUPPT.exists_comp` of `A` with `pre = pairSndD` and `post = id`, so
++`A'.coins = A.coins` and `A'.runAtL n ⟨x, L⟩ r = A.runAtL n L r` (`pairSndD_pairEncode`). The
++bijection `φ` transports the coins along `A.coinLen n = A'.coinLen n` (`finCongr`), so
++`List.ofFn (φ r) = List.ofFn r` (`List.ofFn_congr`); with `runAt_eq` the next-move functions of
++`A'.toCompOn codec n q x (φ r)` and `A.toComp codec n q r` agree on every log, and
++`toCompOn_eq`, `toComp_eq` conclude. The length equation needs an equation of `NUPPT.coinLen`,
++published beside its definition. -/
++theorem exists_toCompOn_of_toComp (A : NUPPT) :
++    ∃ A' : NUPPT, A'.coins = A.coins ∧ ∀ n : ℕ, ∃ φ : A.Coins n ≃ A'.Coins n,
++      ∀ {ι α : Type} {spec : OracleSpec ι} (codec : MachineCodec spec α) (q : ℕ)
++        (x : List Bool) (r : A.Coins n),
++        A'.toCompOn codec n q x (φ r) = A.toComp codec n q r := by
++  sorry
++
++/-- **T4 (the efficiency fill's target; the bridge to pseudorandom functions).** An oracle
++machine `B` against one `bitCodec` oracle (`ℓ₁(n)`-bit queries, `ℓ₂(n)`-bit answers) with a
++one-bit output, run on the empty input, is a next-query machine of the ch. 2–4 layer: there is a
++machine `B'` with the same coins whose oracle adversary `B'.toOracleAdversary`, run against any
++`f`, returns the bit of `B`'s computation evaluated with `f`, the coins related by a bijection
++`φ`. So `OracleEnsemble.Indist`, and with it `PRF`, applies to the machines of T2 with one outer
++oracle and a one-bit output (through `oracleDist_apply` and `Bridge.eval_eq_evalFn`).
++
++**Proof sketch.**
++1. `B'` translates between the two formats around `B` (`NUPPT.exists_comp` with polynomial-time
++   pre- and post-processing, or `NUPPT.ofPolyTime` of the composite to read `1^{ℓ₁(n)}`):
++   - its input, the history `⟨⟨x₁, y₁⟩, ⟨…, []⟩⟩` (`encodeHist`), becomes `⟨[], ⟨⟨[], ⟨x₁, y₁⟩⟩,
++     ⟨…, []⟩⟩⟩`, `B`'s empty input and its log (`encodeHist_cons`, `encodeLog_cons`,
++     `bitCodec_encodeEntry` with `1^0 = []`), polynomial-time by iterating over the pairs;
++   - `B`'s output, a move decoded by `decodeBitMove` (`decodeBitMove_eq_query_iff`,
++     `decodeBitMove_of_not_canonical`, `decodeIdx_eq_some_iff` at `k = 1`), becomes the query
++     `⟨[false], x⟩` for a query `x`, and the verdict `[true, b]` for an output `[b]` and for the
++     default.
++2. Both trees branch on corresponding moves, so by induction on the budget
++   (`toOracleAdversary_eq` and `buildTree`'s case lemmas against `toCompOn_eq` and `buildComp`'s)
++   their evaluations against `f` and `fun _ => f` agree (`QueryTree.eval_query`,
++   `OracleComp.evalFn_query`); at the timeout the verdict `false` is bit `0` of `zeroBits 1`
++   (`zeroBits_apply`).
++3. `φ` transports the coins along `B.coins = B'.coins`, as in `exists_toCompOn_of_toComp`. -/
++theorem exists_toOracleAdversary_of_bitCodec (B : NUPPT) (ℓ₁ ℓ₂ : PolyExpr) :
++    ∃ B' : NUPPT, B'.coins = B.coins ∧ ∀ n : ℕ, ∃ φ : B.Coins n ≃ B'.Coins n,
++      ∀ (q : ℕ) (r : B.Coins n) (f : (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)),
++        (B'.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) q (φ r)).eval f =
++          (B.toCompOn (bitCodec (fun _ : Fin 1 => ℓ₁.eval n) (fun _ => ℓ₂.eval n) 1) n q []
++              r).evalFn (fun _ => f) 0 := by
+   sorry
+ 
+ end TCSlib.Cryptography.Games
+diff --git a/TCSlib/Cryptography/Games/Hopping.lean b/TCSlib/Cryptography/Games/Hopping.lean
+index 4159d1c8..3a6a3130 100644
+--- a/TCSlib/Cryptography/Games/Hopping.lean
++++ b/TCSlib/Cryptography/Games/Hopping.lean
+@@ -82,10 +82,13 @@ then the expectation of `f` over `c` is at most that of `g`. -/
+ theorem expect_mono_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
+     {f g : α → ℝ} (h : ∀ a, P a → f a ≤ g a) : expect c f ≤ expect c g := by
+   induction c with
+-  | pure a => exact h a hc
++  | pure a =>
++    rw [expect_pure, expect_pure]
++    exact h a (OracleComp.allOutputs_pure.1 hc)
+   | query m x k ih =>
+     simp only [expect_query]
+-    exact mul_le_mul_of_nonneg_left (sum_le_sum fun j _ => ih j (hc j)) (by positivity)
++    exact mul_le_mul_of_nonneg_left
++      (sum_le_sum fun j _ => ih j (OracleComp.allOutputs_query.1 hc j)) (by positivity)
+ 
+ /-- An event holding at every possible output has probability one. -/
+ theorem prob_eq_one_of_allOutputs {c : ProbComp α} {p : α → Prop} (hc : c.AllOutputs p) :
+@@ -165,7 +168,9 @@ theorem simulate_allOutputs_bad {spec : OracleSpec ι} {impl : QueryImpl spec σ
+     (c : OracleComp spec α) {s : σ} (hs : bad s) :
+     (simulate impl c s).AllOutputs fun r => bad r.2 := by
+   induction c generalizing s with
+-  | pure a => exact hs
++  | pure a =>
++    rw [simulate_pure, OracleComp.allOutputs_pure]
++    exact hs
+   | query i x k ih =>
+     rw [simulate_query]
+     exact OracleComp.AllOutputs.bind (hstick i x s hs) fun ys hys => ih ys.1 hys
+@@ -210,7 +215,7 @@ theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl sp
+       ProbComp.prob (simulate impl₀ c s) (fun r => bad r.2) =
+         ProbComp.prob (simulate impl₁ c s) (fun r => bad r.2) := by
+   induction c generalizing s with
+-  | pure a => exact ⟨rfl, rfl⟩
++  | pure a => simp only [simulate_pure, and_self]
+   | query i x k ih =>
+     simp only [simulate_query, ProbComp.prob_bind]
+     constructor
+diff --git a/TCSlib/Cryptography/Games/Machines.lean b/TCSlib/Cryptography/Games/Machines.lean
+index a1663582..3bc7de06 100644
+--- a/TCSlib/Cryptography/Games/Machines.lean
++++ b/TCSlib/Cryptography/Games/Machines.lean
+@@ -89,6 +89,17 @@ variable {spec : OracleSpec ι}
+ def encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) : List Bool :=
+   h.foldr (fun e acc => pairEncode (codec.encodeEntry e) acc) []
+ 
++/-- The empty log is encoded as the empty string: `codec.encodeLog [] = []`. -/
++theorem encodeLog_nil (codec : MachineCodec spec α) : codec.encodeLog [] = [] :=
++  rfl
++
++/-- A log is encoded entry by entry:
++`codec.encodeLog (e :: h) = pairEncode (codec.encodeEntry e) (codec.encodeLog h)`. -/
++theorem encodeLog_cons (codec : MachineCodec spec α) (e : Σ i, spec.dom i × spec.rng i)
++    (h : QueryLog spec) :
++    codec.encodeLog (e :: h) = pairEncode (codec.encodeEntry e) (codec.encodeLog h) :=
++  rfl
++
+ end MachineCodec
+ 
+ /-- The computation of a next-move function `next` with query budget `q`, started from the log
+@@ -103,18 +114,55 @@ def buildComp {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (ti
+     | .ret a => .pure a
+     | .query i x => .query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩]))
+ 
++section BuildComp
++
++variable {spec : OracleSpec ι} {next : QueryLog spec → Move spec α} {timeout : α}
++  {hist : QueryLog spec}
++
++/-- With the budget spent, a final output stops the computation:
++`buildComp next timeout 0 hist = pure a` when `next hist = ret a`. -/
++theorem buildComp_zero_of_ret {a : α} (h : next hist = .ret a) :
++    buildComp next timeout 0 hist = .pure a := by
++  rw [buildComp, h]
++
++/-- With the budget spent, a query gives the output `timeout` and asks nothing:
++`buildComp next timeout 0 hist = pure timeout` when `next hist = query i x`. -/
++theorem buildComp_zero_of_query {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
++    buildComp next timeout 0 hist = .pure timeout := by
++  rw [buildComp, h]
++
++/-- Within budget, a final output stops the computation:
++`buildComp next timeout (q + 1) hist = pure a` when `next hist = ret a`. -/
++theorem buildComp_succ_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
++    buildComp next timeout (q + 1) hist = .pure a := by
++  rw [buildComp, h]
++
++/-- Within budget, a query asks the oracle and continues with the entry appended to the log:
++`buildComp next timeout (q + 1) hist =
++query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩]))` when `next hist = query i x`.
++-/
++theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
++    buildComp next timeout (q + 1) hist =
++      .query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩])) := by
++  rw [buildComp, h]
++
++end BuildComp
++
+ /-- The computation built with budget `q` makes at most `q` queries, from every log. -/
+ theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec → Move spec α)
+     (timeout : α) : ∀ (q : ℕ) (hist : QueryLog spec),
+       (buildComp next timeout q hist).CostBoundedBy (fun _ => 1) q
+   | 0, hist => by
+-    unfold buildComp
+-    cases next hist <;> exact trivial
++    cases h : next hist with
++    | ret a => rw [buildComp_zero_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
++    | query i x => rw [buildComp_zero_of_query h]; exact OracleComp.costBoundedBy_pure _ _ _
+   | q + 1, hist => by
+-    unfold buildComp
+-    cases next hist with
+-    | ret a => exact trivial
+-    | query i x => exact ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
++    cases h : next hist with
++    | ret a => rw [buildComp_succ_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
++    | query i x =>
++      rw [buildComp_succ_of_query h]
++      exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
++        ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
+ 
+ /-- The oracle computation of the machine `D` at parameter `n`, with coins `r` and query budget
+ `q`: the machine's next-move function is one activation of `D` on the encoded log.
+@@ -123,6 +171,17 @@ def _root_.Complexity.NUPPT.toComp {spec : OracleSpec ι} (D : NUPPT) (codec : M
+     (n q : ℕ) (r : D.Coins n) : OracleComp spec α :=
+   buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout q []
+ 
++/-- The computation of `D` is built from the empty log, the next move being `D`'s output on the
++encoded log, decoded: `D.toComp codec n q r =
++buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout q []`.
++-/
++theorem _root_.Complexity.NUPPT.toComp_eq {spec : OracleSpec ι} (D : NUPPT)
++    (codec : MachineCodec spec α) (n q : ℕ) (r : D.Coins n) :
++    D.toComp codec n q r =
++      buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout
++        q [] :=
++  rfl
++
+ /-- A machine's computation makes at most `q` queries. -/
+ theorem _root_.Complexity.NUPPT.toComp_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
+     (codec : MachineCodec spec α) (n q : ℕ) (r : D.Coins n) :
+@@ -137,6 +196,17 @@ def _root_.Complexity.NUPPT.toCompOn {spec : OracleSpec ι} (D : NUPPT)
+   buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
+     codec.timeout q []
+ 
++/-- The computation of `D` on the input `x` is built from the empty log, the next move being
++`D`'s output on `⟨x, encoded log⟩`, decoded: `D.toCompOn codec n q x r =
++buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
++codec.timeout q []`. -/
++theorem _root_.Complexity.NUPPT.toCompOn_eq {spec : OracleSpec ι} (D : NUPPT)
++    (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) :
++    D.toCompOn codec n q x r =
++      buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
++        codec.timeout q [] :=
++  rfl
++
+ /-- A machine's computation on an input makes at most `q` queries. -/
+ theorem _root_.Complexity.NUPPT.toCompOn_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
+     (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) :
+diff --git a/TCSlib/Cryptography/Games/OracleComp.lean b/TCSlib/Cryptography/Games/OracleComp.lean
+index 24cbd565..2b8c0460 100644
+--- a/TCSlib/Cryptography/Games/OracleComp.lean
++++ b/TCSlib/Cryptography/Games/OracleComp.lean
+@@ -154,6 +154,12 @@ end OracleComp
+ layer's query trees are the computations over it (`TCSlib.Cryptography.QueryTree`). -/
+ abbrev singleSpec (I O : Type) : OracleSpec Unit := ⟨fun _ => I, fun _ => O⟩
+ 
++/-- The single oracle of `singleSpec I O` takes queries in `I`. -/
++theorem singleSpec_dom (I O : Type) (u : Unit) : (singleSpec I O).dom u = I := rfl
++
++/-- The single oracle of `singleSpec I O` answers in `O`. -/
++theorem singleSpec_rng (I O : Type) (u : Unit) : (singleSpec I O).rng u = O := rfl
++
+ /-- The **disjoint union** of two oracle families: oracle `.inl i` is oracle `i` of `s₁`, and
+ oracle `.inr j` is oracle `j` of `s₂`. [VCVio, OracleComp/OracleSpec] -/
+ def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
+@@ -269,6 +275,18 @@ def AllOutputs {spec : OracleSpec ι} (P : α → Prop) : OracleComp spec α →
+   | .pure a => P a
+   | .query _ _ k => ∀ y, AllOutputs P (k y)
+ 
++/-- The only possible output of a return is its value: `(pure a).AllOutputs P ↔ P a`. -/
++theorem allOutputs_pure {spec : OracleSpec ι} {P : α → Prop} {a : α} :
++    (OracleComp.pure (spec := spec) a).AllOutputs P ↔ P a :=
++  Iff.rfl
++
++/-- The possible outputs of a query are those of its continuations, whatever the answer:
++`(query i x k).AllOutputs P ↔ ∀ y, (k y).AllOutputs P`. -/
++theorem allOutputs_query {spec : OracleSpec ι} {P : α → Prop} {i : ι} {x : spec.dom i}
++    {k : spec.rng i → OracleComp spec α} :
++    (OracleComp.query i x k).AllOutputs P ↔ ∀ y, (k y).AllOutputs P :=
++  Iff.rfl
++
+ /-- Every computation satisfies the trivial predicate at every possible output. -/
+ theorem allOutputs_true {spec : OracleSpec ι} (c : OracleComp spec α) :
+     c.AllOutputs fun _ => True := by
+diff --git a/TCSlib/Cryptography/Games/Protocols.lean b/TCSlib/Cryptography/Games/Protocols.lean
+index 1b84c70b..3e6d9334 100644
+--- a/TCSlib/Cryptography/Games/Protocols.lean
++++ b/TCSlib/Cryptography/Games/Protocols.lean
+@@ -103,6 +103,21 @@ def ExecOutcome.swap {α β : Type} : ExecOutcome α β → ExecOutcome β α
+   | .outOfFuel => .outOfFuel
+   | .sentAfterEnd => .sentAfterEnd
+ 
++/-- Exchanging the roles exchanges the outputs: `(done a b).swap = done b a`. -/
++theorem ExecOutcome.swap_done {α β : Type} (a : α) (b : β) :
++    (ExecOutcome.done a b).swap = .done b a :=
++  rfl
++
++/-- A spent budget stays a spent budget: `outOfFuel.swap = outOfFuel`. -/
++theorem ExecOutcome.swap_outOfFuel {α β : Type} :
++    (ExecOutcome.outOfFuel : ExecOutcome α β).swap = .outOfFuel :=
++  rfl
++
++/-- A send after the end stays one: `sentAfterEnd.swap = sentAfterEnd`. -/
++theorem ExecOutcome.swap_sentAfterEnd {α β : Type} :
++    (ExecOutcome.sentAfterEnd : ExecOutcome α β).swap = .sentAfterEnd :=
++  rfl
++
+ namespace Party
+ 
+ variable {Out In α β : Type}
+@@ -114,6 +129,24 @@ def step : Party Out In α → ProbComp (α ⊕ (Out × (Option In → Party Out
+   | .query (.inl ()) m k => .pure (.inr (m, k))
+   | .query (.inr j) x k => .query j x (fun y => step (k y))
+ 
++/-- A returned party is done: `step (pure a) = pure (inl a)`. -/
++theorem step_pure (a : α) : step (OracleComp.pure a : Party Out In α) = .pure (.inl a) :=
++  rfl
++
++/-- A party sending `m` stops there, with `m` and its continuation on the reply:
++`step (query (inl ()) m k) = pure (inr (m, k))`. -/
++theorem step_send (m : Out) (k : Option In → Party Out In α) :
++    step (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inl ()) m k) =
++      .pure (.inr (m, k)) :=
++  rfl
++
++/-- A coin draw of a party is passed through:
++`step (query (inr j) x k) = query j x (fun y => step (k y))`. -/
++theorem step_coin (j : ℕ) (x : Unit) (k : Fin (j + 1) → Party Out In α) :
++    step (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inr j) x k) =
++      .query j x (fun y => step (k y)) :=
++  rfl
++
+ /-- **Close** a party whose counterpart has returned (its pending send already answered `none`):
+ it may still draw coins, and returns `some` of its output, or `none` if it sends a message. -/
+ def close : Party Out In α → ProbComp (Option α)
+@@ -121,12 +154,37 @@ def close : Party Out In α → ProbComp (Option α)
+   | .query (.inl ()) _ _ => .pure none
+   | .query (.inr j) x k => .query j x (fun y => close (k y))
+ 
++/-- Closing a returned party gives its output: `close (pure a) = pure (some a)`. -/
++theorem close_pure (a : α) : close (OracleComp.pure a : Party Out In α) = .pure (some a) :=
++  rfl
++
++/-- Closing a party that sends gives `none`: `close (query (inl ()) m k) = pure none`. -/
++theorem close_send (m : Out) (k : Option In → Party Out In α) :
++    close (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inl ()) m k) =
++      .pure none :=
++  rfl
++
++/-- Closing passes a coin draw through:
++`close (query (inr j) x k) = query j x (fun y => close (k y))`. -/
++theorem close_coin (j : ℕ) (x : Unit) (k : Fin (j + 1) → Party Out In α) :
++    close (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inr j) x k) =
++      .query j x (fun y => close (k y)) :=
++  rfl
++
+ /-- The end of an execution in which the active party returned `a`: the waiting party `B` is
+ activated once more, with `none`, and closed. -/
+ def endWith {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
+     ProbComp (ExecOutcome α β) :=
+   (close (B none)).bind fun ob => .pure (Option.elim ob .sentAfterEnd (ExecOutcome.done a))
+ 
++/-- The end of an execution closes the waiting party on `none`, and reports `done a b` if it
++returns `b` and `sentAfterEnd` if it sends:
++`endWith a B = (close (B none)).bind fun ob => pure (ob.elim sentAfterEnd (done a))`. -/
++theorem endWith_eq {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
++    endWith a B =
++      (close (B none)).bind fun ob => .pure (Option.elim ob .sentAfterEnd (ExecOutcome.done a)) :=
++  rfl
++
+ /-- **Execution** of a two-party protocol with at most `fuel` messages. `A` moves first, and `B`
+ waits for `A`'s first message. After each message the roles swap. A return costs no fuel; when the
+ active party returns, the waiting party is activated once more and closed (`endWith`).
+@@ -235,8 +293,9 @@ def execT : ℕ → ∀ {M₁ M₂ α β : Type},
+ theorem endWithT_ne_outOfFuel {M₁ M₂ : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
+     (endWithT a B).AllOutputs fun q => q.1 ≠ .outOfFuel := by
+   refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+-  show Option.elim p.1 ExecOutcome.sentAfterEnd (ExecOutcome.done a) ≠ .outOfFuel
+-  cases p.1 <;> simp [Option.elim]
++  rcases p with ⟨_ | b, cs⟩ <;>
++    simp only [OracleComp.allOutputs_pure, Option.elim_none, Option.elim_some, ne_eq,
++      reduceCtorEq, not_false_eq_true]
+ 
+ /-- **Trace invariants** (gate 02 round 2, note 5): on every possible run of
+ `execT fuel A B`, write `M_A` and `M_B` for the messages delivered to the first and the second
+@@ -259,16 +318,16 @@ theorem execT_trace : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M₁
+     refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+     rcases p with ⟨a | mk, cs⟩
+     · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+-        ⟨by simp, by simp, fun h => absurd h hq⟩
+-    · exact ⟨by simp, by simp, fun _ => by simp⟩
++        OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun h => absurd h hq⟩
++    · exact OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun _ => by simp⟩
+   | fuel + 1, _, _, _, _, A, B => by
+     refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+     rcases p with ⟨a | mk, cs⟩
+     · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+-        ⟨by simp, by simp, fun h => absurd h hq⟩
++        OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun h => absurd h hq⟩
+     · refine OracleComp.AllOutputs.bind (execT_trace fuel (B (some mk.1)) mk.2) fun r hr => ?_
+       obtain ⟨h1, h2, h3⟩ := hr
+-      refine ⟨?_, ?_, fun h => ?_⟩
++      refine OracleComp.allOutputs_pure.2 ⟨?_, ?_, fun h => ?_⟩
+       · simp only [List.length_cons]; omega
+       · simp only [List.length_cons]; omega
+       · have : r.1 = .outOfFuel := by
+diff --git a/TCSlib/Cryptography/Games/Simulate.lean b/TCSlib/Cryptography/Games/Simulate.lean
+index d8ac0e1d..906ec1ac 100644
+--- a/TCSlib/Cryptography/Games/Simulate.lean
++++ b/TCSlib/Cryptography/Games/Simulate.lean
+@@ -116,10 +116,23 @@ def ofComp {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+     (f : ∀ i, spec.dom i → OracleComp spec' (spec.rng i)) : QueryImpl spec σ spec' :=
+   fun i x s => (f i x).bind (fun y => .pure (y, s))
+ 
++/-- A stateless implementation runs `f i x` and keeps the state:
++`ofComp f i x s = (f i x).bind (fun y => .pure (y, s))`. -/
++theorem ofComp_apply {spec : OracleSpec ι} {spec' : OracleSpec ι'}
++    (f : ∀ i, spec.dom i → OracleComp spec' (spec.rng i)) (i : ι) (x : spec.dom i) (s : σ) :
++    ofComp f i x s = (f i x).bind (fun y => .pure (y, s)) :=
++  rfl
++
+ /-- **Forwarding:** every query is passed unchanged to the same oracle of the target. -/
+ def passthrough {spec : OracleSpec ι} : QueryImpl spec σ spec :=
+   ofComp (fun i x => OracleComp.call i x)
+ 
++/-- Forwarding asks the same oracle the same query and keeps the state:
++`passthrough i x s = .query i x (fun y => .pure (y, s))`. -/
++theorem passthrough_apply {spec : OracleSpec ι} (i : ι) (x : spec.dom i) (s : σ) :
++    passthrough (σ := σ) i x s = .query i x (fun y => .pure (y, s)) :=
++  rfl
++
+ /-- Implement two oracle families **side by side**, sharing one state: `.inl i` is answered by
+ `impl₁`, and `.inr j` by `impl₂`. -/
+ def sum {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
+@@ -128,6 +141,20 @@ def sum {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec
+   | .inl i => impl₁ i
+   | .inr j => impl₂ j
+ 
++/-- Side by side, the oracle `.inl i` is answered by `impl₁`: `sum impl₁ impl₂ (.inl i) x s =
++impl₁ i x s`. -/
++theorem sum_inl {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
++    (impl₁ : QueryImpl s₁ σ spec') (impl₂ : QueryImpl s₂ σ spec') (i : ι₁) (x : s₁.dom i)
++    (s : σ) : sum impl₁ impl₂ (.inl i) x s = impl₁ i x s :=
++  rfl
++
++/-- Side by side, the oracle `.inr j` is answered by `impl₂`: `sum impl₁ impl₂ (.inr j) x s =
++impl₂ j x s`. -/
++theorem sum_inr {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
++    (impl₁ : QueryImpl s₁ σ spec') (impl₂ : QueryImpl s₂ σ spec') (j : ι₂) (x : s₂.dom j)
++    (s : σ) : sum impl₁ impl₂ (.inr j) x s = impl₂ j x s :=
++  rfl
++
+ end QueryImpl
+ 
+ /-! ### Composing implementations -/
+@@ -142,6 +169,16 @@ def QueryImpl.comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+     (impl₁ : QueryImpl spec σ₁ spec') : QueryImpl spec (σ₁ × σ₂) spec'' :=
+   fun i x s => (simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2)))
+ 
++/-- The composed implementation simulates `impl₁`'s answer with `impl₂` and regroups the states:
++`impl₂.comp impl₁ i x s =
++(simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2)))`. -/
++theorem QueryImpl.comp_apply {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
++    {spec'' : OracleSpec ι''} {σ₁ σ₂ : Type} (impl₂ : QueryImpl spec' σ₂ spec'')
++    (impl₁ : QueryImpl spec σ₁ spec') (i : ι) (x : spec.dom i) (s : σ₁ × σ₂) :
++    impl₂.comp impl₁ i x s =
++      (simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2))) :=
++  rfl
++
+ /-- **Simulation composes:** simulating with `impl₂` a simulation by `impl₁` is simulating once
+ with the composed implementation, up to regrouping the states.
+ [VCVio, SimSemantics/QueryImpl/Compose (simulateQ_compose)]
+@@ -176,6 +213,15 @@ def QueryImpl.withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+     (impl : QueryImpl spec σ spec') : QueryImpl spec (σ × QueryLog spec) spec' :=
+   fun i x s => (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩])))
+ 
++/-- The logged implementation answers as `impl` and appends the entry to the log:
++`impl.withLog i x s = (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩])))`.
++-/
++theorem QueryImpl.withLog_apply {spec : OracleSpec ι} {spec' : OracleSpec ι'}
++    (impl : QueryImpl spec σ spec') (i : ι) (x : spec.dom i) (s : σ × QueryLog spec) :
++    impl.withLog i x s =
++      (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩]))) :=
++  rfl
++
+ /-- **Logging is conservative:** forgetting the log of a logged simulation gives the plain
+ simulation, whatever the initial log.
+ 
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean b/TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean
+index 875c3264..eae48686 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean
+@@ -191,7 +191,8 @@ the `j`-th distinct prefix (0-indexed, in order of first appearance) by
+ `G_{x_n}(⋯ G_{x_{i+2}}(z_{x_{i+1}}) ⋯)`, earlier prefixes as in `H_{i+1}` and later
+ prefixes as in `H_i`, and outputs what `A` outputs.
+ 
+-*Cost.* One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
++*Cost*, for `A` bounded by `q` queries (`OracleAdversary.BoundedBy`; the definition itself
++runs any `A`). One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
+ `q` fresh pairs of seeds as coins together with `A`'s coins, which is lazy sampling of
+ `R_i` and `R_{i+1}` [Gar26, footnote 9]: no exponential table is sampled; maintaining the
+ list of at most `q` distinct prefixes. The indices `i, j` are non-uniform advice
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean b/TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean
+index 35e6a6d9..9c785839 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean
+@@ -99,6 +99,21 @@ from all the subtrees of a query to the query. Use it as `induction t using Quer
+   | Games.OracleComp.pure a => ret a
+   | Games.OracleComp.query () x k => query x k fun o => induct ret query (k o)
+ 
++/-- `induct` computes on a leaf by its leaf case: `induct hret hquery (ret a) = hret a`. -/
++theorem induct_ret {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
++    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (a : α) :
++    induct (motive := motive) hret hquery (ret a) = hret a :=
++  rfl
++
++/-- `induct` computes on a query node by its query case, applied to the inductions on the
++subtrees: `induct hret hquery (query x k) = hquery x k (fun o => induct hret hquery (k o))`. -/
++theorem induct_query {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
++    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (x : I)
++    (k : O → QueryTree I O α) :
++    induct (motive := motive) hret hquery (query x k) =
++      hquery x k fun o => induct (motive := motive) hret hquery (k o) :=
++  rfl
++
+ /-- The output of the query tree `t` when every query `x` is answered by `f x`. -/
+ def eval (f : I → O) : QueryTree I O α → α
+   | ret a => a
+@@ -151,6 +166,18 @@ def simulate (π : I → I') (ans : I → O' → O) : QueryTree I O α → Query
+   | ret a => ret a
+   | query x k => query (π x) (fun o' => simulate π ans (k (ans x o')))
+ 
++/-- Simulating a leaf leaves it unchanged: `(ret a).simulate π ans = ret a`. -/
++theorem simulate_ret (π : I → I') (ans : I → O' → O) (a : α) :
++    (ret a : QueryTree I O α).simulate π ans = ret a :=
++  rfl
++
++/-- Simulating a query node asks `π x` and continues, on the answer `o'`, with the simulation of
++the subtree for `ans x o'`:
++`(query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans)`. -/
++theorem simulate_query (π : I → I') (ans : I → O' → O) (x : I) (k : O → QueryTree I O α) :
++    (query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans) :=
++  rfl
++
+ /-- Running the simulated tree against `g` is running the original tree against the
+ oracle that answers `x` by `ans x (g (π x))`. -/
+ @[simp] theorem eval_simulate (π : I → I') (ans : I → O' → O) (g : I' → O')
+@@ -192,4 +219,10 @@ def oracleDist {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) :
+     (I → O) → ρ → Bool :=
+   fun f r => (A r).eval f
+ 
++/-- The distinguisher of `A` on the oracle `f` and coins `r` is the run of `A r` against `f`:
++`oracleDist A f r = (A r).eval f`. -/
++theorem oracleDist_apply {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) (f : I → O)
++    (r : ρ) : oracleDist A f r = (A r).eval f :=
++  rfl
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean b/TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean
+index b3170d33..f09a5e55 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean
+@@ -100,7 +100,8 @@ Theorem 3.3, the outer adversary `B`]. On a challenge `z ∈ V` and coins
+ answers the `k`-th distinct query by `W₁ k` if `k < j`, by `z` if `k = j`, and by
+ `G (W₀ k)` if `k > j`, and outputs what `A` outputs.
+ 
+-*Cost.* One run of `A`; at most `q` evaluations of `G`; `q` seeds and `q` values of
++*Cost*, for `A` bounded by `q` queries (`OracleAdversary.BoundedBy`; the definition itself
++runs any `A`). One run of `A`; at most `q` evaluations of `G`; `q` seeds and `q` values of
+ fresh randomness (lazy sampling, [Gar26, footnote 9]: no exponential table is sampled);
+ bookkeeping of the list of at most `q` distinct queries (membership and position
+ lookups). -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+index 8fdeb8bf..d017706a 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+@@ -266,6 +266,11 @@ def View.encode (v : View) : List Bool :=
+ function on the complete history. -/
+ def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
+ 
++/-- The output on a view is the next-message function on the view's complete history:
++`S.out v = S.next v.x v.z v.r v.received`. -/
++theorem Strategy.out_eq (S : Strategy) (v : View) : S.out v = S.next v.x v.z v.r v.received :=
++  rfl
++
+ /-! ### Protocols -/
+ 
+ /-- A protocol [PS10, §4.4] (Def-114.b): a prover strategy, a verifier strategy, the number of
+@@ -327,11 +332,26 @@ def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.E
+     List (List Bool) × List (List Bool) :=
+   exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
+ 
++/-- The transcript against `P'` is `exec` with all `rounds.eval |x|` moves, on the encoded tapes:
++`π.transcriptWith P' x y z r =
++exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)`. -/
++theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
++    (r : π.ExecCoins P' x) :
++    π.transcriptWith P' x y z r =
++      exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length) :=
++  rfl
++
+ /-- The transcript of the honest execution `P(x, y) ↔ V(x, z)` (Def-115.c). -/
+ def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+     List (List Bool) × List (List Bool) :=
+   π.transcriptWith π.P x y z r
+ 
++/-- The honest transcript is the transcript against the honest prover:
++`π.transcript x y z r = π.transcriptWith π.P x y z r`. -/
++theorem transcript_eq_transcriptWith (π : Protocol) (x y z : List Bool)
++    (r : π.ExecCoins π.P x) : π.transcript x y z r = π.transcriptWith π.P x y z r :=
++  rfl
++
+ /-- The verifier's output in `P'_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `out_V`] (Def-115.d):
+ `V.next` on the complete history.
+ 
+@@ -340,20 +360,46 @@ last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
+ def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
+   π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
+ 
++/-- The verifier's output against `P'` is `V.next` on the messages it received:
++`π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2`. -/
++theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
++    π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2 :=
++  rfl
++
+ /-- The honest prover's output in `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` (Def-115.d). -/
+ def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=
+   π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1
+ 
++/-- The honest prover's output is `P.next` on the messages it received:
++`π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1`. -/
++theorem outP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
++    π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1 :=
++  rfl
++
+ /-- The honest verifier's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_V`]
+ (Def-115.b). -/
+ def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+ 
++/-- The honest verifier's view consists of `x`, its auxiliary input `z`, its tape and the
++messages it received: `π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩`.
++-/
++theorem viewV_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
++    π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩ :=
++  rfl
++
+ /-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
+ (Def-115.b). -/
+ def viewP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+   ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩
+ 
++/-- The honest prover's view consists of `x`, its auxiliary input `y`, its tape and the
++messages it received: `π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩`.
++-/
++theorem viewP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
++    π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩ :=
++  rfl
++
+ /-- The execution `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` as the pair of views (the joint view)
+ [PS10, §4.4] (Def-115.a). -/
+ def execution (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View × View :=

@@ -8,6 +8,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
 import TCSlib.Cryptography.NumberTheory.Units
 import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Candidates.Arithmetic
 import Mathlib.Logic.Equiv.Prod
 
@@ -105,7 +106,7 @@ is the probability of `S` under the uniform distribution on the subtype `{a // E
 uniformly distributed input … and replaces `xy` with `z` if both are prime"). -/
 theorem uprob_and_eq_mul_subtype (E S : α → Prop) [DecidablePred E] :
     uprob (fun a => E a ∧ S a) = uprob E * uprob (fun z : {a // E a} => S z.1) := by
-  unfold uprob
+  simp only [uprob_def]
   rw [← Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S)]
   rcases (Fintype.card {a // E a}).eq_zero_or_pos with h0 | hpos
   · haveI : IsEmpty {a // E a} := Fintype.card_eq_zero_iff.mp h0
@@ -129,7 +130,7 @@ theorem one_sub_div_le_uprob_subtype (E S : α → Prop) [DecidablePred E] {δ :
     by_contra h
     rw [not_nonempty_iff] at h
     have h0 : uprob E = 0 := by
-      unfold uprob
+      rw [uprob_def]
       simp
     linarith
   have hES := uprob_and_eq_mul_subtype E S
@@ -217,7 +218,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
       m * uprob (fun z : α × (Fin m × ((Fin m → α) × ρ)) =>
         G z.1 ∧ f (yaoTry f B (f z.1) z.2) = f z.1) := by
   classical
-  unfold invProb
+  rw [invProb_def]
   calc uprob (fun z : (Fin m → α) × ρ =>
         prodFun f m (B (prodFun f m z.1) z.2) = prodFun f m z.1)
       ≤ uprob (fun z : (Fin m → α) × ρ => (∀ i, ¬ G (z.1 i)) ∨
@@ -247,7 +248,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
               G (xs i) ∧ f (B (prodFun f m xs) r i) = f (xs i))]
             apply uprob_congr
             rintro ⟨x, xs, r⟩
-            simp [yaoTry, prodFun_update]
+            simp [yaoTry_eq, prodFun_update]
           simp only [hplant]
           rw [sum_uprob_eq_card_mul, Fintype.card_fin]
           let e : α × (Fin m × ((Fin m → α) × ρ)) ≃ Fin m × (α × ((Fin m → α) × ρ)) :=
@@ -365,8 +366,16 @@ variable {n : ℕ}
 /-- The first prime `p`. -/
 def p (z : DistinctPrimes n) : ℕ := z.1.1.1
 
+/-- The defining equation of `DistinctPrimes.p`: `z.p` is the value of the first prime of the
+pair, `z.p = ((z.1.1 : Fin (2^n)) : ℕ)`. -/
+theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ) := rfl
+
 /-- The second prime `q`. -/
 def q (z : DistinctPrimes n) : ℕ := z.1.2.1
+
+/-- The defining equation of `DistinctPrimes.q`: `z.q` is the value of the second prime of the
+pair, `z.q = ((z.1.2 : Fin (2^n)) : ℕ)`. -/
+theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ) := rfl
 
 /-- `p` is prime. -/
 theorem p_prime (z : DistinctPrimes n) : z.p.Prime := z.1.1.2
@@ -446,6 +455,12 @@ def default (hn : 2 ≤ n) : DistinctPrimes n :=
     ⟨⟨3, lt_of_lt_of_le (by norm_num) ((Nat.pow_le_pow_right (by norm_num) hn).trans_eq' rfl)⟩,
       Nat.prime_three⟩), (by norm_num : (2 : ℕ) ≠ 3)⟩
 
+/-- The first prime of the default pair is `2`: `(DistinctPrimes.default hn).p = 2`. -/
+theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2 := rfl
+
+/-- The second prime of the default pair is `3`: `(DistinctPrimes.default hn).q = 3`. -/
+theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3 := rfl
+
 end DistinctPrimes
 
 /-! ### Encoding pairs of distinct primes -/
@@ -464,14 +479,50 @@ def decodeDistinctPrimes (m : ℕ) (w : List Bool) : Option (DistinctPrimes m) :
 def encodeDistinctPrimes (m : ℕ) (z : DistinctPrimes m) : List Bool :=
   pairEncode (natToList m z.p) (natToList m z.q)
 
+/-- The defining equation of `encodeDistinctPrimes`:
+`encodeDistinctPrimes m z = ⟨⟦p⟧_m, ⟦q⟧_m⟩`, the pair of the `m`-bit numerals of the two primes. -/
+theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
+    encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q) := rfl
+
 /-- Decoding inverts encoding. -/
 theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
     decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z := by
-  unfold decodeDistinctPrimes encodeDistinctPrimes natToList
+  unfold decodeDistinctPrimes encodeDistinctPrimes
+  rw [natToList_eq, natToList_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, decodeFin_ofFn,
     bitsToNat_natToBits z.p_lt, bitsToNat_natToBits z.q_lt]
   rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q⟩]
   congr 1
+
+/-- **Decoding is canonical**: a string that `decodeDistinctPrimes m` decodes to `z` is
+`encodeDistinctPrimes m z` (the clause `Collection.encD_decD` of the factoring collection;
+gate 03b, finding 1).
+
+**Proof sketch.** Both components decode as `m`-bit strings `a`, `b`, so they are `List.ofFn a`,
+`List.ofFn b` (`ofFn_of_decodeFin_eq_some`), the numerals of `p = bitsToNat a`, `q = bitsToNat b`
+at width `m` (`natToList_length_listToNat`); the first is nonempty (`Π_m` has two distinct
+primes only for `m ≥ 2`, `DistinctPrimes.isEmpty_of_lt`), so the string is the pair of its
+components (`eq_pairEncode_of_pairFstD_ne`). -/
+theorem encodeDistinctPrimes_of_decode {m : ℕ} {w : List Bool} {z : DistinctPrimes m}
+    (h : decodeDistinctPrimes m w = some z) : encodeDistinctPrimes m z = w := by
+  have hm : 2 ≤ m := by
+    by_contra hm
+    exact (DistinctPrimes.isEmpty_of_lt (not_le.1 hm)).false z
+  have hnum : ∀ a : Fin m → Bool, natToList m (bitsToNat a) = List.ofFn a := fun a => by
+    have := natToList_length_listToNat (List.ofFn a)
+    rwa [List.length_ofFn, ← bitsToNat_eq_listToNat] at this
+  unfold decodeDistinctPrimes at h
+  rcases ha : decodeFin m (pairFstD w) with _ | a <;> rcases hb : decodeFin m (pairSndD w) with _ | b <;>
+    simp only [ha, hb, reduceCtorEq] at h
+  split_ifs at h with hc
+  obtain rfl := Option.some.inj h
+  have hne : pairFstD w ≠ [] := fun h0 => by
+    have := length_eq_of_decodeFin_eq_some ha
+    rw [h0, List.length_nil] at this
+    omega
+  show pairEncode (natToList m (bitsToNat a)) (natToList m (bitsToNat b)) = w
+  rw [hnum, hnum, ofFn_of_decodeFin_eq_some ha, ofFn_of_decodeFin_eq_some hb]
+  exact (eq_pairEncode_of_pairFstD_ne hne).symm
 
 /-! ## Block rejection sampling on coin lists (run-3 audit P7-6) -/
 
@@ -487,6 +538,15 @@ def rejectBlocksL (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List B
   (List.range T).findSome? fun t =>
     if E (listToNat ((r.drop (t * B)).take k)) then some (listToNat ((r.drop (t * B)).take k))
     else none
+
+/-- Block rejection sampling unfolded: `rejectBlocksL E k B T r` is the first `some v` over
+`t ∈ [0, T)` (`List.findSome?` over `List.range T`) with `v` the number read from the first `k`
+bits of the `t`-th block of `B` bits of `r`, kept iff `E v`. -/
+theorem rejectBlocksL_eq (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List Bool) :
+    rejectBlocksL E k B T r = (List.range T).findSome? fun t =>
+      if E (listToNat ((r.drop (t * B)).take k)) then some (listToNat ((r.drop (t * B)).take k))
+      else none :=
+  rfl
 
 /-- An accepted value satisfies the test and is below `2^k` (it is read from at most `k`
 bits, `listToNat_lt_two_pow`). -/

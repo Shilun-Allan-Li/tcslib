@@ -88,8 +88,9 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
-  (§2.4.2 Theorem 35.1; §2.6.5 Lemma 51.17; §2.12 Corollary 60.6 and Theorem 63.10;
-  §4.4–§4.6 Protocols 120.6 and 127.5 for the permutation sampler of `Asymptotic/Permutations.lean`.)
+  (Definition 181.1, `ε`-closeness; §2.4.2 Theorem 35.1; §2.6.5 Lemma 51.17; §2.12
+  Corollary 60.6 and Theorem 63.10; §4.4–§4.6 Protocols 120.6 and 127.5 for the permutation
+  sampler of `Asymptotic/Permutations.lean`.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, Lemma 3.1 (statistical distance bounds every advantage).
 -/
@@ -102,16 +103,31 @@ open Finset
 
 /-- Two samplers `X : σ → γ` and `Y : τ → γ` from uniform seeds are *statistically
 `δ`-close* when every test set `T ⊆ γ` has probabilities under the two sampled laws differing
-by at most `δ`: the sup-over-test-sets form of the statistical distance, usable for samples in
-an infinite type such as `List Bool`. The device of foundation decision D10: experiments use
-ideal distributions, samplers approximate them within `StatClose` error
-[PS10, §2.4.2 (the uniform position of Theorem 35.1), §4.3 (statistical zero-knowledge)]. -/
+by at most `δ`: the `ε`-closeness of [PS10, Definition 181.1] ("for every (deterministic)
+distinguisher `D` (with no time bound), `|Pr[D(x) = 1] − Pr[D(y) = 1]| ≤ ε`"), in its
+sup-over-test-sets form, usable for samples in an infinite type such as `List Bool`; on a
+finite sample space, with nonempty seed types, it is exactly `EpsClose` of the two laws
+(`statClose_iff_epsClose_map`, `Asymptotic/SamplingFinDist.lean`). The device of foundation
+decision D10: experiments use ideal distributions, samplers approximate them within
+`StatClose` error [PS10, §2.4.2 (the uniform position of Theorem 35.1), §4.3 (statistical
+zero-knowledge)].
+
+The seed types are not required to be nonempty. On an empty seed type every probability is
+`0` (`uprob`), so the "law" of an empty-seeded sampler is the zero measure and
+`StatClose X Y 0` fails as soon as `Y` has seeds; every use has nonempty seeds
+(`Ensemble.nonempty`, machine coins `Fin k → Bool`, the `[Nonempty σ]` of `SamplingFinDist`). -/
 def StatClose {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) (δ : ℝ) : Prop :=
   ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ
 
 section StatClose
 
 variable {σ τ υ γ γ' : Type*} [Fintype σ] [Fintype τ] [Fintype υ]
+
+/-- The defining property of `StatClose`: `StatClose X Y δ` iff
+`|Pr_s[T (X s)] − Pr_t[T (Y t)]| ≤ δ` for every test set `T`. -/
+theorem statClose_iff (X : σ → γ) (Y : τ → γ) (δ : ℝ) :
+    StatClose X Y δ ↔ ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ :=
+  Iff.rfl
 
 /-- Unfolding: for a `δ`-close pair the probability of any test set moves by at most `δ`. -/
 theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
@@ -444,6 +460,12 @@ def firstHit {α : Type*} (E : α → Prop) [DecidablePred E] {T : ℕ} (xs : Fi
 section FirstHit
 
 variable {α : Type*} (E : α → Prop) [DecidablePred E] {T : ℕ}
+
+/-- The defining equation of `firstHit`: the first draw satisfying `E`,
+`firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none`. -/
+theorem firstHit_eq (xs : Fin T → α) :
+    firstHit E xs = (List.finRange T).findSome? fun t => if E (xs t) then some (xs t) else none :=
+  rfl
 
 /-- No hit exactly when no draw satisfies `E`. -/
 theorem firstHit_eq_none_iff (xs : Fin T → α) : firstHit E xs = none ↔ ∀ t, ¬ E (xs t) := by

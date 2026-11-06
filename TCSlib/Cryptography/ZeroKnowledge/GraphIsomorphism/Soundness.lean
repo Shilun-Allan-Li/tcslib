@@ -173,8 +173,9 @@ theorem gni_interactiveProofErr (hV : gniVerifier.Efficient) :
     InteractiveProofErr gniProtocol Lniso (fun N => 1 / 2 + permFailBound (instanceVertices N)) where
   efficientV := hV
   complete := by
+    refine ⟨.const 1, ?_⟩
     rintro x ⟨n, G₀, G₁, rfl, hni⟩
-    exact ⟨[], fun z => gni_complete hni [] z⟩
+    exact ⟨[], gniProver_length_le _ [], fun z => gni_complete hni [] z⟩
   sound := by
     intro x hx P' z
     by_cases hwf : wellFormedInstance x = true
@@ -293,8 +294,9 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
     EfficientProverProofErr giProtocol Liso Riso (fun _ => 1 / 2) where
   efficientV := hV
   complete := by
+    refine ⟨.var, ?_⟩
     rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
-    exact ⟨encPerm σ, fun z => gi_complete hσ z⟩
+    exact ⟨encPerm σ, giProver_length_le _ _, fun z => gi_complete hσ z⟩
   sound := by
     intro x hx P' z
     by_cases hwf : wellFormedInstance x = true
@@ -316,6 +318,8 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
       rw [HardcoreBit.uprob_eq_one_of_forall hall]
       norm_num
   efficientP := hP
+  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
+    giProver_length_le x y r hist⟩
   completeWitness := by
     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
     exact gi_complete hσ z

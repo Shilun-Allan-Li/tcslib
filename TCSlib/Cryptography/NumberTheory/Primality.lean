@@ -41,7 +41,10 @@ The Miller–Rabin test [PS10, §2.6.5] and the prime sampler [PS10, §2.6.6]:
 test reject primes with positive probability; the test draws `α ∈ [1, N−1]` as in the
 standard presentation, matching `|L_N| = N − 1`. Even `N > 2` are rejected outright (the text
 handles only the base case `N = 2`). **Deviation:** [PS10, Theorem 49.14] says "with
-probability `1 − 2^{−t}`" for "at least"; Lemma 50.15's composite case needs `N` odd.
+probability `1 − 2^{−t}`" for "at least"; Lemma 50.15's composite case is proved for odd `N`
+only, as a convenience: for even `N > 2` the liars also lie in a proper subgroup of `Z_N^*` (the
+kernel of `x ↦ x^{N−1}`, which misses `−1` since `(−1)^{N−1} = −1`), and the test rejects even
+`N` outright.
 **Deviation:** `SamplePrime` is truncated to `T` trials (strict PPT with failure `⊥`, D10)
 and tests primality exactly (`Nat.Prime`); with Miller–Rabin in place of the exact test the
 output would only be statistically close to uniform. §2.6.6 (p. 50) misquotes the prime
@@ -386,8 +389,11 @@ private theorem liar_pow_mem {N : ℕ} (hN : 2 < N) {j' : ℕ}
 /-- **Odd composites have few liars** [PS10, Lemma 50.15, second half]: for odd composite
 `N > 2`, `|L_N| ≤ (N−1)/2`, stated as `2 |L_N| ≤ N − 1`.
 
-**Deviation:** the text says `N > 2` composite (oddness is needed) and `<` (the proof gives
-`≤ Φ(N)/2 < (N−1)/2`, so `<` also holds; the weaker form suffices for Theorem 49.14).
+**Deviation:** the text says `N > 2` composite and `<`. The restriction to odd `N` is a
+convenience, not a necessity: for even `N > 2` every liar satisfies `α^{N−1} = 1` while the unit
+`−1` does not (`N − 1` is odd and `−1 ≠ 1`), so the liars again lie in a proper subgroup;
+`uprob_millerRabin_le` rejects even `N` outright and needs only the odd case. The proof gives
+`≤ Φ(N)/2 < (N−1)/2`, so `<` also holds; the weaker form suffices for Theorem 49.14.
 
 **Proof sketch.** ([CLRS09, Theorems 31.38–31.39].) Every liar is a unit (`α^{N−1} = 1`,
 `mrLiar_isUnit`), so it suffices to exhibit a proper subgroup of `Z_N^*` containing every
@@ -656,6 +662,11 @@ theorem statClose_samplePrime (n T : ℕ) (hn : 2 ≤ n) {d : Fin n → Bool}
 `bitsToNat`. -/
 def listToNat (w : List Bool) : ℕ := w.foldl (fun a c => 2 * a + if c then 1 else 0) 0
 
+/-- The defining equation of `listToNat`:
+`listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0`. -/
+theorem listToNat_eq (w : List Bool) :
+    listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0 := rfl
+
 /-- `bitsToNat` is `listToNat` of the list of bits. -/
 theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
   rfl
@@ -675,6 +686,16 @@ def chunk (T n : ℕ) (r : Fin (T * n) → Bool) : Fin T → Fin n → Bool := f
     calc (t : ℕ) * n + i < (t : ℕ) * n + n := by omega
       _ = ((t : ℕ) + 1) * n := by ring
       _ ≤ T * n := Nat.mul_le_mul_right n ht⟩
+
+/-- The defining equation of `chunk`: bit `i` of block `t` is the coin at position `t·n + i`,
+i.e. `chunk T n r t i = r (finProdFinEquiv (t, i))` (`chunk` is `r` read through the
+row-major bijection `Fin T × Fin n ≃ Fin (T · n)`). -/
+theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) :
+    chunk T n r t i = r (finProdFinEquiv (t, i)) := by
+  unfold chunk
+  congr 1
+  ext
+  simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
 
 /-! #### The `SamplePrime` state loop -/
 
@@ -761,8 +782,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       firstHit E xs = some (xs t)
   | 0, _, t, _, _ => t.elim0
   | T + 1, xs, t, ht, hfirst => by
-    unfold firstHit
-    rw [List.finRange_succ, List.findSome?_cons]
+    rw [firstHit_eq, List.finRange_succ, List.findSome?_cons]
     rcases Fin.eq_zero_or_eq_succ t with rfl | ⟨t', rfl⟩
     · simp [ht]
     · have h0 : ¬ E (xs 0) := hfirst 0 (Fin.succ_pos t')
@@ -770,7 +790,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       rw [List.findSome?_map]
       have ih := firstHit_eq_some_of_first E (fun s => xs s.succ) t' ht
         (fun s hs => hfirst s.succ (Fin.succ_lt_succ_iff.2 hs))
-      unfold firstHit at ih
+      rw [firstHit_eq] at ih
       exact ih
 
 /-- Along the orbit from `⟨1^n, rs⟩`, the acceptance test at round `i` tests block `i`. -/
@@ -859,10 +879,11 @@ private theorem spFind_eq (n : ℕ) (r : Fin (2 * n ^ 2 * n) → Bool) :
     rfl
 
 /-- **`SamplePrime` is a PPT** [PS10, Lemma 51.17, "in time `poly(n)`"], given a
-polynomial-time primality test on binary strings (the hypothesis `Rem-33.2`/Q6 of the plan,
-AKS or Miller–Rabin): there is a uniform `NUPPT` with coin polynomial `2n² · n` whose
-activation at parameter `n` on the empty argument with coins `r` (read as `2n²` blocks of
-`n` bits) outputs the bits of `samplePrime n (2n²)`, or `[]` on failure.
+polynomial-time primality test on binary strings (the hypothesis `Rem-33.2`/Q6 of the plan:
+an exact deterministic primality test such as AKS; a bounded-error Miller–Rabin test does not
+compute `hP`'s function exactly): there is a uniform `NUPPT` with coin polynomial `2n² · n`
+whose activation at parameter `n` on the empty argument with coins `r` (read as `2n²` blocks
+of `n` bits) outputs the bits of `samplePrime n (2n²)`, or `[]` on failure.
 
 **Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` (M3): on the state
 word `⟨1^n, r⟩`, the step `spStep` drops the first `n` bits of the second component
@@ -887,14 +908,14 @@ theorem exists_samplePrime_nuppt
   have hpre : PolyTimeComputable fun z => pairEncode (NUPPT.inParam z) (NUPPT.inCoins z) :=
     NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
   refine ⟨NUPPT.ofPolyTimeUniform (hF.comp hpre) samplePrimeCoins,
-    NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun n r => ?_⟩
+    NUPPT.ofPolyTimeUniform_uniform _ _, NUPPT.coins_ofPolyTimeUniform _ _, fun n r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   have h1 : NUPPT.inParam (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.replicate n true := by
-    simp [NUPPT.inParam, NUPPT.advInput]
+    simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
   have h2 : NUPPT.inCoins (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.ofFn r := by
-    simp [NUPPT.inCoins]
+    simp [NUPPT.inCoins_eq]
   simp only [Function.comp_apply, h1, h2]
   exact spFind_eq n r
 

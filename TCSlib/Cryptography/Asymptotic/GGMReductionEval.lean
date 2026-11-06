@@ -244,6 +244,13 @@ def coinStr : List Bool :=
     (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
       List.ofFn d.r)
 
+/-- The defining equation of `coinStr`: the seed blocks, then the pair blocks, then `D`'s
+coins. -/
+theorem coinStr_eq : coinStr d =
+    List.ofFn ((FunFamily.blocks (q.eval n) n).symm d.W.1) ++
+      (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
+        List.ofFn d.r) := rfl
+
 /-- The raw input of the machine at parameter `n`: `⟨⟨⟨1^n, z⟩, ⟨⟨1^i, 1^j⟩, α_D⟩⟩, coins⟩`. -/
 def rawInput : List Bool :=
   NUPPT.layout (List.replicate n true) (List.ofFn d.z)

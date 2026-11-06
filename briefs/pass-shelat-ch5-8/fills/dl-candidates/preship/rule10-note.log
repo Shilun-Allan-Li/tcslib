@@ -1,0 +1,98 @@
+# Rule 10 note: foreign definitions the 21 sketches read, and their published lemmas
+
+Method: each target's statement and docstring sketch read at the pre-ship tree; for every other-file TCSlib definition
+the proof must read, a search for a published lemma named after it (tools/deflemmas.py: theorems whose last name component
+starts with <def>_ or <Def>_, in any TCSlib file), cross-checked with check 8 of scripts/campaign_style_lint.py (excerpt below).
+This is a reading-based screen. No proofs exist yet, so no sealed compile of the fills was possible; the dl-a corollary's route
+probe (route-probe-dla.log) is the one sealed check.
+
+## Missing equation lemmas (prerequisites named in brief.md)
+| Definition (file) | Missing | Needed by |
+|---|---|---|
+| firstHit (Asymptotic/Sampling) | firstHit_eq | dl-a statClose_rejectBlocksL (rejectBlocksL = (firstHit ...).map Fin.val) |
+| StatClose (Asymptotic/Sampling) | statClose_iff (introduction; only elimination lemmas exist) | dl-c statClose_sq_generator |
+| NUPPT.coinLen (Complexity/Randomized/PPT) | NUPPT.coinLen_eq | dl-a expCollection_sampleClose (coins = n*n); dl-b headline (B's coins); dl-c elGamal_correct, elGamal_secure (coin segments) |
+| NUPPT.distinguisherL (Asymptotic/Adversary) | NUPPT.distinguisherL_eq | dl-b headline (A_i inside B); dl-c elGamal_secure |
+| predProb, invProb, distAdv (Foundations/Experiments) | predProb_eq, invProb_eq, distAdv_eq | dl-b uprob_trial_ge, uprob_majOracle_ne_le, invProb_shiftInverter_ge; dl-c elGamal_secure (hybrid triangle) |
+| Collection.SampleClose, .invProbAt, .HardCore (Asymptotic/Collections) | sampleClose_iff, invProbAt_eq, hardCore_iff (the FunFamily hardCore_iff in Asymptotic/HardCore is a different definition) | dl-a expCollection_sampleClose, expCollection_invProbAt_le; dl-b headline |
+| divModStr, xgcdStr, sizeStr, natToList (Candidates/Arithmetic) | divModStr_pairEncode, xgcdStr_pairEncode, sizeStr_eq (only length_sizeStr exists), natToList_eq (= List.ofFn (natToBits k N)) | dl-b polyTimeComputable_halfStr, headline; dl-c polyTimeComputable_egEncRaw, egDecStr_apply, elGamal_correct; sizeStr_eq possibly dl-a/dl-c samplers |
+| dlP, dlM, dlG (Candidates/DiscreteLog) | dlP_eq, dlM_eq, dlG_eq (dlP has only dlP_lt_two_pow) | dl-b headline; dl-c polyTimeComputable_egEncRaw, elGamal_correct, elGamal_secure |
+| ExpValid, WellFormedIndex, SafePrimeValid, ExpGroupGen.FullLengthExcept, ExpGroupGen.DLHard, ExpGroupGen.dlProb, expF (Candidates/DiscreteLog) | expValid_iff, wellFormedIndex_iff, safePrimeValid_iff, fullLengthExcept_iff, dlHard_iff, dlProb_eq, expF_eq | dl-b headline; dl-c elGamal_correct, elGamal_secure |
+| expCollection (Candidates/DiscreteLog, structure-valued) | field equations f, encD, decD, gen, sample (only expCollection_D, expCollection_index exist) | dl-b headline |
+
+For dl-a, Candidates/DiscreteLog and Candidates/Concrete are its own files; it reads Concrete's rejectBlocksL from DiscreteLog through rejectBlocksL_eq (route probe).
+
+## Read through existing lemmas (no prerequisite)
+rejectBlocksL (rejectBlocksL_eq, rejectBlocksL_spec), sampleBelowL (sampleBelowL_eq_rejectBlocksL, sampleBelowL_lt), bitsEquiv (bitsEquiv_val),
+bitsToNat/listToNat (bitsToNat_eq_listToNat, listToNat_natToList, natToList_length_listToNat), uprob (uprob_bitsToNat_lt, uprob_comp_equiv, ...),
+PushesUniform (pushesUniform_of_card_fiber, HardcoreBit.pushesUniform_equiv, ...), QR (mem_QR_iff), sqTo (coe_sqTo), HardcoreBit.majority
+(two_mul_card_le_of_majority_ne, uprob_majority_fails_le), leStr/modExpStr/mulStr/addStr/subStr (_pairEncode), decodeFin (decodeFin_ofFn,
+ofFn_of_decodeFin_eq_some), padFin (padFin_ofFn, ofFn_padFin_of_le), NUPPT layout (inParam_layout, inArg_layout, inAdvice_layout, inCoins_layout,
+runAt_eq, runAtL_ofPolyTime(Uniform), coins_ofPolyTime(Uniform), distinguisher_eq), Ensemble.Indist (Ensemble.indist_iff_exists_negligible),
+Negligible (not_negligible_iff), Collection.OneWay (a structure: anonymous constructor), expOrd (expOrd_of_valid/_of_not_valid),
+expCollection.D (expCollection_D), Collection.index at expCollection (expCollection_index, expCollection_index_of_lt), dlW (WellFormedIndex.dlW_eq).
+uexp has no equation lemma; the sketches use only its lemmas (OneWay.uexp_mono, HardcoreBit.uprob_mul_le_uexp, good_instances).
+
+## campaign_style_lint.py TCSlib/Cryptography, check 8 lines for the files involved (verbatim)
+WARN  TCSlib/Cryptography/Asymptotic/Adversary.lean                            1 public def(s) without a lemma beside them (check 8): _root_.Complexity.NUPPT.distinguisherL
+WARN  TCSlib/Cryptography/Asymptotic/Collections.lean                          9 public def(s) without a lemma beside them (check 8): EvalSampled, HardCore, OutLenBound, PermCollection.OneWay, SampleClose, TrapdoorCollection.OneWay, index, owfRaw, trap
+WARN  TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean                   2 public def(s) without a lemma beside them (check 8): _root_.Complexity.NUPPT.runLenPoly, splitCoins
+WARN  TCSlib/Cryptography/Asymptotic/Ensembles.lean                            7 public def(s) without a lemma beside them (check 8): Distinguishes, Ensemble.DistinguishesWith, IndistLit, Pseudorandom, Samplable, mixEnsemble, push
+WARN  TCSlib/Cryptography/Candidates/Arithmetic.lean                           3 public def(s) without a lemma beside them (check 8): divModStr, sizeStr, xgcdStr
+WARN  TCSlib/Cryptography/Candidates/Concrete.lean                             1 public def(s) without a lemma beside them (check 8): default
+WARN  TCSlib/Cryptography/Candidates/DiscreteLog.lean                          11 public def(s) without a lemma beside them (check 8): DLAssumption, DLHard, FullLength, FullLengthExcept, SafePrimeValid, WellFormedIndex, dlDefaultIndex, dlG, dlM, expSampleRaw, expUnit
+WARN  TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean                  9 public def(s) without a lemma beside them (check 8): FullDLAssumption, FullGroupValid, IsGenerator, dlInverter, dlRoot, halfBit, halfOracle, majOracle, shiftInverter
+WARN  TCSlib/Cryptography/Candidates/ElGamal.lean                              15 public def(s) without a lemma beside them (check 8): DDHAssumption, Secure, challenge, ddhLen, ddhRandom, ddhReal, ddhTuple, egCanon, egEncParts, egEncRaw, egGenCoins, egGenParts, egGenRaw, egGroupGenRaw, egGroupParts
+WARN  TCSlib/Cryptography/Foundations/Experiments.lean                         2 public def(s) without a lemma beside them (check 8): invProb, predProb
+WARN  TCSlib/Cryptography/Foundations/Negligible.lean                          1 public def(s) without a lemma beside them (check 8): Noticeable
+WARN  TCSlib/Cryptography/Foundations/Probability.lean                         1 public def(s) without a lemma beside them (check 8): uexp
+WARN  TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean                5 public def(s) without a lemma beside them (check 8): PairwiseIndep, ind, majority, subsetSum, subsetSumHom
+WARN  TCSlib/Cryptography/NumberTheory/Primality.lean                          6 public def(s) without a lemma beside them (check 8): MRLiar, chunk, listToNat, mrExp, mrLiars, samplePrimeCoins
+WARN  TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean                  1 public def(s) without a lemma beside them (check 8): QR
+
+## deflemmas.py survey (verbatim)
+StatClose	def@[('TCSlib/Cryptography/Asymptotic/Sampling.lean', 119)]	#lemmas=30	eq-like: statClose_getD_of_uniform_of_some
+uprob	def@[('TCSlib/Cryptography/Foundations/Probability.lean', 59)]	#lemmas=102	eq-like: PushesUniform.uprob_eq, uprob_and_eq_mul_subtype, uprob_bool_eq, uprob_colSimAttemptH_none, uprob_colSimAttemptH_some, uprob_colSimAttemptW_eq, uprob_colSimTruncH_none, uprob_colSimTruncW_eq, uprob_comp_eq_probTrue_map, uprob_comp_eq_sum_fiber, uprob_comp_eq_sum_map, uprob_eq_card_filter
+uexp	def@[('TCSlib/Cryptography/Foundations/Probability.lean', 64)]	#lemmas=16	eq-like: uexp_sq_sum_sub_eq
+firstHit	def@[('TCSlib/Cryptography/Asymptotic/Sampling.lean', 451)]	#lemmas=4	eq-like: firstHit_eq_none_iff, firstHit_eq_some_imp, firstHit_map_getD_eq, firstHit_uniform_of_some
+bitsEquiv	def@[('TCSlib/Complexity/Randomized/RandomBits.lean', 220), ('TCSlib/Cryptography/Asymptotic/Sampling.lean', 358)]	#lemmas=2	eq-like: bitsEquiv_apply
+listToNat	def@[('TCSlib/Cryptography/NumberTheory/Primality.lean', 663)]	#lemmas=7	eq-like: listToNat_natToList_eq_mod
+natToList	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 88)]	#lemmas=4	eq-like: natToList_zero
+natToBits	def@[('TCSlib/Complexity/CircuitComplexity/AdderLanguage.lean', 64), ('TCSlib/Cryptography/Candidates/Arithmetic.lean', 85)]	#lemmas=5	eq-like: 
+bitsToNat	def@[('TCSlib/Cryptography/Asymptotic/Sampling.lean', 308)]	#lemmas=8	eq-like: bitsToNat_eq_bitListToNat, bitsToNat_eq_blockVal, bitsToNat_eq_listToNat, bitsToNat_eq_natOfBits, bitsToNat_getD_eq_blockVal
+decodeFin	def@[('TCSlib/Cryptography/Asymptotic/Adversary.lean', 77)]	#lemmas=3	eq-like: decodeFin_eq_some_iff
+PushesUniform	def@[('TCSlib/Cryptography/HardcoreBit/Basic.lean', 172)]	#lemmas=19	eq-like: 
+invProb	def@[('TCSlib/Cryptography/Foundations/Experiments.lean', 60)]	#lemmas=25	eq-like: invProb_zeroPatch_eq_one
+predProb	def@[('TCSlib/Cryptography/Foundations/Experiments.lean', 66)]	#lemmas=11	eq-like: predProb_glPad_eq, predProb_owpPredictor_false, predProb_owpPredictor_true, predProb_pkPredictor_false, predProb_pkPredictor_true
+distAdv	def@[('TCSlib/Cryptography/Foundations/Experiments.lean', 78)]	#lemmas=16	eq-like: distAdv_eq_of_unifProj, distAdv_eq_zero_of_subsingleton, distAdv_mixDist_eq
+acceptProb	def@[('TCSlib/Cryptography/Foundations/Experiments.lean', 72)]	#lemmas=48	eq-like: acceptProb_eq_of_unifProj, acceptProb_eq_uexp_fst, acceptProb_eq_uexp_sum_map, acceptProb_multicopyHybrid_zero, acceptProb_nextBitHybrid_zero, acceptProb_pairHybrid_zero, acceptProb_prgHybrid_zero, acceptProb_random_eq_lazy
+inArg	def@[('TCSlib/Complexity/Randomized/Closure.lean', 99)]	#lemmas=1	eq-like: 
+inParam	def@[('TCSlib/Complexity/Randomized/Closure.lean', 96)]	#lemmas=2	eq-like: 
+inCoins	def@[('TCSlib/Complexity/Randomized/Closure.lean', 105)]	#lemmas=2	eq-like: 
+layout	def@[('TCSlib/Complexity/Randomized/Closure.lean', 93)]	#lemmas=1	eq-like: 
+PairwiseUniform	def@[('TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean', 74)]	#lemmas=2	eq-like: 
+majority	def@[('TCSlib/BooleanAnalysis/Basic.lean', 967), ('TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean', 235)]	#lemmas=21	eq-like: 
+Indist	def@[('TCSlib/Cryptography/Asymptotic/Ensembles.lean', 174)]	#lemmas=1	eq-like: 
+sqTo	def@[('TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean', 105)]	#lemmas=2	eq-like: 
+QR	def@[('TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean', 90)]	#lemmas=0	eq-like: 
+dlP	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 118)]	#lemmas=1	eq-like: 
+dlM	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 122)]	#lemmas=0	eq-like: 
+dlG	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 125)]	#lemmas=0	eq-like: 
+dlW	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 129)]	#lemmas=1	eq-like: WellFormedIndex.dlW_eq
+ExpValid	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 155)]	#lemmas=1	eq-like: 
+WellFormedIndex	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 133)]	#lemmas=0	eq-like: 
+SafePrimeValid	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 665)]	#lemmas=0	eq-like: 
+FullLengthExcept	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 334)]	#lemmas=0	eq-like: 
+DLHard	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 355)]	#lemmas=0	eq-like: 
+dlProb	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 344)]	#lemmas=2	eq-like: 
+expF	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 232)]	#lemmas=1	eq-like: 
+expEnc	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 208)]	#lemmas=1	eq-like: 
+expOrd	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 163)]	#lemmas=3	eq-like: 
+sampleBelowL	def@[('TCSlib/Cryptography/Candidates/DiscreteLog.lean', 468)]	#lemmas=2	eq-like: sampleBelowL_eq_rejectBlocksL
+sizeStr	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 197)]	#lemmas=0	eq-like: 
+divModStr	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 201)]	#lemmas=0	eq-like: 
+xgcdStr	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 209)]	#lemmas=0	eq-like: 
+leStr	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 221)]	#lemmas=1	eq-like: leStr_pairEncode
+modExpStr	def@[('TCSlib/Cryptography/Candidates/Arithmetic.lean', 216)]	#lemmas=1	eq-like: modExpStr_pairEncode
+padFin	def@[('TCSlib/Cryptography/Asymptotic/Adversary.lean', 82)]	#lemmas=2	eq-like: 
+coinLen	def@[('TCSlib/Complexity/Randomized/PPT.lean', 160), ('TCSlib/Cryptography/ZeroKnowledge/Interaction.lean', 123)]	#lemmas=2	eq-like: 

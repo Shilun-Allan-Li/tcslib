@@ -1,0 +1,230 @@
+# Gate 03l, major 1 repair: #print axioms of every public theorem and lemma of the six audited files (90) and of their consumers in Repetition.lean and Primitives.lean (16), at af91d53a414cdad6bbb61cecdc13f5e0e956d0b1.
+# The six files are unchanged since the audited commit a3c5fa8b72e50939822f22364647dc844a3914a0. Olean tree: the 416-module replay at af91d53a (every module rc=0).
+# Generator: an axgen.py variant matching theorem and lemma declarations; private declarations are not printed. polyTimeComputable_blockMap is printed twice (107 lines, 106 distinct).
+# Summary: 106 distinct; 0 depend on sorryAx; axioms used: [propext, Classical.choice, Quot.sound] 75, [propext, Quot.sound] 27, [propext] 3, none 2.
+
+import TCSlib.Complexity.Randomized.Build.IterateFind
+import TCSlib.Complexity.Randomized.Build.IterateFindHost
+import TCSlib.Complexity.Randomized.Build.PairSplit
+import TCSlib.Complexity.Randomized.Build.StateLoop
+import TCSlib.Complexity.Randomized.Build.StringLoops
+import TCSlib.Complexity.Randomized.Build.UnaryMul
+import TCSlib.Complexity.Randomized.Repetition
+import TCSlib.Complexity.Randomized.Primitives
+
+#print axioms Complexity.IterateFind.find?_congr_of_mem
+#print axioms Complexity.IterateFind.polyTimeComputable_find
+#print axioms Complexity.IterateFind.clean_install
+#print axioms Complexity.IterateFind.clean_emit
+#print axioms Complexity.IterateFind.copy_clean
+#print axioms Complexity.IterateFind.host_call
+#print axioms Complexity.IterateFind.guard_add
+#print axioms Complexity.IterateFind.host_clean
+#print axioms Complexity.IterateFind.host_dispatch
+#print axioms Complexity.IterateFind.host_branch
+#print axioms Complexity.IterateFind.host_halt
+#print axioms Turing.FinTM.exists_pairSplitTM
+#print axioms Complexity.StateLoop.lenLe_comp
+#print axioms Complexity.StateLoop.unaryPoly_comp
+#print axioms Complexity.StateLoop.headBit_poly
+#print axioms Complexity.StateLoop.tail_poly
+#print axioms Complexity.StateLoop.cons_poly
+#print axioms Complexity.StateLoop.isNil_poly
+#print axioms Complexity.StateLoop.not_poly
+#print axioms Complexity.StateLoop.or_poly
+#print axioms Complexity.StateLoop.xor_poly
+#print axioms Complexity.StateLoop.length_pairFstD_add_pairSndD_le
+#print axioms Complexity.StateLoop.length_flatMap_range_le
+#print axioms Complexity.StateLoop.find?_range_eq_some
+#print axioms Complexity.StateLoop.orbit_zero
+#print axioms Complexity.StateLoop.orbit_succ
+#print axioms Complexity.StateLoop.gstep_poly
+#print axioms Complexity.StateLoop.gstep_iterate_cases
+#print axioms Complexity.StateLoop.length_gstep_iterate_le
+#print axioms Complexity.StateLoop.gstep_iterate_eq
+#print axioms Complexity.StateLoop.IterLoop.start_poly
+#print axioms Complexity.StateLoop.IterLoop.step_poly
+#print axioms Complexity.StateLoop.IterLoop.acc_poly
+#print axioms Complexity.StateLoop.IterLoop.out_poly
+#print axioms Complexity.StateLoop.IterLoop.orbit_eq
+#print axioms Complexity.StateLoop.EmitLoop.point_poly
+#print axioms Complexity.StateLoop.EmitLoop.accum_poly
+#print axioms Complexity.StateLoop.EmitLoop.start_poly
+#print axioms Complexity.StateLoop.EmitLoop.step_poly
+#print axioms Complexity.StateLoop.EmitLoop.out_poly
+#print axioms Complexity.StateLoop.EmitLoop.orbit_eq
+#print axioms Complexity.StateLoop.MajLoop.rest_poly
+#print axioms Complexity.StateLoop.MajLoop.trues_poly
+#print axioms Complexity.StateLoop.MajLoop.falses_poly
+#print axioms Complexity.StateLoop.MajLoop.start_poly
+#print axioms Complexity.StateLoop.MajLoop.step_poly
+#print axioms Complexity.StateLoop.MajLoop.acc_poly
+#print axioms Complexity.StateLoop.MajLoop.out_poly
+#print axioms Complexity.StateLoop.MajLoop.orbit_eq
+#print axioms Complexity.StateLoop.MajLoop.orbit_length_le
+#print axioms Complexity.StateLoop.MajLoop.acc_orbit_false
+#print axioms Complexity.StateLoop.MajLoop.acc_orbit_true
+#print axioms Complexity.StateLoop.MajLoop.out_orbit
+#print axioms Complexity.StateLoop.XorLoop.fstRest_poly
+#print axioms Complexity.StateLoop.XorLoop.sndRest_poly
+#print axioms Complexity.StateLoop.XorLoop.accum_poly
+#print axioms Complexity.StateLoop.XorLoop.xorBit_poly
+#print axioms Complexity.StateLoop.XorLoop.start_poly
+#print axioms Complexity.StateLoop.XorLoop.step_poly
+#print axioms Complexity.StateLoop.XorLoop.acc_poly
+#print axioms Complexity.StateLoop.XorLoop.out_poly
+#print axioms Complexity.StateLoop.XorLoop.orbit_eq
+#print axioms Complexity.StateLoop.XorLoop.orbit_length_le
+#print axioms Complexity.StateLoop.XorLoop.acc_orbit_false
+#print axioms Complexity.StateLoop.XorLoop.acc_orbit_true
+#print axioms Complexity.StateLoop.XorLoop.out_orbit
+#print axioms Complexity.StateLoop.EqLoop.step_poly
+#print axioms Complexity.StateLoop.EqLoop.out_poly
+#print axioms Complexity.StateLoop.EqLoop.append_singleton_eq_iff
+#print axioms Complexity.StateLoop.EqLoop.flag_succ
+#print axioms Complexity.StateLoop.EqLoop.length_flag_le
+#print axioms Complexity.StateLoop.EqLoop.orbit_eq
+#print axioms Complexity.StateLoop.EqLoop.orbit_length_le
+#print axioms Complexity.StateLoop.EqLoop.acc_orbit_false
+#print axioms Complexity.StateLoop.EqLoop.acc_orbit_true
+#print axioms Complexity.StateLoop.EqLoop.verdict_eq
+#print axioms Complexity.StateLoop.EqLoop.out_orbit
+#print axioms Complexity.StateLoop.BlockLoop.param_poly
+#print axioms Complexity.StateLoop.BlockLoop.rest_poly
+#print axioms Complexity.StateLoop.BlockLoop.accum_poly
+#print axioms Complexity.StateLoop.BlockLoop.start_poly
+#print axioms Complexity.StateLoop.BlockLoop.step_poly
+#print axioms Complexity.StateLoop.BlockLoop.acc_poly
+#print axioms Complexity.StateLoop.BlockLoop.out_poly
+#print axioms Complexity.StateLoop.BlockLoop.orbit_eq
+#print axioms Complexity.StateLoop.BlockLoop.orbit_length_le
+#print axioms Complexity.StateLoop.BlockLoop.acc_orbit_false
+#print axioms Complexity.StateLoop.BlockLoop.acc_orbit_true
+#print axioms Complexity.StateLoop.BlockLoop.out_orbit
+#print axioms Turing.FinTM.exists_unaryMulTM
+#print axioms Complexity.loopInv_init
+#print axioms Complexity.loopInv_guardedStep
+#print axioms Complexity.iterate_guardedStep_eq
+#print axioms Complexity.acc_guardedStep_eq
+#print axioms Complexity.polyTimeComputable_iterateFind
+#print axioms Complexity.polyTimeComputable_iterate
+#print axioms Complexity.polyTimeComputable_iterateEmit
+#print axioms Complexity.polyTimeComputable_majority
+#print axioms Complexity.polyTimeComputable_pairXor
+#print axioms Complexity.polyTimeComputable_pairEq
+#print axioms Complexity.polyTimeComputable_blockMap
+#print axioms Turing.FinTM.computesFunInTime_pairSplitAt
+#print axioms Turing.FinTM.computesFunInTime_unaryMul
+#print axioms Complexity.polyTimeComputable_unaryPoly
+#print axioms Complexity.polyTimeComputable_pairTakePoly
+#print axioms Complexity.polyTimeComputable_pairDropPoly
+#print axioms Complexity.polyTimeComputable_blockMap
+
+# --- output ---
+'Complexity.IterateFind.find?_congr_of_mem' depends on axioms: [propext]
+'Complexity.IterateFind.polyTimeComputable_find' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.clean_install' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.clean_emit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.copy_clean' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.host_call' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.guard_add' depends on axioms: [propext, Quot.sound]
+'Complexity.IterateFind.host_clean' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.host_dispatch' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.host_branch' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.IterateFind.host_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_pairSplitTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.lenLe_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.unaryPoly_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.headBit_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.tail_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.cons_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.isNil_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.not_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.or_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.xor_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.length_pairFstD_add_pairSndD_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.length_flatMap_range_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.find?_range_eq_some' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.orbit_zero' does not depend on any axioms
+'Complexity.StateLoop.orbit_succ' does not depend on any axioms
+'Complexity.StateLoop.gstep_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.gstep_iterate_cases' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.length_gstep_iterate_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.gstep_iterate_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.IterLoop.start_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.IterLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.IterLoop.acc_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.IterLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.IterLoop.orbit_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EmitLoop.point_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EmitLoop.accum_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EmitLoop.start_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EmitLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EmitLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EmitLoop.orbit_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.MajLoop.rest_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.trues_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.falses_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.start_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.acc_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.orbit_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.orbit_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.acc_orbit_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.acc_orbit_true' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.MajLoop.out_orbit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.fstRest_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.sndRest_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.accum_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.xorBit_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.start_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.acc_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.orbit_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.XorLoop.orbit_length_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.XorLoop.acc_orbit_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.XorLoop.acc_orbit_true' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.XorLoop.out_orbit' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EqLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EqLoop.append_singleton_eq_iff' depends on axioms: [propext]
+'Complexity.StateLoop.EqLoop.flag_succ' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.length_flag_le' depends on axioms: [propext]
+'Complexity.StateLoop.EqLoop.orbit_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.orbit_length_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.acc_orbit_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.EqLoop.acc_orbit_true' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.verdict_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.EqLoop.out_orbit' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.BlockLoop.param_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.rest_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.accum_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.start_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.step_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.acc_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.out_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.orbit_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.BlockLoop.orbit_length_le' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.BlockLoop.acc_orbit_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.StateLoop.BlockLoop.acc_orbit_true' depends on axioms: [propext, Quot.sound]
+'Complexity.StateLoop.BlockLoop.out_orbit' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.exists_unaryMulTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.loopInv_init' depends on axioms: [propext, Quot.sound]
+'Complexity.loopInv_guardedStep' depends on axioms: [propext, Quot.sound]
+'Complexity.iterate_guardedStep_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.acc_guardedStep_eq' depends on axioms: [propext, Quot.sound]
+'Complexity.polyTimeComputable_iterateFind' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterateEmit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_majority' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairXor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairEq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_blockMap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairSplitAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_unaryMul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_unaryPoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairTakePoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairDropPoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_blockMap' depends on axioms: [propext, Classical.choice, Quot.sound]

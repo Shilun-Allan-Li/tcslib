@@ -542,13 +542,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
   set kf : Fin N := ⟨k, hk⟩ with hkf
   have hPk : acceptProb (hybStd H Wa N k) D = uexp (hybAcc H Wa kf Wa D) := by
     rw [← uprob_hybGen_eq_uexp hm H Wa kf]
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext z
     rw [← hybGen_W H Wa kf D z.1 z.2]
   have hPk1 : acceptProb (hybStd H Wa N (k + 1)) D = uexp (hybAcc H Wa kf H D) := by
     rw [← uprob_hybGen_eq_uexp hm H Wa kf]
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext z
     rw [← hybGen_H H Wa kf D z.1 z.2]

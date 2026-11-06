@@ -77,6 +77,12 @@ open Complexity Turing Finset
 def decodeFin (ℓ : ℕ) (w : List Bool) : Option (Fin ℓ → Bool) :=
   if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none
 
+/-- The defining equation of `decodeFin`: `decodeFin ℓ w` is `some` of the bits of `w` when
+`|w| = ℓ`, and `none` otherwise. -/
+theorem decodeFin_eq (ℓ : ℕ) (w : List Bool) :
+    decodeFin ℓ w = if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none :=
+  rfl
+
 /-- Pad with `false` or truncate a string to exactly `ℓ` bits (the output convention of
 samplers, where no failure is possible). -/
 def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
@@ -97,7 +103,15 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
   simp [padFin]
 
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
-[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`]. -/
+[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
+
+**Deviation:** wrong-length output = failure (D5). For a typed family this loses nothing. For
+a string function `f : {0,1}* → {0,1}*` the text's experiment also accepts a preimage of
+another length, so the typed experiment can count fewer successes and typed one-wayness is
+implied by, but weaker than, the text's, unless `|f(x)|` determines `|x|` (length-regular `f`
+whose output length is a non-constant `PolyExpr`, hence injective in the input length; with
+constant output length neither notion is satisfiable). The proviso is stated where string functions enter the typed world,
+`FunFamily.ofString` (`Asymptotic/OneWay.lean`; gate 03a, note 15). -/
 def _root_.Complexity.NUPPT.inverter (A : NUPPT) (n ℓ m : ℕ) :
     (Fin m → Bool) → A.Coins n → Option (Fin ℓ → Bool) :=
   fun y r => decodeFin ℓ (A.runAt n (List.ofFn y) r)
@@ -117,6 +131,11 @@ def _root_.Complexity.NUPPT.distinguisher (A : NUPPT) (n m : ℕ) :
 /-- `A(1^n, w)` as a distinguisher of untyped samples (ciphertexts, views, histories). -/
 def _root_.Complexity.NUPPT.distinguisherL (A : NUPPT) (n : ℕ) : List Bool → A.Coins n → Bool :=
   fun w r => decide (A.runAt n w r = [true])
+
+/-- The defining equation of `distinguisherL`:
+`A.distinguisherL n w r = decide (A.runAt n w r = [true])`. -/
+theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
+    (r : A.Coins n) : A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
 
 /-- `A(1^n, y)` as a predictor of a bit: the same verdict convention as a distinguisher
 [PS10, Definitions 75.2 and 78.3]. -/

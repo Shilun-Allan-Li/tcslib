@@ -71,9 +71,10 @@ lemmas are proved in this file (the `xor` bijection `adaptiveEquiv` and the chan
 variables `gniShear`), which certifies the repaired statements.
 
 **Deviation (fixed alternation, D8):** the repeated graph-isomorphism protocol uses four
-moves per iteration (`H`, `b`, `γ`, and an empty verifier message) so that the strict
-prover/verifier alternation of `exec` is respected; the repeated protocols run `|x|`
-iterations instead of the text's `n = |G₁|` (so `2^{-|x|}` is negligible in `|x|` directly).
+moves per iteration (`H`, `b`, `γ`, and a verifier message, empty except for the final
+verdict) so that the strict prover/verifier alternation of `exec` is respected; the repeated
+protocols run `|x|` iterations instead of the text's `n = |G₁|` (so `2^{-|x|}` is negligible in
+`|x|` directly).
 
 **Deviation (well-formedness):** the verifiers reject common inputs that are not the
 encoding of two graphs on the same vertex set (`wellFormedInstance`); without this check a
@@ -127,7 +128,9 @@ malformed `x ∉ L` could decode to a pair of isomorphic graphs and soundness wo
   `TCSlib.Cryptography.uprob_gi_rep_cheat_le` (Lem-120.d, proved from Lem-119.c).
 * `TCSlib.Cryptography.gni_interactiveProofErr`, `TCSlib.Cryptography.gni_interactiveProof`
   — [PS10, Proposition 118.4]; `TCSlib.Cryptography.gi_efficientProverProofErr`,
-  `TCSlib.Cryptography.gi_rep_efficientProverProof` — [PS10, Proposition 120.7].
+  `TCSlib.Cryptography.gi_rep_efficientProverProof` — [PS10, Proposition 120.7];
+  `TCSlib.Cryptography.giProtocol_proverBounded`, `TCSlib.Cryptography.gniProtocol_proverBounded`
+  (and the `Rep` forms) — the honest messages are bounded (ruling G3-3).
 * `TCSlib.Cryptography.Riso_witnessRelation` — `Riso` is a witness relation for `Liso`.
 
 ## References
@@ -550,7 +553,8 @@ noncomputable def giVerifierRep : Strategy where
 
 /-- The `|x|`-fold graph isomorphism protocol [PS10, Protocol 120.6, "repeat the procedure
 `|G₁|` times"] (Prot-120.6): prover first, four moves per iteration (`H_i`, `b_i`, `γ_i`, and
-an empty verifier message, D8 fixed alternation), `4|x|` messages. -/
+a verifier message, empty except for the final verdict, D8 fixed alternation), `4|x|`
+messages. -/
 noncomputable def giProtocolRep : Protocol where
   P := giProverRep
   V := giVerifierRep
@@ -826,7 +830,7 @@ theorem gni_honest_reply {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀
 
 /-! ### Efficiency of the honest parties (Inf-4.2) -/
 
-/-- The honest prover of the graph isomorphism protocol is a PPT strategy
+/-- The honest prover of the graph isomorphism protocol is efficient (D8)
 [PS10, Proposition 120.7, efficient prover] (Inf-4.2).
 
 **Proof sketch.** `Strategy.Efficient` with `NUPPT.ofPolyTimeUniform` of the string function
@@ -839,7 +843,7 @@ the case split on `msgs = []` by `polyTimeComputable_lenEq`; the equation with `
 by `NUPPT.runAtL_ofPolyTimeUniform`, `Strategy.pairFstD_encodeMsgs`, `decPerm_encPerm`. -/
 theorem giProver_efficient : giProver.Efficient := GI.giProver_efficient
 
-/-- The verifier of the graph isomorphism protocol is a PPT strategy [PS10, Definition 116.1
+/-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
 for Proposition 120.7] (Inf-4.2).
 
 **Proof sketch.** As `giProver_efficient`: the challenge is the first coin
@@ -849,24 +853,24 @@ conjoined (`polyTimeComputable_and`) with the well-formedness test (`polyTimeCom
 against the squared vertex count in unary and `computesFunInTime_pairValid`). -/
 theorem giVerifier_efficient : giVerifier.Efficient := GI.giVerifier_efficient
 
-/-- The verifier of one iteration of the graph non-isomorphism protocol is a PPT strategy
+/-- The verifier of one iteration of the graph non-isomorphism protocol is efficient (D8)
 [PS10, Proposition 118.4] (Inf-4.2): as `giVerifier_efficient`, with the first message
 `polyTimeComputable_encPermGraph` on `⟨G_b, encPerm σ⟩` for `σ` from
 `polyTimeComputable_encSamplePerm` and the verdict a one-bit comparison. -/
 theorem gniVerifier_efficient : gniVerifier.Efficient := GI.gniVerifier_efficient
 
-/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is a PPT strategy
+/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8)
 (Inf-4.2): the coin block of iteration `hist.length` is cut by `pairTakePoly`/`pairDropPoly`
 with the unary block length, the message as in `gniVerifier_efficient`, and the verdict is a
 loop over the `|x|` replies (`polyTimeComputable_iterate` with an accumulated conjunction). -/
 theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := GI.gniVerifierRep_efficient
 
-/-- The prover of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2): as
+/-- The prover of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2): as
 `giProver_efficient` with the coin block of iteration `hist.length / 2` cut by
 `pairTakePoly`/`pairDropPoly` and the parity test of the history length. -/
 theorem giProverRep_efficient : giProverRep.Efficient := GI.giProverRep_efficient
 
-/-- The verifier of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2):
+/-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2):
 the challenge is coin `hist.length / 2`, and the verdict is a loop over the `|x|` pairs
 `(H_j, γ_j)` of the history (`polyTimeComputable_iterate` over `polyTimeComputable_encPermGraph`
 and `polyTimeComputable_pairEq`). -/
@@ -917,6 +921,25 @@ Negligibility: `negligible_two_pow_neg`, `negligible_mul_permFailBound`, `Neglig
 Efficiency: `gniVerifierRep_efficient`. -/
 theorem gni_interactiveProof : InteractiveProof gniProtocolRep Lniso :=
   GI.gni_interactiveProof gniVerifierRep_efficient
+
+/-- The honest provers of the graph-isomorphism protocols send `n²`-bit words with
+`n² ≤ |x|`, so at most `|x|` bits per message, on every instance (ruling G3-3 of gate 03;
+`GI.giProver_length_le`). -/
+theorem giProtocol_proverBounded (R : List Bool → List Bool → Prop) :
+    giProtocol.ProverBounded R .var :=
+  (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.giProver_length_le x y r hist
+
+/-- The `|x|`-fold form of `giProtocol_proverBounded` (`GI.giProverRep_length_le`). -/
+theorem giProtocolRep_proverBounded (R : List Bool → List Bool → Prop) :
+    giProtocolRep.ProverBounded R .var :=
+  (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.giProverRep_length_le x y r hist
+
+/-- The honest graph non-isomorphism prover sends one bit per message (ruling G3-3 of gate 03;
+`GI.gniProver_length_le`), in one iteration and in the `|x|`-fold protocol. -/
+theorem gniProtocol_proverBounded (R : List Bool → List Bool → Prop) :
+    gniProtocol.ProverBounded R (.const 1) ∧ gniProtocolRep.ProverBounded R (.const 1) :=
+  ⟨(Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.gniProver_length_le x y r hist,
+    (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.gniProver_length_le x y r hist⟩
 
 /-- One iteration of the graph isomorphism protocol is an interactive proof for `L_iso`
 with soundness error `1/2` and efficient prover with respect to `R_iso`

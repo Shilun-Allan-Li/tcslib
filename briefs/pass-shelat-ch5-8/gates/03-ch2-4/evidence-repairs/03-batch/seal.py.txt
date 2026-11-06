@@ -1,0 +1,145 @@
+"""Rule-10 seal (gate 03 repair batch; adapted from evidence-repairs/03l-cleanup1/seal.py.txt).
+
+Part 1, consumers: compile each consumer file of `Protocol.ProverBounded` with
+`attribute [local irreducible] TCSlib.Cryptography.Protocol.ProverBounded`; control = the base
+text under the same seal (must FAIL where it read the definition through its body), and the same
+control unsealed (must PASS, so that the failure is the seal's).
+
+Part 2, new proofs: each new lemma whose proof could read another file's definition is copied
+verbatim into a test file (namespace `<its namespace>.SealTest`, so its own references resolve to
+the copies) that imports its module, with the other files' definitions it touches sealed. The
+control is a variant that reads one of them through its body (must FAIL sealed, PASS unsealed).
+
+Outputs go to g03batch/sealrun/, never to the olean tree."""
+import subprocess, sys, os, re
+from pathlib import Path
+SP = Path("/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad")
+WT = SP / "wt-g03batch"
+OUT = SP / "g03batch/sealrun"
+OL = str(SP / "g03batch-oleans")
+BASE = (SP / "g03batch/base.txt").read_text().strip().split("=")[1]
+OUT.mkdir(parents=True, exist_ok=True)
+PB = ["TCSlib.Cryptography.Protocol.ProverBounded"]
+ZK = "TCSlib/Cryptography/ZeroKnowledge/"
+CONSUMERS = [ZK + f for f in ["InteractiveProofs.lean", "NP.lean", "GraphIsomorphism.lean",
+                              "ThreeColoring/Protocol.lean", "GraphIsomorphism/Soundness.lean",
+                              "GraphIsomorphism/SoundnessRepGI.lean"]]
+
+env = dict(os.environ)
+env["LEAN_PATH"] = ":".join([OL] + [str(d) for d in (WT / ".lake/packages").glob("*/.lake/build/lib/lean")])
+env["PATH"] = str(Path.home() / ".elan/bin") + ":" + env["PATH"]
+
+def run(text, tag):
+    f = OUT / (tag + ".lean")
+    f.write_text(text)
+    r = subprocess.run(["lean", str(f)], cwd=WT, env=env, capture_output=True, text=True)
+    errs = [l for l in (r.stdout + r.stderr).splitlines() if "error" in l]
+    return r.returncode == 0 and not errs, errs
+
+def seal(src, names):
+    lines = src.splitlines()
+    idx = max(i for i, l in enumerate(lines[:40]) if l.startswith("set_option"))
+    lines.insert(idx + 1, "attribute [local irreducible] " + " ".join(names))
+    return "\n".join(lines) + "\n"
+
+def base_text(path):
+    return subprocess.run(["git", "show", f"{BASE}:{path}"], cwd=WT, capture_output=True,
+                          text=True).stdout
+
+def explicit(text, short):
+    return [f"{k}: {l.strip()[:110]}" for k, l in enumerate(text.splitlines(), 1)
+            if re.search(r"\b(simp|rw|unfold|dsimp|delta|simpa)\b", l)
+            and re.search(r"(?<![A-Za-z0-9_'])" + re.escape(short) + r"(?![A-Za-z0-9_'])",
+                          " ".join(re.findall(r"\[[^\]]*\]", l)) + (l if "unfold" in l else ""))]
+
+def report(title, ok, errs, desc, okc, errsc, expect, unsealed=None):
+    verdict = ("as expected" if (okc and expect == "pass") or (not okc and expect == "fail")
+               else "UNEXPECTED")
+    print(title)
+    print(f"  sealed current: {'PASS' if ok else 'FAIL'}")
+    for e in errs[:8]: print("    cur:", e[:200])
+    print(f"  control ({desc}): {'PASS' if okc else 'FAIL'} ({len(errsc)} error lines); "
+          f"expected {expect}: {verdict}")
+    for e in errsc[:12]: print("    ctl:", re.sub(r"^.*?sealrun/", "", e)[:200])
+    if unsealed is not None:
+        print(f"  the same control unsealed: {'PASS' if unsealed else 'FAIL'} "
+              f"(so its sealed failure is {'due to the seal' if unsealed else 'NOT attributable'})")
+
+# ---------------- Part 1: consumers of Protocol.ProverBounded ----------------
+print("## Part 1: consumers of TCSlib.Cryptography.Protocol.ProverBounded (whole files sealed)\n")
+for path in CONSUMERS:
+    tag = path.replace("/", "_")[:-5]
+    cur = (WT / path).read_text()
+    ok, errs = run(seal(cur, PB), tag + "_sealed_new")
+    ctext = base_text(path)
+    okc, errsc = run(seal(ctext, PB), tag + "_sealed_control")
+    uns = None
+    if not okc:
+        uns, _ = run(ctext, tag + "_unsealed_control")
+    report(f"{path}\n  seal: ProverBounded", ok, errs, "base text", okc, errsc, "fail", uns)
+    ex = explicit(cur, "ProverBounded")
+    print(f"  explicit simp/rw/unfold of ProverBounded in the current file: {len(ex)}")
+    for e in ex[:6]: print("    exp:", e)
+    print()
+
+# ---------------- Part 2: new proofs ----------------
+def block(path, name):
+    """The declaration `theorem <name>` with its docstring-free body, up to the next blank line
+    that precedes a docstring, `/-!`, `end`, or another declaration."""
+    lines = (WT / path).read_text().splitlines()
+    i = next(k for k, l in enumerate(lines) if re.match(rf"^theorem {re.escape(name)}\b", l))
+    j = i + 1
+    while j < len(lines) and not (lines[j] == "" and j + 1 < len(lines) and
+                                  re.match(r"^(/--|/-!|end |theorem |def |@\[|$)", lines[j + 1])):
+        j += 1
+    return "\n".join(lines[i:j]) + "\n"
+
+HEADER = ("import {mod}\n\nset_option maxHeartbeats 0\nset_option relaxedAutoImplicit false\n"
+          "set_option autoImplicit false\n\n{opens}\nnamespace {ns}.SealTest\n\n{body}\nend {ns}.SealTest\n")
+TESTS = [
+ dict(tag="ModuleHost_envelopes", mod="TCSlib.Complexity.TuringMachine.Build.ModuleHost",
+      path="TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean", ns="Turing.ModuleHost",
+      opens="open Complexity\n",
+      names=["Clean.envelope", "host_call_envelope", "host_clean_envelope"],
+      seal=["Turing.Cfg.ofWords", "Turing.stateWord", "Turing.MultiTapeTM.runFrom",
+            "Turing.MultiTapeTM.step"],
+      ctl=("  rw [Cfg.ofWords_workTapePos] at h1 h2\n",
+           "  rw [show (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)).workTapePos j = 0 "
+           "from rfl] at h1 h2\n"),
+      ctldesc="Clean.envelope with the seam's head position read by `rfl` through `Cfg.ofWords`"),
+ dict(tag="Defs_AbortRetry", mod="TCSlib.Cryptography.ZeroKnowledge.Defs",
+      path="TCSlib/Cryptography/ZeroKnowledge/Defs.lean", ns="TCSlib.Cryptography.AbortRetry",
+      opens="open Complexity Turing\nopen TCSlib.Cryptography.EncodingMachines Finset Complexity.StateLoop\n",
+      names=["attempt_eq", "retry_eq", "retry_eq_attempt", "retry_eq_nil"],
+      seal=["TCSlib.Cryptography.EncodingMachines.firstIdx", "Complexity.NUPPT.layout",
+            "Complexity.NUPPT.inParam", "Complexity.NUPPT.inArg", "Complexity.NUPPT.inCoins",
+            "Complexity.NUPPT.output", "Complexity.NUPPT.coinLen"],
+      ctl=None,
+      ctladd="example (q : ℕ → Bool) : firstIdx q 0 = 0 := rfl\n",
+      ctldesc="the copies plus one `rfl` read of `firstIdx` (seal-active check)"),
+ dict(tag="DiscreteLog_sampleBelowL", mod="TCSlib.Cryptography.Candidates.DiscreteLog",
+      path="TCSlib/Cryptography/Candidates/DiscreteLog.lean", ns="TCSlib.Cryptography.Candidates",
+      opens="open Complexity Turing TCSlib.Cryptography.NumberTheory Finset\n",
+      names=["sampleBelowL_eq_rejectBlocksL"],
+      seal=["TCSlib.Cryptography.Candidates.rejectBlocksL"],
+      ctl=("  funext r\n  rw [rejectBlocksL_eq]\n  rfl\n", "  funext r\n  rfl\n"),
+      ctldesc="the lemma proved by `funext r; rfl`, reading `rejectBlocksL` through its body"),
+]
+print("## Part 2: new proofs that read another file's definitions (copies in a SealTest namespace)\n")
+for t in TESTS:
+    body = "\n".join(block(t["path"], n) for n in t["names"])
+    text = HEADER.format(mod=t["mod"], opens=t["opens"], ns=t["ns"], body=body)
+    ok, errs = run(seal(text, t["seal"]), t["tag"] + "_sealed_new")
+    if t.get("ctl"):
+        old, new = t["ctl"]
+        assert body.count(old) == 1, (t["tag"], old)
+        ctext = HEADER.format(mod=t["mod"], opens=t["opens"], ns=t["ns"], body=body.replace(old, new))
+    else:
+        ctext = HEADER.format(mod=t["mod"], opens=t["opens"], ns=t["ns"], body=body + "\n" + t["ctladd"])
+    okc, errsc = run(seal(ctext, t["seal"]), t["tag"] + "_sealed_control")
+    uns = None
+    if not okc:
+        uns, _ = run(ctext, t["tag"] + "_unsealed_control")
+    report(f"{t['path']}: {', '.join(t['names'])}\n  seal: {' '.join(s.split('.')[-1] for s in t['seal'])}",
+           ok, errs, t["ctldesc"], okc, errsc, "fail", uns)
+    print()

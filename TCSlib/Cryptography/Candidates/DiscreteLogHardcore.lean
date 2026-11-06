@@ -460,6 +460,11 @@ generates `Z_p^*`, the setting of [PS10, Lemma 84.1 and Algorithm 84.2]) with `p
 **Deviation:** `p ≡ 3 (mod 4)` (decision log, open question 3). -/
 def FullGroupValid (i : List Bool) : Prop := ExpValid i ∧ dlM i = dlP i - 1 ∧ dlP i % 4 = 3
 
+/-- Unfolding `FullGroupValid`: `i` is a full-group instance iff it is valid, `m = p − 1` and
+`p ≡ 3 (mod 4)`. -/
+theorem fullGroupValid_iff (i : List Bool) :
+    FullGroupValid i ↔ ExpValid i ∧ dlM i = dlP i - 1 ∧ dlP i % 4 = 3 := Iff.rfl
+
 /-- A full-group instance is a valid instance. -/
 theorem FullGroupValid.expValid {i : List Bool} (h : FullGroupValid i) : ExpValid i := h.1
 
@@ -478,11 +483,99 @@ hardness for a uniform generator of the full group `Z_p^*` (source error 27), st
 relative to a full-group instance generator. -/
 def FullDLAssumption (G : FullGroupGen) : Prop := G.DLHard
 
+/-- Unfolding: the full-group discrete-log assumption is the negligibility of every `dlProb`. -/
+theorem fullDLAssumption_iff (G : FullGroupGen) :
+    FullDLAssumption G ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n :=
+  ExpGroupGen.dlHard_iff G
+
 /-- **The discrete-log collection in `Z_p^*`** [PS10, Lemma 84.1, "the exponentiation function
 `f_{p,g}(x) = g^x mod p` from the discrete-log collection `DL`"]: domains `Z_{p−1}`,
 `f_{p,g}(x) = g^x mod p`, the instance generator `G`. -/
 noncomputable def fullDLCollection (H : ArithmeticFP) (G : FullGroupGen) : Collection :=
   expCollection H G fun _ h => h.expValid
+
+/-- **The domain of the full-group collection is `Z_{p−1}`**: the published equivalence
+`(fullDLCollection H G).D i ≃ ZMod (expOrd i)` (the identity), the interface to the domain
+(`fullDLCollection_f`, `fullDLCollection_encD`, `fullDLCollection_decD`; see
+`expCollection_domEquiv`). -/
+def fullDLCollection_domEquiv (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) :
+    (fullDLCollection H G).D i ≃ ZMod (expOrd i) :=
+  expCollection_domEquiv H G (fun _ h => h.expValid) i
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_{p−1}`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = fullDLCollection_domEquiv H G i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem fullDLCollection_domEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (fullDLCollection H G).D i => P (fullDLCollection_domEquiv H G i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the full-group collection is `expF`, read through the domain equivalence:
+`(fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x)`. -/
+theorem fullDLCollection_f (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x) :=
+  expCollection_f H G (fun _ h => h.expValid) i x
+
+/-- The encoder of the full-group collection is `expEnc`, read through the domain equivalence:
+`(fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x)`. -/
+theorem fullDLCollection_encD (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x) :=
+  expCollection_encD H G (fun _ h => h.expValid) i x
+
+/-- The decoder of the full-group collection is `expDec`, carried back along the domain
+equivalence:
+`(fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm`. -/
+theorem fullDLCollection_decD (H : ArithmeticFP) (G : FullGroupGen) (i w : List Bool) :
+    (fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm :=
+  expCollection_decD H G (fun _ h => h.expValid) i w
+
+/-- The index generator of the full-group collection is `expGen G`. -/
+theorem fullDLCollection_gen (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).gen = expGen G :=
+  expCollection_gen H G (fun _ h => h.expValid)
+
+/-- **The coins of the full-group collection's generator are the instance generator's**: the
+published equivalence `(fullDLCollection H G).gen.Coins n ≃ G.gen.Coins n`
+(`expCollection_coinsEquiv`), the interface between the `HardCore` average and the averages of
+`hbig` and `G.dlProb` over `G.gen`'s coins. -/
+noncomputable def fullDLCollection_coinsEquiv (H : ArithmeticFP) (G : FullGroupGen) (n : ℕ) :
+    (fullDLCollection H G).gen.Coins n ≃ G.gen.Coins n :=
+  expCollection_coinsEquiv H G (fun _ h => h.expValid) n
+
+/-- The coin equivalence carries the uniform distribution:
+`Pr_r[P (φ r)] = Pr_{r'}[P r']` with `φ = fullDLCollection_coinsEquiv H G n`. -/
+theorem fullDLCollection_coinsEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (n : ℕ)
+    (P : G.gen.Coins n → Prop) :
+    uprob (fun r : (fullDLCollection H G).gen.Coins n => P (fullDLCollection_coinsEquiv H G n r)) =
+      uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The coin equivalence carries averages:
+`E_r[F (φ r)] = E_{r'}[F r']` with `φ = fullDLCollection_coinsEquiv H G n`. -/
+theorem fullDLCollection_coinsEquiv_uexp (H : ArithmeticFP) (G : FullGroupGen) (n : ℕ)
+    (F : G.gen.Coins n → ℝ) :
+    uexp (fun r : (fullDLCollection H G).gen.Coins n => F (fullDLCollection_coinsEquiv H G n r)) =
+      uexp F :=
+  HardcoreBit.uexp_comp_equiv _ F
+
+/-- The index generated by the full-group collection from `n₀` on is the instance generator's
+output on the coins read through `fullDLCollection_coinsEquiv`. -/
+theorem fullDLCollection_index (H : ArithmeticFP) (G : FullGroupGen) (n : ℕ)
+    (r : (fullDLCollection H G).gen.Coins n) (hn : G.n₀ ≤ n) :
+    (fullDLCollection H G).index n r = G.gen.runAt n [] (fullDLCollection_coinsEquiv H G n r) :=
+  expCollection_index H G _ n r hn
+
+/-- The domain sampler of the full-group collection is `expSampler H`. -/
+theorem fullDLCollection_sample (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).sample = expSampler H :=
+  expCollection_sample H G (fun _ h => h.expValid)
+
+/-- The evaluator of the full-group collection is `expEval`. -/
+theorem fullDLCollection_eval (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).eval = expEval :=
+  expCollection_eval H G (fun _ h => h.expValid)
 
 /-- The full-group collection is one-way under the full-group discrete-log assumption
 ([PS10, Theorem 52.3] for `Z_p^*`): `expCollection_oneWay`. -/
@@ -500,7 +593,7 @@ noncomputable def halfPred (i : List Bool) (x : ZMod (expOrd i)) : Bool :=
 concrete layer. -/
 theorem halfPred_eq {i : List Bool} (h : ExpValid i) (x : ZMod (expOrd i)) :
     halfPred i x = decide (2 * x.val < dlP i - 1) := by
-  have := h.1.two_le
+  have := ((expValid_iff i).1 h).1.two_le
   simp only [halfPred, decide_eq_decide]
   omega
 
@@ -513,7 +606,10 @@ def halfStr (z : List Bool) : List Bool :=
 clause of `Collection.HardCore`). -/
 theorem halfStr_spec (i : List Bool) (x : ZMod (expOrd i)) :
     halfStr (pairEncode i (expEnc i x)) = [halfPred i x] := by
-  simp only [halfStr, halfPred, expEnc, dlP, pairFstD_pairEncode, pairSndD_pairEncode,
+  rw [expEnc_eq]
+  unfold halfPred
+  rw [dlP_eq]
+  simp only [halfStr, pairFstD_pairEncode, pairSndD_pairEncode,
     listToNat_natToList (val_lt_two_pow_dlW i x)]
 
 /-- **`half_{p−1}` is polynomial-time computable** (Lem-84.1.0) given the arithmetic bundle.
@@ -545,41 +641,57 @@ Repair (run-3 audit P8-2): the hypothesis `hbig : G.FullLength` (full length on 
 string, not known to be satisfiable) became `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`; the
 proof discards the short-prime coins, which contribute at most `δ n` to the good-instance set.
 
-**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`.
+**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`,
+read through `fullDLCollection_encD`.
 *Hard:* by contradiction with `not_negligible_iff` (through the quantifier form
 `Ensemble.indist_iff_exists_negligible`-style of `HardCore`): suppose `A : NUPPT` has
 `1/2 + n^{-c} ≤ E_r[Pr_{x, ρ}[A(1^n, ⟨i, f_i x⟩) = half_i x]]` for infinitely many `n ≥ n₀`.
 Set `ε := n^{-c}/2`. By `good_instances` (over the generator's coins `r`, index `i = Gen(1^n; r)`)
-a set of coins of probability `≥ ε` has per-instance success `≥ 1/2 + ε`; removing the coins
+a set of coins of probability `≥ ε` has per-instance success `≥ 1/2 + ε` (the collection's coins
+read as `G.gen`'s through `fullDLCollection_coinsEquiv`, `fullDLCollection_index`,
+`fullDLCollection_coinsEquiv_uexp`); removing the coins
 with `p < 2^{n−1}` (probability `≤ δ n` by `hbig`, and `δ n ≤ ε/2` for large `n` since `δ` is
 negligible) leaves a *good* set of probability `≥ ε/2` (`uprob_not`, `uprob_or_le`). At such an
 index `i = ⟨p, ⟨p−1, g⟩⟩` (valid, `dlW i = n`, `p ≡ 3 (mod 4)`, `2^{n−1} ≤ p < 2^n` on the good
-set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`expOrd_of_valid`), `f_i x` is the numeral of
+set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`fullDLCollection_domEquiv` with
+`fullDLCollection_domEquiv_uprob`, `expOrd_of_valid`), `f_i x` is the numeral of
 `expo g_u x` with `g_u := expUnit` a generator (`orderOf_expUnit`, `IsGenerator` by
 `orderOf_eq_card_of_forall_mem_zpowers`-converse `zpowers_eq_top_of_prime_card`-free counting:
-`Nat.card_zpowers`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so `A`'s per-instance
-success is `predProb (expo g_u) (halfBit (p−1)) A_i` with `A_i y ρ := A.distinguisherL n ⟨i, encD y⟩ ρ`.
-Apply `invProb_dlInverter_ge` with `s := ⌊ε(p−1)/4⌋ ≥ 1` (as `p − 1 ≥ 2^{n−1} − 1 ≥ 8n^c` for
-large `n`), `T := ⌈(p−1)/s⌉ ≤ 8n^c + 1`, `k := n`, `ℓ := 4n · (2n^c)² = 16 n^{2c+1}`: the inverter
-succeeds on the good instances with probability `≥ (3/4)/T ≥ 3/(4(8n^c + 1))`, hence overall
-`≥ (ε/2) · 3/(4(8n^c + 1))` (`OneWay.uprob_mul_le_uexp`-style averaging over the good set). The
-machine `B` realising `dlInverter` is a non-uniform PPT: advice `⟨A.advice n, 1^{n}⟩`, coins
-`T·n + n·ℓ·(2n + A.coins)` (all `PolyExpr`), on `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`,
-computes `s` and `T` from `1^n` and `p` (`H.divMod`, `H.mul`), samples `t` and the `r_{j,i}` by
-rejection (`sampleBelowL` with `H.le`; the statistical term `n·ℓ·(1/2)^n + (1/2)^n` by
-`statClose_rejectionSample`/`StatClose.prod`, `StatClose.abs_uprob_sub_le_prod`), shifts
-`y · g^{−ts}` (`H.modExp`, `H.xgcd` for the inverse), and runs the `n` rounds of `dlLoop`
-(`Complexity.polyTimeComputable_iterate` with the state `⟨y_j, bits⟩`, D11): quadratic
-residuosity by `H.modExp` (`y^{(p−1)/2} = 1`, Euler), the root `y^{(p+1)/4}` by `H.modExp`
-(`sqrtMod3`, [PS10, Theorem 58.2]), the `ℓ` oracle calls `A.output` on the layout
-`⟨⟨⟨1^n, ⟨i, z_i⟩⟩, A.advice n⟩, ρ_i⟩` (`polyTimeComputable_iterateEmit`, `NUPPT.polyTimeComputable_layout`),
-the comparison with `half(r_i)` (`halfStr`), the majority (`polyTimeComputable_majority`), the
-negation `p − z` and the bit assembly; finally `(bits + ts) mod (p−1)` as an `n`-bit numeral
-(`decodeFin n` reads it back, `bitsToNat_natToBits`). Thus `G.dlProb B n ≥ 3ε/(8(8n^c+1)) − 2n^{2c+2}(1/2)^n`
+`Nat.card_zpowers`; `fullDLCollection_f`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so
+`A`'s per-instance success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
+`A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`.
+Apply `invProb_dlInverter_ge` with `ε := n^{-c}/2`, `s := ⌊(p−1)/(8n^c)⌋` (so `4s ≤ ε(p−1)`),
+`T := ⌈(p−1)/s⌉` (so `Ts ≥ p − 1`), `k := n` (`s ≤ p − 1 < 2^n`) and `ℓ := 16 n^{2c+1}`
+(so `k/(ε²ℓ) = 1/4`). For large `n` the good instances have `p − 1 ≥ 2^{n−1} − 1 ≥ 16 n^c`, so
+`(p−1)/(8n^c) ≥ 2`, `s ≥ (p−1)/(16 n^c) ≥ 1` and `T ≤ K(n) := 16 n^c < 2^n`; the inverter then
+succeeds with probability `≥ (3/4)/T ≥ 3/(4K(n))` on each good instance, with ideal coins.
+The machine `B` realising `dlInverter` is a non-uniform PPT: advice `⟨A.advice n, ⟦8n^c⟧_n⟩`
+(the `n`-bit numeral of `8n^c`: the bundle has no unary-to-binary conversion); coins
+`n·n + n·ℓ·(n·n + A.coins)` (a `PolyExpr`, `c` being fixed): one block of `n·n` coins for `t`
+and, for each of the `n·ℓ` trials, a block of `n·n` coins for `r_{j,i}` and `A.coins` coins for
+`ρ_{j,i}`. On `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`; computes `s` and `T` (`H.sub`,
+`H.divMod`, `H.add`); outputs `0^n` unless `1 ≤ s` and `T < 2^n` (the analysis uses only the
+good instances); samples `t := (sampleBelowL T (Nat.size T) n n ·).getD 0` and
+`r_{j,i} := (sampleBelowL (p−1) (Nat.size (p−1)) n n ·).getD 0` (`H.le`, `H.size`,
+`polyTimeComputable_iterateFind`); shifts `y · g^{−ts}` (`H.modExp`, `H.xgcd`); and runs the
+`n` rounds of `dlLoop` (`Complexity.polyTimeComputable_iterate` with the state `⟨y_j, bits⟩`,
+D11): quadratic residuosity by `H.modExp` (`y^{(p−1)/2} = 1`, Euler), the root `y^{(p+1)/4}` by
+`H.modExp` (`sqrtMod3`, [PS10, Theorem 58.2]), the `ℓ` oracle calls `A.output` on the layout
+`⟨⟨⟨1^n, ⟨i, z_{j,i}⟩⟩, A.advice n⟩, ρ_{j,i}⟩` (`polyTimeComputable_iterateEmit`,
+`NUPPT.polyTimeComputable_layout`), the comparison with `half(r_{j,i})` (`halfStr`), the
+majority (`polyTimeComputable_majority`), the negation `p − z` and the bit assembly; finally
+`(bits + ts) mod (p−1)` as an `n`-bit numeral (`decodeFin n` reads it back,
+`bitsToNat_natToBits`). Sampling: each of the `1 + nℓ` sampled coordinates is within `(1/2)^n`
+of uniform (`statClose_sampleBelowL`, with `0 < T < 2^n` and `0 < p − 1 < 2^n`); the coins of
+`A` are exact; `StatClose.prod` and `StatClose.abs_uprob_sub_le_prod` give a loss of at most
+`(1 + 16 n^{2c+2})(1/2)^n` at every instance. Averaging over the good set (probability
+`≥ ε/2`, `HardcoreBit.uprob_mul_le_uexp`):
+`G.dlProb B n ≥ (ε/2)·3/(4K(n)) − (1 + 16 n^{2c+2})(1/2)^n`
+`= 3/(256 n^{2c}) − (1 + 16 n^{2c+2})(1/2)^n`
 for infinitely many `n`, an inverse polynomial, contradicting `hDL B` via `not_negligible_iff`. -/
 theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
-    (fullDLCollection H G).HardCore halfPred := by
+    (fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x) := by
   sorry
 
 end TCSlib.Cryptography.Candidates

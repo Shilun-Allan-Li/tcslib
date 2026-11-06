@@ -59,6 +59,10 @@ the number of elements satisfying `p` divided by the number of elements. -/
 noncomputable def uprob (p : α → Prop) : ℝ :=
   (Nat.card {a // p a} : ℝ) / Fintype.card α
 
+/-- The defining equation of `uprob`: the number of points satisfying `p` divided by the number
+of points, `uprob p = Nat.card {a // p a} / Fintype.card α`. -/
+theorem uprob_def (p : α → Prop) : uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α := rfl
+
 /-- The average of a real function over the finite type `α`, its expectation under the
 uniform distribution. -/
 noncomputable def uexp (f : α → ℝ) : ℝ :=

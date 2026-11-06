@@ -35,6 +35,11 @@ polynomial `stretch`, so that `G` is a typed family `G n : {0,1}^n → {0,1}^{�
 concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* → {0,1}*` with
 `|G(x)| > |x|` admits irregular lengths, which no construction of the book uses.
 
+**Deviation:** the expansion clause `PRG.expands` holds at every seed length, `n = 0` included
+(the text's `|G(x)| > |x|` read literally at `x = ε`), so no `PolyExpr` stretch with `ℓ(0) = 0`
+(exactly `2n`) or `ℓ(1) = 1` (`n^c`) is a `PRG`; the length-doubling generators of the text are
+`DoublingPRG` (`Asymptotic/PRF.lean`). See `PRG` (gate 03c, finding 1; ruling G3-2).
+
 **Deviation:** `PRG.Easy`: a deterministic polynomial-time evaluator on the seed string
 instead of a PPT computing `G` with probability one (equivalent by `Complexity.NUPPT.Computes`
 and `ofPolyTimeUniform`, as for `FunFamily.Easy`); the seed is not prefixed by `1^n` since
@@ -55,12 +60,13 @@ its length is the parameter.
   "`prgAdv` negligible for every `D`" (the concrete quantity of [Gar26, Definition 3.5]).
 * `TCSlib.Cryptography.Ensemble.uniform_pseudorandom` — the uniform ensemble is pseudorandom
   (non-vacuity of Definition 74.1).
-* `TCSlib.Cryptography.PRG.secure_iff` — unfolding of `PRG.Secure` to the `prgAdv` form.
+* `TCSlib.Cryptography.PRG.easy_iff`, `TCSlib.Cryptography.PRG.secure_iff` — unfoldings of
+  `PRG.Easy` and of `PRG.Secure` (the latter to the `prgAdv` form).
 * `TCSlib.Cryptography.PRG.Easy.samplable` — the output ensemble of an efficiently
   computable generator is efficiently samplable (D6), so that `Ensemble.Indist.copies`
   applies to it.
-* `TCSlib.Cryptography.PRG.stretch_pos` — the output length is positive (the hypothesis of
-  [PS10, Theorem 75.4] holds for every generator).
+* `TCSlib.Cryptography.PRG.stretch_pos` — the output length of a generator is positive at
+  every seed length (from the expansion clause).
 
 ## References
 
@@ -101,20 +107,35 @@ theorem Ensemble.Indist.pseudorandom {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : 
 /-! ### Pseudorandom generators [PS10, Definition 77.1] -/
 
 /-- A **(length-regular) generator** with explicit stretch: at every seed length `n`, a
-function `G n : {0,1}^n → {0,1}^{ℓ(n)}` with `ℓ(n) > n` — the expansion clause
+function `G n : {0,1}^n → {0,1}^{ℓ(n)}` with `ℓ(n) > n` (at every `n`, `n = 0` included; see
+the second Deviation) — the expansion clause
 [PS10, Definition 77.1 (2)] with the output length a syntactic polynomial `stretch` (D9).
 The efficiency and pseudorandomness clauses are `PRG.Easy` and `PRG.Secure`.
 
 **Deviation:** `PRG` is *length-regular*: `|G(x)|` depends only on `|x|` and is the syntactic
 polynomial `stretch`, so that `G` is a typed family `G n : {0,1}^n → {0,1}^{ℓ(n)}` (the
 concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* → {0,1}*` with
-`|G(x)| > |x|` admits irregular lengths, which no construction of the book uses. -/
+`|G(x)| > |x|` admits irregular lengths, which no construction of the book uses.
+
+**Deviation:** the expansion clause holds at every seed length, `n = 0` included, as the text's
+`|G(x)| > |x|` says literally for `x = ε`. A `PolyExpr` stretch is a polynomial with coefficients
+in ℕ, so a stretch with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) is not a `PRG`, although
+the text uses such generators (the length-doubling `G` of Algorithm 92.1 and Theorem 97.3;
+Lemma 80.5's "for any polynomial `ℓ`"). They are reached up to one bit (`2n + 1`, `n^c + 1`, by
+`prg_expand` from the one-bit truncation `PRG.truncate` of `Asymptotic/PRF.lean`) or by truncation
+(`PRG.Secure.truncateTo_easy`/`_negligible`, `Asymptotic/PRFLemmas.lean`); the length-doubling
+generator of Theorem 97.3 is the separate predicate `DoublingPRG` (`Asymptotic/PRF.lean`),
+produced from any secure `PRG` by `PRG.doubling` (`PRG.Secure.doubling`). "PRGs exist" means the
+same under either reading, since a generator expanding only from some `n₀` on is made to expand
+everywhere by truncating to `n + 1` bits and changing it below `n₀` (a remark, not formalized).
+(Gate 03c, finding 1; ruling G3-2; DESIGN §5.25.) -/
 structure PRG where
   /-- The output length `ℓ(n)` at seed length `n`. -/
   stretch : PolyExpr
   /-- The generator at seed length `n`. -/
   G : ∀ n, (Fin n → Bool) → (Fin (stretch.eval n) → Bool)
-  /-- Expansion: `|G(x)| > |x|` [PS10, Definition 77.1 (2)]. -/
+  /-- Expansion: `|G(x)| > |x|` [PS10, Definition 77.1 (2)], at every seed length `n`,
+  `n = 0` included (see the Deviation above). -/
   expands : ∀ n, n < stretch.eval n
 
 namespace PRG
@@ -129,6 +150,13 @@ its length is the parameter. -/
 def Easy (P : PRG) : Prop :=
   ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
     ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)
+
+/-- **Efficiency unfolded** [PS10, Definition 77.1 (1)]: `G` is easy iff some polynomial-time
+string function `F` sends every seed string `s` of length `n` to `G n s`. -/
+theorem easy_iff (P : PRG) :
+    P.Easy ↔ ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+      ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s) :=
+  Iff.rfl
 
 /-- The **output ensemble** `{x ← U_n : G(x)}_n` of a generator [PS10, Definition 77.1 (3)]:
 seeds are the uniform `n`-bit strings and the sampler is `G n`. -/
@@ -147,9 +175,8 @@ def Secure (P : PRG) : Prop := P.Easy ∧ P.ensemble.Pseudorandom
 /-- Unfolding of the output ensemble: the seed type at `n` is `{0,1}^n`. -/
 theorem ensemble_σ (P : PRG) (n : ℕ) : P.ensemble.σ n = (Fin n → Bool) := rfl
 
-/-- The output length of a generator is positive at every seed length (from the expansion
-clause); this is the hypothesis `0 < ℓ(n)` of [PS10, Theorem 75.4] for output ensembles of
-generators. -/
+/-- The output length of a generator is positive at every seed length: `0 < ℓ(n)` for all `n`
+(from the expansion clause `n < ℓ(n)` of [PS10, Definition 77.1 (2)]). -/
 theorem stretch_pos (P : PRG) (n : ℕ) : 0 < P.stretch.eval n :=
   lt_of_le_of_lt (Nat.zero_le n) (P.expands n)
 

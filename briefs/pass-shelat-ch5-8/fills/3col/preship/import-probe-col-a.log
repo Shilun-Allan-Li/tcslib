@@ -1,0 +1,303 @@
+# Import probe, unit col-a (owned module ThreeColoring/Protocol)
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColAImport   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## probe source
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+open TCSlib.Cryptography Complexity Turing
+-- R3COL_witnessRelation (decidable clause)
+#check @WitnessRelation
+#check @mem_L3COL_iff
+#check @length_encColoring
+#check @length_encGraph
+#check @decGraph_encGraph
+#check @decColoring_encColoring
+#check @polyTimeComputable_pairEq
+#check @polyTimeComputable_blockMap
+#check @polyTimeComputable_iterateEmit
+#check @polyTimeComputable_iterate
+#check @Complexity.polyTimeComputable_iterate
+#check @polyTimeComputable_and
+#check @polyTimeComputable_lenEq
+#check @polyTimeComputable_ite
+#check @colWellFormed
+#check @colWellFormed_encGraph
+#check @ProperColoring
+#check @encGraph_injective
+#check @GI.Riso_decidable
+#check @GI.risoTest_iff
+#check @GI.wellFormed_poly
+-- colRep_efficientProverProof
+#check @col_efficientProverProofErr
+#check @colProverRep_efficient
+#check @colVerifierRep_efficient
+#check @colProtocol_proverBounded
+#check @Protocol.proverBounded_iff
+#check @Protocol.exists_proverCoins_le
+#check @exec_succ
+#check @statClose_sampleEdgeIdx
+#check @StatClose.prod
+#check @StatClose.abs_uprob_sub_le_prod
+#check @uprob_col_cheat_le
+#check @challengesBefore
+#check @challengesUpTo
+#check @one_sub_inv_pow_mul_le_exp
+#check @Nat.sqrt_eq
+#check @negligible_exp_neg_sqrt_div
+#check @Negligible.mul_pow
+#check @negligible_two_pow_neg
+#check @Negligible.add
+#check @Negligible.mono
+#check @HardcoreBit.uprob_eq_one_of_forall
+#check @encGraph_mem_L3COL_iff
+#check @edgeCount_pos_of_not_threeColorable
+#check @uprob_not
+#check @EfficientProverProof
+#check @InteractiveProof
+#check @colIterations
+#check @colCoinSlice
+#check @ColProofs.colProverRep_next_eq
+#check @ColProofs.colVerifierRep_next_eq
+#check @ColProofs.pushesUniform_castLE
+#check @ColProofs.sampleEdgeIdx_ofFn_castLE
+#check @StatClose.comp_pushesUniform
+#check @OneWay.uprob_congr
+#check @statClose_pi
+#check @GI.statClose_pi
+#check @exec_repViews
+#check @GI.exec_repViews
+#check @GI.gi_rep_efficientProverProof
+#check @gi_rep_efficientProverProof
+#check @colProtocol_outV_honest
+#check @uprob_check_uniform_le
+#check @colProtocol_sound
+
+## output
+Fri Nov  6 02:14:56 UTC 2026
+WitnessRelation : Language Bool → (List Bool → List Bool → Prop) → Prop
+mem_L3COL_iff : ∀ (x : List Bool), x ∈ L3COL ↔ ∃ y, R3COL x y
+@length_encColoring : ∀ {n : ℕ} (c : Fin n → Fin 3), (encColoring c).length = n * 2
+@length_encGraph : ∀ {n : ℕ} (G : Graph n), (encGraph G).length = n * n
+@decGraph_encGraph : ∀ {n : ℕ} (G : Graph n), decGraph (encGraph G) = ⟨n, G⟩
+@decColoring_encColoring : ∀ {n : ℕ} (c : Fin n → Fin 3), decColoring n (encColoring c) = c
+polyTimeComputable_pairEq : PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)]
+polyTimeComputable_blockMap : ∀ (b : PolyExpr) {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable fun z =>
+      List.flatMap
+        (fun i => g (List.take (b.eval (pairFstD z).length) (List.drop (i * b.eval (pairFstD z).length) (pairSndD z))))
+        (List.range ((pairSndD z).length / b.eval (pairFstD z).length))
+@polyTimeComputable_iterateEmit : ∀ {g emit : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable emit →
+      ∀ (R P : PolyExpr),
+        (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+          PolyTimeComputable fun x => List.flatMap (fun i => emit (g^[i] x)) (List.range (R.eval x.length + 1))
+@polyTimeComputable_iterate : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ (R P : PolyExpr),
+      (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+        PolyTimeComputable fun x => g^[R.eval x.length] x
+@polyTimeComputable_iterate : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ (R P : PolyExpr),
+      (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+        PolyTimeComputable fun x => g^[R.eval x.length] x
+@polyTimeComputable_and : ∀ {p q : List Bool → Bool},
+  (PolyTimeComputable fun x => [p x]) → (PolyTimeComputable fun x => [q x]) → PolyTimeComputable fun x => [p x && q x]
+polyTimeComputable_lenEq : PolyTimeComputable fun z => [decide ((pairFstD z).length = (pairSndD z).length)]
+@polyTimeComputable_ite : ∀ {p : List Bool → Bool} {f g : List Bool → List Bool},
+  (PolyTimeComputable fun x => [p x]) →
+    PolyTimeComputable f → PolyTimeComputable g → PolyTimeComputable fun x => if p x = true then f x else g x
+colWellFormed : List Bool → Bool
+@colWellFormed_encGraph : ∀ {n : ℕ} (G : Graph n), colWellFormed (encGraph G) = true
+@ProperColoring : {n : ℕ} → Graph n → (Fin n → Fin 3) → Prop
+encGraph_injective : ∀ (n : ℕ), Function.Injective encGraph
+Probe/ColAImport.lean:22:8: error(lean.unknownIdentifier): Unknown identifier `GI.Riso_decidable`
+Probe/ColAImport.lean:23:8: error(lean.unknownIdentifier): Unknown identifier `GI.risoTest_iff`
+Probe/ColAImport.lean:24:8: error(lean.unknownIdentifier): Unknown identifier `GI.wellFormed_poly`
+@col_efficientProverProofErr : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ → EfficientProverProofErr (colProtocol Com ℓ) L3COL R3COL fun N => 1 - 1 / ↑N + (1 / 2) ^ N
+@colProverRep_efficient : ∀ {Com : List Bool → List Bool},
+  PolyTimeComputable Com → ∀ (ℓ : PolyExpr), (colProverRep Com ℓ).Efficient
+@colVerifierRep_efficient : ∀ {Com : List Bool → List Bool},
+  PolyTimeComputable Com → ∀ (ℓ : PolyExpr), (colVerifierRep Com ℓ).Efficient
+@colProtocol_proverBounded : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ (R : List Bool → List Bool → Prop),
+      ∃ B, (colProtocol Com ℓ).ProverBounded R B ∧ (colProtocolRep Com ℓ).ProverBounded R B
+Protocol.proverBounded_iff : ∀ (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr),
+  π.ProverBounded R B ↔
+    ∀ (x y r : List Bool) (hist : List (List Bool)), R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+Protocol.exists_proverCoins_le : ∀ (π : Protocol) (P' : Strategy) (x y z : List Bool) (p : List Bool → Prop),
+  ∃ r₁, (uprob fun r => p (π.outV P' x y z r)) ≤ uprob fun r₂ => p (π.outV P' x y z (r₁, r₂))
+exec_succ : ∀ (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (k : ℕ),
+  exec P V vFirst x zP zV rP rV (k + 1) =
+    have e := exec P V vFirst x zP zV rP rV k;
+    if moverIsV vFirst k = true then (e.1 ++ [V.next x zV rV e.2], e.2) else (e.1, e.2 ++ [P.next x zP rP e.1])
+@statClose_sampleEdgeIdx : ∀ {m : ℕ} (hm : 0 < m) (T : ℕ),
+  StatClose (fun r => ⟨sampleEdgeIdx m T (List.ofFn r), ⋯⟩) id ((1 / 2) ^ T)
+@StatClose.prod : ∀ {σ : Type u_1} {σ' : Type u_2} {τ : Type u_3} {τ' : Type u_4} {γ : Type u_5} {γ' : Type u_6}
+  [inst : Fintype σ] [inst_1 : Fintype σ'] [inst_2 : Fintype τ] [inst_3 : Fintype τ'] {X : σ → γ} {X' : τ → γ}
+  {Y : σ' → γ'} {Y' : τ' → γ'} {δ δ' : ℝ},
+  StatClose X X' δ → StatClose Y Y' δ' → StatClose (fun z => (X z.1, Y z.2)) (fun z => (X' z.1, Y' z.2)) (δ + δ')
+@StatClose.abs_uprob_sub_le_prod : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ]
+  [inst_1 : Fintype τ] {ρ : Type u_4} [inst_2 : Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (P : γ → ρ → Prop), |(uprob fun z => P (X z.1) z.2) - uprob fun z => P (Y z.1) z.2| ≤ δ
+@uprob_col_cheat_le : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ {n : ℕ},
+      2 ≤ n →
+        ∀ {G : Graph n},
+          ¬ThreeColorable G →
+            ∀ (k : ℕ) {W : Type u_1} [inst : Fintype W]
+              (comF : (i : Fin k) → (Fin ↑i → Fin (edgeCount G)) → W → List Bool)
+              (opnF : (i : Fin k) → (Fin (↑i + 1) → Fin (edgeCount G)) → W → List Bool),
+              (uprob fun z =>
+                  ∀ (i : Fin k),
+                    colVerify Com (ℓ.eval n) G (↑(z.1 i)) (comF i (challengesBefore z.1 i) z.2)
+                        (opnF i (challengesUpTo z.1 i) z.2) =
+                      true) ≤
+                (1 - 1 / ↑(edgeCount G)) ^ k
+@challengesBefore : {k : ℕ} → {α : Type u_1} → (Fin k → α) → (i : Fin k) → Fin ↑i → α
+@challengesUpTo : {k : ℕ} → {α : Type u_1} → (Fin k → α) → (i : Fin k) → Fin (↑i + 1) → α
+one_sub_inv_pow_mul_le_exp : ∀ (m n : ℕ), 0 < m → (1 - 1 / ↑m) ^ (n * m) ≤ Real.exp (-↑n)
+Nat.sqrt_eq : ∀ (n : ℕ), (n * n).sqrt = n
+@negligible_exp_neg_sqrt_div : ∀ {C : ℕ}, 0 < C → Negligible fun N => Real.exp (-↑(N / C).sqrt)
+@Negligible.mul_pow : ∀ {μ : ℕ → ℝ}, Negligible μ → ∀ (d : ℕ), Negligible fun n => ↑n ^ d * μ n
+negligible_two_pow_neg : Negligible fun n => 2⁻¹ ^ n
+@Negligible.add : ∀ {μ ν : ℕ → ℝ}, Negligible μ → Negligible ν → Negligible fun n => μ n + ν n
+@Negligible.mono : ∀ {μ ν : ℕ → ℝ}, Negligible μ → (∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) → Negligible ν
+@HardcoreBit.uprob_eq_one_of_forall : ∀ {Ω : Type u_1} [inst : Fintype Ω] [Nonempty Ω] {p : Ω → Prop},
+  (∀ (ω : Ω), p ω) → uprob p = 1
+@encGraph_mem_L3COL_iff : ∀ {n : ℕ} (G : Graph n), encGraph G ∈ L3COL ↔ ThreeColorable G
+@edgeCount_pos_of_not_threeColorable : ∀ {n : ℕ} {G : Graph n}, ¬ThreeColorable G → 0 < edgeCount G
+@uprob_not : ∀ {α : Type u_1} [inst : Fintype α] [Nonempty α] (p : α → Prop), (uprob fun a => ¬p a) = 1 - uprob p
+EfficientProverProof : Protocol → Language Bool → (List Bool → List Bool → Prop) → Prop
+InteractiveProof : Protocol → Language Bool → Prop
+colIterations : List Bool → ℕ
+colCoinSlice : ℕ → ℕ → List Bool → List Bool
+ColProofs.colProverRep_next_eq : ∀ (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y r : List Bool)
+  (hist : List (List Bool)),
+  (ColProofs.colProverRep Com ℓ).next x y r hist = ColMachines.proverRepStr Com ℓ (ColMachines.ilayout x y hist r)
+ColProofs.colVerifierRep_next_eq : ∀ (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
+  (hist : List (List Bool)),
+  (ColProofs.colVerifierRep Com ℓ).next x z r hist = ColMachines.verifierRepStr Com ℓ (ColMachines.ilayout x z hist r)
+@ColProofs.pushesUniform_castLE : ∀ {m c : ℕ} (h : m ≤ c), HardcoreBit.PushesUniform fun t i => t (Fin.castLE h i)
+@ColProofs.sampleEdgeIdx_ofFn_castLE : ∀ {m T c : ℕ} (h : T * m.size ≤ c) (t : Fin c → Bool),
+  sampleEdgeIdx m T (List.ofFn t) = sampleEdgeIdx m T (List.ofFn fun i => t (Fin.castLE h i))
+@StatClose.comp_pushesUniform : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {Ω : Type u_4} [inst_2 : Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ {π : Ω → σ}, HardcoreBit.PushesUniform π → StatClose (fun ω => X (π ω)) Y δ
+@OneWay.uprob_congr : ∀ {α : Type u_1} [inst : Fintype α] {p q : α → Prop}, (∀ (a : α), p a ↔ q a) → uprob p = uprob q
+Probe/ColAImport.lean:60:8: error(lean.unknownIdentifier): Unknown identifier `statClose_pi`
+Probe/ColAImport.lean:61:8: error(lean.unknownIdentifier): Unknown identifier `GI.statClose_pi`
+Probe/ColAImport.lean:62:8: error(lean.unknownIdentifier): Unknown identifier `exec_repViews`
+Probe/ColAImport.lean:63:8: error(lean.unknownIdentifier): Unknown identifier `GI.exec_repViews`
+Probe/ColAImport.lean:64:8: error(lean.unknownIdentifier): Unknown identifier `GI.gi_rep_efficientProverProof`
+Probe/ColAImport.lean:65:8: error(lean.unknownIdentifier): Unknown identifier `gi_rep_efficientProverProof`
+Probe/ColAImport.lean:66:8: error(lean.unknownIdentifier): Unknown identifier `colProtocol_outV_honest`
+Probe/ColAImport.lean:67:8: error(lean.unknownIdentifier): Unknown identifier `uprob_check_uniform_le`
+Probe/ColAImport.lean:68:8: error(lean.unknownIdentifier): Unknown identifier `colProtocol_sound`
+FAIL(Probe/ColAImport): lean exited with status 1
+FAIL(Probe/ColAImport): no fresh .olean produced
+rc=1
+Fri Nov  6 02:14:59 UTC 2026
+
+## supplementary probe (imports Simulator; names cited in the brief)
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+open TCSlib.Cryptography Complexity Turing
+#check @List.finite_length_le
+#check @Set.Finite.exists_maximal_wrt
+#check @Finset.exists_max_image
+#check @Strategy.Efficient.exists_uniform
+#check @Protocol.outV_withV
+#check @Protocol.withV_self
+#check @PolyExpr.eval_normal
+#check @PolyExpr.eval_subst
+#check @PolyExpr.eval_var
+#check @ColMachines.encGraph_decGraph_eq_take
+#check @ColMachines.decColoring_val
+#check @ColMachines.countTrue_le
+#check @edgeCount_eq
+#check @decGraph_apply
+#check @sampleEdgeIdx_lt
+#check @edgeAt_eq_some_edgeOf
+#check @edgeAt_eq_some_of_pos
+#check @colVerify_honest
+#check @Real.exp_nonneg
+#check @Real.add_one_le_exp
+#check @Nat.sqrt_le_self
+#check @CommitmentLemmas.acceptProb_eq_uexp_fst
+#check @LevinTransfer.distinguisherL_lift
+#check @PolyExpr.subst
+
+Fri Nov  6 02:30:22 UTC 2026
+Probe/ColSupp.lean:3:8: error(lean.unknownIdentifier): Unknown constant `List.finite_length_le`
+Probe/ColSupp.lean:4:8: warning: `Set.Finite.exists_maximal_wrt` has been deprecated: Use `Set.Finite.exists_maximalFor` instead
+@Set.Finite.exists_maximal_wrt : ∀ {ι : Type u_1} {α : Type u_2} [inst : LE α] [IsTrans α LE.le] (f : ι → α)
+  (s : Set ι), s.Finite → s.Nonempty → ∃ i, MaximalFor (fun x => x ∈ s) f i
+@Finset.exists_max_image : ∀ {α : Type u_1} {β : Type u_2} [inst : LinearOrder α] (s : Finset β) (f : β → α),
+  s.Nonempty → ∃ x ∈ s, ∀ x' ∈ s, f x' ≤ f x
+@Strategy.Efficient.exists_uniform : ∀ {S : Strategy}, S.Efficient → ∃ A, A.Uniform ∧ S.coins = A.coins
+Protocol.outV_withV : ∀ (π : Protocol) (V' P' : Strategy) (x y z : List Bool) (r : (π.withV V').ExecCoins P' x),
+  (π.withV V').outV P' x y z r =
+    V'.next x z (List.ofFn r.2)
+      (exec P' V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)).2
+Protocol.withV_self : ∀ (π : Protocol), π.withV π.V = π
+PolyExpr.eval_normal : ∀ (C c n : ℕ), (PolyExpr.normal C c).eval n = C * (n + 1) ^ c
+PolyExpr.eval_subst : ∀ (p q : PolyExpr) (n : ℕ), (p.subst q).eval n = p.eval (q.eval n)
+PolyExpr.eval_var : ∀ (n : ℕ), PolyExpr.var.eval n = n
+ColMachines.encGraph_decGraph_eq_take : ∀ (x : List Bool),
+  encGraph (decGraph x).snd = List.take ((decGraph x).fst * (decGraph x).fst) x
+ColMachines.decColoring_val : ∀ (n : ℕ) (y : List Bool) (u : Fin n), ↑(decColoring n y u) = ColMachines.colorVal y ↑u
+ColMachines.countTrue_le : ∀ (x : List Bool) (j : ℕ), ColMachines.countTrue x j ≤ j
+Probe/ColSupp.lean:15:8: error(lean.unknownIdentifier): Unknown identifier `edgeCount_eq`
+Probe/ColSupp.lean:16:8: error(lean.unknownIdentifier): Unknown identifier `decGraph_apply`
+@sampleEdgeIdx_lt : ∀ {m : ℕ}, 0 < m → ∀ (T : ℕ) (r : List Bool), sampleEdgeIdx m T r < m
+@edgeAt_eq_some_edgeOf : ∀ {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)), edgeAt G ↑e = some (edgeOf G e)
+Probe/ColSupp.lean:19:8: error(lean.unknownIdentifier): Unknown identifier `edgeAt_eq_some_of_pos`
+colVerify_honest : ∀ (Com : List Bool → List Bool) {n ℓn : ℕ} {G : Graph n} {c : Fin n → Fin 3},
+  ProperColoring G c →
+    ∀ (π : Equiv.Perm (Fin 3)) (r : Fin n → Fin ℓn → Bool) {e : ℕ} {p : Fin n × Fin n},
+      edgeAt G e = some p →
+        colVerify Com ℓn G e (colCommit Com n ℓn (fun i => π (c i)) r) (colOpen (fun i => π (c i)) r p) = true
+Real.exp_nonneg : ∀ (x : ℝ), 0 ≤ Real.exp x
+Real.add_one_le_exp : ∀ (x : ℝ), x + 1 ≤ Real.exp x
+Nat.sqrt_le_self : ∀ (n : ℕ), n.sqrt ≤ n
+@CommitmentLemmas.acceptProb_eq_uexp_fst : ∀ {σ : Type u_1} {γ : Type u_2} {κ : Type u_3} {ρ : Type u_4}
+  [inst : Fintype σ] [inst_1 : Fintype κ] [inst_2 : Fintype ρ] (X : σ → γ) (D : γ → κ × ρ → Bool),
+  acceptProb X D = uexp fun c₀ => acceptProb X fun z c => D z (c₀, c)
+Probe/ColSupp.lean:25:8: error(lean.unknownIdentifier): Unknown identifier `LevinTransfer.distinguisherL_lift`
+PolyExpr.subst : PolyExpr → PolyExpr → PolyExpr
+FAIL(Probe/ColSupp): lean exited with status 1
+FAIL(Probe/ColSupp): no fresh .olean produced
+rc=1
+Fri Nov  6 02:30:25 UTC 2026
+
+## Classification (col-a)
+- Present and imported by Protocol.lean: every name of the R3COL_witnessRelation and colRep_efficientProverProof
+  sketches (WitnessRelation, mem_L3COL_iff, length_encColoring, length_encGraph, decGraph_encGraph,
+  decColoring_encColoring, polyTimeComputable_pairEq, polyTimeComputable_blockMap, polyTimeComputable_iterateEmit,
+  Complexity.polyTimeComputable_iterate (Randomized/Repetition; `polyTimeComputable_iterate` resolves to it),
+  polyTimeComputable_and, polyTimeComputable_lenEq, polyTimeComputable_ite, colWellFormed(_encGraph),
+  encGraph_injective, col_efficientProverProofErr, colProverRep_efficient, colVerifierRep_efficient,
+  colProtocol_proverBounded, Protocol.proverBounded_iff, Protocol.exists_proverCoins_le, exec_succ,
+  statClose_sampleEdgeIdx, StatClose.prod, StatClose.abs_uprob_sub_le_prod, StatClose.comp_pushesUniform,
+  uprob_col_cheat_le, challengesBefore/UpTo, one_sub_inv_pow_mul_le_exp, Nat.sqrt_eq, negligible_exp_neg_sqrt_div,
+  Negligible.mul_pow/add/mono, negligible_two_pow_neg, HardcoreBit.uprob_eq_one_of_forall, encGraph_mem_L3COL_iff,
+  edgeCount_pos_of_not_threeColorable, uprob_not, EfficientProverProof, InteractiveProof, colIterations, colCoinSlice,
+  ColProofs.{colProverRep_next_eq, colVerifierRep_next_eq, pushesUniform_castLE, sampleEdgeIdx_ofFn_castLE},
+  OneWay.uprob_congr; supplementary: Protocol.outV_withV, Protocol.withV_self, PolyExpr.eval_normal/subst/var,
+  ColMachines.encGraph_decGraph_eq_take, ColMachines.decColoring_val, sampleEdgeIdx_lt, edgeAt_eq_some_edgeOf,
+  colVerify_honest, OneWay.statClose_pi (col-b log; same closure).
+- Present, private to Protocol.lean (the unit's own file, usable there; not citable from a helper module):
+  colProtocol_outV_honest, uprob_check_uniform_le, colProtocol_sound (all `private theorem`, Protocol.lean:681–723).
+- Present but not imported (templates; importing is optional, no cycle: the GI modules are earlier in the
+  topological order and import nothing from ThreeColoring):
+  GI.Riso_decidable, GI.risoTest_iff, GI.wellFormed_poly (GraphIsomorphism/Efficiency.lean);
+  GI.exec_repViews, GI.gi_rep_efficientProverProof (GraphIsomorphism/SoundnessRepGI.lean);
+  GI.statClose_pi (GraphIsomorphism/SoundnessRep.lean), GIZK.statClose_pi (GraphIsomorphismZK/Closeness.lean).
+- Absent under the probed spelling: `statClose_pi` unqualified (use OneWay.statClose_pi, imported);
+  `exec_repViews` unqualified (it is GI.exec_repViews); `edgeCount_eq`, `decGraph_apply`, `edgeAt_eq_some_of_pos`
+  unqualified (namespaced/private helpers; not cited by the brief).

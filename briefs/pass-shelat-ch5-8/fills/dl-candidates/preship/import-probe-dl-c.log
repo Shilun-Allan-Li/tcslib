@@ -1,0 +1,620 @@
+# Import probe, unit dl-c
+
+Tree: the pre-ship worktree at the issue-tree commit (see the brief's Pre-ship record); olean tree filldl-oleans; each probe checked alone with scripts/lean_check_tree.sh (PATH with ~/.elan/bin, TCSLIB_OLEANS set).
+A probe file is `#check @Name` per line inside `namespace TCSlib.Cryptography.Candidates` with the owned file's `open`s; a Lean error on a line marks that name UNRESOLVED.
+
+Worktree HEAD: 5f2771631fe853dae9c2aa44791ae5b0e09c95eb
+## Classification
+- Present in ElGamal's scope: every name of the seven dl-c sketches except those listed next.
+- Wrong name: PushesUniform.uprob_eq -> HardcoreBit.PushesUniform.uprob_eq (verified in DLCImports2).
+- Present but not imported: dlog (Candidates/DiscreteLogHardcore), in the alternative route of elGamal_secure's Hybrid 3. Adding
+  `import TCSlib.Cryptography.Candidates.DiscreteLogHardcore` to ElGamal creates no cycle and adds one module (cyclecheck.py); verified in
+  DLCImports2. Optional import, authorized only for that alternative; the Equiv.mulRight route needs none.
+- Unresolved, expected: the dl-b targets; the templates as for dl-a.
+- Imports dl-c may add: TCSlib.Cryptography.Candidates.DiscreteLogHardcore (optional).
+
+
+## Probe/DLCImports.lean
+Names of the seven ElGamal sketches plus every name the draft brief cites, in ElGamal.lean's scope (other units' targets are expected to be unresolved here).
+Header:
+  import TCSlib.Cryptography.Candidates.ElGamal
+Names checked: 133; unresolved: 14
+
+  present     sqTo
+  present     QR
+  present     uprob_eq_card_filter
+  present     card_QR_safe
+  present     Fintype.card_subtype_compl
+  present     pushesUniform_sqTo_safe
+  present     HardcoreBit.PushesUniform.uprob_eq
+  UNRESOLVED  PushesUniform.uprob_eq   -- Unknown identifier `PushesUniform.uprob_eq`
+  present     StatClose
+  present     polyTimeComputable_pairTakePoly
+  present     polyTimeComputable_pairDropPoly
+  present     NUPPT.polyTimeComputable_layout
+  present     NUPPT.polyTimeComputable_output
+  present     NUPPT.output
+  present     Complexity.polyTimeComputable_iterateFind
+  present     polyTimeComputable_iterateFind
+  present     ArithmeticFP.le
+  present     ArithmeticFP.sub
+  present     ArithmeticFP.size
+  present     ArithmeticFP.modExp
+  present     ArithmeticFP.mul
+  present     ArithmeticFP.divMod
+  present     ArithmeticFP.xgcd
+  present     polyTimeComputable_unaryPoly
+  present     polyTimeComputable_blockMap
+  present     polyTimeComputable_pairEq
+  present     polyTimeComputable_ite
+  present     egGenRaw
+  present     egEncRaw
+  present     egGroupGenRaw
+  present     egDecStr
+  present     modExpStr_pairEncode
+  present     modExpStr
+  present     xgcdStr
+  present     mulStr_pairEncode
+  present     mul_lt_two_pow_add
+  present     divModStr
+  present     listToNat_natToList
+  present     ZMod.inv
+  present     egGen_runAt
+  present     egEnc_runAt
+  present     egGenParts
+  present     egEncParts
+  present     ExpGroupGen.valid
+  present     ExpGroupGen.wellFormed
+  present     egUnit_pos
+  present     egUnit_lt
+  present     egUnit
+  present     egCanon
+  present     Nat.Prime.dvd_of_dvd_pow
+  present     dlP
+  present     dlM
+  present     dlG
+  present     pow_mul
+  present     mul_comm
+  present     Units.mul_inv_cancel_right
+  present     ZMod.natCast_mod
+  present     natToList
+  present     decodeFin_ofFn
+  present     natToBits
+  present     egSquareGen
+  present     egSquareGen_valid
+  present     egGroupGen
+  present     egGroupGenMachine_runAt
+  present     NUPPT.advice
+  present     NUPPT.coins
+  present     NUPPT.coinLen
+  present     NUPPT.exists_seq
+  present     NUPPT.exists_comp
+  present     GroupPKScheme.challenge
+  present     GroupPKScheme.Secure
+  present     acceptProb_comp_equiv
+  present     ddhReal
+  present     ddhRandom
+  present     ddhExpo
+  present     ddhExpo_statClose
+  present     DDHAssumption
+  present     Ensemble.Indist
+  present     Ensemble.indist_iff_exists_negligible
+  present     expOrd_of_valid
+  present     expF_injective
+  present     uprob_mono
+  present     statClose_of_uprob_ne
+  present     statClose_sampleBelowL
+  present     StatClose.map
+  present     StatClose.abs_uprob_sub_le_prod
+  present     uprob_sq_eq_one
+  present     card_sqrt_safe
+  present     ExpGroupGen.FullLengthExcept
+  present     ExpGroupGen.FullLength
+  present     Equiv.mulRight
+  present     HardcoreBit.pushesUniform_add_right
+  UNRESOLVED  dlog   -- Unknown identifier `dlog`
+  present     uprob_prod
+  present     uprob_comp_equiv
+  present     negligible_two_pow_neg
+  present     Negligible.const_mul
+  present     Negligible.add
+  present     Negligible.mono
+  present     distAdv
+  present     pairFstD
+  present     pairSndD
+  present     ArithmeticFP
+  present     StatClose.comp_equiv_right
+  present     StatClose.comp_pushesUniform
+  present     statClose_firstHit
+  UNRESOLVED  statClose_permFromCoins   -- Unknown identifier `statClose_permFromCoins`
+  present     statClose_rejectionSample
+  UNRESOLVED  polyTimeComputable_prgPadFun   -- Unknown identifier `polyTimeComputable_prgPadFun`
+  UNRESOLVED  polyTimeComputable_preFun   -- Unknown identifier `polyTimeComputable_preFun`
+  UNRESOLVED  polyTimeComputable_postFun   -- Unknown identifier `polyTimeComputable_postFun`
+  UNRESOLVED  polyTimeComputable_blockMapFun   -- Unknown identifier `polyTimeComputable_blockMapFun`
+  present     sampleBelowL_eq_rejectBlocksL
+  present     statClose_rejectBlocksL
+  present     polyTimeComputable_expSampleRaw
+  present     expSampler_spec
+  present     expCollection_sampleClose
+  present     expCollection_invProbAt_le
+  present     expCollection_oneWay
+  UNRESOLVED  dlBits_pow   -- Unknown identifier `dlBits_pow`
+  UNRESOLVED  uprob_trial_ge   -- Unknown identifier `uprob_trial_ge`
+  UNRESOLVED  uprob_majOracle_ne_le   -- Unknown identifier `uprob_majOracle_ne_le`
+  UNRESOLVED  invProb_shiftInverter_ge   -- Unknown identifier `invProb_shiftInverter_ge`
+  UNRESOLVED  invProb_dlInverter_ge   -- Unknown identifier `invProb_dlInverter_ge`
+  UNRESOLVED  polyTimeComputable_halfStr   -- Unknown identifier `polyTimeComputable_halfStr`
+  UNRESOLVED  fullDLCollection_hardCore   -- Unknown identifier `fullDLCollection_hardCore`
+  present     statClose_sq_generator
+  present     polyTimeComputable_egGenRaw
+  present     polyTimeComputable_egEncRaw
+  present     egDecStr_apply
+  present     elGamal_correct
+  present     polyTimeComputable_egGroupGenRaw
+  present     elGamal_secure
+
+### Lean output (verbatim)
+sqTo : (N : ℕ) → (ZMod N)ˣ → ↥(QR N)
+QR : (N : ℕ) → Subgroup (ZMod N)ˣ
+@uprob_eq_card_filter : ∀ {α : Type u_1} [inst : Fintype α] (p : α → Prop) [inst_1 : DecidablePred p],
+  uprob p = ↑(#(filter p univ)) / ↑(Fintype.card α)
+@card_QR_safe : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)], p = 2 * q + 1 → Nat.card ↥(QR p) = q
+@Fintype.card_subtype_compl : ∀ {α : Type u_1} [inst : Fintype α] (p : α → Prop) [inst_1 : Fintype { x // p x }]
+  [inst_2 : Fintype { x // ¬p x }], Fintype.card { x // ¬p x } = Fintype.card α - Fintype.card { x // p x }
+@pushesUniform_sqTo_safe : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p = 2 * q + 1 → HardcoreBit.PushesUniform (sqTo p)
+@HardcoreBit.PushesUniform.uprob_eq : ∀ {Ω : Type u_1} {γ : Type u_2} [inst : Fintype Ω] [inst_1 : Fintype γ]
+  {π : Ω → γ}, HardcoreBit.PushesUniform π → ∀ (p : γ → Prop), (uprob fun ω => p (π ω)) = uprob p
+Probe/DLCImports.lean:13:8: error(lean.unknownIdentifier): Unknown identifier `PushesUniform.uprob_eq`
+@StatClose : {σ : Type u_1} → {τ : Type u_2} → {γ : Type u_3} → [Fintype σ] → [Fintype τ] → (σ → γ) → (τ → γ) → ℝ → Prop
+polyTimeComputable_pairTakePoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.take (p.eval (pairFstD z).length) (pairSndD z)
+polyTimeComputable_pairDropPoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.drop (p.eval (pairFstD z).length) (pairSndD z)
+@NUPPT.polyTimeComputable_layout : ∀ {f₁ f₂ f₃ f₄ : List Bool → List Bool},
+  PolyTimeComputable f₁ →
+    PolyTimeComputable f₂ →
+      PolyTimeComputable f₃ →
+        PolyTimeComputable f₄ → PolyTimeComputable fun z => NUPPT.layout (f₁ z) (f₂ z) (f₃ z) (f₄ z)
+NUPPT.polyTimeComputable_output : ∀ (A : NUPPT), PolyTimeComputable A.output
+NUPPT.output : NUPPT → List Bool → List Bool
+@polyTimeComputable_iterateFind : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          PolyTimeComputable out →
+            ∀ (R P : PolyExpr),
+              (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+                PolyTimeComputable fun x =>
+                  match List.find? (fun i => acc (g^[i] x)) (List.range (R.eval x.length + 1)) with
+                  | some i => out (g^[i] x)
+                  | none => []
+@polyTimeComputable_iterateFind : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          PolyTimeComputable out →
+            ∀ (R P : PolyExpr),
+              (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+                PolyTimeComputable fun x =>
+                  match List.find? (fun i => acc (g^[i] x)) (List.range (R.eval x.length + 1)) with
+                  | some i => out (g^[i] x)
+                  | none => []
+ArithmeticFP.le : ArithmeticFP → PolyTimeComputable leStr
+ArithmeticFP.sub : ArithmeticFP → PolyTimeComputable subStr
+ArithmeticFP.size : ArithmeticFP → PolyTimeComputable sizeStr
+ArithmeticFP.modExp : ArithmeticFP → PolyTimeComputable modExpStr
+ArithmeticFP.mul : ArithmeticFP → PolyTimeComputable mulStr
+ArithmeticFP.divMod : ArithmeticFP → PolyTimeComputable divModStr
+ArithmeticFP.xgcd : ArithmeticFP → PolyTimeComputable xgcdStr
+polyTimeComputable_unaryPoly : ∀ (p : PolyExpr), PolyTimeComputable fun x => List.replicate (p.eval x.length) true
+polyTimeComputable_blockMap : ∀ (b : PolyExpr) {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable fun z =>
+      List.flatMap
+        (fun i => g (List.take (b.eval (pairFstD z).length) (List.drop (i * b.eval (pairFstD z).length) (pairSndD z))))
+        (List.range ((pairSndD z).length / b.eval (pairFstD z).length))
+polyTimeComputable_pairEq : PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)]
+@polyTimeComputable_ite : ∀ {p : List Bool → Bool} {f g : List Bool → List Bool},
+  (PolyTimeComputable fun x => [p x]) →
+    PolyTimeComputable f → PolyTimeComputable g → PolyTimeComputable fun x => if p x = true then f x else g x
+egGenRaw : SafePrimeGen → List Bool → List Bool
+egEncRaw : List Bool → List Bool
+egGroupGenRaw : SafePrimeGen → List Bool → List Bool
+egDecStr : List Bool → List Bool
+modExpStr_pairEncode : ∀ (a x N : List Bool),
+  modExpStr (pairEncode a (pairEncode x N)) = natToList N.length (listToNat a ^ listToNat x % listToNat N)
+modExpStr : List Bool → List Bool
+xgcdStr : List Bool → List Bool
+mulStr_pairEncode : ∀ (a b : List Bool),
+  mulStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a * listToNat b)
+@mul_lt_two_pow_add : ∀ {k M N : ℕ}, M < 2 ^ k → N < 2 ^ k → M * N < 2 ^ (k + k)
+divModStr : List Bool → List Bool
+@listToNat_natToList : ∀ {k N : ℕ}, N < 2 ^ k → listToNat (natToList k N) = N
+ZMod.inv : (n : ℕ) → ZMod n → ZMod n
+egGen_runAt : ∀ (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : (egGen H G).Coins n),
+  (egGen H G).runAt n [] r =
+    pairEncode
+      (egGenParts n (pairFstD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r))))
+          (pairFstD (pairSndD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r)))))
+          (List.take (n * n) (List.drop (G.gen.coinLen n) (List.ofFn r)))
+          (List.drop (G.gen.coinLen n + n * n) (List.ofFn r))).1
+      (egGenParts n (pairFstD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r))))
+          (pairFstD (pairSndD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r)))))
+          (List.take (n * n) (List.drop (G.gen.coinLen n) (List.ofFn r)))
+          (List.drop (G.gen.coinLen n + n * n) (List.ofFn r))).2
+egEnc_runAt : ∀ (H : ArithmeticFP) (n : ℕ) (pk m : List Bool) (r : (egEnc H).Coins n),
+  (egEnc H).runAt n (pairEncode pk m) r = egEncParts n pk m (List.ofFn r)
+egGenParts : ℕ → List Bool → List Bool → List Bool → List Bool → List Bool × List Bool
+egEncParts : ℕ → List Bool → List Bool → List Bool → List Bool
+@ExpGroupGen.valid : ∀ {V : List Bool → Prop} (self : ExpGroupGen V) (n : ℕ) (r : self.gen.Coins n),
+  self.n₀ ≤ n → V (self.gen.runAt n [] r)
+@ExpGroupGen.wellFormed : ∀ {V : List Bool → Prop} (self : ExpGroupGen V) (n : ℕ) (r : self.gen.Coins n),
+  self.n₀ ≤ n → WellFormedIndex n (self.gen.runAt n [] r)
+egUnit_pos : ∀ (n p : ℕ) (r : List Bool), 0 < egUnit n p r
+@egUnit_lt : ∀ {p : ℕ}, 2 ≤ p → ∀ (n : ℕ) (r : List Bool), egUnit n p r < p
+egUnit : ℕ → ℕ → List Bool → ℕ
+egCanon : ℕ → ℕ → ℕ → ℕ
+@Nat.Prime.dvd_of_dvd_pow : ∀ {p m n : ℕ}, Nat.Prime p → p ∣ m ^ n → p ∣ m
+dlP : List Bool → ℕ
+dlM : List Bool → ℕ
+dlG : List Bool → ℕ
+@pow_mul : ∀ {M : Type u_1} [inst : Monoid M] (a : M) (m n : ℕ), a ^ (m * n) = (a ^ m) ^ n
+@mul_comm : ∀ {G : Type u_1} [inst : CommMagma G] (a b : G), a * b = b * a
+@Units.mul_inv_cancel_right : ∀ {α : Type u_1} [inst : Monoid α] (a : α) (b : αˣ), a * ↑b * ↑b⁻¹ = a
+ZMod.natCast_mod : ∀ (a n : ℕ), ↑(a % n) = ↑a
+natToList : ℕ → ℕ → List Bool
+@decodeFin_ofFn : ∀ {ℓ : ℕ} (x : Fin ℓ → Bool), decodeFin ℓ (List.ofFn x) = some x
+natToBits : (k : ℕ) → ℕ → Fin k → Bool
+egSquareGen : ℕ → ℕ → ℕ
+@egSquareGen_valid : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p = 2 * q + 1 → ∀ {g : ℕ}, 0 < g → g < p → 0 < egSquareGen p g ∧ egSquareGen p g < p ∧ orderOf ↑(egSquareGen p g) = q
+egGroupGen : ArithmeticFP → SafePrimeGen → SafePrimeGen
+egGroupGenMachine_runAt : ∀ (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : (egGroupGenMachine H G).Coins n),
+  (egGroupGenMachine H G).runAt n [] r =
+    egGroupParts n (pairFstD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r))))
+      (pairFstD (pairSndD (G.gen.runAtL n [] (List.take (G.gen.coinLen n) (List.ofFn r)))))
+      (List.take (n * n) (List.drop (G.gen.coinLen n) (List.ofFn r)))
+NUPPT.advice : NUPPT → ℕ → List Bool
+NUPPT.coins : NUPPT → PolyExpr
+NUPPT.coinLen : NUPPT → ℕ → ℕ
+NUPPT.exists_seq : ∀ (A B : NUPPT),
+  ∃ C,
+    C.coins = A.coins.add B.coins ∧
+      (A.Uniform → B.Uniform → C.Uniform) ∧
+        ∀ (n : ℕ) (y r : List Bool),
+          C.runAtL n y r =
+            B.runAtL n (pairEncode y (A.runAtL n y (List.take (A.coinLen n) r))) (List.drop (A.coinLen n) r)
+NUPPT.exists_comp : ∀ (A : NUPPT) {pre post : List Bool → List Bool},
+  PolyTimeComputable pre →
+    PolyTimeComputable post →
+      ∃ B,
+        B.coins = A.coins ∧
+          B.adv = A.adv ∧
+            B.advice = A.advice ∧ ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = post (A.runAtL n (pre y) r)
+GroupPKScheme.challenge : (S : GroupPKScheme) →
+  (n : ℕ) → (M : NUPPT) → Bool → S.gen.Coins n × M.Coins n × S.enc.Coins n → List Bool
+GroupPKScheme.Secure : GroupPKScheme → Prop
+@acceptProb_comp_equiv : ∀ {ρ : Type u_1} {σ : Type u_2} {τ : Type u_3} {γ : Type u_4} [inst : Fintype ρ]
+  [inst_1 : Fintype σ] [inst_2 : Fintype τ] (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool),
+  acceptProb (fun s => X (e s)) D = acceptProb X D
+ddhReal : SafePrimeGen → Ensemble ddhLen
+ddhRandom : SafePrimeGen → Ensemble ddhLen
+ddhExpo : (n : ℕ) → (i : List Bool) → (Fin (n * n) → Bool) → ZMod (expOrd i)
+@ddhExpo_statClose : ∀ {n : ℕ} {i : List Bool},
+  ExpValid i → WellFormedIndex n i → StatClose (ddhExpo n i) id ((1 / 2) ^ n)
+DDHAssumption : SafePrimeGen → Prop
+@Ensemble.Indist : {ℓ : PolyExpr} → Ensemble ℓ → Ensemble ℓ → Prop
+@Ensemble.indist_iff_exists_negligible : ∀ {ℓ : PolyExpr} (X Y : Ensemble ℓ),
+  X.Indist Y ↔
+    ∀ (D : NUPPT), ∃ ε, Negligible ε ∧ ∀ (n : ℕ), distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) < ε n
+@expOrd_of_valid : ∀ {i : List Bool}, ExpValid i → expOrd i = dlM i
+@expF_injective : ∀ {i : List Bool}, ExpValid i → Function.Injective (expF i)
+@uprob_mono : ∀ {α : Type u_1} [inst : Fintype α] {p q : α → Prop}, (∀ (a : α), p a → q a) → uprob p ≤ uprob q
+@statClose_of_uprob_ne : ∀ {σ : Type u_1} {γ : Type u_2} [inst : Fintype σ] (X Y : σ → γ),
+  StatClose X Y (uprob fun s => X s ≠ Y s)
+@statClose_sampleBelowL : ∀ {m n : ℕ},
+  0 < m → m < 2 ^ n → StatClose (fun b => (sampleBelowL m m.size n n (List.ofFn b)).getD 0) (fun x => ↑x) ((1 / 2) ^ n)
+@StatClose.map : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {γ' : Type u_4} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {X : σ → γ} {Y : τ → γ} {δ : ℝ}, StatClose X Y δ → ∀ (g : γ → γ'), StatClose (fun s => g (X s)) (fun t => g (Y t)) δ
+@StatClose.abs_uprob_sub_le_prod : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ]
+  [inst_1 : Fintype τ] {ρ : Type u_4} [inst_2 : Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (P : γ → ρ → Prop), |(uprob fun z => P (X z.1) z.2) - uprob fun z => P (Y z.1) z.2| ≤ δ
+@uprob_sq_eq_one : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p = 2 * q + 1 → (uprob fun g => g ^ 2 = 1) = 1 / ↑q
+@card_sqrt_safe : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p = 2 * q + 1 → ∀ {x : (ZMod p)ˣ}, x ∈ QR p → #{y | y ^ 2 = x} = 2
+@ExpGroupGen.FullLengthExcept : {V : List Bool → Prop} → ExpGroupGen V → (ℕ → ℝ) → Prop
+@ExpGroupGen.FullLength : {V : List Bool → Prop} → ExpGroupGen V → Prop
+@Equiv.mulRight : {G : Type u_1} → [Group G] → G → Equiv.Perm G
+@HardcoreBit.pushesUniform_add_right : ∀ {G : Type u_1} [inst : AddGroup G] [inst_1 : Fintype G] (e : G),
+  HardcoreBit.PushesUniform fun a => a + e
+Probe/DLCImports.lean:98:8: error(lean.unknownIdentifier): Unknown identifier `dlog`
+@uprob_prod : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] (p : α × β → Prop),
+  uprob p = uexp fun a => uprob fun b => p (a, b)
+@uprob_comp_equiv : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] (e : α ≃ β) (p : β → Prop),
+  (uprob fun a => p (e a)) = uprob p
+negligible_two_pow_neg : Negligible fun n => 2⁻¹ ^ n
+@Negligible.const_mul : ∀ {μ : ℕ → ℝ}, Negligible μ → ∀ (a : ℝ), Negligible fun n => a * μ n
+@Negligible.add : ∀ {μ ν : ℕ → ℝ}, Negligible μ → Negligible ν → Negligible fun n => μ n + ν n
+@Negligible.mono : ∀ {μ ν : ℕ → ℝ}, Negligible μ → (∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) → Negligible ν
+@distAdv : {ρ : Type u_1} →
+  {σ : Type u_2} →
+    {τ : Type u_3} → {γ : Type u_4} → [Fintype ρ] → [Fintype σ] → [Fintype τ] → (σ → γ) → (τ → γ) → (γ → ρ → Bool) → ℝ
+pairFstD : List Bool → List Bool
+pairSndD : List Bool → List Bool
+ArithmeticFP : Prop
+@StatClose.comp_equiv_right : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {τ' : Type u_4} [inst_2 : Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (e : τ' ≃ τ), StatClose X (fun t => Y (e t)) δ
+@StatClose.comp_pushesUniform : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {Ω : Type u_4} [inst_2 : Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ {π : Ω → σ}, HardcoreBit.PushesUniform π → StatClose (fun ω => X (π ω)) Y δ
+@statClose_firstHit : ∀ {α : Type u_1} (E : α → Prop) [inst : DecidablePred E] [inst_1 : Fintype α] [DecidableEq α]
+  [Nonempty α] (T : ℕ) {d : α}, E d → StatClose (fun xs => (firstHit E xs).getD d) (fun e => ↑e) ((1 - uprob E) ^ T)
+Probe/DLCImports.lean:112:8: error(lean.unknownIdentifier): Unknown identifier `statClose_permFromCoins`
+statClose_rejectionSample : ∀ (m k T : ℕ),
+  0 < m → m ≤ 2 ^ k → ∀ (d : Fin m), StatClose (fun b => (rejectionSample m k T b).getD d) id ((1 - ↑m / 2 ^ k) ^ T)
+Probe/DLCImports.lean:114:8: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_prgPadFun`
+Probe/DLCImports.lean:115:8: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_preFun`
+Probe/DLCImports.lean:116:8: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_postFun`
+Probe/DLCImports.lean:117:8: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_blockMapFun`
+sampleBelowL_eq_rejectBlocksL : ∀ (m k B T : ℕ), sampleBelowL m k B T = rejectBlocksL (fun x => x < m) k B T
+statClose_rejectBlocksL : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ),
+  k ≤ B →
+    ∀ {d : ℕ},
+      E d →
+        d < 2 ^ k →
+          StatClose (fun r => (rejectBlocksL E k B T (List.ofFn r)).getD d) (fun e => ↑↑e)
+            ((1 - uprob fun v => E ↑v) ^ T)
+polyTimeComputable_expSampleRaw : ArithmeticFP → PolyTimeComputable expSampleRaw
+@expSampler_spec : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V),
+  (∀ (i : List Bool), V i → ExpValid i) →
+    ∀ (n : ℕ) (r : (expGen G).Coins n) (s : (expSampler H).Coins n),
+      ∃ x,
+        expDec (pairFstD ((expGen G).runAt n [] r)) ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s) =
+            some x ∧
+          expEval
+              (pairEncode (pairFstD ((expGen G).runAt n [] r))
+                ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s)) =
+            expF (pairFstD ((expGen G).runAt n [] r)) x
+@expCollection_sampleClose : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i), ∃ δ, Negligible δ ∧ (expCollection H G hV).SampleClose δ
+@expCollection_invProbAt_le : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i) (A : NUPPT) {n : ℕ},
+  G.n₀ ≤ n → (expCollection H G hV).invProbAt A n ≤ G.dlProb A n
+@expCollection_oneWay : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i), G.DLHard → (expCollection H G hV).OneWay
+Probe/DLCImports.lean:125:8: error(lean.unknownIdentifier): Unknown identifier `dlBits_pow`
+Probe/DLCImports.lean:126:8: error(lean.unknownIdentifier): Unknown identifier `uprob_trial_ge`
+Probe/DLCImports.lean:127:8: error(lean.unknownIdentifier): Unknown identifier `uprob_majOracle_ne_le`
+Probe/DLCImports.lean:128:8: error(lean.unknownIdentifier): Unknown identifier `invProb_shiftInverter_ge`
+Probe/DLCImports.lean:129:8: error(lean.unknownIdentifier): Unknown identifier `invProb_dlInverter_ge`
+Probe/DLCImports.lean:130:8: error(lean.unknownIdentifier): Unknown identifier `polyTimeComputable_halfStr`
+Probe/DLCImports.lean:131:8: error(lean.unknownIdentifier): Unknown identifier `fullDLCollection_hardCore`
+@statClose_sq_generator : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)] [Fact (Nat.Prime q)],
+  p = 2 * q + 1 → StatClose (sqTo p) (fun y => ↑y) (1 / ↑q)
+polyTimeComputable_egGenRaw : ArithmeticFP → ∀ (G : SafePrimeGen), PolyTimeComputable (egGenRaw G)
+polyTimeComputable_egEncRaw : ArithmeticFP → PolyTimeComputable egEncRaw
+egDecStr_apply : ∀ (pstr t a c₁ c₂ : List Bool),
+  0 < listToNat pstr →
+    egDecStr (pairEncode (pairEncode (pairEncode pstr t) a) (pairEncode c₁ c₂)) =
+      natToList pstr.length (listToNat c₂ * (↑(listToNat c₁ ^ listToNat a % listToNat pstr))⁻¹.val % listToNat pstr)
+elGamal_correct : ∀ (H : ArithmeticFP) (G : SafePrimeGen) {n : ℕ},
+  G.n₀ ≤ n →
+    ∀ (rg : (egGen H G).Coins n) (re : (egEnc H).Coins n) (m : ℕ),
+      egCanon (dlP (pairFstD (pairFstD ((egGen H G).runAt n [] rg))))
+            (dlM (pairFstD (pairFstD ((egGen H G).runAt n [] rg)))) m =
+          m →
+        decodeFin n
+            (egDecStr
+              (pairEncode (pairSndD ((egGen H G).runAt n [] rg))
+                ((egEnc H).runAt n (pairEncode (pairFstD ((egGen H G).runAt n [] rg)) (natToList n m)) re))) =
+          some (natToBits n m)
+polyTimeComputable_egGroupGenRaw : ArithmeticFP → ∀ (G : SafePrimeGen), PolyTimeComputable (egGroupGenRaw G)
+elGamal_secure : ∀ (H : ArithmeticFP) (G : SafePrimeGen),
+  (∃ δ, Negligible δ ∧ ExpGroupGen.FullLengthExcept G δ) → DDHAssumption (egGroupGen H G) → (elGamal H G).Secure
+FAIL(Probe/DLCImports): lean exited with status 1
+FAIL(Probe/DLCImports): no fresh .olean produced
+
+
+## Probe/DLCImports2.lean
+The corrected forms; `dlog` with the optional import of DiscreteLogHardcore (no cycle).
+Header:
+  import TCSlib.Cryptography.Candidates.ElGamal
+  import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+Names checked: 4; unresolved: 0
+
+  present     HardcoreBit.PushesUniform.uprob_eq
+  present     dlog
+  present     dlog_expo
+  present     expo_dlog
+
+### Lean output (verbatim)
+@HardcoreBit.PushesUniform.uprob_eq : ∀ {Ω : Type u_1} {γ : Type u_2} [inst : Fintype Ω] [inst_1 : Fintype γ]
+  {π : Ω → γ}, HardcoreBit.PushesUniform π → ∀ (p : γ → Prop), (uprob fun ω => p (π ω)) = uprob p
+@dlog : {p : ℕ} → [hp : Fact (Nat.Prime p)] → (ZMod p)ˣ → (ZMod p)ˣ → ZMod (p - 1)
+@dlog_expo : ∀ {p : ℕ} [hp : Fact (Nat.Prime p)] [NeZero (p - 1)] {g : (ZMod p)ˣ},
+  IsGenerator g → ∀ (x : ZMod (p - 1)), dlog g (expo g x) = x
+@expo_dlog : ∀ {p : ℕ} [hp : Fact (Nat.Prime p)] [NeZero (p - 1)] {g : (ZMod p)ˣ},
+  IsGenerator g → ∀ (y : (ZMod p)ˣ), expo g (dlog g y) = y
+
+
+## Probe/Templates.lean
+The draft's template lemmas, resolved under their full names.
+Header:
+  import TCSlib.Cryptography.Asymptotic.Permutations
+  import TCSlib.Cryptography.Asymptotic.Encryption
+  import TCSlib.Cryptography.Asymptotic.MultiMessageLemmas
+Names checked: 5; unresolved: 0
+
+  present     statClose_permFromCoins
+  present     polyTimeComputable_prgPadFun
+  present     MultiMsg.polyTimeComputable_preFun
+  present     MultiMsg.polyTimeComputable_postFun
+  present     MultiMsg.polyTimeComputable_blockMapFun
+
+### Lean output (verbatim)
+statClose_permFromCoins : ∀ (n k T : ℕ),
+  n ≤ 2 ^ k →
+    ∀ (d : Equiv.Perm (Fin n)), StatClose (fun b => (permFromCoins n k T b).getD d) id (↑n * (1 - 1 / 2 ^ k) ^ T)
+@polyTimeComputable_prgPadFun : ∀ {F : List Bool → List Bool}, PolyTimeComputable F → PolyTimeComputable (prgPadFun F)
+MultiMsg.polyTimeComputable_preFun : PolyTimeComputable MultiMsg.preFun
+MultiMsg.polyTimeComputable_postFun : PolyTimeComputable MultiMsg.postFun
+MultiMsg.polyTimeComputable_blockMapFun : ∀ (b : PolyExpr) {g : List Bool → List Bool},
+  PolyTimeComputable g → PolyTimeComputable (MultiMsg.blockMapFun b g)
+
+
+## Probe/Published.lean
+The "already published" lemma list of the brief (all units), with ElGamal, DiscreteLogHardcore, ThreeColoring/Language and Permutations imported.
+Header:
+  import TCSlib.Cryptography.Candidates.ElGamal
+  import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+  import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language
+  import TCSlib.Cryptography.Asymptotic.Permutations
+Names checked: 46; unresolved: 0
+
+  present     rejectBlocksL_eq
+  present     rejectBlocksL_spec
+  present     sampleBelowL_eq_rejectBlocksL
+  present     sampleBelowL_lt
+  present     bitsEquiv_val
+  present     bitsToNat_eq_listToNat
+  present     uprob_bitsToNat_lt
+  present     mem_QR_iff
+  present     coe_sqTo
+  present     leStr_pairEncode
+  present     modExpStr_pairEncode
+  present     mulStr_pairEncode
+  present     subStr_pairEncode
+  present     addStr_pairEncode
+  present     length_sizeStr
+  present     listToNat_natToList
+  present     natToList_length_listToNat
+  present     decodeFin_ofFn
+  present     ofFn_of_decodeFin_eq_some
+  present     padFin_ofFn
+  present     NUPPT.inParam_layout
+  present     NUPPT.inArg_layout
+  present     NUPPT.inAdvice_layout
+  present     NUPPT.inCoins_layout
+  present     NUPPT.runAt_eq
+  present     NUPPT.runAtL_ofPolyTime
+  present     NUPPT.runAtL_ofPolyTimeUniform
+  present     NUPPT.coins_ofPolyTime
+  present     NUPPT.coins_ofPolyTimeUniform
+  present     NUPPT.distinguisher_eq
+  present     expCollection_D
+  present     expCollection_index
+  present     expCollection_index_of_lt
+  present     expOrd_of_valid
+  present     WellFormedIndex.dlW_eq
+  present     dlP_lt_two_pow
+  present     Ensemble.indist_iff_exists_negligible
+  present     not_negligible_iff
+  present     StatClose.prod
+  present     StatClose.abs_uprob_sub_le_prod
+  present     distAdv_le_of_statClose
+  present     acceptProb_comp_equiv
+  present     statClose_sampleEdgeIdx
+  present     TCSlib.Cryptography.statClose_permFromCoins
+  present     Equiv.mulRight
+  present     HardcoreBit.pushesUniform_add_right
+
+### Lean output (verbatim)
+rejectBlocksL_eq : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ) (r : List Bool),
+  rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (listToNat (List.take k (List.drop (t * B) r))) then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+@rejectBlocksL_spec : ∀ {E : ℕ → Prop} [inst : DecidablePred E] {k B T : ℕ} {r : List Bool} {v : ℕ},
+  rejectBlocksL E k B T r = some v → E v ∧ v < 2 ^ k
+sampleBelowL_eq_rejectBlocksL : ∀ (m k B T : ℕ), sampleBelowL m k B T = rejectBlocksL (fun x => x < m) k B T
+@sampleBelowL_lt : ∀ {m k B T : ℕ} {r : List Bool} {v : ℕ}, sampleBelowL m k B T r = some v → v < m
+@bitsEquiv_val : ∀ {k : ℕ} (b : Fin k → Bool), ↑((bitsEquiv k) b) = bitsToNat b
+@bitsToNat_eq_listToNat : ∀ {n : ℕ} (b : Fin n → Bool), bitsToNat b = listToNat (List.ofFn b)
+@uprob_bitsToNat_lt : ∀ {m k : ℕ}, m ≤ 2 ^ k → (uprob fun b => bitsToNat b < m) = ↑m / 2 ^ k
+@mem_QR_iff : ∀ {N : ℕ} (x : (ZMod N)ˣ), x ∈ QR N ↔ ∃ y, y ^ 2 = x
+@coe_sqTo : ∀ {N : ℕ} (x : (ZMod N)ˣ), ↑(sqTo N x) = x ^ 2
+leStr_pairEncode : ∀ (a b : List Bool), leStr (pairEncode a b) = [decide (listToNat a ≤ listToNat b)]
+modExpStr_pairEncode : ∀ (a x N : List Bool),
+  modExpStr (pairEncode a (pairEncode x N)) = natToList N.length (listToNat a ^ listToNat x % listToNat N)
+mulStr_pairEncode : ∀ (a b : List Bool),
+  mulStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a * listToNat b)
+subStr_pairEncode : ∀ (a b : List Bool), subStr (pairEncode a b) = natToList a.length (listToNat a - listToNat b)
+addStr_pairEncode : ∀ (a b : List Bool),
+  addStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a + listToNat b)
+length_sizeStr : ∀ (w : List Bool), (sizeStr w).length = (listToNat w).size
+@listToNat_natToList : ∀ {k N : ℕ}, N < 2 ^ k → listToNat (natToList k N) = N
+natToList_length_listToNat : ∀ (w : List Bool), natToList w.length (listToNat w) = w
+@decodeFin_ofFn : ∀ {ℓ : ℕ} (x : Fin ℓ → Bool), decodeFin ℓ (List.ofFn x) = some x
+@ofFn_of_decodeFin_eq_some : ∀ {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}, decodeFin ℓ w = some x → List.ofFn x = w
+@padFin_ofFn : ∀ {ℓ : ℕ} (x : Fin ℓ → Bool), padFin ℓ (List.ofFn x) = x
+NUPPT.inParam_layout : ∀ (u y α r : List Bool), NUPPT.inParam (NUPPT.layout u y α r) = u
+NUPPT.inArg_layout : ∀ (u y α r : List Bool), NUPPT.inArg (NUPPT.layout u y α r) = y
+NUPPT.inAdvice_layout : ∀ (u y α r : List Bool), NUPPT.inAdvice (NUPPT.layout u y α r) = α
+NUPPT.inCoins_layout : ∀ (u y α r : List Bool), NUPPT.inCoins (NUPPT.layout u y α r) = r
+NUPPT.runAt_eq : ∀ (A : NUPPT) (n : ℕ) (y : List Bool) (r : A.Coins n), A.runAt n y r = A.runAtL n y (List.ofFn r)
+@NUPPT.runAtL_ofPolyTime : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+  (advice : ℕ → List Bool) (hα : ∀ (n : ℕ), (advice n).length ≤ adv.eval n) (n : ℕ) (y r : List Bool),
+  (NUPPT.ofPolyTime hf coins adv advice hα).runAtL n y r = f (pairEncode (pairEncode (NUPPT.advInput n y) (advice n)) r)
+@NUPPT.runAtL_ofPolyTimeUniform : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) (n : ℕ)
+  (y r : List Bool),
+  (NUPPT.ofPolyTimeUniform hf coins).runAtL n y r = f (pairEncode (pairEncode (NUPPT.advInput n y) []) r)
+@NUPPT.coins_ofPolyTime : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+  (advice : ℕ → List Bool) (hα : ∀ (n : ℕ), (advice n).length ≤ adv.eval n),
+  (NUPPT.ofPolyTime hf coins adv advice hα).coins = coins
+@NUPPT.coins_ofPolyTimeUniform : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr),
+  (NUPPT.ofPolyTimeUniform hf coins).coins = coins
+NUPPT.distinguisher_eq : ∀ (A : NUPPT) (n m : ℕ) (t : Fin m → Bool) (r : A.Coins n),
+  A.distinguisher n m t r = A.distinguisherL n (List.ofFn t) r
+@expCollection_D : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i) (i : List Bool), (expCollection H G hV).D i = ZMod (expOrd i)
+@expCollection_index : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n),
+  G.n₀ ≤ n → (expCollection H G hV).index n r = G.gen.runAt n [] r
+@expCollection_index_of_lt : ∀ {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+  (hV : ∀ (i : List Bool), V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n),
+  n < G.n₀ → (expCollection H G hV).index n r = dlDefaultIndex
+@expOrd_of_valid : ∀ {i : List Bool}, ExpValid i → expOrd i = dlM i
+@WellFormedIndex.dlW_eq : ∀ {n : ℕ} {i : List Bool}, WellFormedIndex n i → dlW i = n
+dlP_lt_two_pow : ∀ (i : List Bool), dlP i < 2 ^ dlW i
+@Ensemble.indist_iff_exists_negligible : ∀ {ℓ : PolyExpr} (X Y : Ensemble ℓ),
+  X.Indist Y ↔
+    ∀ (D : NUPPT), ∃ ε, Negligible ε ∧ ∀ (n : ℕ), distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) < ε n
+@not_negligible_iff : ∀ {μ : ℕ → ℝ}, ¬Negligible μ ↔ ∃ c, ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 / ↑n ^ c ≤ |μ n|
+@StatClose.prod : ∀ {σ : Type u_1} {σ' : Type u_2} {τ : Type u_3} {τ' : Type u_4} {γ : Type u_5} {γ' : Type u_6}
+  [inst : Fintype σ] [inst_1 : Fintype σ'] [inst_2 : Fintype τ] [inst_3 : Fintype τ'] {X : σ → γ} {X' : τ → γ}
+  {Y : σ' → γ'} {Y' : τ' → γ'} {δ δ' : ℝ},
+  StatClose X X' δ → StatClose Y Y' δ' → StatClose (fun z => (X z.1, Y z.2)) (fun z => (X' z.1, Y' z.2)) (δ + δ')
+@StatClose.abs_uprob_sub_le_prod : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ]
+  [inst_1 : Fintype τ] {ρ : Type u_4} [inst_2 : Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (P : γ → ρ → Prop), |(uprob fun z => P (X z.1) z.2) - uprob fun z => P (Y z.1) z.2| ≤ δ
+@distAdv_le_of_statClose : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {ρ : Type u_4} [inst : Fintype σ]
+  [inst_1 : Fintype τ] [inst_2 : Fintype ρ] (X : σ → γ) (Y : τ → γ) {δ : ℝ},
+  StatClose X Y δ → ∀ (D : γ → ρ → Bool), distAdv X Y D ≤ δ
+@acceptProb_comp_equiv : ∀ {ρ : Type u_1} {σ : Type u_2} {τ : Type u_3} {γ : Type u_4} [inst : Fintype ρ]
+  [inst_1 : Fintype σ] [inst_2 : Fintype τ] (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool),
+  acceptProb (fun s => X (e s)) D = acceptProb X D
+@statClose_sampleEdgeIdx : ∀ {m : ℕ} (hm : 0 < m) (T : ℕ),
+  StatClose (fun r => ⟨sampleEdgeIdx m T (List.ofFn r), ⋯⟩) id ((1 / 2) ^ T)
+statClose_permFromCoins : ∀ (n k T : ℕ),
+  n ≤ 2 ^ k →
+    ∀ (d : Equiv.Perm (Fin n)), StatClose (fun b => (permFromCoins n k T b).getD d) id (↑n * (1 - 1 / 2 ^ k) ^ T)
+@Equiv.mulRight : {G : Type u_1} → [Group G] → G → Equiv.Perm G
+@HardcoreBit.pushesUniform_add_right : ∀ {G : Type u_1} [inst : AddGroup G] [inst_1 : Fintype G] (e : G),
+  HardcoreBit.PushesUniform fun a => a + e
+
+
+## Cycle check (tools/cyclecheck.py at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb, via git show)
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Asymptotic.Permutations: cycle=False; already in owned closure=False; new modules added=1
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Asymptotic.Encryption: cycle=False; already in owned closure=False; new modules added=2
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Asymptotic.MultiMessageLemmas: cycle=False; already in owned closure=False; new modules added=24
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Asymptotic.Ensembles: cycle=False; already in owned closure=True; new modules added=0
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Candidates.DiscreteLogHardcore: cycle=False; already in owned closure=False; new modules added=1
+TCSlib.Cryptography.Candidates.ElGamal + import TCSlib.Cryptography.Asymptotic.HardCoreGL: cycle=False; already in owned closure=False; new modules added=10

@@ -33,7 +33,7 @@ differences of probabilities can be fed in directly. [Gar26] restricts to values
 
 * `Negligible.add`, `Negligible.mul`, `Negligible.const_mul`, `Negligible.mono`: closure.
 * `Negligible.mul_pow`: a negligible function times a polynomial is negligible.
-* `negligible_two_pow_neg`: `2^{-n}` is negligible.
+* `negligible_two_pow_neg`: `2^{-n}` is negligible; `negligible_zero`: so is the constant `0`.
 * `Noticeable.not_negligible`: noticeable functions are not negligible.
 * `not_negligible_sub`: a non-negligible function minus a negligible one is
   non-negligible.
@@ -56,6 +56,11 @@ functions bounded in absolute value; on `[0, 1]`-valued functions this is the so
 definition. -/
 def Negligible (μ : ℕ → ℝ) : Prop :=
   ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c
+
+/-- The defining property of `Negligible`: `Negligible μ` iff for every `c` there is `n₀` with
+`|μ n| < 1 / n^c` for all `n ≥ n₀`. -/
+theorem negligible_iff (μ : ℕ → ℝ) :
+    Negligible μ ↔ ∀ c : ℕ, ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ c := Iff.rfl
 
 /-- A function `μ` is noticeable when there are `c` and `n₀` with `μ n > 1 / n^c` for all
 `n ≥ n₀`. [Gar26, Definition 1.3]. -/
@@ -156,6 +161,17 @@ theorem negligible_two_pow_neg : Negligible (fun n => (2 : ℝ)⁻¹ ^ n) := by
   show |(2 : ℝ)⁻¹ ^ n| < 1 / (n : ℝ) ^ c
   rw [abs_of_pos (by positivity), inv_pow, ← one_div]
   exact one_div_lt_one_div_of_lt (pow_pos (by linarith) c) hlt
+
+/-- The constant zero function is negligible: `|0| = 0 < 1 / n^c` for every `n ≥ 1`. Technical
+glue (the advantage of a distinguisher between two equal distributions). Added by the
+Pass–shelat campaign (gate 03a, ruling G3-7a), which moved it here from
+`Asymptotic/Ensembles.lean` under its unchanged full name. -/
+theorem negligible_zero : Negligible fun _ : ℕ => (0 : ℝ) := by
+  intro c
+  refine ⟨1, fun n hn => ?_⟩
+  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  simp only [abs_zero]
+  positivity
 
 /-- A noticeable function is not negligible. [Gar26, §1.2].
 

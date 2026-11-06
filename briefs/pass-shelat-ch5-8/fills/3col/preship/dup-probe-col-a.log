@@ -1,0 +1,93 @@
+# Duplication probe, unit col-a (exact?, maxHeartbeats 400000)
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColADup   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## probe source
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+set_option maxHeartbeats 400000
+set_option autoImplicit false
+open TCSlib.Cryptography Complexity Turing
+
+/-! Duplication probe, col-a: `exact?` (maxHeartbeats 400000) on each target and planned lemma. -/
+namespace DupA
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+
+/-- T1: the decidable clause of `R3COL_witnessRelation`. -/
+example : ∃ T : List Bool → Bool, PolyTimeComputable (fun z => [T z]) ∧
+    ∀ x y, T (pairEncode x y) = true ↔ R3COL x y := by exact?
+
+/-- T1': the whole target. -/
+example : WitnessRelation L3COL R3COL := by exact?
+
+/-- T2: `colRep_efficientProverProof`. -/
+example (hC : Commitment Com ℓ) : EfficientProverProof (colProtocolRep Com ℓ) L3COL R3COL := by
+  exact?
+
+/-- H1: the soundness error of the repeated protocol is negligible. -/
+example : Negligible fun N : ℕ =>
+    Real.exp (-(Nat.sqrt N : ℝ)) + (N : ℝ) ^ 2 * (1 / 2 : ℝ) ^ N + (2 : ℝ)⁻¹ ^ N := by exact?
+
+/-- H2: `K` independent edge samplers are `K (1/2)^T`-close to uniform. -/
+example {m : ℕ} (hm : 0 < m) (T K : ℕ) :
+    StatClose (fun r : Fin K → Fin (T * Nat.size m) → Bool => fun t =>
+        (⟨sampleEdgeIdx m T (List.ofFn (r t)), sampleEdgeIdx_lt hm T _⟩ : Fin m))
+      (fun e : Fin K → Fin m => e) (K * (1 / 2 : ℝ) ^ T) := by exact?
+
+/-- H3: the iteration count is at most `|x|²`. -/
+example {n : ℕ} (G : Graph n) : n * edgeCount G ≤ (encGraph G).length * (encGraph G).length := by
+  exact?
+end DupA
+
+## output
+Fri Nov  6 02:22:29 UTC 2026
+Probe/ColADup.lean:12:55: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact R3COL_witnessRelation
+Try this:
+  [apply] exact colRep_efficientProverProof hC
+Probe/ColADup.lean:23:87: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/ColADup.lean:29:63: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColADup.lean:33:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+FAIL(Probe/ColADup): lean exited with status 1
+FAIL(Probe/ColADup): error diagnostics reported
+FAIL(Probe/ColADup): no fresh .olean produced
+rc=1
+Fri Nov  6 02:23:15 UTC 2026
+
+## name/statement greps
+## name/statement greps (git grep at HEAD 5f2771631fe853dae9c2aa44791ae5b0e09c95eb)
+### pattern: statClose_sampleColorPair\|sampleColorPair
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:233:theorem sampleColorPair_fst (T : ℕ) (r : List Bool) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:240:theorem sampleColorPair_snd (T : ℕ) (r : List Bool) :
+### pattern: colRealView
+### pattern: colSimTrunc
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:236:theorem uprob_colSimTruncW_eq [Fintype ρ] {c : Fin n → Fin 3} (hc : ProperColoring G c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:325:theorem uprob_colSimTruncH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:345:theorem statClose_colSimTruncH [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+### pattern: colSimRed
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:552:theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < edgeCount G)
+### pattern: subst (.mul .var .var)\|subst (PolyExpr.mul\|mul var var
+### pattern: distinguisherL_lift\|acceptProb_distinguisher.*runAtL\|acceptProb_coins_equiv
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:80:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:207:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Asymptotic/NextBit.lean:540:private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:129:theorem acceptProb_distinguisher_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:143:theorem acceptProb_distinguisherL_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:400:theorem distinguisherL_lift {D D' : NUPPT} {φ : ℕ → ℕ} {c : PolyExpr}
+### pattern: V'.next (X w)\|\.next (X w) (Z w)
+### pattern: comp_sqrt\|exp_neg_sqrt
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:711:theorem negligible_exp_neg_sqrt_div {C : ℕ} (hC : 0 < C) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:685:theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+### pattern: edgeCount_le\|edgeCount G ≤\|countTrue_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:339:theorem countTrue_le (x : List Bool) (j : ℕ) : countTrue x j ≤ j := by
+
+## Reading
+- T1 (decidable clause): no closing term. T1', T2: `exact?` returns only the sorried targets themselves.
+- H1 (soundness error negligible): none. H2 (K edge samplers): timeout, inconclusive; by statement it is
+  `OneWay.statClose_pi (statClose_sampleEdgeIdx hm T) K` up to the identity map (GI.statClose_pi is the `id` form, not
+  imported). H3 (`n·|E| ≤ |x|²`): none.
+- Name greps: no existing `R3COL` decider; the GI decider `GI.Riso_decidable` is the template.

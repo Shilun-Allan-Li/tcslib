@@ -24,6 +24,14 @@ main file closes each efficiency theorem by `ColProofs.…`, which type-checks b
 shadows are proof devices, not public API; any divergence from the frozen definitions of the
 main file makes the main file fail to type-check, so it cannot go unnoticed.
 
+## Main definitions
+
+* `TCSlib.Cryptography.ColProofs.colProver`, `ColProofs.colVerifier`, `ColProofs.colProtocol`,
+  `ColProofs.colProverRep`, `ColProofs.colVerifierRep`, `ColProofs.colProtocolRep` and their
+  ingredients (`msgAt`, `colCommit`, `colOpen`, `colVerify`, `colWellFormed`, `colCoinSlice`,
+  `colIterations`) — verbatim shadows of the definitions of `Protocol.lean`.
+* `TCSlib.Cryptography.ColProofs.finOneEquiv` — `Fin m ≃ (Fin 1 → Fin m) × Unit`.
+
 ## Main results
 
 * `TCSlib.Cryptography.ColProofs.colProver_next_eq`, `ColProofs.colVerifier_next_eq`,
@@ -33,7 +41,7 @@ main file makes the main file fail to type-check, so it cannot go unnoticed.
   when the graph has an edge.
 * `TCSlib.Cryptography.ColProofs.colProver_efficient`, `ColProofs.colVerifier_efficient`,
   `ColProofs.colProverRep_efficient`, `ColProofs.colVerifierRep_efficient` — the (shadow)
-  parties are PPT strategies (Inf-4.2).
+  parties are efficient (D8) (Inf-4.2).
 * `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
   `ColProofs.finOneEquiv`, `ColProofs.two_le_of_edge` — helpers of the soundness proof of
   Proposition 127.6.
@@ -200,7 +208,15 @@ theorem colVerify_eq_checkStr (Com : List Bool → List Bool) (L : ℕ) (x com o
   simp only [msgAt, padColor, ofFn_padFin, encColor_eq_ofVal, decColor_val, h1, h2, ne_eq,
     Fin.ext_iff]
 
-/-- The verifier's message of one iteration is `verifierStr` of the layout. -/
+/-- The verifier's message of one iteration is `verifierStr` of the layout.
+
+**Proof sketch.** Case on the history: `[]`, `[com]`, `[com, opn]` or longer. The encoded
+history (`argM_ilayout`, `Strategy.encodeMsgs_cons`) is empty only for `[]`, and its iterated
+second projections are empty after one, two or three steps exactly in the other cases
+(`pairSndD_pairEncode`, `pairEncode_ne_nil`), which selects the branch of `verifierStr`. On
+`[com]` the challenge is `edgeMsg` of `eOf_ilayout`; on `[com, opn]` the verdict is
+`verdictStr` by the layout lemmas, `encGraph_decGraph_eq_take` for well-formedness and
+`colVerify_eq_checkStr` when the graph has an edge; otherwise both send `[false]`. -/
 theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
     (hist : List (List Bool)) :
     (colVerifier Com ℓ).next x z r hist = verifierStr Com ℓ (ilayout x z hist r) := by
@@ -248,7 +264,14 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     rw [verifierStr, if_neg c1, if_neg c2, if_neg c3]
     rfl
 
-/-- The repeated prover's message is `proverRepStr` of the layout. -/
+/-- The repeated prover's message is `proverRepStr` of the layout.
+
+**Proof sketch.** Unfold `colProverRep` (`show`) and `proverRepStr`; the layout lemmas
+(`argM_ilayout`, `histLen_encodeMsgs`, `nOf_ilayout`, `mOf_ilayout`, `inCoins_ilayout`) and
+the coin count `proverCoinsOf` make the iteration test and the coin block agree. Inside the
+iteration, `colProver_next_eq` turns the one-iteration prover into `proverStr`; the history
+`[]` or `[last message]` matches by parity, with the last message read by
+`getD_eq_pairFstD_iterate`. -/
 theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y r : List Bool)
     (hist : List (List Bool)) :
     (colProverRep Com ℓ).next x y r hist = proverRepStr Com ℓ (ilayout x y hist r) := by
@@ -275,7 +298,14 @@ theorem colProverRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x
     · rw [if_neg h2, if_neg h2, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, hlast]
   · rw [if_neg h1, if_neg h1]
 
-/-- The repeated verifier's message is `verifierRepStr` of the layout. -/
+/-- The repeated verifier's message is `verifierRepStr` of the layout.
+
+**Proof sketch.** Unfold `colVerifierRep` (`show`) and `verifierRepStr` and split on the parity
+of `|hist|`, the iteration test and the final length `2|x|²`. Odd histories send the challenge
+`edgeMsg` of `eRep_ilayout`; the final history sends the verdict, which matches `verdictRepStr`
+by the layout lemmas, `encGraph_decGraph_eq_take` and, with an edge, `firstIdx_eq_iff` turning
+the search for a failed iteration into the universal check (`checkRep`, `eRep_ilayout`,
+`getD_eq_pairFstD_iterate`, `colVerify_eq_checkStr`); every other history sends `[]`. -/
 theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x z r : List Bool)
     (hist : List (List Bool)) :
     (colVerifierRep Com ℓ).next x z r hist = verifierRepStr Com ℓ (ilayout x z hist r) := by
@@ -316,22 +346,22 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
 
 /-! ### Efficiency of the (shadow) parties -/
 
-/-- The honest prover of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The honest prover of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverStr_poly Com ℓ hCom) (colProver_next_eq Com ℓ)
 
-/-- The verifier of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierStr_poly Com ℓ hCom) (colVerifier_next_eq Com ℓ)
 
-/-- The prover of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The prover of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverRepStr_poly Com ℓ hCom) (colProverRep_next_eq Com ℓ)
 
-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierRepStr_poly Com ℓ hCom) (colVerifierRep_next_eq Com ℓ)

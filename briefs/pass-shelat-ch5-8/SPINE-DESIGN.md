@@ -39,6 +39,17 @@ The spine has four steps, run in order.
     `Candidates.ArithmeticFP`;
   - interaction: `Protocol`, `Strategy`, `View`, `InteractiveProof`, `ZK`, `PerfectZK`,
     `PerfectZKAbort`, `Commitment`.
+- **Two limits of the interaction model D8 for ch. 5–8** (gate 03e, finding 15, recorded
+  2026-11-05):
+  - *Strict-PPT simulators.* Barak and Lindell (SICOMP 2004, "Strict polynomial-time in
+    simulation and extraction") show that constant-round zero knowledge with black-box strict-PPT
+    simulation exists only for BPP. So D8 cannot express constant-round ZK with negligible
+    soundness through a black-box simulator. Sequential composition (Thm 175.1, `seqRep`) is
+    unaffected.
+  - *Everything is indexed by `|x|`*: coins, rounds, the simulator's and distinguisher's
+    parameter, `ε(|x|)`, and `Commitment`'s `n = |v|`. A ch. 5–8 protocol with a separate
+    security parameter encodes it into the common input (e.g. `⟨1^n, x₀⟩`) or pads values to `n`
+    bits.
 - **Ownership.** ch. 5–8 code goes in new directories only (proposal below). Nothing is added to
   his files. A missing closure or machine lemma is requested from him, or stated in our own file
   with a note to fold it in later.

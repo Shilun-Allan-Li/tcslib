@@ -1,10 +1,9 @@
 # Gate 03f2 ([PS10] ch. 2–4, factoring, RSA, Rabin; number theory): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch once [Shilun-Allan-Li/tcslib#201](https://github.com/Shilun-Allan-Li/tcslib/pull/201) merges** (re-staged 2026-11-05 at that PR's head, the gate 03a + 03c repairs; first staged at `a3c5fa8b`; the evidence is under `evidence/f2/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the factoring assumption and the factoring-based candidates (the weak one-way function `f_mult`, the factoring collection, RSA and Rabin with their trapdoors), and the number theory they rest on (Euclid, modular exponentiation, groups, primality testing, quadratic residues, the density of primes).
+`0c348ff94cacf24d96d99078c9dd9e328530c8d2` (the head of #201; its Lean files are what the branch holds once #201 merges). This pack covers the factoring assumption and the factoring-based candidates (the weak one-way function `f_mult`, the factoring collection, RSA and Rabin with their trapdoors), and the number theory they rest on (Euclid, modular exponentiation, groups, primality testing, quadratic residues, the density of primes).
 - **This pack gates fills.** Its files hold **36 `sorry`s**, to be filled after this pack
   closes (user's ruling of 2026-11-05). A statement that cannot be proved as stated, or that is
   weaker than the source, must be found **now**.
@@ -15,6 +14,17 @@ PR has landed (`PLAN.md`).
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
 **The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
 page − 12. This pack needs §2.3 (book pp. 29–33), the factoring statements of §2.4 (Thms 33.5 and 36.3), and §2.6–§2.12 (pp. 41–63).
+
+## Changes since the first staging (repairs of the interface packs; check them, do not re-find them)
+
+The pin moved from `a3c5fa8b` to the head of the gate 03a + 03c repair PR. Changes in or near this pack's files:
+- **G3-1** (gate 03b major, merged in #198): `Collection` gained the field `encD_decD`, which makes decoding canonical. The proofs:
+  - the distinct-primes collection: `encodeDistinctPrimes_of_decode` (`Concrete.lean`, context);
+  - `rsaTrapdoor`: `rsaEnc_of_rsaDec`, which covers the invalid-index branch (the canonical string of `1 mod N`);
+  - Rabin's and Blum's collections: inline proofs.
+
+  They rest on the numeral lemmas `natToList_length_listToNat` and `natToList_val_natCast` (`Arithmetic.lean`).
+- **Gate 03l, major 1:** the axiom attestation below prints every public theorem and lemma of this pack's files, not only `Checks.lean`'s headlines.
 
 ## Brief for the auditor
 
@@ -45,9 +55,25 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `0c348ff94cacf24d96d99078c9dd9e328530c8d2` (evidence under `evidence/f2/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 73 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   54 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 230 prints of every public theorem and lemma in this pack's files:
+   177 use only the standard axioms, and 53 depend on `sorryAx`; any other axiom is listed
+   in the log.
+3. **Admissions** (`admissions.txt`): 36 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 10 files.
+
+The replay is the 416-module replay at `af91d53a` overlaid with the re-check of the 98 modules
+downstream of #201's changes at its head (`evidence-repairs/03ac/replay.log`); each line of
+`replay.log` is the newest check of its module. The closure is smaller than at the first staging
+because 03a's repair narrowed facade imports (`Randomized` → its three files).
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
-- the axiom prints of this pack's headlines (`audits/pass-shelat/Checks.lean`);
+- the axiom prints of every public theorem and lemma of this pack's files;
 - admissions: the 36 `sorry`s, listed by declaration;
 - lint.
 

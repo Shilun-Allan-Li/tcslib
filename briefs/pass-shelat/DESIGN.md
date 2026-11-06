@@ -44,7 +44,11 @@ D2. **Two layers, as in the Garg plan.** Concrete reductions are reused verbatim
     `ClassNP/PolyTimePairing.lean` with `NUPPT.polyTimeComputable_output` as a black box, plus
     the two new machine lemmas of D11, (iii) negligible-function arithmetic through
     `not_negligible_iff`. New concrete lemmas go into campaign-owned files, never into the
-    frozen Garg files.
+    frozen Garg files. *Exception* (gate 03a, ruling G3-7a, user 2026-11-05): the general
+    helper `negligible_zero` moved from `Asymptotic/Ensembles.lean` into
+    `Foundations/Negligible.lean`, full name `TCSlib.Cryptography.negligible_zero` unchanged; its
+    copy `negligible_const_zero` (`ZeroKnowledge/Defs.lean`) is left to the duplicate clean-up
+    (ruling G3-5).
 
 D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `TCSlib/Complexity/Randomized/PPT.lean`): a `Turing.FinTM Bool` that halts on **every** input
@@ -57,7 +61,11 @@ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `runAt n y r := output ⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with `r : Fin (coins.eval n) → Bool`; the
     random tape is part of the input, the time bound holds for every coin string
     ([PS10, Def 23.5], worst case), and "`A` computes `f` with probability 1" ([PS10, Def 24.6])
-    is `Computes`: equality for every coin string. Honest evaluators ("easy to compute") are
+    is `Computes`: equality for every coin string. `Computes` does not require `Uniform`: Def
+    24.6 (on the encodings `⟨1^n, y⟩`, which is all `Computes` constrains; gate 03a, round 2,
+    R2-1) is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
+    analogue and holds for uncomputable `f` (advice `[h n]`), so `∃ A, A.Computes f` is not "a
+    PPT computes `f`" (gate 03a, finding 1). Honest evaluators ("easy to compute") are
     stated as `PolyTimeComputable` string functions on `⟨1^n, x⟩`. Recorded deviations:
     totality on all inputs (behaviour class unchanged: a machine polynomial-time on well-formed
     inputs is clocked by `timed_universal`; the optional lemma `NUPPT.ofPartial` is not needed
@@ -77,7 +85,8 @@ D4. **Non-uniform PPT** ([PS10, Def 26.8]) in the advice formulation: `advice n`
 
 D5. **Domains are typed at each parameter.** A function family is
     `FunFamily := ⟨inLen outLen : PolyExpr, f n : (Fin (inLen.eval n) → Bool) → (Fin (outLen.eval n) → Bool)⟩`;
-    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`). An
+    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`; exact for
+    length-regular `f`, `ofFn_ofString_f`, otherwise the `false`-padding is lossy). An
     inverter's output is decoded by `decodeFin` as an `inLen n`-bit string and a wrong length is
     a failure (`invProbOpt`, bridged to the concrete `invProb` by `invProbOpt_le_invProb` and
     `invProbOpt_some`). Adversaries receive `1^n` exactly where the text gives it
@@ -85,7 +94,9 @@ D5. **Domains are typed at each parameter.** A function family is
     Def 69.4: `D(t)`) the frozen definition is the literal one (`WorstCaseOneWay` with
     `inverterLit`, `Ensemble.IndistLit`), and the `1^n` form (`Ensemble.Indist`) is the headline
     form of the theorems, related by `Indist.toLit` (always) and `IndistLit.toIndist`
-    (injective `ℓ`, i.e. every ensemble of the text). The two are never unified silently.
+    (injective `ℓ`, i.e. every ensemble of the text; for constant `ℓ` the two forms coincide
+    as well, by point tests, which is not formalized: gate 03a, note 14). The two are never
+    unified silently.
 
 D6. **Ensembles** ([PS10, Def 69.3]) are `Ensemble ℓ := ⟨σ : ℕ → Type, Fintype, X n : σ n → (Fin (ℓ.eval n) → Bool)⟩`
     with arbitrary finite seed types (the uniform ensemble has seeds `Fin (ℓ n) → Bool`, the
@@ -127,6 +138,14 @@ D8. **Interactive protocols** ([PS10, §4.4]). A `Strategy` is a next-message fu
     simulators, rejection-sampled permutations). Deviations: fixed number of moves (a halting
     party is modelled as sending `[]`; all protocols of the text are fixed-round), strict
     simulators, statistical instead of perfect ZK, `|z|` polynomially bounded.
+    **Erratum (2026-11-06, gate 03e round 2, finding 1, and gate 03g, finding 6; the frozen text
+    above is unchanged).** Only GI is proved statistically (`gi_statZK`: `StatZK` with
+    negligible δ, truncated simulator, rejection-sampled permutations). 3COL is proved
+    computationally ZK (`col_zk`, by `Commitment.multiHiding`; the truncation and sampling errors
+    are statistical terms inside a computational bound), its simulator stopping after `n|E|`
+    attempts as the text's does. It cannot be statistical: with a perfectly binding commitment
+    the real views of two colourings outside one colour-permutation orbit are statistically far
+    apart, and the simulator does not see the witness.
 
 D9. **Lengths are syntax.** Every length or budget that depends on the parameter (coins,
     advice, input/output lengths of families and ensembles, stretch, query budgets, rounds,
@@ -159,6 +178,12 @@ D11. **Admissions policy.** `Complexity.polyTimeComputable_iterateFind`
     audit P7-1 added `add`/`sub`/bit length) are explicit hypotheses
     (`Candidates/Arithmetic.lean` bundle), never axioms; `#print axioms` of every headline must
     show `[propext, Classical.choice, Quot.sound]` plus, at most, the admissions named here.
+    *Status* (gate 03a, note 20; decision log 2026-10-28): run 3b proved
+    `polyTimeComputable_iterateFind`, so the permitted machine admission is unused.
+    `NUPPT.ofPartial` was never written; the only machine-layer `sorry` is the optional bridge
+    `NUPPT.decides_of_decidesWithAdviceInTime` (`Randomized/NonUniform.lean`), whose sketch does
+    `ofPartial`'s clocking inline. It is the named admission of that optional module (open
+    question 5, ruled outside the core on 2026-10-27).
 
 ---
 
@@ -312,6 +337,12 @@ output (`emitAction`-style) and rewind; `O(ab + a + b)` steps, ≈ 300–500 lin
 `pairTakePoly p` = `pairFstD ∘ pairSplitAt ∘ pairEncode (unaryPoly p ∘ pairFstD) pairSndD`
 by `polyTimeComputable_of_linear`, `PolyTimeComputable.pairEncode`, `.comp`.
 
+**As-built note (2026-11-05, gate 03l; the sketch above is unchanged).** The `pairSplitAt`
+machine (`Randomized/Build/PairSplit.lean`) uses one work tape, not two: the parser stores `u`,
+and the copy scan of `b` doubles each bit while the work head walks across the stored `u`. Its
+buffered aligned parser is public (`Turing.PairParse`) and is shared by the `unaryMul` machine
+(`Randomized/Build/UnaryMul.lean`), which stores `u` and replays it once per symbol of `v`.
+
 ### 2.5 `TCSlib/Complexity/Randomized/Closure.lean` — closure catalogue
 
 Every lemma is `NUPPT.ofPolyTime` of an FP function built from
@@ -432,6 +463,35 @@ three panel repairs built in.**
 Estimated size 1 200–1 800 lines; private precedent for the module gluing: `satClean_install`,
 `satStopTM`, `sat_run_agree` in `ClassNP/SAT.lean` (private copies, not edits). If the lemma is
 not closed in run 4 it is the single named admission of D11.
+
+**As-built erratum (2026-11-05, gate 03l, minor 2; the frozen text above is unchanged).** The
+machine of `polyTimeComputable_iterateFind` (`Randomized/Build/IterateFind.lean`, with
+`Randomized/Build/IterateFindHost.lean` and the public host `TuringMachine/Build/ModuleHost.lean`)
+departs from steps 1–5 and 7 as follows. The frozen signatures and decisions are unchanged.
+- *Step 1: the guard and the invariant.* The guard tests the **new** point:
+  `stepF x w := if |g (pairSndD w)| ≤ P|x| then pairEncode x (g (pairSndD w)) else w`. The guard
+  on the old length written above does not close `Inv`: for `x = []`, `P = var` and
+  `g s = true :: s`, the word `⟨[], []⟩` satisfies `Inv`, passes the guard `0 ≤ 0`, and steps to
+  `⟨[], [true]⟩`, which does not. The machine's invariant is the actual-pair invariant
+  `Inv x w := ∃ s, w = pairEncode x s ∧ |s| ≤ P|x|`, which, unlike `pairFstD w = x ∧ …`, excludes
+  malformed words and gives the length bound `|w| ≤ 2|x| + 2 + P|x|` that the budget needs.
+  (`Repetition.lean`'s `guardedStep` is the same step; its `LoopInv` is the pure invariant above,
+  not the machine's.)
+- *Steps 2–3: the gluing.* No transition is redirected. A release flag halts each clean-call
+  module one silent step after its first positive exit, and the run is cut at its first halt
+  (the clean-module contract `Turing.ModuleHost.Clean`, `clean_install`, `clean_emit`). The
+  modules are padded to a common bank of tapes and run in one finite host with states
+  `Fin 3 ⊕ Σ i, (M i).State` over five modules (copier, startup install `x ↦ ⟨x, x⟩`, verdict
+  install, step install, payload emit): the anchor `inl 0`, the branch `inl 1` and the halt
+  `inl 2`. This host is now the public clean-module host `Turing.ModuleHost.hostTM`
+  (`machine-library-design.md` §14, row H14), harvested on 2026-11-05 from `ClassNP/SAT.lean`'s
+  private module layer and this machine's copy of it.
+- *Step 4: the startup.* The input is copied onto tape 0 by a two-state copier (`copyTM`: copy and
+  turn, then rewind both heads), not by a one-state scan and `timed_rewind`.
+- *Step 5: the budget.* Every request has length at most `2n + 6 + P n`, and the common budget is
+  `T n = A·(2n + 7 + P n)^D` (`IterateFind.lean`), with `A` and `D` collected from the modules'
+  budgets and the fuel machine.
+- *Step 7.* `iterate`'s counter test is `R|x| ≤ |cnt|` (`StateLoop.IterLoop.acc`), not `lenEq`.
 
 ### 2.7 `TCSlib/Cryptography/Asymptotic/Sampling.lean`
 
@@ -568,6 +628,7 @@ structure Collection where                      -- [PS10, Def 41.1]; Gen(1^n) = 
   encD : ∀ i, D i → List Bool
   decD : ∀ i, List Bool → Option (D i)
   decD_encD : ∀ i x, decD i (encD i x) = some x
+  encD_decD : ∀ i w x, decD i w = some x → encD i x = w                     -- canonical decoding; gate 03b, G3-1
   f : ∀ i, D i → List Bool
   gen : NUPPT     gen_uniform : gen.Uniform
   sample : NUPPT  sample_uniform : sample.Uniform
@@ -609,6 +670,19 @@ the RSA/Rabin/Blum/exponentiation candidates by sorried `*Sampler_spec` stubs;
 `expCollection H G hV` takes the validity bridge and its generator outputs `dlDefaultIndex`
 below `n₀`). Run-3 audit (P3-5): the literal `Inv(1^n, ⟨⟨i, t⟩, y⟩)` form of Def 56.1 (6) was
 not adopted; the Deviation is recorded on `TrapdoorCollection`, `rsaGen` and `blumGen`.
+
+Gate 03b (finding 1, ruling G3-1): the field `encD_decD` (canonical decoding) was added. Without
+it the sampler's and the trapdoor inverter's outputs were pinned only up to a possibly lenient
+decoder, so `eval` and a hard-core evaluator (constrained on encodings) could misbehave on them.
+Every instance discharges it by a decoder lemma (`ofFn_of_decodeFin_eq_some` for
+`FunFamily.toCollection` and the padding of `Collection.glPad`; `expEnc_of_expDec`,
+`encodeDistinctPrimes_of_decode`, `rsaEnc_of_rsaDec`; inline for `rabinCollection` and
+`rabinBlumTrapdoor`). Derived: `Collection.decD_eq_some_iff`, `apply_of_decD`, `eval_of_decD`,
+`sample_eq_encD`, `HardCore.evaluator`, `TrapdoorCollection.inv_eq_encD`, `eval_inv`,
+`Collection.HardCore.nonempty_predEvaluator` and the evaluator-free
+`TrapdoorCollection.OneWay.exists_glPad_singleBitSecure`. The helpers of Thm 42.2
+(`NUPPT.withIndexParam`, `NUPPT.runLenPoly`, `splitCoins`, the marker padding) moved, names
+unchanged, to `Asymptotic/CollectionsHelpers.lean`, which `Collections.lean` imports.
 
 ### 2.11 `TCSlib/Cryptography/Asymptotic/Ensembles.lean`
 
@@ -674,11 +748,14 @@ once with `uprob_bool_prod`.
 
 ### 2.12 `Asymptotic/{Pseudorandom,NextBit,HardCore}.lean` — definition shapes
 
+(The collection form of Thm 87.3, `Collection.glPad` … `goldreich_levin_coll`, moved unchanged to
+`Asymptotic/HardCoreCollection.lean`, which `HardCore.lean` imports; gate 03c, finding 11.)
+
 ```lean
 structure PRG where                                           -- [PS10, Def 77.1], length-regular
   stretch : PolyExpr
   G : ∀ n, (Fin n → Bool) → (Fin (stretch.eval n) → Bool)
-  expands : ∀ n, n < stretch.eval n
+  expands : ∀ n, n < stretch.eval n                           -- every n, n = 0 included: 2n, n^c excluded (§5.25; gate 03c, G3-2)
 def PRG.Easy (P : PRG) : Prop := ∃ F, PolyTimeComputable F ∧ ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)
 def PRG.ensemble (P : PRG) : Ensemble P.stretch               -- seeds Fin n → Bool
 def PRG.Secure (P : PRG) : Prop := P.Easy ∧ P.ensemble.Pseudorandom
@@ -687,7 +764,7 @@ noncomputable def nextBitProb {ℓ} (X : σ → Fin ℓ → Bool) (i : Fin ℓ) 
   uprob fun z : σ × ρ => A (fun j => X z.1 (Fin.castLE i.isLt.le j)) z.2 = X z.1 i
 def Ensemble.NextBitUnpredictable (X : Ensemble ℓ) : Prop :=   -- [PS10, Def 75.2], i < ℓ n, A gets 1^n and the prefix
   ∀ A : NUPPT, ∃ ε, Negligible ε ∧ ∀ n (i : Fin (ℓ.eval n)), nextBitProb (X.X n) i (A.predictor n i) ≤ 1/2 + ε n
-theorem Ensemble.NextBitUnpredictable.pseudorandom (hℓ : ∀ n, 0 < ℓ.eval n) (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]
+theorem Ensemble.NextBitUnpredictable.pseudorandom (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]; the source's statement (hℓ : ∀ n, 0 < ℓ.eval n dropped at gate 03c, G3-7b)
 
 def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) → Bool) : Prop :=   -- [PS10, Def 78.3]
   (∃ H, PolyTimeComputable H ∧ ∀ n x, H (NUPPT.advInput n (List.ofFn x)) = [h n x]) ∧
@@ -696,7 +773,12 @@ def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) �
 
 Theorem shapes of the HardCore file (statement phase): `owp_hardcore_prg (P : PermFamily) (h) : OneWayPermutation P → HardCore P.toFunFamily h → (PRG with G n s = f n s ‖ h n s).Secure`
 (79.4, via `exists_owpPredictorBits`); `prg_expand (P : PRG) (ℓ : PolyExpr) : P.Secure → (prgExtBits-based PRG of stretch ℓ).Secure`
-(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator);
+(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator; **as shipped**
+(gate 03c, finding 4): `prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+(hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure`, the one-bit input of the
+text's Lemma 80.5 ("Let `G : {0,1}^n → {0,1}^{n+1}` be a PRG"); a general secure `P : PRG` reaches it through
+`PRG.truncate` with `PRG.Secure.truncate : (PRG.oneBit P.truncate).Secure` in `Asymptotic/PRF.lean`, and `hℓ`
+carries the cost of §5.25);
 `cor_81_7` (closed form `prgExt_succ`); `goldreich_levin (𝓕) : StrongOneWay 𝓕 → StrongOneWay (glPad 𝓕) ∧ HardCore (glPad 𝓕) glBit`
 (87.3, via `invProb_guessInverter`, `k(n) := ⌈log₂(2n^{2c+1}+1)⌉` hard-wired, `iterateFind`
 for the `n(2^k−1)` calls, `majority`, `pairXor`); `goldreich_levin_coll (F : Collection) …`
@@ -845,6 +927,12 @@ structure Commitment (Com : List Bool → List Bool) (ℓ : PolyExpr) : Prop whe
             (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn v₁) (List.ofFn r))) (D.distinguisherL n) ≤ ε n
 ```
 
+**As-built note (2026-11-06, gate 03g, finding 6; the frozen block above is unchanged).** Ruling
+G3-3 changed two signatures. `InteractiveProof(Err).complete` is
+`∃ B : PolyExpr, ∀ x ∈ L, ∃ y, (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧ ∀ z, uprob (…) = 1`,
+and `EfficientProverProof(Err)` has the field `boundedP : ∃ B : PolyExpr, π.ProverBounded R B`
+(`Protocol.ProverBounded`, `Interaction.lean`). See §5 item 8.
+
 Graph isomorphism (compiled expressibility check): `Graph n := Fin n → Fin n → Bool`,
 `permGraph G π u v := G (π.symm u) (π.symm v)`, `encGraph`/`decGraph` (adjacency matrix, `n²`
 bits, `Nat.sqrt`), `encPerm`/`decPerm` (relation matrix, `Fin.find`, `Equiv.ofBijective`),
@@ -962,20 +1050,33 @@ Issues found in this synthesis and resolved here (not raised by the panel):
    computing with probability one (equivalent by `Computes` + `ofPolyTimeUniform`).
 4. `inverter`: wrong-length output = failure (D5); verdict `= [true]` (normalisable by `ifEq`).
 5. `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n` (literal form
-   `IndistLit`, equivalent for injective `ℓ`).
+   `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the constant case
+   by point tests, not formalized; gate 03a, note 14).
 6. `WeakOneWay`: `0 < q n` made explicit; Theorem 35.1 with the text's `m = 2nq(n)` and a
    rejection-sampled position (statistical term absorbed).
 7. `OracleEnsemble.Indist`: next-query machines with an explicit universally quantified
    budget; no oracle tapes; forced verdict `false` after `q n` queries.
 8. `Protocol`: fixed number of messages `rounds.eval |x|`, verdict on the complete history
-   (halting = sending `[]`); `Efficient` time polynomial in the total input length.
+   (halting = sending `[]`); `Efficient` time polynomial in the total input length. The honest
+   messages are polynomially bounded in `|x|` (`Protocol.ProverBounded`, in
+   `InteractiveProof(Err).complete` and the field `EfficientProverProof(Err).boundedP`): for
+   Definition 119.5 the source's p.p.t. prover writes at most `t(|x|)` bits; for Definition
+   116.1, whose prover is unbounded, it is a normal form (a verifier of time `t(|x|)` reads at
+   most `t(|x|)` bits of each message; gate 03e round 2, finding 7). Against a cheating prover the verifier's
+   work is polynomial in the message length, not in `|x|` (gate 03e, finding 1; ruling G3-3).
 9. Soundness `1 − ε < Pr[out = [false]]` literal; provers have polynomial coin tapes (no loss by
    averaging); completeness `uprob = 1` (every coin pair).
 10. `ZK`/`HVZK`: strict PPT simulators; auxiliary inputs bounded by `∀ Lz : PolyExpr`;
     simulator and distinguisher at parameter `|x|`; views encoded as `⟨⟨x, z⟩, ⟨r, msgs⟩⟩`.
-11. GI/3COL: statistical ZK (truncated simulators, rejection-sampled permutations / edges /
-    colour permutations); one-iteration ZK, `n`-fold protocols get soundness only (sequential
-    composition is §7.2.1, out of scope); `PerfectZKAbort` stated as the perfect form.
+11. GI: statistical ZK with negligible δ (`gi_statZK`; truncated simulator, rejection-sampled
+    permutations). 3COL: computational ZK (`col_zk`; `Commitment.multiHiding`, with the
+    statistical errors of the `n|E|`-attempt simulator and of the rejection-sampled edges, colour
+    pairs and colour permutations absorbed); not statistical, since with a perfectly binding
+    commitment two inequivalent colourings give statistically distinct views (gate 03e round 2,
+    finding 1; gate 03g, finding 6). One-iteration ZK; the `n`-fold protocols get soundness only
+    (sequential composition is §7.2.1, out of scope). `PerfectZK` and `PerfectZKAbort` are
+    stated, but no source protocol attains them under D8/D10; `PerfectZKAbort.statZK` turns the
+    abort form into statistical ZK with error `2^{-|x|}` (gate 03e, finding 2; ruling G3-4).
 12. `Commitment`: binding clause with `v₀ ≠ v₁` (source error); `n` an explicit argument,
     colours padded to `n` bits (DQ4).
 13. `PublicKeyScheme`: clause (4) (message enumerator) dropped; `0^n` is the canonical message.
@@ -983,14 +1084,27 @@ Issues found in this synthesis and resolved here (not raised by the panel):
     uniform (`SampleClose`), hardness on the ideal uniform `x ← D_i` (`uexp` over `Gen`'s coins).
 15. Candidates: `A` receives `1^n` in Assumptions 30.1/52.2/53.1; `Π_n` throughout; `p ≠ q`
     (odd / Blum) in RSA and Rabin; expected time replaced by strict PPT with `2^{-n}` failure.
-16. `WorstCaseOneWayLit` (run-3 audit P3-2): satisfied by every length-shrinking family whose
-    output length does not determine `n` (e.g. the constant family), an artefact of D5's typed
-    inverse; the `1^n` form `WorstCaseOneWay` is the headline.
+16. `WorstCaseOneWayLit` (run-3 audit P3-2; reworded at gate 03b, finding 9): when `outLen` is
+    constant, so that `|f(x)|` does not determine `n`, the literal form can hold for families
+    that are trivially invertible given `1^n` (e.g. the constant family, or `f n b = b ⊕ [n odd]`
+    on one bit), an artefact of D5's typed inverse; the `1^n` form `WorstCaseOneWay` is the
+    headline, and `toParam` applies whenever `outLen` is non-constant (for `PolyExpr`,
+    injective ⇔ non-constant).
 17. `TrapdoorCollection.inv_spec` (run-3 audit P3-5): the inverter receives `⟨t, y⟩` without the
-    index, so RSA's trapdoor is `⟨N, d⟩` (text: `d`) and Rabin's inverter recomputes `N = pq`.
+    index. The classes coincide (gate 03b, finding 6): a text TDP becomes one of this shape with
+    `t' := ⟨i, t⟩` (`Gen'` outputs `⟨i, ⟨i, t⟩⟩`; the trapdoor never reaches the adversary), and
+    this shape is a text TDP whose `Inv` ignores `i`. RSA's trapdoor is `⟨N, d⟩` (text: `d`) and
+    Rabin's inverter recomputes `N = pq`.
 18. `Collection.glPad m henc`, `expCollection H G hV` (run-3 audit P3-1): the encoding-length
     hypothesis resp. the validity bridge are arguments of the definitions; `expGen` outputs the
-    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`.
+    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`. Cost of
+    `henc` (gate 03c, finding 3; ruling G3-7c): a non-constant `PolyExpr` is strictly
+    increasing, so an index generated at two parameters forces `m` constant, and no candidate of
+    the library satisfies `henc` as parametrized (`rsaTrapdoor`: `2·max(n, 2)`-bit elements,
+    `rabinBlumTrapdoor`: `2·max(n, 3)`, `expCollection`: `dlDefaultIndex` below `n₀`); Thm 104.4's
+    reading "from trapdoor permutations" (`glPad_hardCore`, `exists_glPad_singleBitSecure`) holds
+    for TDPs whose generated indices encode elements in exactly `m(n)` bits. A per-index form
+    (`|encD_i x| = |encD_i default| ≤ m(n)`) would admit the candidates; not formalized.
 19. Theorem 63.1 (run-3 audit P3-4): `theorem_63_1`, `fUniversal_*` are conditional on an
     encoding scheme with `CanonizerExp c`; no instance proved (`exists_canonizerExp`).
 20. `ddhReal`/`ddhRandom` (run-3 audit P8-1): the DDH exponents `a, b, z` are read from
@@ -1003,6 +1117,27 @@ Issues found in this synthesis and resolved here (not raised by the panel):
 22. `uprob_adaptive_guess`, `uprob_gni_rep_cheat` (run-3 audit P10-1/P10-2): the auxiliary coin
     type (`W`, `ρ`) is assumed nonempty — `uprob` on an empty type is `0`, so the exact `2^{-m}`
     fails for `Empty`; every consumer passes a tape type `Fin k → Bool`.
+23. Thms 35.1, 35.2 and Claim 38.2 (gate 03b, finding 8): the direct products are families at
+    parameter `n` whose adversaries receive `1^n` (the text: `1^{n·m(n)}`, `1^{2n}`;
+    interderivable, so negligibility in `n` and in `n·m(n)` coincide); Claim 38.2 runs
+    `T(n) + 1 = 2n·m(n)·n^c + 1` rounds with Garg's threshold `μ₀/(2m)` (the text: `2nm²p(n)`
+    rounds, threshold `1/(2m²p(n))`), with the margin `(T + 1)·2^{-n}` for the rejection-sampled
+    positions.
+24. `Collection.encD_decD` (gate 03b, finding 1; ruling G3-1): decoders are canonical — a string
+    decodes only if it is the encoding of its value — so the outputs of the sampler and of the
+    trapdoor inverter are encodings ([PS10, Defs 41.1 (2), 56.1 (6)]: "an element of `D_i`",
+    "computes `f_i^{-1}(y)`"); every decoder of the library is canonical.
+25. `PRG.expands` (gate 03c, finding 1; ruling G3-2): expansion at every seed length, `n = 0`
+    included (Def 77.1 (2)'s `|G(x)| > |x|` read literally at `x = ε`). A `PolyExpr` stretch has
+    coefficients in ℕ, so stretches with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) are not
+    `PRG`s, although the text uses them (the length-doubling `G` of Alg 92.1 and Thm 97.3; Lem 80.5's
+    "for any polynomial `ℓ`"); `PRG.expand`/`prg_expand` take the same `hℓ : ∀ n, n < ℓ(n)`. Thm 97.3
+    uses the separate predicate `DoublingPRG`, produced from any secure `PRG` by `PRG.doubling`
+    (`PRG.Secure.doubling`, `Asymptotic/PRF.lean`); elsewhere `2n + 1`, `n^c + 1` are reached by
+    `prg_expand` from the one-bit truncation `PRG.truncate`, and shorter outputs by truncation
+    (`PRG.Secure.truncateTo_easy`/`_negligible`). Alg 92.1 needs only `n ≤ ℓ(n)`. "PRGs exist" has the
+    same meaning under every reading (truncate to `n + 1` bits, change below `n₀`), and no statement
+    of ch. 2–8 is vacuous by it.
 
 ---
 
@@ -1104,8 +1239,10 @@ Outright errors (to replace the plan's seeded list):
 18. p. 61 example `N = 77`: numbers garbled.
 19. Theorem 63.1 proof: "hardness amplification from §2.3" should be §2.4; budget `|y|^3`
     becomes `(|y|+1)^3`.
-20. Theorem 49.14: "with probability `1 − 2^{−t}`" should be "at least"; Lemma 50.15: "`N > 2`
-    composite" should be odd composite.
+20. Theorem 49.14: "with probability `1 − 2^{−t}`" should be "at least". (Lemma 50.15's "`N > 2`
+    composite" is right as stated: for even `N > 2` the liars also form a proper subgroup, since
+    `(−1)^{N−1} = −1`; the formal lemma restricts to odd `N` only for convenience. Corrected on gate
+    03f2, F01.)
 21. p. 27: "NP ⊄ BPP ⟺ worst-case OWFs exist" mixes uniform BPP with non-uniform inverters.
 22. Theorem 45.6 / p. 46: the remark that Euler's theorem "removes the restriction `x < N`"
     refers to a restriction Algorithm 45.5 does not have.
@@ -1160,7 +1297,8 @@ Outright errors (to replace the plan's seeded list):
 45. Definitions 121.1/121.2 and Proposition 128.8 bound by `e(n)` with `n` undefined
     (`n = |x|`); Definition 121.2 relies on expected polynomial time.
 46. Proposition 128.8's proof: hybrid count `2n|E|` vs `n|E|` attempts; "`S̃_{e+1}` … `S̃_{e+1}`"
-    typo; the `6|E|` sub-hybrid is unnecessary.
+    typo; the `6|E|` sub-hybrid is unnecessary; p. 129 prints "If we assume that `S′` never
+    outputs fail" and "`S′` fails with probability …" for `S″` (gate 03g, M2).
 47. §4.7 step 2: "Cook's reduction applied to the witness" needs a Levin reduction (never
     defined); "execute `(P, V)` on `x'`" should be `(P', V')`; Theorem 126.4 needs a hard-core
     predicate (Theorem 87.3) and uses a single OWP, not Definition 55.1's collection.
@@ -1171,12 +1309,21 @@ Outright errors (to replace the plan's seeded list):
     literal `Pr[out_V = 0]` of Definition 116.1 unsatisfiable against a prover that halts at
     once; time complexity `t(|x|)` "regardless of messages" leaves the simulator's call to `V*`
     on long `z` ill-defined (D8 reading).
+51. Definition 121.2 read literally (`∀ z ∈ {0,1}*`, the distinguisher polynomial-time in its
+    input) fails for the 3-colouring protocol 127.5 of Proposition 128.8: with `|z|` exponential,
+    the distinguisher, whose input (the view) contains `z`, opens the perfectly binding
+    commitments by exhaustive search, and on a graph with two proper colourings outside one
+    colour-permutation orbit it separates the two real views, which the witness-blind simulator
+    cannot match (protocols with exactly simulable views are not affected; gate 03e round 2,
+    finding 6). So the bound `∀ Lz : PolyExpr` on `|z|`, and
+    indexing the distinguisher's advice by `|x|` rather than by its input length, are necessary,
+    not only convenient (gate 03e, finding 9; `ZeroKnowledge/Defs.lean`'s module docstring).
 
 Gaps the formalization fills (not errors): Theorem 42.2 (⇒) and Theorem 57.2 ("exercises");
 the PKE single ⇒ multi-message theorem and the bitwise theorem (p. 103); Theorem 107.3
 ("exercise") with the `1/q` term; Lemma 84.1's range reduction and averaging; the square-root
 algorithm for `p ≡ 1 (mod 4)` (restricted to `3 (mod 4)` instead); Miller–Rabin's composite
-case (deferred); Chernoff (replaced by Chebyshev for pairwise independence); Theorem 112.2's
+case (proved: `two_mul_card_mrLiars_le`, `uprob_millerRabin_le`); Chernoff (replaced by Chebyshev for pairwise independence); Theorem 112.2's
 message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (hypothesis).
 
 ---
@@ -1207,7 +1354,9 @@ message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (h
 5. **Optional literal modules.** `NUPPTSeq` (Def 26.8 verbatim), `exists_queryTree`
    (`OracleTM` bridge) and `NUPPT.ofPartial` are specified as optional modules with one named
    admission each; confirm they are out of the mandatory core (they are not needed by any
-   chapter 2–4 theorem).
+   chapter 2–4 theorem). **Ruled** (decision log 2026-10-27): outside the mandatory core.
+   The one admission in this area is the optional bridge
+   `NUPPT.decides_of_decidesWithAdviceInTime` (decision log 2026-10-28; see D11).
 6. **Encoding scheme for Theorem 63.1 (run-3 audit P3-4).** `theorem_63_1` and `fUniversal_*`
    are stated for schemes with an at most exponential canonizer (`CanonizerExp c`); the only
    scheme in the library (`Turing.exists_effectiveMachineCode`) has no bound on its canonizer,

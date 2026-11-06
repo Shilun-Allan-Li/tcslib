@@ -1,0 +1,252 @@
+# Route probe, unit col-b (bridge through exists_fixCoins / Commitment.multiHiding), sealed
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColBRoute   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## probe source
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+set_option maxHeartbeats 400000
+set_option autoImplicit false
+open TCSlib.Cryptography Complexity Turing ColSimLemmas
+
+/-! Route probe for `col_zk` (review §2.3, steps (4)–(5) and the machine `B`). Foreign definitions
+the bridge could unfold are sealed; section `Unsealed` repeats the shape checks without the seal. -/
+
+namespace RouteProbe
+
+section Sealed
+attribute [local irreducible] TCSlib.Cryptography.multiCom TCSlib.Cryptography.distAdv
+  TCSlib.Cryptography.acceptProb Complexity.NUPPT.distinguisherL Complexity.NUPPT.coinLen
+  Complexity.PolyExpr.eval TCSlib.Cryptography.ZK TCSlib.Cryptography.Protocol.viewV
+  TCSlib.Cryptography.Protocol.transcriptWith TCSlib.Cryptography.View.encode
+  TCSlib.Cryptography.Strategy.Efficient
+
+/-- C1 (seal control): `PolyExpr.eval` read through its body; must FAIL sealed. -/
+example (n : ℕ) : Complexity.PolyExpr.eval .var n = n := rfl
+
+/-- C2 (seal control): `distAdv` read through its body; must FAIL sealed. -/
+example {σ τ γ ρ : Type} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ) (Y : τ → γ)
+    (D : γ → ρ → Bool) : 0 ≤ distAdv X Y D := abs_nonneg _
+
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+
+/-- R1: step (4) and the fixed-coin bridge (ladder step 4, `exists_colSimRed_fixCoins`):
+`exists_colSimRed_ge` then `CommitmentLemmas.exists_fixCoins` with `κ :=` the attempt table and
+`ρ :=` `D'`'s coins. -/
+theorem r1 {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (c : Fin n → Fin 3) {ρ : Type}
+    [Fintype ρ] [Nonempty ρ] (V : List Bool → ρ → List Bool) (N : ℕ) (hN : 0 < N) {ρ' : Type}
+    [Fintype ρ'] (D' : Option (ColView ρ) → ρ' → Bool) :
+    ∃ (k : Fin N) (e₀ : Fin (edgeCount G)) (π₀ : Equiv.Perm (Fin 3))
+      (w₀ : Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) ×
+        (Fin n → Fin (ℓ.eval n) → Bool)) × ρ),
+      distAdv (colSimTruncW Com (ℓ.eval n) G c V N) (colSimTruncH Com (ℓ.eval n) G c V N) D' / N ≤
+        distAdv
+          (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+            multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
+          (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
+          (fun cv c' => colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D' cv (w₀, c')) := by
+  obtain ⟨k, e₀, π₀, h⟩ := exists_colSimRed_ge Com (ℓ.eval n) G hm c V N hN D'
+  haveI : Nonempty (Fin (edgeCount G)) := ⟨⟨0, hm⟩⟩
+  obtain ⟨w₀, hw₀⟩ := CommitmentLemmas.exists_fixCoins
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+      multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
+    (colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D')
+  exact ⟨k, e₀, π₀, w₀, h.trans hw₀⟩
+
+/-- R2: with the table fixed, only attempt `k` reads the challenge (statement only). -/
+theorem r2 {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : Type} (V : List Bool → ρ → List Bool)
+    {N : ℕ} (k : Fin N) (e₀ : Fin (edgeCount G)) (π₀ : Equiv.Perm (Fin 3)) {ρ' : Type}
+    (D' : Option (ColView ρ) → ρ' → Bool)
+    (w₀ : Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin (ℓ.eval n) → Bool)) × ρ)
+    (cv : List Bool) (c' : ρ') :
+    colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D' cv (w₀, c') =
+      D' ((firstSome fun t : Fin N =>
+            if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) else none) <|>
+          colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ k) <|>
+          (firstSome fun t : Fin N =>
+            if k < t then colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) else none)) c' := by
+  sorry
+
+/-- R3a: `Commitment.multiHiding` with `q := var` applied directly to vectors indexed by `Fin n`
+(needs `var.eval n ≡ n` by unfolding `PolyExpr.eval`). Expected to FAIL sealed. -/
+example (hC : Commitment Com ℓ) (B : NUPPT) : ∃ ε : ℕ → ℝ, Negligible ε ∧
+    ∀ (n : ℕ) (v v' : Fin n → Fin n → Bool),
+      distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+        (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v' r) (B.distinguisherL n) ≤ ε n := by
+  obtain ⟨ε, hε, h⟩ := hC.multiHiding .var B
+  exact ⟨ε, hε, fun n v v' => h n v v'⟩
+
+/-- R3b: the same through the published `PolyExpr.eval_var` (`rw … at`). -/
+theorem r3b (hC : Commitment Com ℓ) (B : NUPPT) : ∃ ε : ℕ → ℝ, Negligible ε ∧
+    ∀ (n : ℕ) (v v' : Fin n → Fin n → Bool),
+      distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+        (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v' r) (B.distinguisherL n) ≤ ε n := by
+  obtain ⟨ε, hε, h⟩ := hC.multiHiding .var B
+  refine ⟨ε, hε, fun n => ?_⟩
+  have h' := h n
+  rw [PolyExpr.eval_var] at h'
+  exact h'
+
+/-- R4: the machine `B` (`D` at parameter `n²`) by `NUPPT.exists_reparam` and
+`NUPPT.exists_withAdvice`, its runs in the published equations. -/
+theorem r4 (D : NUPPT) (β : ℕ → List Bool) (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) :
+    ∃ B : NUPPT, B.coins = D.coins.subst (.mul .var .var) ∧
+      ∀ n y r, B.runAtL n y r = D.runAtL (n * n) (pairEncode y (β (n * n))) r := by
+  obtain ⟨A, hAc, hA⟩ := D.exists_withAdvice β b hβ
+  obtain ⟨B, hBc, -, hB⟩ := A.exists_reparam (.mul .var .var)
+  refine ⟨B, by rw [hBc, hAc], fun n y r => ?_⟩
+  rw [hB, hA, PolyExpr.eval_mul, PolyExpr.eval_var]
+
+/-- R5: two-parameter coin transport. `EnsembleLemmas.acceptProb_coins_equiv` applies; the rest
+needs `NUPPT.distinguisherL` and `NUPPT.coinLen` through their bodies (no equation lemmas). -/
+theorem r5 (B D : NUPPT) (n : ℕ) (F : List Bool → List Bool)
+    (hc : B.coins = D.coins.subst (.mul .var .var))
+    (hrun : ∀ y r, B.runAtL n y r = D.runAtL (n * n) (F y) r) {σ : Type} [Fintype σ]
+    (X : σ → List Bool) :
+    acceptProb X (B.distinguisherL n) =
+      acceptProb X fun y c => D.distinguisherL (n * n) (F y) c := by
+  have hlen : D.coinLen (n * n) = B.coinLen n := by
+    sorry -- needs `NUPPT.coinLen` (PPT.lean) through its body, then `PolyExpr.eval_subst`
+  rw [← EnsembleLemmas.acceptProb_coins_equiv
+    (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)) X (B.distinguisherL n)]
+  congr 1
+  funext y c
+  sorry -- needs `NUPPT.distinguisherL` (Adversary.lean) through its body, then `NUPPT.runAt_eq`
+
+/-- R6: the target's quantifiers. `intro` on `ZK` reads its body; expected to FAIL sealed. -/
+example (hC : Commitment Com ℓ) : ZK (colProtocol Com ℓ) R3COL := by
+  intro V' hV'
+  sorry
+
+/-- R7: the simulator of `exists_colSimulator` and the target's simulator slot. -/
+example (hC : Commitment Com ℓ) (V' : Strategy) (hV' : V'.Efficient) :
+    ∃ S : NUPPT, S.Uniform ∧ ∀ x z (r : S.Coins x.length),
+      S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+  obtain ⟨S, hS, -, hsim⟩ := exists_colSimulator hC.easy ℓ V' hV'
+  exact ⟨S, hS, hsim⟩
+
+/-- R8: nonnegativity of the hiding bound (review: `0 ≤ ε_B` from the conclusion at `v = v'`)
+needs `0 ≤ distAdv …`, i.e. `distAdv`'s body. Expected to FAIL sealed. -/
+example (hC : Commitment Com ℓ) (B : NUPPT) (ε : ℕ → ℝ)
+    (h : ∀ n (v v' : Fin (PolyExpr.var.eval n) → Fin n → Bool),
+      distAdv (fun r : Fin (PolyExpr.var.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+        (fun r : Fin (PolyExpr.var.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
+        (B.distinguisherL n) ≤ ε n) (n : ℕ) : 0 ≤ ε n :=
+  (abs_nonneg _).trans (h n (fun _ _ => false) (fun _ _ => false))
+
+end Sealed
+
+section Unsealed
+
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+
+/-- C1 unsealed: must PASS. -/
+example (n : ℕ) : Complexity.PolyExpr.eval .var n = n := rfl
+
+/-- C2 unsealed: must PASS. -/
+example {σ τ γ ρ : Type} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ) (Y : τ → γ)
+    (D : γ → ρ → Bool) : 0 ≤ distAdv X Y D := abs_nonneg _
+
+/-- R3a unsealed. -/
+example (hC : Commitment Com ℓ) (B : NUPPT) : ∃ ε : ℕ → ℝ, Negligible ε ∧
+    ∀ (n : ℕ) (v v' : Fin n → Fin n → Bool),
+      distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+        (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v' r) (B.distinguisherL n) ≤ ε n := by
+  obtain ⟨ε, hε, h⟩ := hC.multiHiding .var B
+  exact ⟨ε, hε, fun n v v' => h n v v'⟩
+
+/-- R6 unsealed. -/
+example (hC : Commitment Com ℓ) : ZK (colProtocol Com ℓ) R3COL := by
+  intro V' hV'
+  sorry
+
+/-- R8 unsealed. -/
+example (hC : Commitment Com ℓ) (B : NUPPT) (ε : ℕ → ℝ)
+    (h : ∀ n (v v' : Fin (PolyExpr.var.eval n) → Fin n → Bool),
+      distAdv (fun r : Fin (PolyExpr.var.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+        (fun r : Fin (PolyExpr.var.eval n) → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
+        (B.distinguisherL n) ≤ ε n) (n : ℕ) : 0 ≤ ε n :=
+  (abs_nonneg _).trans (h n (fun _ _ => false) (fun _ _ => false))
+
+end Unsealed
+
+end RouteProbe
+
+## output
+Fri Nov  6 02:19:21 UTC 2026
+Probe/ColBRoute.lean:19:57: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  PolyExpr.var.eval n = n
+Probe/ColBRoute.lean:23:46: error: Type mismatch
+  abs_nonneg ?m.17
+has type
+  0 ≤ |?m.17|
+but is expected to have type
+  0 ≤ distAdv X Y D
+Probe/ColBRoute.lean:52:8: warning: declaration uses 'sorry'
+Probe/ColBRoute.lean:72:34: error: Application type mismatch: The argument
+  v
+has type
+  Fin n → Fin n → Bool
+but is expected to have type
+  Fin (PolyExpr.var.eval n) → Fin n → Bool
+in the application
+  h n v
+Probe/ColBRoute.lean:97:8: warning: declaration uses 'sorry'
+Probe/ColBRoute.lean:113:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+Com : List Bool → List Bool
+ℓ : PolyExpr
+hC : Commitment Com ℓ
+⊢ ZK (colProtocol Com ℓ) R3COL
+Probe/ColBRoute.lean:130:23: error: Application type mismatch: The argument
+  h n (fun x x_1 => false) fun x x_1 => false
+has type
+  distAdv (fun r => multiCom Com (fun x x_1 => false) r) (fun r => multiCom Com (fun x x_1 => false) r)
+      (B.distinguisherL n) ≤
+    ε n
+but is expected to have type
+  |?m.26| ≤ ε n
+in the application
+  LE.le.trans (abs_nonneg ?m.26) (h n (fun x x_1 => false) fun x x_1 => false)
+Probe/ColBRoute.lean:154:0: warning: declaration uses 'sorry'
+Probe/ColBRoute.lean:159:9: warning: unused variable `hC`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+FAIL(Probe/ColBRoute): lean exited with status 1
+FAIL(Probe/ColBRoute): error diagnostics reported
+FAIL(Probe/ColBRoute): no fresh .olean produced
+rc=1
+Fri Nov  6 02:19:25 UTC 2026
+
+## Reading of the result
+Sealed (section `Sealed`): TCSlib.Cryptography.{multiCom, distAdv, acceptProb, ZK, Protocol.viewV,
+Protocol.transcriptWith, View.encode, Strategy.Efficient}, Complexity.{NUPPT.distinguisherL, NUPPT.coinLen,
+PolyExpr.eval}.
+- C1 (`PolyExpr.eval` by rfl) and C2 (`0 ≤ distAdv` by `abs_nonneg`) FAIL sealed and PASS unsealed: the seal is active.
+- R1 PASSES sealed: `exists_colSimRed_ge` composes with `CommitmentLemmas.exists_fixCoins` with no glue
+  (κ := the attempt table `Fin N → AttemptCoins`, ρ := D's coins; Nonempty κ from `0 < edgeCount G` and
+  `[Nonempty ρ]`). The samplers must be given explicitly (with `_ _` the Fintype instances are stuck).
+  This is ladder step 4 (`exists_colSimRed_fixCoins`), statement checked.
+- R2 elaborates (statement only, `sorry`): the fixed reduction as `D' (pre <|> planted cv <|> post)`.
+- R3a FAILS sealed, PASSES unsealed: `Commitment.multiHiding` with `q := var` is indexed by
+  `Fin (PolyExpr.var.eval n)`, the 3-colouring vectors by `Fin n`; matching them reads `PolyExpr.eval`.
+  R3b PASSES sealed: `rw [PolyExpr.eval_var] at h'` on the specialised hiding bound lines the shapes up.
+  **Mismatch 1 (resolved by R3b).**
+- R4 PASSES sealed: `NUPPT.exists_withAdvice` then `NUPPT.exists_reparam (.mul .var .var)` gives a machine at
+  parameter `n` running `D` at `n * n` with coins `D.coins.subst (.mul .var .var)` (published equations only:
+  `PolyExpr.eval_mul`, `PolyExpr.eval_var`). `exists_reparam` (exact run at `p.eval n`, no `take`) suffices because
+  `n ↦ n²` is a `PolyExpr`; the sketch's `exists_reparam_advice` also works.
+- R5: `EnsembleLemmas.acceptProb_coins_equiv` along `Equiv.arrowCongr (finCongr _) (Equiv.refl Bool)` applies, but
+  closing it needs (a) `B.coinLen n = D.coinLen (n * n)`, i.e. `NUPPT.coinLen` through its body, and (b)
+  `NUPPT.distinguisherL` through its body. **Mismatch 2: no published equation for `NUPPT.coinLen` (PPT.lean) or
+  `NUPPT.distinguisherL` (Adversary.lean).** The existing glue (`CommitmentLemmas.acceptProb_distinguisherL_of_runAtL`,
+  one parameter only) reads both bodies itself.
+- R6 FAILS sealed (`intro` on `ZK`), passes unsealed. **Mismatch 3: `ZK` (Defs.lean) has no `_iff` lemma.**
+- R7 PASSES sealed: `exists_colSimulator` fills the simulator slot.
+- R8 FAILS sealed, passes unsealed: `0 ≤ ε_B` from the hiding bound at `v = v'` needs `0 ≤ distAdv …`.
+  **Mismatch 4: `distAdv` (Foundations/Experiments.lean) has no equation lemma** (also needed for the triangle
+  inequality `abs_sub_le` of the assembly).

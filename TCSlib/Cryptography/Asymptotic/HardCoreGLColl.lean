@@ -17,7 +17,7 @@ The collection form of [PS10, Theorem 87.3] (needed by [PS10, Theorem 104.4] and
 if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at
 generated indices, then `⟨encD_i x, r⟩` is hard-core for the padded collection
 `g_i(x, r) = ⟨f_i(x), r⟩`. This file supplies the machine side for
-`Collection.OneWay.glPad_hardCore` (`Asymptotic/HardCore.lean`):
+`Collection.OneWay.glPad_hardCore` (`Asymptotic/HardCoreCollection.lean`):
 
 * the evaluator of the bit `⟨padFin(encD_i x), r⟩` on `⟨i, ⟨encD_i x, r⟩⟩` (`padToLen`, `ipFun`);
 * the recovery machine `glMachine` of `Asymptotic/HardCoreGL.lean` applied to the predictor

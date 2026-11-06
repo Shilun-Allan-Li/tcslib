@@ -7,6 +7,7 @@ import Mathlib.Data.List.Induction
 import Mathlib.Tactic.DeriveFintype
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.Randomized.Build.PairSplit
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -28,7 +29,9 @@ built in the `Build/` style).
 ## Construction (DESIGN.md §2.4, with the roles of the two components exchanged)
 
 One work tape and four control modes (six states), in the idiom of the coin-splitting
-machine `TCSlib.Complexity.Randomized.Build.PairSplit` (whose parser is copied privately).
+machine `TCSlib.Complexity.Randomized.Build.PairSplit`, whose buffered aligned parser it uses
+(`Turing.PairParse.parse_first`, `parse_block`, `rewind_run`, on the one-buffer configurations
+`Turing.PairParse.cfg`).
 
 * **Phase 1, `parse`.** The buffered aligned parser: aligned two-bit blocks `00`/`11` of the
   doubled first component `u` are undoubled onto the work tape without emitting anything,
@@ -60,8 +63,8 @@ an input of length `n` is at most `n ^ 2 + 3 n + 5 ≤ 5 (n + 1) ^ 2`.
 
 ## Main definitions
 
-None public (the machine and its configuration family are private; the result is an
-existence statement over `Turing.FinTM Bool`).
+None public (the machine is private and its configurations are `Turing.PairParse.cfg`; the
+result is an existence statement over `Turing.FinTM Bool`).
 
 ## References
 
@@ -123,114 +126,37 @@ private def unaryMulTM : FinTM Bool where
           | some _ => ⟨0, fun _ => (none, .pos), some true, some .emit⟩
           | none => ⟨0, fun _ => (none, .neg), none, some .back⟩ }
 
-/-- The one-buffer configurations of the unary-multiplication machine: control `q`, input
-head after `i` input bits, work tape holding the word `a` from the origin with its head at
-cell `z`, output `out`. -/
-private def mulCfg (x : List Bool) (q : Option MulControl) (i : ℕ) (hi : i ≤ x.length)
-    (a : List Bool) (z : ℤ) (out : List Bool) : Cfg 1 Bool MulControl x :=
-  ⟨q, ⟨i + 1, by omega⟩, fun _ => bufferTape a, fun _ => z, out⟩
-
-/-- Reading at the indexed input position returns the optional list entry. -/
-private lemma mulCfg_read (x : List Bool) (q : Option MulControl) (i : ℕ)
-    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
-    (mulCfg x q i hi a z out).inputSymbol = x[i]? := by
-  by_cases h : i < x.length
-  · rw [List.getElem?_eq_getElem h]
-    exact inputSymbolInner i (by simp [mulCfg]; omega) h
-  · have he : i = x.length := by omega
-    subst i
-    simp [mulCfg, Cfg.inputSymbol, Fin.ext_iff]
-
-/-- Two indexed configurations with equal input indices are equal (the bound proofs are
-irrelevant). -/
-private lemma mulCfg_congr (x : List Bool) (q : Option MulControl) {i i' : ℕ}
-    (hi : i ≤ x.length) (hi' : i' ≤ x.length) (h : i = i') (a : List Bool) (z : ℤ)
-    (out : List Bool) :
-    mulCfg x q i hi a z out = mulCfg x q i' hi' a z out := by
-  subst h
+/-- The machine's table at the parse state `parse none`: a bit `b` moves the input head right
+into `parse (some b)`, silently (the hypothesis `hp0` of `Turing.PairParse.parse_first`). -/
+private lemma mul_tr_first (b : Bool) (w : Fin 1 → Option Bool) :
+    unaryMulTM.tm.tr (.parse none) (some b) w =
+      ⟨.pos, fun _ => (none, 0), none, some (.parse (some b))⟩ :=
   rfl
 
-/-- Reading the first half of an aligned block preserves the buffer silently. -/
-private lemma mul_first (x pre rest a : List Bool) (b : Bool)
-    (hx : x = pre ++ b :: rest) :
-    unaryMulTM.tm.step
-      (mulCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) =
-      mulCfg x (some (.parse (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
-  unfold MultiTapeTM.step
-  change (unaryMulTM.tm.tr (.parse none) _ _).apply _ = _
-  rw [mulCfg_read]
-  have hr : x[pre.length]? = some b := by simp [hx]
-  rw [hr]
-  refine Cfg.ext rfl ?_ rfl ?_ rfl
-  · exact moveInputPos_pos_of_ne_right _ (by simp [mulCfg, hx])
-  · funext i; simp [unaryMulTM, Action.apply, mulCfg]
+/-- The machine's table at the parse state `parse (some b)` reading `c`: the aligned-block step
+of the parser (the hypothesis `hp1` of `Turing.PairParse.parse_block`, rewind state `back`). -/
+private lemma mul_tr_second (b c : Bool) (w : Fin 1 → Option Bool) :
+    unaryMulTM.tm.tr (.parse (some b)) (some c) w =
+      if b = c then ⟨.pos, fun _ => (some (some b), .pos), none, some (.parse none)⟩
+      else if b then ⟨.pos, fun _ => (none, 0), none, none⟩
+      else ⟨.pos, fun _ => (none, .neg), none, some .back⟩ :=
+  rfl
 
-/-- Equal-bit blocks append one decoded bit to the buffer; `01` begins the rewind (the work
-head steps back onto the last stored cell) and `10` halts silently. Neither transition emits
-physical output.
-**Proof sketch.** The first step is `mul_first`; the second reads the block's second bit
-`c` at the input index `|pre| + 1`. Case analysis on `b` and `c`: equal bits write `some b`
-at the right blank of the buffer (`bufferTape_append`) and move the work head right, `01`
-moves it left into `back`, `10` halts; in every case the input head advances. -/
-private lemma mul_block (x pre rest a : List Bool) (b c : Bool)
-    (hx : x = pre ++ b :: c :: rest) :
-    unaryMulTM.tm.runFrom
-      (mulCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) 2 =
-      if b = c then mulCfg x (some (.parse none)) (pre.length + 2) (by simp [hx])
-          (a ++ [b]) (a ++ [b]).length []
-      else if b then mulCfg x none (pre.length + 2) (by simp [hx]) a a.length []
-      else mulCfg x (some .back) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
-  change unaryMulTM.tm.step (unaryMulTM.tm.step _) = _
-  rw [mul_first x pre (c :: rest) a b hx]
-  unfold MultiTapeTM.step
-  change (unaryMulTM.tm.tr (.parse (some b)) _ _).apply _ = _
-  rw [mulCfg_read]
-  have hr : x[pre.length + 1]? = some c := by simp [hx]
-  rw [hr]
-  have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
-      ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ :=
-    moveInputPos_pos_of_ne_right _ (by simp [hx])
-  cases b <;> cases c <;> simp only [Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
-  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
-  all_goals first
-    | rfl
-    | (funext i; exact (bufferTape_append a _).symm)
-    | (funext i; simp [unaryMulTM, Action.apply, mulCfg])
+/-- The machine's table at `back`: left over stored symbols, right into `next` at the left
+blank (the hypothesis `hr` of `Turing.PairParse.rewind_run`). -/
+private lemma mul_tr_back (inp : Option Bool) (w : Fin 1 → Option Bool) :
+    unaryMulTM.tm.tr .back inp w = match w 0 with
+      | some _ => ⟨0, fun _ => (none, .neg), none, some .back⟩
+      | none => ⟨0, fun _ => (none, .pos), none, some .next⟩ :=
+  rfl
 
-/-- Rewinding the buffer from cell `j - 1` takes `j + 1` transitions and leaves the work
-head at the origin in the `next` state; the output is untouched.
-**Proof sketch.** At the left blank, move right and enter `next`. Otherwise read a buffer
-cell, move left, and invoke the induction hypothesis. -/
-private lemma mul_back (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
-    ∀ j, j ≤ a.length →
-    unaryMulTM.tm.runFrom (mulCfg x (some .back) i hi a ((j : ℤ) - 1) out) (j + 1) =
-      mulCfg x (some .next) i hi a 0 out := by
-  intro j
-  induction j with
-  | zero =>
-    intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
-    simp only [unaryMulTM, mulCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,
-      bufferTape_left]
-    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-    · funext k; simp [Action.apply]
-    · simp [Action.apply]
-  | succ j ih =>
-    intro hj
-    have hs : unaryMulTM.tm.step
-        (mulCfg x (some .back) i hi a (((j + 1 : ℕ) : ℤ) - 1) out) =
-        mulCfg x (some .back) i hi a ((j : ℤ) - 1) out := by
-      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
-      rw [hz]
-      unfold MultiTapeTM.step
-      simp only [unaryMulTM, mulCfg, Cfg.workTapeSymbols, bufferTape_nat,
-        List.getElem?_eq_getElem (by omega : j < a.length)]
-      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-      · funext k; simp [Action.apply, sub_eq_add_neg]
-      · simp [Action.apply]
-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
-    exact ih (by omega)
+/-- Rewinding the buffer from cell `j - 1` takes `j + 1` transitions and leaves the work head
+at the origin in the `next` state; the output is untouched (`Turing.PairParse.rewind_run`). -/
+private lemma mul_back (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) (out : List Bool)
+    (j : ℕ) (hj : j ≤ a.length) :
+    unaryMulTM.tm.runFrom (PairParse.cfg x (some .back) i hi a ((j : ℤ) - 1) out) (j + 1) =
+      PairParse.cfg x (some .next) i hi a 0 out :=
+  PairParse.rewind_run unaryMulTM.tm .back .next mul_tr_back x a i hi out j hj
 
 /-- The emission walk: from cell `j` of the buffer with `k = |a| - j` cells ahead, `k + 1`
 transitions emit `1^k` and leave the work head on the last stored cell in the `back` state.
@@ -240,53 +166,51 @@ cell `a[j]`, emits `true`, moves right, and the induction hypothesis applies to 
 `j + 1`; the outputs match by `List.replicate_succ`. -/
 private lemma mul_emit (x : List Bool) (i : ℕ) (hi : i ≤ x.length) (a : List Bool) :
     ∀ k j (out : List Bool), j + k = a.length →
-    unaryMulTM.tm.runFrom (mulCfg x (some .emit) i hi a (j : ℤ) out) (k + 1) =
-      mulCfg x (some .back) i hi a ((a.length : ℤ) - 1) (out ++ List.replicate k true) := by
+    unaryMulTM.tm.runFrom (PairParse.cfg x (some .emit) i hi a (j : ℤ) out) (k + 1) =
+      PairParse.cfg x (some .back) i hi a ((a.length : ℤ) - 1)
+        (out ++ List.replicate k true) := by
   intro k
   induction k with
   | zero =>
     intro j out hj
     obtain rfl : j = a.length := by omega
     have hnone : a[a.length]? = none := List.getElem?_eq_none le_rfl
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
-    simp only [unaryMulTM, mulCfg, Cfg.workTapeSymbols, bufferTape_nat, hnone]
-    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-    · funext k; simp [Action.apply, sub_eq_add_neg]
-    · simp [Action.apply]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _),
+      PairParse.cfg_workTapeSymbols]
+    simp only [unaryMulTM, bufferTape_nat, hnone]
+    rw [PairParse.apply_cfg_stay]
+    congr 1
   | succ k ih =>
     intro j out hj
     have hjl : j < a.length := by omega
-    have hs : unaryMulTM.tm.step (mulCfg x (some .emit) i hi a (j : ℤ) out) =
-        mulCfg x (some .emit) i hi a ((j + 1 : ℕ) : ℤ) (out ++ [true]) := by
-      unfold MultiTapeTM.step
-      simp only [unaryMulTM, mulCfg, Cfg.workTapeSymbols, bufferTape_nat,
-        List.getElem?_eq_getElem hjl]
-      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-      · funext k; simp [Action.apply]
-      · simp [Action.apply]
+    have hs : unaryMulTM.tm.step (PairParse.cfg x (some .emit) i hi a (j : ℤ) out) =
+        PairParse.cfg x (some .emit) i hi a ((j + 1 : ℕ) : ℤ) (out ++ [true]) := by
+      rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _),
+        PairParse.cfg_workTapeSymbols]
+      simp only [unaryMulTM, bufferTape_nat, List.getElem?_eq_getElem hjl]
+      rw [PairParse.apply_cfg_stay]
+      congr 1
     rw [MultiTapeTM.runFrom_succ_eq_step, hs, ih (j + 1) (out ++ [true]) (by omega),
       List.append_assoc, List.singleton_append, ← List.replicate_succ]
 
 /-- One round at an input symbol: `next` consumes the symbol, `emit` walks across the buffer
 emitting `1^{|a|}`, `back` rewinds; `2 |a| + 3` steps in all.
 **Proof sketch.** The `next` step reads `x[i]` and advances the input head
-(`moveInputPos_pos_of_ne_right`); then `mul_emit` from the origin and `mul_back` from the
+(`Turing.PairParse.apply_cfg_advance`); then `mul_emit` from the origin and `mul_back` from the
 last stored cell, glued with `MultiTapeTM.runFrom_add`. -/
 private lemma mul_round (x : List Bool) (i : ℕ) (hi : i < x.length) (a out : List Bool) :
-    unaryMulTM.tm.runFrom (mulCfg x (some .next) i hi.le a 0 out) (2 * a.length + 3) =
-      mulCfg x (some .next) (i + 1) hi a 0 (out ++ List.replicate a.length true) := by
-  have h1 : unaryMulTM.tm.step (mulCfg x (some .next) i hi.le a 0 out) =
-      mulCfg x (some .emit) (i + 1) hi a 0 out := by
-    unfold MultiTapeTM.step
-    change (unaryMulTM.tm.tr .next _ _).apply _ = _
-    rw [mulCfg_read, List.getElem?_eq_getElem hi]
-    refine Cfg.ext rfl ?_ rfl ?_ ?_
-    · exact moveInputPos_pos_of_ne_right _ (by show i + 1 ≠ x.length + 1; omega)
-    · funext k; simp [unaryMulTM, Action.apply, mulCfg]
-    · simp [unaryMulTM, Action.apply, mulCfg]
-  have h0 : unaryMulTM.tm.runFrom (mulCfg x (some .next) i hi.le a 0 out) 1 =
-      mulCfg x (some .emit) (i + 1) hi a 0 out := by
+    unaryMulTM.tm.runFrom (PairParse.cfg x (some .next) i hi.le a 0 out) (2 * a.length + 3) =
+      PairParse.cfg x (some .next) (i + 1) hi a 0 (out ++ List.replicate a.length true) := by
+  have h1 : unaryMulTM.tm.step (PairParse.cfg x (some .next) i hi.le a 0 out) =
+      PairParse.cfg x (some .emit) (i + 1) hi a 0 out := by
+    rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _),
+      PairParse.cfg_inputSymbol, List.getElem?_eq_getElem hi]
+    change (⟨.pos, fun _ => (none, 0), none, some .emit⟩ : Action 1 Bool MulControl).apply _ = _
+    rw [PairParse.apply_cfg_advance _ _ _ _ _ hi]
+    simp
+  have h0 : unaryMulTM.tm.runFrom (PairParse.cfg x (some .next) i hi.le a 0 out) 1 =
+      PairParse.cfg x (some .emit) (i + 1) hi a 0 out := by
     rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, h1]
   have h2 := mul_emit x (i + 1) hi a a.length 0 out (by simp)
   rw [Nat.cast_zero] at h2
@@ -301,68 +225,69 @@ private lemma mul_round (x : List Bool) (i : ℕ) (hi : i < x.length) (a out : L
 `|pre| + j < |x|`, and the outputs are glued by `List.replicate_add` and `Nat.mul_add`. -/
 private lemma mul_loop (x pre rest a out : List Bool) (hx : x = pre ++ rest) :
     ∀ j (_hj : j ≤ rest.length),
-    unaryMulTM.tm.runFrom (mulCfg x (some .next) pre.length (by simp [hx]) a 0 out)
+    unaryMulTM.tm.runFrom (PairParse.cfg x (some .next) pre.length (by simp [hx]) a 0 out)
         (j * (2 * a.length + 3)) =
-      mulCfg x (some .next) (pre.length + j) (by simp [hx]; omega) a 0
+      PairParse.cfg x (some .next) (pre.length + j) (by simp [hx]; omega) a 0
         (out ++ List.replicate (a.length * j) true) := by
   intro j
   induction j with
   | zero =>
     intro _
-    rw [Nat.zero_mul, MultiTapeTM.runFrom_zero]
-    simp [mulCfg]
+    rw [Nat.zero_mul, MultiTapeTM.runFrom_zero, Nat.mul_zero, List.replicate_zero,
+      List.append_nil]
+    rfl
   | succ j ih =>
     intro hj
     have hlt : pre.length + j < x.length := by simp [hx]; omega
     rw [Nat.add_mul, Nat.one_mul, MultiTapeTM.runFrom_add, ih (by omega), mul_round x _ hlt,
       Nat.mul_succ, List.replicate_add, List.append_assoc]
-    exact mulCfg_congr x _ hlt _ (Nat.add_assoc pre.length j 1) a 0 _
+    exact PairParse.cfg_congr x _ hlt _ (Nat.add_assoc pre.length j 1) a 0 _
 
 /-- At the end of the input, `next` halts in one step without touching anything. -/
 private lemma mul_halt (x a out : List Bool) :
-    unaryMulTM.tm.runFrom (mulCfg x (some .next) x.length le_rfl a 0 out) 1 =
-      mulCfg x none x.length le_rfl a 0 out := by
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-  unfold MultiTapeTM.step
-  change (unaryMulTM.tm.tr .next _ _).apply _ = _
-  rw [mulCfg_read, List.getElem?_eq_none le_rfl]
-  refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-  · funext k; simp [unaryMulTM, Action.apply, mulCfg]
-  · simp [unaryMulTM, Action.apply, mulCfg]
+    unaryMulTM.tm.runFrom (PairParse.cfg x (some .next) x.length le_rfl a 0 out) 1 =
+      PairParse.cfg x none x.length le_rfl a 0 out := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+    MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _),
+    PairParse.cfg_inputSymbol, List.getElem?_eq_none le_rfl]
+  change (⟨0, fun _ => (none, 0), none, none⟩ : Action 1 Bool MulControl).apply _ = _
+  rw [PairParse.apply_cfg_stay]
+  simp
 
 /-- Once the separator has been validated, the initial rewind, the rounds and the halting
 step cost `|a| + 1 + |rest| (2 |a| + 3) + 1` steps and emit exactly `1^{|a| · |rest|}`.
 **Proof sketch.** `mul_back` from the last stored cell, `mul_loop` with `j = |rest|`
-(re-indexing the input position to `|x|` by `mulCfg_congr`), then `mul_halt`. -/
+(re-indexing the input position to `|x|` by `Turing.PairParse.cfg_congr`), then `mul_halt`. -/
 private lemma mul_finish (x pre rest a : List Bool) (hx : x = pre ++ rest) :
     ∃ t ≤ a.length + 1 + rest.length * (2 * a.length + 3) + 1,
       (unaryMulTM.tm.runFrom
-        (mulCfg x (some .back) pre.length (by simp [hx]) a (a.length - 1) []) t).state =
+        (PairParse.cfg x (some .back) pre.length (by simp [hx]) a (a.length - 1) []) t).state =
           none ∧
       (unaryMulTM.tm.runFrom
-        (mulCfg x (some .back) pre.length (by simp [hx]) a (a.length - 1) []) t).output =
+        (PairParse.cfg x (some .back) pre.length (by simp [hx]) a (a.length - 1) []) t).output =
           List.replicate (a.length * rest.length) true := by
   refine ⟨a.length + 1 + rest.length * (2 * a.length + 3) + 1, le_rfl, ?_⟩
   rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, mul_back x a _ _ [] a.length le_rfl,
     mul_loop x pre rest a [] hx rest.length le_rfl,
-    mulCfg_congr x _ _ le_rfl (show pre.length + rest.length = x.length by simp [hx]),
+    PairParse.cfg_congr x _ _ le_rfl (show pre.length + rest.length = x.length by simp [hx]),
     mul_halt]
-  simp [mulCfg]
+  simp [PairParse.cfg_state, PairParse.cfg_output]
 
 /-- The silent aligned parser either rejects or validates and runs the rounds.
 **Proof sketch.** Induct over aligned two-bit blocks while carrying the already-decoded
 buffer `a` (with `2 |a| ≤ |pre|`). A doubled bit costs two steps and enlarges the buffer by
-one; the potential `|x| · |rest| + 3 |rest| + 2 |a| + 5` pays for it. Missing and forbidden
-separators halt silently with empty output. At `01`, apply the finish ledger `mul_finish`;
+one (`Turing.PairParse.parse_block`); the potential `|x| · |rest| + 3 |rest| + 2 |a| + 5` pays
+for it. Missing and forbidden separators halt silently with empty output. At `01`, apply the
+finish ledger `mul_finish`;
 its quadratic term `|rest| · 2 |a|` is dominated by `|x| · |rest|` because `2 |a| ≤ |x|`. -/
 private lemma mul_run (x rest : List Bool) :
     ∀ pre a (hx : x = pre ++ rest) (_hpre : 2 * a.length ≤ pre.length),
     ∃ t ≤ x.length * rest.length + 3 * rest.length + 2 * a.length + 5,
       (unaryMulTM.tm.runFrom
-        (mulCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).state =
+        (PairParse.cfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).state =
           none ∧
       (unaryMulTM.tm.runFrom
-        (mulCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).output =
+        (PairParse.cfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).output =
           match pairDecode rest with
           | some (u, v) => List.replicate ((a.length + u.length) * v.length) true
           | none => [] := by
@@ -371,20 +296,16 @@ private lemma mul_run (x rest : List Bool) :
     intro pre a hx _
     refine ⟨1, by simp, ?_⟩
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
-    change ((unaryMulTM.tm.tr (.parse none) _ _).apply _).state = none ∧ _
-    rw [mulCfg_read]
-    simp [hx, unaryMulTM, Action.apply, mulCfg, pairDecode]
+    rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _), PairParse.cfg_inputSymbol]
+    simp [hx, unaryMulTM, PairParse.cfg_output, pairDecode]
   | singleton b =>
     intro pre a hx _
     refine ⟨2, by simp, ?_⟩
     change (unaryMulTM.tm.step (unaryMulTM.tm.step _)).state = none ∧
       (unaryMulTM.tm.step (unaryMulTM.tm.step _)).output = _
-    rw [mul_first x pre [] a b hx]
-    unfold MultiTapeTM.step
-    change ((unaryMulTM.tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
-    rw [mulCfg_read]
-    cases b <;> simp [hx, unaryMulTM, Action.apply, mulCfg, pairDecode]
+    rw [PairParse.parse_first unaryMulTM.tm MulControl.parse mul_tr_first x pre [] a b hx,
+      MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _), PairParse.cfg_inputSymbol]
+    cases b <;> simp [hx, unaryMulTM, PairParse.cfg_output, pairDecode]
   | cons_cons b c rest ih _ =>
     intro pre a hx hpre
     by_cases h : b = c
@@ -396,7 +317,8 @@ private lemma mul_run (x rest : List Bool) :
       · simp only [List.length_append, List.length_cons, List.length_nil, Nat.mul_add,
           Nat.mul_one] at ht ⊢
         omega
-      rw [MultiTapeTM.runFrom_add, mul_block x pre rest a b b hx, if_pos rfl]
+      rw [MultiTapeTM.runFrom_add, PairParse.parse_block unaryMulTM.tm MulControl.parse .back
+        mul_tr_first mul_tr_second x pre rest a b b hx, if_pos rfl]
       simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
       refine ⟨?_, ?_⟩
       · simpa only [List.length_append, List.length_cons, List.length_nil] using hs
@@ -417,13 +339,15 @@ private lemma mul_run (x rest : List Bool) :
             exact Nat.mul_le_mul_left _ hx2
           simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at ht ⊢
           omega
-        rw [MultiTapeTM.runFrom_add, mul_block x pre rest a false true hx]
+        rw [MultiTapeTM.runFrom_add, PairParse.parse_block unaryMulTM.tm MulControl.parse .back
+          mul_tr_first mul_tr_second x pre rest a false true hx]
         simp only [Bool.false_eq_true, ↓reduceIte]
         simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
         exact ⟨hs, by simpa [pairDecode] using ho⟩
       · refine ⟨2, by simp only [List.length_cons]; omega, ?_⟩
-        rw [mul_block x pre rest a true false hx]
-        simp [mulCfg, pairDecode]
+        rw [PairParse.parse_block unaryMulTM.tm MulControl.parse .back mul_tr_first mul_tr_second
+          x pre rest a true false hx]
+        simp [PairParse.cfg_state, PairParse.cfg_output, pairDecode]
       · exact False.elim (h rfl)
 
 /-- The unary-multiplication machine halts on every input within `5 (|x| + 1) ^ 2` steps
@@ -440,8 +364,13 @@ private lemma mul_computes (x : List Bool) :
         | none => []) (5 * (x.length + 1) ^ 2) := by
   obtain ⟨t, ht, hs, ho⟩ := mul_run x x [] [] rfl (by simp)
   have hinit : unaryMulTM.tm.initCfg x =
-      mulCfg x (some (.parse none)) 0 (by omega) [] 0 [] := by
-    apply Cfg.ext <;> simp [unaryMulTM, mulCfg, MultiTapeTM.initCfg, Cfg.init]
+      PairParse.cfg x (some (.parse none)) 0 (by omega) [] 0 [] := by
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · simp [unaryMulTM, PairParse.cfg_state, MultiTapeTM.initCfg, Cfg.init]
+    · simp [PairParse.cfg_inputPos, MultiTapeTM.initCfg, Cfg.init]
+    · funext i z; simp [PairParse.cfg_workTapes, MultiTapeTM.initCfg, Cfg.init]
+    · funext i; simp [PairParse.cfg_workTapePos, MultiTapeTM.initCfg, Cfg.init]
+    · simp [PairParse.cfg_output, MultiTapeTM.initCfg, Cfg.init]
   have hh : unaryMulTM.ComputesInTime x
       (match pairDecode x with
         | some (u, v) => List.replicate (u.length * v.length) true

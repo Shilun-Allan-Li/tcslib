@@ -1,0 +1,153 @@
+# Rule-10 seal probes for col-a's routes (and two col-b items B1/B2)
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColASeal and Probe/ColASeal2   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## Probe/ColASeal.lean
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+set_option maxHeartbeats 400000
+set_option autoImplicit false
+open TCSlib.Cryptography Complexity Turing
+
+/-! Rule-10 shape probe for col-a's routes (and the shadow device), plus `Strategy.Efficient`. -/
+namespace SealProbeA
+
+section Sealed
+attribute [local irreducible] TCSlib.Cryptography.Protocol.outV
+  TCSlib.Cryptography.Protocol.transcriptWith TCSlib.Cryptography.exec TCSlib.Cryptography.R3COL
+  TCSlib.Cryptography.L3COL TCSlib.Cryptography.encColoring TCSlib.Cryptography.Strategy.Efficient
+  TCSlib.Cryptography.ColProofs.colProverRep
+
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+
+/-- A1: the verdict of the repeated protocol against `P'` in the published form
+(`outV_withV` after `withV_self`). -/
+theorem a1 (P' : Strategy) (x y z : List Bool)
+    (r : ((colProtocolRep Com ℓ).withV (colProtocolRep Com ℓ).V).ExecCoins P' x) :
+    ((colProtocolRep Com ℓ).withV (colProtocolRep Com ℓ).V).outV P' x y z r =
+      (colVerifierRep Com ℓ).next x z (List.ofFn r.2)
+        (exec P' (colVerifierRep Com ℓ) false x y z (List.ofFn r.1) (List.ofFn r.2)
+          ((PolyExpr.mul (.const 4) (.mul .var .var)).eval x.length)).2 :=
+  Protocol.outV_withV _ _ _ _ _ _ _
+
+/-- A2: the same without `withV` (reads `outV`/`transcriptWith` by `rfl`); expected FAIL sealed. -/
+example (P' : Strategy) (x y z : List Bool) (r : (colProtocolRep Com ℓ).ExecCoins P' x) :
+    (colProtocolRep Com ℓ).outV P' x y z r =
+      (colVerifierRep Com ℓ).next x z (List.ofFn r.2)
+        (exec P' (colVerifierRep Com ℓ) false x y z (List.ofFn r.1) (List.ofFn r.2)
+          ((PolyExpr.mul (.const 4) (.mul .var .var)).eval x.length)).2 := rfl
+
+/-- A3: destructuring `R3COL` (Language.lean) reads its body; expected FAIL sealed. -/
+example (x y : List Bool) (h : R3COL x y) : ∃ n : ℕ, x.length = n * n := by
+  obtain ⟨n, G, c, rfl, rfl, -⟩ := h
+  exact ⟨n, length_encGraph G⟩
+
+/-- A4: the shadow device under a seal of the shadow (`ColProofs.colProverRep`). -/
+example (hCom : PolyTimeComputable Com) : (colProverRep Com ℓ).Efficient :=
+  ColProofs.colProverRep_efficient hCom ℓ
+
+/-- B1 (col-b): destructuring `Strategy.Efficient` (Interaction.lean); expected FAIL sealed. -/
+example (V' : Strategy) (hV' : V'.Efficient) : ∃ A : NUPPT, A.Uniform := by
+  obtain ⟨A, hA, -, -⟩ := hV'
+  exact ⟨A, hA⟩
+
+/-- B2 (col-b): the published route `Efficient.exists_uniform`. -/
+example (V' : Strategy) (hV' : V'.Efficient) : ∃ A : NUPPT, A.Uniform :=
+  (hV'.exists_uniform).imp fun _ h => h.1
+
+end Sealed
+
+section Unsealed
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+example (P' : Strategy) (x y z : List Bool) (r : (colProtocolRep Com ℓ).ExecCoins P' x) :
+    (colProtocolRep Com ℓ).outV P' x y z r =
+      (colVerifierRep Com ℓ).next x z (List.ofFn r.2)
+        (exec P' (colVerifierRep Com ℓ) false x y z (List.ofFn r.1) (List.ofFn r.2)
+          ((PolyExpr.mul (.const 4) (.mul .var .var)).eval x.length)).2 := rfl
+example (x y : List Bool) (h : R3COL x y) : ∃ n : ℕ, x.length = n * n := by
+  obtain ⟨n, G, c, rfl, rfl, -⟩ := h
+  exact ⟨n, length_encGraph G⟩
+example (hCom : PolyTimeComputable Com) : (colProverRep Com ℓ).Efficient :=
+  ColProofs.colProverRep_efficient hCom ℓ
+example (V' : Strategy) (hV' : V'.Efficient) : ∃ A : NUPPT, A.Uniform := by
+  obtain ⟨A, hA, -, -⟩ := hV'
+  exact ⟨A, hA⟩
+end Unsealed
+end SealProbeA
+
+## output
+Fri Nov  6 02:21:34 UTC 2026
+Probe/ColASeal.lean:32:75: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (colProtocolRep Com ℓ).outV P' x y z r =
+    (colVerifierRep Com ℓ).next x z (List.ofFn r.2)
+      (exec P' (colVerifierRep Com ℓ) false x y z (List.ofFn r.1) (List.ofFn r.2)
+          (((PolyExpr.const 4).mul (PolyExpr.var.mul PolyExpr.var)).eval x.length)).2
+Probe/ColASeal.lean:36:9: error: Tactic `rcases` failed: `h : R3COL x y` is not an inductive datatype
+Probe/ColASeal.lean:41:2: error: Type mismatch
+  ColProofs.colProverRep_efficient hCom ℓ
+has type
+  (ColProofs.colProverRep Com ℓ).Efficient
+but is expected to have type
+  (colProverRep Com ℓ).Efficient
+Probe/ColASeal.lean:45:9: error: Tactic `rcases` failed: `hV' : V'.Efficient` is not an inductive datatype
+FAIL(Probe/ColASeal): lean exited with status 1
+FAIL(Probe/ColASeal): error diagnostics reported
+FAIL(Probe/ColASeal): no fresh .olean produced
+rc=1
+Fri Nov  6 02:21:40 UTC 2026
+
+## Probe/ColASeal2.lean
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+set_option maxHeartbeats 400000
+set_option autoImplicit false
+open TCSlib.Cryptography Complexity Turing
+namespace SealProbeA2
+section Sealed
+attribute [local irreducible] TCSlib.Cryptography.Protocol.outV
+  TCSlib.Cryptography.Protocol.transcriptWith TCSlib.Cryptography.exec
+  TCSlib.Cryptography.Strategy.coinLen TCSlib.Cryptography.Protocol.withV
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+/-- A5: from `outV_withV` to the plain protocol through `withV_self`. -/
+theorem a5 (P' : Strategy) (x y z : List Bool) (r : (colProtocolRep Com ℓ).ExecCoins P' x) :
+    (colProtocolRep Com ℓ).outV P' x y z r =
+      (colVerifierRep Com ℓ).next x z (List.ofFn r.2)
+        (exec P' (colVerifierRep Com ℓ) false x y z (List.ofFn r.1) (List.ofFn r.2)
+          ((PolyExpr.mul (.const 4) (.mul .var .var)).eval x.length)).2 := by
+  have h := Protocol.outV_withV (colProtocolRep Com ℓ) (colProtocolRep Com ℓ).V P' x y z
+  rw [Protocol.withV_self] at h
+  exact h r
+/-- A6: the coin length of the one-iteration prover (`Strategy.coinLen` body); expected FAIL. -/
+example (N : ℕ) : (colProver Com ℓ).coinLen N = 3 * N + N * ℓ.eval N := by
+  show (PolyExpr.add (.mul (.const 3) .var) (.mul .var ℓ)).eval N = _
+  simp
+end Sealed
+end SealProbeA2
+
+## output
+Fri Nov  6 02:28:26 UTC 2026
+Probe/ColASeal2.lean:22:2: error: 'show' tactic failed, pattern
+  (((PolyExpr.const 3).mul PolyExpr.var).add (PolyExpr.var.mul ℓ)).eval N = ?m.20
+is not definitionally equal to target
+  (colProver Com ℓ).coinLen N = 3 * N + N * ℓ.eval N
+FAIL(Probe/ColASeal2): lean exited with status 1
+FAIL(Probe/ColASeal2): error diagnostics reported
+FAIL(Probe/ColASeal2): no fresh .olean produced
+rc=1
+Fri Nov  6 02:28:28 UTC 2026
+
+## Reading of the result
+- A1 PASSES sealed (outV, transcriptWith, exec sealed): the repeated protocol's verdict in published form through
+  `Protocol.outV_withV`. A5 (ColASeal2) PASSES sealed: from `outV_withV` to the plain protocol by
+  `rw [Protocol.withV_self] at h`.
+- A2 (`outV` by rfl, the device of `colProtocol_outV`) FAILS sealed, PASSES unsealed (seal active).
+- A3 FAILS sealed, PASSES unsealed: destructuring `R3COL` reads its body. **`R3COL` (Language.lean) has no `_iff`.**
+- A4 FAILS sealed, PASSES unsealed: the shadow device (`ColProofs.colProverRep_efficient` at the type of the original)
+  does not survive a seal of the shadow. Helper modules must therefore hold generic lemmas, not lemmas about
+  `ColProofs.*` shadows transferred by `rfl`.
+- A6 FAILS sealed: `Strategy.coinLen` (Interaction.lean) has no equation lemma; the repeated parties' coin blocks
+  (`(colProver Com ℓ).coinLen x.length`) need it.
+- B1 FAILS sealed, PASSES unsealed: destructuring `Strategy.Efficient` reads its body (no `_iff`). B2 PASSES:
+  `Strategy.Efficient.exists_uniform` gives the uniform machine and coins, but not the `next` equation.

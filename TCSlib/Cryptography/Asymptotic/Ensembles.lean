@@ -3,7 +3,12 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Complexity.Randomized
+import TCSlib.Complexity.Randomized.Closure
+-- `NonUniform` is not used here. It replaces, for downstream files, the former import of the
+-- facade `TCSlib.Complexity.Randomized`: `ZeroKnowledge/ThreeColoring/SimulatorMachine.lean`
+-- uses `NUPPT.Uniform.advice_eq` and reaches `NonUniform` only through this file (gate 03a,
+-- finding 12). Drop it once that file imports `NonUniform` itself.
+import TCSlib.Complexity.Randomized.NonUniform
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
 import TCSlib.Cryptography.Asymptotic.Sampling
@@ -34,7 +39,8 @@ uniform bits whose output law is exactly `X n` (`StatClose … 0`). The headline
 Definition 69.4 gives the distinguisher the input `1^n` (`Ensemble.Indist`, D5); the literal
 form `Ensemble.IndistLit` (the distinguisher receives the sample `t` only, activation at
 parameter `|t| = ℓ n`) is stated next to it with the bridges `Indist.toLit` and
-`IndistLit.toIndist` (injective `ℓ`), never unified silently.
+`IndistLit.toIndist` (injective, i.e. non-constant, `ℓ`; for constant `ℓ` the two forms
+coincide as well, by point tests, which is not formalized), never unified silently.
 
 Every asymptotic statement is proved by instantiating a concrete reduction of
 `TCSlib.Cryptography.Pseudorandom.Indistinguishability` [Gar26, §3.2] at each `n`, exhibiting
@@ -44,7 +50,8 @@ the reduction as a `Complexity.NUPPT` by the closure catalogue of
 `not_negligible_iff_exists_polyExpr`).
 
 **Deviation:** `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n`
-(literal form `IndistLit`, equivalent for injective `ℓ`).
+(literal form `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the
+constant case by point tests, not formalized).
 
 The machine constructions and the probability bookkeeping behind the proofs (the negated,
 padded-image and multicopy reductions as `NUPPT`s, coin-splitting bijections, the exactness
@@ -109,9 +116,14 @@ at each `n` a sampler `X n` from a finite seed type `σ n` (uniformly distribute
 the `ℓ(n)`-bit strings, the distribution `X_n` being the pushforward of the uniform seed. The
 length `ℓ` is a syntactic polynomial (D9).
 
-**Deviation:** every distribution is dyadic (a pushforward of uniform seeds); the text allows
-arbitrary distributions over `{0,1}^*`, but every ensemble of chapters 3 and 4 is of this form
-and the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
+**Deviation:** each `X_n` is the pushforward of the uniform distribution on a finite nonempty
+seed set, so its probabilities are rational (not necessarily dyadic: three seeds mapped to
+distinct strings give masses `1/3`; every efficiently samplable ensemble, `Samplable`, has dyadic
+laws, D6, but not every dyadic ensemble is samplable, e.g. the point mass at an uncomputable bit;
+gate 03a, round 2, R2-3), and it lives
+on strings of the fixed length `ℓ(n)` that Definition 69.4 requires (Definition 69.3 allows
+arbitrary distributions over `{0,1}^*`). Every ensemble of chapters 3 and 4 is of this form;
+the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
 experiments, approximated by the rejection samplers of `Asymptotic/Sampling.lean` (D6, D10).
 
 **Repair (run-3 audit P2-2):** the field `nonempty` was added to the frozen structure of
@@ -141,11 +153,19 @@ def uniform (ℓ : PolyExpr) : Ensemble ℓ where
   σ n := Fin (ℓ.eval n) → Bool
   X _ := id
 
+/-- Field equation of the uniform ensemble: the seed type at `n` is `{0,1}^{ℓ(n)}`. -/
+theorem uniform_σ (ℓ : PolyExpr) (n : ℕ) : (uniform ℓ).σ n = (Fin (ℓ.eval n) → Bool) := rfl
+
+/-- Field equation of the uniform ensemble: the sampler at `n` is the identity on seeds, read
+along `uniform_σ`. -/
+theorem uniform_X (ℓ : PolyExpr) (n : ℕ) (x : (uniform ℓ).σ n) :
+    (uniform ℓ).X n x = cast (uniform_σ ℓ n) x := rfl
+
 /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
 polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
 `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
-law of `X n` (`StatClose … 0`). This is the "efficiently sample from the ensemble" of
-[PS10, p. 72 (Example) and Lemma 71.6's multicopy corollary]. -/
+law of `X n` (`StatClose … 0`). This is the "efficiently sample" of [PS10, p. 72, Example];
+the multicopy lemma that assumes it is [Gar26, Lemma 3.3] (`Indist.copies`). -/
 def Samplable (X : Ensemble ℓ) : Prop :=
   ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
     ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
@@ -173,10 +193,17 @@ def IndistLit (X Y : Ensemble ℓ) : Prop :=
 ensemble `{U_{ℓ(n)}}`. -/
 def Pseudorandom (X : Ensemble ℓ) : Prop := Indist X (uniform ℓ)
 
+/-- The defining property of `Pseudorandom`: `X.Pseudorandom ↔ Indist X (uniform ℓ)`. -/
+theorem pseudorandom_iff (X : Ensemble ℓ) : X.Pseudorandom ↔ Indist X (uniform ℓ) := Iff.rfl
+
 /-- The image ensemble `{M(X_n)}` of [PS10, Lemma 71.5]: at parameter `n`, draw a seed of `X`
 and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)` bits. The
 output length `ℓ'` is an explicit syntactic polynomial so that the padding is itself
-polynomial-time (`polyTimeComputable_unaryPoly`). -/
+polynomial-time (`polyTimeComputable_unaryPoly`). The padding (`padFin`: `false`-padding or
+truncation) is lossless when `M` outputs exactly `ℓ'(n)` bits, the only case Definition 69.4
+can type (a sufficient condition), and can be lossy otherwise (`[1]` and `[1, 0]` both pad to
+`[1, 0, …]`; gate 03a, round 2, R2-5): variable-length
+outputs (ciphertexts, views, transcripts) are not ensembles of this kind. -/
 def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
   σ n := X.σ n × M.Coins n
   X n z := padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X.X n z.1)) z.2)
@@ -226,14 +253,6 @@ def Distinguishes {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (
 def Ensemble.DistinguishesWith {ℓ : PolyExpr} (X Y : Ensemble ℓ) (D : NUPPT) (μ : ℕ → ℝ) :
     Prop :=
   ∀ n, Distinguishes (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) (μ n)
-
-/-- The constant zero is negligible. -/
-theorem negligible_zero : Negligible fun _ : ℕ => (0 : ℝ) := by
-  intro c
-  refine ⟨1, fun n hn => ?_⟩
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  simp only [abs_zero]
-  positivity
 
 /-- The text's form of Definition 69.4 — "there exists a negligible `ε` with advantage
 `< ε(n)` for all `n`" — is equivalent to the frozen form "the advantage is negligible"
@@ -341,6 +360,13 @@ theorem Ensemble.Indist.toLit {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indis
 the text): if `{X_n} ≈ {Y_n}` against literal distinguishers, then also against distinguishers
 receiving `1^n` [PS10, Definition 69.4; D5].
 
+The hypothesis `hℓ` excludes only constant `ℓ`: a `PolyExpr` has natural-number coefficients,
+so `ℓ.eval` is constant or strictly increasing. For constant `ℓ ≡ L` the two forms coincide as
+well (not formalized, no consumer): the `2^L` point tests `t ↦ [t = t₀]` are advice-free
+literal distinguishers, so `IndistLit` makes `Σ_{t₀} |Pr[X_n = t₀] − Pr[Y_n = t₀]|`, hence the
+statistical distance of `X_n` and `Y_n`, negligible, and that bounds every distinguisher
+(`distAdv_le_of_statClose`). So D5's "`D` receives `1^n`" costs nothing for ensembles.
+
 **Proof sketch.** `ℓ.eval` is monotone (`PolyExpr.eval_mono`) and injective, hence strictly
 increasing, so `n ≤ ℓ n` for all `n`. Let `φ m := n` if `m = ℓ n` (`Classical.choose` of the
 preimage, unique by injectivity) and `φ m := 0` off the image; then `φ m ≤ m`, so
@@ -387,7 +413,7 @@ non-uniform PPT `M` (and every explicit output length `ℓ'`), `{M(X_n)} ≈ {M(
 `combineAdvice (M.advice n) (D.advice n)`, built as `NUPPT.ofPolyTime` of a raw function of
 the layout `⟨⟨⟨1^n, t⟩, α⟩, r⟩` as in `NUPPT.exists_seq`) runs `M` on `t` with the first
 `M.coins n` coins, pads the result to `ℓ'(n)` bits *inside the layout*, where `1^n` is
-available (run-3 audit note P2-4: `NUPPT.exists_comp` sees only `y`; the padding is
+available (`NUPPT.exists_comp` sees only `y`, gate 03a finding 3; the padding is
 `EnsembleLemmas.polyTimeComputable_padL`, a typed cut `pairTakePoly ℓ'` of the output
 followed by `0^{ℓ'(n)}`), and hands it to `D` with the remaining coins. Its distinguisher at
 `n` is the concrete `sunglassRed P (D.distinguisher n (ℓ' n))` with
@@ -411,7 +437,9 @@ theorem Ensemble.Indist.push {ℓ ℓ' : PolyExpr} {X Y : Ensemble ℓ} (h : X.I
 `X^m` with advantage `ε` then some consecutive pair `X^i, X^{i+1}` (`i < m`) is distinguished
 by `D` with advantage at least `ε / m`. (The text indexes `X^1, …, X^m` and loses the factor
 `m` where `m − 1` steps would do; harmless.) This is the concrete `exists_hybrid_gap` applied to
-the acceptance probabilities `g_i = Pr[t ← X^i : D(t) = 1]`. -/
+the acceptance probabilities `g_i = Pr[t ← X^i : D(t) = 1]`. All hybrids share one seed type
+`σ` (`X : ℕ → σ → γ`); hybrids with seeds of different shapes are first embedded into a
+common product seed. -/
 theorem hybrid_lemma {σ γ ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm : 0 < m)
     (X : ℕ → σ → γ) (D : γ → ρ → Bool) :
     ∃ i < m, distAdv (X 0) (X m) D / m ≤ distAdv (X i) (X (i + 1)) D := by
@@ -438,6 +466,12 @@ theorem Ensemble.Indist.trans {ℓ : PolyExpr} {X Y Z : Ensemble ℓ} (h₁ : X.
 [PS10, Lemma 71.6; Gar26, Lemma 3.3]): if `{X_n} ≈ {Y_n}` and both ensembles are efficiently
 samplable, then `t(n)` independent copies remain indistinguishable for every syntactic
 polynomial `t`.
+
+The samplability hypotheses are those of [Gar26, Lemma 3.3]'s uniform reduction, which
+samples the other copies (D6). Against non-uniform distinguishers they can be dropped: hard-wire
+the hybrid index and the other `t(n) − 1` copies that keep the gap as advice
+(`NUPPT.exists_withAdvice`). That form is not proved, since no consumer needs copies of a
+non-samplable ensemble (gate 03a, finding 2).
 
 **Proof sketch.** Fix a distinguisher `D` of the `t(n)`-fold products. At each `n` with
 `t(n) > 0`, `exists_multicopyRed_ge` (through the block bijection `blocks`) gives a hybrid
@@ -670,7 +704,10 @@ independent bits `X_1, …, X_m`, each `true` with probability `p`, and `ε > 0`
 
 **Deviation:** the text states the inequality for real random variables with `|X_i| ≤ 1` and
 mean `μ` with the bound `(1 − μ²)/(m ε²)`; here the variables are bits (the only case used in
-the campaign) and the bound is the variance bound `p(1−p) ≤ 1/4` of the concrete layer. -/
+the campaign) and the bound is the variance bound `p(1−p) ≤ 1/4` of the concrete layer. Bits
+satisfy the text's hypothesis, and `1/4 > 1 − p²` exactly when `p > √3/2`, so for such `p`
+this bound is weaker than the text's (at `p = 1` the text gives `0`); the variance form
+`p(1−p)/(m ε²)` would imply both. -/
 theorem pairwise_sampling_ineq {Ω ι : Type*} [Fintype Ω] [Nonempty Ω] [Fintype ι]
     {X : ι → Ω → Bool} (hX : HardcoreBit.PairwiseIndep X) {p : ℝ}
     (hp : ∀ i, uprob (fun ω => X i ω = true) = p) {ε : ℝ} (hε : 0 < ε)

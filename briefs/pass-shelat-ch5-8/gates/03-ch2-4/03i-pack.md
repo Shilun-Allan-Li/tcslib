@@ -1,20 +1,19 @@
 # Gate 03i ([PS10] ch. 2–4, Goldreich–Levin and hard-core results): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup PR has landed
-(`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/i/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the proof of the Goldreich–Levin theorem (Thm 87.3) and its collection form, the hard-core lemmas behind the PRG constructions (Thm 79.4, Lem 80.5), the hard-core bit of one-way permutation collections, and the ensemble lemmas (the hybrid and prediction lemmas, Lems 71.5, 71.6, 73.8).
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the proof of the Goldreich–Levin theorem (Thm 87.3) and its collection form, the hard-core lemmas behind the PRG constructions (Thm 79.4, Lem 80.5), the hard-core bit of one-way permutation collections, and the ensemble lemmas (the hybrid and prediction lemmas, Lems 71.5, 71.6, 73.8).
 - **This is a "rest" pack.** Its files mostly hold the proofs of headline theorems stated in
   earlier packs, so its trusted surface is their **auxiliary statements**, definitions and
   sketches. A wrong auxiliary statement can make a proof hold for the wrong reason, or hide a
   weaker result behind a headline.
 - **Gate type:** an external **statement gate** (`workflow.md` §3), over a layer written in another
   campaign (Frederick Dehmel's, now closed). That layer had only an internal audit (run 3a).
-- **The deliverable:** **`gate03i-findings.md`**.
+- **The deliverable:** **`gate03i-findings.md`**, committed as `inbox/gate03i-findings.md` on the exchange branch `exchange/pass-shelat-ch5-8` and pushed (the protocol is that branch's `README.md`: write only that file, `git pull --rebase` before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-**The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
+**The source** is [PS10], 3rd ed., January 2010: `Pass–Shelat.pdf` at the root of `cryptography/pass-shelat-ch2-4` (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`). Book page = PDF
 page − 12. This pack needs §3.1 (book pp. 69–73) and §3.3–§3.4 (pp. 77–90).
 
 ## Brief for the auditor
@@ -38,13 +37,24 @@ Attempt at least **two adversarial instantiations**. Do not give a blanket appro
 | Design record | `briefs/pass-shelat/DESIGN.md` |
 | Inventory | `briefs/pass-shelat/inventory-ch3.md`: the proof rows of Thm-87.3 (with .a, .b, .coll), Thm-79.4, Lem-80.5, Cor-81.7, Lem-71.5, Lem-71.6, Lem-73.8 |
 | Internal audit record | `audits/pass-shelat/run3-audit-summary.md` |
-| Source | [PS10] as above (PDF attached) |
+| Source | [PS10] as above (`Pass–Shelat.pdf`, campaign branch root) |
 | Standards | `policy.md` |
 | Out of scope | tactic proofs |
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head: elaboration (a fresh replay of the closure); the axiom prints of
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/i/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 339 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   22 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 14 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 14 use only the standard axioms, and
+   0 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 0 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 8 files.
+
+Pack-specific notes (as drafted): elaboration (a fresh replay of the closure); the axiom prints of
 the headlines whose proofs live here; admissions (none in these files); lint.
 
 ## Specific questions

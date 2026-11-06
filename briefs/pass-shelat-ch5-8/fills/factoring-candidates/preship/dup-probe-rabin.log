@@ -1,0 +1,83 @@
+# Duplication probe, unit rabin (TCSlib/Cryptography/Candidates/Rabin.lean) at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb
+# Method: Probe/DupRabin.lean is a copy of the owned file (same imports, so the target itself is not in scope)
+# with each target body `sorry` replaced by `exact?` under `set_option maxHeartbeats 400000 in`;
+# checked by scripts/lean_check_tree.sh against the fillfac olean tree. Every target reported an error (no proof term found).
+# targets: 19; hits: 0
+
+oddFactorProb_le: no hit (exact? failed)
+blumFactorProb_le: no hit (exact? failed)
+blumFactoring_of_factoring: no hit (timeout at 400000 heartbeats)
+polyTimeComputable_oddGenRaw: no hit (exact? failed)
+polyTimeComputable_blumGenRaw: no hit (exact? failed)
+rabinSampler_spec: no hit (timeout at 400000 heartbeats)
+rabinCollection_sampleClose: no hit (timeout at 400000 heartbeats)
+polyTimeComputable_rabinFactorRaw: no hit (exact? failed)
+rabinCollection_invProbAt_le: no hit (exact? failed)
+rabinCollection_oneWay: no hit (exact? failed)
+polyTimeComputable_blumInvRaw: no hit (exact? failed)
+blumInv_spec: no hit (exact? failed)
+blumSampler_spec: no hit (timeout at 400000 heartbeats)
+rabinBlumTrapdoor_sampleClose: no hit (timeout at 400000 heartbeats)
+rabinBlumTrapdoor_invProbAt_le: no hit (exact? failed)
+rabinBlumTrapdoor_oneWay: no hit (exact? failed)
+polyTimeComputable_rabinRootRaw: no hit (exact? failed)
+blumFactorProb_le_invProbAt: no hit (exact? failed)
+blumFactoring_of_rabinBlum_oneWay: no hit (exact? failed)
+
+# Grep for equivalent public lemmas (TCSlib NumberTheory and Mathlib):
+#  - Square roots mod p ≡ 3 (mod 4): NumberTheory.sqrtMod3 / sqrtMod3_sq, sq_pow_div_four_succ, pow_div_four_succ_mem_QR
+#    (QuadraticResidues.lean); Mathlib ZMod.euler_criterion, ZMod.euler_criterion_units, ZMod.exists_sq_eq_neg_one_iff.
+#  - Chinese remainder: NumberTheory.crtUnits (+ crtUnits_fst/_snd, sq_crtUnits_symm, mem_QR_mul_iff) over Mathlib's
+#    ZMod.chineseRemainder; Mathlib Nat.chineseRemainder (explicit value). No lemma identifies the explicit CRT formula
+#    `blumInvNat` with a residue root: blumInv_spec's identification is new content (route below avoids blumSqrt's body).
+#  - Blum roots: blumSqrt, blumSqrt_sq, blumSqrt_mem_QR, eq_blumSqrt_of_sq_eq, sqTo_bijective_of_blum; factoring from two
+#    roots: gcd_sub_eq_prime_of_sq_eq_sq; squaring pushes uniform: pushesUniform_sqTo; symmetry: rabin_symmetry (proved,
+#    in the owned file). All cited, none states a target.
+#  - Conditioning: uprob_and_eq_mul_subtype, uprob_subtype_prod_eq, one_sub_div_le_uprob_subtype (Concrete.lean).
+#  Result: no equivalent of any rabin target exists.
+
+# ---- raw Lean log ----
+start 2026-11-06T02:24:13Z maxHeartbeats=400000 per target (set_option ... in)
+Probe/DupRabin.lean:129:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:140:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:148:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRabin.lean:345:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:352:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:473:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRabin.lean:539:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRabin.lean:577:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:625:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:642:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:816:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:839:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:859:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRabin.lean:906:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRabin.lean:929:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:943:2: error: `exact?` could not close the goal.
+Probe/DupRabin.lean:968:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:1001:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRabin.lean:1016:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+FAIL(Probe/DupRabin): lean exited with status 1
+FAIL(Probe/DupRabin): error diagnostics reported
+FAIL(Probe/DupRabin): no fresh .olean produced
+end 2026-11-06T02:27:53Z rc=1 elapsed=220s

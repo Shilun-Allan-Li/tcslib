@@ -45,7 +45,7 @@ None: the file proves lemmas about the existing `HardcoreBit.guessRecover`.
 * `TCSlib.Cryptography.HardcoreBit.invProb_guessInverter_enc_pad` — the same bound on the
   sample space `(α × {0,1}^m) × coins` of the padded collection (the padding `r` is carried
   along unused), the form consumed by `Collection.OneWay.glPad_hardCore`
-  (`Asymptotic/HardCore.lean`).
+  (`Asymptotic/HardCoreCollection.lean`).
 
 ## References
 

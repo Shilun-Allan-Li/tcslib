@@ -1,0 +1,24 @@
+# Lint at the issue tree. Gate lint (python3 -I scripts/style_lint.py on the three owned files): first line.
+# Then campaign_style_lint.py TCSlib/Cryptography/Candidates, rows for the owned files (check 8 WARNs and the 7 Rabin
+# targets whose docstrings have no 'Proof sketch' paragraph; informational). ----
+
+0 findings in 3 files
+
+
+
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 145: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 347: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 532: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 805: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 892: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 927: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 951: `sorry` without a proof sketch in the preceding docstring
+WARN  TCSlib/Cryptography/Candidates/Factoring.lean            7 public def(s) without a lemma beside them (check 8): FactoringAssumption, fmultBlocks, fmultWeakPoly, plantFactor, prodInverter, sample
+WARN  TCSlib/Cryptography/Candidates/RSA.lean                  19 public def(s) without a lemma beside them (check 8): RSAAssumption, RSAValid, rsaBlock, rsaEncVal, rsaFromFactorRaw, rsaGenCoins, rsaG
+WARN  TCSlib/Cryptography/Candidates/Rabin.lean                28 public def(s) without a lemma beside them (check 8): BlumDensity, BlumFactoringAssumption, BlumValid, blumDefault, blumEnc, blumEncVal
+INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines; 47 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines; 85 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines; 96 public / 0 private declarations

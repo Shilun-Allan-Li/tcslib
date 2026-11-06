@@ -37,7 +37,7 @@ S. Ben-David, *Understanding Machine Learning*, ch. 3. The definitions:
   `c`.
 - **Learners:** a (randomized) learner is `L : (Fin m → X × Bool) → ρ → (X → Bool)`, with finite
   coins `ρ`.
-- **PAC learning:** `PACLearns C L m ε δ :=` for every `i` and every `D`, with probability
+- **PAC learning:** `PACLearns C m L ε δ :=` for every `i` and every `D`, with probability
   `≥ 1 − δ` over the sample and the coins, `err D (L S r) (C i) ≤ ε`. Variants:
   - weak learning: `ε = ½ − γ` [KV94, §4];
   - learning under a fixed distribution: `D` fixed to uniform, the case [PS10] needs.
@@ -45,8 +45,14 @@ S. Ben-David, *Understanding Machine Learning*, ch. 3. The definitions:
   the learner predicts `C i x`.
 - **The bridge (proved here):** the prediction success equals `1 − E_{i,S,r}[err_U(L S r, C i)]`.
   The fresh point is independent of the sample, so no fresh-point collision issue arises. Hence
-  a learner with prediction advantage `≤ γ` cannot weakly PAC-learn with any `γ' > γ`, at a
-  stated `δ` (Markov on the error).
+  a learner with prediction advantage `≤ γ` does not satisfy `WeakLearnsUnder U C m L γ' δ`
+  whenever `γ + δ < γ' ≤ ½`: split the expected error over the accuracy event (error at most
+  `½ − γ'`) and its complement (probability at most `δ`, error at most 1). Starting from
+  [KV94, §4.1, p. 74]'s weak learner, which is guaranteed to succeed only with probability `1/q`,
+  a small `δ` is obtained by confidence amplification [KV94, §4.2, pp. 76–77] unless the learner
+  is already certified at it; layer 2 applies the bridge to the learner actually used (the
+  amplified one, with its own sample count, running time and edge, when amplification is needed)
+  (gate 05, rounds 2 and 3: R2-1, R2-2, R3-2).
 
 ### Layer 2: efficient learning and Thm 179.1 (prong D, `TCSlib/Cryptography/Randomness/`)
 

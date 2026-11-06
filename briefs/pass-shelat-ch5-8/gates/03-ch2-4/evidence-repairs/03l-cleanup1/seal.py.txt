@@ -1,0 +1,157 @@
+"""Rule-10 seal self-check (gate 03l clean-up; adapted from scratchpad/g04r2/seal.py): compile each
+consumer file with `attribute [local irreducible]` on the other files' definitions it consumes,
+and a control version that must fail where it unfolded (or pass when there was nothing to
+re-point). Outputs go to scratchpad/g03l-fix/sealrun/, never to the olean tree."""
+import subprocess, sys, os, re
+from pathlib import Path
+SP = Path("/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad")
+WT = SP / "wt-g03l-fix"
+OUT = SP / "g03l-fix/sealrun"
+OL = str(SP / "g03l-oleans")
+BASE = "0c348ff94cacf24d96d99078c9dd9e328530c8d2"
+OUT.mkdir(parents=True, exist_ok=True)
+MH = "Turing.ModuleHost."
+IF = "Complexity.IterateFind."
+SL = "Complexity.StateLoop."
+LOOPS = [SL + n for n in [
+    "orbit", "gstep", "gstepBound", "IterLoop.start", "IterLoop.step", "IterLoop.acc",
+    "IterLoop.out", "EmitLoop.start", "EmitLoop.step", "EmitLoop.out", "MajLoop.start",
+    "MajLoop.step", "MajLoop.acc", "MajLoop.out", "XorLoop.start", "XorLoop.step",
+    "XorLoop.acc", "XorLoop.out", "XorLoop.rounds", "EqLoop.step", "EqLoop.out", "EqLoop.flag",
+    "BlockMapLoop.start", "BlockMapLoop.step", "BlockMapLoop.acc", "BlockMapLoop.out",
+    "BlockMapLoop.rounds"]]
+ORB = [SL + "orbit", SL + "gstep", SL + "gstepBound"]
+SEALS = {
+ "TCSlib/Complexity/Randomized/Build/IterateFind.lean":
+    [MH + "Clean", MH + "entry", IF + "hostRet", IF + "hostCtrl"],
+ "TCSlib/Complexity/Randomized/Build/IterateFindHost.lean": [MH + "Clean", MH + "entry"],
+ "TCSlib/Complexity/ClassNP/SAT.lean": [MH + "Clean", MH + "entry"],
+ "TCSlib/Complexity/Randomized/Build/UnaryMul.lean": ["Turing.PairParse.cfg"],
+ "TCSlib/Complexity/Randomized/Repetition.lean": [IF + "step"] + LOOPS,
+ "TCSlib/Complexity/Randomized/Build/StringLoops.lean": [SL + "orbit"],
+ "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean": ORB,
+ "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean": ORB,
+}
+# Outside the brief's scope (files not touched, definitions not added or moved here); informational.
+EXTRA = {
+ "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean": ORB,
+ "TCSlib/Cryptography/Asymptotic/GGMReduction.lean": ORB,
+ "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean": ORB,
+ "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean": ORB,
+ "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean": ORB,
+ "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean": ORB,
+}
+# Machines: the seal cannot cover them (the type of their configurations reads `.k`/`.State`).
+MACHINES = {
+ "TCSlib/Complexity/Randomized/Build/IterateFind.lean": [MH + "hostTM", IF + "copyTM"],
+}
+
+def base_text(path):
+    return subprocess.run(["git", "show", f"{BASE}:{path}"], cwd=WT, capture_output=True,
+                          text=True).stdout
+
+def control(path, cur):
+    """(description, text, expectation) of the control version."""
+    if path.endswith("Repetition.lean"):
+        t = re.sub(r"\bBlockLoop\b", "BlockMapLoop", base_text(path))
+        return ("base version (rename BlockLoop -> BlockMapLoop applied)", t, "fail")
+    if path.endswith("Build/IterateFind.lean"):
+        t = cur
+        for k, rhs in [("zero", "ModuleHost.entry M 1"), ("one", "anchor"), ("two", ".inl 1"),
+                       ("three", "anchor"), ("four", ".inl 2")]:
+            i = {"zero": 0, "one": 1, "two": 2, "three": 3, "four": 4}[k]
+            t = t.replace(f"rw [hostRet_{k}", f"rw [show hostRet M {i} = {rhs} from rfl", 1)
+        return ("current version with the five hostRet_* reads reverted to `rfl`", t, "fail")
+    if path.endswith("UnaryMul.lean"):
+        a = ("    rw [MultiTapeTM.step_of_some (PairParse.cfg_state _ _ _ _ _ _ _),\n"
+             "      PairParse.cfg_inputSymbol, List.getElem?_eq_getElem hi]\n")
+        assert cur.count(a) == 1
+        t = cur.replace(a, "    unfold MultiTapeTM.step\n"
+                           "    change (unaryMulTM.tm.tr .next _ _).apply _ = _\n"
+                           "    rw [PairParse.cfg_inputSymbol, List.getElem?_eq_getElem hi]\n", 1)
+        return ("current version with mul_round's step read as in the old file (`unfold step; "
+                "change`, the state reduced through `cfg`)", t, "fail")
+    if path.endswith("ThreeColoring/Machines.lean"):
+        t = base_text(path).replace("  have h := polyTimeComputable_stateFind (CountLoop",
+                                    "  have h := EncodingMachines.polyTimeComputable_stateFind (CountLoop", 1)
+        return ("base version with item D's qualification applied", t, "pass")
+    if path.endswith("SAT.lean") or path.endswith("IterateFindHost.lean"):
+        t = cur.rstrip("\n").rsplit("\nend ", 1)
+        ex = ("\nexample {n : ℕ} (M : Fin n → FinTM Bool) (i : Fin n) :\n"
+              "    Turing.ModuleHost.entry (C := Unit) M i = .inr ⟨i, (M i).tm.q₀⟩ := rfl\n")
+        return ("current version plus one `rfl` read of `ModuleHost.entry` (seal-active check)",
+                t[0] + "\n" + ex + "\nend " + t[1] + "\n", "fail")
+    return ("base version (no unfolding sites to re-point)", base_text(path), "pass")
+
+env = dict(os.environ)
+lp = [OL] + [str(d) for d in (WT / ".lake/packages").glob("*/.lake/build/lib/lean")]
+env["LEAN_PATH"] = ":".join(lp)
+env["PATH"] = str(Path.home() / ".elan/bin") + ":" + env["PATH"]
+
+def seal(src, names):
+    lines = src.splitlines()
+    idx = max(i for i, l in enumerate(lines[:30]) if l.startswith("set_option"))
+    lines.insert(idx + 1, "attribute [local irreducible] " + " ".join(names))
+    return "\n".join(lines) + "\n"
+
+def run(text, tag):
+    f = OUT / (tag + ".lean")
+    f.write_text(text)
+    r = subprocess.run(["lean", str(f)], cwd=WT, env=env, capture_output=True, text=True)
+    errs = [l for l in (r.stdout + r.stderr).splitlines() if "error" in l]
+    return r.returncode == 0 and not errs, errs
+
+def explicit(text, names):
+    """Lines that name a sealed definition in simp/rw/unfold/dsimp/delta (the seal cannot see
+    equation-lemma unfolding; this syntactic check covers it)."""
+    hits = []
+    shorts = set()
+    for n in names:
+        parts = n.split(".")
+        shorts.add(parts[-1] if parts[-2] in ("StateLoop", "IterateFind", "ModuleHost",
+                                              "PairParse") else ".".join(parts[-2:]))
+    for k, l in enumerate(text.splitlines(), 1):
+        if not re.search(r"\b(simp|simp only|rw|unfold|dsimp|delta|simpa)\b", l):
+            continue
+        for sh in shorts:
+            pat = r"(?<![A-Za-z0-9_.'])(?:[A-Za-z0-9_]+\.)*" + re.escape(sh) + r"(?![A-Za-z0-9_'])"
+            seg = " ".join(re.findall(r"\[[^\]]*\]", l)) + (l if "unfold" in l or "delta" in l else "")
+            if re.search(pat, seg):
+                hits.append(f"{k}: {l.strip()[:120]}")
+    return hits
+
+which = sys.argv[1:] or list(SEALS) + list(EXTRA)
+for path in which:
+    names = SEALS.get(path) or EXTRA[path]
+    if path in EXTRA and path == list(EXTRA)[0]:
+        print("\n## Outside the brief's scope (not touched here; informational)\n")
+    tag = path.replace("/", "_")[:-5]
+    cur = (WT / path).read_text()
+    ok, errs = run(seal(cur, names), tag + "_sealed_new")
+    desc, ctext, expect = control(path, cur)
+    okc, errsc = run(seal(ctext, names), tag + "_sealed_control")
+    verdict = ("as expected" if (okc and expect == "pass") or (not okc and expect == "fail")
+               else "UNEXPECTED")
+    print(f"{path}\n  seal: {' '.join(n.split('.')[-1] for n in names)}")
+    print(f"  sealed current: {'PASS' if ok else 'FAIL'}")
+    for e in errs[:8]:
+        print("    cur:", e[:200])
+    print(f"  control ({desc}): {'PASS' if okc else 'FAIL'} ({len(errsc)} error lines); "
+          f"expected {expect}: {verdict}")
+    for e in errsc[:12]:
+        print("    ctl:", re.sub(r"^.*?sealrun/", "", e)[:200])
+    if expect == "fail" and not okc:
+        oku, errsu = run(ctext, tag + "_unsealed_control")
+        print(f"  the same control unsealed: {'PASS' if oku else 'FAIL'} "
+              f"(so its sealed failure is {'due to the seal' if oku else 'NOT attributable'})")
+    ex = explicit(cur, names)
+    print(f"  explicit simp/rw/unfold of a sealed name in the current file: {len(ex)}")
+    for e in ex[:6]:
+        print("    exp:", e)
+    if path in MACHINES:
+        okm, errsm = run(seal(cur, names + MACHINES[path]), tag + "_sealed_machines")
+        print(f"  with the machines also sealed ({', '.join(MACHINES[path])}): "
+              f"{'PASS' if okm else 'FAIL'} ({len(errsm)} error lines)")
+        for e in errsm[:3]:
+            print("    mach:", re.sub(r"^.*?sealrun/", "", e)[:200])
+    sys.stdout.flush()

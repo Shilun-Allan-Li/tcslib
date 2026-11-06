@@ -31,7 +31,8 @@ The supplier table (DESIGN.md §2.5):
 
 | Lemma | Raw function on `⟨⟨⟨1^n, y⟩, α⟩, r⟩` | Supplier |
 | --- | --- | --- |
-| `exists_comp` | re-pair with `pre y`, apply `A.output`, apply `post` | projections, `pairEncode`, `comp` |
+| `exists_compParam` | `pre ⟨1^n, y⟩`, then `A.output`, then `post ⟨1^n, ·⟩` | projections, `comp` |
+| `exists_comp` | `exists_compParam` with `pre`, `post` ignoring `1^n` | `exists_compParam` |
 | `exists_reparam p` | advice `A.advice (p n)`; replace `1^n` by `1^{p n}` (`unaryPoly p`) | `unaryPoly` |
 | `exists_reparam_advice φ p` | advice `⟨1^{φ n}, A.advice (φ n)⟩`; cut `A.coins (φ n)` coins | `pairTakePoly`, `eval_mono` |
 | `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
@@ -53,7 +54,10 @@ Not in this file (they are FP-level facts the campaign uses directly): negation 
 
 ## Main results
 
-* `Complexity.NUPPT.exists_comp` — closure under polynomial-time pre- and post-processing.
+* `Complexity.NUPPT.exists_compParam` — closure under polynomial-time pre- and post-processing
+  that reads the parameter (`pre` sees `⟨1^n, y⟩`, `post` sees `⟨1^n, output⟩`).
+* `Complexity.NUPPT.exists_comp` — its case that does not read the parameter (`pre` sees only
+  `y`, `post` only the output).
 * `Complexity.NUPPT.exists_reparam` — parameter change `n ↦ p(n)` (uniformity preserved).
 * `Complexity.NUPPT.exists_reparam_advice` — parameter change along a polynomially bounded
   `φ : ℕ → ℕ`, hard-wiring `1^{φ n}` and the advice at `φ n`; extra coins unread.
@@ -100,6 +104,23 @@ def inAdvice (z : List Bool) : List Bool := pairSndD (pairFstD z)
 /-- The coin slot of a raw input. -/
 def inCoins (z : List Bool) : List Bool := pairSndD z
 
+/-- The defining equation of `layout`:
+`layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r`. -/
+theorem layout_eq (u y α r : List Bool) :
+    layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r := rfl
+
+/-- The defining equation of `inParam`: `inParam z = pairFstD (pairFstD (pairFstD z))`. -/
+theorem inParam_eq (z : List Bool) : inParam z = pairFstD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inArg`: `inArg z = pairSndD (pairFstD (pairFstD z))`. -/
+theorem inArg_eq (z : List Bool) : inArg z = pairSndD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inAdvice`: `inAdvice z = pairSndD (pairFstD z)`. -/
+theorem inAdvice_eq (z : List Bool) : inAdvice z = pairSndD (pairFstD z) := rfl
+
+/-- The defining equation of `inCoins`: `inCoins z = pairSndD z`. -/
+theorem inCoins_eq (z : List Bool) : inCoins z = pairSndD z := rfl
+
 /-- The parameter slot of a layout. -/
 @[simp] theorem inParam_layout (u y α r : List Bool) : inParam (layout u y α r) = u := by
   simp [inParam, layout]
@@ -118,7 +139,9 @@ def inCoins (z : List Bool) : List Bool := pairSndD z
 
 /-- An activation is the output on the layout `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/
 theorem runAtL_eq_output_layout (A : NUPPT) (n : ℕ) (y r : List Bool) :
-    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := rfl
+    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := by
+  rw [runAtL_eq, advInput_eq]
+  rfl
 
 /-- The parameter projection is polynomial-time. -/
 theorem polyTimeComputable_inParam : PolyTimeComputable inParam :=
@@ -187,31 +210,63 @@ theorem length_combineAdvice_le (a b : List Bool) :
 
 /-! ### The closure catalogue -/
 
-/-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
-Claim-26.3 (a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
-`NUPPT` `B` with the same coins and advice that computes `post (A(1^n, pre y; r))`.
+/-- **Closure under parameter-aware pre- and post-processing** [PS10, §2.1, implicit;
+inventory Claim-26.3(a), (b)] (gate 03a, finding 3): for an `NUPPT` `A` and polynomial-time
+`pre`, `post` there is an `NUPPT` `B` with the same coins and advice that, at parameter `n` on
+argument `y` with coins `r`, computes `post ⟨1^n, A(1^n, pre ⟨1^n, y⟩; r)⟩`: `pre` sees the
+adversary input `⟨1^n, y⟩` (`advInput n y`), and `post` sees the parameter `1^n` paired with
+`A`'s output. `exists_comp` is the case where `pre` and `post` ignore `1^n`.
 
 **Proof sketch.** The raw function is
-`z ↦ post (A.output (layout (inParam z) (pre (inArg z)) (inAdvice z) (inCoins z)))`, polynomial-time
-by `polyTimeComputable_layout`, `PolyTimeComputable.comp`, `NUPPT.polyTimeComputable_output`,
+`z ↦ post ⟨inParam z, A.output (layout (inParam z) (pre ⟨inParam z, inArg z⟩) (inAdvice z)
+(inCoins z))⟩`, polynomial-time by `polyTimeComputable_layout`,
+`PolyTimeComputable.pairEncode`, `PolyTimeComputable.comp`, `NUPPT.polyTimeComputable_output`,
 `hpre`, `hpost`; `B := ofPolyTime` of it with `A`'s coins and advice. On the layout
 `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` the projections return the slots (`runAtL_ofPolyTime`, the
-`pairFstD_pairEncode`/`pairSndD_pairEncode` identities), giving `post (A.runAtL n (pre y) r)`. -/
+`pairFstD_pairEncode`/`pairSndD_pairEncode` identities), so `⟨inParam z, inArg z⟩` is
+`⟨1^n, y⟩ = advInput n y` and the value is `post ⟨1^n, A.runAtL n (pre (advInput n y)) r⟩`. -/
+theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
+    ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
+      ∀ n y r, B.runAtL n y r =
+        post (pairEncode (List.replicate n true) (A.runAtL n (pre (advInput n y)) r)) := by
+  have hF := ptc_comp hpost (polyTimeComputable_inParam.pairEncode
+    (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
+      (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
+      polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
+  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
+inventory Claim-26.3(a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
+`NUPPT` `B` with the same coins and advice that computes `post (A(1^n, pre y; r))`.
+
+**Scope** (gate 03a, finding 3): `pre` sees only the argument `y` and `post` only `A`'s output;
+neither sees `1^n`. Pre- and post-processing that depends on the parameter (padding or cutting
+to `ℓ'(n)` bits, slicing `p(n)` bits, planting at a position that depends on `n`) is the
+parameter-aware form `exists_compParam`, where `pre` sees `⟨1^n, y⟩` and `post` sees `1^n`
+paired with the output. Reductions that also read the advice or the coins are built as
+`ofPolyTime` of a raw function of the layout (`inParam`, `inArg`, `inAdvice`, `inCoins`,
+`polyTimeComputable_layout`), as `EnsembleLemmas.exists_pushRed` does for [PS10, Lemma 71.5].
+
+**Proof sketch.** `exists_compParam` with `pre ∘ snd` and `post ∘ snd`: the second component of
+`advInput n y = ⟨1^n, y⟩` is `y`, and that of `⟨1^n, A.runAtL n (pre y) r⟩` is `A`'s output
+(`pairSndD_pairEncode`). -/
 theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
     ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
       ∀ n y r, B.runAtL n y r = post (A.runAtL n (pre y) r) := by
-  have hF := ptc_comp hpost (ptc_comp A.polyTimeComputable_output
-    (polyTimeComputable_layout polyTimeComputable_inParam (ptc_comp hpre polyTimeComputable_inArg)
-      polyTimeComputable_inAdvice polyTimeComputable_inCoins))
-  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
-  rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (ptc_comp hpre polyTimeComputable_pairSndD)
+    (ptc_comp hpost polyTimeComputable_pairSndD)
+  refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
+  rw [hB, pairSndD_pairEncode]
+  simp [advInput_eq]
 
-/-- **Parameter change `n ↦ p(n)`** [Claim-26.3, implicit]: for an `NUPPT` `A` and a syntactic
-polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p` that at parameter `n`
-behaves as `A` at parameter `p(n)`; `B` is uniform when `A` is (the prefix `1^{p(n)}` is
-computed, not hard-wired).
+/-- **Parameter change `n ↦ p(n)`** [PS10, §2.1, implicit; inventory Claim-26.3]: for an
+`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p`
+that at parameter `n` behaves as `A` at parameter `p(n)`; `B` is uniform when `A` is (the
+prefix `1^{p(n)}` is computed, not hard-wired).
 
 **Proof sketch.** Advice `A.advice (p n)` of length `≤ (A.adv.subst p).eval n`
 (`PolyExpr.eval_subst`); the raw function replaces the parameter slot `1^n` by
@@ -231,15 +286,15 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
   refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
     rfl, fun hA n => hA _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
-/-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform):
-for an `NUPPT` `A`, `φ` with `φ n ≤ p n`, there is an `NUPPT` `B` with coins
-`A.coins.subst p` that at parameter `n` behaves as `A` at parameter `φ n` on the first
-`A.coins (φ n)` coins (extra coins are unread). This is the one place an abstract `ℕ → ℕ`
-appears (as a hypothesis with a `PolyExpr` majorant, D9); it serves Lemma 64.3's
-`m(n) = n − ⌊log₂ n⌋`, the literal/`1^n` bridges of Definitions 26.1 and 69.4, and the
-interdefinability argument of D3/D4.
+/-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform)
+[PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`, `φ` with `φ n ≤ p n`,
+there is an `NUPPT` `B` with coins `A.coins.subst p` that at parameter `n` behaves as `A` at
+parameter `φ n` on the first `A.coins (φ n)` coins (extra coins are unread). This is the one
+place an abstract `ℕ → ℕ` appears (as a hypothesis with a `PolyExpr` majorant, D9); it serves
+Lemma 64.3's `m(n) = n − ⌊log₂ n⌋`, the literal/`1^n` bridges of Definitions 26.1 and 69.4, and
+the interdefinability argument of D3/D4.
 
 **Proof sketch.** Advice `⟨1^{φ n}, A.advice (φ n)⟩`, of length
 `2 φ n + 2 + |A.advice (φ n)| ≤ 2 p n + 2 + A.adv (p n)` by `hφ`, `advice_length` and
@@ -270,12 +325,12 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
   refine ⟨ofPolyTime hF (A.coins.subst p) _
     (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv, rfl, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, coinLen, layout, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
 
-/-- **Hard-wiring advice** [Claim-26.3 (d)]: for an `NUPPT` `A` and a polynomially bounded
-family `β n` there is an `NUPPT` `B` with the same coins that computes
-`A(1^n, ⟨y, β n⟩; r)` (the reductions of chapters 2–4 hard-wire hybrid indices, worst-case
-inputs and the given adversary's advice this way).
+/-- **Hard-wiring advice** [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`
+and a polynomially bounded family `β n` there is an `NUPPT` `B` with the same coins that
+computes `A(1^n, ⟨y, β n⟩; r)` (the reductions of chapters 2–4 hard-wire hybrid indices,
+worst-case inputs and the given adversary's advice this way).
 
 **Proof sketch.** Advice `⟨A.advice n, β n⟩` of length `2 A.adv n + 2 + b n`
 (`length_pairEncode`); the raw function re-pairs the argument slot with the second half of
@@ -300,12 +355,13 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
   refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv, rfl,
     fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
-/-- **Extra coins passed as data** [Claim-26.3 (c)]: for an `NUPPT` `A` and a syntactic
-polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins` and `A`'s advice such that
-`B(1^n, y; r) = A(1^n, ⟨y, r.take (p n)⟩; r.drop (p n))`: the first `p n` coins become part of
-the input (a uniformly random string of length `p n`), the rest are `A`'s coins.
+/-- **Extra coins passed as data** [PS10, §2.1, implicit; inventory Claim-26.3(c)]: for an
+`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins`
+and `A`'s advice such that `B(1^n, y; r) = A(1^n, ⟨y, r.take (p n)⟩; r.drop (p n))`: the first
+`p n` coins become part of the input (a uniformly random string of length `p n`), the rest are
+`A`'s coins.
 
 **Proof sketch.** The raw function cuts the coin slot at `p(|1^n|)` with
 `polyTimeComputable_pairTakePoly p`/`pairDropPoly p` on `⟨inParam z, inCoins z⟩`, re-pairs the
@@ -323,11 +379,11 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
   refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length, rfl, rfl,
     fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
-/-- **Sequential composition with input pass-through and fresh coins** [Claim-26.3 (b), (c),
-(e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT` `C` with coins
-`A.coins + B.coins`, uniform when both are, computing
+/-- **Sequential composition with input pass-through and fresh coins** [PS10, §2.1, implicit;
+inventory Claim-26.3(b), (c), (e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT`
+`C` with coins `A.coins + B.coins`, uniform when both are, computing
 `B(1^n, ⟨y, A(1^n, y; r₁)⟩; r₂)` where `r = r₁ ++ r₂` is cut at `A.coins n`. This is the
 machine-level form of the "sunglass" reduction `D' := D ∘ (sampler)` of [Gar26] used by
 Lemma 71.5 (`Indist.push`) and every two-stage reduction.
@@ -366,7 +422,7 @@ theorem exists_seq (A B : NUPPT) :
   · show combineAdvice (A.advice n) (B.advice n) = []
     rw [hA n, hB n, combineAdvice_nil]
   · rw [runAtL_ofPolyTime]
-    simp [runAtL, advInput, coinLen, layout, inParam, inArg, inAdvice, inCoins]
+    simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **From "computes with probability one" to FP** [PS10, Definition 24.6; the direction
 "a PPT computing `f` gives a polynomial-time evaluator" behind Deviation 3]: if a uniform
@@ -389,9 +445,9 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
   funext z
   have hz := h (pairFstD z).length (pairSndD z) (fun _ => true)
   have hadv := hA (pairFstD z).length
-  simp only [runAt, List.ofFn_const] at hz
+  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
   rw [← hz]
-  simp [layout, advInput, coinLen, hadv]
+  simp [layout, advInput_eq, coinLen_eq, hadv]
 
 end NUPPT
 

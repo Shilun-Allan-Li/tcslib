@@ -1,0 +1,82 @@
+# Lint of the 3-colouring files at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb
+# python3 -I scripts/style_lint.py <each ThreeColoring file and the facade>
+
+
+20 findings in 10 files
+
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean: module docstring missing `## Main definitions`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:95: `polyTimeComputable_loopState'` proof is 38 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:152: `polyTimeComputable_flatMap_range` proof is 26 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:182: `iterSnd_poly` proof is 27 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:333: public `theorem countTrue_zero` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:335: public `theorem countTrue_succ` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:361: `countTrue_poly` proof is 30 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:597: public `theorem natOfBits_zero` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:599: public `theorem natOfBits_succ` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:628: `natOfBits_poly` proof is 31 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:662: `findSome?_finRange_eq` proof is 25 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:724: `sampleVal_poly` proof is 29 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean: module docstring missing `## Main definitions`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:218: `checkStr_poly` proof is 38 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:312: `proverRepStr_poly` proof is 23 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:723: `colProtocol_sound` proof is 99 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean: module docstring missing `## Main definitions`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:204: `colVerifier_next_eq` proof is 46 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:252: `colProverRep_next_eq` proof is 25 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:279: `colVerifierRep_next_eq` proof is 37 lines, no **Proof sketch.**
+
+
+
+
+
+
+# python3 -I scripts/campaign_style_lint.py --check8b <subtree>  (the script takes a directory, not a file: with a file path it prints 'no .lean files under …')
+## subtree TCSlib/Cryptography/ZeroKnowledge/ThreeColoring
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 333: public theorem `countTrue_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 335: public theorem `countTrue_succ` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 597: public theorem `natOfBits_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 599: public theorem `natOfBits_succ` has no preceding docstring (policy section 2, statement prose)
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          9 public def(s) without a lemma beside them (check 8): Graph.ofSimpleGraph, L3COL, ProperColoring, R3COL, edgeList, edgeMsg, perm3Equiv, sampleIdx, samplePerm3
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          2 public def(s) without a lemma beside them (check 8): firstTrial, ilayout
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean           1 public def(s) without a lemma beside them (check 8): proverCoinsOf
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          7 public def(s) without a lemma beside them (check 8): challengesBefore, challengesUpTo, colCoinSlice, colCommit, colIterations, colOpen, colProtocolRep
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean    9 public def(s) without a lemma beside them (check 8): colCoinSlice, colCommit, colIterations, colOpen, colProtocol, colProtocolRep, colWellFormed, finOneEquiv, msgAt
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         17 public def(s) without a lemma beside them (check 8): colRealView, colSim, colSimAttempt, colSimAttemptH, colSimAttemptPlanted, colSimAttemptStr, colSimAttemptW, colSimBlock, colSimCoins, colSimRed, colSimTrunc, colSimTruncH, colSimTruncW, pair6Equiv, sampleColorPair, simCoinsEquiv, simColors
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean   7 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, hybStd, plantEP, swapEP, swapR, truncAttempts
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean  22 public def(s) without a lemma beside them (check 8): attemptNum, baseR, blockPoly, chunk, colorA, colorB, colorNum, comStr, eIdx, edgePos, kPos, mE, nV, opnStr, pair6Equiv, rVStr, rrStr, sampleNum, sim, simCoins, simColors, vIdx
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          424 lines; 40 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          983 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          983 lines; 87 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean           537 lines; 53 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines; 34 public / 12 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean    398 lines; 27 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines; 42 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean   569 lines; 33 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean  620 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean  620 lines; 42 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean  661 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean  661 lines; 47 public / 0 private declarations
+
+style_lint: 4 FAIL, 8 WARN over 9 files
+
+## subtree TCSlib/Cryptography/ZeroKnowledge, ThreeColoring lines only (adds the facade check of ThreeColoring.lean)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            line 333: public theorem `countTrue_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            line 335: public theorem `countTrue_succ` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            line 597: public theorem `natOfBits_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            line 599: public theorem `natOfBits_succ` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorMachine`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric`
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            9 public def(s) without a lemma beside them (check 8): Graph.ofSimpleGraph, L3COL, ProperColoring, R3COL, edgeList, edgeMsg, perm3Equiv, sampleIdx, samplePerm3
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            2 public def(s) without a lemma beside them (check 8): firstTrial, ilayout
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean             1 public def(s) without a lemma beside them (check 8): proverCoinsOf
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            7 public def(s) without a lemma beside them (check 8): challengesBefore, challengesUpTo, colCoinSlice, colCommit, colIterations, colOpen, colProtocolRep
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean      9 public def(s) without a lemma beside them (check 8): colCoinSlice, colCommit, colIterations, colOpen, colProtocol, colProtocolRep, colWellFormed, finOneEquiv, msgAt
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           17 public def(s) without a lemma beside them (check 8): colRealView, colSim, colSimAttempt, colSimAttemptH, colSimAttemptPlanted, colSimAttemptStr, colSimAttemptW, colSimBlock, colSimCoins, colSimRed, colSimTrunc, colSimTruncH, colSimTruncW, pair6Equiv, sampleColorPair, simCoinsEquiv, simColors
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean     7 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, hybStd, plantEP, swapEP, swapR, truncAttempts
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean    22 public def(s) without a lemma beside them (check 8): attemptNum, baseR, blockPoly, chunk, colorA, colorB, colorNum, comStr, eIdx, edgePos, kPos, mE, nV, opnStr, pair6Equiv, rVStr, rrStr, sampleNum, sim, simCoins, simColors, vIdx

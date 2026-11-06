@@ -1,0 +1,1189 @@
+# Gate 03a, round 2: the repair diff
+#
+# Section A: every change to this pack's Lean files between the round 1 head a3c5fa8b72e50939822f22364647dc844a3914a0 and the round 2 pin e28773ef3bda6f7b4b112ec1657427bfef01e374, whichever repair made it (03a's commit, #201, #203).
+# Section B: the 03a repair commit e8f45ca3ca7246d1379c4b66ce5a7a72d0b2d820 and #203's item H commit 43e8fe2c27c54c2c50e01541024995e95c6bf6fa: their changes outside this pack's files.
+
+### --- A: this pack's files, a3c5fa8b72e50939822f22364647dc844a3914a0..e28773ef3bda6f7b4b112ec1657427bfef01e374 ---
+diff --git a/TCSlib/Complexity/Randomized/Closure.lean b/TCSlib/Complexity/Randomized/Closure.lean
+index df05331c..468cb1ed 100644
+--- a/TCSlib/Complexity/Randomized/Closure.lean
++++ b/TCSlib/Complexity/Randomized/Closure.lean
+@@ -31,7 +31,8 @@ The supplier table (DESIGN.md §2.5):
+ 
+ | Lemma | Raw function on `⟨⟨⟨1^n, y⟩, α⟩, r⟩` | Supplier |
+ | --- | --- | --- |
+-| `exists_comp` | re-pair with `pre y`, apply `A.output`, apply `post` | projections, `pairEncode`, `comp` |
++| `exists_compParam` | `pre ⟨1^n, y⟩`, then `A.output`, then `post ⟨1^n, ·⟩` | projections, `comp` |
++| `exists_comp` | `exists_compParam` with `pre`, `post` ignoring `1^n` | `exists_compParam` |
+ | `exists_reparam p` | advice `A.advice (p n)`; replace `1^n` by `1^{p n}` (`unaryPoly p`) | `unaryPoly` |
+ | `exists_reparam_advice φ p` | advice `⟨1^{φ n}, A.advice (φ n)⟩`; cut `A.coins (φ n)` coins | `pairTakePoly`, `eval_mono` |
+ | `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+@@ -53,7 +54,10 @@ Not in this file (they are FP-level facts the campaign uses directly): negation
+ 
+ ## Main results
+ 
+-* `Complexity.NUPPT.exists_comp` — closure under polynomial-time pre- and post-processing.
++* `Complexity.NUPPT.exists_compParam` — closure under polynomial-time pre- and post-processing
++  that reads the parameter (`pre` sees `⟨1^n, y⟩`, `post` sees `⟨1^n, output⟩`).
++* `Complexity.NUPPT.exists_comp` — its case that does not read the parameter (`pre` sees only
++  `y`, `post` only the output).
+ * `Complexity.NUPPT.exists_reparam` — parameter change `n ↦ p(n)` (uniformity preserved).
+ * `Complexity.NUPPT.exists_reparam_advice` — parameter change along a polynomially bounded
+   `φ : ℕ → ℕ`, hard-wiring `1^{φ n}` and the advice at `φ n`; extra coins unread.
+@@ -187,31 +191,63 @@ theorem length_combineAdvice_le (a b : List Bool) :
+ 
+ /-! ### The closure catalogue -/
+ 
+-/-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
+-Claim-26.3 (a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
+-`NUPPT` `B` with the same coins and advice that computes `post (A(1^n, pre y; r))`.
++/-- **Closure under parameter-aware pre- and post-processing** [PS10, §2.1, implicit;
++inventory Claim-26.3(a), (b)] (gate 03a, finding 3): for an `NUPPT` `A` and polynomial-time
++`pre`, `post` there is an `NUPPT` `B` with the same coins and advice that, at parameter `n` on
++argument `y` with coins `r`, computes `post ⟨1^n, A(1^n, pre ⟨1^n, y⟩; r)⟩`: `pre` sees the
++adversary input `⟨1^n, y⟩` (`advInput n y`), and `post` sees the parameter `1^n` paired with
++`A`'s output. `exists_comp` is the case where `pre` and `post` ignore `1^n`.
+ 
+ **Proof sketch.** The raw function is
+-`z ↦ post (A.output (layout (inParam z) (pre (inArg z)) (inAdvice z) (inCoins z)))`, polynomial-time
+-by `polyTimeComputable_layout`, `PolyTimeComputable.comp`, `NUPPT.polyTimeComputable_output`,
++`z ↦ post ⟨inParam z, A.output (layout (inParam z) (pre ⟨inParam z, inArg z⟩) (inAdvice z)
++(inCoins z))⟩`, polynomial-time by `polyTimeComputable_layout`,
++`PolyTimeComputable.pairEncode`, `PolyTimeComputable.comp`, `NUPPT.polyTimeComputable_output`,
+ `hpre`, `hpost`; `B := ofPolyTime` of it with `A`'s coins and advice. On the layout
+ `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` the projections return the slots (`runAtL_ofPolyTime`, the
+-`pairFstD_pairEncode`/`pairSndD_pairEncode` identities), giving `post (A.runAtL n (pre y) r)`. -/
+-theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
++`pairFstD_pairEncode`/`pairSndD_pairEncode` identities), so `⟨inParam z, inArg z⟩` is
++`⟨1^n, y⟩ = advInput n y` and the value is `post ⟨1^n, A.runAtL n (pre (advInput n y)) r⟩`. -/
++theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
+     ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
+-      ∀ n y r, B.runAtL n y r = post (A.runAtL n (pre y) r) := by
+-  have hF := ptc_comp hpost (ptc_comp A.polyTimeComputable_output
+-    (polyTimeComputable_layout polyTimeComputable_inParam (ptc_comp hpre polyTimeComputable_inArg)
+-      polyTimeComputable_inAdvice polyTimeComputable_inCoins))
++      ∀ n y r, B.runAtL n y r =
++        post (pairEncode (List.replicate n true) (A.runAtL n (pre (advInput n y)) r)) := by
++  have hF := ptc_comp hpost (polyTimeComputable_inParam.pairEncode
++    (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
++      (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
++      polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
+   refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+ 
+-/-- **Parameter change `n ↦ p(n)`** [Claim-26.3, implicit]: for an `NUPPT` `A` and a syntactic
+-polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p` that at parameter `n`
+-behaves as `A` at parameter `p(n)`; `B` is uniform when `A` is (the prefix `1^{p(n)}` is
+-computed, not hard-wired).
++/-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
++inventory Claim-26.3(a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
++`NUPPT` `B` with the same coins and advice that computes `post (A(1^n, pre y; r))`.
++
++**Scope** (gate 03a, finding 3): `pre` sees only the argument `y` and `post` only `A`'s output;
++neither sees `1^n`. Pre- and post-processing that depends on the parameter (padding or cutting
++to `ℓ'(n)` bits, slicing `p(n)` bits, planting at a position that depends on `n`) is the
++parameter-aware form `exists_compParam`, where `pre` sees `⟨1^n, y⟩` and `post` sees `1^n`
++paired with the output. Reductions that also read the advice or the coins are built as
++`ofPolyTime` of a raw function of the layout (`inParam`, `inArg`, `inAdvice`, `inCoins`,
++`polyTimeComputable_layout`), as `EnsembleLemmas.exists_pushRed` does for [PS10, Lemma 71.5].
++
++**Proof sketch.** `exists_compParam` with `pre ∘ snd` and `post ∘ snd`: the second component of
++`advInput n y = ⟨1^n, y⟩` is `y`, and that of `⟨1^n, A.runAtL n (pre y) r⟩` is `A`'s output
++(`pairSndD_pairEncode`). -/
++theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
++    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
++    ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
++      ∀ n y r, B.runAtL n y r = post (A.runAtL n (pre y) r) := by
++  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (ptc_comp hpre polyTimeComputable_pairSndD)
++    (ptc_comp hpost polyTimeComputable_pairSndD)
++  refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
++  rw [hB, pairSndD_pairEncode]
++  simp [advInput]
++
++/-- **Parameter change `n ↦ p(n)`** [PS10, §2.1, implicit; inventory Claim-26.3]: for an
++`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p`
++that at parameter `n` behaves as `A` at parameter `p(n)`; `B` is uniform when `A` is (the
++prefix `1^{p(n)}` is computed, not hard-wired).
+ 
+ **Proof sketch.** Advice `A.advice (p n)` of length `≤ (A.adv.subst p).eval n`
+ (`PolyExpr.eval_subst`); the raw function replaces the parameter slot `1^n` by
+@@ -233,13 +269,13 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
+   rw [runAtL_ofPolyTime]
+   simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+ 
+-/-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform):
+-for an `NUPPT` `A`, `φ` with `φ n ≤ p n`, there is an `NUPPT` `B` with coins
+-`A.coins.subst p` that at parameter `n` behaves as `A` at parameter `φ n` on the first
+-`A.coins (φ n)` coins (extra coins are unread). This is the one place an abstract `ℕ → ℕ`
+-appears (as a hypothesis with a `PolyExpr` majorant, D9); it serves Lemma 64.3's
+-`m(n) = n − ⌊log₂ n⌋`, the literal/`1^n` bridges of Definitions 26.1 and 69.4, and the
+-interdefinability argument of D3/D4.
++/-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform)
++[PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`, `φ` with `φ n ≤ p n`,
++there is an `NUPPT` `B` with coins `A.coins.subst p` that at parameter `n` behaves as `A` at
++parameter `φ n` on the first `A.coins (φ n)` coins (extra coins are unread). This is the one
++place an abstract `ℕ → ℕ` appears (as a hypothesis with a `PolyExpr` majorant, D9); it serves
++Lemma 64.3's `m(n) = n − ⌊log₂ n⌋`, the literal/`1^n` bridges of Definitions 26.1 and 69.4, and
++the interdefinability argument of D3/D4.
+ 
+ **Proof sketch.** Advice `⟨1^{φ n}, A.advice (φ n)⟩`, of length
+ `2 φ n + 2 + |A.advice (φ n)| ≤ 2 p n + 2 + A.adv (p n)` by `hφ`, `advice_length` and
+@@ -272,10 +308,10 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+   rw [runAtL_ofPolyTime]
+   simp [runAtL, advInput, coinLen, layout, inArg, inAdvice, inCoins]
+ 
+-/-- **Hard-wiring advice** [Claim-26.3 (d)]: for an `NUPPT` `A` and a polynomially bounded
+-family `β n` there is an `NUPPT` `B` with the same coins that computes
+-`A(1^n, ⟨y, β n⟩; r)` (the reductions of chapters 2–4 hard-wire hybrid indices, worst-case
+-inputs and the given adversary's advice this way).
++/-- **Hard-wiring advice** [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`
++and a polynomially bounded family `β n` there is an `NUPPT` `B` with the same coins that
++computes `A(1^n, ⟨y, β n⟩; r)` (the reductions of chapters 2–4 hard-wire hybrid indices,
++worst-case inputs and the given adversary's advice this way).
+ 
+ **Proof sketch.** Advice `⟨A.advice n, β n⟩` of length `2 A.adv n + 2 + b n`
+ (`length_pairEncode`); the raw function re-pairs the argument slot with the second half of
+@@ -302,10 +338,11 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+   rw [runAtL_ofPolyTime]
+   simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+ 
+-/-- **Extra coins passed as data** [Claim-26.3 (c)]: for an `NUPPT` `A` and a syntactic
+-polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins` and `A`'s advice such that
+-`B(1^n, y; r) = A(1^n, ⟨y, r.take (p n)⟩; r.drop (p n))`: the first `p n` coins become part of
+-the input (a uniformly random string of length `p n`), the rest are `A`'s coins.
++/-- **Extra coins passed as data** [PS10, §2.1, implicit; inventory Claim-26.3(c)]: for an
++`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins`
++and `A`'s advice such that `B(1^n, y; r) = A(1^n, ⟨y, r.take (p n)⟩; r.drop (p n))`: the first
++`p n` coins become part of the input (a uniformly random string of length `p n`), the rest are
++`A`'s coins.
+ 
+ **Proof sketch.** The raw function cuts the coin slot at `p(|1^n|)` with
+ `polyTimeComputable_pairTakePoly p`/`pairDropPoly p` on `⟨inParam z, inCoins z⟩`, re-pairs the
+@@ -325,9 +362,9 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
+   rw [runAtL_ofPolyTime]
+   simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+ 
+-/-- **Sequential composition with input pass-through and fresh coins** [Claim-26.3 (b), (c),
+-(e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT` `C` with coins
+-`A.coins + B.coins`, uniform when both are, computing
++/-- **Sequential composition with input pass-through and fresh coins** [PS10, §2.1, implicit;
++inventory Claim-26.3(b), (c), (e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT`
++`C` with coins `A.coins + B.coins`, uniform when both are, computing
+ `B(1^n, ⟨y, A(1^n, y; r₁)⟩; r₂)` where `r = r₁ ++ r₂` is cut at `A.coins n`. This is the
+ machine-level form of the "sunglass" reduction `D' := D ∘ (sampler)` of [Gar26] used by
+ Lemma 71.5 (`Indist.push`) and every two-stage reduction.
+diff --git a/TCSlib/Complexity/Randomized/NonUniform.lean b/TCSlib/Complexity/Randomized/NonUniform.lean
+index fd1140fb..6c186659 100644
+--- a/TCSlib/Complexity/Randomized/NonUniform.lean
++++ b/TCSlib/Complexity/Randomized/NonUniform.lean
+@@ -30,7 +30,11 @@ no information — and it is the layout of the literal forms of Definition 26.1
+ (`WorstCaseOneWay`, `inverterLit`) and Definition 69.4 (`Ensemble.IndistLit`). The
+ machine-sequence form is reflected only as a sanity statement here: at every parameter `n`
+ the activation is a deterministic polynomial-time function of `(y, r)`
+-(`NUPPT.polyTimeComputable_runAtL`), i.e. each "`A_n`" is a polynomial-size machine.
++(`NUPPT.polyTimeComputable_runAtL`). The machine of that statement hard-wires `1^n` and
++`advice n`, so its size and its time constants depend on `n`: the lemma bounds neither the
++size of "`A_n`" nor its running time uniformly in `n` (it would hold equally with
++exponentially long advice). The polynomial size of Definition 26.8's `A_n` comes from
++`|advice n| ≤ adv.eval n` (the field `NUPPT.advice_length`), not from this lemma.
+ 
+ **Deviation:** `NUPPT`: Def 26.8's machine-sequence formulation not formalized in the core
+ (optional module). The equivalence of the two forms (`NUPPTSeq`, `nuppt_seq_iff_advice`, with
+@@ -55,8 +59,8 @@ construction `NUPPT.ofPartial` and is off every critical path).
+ * `Complexity.NUPPT.Uniform.advice_eq`, `NUPPT.Uniform.runAtL_eq`, `NUPPT.Uniform.runAt_eq`,
+   `NUPPT.ofPolyTime_uniform` — uniform machines run on `⟨⟨⟨1^n, y⟩, []⟩, r⟩`.
+ * `Complexity.NUPPT.polyTimeComputable_runAtL` — at a fixed parameter the activation is a
+-  deterministic polynomial-time function of `(y, r)` (the "`A_n`" of the machine-sequence
+-  form).
++  deterministic polynomial-time function of `(y, r)`, with constants that depend on `n` (not a
++  uniform size bound on the "`A_n`" of the machine-sequence form).
+ * `Complexity.NUPPT.decides_of_decidesWithAdviceInTime` — (optional, sorried) a language
+   decided with polynomial advice in polynomial time [AB09, Definition 6.16] is decided by an
+   `NUPPT` at the input length.
+@@ -115,10 +119,13 @@ theorem runLit_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeCom
+       f (pairEncode (pairEncode (advInput y.length y) []) (List.ofFn r)) := by
+   rw [runLit_eq_runAtL, runAtL_ofPolyTimeUniform]
+ 
+-/-- **The machine-sequence view, sanity direction.** At a fixed parameter `n`, the activation
+-of `A` is a deterministic polynomial-time function of the pair `⟨y, r⟩`: the "`A_n`" of
+-[PS10, Definition 26.8]'s first formulation is a polynomial-size machine (the advice `advice n`
+-and the prefix `1^n` are hard-wired constants).
++/-- **The machine-sequence view, sanity direction.** At each fixed parameter `n`, the
++activation of `A` is a deterministic polynomial-time function of the pair `⟨y, r⟩`
++[PS10, Definition 26.8, first formulation, the "`A_n`"]. The machine hard-wires `1^n` and
++`advice n`, so its size and its time constants depend on `n`: the statement is per `n` and
++would hold equally with exponentially long advice. It is **not** the polynomial-size half of
++Definition 26.8; that half comes from `|advice n| ≤ adv.eval n` (`NUPPT.advice_length`), not
++from this lemma.
+ 
+ **Proof sketch.** The raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` is assembled from `⟨y, r⟩` by
+ `PolyTimeComputable.pairEncode` with the constant strings `1^n` and `advice n`
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index e33b9fcd..2fdfe96c 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -37,9 +37,15 @@ convention of [PS10, Definition 23.5]; "`A` computes `f` with probability 1"
+ [PS10, Definition 24.6] is `NUPPT.Computes`: equality for every coin string (on the finite
+ uniform coin space, probability one is the same as every coin string, see
+ `TCSlib.Cryptography.Asymptotic.Adversary`). A PPT [PS10, Definition 23.4] is an `NUPPT` with
+-empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. The input-length-indexed
+-activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the lemmas about it
+-and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
++empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. `Computes` does not require
++`Uniform`: [PS10, Definition 24.6] is about a randomized algorithm, i.e. a PPT, and is the case
++`A.Uniform ∧ A.Computes f`; for a non-uniform `A`, `Computes` is the advice analogue and holds
++for uncomputable `f` (advice `[h n]` for an arbitrary `h : ℕ → Bool`, read back by the machine).
++So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`; efficient computation is
++`∃ A, A.Uniform ∧ A.Computes f` (`NUPPT.exists_uniform_computes`, and conversely
++`NUPPT.Computes.polyTimeComputable` of `TCSlib.Complexity.Randomized.Closure`). The
++input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the
++lemmas about it and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
+ 
+ ## Deviations (DESIGN.md §5, items 1–2)
+ 
+@@ -60,10 +66,8 @@ the machine input" coincide.
+ text indexes advice and coins by the input length (`A_{|x|}(x)`), while `NUPPT` indexes
+ them by the parameter `n` read from the unary prefix `1^n`. The two are interdefinable in
+ every experiment of the text: (i) an `NUPPT` run at `n := |y|` is exactly the text's
+-`A_{|y|}(y)` (`NUPPT.runLit`; the prefix `1^{|y|}` carries no information, so the
+-input-length-indexed machine is obtained by ignoring it, see
+-`Complexity.NUPPT.exists_reparam_advice` in `TCSlib.Complexity.Randomized.Closure` with
+-`φ := length`); (ii) conversely, every experiment of the text hands the adversary strings
++`A_{|y|}(y)`, by definition (`NUPPT.runLit`; the prefix `1^{|y|}` carries no information);
++(ii) conversely, every experiment of the text hands the adversary strings
+ whose length is a fixed polynomial `ℓ(n)` of the parameter, and an input-length-indexed
+ machine at length `ℓ(n)` becomes a `1^n`-indexed one by hard-wiring its advice at `ℓ(n)` and
+ evaluating its coin polynomial at `ℓ(n)` (`exists_reparam_advice` with `φ := ℓ.eval`); for
+@@ -82,7 +86,8 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
+ * `Complexity.NUPPT.advInput` — the adversary input `⟨1^n, y⟩`; `NUPPT.Coins` — the coin type
+   at parameter `n`; `NUPPT.runAt`, `NUPPT.runAtL`, `NUPPT.runLit` — activations.
+ * `Complexity.NUPPT.Uniform` — no advice (a PPT); `Complexity.PPT` — the subtype.
+-* `Complexity.NUPPT.Computes` — computes `f` with probability one [PS10, Definition 24.6].
++* `Complexity.NUPPT.Computes` — computes `f` with probability one: [PS10, Definition 24.6] for a
++  uniform `A` (`NUPPT.Uniform`), the advice analogue otherwise.
+ * `Complexity.NUPPT.ofPolyTime`, `Complexity.NUPPT.ofPolyTimeUniform` — the `NUPPT` with a
+   given polynomial-time output function, with and without advice.
+ 
+@@ -224,7 +229,16 @@ def Uniform : Prop := ∀ n, A.advice n = []
+ /-- `A` computes `f` with probability one [PS10, Definition 24.6]: at every parameter `n`,
+ on every argument `y` and for **every** coin string `r`, `A(1^n, y; r) = f(⟨1^n, y⟩)`. On
+ the finite uniform coin space "probability one" is the same as "every coin string"
+-(`TCSlib.Cryptography.Asymptotic.Adversary`, `NUPPT.computes_iff_uprob`). -/
++(`TCSlib.Cryptography.Asymptotic.Adversary`, `NUPPT.computes_iff_uprob`).
++
++The definition does not require `A.Uniform`. [PS10, Definition 24.6] is about a randomized
++algorithm, i.e. a PPT, and is the case `A.Uniform ∧ A.Computes f`. For a non-uniform `A` this
++is the advice analogue, which holds for uncomputable functions: with advice `[h n]` at
++parameter `n` for an arbitrary `h : ℕ → Bool` (`ofPolyTime` of the advice projection), `A`
++computes `w ↦ [h |fst w|]`. So `∃ A : NUPPT, A.Computes f` does **not** mean "a PPT computes
++`f`"; where the text means efficient computation, the form is `A.Uniform ∧ A.Computes f`
++(`exists_uniform_computes`; conversely `NUPPT.Computes.polyTimeComputable` of
++`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`). -/
+ def Computes (f : List Bool → List Bool) : Prop :=
+   ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)
+ 
+diff --git a/TCSlib/Complexity/Randomized/PolyExpr.lean b/TCSlib/Complexity/Randomized/PolyExpr.lean
+index 94e3c7ec..8fb04d06 100644
+--- a/TCSlib/Complexity/Randomized/PolyExpr.lean
++++ b/TCSlib/Complexity/Randomized/PolyExpr.lean
+@@ -63,7 +63,13 @@ open Turing
+ campaign (coins, advice, input/output lengths, query and round budgets) is one of these,
+ never an abstract `ℕ → ℕ`. `normal C c` is the campaign normal form `C * (n + 1) ^ c`.
+ [PS10, §2.1] writes such bounds as "a polynomial `p(n)`"; foundation decision D9 of
+-`PassShelatChapter2-4Plan.md` fixes the syntactic representation. -/
++`PassShelatChapter2-4Plan.md` fixes the syntactic representation.
++
++Cost of D9: an expression is a polynomial with natural-number coefficients and no
++subtraction, so lengths such as `n − 1`, `⌊n/2⌋`, `n(n − 1)/2` or `⌈log₂ n⌉` are not
++expressible. A consumer pads to a `PolyExpr` majorant or reparametrizes with
++`Complexity.NUPPT.exists_reparam_advice` (an abstract `φ : ℕ → ℕ` with a `PolyExpr`
++majorant, the one place such a function appears). -/
+ inductive PolyExpr : Type
+   | const : ℕ → PolyExpr
+   | var : PolyExpr
+diff --git a/TCSlib/Complexity/Randomized/Repetition.lean b/TCSlib/Complexity/Randomized/Repetition.lean
+index d129a30b..2674b05a 100644
+--- a/TCSlib/Complexity/Randomized/Repetition.lean
++++ b/TCSlib/Complexity/Randomized/Repetition.lean
+@@ -34,69 +34,50 @@ an adversary depends on it and on nothing else admitted, and the headline axiom
+ (`audits/pass-shelat/Checks.lean`) list it by name if it is still open. The derived lemmas of
+ this file are to be closed from it (or by small direct machines), so that the admission stays
+ a single named one. **Status (run 3b):** `polyTimeComputable_iterateFind` is closed — its
+-machine is built in `TCSlib.Complexity.Randomized.Build.IterateFindHost` (clean modules and
+-the finite host) and `TCSlib.Complexity.Randomized.Build.IterateFind` (assembly through
++machine is built on the public clean-module host `TCSlib.Complexity.TuringMachine.Build.ModuleHost`
++(clean modules and the finite host), with its instance in
++`TCSlib.Complexity.Randomized.Build.IterateFindHost` (the copier and the host's control) and
++the assembly in `TCSlib.Complexity.Randomized.Build.IterateFind` (through
+ `Turing.FinTM.exists_loopFindTM`), and its axiom print is `[propext, Classical.choice, Quot.sound]`.
+-The six derived lemmas are closed too, as instances of one private **state-loop** form
++The six derived lemmas are closed too, as instances of one public **state-loop** form
+ `polyTimeComputable_stateFind` of the repetition lemma (a state word `⟨x, s⟩` retaining the
+ input, a step on the state, a test firing first at round `N x ≤ R|x|`, an output read off the
+ final state), whose loop data, orbit closed forms and bounds live in
+ `TCSlib.Complexity.Randomized.Build.StateLoop` (the form itself and the two iteration loops)
+ and `TCSlib.Complexity.Randomized.Build.StringLoops` (the four string loops).
+ 
+-**Construction plan of `iterateFind` (DESIGN.md §2.6, with the three panel repairs built in;
+-the proof sketch of the theorem repeats it).**
+-
+-1. *State word carries the input.* `s0 x := ⟨x, x⟩` (second component: the current orbit
+-   point). Loop data for `Turing.FinTM.exists_loopFindTM`: `stepF x w := guardedStep g P x w`
+-   (**length-guarded**: `⟨x, g (snd w)⟩` if `|g (snd w)| ≤ P|x|`, else `w`),
+-   `acceptF x w := acc (snd w)`, `out x w := out (snd w)`,
+-   `Inv x w := fst w = x ∧ |snd w| ≤ P|x|` (`LoopInv`). `hInv0` is `pairDecode_pairEncode`
+-   plus `horbit x 0`; `hInvStep` holds for every `w` because the guarded step leaves `w`
+-   unchanged when the new point would be too long (`loopInv_guardedStep`). On the orbit
+-   `i ≤ R|x|`, `horbit` shows the guard is never taken, so
+-   `(stepF x)^[i] (s0 x) = ⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`) and the `find?` of the
+-   conclusion is the statement's.
+-2. *Modules.* From `hg`, `hacc`, `hout` build three clean-call modules over the state word:
+-   `C₁ := exists_installCallTM` for `w ↦ ⟨[acc (snd w)], w⟩` (the verdict as the first cell of
+-   the installed word, `pairEncode [b] w = [b, b, false, true] ++ w`, no scan needed);
+-   `C₂ := exists_installCallTM` for the guarded step on the pair (FP by
+-   `polyTimeComputable_ite` with `polyTimeComputable_lenLe` on `⟨1^{P|fst w|}, g (snd w)⟩`,
+-   `polyTimeComputable_unaryPoly P`); `C₃ := exists_emitCallTM` for `w ↦ out (snd (snd w))`.
+-   Each module promises first-visit-to-exit from the clean seam over an arbitrary native
+-   input and `0 < C.k`.
+-3. *Gluing without overriding `exit`.* Body state `Unit ⊕ (C₁.State ⊕ C₂.State ⊕ C₃.State) ⊕ Fin 3`;
+-   tape counts equalised with idle tapes (`leftAction`/`leftCfg_run`, Simulation.lean). The
+-   anchor is the fresh state `inl ()`, whose transition is stationary into `C₁.entry` (no
+-   module-internal state is the anchor). The module tables are copied with every transition
+-   *targeting* `Cᵢ.exit` redirected to a fresh branch state `inr (inr k)`, so the module's own
+-   table at `exit` is never consulted and `entry = exit` is harmless: the first positive visit
+-   of `exit` promised by the contract is exactly the first entry into the branch state, with
+-   the clean seam on the tapes. Branch states: after `C₁`, read tape-0 cell 0 — `true` →
+-   `C₃.entry`, `false` → `C₂.entry`; after `C₂` → anchor (one stationary step); after `C₃` → halt.
+-4. *`hstart`.* From `initCfg x`, install `s0 x = ⟨x, x⟩` on tape 0: one more
+-   `exists_installCallTM` module for `pairDup` (`computesFunInTime_pairDup`) applied to the
+-   argument word `x`, which is first copied onto tape 0 by a one-state copy scan of the native
+-   input plus `timed_rewind` (precedent: the startup phases of `computesFunInTime_splitSolveWith`).
+-   No anchor visit before the seam.
+-5. *`hround`.* From `Cfg.ofWords anchor (stateWord K w)` with `Inv x w`: one step into
+-   `C₁.entry`; `C₁` to its first exit (`t₁ ≤ c₁ (T_acc(|w|) + 2|w| + 5)`), branch; accepting
+-   clause: `C₃` to its first exit emitting `out (snd w)` and halt; advancing clause: `C₂` to
+-   its first exit installing `stepF x w`, one step to the anchor. Anchor exclusion inside the
+-   round is syntactic (the anchor is `inl ()`, entered only from the post-`C₂` branch state).
+-   Budget `T n := c (T_g(Q n) + T_acc(Q n) + T_out(Q n) + Q n + 8)` with
+-   `Q n := 2n + 2 + P.eval n + 4` (the length of the state word), a normal-form majorant by
+-   `PolyExpr.eval_le`.
+-6. *Fuel.* `hF` from `computesFunInTime_polyBits` for a normal-form majorant of `R`, or
+-   `polyTimeComputable_unaryPoly R` + `computesFunInTime_lengthBits` for exact `R` (the `find?`
+-   range must be exactly `R|x| + 1`: use the exact form).
+-7. *Conclusion.* `exists_loopFindTM` gives `E` within `c (T n + 1)(R n + 2)`; package as
+-   `PolyTimeComputable`. `iterate` threads a unary counter in the state
+-   (`acc := lenEq cnt 1^{R|x|}` against `unaryPoly R` of the retained input); `iterateEmit`
+-   threads an accumulator; the derived string functions are instances.
+-
+-Estimated size 1 200–1 800 lines; private precedent for the module gluing: `satClean_install`,
+-`satStopTM`, `sat_run_agree` in `TCSlib.Complexity.ClassNP.SAT` (private copies, not edits).
++**Construction of `iterateFind`, as built (DESIGN.md §2.6, step 1, and its as-built erratum,
++which records the departures from the frozen steps 2–5).**
++
++1. *State word carries the input.* The loop state is `⟨x, s⟩` (`pairEncode x s`) from
++   `⟨x, x⟩`; the step is the length-guarded `guardedStep g P x`, which advances to `⟨x, g s⟩` if
++   the **new** point fits, `|g s| ≤ P|x|`, and otherwise leaves the word unchanged. On the
++   orbit, for `i ≤ R|x|`, the guard is never taken (`iterate_guardedStep_eq`), so the loop's
++   `find?` is the statement's (`acc_guardedStep_eq`). The pure invariant `LoopInv` is closed
++   under the step (`loopInv_guardedStep`); the machine uses the stronger actual-pair invariant
++   `∃ s, w = ⟨x, s⟩ ∧ |s| ≤ P|x|`, which bounds the word's length by `2|x| + 2 + P|x|`.
++2. *The machine.* `Complexity.IterateFind.polyTimeComputable_find`
++   (`TCSlib.Complexity.Randomized.Build.IterateFind`) is an instance of
++   `Turing.FinTM.exists_loopFindTM` with the guarded step `IterateFind.step`, the same function
++   as `guardedStep` (`IterateFind.step_eq`). Its loop body runs five clean modules in the public
++   clean-module host `Turing.ModuleHost.hostTM` (`TCSlib.Complexity.TuringMachine.Build.ModuleHost`,
++   host H14): the copier, which puts the native input on tape 0 (`IterateFind.copyTM`); the
++   startup install `x ↦ ⟨x, x⟩`; the verdict install `w ↦ ⟨[acc (snd w)], w⟩`; the step install;
++   and the payload emit `w ↦ out (snd (snd w))`. The installs and the emit come from
++   `Turing.ModuleHost.clean_install`/`clean_emit` (a clean-call bridge stopped by a release flag
++   and cut at its first halt). The host's control
++   (`TCSlib.Complexity.Randomized.Build.IterateFindHost`) has three fresh states: the anchor, which
++   dispatches into the verdict module; the branch, which reads the verdict cell of tape 0 and
++   dispatches into the payload or the step module; and the halt.
++3. *Budget and fuel.* Every request has length at most `2n + 6 + P n`, so every module's
++   polynomial budget, and that of the fuel machine `x ↦ Nat.bits (R|x|)`
++   (`polyTimeComputable_unaryPoly R` and `computesFunInTime_lengthBits`, so that the `find?` range
++   is exactly `R|x| + 1`), fit `T n = A·(2n + 7 + P n)^D`; the loop combinator's bound
++   `c (T n + 1)(R n + 2)` is put in normal form by `PolyExpr.eval_le`.
++4. *The derived lemmas* are instances of the state-loop form `polyTimeComputable_stateFind`,
++   which runs `iterateFind` on the guarded step `StateLoop.gstep` of a state word `⟨x, s⟩`:
++   `iterate` threads a unary counter, tested against `1^{R|x|}` by `IterLoop.acc` (`R|x| ≤ |cnt|`);
++   `iterateEmit` also threads an accumulator; the string functions consume their input.
+ 
+ ## Main definitions
+ 
+@@ -111,6 +92,8 @@ Estimated size 1 200–1 800 lines; private precedent for the module gluing: `sa
+ * `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit` —
+   `R(|x|)`-fold iteration and concatenated emissions (proved; state loops with a unary round
+   counter).
++* `Complexity.polyTimeComputable_stateFind` — the state-loop form of the repetition lemma, of
++  which the six derived lemmas are instances (proved, from `polyTimeComputable_iterateFind`).
+ * `Complexity.polyTimeComputable_majority`, `polyTimeComputable_pairXor`,
+   `polyTimeComputable_pairEq`, `polyTimeComputable_blockMap` — string tests and the block
+   map used by the reductions (proved; state loops consuming the input).
+@@ -196,23 +179,14 @@ with first success [PS10, Theorem 35.1], the `n(2^k−1)` calls of Goldreich–L
+ [PS10, Theorem 87.3], rejection sampling (D10), the truncated simulators
+ [PS10, Algorithms 123.4 and 128.7] (inventory Inf-4.3).
+ 
+-**Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` (Loop.lean) with the data of the
+-construction plan in the module docstring: (1) state word `⟨x, s⟩`, guarded step
+-`guardedStep g P`, invariant `LoopInv P` (`loopInv_init`, `loopInv_guardedStep`), and on the
+-orbit `(stepF x)^[i] ⟨x, x⟩ = ⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`), so the loop's `find?`
+-over `List.range (R|x| + 1)` is the statement's (`acc_guardedStep_eq`); (2) the three
+-clean-call modules `C₁` (verdict installed as the first cell), `C₂` (guarded step on the
+-pair, FP by `polyTimeComputable_ite`, `polyTimeComputable_lenLe`,
+-`polyTimeComputable_unaryPoly P`) and `C₃` (`out` of the orbit point, emitted) from
+-`exists_installCallTM`/`exists_emitCallTM`; (3) the glued body with the fresh anchor
+-`inl ()` and transitions into each `exit` redirected to fresh branch states; (4) `hstart` by a
+-`pairDup` install module after a copy scan and `timed_rewind`; (5) `hround` with budget
+-`T n := c (T_g(Q n) + T_acc(Q n) + T_out(Q n) + Q n + 8)`, `Q n := 2n + 2 + P n + 4`, in normal
+-form by `PolyExpr.eval_le`; (6) fuel `Nat.bits (R|x|)` by `polyTimeComputable_unaryPoly R`
+-and `computesFunInTime_lengthBits`; (7) `exists_loopFindTM` returns a machine within
+-`c (T n + 1)(R n + 2)`, packaged as `PolyTimeComputable`. Sub-obligations: the four modules,
+-the gluing lemma (precedent: `satClean_install`/`sat_run_agree` in `ClassNP/SAT.lean`), the
+-startup phase, the round budget arithmetic. -/
++**Proof sketch.** The machine is `Complexity.IterateFind.polyTimeComputable_find`
++(`TCSlib.Complexity.Randomized.Build.IterateFind`; its construction is in the module docstring):
++it computes `out` of the first accepted point, among the first `R|x| + 1`, of the orbit of
++`⟨x, x⟩` under the guarded step `IterateFind.step g P x`, which is `guardedStep g P x`
++(`IterateFind.step_eq`). Convert its conclusion to the statement's: for `i ≤ R|x|` the guarded
++orbit is `⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`), so the two `find?` predicates agree on the
++range (`acc_guardedStep_eq`, `IterateFind.find?_congr_of_mem`), and at the index found the
++payloads agree (`iterate_guardedStep_eq`, `pairSndD_pairEncode`). -/
+ theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+     {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+     {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+@@ -226,7 +200,10 @@ theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyT
+   have h := IterateFind.polyTimeComputable_find hg hacc hout R P horbit
+   convert h using 1
+   funext x
+-  have hstep : IterateFind.step g P x = guardedStep g P x := rfl
++  have hstep : IterateFind.step g P x = guardedStep g P x := by
++    funext w
++    rw [IterateFind.step_eq]
++    rfl
+   have hfind : (List.range (R.eval x.length + 1)).find? (fun i => acc (g^[i] x)) =
+       (List.range (R.eval x.length + 1)).find?
+         (fun i => acc (pairSndD ((IterateFind.step g P x)^[i] (pairEncode x x)))) := by
+@@ -261,7 +238,7 @@ the genuine orbit the guard never fires (`StateLoop.gstep_iterate_eq`, from the
+ first `N x` states), so the loop's `find?` over `List.range (R|⟨x, start x⟩| + 1)` — a range
+ containing `N x`, as `R` is monotone (`PolyExpr.eval_mono`) — returns `some (N x)`
+ (`StateLoop.find?_range_eq_some`), and the payload is `out ⟨x, orbit x (N x)⟩`. -/
+-private theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
++theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
+     {acc : List Bool → Bool} {out : List Bool → List Bool}
+     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
+     (hacc : PolyTimeComputable fun w => [acc w]) (hout : PolyTimeComputable out)
+@@ -319,19 +296,19 @@ theorem polyTimeComputable_iterate {g : List Bool → List Bool} (hg : PolyTimeC
+       IterLoop.acc R (pairEncode x (orbit IterLoop.start (IterLoop.step g) x i)) = false := by
+     intro x i hi
+     rw [IterLoop.orbit_eq]
+-    simp [IterLoop.acc, hi]
++    simp [IterLoop.acc_eq, hi]
+   have hlast : ∀ x, IterLoop.acc R
+       (pairEncode x (orbit IterLoop.start (IterLoop.step g) x (R.eval x.length))) = true := by
+     intro x
+     rw [IterLoop.orbit_eq]
+-    simp [IterLoop.acc]
++    simp [IterLoop.acc_eq]
+   have h := polyTimeComputable_stateFind IterLoop.start_poly (IterLoop.step_poly hg)
+     (IterLoop.acc_poly R) IterLoop.out_poly R _ (fun x => R.eval x.length) (fun _ => le_rfl)
+     hbound hfirst hlast
+   convert h using 1
+   funext x
+   rw [IterLoop.orbit_eq]
+-  simp [IterLoop.out]
++  simp [IterLoop.out_eq]
+ 
+ /-- **Polynomially many iterations with concatenated emissions:** under the orbit bound,
+ `x ↦ emit x ++ emit (g x) ++ ⋯ ++ emit (g^[R|x|] x)` is polynomial-time computable (the
+@@ -375,19 +352,19 @@ theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
+       IterLoop.acc R (pairEncode x (orbit EmitLoop.start (EmitLoop.step g emit) x i)) = false := by
+     intro x i hi
+     rw [EmitLoop.orbit_eq]
+-    simp [IterLoop.acc, hi]
++    simp [IterLoop.acc_eq, hi]
+   have hlast : ∀ x, IterLoop.acc R (pairEncode x
+       (orbit EmitLoop.start (EmitLoop.step g emit) x (R.eval x.length))) = true := by
+     intro x
+     rw [EmitLoop.orbit_eq]
+-    simp [IterLoop.acc]
++    simp [IterLoop.acc_eq]
+   have h := polyTimeComputable_stateFind EmitLoop.start_poly (EmitLoop.step_poly hg hemit)
+     (IterLoop.acc_poly R) (EmitLoop.out_poly hemit) R _ (fun x => R.eval x.length)
+     (fun _ => le_rfl) hbound hfirst hlast
+   convert h using 1
+   funext x
+   rw [EmitLoop.orbit_eq]
+-  simp [EmitLoop.out, List.range_succ]
++  simp [EmitLoop.out_eq, List.range_succ]
+ 
+ /-- **Majority vote** on a bit string: `w ↦ [decide (|w| < 2 · #true w)]` (strict majority of
+ `true`) is polynomial-time computable (the vote of the Goldreich–Levin inverter
+@@ -431,7 +408,7 @@ theorem polyTimeComputable_pairXor :
+   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
+     intro z
+     have := length_pairFstD_add_pairSndD_le z
+-    unfold XorLoop.rounds
++    rw [XorLoop.rounds_eq]
+     simp only [PolyExpr.eval_var]
+     omega
+   have h := polyTimeComputable_stateFind XorLoop.start_poly XorLoop.step_poly XorLoop.acc_poly
+@@ -461,7 +438,7 @@ theorem polyTimeComputable_pairEq :
+   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
+     intro z
+     have := length_pairFstD_add_pairSndD_le z
+-    unfold XorLoop.rounds
++    rw [XorLoop.rounds_eq]
+     simp only [PolyExpr.eval_var]
+     omega
+   have h := polyTimeComputable_stateFind XorLoop.start_poly EqLoop.step_poly XorLoop.acc_poly
+@@ -478,11 +455,11 @@ mapped, a partial last block is dropped). This evaluates `prodFun f q` blockwise
+ [PS10, Theorem 35.1, Algorithm 38.5] and decodes tuples of `n`-bit strings.
+ 
+ **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
+-`Complexity.StateLoop.BlockLoop`) with `R := var` (at most `|z|` blocks) on the state
++`Complexity.StateLoop.BlockMapLoop`) with `R := var` (at most `|z|` blocks) on the state
+ `⟨rest, c⟩` from `⟨snd z, []⟩`, with `k := b(|fst z|)` read off the retained input: each step
+ drops `k` bits of `rest` and appends `g (rest.take k)` to `c` (`polyTimeComputable_pairDropPoly b`,
+ `polyTimeComputable_pairTakePoly b` on `⟨fst z, rest⟩`), so after `i` rounds the state is
+-`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockLoop.orbit_eq`,
++`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockMapLoop.orbit_eq`,
+ `List.drop_drop`); `acc` is "`|rest| < k` or `k = 0`" (two length tests against `1^k`), `false`
+ below round `|snd z| / k` and `true` there (`Nat.le_div_iff_mul_le`, `Nat.lt_mul_div_succ`),
+ where `out` returns `c`, the statement's `flatMap`. States have length at most
+@@ -493,16 +470,17 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
+       (List.range ((pairSndD z).length / b.eval (pairFstD z).length)).flatMap fun i =>
+         g (((pairSndD z).drop (i * b.eval (pairFstD z).length)).take (b.eval (pairFstD z).length)) := by
+   obtain ⟨C, c, hC⟩ := hg.output_length_le
+-  have hN : ∀ z, BlockLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
++  have hN : ∀ z, BlockMapLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
+     intro z
+     have := length_pairFstD_add_pairSndD_le z
++    rw [BlockMapLoop.rounds_eq]
+     exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
+-  have h := polyTimeComputable_stateFind BlockLoop.start_poly (BlockLoop.step_poly b hg)
+-    (BlockLoop.acc_poly b) BlockLoop.out_poly .var _ (BlockLoop.rounds b) hN
+-    (BlockLoop.orbit_length_le b g C c hC) (BlockLoop.acc_orbit_false b g)
+-    (BlockLoop.acc_orbit_true b g)
++  have h := polyTimeComputable_stateFind BlockMapLoop.start_poly (BlockMapLoop.step_poly b hg)
++    (BlockMapLoop.acc_poly b) BlockMapLoop.out_poly .var _ (BlockMapLoop.rounds b) hN
++    (BlockMapLoop.orbit_length_le b g C c hC) (BlockMapLoop.acc_orbit_false b g)
++    (BlockMapLoop.acc_orbit_true b g)
+   convert h using 1
+   funext z
+-  exact (BlockLoop.out_orbit b g z).symm
++  rw [BlockMapLoop.out_orbit, BlockMapLoop.rounds_eq]
+ 
+ end Complexity
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 5ca92cbd..174e38fb 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -97,7 +97,15 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
+   simp [padFin]
+ 
+ /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
+-[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`]. -/
++[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
++
++**Deviation:** wrong-length output = failure (D5). For a typed family this loses nothing. For
++a string function `f : {0,1}* → {0,1}*` the text's experiment also accepts a preimage of
++another length, so the typed experiment can count fewer successes and typed one-wayness is
++implied by, but weaker than, the text's, unless `|f(x)|` determines `|x|` (length-regular `f`
++with non-constant output length; with constant output length neither notion is
++satisfiable). The proviso is stated where string functions enter the typed world,
++`FunFamily.ofString` (`Asymptotic/OneWay.lean`; gate 03a, note 15). -/
+ def _root_.Complexity.NUPPT.inverter (A : NUPPT) (n ℓ m : ℕ) :
+     (Fin m → Bool) → A.Coins n → Option (Fin ℓ → Bool) :=
+   fun y r => decodeFin ℓ (A.runAt n (List.ofFn y) r)
+diff --git a/TCSlib/Cryptography/Asymptotic/Ensembles.lean b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+index b60c501a..e5b14f80 100644
+--- a/TCSlib/Cryptography/Asymptotic/Ensembles.lean
++++ b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+@@ -3,7 +3,12 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+-import TCSlib.Complexity.Randomized
++import TCSlib.Complexity.Randomized.Closure
++-- `NonUniform` is not used here. It replaces, for downstream files, the former import of the
++-- facade `TCSlib.Complexity.Randomized`: `ZeroKnowledge/ThreeColoring/SimulatorMachine.lean`
++-- uses `NUPPT.Uniform.advice_eq` and reaches `NonUniform` only through this file (gate 03a,
++-- finding 12). Drop it once that file imports `NonUniform` itself.
++import TCSlib.Complexity.Randomized.NonUniform
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Asymptotic.EnsemblesLemmas
+ import TCSlib.Cryptography.Asymptotic.Sampling
+@@ -34,7 +39,8 @@ uniform bits whose output law is exactly `X n` (`StatClose … 0`). The headline
+ Definition 69.4 gives the distinguisher the input `1^n` (`Ensemble.Indist`, D5); the literal
+ form `Ensemble.IndistLit` (the distinguisher receives the sample `t` only, activation at
+ parameter `|t| = ℓ n`) is stated next to it with the bridges `Indist.toLit` and
+-`IndistLit.toIndist` (injective `ℓ`), never unified silently.
++`IndistLit.toIndist` (injective, i.e. non-constant, `ℓ`; for constant `ℓ` the two forms
++coincide as well, by point tests, which is not formalized), never unified silently.
+ 
+ Every asymptotic statement is proved by instantiating a concrete reduction of
+ `TCSlib.Cryptography.Pseudorandom.Indistinguishability` [Gar26, §3.2] at each `n`, exhibiting
+@@ -44,7 +50,8 @@ the reduction as a `Complexity.NUPPT` by the closure catalogue of
+ `not_negligible_iff_exists_polyExpr`).
+ 
+ **Deviation:** `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n`
+-(literal form `IndistLit`, equivalent for injective `ℓ`).
++(literal form `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the
++constant case by point tests, not formalized).
+ 
+ The machine constructions and the probability bookkeeping behind the proofs (the negated,
+ padded-image and multicopy reductions as `NUPPT`s, coin-splitting bijections, the exactness
+@@ -109,9 +116,12 @@ at each `n` a sampler `X n` from a finite seed type `σ n` (uniformly distribute
+ the `ℓ(n)`-bit strings, the distribution `X_n` being the pushforward of the uniform seed. The
+ length `ℓ` is a syntactic polynomial (D9).
+ 
+-**Deviation:** every distribution is dyadic (a pushforward of uniform seeds); the text allows
+-arbitrary distributions over `{0,1}^*`, but every ensemble of chapters 3 and 4 is of this form
+-and the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
++**Deviation:** each `X_n` is the pushforward of the uniform distribution on a finite nonempty
++seed set, so its probabilities are rational (not necessarily dyadic: seeds `Fin 3` give mass
++`1/3`; the efficiently samplable ensembles, `Samplable`, are the dyadic ones, D6), and it lives
++on strings of the fixed length `ℓ(n)` that Definition 69.4 requires (Definition 69.3 allows
++arbitrary distributions over `{0,1}^*`). Every ensemble of chapters 3 and 4 is of this form;
++the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
+ experiments, approximated by the rejection samplers of `Asymptotic/Sampling.lean` (D6, D10).
+ 
+ **Repair (run-3 audit P2-2):** the field `nonempty` was added to the frozen structure of
+@@ -144,8 +154,8 @@ def uniform (ℓ : PolyExpr) : Ensemble ℓ where
+ /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
+ polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
+ `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
+-law of `X n` (`StatClose … 0`). This is the "efficiently sample from the ensemble" of
+-[PS10, p. 72 (Example) and Lemma 71.6's multicopy corollary]. -/
++law of `X n` (`StatClose … 0`). This is the "efficiently sample" of [PS10, p. 72, Example];
++the multicopy lemma that assumes it is [Gar26, Lemma 3.3] (`Indist.copies`). -/
+ def Samplable (X : Ensemble ℓ) : Prop :=
+   ∃ (s : PolyExpr) (S : List Bool → List Bool), PolyTimeComputable S ∧
+     ∀ n, StatClose (fun r : Fin (s.eval n) → Bool =>
+@@ -176,7 +186,10 @@ def Pseudorandom (X : Ensemble ℓ) : Prop := Indist X (uniform ℓ)
+ /-- The image ensemble `{M(X_n)}` of [PS10, Lemma 71.5]: at parameter `n`, draw a seed of `X`
+ and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)` bits. The
+ output length `ℓ'` is an explicit syntactic polynomial so that the padding is itself
+-polynomial-time (`polyTimeComputable_unaryPoly`). -/
++polynomial-time (`polyTimeComputable_unaryPoly`). The padding (`padFin`: `false`-padding or
++truncation) is lossless when `M` outputs exactly `ℓ'(n)` bits, the only case Definition 69.4
++can type, and lossy otherwise (`[1]` and `[1, 0]` both pad to `[1, 0, …]`): variable-length
++outputs (ciphertexts, views, transcripts) are not ensembles of this kind. -/
+ def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
+   σ n := X.σ n × M.Coins n
+   X n z := padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X.X n z.1)) z.2)
+@@ -227,14 +240,6 @@ def Ensemble.DistinguishesWith {ℓ : PolyExpr} (X Y : Ensemble ℓ) (D : NUPPT)
+     Prop :=
+   ∀ n, Distinguishes (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n)) (μ n)
+ 
+-/-- The constant zero is negligible. -/
+-theorem negligible_zero : Negligible fun _ : ℕ => (0 : ℝ) := by
+-  intro c
+-  refine ⟨1, fun n hn => ?_⟩
+-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+-  simp only [abs_zero]
+-  positivity
+-
+ /-- The text's form of Definition 69.4 — "there exists a negligible `ε` with advantage
+ `< ε(n)` for all `n`" — is equivalent to the frozen form "the advantage is negligible"
+ [PS10, Definition 69.4]: the advantage lies in `[0, 1]`, so one direction is `Negligible.mono`
+@@ -341,6 +346,13 @@ theorem Ensemble.Indist.toLit {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indis
+ the text): if `{X_n} ≈ {Y_n}` against literal distinguishers, then also against distinguishers
+ receiving `1^n` [PS10, Definition 69.4; D5].
+ 
++The hypothesis `hℓ` excludes only constant `ℓ`: a `PolyExpr` has natural-number coefficients,
++so `ℓ.eval` is constant or strictly increasing. For constant `ℓ ≡ L` the two forms coincide as
++well (not formalized, no consumer): the `2^L` point tests `t ↦ [t = t₀]` are advice-free
++literal distinguishers, so `IndistLit` makes `Σ_{t₀} |Pr[X_n = t₀] − Pr[Y_n = t₀]|`, hence the
++statistical distance of `X_n` and `Y_n`, negligible, and that bounds every distinguisher
++(`distAdv_le_of_statClose`). So D5's "`D` receives `1^n`" costs nothing for ensembles.
++
+ **Proof sketch.** `ℓ.eval` is monotone (`PolyExpr.eval_mono`) and injective, hence strictly
+ increasing, so `n ≤ ℓ n` for all `n`. Let `φ m := n` if `m = ℓ n` (`Classical.choose` of the
+ preimage, unique by injectivity) and `φ m := 0` off the image; then `φ m ≤ m`, so
+@@ -387,7 +399,7 @@ non-uniform PPT `M` (and every explicit output length `ℓ'`), `{M(X_n)} ≈ {M(
+ `combineAdvice (M.advice n) (D.advice n)`, built as `NUPPT.ofPolyTime` of a raw function of
+ the layout `⟨⟨⟨1^n, t⟩, α⟩, r⟩` as in `NUPPT.exists_seq`) runs `M` on `t` with the first
+ `M.coins n` coins, pads the result to `ℓ'(n)` bits *inside the layout*, where `1^n` is
+-available (run-3 audit note P2-4: `NUPPT.exists_comp` sees only `y`; the padding is
++available (`NUPPT.exists_comp` sees only `y`, gate 03a finding 3; the padding is
+ `EnsembleLemmas.polyTimeComputable_padL`, a typed cut `pairTakePoly ℓ'` of the output
+ followed by `0^{ℓ'(n)}`), and hands it to `D` with the remaining coins. Its distinguisher at
+ `n` is the concrete `sunglassRed P (D.distinguisher n (ℓ' n))` with
+@@ -411,7 +423,9 @@ theorem Ensemble.Indist.push {ℓ ℓ' : PolyExpr} {X Y : Ensemble ℓ} (h : X.I
+ `X^m` with advantage `ε` then some consecutive pair `X^i, X^{i+1}` (`i < m`) is distinguished
+ by `D` with advantage at least `ε / m`. (The text indexes `X^1, …, X^m` and loses the factor
+ `m` where `m − 1` steps would do; harmless.) This is the concrete `exists_hybrid_gap` applied to
+-the acceptance probabilities `g_i = Pr[t ← X^i : D(t) = 1]`. -/
++the acceptance probabilities `g_i = Pr[t ← X^i : D(t) = 1]`. All hybrids share one seed type
++`σ` (`X : ℕ → σ → γ`); hybrids with seeds of different shapes are first embedded into a
++common product seed. -/
+ theorem hybrid_lemma {σ γ ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm : 0 < m)
+     (X : ℕ → σ → γ) (D : γ → ρ → Bool) :
+     ∃ i < m, distAdv (X 0) (X m) D / m ≤ distAdv (X i) (X (i + 1)) D := by
+@@ -439,6 +453,12 @@ theorem Ensemble.Indist.trans {ℓ : PolyExpr} {X Y Z : Ensemble ℓ} (h₁ : X.
+ samplable, then `t(n)` independent copies remain indistinguishable for every syntactic
+ polynomial `t`.
+ 
++The samplability hypotheses are those of [Gar26, Lemma 3.3]'s uniform reduction, which
++samples the other copies (D6). Against non-uniform distinguishers they can be dropped: hard-wire
++the hybrid index and the other `t(n) − 1` copies that keep the gap as advice
++(`NUPPT.exists_withAdvice`). That form is not proved, since no consumer needs copies of a
++non-samplable ensemble (gate 03a, finding 2).
++
+ **Proof sketch.** Fix a distinguisher `D` of the `t(n)`-fold products. At each `n` with
+ `t(n) > 0`, `exists_multicopyRed_ge` (through the block bijection `blocks`) gives a hybrid
+ index `k_n < t(n)` such that the concrete reduction `multicopyRed (X.X n) (Y.X n) (t n) k_n D'`
+@@ -670,7 +690,10 @@ independent bits `X_1, …, X_m`, each `true` with probability `p`, and `ε > 0`
+ 
+ **Deviation:** the text states the inequality for real random variables with `|X_i| ≤ 1` and
+ mean `μ` with the bound `(1 − μ²)/(m ε²)`; here the variables are bits (the only case used in
+-the campaign) and the bound is the variance bound `p(1−p) ≤ 1/4` of the concrete layer. -/
++the campaign) and the bound is the variance bound `p(1−p) ≤ 1/4` of the concrete layer. Bits
++satisfy the text's hypothesis, and `1/4 > 1 − p²` exactly when `p > √3/2`, so for such `p`
++this bound is weaker than the text's (at `p = 1` the text gives `0`); the variance form
++`p(1−p)/(m ε²)` would imply both. -/
+ theorem pairwise_sampling_ineq {Ω ι : Type*} [Fintype Ω] [Nonempty Ω] [Fintype ι]
+     {X : ι → Ω → Bool} (hX : HardcoreBit.PairwiseIndep X) {p : ℝ}
+     (hp : ∀ i, uprob (fun ω => X i ω = true) = p) {ε : ℝ} (hε : 0 < ε)
+diff --git a/TCSlib/Cryptography/Asymptotic/Sampling.lean b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+index d25fae40..614318c8 100644
+--- a/TCSlib/Cryptography/Asymptotic/Sampling.lean
++++ b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+@@ -88,8 +88,9 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+-  (§2.4.2 Theorem 35.1; §2.6.5 Lemma 51.17; §2.12 Corollary 60.6 and Theorem 63.10;
+-  §4.4–§4.6 Protocols 120.6 and 127.5 for the permutation sampler of `Asymptotic/Permutations.lean`.)
++  (Definition 181.1, `ε`-closeness; §2.4.2 Theorem 35.1; §2.6.5 Lemma 51.17; §2.12
++  Corollary 60.6 and Theorem 63.10; §4.4–§4.6 Protocols 120.6 and 127.5 for the permutation
++  sampler of `Asymptotic/Permutations.lean`.)
+ * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+   draft of 22 January 2026, Lemma 3.1 (statistical distance bounds every advantage).
+ -/
+@@ -102,10 +103,19 @@ open Finset
+ 
+ /-- Two samplers `X : σ → γ` and `Y : τ → γ` from uniform seeds are *statistically
+ `δ`-close* when every test set `T ⊆ γ` has probabilities under the two sampled laws differing
+-by at most `δ`: the sup-over-test-sets form of the statistical distance, usable for samples in
+-an infinite type such as `List Bool`. The device of foundation decision D10: experiments use
+-ideal distributions, samplers approximate them within `StatClose` error
+-[PS10, §2.4.2 (the uniform position of Theorem 35.1), §4.3 (statistical zero-knowledge)]. -/
++by at most `δ`: the `ε`-closeness of [PS10, Definition 181.1] ("for every (deterministic)
++distinguisher `D` (with no time bound), `|Pr[D(x) = 1] − Pr[D(y) = 1]| ≤ ε`"), in its
++sup-over-test-sets form, usable for samples in an infinite type such as `List Bool`; on a
++finite sample space, with nonempty seed types, it is exactly `EpsClose` of the two laws
++(`statClose_iff_epsClose_map`, `Asymptotic/SamplingFinDist.lean`). The device of foundation
++decision D10: experiments use ideal distributions, samplers approximate them within
++`StatClose` error [PS10, §2.4.2 (the uniform position of Theorem 35.1), §4.3 (statistical
++zero-knowledge)].
++
++The seed types are not required to be nonempty. On an empty seed type every probability is
++`0` (`uprob`), so the "law" of an empty-seeded sampler is the zero measure and
++`StatClose X Y 0` fails as soon as `Y` has seeds; every use has nonempty seeds
++(`Ensemble.nonempty`, machine coins `Fin k → Bool`, the `[Nonempty σ]` of `SamplingFinDist`). -/
+ def StatClose {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) (δ : ℝ) : Prop :=
+   ∀ T : γ → Prop, |uprob (fun s => T (X s)) - uprob (fun t => T (Y t))| ≤ δ
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean b/TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean
+index 3a619deb..c5e5d131 100644
+--- a/TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean
++++ b/TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean
+@@ -1,10 +1,12 @@
+ /-
+ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.Asymptotic.Sampling
+ import TCSlib.InformationTheory.Extractors
+ 
++set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+@@ -18,6 +20,10 @@ between two finite distributions by distinguishers (`EpsClose`,
+ On a finite sample space the two agree: two samplers are `δ`-close exactly when the laws they push
+ the uniform seed distribution to are `δ`-close. This closes duplication-ledger item DL-4.
+ 
++## Main definitions
++
++None.
++
+ ## Main results
+ 
+ * `uprob_comp_eq_probTrue_map`: the probability that a test accepts a sample is its acceptance
+diff --git a/TCSlib/Cryptography/Foundations/Negligible.lean b/TCSlib/Cryptography/Foundations/Negligible.lean
+index a006f767..9cec03b1 100644
+--- a/TCSlib/Cryptography/Foundations/Negligible.lean
++++ b/TCSlib/Cryptography/Foundations/Negligible.lean
+@@ -33,7 +33,7 @@ differences of probabilities can be fed in directly. [Gar26] restricts to values
+ 
+ * `Negligible.add`, `Negligible.mul`, `Negligible.const_mul`, `Negligible.mono`: closure.
+ * `Negligible.mul_pow`: a negligible function times a polynomial is negligible.
+-* `negligible_two_pow_neg`: `2^{-n}` is negligible.
++* `negligible_two_pow_neg`: `2^{-n}` is negligible; `negligible_zero`: so is the constant `0`.
+ * `Noticeable.not_negligible`: noticeable functions are not negligible.
+ * `not_negligible_sub`: a non-negligible function minus a negligible one is
+   non-negligible.
+@@ -157,6 +157,17 @@ theorem negligible_two_pow_neg : Negligible (fun n => (2 : ℝ)⁻¹ ^ n) := by
+   rw [abs_of_pos (by positivity), inv_pow, ← one_div]
+   exact one_div_lt_one_div_of_lt (pow_pos (by linarith) c) hlt
+ 
++/-- The constant zero function is negligible: `|0| = 0 < 1 / n^c` for every `n ≥ 1`. Technical
++glue (the advantage of a distinguisher between two equal distributions). Added by the
++Pass–shelat campaign (gate 03a, ruling G3-7a), which moved it here from
++`Asymptotic/Ensembles.lean` under its unchanged full name. -/
++theorem negligible_zero : Negligible fun _ : ℕ => (0 : ℝ) := by
++  intro c
++  refine ⟨1, fun n hn => ?_⟩
++  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
++  simp only [abs_zero]
++  positivity
++
+ /-- A noticeable function is not negligible. [Gar26, §1.2].
+ 
+ **Proof sketch.** With the noticeability exponent `c`, at any `n` past both thresholds
+
+### --- B1: the 03a repair commit e8f45ca3ca7246d1379c4b66ce5a7a72d0b2d820, outside this pack's files ---
+diff --git a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+index 54ad6508..dc8fbb52 100644
+--- a/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean
+@@ -3,7 +3,8 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+-import TCSlib.Complexity.Randomized
++import TCSlib.Complexity.Randomized.Closure
++import TCSlib.Complexity.Randomized.Repetition
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Asymptotic.Sampling
+ import TCSlib.Cryptography.Foundations.Negligible
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWay.lean b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+index edb8e719..d4b35d6f 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWay.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+@@ -193,7 +193,17 @@ structure WorstCaseOneWayLit (𝓕 : FunFamily) : Prop where
+ def strOutLen (f : List Bool → List Bool) (n : ℕ) : ℕ := (f (List.replicate n false)).length
+ 
+ /-- The textbook `f : {0,1}* → {0,1}*` with the output length `p`: parameter = input length,
+-the output padded or truncated to `p(n)` bits (exact when `f` is `LengthRegular f p`). -/
++the output padded or truncated to `p(n)` bits (exact when `f` is `LengthRegular f p`).
++
++Inversion is typed (D5, `NUPPT.inverter`): an inverter of `ofString f p` at parameter `n` must
++return a preimage of length `n`, while [PS10, Definition 27.3] accepts a preimage of any
++length. The two experiments agree when `f` is length-regular with non-constant `p` (then
++`|f(x)|` determines `|x|`); with constant `p` neither notion is satisfiable. Otherwise the typed
++notion can be strictly weaker: for a length-preserving one-way `g`, the function
++`f(0^k ‖ w) := w` (`|w| = k`), `f(x) := g(x)` elsewhere is inverted with probability one by
++`y ↦ 0^{|y|} ‖ y` in the text's experiment, while in the typed one every inverter succeeds
++with probability at most its inversion probability against `g` plus `2^{-n/2}` (gate 03a,
++note 15). -/
+ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
+   inLen := .var
+   outLen := p
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 01a9d640..767d14fe 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: TCSlib contributors
+ -/
+-import TCSlib.Complexity.Randomized
++import TCSlib.Complexity.Randomized.Closure
++import TCSlib.Complexity.Randomized.NonUniform
++import TCSlib.Complexity.Randomized.Repetition
+ import TCSlib.Cryptography.Candidates.Arithmetic
+ import TCSlib.Cryptography.Candidates.Concrete
+ import TCSlib.Cryptography.Asymptotic.Collections
+diff --git a/audits/pass-shelat/Checks.lean b/audits/pass-shelat/Checks.lean
+index db0e077b..d479fa0a 100644
+--- a/audits/pass-shelat/Checks.lean
++++ b/audits/pass-shelat/Checks.lean
+@@ -11,6 +11,10 @@ import TCSlib.Cryptography.NumberTheory
+ import TCSlib.Cryptography.Candidates
+ import TCSlib.Cryptography.ZeroKnowledge
+ 
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
+ /-!
+ # Pass–shelat Chapters 2–4 verification (run 2, statement phase)
+ 
+@@ -18,6 +22,20 @@ Axiom prints for the sanity theorems and for every headline theorem of the campa
+ (every theorem whose name corresponds to a numbered result of [PS10]). In the statement
+ phase most headlines are sorried under their proof sketches and print `sorryAx`; proved
+ results must print exactly `[propext, Classical.choice, Quot.sound]`.
++
++## Main definitions
++
++* `PassShelatChecks.zeros` — the constant ensemble `{0^{ℓ(n)}}` (gate 03a, note 21).
++
++## Main results
++
++* `PassShelatChecks.not_indist_uniform_zeros` — non-vacuity of `Ensemble.Indist`: `{U_n}` and
++  `{0^n}` are distinguishable (gate 03a, note 21).
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (Definition 69.4, computational indistinguishability.)
+ -/
+ 
+ -- ## Sanity theorems (plan §6, workstream A)
+@@ -392,3 +410,105 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.not_weakOneWay_id
+ #print axioms TCSlib.Cryptography.not_worstCaseOneWay_id
+ #print axioms TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id
++
++-- ## Gate 03a repairs (pack 03a: machines and probability)
++-- Note 19: interface lemmas that had no axiom print.
++#print axioms TCSlib.Cryptography.statClose_iff_epsClose_map
++#print axioms Complexity.NUPPT.computes_iff_uprob
++#print axioms Complexity.NUPPT.Computes.polyTimeComputable
++#print axioms Complexity.NUPPT.exists_uniform_computes
++#print axioms TCSlib.Cryptography.Ensemble.uniform_samplable
++#print axioms TCSlib.Cryptography.Ensemble.indist_iff_exists_negligible
++#print axioms TCSlib.Cryptography.invProbOpt_le_invProb
++#print axioms TCSlib.Cryptography.invProbOpt_some
++#print axioms TCSlib.Cryptography.statClose_firstHit
++#print axioms TCSlib.Cryptography.pushesUniform_of_card_fiber
++#print axioms TCSlib.Cryptography.pairwise_sampling_ineq
++-- Ruling G3-7a: `negligible_zero` now lives in `Foundations/Negligible.lean` (name unchanged).
++#print axioms TCSlib.Cryptography.negligible_zero
++
++-- Note 21: `Ensemble.Indist` can fail (the distinguisher semantics is not trivial).
++namespace PassShelatChecks
++
++open TCSlib.Cryptography Complexity Turing
++
++/-- The constant ensemble `{0^{ℓ(n)}}`: one seed, the all-`false` string. -/
++def zeros (ℓ : PolyExpr) : Ensemble ℓ where
++  σ _ := Unit
++  X _ _ := fun _ => false
++
++/-- A uniformly random bit string of positive length has its first bit set with probability
++`1/2`: flipping that bit is a bijection that exchanges the event and its complement. -/
++theorem uprob_first_bit (m : ℕ) :
++    uprob (fun t : Fin (m + 1) → Bool => t 0 = true) = 1 / 2 := by
++  have hinv : Function.Involutive fun t : Fin (m + 1) → Bool => Function.update t 0 (!t 0) := by
++    intro t
++    funext j
++    by_cases hj : j = 0
++    · subst hj
++      simp
++    · simp [hj]
++  have h := uprob_comp_equiv hinv.toPerm (fun t : Fin (m + 1) → Bool => t 0 = true)
++  have hne : (fun t : Fin (m + 1) → Bool => hinv.toPerm _ t 0 = true) =
++      fun t => ¬ (t 0 = true) := by
++    funext t
++    simp [Function.Involutive.coe_toPerm]
++  rw [hne, uprob_not] at h
++  linarith
++
++/-- **Non-vacuity of `Ensemble.Indist`** [PS10, Definition 69.4] (gate 03a, note 21): the
++uniform ensemble `{U_n}` is not indistinguishable from the constant ensemble `{0^n}`.
++
++**Proof sketch.** The distinguisher `D` outputs the first bit of its sample: it is
++`ofPolyTimeUniform` of `polyTimeComputable_pairTakePoly` with the constant cut `1` applied to
++the slot `⟨1^n, t⟩` of the raw layout, so `D(1^n, t) = t.take 1`. At every `n = m + 1` it
++accepts `U_n` with probability `1/2` (`uprob_fst`, `uprob_first_bit`) and `0^n` never
++(`uprob_false`), so its advantage is `1/2`. Negligibility with exponent `1` would give
++`1/2 < 1/n` for all large `n`, false at any `n ≥ 2`. -/
++theorem not_indist_uniform_zeros : ¬ (Ensemble.uniform .var).Indist (zeros .var) := by
++  intro h
++  have hF : PolyTimeComputable fun z =>
++      (pairSndD (pairFstD (pairFstD z))).take
++        ((PolyExpr.const 1).eval (pairFstD (pairFstD (pairFstD z))).length) :=
++    (polyTimeComputable_pairTakePoly (.const 1)).comp
++      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
++  let D := NUPPT.ofPolyTimeUniform hF (.const 0)
++  have hrun : ∀ n (y : List Bool) (r : D.Coins n), D.runAt n y r = y.take 1 := by
++    intro n y r
++    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
++    simp [NUPPT.advInput]
++  have hacc : ∀ m (t : Fin (m + 1) → Bool) (r : D.Coins (m + 1)),
++      D.distinguisher (m + 1) (m + 1) t r = t 0 := by
++    intro m t r
++    simp only [NUPPT.distinguisher, hrun, List.ofFn_succ]
++    cases t 0 <;> simp
++  have hadv : ∀ m, distAdv ((Ensemble.uniform .var).X (m + 1)) ((zeros .var).X (m + 1))
++      (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 1 / 2 := by
++    intro m
++    have hU : acceptProb ((Ensemble.uniform .var).X (m + 1))
++        (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 1 / 2 := by
++      show uprob (fun z : (Fin (m + 1) → Bool) × D.Coins (m + 1) =>
++        D.distinguisher (m + 1) (m + 1) z.1 z.2 = true) = 1 / 2
++      simp only [hacc]
++      exact (uprob_fst (fun t : Fin (m + 1) → Bool => t 0 = true)).trans (uprob_first_bit m)
++    have hZ : acceptProb ((zeros .var).X (m + 1))
++        (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 0 := by
++      show uprob (fun z : Unit × D.Coins (m + 1) =>
++        D.distinguisher (m + 1) (m + 1) (fun _ => false) z.2 = true) = 0
++      simp only [hacc, Bool.false_eq_true]
++      exact uprob_false
++    rw [distAdv, hU, hZ]
++    norm_num
++  obtain ⟨n₀, hn₀⟩ := h D 1
++  have hlt := hn₀ (max n₀ 2 - 1 + 1) (by omega)
++  simp only at hlt
++  rw [hadv] at hlt
++  have h2 : (2 : ℝ) ≤ ((max n₀ 2 - 1 + 1 : ℕ) : ℝ) := by
++    exact_mod_cast (show 2 ≤ max n₀ 2 - 1 + 1 by omega)
++  rw [abs_of_pos (by norm_num), pow_one] at hlt
++  have : 1 / ((max n₀ 2 - 1 + 1 : ℕ) : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num) h2
++  linarith
++
++end PassShelatChecks
++
++#print axioms PassShelatChecks.not_indist_uniform_zeros
+diff --git a/briefs/pass-shelat/DESIGN.md b/briefs/pass-shelat/DESIGN.md
+index 65a36662..755283ac 100644
+--- a/briefs/pass-shelat/DESIGN.md
++++ b/briefs/pass-shelat/DESIGN.md
+@@ -44,7 +44,11 @@ D2. **Two layers, as in the Garg plan.** Concrete reductions are reused verbatim
+     `ClassNP/PolyTimePairing.lean` with `NUPPT.polyTimeComputable_output` as a black box, plus
+     the two new machine lemmas of D11, (iii) negligible-function arithmetic through
+     `not_negligible_iff`. New concrete lemmas go into campaign-owned files, never into the
+-    frozen Garg files.
++    frozen Garg files. *Exception* (gate 03a, ruling G3-7a, user 2026-11-05): the general
++    helper `negligible_zero` moved from `Asymptotic/Ensembles.lean` into
++    `Foundations/Negligible.lean`, full name `TCSlib.Cryptography.negligible_zero` unchanged; its
++    copy `negligible_const_zero` (`ZeroKnowledge/Defs.lean`) is left to the duplicate clean-up
++    (ruling G3-5).
+ 
+ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
+     `TCSlib/Complexity/Randomized/PPT.lean`): a `Turing.FinTM Bool` that halts on **every** input
+@@ -57,7 +61,10 @@ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
+     `runAt n y r := output ⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with `r : Fin (coins.eval n) → Bool`; the
+     random tape is part of the input, the time bound holds for every coin string
+     ([PS10, Def 23.5], worst case), and "`A` computes `f` with probability 1" ([PS10, Def 24.6])
+-    is `Computes`: equality for every coin string. Honest evaluators ("easy to compute") are
++    is `Computes`: equality for every coin string. `Computes` does not require `Uniform`: Def
++    24.6 proper is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
++    analogue and holds for uncomputable `f` (advice `[h n]`), so `∃ A, A.Computes f` is not "a
++    PPT computes `f`" (gate 03a, finding 1). Honest evaluators ("easy to compute") are
+     stated as `PolyTimeComputable` string functions on `⟨1^n, x⟩`. Recorded deviations:
+     totality on all inputs (behaviour class unchanged: a machine polynomial-time on well-formed
+     inputs is clocked by `timed_universal`; the optional lemma `NUPPT.ofPartial` is not needed
+@@ -86,7 +93,9 @@ D5. **Domains are typed at each parameter.** A function family is
+     Def 69.4: `D(t)`) the frozen definition is the literal one (`WorstCaseOneWay` with
+     `inverterLit`, `Ensemble.IndistLit`), and the `1^n` form (`Ensemble.Indist`) is the headline
+     form of the theorems, related by `Indist.toLit` (always) and `IndistLit.toIndist`
+-    (injective `ℓ`, i.e. every ensemble of the text). The two are never unified silently.
++    (injective `ℓ`, i.e. every ensemble of the text; for constant `ℓ` the two forms coincide
++    as well, by point tests, which is not formalized: gate 03a, note 14). The two are never
++    unified silently.
+ 
+ D6. **Ensembles** ([PS10, Def 69.3]) are `Ensemble ℓ := ⟨σ : ℕ → Type, Fintype, X n : σ n → (Fin (ℓ.eval n) → Bool)⟩`
+     with arbitrary finite seed types (the uniform ensemble has seeds `Fin (ℓ n) → Bool`, the
+@@ -160,6 +169,12 @@ D11. **Admissions policy.** `Complexity.polyTimeComputable_iterateFind`
+     audit P7-1 added `add`/`sub`/bit length) are explicit hypotheses
+     (`Candidates/Arithmetic.lean` bundle), never axioms; `#print axioms` of every headline must
+     show `[propext, Classical.choice, Quot.sound]` plus, at most, the admissions named here.
++    *Status* (gate 03a, note 20; decision log 2026-10-28): run 3b proved
++    `polyTimeComputable_iterateFind`, so the permitted machine admission is unused.
++    `NUPPT.ofPartial` was never written; the only machine-layer `sorry` is the optional bridge
++    `NUPPT.decides_of_decidesWithAdviceInTime` (`Randomized/NonUniform.lean`), whose sketch does
++    `ofPartial`'s clocking inline. It is the named admission of that optional module (open
++    question 5, ruled outside the core on 2026-10-27).
+ 
+ ---
+ 
+@@ -977,7 +992,8 @@ Issues found in this synthesis and resolved here (not raised by the panel):
+    computing with probability one (equivalent by `Computes` + `ofPolyTimeUniform`).
+ 4. `inverter`: wrong-length output = failure (D5); verdict `= [true]` (normalisable by `ifEq`).
+ 5. `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n` (literal form
+-   `IndistLit`, equivalent for injective `ℓ`).
++   `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the constant case
++   by point tests, not formalized; gate 03a, note 14).
+ 6. `WeakOneWay`: `0 < q n` made explicit; Theorem 35.1 with the text's `m = 2nq(n)` and a
+    rejection-sampled position (statistical term absorbed).
+ 7. `OracleEnsemble.Indist`: next-query machines with an explicit universally quantified
+@@ -1245,7 +1261,9 @@ message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (h
+ 5. **Optional literal modules.** `NUPPTSeq` (Def 26.8 verbatim), `exists_queryTree`
+    (`OracleTM` bridge) and `NUPPT.ofPartial` are specified as optional modules with one named
+    admission each; confirm they are out of the mandatory core (they are not needed by any
+-   chapter 2–4 theorem).
++   chapter 2–4 theorem). **Ruled** (decision log 2026-10-27): outside the mandatory core.
++   The one admission in this area is the optional bridge
++   `NUPPT.decides_of_decidesWithAdviceInTime` (decision log 2026-10-28; see D11).
+ 6. **Encoding scheme for Theorem 63.1 (run-3 audit P3-4).** `theorem_63_1` and `fUniversal_*`
+    are stated for schemes with an at most exponential canonizer (`CanonizerExp c`); the only
+    scheme in the library (`Turing.exists_effectiveMachineCode`) has no bound on its canonizer,
+diff --git a/briefs/pass-shelat/inventory-ch2.md b/briefs/pass-shelat/inventory-ch2.md
+index c8b22cde..a512d310 100644
+--- a/briefs/pass-shelat/inventory-ch2.md
++++ b/briefs/pass-shelat/inventory-ch2.md
+@@ -252,7 +252,7 @@ Full paths of the existing declarations cited below:
+ 
+ **Rem-22.1 (§2.1.1 hard problems).** (i) Halting is uncomputable; (ii) the time hierarchy gives functions computable in exponential but not polynomial time; (iii) SAT is NP-complete, conjectured not in P. — Existing: `Complexity.HALT_not_computable` (relative to an `EffectiveMachineCode`), `Complexity.P_ssubset_EXP`, `Complexity.SAT_NPComplete`. Cite only.
+ 
+-**Def-23.4 (PPT).** A randomized algorithm is a TM with an extra random tape of uniform independent bits. **Formal (D3):** a structure with a `FinTM Bool` `M`, coin-length constants `(Cr, cr)` and time constants `(Ct, ct)` such that for every `x : List Bool` and every `r : Fin (Cr·(|x|+1)^cr) → Bool`, `M` halts on `pairEncode x (ofFn r)` within `Ct·(|x|+1)^ct` steps; `M.run x r` is its completed output; `M(x)` is the sampler `r ↦ M.run x r` (a `(Fin ℓ → Bool) → List Bool`, directly usable by `uprob`). Deviation: coins are an input component (reading a random tape sequentially is a bounded-cost simulation), and the coin length is an explicit polynomial. — Existing pattern: `FinTM.DecidesWithAdviceInTime` (pair input, time in `|x|`). New file `TCSlib/Complexity/Randomized/PPT.lean`. Difficulty 3 (definition + run/sampler API + basic lemmas `run_eq_of_computesInTime`, determinism via `ComputesInTime.output_unique`).
++**Def-23.4 (PPT).** *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* A randomized algorithm is a TM with an extra random tape of uniform independent bits. **Formal (D3):** a structure with a `FinTM Bool` `M`, coin-length constants `(Cr, cr)` and time constants `(Ct, ct)` such that for every `x : List Bool` and every `r : Fin (Cr·(|x|+1)^cr) → Bool`, `M` halts on `pairEncode x (ofFn r)` within `Ct·(|x|+1)^ct` steps; `M.run x r` is its completed output; `M(x)` is the sampler `r ↦ M.run x r` (a `(Fin ℓ → Bool) → List Bool`, directly usable by `uprob`). Deviation: coins are an input component (reading a random tape sequentially is a bounded-cost simulation), and the coin length is an explicit polynomial. — Existing pattern: `FinTM.DecidesWithAdviceInTime` (pair input, time in `|x|`). New file `TCSlib/Complexity/Randomized/PPT.lean`. Difficulty 3 (definition + run/sampler API + basic lemmas `run_eq_of_computesInTime`, determinism via `ComputesInTime.output_unique`).
+ 
+ **Def-23.5 (Running time, randomized).** `A` runs in time `T` if for all `x` and *every* random tape, `A(x)` halts within `T(|x|)` steps (worst case over coins). — Folded into Def-23.4's time clause (the clause quantifies over all `r`). Expected polynomial time is not formalized (plan D8).
+ 
+@@ -262,7 +262,7 @@ Full paths of the existing declarations cited below:
+ 
+ **Def-24.7 (Efficient private-key encryption).** `(Gen, Enc, Dec)` are PPTs; `Gen(1^n)` outputs a key `k`; `Enc_k(m)` for `m ∈ {0,1}^n` outputs `c`; `Dec_k(c)` outputs `m ∈ {0,1}^n ∪ {⊥}`; for all `n` and `m ∈ {0,1}^n`, `Pr[k ← Gen(1^n) : Dec_k(Enc_k(m)) = m] = 1` (over the coins of `Gen` and `Enc`). **Formal:** messages `Fin n → Bool`; keys/ciphertexts `List Bool`; `Enc`/`Dec` receive `pairEncode 1^n (pairEncode k m)` (so their polynomial bounds are in `n`; the text says "polynomial in the size of their inputs" — with `|k| ≤ poly(n)` the two readings agree); `Dec` output decoded as an `n`-bit string or `⊥`. Correctness quantifies over all coin strings (Def-24.6 reading). Asymptotic/Encryption.lean (plan). Difficulty 2. Depends on Def-23.4.
+ 
+-**Def-26.8 (nuPPT).** A sequence `{A_i}` of probabilistic machines with `|A_i| < d(i)` and running time `< d(i)` for a polynomial `d`; `A(x)` runs `A_{|x|}(x)`. Equivalently (text): a uniform PPT with a polynomial-length advice string per input length. **Formal (D4):** a PPT `M` plus `α : ℕ → List Bool` with `|α n| ≤ Ca·(n+1)^ca`, run on `pairEncode (pairEncode x (α |x|)) r`, time `Ct·(|x|+1)^ct` for every `r`. Deviation: the machine-sequence formulation is not formalized. — Existing pattern: `FinTM.DecidesWithAdviceInTime`, `Complexity.PAdvicePoly`. New file `TCSlib/Complexity/Randomized/NonUniform.lean`. Difficulty 3. Note the standing convention "any adversarial algorithm is implicitly nuPPT" (p. 26) governs Defs 26.1, 27.3, 28.4, 41.1(4), 56.1(5) and Assumptions 30.1, 52.2, 53.1.
++**Def-26.8 (nuPPT).** *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* A sequence `{A_i}` of probabilistic machines with `|A_i| < d(i)` and running time `< d(i)` for a polynomial `d`; `A(x)` runs `A_{|x|}(x)`. Equivalently (text): a uniform PPT with a polynomial-length advice string per input length. **Formal (D4):** a PPT `M` plus `α : ℕ → List Bool` with `|α n| ≤ Ca·(n+1)^ca`, run on `pairEncode (pairEncode x (α |x|)) r`, time `Ct·(|x|+1)^ct` for every `r`. Deviation: the machine-sequence formulation is not formalized. — Existing pattern: `FinTM.DecidesWithAdviceInTime`, `Complexity.PAdvicePoly`. New file `TCSlib/Complexity/Randomized/NonUniform.lean`. Difficulty 3. Note the standing convention "any adversarial algorithm is implicitly nuPPT" (p. 26) governs Defs 26.1, 27.3, 28.4, 41.1(4), 56.1(5) and Assumptions 30.1, 52.2, 53.1.
+ 
+ **Rem-26.2 (equivalence of nuPPT formulations).** Deferred (difficulty 4): `⇒` would use `Turing.timed_universal` with the description `A_{|x|}` as advice; `⇐` hard-wires the advice. Not needed downstream under D4.
+ 
+diff --git a/briefs/pass-shelat/inventory-ch3.md b/briefs/pass-shelat/inventory-ch3.md
+index 1730a3a1..d405ce53 100644
+--- a/briefs/pass-shelat/inventory-ch3.md
++++ b/briefs/pass-shelat/inventory-ch3.md
+@@ -35,7 +35,7 @@ Run 1 (understand & design), 2026-10-27. Source: `blueprint/src/references/pass-
+ | Label | Meaning | Where it will live |
+ | --- | --- | --- |
+ | `Machine-PPT` | D3: `PPT` structure, run/sampler semantics `run M n : (Fin (coins n) → Bool) → List Bool`, `ComputesFun` (same output for every coin string), typed decoding of outputs (`List Bool` → `Fin m → Bool`, wrong length = failure/`false`) | `TCSlib/Complexity/Randomized/PPT.lean` |
+-| `Machine-NUPPT` | D4: nuPPT = PPT + advice `α n` of length `Cα (n+1)^cα`, run on `pairEncode (pairEncode x (α |x|)) r`; Boolean output `decide (out = [true])` | `Randomized/NonUniform.lean` |
++| `Machine-NUPPT` | *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* D4: nuPPT = PPT + advice `α n` of length `Cα (n+1)^cα`, run on `pairEncode (pairEncode x (α |x|)) r`; Boolean output `decide (out = [true])` | `Randomized/NonUniform.lean` |
+ | `Machine-Closure` | pre/post-composition with a PPT, pairing of inputs, hard-wiring a per-`n` constant (index `i`, message `m_n`, sign bit) into advice, drawing extra coins, a PPT is an nuPPT | `Randomized/Closure.lean` |
+ | `Machine-Repetition` | polynomially many calls of an nuPPT with fresh coins and a post-processing (majority, list, XOR) — the load-bearing lemma for GL, DL, multi-message | `Randomized/Repetition.lean` |
+ | `Machine-Loop` | iterate a PPT-computable function `poly(n)` times (PRG expansion, GGM evaluation, Shamir/Blum–Micali) | `Randomized/Repetition.lean` (or Closure) |
+@@ -192,7 +192,7 @@ unbounded distinguisher (membership in the image of `G`) has advantage `≥ 1/2`
+ distinguisher; `acceptProb` on `G` is `1`, on `U_m` is `|image|/2^m ≤ 2^{n−m}`). Optional,
+ difficulty 2. (The text argues via Shannon's theorem from ch. 1; the pigeonhole form is simpler.)
+ 
+-**Def-69.3** — *Ensemble.* A sequence `{X_n}` with `X_n` a distribution over `{0,1}^*`. D6 reading:
++**Def-69.3** — *Ensemble.* *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* A sequence `{X_n}` with `X_n` a distribution over `{0,1}^*`. D6 reading:
+ `structure Ensemble` with `seedLen outLen : ℕ → ℕ` (explicit `C(n+1)^c` formulas, or at least
+ `PolyBound`) and `sample n : (Fin (seedLen n) → Bool) → (Fin (outLen n) → Bool)`; the distribution
+ `X_n` is the pushforward of uniform seeds (dyadic). `Samplable X` := the sampler family is computed
+@@ -201,7 +201,7 @@ arbitrary distributions over `{0,1}^*`; the text's own ensembles are all of this
+ DDH/El Gamal ones that sample primes and `Z_q` — see Asm-105.1).
+ Reuse: samplers `σ → γ` of `Foundations/Experiments.lean` are the one-`n` slices.
+ 
+-**Def-69.4** — *Computational indistinguishability.* `X ≈ Y` iff for every nuPPT `D` there is a
++**Def-69.4** — *Computational indistinguishability.* *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* `X ≈ Y` iff for every nuPPT `D` there is a
+ negligible `ε` with `|Pr[t ← X_n : D(t)=1] − Pr[t ← Y_n : D(t)=1]| < ε(n)` for all `n`. Formal:
+ `CompIndist X Y := ∀ D : NUPPT, Negligible (fun n => distAdv (X.sample n) (Y.sample n) (D.dist n))`
+ where `D.dist n : (Fin (outLen n) → Bool) → (Fin (coins n) → Bool) → Bool` runs the machine on
+
+### --- B2: #203's item H commit 43e8fe2c27c54c2c50e01541024995e95c6bf6fa, outside this pack's files ---
+diff --git a/audits/pass-shelat/Checks.lean b/audits/pass-shelat/Checks.lean
+index 15941575..61fb0276 100644
+--- a/audits/pass-shelat/Checks.lean
++++ b/audits/pass-shelat/Checks.lean
+@@ -465,6 +465,8 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.pairwise_sampling_ineq
+ -- Ruling G3-7a: `negligible_zero` now lives in `Foundations/Negligible.lean` (name unchanged).
+ #print axioms TCSlib.Cryptography.negligible_zero
++-- Finding 3: the parameter-aware closure under pre- and post-processing.
++#print axioms Complexity.NUPPT.exists_compParam
+ 
+ -- Note 21: `Ensemble.Indist` can fail (the distinguisher semantics is not trivial).
+ namespace PassShelatChecks

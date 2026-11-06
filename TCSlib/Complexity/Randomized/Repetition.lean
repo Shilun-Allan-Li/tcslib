@@ -34,69 +34,50 @@ an adversary depends on it and on nothing else admitted, and the headline axiom 
 (`audits/pass-shelat/Checks.lean`) list it by name if it is still open. The derived lemmas of
 this file are to be closed from it (or by small direct machines), so that the admission stays
 a single named one. **Status (run 3b):** `polyTimeComputable_iterateFind` is closed — its
-machine is built in `TCSlib.Complexity.Randomized.Build.IterateFindHost` (clean modules and
-the finite host) and `TCSlib.Complexity.Randomized.Build.IterateFind` (assembly through
+machine is built on the public clean-module host `TCSlib.Complexity.TuringMachine.Build.ModuleHost`
+(clean modules and the finite host), with its instance in
+`TCSlib.Complexity.Randomized.Build.IterateFindHost` (the copier and the host's control) and
+the assembly in `TCSlib.Complexity.Randomized.Build.IterateFind` (through
 `Turing.FinTM.exists_loopFindTM`), and its axiom print is `[propext, Classical.choice, Quot.sound]`.
-The six derived lemmas are closed too, as instances of one private **state-loop** form
+The six derived lemmas are closed too, as instances of one public **state-loop** form
 `polyTimeComputable_stateFind` of the repetition lemma (a state word `⟨x, s⟩` retaining the
 input, a step on the state, a test firing first at round `N x ≤ R|x|`, an output read off the
 final state), whose loop data, orbit closed forms and bounds live in
 `TCSlib.Complexity.Randomized.Build.StateLoop` (the form itself and the two iteration loops)
 and `TCSlib.Complexity.Randomized.Build.StringLoops` (the four string loops).
 
-**Construction plan of `iterateFind` (DESIGN.md §2.6, with the three panel repairs built in;
-the proof sketch of the theorem repeats it).**
+**Construction of `iterateFind`, as built (DESIGN.md §2.6, step 1, and its as-built erratum,
+which records the departures from the frozen steps 2–5).**
 
-1. *State word carries the input.* `s0 x := ⟨x, x⟩` (second component: the current orbit
-   point). Loop data for `Turing.FinTM.exists_loopFindTM`: `stepF x w := guardedStep g P x w`
-   (**length-guarded**: `⟨x, g (snd w)⟩` if `|g (snd w)| ≤ P|x|`, else `w`),
-   `acceptF x w := acc (snd w)`, `out x w := out (snd w)`,
-   `Inv x w := fst w = x ∧ |snd w| ≤ P|x|` (`LoopInv`). `hInv0` is `pairDecode_pairEncode`
-   plus `horbit x 0`; `hInvStep` holds for every `w` because the guarded step leaves `w`
-   unchanged when the new point would be too long (`loopInv_guardedStep`). On the orbit
-   `i ≤ R|x|`, `horbit` shows the guard is never taken, so
-   `(stepF x)^[i] (s0 x) = ⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`) and the `find?` of the
-   conclusion is the statement's.
-2. *Modules.* From `hg`, `hacc`, `hout` build three clean-call modules over the state word:
-   `C₁ := exists_installCallTM` for `w ↦ ⟨[acc (snd w)], w⟩` (the verdict as the first cell of
-   the installed word, `pairEncode [b] w = [b, b, false, true] ++ w`, no scan needed);
-   `C₂ := exists_installCallTM` for the guarded step on the pair (FP by
-   `polyTimeComputable_ite` with `polyTimeComputable_lenLe` on `⟨1^{P|fst w|}, g (snd w)⟩`,
-   `polyTimeComputable_unaryPoly P`); `C₃ := exists_emitCallTM` for `w ↦ out (snd (snd w))`.
-   Each module promises first-visit-to-exit from the clean seam over an arbitrary native
-   input and `0 < C.k`.
-3. *Gluing without overriding `exit`.* Body state `Unit ⊕ (C₁.State ⊕ C₂.State ⊕ C₃.State) ⊕ Fin 3`;
-   tape counts equalised with idle tapes (`leftAction`/`leftCfg_run`, Simulation.lean). The
-   anchor is the fresh state `inl ()`, whose transition is stationary into `C₁.entry` (no
-   module-internal state is the anchor). The module tables are copied with every transition
-   *targeting* `Cᵢ.exit` redirected to a fresh branch state `inr (inr k)`, so the module's own
-   table at `exit` is never consulted and `entry = exit` is harmless: the first positive visit
-   of `exit` promised by the contract is exactly the first entry into the branch state, with
-   the clean seam on the tapes. Branch states: after `C₁`, read tape-0 cell 0 — `true` →
-   `C₃.entry`, `false` → `C₂.entry`; after `C₂` → anchor (one stationary step); after `C₃` → halt.
-4. *`hstart`.* From `initCfg x`, install `s0 x = ⟨x, x⟩` on tape 0: one more
-   `exists_installCallTM` module for `pairDup` (`computesFunInTime_pairDup`) applied to the
-   argument word `x`, which is first copied onto tape 0 by a one-state copy scan of the native
-   input plus `timed_rewind` (precedent: the startup phases of `computesFunInTime_splitSolveWith`).
-   No anchor visit before the seam.
-5. *`hround`.* From `Cfg.ofWords anchor (stateWord K w)` with `Inv x w`: one step into
-   `C₁.entry`; `C₁` to its first exit (`t₁ ≤ c₁ (T_acc(|w|) + 2|w| + 5)`), branch; accepting
-   clause: `C₃` to its first exit emitting `out (snd w)` and halt; advancing clause: `C₂` to
-   its first exit installing `stepF x w`, one step to the anchor. Anchor exclusion inside the
-   round is syntactic (the anchor is `inl ()`, entered only from the post-`C₂` branch state).
-   Budget `T n := c (T_g(Q n) + T_acc(Q n) + T_out(Q n) + Q n + 8)` with
-   `Q n := 2n + 2 + P.eval n + 4` (the length of the state word), a normal-form majorant by
-   `PolyExpr.eval_le`.
-6. *Fuel.* `hF` from `computesFunInTime_polyBits` for a normal-form majorant of `R`, or
-   `polyTimeComputable_unaryPoly R` + `computesFunInTime_lengthBits` for exact `R` (the `find?`
-   range must be exactly `R|x| + 1`: use the exact form).
-7. *Conclusion.* `exists_loopFindTM` gives `E` within `c (T n + 1)(R n + 2)`; package as
-   `PolyTimeComputable`. `iterate` threads a unary counter in the state
-   (`acc := lenEq cnt 1^{R|x|}` against `unaryPoly R` of the retained input); `iterateEmit`
-   threads an accumulator; the derived string functions are instances.
-
-Estimated size 1 200–1 800 lines; private precedent for the module gluing: `satClean_install`,
-`satStopTM`, `sat_run_agree` in `TCSlib.Complexity.ClassNP.SAT` (private copies, not edits).
+1. *State word carries the input.* The loop state is `⟨x, s⟩` (`pairEncode x s`) from
+   `⟨x, x⟩`; the step is the length-guarded `guardedStep g P x`, which advances to `⟨x, g s⟩` if
+   the **new** point fits, `|g s| ≤ P|x|`, and otherwise leaves the word unchanged. On the
+   orbit, for `i ≤ R|x|`, the guard is never taken (`iterate_guardedStep_eq`), so the loop's
+   `find?` is the statement's (`acc_guardedStep_eq`). The pure invariant `LoopInv` is closed
+   under the step (`loopInv_guardedStep`); the machine uses the stronger actual-pair invariant
+   `∃ s, w = ⟨x, s⟩ ∧ |s| ≤ P|x|`, which bounds the word's length by `2|x| + 2 + P|x|`.
+2. *The machine.* `Complexity.IterateFind.polyTimeComputable_find`
+   (`TCSlib.Complexity.Randomized.Build.IterateFind`) is an instance of
+   `Turing.FinTM.exists_loopFindTM` with the guarded step `IterateFind.step`, the same function
+   as `guardedStep` (`IterateFind.step_eq`). Its loop body runs five clean modules in the public
+   clean-module host `Turing.ModuleHost.hostTM` (`TCSlib.Complexity.TuringMachine.Build.ModuleHost`,
+   host H14): the copier, which puts the native input on tape 0 (`IterateFind.copyTM`); the
+   startup install `x ↦ ⟨x, x⟩`; the verdict install `w ↦ ⟨[acc (snd w)], w⟩`; the step install;
+   and the payload emit `w ↦ out (snd (snd w))`. The installs and the emit come from
+   `Turing.ModuleHost.clean_install`/`clean_emit` (a clean-call bridge stopped by a release flag
+   and cut at its first halt). The host's control
+   (`TCSlib.Complexity.Randomized.Build.IterateFindHost`) has three fresh states: the anchor, which
+   dispatches into the verdict module; the branch, which reads the verdict cell of tape 0 and
+   dispatches into the payload or the step module; and the halt.
+3. *Budget and fuel.* Every request has length at most `2n + 6 + P n`, so every module's
+   polynomial budget, and that of the fuel machine `x ↦ Nat.bits (R|x|)`
+   (`polyTimeComputable_unaryPoly R` and `computesFunInTime_lengthBits`, so that the `find?` range
+   is exactly `R|x| + 1`), fit `T n = A·(2n + 7 + P n)^D`; the loop combinator's bound
+   `c (T n + 1)(R n + 2)` is put in normal form by `PolyExpr.eval_le`.
+4. *The derived lemmas* are instances of the state-loop form `polyTimeComputable_stateFind`,
+   which runs `iterateFind` on the guarded step `StateLoop.gstep` of a state word `⟨x, s⟩`:
+   `iterate` threads a unary counter, tested against `1^{R|x|}` by `IterLoop.acc` (`R|x| ≤ |cnt|`);
+   `iterateEmit` also threads an accumulator; the string functions consume their input.
 
 ## Main definitions
 
@@ -111,6 +92,8 @@ Estimated size 1 200–1 800 lines; private precedent for the module gluing: `sa
 * `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit` —
   `R(|x|)`-fold iteration and concatenated emissions (proved; state loops with a unary round
   counter).
+* `Complexity.polyTimeComputable_stateFind` — the state-loop form of the repetition lemma, of
+  which the six derived lemmas are instances (proved, from `polyTimeComputable_iterateFind`).
 * `Complexity.polyTimeComputable_majority`, `polyTimeComputable_pairXor`,
   `polyTimeComputable_pairEq`, `polyTimeComputable_blockMap` — string tests and the block
   map used by the reductions (proved; state loops consuming the input).
@@ -196,23 +179,14 @@ with first success [PS10, Theorem 35.1], the `n(2^k−1)` calls of Goldreich–L
 [PS10, Theorem 87.3], rejection sampling (D10), the truncated simulators
 [PS10, Algorithms 123.4 and 128.7] (inventory Inf-4.3).
 
-**Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` (Loop.lean) with the data of the
-construction plan in the module docstring: (1) state word `⟨x, s⟩`, guarded step
-`guardedStep g P`, invariant `LoopInv P` (`loopInv_init`, `loopInv_guardedStep`), and on the
-orbit `(stepF x)^[i] ⟨x, x⟩ = ⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`), so the loop's `find?`
-over `List.range (R|x| + 1)` is the statement's (`acc_guardedStep_eq`); (2) the three
-clean-call modules `C₁` (verdict installed as the first cell), `C₂` (guarded step on the
-pair, FP by `polyTimeComputable_ite`, `polyTimeComputable_lenLe`,
-`polyTimeComputable_unaryPoly P`) and `C₃` (`out` of the orbit point, emitted) from
-`exists_installCallTM`/`exists_emitCallTM`; (3) the glued body with the fresh anchor
-`inl ()` and transitions into each `exit` redirected to fresh branch states; (4) `hstart` by a
-`pairDup` install module after a copy scan and `timed_rewind`; (5) `hround` with budget
-`T n := c (T_g(Q n) + T_acc(Q n) + T_out(Q n) + Q n + 8)`, `Q n := 2n + 2 + P n + 4`, in normal
-form by `PolyExpr.eval_le`; (6) fuel `Nat.bits (R|x|)` by `polyTimeComputable_unaryPoly R`
-and `computesFunInTime_lengthBits`; (7) `exists_loopFindTM` returns a machine within
-`c (T n + 1)(R n + 2)`, packaged as `PolyTimeComputable`. Sub-obligations: the four modules,
-the gluing lemma (precedent: `satClean_install`/`sat_run_agree` in `ClassNP/SAT.lean`), the
-startup phase, the round budget arithmetic. -/
+**Proof sketch.** The machine is `Complexity.IterateFind.polyTimeComputable_find`
+(`TCSlib.Complexity.Randomized.Build.IterateFind`; its construction is in the module docstring):
+it computes `out` of the first accepted point, among the first `R|x| + 1`, of the orbit of
+`⟨x, x⟩` under the guarded step `IterateFind.step g P x`, which is `guardedStep g P x`
+(`IterateFind.step_eq`). Convert its conclusion to the statement's: for `i ≤ R|x|` the guarded
+orbit is `⟨x, g^[i] x⟩` (`iterate_guardedStep_eq`), so the two `find?` predicates agree on the
+range (`acc_guardedStep_eq`, `IterateFind.find?_congr_of_mem`), and at the index found the
+payloads agree (`iterate_guardedStep_eq`, `pairSndD_pairEncode`). -/
 theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyTimeComputable g)
     {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
     {out : List Bool → List Bool} (hout : PolyTimeComputable out)
@@ -226,7 +200,10 @@ theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyT
   have h := IterateFind.polyTimeComputable_find hg hacc hout R P horbit
   convert h using 1
   funext x
-  have hstep : IterateFind.step g P x = guardedStep g P x := rfl
+  have hstep : IterateFind.step g P x = guardedStep g P x := by
+    funext w
+    rw [IterateFind.step_eq]
+    rfl
   have hfind : (List.range (R.eval x.length + 1)).find? (fun i => acc (g^[i] x)) =
       (List.range (R.eval x.length + 1)).find?
         (fun i => acc (pairSndD ((IterateFind.step g P x)^[i] (pairEncode x x)))) := by
@@ -261,7 +238,7 @@ the genuine orbit the guard never fires (`StateLoop.gstep_iterate_eq`, from the 
 first `N x` states), so the loop's `find?` over `List.range (R|⟨x, start x⟩| + 1)` — a range
 containing `N x`, as `R` is monotone (`PolyExpr.eval_mono`) — returns `some (N x)`
 (`StateLoop.find?_range_eq_some`), and the payload is `out ⟨x, orbit x (N x)⟩`. -/
-private theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
+theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
     {acc : List Bool → Bool} {out : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
     (hacc : PolyTimeComputable fun w => [acc w]) (hout : PolyTimeComputable out)
@@ -319,19 +296,19 @@ theorem polyTimeComputable_iterate {g : List Bool → List Bool} (hg : PolyTimeC
       IterLoop.acc R (pairEncode x (orbit IterLoop.start (IterLoop.step g) x i)) = false := by
     intro x i hi
     rw [IterLoop.orbit_eq]
-    simp [IterLoop.acc, hi]
+    simp [IterLoop.acc_eq, hi]
   have hlast : ∀ x, IterLoop.acc R
       (pairEncode x (orbit IterLoop.start (IterLoop.step g) x (R.eval x.length))) = true := by
     intro x
     rw [IterLoop.orbit_eq]
-    simp [IterLoop.acc]
+    simp [IterLoop.acc_eq]
   have h := polyTimeComputable_stateFind IterLoop.start_poly (IterLoop.step_poly hg)
     (IterLoop.acc_poly R) IterLoop.out_poly R _ (fun x => R.eval x.length) (fun _ => le_rfl)
     hbound hfirst hlast
   convert h using 1
   funext x
   rw [IterLoop.orbit_eq]
-  simp [IterLoop.out]
+  simp [IterLoop.out_eq]
 
 /-- **Polynomially many iterations with concatenated emissions:** under the orbit bound,
 `x ↦ emit x ++ emit (g x) ++ ⋯ ++ emit (g^[R|x|] x)` is polynomial-time computable (the
@@ -375,19 +352,19 @@ theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
       IterLoop.acc R (pairEncode x (orbit EmitLoop.start (EmitLoop.step g emit) x i)) = false := by
     intro x i hi
     rw [EmitLoop.orbit_eq]
-    simp [IterLoop.acc, hi]
+    simp [IterLoop.acc_eq, hi]
   have hlast : ∀ x, IterLoop.acc R (pairEncode x
       (orbit EmitLoop.start (EmitLoop.step g emit) x (R.eval x.length))) = true := by
     intro x
     rw [EmitLoop.orbit_eq]
-    simp [IterLoop.acc]
+    simp [IterLoop.acc_eq]
   have h := polyTimeComputable_stateFind EmitLoop.start_poly (EmitLoop.step_poly hg hemit)
     (IterLoop.acc_poly R) (EmitLoop.out_poly hemit) R _ (fun x => R.eval x.length)
     (fun _ => le_rfl) hbound hfirst hlast
   convert h using 1
   funext x
   rw [EmitLoop.orbit_eq]
-  simp [EmitLoop.out, List.range_succ]
+  simp [EmitLoop.out_eq, List.range_succ]
 
 /-- **Majority vote** on a bit string: `w ↦ [decide (|w| < 2 · #true w)]` (strict majority of
 `true`) is polynomial-time computable (the vote of the Goldreich–Levin inverter
@@ -431,7 +408,7 @@ theorem polyTimeComputable_pairXor :
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
-    unfold XorLoop.rounds
+    rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
   have h := polyTimeComputable_stateFind XorLoop.start_poly XorLoop.step_poly XorLoop.acc_poly
@@ -461,7 +438,7 @@ theorem polyTimeComputable_pairEq :
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
-    unfold XorLoop.rounds
+    rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
   have h := polyTimeComputable_stateFind XorLoop.start_poly EqLoop.step_poly XorLoop.acc_poly
@@ -478,11 +455,11 @@ mapped, a partial last block is dropped). This evaluates `prodFun f q` blockwise
 [PS10, Theorem 35.1, Algorithm 38.5] and decodes tuples of `n`-bit strings.
 
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
-`Complexity.StateLoop.BlockLoop`) with `R := var` (at most `|z|` blocks) on the state
+`Complexity.StateLoop.BlockMapLoop`) with `R := var` (at most `|z|` blocks) on the state
 `⟨rest, c⟩` from `⟨snd z, []⟩`, with `k := b(|fst z|)` read off the retained input: each step
 drops `k` bits of `rest` and appends `g (rest.take k)` to `c` (`polyTimeComputable_pairDropPoly b`,
 `polyTimeComputable_pairTakePoly b` on `⟨fst z, rest⟩`), so after `i` rounds the state is
-`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockLoop.orbit_eq`,
+`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockMapLoop.orbit_eq`,
 `List.drop_drop`); `acc` is "`|rest| < k` or `k = 0`" (two length tests against `1^k`), `false`
 below round `|snd z| / k` and `true` there (`Nat.le_div_iff_mul_le`, `Nat.lt_mul_div_succ`),
 where `out` returns `c`, the statement's `flatMap`. States have length at most
@@ -493,16 +470,17 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
       (List.range ((pairSndD z).length / b.eval (pairFstD z).length)).flatMap fun i =>
         g (((pairSndD z).drop (i * b.eval (pairFstD z).length)).take (b.eval (pairFstD z).length)) := by
   obtain ⟨C, c, hC⟩ := hg.output_length_le
-  have hN : ∀ z, BlockLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
+  have hN : ∀ z, BlockMapLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
+    rw [BlockMapLoop.rounds_eq]
     exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
-  have h := polyTimeComputable_stateFind BlockLoop.start_poly (BlockLoop.step_poly b hg)
-    (BlockLoop.acc_poly b) BlockLoop.out_poly .var _ (BlockLoop.rounds b) hN
-    (BlockLoop.orbit_length_le b g C c hC) (BlockLoop.acc_orbit_false b g)
-    (BlockLoop.acc_orbit_true b g)
+  have h := polyTimeComputable_stateFind BlockMapLoop.start_poly (BlockMapLoop.step_poly b hg)
+    (BlockMapLoop.acc_poly b) BlockMapLoop.out_poly .var _ (BlockMapLoop.rounds b) hN
+    (BlockMapLoop.orbit_length_le b g C c hC) (BlockMapLoop.acc_orbit_false b g)
+    (BlockMapLoop.acc_orbit_true b g)
   convert h using 1
   funext z
-  exact (BlockLoop.out_orbit b g z).symm
+  rw [BlockMapLoop.out_orbit, BlockMapLoop.rounds_eq]
 
 end Complexity

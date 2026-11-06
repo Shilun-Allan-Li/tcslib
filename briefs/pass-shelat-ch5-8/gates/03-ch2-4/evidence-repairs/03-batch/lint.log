@@ -1,0 +1,202 @@
+# Lint (check 4), HEAD 73751f5747d8c0a57aba9939cac8bb16f87ba2ba vs BASE 092083cd10be7a284db4e97fcf42eddb8296edf7 (archive in g03batch/basetree)
+# lint.sh: scripts/style_lint.py on the 21 changed .lean files; scripts/campaign_style_lint.py --check8b per directory, filtered to them.
+# Normalized diff base -> head (line numbers masked):
+#   26c26,27
+#   < INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          548 lines; 16 public / 13 private declarations
+#   ---
+#   > INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          663 lines > target 600
+#   > INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          663 lines; 19 public / 13 private declarations
+#   28,29c29,30
+#   < INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                929 lines > target 600
+#   < INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                929 lines; 44 public / 6 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                930 lines > target 600
+#   > INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                930 lines; 44 public / 6 private declarations
+#   45,56c46,57
+#   < INFO  TCSlib/Cryptography/Candidates/Concrete.lean             561 lines; 39 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          710 lines > target 600
+#   < INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          710 lines; 65 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean  585 lines; 45 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              890 lines > target 600
+#   < INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              890 lines; 60 public / 4 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/Factoring.lean            691 lines > target 600
+#   < INFO  TCSlib/Cryptography/Candidates/Factoring.lean            691 lines; 47 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/RSA.lean                  914 lines > target 600
+#   < INFO  TCSlib/Cryptography/Candidates/RSA.lean                  914 lines; 85 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/Candidates/Rabin.lean                994 lines > target 600
+#   < INFO  TCSlib/Cryptography/Candidates/Rabin.lean                994 lines; 96 public / 0 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/Candidates/Concrete.lean             570 lines; 40 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          719 lines > target 600
+#   > INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          719 lines; 66 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean  597 lines; 45 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              894 lines > target 600
+#   > INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              894 lines; 60 public / 4 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines > target 600
+#   > INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines; 47 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines > target 600
+#   > INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines; 85 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines > target 600
+#   > INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines; 96 public / 0 private declarations
+#   58,60c59,61
+#   < INFO  TCSlib/Cryptography/NumberTheory/Chebyshev.lean          308 lines; 11 public / 3 private declarations
+#   < INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          901 lines > target 600
+#   < INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          901 lines; 30 public / 30 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/NumberTheory/Chebyshev.lean          311 lines; 11 public / 3 private declarations
+#   > INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          908 lines > target 600
+#   > INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          908 lines; 30 public / 30 private declarations
+#   67c68
+#   < WARN  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       10 public def(s) without a lemma beside them (check 8): Efficient, ProverBounded, ReadsPrefix, Strategy.out, View.encode, coinLen, execution, transcriptWith, viewP, viewV
+#   ---
+#   > WARN  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       9 public def(s) without a lemma beside them (check 8): Efficient, ReadsPrefix, Strategy.out, View.encode, coinLen, execution, transcriptWith, viewP, viewV
+#   73,86c74,87
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              687 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              687 lines; 30 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        326 lines; 17 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   489 lines; 30 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  981 lines; 68 public / 7 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       464 lines; 49 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean                 544 lines; 30 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                763 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                763 lines; 23 public / 5 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            423 lines; 40 public / 3 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            923 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            923 lines; 34 public / 12 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           790 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           790 lines; 42 public / 3 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              733 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              733 lines; 34 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        327 lines; 17 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   490 lines; 30 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  985 lines; 68 public / 7 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       473 lines; 50 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean                 550 lines; 30 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                766 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                766 lines; 23 public / 5 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            424 lines; 40 public / 3 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            926 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            926 lines; 34 public / 12 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines; 42 public / 3 private declarations
+#   89,90c90,91
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        326 lines; 17 public / 0 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   489 lines; 30 public / 0 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        327 lines; 17 public / 0 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   490 lines; 30 public / 0 private declarations
+#   94,98c95,99
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          423 lines; 40 public / 3 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          923 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          923 lines; 34 public / 12 private declarations
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         790 lines > target 600
+#   < INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         790 lines; 42 public / 3 private declarations
+#   ---
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          424 lines; 40 public / 3 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines; 34 public / 12 private declarations
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines > target 600
+#   > INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines; 42 public / 3 private declarations
+# => no new WARN/FAIL; Interaction.lean's check-8 list loses ProverBounded; ModuleHost.lean passes the 600-line target (INFO, 663 lines); the rest are line counts.
+
+### HEAD raw
+### scripts/style_lint.py on the changed .lean files
+
+1 findings in 21 files
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:723: `colProtocol_sound` proof is 99 lines, no **Proof sketch.**
+
+### scripts/campaign_style_lint.py --check8b, per directory, filtered to the changed files
+INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          663 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          663 lines; 19 public / 13 private declarations
+WARN  TCSlib/Cryptography/Asymptotic/OneWay.lean                5 public def(s) without a lemma beside them (check 8): Easy, LengthRegular, OneWayPermutation, strOutLen, yaoRounds
+INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                930 lines > target 600
+INFO  TCSlib/Cryptography/Asymptotic/OneWay.lean                930 lines; 44 public / 6 private declarations
+FAIL  TCSlib/Cryptography/Candidates/ElGamal.lean              line 749: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 145: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 347: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 532: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 805: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 892: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 927: `sorry` without a proof sketch in the preceding docstring
+FAIL  TCSlib/Cryptography/Candidates/Rabin.lean                line 951: `sorry` without a proof sketch in the preceding docstring
+WARN  TCSlib/Cryptography/Candidates/Concrete.lean             1 public def(s) without a lemma beside them (check 8): default
+WARN  TCSlib/Cryptography/Candidates/DiscreteLog.lean          11 public def(s) without a lemma beside them (check 8): DLAssumption, DLHard, FullLength, FullLengthExcept, SafePrimeValid, WellFormedIndex, dlDefaultIndex, dlG, dlM, expSampleRaw, expUnit
+WARN  TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean  9 public def(s) without a lemma beside them (check 8): FullDLAssumption, FullGroupValid, IsGenerator, dlInverter, dlRoot, halfBit, halfOracle, majOracle, shiftInverter
+WARN  TCSlib/Cryptography/Candidates/ElGamal.lean              15 public def(s) without a lemma beside them (check 8): DDHAssumption, Secure, challenge, ddhLen, ddhRandom, ddhReal, ddhTuple, egCanon, egEncParts, egEncRaw, egGenCoins, egGenParts, egGenRaw, egGroupGenRaw, egGroupParts
+WARN  TCSlib/Cryptography/Candidates/Factoring.lean            7 public def(s) without a lemma beside them (check 8): FactoringAssumption, fmultBlocks, fmultWeakPoly, plantFactor, prodInverter, samplePairRaw, samplePrimeL
+WARN  TCSlib/Cryptography/Candidates/RSA.lean                  19 public def(s) without a lemma beside them (check 8): RSAAssumption, RSAValid, rsaBlock, rsaEncVal, rsaFromFactorRaw, rsaGenCoins, rsaGenErr, rsaGenOut, rsaGenParams, rsaGenRaw, rsaIndexOf, rsaInput, rsaInvRaw, rsaPermAt, rsaSampleCoins, rsaSampleRaw, rsaTrapOf, rsaTrials, unitSampleStr
+WARN  TCSlib/Cryptography/Candidates/Rabin.lean                28 public def(s) without a lemma beside them (check 8): BlumDensity, BlumFactoringAssumption, BlumValid, blumDefault, blumEnc, blumEncVal, blumInvNat, blumInvRaw, blumPermAt, blumSampleRaw, oddDefault, rabinEnc, rabinErr, rabinF, rabinFactorRaw, rabinFactorStep, rabinGenCoins, rabinGenOut, rabinGenParams, rabinGenRaw, rabinIndexOf, rabinPrimeCoins, rabinRootRaw, rabinRootStep, rabinSampleRaw, rabinTrials, samplePrimePL, smallDistinctPrimes
+INFO  TCSlib/Cryptography/Candidates/Concrete.lean             570 lines; 40 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          719 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/DiscreteLog.lean          719 lines; 66 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean  597 lines; 45 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              894 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/ElGamal.lean              894 lines; 60 public / 4 private declarations
+INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/Factoring.lean            697 lines; 47 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/RSA.lean                  926 lines; 85 public / 0 private declarations
+INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines > target 600
+INFO  TCSlib/Cryptography/Candidates/Rabin.lean                999 lines; 96 public / 0 private declarations
+WARN  TCSlib/Cryptography/NumberTheory/Primality.lean          6 public def(s) without a lemma beside them (check 8): MRLiar, chunk, listToNat, mrExp, mrLiars, samplePrimeCoins
+INFO  TCSlib/Cryptography/NumberTheory/Chebyshev.lean          311 lines; 11 public / 3 private declarations
+INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          908 lines > target 600
+INFO  TCSlib/Cryptography/NumberTheory/Primality.lean          908 lines; 30 public / 30 private declarations
+FAIL  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Concrete`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs`
+WARN  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              4 public def(s) without a lemma beside them (check 8): HVZK, PerfectZKAbort, StatZK, ZK
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        2 public def(s) without a lemma beside them (check 8): giBitEquiv, vTapeSplit
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   4 public def(s) without a lemma beside them (check 8): Hfun, Vs, giRepCoins, honestH
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  12 public def(s) without a lemma beside them (check 8): Liso, Lniso, coinSlice, gniProtocolRep, gniProver, instanceG, instanceG, permFailBound, prefixLE, prefixLT, samplePerm, wellFormedInstance
+WARN  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       9 public def(s) without a lemma beside them (check 8): Efficient, ReadsPrefix, Strategy.out, View.encode, coinLen, execution, transcriptWith, viewP, viewV
+WARN  TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean                 3 public def(s) without a lemma beside them (check 8): IP, witnessLanguage, witnessSet
+WARN  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                1 public def(s) without a lemma beside them (check 8): LevinNPHard
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            9 public def(s) without a lemma beside them (check 8): Graph.ofSimpleGraph, L3COL, ProperColoring, R3COL, edgeList, edgeMsg, perm3Equiv, sampleIdx, samplePerm3
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            7 public def(s) without a lemma beside them (check 8): challengesBefore, challengesUpTo, colCoinSlice, colCommit, colIterations, colOpen, colProtocolRep
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           17 public def(s) without a lemma beside them (check 8): colRealView, colSim, colSimAttempt, colSimAttemptH, colSimAttemptPlanted, colSimAttemptStr, colSimAttemptW, colSimBlock, colSimCoins, colSimRed, colSimTrunc, colSimTruncH, colSimTruncW, pair6Equiv, sampleColorPair, simCoinsEquiv, simColors
+INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              733 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/Defs.lean                              733 lines; 34 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        327 lines; 17 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   490 lines; 30 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  985 lines; 68 public / 7 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/Interaction.lean                       473 lines; 50 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean                 550 lines; 30 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                766 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/NP.lean                                766 lines; 23 public / 5 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            424 lines; 40 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            926 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            926 lines; 34 public / 12 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines; 42 public / 3 private declarations
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        2 public def(s) without a lemma beside them (check 8): giBitEquiv, vTapeSplit
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   4 public def(s) without a lemma beside them (check 8): Hfun, Vs, giRepCoins, honestH
+INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean        327 lines; 17 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean   490 lines; 30 public / 0 private declarations
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          9 public def(s) without a lemma beside them (check 8): Graph.ofSimpleGraph, L3COL, ProperColoring, R3COL, edgeList, edgeMsg, perm3Equiv, sampleIdx, samplePerm3
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          7 public def(s) without a lemma beside them (check 8): challengesBefore, challengesUpTo, colCoinSlice, colCommit, colIterations, colOpen, colProtocolRep
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         17 public def(s) without a lemma beside them (check 8): colRealView, colSim, colSimAttempt, colSimAttemptH, colSimAttemptPlanted, colSimAttemptStr, colSimAttemptW, colSimBlock, colSimCoins, colSimRed, colSimTrunc, colSimTruncH, colSimTruncW, pair6Equiv, sampleColorPair, simCoinsEquiv, simColors
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean          424 lines; 40 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean          926 lines; 34 public / 12 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean         804 lines; 42 public / 3 private declarations

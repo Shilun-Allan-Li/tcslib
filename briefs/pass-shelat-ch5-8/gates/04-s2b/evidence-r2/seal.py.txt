@@ -1,0 +1,73 @@
+"""Rule-10 seal self-check: compile each consumer file (current and HEAD versions) with
+`attribute [local irreducible]` on the other files' definitions it consumes."""
+import subprocess, sys, os
+from pathlib import Path
+WT = Path("/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-s2b-fix")
+OUT = Path("/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/s2bfix-seal")
+OL = "/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/s2b-fix-oleans"
+G = "TCSlib.Cryptography.Games."
+C = "TCSlib.Cryptography."
+SEALS = {
+ "TCSlib/Cryptography/Games/Machines.lean": [G+"OracleComp.CostBoundedBy", G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Games/Hopping.lean": [G+"OracleComp.AllOutputs", G+"simulate",
+    G+"ProbComp.expect", G+"ProbComp.prob", G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Games/Protocols.lean": [G+"OracleComp.AllOutputs"],
+ "TCSlib/Cryptography/Games/BitCodec.lean": [C+"decodeFin", "Turing.pairDecode",
+    "Turing.pairEncode", G+"MachineCodec.encodeLog"],
+ "TCSlib/Cryptography/Games/Efficiency.lean": [C+"decodeFin", "Turing.pairDecode",
+    "Turing.pairEncode", G+"buildComp", G+"decodeBitMove", G+"bitCodec",
+    G+"MachineCodec.encodeLog", G+"zeroBits"],
+ "TCSlib/Cryptography/Games/Bridges/Machines.lean": [G+"MachineCodec.encodeLog", G+"buildComp",
+    "Complexity.NUPPT.toComp", "Complexity.NUPPT.toCompOn", C+"encodeHist", C+"buildTree",
+    "Complexity.NUPPT.toOracleAdversary", C+"decodeOracleMove", G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Games/Bridges/QueryTree.lean": [G+"simulate", G+"QueryImpl.ofComp",
+    G+"OracleComp.bind", G+"OracleComp.call", C+"QueryTree.eval", C+"QueryTree.simulate",
+    G+"OracleComp.CostBoundedBy", C+"QueryTree.BoundedBy", C+"QueryTree.induct"],
+ "TCSlib/Cryptography/Games/Bridges/Experiments.lean": [G+"accept", G+"advantage", C+"invProb",
+    C+"predProb", C+"acceptProb", C+"distAdv", C+"uprob", G+"ProbComp.sample",
+    G+"ProbComp.expect", G+"ProbComp.prob", G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Games/Simulate.lean": [G+"OracleComp.bind", G+"OracleComp.call",
+    G+"OracleComp.CostBoundedBy"],
+ "TCSlib/Cryptography/Games/Advantage.lean": [G+"ProbComp.prob", G+"ProbComp.expect",
+    G+"ProbComp.sample", G+"OracleComp.bind", C+"abs_sub_le_sum_hybrids"],
+ "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean": [G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Asymptotic/PRF.lean": [C+"QueryTree.BoundedBy", C+"QueryTree.eval",
+    C+"oracleDist", C+"OracleAdversary.BoundedBy", G+"OracleComp.bind"],
+ "TCSlib/Cryptography/Games/Bridges/Strategies.lean": [G+"Party.exec", G+"Party.step",
+    G+"Party.close", G+"Party.endWith", G+"ExecOutcome.swap", G+"OracleComp.bind", C+"exec",
+    C+"moverIsV", C+"Protocol.outP", C+"Protocol.outV", C+"Protocol.transcriptWith",
+    C+"Protocol.transcript"],
+}
+env = dict(os.environ)
+lp = [OL] + [str(d) for d in (WT / ".lake/packages").glob("*/.lake/build/lib/lean")]
+env["LEAN_PATH"] = ":".join(lp)
+env["PATH"] = str(Path.home() / ".elan/bin") + ":" + env["PATH"]
+
+def seal(src, names):
+    lines = src.splitlines()
+    idx = max(i for i, l in enumerate(lines[:20]) if l.startswith("set_option"))
+    lines.insert(idx + 1, "attribute [local irreducible] " + " ".join(names))
+    return "\n".join(lines) + "\n"
+
+def run(text, tag):
+    f = OUT / (tag + ".lean")
+    f.write_text(text)
+    r = subprocess.run(["lean", str(f)], cwd=WT, env=env, capture_output=True, text=True)
+    errs = [l for l in (r.stdout + r.stderr).splitlines() if "error" in l]
+    return r.returncode == 0 and not errs, errs
+
+which = sys.argv[1:] or list(SEALS)
+for path in which:
+    names = SEALS[path]
+    tag = path.replace("/", "_")[:-5]
+    cur = (WT / path).read_text()
+    ok, errs = run(seal(cur, names), tag + "_sealed_new")
+    head = subprocess.run(["git", "show", "HEAD:" + path], cwd=WT, capture_output=True,
+                          text=True).stdout
+    ok0, errs0 = run(seal(head, names), tag + "_sealed_old")
+    print(f"{path}: sealed current {'PASS' if ok else 'FAIL'}; "
+          f"sealed HEAD version {'PASS' if ok0 else 'FAIL'} ({len(errs0)} error lines)")
+    for e in errs[:8]:
+        print("   cur:", e[:220])
+    for e in errs0[:4]:
+        print("   old:", e[:220])

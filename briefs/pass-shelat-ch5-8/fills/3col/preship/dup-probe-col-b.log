@@ -1,0 +1,185 @@
+# Duplication probe, unit col-b (exact?, maxHeartbeats 400000)
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColBDup   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## probe source
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+set_option maxHeartbeats 400000
+set_option autoImplicit false
+open TCSlib.Cryptography Complexity Turing ColSimLemmas
+
+/-! Duplication probe, col-b: `exact?` (maxHeartbeats 400000) on the target and each ladder step. -/
+namespace DupB
+variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
+
+/-- L1 `statClose_sampleColorPair`. -/
+example (T : ℕ) : StatClose (fun r : Fin (T * 3) → Bool => sampleColorPair T (List.ofFn r))
+    (id : ColorPair → ColorPair) ((1 / 4 : ℝ) ^ T) := by exact?
+
+/-- L2 the real view to `some ∘ colRealView` (encoded). -/
+example (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) (hc : ProperColoring G c)
+    (z : List Bool) :
+    StatClose (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
+      (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins (encGraph G).length =>
+        (some (colRealView Com (ℓ.eval n) G c
+            (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]) w)).elim []
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩)
+      ((1 / 4 : ℝ) ^ (encGraph G).length) := by exact?
+
+/-- L3 `colSim` to `colSimTrunc` (encoded), `m > 0`. -/
+example (V' : Strategy) {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (z : List Bool) :
+    StatClose (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
+        colSim Com ℓ V' (encGraph G) z (List.ofFn r))
+      (fun w : Fin (n * edgeCount G) → ((Fin (edgeCount G) × ColorPair) ×
+          (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins (encGraph G).length =>
+        (colSimTrunc Com (ℓ.eval n) G (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com])
+            (n * edgeCount G) w).elim []
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩)
+      ((n * edgeCount G : ℕ) * ((1 / 2 : ℝ) ^ (encGraph G).length +
+        (1 / 4 : ℝ) ^ (encGraph G).length)) := by exact?
+
+/-- L4 `exists_colSimRed_fixCoins` (the route probe's `r1`). -/
+example {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (c : Fin n → Fin 3) {ρ : Type}
+    [Fintype ρ] [Nonempty ρ] (V : List Bool → ρ → List Bool) (N : ℕ) (hN : 0 < N) {ρ' : Type}
+    [Fintype ρ'] (D' : Option (ColView ρ) → ρ' → Bool) :
+    ∃ (k : Fin N) (e₀ : Fin (edgeCount G)) (π₀ : Equiv.Perm (Fin 3))
+      (w₀ : Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) ×
+        (Fin n → Fin (ℓ.eval n) → Bool)) × ρ),
+      distAdv (colSimTruncW Com (ℓ.eval n) G c V N) (colSimTruncH Com (ℓ.eval n) G c V N) D' / N ≤
+        distAdv
+          (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+            multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
+          (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
+          (fun cv c' => colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D' cv (w₀, c')) := by exact?
+
+/-- L5a the machine shape: `D` at parameter `n²` after a polynomial-time map of the challenge and
+the advice. -/
+example (D : NUPPT) {f : List Bool → List Bool} (hf : PolyTimeComputable f) (β : ℕ → List Bool)
+    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) :
+    ∃ B : NUPPT, B.coins = D.coins.subst (.mul .var .var) ∧
+      ∀ n y r, B.runAtL n y r = D.runAtL (n * n) (f (pairEncode y (β n))) r := by exact?
+
+/-- L5b two-parameter coin transport. -/
+example (B D : NUPPT) (n m : ℕ) (F : List Bool → List Bool) (hc : B.coinLen n = D.coinLen m)
+    (hrun : ∀ y r, B.runAtL n y r = D.runAtL m (F y) r) {σ : Type} [Fintype σ]
+    (X : σ → List Bool) :
+    acceptProb X (B.distinguisherL n) = acceptProb X fun y c => D.distinguisherL m (F y) c := by
+  exact?
+
+/-- L5c one call of an efficient verifier on an arbitrary polynomial-time tape. -/
+example {V' : Strategy} (hV' : V'.Efficient) {X Z R C : List Bool → List Bool}
+    (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z) (hR : PolyTimeComputable R)
+    (hC : PolyTimeComputable C) : PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w] := by
+  exact?
+
+/-- L6 the edgeless case (`m = 0`, `n ≥ 1`). -/
+example (V' : Strategy) {n : ℕ} (hn : 1 ≤ n) (G : Graph n) (hm : edgeCount G = 0)
+    (c : Fin n → Fin 3) (z : List Bool) (D : NUPPT) :
+    ∃ (π₀ : Equiv.Perm (Fin 3)) (rV : V'.Coins (encGraph G).length),
+      distAdv (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
+          (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
+            colSim Com ℓ V' (encGraph G) z (List.ofFn r))
+          (D.distinguisherL (encGraph G).length) ≤
+        (1 / 4 : ℝ) ^ (encGraph G).length +
+          distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+              multiCom Com (fun i => padColor n (π₀ (c i))) r)
+            (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun _ => padColor n 0) r)
+            (fun cv d => D.distinguisherL (encGraph G).length
+              (View.encode ⟨encGraph G, z, List.ofFn rV, [cv, []]⟩) d) := by exact?
+
+/-- L7a the assembled error is negligible. -/
+example {εB : ℕ → ℝ} (h : Negligible εB) : Negligible fun N : ℕ =>
+    (N : ℝ) ^ 2 * εB (Nat.sqrt N) + Real.exp (-(Nat.sqrt N : ℝ)) +
+      (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) + (1 / 4 : ℝ) ^ N := by exact?
+
+/-- L7b the attempt count. -/
+example {n : ℕ} (G : Graph n) : n * edgeCount G ≤ (encGraph G).length ^ 2 := by exact?
+
+/-- L7 the target. -/
+example (hC : Commitment Com ℓ) : ZK (colProtocol Com ℓ) R3COL := by exact?
+end DupB
+
+## output
+Fri Nov  6 02:23:43 UTC 2026
+Probe/ColBDup.lean:12:57: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:22:48: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:34:50: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:48:87: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/ColBDup.lean:55:82: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:62:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:68:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:83:74: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/ColBDup.lean:88:80: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/ColBDup.lean:91:80: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact col_zk hC
+FAIL(Probe/ColBDup): lean exited with status 1
+FAIL(Probe/ColBDup): error diagnostics reported
+FAIL(Probe/ColBDup): no fresh .olean produced
+rc=1
+Fri Nov  6 02:27:09 UTC 2026
+
+## name/statement greps
+## name/statement greps (git grep at HEAD 5f2771631fe853dae9c2aa44791ae5b0e09c95eb)
+### pattern: statClose_sampleColorPair\|sampleColorPair
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:233:theorem sampleColorPair_fst (T : ℕ) (r : List Bool) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean:240:theorem sampleColorPair_snd (T : ℕ) (r : List Bool) :
+### pattern: colRealView
+### pattern: colSimTrunc
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:236:theorem uprob_colSimTruncW_eq [Fintype ρ] {c : Fin n → Fin 3} (hc : ProperColoring G c)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:325:theorem uprob_colSimTruncH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:345:theorem statClose_colSimTruncH [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+### pattern: colSimRed
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:552:theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < edgeCount G)
+### pattern: subst (.mul .var .var)\|subst (PolyExpr.mul\|mul var var
+### pattern: distinguisherL_lift\|acceptProb_distinguisher.*runAtL\|acceptProb_coins_equiv
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean:80:theorem acceptProb_coins_equiv (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool) :
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:207:theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/Asymptotic/NextBit.lean:540:private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:129:theorem acceptProb_distinguisher_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean:143:theorem acceptProb_distinguisherL_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
+TCSlib/Cryptography/ZeroKnowledge/NPLemmas.lean:400:theorem distinguisherL_lift {D D' : NUPPT} {φ : ℕ → ℕ} {c : PolyExpr}
+### pattern: V'.next (X w)\|\.next (X w) (Z w)
+### pattern: comp_sqrt\|exp_neg_sqrt
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:711:theorem negligible_exp_neg_sqrt_div {C : ℕ} (hC : 0 < C) :
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:685:theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+### pattern: edgeCount_le\|edgeCount G ≤\|countTrue_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:339:theorem countTrue_le (x : List Bool) (j : ℕ) : countTrue x j ≤ j := by
+
+## Reading
+All eleven statements elaborate at the issue commit (only `exact?` reports errors), so the ladder statements of the
+brief are well typed. Results: L4 (exists_colSimRed_fixCoins), L7a (negligible ε), L7b (K ≤ |x|²): no closing term.
+L7 (col_zk): only the sorried target. L1, L2, L3, L5a, L5b, L5c, L6: `exact?` timed out at 400000 heartbeats
+(inconclusive); the name/statement greps find no equivalent public lemma (no `statClose_sampleColorPair`; nothing on
+`colRealView` or `colSimTrunc` beyond Claim-129.a/c; the only two-parameter coin transport is
+`LevinTransfer.distinguisherL_lift`, specific to `postView` and truncated coins; the only verifier-call polytime lemma is
+`ColSimMachine.reply_poly`, whose tape is `rVStr ℓ x blk`). The machine L5 itself (`exists_colHidingRed`) needs a new
+string function and is stated in the brief by interface only.

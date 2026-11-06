@@ -1,19 +1,18 @@
 # Gate 03h ([PS10] ch. 2–4, ch. 2 results and the universal one-way function): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/h/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the statements of ch. 2's main results proved in their own files: Yao's amplification (Thm 35.1's proof) and its lemmas, the collections theorem's proof (Thm 42.2), and the universal one-way function of §2.13.
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the statements of ch. 2's main results proved in their own files: Yao's amplification (Thm 35.1's proof) and its lemmas, the collections theorem's proof (Thm 42.2), and the universal one-way function of §2.13.
 - **This pack gates fills.** Its files hold **2 `sorry`s**, to be filled after this pack
   closes (user's ruling of 2026-11-05). A statement that cannot be proved as stated, or that is
   weaker than the source, must be found **now**.
 - **Gate type:** an external **statement gate** (`workflow.md` §3), over a layer written in another
   campaign (Frederick Dehmel's, now closed). That layer had only an internal audit (run 3a).
-- **The deliverable:** **`gate03h-findings.md`**.
+- **The deliverable:** **`gate03h-findings.md`**, committed as `inbox/gate03h-findings.md` on the exchange branch `exchange/pass-shelat-ch5-8` and pushed (the protocol is that branch's `README.md`: write only that file, `git pull --rebase` before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-**The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
+**The source** is [PS10], 3rd ed., January 2010: `Pass–Shelat.pdf` at the root of `cryptography/pass-shelat-ch2-4` (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`). Book page = PDF
 page − 12. This pack needs §2.4.3 (book pp. 36–40), §2.5 (pp. 41–42) and §2.13 (pp. 63–65).
 
 ## Brief for the auditor
@@ -39,13 +38,24 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 | Design record | `briefs/pass-shelat/DESIGN.md` (§1 D11 (`CanonizerExp`, ratified as an explicit hypothesis, with its open problem); §5 the deviations register; §7 the source's errors and gaps) |
 | Inventory | `briefs/pass-shelat/inventory-ch2.md`: Thm-35.1 (proof), Claim-38.2, Thm-42.2 (proof), Thm-63.1, Alg-64.2, Lem-64.3, Claim-65.1, Claim-65.2 |
 | Internal audit record | `audits/pass-shelat/run3-audit-summary.md` |
-| Source | [PS10] as above (PDF attached) |
+| Source | [PS10] as above (`Pass–Shelat.pdf`, campaign branch root) |
 | Standards | `policy.md` |
 | Out of scope | tactic proofs; the definitions of pack 03b |
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/h/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 69 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   19 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 9 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 6 use only the standard axioms, and
+   3 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 2 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 6 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints of this pack's headlines (`audits/pass-shelat/Checks.lean`);
 - admissions: the 2 `sorry`s, listed by declaration;

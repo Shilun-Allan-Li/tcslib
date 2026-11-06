@@ -47,16 +47,26 @@ Every phase is accounted for by an explicit step ledger: the parser costs two st
 block, the rewind `|u| + 1`, the copy scan two steps per doubled bit, the separator two,
 the tail one per remaining bit plus one; the total is at most `5 (n + 1)`.
 
+The parse phase (phases 1 and 2) is public, for every one-tape machine whose table agrees with
+the parser at its states (namespace `Turing.PairParse`): the unary-multiplication machine of
+`TCSlib.Complexity.Randomized.Build.UnaryMul` uses it too.
+
+## Main definitions
+
+* `Turing.PairParse.cfg` — the one-buffer configurations of a one-tape machine (field equations
+  by `simps`). The machine itself is private; its result is an existence statement over
+  `Turing.FinTM Bool`.
+
 ## Main results
 
 * `Turing.FinTM.exists_pairSplitTM` — a finite machine computes
   `⟨u, b⟩ ↦ ⟨b.take |u|, b.drop |u|⟩` (and `[]` on malformed words) within `5 (n + 1)`
   steps.
-
-## Main definitions
-
-None public (the machine and its configuration family are private; the result is an
-existence statement over `Turing.FinTM Bool`).
+* `Turing.PairParse.parse_first`, `parse_block`, `rewind_run` — the buffered aligned parser:
+  one half block, one aligned block, and the rewind of the buffer, for every one-tape machine
+  whose table agrees with the parser; `Turing.PairParse.cfg_inputSymbol`,
+  `cfg_workTapeSymbols`, `cfg_congr`, and the non-writing steps `apply_cfg_stay`,
+  `apply_cfg_advance`.
 
 ## References
 
@@ -66,6 +76,179 @@ existence statement over `Turing.FinTM Bool`).
   Cambridge University Press, 2009. (§1.2–1.3, multi-tape machines and linear-time string
   manipulation.)
 -/
+
+/-! ### The buffered aligned parser, shared with the unary-multiplication machine
+
+The parse phase of `pairSplitTM` (below) and of the unary-multiplication machine of
+`TCSlib.Complexity.Randomized.Build.UnaryMul`, stated once for every one-tape machine whose table
+agrees with the parser at its states: a family `p : Option Bool → S` of parse states (`p none`
+expects the first bit of an aligned block, `p (some b)` its second bit after reading `b`), a
+rewind state `r` and the state `n` entered after the rewind. -/
+
+namespace Turing.PairParse
+
+/-- The one-buffer configurations of a one-tape machine with states `S`: control `q`, input
+head after `i` input bits (at position `i + 1`), the work tape holding the word `a` from the
+origin with its head at cell `z`, output `out`. -/
+@[simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+def cfg {S : Type} (x : List Bool) (q : Option S) (i : ℕ) (hi : i ≤ x.length)
+    (a : List Bool) (z : ℤ) (out : List Bool) : Cfg 1 Bool S x :=
+  ⟨q, ⟨i + 1, by omega⟩, fun _ => FinTM.bufferTape a, fun _ => z, out⟩
+
+/-- At a one-buffer configuration the input head reads the optional entry `x[i]?` (the right
+blank when `i = |x|`). -/
+theorem cfg_inputSymbol {S : Type} (x : List Bool) (q : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
+    (cfg x q i hi a z out).inputSymbol = x[i]? := by
+  by_cases h : i < x.length
+  · rw [List.getElem?_eq_getElem h]
+    exact inputSymbolInner i (by simp [cfg]; omega) h
+  · have he : i = x.length := by omega
+    subst i
+    simp [cfg, Cfg.inputSymbol, Fin.ext_iff]
+
+/-- Two one-buffer configurations with equal input indices are equal (the bound proofs are
+irrelevant). -/
+theorem cfg_congr {S : Type} (x : List Bool) (q : Option S) {i i' : ℕ}
+    (hi : i ≤ x.length) (hi' : i' ≤ x.length) (h : i = i') (a : List Bool) (z : ℤ)
+    (out : List Bool) :
+    cfg x q i hi a z out = cfg x q i' hi' a z out := by
+  subst h
+  rfl
+
+/-- At a one-buffer configuration the work head reads cell `z` of the buffer `a`:
+`(cfg x q i hi a z out).workTapeSymbols = fun _ => bufferTape a z`. -/
+theorem cfg_workTapeSymbols {S : Type} (x : List Bool) (q : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
+    (cfg x q i hi a z out).workTapeSymbols = fun _ => FinTM.bufferTape a z :=
+  rfl
+
+/-- **A non-writing step that keeps the input head.** The action that writes nothing, keeps the
+input head, moves the work head by `d`, emits `o` and enters `q'` maps the one-buffer
+configuration `(i, a, z, out)` to the one-buffer configuration `(i, a, z + d, out ++ o)` in
+control `q'`. -/
+theorem apply_cfg_stay {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) (d : SignType)
+    (o : Option Bool) :
+    (⟨0, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
+      cfg x q' i hi a (z + d) (out ++ o.toList) :=
+  Cfg.ext rfl (moveInputPos_zero _) rfl rfl rfl
+
+/-- **A non-writing step that advances the input head.** For `i < |x|`, the action that writes
+nothing, moves the input head right, moves the work head by `d`, emits `o` and enters `q'` maps
+the one-buffer configuration `(i, a, z, out)` to the one-buffer configuration
+`(i + 1, a, z + d, out ++ o)` in control `q'`. -/
+theorem apply_cfg_advance {S : Type} (x : List Bool) (q q' : Option S) (i : ℕ)
+    (hi : i ≤ x.length) (hi' : i + 1 ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool)
+    (d : SignType) (o : Option Bool) :
+    (⟨.pos, fun _ => (none, d), o, q'⟩ : Action 1 Bool S).apply (cfg x q i hi a z out) =
+      cfg x q' (i + 1) hi' a (z + d) (out ++ o.toList) :=
+  Cfg.ext rfl (moveInputPos_pos_of_ne_right _ (by show i + 1 ≠ x.length + 1; omega)) rfl rfl rfl
+
+/-- **The first half of an aligned block.** For a one-tape machine whose parse state `p none`
+reads a bit `b` by moving the input head right into `p (some b)`, silently and without touching
+the work tape (`hp0`): at the configuration after the prefix `pre` of `x = pre ++ b :: rest`,
+with the buffer `a` and the work head on its right blank, one step reads `b` and enters
+`p (some b)`, the buffer and the output unchanged. -/
+theorem parse_first {S : Type} (tm : MultiTapeTM 1 Bool S) (p : Option Bool → S)
+    (hp0 : ∀ b w, tm.tr (p none) (some b) w = ⟨.pos, fun _ => (none, 0), none, some (p (some b))⟩)
+    (x pre rest a : List Bool) (b : Bool) (hx : x = pre ++ b :: rest) :
+    tm.step (cfg x (some (p none)) pre.length (by simp [hx]) a a.length []) =
+      cfg x (some (p (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
+  unfold MultiTapeTM.step
+  change (tm.tr (p none) _ _).apply _ = _
+  rw [cfg_inputSymbol]
+  have hr : x[pre.length]? = some b := by simp [hx]
+  rw [hr, hp0]
+  refine Cfg.ext rfl ?_ rfl ?_ rfl
+  · exact moveInputPos_pos_of_ne_right _ (by simp [cfg, hx])
+  · funext i; simp [Action.apply, cfg]
+
+/-- **One aligned block.** For a one-tape machine whose parse states act as the buffered aligned
+parser (`hp0` as in `parse_first`; `hp1`: at `p (some b)` reading `c`, equal bits append `b` to
+the buffer and return to `p none`, the block `10` halts, the block `01` steps the work head back
+onto the last stored cell and enters the rewind state `r`, the input head moving right in every
+case and nothing emitted): from the configuration after the prefix `pre` of
+`x = pre ++ b :: c :: rest`, with the buffer `a` and the work head on its right blank, two steps
+read the block and reach, at the input index `|pre| + 2`, the parse state with the buffer
+`a ++ [b]` if `b = c`, the halted configuration if `b = true ≠ c`, and the rewind state with the
+work head at `|a| - 1` if `b = false ≠ c`; the output stays empty.
+
+**Proof sketch.** The first step is `parse_first`; the second reads `c` at the input index
+`|pre| + 1` (`cfg_inputSymbol`). Case analysis on `b` and `c`: equal bits write `b` at the
+right blank of the buffer (`Turing.FinTM.bufferTape_append`) and move the work head right, `01`
+moves it left into `r`, `10` halts; in every case the input head advances. -/
+theorem parse_block {S : Type} (tm : MultiTapeTM 1 Bool S) (p : Option Bool → S) (r : S)
+    (hp0 : ∀ b w, tm.tr (p none) (some b) w = ⟨.pos, fun _ => (none, 0), none, some (p (some b))⟩)
+    (hp1 : ∀ b c w, tm.tr (p (some b)) (some c) w =
+      if b = c then ⟨.pos, fun _ => (some (some b), .pos), none, some (p none)⟩
+      else if b then ⟨.pos, fun _ => (none, 0), none, none⟩
+      else ⟨.pos, fun _ => (none, .neg), none, some r⟩)
+    (x pre rest a : List Bool) (b c : Bool) (hx : x = pre ++ b :: c :: rest) :
+    tm.runFrom (cfg x (some (p none)) pre.length (by simp [hx]) a a.length []) 2 =
+      if b = c then cfg x (some (p none)) (pre.length + 2) (by simp [hx])
+          (a ++ [b]) (a ++ [b]).length []
+      else if b then cfg x none (pre.length + 2) (by simp [hx]) a a.length []
+      else cfg x (some r) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
+  change tm.step (tm.step _) = _
+  rw [parse_first tm p hp0 x pre (c :: rest) a b hx]
+  unfold MultiTapeTM.step
+  change (tm.tr (p (some b)) _ _).apply _ = _
+  rw [cfg_inputSymbol]
+  have hr : x[pre.length + 1]? = some c := by simp [hx]
+  rw [hr, hp1]
+  have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
+      ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ :=
+    moveInputPos_pos_of_ne_right _ (by simp [hx])
+  cases b <;> cases c <;> simp only [Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
+  all_goals first
+    | rfl
+    | (funext i; exact (FinTM.bufferTape_append a _).symm)
+    | (funext i; simp [Action.apply, cfg])
+
+/-- **The rewind.** For a one-tape machine whose rewind state `r` moves the work head left while
+it reads a stored symbol and, at the left blank, moves it right into the state `n`, the input
+head stationary and nothing emitted (`hr`): from the work head at cell `j - 1` of the buffer `a`
+(`j ≤ |a|`), `j + 1` steps leave the work head at the origin in the state `n`, the input head
+and the output unchanged.
+
+**Proof sketch.** Induction on `j`. At the left blank (`Turing.FinTM.bufferTape_left`) the head
+moves right and the state becomes `n`; otherwise the head reads the stored cell
+(`Turing.FinTM.bufferTape_nat`), moves left, and the induction hypothesis finishes. -/
+theorem rewind_run {S : Type} (tm : MultiTapeTM 1 Bool S) (r n : S)
+    (hr : ∀ inp w, tm.tr r inp w = match w 0 with
+      | some _ => ⟨0, fun _ => (none, .neg), none, some r⟩
+      | none => ⟨0, fun _ => (none, .pos), none, some n⟩)
+    (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+    ∀ j, j ≤ a.length →
+    tm.runFrom (cfg x (some r) i hi a ((j : ℤ) - 1) out) (j + 1) = cfg x (some n) i hi a 0 out := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    simp only [hr, cfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub, FinTM.bufferTape_left]
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+    · funext k; simp [Action.apply]
+    · simp [Action.apply]
+  | succ j ih =>
+    intro hj
+    have hs : tm.step (cfg x (some r) i hi a (((j + 1 : ℕ) : ℤ) - 1) out) =
+        cfg x (some r) i hi a ((j : ℤ) - 1) out := by
+      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+      rw [hz]
+      unfold MultiTapeTM.step
+      simp only [hr, cfg, Cfg.workTapeSymbols, FinTM.bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < a.length)]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+      · funext k; simp [Action.apply, sub_eq_add_neg]
+      · simp [Action.apply]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+end Turing.PairParse
 
 namespace Turing.FinTM
 
@@ -123,117 +306,34 @@ private def pairSplitTM : FinTM Bool where
           | some c => ⟨.pos, fun _ => (none, 0), some c, some .tail⟩
           | none => ⟨0, fun _ => (none, 0), none, none⟩ }
 
-/-- The one-buffer configurations of the coin-splitting machine: control `q`, input head
-after `i` input bits, work tape holding the word `a` from the origin with its head at cell
-`z`, output `out`. -/
-private def splitCfg (x : List Bool) (q : Option SplitControl) (i : ℕ) (hi : i ≤ x.length)
-    (a : List Bool) (z : ℤ) (out : List Bool) : Cfg 1 Bool SplitControl x :=
-  ⟨q, ⟨i + 1, by omega⟩, fun _ => bufferTape a, fun _ => z, out⟩
-
-/-- Reading at the indexed input position returns the optional list entry. -/
-private lemma splitCfg_read (x : List Bool) (q : Option SplitControl) (i : ℕ)
-    (hi : i ≤ x.length) (a : List Bool) (z : ℤ) (out : List Bool) :
-    (splitCfg x q i hi a z out).inputSymbol = x[i]? := by
-  by_cases h : i < x.length
-  · rw [List.getElem?_eq_getElem h]
-    exact inputSymbolInner i (by simp [splitCfg]; omega) h
-  · have he : i = x.length := by omega
-    subst i
-    simp [splitCfg, Cfg.inputSymbol, Fin.ext_iff]
-
-/-- Two indexed configurations with equal input indices are equal (the bound proofs are
-irrelevant). -/
-private lemma splitCfg_congr (x : List Bool) (q : Option SplitControl) {i i' : ℕ}
-    (hi : i ≤ x.length) (hi' : i' ≤ x.length) (h : i = i') (a : List Bool) (z : ℤ)
-    (out : List Bool) :
-    splitCfg x q i hi a z out = splitCfg x q i' hi' a z out := by
-  subst h
-  rfl
-
 /-- Doubling a word extended by one bit appends the doubled bit. -/
 private lemma split_dbl_append (l : List Bool) (c : Bool) :
     dbl (l ++ [c]) = dbl l ++ [c, c] := by
   simp [dbl]
 
-/-- Reading the first half of an aligned block preserves the buffer silently. -/
-private lemma split_first (x pre rest a : List Bool) (b : Bool)
-    (hx : x = pre ++ b :: rest) :
-    pairSplitTM.tm.step
-      (splitCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) =
-      splitCfg x (some (.parse (some b))) (pre.length + 1) (by simp [hx]) a a.length [] := by
-  unfold MultiTapeTM.step
-  change (pairSplitTM.tm.tr (.parse none) _ _).apply _ = _
-  rw [splitCfg_read]
-  have hr : x[pre.length]? = some b := by simp [hx]
-  rw [hr]
-  refine Cfg.ext rfl ?_ rfl ?_ rfl
-  · exact moveInputPos_pos_of_ne_right _ (by simp [splitCfg, hx])
-  · funext i; simp [pairSplitTM, Action.apply, splitCfg]
+/-- The machine's table at the parse state `parse none`: a bit `b` moves the input head right
+into `parse (some b)`, silently (the hypothesis `hp0` of `Turing.PairParse.parse_first`). -/
+private lemma split_tr_first (b : Bool) (w : Fin 1 → Option Bool) :
+    pairSplitTM.tm.tr (.parse none) (some b) w =
+      ⟨.pos, fun _ => (none, 0), none, some (.parse (some b))⟩ :=
+  rfl
 
-/-- Equal-bit blocks append one decoded bit to the buffer; `01` begins the rewind (the work
-head steps back onto the last stored cell) and `10` halts silently. Neither transition emits
-physical output.
-**Proof sketch.** The first step is `split_first`; the second reads the block's second bit
-`c` at the input index `|pre| + 1`. Case analysis on `b` and `c`: equal bits write `some b`
-at the right blank of the buffer (`bufferTape_append`) and move the work head right, `01`
-moves it left into `rewind`, `10` halts; in every case the input head advances. -/
-private lemma split_block (x pre rest a : List Bool) (b c : Bool)
-    (hx : x = pre ++ b :: c :: rest) :
-    pairSplitTM.tm.runFrom
-      (splitCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) 2 =
-      if b = c then splitCfg x (some (.parse none)) (pre.length + 2) (by simp [hx])
-          (a ++ [b]) (a ++ [b]).length []
-      else if b then splitCfg x none (pre.length + 2) (by simp [hx]) a a.length []
-      else splitCfg x (some .rewind) (pre.length + 2) (by simp [hx]) a (a.length - 1) [] := by
-  change pairSplitTM.tm.step (pairSplitTM.tm.step _) = _
-  rw [split_first x pre (c :: rest) a b hx]
-  unfold MultiTapeTM.step
-  change (pairSplitTM.tm.tr (.parse (some b)) _ _).apply _ = _
-  rw [splitCfg_read]
-  have hr : x[pre.length + 1]? = some c := by simp [hx]
-  rw [hr]
-  have hm : moveInputPos (⟨pre.length + 1 + 1, by simp [hx]⟩ : Fin (x.length + 2)) .pos =
-      ⟨pre.length + 2 + 1, by simp [hx]; omega⟩ :=
-    moveInputPos_pos_of_ne_right _ (by simp [hx])
-  cases b <;> cases c <;> simp only [Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
-  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
-  all_goals first
-    | rfl
-    | (funext i; exact (bufferTape_append a _).symm)
-    | (funext i; simp [pairSplitTM, Action.apply, splitCfg])
+/-- The machine's table at the parse state `parse (some b)` reading `c`: the aligned-block step
+of the parser (the hypothesis `hp1` of `Turing.PairParse.parse_block`, rewind state `rewind`). -/
+private lemma split_tr_second (b c : Bool) (w : Fin 1 → Option Bool) :
+    pairSplitTM.tm.tr (.parse (some b)) (some c) w =
+      if b = c then ⟨.pos, fun _ => (some (some b), .pos), none, some (.parse none)⟩
+      else if b then ⟨.pos, fun _ => (none, 0), none, none⟩
+      else ⟨.pos, fun _ => (none, .neg), none, some .rewind⟩ :=
+  rfl
 
-/-- Rewinding the validated buffer from cell `j - 1` takes `j + 1` transitions and leaves
-the work head at the origin in the `copy` state.
-**Proof sketch.** At the left blank, move right and enter `copy`. Otherwise read a buffer
-cell, move left, and invoke the induction hypothesis. -/
-private lemma split_rewind (x a : List Bool) (i : ℕ) (hi : i ≤ x.length) :
-    ∀ j, j ≤ a.length →
-    pairSplitTM.tm.runFrom (splitCfg x (some .rewind) i hi a ((j : ℤ) - 1) []) (j + 1) =
-      splitCfg x (some .copy) i hi a 0 [] := by
-  intro j
-  induction j with
-  | zero =>
-    intro _
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    unfold MultiTapeTM.step
-    simp only [pairSplitTM, splitCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,
-      bufferTape_left]
-    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
-    funext k; simp [Action.apply]
-  | succ j ih =>
-    intro hj
-    have hs : pairSplitTM.tm.step
-        (splitCfg x (some .rewind) i hi a (((j + 1 : ℕ) : ℤ) - 1) []) =
-        splitCfg x (some .rewind) i hi a ((j : ℤ) - 1) [] := by
-      have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
-      rw [hz]
-      unfold MultiTapeTM.step
-      simp only [pairSplitTM, splitCfg, Cfg.workTapeSymbols, bufferTape_nat,
-        List.getElem?_eq_getElem (by omega : j < a.length)]
-      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
-      funext k; simp [Action.apply, sub_eq_add_neg]
-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
-    exact ih (by omega)
+/-- The machine's table at `rewind`: left over stored symbols, right into `copy` at the left
+blank (the hypothesis `hr` of `Turing.PairParse.rewind_run`). -/
+private lemma split_tr_rewind (inp : Option Bool) (w : Fin 1 → Option Bool) :
+    pairSplitTM.tm.tr .rewind inp w = match w 0 with
+      | some _ => ⟨0, fun _ => (none, .neg), none, some .rewind⟩
+      | none => ⟨0, fun _ => (none, .pos), none, some .copy⟩ :=
+  rfl
 
 /-- The doubling scan: as long as both the stored word and the input have symbols left,
 every two steps emit the current input bit twice and advance both heads.
@@ -243,14 +343,16 @@ the `dup` step emits it again and moves both heads right. The output after `j` r
 `dbl (rest.take j)` (`List.take_succ`). -/
 private lemma split_copy (x pre rest a : List Bool) (hx : x = pre ++ rest) :
     ∀ j (_hja : j ≤ a.length) (hjr : j ≤ rest.length),
-    pairSplitTM.tm.runFrom (splitCfg x (some .copy) pre.length (by simp [hx]) a 0 []) (2 * j) =
-      splitCfg x (some .copy) (pre.length + j) (by simp [hx]; omega) a j (dbl (rest.take j)) := by
+    pairSplitTM.tm.runFrom (PairParse.cfg x (some .copy) pre.length (by simp [hx]) a 0 [])
+        (2 * j) =
+      PairParse.cfg x (some .copy) (pre.length + j) (by simp [hx]; omega) a j
+        (dbl (rest.take j)) := by
   intro j
   induction j with
   | zero =>
     intro _ _
     rw [Nat.mul_zero, MultiTapeTM.runFrom_zero]
-    simp [splitCfg]
+    simp [PairParse.cfg]
   | succ j ih =>
     intro hja hjr
     have hja' : j < a.length := by omega
@@ -258,30 +360,30 @@ private lemma split_copy (x pre rest a : List Bool) (hx : x = pre ++ rest) :
     have hr : x[pre.length + j]? = some rest[j] := by
       simp [hx, hjr']
     have h1 : pairSplitTM.tm.step
-        (splitCfg x (some .copy) (pre.length + j) (by simp [hx]; omega) a j
+        (PairParse.cfg x (some .copy) (pre.length + j) (by simp [hx]; omega) a j
           (dbl (rest.take j))) =
-        splitCfg x (some (.dup rest[j])) (pre.length + j) (by simp [hx]; omega) a j
+        PairParse.cfg x (some (.dup rest[j])) (pre.length + j) (by simp [hx]; omega) a j
           (dbl (rest.take j) ++ [rest[j]]) := by
       unfold MultiTapeTM.step
       change (pairSplitTM.tm.tr .copy _ _).apply _ = _
-      rw [splitCfg_read, hr]
-      simp only [pairSplitTM, splitCfg, Cfg.workTapeSymbols, bufferTape_nat,
+      rw [PairParse.cfg_inputSymbol, hr]
+      simp only [pairSplitTM, PairParse.cfg, Cfg.workTapeSymbols, bufferTape_nat,
         List.getElem?_eq_getElem hja', Option.isSome_some, ↓reduceIte]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
       funext k; simp [Action.apply]
     have h2 : pairSplitTM.tm.step
-        (splitCfg x (some (.dup rest[j])) (pre.length + j) (by simp [hx]; omega) a j
+        (PairParse.cfg x (some (.dup rest[j])) (pre.length + j) (by simp [hx]; omega) a j
           (dbl (rest.take j) ++ [rest[j]])) =
-        splitCfg x (some .copy) (pre.length + (j + 1)) (by simp [hx]; omega) a
+        PairParse.cfg x (some .copy) (pre.length + (j + 1)) (by simp [hx]; omega) a
           ((j + 1 : ℕ) : ℤ) (dbl (rest.take (j + 1))) := by
       unfold MultiTapeTM.step
       change (pairSplitTM.tm.tr (.dup rest[j]) _ _).apply _ = _
       refine Cfg.ext rfl ?_ rfl ?_ ?_
       · show moveInputPos (⟨pre.length + j + 1, _⟩ : Fin (x.length + 2)) .pos = _
         rw [moveInputPos_pos_of_ne_right _ (by simp [hx]; omega)]
-        simp only [splitCfg, Fin.ext_iff]
+        simp only [PairParse.cfg, Fin.ext_iff]
         omega
-      · funext k; simp [pairSplitTM, Action.apply, splitCfg]
+      · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
       · show dbl (rest.take j) ++ [rest[j]] ++ (some rest[j]).toList = dbl (rest.take (j + 1))
         rw [List.take_succ, List.getElem?_eq_getElem hjr', Option.toList_some, split_dbl_append]
         simp
@@ -296,33 +398,33 @@ private lemma split_copy (x pre rest a : List Bool) (hx : x = pre ++ rest) :
 `sep` emits `true` unconditionally and enters `tail`. Both steps are stationary. -/
 private lemma split_sep (x : List Bool) (i : ℕ) (hi : i ≤ x.length) (a : List Bool) (m : ℕ)
     (out : List Bool) (h : a[m]? = none ∨ x[i]? = none) :
-    pairSplitTM.tm.runFrom (splitCfg x (some .copy) i hi a m out) 2 =
-      splitCfg x (some .tail) i hi a m (out ++ [false, true]) := by
-  have h1 : pairSplitTM.tm.step (splitCfg x (some .copy) i hi a m out) =
-      splitCfg x (some .sep) i hi a m (out ++ [false]) := by
+    pairSplitTM.tm.runFrom (PairParse.cfg x (some .copy) i hi a m out) 2 =
+      PairParse.cfg x (some .tail) i hi a m (out ++ [false, true]) := by
+  have h1 : pairSplitTM.tm.step (PairParse.cfg x (some .copy) i hi a m out) =
+      PairParse.cfg x (some .sep) i hi a m (out ++ [false]) := by
     unfold MultiTapeTM.step
     change (pairSplitTM.tm.tr .copy _ _).apply _ = _
-    rw [splitCfg_read]
+    rw [PairParse.cfg_inputSymbol]
     rcases h with h | h
     · cases hxi : x[i]? with
       | none =>
         refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
-        funext k; simp [pairSplitTM, Action.apply, splitCfg]
+        funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
       | some c =>
-        simp only [pairSplitTM, splitCfg, Cfg.workTapeSymbols, bufferTape_nat, h,
+        simp only [pairSplitTM, PairParse.cfg, Cfg.workTapeSymbols, bufferTape_nat, h,
           Option.isSome_none, Bool.false_eq_true, ↓reduceIte]
         refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
         funext k; simp [Action.apply]
     · rw [h]
       refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
-      funext k; simp [pairSplitTM, Action.apply, splitCfg]
-  have h2 : pairSplitTM.tm.step (splitCfg x (some .sep) i hi a m (out ++ [false])) =
-      splitCfg x (some .tail) i hi a m (out ++ [false, true]) := by
+      funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
+  have h2 : pairSplitTM.tm.step (PairParse.cfg x (some .sep) i hi a m (out ++ [false])) =
+      PairParse.cfg x (some .tail) i hi a m (out ++ [false, true]) := by
     unfold MultiTapeTM.step
     change (pairSplitTM.tm.tr .sep _ _).apply _ = _
     refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-    · funext k; simp [pairSplitTM, Action.apply, splitCfg]
-    · simp [pairSplitTM, Action.apply, splitCfg]
+    · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
+    · simp [pairSplitTM, Action.apply, PairParse.cfg]
   change pairSplitTM.tm.step (pairSplitTM.tm.step _) = _
   rw [h1, h2]
 
@@ -330,36 +432,36 @@ private lemma split_sep (x : List Bool) (i : ℕ) (hi : i ≤ x.length) (a : Lis
 **Proof sketch.** The input prefix grows by one at each emitting transition; the buffer
 and its head remain fixed. The right-blank test supplies the final halting step. -/
 private lemma split_tail (x rest a : List Bool) (z : ℤ) : ∀ pre out (hx : x = pre ++ rest),
-    pairSplitTM.tm.runFrom (splitCfg x (some .tail) pre.length (by simp [hx]) a z out)
+    pairSplitTM.tm.runFrom (PairParse.cfg x (some .tail) pre.length (by simp [hx]) a z out)
         (rest.length + 1) =
-      splitCfg x none x.length (le_refl _) a z (out ++ rest) := by
+      PairParse.cfg x none x.length (le_refl _) a z (out ++ rest) := by
   induction rest with
   | nil =>
     intro pre out hx
     simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
     unfold MultiTapeTM.step
     change (pairSplitTM.tm.tr .tail _ _).apply _ = _
-    rw [splitCfg_read]
+    rw [PairParse.cfg_inputSymbol]
     have hr : x[pre.length]? = none := by simp [hx]
     rw [hr]
     refine Cfg.ext rfl ?_ rfl ?_ ?_
-    · simp [pairSplitTM, Action.apply, splitCfg, hx]
-    · funext k; simp [pairSplitTM, Action.apply, splitCfg]
-    · simp [pairSplitTM, Action.apply, splitCfg]
+    · simp [pairSplitTM, Action.apply, PairParse.cfg, hx]
+    · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
+    · simp [pairSplitTM, Action.apply, PairParse.cfg]
   | cons b rest ih =>
     intro pre out hx
     have hs : pairSplitTM.tm.step
-        (splitCfg x (some .tail) pre.length (by simp [hx]) a z out) =
-        splitCfg x (some .tail) (pre ++ [b]).length (by simp [hx]) a z (out ++ [b]) := by
+        (PairParse.cfg x (some .tail) pre.length (by simp [hx]) a z out) =
+        PairParse.cfg x (some .tail) (pre ++ [b]).length (by simp [hx]) a z (out ++ [b]) := by
       unfold MultiTapeTM.step
       change (pairSplitTM.tm.tr .tail _ _).apply _ = _
-      rw [splitCfg_read]
+      rw [PairParse.cfg_inputSymbol]
       have hr : x[pre.length]? = some b := by simp [hx]
       rw [hr]
       refine Cfg.ext rfl ?_ rfl ?_ rfl
-      · simpa [splitCfg] using moveInputPos_pos_of_ne_right
+      · simpa [PairParse.cfg] using moveInputPos_pos_of_ne_right
           (⟨pre.length + 1, by simp [hx]; omega⟩ : Fin (x.length + 2)) (by simp [hx])
-      · funext k; simp [pairSplitTM, Action.apply, splitCfg]
+      · funext k; simp [pairSplitTM, Action.apply, PairParse.cfg]
     simp only [List.length_cons]
     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
     simpa only [List.append_assoc, List.singleton_append] using
@@ -368,18 +470,19 @@ private lemma split_tail (x rest a : List Bool) (z : ℤ) : ∀ pre out (hx : x 
 /-- Once the separator has been validated, rewind, doubling scan, separator and tail cost
 at most `2|a| + |rest| + 4` steps and emit exactly the output pair.
 **Proof sketch.** Let `m = min |a| |rest|`. The rewind costs `|a| + 1`
-(`split_rewind`), the doubling scan `2m` (`split_copy`), the separator `2` (`split_sep`;
-at head `m` the stored word or the input is exhausted) and the tail `|rest| - m + 1`
-(`split_tail` after re-indexing the input position past `rest.take m`). The output is
+(`Turing.PairParse.rewind_run`), the doubling scan `2m` (`split_copy`), the separator `2`
+(`split_sep`; at head `m` the stored word or the input is exhausted) and the tail
+`|rest| - m + 1` (`split_tail` after re-indexing the input position past `rest.take m`). The
+output is
 `dbl (rest.take m) ++ 01 ++ rest.drop m`, and `take`/`drop` at `m` agree with `take`/`drop`
 at `|a|` because both saturate. -/
 private lemma split_finish (x pre rest a : List Bool) (hx : x = pre ++ rest) :
     ∃ t ≤ 2 * a.length + rest.length + 4,
       (pairSplitTM.tm.runFrom
-        (splitCfg x (some .rewind) pre.length (by simp [hx]) a (a.length - 1) []) t).state =
+        (PairParse.cfg x (some .rewind) pre.length (by simp [hx]) a (a.length - 1) []) t).state =
           none ∧
       (pairSplitTM.tm.runFrom
-        (splitCfg x (some .rewind) pre.length (by simp [hx]) a (a.length - 1) []) t).output =
+        (PairParse.cfg x (some .rewind) pre.length (by simp [hx]) a (a.length - 1) []) t).output =
           dbl (rest.take a.length) ++ [false, true] ++ rest.drop a.length := by
   obtain ⟨m, hm⟩ : ∃ m, m = min a.length rest.length := ⟨_, rfl⟩
   have hma : m ≤ a.length := hm ▸ Nat.min_le_left _ _
@@ -414,24 +517,26 @@ private lemma split_finish (x pre rest a : List Bool) (hx : x = pre ++ rest) :
     omega
   · rw [MultiTapeTM.runFrom_add _ (a.length + 1 + (2 * m + 2)) ((rest.drop m).length + 1),
       MultiTapeTM.runFrom_add _ (a.length + 1) (2 * m + 2),
-      split_rewind x a _ _ a.length (le_refl _), MultiTapeTM.runFrom_add _ (2 * m) 2,
+      PairParse.rewind_run pairSplitTM.tm .rewind .copy split_tr_rewind x a _ _ [] a.length
+        (le_refl _), MultiTapeTM.runFrom_add _ (2 * m) 2,
       split_copy x pre rest a hx m hma hmr, split_sep x _ _ a m _ hsep,
-      splitCfg_congr x _ _ (by simp [hx]) hlen.symm,
+      PairParse.cfg_congr x _ _ (by simp [hx]) hlen.symm,
       split_tail x (rest.drop m) a m (pre ++ rest.take m) _ hx']
-    simp [splitCfg, htake, hdrop]
+    simp [PairParse.cfg, htake, hdrop]
 
 /-- The silent aligned parser either rejects or validates and runs the emission phases.
 **Proof sketch.** Induct over aligned two-bit blocks while carrying the already-decoded
-buffer. A doubled bit costs two steps and enlarges the buffer by one; the linear potential
-`3|rest| + 2|a| + 5` pays for both effects. Missing and forbidden separators halt silently
-with empty output. At `01`, apply the finish ledger `split_finish`. -/
+buffer. A doubled bit costs two steps and enlarges the buffer by one
+(`Turing.PairParse.parse_block`); the linear potential `3|rest| + 2|a| + 5` pays for both effects.
+Missing and forbidden separators halt silently with empty output. At `01`, apply the finish
+ledger `split_finish`. -/
 private lemma split_run (x rest : List Bool) : ∀ pre a (hx : x = pre ++ rest),
     ∃ t ≤ 3 * rest.length + 2 * a.length + 5,
       (pairSplitTM.tm.runFrom
-        (splitCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).state =
+        (PairParse.cfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).state =
           none ∧
       (pairSplitTM.tm.runFrom
-        (splitCfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).output =
+        (PairParse.cfg x (some (.parse none)) pre.length (by simp [hx]) a a.length []) t).output =
           match pairDecode rest with
           | some (u, b) => dbl (b.take (a.length + u.length)) ++ [false, true] ++
               b.drop (a.length + u.length)
@@ -443,18 +548,18 @@ private lemma split_run (x rest : List Bool) : ∀ pre a (hx : x = pre ++ rest),
     simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
     unfold MultiTapeTM.step
     change ((pairSplitTM.tm.tr (.parse none) _ _).apply _).state = none ∧ _
-    rw [splitCfg_read]
-    simp [hx, pairSplitTM, Action.apply, splitCfg, pairDecode]
+    rw [PairParse.cfg_inputSymbol]
+    simp [hx, pairSplitTM, Action.apply, PairParse.cfg, pairDecode]
   | singleton b =>
     intro pre a hx
     refine ⟨2, by simp, ?_⟩
     change (pairSplitTM.tm.step (pairSplitTM.tm.step _)).state = none ∧
       (pairSplitTM.tm.step (pairSplitTM.tm.step _)).output = _
-    rw [split_first x pre [] a b hx]
+    rw [PairParse.parse_first pairSplitTM.tm SplitControl.parse split_tr_first x pre [] a b hx]
     unfold MultiTapeTM.step
     change ((pairSplitTM.tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
-    rw [splitCfg_read]
-    cases b <;> simp [hx, pairSplitTM, Action.apply, splitCfg, pairDecode]
+    rw [PairParse.cfg_inputSymbol]
+    cases b <;> simp [hx, pairSplitTM, Action.apply, PairParse.cfg, pairDecode]
   | cons_cons b c rest ih _ =>
     intro pre a hx
     by_cases h : b = c
@@ -463,7 +568,8 @@ private lemma split_run (x rest : List Bool) : ∀ pre a (hx : x = pre ++ rest),
         ih (pre ++ [b, b]) (a ++ [b]) (by simpa [List.append_assoc] using hx)
       refine ⟨2 + t, by
         simp only [List.length_append, List.length_cons, List.length_nil] at *; omega, ?_⟩
-      rw [MultiTapeTM.runFrom_add, split_block x pre rest a b b hx, if_pos rfl]
+      rw [MultiTapeTM.runFrom_add, PairParse.parse_block pairSplitTM.tm SplitControl.parse .rewind
+        split_tr_first split_tr_second x pre rest a b b hx, if_pos rfl]
       simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
       refine ⟨?_, ?_⟩
       · simpa only [List.length_append, List.length_cons, List.length_nil] using hs
@@ -478,13 +584,15 @@ private lemma split_run (x rest : List Bool) : ∀ pre a (hx : x = pre ++ rest),
       · obtain ⟨t, ht, hs, ho⟩ := split_finish x (pre ++ [false, true]) rest a
           (by simpa [List.append_assoc] using hx)
         refine ⟨2 + t, by simp only [List.length_cons]; omega, ?_⟩
-        rw [MultiTapeTM.runFrom_add, split_block x pre rest a false true hx]
+        rw [MultiTapeTM.runFrom_add, PairParse.parse_block pairSplitTM.tm SplitControl.parse
+          .rewind split_tr_first split_tr_second x pre rest a false true hx]
         simp only [Bool.false_eq_true, ↓reduceIte]
         simp only [List.length_append, List.length_cons, List.length_nil] at hs ho
         exact ⟨hs, by simpa [pairDecode] using ho⟩
       · refine ⟨2, by simp, ?_⟩
-        rw [split_block x pre rest a true false hx]
-        simp [splitCfg, pairDecode]
+        rw [PairParse.parse_block pairSplitTM.tm SplitControl.parse .rewind split_tr_first
+          split_tr_second x pre rest a true false hx]
+        simp [PairParse.cfg, pairDecode]
       · exact False.elim (h rfl)
 
 /-- The coin-splitting machine halts on every input within `5(|x| + 1)` steps with the
@@ -502,8 +610,8 @@ private lemma split_computes (x : List Bool) :
         | none => []) (5 * (x.length + 1)) := by
   obtain ⟨t, ht, hs, ho⟩ := split_run x x [] [] rfl
   have hinit : pairSplitTM.tm.initCfg x =
-      splitCfg x (some (.parse none)) 0 (by omega) [] 0 [] := by
-    apply Cfg.ext <;> simp [pairSplitTM, splitCfg, MultiTapeTM.initCfg, Cfg.init]
+      PairParse.cfg x (some (.parse none)) 0 (by omega) [] 0 [] := by
+    apply Cfg.ext <;> simp [pairSplitTM, PairParse.cfg, MultiTapeTM.initCfg, Cfg.init]
   have hh : pairSplitTM.ComputesInTime x
       (match pairDecode x with
         | some (u, b) => pairEncode (b.take u.length) (b.drop u.length)

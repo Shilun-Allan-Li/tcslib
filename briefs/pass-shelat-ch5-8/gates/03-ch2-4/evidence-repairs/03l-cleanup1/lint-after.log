@@ -1,0 +1,124 @@
+# Lint after (check 5), head f29be161cd86cfc3a9c38bd203bfa095b4974086
+# Changed .lean files:
+#   TCSlib/Complexity/ClassNP/SAT.lean
+#   TCSlib/Complexity/Randomized/Build/IterateFind.lean
+#   TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+#   TCSlib/Complexity/Randomized/Build/PairSplit.lean
+#   TCSlib/Complexity/Randomized/Build/StateLoop.lean
+#   TCSlib/Complexity/Randomized/Build/StringLoops.lean
+#   TCSlib/Complexity/Randomized/Build/UnaryMul.lean
+#   TCSlib/Complexity/Randomized/Closure.lean
+#   TCSlib/Complexity/Randomized/Repetition.lean
+#   TCSlib/Complexity/TuringMachine.lean
+#   TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+#   TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean
+#   TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+# style_lint.py runs on the changed files; campaign_style_lint.py --check8b runs per directory and is filtered to the changed files.
+# Base comparison: the same runs on an archive of the base tree (0c348ff94cacf24d96d99078c9dd9e328530c8d2), lint-base-raw.log.
+# Normalized diff base -> head (lines prefixed '<' are base-only, '>' head-only):
+#   33,37d32
+#   < WARN TCSlib/Complexity/Randomized/Build/IterateFind.lean 1 public def(s) without a lemma beside them (check 8): step
+#   < WARN TCSlib/Complexity/Randomized/Build/IterateFindHost.lean 2 public def(s) without a lemma beside them (check 8): hostEntry, hostRet
+#   < WARN TCSlib/Complexity/Randomized/Build/IterateFindHost.lean 2 structure-valued def(s) without field equations (check 8b): copyTM, hostTM
+#   < WARN TCSlib/Complexity/Randomized/Build/StateLoop.lean 1 public def(s) without a lemma beside them (check 8): gstepBound
+#   < WARN TCSlib/Complexity/Randomized/Build/StringLoops.lean 3 public def(s) without a lemma beside them (check 8): blk, rounds, rounds
+# => no new finding; the five check 8/8b WARNs of the Build files are gone; check 8/8b lists for the six Build files and ModuleHost.lean are empty.
+
+### HEAD: scripts/style_lint.py on the changed .lean files
+
+19 findings in 13 files
+TCSlib/Complexity/ClassNP/SAT.lean: 4071 lines (> 1000, must split)
+TCSlib/Complexity/ClassNP/SAT.lean:2966: `satMax_prefix` proof is 23 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassNP/SAT.lean:3164: `satDrop_double` proof is 22 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassNP/SAT.lean:3211: `satDrop_separator` proof is 24 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassNP/SAT.lean:3237: `satDrop_rewind` proof is 26 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassNP/SAT.lean:3295: `satDrop_copy` proof is 32 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassNP/SAT.lean:3572: `satReq_fields_poly` proof is 21 lines, no **Proof sketch.**
+
+
+
+
+
+
+
+
+
+
+
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean: module docstring missing `## Main definitions`
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:95: `polyTimeComputable_loopState'` proof is 38 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:152: `polyTimeComputable_flatMap_range` proof is 26 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:182: `iterSnd_poly` proof is 27 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:333: public `theorem countTrue_zero` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:335: public `theorem countTrue_succ` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:361: `countTrue_poly` proof is 30 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:597: public `theorem natOfBits_zero` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:599: public `theorem natOfBits_succ` has no docstring
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:628: `natOfBits_poly` proof is 31 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:662: `findSome?_finRange_eq` proof is 25 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:724: `sampleVal_poly` proof is 29 lines, no **Proof sketch.**
+rc=1
+### HEAD: scripts/campaign_style_lint.py --check8b, per directory, filtered to the changed files
+## TCSlib/Complexity
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Basic`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Counter`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Embed`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Lift`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.Contract.Seam`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.EmitIterBody`
+FAIL  TCSlib/Complexity/TuringMachine.lean                                      facade does not import child module `TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed`
+WARN  TCSlib/Complexity/ClassNP/SAT.lean                                        4070 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/Randomized/Closure.lean                                 1 public def(s) without a lemma beside them (check 8): layout
+WARN  TCSlib/Complexity/Randomized/Repetition.lean                              1 public def(s) without a lemma beside them (check 8): guardedStep
+INFO  TCSlib/Complexity/ClassNP/SAT.lean                                        4070 lines; 5 public / 241 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/IterateFind.lean                       531 lines; 4 public / 16 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/IterateFindHost.lean                   362 lines; 15 public / 5 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean                         648 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean                         648 lines; 10 public / 14 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StateLoop.lean                         429 lines; 48 public / 0 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean                       714 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean                       714 lines; 82 public / 1 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/UnaryMul.lean                          411 lines; 1 public / 15 private declarations
+INFO  TCSlib/Complexity/Randomized/Closure.lean                                 435 lines; 28 public / 1 private declarations
+INFO  TCSlib/Complexity/Randomized/Repetition.lean                              486 lines; 14 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean                     548 lines; 16 public / 13 private declarations
+INFO  TCSlib/Complexity/TuringMachine.lean                                      276 lines; 0 public / 0 private declarations
+## TCSlib/Complexity/ClassNP
+WARN  TCSlib/Complexity/ClassNP/SAT.lean                    4070 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  TCSlib/Complexity/ClassNP/SAT.lean                    4070 lines; 5 public / 241 private declarations
+## TCSlib/Complexity/Randomized
+WARN  TCSlib/Complexity/Randomized/Closure.lean                  1 public def(s) without a lemma beside them (check 8): layout
+WARN  TCSlib/Complexity/Randomized/Repetition.lean               1 public def(s) without a lemma beside them (check 8): guardedStep
+INFO  TCSlib/Complexity/Randomized/Build/IterateFind.lean        531 lines; 4 public / 16 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/IterateFindHost.lean    362 lines; 15 public / 5 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean          648 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean          648 lines; 10 public / 14 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StateLoop.lean          429 lines; 48 public / 0 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean        714 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean        714 lines; 82 public / 1 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/UnaryMul.lean           411 lines; 1 public / 15 private declarations
+INFO  TCSlib/Complexity/Randomized/Closure.lean                  435 lines; 28 public / 1 private declarations
+INFO  TCSlib/Complexity/Randomized/Repetition.lean               486 lines; 14 public / 0 private declarations
+## TCSlib/Complexity/Randomized/Build
+INFO  TCSlib/Complexity/Randomized/Build/IterateFind.lean      531 lines; 4 public / 16 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/IterateFindHost.lean  362 lines; 15 public / 5 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean        648 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/PairSplit.lean        648 lines; 10 public / 14 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StateLoop.lean        429 lines; 48 public / 0 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean      714 lines > target 600
+INFO  TCSlib/Complexity/Randomized/Build/StringLoops.lean      714 lines; 82 public / 1 private declarations
+INFO  TCSlib/Complexity/Randomized/Build/UnaryMul.lean         411 lines; 1 public / 15 private declarations
+## TCSlib/Complexity/TuringMachine/Build
+INFO  TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean          548 lines; 16 public / 13 private declarations
+## TCSlib/Cryptography/Asymptotic
+WARN  TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean         2 public def(s) without a lemma beside them (check 8): bound, input
+INFO  TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean         408 lines; 32 public / 0 private declarations
+## TCSlib/Cryptography/ZeroKnowledge/ThreeColoring
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 333: public theorem `countTrue_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 335: public theorem `countTrue_succ` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 597: public theorem `natOfBits_zero` has no preceding docstring (policy section 2, statement prose)
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          line 599: public theorem `natOfBits_succ` has no preceding docstring (policy section 2, statement prose)
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          2 public def(s) without a lemma beside them (check 8): firstTrial, ilayout
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          983 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean          983 lines; 87 public / 0 private declarations
