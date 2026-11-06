@@ -9,10 +9,10 @@
   weaker than the source, must be found **now**.
 - **Gate type:** an external **statement gate** (`workflow.md` §3), over a layer written in another
   campaign (Frederick Dehmel's, now closed). That layer had only an internal audit (run 3a).
-- **The deliverable:** **`gate03h-findings.md`**.
+- **The deliverable:** **`gate03h-findings.md`**, committed as `inbox/gate03h-findings.md` on the exchange branch `exchange/pass-shelat-ch5-8` and pushed (the protocol is that branch's `README.md`: write only that file, `git pull --rebase` before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-**The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
+**The source** is [PS10], 3rd ed., January 2010: `Pass–Shelat.pdf` at the root of `cryptography/pass-shelat-ch2-4` (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`). Book page = PDF
 page − 12. This pack needs §2.4.3 (book pp. 36–40), §2.5 (pp. 41–42) and §2.13 (pp. 63–65).
 
 ## Brief for the auditor
@@ -38,7 +38,7 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 | Design record | `briefs/pass-shelat/DESIGN.md` (§1 D11 (`CanonizerExp`, ratified as an explicit hypothesis, with its open problem); §5 the deviations register; §7 the source's errors and gaps) |
 | Inventory | `briefs/pass-shelat/inventory-ch2.md`: Thm-35.1 (proof), Claim-38.2, Thm-42.2 (proof), Thm-63.1, Alg-64.2, Lem-64.3, Claim-65.1, Claim-65.2 |
 | Internal audit record | `audits/pass-shelat/run3-audit-summary.md` |
-| Source | [PS10] as above (PDF attached) |
+| Source | [PS10] as above (`Pass–Shelat.pdf`, campaign branch root) |
 | Standards | `policy.md` |
 | Out of scope | tactic proofs; the definitions of pack 03b |
 

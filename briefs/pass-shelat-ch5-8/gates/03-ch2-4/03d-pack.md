@@ -8,10 +8,10 @@ PR and the F-1 restatement have landed (`PLAN.md`; ruling of 2026-11-05: 03d wai
 - **Gate type:** an external **statement gate** (`workflow.md` §3; user's ruling of 2026-11-05),
   over a layer written in another campaign (Frederick Dehmel's, now closed). That layer had only
   an internal audit (run 3a, summary in the bundle).
-- **The deliverable:** **`gate03d-findings.md`**.
+- **The deliverable:** **`gate03d-findings.md`**, committed as `inbox/gate03d-findings.md` on the exchange branch `exchange/pass-shelat-ch5-8` and pushed (the protocol is that branch's `README.md`: write only that file, `git pull --rebase` before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-**The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
+**The source** is [PS10], 3rd ed., January 2010: `Pass–Shelat.pdf` at the root of `cryptography/pass-shelat-ch2-4` (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`). Book page = PDF
 page − 12. This pack needs §2.1.3 (Def 24.7, book p. 24), §3.5–§3.10 (pp. 91–105) and §4.2 (pp. 110–112).
 
 ## Brief for the auditor
@@ -35,7 +35,7 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 | Design record | `briefs/pass-shelat/DESIGN.md` (§1 D1–D11, §2.13 and §2.14 the frozen shapes, §5 the deviations register) |
 | Inventory | `briefs/pass-shelat/inventory-ch3.md`: Def-91.1, Alg-92.1, Claim-92.a, Thm-92.2, Def-93.1, Thm-94.2, Def-96.1, Claim-96.a–c, Def-96.2, Cor-97.a, Claim-97.c, Thm-97.3 (and .3), Alg-99.1, Thm-99.2 (with .1–.3), Def-102.1, Def-102.2, Claim-103.a, Claim-103.b, Def-103.c, Thm-103.d, Def-103.e, Thm-103.f, Constr-104.a, Alg-104.3, Lem-104.a, Thm-104.4; `inventory-ch2.md`: Def-24.7; `inventory-ch4.md`: Def-111.1, Def-111.a, Def-111.b, Thm-112.2 (with .i, .ii), Claim-112.a, Claim-112.b |
 | Internal audit record | `audits/pass-shelat/run3-audit-summary.md` |
-| Source | [PS10] as above (PDF attached) |
+| Source | [PS10] as above (`Pass–Shelat.pdf`, campaign branch root) |
 | Standards | `policy.md` |
 | Out of scope | tactic proofs; the GGM reduction and the encryption lemmas (`GGMReduction*`, `PRFLemmas`, `MultiMessageLemmas`, `PublicKeyLemmas`), whose statements pack 03j audits |
 

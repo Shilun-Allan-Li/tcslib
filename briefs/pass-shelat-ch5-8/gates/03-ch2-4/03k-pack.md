@@ -10,10 +10,10 @@
   weaker result behind a headline.
 - **Gate type:** an external **statement gate** (`workflow.md` §3), over a layer written in another
   campaign (Frederick Dehmel's, now closed). That layer had only an internal audit (run 3a).
-- **The deliverable:** **`gate03k-findings.md`**.
+- **The deliverable:** **`gate03k-findings.md`**, committed as `inbox/gate03k-findings.md` on the exchange branch `exchange/pass-shelat-ch5-8` and pushed (the protocol is that branch's `README.md`: write only that file, `git pull --rebase` before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-**The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
+**The source** is [PS10], 3rd ed., January 2010: `Pass–Shelat.pdf` at the root of `cryptography/pass-shelat-ch2-4` (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`). Book page = PDF
 page − 12. This pack needs §4.5–§4.7 (book pp. 116–127).
 
 ## Brief for the auditor
@@ -37,7 +37,7 @@ Attempt at least **two adversarial instantiations**. Do not give a blanket appro
 | Design record | `briefs/pass-shelat/DESIGN.md` |
 | Inventory | `briefs/pass-shelat/inventory-ch4.md`: Def-117.e, Def-118.a, Claim-118.b, Claim-118.c, Prot-118.3, Lems 119.a–d, Prop-118.4, Prot-120.6, Lems 120.a–d, Prop-120.7, Thm-122.3 (with .hv, .trunc), the GI simulator rows, Inf-4.1, Inf-4.2 |
 | Internal audit record | `audits/pass-shelat/run3-audit-summary.md` |
-| Source | [PS10] as above (PDF attached) |
+| Source | [PS10] as above (`Pass–Shelat.pdf`, campaign branch root) |
 | Standards | `policy.md` |
 | Out of scope | tactic proofs |
 
