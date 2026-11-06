@@ -136,6 +136,11 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
     agent pushes its delivery zip (and checkpoint zips) there; an auditor its findings file. The
     user still dispatches each prompt, and every change to `complexity/arora-barak-ch3-4` is
     still a PR the user merges.
+  - **A pack's closing paragraph** (since 2026-11-06): "**Deliver your findings as
+    `<name>-findings.md`** (the findings table and the verdict line, no other wrapping): push it to
+    `arora-barak-ch3-4/inbox/` on the branch `exchange/pass-shelat-ch5-8` (`git pull --rebase`
+    first, add only that file, never force-push, no PR), and also paste its content in your reply."
+    The prompt names the bundle by its path on that branch.
   - **Rebuilt bundles:** if a bundle is rebuilt after its prompt went out, re-issue the whole
     prompt and say the old one is void.
 - **The exchange** is the `arora-barak-ch3-4/` subfolder of the orphan branch
