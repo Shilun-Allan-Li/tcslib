@@ -4,10 +4,14 @@
 - **Targets:** the three admissions of gate pack 03g. Gate 03g is closed (round 2: 0 blockers,
   0 majors, 1 minor, R2-1, carried into this brief).
 - **Ruled 2026-11-06:** two units on disjoint files; they may run in parallel on separate hosts.
+- **Ruled 2026-11-06 (user):** `ThreeColoring/Protocol.lean` may exceed 1000 lines (size
+  exception). It is not split, in the fill or at landing.
 - **Before issue** (each item lands on the campaign branch, so that `@ANCESTOR@` contains it):
-  - the rule-10 prerequisites P1–P11 below (published equations missing at the pre-ship commit);
-  - a review of this brief by a review sub-agent;
-  - the issue commit.
+  - PR #210 (branch `cryptography/pass-shelat-ch2-4-eqlemmas`): the rule-10 equation lemmas
+    P1–P12 (table below). P7, `distAdv_def`, is #195's `Foundations/Experiments.lean` block
+    "Defining equations", carried by #210's extension;
+  - the edits from this brief's review (`review.md`);
+  - the issue commit, with the build inputs regenerated there.
 
 The targets were written in run 2 of the campaign. Each is a `sorry` under a proof sketch, and
 the statements were screened by gate 03g (`gates/03-ch2-4/review/gate03g-review.md`, and round 2,
@@ -29,8 +33,11 @@ pp. 127–129, PDF pp. 139–141).
   - `patches/`: `git format-patch @ANCESTOR@..fill/<unit>`, the whole series;
   - `src/`: the owned file(s) and any new helper modules at your head, under their repository paths;
   - `evidence/`: the logs that this brief and the environment addendum require.
-- **Push at each checkpoint**, with the commit message `fill <unit>: checkpoint <n>`; the final push
-  is `fill <unit>: final`. A session that ends early leaves its last checkpoint as the delivery.
+- **Push at each checkpoint.** A checkpoint is a push of `inbox/fills/<unit>/` with the commit
+  message `fill <unit>: checkpoint <n>`; the final push is `fill <unit>: final`. A session that
+  ends early leaves its last checkpoint as the delivery. Push one: col-a after the decider and
+  after `colRep_efficientProverProof`; col-b after each ladder step. Also push at least every two
+  hours of work.
 - **Rules for pushing:**
   - write only `inbox/fills/<unit>/`;
   - run `git pull --rebase origin exchange/pass-shelat-ch5-8` before each push;
@@ -39,9 +46,11 @@ pp. 127–129, PDF pp. 139–141).
 
 
 **Mathlib first (user direction 2026-11-06).** Before proving any number-theory fact, search the
-pinned Mathlib. The names to cite for this fill are in `briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md`,
-section "Advice for the fill briefs" (all reachable from the owned files' current imports). Proving
-a fact Mathlib already has is a reuse finding at delivery review.
+pinned Mathlib (`briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md`, section "Advice for the fill
+briefs"). That file has no 3-colouring entry: these fills prove no number-theory facts. The
+arithmetic they need is already in TCSlib or Mathlib (`Nat.sqrt_eq`, `one_sub_inv_pow_mul_le_exp`,
+`negligible_exp_neg_sqrt_div`). Proving a fact Mathlib already has is a reuse finding at delivery
+review.
 
 ## Units (disjoint file ownership; they may run in parallel)
 
@@ -49,19 +58,22 @@ Cross-file dependencies are on **statements** only. The integration replay close
 
 | Unit | Owned file(s) | Targets (`sorry`s) |
 |---|---|---|
-| **col-a** | `ThreeColoring/Protocol.lean`; new helper modules `ThreeColoring/ColRep*.lean` (below) | `R3COL_witnessRelation`, its `decidable` clause (`:846`); `colRep_efficientProverProof` (`:919`) (2) |
+| **col-a** | `ThreeColoring/Protocol.lean`; new helper modules `ThreeColoring/ColRep*.lean` (below) | `R3COL_witnessRelation`, its `decidable` clause (`:919`); `colRep_efficientProverProof` (`:990`, its `sorry` at `:992`) (2) |
 | **col-b** | `ThreeColoring/Simulator.lean`; new helper modules `ThreeColoring/ColZK*.lean` (below) | `col_zk` (`:780`) (1) |
 
 `ThreeColoring/` abbreviates `TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/`. Line numbers are
-at the pre-ship commit `5f2771631fe853dae9c2aa44791ae5b0e09c95eb`.
+at PR #210's head `fff0430c7c9db136e60ed14b069e972c2ea56fc8`; check them at `@ANCESTOR@`.
 
 Each target's docstring carries its proof sketch. **Follow it, or report why it fails.** For
 `col_zk`, the binding plan is the sketch as corrected by R2-1 and the ladder below.
 
 ### Helper modules: what may go where
 
-- **Why.** `Protocol.lean` has 926 lines and `Simulator.lean` has 804. The fills would take both
-  past policy's 1000-line threshold.
+- **Why.** At #210's head, `Protocol.lean` has 999 lines and `Simulator.lean` has 804.
+  `colRep_efficientProverProof` names `colProtocolRep`, so its proof stays in `Protocol.lean`,
+  and col-a's fill takes that file past 1000 lines. Size exception for `Protocol.lean`: user,
+  2026-11-06 (no split, also not at landing). Keep the file's growth small: put everything that
+  does not name the definitions below in helpers.
 - **What a helper module is.** It is imported by its unit's owned file, so it cannot see that
   file's definitions (Lean imports are acyclic). It may import any module of the order list
   upstream of its owned file.
@@ -77,11 +89,13 @@ Each target's docstring carries its proof sketch. **Follow it, or report why it 
     rule-10 seal this transfer fails (pre-ship probe A4).
 - **Namespaces and size.** col-a's helpers use `TCSlib.Cryptography.ColRep`, and col-b's use
   `TCSlib.Cryptography.ColZK`. Each helper module has 150–600 lines and the full file header of
-  policy §1. Aim to keep each owned file at or under 1000 lines. If an owned file goes over, say why
-  in `REPORT.md`: the frozen definitions cannot move.
+  policy §1. `Simulator.lean` should stay at or under 1000 lines. `Protocol.lean` will pass 1000;
+  record its final line count and the reason in `REPORT.md` (the frozen definitions and statements
+  cannot move).
 - **The facade.** `ThreeColoring.lean` belongs to neither unit, so a new helper module is not
-  imported by it. This adds a facade FAIL in `campaign_style_lint.py`. Record it in `REPORT.md`
-  as a landing edit for the maintainer.
+  imported by it. This adds a facade FAIL in `campaign_style_lint.py` (visible when the parent
+  directory `ZeroKnowledge` is linted; see Lint). Record it in `REPORT.md` as a landing edit for
+  the maintainer.
 
 **col-a: what stays in `Protocol.lean`.** Anything that names `colProverRep`, `colVerifierRep`,
 `colProtocolRep`, `colProver`, `colVerifier`, `colCoinSlice` or `colIterations`. The
@@ -110,16 +124,17 @@ is generic in the attempt function).
   - The well-formedness test is `x = x.take (n·n)` (`ColMachines.encGraph_decGraph_eq_take`; the
     verifier's `verdictStr` already computes it).
   - The colouring re-encoding is `polyTimeComputable_blockMap` / `polyTimeComputable_iterateEmit`.
-    It needs the bitwise equation of `encColoring` (P3).
+    Read `encColoring` through `encColoring_eq` / `getD_encColoring` (P3).
   - The properness scan over the `n²` matrix entries is `polyTimeComputable_iterate` with an
-    accumulated conjunction (`ProperColoring_iff`, P2; colour values by `ColMachines.decColoring_val`).
+    accumulated conjunction (`ProperColoring_iff`, P2; colour values by `ColMachines.decColoring_val`,
+    whose right side `ColMachines.colorVal` has `ColMachines.colorVal_poly`).
   - Pairing: `polyTimeComputable_pairEq`, `polyTimeComputable_and`, `polyTimeComputable_ite`.
 - **Placement.** Recommended in a helper `ThreeColoring/ColRepWitness.lean`, closed in
   `Protocol.lean` by one `exact`.
 
 ### `colRep_efficientProverProof`
 
-Follow its docstring sketch (`Protocol.lean:893–916`).
+Follow its docstring sketch (`Protocol.lean:966–989` at #210's head).
 - **The verdict against any `P'`.** Use `Protocol.outV_withV`, after
   `rw [Protocol.withV_self] at h` (probes A1 and A5; not by `rfl`, which reads `outV` and
   `transcriptWith`). The transcript after `4i` moves is `GI.exec_repViews` / `GI.repViews`. These
@@ -160,8 +175,8 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
 - **Variables.** In the statements, `{Com : List Bool → List Bool} {ℓ : PolyExpr}` are section
   variables, as in `Simulator.lean`.
 - **The statements below are the intended ones.** All but step 5's elaborate at the pre-ship
-  commit (`preship/dup-probe-col-b.log`, `preship/route-probe-colb.log`). You may restate one
-  through a new `enc` definition, if its content is unchanged.
+  commit (`preship/dup-probe-col-b.log`, `preship/route-probe-colb.log`) and at #210's head
+  (review). You may restate one through a new `enc` definition, if its content is unchanged.
 
 1. **`statClose_sampleColorPair`** (`Simulator.lean`), the colour-pair analogue of
    `statClose_samplePerm3`:
@@ -188,6 +203,12 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
    (`StatClose.comp_pushesUniform`); then `StatClose.prod`/`StatClose.refl` with `V'`'s tape, and
    `StatClose.map`. Unfold through `Protocol.viewV_withV`, `View.encode` (P6), `exec_succ`,
    `decGraph_encGraph`, `decColoring_encColoring` and the public `colProver` equations (P10).
+   - **The commitment randomness** `r_i j = r.getD (3|x| + i ℓ(n) + j)` (`colProver_next_nil`)
+     lies inside the prover's tape of `3|x| + |x| ℓ(|x|)` bits (`Strategy.coinLen_eq`,
+     `colProver_coins`), because `n ≤ n² = |x|` and `PolyExpr.eval_mono`.
+   - **The rest of the unfolding** is `Protocol.viewV_withV`, `View.encode_mk` (review probe S5
+     rewrites the left side sealed), `colProtocol_P`, `colProtocol_rounds` with
+     `PolyExpr.eval_const`, `colProtocol_verifierFirst` and `exec_succ`.
 3. **`colSim` to `colSimTrunc`** (step (2), `m > 0`):
    ```lean
    theorem statClose_colSim_colSimTrunc (V' : Strategy) {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G)
@@ -256,10 +277,18 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
        needs P12.
    - **In `Simulator.lean`:** the identification `D.distinguisherL (n*n) (hidingView … (α n) cv) =
      D' (pre <|> planted cv <|> post)` for the chosen data.
-   - **Coin transport** is the generic two-parameter lemma
-     **`ColZK.acceptProb_distinguisherL_reparam`** (helper; probe R5 shape). It is
-     `EnsembleLemmas.acceptProb_coins_equiv` along `Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)`,
-     and it needs P8 and P9. Report it as a requested shared lemma, to be placed next to
+   - **Coin transport** is a generic two-parameter lemma in a helper (probe R5 shape; review
+     probe S8). State it at the `distAdv` level, as
+     **`ColZK.distAdv_distinguisherL_reparam`**:
+     `distAdv X Y (B.distinguisherL n) = distAdv X Y fun y c => D.distinguisherL (n * n) (F y) c`
+     from `B.coins = D.coins.subst (.mul .var .var)` and
+     `∀ y r, B.runAtL n y r = D.runAtL (n * n) (F y) r`. Proof: `NUPPT.distinguisherL_eq`,
+     `NUPPT.runAt_eq` and the run equation pointwise; `change` the coin type to
+     `Fin (B.coinLen n) → Bool`; `rw` with `B.coinLen n = D.coinLen (n * n)` (`NUPPT.coinLen_eq`,
+     `PolyExpr.eval_subst`, `eval_mul`, `eval_var`). An `acceptProb` form,
+     `ColZK.acceptProb_distinguisherL_reparam` (`EnsembleLemmas.acceptProb_coins_equiv` along
+     `Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)`), may be added beside it. Report the lemma
+     as a requested shared lemma, to be placed next to
      `CommitmentLemmas.acceptProb_distinguisherL_of_runAtL` (review #2 ripple); keep no private copy.
 6. **The edgeless case** (`m = 0`, `n ≥ 1`):
    ```lean
@@ -280,6 +309,7 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
      vector differs: `π ∘ c` against `0` (`colCommit_eq`, P10).
    - Make `π` uniform (step 2's argument), fix `π` and then `r_V` by `exists_fixCoins`, and take
      the worst `π₀`.
+   - The `(1/4)^N` term needs the triangle inequality (`distAdv_def`, P7; step 7).
 7. **The assembly, `col_zk`** (`intro` through `ZK_iff`, P5).
    - **The data and the machine.** For each `n`, choose the data with the largest fixed-reduction
      gap on its own vectors. The data are: the graph, `c`, `z` with `|z| ≤ Lz(n²)` (finite only
@@ -293,10 +323,19 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
    - **The hiding bound.** `hC.multiHiding .var B` gives `ε_B`. Specialise it at `n` and rewrite
      `PolyExpr.eval_var` in the hypothesis (`rw … at`, probe R3b): direct application needs
      `var.eval n ≡ n` (R3a fails under the seal).
-   - **Sign and triangle inequality.** `0 ≤ ε_B n` follows from the bound at `v = v'` and needs
-     `distAdv_eq` (P7). The triangle inequality is `abs_sub_le` through P7.
+   - **Sign.** Use `fun n => |ε_B n|` for `ε_B`: it is negligible by
+     `hε.mono ⟨0, fun n _ => (abs_abs _).le⟩`, it is nonnegative, and it still bounds every gap
+     (`le_abs_self`). No equation of `distAdv` is needed.
+   - **Triangle inequality.** `rw [distAdv_def]` on the three advantages, then `abs_sub_le`.
+   - **`n = 0`.** `Δ ≤ 1` by `distAdv_le_of_statClose` with `StatClose X Y 1`, which follows from
+     `statClose_iff`, `uprob_nonneg` and `uprob_le_one`.
+   - **The simulator's seed.** `S.Coins |x|` against the ladder's
+     `Fin ((colSimCoins ℓ V').eval |x|) → Bool`: `funext` of `exists_colSimulator`'s equation, then
+     a `change` to `Fin (S.coinLen |x|) → Bool`, then `rw` with `NUPPT.coinLen_eq` and
+     `S.coins = colSimCoins ℓ V'` (review probe S7, sealed).
    - **Lengths.** `(encGraph G).length = n * n` is `length_encGraph`. Transport `D`'s coin type
-     along it with `finCongr`; do not `rw` it inside `D.Coins _`.
+     along it with `finCongr`; do not `rw` it inside `D.Coins _`. The same `change`-first move as
+     for the simulator's seed works for `D`'s coins; a direct `rw` fails with a motive error.
 
 ### The error accounting (binding; review §2.3 with the R2-1 correction)
 
@@ -308,7 +347,7 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
 - **`m = 0`, `n ≥ 1`** (R2-1): `Δ ≤ 4^{−N} + ε_B(n)`. This is **one** multi-value hiding gap,
   not `K ε_B(n) = 0`; round 2's counterexample has advantage `85/128` at `n = 2`. Bound it by
   `ε_B(n) ≤ N² ε_B(n)`.
-- **`n = 0`** (`N = 0`): `Δ ≤ 1`. The simulator's tape is empty while `V'`'s need not be.
+- **`n = 0`** (`N = 0`): `Δ ≤ 1` (step 7). The simulator's tape is empty while `V'`'s need not be.
 - **In every case** `Δ ≤ ε(N)`, with
   `ε N := N² ε_B (Nat.sqrt N) + Real.exp (−(Nat.sqrt N : ℝ)) + N² ((1/2)^N + (1/4)^N) + (1/4)^N`:
   - use `K = n m ≤ n³ ≤ n⁴ = N²` (`n ≥ 1`), `max(1, K) ε_B(n) ≤ N² ε_B(n)`, and
@@ -373,62 +412,52 @@ Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy` (probe R7), and 
   - `ZeroKnowledge/NPLemmas.lean` is also cycle-free, but is not needed.
 - **No new Mathlib roots** are expected. A new one is fetched as the addendum says, and reported.
 
-## Lint sweep (decision 2026-11-05)
+## Lint
 
-- **Run** `python3 -I scripts/style_lint.py <files>` on the owned files and your helpers, before and
-  after.
-- **Also run** `python3 -I scripts/campaign_style_lint.py --check8b TCSlib/Cryptography/ZeroKnowledge/ThreeColoring`.
-  It takes a **directory**; given a file it prints "no .lean files". Read the lines of your files.
-- **The 20 pre-existing `style_lint.py` findings** of the 3-colouring files
-  (`preship/lint-base.log`) split as follows:
-  - **col-a, 1:** `Protocol.lean:723`, `colProtocol_sound` (99 lines, no **Proof sketch.**). Add a
-    sketch paragraph to its docstring (authorized docstring edit).
-  - **col-b, 0:** none in `Simulator.lean`.
-  - **Neither unit, 19 (out of scope; do not edit):**
-    - `Machines.lean`, 12: no `## Main definitions`; no sketch for `polyTimeComputable_loopState'`
-      (:95), `polyTimeComputable_flatMap_range` (:152), `iterSnd_poly` (:182), `countTrue_poly`
-      (:361), `natOfBits_poly` (:628), `findSome?_finRange_eq` (:662), `sampleVal_poly` (:724);
-      no docstring for `countTrue_zero` (:333), `countTrue_succ` (:335), `natOfBits_zero` (:597),
-      `natOfBits_succ` (:599).
-    - `Parties.lean`, 3: no `## Main definitions`; no sketch for `checkStr_poly` (:218),
-      `proverRepStr_poly` (:312).
-    - `ProtocolProofs.lean`, 4: no `## Main definitions`; no sketch for `colVerifier_next_eq`
-      (:204), `colProverRep_next_eq` (:252), `colVerifierRep_next_eq` (:279).
-- **Also pre-existing, not in the 20:**
-  - `campaign_style_lint.py` reports 6 facade FAILs on `ThreeColoring.lean` (owned by neither);
-  - check-8 WARNs: `Protocol.lean` 7, `Simulator.lean` 17.
-- **Your delivery** adds no new check-8 name and no FAIL in your files, apart from the facade line
-  of each new helper module (see above).
+- **Run, before and after:** `python3 -I scripts/style_lint.py <owned files and your helpers>`,
+  and `python3 -I scripts/campaign_style_lint.py --check8b TCSlib/Cryptography/ZeroKnowledge`.
+  The script takes a **directory**; given a file it prints "no .lean files". Read the
+  `ThreeColoring` lines; the parent directory is needed for the facade check.
+- **At `@ANCESTOR@`** (the 2026-11-05 lint sweep was done by PR #210; there is no lint work in
+  this fill):
+  - `style_lint.py`: 0 findings in the 3-colouring files;
+  - `campaign_style_lint.py`: no FAIL in `ThreeColoring/`; 6 pre-existing facade FAILs on
+    `ThreeColoring.lean` (owned by neither unit); check-8 WARNs `Protocol.lean` 3,
+    `Simulator.lean` 17.
+- **Your delivery** adds no finding, no FAIL and no new check-8 name in your files, apart from:
+  - the facade line of each new helper module (above);
+  - col-a: the single size finding of `Protocol.lean` once it passes 1000 lines (approved size
+    exception; expected).
 
-## Rule-10 prerequisites (before issue)
+  Edit no file outside your unit.
 
-At the pre-ship commit these definitions are read by the routes but have no published equation.
-The probes under seal confirm it where marked (`preship/route-probe-colb.log`,
-`preship/seal-probe-col-a.log`). Each prerequisite lands beside its definition, with no `@[simp]`
-(policy §1).
+## Rule-10 prerequisites (published equations)
 
-| # | Definition (file) | Lemma needed | Unit(s) | Probe |
-|---|---|---|---|---|
-| P1 | `R3COL` (`ThreeColoring/Language.lean`) | `R3COL_iff` | col-a, col-b | A3 fails sealed |
-| P2 | `ProperColoring` (`Language.lean`) | `ProperColoring_iff` | col-a | — |
-| P3 | `encColoring` (`ZeroKnowledge/Encoding.lean`) | a bitwise equation (`getD_encColoring` or a `flatMap` form) | col-a | — |
-| P4 | `Strategy.coinLen` (`ZeroKnowledge/Interaction.lean`) | `Strategy.coinLen_eq` | col-a, col-b | A6 fails sealed |
-| P5 | `ZK` (`ZeroKnowledge/Defs.lean`) | `ZK_iff` | col-b | R6 fails sealed |
-| P6 | `Protocol.viewV`, `View.encode` (`Interaction.lean`) | `Protocol.viewV_withV` (as `outV_withV`), `View.encode_mk` | col-b | — |
-| P7 | `distAdv` (`Foundations/Experiments.lean`) | `distAdv_eq` | col-b | C2, R8 fail sealed |
-| P8 | `NUPPT.distinguisherL` (`Asymptotic/Adversary.lean`) | `NUPPT.distinguisherL_eq` | col-b | R5 |
-| P9 | `NUPPT.coinLen` (`Complexity/Randomized/PPT.lean`) | `NUPPT.coinLen_eq` | col-b | R5 |
-| P10 | `colCommit`, `colOpen`, `colCoinSlice`, `colIterations`, `colProver`, `colProtocol` (`ThreeColoring/Protocol.lean`, col-a's file) | `_eq` lemmas; public `colProver` next-message equations (today private, `:644–667`); `colProtocol` field lemmas | col-b | — |
-| P11 | `sampleIdx` (`Language.lean`) | public tape lemma (today private `tapeEquiv`, `sampleIdx_ofFn`), or a generic `statClose_sampleIdx` | col-b | — |
-| P12 (optional) | `Strategy.Efficient` (`Interaction.lean`) | `Strategy.efficient_iff` | col-b, only for a generic verifier-call lemma | B1 fails sealed |
+The routes read these definitions only through the equations below. All come from PR #210 (P7
+through its extension, which carries #195's `Foundations/Experiments.lean` block "Defining
+equations"). None is `@[simp]`.
 
-- **P10 changes col-a's file,** so it cannot be left to col-a while col-b runs in parallel.
-- **If a prerequisite is missing at `@ANCESTOR@`,** report the step that needs it as blocked
-  (escalation E-API). Do not read the body.
+| # | Definition (file) | Published lemma(s) | Unit(s) |
+|---|---|---|---|
+| P1 | `R3COL` (`ThreeColoring/Language.lean`) | `R3COL_iff` | col-a, col-b |
+| P2 | `ProperColoring` (`Language.lean`) | `ProperColoring_iff` | col-a |
+| P3 | `encColoring` (`ZeroKnowledge/Encoding.lean`) | `encColoring_eq` (`List.ofFn` form), `getD_encColoring`, `getD_encColoring_two_mul`, `getD_encColoring_two_mul_add_one` | col-a |
+| P4 | `Strategy.coinLen` (`ZeroKnowledge/Interaction.lean`) | `Strategy.coinLen_eq` | col-a, col-b |
+| P5 | `ZK` (`ZeroKnowledge/Defs.lean`) | `ZK_iff` | col-b |
+| P6 | `Protocol.viewV`, `View.encode` (`Interaction.lean`) | `Protocol.viewV_withV`, `View.encode_mk` | col-b |
+| P7 | `distAdv` (`Foundations/Experiments.lean`) | `distAdv_def` (#195's block, in #210's extension; the name is `_def`, not `_eq`) | col-b (the triangle inequality in steps 6–7) |
+| P8 | `NUPPT.distinguisherL` (`Asymptotic/Adversary.lean`) | `NUPPT.distinguisherL_eq` | col-b |
+| P9 | `NUPPT.coinLen` (`Complexity/Randomized/PPT.lean`) | `NUPPT.coinLen_eq` | col-b |
+| P10 | `colCommit`, `colOpen`, `colCoinSlice`, `colIterations`, `colProver`, `colProtocol` (`ThreeColoring/Protocol.lean`) | `colCommit_eq`, `colOpen_eq`, `colCoinSlice_eq`, `colIterations_eq`; `colProver_coins`; `colProver_next_nil`, `colProver_next_cons`, `colProver_next_cons_of_edgeCount_eq_zero`; `colProtocol_P`, `colProtocol_V`, `colProtocol_rounds`, `colProtocol_verifierFirst` | col-b |
+| P11 | `sampleIdx` (`Language.lean`) | `sampleIdx_eq_rejectionSample`, `sampleIdx_ofFn_eq_rejectionSample` (the tape lemma) | col-b |
+| P12 | `Strategy.Efficient` (`Interaction.lean`) | `Strategy.efficient_iff` | col-b (generic verifier-call lemma) |
+
+- **If one of these is missing at `@ANCESTOR@`,** report the steps that need it as blocked
+  (escalation E-API, defined under Ground rules) and go on with the others. Do not read the body.
 - **Published equations that already exist and suffice:**
   - `Protocol.outV_withV`, `Protocol.withV_self/withV_P/withV_V`, `exec_succ`, `exec_zero`;
-  - `NUPPT.runAt_eq`, `NUPPT.simulate_eq`;
-  - `PolyExpr.eval_var/mul/add/const/pow/normal/subst`;
+  - `NUPPT.runAt_eq`, `NUPPT.simulate_eq` (`ZeroKnowledge/Defs.lean`);
+  - `PolyExpr.eval_var/mul/add/const/pow/normal/subst`, `PolyExpr.eval_mono`;
   - `ColSimLemmas.msgAt_multiCom`, `mergeAt_fst/snd`.
 
 ## Ground rules (binding)
@@ -436,7 +465,7 @@ The probes under seal confirm it where marked (`preship/route-probe-colb.log`,
 1. **Statement freeze.** Every definition and every existing statement is byte-identical in your
    delivery. Only these change:
    - the bodies of the listed `sorry`s;
-   - the docstring edits authorized above (`col_zk`'s sketch; `colProtocol_sound`'s sketch);
+   - the docstring edits authorized above (`col_zk`'s sketch, col-b);
    - new lemmas: the ladder lemmas named above, plus `private` helpers prefixed `colRep_`
      (col-a) or `colZK_` (col-b) in the owned file;
    - new helper modules under the rules above.
@@ -448,17 +477,24 @@ The probes under seal confirm it where marked (`preship/route-probe-colb.log`,
      one of them through its body: it must fail sealed and pass unsealed.
    - Shadows count as foreign (probe A4).
 3. **Rule 11.** Cite no private declaration of another file. For col-b this includes
-   `Protocol.lean`'s private `colProver_next_*` and `Language.lean`'s private `tapeEquiv` and
-   `sampleIdx_ofFn`.
+   `Protocol.lean`'s private `colProver_next_nil_of`, `colProver_next_cons_of`,
+   `colProtocol_outV`, `colProtocol_outV_honest`, `uprob_check_uniform_le` and
+   `colProtocol_sound`, and `Language.lean`'s private `tapeEquiv` and `sampleIdx_ofFn`. Use their
+   public forms: `colProver_next_nil`, `colProver_next_cons`,
+   `colProver_next_cons_of_edgeCount_eq_zero` and `sampleIdx_ofFn_eq_rejectionSample`.
 4. **Reuse, not copy.**
    - If a lemma you need is private elsewhere, request it in `REPORT.md` and prove a generic
      version under your prefix.
    - Disclose every copy (policy §1, duplication).
    - Do not duplicate `ColSimMachine.reply_poly`.
-   - The two-parameter coin transport is one public generic lemma, requested for promotion.
+   - The two-parameter coin transport is public and generic (its `distAdv` form, and optionally
+     its `acceptProb` form), requested for promotion.
 5. **Escalation.** A target that looks false or unprovable as stated is reported with the missing
    hypothesis or a counterexample, never patched. Gate 03g found all three provable as stated, so a
    report is a finding against pack 03g.
+   - **E-API:** a published interface (an equation) that a step needs is missing. Report it in
+     `REPORT.md` with the definition and the lemma you would need, mark the step blocked, and go
+     on with the steps that do not need it. Do not add the lemma, and do not read the body.
 6. **Budget.** Complete targets beat partial ones.
    - col-a: the decider first, then `colRep_efficientProverProof`.
    - col-b: ladder steps in the order 1, 4, 5, 2, 3, 6, then the assembly. Each step is a
@@ -466,11 +502,13 @@ The probes under seal confirm it where marked (`preship/route-probe-colb.log`,
 
 ## Environment and verification
 
-- **Environment.** Use the environment addendum attached at dispatch (v1). **Never `lake build`**,
-  and never an unfiltered `lake exe cache get`. Run one Lean process at a time
+- **Environment.** Use the environment addendum v1 (`fill-environment-addendum.md`, next to this
+  brief in `outbox/fills/3col/` on the exchange branch; also at
+  `briefs/pass-shelat-ch5-8/fills/fill-environment-addendum.md` in the repository). **Never
+  `lake build`**, and never an unfiltered `lake exe cache get`. Run one Lean process at a time
   (`scripts/lean_check_tree.sh <module>`).
-- **Build inputs** (identical for both units at the pre-ship commit; regenerate them at
-  `@ANCESTOR@` and record their counts):
+- **Build inputs** (identical for both units; regenerated at issue, at `@ANCESTOR@`; at the
+  pre-ship commit and at #210's head `fff0430c`):
   - `inputs/<unit>/order.txt`: 142 modules;
   - `roots.txt`: 66 Mathlib roots;
   - `base-sorries.txt`: 21 sorried declarations in 10 modules.
@@ -494,14 +532,16 @@ The probes under seal confirm it where marked (`preship/route-probe-colb.log`,
 - [ ] Each target: filled, partial (with its frontier), or escalated (with the reason). For col-b,
       the status of each ladder step.
 - [ ] Every new public lemma and definition (with its equation lemmas), every new `private`, and
-      every new helper module, each with its role and line count. Owned files over 1000 lines:
-      the reason.
+      every new helper module, each with its role and line count. `Protocol.lean`'s final line
+      count and the reason it passes 1000; `Simulator.lean` over 1000 lines, if so, with the
+      reason.
 - [ ] The error accounting actually used by `col_zk`, if it differs from the binding one.
 - [ ] Requested shared lemmas (the two-parameter coin transport; any private found elsewhere).
 - [ ] The reuse-not-copy screen and the rule-10 seal (sealed names, controls).
 - [ ] The final sweep tail, the axiom prints, and the lint lines (before and after).
 - [ ] The diff touches only the owned file(s) and new helper modules; the facade landing edit.
-- [ ] Prerequisites P1–P12 found missing at `@ANCESTOR@`, if any, and the steps they blocked.
+- [ ] Any prerequisite of the table found missing at `@ANCESTOR@` (expected: none), and the steps
+      it blocked (E-API).
 
 ## Pre-ship record
 
@@ -519,9 +559,47 @@ worktree, with one Lean process at a time and no build. Logs are in `preship/`; 
 | Route probe, col-b (sealed, controls C1/C2) | The bridge lines up: R1 (`exists_colSimRed_ge` + `exists_fixCoins`), R4 (the machine shape), R7 pass sealed. Mismatches: R3a (`Fin (var.eval n)` vs `Fin n`; fixed by `rw [PolyExpr.eval_var] at`, R3b), R5 (P8, P9), R6 (P5), R8 (P7) | `preship/route-probe-colb.log` |
 | Rule-10 probe, col-a (sealed, controls) | A1/A5 pass (`outV_withV`, `withV_self`); A3 (P1), A6 (P4), A4 (shadows), B1 (P12) fail sealed and pass unsealed | `preship/seal-probe-col-a.log` |
 | Lint at the base | `style_lint.py`: 20 findings (col-a 1, col-b 0, neither 19); `campaign_style_lint.py`: 4 FAIL (Machines docstrings) plus 6 facade FAILs, check-8 WARNs | `preship/lint-base.log` |
+| Review at #210's head `fff0430c` | All cited names present with the cited meaning, except P7 (`distAdv_def`, #195; now carried by #210's extension). Build inputs regenerated: unchanged (order 142, roots 66, 21 sorried declarations in 10 modules; owned files `Protocol.lean` 2, `Simulator.lean` 1). Ladder statements 1–4, `colSimRed_fixed_eq` and 6 elaborate. Sealed: `ZK_iff` intro, the coin transport (`acceptProb` and `distAdv` forms), `\|ε_B\|`, `Δ ≤ 1`, the simulator-seed transport and the step-2 unfolding pass; the triangle inequality fails without P7. Lint: 0 `style_lint` findings, 0 FAIL in `ThreeColoring/` | `review.md` and the review's scratch logs |
 
 **Not verified:**
 - the ladder statements' truth: they elaborate, but are unproved;
 - step 5's string function, which is designed by the fill;
 - the duplication probes that timed out;
-- a full all-branch search for the new public names.
+- a full all-branch search for the new public names;
+- the inputs at `@ANCESTOR@`: #210's extension touches upstream files (`Foundations/*`), so
+  regenerate them there.
+
+## Changes from review
+
+- **B1** (blocker): resolved by #210's extension (`distAdv_def`, from #195's block). Row P7 and the
+  Status updated; step 7's "Sign and triangle inequality" bullet replaced by the review's Sign,
+  Triangle and `n = 0` bullets; step 5's coin-transport sentence replaced by the `distAdv`-level
+  statement. Adapted: the review gives no name for the `distAdv` form; the brief names it
+  `ColZK.distAdv_distinguisherL_reparam` and keeps `ColZK.acceptProb_distinguisherL_reparam` for
+  the optional `acceptProb` form (ground rule 4 updated). Step 6 now points to P7 for its
+  `(1/4)^N` term.
+- **M1**: applied. "Before issue" and the prerequisite section replaced; all of P1–P12 attributed
+  to #210 (P7 through its extension, not a separate landing of #195's block). col-a's P3 sentence
+  and the last checklist item replaced; `PolyExpr.eval_mono` added.
+- **M2**: applied with the user's size exception of 2026-11-06 for `Protocol.lean` (no split, also
+  not at landing), in the Status and the "Why." bullet; the 1000-line sentence replaced; checklist
+  adjusted.
+- **M3**: applied. The lint section replaced ("Lint"; the 2026-11-05 sweep is done by #210, no lint
+  work for col-a or col-b; command corrected to the `ZeroKnowledge` directory). Ground rule 1 no
+  longer authorizes `colProtocol_sound`'s sketch. Adapted: "adds no finding" now excepts
+  `Protocol.lean`'s expected size finding.
+- **M4**: applied (rule 11 names the private and the public lemmas).
+- **m1**: applied (unit table lines at #210's head, the line-number sentence, `Protocol.lean:966–989`;
+  P10's private range dropped with M1's table).
+- **m2**: applied (step 2 tape and unfolding hints; step 7 simulator seed and the `change`-first
+  move for `D`'s coins; `ColMachines.colorVal_poly` for the decider).
+- **m3**: applied (no 3-colouring entry in the overlap file).
+- **m4**: applied (addendum in `outbox/fills/3col/`; no attachment wording remains).
+- **m5**: applied. Checkpoint defined (a push of `inbox/fills/<unit>/` with message
+  `fill <unit>: checkpoint <n>`), with the review's checkpoint schedule; E-API defined in ground
+  rule 5 (report the missing interface; do not add it).
+- **m6**: applied (pre-ship row added; inputs "regenerated at issue; at the pre-ship commit and at
+  #210's head"). The maintainer note on regenerating after #195 is kept as a "Not verified" item,
+  since #195's block now arrives through #210's extension.
+- **m7**: resolved by M3's command; the facade bullet now says the FAIL shows for the parent
+  directory.
