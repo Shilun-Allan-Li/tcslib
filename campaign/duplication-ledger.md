@@ -1088,6 +1088,7 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
+**Retired: #214 merged 2026-11-06 (`9df4a7bd`); its widening continues as AS-2 and MT-1.**
 
 **AS-2, implicit `astep` reductions by unification** (gate 105 round 2, finding 1; **acknowledged,
 the user, 2026-11-06**). `AReach.step`/`AHalt.step` leave a premise that starts at `astep`, and a

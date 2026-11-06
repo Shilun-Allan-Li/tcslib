@@ -4,3 +4,4 @@
 - 2026-11-06: **dispatched** by the user (31 sections, bundle `8aa67852…`).
 - 2026-11-06: findings: **PASS 0/0/4**; CLOSED. Minors being fixed on #223.
 - 2026-11-06: minors fixed (`09a10335`; regenerated seal: exactly the two disclosed reads); DT-1 recorded. **Clear to merge.**
+- 2026-11-06: **merged** by the user.

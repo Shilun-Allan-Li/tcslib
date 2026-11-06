@@ -17,3 +17,4 @@
 - 2026-11-06: the user ruled: land, acknowledge both majors (AS-2, MT-1); round 3 (dispositions only) staged.
 - 2026-11-06: round 3 **dispatched** by the user (13 sections, bundle `055354b3…`).
 - 2026-11-06: round 3 findings **PASS 0/0/1**; **CLOSED**. Minor 1 accepted (the 501 withdrawn; the scope table marked historical).
+- 2026-11-06: **merged** by the user.
