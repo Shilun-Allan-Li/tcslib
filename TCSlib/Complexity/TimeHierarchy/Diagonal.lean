@@ -30,8 +30,8 @@ twice. First, through the universal machine `Turing.universal`, with quadratic o
   if `g` is time constructible and `(f(n) + n + 1)² = o(g(n))`, then
   `DTIME(f) ⊊ DTIME(g + 1)`.
 
-Then in the book's form (`Complexity.time_hierarchy_book`), through the two-work-tape
-self-universal machine and its `O(t log t)` overhead: if `g` is time constructible, `n ≤ f(n)`
+Then in the book's form (`Complexity.time_hierarchy_book`), through the self-universal machine
+for two-work-tape codes and its `O(t log t)` overhead: if `g` is time constructible, `n ≤ f(n)`
 and `f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g + 1)`.
 
 ## The diagonal language
@@ -54,8 +54,7 @@ and the inputs `x = pairEncode α 1^m`: the simulation of `M` on `x` finishes wi
 ## The parameterized argument
 
 The argument is stated once, over the simulator and its overhead; the received theorem is its
-instance at `diagSim` (user authorization, 2026-10-14; design note
-`audits/evidence/u2/U2-design.md` §3).
+instance at `diagSim`.
 
 * `diagLangOf W g` is the diagonal language of an arbitrary machine `W`. It lies in
   `DTIME (g + 1)` for every `W` (`diagLangOf_mem_DTIME`), because the clocked runner counts
