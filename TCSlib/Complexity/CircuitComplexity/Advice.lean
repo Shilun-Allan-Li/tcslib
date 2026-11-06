@@ -192,14 +192,16 @@ cannot be taken verbatim: see `Complexity.DTIMEAdvice_pow_eq_empty`.
 
 **Proof sketch.** On the empty input `x = []` the machine must halt within
 `c · T 0 = 0` steps, but after `0` steps it is still in its initial configuration, whose
-state is the start state, not the halting state `none`. -/
+state is the start state, not the halting state `none`
+(`Turing.FinTM.not_computesInTime_zero`). -/
 theorem DTIMEAdvice_eq_empty_of_eq_zero {T : ℕ → ℕ} (hT : T 0 = 0) (a : ℕ → ℕ) :
     DTIMEAdvice T a = ∅ := by
   ext L
   simp only [Set.mem_empty_iff_false, iff_false]
   rintro ⟨c, α, M, -, hM⟩
-  have h := ((FinTM.computesInTime_iff _ _ _ _).mp (hM [])).1
-  simp [hT, MultiTapeTM.runFrom, MultiTapeTM.initCfg] at h
+  have h := hM []
+  simp only [List.length_nil, hT, Nat.mul_zero] at h
+  exact M.not_computesInTime_zero _ _ h
 
 /-- **The literal `DTIME(n^c)/a` is empty for `c ≥ 1`.**  With the time bound `n^c`
 taken literally, the machine gets `c' · 0^c = 0` steps on the empty input, so no

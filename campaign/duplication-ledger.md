@@ -717,7 +717,7 @@ ending in a state mismatch (`Hardness`, `NDCodeSimulator`, `NDNormalForm`, `Step
 `Contract/Basic`, `Contract/Seam`, `NTimeDiagonalizer`); composite runs at positive times
 (`UniversalK`, `NTimeHierarchy`, `Composition`, `Inclusions`); positive liveness facts
 (`state = some q₀`); and other models (NARM's `narun`, `Yap`'s `badLang`, the oracle machines).
-**Retired on #217's merge.**
+**Retired: #217 merged 2026-11-06 (`eb8cbf60`).**
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
