@@ -181,6 +181,54 @@ theorem fmult_inv_factor {n p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpn : p < 
   exact fmultNat_eq_mul_prime hp hq
     (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h)
 
+/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
+private theorem fac_foldl_replicate_false (m : ℕ) :
+    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
+  induction m with
+  | zero => rfl
+  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
+
+/-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
+(`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
+private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
+    natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
+  have h := natToList_length_listToNat (List.replicate j false ++ w)
+  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
+    fac_foldl_replicate_false, ← listToNat_eq] at h
+  exact h
+
+/-- The numeral of `1`: `natToList k 1 = (0^k ++ 1).drop 1` (`0^{k−1}1` for `k ≥ 1`, empty for
+`k = 0`). -/
+private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k false ++ [true]).drop 1 := by
+  rcases k with _ | m
+  · rw [natToList_zero]; rfl
+  · have h := fac_natToList_lead m [true]
+    rw [listToNat_eq] at h
+    exact h
+
+/-- The two `n`-bit halves of a `2n`-bit string are its two blocks:
+`(List.ofFn x).take n = List.ofFn (blocks 2 n x 0)` and `.drop n` is block `1`. -/
+private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
+    (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
+      (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
+  have h : List.ofFn x = List.ofFn (FunFamily.blocks 2 n x 0) ++ List.ofFn (FunFamily.blocks 2 n x 1) := by
+    conv_lhs => rw [← (FunFamily.blocks 2 n).symm_apply_apply x]
+    rw [FunFamily.ofFn_blocks_symm, List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
+    simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
+    rfl
+  rw [h]
+  exact ⟨List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)⟩
+
+/-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
+private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
+    (hg : PolyTimeComputable g) :
+    PolyTimeComputable fun z => [decide (listToNat (g z) ≤ 1) && decide (1 ≤ listToNat (g z))] := by
+  have h1 := H.le.comp (hg.pairEncode (polyTimeComputable_const [true]))
+  have h2 := H.le.comp ((polyTimeComputable_const [true]).pairEncode hg)
+  have hone : listToNat [true] = 1 := by rw [listToNat_eq]; rfl
+  simp only [Function.comp_def, leStr_pairEncode, hone] at h1 h2
+  exact polyTimeComputable_and h1 h2
+
 /-- **`f_mult` is easy to compute** [PS10, Theorem 33.5, "clearly computable in polynomial
 time"], given binary multiplication and comparison (`ArithmeticFP`).
 
@@ -195,7 +243,35 @@ numeral `natToList (2n) 1 = 0^{2n-1} 1` (`polyTimeComputable_unaryPoly` mapped t
 `(List.ofFn w).take n`/`.drop n` (`FunFamily.ofFn_blocks_symm`, `List.ofFn_mul`) and
 `bitsToNat = listToNat ∘ List.ofFn` (`bitsToNat_eq_listToNat`). -/
 theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
-  sorry
+  rw [FunFamily.easy_iff]
+  have hx := polyTimeComputable_pairTakePoly .var
+  have hy := polyTimeComputable_pairDropPoly .var
+  simp only [PolyExpr.eval_var] at hx hy
+  have htest := polyTimeComputable_or (fac_polyTimeComputable_isOne H hx)
+    (fac_polyTimeComputable_isOne H hy)
+  have hone : PolyTimeComputable fun z =>
+      (List.replicate (2 * (pairFstD z).length) false ++ [true]).drop 1 := by
+    have h := (polyTimeComputable_pairDropPoly (.const 1)).comp ((polyTimeComputable_const []).pairEncode
+      ((polyTimeComputable_zerosPoly (.mul (.const 2) .var)).append (polyTimeComputable_const [true])))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
+      PolyExpr.eval_var, PolyExpr.eval_mul] using h
+  refine ⟨_, polyTimeComputable_ite htest hone (H.mul.comp (hx.pairEncode hy)), fun n x => ?_⟩
+  obtain ⟨h0, h1⟩ := fac_ofFn_halves n x
+  simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate, h0, h1, mulStr_pairEncode, List.length_ofFn]
+  have hf : List.ofFn (fmult.f n x) = natToList (2 * n)
+      (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1))) := by
+    rw [fmult_f, natToList_eq]
+  rw [hf]
+  unfold fmultNat
+  rw [← bitsToNat_eq_listToNat, ← bitsToNat_eq_listToNat]
+  by_cases hc : bitsToNat (FunFamily.blocks 2 n x 0) = 1 ∨ bitsToNat (FunFamily.blocks 2 n x 1) = 1
+  · rw [if_pos hc, if_pos, fac_natToList_one]
+    simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
+    omega
+  · rw [if_neg hc, if_neg, ← two_mul]
+    simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
+    omega
 
 /-! ## The factoring assumption [PS10, Assumption 30.1] -/
 
@@ -497,13 +573,6 @@ private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N %
   rw [listToNat_natToList_eq_mod, hl] at h
   exact h.symm
 
-/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
-private theorem fac_foldl_replicate_false (m : ℕ) :
-    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
-  induction m with
-  | zero => rfl
-  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
-
 /-- **The fallback numeral of `SamplePrime`**: the `k`-bit numeral of `2` is `0^{k+2}` followed
 by `10`, with its first two bits dropped (`0^{k−2}10` for `k ≥ 2`, `0` for `k = 1`, empty for
 `k = 0`). -/
@@ -762,15 +831,6 @@ def samplePairRaw (z : List Bool) : List Bool :=
   samplePairOut (max (NUPPT.inParam z).length 2) (le_max_right _ _)
     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).take (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).drop (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
-
-/-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
-(`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
-private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
-    natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
-  have h := natToList_length_listToNat (List.replicate j false ++ w)
-  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
-    fac_foldl_replicate_false, ← listToNat_eq] at h
-  exact h
 
 /-- A two-bit value `v`, read from the word `w`, as a `k`-bit numeral (`k ≥ 2`):
 `natToList k v = (0^k).drop 2 ++ w`. -/
