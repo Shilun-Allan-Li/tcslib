@@ -141,7 +141,7 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
       rintro ⟨v, h1, h2, -⟩; omega
     rw [decide_eq_false hno]
     refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hU, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hU, ↓reduceIte]
     exact MHalt.ret rfl (g_of hbd ⟨le_rfl, by omega⟩ _)
   · have hlt : S.U < S.K := by omega
     have hsplit : (∃ v, S.U ≤ v ∧ v < S.K ∧ M (cell S.Bs v) = true ∧
@@ -167,10 +167,10 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
         (decide (∃ v, S.U + 1 ≤ v ∧ v < S.K ∧ M (cell S.Bs v) = true ∧
           orc 3 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits S.s))) = true)) := by
       refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs
+      simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
       exact rest
     refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs; rw [if_neg hU]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hU]
     have hac := ac_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) .fU S M hbd hT
       hT2 hZ (by simp [Site.idx]; omega) (by simp [Site.idx]; omega)
     simp only [Site.set, Site.idx, St.toV_U, Bool.false_or, Bool.false_eq_true, ↓reduceIte,
@@ -188,7 +188,7 @@ theorem fscan_run : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S.U = j →
     by_cases hb : M (cell S.Bs S.U) = true
     · simp only [hb, ↓reduceIte]
       refine stepH_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep, vword_whole₂]; regs
+      simp only [astep_call (A := fun _ => Ins.call _ _ _ _ _) rfl, vword_whole₂]; regs
       by_cases ha : orc 3 (pairEncode x (pairEncode (Nat.bits S.U) (Nat.bits S.s))) = true
       · simp only [ha, ↓reduceIte]
         rw [decide_eq_true ⟨S.U, le_rfl, hlt, hb, ha⟩]
@@ -410,7 +410,7 @@ theorem iter_run {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace L
     simp only [St.Bd, hS4, wkSt, St.zero, st3]; simp; omega
   refine (((hw1.trans hr1).trans hA2).trans (hw2.trans hr2)).halt ?_
   refine stepH_of rfl hbdE hp0 ?_
-  simp only [astep]; regs
+  simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs
   have hc1' : ({ S4 with U := S4.K, c := c2 } : St).c1 = c1 := rfl
   have hS4c1 : S4.c1 = c1 := rfl
   by_cases heq : c2 = c1

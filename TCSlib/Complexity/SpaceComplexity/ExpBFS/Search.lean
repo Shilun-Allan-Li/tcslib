@@ -111,9 +111,9 @@ theorem rounds_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), unma
   refine ex1_pre (b := ?b6) ?p6 ?q6
   case p6 =>
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs
+    simp only [astep_clr (A := fun _ => Ins.clr _ _) rfl]; regs
     refine step_of rfl hbd0 ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs
+    simp only [astep_clr (A := fun _ => Ins.clr _ _) rfl]; regs
     exact MReach.refl _
   obtain ⟨M1, c1, hr1, hm1, ho1, hc1, hq1, hcl1, he1, hn1⟩ :=
     outer_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) φ (S.K - 0)
@@ -128,7 +128,7 @@ theorem rounds_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), unma
   case p7 =>
     refine cont (st' := { S with U := S.K, ch := c1 }) (by ext <;> simp) ?_
     refine step_of rfl hbd1 ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs
+    simp only [astep_jz (A := fun _ => Ins.jz _ _ _) rfl]; regs
     exact MReach.refl _
   by_cases e : M1 = M
   · have hc0 : c1 = 0 := he1 e
@@ -177,12 +177,12 @@ theorem count_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
   obtain ⟨hbd, hB1, hP1, hK1⟩ := hS
   by_cases hU : S.U = S.K
   · refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hU, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hU, ↓reduceIte]
     refine reach_cf (MReach.refl _) ?_ rfl
     ext <;> simp [hU]
   · have hlt : S.U < S.K := by omega
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs; rw [if_neg hU]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hU]
     have hac := ac_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) (.cU φ) S M hbd hT
       hT2 hZ (by simp [Site.idx]; omega) (by simp [Site.idx]; omega)
     simp only [Site.set, Site.idx, St.toV_U, Bool.false_or, Bool.false_eq_true, ↓reduceIte,
@@ -195,9 +195,9 @@ theorem count_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
       have hbd2 : St.Bd B { S with U := S.U + 1, c := S.c + 1 } := by
         simp only [St.Bd] at hbd ⊢; omega
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs
+      simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
       refine step_of rfl hbd1 ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs
+      simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
       exact reach_cf (ih (S.K - (S.U + 1)) (by omega) { S with U := S.U + 1, c := S.c + 1 } M
         rfl (by simp only; omega) hT hT2 hZ (by simp only; omega) ⟨hbd2, hB1, hP1, hK1⟩)
         (by ext <;> simp; omega) rfl
@@ -205,7 +205,7 @@ theorem count_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
       simp only [hb, Bool.false_eq_true, ↓reduceIte, zero_add]
       have hbd1 : St.Bd B { S with U := S.U + 1 } := by simp only [St.Bd] at hbd ⊢; omega
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs
+      simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
       exact reach_cf (ih (S.K - (S.U + 1)) (by omega) { S with U := S.U + 1 } M rfl
         (by simp only; omega) hT hT2 hZ (by simp only; omega) ⟨hbd1, hB1, hP1, hK1⟩)
         (by ext <;> simp) rfl
@@ -263,7 +263,7 @@ theorem search_run (φ : Bool) (S : St) (M : ℤ → Bool) (hU : S.U = 0) (hV : 
   refine (hr1.trans hr2).trans ?_
   have hbdK0 : St.Bd B { S with U := S.K, ch := 0 } := by simp only [St.Bd] at hbd ⊢; omega
   refine step_of rfl hbdK0 ⟨le_rfl, by omega⟩ ?_
-  simp only [astep]; regs
+  simp only [astep_clr (A := fun _ => Ins.clr _ _) rfl]; regs
   have hcnt := count_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) φ (S.K - 0)
     { S with U := 0, ch := 0 } M2 (by simp) (by simp) hT hT2 hZ (by simp [hc])
     ⟨by simp only [St.Bd] at hbd ⊢; omega, hB1, hP1, hK1⟩
