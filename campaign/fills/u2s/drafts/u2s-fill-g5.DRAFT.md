@@ -46,20 +46,20 @@
     (`Turing.embedEmitTM`, `Build/Embed`);
   - the fill-environment addendum `campaign/standards/fill-environment-addendum.md` (**v2.6**) and
     the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
-  - **this round's inputs** (`campaign/fills/u2s/inputs/u2s-fill-g5/`, all `@TBD@`):
-    - the overlay (your file with region (a)'s import): `@TBD@.lean.txt`;
-    - the import probe: `@TBD@.lean.txt` (`@TBD@` checks of `@TBD@` names, and the axiom prints);
+  - **this round's inputs** (`campaign/fills/u2s/inputs/u2s-fill-g5/`):
+    - the overlay (your file with region (a)'s import): `TwoTapesOverlay.lean.txt`;
+    - the import probe: `G5ImportProbe.lean.txt` (213 `#check`s, every name this brief cites);
     - the route probe with its seal and controls: `G5Route.lean.txt`, `G5RouteSealed.lean.txt`,
       `G5RouteCtl_unsealed.lean.txt`, `G5RouteCtl_sealed.lean.txt` (drafted 2026-11-06,
       `campaign/fills/u2s/drafts/u2s-fill-g5/route/`; re-run on the merged tree at issue);
     - the semantic-duplication probe: `G5RouteExact.lean.txt`;
-    - the screen population `screen-population.txt` (`@TBD@` files);
+    - the screen population `screen-population.txt` (21 files);
     - the order list `campaign/fills/u2s/orders/u2s-fill-g5.txt`, the base sorry set, the screen
-      base and the pre-ship log (`campaign/fills/u2s/logs/u2s-fill-g5-*`, `@TBD@`).
+      base and the pre-ship log (`campaign/fills/u2s/logs/u2s-fill-g5-*`).
 - The design records: `campaign/items/u2/G5-statements-plan.md` (§1–§3, §6–§7);
   `campaign/items/u2/U2-design.md` §1 and §4; `machine-library-design.md` §13d (G3–G5) and §14.
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule. Fetch
-  the cache for your roots only (`@TBD@` Mathlib roots); never the unfiltered
+  the cache for your roots only (42 Mathlib roots); never the unfiltered
   `lake exe cache get`. If Lean never runs, do not draft proofs blind: deliver the environment
   report only.
 - **Branch at exactly that commit, not at the campaign tip:**
@@ -148,8 +148,9 @@ within `c · (t + 1)(log₂(t + 1) + 1)` steps, and every completed output of `M
 
 Your regions, all in `TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean`:
 - **(a) the imports**, as your first edit: add exactly
-  `import TCSlib.Complexity.TuringMachine.Build.ZoneStep` after line 8 (the overlay; `@TBD@`: the
-  import probe fixes the list). No other import.
+  `import TCSlib.Complexity.TuringMachine.Build.ZoneStep` after line 8 (the overlay). No other
+  import: `Build/Embed` (R1) is already in your closure, and the import probe resolves every cited
+  name through these four.
 - **(b) your home**, the blank line 49, between `namespace Turing.FinTM` (48) and the target's
   docstring (50): your `private` declarations, under the prefix `tt_` (unused at the drafting base
   on the campaign and on all 201 PR heads). Section comments (`/-! ### … -/`) are allowed; no
@@ -226,7 +227,7 @@ theorem two_work_tapes_run (M : FinTM Bool) :
 
 ## The published API you cite (binding)
 
-All public and proved at `@ANCESTOR@`; the import probe checks every name (`@TBD@`). Cite these;
+All public and proved at `@ANCESTOR@`; the import probe checks every name (213). Cite these;
 never re-prove one, and never restate one as a private.
 
 - **The track step and the amortization** (`Build/ZoneStep`): `Turing.exists_zoneTrackStepTM`
@@ -585,7 +586,7 @@ the axiom walk: `sorryAx` reaches the target only through its own open body.
 - Run the v3 screen **before and after**, one run at a time, under `nice -n 10`, each on a
   frozen copy of its commit (`git worktree add <dir> HEAD`). The before screen, after your first
   edit, must equal the screen base (the overlay changes only an import).
-- **The population** is `@TBD@` files
+- **The population** is 21 files
   (`campaign/fills/u2s/inputs/u2s-fill-g5/screen-population.txt`):
   - your file;
   - the files the route cites: `Build/ZoneStep`, `Build/ZoneRebalance`, `Build/ZoneTape`,
@@ -625,9 +626,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   - **RN-1**, renamed configurations converted field by field: canonical
     `Cfg.mapState_eq_of_fields`. No five-line `Cfg.ext`/`Cfg.mapState_*` block.
   - **WS-1**, one step keeps a configuration in a window, and window monotonicity: canonical
-    `Cfg.InWindow.apply_iff`, `Cfg.InWindow.mono` (`Build/CfgRecord`, published by #196, not yet
-    merged at drafting: `@TBD@` whether your base has them). Your bound is on time, so expect no
-    member; for a head bound use `Contract.time_envelope`.
+    `Cfg.InWindow.apply_iff`, `Cfg.InWindow.mono` (`Build/CfgRecord`, merged with #196). They are
+    at your base but not in your imports, and no import may be added. Your bound is on time, so
+    expect no member; for a head bound use `Contract.time_envelope`.
   - **RI-1** (retired), the round iteration along a sequence: canonical `Round.iterate_seq`.
     Your iteration cites its generalization `Segment.iterate_seq` (#202).
   - **FH-1**, the first halting time: canonical `MultiTapeTM.exists_first_halt`; never `Nat.find`
@@ -645,12 +646,12 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; the cache for your roots only (`@TBD@` roots, addendum v2.6
+- Lean 4 v4.25.0, mathlib pinned; the cache for your roots only (42 roots, addendum v2.6
   Part 1); **never `lake build`**; `scripts/lean_check_tree.sh` for every check, one Lean process
   at a time.
-- **Bootstrap** from `campaign/fills/u2s/orders/u2s-fill-g5.txt` (`@TBD@` modules, computed on the
+- **Bootstrap** from `campaign/fills/u2s/orders/u2s-fill-g5.txt` (105 modules, computed on the
   overlay), after your first edit, logging each module's start and end time and maximum memory.
-  **The base sorry-warning set** has `@TBD@` entries in `@TBD@` modules
+  **The base sorry-warning set** has 22 entries in 9 modules
   (`campaign/fills/u2s/logs/u2s-fill-g5-base-sorries.txt`); yours is `TwoTapes`' one. Record the
   base list by name first, and report any difference.
 - **Final checks:**
@@ -658,20 +659,21 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
      other warning in anything you added.
   2. Every other module of the order list: zero errors, and sorry warnings exactly the base's
      minus yours.
-  3. Re-run the import probe (`@TBD@.lean.txt`), extended by every further name you cite: 0
+  3. Re-run the import probe (`G5ImportProbe.lean.txt`), extended by every further name you cite: 0
      errors.
 - **Axiom prints** (a scratch copy of your module with `#print axioms` appended) for
   `two_work_tapes_run`, `two_work_tapes_binary` and every new private, and for
   `Turing.universal_TlogT` (in a probe importing `UniversalTlogT`): within
   `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine`, 0 FAIL
-  (base: `@TBD@`), and the policy linter on your file. No new line over 100 characters.
+  (base: 0 FAIL, 71 WARN over 92 files), and the policy linter on your file (base: 0 findings).
+  No new line over 100 characters.
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 
-Everything in the base sorry set except your target (`@TBD@`; at drafting, the campaign's other
-`sorry`s were `Build/RecordTable`'s four, `TQBF`'s, `RAMSimulation`'s, `Hierarchy`'s and
-`Savitch`'s, of which only those in your order list appear). If a proof seems to *need* one of
+Everything in the base sorry set except your target: 21 entries in 8 modules, `Simulation` 1,
+`Composition` 3, `Build/Wrappers` 2, `Build/Loop` 5, `Encoding` 1, `ClassP/TimeConstructible` 2,
+`Build/Primitives` 3 and `Build/RecordTable` 4. If a proof seems to *need* one of
 them, that is an escalation, not a license.
 
 ## Known pitfalls at this pin

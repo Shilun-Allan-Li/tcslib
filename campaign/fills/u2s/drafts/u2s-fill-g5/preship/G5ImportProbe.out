@@ -1,0 +1,948 @@
+Turing.exists_zoneTrackStepTM : ∀ (k : ℕ),
+  ∃ A,
+    ∀ (dir : Bool) (t : Fin k),
+      ∃ S x x M entry X,
+        none ∉ X ∧
+          ∀ (x : List (Turing.ZoneSym k)),
+            ∃ R,
+              R.pre = Turing.zoneRowPre ∧
+                ∀ (D : Turing.ZoneData k) (d : Turing.Cfg 2 (Turing.ZoneSym k) S x),
+                  d.state = some entry →
+                    Turing.zoneRowPre D d →
+                      R.time D d ≤ A * (2 ^ Turing.zoneRebalanceIndex dir t D + 1) ∧
+                        Turing.zoneRowPre (Turing.zoneTrackStepData dir t D) (R.post D d) ∧
+                          (R.post D d).workTapePos 1 = d.workTapePos 1 ∧
+                            (R.post D d).inputPos = d.inputPos ∧ (R.post D d).output = d.output
+@Turing.zoneTrackStepData : {k : ℕ} → Bool → Fin k → Turing.ZoneData k → Turing.ZoneData k
+@Turing.zoneTrackStepData_of_lt : ∀ {k : ℕ} (dir : Bool) (t : Fin k) {D : Turing.ZoneData k},
+  Turing.zoneRebalanceIndex dir t D < D.fst → Turing.zoneTrackStepData dir t D = Turing.zoneRebalanceData dir t D
+@Turing.zoneTrackStepData_of_not_lt : ∀ {k : ℕ} (dir : Bool) (t : Fin k) {D : Turing.ZoneData k},
+  ¬Turing.zoneRebalanceIndex dir t D < D.fst →
+    Turing.zoneTrackStepData dir t D = Turing.zoneRebalanceData dir t (Turing.zoneExtendData D)
+Turing.sum_two_pow_le_of_count : ∀ (T L : ℕ) (idx : ℕ → ℕ),
+  (∀ s < T, idx s ≤ L) →
+    (∀ i < L, {s ∈ Finset.range T | i < idx s}.card ≤ T / 2 ^ i + 1) →
+      ∑ s ∈ Finset.range T, 2 ^ idx s ≤ (L + 1) * T + 2 ^ L
+Turing.sum_cost_le_of_count : ∀ (k T L A B : ℕ) (idx : Fin k → ℕ → ℕ) (cost : ℕ → ℕ),
+  (∀ s < T, cost s ≤ B + A * ∑ t, (2 ^ idx t s + 1) + k) →
+    (∀ (t : Fin k), ∀ s < T, idx t s ≤ L) →
+      (∀ (t : Fin k), ∀ i < L, {s ∈ Finset.range T | i < idx t s}.card ≤ T / 2 ^ i + 1) →
+        ∑ s ∈ Finset.range T, cost s ≤ B * T + k * (A * ((L + 2) * T + 2 ^ L) + T)
+Turing.ZoneData : ℕ → Type
+@Turing.zoneRowPre : {k : ℕ} →
+  {S : Type} → {x : List (Turing.ZoneSym k)} → Turing.ZoneData k → Turing.Cfg 2 (Turing.ZoneSym k) S x → Prop
+@Turing.zoneRowPre_iff : ∀ {k : ℕ} {S : Type} {x : List (Turing.ZoneSym k)} (D : Turing.ZoneData k)
+  (d : Turing.Cfg 2 (Turing.ZoneSym k) S x),
+  Turing.zoneRowPre D d ↔
+    d.workTapes 0 = Turing.zonedTape D.snd ∧ d.workTapePos 0 = 0 ∧ ∀ (q : ℤ), d.workTapes 1 q = none
+@Turing.zoneRowPre_congr : ∀ {k : ℕ} {S S' : Type} {x : List (Turing.ZoneSym k)} (D : Turing.ZoneData k)
+  {d : Turing.Cfg 2 (Turing.ZoneSym k) S x} {d' : Turing.Cfg 2 (Turing.ZoneSym k) S' x},
+  d.workTapes = d'.workTapes → d.workTapePos 0 = d'.workTapePos 0 → (Turing.zoneRowPre D d ↔ Turing.zoneRowPre D d')
+@Turing.zoneRowPre_mapState_iff : ∀ {k : ℕ} {S S' : Type} {x : List (Turing.ZoneSym k)} (D : Turing.ZoneData k)
+  (f : S → S') (d : Turing.Cfg 2 (Turing.ZoneSym k) S x),
+  Turing.zoneRowPre D (Turing.Cfg.mapState f d) ↔ Turing.zoneRowPre D d
+@Turing.zoneRebalanceIndex : {k : ℕ} → Bool → Fin k → Turing.ZoneData k → ℕ
+@Turing.zoneRebalanceIndex_eq : ∀ {k : ℕ} (dir : Bool) (t : Fin k) (D : Turing.ZoneData k),
+  Turing.zoneRebalanceIndex dir t D = Turing.zoneShiftIndex dir (D.snd t)
+@Turing.zoneRebalanceIndex_le : ∀ {k : ℕ} (dir : Bool) (t : Fin k) (D : Turing.ZoneData k),
+  Turing.zoneRebalanceIndex dir t D ≤ D.fst
+@Turing.zoneRebalanceData : {k : ℕ} → Bool → Fin k → Turing.ZoneData k → Turing.ZoneData k
+@Turing.zoneExtendData : {k : ℕ} → Turing.ZoneData k → Turing.ZoneData k
+@Turing.zoneRebalancePost : {k : ℕ} →
+  Bool →
+    Fin k →
+      {S : Type} →
+        {x : List (Turing.ZoneSym k)} →
+          S → S → Turing.ZoneData k → Turing.Cfg 2 (Turing.ZoneSym k) S x → Turing.Cfg 2 (Turing.ZoneSym k) S x
+@Turing.zoneExtendPost : {k : ℕ} →
+  {S : Type} →
+    {x : List (Turing.ZoneSym k)} →
+      S → Turing.ZoneData k → Turing.Cfg 2 (Turing.ZoneSym k) S x → Turing.Cfg 2 (Turing.ZoneSym k) S x
+@Turing.zoneRebalanceData_of_short : ∀ {k : ℕ} (dir : Bool) (t : Fin k) (D : Turing.ZoneData k),
+  ¬Turing.zoneRebalanceIndex dir t D < D.fst → Turing.zoneRebalanceData dir t D = D
+@Turing.zoneRebalanceIndex_extend_of_short : ∀ {k : ℕ} (dir : Bool) (t : Fin k) (D : Turing.ZoneData k),
+  ¬Turing.zoneRebalanceIndex dir t D < D.fst → Turing.zoneRebalanceIndex dir t (Turing.zoneExtendData D) = D.fst
+Turing.exists_zoneRebalanceTM : ∀ (k : ℕ),
+  ∃ C,
+    ∀ (dir : Bool) (t : Fin k),
+      ∃ S x x M entry done short,
+        done ≠ short ∧
+          ∀ (x : List (Turing.ZoneSym k)),
+            ∃ R,
+              R.pre = Turing.zoneRowPre ∧
+                R.post = Turing.zoneRebalancePost dir t done short ∧
+                  R.lo = Turing.zoneRowLo (Turing.zoneRebalanceIndex dir t) C ∧
+                    R.hi = Turing.zoneRowHi (Turing.zoneRebalanceIndex dir t) C ∧
+                      ∀ (D : Turing.ZoneData k) (d : Turing.Cfg 2 (Turing.ZoneSym k) S x),
+                        d.state = some entry → R.pre D d → R.time D d ≤ C * (2 ^ Turing.zoneRebalanceIndex dir t D + 1)
+Turing.exists_zoneExtendTM : ∀ (k : ℕ),
+  ∃ C S x x M entry done,
+    ∀ (x : List (Turing.ZoneSym k)),
+      ∃ R,
+        R.pre = Turing.zoneRowPre ∧
+          R.post = Turing.zoneExtendPost done ∧
+            R.lo = Turing.zoneRowLo (fun D => D.fst) C ∧
+              R.hi = Turing.zoneRowHi (fun D => D.fst) C ∧
+                ∀ (D : Turing.ZoneData k) (d : Turing.Cfg 2 (Turing.ZoneSym k) S x),
+                  d.state = some entry → R.pre D d → R.time D d ≤ C * (2 ^ D.fst + 1)
+Turing.ZoneCell : ℕ → Type
+Turing.ZoneSym : ℕ → Type
+@Turing.zoneCellOfCell : {k : ℕ} → Option (Turing.ZoneSym k) → Turing.ZoneCell k
+@Turing.zoneCellOfCell_inr : ∀ {k : ℕ} (c : Turing.ZoneCell k), Turing.zoneCellOfCell (some (Sum.inr c)) = c
+@Turing.zoneCellOfCell_inl : ∀ {k : ℕ} (b : Bool), Turing.zoneCellOfCell (some (Sum.inl b)) = fun x => none
+@Turing.zoneCellOfCell_none : ∀ {k : ℕ}, Turing.zoneCellOfCell none = fun x => none
+Turing.zoneStart_eq : ∀ (i : ℕ), Turing.zoneStart i = 2 ^ (i + 1) + i
+@Turing.zonedTape : {k ℓ : ℕ} → (Fin k → Turing.ZoneContents ℓ) → ℤ → Option (Turing.ZoneSym k)
+@Turing.zonedTape_zero : ∀ {k ℓ : ℕ} (z : Fin k → Turing.ZoneContents ℓ),
+  Turing.zonedTape z 0 = some (Sum.inr fun t => some (z t).home)
+@Turing.zonedTape_blank_outside : ∀ {k ℓ : ℕ} (z : Fin k → Turing.ZoneContents ℓ) (c : ℤ),
+  ↑(Turing.zoneStart ℓ) - 1 ≤ |c| → Turing.zonedTape z c = none
+@Turing.zonedTape_homeWrite : ∀ {k ℓ : ℕ} (z : Fin k → Turing.ZoneContents ℓ) (v : Fin k → Option Bool),
+  Function.update (Turing.zonedTape z) 0 (some (Sum.inr fun t => some (v t))) =
+    Turing.zonedTape fun t => Turing.zoneHomeWrite (z t) (v t)
+Turing.zoneCapacity_eq : ∀ (i : ℕ), Turing.zoneCapacity i = 2 * 2 ^ i
+Turing.ZoneContents : ℕ → Type
+Turing.ZoneContents.empty : (ℓ : ℕ) → Turing.ZoneContents ℓ
+Turing.ZoneContents.empty_home : ∀ (ℓ : ℕ), (Turing.ZoneContents.empty ℓ).home = none
+Turing.ZoneContents.empty_left : ∀ (ℓ : ℕ) (x : Fin ℓ), (Turing.ZoneContents.empty ℓ).left x = []
+Turing.ZoneContents.empty_right : ∀ (ℓ : ℕ) (x : Fin ℓ), (Turing.ZoneContents.empty ℓ).right x = []
+@Turing.ZoneContents.words_true : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ), Turing.ZoneContents.words true z = z.right
+@Turing.ZoneContents.words_false : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ), Turing.ZoneContents.words false z = z.left
+@Turing.ZoneContents.extend : {ℓ : ℕ} → Turing.ZoneContents ℓ → Turing.ZoneContents (ℓ + 1)
+@Turing.ZoneContents.extend_words_castSucc : ∀ {ℓ : ℕ} (side : Bool) (z : Turing.ZoneContents ℓ) (i : Fin ℓ),
+  Turing.ZoneContents.words side z.extend i.castSucc = Turing.ZoneContents.words side z i
+@Turing.ZoneContents.extend_words_last : ∀ {ℓ : ℕ} (side : Bool) (z : Turing.ZoneContents ℓ),
+  Turing.ZoneContents.words side z.extend (Fin.last ℓ) = List.replicate (2 ^ ℓ) none
+@Turing.zoneHomeWrite : {ℓ : ℕ} → Turing.ZoneContents ℓ → Option Bool → Turing.ZoneContents ℓ
+@Turing.zoneHomeWrite_home : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (v : Option Bool),
+  (Turing.zoneHomeWrite z v).home = v
+@Turing.zoneHomeWrite_left : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (v : Option Bool) (a : Fin ℓ),
+  (Turing.zoneHomeWrite z v).left a = z.left a
+@Turing.zoneHomeWrite_right : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (v : Option Bool) (a : Fin ℓ),
+  (Turing.zoneHomeWrite z v).right a = z.right a
+@Turing.zoneShiftIndex_le : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ), Turing.zoneShiftIndex dir z ≤ ℓ
+@Turing.zoneShiftIndex_empty : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ) (i : Fin ℓ),
+  ↑i < Turing.zoneShiftIndex dir z → Turing.ZoneContents.words dir z i = []
+@Turing.zoneShiftIndex_nonempty : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ)
+  (h : Turing.zoneShiftIndex dir z < ℓ), Turing.ZoneContents.words dir z ⟨Turing.zoneShiftIndex dir z, h⟩ ≠ []
+@Turing.zoneShiftIndex_eq : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ) (j : ℕ) (hj : j < ℓ),
+  (∀ (i : Fin ℓ), ↑i < j → Turing.ZoneContents.words dir z i = []) →
+    Turing.ZoneContents.words dir z ⟨j, hj⟩ ≠ [] → Turing.zoneShiftIndex dir z = j
+@Turing.zoneShiftIndex_eq_length_iff : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ),
+  Turing.zoneShiftIndex dir z = ℓ ↔ ∀ (i : Fin ℓ), Turing.ZoneContents.words dir z i = []
+@Turing.zoneShiftIndex_extend : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ),
+  Turing.zoneShiftIndex dir z = ℓ → Turing.zoneShiftIndex dir z.extend = ℓ
+@Turing.zoneShiftIndex_extend_of_lt : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ),
+  Turing.zoneShiftIndex dir z < ℓ → Turing.zoneShiftIndex dir z.extend = Turing.zoneShiftIndex dir z
+@Turing.zoneRebalance_of_lt : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ),
+  Turing.zoneShiftIndex dir z < ℓ → Turing.zoneRebalance dir z = Turing.zoneCascade dir (Turing.zoneShiftIndex dir z) z
+@Turing.zoneRebalance_of_le : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ),
+  ℓ ≤ Turing.zoneShiftIndex dir z → Turing.zoneRebalance dir z = z
+@Turing.zoneRebalance_frame : ∀ {ℓ : ℕ} (dir : Bool) (z : Turing.ZoneContents ℓ) (k : Fin ℓ),
+  Turing.zoneShiftIndex dir z < ↑k →
+    (Turing.zoneRebalance dir z).left k = z.left k ∧ (Turing.zoneRebalance dir z).right k = z.right k
+@Turing.zoneCascade_true : ∀ {ℓ : ℕ} (j : ℕ) (z : Turing.ZoneContents ℓ),
+  Turing.zoneCascade true j z = Turing.zoneCascadeRight j z
+@Turing.zoneCascade_false : ∀ {ℓ : ℕ} (j : ℕ) (z : Turing.ZoneContents ℓ),
+  Turing.zoneCascade false j z = Turing.zoneCascadeLeft j z
+@Turing.zoneCascadeRight_lengths : ∀ {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : Turing.ZoneContents ℓ),
+  (∀ (k : ℕ) (hk : k < j), z.right ⟨k, ⋯⟩ = []) →
+    (∀ (k : ℕ) (hk : k < j), (z.left ⟨k, ⋯⟩).length = Turing.zoneCapacity k) →
+      2 ^ j ≤ (z.right ⟨j, hj⟩).length →
+        (z.left ⟨j, hj⟩).length + 2 ^ j ≤ Turing.zoneCapacity j →
+          (∀ (k : ℕ) (hk : k < j),
+              ((Turing.zoneCascadeRight j z).right ⟨k, ⋯⟩).length = 2 ^ k ∧
+                ((Turing.zoneCascadeRight j z).left ⟨k, ⋯⟩).length = 2 ^ k) ∧
+            ((Turing.zoneCascadeRight j z).right ⟨j, hj⟩).length = (z.right ⟨j, hj⟩).length - 2 ^ j ∧
+              ((Turing.zoneCascadeRight j z).left ⟨j, hj⟩).length = (z.left ⟨j, hj⟩).length + 2 ^ j
+@Turing.zoneCascadeLeft_lengths : ∀ {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : Turing.ZoneContents ℓ),
+  (∀ (k : ℕ) (hk : k < j), z.left ⟨k, ⋯⟩ = []) →
+    (∀ (k : ℕ) (hk : k < j), (z.right ⟨k, ⋯⟩).length = Turing.zoneCapacity k) →
+      2 ^ j ≤ (z.left ⟨j, hj⟩).length →
+        (z.right ⟨j, hj⟩).length + 2 ^ j ≤ Turing.zoneCapacity j →
+          (∀ (k : ℕ) (hk : k < j),
+              ((Turing.zoneCascadeLeft j z).left ⟨k, ⋯⟩).length = 2 ^ k ∧
+                ((Turing.zoneCascadeLeft j z).right ⟨k, ⋯⟩).length = 2 ^ k) ∧
+            ((Turing.zoneCascadeLeft j z).left ⟨j, hj⟩).length = (z.left ⟨j, hj⟩).length - 2 ^ j ∧
+              ((Turing.zoneCascadeLeft j z).right ⟨j, hj⟩).length = (z.right ⟨j, hj⟩).length + 2 ^ j
+@Turing.zoneTrackTape_zero : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ), Turing.zoneTrackTape z 0 = z.home
+Turing.zoneTrackTape_empty : ∀ (ℓ : ℕ), Turing.zoneTrackTape (Turing.ZoneContents.empty ℓ) = fun x => none
+@Turing.zoneTrackTape_homeWrite : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (v : Option Bool) (p : ℤ),
+  Turing.zoneTrackTape (Turing.zoneHomeWrite z v) p = if p = 0 then v else Turing.zoneTrackTape z p
+@Turing.zoneTrackTape_extend : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ),
+  Turing.zoneTrackTape z.extend = Turing.zoneTrackTape z
+@Turing.zoneTrackTape_rebalance_right : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (h : Turing.zoneShiftIndex true z < ℓ),
+  (∀ (k : ℕ) (hk : k < Turing.zoneShiftIndex true z), (z.left ⟨k, ⋯⟩).length = Turing.zoneCapacity k) →
+    (z.left ⟨Turing.zoneShiftIndex true z, h⟩).length + 2 ^ (Turing.zoneShiftIndex true z - 1) ≤
+        Turing.zoneCapacity (Turing.zoneShiftIndex true z) →
+      ∀ (p : ℤ), Turing.zoneTrackTape (Turing.zoneRebalance true z) p = Turing.zoneTrackTape z (p + 1)
+@Turing.zoneTrackTape_rebalance_left : ∀ {ℓ : ℕ} (z : Turing.ZoneContents ℓ) (h : Turing.zoneShiftIndex false z < ℓ),
+  (∀ (k : ℕ) (hk : k < Turing.zoneShiftIndex false z), (z.right ⟨k, ⋯⟩).length = Turing.zoneCapacity k) →
+    (z.right ⟨Turing.zoneShiftIndex false z, h⟩).length + 2 ^ (Turing.zoneShiftIndex false z - 1) ≤
+        Turing.zoneCapacity (Turing.zoneShiftIndex false z) →
+      ∀ (p : ℤ), Turing.zoneTrackTape (Turing.zoneRebalance false z) p = Turing.zoneTrackTape z (p - 1)
+@Turing.ZoneContents.words : {ℓ : ℕ} → Bool → Turing.ZoneContents ℓ → Fin ℓ → List (Option Bool)
+Turing.zoneCapacity : ℕ → ℕ
+@Turing.zoneCascade : {ℓ : ℕ} → Bool → ℕ → Turing.ZoneContents ℓ → Turing.ZoneContents ℓ
+@Turing.zoneRebalance : {ℓ : ℕ} → Bool → Turing.ZoneContents ℓ → Turing.ZoneContents ℓ
+@Turing.zoneShiftIndex : {ℓ : ℕ} → Bool → Turing.ZoneContents ℓ → ℕ
+@Turing.zoneTrackTape : {ℓ : ℕ} → Turing.ZoneContents ℓ → ℤ → Option Bool
+@Turing.Contract : {k : ℕ} → {Γ S : Type} → Turing.MultiTapeTM k Γ S → S → Set (Option S) → Type → List Γ → Type
+@Turing.Contract.live : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S} {exits : Set (Option S)}
+  {ι : Type} {x : List Γ} (C : Turing.Contract M entry exits ι x) (i : ι) (d : Turing.Cfg k Γ S x),
+  d.state = some entry → C.pre i d → ∀ {u : ℕ}, u < C.time i d → (Turing.MultiTapeTM.runFrom d u).state ≠ none
+@Turing.Contract.segment : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S} {exits : Set (Option S)}
+  {ι : Type} {x : List Γ} (C : Turing.Contract M entry exits ι x) (i : ι) (d : Turing.Cfg k Γ S x),
+  d.state = some entry →
+    C.pre i d → Turing.Segment M exits (Turing.HeadBox (C.lo i d) (C.hi i d)) d (C.post i d) (C.time i d)
+@Turing.Contract.ofSegment : {k : ℕ} →
+  {Γ S : Type} →
+    {M : Turing.MultiTapeTM k Γ S} →
+      {entry : S} →
+        {exits : Set (Option S)} →
+          {ι : Type} →
+            {x : List Γ} →
+              (pre : ι → Turing.Cfg k Γ S x → Prop) →
+                (time : ι → Turing.Cfg k Γ S x → ℕ) →
+                  (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x) →
+                    (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ) →
+                      (∀ (i : ι) (d : Turing.Cfg k Γ S x),
+                          d.state = some entry →
+                            pre i d →
+                              Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d)) →
+                        (∀ (i : ι) (d : Turing.Cfg k Γ S x),
+                            d.state = some entry → pre i d → (post i d).state ∈ exits) →
+                          Turing.Contract M entry exits ι x
+@Turing.Contract.ofSegment_pre : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (pre : ι → Turing.Cfg k Γ S x → Prop)
+  (time : ι → Turing.Cfg k Γ S x → ℕ) (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x)
+  (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ)
+  (seg :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some entry →
+        pre i d → Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d))
+  (exit_mem : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some entry → pre i d → (post i d).state ∈ exits) (a : ι)
+  (a_1 : Turing.Cfg k Γ S x), (Turing.Contract.ofSegment pre time post lo hi seg exit_mem).pre a a_1 = pre a a_1
+@Turing.Contract.ofSegment_time : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (pre : ι → Turing.Cfg k Γ S x → Prop)
+  (time : ι → Turing.Cfg k Γ S x → ℕ) (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x)
+  (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ)
+  (seg :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some entry →
+        pre i d → Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d))
+  (exit_mem : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some entry → pre i d → (post i d).state ∈ exits) (a : ι)
+  (a_1 : Turing.Cfg k Γ S x), (Turing.Contract.ofSegment pre time post lo hi seg exit_mem).time a a_1 = time a a_1
+@Turing.Contract.ofSegment_post : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (pre : ι → Turing.Cfg k Γ S x → Prop)
+  (time : ι → Turing.Cfg k Γ S x → ℕ) (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x)
+  (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ)
+  (seg :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some entry →
+        pre i d → Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d))
+  (exit_mem : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some entry → pre i d → (post i d).state ∈ exits) (a : ι)
+  (a_1 : Turing.Cfg k Γ S x), (Turing.Contract.ofSegment pre time post lo hi seg exit_mem).post a a_1 = post a a_1
+@Turing.Contract.ofSegment_lo : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (pre : ι → Turing.Cfg k Γ S x → Prop)
+  (time : ι → Turing.Cfg k Γ S x → ℕ) (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x)
+  (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ)
+  (seg :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some entry →
+        pre i d → Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d))
+  (exit_mem : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some entry → pre i d → (post i d).state ∈ exits) (a : ι)
+  (a_1 : Turing.Cfg k Γ S x) (a_2 : Fin k),
+  (Turing.Contract.ofSegment pre time post lo hi seg exit_mem).lo a a_1 a_2 = lo a a_1 a_2
+@Turing.Contract.ofSegment_hi : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (pre : ι → Turing.Cfg k Γ S x → Prop)
+  (time : ι → Turing.Cfg k Γ S x → ℕ) (post : ι → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x)
+  (lo hi : ι → Turing.Cfg k Γ S x → Fin k → ℤ)
+  (seg :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some entry →
+        pre i d → Turing.Segment M exits (Turing.HeadBox (lo i d) (hi i d)) d (post i d) (time i d))
+  (exit_mem : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some entry → pre i d → (post i d).state ∈ exits) (a : ι)
+  (a_1 : Turing.Cfg k Γ S x) (a_2 : Fin k),
+  (Turing.Contract.ofSegment pre time post lo hi seg exit_mem).hi a a_1 a_2 = hi a a_1 a_2
+@Turing.Contract.zero : {k : ℕ} →
+  {Γ S : Type} → (M : Turing.MultiTapeTM k Γ S) → (e : S) → (ι : Type) → (x : List Γ) → Turing.Contract M e {some e} ι x
+@Turing.Contract.zero_pre : ∀ {k : ℕ} {Γ S : Type} (M : Turing.MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ)
+  (i : ι) (d : Turing.Cfg k Γ S x), (Turing.Contract.zero M e ι x).pre i d = True
+@Turing.Contract.zero_time : ∀ {k : ℕ} {Γ S : Type} (M : Turing.MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ)
+  (i : ι) (d : Turing.Cfg k Γ S x), (Turing.Contract.zero M e ι x).time i d = 0
+@Turing.Contract.zero_post : ∀ {k : ℕ} {Γ S : Type} (M : Turing.MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ)
+  (i : ι) (d : Turing.Cfg k Γ S x), (Turing.Contract.zero M e ι x).post i d = d
+@Turing.Contract.zero_lo : ∀ {k : ℕ} {Γ S : Type} (M : Turing.MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+  (d : Turing.Cfg k Γ S x), (Turing.Contract.zero M e ι x).lo i d = d.workTapePos
+@Turing.Contract.zero_hi : ∀ {k : ℕ} {Γ S : Type} (M : Turing.MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+  (d : Turing.Cfg k Γ S x), (Turing.Contract.zero M e ι x).hi i d = d.workTapePos
+@Turing.Contract.time_envelope : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {entry : S}
+  {exits : Set (Option S)} {ι : Type} {x : List Γ} (C : Turing.Contract M entry exits ι x) (i : ι)
+  (d : Turing.Cfg k Γ S x),
+  ∀ u ≤ C.time i d,
+    ∀ (j : Fin k),
+      (Turing.MultiTapeTM.runFrom d u).workTapePos j ∈
+        Finset.Icc (d.workTapePos j - ↑(C.time i d)) (d.workTapePos j + ↑(C.time i d))
+@Turing.Contract.trans : {k : ℕ} →
+  {Γ S : Type} →
+    {M : Turing.MultiTapeTM k Γ S} →
+      {e₁ e₂ : S} →
+        {X : Set (Option S)} →
+          {ι κ : Type} →
+            {x : List Γ} →
+              (C₁ : Turing.Contract M e₁ {some e₂} ι x) →
+                (C₂ : Turing.Contract M e₂ X κ x) →
+                  (link : ι → κ) →
+                    (∀ (i : ι) (d : Turing.Cfg k Γ S x),
+                        d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d)) →
+                      (∀ (i : ι) (d : Turing.Cfg k Γ S x),
+                          d.state = some e₁ →
+                            C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X) →
+                        Turing.Contract M e₁ X ι x
+@Turing.Contract.trans_pre : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (a : ι) (a_1 : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).pre a a_1 = C₁.pre a a_1
+@Turing.Contract.trans_time : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).time i d = C₁.time i d + C₂.time (link i) (C₁.post i d)
+@Turing.Contract.trans_post : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).post i d = C₂.post (link i) (C₁.post i d)
+@Turing.Contract.trans_lo : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x) (j : Fin k),
+  (C₁.trans C₂ link hlink hX).lo i d j = min (C₁.lo i d j) (C₂.lo (link i) (C₁.post i d) j)
+@Turing.Contract.trans_hi : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x) (j : Fin k),
+  (C₁.trans C₂ link hlink hX).hi i d j = max (C₁.hi i d j) (C₂.hi (link i) (C₁.post i d) j)
+@Turing.Segment : {k : ℕ} →
+  {Γ S : Type} →
+    {x : List Γ} →
+      Turing.MultiTapeTM k Γ S →
+        Set (Option S) → ((Fin k → ℤ) → Prop) → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x → ℕ → Prop
+@Turing.segment_iff : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (M : Turing.MultiTapeTM k Γ S) (F : Set (Option S))
+  (P : (Fin k → ℤ) → Prop) (a b : Turing.Cfg k Γ S x) (t : ℕ),
+  Turing.Segment M F P a b t ↔
+    Turing.MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (Turing.MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (Turing.MultiTapeTM.runFrom a u).workTapePos
+@Turing.Segment.one : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {a : Turing.Cfg k Γ S x},
+  a.state ∉ F →
+    P a.workTapePos → P (Turing.MultiTapeTM.step a).workTapePos → Turing.Segment M F P a (Turing.MultiTapeTM.step a) 1
+@Turing.Segment.trans : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {a b c : Turing.Cfg k Γ S x} {t v : ℕ},
+  Turing.Segment M F P a b t → Turing.Segment M F P b c v → Turing.Segment M F P a c (t + v)
+@Turing.Segment.mono : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {F' : Set (Option S)} {P' : (Fin k → ℤ) → Prop} {a b : Turing.Cfg k Γ S x} {t : ℕ},
+  Turing.Segment M F P a b t → F' ⊆ F → (∀ (p : Fin k → ℤ), P p → P' p) → Turing.Segment M F' P' a b t
+@Turing.Segment.cons : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {a a₁ b : Turing.Cfg k Γ S x} {t : ℕ},
+  Turing.MultiTapeTM.step a = a₁ →
+    a.state ∉ F → P a.workTapePos → Turing.Segment M F P a₁ b t → Turing.Segment M F P a b (1 + t)
+@Turing.Segment.live : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {a b : Turing.Cfg k Γ S x} {t : ℕ},
+  Turing.Segment M F P a b t → b.state ≠ none → Turing.Segment M (insert none F) P a b t
+@Turing.Round : {k : ℕ} →
+  {Γ S : Type} →
+    {x : List Γ} →
+      Turing.MultiTapeTM k Γ S →
+        S → Set (Option S) → ((Fin k → ℤ) → Prop) → Turing.Cfg k Γ S x → Turing.Cfg k Γ S x → ℕ → Prop
+@Turing.Round.iterate_seq : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {a : S}
+  {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Turing.Cfg k Γ S x) (τ : ℕ → ℕ),
+  some a ∉ E →
+    P (cs 0).workTapePos →
+      ∀ (n : ℕ),
+        (∀ r < n, Turing.Round M a E P (cs r) (cs (r + 1)) (τ r)) →
+          Turing.Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r)
+@Turing.RoundContract : {k : ℕ} → {Γ S : Type} → Turing.MultiTapeTM k Γ S → S → Set (Option S) → Type → List Γ → Type
+@Turing.Lockstep : {k : ℕ} →
+  {Γ : Type} →
+    {k' : ℕ} →
+      {Γ' S S' : Type} →
+        {x : List Γ} →
+          {x' : List Γ'} →
+            Turing.MultiTapeTM k Γ S →
+              Turing.MultiTapeTM k' Γ' S' →
+                (Turing.Cfg k Γ S x → Turing.Cfg k' Γ' S' x') →
+                  (Turing.Cfg k Γ S x → ℕ) → Set (Option S) → Set (Option S') → Prop
+@Turing.Lockstep.runFrom : ∀ {k : ℕ} {Γ : Type} {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'}
+  {M : Turing.MultiTapeTM k Γ S} {N : Turing.MultiTapeTM k' Γ' S'} {enc : Turing.Cfg k Γ S x → Turing.Cfg k' Γ' S' x'}
+  {cost : Turing.Cfg k Γ S x → ℕ} {X : Set (Option S)} {X' : Set (Option S')},
+  Turing.Lockstep M N enc cost X X' →
+    ∀ (d : Turing.Cfg k Γ S x) (t : ℕ),
+      (∀ u < t, (Turing.MultiTapeTM.runFrom d u).state ∉ X) →
+        Turing.MultiTapeTM.runFrom (enc d) (∑ u ∈ Finset.range t, cost (Turing.MultiTapeTM.runFrom d u)) =
+          enc (Turing.MultiTapeTM.runFrom d t)
+@Turing.Contract.seq : {k : ℕ} →
+  {Γ S₁ S₂ : Type} →
+    [inst : DecidableEq S₁] →
+      {M₁ : Turing.MultiTapeTM k Γ S₁} →
+        {M₂ : Turing.MultiTapeTM k Γ S₂} →
+          {entry₁ exit₁ : S₁} →
+            {entry₂ : S₂} →
+              {X₂ : Set (Option S₂)} →
+                {ι κ : Type} →
+                  {x : List Γ} →
+                    (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) →
+                      (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) →
+                        (link : ι → κ) →
+                          (∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+                              d.state = some entry₁ →
+                                C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d))) →
+                            Turing.Contract (Turing.seamCompTM M₁ exit₁ M₂ entry₂) (Sum.inl entry₁)
+                              (Option.map Sum.inr '' X₂) ι x
+@Turing.Contract.inPhase : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i)) →
+        (q0 : (i : I) × Ph i) →
+          (red : (i : I) → Ph i → Option ((i : I) × Ph i)) →
+            (p : I) →
+              {s₀ : Ph p} →
+                {X : Set (Option (Ph p))} →
+                  {ι : Type} →
+                    {x : List Γ} →
+                      Turing.Contract (Mf p) s₀ X ι x →
+                        none ∉ X →
+                          (∀ (s : Ph p), some s ∉ X → red p s = none) →
+                            (∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) →
+                              Turing.Contract (Turing.phaseHostTM Mf q0 red) ⟨p, s₀⟩ {q | ∃ s, some s ∈ X ∧ q = red p s}
+                                ι x
+@Turing.Contract.branch : {k : ℕ} →
+  {Γ S₀ S₁ S₂ : Type} →
+    [inst : DecidableEq S₀] →
+      [inst_1 : DecidableEq S₁] →
+        {M₀ : Turing.MultiTapeTM k Γ S₀} →
+          {M₁ : Turing.MultiTapeTM k Γ S₁} →
+            {M₂ : Turing.MultiTapeTM k Γ S₂} →
+              {entry₀ e₁ e₂ : S₀} →
+                {entry₁ : S₁} →
+                  {entry₂ : S₂} →
+                    {X₁ : Set (Option S₁)} →
+                      {X₂ : Set (Option S₂)} →
+                        {ι κ₁ κ₂ : Type} →
+                          {x : List Γ} →
+                            e₁ ≠ e₂ →
+                              (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) →
+                                (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x) →
+                                  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) →
+                                    (l₁ : ι → κ₁) →
+                                      (l₂ : ι → κ₂) →
+                                        (∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+                                            d.state = some entry₀ →
+                                              C₀.pre i d →
+                                                (C₀.post i d).state = some e₁ →
+                                                  C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d))) →
+                                          (∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+                                              d.state = some entry₀ →
+                                                C₀.pre i d →
+                                                  (C₀.post i d).state = some e₂ →
+                                                    C₂.pre (l₂ i)
+                                                      (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d))) →
+                                            Turing.Contract (Turing.seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂)
+                                              (Sum.inl (Sum.inl entry₀))
+                                              (Option.map (Sum.inl ∘ Sum.inr) '' X₁ ∪ Option.map Sum.inr '' X₂) ι x
+@Turing.Contract.seq_pre : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ (S₁ ⊕ S₂) x),
+  (C₁.seq C₂ link hlink).pre i d = C₁.pre i (Turing.Cfg.mapState (fun x => entry₁) d)
+@Turing.Contract.seq_time : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ (S₁ ⊕ S₂) x),
+  (C₁.seq C₂ link hlink).time i d =
+    C₁.time i (Turing.Cfg.mapState (fun x => entry₁) d) + 1 +
+      C₂.time (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i (Turing.Cfg.mapState (fun x => entry₁) d)))
+@Turing.Contract.seq_post : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ (S₁ ⊕ S₂) x),
+  (C₁.seq C₂ link hlink).post i d =
+    Turing.Cfg.mapState Sum.inr
+      (C₂.post (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i (Turing.Cfg.mapState (fun x => entry₁) d))))
+@Turing.Contract.seq_lo : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ (S₁ ⊕ S₂) x) (j : Fin k),
+  (C₁.seq C₂ link hlink).lo i d j =
+    min (C₁.lo i (Turing.Cfg.mapState (fun x => entry₁) d) j)
+      (C₂.lo (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i (Turing.Cfg.mapState (fun x => entry₁) d))) j)
+@Turing.Contract.seq_hi : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ (S₁ ⊕ S₂) x) (j : Fin k),
+  (C₁.seq C₂ link hlink).hi i d j =
+    max (C₁.hi i (Turing.Cfg.mapState (fun x => entry₁) d) j)
+      (C₂.hi (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i (Turing.Cfg.mapState (fun x => entry₁) d))) j)
+@Turing.Contract.inPhase_pre : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+  {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+  (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) (i : ι)
+  (d : Turing.Cfg k Γ ((i : I) × Ph i) x),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).pre i d = C.pre i (Turing.Cfg.mapState (fun x => s₀) d)
+@Turing.Contract.inPhase_time : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+  {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+  (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) (i : ι)
+  (d : Turing.Cfg k Γ ((i : I) × Ph i) x),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).time i d = C.time i (Turing.Cfg.mapState (fun x => s₀) d) + 1
+@Turing.Contract.inPhase_post : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+  {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+  (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) (i : ι)
+  (d : Turing.Cfg k Γ ((i : I) × Ph i) x),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).post i d =
+    (C.post i (Turing.Cfg.mapState (fun x => s₀) d)).bindState (red p)
+@Turing.Contract.inPhase_lo : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+  {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+  (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) (i : ι) (d : Turing.Cfg k Γ ((i : I) × Ph i) x)
+  (a : Fin k),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).lo i d a = C.lo i (Turing.Cfg.mapState (fun x => s₀) d) a
+@Turing.Contract.inPhase_hi : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+  {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+  (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p) (i : ι) (d : Turing.Cfg k Γ ((i : I) × Ph i) x)
+  (a : Fin k),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).hi i d a = C.hi i (Turing.Cfg.mapState (fun x => s₀) d) a
+@Turing.Contract.branch_pre : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ ((S₀ ⊕ S₁) ⊕ S₂) x),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).pre i d = C₀.pre i (Turing.Cfg.mapState (fun x => entry₀) d)
+@Turing.Contract.branch_time : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ ((S₀ ⊕ S₁) ⊕ S₂) x),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).time i d =
+    C₀.time i (Turing.Cfg.mapState (fun x => entry₀) d) + 1 +
+      if (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)).state = some e₁ then
+        C₁.time (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)))
+      else C₂.time (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)))
+@Turing.Contract.branch_post : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ ((S₀ ⊕ S₁) ⊕ S₂) x),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).post i d =
+    if (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)).state = some e₁ then
+      Turing.Cfg.mapState Sum.inl
+        (Turing.Cfg.mapState Sum.inr
+          (C₁.post (l₁ i)
+            (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)))))
+    else
+      Turing.Cfg.mapState Sum.inr
+        (C₂.post (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d))))
+@Turing.Contract.branch_lo : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ ((S₀ ⊕ S₁) ⊕ S₂) x) (j : Fin k),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).lo i d j =
+    min (C₀.lo i (Turing.Cfg.mapState (fun x => entry₀) d) j)
+      (if (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)).state = some e₁ then
+        C₁.lo (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d))) j
+      else C₂.lo (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d))) j)
+@Turing.Contract.branch_hi : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d)))
+  (i : ι) (d : Turing.Cfg k Γ ((S₀ ⊕ S₁) ⊕ S₂) x) (j : Fin k),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).hi i d j =
+    max (C₀.hi i (Turing.Cfg.mapState (fun x => entry₀) d) j)
+      (if (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d)).state = some e₁ then
+        C₁.hi (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d))) j
+      else C₂.hi (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i (Turing.Cfg.mapState (fun x => entry₀) d))) j)
+@Turing.Contract.seq_positive : ∀ {k : ℕ} {Γ S₁ S₂ : Type} [inst : DecidableEq S₁] {M₁ : Turing.MultiTapeTM k Γ S₁}
+  {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+  (C₁ : Turing.Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Turing.Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+  (hlink :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₁ x),
+      d.state = some entry₁ → C₁.pre i d → C₂.pre (link i) (Turing.Cfg.mapState (fun x => entry₂) (C₁.post i d))),
+  (C₁.seq C₂ link hlink).Positive
+@Turing.Contract.inPhase_positive : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type}
+  (Mf : (i : I) → Turing.MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i))
+  (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))} {ι : Type} {x : List Γ} (C : Turing.Contract (Mf p) s₀ X ι x)
+  (hnone : none ∉ X) (hred : ∀ (s : Ph p), some s ∉ X → red p s = none)
+  (hsome : ∀ (s : Ph p), some s ∈ X → ∃ q, red p s = some q ∧ q.fst ≠ p),
+  (Turing.Contract.inPhase Mf q0 red p C hnone hred hsome).Positive
+@Turing.Contract.branch_positive : ∀ {k : ℕ} {Γ S₀ S₁ S₂ : Type} [inst : DecidableEq S₀] [inst_1 : DecidableEq S₁]
+  {M₀ : Turing.MultiTapeTM k Γ S₀} {M₁ : Turing.MultiTapeTM k Γ S₁} {M₂ : Turing.MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀}
+  {entry₁ : S₁} {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ} (he : e₁ ≠ e₂)
+  (C₀ : Turing.Contract M₀ entry₀ {some e₁, some e₂} ι x) (C₁ : Turing.Contract M₁ entry₁ X₁ κ₁ x)
+  (C₂ : Turing.Contract M₂ entry₂ X₂ κ₂ x) (l₁ : ι → κ₁) (l₂ : ι → κ₂)
+  (h₁ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₁ → C₁.pre (l₁ i) (Turing.Cfg.mapState (fun x => entry₁) (C₀.post i d)))
+  (h₂ :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S₀ x),
+      d.state = some entry₀ →
+        C₀.pre i d →
+          (C₀.post i d).state = some e₂ → C₂.pre (l₂ i) (Turing.Cfg.mapState (fun x => entry₂) (C₀.post i d))),
+  (Turing.Contract.branch he C₀ C₁ C₂ l₁ l₂ h₁ h₂).Positive
+@Turing.Cfg.bindState : {k : ℕ} →
+  {Γ S S' : Type} → {x : List Γ} → Turing.Cfg k Γ S x → (S → Option S') → Turing.Cfg k Γ S' x
+@Turing.Cfg.bindState_state : ∀ {k : ℕ} {Γ S S' : Type} {x : List Γ} (d : Turing.Cfg k Γ S x) (f : S → Option S'),
+  (d.bindState f).state = d.state.bind f
+@Turing.Cfg.bindState_inputPos : ∀ {k : ℕ} {Γ S S' : Type} {x : List Γ} (d : Turing.Cfg k Γ S x) (f : S → Option S'),
+  (d.bindState f).inputPos = d.inputPos
+@Turing.Cfg.bindState_workTapes : ∀ {k : ℕ} {Γ S S' : Type} {x : List Γ} (d : Turing.Cfg k Γ S x) (f : S → Option S')
+  (a : Fin k) (a_1 : ℤ), (d.bindState f).workTapes a a_1 = d.workTapes a a_1
+@Turing.Cfg.bindState_workTapePos : ∀ {k : ℕ} {Γ S S' : Type} {x : List Γ} (d : Turing.Cfg k Γ S x) (f : S → Option S')
+  (a : Fin k), (d.bindState f).workTapePos a = d.workTapePos a
+@Turing.Cfg.bindState_output : ∀ {k : ℕ} {Γ S S' : Type} {x : List Γ} (d : Turing.Cfg k Γ S x) (f : S → Option S'),
+  (d.bindState f).output = d.output
+@Turing.phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → Turing.MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → Turing.MultiTapeTM k Γ ((i : I) × Ph i)
+@Turing.phaseHostTM_tr_of_red_none : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type}
+  (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i))
+  (i : I) (s : Ph i),
+  red i s = none →
+    ∀ (inp : Option Γ) (w : Fin k → Option Γ),
+      (Turing.phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = Turing.Action.mapState (Sigma.mk i) ((M i).tr s inp w)
+@Turing.phaseHostTM_q₀ : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)), (Turing.phaseHostTM M q0 red).q₀ = q0
+@Turing.phaseHostTM_tr_of_red_some : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type}
+  (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i))
+  (i : I) (s : Ph i) {q' : (i : I) × Ph i},
+  red i s = some q' →
+    ∀ (inp : Option Γ) (w : Fin k → Option Γ),
+      (Turing.phaseHostTM M q0 red).tr ⟨i, s⟩ inp w =
+        { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some q' }
+@Turing.phaseHostTM_run_le : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ}
+  (c : Turing.Cfg k Γ (Ph i) x) (T : ℕ),
+  (∀ u < T, ∀ (s : Ph i), (Turing.MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+    ∀ u ≤ T,
+      Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (Sigma.mk i) c) u =
+        Turing.Cfg.mapState (Sigma.mk i) (Turing.MultiTapeTM.runFrom c u)
+@Turing.phaseHostTM_run : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ}
+  (c c' : Turing.Cfg k Γ (Ph i) x) (T : ℕ),
+  Turing.MultiTapeTM.runFrom c T = c' →
+    ∀ (s' : Ph i),
+      c'.state = some s' →
+        ∀ (q' : (i : I) × Ph i),
+          red i s' = some q' →
+            (∀ u < T, ∀ (s : Ph i), (Turing.MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+              (∀ u ≤ T,
+                  Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (Sigma.mk i) c) u =
+                    Turing.Cfg.mapState (Sigma.mk i) (Turing.MultiTapeTM.runFrom c u)) ∧
+                Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (Sigma.mk i) c) (T + 1) =
+                  Turing.Cfg.mapState (fun x => q') c'
+@Turing.Cfg.mapState_eq_of_fields : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {S' : Type u_3} {x : List Γ}
+  (c : Turing.Cfg k Γ S x) (f : S → S') (d : Turing.Cfg k Γ S' x),
+  Option.map f c.state = d.state →
+    c.inputPos = d.inputPos →
+      c.workTapes = d.workTapes → c.workTapePos = d.workTapePos → c.output = d.output → Turing.Cfg.mapState f c = d
+@Turing.Cfg.mapState_const_eq_mapState_sigma : ∀ {k : ℕ} {Γ : Type u_1} {I : Type u_2} {S : Type u_3}
+  {Ph : I → Type u_4} {x : List Γ} {i : I} (c : Turing.Cfg k Γ S x) (c₂ : Turing.Cfg k Γ (Ph i) x) {q : Ph i},
+  c.state.isSome = true →
+    c₂.state = some q →
+      c.inputPos = c₂.inputPos →
+        c.workTapes = c₂.workTapes →
+          c.workTapePos = c₂.workTapePos →
+            c.output = c₂.output → Turing.Cfg.mapState (fun x => ⟨i, q⟩) c = Turing.Cfg.mapState (Sigma.mk i) c₂
+@Turing.Cfg.mapState_sigma_state_ne : ∀ {k : ℕ} {Γ : Type u_1} {I : Type u_2} {Ph : I → Type u_3} {x : List Γ} (i : I)
+  (v : (j : I) × Ph j), i ≠ v.fst → ∀ (c : Turing.Cfg k Γ (Ph i) x), (Turing.Cfg.mapState (Sigma.mk i) c).state ≠ some v
+@Turing.embedEmitTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → Turing.MultiTapeTM m Symbol S → Turing.MultiTapeTM k Symbol S
+@Turing.embedEmitTM_tr : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} (ι : Fin m ↪ Fin k)
+  (M : Turing.MultiTapeTM m Symbol S) (q : S) (inp : Option Symbol) (w : Fin k → Option Symbol),
+  ((Turing.embedEmitTM ι M).tr q inp w).inputTape = (M.tr q inp fun i => w (ι i)).inputTape ∧
+    (∀ (i : Fin m), ((Turing.embedEmitTM ι M).tr q inp w).workTapes (ι i) = (M.tr q inp fun i => w (ι i)).workTapes i) ∧
+      (∀ j ∉ Set.range ⇑ι, ((Turing.embedEmitTM ι M).tr q inp w).workTapes j = (none, 0)) ∧
+        ((Turing.embedEmitTM ι M).tr q inp w).output = (M.tr q inp fun i => w (ι i)).output ∧
+          ((Turing.embedEmitTM ι M).tr q inp w).state = (M.tr q inp fun i => w (ι i)).state
+@Turing.embedEmitTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : Turing.MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Turing.Cfg m Symbol S x) (t : ℕ),
+  Turing.MultiTapeTM.runFrom (Turing.embedEmitCfg ι tapes heads pre c) t =
+    Turing.embedEmitCfg ι tapes heads pre (Turing.MultiTapeTM.runFrom c t)
+@Turing.embedEmitTM_frame : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : Turing.MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Turing.Cfg m Symbol S x) (t : ℕ),
+  (∀ j ∉ Set.range ⇑ι,
+      (Turing.MultiTapeTM.runFrom (Turing.embedEmitCfg ι tapes heads pre c) t).workTapes j = tapes j ∧
+        (Turing.MultiTapeTM.runFrom (Turing.embedEmitCfg ι tapes heads pre c) t).workTapePos j = heads j) ∧
+    (Turing.MultiTapeTM.runFrom (Turing.embedEmitCfg ι tapes heads pre c) t).inputPos =
+        (Turing.MultiTapeTM.runFrom c t).inputPos ∧
+      (Turing.MultiTapeTM.runFrom (Turing.embedEmitCfg ι tapes heads pre c) t).output =
+        pre ++ (Turing.MultiTapeTM.runFrom c t).output
+@Turing.embedEmitCfg_eq : ∀ {k : ℕ} {Γ : Type u_1} {m : ℕ} {S : Type u_2} {x : List Γ} (σ : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Turing.Cfg m Γ S x) (d : Turing.Cfg k Γ S x),
+  c.state = d.state →
+    c.inputPos = d.inputPos →
+      pre ++ c.output = d.output →
+        (∀ (i : Fin m), c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i)) →
+          (∀ j ∉ Set.range ⇑σ, tapes j = d.workTapes j ∧ heads j = d.workTapePos j) →
+            Turing.embedEmitCfg σ tapes heads pre c = d
+@Turing.Action.apply : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        Turing.Action k Symbol State → Turing.Cfg k Symbol State input → Turing.Cfg k Symbol State input
+@Turing.Action.apply_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).state = action.state
+@Turing.Action.apply_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).inputPos = Turing.moveInputPos cfg.inputPos action.inputTape
+@Turing.Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+@Turing.Action.apply_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+@Turing.Cfg.inputSymbol_of_zero : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input}, cfg.inputPos = 0 → cfg.inputSymbol = none
+@Turing.Cfg.inputSymbol_of_end : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input}, ↑cfg.inputPos = input.length + 1 → cfg.inputSymbol = none
+@Turing.inputSymbolInner : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Turing.Cfg k Symbol State input} (p : ℕ),
+  ↑cfg.inputPos = 1 + p → ∀ (h₂ : p < input.length), cfg.inputSymbol = some input[p]
+@Turing.Cfg.workTapeSymbols_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (cfg : Turing.Cfg k Symbol State input) (i : Fin k), cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)
+@Turing.Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).state = some q₀
+@Turing.Cfg.init_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).inputPos = 1
+@Turing.Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k) (x_1 : ℤ), (Turing.Cfg.init q₀ input).workTapes x x_1 = none
+@Turing.Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k), (Turing.Cfg.init q₀ input).workTapePos x = 0
+@Turing.Cfg.init_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).output = []
+@Turing.moveInputPos : {n : ℕ} → Fin (n + 2) → SignType → Fin (n + 2)
+@Turing.Cfg.ext : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  {x y : Turing.Cfg k Symbol State input},
+  x.state = y.state →
+    x.inputPos = y.inputPos → x.workTapes = y.workTapes → x.workTapePos = y.workTapePos → x.output = y.output → x = y
+@Turing.Cfg.init : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → State → (input : List Symbol) → Turing.Cfg k Symbol State input
+@Turing.Cfg.inputSymbol : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → {input : List Symbol} → Turing.Cfg k Symbol State input → Option Symbol
+@Turing.Action.apply_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Turing.Action k Symbol State) (c : Turing.Cfg k Symbol State input) (i : Fin k),
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+@Turing.Cfg.mapState : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      {State' : Type u_3} →
+        {input : List Symbol} → (State → State') → Turing.Cfg k Symbol State input → Turing.Cfg k Symbol State' input
+@Turing.Cfg.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).state = Option.map f cfg.state
+@Turing.Cfg.mapState_inputPos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).inputPos = cfg.inputPos
+@Turing.Cfg.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k) (a_1 : ℤ),
+  (Turing.Cfg.mapState f cfg).workTapes a a_1 = cfg.workTapes a a_1
+@Turing.Cfg.mapState_workTapePos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k),
+  (Turing.Cfg.mapState f cfg).workTapePos a = cfg.workTapePos a
+@Turing.Cfg.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input), (Turing.Cfg.mapState f cfg).output = cfg.output
+@Turing.MultiTapeTM.step_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input},
+  cfg.state = none → Turing.MultiTapeTM.step cfg = cfg
+@Turing.MultiTapeTM.step_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} {q : State},
+  cfg.state = some q → Turing.MultiTapeTM.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+@Turing.MultiTapeTM.runFrom_zero : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input},
+  Turing.MultiTapeTM.runFrom cfg 0 = cfg
+@Turing.MultiTapeTM.runFrom_succ_eq_step' : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} {t : ℕ},
+  Turing.MultiTapeTM.runFrom cfg (t + 1) = Turing.MultiTapeTM.step (Turing.MultiTapeTM.runFrom cfg t)
+@Turing.MultiTapeTM.runFrom_add : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (a b : ℕ),
+  Turing.MultiTapeTM.runFrom cfg (a + b) = Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.runFrom cfg a) b
+@Turing.MultiTapeTM.runFrom_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input),
+  cfg.state = none → ∀ {n : ℕ}, Turing.MultiTapeTM.runFrom cfg n = cfg
+@Turing.MultiTapeTM.initCfg : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {tm : Turing.MultiTapeTM k Symbol State} → (input : List Symbol) → Turing.Cfg k Symbol State input
+@Turing.MultiTapeTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2}
+  {tm : Turing.MultiTapeTM k Symbol State} (input : List Symbol),
+  Turing.MultiTapeTM.initCfg input = Turing.Cfg.init tm.q₀ input
+@Turing.MultiTapeTM.step : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : Turing.MultiTapeTM k Symbol State} → Turing.Cfg k Symbol State input → Turing.Cfg k Symbol State input
+@Turing.MultiTapeTM.runFrom : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : Turing.MultiTapeTM k Symbol State} → Turing.Cfg k Symbol State input → ℕ → Turing.Cfg k Symbol State input
+@Turing.MultiTapeTM.runFrom_state_ne_none_of_le : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  (Turing.MultiTapeTM.runFrom cfg t).state ≠ none → ∀ u ≤ t, (Turing.MultiTapeTM.runFrom cfg u).state ≠ none
+@Turing.MultiTapeTM.exists_first_halt : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (cfg : Turing.Cfg k Symbol State input) {t : ℕ},
+  (Turing.MultiTapeTM.runFrom cfg t).state = none →
+    ∃ u ≤ t,
+      (∀ v < u, ¬(Turing.MultiTapeTM.runFrom cfg v).Halted) ∧
+        Turing.MultiTapeTM.runFrom cfg u = Turing.MultiTapeTM.runFrom cfg t
+@Turing.MultiTapeTM.runFrom_with_q₀ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (q : State) (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.runFrom cfg t = Turing.MultiTapeTM.runFrom cfg t
+@Turing.MultiTapeTM.initCfg_with_q₀ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (tm : Turing.MultiTapeTM k Symbol State) (q : State) (x : List Symbol),
+  Turing.MultiTapeTM.initCfg x = Turing.Cfg.init q x
+Turing.FinTM : Type → Type 1
+@Turing.FinTM.ComputesInTime : {Symbol : Type} → Turing.FinTM Symbol → List Symbol → List Symbol → ℕ → Prop
+@Turing.FinTM.computesFunInTime_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol)
+  (T : ℕ → ℕ), M.ComputesFunInTime f T ↔ ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)
+@Turing.FinTM.ComputesInTime.mono : ∀ {Symbol : Type} {M : Turing.FinTM Symbol} {input output : List Symbol} {t t' : ℕ},
+  M.ComputesInTime input output t → t ≤ t' → M.ComputesInTime input output t'
+@Turing.FinTM.not_computesInTime_zero : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (input output : List Symbol),
+  ¬M.ComputesInTime input output 0
+@Turing.FinTM.ComputesInTime.output_unique : ∀ {Symbol : Type} {M : Turing.FinTM Symbol} {input w w' : List Symbol}
+  {t t' : ℕ}, M.ComputesInTime input w t → M.ComputesInTime input w' t' → w = w'
+@Turing.FinTM.computesInTime_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (x w : List Symbol) (t : ℕ),
+  M.ComputesInTime x w t ↔
+    (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).state = none ∧
+      (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).output = w
+@Turing.FinTM.ComputesFunInTime : {Symbol : Type} → Turing.FinTM Symbol → (List Symbol → List Symbol) → (ℕ → ℕ) → Prop
+@Turing.FinTM.alphabet_reduction_run : ∀ {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ) (M : Turing.FinTM Γ),
+  ∃ c M',
+    M'.k = M.k ∧
+      (∀ (x w : List Bool) (t : ℕ),
+          M.ComputesInTime (List.map (⇑e) x) (List.map (⇑e) w) t → M'.ComputesInTime x w (c * t)) ∧
+        ∀ (x w : List Bool),
+          (∃ t, M'.ComputesInTime x w t) →
+            ∃ t o, M.ComputesInTime (List.map (⇑e) x) o t ∧ ∀ (v : List Bool), o = List.map (⇑e) v → v = w
+@Function.Embedding.inl : {α : Type u_1} → {β : Type u_2} → α ↪ α ⊕ β
+@Function.Embedding.inl_apply : ∀ {α : Type u_1} {β : Type u_2} (val : α), Function.Embedding.inl val = Sum.inl val
+Nat.log : ℕ → ℕ → ℕ
+Nat.pow_log_le_self : ∀ (b : ℕ) {x : ℕ}, x ≠ 0 → b ^ Nat.log b x ≤ x
+@Nat.lt_pow_succ_log_self : ∀ {b : ℕ}, 1 < b → ∀ (x : ℕ), x < b ^ (Nat.log b x).succ
+@Nat.log_mono_right : ∀ {b n m : ℕ}, n ≤ m → Nat.log b n ≤ Nat.log b m
+@Nat.log2_eq_log_two : ∀ {n : ℕ}, n.log2 = Nat.log 2 n
+@Fin.castLEEmb : {n m : ℕ} → n ≤ m → Fin n ↪ Fin m
+SignType : Type
+@lt_trichotomy : ∀ {α : Type u_1} [inst : LinearOrder α] (a b : α), a < b ∨ a = b ∨ b < a
+@Nat.find : {p : ℕ → Prop} → [DecidablePred p] → (∃ n, p n) → ℕ
+@List.length_map : ∀ {α : Type u_1} {β : Type u_2} {as : List α} (f : α → β), (List.map f as).length = as.length
+@List.getElem_map : ∀ {α : Type u_1} {β : Type u_2} (f : α → β) {l : List α} {i : ℕ} {h : i < (List.map f l).length},
+  (List.map f l)[i] = f l[i]
+@Nat.exists_eq_add_of_le : ∀ {m n : ℕ}, m ≤ n → ∃ k, n = m + k
+Nat.log2 : ℕ → ℕ
+@Turing.Segment.iterate_seq : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : Turing.MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} (cs : ℕ → Turing.Cfg k Γ S x) (τ : ℕ → ℕ),
+  P (cs 0).workTapePos →
+    ∀ (n : ℕ),
+      (∀ r < n, Turing.Segment M F P (cs r) (cs (r + 1)) (τ r)) →
+        Turing.Segment M F P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r)
+exit 0
