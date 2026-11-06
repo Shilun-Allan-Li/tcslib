@@ -8,3 +8,4 @@
   bundle `101-deepen-landing-fill-bundle.md`, 83 sections, SHA-256
   `0e67a7cdd8b5f1b98afe5f1748da812fef381b666605122858d7d138cdf8004a`; Lean from `a074d9b7`, records
   from `c4a5d6d2`. Findings file `deepen-landing-fill-findings.md`.
+- 2026-11-06: **dispatched** (the user).

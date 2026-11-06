@@ -10,3 +10,4 @@
   `89a9c00b2239b0fcb0bc29616846e08cb8183cf01d5fd1891ed028430310011b`): **PASS — 0 blockers, 0 majors, 0 minors, 4 notes.** **Gate 100 CLOSED.**
   #209's head `0b05cc3a` passed `replay-lnth` on the merged tree; the campaign's Lean is unchanged
   since. **Clear to merge.**
+- 2026-11-06: **#209 merged** (`5761d6e0`, the user).
