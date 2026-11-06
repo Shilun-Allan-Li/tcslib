@@ -66,8 +66,8 @@ variable {N : FinNDTM Bool} {x : List Bool}
 lemma orcN_len (N : FinNDTM Bool) (x : List Bool) :
     ∀ k ≤ x.length, orcN N 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
   intro k _
-  simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  simp only [orcN, decs, Matrix.cons_val_zero]
+  exact indicator_inputLenLang x k
 
 /-- Decider `1` answers whether a code is the initial code. -/
 lemma ini_orcN (r u : ℕ) :
