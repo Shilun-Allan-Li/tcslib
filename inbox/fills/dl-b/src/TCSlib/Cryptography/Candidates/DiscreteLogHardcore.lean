@@ -1120,7 +1120,9 @@ private theorem dlb_stateIterate_poly {start step : List Bool → List Bool}
       pairSndD ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) := by
   have hF := polyTimeComputable_iterate (StateLoop.gstep_poly hstep B) .var (StateLoop.gstepBound B)
     (fun w i _ => StateLoop.length_gstep_iterate_le step B w i)
-  exact dlb_ptc polyTimeComputable_pairSndD (dlb_ptc hF (polyTimeComputable_id.pairEncode hstart))
+  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp
+    (dlb_ptc polyTimeComputable_pairSndD (dlb_ptc hF (polyTimeComputable_id.pairEncode hstart)))
+  simp only [PolyExpr.eval_var, id_eq]
 
 /-! ### The fixed data of the inverter's loops -/
 
@@ -1522,7 +1524,7 @@ private theorem dlb_blocksL_cons (b : S.Coins n × A.Coins n) (bs : List (S.Coin
 private theorem dlb_orbit_eq (start step : List Bool → List Bool) (x : List Bool) (i : ℕ) :
     StateLoop.orbit start step x i = (fun s => step (pairEncode x s))^[i] (start x) := by
   induction i with
-  | zero => rfl
+  | zero => rw [StateLoop.orbit_zero, Function.iterate_zero_apply]
   | succ i ih => rw [StateLoop.orbit_succ, ih, Function.iterate_succ_apply']
 
 variable {S A n} {f root : List Bool}
@@ -2398,6 +2400,7 @@ private theorem dlb_statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X
     ∀ N : ℕ, StatClose (fun s : Fin N → σ => fun j => X (s j)) (fun t : Fin N → τ => fun j => Y (t j))
       (N * δ)
   | 0 => by
+    rw [statClose_iff]
     intro T
     have hc : ∀ (s : Fin 0 → σ) (t : Fin 0 → τ), (fun j => X (s j)) = fun j => Y (t j) :=
       fun _ _ => funext fun j => j.elim0
@@ -2699,7 +2702,7 @@ private theorem dlb_window_params (c n P : ℕ) (hn : 0 < n) (h2D : 16 * n ^ c �
 /-- Polynomials are eventually below `2^n`: `n^d < 2^n` from some point on
 (`negligible_two_pow_neg`). -/
 private theorem dlb_eventually_pow_lt (d : ℕ) : ∃ N, ∀ n ≥ N, n ^ d < 2 ^ n := by
-  obtain ⟨N, hN⟩ := negligible_two_pow_neg d
+  obtain ⟨N, hN⟩ := (negligible_iff _).1 negligible_two_pow_neg d
   refine ⟨max N 1, fun n hn => ?_⟩
   have h := hN n (le_of_max_le_left hn)
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast le_of_max_le_right hn
@@ -2783,8 +2786,9 @@ private theorem dlb_reduction (H : ArithmeticFP) (G : FullGroupGen)
       3 / (1024 * (n : ℝ) ^ (2 * c)) ≤ G.dlProb (dlb_B H G A c) n := by
   obtain ⟨δ, hδ, hfl⟩ := hbig
   obtain ⟨δS, hδS, hSC⟩ := (fullDLCollection_oneWay H G hDL).sampleClose
-  obtain ⟨Nδ, hNδ⟩ := hδ (c + 1)
-  obtain ⟨NS, hNS⟩ := hδS (4 * c + 3)
+  obtain ⟨Nδ, hNδ⟩ := (negligible_iff δ).1 hδ (c + 1)
+  obtain ⟨NS, hNS⟩ := (negligible_iff δS).1 hδS (4 * c + 3)
+  rw [Collection.sampleClose_iff] at hSC
   obtain ⟨Np, hNp⟩ := dlb_eventually_pow_lt (c + 6)
   refine ⟨max (max (max G.n₀ Nδ) (max NS Np)) 6000, fun n hn hsucc => ?_⟩
   have hn0 : G.n₀ ≤ n := le_trans (le_trans (le_max_left _ _) (le_trans (le_max_left _ _) (le_max_left _ _))) hn
@@ -3001,7 +3005,7 @@ theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
   · by_contra hne
     obtain ⟨c, hc⟩ := not_negligible_iff.1 hne
     obtain ⟨N, hN⟩ := dlb_reduction H G hbig hDL A c
-    obtain ⟨n₁, hn₁⟩ := (fullDLAssumption_iff G).1 hDL (dlb_B H G A c) (2 * c + 11)
+    obtain ⟨n₁, hn₁⟩ := (negligible_iff _).1 ((fullDLAssumption_iff G).1 hDL (dlb_B H G A c)) (2 * c + 11)
     obtain ⟨n, hn, hcn⟩ := hc (max (max N n₁) 2)
     have hnN : N ≤ n := le_trans (le_trans (le_max_left _ _) (le_max_left _ _)) hn
     have hn1 : n₁ ≤ n := le_trans (le_trans (le_max_right _ _) (le_max_left _ _)) hn
