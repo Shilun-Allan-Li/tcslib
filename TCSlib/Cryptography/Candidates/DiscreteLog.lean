@@ -49,7 +49,8 @@ collection `expCollection H G hV` therefore takes the validity bridge `hV : ∀ 
 as an argument.
 
 **Full-length primes.** Where a proof divides by `q` or `p − 1` (Lemma 84.1's range reduction,
-the `1/q` term of Theorem 107.3) the prime must have full length `2^{n−1} ≤ p`. This is
+the `1/q` term of Theorem 107.3) the proofs use full length `2^{n−1} ≤ p` (a convenience: the
+hypothesis is dispensable in both headline theorems, gate 03f1 review, M1). This is
 demanded only *except on a negligible set of coins* (`ExpGroupGen.FullLengthExcept δ` with
 `Negligible δ`): a strict-PPT generator may fall back to a fixed instance when its rejection
 loop fails (D10), and demanding full length on every coin string (`ExpGroupGen.FullLength`)
@@ -316,9 +317,11 @@ def FullLength : Prop :=
 
 /-- The generator outputs primes of full length `n` **except on a set of coins of probability
 at most `δ n`**: for `n ≥ n₀`, `Pr_r[p < 2^{n−1}] ≤ δ n` (the fallback instance of a strict-PPT
-rejection sampler, D10). Needed, with `Negligible δ`, where the proofs divide by `q` or
+rejection sampler, D10). Used, with `Negligible δ`, by the proofs that divide by `q` or
 `p − 1` (Lemma 84.1's range reduction, the `1/q` term of Theorem 107.3): the short-prime coins
-are discarded and contribute at most `δ n`. Whether safe primes (resp. primes `≡ 3 (mod 4)`
+are discarded and contribute at most `δ n`. This is a convenience: instances with `p − 1` below
+a polynomial can be inverted by exhaustive search, so `hbig` could be dropped (gate 03f1
+review, M1; ruling R-03f1-1 (A) keeps it). Whether safe primes (resp. primes `≡ 3 (mod 4)`
 with a generator) of full length can be produced for every `n` except with negligible
 probability is itself open ([PS10, p. 52]: the sampler's "basic theoretical properties are
 unknown"); the hypothesis `∃ δ, Negligible δ ∧ G.FullLengthExcept δ` of the headline theorems
@@ -467,6 +470,15 @@ def sampleBelowL (m k B T : ℕ) (r : List Bool) : Option ℕ :=
     if listToNat ((r.drop (t * B)).take k) < m then some (listToNat ((r.drop (t * B)).take k))
     else none
 
+/-- `sampleBelowL` is block rejection sampling with the test `v < m`:
+`sampleBelowL m k B T = rejectBlocksL (· < m) k B T` (the same blocks, the same test; gate 03f1
+review, M2). -/
+theorem sampleBelowL_eq_rejectBlocksL (m k B T : ℕ) :
+    sampleBelowL m k B T = rejectBlocksL (· < m) k B T := by
+  funext r
+  rw [rejectBlocksL_eq]
+  rfl
+
 /-- A sampled value is below `m`. -/
 theorem sampleBelowL_lt {m k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleBelowL m k B T r = some v) :
     v < m := by
@@ -484,18 +496,15 @@ distance `(1/2)^n` of the uniform number below `m`. The closeness fact behind
 `expCollection_sampleClose` and the El Gamal samplers (`egUnit`, `egGenParts`, `egEncParts`,
 `ddhExpo`).
 
-**Proof sketch.** `k ≤ n` by `Nat.size_le`, so trial `t < n` reads the first `k` bits of the
-`t`-th block of `n` bits of `List.ofFn b` (`NumberTheory.chunk`; `List.drop`/`List.take` of
-`List.ofFn`), and `sampleBelowL m k n n` is `firstHit (· < m)` of the numbers read from the
-blocks (`List.findSome?` over `List.range n` versus `List.finRange n`; `listToNat` of the `k`
-bits is `bitsToNat` of the block's prefix, `bitsToNat_eq_listToNat`). The map from the `n · n`
-coins to the `n` prefixes is a product of coordinate projections, so it pushes the uniform
-distribution to the uniform one on `Fin n → Fin k → Bool` (`StatClose.comp_pushesUniform`),
-and reading bits is the bijection `bitsEquiv k` onto `Fin (2^k)`; `statClose_firstHit` with
-`E = {x < m}` and `d = 0` gives closeness `(1 − m/2^k)^n ≤ (1/2)^n` (`Nat.lt_size_self`:
-`m/2^k ≥ 1/2`), transported along the bijection `{x : Fin (2^k) // x < m} ≃ Fin m` by
-`StatClose.comp_equiv_right` and `StatClose.map` (`Fin.val`), exactly as in
-`statClose_rejectionSample`. -/
+**Proof sketch.** A corollary of `statClose_rejectBlocksL` (gate 03f1 review, M2; that lemma is
+filled first, and this one is not filled a second time). With `k = Nat.size m`, `k ≤ n` by
+`Nat.size_le` (`m < 2^n`), and `sampleBelowL m k n n = rejectBlocksL (· < m) k n n`
+(`sampleBelowL_eq_rejectBlocksL`). `statClose_rejectBlocksL (· < m) k n n` with the default
+`d = 0` (`0 < m`, `0 < 2^k`) gives closeness `(1 − Pr_{v < 2^k}[v < m])^n = (1 − m/2^k)^n` to
+the uniform element of `{v : Fin (2^k) // v < m}`, and `(1 − m/2^k)^n ≤ (1/2)^n` since
+`2^k ≤ 2m` (`Nat.lt_size_self` and the minimality of `Nat.size`: `m/2^k ≥ 1/2`). Transport the
+target along the value-preserving bijection `{v : Fin (2^k) // v < m} ≃ Fin m`
+(`StatClose.comp_equiv_right`) and weaken the bound (`StatClose.mono`). -/
 theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
     StatClose (fun b : Fin (n * n) → Bool => (sampleBelowL m (Nat.size m) n n (List.ofFn b)).getD 0)
       (fun x : Fin m => (x : ℕ)) ((1 / 2 : ℝ) ^ n) := by
@@ -514,7 +523,7 @@ def expSampleRaw (z : List Bool) : List Bool :=
 domain `D_i`"] given the arithmetic bundle.
 
 **Proof sketch.** The bit length `Nat.size m` is the length of the numeral of `m` with its
-leading zeros stripped (requested shared primitive, as in the RSA sampler); the trial loop is
+leading zeros stripped (`H.size`); the trial loop is
 `Complexity.polyTimeComputable_iterateFind` over the `n` blocks of `1^n` bits
 (`polyTimeComputable_pairDropPoly`), each trial comparing the first `k` bits with `m`
 (`H.le`); the payload is the accepted block, the `none` branch gives the fallback; the output

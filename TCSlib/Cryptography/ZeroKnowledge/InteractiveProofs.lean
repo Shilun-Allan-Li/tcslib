@@ -33,8 +33,9 @@ read as the output string `[false]`, the negligible `ε` quantified before the i
 cheating prover and its auxiliary input; cheating provers are arbitrary strategies with a
 polynomial random tape (unbounded computation; polynomial coin tapes lose nothing by
 averaging, `Protocol.exists_proverCoins_le`). Completeness is `uprob = 1`, i.e. acceptance on
-every pair of random tapes. The parties' efficiency (the text's "p.p.t.") is
-`Strategy.Efficient`, polynomial time in `|x| + |z| + |messages|` (D8), together with a
+every pair of random tapes. The verifier's efficiency (Definition 116.1's "p.p.t.", and the
+prover's for Definition 119.5) is `Strategy.Efficient`, polynomial time in
+`|x| + |z| + |messages|` (D8), together with a
 polynomial bound `B(|x|)` on the honest prover's messages (ruling G3-3 of gate 03, the
 convention of ch. 6): in the completeness clause of `InteractiveProof` and
 `InteractiveProofErr` for the completeness witness, and as the field `boundedP`
@@ -43,10 +44,13 @@ witness. The residual deviation is that against a cheating prover the verifier's
 polynomial in the length of the messages it receives, not in `|x|`. Since the honest messages
 are short, the verifier can always be capped: `V` reading only the first `B(|x|)` bits of each
 message is still complete (the honest messages are untouched) and sound (against `P*` it acts
-as `V` against `P*` with truncated messages, another prover strategy). So the proof systems
-hold only for languages of the text's class IP — undecidable languages such as the halting
-problem, whose computation histories are not polynomially bounded, are excluded — while
-`IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
+as `V` against `P*` with truncated messages, another prover strategy). So `InteractiveProof`
+(and `InteractiveProofErr` with negligible error, by `InteractiveProofErr.interactiveProof`)
+holds only for languages of the text's class IP — undecidable languages such as the halting
+problem, whose computation histories are not polynomially bounded, are excluded — the
+explicit-error forms with a large error say little (with `s = 1` the zero-message,
+always-accepting protocol is an `EfficientProverProofErr` for every language and relation) —
+while `IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
 (run-3 audit P9-1). The capping argument is not formalized as a lemma.
 
 ## Main definitions
@@ -111,12 +115,14 @@ on the complete history of the fixed-alternation execution; `P'` ranges over str
 polynomial random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is
 `uprob = 1` (every pair of random tapes). The verifier's "p.p.t." is `Strategy.Efficient`,
 polynomial-time in `|x| + |z| + |messages|` (D8), and the honest messages on the completeness
-witness are bounded by `B(|x|)` (the text's p.p.t. prover writes at most `t(|x|)` bits; the
-convention of ch. 6). Against a cheating prover the verifier's work is polynomial in the
-length of the messages it receives, not in `|x|`; because the honest messages are short the
-verifier can be capped to their length without losing completeness or soundness (module
-docstring), so the predicate holds only for languages of the text's class IP. The class `IP`
-is stated with the message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
+witness are bounded by `B(|x|)` (Definition 116.1's prover need not be efficient; bounding its
+messages is the chosen normal form, harmless because a verifier of time `t(|x|)` reads at most
+`t(|x|)` bits of each message; the convention of ch. 6). Against a cheating prover the
+verifier's work is polynomial in the length of the messages it receives, not in `|x|`; because
+the honest messages are short the verifier can be capped to their length without losing
+completeness or soundness (module docstring), so the predicate holds only for languages of the
+text's class IP. The class `IP` is stated with the message-prefix cap `Strategy.ReadsPrefix`
+(run-3 audit P9-1). -/
 structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
   /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
   efficientV : π.V.Efficient
@@ -232,7 +238,7 @@ theorem Protocol.ProverBounded.exists_complete {π : Protocol} {L : Language Boo
       ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 :=
   ⟨B, fun x hx =>
     let ⟨y, hy⟩ := hLR x hx
-    ⟨y, fun r hist => hB x y r hist hy, hc x y hy⟩⟩
+    ⟨y, fun r hist => (π.proverBounded_iff R B).1 hB x y r hist hy, hc x y hy⟩⟩
 
 /-! ### Witness relations -/
 
@@ -466,7 +472,7 @@ theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
 theorem npProtocol_proverBounded (T : List Bool → Bool) (p : PolyExpr)
     {R : List Bool → List Bool → Prop} (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
     (npProtocol T p).ProverBounded R p :=
-  fun x y _ _ hxy => hp x y hxy
+  ((npProtocol T p).proverBounded_iff R p).2 fun x y _ _ hxy => hp x y hxy
 
 /-- Non-vacuity of Definitions 116.1 and 119.5 [PS10, §4.5, "`NP ⊆ IP`"]: for a witness relation
 `R` of `L` decided by the polynomial-time predicate `T`, with witnesses of length at most

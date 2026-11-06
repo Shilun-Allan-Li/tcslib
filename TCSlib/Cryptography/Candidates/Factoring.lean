@@ -499,11 +499,17 @@ with the step dropping `n` bits, the test `hP` on the first `n` bits, the payloa
 bits, `R = 2n²`, `P = var`), whose `List.range.find?` form is `firstHit` over `chunk`
 (`samplePrime`); the fallback numeral `natToList n 2 = 0^{n-2}10` of a failed run is the
 `none` branch of `iterateFind` (a constant string of unary-polynomial length,
-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`); the acceptance test of
-`samplePairOut` is two `H.prime` calls, a `pairEq` test and two `H.le`
-comparisons with `1^{max n 2}` (`polyTimeComputable_ite`), the accepted blocks are re-encoded
-with `max n 2` bits (`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the
-default pair is a constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
+`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The acceptance test of
+`samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two prime
+tests are `hP`, and the inequality of the two values is tested by comparing the two `n`-bit
+words directly (a `pairEq` test: words of equal length have equal values iff they are equal);
+the two range checks `< 2^{max n 2}` are discharged from the fixed widths, not computed (each
+`samplePrimeL` output has `n` bits, so its value is `< 2^n ≤ 2^{max n 2}`,
+`listToNat_lt_two_pow`); the branch is `polyTimeComputable_ite`. The accepted words are
+re-encoded with `max n 2` bits by leading-zero padding (the `max n 2`-bit numeral of an `n`-bit
+word is the word preceded by `max n 2 − n` zeros, a constant block of unary-polynomial length:
+`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the default pair is a
+constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
 theorem polyTimeComputable_samplePairRaw (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable samplePairRaw := by
   sorry

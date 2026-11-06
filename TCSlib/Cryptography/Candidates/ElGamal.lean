@@ -56,10 +56,11 @@ generator's coins (`ExpGroupGen.FullLengthExcept`).
 
 **Run-3 audit repairs.** P8-1: the run-2 DDH ensembles had dependent-sum seeds
 `Σ r, Z_{q_r} × Z_{q_r}` (resp. three factors), on which the uniform seed gives the coin string
-`r` probability `q_r² / Σ q²` (resp. `q_r³ / Σ q³`) instead of `2^{-|r|}` — the two ensembles
-then had different instance laws whenever `q` varies with the coins, and the threshold test
-`[q ≥ θ_n]` distinguished them with constant advantage, so `DDHAssumption` was false for every
-randomized generator. The seeds are now product types (uniform coins for the generator, D6)
+`r` probability `q_r² / Σ q²` (resp. `q_r³ / Σ q³`) instead of `2^{-|r|}` — so the two ensembles
+could have different instance laws, and when `q` varies non-negligibly with the coins (two
+orders `q`, `3q/2` on half the coins each give the laws `(4/13, 9/13)` and `(8/35, 27/35)`) a
+threshold test `[q ≥ θ_n]` distinguished them, making `DDHAssumption` false for reasons
+unrelated to DDH. The seeds are now product types (uniform coins for the generator, D6)
 with the exponents read by `ddhExpo`. P8-2: `elGamal_secure`'s hypothesis `G.FullLength`
 (full length on every coin string) became `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`.
 
@@ -294,8 +295,8 @@ run-3 audit P2-2, by instance resolution).
 
 Repair (run-3 audit P8-1): the run-2 seed type `Σ r : G.gen.Coins n, Z_{q_r} × Z_{q_r}` gave
 the coin string `r` probability `q_r² / Σ_r q_r²` under the uniform seed, so the instance law
-depended on the fibre sizes and differed from `ddhRandom`'s (cubes), making `DDHAssumption`
-false for every generator whose `q` varies with the coins. -/
+depended on the fibre sizes and differed from `ddhRandom`'s (cubes), which could make
+`DDHAssumption` false for reasons unrelated to DDH (DESIGN §5 item 20). -/
 noncomputable def ddhReal (G : SafePrimeGen) : Ensemble ddhLen where
   σ n := G.gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))
   X n z := padFin (ddhLen.eval n) (ddhTuple (G.gen.runAt n [] z.1)
@@ -509,9 +510,9 @@ def egGenRaw (G : SafePrimeGen) (z : List Bool) : List Bool :=
 (`polyTimeComputable_pairTakePoly`/`_pairDropPoly` on `⟨1^n, r⟩`); run `G.gen.output` on the
 layout (`NUPPT.polyTimeComputable_layout`, `G.gen.polyTimeComputable_output`); the two
 rejection loops are `Complexity.polyTimeComputable_iterateFind` over `n`-bit blocks with the
-test `H.le` (the decrement `p − 1` and the bit length `Nat.size` are requested shared
-primitives, as in the RSA generator); `h = g² mod p` and `h^x mod p` by `H.modExp`; the
-numerals are padded to width `n` (`polyTimeComputable_unaryPoly`, `_blockMap`); pair. -/
+test `H.le` (the decrement `p − 1` and the bit length `Nat.size`: `H.sub`, `H.size`);
+`h = g² mod p` and `h^x mod p` by `H.modExp`; the numerals are padded to width `n`
+(`polyTimeComputable_unaryPoly`, `_blockMap`); pair. -/
 theorem polyTimeComputable_egGenRaw (H : ArithmeticFP) (G : SafePrimeGen) :
     PolyTimeComputable (egGenRaw G) := by
   sorry
@@ -843,8 +844,11 @@ except on a negligible set of the generator's coins (and under the arithmetic hy
 **Deviation:** message space `G_q` and the chosen-message form of security (the text's
 `m ∈ Z_p` is insecure, source error 28); the DDH assumption is relative to `egGroupGen H G`
 and samples its exponents by rejection (`ddhExpo`, D10); `hbig` (`ExpGroupGen.FullLengthExcept`)
-makes the sampling term `1/q ≤ 8 · 2^{-n}` negligible outside a set of coins of probability
-`δ n`; the text leaves the proof as an exercise and omits the generator-versus-square term.
+is used to make the sampling term `1/q ≤ 8 · 2^{-n}` negligible outside a set of coins of
+probability `δ n` (a convenience: if `E[1/q]` were not negligible, a DDH distinguisher finding
+`a` by exhaustive search when `q ≤ 2n^c` would contradict the DDH assumption, so `hbig` could be
+dropped; gate 03f1 review, M1; ruling R-03f1-1 (A) keeps it); the text leaves the proof as
+an exercise and omits the generator-versus-square term.
 
 Repair (run-3 audit P8-1, P8-2): the DDH ensembles' seeds became products (so hybrid 1 below
 is exact up to the event `g² = 1`), and `hbig : G.FullLength` became

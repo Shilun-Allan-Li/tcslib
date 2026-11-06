@@ -31,9 +31,10 @@ the distinct colour pairs, the commitment randomness `Fin n → Fin ℓ(n) → B
 `ρ` of an arbitrary verifier `V*` given as its reply function); the *string* layer is the
 simulator `colSim` run by a uniform `NUPPT` on the tape layout of `colSimBlock`.
 
-**Deviations** (D8, D10, source errors 42 and 46 of the plan): the simulator is strict PPT,
-truncated at `n|E|` attempts and outputting `⊥ = []` on failure, which costs the statistical
-term `(1 - 1/|E|)^{n|E|} ≤ e^{-n}`; `e'`, the colour pair and the honest prover's `π` are
+**Deviations** (D8, D10, source errors 42 and 46 of the plan): the simulator is strict PPT
+(D8's definition of `ZK`); it makes at most `n|E|` attempts and outputs `⊥ = []` on failure, as
+the text does (Algorithm 128.7, steps 4–5), and the failure costs the text's own term
+`(1 − 1/|E|)^{n|E|} ≤ e^{-n}`; `e'`, the colour pair and the honest prover's `π` are
 rejection-sampled from the bit tapes; the hybrid over attempts has `n|E|` steps (the text says
 `2n|E|`) and the text's `6|E|` sub-hybrid is replaced by a non-uniform choice of the worst
 `(e', π)`; "`k ∈ [m] ∖ {i', j'}`" is read as `k ∈ [n]`; if `E = ∅` the simulator commits to
@@ -318,9 +319,9 @@ theorem uprob_colSimAttemptH_some [Fintype ρ] (hm : 0 < edgeCount G)
     (fun a => edgeIdxOfMsg_lt hm _) (fun a => T (colRealView Com ℓn G c V a))
 
 /-- **The truncated `S''` fails with probability `(1 - 1/|E|)^N`** [PS10, proof of Proposition
-128.8, "`S''` fails with probability `(1 - 1/|E|)^{n|E|}`"] (Claim-129.c): the attempts use
-disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability `1 - 1/|E|`
-(`uprob_colSimAttemptH_none`). -/
+128.8, "`S'` [sic: `S''`] fails with probability `(1 - 1/|E|)^{n|E|}`"] (Claim-129.c): the
+attempts use disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability
+`1 - 1/|E|` (`uprob_colSimAttemptH_none`). -/
 theorem uprob_colSimTruncH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ) :
     uprob (fun w => colSimTruncH Com ℓn G c V N w = none) = (1 - 1 / (edgeCount G : ℝ)) ^ N := by
@@ -633,8 +634,9 @@ noncomputable def colSimAttemptStr (Com : List Bool → List Bool) (ℓ : PolyEx
 the consecutive coin blocks of the tape `r`, the first successful attempt's view, or `⊥ = []`
 after `n|E|` failures; a single attempt if `E = ∅`.
 
-**Deviation (D8):** truncated at `n|E|` attempts (strict PPT) instead of restarting until
-success. -/
+As in [PS10, Algorithm 128.7, steps 4–5], at most `n|E|` attempts, then `fail` (`⊥ = []`).
+**Deviation (D10):** `e'` and the colour pair are rejection-sampled from the tape (defaults `0`
+and `(0, 1)`). -/
 noncomputable def colSim (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
     (x z r : List Bool) : List Bool :=
   let B := (colSimBlock ℓ V').eval x.length
@@ -676,9 +678,10 @@ theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComp
 commitment's hiding error `ε(n)` at the vertex count `n = √|x|` into a function of `|x|`,
 Inf-4.4).
 
-**Proof sketch.** Given `c`, take `n₀` from `hμ (2c + 1)` and `N ≥ max ((n₀ + 1)², 4^c · 4)`:
-`n := Nat.sqrt N ≥ n₀` (`Nat.le_sqrt`) and `N < (n + 1)² ≤ 4n²` (`Nat.lt_succ_sqrt`), so
-`N^c ≤ 4^c n^{2c} ≤ n^{2c+1}` once `n ≥ 4^c`, whence `|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
+**Proof sketch.** Given `c`, take `n₀` from `hμ (2c + 1)`, `K := max (n₀, 4^c, 1)` and `N ≥ K²`:
+`n := Nat.sqrt N ≥ K` (`Nat.le_sqrt`), so `n ≥ n₀`, `n ≥ 4^c`, `n ≥ 1`, and
+`N < (n + 1)² ≤ 4n²` (`Nat.lt_succ_sqrt`); hence `N^c ≤ 4^c n^{2c} ≤ n^{2c+1}` and
+`|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
 theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
     Negligible fun N => μ (Nat.sqrt N) := by
   intro c
@@ -719,48 +722,59 @@ there is a negligible `ε` with, for all `x`, witnesses `y` and `z` with `|z| �
 advantage of `D` between the view of `V'` in `P(x, y) ↔ V'(x, z)` and `S(x, z)` at most
 `ε(|x|)`.
 
-**Deviation (D8, D10):** strict PPT simulator truncated at `n|E|` attempts, rejection-sampled
+**Deviation (D8, D10):** strict PPT simulator (D8's definition of `ZK`), rejection-sampled
 `π`, `e'` and colour pairs; the error bound is in `|x|` (the text's `e(n)` with `n`
 undefined); one iteration (the `n|E|`-fold protocol's zero-knowledge is sequential
 composition, [PS10, §7.2.1], out of scope).
 
-**Proof sketch.** Fix `V'` efficient and take `S` from `exists_colSimulator hC.easy`. Fix
-`Lz` and `D`. Let `B` be the hiding reduction machine of Claim-129.d (`colSimRed` at the
-string level): at parameter `n` it carries in its advice the worst instance
-`(x_n, y_n, z_n)` with `|x_n| = n²`, `|y_n| = 2n`, `|z_n| ≤ Lz(n²)` (`NUPPT.exists_withAdvice`
-with the polynomial bound `add (add (mul var var) (mul (const 2) var)) (Lz.subst (mul var var))`),
-the hybrid index `k_n`, `e₀`, `π₀` and `D.advice n²`; its coins are the other attempts' blocks
-and `D`'s coins (`NUPPT.exists_split`); it runs `V'`'s machine and `D`'s machine
-(`NUPPT.exists_seq`, `NUPPT.exists_comp`, `polyTimeComputable_iterateFind` for the attempts,
-`polyTimeComputable_blockMap ℓ` with `hC.easy` for the commitments, `msgAt` projections by
-`polyTimeComputable_iterate_pairFstD`). `hC.multiHiding var B` gives a negligible `ε_B` with
-`distAdv (multiCom Com v ·) (multiCom Com v' ·) (B.distinguisherL n) ≤ ε_B n` for all `n`-vectors
-`v, v'`. Put
-`ε N := N · ε_B (Nat.sqrt N) + Real.exp (-(Nat.sqrt N)) + 2 N² (1/4)^N + N² (1/2)^N + (1/4)^N`,
+**Proof sketch.** Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy`, and fix `Lz`
+and `D`. For `x = encGraph G`, `y = encColoring c` with `c` proper and `|z| ≤ Lz |x|`, let `n` be
+the vertex count, `m = |E|`, `K = n m ≤ n³`, and `D'` the distinguisher `D.distinguisherL |x|`
+on the encoded optional view (`⊥ ↦ []`).
+
+(1) The real view, with `π = samplePerm3 |x| …`, is within `(1/4)^{|x|}` of the view with a
+uniform `π`: `statClose_samplePerm3`, `StatClose.prod`/`StatClose.refl` for the prover's
+randomness and `V'`'s tape, and `StatClose.map`. `exec_succ` three times, `decGraph_encGraph`,
+`decColoring_encColoring`, and `colProver` with `V com r_V := V'.next x z r_V [com]` unfold it to
+`some ∘ colRealView`.
+
+If `m > 0`:
+(2) `colSim` is within `K((1/2)^{|x|} + (1/4)^{|x|})` of `colSimTrunc … K`, with uniform
+`(e'_t, (a_t, b_t))` read from disjoint fields of the `t`-th block (`statClose_sampleEdgeIdx`,
+`statClose_sampleColorPair` — the colour-pair analogue of `statClose_samplePerm3`, still to be
+added: the fill ladder's first step, gate 03g review M3 — and `StatClose.prod` over the blocks).
+(3) `uprob_colSimTruncW_eq`.
+(4) `exists_colSimRed_ge` with `N := K` gives `k, e₀, π₀` with
+`distAdv truncW truncH D' ≤ K · distAdv X Y (colSimRed … k e₀ π₀ D')`.
+`CommitmentLemmas.exists_fixCoins` fixes the reduction's attempt table `w₀` without loss.
+With `w₀` fixed, only attempt `k` reads the challenge `cv`, so the fixed reduction is
+`cv ↦ D'(pre <|> planted cv <|> post)` for two constant optional views.
+(5) `statClose_colSimTruncH` and `one_sub_inv_pow_mul_le_exp` give
+`distAdv truncH (some ∘ colRealView) D' ≤ e^{−n}`.
+
+If `m = 0` and `n ≥ 1`, the two views differ only in the commitment vector (`π ∘ c` against
+`0`). For each fixed `π`, `D`'s advantage is the hiding gap of
+`cv ↦ D(encode ⟨x, z, r_V, [cv, []]⟩)`, with `r_V` fixed by `exists_fixCoins`. Average over `π`.
+If `n = 0`, bound the advantage by `1`: the simulator's tape is empty, so its `r_V = []` differs
+from the real tape when `V'.coinLen 0 > 0`.
+
+The machine `B` at parameter `n`: among the finitely many data at vertex count `n` (finite
+because `|z| ≤ Lz(n²)`: this is where the bound `Lz` is used, see the `Defs.lean` module
+docstring), take those whose fixed reduction (either case) has the largest gap on its own
+vectors. Hard-wire `x`, `z`, the case, `ρ_k`, `e₀`, the two endpoint commitments and openings,
+`pre`, `post` and `D.advice (n²)` as advice (`NUPPT.exists_withAdvice`; polynomially bounded by
+`hC.easy.output_length_le` and `colProtocol_proverBounded`). Call `V'`'s uniform machine once
+(`Strategy.Efficient`) and `D` at parameter `n²` on `B`'s coins (`NUPPT.exists_reparam_advice`,
+`φ n = n²`). Its acceptance probabilities on `multiCom` samples are the fixed reduction's (coin
+transport along `finCongr`). `hC.multiHiding var B` gives a negligible `ε_B ≥ 0` (it bounds a
+`distAdv` at every `n`), so the hiding terms are at most
+`K ε_B n ≤ n³ ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)` for `n ≥ 1`.
+
+Put `ε N := N² ε_B (Nat.sqrt N) + exp (−Nat.sqrt N) + N² ((1/2)^N + (1/4)^N) + (1/4)^N`. It is
 negligible by `Negligible.comp_sqrt`, `Negligible.mul_pow`, `negligible_exp_neg_sqrt_div`
-(`C = 1`), `negligible_two_pow_neg` (with `(1/4)^N ≤ (1/2)^N`), `Negligible.add`,
-`Negligible.const_mul`. Now fix `x = encGraph G`, `y = encColoring c` with `c` proper
-(`R3COL`), `|z| ≤ Lz |x|`, `n` the vertex count, `m = |E|`. If `m = 0` the real view is
-`⟨⟨x,z⟩,⟨r_V,[colCommit (π ∘ c) r, []]⟩⟩` and the simulated one has the all-zero colours, so
-`D`'s advantage is at most `ε_B n` by `hC.multiHiding` applied to a machine `B'` built like
-`B` (absorbed into `B` by a case split on `m` in its advice). Otherwise `n ≥ 2` and the chain is:
-(1) the real view with `π = samplePerm3 |x| …` is within `(1/4)^{|x|}` of the view with a
-uniform `π` (`statClose_samplePerm3`, `StatClose.prod` with `StatClose.refl` for the
-randomness and `V'`'s tape, `StatClose.map` by the view encoding; `exec_succ` three times,
-`decGraph_encGraph`, `decColoring_encColoring`, `colProver`/`colVerifier` unfold to
-`colRealView` with `V com r_V := V'.next x z r_V [com]`); (2) `colSim` is `(Option.map enc
-(colSimTrunc … (n m) w)).getD []` with the `t`-th attempt's coins read from the `t`-th block
-(`colCoinSlice`, `colSimBlock`), within `n m ((1/2)^{|x|} + (1/4)^{|x|})` of the same with
-uniform `(e'_t, (a_t, b_t))` (`statClose_sampleEdgeIdx`, the colour-pair analogue of
-`statClose_samplePerm3`, `StatClose.prod` over the blocks); (3) `uprob_colSimTruncW_eq` makes
-that the law of `colSimTruncW`; (4) `exists_colSimRed_ge` with `N := n m` gives `k, e₀, π₀`
-with `distAdv (truncW) (truncH) D' ≤ n m · distAdv (X) (Y) (colSimRed …)`, and
-`colSimRed … = B.distinguisherL n` up to the coin bijection (`acceptProb_comp_equiv`), so
-`≤ n m ε_B n ≤ |x| ε_B (Nat.sqrt |x|)`; (5) `statClose_colSimTruncH` and
-`one_sub_inv_pow_mul_le_exp` give `distAdv (truncH) (some ∘ colRealView) D' ≤ e^{-n}`
-(`distAdv_le_of_statClose`). The triangle inequality for `distAdv` (`abs_sub_le` on the
-acceptance probabilities) sums the five terms, and `Nat.sqrt |x| = n` (`length_encGraph`,
-`Nat.sqrt_eq`). -/
+(`C = 1`), `negligible_two_pow_neg` and `Negligible.add`. At `N = 0` its exponential term is
+`1`. Use the triangle inequality for `distAdv` (`abs_sub_le`), and `Nat.sqrt |x| = n`
+(`length_encGraph`, `Nat.sqrt_eq`). -/
 theorem col_zk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
     ZK (colProtocol Com ℓ) R3COL := by
   sorry

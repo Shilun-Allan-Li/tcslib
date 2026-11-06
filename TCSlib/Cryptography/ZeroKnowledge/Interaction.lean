@@ -37,10 +37,12 @@ last message *is* its verdict (`Protocol.outV_eq_getLast_of_moverIsV`); the chap
 are stated with the prover moving last, and the `n`-fold protocols read the verifier's last
 message as the verdict.
 Repetition convention (gate 03e, note 8): an iteration with an odd number of messages (prover,
-verifier, prover) is repeated under strict alternation by appending one dummy empty verifier
-message to each iteration, so that every iteration starts with the prover; the fourth move of
-`giProtocolRep` and of `colProtocolRep`, and the filler moves of the sequential repetition of
-[PS10, §7.2.1] in ch. 7, follow this convention.
+verifier, prover) is repeated under strict alternation by giving each iteration one additional
+verifier move, so that every iteration starts with the prover. In `giProtocolRep` and
+`colProtocolRep` that move is the empty message, except for the protocol's final move, which
+carries the verifier's verdict (the verdict convention above). The sequential repetition of
+[PS10, §7.2.1] in ch. 7 pads each phase instead with `rounds(|x|)` filler moves of both parties,
+its last filler again carrying the verdict.
 `Strategy.Efficient` ([PS10, §4.4], time complexity of an interactive machine) is one
 activation of a uniform `Complexity.NUPPT` at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the
 whole random tape; the time is polynomial in the total input length rather than in `|x|`
@@ -330,6 +332,13 @@ zero-knowledge for one run — lets a cheating verifier that doubles its message
 of length `2^{rounds}`, which the composition theorems of ch. 7 cannot simulate. -/
 def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
   ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+
+/-- **Bounded honest messages unfolded:** `π.ProverBounded R B` iff for every `x` and `y` with
+`R x y`, every tape `r` and every history `hist`, `|π.P.next x y r hist| ≤ B(|x|)`. -/
+theorem proverBounded_iff (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) :
+    π.ProverBounded R B ↔
+      ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length :=
+  Iff.rfl
 
 /-- A message bound `B` implies every pointwise larger bound `B'`. -/
 theorem ProverBounded.mono {π : Protocol} {R : List Bool → List Bool → Prop} {B B' : PolyExpr}

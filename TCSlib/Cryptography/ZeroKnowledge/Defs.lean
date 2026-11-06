@@ -39,13 +39,15 @@ and what the non-uniform reduction of [PS10, Proposition 128.8] needs); the erro
 a function of `|x|` (the text's `e(n)` leaves `n` undefined); the honest-verifier notion is
 stated for a protocol and a witness relation without assuming the proof property, which the
 theorems add separately.
-The bound `Lz` is necessary, not only convenient (gate 03e, note 9): the distinguisher runs in
-time polynomial in its input, the encoded view, which contains `z`; with `|z| ≥ 2^n` it could
-invert a one-way permutation on `n`-bit inputs and open the unopened commitments of the
-3-colouring protocol, so computational zero-knowledge would fail for every protocol whose
-hiding is only computational. Read literally, [PS10, Definition 121.2] (every
-`z ∈ {0,1}*`, with `D` polynomial-time in its input) has the same defect. For the same reason
-the distinguisher's advice is indexed by the parameter `|x|`, not by its input length.
+The bound `Lz` is necessary for the 3-colouring protocol, not only convenient (gate 03e,
+note 9; round 2, finding 6). The distinguisher runs in time polynomial in its input, the
+encoded view, which contains `z`. With `|z|` exponential in `ℓ(n)` it can open the perfectly
+binding commitments by exhaustive search. On a graph with two proper colourings outside one
+colour-permutation orbit, that tells the two real views apart with advantage 1, while the
+simulator does not see the witness. Read literally, [PS10, Definition 121.2] (every
+`z ∈ {0,1}*`, with `D` polynomial-time in its input) has the same defect for that protocol.
+Protocols with exactly simulable views are not affected. For the same reason the
+distinguisher's advice is indexed by the parameter `|x|`, not by its input length.
 
 **Perfect zero-knowledge (ruling G3-4 of gate 03).** With strict simulators and honest parties
 drawing polynomially many fair coins (D8, D10), no protocol of the source attains `PerfectZK`
@@ -307,6 +309,15 @@ def attempt (S : NUPPT) (w : List Bool) (t : ℕ) : List Bool :=
     (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
       (S.coinLen (NUPPT.inParam w).length)))
 
+/-- One attempt unfolded: `attempt S w t` is `S.output` on the layout with parameter
+`inParam w`, argument `inArg w`, empty advice and coins
+`((inCoins w).drop (t · c)).take c`, where `c = S.coinLen |inParam w|`. -/
+theorem attempt_eq (S : NUPPT) (w : List Bool) (t : ℕ) :
+    attempt S w t = S.output (NUPPT.layout (NUPPT.inParam w) (NUPPT.inArg w) []
+      (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
+        (S.coinLen (NUPPT.inParam w).length))) :=
+  rfl
+
 /-- The retrying simulator on its machine layout `w = ⟨⟨⟨1^n, y⟩, α⟩, r⟩`
 (for the abort form of [Gol01, Definition 4.3.1], amplified by repetition): the
 first of the `n` attempts that does not output `⊥ = []` (the first accepted index,
@@ -316,6 +327,41 @@ noncomputable def retry (S : NUPPT) (w : List Bool) : List Bool :=
       (NUPPT.inParam w).length then
     attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length)
   else []
+
+/-- The retrying simulator unfolded: with `N = |inParam w|` and `i` the least index below `N`
+whose attempt is not `⊥ = []` (`firstIdx`, equal to `N` if there is none), `retry S w` is
+attempt `i` if `i < N`, and `[]` otherwise. -/
+theorem retry_eq (S : NUPPT) (w : List Bool) :
+    retry S w =
+      if firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length <
+          (NUPPT.inParam w).length then
+        attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length)
+      else [] :=
+  rfl
+
+/-- If attempt `i < |inParam w|` is the first that does not abort (`attempt S w i ≠ []`, and
+`attempt S w j = []` for every `j < i`), then `retry S w` is attempt `i`.
+
+**Proof sketch.** `firstIdx` of the non-abort test is `i` (`firstIdx_eq_of`); rewrite
+`retry_eq` with it and take the `i < |inParam w|` branch. -/
+theorem retry_eq_attempt {S : NUPPT} {w : List Bool} {i : ℕ}
+    (hi : i < (NUPPT.inParam w).length) (hne : attempt S w i ≠ [])
+    (hmin : ∀ j < i, attempt S w j = []) : retry S w = attempt S w i := by
+  have h : firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length = i :=
+    firstIdx_eq_of hi (decide_eq_true hne) fun j hj => decide_eq_false (not_not.2 (hmin j hj))
+  rw [retry_eq, h, if_pos hi]
+
+/-- If all `|inParam w|` attempts abort (`attempt S w t = []` for every `t < |inParam w|`),
+then `retry S w = []`. Together with `retry_eq_attempt` this covers every input.
+
+**Proof sketch.** `firstIdx` of the non-abort test is `|inParam w|` (`firstIdx_eq_of_forall`);
+rewrite `retry_eq` with it and take the `else` branch. -/
+theorem retry_eq_nil {S : NUPPT} {w : List Bool}
+    (h : ∀ t < (NUPPT.inParam w).length, attempt S w t = []) : retry S w = [] := by
+  have h' : firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length =
+      (NUPPT.inParam w).length :=
+    firstIdx_eq_of_forall fun t ht => decide_eq_false (not_not.2 (h t ht))
+  rw [retry_eq, h', if_neg (lt_irrefl _)]
 
 /-- One attempt is polynomial-time on the indexed layout `⟨1^t, w⟩`.
 
