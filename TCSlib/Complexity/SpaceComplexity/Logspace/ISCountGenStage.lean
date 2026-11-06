@@ -130,10 +130,12 @@ theorem guloop (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 1 ≤ B) (hu : 
         simp [he]
       refine NSem.jeq_neg rfl (St.greg hσ _ _) (by isr; exact he) ?_
       by_cases hr' : RelO orc x σ.s σ.u σ.v
-      · refine (nsem_call₃_pos rfl (St.greg hσ _ _) (by isr; exact hr')
+      · refine (nsem_call₃_pos rfl (St.greg hσ _ _)
+          (by isr; exact SavitchARM.rel_iff_orc.mp hr')
           (NSem.ret rfl (St.greg hσ _ _))).congr ?_
         simp [hr']
-      refine nsem_call₃_neg rfl (St.greg hσ _ _) (by isr; simpa [SavitchARM.Rel] using hr') ?_
+      refine nsem_call₃_neg rfl (St.greg hσ _ _)
+        (by isr; simpa [SavitchARM.rel_iff_orc] using hr') ?_
       refine NSem.inc rfl (St.greg hσ _ _) ?_
       isr
       exact (hnext (σ.cnt + 1) (by omega)
@@ -229,10 +231,12 @@ theorem gvloop (Kont : ℕ → Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 1 �
           Kont r (σ.v + 1) (σ.c + 1)) := by
       intro hmem
       by_cases ha : AccO orc x σ.s σ.v
-      · refine (nsem_call₂_pos rfl (St.greg hσ _ _) (by isr; exact ha)
+      · refine (nsem_call₂_pos rfl (St.greg hσ _ _)
+          (by isr; exact SavitchARM.accO_iff_orc.mp ha)
           (NSem.ret rfl (St.greg hσ _ _))).congr ?_
         simp [ha]
-      refine nsem_call₂_neg rfl (St.greg hσ _ _) (by isr; simpa [SavitchARM.AccO] using ha) ?_
+      refine nsem_call₂_neg rfl (St.greg hσ _ _)
+        (by isr; simpa [SavitchARM.accO_iff_orc] using ha) ?_
       refine NSem.inc rfl (St.greg hσ _ _) ?_
       isr
       exact (hnext (σ.c + 1) (by omega)

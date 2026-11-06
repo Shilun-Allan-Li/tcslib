@@ -1,0 +1,12 @@
+Scratch/T31Seal.lean:20:41: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Scratch/T31Seal.lean:170:11: error: Tactic `rcases` failed: `a✝ : DTIME T L` is not an inductive datatype
+Scratch/T31Seal.lean:422:39: error: Application type mismatch: The argument
+  hM
+has type
+  M.DecidesInTime L fun n => c₀ * T n
+but is expected to have type
+  ∀ (input : List Bool), M.ComputesInTime input [MultiTapeTM.indicator L input] (c₀ * T input.length)
+in the application
+  (computesFunInTime_iff M (fun x => [MultiTapeTM.indicator L x]) fun n => c₀ * T n).mpr hM
