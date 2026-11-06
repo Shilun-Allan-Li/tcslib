@@ -1,0 +1,79 @@
+# Rule-10 seal run (Fri Nov  6 13:07:35 UTC 2026), base 16a7d02d, head 240075b6bc0183f29e1df4403e5695dcfe713d60
+# Each sealed copy inserts 'attribute [local irreducible]' for the names below (ColZKMachine without ColSimLemmas.mergeAt, not imported there) before the new proofs: after 'open' in the helpers; inside the ladder and assembly sections and around step 1 in Simulator. Two controls per block read edgeIdxOfMsg and msgAt by rfl: they must FAIL sealed (Type mismatch at the control lines) and PASS unsealed.
+# Sealed names:
+#   TCSlib.Cryptography.StatClose
+#   TCSlib.Cryptography.uprob
+#   TCSlib.Cryptography.uexp
+#   TCSlib.Cryptography.acceptProb
+#   TCSlib.Cryptography.distAdv
+#   TCSlib.Cryptography.HardcoreBit.PushesUniform
+#   TCSlib.Cryptography.rejectionSample
+#   TCSlib.Cryptography.sampleIdx
+#   TCSlib.Cryptography.sampleEdgeIdx
+#   TCSlib.Cryptography.samplePerm3
+#   TCSlib.Cryptography.perm3Equiv
+#   TCSlib.Cryptography.edgeIdxOfMsg
+#   TCSlib.Cryptography.msgAt
+#   TCSlib.Cryptography.edgeAt
+#   TCSlib.Cryptography.edgeOf
+#   TCSlib.Cryptography.edgeList
+#   TCSlib.Cryptography.padColor
+#   TCSlib.Cryptography.encColor
+#   TCSlib.Cryptography.multiCom
+#   TCSlib.Cryptography.colCommit
+#   TCSlib.Cryptography.colOpen
+#   TCSlib.Cryptography.colCoinSlice
+#   TCSlib.Cryptography.colIterations
+#   TCSlib.Cryptography.colProver
+#   TCSlib.Cryptography.colProtocol
+#   TCSlib.Cryptography.Protocol.withV
+#   TCSlib.Cryptography.Protocol.viewV
+#   TCSlib.Cryptography.Protocol.withV_vCoinsEquiv
+#   TCSlib.Cryptography.View.encode
+#   TCSlib.Cryptography.exec
+#   TCSlib.Cryptography.moverIsV
+#   TCSlib.Cryptography.Strategy.coinLen
+#   TCSlib.Cryptography.Strategy.encodeMsgs
+#   TCSlib.Cryptography.Strategy.Efficient
+#   TCSlib.Cryptography.Strategy.ofNUPPT
+#   TCSlib.Cryptography.ZK
+#   TCSlib.Cryptography.R3COL
+#   TCSlib.Cryptography.ProperColoring
+#   TCSlib.Cryptography.Negligible
+#   TCSlib.Cryptography.encGraph
+#   TCSlib.Cryptography.decGraph
+#   TCSlib.Cryptography.encColoring
+#   TCSlib.Cryptography.decColoring
+#   TCSlib.Cryptography.ColMachines.countTrue
+#   TCSlib.Cryptography.ColSimLemmas.mergeAt
+#   Complexity.NUPPT.distinguisherL
+#   Complexity.NUPPT.coinLen
+#   Complexity.NUPPT.runAt
+#   Complexity.NUPPT.runAtL
+#   Complexity.NUPPT.Uniform
+#   Complexity.NUPPT.layout
+#   Complexity.NUPPT.output
+#   Complexity.PolyExpr.eval
+#   Complexity.PolyExpr.subst
+#   Complexity.PolyExpr.normal
+#   Turing.pairEncode
+#   Complexity.pairFstD
+#   Complexity.pairSndD
+== ColZKLemmas sealed
+ColZKLemmas_sealed.lean:107:89: error: Type mismatch
+ColZKLemmas_sealed.lean:109:117: error: Type mismatch
+== ColZKLemmas unsealed
+== ColZKMachine sealed
+ColZKMachine_sealed.lean:116:89: error: Type mismatch
+ColZKMachine_sealed.lean:118:117: error: Type mismatch
+== ColZKMachine unsealed
+== Simulator sealed
+Simulator_sealed.lean:669:89: error: Type mismatch
+Simulator_sealed.lean:671:117: error: Type mismatch
+Simulator_sealed.lean:848:89: error: Type mismatch
+Simulator_sealed.lean:850:117: error: Type mismatch
+Simulator_sealed.lean:1408:89: error: Type mismatch
+Simulator_sealed.lean:1410:117: error: Type mismatch
+Simulator_sealed.lean:1827:8: warning: declaration uses 'sorry'
+== Simulator unsealed
+Simulator_unsealed.lean:1653:8: warning: declaration uses 'sorry'

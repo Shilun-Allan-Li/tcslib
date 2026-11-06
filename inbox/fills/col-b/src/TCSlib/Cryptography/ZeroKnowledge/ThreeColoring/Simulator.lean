@@ -1045,7 +1045,7 @@ theorem exists_colZK_edgeless (V' : Strategy) {n : ℕ} (hn : 1 ≤ n) (G : Grap
   set N := (encGraph G).length with hN
   have hNn : N = n * n := length_encGraph G
   have hnN : n ≤ N := hNn ▸ Nat.le_mul_self n
-  have hc : ProperColoring G c := fun u v huv => by
+  have hc : ProperColoring G c := (ProperColoring_iff G c).2 fun u v huv => by
     have hmem := (mem_edgeList_iff G (u, v)).2 huv
     rw [List.length_eq_zero_iff.1 hm] at hmem
     exact absurd hmem List.not_mem_nil
@@ -1306,7 +1306,16 @@ private theorem colZK_attempt_some {n ℓn : ℕ} {G : Graph n} {ρ : Type*} {V 
 
 /-- **The case `m > 0` of `col_zk`** (conditional on the equations of `msgAt` and
 `edgeIdxOfMsg`): `D`'s advantage is at most
-`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`. -/
+`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`.
+
+**Proof sketch.** Steps (1)–(5) of `col_zk`'s sketch along the chain real view, honest typed
+view, `S''`, `S'`, `S`, simulator (triangle inequality, `distAdv_def`, `abs_sub_le`):
+`statClose_colRealView` (`(1/4)^{|x|}`), `statClose_colSimTruncH` with
+`one_sub_inv_pow_mul_le_exp` (`e^{−n}`), `exists_colSimRed_fixCoins` with `N := K` (`K` times the
+fixed reduction's gap), `uprob_colSimTruncW_eq` (exact) and `statClose_colSim_colSimTrunc`. By
+`colSimRed_fixed_eq` and `colZK_planted_eq` the fixed reduction is `cv ↦ D(hidingView adv cv)`
+for the planted advice `adv`, whose fields are bounded by `M` (`colZK_length_view_le`,
+`colZK_attempt_some`), so its gap is at most `ε_B n`. -/
 private theorem colZK_planted_case
     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
@@ -1349,7 +1358,7 @@ private theorem colZK_planted_case
   have h3 := distAdv_le_of_statClose _ _
     (statClose_colSim_colSimTrunc (Com := Com) (ℓ := ℓ) V' G hm z).symm (D.distinguisherL N)
   have hW : distAdv (colSimTruncW Com (ℓ.eval n) G c V K) (colSimTrunc Com (ℓ.eval n) G V K) D' ≤ 0 :=
-    distAdv_le_of_statClose _ _ (fun T => by
+    distAdv_le_of_statClose _ _ ((statClose_iff _ _ _).2 fun T => by
       rw [uprob_colSimTruncW_eq Com (ℓ.eval n) G hc V K T, sub_self, abs_zero]) D'
   have hH := distAdv_le_of_statClose _ _ (statClose_colSimTruncH Com (ℓ.eval n) G hm c V K).symm D'
   have hexp : (1 - 1 / (m : ℝ)) ^ K ≤ Real.exp (-(n : ℝ)) := one_sub_inv_pow_mul_le_exp m n hm
@@ -1436,9 +1445,11 @@ private theorem colZK_planted_case
   have e1 : acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
       some (colRealView Com (ℓ.eval n) G c V w)) D' =
       acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
-        (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N) := rfl
+        (some (colRealView Com (ℓ.eval n) G c V w)).elim [] enc) (D.distinguisherL N) := by
+    rw [acceptProb_def, acceptProb_def]
   have e2 : acceptProb (colSimTrunc Com (ℓ.eval n) G V K) D' =
-      acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc) (D.distinguisherL N) := rfl
+      acceptProb (fun w => (colSimTrunc Com (ℓ.eval n) G V K w).elim [] enc) (D.distinguisherL N) := by
+    rw [acceptProb_def, acceptProb_def]
   rw [e1] at hH
   rw [e2] at hW
   calc _ ≤ _ := abs_sub_le _ (acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
@@ -1457,7 +1468,16 @@ private theorem colZK_planted_case
 
 
 /-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
-conditional because the step-5 identification needs these two published equations, E-API). -/
+conditional because the step-5 identification needs these two published equations, E-API).
+
+**Proof sketch.** `ZK_iff`; `S` from `exists_colSimulator` (its seed is the ladder's tape along
+`NUPPT.coinLen_eq`). A polynomial `M(n)` bounds every field of the reductions' advice (R2-2), and
+`ColZK.exists_hidingView_bound` with `b := 15 (2M + 2)` gives a negligible `ε_B ≥ 0`. Put
+`ε N := N² ε_B (√N) + e^{−√N} + N² ((1/2)^N + (1/4)^N) + (1/4)^N`, negligible by
+`ColZK.negligible_colZKErr` and `Negligible.comp_sqrt`. For `x = encGraph G`: if `n = 0` the
+advantage is at most `1 ≤ ε 0 = 2`; if `m = 0` it is at most `(1/4)^N + ε_B n`
+(`exists_colZK_edgeless`, `ColZK.hidingView_edgelessAdv`); if `m > 0` it is the bound of
+`colZK_planted_case`; in both cases `≤ ε N` since `max(1, K) ≤ N²` and `√N = n`. -/
 private theorem colZK_zk_of_eqs
     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
