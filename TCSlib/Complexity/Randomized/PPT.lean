@@ -252,6 +252,26 @@ theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : Li
     (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r) := by
   rw [runAt_eq, coinsCongr_ofFn]
 
+/-- **The coins of a machine with a known coin polynomial**: `A.Coins n ≃ {0,1}^{c(n)}` when
+`A.coins = c` (`finCongr` on the coin length). The interface through which a statement reads the
+coins of a construction as bit strings of the polynomial's length, without reducing `coinLen` or
+the construction. -/
+def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+    A.Coins n ≃ (Fin (c.eval n) → Bool) :=
+  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, h])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (coinsEquivPoly h n r) = List.ofFn r`. -/
+theorem coinsEquivPoly_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) (r : A.Coins n) :
+    List.ofFn (coinsEquivPoly h n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [coinLen_eq, h]) r).symm
+
+/-- The inverse coin equivalence keeps the coin string:
+`List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w`. -/
+theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ)
+    (w : Fin (c.eval n) → Bool) : List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w := by
+  rw [← coinsEquivPoly_ofFn h n, Equiv.apply_symm_apply]
+
 /-- The input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8]: the
 parameter is the input length (the `1^{|y|}` prefix carries no information). It is the layout
 of the literal forms of [PS10, Definition 26.1] and [PS10, Definition 69.4] (D5). -/
@@ -316,6 +336,20 @@ theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable
     (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
     (ofPolyTime hf coins adv advice hα).coins = coins := rfl
 
+/-- **The coins of `ofPolyTime hf coins …`** are `coins(n)` bits: the published equivalence
+`(ofPolyTime hf coins adv advice hα).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+noncomputable def coinsEquiv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
+    (n : ℕ) : (ofPolyTime hf coins adv advice hα).Coins n ≃ (Fin (coins.eval n) → Bool) :=
+  coinsEquivPoly (coins_ofPolyTime hf coins adv advice hα) n
+
+/-- The coin equivalence of `ofPolyTime` keeps the coin string. -/
+theorem coinsEquiv_ofPolyTime_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
+    (n : ℕ) (r : (ofPolyTime hf coins adv advice hα).Coins n) :
+    List.ofFn (coinsEquiv_ofPolyTime hf coins adv advice hα n r) = List.ofFn r :=
+  coinsEquivPoly_ofFn _ n r
+
 /-- The advice polynomial of `ofPolyTime hf coins adv advice hα` is `adv`. -/
 @[simp] theorem adv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
@@ -351,6 +385,18 @@ theorem output_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeCom
 /-- The coin polynomial of `ofPolyTimeUniform hf coins` is `coins`. -/
 @[simp] theorem coins_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins : PolyExpr) : (ofPolyTimeUniform hf coins).coins = coins := rfl
+
+/-- **The coins of `ofPolyTimeUniform hf coins`** are `coins(n)` bits: the published equivalence
+`(ofPolyTimeUniform hf coins).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+noncomputable def coinsEquiv_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) (n : ℕ) : (ofPolyTimeUniform hf coins).Coins n ≃ (Fin (coins.eval n) → Bool) :=
+  coinsEquivPoly (coins_ofPolyTimeUniform hf coins) n
+
+/-- The coin equivalence of `ofPolyTimeUniform` keeps the coin string. -/
+theorem coinsEquiv_ofPolyTimeUniform_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) (n : ℕ) (r : (ofPolyTimeUniform hf coins).Coins n) :
+    List.ofFn (coinsEquiv_ofPolyTimeUniform hf coins n r) = List.ofFn r :=
+  coinsEquivPoly_ofFn _ n r
 
 /-- The untyped activation of `ofPolyTimeUniform hf coins` is `f` on the raw layout with
 empty advice. -/

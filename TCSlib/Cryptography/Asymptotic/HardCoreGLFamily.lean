@@ -167,11 +167,12 @@ theorem concatPre_poly : PolyTimeComputable concatPre := polyTimeComputable_pair
 /-- The predictor of the family, called by the recovery machine on the pair `⟨y, q⟩`, computes
 the concrete predictor `A(1^n, y ‖ q)` of [PS10, Algorithm 89.6]. -/
 theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool)
-    (c : A.Coins n) :
+    (c : (A.precomp concatPre_poly).Coins n) :
     glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c =
-      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) c := by
+      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
   simp only [glPredictorOf, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode, pairSndD_pairEncode,
-    NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, ofFn_appendEquiv]
+    NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, ofFn_appendEquiv,
+    NUPPT.precomp_coinsEquiv_ofFn]
 
 
 /-- **The inversion probability of the family inverter is that of the concrete inverter**
@@ -227,8 +228,10 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : �
     rw [ofFn_appendEquiv]
     show (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).runAt n (List.ofFn (𝓕.f n x) ++ List.ofFn r) _ = _
     rw [glFamMachine_runAt A₁ 𝓕.inLen 𝓕.outLen K k hk n (𝓕.f n x) r
-      (glCoinsEquiv A₁ n (𝓕.inLen.eval n) (k n) _ (glNeed_le A₁ 𝓕.inLen K k hk n) (g, ex)) _
-      (by simp only [eC, Equiv.trans_apply]; exact ofFn_finCastEquiv _ _),
+      ((glMachine_coinsEquiv A₁ 𝓕.inLen K k hk n).symm
+        (glCoinsEquiv A₁ n (𝓕.inLen.eval n) (k n) _ (glNeed_le A₁ 𝓕.inLen K k hk n) (g, ex))) _
+      (by simp only [eC, Equiv.trans_apply, glMachine_coinsEquiv_symm_ofFn]
+          exact ofFn_finCastEquiv _ _),
       glMachine_runAt_guessRecover A₁ 𝓕.inLen K k hk n hM (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y)
         (𝓕.f n x) g ex]
   rw [hrun]
