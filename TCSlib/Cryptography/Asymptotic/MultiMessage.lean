@@ -521,8 +521,13 @@ noncomputable def prfScheme (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) �
   correct := by
     intro n m rg re rd
     rw [runAt_coinKey, runAt_prfEnc hE]
-    have h : E (pairEncode (List.ofFn rg) (List.ofFn re)) = List.ofFn (F n rg re) := hFE n rg re
-    rw [h, runAt_prfDec hE _ _ _ _ _ (by rw [List.length_ofFn]; rfl) (by simp), h,
+    have h : E (pairEncode (List.ofFn rg) (List.ofFn re)) =
+        List.ofFn (F n (NUPPT.coinsEquiv_ofPolyTimeUniform _ _ n rg)
+          (NUPPT.coinsEquiv_ofPolyTimeUniform _ _ n re)) := by
+      rw [← hFE, NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn]
+    have hre : (List.ofFn re).length = n := by
+      rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n re, List.length_ofFn, PolyExpr.eval_var]
+    rw [h, runAt_prfDec hE _ _ _ _ _ hre (by simp), h,
       zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
 
 /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
@@ -546,14 +551,30 @@ theorem encodeTuple_eq_flatten {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool)
         pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten := by
   rw [encodeTuple, encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
 
+/-- **The coins of the multi-message experiment of Algorithm 99.1 are bit strings**: the key
+coins of `Gen` and the `q + 1` coin strings of `Enc` are `n`-bit strings,
+`gen.Coins n × (Fin (q + 1) → enc.Coins n) ≃ {0,1}^n × ({0,1}^n)^{q+1}` (the published coin
+identifications `NUPPT.coinsEquiv_ofPolyTimeUniform`; they keep every coin string). -/
+noncomputable def prfScheme_coinsEquiv (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
+    (n q : ℕ) :
+    (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n) ≃
+      (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool) :=
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).prodCongr
+    (Equiv.piCongrRight fun _ =>
+      NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n)
+
 /-- **The ciphertext tuple of Algorithm 99.1** is the encoding of the hybrid `H¹`: for the key
-`k = r.1` and the points `r.2 j`, `multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r)`. -/
+`k` and the points `r_j` read off the coins `r` (`prfScheme_coinsEquiv`),
+`multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv … r))`. -/
 theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
     (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
     (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
     (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) :
-    (prfScheme F E hE hFE).multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r) := by
+    (prfScheme F E hE hFE).multiEncDist n q m r =
+      encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv F E hE hFE n q r)) := by
   rw [PrivateKeyScheme.multiEncDist_apply, encodeTuple]
   congr 1
   congr 1
@@ -562,9 +583,11 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
     (pairEncode ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var).runAt n [] r.1)
       (List.ofFn (m j))) (r.2 j) = _
   rw [runAt_coinKey, runAt_prfEnc hE]
-  have h : E (pairEncode (List.ofFn r.1) (List.ofFn (r.2 j))) = List.ofFn (F n r.1 (r.2 j)) :=
-    hFE n r.1 (r.2 j)
-  rw [h, zipWith_xor_ofFn_add]
+  have h1 : List.ofFn r.1 = List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 :=
+    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r.1).symm
+  have h2 : List.ofFn (r.2 j) = List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) :=
+    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n (r.2 j)).symm
+  rw [h1, h2, hFE, zipWith_xor_ofFn_add]
   rfl
 
 /-- **[PS10, Theorem 99.2]: the scheme of Algorithm 99.1 is multi-message secure** when `F` is
@@ -637,7 +660,7 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
     -- the concrete step: the ciphertext tuples are `encodeTuple ∘ prfEncReal`
     have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
         (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ =
-          fun r => encodeTuple (prfEncReal (F n) m₀ r) :=
+          fun r => encodeTuple (prfEncReal (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
       fun m₀ => funext fun r => prfScheme_multiEncDist F E hE hFE n (q.eval n) m₀ r
     -- the machine step: the oracle adversaries of `B₀`, `B₁` are the `multiMsgAdv`
     have hadv : ∀ (B : NUPPT) (v : Fin (q.eval n + 1) → Fin n → Bool)
@@ -655,7 +678,11 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
     obtain ⟨φ₀, hφ₀⟩ := hB₀ n
     obtain ⟨φ₁, hφ₁⟩ := hB₁ n
     dsimp only
-    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key]
+    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key, distAdv_def,
+      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+        (fun s => encodeTuple (prfEncReal (F n) (μ n).1 s)),
+      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+        (fun s => encodeTuple (prfEncReal (F n) (μ n).2 s)), ← distAdv_def]
     exact (distAdv_comp encodeTuple (prfEncReal (F n) (μ n).1) (prfEncReal (F n) (μ n).2)
       (D.distinguisherL n)).symm.trans_le (distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
         (fun w c => D.distinguisherL n (encodeTuple w) c))
