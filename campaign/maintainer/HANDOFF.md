@@ -161,7 +161,8 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
 1. **The deepening fill** is dispatched (2026-11-06, Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`.
    Its delivery is reviewed by a sub-agent, then landed by PR and a fill gate.
 2. **G5's fill brief is issued** (2026-11-06, agent Claude): `campaign/fills/u2s/briefs/u2s-fill-g5.md`
-   at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`.
+   at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`;
+   **dispatched 2026-11-06** (the user).
 3. **H's brief:** re-take its pre-ship after NF lands (#191; E-D landed as #188). Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
