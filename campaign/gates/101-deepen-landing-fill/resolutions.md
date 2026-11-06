@@ -30,3 +30,9 @@
 with `InputAccess`'s `indicator_inputLenLang` and `ExpBFS/Main`'s `orcN_len` (94%, present at the
 base). `git grep` for the closing step found four more members. **Ruled (the user, 2026-11-06):
 re-point all six in #208**, done at `6a289c50`.
+
+**IL-1 widened** (the same preparation): the first search matched one closing form only. Five
+more members re-derive `indicator_inputLenLang` or its sibling `indicator_inputBitLang` through a
+simp set (`PathWalkMachine`'s `pathOr_len`/`pathOr_bit`, `PathHardRegs`' `orc_bit`, `Mult`'s
+`mult_queries`). **Ruled (the user, 2026-11-06): re-point all five in #208**, done at `0140aee2`;
+the ledger's IL-1 is widened by kind to both readings.

@@ -22,3 +22,7 @@
   all predating #208); the user ruled: re-point all six in #208 (`6a289c50`), then the campaign
   merge `d01c56a4`. #208 now changes 11 files. `replay-ldp4` was stopped (superseded);
   `replay-ldp5` (190 modules, from `oleans-lnth`) running.
+- 2026-11-06: `replay-ldp5` passed (190 modules, 0 failed). Round 2's screen then showed the
+  simp-set members of IL-1 and its sibling reading (`indicator_inputBitLang`); the user ruled:
+  re-point all five in #208 (`0140aee2`), then the campaign merge `36ed2deb`. #208 changes 13
+  files. `replay-ldp6` (190 modules, from `oleans-lnth`) running; the freeze and lint redone.

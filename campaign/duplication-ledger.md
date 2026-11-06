@@ -659,9 +659,21 @@ unfolded their decider table and repeated its two-line proof
 
 All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
 one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
-replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates. The
-other closings by `decide_eq_decide.mpr Iff.rfl` in the library (`InputAccess:551`, the lemma
-itself) are not members. **Retired on #208's merge.**
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates.
+
+**Widened by kind (2026-11-06):** every proof that re-derives one of `InputAccess`'s two
+published readings, `indicator_inputLenLang` or `indicator_inputBitLang`
+(`y.getD a false` on `pairEncode y (bits a)`), by unfolding the language and
+`indicator_indexLang_pairEncode`. The first search matched only the `decide_eq_decide` closing;
+its simp-set variants are five more members: `PathWalkMachine`'s `pathOr_len` and `pathOr_bit`,
+`PathHardRegs`' `orc_bit`, and both halves of `Mult`'s private `mult_queries`. **Ruled (the
+user, 2026-11-06): re-point all five in #208**, done at `0140aee2`. A grep of every code line
+naming `inputBitLang` or `inputLenLang` finds no other unfolding: `TQBFARM/Machine`'s and
+`Codec/Run`'s `orc_bit`/`orc_len` and `QueryReshape`'s `drop_bit`/`drop_len` already cite the
+lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
+`drop_lang_pair`, `comp_lang_pair` and `transport`; `PathHardDecide`'s `qLang` step) read other
+languages, which have no published reading; they are not members. Census after widening: one
+declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
