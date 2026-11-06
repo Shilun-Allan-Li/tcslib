@@ -225,6 +225,18 @@ theorem PRG.oneBit_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Boo
 theorem PRG.oneBit_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (n : ℕ)
     (s : Fin n → Bool) : (PRG.oneBit G).G n s = G n s := rfl
 
+/-- **Security of `PRG.oneBit G` unfolded**: it is secure iff some polynomial-time string
+function computes `G n s` from the seed string, and for every non-uniform PPT `D` the PRG
+advantage `prgAdv (G n) (D(1^n, ·))` on `n + 1` bits is negligible (`PRG.secure_iff` at
+`oneBit`, where the generator's type depends on the stretch). -/
+theorem PRG.oneBit_secure_iff (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) :
+    (PRG.oneBit G).Secure ↔
+      (∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+        ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)) ∧
+      ∀ D : NUPPT, Negligible fun n => prgAdv (G n) (D.distinguisher n (n + 1)) := by
+  rw [PRG.secure_iff, PRG.easy_iff]
+  rfl
+
 /-- The generator `G(s) = f(s) ‖ h(s)` of [PS10, Theorem 79.4] for a permutation family `f`
 and a predicate `h`: output length `n + 1`, the bit `h(s)` in the last position. -/
 def owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) : PRG :=
@@ -382,6 +394,10 @@ def PRG.expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : P
   stretch := ℓ
   G n s := (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1
   expands := hℓ
+
+/-- Field equation: the stretch of `PRG.expand G ℓ hℓ` is `ℓ`. -/
+theorem PRG.expand_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+    (hℓ : ∀ n, n < ℓ.eval n) : (PRG.expand G ℓ hℓ).stretch = ℓ := rfl
 
 /-- Closed form of the expansion: output bit `i` is the last bit of `G(X_i)`, where
 `X_i` is the `i`-th iterate of `s ↦ init (G s)` on the seed (`b_{i+1}` in the text's

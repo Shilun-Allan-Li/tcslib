@@ -343,6 +343,9 @@ def edgeMsg (e : ℕ) : List Bool := List.replicate e true
 (every string names an edge when `E ≠ ∅`). -/
 def edgeIdxOfMsg (m : ℕ) (w : List Bool) : ℕ := w.length % m
 
+/-- The defining equation of `edgeIdxOfMsg`: `edgeIdxOfMsg m w = |w| mod m`. -/
+theorem edgeIdxOfMsg_eq (m : ℕ) (w : List Bool) : edgeIdxOfMsg m w = w.length % m := rfl
+
 /-- The challenge `1^e` decodes to `e` when `e < m`. -/
 @[simp] theorem edgeIdxOfMsg_edgeMsg {m e : ℕ} (he : e < m) : edgeIdxOfMsg m (edgeMsg e) = e := by
   simp [edgeIdxOfMsg, edgeMsg, Nat.mod_eq_of_lt he]

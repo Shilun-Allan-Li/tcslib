@@ -428,19 +428,49 @@ noncomputable def prgScheme (P : PRG) (F : List Bool → List Bool) (hF : PolyTi
     intro n m rg re rd
     rw [runAt_coinKey, runAt_prgPad hF, runAt_prgPad hF, hG, zipWith_xor_xor_self, decodeFin_ofFn]
     simp only [List.length_ofFn]
+    rw [NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform]
     exact (P.expands n).le
+
+/-- **The key of Algorithm 92.1 is an `n`-bit seed**: the published equivalence
+`(prgScheme P F hF hG).gen.Coins n ≃ {0,1}^n` (`NUPPT.coinsEquiv_ofPolyTimeUniform`). -/
+noncomputable def prgScheme_genCoinsEquiv (P : PRG) (F : List Bool → List Bool)
+    (hF : PolyTimeComputable F) (hG : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s))
+    (n : ℕ) : (prgScheme P F hF hG).gen.Coins n ≃ (Fin n → Bool) :=
+  NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n
+
+/-- The key equivalence keeps the coin string. -/
+theorem prgScheme_genCoinsEquiv_ofFn (P : PRG) (F : List Bool → List Bool)
+    (hF : PolyTimeComputable F) (hG : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s))
+    (n : ℕ) (r : (prgScheme P F hF hG).gen.Coins n) :
+    List.ofFn (prgScheme_genCoinsEquiv P F hF hG n r) = List.ofFn r :=
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn polyTimeComputable_pairSndD .var n r
+
+/-- **The encryptor of Algorithm 92.1 has no coins**: the published equivalence
+`(prgScheme P F hF hG).enc.Coins n ≃ {0,1}^0` (`NUPPT.coinsEquiv_ofPolyTimeUniform`). -/
+noncomputable def prgScheme_encCoinsEquiv (P : PRG) (F : List Bool → List Bool)
+    (hF : PolyTimeComputable F) (hG : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s))
+    (n : ℕ) : (prgScheme P F hF hG).enc.Coins n ≃ (Fin 0 → Bool) :=
+  NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prgPadFun hF) (.const 0) n
+
+/-- The encryptor's coin equivalence keeps the (empty) coin string. -/
+theorem prgScheme_encCoinsEquiv_ofFn (P : PRG) (F : List Bool → List Bool)
+    (hF : PolyTimeComputable F) (hG : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s))
+    (n : ℕ) (r : (prgScheme P F hF hG).enc.Coins n) :
+    List.ofFn (prgScheme_encCoinsEquiv P F hF hG n r) = List.ofFn r :=
+  NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (polyTimeComputable_prgPadFun hF) (.const 0) n r
 
 /-- **The ciphertext distribution of Algorithm 92.1** is `m ⊕ G(k)|_n` for a uniform seed `k`
 (the encryption coins are unused): `encDist n m (k, _) = ofFn (padXor m (G n k))`. -/
 theorem prgScheme_encDist (P : PRG) (F : List Bool → List Bool) (hF : PolyTimeComputable F)
     (hG : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)) (n : ℕ)
     (m : Fin n → Bool) (r : (prgScheme P F hF hG).gen.Coins n × (prgScheme P F hF hG).enc.Coins n) :
-    (prgScheme P F hF hG).encDist n m r = List.ofFn (padXor (P.expands n).le m (P.G n r.1)) := by
+    (prgScheme P F hF hG).encDist n m r =
+      List.ofFn (padXor (P.expands n).le m (P.G n (prgScheme_genCoinsEquiv P F hF hG n r.1))) := by
   show (NUPPT.ofPolyTimeUniform (polyTimeComputable_prgPadFun hF) (.const 0)).runAt n
     (pairEncode ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var).runAt n [] r.1)
       (List.ofFn m)) r.2 = _
-  rw [runAt_coinKey, runAt_prgPad hF, hG]
-  exact zipWith_xor_ofFn (P.expands n).le m (P.G n r.1)
+  rw [runAt_coinKey, ← prgScheme_genCoinsEquiv_ofFn P F hF hG n r.1, runAt_prgPad hF, hG]
+  exact zipWith_xor_ofFn (P.expands n).le m (P.G n (prgScheme_genCoinsEquiv P F hF hG n r.1))
 
 /-- **Dropping the unused encryption coins of Algorithm 92.1**: the probability that a
 distinguisher accepts a ciphertext `encDist n m` of `prgScheme` is the probability that it
@@ -455,15 +485,17 @@ private theorem acceptProb_prgScheme_encDist (P : PRG) (F : List Bool → List B
         (fun t r => Dst (List.ofFn t) r) := by
   let e : (Fin n → Bool) × ρ ≃
       ((prgScheme P F hF hG).gen.Coins n × (prgScheme P F hF hG).enc.Coins n) × ρ :=
-    { toFun := fun z => ((z.1, fun i => Fin.elim0 i), z.2)
-      invFun := fun z => (z.1.1, z.2)
-      left_inv := fun _ => rfl
-      right_inv := fun _ => Prod.ext (Prod.ext rfl (funext fun i => Fin.elim0 i)) rfl }
-  unfold acceptProb
-  rw [← uprob_comp_equiv e]
+    { toFun := fun z => (((prgScheme_genCoinsEquiv P F hF hG n).symm z.1,
+          (prgScheme_encCoinsEquiv P F hF hG n).symm fun i => Fin.elim0 i), z.2)
+      invFun := fun z => (prgScheme_genCoinsEquiv P F hF hG n z.1.1, z.2)
+      left_inv := fun z => by simp only [Equiv.apply_symm_apply]
+      right_inv := fun z => Prod.ext (Prod.ext (Equiv.symm_apply_apply _ _)
+        ((prgScheme_encCoinsEquiv P F hF hG n).injective (by
+          rw [Equiv.apply_symm_apply]; exact funext fun i => Fin.elim0 i))) rfl }
+  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv e]
   congr 1
   funext z
-  simp only [e, Equiv.coe_fn_mk, prgScheme_encDist]
+  simp only [e, Equiv.coe_fn_mk, prgScheme_encDist, Equiv.apply_symm_apply]
 
 /-- **A machine that runs `D` on `m ⊕ t` is the distinguisher `D ∘ (m ⊕ ·)`**: if
 `B(1^n, t; r) = D(1^n, m ⊕ t|_n; r)` for every `L`-bit string `t` (with `B.coins = D.coins`),

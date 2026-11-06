@@ -699,19 +699,38 @@ def EvalSampled : Prop :=
 underivable hypothesis). -/
 theorem evalSampled : G.EvalSampled := G.sample_spec
 
+/-- **The input of `g` as the coins of `Gen` and `Sample`**: the published equivalence
+`{0,1}^{gen.coins(n) + sample.coins(n)} ≃ {0,1}^{|Gen's coins| + |Sample's coins|}` (`finCongr` on
+the coin lengths, `NUPPT.coinLen_eq`), through which `owfFamily`'s input is cut by `splitCoins`. -/
+def owfCoinsEquiv (n : ℕ) :
+    (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃
+      (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) :=
+  Equiv.arrowCongr (finCongr (by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string: `List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r`. -/
+theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) :
+    List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]) r).symm
+
+/-- The inverse coin equivalence keeps the coin string. -/
+theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) :
+    List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z := by
+  rw [← G.owfCoinsEquiv_ofFn n, Equiv.apply_symm_apply]
+
 /-- **The function `g(r₁, r₂) = ⟨i, f_i(x)⟩`** of [PS10, Theorem 42.2 ⇒, proof idea] as a
 family: input length `|r₁| + |r₂|` (the coins of `Gen` and `Sample`), output length `L`, the
 raw string followed by the marker `1` and zero-padded to `L n` bits (recovered by
 `splitAtLastTrue`).
 
 **Deviation:** explicit output length `L` (D9) and marker padding for a typed output;
-`OutLenBound L` holds for a suitable `L` (`exists_outLenBound`). -/
+`OutLenBound L` holds for a suitable `L` (`exists_outLenBound`). The input is read as the coins
+`(r₁, r₂)` through `owfCoinsEquiv` and `splitCoins`. -/
 def owfFamily (L : PolyExpr) : FunFamily where
   inLen := .add G.gen.coins G.sample.coins
   outLen := L
   f n r := padFin (L.eval n)
-    (G.owfRaw n (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).1
-      (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).2 ++ [true])
+    (G.owfRaw n (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n r)).1
+      (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n r)).2 ++ [true])
 
 /-- **The output of `g` has polynomial length**: a syntactic polynomial `L` with
 `|⟨i, eval ⟨i, w⟩⟩| < L(n)` for all coins, from the time bounds of `Gen`, `Sample` and `eval`.
@@ -812,9 +831,9 @@ private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
     simp
   refine ⟨_, hF, fun n x => ?_⟩
   have hx : List.ofFn x =
-      List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) x).1 ++
-        List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) x).2 := by
-    rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply]
+      List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).1 ++
+        List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).2 := by
+    rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply, owfCoinsEquiv_ofFn]
   simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, owfFamily]
   rw [hx, owfRawStr_eq, ← ofFn_padFin_eq_padStr, List.length_replicate]
 
@@ -921,9 +940,12 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
     (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) (ρ : A'.Coins n)
     (z' : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
     (hz' : A'.runAt n (List.ofFn ((G.owfFamily L).f n
-      ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) ρ = List.ofFn z')
-    (hg : (G.owfFamily L).f n z' =
-      (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))) :
+        ((G.owfCoinsEquiv n).symm
+          ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))))) ρ = List.ofFn z')
+    (hg : (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+      (G.owfFamily L).f n
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) :
     ∃ x, G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) r₂) = some x ∧
       ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
           (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ) = some x' ∧
@@ -953,7 +975,8 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
       ← NUPPT.runAt_eq]
     have hpad : padStr L (List.replicate n true) (G.owfRaw n r₁ r₂ ++ [true]) =
         List.ofFn ((G.owfFamily L).f n
-          ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))) := by
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) := by
       simp only [owfFamily, Equiv.apply_symm_apply]
       rw [← ofFn_padFin_eq_padStr, List.length_replicate]
     rw [hpad, hz', NUPPT.runAt_eq, ← ofFn_splitCoins_snd]
@@ -976,9 +999,13 @@ private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ 
     (hδ : G.SampleClose δ) (n : ℕ) (r₁ : G.gen.Coins n) :
     uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
-        ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) v.2 = List.ofFn z' ∧
-      (G.owfFamily L).f n z' =
-        (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))) ≤
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
+              List.ofFn z' ∧
+      (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+        (G.owfFamily L).f n
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
     uprob (fun z : G.D (G.index n r₁) × A'.Coins n => ∃ x', G.decD (G.index n r₁)
         ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) + δ n := by
@@ -989,9 +1016,13 @@ private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ 
   have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod P)).2
   have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
-        ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) v.2 = List.ofFn z' ∧
-      (G.owfFamily L).f n z' =
-        (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))) ≤
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
+              List.ofFn z' ∧
+      (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+        (G.owfFamily L).f n
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
       uprob (fun v : G.sample.Coins n × A'.Coins n =>
         P (G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) v.1)) v.2) := by
     refine uprob_mono fun v hv => ?_
@@ -1017,9 +1048,10 @@ private theorem invProbAt_owfFamily_le (L : PolyExpr) (hL : G.OutLenBound L) (A'
   haveI : Nonempty (G.gen.Coins n) := ⟨fun _ => false⟩
   rw [FunFamily.invProbAt_eq_uprob]
   let e : G.gen.Coins n × (G.sample.Coins n × A'.Coins n) ≃
-      (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) × A'.Coins n :=
+      (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) × A'.Coins n :=
     (Equiv.prodAssoc _ _ _).symm.trans
-      (Equiv.prodCongr (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (Equiv.refl _))
+      (Equiv.prodCongr ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm.trans
+        (G.owfCoinsEquiv n).symm) (Equiv.refl _))
   rw [← uprob_comp_equiv e, uprob_prod]
   unfold Collection.invProbAt
   rw [← OneWay.uexp_const (α := G.gen.Coins n) (δ n), ← OneWay.uexp_add]

@@ -232,6 +232,11 @@ positions `ℓ·i, …, ℓ·i + ℓ - 1`): the encoding of the tuple `(x₁, �
 def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
   (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
 
+/-- The defining equation of `blocks`: `blocks q ℓ x i j = x (finProdFinEquiv (i, j))`, block `i`
+reads position `ℓ·i + j`. -/
+theorem blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
+    blocks q ℓ x i j = x (finProdFinEquiv (i, j)) := rfl
+
 /-- The direct product `f'_n = (f_n)^{q n}` of [PS10, Theorem 35.1]:
 `f'(x₁, …, x_{q(n)}) = (f(x₁), …, f(x_{q(n)}))` on blocks, encoded as concatenations;
 `OneWay.prodFun` [Gar26, Theorem 2.1] blockwise. -/
@@ -933,5 +938,50 @@ def OneWayPermutation (P : PermFamily) : Prop := P.toFunFamily.StrongOneWay
 /-- The function of a permutation family is the permutation. -/
 @[simp] theorem PermFamily.toFunFamily_f (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
     P.toFunFamily.f n x = P.f n x := rfl
+
+/-- Field equation: the input length of `P.toFunFamily` is `var`. -/
+theorem PermFamily.toFunFamily_inLen (P : PermFamily) : P.toFunFamily.inLen = .var := rfl
+
+/-- Field equation: the output length of `P.toFunFamily` is `var`. -/
+theorem PermFamily.toFunFamily_outLen (P : PermFamily) : P.toFunFamily.outLen = .var := rfl
+
+/-- **The domain of `P.toFunFamily` is `{0,1}^n`**: the published equivalence
+`{0,1}^{inLen(n)} ≃ {0,1}^n` (the identity on the definition), through which a statement reads
+inputs of the family as inputs of the permutation. -/
+def PermFamily.toFunFamily_domEquiv (P : PermFamily) (n : ℕ) :
+    (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool) :=
+  Equiv.refl _
+
+/-- **The range of `P.toFunFamily` is `{0,1}^n`**: the published equivalence
+`{0,1}^{outLen(n)} ≃ {0,1}^n` (the identity on the definition). -/
+def PermFamily.toFunFamily_codEquiv (P : PermFamily) (n : ℕ) :
+    (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) :=
+  Equiv.refl _
+
+/-- The domain equivalence keeps the string:
+`List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x`. -/
+theorem PermFamily.toFunFamily_domEquiv_ofFn (P : PermFamily) (n : ℕ)
+    (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
+    List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x := rfl
+
+/-- The inverse domain equivalence keeps the string. -/
+theorem PermFamily.toFunFamily_domEquiv_symm_ofFn (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
+    List.ofFn ((P.toFunFamily_domEquiv n).symm x) = List.ofFn x := rfl
+
+/-- The range equivalence keeps the string:
+`List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y`. -/
+theorem PermFamily.toFunFamily_codEquiv_ofFn (P : PermFamily) (n : ℕ)
+    (y : Fin (P.toFunFamily.outLen.eval n) → Bool) :
+    List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y := rfl
+
+/-- The inverse range equivalence keeps the string. -/
+theorem PermFamily.toFunFamily_codEquiv_symm_ofFn (P : PermFamily) (n : ℕ) (y : Fin n → Bool) :
+    List.ofFn ((P.toFunFamily_codEquiv n).symm y) = List.ofFn y := rfl
+
+/-- The function of `P.toFunFamily` through the two equivalences is the permutation:
+`codEquiv (f_n x) = P.f n (domEquiv x)`. -/
+theorem PermFamily.toFunFamily_f_domEquiv (P : PermFamily) (n : ℕ)
+    (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
+    P.toFunFamily_codEquiv n (P.toFunFamily.f n x) = P.f n (P.toFunFamily_domEquiv n x) := rfl
 
 end TCSlib.Cryptography

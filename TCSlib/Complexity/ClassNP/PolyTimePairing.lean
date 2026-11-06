@@ -208,6 +208,26 @@ def pairFstD (z : List Bool) : List Bool := ((pairDecode z).map Prod.fst).getD [
 /-- The total second projection of a `Turing.pairEncode` pair (`[]` on malformed words). -/
 def pairSndD (z : List Bool) : List Bool := ((pairDecode z).map Prod.snd).getD []
 
+/-- The defining equation of `pairFstD`: `pairFstD z = ((pairDecode z).map Prod.fst).getD []`. -/
+theorem pairFstD_eq (z : List Bool) : pairFstD z = ((pairDecode z).map Prod.fst).getD [] := rfl
+
+/-- The defining equation of `pairSndD`: `pairSndD z = ((pairDecode z).map Prod.snd).getD []`. -/
+theorem pairSndD_eq (z : List Bool) : pairSndD z = ((pairDecode z).map Prod.snd).getD [] := rfl
+
+/-- On a word that is not a pair the first projection is empty:
+`pairDecode z = none → pairFstD z = []`. -/
+theorem pairFstD_of_pairDecode_eq_none {z : List Bool} (h : pairDecode z = none) :
+    pairFstD z = [] := by
+  rw [pairFstD_eq, h]
+  rfl
+
+/-- On a word that is not a pair the second projection is empty:
+`pairDecode z = none → pairSndD z = []`. -/
+theorem pairSndD_of_pairDecode_eq_none {z : List Bool} (h : pairDecode z = none) :
+    pairSndD z = [] := by
+  rw [pairSndD_eq, h]
+  rfl
+
 /-- The first projection of a pair is its first component. -/
 @[simp] theorem pairFstD_pairEncode (a b : List Bool) : pairFstD (pairEncode a b) = a := by
   simp [pairFstD, pairDecode_pairEncode]
