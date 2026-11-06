@@ -634,6 +634,32 @@ section Loop
 variable {c : ℕ} {B : ℕ}
 
 open Classical in
+/-- **A block at radius `s`**: from `cb f 0`, `D` prepares block `f` (`dp_prep`) and runs it
+(`dp_fit`) to its exit `k b`, where `b` is the block's answer at radius `s` and width
+`w = c · (s + ℓ + 1)`; `ℓ`, `s` and the scratch register are unchanged. -/
+private theorem dp_block (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ : ℕ}
+    (hBB : 2 ^ (c * (s + ℓ + 1) * (c * (s + ℓ + 1))) ≤ B) (f : Bool) {σ : Fin 4 → Fin 5}
+    (j : Fin 5) (La : Language Bool) (hj : dpAs N j = La) (h1 : σ 1 = 1) (h2 : σ 2 = j)
+    (h3 : σ 3 = 3) {ι : Lb 0 → DpLb c} {k : Bool → DpLb c}
+    (hD : ∀ l, dpD c (ι l) = (A 0 l).embed dpρ σ ι k 24) (hι : dpIn (c := c) f = ι .OU)
+    {v : Fin 25 → ℕ} (hL : v 22 = ℓ) (hS : v 23 = s) (hZ : v 24 = 0) (hv : ∀ r, v r ≤ B) :
+    ∃ v₂, AReach (dpD c) (dpOrc N) x (GuardLe (dpD c) x B) (some (.cb f 0), v, none)
+        (some (k (decide (∃ u < 2 ^ (c * (s + ℓ + 1)),
+          pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+          ∃ v < 2 ^ (c * (s + ℓ + 1)), pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ La ∧
+            Reach (2 ^ (c * (s + ℓ + 1))) (StepRel N x s) (c * (s + ℓ + 1)) u v))), v₂, none) ∧
+      v₂ 22 = ℓ ∧ v₂ 23 = s ∧ v₂ 24 = 0 ∧ ∀ r, v₂ r ≤ B := by
+  have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
+  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B :=
+    (Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)).trans hBB
+  obtain ⟨v', r1, e1, e2, e3, e4, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc f hB hL hS hZ hv
+  obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw j La hj h1 h2 h3 hD hBB e5 e1
+  rw [hι] at r1
+  exact ⟨v₂, r1.trans r2, (f1 22 fun r => dpρ_ne r (by decide)).trans e2,
+    (f1 23 fun r => dpρ_ne r (by decide)).trans e3, (f1 24 fun r => dpρ_ne r (by decide)).trans e4,
+    dp_bd_blk f1 f2 hBB e5⟩
+
+open Classical in
 /-- **The edge step** at radius `s`: `D` prepares and runs the edge block, which exits through
 `dpkE b` with `b = false` exactly when no edge code is reachable (`NoEdge`). -/
 private theorem dp_edge (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ : ℕ}
@@ -642,16 +668,9 @@ private theorem dp_edge (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ
     ∃ b v₂, AReach (dpD c) (dpOrc N) x (GuardLe (dpD c) x B) (some (.cb false 0), v, none)
         (some (dpkE b), v₂, none) ∧ (b = false ↔ NoEdge N x s (c * (s + ℓ + 1))) ∧
       v₂ 22 = ℓ ∧ v₂ 23 = s ∧ v₂ 24 = 0 ∧ ∀ r, v₂ r ≤ B := by
-  have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
-  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B :=
-    (Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)).trans hBB
-  obtain ⟨v', r1, e1, e2, e3, e4, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc false hB hL hS hZ hv
-  obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw 4 (edgeLang N) rfl (σ := dpσE) rfl rfl rfl
-    (ι := DpLb.eb) (k := dpkE) (fun _ => rfl) hBB e5 e1
-  refine ⟨_, v₂, r1.trans r2, ?_, (f1 22 fun r => dpρ_ne r (by decide)).trans e2,
-    (f1 23 fun r => dpρ_ne r (by decide)).trans e3, (f1 24 fun r => dpρ_ne r (by decide)).trans e4,
-    dp_bd_blk f1 f2 hBB e5⟩
-  rw [decide_eq_false_iff_not, noEdge_iff]
+  obtain ⟨v₂, r, e1, e2, e3, e4⟩ := dp_block N hc x hBB false 4 (edgeLang N) rfl (σ := dpσE) rfl
+    rfl rfl (ι := DpLb.eb) (k := dpkE) (fun _ => rfl) rfl hL hS hZ hv
+  exact ⟨_, v₂, r, by rw [decide_eq_false_iff_not, noEdge_iff], e1, e2, e3, e4⟩
 
 open Classical in
 /-- **The accept step** at radius `s`, when no edge code is reachable: `D` prepares and runs
@@ -664,15 +683,11 @@ private theorem dp_acc (N : FinNDTM Bool) {L : Language Bool} {sp : ℕ → ℕ}
     (hS : v 23 = s) (hZ : v 24 = 0) (hv : ∀ r, v r ≤ B) :
     AHalt (dpD c) (dpOrc N) x (GuardLe (dpD c) x B) (some (.cb true 0), v, none)
       (decide (x ∈ L)) := by
-  have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
-  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B :=
-    (Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)).trans hBB
-  obtain ⟨v', r1, e1, -, -, -, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc true hB hL hS hZ hv
-  obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw 2 (acceptLang N) rfl (σ := dpσA) rfl rfl rfl
-    (ι := DpLb.ab) (k := DpLb.fin) (fun _ => rfl) hBB e5 e1
-  rw [decide_eq_decide.mpr (mem_iff_reach_of_noEdge h x s _ hw hne).symm] at r2
-  exact r1.halt (r2.halt (AHalt.ret rfl
-    ⟨dp_pre (Or.inr (Or.inr ⟨_, rfl⟩)), dp_bd_blk f1 f2 hBB e5⟩))
+  obtain ⟨v₂, r, -, -, -, e4⟩ := dp_block N hc x hBB true 2 (acceptLang N) rfl (σ := dpσA) rfl
+    rfl rfl (ι := DpLb.ab) (k := DpLb.fin) (fun _ => rfl) rfl hL hS hZ hv
+  rw [(@decide_eq_decide _ _ _ (Classical.propDecidable _)).mpr
+    (mem_iff_reach_of_noEdge h x s _ hw hne).symm] at r
+  exact r.halt (AHalt.ret rfl ⟨dp_pre (Or.inr (Or.inr ⟨_, rfl⟩)), e4⟩)
 
 end Loop
 
