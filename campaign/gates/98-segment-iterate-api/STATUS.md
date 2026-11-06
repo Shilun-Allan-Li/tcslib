@@ -29,3 +29,8 @@
   F1 awaits the user's ruling.
 - 2026-11-06: round 2 prepared: SG-1 in the ledger (the user's ruling), the screen re-run on the
   audited trees (1,341 declarations, 778 pairs at both; 0 new). `pack-r2.md`.
+- 2026-11-06: round 2 staged (`outbox/gates/98-segment-iterate-api-r2-gate/`, exchange commit
+  `24c8ac43`): bundle `98-segment-iterate-api-r2-bundle.md`, 39 sections, SHA-256
+  `187c6243c8d86a82057a0f13cfd0a08d6cb80aa873067de525a99c095a59390e`; Lean from `7b5774fb`,
+  records from `c337361b0d66e21345d3802649dc0c151b5c56d2`. Findings file
+  `segment-iterate-api-r2-findings.md`.
