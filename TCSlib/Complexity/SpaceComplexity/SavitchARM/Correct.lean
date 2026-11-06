@@ -56,19 +56,19 @@ lemma rel_orcN (N : FinNDTM Bool) (x : List Bool) (s : ℕ) :
     Rel (orcN N) x s = Codec.StepRel N x s := by
   funext u v
   apply propext
-  simp [Rel, Codec.StepRel, orcN, decs, indicator_eq_decide]
+  simp [rel_iff_orc, Codec.stepRel_iff_mem, orcN, decs, indicator_eq_decide]
 
 /-- Decider `1` answers membership in the initial-code language. -/
 lemma initO_orcN (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) :
     InitO (orcN N) x s u ↔
       pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ Codec.initLang N := by
-  simp [InitO, orcN, decs, indicator_eq_decide]
+  simp [initO_iff_orc, orcN, decs, indicator_eq_decide]
 
 /-- Decider `2` answers membership in the accepting-code language. -/
 lemma accO_orcN (N : FinNDTM Bool) (x : List Bool) (s v : ℕ) :
     AccO (orcN N) x s v ↔
       pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ Codec.acceptLang N := by
-  simp [AccO, orcN, decs, indicator_eq_decide]
+  simp [accO_iff_orc, orcN, decs, indicator_eq_decide]
 
 /-- The constant of the Savitch machine for `N` deciding in space `c (n ^ k + 1)`: large
 enough for the radius (`radius_le`), the code width (`codeWidth_le`) and the configuration
@@ -110,8 +110,8 @@ theorem NSPACE_poly_subset_PSPACE (k : ℕ) : NSPACE (fun n => n ^ k + 1) ⊆ PS
   set n := x.length with hn
   have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
     intro m _
-    simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-    exact decide_eq_decide.mpr Iff.rfl
+    simp only [orcN, decs, Matrix.cons_val_zero]
+    exact indicator_inputLenLang x m
   have h := savitch_halts (E := E) (orc := orcN N) (x := x) hE1 hq
   have hmem := mem_iff_reach hN x ((n + 2) ^ E) ((n + 2) ^ (2 * E))
     (radius_le n k c E (by simp only [hE, bigE]; omega))

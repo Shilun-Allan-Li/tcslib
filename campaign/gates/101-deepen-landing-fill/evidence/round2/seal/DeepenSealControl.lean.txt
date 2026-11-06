@@ -1,0 +1,241 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
+
+/-! The controls for the deepening fill's seal (`DeepenSealed.lean`): one `rfl` unfolding of each
+sealed definition. Unsealed, every goal closes; sealed (the same attribute as the sealed copy),
+every goal is expected to FAIL, each at its own goal. -/
+
+set_option autoImplicit false
+
+open Turing Complexity Complexity.Codec Complexity.LogProg Complexity.LogProg.SavitchARM
+
+section Unsealed
+
+-- InitO
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u : ℕ) : InitO orc x s u =
+    (orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true) := rfl
+-- AccO
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s v : ℕ) : AccO orc x s v =
+    (orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true) := rfl
+-- Rel
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ) : Rel orc x s u v =
+    (orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true) :=
+  rfl
+-- outerSt
+example (s w u v M : ℕ) : outerSt s w u v M = { setSt s w with U := u, V := v, M := M } := rfl
+-- setSt
+example (s w : ℕ) : setSt s w = { St.zero with s := s, w := w, K := 2 ^ w } := rfl
+-- St.toV
+example (st : St) : st.toV = ![st.n, st.a, st.X, st.P, st.T, st.Z, st.C, st.s, st.w, st.K, st.U,
+    st.V, st.M, st.I, st.SE, st.SP, st.E, st.Q] := rfl
+-- St.zero
+example : St.zero = ⟨0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0⟩ := rfl
+-- rs
+example : (SavitchARM.rs : Fin 18) = 7 := rfl
+-- rw
+example : (SavitchARM.rw : Fin 18) = 8 := rfl
+-- rK
+example : (SavitchARM.rK : Fin 18) = 9 := rfl
+-- A
+example : A 0 .acc = .ret true := rfl
+-- Reach
+example (K : ℕ) (R : ℕ → ℕ → Prop) (u v : ℕ) : SavitchARM.Reach K R 0 u v = (u = v ∨ R u v) := rfl
+-- StepRel
+example (N : FinNDTM Bool) (x : List Bool) (s a b : ℕ) : StepRel N x s a b =
+    (pairEncode x (pairEncode (Nat.bits a) (pairEncode (Nat.bits b) (Nat.bits s))) ∈ stepLang N) :=
+  rfl
+-- initLang
+example (N : FinNDTM Bool) : initLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      cfgCode s (N.tm.initCfg x) = c} := rfl
+-- acceptLang
+example (N : FinNDTM Bool) : acceptLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧ C.state = none ∧
+        C.output = [true]} := rfl
+-- edgeLang
+example (N : FinNDTM Bool) : edgeLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ i, |C.workTapePos i| = (s : ℤ)} := rfl
+-- stepLang
+example (N : FinNDTM Bool) : stepLang N =
+    {y | ∃ (x : List Bool) (c c' s : ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits c') (Nat.bits s))) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧ cfgCode s C' = c'} :=
+  rfl
+-- MultiTapeTM.indicator
+open Classical in
+example (S : Set (List Bool)) (a : List Bool) :
+    MultiTapeTM.indicator S a = if a ∈ S then true else false := rfl
+-- Ins.embed
+example (ρ : Fin 18 → Fin 25) (σ : Fin 4 → Fin 5) (ι : Lb 0 → Bool) (k : Bool → Bool) (r₀ : Fin 25)
+    (b : Bool) : (Ins.ret b : Ins 18 4 (Lb 0)).embed ρ σ ι k r₀ = .jz r₀ (k b) (k b) := rfl
+-- AHalt
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool)
+    (G : AConf 25 Bool → Prop) (a : AConf 25 Bool) (b : Bool) : AHalt D o x G a b =
+    ∃ T, (arun D o x a T).1 = none ∧ (arun D o x a T).2.2 = some b ∧ ∀ t < T, G (arun D o x a t) :=
+  rfl
+-- AReach
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool)
+    (G : AConf 25 Bool → Prop) (a a' : AConf 25 Bool) : AReach D o x G a a' =
+    ∃ T, arun D o x a T = a' ∧ ∀ t < T, G (arun D o x a t) := rfl
+-- PreS
+example (D : ARM 25 5 Bool) (x : List Bool) (v : Fin 25 → ℕ) (r : Option Bool) :
+    PreS D x (none, v, r) = True := rfl
+-- NoEdge
+example (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : NoEdge N x s w =
+    ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+      ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+        SavitchARM.Reach (2 ^ w) (StepRel N x s) w u v := rfl
+-- FinNDTM.DecidesInSpace
+example (N : FinNDTM Bool) (L : Language Bool) (sp : ℕ → ℕ) : N.DecidesInSpace L sp =
+    ∀ x : List Bool, ∃ T : ℕ, N.tm.HaltsWithin x T ∧
+      (∀ w : List Bool, w.length = T → N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ sp x.length) ∧
+      (x ∈ L ↔ N.AcceptsWithin x T) := rfl
+-- codeK
+example (N : FinNDTM Bool) : codeK N = 2 * Codec.W N + 2 := rfl
+-- logSpace
+example (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+-- pairEncode
+example (x α : List Bool) : pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α :=
+  rfl
+-- astep
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool) (v : Fin 25 → ℕ)
+    (r : Option Bool) : astep D o x (none, v, r) = (none, v, r) := rfl
+-- arun
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool) (a : AConf 25 Bool)
+    (n : ℕ) : arun D o x a n = (astep D o x)^[n] a := rfl
+-- rU
+example : (SavitchARM.rU : Fin 18) = 10 := rfl
+-- rV
+example : (SavitchARM.rV : Fin 18) = 11 := rfl
+-- rM
+example : (SavitchARM.rM : Fin 18) = 12 := rfl
+-- inputLenLang
+example : inputLenLang = indexLang fun u i => i < u.length := rfl
+-- ValidPlain
+example (y : List Bool) : ValidPlain y = ∃ n w, y = pairEncode (List.replicate n true) w ∧ Canon w :=
+  rfl
+-- ValidPair
+example (y : List Bool) : ValidPair y =
+    ∃ n u w, y = pairEncode (List.replicate n true) (pairEncode u w) ∧ Canon u ∧ Canon w := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Complexity.LogProg.SavitchARM.InitO Complexity.LogProg.SavitchARM.AccO Complexity.LogProg.SavitchARM.Rel Complexity.LogProg.SavitchARM.outerSt Complexity.LogProg.SavitchARM.setSt Complexity.LogProg.SavitchARM.St.toV Complexity.LogProg.SavitchARM.St.zero Complexity.LogProg.SavitchARM.rs Complexity.LogProg.SavitchARM.rw Complexity.LogProg.SavitchARM.rK Complexity.LogProg.SavitchARM.A Complexity.LogProg.SavitchARM.Reach Complexity.Codec.StepRel Complexity.Codec.initLang Complexity.Codec.acceptLang Complexity.Codec.edgeLang Complexity.Codec.stepLang Turing.MultiTapeTM.indicator Complexity.LogProg.Ins.embed Complexity.LogProg.AHalt Complexity.LogProg.AReach Complexity.LogProg.PreS Complexity.LogProg.SavitchARM.NoEdge Turing.FinNDTM.DecidesInSpace Complexity.Codec.codeK Complexity.logSpace Turing.pairEncode Complexity.LogProg.astep Complexity.LogProg.arun Complexity.LogProg.SavitchARM.rU Complexity.LogProg.SavitchARM.rV Complexity.LogProg.SavitchARM.rM Complexity.inputLenLang Complexity.LogProg.ValidPlain Complexity.LogProg.ValidPair
+
+-- InitO
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u : ℕ) : InitO orc x s u =
+    (orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true) := rfl
+-- AccO
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s v : ℕ) : AccO orc x s v =
+    (orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true) := rfl
+-- Rel
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ) : Rel orc x s u v =
+    (orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true) :=
+  rfl
+-- outerSt
+example (s w u v M : ℕ) : outerSt s w u v M = { setSt s w with U := u, V := v, M := M } := rfl
+-- setSt
+example (s w : ℕ) : setSt s w = { St.zero with s := s, w := w, K := 2 ^ w } := rfl
+-- St.toV
+example (st : St) : st.toV = ![st.n, st.a, st.X, st.P, st.T, st.Z, st.C, st.s, st.w, st.K, st.U,
+    st.V, st.M, st.I, st.SE, st.SP, st.E, st.Q] := rfl
+-- St.zero
+example : St.zero = ⟨0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0⟩ := rfl
+-- rs
+example : (SavitchARM.rs : Fin 18) = 7 := rfl
+-- rw
+example : (SavitchARM.rw : Fin 18) = 8 := rfl
+-- rK
+example : (SavitchARM.rK : Fin 18) = 9 := rfl
+-- A
+example : A 0 .acc = .ret true := rfl
+-- Reach
+example (K : ℕ) (R : ℕ → ℕ → Prop) (u v : ℕ) : SavitchARM.Reach K R 0 u v = (u = v ∨ R u v) := rfl
+-- StepRel
+example (N : FinNDTM Bool) (x : List Bool) (s a b : ℕ) : StepRel N x s a b =
+    (pairEncode x (pairEncode (Nat.bits a) (pairEncode (Nat.bits b) (Nat.bits s))) ∈ stepLang N) :=
+  rfl
+-- initLang
+example (N : FinNDTM Bool) : initLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      cfgCode s (N.tm.initCfg x) = c} := rfl
+-- acceptLang
+example (N : FinNDTM Bool) : acceptLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧ C.state = none ∧
+        C.output = [true]} := rfl
+-- edgeLang
+example (N : FinNDTM Bool) : edgeLang N =
+    {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ i, |C.workTapePos i| = (s : ℤ)} := rfl
+-- stepLang
+example (N : FinNDTM Bool) : stepLang N =
+    {y | ∃ (x : List Bool) (c c' s : ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits c') (Nat.bits s))) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧ cfgCode s C' = c'} :=
+  rfl
+-- MultiTapeTM.indicator
+open Classical in
+example (S : Set (List Bool)) (a : List Bool) :
+    MultiTapeTM.indicator S a = if a ∈ S then true else false := rfl
+-- Ins.embed
+example (ρ : Fin 18 → Fin 25) (σ : Fin 4 → Fin 5) (ι : Lb 0 → Bool) (k : Bool → Bool) (r₀ : Fin 25)
+    (b : Bool) : (Ins.ret b : Ins 18 4 (Lb 0)).embed ρ σ ι k r₀ = .jz r₀ (k b) (k b) := rfl
+-- AHalt
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool)
+    (G : AConf 25 Bool → Prop) (a : AConf 25 Bool) (b : Bool) : AHalt D o x G a b =
+    ∃ T, (arun D o x a T).1 = none ∧ (arun D o x a T).2.2 = some b ∧ ∀ t < T, G (arun D o x a t) :=
+  rfl
+-- AReach
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool)
+    (G : AConf 25 Bool → Prop) (a a' : AConf 25 Bool) : AReach D o x G a a' =
+    ∃ T, arun D o x a T = a' ∧ ∀ t < T, G (arun D o x a t) := rfl
+-- PreS
+example (D : ARM 25 5 Bool) (x : List Bool) (v : Fin 25 → ℕ) (r : Option Bool) :
+    PreS D x (none, v, r) = True := rfl
+-- NoEdge
+example (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : NoEdge N x s w =
+    ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+      ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+        SavitchARM.Reach (2 ^ w) (StepRel N x s) w u v := rfl
+-- FinNDTM.DecidesInSpace
+example (N : FinNDTM Bool) (L : Language Bool) (sp : ℕ → ℕ) : N.DecidesInSpace L sp =
+    ∀ x : List Bool, ∃ T : ℕ, N.tm.HaltsWithin x T ∧
+      (∀ w : List Bool, w.length = T → N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ sp x.length) ∧
+      (x ∈ L ↔ N.AcceptsWithin x T) := rfl
+-- codeK
+example (N : FinNDTM Bool) : codeK N = 2 * Codec.W N + 2 := rfl
+-- logSpace
+example (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+-- pairEncode
+example (x α : List Bool) : pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α :=
+  rfl
+-- astep
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool) (v : Fin 25 → ℕ)
+    (r : Option Bool) : astep D o x (none, v, r) = (none, v, r) := rfl
+-- arun
+example (D : ARM 25 5 Bool) (o : Fin 5 → List Bool → Bool) (x : List Bool) (a : AConf 25 Bool)
+    (n : ℕ) : arun D o x a n = (astep D o x)^[n] a := rfl
+-- rU
+example : (SavitchARM.rU : Fin 18) = 10 := rfl
+-- rV
+example : (SavitchARM.rV : Fin 18) = 11 := rfl
+-- rM
+example : (SavitchARM.rM : Fin 18) = 12 := rfl
+-- inputLenLang
+example : inputLenLang = indexLang fun u i => i < u.length := rfl
+-- ValidPlain
+example (y : List Bool) : ValidPlain y = ∃ n w, y = pairEncode (List.replicate n true) w ∧ Canon w :=
+  rfl
+-- ValidPair
+example (y : List Bool) : ValidPair y =
+    ∃ n u w, y = pairEncode (List.replicate n true) (pairEncode u w) ∧ Canon u ∧ Canon w := rfl
+
+end Sealed

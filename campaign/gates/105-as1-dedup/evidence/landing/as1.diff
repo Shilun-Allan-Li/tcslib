@@ -1,0 +1,14 @@
+diff --git a/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean b/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
+index 815b175a..0a958173 100644
+--- a/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
++++ b/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
+@@ -153,8 +153,7 @@ lemma astep_call₁ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (o : Fin d → List
+     astep A o (pairEncode (List.replicate n true) w) (some l, v, none) =
+       (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+         v, none) := by
+-  simp only [astep, hl]
+-  rw [vword_unary₁]
++  rw [astep_call hl, vword_unary₁]
+ 
+ end LogProg
+ 
