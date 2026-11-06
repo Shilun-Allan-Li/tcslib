@@ -428,17 +428,17 @@ theorem ps_walk (hB : 2 * x.length + 2 ≤ B) (σ : PReg) (hσ : σ.Le B) (hs : 
     by_cases he : σ.s = σ.t
     · refine (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simpa using he)
         (NSem.ret rfl (PReg.reg hσ _ _))).congr ?_
-      simp only [WalkLe, he]
+      simp only [walkLe_zero_iff, he]
     · refine (NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simpa using he)
         (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simp; omega)
           (NSem.ret rfl (PReg.reg hσ _ _)))).congr ?_
-      simp only [WalkLe, he, Bool.false_eq_true]
+      simp only [walkLe_zero_iff, he, Bool.false_eq_true]
   | succ d ih =>
     intro σ hd hσ hs ht hst hm
     by_cases he : σ.s = σ.t
     · refine (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simpa using he)
         (NSem.ret rfl (PReg.reg hσ _ _))).congr ?_
-      simp only [WalkLe, he, true_or]
+      simp only [walkLe_succ_iff_head, he, true_or]
     refine NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simpa using he) ?_
     refine NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simp; omega) ?_
     refine NSem.clr rfl (PReg.reg hσ _ _) ?_
@@ -472,7 +472,7 @@ theorem ps_walk (hB : 2 * x.length + 2 ≤ B) (σ : PReg) (hσ : σ.Le B) (hs : 
           (by simp only [PReg.v_0, pathOr_bit]; simpa [pathEdge] using hedge)
           (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
         simp only [hedge, false_and, Bool.false_eq_true]
-    · simp only [PReg.v_8, PReg.v_1, WalkLe, he, false_or]
+    · simp only [PReg.v_8, PReg.v_1, walkLe_succ_iff_head, he, false_or]
       exact ⟨fun ⟨j, _, h⟩ => ⟨j, h.1, h.2⟩, fun ⟨j, h1, h2⟩ => ⟨j, Nat.zero_le _, h1, h2⟩⟩
 
 end Complexity.LogProg

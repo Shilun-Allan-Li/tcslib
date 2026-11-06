@@ -1,0 +1,24 @@
+import importlib.util, re, sys
+spec = importlib.util.spec_from_file_location('df', sys.argv[1]); df = importlib.util.module_from_spec(spec); spec.loader.exec_module(df)
+base = open(sys.argv[2], encoding='utf-8').read(); head = open(sys.argv[3], encoding='utf-8').read()
+sys.path.insert(0, 'gen'); 
+exec(open('gen/slice.py', encoding='utf-8').read().split('def rn')[0].split('src = ')[0])  # imports
+ren = eval(open('gen/slice.py', encoding='utf-8').read().split('ren = ')[1].split('\ndef rn')[0])
+def rn(s):
+    for a, b in ren:
+        s = re.sub(r'(?<![A-Za-z0-9_.])' + re.escape(a) + r'(?![A-Za-z0-9_])', b, s)
+    return s
+B = {n: t for n, _, t in df.chunks(base)}; H = {n: t for n, _, t in df.chunks(head)}
+def st(t):
+    t = re.sub(r'/--.*?-/', '', t, flags=re.S)
+    t = df.stmt(t) if hasattr(df, 'stmt') else t
+    t = re.sub(r'^(private |noncomputable )+', '', t.strip())
+    return ' '.join(t.split())
+m = dict(ren)
+for a, b in ren:
+    bn = 'Turing.' + a
+    hn = 'Turing.' + b
+    if bn not in B: print('?? base', bn); continue
+    if hn not in H: print('?? head', hn); continue
+    sb = ' '.join(rn(st(B[bn])).split()); sh = st(H[hn])
+    print(('SAME ' if sb == sh else 'DIFF ') + a + ' -> ' + b)

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# compile.sh <module path .lean> <outfile>: unlink the module's outputs in the overlay, then
+# compile it into the overlay with leanelab-o.sh (overlay = olean tree = output).
+source /home/user/tcslib-scratch/env.sh
+OV=/home/user/tcslib-scratch/ov-harvest; WT=/home/user/tcslib-scratch/wt-harvest; F="$1"; OUT="$2"
+B="$OV/${F%.lean}"
+rm -f "$B.olean" "$B.ilean" "$B.c" "$B.trace" "$B.olean.hash" "$B.ilean.hash"
+cd "$WT" || exit 1
+S=$(date +%s)
+bash devtools/seyoon/leanelab-o.sh "$WT" "$OV" "$F" "$OV" > "$OUT" 2>&1
+echo "exit=$? $(( $(date +%s)-S ))s" >> "$OUT"
