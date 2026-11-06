@@ -166,7 +166,7 @@ private lemma sph_inclusion {f g : ℕ → ℕ} (hg : SpaceConstructible g)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) : SPACE f ⊆ SPACE g := by
   obtain ⟨N, hN⟩ := hfg 1
   have hfloor : ∀ n, 1 ≤ g n := fun n =>
-    Nat.one_le_of_lt (((spaceConstructible_iff g).mp hg).1 n)
+    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff g).mp hg).1 n)
   set F := (Finset.range N).sup f with hF
   refine SPACE.mono_const (a := F + 1) fun n => ?_
   by_cases hn : N ≤ n
@@ -231,7 +231,7 @@ private lemma sph_code_window (f g : ℕ → ℕ) (hf : SpaceConstructible f)
   obtain ⟨u, hu, hsu⟩ := hsim (List.replicate N₀ true)
     [MultiTapeTM.indicator (L : Set (List Bool)) x] t₀ (c₁ * (c₀ * f x.length + 1)) hn hs
   have hfloor : 1 ≤ f x.length :=
-    Nat.one_le_of_lt (((spaceConstructible_iff f).mp hf).1 x.length)
+    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff f).mp hf).1 x.length)
   have hsmall : C * (c₁ * (c₀ * f x.length + 1) + 1) ≤ A * f x.length := by
     calc
       _ ≤ C * (c₁ * (c₀ * f x.length + f x.length) + f x.length) :=
@@ -1812,7 +1812,7 @@ needs at most twice `logSpace n` digits. Insert these bounds in the public recor
 formula and absorb the additive constants using the logarithmic floor. -/
 private lemma sph_record_size (g : ℕ → ℕ) (hg : ∀ n, logSpace n ≤ g n) (k n : ℕ) :
     recordLength k n (g n) + (g n).bits.length + g n + 1 ≤ (4 * k + 9) * g n := by
-  have hfloor : 1 ≤ g n := Nat.one_le_of_lt (hg n)
+  have hfloor : 1 ≤ g n := by have h := hg n; rw [logSpace_eq] at h; omega
   have hb : (g n).bits.length ≤ g n := length_bits_le_self _
   have hp : posWidth n ≤ 2 * g n := by
     rw [posWidth_eq]
@@ -2008,7 +2008,7 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
   have hsize : radius ≤ B * g x.length := by
     have hrecord := sph_record_size g hg M.k x.length
     have hbits : ws.length ≤ g x.length := length_bits_le_self _
-    have hfloor : 1 ≤ g x.length := Nat.one_le_of_lt (hg x.length)
+    have hfloor : 1 ≤ g x.length := by have h := hg x.length; rw [logSpace_eq] at h; omega
     have h := Nat.mul_le_mul_left C hrecord
     dsimp only [radius, rW, rR, rS, B]
     nlinarith
@@ -2304,7 +2304,7 @@ private lemma sph_diagonal_language (M : FinTM Bool) (g : ℕ → ℕ) (hg : Spa
       exact (ht ys).spaceUsed_le_of_halt (hs ys) u)
   have hL : L ∈ SPACE (fun n => S n + 1) := mem_SPACE_iff.mpr ⟨c', N, hN⟩
   have hb (n : ℕ) : S n + 1 ≤ (k * (2 * B + 1) + 1) * g n := by
-    have hn : 1 ≤ g n := Nat.one_le_of_lt (hfloor n)
+    have hn : 1 ≤ g n := by have h := hfloor n; rw [logSpace_eq] at h; omega
     calc
       _ ≤ k * (2 * (B * g n) + g n) + g n :=
         Nat.add_le_add (Nat.mul_le_mul_left k (Nat.add_le_add_left hn _)) hn
