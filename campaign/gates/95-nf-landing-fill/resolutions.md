@@ -138,3 +138,11 @@ major is repaired (note 4).
 | 1 | major | **Repaired, by the standing ruling's kind (repair).** `simp only [List.foldl_concat, List.length_append, List.length_singleton]`, as proposed (`b4af93b744e240244d5705e2a3e1508e6cce8ddc`). The round-3 sweep wrongly exempted the chain because it sat in a `simp` set. Round 5 checks **every member of both chain classes anywhere in the file**, `rw`, `simp only` and `simpa only` alike (`evidence/round5/sweep/`). After the repair the remaining `foldl` and `take` lemmas are single citations: `foldl_nil` at five nil base cases, line 574's fold over a general append (`flatMap_cons`), and line 3077's `List.take_take` with `Nat.min_eq_left`. For that last one `exact?` finds no one-lemma form of `i ≤ j → (l.take j).take i = l.take i` (`NFLibE`). The neighbouring pair `length_append`, `length_singleton` on `l ++ [a]` also has no one-lemma form (`NFLibF`, whose control finds `foldl_concat`). Ledger: the sweep's entry adds this site and corrects "no member remains". |
 | 2 | minor | **Fixed, with an erratum** (the dispatched pack is kept): round 4's `anonymous-haves.txt` matched only `have :=` at the start of a line. Round 5's list matches every occurrence: 18 occurrences on 17 lines, the auditor's count (line numbers one lower after F1's merged line). Each is dispositioned: three `Fin` bounds (`isLt`), two specialisations of a local flag hypothesis, eight `min`/`max` bounds for `omega`, four specialisations of local hypotheses, and one local hypothesis restated. None is a re-derivation. |
 | 3–7 | notes | Agreed. Note 5: C02's probes are search results, not proofs of nonexistence; the round-4 wording is corrected to "no lemma found by `exact?`, `apply?` or name search". Round 5 regenerates the evidence. |
+
+**Round 5 (2026-11-06):** `pack-r5.md`, at #191's head `c8cedd9d1a6905ef23f138f05a544ad92c0dd2e1`.
+Staged on the exchange at `arora-barak-ch3-4/outbox/gates/95-nf-landing-fill-r5-gate/` (exchange
+commit `4c59561a`): bundle `95-nf-landing-fill-r5-bundle.md`, 89 sections, SHA-256
+`f6d8ac55580126178d485c13a526073e0f77ecbf7efe11967be025e4a63a2962`; Lean from `c8cedd9d`, records
+from `f2f1afcb1a39f2a89a086898fdb76e6e21f186e9`. Findings file `nf-landing-fill-r5-findings.md`.
+
+**Not yet clear to merge: #191** (gate 95's round 5 is staged, not yet dispatched).

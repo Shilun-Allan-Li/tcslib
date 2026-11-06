@@ -77,7 +77,7 @@ configuration facts; gate 94, `replay-lcf3`).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | `replay-lnf` **passed** (4 modules from `oleans-lcf3`, at `e8994dc1`; 0 `sorry`) | 95 **dispatched** 2026-11-05 (`outbox/gates/95-nf-landing-fill-gate/`, 415 sections) | merge when gate 95 closes |
+| #191 | `c8cedd9d` (round 4's repair `b4af93b7` + a records-only merge) | `replay-lnf6` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 rounds 3 and 4 did not close (one more re-derivation each); round 5 **staged** (`outbox/gates/95-nf-landing-fill-r5-gate/`, 89 sections) | dispatch round 5; merge when it closes |
 | #196 | the deepening's API: `SavitchARM/Window` (window exactness, termination) and eleven facts in eight files (design §9–§10; decisions 4 and 5) | `replay-ldwa` **passed** (73 modules from `oleans-lcf3`, at `89f4ebbc`; the existing 30 `sorry`s) | 96 **dispatched** 2026-11-05 (`outbox/gates/96-deepen-api-gate/`, 209 sections) | merge when gate 96 closes; then issue the deepening fill (Claude) |
 | #197 | G5's consumer API (decision G5-F1, API first): `Build/ZoneStep` (`exists_zoneTrackStepTM`, the amortization), `Contract.zero`, `ZoneRebalance`'s equations | `replay-lzsa` **passed** (111 modules from `oleans-lcf3`, at `0a1b64d5`; the existing 45 `sorry`s) | 97 **staged** (`outbox/gates/97-zone-step-api-gate/`, 91 sections) | dispatch gate 97; merge when it closes; then G5's fill brief |
 
@@ -131,7 +131,7 @@ at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
-(#202's merged tree) and `oleans-lnf5` (#191's). Once #191 or #202 merges, its snapshot is the
+(#202's merged tree) and `oleans-lnf6` (#191's). Once #191 or #202 merges, its snapshot is the
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
