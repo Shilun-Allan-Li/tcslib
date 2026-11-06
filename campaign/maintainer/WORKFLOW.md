@@ -127,14 +127,22 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   SHA-256 and section count, and both full 40-character hashes (Lean and records).
   - **Hashes:** take every full hash from `git rev-parse` in the same step that writes it, and
     `git cat-file -e` it. Never complete a short hash by hand.
-  - **Findings file:** every prompt asks the auditor to deliver the findings as a downloadable
-    `<name>-findings.md` (the table and the verdict line) and to paste it too.
+  - **Findings file:** every prompt asks the auditor for `<name>-findings.md` (the table and the
+    verdict line), pushed to the exchange inbox (below), and pasted in its reply too.
+  - **Agents use the exchange branch directly** (the user, 2026-11-06). Auditors and fill agents
+    have read and push access to `exchange/pass-shelat-ch5-8`. Prompts name files on it, not
+    attachments. Agents push their output to `arora-barak-ch3-4/inbox/`, and nothing else, with
+    `git pull --rebase` before every push and never a force push; no PR on the exchange. A fill
+    agent pushes its delivery zip (and checkpoint zips) there; an auditor its findings file. The
+    user still dispatches each prompt, and every change to `complexity/arora-barak-ch3-4` is
+    still a PR the user merges.
   - **Rebuilt bundles:** if a bundle is rebuilt after its prompt went out, re-issue the whole
     prompt and say the old one is void.
 - **The exchange** is the `arora-barak-ch3-4/` subfolder of the orphan branch
   `exchange/pass-shelat-ch5-8`:
   - `outbox/gates/<NN>-<slug>-gate/` and `outbox/fills/` (staged by the maintainer);
-  - `inbox/` (deliveries and findings, from the user);
+  - `inbox/` (deliveries and findings, pushed by the agents since 2026-11-06; earlier by the
+    user);
   - `archive/` (moved there once dispatched or committed to the records).
 
   Touch only this subtree; pull with rebase before every push. The historical archive before
