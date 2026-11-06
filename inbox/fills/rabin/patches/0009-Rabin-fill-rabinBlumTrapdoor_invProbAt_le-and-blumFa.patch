@@ -1,0 +1,327 @@
+From 8886af8cb4b8b74aab859d5edc578a5b3b5077c1 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 22:06:02 +0000
+Subject: [PATCH 9/9] Rabin: fill rabinBlumTrapdoor_invProbAt_le and
+ blumFactorProb_le_invProbAt
+
+---
+ TCSlib/Cryptography/Candidates/Rabin.lean | 282 +++++++++++++++++++++-
+ 1 file changed, 280 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index ba9cc76c..d69a7e26 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -3210,6 +3210,175 @@ theorem rabinBlumTrapdoor_sampleClose (H : ArithmeticFP) :
+   simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+   exact h1
+ 
++/-- A map pushing uniform to uniform on the first coordinate keeps the probability of an event
++with independent coins (`uprob_prod`, the definition of `PushesUniform`). -/
++private theorem rabin_pushesUniform_prod {Ω γ ρ : Type*} [Fintype Ω] [Fintype γ] [Fintype ρ]
++    {π : Ω → γ} (h : HardcoreBit.PushesUniform π) (P : γ → ρ → Prop) :
++    uprob (fun w : Ω × ρ => P (π w.1) w.2) = uprob (fun w : γ × ρ => P w.1 w.2) := by
++  rw [uprob_prod, uprob_prod]
++  exact h (fun a => uprob (fun b => P a b))
++
++/-- A Blum pair's index is a valid Blum index. -/
++private theorem rabin_blumValid_idx {n : ℕ} (z : DistinctPrimes n) (hp3 : z.p % 4 = 3)
++    (hq3 : z.q % 4 = 3) : BlumValid (rabin_idx z) := by
++  have hN : listToNat (rabin_idx z) = z.p * z.q := listToNat_natToList z.mul_lt
++  have hp := z.p_prime.two_le
++  have hq := z.q_prime.two_le
++  rw [blumValid_iff, hN]
++  exact ⟨z.p, Finset.mem_range.2 (by nlinarith), z.q, Finset.mem_range.2 (by nlinarith), z.p_prime,
++    z.q_prime, z.p_ne_q, hp3, hq3, rfl⟩
++
++/-- **The inner bound of the Blum Rabin collection** at a pair of distinct Blum primes: the
++inversion probability at the index `⟦pq⟧_{2n}` is at most `2 F + 2e^{-n}`.
++
++**Proof sketch.** Reparametrize the uniform `y ∈ QR_N` by `w = y²` (`blumPermAt`, a bijection):
++`A` receives `blumEnc w` and wins iff it answers a residue `x'` with `x'² = w` (`blumF_perm`,
++`blumDec_blumEnc`). The uniform residue `w` is the square of a uniform unit `r`
++(`pushesUniform_sqTo`, `rabin_pushesUniform_prod`), so the event is "`A(r²)` decodes to a root
++of `r²`", and `rabin_core` (Blum primes are odd) with the decoder `blumDec` transported to
++`Z_{pq}^*` concludes. -/
++private theorem rabin_inner_blum (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : DistinctPrimes n)
++    (hp3 : z.p % 4 = 3) (hq3 : z.q % 4 = 3) :
++    uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection A n (rabin_idx z)) ≤
++      2 * rabin_F (rabinFactorer H A) n z + 2 * Real.exp (-(n : ℝ)) := by
++  have hp2 : z.p ≠ 2 := fun h => by rw [h] at hp3; omega
++  have hq2 : z.q ≠ 2 := fun h => by rw [h] at hq3; omega
++  have hV := rabin_blumValid_idx z hp3 hq3
++  have hN : listToNat (rabin_idx z) = z.p * z.q := listToNat_natToList z.mul_lt
++  have hM : blumMod (rabin_idx z) = z.p * z.q := by rw [blumMod_of_valid hV, hN]
++  have hl : (rabin_idx z).length = 2 * n := length_natToList _ _
++  set i := rabin_idx z with hi
++  set e := rabin_unitsCongr hM with he
++  -- the encoding of a residue
++  have henc : ∀ u : QR (blumMod i), blumEnc i u =
++      natToList (2 * n) (((u : (ZMod (blumMod i))ˣ) : ZMod (blumMod i))).val := by
++    intro u
++    rw [blumEnc, blumEncVal, if_pos hV, hl]
++  -- (1) reparametrize by `w = y²`
++  unfold rabin_Qcoll
++  rw [← uprob_comp_equiv (Equiv.prodCongr ((blumPermAt i).symm.trans (rabinBlumTrapdoor_domEquiv H i).symm) (Equiv.refl (A.Coins n)))]
++  have h1 : uprob (fun w : QR (blumMod i) × A.Coins n =>
++      ∃ x', (rabinBlumTrapdoor H).toCollection.decD i (A.runAt n (pairEncode i
++          ((rabinBlumTrapdoor H).toCollection.f i (((blumPermAt i).symm.trans (rabinBlumTrapdoor_domEquiv H i).symm) w.1))) w.2) = some x' ∧
++        (rabinBlumTrapdoor H).toCollection.f i x' =
++          (rabinBlumTrapdoor H).toCollection.f i (((blumPermAt i).symm.trans (rabinBlumTrapdoor_domEquiv H i).symm) w.1)) ≤
++      uprob (fun w : QR (blumMod i) × A.Coins n => ∃ x' : QR (blumMod i),
++        blumDec i (A.runAt n (pairEncode i (blumEnc i w.1)) w.2) = some x' ∧
++          (x' : (ZMod (blumMod i))ˣ) ^ 2 = (w.1 : (ZMod (blumMod i))ˣ)) := by
++    apply uprob_mono
++    rintro ⟨w, ρ⟩ ⟨x', hx', hf⟩
++    simp only [Equiv.trans_apply, rabinBlumTrapdoor_f, rabinBlumTrapdoor_decD, Equiv.apply_symm_apply,
++      blumF_perm] at hx' hf
++    rw [Option.map_eq_some_iff] at hx'
++    obtain ⟨a, ha, rfl⟩ := hx'
++    rw [Equiv.apply_symm_apply] at hf
++    have hperm : blumPermAt i a = w := by
++      have := congrArg (blumDec i) hf
++      rwa [blumDec_blumEnc, blumDec_blumEnc, Option.some.injEq] at this
++    refine ⟨a, ha, ?_⟩
++    rw [← hperm, blumPermAt, dif_pos hV, Equiv.ofBijective_apply, coe_sqTo]
++  have h2 := (rabin_pushesUniform_prod (rabin_pushesUniform_sqTo z.p_ne_q hp2 hq2 _ hM)
++      (fun (w : QR (blumMod i)) (ρ : A.Coins n) => ∃ x' : QR (blumMod i),
++        blumDec i (A.runAt n (pairEncode i (blumEnc i w)) ρ) = some x' ∧
++          (x' : (ZMod (blumMod i))ˣ) ^ 2 = (w : (ZMod (blumMod i))ˣ))).symm
++  refine (h1.trans h2.le).trans ?_
++  -- (3) the core, on `Z_{pq}^*`
++  rw [← uprob_comp_equiv (Equiv.prodCongr e.toEquiv.symm (Equiv.refl (A.Coins n)))]
++  refine (uprob_mono ?_).trans (rabin_core H A z hp2 hq2
++    (fun w => (blumDec i w).map (fun q : QR (blumMod i) => e q.1)) ?_)
++  · rintro ⟨y, ρ⟩ ⟨x', hx', hsq⟩
++    simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, coe_sqTo] at hx' hsq
++    have hy : blumEnc i (sqTo (blumMod i) (e.symm y)) =
++        natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val := by
++      rw [henc, coe_sqTo, ← map_pow, rabin_unitsCongr_symm_val]
++    refine ⟨e x'.1, ?_, ?_⟩
++    · have hx'' : blumDec i (A.runAt n (pairEncode i
++          (natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) ρ) = some x' := by
++        rw [← hy]; exact hx'
++      show Option.map (fun q : QR (blumMod i) => e q.1) (blumDec i (A.runAt n
++        (pairEncode i (natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) ρ)) =
++        some (e x'.1)
++      rw [hx'', Option.map_some]
++    · rw [← map_pow]
++      change e (x'.1 ^ 2) = y ^ 2
++      rw [hsq, map_pow]
++      exact congrArg (· ^ 2) (MulEquiv.apply_symm_apply e y)
++  · intro w x hx
++    rw [Option.map_eq_some_iff] at hx
++    obtain ⟨a, ha, rfl⟩ := hx
++    rw [rabin_unitsCongr_val, ← rabin_blumEnc_of_dec ha, henc]
++    exact listToNat_natToList (hl ▸ blum_val_lt_two_pow i a)
++
++/-- The Blum-prime density in the form of the pair law: `2^n ≤ 4n · |C|` from `BlumDensity`
++(`Equiv.subtypeSubtypeEquivSubtypeInter`). -/
++private theorem rabin_card_blum (hD : BlumDensity) (n : ℕ) (hn : 2 ≤ n) :
++    2 ^ n ≤ 4 * n * Fintype.card (rabin_C (· % 4 = 3) n) := by
++  have hcard : Fintype.card (rabin_C (· % 4 = 3) n) = Fintype.card (BlumPrimes n) :=
++    (Fintype.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter
++      (fun v : Fin (2 ^ n) => (v : ℕ).Prime) (fun v : Fin (2 ^ n) => (v : ℕ) % 4 = 3))).symm
++  rw [hcard]
++  exact hD n hn
++
++/-- `blumFactorProb` is the average of the factoring section over the uniform distinct Blum pair. -/
++private theorem rabin_blumFactorProb_eq (A : NUPPT) (n : ℕ) :
++    blumFactorProb A n = uexp (fun t : rabin_RDP (· % 4 = 3) n => rabin_F A n t.1) := by
++  unfold blumFactorProb rabin_F
++  rw [uprob_prod]
++
++/-- The pair `(3, 7)` (`n ≥ 3`) as an element of `DistinctPrimes n`: the fallback of `blumGen`. -/
++private def rabin_z37 {n : ℕ} (hn : 3 ≤ n) : DistinctPrimes n :=
++  rabin_mkDP 3 7 ⟨Nat.prime_three, by decide, by norm_num,
++    lt_of_lt_of_le (by norm_num) (Nat.pow_le_pow_right (by norm_num) hn),
++    lt_of_lt_of_le (by norm_num) (Nat.pow_le_pow_right (by norm_num) hn)⟩
++
++/-- The generator of the Blum collection has the coins `rabinGenCoins`. -/
++private theorem rabin_coins_blumGen (H : ArithmeticFP) :
++    (rabinBlumTrapdoor H).toCollection.gen.coins = rabinGenCoins := by
++  show (rabinBlumTrapdoor H).gen.coins = rabinGenCoins
++  rw [rabinBlumTrapdoor_gen]; unfold blumGen; exact NUPPT.coins_ofPolyTimeUniform _ _
++
++/-- **The Blum generator's law, averaged** (`n ≥ 3`, `BlumDensity`): an average over the
++generator's index of a probability `Pr[Q i]` differs from the average at the uniform distinct
++Blum pair by at most `2e^{-n} + 4n/2^n`, in both directions (`rabin_pairLaw`, `rabin_genIndex`,
++`rabin_uexp_le`). -/
++private theorem rabin_blum_uexp (H : ArithmeticFP) (hD : BlumDensity) {n : ℕ} (hn : 3 ≤ n)
++    (Aux : List Bool → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) :
++    |uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>
++        uprob (Q ((rabinBlumTrapdoor H).toCollection.index n r))) -
++      uexp (fun t : rabin_RDP (· % 4 = 3) n => uprob (Q (rabin_idx t.1)))| ≤
++      2 * Real.exp (-(n : ℝ)) + 4 * n / 2 ^ n := by
++  set z0 := rabin_z37 hn with hz0d
++  have hz1 : z0.p = (blumDefault n).z.p := by
++    rw [hz0d, rabin_z37, rabin_mkDP_p]
++    exact (smallDistinctPrimes_p n Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
++      (by norm_num)).symm
++  have hz2 : z0.q = (blumDefault n).z.q := by
++    rw [hz0d, rabin_z37, rabin_mkDP_q]
++    exact (smallDistinctPrimes_q n Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
++      (by norm_num)).symm
++  have hz0 : z0.p % 4 = 3 ∧ z0.q % 4 = 3 := by
++    rw [hz0d, rabin_z37, rabin_mkDP_p, rabin_mkDP_q]; norm_num
++  have hG := rabin_coins_blumGen H
++  have hlaw := rabin_pairLaw (· % 4 = 3) (by omega) (rabin_card_blum hD n (by omega)) z0 hz0
++  have hidx : ∀ s, (rabinBlumTrapdoor H).toCollection.index n (rabin_genCoinsEquiv _ hG n s) =
++      rabin_idx (rabin_X (· % 4 = 3) z0 s) := by
++    intro s
++    show (rabinBlumTrapdoor H).index n (rabin_genCoinsEquiv _ hG n s) = _
++    rw [rabinBlumTrapdoor_index, rabin_genCoinsEquiv_ofFn]
++    exact rabin_genIndex (· % 4 = 3) blumDefault hn z0 hz1 hz2 s
++  have hL : uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>
++      uprob (Q ((rabinBlumTrapdoor H).toCollection.index n r))) =
++      uexp (fun s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool) =>
++        uprob (Q (rabin_idx (rabin_X (· % 4 = 3) z0 s)))) := by
++    rw [← HardcoreBit.uexp_comp_equiv (rabin_genCoinsEquiv _ hG n)]
++    congr 1
++    funext s
++    rw [hidx s]
++  have h1 := rabin_uexp_le hlaw (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
++  have h2 := rabin_uexp_le hlaw.symm (fun c => Aux (rabin_idx c)) (fun c => Q (rabin_idx c))
++  rw [hL, abs_le]
++  constructor <;> linarith
++
+ /-- **Inverting the Blum Rabin collection factors** [PS10, Theorem 63.10 (5), via
+ Algorithm 62.9]: for `n ≥ 3` and under the density hypothesis, the inversion probability of
+ `A` against `rabinBlumTrapdoor` is at most twice the Blum factoring probability of `A'`
+@@ -3230,7 +3399,25 @@ theorem rabinBlumTrapdoor_invProbAt_le (H : ArithmeticFP) (hD : BlumDensity) (A
+     (hn : 3 ≤ n) :
+     (rabinBlumTrapdoor H).toCollection.invProbAt A n ≤
+       2 * blumFactorProb (rabinFactorer H A) n + rabinErr n := by
+-  sorry
++  haveI : Nonempty (rabin_RDP (· % 4 = 3) n) :=
++    ⟨⟨rabin_z37 hn, by rw [rabin_z37, rabin_mkDP_p, rabin_mkDP_q]; norm_num⟩⟩
++  have hlaw := rabin_blum_uexp H hD hn (fun i => (rabinBlumTrapdoor H).toCollection.D i × A.Coins n)
++    (fun i => rabin_Qcoll (rabinBlumTrapdoor H).toCollection A n i)
++  have hinner : uexp (fun t : rabin_RDP (· % 4 = 3) n =>
++      uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection A n (rabin_idx t.1))) ≤
++      uexp (fun t : rabin_RDP (· % 4 = 3) n =>
++        2 * rabin_F (rabinFactorer H A) n t.1 + 2 * Real.exp (-(n : ℝ))) := by
++    refine OneWay.uexp_mono fun t => ?_
++    have h1 : t.1.p % 4 = 3 := t.2.1
++    have h2 : t.1.q % 4 = 3 := t.2.2
++    exact rabin_inner_blum H A t.1 h1 h2
++  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, ← rabin_blumFactorProb_eq]
++    at hinner
++  rw [Collection.invProbAt_eq, rabinErr]
++  have := (abs_le.1 hlaw).2
++  show uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>
++    uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection A n ((rabinBlumTrapdoor H).toCollection.index n r))) ≤ _
++  linarith
+ 
+ /-- **Theorem 63.10** [PS10, Theorem 63.10]: under the factoring assumption, the density of
+ Blum primes and the arithmetic hypotheses, the Rabin collection on Blum integers with domain
+@@ -3381,6 +3568,80 @@ theorem rabinBlumInverter_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N y :
+     NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+     pairSndD_pairEncode, rabinRootRaw]
+ 
++/-- **A factorer's success gives an inversion** at a Blum pair: the factoring section of `A` is at
++most the inversion probability of `rabinBlumInverter A` at the index `⟦pq⟧_{2n}`.
++
++**Proof sketch.** On coins where `A(1^n, N)` reads as `p` (or `q`), `q' = N / p'` is the other
++prime, the test `p' q' = N` passes, and the inverter outputs the numeral of `blumInvNat p' q' y.val`
++(`rabinBlumInverter_runAt`, `rabinRootStep`), the residue root of `y` (`rabin_blumInvNat_spec`),
++which `blumDec` decodes to a preimage of `y` (`blumDec_blumEnc`, `blumF_perm`); the event depends
++only on the coins of `A` (`uprob_fst`, `rabinBlumInverter_coinsEquiv`, `uprob_comp_equiv`). -/
++private theorem rabin_inner_inv (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : DistinctPrimes n)
++    (hp3 : z.p % 4 = 3) (hq3 : z.q % 4 = 3) :
++    rabin_F A n z ≤ uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection (rabinBlumInverter H A) n
++      (rabin_idx z)) := by
++  have hV := rabin_blumValid_idx z hp3 hq3
++  have hN : listToNat (rabin_idx z) = z.p * z.q := listToNat_natToList z.mul_lt
++  have hM : blumMod (rabin_idx z) = z.p * z.q := by rw [blumMod_of_valid hV, hN]
++  have hl : (rabin_idx z).length = 2 * n := length_natToList _ _
++  set i := rabin_idx z with hi
++  have henc : ∀ u : QR (blumMod i), blumEnc i u =
++      natToList (2 * n) (((u : (ZMod (blumMod i))ˣ) : ZMod (blumMod i))).val := by
++    intro u
++    rw [blumEnc, blumEncVal, if_pos hV, hl]
++  have hmb : List.ofFn (modulusBits n z) = i := by rw [modulusBits_eq, ← natToList_eq]; rfl
++  -- the event depends on the coins of `A` only
++  have hS : rabin_F A n z = uprob (fun w : (rabinBlumTrapdoor H).toCollection.D i ×
++      (rabinBlumInverter H A).Coins n => ∃ x : Fin n → Bool,
++        A.inverter n n (2 * n) (modulusBits n z) (rabinBlumInverter_coinsEquiv H A n w.2) = some x ∧
++          (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := by
++    calc rabin_F A n z = uprob (fun c : A.Coins n => ∃ x : Fin n → Bool,
++          A.inverter n n (2 * n) (modulusBits n z) c = some x ∧ (bitsToNat x = z.p ∨ bitsToNat x = z.q)) :=
++          rfl
++      _ = uprob (fun c : (rabinBlumInverter H A).Coins n => ∃ x : Fin n → Bool,
++          A.inverter n n (2 * n) (modulusBits n z) (rabinBlumInverter_coinsEquiv H A n c) = some x ∧
++            (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := (uprob_comp_equiv _ _).symm
++      _ = uprob (fun a : (rabinBlumInverter H A).Coins n × (rabinBlumTrapdoor H).toCollection.D i =>
++          ∃ x : Fin n → Bool,
++          A.inverter n n (2 * n) (modulusBits n z) (rabinBlumInverter_coinsEquiv H A n a.1) = some x ∧
++            (bitsToNat x = z.p ∨ bitsToNat x = z.q)) := (uprob_fst _).symm
++      _ = _ := (uprob_comp_equiv (Equiv.prodComm _ _) (fun a : (rabinBlumInverter H A).Coins n ×
++          (rabinBlumTrapdoor H).toCollection.D i => ∃ x : Fin n → Bool,
++          A.inverter n n (2 * n) (modulusBits n z) (rabinBlumInverter_coinsEquiv H A n a.1) = some x ∧
++            (bitsToNat x = z.p ∨ bitsToNat x = z.q))).symm
++  rw [hS]
++  apply uprob_mono
++  rintro ⟨y, c⟩ ⟨x, hx, hpq⟩
++  rw [NUPPT.inverter_eq_some_iff, hmb] at hx
++  unfold rabin_Qcoll
++  simp only [rabinBlumTrapdoor_f, rabinBlumTrapdoor_decD, blumF_perm]
++  set u := blumPermAt i ((rabinBlumTrapdoor_domEquiv H i) y) with hu
++  -- the root of `u` from the factor `s ∈ {p, q}`
++  have key : ∀ {a b : ℕ} [Fact a.Prime] [Fact b.Prime], a ≠ b → a % 4 = 3 → b % 4 = 3 →
++      blumMod i = a * b → bitsToNat x = a →
++      ∃ x' : QR (blumMod i), rabinRootStep (List.ofFn x) (listToNat i) (blumEnc i u) = blumEnc i x' ∧
++        blumPermAt i x' = u := by
++    intro a b _ _ hab ha3 hb3 hMab hxa
++    obtain ⟨r, hrQ, hr2, hrv⟩ := rabin_blumInvNat_spec hab ha3 hb3 (blumMod i) hMab
++      (u : (ZMod (blumMod i))ˣ) u.2
++    have ha0 : 0 < a := (Fact.out : a.Prime).pos
++    have hNab : listToNat i = a * b := by rw [← hMab, blumMod_of_valid hV]
++    refine ⟨⟨r, hrQ⟩, ?_, ?_⟩
++    · rw [rabinRootStep, ← bitsToNat_eq_listToNat, hxa, hNab, Nat.mul_div_cancel_left _ ha0,
++        if_pos rfl, henc u, length_natToList, henc, listToNat_natToList (hl ▸ blum_val_lt_two_pow i u),
++        ← hrv]
++    · rw [blumPermAt, dif_pos hV, Equiv.ofBijective_apply]
++      exact Subtype.ext (by rw [coe_sqTo]; exact hr2)
++  have hroot : ∃ x' : QR (blumMod i), rabinRootStep (List.ofFn x) (listToNat i) (blumEnc i u) =
++      blumEnc i x' ∧ blumPermAt i x' = u := by
++    rcases hpq with h | h
++    · exact key z.p_ne_q hp3 hq3 hM h
++    · exact key z.p_ne_q.symm hq3 hp3 (by rw [hM, mul_comm]) h
++  obtain ⟨x', hx'1, hx'2⟩ := hroot
++  refine ⟨(rabinBlumTrapdoor_domEquiv H i).symm x', ?_, ?_⟩
++  · rw [rabinBlumInverter_runAt, hx, hx'1, blumDec_blumEnc, Option.map_some]
++  · rw [Equiv.apply_symm_apply, hx'2]
++
+ /-- **A Blum factorer inverts the Blum Rabin collection** [PS10, proof of Theorem 61.8 ⇐,
+ "from the correct `p, q` we can compute the square root of `u` with probability 1"]: for
+ `n ≥ 3` and under the density hypothesis, `blumFactorProb A n` is at most the inversion
+@@ -3396,7 +3657,24 @@ generator's law (`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2
+ theorem blumFactorProb_le_invProbAt (H : ArithmeticFP) (hD : BlumDensity) (A : NUPPT) {n : ℕ}
+     (hn : 3 ≤ n) :
+     blumFactorProb A n ≤ (rabinBlumTrapdoor H).toCollection.invProbAt (rabinBlumInverter H A) n + rabinErr n := by
+-  sorry
++  have hlaw := rabin_blum_uexp H hD hn
++    (fun i => (rabinBlumTrapdoor H).toCollection.D i × (rabinBlumInverter H A).Coins n)
++    (fun i => rabin_Qcoll (rabinBlumTrapdoor H).toCollection (rabinBlumInverter H A) n i)
++  have hinner : uexp (fun t : rabin_RDP (· % 4 = 3) n => rabin_F A n t.1) ≤
++      uexp (fun t : rabin_RDP (· % 4 = 3) n =>
++        uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection (rabinBlumInverter H A) n (rabin_idx t.1))) := by
++    refine OneWay.uexp_mono fun t => ?_
++    have h1 : t.1.p % 4 = 3 := t.2.1
++    have h2 : t.1.q % 4 = 3 := t.2.2
++    exact rabin_inner_inv H A t.1 h1 h2
++  rw [← rabin_blumFactorProb_eq] at hinner
++  rw [Collection.invProbAt_eq, rabinErr]
++  have := (abs_le.1 hlaw).1
++  have he : 0 ≤ Real.exp (-(n : ℝ)) := (Real.exp_pos _).le
++  show _ ≤ uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>
++    uprob (rabin_Qcoll (rabinBlumTrapdoor H).toCollection (rabinBlumInverter H A) n
++      ((rabinBlumTrapdoor H).toCollection.index n r))) + _
++  linarith
+ 
+ /-- **Theorem 61.8 (⇐)** [PS10, Theorem 61.8, "only if"], Blum form: if the Blum Rabin
+ collection is one-way (and the density hypothesis holds) then factoring Blum integers is
+-- 
+2.43.0
+

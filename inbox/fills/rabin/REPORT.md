@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: in progress (checkpoint 9).** Filled so far: steps 1–7 and `rabinCollection_invProbAt_le` (13 targets).
+**Status: in progress (checkpoint 10).** Filled so far: steps 1–8 (15 targets).
 
 ## Base and environment
 
@@ -46,3 +46,5 @@
 | 7 | `polyTimeComputable_blumInvRaw` | filled: exact CRT word `rabin_crtW` (`rabin_listToNat_crtW`) and truncation `rabin_trunc`; short docstring expanded |
 | 7 | `polyTimeComputable_rabinRootRaw` | filled: `rabin_rOut` (cofactor by `H.divMod`, test by `H.mul` and two `H.le`, the CRT word); short docstring expanded |
 | 8 | `rabinCollection_invProbAt_le` | filled: generator law first (`rabin_pairLaw`, generic in `P`; `rabin_uexp_le`), then at the ideal odd pair the symmetry lemma and S3 (`rabin_core`); total `rabinErr n` exactly |
+| 8 | `rabinBlumTrapdoor_invProbAt_le` | filled: `rabin_blum_uexp` (pair law with `hD`), inner bound `rabin_inner_blum` (reparametrize by `w = y²`, `pushesUniform_sqTo`, `rabin_core`) |
+| 8 | `blumFactorProb_le_invProbAt` | filled: `rabin_blum_uexp` (other direction) and `rabin_inner_inv` (the root finder wins whenever `A` factors; `rabin_blumInvNat_spec`) |
