@@ -11,3 +11,4 @@
 - 2026-11-06: after dispatch, the user allowed colleague-owned edits; `1fd7d4ce` re-proves the five
   `BoolCircuit` members through the general equations (pushed to #214). Round 1 audits
   `0bc71211` as dispatched; the five go into round 2 with a new replay.
+- 2026-11-06: round 2: #214 complete (`92e53e6e`); freeze, lint, replay-las2 (109/0); pack-r2 written; staged.
