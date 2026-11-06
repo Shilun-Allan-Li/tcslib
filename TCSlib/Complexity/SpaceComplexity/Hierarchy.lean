@@ -178,6 +178,77 @@ private lemma sph_inclusion {f g : ℕ → ℕ} (hg : SpaceConstructible g)
       _ = (F + 1) * 1 := (Nat.mul_one _).symm
       _ ≤ (F + 1) * g n := Nat.mul_le_mul_left _ (hfloor n)
 
+/-- A decider in the smaller space class has a padded code on which the fixed universal
+machine halts inside the larger window, before its configuration-count clock expires.
+[AB09, Theorem 4.8, diagonal contradiction]
+
+**Proof sketch.** Normalize the decider to one binary work tape and then to a coded machine,
+using the published space clauses. Choose the domination constant after the code's universal
+simulation constant is fixed, and pad the payload to the resulting threshold. The configuration
+bound supplies a halting time; the window-summary theorem identifies the run at the next round. -/
+private lemma sph_code_window (f g : ℕ → ℕ) (hf : SpaceConstructible f)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) (U₀ : FinTM Bool)
+    (hU : ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (w output : List Bool) (t s : ℕ),
+        (TimeHierarchy.code.decode α).toFinTM.ComputesInTime (pairEncode α w) output t →
+        (TimeHierarchy.code.decode α).toFinTM.tm.spaceUsed
+          ((TimeHierarchy.code.decode α).toFinTM.tm.initCfg (pairEncode α w)) t ≤ s →
+        ∃ t' : ℕ, U₀.ComputesInTime (pairEncode α w) output t' ∧
+          U₀.tm.spaceUsed (U₀.tm.initCfg (pairEncode α w)) t' ≤ C * (s + 1))
+    (L : Language Bool) (c₀ : ℕ) (M : FinTM Bool)
+    (hM : M.DecidesInSpace L (fun n => c₀ * f n)) :
+    ∃ (x : List Bool) (t : ℕ),
+      U₀.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] t ∧
+      U₀.tm.spaceUsed (U₀.tm.initCfg x) t ≤ g x.length ∧
+      t = U₀.configBound x.length (g x.length) ∧
+      windowRun U₀.tm (g x.length) summaryTag (t + 1) (U₀.tm.initCfg x) 0 =
+        (.halted, U₀.tm.runFrom (U₀.tm.initCfg x) t,
+          outSummaryCode (outSummary [MultiTapeTM.indicator (L : Set (List Bool)) x])) := by
+  have hm := (FinTM.decidesInSpace_iff M L (fun n => c₀ * f n)).mp hM
+  have hbounds := hm.computesFunInTime_and_forall_spaceUsed_le
+  obtain ⟨M₁, c₁, hk, htime, hspace⟩ := FinTM.one_work_tape_binary_spaceUsed M
+    (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x])
+    (fun n => M.configBound n (c₀ * f n)) (fun n => c₀ * f n) hbounds.1 hbounds.2
+  obtain ⟨N, hrun, hsp⟩ := exists_codeTM_spaceUsed M₁ hk
+  let α := TimeHierarchy.code.encode N
+  have hα : TimeHierarchy.code.decode α = N := MachineCode.decode_encode _ _
+  obtain ⟨C, _hC, hsim⟩ := hU α
+  let A := C * (c₁ * c₀ + c₁ + 1)
+  obtain ⟨N₀, hN₀⟩ := hfg A
+  let x := pairEncode α (List.replicate N₀ true)
+  have hx : N₀ ≤ x.length := by
+    simp only [x, length_pairEncode, List.length_replicate]
+    omega
+  let t₀ := c₁ * (M.configBound x.length (c₀ * f x.length) + 1) ^ 2
+  have hn : (TimeHierarchy.code.decode α).toFinTM.ComputesInTime x
+      [MultiTapeTM.indicator (L : Set (List Bool)) x] t₀ := by
+    rw [hα]
+    exact (hrun x _ t₀).mpr ((FinTM.computesFunInTime_iff _ _ _).mp htime x)
+  have hs : (TimeHierarchy.code.decode α).toFinTM.tm.spaceUsed
+      ((TimeHierarchy.code.decode α).toFinTM.tm.initCfg x) t₀ ≤
+      c₁ * (c₀ * f x.length + 1) := by
+    rw [hα, hsp]
+    exact hspace x t₀
+  obtain ⟨u, hu, hsu⟩ := hsim (List.replicate N₀ true)
+    [MultiTapeTM.indicator (L : Set (List Bool)) x] t₀ (c₁ * (c₀ * f x.length + 1)) hn hs
+  have hfloor : 1 ≤ f x.length :=
+    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff f).mp hf).1 x.length)
+  have hsmall : C * (c₁ * (c₀ * f x.length + 1) + 1) ≤ A * f x.length := by
+    calc
+      _ ≤ C * (c₁ * (c₀ * f x.length + f x.length) + f x.length) :=
+        Nat.mul_le_mul_left C (Nat.add_le_add
+          (Nat.mul_le_mul_left c₁ (Nat.add_le_add_left hfloor _)) hfloor)
+      _ = A * f x.length := by dsimp only [A]; ring
+  have hwindow : U₀.tm.spaceUsed (U₀.tm.initCfg x) u ≤ g x.length :=
+    hsu.trans (hsmall.trans (hN₀ x.length hx))
+  let t := U₀.configBound x.length (g x.length)
+  have hhalt : U₀.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] t :=
+    hu.of_spaceUsed_le hwindow
+  have hspace' : U₀.tm.spaceUsed (U₀.tm.initCfg x) t ≤ g x.length :=
+    hu.spaceUsed_le_of_halt hwindow t
+  exact ⟨x, t, hhalt, hspace', rfl,
+    windowRun_summary_of_halts U₀ x hhalt hspace' (Nat.lt_succ_self t)⟩
+
 /-- **The space hierarchy theorem** ([AB09, Theorem 4.8]; [SHL65] through
 [AB09]): for
 space-constructible `f` and `g`, if every constant multiple of `f` is
