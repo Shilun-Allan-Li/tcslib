@@ -138,6 +138,14 @@ D8. **Interactive protocols** ([PS10, §4.4]). A `Strategy` is a next-message fu
     simulators, rejection-sampled permutations). Deviations: fixed number of moves (a halting
     party is modelled as sending `[]`; all protocols of the text are fixed-round), strict
     simulators, statistical instead of perfect ZK, `|z|` polynomially bounded.
+    **Erratum (2026-11-06, gate 03e round 2, finding 1, and gate 03g, finding 6; the frozen text
+    above is unchanged).** Only GI is proved statistically (`gi_statZK`: `StatZK` with
+    negligible δ, truncated simulator, rejection-sampled permutations). 3COL is proved
+    computationally ZK (`col_zk`, by `Commitment.multiHiding`; the truncation and sampling errors
+    are statistical terms inside a computational bound), its simulator stopping after `n|E|`
+    attempts as the text's does. It cannot be statistical: with a perfectly binding commitment
+    the real views of two colourings outside one colour-permutation orbit are statistically far
+    apart, and the simulator does not see the witness.
 
 D9. **Lengths are syntax.** Every length or budget that depends on the parameter (coins,
     advice, input/output lengths of families and ensembles, stretch, query budgets, rounds,
@@ -919,6 +927,12 @@ structure Commitment (Com : List Bool → List Bool) (ℓ : PolyExpr) : Prop whe
             (fun r : Fin (ℓ.eval n) → Bool => Com (pairEncode (List.ofFn v₁) (List.ofFn r))) (D.distinguisherL n) ≤ ε n
 ```
 
+**As-built note (2026-11-06, gate 03g, finding 6; the frozen block above is unchanged).** Ruling
+G3-3 changed two signatures. `InteractiveProof(Err).complete` is
+`∃ B : PolyExpr, ∀ x ∈ L, ∃ y, (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧ ∀ z, uprob (…) = 1`,
+and `EfficientProverProof(Err)` has the field `boundedP : ∃ B : PolyExpr, π.ProverBounded R B`
+(`Protocol.ProverBounded`, `Interaction.lean`). See §5 item 8.
+
 Graph isomorphism (compiled expressibility check): `Graph n := Fin n → Fin n → Bool`,
 `permGraph G π u v := G (π.symm u) (π.symm v)`, `encGraph`/`decGraph` (adjacency matrix, `n²`
 bits, `Nat.sqrt`), `encPerm`/`decPerm` (relation matrix, `Fin.find`, `Equiv.ofBijective`),
@@ -1045,19 +1059,24 @@ Issues found in this synthesis and resolved here (not raised by the panel):
 8. `Protocol`: fixed number of messages `rounds.eval |x|`, verdict on the complete history
    (halting = sending `[]`); `Efficient` time polynomial in the total input length. The honest
    messages are polynomially bounded in `|x|` (`Protocol.ProverBounded`, in
-   `InteractiveProof(Err).complete` and the field `EfficientProverProof(Err).boundedP`): the
-   source's p.p.t. prover writes at most `t(|x|)` bits. Against a cheating prover the verifier's
+   `InteractiveProof(Err).complete` and the field `EfficientProverProof(Err).boundedP`): for
+   Definition 119.5 the source's p.p.t. prover writes at most `t(|x|)` bits; for Definition
+   116.1, whose prover is unbounded, it is a normal form (a verifier of time `t(|x|)` reads at
+   most `t(|x|)` bits of each message; gate 03e round 2, finding 7). Against a cheating prover the verifier's
    work is polynomial in the message length, not in `|x|` (gate 03e, finding 1; ruling G3-3).
 9. Soundness `1 − ε < Pr[out = [false]]` literal; provers have polynomial coin tapes (no loss by
    averaging); completeness `uprob = 1` (every coin pair).
 10. `ZK`/`HVZK`: strict PPT simulators; auxiliary inputs bounded by `∀ Lz : PolyExpr`;
     simulator and distinguisher at parameter `|x|`; views encoded as `⟨⟨x, z⟩, ⟨r, msgs⟩⟩`.
-11. GI/3COL: statistical ZK (truncated simulators, rejection-sampled permutations / edges /
-    colour permutations); one-iteration ZK, `n`-fold protocols get soundness only (sequential
-    composition is §7.2.1, out of scope). `PerfectZK` and `PerfectZKAbort` are stated, but no
-    source protocol attains them under D8/D10; GI is `StatZK` with negligible δ, and
-    `PerfectZKAbort.statZK` turns the abort form into statistical ZK with error `2^{-|x|}`
-    (gate 03e, finding 2; ruling G3-4).
+11. GI: statistical ZK with negligible δ (`gi_statZK`; truncated simulator, rejection-sampled
+    permutations). 3COL: computational ZK (`col_zk`; `Commitment.multiHiding`, with the
+    statistical errors of the `n|E|`-attempt simulator and of the rejection-sampled edges, colour
+    pairs and colour permutations absorbed); not statistical, since with a perfectly binding
+    commitment two inequivalent colourings give statistically distinct views (gate 03e round 2,
+    finding 1; gate 03g, finding 6). One-iteration ZK; the `n`-fold protocols get soundness only
+    (sequential composition is §7.2.1, out of scope). `PerfectZK` and `PerfectZKAbort` are
+    stated, but no source protocol attains them under D8/D10; `PerfectZKAbort.statZK` turns the
+    abort form into statistical ZK with error `2^{-|x|}` (gate 03e, finding 2; ruling G3-4).
 12. `Commitment`: binding clause with `v₀ ≠ v₁` (source error); `n` an explicit argument,
     colours padded to `n` bits (DQ4).
 13. `PublicKeyScheme`: clause (4) (message enumerator) dropped; `0^n` is the canonical message.
@@ -1278,7 +1297,8 @@ Outright errors (to replace the plan's seeded list):
 45. Definitions 121.1/121.2 and Proposition 128.8 bound by `e(n)` with `n` undefined
     (`n = |x|`); Definition 121.2 relies on expected polynomial time.
 46. Proposition 128.8's proof: hybrid count `2n|E|` vs `n|E|` attempts; "`S̃_{e+1}` … `S̃_{e+1}`"
-    typo; the `6|E|` sub-hybrid is unnecessary.
+    typo; the `6|E|` sub-hybrid is unnecessary; p. 129 prints "If we assume that `S′` never
+    outputs fail" and "`S′` fails with probability …" for `S″` (gate 03g, M2).
 47. §4.7 step 2: "Cook's reduction applied to the witness" needs a Levin reduction (never
     defined); "execute `(P, V)` on `x'`" should be `(P', V')`; Theorem 126.4 needs a hard-core
     predicate (Theorem 87.3) and uses a single OWP, not Definition 55.1's collection.
@@ -1290,9 +1310,12 @@ Outright errors (to replace the plan's seeded list):
     once; time complexity `t(|x|)` "regardless of messages" leaves the simulator's call to `V*`
     on long `z` ill-defined (D8 reading).
 51. Definition 121.2 read literally (`∀ z ∈ {0,1}*`, the distinguisher polynomial-time in its
-    input) fails for every protocol whose hiding is only computational: with `|z| ≥ 2^n` the
-    distinguisher, whose input (the view) contains `z`, may run in time `2^n`, invert the OWP on
-    `n`-bit inputs and open the unopened commitments. So the bound `∀ Lz : PolyExpr` on `|z|`, and
+    input) fails for the 3-colouring protocol 127.5 of Proposition 128.8: with `|z|` exponential,
+    the distinguisher, whose input (the view) contains `z`, opens the perfectly binding
+    commitments by exhaustive search, and on a graph with two proper colourings outside one
+    colour-permutation orbit it separates the two real views, which the witness-blind simulator
+    cannot match (protocols with exactly simulable views are not affected; gate 03e round 2,
+    finding 6). So the bound `∀ Lz : PolyExpr` on `|z|`, and
     indexing the distinguisher's advice by `|x|` rather than by its input length, are necessary,
     not only convenient (gate 03e, finding 9; `ZeroKnowledge/Defs.lean`'s module docstring).
 

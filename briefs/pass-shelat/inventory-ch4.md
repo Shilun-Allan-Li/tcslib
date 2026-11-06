@@ -27,8 +27,10 @@ items specific to Chapter 4 carry `Inf-4.<k>` ids.
   functions; `view_A = (x, z_A, r_A, M_A)`, `transcript = (M_A, M_B)`, `out_A = A.out(view_A)`.
   No tapes, states or idle transitions are modelled (Deviation, recorded once in
   `Interaction.lean`).
-* **Simulators are strict PPT (plan D8).** The two rewinding simulators (123.4, 128.7) are
-  truncated at `n` resp. `n·|E|` attempts and output `⊥` on failure; the resulting theorems
+* **Simulators are strict PPT (plan D8).** The GI simulator (123.4) is truncated at
+  `n` attempts (D8; the text restarts until success) and the 3COL simulator (128.7) stops after
+  `n·|E|` attempts as the text's does (Algorithm 128.7, steps 4–5; gate 03g, finding 5); both
+  output `⊥` on failure; the resulting theorems
   are *statistical* zero-knowledge with error `2^{-n}` (GI) and a computational bound with an
   additional `e^{-n}` term (3COL). The perfect-simulation lemma is proved as stated
   (conditioned on success). Expected polynomial time (Def-121.a) and the untruncated loop
@@ -535,8 +537,11 @@ load-bearing infrastructure item of the chapter together with Claim-128.a.
 Formalized in three forms: **(A, core)** for every `(L, R_L)` and every Levin reduction
 `(f, w)` from `(L, R_L)` to `(3COL, R_3COL)` (Def-124.a, string level through Inf-4.1), the
 composed protocol — both parties compute `x' := f(x)`, the prover additionally `y' := w(x, y)`,
-then run Protocol 127.5 — is a ZK proof with efficient prover for `L` (Claim-124.d applied to
-Prop-127.6, with the commitment scheme from Thm-126.4). **(B, optional/deferred)** "every
+then run Protocol 127.5 — gives, under the hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` (run-3 P11-1),
+an interactive proof with efficient prover for `L` (the pulled-back repeated protocol), a ZK
+single iteration (DQ5), and the single iteration's soundness error (`zk_proof_of_levinReduction`;
+Claim-124.d applied to Prop-127.6, with the commitment scheme from Thm-126.4; gate 03g,
+finding 6). **(B, optional/deferred)** "every
 `L ∈ Complexity.NP`" follows from (A) given string-level Levin NP-hardness of 3COL
 (Claim-124.b + Claim-124.c), stated as an explicit hypothesis. **(C, optional)** with an
 *unbounded* honest prover a Karp reduction suffices (the prover finds a colouring of `f(x)`
@@ -547,7 +552,9 @@ reduction, never defined in the text; "execute protocol `(P, V)` on `x'`" should
 
 **Def-124.a (Levin reduction).** `(f, w)` with `PolyTimeComputable f`, `w` polynomial-time
 in `(x, y)` (two-argument via `pairEncode`), `∀ x, x ∈ L ↔ f x ∈ L'`, and
-`∀ x y, R_L x y → R_{L'} (f x) (w x y)`. Extends `Complexity.PolyTimeReducible` (Karp).
+`∀ x y, R_L x y → R_{L'} (f x) (w x y)`, with `f` length-regular (`length_eq :
+|f x| = p(|x|)`) for a length polynomial `p ≥ id` (`le_eval`). Extends
+`Complexity.PolyTimeReducible` (Karp); gate 03g, finding 6.
 
 **Claim-124.b (3COL NP-complete, string level).** `3COL := {x | (decodeGraph x).Colorable 3}`;
 NP membership (colouring certificate) and NP-hardness via `SAT3 ≤ₚ 3COL`. The repository
@@ -563,7 +570,8 @@ Deferred with Claim-124.b.
 **Claim-124.d (ZK transfers along Levin reductions).** If `(P', V')` is a ZK proof with
 efficient prover for `(L', R_{L'})` and `(f, w)` is a Levin reduction from `(L, R_L)`, then
 `P(x, y) := P'(f x, w x y)`, `V(x, z) := V'(f x, z)` is a ZK proof with efficient prover for
-`(L, R_L)`: completeness from `R_L x y → R_{L'} (f x) (w x y)`; soundness: `x ∉ L → f x ∉ L'`
+`(L, R_L)`: completeness from `R_L x y → R_{L'} (f x) (w x y)` and `hLR : ∀ x ∈ L, ∃ y, R x y`
+(the formal transfer needs it; gate 03g, finding 6); soundness: `x ∉ L → f x ∉ L'`
 and a cheating `P*` for `x` is a cheating prover for `f x`; ZK: for `V*`, let
 `V*'(x', (x, z)) := V*(x, z)` (recovers `x` from its auxiliary input, ignores `x'`), then
 `viewV*[P(x,y) ↔ V*(x,z)] = viewV*'[P'(f x, w x y) ↔ V*'(f x, (x,z))]` up to relabelling,

@@ -1,0 +1,35 @@
+from fractions import Fraction as F
+from itertools import product
+def isprime(x):
+    return x>1 and all(x%d for d in range(2,int(x**0.5)+1))
+def listToNat(w):
+    a=0
+    for c in w: a=2*a+(1 if c else 0)
+    return a
+def sampleBelowL(m,k,B,T,r):
+    for t in range(T):
+        blk=r[t*B:t*B+B][:k] if True else None
+        blk=(r[t*B:])[:k]
+        v=listToNat(blk)
+        if v<m: return v
+    return None
+def size(m): return m.bit_length()
+# auditor's counterexample: p=523,n=10,m=522, list of only 2n=20 bits
+p,n=523,10; m=p-1; k=size(m)
+print("p prime",isprime(p),"p%4",p%4,"k",k,"2^(n-1)<=p<2^n",2**(n-1)<=p<2**n)
+from collections import Counter
+cnt=Counter()
+N=0
+for bits in product([False,True],repeat=2*n):
+    v=sampleBelowL(m,k,n,n,list(bits)); cnt[0 if v is None else v]+=1; N+=1
+tv=sum(max(F(cnt[x],N)-F(1,m),0) for x in range(m))
+print("exhaustive TV on 2n bits:",tv,float(tv))
+lam=(1-F(m,2**k))**2
+print("formula",lam*(1-F(1,m)), lam*(1-F(1,m))==tv, "2^-n",F(1,2**n))
+# with n^2 bits, exact law formula: lambda=(1-m/2^k)^n
+lamn=(1-F(m,2**k))**n
+print("n^2 bits TV formula",float(lamn*(1-F(1,m))),"<= 2^-n",lamn*(1-F(1,m))<=F(1,2**n))
+# reduction mod m of 2n bits
+N2=2**(2*n); q,r=divmod(N2,m)
+tvmod=F(r*(m-r),N2*m)
+print("2n-bit mod-reduction TV",float(tvmod),"<=2^-n",tvmod<=F(1,2**n), "<= m/(4*2^{2n})",tvmod<=F(m,4*N2))
