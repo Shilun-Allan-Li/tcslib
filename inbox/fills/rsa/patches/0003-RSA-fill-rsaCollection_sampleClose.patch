@@ -1,0 +1,107 @@
+From a501ee15c081bd0dd788b5b450533a83a973e01e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 13:12:05 +0000
+Subject: [PATCH 3/3] RSA: fill rsaCollection_sampleClose
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/RSA.lean | 75 ++++++++++++++++++++++++-
+ 1 file changed, 74 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index 88d92f3c..0198c5e2 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -988,6 +988,55 @@ theorem negligible_rsaGenErr : Negligible rsaGenErr := by
+   rw [pow_one, one_div, inv_pow]
+   field_simp
+ 
++/-- The domain sampler has `T(n) B(n)` coins: `(rsaSampler H).coins = rsaSampleCoins`. -/
++private theorem rsa_coins_sampler (H : ArithmeticFP) : (rsaSampler H).coins = rsaSampleCoins := by
++  unfold rsaSampler
++  exact NUPPT.coins_ofPolyTimeUniform _ _
++
++/-- The modulus of generated parameters fits the blocks: `Nat.size N ≤ b` whenever `2m ≤ b`
++(`N < 2^{2m}`, `Nat.size_le`). -/
++private theorem rsa_size_N_le {m : ℕ} (P : RSAParams m) {b : ℕ} (hb : 2 * m ≤ b) :
++    Nat.size P.N ≤ b :=
++  (Nat.size_le.2 P.N_lt).trans hb
++
++/-- **The decoded unit sampler at a generated index is close to uniform**: at the index
++`i = ⟨N, e⟩` of `P`, `rsaDec i (unitSampleStr ⟦N⟧ n r)` on uniform coins `r` is within `e^{-n}`
++of the uniform unit of `Z_N`, given `Nat.size N ≤ B(n)`.
++
++**Proof sketch.** The sampler string is the `2m`-bit numeral of the S3 sampler's value at the
++modulus `rsaMod i = N` (`unitSampleStr_eq`, `listToNat_natToList`, `rsaMod_indexOf`), and the
++numeral of `x.val` is `rsaEnc i x` (valid index), which `rsaDec` decodes to `x`
++(`rsaDec_rsaEnc`). So both samplers are the images under `v ↦ rsaDec i ⟦v⟧_{2m}` of the two
++samplers of `statClose_sampleUnitL` (at `N = rsaMod i`), and `StatClose.map` concludes. -/
++private theorem rsa_statClose_dec {m : ℕ} (P : RSAParams m) (n : ℕ)
++    (hk : Nat.size P.N ≤ rsaBlock.eval n) :
++    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
++        rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n (List.ofFn s)))
++      (fun x : (ZMod (rsaMod (rsaIndexOf m P)))ˣ => some x) (Real.exp (-(n : ℝ))) := by
++  have hw : pairFstD (rsaIndexOf m P) = natToList (2 * m) P.N := by
++    rw [rsaIndexOf, pairFstD_pairEncode]
++  have hN : listToNat (natToList (2 * m) P.N) = P.N := listToNat_natToList P.N_lt
++  have hM := rsaMod_indexOf m P
++  have hv := rsaValid_indexOf m P
++  have hS := (statClose_sampleUnitL n (rsaMod (rsaIndexOf m P)) (by rw [hM]; exact hk)).map
++    (fun v => rsaDec (rsaIndexOf m P) (natToList (2 * m) v))
++  have eX : (fun s : Fin (rsaSampleCoins.eval n) → Bool => rsaDec (rsaIndexOf m P)
++      (natToList (2 * m) ((sampleUnitL (rsaMod (rsaIndexOf m P)) (Nat.size (rsaMod (rsaIndexOf m P)))
++        (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD (1 % rsaMod (rsaIndexOf m P))))) =
++      fun s => rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n (List.ofFn s)) := by
++    funext s
++    rw [unitSampleStr_eq, hw, hN, length_natToList]
++    congr 2
++    rw [hM]
++  have eY : (fun x : (ZMod (rsaMod (rsaIndexOf m P)))ˣ => rsaDec (rsaIndexOf m P)
++      (natToList (2 * m) (x : ZMod (rsaMod (rsaIndexOf m P))).val)) = fun x => some x := by
++    funext x
++    have hx : natToList (2 * m) (x : ZMod (rsaMod (rsaIndexOf m P))).val = rsaEnc (rsaIndexOf m P) x := by
++      rw [rsaEnc, rsaEncVal, if_pos hv, hw, length_natToList]
++    rw [hx, rsaDec_rsaEnc]
++  rw [eX, eY] at hS
++  exact hS
++
+ /-- **The domain sampler is close to uniform** [PS10, Theorem 53.2, "the set `D_i` is also
+ easy to sample"]: the decoded output of `rsaSampler` at a generated index is within a
+ negligible statistical distance of the uniform element of `Z_N^*`.
+@@ -1005,7 +1054,31 @@ and `(1 - 1/(4n+8))^{(4n+8)n} ≤ e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). Ne
+ `exp_neg_le_half_pow`, `negligible_two_pow_neg`, `Negligible.mono`. -/
+ theorem rsaCollection_sampleClose (H : ArithmeticFP) :
+     ∃ δ : ℕ → ℝ, Negligible δ ∧ (rsaCollection H).SampleClose δ := by
+-  sorry
++  refine ⟨fun n => if n < 2 then 1 else Real.exp (-(n : ℝ)), ?_, ?_⟩
++  · have h1 : Negligible fun n : ℕ => (1 / 2 : ℝ) ^ n := by
++      simpa [one_div] using negligible_two_pow_neg
++    have h4 : Negligible fun n : ℕ => Real.exp (-(n : ℝ)) :=
++      h1.mono ⟨0, fun n _ => by
++        rw [abs_of_pos (Real.exp_pos _), abs_of_pos (by positivity)]
++        exact exp_neg_le_half_pow n⟩
++    exact h4.mono ⟨2, fun n hn => by rw [if_neg (by omega)]⟩
++  rw [Collection.sampleClose_iff]
++  intro n r
++  have hδ : Real.exp (-(n : ℝ)) ≤ if n < 2 then 1 else Real.exp (-(n : ℝ)) := by
++    split_ifs
++    · exact Real.exp_le_one_iff.2 (by simp)
++    · exact le_rfl
++  refine StatClose.mono ?_ hδ
++  rw [rsaCollection_index, rsaCollection_sample]
++  simp only [rsaCollection_decD, rsa_sampler_runAt]
++  have hk : Nat.size (rsaGenParams n (List.ofFn r)).N ≤ rsaBlock.eval n :=
++    rsa_size_N_le _ (by rw [eval_rsaBlock]; omega)
++  have h1 := ((rsa_statClose_dec (rsaGenParams n (List.ofFn r)) n hk).map
++    (Option.map (rsaCollection_domEquiv H _).symm)).comp_equiv_left
++      (NUPPT.coinsEquivPoly (rsa_coins_sampler H) n) |>.comp_equiv_right
++      (rsaCollection_domEquiv H _)
++  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
++  exact h1
+ 
+ /-- **The RSA adversary of an inverter of the collection** [PS10, proof of Theorem 53.2]:
+ `A'(1^n, ⟨N, ⟨e, y⟩⟩) := A(1^n, ⟨⟨N, e⟩, y⟩)`, a re-pairing of the input; coins and advice
+-- 
+2.43.0
+

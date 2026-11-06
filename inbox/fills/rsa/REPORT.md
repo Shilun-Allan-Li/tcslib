@@ -12,8 +12,8 @@
 | # | Target | State |
 |---|---|---|
 | 1 | `rsaSampler_spec` | filled |
-| 2 | `statClose_sampleUnitL` (S3) | open |
-| 3 | `rsaCollection_sampleClose` | open |
+| 2 | `statClose_sampleUnitL` (S3) | filled |
+| 3 | `rsaCollection_sampleClose` | filled |
 | 4 | `polyTimeComputable_unitSampleStr` | open |
 | 5 | `polyTimeComputable_rsaGenRaw` | open |
 | 6 | `polyTimeComputable_rsaFromFactorRaw` | open |

@@ -388,6 +388,71 @@ theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUn
     v < N ∧ Nat.Coprime v N :=
   (rejectBlocksL_spec h).1
 
+/-- The default `1 mod N` passes the unit test: `1 % N < N` and `gcd(1 % N, N) = gcd(N, 1) = 1`
+(`Nat.gcd_rec`). -/
+private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
+  refine ⟨Nat.mod_lt _ hN, ?_⟩
+  rw [Nat.Coprime, ← Nat.gcd_rec]
+  exact Nat.gcd_one_right N
+
+/-- The units of `Z_N` are the accepted values of the unit test below `2^k` (for `N ≤ 2^k`):
+`x ↦ x.val`, with inverse `v ↦ ZMod.unitOfCoprime v` (`ZMod.val_lt`,
+`ZMod.val_coe_unit_coprime`, `ZMod.natCast_zmod_val`, `ZMod.val_natCast`). -/
+private def rsa_unitsEquiv (N k : ℕ) [NeZero N] (hk : N ≤ 2 ^ k) :
+    (ZMod N)ˣ ≃ {v : Fin (2 ^ k) // (v : ℕ) < N ∧ Nat.Coprime (v : ℕ) N} where
+  toFun x := ⟨⟨(x : ZMod N).val, (ZMod.val_lt _).trans_le hk⟩, ZMod.val_lt _,
+    ZMod.val_coe_unit_coprime x⟩
+  invFun e := ZMod.unitOfCoprime ((e : Fin (2 ^ k)) : ℕ) e.2.2
+  left_inv x := by
+    apply Units.ext
+    show ((((x : ZMod N).val : ℕ) : ZMod N)) = x
+    exact ZMod.natCast_zmod_val _
+  right_inv e := by
+    apply Subtype.ext
+    apply Fin.ext
+    show ((ZMod.unitOfCoprime ((e : Fin (2 ^ k)) : ℕ) e.2.2 : (ZMod N)ˣ) : ZMod N).val = e.1
+    rw [ZMod.coe_unitOfCoprime, ZMod.val_natCast, Nat.mod_eq_of_lt e.2.1]
+
+/-- The acceptance probability of the unit test on `k`-bit values is `Φ(N)/2^k` (for
+`N ≤ 2^k`): the accepted values are in bijection with `Z_N^*` (`rsa_unitsEquiv`,
+`ZMod.card_units_eq_totient`). -/
+private theorem rsa_uprob_units (N k : ℕ) [NeZero N] (hk : N ≤ 2 ^ k) :
+    uprob (fun v : Fin (2 ^ k) => (v : ℕ) < N ∧ Nat.Coprime (v : ℕ) N) =
+      (Nat.totient N : ℝ) / 2 ^ k := by
+  rw [uprob_def, ← Nat.card_congr (rsa_unitsEquiv N k hk), Nat.card_eq_fintype_card,
+    ZMod.card_units_eq_totient, Fintype.card_fin]
+  push_cast
+  rfl
+
+/-- **The acceptance rate of the unit sampler**: for `0 < N` of bit length `k = Nat.size N ≤
+2(n + 2)`, `2^k ≤ Φ(N) · (4n + 8)`.
+
+**Proof sketch.** `2^{k−1} ≤ N` by the minimality of `Nat.size` (`Nat.size_le`), and
+`⌊log₂ N⌋ < k` (`Nat.pow_log_le_self`, `Nat.lt_size_self`); so
+`2^k ≤ 2N ≤ 2 Φ(N)(⌊log₂ N⌋ + 1) ≤ 2 Φ(N) k ≤ Φ(N)(4n + 8)`
+(`NumberTheory.le_totient_mul_log_succ`). -/
+private theorem rsa_two_pow_size_le (n N : ℕ) (hN : 0 < N) (hk : Nat.size N ≤ 2 * (n + 2)) :
+    2 ^ Nat.size N ≤ Nat.totient N * (4 * n + 8) := by
+  have hpos : 0 < Nat.size N := Nat.size_pos.2 hN
+  have h1 : 2 ^ (Nat.size N - 1) ≤ N := by
+    by_contra h
+    push_neg at h
+    have := Nat.size_le.2 h
+    omega
+  have h2 : Nat.log 2 N < Nat.size N :=
+    (Nat.pow_lt_pow_iff_right (by norm_num)).1
+      ((Nat.pow_log_le_self 2 hN.ne').trans_lt (Nat.lt_size_self N))
+  have h3 := le_totient_mul_log_succ N hN
+  calc 2 ^ Nat.size N = 2 * 2 ^ (Nat.size N - 1) := by
+        rw [← pow_succ']
+        congr 1
+        omega
+    _ ≤ 2 * N := by omega
+    _ ≤ 2 * (Nat.totient N * (Nat.log 2 N + 1)) := by omega
+    _ ≤ 2 * (Nat.totient N * (2 * (n + 2))) :=
+        Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ (by omega))
+    _ = Nat.totient N * (4 * n + 8) := by ring
+
 /-- **The unit sampler is close to uniform** [PS10, Theorem 53.2, "sample a random element from
 `Z*_{Φ(N)}`" and "the set `D_i` is also easy to sample"]: for a modulus `N ≥ 1` of bit length
 `k = Nat.size N ≤ B(n)`, the sampler `sampleUnitL N k B(n) T(n)` on `T(n) · B(n)` uniform coins,
@@ -417,7 +482,29 @@ theorem statClose_sampleUnitL (n N : ℕ) [NeZero N] (hk : Nat.size N ≤ rsaBlo
         (sampleUnitL N (Nat.size N) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
           (1 % N))
       (fun x : (ZMod N)ˣ => (x : ZMod N).val) (Real.exp (-(n : ℝ))) := by
-  sorry
+  have hN : 0 < N := NeZero.pos N
+  have hNk : N < 2 ^ Nat.size N := Nat.lt_size_self N
+  -- (1) the shared block sampler, default `1 % N`
+  have hd : 1 % N < N ∧ Nat.Coprime (1 % N) N := rsa_one_mod_spec hN
+  have h1 := statClose_rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) (Nat.size N)
+    (rsaBlock.eval n) (rsaTrials.eval n) hk hd (hd.1.trans hNk)
+  -- (2) transport the target to the residues of the units of `Z_N`
+  have h2 := h1.comp_equiv_right (rsa_unitsEquiv N (Nat.size N) hNk.le)
+  -- (3) the acceptance rate is at least `1/(4n + 8)`
+  have hacc : 1 / ((4 * n + 8 : ℕ) : ℝ) ≤
+      uprob fun v : Fin (2 ^ Nat.size N) => (v : ℕ) < N ∧ Nat.Coprime (v : ℕ) N := by
+    rw [rsa_uprob_units N (Nat.size N) hNk.le, div_le_div_iff₀ (by positivity) (by positivity),
+      one_mul]
+    exact_mod_cast rsa_two_pow_size_le n N hN (by rw [← eval_rsaBlock]; exact hk)
+  -- (4) the tail bound
+  have hpow : (1 - uprob fun v : Fin (2 ^ Nat.size N) => (v : ℕ) < N ∧ Nat.Coprime (v : ℕ) N) ^
+      rsaTrials.eval n ≤ Real.exp (-(n : ℝ)) := by
+    rw [eval_rsaTrials]
+    calc _ ≤ (1 - 1 / ((4 * n + 8 : ℕ) : ℝ)) ^ ((4 * n + 8) * n) :=
+          pow_le_pow_left₀ (sub_nonneg.2 (uprob_le_one _)) (by linarith) _
+      _ ≤ _ := one_sub_one_div_pow_le_exp_neg _ _ (by omega)
+  rw [eval_rsaSampleCoins]
+  exact h2.mono hpow
 
 /-- The string function of the domain sampler on the modulus numeral `w` at parameter `n`
 with coins `r`: a unit modulo `N = listToNat w` by rejection (`sampleUnitL` with the bit
@@ -676,7 +763,7 @@ theorem rsaInv_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
 
 /-- The fallback of the unit sampler is a unit: for `N > 0`, the value
 `(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
-`1 % N < N` with `gcd(1 % N, N) = gcd(N, 1) = 1`). -/
+the default, `rsa_one_mod_spec`). -/
 private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
     (sampleUnitL N k B T r).getD (1 % N) < N ∧
       Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
@@ -686,9 +773,7 @@ private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Boo
     exact sampleUnitL_spec h
   | none =>
     rw [Option.getD_none]
-    refine ⟨Nat.mod_lt _ hN, ?_⟩
-    rw [Nat.Coprime, ← Nat.gcd_rec]
-    exact Nat.gcd_one_right N
+    exact rsa_one_mod_spec hN
 
 /-- The activation of the domain sampler: `rsaSampler` on the index `i` is `unitSampleStr` on
 the modulus numeral `pairFstD i` (`NUPPT.runAtL_ofPolyTimeUniform` and the layout equations). -/
@@ -903,6 +988,55 @@ theorem negligible_rsaGenErr : Negligible rsaGenErr := by
   rw [pow_one, one_div, inv_pow]
   field_simp
 
+/-- The domain sampler has `T(n) B(n)` coins: `(rsaSampler H).coins = rsaSampleCoins`. -/
+private theorem rsa_coins_sampler (H : ArithmeticFP) : (rsaSampler H).coins = rsaSampleCoins := by
+  unfold rsaSampler
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- The modulus of generated parameters fits the blocks: `Nat.size N ≤ b` whenever `2m ≤ b`
+(`N < 2^{2m}`, `Nat.size_le`). -/
+private theorem rsa_size_N_le {m : ℕ} (P : RSAParams m) {b : ℕ} (hb : 2 * m ≤ b) :
+    Nat.size P.N ≤ b :=
+  (Nat.size_le.2 P.N_lt).trans hb
+
+/-- **The decoded unit sampler at a generated index is close to uniform**: at the index
+`i = ⟨N, e⟩` of `P`, `rsaDec i (unitSampleStr ⟦N⟧ n r)` on uniform coins `r` is within `e^{-n}`
+of the uniform unit of `Z_N`, given `Nat.size N ≤ B(n)`.
+
+**Proof sketch.** The sampler string is the `2m`-bit numeral of the S3 sampler's value at the
+modulus `rsaMod i = N` (`unitSampleStr_eq`, `listToNat_natToList`, `rsaMod_indexOf`), and the
+numeral of `x.val` is `rsaEnc i x` (valid index), which `rsaDec` decodes to `x`
+(`rsaDec_rsaEnc`). So both samplers are the images under `v ↦ rsaDec i ⟦v⟧_{2m}` of the two
+samplers of `statClose_sampleUnitL` (at `N = rsaMod i`), and `StatClose.map` concludes. -/
+private theorem rsa_statClose_dec {m : ℕ} (P : RSAParams m) (n : ℕ)
+    (hk : Nat.size P.N ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n (List.ofFn s)))
+      (fun x : (ZMod (rsaMod (rsaIndexOf m P)))ˣ => some x) (Real.exp (-(n : ℝ))) := by
+  have hw : pairFstD (rsaIndexOf m P) = natToList (2 * m) P.N := by
+    rw [rsaIndexOf, pairFstD_pairEncode]
+  have hN : listToNat (natToList (2 * m) P.N) = P.N := listToNat_natToList P.N_lt
+  have hM := rsaMod_indexOf m P
+  have hv := rsaValid_indexOf m P
+  have hS := (statClose_sampleUnitL n (rsaMod (rsaIndexOf m P)) (by rw [hM]; exact hk)).map
+    (fun v => rsaDec (rsaIndexOf m P) (natToList (2 * m) v))
+  have eX : (fun s : Fin (rsaSampleCoins.eval n) → Bool => rsaDec (rsaIndexOf m P)
+      (natToList (2 * m) ((sampleUnitL (rsaMod (rsaIndexOf m P)) (Nat.size (rsaMod (rsaIndexOf m P)))
+        (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD (1 % rsaMod (rsaIndexOf m P))))) =
+      fun s => rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n (List.ofFn s)) := by
+    funext s
+    rw [unitSampleStr_eq, hw, hN, length_natToList]
+    congr 2
+    rw [hM]
+  have eY : (fun x : (ZMod (rsaMod (rsaIndexOf m P)))ˣ => rsaDec (rsaIndexOf m P)
+      (natToList (2 * m) (x : ZMod (rsaMod (rsaIndexOf m P))).val)) = fun x => some x := by
+    funext x
+    have hx : natToList (2 * m) (x : ZMod (rsaMod (rsaIndexOf m P))).val = rsaEnc (rsaIndexOf m P) x := by
+      rw [rsaEnc, rsaEncVal, if_pos hv, hw, length_natToList]
+    rw [hx, rsaDec_rsaEnc]
+  rw [eX, eY] at hS
+  exact hS
+
 /-- **The domain sampler is close to uniform** [PS10, Theorem 53.2, "the set `D_i` is also
 easy to sample"]: the decoded output of `rsaSampler` at a generated index is within a
 negligible statistical distance of the uniform element of `Z_N^*`.
@@ -920,7 +1054,31 @@ and `(1 - 1/(4n+8))^{(4n+8)n} ≤ e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). Ne
 `exp_neg_le_half_pow`, `negligible_two_pow_neg`, `Negligible.mono`. -/
 theorem rsaCollection_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (rsaCollection H).SampleClose δ := by
-  sorry
+  refine ⟨fun n => if n < 2 then 1 else Real.exp (-(n : ℝ)), ?_, ?_⟩
+  · have h1 : Negligible fun n : ℕ => (1 / 2 : ℝ) ^ n := by
+      simpa [one_div] using negligible_two_pow_neg
+    have h4 : Negligible fun n : ℕ => Real.exp (-(n : ℝ)) :=
+      h1.mono ⟨0, fun n _ => by
+        rw [abs_of_pos (Real.exp_pos _), abs_of_pos (by positivity)]
+        exact exp_neg_le_half_pow n⟩
+    exact h4.mono ⟨2, fun n hn => by rw [if_neg (by omega)]⟩
+  rw [Collection.sampleClose_iff]
+  intro n r
+  have hδ : Real.exp (-(n : ℝ)) ≤ if n < 2 then 1 else Real.exp (-(n : ℝ)) := by
+    split_ifs
+    · exact Real.exp_le_one_iff.2 (by simp)
+    · exact le_rfl
+  refine StatClose.mono ?_ hδ
+  rw [rsaCollection_index, rsaCollection_sample]
+  simp only [rsaCollection_decD, rsa_sampler_runAt]
+  have hk : Nat.size (rsaGenParams n (List.ofFn r)).N ≤ rsaBlock.eval n :=
+    rsa_size_N_le _ (by rw [eval_rsaBlock]; omega)
+  have h1 := ((rsa_statClose_dec (rsaGenParams n (List.ofFn r)) n hk).map
+    (Option.map (rsaCollection_domEquiv H _).symm)).comp_equiv_left
+      (NUPPT.coinsEquivPoly (rsa_coins_sampler H) n) |>.comp_equiv_right
+      (rsaCollection_domEquiv H _)
+  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+  exact h1
 
 /-- **The RSA adversary of an inverter of the collection** [PS10, proof of Theorem 53.2]:
 `A'(1^n, ⟨N, ⟨e, y⟩⟩) := A(1^n, ⟨⟨N, e⟩, y⟩)`, a re-pairing of the input; coins and advice
