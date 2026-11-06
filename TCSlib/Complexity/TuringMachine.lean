@@ -73,6 +73,7 @@ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.TuringMachine.NatBits
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.CodeParser
 import TCSlib.Complexity.TuringMachine.CodeFormat
@@ -264,6 +265,8 @@ for the local modifications.
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
 * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
+* `NatBits` — the elementary bounds on the binary length `|Nat.bits n|` (below `Encoding` and
+  `SpaceComplexity/Machines/Bin`; no TCSlib import).
 * `Encoding` — machines as strings [AB09, §1.4]: the code normal form `CodeTM`, the
   fixed canonical serialization, the representation-scheme laws `MachineCode`, and
   the effective scheme `EffectiveMachineCode` that the universal machine requires.
