@@ -137,7 +137,19 @@ needs a fix or the user's explicit acknowledgment.
 with the campaign, and a replay on the current campaign snapshot (or the validity argument above,
 stated).
 
-## 5. Gate numbering and the current state
+## 5. If you are Codex (or any agent without this VM)
+
+- **No push access?** Codex writes through its own PRs. Put records changes (campaign/, docs)
+  and Lean changes in **separate PRs** against `complexity/arora-barak-ch3-4`, and say which is
+  which; the user merges both. Exchange-branch staging also needs push. If you cannot push, give
+  the user the staged folder's files and the prompt, and say where they go.
+- **No snapshot?** The VM's `oleans-*` trees do not travel. Bootstrap one (HANDOFF §1, item 4),
+  or, for a single PR, elaborate its changed files and their downstream with `leanelab-o.sh` into
+  a hard-linked overlay of whatever snapshot you build.
+- **Lean unavailable?** Say so plainly. Never claim an elaboration, replay or seal you did not
+  run. Gates distinguish source checks from executed ones.
+
+## 6. Gate numbering and the current state
 
 Gates are numbered upward; the latest are in `campaign/gates/`. Reserved: 106 (#215, SG-1) and 114
 (#222, NatBits). **The current state is HANDOFF §0.**
