@@ -534,7 +534,10 @@ private noncomputable def multOracle : Fin 2 → List Bool → Bool :=
 private lemma mult_queries (x : List Bool) (i : ℕ) :
     multOracle 0 (pairEncode x (Nat.bits i)) = x.getD i false ∧
     multOracle 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
-  simp [multOracle, inputBitLang, inputLenLang, indicator_indexLang_pairEncode]
+  exact ⟨show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _ from
+      indicator_inputBitLang x i,
+    show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _ from
+      indicator_inputLenLang x i⟩
 
 /-- All table instructions meet their syntactic side conditions for every input and
 register assignment: comparisons use distinct registers and calls use one register. -/

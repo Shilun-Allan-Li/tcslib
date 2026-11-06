@@ -289,12 +289,7 @@ theorem arm_decides_pspace_val {L : Language Bool} [Fintype Λ] [DecidableEq Λ]
   refine arm_decides_pspace A l₀ As hAs (C₀ + 2) c₀ fun x =>
     (hcorr x).mono fun a ⟨h1, h2⟩ => ⟨h1, fun r => ?_⟩
   set N := C₀ * (x.length + 1) ^ c₀ with hN
-  have hlt : a.2.1 r + 1 < 2 ^ (N + 2) := by
-    have := h2 r
-    have e : 2 ^ (N + 2) = 4 * 2 ^ N := by rw [pow_add]; ring
-    have := Nat.two_pow_pos N
-    omega
-  have h3 := length_bits_le hlt
+  have h3 := length_bits_succ_le ((h2 r).trans (Nat.le_succ _))
   have h4 : 2 ≤ 2 * (x.length + 1) ^ c₀ :=
     Nat.le_mul_of_pos_right _ (Nat.one_le_pow _ _ (by omega))
   have e : (C₀ + 2) * (x.length + 1) ^ c₀ = N + 2 * (x.length + 1) ^ c₀ := by

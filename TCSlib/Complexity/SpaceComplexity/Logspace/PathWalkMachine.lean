@@ -187,12 +187,14 @@ noncomputable abbrev pathOr : Fin 2 → List Bool → Bool :=
 /-- Decider `0` reads an input bit. -/
 lemma pathOr_bit (x : List Bool) (i : ℕ) :
     pathOr 0 (pairEncode x (Nat.bits i)) = x.getD i false := by
-  simp [pathOr, pathAs, inputBitLang, indicator_indexLang_pairEncode]
+  show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
+  exact indicator_inputBitLang x i
 
 /-- Decider `1` compares with the input length. -/
 lemma pathOr_len (x : List Bool) (i : ℕ) :
     pathOr 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
-  simp [pathOr, pathAs, inputLenLang, indicator_indexLang_pairEncode]
+  show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
+  exact indicator_inputLenLang x i
 
 /-- The deciders are in `L`. -/
 lemma pathAs_mem (j : Fin 2) : pathAs j ∈ LOGSPACE := by

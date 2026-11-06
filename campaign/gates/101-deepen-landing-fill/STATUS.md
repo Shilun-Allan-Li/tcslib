@@ -35,3 +35,4 @@
   `d852220c1049b860825c553b44567f5a48138b2d891ea975602d6fd8cc9ad05c`; Lean from `36ed2deb`.
   Findings file `deepen-landing-fill-r2-findings.md`. **Ready to dispatch.**
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: round 2 findings: **PASS 0/0/1/4. CLOSED.** The minor (IL-1's census) fixed in the ledger. **#208 clear to merge.**
