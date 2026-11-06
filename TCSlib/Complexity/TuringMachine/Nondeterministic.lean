@@ -85,8 +85,7 @@ state embeddings, the slice lemma, state relabelling and input locality.
   `runFrom` lemmas).
 * `Turing.NDTM.HaltsWithin.mono` — all-branch halting is monotone in the time bound.
 * `Turing.NDTM.not_haltsWithin_zero` — no machine halts within `0` steps along every branch: the
-  initial configuration is live (the counterpart of `Turing.FinTM.not_computesInTime_zero`;
-  ledger family NZ-1, 2026-11-06).
+  initial configuration is live (the counterpart of `Turing.FinTM.not_computesInTime_zero`).
 * `Turing.MultiTapeTM.toNDTM_runWith` — the embedded deterministic machine ignores its
   choices: every choice word of length `t` reproduces `runFrom` at time `t`.
 * `Turing.NDTM.runWith_mapState_of_agreeOn`, `Turing.NDTM.runWith_mapState_of_agreeOn_det` —
@@ -258,7 +257,7 @@ theorem HaltsWithin.mono {tm : NDTM k Symbol State} {input : List Symbol} {t t' 
   rw [hrun]
   exact hhalt
 
-/-- **No branch halts in zero steps** (ledger family NZ-1, 2026-11-06): on every input, a machine
+/-- **No branch halts in zero steps**: on every input, a machine
 does not halt within `0` steps along every branch, `¬ tm.HaltsWithin input 0`, because the empty
 choice word leaves the run at the initial configuration, whose state `some tm.q₀` is live. In
 particular an all-branch time budget of `0` (e.g. from a vanishing time bound) is never met. This

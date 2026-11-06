@@ -3748,9 +3748,9 @@ private lemma emCall_prepared_eval_first (M : FinTM Bool) (w s out : List Bool) 
   have hright := (emCall_right_computes (emCallTrackTM M) s out (1 + 2 * T) htrack).1
   obtain ⟨t, ht, b, _, hh, _, hfirst, hr⟩ := emCall_eval_first R w s out D hright
   have hpos : 0 < t := by
-    by_contra hn
-    have ht0 : t = 0 := by omega
-    simp [ht0, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg, Cfg.init] at hh
+    refine Nat.pos_of_ne_zero fun ht0 => not_computesInTime_zero R s _
+      ((computesInTime_iff R s _ 0).2 ⟨?_, rfl⟩)
+    rwa [ht0] at hh
   have habs : R.tm.runFrom (R.tm.initCfg s) D = R.tm.runFrom (R.tm.initCfg s) t := by
     rw [show D = t + (D - t) by omega, MultiTapeTM.runFrom_add,
       MultiTapeTM.runFrom_of_halt _ hh]

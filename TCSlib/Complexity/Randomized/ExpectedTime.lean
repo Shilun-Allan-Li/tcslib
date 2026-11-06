@@ -518,9 +518,8 @@ theorem AbortDecidesInTime.restart (h : N.AbortDecidesInTime L T) (x : List Bool
   unfold outputProb at hprob
   set ℓ := MultiTapeTM.indicator (L : Set (List Bool)) x
   have hT : 0 < T x.length := by
-    refine Nat.pos_of_ne_zero fun h0 => ?_
-    have := hhalt [] (by simp [h0])
-    simp [NDTM.initCfg, Cfg.init] at this
+    refine Nat.pos_of_ne_zero fun h0 => NDTM.not_haltsWithin_zero N.tm x ?_
+    rwa [h0] at hhalt
   refine ⟨expTimeLe_repeatRun hT ?_, fun w b hw => ?_⟩
   · show (randProb (T x.length) fun u => bitOfOutput (N.outputWith x u) = none) ≤ 1 / 2
     have hle : (randProb (T x.length) fun u => bitOfOutput (N.outputWith x u) = none) ≤
