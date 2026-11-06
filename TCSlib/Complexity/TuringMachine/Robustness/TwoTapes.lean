@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Nat.Log
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
