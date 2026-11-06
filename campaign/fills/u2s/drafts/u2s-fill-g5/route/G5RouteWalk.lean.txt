@@ -1,0 +1,242 @@
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+set_option autoImplicit false
+
+/-!
+# Route probe for `Turing.FinTM.two_work_tapes_run`: the frame and the zero-tape case
+
+A scratch probe, not library code. It proves the frame of the two-work-tape reduction and its
+zero-tape case as private `tt_` lemmas, to be copied into
+`TCSlib.Complexity.TuringMachine.Robustness.TwoTapes`:
+
+* `tt_zero_tapes`: with no work tapes, the machine runs beside two idle tapes (R1,
+  `Turing.embedEmitTM`), with constant `1`;
+* `tt_frame`: a zone machine over `Turing.ZoneSym M.k` with two work tapes, a forward
+  property and an image converse, gives the target through
+  `Turing.FinTM.alphabet_reduction_run`;
+* `tt_route`: the case split on `M.k = 0`.
+
+The zone machine itself is not constructed here.
+-/
+
+namespace Turing.FinTM
+
+/-- **Zero work tapes** [HS66; AB09, §1.7]: a binary machine `M` without work tapes has a binary
+equivalent with two work tapes that reproduces each halting run of `t` steps within
+`1 · (t + 1)(log₂(t + 1) + 1)` steps, and whose completed outputs are outputs of `M`.
+
+**Proof sketch.** Run `M` on the two-tape host through the forwarding embedding
+`Turing.embedEmitTM` along the empty selection `Fin M.k ↪ Fin 2`, restarted at `M`'s initial
+state. The host's initial configuration is the embedding of `M`'s into the blank frame with
+heads at `0` and empty prefix (`Turing.embedEmitCfg_eq`, field by field from the `Cfg.init`
+equations; the selected bank is empty). By `Turing.embedEmitTM_runFrom` the host's run is the
+embedding of `M`'s run, so the two have the same state and the same output at every time
+(`Turing.embedEmitCfg_state`, `Turing.embedEmitCfg_output`). Hence they halt together with the
+same output, and `t ≤ (t + 1)(log₂(t + 1) + 1)` pads the time. -/
+private theorem tt_zero_tapes (M : FinTM Bool) (hk : M.k = 0) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  obtain ⟨σ⟩ : Nonempty (Fin M.k ↪ Fin 2) := ⟨Fin.castLEEmb (by omega)⟩
+  -- the host: R1 of `M.tm`, restarted at `M`'s initial state
+  obtain ⟨N, hq, hr⟩ : ∃ N : MultiTapeTM 2 Bool M.State,
+      (∀ x, N.initCfg x = Cfg.init M.tm.q₀ x) ∧
+        ∀ (x : List Bool) (c : Cfg 2 Bool M.State x) (t : ℕ),
+          N.runFrom c t = (embedEmitTM σ M.tm).runFrom c t :=
+    ⟨_, fun x => MultiTapeTM.initCfg_with_q₀ (embedEmitTM σ M.tm) M.tm.q₀ x,
+      fun _ c t => MultiTapeTM.runFrom_with_q₀ (embedEmitTM σ M.tm) M.tm.q₀ c t⟩
+  -- the host's initial configuration is the embedding of `M`'s into the blank frame
+  have hinit : ∀ x : List Bool,
+      embedEmitCfg σ (fun _ _ => none) (fun _ => 0) [] (M.tm.initCfg x) =
+        Cfg.init M.tm.q₀ x := by
+    intro x
+    rw [MultiTapeTM.initCfg_eq]
+    refine embedEmitCfg_eq σ _ _ [] _ _ ?_ ?_ ?_ ?_ ?_
+    · simp only [Cfg.init_state]
+    · simp only [Cfg.init_inputPos]
+    · simp only [Cfg.init_output, List.append_nil]
+    · intro i
+      exact absurd i.isLt (by omega)
+    · intro j _
+      exact ⟨funext fun p => by simp only [Cfg.init_workTapes],
+        by simp only [Cfg.init_workTapePos]⟩
+  -- the host's run is the embedding of `M`'s
+  have hrun : ∀ (x : List Bool) (t : ℕ), N.runFrom (N.initCfg x) t =
+      embedEmitCfg σ (fun _ _ => none) (fun _ => 0) [] (M.tm.runFrom (M.tm.initCfg x) t) := by
+    intro x t
+    rw [hq, ← hinit x, hr, embedEmitTM_runFrom]
+  refine ⟨{ k := 2, State := M.State, tm := N }, 1, rfl, fun x o t h => ?_, fun x o h => ?_⟩
+  · obtain ⟨hs, ho⟩ := (computesInTime_iff M x o t).1 h
+    have hb : t ≤ 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) :=
+      calc t ≤ t + 1 := Nat.le_succ t
+        _ = (t + 1) * 1 := (Nat.mul_one _).symm
+        _ ≤ (t + 1) * (Nat.log 2 (t + 1) + 1) := Nat.mul_le_mul_left _ (by omega)
+        _ = 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := (Nat.one_mul _).symm
+    refine ComputesInTime.mono ?_ hb
+    rw [computesInTime_iff]
+    show (N.runFrom (N.initCfg x) t).state = none ∧ (N.runFrom (N.initCfg x) t).output = o
+    refine ⟨?_, ?_⟩
+    · rw [hrun, embedEmitCfg_state, hs]
+    · rw [hrun, embedEmitCfg_output, ho, List.nil_append]
+  · obtain ⟨t, ht⟩ := h
+    obtain ⟨hs, ho⟩ := (computesInTime_iff _ x o t).1 ht
+    have hs' : (N.runFrom (N.initCfg x) t).state = none := hs
+    have ho' : (N.runFrom (N.initCfg x) t).output = o := ho
+    rw [hrun, embedEmitCfg_state] at hs'
+    rw [hrun, embedEmitCfg_output, List.nil_append] at ho'
+    exact ⟨t, (computesInTime_iff M x o t).2 ⟨hs', ho'⟩⟩
+
+/-- **The frame of the two-work-tape reduction** [HS66; AB09, §1.7, with Claim 1.5 for the
+alphabet]: let `HS` be a machine over the zone alphabet `Turing.ZoneSym M.k` with two work tapes
+that reproduces each halting run of `M` of `t` steps on the encoded input `x.map Sum.inl`, with
+the encoded output, within `c₁ · (t + 1)(log₂(t + 1) + 1)` steps, and every completed output of
+which on an encoded input is the encoding of an output of `M`. Then `M` has a binary equivalent
+with two work tapes, with the same overhead up to a constant, and whose completed outputs are
+outputs of `M`.
+
+**Proof sketch.** Reduce `HS` to the binary alphabet by `Turing.FinTM.alphabet_reduction_run`
+along `Sum.inl : Bool ↪ ZoneSym M.k`, which keeps the two work tapes and multiplies the time by a
+constant `c₂`; the constant of the result is `c₂ · c₁`. Forward, `M`'s run gives `HS`'s within
+`c₁ · (t + 1)(log₂(t + 1) + 1)` steps, and the reduction's forward direction gives the binary
+machine's. Conversely, a completed output `w` of the binary machine comes from a completed output
+`o'` of `HS` on the encoded input such that every binary word encoding to `o'` is `w`; the
+converse property of `HS` writes `o'` as the encoding of an output `v` of `M`, so `v = w`. -/
+private theorem tt_frame (M : FinTM Bool) (HS : FinTM (ZoneSym M.k)) (hHS : HS.k = 2) (c₁ : ℕ)
+    (hfwd : ∀ (x o : List Bool) (t : ℕ), M.ComputesInTime x o t →
+      HS.ComputesInTime (x.map Sum.inl) (o.map Sum.inl)
+        (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1))))
+    (hconv : ∀ (x : List Bool) (o' : List (ZoneSym M.k)) (t' : ℕ),
+      HS.ComputesInTime (x.map Sum.inl) o' t' →
+        ∃ (t : ℕ) (v : List Bool), M.ComputesInTime x v t ∧ o' = v.map Sum.inl) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  obtain ⟨c₂, M', hk, hf, hc⟩ :=
+    alphabet_reduction_run (Function.Embedding.inl : Bool ↪ ZoneSym M.k) HS
+  have hinl : ⇑(Function.Embedding.inl : Bool ↪ ZoneSym M.k) = Sum.inl :=
+    funext fun b => Function.Embedding.inl_apply b
+  rw [hinl] at hf hc
+  refine ⟨M', c₂ * c₁, hk.trans hHS, fun x o t h => ?_, fun x o h => ?_⟩
+  · rw [Nat.mul_assoc]
+    exact hf x o _ (hfwd x o t h)
+  · obtain ⟨t', o', ht', hv⟩ := hc x o h
+    obtain ⟨t, v, hM, rfl⟩ := hconv x o' t' ht'
+    obtain rfl := hv v rfl
+    exact ⟨t, hM⟩
+
+/-- **The route of the two-work-tape reduction** [HS66; AB09, §1.7]: if every binary machine
+with at least one work tape has a two-work-tape zone machine with the forward property and the
+image converse of `tt_frame`, then every binary machine has a binary equivalent with two work
+tapes, with overhead `O((t + 1) log(t + 1))` per run of `t` steps, whose completed outputs are
+outputs of the source.
+
+**Proof sketch.** Without work tapes, `tt_zero_tapes`; otherwise the hypothesis gives the zone
+machine, and `tt_frame` finishes. -/
+private theorem tt_route
+    (hHS : ∀ M : FinTM Bool, 1 ≤ M.k →
+      ∃ (HS : FinTM (ZoneSym M.k)) (_ : HS.k = 2) (c₁ : ℕ),
+        (∀ (x o : List Bool) (t : ℕ), M.ComputesInTime x o t →
+          HS.ComputesInTime (x.map Sum.inl) (o.map Sum.inl)
+            (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+        ∀ (x : List Bool) (o' : List (ZoneSym M.k)) (t' : ℕ),
+          HS.ComputesInTime (x.map Sum.inl) o' t' →
+            ∃ (t : ℕ) (v : List Bool), M.ComputesInTime x v t ∧ o' = v.map Sum.inl)
+    (M : FinTM Bool) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  by_cases hk : M.k = 0
+  · exact tt_zero_tapes M hk
+  · obtain ⟨HS, hHSk, c₁, hf, hc⟩ := hHS M (by omega)
+    exact tt_frame M HS hHSk c₁ hf hc
+
+
+open Lean Elab Command in
+private def g5Kind (ci : ConstantInfo) : String :=
+  match ci with
+  | .thmInfo _ => "theorem"
+  | .defnInfo d =>
+      match d.hints with
+      | .opaque => "definition (opaque hint)"
+      | .abbrev => "definition (abbrev hint)"
+      | .regular h => s!"definition (regular {h})"
+  | .axiomInfo _ => "axiom"
+  | .opaqueInfo _ => "opaque" | .ctorInfo _ => "constructor" | .inductInfo _ => "inductive"
+  | .recInfo _ => "recursor" | .quotInfo _ => "quot"
+
+open Lean Elab Command in
+elab "#g5kind " ids:ident* : command => do
+  for id in ids do
+    let n ← liftCoreM (realizeGlobalConstNoOverload id)
+    logInfo m!"KIND {n}: {g5Kind (← getConstInfo n)}"
+
+open Lean Elab Command in
+elab "#g5walk " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let env ← getEnv
+  -- transitive walk through this module's own auxiliary declarations, stopping at other modules
+  let mut todo := #[n]
+  let mut seen : NameSet := {}
+  let mut ext : NameSet := {}
+  while h : todo.size > 0 do
+    let c := todo.back
+    todo := todo.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    let some ci := env.find? c | continue
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants) |>.getD #[])
+    for u in used do
+      if (env.getModuleIdxFor? u).isNone then todo := todo.push u
+      else if (`Turing).isPrefixOf u then ext := ext.insert u
+  let lines := ext.toArray.qsort (·.toString < ·.toString) |>.map fun u =>
+    s!"  {u}: {(env.find? u).map g5Kind |>.getD "?"}"
+  logInfo m!"WALK {n}: {ext.size} Turing constants from other modules\n{"\n".intercalate lines.toList}"
+
+#g5kind MultiTapeTM.initCfg_eq Cfg.init_state Cfg.init_inputPos Cfg.init_output List.append_nil
+  Cfg.init_workTapes Cfg.init_workTapePos embedEmitTM_runFrom computesInTime_iff
+  embedEmitCfg_state embedEmitCfg_output List.nil_append Nat.mul_assoc
+  MultiTapeTM.initCfg_with_q₀ MultiTapeTM.runFrom_with_q₀ embedEmitCfg_eq ComputesInTime.mono
+  alphabet_reduction_run Function.Embedding.inl_apply Nat.le_succ Nat.mul_one
+  Nat.mul_le_mul_left Nat.one_mul
+  MultiTapeTM.runFrom MultiTapeTM.initCfg Cfg.init embedEmitTM embedEmitCfg ComputesInTime
+  Fin.castLEEmb Function.Embedding.inl ZoneSym ZoneCell
+
+#g5walk tt_zero_tapes
+#g5walk tt_frame
+#g5walk tt_route
+
+
+#check @Turing.instInhabitedCfg.default._proof_1
+
+open Lean Elab Command in
+elab "#g5who " id:ident target:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let tgt ← liftCoreM (realizeGlobalConstNoOverload target)
+  let env ← getEnv
+  let mut todo := #[n]
+  let mut seen : NameSet := {}
+  while h : todo.size > 0 do
+    let c := todo.back
+    todo := todo.pop
+    if seen.contains c then continue
+    seen := seen.insert c
+    let some ci := env.find? c | continue
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants) |>.getD #[])
+    if used.contains tgt then
+      logInfo m!"WHO {c} : {ci.type}"
+    for u in used do
+      if (env.getModuleIdxFor? u).isNone then todo := todo.push u
+
+#g5who tt_zero_tapes Turing.instInhabitedCfg.default._proof_1
+
+end Turing.FinTM

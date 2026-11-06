@@ -1,0 +1,37 @@
+"""Rule-10 seal for the G5 route probe: a sealed copy of the probe (every other-file TCSlib
+definition its proofs mention or could reach made irreducible, and the `@[simp]` ones among them
+erased from the simp set) and the controls (a delta goal and an equation goal per sealed
+definition, plus a simp goal per `@[simp]` definition), sealed and unsealed.
+Usage: python3 -I mkseal_g5route.py <G5Route.lean> <ctl_header.lean.part.txt> <out dir>"""
+import sys, pathlib
+
+src, hdr_path, out = (pathlib.Path(a) for a in sys.argv[1:4])
+SEAL = """Turing.FinTM.ComputesInTime Turing.MultiTapeTM.ComputesInTimeAndSpace
+Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape
+Turing.MultiTapeTM.visitedByTapeHead Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg
+Turing.Cfg.init Turing.MultiTapeTM.step Turing.Action.apply Turing.Cfg.inputSymbol
+Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.embedEmitTM Turing.embedEmitCfg""".split()
+SIMP = "Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply".split()
+assert all(n in SEAL for n in SIMP)
+block = ("attribute [local irreducible]\n" + "".join(f"  {n}\n" for n in SEAL)
+         + "attribute [-simp] " + " ".join(SIMP) + "\n")
+
+s = src.read_text()
+anchor = "namespace Turing.FinTM\n"
+assert s.count(anchor) == 1
+sealed = s.replace(anchor, anchor + "\n" + block, 1)
+head = "# Route probe for `Turing.FinTM.two_work_tapes_run`: the frame and the zero-tape case"
+assert sealed.count(head) == 1
+sealed = sealed.replace(head, head + " (rule-10 sealed copy)", 1)
+(out / "G5RouteSealed.lean").write_text(sealed)
+
+imports = "".join(l + "\n" for l in s.splitlines() if l.startswith("import "))
+hdr = hdr_path.read_text()
+ctl = ("".join(f"#ctl_rfl {n}\n" for n in SEAL) + "".join(f"#ctl_eqn {n}\n" for n in SEAL)
+       + "".join(f"#ctl_simp {n}\n" for n in SIMP))
+for name, seal_block in (("sealed", block), ("unsealed", "")):
+    doc = (f"/-! Rule-10 controls for the G5 route probe ({name}): {len(SEAL)} definitions, "
+           f"{len(SIMP)} of them `@[simp]`. -/\n\n")
+    (out / f"G5RouteCtl_{name}.lean").write_text(imports + "\n" + doc + hdr +
+        "\n\nsection Controls\n\n" + seal_block + "\n" + ctl + "\nend Controls\n")
+print(len(SEAL), "definitions,", len(SIMP), "simp;", 2 * len(SEAL) + len(SIMP), "controls per file")

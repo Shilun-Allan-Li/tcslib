@@ -1,0 +1,69 @@
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+set_option autoImplicit false
+
+/-!
+# exact? probe of the statements of the route probe for `Turing.FinTM.two_work_tapes_run`: the frame and the zero-tape case
+
+A scratch probe, not library code. It proves the frame of the two-work-tape reduction and its
+zero-tape case as private `tt_` lemmas, to be copied into
+`TCSlib.Complexity.TuringMachine.Robustness.TwoTapes`:
+
+* `tt_zero_tapes`: with no work tapes, the machine runs beside two idle tapes (R1,
+  `Turing.embedEmitTM`), with constant `1`;
+* `tt_frame`: a zone machine over `Turing.ZoneSym M.k` with two work tapes, a forward
+  property and an image converse, gives the target through
+  `Turing.FinTM.alphabet_reduction_run`;
+* `tt_route`: the case split on `M.k = 0`.
+
+The zone machine itself is not constructed here.
+-/
+
+namespace Turing.FinTM
+-- tt_zero_tapes
+example (M : FinTM Bool) (hk : M.k = 0) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  exact?
+
+-- tt_frame
+example (M : FinTM Bool) (HS : FinTM (ZoneSym M.k)) (hHS : HS.k = 2) (c₁ : ℕ)
+    (hfwd : ∀ (x o : List Bool) (t : ℕ), M.ComputesInTime x o t →
+      HS.ComputesInTime (x.map Sum.inl) (o.map Sum.inl)
+        (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1))))
+    (hconv : ∀ (x : List Bool) (o' : List (ZoneSym M.k)) (t' : ℕ),
+      HS.ComputesInTime (x.map Sum.inl) o' t' →
+        ∃ (t : ℕ) (v : List Bool), M.ComputesInTime x v t ∧ o' = v.map Sum.inl) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  exact?
+
+-- tt_route
+example
+    (hHS : ∀ M : FinTM Bool, 1 ≤ M.k →
+      ∃ (HS : FinTM (ZoneSym M.k)) (_ : HS.k = 2) (c₁ : ℕ),
+        (∀ (x o : List Bool) (t : ℕ), M.ComputesInTime x o t →
+          HS.ComputesInTime (x.map Sum.inl) (o.map Sum.inl)
+            (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+        ∀ (x : List Bool) (o' : List (ZoneSym M.k)) (t' : ℕ),
+          HS.ComputesInTime (x.map Sum.inl) o' t' →
+            ∃ (t : ℕ) (v : List Bool), M.ComputesInTime x v t ∧ o' = v.map Sum.inl)
+    (M : FinTM Bool) :
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
+        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
+        ∃ t, M.ComputesInTime x output t := by
+  exact?
+
+end Turing.FinTM

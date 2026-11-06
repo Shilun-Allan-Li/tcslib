@@ -49,8 +49,10 @@
   - **this round's inputs** (`campaign/fills/u2s/inputs/u2s-fill-g5/`, all `@TBD@`):
     - the overlay (your file with region (a)'s import): `@TBD@.lean.txt`;
     - the import probe: `@TBD@.lean.txt` (`@TBD@` checks of `@TBD@` names, and the axiom prints);
-    - the route probe with its seal controls: `@TBD@.lean.txt`, `@TBD@.lean.txt`;
-    - the semantic-duplication probe: `@TBD@.lean.txt`;
+    - the route probe with its seal and controls: `G5Route.lean.txt`, `G5RouteSealed.lean.txt`,
+      `G5RouteCtl_unsealed.lean.txt`, `G5RouteCtl_sealed.lean.txt` (drafted 2026-11-06,
+      `campaign/fills/u2s/drafts/u2s-fill-g5/route/`; re-run on the merged tree at issue);
+    - the semantic-duplication probe: `G5RouteExact.lean.txt`;
     - the screen population `screen-population.txt` (`@TBD@` files);
     - the order list `campaign/fills/u2s/orders/u2s-fill-g5.txt`, the base sorry set, the screen
       base and the pre-ship log (`campaign/fills/u2s/logs/u2s-fill-g5-*`, `@TBD@`).
@@ -135,7 +137,8 @@ within `c · (t + 1)(log₂(t + 1) + 1)` steps, and every completed output of `M
 - `Build/Zone`'s and `Build/ZoneTape`'s module docstrings (`## Main results`);
 - `Contract.inPhase` and `phaseHostTM_run` (`Build/Contract/Seam`, `Build/Seam`), the segment
   layer (`Turing.Segment`, `Build/Contract/Basic`);
-- the route probe (`@TBD@.lean.txt`): its proofs may be copied into your home as `tt_` privates.
+- the route probe (`G5Route.lean.txt`): `tt_zero_tapes` (step 1), `tt_frame` (step 0) and
+  `tt_route` (the case split), proved; copy them into your home as they are.
 
 ## Owned regions and targets (modify these and nothing else)
 
@@ -337,7 +340,9 @@ never re-prove one, and never restate one as a private.
   `embedEmitTM_runFrom` and `embedEmitCfg_eq` (the initial configuration, with `Cfg.init_*` and
   `MultiTapeTM.initCfg_eq`), both directions. `embedEmitTM` has no published `q₀` equation: build
   `{ embedEmitTM σ M.tm with q₀ := M.tm.q₀ }` and read it through `MultiTapeTM.initCfg_with_q₀`
-  and `MultiTapeTM.runFrom_with_q₀`. The bound: `t ≤ (t + 1) · (Nat.log 2 (t + 1) + 1)`.
+  and `MultiTapeTM.runFrom_with_q₀` (needed: with `embedEmitTM` sealed, no lemma gives its `q₀`
+  or `initCfg`). The bound: `t ≤ (t + 1) · (Nat.log 2 (t + 1) + 1)`. The route probe's
+  `tt_zero_tapes` is this step, proved.
   **Never copy `Robustness/SingleTape`'s private zero-tape embedding** (`unusedTapeTM`,
   `unusedTape_step`, `unusedTape_computes`): R1 is its public form.
 
@@ -532,7 +537,7 @@ of round `t₀ - 1` with `(M's output).map Sum.inl`, and its completed output is
     - **self-check by both methods** (neither alone is complete):
       - a **seal test**: a scratch copy of your module with `attribute [local irreducible]` on
         every other-file TCSlib definition your proofs mention (start from the route probe's
-        seal, `@TBD@` definitions, and extend: at least `zoneRowPre`, `zoneRebalanceIndex`,
+        seal, 15 definitions, and extend: at least `zoneRowPre`, `zoneRebalanceIndex`,
         `zoneRebalanceData`, `zoneExtendData`, `zoneTrackStepData`, `zonedTape`,
         `zoneHomeWrite`, `zoneTrackTape`, `zoneShiftIndex`, `zoneRebalance`, `zoneCascade`,
         `ZoneContents.extend`, `ZoneContents.words`, `zoneCapacity`, `zoneCellOfCell`,
@@ -541,6 +546,9 @@ of round `t₀ - 1` with `(M's output).map Sum.inl`, and its completed output is
         `attribute [-simp]` on the `@[simp]` definitions among them (`Action.apply`,
         `MultiTapeTM.initCfg`, `Cfg.init`, …), which must still elaborate, **with controls**: per
         sealed definition, a goal that closes by `rfl` unsealed and fails sealed;
+        `ZoneSym` and `ZoneCell` are reducible `abbrev`s through which the alphabet gets its
+        `Fintype` and `DecidableEq`: Lean cannot seal them, and they stay out (the route probe's
+        `README.md`);
       - an **inspection table** of every `rw`/`simp`/`simpa`/`dsimp`/`unfold`/`show`/`change`
         argument in your diff, each other-file name classified (a theorem, or a definition: a
         finding).
@@ -604,8 +612,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 - **Semantic duplication (required).** For **every** private lemma you add, search for a published
   declaration that states it or a generalization: in the tree and on every open PR branch, by
   name and by statement (`git grep`), and by an `exact?`/`apply?` probe. `REPORT.md` lists, per
-  private, the search and its result. The pre-ship probe `@TBD@.lean.txt` poses the route probe's
-  lemmas to `exact?` (`@TBD@`).
+  private, the search and its result. The pre-ship probe `G5RouteExact.lean.txt` poses the route
+  probe's three lemmas to `exact?`: no library lemma closes any of them.
 - **Search inline steps, not only statements** (WORKFLOW §3): sweep your proofs for
   `Nat.exists_eq_add_of_le` with `runFrom_add` and `runFrom_of_halt`, `lt_trichotomy` or
   `Nat.find` over runs, and five-line `Cfg.ext` blocks, and test each hit against the published

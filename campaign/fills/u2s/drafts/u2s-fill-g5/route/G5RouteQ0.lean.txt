@@ -1,0 +1,26 @@
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+set_option autoImplicit false
+
+/-! Scratch: is a published lemma available for `(embedEmitTM σ tm).q₀ = tm.q₀`? With
+`Turing.embedEmitTM` sealed, `exact?` searches the library for one (expected: none, so the probe
+restarts the machine with `{ embedEmitTM σ M.tm with q₀ := M.tm.q₀ }`). -/
+
+namespace Turing
+
+attribute [local irreducible] Turing.embedEmitTM
+
+example {m k : ℕ} {S Symbol : Type} (σ : Fin m ↪ Fin k) (tm : MultiTapeTM m Symbol S) :
+    (embedEmitTM σ tm).q₀ = tm.q₀ := by
+  exact?
+
+example {m k : ℕ} {S Symbol : Type} (σ : Fin m ↪ Fin k) (tm : MultiTapeTM m Symbol S)
+    (x : List Symbol) :
+    (embedEmitTM σ tm).initCfg x = Cfg.init tm.q₀ x := by
+  exact?
+
+end Turing
