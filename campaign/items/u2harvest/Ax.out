@@ -1,0 +1,66 @@
+'Turing.MultiTapeTM.initCfg_eq_mapState' depends on axioms: [propext, Quot.sound]
+'Turing.StepBlock.forwardLoopCfg_init_workTapes' depends on axioms: [propext, Quot.sound]
+'Turing.StepBlock.forwardLoopCfg_init_fields' depends on axioms: [propext, Quot.sound]
+'Turing.StepBlock.forwardLoopCfg_halt_iff' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitCfg_forwardLoop_init' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.forwardLoop_forward' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.forwardLoop_live' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.forwardLoop_converse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.startupLoopTM' depends on axioms: [propext, Quot.sound]
+'Turing.startupLoopTM_initCfg' depends on axioms: [propext, Quot.sound]
+'Turing.startupLoopTM_live_of_le' depends on axioms: [propext, Quot.sound]
+'Turing.startupLoopTM_runFrom' depends on axioms: [propext, Quot.sound]
+'Turing.startupLoopTM_spaceUsed_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.headerScanTM' depends on axioms: [propext]
+'Turing.headerScanCfg' does not depend on any axioms
+'Turing.headerScanCfg_state' does not depend on any axioms
+'Turing.headerScanCfg_inputPos' does not depend on any axioms
+'Turing.headerScanCfg_workTapes' does not depend on any axioms
+'Turing.headerScanCfg_workTapePos' does not depend on any axioms
+'Turing.headerScanCfg_output' does not depend on any axioms
+'Turing.headerScanTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.headerScanCfg_ruler' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.headerRulerTM' depends on axioms: [propext]
+'Turing.headerRulerTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.suffixRulerCfg' depends on axioms: [propext]
+'Turing.suffixRulerCfg_state' depends on axioms: [propext]
+'Turing.suffixRulerCfg_inputPos' depends on axioms: [propext]
+'Turing.suffixRulerCfg_workTapes' depends on axioms: [propext]
+'Turing.suffixRulerCfg_workTapePos' depends on axioms: [propext]
+'Turing.suffixRulerCfg_output' depends on axioms: [propext]
+'Turing.rulerHostCfg_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.suffixRulerCfg_embed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universalK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversalK' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Turing.headerScanCfg_state : ∀ {k : ℕ} {z : List Bool} (i : Fin k) (d : Turing.Cfg k Bool (Fin 4) z) (q : Fin 4)
+  (t : ℕ) (ht : ↑d.inputPos + t < z.length + 2), (Turing.headerScanCfg i d q t ht).state = some q
+@Turing.headerScanCfg_inputPos : ∀ {k : ℕ} {z : List Bool} (i : Fin k) (d : Turing.Cfg k Bool (Fin 4) z) (q : Fin 4)
+  (t : ℕ) (ht : ↑d.inputPos + t < z.length + 2), (Turing.headerScanCfg i d q t ht).inputPos = ⟨↑d.inputPos + t, ht⟩
+@Turing.headerScanCfg_workTapes : ∀ {k : ℕ} {z : List Bool} (i : Fin k) (d : Turing.Cfg k Bool (Fin 4) z) (q : Fin 4)
+  (t : ℕ) (ht : ↑d.inputPos + t < z.length + 2) (a : Fin k) (a_1 : ℤ),
+  (Turing.headerScanCfg i d q t ht).workTapes a a_1 =
+    Function.update d.workTapes i
+      (fun a => if d.workTapePos i ≤ a ∧ a < d.workTapePos i + ↑t then some true else d.workTapes i a) a a_1
+@Turing.headerScanCfg_workTapePos : ∀ {k : ℕ} {z : List Bool} (i : Fin k) (d : Turing.Cfg k Bool (Fin 4) z) (q : Fin 4)
+  (t : ℕ) (ht : ↑d.inputPos + t < z.length + 2) (a : Fin k),
+  (Turing.headerScanCfg i d q t ht).workTapePos a = Function.update d.workTapePos i (d.workTapePos i + ↑t) a
+@Turing.headerScanCfg_output : ∀ {k : ℕ} {z : List Bool} (i : Fin k) (d : Turing.Cfg k Bool (Fin 4) z) (q : Fin 4)
+  (t : ℕ) (ht : ↑d.inputPos + t < z.length + 2), (Turing.headerScanCfg i d q t ht).output = d.output
+@Turing.suffixRulerCfg_state : ∀ {k K n : ℕ} {P : Type} (q : P) (M : Turing.MultiTapeTM k Bool (Fin (n + 1)))
+  (z : List Bool) (ℓ : ℕ) (hℓ : ℓ + 1 < z.length + 2), (Turing.suffixRulerCfg q M z ℓ hℓ).state = some q
+@Turing.suffixRulerCfg_inputPos : ∀ {k K n : ℕ} {P : Type} (q : P) (M : Turing.MultiTapeTM k Bool (Fin (n + 1)))
+  (z : List Bool) (ℓ : ℕ) (hℓ : ℓ + 1 < z.length + 2), (Turing.suffixRulerCfg q M z ℓ hℓ).inputPos = ⟨ℓ + 1, hℓ⟩
+@Turing.suffixRulerCfg_workTapes : ∀ {k K n : ℕ} {P : Type} (q : P) (M : Turing.MultiTapeTM k Bool (Fin (n + 1)))
+  (z : List Bool) (ℓ : ℕ) (hℓ : ℓ + 1 < z.length + 2) (j : Fin (K + (k + 3))) (a : ℤ),
+  (Turing.suffixRulerCfg q M z ℓ hℓ).workTapes j a =
+    (if ↑j = k then Turing.FinTM.bufferTape (Turing.tableBitsK M.tr)
+      else
+        if ↑j = k + 1 then fun a => Turing.FinTM.bufferTape (Turing.unaryFin M.q₀) (a - 2)
+        else if ↑j = k + 2 then Turing.FinTM.bufferTape (List.replicate ℓ true) else fun x => none)
+      a
+@Turing.suffixRulerCfg_workTapePos : ∀ {k K n : ℕ} {P : Type} (q : P) (M : Turing.MultiTapeTM k Bool (Fin (n + 1)))
+  (z : List Bool) (ℓ : ℕ) (hℓ : ℓ + 1 < z.length + 2) (x : Fin (K + (k + 3))),
+  (Turing.suffixRulerCfg q M z ℓ hℓ).workTapePos x = 0
+@Turing.suffixRulerCfg_output : ∀ {k K n : ℕ} {P : Type} (q : P) (M : Turing.MultiTapeTM k Bool (Fin (n + 1)))
+  (z : List Bool) (ℓ : ℕ) (hℓ : ℓ + 1 < z.length + 2), (Turing.suffixRulerCfg q M z ℓ hℓ).output = []
+exit=0 3s

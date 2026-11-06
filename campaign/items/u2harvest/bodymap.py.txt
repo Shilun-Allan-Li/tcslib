@@ -1,0 +1,20 @@
+import importlib.util, re, sys, io, contextlib
+spec = importlib.util.spec_from_file_location('df', sys.argv[1]); df = importlib.util.module_from_spec(spec)
+with contextlib.redirect_stdout(io.StringIO()):
+    try: spec.loader.exec_module(df)
+    except SystemExit: pass
+base = open(sys.argv[2], encoding='utf-8').read(); head = open(sys.argv[3], encoding='utf-8').read()
+ren = eval(open('gen/slice.py', encoding='utf-8').read().split('ren = ')[1].split('\ndef rn')[0])
+def rn(s):
+    for a, b in ren:
+        s = re.sub(r'(?<![A-Za-z0-9_.])' + re.escape(a) + r'(?![A-Za-z0-9_])', b, s)
+    return s
+B = {n: t for n, _, t in df.chunks(base)}; H = {n: t for n, _, t in df.chunks(head)}
+def norm(t):
+    t = re.sub(r'/--.*?-/', '', t, flags=re.S); t = re.sub(r'/-!.*?-/', '', t, flags=re.S)
+    t = re.sub(r'^attribute.*?(?=\n\S|\Z)', '', t, flags=re.S|re.M)
+    t = re.sub(r'(private |noncomputable )', '', t)
+    return ' '.join(t.split())
+for a, b in ren:
+    sb = norm(rn(B['Turing.' + a])); sh = norm(H['Turing.' + b])
+    print(('SAME ' if sb == sh else 'DIFF ') + a + ' -> ' + b)

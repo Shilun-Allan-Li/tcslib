@@ -1,0 +1,452 @@
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean b/TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean
+index bf14ec15..1ad78913 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean
+@@ -121,9 +121,7 @@ theorem reflTransGen_stepRel (x : List Bool) (s u : ℕ) {γ : List Bool}
+     have hs := bits_injective h6
+     subst hc₂ hs
+     refine (ih c₁ h3).tail ?_
+-    show pairEncode x (pairEncode (Nat.bits c₁) (pairEncode (Nat.bits c) (Nat.bits s))) ∈
+-      stepLang N
+-    rw [← h3]
++    rw [stepRel_iff_mem, ← h3]
+     exact hst
+ 
+ /-- **Acceptance as a block path** ([AB09, Claim 4.4(1)] in the form of the proof of
+diff --git a/TCSlib/Complexity/Randomized/BPLInP.lean b/TCSlib/Complexity/Randomized/BPLInP.lean
+index 689c48a1..55b06b3b 100644
+--- a/TCSlib/Complexity/Randomized/BPLInP.lean
++++ b/TCSlib/Complexity/Randomized/BPLInP.lean
+@@ -226,7 +226,7 @@ theorem entryW_eq (s a a' v : ℕ) :
+       Nat.bits ((if StepRel (fixCoin N false) x s a a' then v else 0) +
+         (if StepRel (fixCoin N true) x s a a' then v else 0)) := by
+   simp only [entryW, stepTest, pairFstD_pairEncode, pairSndD_pairEncode, MultiTapeTM.indicator,
+-    StepRel]
++    stepRel_iff_mem]
+   split_ifs <;> simp_all [add, bitsVal_bits, LogProg.bitsVal]
+ 
+ /-- The initial state is the context and the table after `0` rounds. -/
+diff --git a/TCSlib/Complexity/Randomized/BPLInPCount.lean b/TCSlib/Complexity/Randomized/BPLInPCount.lean
+index f1170da3..18a9cf33 100644
+--- a/TCSlib/Complexity/Randomized/BPLInPCount.lean
++++ b/TCSlib/Complexity/Randomized/BPLInPCount.lean
+@@ -111,7 +111,8 @@ theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length 
+     rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil]
+   constructor
+   · intro h
+-    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ := (mem_stepLang (fixCoin N b) x _ _ s).mp h
++    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ :=
++      (mem_stepLang (fixCoin N b) x _ _ s).mp (stepRel_iff_mem.mp h)
+     have hcore : NDTM.coreSum C = NDTM.coreSum (run v) :=
+       ExpBFS.coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
+     rw [← hcC', ← hb']
+@@ -119,8 +120,8 @@ theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length 
+     rw [stepWith_fixCoin, hstep]
+     exact congrArg bitsVal (cfgWord_congr (NDTM.coreSum_stepWith N.tm b hcore))
+   · rintro rfl
+-    refine (mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v, inWin_run hN hs v, rfl,
+-      run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩
++    refine stepRel_iff_mem.mpr ((mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v,
++      inWin_run hN hs v, rfl, run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩)
+     change (fixCoin N b).tm.stepWith b (run v) = _
+     rw [stepWith_fixCoin, hstep]
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
+index 044345da..0b9a4a83 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
+@@ -77,7 +77,7 @@ lemma ini_orcN (r u : ℕ) :
+ 
+ /-- Decider `2` answers the step relation. -/
+ lemma stp_orcN (r u v : ℕ) : stp (orcN N) x r u v = true ↔ Codec.StepRel N x r u v := by
+-  simp [stp, orcN, decs, indicator_eq_decide, Codec.StepRel]
++  simp [stp, orcN, decs, indicator_eq_decide, Codec.stepRel_iff_mem]
+ 
+ /-- Decider `3` answers whether a code is accepting. -/
+ lemma acc_orcN (r u : ℕ) :
+@@ -85,25 +85,31 @@ lemma acc_orcN (r u : ℕ) :
+       pairEncode x (pairEncode (Nat.bits u) (Nat.bits r)) ∈ Codec.acceptLang N := by
+   simp [orcN, decs, indicator_eq_decide]
+ 
+-/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes. -/
++/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes.
++
++**Proof sketch.** `→`: a search path from the initial code is a path of the step relation
++(`stp_orcN`), so its end is reachable (`ExpBFS.rcode_iff_reflTransGen`). `←`: induct on a
++reachability path; each code on it is reachable, so it is below `K` (`ExpBFS.rcode_lt` and `hK`),
++and each step is a search step (`stp_orcN`). -/
+ lemma cl_iff {r K : ℕ} (hK : 2 ^ (Codec.codeK N * (r + logSpace x.length + 1)) ≤ K) (v : ℕ) :
+     Cl (orcN N) x r K v ↔ ExpBFS.RCode N x r v := by
+   constructor
+   · rintro ⟨u, -, hi, hpath⟩
+     rw [ini_orcN] at hi
+     subst hi
+-    exact hpath.mono fun a b h => (stp_orcN r a b).mp h.1
++    exact ExpBFS.rcode_iff_reflTransGen.mpr (hpath.mono fun a b h => (stp_orcN r a b).mp h.1)
+   · intro h
+     refine ⟨_, (Codec.cfgCode_lt r _).trans_le hK, (ini_orcN r _).mpr rfl, ?_⟩
+     have key : ∀ w, ExpBFS.RCode N x r w → Relation.ReflTransGen
+         (fun a b => stp (orcN N) x r a b = true ∧ b < K)
+         (Codec.cfgCode r (N.tm.initCfg x)) w := by
+       intro w hw
++      rw [ExpBFS.rcode_iff_reflTransGen] at hw
+       induction hw with
+       | refl => exact Relation.ReflTransGen.refl
+       | @tail b c hab hbc ih =>
+         exact ih.tail ⟨(stp_orcN r b c).mpr hbc,
+-          (ExpBFS.rcode_lt (hab.tail hbc)).trans_le hK⟩
++          (ExpBFS.rcode_lt (ExpBFS.rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK⟩
+     exact key v h
+ 
+ open Classical in
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+index bbc05e6d..1cf0278d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+@@ -162,7 +162,8 @@ theorem rcode_iff (s u : ℕ) :
+     | refl => exact ⟨[], fun j _ => by simpa using inWin_init s, rfl⟩
+     | tail _ hst ih =>
+       obtain ⟨w, hw, hcode⟩ := ih
+-      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
++      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ :=
++        (mem_stepLang N x _ _ s).mp (stepRel_iff_mem.mp hst)
+       have hv : NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum C :=
+         coreSum_eq_of_code_eq hw.last hC (hcode.trans hcC.symm)
+       have hv' : NDTM.coreSum (N.tm.runWith (w ++ [b]) (N.tm.initCfg x)) = NDTM.coreSum C' := by
+@@ -179,7 +180,7 @@ theorem rcode_iff (s u : ℕ) :
+       | succ j ih =>
+         intro hj
+         refine (ih (by omega)).tail ?_
+-        rw [StepRel, mem_stepLang]
++        rw [stepRel_iff_mem, mem_stepLang]
+         refine ⟨_, hw j (by omega), rfl, _, ⟨w[j]'(by omega), ?_⟩, hw (j + 1) hj, rfl⟩
+         rw [List.take_succ, NDTM.runWith_append, List.getElem?_eq_getElem (by omega)]
+         rfl
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean
+index b58ac31f..dad3a220 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean
+@@ -83,15 +83,17 @@ theorem mem_ball_iff_rcode {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.leng
+   · rintro ⟨u, hu, hinit, hw⟩
+     rw [InitM, mem_initLang] at hinit
+     subst hinit
+-    exact (walkLe_reach hu hw).mono fun a b hab => hab.2.2
++    exact rcode_iff_reflTransGen.mpr ((walkLe_reach hu hw).mono fun a b hab => hab.2.2)
+   · intro ht
+     have hpath : ∀ t, RCode N x s t → Relation.ReflTransGen
+         (fun u v => u < K ∧ v < K ∧ StepRel N x s u v) (cfgCode s (N.tm.initCfg x)) t := by
+       intro t ht
++      rw [rcode_iff_reflTransGen] at ht
+       induction ht with
+       | refl => exact Relation.ReflTransGen.refl
+       | @tail b c hab hbc ih =>
+-        exact ih.tail ⟨(rcode_lt hab).trans_le hK, (rcode_lt (hab.tail hbc)).trans_le hK, hbc⟩
++        exact ih.tail ⟨(rcode_lt (rcode_iff_reflTransGen.mpr hab)).trans_le hK,
++          (rcode_lt (rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK, hbc⟩
+     have h0 : cfgCode s (N.tm.initCfg x) < K := (cfgCode_lt s _).trans_le hK
+     obtain ⟨j, hw⟩ := exists_walkLe (hpath t ht)
+     exact ⟨_, h0, by rw [InitM, mem_initLang], walkLe_short ((rcode_lt ht).trans_le hK) h0 hw⟩
+@@ -114,7 +116,7 @@ theorem card_ball_zero_code {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.len
+ 
+ /-- There is a reachable code (the initial one). -/
+ theorem one_le_card_rset (s : ℕ) : 1 ≤ (rset N x s).card :=
+-  Finset.card_pos.mpr ⟨_, mem_rset.mpr Relation.ReflTransGen.refl⟩
++  Finset.card_pos.mpr ⟨_, mem_rset.mpr (rcode_iff_reflTransGen.mpr Relation.ReflTransGen.refl)⟩
+ 
+ /-- **No accepting code in the balls** `C_1, …, C_K` iff no reachable code is accepting. -/
+ theorem noAcc_balls_iff {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.length + 1)) ≤ K) :
+@@ -131,7 +133,7 @@ theorem noAcc_balls_iff {s K : ℕ} (hK : 2 ^ (codeK N * (s + logSpace x.length
+ theorem mem_of_exists_acc {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace L sp)
+     {s : ℕ} (h : ∃ t, RCode N x s t ∧ AccM N x s t) : x ∈ L := by
+   obtain ⟨t, ht, hacc⟩ := h
+-  exact mem_of_codePath hN x s _ t (by rw [mem_initLang]) ht hacc
++  exact mem_of_codePath hN x s _ t (by rw [mem_initLang]) (rcode_iff_reflTransGen.mp ht) hacc
+ 
+ /-- **Equal counts at `s - 1` and `s` decide membership at radius `s`**: then `x ∈ L` iff some
+ reachable code at radius `s` is accepting.
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
+index 94662288..fab55360 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
+@@ -130,10 +130,12 @@ theorem guloop (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 1 ≤ B) (hu :
+         simp [he]
+       refine NSem.jeq_neg rfl (St.greg hσ _ _) (by isr; exact he) ?_
+       by_cases hr' : RelO orc x σ.s σ.u σ.v
+-      · refine (nsem_call₃_pos rfl (St.greg hσ _ _) (by isr; exact hr')
++      · refine (nsem_call₃_pos rfl (St.greg hσ _ _)
++          (by isr; exact SavitchARM.rel_iff_orc.mp hr')
+           (NSem.ret rfl (St.greg hσ _ _))).congr ?_
+         simp [hr']
+-      refine nsem_call₃_neg rfl (St.greg hσ _ _) (by isr; simpa [SavitchARM.Rel] using hr') ?_
++      refine nsem_call₃_neg rfl (St.greg hσ _ _)
++        (by isr; simpa [SavitchARM.rel_iff_orc] using hr') ?_
+       refine NSem.inc rfl (St.greg hσ _ _) ?_
+       isr
+       exact (hnext (σ.cnt + 1) (by omega)
+@@ -229,10 +231,12 @@ theorem gvloop (Kont : ℕ → Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 1 
+           Kont r (σ.v + 1) (σ.c + 1)) := by
+       intro hmem
+       by_cases ha : AccO orc x σ.s σ.v
+-      · refine (nsem_call₂_pos rfl (St.greg hσ _ _) (by isr; exact ha)
++      · refine (nsem_call₂_pos rfl (St.greg hσ _ _)
++          (by isr; exact SavitchARM.accO_iff_orc.mp ha)
+           (NSem.ret rfl (St.greg hσ _ _))).congr ?_
+         simp [ha]
+-      refine nsem_call₂_neg rfl (St.greg hσ _ _) (by isr; simpa [SavitchARM.AccO] using ha) ?_
++      refine nsem_call₂_neg rfl (St.greg hσ _ _)
++        (by isr; simpa [SavitchARM.accO_iff_orc] using ha) ?_
+       refine NSem.inc rfl (St.greg hσ _ _) ?_
+       isr
+       exact (hnext (σ.c + 1) (by omega)
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
+index abe397e6..d82e8c65 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
+@@ -83,13 +83,13 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+         isr
+         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
+         isr
+-        exact hQ he
+-      · simp only [WalkLe, he, true_and]
++        exact hQ (walkLe_zero_iff.mpr he)
++      · simp only [walkLe_zero_iff, he, true_and]
+     · have hL : σ.stp = σ.wb b := by omega
+       refine (NSem.jeq_neg rfl (St.greg hσ _ _) (by simp only [St.toV_cur, toV_wT]; exact he)
+         (NSem.jeq_pos rfl (St.greg hσ _ _) (by simp only [St.toV_stp, toV_wB]; exact hL)
+           (NSem.ret rfl (St.greg hσ _ _)))).congr ?_
+-      simp only [WalkLe, he, Bool.false_eq_true, false_and]
++      simp only [walkLe_zero_iff, he, Bool.false_eq_true, false_and]
+   | succ dd ih =>
+     intro σ hd hσ hK hcur hstp hQ
+     by_cases he : σ.cur = σ.wt b
+@@ -101,8 +101,8 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+         isr
+         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
+         isr
+-        exact hQ (Or.inl he)
+-      · simp only [WalkLe, he, true_or, true_and]
++        exact hQ (walkLe_succ_iff_head.mpr (Or.inl he))
++      · simp only [walkLe_succ_iff_head, he, true_or, true_and]
+     have hbd : σ.wb b ≤ B := by simp only [St.wb, St.Bd] at hσ ⊢; cases b <;> simp <;> omega
+     refine NSem.jeq_neg rfl (St.greg hσ _ _) (by simp only [St.toV_cur, toV_wT]; exact he) ?_
+     have hL : σ.stp ≠ σ.wb b := by omega
+@@ -117,7 +117,8 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+     · simp only [St.toV_K] at hj2
+       isr
+       by_cases hr : RelO orc x σ.s σ.cur j
+-      · refine nsem_call₃_pos rfl (St.greg (by isb) _ _) (by isr; exact hr) ?_
++      · refine nsem_call₃_pos rfl (St.greg (by isb) _ _)
++          (by isr; exact SavitchARM.rel_iff_orc.mp hr) ?_
+         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
+         isr
+         refine nsem_copy (igA E) orc x B rcur rg (by decide) (.wc b true) (.wcb b true)
+@@ -129,14 +130,15 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+           (by show St.wb b σ - (σ.stp + 1) = dd; omega)
+           (by isb) hK (by simpa using hj2) (by show σ.stp + 1 ≤ St.wb b σ; omega)
+           (fun hw => IG.of_eq (by ext <;> rfl)
+-            (hQ (Or.inr ⟨j, by simpa using hj2, hr, by simpa [St.wt] using hw⟩)))).congr ?_
++            (hQ (walkLe_succ_iff_head.mpr
++              (Or.inr ⟨j, by simpa using hj2, hr, by simpa [St.wt] using hw⟩))))).congr ?_
+         simp [St.wt, hr]
+       · refine (nsem_call₃_neg rfl (St.greg (by isb) _ _)
+-          (by isr; simpa [SavitchARM.Rel] using hr)
++          (by isr; simpa [SavitchARM.rel_iff_orc] using hr)
+           (NSem.ret rfl (St.greg (by isb) _ _))).congr ?_
+         simp only [Bool.false_eq_true, false_iff, not_and]
+         exact fun h => absurd h hr
+-    · simp only [St.toV_g, St.toV_K, WalkLe, he, false_or]
++    · simp only [St.toV_g, St.toV_K, walkLe_succ_iff_head, he, false_or]
+       constructor
+       · rintro ⟨j, -, hj, h1, h2, hq⟩; exact ⟨⟨j, hj, h1, h2⟩, hq⟩
+       · rintro ⟨⟨j, hj, h1, h2⟩, hq⟩; exact ⟨j, Nat.zero_le _, hj, h1, h2, hq⟩
+@@ -164,7 +166,8 @@ theorem gwalk_spec (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+   · simp only [St.toV_K] at hj2
+     isr
+     by_cases hi : InitO orc x σ.s j
+-    · refine nsem_call₂_pos rfl (St.greg (by isb) _ _) (by isr; exact hi) ?_
++    · refine nsem_call₂_pos rfl (St.greg (by isb) _ _)
++        (by isr; exact SavitchARM.initO_iff_orc.mp hi) ?_
+       refine NSem.clr rfl (St.greg (by isb) _ _) ?_
+       isr
+       refine nsem_copy (igA E) orc x B rcur rg (by decide) (.wc b false) (.wcb b false)
+@@ -178,7 +181,7 @@ theorem gwalk_spec (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K +
+           (hQ ⟨j, by simpa using hj2, hi, by simpa [St.wb, St.wt] using hw⟩))).congr ?_
+       exact ⟨fun h => ⟨hi, h⟩, fun h => h.2⟩
+     · refine (nsem_call₂_neg rfl (St.greg (by isb) _ _)
+-        (by isr; simpa [SavitchARM.InitO] using hi)
++        (by isr; simpa [SavitchARM.initO_iff_orc] using hi)
+         (NSem.ret rfl (St.greg (by isb) _ _))).congr ?_
+       simp only [Bool.false_eq_true, false_iff, not_and]
+       exact fun h => absurd h hi
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
+index f25b356f..3066bf69 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
+@@ -84,9 +84,9 @@ variable {K R Init Acc}
+ /-- A walk from a vertex below `K` ends below `K`. -/
+ lemma walkLe_lt {j c t : ℕ} (hc : c < K) (h : WalkLe R K j c t) : t < K := by
+   induction j generalizing c with
+-  | zero => cases h; exact hc
++  | zero => cases walkLe_zero_iff.mp h; exact hc
+   | succ j ih =>
+-    rcases h with rfl | ⟨v, hv, -, hw⟩
++    rcases walkLe_succ_iff_head.mp h with rfl | ⟨v, hv, -, hw⟩
+     · exact hc
+     · exact ih hv hw
+ 
+@@ -121,7 +121,7 @@ lemma walkLe_succ_iff (j c t : ℕ) : WalkLe R K (j + 1) c t ↔
+     WalkLe R K j c t ∨ ∃ w, WalkLe R K j c w ∧ R w t ∧ t < K := by
+   induction j generalizing c with
+   | zero =>
+-    simp only [WalkLe]
++    simp only [walkLe_succ_iff_head, walkLe_zero_iff]
+     constructor
+     · rintro (h | ⟨v, hv, he, rfl⟩)
+       · exact Or.inl h
+@@ -130,18 +130,21 @@ lemma walkLe_succ_iff (j c t : ℕ) : WalkLe R K (j + 1) c t ↔
+       · exact Or.inl h
+       · exact Or.inr ⟨t, ht, he, rfl⟩
+   | succ j ih =>
++    rw [walkLe_succ_iff_head (j := j + 1)]
+     constructor
+     · rintro (h | ⟨v, hv, he, hw⟩)
+-      · exact Or.inl (Or.inl h)
++      · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inl h))
+       · rcases (ih v).mp hw with h | ⟨w, hw', hwt, ht⟩
+-        · exact Or.inl (Or.inr ⟨v, hv, he, h⟩)
+-        · exact Or.inr ⟨w, Or.inr ⟨v, hv, he, hw'⟩, hwt, ht⟩
+-    · rintro ((h | ⟨v, hv, he, hw⟩) | ⟨w, hw | ⟨v, hv, he, hw⟩, hwt, ht⟩)
+-      · exact Or.inl h
+-      · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
+-      · subst hw
+-        exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
+-      · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
++        · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, h⟩))
++        · exact Or.inr ⟨w, walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, hw'⟩), hwt, ht⟩
++    · rintro (h | ⟨w, hw, hwt, ht⟩)
++      · rcases walkLe_succ_iff_head.mp h with h | ⟨v, hv, he, hw⟩
++        · exact Or.inl h
++        · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
++      · rcases walkLe_succ_iff_head.mp hw with hw | ⟨v, hv, he, hw⟩
++        · subst hw
++          exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
++        · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
+ 
+ /-- **The balls grow by one step**: `C_{L+1}` is `C_L` together with the successors below `K`
+ of its members. -/
+@@ -176,12 +179,12 @@ lemma card_ball_zero {u₀ : ℕ} (hu₀ : u₀ < K) (hI : ∀ u, Init u ↔ u =
+   rw [mem_ball, Finset.mem_singleton]
+   constructor
+   · rintro ⟨u, -, hi, hw⟩
+-    have e : u = t := hw
++    have e : u = t := walkLe_zero_iff.mp hw
+     rw [← e]
+     exact (hI u).mp hi
+   · intro h
+     rw [h]
+-    exact ⟨u₀, hu₀, (hI u₀).mpr rfl, rfl⟩
++    exact ⟨u₀, hu₀, (hI u₀).mpr rfl, walkLe_zero_iff.mpr rfl⟩
+ 
+ /-! ## Guessed enumerations -/
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
+index a1f376ee..896e12da 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
+@@ -229,7 +229,7 @@ theorem red_mem_iff {L : Language Bool} {c₀ : ℕ}
+         intro hj
+         refine (ih (by omega)).tail ((rawEdge_adjWordE N x s n _ _).mpr
+           ⟨hW j (by omega), hW (j + 1) hj, Or.inr (Or.inr ⟨by omega, by omega, ?_⟩)⟩)
+-        simpa [StepRel] using hstep j (by omega)
++        simpa [stepRel_iff_mem] using hstep j (by omega)
+     have first : rawEdge n (adjWordE N x s n) 0 (c 0 + 2) :=
+       (rawEdge_adjWordE N x s n _ _).mpr ⟨by omega, hW 0 (by omega),
+         Or.inl ⟨rfl, by omega, by simpa using hinit⟩⟩
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
+index f48bd13d..a507cf09 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
+@@ -350,6 +350,6 @@ lemma orc_step (N : FinNDTM Bool) (x β : List Bool) (u v s : ℕ) :
+         (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =
+       @decide (Codec.StepRel N x s u v) (Classical.dec _) := by
+   simp only [orc, As, indicator_eq_decide]
+-  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.StepRel])
++  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.stepRel_iff_mem])
+ 
+ end Complexity.PathHard
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
+index 96172f8c..ed3857f7 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
+@@ -428,17 +428,17 @@ theorem ps_walk (hB : 2 * x.length + 2 ≤ B) (σ : PReg) (hσ : σ.Le B) (hs :
+     by_cases he : σ.s = σ.t
+     · refine (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simpa using he)
+         (NSem.ret rfl (PReg.reg hσ _ _))).congr ?_
+-      simp only [WalkLe, he]
++      simp only [walkLe_zero_iff, he]
+     · refine (NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simpa using he)
+         (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simp; omega)
+           (NSem.ret rfl (PReg.reg hσ _ _)))).congr ?_
+-      simp only [WalkLe, he, Bool.false_eq_true]
++      simp only [walkLe_zero_iff, he, Bool.false_eq_true]
+   | succ d ih =>
+     intro σ hd hσ hs ht hst hm
+     by_cases he : σ.s = σ.t
+     · refine (NSem.jeq_pos rfl (PReg.reg hσ _ _) (by simpa using he)
+         (NSem.ret rfl (PReg.reg hσ _ _))).congr ?_
+-      simp only [WalkLe, he, true_or]
++      simp only [walkLe_succ_iff_head, he, true_or]
+     refine NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simpa using he) ?_
+     refine NSem.jeq_neg rfl (PReg.reg hσ _ _) (by simp; omega) ?_
+     refine NSem.clr rfl (PReg.reg hσ _ _) ?_
+@@ -472,7 +472,7 @@ theorem ps_walk (hB : 2 * x.length + 2 ≤ B) (σ : PReg) (hσ : σ.Le B) (hs :
+           (by simp only [PReg.v_0, pathOr_bit]; simpa [pathEdge] using hedge)
+           (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+         simp only [hedge, false_and, Bool.false_eq_true]
+-    · simp only [PReg.v_8, PReg.v_1, WalkLe, he, false_or]
++    · simp only [PReg.v_8, PReg.v_1, walkLe_succ_iff_head, he, false_or]
+       exact ⟨fun ⟨j, _, h⟩ => ⟨j, h.1, h.2⟩, fun ⟨j, h1, h2⟩ => ⟨j, Nat.zero_le _, h1, h2⟩⟩
+ 
+ end Complexity.LogProg
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
+index de68ce1e..78814e59 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
+@@ -56,19 +56,19 @@ lemma rel_orcN (N : FinNDTM Bool) (x : List Bool) (s : ℕ) :
+     Rel (orcN N) x s = Codec.StepRel N x s := by
+   funext u v
+   apply propext
+-  simp [Rel, Codec.StepRel, orcN, decs, indicator_eq_decide]
++  simp [rel_iff_orc, Codec.stepRel_iff_mem, orcN, decs, indicator_eq_decide]
+ 
+ /-- Decider `1` answers membership in the initial-code language. -/
+ lemma initO_orcN (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) :
+     InitO (orcN N) x s u ↔
+       pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ Codec.initLang N := by
+-  simp [InitO, orcN, decs, indicator_eq_decide]
++  simp [initO_iff_orc, orcN, decs, indicator_eq_decide]
+ 
+ /-- Decider `2` answers membership in the accepting-code language. -/
+ lemma accO_orcN (N : FinNDTM Bool) (x : List Bool) (s v : ℕ) :
+     AccO (orcN N) x s v ↔
+       pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ Codec.acceptLang N := by
+-  simp [AccO, orcN, decs, indicator_eq_decide]
++  simp [accO_iff_orc, orcN, decs, indicator_eq_decide]
+ 
+ /-- The constant of the Savitch machine for `N` deciding in space `c (n ^ k + 1)`: large
+ enough for the radius (`radius_le`), the code width (`codeWidth_le`) and the configuration
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
+index f9071f83..8da4bc53 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
+@@ -290,8 +290,8 @@ theorem mem_iff_reach {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+     obtain ⟨t, c, ht, hinit, hstep, hacc, hlt⟩ := (mem_iff_codeChain h x s hs).mp hx
+     have hK : ∀ j ≤ t, c j < 2 ^ w := fun j hj =>
+       (hlt j hj).trans_le (Nat.pow_le_pow_right (by norm_num) hw)
+-    have hr := reach_of_chain (2 ^ w) (StepRel N x s) c t hstep hK w 0 t (by omega)
+-      (ht.trans hcb)
++    have hr := reach_of_chain (2 ^ w) (StepRel N x s) c t
++      (fun j hj => stepRel_iff_mem.mpr (hstep j hj)) hK w 0 t (by omega) (ht.trans hcb)
+     rw [zero_add] at hr
+     exact ⟨c 0, hK 0 (Nat.zero_le _), hinit, c t, hK t le_rfl, hacc, hr⟩
+   · rintro ⟨u, -, hinit, v, -, hacc, hr⟩

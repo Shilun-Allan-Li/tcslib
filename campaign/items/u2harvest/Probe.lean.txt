@@ -1,0 +1,229 @@
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
+import TCSlib.Complexity.TuringMachine.UniversalK
+
+/-! Consumer probe for the U2 harvest (scratch, never committed): F6's route
+(`Complexity.space_universal`, plan §F6(b) D-F6-3 (ii)) composed from the public rows of
+`Build/UniversalParts`. Only F6's own leaves are `sorry`. -/
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace F6Probe
+
+open Turing
+
+/-! ### §1 Two header scans, the ruler extended -/
+
+/-- Two consecutive header scans from a blank ruler tape write the ruler `true^(ℓ₁ + ℓ₂)`, with
+the input head just past both headers. -/
+theorem two_scans {k : ℕ} {z : List Bool} (i : Fin k) (d : Cfg k Bool (Fin 4) z) (p : ℕ)
+    (hp : d.inputPos.val = 1 + p) (hd : d.state = some 0)
+    (hblank : ∀ a, d.workTapes i a = none) (u₁ u₂ v : List Bool)
+    (hz : z.drop p = pairEncode u₁ (pairEncode u₂ v)) :
+    ((headerScanTM i).runFrom d (2 * u₁.length + 2)).state = some 3 ∧
+      ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).state = some 3 ∧
+      ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).inputPos.val =
+        1 + p + (2 * u₁.length + 2) + (2 * u₂.length + 2) ∧
+      ∀ a : ℤ, ((headerScanTM i).runFrom
+          (((headerScanTM i).runFrom d (2 * u₁.length + 2)).mapState fun _ => 0)
+          (2 * u₂.length + 2)).workTapes i (d.workTapePos i + a) =
+        FinTM.bufferTape (List.replicate ((2 * u₁.length + 2) + (2 * u₂.length + 2)) true) a := by
+  obtain ⟨h1, -, -⟩ := headerScanTM_run i d p hp hd u₁ (pairEncode u₂ v) hz
+  rw [h1]
+  set ℓ₁ := 2 * u₁.length + 2 with hℓ₁
+  have hlen₁ : d.inputPos.val + ℓ₁ < z.length + 2 := by
+    have h := congrArg List.length hz
+    rw [List.length_drop, length_pairEncode] at h
+    omega
+  -- the second scan's start
+  set d₂ := (headerScanCfg i d 3 ℓ₁ hlen₁).mapState (fun _ => (0 : Fin 4)) with hd₂
+  have hp₂ : d₂.inputPos.val = 1 + (p + ℓ₁) := by
+    rw [hd₂, Cfg.mapState_inputPos, headerScanCfg_inputPos, Fin.val_mk, hp]
+    omega
+  have hs₂ : d₂.state = some 0 := by
+    rw [hd₂, Cfg.mapState_state, headerScanCfg_state, Option.map_some]
+  have hz₂ : z.drop (p + ℓ₁) = pairEncode u₂ v := by
+    rw [← List.drop_drop, hz, hℓ₁, pairEncode_drop]
+  have hlen₂ : d₂.inputPos.val + (2 * u₂.length + 2) < z.length + 2 := by
+    have h := congrArg List.length hz₂
+    rw [List.length_drop, length_pairEncode] at h
+    omega
+  have hpos₂ : d₂.workTapePos i = d.workTapePos i + ℓ₁ := by
+    rw [hd₂, Cfg.mapState_workTapePos, headerScanCfg_workTapePos, Function.update_self]
+  -- the first scan's ruler (`m = 0`), as the second scan's prefix (`m = ℓ₁`)
+  have hfirst : ∀ a : ℤ, (headerScanCfg i d 3 ℓ₁ hlen₁).workTapes i (d.workTapePos i + a) =
+      FinTM.bufferTape (List.replicate ℓ₁ true) a := by
+    intro a
+    have h := headerScanCfg_ruler i d 3 ℓ₁ hlen₁ 0 (fun b => by
+      rw [hblank, List.replicate_zero, FinTM.bufferTape_eq, List.getElem?_nil, ite_self]) a
+    simpa only [Nat.cast_zero, sub_zero, Nat.zero_add] using h
+  have hpre₂ : ∀ a : ℤ, d₂.workTapes i (d₂.workTapePos i - (ℓ₁ : ℤ) + a) =
+      FinTM.bufferTape (List.replicate ℓ₁ true) a := by
+    intro a
+    rw [hpos₂, show d.workTapePos i + (ℓ₁ : ℤ) - ℓ₁ + a = d.workTapePos i + a by ring, hd₂,
+      Cfg.mapState_workTapes]
+    exact hfirst a
+  obtain ⟨h2, -, -⟩ := headerScanTM_run i d₂ (p + ℓ₁) hp₂ hs₂ u₂ v hz₂
+  rw [h2]
+  refine ⟨by rw [headerScanCfg_state], by rw [headerScanCfg_state], ?_, ?_⟩
+  · rw [headerScanCfg_inputPos, Fin.val_mk, hp₂]
+    omega
+  · intro a
+    have h := headerScanCfg_ruler i d₂ 3 (2 * u₂.length + 2) hlen₂ ℓ₁ hpre₂ a
+    rwa [hpos₂, show d.workTapePos i + (ℓ₁ : ℤ) - ℓ₁ + a = d.workTapePos i + a by ring] at h
+
+/-! ### §2 The startup under the ruler host, on the first header's suffix -/
+
+/-- The startup run under H5's ruler host on the suffix `pairEncode α x` of
+`pairEncode u (pairEncode α x)`, with the first header's ruler `true^ℓ₁`: the host ends at the
+startup's endpoint presented through `rulerHostCfg` (input head at `ℓ₁ + 1`, the bank holding
+the startup's tapes, the ruler last), within `C · (ℓ₁ + 1) · T` steps, and uses the startup's
+cells plus `ℓ₁ + 2`. -/
+theorem hosted_startup {K k : ℕ} {P : Type} [Fintype P] [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (u y : List Bool) (T B : ℕ)
+    (d : Cfg (K + (k + 2)) Bool P y)
+    (hrun : R.runFrom (R.initCfg y) T = d) (hB : R.spaceUsed (R.initCfg y) T ≤ B) :
+    ∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V) (H : MultiTapeTM (K + (k + 2) + 1) Bool V)
+      (inj : P → Bool → V) (C : ℕ), 0 < C ∧
+      ∃ (hz : (pairEncode u y).length = (2 * u.length + 2) + y.length) (t' : ℕ) (b' : Bool),
+        t' ≤ C * (2 * u.length + 2 + 1) * T ∧
+        (H.runFrom (rulerHostCfg (2 * u.length + 2) hz (some (inj R.q₀ false)) (R.initCfg y)
+            (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)) 0) t').inputPos.val =
+          2 * u.length + 2 + d.inputPos.val ∧
+        H.runFrom (rulerHostCfg (2 * u.length + 2) hz (some (inj R.q₀ false)) (R.initCfg y)
+            (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)) 0) t' =
+          rulerHostCfg (2 * u.length + 2) hz (d.state.map fun q => inj q b') d
+            (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)) 0 ∧
+        H.spaceUsed (rulerHostCfg (2 * u.length + 2) hz (some (inj R.q₀ false)) (R.initCfg y)
+            (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)) 0) t' ≤
+          B + (2 * u.length + 2 + 2) := by
+  classical
+  obtain ⟨V, fV, dV, H, inj, C, hC, hH⟩ := exists_rulerHostTM R
+  refine ⟨V, fV, dV, H, inj, C, hC, ?_⟩
+  set ℓ := 2 * u.length + 2 with hℓ
+  have hz : (pairEncode u y).length = ℓ + y.length := length_pairEncode u y
+  have hinit : (R.initCfg y).inputPos.val = 1 := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos]; rfl
+  have hb : false = true ↔ (R.initCfg y).inputPos.val = 0 := by rw [hinit]; decide
+  have hstate : (R.initCfg y).state.map (fun q => inj q false) = some (inj R.q₀ false) := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+  obtain ⟨t', -, ht', ⟨b', -, hend⟩, -, -, hbank, hruler⟩ :=
+    hH ℓ hz (by omega) (pairEncode_drop u y) (FinTM.bufferTape (List.replicate ℓ true)) 0
+      (by intro p _ _; rw [zero_add]) (R.initCfg y) false hb T
+  rw [hstate, hrun] at hend
+  rw [hstate] at hbank hruler
+  refine ⟨hz, t', b', ht', ?_, ?_, ?_⟩
+  · rw [hend]
+    exact (rulerHostCfg_fields ℓ hz _ d _ 0).1
+  · rw [hend]
+  · -- the space ledger: the bank's cells are the startup's, the ruler's at most `ℓ + 2`
+    rw [MultiTapeTM.spaceUsed_eq_sum, Fin.sum_univ_castSucc]
+    have hbankle : ∑ i : Fin (K + (k + 2)), H.spaceUsedByTape
+        (rulerHostCfg ℓ hz (some (inj R.q₀ false)) (R.initCfg y)
+          (FinTM.bufferTape (List.replicate ℓ true)) 0) t' i.castSucc ≤ B := by
+      calc
+        _ = ∑ i : Fin (K + (k + 2)), R.spaceUsedByTape (R.initCfg y) T i := by
+          refine Finset.sum_congr rfl fun i _ => ?_
+          rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card,
+            hbank i]
+        _ = R.spaceUsed (R.initCfg y) T := (MultiTapeTM.spaceUsed_eq_sum _ _).symm
+        _ ≤ B := hB
+    have hrulerle : H.spaceUsedByTape
+        (rulerHostCfg ℓ hz (some (inj R.q₀ false)) (R.initCfg y)
+          (FinTM.bufferTape (List.replicate ℓ true)) 0) t' (Fin.last _) ≤ ℓ + 2 := by
+      rw [MultiTapeTM.spaceUsedByTape_eq_card]
+      calc
+        _ ≤ (Finset.Icc ((0 : ℤ) - 1) (0 + ℓ)).card := Finset.card_le_card hruler
+        _ = ℓ + 2 := by rw [Int.card_Icc]; omega
+    omega
+
+/-! ### §3 The final seam: the suffix-ruler layout into the ruler host around H2-F -/
+
+/-- From any prefix machine `A` that ends at the suffix-ruler layout with a ruler of length `ℓ`
+(F6: `ℓ = ℓ₁ + ℓ₂`, two headers), the seam machine runs the ruler host `H` around the forwarding
+loop on the suffix `x`, and its space is `A`'s plus `(K + (k + 3)) · S` for a per-tape bound `S`
+of the hosted loop. -/
+theorem final_seam {k K n : ℕ} {P Q V : Type} [DecidableEq P]
+    (A : MultiTapeTM (K + (k + 3)) Bool P) (finish : P)
+    (H : MultiTapeTM (k + 3) Bool V) (inj : Q → Bool → V) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) {z x : List Bool} (ℓ : ℕ)
+    (hz : z.length = ℓ + x.length) (hlen : ℓ + 1 < z.length + 2) (T : ℕ)
+    (aRun : A.runFrom (A.initCfg z) T = suffixRulerCfg (K := K) finish M z ℓ hlen)
+    (aCut : ∀ u < T, (A.runFrom (A.initCfg z) u).state ≠ some finish)
+    (t B S : ℕ) (hB : A.spaceUsed (A.initCfg z) T ≤ B) (hS : 1 ≤ S)
+    (hloop : ∀ i, H.spaceUsedByTape
+      (rulerHostCfg ℓ hz ((StepBlock.forwardLoopCfg entry M (M.initCfg x)).state.map
+        fun q => inj q false) (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+        (FinTM.bufferTape (List.replicate ℓ true)) 0) t i ≤ S) :
+    (startupLoopTM (k := k + 1) A finish H (inj entry false)).runFrom
+        ((startupLoopTM (k := k + 1) A finish H (inj entry false)).initCfg z) (T + 1 + t) =
+      (embedEmitCfg (Fin.castLEEmb (by omega : k + 1 + 2 ≤ K + (k + 1 + 2)))
+        (fun _ _ => none) (fun _ => 0) []
+        (H.runFrom (rulerHostCfg ℓ hz
+          ((StepBlock.forwardLoopCfg entry M (M.initCfg x)).state.map fun q => inj q false)
+          (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+          (FinTM.bufferTape (List.replicate ℓ true)) 0) t)).mapState Sum.inr ∧
+    (startupLoopTM (k := k + 1) A finish H (inj entry false)).spaceUsed
+        ((startupLoopTM (k := k + 1) A finish H (inj entry false)).initCfg z) (T + 1 + t) ≤
+      B + (K + (k + 1 + 2)) * S := by
+  have hcfg := (suffixRulerCfg_embed (K := K) finish entry inj M ℓ hz hlen).symm
+  have hexit : (suffixRulerCfg (K := K) finish M z ℓ hlen).state = some finish :=
+    suffixRulerCfg_state _ _ _ _ _
+  exact ⟨startupLoopTM_runFrom (k := k + 1) A finish H (inj entry false) _ _ T aRun hexit
+      aCut hcfg t,
+    startupLoopTM_spaceUsed_le (k := k + 1) A finish H (inj entry false) _ _ T aRun hexit
+      aCut hcfg t B S hB hS hloop⟩
+
+/-! ### §4 The route at F6's layout `pairEncode (bits s) (pairEncode α x)` -/
+
+/-- F6's layout: the two headers' lengths add up to the suffix-ruler layout's `ℓ`, and the
+suffix after both is `x`. -/
+theorem layout (u α x : List Bool) :
+    (pairEncode u (pairEncode α x)).length =
+        ((2 * u.length + 2) + (2 * α.length + 2)) + x.length ∧
+      (pairEncode u (pairEncode α x)).drop ((2 * u.length + 2) + (2 * α.length + 2)) = x := by
+  refine ⟨by rw [length_pairEncode, length_pairEncode]; omega, ?_⟩
+  rw [← List.drop_drop, pairEncode_drop, pairEncode_drop]
+
+/-- The route's space ledger at F6's layout, from §3. F6's own leaves are `sorry`: (L1) the
+prefix machine (header ruler on `bits s`, the startup under the ruler host (§2), a seek to the
+ruler's end, the second scan (§1) and the rewind) and its exact run to the suffix-ruler layout;
+(L2) the hosted loop's per-tape bound from H5's and H2-F's visited-set clauses. -/
+theorem route_space {k K n : ℕ} {P Q V : Type} [DecidableEq P]
+    (A : MultiTapeTM (K + (k + 3)) Bool P) (finish : P)
+    (H : MultiTapeTM (k + 3) Bool V) (inj : Q → Bool → V) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (u α x : List Bool) (T t B S : ℕ)
+    (hB : A.spaceUsed (A.initCfg (pairEncode u (pairEncode α x))) T ≤ B) (hS : 1 ≤ S) :
+    (startupLoopTM (k := k + 1) A finish H (inj entry false)).spaceUsed
+        ((startupLoopTM (k := k + 1) A finish H (inj entry false)).initCfg
+          (pairEncode u (pairEncode α x))) (T + 1 + t) ≤ B + (K + (k + 1 + 2)) * S := by
+  obtain ⟨hz, -⟩ := layout u α x
+  have hlen : (2 * u.length + 2) + (2 * α.length + 2) + 1 <
+      (pairEncode u (pairEncode α x)).length + 2 := by omega
+  -- (L1) F6's prefix machine reaches the suffix-ruler layout at `ℓ = ℓ₁ + ℓ₂`
+  have aRun : A.runFrom (A.initCfg (pairEncode u (pairEncode α x))) T =
+      suffixRulerCfg (K := K) finish M (pairEncode u (pairEncode α x))
+        ((2 * u.length + 2) + (2 * α.length + 2)) hlen := sorry
+  have aCut : ∀ v < T,
+      (A.runFrom (A.initCfg (pairEncode u (pairEncode α x))) v).state ≠ some finish := sorry
+  -- (L2) the hosted loop's per-tape bound
+  have hloop : ∀ i, H.spaceUsedByTape
+      (rulerHostCfg ((2 * u.length + 2) + (2 * α.length + 2)) hz
+        ((StepBlock.forwardLoopCfg entry M (M.initCfg x)).state.map fun q => inj q false)
+        (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+        (FinTM.bufferTape (List.replicate ((2 * u.length + 2) + (2 * α.length + 2)) true)) 0)
+      t i ≤ S := sorry
+  exact (final_seam A finish H inj entry M _ hz hlen T aRun aCut t B S hB hS hloop).2
+
+end F6Probe
+
+#print axioms F6Probe.two_scans
+#print axioms F6Probe.hosted_startup
+#print axioms F6Probe.final_seam
+#print axioms F6Probe.layout
+#print axioms F6Probe.route_space
