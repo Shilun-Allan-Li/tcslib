@@ -58,7 +58,7 @@ lemma read_t {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₁, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_bit, hb, if_pos rfl]
   exact h
 
@@ -68,7 +68,7 @@ lemma read_f {l l₁ l₀ : Lb} {st : St} {c : AConf 7 Lb}
     (h : AReach A orc x (GuardLe A x B) (some l₀, st.toV, none) c) :
     AReach A orc x (GuardLe A x B) (some l, st.toV, none) c := by
   refine step_of hbd ?_
-  simp only [astep, hl, vword_whole₁]
+  rw [astep_call hl, vword_whole₁]
   rw [St.toV_P, orc_bit, hb, if_neg (by decide)]
   exact h
 
