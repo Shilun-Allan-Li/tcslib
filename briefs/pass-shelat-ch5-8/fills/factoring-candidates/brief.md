@@ -45,6 +45,12 @@ and the 03f2 external audit. This campaign owns them.
   2010; book page = PDF page − 12). You need §2.3–§2.4 (pp. 29–38), §2.7 (Theorem 51.1), and
   §2.9–§2.12 (pp. 52–63).
 
+
+**Mathlib first (user direction 2026-11-06).** Before proving any number-theory fact, search the
+pinned Mathlib. The names to cite for this fill are in `briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md`,
+section "Advice for the fill briefs" (all reachable from the owned files' current imports). Proving
+a fact Mathlib already has is a reuse finding at delivery review.
+
 ## Units (disjoint file ownership; they may run in parallel)
 
 | Unit | Owned file | Targets (`sorry`s) |

@@ -1,0 +1,147 @@
+# probe: Probe/NTOverlap3.lean  (worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fillfac @ 5f277163; Lean Lean (version 4.25.0, x86_64-unknown-linux-gnu, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release))
+# command: RUNDIR=wt ntoverlap-tools/run.sh Probe/NTOverlap3.lean  (= scripts/lean_check_tree.sh's LEAN_PATH with TCSLIB_OLEANS=fillfac-oleans, plus an overlay of pinned-Mathlib oleans for PowModTotient, FermatPsp, RingTheory/ZMod/UnitsCyclic, Algebra/Group/Subgroup/Even compiled from .lake/packages/mathlib sources by direct lean -o; no lake)
+# date: 2026-11-06T03:14:26Z
+# ---- source ----
+     1	import Mathlib.NumberTheory.PrimeCounting
+     2	import Mathlib.NumberTheory.SmoothNumbers
+     3	import Mathlib.NumberTheory.Bertrand
+     4	import Mathlib.NumberTheory.Primorial
+     5	import Mathlib.Data.Nat.Choose.Factorization
+     6	import Mathlib.Data.Nat.Choose.Central
+     7	import Mathlib.Analysis.SpecialFunctions.Log.Base
+     8	import Mathlib.Data.Nat.Totient
+     9	import Mathlib.Data.Nat.Log
+    10	import Mathlib.FieldTheory.Finite.Basic
+    11	import Mathlib.GroupTheory.SpecificGroups.Cyclic
+    12	import Mathlib.NumberTheory.LegendreSymbol.Basic
+    13	import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
+    14	import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+    15	import Mathlib.NumberTheory.PowModTotient
+    16	import Mathlib.NumberTheory.FermatPsp
+    17	import Mathlib.RingTheory.ZMod.UnitsCyclic
+    18	import Mathlib.Algebra.Group.Subgroup.Even
+    19	
+    20	/-! Probe NTOverlap2: `exact?` duplication search on a sample of TCSlib number-theory
+    21	statements (maxHeartbeats 400000 each), importing Mathlib only (the pinned modules the
+    22	TCSlib files import, plus the number-theory modules of this audit), so a hit is a Mathlib lemma. A hit names the Mathlib lemma; "could not close" means
+    23	no single Mathlib lemma (after `solve_by_elim` on hypotheses) proves the statement. -/
+    24	
+    25	set_option autoImplicit false
+    26	set_option maxHeartbeats 400000
+    27	
+    28	open Nat
+    29	
+    30	-- E1 Chebyshev.two_mul_le_two_pow (private)
+    31	example (x : ℕ) (h : 1 ≤ x) : 2 * x ≤ 2 ^ x := by exact?
+    32	
+    33	-- E2 Chebyshev.two_pow_le_centralBinom (private)
+    34	example (x : ℕ) (hx : 0 < x) : 2 ^ x ≤ Nat.centralBinom x := by exact?
+    35	
+    36	-- E3 Chebyshev.two_pow_le_pow_primeCounting
+    37	example (x : ℕ) (hx : 0 < x) : 2 ^ x ≤ (2 * x) ^ Nat.primeCounting (2 * x) := by exact?
+    38	
+    39	-- E4 Units.totient_prime_mul_prime
+    40	example {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) :
+    41	    φ (p * q) = (p - 1) * (q - 1) := by exact?
+    42	
+    43	-- E5 Units.units_pow_mod_totient
+    44	example {N : ℕ} (a : (ZMod N)ˣ) (x : ℕ) : a ^ x = a ^ (x % φ N) := by exact?
+    45	
+    46	-- E6 Units.rsa_pow_pow
+    47	example {N e d : ℕ} (hed : e * d ≡ 1 [MOD φ N]) (x : (ZMod N)ˣ) : (x ^ e) ^ d = x := by exact?
+    48	
+    49	-- E7 Units.le_totient_mul_log_succ
+    50	example (m : ℕ) (hm : 0 < m) : m ≤ φ m * (Nat.log 2 m + 1) := by exact?
+    51	
+    52	-- E8 QuadraticResidues.card_sqrt_eq_two
+    53	example {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) {a : (ZMod p)ˣ} (ha : ∃ y : (ZMod p)ˣ, y ^ 2 = a) :
+    54	    (Finset.univ.filter fun x : (ZMod p)ˣ => x ^ 2 = a).card = 2 := by exact?
+    55	
+    56	-- E9 QuadraticResidues.sq_pow_div_four_succ (units form)
+    57	example {p : ℕ} [Fact p.Prime] (hp3 : p % 4 = 3) {y : (ZMod p)ˣ} (hy : ∃ a : (ZMod p)ˣ, a ^ 2 = y) :
+    58	    (y ^ (p / 4 + 1)) ^ 2 = y := by exact?
+    59	
+    60	-- E10 QuadraticResidues.sqrtMod3_sq (field form)
+    61	example {p : ℕ} [Fact p.Prime] (hp3 : p % 4 = 3) {y : ZMod p} (hy : IsSquare y) :
+    62	    (y ^ (p / 4 + 1)) ^ 2 = y := by exact?
+    63	
+    64	-- E11 QuadraticResidues.gcd_sub_eq_prime_of_sq_eq_sq (core, ℕ form)
+    65	example {p q a b : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) (h : p * q ∣ a * b)
+    66	    (ha : ¬ p * q ∣ a) (hb : ¬ p * q ∣ b) : Nat.gcd a (p * q) = p ∨ Nat.gcd a (p * q) = q := by
+    67	  exact?
+    68	
+    69	-- E12 Units.pow_mod_totient_modEq (integer form; Mathlib needs 1 < N)
+    70	example {a N : ℕ} (h : Nat.Coprime a N) (x : ℕ) : a ^ x ≡ a ^ (x % φ N) [MOD N] := by exact?
+    71	
+    72	-- E12' the derivation from Nat.pow_totient_mod for every N
+    73	example {a N : ℕ} (h : Nat.Coprime a N) (x : ℕ) : a ^ x ≡ a ^ (x % φ N) [MOD N] := by
+    74	  rcases Nat.lt_or_ge 1 N with hN | hN
+    75	  · exact Nat.pow_totient_mod hN (h.symm.symm)
+    76	  · interval_cases N
+    77	    · simp [Nat.ModEq]
+    78	    · exact Nat.modEq_one
+    79	
+    80	-- E13 Primality: Fermat's little theorem in units (mrLiar_iff_of_prime ingredient)
+    81	example {p : ℕ} [Fact p.Prime] {a : ZMod p} (ha : a ≠ 0) : a ^ (p - 1) = 1 := by exact?
+    82	
+    83	-- E14 DiscreteLogHardcore.pow_half_eq_neg_one
+    84	example {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) {g : (ZMod p)ˣ}
+    85	    (hg : ∀ x, x ∈ Subgroup.zpowers g) : g ^ ((p - 1) / 2) = -1 := by exact?
+    86	
+    87	-- E15 ElGamal.eq_QR_of_card (unique subgroup of order q in cyclic Z_p^*)
+    88	example {G : Type*} [CommGroup G] [Finite G] [IsCyclic G] (H K : Subgroup G)
+    89	    (h : Nat.card H = Nat.card K) : H = K := by exact?
+    90	
+    91	-- E16 RSA.mul_inv_val_modEq
+    92	example (e Φ : ℕ) (h : Nat.Coprime e Φ) : e * ((e : ZMod Φ)⁻¹).val ≡ 1 [MOD Φ] := by exact?
+    93	
+    94	-- E17 Arithmetic.val_units_pow
+    95	example (M : ℕ) [NeZero M] (x : (ZMod M)ˣ) (e : ℕ) :
+    96	    ((x ^ e : (ZMod M)ˣ) : ZMod M).val = (x : ZMod M).val ^ e % M := by exact?
+    97	
+    98	-- E18 Chebyshev.chebyshev (real form)
+    99	example (m : ℕ) (hm : 2 ≤ m) : (m : ℝ) / (2 * Real.logb 2 m) ≤ Nat.primeCounting m := by exact?
+   100	
+   101	-- E19 Chebyshev.two_pow_le_two_mul_card_primes (counting form, via primeCounting')
+   102	example (n : ℕ) (hn : 2 ≤ n) : 2 ^ n ≤ 2 * n * Nat.primeCounting' (2 ^ n) := by exact?
+   103	
+   104	-- E20 QuadraticResidues.card_QR_prime (range-of-squaring form)
+   105	example {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) :
+   106	    Nat.card (powMonoidHom 2 : (ZMod p)ˣ →* (ZMod p)ˣ).range = (p - 1) / 2 := by exact?
+   107	
+   108	-- E21 DistinctPrimes.one_lt_totient
+   109	example {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) : 1 < φ (p * q) := by exact?
+   110	
+   111	-- E22 Factoring.fmultNat_eq_mul_prime (core)
+   112	example {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime) (h : x * y = p * q) (hx : x ≠ 1)
+   113	    (hy : y ≠ 1) : x = p ∨ x = q := by exact?
+   114	
+   115	-- E23 Primality.two_mul_card_le_of_ne_top (private)
+   116	example {G : Type*} [Group G] [Finite G] (H : Subgroup G) (hH : H ≠ ⊤) :
+   117	    2 * Nat.card H ≤ Nat.card G := by exact?
+# ---- lean output ----
+Probe/NTOverlap3.lean:31:50: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:34:64: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:37:81: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:41:40: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:44:70: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:47:88: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:50:65: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:54:71: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:58:36: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:62:36: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:67:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:70:86: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact ZMod.pow_card_sub_one_eq_one ha
+Probe/NTOverlap3.lean:85:70: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:89:48: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:92:85: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:96:72: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:99:89: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:102:80: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:106:81: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:109:84: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:113:39: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/NTOverlap3.lean:117:38: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+EXIT=1

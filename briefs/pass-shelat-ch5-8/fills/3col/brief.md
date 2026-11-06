@@ -37,6 +37,12 @@ pp. 127–129, PDF pp. 139–141).
   - never force-push;
   - open no PRs.
 
+
+**Mathlib first (user direction 2026-11-06).** Before proving any number-theory fact, search the
+pinned Mathlib. The names to cite for this fill are in `briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md`,
+section "Advice for the fill briefs" (all reachable from the owned files' current imports). Proving
+a fact Mathlib already has is a reuse finding at delivery review.
+
 ## Units (disjoint file ownership; they may run in parallel)
 
 Cross-file dependencies are on **statements** only. The integration replay closes the chain.

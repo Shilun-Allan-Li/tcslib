@@ -1,0 +1,218 @@
+# probe: Probe/NTOverlap1.lean  (worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fillfac @ 5f277163; Lean Lean (version 4.25.0, x86_64-unknown-linux-gnu, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release))
+# command: RUNDIR=wt ntoverlap-tools/run.sh Probe/NTOverlap1.lean  (= scripts/lean_check_tree.sh's LEAN_PATH with TCSLIB_OLEANS=fillfac-oleans, plus an overlay of pinned-Mathlib oleans for PowModTotient, FermatPsp, RingTheory/ZMod/UnitsCyclic, Algebra/Group/Subgroup/Even compiled from .lake/packages/mathlib sources by direct lean -o; no lake)
+# date: 2026-11-06T03:14:21Z
+# ---- source ----
+     1	import TCSlib.Cryptography.NumberTheory.QuadraticResidues
+     2	import TCSlib.Cryptography.NumberTheory.Units
+     3	import TCSlib.Cryptography.NumberTheory.Primality
+     4	import TCSlib.Cryptography.NumberTheory.Euclid
+     5	import Mathlib.GroupTheory.SpecificGroups.Cyclic
+     6	import Mathlib.NumberTheory.LegendreSymbol.Basic
+     7	import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
+     8	import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+     9	import Mathlib.NumberTheory.Bertrand
+    10	import Mathlib.NumberTheory.Primorial
+    11	import Mathlib.Algebra.Group.Subgroup.Even
+    12	
+    13	/-! Probe NTOverlap1: TCSlib `NumberTheory/*` statements closed by pinned-Mathlib lemmas.
+    14	Each `example` restates a TCSlib declaration; the proof cites Mathlib only (no TCSlib lemma
+    15	other than definitions unfolded by `simp`/`show`). -/
+    16	
+    17	set_option autoImplicit false
+    18	set_option maxHeartbeats 400000
+    19	
+    20	open TCSlib.Cryptography.NumberTheory Nat
+    21	
+    22	/-! ## Units.lean -/
+    23	
+    24	-- P1.1 units_val_mem  ← ZMod.val_pos, ZMod.val_lt
+    25	example {N : ℕ} [Fact (1 < N)] (u : (ZMod N)ˣ) :
+    26	    1 ≤ (u : ZMod N).val ∧ (u : ZMod N).val ≤ N - 1 :=
+    27	  ⟨ZMod.val_pos.2 u.ne_zero, Nat.le_sub_one_of_lt (ZMod.val_lt _)⟩
+    28	
+    29	-- P1.2 totient_prime_mul_prime  ← Nat.totient_mul, Nat.totient_prime, Nat.coprime_primes
+    30	example {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) :
+    31	    φ (p * q) = (p - 1) * (q - 1) := by
+    32	  rw [Nat.totient_mul ((Nat.coprime_primes hp hq).2 hpq), Nat.totient_prime hp,
+    33	    Nat.totient_prime hq]
+    34	
+    35	-- P1.3 units_pow_mod_totient  ← pow_mod_natCard (Nat.card (ZMod N)ˣ = φ N needs NeZero; the
+    36	-- TCSlib statement has no NeZero, so the general-N form is ZMod.pow_totient itself)
+    37	example {N : ℕ} [NeZero N] (a : (ZMod N)ˣ) (x : ℕ) : a ^ x = a ^ (x % φ N) := by
+    38	  rw [← ZMod.card_units_eq_totient, ← Nat.card_eq_fintype_card, pow_mod_natCard]
+    39	
+    40	-- P1.4 rsa_pow_pow  ← pow_mod_natCard + ZMod.card_units_eq_totient (NeZero case)
+    41	example {N e d : ℕ} [NeZero N] (hed : e * d ≡ 1 [MOD φ N]) (x : (ZMod N)ˣ) :
+    42	    (x ^ e) ^ d = x := by
+    43	  rw [← pow_mul, ← pow_mod_natCard, Nat.card_eq_fintype_card, ZMod.card_units_eq_totient,
+    44	    show e * d % φ N = 1 % φ N from hed, ← ZMod.card_units_eq_totient,
+    45	    ← Nat.card_eq_fintype_card, pow_mod_natCard, pow_one]
+    46	
+    47	-- P1.5 rsa_pow_bijective  ← powCoprime (as in TCSlib)
+    48	example {N e : ℕ} [NeZero N] (he : Nat.Coprime e (φ N)) :
+    49	    Function.Bijective (fun x : (ZMod N)ˣ => x ^ e) :=
+    50	  (powCoprime (by rw [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]; exact he.symm)).bijective
+    51	
+    52	-- P1.6 DistinctPrimes.one_lt_totient core  ← Nat.totient_eq_one_iff, Nat.totient_pos
+    53	example {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q) : 1 < φ (p * q) := by
+    54	  have h0 : 0 < φ (p * q) := Nat.totient_pos.2 (Nat.mul_pos hp.pos hq.pos)
+    55	  have h1 : φ (p * q) ≠ 1 := by
+    56	    rw [Ne, Nat.totient_eq_one_iff]
+    57	    rintro (h | h)
+    58	    · exact absurd (Nat.eq_one_of_mul_eq_one_right h) hp.one_lt.ne'
+    59	    · have h2 := hp.two_le; have h3 := hq.two_le
+    60	      have : 2 * 2 ≤ p * q := Nat.mul_le_mul h2 h3
+    61	      omega
+    62	  omega
+    63	
+    64	/-! ## Primality.lean -/
+    65	
+    66	-- P1.7 two_mul_card_le_of_ne_top  ← Subgroup.card_mul_index, Subgroup.index_eq_one
+    67	example {G : Type*} [Group G] [Finite G] (H : Subgroup G) (hH : H ≠ ⊤) :
+    68	    2 * Nat.card H ≤ Nat.card G := by
+    69	  have h1 : H.index ≠ 1 := fun h => hH (Subgroup.index_eq_one.1 h)
+    70	  have h0 : H.index ≠ 0 := Subgroup.index_ne_zero_of_finite
+    71	  have h2 : 2 ≤ H.index := by omega
+    72	  rw [← H.card_mul_index]
+    73	  nlinarith [Nat.zero_le (Nat.card H)]
+    74	
+    75	-- P1.8 powOneSubgroup is (powMonoidHom m).ker
+    76	example {N m : ℕ} (x : (ZMod N)ˣ) : x ∈ (powMonoidHom m : (ZMod N)ˣ →* (ZMod N)ˣ).ker ↔ x ^ m = 1 :=
+    77	  MonoidHom.mem_ker
+    78	
+    79	-- P1.9 units_pow_eq_one_iff  ← Units.val_eq_one / Units.val_pow_eq_pow_val
+    80	example {N m : ℕ} (w : (ZMod N)ˣ) : w ^ m = 1 ↔ (w : ZMod N) ^ m = 1 := by
+    81	  rw [← Units.val_pow_eq_pow_val, Units.val_eq_one]
+    82	
+    83	-- P1.10 mrExp/mrOdd decomposition ← Nat.exists_eq_two_pow_mul_odd (existential form)
+    84	example (N : ℕ) (hN : 2 ≤ N) : ∃ k m, Odd m ∧ N - 1 = 2 ^ k * m :=
+    85	  Nat.exists_eq_two_pow_mul_odd (by omega)
+    86	
+    87	/-! ## QuadraticResidues.lean -/
+    88	
+    89	-- P1.11 card_QR_prime  ← IsCyclic.card_powMonoidHom_range, ZMod.card_units
+    90	example {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) : Nat.card (QR p) = (p - 1) / 2 := by
+    91	  have hodd : Odd p := (Fact.out : p.Prime).eq_two_or_odd'.resolve_left hp2
+    92	  have h2 : 2 ∣ p - 1 := by obtain ⟨k, hk⟩ := hodd; omega
+    93	  rw [QR, IsCyclic.card_powMonoidHom_range, Nat.card_eq_fintype_card, ZMod.card_units,
+    94	    Nat.gcd_eq_right h2]
+    95	
+    96	-- P1.12 QR N = Subgroup.square (Mathlib's subgroup of squares)
+    97	example (N : ℕ) : QR N = Subgroup.square (ZMod N)ˣ := by
+    98	  ext x
+    99	  rw [mem_QR_iff, Subgroup.mem_square]
+   100	  constructor
+   101	  · rintro ⟨y, rfl⟩; exact ⟨y, sq y⟩
+   102	  · rintro ⟨y, rfl⟩; exact ⟨y, sq y⟩
+   103	
+   104	-- P1.13 coprime_of_ne  ← Nat.coprime_primes (literally)
+   105	example {p q : ℕ} [hp : Fact p.Prime] [hq : Fact q.Prime] (hpq : p ≠ q) : p.Coprime q :=
+   106	  (Nat.coprime_primes hp.out hq.out).2 hpq
+   107	
+   108	-- P1.14 sq_pow_div_four_succ via Euler's criterion  ← ZMod.euler_criterion_units
+   109	example {p : ℕ} [hp : Fact p.Prime] (hp3 : p % 4 = 3) {y : (ZMod p)ˣ} (hy : y ∈ QR p) :
+   110	    (y ^ (p / 4 + 1)) ^ 2 = y := by
+   111	  have he : y ^ (p / 2) = 1 := (ZMod.euler_criterion_units p y).1 ((mem_QR_iff y).1 hy)
+   112	  rw [← pow_mul, show (p / 4 + 1) * 2 = p / 2 + 1 by omega, pow_succ, he, one_mul]
+   113	
+   114	-- P1.15 card_sqrt_eq_two vs Mathlib's legendreSym.card_sqrts (field elements, ℤ argument)
+   115	#check @legendreSym.card_sqrts
+   116	#check @quadraticChar_card_sqrts
+   117	
+   118	/-! ## Euclid.lean -/
+   119	
+   120	-- P1.16 Mathlib's Bézout coefficients (the analogue of extEuclid_spec)
+   121	example (a b : ℕ) : (Nat.gcd a b : ℤ) = a * Nat.gcdA a b + b * Nat.gcdB a b := Nat.gcd_eq_gcd_ab a b
+   122	
+   123	-- P1.17 extEuclid_inv analogue  ← ZMod.coe_mul_inv_eq_one
+   124	example (a N : ℕ) (h : Nat.Coprime a N) : (a : ZMod N) * (a : ZMod N)⁻¹ = 1 :=
+   125	  ZMod.coe_mul_inv_eq_one a h
+   126	
+   127	/-! ## Chebyshev.lean -/
+   128	
+   129	-- P1.18 the only prime-counting lower-bound-type facts at the pin
+   130	#check @Nat.exists_prime_lt_and_le_two_mul
+   131	#check @Nat.primeCounting'_add_le
+   132	#check @Nat.four_pow_le_two_mul_self_mul_centralBinom
+   133	#check @Nat.pow_factorization_choose_le
+   134	#check @Nat.prod_pow_factorization_centralBinom
+   135	#check @primorial_le_4_pow
+   136	
+   137	/-! ## DiscreteLogHardcore / ElGamal cores -/
+   138	
+   139	-- P1.19 pow_half_eq_neg_one core  ← ZMod.pow_div_two_eq_neg_one_or_one
+   140	example {p : ℕ} [Fact p.Prime] {a : ZMod p} (ha : a ≠ 0) :
+   141	    a ^ (p / 2) = 1 ∨ a ^ (p / 2) = -1 := ZMod.pow_div_two_eq_neg_one_or_one p ha
+   142	
+   143	-- P1.20 expo_injective / expF_injective core  ← pow_injOn_Iio_orderOf
+   144	example {G : Type*} [Monoid G] (g : G) {a b : ℕ} (ha : a < orderOf g) (hb : b < orderOf g)
+   145	    (h : g ^ a = g ^ b) : a = b := pow_injOn_Iio_orderOf ha hb h
+   146	
+   147	-- P1.21 cyclicity of (ZMod p)ˣ (instance at this pin) and generators
+   148	example {p : ℕ} [Fact p.Prime] : IsCyclic (ZMod p)ˣ := inferInstance
+   149	example {p : ℕ} [Fact p.Prime] : ∃ g : (ZMod p)ˣ, ∀ x, x ∈ Subgroup.zpowers g :=
+   150	  IsCyclic.exists_generator
+   151	example {p : ℕ} [Fact p.Prime] : ∃ g : (ZMod p)ˣ, orderOf g = p - 1 := by
+   152	  obtain ⟨g, hg⟩ := IsCyclic.exists_ofOrder_eq_natCard (α := (ZMod p)ˣ)
+   153	  exact ⟨g, by rw [hg, Nat.card_eq_fintype_card, ZMod.card_units]⟩
+   154	#check @IsCyclic.card_orderOf_eq_totient
+   155	#check @IsCyclic.unique_zpow_zmod
+   156	#check @orderOf_eq_card_of_forall_mem_zpowers
+   157	
+   158	-- P1.22 Mathlib units ↔ coprime residues (for the unit samplers)
+   159	#check @ZMod.unitsEquivCoprime
+   160	#check @ZMod.unitOfCoprime
+   161	#check @ZMod.chineseRemainder
+   162	#check @Nat.chineseRemainder
+   163	#check @ZMod.exists_sq_eq_neg_one_iff
+   164	#check @ZMod.euler_criterion
+   165	#check @legendreSym.quadratic_reciprocity
+   166	#check @jacobiSym.quadratic_reciprocity
+   167	
+   168	/-! ## Factoring.lean core -/
+   169	
+   170	-- P1.23 fmultNat_eq_mul_prime core (x * y = p * q, x, y ≠ 1 ⇒ x ∈ {p, q})
+   171	example {p q x y : ℕ} (hp : p.Prime) (hq : q.Prime) (h : x * y = p * q) (hx : x ≠ 1)
+   172	    (hy : y ≠ 1) : x = p ∨ x = q := by
+   173	  obtain ⟨a, b, ha, hb, hab⟩ := Nat.dvd_mul.1 (Dvd.intro y h)
+   174	  have hpq : 0 < p * q := Nat.mul_pos hp.pos hq.pos
+   175	  rcases (Nat.dvd_prime hp).1 ha with h1 | h1 <;> rcases (Nat.dvd_prime hq).1 hb with h2 | h2
+   176	  · exact absurd (by rw [← hab, h1, h2]) hx
+   177	  · exact Or.inr (by rw [← hab, h1, h2, one_mul])
+   178	  · exact Or.inl (by rw [← hab, h1, h2, mul_one])
+   179	  · exfalso; apply hy
+   180	    rw [← hab, h1, h2] at h
+   181	    exact (Nat.mul_eq_left hpq.ne').1 h
+# ---- lean output ----
+Probe/NTOverlap1.lean:53:49: warning: unused variable `hpq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+legendreSym.card_sqrts : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)],
+  p ≠ 2 → ∀ (a : ℤ), ↑{x | x ^ 2 = ↑a}.toFinset.card = legendreSym p a + 1
+@quadraticChar_card_sqrts : ∀ {F : Type u_1} [inst : Field F] [inst_1 : Fintype F] [inst_2 : DecidableEq F],
+  ringChar F ≠ 2 → ∀ (a : F), ↑{x | x ^ 2 = a}.toFinset.card = (quadraticChar F) a + 1
+exists_prime_lt_and_le_two_mul : ∀ (n : ℕ), n ≠ 0 → ∃ p, Nat.Prime p ∧ n < p ∧ p ≤ 2 * n
+@primeCounting'_add_le : ∀ {a k : ℕ},
+  a ≠ 0 → a < k → ∀ (n : ℕ), (k + n).primeCounting' ≤ k.primeCounting' + φ a * (n / a + 1)
+four_pow_le_two_mul_self_mul_centralBinom : ∀ (n : ℕ), 0 < n → 4 ^ n ≤ 2 * n * n.centralBinom
+@pow_factorization_choose_le : ∀ {p n k : ℕ}, 0 < n → p ^ (n.choose k).factorization p ≤ n
+prod_pow_factorization_centralBinom : ∀ (n : ℕ),
+  ∏ p ∈ Finset.range (2 * n + 1), p ^ n.centralBinom.factorization p = n.centralBinom
+primorial_le_4_pow : ∀ (n : ℕ), primorial n ≤ 4 ^ n
+@IsCyclic.card_orderOf_eq_totient : ∀ {α : Type u_1} [inst : Group α] [IsCyclic α] [inst_2 : Fintype α] {d : ℕ},
+  d ∣ Fintype.card α → {a | orderOf a = d}.card = φ d
+@IsCyclic.unique_zpow_zmod : ∀ {α : Type u_1} {a : α} [inst : Group α] [inst_1 : Fintype α],
+  (∀ (x : α), x ∈ Subgroup.zpowers a) → ∀ (x : α), ∃! n, x = a ^ n.val
+@orderOf_eq_card_of_forall_mem_zpowers : ∀ {α : Type u_1} [inst : Group α] {g : α},
+  (∀ (x : α), x ∈ Subgroup.zpowers g) → orderOf g = Nat.card α
+@ZMod.unitsEquivCoprime : {n : ℕ} → [NeZero n] → (ZMod n)ˣ ≃ { x // x.val.Coprime n }
+@ZMod.unitOfCoprime : {n : ℕ} → (x : ℕ) → x.Coprime n → (ZMod n)ˣ
+@ZMod.chineseRemainder : {m n : ℕ} → m.Coprime n → ZMod (m * n) ≃+* ZMod m × ZMod n
+@chineseRemainder : {m n : ℕ} → n.Coprime m → (a b : ℕ) → { k // k ≡ a [MOD n] ∧ k ≡ b [MOD m] }
+@ZMod.exists_sq_eq_neg_one_iff : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)], IsSquare (-1) ↔ p % 4 ≠ 3
+ZMod.euler_criterion : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] {a : ZMod p}, a ≠ 0 → (IsSquare a ↔ a ^ (p / 2) = 1)
+@legendreSym.quadratic_reciprocity : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)] [inst_1 : Fact (Nat.Prime q)],
+  p ≠ 2 → q ≠ 2 → p ≠ q → legendreSym q ↑p * legendreSym p ↑q = (-1) ^ (p / 2 * (q / 2))
+@jacobiSym.quadratic_reciprocity : ∀ {a b : ℕ},
+  Odd a → Odd b → jacobiSym (↑a) b = (-1) ^ (a / 2 * (b / 2)) * jacobiSym (↑b) a
+EXIT=0

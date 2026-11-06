@@ -1,0 +1,106 @@
+# probe: Probe/NTOverlap4.lean  (worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fillfac @ 5f277163; Lean Lean (version 4.25.0, x86_64-unknown-linux-gnu, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release))
+# command: RUNDIR=wt ntoverlap-tools/run.sh Probe/NTOverlap4.lean  (= scripts/lean_check_tree.sh's LEAN_PATH with TCSLIB_OLEANS=fillfac-oleans, plus an overlay of pinned-Mathlib oleans for PowModTotient, FermatPsp, RingTheory/ZMod/UnitsCyclic, Algebra/Group/Subgroup/Even compiled from .lake/packages/mathlib sources by direct lean -o; no lake)
+# date: 2026-11-06T03:15:23Z
+# ---- source ----
+     1	import TCSlib.Cryptography.Candidates.Rabin
+     2	import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+     3	import TCSlib.Cryptography.Candidates.ElGamal
+     4	import Mathlib.GroupTheory.SpecificGroups.Cyclic
+     5	import Mathlib.NumberTheory.LegendreSymbol.Basic
+     6	
+     7	/-! Probe NTOverlap4: candidate-level number theory (`Candidates/*`) and the fill-brief
+     8	ingredients, restated and closed from pinned-Mathlib lemmas. -/
+     9	
+    10	set_option autoImplicit false
+    11	set_option maxHeartbeats 400000
+    12	
+    13	open TCSlib.Cryptography.NumberTheory TCSlib.Cryptography.Candidates
+    14	
+    15	-- C1 QuadraticResidues.crtUnits is Mathlib's inline CRT-on-units construction (definitional)
+    16	example {p q : ℕ} (h : p.Coprime q) :
+    17	    crtUnits h = (Units.mapEquiv (ZMod.chineseRemainder h).toMulEquiv).trans MulEquiv.prodUnits :=
+    18	  rfl
+    19	
+    20	-- C2 card_units_eq_mul_card_QR, group form: |G| = |ker| · |range|  ← Subgroup.index_ker,
+    21	-- Subgroup.card_mul_index (no per-fibre hypothesis needed)
+    22	example (N : ℕ) :
+    23	    Nat.card (ZMod N)ˣ = Nat.card (powMonoidHom 2 : (ZMod N)ˣ →* (ZMod N)ˣ).ker * Nat.card (QR N) := by
+    24	  rw [QR, ← Subgroup.index_ker, Subgroup.card_mul_index]
+    25	
+    26	-- C3 DiscreteLogHardcore.pow_half_eq_neg_one from Mathlib's Euler dichotomy
+    27	--    (ZMod.pow_div_two_eq_neg_one_or_one) and orderOf
+    28	example {p : ℕ} [hp : Fact p.Prime] (hp2 : p ≠ 2) {g : (ZMod p)ˣ} (hg : orderOf g = p - 1) :
+    29	    g ^ ((p - 1) / 2) = -1 := by
+    30	  have hodd := hp.out.eq_two_or_odd'.resolve_left hp2
+    31	  have h2 := hp.out.two_le
+    32	  have hh : p / 2 = (p - 1) / 2 := by obtain ⟨k, hk⟩ := hodd; omega
+    33	  rcases ZMod.pow_div_two_eq_neg_one_or_one p g.ne_zero with h | h
+    34	  · exfalso
+    35	    have h1 : g ^ (p / 2) = 1 := Units.ext (by simpa using h)
+    36	    have := Nat.le_of_dvd (by obtain ⟨k, hk⟩ := hodd; omega) (hg ▸ orderOf_dvd_of_pow_eq_one h1)
+    37	    omega
+    38	  · rw [← hh]; exact Units.ext (by simpa using h)
+    39	
+    40	-- C4 IsGenerator (DiscreteLogHardcore) is the hypothesis form of Mathlib's IsCyclic API
+    41	example {p : ℕ} [Fact p.Prime] : ∃ g : (ZMod p)ˣ, IsGenerator g := IsCyclic.exists_generator
+    42	
+    43	-- C5 the fill route of S3 (rsa): the units of Z_N as coprime residues, residues as Fin N
+    44	#check @ZMod.unitsEquivCoprime
+    45	#check @ZMod.finEquiv
+    46	#check @ZMod.val_coe_unit_coprime
+    47	#check @ZMod.coe_unitOfCoprime
+    48	#check @ZMod.isUnit_iff_coprime
+    49	
+    50	-- C6 blumInv_spec (rabin): the CRT formula reduces to `a` modulo p  ← ZMod.coe_mul_inv_eq_one
+    51	example {p q : ℕ} [NeZero p] (h : Nat.Coprime q p) (a b : ℕ) :
+    52	    (((a * (q * ((q : ZMod p)⁻¹).val) + b * (p * ((p : ZMod q)⁻¹).val) : ℕ)) : ZMod p) = a := by
+    53	  push_cast
+    54	  rw [ZMod.natCast_self, ZMod.natCast_zmod_val, ZMod.coe_mul_inv_eq_one q h]
+    55	  ring
+    56	
+    57	-- C7 elGamal_correct (dl-c), group core: (h^a)^b · m · ((h^b)^a)⁻¹ = m
+    58	example {G : Type*} [CommGroup G] (h m : G) (a b : ℕ) : (h ^ a) ^ b * m * ((h ^ b) ^ a)⁻¹ = m := by
+    59	  rw [← pow_mul, ← pow_mul, mul_comm a b, mul_inv_cancel_comm]
+    60	
+    61	-- C8 dlBits_pow (dl-b) ingredients, all Mathlib
+    62	#check @Units.sq_eq_sq_iff_eq_or_eq_neg
+    63	#check @pow_eq_pow_iff_modEq
+    64	#check @ZMod.euler_criterion_units
+    65	#check @ZMod.pow_card_sub_one_eq_one
+    66	#check @ZMod.units_pow_card_sub_one_eq_one
+    67	
+    68	-- C9 ElGamal.orderOf_eq_of_mem_QR / egSquareGen_valid ingredient
+    69	#check @orderOf_eq_prime
+    70	#check @Subgroup.eq_of_le_of_card_ge
+    71	#check @Nat.card_zpowers
+    72	
+    73	-- C10 ElGamal.mem_QR_iff_pow_eq_one is Euler's criterion verbatim
+    74	example {p q : ℕ} [Fact p.Prime] (hpq : p / 2 = q) (x : (ZMod p)ˣ) :
+    75	    (∃ y : (ZMod p)ˣ, y ^ 2 = x) ↔ x ^ q = 1 := by
+    76	  rw [ZMod.euler_criterion_units, hpq]
+    77	
+    78	-- C11 Rabin.crtNegOne_ne_one ingredient
+    79	#check @ZMod.neg_one_ne_one
+    80	-- C12 the Blum-root uniqueness ingredient (eq_blumSqrt_of_sq_eq)
+    81	#check @ZMod.exists_sq_eq_neg_one_iff
+# ---- lean output ----
+@ZMod.unitsEquivCoprime : {n : ℕ} → [NeZero n] → (ZMod n)ˣ ≃ { x // x.val.Coprime n }
+ZMod.finEquiv : (n : ℕ) → [NeZero n] → Fin n ≃+* ZMod n
+@ZMod.val_coe_unit_coprime : ∀ {n : ℕ} (u : (ZMod n)ˣ), (↑u).val.Coprime n
+@ZMod.coe_unitOfCoprime : ∀ {n : ℕ} (x : ℕ) (h : x.Coprime n), ↑(ZMod.unitOfCoprime x h) = ↑x
+ZMod.isUnit_iff_coprime : ∀ (m n : ℕ), IsUnit ↑m ↔ m.Coprime n
+@Units.sq_eq_sq_iff_eq_or_eq_neg : ∀ {R : Type u_1} [inst : CommRing R] [NoZeroDivisors R] {a b : Rˣ},
+  a ^ 2 = b ^ 2 ↔ a = b ∨ a = -b
+@pow_eq_pow_iff_modEq : ∀ {G : Type u_1} [inst : LeftCancelMonoid G] {x : G} {m n : ℕ},
+  x ^ n = x ^ m ↔ n ≡ m [MOD orderOf x]
+ZMod.euler_criterion_units : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] (x : (ZMod p)ˣ), (∃ y, y ^ 2 = x) ↔ x ^ (p / 2) = 1
+@ZMod.pow_card_sub_one_eq_one : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)] {a : ZMod p}, a ≠ 0 → a ^ (p - 1) = 1
+ZMod.units_pow_card_sub_one_eq_one : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] (a : (ZMod p)ˣ), a ^ (p - 1) = 1
+@orderOf_eq_prime : ∀ {G : Type u_1} [inst : Monoid G] {x : G} {p : ℕ} [hp : Fact (Nat.Prime p)],
+  x ^ p = 1 → x ≠ 1 → orderOf x = p
+@Subgroup.eq_of_le_of_card_ge : ∀ {G : Type u_1} [inst : Group G] {H K : Subgroup G} [Finite ↥K],
+  H ≤ K → Nat.card ↥K ≤ Nat.card ↥H → H = K
+@Nat.card_zpowers : ∀ {α : Type u_1} [inst : Group α] (a : α), Nat.card ↥(Subgroup.zpowers a) = orderOf a
+@ZMod.neg_one_ne_one : ∀ {n : ℕ} [Fact (2 < n)], -1 ≠ 1
+@ZMod.exists_sq_eq_neg_one_iff : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)], IsSquare (-1) ↔ p % 4 ≠ 3
+EXIT=0

@@ -42,6 +42,12 @@ The exchange protocol is the `README.md` of the exchange branch `exchange/pass-s
   `cryptography/pass-shelat-ch2-4` (SHA-256
   `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`; book page = PDF page − 12).
 
+
+**Mathlib first (user direction 2026-11-06).** Before proving any number-theory fact, search the
+pinned Mathlib. The names to cite for this fill are in `briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md`,
+section "Advice for the fill briefs" (all reachable from the owned files' current imports). Proving
+a fact Mathlib already has is a reuse finding at delivery review.
+
 ## Units (disjoint file ownership; they may run in parallel, on separate hosts)
 
 Cross-file dependencies are on **statements** only: a target may use another unit's sorried

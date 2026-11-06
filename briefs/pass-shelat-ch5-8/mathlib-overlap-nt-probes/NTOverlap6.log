@@ -1,0 +1,161 @@
+# probe: Probe/NTOverlap6.lean (worktree @ 5f277163); command: ntoverlap-tools/run.sh Probe/NTOverlap6.lean (overlay LEAN_PATH as NTOverlap1)
+# date: 2026-11-06T03:20:49Z
+# ---- source ----
+     1	import Mathlib.NumberTheory.PrimeCounting
+     2	import Mathlib.NumberTheory.SmoothNumbers
+     3	import Mathlib.NumberTheory.Bertrand
+     4	import Mathlib.NumberTheory.Primorial
+     5	import Mathlib.Data.Nat.Choose.Factorization
+     6	import Mathlib.Data.Nat.Totient
+     7	import Mathlib.FieldTheory.Finite.Basic
+     8	import Mathlib.GroupTheory.SpecificGroups.Cyclic
+     9	import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
+    10	import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+    11	import Mathlib.NumberTheory.FermatPsp
+    12	import Mathlib.RingTheory.ZMod.UnitsCyclic
+    13	import Mathlib.Analysis.SpecialFunctions.Log.Base
+    14	
+    15	/-! Probe NTOverlap6: every further Mathlib name cited in `mathlib-overlap-nt.md` resolves at the
+    16	pin (names not already exercised in NTOverlap1/3/4/5). -/
+    17	#check @Nat.two_mul_div_two_of_even
+    18	#check @Nat.two_mul_div_two_add_one_of_odd
+    19	#check @Nat.Prime.eq_two_or_odd'
+    20	#check @Nat.odd_iff
+    21	#check @Nat.Coprime.gcd_mul
+    22	#check @Fintype.card_subtype_compl
+    23	#check @Nat.even_or_odd
+    24	#check @ZMod.val_natCast_of_lt
+    25	#check @neg_one_pow_eq_one_iff_even
+    26	#check @Subgroup.card_subgroup_dvd_card
+    27	#check @MonoidHom.decidableMemRange
+    28	#check @Nat.tendsto_primeCounting
+    29	#check @Bertrand.real_main_inequality
+    30	#check @Nat.exists_prime_lt_and_le_two_mul_eventually
+    31	#check @Nat.totient_eq_div_primeFactors_mul
+    32	#check @Nat.coprime_ordCompl
+    33	#check @Nat.exists_mul_emod_eq_one_of_coprime
+    34	#check @ZMod.mod_four_ne_three_of_sq_eq_neg_one
+    35	#check @legendreSym.eq_pow
+    36	#check @ZMod.nonsquare_of_jacobiSym_eq_neg_one
+    37	#check @ZMod.exists_sq_eq_prime_iff_of_mod_four_eq_three
+    38	#check @FiniteField.unit_isSquare_iff
+    39	#check @FiniteField.isSquare_iff
+    40	#check @Nat.FermatPsp
+    41	#check @Nat.probablePrime_iff_modEq
+    42	#check @Nat.coprime_of_probablePrime
+    43	#check @Nat.exists_infinite_pseudoprimes
+    44	#check @ZMod.isCyclic_units_iff
+    45	#check @Nat.Coprime.mul_dvd_of_dvd_of_dvd
+    46	#check @Nat.Prime.dvd_mul
+    47	#check @Nat.ordProj_mul_ordCompl_eq_self
+    48	#check @Nat.not_dvd_ordCompl
+    49	#check @exists_prime_orderOf_dvd_card
+    50	#check @Nat.totient_prime_pow
+    51	#check @IsUnit.of_pow_eq_one
+    52	#check @Subgroup.index_ne_zero_of_finite
+    53	#check @MonoidHom.mem_range
+    54	#check @Prod.fst_zmod_cast
+    55	#check @Prod.snd_zmod_cast
+    56	#check @orderOf_units
+    57	#check @Nat.Prime.coprime_iff_not_dvd
+    58	#check @Real.one_sub_div_pow_le_exp_neg
+    59	#check @Real.add_one_le_exp
+    60	#check @mul_inv_cancel_comm
+    61	#check @ZMod.natCast_mod
+    62	#check @ZMod.val_mul
+    63	#check @ZMod.natCast_self
+    64	#check @Nat.totient_le
+    65	#check @Nat.totient_lt
+    66	#check @Nat.totient_super_multiplicative
+    67	#check @ZMod.pow_card_sub_one_eq_one
+    68	#check @mul_self_eq_one_iff
+    69	#check @legendreSym.quadratic_reciprocity'
+    70	#check @legendreSym.quadratic_reciprocity_one_mod_four
+    71	#check @legendreSym.quadratic_reciprocity_three_mod_four
+    72	#check @Nat.xgcd
+    73	#check @Nat.gcdA
+    74	#check @Nat.gcdB
+    75	#check @primorial_le_4_pow
+    76	#check @Nat.count_succ
+    77	-- (SumPrimeReciprocals, LucasPrimality: no olean in the cache; names checked by grep in the report)
+# ---- lean output ----
+@Nat.two_mul_div_two_of_even : ∀ {n : ℕ}, Even n → 2 * (n / 2) = n
+@Nat.two_mul_div_two_add_one_of_odd : ∀ {n : ℕ}, Odd n → 2 * (n / 2) + 1 = n
+@Nat.Prime.eq_two_or_odd' : ∀ {p : ℕ}, Nat.Prime p → p = 2 ∨ Odd p
+@Nat.odd_iff : ∀ {n : ℕ}, Odd n ↔ n % 2 = 1
+@Nat.Coprime.gcd_mul : ∀ {m n : ℕ} (k : ℕ), m.Coprime n → k.gcd (m * n) = k.gcd m * k.gcd n
+@Fintype.card_subtype_compl : ∀ {α : Type u_1} [inst : Fintype α] (p : α → Prop) [inst_1 : Fintype { x // p x }]
+  [inst_2 : Fintype { x // ¬p x }], Fintype.card { x // ¬p x } = Fintype.card α - Fintype.card { x // p x }
+Nat.even_or_odd : ∀ (n : ℕ), Even n ∨ Odd n
+@ZMod.val_natCast_of_lt : ∀ {n a : ℕ}, a < n → (↑a).val = a
+@neg_one_pow_eq_one_iff_even : ∀ {R : Type u_1} [inst : Monoid R] [inst_1 : HasDistribNeg R] {n : ℕ},
+  -1 ≠ 1 → ((-1) ^ n = 1 ↔ Even n)
+@Subgroup.card_subgroup_dvd_card : ∀ {α : Type u_1} [inst : Group α] (s : Subgroup α), Nat.card ↥s ∣ Nat.card α
+@MonoidHom.decidableMemRange : {G : Type u_1} →
+  [inst : Group G] →
+    {N : Type u_2} →
+      [inst_1 : Group N] → (f : G →* N) → [Fintype G] → [DecidableEq N] → DecidablePred fun x => x ∈ f.range
+Nat.tendsto_primeCounting : Filter.Tendsto Nat.primeCounting Filter.atTop Filter.atTop
+@Bertrand.real_main_inequality : ∀ {x : ℝ}, 512 ≤ x → x * (2 * x) ^ √(2 * x) * 4 ^ (2 * x / 3) ≤ 4 ^ x
+Nat.exists_prime_lt_and_le_two_mul_eventually : ∀ (n : ℕ), 512 ≤ n → ∃ p, Nat.Prime p ∧ n < p ∧ p ≤ 2 * n
+Nat.totient_eq_div_primeFactors_mul : ∀ (n : ℕ),
+  n.totient = (n / ∏ p ∈ n.primeFactors, p) * ∏ p ∈ n.primeFactors, (p - 1)
+@Nat.coprime_ordCompl : ∀ {n p : ℕ}, Nat.Prime p → n ≠ 0 → p.Coprime (n / p ^ n.factorization p)
+@Nat.exists_mul_emod_eq_one_of_coprime : ∀ {k n : ℕ}, n.Coprime k → 1 < k → ∃ m, n * m % k = 1
+@ZMod.mod_four_ne_three_of_sq_eq_neg_one : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)] {y : ZMod p}, y ^ 2 = -1 → p % 4 ≠ 3
+legendreSym.eq_pow : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] (a : ℤ), ↑(legendreSym p a) = ↑a ^ (p / 2)
+@ZMod.nonsquare_of_jacobiSym_eq_neg_one : ∀ {a : ℤ} {b : ℕ}, jacobiSym a b = -1 → ¬IsSquare ↑a
+@ZMod.exists_sq_eq_prime_iff_of_mod_four_eq_three : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)]
+  [inst_1 : Fact (Nat.Prime q)], p % 4 = 3 → q % 4 = 3 → p ≠ q → (IsSquare ↑q ↔ ¬IsSquare ↑p)
+@FiniteField.unit_isSquare_iff : ∀ {F : Type u_1} [inst : Field F] [inst_1 : Fintype F],
+  ringChar F ≠ 2 → ∀ (a : Fˣ), IsSquare a ↔ a ^ (Fintype.card F / 2) = 1
+@FiniteField.isSquare_iff : ∀ {F : Type u_1} [inst : Field F] [inst_1 : Fintype F],
+  ringChar F ≠ 2 → ∀ {a : F}, a ≠ 0 → (IsSquare a ↔ a ^ (Fintype.card F / 2) = 1)
+Nat.FermatPsp : ℕ → ℕ → Prop
+Nat.probablePrime_iff_modEq : ∀ (n : ℕ) {b : ℕ}, 1 ≤ b → (n.ProbablePrime b ↔ b ^ (n - 1) ≡ 1 [MOD n])
+@Nat.coprime_of_probablePrime : ∀ {n b : ℕ}, n.ProbablePrime b → 1 ≤ n → 1 ≤ b → n.Coprime b
+@Nat.exists_infinite_pseudoprimes : ∀ {b : ℕ}, 1 ≤ b → ∀ (m : ℕ), ∃ n, n.FermatPsp b ∧ m ≤ n
+ZMod.isCyclic_units_iff : ∀ (n : ℕ),
+  IsCyclic (ZMod n)ˣ ↔ n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 4 ∨ ∃ p m, Nat.Prime p ∧ Odd p ∧ 1 ≤ m ∧ (n = p ^ m ∨ n = 2 * p ^ m)
+@Nat.Coprime.mul_dvd_of_dvd_of_dvd : ∀ {m n a : ℕ}, m.Coprime n → m ∣ a → n ∣ a → m * n ∣ a
+@Nat.Prime.dvd_mul : ∀ {p m n : ℕ}, Nat.Prime p → (p ∣ m * n ↔ p ∣ m ∨ p ∣ n)
+Nat.ordProj_mul_ordCompl_eq_self : ∀ (n p : ℕ), p ^ n.factorization p * (n / p ^ n.factorization p) = n
+@Nat.not_dvd_ordCompl : ∀ {n p : ℕ}, Nat.Prime p → n ≠ 0 → ¬p ∣ n / p ^ n.factorization p
+@exists_prime_orderOf_dvd_card : ∀ {G : Type u_1} [inst : Group G] [inst_1 : Fintype G] (p : ℕ)
+  [hp : Fact (Nat.Prime p)], p ∣ Fintype.card G → ∃ x, orderOf x = p
+@Nat.totient_prime_pow : ∀ {p : ℕ}, Nat.Prime p → ∀ {n : ℕ}, 0 < n → (p ^ n).totient = p ^ (n - 1) * (p - 1)
+@IsUnit.of_pow_eq_one : ∀ {M : Type u_1} [inst : Monoid M] {n : ℕ} {a : M}, a ^ n = 1 → n ≠ 0 → IsUnit a
+@Subgroup.index_ne_zero_of_finite : ∀ {G : Type u_1} [inst : Group G] {H : Subgroup G} [hH : Finite (G ⧸ H)],
+  H.index ≠ 0
+@MonoidHom.mem_range : ∀ {G : Type u_1} [inst : Group G] {N : Type u_2} [inst_1 : Group N] {f : G →* N} {y : N},
+  y ∈ f.range ↔ ∃ x, f x = y
+@Prod.fst_zmod_cast : ∀ {n : ℕ} {R : Type u_1} [inst : AddGroupWithOne R] {S : Type u_2} [inst_1 : AddGroupWithOne S]
+  (a : ZMod n), a.cast.1 = a.cast
+@Prod.snd_zmod_cast : ∀ {n : ℕ} {R : Type u_1} [inst : AddGroupWithOne R] {S : Type u_2} [inst_1 : AddGroupWithOne S]
+  (a : ZMod n), a.cast.2 = a.cast
+@orderOf_units : ∀ {G : Type u_1} [inst : Monoid G] {y : Gˣ}, orderOf ↑y = orderOf y
+@Nat.Prime.coprime_iff_not_dvd : ∀ {p n : ℕ}, Nat.Prime p → (p.Coprime n ↔ ¬p ∣ n)
+@Real.one_sub_div_pow_le_exp_neg : ∀ {n : ℕ} {t : ℝ}, t ≤ ↑n → (1 - t / ↑n) ^ n ≤ Real.exp (-t)
+Real.add_one_le_exp : ∀ (x : ℝ), x + 1 ≤ Real.exp x
+@mul_inv_cancel_comm : ∀ {G : Type u_1} [inst : CommGroup G] (a b : G), a * b * a⁻¹ = b
+ZMod.natCast_mod : ∀ (a n : ℕ), ↑(a % n) = ↑a
+@ZMod.val_mul : ∀ {n : ℕ} (a b : ZMod n), (a * b).val = a.val * b.val % n
+ZMod.natCast_self : ∀ (n : ℕ), ↑n = 0
+Nat.totient_le : ∀ (n : ℕ), n.totient ≤ n
+Nat.totient_lt : ∀ (n : ℕ), 1 < n → n.totient < n
+Nat.totient_super_multiplicative : ∀ (a b : ℕ), a.totient * b.totient ≤ (a * b).totient
+@ZMod.pow_card_sub_one_eq_one : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)] {a : ZMod p}, a ≠ 0 → a ^ (p - 1) = 1
+@mul_self_eq_one_iff : ∀ {R : Type u_1} [inst : NonAssocRing R] [NoZeroDivisors R] {a : R}, a * a = 1 ↔ a = 1 ∨ a = -1
+@legendreSym.quadratic_reciprocity' : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)] [inst_1 : Fact (Nat.Prime q)],
+  p ≠ 2 → q ≠ 2 → legendreSym q ↑p = (-1) ^ (p / 2 * (q / 2)) * legendreSym p ↑q
+@legendreSym.quadratic_reciprocity_one_mod_four : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)] [inst_1 : Fact (Nat.Prime q)],
+  p % 4 = 1 → q ≠ 2 → legendreSym q ↑p = legendreSym p ↑q
+@legendreSym.quadratic_reciprocity_three_mod_four : ∀ {p q : ℕ} [inst : Fact (Nat.Prime p)]
+  [inst_1 : Fact (Nat.Prime q)], p % 4 = 3 → q % 4 = 3 → legendreSym q ↑p = -legendreSym p ↑q
+Nat.xgcd : ℕ → ℕ → ℤ × ℤ
+Nat.gcdA : ℕ → ℕ → ℤ
+Nat.gcdB : ℕ → ℕ → ℤ
+primorial_le_4_pow : ∀ (n : ℕ), primorial n ≤ 4 ^ n
+Nat.count_succ : ∀ (p : ℕ → Prop) [inst : DecidablePred p] (n : ℕ),
+  Nat.count p (n + 1) = Nat.count p n + if p n then 1 else 0
+EXIT=0
