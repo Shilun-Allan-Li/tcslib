@@ -311,8 +311,8 @@ theorem oneCallFactorer_runAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
     (oneCallFactorer A).runAtL n y r = (A.runAtL n y r).take n := by
   unfold oneCallFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The polynomial `q(n) = 8(n + 1)²` of the weak one-wayness of `f_mult`
 [PS10, Theorem 33.5: `q(n) = 8n²`].
@@ -625,7 +625,7 @@ theorem factoringGen_runAt (n : ℕ) (r : factoringGen.Coins n) :
   rw [NUPPT.runAt_eq]
   unfold factoringGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inParam, NUPPT.advInput]
+  simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- The activation of the sampler on any index: `samplePairOut` of the two `SamplePrime(n)`
 runs on the two halves of the coins. -/
@@ -638,7 +638,7 @@ theorem factoringSampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
   rw [NUPPT.runAt_eq]
   unfold factoringSampler
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [samplePairRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [samplePairRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **The factoring sampler's outputs decode and evaluate honestly** (the clause
 `sample_spec` of `Collection`, [PS10, Definition 41.1 (2)]): at every parameter the output of
@@ -662,7 +662,7 @@ theorem factoringSampler_spec (H : ArithmeticFP) (n : ℕ) (r : factoringGen.Coi
     (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))
   rw [hz]
   refine ⟨z, decodeDistinctPrimes_encode _ z, ?_⟩
-  simp only [encodeDistinctPrimes]
+  simp only [encodeDistinctPrimes_eq]
   rw [mulStr_natToList _ _ _ _ z.p_lt z.q_lt, two_mul]
 
 /-- **The factoring collection** [PS10, Theorem 51.1]: indices `1^n` (`Gen(1^n) = ⟨1^n, []⟩`,
@@ -690,7 +690,7 @@ noncomputable def factoringCollection (H : ArithmeticFP) : Collection where
   eval z := mulStr (pairSndD z)
   eval_poly := H.mul.comp polyTimeComputable_pairSndD
   eval_spec i z := by
-    simp only [pairSndD_pairEncode, encodeDistinctPrimes]
+    simp only [pairSndD_pairEncode, encodeDistinctPrimes_eq]
     rw [mulStr_natToList _ _ _ _ z.p_lt z.q_lt, two_mul]
   sample_spec := factoringSampler_spec H
 
@@ -755,8 +755,8 @@ theorem factoringCollection_eval (H : ArithmeticFP) (z : List Bool) :
 theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
     (r : (factoringCollection H).gen.Coins n) :
     (factoringCollection H).index n r = List.replicate n true := by
-  simp [Collection.index, factoringCollection, factoringGen, NUPPT.runAt_eq,
-    NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam, NUPPT.advInput]
+  simp [Collection.index_eq, factoringCollection, factoringGen, NUPPT.runAt_eq,
+    NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- **The sampler is close to uniform** [PS10, Lemma 51.17 and Theorem 51.1, "sample two
 random prime numbers"]: the decoded output of the factoring collection's sampler is within

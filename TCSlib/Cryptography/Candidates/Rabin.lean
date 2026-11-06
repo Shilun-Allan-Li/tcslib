@@ -369,7 +369,7 @@ theorem oddGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (oddGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold oddGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rabinGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The activation of the Blum generator. -/
 theorem blumGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n) :
@@ -377,7 +377,7 @@ theorem blumGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold blumGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rabinGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The modulus read from a Rabin index is `N`. -/
 @[simp] theorem listToNat_rabinIndexOf {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) :
@@ -432,7 +432,7 @@ def rabinEval (z : List Bool) : List Bool :=
 /-- The evaluator computes `rabinF` on encoded elements. -/
 theorem rabinEval_spec (i : List Bool) (x : (ZMod (rabinMod i))ˣ) :
     rabinEval (pairEncode i (rabinEnc i x)) = rabinF i x := by
-  simp [rabinEval, rabinF, listToNat]
+  simp [rabinEval, rabinF, listToNat_eq]
 
 /-- The evaluator is polynomial-time given modular exponentiation. -/
 theorem polyTimeComputable_rabinEval (H : ArithmeticFP) : PolyTimeComputable rabinEval :=
@@ -636,8 +636,8 @@ theorem rabinFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N : List B
   rw [NUPPT.runAt_eq]
   unfold rabinFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rabinFactorRaw, NUPPT.runAtL, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinFactorRaw, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **Inverting the Rabin collection factors** [PS10, Theorem 61.8 ⇒, Algorithm 62.9]: for
 `n ≥ 3`, the inversion probability of `A` against the Rabin collection is at most twice the
@@ -790,7 +790,7 @@ def blumF (i : List Bool) (x : QR (blumMod i)) : List Bool :=
 /-- The evaluator `rabinEval` computes `blumF` on encoded residues. -/
 theorem blumEval_spec (i : List Bool) (x : QR (blumMod i)) :
     rabinEval (pairEncode i (blumEnc i x)) = blumF i x := by
-  simp [rabinEval, blumF, listToNat]
+  simp [rabinEval, blumF, listToNat_eq]
 
 /-- The permutation of `D_N = QR_N`: squaring [PS10, Theorem 63.10 (1), Claim-63.1] for a
 valid Blum index, the identity of the one-element domain otherwise. -/

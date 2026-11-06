@@ -114,11 +114,11 @@ theorem natToBits_succ_last (k N : ℕ) : natToBits (k + 1) N (Fin.last k) = N.t
 low-order digits). -/
 theorem listToNat_natToList_eq_mod (k N : ℕ) : listToNat (natToList k N) = N % 2 ^ k := by
   induction k generalizing N with
-  | zero => simp [natToList, listToNat, Nat.mod_one]
+  | zero => simp [natToList, listToNat_eq, Nat.mod_one]
   | succ k ih =>
     rw [natToList, List.ofFn_succ', List.concat_eq_append]
     simp only [natToBits_succ_castSucc, natToBits_succ_last]
-    rw [listToNat, List.foldl_concat, ← listToNat, ← natToList, ih, pow_succ', Nat.mod_mul]
+    rw [listToNat_eq, List.foldl_concat, ← listToNat_eq, ← natToList, ih, pow_succ', Nat.mod_mul]
     have h0 : (if N.testBit 0 then 1 else 0) = N % 2 := by
       have := Nat.toNat_testBit N 0
       simp only [pow_zero, Nat.div_one] at this

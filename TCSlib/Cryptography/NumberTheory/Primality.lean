@@ -662,6 +662,11 @@ theorem statClose_samplePrime (n T : ℕ) (hn : 2 ≤ n) {d : Fin n → Bool}
 `bitsToNat`. -/
 def listToNat (w : List Bool) : ℕ := w.foldl (fun a c => 2 * a + if c then 1 else 0) 0
 
+/-- The defining equation of `listToNat`:
+`listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0`. -/
+theorem listToNat_eq (w : List Bool) :
+    listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0 := rfl
+
 /-- `bitsToNat` is `listToNat` of the list of bits. -/
 theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
   rfl
@@ -777,8 +782,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       firstHit E xs = some (xs t)
   | 0, _, t, _, _ => t.elim0
   | T + 1, xs, t, ht, hfirst => by
-    unfold firstHit
-    rw [List.finRange_succ, List.findSome?_cons]
+    rw [firstHit_eq, List.finRange_succ, List.findSome?_cons]
     rcases Fin.eq_zero_or_eq_succ t with rfl | ⟨t', rfl⟩
     · simp [ht]
     · have h0 : ¬ E (xs 0) := hfirst 0 (Fin.succ_pos t')
@@ -786,7 +790,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       rw [List.findSome?_map]
       have ih := firstHit_eq_some_of_first E (fun s => xs s.succ) t' ht
         (fun s hs => hfirst s.succ (Fin.succ_lt_succ_iff.2 hs))
-      unfold firstHit at ih
+      rw [firstHit_eq] at ih
       exact ih
 
 /-- Along the orbit from `⟨1^n, rs⟩`, the acceptance test at round `i` tests block `i`. -/
@@ -908,10 +912,10 @@ theorem exists_samplePrime_nuppt
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   have h1 : NUPPT.inParam (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.replicate n true := by
-    simp [NUPPT.inParam, NUPPT.advInput]
+    simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
   have h2 : NUPPT.inCoins (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.ofFn r := by
-    simp [NUPPT.inCoins]
+    simp [NUPPT.inCoins_eq]
   simp only [Function.comp_apply, h1, h2]
   exact spFind_eq n r
 

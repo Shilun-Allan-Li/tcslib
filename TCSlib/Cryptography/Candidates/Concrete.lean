@@ -248,7 +248,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
               G (xs i) ∧ f (B (prodFun f m xs) r i) = f (xs i))]
             apply uprob_congr
             rintro ⟨x, xs, r⟩
-            simp [yaoTry, prodFun_update]
+            simp [yaoTry_eq, prodFun_update]
           simp only [hplant]
           rw [sum_uprob_eq_card_mul, Fintype.card_fin]
           let e : α × (Fin m × ((Fin m → α) × ρ)) ≃ Fin m × (α × ((Fin m → α) × ρ)) :=
@@ -487,7 +487,8 @@ theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
 /-- Decoding inverts encoding. -/
 theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
     decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z := by
-  unfold decodeDistinctPrimes encodeDistinctPrimes natToList
+  unfold decodeDistinctPrimes encodeDistinctPrimes
+  rw [natToList_eq, natToList_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, decodeFin_ofFn,
     bitsToNat_natToBits z.p_lt, bitsToNat_natToBits z.q_lt]
   rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q⟩]

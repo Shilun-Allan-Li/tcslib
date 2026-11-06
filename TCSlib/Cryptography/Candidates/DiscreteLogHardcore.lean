@@ -593,7 +593,7 @@ noncomputable def halfPred (i : List Bool) (x : ZMod (expOrd i)) : Bool :=
 concrete layer. -/
 theorem halfPred_eq {i : List Bool} (h : ExpValid i) (x : ZMod (expOrd i)) :
     halfPred i x = decide (2 * x.val < dlP i - 1) := by
-  have := h.1.two_le
+  have := ((expValid_iff i).1 h).1.two_le
   simp only [halfPred, decide_eq_decide]
   omega
 
@@ -606,7 +606,10 @@ def halfStr (z : List Bool) : List Bool :=
 clause of `Collection.HardCore`). -/
 theorem halfStr_spec (i : List Bool) (x : ZMod (expOrd i)) :
     halfStr (pairEncode i (expEnc i x)) = [halfPred i x] := by
-  simp only [halfStr, halfPred, expEnc, dlP, pairFstD_pairEncode, pairSndD_pairEncode,
+  rw [expEnc_eq]
+  unfold halfPred
+  rw [dlP_eq]
+  simp only [halfStr, pairFstD_pairEncode, pairSndD_pairEncode,
     listToNat_natToList (val_lt_two_pow_dlW i x)]
 
 /-- **`half_{p−1}` is polynomial-time computable** (Lem-84.1.0) given the arithmetic bundle.

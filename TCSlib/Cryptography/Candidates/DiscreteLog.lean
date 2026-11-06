@@ -645,7 +645,7 @@ theorem expSampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool) (s : (expS
   rw [NUPPT.runAt_eq]
   unfold expSampler
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [expSampleRaw, NUPPT.inArg, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [expSampleRaw, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **The domain sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2)]; repair of the run-3 audit, P3-1): at every parameter

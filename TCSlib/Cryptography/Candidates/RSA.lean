@@ -572,7 +572,7 @@ theorem rsaGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold rsaGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rsaGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rsaGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The string function of the domain sampler on the raw layout `⟨⟨⟨1^n, ⟨N, e⟩⟩, α⟩, r⟩`:
 `unitSampleStr` on the modulus numeral. -/
@@ -630,7 +630,7 @@ theorem rsaInv_runAt (H : ArithmeticFP) (n : ℕ) (t y : List Bool) (s : (rsaInv
   rw [NUPPT.runAt_eq]
   unfold rsaInv
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rsaInvRaw, NUPPT.inArg, NUPPT.advInput]
+  simp [rsaInvRaw, NUPPT.inArg_eq, NUPPT.advInput_eq]
 
 /-- **The trapdoor inverter decodes to `f⁻¹_{N,e}(y) = y^d`** at every generated index
 (the clause `inv_spec` of `TrapdoorCollection`, [PS10, Theorem 57.2, "`e·d = 1 mod Φ(N)`"]).
@@ -1027,7 +1027,7 @@ theorem rsaFromFactorStep_correct {n : ℕ} (z : DistinctPrimes n) {s : List Boo
   have hv : (y : ZMod (z.p * z.q)).val ^ d % (z.p * z.q) < 2 ^ (2 * n) :=
     (Nat.mod_lt _ (NeZero.pos _)).trans z.mul_lt
   refine ⟨natToBits (2 * n) ((y : ZMod (z.p * z.q)).val ^ d % (z.p * z.q)), ?_, ?_⟩
-  · rw [rsaFromFactorStep, if_pos hpq.1, natToList]
+  · rw [rsaFromFactorStep, if_pos hpq.1, natToList_eq]
     exact decodeFin_ofFn _
   · rw [bitsToNat_natToBits hv, ZMod.natCast_mod, Nat.cast_pow, ZMod.natCast_zmod_val,
       ← Units.val_pow_eq_pow_val, ← Units.val_pow_eq_pow_val, ← pow_mul, mul_comm d e, pow_mul]
