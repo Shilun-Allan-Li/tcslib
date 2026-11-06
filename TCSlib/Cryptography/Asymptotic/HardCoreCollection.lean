@@ -199,6 +199,12 @@ def glPad_domEquiv (m : PolyExpr)
   Equiv.refl _
 
 variable {F} in
+/-- The domain equivalence of the padded collection is the identity on the definition. -/
+theorem glPad_domEquiv_apply (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (F.glPad m henc).D i) : glPad_domEquiv m henc i z = z := rfl
+
+variable {F} in
 /-- The encoding of the padded collection through its domain equivalence `e`:
 `encD'_i z = ⟨encD_i (e z).1, (e z).2⟩`. -/
 theorem glPad_encD (m : PolyExpr)
@@ -358,6 +364,11 @@ def PermCollection.glPad_domEquiv (P : PermCollection) (m : PolyExpr)
     (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool) :=
   Equiv.refl _
 
+/-- The domain equivalence of the padded permutation collection is the identity. -/
+theorem PermCollection.glPad_domEquiv_apply (P : PermCollection) (m : PolyExpr)
+    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (P.glPad m henc).D i) : P.glPad_domEquiv m henc i z = z := rfl
+
 /-- The permutation of the padded permutation collection through its domain equivalence `e`:
 `e⁻¹ ∘ (perm_i × id) ∘ e`. -/
 theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr)
@@ -416,6 +427,11 @@ def TrapdoorCollection.glPad_domEquiv (T : TrapdoorCollection) (m : PolyExpr)
     (i : List Bool) :
     (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool) :=
   Equiv.refl _
+
+/-- The domain equivalence of the padded trapdoor collection is the identity. -/
+theorem TrapdoorCollection.glPad_domEquiv_apply (T : TrapdoorCollection) (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (T.glPad m henc).D i) : T.glPad_domEquiv m henc i z = z := rfl
 
 /-- The trapdoor inverter of the padded trapdoor collection: `ofPolyTimeUniform` of
 `glPadInvFun T` with the coins of `T.inv`. -/
