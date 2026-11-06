@@ -597,7 +597,8 @@ Repair (run-3 audit P8-2): the hypothesis `hbig : G.FullLength` (full length on 
 string, not known to be satisfiable) became `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`; the
 proof discards the short-prime coins, which contribute at most `δ n` to the good-instance set.
 
-**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`.
+**Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`,
+read through `fullDLCollection_encD`.
 *Hard:* by contradiction with `not_negligible_iff` (through the quantifier form
 `Ensemble.indist_iff_exists_negligible`-style of `HardCore`): suppose `A : NUPPT` has
 `1/2 + n^{-c} ≤ E_r[Pr_{x, ρ}[A(1^n, ⟨i, f_i x⟩) = half_i x]]` for infinitely many `n ≥ n₀`.
@@ -606,11 +607,12 @@ a set of coins of probability `≥ ε` has per-instance success `≥ 1/2 + ε`; 
 with `p < 2^{n−1}` (probability `≤ δ n` by `hbig`, and `δ n ≤ ε/2` for large `n` since `δ` is
 negligible) leaves a *good* set of probability `≥ ε/2` (`uprob_not`, `uprob_or_le`). At such an
 index `i = ⟨p, ⟨p−1, g⟩⟩` (valid, `dlW i = n`, `p ≡ 3 (mod 4)`, `2^{n−1} ≤ p < 2^n` on the good
-set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`expOrd_of_valid`), `f_i x` is the numeral of
+set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`fullDLCollection_domEquiv` with
+`fullDLCollection_domEquiv_uprob`, `expOrd_of_valid`), `f_i x` is the numeral of
 `expo g_u x` with `g_u := expUnit` a generator (`orderOf_expUnit`, `IsGenerator` by
 `orderOf_eq_card_of_forall_mem_zpowers`-converse `zpowers_eq_top_of_prime_card`-free counting:
-`Nat.card_zpowers`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so `A`'s per-instance
-success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
+`Nat.card_zpowers`; `fullDLCollection_f`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so
+`A`'s per-instance success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
 `A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`.
 Apply `invProb_dlInverter_ge` with `ε := n^{-c}/2`, `s := ⌊(p−1)/(8n^c)⌋` (so `4s ≤ ε(p−1)`),
 `T := ⌈(p−1)/s⌉` (so `Ts ≥ p − 1`), `k := n` (`s ≤ p − 1 < 2^n`) and `ℓ := 16 n^{2c+1}`
@@ -643,7 +645,7 @@ of uniform (`statClose_sampleBelowL`, with `0 < T < 2^n` and `0 < p − 1 < 2^n`
 for infinitely many `n`, an inverse polynomial, contradicting `hDL B` via `not_negligible_iff`. -/
 theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
-    (fullDLCollection H G).HardCore halfPred := by
+    (fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x) := by
   sorry
 
 end TCSlib.Cryptography.Candidates

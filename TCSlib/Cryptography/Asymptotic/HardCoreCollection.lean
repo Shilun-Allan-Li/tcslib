@@ -455,4 +455,14 @@ theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : P
     (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=
   Collection.OneWay.glPad_hardCore m henc h
 
+/-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**, the predicate read through the
+published domain equivalence `e = T.glPad_domEquiv m henc`: `z ↦ ⟨(e z).1, (e z).2⟩` is
+hard-core for `T.glPad m henc` (the form of `glPad_hardCore` that a consumer states without
+reducing the domain of `T.glPad`; `e` is the identity). -/
+theorem TrapdoorCollection.OneWay.glPad_hardCore_domEquiv {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (h : T.OneWay) :
+    (T.glPad m henc).toCollection.HardCore fun i z => T.glBit i (T.glPad_domEquiv m henc i z) :=
+  h.glPad_hardCore m henc
+
 end TCSlib.Cryptography

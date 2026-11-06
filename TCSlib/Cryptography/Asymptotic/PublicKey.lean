@@ -953,30 +953,36 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
 reading of [PS10, Theorem 104.4] with the hard-core bit supplied by Goldreich–Levin
 ([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
 with encoding length `m(n)` at generated indices, the scheme of Algorithm 104.3 for the padded
-collection `T.glPad m` with the predicate `⟨x, r⟩` is single-bit secure (given its predicate
-evaluator, which always exists: `OneWay.exists_glPad_singleBitSecure`). The cost of `henc`: no
-candidate of the library satisfies it as parametrized (see `Collection.glPad`). -/
+collection `T.glPad m` with the predicate `⟨x, r⟩` (read through the published domain
+equivalence `T.glPad_domEquiv`) is single-bit secure (given its predicate evaluator, which always
+exists: `OneWay.exists_glPad_singleBitSecure`). The cost of `henc`: no candidate of the library
+satisfies it as parametrized (see `Collection.glPad`). -/
 theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection}
     (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
-    (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) :
+    (hT : T.OneWay)
+    (E : (T.glPad m henc).toCollection.PredEvaluator
+      fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) :
     ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
-  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc) (hT.glPad_hardCore m henc)
+  (T.glPad m henc).tdpBitScheme_singleBitSecure E (hT.glPad m henc)
+    (hT.glPad_hardCore_domEquiv m henc)
 
 /-- **Trapdoor permutations give a secure single-bit public-key encryption scheme**, without a
 supplied evaluator — the text's reading of [PS10, Theorem 104.4] through Goldreich–Levin
 ([PS10, Theorem 87.3], collection form): for a collection of one-way trapdoor permutations `T`
 with encoding length `m(n)` at generated indices (`henc`; see `Collection.glPad` for its cost),
-some predicate evaluator `E` of `⟨x, r⟩` on `T.glPad m` makes the scheme of Algorithm 104.3
-single-bit secure. The evaluator comes from the hard-core predicate
-(`Collection.HardCore.nonempty_predEvaluator`, canonical decoding). -/
+some predicate evaluator `E` of `⟨x, r⟩` (read through `T.glPad_domEquiv`) on `T.glPad m` makes
+the scheme of Algorithm 104.3 single-bit secure. The evaluator comes from the hard-core predicate
+(`TrapdoorCollection.OneWay.glPad_hardCore_domEquiv`, `Collection.HardCore.nonempty_predEvaluator`,
+canonical decoding). -/
 theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection}
     (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
     (hT : T.OneWay) :
-    ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit,
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator
+        fun i z => T.glBit i (T.glPad_domEquiv m henc i z),
       ((T.glPad m henc).tdpBitScheme E).SingleBitSecure :=
-  let ⟨E⟩ := (hT.glPad_hardCore m henc).nonempty_predEvaluator
+  let ⟨E⟩ := (hT.glPad_hardCore_domEquiv m henc).nonempty_predEvaluator
   ⟨E, hT.glPad_tdpBitScheme_singleBitSecure m henc E⟩
 
 end TCSlib.Cryptography
