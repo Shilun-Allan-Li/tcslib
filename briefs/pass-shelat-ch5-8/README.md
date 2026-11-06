@@ -1,3 +1,5 @@
+> **Maintainer hand-off (2026-11-07): start with [`MAINTAINER-HANDOFF.md`](MAINTAINER-HANDOFF.md)** (and `AGENTS.md`/`CLAUDE.md` in this folder). The text below is the original 2026-11-04 planning note, kept for history.
+
 # Pass–shelat ch. 5–8: start here
 
 Planning documents for formalizing Chapters 5–8 of [PS10] R. Pass, a. shelat, *A Course in
