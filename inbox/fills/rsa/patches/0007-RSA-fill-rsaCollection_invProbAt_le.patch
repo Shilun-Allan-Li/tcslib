@@ -1,0 +1,441 @@
+From ea4b3601a60f4fc97fce36442f6704b83729f02e Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 15:07:56 +0000
+Subject: [PATCH 7/7] RSA: fill rsaCollection_invProbAt_le
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/RSA.lean | 399 +++++++++++++++++++++++-
+ 1 file changed, 390 insertions(+), 9 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index f749b5d6..b26aa57d 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -1856,6 +1856,361 @@ theorem rsaBreaker_runAt (A : NUPPT) (n : ℕ) (N e y : List Bool) (r : (rsaBrea
+     NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+     pairSndD_pairEncode]
+ 
++/-! ### The inversion experiment against the RSA experiment (helpers of `rsaCollection_invProbAt_le`) -/
++
++/-- The modulus of generated parameters is nonzero. -/
++private instance rsa_neZero_N {m : ℕ} (P : RSAParams m) : NeZero P.N := DistinctPrimes.neZero_mul P.z
++
++/-- The RSA event of `A` at modulus `M`, exponent `e` and challenge and coins `ρ = (y, ω)`: the
++answer of `A` on `⟨⟦M⟧, ⟨⟦e⟧, ⟦y⟧⟩⟩` (`2n`-bit numerals) decodes to a `2n`-bit `x` with
++`x^e = y` in `Z_M`. -/
++private def rsa_T (A : NUPPT) (n M e : ℕ) (ρ : (ZMod M)ˣ × A.Coins n) : Prop :=
++  ∃ x : Fin (2 * n) → Bool,
++    decodeFin (2 * n) (A.runAt n (pairEncode (natToList (2 * n) M)
++      (pairEncode (natToList (2 * n) e) (natToList (2 * n) (ρ.1 : ZMod M).val))) ρ.2) = some x ∧
++    ((bitsToNat x : ℕ) : ZMod M) ^ e = (ρ.1 : ZMod M)
++
++/-- The RSA success probability of `A` at modulus `M` and exponent `e`, over the challenge
++`y ∈ Z_M^*` and the coins. -/
++private noncomputable def rsa_g (A : NUPPT) (n M e : ℕ) [NeZero M] : ℝ := uprob (rsa_T A n M e)
++
++/-- `rsa_g` depends on the modulus only through its value (the `NeZero` instances agree). -/
++private theorem rsa_g_congr (A : NUPPT) (n e : ℕ) {M M' : ℕ} (h : M = M') [NeZero M] [NeZero M'] :
++    rsa_g A n M e = rsa_g A n M' e := by
++  subst h
++  rfl
++
++/-- The encoding of the domain of the RSA collection is injective: `rsaF i` is the encoding of
++the permutation `rsaPermAt i` (`rsaF_perm`, `rsaDec_rsaEnc`). -/
++private theorem rsa_rsaF_injective (i : List Bool) : Function.Injective (rsaF i) := by
++  intro x x' h
++  rw [rsaF_perm, rsaF_perm] at h
++  have h' := congrArg (rsaDec i) h
++  rw [rsaDec_rsaEnc, rsaDec_rsaEnc, Option.some.injEq] at h'
++  exact (rsaPermAt i).injective h'
++
++/-- **An inversion is an RSA success** (step (o) of `rsaCollection_invProbAt_le`): at the index
++`i = ⟨N, e⟩` generated from `P` (`n ≥ 2`), if `A(1^n, ⟨i, f_i(u)⟩; ω)` decodes to a preimage of
++`f_i(u)`, then `A' = rsaBreaker A` succeeds on the challenge `y = u^e` with the coins
++`φ⁻¹ ω`.
++
++**Proof sketch.** The preimage is `u` (`rsa_rsaF_injective`), so the answer is
++`rsaEnc i u = ⟦u⟧_{2n}` (`rsaEnc_of_rsaDec`, valid index); `A'` re-pairs its input into
++`⟨⟨⟦N⟧, ⟦e⟧⟩, ⟦u^e⟧⟩ = ⟨i, f_i(u)⟩` (`rsaBreaker_runAt`, `rsaF_perm`), and the decoded answer
++`x = ⟦u⟧` satisfies `x^e = u^e` (`bitsToNat_natToBits`, `ZMod.natCast_zmod_val`). -/
++private theorem rsa_inv_imp {n : ℕ} (hn : 2 ≤ n) (A : NUPPT) (P : RSAParams (max n 2))
++    (u : (ZMod (rsaMod (rsaIndexOf _ P)))ˣ) (ω : A.Coins n)
++    (h : ∃ x', rsaDec (rsaIndexOf _ P)
++        (A.runAt n (pairEncode (rsaIndexOf _ P) (rsaF (rsaIndexOf _ P) u)) ω) = some x' ∧
++      rsaF (rsaIndexOf _ P) x' = rsaF (rsaIndexOf _ P) u) :
++    rsa_T (rsaBreaker A) n (rsaMod (rsaIndexOf _ P)) P.e
++      (rsaPermAt (rsaIndexOf _ P) u, (rsaBreaker_coinsEquiv A n).symm ω) := by
++  obtain ⟨x', hx', hf⟩ := h
++  rw [rsa_rsaF_injective _ hf] at hx'
++  have hv := rsaValid_indexOf _ P
++  have hmx : max n 2 = n := max_eq_left hn
++  have hlen : (pairFstD (rsaIndexOf _ P)).length = 2 * n := by
++    rw [rsaIndexOf, pairFstD_pairEncode, length_natToList, hmx]
++  have hw := rsaEnc_of_rsaDec hx'
++  rw [rsaEnc, rsaEncVal, if_pos hv, hlen] at hw
++  have hfu : rsaF (rsaIndexOf _ P) u = natToList (2 * n)
++      ((rsaPermAt (rsaIndexOf _ P) u : ZMod (rsaMod (rsaIndexOf _ P)))).val := by
++    rw [rsaF_perm, rsaEnc, rsaEncVal, if_pos hv, hlen]
++  have hi : pairEncode (natToList (2 * n) (rsaMod (rsaIndexOf _ P))) (natToList (2 * n) P.e) =
++      rsaIndexOf _ P := by
++    have h2 : 2 * max n 2 = 2 * n := by rw [hmx]
++    rw [rsaMod_indexOf, rsaIndexOf, h2]
++  have hlt : (u : ZMod (rsaMod (rsaIndexOf _ P))).val < 2 ^ (2 * n) := hlen ▸ val_lt_two_pow _ u
++  refine ⟨natToBits (2 * n) (u : ZMod (rsaMod (rsaIndexOf _ P))).val, ?_, ?_⟩
++  · rw [rsaBreaker_runAt, Equiv.apply_symm_apply, hi, ← hfu, ← hw, natToList_eq]
++    exact decodeFin_ofFn _
++  · have he : rsaE (rsaIndexOf _ P) = P.e := rsaE_indexOf _ P
++    rw [bitsToNat_natToBits hlt, ZMod.natCast_zmod_val, rsaPermAt, dif_pos hv, rsaPerm_apply, he,
++      Units.val_pow_eq_pow_val]
++
++/-- **The inversion probability at one generated index is at most an RSA probability**: for
++`n ≥ 2`, the inner probability of `invProbAt` at the coins `r` of the generator is at most the
++RSA success probability of `rsaBreaker A` at the modulus `N` and exponent `e` of
++`rsaGenParams n r`.
++
++**Proof sketch.** Read the domain through `rsaCollection_domEquiv` (`uprob_comp_equiv`); by
++`rsa_inv_imp` the inversion event at `(u, ω)` implies the RSA event at
++`(u^e, φ⁻¹ ω)`, and `(u, ω) ↦ (u^e, φ⁻¹ ω)` is a bijection (`rsaPermAt`,
++`rsaBreaker_coinsEquiv`); the modulus `rsaMod i` is `N` (`rsaMod_indexOf`, `rsa_g_congr`). -/
++private theorem rsa_inner_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n)
++    (r : (rsaCollection H).gen.Coins n) :
++    (uprob fun z : (rsaCollection H).D ((rsaCollection H).index n r) × A.Coins n =>
++      ∃ x', (rsaCollection H).decD ((rsaCollection H).index n r)
++          (A.runAt n (pairEncode ((rsaCollection H).index n r)
++            ((rsaCollection H).f ((rsaCollection H).index n r) z.1)) z.2) = some x' ∧
++        (rsaCollection H).f ((rsaCollection H).index n r) x' =
++          (rsaCollection H).f ((rsaCollection H).index n r) z.1) ≤
++      rsa_g (rsaBreaker A) n (rsaGenParams n (List.ofFn r)).N (rsaGenParams n (List.ofFn r)).e := by
++  rw [rsaCollection_index]
++  generalize rsaGenParams n (List.ofFn r) = P
++  set φ := rsaCollection_domEquiv H (rsaIndexOf _ P)
++  rw [← rsa_g_congr (rsaBreaker A) n P.e (rsaMod_indexOf _ P), rsa_g]
++  refine le_of_le_of_eq ?_ (uprob_comp_equiv (Equiv.prodCongr (rsaPermAt (rsaIndexOf _ P))
++      (rsaBreaker_coinsEquiv A n).symm) _)
++  rw [← uprob_comp_equiv (Equiv.prodCongr φ.symm (Equiv.refl (A.Coins n)))]
++  apply uprob_mono
++  rintro ⟨u, ω⟩ h
++  simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply, rsaCollection_f,
++    rsaCollection_decD] at h ⊢
++  obtain ⟨x', hx', hf⟩ := h
++  rw [Option.map_eq_some_iff] at hx'
++  obtain ⟨v, hv, rfl⟩ := hx'
++  rw [Equiv.apply_symm_apply] at hf
++  exact rsa_inv_imp hn A P u ω ⟨v, hv, hf⟩
++
++/-- The selection of the generator's primes from the two runs' values `(a, b)` at width `k`:
++`(a, b)` if both are primes below `2^k` and distinct, the fallback `(2, 3)` otherwise. -/
++private def rsa_zsel (k : ℕ) (ab : ℕ × ℕ) : ℕ × ℕ :=
++  if ab.1.Prime ∧ ab.2.Prime ∧ ab.1 ≠ ab.2 ∧ ab.1 < 2 ^ k ∧ ab.2 < 2 ^ k then ab else (2, 3)
++
++/-- **The generator's primes are the selection of the two runs' values** (`rsaGenParams`, its
++fallback `DistinctPrimes.default`). -/
++private theorem rsa_genParams_z (m : ℕ) (r : List Bool) :
++    ((rsaGenParams m r).z.p, (rsaGenParams m r).z.q) = rsa_zsel (max m 2)
++      (listToNat (samplePrimeL (max m 2) (r.take (samplePrimeCoins.eval (max m 2)))),
++        listToNat (samplePrimeL (max m 2) ((r.drop (samplePrimeCoins.eval (max m 2))).take
++          (samplePrimeCoins.eval (max m 2))))) := by
++  unfold rsaGenParams
++  dsimp only
++  split
++  · next hc =>
++    rw [rsa_zsel, if_pos hc, DistinctPrimes.p_eq, DistinctPrimes.q_eq]
++  · next hc =>
++    rw [rsa_zsel, if_neg hc, DistinctPrimes.default_p, DistinctPrimes.default_q]
++
++/-- The pair of distinct primes of a selected pair (for `2 ≤ k`): the selection when it is
++valid, `DistinctPrimes.default` otherwise. -/
++private def rsa_zOf {k : ℕ} (hk : 2 ≤ k) (ab : ℕ × ℕ) : DistinctPrimes k :=
++  if h : ab.1.Prime ∧ ab.2.Prime ∧ ab.1 ≠ ab.2 ∧ ab.1 < 2 ^ k ∧ ab.2 < 2 ^ k then
++    ⟨(⟨⟨ab.1, h.2.2.2.1⟩, h.1⟩, ⟨⟨ab.2, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩
++  else DistinctPrimes.default hk
++
++/-- The primes of `rsa_zOf` are the selection: `((rsa_zOf ab).p, (rsa_zOf ab).q) = rsa_zsel k ab`. -/
++private theorem rsa_zOf_pq {k : ℕ} (hk : 2 ≤ k) (ab : ℕ × ℕ) :
++    ((rsa_zOf hk ab).p, (rsa_zOf hk ab).q) = rsa_zsel k ab := by
++  unfold rsa_zOf rsa_zsel
++  split
++  · next hc => rw [DistinctPrimes.p_eq, DistinctPrimes.q_eq]
++  · next hc => rw [DistinctPrimes.default_p, DistinctPrimes.default_q]
++
++/-- A pair of distinct primes is its own selection: `rsa_zOf (z.p, z.q) = z`. -/
++private theorem rsa_zOf_self {k : ℕ} (hk : 2 ≤ k) (z : DistinctPrimes k) : rsa_zOf hk (z.p, z.q) = z := by
++  have hc : (z.p, z.q).1.Prime ∧ (z.p, z.q).2.Prime ∧ (z.p, z.q).1 ≠ (z.p, z.q).2 ∧
++      (z.p, z.q).1 < 2 ^ k ∧ (z.p, z.q).2 < 2 ^ k := ⟨z.p_prime, z.q_prime, z.p_ne_q, z.p_lt, z.q_lt⟩
++  have h := rsa_zOf_pq hk (z.p, z.q)
++  rw [rsa_zsel, if_pos hc, Prod.mk.injEq] at h
++  exact DistinctPrimes.ext h.1 h.2
++
++/-- Splitting a coin string `Fin (a + b) → Bool` into its two segments (`Fin.append`). -/
++private def rsa_appendEquiv (a b : ℕ) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin (a + b) → Bool) where
++  toFun s := Fin.append s.1 s.2
++  invFun f := (fun i => f (Fin.castAdd b i), fun j => f (Fin.natAdd a j))
++  left_inv s := by
++    obtain ⟨s1, s2⟩ := s
++    ext i
++    · exact Fin.append_left s1 s2 i
++    · exact Fin.append_right s1 s2 i
++  right_inv f := Fin.append_castAdd_natAdd
++
++/-- The coin length of the generator: `2 · 2n³ + T(n) B(n) = rsaGenCoins(n)`. -/
++private theorem rsa_genCoins_len (n : ℕ) :
++    2 * (2 * n ^ 2 * n) + rsaSampleCoins.eval n = rsaGenCoins.eval n := by
++  rw [rsaGenCoins, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, eval_samplePrimeCoins]
++
++/-- The coin polynomial of the collection's generator is `rsaGenCoins`. -/
++private theorem rsa_coins_gen (H : ArithmeticFP) : (rsaCollection H).gen.coins = rsaGenCoins := by
++  rw [rsaCollection_gen]
++  unfold rsaGen
++  exact NUPPT.coins_ofPolyTimeUniform _ _
++
++/-- The generator's coins are the two prime segments (`2 · 2n³` bits) followed by the exponent
++segment: the equivalence `(Fin (2 · 2n³) → Bool) × (Fin (T(n) B(n)) → Bool) ≃ (rsaGen H).Coins n`
++with `ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂`. -/
++private noncomputable def rsa_genCoinsEquiv (H : ArithmeticFP) (n : ℕ) :
++    (Fin (2 * (2 * n ^ 2 * n)) → Bool) × (Fin (rsaSampleCoins.eval n) → Bool) ≃
++      (rsaCollection H).gen.Coins n :=
++  (rsa_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rsa_genCoins_len n)) (Equiv.refl Bool)).trans
++    (NUPPT.coinsEquivPoly (rsa_coins_gen H) n).symm)
++
++/-- The coin string of the split coins is the concatenation of the segments. -/
++private theorem rsa_genCoinsEquiv_ofFn (H : ArithmeticFP) (n : ℕ)
++    (s : (Fin (2 * (2 * n ^ 2 * n)) → Bool) × (Fin (rsaSampleCoins.eval n) → Bool)) :
++    List.ofFn (rsa_genCoinsEquiv H n s) = List.ofFn s.1 ++ List.ofFn s.2 := by
++  unfold rsa_genCoinsEquiv
++  rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
++  rw [show ((finCongr (rsa_genCoins_len n)).arrowCongr (Equiv.refl Bool))
++      ((rsa_appendEquiv _ _) s) = fun i => (rsa_appendEquiv _ _) s (Fin.cast (rsa_genCoins_len n).symm i)
++    from rfl, ← List.ofFn_congr (rsa_genCoins_len n)]
++  exact List.ofFn_fin_append _ _
++
++/-- The values of the two prime runs on the prime segment `s₁` of `2 · 2n³` coins (the sampler of
++S2). -/
++private def rsa_pr (n : ℕ) (s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool) : ℕ × ℕ :=
++  (listToNat (samplePrimeL n ((List.ofFn s₁).take (2 * n ^ 2 * n))),
++    listToNat (samplePrimeL n ((List.ofFn s₁).drop (2 * n ^ 2 * n))))
++
++/-- The exponent sampled modulo `Φ(pq)` from the exponent segment `s₂` (the sampler of S3). -/
++private def rsa_eNum {n : ℕ} (z : DistinctPrimes n) (s₂ : Fin (rsaSampleCoins.eval n) → Bool) : ℕ :=
++  (sampleUnitL (Nat.totient (z.p * z.q)) (Nat.size (Nat.totient (z.p * z.q))) (rsaBlock.eval n)
++    (rsaTrials.eval n) (List.ofFn s₂)).getD (1 % Nat.totient (z.p * z.q))
++
++/-- **The generator on split coins** (`n ≥ 2`): on `E (s₁, s₂)` the modulus is `pq` for the pair
++`z = rsa_zOf (rsa_pr s₁)` and the exponent is `rsa_eNum z s₂`, so the RSA probability at the
++generated parameters is the one at `(z, rsa_eNum z s₂)`.
++
++**Proof sketch.** `ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂` (`rsa_genCoinsEquiv_ofFn`), so the
++two prime runs read `s₁` (`List.take_append_of_le_length`, `List.drop_append_of_le_length`,
++`List.take_of_length_le`) and the exponent run reads `s₂` (`List.drop_left'`);
++`rsa_genParams_z`, `rsa_zOf_pq` and `max n 2 = n` identify the primes, and the fallback of the
++exponent is `1 = 1 mod Φ` (`DistinctPrimes.one_lt_totient`); `rsa_g_congr`. -/
++private theorem rsa_g_split (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n)
++    (s : (Fin (2 * (2 * n ^ 2 * n)) → Bool) × (Fin (rsaSampleCoins.eval n) → Bool)) :
++    rsa_g A n (rsaGenParams n (List.ofFn (rsa_genCoinsEquiv H n s))).N
++        (rsaGenParams n (List.ofFn (rsa_genCoinsEquiv H n s))).e =
++      rsa_g A n ((rsa_zOf hn (rsa_pr n s.1)).p * (rsa_zOf hn (rsa_pr n s.1)).q)
++        (rsa_eNum (rsa_zOf hn (rsa_pr n s.1)) s.2) := by
++  rw [rsa_genCoinsEquiv_ofFn]
++  obtain ⟨s₁, s₂⟩ := s
++  have hmx : max n 2 = n := max_eq_left hn
++  have hL1 : (List.ofFn s₁).length = 2 * (2 * n ^ 2 * n) := List.length_ofFn
++  have hz := rsa_genParams_z n (List.ofFn s₁ ++ List.ofFn s₂)
++  have hsel : rsa_zsel (max n 2)
++      (listToNat (samplePrimeL (max n 2) ((List.ofFn s₁ ++ List.ofFn s₂).take
++        (samplePrimeCoins.eval (max n 2)))),
++        listToNat (samplePrimeL (max n 2) (((List.ofFn s₁ ++ List.ofFn s₂).drop
++          (samplePrimeCoins.eval (max n 2))).take (samplePrimeCoins.eval (max n 2))))) =
++      ((rsa_zOf hn (rsa_pr n s₁)).p, (rsa_zOf hn (rsa_pr n s₁)).q) := by
++    rw [rsa_zOf_pq, rsa_pr, hmx, eval_samplePrimeCoins,
++      List.take_append_of_le_length (by omega), List.drop_append_of_le_length (by omega),
++      List.take_append_of_le_length (by rw [List.length_drop]; omega),
++      List.take_of_length_le (l := (List.ofFn s₁).drop (2 * n ^ 2 * n))
++        (by rw [List.length_drop]; omega)]
++  rw [hsel, Prod.mk.injEq] at hz
++  have hN : (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).N =
++      (rsa_zOf hn (rsa_pr n s₁)).p * (rsa_zOf hn (rsa_pr n s₁)).q := by
++    rw [← hz.1, ← hz.2]
++    rfl
++  have he0 : (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).e =
++      (sampleUnitL (Nat.totient ((rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.p *
++          (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.q))
++        (Nat.size (Nat.totient ((rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.p *
++          (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.q)))
++        (rsaBlock.eval (max n 2)) (rsaTrials.eval (max n 2))
++        ((List.ofFn s₁ ++ List.ofFn s₂).drop (2 * samplePrimeCoins.eval (max n 2)))).getD 1 := rfl
++  have hΦ1 := (rsa_zOf hn (rsa_pr n s₁)).one_lt_totient
++  have he1 : (sampleUnitL (Nat.totient ((rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.p *
++          (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.q))
++        (Nat.size (Nat.totient ((rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.p *
++          (rsaGenParams n (List.ofFn s₁ ++ List.ofFn s₂)).z.q)))
++        (rsaBlock.eval (max n 2)) (rsaTrials.eval (max n 2))
++        ((List.ofFn s₁ ++ List.ofFn s₂).drop (2 * samplePrimeCoins.eval (max n 2)))).getD 1 =
++      rsa_eNum (rsa_zOf hn (rsa_pr n s₁)) s₂ := by
++    rw [rsa_eNum, hz.1, hz.2, hmx, eval_samplePrimeCoins, Nat.mod_eq_of_lt hΦ1,
++      List.drop_left' hL1]
++  rw [he0, he1]
++  exact rsa_g_congr A n _ hN
++
++/-- The RSA probability at a pair `z`, averaged over a uniform exponent `e ∈ Z*_{Φ(N)}`. -/
++private noncomputable def rsa_F (A : NUPPT) (n : ℕ) (z : DistinctPrimes n) : ℝ :=
++  uexp fun eU : (ZMod (Nat.totient (z.p * z.q)))ˣ =>
++    rsa_g A n (z.p * z.q) (eU : ZMod (Nat.totient (z.p * z.q))).val
++
++/-- The RSA probability is the average of `rsa_F` over the pair `z` (`uprob_prod`). -/
++private theorem rsa_rsaProb_eq (A : NUPPT) (n : ℕ) : rsaProb A n = uexp (rsa_F A n) := by
++  unfold rsaProb rsa_F
++  congr 1
++  funext z
++  rw [uprob_prod]
++  rfl
++
++/-- **Step (i): the exponent sampler** (S3 at the modulus `Φ(N)`): for a fixed pair `z`, the
++average over the exponent segment of the RSA probability at the sampled exponent exceeds
++`rsa_F z` by at most `e^{-n}`.
++
++**Proof sketch.** `statClose_sampleUnitL` at `Φ(N)` (`Nat.size Φ(N) ≤ 2n ≤ B(n)`) and
++`StatClose.abs_uprob_sub_le_prod` with the challenge and coins as auxiliary coins; both sides
++are averages of `rsa_g` (`uprob_prod`). -/
++private theorem rsa_step_i (A : NUPPT) {n : ℕ} (z : DistinctPrimes n) :
++    uexp (fun s₂ : Fin (rsaSampleCoins.eval n) → Bool => rsa_g A n (z.p * z.q) (rsa_eNum z s₂)) ≤
++      rsa_F A n z + Real.exp (-(n : ℝ)) := by
++  have hk : Nat.size (Nat.totient (z.p * z.q)) ≤ rsaBlock.eval n := by
++    rw [eval_rsaBlock]
++    exact (Nat.size_le.2 ((Nat.totient_le _).trans_lt z.mul_lt)).trans (by omega)
++  have h := (statClose_sampleUnitL n (Nat.totient (z.p * z.q)) hk).abs_uprob_sub_le_prod
++    (fun e ρ => rsa_T A n (z.p * z.q) e ρ)
++  have e1 : uprob (fun w : (Fin (rsaSampleCoins.eval n) → Bool) × ((ZMod (z.p * z.q))ˣ × A.Coins n) =>
++      rsa_T A n (z.p * z.q) (rsa_eNum z w.1) w.2) =
++      uexp (fun s₂ => rsa_g A n (z.p * z.q) (rsa_eNum z s₂)) := by
++    rw [uprob_prod]
++    rfl
++  have e2 : uprob (fun w : (ZMod (Nat.totient (z.p * z.q)))ˣ × ((ZMod (z.p * z.q))ˣ × A.Coins n) =>
++      rsa_T A n (z.p * z.q) (w.1 : ZMod (Nat.totient (z.p * z.q))).val w.2) = rsa_F A n z := by
++    rw [uprob_prod]
++    rfl
++  have h' : |uprob (fun w : (Fin (rsaSampleCoins.eval n) → Bool) × ((ZMod (z.p * z.q))ˣ × A.Coins n) =>
++      rsa_T A n (z.p * z.q) (rsa_eNum z w.1) w.2) -
++      uprob (fun w : (ZMod (Nat.totient (z.p * z.q)))ˣ × ((ZMod (z.p * z.q))ˣ × A.Coins n) =>
++        rsa_T A n (z.p * z.q) (w.1 : ZMod (Nat.totient (z.p * z.q))).val w.2)| ≤
++      Real.exp (-(n : ℝ)) := h
++  rw [e1, e2] at h'
++  linarith [(abs_le.1 h').2]
++
++/-- The auxiliary coins of the RSA experiment at a pair `z`: exponent, challenge and coins. -/
++private abbrev rsa_Aux (A : NUPPT) (n : ℕ) (z : DistinctPrimes n) : Type :=
++  (ZMod (Nat.totient (z.p * z.q)))ˣ × ((ZMod (z.p * z.q))ˣ × A.Coins n)
++
++/-- Reading one coordinate of a uniform family of independent auxiliary coins is uniform:
++`Pr_{ω ∈ Π_z Aux z}[Q (ω c)] = Pr_{a ∈ Aux c}[Q a]` (`Equiv.piSplitAt`, `uprob_fst`). -/
++private theorem rsa_uprob_pi_eval (A : NUPPT) (n : ℕ) (c : DistinctPrimes n) (Q : rsa_Aux A n c → Prop) :
++    uprob (fun ω : (z : DistinctPrimes n) → rsa_Aux A n z => Q (ω c)) = uprob Q := by
++  have h := uprob_comp_equiv (Equiv.piSplitAt c (rsa_Aux A n)) (fun w => Q w.1)
++  rw [uprob_fst] at h
++  exact h
++
++/-- **Step (ii): the prime sampler** (S2): the average of `rsa_F` over the prime segment, at the
++selected pair, exceeds its average over a uniform pair by at most `2 (1/2)^n + 2n/2^n`.
++
++**Proof sketch.** S2 mapped through the selection `rsa_zOf` (`StatClose.map`; a uniform pair is
++its own selection, `rsa_zOf_self`); `rsa_F z` is a probability over the auxiliary coins
++`ω z` of a uniform family `ω ∈ Π_z Aux z` (`rsa_uprob_pi_eval`, `uprob_prod`), so
++`StatClose.abs_uprob_sub_le_prod` applies with `ω` as the auxiliary coins. -/
++private theorem rsa_step_ii (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
++    uexp (fun s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool => rsa_F A n (rsa_zOf hn (rsa_pr n s₁))) ≤
++      uexp (rsa_F A n) + (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
++  have hX := (statClose_samplePrimeL_pair n hn).map (rsa_zOf hn)
++  rw [show (fun z : DistinctPrimes n => rsa_zOf hn (z.p, z.q)) = fun z => z from
++    funext (rsa_zOf_self hn)] at hX
++  have hX' : StatClose (fun s₁ => rsa_zOf hn (rsa_pr n s₁)) (fun z : DistinctPrimes n => z)
++      (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := hX
++  let R : DistinctPrimes n → ((z : DistinctPrimes n) → rsa_Aux A n z) → Prop := fun γ ω =>
++    rsa_T A n (γ.p * γ.q) ((ω γ).1 : ZMod (Nat.totient (γ.p * γ.q))).val (ω γ).2
++  have hF : ∀ z, rsa_F A n z = uprob (fun ω : (z : DistinctPrimes n) → rsa_Aux A n z => R z ω) := by
++    intro z
++    rw [rsa_uprob_pi_eval A n z (fun a => rsa_T A n (z.p * z.q)
++      (a.1 : ZMod (Nat.totient (z.p * z.q))).val a.2), uprob_prod]
++    rfl
++  have h := hX'.abs_uprob_sub_le_prod R
++  have e1 : uprob (fun w : (Fin (2 * (2 * n ^ 2 * n)) → Bool) × ((z : DistinctPrimes n) → rsa_Aux A n z) =>
++      R (rsa_zOf hn (rsa_pr n w.1)) w.2) =
++      uexp (fun s₁ => rsa_F A n (rsa_zOf hn (rsa_pr n s₁))) := by
++    rw [uprob_prod]
++    congr 1
++    funext s₁
++    rw [hF]
++  have e2 : uprob (fun w : DistinctPrimes n × ((z : DistinctPrimes n) → rsa_Aux A n z) => R w.1 w.2) =
++      uexp (rsa_F A n) := by
++    rw [uprob_prod]
++    congr 1
++    funext z
++    rw [hF]
++  rw [e1, e2] at h
++  linarith [(abs_le.1 h).2]
++
+ /-- **Inverting the RSA collection breaks the RSA assumption** [PS10, proof of Theorem 53.2]:
+ for `n ≥ 2`, the inversion probability of `A` against the RSA collection is at most the RSA
+ probability of `rsaBreaker A` plus the statistical error of the generator.
+@@ -1871,17 +2226,15 @@ inner probability equals the RSA inner probability at `(z, e)`: a number `h(z, e
+ (over `y` and `A`'s coins).
+ The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
+ uniform product: the comparison is a conditional expectation over `z`. Split the generator's
+-coins into the two prime segments and the exponent segment (`rsaGenParams`, `uexp_prod`,
+-`uprob_prod`). (i) For each fixed prime pair `z`, the exponent drawn from the exponent segment
+-(`sampleUnitL` modulo `Φ(N)`, fallback `1`) is within `e^{-n}` of the uniform element of
+-`Z*_{Φ(N)}` (`statClose_rejectBlocksL` with the acceptance rate of the sampleClose sketch), so
++coins into the two prime segments and the exponent segment (`rsaGenParams`,
++`HardcoreBit.uexp_prod`, `uprob_prod`, `HardcoreBit.uexp_comp_equiv`). (i) For each fixed prime pair `z`, the exponent drawn from the exponent segment
++(`sampleUnitL` modulo `Φ(N)`, fallback `1 = 1 mod Φ(N)` as `Φ(N) ≥ 2`) is within `e^{-n}` of
++the uniform element of `Z*_{Φ(N)}` (S3, `statClose_sampleUnitL` at the modulus `Φ(N)`), so
+ the conditional success at `z` exceeds `g(z) := E_{e uniform}[h(z, e)]` by at most `e^{-n}`
+ (`StatClose.abs_uprob_sub_le_prod`, with `(y, r)` as the auxiliary coins). (ii) The law of `z`
+ under the two prime segments is within `2 · 2^{-n} + 2n/2^n` of the uniform law on
+-`DistinctPrimes n` (`statClose_samplePrime` with the prime fallback `natToBits n 2` of
+-`samplePrimeL` — run-3 audit P7-7 — twice and `StatClose.prod` for `(p, q)`, `StatClose.map`
+-through the validity test with `uprob_diag` and `one_div_card_primes_le` for the fallback on
+-`p = q`); averaging the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
++`DistinctPrimes n` (S2, `statClose_samplePrimeL_pair`, mapped through the validity test and
++its fallback `(2, 3)` by `StatClose.map`; a uniform pair passes the test unchanged); averaging the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
+ most that distance (`StatClose.abs_uprob_sub_le_prod` again, with `g(z)` read as a probability
+ over the auxiliary coins `ω : Π z', Z*_{Φ(N')} × Z_{N'}^* × A.Coins n` at `ω z`). (iii) Adding
+ the conditional exponent error, the inversion probability is at most
+@@ -1890,7 +2243,35 @@ the conditional exponent error, the inversion probability is at most
+ beyond `rsaGenErr n` is needed. -/
+ theorem rsaCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
+     (rsaCollection H).invProbAt A n ≤ rsaProb (rsaBreaker A) n + rsaGenErr n := by
+-  sorry
++  rw [Collection.invProbAt_eq]
++  calc _ ≤ uexp (fun r : (rsaCollection H).gen.Coins n => rsa_g (rsaBreaker A) n
++          (rsaGenParams n (List.ofFn r)).N (rsaGenParams n (List.ofFn r)).e) :=
++        OneWay.uexp_mono fun r => rsa_inner_le H A hn r
++    _ = uexp (fun s => rsa_g (rsaBreaker A) n
++          (rsaGenParams n (List.ofFn (rsa_genCoinsEquiv H n s))).N
++          (rsaGenParams n (List.ofFn (rsa_genCoinsEquiv H n s))).e) :=
++        (HardcoreBit.uexp_comp_equiv (rsa_genCoinsEquiv H n) _).symm
++    _ = uexp (fun s : (Fin (2 * (2 * n ^ 2 * n)) → Bool) × (Fin (rsaSampleCoins.eval n) → Bool) =>
++          rsa_g (rsaBreaker A) n ((rsa_zOf hn (rsa_pr n s.1)).p * (rsa_zOf hn (rsa_pr n s.1)).q)
++            (rsa_eNum (rsa_zOf hn (rsa_pr n s.1)) s.2)) := by
++        congr 1
++        funext s
++        exact rsa_g_split H (rsaBreaker A) hn s
++    _ = uexp (fun s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool => uexp fun s₂ : Fin (rsaSampleCoins.eval n) → Bool =>
++          rsa_g (rsaBreaker A) n ((rsa_zOf hn (rsa_pr n s₁)).p * (rsa_zOf hn (rsa_pr n s₁)).q)
++            (rsa_eNum (rsa_zOf hn (rsa_pr n s₁)) s₂)) := HardcoreBit.uexp_prod _
++    _ ≤ uexp (fun s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
++          rsa_F (rsaBreaker A) n (rsa_zOf hn (rsa_pr n s₁)) + Real.exp (-(n : ℝ))) :=
++        OneWay.uexp_mono fun s₁ => rsa_step_i (rsaBreaker A) (rsa_zOf hn (rsa_pr n s₁))
++    _ = uexp (fun s₁ : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
++          rsa_F (rsaBreaker A) n (rsa_zOf hn (rsa_pr n s₁))) + Real.exp (-(n : ℝ)) := by
++        rw [HardcoreBit.uexp_add, OneWay.uexp_const]
++    _ ≤ uexp (rsa_F (rsaBreaker A) n) + (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) +
++          Real.exp (-(n : ℝ)) := by
++        linarith [rsa_step_ii (rsaBreaker A) hn]
++    _ = rsaProb (rsaBreaker A) n + rsaGenErr n := by
++        rw [rsa_rsaProb_eq, rsaGenErr]
++        ring
+ 
+ /-- **Theorem 53.2** [PS10, Theorem 53.2]: under the RSA assumption (and the arithmetic
+ hypotheses), the RSA collection `{f_{N,e}(x) = x^e mod N}` is a collection of one-way
+-- 
+2.43.0
+
