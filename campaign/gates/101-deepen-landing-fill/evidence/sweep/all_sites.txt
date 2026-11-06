@@ -1,0 +1,224 @@
+115:private theorem dpρ_inj : Function.Injective dpρ := Fin.castLE_injective _
+117:private theorem dpρ_ne (r : Fin 18) {r' : Fin 25} (h : 18 ≤ r'.val) : dpρ r ≠ r' := fun e => by
+118:  have h1 : (dpρ r).val = r.val := rfl
+119:  have := r.isLt
+120:  rw [e] at h1
+202:private theorem dp_mem (N : FinNDTM Bool) (j : Fin 5) (V : List Bool) :
+204:  rw [dpOrc, indicator_eq_decide]
+208:private theorem dp_rel (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (hσ : σ 3 = 3) (x : List Bool)
+212:  rw [rel_iff_orc, stepRel_iff_mem, Function.comp_apply, hσ, dp_mem]
+215:private theorem dp_initO (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (hσ : σ 1 = 1) (x : List Bool)
+218:  rw [initO_iff_orc, Function.comp_apply, hσ, dp_mem]
+221:private theorem dp_accO (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (j : Fin 5) (hσ : σ 2 = j)
+224:  rw [accO_iff_orc, Function.comp_apply, hσ, dp_mem]
+233:private theorem dp_pre {l : DpLb c} {v : Fin 25 → ℕ}
+240:private theorem dp_inc {l l' : DpLb c} {r : Fin 25} (h : dpD c l = .inc r l') {v : Fin 25 → ℕ}
+243:  AReach.step ⟨dp_pre (Or.inl ⟨r, l', h⟩), hv⟩ (by rw [astep_inc h]; exact AReach.refl _)
+245:private theorem dp_clr {l l' : DpLb c} {r : Fin 25} (h : dpD c l = .clr r l') {v : Fin 25 → ℕ}
+248:  AReach.step ⟨dp_pre (Or.inr (Or.inl ⟨r, l', h⟩)), hv⟩ (by rw [astep_clr h]; exact AReach.refl _)
+261:private theorem dpSt_ρ (b : Fin 18 → ℕ) (o : Fin 7 → ℕ) (r : Fin 18) :
+263:  simp only [dpSt]
+264:  rw [dif_pos (show (dpρ r).val < 18 from r.isLt)]
+267:private theorem dpSt_own (b : Fin 18 → ℕ) (o : Fin 7 → ℕ) (r : Fin 25) (i : Fin 7)
+269:  simp only [dpSt]
+270:  rw [dif_neg (by omega)]
+273:private theorem dpSt_upd_ρ (b : Fin 18 → ℕ) (o : Fin 7 → ℕ) (r : Fin 18) (a : ℕ) :
+276:  simp only [dpSt, Function.update_apply]
+278:  · rw [dif_pos h, dif_pos h]
+279:    have e : (r' = dpρ r) ↔ ((⟨r'.val, h⟩ : Fin 18) = r) := by
+280:      rw [Fin.ext_iff, Fin.ext_iff]
+282:    simp only [e]
+283:  · rw [dif_neg h, dif_neg h, if_neg]
+285:    exact h (by rw [e]; exact r.isLt)
+287:private theorem dpSt_upd_own (b : Fin 18 → ℕ) (o : Fin 7 → ℕ) (r : Fin 25) (i : Fin 7)
+291:  simp only [dpSt, Function.update_apply]
+293:  · rw [dif_pos h', dif_pos h', if_neg]
+295:    rw [e] at h'
+297:  · rw [dif_neg h', dif_neg h']
+298:    have e : (r' = r) ↔ ((⟨r'.val - 18, by omega⟩ : Fin 7) = i) := by
+299:      rw [Fin.ext_iff, Fin.ext_iff]
+302:    simp only [e]
+304:private theorem dpSt_bd {B : ℕ} {b : Fin 18 → ℕ} {o : Fin 7 → ℕ} (hb : ∀ r, b r ≤ B)
+306:  simp only [dpSt]
+312:private theorem dp_bd_blk {B M : ℕ} {v₂ v' : Fin 25 → ℕ}
+316:  · have e : r' = dpρ ⟨r'.val, h⟩ := rfl
+317:    rw [e]
+319:  · rw [f1 r' (fun r e => h (by rw [← e]; exact r.isLt))]
+329:private theorem dp_copy {src dst : Fin 25} {ex : DpLb c} {k : Fin 7 → DpLb c}
+338:private theorem dp_shl {ex : DpLb c} {k : Fin 9 → DpLb c} (hk : ∀ j, dpD c (k j) = dpShlI ex k j)
+349:private theorem dp_cb_run (f : Bool) : ∀ j i (hi : i < 21), i + j = 20 → ∀ v : Fin 25 → ℕ,
+356:    have r1 := dp_clr (c := c) (o := o) (x := x) (l := .cb f ⟨i, hi⟩) rfl hv
+357:    rw [show dpCbEx (c := c) f ⟨i, hi⟩ = .cS f 0 from dif_neg (by show ¬ i + 1 < 21; omega)]
+362:    simp only [Function.update_apply, Fin.ext_iff, Fin.val_mk]
+366:    have r1 := dp_clr (c := c) (o := o) (x := x) (l := .cb f ⟨i, hi⟩) rfl hv
+367:    rw [show dpCbEx (c := c) f ⟨i, hi⟩ = .cb f ⟨i + 1, by omega⟩ from
+373:    simp only [Function.update_apply, Fin.ext_iff, Fin.val_mk]
+379:private theorem dp_cT_run (f : Bool) : ∀ j i (hi : i < c), i + j + 1 = c → ∀ v : Fin 25 → ℕ,
+387:    have r1 := dp_copy (o := o) (x := x) (k := DpLb.cT f ⟨i, hi⟩) (src := 18) (dst := 19)
+389:    rw [show dpCtEx f ⟨i, hi⟩ = .bS f 0 from dif_neg (by show ¬ i + 1 < c; omega)] at r1
+390:    exact reach_of_eq r1 (by rw [zero_add, one_mul])
+393:    have r1 := dp_copy (o := o) (x := x) (k := DpLb.cT f ⟨i, hi⟩) (src := 18) (dst := 19)
+395:    rw [show dpCtEx f ⟨i, hi⟩ = .cT f ⟨i + 1, by omega⟩ 0 from
+397:    have e18 : Function.update v 19 (v 19 + v 18) 18 = v 18 :=
+400:      (by rw [Function.update_of_ne (by decide)]; exact hZ) (register_update_le _ _ _ _ hv (by nlinarith))
+401:      (by rw [e18, Function.update_self]; nlinarith)) ?_)
+402:    rw [e18, Function.update_self, Function.update_idem]
+408:private theorem dp_bits_logSpace (n : ℕ) : logSpace n ≤ 1 + (Nat.bits n).length ∧
+410:  have h2 : (Nat.bits n).length ≤ logSpace n :=
+412:  rw [Nat.size_eq_bits_len] at h2 ⊢
+413:  exact ⟨by have := logSpace_le_size_succ n; omega, h2, Nat.lt_size_self n⟩
+427:private theorem dp_prep {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List Bool} {B : ℕ}
+436:  have hw1 : s + ℓ + 1 ≤ c * (s + ℓ + 1) := Nat.le_mul_of_pos_left _ hc
+437:  have hw2 : c * (s + ℓ + 1) < 2 ^ (c * (s + ℓ + 1)) := Nat.lt_two_pow_self
+439:  have hwB : w ≤ B := by omega
+441:  have r1 := dp_cb_run (c := c) (o := o) (x := x) (B := B) f 20 0 (by omega) rfl v hv
+443:  have e1 : (fun r : Fin 25 => if 0 ≤ r.val ∧ r.val < 21 then 0 else v r) =
+446:    simp only [dpSt, ho1]
+448:    · rw [dif_pos h1, if_pos ⟨Nat.zero_le _, by omega⟩]
+449:    · rw [dif_neg h1]
+451:      · rw [if_pos ⟨Nat.zero_le _, h2⟩, if_pos (show r.val - 18 < 3 by omega)]
+452:      · rw [if_neg (fun h => h2 h.2), if_neg (show ¬ r.val - 18 < 3 by omega)]
+454:  rw [e1] at r1
+455:  have o1L : o1 4 = ℓ := hL
+456:  have o1S : o1 5 = s := hS
+457:  have o1Z : o1 6 = 0 := hZ
+458:  have o1b : ∀ i, o1 i ≤ B := fun i => by
+459:    simp only [ho1]
+462:  have b0 : ∀ r : Fin 18, (fun _ => 0 : Fin 18 → ℕ) r ≤ B := fun _ => Nat.zero_le _
+464:  have r2 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.cS f) (src := 23) (dst := 18) (fun _ => rfl)
+466:    (by rw [dpSt_own _ _ 24 6 rfl]; exact o1Z) (dpSt_bd b0 o1b)
+467:    (by rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 23 5 rfl, o1S]; exact (show (0 : ℕ) + s ≤ B by omega))
+468:  rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 23 5 rfl, o1S, dpSt_upd_own _ _ 18 0 rfl,
+469:    show o1 0 + s = s from by simp [ho1]] at r2
+472:  have o2b : ∀ i, o2 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
+473:  have r3 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.cL f) (src := 22) (dst := 18) (fun _ => rfl)
+475:    (by rw [dpSt_own _ _ 24 6 rfl, ho2, Function.update_of_ne (by decide)]; exact o1Z)
+477:    (by rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 22 4 rfl, ho2, Function.update_self,
+479:  rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 22 4 rfl, dpSt_upd_own _ _ 18 0 rfl, ho2,
+484:  have o3b : ∀ i, o3 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
+485:  have r4 := dp_inc (c := c) (o := o) (x := x) (l := .tInc f) rfl (dpSt_bd b0 o3b)
+486:  rw [dpSt_own _ _ 18 0 rfl, dpSt_upd_own _ _ 18 0 rfl, ho3, Function.update_self,
+490:  have o4b : ∀ i, o4 i ≤ B := register_update_le _ _ _ _ o1b (by omega)
+491:  have o4T : o4 0 = s + ℓ + 1 := Function.update_self _ _ _
+492:  have o4W : o4 1 = 0 := by rw [ho4, Function.update_of_ne (by decide)]; rfl
+493:  have r5 := dp_cT_run (c := c) (o := o) (x := x) (B := B) f (c - 1) 0 hc (by omega)
+495:    (by rw [dpSt_own _ _ 24 6 rfl, ho4, Function.update_of_ne (by decide)]; exact o1Z)
+497:    (by rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 19 1 rfl, o4T, o4W,
+499:  rw [dpSt_own _ _ 18 0 rfl, dpSt_own _ _ 19 1 rfl, o4T, o4W, Nat.sub_add_cancel hc, hw,
+503:  have o5b : ∀ i, o5 i ≤ B := register_update_le _ _ _ _ o4b hwB
+504:  have o5S : o5 5 = s := by
+505:    rw [ho5, ho4, Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+507:  have o5W : o5 1 = w := Function.update_self _ _ _
+508:  have o5C : o5 2 = 0 := by
+509:    rw [ho5, ho4, Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+511:  have o5Z : o5 6 = 0 := by
+512:    rw [ho5, ho4, Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+514:  have Z5 : ∀ b : Fin 18 → ℕ, dpSt b o5 24 = 0 := fun b => by
+515:    rw [dpSt_own _ _ 24 6 rfl]; exact o5Z
+516:  have r6 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.bS f) (src := 23) (dst := dpρ rs)
+518:    (dpSt_bd b0 o5b) (by rw [dpSt_ρ, dpSt_own _ _ 23 5 rfl, o5S]; show 0 + s ≤ B; omega)
+519:  rw [dpSt_ρ, dpSt_own _ _ 23 5 rfl, o5S, dpSt_upd_ρ] at r6
+520:  simp only [zero_add] at r6
+523:  have b1b : ∀ r, b1 r ≤ B := register_update_le _ _ _ _ b0 (by omega)
+524:  have r7 := dp_clr (c := c) (o := o) (x := x) (l := .zW f) rfl (dpSt_bd b1b o5b)
+525:  rw [dpSt_upd_ρ] at r7
+526:  have r8 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.bW f) (src := 19) (dst := dpρ rw)
+529:    (by rw [dpSt_ρ, dpSt_own _ _ 19 1 rfl, o5W, Function.update_self]; omega)
+530:  rw [dpSt_ρ, dpSt_own _ _ 19 1 rfl, o5W, Function.update_self, zero_add, dpSt_upd_ρ,
+534:  have b2b : ∀ r, b2 r ≤ B := register_update_le _ _ _ _ b1b hwB
+535:  have r9 := dp_clr (c := c) (o := o) (x := x) (l := .zK f) rfl (dpSt_bd b2b o5b)
+536:  rw [dpSt_upd_ρ] at r9
+537:  have r10 := dp_inc (c := c) (o := o) (x := x) (l := .kOne f) rfl
+539:  rw [dpSt_ρ, Function.update_self, zero_add, dpSt_upd_ρ, Function.update_idem] at r10
+542:  have b3b : ∀ r, b3 r ≤ B := register_update_le _ _ _ _ b2b (by omega)
+543:  have r11 := dp_copy (c := c) (o := o) (x := x) (k := DpLb.cC f) (src := 19) (dst := 20) (fun _ => rfl)
+545:    (by rw [dpSt_own _ _ 20 2 rfl, dpSt_own _ _ 19 1 rfl, o5W, o5C]; omega)
+546:  rw [dpSt_own _ _ 20 2 rfl, dpSt_own _ _ 19 1 rfl, o5W, o5C, zero_add,
+550:  have o6b : ∀ i, o6 i ≤ B := register_update_le _ _ _ _ o5b hwB
+551:  have r12 := dp_shl (c := c) (o := o) (x := x) (k := DpLb.sh f) (ex := .zU f) (fun _ => rfl)
+553:    (by rw [dpSt_own _ _ 24 6 rfl, ho6, Function.update_of_ne (by decide)]; exact o5Z)
+555:    (by rw [dpSt_ρ, dpSt_own _ _ 20 2 rfl, ho6, Function.update_self, hb3,
+557:  rw [dpSt_ρ, dpSt_own _ _ 20 2 rfl, ho6, Function.update_self, hb3, Function.update_self,
+563:  have b4b : ∀ r, b4 r ≤ B := register_update_le _ _ _ _ b2b hB
+564:  have o7b : ∀ i, o7 i ≤ B := register_update_le _ _ _ _ o5b (Nat.zero_le _)
+565:  have r13 := dp_clr (c := c) (o := o) (x := x) (l := .zU f) rfl (dpSt_bd b4b o7b)
+566:  rw [dpSt_upd_ρ] at r13
+567:  have r14 := dp_clr (c := c) (o := o) (x := x) (l := .zV f) rfl
+569:  rw [dpSt_upd_ρ] at r14
+570:  have r15 := dp_clr (c := c) (o := o) (x := x) (l := .zM f) rfl
+572:  rw [dpSt_upd_ρ] at r15
+577:  · rw [dpSt_own _ _ 22 4 rfl, ho7, ho5, ho4, Function.update_of_ne (by decide),
+580:  · rw [dpSt_own _ _ 23 5 rfl, ho7, Function.update_of_ne (by decide)]
+582:  · rw [dpSt_own _ _ 24 6 rfl, ho7, Function.update_of_ne (by decide)]
+597:private theorem dp_fit (N : FinNDTM Bool) {c : ℕ} (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+610:  have hR : RegExt dpρ v' _ v' := ⟨hv, fun _ _ => rfl⟩
+611:  rw [← setSt_toV, ← outerSt_toV] at hR
+612:  have hrun := outerU_run (E := 0) (orc := dpOrc N ∘ σ) (x := x) hsw (2 ^ w) 0 0
+614:  obtain ⟨v₂', e1, e2, e3⟩ := AHalt.embed_guardLe dpρ_inj hD (A_noVal 0) hBB he hrun hR
+615:  have hiff : (∃ u', 0 ≤ u' ∧ u' < 2 ^ w ∧ InitO (dpOrc N ∘ σ) x s u' ∧
+621:    rw [dp_rel N σ h3, ← hj]
+628:  rw [decide_eq_decide.mpr hiff] at e3
+645:private theorem dp_block (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ : ℕ}
+657:  have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
+658:  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B := (size_facts _).2.trans hBB
+659:  obtain ⟨v', r1, e1, e2, e3, e4, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc f hB hL hS hZ hv
+660:  obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw j La hj h1 h2 h3 hD hBB e5 e1
+661:  rw [hι] at r1
+669:private theorem dp_edge (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ : ℕ}
+675:  obtain ⟨v₂, r, e1, e2, e3, e4⟩ := dp_block N hc x hBB false 4 (edgeLang N) rfl (σ := dpσE) rfl
+677:  exact ⟨_, v₂, r, by rw [decide_eq_false_iff_not, noEdge_iff], e1, e2, e3, e4⟩
+682:private theorem dp_acc (N : FinNDTM Bool) {L : Language Bool} {sp : ℕ → ℕ}
+690:  obtain ⟨v₂, r, -, -, -, e4⟩ := dp_block N hc x hBB true 2 (acceptLang N) rfl (σ := dpσA) rfl
+692:  rw [(@decide_eq_decide _ _ _ (Classical.propDecidable _)).mpr
+711:private theorem dp_body {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+719:  have hc : 1 ≤ codeK N + 1 := by omega
+720:  have hl := dp_bits_logSpace x.length
+721:  have hWs : ∀ s, s ≤ sp x.length + 1 →
+724:  have hBB : ∀ s, s ≤ sp x.length + 1 →
+728:  have hw : ∀ s, codeK N * (s + logSpace x.length + 1) ≤
+735:    obtain ⟨b, v₂, r, hb, e1, e2, e3, e4⟩ := dp_edge N hc x (hBB s hs2) hL hS hZ hv
+736:    obtain rfl : b = false := hb.mpr (noEdge_of_lt h x s _ (by omega))
+740:    obtain ⟨b, v₂, r, hb, e1, e2, e3, e4⟩ := dp_edge N hc x (hBB s hs2) hL hS hZ hv
+744:      have hs : s ≤ sp x.length := by
+747:      have hsB : s + 1 ≤ 2 ^ (dpW N sp x * dpW N sp x) := by
+748:        have h1 := hWs (s + 1) (by omega)
+749:        have h2 : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
+750:        have h3 : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
+751:        have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + (Nat.bits x.length).length) + 1) :=
+755:      rw [astep_inc (show dpD (codeK N + 1) (dpkE true) = .inc 23 (.cb false 0) from rfl)]
+757:        (by rw [Function.update_of_ne (by decide)]; exact e1)
+758:        (by rw [Function.update_self, e2]) (by rw [Function.update_of_ne (by decide)]; exact e3)
+759:        (register_update_le _ _ _ _ e4 (by rw [e2]; exact hsB))
+768:private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+773:  have hl := dp_bits_logSpace x.length
+774:  have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
+776:  have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
+777:  have hn : x.length < 2 ^ dpW N sp x :=
+779:  have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
+781:  have hnB : x.length ≤ B := by omega
+782:  have hlB : 1 + (Nat.bits x.length).length ≤ B := by omega
+783:  have r1 := inputLength_loop (dpD (codeK N + 1)) (dpOrc N) x 21 0 .scan .incN .lInc rfl rfl
+786:  have b1 : ∀ r, Function.update (fun _ : Fin 25 => 0) 21 x.length r ≤ B :=
+789:  rw [Function.update_of_ne (by decide), zero_add]
+790:  have b2 := register_update_le _ 22 _ _ b1 (show 1 ≤ B by omega)
+791:  have e21 : Function.update (Function.update (fun _ : Fin 25 => 0) 21 x.length) 22 1 21 =
+793:    rw [Function.update_of_ne (by decide), Function.update_self]
+795:    rfl rfl rfl B _ b2 (by rw [Function.update_self, e21]; omega)).halt ?_
+796:  rw [Function.update_self, e21]
+797:  have b3 := register_update_le _ 22 _ _ (register_update_le _ 21 _ _ b2 (Nat.zero_le _)) hlB
+799:  rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
+802:    (by rw [Function.update_of_ne (by decide), Function.update_self])
+804:    (by rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
+827:  · rw [indicator_eq_decide]
+829:    have hl := (dp_bits_logSpace x.length).2.1
+830:    have hls : 1 ≤ logSpace x.length := by rw [logSpace_eq]; omega
+833:    have hW3 : W ≤ 3 * (codeK N + 1) * X := by
+834:      rw [hW, dpW, mul_comm 3, mul_assoc]
+836:    have hlt : a.2.1 r + 1 < 2 ^ (W * W + 2) := by
+837:      have := ha.2 r
+838:      have e : 2 ^ (W * W + 2) = 4 * 2 ^ (W * W) := by rw [pow_add]; ring
+839:      have := Nat.two_pow_pos (W * W)
+842:    have h1 : W * W ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) := Nat.mul_le_mul hW3 hW3
+843:    have h2 : 1 ≤ X * X := Nat.one_le_iff_ne_zero.mpr (by positivity)
+844:    calc W * W + 2 ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) + 2 * (X * X) := by omega
+845:      _ = (9 * (codeK N + 1) ^ 2 + 2) * X ^ 2 := by ring

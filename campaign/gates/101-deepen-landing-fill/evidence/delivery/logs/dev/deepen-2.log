@@ -1,0 +1,178 @@
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:400:71: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if r = ⟨i, ⋯⟩ then ?m.450 else ?m.451
+in the target expression
+  0 = if i ≤ ↑r ∧ ↑r < 21 then 0 else v r
+
+case pos
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+j : ℕ
+ih :
+  ∀ (i : ℕ) (hi : i < 21),
+    i + j = 20 →
+      ∀ (v : Fin 25 → ℕ),
+        (∀ (r : Fin 25), v r ≤ B) →
+          AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨i, hi⟩), v, none)
+            (some (DpLb.cS f 0), fun r => if i ≤ ↑r ∧ ↑r < 21 then 0 else v r, none)
+i : ℕ
+hi : i < 21
+hij : i + (j + 1) = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+r1 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨i, hi⟩), v, none)
+    (some (DpLb.cb f ⟨i + 1, ⋯⟩), Function.update v ⟨↑⟨i, hi⟩, ⋯⟩ 0, none)
+r : Fin 25
+h1 : r = ⟨i, ⋯⟩
+⊢ 0 = if i ≤ ↑r ∧ ↑r < 21 then 0 else v r
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:406:61: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if r = ⟨i, ⋯⟩ then ?m.543 else ?m.544
+in the target expression
+  v r = v r
+
+case neg
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+j : ℕ
+ih :
+  ∀ (i : ℕ) (hi : i < 21),
+    i + j = 20 →
+      ∀ (v : Fin 25 → ℕ),
+        (∀ (r : Fin 25), v r ≤ B) →
+          AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨i, hi⟩), v, none)
+            (some (DpLb.cS f 0), fun r => if i ≤ ↑r ∧ ↑r < 21 then 0 else v r, none)
+i : ℕ
+hi : i < 21
+hij : i + (j + 1) = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+r1 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨i, hi⟩), v, none)
+    (some (DpLb.cb f ⟨i + 1, ⋯⟩), Function.update v ⟨↑⟨i, hi⟩, ⋯⟩ 0, none)
+r : Fin 25
+h1 : ¬r = ⟨i, ⋯⟩
+h2 : ↑r ≠ i
+h3 : ¬(i + 1 ≤ ↑r ∧ ↑r < 21)
+⊢ v r = v r
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:636:66: error: `dsimp` made no progress
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:553:59: error: unsolved goals
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+hc : 1 ≤ c
+f : Bool
+s ℓ : ℕ
+v : Fin 25 → ℕ
+hL : v 22 = ℓ
+hS : v 23 = s
+hZ : v 24 = 0
+hv : ∀ (r : Fin 25), v r ≤ B
+w : ℕ
+hw : c * (s + ℓ + 1) = w
+hw1 : s + ℓ + 1 ≤ w
+hw2 : w < 2 ^ w
+hB : 2 ^ w ≤ B
+hwB : w ≤ B
+o1 : Fin 7 → ℕ := fun i => if ↑i < 3 then 0 else v ⟨18 + ↑i, ⋯⟩
+r1 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨0, ⋯⟩), v, none)
+    (some (DpLb.cS f 0), dpSt (fun x => 0) o1, none)
+ho1 : o1 = fun i => if ↑i < 3 then 0 else v ⟨18 + ↑i, ⋯⟩
+e1 : (fun r => if 0 ≤ ↑r ∧ ↑r < 21 then 0 else v r) = dpSt (fun x => 0) o1
+o1L : o1 4 = ℓ
+o1S : o1 5 = s
+o1Z : o1 6 = 0
+o1b : ∀ (i : Fin 7), o1 i ≤ B
+b0 : ∀ (r : Fin 18), (fun x => 0) r ≤ B
+o2 : Fin 7 → ℕ := Function.update o1 0 s
+r2 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cS f 0), dpSt (fun x => 0) o1, none)
+    (some (DpLb.cL f 0), dpSt (fun x => 0) o2, none)
+ho2 : o2 = Function.update o1 0 s
+o2b : ∀ (i : Fin 7), o2 i ≤ B
+o3 : Fin 7 → ℕ := Function.update o1 0 (s + ℓ)
+r3 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cL f 0), dpSt (fun x => 0) (Function.update o1 0 s), none)
+    (some (DpLb.tInc f), dpSt (fun x => 0) o3, none)
+ho3 : o3 = Function.update o1 0 (s + ℓ)
+o3b : ∀ (i : Fin 7), o3 i ≤ B
+o4 : Fin 7 → ℕ := Function.update o1 0 (s + ℓ + 1)
+r4 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.tInc f), dpSt (fun x => 0) (Function.update o1 0 (s + ℓ)), none)
+    (some (DpLb.cT f ⟨0, hc⟩ 0), dpSt (fun x => 0) o4, none)
+ho4 : o4 = Function.update o1 0 (s + ℓ + 1)
+o4b : ∀ (i : Fin 7), o4 i ≤ B
+o4T : o4 0 = s + ℓ + 1
+o4W : o4 1 = 0
+o5 : Fin 7 → ℕ := Function.update o4 1 w
+r5 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cT f ⟨0, hc⟩ 0), dpSt (fun x => 0) o4, none)
+    (some (DpLb.bS f 0), dpSt (fun x => 0) o5, none)
+ho5 : o5 = Function.update o4 1 w
+o5b : ∀ (i : Fin 7), o5 i ≤ B
+o5S : o5 5 = s
+o5W : o5 1 = w
+o5C : o5 2 = 0
+o5Z : o5 6 = 0
+Z5 : ∀ (b : Fin 18 → ℕ), dpSt b o5 24 = 0
+b1 : Fin 18 → ℕ := Function.update (fun x => 0) rs s
+r6 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.bS f 0), dpSt (fun x => 0) o5, none)
+    (some (DpLb.zW f), dpSt b1 o5, none)
+hb1 : b1 = Function.update (fun x => 0) rs s
+b1b : ∀ (r : Fin 18), b1 r ≤ B
+r7 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.zW f), dpSt b1 o5, none)
+    (some (DpLb.bW f 0), dpSt (Function.update b1 rw 0) o5, none)
+b2 : Fin 18 → ℕ := Function.update b1 rw w
+r8 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.bW f 0), dpSt (Function.update b1 rw 0) o5, none)
+    (some (DpLb.zK f), dpSt b2 o5, none)
+hb2 : b2 = Function.update b1 rw w
+b2b : ∀ (r : Fin 18), b2 r ≤ B
+r9 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.zK f), dpSt b2 o5, none)
+    (some (DpLb.kOne f), dpSt (Function.update b2 rK 0) o5, none)
+⊢ ∃ v',
+    AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f 0), v, none) (some (dpIn f), v', none) ∧
+      (∀ (r : Fin 18),
+          v' (dpρ r) =
+            Function.update (Function.update (Function.update (Function.update b2 rK (2 ^ w)) rU 0) rV 0) rM 0 r) ∧
+        v' 22 = ℓ ∧ v' 23 = s ∧ v' 24 = 0 ∧ ∀ (r : Fin 25), v' r ≤ B
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:898:5: error: unsolved goals
+N : FinNDTM Bool
+L : Language Bool
+sp : ℕ → ℕ
+h : N.DecidesInSpace L sp
+x : List Bool
+hl : logSpace x.length ≤ 1 + dpHl x.length ∧ dpHl x.length ≤ logSpace x.length
+hW1 : 1 + dpHl x.length ≤ dpW N sp x
+hn : x.length < 2 ^ dpW N sp x
+hWlt : dpW N sp x < 2 ^ dpW N sp x
+B : ℕ := 2 ^ (dpW N sp x * dpW N sp x)
+hWB : 2 ^ dpW N sp x ≤ B
+hB : B = 2 ^ (dpW N sp x * dpW N sp x)
+hnB : x.length ≤ B
+hlB : 1 + dpHl x.length ≤ B
+r1 :
+  AReach (dpD (codeK N + 1)) (dpOrc N) x (fun a => PreS (dpD (codeK N + 1)) x a ∧ ∀ (s : Fin 25), a.2.1 s ≤ B)
+    (some DpLb.scan, fun x => 0, none) (some DpLb.lInc, Function.update (fun x => 0) 21 x.length, none)
+b1 : ∀ (r : Fin 25), Function.update (fun x => 0) 21 x.length r ≤ B
+b2 : ∀ (s : Fin 25), Function.update (Function.update (fun x => 0) 21 x.length) 22 1 s ≤ B
+b3 :
+  ∀ (s : Fin 25),
+    Function.update (Function.update (Function.update (Function.update (fun x => 0) 21 x.length) 22 1) 21 0) 22
+        (1 + dpHl x.length) s ≤
+      B
+⊢ Function.update (fun x => 0) 21 x.length 24 = 0
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): lean exited with status 1
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): error diagnostics reported
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): no fresh .olean produced
+TIMED start=2026-11-06T00:48:27Z end=2026-11-06T00:48:34Z wall_s=7.2 exit=1 maxrss_kib=2208664 cmd=bash scripts/lean_check_tree.sh TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen

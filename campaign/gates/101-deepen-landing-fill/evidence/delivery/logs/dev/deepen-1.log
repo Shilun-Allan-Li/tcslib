@@ -1,0 +1,152 @@
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:112:91: error: Application type mismatch: The argument
+  h
+has type
+  dpρ x✝¹ = dpρ x✝
+but is expected to have type
+  x✝¹ = x✝
+in the application
+  congrArg Fin.val h
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:15: error: don't know how to synthesize implicit argument `l'`
+  @dp_clr ?m.91 o x B (DpLb.cb f ⟨i, hi⟩) (dpCbEx f ⟨i, hi⟩) ⟨↑⟨i, hi⟩, dpD._proof_2 ⟨i, hi⟩⟩ rfl v hv
+context:
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+i : ℕ
+hi : i < 21
+hij : i + 0 = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+⊢ DpLb ?m.91
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:15: error: don't know how to synthesize implicit argument `c`
+  @dp_clr ?m.91 o x B (DpLb.cb f ⟨i, hi⟩) (dpCbEx f ⟨i, hi⟩) ⟨↑⟨i, hi⟩, dpD._proof_2 ⟨i, hi⟩⟩ rfl v hv
+context:
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+i : ℕ
+hi : i < 21
+hij : i + 0 = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+⊢ ℕ
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:61: error: don't know how to synthesize implicit argument `a`
+  @rfl (Ins 25 5 (DpLb ?m.91)) (dpD ?m.91 (DpLb.cb f ⟨i, hi⟩))
+context:
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+i : ℕ
+hi : i < 21
+hij : i + 0 = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+⊢ Ins 25 5 (DpLb ?m.91)
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:61: error: don't know how to synthesize implicit argument `α`
+  @rfl (Ins 25 5 (DpLb ?m.91)) (dpD ?m.91 (DpLb.cb f ⟨i, hi⟩))
+context:
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+i : ℕ
+hi : i < 21
+hij : i + 0 = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+⊢ Type
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:46: error: don't know how to synthesize implicit argument `c`
+  @DpLb.cb ?m.91 f ⟨i, hi⟩
+context:
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+f : Bool
+i : ℕ
+hi : i < 21
+hij : i + 0 = 20
+v : Fin 25 → ℕ
+hv : ∀ (r : Fin 25), v r ≤ B
+⊢ ℕ
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:375:9: error: failed to infer `have` declaration type
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:567:51: error: `dsimp` made no progress
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:568:49: error: `dsimp` made no progress
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:551:59: error: unsolved goals
+c : ℕ
+o : Fin 5 → List Bool → Bool
+x : List Bool
+B : ℕ
+hc : 1 ≤ c
+f : Bool
+s ℓ : ℕ
+v : Fin 25 → ℕ
+hL : v 22 = ℓ
+hS : v 23 = s
+hZ : v 24 = 0
+hv : ∀ (r : Fin 25), v r ≤ B
+w : ℕ
+hw : c * (s + ℓ + 1) = w
+hw1 : s + ℓ + 1 ≤ w
+hw2 : w < 2 ^ w
+hB : 2 ^ w ≤ B
+hwB : w ≤ B
+o1 : Fin 7 → ℕ := fun i => if ↑i < 3 then 0 else v ⟨18 + ↑i, ⋯⟩
+r1 :
+  AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f ⟨0, ⋯⟩), v, none)
+    (some (DpLb.cS f 0), dpSt (fun x => 0) o1, none)
+ho1 : o1 = fun i => if ↑i < 3 then 0 else v ⟨18 + ↑i, ⋯⟩
+e1 : (fun r => if 0 ≤ ↑r ∧ ↑r < 21 then 0 else v r) = dpSt (fun x => 0) o1
+o1L : o1 4 = ℓ
+o1S : o1 5 = s
+o1Z : o1 6 = 0
+o1b : ∀ (i : Fin 7), o1 i ≤ B
+b0 : ∀ (r : Fin 18), (fun x => 0) r ≤ B
+⊢ ∃ v',
+    AReach (dpD c) o x (GuardLe (dpD c) x B) (some (DpLb.cb f 0), v, none) (some (dpIn f), v', none) ∧
+      (∀ (r : Fin 18),
+          v' (dpρ r) =
+            Function.update
+              (Function.update
+                (Function.update (Function.update (Function.update (Function.update (fun x => 0) rs s) rw w) rK (2 ^ w))
+                  rU 0)
+                rV 0)
+              rM 0 r) ∧
+        v' 22 = ℓ ∧ v' 23 = s ∧ v' 24 = 0 ∧ ∀ (r : Fin 25), v' r ≤ B
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:896:5: error: unsolved goals
+N : FinNDTM Bool
+L : Language Bool
+sp : ℕ → ℕ
+h : N.DecidesInSpace L sp
+x : List Bool
+hl : logSpace x.length ≤ 1 + dpHl x.length ∧ dpHl x.length ≤ logSpace x.length
+hW1 : 1 + dpHl x.length ≤ dpW N sp x
+hn : x.length < 2 ^ dpW N sp x
+hWlt : dpW N sp x < 2 ^ dpW N sp x
+B : ℕ := 2 ^ (dpW N sp x * dpW N sp x)
+hWB : 2 ^ dpW N sp x ≤ B
+hB : B = 2 ^ (dpW N sp x * dpW N sp x)
+hnB : x.length ≤ B
+hlB : 1 + dpHl x.length ≤ B
+r1 :
+  AReach (dpD (codeK N + 1)) (dpOrc N) x (fun a => PreS (dpD (codeK N + 1)) x a ∧ ∀ (s : Fin 25), a.2.1 s ≤ B)
+    (some DpLb.scan, fun x => 0, none) (some DpLb.lInc, Function.update (fun x => 0) 21 x.length, none)
+b1 : ∀ (r : Fin 25), Function.update (fun x => 0) 21 x.length r ≤ B
+b2 : ∀ (s : Fin 25), Function.update (Function.update (fun x => 0) 21 x.length) 22 1 s ≤ B
+b3 :
+  ∀ (s : Fin 25),
+    Function.update (Function.update (Function.update (Function.update (fun x => 0) 21 x.length) 22 1) 21 0) 22
+        (1 + dpHl x.length) s ≤
+      B
+⊢ Function.update (fun x => 0) 21 x.length 24 = 0
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): lean exited with status 1
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): error diagnostics reported
+FAIL(TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen): no fresh .olean produced
+TIMED start=2026-11-06T00:47:53Z end=2026-11-06T00:48:00Z wall_s=6.7 exit=1 maxrss_kib=2184728 cmd=bash scripts/lean_check_tree.sh TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen
