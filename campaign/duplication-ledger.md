@@ -675,6 +675,15 @@ lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
 languages, which have no published reading; they are not members. Census after widening: one
 declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
 
+**NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
+a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
+(`Turing.FinTM.not_computesInTime_zero`, `TuringMachine/Finite`) and cited where it applies. Its
+nondeterministic analogue (`Cfg.init` is live, so `N.tm.HaltsWithin z 0` fails) has no public
+lemma and is proved twice: `ClassNP/ExhaustiveReplay`'s private `xr_not_haltsWithin_zero` and an
+inline step of `ClassNP/NDNormalForm` (`hpos`, through `runWith_nil`, `initCfg_eq` and
+`Cfg.init_state`). One member in each file. **Proposed disposition:** the dedup window (12.2c):
+publish `NDTM.not_haltsWithin_zero` beside the NDTM run equations and re-point both.
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
