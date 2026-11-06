@@ -585,6 +585,135 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
 
 end Typed
 
+/-! ### The string simulator [PS10, Algorithm 128.7] (Alg-128.7, Claim-128.a) -/
+
+/-- The coin block of one attempt of the string simulator against `V'` at instance length
+`N`: `(N+1)²` bits for the edge sampler, `3N` bits for the colour-pair sampler, `N ℓ(N)` bits
+of commitment randomness and the tape of `V'`. -/
+def colSimBlock (ℓ : PolyExpr) (V' : Strategy) : PolyExpr :=
+  .add (.add (.add (.normal 1 2) (.mul (.const 3) .var)) (.mul .var ℓ)) V'.coins
+
+/-- The coin polynomial of the string simulator: `N²` blocks (at most `n|E| ≤ N²` attempts
+are made). -/
+def colSimCoins (ℓ : PolyExpr) (V' : Strategy) : PolyExpr :=
+  .mul (.mul .var .var) (colSimBlock ℓ V')
+
+/-- The six distinct colour pairs enumerated by `Fin 6`. -/
+noncomputable def pair6Equiv : Fin 6 ≃ ColorPair := (Fintype.equivFinOfCardEq card_colorPair).symm
+
+/-- The simulator's distinct colour pair from `3T` tape bits: `T` rejection trials of three
+bits, the pair `(0, 1)` on failure (D10). -/
+noncomputable def sampleColorPair (T : ℕ) (r : List Bool) : ColorPair :=
+  ((sampleIdx 6 3 T r).map pair6Equiv).getD ⟨(0, 1), by decide⟩
+
+/-- **The colour-pair sampler is within `(1/4)^T` of a uniform distinct pair** (D10), the
+colour-pair analogue of `statClose_samplePerm3`, for the simulator's guess `(c'_{i'}, c'_{j'})`
+of [PS10, Algorithm 128.7, step 1].
+
+**Proof sketch.** `statClose_rejectionSample 6 3 T` (with `6 ≤ 2³`) gives closeness
+`(1 - 6/8)^T = (1/4)^T` of `(rejectionSample 6 3 T b).getD d` to the identity on `Fin 6`; the
+tape is read as its trial table along the curried `finProdFinEquiv`
+(`sampleIdx_ofFn_eq_rejectionSample`, `StatClose.comp_equiv_left`), and `pair6Equiv` is a
+bijection carrying the default `d := pair6Equiv.symm (0, 1)` to the sampler's default
+(`StatClose.map`, `StatClose.comp_equiv_right`). -/
+theorem statClose_sampleColorPair (T : ℕ) :
+    StatClose (fun r : Fin (T * 3) → Bool => sampleColorPair T (List.ofFn r))
+      (id : ColorPair → ColorPair) ((1 / 4 : ℝ) ^ T) := by
+  set e : (Fin (T * 3) → Bool) ≃ (Fin T → Fin 3 → Bool) :=
+    (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _) with he
+  have he' : ∀ r, e r = fun t j => r (finProdFinEquiv (t, j)) := fun r => rfl
+  have h := (((statClose_rejectionSample 6 3 T (by norm_num) (by norm_num)
+    (pair6Equiv.symm ⟨(0, 1), by decide⟩)).map pair6Equiv).comp_equiv_right
+      pair6Equiv.symm).comp_equiv_left e
+  have hδ : (1 - ((6 : ℕ) : ℝ) / 2 ^ 3) ^ T = (1 / 4) ^ T := by norm_num
+  rw [hδ] at h
+  convert h using 2 with r σ
+  · unfold sampleColorPair
+    rw [sampleIdx_ofFn_eq_rejectionSample, he']
+    cases rejectionSample 6 3 T fun t j => r (finProdFinEquiv (t, j)) with
+    | none => exact (pair6Equiv.apply_symm_apply _).symm
+    | some i => rfl
+  · exact (pair6Equiv.apply_symm_apply σ).symm
+
+/-- The colour-pair sampler reads only the first `3T` bits of its tape. -/
+private theorem colZK_sampleColorPair_take (T : ℕ) (r : List Bool) :
+    sampleColorPair T r = sampleColorPair T (r.take (T * 3)) := by
+  unfold sampleColorPair
+  rw [sampleIdx_eq_rejectionSample, sampleIdx_eq_rejectionSample]
+  congr 4
+  funext t j
+  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt]
+  have := ColZK.table_index_lt t j
+  omega
+
+/-- One attempt of the string simulator [PS10, Algorithm 128.7, steps 1–4] on `(x, z)` with
+the coin block `blk`: sample `e'` and the colour pair, commit to `simColors (edgeAt G e') (a, b)`
+with the randomness read from the block, run `V'` on `[com]` with the rest of the block as its
+tape, and output the encoded view `⟨⟨x, z⟩, ⟨r_{V'}, [com, opening]⟩⟩` if `V'` names `e'`;
+if `E = ∅`, commit to all-zero colours and output the view with the empty opening. -/
+noncomputable def colSimAttemptStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+    (x z blk : List Bool) : Option (List Bool) :=
+  let n := (decGraph x).1
+  let G : Graph n := (decGraph x).2
+  let m := edgeCount G
+  let N := x.length
+  let e' := sampleEdgeIdx m N blk
+  let ab := sampleColorPair N (blk.drop ((N + 1) ^ 2))
+  let rr : Fin n → Fin (ℓ.eval n) → Bool :=
+    fun i j => blk.getD ((N + 1) ^ 2 + 3 * N + i * ℓ.eval n + j) false
+  let rV := blk.drop ((N + 1) ^ 2 + 3 * N + N * ℓ.eval N)
+  match edgeAt G e' with
+  | none => some (View.encode ⟨x, z, rV, [colCommit Com n (ℓ.eval n) (fun _ => 0) rr, []]⟩)
+  | some p =>
+    let c' := simColors p ab
+    let com := colCommit Com n (ℓ.eval n) c' rr
+    if edgeIdxOfMsg m (V'.next x z rV [com]) = e' then
+      some (View.encode ⟨x, z, rV, [com, colOpen c' rr p]⟩)
+    else none
+
+/-- The string simulator [PS10, Algorithm 128.7] (Alg-128.7): up to `n|E|` attempts
+(`colIterations x`, with `|E| = edgeCount G` counting ordered edge pairs; run-3 audit P11-3) on
+the consecutive coin blocks of the tape `r`, the first successful attempt's view, or `⊥ = []`
+after `n|E|` failures; a single attempt if `E = ∅`.
+
+As in [PS10, Algorithm 128.7, steps 4–5], at most `n|E|` attempts, then `fail` (`⊥ = []`).
+**Deviation (D10):** `e'` and the colour pair are rejection-sampled from the tape (defaults `0`
+and `(0, 1)`). -/
+noncomputable def colSim (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+    (x z r : List Bool) : List Bool :=
+  let B := (colSimBlock ℓ V').eval x.length
+  let att : ℕ → Option (List Bool) := fun t => colSimAttemptStr Com ℓ V' x z (colCoinSlice B t r)
+  if edgeCount (decGraph x).2 = 0 then (att 0).getD []
+  else ((List.range (colIterations x)).findSome? att).getD []
+
+/-- **The simulator is a uniform PPT** [PS10, p. 128, "by construction it directly follows that
+`S` is a p.p.t."] (Claim-128.a): for a polynomial-time `Com` and an efficient `V'` there is a
+uniform `NUPPT` with coin polynomial `colSimCoins ℓ V'` whose activation on `⟨x, z⟩` at
+parameter `|x|` is `colSim Com ℓ V' x z r`.
+
+**Proof sketch.** `V'.Efficient` gives a uniform machine `A` with
+`V'.next x z rV [com] = A.runAtL |x| ⟨⟨x, z⟩, encodeMsgs [com]⟩ rV` (`Strategy.ofNUPPT_next`),
+polynomial-time by `A.polyTimeComputable_output` and the pairing calculus. One attempt on the
+raw layout is polynomial-time: the block is cut by `polyTimeComputable_pairTakePoly`/
+`pairDropPoly` with the unary block length (`polyTimeComputable_unaryPoly`); the two samplers
+by `polyTimeComputable_iterateFind` over the trials; the `n` commitments by
+`polyTimeComputable_blockMap ℓ` composed with `hCom` and `polyTimeComputable_iterateEmit`
+for the `encodeMsgs` fold (the colour at position `i` by `polyTimeComputable_ite` on the
+comparison with the two endpoints); the comparison of `V'`'s reply with `e'` by
+`polyTimeComputable_lenLe`-based modular arithmetic in unary; the view by
+`PolyTimeComputable.pairEncode`. The loop over `t < n|E|` is
+`Complexity.polyTimeComputable_iterateFind` with the attempt index in the state and the
+accepting test "the attempt succeeded" (`R := mul var var`, `P :=` the layout length), the
+`E = ∅` case by `polyTimeComputable_ite`; the result is packaged by `NUPPT.ofPolyTimeUniform`
+with coins `colSimCoins ℓ V'` (`NUPPT.runAtL_ofPolyTimeUniform`,
+`NUPPT.ofPolyTimeUniform_uniform`). -/
+theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+    (ℓ : PolyExpr) (V' : Strategy) (hV' : V'.Efficient) :
+    ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
+      ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
+  obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
+  exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
+
 /-! ### The fill ladder of `col_zk` -/
 
 section ColZKLadder
@@ -736,96 +865,156 @@ theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n
       (edgeAt_eq_none_iff G _).2 hm]
   · rw [colProver_next_cons Com ℓ (decGraph_encGraph G) hm, decColoring_encColoring, hπ, hr,
       ColMachines.edgeAt_eq_some_of_pos G hm]
+/-- **`colSim` is `K((1/2)^{|x|} + (1/4)^{|x|})`-close to the typed truncated simulator**
+[PS10, Algorithm 128.7] (step (2) of `col_zk`'s sketch, `m > 0`): the string simulator on
+`encGraph G` is within `K((1/2)^{|x|} + (1/4)^{|x|})`, `K = n|E|`, of the encoded `colSimTrunc`
+with `K` attempts on independent uniform typed coins.
+
+**Proof sketch.** The simulator makes `colIterations x = K` attempts (`colIterations_eq`) on the
+blocks `t < K` of its `|x|²` blocks (`colCoinSlice_eq`), which are independent and uniform
+(`ColZK.pushesUniform_offsetTable`). In a block (`colSimBlock`) the edge sampler reads its first
+`|x| · size |E| ≤ (|x| + 1)²` bits (`ColProofs.sampleEdgeIdx_ofFn_castLE`, `|E| ≤ n² = |x|`), the
+colour-pair sampler `3|x|` bits from `(|x| + 1)²` (`colZK_sampleColorPair_take`), then come the
+commitment randomness and `V'`'s tape: four independent uniform fields
+(`ColZK.pushesUniform_blockFields`). The samplers are `(1/2)^{|x|}`- and `(1/4)^{|x|}`-close to
+uniform (`statClose_sampleEdgeIdx`, `statClose_sampleColorPair`, `StatClose.prod`), the blocks
+add up (`OneWay.statClose_pi`), and on each block the string attempt is the typed attempt
+(`edgeAt_eq_some_edgeOf`), so the first success is the same (`ColZK.findSome?_range_eq_finRange`,
+`ColZK.findSome?_map_option`). -/
+theorem statClose_colSim_colSimTrunc (V' : Strategy) {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G)
+    (z : List Bool) :
+    StatClose (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
+        colSim Com ℓ V' (encGraph G) z (List.ofFn r))
+      (fun w : Fin (n * edgeCount G) → ((Fin (edgeCount G) × ColorPair) ×
+          (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins (encGraph G).length =>
+        (colSimTrunc Com (ℓ.eval n) G (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com])
+            (n * edgeCount G) w).elim []
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩)
+      ((n * edgeCount G : ℕ) * ((1 / 2 : ℝ) ^ (encGraph G).length + (1 / 4 : ℝ) ^ (encGraph G).length)) := by
+  set N := (encGraph G).length with hN
+  set m := edgeCount G with hmdef
+  have hNn : N = n * n := length_encGraph G
+  have hnN : n ≤ N := hNn ▸ Nat.le_mul_self n
+  have hmN : m ≤ N := hNn ▸ (ColMachines.edgeCount_eq G (encGraph G)
+    (fun u v => (encGraph_getD G u v).symm)).trans_le (ColMachines.countTrue_le _ _)
+  have hsize : Nat.size m ≤ N + 1 :=
+    (Nat.size_le.2 (Nat.lt_two_pow_self)).trans (hmN.trans (Nat.le_succ N))
+  have hsz : N * Nat.size m ≤ (N + 1) ^ 2 := by
+    rw [sq]
+    exact Nat.mul_le_mul (Nat.le_succ N) hsize
+  have hnℓ : n * ℓ.eval n ≤ N * ℓ.eval N := Nat.mul_le_mul hnN (PolyExpr.eval_mono ℓ hnN)
+  have hB : (colSimBlock ℓ V').eval N = (N + 1) ^ 2 + N * 3 + N * ℓ.eval N + V'.coinLen N := by
+    unfold colSimBlock
+    rw [PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_normal,
+      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul,
+      PolyExpr.eval_var, Strategy.coinLen_eq]
+    ring
+  -- one block: four independent uniform fields
+  have hF := ColZK.pushesUniform_blockFields (L := (colSimBlock ℓ V').eval N)
+    (a₁ := N * Nat.size m) (o₂ := (N + 1) ^ 2) (a₂ := N * 3) (o₃ := (N + 1) ^ 2 + N * 3)
+    (n := n) (k := ℓ.eval n) (o₄ := (N + 1) ^ 2 + N * 3 + N * ℓ.eval N) (a₄ := V'.coinLen N)
+    hsz le_rfl (by omega) (by omega)
+  have hA := ((((statClose_sampleEdgeIdx hm N).prod (statClose_sampleColorPair N)).prod
+    (StatClose.refl (fun r : Fin n → Fin (ℓ.eval n) → Bool => r))).prod
+      (StatClose.refl (fun ρ : V'.Coins N => ρ))).comp_pushesUniform hF
+  -- the first `n m` blocks of the tape: independent and uniform
+  have hKB : 0 + n * m * (colSimBlock ℓ V').eval N ≤ (colSimCoins ℓ V').eval N := by
+    unfold colSimCoins
+    rw [PolyExpr.eval_mul, PolyExpr.eval_mul, PolyExpr.eval_var, zero_add]
+    exact Nat.mul_le_mul_right _ (Nat.mul_le_mul hnN hmN)
+  have hT := (ColZK.pushesUniform_offsetTable hKB).comp HardcoreBit.pushesUniform_snd
+  have h := ((OneWay.statClose_pi hA (n * m)).comp_pushesUniform hT).map fun w =>
+    (colSimTrunc Com (ℓ.eval n) G (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com])
+        (n * m) w).elim [] fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩
+  rw [add_zero, add_zero] at h
+  convert h using 1
+  funext r
+  -- one attempt of the string simulator on a block is the typed attempt on its fields
+  have key : ∀ blk : Fin ((colSimBlock ℓ V').eval N) → Bool,
+      colSimAttemptStr Com ℓ V' (encGraph G) z (List.ofFn blk) =
+        (colSimAttempt Com (ℓ.eval n) G (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com])
+          (((⟨sampleEdgeIdx m N (List.ofFn fun i : Fin (N * Nat.size m) =>
+                blk ⟨i, by have := i.isLt; omega⟩), sampleEdgeIdx_lt hm _ _⟩,
+              sampleColorPair N (List.ofFn fun i : Fin (N * 3) =>
+                blk ⟨(N + 1) ^ 2 + i, by have := i.isLt; omega⟩)),
+            fun (i : Fin n) (j : Fin (ℓ.eval n)) => blk ⟨(N + 1) ^ 2 + N * 3 + (i * ℓ.eval n + j),
+              by have := ColZK.table_index_lt i j; omega⟩),
+            fun i : Fin (V'.coinLen N) => blk ⟨(N + 1) ^ 2 + N * 3 + N * ℓ.eval N + i,
+              by have := i.isLt; omega⟩)).map
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩ := by
+    intro blk
+    have he : sampleEdgeIdx m N (List.ofFn blk) = sampleEdgeIdx m N (List.ofFn fun i : Fin (N * Nat.size m) =>
+        blk ⟨i, by have := i.isLt; omega⟩) :=
+      ColProofs.sampleEdgeIdx_ofFn_castLE (by omega) blk
+    have hab : sampleColorPair N ((List.ofFn blk).drop ((N + 1) ^ 2)) =
+        sampleColorPair N (List.ofFn fun i : Fin (N * 3) => blk ⟨(N + 1) ^ 2 + i, by have := i.isLt; omega⟩) := by
+      rw [colZK_sampleColorPair_take, ColZK.ofFn_drop_take blk _ _ (by omega)]
+    have hrr : (fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+        (List.ofFn blk).getD ((N + 1) ^ 2 + 3 * N + i * ℓ.eval n + j) false) =
+        fun (i : Fin n) (j : Fin (ℓ.eval n)) => blk ⟨(N + 1) ^ 2 + N * 3 + (i * ℓ.eval n + j),
+          by have := ColZK.table_index_lt i j; omega⟩ := by
+      funext i j
+      rw [ColProofs.ofFn_getD_lt blk (by have := ColZK.table_index_lt i j; omega)]
+      congr 1
+      exact Fin.ext (by simp only; ring)
+    have hrV : (List.ofFn blk).drop ((N + 1) ^ 2 + 3 * N + N * ℓ.eval N) =
+        List.ofFn fun i : Fin (V'.coinLen N) => blk ⟨(N + 1) ^ 2 + N * 3 + N * ℓ.eval N + i,
+          by have := i.isLt; omega⟩ := by
+      rw [ColZK.ofFn_drop_eq blk _ (V'.coinLen N) (by omega)]
+      congr 1
+      funext i
+      congr 1
+      exact Fin.ext (by simp only; ring)
+    unfold colSimAttemptStr
+    generalize hd : decGraph (encGraph G) = d
+    rw [decGraph_encGraph] at hd
+    subst hd
+    dsimp only
+    rw [he, hab, hrr, hrV, edgeAt_eq_some_edgeOf G ⟨_, sampleEdgeIdx_lt hm _ _⟩]
+    unfold colSimAttempt
+    dsimp only
+    split_ifs <;> rfl
+  have hit : colIterations (encGraph G) = n * m := by
+    rw [colIterations_eq, decGraph_encGraph]
+  have hblk : ∀ (t : Fin (n * m)) (j : ℕ), j < (colSimBlock ℓ V').eval N →
+      0 + ((t : ℕ) * (colSimBlock ℓ V').eval N + j) < (colSimCoins ℓ V').eval N := by
+    intro t j hj
+    have := ColZK.table_index_lt t (⟨j, hj⟩ : Fin ((colSimBlock ℓ V').eval N))
+    dsimp only at this
+    omega
+  have hatt : (fun t : Fin (n * m) => colSimAttemptStr Com ℓ V' (encGraph G) z
+      (colCoinSlice ((colSimBlock ℓ V').eval N) t (List.ofFn r))) = fun t : Fin (n * m) =>
+      (colSimAttempt Com (ℓ.eval n) G (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com])
+          (((⟨sampleEdgeIdx m N (List.ofFn fun i : Fin (N * Nat.size m) =>
+                r ⟨0 + ((t : ℕ) * (colSimBlock ℓ V').eval N + i), hblk t _ (by have := i.isLt; omega)⟩),
+                sampleEdgeIdx_lt hm _ _⟩,
+              sampleColorPair N (List.ofFn fun i : Fin (N * 3) =>
+                r ⟨0 + ((t : ℕ) * (colSimBlock ℓ V').eval N + ((N + 1) ^ 2 + i)),
+                  hblk t _ (by have := i.isLt; omega)⟩)),
+            fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+              r ⟨0 + ((t : ℕ) * (colSimBlock ℓ V').eval N + ((N + 1) ^ 2 + N * 3 + (i * ℓ.eval n + j))),
+                hblk t _ (by have := ColZK.table_index_lt i j; omega)⟩),
+            fun i : Fin (V'.coinLen N) =>
+              r ⟨0 + ((t : ℕ) * (colSimBlock ℓ V').eval N + ((N + 1) ^ 2 + N * 3 + N * ℓ.eval N + i)),
+                hblk t _ (by have := i.isLt; omega)⟩)).map
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩ := by
+    funext t
+    have hlt : (t : ℕ) * (colSimBlock ℓ V').eval N + (colSimBlock ℓ V').eval N ≤
+        (colSimCoins ℓ V').eval N := by
+      have := ColZK.table_index_lt t ⟨0, by omega⟩
+      have h0 : (t : ℕ) * (colSimBlock ℓ V').eval N + (colSimBlock ℓ V').eval N =
+          ((t : ℕ) + 1) * (colSimBlock ℓ V').eval N := by ring
+      rw [h0]
+      exact (Nat.mul_le_mul_right _ t.isLt).trans (by omega)
+    rw [colCoinSlice_eq, ColZK.ofFn_drop_take r _ _ hlt, key]
+    simp only [zero_add, Nat.add_assoc]
+  unfold colSim colSimTrunc firstSome
+  dsimp only
+  rw [if_neg (by rw [decGraph_encGraph]; exact hm.ne'), hit, ColZK.findSome?_range_eq_finRange,
+    hatt, ColZK.findSome?_map_option]
+  cases (List.finRange (n * m)).findSome? _ <;> rfl
+
 end ColZKLadder
-
-/-! ### The string simulator [PS10, Algorithm 128.7] (Alg-128.7, Claim-128.a) -/
-
-/-- The coin block of one attempt of the string simulator against `V'` at instance length
-`N`: `(N+1)²` bits for the edge sampler, `3N` bits for the colour-pair sampler, `N ℓ(N)` bits
-of commitment randomness and the tape of `V'`. -/
-def colSimBlock (ℓ : PolyExpr) (V' : Strategy) : PolyExpr :=
-  .add (.add (.add (.normal 1 2) (.mul (.const 3) .var)) (.mul .var ℓ)) V'.coins
-
-/-- The coin polynomial of the string simulator: `N²` blocks (at most `n|E| ≤ N²` attempts
-are made). -/
-def colSimCoins (ℓ : PolyExpr) (V' : Strategy) : PolyExpr :=
-  .mul (.mul .var .var) (colSimBlock ℓ V')
-
-/-- The six distinct colour pairs enumerated by `Fin 6`. -/
-noncomputable def pair6Equiv : Fin 6 ≃ ColorPair := (Fintype.equivFinOfCardEq card_colorPair).symm
-
-/-- The simulator's distinct colour pair from `3T` tape bits: `T` rejection trials of three
-bits, the pair `(0, 1)` on failure (D10). -/
-noncomputable def sampleColorPair (T : ℕ) (r : List Bool) : ColorPair :=
-  ((sampleIdx 6 3 T r).map pair6Equiv).getD ⟨(0, 1), by decide⟩
-
-/-- One attempt of the string simulator [PS10, Algorithm 128.7, steps 1–4] on `(x, z)` with
-the coin block `blk`: sample `e'` and the colour pair, commit to `simColors (edgeAt G e') (a, b)`
-with the randomness read from the block, run `V'` on `[com]` with the rest of the block as its
-tape, and output the encoded view `⟨⟨x, z⟩, ⟨r_{V'}, [com, opening]⟩⟩` if `V'` names `e'`;
-if `E = ∅`, commit to all-zero colours and output the view with the empty opening. -/
-noncomputable def colSimAttemptStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
-    (x z blk : List Bool) : Option (List Bool) :=
-  let n := (decGraph x).1
-  let G : Graph n := (decGraph x).2
-  let m := edgeCount G
-  let N := x.length
-  let e' := sampleEdgeIdx m N blk
-  let ab := sampleColorPair N (blk.drop ((N + 1) ^ 2))
-  let rr : Fin n → Fin (ℓ.eval n) → Bool :=
-    fun i j => blk.getD ((N + 1) ^ 2 + 3 * N + i * ℓ.eval n + j) false
-  let rV := blk.drop ((N + 1) ^ 2 + 3 * N + N * ℓ.eval N)
-  match edgeAt G e' with
-  | none => some (View.encode ⟨x, z, rV, [colCommit Com n (ℓ.eval n) (fun _ => 0) rr, []]⟩)
-  | some p =>
-    let c' := simColors p ab
-    let com := colCommit Com n (ℓ.eval n) c' rr
-    if edgeIdxOfMsg m (V'.next x z rV [com]) = e' then
-      some (View.encode ⟨x, z, rV, [com, colOpen c' rr p]⟩)
-    else none
-
-/-- The string simulator [PS10, Algorithm 128.7] (Alg-128.7): up to `n|E|` attempts
-(`colIterations x`, with `|E| = edgeCount G` counting ordered edge pairs; run-3 audit P11-3) on
-the consecutive coin blocks of the tape `r`, the first successful attempt's view, or `⊥ = []`
-after `n|E|` failures; a single attempt if `E = ∅`.
-
-As in [PS10, Algorithm 128.7, steps 4–5], at most `n|E|` attempts, then `fail` (`⊥ = []`).
-**Deviation (D10):** `e'` and the colour pair are rejection-sampled from the tape (defaults `0`
-and `(0, 1)`). -/
-noncomputable def colSim (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
-    (x z r : List Bool) : List Bool :=
-  let B := (colSimBlock ℓ V').eval x.length
-  let att : ℕ → Option (List Bool) := fun t => colSimAttemptStr Com ℓ V' x z (colCoinSlice B t r)
-  if edgeCount (decGraph x).2 = 0 then (att 0).getD []
-  else ((List.range (colIterations x)).findSome? att).getD []
-
-/-- **The simulator is a uniform PPT** [PS10, p. 128, "by construction it directly follows that
-`S` is a p.p.t."] (Claim-128.a): for a polynomial-time `Com` and an efficient `V'` there is a
-uniform `NUPPT` with coin polynomial `colSimCoins ℓ V'` whose activation on `⟨x, z⟩` at
-parameter `|x|` is `colSim Com ℓ V' x z r`.
-
-**Proof sketch.** `V'.Efficient` gives a uniform machine `A` with
-`V'.next x z rV [com] = A.runAtL |x| ⟨⟨x, z⟩, encodeMsgs [com]⟩ rV` (`Strategy.ofNUPPT_next`),
-polynomial-time by `A.polyTimeComputable_output` and the pairing calculus. One attempt on the
-raw layout is polynomial-time: the block is cut by `polyTimeComputable_pairTakePoly`/
-`pairDropPoly` with the unary block length (`polyTimeComputable_unaryPoly`); the two samplers
-by `polyTimeComputable_iterateFind` over the trials; the `n` commitments by
-`polyTimeComputable_blockMap ℓ` composed with `hCom` and `polyTimeComputable_iterateEmit`
-for the `encodeMsgs` fold (the colour at position `i` by `polyTimeComputable_ite` on the
-comparison with the two endpoints); the comparison of `V'`'s reply with `e'` by
-`polyTimeComputable_lenLe`-based modular arithmetic in unary; the view by
-`PolyTimeComputable.pairEncode`. The loop over `t < n|E|` is
-`Complexity.polyTimeComputable_iterateFind` with the attempt index in the state and the
-accepting test "the attempt succeeded" (`R := mul var var`, `P :=` the layout length), the
-`E = ∅` case by `polyTimeComputable_ite`; the result is packaged by `NUPPT.ofPolyTimeUniform`
-with coins `colSimCoins ℓ V'` (`NUPPT.runAtL_ofPolyTimeUniform`,
-`NUPPT.ofPolyTimeUniform_uniform`). -/
-theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
-    (ℓ : PolyExpr) (V' : Strategy) (hV' : V'.Efficient) :
-    ∃ S : NUPPT, S.Uniform ∧ S.coins = colSimCoins ℓ V' ∧
-      ∀ x z (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r) := by
-  obtain ⟨S, hS, hc, hsim⟩ := ColSimMachine.exists_simulator hCom ℓ hV'
-  exact ⟨S, hS, hc, fun x z r => (hsim x z r).trans rfl⟩
 
 /-! ### Proposition 128.8 -/
 
