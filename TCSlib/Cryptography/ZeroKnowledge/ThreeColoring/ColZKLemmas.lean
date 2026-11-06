@@ -252,6 +252,28 @@ theorem findSome?_range_eq_finRange {β : Type*} (K : ℕ) (g : ℕ → Option �
   rw [← List.map_coe_finRange, List.findSome?_map]
   rfl
 
+/-! ### The error of `col_zk` -/
+
+/-- **The error function of `col_zk` is negligible**: if `εB (√N)` is negligible in `N` then so
+is `N² εB (√N) + e^{−√N} + N² ((1/2)^N + (1/4)^N) + (1/4)^N` (gate 03g review §2.3).
+
+**Proof sketch.** `Negligible.mul_pow` (twice, with `negligible_two_pow_neg` and
+`(1/4)^N ≤ (1/2)^N`), `negligible_exp_neg_sqrt_div` with `C = 1` (`Nat.div_one`),
+`Negligible.mono` and `Negligible.add`. -/
+theorem negligible_colZKErr {εB : ℕ → ℝ} (hε : Negligible fun N => εB (Nat.sqrt N)) :
+    Negligible fun N : ℕ => (N : ℝ) ^ 2 * εB (Nat.sqrt N) + Real.exp (-(Nat.sqrt N : ℝ)) +
+      (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) + (1 / 4 : ℝ) ^ N := by
+  have h2 : Negligible fun N : ℕ => (1 / 2 : ℝ) ^ N :=
+    negligible_two_pow_neg.mono ⟨0, fun N _ => le_of_eq (by rw [one_div])⟩
+  have h4 : Negligible fun N : ℕ => (1 / 4 : ℝ) ^ N := h2.mono ⟨0, fun N _ => by
+    rw [abs_of_nonneg (by positivity), abs_of_nonneg (by positivity)]
+    exact pow_le_pow_left₀ (by norm_num) (by norm_num) N⟩
+  have he : Negligible fun N : ℕ => Real.exp (-(Nat.sqrt N : ℝ)) :=
+    (negligible_exp_neg_sqrt_div one_pos).mono ⟨0, fun N _ => le_of_eq (by rw [Nat.div_one])⟩
+  have h24 : Negligible fun N : ℕ => (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) :=
+    ((h2.mul_pow 2).add (h4.mul_pow 2)).mono ⟨0, fun N _ => le_of_eq (by rw [mul_add])⟩
+  exact (((hε.mul_pow 2).add he).add h24).add h4
+
 /-! ### Splitting a search at an index -/
 
 /-- **The first success splits at `k`**: the search over `List.finRange N` is the search before

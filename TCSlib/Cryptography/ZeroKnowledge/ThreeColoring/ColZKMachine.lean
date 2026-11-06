@@ -311,4 +311,104 @@ theorem distAdv_distinguisherL_reparam {σ τ : Type*} [Fintype σ] [Fintype τ]
   simp only [key] at hX hY
   rw [distAdv_def, distAdv_def, ← hX, ← hY]
 
+/-- **The hiding bound for the fixed reductions** [PS10, proof of Proposition 128.8, "by the
+hiding property of the commitment"] (gate 03g review §2.1, items 3–6): for a commitment scheme
+`(Com, ℓ)`, an efficient `V'`, a distinguisher `D` and an advice bound `b`, there is a negligible
+`ε ≥ 0` such that for every `n`, every two colour vectors `v, v'` of `n` values of `n` bits and
+every advice `adv` of length at most `b(n)`, the advantage of `cv ↦ D(n², hidingView V' adv cv)`
+between the commitment vectors to `v` and to `v'` is at most `ε n`.
+
+**Proof sketch.** At each `n` the triples `(v, v', adv)` with `|adv| ≤ b(n)` form a finite set
+(the advice as `List.ofFn` of a tuple of length `≤ b(n)`); take one with the largest advantage
+(`Finite.exists_max`) and hard-wire its advice as `α n`. The machine `B` of
+`exists_colHidingRed` has, at parameter `n`, exactly that advantage on its own vectors
+(`distAdv_distinguisherL_reparam`), which `Commitment.multiHiding` with `q := var` bounds by a
+negligible `ε_B n` (`rw [PolyExpr.eval_var] at`, pre-ship probe R3b); `ε := |ε_B|` is
+nonnegative and negligible and bounds every triple's advantage. -/
+theorem exists_hidingView_bound {Com : List Bool → List Bool} {ℓ : PolyExpr}
+    (hC : Commitment Com ℓ) {V' : Strategy} (hV' : V'.Efficient) (D : NUPPT) (b : PolyExpr) :
+    ∃ ε : ℕ → ℝ, Negligible ε ∧ (∀ n, 0 ≤ ε n) ∧ ∀ n (v v' : Fin n → Fin n → Bool)
+      (adv : List Bool), adv.length ≤ b.eval n →
+        distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v r)
+          (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com v' r)
+          (fun cv d => D.distinguisherL (n * n) (hidingView V' adv cv) d) ≤ ε n := by
+  -- the advantage of a triple, the advice given as a tuple of length at most `b(n)`
+  let g : ∀ n, (Fin n → Fin n → Bool) × (Fin n → Fin n → Bool) ×
+      (Σ k : Fin (b.eval n + 1), Fin k → Bool) → ℝ := fun n p =>
+    distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com p.1 r)
+      (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com p.2.1 r)
+      (fun cv d => D.distinguisherL (n * n) (hidingView V' (List.ofFn p.2.2.2) cv) d)
+  have hmax : ∀ n, ∃ p, ∀ q, g n q ≤ g n p := fun n => Finite.exists_max (g n)
+  choose p hp using hmax
+  have hα : ∀ n, (List.ofFn (p n).2.2.2).length ≤ b.eval n := fun n => by
+    rw [List.length_ofFn]
+    exact Nat.lt_succ_iff.1 (p n).2.2.1.isLt
+  obtain ⟨B, hBc, hB⟩ := exists_colHidingRed hV' D (fun n => List.ofFn (p n).2.2.2) b hα
+  obtain ⟨ε, hε, hεB⟩ := hC.multiHiding .var B
+  refine ⟨fun n => |ε n|, hε.mono ⟨0, fun n _ => (abs_abs _).le⟩, fun n => abs_nonneg _,
+    fun n v v' adv hadv => ?_⟩
+  have h := hεB n
+  rw [PolyExpr.eval_var] at h
+  have hB' := distAdv_distinguisherL_reparam hBc
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (p n).1 r)
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (p n).2.1 r) _ (hB n)
+  have hq : g n (v, v', ⟨⟨adv.length, Nat.lt_succ_of_le hadv⟩, adv.get⟩) ≤ g n (p n) := hp n _
+  have hofn : List.ofFn adv.get = adv := List.ofFn_get adv
+  simp only [g, hofn] at hq
+  calc _ ≤ _ := hq
+    _ = _ := hB'.symm
+    _ ≤ ε n := h (p n).1 (p n).2.1
+    _ ≤ |ε n| := le_abs_self _
+
+/-- The edgeless advice is short: at most `4 (2M + 2)` bits when `x`, `z`, `ρ` have at most `M`
+(`CommitmentLemmas.length_encodeMsgs_le`). -/
+theorem length_edgelessAdv_le {M : ℕ} {x z ρ : List Bool} (hx : x.length ≤ M)
+    (hz : z.length ≤ M) (hρ : ρ.length ≤ M) : (edgelessAdv x z ρ).length ≤ 4 * (2 * M + 2) := by
+  rw [edgelessAdv_eq]
+  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hw
+  rcases hw with rfl | rfl | rfl | rfl
+  exacts [hx, hz, hρ, Nat.zero_le _]
+
+/-- The planted advice is short: at most `15 (2M + 2)` bits when each of its fields has at most
+`M` bits (`CommitmentLemmas.length_encodeMsgs_le`). -/
+theorem length_plantedAdv_le {M : ℕ} {x z ρ A₁ A₂ opn post : List Bool} {n p₁ p₂ m e₀ : ℕ}
+    {pre : Option (List Bool)} (h1 : 1 ≤ M) (hx : x.length ≤ M) (hz : z.length ≤ M)
+    (hρ : ρ.length ≤ M) (hn : n ≤ M) (hp₁ : p₁ ≤ M) (hp₂ : p₂ ≤ M) (hA₁ : A₁.length ≤ M)
+    (hA₂ : A₂.length ≤ M) (hm : m ≤ M) (he₀ : e₀ ≤ M) (hopn : opn.length ≤ M)
+    (hpost : post.length ≤ M) (hpre : ∀ v, pre = some v → v.length ≤ M) :
+    (plantedAdv x z ρ n p₁ p₂ A₁ A₂ m e₀ opn post pre).length ≤ 15 * (2 * M + 2) := by
+  rw [plantedAdv_eq]
+  refine CommitmentLemmas.length_encodeMsgs_le _ M fun w hw => ?_
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hw
+  rcases hw with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl
+  · exact hx
+  · exact hz
+  · exact hρ
+  · exact h1
+  · split_ifs <;> simp only [List.length_cons, List.length_nil] <;> omega
+  · rw [List.length_replicate]; exact hn
+  · rw [List.length_replicate]; exact hp₁
+  · rw [List.length_replicate]; exact hp₂
+  · exact hA₁
+  · exact hA₂
+  · rw [List.length_replicate]; exact hm
+  · rw [List.length_replicate]; exact he₀
+  · exact hopn
+  · exact hpost
+  · cases pre with
+    | none => exact Nat.zero_le _
+    | some v => exact hpre v rfl
+
+/-- `D`'s advantage does not depend on how its parameter is written: `N₁ = N₂` gives equal
+advantages of `cv ↦ D(N₁, F cv)` and `cv ↦ D(N₂, F cv)` (the transport of `D`'s coin type along
+`|encGraph G| = n²`). -/
+theorem distAdv_distinguisherL_congr {σ τ : Type*} [Fintype σ] [Fintype τ] (D : NUPPT)
+    {N₁ N₂ : ℕ} (h : N₁ = N₂) (X : σ → List Bool) (Y : τ → List Bool) (F : List Bool → List Bool) :
+    distAdv X Y (fun cv d => D.distinguisherL N₁ (F cv) d) =
+      distAdv X Y fun cv d => D.distinguisherL N₂ (F cv) d := by
+  subst h
+  rfl
+
 end TCSlib.Cryptography.ColZK
