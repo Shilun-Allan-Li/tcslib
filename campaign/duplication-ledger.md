@@ -646,6 +646,23 @@ publishes `Complexity.LogProg.length_bits_succ_le` in `Machines/Bin`, beside `le
 bounds a `Nat.log` width and a memory range, and `BinaryArith/AddSub:174` a sum of two words, both
 other statements. **Retired on #208's merge.**
 
+**IL-1, the input-length decider's answer** (gate 101's round-2 screen, 2026-11-06). The
+public `Complexity.indicator_inputLenLang` (`Logspace/InputAccess`, since the ARM dedup `56716442`)
+states that `inputLenLang` answers `decide (a < |y|)` on `pairEncode y (bits a)`. Six proofs
+unfolded their decider table and repeated its two-line proof
+(`inputLenLang`, `indicator_indexLang_pairEncode`, `decide_eq_decide.mpr Iff.rfl`):
+- `Logspace/ISCountGenCorrect`'s `gen_start` (`hq`), which the v3 screen pairs with
+  `indicator_inputLenLang` and with `ExpBFS/Main`'s `orcN_len` at 94%;
+- `ExpBFS/Main`'s `orcN_len`, `SavitchARM/Correct`'s `hq`, `Machines/ARMWidthExample`'s `hq`,
+  `Logspace/PathHardRegs`' `orc_len` and `Randomized/SpaceAmplifyPoly`'s input-length loop (each
+  under the screen's cut-off or outside its population; found by `git grep` for the closing step).
+
+All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
+one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates. The
+other closings by `decide_eq_decide.mpr Iff.rfl` in the library (`InputAccess:551`, the lemma
+itself) are not members. **Retired on #208's merge.**
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general

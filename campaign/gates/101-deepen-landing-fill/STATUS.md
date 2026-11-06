@@ -18,3 +18,7 @@
   in `Machines/Bin`, the three sites re-pointed; F2–F4), then the campaign merge `dd8a52c5`.
   BL-2 in the ledger; dispositions in `resolutions.md`. `replay-ldp4` (190 modules) running; freeze
   and lint done.
+- 2026-11-06: round 2's screen exposed IL-1 (six re-derivations of `indicator_inputLenLang`,
+  all predating #208); the user ruled: re-point all six in #208 (`6a289c50`), then the campaign
+  merge `d01c56a4`. #208 now changes 11 files. `replay-ldp4` was stopped (superseded);
+  `replay-ldp5` (190 modules, from `oleans-lnth`) running.
