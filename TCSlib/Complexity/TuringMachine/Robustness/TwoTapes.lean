@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Nat.Log
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
@@ -87,7 +88,7 @@ private theorem tt_zero_tapes (M : FinTM Bool) (hk : M.k = 0) :
     · simp only [Cfg.init_inputPos]
     · simp only [Cfg.init_output, List.append_nil]
     · intro i
-      exact absurd i.isLt (by omega)
+      exact (i.cast hk).elim0
     · intro j _
       exact ⟨funext fun p => by simp only [Cfg.init_workTapes],
         by simp only [Cfg.init_workTapePos]⟩
@@ -98,11 +99,9 @@ private theorem tt_zero_tapes (M : FinTM Bool) (hk : M.k = 0) :
     rw [hq, ← hinit x, hr, embedEmitTM_runFrom]
   refine ⟨{ k := 2, State := M.State, tm := N }, 1, rfl, fun x o t h => ?_, fun x o h => ?_⟩
   · obtain ⟨hs, ho⟩ := (computesInTime_iff M x o t).1 h
-    have hb : t ≤ 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) :=
-      calc t ≤ t + 1 := Nat.le_succ t
-        _ = (t + 1) * 1 := (Nat.mul_one _).symm
-        _ ≤ (t + 1) * (Nat.log 2 (t + 1) + 1) := Nat.mul_le_mul_left _ (by omega)
-        _ = 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := (Nat.one_mul _).symm
+    have hb : t ≤ 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := by
+      rw [Nat.one_mul]
+      exact le_mul_of_le_of_one_le (Nat.le_succ t) (by omega)
     refine ComputesInTime.mono ?_ hb
     rw [computesInTime_iff]
     show (N.runFrom (N.initCfg x) t).state = none ∧ (N.runFrom (N.initCfg x) t).output = o
@@ -552,10 +551,8 @@ private theorem tt_track_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk :
     obtain ⟨htime, hpost, h1, hin, hout⟩ := F.spec (tt_dir (m t)) t x D c rfl
       (tt_cfg_rowPre _ D ip out)
     have hx := R.exit_mem D c rfl hpre
-    obtain ⟨s', hs'⟩ : ∃ s', (R.post D c).state = some s' := by
-      cases h : (R.post D c).state with
-      | none => rw [h] at hx; exact absurd hx (F.none_nmem _ _)
-      | some s' => exact ⟨s', rfl⟩
+    obtain ⟨s', hs'⟩ : ∃ s', (R.post D c).state = some s' :=
+      Option.ne_none_iff_exists'.mp (ne_of_mem_of_not_mem hx (F.none_nmem _ _))
     have hs'X : some s' ∈ F.X (tt_dir (m t)) t := hs' ▸ hx
     have hred : tt_red M F hk (some (q', m, t)) s' = some (tt_next M F q' m t) := by
       exact tt_red_track_pos M F hk q' m t _ (Or.inr ⟨h0, hs'X⟩)
@@ -810,7 +807,7 @@ private def tt_full {ℓ : ℕ} (z : ZoneContents ℓ) : Prop :=
 
 /-- The empty contents at level `0` are full (there is no level). -/
 private theorem tt_full_empty : tt_full (ZoneContents.empty 0) :=
-  fun i => absurd i.isLt (Nat.not_lt_zero _)
+  fun i => i.elim0
 
 /-- The home write keeps fullness: it changes no zone. -/
 private theorem tt_full_homeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool)
@@ -1139,7 +1136,7 @@ private theorem tt_Dtr_inv {k : ℕ} (m : Fin k → SignType) (D : ZoneData k) (
         by_cases ht : t = ⟨j, hj⟩
         · subst ht
           rw [if_neg (lt_irrefl j), if_pos (Nat.lt_succ_self j), h0, SignType.coe_zero, add_zero]
-        · have : t.val ≠ j := fun h => ht (Fin.ext h)
+        · have : t.val ≠ j := Fin.val_ne_of_ne ht
           by_cases htj : t.val < j
           · rw [if_pos htj, if_pos (by omega)]
           · rw [if_neg htj, if_neg (by omega)]
@@ -1152,7 +1149,7 @@ private theorem tt_Dtr_inv {k : ℕ} (m : Fin k → SignType) (D : ZoneData k) (
         · subst ht
           rw [if_pos rfl, if_neg (lt_irrefl j), if_pos (Nat.lt_succ_self j),
             tt_shift_dir _ h0]
-        · have : t.val ≠ j := fun h => ht (Fin.ext h)
+        · have : t.val ≠ j := Fin.val_ne_of_ne ht
           rw [if_neg ht]
           by_cases htj : t.val < j
           · rw [if_pos htj, if_pos (by omega)]
@@ -1418,11 +1415,6 @@ private theorem tt_cs_start (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : L
       · show (if j = 0 then _ else fun _ => none) p = (if j = 0 then _ else fun _ => none) p
         rw [if_neg hj, if_neg hj]
 
-/-- The output of `M`'s action, encoded, is the encoding of its output list. -/
-private theorem tt_output_map {S : Type} {k : ℕ} (a : Action k Bool S) :
-    (a.output.map (Sum.inl : Bool → ZoneSym k)).toList = a.output.toList.map Sum.inl := by
-  cases a.output <;> rfl
-
 /-- **One round of the run** [HS66; AB09, §1.7]: while `M` is live after `r + 1` steps, the
 zone machine runs live from the boundary configuration after `r` rounds to the one after
 `r + 1`, in `tt_T` steps.
@@ -1433,7 +1425,7 @@ The start is a transition-step configuration (`tt_cs_start`), and the round's ac
 `tt_round` gives the segment; its endpoint is the next boundary configuration: the data are the
 orbit's next (`tt_D_succ`), the input head moves as `M`'s (`tt_moveInputPos_val`,
 `Turing.Action.apply_inputPos`) and the output gains the encoded emission
-(`Turing.Action.apply_output`, `tt_output_map`). -/
+(`Turing.Action.apply_output`, `Option.toList_map`). -/
 private theorem tt_cs_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
     (x : List Bool) (r : ℕ) (hr : (tt_c M x (r + 1)).state ≠ none) :
     Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
@@ -1475,7 +1467,7 @@ private theorem tt_cs_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 
       show (tt_c M x (r + 1)).inputPos.val = _
       rw [happly, Action.apply_inputPos]
       exact tt_moveInputPos_val (List.length_map _).symm _ _ rfl _
-    · rw [happly, Action.apply_output, List.map_append, tt_output_map]
+    · rw [happly, Action.apply_output, List.map_append, Option.toList_map]
   rw [hstart, hT, hend]
   exact H
 
@@ -1520,7 +1512,7 @@ private theorem tt_cs_halt (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0
     ((tt_c M x r).output.map Sum.inl) _ (tt_inputSymbol _ _ rfl)).1 hsa
   rw [hstart]
   refine ⟨H.1, ?_⟩
-  rw [H.2, happly, Action.apply_output, List.map_append, tt_output_map]
+  rw [H.2, happly, Action.apply_output, List.map_append, Option.toList_map]
 
 /-- **Every round takes at least two steps** while `M` is live: the transition step and its
 dispatch. -/
@@ -1602,9 +1594,9 @@ private theorem tt_converse (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 
     push_neg at hhalt
     have hseg := tt_cs_run M F hk x (t' + 1) (hhalt _)
     have hsum : 2 * (t' + 1) ≤ ∑ r ∈ Finset.range (t' + 1), tt_T M F x r := by
-      calc 2 * (t' + 1) = ∑ _r ∈ Finset.range (t' + 1), 2 := by
-            rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id, Nat.mul_comm]
-        _ ≤ _ := Finset.sum_le_sum fun r _ => tt_T_ge M F x r (hhalt r)
+      have h := Finset.card_nsmul_le_sum (Finset.range (t' + 1)) (tt_T M F x) 2
+        fun r _ => tt_T_ge M F x r (hhalt r)
+      rwa [Finset.card_range, Nat.nsmul_eq_mul, Nat.mul_comm (t' + 1) 2] at h
     obtain ⟨hs, -⟩ := (computesInTime_iff _ _ _ _).1 h
     rw [tt_HS_init] at hs
     exact (segment_iff _ _ _ _ _ _).1 hseg |>.2.1 t' (by omega) (Set.mem_singleton_iff.mpr hs)
@@ -1856,7 +1848,7 @@ private theorem tt_trackStep_rsum {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneDa
       exact ⟨fun _ _ => rfl, rfl⟩
   · have hlt' : ¬ zoneRebalanceIndex dir t D < D.1 := by rwa [zoneRebalanceIndex_eq]
     have hidx : zoneShiftIndex dir (D.2 t) = D.1 :=
-      le_antisymm (zoneShiftIndex_le dir (D.2 t)) (not_lt.mp hlt)
+      eq_of_le_of_not_lt (zoneShiftIndex_le dir (D.2 t)) hlt
     have hidx' := zoneShiftIndex_extend dir (D.2 t) hidx
     have hfull' := tt_full_extend _ (hD t)
     have hlt₂ : zoneShiftIndex dir (D.2 t).extend < D.1 + 1 := by
@@ -1878,23 +1870,20 @@ private theorem tt_trackStep_rsum {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneDa
 /-- The tracks' steps never lower the level count. -/
 private theorem tt_Dtr_level_mono {k : ℕ} (m : Fin k → SignType) (H : ZoneData k) (j₁ : ℕ) :
     ∀ j₂, j₁ ≤ j₂ → (tt_Dtr m H j₁).1 ≤ (tt_Dtr m H j₂).1 := by
-  intro j₂ hj
-  induction j₂, hj using Nat.le_induction with
-  | base => exact le_rfl
-  | succ j _ ih =>
-    refine ih.trans ?_
-    by_cases h : j < k
-    · rw [show tt_Dtr m H (j + 1) = tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) from dif_pos h]
-      by_cases h0 : m ⟨j, h⟩ = 0
-      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) = tt_Dtr m H j from if_pos h0]
-      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) =
-          zoneTrackStepData (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) from if_neg h0]
-        by_cases hlt : zoneRebalanceIndex (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) <
-            (tt_Dtr m H j).1
-        · rw [zoneTrackStepData_of_lt _ _ hlt, zoneRebalanceData_eq]
-        · rw [zoneTrackStepData_of_not_lt _ _ hlt, zoneRebalanceData_eq, zoneExtendData_eq]
-          exact Nat.le_succ _
-    · rw [show tt_Dtr m H (j + 1) = tt_Dtr m H j from dif_neg h]
+  refine fun j₂ hj => monotone_nat_of_le_succ (f := fun j => (tt_Dtr m H j).1) (fun j => ?_) hj
+  show (tt_Dtr m H j).1 ≤ (tt_Dtr m H (j + 1)).1
+  by_cases h : j < k
+  · rw [show tt_Dtr m H (j + 1) = tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) from dif_pos h]
+    by_cases h0 : m ⟨j, h⟩ = 0
+    · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) = tt_Dtr m H j from if_pos h0]
+    · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) =
+        zoneTrackStepData (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) from if_neg h0]
+      by_cases hlt : zoneRebalanceIndex (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) <
+          (tt_Dtr m H j).1
+      · rw [zoneTrackStepData_of_lt _ _ hlt, zoneRebalanceData_eq]
+      · rw [zoneTrackStepData_of_not_lt _ _ hlt, zoneRebalanceData_eq, zoneExtendData_eq]
+        exact Nat.le_succ _
+  · rw [show tt_Dtr m H (j + 1) = tt_Dtr m H j from dif_neg h]
 
 /-- **The other tracks' steps keep a track's side totals** below a laid-out level `n`: from
 `j₁` to `j₂` the steps of tracks other than `t` change no side total of track `t` below `n`. -/
@@ -2020,16 +2009,10 @@ private theorem tt_card_le_of_gap (T g : ℕ) (hg : 0 < g) (S : Finset ℕ)
     calc a / g < a / g + 1 := Nat.lt_succ_self _
       _ = (a + g) / g := (Nat.add_div_right a hg).symm
       _ ≤ b / g := Nat.div_le_div_right h
-  have hinj : Set.InjOn (fun a => a / g) S := by
-    intro a ha b hb hab
-    by_contra hne
-    rcases lt_or_gt_of_ne hne with h | h
-    · exact absurd hab (hstep a ha b hb h).ne
-    · exact absurd hab (hstep b hb a ha h).ne'
-  calc S.card = (S.image fun a => a / g).card := (Finset.card_image_of_injOn hinj).symm
-    _ ≤ (Finset.range (T / g + 1)).card := Finset.card_le_card fun y hy => by
-        obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hy
-        exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.div_le_div_right (hS a ha).le))
+  have hinj : Set.InjOn (fun a => a / g) S := StrictMonoOn.injOn hstep
+  calc S.card ≤ (Finset.range (T / g + 1)).card :=
+        Finset.card_le_card_of_injOn (fun a => a / g) (fun a ha =>
+          Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.div_le_div_right (hS a ha).le))) hinj
     _ = T / g + 1 := Finset.card_range _
 
 /-! ### The count and level bounds over the run -/
@@ -2115,7 +2098,7 @@ private theorem tt_count (M : FinTM Bool) (x : List Bool) (T : ℕ)
   obtain ⟨e₁, e₂⟩ := hdrift b (by omega) le_rfl
   have hb := (F b hbT).2.1 (hlev b (by omega) le_rfl) hbi
   have h2 : 2 ≤ 2 ^ n := Nat.le_self_pow (by omega) 2
-  have hpow : 2 ^ n = 2 * 2 ^ i := by rw [hn, pow_succ]; ring
+  have hpow : 2 ^ n = 2 * 2 ^ i := by rw [hn, pow_succ']
   rcases hb with hb | hb
   · rw [hb] at e₂
     push_cast at e₂
@@ -2127,7 +2110,7 @@ private theorem tt_count (M : FinTM Bool) (x : List Bool) (T : ℕ)
     have h4 : 2 ≤ 2 ^ (n + 1) := Nat.le_self_pow (by omega) 2
     push_cast [Nat.cast_sub h4] at e₁
     have : (2 : ℤ) ^ n = 2 * 2 ^ i := by exact_mod_cast hpow
-    have : (2 : ℤ) ^ (n + 1) = 2 * 2 ^ n := by ring
+    have : (2 : ℤ) ^ (n + 1) = 2 * 2 ^ n := pow_succ' 2 n
     have : (1 : ℤ) ≤ 2 ^ i := by exact_mod_cast Nat.one_le_two_pow
     have key : (a : ℤ) + 2 ^ i ≤ b := by omega
     exact_mod_cast key
@@ -2177,7 +2160,7 @@ private theorem tt_round_disp {k : ℕ} {S : Type} (a : Action k Bool S) (D : Zo
           · subst ht
             rw [if_pos (Nat.lt_succ_self j), if_neg (lt_irrefl j), h0]
             simp
-          · have : t.val ≠ j := fun h => ht (Fin.ext h)
+          · have : t.val ≠ j := Fin.val_ne_of_ne ht
             by_cases htj : t.val < j
             · rw [if_pos htj, if_pos (by omega)]
             · rw [if_neg htj, if_neg (by omega)]
@@ -2199,7 +2182,7 @@ private theorem tt_round_disp {k : ℕ} {S : Type} (a : Action k Bool S) (D : Zo
               have := ih₁ ⟨j, hj⟩
               rw [if_neg (lt_irrefl j), add_zero] at this
               linarith
-            · have : t.val ≠ j := fun h => ht (Fin.ext h)
+            · have : t.val ≠ j := Fin.val_ne_of_ne ht
               obtain ⟨-, c4'⟩ := c4 t ht
               rw [c4', hℓ]
               have := ih₁ t
@@ -2217,7 +2200,7 @@ private theorem tt_round_disp {k : ℕ} {S : Type} (a : Action k Bool S) (D : Zo
             · -- an extension at level `E.1`: the scanned side is extreme
               have hidx : zoneShiftIndex dir (E.2 ⟨j, hj⟩) = E.1 := by
                 rw [← zoneRebalanceIndex_eq]
-                exact le_antisymm (zoneRebalanceIndex_le _ _ _) (not_lt.mp hlt)
+                exact eq_of_le_of_not_lt (zoneRebalanceIndex_le _ _ _) hlt
               have hl := tt_rsum_low dir (E.2 ⟨j, hj⟩) (hEf _) E.1 hidx.ge le_rfl
               have hq := ih₁ ⟨j, hj⟩
               rw [if_neg (lt_irrefl j), add_zero] at hq
@@ -2228,7 +2211,7 @@ private theorem tt_round_disp {k : ℕ} {S : Type} (a : Action k Bool S) (D : Zo
                 · rw [hdir, if_neg (by simp)] at hl
                   rw [hl] at hq
                   push_cast [Nat.cast_sub h2] at hq
-                  have : (2 : ℤ) ^ (E.1 + 1) = 2 * 2 ^ E.1 := by ring
+                  have : (2 : ℤ) ^ (E.1 + 1) = 2 * 2 ^ E.1 := pow_succ' 2 E.1
                   have : (2 : ℤ) ^ E.1 ≤ r + 1 := by linarith
                   exact_mod_cast this
                 · rw [hdir, if_pos rfl] at hl
@@ -2315,13 +2298,6 @@ private theorem tt_idxR_le (M : FinTM Bool) (x : List Bool) (T : ℕ)
 
 /-! ### The cost -/
 
-/-- A sum over `range k` is the sum over `Fin k` of the values at the indices. -/
-private theorem tt_sum_range_fin (k : ℕ) (f : ℕ → ℕ) :
-    ∑ j ∈ Finset.range k, f j = ∑ t : Fin k, f t.val :=
-  (Finset.sum_bij (fun (t : Fin k) _ => t.val) (fun t _ => Finset.mem_range.mpr t.isLt)
-    (fun _ _ _ _ h => Fin.ext h) (fun j hj => ⟨⟨j, Finset.mem_range.mp hj⟩, Finset.mem_univ _, rfl⟩)
-    (fun _ _ => rfl)).symm
-
 /-- **The cost of a halting run** [AB09, §1.7]: if `M` is live for its first `t₀ ≥ 1` steps, the
 zone machine's time `∑_{r < t₀ − 1} T_r + 1` is at most
 `(2 + k (5 A + 1)) · (t₀ + 1)(log₂(t₀ + 1) + 1)`.
@@ -2340,7 +2316,7 @@ private theorem tt_cost (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < 
   -- the time is at most the sum of all the rounds
   have hsum : ∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1 ≤
       ∑ r ∈ Finset.range t₀, tt_T M F x r := by
-    obtain ⟨s, rfl⟩ : ∃ s, t₀ = s + 1 := ⟨t₀ - 1, by omega⟩
+    obtain ⟨s, rfl⟩ : ∃ s, t₀ = s + 1 := Nat.exists_eq_add_one.mpr h1
     rw [Nat.add_sub_cancel, Finset.sum_range_succ]
     have := tt_T_ge M F x s (hl s (by omega))
     omega
@@ -2381,15 +2357,14 @@ private theorem tt_cost (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < 
       exact tt_τ_le M F hk _ _ _ _ _ j.val j.isLt
     have hsumτ := Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => hle j
     rw [Finset.sum_add_distrib, ← Finset.mul_sum] at hsumτ
-    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_id,
-      mul_one] at hsumτ
-    rw [tt_sum_range_fin M.k (fun j => tt_τ M F (x.map Sum.inl)
+    simp only [Finset.sum_const, Finset.card_fin, Nat.nsmul_eq_mul, mul_one] at hsumτ
+    rw [← Fin.sum_univ_eq_sum_range (fun j => tt_τ M F (x.map Sum.inl)
         (tt_moves (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)))
         (tt_homeData (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)) (tt_D M x s))
         (moveInputPos (tt_ipOf M (tt_c M x s))
           (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).inputTape)
         ((tt_c M x s).output.map Sum.inl ++
-          ((tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).output.map Sum.inl).toList) j)]
+          ((tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).output.map Sum.inl).toList) j) M.k]
     omega
   have hcost := sum_cost_le_of_count M.k t₀ L A 2 (fun t s => tt_idxR M x t s) (tt_T M F x)
     hstep (fun t => tt_idxR_le M x t₀ hl t) (fun t i _ => tt_count M x t₀ hl t i)
