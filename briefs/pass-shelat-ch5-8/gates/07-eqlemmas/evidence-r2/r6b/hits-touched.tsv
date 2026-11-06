@@ -1,0 +1,51 @@
+TCSlib/Cryptography/Asymptotic/Collections.lean:1044	simp	P	foreign-def	Complexity.P	TCSlib.Complexity.ClassP.P	[theorem fiber_le]	simp only [P, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply, Prod.map_apply,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:292	unfold	Collection.invProbAt	foreign-def	TCSlib.Cryptography.Collection.invProbAt	TCSlib.Cryptography.Asymptotic.Collections	[theorem OneWay.glPad]	unfold Collection.invProbAt at key ⊢
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:419	simp	glPadInvFun	foreign-def	TCSlib.Cryptography.glPadInvFun	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[def TrapdoorCollection.glPad]	simp only [glPadInvFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:832	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem yaoRaw'_layout]	simp only [hx₀, NUPPT.layout, length_pairEncode, List.length_replicate]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:362	rw	decListFun	foreign-def	TCSlib.Cryptography.decListFun	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[def bitwise]	rw [bitwise_enc_runAt, decListFun,
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:373	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[def bitwise]	simp only [coinBlock, List.length_take, List.length_drop]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:426	simp	multiDist	foreign-def	TCSlib.Cryptography.multiDist	TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	[theorem bitwise_pkEncDist_coinBlocks]	simp only [multiDist]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:437	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_bitwise_pkEncDist]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:501	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem SingleBitSecure.bitwise]	unfold distAdv at hn ⊢
+TCSlib/Cryptography/Asymptotic/Universal.lean:664	rw	padStr	foreign-def	TCSlib.Cryptography.padStr	TCSlib.Cryptography.Asymptotic.CollectionsLemmas	[theorem padStr_eq_ofFn_fUniversal_f]	fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy), padStr,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:237	simp	encDist	foreign-def	TCSlib.Cryptography.PrivateKeyScheme.encDist	TCSlib.Cryptography.Asymptotic.Encryption	[theorem zkSim_runAt]	simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform.advice_eq n, S.enc_uniform.advice_eq n, zkSimFun,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:237	simp	NUPPT.runAt	foreign-def	Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	[theorem zkSim_runAt]	simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform.advice_eq n, S.enc_uniform.advice_eq n, zkSimFun,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:237	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem zkSim_runAt]	simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform.advice_eq n, S.enc_uniform.advice_eq n, zkSimFun,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:238	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem zkSim_runAt]	NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:238	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem zkSim_runAt]	NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:238	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem zkSim_runAt]	NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:368	simp	Protocol.outV	foreign-def	TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem outV_pullback_cheat]	simp only [Protocol.outV, Protocol.transcriptWith, Prod.map]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:368	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem outV_pullback_cheat]	simp only [Protocol.outV, Protocol.transcriptWith, Prod.map]
+TCSlib.Complexity.ClassNP.PolyTimePairing	Complexity.splitAtLastTrue_replicate_succ	_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.splitAtLastTrue_replicate_succ	Turing.splitAtLastTrue.eq_1
+TCSlib.Cryptography.Asymptotic.Encryption	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.Encryption	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq	Complexity.NUPPT.distinguisherL.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.out_eq	TCSlib.Cryptography.GGMRed.out_eq	TCSlib.Cryptography.GGMRed.out.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.isQ_iff	TCSlib.Cryptography.GGMRed.isQ_iff	TCSlib.Cryptography.GGMRed.isQ.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.unQ.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.seeds_eq	TCSlib.Cryptography.GGMRed.seeds_eq	TCSlib.Cryptography.GGMRed.seeds.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.coinsRest_eq	TCSlib.Cryptography.GGMRed.coinsRest_eq	TCSlib.Cryptography.GGMRed.coinsRest.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.fresh_eq	TCSlib.Cryptography.GGMRed.fresh_eq	TCSlib.Cryptography.GGMRed.fresh.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.coinsD_eq	TCSlib.Cryptography.GGMRed.coinsD_eq	TCSlib.Cryptography.GGMRed.coinsD.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.pfx.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.lab.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.query.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.ans.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.vstr.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.look.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.pairs_eq	TCSlib.Cryptography.GGMRed.pairs_eq	TCSlib.Cryptography.GGMRed.pairs.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.move_eq	TCSlib.Cryptography.GGMRed.move_eq	TCSlib.Cryptography.GGMRed.move.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.rawFun_rawInput	TCSlib.Cryptography.GGMRed.rawFun_rawInput	TCSlib.Cryptography.GGMRed.rawFun.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher	Complexity.NUPPT.distinguisher.eq_1
+TCSlib.Cryptography.Asymptotic.HardCoreLemmas	TCSlib.Cryptography.exists_glPadEvaluator	TCSlib.Cryptography.exists_glPadEvaluator	Complexity.NUPPT.advInput.eq_1
+TCSlib.Cryptography.Asymptotic.OneWay	TCSlib.Cryptography.FunFamily.Easy.prod	TCSlib.Cryptography.FunFamily.Easy.prod	Complexity.NUPPT.advInput.eq_1
+TCSlib.Cryptography.Asymptotic.OneWay	TCSlib.Cryptography.strong_prod_two	TCSlib.Cryptography.strong_prod_two	TCSlib.Cryptography.OneWay.prodFun.eq_1
+TCSlib.Cryptography.Asymptotic.OneWayYao	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout	TCSlib.Cryptography.OneWay.yaoTry.eq_1
+TCSlib.Cryptography.Asymptotic.PublicKey	TCSlib.Cryptography.BitPublicKeyScheme.bitwise	TCSlib.Cryptography.BitPublicKeyScheme.bitwise._proof_5	TCSlib.Cryptography.decListFun.eq_1
+TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	TCSlib.Cryptography.exists_hybridBound	TCSlib.Cryptography.exists_hybridBound	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	TCSlib.Cryptography.distAdv_tuple_le_sum	TCSlib.Cryptography.distAdv_tuple_le_sum	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.Universal	TCSlib.Cryptography.padStr_eq_ofFn_fUniversal_f	_private.TCSlib.Cryptography.Asymptotic.Universal.0.TCSlib.Cryptography.padStr_eq_ofFn_fUniversal_f	TCSlib.Cryptography.padStr.eq_1
+TCSlib.Cryptography.Asymptotic.Universal	TCSlib.Cryptography.uprob_fiber_le_card_mul	TCSlib.Cryptography.uprob_fiber_le_card_mul	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.ZeroKnowledge.Commitment	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.multiCom.eq_1

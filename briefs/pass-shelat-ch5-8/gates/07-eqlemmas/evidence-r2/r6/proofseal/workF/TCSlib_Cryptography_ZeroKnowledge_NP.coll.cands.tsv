@@ -1,0 +1,103 @@
+Complexity.DTIME	TCSlib.Complexity.ClassP.DTIME	deep	Complexity.NP	2
+Complexity.NP	TCSlib.Complexity.ClassNP.NP	direct		2
+Complexity.P	TCSlib.Complexity.ClassP.P	deep	Complexity.NP	2
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.PolyTimeReducible, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_pairSndD	15
+Complexity.PolyTimeReducible	TCSlib.Complexity.ClassNP.Reductions	direct		1
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.colProtocol, TCSlib.Cryptography.LevinTransfer.postView_encode	15
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_pairSndD, TCSlib.Cryptography.colProtocol	17
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.polyTimeComputable_pairSndD, TCSlib.Cryptography.colProtocol	17
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.simulate, TCSlib.Cryptography.ZK	12
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.efficientV	10
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAtL, Complexity.NUPPT.simulate	11
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.simulate, TCSlib.Cryptography.ZK	9
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.exists_commitment_of_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	2
+Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk	8
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAtL, Complexity.NUPPT.simulate	11
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.exists_commitment_of_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	2
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.simulate, TCSlib.Cryptography.ZK	9
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.efficientV	10
+Complexity.NUPPT.simulate	TCSlib.Cryptography.ZeroKnowledge.Defs	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk	9
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAtL, Complexity.NUPPT.simulate	11
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.simulate, TCSlib.Cryptography.ZK, TCSlib.Cryptography.colProtocol	29
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.colProtocol	6
+Complexity.PolyExpr.subst	TCSlib.Complexity.Randomized.PolyExpr	direct		11
+TCSlib.Cryptography.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	deep	TCSlib.Cryptography.exists_commitment_of_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	2
+TCSlib.Cryptography.L3COL	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.colRep_efficientProverProof	7
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.exists_commitment_of_owp_hardCore	10
+TCSlib.Cryptography.OneWayPermutation	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.exists_commitment_of_owp, TCSlib.Cryptography.exists_commitment_of_owp_hardCore	4
+TCSlib.Cryptography.ProperColoring	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.R3COL, TCSlib.Cryptography.colRep_efficientProverProof	7
+TCSlib.Cryptography.R3COL	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	direct	TCSlib.Cryptography.colRep_efficientProverProof	7
+TCSlib.Cryptography.ThreeColorable	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.L3COL, TCSlib.Cryptography.colRep_efficientProverProof	7
+TCSlib.Cryptography.ZK	TCSlib.Cryptography.ZeroKnowledge.Defs	direct	TCSlib.Cryptography.col_zk	8
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.distAdv	8
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colCoinSlice	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocolRep, TCSlib.Cryptography.colRep_efficientProverProof	6
+TCSlib.Cryptography.colCommit	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colIterations	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocolRep, TCSlib.Cryptography.colRep_efficientProverProof	6
+TCSlib.Cryptography.colOpen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colProtocol	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	direct		6
+TCSlib.Cryptography.colProtocolRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	direct	TCSlib.Cryptography.colRep_efficientProverProof	6
+TCSlib.Cryptography.colProver	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colProverRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocolRep, TCSlib.Cryptography.colRep_efficientProverProof	6
+TCSlib.Cryptography.colVerifier	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colVerifierRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocolRep, TCSlib.Cryptography.colRep_efficientProverProof	6
+TCSlib.Cryptography.colVerify	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.colWellFormed	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.decColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.decColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk	8
+TCSlib.Cryptography.edgeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.edgeIdxOfMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.edgeList	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.edgeMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.encColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.encColoring	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.R3COL, TCSlib.Cryptography.colProtocol	7
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.R3COL, TCSlib.Cryptography.colProtocol	7
+TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.sound	15
+TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.exec	15
+TCSlib.Cryptography.msgAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.perm3Equiv	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	deep	TCSlib.Cryptography.exists_commitment_of_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	2
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.samplePerm3	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.colProtocol	6
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.distAdv	9
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeReducible, Complexity.polyTimeComputable_id	15
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	16
+Turing.FinTM.DecidesInTime	TCSlib.Complexity.ClassP.DTIME	deep	Complexity.NP	2
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	16
+Turing.MultiTapeTM.indicator	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP	2
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	16
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	16
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	21
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.NP, Complexity.PolyTimeComputable, Complexity.PolyTimeReducible	16
+TCSlib.Cryptography.LevinTransfer.UnifProj	TCSlib.Cryptography.ZeroKnowledge.NPLemmas	deep	TCSlib.Cryptography.LevinTransfer.unifProj_coinTrunc, TCSlib.Cryptography.LevinTransfer.UnifProj.uprob_comp	2
+TCSlib.Cryptography.LevinTransfer.coinTrunc	TCSlib.Cryptography.ZeroKnowledge.NPLemmas	direct	TCSlib.Cryptography.LevinTransfer.unifProj_coinTrunc	4
+TCSlib.Cryptography.LevinTransfer.liftVerifier	TCSlib.Cryptography.ZeroKnowledge.NPLemmas	deep	TCSlib.Cryptography.LevinTransfer.liftVerifier_efficient	1
+TCSlib.Cryptography.LevinTransfer.postView	TCSlib.Cryptography.ZeroKnowledge.NPLemmas	deep	TCSlib.Cryptography.LevinTransfer.postView_encode	1
+TCSlib.Cryptography.PermFamily.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	direct	TCSlib.Cryptography.exists_commitment_of_owp_hardCore	2
+TCSlib.Cryptography.PermFamily.toFunFamily	TCSlib.Cryptography.Asymptotic.OneWay	deep	TCSlib.Cryptography.OneWayPermutation, TCSlib.Cryptography.exists_commitment_of_owp, TCSlib.Cryptography.exists_commitment_of_owp_hardCore	4
+TCSlib.Cryptography.PermFamily.toFunFamily_domEquiv	TCSlib.Cryptography.Asymptotic.OneWay	deep	TCSlib.Cryptography.exists_commitment_of_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	2
+TCSlib.Cryptography.Protocol.ProverBounded	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.EfficientProverProofErr.boundedP, TCSlib.Cryptography.Protocol.proverBounded_iff	2
+TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.InteractiveProofErr.sound	4
+TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.sound	13
+TCSlib.Cryptography.Protocol.viewV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk	9
+TCSlib.Cryptography.Protocol.withV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk	8
+TCSlib.Cryptography.Strategy.Efficient	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.efficientV	10
+TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.colProtocolRep, TCSlib.Cryptography.colRep_efficientProverProof	16
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.ZK, TCSlib.Cryptography.colProtocol, TCSlib.Cryptography.InteractiveProofErr.efficientV	10
+TCSlib.Cryptography.Strategy.ofNUPPT	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.InteractiveProofErr.efficientV	10
+TCSlib.Cryptography.View.encode	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.ZK, TCSlib.Cryptography.col_zk, TCSlib.Cryptography.LevinTransfer.postView_encode	8

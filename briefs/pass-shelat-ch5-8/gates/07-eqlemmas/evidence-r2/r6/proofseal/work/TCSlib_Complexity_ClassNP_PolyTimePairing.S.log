@@ -1,0 +1,34 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:70:8: error: Invalid `⟨...⟩` notation: The expected type `PolyTimeComputable f` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:98:9: error: Tactic `rcases` failed: `hg : PolyTimeComputable g` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:168:10: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun x => List.replicate (1 * (x.length + 1) ^ 1) true
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:177:10: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun x =>
+    match pairDecode x with
+    | some (a, v) =>
+      match splitAtLastTrue v with
+      | some u => pairEncode a u
+      | none => []
+    | none => []
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:199:8: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun x => List.replicate (C * (x.length + 1) ^ d) true
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:295:9: error: Tactic `rcases` failed: `hp : PolyTimeComputable fun x => [p x]` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Complexity_ClassNP_PolyTimePairing.S.lean:337:10: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun x =>
+    [match pairDecode x with
+      | some (a, b) => decide (b.length ≤ 1 * (a.length + 1) ^ 1)
+      | none => false]
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor

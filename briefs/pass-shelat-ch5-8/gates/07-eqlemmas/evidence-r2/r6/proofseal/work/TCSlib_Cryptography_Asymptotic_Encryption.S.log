@@ -1,0 +1,37 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:360:2: error: 'change' tactic failed, pattern
+  |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun s => padXor h m₁ (G s)) D| ≤
+    |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun p => padXor h m₀ p) D| +
+      |acceptProb (fun s => padXor h m₁ (G s)) D - acceptProb (fun p => padXor h m₁ p) D|
+is not definitionally equal to target
+  distAdv (fun s => padXor h m₀ (G s)) (fun s => padXor h m₁ (G s)) D ≤
+    (prgAdv G fun t r => D (padXor h m₀ t) r) + prgAdv G fun t r => D (padXor h m₁ t) r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:515:68: error: Type mismatch
+  rfl
+has type
+  ?m.50 = ?m.50
+but is expected to have type
+  acceptProb G (B.distinguisher n L) = acceptProb (fun s => List.ofFn (G s)) (B.distinguisherL n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:583:61: error: Invalid projection: Expected a value whose type is a structure
+  hP
+has type
+  P.Secure
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:591:2: error: Type mismatch
+  distAdv_padXor_le (LT.lt.le (P.expands n)) (P.G n) (μ n).1 (μ n).2 fun t r => D.distinguisherL n (List.ofFn t) r
+has type
+  (distAdv (fun s => padXor ⋯ (μ n).1 (P.G n s)) (fun s => padXor ⋯ (μ n).2 (P.G n s)) fun t r =>
+      D.distinguisherL n (List.ofFn t) r) ≤
+    (prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).1 t)) r) +
+      prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).2 t)) r
+but is expected to have type
+  |(acceptProb (fun s => padXor ⋯ (μ n).1 (P.G n s)) fun t r => D.distinguisherL n (List.ofFn t) r) -
+        acceptProb (fun s => padXor ⋯ (μ n).2 (P.G n s)) fun t r => D.distinguisherL n (List.ofFn t) r| ≤
+    (prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).1 t)) r) +
+      prgAdv (P.G n) fun t r => D.distinguisherL n (List.ofFn (padXor ⋯ (μ n).2 t)) r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:648:22: error: Function expected at
+  hε
+but this term has type
+  Negligible ε
+
+Note: Expected a function because this term is being applied to the argument
+  1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_Asymptotic_Encryption.S.lean:648:9: error: Tactic `rcases` failed: `x✝ : ?m.27` is not an inductive datatype

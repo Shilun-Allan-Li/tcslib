@@ -1,0 +1,108 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:86:55: warning: This simp argument is unused:
+  moverIsV
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵m̵o̵v̵e̵r̵I̵s̵V̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:113:55: warning: This simp argument is unused:
+  moverIsV
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵m̵o̵v̵e̵r̵I̵s̵V̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:132:2: error: 'show' tactic failed, pattern
+  [decide
+        ¬Isomorphic (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+            (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (hist.getLastD []))] =
+    ?m.20
+is not definitionally equal to target
+  gniProver.next (encInstance G₀ G₁) y r hist = [decide ¬Isomorphic G₀ (decGraphAt n (hist.getLastD []))]
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:154:2: error: 'show' tactic failed, pattern
+  (if hist.length < (encInstance G₀ G₁).length then ?m.76 else ?m.77) = ?m.79
+is not definitionally equal to target
+  gniVerifierRep.next (encInstance G₀ G₁) z r hist =
+    encGraph
+      (permGraph (bif (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false then G₁ else G₀)
+        (samplePerm n (List.drop 1 (coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:175:2: error: 'show' tactic failed, pattern
+  (if hist.length < x.length then ?m.58 else ?m.59) = ?m.61
+is not definitionally equal to target
+  gniVerifierRep.next x z r hist =
+    [decide
+        (wellFormedInstance x = true ∧
+          ∀ (j : Fin x.length),
+            (hist.getD ↑j []).headD false = (coinSlice (1 + (x.length + 1) ^ 2) (↑j) r).headD false)]
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:183:96: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  gniProtocolRep.outV P' x y z r =
+    gniVerifierRep.next x z (List.ofFn r.2)
+      (exec P' gniVerifierRep true x y z (List.ofFn r.1) (List.ofFn r.2) (2 * x.length)).2
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:304:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+γ : Type u_2
+inst✝¹ : Fintype σ
+inst✝ : Fintype γ
+X : σ → γ
+δ : ℝ
+h : StatClose X id δ
+⊢ StatClose (fun ts k => X (ts k)) id (↑0 * δ)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:325:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+γ : Type u_2
+inst✝¹ : Fintype σ
+inst✝ : Fintype γ
+X : σ → γ
+δ : ℝ
+h : StatClose X id δ
+m : ℕ
+ih : StatClose (fun ts k => X (ts k)) id (↑m * δ)
+hp :
+  StatClose (fun s => Fin.cons (X s.1, fun k => X (s.2 k)).1 (X s.1, fun k => X (s.2 k)).2)
+    (fun t => Fin.cons (id t.1, id t.2).1 (id t.1, id t.2).2) (δ + ↑m * δ)
+h1 :
+  StatClose
+    (fun s =>
+      Fin.cons (X ((Fin.consEquiv fun x => σ).symm s).1, fun k => X (((Fin.consEquiv fun x => σ).symm s).2 k)).1
+        (X ((Fin.consEquiv fun x => σ).symm s).1, fun k => X (((Fin.consEquiv fun x => σ).symm s).2 k)).2)
+    (fun t =>
+      Fin.cons (id ((Fin.consEquiv fun x => γ).symm t).1, id ((Fin.consEquiv fun x => γ).symm t).2).1
+        (id ((Fin.consEquiv fun x => γ).symm t).1, id ((Fin.consEquiv fun x => γ).symm t).2).2)
+    (δ + ↑m * δ)
+⊢ StatClose (fun ts k => X (ts k)) id (↑(m + 1) * δ)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:388:10: error: Tactic `rfl` failed: The left-hand side
+  (fun k => encGraph (prefixLE (fun j => permGraph (bif b j then G₁ else G₀) (samplePerm n (List.ofFn (ts j)))) i k)) t
+is not definitionally equal to the right-hand side
+  encGraph (permGraph (bif b ⟨↑t, ⋯⟩ then G₁ else G₀) (samplePerm n (List.ofFn (ts ⟨↑t, ⋯⟩))))
+
+n : ℕ
+G₀ G₁ : Graph n
+σ₀ : Equiv.Perm (Fin n)
+hσ : permGraph G₀ σ₀ = G₁
+P' : Strategy
+y z : List Bool
+r₁ : P'.Coins (encInstance G₀ G₁).length
+hr₁ :
+  (uprob fun r => gniProtocolRep.outV P' (encInstance G₀ G₁) y z r = [true]) ≤
+    uprob fun r₂ => gniProtocolRep.outV P' (encInstance G₀ G₁) y z (r₁, r₂) = [true]
+b : Fin (encInstance G₀ G₁).length → Bool
+ts : Fin (encInstance G₀ G₁).length → Fin (1 * ((encInstance G₀ G₁).length + 1) ^ 2) → Bool
+i : Fin (encInstance G₀ G₁).length
+t : Fin (↑i + 1)
+⊢ (fun k => encGraph (prefixLE (fun j => permGraph (bif b j then G₁ else G₀) (samplePerm n (List.ofFn (ts j)))) i k))
+      t =
+    encGraph (permGraph (bif b ⟨↑t, ⋯⟩ then G₁ else G₀) (samplePerm n (List.ofFn (ts ⟨↑t, ⋯⟩))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:422:16: error: Type mismatch
+  hV
+has type
+  gniVerifierRep.Efficient
+but is expected to have type
+  gniProtocolRep.V.Efficient
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:425:13: error: Tactic `rcases` failed: `a✝ : Lniso x` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work2/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep.S.lean:431:13: error: Tactic `rcases` failed: `x✝ : Isomorphic G₀ G₁` is not an inductive datatype

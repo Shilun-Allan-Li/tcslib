@@ -18,3 +18,5 @@
 byte-identical from `bd2e4d0f`), `expGen_coinsEquiv` with `expGen_runAt` and the three `_index`
 statements restated through it, and `factoringAssumption_iff` (with a sweep for other `Prop`
 definitions lacking an `_iff`).
+
+**Repair complete (2026-11-07):** #210 at `037075b01ca348266d50735cd22526a96fc131bf` (rounds 16a7d02d, 286aee54, c304994e, 037075b0). F01: the complete sweep, then the definition-body fixes, a whole-file proof seal and an explicit-unfold scan over touched declarations (`evidence-r2/`). F02: sealed pass probes and paired controls for every lemma group (`evidence-r5/probes/`, `evidence-r2/r6/probes/`). F03: the S1 sketch at `n < 2`. Round 2 pack: `pack-r2.md`.

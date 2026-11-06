@@ -1,0 +1,48 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform, TCSlib.Cryptography.OneWay.exists_prodEval	7
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	deep	Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.inArg_layout	2
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	deep	Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.inArg_layout	2
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.inArg_layout	2
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct		1
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	32
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	30
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.polyTimeComputable_inAdvice	1
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.inArg_layout, Complexity.NUPPT.polyTimeComputable_inArg	2
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.polyTimeComputable_inCoins	1
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.polyTimeComputable_inParam	1
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	direct		17
+Complexity.NUPPT.inverterLit	TCSlib.Cryptography.Asymptotic.Adversary	direct		9
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.inArg_layout, Complexity.NUPPT.polyTimeComputable_layout	2
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAtL_ofPolyTimeUniform	2
+Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.runAtL_ofPolyTimeUniform	1
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	28
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt_eq	28
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.runAt_eq	4
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.output	28
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.coinLen, Complexity.NUPPT.inverter	79
+Complexity.PolyExpr.subst	TCSlib.Complexity.Randomized.PolyExpr	direct		2
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.Negligible.mono	9
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	24
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.OneWay.yao_amplification_exp	3
+TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.invProbOpt_le_one, TCSlib.Cryptography.invProbOpt_nonneg	7
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.invProb, TCSlib.Cryptography.invProbOpt, TCSlib.Cryptography.invProbOpt_le_one	25
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	32
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.polyTimeComputable_pairTakePoly, Complexity.NUPPT.runAtL_ofPolyTimeUniform	7
+TCSlib.Cryptography.OneWay.blocksE	TCSlib.Cryptography.Asymptotic.OneWayYao	direct	TCSlib.Cryptography.OneWay.yaoB	2
+TCSlib.Cryptography.OneWay.padTrue	TCSlib.Cryptography.Asymptotic.OneWayLemmas	deep	TCSlib.Cryptography.OneWay.yaoB	1
+TCSlib.Cryptography.OneWay.prodFun	TCSlib.Cryptography.OneWayFunctions.Amplification	direct	TCSlib.Cryptography.OneWay.yaoInverter, TCSlib.Cryptography.OneWay.yaoTry, TCSlib.Cryptography.OneWay.yao_amplification_exp	8
+TCSlib.Cryptography.OneWay.yaoB	TCSlib.Cryptography.Asymptotic.OneWayYao	direct		1
+TCSlib.Cryptography.OneWay.yaoInverter	TCSlib.Cryptography.OneWayFunctions.Amplification	direct	TCSlib.Cryptography.OneWay.yao_amplification_exp	2
+TCSlib.Cryptography.OneWay.yaoTry	TCSlib.Cryptography.OneWayFunctions.Amplification	direct	TCSlib.Cryptography.OneWay.yaoInverter, TCSlib.Cryptography.OneWay.yao_amplification_exp	3

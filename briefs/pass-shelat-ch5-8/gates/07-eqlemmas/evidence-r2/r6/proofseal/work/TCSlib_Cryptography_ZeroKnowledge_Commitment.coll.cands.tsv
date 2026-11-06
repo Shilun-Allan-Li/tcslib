@@ -1,0 +1,73 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.owpPredMachine	12
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.owpPredMachine, TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	6
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.pairSndD_pairEncode, TCSlib.Cryptography.owpPredMachine, TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	7
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, TCSlib.Cryptography.owpPredMachine	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.pairSndD_pairEncode, Complexity.NUPPT.advInput, Complexity.NUPPT.distinguisher	27
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.exists_owp_hardCore	17
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.owpPredMachine_predProb	15
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.owpPredMachine_predProb, TCSlib.Cryptography.CommitmentLemmas.acceptProb_distinguisher_of_runAtL	6
+Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.CommitmentLemmas.acceptProb_distinguisher_of_runAtL	10
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.exists_owp_hardCore	15
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	deep	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.owpPredMachine_predProb, TCSlib.Cryptography.PermFamily.HardCore	4
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.exists_owp_hardCore	15
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.CommitmentLemmas.acceptProb_distinguisher_of_runAtL, TCSlib.Cryptography.CommitmentLemmas.exists_pairSpliceRed	2
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.exists_owp_hardCore	15
+Complexity.NUPPT.wrap	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.NUPPT.wrapFun	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	TCSlib.Cryptography.owpPredMachine	1
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.coinLen, Complexity.NUPPT.distinguisherL, TCSlib.Cryptography.OneWayPermutation	28
+TCSlib.Cryptography.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	deep	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore, TCSlib.Cryptography.PermFamily.HardCore.easy	4
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore, TCSlib.Cryptography.PermFamily.HardCore.easy	13
+TCSlib.Cryptography.OneWayPermutation	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.exists_owp_hardCore	3
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.acceptProb_bind, TCSlib.Cryptography.acceptProb_snd, TCSlib.Cryptography.distAdv	18
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.CommitmentLemmas.distAdv_comm, TCSlib.Cryptography.distAdv.eq_1	14
+TCSlib.Cryptography.owpGen	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	deep	TCSlib.Cryptography.predProb_owpPredictor_true	1
+TCSlib.Cryptography.owpGenNot	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	deep	TCSlib.Cryptography.predProb_owpPredictor_true	1
+TCSlib.Cryptography.owpGenPRG	TCSlib.Cryptography.Asymptotic.HardCore	direct	TCSlib.Cryptography.owpGenPRG_G_outEquiv	1
+TCSlib.Cryptography.owpGenPRG_outEquiv	TCSlib.Cryptography.Asymptotic.HardCore	direct	TCSlib.Cryptography.owpGenPRG_G_outEquiv	1
+TCSlib.Cryptography.owpPair	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	direct		1
+TCSlib.Cryptography.owpPredMachine	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	direct		1
+TCSlib.Cryptography.owpPredPost	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	TCSlib.Cryptography.owpPredMachine	1
+TCSlib.Cryptography.owpPredPre	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	TCSlib.Cryptography.owpPredMachine	1
+TCSlib.Cryptography.owpPredictor	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	direct	TCSlib.Cryptography.owpPredictorSnoc	2
+TCSlib.Cryptography.owpPredictorSnoc	TCSlib.Cryptography.Asymptotic.HardCore	direct		2
+TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	direct	TCSlib.Cryptography.padFin_ofFn, TCSlib.Cryptography.EnsembleLemmas.padL, TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	8
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore, TCSlib.Cryptography.PermFamily.HardCore.easy	5
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.acceptProb_bind, TCSlib.Cryptography.acceptProb_snd	21
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisher, Complexity.NUPPT.distinguisherL	17
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.output_length_le, TCSlib.Cryptography.exists_owp_hardCore	12
+TCSlib.Cryptography.EnsembleLemmas.blocks	TCSlib.Cryptography.Asymptotic.EnsemblesLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt	1
+TCSlib.Cryptography.EnsembleLemmas.padL	TCSlib.Cryptography.Asymptotic.EnsemblesLemmas	direct	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	3
+TCSlib.Cryptography.FunFamily.Easy	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.FunFamily.StrongOneWay.easy	2
+TCSlib.Cryptography.FunFamily.blocks	TCSlib.Cryptography.Asymptotic.OneWay	direct		7
+TCSlib.Cryptography.PRG.oneBit	TCSlib.Cryptography.Asymptotic.HardCore	deep	TCSlib.Cryptography.owpGenPRG, TCSlib.Cryptography.owpGenPRG_G_outEquiv	1
+TCSlib.Cryptography.PermFamily.HardCore	TCSlib.Cryptography.Asymptotic.HardCore	direct	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore.easy	4
+TCSlib.Cryptography.PermFamily.toFunFamily	TCSlib.Cryptography.Asymptotic.OneWay	direct	TCSlib.Cryptography.OneWayPermutation, TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore	5
+TCSlib.Cryptography.PermFamily.toFunFamily_domEquiv	TCSlib.Cryptography.Asymptotic.OneWay	deep	TCSlib.Cryptography.exists_owp_hardCore, TCSlib.Cryptography.PermFamily.HardCore, TCSlib.Cryptography.PermFamily.HardCore.easy	4
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		5
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.arg	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	direct		2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	direct		2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₁	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₂	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.p₃	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.st	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	2
+TCSlib.Cryptography.CommitmentLemmas.ComLoop.step	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	deep	TCSlib.Cryptography.CommitmentLemmas.ComLoop.emit_init_of_lt, TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	2

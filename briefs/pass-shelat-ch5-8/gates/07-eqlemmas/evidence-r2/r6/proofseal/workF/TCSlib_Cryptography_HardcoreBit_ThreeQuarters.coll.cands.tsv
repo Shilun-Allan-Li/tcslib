@@ -1,0 +1,12 @@
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.HardcoreBit.le_invProb_of_good	1
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct		1
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform.uprob_eq	2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.predProb, TCSlib.Cryptography.HardcoreBit.secProb, TCSlib.Cryptography.HardcoreBit.PushesUniform.uprob_eq	3
+TCSlib.Cryptography.HardcoreBit.PairwiseIndep	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	deep	TCSlib.Cryptography.HardcoreBit.uprob_majority_fails_le	1
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform.uprob_eq	2
+TCSlib.Cryptography.HardcoreBit.glBit	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		1
+TCSlib.Cryptography.HardcoreBit.glInverter	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct	TCSlib.Cryptography.HardcoreBit.le_invProb_of_good	3
+TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct	TCSlib.Cryptography.HardcoreBit.le_invProb_of_good	1
+TCSlib.Cryptography.HardcoreBit.ip	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.HardcoreBit.glBit, TCSlib.Cryptography.HardcoreBit.secProb	3
+TCSlib.Cryptography.HardcoreBit.majority	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	direct	TCSlib.Cryptography.HardcoreBit.two_mul_card_le_of_majority_ne	2
+TCSlib.Cryptography.HardcoreBit.secProb	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		3

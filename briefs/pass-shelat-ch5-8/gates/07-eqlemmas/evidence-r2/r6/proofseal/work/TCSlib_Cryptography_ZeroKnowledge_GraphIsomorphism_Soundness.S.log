@@ -1,0 +1,41 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:68:2: error: 'show' tactic failed, pattern
+  [decide
+        ¬Isomorphic (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+            (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (encGraph K))] =
+    ?m.20
+is not definitionally equal to target
+  gniProver.next (encInstance G₀ G₁) y r [encGraph K] = [decide ¬Isomorphic G₀ K]
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:180:16: error: Type mismatch
+  hV
+has type
+  gniVerifier.Efficient
+but is expected to have type
+  gniProtocol.V.Efficient
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:183:13: error: Tactic `rcases` failed: `a✝ : Lniso x` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:189:13: error: Tactic `rcases` failed: `x✝ : Isomorphic G₀ G₁` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:243:2: error: Type mismatch
+  Eq.trans (Eq.symm (List.ofFn_congr (Eq.symm (giProtocol_V_coinLen N)) ?m.22)) ?m.30
+has type
+  (List.ofFn fun i => ?m.22 (Fin.cast ⋯ i)) = ?m.29
+but is expected to have type
+  List.ofFn (((finCongr ⋯).arrowCongr (Equiv.refl Bool)) ((Equiv.funUnique (Fin 1) Bool).symm b)) = [b]
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:306:16: error: Type mismatch
+  hV
+has type
+  giVerifier.Efficient
+but is expected to have type
+  giProtocol.V.Efficient
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:331:16: error: Type mismatch
+  hP
+has type
+  giProver.Efficient
+but is expected to have type
+  giProtocol.P.Efficient
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:333:4: error: Type mismatch
+  giProver_length_le x y r hist
+has type
+  (giProver.next x y r hist).length ≤ x.length
+but is expected to have type
+  (giProtocol.P.next x y r hist).length ≤ PolyExpr.var.eval x.length
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:309:13: error: Tactic `rcases` failed: `a✝ : Liso x` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work/TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness.S.lean:335:15: error: Tactic `rcases` failed: `a✝ : Riso x y` is not an inductive datatype

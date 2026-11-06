@@ -1,0 +1,17 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work3/TCSlib_Cryptography_ZeroKnowledge_Encryption.S.lean:118:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+S : PrivateKeyScheme
+Sim : NUPPT
+hSim :
+  ∀ (D : NUPPT),
+    ∃ ε,
+      Negligible ε ∧ ∀ (n : ℕ) (m : Fin n → Bool), distAdv (S.encDist n m) (Sim.runAt n []) (D.distinguisherL n) ≤ ε n
+⊢ S.SingleMessageSecure
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work3/TCSlib_Cryptography_ZeroKnowledge_Encryption.S.lean:285:24: error: Function expected at
+  h
+but this term has type
+  S.SingleMessageSecure
+
+Note: Expected a function because this term is being applied to the argument
+  D
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6/proofseal/work3/TCSlib_Cryptography_ZeroKnowledge_Encryption.S.lean:285:9: error: Tactic `rcases` failed: `x✝ : ?m.13` is not an inductive datatype

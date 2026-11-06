@@ -1,0 +1,5 @@
+724,725c724
+<   rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
+<       ((fmult.prod fmultBlocks).outLen.eval n)
+---
+>   rcases hx : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
