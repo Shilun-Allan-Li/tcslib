@@ -34,10 +34,10 @@
     population; the order list `campaign/fills/b6/orders/b6-fill-hierarchy.txt`, the base sorry
     set, the screen base and the pre-ship log (`campaign/fills/b6/logs/b6-fill-hierarchy-*`). The
     route's design note is `campaign/items/b6hosts/H/H-route-design.md`.
-- **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule
-  (E-RES). Fetch the cache for your roots only (⟨roots⟩); never run the unfiltered
-  `lake exe cache get`. If Lean cannot start, follow Part 2 exactly. **If Lean never runs, do not
-  draft proofs blind**: deliver the environment report only.
+- **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule (E-RES).
+  Fetch the cache for your roots only (63 Mathlib roots, in the pre-ship log); never run the
+  unfiltered `lake exe cache get`. If Lean cannot start, follow Part 2 exactly. **If Lean never
+  runs, do not draft proofs blind**: deliver the environment report only.
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
@@ -48,7 +48,9 @@
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
-- **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-b6-hierarchy.zip`, with
+- **Delivery is by zip, not PR** (`workflow.md` §4): `fill-b6-hierarchy.zip`, pushed to the branch
+  `exchange/pass-shelat-ch5-8` at `arora-barak-ch3-4/inbox/` (`git pull --rebase` first, add only
+  your zips, never force-push, no PR; if you cannot push, say so and attach them), with
   `REPORT.md`, the full modified source, a `git format-patch` series against your base, a git
   bundle whose only prerequisite is your base, the environment logs (`evidence/logs/`), the
   bootstrap and final sweep logs with **each module's time and maximum memory**, the axiom log, the
@@ -68,9 +70,13 @@
   `import TCSlib.Complexity.SpaceComplexity.WindowClock` and
   `import TCSlib.Complexity.ClassNP.PClosure` (for `preimage_mem_NP`; it brings
   `Mathlib.Tactic.Linarith` into the file's environment)
-  (`HierarchyOverlay.lean.txt` is the file after it). The pre-ship elaborated it: ⟨exactly the four
-  sorry warnings (lines 161, 271, 285, 315 of the base), nothing else⟩.
-- **In flight:** ⟨none touching your order list, at the issue commit⟩.
+  (`HierarchyOverlay.lean.txt` is the file after it). The pre-ship elaborated it: exactly the four
+  sorry warnings, at the overlay's lines 154, 271, 288 and 318 (the base's 150, 267, 284 and 314),
+  nothing else.
+- **In flight:** #208, the deepening fill's landing (`SavitchARM/Deepen`, new, and `Savitch`, both
+  in your order list), and #209 (`NTimeHierarchy`'s docstring, outside it). Each is replayed on the
+  merged tree before it merges; cite nothing they add. If #208 merges first, `savitch` leaves the
+  base sorry set; that is not a difference you need to explain.
 
 ## Parallel batches this round
 
@@ -96,9 +102,12 @@ three targets' docstrings (lines 162–315); `exists_configWindowRunnerTM`'s sta
 
 **Pre-ship check** (the maintainer, against the replay snapshot of your base's tree; log
 `campaign/fills/b6/logs/b6-fill-hierarchy-preship.log`): the overlay as above; the import probe
-⟨N⟩ checks of ⟨N⟩ names, 0 errors; the route probe's three lemmas on the standard axioms, through
-published readings only, sealed ⟨with ⟨N⟩ controls⟩; the order list ⟨modules, roots, base
-sorries⟩; the screen base ⟨…⟩; lint ⟨…⟩.
+72 checks of 72 names, 0 errors; the route probe's three lemmas on the standard axioms, through
+published readings only, sealed (5 definitions) with 9 controls (9 pass unsealed, 9 fail sealed);
+the duplication probe: of its six `exact?` calls, only `logSpace_le_succ` and
+`LOGSPACE_subset_PSPACE` close, both cited below; the order list 220 modules, 63 roots, 26 base
+sorries in 10 modules; the screen base 1,345 declarations, 740 pairs, none on `Hierarchy`; lint
+0 FAIL, 80 WARN over 111 files.
 
 ## Owned regions and targets (modify these and nothing else)
 
@@ -203,7 +212,7 @@ embedded word (rejected by the fold, in bounded space); `U₀` halting with an o
 
 ## Cited infrastructure (public and proved at the issue commit; all in `HImportProbe.lean.txt`)
 
-⟨The probe's names⟩: the targets and the space classes with their readings (`mem_SPACE_iff`,
+The probe's 72 names: the targets and the space classes with their readings (`mem_SPACE_iff`,
 `SPACE.mono`, `SPACE.mono_const`, `decidesInSpace_iff`, `computesInSpace_iff`,
 `spaceConstructible_iff`, `LOGSPACE_eq`, `space_poly_subset_PSPACE`, the three constructible
 rows); the universal machine and its code scheme; the runner and the window run with its records,
@@ -250,7 +259,8 @@ bounded-certificate reading `mem_NP_iff_exists_length_le` and the reductions' `�
       item and escalate**, naming the lemma you need.
     - **Self-check by both methods:** a **seal test** (a scratch copy of your module with
       `attribute [local irreducible]` on every other-file TCSlib definition your proofs mention,
-      from your first private on: at least ⟨the pre-ship's list⟩; `attribute [-simp]` on the four
+      from your first private on: at least the route probe's five, `SpaceConstructible`, `SPACE`,
+      `logSpace`, `LOGSPACE` and `PSPACE`; `attribute [-simp]` on the four
       `@[simp]` TCSlib definitions `Action.apply`, `Cfg.init`, `MultiTapeTM.initCfg`,
       `NDTM.initCfg`; **with controls**: for each sealed definition, a goal that closes by `rfl`
       with nothing sealed and fails under the seal, recursive definitions with usage controls); and
@@ -262,8 +272,9 @@ bounded-certificate reading `mem_NP_iff_exists_length_le` and the reductions' `�
 11. **MIG-1 compatibility.** Cite none of the six R3 canonical rows (`copyTM_run`,
     `transferTM_run`, `clearTM_run`, `compareTM_run`, `incrementTM_run_succ`,
     `incrementTM_run_overflow`); use the framed `_ofCfg` forms. Cite no private declaration of
-    another file. Keep your new privates under the `sh_` prefix (`Sh`/`sh` for types and
-    definitions; ⟨check: unused in the tree⟩).
+    another file. Keep your new privates under the `sph_` prefix (`Sph`/`sph` for types and
+    definitions; unused in the tree at the issue commit, while `sh_` is not: `ExpBFS/Run`'s
+    `sh_run`).
 
 ### Checkpoints (for a partial; ground rule 9)
 
@@ -287,10 +298,11 @@ frozen copy of its commit (`git worktree add <dir> HEAD`). **Semantic duplicatio
 every private lemma you add, search for a published declaration that states it or a
 generalization, in the tree and on every open PR branch, by name and by statement (`git grep`), and
 by an `exact?` or `apply?` probe; `REPORT.md` lists the search and result per private. **The
-population** is ⟨N⟩ files (`screen-population.txt`): your file; the files the route cites; the known
+population** is 28 files (`screen-population.txt`): your file; the files the route cites; the known
 hazards (`TimeHierarchy/Diagonal`, `TimeHierarchy/Separation`, `SpaceComplexity/Savitch`,
 `ClassNP/Nondeterminism` for the padding precedent). **The base** is
-`campaign/fills/b6/logs/b6-fill-hierarchy-screen-base.txt`: ⟨…⟩. A new cross-file pair with an
+`campaign/fills/b6/logs/b6-fill-hierarchy-screen-base.txt`: 1,345 declarations, 740 pairs,
+207,247 characters, none on `Hierarchy`. A new cross-file pair with an
 owned-file declaration on one side is listed with one disposition (idiom; re-derivation of a
 published lemma: cite it instead; re-derivation of another file's private: keep yours and request
 a promotion); a pair at 90% or more is a copy. `REPORT.md` carries **"new copies: none"** or lists
@@ -302,9 +314,9 @@ each pair, and ships both full outputs.
   the unfiltered `lake exe cache get`; `scripts/lean_check_tree.sh` for every check, one Lean
   process at a time (a screen may run beside one). The cache tool's own compilation inside
   `lake exe cache get` is outside the one-Lean rule. **A process deviation never ends the item.**
-- **Bootstrap** from `campaign/fills/b6/orders/b6-fill-hierarchy.txt` (⟨N⟩ modules), right after
+- **Bootstrap** from `campaign/fills/b6/orders/b6-fill-hierarchy.txt` (220 modules), right after
   branching, logging each module's time and maximum memory. **The base sorry-warning set** has
-  ⟨N⟩ entries in ⟨N⟩ modules; yours are `Hierarchy`'s four. Record the base list by name first.
+  26 entries in 10 modules; yours are `Hierarchy`'s four. Record the base list by name first.
 - **Final checks:** `Hierarchy`: zero errors, exactly one sorry warning (`space_universal`'s; for a
   partial, also the open targets'); every other module: zero errors and the base's sorry warnings;
   the import probe re-run, 0 errors; after every proof edit, the order list's tail from your module
@@ -312,7 +324,8 @@ each pair, and ships both full outputs.
 - **Axiom prints** for the three targets and every new private: within
   `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/SpaceComplexity`, 0 FAIL
-  (base ⟨…⟩), and `scripts/style_lint.py` on your file; no new line over 100 characters.
+  (base: 0 FAIL, 80 WARN over 111 files), and `scripts/style_lint.py` on your file (base: one
+  finding, the module docstring's missing `## Main definitions`); no new line over 100 characters.
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 

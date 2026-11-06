@@ -3,10 +3,11 @@
 ## Why this PR
 
 `Complexity.savitch` ([AB09, Theorem 4.14]; [Sav70]) was the campaign's last `sorry` in
-`SpaceComplexity/Savitch`. The deepening fill (brief `campaign/fills/ch34/briefs/ch34-fill-deepen.md`,
-agent Claude) proves it for every `S ≥ logSpace` without computing the space bound: a register
-machine `D` runs Savitch's midpoint search at radius `s = 1, 2, …` and stops once no configuration
-reaches the window's edge ([Sip13, §8.1, proof of Theorem 8.5]). Its API is gate 96's (#196).
+`SpaceComplexity/Savitch`. The deepening fill (brief
+`campaign/fills/ch34/briefs/ch34-fill-deepen.md`, agent Claude) proves it for every `S ≥ logSpace`
+without computing the space bound: a register machine `D` runs Savitch's midpoint search at radius
+`s = 1, 2, …` and stops once no configuration reaches the window's edge ([Sip13, §8.1, proof of
+Theorem 8.5]). Its API is gate 96's (#196).
 
 **The PR:** #208 on `lean/ch34-deepen-landing`, head `a074d9b7ef0eb5c82bb248254f5f599081e0521b`:
 - the delivery, `fill/ch34-deepen` at `c7b179da` (base `fd97df61`; seven commits, kept as
