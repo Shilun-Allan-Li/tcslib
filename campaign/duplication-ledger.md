@@ -1464,3 +1464,11 @@ Neither has a published characterization (`ClassP/DTIME`). Readers include `Time
 membership; `hM` passed as `computesFunInTime_iff`'s right side). **Resolution:** publish
 `mem_DTIME_iff` and `FinTM.decidesInTime_iff` (`Iff.rfl`) beside the definitions and re-point the
 readers; the replay covers most of the tree, so it waits for a quiet point in the window.
+
+**CK-1, the codec check predicates read through their bodies** (gate 111, minor 1; 2026-11-06).
+`SpaceComplexity/Codec/Deciders`' `acceptLang_mem` and `initLang_mem` read `AcceptChk` and `InitChk`
+(homed in `Codec/Checks`) by `rw [AcceptChk]`/`rw [InitChk]` and `h.1`, as at CL-1's base. Both
+have published characterizations (`acceptChk_iff`, `initChk_iff`). **Resolution:** re-point both
+consumers to them in the dedup window (mechanical, Hydroxyi's files, FYI); the seal then adds the
+two predicates.
+
