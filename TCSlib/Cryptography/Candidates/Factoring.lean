@@ -490,6 +490,45 @@ def plantFactor {n : ℕ} {ρ : Type*}
     Fin n → Bool :=
   FunFamily.blocks 2 n (OneWay.yaoTry (fmult.f n) B N c) 0
 
+/-- The two block bijections of the library coincide: `FunFamily.blocks q ℓ = OneWay.blocksE q ℓ`
+(their inverses read the same coordinate, `FunFamily.blocks_symm_apply`,
+`OneWay.blocksE_symm_apply`). -/
+private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ := by
+  have h : (FunFamily.blocks q ℓ).symm = (OneWay.blocksE q ℓ).symm :=
+    Equiv.ext fun t => funext fun k => by
+      rw [FunFamily.blocks_symm_apply, OneWay.blocksE_symm_apply]
+  rw [← Equiv.symm_symm (FunFamily.blocks q ℓ), h, Equiv.symm_symm]
+
+/-- The all-`false` string reads as `0`. -/
+private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by
+  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_eq, fac_foldl_replicate_false]
+
+/-- Block `i` of `x` under `FunFamily.blocks` is the window `x (finProdFinEquiv (i, ·))`. -/
+private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+    FunFamily.blocks q ℓ x i = fun j => x (finProdFinEquiv (i, j)) := by
+  rw [fac_blocks_eq_blocksE]
+  funext j
+  exact OneWay.blocksE_apply q ℓ x i j
+
+/-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
+answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
+padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
+private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
+    (Y : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) (r : A.Coins n) (i : Fin (fmultBlocks.eval n))
+    (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :
+    prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
+  unfold prodInverter at hp ⊢
+  rw [OneWay.yaoB]
+  rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
+      ((fmult.prod fmultBlocks).outLen.eval n)
+      ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
+  · rw [hx, Option.getD_none, fac_blocks_apply, fac_blocks_apply, fac_bitsToNat_false] at hp
+    exact absurd hp Nat.not_prime_zero
+  · have h2 : A.runAt n (List.ofFn ((FunFamily.blocks (fmultBlocks.eval n)
+        (fmult.outLen.eval n)).symm Y)) r = List.ofFn x := (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).1 hx
+    rw [Option.getD_some, fac_blocks_apply, ← fac_blocks_eq_blocksE, h2]
+    exact (OneWay.padTrue_drop_ofFn (q := fmultBlocks.eval n) (ℓ := fmult.inLen.eval n) x i).symm
+
 /-- **The machine of Algorithm 37.4** [PS10, Algorithm 37.4]: for every inverter `A` of the
 direct product there is a non-uniform PPT `A''` whose factoring probability is, up to the
 statistical term `2^{-n}` of the rejection-sampled position, at least the probability that
@@ -501,33 +540,29 @@ which every trial fails with probability `1 − m/2^m ≥ 1/2` (`m ≥ 4`) and
 `uprob_rejectionSample_none_le_half_pow` (`2^k ≤ 2m`) does not apply; the position is now
 sampled from `k n := Nat.size (m n)` bits.
 
-**Proof sketch.** `A''` is `NUPPT.ofPolyTime` of an FP function of the raw input
-`⟨⟨⟨1^n, N⟩, α⟩, r⟩` with coins `add (mul var Bp) (add (mul m (mul (const 2) var)) A.coins)`,
-where `m = fmultBlocks` and `Bp := add (mul (const 3) var) (const 3)` is the width of a
-position block (`4n³ < 2^{3n+3}`, so `k n := Nat.size (m n) ≤ Bp n`, `Nat.size_le`), and advice
-`α n := ⟨A.advice n, ⟨natToList (Bp n) (m n), 1^{k n}⟩⟩` (length bounded by a `PolyExpr`; the
-unary `1^{k n}` is also `sizeStr` of the numeral, `H.size`): cut the coins
-(`polyTimeComputable_pairTakePoly`/`_pairDropPoly`), read the position
-`i := (rejectionSample (m n) (k n) n (trials)).getD 0` from the first `k n` bits of each of the
-`n` position blocks (`polyTimeComputable_pairTakePoly var` on `⟨1^{k n}, block⟩`, each trial
-compared with the advice numeral by `H.le`, `polyTimeComputable_blockMap`,
-`polyTimeComputable_ite`),
-evaluate `f_mult` on the `m n` fresh `2n`-bit blocks (`polyTimeComputable_blockMap
-(mul (const 2) var)` with the evaluator of `fmult_easy H`), plant `N` at block `i`
-(`take`/`drop` at the unary offset `1^{i · 2n}`, `Turing.FinTM.computesFunInTime_unaryMul`),
-call `A.output` on the layout `⟨⟨⟨1^n, z⃗⟩, A.advice n⟩, r'⟩` (`NUPPT.polyTimeComputable_layout`,
-`A.polyTimeComputable_output`), take block `i` of the answer when its length is `8n⁴`
-(`polyTimeComputable_lenEq`, `_ite`; otherwise `0^{2n}`) and output its first `n` bits.
-Functional identity: `A''.inverter n n (2n) N r = some (plantFactor (prodInverter A n) N (S n r))`
-with `S n` the typed coin sampler (position by `(rejectionSample …).getD 0`, blocks by
-`FunFamily.blocks`, coins verbatim), by `NUPPT.runAtL_ofPolyTime`, `NUPPT.inverter_eq_some_iff`,
-`FunFamily.ofFn_blocks_symm` and `decodeFin_ofFn`. Probability: `statClose_rejectionSample
-(m n) (k n) n 0` with `uprob_rejectionSample_none_le_half_pow` — its hypotheses
-`m n ≤ 2^{k n}` and `2^{k n} ≤ 2 m n` are `Nat.lt_size_self` and `Nat.lt_size` at `k n − 1`
-(`m n ≥ 4`) — puts the sampled position within `(1/2)^n` of uniform; `StatClose.prod` with
-`StatClose.refl` on the other components,
-`StatClose.comp_equiv_left` for the coin-string bijection and
-`StatClose.abs_uprob_sub_le_prod` (auxiliary coins: the pair of primes) give the claim. -/
+**Proof sketch.** (Route of the fill brief: the position by `OneWay.exists_posMachine`, the
+model `OneWay.exists_yaoReduction`.) `A''` is `NUPPT.ofPolyTime` of the first `n` bits of the
+proved one-round machine of Algorithm 38.5, `OneWay.YaoMachine.ans` (the round of
+`OneWay.exists_yaoReduction`), instantiated with the evaluator of `fmult_easy H`, its blockwise
+evaluator `OneWay.exists_prodEval` and the position sampler `OneWay.exists_posMachine`, the
+lengths `inLen = outLen = 2n`, `m = fmultBlocks` and the inverter `A`; coins `YaoMachine.ρP`
+(`n·m` position bits, of which the first `n·k` are read as `n` trials of
+`k = OneWay.kkOf m = ⌊log₂ m⌋ + 1` bits, then `m·2n` fresh bits and the coins of `A`), advice
+`⟨A.advice n, 1^k⟩` (`YaoMachine.adv`, `adv_length`), polynomial time by `YaoMachine.ans_poly`
+and `Complexity.polyTimeComputable_pairTakePoly`. Functional identity: by
+`NUPPT.runAtL_ofPolyTime`, the coin identification `NUPPT.coinsEquiv_ofPolyTime` and the round
+identity `YaoMachine.ans_layout`, `A''(1^n, N; r)` is the first `n`-bit block of
+`OneWay.yaoTry (f_mult) yaoB N (roundSample r)`, i.e. `plantFactor yaoB N (roundSample r)`, where
+`OneWay.yaoB` reads block `i` of `A`'s answer padded with `true`. Inverter comparison: whenever
+`plantFactor (prodInverter A n)` outputs a factor its first block reads as a prime, so `A`'s
+answer had the right length (a wrong-length answer gives the all-`false` block, which reads as
+`0`), and then block `i` of `prodInverter A n` is block `i` of `yaoB` (`OneWay.padTrue_drop_ofFn`,
+`FunFamily.blocks = OneWay.blocksE`); so the ideal success event with `prodInverter` is contained
+in the one with `yaoB` (`uprob_mono`). Probability: `OneWay.statClose_roundSample` puts the
+sampled round coins within `(1 − m/2^k)^n ≤ (1/2)^n` of uniform (`m ≤ 2^k ≤ 2m`,
+`OneWay.lt_two_pow_kkOf`, `two_pow_kkOf_le`), and `StatClose.abs_uprob_sub_le_prod` (auxiliary
+coins: the pair of primes) with `uprob_comp_equiv` for the coin and coordinate bijections gives
+the claim. -/
 theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
     ∃ A'' : NUPPT, ∀ n, 1 ≤ n →
       uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
@@ -535,7 +570,117 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
           bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
             bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q)
         - (1 / 2 : ℝ) ^ n ≤ factorProb A'' n := by
-  sorry
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 (fmult_easy H)
+  obtain ⟨F', hF', hF'x⟩ := OneWay.exists_prodEval hF fmult.inLen fmultBlocks
+  obtain ⟨Pm, hPm, hPmx⟩ := OneWay.exists_posMachine
+  let D : OneWay.YaoMachine.Data := ⟨F, F', Pm, fmult.inLen, fmult.outLen, fmultBlocks, A⟩
+  have hans := OneWay.YaoMachine.ans_poly (D := D) hF' hPm
+  have hpoly : PolyTimeComputable fun w =>
+      (OneWay.YaoMachine.ans D w).take (NUPPT.inParam w).length := by
+    have h := (polyTimeComputable_pairTakePoly .var).comp
+      (NUPPT.polyTimeComputable_inParam.pairEncode hans)
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+      using h
+  refine ⟨NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+    (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D), fun n hn => ?_⟩
+  have hM : 0 < fmultBlocks.eval n := by rw [eval_fmultBlocks]; positivity
+  have hFe : ∀ a : Fin (D.inLen.eval n) → Bool,
+      D.Fe (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (fmult.f n a) :=
+    fun a => by rw [← NUPPT.advInput_eq]; exact hFx n a
+  have hF'' := hF'x n
+  have hPm'' := hPmx (fmultBlocks.eval n) (OneWay.kkOf (fmultBlocks.eval n)) n hM
+    (OneWay.kkOf_pos _) (OneWay.two_pow_kkOf_le _ hM)
+  set ce := NUPPT.coinsEquiv_ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+    (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D) n with hce
+  set S := OneWay.roundSample n (fmultBlocks.eval n) (fmult.inLen.eval n) (A.coinLen n)
+    (OneWay.kkOf (fmultBlocks.eval n)) hM (OneWay.YaoMachine.nkk_le n _ hM) with hS
+  -- the round identity: `A''` outputs the first half of the planted answer block
+  have hround : ∀ (N : Fin (2 * n) → Bool) r,
+      (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+        (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)).runAt n (List.ofFn N) r =
+      List.ofFn (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) N (S (ce r))) := by
+    intro N r
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime, NUPPT.advInput_eq, ← NUPPT.layout_eq,
+      NUPPT.inParam_layout, List.length_replicate, ← NUPPT.coinsEquiv_ofPolyTime_ofFn hpoly _ _ _ _ n r,
+      ← hce, show List.ofFn (ce r) = List.ofFn (ce r) ++ [] from (List.append_nil _).symm,
+      OneWay.YaoMachine.ans_layout (D := D) n hM (fmult.f n) hFe hF'' hPm'' N (ce r) []]
+    unfold plantFactor
+    exact (fac_ofFn_halves n _).1
+  -- the success event of the planting reduction with the padded inverter `yaoB`
+  let P : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ×
+      (Fin (A.coinLen n) → Bool)) → DistinctPrimes n → Prop := fun c z =>
+    bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
+        z.p ∨
+      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
+        z.q
+  -- the factoring probability of `A''` is that event on the sampled coins
+  have hfp : factorProb (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+      (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)) n =
+      uprob (fun w : (Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool) × DistinctPrimes n =>
+        P (S w.1) w.2) := by
+    rw [factorProb_eq, ← uprob_comp_equiv ((Equiv.prodComm _ _).trans
+      (Equiv.prodCongr ce (Equiv.refl (DistinctPrimes n))))]
+    apply OneWay.uprob_congr
+    rintro ⟨z, r⟩
+    show (∃ x, _ ∧ _) ↔ P (S (ce r)) z
+    constructor
+    · rintro ⟨x, hx, hpq⟩
+      rw [NUPPT.inverter_eq_some_iff, hround] at hx
+      rw [← List.ofFn_injective hx] at hpq
+      exact hpq
+    · intro h
+      exact ⟨_, (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).2 (hround _ _), h⟩
+  -- the sampled coins are close to uniform
+  have hsc := OneWay.statClose_roundSample n (fmultBlocks.eval n) (fmult.inLen.eval n) (A.coinLen n)
+    (OneWay.kkOf (fmultBlocks.eval n)) hM (OneWay.lt_two_pow_kkOf _).le
+    (OneWay.YaoMachine.nkk_le n _ hM)
+  have habs := hsc.abs_uprob_sub_le_prod P
+  -- on uniform coins, the reduction with `prodInverter` succeeds only where the one with `yaoB` does
+  have hideal : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
+            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q) ≤
+      uprob (fun z : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) →
+        Fin (fmult.inLen.eval n) → Bool) × (Fin (A.coinLen n) → Bool)) × DistinctPrimes n =>
+          P (id z.1) z.2) := by
+    rw [← uprob_comp_equiv (Equiv.prodComm (DistinctPrimes n) _)]
+    apply uprob_mono
+    rintro ⟨z, i, xs, r⟩ h
+    show bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
+        (modulusBits n z) (i, xs, r)) = z.p ∨
+      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
+        (modulusBits n z) (i, xs, r)) = z.q
+    have hp : (bitsToNat (plantFactor (prodInverter A n) (modulusBits n z) (i, xs, r))).Prime := by
+      rcases h with h | h
+      · rw [h]; exact z.p_prime
+      · rw [h]; exact z.q_prime
+    unfold plantFactor at h hp ⊢
+    rw [OneWay.yaoTry_eq] at h hp ⊢
+    rw [← fac_prodInverter_eq_yaoB A n _ r i hp]
+    exact h
+  have hb : (1 - (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n)) ^ n + 0 ≤
+      (1 / 2 : ℝ) ^ n := by
+    have h2 : ((2 ^ OneWay.kkOf (fmultBlocks.eval n) : ℕ) : ℝ) ≤ 2 * (fmultBlocks.eval n : ℕ) := by
+      exact_mod_cast OneWay.two_pow_kkOf_le _ hM
+    have h3 : ((fmultBlocks.eval n : ℕ) : ℝ) ≤ ((2 ^ OneWay.kkOf (fmultBlocks.eval n) : ℕ) : ℝ) := by
+      exact_mod_cast (OneWay.lt_two_pow_kkOf _).le
+    push_cast at h2 h3
+    have hpos : (0 : ℝ) < 2 ^ OneWay.kkOf (fmultBlocks.eval n) := by positivity
+    have h4 : (1 : ℝ) / 2 ≤ (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n) := by
+      rw [div_le_div_iff₀ (by norm_num) hpos]; linarith
+    have h5 : (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n) ≤ 1 := by
+      rw [div_le_one hpos]; exact h3
+    rw [add_zero]
+    exact pow_le_pow_left₀ (by linarith) (by linarith) n
+  -- the coin type of `A''` is that of a round (`OneWay.YaoMachine.ρP_eval`, a definitional equation)
+  have key : uprob (fun w : (Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool) × DistinctPrimes n =>
+      P (S w.1) w.2) = uprob (fun z : (Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n *
+        fmult.inLen.eval n + A.coinLen n)) → Bool) × DistinctPrimes n => P (OneWay.roundSample n (fmultBlocks.eval n)
+        (fmult.inLen.eval n) (A.coinLen n) (OneWay.kkOf (fmultBlocks.eval n)) hM
+        (OneWay.YaoMachine.nkk_le n _ hM) z.1) z.2) := rfl
+  rw [hfp, key]
+  have := (abs_le.1 habs).1
+  linarith
 
 /-- **Theorem 36.3** [PS10, Theorem 36.3]: under the factoring assumption (and the
 arithmetic hypotheses), the direct product `f'((x₁, y₁), …, (x_{m_n}, y_{m_n})) =
