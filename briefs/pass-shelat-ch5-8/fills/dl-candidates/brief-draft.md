@@ -6,7 +6,11 @@
   closes; for these files, that is pack **03f1**.
 - **Before issue:**
   - 03f1 closes, and any statement repairs it forces are applied, which re-freezes the targets
-    below;
+    below. Its round 1 review (`gates/03-ch2-4/review/gate03f1-review.md`) rewrites
+    `fullDLCollection_hardCore`'s sketch (§1.4): `n²` coins for `t`, `n² +` A's coins per trial,
+    `T ≤ 16n^c`, success `≥ 3/(256 n^{2c}) − (1 + 16n^{2c+2})·2⁻ⁿ`, and the binary numeral of
+    `8n^c` in the inverter's advice. dl-b follows the corrected sketch. `hbig` stays in the
+    statements (ruling R-03f1-1 (A));
   - the order lists and Mathlib roots of each unit;
   - an import probe of every cited name at the issue commit;
   - a review of this brief by a review sub-agent;
@@ -47,7 +51,9 @@ sketches name the lemmas to use.
 
 - **Samplers close to uniform:**
   - `statClose_rejectionSample` (`Asymptotic/Sampling.lean`) is the model for
-    `statClose_sampleBelowL` and `statClose_rejectBlocksL`, which differ in the block layout;
+    `statClose_rejectBlocksL`. `statClose_sampleBelowL` then follows from it through
+    `sampleBelowL_eq_rejectBlocksL` (added by the gate 03 repair batch; gate 03f1 review, M2):
+    fill it as a corollary, not a second copy;
   - also `statClose_firstHit`, `StatClose.comp_pushesUniform`, `StatClose.comp_equiv_right` and
     `StatClose.map`;
   - `statClose_permFromCoins` (`Asymptotic/Permutations.lean`) for a full worked instance.
