@@ -81,6 +81,21 @@ def qubitEquivBool : Qubit ≃ Bool := finTwoEquiv
 /-- `qubitEquivBool` is `finTwoEquiv`. -/
 theorem qubitEquivBool_eq : qubitEquivBool = finTwoEquiv := rfl
 
+/-- `qubitEquivBool` sends the qubit `0` to `false` (round-1 audit, sanity statement 1). -/
+theorem qubitEquivBool_zero : qubitEquivBool 0 = false := by
+  decide
+
+/-- `qubitEquivBool` sends the qubit `1` to `true` (round-1 audit, sanity statement 1). -/
+theorem qubitEquivBool_one : qubitEquivBool 1 = true := by
+  decide
+
+/-- An `n`-qubit register has `2ⁿ` basis states; in particular `Reg 0` has exactly one, so the
+zero-qubit state space is one-dimensional, not empty (round-1 audit, sanity statement 1).
+
+**Proof sketch.** `Fintype.card_fun`, `Fintype.card_fin`. -/
+theorem card_reg (n : ℕ) : Fintype.card (Reg n) = 2 ^ n := by
+  sorry
+
 /-- The register basis state spelling out a `Bool` string: wire `i` holds the qubit
 corresponding to `x i`. -/
 def basisOf {n : ℕ} (x : Fin n → Bool) : Reg n := fun i => qubitEquivBool.symm (x i)
@@ -222,6 +237,18 @@ theorem evolve_mul [DecidableEq d] (U V : 𝐔[d]) (ψ : Ket d) :
 **Proof sketch.** `1 *ᵥ v = v` (`Matrix.one_mulVec`), then `Ket.ext`. -/
 theorem evolve_one [DecidableEq d] (ψ : Ket d) : ψ.evolve 1 = ψ := by
   sorry
+
+/-- There is no state on an empty basis: the empty sum of squared norms is `0`, not `1`. This
+distinguishes an empty basis from the one-element basis `Reg 0` (round-1 audit, sanity
+statement 1).
+
+**Proof sketch.** For a ket on an empty basis, `normalized'` says `0 = 1`
+(`Finset.univ_eq_empty`, `Finset.sum_empty`). -/
+theorem isEmpty_of_isEmpty [IsEmpty d] : IsEmpty (Ket d) := by
+  sorry
+
+/-- The zero-qubit register carries a state: the basis state of its unique basis element. -/
+theorem nonempty_reg_zero : Nonempty (Ket (Reg 0)) := ⟨basis Fin.elim0⟩
 
 end Ket
 

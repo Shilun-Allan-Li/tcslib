@@ -15,8 +15,14 @@ set_option autoImplicit false
 A *gap function* counts accepting minus rejecting computations: for a nondeterministic machine
 `M`, `f(x) = #accept(x) - #reject(x)`, and GapP is the class of such `f` for polynomial-time `M`
 [Wat08, §IV.5], [FR99, §2]. GapP is closed under sums, products and negation, which is what makes
-it the right tool for bounding quantum classes: a quantum acceptance probability is a sum of
-products of gate entries, and each entry is a gap function (plan FD-10, item Q4.5).
+it the right tool for bounding quantum classes (plan item Q4.5). Gap functions are integer-valued,
+so the bridge goes through scaled numerators, not raw gate entries: the entries `1/√2` of `H` and
+`i` of `S` are not integers. For a circuit over the gate set of [Wat08, §III.2] with `h` Hadamard
+gates, every amplitude is `(1/√2)^h` times a sum of terms in `{±1, ±i}` (plan FD-10). The real and
+imaginary parts of these sums are integers, and the acceptance probability, a sum of squared
+moduli, is `F(x) / 2^h` for an integer `F` built from them. It is such numerators `F`, with the
+denominator stated explicitly, that the later construction shows to be gap functions
+[Wat08, §IV.5].
 
 Here a computation is a random string `r` of the length the schedule `polyLen a k` assigns, and
 the verifier answers `some true` (accept), `some false` (reject) or `none` (abstain). Abstaining
@@ -100,6 +106,23 @@ theorem gap_boolVerifier (M : List Bool → List Bool → Bool) (m : ℕ) (x : L
     (gap (boolVerifier M) m x : ℚ) = 2 ^ m * (2 * randProb m (fun r => M x r = true) - 1) := by
   sorry
 
+/-- The gap of a Boolean verifier, in integers: twice the number of accepted strings minus `2^m`
+(round-1 audit, sanity statement 5).
+
+**Proof sketch.** With no abstentions, `#reject = 2^m - #accept`, as in `gap_boolVerifier`. -/
+theorem gap_boolVerifier_int (M : List Bool → List Bool → Bool) (m : ℕ) (x : List Bool) :
+    gap (boolVerifier M) m x =
+      2 * ((univ.filter fun r : Fin m → Bool => M x (List.ofFn r) = true).card : ℤ) - 2 ^ m := by
+  sorry
+
+/-- A gap on length `m` is at most `2^m` in absolute value (round-1 audit, sanity statement 5).
+
+**Proof sketch.** The accepted and rejected strings are disjoint sets of the `2^m` strings, so
+each count is between `0` and `2^m`, and their difference is too. -/
+theorem abs_gap_le (M : List Bool → List Bool → Option Bool) (m : ℕ) (x : List Bool) :
+    |gap M m x| ≤ 2 ^ m := by
+  sorry
+
 /-! ### Verifier combinators -/
 
 /-- Swap acceptance and rejection, keeping abstentions. -/
@@ -167,8 +190,10 @@ theorem constVerifier_eq (b : Bool) (x r : List Bool) :
     constVerifier b x r = if r.all (fun c => !c) then some b else none := rfl
 
 /-- Turn a verifier that may abstain into a Boolean one: run `M` on the first `p |x|` bits, and
-where it abstains, answer the next random bit instead. Later bits are ignored. Its acceptance
-probability is `1/2 + gap / 2^(p |x| + 1)` (`randProb_coinFill`). -/
+where it abstains, answer the next random bit instead, or `false` if the string has no next bit.
+Later bits are ignored. On random strings of any length `m ≥ p |x| + 1`, so that the next bit
+exists, its acceptance probability is `1/2 + gap / 2^(p |x| + 1)` (`randProb_coinFill`). On
+shorter strings the `false` default applies and that formula fails (round-1 audit, finding 5). -/
 def coinFill (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ) :
     List Bool → List Bool → Bool := fun x r =>
   (M x (r.take (p x.length))).getD ((r.drop (p x.length)).headD false)

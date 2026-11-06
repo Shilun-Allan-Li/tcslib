@@ -269,6 +269,27 @@ theorem Toffoli_coe :
 theorem H_mul_H : H * H = 1 := by
   sorry
 
+/-- The NOT gate is its own inverse: `X X = 1` (round-1 audit, sanity statement 3).
+
+**Proof sketch.** `X` is the permutation gate of the involution `flipAt 0`, and
+`permMat σ * permMat σ = permMat (σ * σ) = permMat 1 = 1`. -/
+theorem X_mul_X : X * X = 1 := by
+  sorry
+
+/-- The phase flip is its own inverse: `Z Z = 1` (round-1 audit, sanity statement 3).
+
+**Proof sketch.** Diagonal matrices multiply entrywise, and `((-1)^a)² = 1`. -/
+theorem Z_mul_Z : Z * Z = 1 := by
+  sorry
+
+/-- The NOT gate is not the identity, so the gate definitions are not degenerate (round-1 audit,
+sanity statement 3).
+
+**Proof sketch.** Entry `(|1⟩, |0⟩)` of `X` is `1` (`permMat_apply`, since `flipAt 0` sends the
+register `0` to `1`), while that entry of the identity is `0`. -/
+theorem X_ne_one : X ≠ 1 := by
+  sorry
+
 /-- Two phase shifts make a phase flip: `S S = Z`.
 
 **Proof sketch.** Both are diagonal; `diagonal f * diagonal g = diagonal (f * g)`, and

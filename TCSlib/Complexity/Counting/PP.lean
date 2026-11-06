@@ -34,8 +34,15 @@ most `1/2` [Wat08, §II.1]. Unlike `BPP` there is no gap between the two thresho
 * As for `Randomized.InBPP` (see `TCSlib/Complexity/Randomized/Classes.lean`, **Deviations**),
   machines are replaced by an abstract `VerifierModel` `E` with random strings of length
   `polyLen a k |x|`; the intended instance is `Randomized.polyTimeModel`. [Wat08, §II.1] and
-  [AB09, ch. 17] state `PP` for polynomial-time probabilistic machines; the certificate form here
-  is the standard equivalent with the coin flips written out as the random string.
+  [AB09, Def 17.6] state `PP` for polynomial-time probabilistic machines; the certificate form
+  here is the standard equivalent with the coin flips written out as the random string.
+* **Ties.** `InPP` follows [Wat08, §II.1]: members are accepted with probability *strictly* above
+  `1/2`, and a tie counts as a non-member. [AB09, Def 17.6] instead accepts when at least half the
+  random strings accept, so a tie counts as a member. For a fixed verifier the two tests differ.
+  For polynomial time the classes agree: if `f` is an integer gap function for a witness of one
+  convention, `f + 1` or `f - 1` is one for the other (`Counting.inPP_iff_exists_isGapP`). This is
+  not claimed for every verifier model, and no bridge theorem is stated yet (round-1 audit,
+  finding 8).
 
 ## References
 
@@ -50,8 +57,8 @@ open Randomized Finset
 
 /-- `L ∈ PP` relative to the verifier model `E`: some efficient Boolean verifier `M` with random
 strings of length `polyLen a k |x|` accepts `x` with probability strictly greater than `1/2`
-exactly when `x ∈ L`. [Wat08, §II.1], [AB09, ch. 17], in the certificate form of the module
-docstring. -/
+exactly when `x ∈ L`. [Wat08, §II.1]; [AB09, Def 17.6] with ties assigned to non-members, in
+the certificate form (see the module docstring's **Divergences**). -/
 def InPP (E : VerifierModel) (L : Language Bool) : Prop :=
   ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
     E.Eff (boolVerifier M) ∧

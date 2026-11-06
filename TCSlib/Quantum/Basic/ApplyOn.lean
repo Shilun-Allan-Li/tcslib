@@ -137,9 +137,11 @@ theorem applyOn_refl (U : Matrix (Reg n) (Reg n) ℂ) :
 
 **Proof sketch.** Both products have entry `(y, x)` equal to
 `U₁ (y ∘ w₁) (x ∘ w₁) · U₂ (y ∘ w₂) (x ∘ w₂)` when `y, x` agree off the union of the two ranges,
-and `0` otherwise. Each side reduces to this through the bijection of `applyOn_mul`'s sketch,
-applied to the intermediate register, which must agree with `y` on `w₁`'s range and with `x`
-on `w₂`'s. -/
+and `0` otherwise. Each side reduces to this: its sum over intermediate registers `z` has a
+single nonzero term. In `applyOn w₁ U₁ * applyOn w₂ U₂`, that `z` agrees with `x` on `w₁`'s range
+and with `y` on `w₂`'s; in the reversed product it agrees with `y` on `w₁`'s range and with `x`
+on `w₂`'s. Off both ranges it is the common value of `y` and `x`. The two scalar products are
+then equal because complex multiplication commutes (round-1 audit, finding 4). -/
 theorem applyOn_commute_of_disjoint (w₁ : Fin k₁ ↪ Fin n) (w₂ : Fin k₂ ↪ Fin n)
     (h : Disjoint (Set.range w₁) (Set.range w₂))
     (U₁ : Matrix (Reg k₁) (Reg k₁) ℂ) (U₂ : Matrix (Reg k₂) (Reg k₂) ℂ) :
@@ -174,6 +176,16 @@ theorem applyOn_mulVec_basis (w : Fin k ↪ Fin n) (U : Matrix (Reg k) (Reg k) �
       fun y => if AgreeOff w y x then U (y ∘ w) (x ∘ w) else 0 := by
   sorry
 
+/-- With no wires (`k = 0`), `applyOn` scales the identity by the single entry of the `1 × 1`
+matrix `U`: a zero-qubit operator acts as a global scalar (round-1 audit, sanity statement 2).
+`U` need not be unitary.
+
+**Proof sketch.** Every wire is outside the (empty) range, so `AgreeOff w y x` says `y = x`, and
+`y ∘ w = x ∘ w` is the unique element of `Reg 0`. -/
+theorem applyOn_of_fin_zero (w : Fin 0 ↪ Fin n) (U : Matrix (Reg 0) (Reg 0) ℂ) :
+    applyOn w U = U Fin.elim0 Fin.elim0 • (1 : Matrix (Reg n) (Reg n) ℂ) := by
+  sorry
+
 /-- The embedding `Fin 1 ↪ Fin n` naming the single wire `i`. -/
 def wire (i : Fin n) : Fin 1 ↪ Fin n := ⟨fun _ => i, fun a b _ => Subsingleton.elim a b⟩
 
@@ -189,6 +201,26 @@ when `y` agrees with `x` off `i`; that is `1` exactly when `y i = x i + 1`, i.e.
 theorem applyOn_wire_X_mulVec_basis (i : Fin n) (x : Reg n) :
     applyOn (wire i) (Gate.X : Matrix (Reg 1) (Reg 1) ℂ) *ᵥ (Ket.basis x).vec =
       (Ket.basis (flipAt i x)).vec := by
+  sorry
+
+/-- The embedding `Fin 2 ↪ Fin 3` sending gate wire `0` to register wire `2` and gate wire `1`
+to register wire `0`: a reversed, non-contiguous placement, used as a sanity check. -/
+def wires20 : Fin 2 ↪ Fin 3 := ⟨![2, 0], by decide⟩
+
+/-- `wires20` sends `j` to `![2, 0] j`. -/
+theorem wires20_apply (j : Fin 2) : wires20 j = ![2, 0] j := rfl
+
+/-- Sanity check for reversed, non-contiguous placement: `CNOT` placed with its control on
+register wire `2` and its target on register wire `0` maps `|x⟩` to the basis state with wire `0`
+replaced by `x 0 + x 2`, all other wires unchanged (round-1 audit, sanity statement 3; on the
+input `011` the output is `111`).
+
+**Proof sketch.** By `applyOn_mulVec_basis`, the amplitude at `y` is
+`CNOT (y ∘ wires20) (x ∘ wires20)` when `y 1 = x 1`; it is `1` exactly when
+`(y 2, y 0) = (x 2, x 0 + x 2)`. -/
+theorem applyOn_wires20_CNOT_mulVec_basis (x : Reg 3) :
+    applyOn wires20 (Gate.CNOT : Matrix (Reg 2) (Reg 2) ℂ) *ᵥ (Ket.basis x).vec =
+      (Ket.basis (Function.update x 0 (x 0 + x 2))).vec := by
   sorry
 
 end Quantum

@@ -82,4 +82,17 @@ theorem inPP_polyTimeModel_of_mem_NP {L : Language Bool} (hL : L ∈ NP) :
     InPP polyTimeModel L := by
   sorry
 
+/-- A concrete language in `PP` for polynomial time: the strings whose first bit is `true`. It
+contains `[true]` and not `[]`, so it is neither `∅` nor everything (round-1 audit, sanity
+statement 8).
+
+**Proof sketch.** Use the verifier `M x r = x.headD false` with no random bits (`polyLen 0 0 = 0`):
+its acceptance probability is `1` on members and `0` on the rest. It is efficient because its
+accepting language `{pairEncode x r | x.headD false = true}` is the preimage under `pairFstD` of a
+linear-time language, and its rejecting language is the complement (`preimage_mem_P`,
+`compl_mem_P`). -/
+theorem inPP_polyTimeModel_headD :
+    InPP polyTimeModel ({x | x.headD false = true} : Language Bool) := by
+  sorry
+
 end Counting

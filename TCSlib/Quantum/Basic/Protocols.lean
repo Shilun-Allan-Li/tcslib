@@ -26,7 +26,13 @@ Three first results about qubits, stated on registers with the gates of `Gates.l
 
 ## Main results
 
-* `Quantum.no_cloning` — no unitary copies every state [NC10, Box 12.1], [WZ82].
+* `Quantum.no_cloning_of_overlap` — no unitary copies two states whose overlap has modulus
+  strictly between `0` and `1`, even up to a separate phase on each copy [NC10, Box 12.1].
+* `Quantum.no_cloning` — the standard no-cloning theorem: on a basis with at least two elements,
+  no unitary copies every state, even up to a state-dependent phase [NC10, Box 12.1], [WZ82].
+* `Quantum.no_exact_cloning` — a weaker, vector-level statement: no unitary maps every
+  `|ψ⟩|e⟩` to exactly `|ψ⟩|ψ⟩`. It holds even on a one-element basis, where the single physical
+  state can be copied, so it is a fact about vector representatives, not about physical states.
 * `Quantum.teleportState_vec` — after Alice's gates, the state is
   `½ ∑_{m₀ m₁} |m₀ m₁⟩ ⊗ X^{m₁} Z^{m₀} |ψ⟩` [dW26, §1.5].
 * `Quantum.teleport_outcome_prob` — each of Alice's four outcomes has probability `1/4`.
@@ -35,8 +41,16 @@ Three first results about qubits, stated on registers with the gates of `Gates.l
 
 ## Divergences
 
-* `no_cloning` is proved by linearity on a superposition of two basis states (the argument of
-  [WZ82]), not by the inner-product argument of [NC10, Box 12.1]; the statement is the same.
+* Kets are vectors, not rays: they keep their global phase. A cloning statement that demands
+  exact vector equality is therefore weaker than physical no-cloning: it already fails for `ψ` and
+  `-ψ` by linearity, since `(-ψ) ⊗ (-ψ) = ψ ⊗ ψ`. `no_exact_cloning` is that statement.
+  `no_cloning_of_overlap` and `no_cloning` allow a unit-modulus phase on each output and carry the
+  physical content (round-1 audit, finding 1).
+* `denseCode`'s message labels follow the decoder used here: `(b₀, b₁)` is encoded as
+  `X^{b₁} Z^{b₀}` and decoded as the basis state `|b₀ b₁⟩`. [NC10, §2.3] sends `01` with `Z` and
+  `10` with `X`, the other way round, and its `11` operator `iY` differs from `X Z = -iY` by a global
+  sign. The protocols are the same up to relabelling the messages and a phase that no measurement
+  sees (round-1 audit, finding 3).
 * States of one qubit are kets over `Reg 1`, the basis the gates of `Gates.lean` act on.
 
 ## References
@@ -57,14 +71,44 @@ open scoped Quantum
 
 /-! ### No-cloning -/
 
-/-- **No-cloning theorem.** On a basis with at least two elements, no unitary `U` maps
-`|ψ⟩|e⟩` to `|ψ⟩|ψ⟩` for every state `ψ`, whatever the blank state `|e⟩`. [NC10, Box 12.1],
-[WZ82]
+/-- **No-cloning for two states.** Let `ψ` and `φ` be states whose overlap
+`t = |⟨ψ, φ⟩| = |∑ₓ conj (ψ x) φ x|` satisfies `0 < t < 1`. Then no unitary `U` maps `|ψ⟩|e⟩` to
+`c₁ |ψ⟩|ψ⟩` and `|φ⟩|e⟩` to `c₂ |φ⟩|φ⟩` for any phases `|c₁| = |c₂| = 1`, whatever the blank
+state `|e⟩`. Distinct states that are not orthogonal cannot be copied, even up to phase.
+[NC10, Box 12.1]
 
-**Proof sketch.** Pick basis states `i ≠ j` and let `ψ₊ = (|i⟩ + |j⟩)/√2`. By linearity of `U`,
-`U |ψ₊⟩|e⟩ = (U|i⟩|e⟩ + U|j⟩|e⟩)/√2 = (|ii⟩ + |jj⟩)/√2`, whose amplitude at `(i, j)` is `0`. But
-`|ψ₊⟩|ψ₊⟩` has amplitude `1/2` at `(i, j)`. -/
+**Proof sketch.** A unitary preserves inner products. The inputs have inner product
+`⟨ψ, φ⟩ ⟨e, e⟩ = ⟨ψ, φ⟩`, and the outputs have inner product `conj c₁ · c₂ · ⟨ψ, φ⟩²`. Taking
+moduli gives `t = t²`, so `t ∈ {0, 1}`, contradicting `0 < t < 1`. -/
+theorem no_cloning_of_overlap {d : Type*} [Fintype d] [DecidableEq d] (e : d) (ψ φ : Ket d)
+    (h₀ : 0 < ‖∑ x, star (ψ.vec x) * φ.vec x‖) (h₁ : ‖∑ x, star (ψ.vec x) * φ.vec x‖ < 1) :
+    ¬ ∃ (U : 𝐔[d × d]) (c₁ c₂ : ℂ), ‖c₁‖ = 1 ∧ ‖c₂‖ = 1 ∧
+      (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c₁ • (ψ ⊗ᵠ ψ).vec ∧
+      (U : Matrix (d × d) (d × d) ℂ) *ᵥ (φ ⊗ᵠ Ket.basis e).vec = c₂ • (φ ⊗ᵠ φ).vec := by
+  sorry
+
+/-- **No-cloning theorem.** On a basis with at least two elements, no unitary `U` maps
+`|ψ⟩|e⟩` to `c_ψ |ψ⟩|ψ⟩` for every state `ψ`, even allowing a phase `|c_ψ| = 1` that depends on
+`ψ`, whatever the blank state `|e⟩`. This is the physical statement: kets differing by a phase
+are the same state. [NC10, Box 12.1], [WZ82]
+
+**Proof sketch.** Pick basis states `i ≠ j` (`Nontrivial`). The states `|i⟩` and
+`(|i⟩ + |j⟩)/√2` have overlap `1/√2`, strictly between `0` and `1`, so `no_cloning_of_overlap`
+forbids copying both. -/
 theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d) :
+    ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d, ∃ c : ℂ, ‖c‖ = 1 ∧
+      (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c • (ψ ⊗ᵠ ψ).vec := by
+  sorry
+
+/-- **No exact cloning of vectors.** No unitary `U` maps `|ψ⟩|e⟩` to exactly `|ψ⟩|ψ⟩` for every
+ket `ψ`, on any basis. This is weaker than `no_cloning`: it forbids copying vector
+representatives, phase included, and holds even on a one-element basis, where the single
+physical state is trivially copied. Kept as a vector-level fact (round-1 audit, finding 1).
+
+**Proof sketch.** Apply the hypothesis to `|e⟩` and to `-|e⟩` (also a ket). By linearity,
+`U ((-|e⟩)|e⟩) = -U(|e⟩|e⟩) = -|ee⟩`, but the hypothesis says it is
+`(-|e⟩)(-|e⟩) = |ee⟩`. So `|ee⟩ = 0`, contradicting its amplitude `1` at `(e, e)`. -/
+theorem no_exact_cloning {d : Type*} [Fintype d] [DecidableEq d] (e : d) :
     ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d,
       (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = (ψ ⊗ᵠ ψ).vec := by
   sorry
@@ -203,6 +247,16 @@ certainty: one qubit carries two classical bits, given shared entanglement. [NC1
 `X^{b₁} Z^{b₀} ⊗ I (|00⟩ + |11⟩)/√2` to `±|b₀ b₁⟩`. A global sign does not change the
 probability. -/
 theorem superdense_decode (b₀ b₁ : Qubit) : (superdenseState b₀ b₁).prob ![b₀, b₁] = 1 := by
+  sorry
+
+/-- **Superdense coding, exact state.** Bob's decoded state is the basis state `|b₀ b₁⟩` times the
+sign `(-1)^(b₀ b₁)`: it is `-|11⟩` for the message `11` and `+|b₀ b₁⟩` otherwise. This pins down
+the phase that `superdense_decode` deliberately ignores (round-1 audit, sanity statement 10).
+
+**Proof sketch.** As for `superdense_decode`, computing the four cases: the sign comes from
+applying `Z` before `X` in `denseCode`, since `X Z = -Z X`. -/
+theorem superdenseState_vec (b₀ b₁ : Qubit) :
+    (superdenseState b₀ b₁).vec = ((-1 : ℂ) ^ (b₀.val * b₁.val)) • (Ket.basis ![b₀, b₁]).vec := by
   sorry
 
 end Quantum
