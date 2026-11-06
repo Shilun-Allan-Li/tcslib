@@ -761,8 +761,10 @@ open Classical in
 values at most `2 ^ (dpW · dpW)`.
 
 **Proof sketch.** Count `N := |x|` (`inputLength_loop`, decider `0`), set `ℓ := 1` and halve
-`N` to `0` (`Complexity.Codec.halvCount_loop`), so `ℓ = 1 + |bits |x||`; set `s := 1` and run the deepening loop
-(`dp_body`). Every value met is at most `|x| < 2 ^ ℓ ≤ 2 ^ dpW`. -/
+`N` to `0` (`Complexity.Codec.halvCount_loop`), so `ℓ = 1 + |bits |x||`; set `s := 1` and run
+the deepening loop (`dp_body`). Before the loop every value is at most
+`max |x| (1 + |bits |x||)`, below `2 ^ dpW`; the loop keeps every value at most
+`2 ^ (dpW · dpW)`. -/
 private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (h : N.DecidesInSpace L sp) (x : List Bool) :
     AHalt (dpD (codeK N + 1)) (dpOrc N) x
@@ -809,12 +811,14 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
 machine with five logspace deciders decides `L` with every register of at most
 `C · (sp |x| + logSpace |x| + 1)²` binary digits. The deciders are `inputLenLang`,
 `initLang N`, `acceptLang N`, `stepLang N` and `edgeLang N`, and `C = 9 (codeK N + 1)² + 2`.
+The machine never computes `sp`: it searches at radius `s = 1, 2, …` until no configuration
+reaches the window's edge ([Sip13, §8.1, proof of Theorem 8.5]; [AB09, Theorem 4.14]).
 
 **Proof sketch.** `D`'s run (`dp_run`) answers `x ∈ L` with every register at most
 `2 ^ (W · W)`, `W = (codeK N + 1)(sp |x| + ℓ + 2)` and `ℓ ≤ logSpace |x| + 1`
 (`dp_bits_logSpace`). A value `v ≤ 2 ^ (W · W)` has `|bits (v + 1)| ≤ W · W + 2`
-(`length_bits_le`), and `W ≤ 3 (codeK N + 1) X` with `X = sp |x| + logSpace |x| + 1 ≥ 1`, so
-`W · W + 2 ≤ (9 (codeK N + 1)² + 2) X²`. -/
+(`Complexity.LogProg.length_bits_succ_le`), and `W ≤ 3 (codeK N + 1) X` with
+`X = sp |x| + logSpace |x| + 1 ≥ 1`, so `W · W + 2 ≤ (9 (codeK N + 1)² + 2) X²`. -/
 theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (h : N.DecidesInSpace L sp) : DeepenContract L sp := by
   refine ⟨25, 5, DpLb (codeK N + 1), inferInstance, inferInstance, dpD (codeK N + 1), .scan,
@@ -830,12 +834,7 @@ theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
     have hW3 : W ≤ 3 * (codeK N + 1) * X := by
       rw [hW, dpW, mul_comm 3, mul_assoc]
       exact Nat.mul_le_mul_left _ (by omega)
-    have hlt : a.2.1 r + 1 < 2 ^ (W * W + 2) := by
-      have := ha.2 r
-      have e : 2 ^ (W * W + 2) = 4 * 2 ^ (W * W) := by rw [pow_add]; ring
-      have := Nat.two_pow_pos (W * W)
-      omega
-    refine (length_bits_le hlt).trans ?_
+    refine (length_bits_succ_le ((ha.2 r).trans (Nat.le_succ _))).trans ?_
     have h1 : W * W ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) :=
       Nat.mul_self_le_mul_self hW3
     have h2 : 1 ≤ X * X := Nat.one_le_iff_ne_zero.mpr (by positivity)

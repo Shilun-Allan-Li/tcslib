@@ -204,14 +204,6 @@ namespace Complexity
 
 open Turing LogProg LogProg.ISCount LogProg.ISGen LogProg.SavitchARM
 
-/-- A number `m ≤ 2 ^ e + 1` has a binary expansion of at most `e + 2` digits after one
-increment. -/
-private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
-  apply length_bits_le
-  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
-    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
-  omega
-
 /-- The binary length is at most the logarithmic width. -/
 private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
   rw [← Nat.size_eq_bits_len, logSpace_eq]
@@ -291,7 +283,7 @@ theorem compl_mem_NSPACE {S : ℕ → ℕ} (hS : ∀ n, logSpace n ≤ S n) {L :
     obtain ⟨Nn, hNn, hiff⟩ :=
       (gen_start (x := x) (sp := fun n => c * S n) hN (Nat.le_succ _) hE1 le_rfl).decides
     rw [ISCount.St.toV_zero] at hNn hiff
-    refine ⟨Nn, hNn.mono fun a ha => ⟨igA_npreS x a, fun r => bits_succ_le (ha r)⟩, ?_⟩
+    refine ⟨Nn, hNn.mono fun a ha => ⟨igA_npreS x a, fun r => length_bits_succ_le (ha r)⟩, ?_⟩
     exact hiff
 
 /-- **Nondeterministic logspace is closed under complement** [AB09, §4.3.2, Theorem 4.20 in

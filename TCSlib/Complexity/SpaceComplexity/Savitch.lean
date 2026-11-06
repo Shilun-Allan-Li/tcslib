@@ -49,8 +49,9 @@ Savitch register machine of `TCSlib.Complexity.SpaceComplexity.SavitchARM`
   the search stops by radius `c · S(|x|) + 1`.
 * **The recursion is realized by a register machine**: the midpoint search is the Savitch
   register machine (`Complexity.LogProg.SavitchARM.A`), whose explicit stack keeps every
-  register within `w · w` binary digits for a code width `w = O(S n)`; the deepening machine
-  holds it twice as a block of its own table (`Complexity.LogProg.Ins.embed`).
+  register value at most `2 ^ (w · w)`, so within `O(w²)` binary digits, for a code width
+  `w = O(S n)`; the deepening machine holds it twice as a block of its own table
+  (`Complexity.LogProg.Ins.embed`).
 
 ## Main definitions
 
@@ -116,7 +117,7 @@ which it decides by the same search. The search stops by `s = c · S |x| + 1`, t
 `O((S |x|)²)`. -/
 theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
     NSPACE S ⊆ SPACE fun n => S n * S n :=
-  savitch_of_logSpace_le S hS.1
+  savitch_of_logSpace_le S ((spaceConstructible_iff S).mp hS).1
 
 /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
 space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
@@ -133,9 +134,9 @@ most `2 ^ w`, every midpoint a code below `2 ^ w`). The Savitch register machine
 evaluates `REACH` by the midpoint recursion, **reusing the space** of the first recursive
 call for the second ([AB09]'s crucial point) through an explicit stack: saved endpoints as
 `w`-bit digits of one register, phase bits as binary digits of another, so every register
-holds at most `w · w` bits. Its deciders (input length and the initial, accepting and step
-code languages) are logspace, and `Complexity.LogProg.arm_decides_pspace_val` turns the
-machine into a polynomial-space decider. -/
+value stays at most `2 ^ (w · w)`, within `O(w²)` bits. Its deciders (input length and the
+initial, accepting and step code languages) are logspace, and
+`Complexity.LogProg.arm_decides_pspace_val` turns the machine into a polynomial-space decider. -/
 theorem PSPACE_eq_NPSPACE : PSPACE = NPSPACE :=
   Set.Subset.antisymm PSPACE_subset_NPSPACE NPSPACE_subset_PSPACE
 
