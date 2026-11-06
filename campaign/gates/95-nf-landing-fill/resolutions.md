@@ -145,4 +145,6 @@ commit `4c59561a`): bundle `95-nf-landing-fill-r5-bundle.md`, 89 sections, SHA-2
 `f6d8ac55580126178d485c13a526073e0f77ecbf7efe11967be025e4a63a2962`; Lean from `c8cedd9d`, records
 from `f2f1afcb1a39f2a89a086898fdb76e6e21f186e9`. Findings file `nf-landing-fill-r5-findings.md`.
 
-**Not yet clear to merge: #191** (gate 95's round 5 is staged, not yet dispatched).
+**Round 5 dispatched (2026-11-06, the user).**
+
+**Not yet clear to merge: #191** (gate 95's round 5 is out).
