@@ -596,8 +596,8 @@ the axiom walk: `sorryAx` reaches the target only through its own open body.
   - the known hazards: `Robustness/SingleTape` (the zero-tape embedding and the sweep
     simulation), `UniversalTlogT`, `Build/StepBlockForward` (H2-F's forwarding loop),
     `Universal` (gate 92's stationarity pair), `SymbolLift` and `Build/Contract/Lift`.
-- **The base** is `campaign/fills/u2s/logs/u2s-fill-g5-screen-base.txt`: `@TBD@` declarations,
-  `@TBD@` pairs, `@TBD@` characters (MEASURED at your base), with `@TBD@` pairs on your file.
+- **The base** is `campaign/fills/u2s/logs/u2s-fill-g5-screen-base.txt`: 1,168 declarations,
+  777 pairs, 272,860 characters (MEASURED at your base), with 0 pairs on your file.
 
 ```sh
 P=campaign/fills/u2s/inputs/u2s-fill-g5

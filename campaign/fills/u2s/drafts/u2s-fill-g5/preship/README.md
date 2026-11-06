@@ -14,4 +14,4 @@ pushed), which adds `import TCSlib.Complexity.TuringMachine.Build.ZoneStep` afte
 | `order.txt`, `roots.txt` (`fillinputs.py` on the overlay) | 105 modules, 42 Mathlib roots; neither `NDNormalForm` nor `SavitchARM` is in the closure, so #191 and the deepening do not change them |
 | `base-sorries.txt` | 22 entries in 9 modules, the target's included; equal, module by module, to the warnings of the snapshot chain's replay logs |
 | Lint at the overlay | `campaign_style_lint.py TCSlib/Complexity/TuringMachine`: 0 FAIL, 71 WARN over 92 files; `style_lint.py` on `TwoTapes`: 0 findings |
-| `screen-population.txt` | the draft's 21 files; the screen base is run on a `git archive` of the overlay |
+| `screen-population.txt`, `screen-base.txt` | the draft's 21 files; the v3 screen on a `git archive` of the overlay: 1,168 declarations, 777 pairs, 272,860 characters, 0 pairs on `TwoTapes`; exit 0, 403 s |
