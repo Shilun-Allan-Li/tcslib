@@ -31,14 +31,16 @@ section "The route" is the one the Lean sketches cite.
   at the issue commit `@ANCESTOR@`. #195 and the clean-up PR are merged there by then.
 - Create your working branch from it (suggested `fill/s2b-efficiency`). Record the base hash in
   `REPORT.md`, and never rebase.
-- **Delivery is by zip**, `fill-s2b-efficiency.zip`, with the standard contents:
+- **Delivery is on the exchange branch** (its `README.md`; records `EXCHANGE.md`): never push
+  your working branch; push `inbox/fills/s2b-efficiency/` on `exchange/pass-shelat-ch5-8`:
   - `REPORT.md`;
-  - the owned file(s);
-  - a `git format-patch` series and a git bundle;
-  - the sweep log and the axiom prints;
-  - `SHA256SUMS`.
+  - `patches/` (`git format-patch @ANCESTOR@..fill/s2b-efficiency`);
+  - `src/`, the owned file(s) at their repository paths;
+  - `evidence/`: the sweep log and the axiom prints.
 
-  Send a checkpoint zip (`fill-s2b-efficiency-cpN.zip`) at each milestone below.
+  Push it at each milestone below (`fill s2b-efficiency: checkpoint <n>`) and at the end
+  (`fill s2b-efficiency: final`). Write only that path; pull with rebase before each push; never
+  force-push.
 
 ## What this is
 
@@ -303,7 +305,7 @@ The private `decodeOracleMove_eq` (PRF.lean) is not citable (rule 11). The same 
 - **Never `lake build`**, and never an unfiltered `lake exe cache get`.
   - Check **one file at a time** with `bash scripts/lean_check_tree.sh <module path without .lean>`,
     in dependency order, one Lean process at a time.
-  - Follow the environment addendum attached at dispatch: preflight, and the Mathlib cache for the
+  - Follow the environment addendum (`fills/fill-environment-addendum.md`, copied into the dispatch folder): preflight, and the Mathlib cache for the
     order list's roots only.
 
 ## Deliverable and checks
