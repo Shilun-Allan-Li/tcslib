@@ -294,10 +294,17 @@ noncomputable def oneCallFactorer (A : NUPPT) : NUPPT :=
   exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **`A''` runs on the coins of `A`**: the published equivalence
-`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_oneCallFactorer`). -/
+`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_oneCallFactorer`). -/
 noncomputable def oneCallFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
     (oneCallFactorer A).Coins n ≃ A.Coins n :=
-  NUPPT.coinsEquiv (coins_oneCallFactorer A) n
+  NUPPT.coinsCongr (coins_oneCallFactorer A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (oneCallFactorer_coinsEquiv A n r) = List.ofFn r`. -/
+theorem oneCallFactorer_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (oneCallFactorer A).Coins n) :
+    List.ofFn (oneCallFactorer_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_oneCallFactorer A) n r
 
 /-- **The activation of `A''`**: `A''(1^n, y; r) = (A(1^n, y; r)).take n`. -/
 theorem oneCallFactorer_runAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
@@ -796,11 +803,18 @@ noncomputable def collectionFactorer (A : NUPPT) : NUPPT :=
   exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **The reduction runs on the coins of `A`**: the published equivalence
-`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along
+`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
 `coins_collectionFactorer`). -/
 noncomputable def collectionFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
     (collectionFactorer A).Coins n ≃ A.Coins n :=
-  NUPPT.coinsEquiv (coins_collectionFactorer A) n
+  NUPPT.coinsCongr (coins_collectionFactorer A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (collectionFactorer_coinsEquiv A n r) = List.ofFn r`. -/
+theorem collectionFactorer_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (collectionFactorer A).Coins n) :
+    List.ofFn (collectionFactorer_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_collectionFactorer A) n r
 
 /-- **The activation of the reduction**: `A_fact(1^n, y; r) = fst(A(1^n, ⟨1^n, y⟩; φ r))`, the
 coins read through `φ = collectionFactorer_coinsEquiv A n`. -/
@@ -809,7 +823,7 @@ theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     (collectionFactorer A).runAt n y r =
       pairFstD (A.runAt n (pairEncode (List.replicate n true) y)
         (collectionFactorer_coinsEquiv A n r)) := by
-  rw [NUPPT.runAt_eq, collectionFactorer_coinsEquiv, NUPPT.runAt_coinsEquiv]
+  rw [NUPPT.runAt_eq, collectionFactorer_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold collectionFactorer
   rw [NUPPT.runAtL_ofPolyTime]
   simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,

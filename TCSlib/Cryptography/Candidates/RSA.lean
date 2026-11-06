@@ -895,16 +895,23 @@ noncomputable def rsaBreaker (A : NUPPT) : NUPPT :=
   exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **`rsaBreaker` runs on the coins of `A`**: the published equivalence
-`(rsaBreaker A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_rsaBreaker`). -/
+`(rsaBreaker A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_rsaBreaker`). -/
 noncomputable def rsaBreaker_coinsEquiv (A : NUPPT) (n : ℕ) : (rsaBreaker A).Coins n ≃ A.Coins n :=
-  NUPPT.coinsEquiv (coins_rsaBreaker A) n
+  NUPPT.coinsCongr (coins_rsaBreaker A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rsaBreaker_coinsEquiv A n r) = List.ofFn r`. -/
+theorem rsaBreaker_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (rsaBreaker A).Coins n) :
+    List.ofFn (rsaBreaker_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rsaBreaker A) n r
 
 /-- The activation of `rsaBreaker`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = A(1^n, ⟨⟨N, e⟩, y⟩; φ r)`, the
 coins read through `φ = rsaBreaker_coinsEquiv A n`. -/
 theorem rsaBreaker_runAt (A : NUPPT) (n : ℕ) (N e y : List Bool) (r : (rsaBreaker A).Coins n) :
     (rsaBreaker A).runAt n (pairEncode N (pairEncode e y)) r =
       A.runAt n (pairEncode (pairEncode N e) y) (rsaBreaker_coinsEquiv A n r) := by
-  rw [NUPPT.runAt_eq, rsaBreaker_coinsEquiv, NUPPT.runAt_coinsEquiv]
+  rw [NUPPT.runAt_eq, rsaBreaker_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rsaBreaker
   rw [NUPPT.runAtL_ofPolyTime]
   simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
@@ -1058,10 +1065,17 @@ noncomputable def rsaFromFactorer (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
   exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **`A'` runs on the coins of `A`**: the published equivalence
-`(rsaFromFactorer H A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_rsaFromFactorer`). -/
+`(rsaFromFactorer H A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_rsaFromFactorer`). -/
 noncomputable def rsaFromFactorer_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
     (rsaFromFactorer H A).Coins n ≃ A.Coins n :=
-  NUPPT.coinsEquiv (coins_rsaFromFactorer H A) n
+  NUPPT.coinsCongr (coins_rsaFromFactorer H A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rsaFromFactorer_coinsEquiv H A n r) = List.ofFn r`. -/
+theorem rsaFromFactorer_coinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+    (r : (rsaFromFactorer H A).Coins n) :
+    List.ofFn (rsaFromFactorer_coinsEquiv H A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rsaFromFactorer H A) n r
 
 /-- The activation of `A'`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = rsaFromFactorStep n (A(1^n, N; φ r)) N e y`,
 the coins read through `φ = rsaFromFactorer_coinsEquiv H A n`. -/
@@ -1070,7 +1084,7 @@ theorem rsaFromFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N e y : 
     (rsaFromFactorer H A).runAt n (pairEncode N (pairEncode e y)) r =
       rsaFromFactorStep n (A.runAt n N (rsaFromFactorer_coinsEquiv H A n r)) (listToNat N)
         (listToNat e) (listToNat y) := by
-  rw [NUPPT.runAt_eq, rsaFromFactorer_coinsEquiv, NUPPT.runAt_coinsEquiv]
+  rw [NUPPT.runAt_eq, rsaFromFactorer_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rsaFromFactorer
   rw [NUPPT.runAtL_ofPolyTime]
   simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,

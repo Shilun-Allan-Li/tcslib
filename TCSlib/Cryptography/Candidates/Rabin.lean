@@ -1077,11 +1077,18 @@ theorem coins_rabinBlumInverter (H : ArithmeticFP) (A : NUPPT) :
   exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **The root finder runs on the coins of `A`**: the published equivalence
-`(rabinBlumInverter H A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along
+`(rabinBlumInverter H A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
 `coins_rabinBlumInverter`). -/
 noncomputable def rabinBlumInverter_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
     (rabinBlumInverter H A).Coins n ≃ A.Coins n :=
-  NUPPT.coinsEquiv (coins_rabinBlumInverter H A) n
+  NUPPT.coinsCongr (coins_rabinBlumInverter H A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rabinBlumInverter_coinsEquiv H A n r) = List.ofFn r`. -/
+theorem rabinBlumInverter_coinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+    (r : (rabinBlumInverter H A).Coins n) :
+    List.ofFn (rabinBlumInverter_coinsEquiv H A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rabinBlumInverter H A) n r
 
 /-- The activation of the root finder: `A'(1^n, ⟨N, y⟩; r) = rabinRootStep (A(1^n, N; φ r)) N y`,
 the coins read through `φ = rabinBlumInverter_coinsEquiv H A n`. -/
@@ -1089,7 +1096,7 @@ theorem rabinBlumInverter_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N y : 
     (r : (rabinBlumInverter H A).Coins n) :
     (rabinBlumInverter H A).runAt n (pairEncode N y) r =
       rabinRootStep (A.runAt n N (rabinBlumInverter_coinsEquiv H A n r)) (listToNat N) y := by
-  rw [NUPPT.runAt_eq, rabinBlumInverter_coinsEquiv, NUPPT.runAt_coinsEquiv]
+  rw [NUPPT.runAt_eq, rabinBlumInverter_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rabinBlumInverter
   rw [NUPPT.runAtL_ofPolyTime]
   simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
