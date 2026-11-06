@@ -228,13 +228,11 @@ section Steps
 
 variable {c : ℕ} {o : Fin 5 → List Bool → Bool} {x : List Bool} {B : ℕ}
 
-/-- `D`'s own instructions (increments, clears, halvings, zero tests, answers) meet the
-syntactic preconditions. -/
+/-- `D`'s own increments, clears and answers meet the syntactic preconditions. -/
 private theorem dp_pre {l : DpLb c} {v : Fin 25 → ℕ}
     (h : (∃ r l', dpD c l = .inc r l') ∨ (∃ r l', dpD c l = .clr r l') ∨
-      (∃ r l', dpD c l = .half r l') ∨ (∃ r l₁ l₀, dpD c l = .jz r l₁ l₀) ∨
       (∃ b, dpD c l = .ret b)) : PreS (dpD c) x (some l, v, none) := by
-  rcases h with ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, _, _, h⟩ | ⟨_, h⟩ <;>
+  rcases h with ⟨_, _, h⟩ | ⟨_, _, h⟩ | ⟨_, h⟩ <;>
     exact preS_of_ins (by intros; simp_all) (by intros; simp_all) (by intros; simp_all)
       (by intros; simp_all) (by intros; simp_all)
 
@@ -247,19 +245,6 @@ private theorem dp_clr {l l' : DpLb c} {r : Fin 25} (h : dpD c l = .clr r l') {v
     (hv : ∀ s, v s ≤ B) : AReach (dpD c) o x (GuardLe (dpD c) x B) (some l, v, none)
       (some l', Function.update v r 0, none) :=
   AReach.step ⟨dp_pre (Or.inr (Or.inl ⟨r, l', h⟩)), hv⟩ (by rw [astep_clr h]; exact AReach.refl _)
-
-private theorem dp_half {l l' : DpLb c} {r : Fin 25} (h : dpD c l = .half r l') {v : Fin 25 → ℕ}
-    (hv : ∀ s, v s ≤ B) : AReach (dpD c) o x (GuardLe (dpD c) x B) (some l, v, none)
-      (some l', Function.update v r (v r / 2), none) :=
-  AReach.step ⟨dp_pre (Or.inr (Or.inr (Or.inl ⟨r, l', h⟩))), hv⟩
-    (by rw [astep_half h]; exact AReach.refl _)
-
-private theorem dp_jz {l l₁ l₀ : DpLb c} {r : Fin 25} (h : dpD c l = .jz r l₁ l₀)
-    {v : Fin 25 → ℕ} (hv : ∀ s, v s ≤ B) :
-    AReach (dpD c) o x (GuardLe (dpD c) x B) (some l, v, none)
-      (some (if v r = 0 then l₁ else l₀), v, none) :=
-  AReach.step ⟨dp_pre (Or.inr (Or.inr (Or.inr (Or.inl ⟨r, l₁, l₀, h⟩)))), hv⟩
-    (by rw [astep_jz h]; exact AReach.refl _)
 
 /-- Writing a value at most `B` keeps every register at most `B`. -/
 private theorem dp_bd {n : ℕ} {v : Fin n → ℕ} (hv : ∀ s, v s ≤ B) {r : Fin n} {a : ℕ}
@@ -424,93 +409,14 @@ private theorem dp_cT_run (f : Bool) : ∀ j i (hi : i < c), i + j + 1 = c → �
     congr 3
     ring
 
-/-- The halving count: `dpHl t` halvings take `t` to `0`. -/
-private def dpHl : ℕ → ℕ
-  | 0 => 0
-  | t + 1 => dpHl ((t + 1) / 2) + 1
-
-private theorem dpHl_succ (t : ℕ) : dpHl (t + 1) = dpHl ((t + 1) / 2) + 1 := by
-  rw [dpHl]
-
-/-- **The halving loop** (a promotion request: no generic row halves until zero): from `hz`,
-`N` is halved to `0` and `ℓ` gains the halving count.
-
-**Proof sketch.** Strong induction on `N`: at `0` the loop exits; otherwise one round halves
-`N` and increments `ℓ`. -/
-private theorem dp_hl_run : ∀ t (v : Fin 25 → ℕ), v 21 = t → (∀ r, v r ≤ B) →
-    v 22 + dpHl t ≤ B → AReach (dpD c) o x (GuardLe (dpD c) x B) (some .hz, v, none)
-      (some .sOne, Function.update (Function.update v 21 0) 22 (v 22 + dpHl t), none) := by
-  intro t
-  induction t using Nat.strong_induction_on with
-  | _ t ih =>
-    intro v ht hv hb
-    refine (dp_jz (l := .hz) rfl hv).trans ?_
-    rcases t with _ | t
-    · rw [if_pos ht]
-      refine reach_of_eq (AReach.refl _) ?_
-      rw [show dpHl 0 = 0 by rw [dpHl], add_zero]
-      congr 2
-      funext r
-      rw [Function.update_apply, Function.update_apply]
-      by_cases h1 : r = 22
-      · rw [if_pos h1, h1]
-      · rw [if_neg h1]
-        by_cases h2 : r = 21
-        · rw [if_pos h2, h2, ht]
-        · rw [if_neg h2]
-    · rw [if_neg (by rw [ht]; omega)]
-      have hd := dpHl_succ t
-      refine (dp_half (l := .hh) rfl hv).trans ?_
-      have e22 : Function.update v 21 (v 21 / 2) 22 = v 22 :=
-        Function.update_of_ne (by decide) _ _
-      refine (dp_inc (l := .hi) rfl (dp_bd hv ((Nat.div_le_self _ _).trans (hv 21)))).trans ?_
-      rw [e22]
-      refine reach_of_eq (ih ((t + 1) / 2) (by omega) _ (by
-          rw [Function.update_of_ne (by decide), Function.update_self, ht])
-        (dp_bd (dp_bd hv ((Nat.div_le_self _ _).trans (hv 21))) (by omega))
-        (by rw [Function.update_self]; omega)) ?_
-      rw [Function.update_self]
-      congr 2
-      funext r
-      simp only [Function.update_apply]
-      by_cases h1 : r = 22
-      · rw [if_pos h1, if_pos h1]
-        omega
-      · rw [if_neg h1, if_neg h1, if_neg h1]
-        by_cases h2 : r = 21
-        · rw [if_pos h2, if_pos h2]
-        · rw [if_neg h2, if_neg h2, if_neg h2]
-
-/-- The halving count brackets the binary length: `n < 2 ^ dpHl n`, and `2 ^ dpHl n ≤ 2n` for
-`n ≥ 1`. -/
-private theorem dpHl_pow : ∀ n, n < 2 ^ dpHl n ∧ (1 ≤ n → 2 ^ dpHl n ≤ 2 * n) := by
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    rcases n with _ | t
-    · simp [dpHl]
-    · rw [dpHl_succ, pow_succ]
-      obtain ⟨h1, h2⟩ := ih ((t + 1) / 2) (by omega)
-      refine ⟨by omega, fun _ => ?_⟩
-      rcases Nat.eq_zero_or_pos ((t + 1) / 2) with h0 | h0
-      · rw [h0, show dpHl 0 = 0 by rw [dpHl]]
-        omega
-      · have := h2 h0
-        omega
-
-/-- The halving count against `logSpace`: `logSpace n ≤ 1 + dpHl n ≤ logSpace n + 1`. -/
-private theorem dpHl_logSpace (n : ℕ) :
-    logSpace n ≤ 1 + dpHl n ∧ dpHl n ≤ logSpace n := by
+/-- The binary length against `logSpace`: `logSpace n ≤ 1 + |bits n| ≤ logSpace n + 1`, and
+`n < 2 ^ |bits n|`. -/
+private theorem dp_bits_logSpace (n : ℕ) : logSpace n ≤ 1 + (Nat.bits n).length ∧
+    (Nat.bits n).length ≤ logSpace n ∧ n < 2 ^ (Nat.bits n).length := by
+  rw [Nat.size_eq_bits_len]
+  refine ⟨by have := logSpace_le_size_succ n; omega, ?_, Nat.lt_size_self n⟩
   rw [logSpace_eq]
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [dpHl]
-  · have h1 := (dpHl_pow n).1
-    have h2 := (dpHl_pow n).2 hn
-    have h3 : Nat.log 2 n < dpHl n := Nat.log_lt_of_lt_pow (by omega) h1
-    have h4 : n < 2 ^ (Nat.log 2 n + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
-    have h5 : 2 ^ dpHl n < 2 ^ (Nat.log 2 n + 2) := by rw [pow_succ]; omega
-    have h6 := (Nat.pow_lt_pow_iff_right (by norm_num)).mp h5
-    omega
+  exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
 
 end Loops
 
@@ -773,13 +679,13 @@ private theorem dp_acc (N : FinNDTM Bool) {L : Language Bool} {sp : ℕ → ℕ}
     (ι := DpLb.ab) (k := DpLb.fin) (fun _ => rfl) hBB e5 e1
   rw [decide_eq_decide.mpr (mem_iff_reach_of_noEdge h x s _ hw hne).symm] at r2
   exact r1.halt (r2.halt (AHalt.ret rfl
-    ⟨dp_pre (Or.inr (Or.inr (Or.inr (Or.inr ⟨_, rfl⟩)))), dp_bd_blk f1 f2 hBB e5⟩))
+    ⟨dp_pre (Or.inr (Or.inr ⟨_, rfl⟩)), dp_bd_blk f1 f2 hBB e5⟩))
 
 end Loop
 
 /-- The largest code width of the run on `x`, at radius `sp |x| + 1`. -/
 private def dpW (N : FinNDTM Bool) (sp : ℕ → ℕ) (x : List Bool) : ℕ :=
-  (codeK N + 1) * (sp x.length + 1 + (1 + dpHl x.length) + 1)
+  (codeK N + 1) * (sp x.length + 1 + (1 + (Nat.bits x.length).length) + 1)
 
 open Classical in
 /-- **The deepening loop**: from the body at any radius `1 ≤ s ≤ sp |x| + 1`, `D` answers
@@ -793,22 +699,22 @@ are at most `dpW N sp x`, so every register stays at most `2 ^ (dpW · dpW)`. -/
 private theorem dp_body {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (h : N.DecidesInSpace L sp) (x : List Bool) :
     ∀ k s (v : Fin 25 → ℕ), sp x.length + 1 - s = k → 1 ≤ s → s ≤ sp x.length + 1 →
-      v 22 = 1 + dpHl x.length → v 23 = s → v 24 = 0 →
+      v 22 = 1 + (Nat.bits x.length).length → v 23 = s → v 24 = 0 →
       (∀ r, v r ≤ 2 ^ (dpW N sp x * dpW N sp x)) →
       AHalt (dpD (codeK N + 1)) (dpOrc N) x
         (GuardLe (dpD (codeK N + 1)) x (2 ^ (dpW N sp x * dpW N sp x)))
         (some (.cb false 0), v, none) (decide (x ∈ L)) := by
   have hc : 1 ≤ codeK N + 1 := by omega
-  have hl := dpHl_logSpace x.length
+  have hl := dp_bits_logSpace x.length
   have hWs : ∀ s, s ≤ sp x.length + 1 →
-      (codeK N + 1) * (s + (1 + dpHl x.length) + 1) ≤ dpW N sp x := fun s hs =>
+      (codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) ≤ dpW N sp x := fun s hs =>
     Nat.mul_le_mul_left _ (by omega)
   have hBB : ∀ s, s ≤ sp x.length + 1 →
-      2 ^ ((codeK N + 1) * (s + (1 + dpHl x.length) + 1) *
-        ((codeK N + 1) * (s + (1 + dpHl x.length) + 1))) ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
+      2 ^ ((codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) *
+        ((codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1))) ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
     fun s hs => Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul (hWs s hs) (hWs s hs))
   have hw : ∀ s, codeK N * (s + logSpace x.length + 1) ≤
-      (codeK N + 1) * (s + (1 + dpHl x.length) + 1) := fun s =>
+      (codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) := fun s =>
     Nat.mul_le_mul (by omega) (by omega)
   intro k
   induction k with
@@ -831,7 +737,7 @@ private theorem dp_body {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
         have h2 : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
         have h3 : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
           Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)
-        have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + dpHl x.length) + 1) :=
+        have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + (Nat.bits x.length).length) + 1) :=
           le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
         omega
       refine r.halt (AHalt.step ⟨dp_pre (Or.inl ⟨23, .cb false 0, rfl⟩), e4⟩ ?_)
@@ -846,24 +752,24 @@ open Classical in
 values at most `2 ^ (dpW · dpW)`.
 
 **Proof sketch.** Count `N := |x|` (`inputLength_loop`, decider `0`), set `ℓ := 1` and halve
-`N` to `0` (`dp_hl_run`), so `ℓ = 1 + dpHl |x|`; set `s := 1` and run the deepening loop
+`N` to `0` (`Complexity.Codec.halvCount_loop`), so `ℓ = 1 + |bits |x||`; set `s := 1` and run the deepening loop
 (`dp_body`). Every value met is at most `|x| < 2 ^ ℓ ≤ 2 ^ dpW`. -/
 private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     (h : N.DecidesInSpace L sp) (x : List Bool) :
     AHalt (dpD (codeK N + 1)) (dpOrc N) x
       (GuardLe (dpD (codeK N + 1)) x (2 ^ (dpW N sp x * dpW N sp x)))
       (some .scan, fun _ => 0, none) (decide (x ∈ L)) := by
-  have hl := dpHl_logSpace x.length
-  have hW1 : 1 + dpHl x.length ≤ dpW N sp x :=
+  have hl := dp_bits_logSpace x.length
+  have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
     le_trans (by omega) (Nat.le_mul_of_pos_left _ (by omega : 0 < codeK N + 1))
   have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
     Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)
   have hn : x.length < 2 ^ dpW N sp x :=
-    (dpHl_pow x.length).1.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+    (dp_bits_logSpace x.length).2.2.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
   set B := 2 ^ (dpW N sp x * dpW N sp x) with hB
   have hnB : x.length ≤ B := by omega
-  have hlB : 1 + dpHl x.length ≤ B := by omega
+  have hlB : 1 + (Nat.bits x.length).length ≤ B := by omega
   have r1 := inputLength_loop (dpD (codeK N + 1)) (dpOrc N) x 21 0 .scan .incN .lInc rfl rfl
     (fun m _ => indicator_inputLenLang x m) B hnB (fun _ => 0) (fun _ => Nat.zero_le _)
     (Nat.zero_le _)
@@ -872,9 +778,12 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
   refine (r1.mono fun _ h => h).halt ((dp_inc (l := .lInc) rfl b1).halt ?_)
   rw [Function.update_of_ne (by decide), zero_add]
   have b2 := dp_bd (r := 22) b1 (show 1 ≤ B by omega)
-  refine (dp_hl_run x.length _ (by rw [Function.update_of_ne (by decide), Function.update_self])
-    b2 (by rw [Function.update_self]; omega)).halt ?_
-  rw [Function.update_self]
+  have e21 : Function.update (Function.update (fun _ : Fin 25 => 0) 21 x.length) 22 1 21 =
+      x.length := by
+    rw [Function.update_of_ne (by decide), Function.update_self]
+  refine (Codec.halvCount_loop (dpD (codeK N + 1)) (dpOrc N) x 21 22 (by decide) .hz .hh .hi .sOne
+    rfl rfl rfl B _ b2 (by rw [Function.update_self, e21]; omega)).halt ?_
+  rw [Function.update_self, e21]
   have b3 := dp_bd (r := 22) (dp_bd (r := 21) b2 (Nat.zero_le _)) hlB
   refine (dp_inc (l := .sOne) rfl b3).halt ?_
   rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide),
@@ -895,7 +804,7 @@ logspace deciders `inputLenLang`, `initLang N`, `acceptLang N`, `stepLang N` and
 
 **Proof sketch.** `D`'s run (`dp_run`) answers `x ∈ L` with every register at most
 `2 ^ (W · W)`, `W = (codeK N + 1)(sp |x| + ℓ + 2)` and `ℓ ≤ logSpace |x| + 1`
-(`dpHl_logSpace`). A value `v ≤ 2 ^ (W · W)` has `|bits (v + 1)| ≤ W · W + 2`
+(`dp_bits_logSpace`). A value `v ≤ 2 ^ (W · W)` has `|bits (v + 1)| ≤ W · W + 2`
 (`length_bits_le`), and `W ≤ 3 (codeK N + 1) X` with `X = sp |x| + logSpace |x| + 1 ≥ 1`, so
 `W · W + 2 ≤ (9 (codeK N + 1)² + 2) X²`. -/
 theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
@@ -906,7 +815,7 @@ theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
     exacts [inputLenLang_mem, initLang_mem, acceptLang_mem, stepLang_mem, edgeLang_mem]
   · rw [indicator_eq_decide]
     refine (dp_run h x).mono fun a ha => ⟨ha.1, fun r => ?_⟩
-    have hl := (dpHl_logSpace x.length).2
+    have hl := (dp_bits_logSpace x.length).2.1
     have hls : 1 ≤ logSpace x.length := by rw [logSpace_eq]; omega
     set X := sp x.length + logSpace x.length + 1 with hX
     set W := dpW N sp x with hW
