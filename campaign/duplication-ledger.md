@@ -1091,6 +1091,13 @@ It also found two rewrite chains that are each one lemma: `List.length_take` wit
 it is now one private, `nf_update_last`. #191's commit `49c4d0f7` repairs all of them, with no
 statement change. No family; no member remains.
 
+**Gate 95's round-3 major 1**: one more member, which the sweep's candidate list missed because it
+is an untyped `have`. `nf_display_firstStop`'s `he` (`Nat.mod_add_div`, then the zero remainder)
+re-proved `Nat.mul_div_cancel'`; #191's commit `698dcdf5` cites it. The sweep now also takes every
+untyped `have`/`obtain` on a core or Mathlib term with a later rewrite `at` it (gate 95,
+`evidence/round4/sweep/`); the one other such site, `nf_display_flag`'s `hm`, has no library
+statement. No family; no member remains.
+
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
 carried here until now.

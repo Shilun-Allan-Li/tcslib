@@ -95,3 +95,20 @@ major is repaired (notes 4–7).
 **Not yet clear to merge: #191** (gate 95's round 3 is staged, not yet dispatched).
 
 **Round 3 dispatched (2026-11-06, the user).**
+
+## Round 3 findings (received 2026-11-06)
+
+`findings-r3.md`, verbatim from the exchange inbox (`arora-barak-ch3-4/inbox/nf-landing-fill-r3-findings.md`,
+exchange commit `817910c4b99dc56fa38df7bb1c2a0c4a7aaf2b7e`), SHA-256 `c7783917ee4f9ce0bd8aef51888bd3ce115a57bdd75376938f6db638c456a7a3`.
+
+**Verdict: does not close.** 0 blockers, 1 major (F1, `nf_display_firstStop`'s `he` re-proves
+`Nat.mul_div_cancel'`), 1 minor (F2, the pack's line count), 5 notes. Round 2's major and the
+sweep's repairs are verified (notes 3–7).
+
+## Round 3 dispositions (#191's commit `698dcdf5`; head `b2bac06f`)
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | major | **Repaired, by the standing ruling's kind (repair).** `have he := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)` replaces the `Nat.mod_add_div` line and its rewrite, as proposed (`698dcdf5b9d66d05a27b684c4b17ca7f80d97001`). The round-3 sweep missed it because its candidates were typed `have`s and proof blocks, and this `have` is untyped, its content stated only by the rewrite after it. So the sweep is extended by that pattern (`evidence/round4/sweep/`): every untyped `have` or `obtain` whose term heads with a core or Mathlib name, with any rewrite `at` it or `▸` transport within eight lines, and every anonymous `have :=`. Of the eleven library-headed sites, one more is rewritten afterwards: `nf_display_flag`'s `hm` (line 231), the round-3 sweep's C02. No library lemma states it (`exact?` fails on two generalisations; `Nat.mod_eq_sub_iff` leaves a divisibility side goal), so it stays an idiom. The nine anonymous `have`s are `min`/`max` bounds for `omega` and local hypotheses. Ledger: the sweep's entry adds the site and the pattern. |
+| 2 | minor | **Erratum** (the dispatched pack is kept): the round-3 change is 3,272 → 3,232 lines, **40 lines shorter**, 39 of them from the sweep (`wc -l` of the blobs; the pack's 3,233 was the linter's count, one more). At round 4 the file is 3,231 lines. |
+| 3–7 | notes | Agreed. Round 4 regenerates the seal, the axioms, the screen and the replay on the new head. |
