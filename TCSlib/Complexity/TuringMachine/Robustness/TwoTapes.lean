@@ -185,6 +185,128 @@ private theorem tt_route
   · obtain ⟨HS, hHSk, c₁, hf, hc⟩ := hHS M (by omega)
     exact tt_frame M HS hHSk c₁ hf hc
 
+/-! ### The leaf: one simulated transition on the home cell -/
+
+/-- The states of the transition step of the two-work-tape simulation of `M` [HS66; AB09,
+§1.7]: `Sum.inl q`, about to simulate one transition of `M` at state `q`, and `Sum.inr (q', m)`,
+the transition done, with `M`'s successor state `q'` and the head moves `m` still pending. -/
+private abbrev tt_LeafSt (M : FinTM Bool) : Type :=
+  M.State ⊕ (M.State × (Fin M.k → SignType))
+
+/-- The input symbol of the binary source read through the zone alphabet's embedding
+`Sum.inl` (a cell that holds no binary symbol reads as blank). -/
+private def tt_decodeIn {k : ℕ} : Option (ZoneSym k) → Option Bool
+  | some (.inl b) => some b
+  | _ => none
+
+/-- The home tuple read from the home cell of the zoned tape (`Turing.zonedTape`): track `t`
+reads the virtual symbol stored in its slot, a blank or unoccupied slot reading as blank. -/
+private def tt_homeRead {k : ℕ} (w : Option (ZoneSym k)) (t : Fin k) : Option Bool :=
+  (zoneCellOfCell w t).join
+
+/-- The value track `t` holds after one transition of `M` with action `a` from the home
+tuple `v`: the written symbol, or the old one when nothing is written. -/
+private def tt_homeNew {k : ℕ} {S : Type} (a : Action k Bool S) (v : Fin k → Option Bool)
+    (t : Fin k) : Option Bool :=
+  (a.workTapes t).1.getD (v t)
+
+/-- The head moves of one transition of `M` with action `a`. -/
+private def tt_moves {k : ℕ} {S : Type} (a : Action k Bool S) (t : Fin k) : SignType :=
+  (a.workTapes t).2
+
+/-- **The transition step's table** [HS66; AB09, §1.7]. No public row applies a finite-state
+transition to the home cell of the zoned tape and the input head in one step, so the
+simulation writes this one leaf. At `Sum.inl q` it reads the home tuple from the home cell of
+tape `0` (`tt_homeRead`) and the input symbol through `Sum.inl` (`tt_decodeIn`), applies `M`'s
+transition at `q`, writes the new home tuple, moves the input head as `M` does, emits `M`'s
+output symbol through `Sum.inl`, keeps both work heads, and goes to `Sum.inr (q', m)` with `M`'s
+successor state and head moves, or halts when `M` halts. A state `Sum.inr _` halts (it is
+redirected by the host and never runs). -/
+private def tt_leafTr (M : FinTM Bool) (s : tt_LeafSt M) (inp : Option (ZoneSym M.k))
+    (w : Fin 2 → Option (ZoneSym M.k)) : Action 2 (ZoneSym M.k) (tt_LeafSt M) :=
+  match s with
+  | .inl q =>
+    { inputTape := (M.tm.tr q (tt_decodeIn inp) (tt_homeRead (w 0))).inputTape
+      workTapes := fun j => if j = 0 then
+          (some (some (.inr fun t =>
+            some (tt_homeNew (M.tm.tr q (tt_decodeIn inp) (tt_homeRead (w 0)))
+              (tt_homeRead (w 0)) t))), 0)
+        else (none, 0)
+      output := (M.tm.tr q (tt_decodeIn inp) (tt_homeRead (w 0))).output.map Sum.inl
+      state := (M.tm.tr q (tt_decodeIn inp) (tt_homeRead (w 0))).state.map fun q' =>
+        .inr (q', tt_moves (M.tm.tr q (tt_decodeIn inp) (tt_homeRead (w 0)))) }
+  | .inr _ => ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- **The transition step** [HS66; AB09, §1.7]: the two-tape machine over `Turing.ZoneSym M.k`
+whose table is `tt_leafTr`. -/
+private def tt_leafTM (M : FinTM Bool) : MultiTapeTM 2 (ZoneSym M.k) (tt_LeafSt M) where
+  q₀ := .inl M.tm.q₀
+  tr := tt_leafTr M
+
+/-- The transition step keeps every work head. -/
+private theorem tt_leafTM_tr_moves (M : FinTM Bool) (s : tt_LeafSt M) (inp : Option (ZoneSym M.k))
+    (w : Fin 2 → Option (ZoneSym M.k)) (j : Fin 2) :
+    (((tt_leafTM M).tr s inp w).workTapes j).2 = 0 := by
+  rcases s with q | _
+  · show (if j = 0 then _ else ((none : Option (Option (ZoneSym M.k))), (0 : SignType))).2 = 0
+    split_ifs <;> rfl
+  · rfl
+
+/-- The transition step writes nothing on tape `1`. -/
+private theorem tt_leafTM_tr_workTapes_of_ne (M : FinTM Bool) (q : M.State)
+    (inp : Option (ZoneSym M.k)) (w : Fin 2 → Option (ZoneSym M.k)) {j : Fin 2} (hj : j ≠ 0) :
+    ((tt_leafTM M).tr (.inl q) inp w).workTapes j = (none, 0) :=
+  if_neg hj
+
+/-- **One transition step** [HS66; AB09, §1.7]: from a configuration at `Sum.inl q`, one step
+of the transition machine applies `M`'s transition `a` at `q` to the home tuple read from the
+home cell and to the decoded input symbol. It writes the new home tuple into the cell under
+head `0` and leaves tape `1`, moves the input head by `a`'s input move, keeps both work heads,
+appends `a`'s output symbol through `Sum.inl`, and goes to `Sum.inr (q', m)` for `a`'s
+successor `q'` and head moves `m`, or halts with `a`.
+
+**Proof sketch.** `Turing.MultiTapeTM.step_of_some` applies the table's action; its fields are
+read through `Turing.Action.apply_state`, `_inputPos`, `_workTapePos`, `_output` and
+`Turing.Action.apply_workTapes`, the table being this file's own definition. -/
+private theorem tt_leaf_step (M : FinTM Bool) {x : List (ZoneSym M.k)}
+    (c : Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x) (q : M.State) (hc : c.state = some (.inl q)) :
+    (tt_leafTM M).step c =
+      { state := (M.tm.tr q (tt_decodeIn c.inputSymbol)
+            (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).state.map fun q' =>
+          .inr (q', tt_moves (M.tm.tr q (tt_decodeIn c.inputSymbol)
+            (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))))
+        inputPos := moveInputPos c.inputPos (M.tm.tr q (tt_decodeIn c.inputSymbol)
+          (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).inputTape
+        workTapes := fun j => if j = 0 then
+            Function.update (c.workTapes 0) (c.workTapePos 0) (some (.inr fun t =>
+              some (tt_homeNew (M.tm.tr q (tt_decodeIn c.inputSymbol)
+                (tt_homeRead (c.workTapes 0 (c.workTapePos 0))))
+                (tt_homeRead (c.workTapes 0 (c.workTapePos 0))) t)))
+          else c.workTapes j
+        workTapePos := c.workTapePos
+        output := c.output ++ ((M.tm.tr q (tt_decodeIn c.inputSymbol)
+          (tt_homeRead (c.workTapes 0 (c.workTapePos 0)))).output.map Sum.inl).toList } := by
+  have hW : c.workTapeSymbols = fun i => c.workTapes i (c.workTapePos i) :=
+    funext (Cfg.workTapeSymbols_eq c)
+  rw [MultiTapeTM.step_of_some hc]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state, hW]
+    rfl
+  · rw [Action.apply_inputPos, hW]
+    rfl
+  · funext j p
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq, hW]
+    by_cases hj : j = 0
+    · subst hj
+      rfl
+    · rw [tt_leafTM_tr_workTapes_of_ne M q _ _ hj, Option.getD_none, Function.update_eq_self]
+      show c.workTapes j p = (if j = 0 then _ else c.workTapes j) p
+      rw [if_neg hj]
+  · funext j
+    rw [Action.apply_workTapePos, tt_leafTM_tr_moves, SignType.coe_zero, add_zero]
+  · rw [Action.apply_output, hW]
+    rfl
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
