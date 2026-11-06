@@ -4,3 +4,4 @@
   seal caught a `logSpace` unfolding (`66fc5327`); seal, freeze, lint and screen at the head;
   `replay-lh2` (2/0, after #216). Pack written; staged.
 - 2026-11-06: **staged** (33 sections).
+- 2026-11-06: **dispatched** by the user (33 sections, bundle `a429d34a…`).
