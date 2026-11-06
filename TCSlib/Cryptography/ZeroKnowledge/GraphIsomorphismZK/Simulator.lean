@@ -115,6 +115,11 @@ noncomputable def sim (V' : Strategy) (x z r : List Bool) : List Bool :=
   ((List.range (instanceVertexCount x)).findSome? fun t =>
     attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
 
+/-- The defining equation of `sim`: the first successful attempt on consecutive coin blocks. -/
+theorem sim_eq (V' : Strategy) (x z r : List Bool) :
+    sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t =>
+      attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD [] := rfl
+
 /-! ### An FP toolkit -/
 
 /-- Polynomial-time computability transfers along pointwise equality. -/

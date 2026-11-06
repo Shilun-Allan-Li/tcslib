@@ -230,7 +230,9 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
         · exact Or.inl hall
         · push_neg at hall
           obtain ⟨i, hi⟩ := hall
-          exact Or.inr ⟨i, mem_univ _, hi, congrFun h i⟩
+          have hfi := congrFun h i
+          rw [OneWay.prodFun_apply, OneWay.prodFun_apply] at hfi
+          exact Or.inr ⟨i, mem_univ _, hi, hfi⟩
     _ ≤ uprob (fun z : (Fin m → α) × ρ => ∀ i, ¬ G (z.1 i)) +
           ∑ i, uprob (fun z : (Fin m → α) × ρ =>
             G (z.1 i) ∧ f (B (prodFun f m z.1) z.2 i) = f (z.1 i)) :=

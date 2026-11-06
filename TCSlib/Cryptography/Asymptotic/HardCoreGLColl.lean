@@ -173,8 +173,8 @@ theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q 
     glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c =
       A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q)))
         (A.precomp_coinsEquiv collPre_poly n c) := by
-  simp only [glPredictorOf, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode, pairSndD_pairEncode,
-    NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
+  simp only [glPredictorOf_apply, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode,
+    pairSndD_pairEncode, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
 
 /-- The pre-processing of the collection inverter: on the view of `⟨1^n, ⟨i, ⟨y, r⟩⟩⟩`, the
 string `⟨i, y⟩`. -/
@@ -238,15 +238,21 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
       ∃ x', glPadDecode F i L ((glCollMachine A mP K k hk).runAt n
           (pairEncode i (pairEncode (F.f i z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧
         pairEncode (F.f i x'.1) (List.ofFn x'.2) = pairEncode (F.f i z.1.1) (List.ofFn z.1.2)) := by
-  have hpred : (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (c : A.Coins n) =>
-      A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) =
-      glPredictorOf (A.precomp collPre_poly) n (mP.eval n) (fun y : List Bool => pairEncode i y) := by
-    funext p c
-    obtain ⟨y, q⟩ := p
-    exact (glPredictorOf_precomp_coll A n (mP.eval n) i y q c).symm
-  rw [hpred]
+  have hrec : ∀ y (g : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n)),
+      HardcoreBit.guessRecover
+        (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (c : A.Coins n) =>
+          A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) (k n) y
+        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n) g) =
+      HardcoreBit.guessRecover
+        (glPredictorOf (A.precomp collPre_poly) n (mP.eval n) (fun y : List Bool => pairEncode i y))
+        (k n) y g := fun y g =>
+    (HardcoreBit.guessRecover_coinsCongr _ _ _
+      (fun p c => glPredictorOf_precomp_coll A n (mP.eval n) i p.1 p.2 c) _ _ _).symm
+  rw [← uprob_comp_equiv ((Equiv.refl (F.D i × (Fin (mP.eval n) → Bool))).prodCongr
+    (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n)))]
   have hcoins : (glCollMachine A mP K k hk).coinLen n = (glCoins mP K (A.precomp collPre_poly)).eval n := by
-    simp [glCollMachine, NUPPT.coinLen]
+    rw [NUPPT.coinLen_eq, glCollMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
+      PolyExpr.eval_const, zero_add]
   let eC : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n) ×
       (Fin ((glCoins mP K (A.precomp collPre_poly)).eval n - glNeed (A.precomp collPre_poly) mP k n) → Bool) ≃
       (glCollMachine A mP K k hk).Coins n :=
@@ -261,7 +267,7 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨⟨x, ρ⟩, g⟩, ex⟩ := w
   simp only [Equiv.trans_apply, Equiv.prodAssoc_apply, Equiv.prodCongr_apply, Prod.map_apply,
-    Equiv.coe_refl, id] at hw ⊢
+    Equiv.coe_refl, id, hrec] at hw ⊢
   rw [glCollMachine_runAt A mP K k hk n i (F.f i x) (List.ofFn (finCastEquiv hL.symm ρ))
         ((glMachine_coinsEquiv (A.precomp collPre_poly) mP K k hk n).symm
         (glCoinsEquiv (A.precomp collPre_poly) n (mP.eval n) (k n) _

@@ -69,6 +69,7 @@ def majorityInverter (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
       (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (majorityRecover A T)
 
+omit [Fintype ρ] in
 /-- The defining equation of `majorityInverter`:
 `majorityInverter A T = glInverter (majorityRecover A T)`. -/
 theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
