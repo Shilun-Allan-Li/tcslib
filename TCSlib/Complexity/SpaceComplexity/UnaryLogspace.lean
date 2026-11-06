@@ -153,8 +153,7 @@ lemma astep_call₁ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (o : Fin d → List
     astep A o (pairEncode (List.replicate n true) w) (some l, v, none) =
       (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
         v, none) := by
-  simp only [astep, hl]
-  rw [vword_unary₁]
+  rw [astep_call hl, vword_unary₁]
 
 end LogProg
 
