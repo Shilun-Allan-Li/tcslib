@@ -721,8 +721,7 @@ private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
     prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
   unfold prodInverter at hp ⊢
   rw [OneWay.yaoB_apply]
-  rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
-      ((fmult.prod fmultBlocks).outLen.eval n)
+  rcases hx : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
   · rw [hx, Option.getD_none, fac_blocks_apply, fac_blocks_apply, fac_bitsToNat_false] at hp
     exact absurd hp Nat.not_prime_zero
