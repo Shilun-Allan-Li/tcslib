@@ -18,3 +18,12 @@
   `2873494d76e5f6b6c19330da894efcfbd39bb62bd0289309fa6a566904c83ddf`; Lean from #202 at
   `7b5774fb8d47fd119d2d314f9f6e717cffcee7de`, records from `7afd05b77e35dc00d2dbe01d3c7e5a786a6f6a25`.
   Findings file `segment-iterate-api-findings.md`. **Dispatched (2026-11-06, the user).**
+- 2026-11-06: round 1 findings received (`findings.md`, verbatim from the exchange inbox,
+  exchange commit `c856cb96a646e26bc3165d11e56ddeb1b2838f5e`, SHA-256
+  `549259f210f2837e20d7d770b0f472edf48a07c8265544401bd2a6df8841590b`). **Does not close: 0
+  blockers, 1 major, 1 minor, 4 notes.** F1: the pre-existing segment-concatenation copies
+  (`Tautology`'s `tautDual_segment_add`, `CounterLoop`'s `counter_span_append`) are in no
+  ledger family, and the pack's screen summary missed the `tautDual_segment_add` pair (an
+  erratum). F2: the screen trees were not the audited head (1,341 declarations, not 1,339), and
+  the bundle lacked 15 of the 17 population files. The new lemma itself is verified (notes 3–6).
+  F1 awaits the user's ruling.
