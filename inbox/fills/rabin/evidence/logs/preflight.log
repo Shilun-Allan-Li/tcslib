@@ -1,0 +1,204 @@
+== date
+Fri Nov  6 20:09:17 UTC 2026
+== nproc
+4
+== cgroup
+9:name=systemd:/
+8:pids:/
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/4d426bac51f4a35aa4b652c3e42bc56c
+3:cpuset:/
+2:cpuacct:/process_api/4d426bac51f4a35aa4b652c3e42bc56c
+1:cpu:/
+0::/
+blkio
+cpu
+cpuacct
+cpuset
+devices
+freezer
+memory
+pids
+systemd
+unified
+-- memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+cat: /sys/fs/cgroup/memory/memory.max: No such file or directory
+-- memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+cat: /sys/fs/cgroup/memory/memory.current: No such file or directory
+-- memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+cat: /sys/fs/cgroup/memory/memory.events: No such file or directory
+-- memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+cache 52322304
+rss 11968512
+rss_huge 0
+shmem 16719872
+mapped_file 34144256
+dirty 32768
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 19848
+pgpgout 4188
+pgfault 8383
+pgmajfault 35
+inactive_anon 19443712
+active_anon 4096
+inactive_file 30003200
+active_file 5603328
+unevictable 9240576
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 713457664
+total_rss 19116032
+total_rss_huge 0
+total_shmem 16719872
+total_mapped_file 37818368
+total_dirty 129073152
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 460335
+total_pgpgout 321243
+total_pgfault 366027
+total_pgmajfault 362
+total_inactive_anon 25784320
+total_active_anon 32768
+total_inactive_file 551309312
+-- memory.limit_in_bytes
+cat: /sys/fs/cgroup/memory.limit_in_bytes: No such file or directory
+9223372036854771712
+-- memory.usage_in_bytes
+cat: /sys/fs/cgroup/memory.usage_in_bytes: No such file or directory
+732454912
+== /proc/meminfo
+MemTotal:       16472088 kB
+MemFree:        15640684 kB
+MemAvailable:   16131436 kB
+Buffers:           12160 kB
+Cached:           684404 kB
+SwapCached:            0 kB
+Active:           142020 kB
+Inactive:         563504 kB
+Active(anon):         12 kB
+Inactive(anon):    25272 kB
+Active(file):     142008 kB
+Inactive(file):   538232 kB
+Unevictable:        9604 kB
+Mlocked:            9700 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:            125996 kB
+Writeback:             0 kB
+AnonPages:         18576 kB
+Mapped:            37080 kB
+Shmem:             16328 kB
+KReclaimable:      32168 kB
+Slab:              54396 kB
+SReclaimable:      32168 kB
+SUnreclaim:        22228 kB
+KernelStack:        1864 kB
+PageTables:         3368 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236044 kB
+Committed_AS:     344964 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5656 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+== df -B1
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 12304261120 31568007168  29% /
+/dev/vda       270553174016 12304261120 31568007168  29% /
+/dev/vda       270553174016 12304261120 31568007168  29% /
+== df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 12015880  30828132  29% /
+/dev/vda       ext4 264212084 12015880  30828132  29% /
+/dev/vda       ext4 264212084 12015880  30828132  29% /
+TMPDIR=unset
+== headroom computation
+no cgroup memory controller limit (no memory.max / memory.limit_in_bytes); headroom = MemAvailable
+MemAvailable = 16140212 kB = 15.39 GiB (floor 4 GiB): PASS
+clone fs free = 31568003072 B = 29.40 GiB (floor 12 GiB): PASS
+== cgroup v1 memory (mounted at /sys/fs/cgroup/memory, the process's group is its root view)
+-- memory.limit_in_bytes: 9223372036854771712
+-- memory.usage_in_bytes: 732667904
+-- memory.max_usage_in_bytes: 977137664
+-- memory.failcnt: 0
+-- memory.oom_control: oom_kill_disable 0
+under_oom 0
+oom_kill 0
+-- memory.stat
+cache 52322304
+rss 11968512
+rss_huge 0
+shmem 16719872
+mapped_file 34144256
+dirty 45056
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 20041
+pgpgout 4388
+pgfault 8849
+pgmajfault 35
+inactive_anon 19443712
+active_anon 4096
+inactive_file 30003200
+active_file 5603328
+unevictable 9244672
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 713637888
+total_rss 19152896
+total_rss_huge 0
+total_shmem 16719872
+total_mapped_file 37801984
+total_dirty 129032192
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 465407
+total_pgpgout 326307
+total_pgfault 377946
+total_pgmajfault 363
+total_inactive_anon 25812992
+total_active_anon 32768
+total_inactive_file 551251968
+total_active_file 145670144
+total_unevictable 9912320
+== verdict: cgroup v1 limit_in_bytes = 9223372036854771712 (unlimited), so headroom = MemAvailable (15.39 GiB) >= 4 GiB; clone fs 29.40 GiB free >= 12 GiB. Preflight PASS.
