@@ -829,7 +829,7 @@ theorem yaoRaw'_layout (y : Fin (D.outLen.eval n) → Bool)
     exact ans_layout n hM f hFe hF' hPm y _ _
   have hR : T.eval n + 1 ≤ T.eval x₀.length + 1 := by
     have : n ≤ x₀.length := by
-      simp only [hx₀, NUPPT.layout, length_pairEncode, List.length_replicate]
+      simp only [hx₀, NUPPT.layout_eq, length_pairEncode, List.length_replicate]
       omega
     exact Nat.succ_le_succ (T.eval_mono this)
   have hfind := find?_range_eq_map_find?_finRange hR

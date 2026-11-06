@@ -289,7 +289,7 @@ theorem OneWay.glPad {F : Collection} (m : PolyExpr)
     rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
     have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
       (fun r => henc n r default)
-    unfold Collection.invProbAt at key ⊢
+    simp only [Collection.invProbAt_eq] at key ⊢
     simp only [glPad_decD_eq]
     exact key
 
@@ -416,7 +416,7 @@ noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExp
       rw [NUPPT.runAt_eq T.inv, NUPPT.coinsCongr_ofFn, T.inv_uniform.runAtL_eq] at hspec
       rw [NUPPT.runAt_eq (NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins),
         NUPPT.runAtL_ofPolyTimeUniform]
-      simp only [glPadInvFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+      simp only [glPadInvFun_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
         NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode,
         PermCollection.glPad, Collection.glPad, pairDecode_pairEncode, decodeFin_ofFn,
         NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform] at hspec ⊢

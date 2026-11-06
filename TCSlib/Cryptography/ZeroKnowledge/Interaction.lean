@@ -399,6 +399,12 @@ def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.E
     List (List Bool) × List (List Bool) :=
   exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 
+/-- The defining equation of `transcriptWith`: the execution `exec` on the two tapes. -/
+theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (r : π.ExecCoins P' x) : π.transcriptWith P' x y z r =
+      exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length) :=
+  rfl
+
 /-- The transcript of the honest execution `P(x, y) ↔ V(x, z)` (Def-115.c). -/
 def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
     List (List Bool) × List (List Bool) :=
@@ -411,6 +417,10 @@ def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
 last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
 def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
   π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
+
+/-- The defining equation of `outV`: the verifier's next message on the received messages. -/
+theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
+    π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2 := rfl
 
 /-- The honest prover's output in `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` (Def-115.d). -/
 def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=

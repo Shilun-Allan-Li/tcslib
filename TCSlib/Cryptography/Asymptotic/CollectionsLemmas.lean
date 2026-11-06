@@ -74,6 +74,10 @@ the typed output `padFin (p n) w` at the parameter `n = |u|` read off `u = 1^n`
 def padStr (p : PolyExpr) (u w : List Bool) : List Bool :=
   (w ++ List.replicate (p.eval u.length) false).take (p.eval u.length)
 
+/-- The defining equation of `padStr`: `padStr p u w = (w ++ 0^{p(|u|)}).take p(|u|)`. -/
+theorem padStr_eq (p : PolyExpr) (u w : List Bool) :
+    padStr p u w = (w ++ List.replicate (p.eval u.length) false).take (p.eval u.length) := rfl
+
 /-- **The padding evaluator is polynomial-time** on `⟨u, w⟩`: append the zeros
 `polyTimeComputable_zerosPoly` and keep the first `p(|u|)` bits
 (`Complexity.polyTimeComputable_pairTakePoly` on `⟨u, w ++ 0^{p(|u|)}⟩`). -/

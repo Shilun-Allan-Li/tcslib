@@ -359,7 +359,7 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
   dec_poly := decListFun_poly S.dec_poly
   correct := by
     intro n m rg re
-    rw [bitwise_enc_runAt, decListFun,
+    rw [bitwise_enc_runAt, decListFun_eq,
       decListFun_spec S.dec _ _ _ (by
         refine (length_le_length_encodeList _).trans ?_
         simp only [length_pairEncode]
@@ -370,7 +370,7 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
         rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn S.bitwiseEncFun_poly (.mul .var S.enc.coins)
           n re, List.length_ofFn, PolyExpr.eval_mul, PolyExpr.eval_var]
       have hlen : (coinBlock (S.enc.coinLen n) i (List.ofFn re)).length = S.enc.coinLen n := by
-        simp only [coinBlock, List.length_take, List.length_drop]
+        simp only [coinBlock_eq, List.length_take, List.length_drop]
         rw [hre, NUPPT.coinLen_eq]
         have hi : (i : ℕ) + 1 ≤ n := i.isLt
         have := Nat.mul_le_mul_right (S.enc.coins.eval n) hi
@@ -423,7 +423,7 @@ private theorem bitwise_pkEncDist_coinBlocks (S : BitPublicKeyScheme) (n : ℕ) 
         (pairEncode (pairFstD (S.gen.runAt n [] r)) (List.ofFn m)) (S.bitwiseEncCoins n v)) =
     _
   rw [bitwise_enc_runAt]
-  simp only [multiDist]
+  simp only [multiDist_eq]
   refine congrArg _ (congrArg (fun l => encodeList (List.ofFn l)) (funext fun i => ?_))
   rw [bitwiseEncCoins_ofFn, coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq, ofFn_fin_one]
 
@@ -434,7 +434,7 @@ private theorem acceptProb_bitwise_pkEncDist (S : BitPublicKeyScheme) (n : ℕ) 
     {ρ : Type*} [Fintype ρ] (Dst : List Bool → ρ → Bool) :
     acceptProb (S.bitwise.pkEncDist n m) Dst =
       acceptProb (multiDist S.gen S.enc n n 1 (fun i _ => m i)) Dst := by
-  unfold acceptProb
+  rw [acceptProb_def, acceptProb_def]
   rw [← uprob_comp_equiv
     (((Equiv.refl (S.gen.Coins n)).prodCongr (S.bitwiseEncCoins n)).prodCongr
       (Equiv.refl ρ))]
@@ -498,7 +498,7 @@ theorem SingleBitSecure.bitwise {S : BitPublicKeyScheme} (h : S.SingleBitSecure)
     rw [h1, h2, ← S.pkEncDist_eq_singleDist, ← S.pkEncDist_eq_singleDist]
     exact hBε n _ _
   have hn := hB n (ε n) hε0 hsingle
-  unfold distAdv at hn ⊢
+  rw [distAdv_def] at hn ⊢
   rw [acceptProb_bitwise_pkEncDist, acceptProb_bitwise_pkEncDist]
   exact hn
 

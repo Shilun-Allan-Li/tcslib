@@ -661,7 +661,7 @@ private theorem padStr_eq_ofFn_fUniversal_f (c : EffectiveMachineCode) {L : Poly
   obtain ⟨y₀, hy₀⟩ := exists_ofFn_eq_of_length (m := n) (w := List.ofFn y)
     (by rw [List.length_ofFn, fUniversal_inLen_eval])
   rw [ofFn_fUniversal_f, ← hy₀,
-    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy), padStr,
+    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy), padStr_eq,
     List.length_replicate]
 
 /-- **Inverses on the fibre** [PS10, Theorem 63.1, "`A` outputs `⟨M_g, x'⟩` with

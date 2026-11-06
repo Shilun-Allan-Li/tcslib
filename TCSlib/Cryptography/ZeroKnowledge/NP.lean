@@ -365,7 +365,7 @@ private theorem outV_pullback_cheat (π : Protocol) (f : List Bool → List Bool
   have hc : (⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ :
       Strategy).coinLen (f x).length = P'.coinLen x.length := Strategy.coinLen_eq _ _
   rw [Protocol.pullback_outV]
-  simp only [Protocol.outV, Protocol.transcriptWith, Prod.map]
+  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Prod.map]
   rw [ofFn_coinTrunc_of_eq _ hc,
     ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.V f (fun _ z => z) hx).symm,
     exec_pullback_cheat, ← hx]
