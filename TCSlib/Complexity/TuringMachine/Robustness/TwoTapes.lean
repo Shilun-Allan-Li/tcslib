@@ -541,8 +541,8 @@ private theorem tt_track_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk :
     refine ⟨(segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩, Nat.zero_le _⟩
     · rw [H.2, hc, tt_cfg_mapState]
       rfl
-    · obtain rfl : u = 0 := by omega
-      rw [MultiTapeTM.runFrom_zero, Set.mem_singleton_iff, Cfg.mapState_state]
+    · rw [Nat.lt_one_iff.mp hu, MultiTapeTM.runFrom_zero, Set.mem_singleton_iff,
+        Cfg.mapState_state]
       exact fun h => by cases h
   · -- a move: the track step's contract inside the host
     set R := F.R (tt_dir (m t)) t x with hR
@@ -623,6 +623,14 @@ private def tt_τ (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List (ZoneS
     (out : List (ZoneSym M.k)) (j : ℕ) : ℕ :=
   if h : j < M.k then tt_trackTime M F x m ⟨j, h⟩ (tt_Dtr m D j) ip out + 1 else 0
 
+/-- Below the track count, a track's phase time in a round is its phase's time plus the dispatch
+step. -/
+private theorem tt_τ_of_lt (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List (ZoneSym M.k))
+    (m : Fin M.k → SignType) (D : ZoneData M.k) (ip : Fin (x.length + 2))
+    (out : List (ZoneSym M.k)) (j : ℕ) (hj : j < M.k) :
+    tt_τ M F x m D ip out j = tt_trackTime M F x m ⟨j, hj⟩ (tt_Dtr m D j) ip out + 1 :=
+  dif_pos hj
+
 /-- **The tracks of a round** [HS66; AB09, §1.7]: from track `0`'s entry, the zone machine runs
 live through every track's phase in order, to the transition step at `q'` with the data after
 every track's step, in `∑ j < k` of the phases' times.
@@ -650,8 +658,7 @@ private theorem tt_tracks_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk 
       dif_pos hj
     have hn : tt_next M F q' m ⟨j, hj⟩ = tt_stAt M F q' m (j + 1) := rfl
     have hD : tt_Dtr m D (j + 1) = tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) := dif_pos hj
-    have hτ : tt_τ M F x m D ip out j = tt_trackTime M F x m ⟨j, hj⟩ (tt_Dtr m D j) ip out + 1 :=
-      dif_pos hj
+    have hτ := tt_τ_of_lt M F x m D ip out j hj
     show Segment _ _ _ (tt_cfg (some (tt_stAt M F q' m j)) (tt_Dtr m D j) ip out)
       (tt_cfg (some (tt_stAt M F q' m (j + 1))) (tt_Dtr m D (j + 1)) ip out) _
     rw [hs, hD, hτ, ← hn]
@@ -717,8 +724,7 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
   have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →
       tt_red M F hk none s = none := by
     intro u hu s hs
-    obtain rfl : u = 0 := by omega
-    rw [MultiTapeTM.runFrom_zero] at hs
+    rw [Nat.lt_one_iff.mp hu, MultiTapeTM.runFrom_zero] at hs
     obtain rfl : (Sum.inl q : tt_LeafSt M) = s := Option.some.inj hs
     rfl
   refine ⟨fun hn => ?_, fun q' hq' => ?_⟩
@@ -774,8 +780,7 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
       · exact H.2.trans hend
       · rw [H.1 u (by omega), Set.mem_singleton_iff, Cfg.mapState_state]
         rcases Nat.lt_or_ge u 1 with h | h
-        · obtain rfl : u = 0 := by omega
-          rw [MultiTapeTM.runFrom_zero]
+        · rw [Nat.lt_one_iff.mp h, MultiTapeTM.runFrom_zero]
           exact fun h => by cases h
         · obtain rfl : u = 1 := by omega
           rw [h1, hs₁]
@@ -789,10 +794,8 @@ private theorem tt_τ_le (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
     (x : List (ZoneSym M.k)) (m : Fin M.k → SignType) (D : ZoneData M.k)
     (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k)) (j : ℕ) (hj : j < M.k) :
     tt_τ M F x m D ip out j ≤ A * (2 ^ tt_idx (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) + 1) + 1 := by
-  rw [show tt_τ M F x m D ip out j =
-    tt_trackTime M F x m ⟨j, hj⟩ (tt_Dtr m D j) ip out + 1 from dif_pos hj]
-  have := (tt_track_seg M F hk (x := x) M.tm.q₀ m ⟨j, hj⟩ (tt_Dtr m D j) ip out).2
-  omega
+  rw [tt_τ_of_lt M F x m D ip out j hj, Nat.add_le_add_iff_right]
+  exact (tt_track_seg M F hk (x := x) M.tm.q₀ m ⟨j, hj⟩ (tt_Dtr m D j) ip out).2
 
 /-! ### The target -/
 
