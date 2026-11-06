@@ -1,0 +1,635 @@
+From 6675ceb32f0a7628d3c9842eef91e84a817f4055 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 22:00:17 +0000
+Subject: [PATCH 8/8] Rabin: fill rabinCollection_invProbAt_le (pair law,
+ symmetry core)
+
+---
+ TCSlib/Cryptography/Candidates/Rabin.lean | 577 +++++++++++++++++++++-
+ 1 file changed, 571 insertions(+), 6 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index 69d32c8f..ba9cc76c 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -1844,6 +1844,537 @@ theorem rabinFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N : List B
+   simp [rabinFactorRaw, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+     NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
+ 
++/-- **Averages along close laws** (the conditional-expectation step of the reductions): if `X`
++is `δ`-close to `Y` in a finite type `γ`, the average of `c ↦ Pr[Q c]` (a probability over
++auxiliary coins `Aux c` depending on `c`) under `X` exceeds its average under `Y` by at most
++`δ`.
++
++**Proof sketch.** Read `Pr[Q c]` as a probability over a uniform family
++`ω ∈ Π_c Aux c` at the coordinate `c` (`Equiv.piSplitAt`, `uprob_fst`), so both averages are
++probabilities over `(·, ω)` (`uprob_prod`), and `StatClose.abs_uprob_sub_le_prod` applies with
++`ω` as the auxiliary coins (the device of the rsa fill's `rsa_uprob_pi_eval`/`rsa_step_ii`). -/
++private theorem rabin_uexp_le {σ τ γ : Type*} [Fintype σ] [Fintype τ] [Fintype γ] [DecidableEq γ]
++    {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) (Aux : γ → Type) [∀ c, Fintype (Aux c)]
++    [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) :
++    uexp (fun s => uprob (Q (X s))) ≤ uexp (fun t => uprob (Q (Y t))) + δ := by
++  have hpi : ∀ c, uprob (Q c) = uprob (fun ω : (∀ c', Aux c') => Q c (ω c)) := by
++    intro c
++    have h := uprob_comp_equiv (Equiv.piSplitAt c Aux) (fun w => Q c w.1)
++    rw [uprob_fst] at h
++    exact h.symm
++  have hh := h.abs_uprob_sub_le_prod (fun c (ω : ∀ c', Aux c') => Q c (ω c))
++  have e1 : uprob (fun w : σ × (∀ c', Aux c') => Q (X w.1) (w.2 (X w.1))) =
++      uexp (fun s => uprob (Q (X s))) := by
++    rw [uprob_prod]
++    congr 1
++    funext s
++    rw [hpi]
++  have e2 : uprob (fun w : τ × (∀ c', Aux c') => Q (Y w.1) (w.2 (Y w.1))) =
++      uexp (fun t => uprob (Q (Y t))) := by
++    rw [uprob_prod]
++    congr 1
++    funext t
++    rw [hpi]
++  rw [e1, e2] at hh
++  linarith [(abs_le.1 hh).2]
++
++/-- Splitting a coin string `Fin (a + b) → Bool` into its two segments (`Fin.append`). -/
++private def rabin_appendEquiv (a b : ℕ) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin (a + b) → Bool) where
++  toFun s := Fin.append s.1 s.2
++  invFun f := (fun i => f (Fin.castAdd b i), fun j => f (Fin.natAdd a j))
++  left_inv s := by
++    obtain ⟨s1, s2⟩ := s
++    ext i
++    · exact Fin.append_left s1 s2 i
++    · exact Fin.append_right s1 s2 i
++  right_inv f := Fin.append_castAdd_natAdd
++
++/-- The coin polynomial of `A'` is `T(n)B(n) + coins(A)`. -/
++private theorem rabin_coins_factorer (H : ArithmeticFP) (A : NUPPT) :
++    (rabinFactorer H A).coins = .add rsaSampleCoins A.coins := by
++  unfold rabinFactorer
++  exact NUPPT.coins_ofPolyTime _ _ _ _ _
++
++/-- The coin length of `A'`: `T(n)B(n) + |coins(A)|`. -/
++private theorem rabin_factorerCoins_len (A : NUPPT) (n : ℕ) :
++    rsaSampleCoins.eval n + A.coinLen n = (PolyExpr.add rsaSampleCoins A.coins).eval n := by
++  rw [PolyExpr.eval_add, NUPPT.coinLen_eq]
++
++/-- The coins of `A'` are the unit sampler's coins followed by the coins of `A`, with `ofFn (E (s, ρ)) = ofFn s ++ ofFn ρ`. -/
++private noncomputable def rabin_fCoinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
++    (Fin (rsaSampleCoins.eval n) → Bool) × A.Coins n ≃ (rabinFactorer H A).Coins n :=
++  (rabin_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_factorerCoins_len A n))
++    (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly (rabin_coins_factorer H A) n).symm)
++
++/-- The coin string of the split coins is the concatenation of the segments (`List.ofFn_fin_append`). -/
++private theorem rabin_fCoinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
++    (s : (Fin (rsaSampleCoins.eval n) → Bool) × A.Coins n) :
++    List.ofFn (rabin_fCoinsEquiv H A n s) = List.ofFn s.1 ++ List.ofFn s.2 := by
++  unfold rabin_fCoinsEquiv
++  rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
++  rw [show ((finCongr (rabin_factorerCoins_len A n)).arrowCongr (Equiv.refl Bool))
++      ((rabin_appendEquiv _ _) s) = fun i => (rabin_appendEquiv _ _) s
++        (Fin.cast (rabin_factorerCoins_len A n).symm i)
++    from rfl, ← List.ofFn_congr (rabin_factorerCoins_len A n)]
++  exact List.ofFn_fin_append _ _
++
++/-- The factoring success of `A'` at a pair `z` (the section of `oddFactorProb`/`blumFactorProb`). -/
++private noncomputable def rabin_F (A : NUPPT) (n : ℕ) (z : DistinctPrimes n) : ℝ :=
++  uprob fun c : A.Coins n => ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n z) c = some x ∧
++    (bitsToNat x = z.p ∨ bitsToNat x = z.q)
++
++/-- **The core of the Rabin reduction** at one pair of distinct odd primes. -/
++private theorem rabin_core (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : DistinctPrimes n)
++    (hp2 : z.p ≠ 2) (hq2 : z.q ≠ 2) (dec : List Bool → Option (ZMod (z.p * z.q))ˣ)
++    (hdec : ∀ w x, dec w = some x → listToNat w = (x : ZMod (z.p * z.q)).val) :
++    uprob (fun w : (ZMod (z.p * z.q))ˣ × A.Coins n => ∃ x', dec (A.runAt n
++        (pairEncode (natToList (2 * n) (z.p * z.q))
++          (natToList (2 * n) ((w.1 ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) w.2) = some x' ∧
++        x' ^ 2 = w.1 ^ 2) ≤
++      2 * rabin_F (rabinFactorer H A) n z + 2 * Real.exp (-(n : ℝ)) := by
++  have hcop := coprime_of_ne z.p_ne_q
++  have hNlt := z.mul_lt
++  have hNpos : 0 < z.p * z.q := NeZero.pos _
++  set i := natToList (2 * n) (z.p * z.q) with hi
++  let Succ : ℕ → A.Coins n → Prop := fun v ρ => ∃ x : Fin n → Bool,
++    rabinFactorStep n (z.p * z.q) v (A.runAt n (pairEncode i (natToList (2 * n) (v ^ 2 % (z.p * z.q)))) ρ) =
++      List.ofFn x ∧ (bitsToNat x = z.p ∨ bitsToNat x = z.q)
++  -- (a) symmetry
++  have hsym := rabin_symmetry z.p_ne_q hp2 hq2 (ρ := A.Coins n)
++    (fun y ρ => dec (A.runAt n (pairEncode i (natToList (2 * n) (y : ZMod (z.p * z.q)).val)) ρ))
++  -- (b) a good root factors
++  have hgood : ∀ w : (ZMod (z.p * z.q))ˣ × A.Coins n,
++      (∃ z', dec (A.runAt n (pairEncode i (natToList (2 * n) ((w.1 ^ 2 : (ZMod (z.p * z.q))ˣ) :
++        ZMod (z.p * z.q)).val)) w.2) = some z' ∧ z' ^ 2 = w.1 ^ 2 ∧ z' ≠ w.1 ∧ z' ≠ -w.1) →
++      Succ (w.1 : ZMod (z.p * z.q)).val w.2 := by
++    rintro ⟨x, ρ⟩ ⟨z', hz, hsq, hne, hne'⟩
++    have hsqv : ((x ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val =
++        (x : ZMod (z.p * z.q)).val ^ 2 % (z.p * z.q) := val_units_pow _ x 2
++    rw [hsqv] at hz
++    have hans := hdec _ _ hz
++    have hg := gcd_sub_eq_prime_of_sq_eq_sq z.p_ne_q hsq.symm hne hne'
++    have hglt : Nat.gcd ((x : ZMod (z.p * z.q)) - z').val (z.p * z.q) < 2 ^ n := by
++      rcases hg with h | h <;> rw [h]
++      · exact z.p_lt
++      · exact z.q_lt
++    refine ⟨natToBits n (Nat.gcd ((x : ZMod (z.p * z.q)) - z').val (z.p * z.q)), ?_, ?_⟩
++    · have htest : listToNat (A.runAt n (pairEncode i (natToList (2 * n)
++          ((x : ZMod (z.p * z.q)).val ^ 2 % (z.p * z.q)))) ρ) ^ 2 % (z.p * z.q) =
++          (x : ZMod (z.p * z.q)).val ^ 2 % (z.p * z.q) := by
++        rw [hans, ← val_units_pow, ← val_units_pow, hsq]
++      rw [rabinFactorStep, if_pos htest, hans, ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, natToList_eq]
++    · rw [bitsToNat_natToBits hglt]
++      exact hg
++  -- (c) S3: the ideal unit against the sampled one
++  have hk : Nat.size (z.p * z.q) ≤ rsaBlock.eval n := by
++    rw [eval_rsaBlock]
++    exact (Nat.size_le.2 hNlt).trans (by omega)
++  have hS3 := (statClose_sampleUnitL n (z.p * z.q) hk).abs_uprob_sub_le_prod Succ
++  -- (d) the sampled side is the factoring success of `A'`
++  have hF : uprob (fun w : (Fin (rsaSampleCoins.eval n) → Bool) × A.Coins n =>
++      Succ ((sampleUnitL (z.p * z.q) (Nat.size (z.p * z.q)) (rsaBlock.eval n) (rsaTrials.eval n)
++        (List.ofFn w.1)).getD (1 % (z.p * z.q))) w.2) = rabin_F (rabinFactorer H A) n z := by
++    rw [rabin_F, ← uprob_comp_equiv (rabin_fCoinsEquiv H A n)]
++    apply OneWay.uprob_congr
++    rintro ⟨s, ρ⟩
++    have hmb : List.ofFn (modulusBits n z) = i := by rw [modulusBits_eq, ← natToList_eq]
++    have hiN : listToNat i = z.p * z.q := listToNat_natToList hNlt
++    have hil : i.length = 2 * n := length_natToList _ _
++    have hv := rabin_getD_spec hNpos (Nat.size (z.p * z.q)) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)
++    simp only [NUPPT.inverter_eq_some_iff, hmb, rabinFactorer_runAt, rabin_fCoinsEquiv_ofFn,
++      List.take_left' (List.length_ofFn (f := s)), List.drop_left' (List.length_ofFn (f := s)),
++      ← NUPPT.runAt_eq, hiN, hil, unitSampleStr_eq, listToNat_natToList (hv.1.trans hNlt), Succ]
++  -- (e) combine
++  have hmono : uprob (fun w : (ZMod (z.p * z.q))ˣ × A.Coins n => ∃ z', dec (A.runAt n
++        (pairEncode i (natToList (2 * n) ((w.1 ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) w.2) =
++          some z' ∧ z' ^ 2 = w.1 ^ 2 ∧ z' ≠ w.1 ∧ z' ≠ -w.1) ≤
++      uprob (fun w : (ZMod (z.p * z.q))ˣ × A.Coins n => Succ (w.1 : ZMod (z.p * z.q)).val w.2) :=
++    uprob_mono hgood
++  rw [hF] at hS3
++  have := (abs_le.1 hS3).1
++  linarith
++
++/-- A pair of distinct primes of `Π_n` from two numbers. -/
++private def rabin_mkDP {n : ℕ} (a b : ℕ) (h : a.Prime ∧ b.Prime ∧ a ≠ b ∧ a < 2 ^ n ∧ b < 2 ^ n) :
++    DistinctPrimes n :=
++  ⟨(⟨⟨a, h.2.2.2.1⟩, h.1⟩, ⟨⟨b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩
++
++/-- The first prime of `rabin_mkDP a b h` is `a` (`DistinctPrimes.p_eq`). -/
++private theorem rabin_mkDP_p {n : ℕ} (a b : ℕ) (h : a.Prime ∧ b.Prime ∧ a ≠ b ∧ a < 2 ^ n ∧ b < 2 ^ n) :
++    (rabin_mkDP a b h).p = a := by
++  rw [DistinctPrimes.p_eq]; rfl
++
++/-- The second prime of `rabin_mkDP a b h` is `b` (`DistinctPrimes.q_eq`). -/
++private theorem rabin_mkDP_q {n : ℕ} (a b : ℕ) (h : a.Prime ∧ b.Prime ∧ a ≠ b ∧ a < 2 ^ n ∧ b < 2 ^ n) :
++    (rabin_mkDP a b h).q = b := by
++  rw [DistinctPrimes.q_eq]; rfl
++
++/-- The selected pair: `(a, b)` if it is a pair of distinct primes below `2^n`, else `z0`. -/
++private def rabin_zOf {n : ℕ} (z0 : DistinctPrimes n) (ab : ℕ × ℕ) : DistinctPrimes n :=
++  if h : ab.1.Prime ∧ ab.2.Prime ∧ ab.1 ≠ ab.2 ∧ ab.1 < 2 ^ n ∧ ab.2 < 2 ^ n then rabin_mkDP ab.1 ab.2 h
++  else z0
++
++/-- The class primes of `Π_n` as values below `2^n` (the target of `statClose_rejectBlocksL`). -/
++private abbrev rabin_C (P : ℕ → Prop) (n : ℕ) : Type := {v : Fin (2 ^ n) // (v : ℕ).Prime ∧ P v}
++
++/-- Distinct pairs of class primes. -/
++private abbrev rabin_RDP (P : ℕ → Prop) (n : ℕ) : Type := {z : DistinctPrimes n // P z.p ∧ P z.q}
++
++/-- Off-diagonal pairs of class primes are the distinct class pairs. -/
++private def rabin_diagEquiv (P : ℕ → Prop) (n : ℕ) :
++    {e : rabin_C P n × rabin_C P n // ((e.1 : Fin (2 ^ n)) : ℕ) ≠ ((e.2 : Fin (2 ^ n)) : ℕ)} ≃ rabin_RDP P n where
++  toFun e := ⟨⟨(⟨e.1.1.1, e.1.1.2.1⟩, ⟨e.1.2.1, e.1.2.2.1⟩), e.2⟩,
++    ⟨by rw [DistinctPrimes.p_eq]; exact e.1.1.2.2, by rw [DistinctPrimes.q_eq]; exact e.1.2.2.2⟩⟩
++  invFun t := ⟨(⟨t.1.1.1.1, t.1.1.1.2, by have := t.2.1; rwa [DistinctPrimes.p_eq] at this⟩,
++    ⟨t.1.1.2.1, t.1.1.2.2, by have := t.2.2; rwa [DistinctPrimes.q_eq] at this⟩), t.1.2⟩
++  left_inv e := rfl
++  right_inv t := rfl
++
++/-- **The diagonal of the uniform class pair**: the selection `rabin_zOf z0` of a uniform pair of class primes is within `1/|C|` of the uniform distinct class pair (the uniform pair off the diagonal is the uniform distinct pair, `rabin_diagEquiv`, `uprob_and_eq_mul_subtype`; the diagonal has probability `1/|C|`, `uprob_diag`). -/
++private theorem rabin_statClose_diag (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (z0 : DistinctPrimes n)
++    [Nonempty (rabin_C P n)] :
++    StatClose (fun e : rabin_C P n × rabin_C P n =>
++        rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))
++      (fun t : rabin_RDP P n => t.1) (1 / Fintype.card (rabin_C P n)) := by
++  intro T
++  set Dn : rabin_C P n × rabin_C P n → Prop := fun e => ((e.1 : Fin (2 ^ n)) : ℕ) ≠ ((e.2 : Fin (2 ^ n)) : ℕ)
++  have hz : ∀ e (h : Dn e), rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)) =
++      (rabin_diagEquiv P n ⟨e, h⟩).1 := by
++    intro e h
++    unfold rabin_zOf
++    rw [dif_pos ⟨e.1.2.1, e.2.2.1, h, e.1.1.2, e.2.1.2⟩]
++    rfl
++  have hcond : uprob (fun e : {e // Dn e} =>
++      T (rabin_zOf z0 (((e.1.1 : Fin (2 ^ n)) : ℕ), ((e.1.2 : Fin (2 ^ n)) : ℕ)))) =
++      uprob (fun t : rabin_RDP P n => T t.1) := by
++    rw [← uprob_comp_equiv (rabin_diagEquiv P n)]
++    exact OneWay.uprob_congr fun e => by rw [hz e.1 e.2]
++  have hdiag : uprob (fun e : rabin_C P n × rabin_C P n => ¬ Dn e) = 1 / Fintype.card (rabin_C P n) := by
++    rw [← uprob_diag]
++    exact OneWay.uprob_congr fun e => ⟨fun h => (Subtype.ext (Fin.ext (not_not.1 h))).symm,
++      fun h => not_not.2 (by rw [h])⟩
++  have hmul := uprob_and_eq_mul_subtype Dn
++    (fun e : rabin_C P n × rabin_C P n => T (rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ))))
++  rw [hcond] at hmul
++  have hnot := uprob_not Dn
++  rw [hdiag] at hnot
++  have hup : uprob (fun e : rabin_C P n × rabin_C P n =>
++      T (rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))) ≤
++      uprob (fun e : rabin_C P n × rabin_C P n => Dn e ∧
++        T (rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))) +
++      uprob (fun e : rabin_C P n × rabin_C P n => ¬ Dn e) := by
++    refine (uprob_mono fun e he => ?_).trans (uprob_or_le _ _)
++    by_cases h : Dn e
++    · exact Or.inl ⟨h, he⟩
++    · exact Or.inr h
++  have hlo : uprob (fun e : rabin_C P n × rabin_C P n => Dn e ∧
++        T (rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))) ≤
++      uprob (fun e : rabin_C P n × rabin_C P n =>
++        T (rabin_zOf z0 (((e.1 : Fin (2 ^ n)) : ℕ), ((e.2 : Fin (2 ^ n)) : ℕ)))) :=
++    uprob_mono fun _ h => h.2
++  have hb0 := uprob_nonneg (fun t : rabin_RDP P n => T t.1)
++  have hb1 := uprob_le_one (fun t : rabin_RDP P n => T t.1)
++  have hD1 := uprob_le_one Dn
++  have hdpos : (0 : ℝ) ≤ 1 / Fintype.card (rabin_C P n) := by positivity
++  rw [hdiag] at hup
++  rw [abs_le]
++  constructor <;> nlinarith
++
++/-- A uniform `n`-bit value is a class prime with probability `|C|/2^n`. -/
++private theorem rabin_uprob_C (P : ℕ → Prop) [DecidablePred P] (n : ℕ) :
++    uprob (fun v : Fin (2 ^ n) => (v : ℕ).Prime ∧ P v) = Fintype.card (rabin_C P n) / 2 ^ n := by
++  rw [uprob_def, Nat.card_eq_fintype_card, Fintype.card_fin]
++  push_cast
++  rfl
++
++/-- **One restricted prime sampler** (`statClose_rejectBlocksL` with the class test): with density `|C|/2^n ≥ 1/(4n)` and `4n²` trials it is within `(1 − 1/(4n))^{4n·n} ≤ e^{-n}` of the uniform class prime (`one_sub_one_div_pow_le_exp_neg`). -/
++private theorem rabin_statClose_sampler (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (hn : 1 ≤ n)
++    (hC : 2 ^ n ≤ 4 * n * Fintype.card (rabin_C P n)) {d : ℕ} (hd : d.Prime ∧ P d) (hdk : d < 2 ^ n) :
++    StatClose (fun r : Fin (4 * n ^ 2 * n) → Bool =>
++        (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn r)).getD d)
++      (fun e : rabin_C P n => ((e : Fin (2 ^ n)) : ℕ)) (Real.exp (-(n : ℝ))) := by
++  have h := statClose_rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) le_rfl hd hdk
++  refine h.mono ?_
++  rw [rabin_uprob_C]
++  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
++  have hC' : (2 : ℝ) ^ n ≤ 4 * n * Fintype.card (rabin_C P n) := by exact_mod_cast hC
++  have hpow : (0 : ℝ) < 2 ^ n := by positivity
++  have hdens : 1 / (4 * (n : ℝ)) ≤ Fintype.card (rabin_C P n) / 2 ^ n := by
++    rw [div_le_div_iff₀ (by positivity) hpow]; linarith
++  have hle1 : (Fintype.card (rabin_C P n) : ℝ) / 2 ^ n ≤ 1 := by
++    rw [div_le_one hpow]
++    have := Fintype.card_subtype_le (fun v : Fin (2 ^ n) => (v : ℕ).Prime ∧ P v)
++    rw [Fintype.card_fin] at this
++    exact_mod_cast this
++  calc (1 - (Fintype.card (rabin_C P n) : ℝ) / 2 ^ n) ^ (4 * n ^ 2)
++      ≤ (1 - 1 / ((4 * n : ℕ) : ℝ)) ^ (4 * n * n) := by
++        rw [show 4 * n ^ 2 = 4 * n * n by ring]
++        apply pow_le_pow_left₀ (by linarith)
++        push_cast
++        linarith
++    _ ≤ Real.exp (-(n : ℝ)) := one_sub_one_div_pow_le_exp_neg (4 * n) n (by omega)
++
++/-- The selected pair of a Rabin generator on its two coin segments: the selection
++`rabin_zOf z0` of the two restricted samplers' values (fallbacks `z0.p`, `z0.q`). -/
++private def rabin_X (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (z0 : DistinctPrimes n)
++    (s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool)) : DistinctPrimes n :=
++  rabin_zOf z0 ((rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.1)).getD z0.p,
++    (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.2)).getD z0.q)
++
++/-- **The pair law of the Rabin generators** (the private helper generic in `P` of brief step 8): two restricted prime samplers on independent coins, selected by `rabin_zOf`, are within `2e^{-n} + 4n/2^n` of the uniform distinct class pair, given the density `2^n ≤ 4n|C|` (`StatClose.prod`, `StatClose.map`, `rabin_statClose_diag`, `StatClose.trans`). -/
++private theorem rabin_pairLaw (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (hn : 1 ≤ n)
++    (hC : 2 ^ n ≤ 4 * n * Fintype.card (rabin_C P n)) (z0 : DistinctPrimes n) (hz0 : P z0.p ∧ P z0.q) :
++    StatClose (rabin_X P z0) (fun t : rabin_RDP P n => t.1) (2 * Real.exp (-(n : ℝ)) + 4 * n / 2 ^ n) := by
++  unfold rabin_X
++  haveI : Nonempty (rabin_C P n) := ⟨⟨⟨z0.p, z0.p_lt⟩, z0.p_prime, hz0.1⟩⟩
++  have h1 := rabin_statClose_sampler P hn hC ⟨z0.p_prime, hz0.1⟩ z0.p_lt
++  have h2 := rabin_statClose_sampler P hn hC ⟨z0.q_prime, hz0.2⟩ z0.q_lt
++  have hprod := (h1.prod h2).map (rabin_zOf z0)
++  have h := hprod.trans (rabin_statClose_diag P z0)
++  refine h.mono ?_
++  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
++  have hC' : (2 : ℝ) ^ n ≤ 4 * n * Fintype.card (rabin_C P n) := by exact_mod_cast hC
++  have hcpos : (0 : ℝ) < Fintype.card (rabin_C P n) := by exact_mod_cast Fintype.card_pos
++  have : 1 / (Fintype.card (rabin_C P n) : ℝ) ≤ 4 * n / 2 ^ n := by
++    rw [div_le_div_iff₀ hcpos (by positivity)]; linarith
++  linarith
++
++/-- The coin length of the Rabin generators: `rabinGenCoins(n) = L + L` with `L = 4n² · n`. -/
++private theorem rabin_genCoins_len (n : ℕ) : 4 * n ^ 2 * n + 4 * n ^ 2 * n = rabinGenCoins.eval n := by
++  simp only [rabinGenCoins, rabinPrimeCoins, rabinTrials, PolyExpr.eval_mul, PolyExpr.eval_const,
++    PolyExpr.eval_pow, PolyExpr.eval_var]
++  ring
++
++/-- The coins of a Rabin generator are the two prime segments, with
++`ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂`. -/
++private noncomputable def rabin_genCoinsEquiv (G : NUPPT) (hG : G.coins = rabinGenCoins) (n : ℕ) :
++    (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool) ≃ G.Coins n :=
++  (rabin_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_genCoins_len n))
++    (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly hG n).symm)
++
++/-- The coin string of the split generator coins is the concatenation of the segments. -/
++private theorem rabin_genCoinsEquiv_ofFn (G : NUPPT) (hG : G.coins = rabinGenCoins) (n : ℕ)
++    (s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool)) :
++    List.ofFn (rabin_genCoinsEquiv G hG n s) = List.ofFn s.1 ++ List.ofFn s.2 := by
++  unfold rabin_genCoinsEquiv
++  rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
++  rw [show ((finCongr (rabin_genCoins_len n)).arrowCongr (Equiv.refl Bool))
++      ((rabin_appendEquiv _ _) s) = fun i => (rabin_appendEquiv _ _) s
++        (Fin.cast (rabin_genCoins_len n).symm i)
++    from rfl, ← List.ofFn_congr (rabin_genCoins_len n)]
++  exact List.ofFn_fin_append _ _
++
++/-- **The primes of a Rabin generator**: the two restricted samplers' values `(a, b)` if they
++differ, the fallback pair otherwise (`rabinGenParams`; its other tests hold for every value,
++`rabin_samplePrimePL_spec`). -/
++private theorem rabin_genParams_pq (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams P (max m 3))
++    (m : ℕ) (r : List Bool) :
++    ((rabinGenParams P dflt m r).z.p, (rabinGenParams P dflt m r).z.q) =
++      if listToNat (samplePrimePL P (max m 3) (dflt m).z.p (r.take (rabinPrimeCoins.eval (max m 3)))) ≠
++          listToNat (samplePrimePL P (max m 3) (dflt m).z.q
++            ((r.drop (rabinPrimeCoins.eval (max m 3))).take (rabinPrimeCoins.eval (max m 3))))
++      then (listToNat (samplePrimePL P (max m 3) (dflt m).z.p (r.take (rabinPrimeCoins.eval (max m 3)))),
++        listToNat (samplePrimePL P (max m 3) (dflt m).z.q
++          ((r.drop (rabinPrimeCoins.eval (max m 3))).take (rabinPrimeCoins.eval (max m 3)))))
++      else ((dflt m).z.p, (dflt m).z.q) := by
++  obtain ⟨hpP, hpC, hpL, -⟩ := rabin_samplePrimePL_spec P (max m 3) (dflt m).z.p
++    (r.take (rabinPrimeCoins.eval (max m 3))) ⟨(dflt m).z.p_prime, (dflt m).hp, (dflt m).z.p_lt⟩
++  obtain ⟨hqP, hqC, hqL, -⟩ := rabin_samplePrimePL_spec P (max m 3) (dflt m).z.q
++    ((r.drop (rabinPrimeCoins.eval (max m 3))).take (rabinPrimeCoins.eval (max m 3)))
++    ⟨(dflt m).z.q_prime, (dflt m).hq, (dflt m).z.q_lt⟩
++  rw [rabinGenParams]
++  split_ifs with h h' h''
++  · rw [Prod.mk.injEq]; exact ⟨DistinctPrimes.p_eq _, DistinctPrimes.q_eq _⟩
++  · exact absurd h.2.2.1 h'
++  · exact absurd ⟨hpP, hqP, h'', hpL, hqL, hpC, hqC⟩ h
++  · rfl
++
++/-- The primes of the selection `rabin_zOf z0 (a, b)`: `(a, b)` if valid, `z0` otherwise. -/
++private theorem rabin_zOf_pq {n : ℕ} (z0 : DistinctPrimes n) (ab : ℕ × ℕ) :
++    ((rabin_zOf z0 ab).p, (rabin_zOf z0 ab).q) =
++      if ab.1.Prime ∧ ab.2.Prime ∧ ab.1 ≠ ab.2 ∧ ab.1 < 2 ^ n ∧ ab.2 < 2 ^ n then ab else (z0.p, z0.q) := by
++  unfold rabin_zOf
++  split_ifs with h
++  · rw [rabin_mkDP_p, rabin_mkDP_q]
++  · rfl
++
++/-- The numeral `⟦pq⟧_{2n}` of a pair: the index of the Rabin collections at `z`. -/
++private def rabin_idx {n : ℕ} (z : DistinctPrimes n) : List Bool := natToList (2 * n) (z.p * z.q)
++
++/-- **The index of a Rabin generator on split coins** (`n ≥ 3`): the numeral of `pq` for the
++selection `rabin_zOf z0` of the two restricted samplers' values, where `z0` carries the fallback
++pair. -/
++private theorem rabin_genIndex (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams P (max m 3))
++    {n : ℕ} (hn : 3 ≤ n) (z0 : DistinctPrimes n) (h1 : z0.p = (dflt n).z.p) (h2 : z0.q = (dflt n).z.q)
++    (s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool)) :
++    rabinIndexOf (max n 3) (rabinGenParams P dflt n (List.ofFn s.1 ++ List.ofFn s.2)) =
++      rabin_idx (rabin_X P z0 s) := by
++  unfold rabin_X
++  have hmx : max n 3 = n := max_eq_left hn
++  have hL : rabinPrimeCoins.eval (max n 3) = 4 * n ^ 2 * n := by rw [hmx]; rfl
++  have hS : ∀ d r, samplePrimePL P (max n 3) d r = samplePrimePL P n d r := by intro d r; rw [hmx]
++  have hl1 : (List.ofFn s.1).length = 4 * n ^ 2 * n := List.length_ofFn
++  have hl2 : (List.ofFn s.2).length = 4 * n ^ 2 * n := List.length_ofFn
++  have hpq := rabin_genParams_pq P dflt n (List.ofFn s.1 ++ List.ofFn s.2)
++  rw [hL, hS, hS, List.take_left' hl1, List.drop_left' hl1, List.take_of_length_le (le_of_eq hl2),
++    ← h1, ← h2] at hpq
++  have hv : ∀ (d : ℕ) (w : List Bool), d.Prime ∧ P d ∧ d < 2 ^ n →
++      listToNat (samplePrimePL P n d w) = (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w).getD d ∧
++        ((rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w).getD d).Prime ∧
++        (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w).getD d < 2 ^ n := by
++    intro d w hd
++    have hg : ((rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w).getD d).Prime ∧
++        (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w).getD d < 2 ^ n := by
++      rcases h : rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) w with _ | v
++      · exact ⟨hd.1, hd.2.2⟩
++      · have := rejectBlocksL_spec h
++        exact ⟨this.1.1, this.2⟩
++    exact ⟨by rw [samplePrimePL, listToNat_natToList hg.2], hg⟩
++  have hd1 : z0.p.Prime ∧ P z0.p ∧ z0.p < 2 ^ n :=
++    ⟨z0.p_prime, h1 ▸ (dflt n).hp, z0.p_lt⟩
++  have hd2 : z0.q.Prime ∧ P z0.q ∧ z0.q < 2 ^ n :=
++    ⟨z0.q_prime, h2 ▸ (dflt n).hq, z0.q_lt⟩
++  obtain ⟨ha, haP, haL⟩ := hv _ (List.ofFn s.1) hd1
++  obtain ⟨hb, hbP, hbL⟩ := hv _ (List.ofFn s.2) hd2
++  rw [ha, hb] at hpq
++  have key : ((rabinGenParams P dflt n (List.ofFn s.1 ++ List.ofFn s.2)).z.p,
++      (rabinGenParams P dflt n (List.ofFn s.1 ++ List.ofFn s.2)).z.q) =
++      ((rabin_zOf z0 ((rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.1)).getD z0.p,
++          (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.2)).getD z0.q)).p,
++        (rabin_zOf z0 ((rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.1)).getD z0.p,
++          (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.2)).getD z0.q)).q) := by
++    rw [hpq, rabin_zOf_pq]
++    by_cases hne : (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.1)).getD z0.p =
++        (rejectBlocksL (fun v => v.Prime ∧ P v) n n (4 * n ^ 2) (List.ofFn s.2)).getD z0.q
++    · rw [if_neg (not_not.2 hne), if_neg (fun h => h.2.2.1 hne)]
++    · rw [if_pos hne, if_pos ⟨haP, hbP, hne, haL, hbL⟩]
++  rw [Prod.mk.injEq] at key
++  rw [rabinIndexOf, rabin_idx, show 2 * max n 3 = 2 * n by rw [hmx], key.1, key.2]
++
++/-- `Z_M^* ≃* Z_N^*` along `M = N` (`ZMod.ringEquivCongr` on units), keeping residues. -/
++private def rabin_unitsCongr {M N : ℕ} (h : M = N) : (ZMod M)ˣ ≃* (ZMod N)ˣ :=
++  Units.mapEquiv (ZMod.ringEquivCongr h).toMulEquiv
++
++/-- The transport of units keeps the residue (`ZMod.ringEquivCongr_val`). -/
++private theorem rabin_unitsCongr_val {M N : ℕ} (h : M = N) (x : (ZMod M)ˣ) :
++    ((rabin_unitsCongr h x : (ZMod N)ˣ) : ZMod N).val = (x : ZMod M).val := by
++  rw [rabin_unitsCongr, Units.coe_mapEquiv]
++  exact ZMod.ringEquivCongr_val h x
++
++/-- The inverse transport keeps the residue. -/
++private theorem rabin_unitsCongr_symm_val {M N : ℕ} (h : M = N) (y : (ZMod N)ˣ) :
++    (((rabin_unitsCongr h).symm y : (ZMod M)ˣ) : ZMod M).val = (y : ZMod N).val := by
++  conv_rhs => rw [← MulEquiv.apply_symm_apply (rabin_unitsCongr h) y]
++  rw [rabin_unitsCongr_val]
++
++/-- `rabinF` at the index of a pair is the numeral of the square: `f_N(u) = ⟦(u²).val⟧_{2n}`. -/
++private theorem rabin_rabinF_idx {n : ℕ} (z : DistinctPrimes n) (u : (ZMod (rabinMod (rabin_idx z)))ˣ) :
++    rabinF (rabin_idx z) u = natToList (2 * n) ((u ^ 2 : (ZMod (rabinMod (rabin_idx z)))ˣ) :
++      ZMod (rabinMod (rabin_idx z))).val := by
++  have hN : listToNat (rabin_idx z) = z.p * z.q := listToNat_natToList z.mul_lt
++  have hM : rabinMod (rabin_idx z) = listToNat (rabin_idx z) := by
++    rw [rabinMod, hN]; have := (NeZero.pos (z.p * z.q)); omega
++  have hl : (rabin_idx z).length = 2 * n := length_natToList _ _
++  rw [rabinF, rabinEnc, listToNat_natToList (lt_of_lt_of_le (ZMod.val_lt _) (rabinMod_le _)), hl,
++    val_units_pow, ← hM]
++
++/-- The inversion event of `invProbAt` at the index `i`: `A(1^n, ⟨i, f_i(x)⟩)` decodes to a
++preimage of `f_i(x)`. -/
++private def rabin_Qcoll (F : Collection) (A : NUPPT) (n : ℕ) (i : List Bool) (w : F.D i × A.Coins n) : Prop :=
++  ∃ x', F.decD i (A.runAt n (pairEncode i (F.f i w.1)) w.2) = some x' ∧ F.f i x' = F.f i w.1
++
++/-- **The inner bound of the Rabin collection** at a pair of distinct odd primes: the inversion
++probability at the index `⟦pq⟧_{2n}` is at most `2 F + 2e^{-n}`, `F` the factoring success of
++`A'` at the pair.
++
++**Proof sketch.** Move the domain to `Z_{pq}^*` (`rabinCollection_domEquiv`,
++`rabin_unitsCongr`, `uprob_comp_equiv`); the challenge `f_N(x)` is the numeral of `x²`
++(`rabin_rabinF_idx`), and an answer decoding to `x'` with `f_N(x') = f_N(x)` is a square root
++of `x²` (`natToList_injOn`, `ZMod.val_injective`); conclude by `rabin_core` with the decoder
++`rabinDec` transported to `Z_{pq}^*` (canonical by `rabinDec`'s width test). -/
++private theorem rabin_inner_odd (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : DistinctPrimes n)
++    (hp2 : z.p ≠ 2) (hq2 : z.q ≠ 2) :
++    uprob (rabin_Qcoll (rabinCollection H) A n (rabin_idx z)) ≤
++      2 * rabin_F (rabinFactorer H A) n z + 2 * Real.exp (-(n : ℝ)) := by
++  unfold rabin_Qcoll
++  have hN : listToNat (rabin_idx z) = z.p * z.q := listToNat_natToList z.mul_lt
++  have hM : rabinMod (rabin_idx z) = z.p * z.q := by
++    rw [rabinMod, hN]; have := (NeZero.pos (z.p * z.q)); omega
++  have hl : (rabin_idx z).length = 2 * n := length_natToList _ _
++  set e := rabin_unitsCongr hM with he
++  rw [← uprob_comp_equiv (Equiv.prodCongr (e.toEquiv.symm.trans (rabinCollection_domEquiv H (rabin_idx z)).symm)
++    (Equiv.refl (A.Coins n)))]
++  refine (uprob_mono ?_).trans (rabin_core H A z hp2 hq2 (fun w => (rabinDec (rabin_idx z) w).map e) ?_)
++  · rintro ⟨y, ρ⟩ ⟨x', hx', hf⟩
++    simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, Equiv.trans_apply,
++      rabinCollection_f, rabinCollection_decD, Equiv.apply_symm_apply] at hx' hf
++    rw [Option.map_eq_some_iff] at hx'
++    obtain ⟨a, ha, rfl⟩ := hx'
++    rw [Equiv.apply_symm_apply] at hf
++    have hsq : a ^ 2 = (e.symm y) ^ 2 := by
++      rw [rabin_rabinF_idx, rabin_rabinF_idx] at hf
++      apply Units.ext
++      apply ZMod.val_injective
++      refine natToList_injOn (k := 2 * n) ?_ ?_ hf <;>
++        exact lt_of_lt_of_le (ZMod.val_lt _) (hM ▸ z.mul_lt.le)
++    have hy : rabinF (rabin_idx z) (e.symm y) =
++        natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val := by
++      rw [rabin_rabinF_idx, ← map_pow, rabin_unitsCongr_symm_val]
++    refine ⟨e a, ?_, ?_⟩
++    · have ha' : rabinDec (rabin_idx z) (A.runAt n (pairEncode (rabin_idx z)
++          (natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) ρ) = some a := by
++        rw [← hy]; exact ha
++      show Option.map e (rabinDec (rabin_idx z) (A.runAt n (pairEncode (rabin_idx z)
++        (natToList (2 * n) ((y ^ 2 : (ZMod (z.p * z.q))ˣ) : ZMod (z.p * z.q)).val)) ρ)) = some (e a)
++      rw [ha', Option.map_some]
++    · rw [← map_pow, hsq, map_pow, MulEquiv.apply_symm_apply]
++  · intro w x hx
++    rw [Option.map_eq_some_iff] at hx
++    obtain ⟨a, ha, rfl⟩ := hx
++    rw [rabin_unitsCongr_val, ← rabin_enc_of_dec ha, rabinEnc]
++    exact listToNat_natToList (lt_of_lt_of_le (ZMod.val_lt _) (rabinMod_le _))
++
++/-- The odd-prime density: `2^n ≤ 4n · #{p ∈ Π_n : p ≠ 2}` for `n ≥ 2` (from
++`two_pow_le_two_mul_card_primes`, `|Π_n| ≥ 2` and `Fintype.card_subtype_compl`). -/
++private theorem rabin_card_odd (n : ℕ) (hn : 2 ≤ n) :
++    2 ^ n ≤ 4 * n * Fintype.card (rabin_C (· ≠ 2) n) := by
++  have h := two_pow_le_two_mul_card_primes n hn
++  have h4 : 4 ≤ 2 ^ n := (Nat.pow_le_pow_right (by norm_num) hn).trans_eq' (by norm_num)
++  have hcard : Fintype.card (rabin_C (· ≠ 2) n) =
++      Fintype.card {x : Primes n // ¬ ((x : Fin (2 ^ n)) : ℕ) = 2} :=
++    (Fintype.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter
++      (fun v : Fin (2 ^ n) => (v : ℕ).Prime) (fun v : Fin (2 ^ n) => (v : ℕ) ≠ 2))).symm
++  have hle1 : Fintype.card {x : Primes n // ((x : Fin (2 ^ n)) : ℕ) = 2} ≤ 1 :=
++    Fintype.card_le_one_iff.2 fun a b => Subtype.ext (Subtype.ext (Fin.ext (a.2.trans b.2.symm)))
++  have hcompl := Fintype.card_subtype_compl (fun x : Primes n => ((x : Fin (2 ^ n)) : ℕ) = 2)
++  have hP2 : 2 ≤ Fintype.card (Primes n) := by
++    have h3 : 3 < 2 ^ n := by omega
++    exact Fintype.one_lt_card_iff.2 ⟨⟨⟨2, by omega⟩, Nat.prime_two⟩, ⟨⟨3, h3⟩, Nat.prime_three⟩,
++      fun h => by have := congrArg (fun x : Primes n => ((x : Fin (2 ^ n)) : ℕ)) h; simp at this⟩
++  rw [hcard, hcompl]
++  have : 2 * n * Fintype.card (Primes n) ≤ 4 * n * (Fintype.card (Primes n) - 1) := by
++    have : Fintype.card (Primes n) ≤ 2 * (Fintype.card (Primes n) - 1) := by omega
++    calc 2 * n * Fintype.card (Primes n) ≤ 2 * n * (2 * (Fintype.card (Primes n) - 1)) :=
++          Nat.mul_le_mul_left _ this
++      _ = 4 * n * (Fintype.card (Primes n) - 1) := by ring
++  calc 2 ^ n ≤ 2 * n * Fintype.card (Primes n) := h
++    _ ≤ 4 * n * (Fintype.card (Primes n) - 1) := this
++    _ ≤ 4 * n * (Fintype.card (Primes n) - Fintype.card {x : Primes n // ((x : Fin (2 ^ n)) : ℕ) = 2}) :=
++        Nat.mul_le_mul_left _ (by omega)
++
++/-- `oddFactorProb` is the average of the factoring section over the uniform distinct odd pair
++(`uprob_prod`). -/
++private theorem rabin_oddFactorProb_eq (A : NUPPT) (n : ℕ) :
++    oddFactorProb A n = uexp (fun t : rabin_RDP (· ≠ 2) n => rabin_F A n t.1) := by
++  unfold oddFactorProb rabin_F
++  rw [uprob_prod]
++
++/-- The pair `(3, 5)` (`n ≥ 3`) as an element of `DistinctPrimes n`: the fallback of `oddGen`. -/
++private def rabin_z35 {n : ℕ} (hn : 3 ≤ n) : DistinctPrimes n :=
++  rabin_mkDP 3 5 ⟨Nat.prime_three, Nat.prime_five, by norm_num,
++    lt_of_lt_of_le (by norm_num) (Nat.pow_le_pow_right (by norm_num) hn),
++    lt_of_lt_of_le (by norm_num) (Nat.pow_le_pow_right (by norm_num) hn)⟩
++
+ /-- **Inverting the Rabin collection factors** [PS10, Theorem 61.8 ⇒, Algorithm 62.9]: for
+ `n ≥ 3`, the inversion probability of `A` against the Rabin collection is at most twice the
+ factoring probability of `A'` on odd moduli plus the statistical error.
+@@ -1868,7 +2399,46 @@ pair by the diagonal `uprob_diag` on the restricted class, `1/(P − 1) ≤ 2/P`
+ (total `rabinErr n`). -/
+ theorem rabinCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 3 ≤ n) :
+     (rabinCollection H).invProbAt A n ≤ 2 * oddFactorProb (rabinFactorer H A) n + rabinErr n := by
+-  sorry
++  set z0 := rabin_z35 hn with hz0d
++  have hz1 : z0.p = (oddDefault n).z.p := by
++    rw [hz0d, rabin_z35, rabin_mkDP_p]
++    exact (smallDistinctPrimes_p n Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num)).symm
++  have hz2 : z0.q = (oddDefault n).z.q := by
++    rw [hz0d, rabin_z35, rabin_mkDP_q]
++    exact (smallDistinctPrimes_q n Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num)).symm
++  have hz0 : z0.p ≠ 2 ∧ z0.q ≠ 2 := by
++    rw [hz0d, rabin_z35, rabin_mkDP_p, rabin_mkDP_q]; norm_num
++  have hG : (rabinCollection H).gen.coins = rabinGenCoins := by
++    rw [rabinCollection_gen]; unfold oddGen; exact NUPPT.coins_ofPolyTimeUniform _ _
++  have hlaw := rabin_pairLaw (· ≠ 2) (by omega) (rabin_card_odd n (by omega)) z0 hz0
++  haveI : Nonempty (rabin_RDP (· ≠ 2) n) := ⟨⟨z0, hz0⟩⟩
++  have hidx : ∀ s, (rabinCollection H).index n (rabin_genCoinsEquiv _ hG n s) =
++      rabin_idx (rabin_X (· ≠ 2) z0 s) := by
++    intro s
++    rw [rabinCollection_index, rabin_genCoinsEquiv_ofFn]
++    exact rabin_genIndex (· ≠ 2) oddDefault hn z0 hz1 hz2 s
++  rw [Collection.invProbAt_eq, ← HardcoreBit.uexp_comp_equiv (rabin_genCoinsEquiv _ hG n)]
++  calc _ = uexp (fun s : (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool) =>
++        uprob (rabin_Qcoll (rabinCollection H) A n (rabin_idx (rabin_X (· ≠ 2) z0 s)))) := by
++        congr 1
++        funext s
++        rw [← hidx s]
++        rfl
++    _ ≤ uexp (fun t : rabin_RDP (· ≠ 2) n => uprob (rabin_Qcoll (rabinCollection H) A n (rabin_idx t.1))) +
++          (2 * Real.exp (-(n : ℝ)) + 4 * n / 2 ^ n) :=
++        rabin_uexp_le hlaw (fun c => (rabinCollection H).D (rabin_idx c) × A.Coins n)
++          (fun c => rabin_Qcoll (rabinCollection H) A n (rabin_idx c))
++    _ ≤ uexp (fun t : rabin_RDP (· ≠ 2) n =>
++          2 * rabin_F (rabinFactorer H A) n t.1 + 2 * Real.exp (-(n : ℝ))) +
++          (2 * Real.exp (-(n : ℝ)) + 4 * n / 2 ^ n) := by
++        refine add_le_add_right (OneWay.uexp_mono fun t => ?_) _
++        have h1 : t.1.p ≠ 2 := t.2.1
++        have h2 : t.1.q ≠ 2 := t.2.2
++        exact rabin_inner_odd H A t.1 h1 h2
++    _ = 2 * oddFactorProb (rabinFactorer H A) n + rabinErr n := by
++        rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const_mul, OneWay.uexp_const, rabin_oddFactorProb_eq,
++          rabinErr]
++        ring
+ 
+ /-- **Theorem 61.7 / Theorem 61.8 (⇒)** [PS10, Theorems 61.7 and 61.8]: under the factoring
+ assumption (and the arithmetic hypotheses), the Rabin collection `{f_N(x) = x² mod N}` is a
+@@ -2215,7 +2785,6 @@ private theorem rabin_crtW_poly (H : ArithmeticFP) {fp fq fy : List Bool → Lis
+   exact h
+ 
+ /-- The truncation of a word `v` to the width of `y`: `(⟦0⟧_{|y|} ++ v).drop |v|`. -/
+-
+ private def rabin_trunc (y v : List Bool) : List Bool := (subStr (pairEncode y y) ++ v).drop v.length
+ 
+ /-- The truncation is the numeral of the word's value at the width of `y` (`rabin_drop_zeros_append`). -/
+@@ -2694,23 +3263,19 @@ def rabinRootRaw (A : NUPPT) (z : List Bool) : List Bool :=
+     (listToNat (pairFstD (NUPPT.inArg z))) (pairSndD (NUPPT.inArg z))
+ 
+ /-- The answer `s = A(1^n, N)` of the factorer. -/
+-
+ private def rabin_rS (A : NUPPT) (z : List Bool) : List Bool :=
+   A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z) (NUPPT.inCoins z))
+ 
+ /-- The cofactor word `⟦N / s⟧`. -/
+-
+ private def rabin_rQ (A : NUPPT) (z : List Bool) : List Bool :=
+   pairFstD (divModStr (pairEncode (pairFstD (NUPPT.inArg z)) (rabin_rS A z)))
+ 
+ /-- The test `s (N / s) = N` by two comparisons. -/
+-
+ private def rabin_rTest (A : NUPPT) (z : List Bool) : Bool :=
+   decide (listToNat (mulStr (pairEncode (rabin_rS A z) (rabin_rQ A z))) ≤ listToNat (pairFstD (NUPPT.inArg z))) &&
+     decide (listToNat (pairFstD (NUPPT.inArg z)) ≤ listToNat (mulStr (pairEncode (rabin_rS A z) (rabin_rQ A z))))
+ 
+ /-- The root finder as a string computation. -/
+-
+ private def rabin_rOut (A : NUPPT) (z : List Bool) : List Bool :=
+   if rabin_rTest A z then
+     rabin_trunc (pairSndD (NUPPT.inArg z)) (rabin_crtW (rabin_rS A z) (rabin_rQ A z) (pairSndD (NUPPT.inArg z)))
+-- 
+2.43.0
+
