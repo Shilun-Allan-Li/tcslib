@@ -133,7 +133,7 @@ at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
-(#202's merged tree, **the campaign's since #202 merged**), `oleans-lnf7` (#191 on it), `oleans-lzde2` (#207 on it) and `oleans-ldp` (#208's delivery). #191 and #207 merged 2026-11-06 (`a1d7fea4`, `d43a1374`); `replay-lcamp1` (both closures, 9 modules, from `oleans-lsi2`) is the combination's replay of record, into `oleans-lcamp1`. Once #191 or #202 merges, its snapshot is the
+(#202's merged tree, **the campaign's since #202 merged**), `oleans-lnf7` (#191 on it), `oleans-lzde2` (#207 on it) and `oleans-ldp` (#208's delivery). #191 and #207 merged 2026-11-06 (`a1d7fea4`, `d43a1374`); `replay-lcamp1` (both closures, 9 modules, from `oleans-lsi2`) **passed** (0 failed; `TwoTapes`' one `sorry`; `campaign/status/2026-11-06-campaign-replay/`): **`oleans-lcamp1` is the campaign's snapshot** (Lean `d43a1374`). Kept on the VM: `oleans-cloud0`, `oleans-lcamp1`, `oleans-ldp`. Once #191 or #202 merges, its snapshot is the
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
@@ -163,8 +163,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
 2. **G5's fill brief is issued** (2026-11-06, agent Claude): `campaign/fills/u2s/briefs/u2s-fill-g5.md`
    at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`;
    **dispatched 2026-11-06** (the user).
-3. **H's brief:** re-take its pre-ship after NF lands (#191; E-D landed as #188). Its screen population includes both
-   files, and NF-X1's `un_setup` pair.
+3. **B6's H, the space hierarchy** (`space_hierarchy`, `LOGSPACE_ssubset_PSPACE`,
+   `SPACE_linear_ne_NP`; agent Codex): `campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, its
+   pre-ship to re-take on the merged tree, then a review sub-agent and issue. (The other "H",
+   `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
+   merged it rests on the standard axioms; #209 corrects its module's Status paragraph.)
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
