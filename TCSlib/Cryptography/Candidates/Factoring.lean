@@ -501,8 +501,10 @@ accepted block as a list, or `[]` when no block is prime. (3) For `n ≥ 1` an a
 has `n` bits, so the output is `[]` exactly on failure (for `n = 0` both sides are `[]`):
 test emptiness against the constant `[]` (`polyTimeComputable_lenEq`) and branch
 (`polyTimeComputable_ite`) between the output and the fallback numeral
-`natToList n 2 = 0^{n−2}10`, a string of unary-polynomial length computed from `1^n`
-(`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The three pieces agree with
+`natToList n 2`, which is `0^{n−2}10` for `n ≥ 2` and the constants `[]` at `n = 0` and
+`[false]` at `n = 1`: a string of unary-polynomial length computed from `1^n`
+(`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`, with the two constant branches
+by `polyTimeComputable_ite`). The three pieces agree with
 `samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
 theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
