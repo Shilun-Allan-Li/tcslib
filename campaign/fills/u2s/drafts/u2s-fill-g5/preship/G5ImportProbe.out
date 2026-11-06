@@ -945,4 +945,13 @@ Nat.log2 : ℕ → ℕ
     ∀ (n : ℕ),
       (∀ r < n, Turing.Segment M F P (cs r) (cs (r + 1)) (τ r)) →
         Turing.Segment M F P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r)
-exit 0
+@Turing.zoneRebalanceData_eq : ∀ {k : ℕ} (dir : Bool) (t : Fin k) (D : Turing.ZoneData k),
+  Turing.zoneRebalanceData dir t D = ⟨D.fst, Function.update D.snd t (Turing.zoneRebalance dir (D.snd t))⟩
+@Turing.zoneExtendData_eq : ∀ {k : ℕ} (D : Turing.ZoneData k),
+  Turing.zoneExtendData D = ⟨D.fst + 1, fun t => (D.snd t).extend⟩
+@Turing.embedEmitCfg_state : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Turing.Cfg m Symbol S x),
+  (Turing.embedEmitCfg ι tapes heads pre c).state = c.state
+@Turing.embedEmitCfg_output : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Turing.Cfg m Symbol S x),
+  (Turing.embedEmitCfg ι tapes heads pre c).output = pre ++ c.output
