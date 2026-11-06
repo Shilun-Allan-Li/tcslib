@@ -42,6 +42,7 @@ import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.WindowClock
 import TCSlib.Complexity.SpaceComplexity.Savitch
 import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Padding
 import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
