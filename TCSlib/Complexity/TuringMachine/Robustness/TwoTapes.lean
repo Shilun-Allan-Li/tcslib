@@ -307,6 +307,494 @@ private theorem tt_leaf_step (M : FinTM Bool) {x : List (ZoneSym M.k)}
   · rw [Action.apply_output, hW]
     rfl
 
+/-! ### The controller: the phase host over the transition step and the track steps -/
+
+/-- **A track-step family** for `k` tracks with constant `A` [AB09, §1.7]: per direction `dir`
+(`true` for a right move) and track `t`, a two-tape machine over `Turing.ZoneSym k` with finite
+states, an entry, live exits, and per input a `Turing.Contract` with precondition
+`Turing.zoneRowPre`, time at most `A · (2^{i₀} + 1)` for the scanned index `i₀`, and an endpoint
+at the data `Turing.zoneTrackStepData dir t D` with the scratch head, the input head and the
+output kept. `Turing.exists_zoneTrackStepTM` gives one. -/
+private structure tt_Fam (k A : ℕ) where
+  /-- the state types -/
+  S : Bool → Fin k → Type
+  /-- their finiteness -/
+  fin : ∀ dir t, Fintype (S dir t)
+  /-- their decidable equality -/
+  dec : ∀ dir t, DecidableEq (S dir t)
+  /-- the machines -/
+  M : ∀ dir t, MultiTapeTM 2 (ZoneSym k) (S dir t)
+  /-- the entries -/
+  entry : ∀ dir t, S dir t
+  /-- the exits -/
+  X : ∀ dir t, Set (Option (S dir t))
+  /-- the exits are live -/
+  none_nmem : ∀ dir t, none ∉ X dir t
+  /-- the contracts -/
+  R : ∀ dir t (x : List (ZoneSym k)), Contract (M dir t) (entry dir t) (X dir t) (ZoneData k) x
+  /-- their precondition -/
+  pre : ∀ dir t x, (R dir t x).pre = zoneRowPre
+  /-- their time and endpoint -/
+  spec : ∀ dir t x (D : ZoneData k) (d : Cfg 2 (ZoneSym k) (S dir t) x),
+    d.state = some (entry dir t) → zoneRowPre D d →
+      (R dir t x).time D d ≤ A * (2 ^ zoneRebalanceIndex dir t D + 1) ∧
+      zoneRowPre (zoneTrackStepData dir t D) ((R dir t x).post D d) ∧
+      ((R dir t x).post D d).workTapePos 1 = d.workTapePos 1 ∧
+      ((R dir t x).post D d).inputPos = d.inputPos ∧ ((R dir t x).post D d).output = d.output
+
+/-- The direction of a head move: `true` for a right move, `false` otherwise. -/
+private def tt_dir : SignType → Bool
+  | .pos => true
+  | _ => false
+
+/-- The phase index of the simulation: `none` for the transition step, `some (q', m, t)` for
+the step of track `t` in the round whose transition went to `q'` with head moves `m`. -/
+private abbrev tt_I (M : FinTM Bool) : Type :=
+  Option (M.State × (Fin M.k → SignType) × Fin M.k)
+
+/-- The phases' state types: the transition step's, and per track the track step's of its
+direction. -/
+private def tt_Ph (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) : tt_I M → Type
+  | none => tt_LeafSt M
+  | some (_, m, t) => F.S (tt_dir (m t)) t
+
+/-- The phases' machines: the transition step, and per track the track step of its
+direction (for a stay, it is entered and left at once). -/
+private def tt_Mf (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) :
+    (i : tt_I M) → MultiTapeTM 2 (ZoneSym M.k) (tt_Ph M F i)
+  | none => tt_leafTM M
+  | some (_, m, t) => F.M (tt_dir (m t)) t
+
+/-- The state after the step of track `t`: the next track's entry, or the transition step at
+`q'` after the last track. -/
+private def tt_next (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (q' : M.State)
+    (m : Fin M.k → SignType) (t : Fin M.k) : Σ i, tt_Ph M F i :=
+  if h : t.val + 1 < M.k then
+    ⟨some (q', m, ⟨t.val + 1, h⟩), F.entry (tt_dir (m ⟨t.val + 1, h⟩)) ⟨t.val + 1, h⟩⟩
+  else ⟨none, .inl q'⟩
+
+open Classical in
+/-- **The redirects** of the simulation's phase host: the transition step's exit
+`Sum.inr (q', m)` goes to track `0`'s entry; a track's exit (for a stay, its entry) goes to
+`tt_next`; nothing else is redirected. -/
+private noncomputable def tt_red (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k) :
+    (i : tt_I M) → tt_Ph M F i → Option (Σ i, tt_Ph M F i)
+  | none, .inl _ => none
+  | none, .inr (q', m) => some ⟨some (q', m, ⟨0, hk⟩), F.entry (tt_dir (m ⟨0, hk⟩)) ⟨0, hk⟩⟩
+  | some (q', m, t), s =>
+    if (m t = 0 ∧ s = F.entry (tt_dir (m t)) t) ∨ (m t ≠ 0 ∧ some s ∈ F.X (tt_dir (m t)) t)
+    then some (tt_next M F q' m t) else none
+
+open Classical in
+/-- A track's exit (for a stay, its entry) is redirected to `tt_next`. -/
+private theorem tt_red_track_pos (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (q' : M.State) (m : Fin M.k → SignType) (t : Fin M.k) (s : F.S (tt_dir (m t)) t)
+    (h : (m t = 0 ∧ s = F.entry (tt_dir (m t)) t) ∨ (m t ≠ 0 ∧ some s ∈ F.X (tt_dir (m t)) t)) :
+    tt_red M F hk (some (q', m, t)) s = some (tt_next M F q' m t) :=
+  if_pos h
+
+open Classical in
+/-- Every other state of a track's phase is not redirected. -/
+private theorem tt_red_track_neg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (q' : M.State) (m : Fin M.k → SignType) (t : Fin M.k) (s : F.S (tt_dir (m t)) t)
+    (h : ¬((m t = 0 ∧ s = F.entry (tt_dir (m t)) t) ∨
+      (m t ≠ 0 ∧ some s ∈ F.X (tt_dir (m t)) t))) :
+    tt_red M F hk (some (q', m, t)) s = none :=
+  if_neg h
+
+/-- The phases' state types are finite. -/
+private def tt_phFin (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) :
+    (i : tt_I M) → Fintype (tt_Ph M F i)
+  | none => inferInstanceAs (Fintype (tt_LeafSt M))
+  | some (_, m, t) => F.fin (tt_dir (m t)) t
+
+/-- The phases' state types have decidable equality. -/
+private def tt_phDec (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) :
+    (i : tt_I M) → DecidableEq (tt_Ph M F i)
+  | none => inferInstanceAs (DecidableEq (tt_LeafSt M))
+  | some (_, m, t) => F.dec (tt_dir (m t)) t
+
+/-- **The two-work-tape zone machine** [HS66; AB09, §1.7]: the phase host
+`Turing.phaseHostTM` over the transition step and the track steps of `F`, started at the
+transition step at `M`'s initial state. Tape `0` is the zoned tape, tape `1` the scratch
+tape. -/
+private noncomputable def tt_HS (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k) :
+    FinTM (ZoneSym M.k) :=
+  letI := tt_phFin M F
+  letI := tt_phDec M F
+  { k := 2
+    State := Σ i, tt_Ph M F i
+    tm := phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) }
+
+/-! ### The configurations at the round boundaries -/
+
+/-- **A configuration at a phase boundary**: state `s`, input head at `ip`, output `out`, tape
+`0` the zoned tape of `D` with its head at home, tape `1` blank with its head at `0`. -/
+private def tt_cfg {k : ℕ} {S : Type} {x : List (ZoneSym k)} (s : Option S) (D : ZoneData k)
+    (ip : Fin (x.length + 2)) (out : List (ZoneSym k)) : Cfg 2 (ZoneSym k) S x :=
+  ⟨s, ip, fun j => if j = 0 then zonedTape D.2 else fun _ => none, fun _ => 0, out⟩
+
+/-- Renaming the state of a phase-boundary configuration renames its state only. -/
+private theorem tt_cfg_mapState {k : ℕ} {S S' : Type} {x : List (ZoneSym k)} (s : Option S)
+    (D : ZoneData k) (ip : Fin (x.length + 2)) (out : List (ZoneSym k)) (f : S → S') :
+    (tt_cfg s D ip out).mapState f = (tt_cfg (s.map f) D ip out : Cfg 2 (ZoneSym k) S' x) :=
+  Cfg.mapState_eq_of_fields _ f _ rfl rfl rfl rfl rfl
+
+/-- A phase-boundary configuration satisfies the zone rows' precondition. -/
+private theorem tt_cfg_rowPre {k : ℕ} {S : Type} {x : List (ZoneSym k)} (s : Option S)
+    (D : ZoneData k) (ip : Fin (x.length + 2)) (out : List (ZoneSym k)) :
+    zoneRowPre D (tt_cfg s D ip out : Cfg 2 (ZoneSym k) S x) :=
+  (zoneRowPre_iff D _).mpr ⟨rfl, rfl, fun _ => rfl⟩
+
+/-- The two work tapes are `0` and `1`. -/
+private theorem tt_fin_two (j : Fin 2) (hj : j ≠ 0) : j = 1 := by
+  fin_cases j
+  · exact absurd rfl hj
+  · rfl
+
+/-- **A row endpoint is a phase-boundary configuration**: a configuration that satisfies the
+zone rows' precondition at `D`, with head `1` at `0`, input head `ip` and output `out`, is
+`tt_cfg` at `D` once its state is renamed to the constant `s`, if it is live. -/
+private theorem tt_mapState_eq_cfg {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+    (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) (hp : zoneRowPre D d) (s : S')
+    (hs : d.state.isSome) (h1 : d.workTapePos 1 = 0) (ip : Fin (x.length + 2))
+    (hi : d.inputPos = ip) (out : List (ZoneSym k)) (ho : d.output = out) :
+    d.mapState (fun _ => s) = tt_cfg (some s) D ip out := by
+  obtain ⟨h0, hp0, hb⟩ := (zoneRowPre_iff D d).mp hp
+  obtain ⟨s₀, hs₀⟩ := Option.isSome_iff_exists.mp hs
+  refine Cfg.mapState_eq_of_fields d _ _ ?_ hi ?_ ?_ ho
+  · rw [hs₀]
+    rfl
+  · funext j p
+    by_cases hj : j = 0
+    · subst hj
+      rw [h0]
+      rfl
+    · obtain rfl := tt_fin_two j hj
+      rw [hb p]
+      rfl
+  · funext j
+    by_cases hj : j = 0
+    · subst hj
+      rw [hp0]
+      rfl
+    · obtain rfl := tt_fin_two j hj
+      rw [h1]
+      rfl
+
+/-! ### One track's phase -/
+
+/-- The data after track `t`'s step for head move `s`: unchanged for a stay, otherwise
+`Turing.zoneTrackStepData` in the move's direction. -/
+private def tt_trackData {k : ℕ} (s : SignType) (t : Fin k) (D : ZoneData k) : ZoneData k :=
+  if s = 0 then D else zoneTrackStepData (tt_dir s) t D
+
+/-- The scanned index of track `t`'s step for head move `s`: `0` for a stay. -/
+private def tt_idx {k : ℕ} (s : SignType) (t : Fin k) (D : ZoneData k) : ℕ :=
+  if s = 0 then 0 else zoneRebalanceIndex (tt_dir s) t D
+
+/-- The time of track `t`'s phase before its dispatch step: `0` for a stay, otherwise the
+track step's contract time from the phase-boundary configuration. -/
+private def tt_trackTime (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List (ZoneSym M.k))
+    (m : Fin M.k → SignType) (t : Fin M.k) (D : ZoneData M.k) (ip : Fin (x.length + 2))
+    (out : List (ZoneSym M.k)) : ℕ :=
+  if m t = 0 then 0 else
+    (F.R (tt_dir (m t)) t x).time D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)
+
+/-- **One track's phase** [HS66; AB09, §1.7]: from the entry of track `t`'s phase, at a
+phase-boundary configuration with data `D`, the zone machine runs live for the phase's time
+plus one dispatch step to the phase-boundary configuration at `tt_next` with the data after
+track `t`'s step, the input head and the output kept; the phase's time is at most
+`A · (2^{i₀} + 1)` for its scanned index `i₀`.
+
+**Proof sketch.** A stay is redirected at once (`Turing.phaseHostTM_run` with time `0`). A move
+runs the track step's contract inside the host (`Turing.phaseHostTM_run`): its run gives the
+phase run, its cut and the redirect table give the guard, and its live exit is redirected to
+`tt_next`. The endpoint satisfies the rows' precondition at the new data and keeps head `1`,
+the input head and the output, so it is the phase-boundary configuration there
+(`tt_mapState_eq_cfg`). Liveness before the end is the contract's (`Turing.Contract.live`). -/
+private theorem tt_track_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    {x : List (ZoneSym M.k)} (q' : M.State) (m : Fin M.k → SignType) (t : Fin M.k)
+    (D : ZoneData M.k) (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k)) :
+    Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+        (fun _ => True)
+        (tt_cfg (some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩) D ip out)
+        (tt_cfg (some (tt_next M F q' m t)) (tt_trackData (m t) t D) ip out)
+        (tt_trackTime M F x m t D ip out + 1) ∧
+      tt_trackTime M F x m t D ip out ≤ A * (2 ^ tt_idx (m t) t D + 1) := by
+  set c : Cfg 2 (ZoneSym M.k) (tt_Ph M F (some (q', m, t))) x :=
+    tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out with hc
+  have hb : (tt_cfg (some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩) D ip out :
+      Cfg 2 (ZoneSym M.k) (Σ i, tt_Ph M F i) x) = c.mapState (Sigma.mk (some (q', m, t))) :=
+    (tt_cfg_mapState (S := tt_Ph M F (some (q', m, t))) (some (F.entry (tt_dir (m t)) t)) D ip
+      out (Sigma.mk (β := tt_Ph M F) (some (q', m, t)))).symm
+  rw [hb]
+  by_cases h0 : m t = 0
+  · -- a stay: redirected at once
+    have hred : tt_red M F hk (some (q', m, t)) (F.entry (tt_dir (m t)) t) =
+        some (tt_next M F q' m t) := by
+      exact tt_red_track_pos M F hk q' m t _ (Or.inl ⟨h0, rfl⟩)
+    have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) (some (q', m, t))
+      c c 0 MultiTapeTM.runFrom_zero (F.entry (tt_dir (m t)) t) rfl _ hred
+      (fun u hu => absurd hu (Nat.not_lt_zero u))
+    have hT : tt_trackTime M F x m t D ip out = 0 := if_pos h0
+    have hD : tt_trackData (m t) t D = D := if_pos h0
+    rw [hT, hD]
+    refine ⟨(segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩, Nat.zero_le _⟩
+    · rw [H.2, hc, tt_cfg_mapState]
+      rfl
+    · obtain rfl : u = 0 := by omega
+      rw [MultiTapeTM.runFrom_zero, Set.mem_singleton_iff, Cfg.mapState_state]
+      exact fun h => by cases h
+  · -- a move: the track step's contract inside the host
+    set R := F.R (tt_dir (m t)) t x with hR
+    have hpre : R.pre D c := by
+      rw [hR, F.pre]
+      exact tt_cfg_rowPre _ D ip out
+    obtain ⟨htime, hpost, h1, hin, hout⟩ := F.spec (tt_dir (m t)) t x D c rfl
+      (tt_cfg_rowPre _ D ip out)
+    have hx := R.exit_mem D c rfl hpre
+    obtain ⟨s', hs'⟩ : ∃ s', (R.post D c).state = some s' := by
+      cases h : (R.post D c).state with
+      | none => rw [h] at hx; exact absurd hx (F.none_nmem _ _)
+      | some s' => exact ⟨s', rfl⟩
+    have hs'X : some s' ∈ F.X (tt_dir (m t)) t := hs' ▸ hx
+    have hred : tt_red M F hk (some (q', m, t)) s' = some (tt_next M F q' m t) := by
+      exact tt_red_track_pos M F hk q' m t _ (Or.inr ⟨h0, hs'X⟩)
+    have hguard : ∀ u < R.time D c, ∀ s,
+        ((tt_Mf M F (some (q', m, t))).runFrom c u).state = some s →
+          tt_red M F hk (some (q', m, t)) s = none := by
+      intro u hu s hs
+      refine tt_red_track_neg M F hk q' m t _ ?_
+      rintro (⟨h, -⟩ | ⟨-, hm⟩)
+      · exact h0 h
+      · exact R.cut D c rfl hpre u hu (hs ▸ hm)
+    have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) (some (q', m, t))
+      c (R.post D c) (R.time D c) (R.run D c rfl hpre) s' hs' _ hred hguard
+    have hT : tt_trackTime M F x m t D ip out = R.time D c := if_neg h0
+    have hD : tt_trackData (m t) t D = zoneTrackStepData (tt_dir (m t)) t D := if_neg h0
+    have hI : tt_idx (m t) t D = zoneRebalanceIndex (tt_dir (m t)) t D := if_neg h0
+    rw [hT, hD, hI]
+    refine ⟨(segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩, htime⟩
+    · rw [H.2]
+      exact tt_mapState_eq_cfg _ _ hpost _ (by rw [hs']; rfl) h1 ip hin out hout
+    · rw [H.1 u (by omega), Set.mem_singleton_iff, Cfg.mapState_state]
+      intro h
+      rcases Nat.lt_or_ge u (R.time D c) with hlt | hge
+      · exact R.live D c rfl hpre hlt (Option.map_eq_none_iff.mp h)
+      · obtain rfl : u = R.time D c := by omega
+        rw [R.run D c rfl hpre, hs'] at h
+        cases h
+
+/-! ### One round: the transition step, then every track -/
+
+/-- **A round's start configuration** at the transition step: tape `0` is the zoned tape of `D`
+except at the home cell, which holds `h0`; the rest as in `tt_cfg`. The first round starts with
+a blank home cell, every later one with the zoned tape's own. -/
+private def tt_cfg0 {k : ℕ} {S : Type} {x : List (ZoneSym k)} (s : Option S) (D : ZoneData k)
+    (h0 : Option (ZoneSym k)) (ip : Fin (x.length + 2)) (out : List (ZoneSym k)) :
+    Cfg 2 (ZoneSym k) S x :=
+  ⟨s, ip, fun j => if j = 0 then Function.update (zonedTape D.2) 0 h0 else fun _ => none,
+    fun _ => 0, out⟩
+
+/-- The transition of `M` at `q` on input symbol `inp` from the homes of `D`. -/
+private def tt_act (M : FinTM Bool) (q : M.State) (inp : Option Bool) (D : ZoneData M.k) :
+    Action M.k Bool M.State :=
+  M.tm.tr q inp fun t => (D.2 t).home
+
+/-- The data after the home write of action `a`. -/
+private def tt_homeData {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k) :
+    ZoneData k :=
+  ⟨D.1, fun t => zoneHomeWrite (D.2 t) (tt_homeNew a (fun t => (D.2 t).home) t)⟩
+
+/-- The data after the steps of the tracks below `j`, for head moves `m`, from `D`. -/
+private def tt_Dtr {k : ℕ} (m : Fin k → SignType) (D : ZoneData k) : ℕ → ZoneData k
+  | 0 => D
+  | j + 1 => if h : j < k then tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m D j) else tt_Dtr m D j
+
+/-- The state at the start of track `j`'s phase, or the transition step at `q'` after the
+last track. -/
+private def tt_stAt (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (q' : M.State)
+    (m : Fin M.k → SignType) (j : ℕ) : Σ i, tt_Ph M F i :=
+  if h : j < M.k then ⟨some (q', m, ⟨j, h⟩), F.entry (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩⟩
+  else ⟨none, .inl q'⟩
+
+/-- The time of track `j`'s phase in a round, with its dispatch step. -/
+private def tt_τ (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List (ZoneSym M.k))
+    (m : Fin M.k → SignType) (D : ZoneData M.k) (ip : Fin (x.length + 2))
+    (out : List (ZoneSym M.k)) (j : ℕ) : ℕ :=
+  if h : j < M.k then tt_trackTime M F x m ⟨j, h⟩ (tt_Dtr m D j) ip out + 1 else 0
+
+/-- **The tracks of a round** [HS66; AB09, §1.7]: from track `0`'s entry, the zone machine runs
+live through every track's phase in order, to the transition step at `q'` with the data after
+every track's step, in `∑ j < k` of the phases' times.
+
+**Proof sketch.** `Turing.Segment.iterate_seq` over the tracks, each track by `tt_track_seg`;
+consecutive boundaries match because `tt_next` at track `j` is `tt_stAt` at `j + 1`. -/
+private theorem tt_tracks_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    {x : List (ZoneSym M.k)} (q' : M.State) (m : Fin M.k → SignType) (D : ZoneData M.k)
+    (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k)) :
+    Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+      (fun _ => True) (tt_cfg (some (tt_stAt M F q' m 0)) D ip out)
+      (tt_cfg (some ⟨none, .inl q'⟩) (tt_Dtr m D M.k) ip out)
+      (∑ j ∈ Finset.range M.k, tt_τ M F x m D ip out j) := by
+  have hend : tt_stAt M F q' m M.k = ⟨none, .inl q'⟩ := dif_neg (lt_irrefl _)
+  have H := Segment.iterate_seq
+    (M := phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) (F := {none})
+    (P := fun _ => True)
+    (fun j => (tt_cfg (some (tt_stAt M F q' m j)) (tt_Dtr m D j) ip out :
+      Cfg 2 (ZoneSym M.k) (Σ i, tt_Ph M F i) x))
+    (tt_τ M F x m D ip out) trivial M.k (fun j hj => ?_)
+  · dsimp only at H
+    rw [hend] at H
+    exact H
+  · have hs : tt_stAt M F q' m j = ⟨some (q', m, ⟨j, hj⟩), F.entry (tt_dir (m ⟨j, hj⟩)) ⟨j, hj⟩⟩ :=
+      dif_pos hj
+    have hn : tt_next M F q' m ⟨j, hj⟩ = tt_stAt M F q' m (j + 1) := rfl
+    have hD : tt_Dtr m D (j + 1) = tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) := dif_pos hj
+    have hτ : tt_τ M F x m D ip out j = tt_trackTime M F x m ⟨j, hj⟩ (tt_Dtr m D j) ip out + 1 :=
+      dif_pos hj
+    show Segment _ _ _ (tt_cfg (some (tt_stAt M F q' m j)) (tt_Dtr m D j) ip out)
+      (tt_cfg (some (tt_stAt M F q' m (j + 1))) (tt_Dtr m D (j + 1)) ip out) _
+    rw [hs, hD, hτ, ← hn]
+    exact (tt_track_seg M F hk q' m ⟨j, hj⟩ (tt_Dtr m D j) ip out).1
+
+/-- **One round** [HS66; AB09, §1.7]. From the transition step at `q`, with data `D` whose
+homes are what the home cell `h0` reads and with decoded input symbol `inp`, let `a` be `M`'s
+transition at `q` on `inp` and the homes of `D`. If `a` halts, the zone machine halts after one
+step with `a`'s output symbol appended. Otherwise, with successor `q'`, it runs live to the
+transition step at `q'`, with the data after the home write and every track's step, the input
+head moved by `a` and `a`'s output symbol appended, in `2 + ∑ j < k` of the tracks' phase times.
+
+**Proof sketch.** One transition step (`tt_leaf_step`) writes the home tuple: the home cell
+becomes the zoned tape's of the written data (`Turing.zonedTape_homeWrite`). In the host it is
+the tagged phase run (`Turing.phaseHostTM_run_le`, for a halt) or, with the redirect of its
+exit, two steps to track `0`'s entry (`Turing.phaseHostTM_run`); the tracks follow
+(`tt_tracks_seg`) and the two segments concatenate (`Turing.Segment.trans`). -/
+private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    {x : List (ZoneSym M.k)} (q : M.State) (D : ZoneData M.k) (h0 : Option (ZoneSym M.k))
+    (hread : ∀ t, tt_homeRead h0 t = (D.2 t).home) (ip : Fin (x.length + 2))
+    (out : List (ZoneSym M.k)) (inp : Option Bool)
+    (hinp : tt_decodeIn (tt_cfg0 (some (.inl q)) D h0 ip out :
+      Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).inputSymbol = inp) :
+    ((tt_act M q inp D).state = none →
+      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+          ((tt_cfg0 (some (.inl q)) D h0 ip out :
+            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).state = none ∧
+      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+          ((tt_cfg0 (some (.inl q)) D h0 ip out :
+            Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none)) 1).output =
+        out ++ ((tt_act M q inp D).output.map Sum.inl).toList) ∧
+    ∀ q', (tt_act M q inp D).state = some q' →
+      Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+        (fun _ => True)
+        ((tt_cfg0 (some (.inl q)) D h0 ip out :
+          Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x).mapState (Sigma.mk none))
+        (tt_cfg (some ⟨none, .inl q'⟩)
+          (tt_Dtr (tt_moves (tt_act M q inp D)) (tt_homeData (tt_act M q inp D) D) M.k)
+          (moveInputPos ip (tt_act M q inp D).inputTape)
+          (out ++ ((tt_act M q inp D).output.map Sum.inl).toList))
+        (2 + ∑ j ∈ Finset.range M.k, tt_τ M F x (tt_moves (tt_act M q inp D))
+          (tt_homeData (tt_act M q inp D) D) (moveInputPos ip (tt_act M q inp D).inputTape)
+          (out ++ ((tt_act M q inp D).output.map Sum.inl).toList) j) := by
+  set c₀ : Cfg 2 (ZoneSym M.k) (tt_LeafSt M) x := tt_cfg0 (some (.inl q)) D h0 ip out with hc₀
+  set a := tt_act M q inp D with ha
+  have hr : c₀.workTapes 0 (c₀.workTapePos 0) = h0 := by
+    show Function.update (zonedTape D.2) 0 h0 0 = h0
+    exact Function.update_self _ _ _
+  have hR : tt_homeRead h0 = fun t => (D.2 t).home := funext hread
+  have hstep := tt_leaf_step M c₀ q rfl
+  rw [hr, hR, hinp] at hstep
+  change (tt_leafTM M).step c₀ =
+    { state := a.state.map fun q' => .inr (q', tt_moves a)
+      inputPos := moveInputPos c₀.inputPos a.inputTape
+      workTapes := fun j => if j = 0 then
+          Function.update (c₀.workTapes 0) (c₀.workTapePos 0)
+            (some (.inr fun t => some (tt_homeNew a (fun t => (D.2 t).home) t)))
+        else c₀.workTapes j
+      workTapePos := c₀.workTapePos
+      output := c₀.output ++ (a.output.map Sum.inl).toList } at hstep
+  have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →
+      tt_red M F hk none s = none := by
+    intro u hu s hs
+    obtain rfl : u = 0 := by omega
+    rw [MultiTapeTM.runFrom_zero] at hs
+    obtain rfl : (Sum.inl q : tt_LeafSt M) = s := Option.some.inj hs
+    rfl
+  refine ⟨fun hn => ?_, fun q' hq' => ?_⟩
+  · have H := phaseHostTM_run_le (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) none c₀ 1
+      hguard 1 le_rfl
+    rw [H, h1, hstep]
+    refine ⟨?_, ?_⟩
+    · rw [Cfg.mapState_state]
+      show Option.map _ (a.state.map _) = none
+      rw [hn]
+      rfl
+    · rw [Cfg.mapState_output]
+      rfl
+  · have hs₁ : ((tt_leafTM M).step c₀).state = some (.inr (q', tt_moves a)) := by
+      rw [hstep]
+      show a.state.map _ = _
+      rw [hq']
+      rfl
+    have hred : tt_red M F hk none (.inr (q', tt_moves a)) = some (tt_stAt M F q' (tt_moves a) 0) := by
+      show some _ = some _
+      rw [show tt_stAt M F q' (tt_moves a) 0 = _ from dif_pos hk]
+    have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) none c₀ _ 1 h1
+      _ hs₁ _ hred hguard
+    have hend : ((tt_leafTM M).step c₀).mapState (fun _ => tt_stAt M F q' (tt_moves a) 0) =
+        tt_cfg (some (tt_stAt M F q' (tt_moves a) 0)) (tt_homeData a D)
+          (moveInputPos ip a.inputTape) (out ++ (a.output.map Sum.inl).toList) := by
+      refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+      · rw [hs₁]
+        rfl
+      · rw [hstep]
+        rfl
+      · rw [hstep]
+        funext j p
+        by_cases hj : j = 0
+        · subst hj
+          show Function.update (Function.update (zonedTape D.2) 0 h0) 0 _ p = zonedTape _ p
+          rw [Function.update_idem, zonedTape_homeWrite]
+          rfl
+        · show (if j = 0 then _ else c₀.workTapes j) p = (if j = 0 then _ else fun _ => none) p
+          rw [if_neg hj, if_neg hj]
+          show (if j = 0 then _ else fun _ => none) p = none
+          rw [if_neg hj]
+      · rw [hstep]
+        rfl
+      · rw [hstep]
+        rfl
+    have hlead : Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+        (fun _ => True) (c₀.mapState (Sigma.mk none))
+        (tt_cfg (some (tt_stAt M F q' (tt_moves a) 0)) (tt_homeData a D)
+          (moveInputPos ip a.inputTape) (out ++ (a.output.map Sum.inl).toList)) 2 := by
+      refine (segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩
+      · exact H.2.trans hend
+      · rw [H.1 u (by omega), Set.mem_singleton_iff, Cfg.mapState_state]
+        rcases Nat.lt_or_ge u 1 with h | h
+        · obtain rfl : u = 0 := by omega
+          rw [MultiTapeTM.runFrom_zero]
+          exact fun h => by cases h
+        · obtain rfl : u = 1 := by omega
+          rw [h1, hs₁]
+          exact fun h => by cases h
+    exact hlead.trans (tt_tracks_seg M F hk q' (tt_moves a) (tt_homeData a D) _ _)
+
+/-- **The time bound of a round's track phases** [AB09, §1.7]: track `j`'s phase, with its
+dispatch, takes at most `A · (2^{i₀} + 1) + 1` steps for its scanned index `i₀` (`0` for a
+stay). -/
+private theorem tt_τ_le (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List (ZoneSym M.k)) (m : Fin M.k → SignType) (D : ZoneData M.k)
+    (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k)) (j : ℕ) (hj : j < M.k) :
+    tt_τ M F x m D ip out j ≤ A * (2 ^ tt_idx (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) + 1) + 1 := by
+  rw [show tt_τ M F x m D ip out j =
+    tt_trackTime M F x m ⟨j, hj⟩ (tt_Dtr m D j) ip out + 1 from dif_pos hj]
+  have := (tt_track_seg M F hk (x := x) M.tm.q₀ m ⟨j, hj⟩ (tt_Dtr m D j) ip out).2
+  omega
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
