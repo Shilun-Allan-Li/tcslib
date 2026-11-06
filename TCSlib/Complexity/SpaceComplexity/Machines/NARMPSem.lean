@@ -365,7 +365,7 @@ theorem PSem.of_areach {A : NARM m d Λ} {oracle : Fin d → List Bool → Bool}
         cases hA : A l with
         | choose l₁ l₀ =>
           have : astep (A.detPart false) oracle x (some l, v, none) = (none, v, some false) := by
-            simp [astep, NARM.detPart_choose hA]
+            simp [astep_ret (NARM.detPart_choose hA false)]
           rw [this] at he; cases he
         | det i =>
           have e : astep (A.detPart false) oracle x (some l, v, none) =
@@ -416,7 +416,7 @@ theorem searchUp_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r
     refine AReach.step ⟨hpre _, hb⟩ ?_
     rw [htest, if_neg hn]
     refine AReach.step ⟨by simp [PreS, hinc], hb⟩ ?_
-    simp only [astep, hinc, Function.update_self, Function.update_idem]
+    simp only [astep_inc hinc, Function.update_self, Function.update_idem]
     exact ih (c₀ + 1) (by omega) (fun c' h1 h2 => hmin c' (by omega) h2) (by omega)
 
 /-- **Searching downwards**: from `r = c₀`, the loop `dec: r--; test: if P r goto yes else
@@ -438,7 +438,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
     have he : c₀ - 1 = c := by omega
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
-    simp only [astep, hdec, Function.update_self, Function.update_idem, he]
+    simp only [astep_dec hdec, Function.update_self, Function.update_idem, he]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_pos hc]
     exact AReach.refl _
@@ -446,7 +446,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     have hn : ¬ P (c₀ - 1) := hmax _ (by omega) (by omega)
     refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
-    simp only [astep, hdec, Function.update_self, Function.update_idem]
+    simp only [astep_dec hdec, Function.update_self, Function.update_idem]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_neg hn]
     exact ih (c₀ - 1) (by omega) (by omega) (fun c' h1 h2 => hmax c' h1 (by omega)) (by omega)

@@ -273,7 +273,7 @@ lemma mrun_eq_arun (β : Bool) (a : AConf m Λ) (μ : Mem) (T : ℕ)
         have hret : A.detPart β l = .ret β := MARM.detPart_mem (by simp [hA, MIns.isMem]) β
         have h1 : arun (A.detPart β) oracle x a (t + 1) = (none, v, some β) := by
           simp [arun, Function.iterate_succ_apply'] at hc ⊢
-          rw [hc]; simp [astep, hret]
+          rw [hc]; simp [astep_ret hret]
         apply hlive
         rw [show T = (t + 1) + (T - (t + 1)) by omega, arun_add, h1, arun_halted]
 

@@ -152,17 +152,17 @@ lemma d1_loop (i u : ℕ) (hi : i ≤ B) (hu : u ≤ B) : ∀ a b, b + 2 * a ≤
   | zero =>
     intro b hb
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simpa [astep, searchA] using AReach.refl _
+    simpa [astep_jz (show searchA .d1 = _ from rfl)] using AReach.refl _
   | succ a ih =>
     intro b hb
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_1, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz (show searchA .d1 = _ from rfl), rf_1, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_1, rf_upd1, Nat.add_sub_cancel]
+    simp only [astep_dec (show searchA .d1a = _ from rfl), rf_1, rf_upd1, Nat.add_sub_cancel]
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_2, rf_upd2]
+    simp only [astep_inc (show searchA .d1b = _ from rfl), rf_2, rf_upd2]
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_2, rf_upd2]
+    simp only [astep_inc (show searchA .d1c = _ from rfl), rf_2, rf_upd2]
     have e : b + 2 * (a + 1) = b + 1 + 1 + 2 * a := by ring
     rw [e]
     exact ih (b + 1 + 1) (by omega)
@@ -179,15 +179,15 @@ lemma d2_loop (i u : ℕ) (hi : i ≤ B) (hu : u ≤ B) : ∀ b p, p + b ≤ B �
   | zero =>
     intro p hb
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simpa [astep, searchA] using AReach.refl _
+    simpa [astep_jz (show searchA .d2 = _ from rfl)] using AReach.refl _
   | succ b ih =>
     intro p hb
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_2, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz (show searchA .d2 = _ from rfl), rf_2, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_2, rf_upd2, Nat.add_sub_cancel]
+    simp only [astep_dec (show searchA .d2a = _ from rfl), rf_2, rf_upd2, Nat.add_sub_cancel]
     refine AReach.step (guard_rf x B _ hi (by omega) (by omega) hu) ?_
-    simp only [astep, searchA, rf_1, rf_upd1]
+    simp only [astep_inc (show searchA .d2b = _ from rfl), rf_1, rf_upd1]
     have e : p + (b + 1) = p + 1 + b := by ring
     rw [e]
     exact ih (p + 1) (by omega)
@@ -207,15 +207,15 @@ lemma dbl_loop (n : ℕ) (hB : 2 ^ n ≤ B) : ∀ k a, a + k = n →
     intro a ha
     obtain rfl : a = n := by omega
     refine AReach.step (guard_rf x B _ (by omega) hB (by omega) (by omega)) ?_
-    simpa [astep, searchA] using AReach.refl _
+    simpa [astep_jz (show searchA .dbl = _ from rfl)] using AReach.refl _
   | succ k ih =>
     intro a ha
     have h2 : 2 ^ (a + 1) ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) (by omega)
     have e2 : 2 ^ (a + 1) = 2 * 2 ^ a := by ring
     refine AReach.step (guard_rf x B _ (by omega) (by omega) (by omega) (by omega)) ?_
-    simp only [astep, searchA, rf_0, Nat.add_one_ne_zero, ↓reduceIte]
+    simp only [astep_jz (show searchA .dbl = _ from rfl), rf_0, Nat.add_one_ne_zero, ↓reduceIte]
     refine AReach.step (guard_rf x B _ (by omega) (by omega) (by omega) (by omega)) ?_
-    simp only [astep, searchA, rf_0, rf_upd0, Nat.add_sub_cancel]
+    simp only [astep_dec (show searchA .decI = _ from rfl), rf_0, rf_upd0, Nat.add_sub_cancel]
     refine (d1_loop P x B k 0 (by omega) (by omega) (2 ^ a) 0 (by omega)).trans ?_
     refine (d2_loop P x B k 0 (by omega) (by omega) (0 + 2 * 2 ^ a) 0 (by omega)).trans ?_
     have e : 0 + (0 + 2 * 2 ^ a) = 2 ^ (a + 1) := by omega
@@ -236,7 +236,7 @@ lemma enum_loop (n : ℕ) (hB : 2 ^ n ≤ B) : ∀ k u, u + k = 2 ^ n → ∀ b 
     intro u hu b hb
     obtain rfl : u = 2 ^ n := by omega
     refine AHalt.step (guard_rf x B _ (by omega) hB (by omega) hB) ?_
-    simp only [astep, searchA, rf_1, rf_3, ↓reduceIte]
+    simp only [astep_jeq (show searchA .enum = _ from rfl), rf_1, rf_3, ↓reduceIte]
     obtain rfl : b = false := by
       cases b
       · rfl
@@ -246,11 +246,11 @@ lemma enum_loop (n : ℕ) (hB : 2 ^ n ≤ B) : ∀ k u, u + k = 2 ^ n → ∀ b 
     intro u hu b hb
     have hu' : u < 2 ^ n := by omega
     refine AHalt.step (guard_rf x B _ (by omega) hB (by omega) (by omega)) ?_
-    simp only [astep, searchA, rf_1, rf_3, hu'.ne, ↓reduceIte]
+    simp only [astep_jeq (show searchA .enum = _ from rfl), rf_1, rf_3, hu'.ne, ↓reduceIte]
     refine AHalt.step (guard_rf x B _ (by omega) hB (by omega) (by omega)) ?_
     have ho : orc P 1 (pairEncode x (Nat.bits u)) = true ↔ pairEncode x (Nat.bits u) ∈ P := by
       simp [orc, decs, indicator_eq_decide]
-    simp only [astep, searchA, vword_whole₁, rf_3]
+    simp only [astep_call (show searchA .chk = _ from rfl), vword_whole₁, rf_3]
     by_cases hq : pairEncode x (Nat.bits u) ∈ P
     · rw [if_pos (ho.mpr hq)]
       obtain rfl : b = true := hb.mpr ⟨u, le_rfl, hu', hq⟩
@@ -260,7 +260,7 @@ lemma enum_loop (n : ℕ) (hB : 2 ^ n ≤ B) : ∀ k u, u + k = 2 ^ n → ∀ b 
       rw [hf]
       simp only [Bool.false_eq_true, ↓reduceIte]
       refine AHalt.step (guard_rf x B _ (by omega) hB (by omega) (by omega)) ?_
-      simp only [astep, searchA, rf_3, rf_upd3]
+      simp only [astep_inc (show searchA .nxt = _ from rfl), rf_3, rf_upd3]
       refine ih (u + 1) (by omega) b (hb.trans ⟨fun ⟨w, h1, h2, h3⟩ => ⟨w, ?_, h2, h3⟩,
         fun ⟨w, h1, h2, h3⟩ => ⟨w, by omega, h2, h3⟩⟩)
       rcases Nat.lt_or_ge u w with h | h
@@ -297,7 +297,7 @@ theorem searchLang_mem_PSPACE (hP : P ∈ PSPACE) : searchLang P ∈ PSPACE := b
   rw [e0]
   refine AHalt.step (G := G x B) (guard_rf x B (i := 0) (p := 0) (t := 0) (u := 0) .init
     (by omega) (by omega) (by omega) (by omega)) ?_
-  simp only [astep, searchA, rf_1, rf_upd1, zero_add]
+  simp only [astep_inc (show searchA .init = _ from rfl), rf_1, rf_upd1, zero_add]
   -- count `i = |x|`
   have hq : ∀ k ≤ x.length, orc P 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
     intro k _
