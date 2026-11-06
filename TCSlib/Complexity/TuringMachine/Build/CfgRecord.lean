@@ -556,18 +556,12 @@ private theorem recordStep_mapState_mk {K : ℕ} {Γ S S' : Type} {x : List Γ}
     (Cfg.mapState f ⟨st, ip, wt, wp, o⟩ : Cfg K Γ S' x) = ⟨st.map f, ip, wt, wp, o⟩ :=
   Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
 
-/-- A one-step run is one machine step, by the published run equations. -/
-private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
-    (M : MultiTapeTM K Γ S) (d : Cfg K Γ S x) : M.runFrom d 1 = M.step d := by
-  have h := MultiTapeTM.runFrom_succ_eq_step' (tm := M) (cfg := d) (t := 0)
-  rwa [MultiTapeTM.runFrom_zero] at h
-
 /-- One round of unit length is one machine step, by the published orbit equation. -/
 private theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}
     (M : MultiTapeTM K Γ S) (c : Cfg K Γ S x) (r : ℕ) :
     roundOrbit M (fun _ => 1) c (r + 1) = M.step (roundOrbit M (fun _ => 1) c r) := by
   rw [roundOrbit_succ]
-  exact recordStep_runFrom_one M _
+  exact MultiTapeTM.runFrom_one M _
 
 /-- **Offset congruence**: the `j`-th field offset reads only the lengths of the first `j`
 fields, so two field lists whose first `j` fields have equal lengths share it. Assembled
@@ -847,7 +841,7 @@ private theorem recordStep_read_run {Q T : Type} [DecidableEq Q] [DecidableEq T]
         {d with state := some (some (d.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T))))} ∧
       (∀ u < 1, ∀ b, (recordStepRead.runFrom d u).state ≠ some (some b)) := by
   constructor
-  · rw [recordStep_runFrom_one]
+  · rw [MultiTapeTM.runFrom_one]
     rw [step_of_inputMoveAction recordStepRead d 0 hd rfl, moveInputPos_zero]
   · intro u hu b
     have : u = 0 := by omega
@@ -958,14 +952,14 @@ private theorem recordStep_probe_run {Γ : Type} {x : List Γ} (hx : 0 < x.lengt
     · have h2 : recordStepProbe.runFrom d 2 =
           recordStepProbe.step (recordStepProbe.step d) := by
         have h := MultiTapeTM.runFrom_succ_eq_step' (tm := recordStepProbe) (cfg := d) (t := 1)
-        rwa [recordStep_runFrom_one] at h
+        rwa [MultiTapeTM.runFrom_one] at h
       rw [h2, step1, step2]
     · intro u hu v
       have hu' : u = 0 ∨ u = 1 := by omega
       rcases hu' with rfl | rfl
       · rw [MultiTapeTM.runFrom_zero]
         simp [hd]
-      · rw [recordStep_runFrom_one, step1]
+      · rw [MultiTapeTM.runFrom_one, step1]
         simp [a]
     · rcases (recordStep_input_blank d).mp hblank with h0 | hR
       · have hpos : a.inputPos.val = 1 := by
@@ -1000,7 +994,7 @@ private theorem recordStep_probe_run {Γ : Type} {x : List Γ} (hx : 0 < x.lengt
     have hR : d.inputPos.val ≠ x.length + 1 := fun h => hbound (Or.inr h)
     have his : d.inputSymbol.isSome = true := by cases h : d.inputSymbol <;> simp_all
     refine ⟨1, by omega, false, d.inputPos, ?_, ?_, by simp [hR], rfl, fun u _ => fixed u⟩
-    · rw [recordStep_runFrom_one]
+    · rw [MultiTapeTM.runFrom_one]
       rw [step_of_inputMoveAction recordStepProbe d (q' := .done false) 0 hd
         (by simp [recordStepProbe, his]), moveInputPos_zero]
     · intro u hu v

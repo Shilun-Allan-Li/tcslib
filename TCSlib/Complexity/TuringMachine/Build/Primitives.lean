@@ -401,7 +401,7 @@ private lemma scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
   | nil =>
     intro pre out hx
     subst x
-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (tm.tr q _ _).apply _ = _
     rw [htr, scanCfg_read]
@@ -859,7 +859,7 @@ private lemma extract_suffix (first : Bool) (x rest a : List Bool) :
   induction rest with
   | nil =>
     intro pre out hx
-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
     rw [extractCfg_read]
@@ -4328,8 +4328,7 @@ private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
     have he : w = pre := by simpa using hw
     clear hw
     subst w
-    simp only [List.append_nil, List.length_nil, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.append_nil, List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     have hr := splitPos_read pre (splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
     simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
     unfold MultiTapeTM.step
@@ -6827,8 +6826,7 @@ unique pair delimiter before entering the suffix copier. -/
 private lemma emitterToken_separator (x out : List Bool) (i : ℕ) (hi : i ≤ x.length) :
     unaryTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =
       scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true]) := by
-  rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
   apply Cfg.ext_zero_tapes <;>
     simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
 

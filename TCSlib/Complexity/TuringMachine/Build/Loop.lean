@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -1071,7 +1072,7 @@ private lemma loopHost_fuel_copy (body F : FinTM Bool) (anchor : body.State) (fo
   induction rest with
   | nil =>
     intro pre
-    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [List.length_nil, MultiTapeTM.runFrom_one]
     change (match (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
         (loopCopyTape pre []) pre.length pre.length out).workTapeSymbols
           (Fin.last (body.k + 1 + (1 + F.k))) with

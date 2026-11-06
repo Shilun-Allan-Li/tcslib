@@ -15,7 +15,8 @@ set_option autoImplicit false
 Four small facts that machine constructions over several phases use repeatedly: the input read
 depends on the input head only; a live configuration redirected to a state of phase `i` is the
 tagged configuration of phase `i`; a configuration tagged by one phase is never at a state of
-another; and a list of equal-length chunks has the expected length.
+another; and a list of equal-length chunks has the expected length. It also states the one-step
+run identity `M.runFrom c 1 = M.step c`, which the vendored `Deterministic` does not publish.
 
 ## Main definitions
 
@@ -32,6 +33,7 @@ No new definitions.
 * `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
   another phase.
 * `Turing.length_flatMap_uniform` — a list of equal-length chunks has length count × chunk length.
+* `Turing.MultiTapeTM.runFrom_one` — a one-step run is one machine step.
 
 ## References
 
@@ -115,5 +117,15 @@ theorem length_flatMap_uniform {α β : Type*} (l : List α) (f : α → List β
   rw [List.length_flatMap, List.map_congr_left (fun a _ => hf a), List.map_const',
     List.sum_replicate]
   rfl
+
+/-- **A one-step run is one step.** Running a machine `tm` for one step from a configuration `cfg`
+gives the machine's step at `cfg`: `tm.runFrom cfg 1 = tm.step cfg`.
+
+**Proof sketch.** Peel the step off the front of the run (`runFrom_succ_eq_step`); the remaining
+run of zero steps is the identity (`runFrom_zero`). -/
+theorem MultiTapeTM.runFrom_one {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) :
+    tm.runFrom cfg 1 = tm.step cfg := by
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
 
 end Turing

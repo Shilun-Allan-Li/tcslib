@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.Formulas.CNFEncoding
 import TCSlib.Complexity.ClassNP.NP
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.TuringMachine.CfgFacts
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.List.MinMax
 
@@ -1576,11 +1577,6 @@ private lemma satRed_move (x : List Bool) (q q' : Fin 35)
   exact satRedAction_apply x (some q) (some q') i i' hi hi' n n buf buf a b a' b' out out
     m none none d₀ d₁ none hm rfl rfl ha hb (by simp)
 
-/-- A single machine transition is the one-step run. -/
-private lemma satRed_one {x : List Bool} (cfg : Cfg 2 Bool (Fin 35) x) :
-    satRedTM.tm.runFrom cfg 1 = satRedTM.tm.step cfg := by
-  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-
 /-- Counter rewinds take exactly `r+1` silent transitions, including the
 left blank, and apply to each of the three return phases.
 
@@ -1717,9 +1713,9 @@ private lemma satRed_maxLiteral (x : List Bool) (v : ℕ) (pol : Bool)
         simpa only [hp, Nat.add_assoc] using hm)
       (by simp) (by simp)
     rfl
-  rw [← satRed_one] at h₁
-  rw [← satRed_one] at h₃
-  rw [← satRed_one] at h₅
+  rw [← MultiTapeTM.runFrom_one satRedTM.tm] at h₁
+  rw [← MultiTapeTM.runFrom_one satRedTM.tm] at h₃
+  rw [← MultiTapeTM.runFrom_one satRedTM.tm] at h₅
   conv_lhs => rw [show 2 * v + 5 = 1 + (v + (1 + ((v + 2) + 1))) by omega,
     MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
     MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, hh₄, h₅]
@@ -1830,7 +1826,7 @@ private lemma satRed_maxFormula (x : List Bool) (φ : CNF ℕ) :
         1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
       simp [CNF.serialize, CNF.serializeClause] <;> omega
     refine ⟨1 + (s + t), by omega, ?_⟩
-    rw [← satRed_one] at hs
+    rw [← MultiTapeTM.runFrom_one satRedTM.tm] at hs
     rw [MultiTapeTM.runFrom_add, hs, MultiTapeTM.runFrom_add, hsrun]
     have hn : max (max n (satClauseVars C)) (CNF.numVars φ) =
         max n (CNF.numVars (C :: φ)) := by rw [sat_numVars_cons, max_assoc]
@@ -1876,7 +1872,7 @@ private lemma satRed_init (x : List Bool) :
     exact satRedAction_apply x (some 1) (some 2) 0 0 _ _ 0 0 (fun _ => none)
       (satRedBuffer [] 0) 0 (-1) 0 0 [] [] 0 none (some (some false)) 0 .pos none
       (moveInputPos_zero _) rfl satRedBuffer_empty.symm (by simp) (by simp) (by simp)
-  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, satRed_one, h₂]
+  rw [hinit, MultiTapeTM.runFrom_succ_eq_step, h₁, MultiTapeTM.runFrom_one, h₂]
 
 /-- The maximum pass and native rewind establish the streaming seam with
 exactly `numVars` in unary, empty output, and both work heads at zero.

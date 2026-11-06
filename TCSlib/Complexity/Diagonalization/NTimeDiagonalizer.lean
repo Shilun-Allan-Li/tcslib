@@ -1278,11 +1278,6 @@ private theorem qy_moveOne {K : ℕ} (P : Fin K → ℤ) (i : Fin K) :
     rfl
   · rw [Function.update_of_ne h, if_neg h, SignType.coe_zero, add_zero]
 
-/-- One step of a run. -/
-private theorem qy_run_one {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)
-    (c : Cfg K Bool S x) : M.runFrom c 1 = M.step c := by
-  rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
-
 /-- Two steps of a run. -/
 private theorem qy_run_two {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S)
     (c : Cfg K Bool S x) : M.runFrom c 2 = M.step (M.runFrom c 1) := by
@@ -1369,7 +1364,7 @@ private theorem qy_emit_run {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : Lis
         omega
       subst hkw
       refine ⟨1, by omega, ?_, ?_⟩
-      · rw [qy_run_one, qy_step M _ (.suf 0) ip T _ _ (fun _ => 0) none (by
+      · rw [MultiTapeTM.runFrom_one, qy_step M _ (.suf 0) ip T _ _ (fun _ => 0) none (by
             have hn : T i (Function.update P i (w.length : ℤ) i) = none := by
               rw [Function.update_self, hT, FinTM.bufferTape_nat, List.getElem?_eq_none le_rfl]
             simp only [hM, qyEmitTM, hn]),
@@ -1391,7 +1386,7 @@ private theorem qy_emit_run {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : Lis
         rfl
       have hstep1 : M.runFrom (qyC .rd ip T (Function.update P i k) o') 1 =
           qyC (.got b) ip T (Function.update P i ((k : ℤ) + 1)) o' := by
-        rw [qy_run_one, qy_step M _ (.got b) ip T _ _
+        rw [MultiTapeTM.runFrom_one, qy_step M _ (.got b) ip T _ _
             (fun j => if j = i then .pos else 0) none (by
             have hn : T i (Function.update P i (k : ℤ) i) = some b := by
               rw [Function.update_self, hT, hkb]
@@ -2115,7 +2110,7 @@ private theorem qy_emit_halt {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : Li
     (o : List Bool) :
     ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).state = none ∧
       ((qyEmitTM K i pre suf rr dl).runFrom (qyC .done ip T P o) 1).output = o := by
-  rw [qy_run_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some (rfl : (qyC (x := x) (K := K)
     (QyEm.done : QyEm pre.length suf.length rr) ip T P o).state = some .done)]
   constructor
   · rw [Action.apply_state]
@@ -5385,7 +5380,7 @@ private theorem dz_take_run {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.l
       ⟨0, fun j => if j = i then (some none, .pos) else (none, 0), none,
         some (some (T i (P i)))⟩ := by
     simp only [dzTakeTM]
-  rw [qy_run_one, MultiTapeTM.step_of_some hs, hw, htr]
+  rw [MultiTapeTM.runFrom_one, MultiTapeTM.step_of_some hs, hw, htr]
   apply Cfg.ext
   · rw [Action.apply_state]
     rfl

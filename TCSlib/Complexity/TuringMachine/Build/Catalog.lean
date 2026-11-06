@@ -2471,7 +2471,7 @@ private lemma f2_scanCopy_suffix {S : Type} (tm : MultiTapeTM 0 Bool S) (q : S)
   | nil =>
     intro pre out hx
     subst x
-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change (tm.tr q _ _).apply _ = _
     rw [htr, f2_scanCfg_read]
@@ -2925,7 +2925,7 @@ private lemma f2_extract_suffix (first : Bool) (x rest a : List Bool) :
   induction rest with
   | nil =>
     intro pre out hx
-    simp only [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     unfold MultiTapeTM.step
     change ((f2_pairExtractTM first true).tm.tr (.inr 2) _ _).apply _ = _
     rw [f2_extractCfg_read]
@@ -7484,7 +7484,7 @@ private lemma f2_loopHost_fuel_copy (body F : FinTM Bool) (anchor : body.State)
   induction rest with
   | nil =>
     intro pre
-    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [List.length_nil, MultiTapeTM.runFrom_one]
     change (match (f2_loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
         (f2_loopCopyTape pre []) pre.length pre.length out).workTapeSymbols
           (Fin.last (body.k + 1 + (1 + F.k))) with
@@ -9971,8 +9971,7 @@ private lemma f2_splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
     have he : w = pre := by simpa using hw
     clear hw
     subst w
-    simp only [List.append_nil, List.length_nil, MultiTapeTM.runFrom_succ_eq_step,
-      MultiTapeTM.runFrom_zero]
+    simp only [List.append_nil, List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_one]
     have hr := f2_splitPos_read pre (f2_splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
     simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
     unfold MultiTapeTM.step

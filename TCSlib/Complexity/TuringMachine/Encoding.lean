@@ -9,6 +9,7 @@ import Mathlib.Data.Nat.Bits
 import Mathlib.Data.Nat.Size
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -460,9 +461,8 @@ private lemma pairDiag_separator (x out : List Bool) :
     pairDiagTM.tm.runFrom
       (pairDiagCfg x (some 0) ⟨x.length + 1, by omega⟩ out) 3 =
       pairDiagCfg x (some 4) ⟨x.length, by omega⟩ (out ++ [false, true]) := by
-  rw [show 3 = (0 + 1) + 1 + 1 from rfl,
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  rw [show 3 = 1 + 1 + 1 from rfl,
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_one]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 0) out)]
   simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
   rw [pairDiag_step _ _ _ _ _ (pairDiag_right x (some 2) _)]
