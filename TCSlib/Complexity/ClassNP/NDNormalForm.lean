@@ -112,8 +112,7 @@ private theorem nf_ctl_position (k : ℕ) (s : List Bool) (f : Bool) :
     simp only [List.foldl_nil, List.length_nil, Nat.zero_mod]
     rfl
   | append_singleton s b ih =>
-    simp only [List.foldl_append, List.foldl_cons, List.foldl_nil,
-      List.length_append, List.length_singleton]
+    simp only [List.foldl_concat, List.length_append, List.length_singleton]
     rw [nf_ctlStep]
     split_ifs with h
     · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
