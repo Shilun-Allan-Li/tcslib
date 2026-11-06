@@ -69,7 +69,9 @@ exit 0 with no errors. Only one probe ever failed: `Reach` before its fix, with 
 `mem_iff_reach` (line 293 of the real file, line 296 of the copy). There, `hstep`, a `stepLang`
 membership, was passed where `∀ j < t, StepRel N x s (c j) (c (j + 1))` is expected. The fix wraps
 it as `fun j hj => stepRel_iff_mem.mpr (hstep j hj)`. Error counts are lines matching `: error`. The
-only non-error output is the existing `sorry` warnings in `ClassPSPACE.TQBF`.
+non-error output is 22 `sorry` warnings: 21 in `ClassPSPACE.TQBF` and one in
+`SpaceComplexity.Savitch` (`savitch`, sorried at that base; #208 later proved it). The merged-head
+replay (`replay-lrp3`) has only the 21 (corrected after gate 107's minor 2).
 
 | Module | Sealed definitions | Exit code | Errors |
 |---|---|---|---|
