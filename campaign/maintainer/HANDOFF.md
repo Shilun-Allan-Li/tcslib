@@ -156,14 +156,13 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
 
 ## 3. Queue after the PRs
 
-1. **The general `savitch`'s deepening fill** (agent: Claude, the user's 2026-11-05 choice). The
-   brief `campaign/fills/ch34/briefs/ch34-fill-deepen-DRAFT.md` issues after #196 merges, with
-   its pre-ship re-run on the merged tree and its `@TBD@` items measured. The design is
-   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8–§10.
-2. **G5's fill brief**, after #197 merges: Hennie–Stearns over the zone layer, citing
-   `Build/ZoneStep`. The fill writes the controller, its invariant and the count bound; `k = 0`
-   is handled separately (plan §2). Codex first, by the soft rule.
-3. **H's brief:** re-take its pre-ship after NF and E-D land. Its screen population includes both
+1. **The deepening fill** is dispatched (2026-11-06, Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`.
+   Its delivery is reviewed by a sub-agent, then landed by PR and a fill gate.
+2. **G5's fill brief** (agent Claude, the user's 2026-11-05 ruling) issues after #202 merges. Its
+   draft, route probe and pre-ship on #202's tree are in `campaign/fills/u2s/drafts/u2s-fill-g5*`
+   (`preship/README.md`); at issue, re-check them on the merged tree, fill the base, the in-flight
+   list and `@ANCESTOR@`, and move the inputs to `inputs/`, `orders/` and `logs/`.
+3. **H's brief:** re-take its pre-ship after NF lands (#191; E-D landed as #188). Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
