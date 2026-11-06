@@ -6369,6 +6369,7 @@ TCSlib.Cryptography.owpPredictor	def	TCSlib.Cryptography.Pseudorandom.GeneratorF
 TCSlib.Cryptography.exists_owpPredictor	thm	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 TCSlib.Cryptography.owpGenBits	def	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 TCSlib.Cryptography.owpGenNot	def	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
+TCSlib.Cryptography.owpPredictor_apply	thm	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 TCSlib.Cryptography.predProb_owpPredictor_false	thm	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 TCSlib.Cryptography.owpGen.eq_1	thm	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 TCSlib.Cryptography.uprob_bool_prod	thm	TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
@@ -6864,6 +6865,7 @@ TCSlib.Cryptography.FunFamily.WorstCaseOneWay.toLit	thm	TCSlib.Cryptography.Asym
 TCSlib.Cryptography.FunFamily.WorstCaseOneWay	inductive	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.mk.sizeOf_spec	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.noConfusionType	def-reducible	TCSlib.Cryptography.Asymptotic.OneWay
+TCSlib.Cryptography.oneWayPermutation_iff	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.toFunFamily_domEquiv	def	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WeakOneWay	inductive	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.StrongOneWay.hard	thm	TCSlib.Cryptography.Asymptotic.OneWay
@@ -6872,6 +6874,7 @@ TCSlib.Cryptography.FunFamily.WeakOneWay.mk	ctor	TCSlib.Cryptography.Asymptotic.
 TCSlib.Cryptography.FunFamily.blocks_symm_apply	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.mk	ctor	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.mk.injEq	thm	TCSlib.Cryptography.Asymptotic.OneWay
+TCSlib.Cryptography.FunFamily.ofString_outLen_eval	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WeakOneWay.mk._flat_ctor	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily._sizeOf_1	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.mk	ctor	TCSlib.Cryptography.Asymptotic.OneWay
@@ -6882,7 +6885,6 @@ TCSlib.Cryptography.OneWay.invProb_prodFun_le_yaoTry	thm	TCSlib.Cryptography.Asy
 TCSlib.Cryptography.FunFamily.casesOn	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.StrongOneWay.easy	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.ofString.eq_1	thm	TCSlib.Cryptography.Asymptotic.OneWay
-_private.TCSlib.Cryptography.Asymptotic.OneWay.0.TCSlib.Cryptography.blocks_apply	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.prod_inLen	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.yaoBlocks_pos	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob._simp_1_1	thm	TCSlib.Cryptography.Asymptotic.OneWay
@@ -6909,12 +6911,14 @@ TCSlib.Cryptography.FunFamily.outLen	def-proj	TCSlib.Cryptography.Asymptotic.One
 TCSlib.Cryptography.FunFamily.WorstCaseOneWay.mk	ctor	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.toFunFamily_outLen_eval	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.blocks	def	TCSlib.Cryptography.Asymptotic.OneWay
+TCSlib.Cryptography.OneWayPermutation.evaluator	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.ctorIdx	def-reducible	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWay.easy	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily._sizeOf_inst	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WeakOneWay.rec	rec	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.mk.inj	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.recOn	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
+TCSlib.Cryptography.FunFamily.ofString_f_apply	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.noConfusionType	def-reducible	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit	inductive	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.ofFn_blocks_symm	thm	TCSlib.Cryptography.Asymptotic.OneWay
@@ -6961,11 +6965,11 @@ TCSlib.Cryptography.FunFamily.invProbAt_nonneg	thm	TCSlib.Cryptography.Asymptoti
 TCSlib.Cryptography.FunFamily.mk._flat_ctor	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.casesOn	def-aux	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.ofString	def	TCSlib.Cryptography.Asymptotic.OneWay
-TCSlib.Cryptography.PermFamily.toFunFamily_codEquiv_symm_ofFn	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.toParam._proof_1_2	thm	TCSlib.Cryptography.Asymptotic.OneWay
 _private.TCSlib.Cryptography.Asymptotic.OneWay.0.TCSlib.Cryptography.eventually_poly_mul_two_pow_lt_one	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.mk.sizeOf_spec	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.toFunFamily_codEquiv	def	TCSlib.Cryptography.Asymptotic.OneWay
+TCSlib.Cryptography.FunFamily.ofFn_ofString_apply	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.prod_outLen	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.invProbAt_eq_uprob	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.yaoRounds	def	TCSlib.Cryptography.Asymptotic.OneWay
@@ -6974,13 +6978,11 @@ TCSlib.Cryptography.FunFamily.noConfusion	def-aux	TCSlib.Cryptography.Asymptotic
 _private.TCSlib.Cryptography.Asymptotic.OneWay.0.TCSlib.Cryptography.exists_runAt_eq_arg	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.StrongOneWay	inductive	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.hard	thm	TCSlib.Cryptography.Asymptotic.OneWay
-TCSlib.Cryptography.PermFamily.toFunFamily_inLen	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.mk.noConfusion	def-reducible	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.OneWayPermutation	def	TCSlib.Cryptography.Asymptotic.OneWay
 _private.TCSlib.Cryptography.Asymptotic.OneWay.0.TCSlib.Cryptography.exp_neg_le_two_pow	thm	TCSlib.Cryptography.Asymptotic.OneWay
 _private.TCSlib.Cryptography.Asymptotic.OneWay.0.TCSlib.Cryptography.ofFn_blocks_two_symm	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.mk.inj	thm	TCSlib.Cryptography.Asymptotic.OneWay
-TCSlib.Cryptography.PermFamily.toFunFamily_outLen	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.PermFamily.toFunFamily_domEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.FunFamily.blocks_apply	thm	TCSlib.Cryptography.Asymptotic.OneWay
 TCSlib.Cryptography.yaoBlocks	def	TCSlib.Cryptography.Asymptotic.OneWay
@@ -8038,6 +8040,7 @@ TCSlib.Cryptography.padStr_of_length_le	thm	TCSlib.Cryptography.Asymptotic.Colle
 TCSlib.Cryptography.polyTimeComputable_zerosPoly	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 TCSlib.Cryptography.padStr.eq_1	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 TCSlib.Cryptography.ofFn_padFin_eq_take._proof_1_1	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
+TCSlib.Cryptography.padStr_eq	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 TCSlib.Cryptography.padStr_of_length_le._proof_1_1	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 TCSlib.Cryptography.ofFn_padFin_eq_take	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 TCSlib.Cryptography.zipWith_xor_replicate_true	thm	TCSlib.Cryptography.Asymptotic.CollectionsLemmas
@@ -8231,6 +8234,7 @@ TCSlib.Cryptography.HardcoreBit.secProb	def	TCSlib.Cryptography.HardcoreBit.Inne
 TCSlib.Cryptography.HardcoreBit.glBit.eq_1	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.ip	def	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.glPad	def	TCSlib.Cryptography.HardcoreBit.InnerProduct
+TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.pushesUniform_xor	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.ip_single	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.glInverter	def	TCSlib.Cryptography.HardcoreBit.InnerProduct
@@ -8243,6 +8247,7 @@ TCSlib.Cryptography.HardcoreBit.GuessCoins	def-reducible	TCSlib.Cryptography.Har
 TCSlib.Cryptography.HardcoreBit.invProb_guessInverter_cubic	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessRecover	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.uprob_guess_eq	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
+TCSlib.Cryptography.HardcoreBit.guessInverter_eq	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessRecover_correct_guess	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.idealRecover.eq_1	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessInverter	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
@@ -8257,6 +8262,7 @@ TCSlib.Cryptography.HardcoreBit.invProb_guessInverter_enc	thm	TCSlib.Cryptograph
 TCSlib.Cryptography.HardcoreBit.invProb_majorityInverter	thm	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 TCSlib.Cryptography.HardcoreBit.trialBit.eq_1	thm	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 TCSlib.Cryptography.HardcoreBit.uprob_majorityRecover_ne_le	thm	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
+TCSlib.Cryptography.HardcoreBit.majorityInverter_eq	thm	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 TCSlib.Cryptography.HardcoreBit.majorityRecover	def	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 TCSlib.Cryptography.HardcoreBit.trialBit_correct	thm	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
 TCSlib.Cryptography.HardcoreBit.trialBit	def	TCSlib.Cryptography.HardcoreBit.ThreeQuarters
@@ -8304,6 +8310,7 @@ TCSlib.Cryptography.take_prgIterFun_ofFn	thm	TCSlib.Cryptography.Asymptotic.Hard
 TCSlib.Cryptography.expandRedMachine._proof_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.glPadCollPost.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 Complexity.NUPPT.wrapCoinsEquiv_symm_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
+Complexity.NUPPT.wrapCoinsEquiv._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.expandRedPre_layout._proof_1_7	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.expandRedMachine_distinguisher	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.owpPredMachine._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
@@ -8331,7 +8338,6 @@ Complexity.NUPPT.reparam._proof_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreLem
 TCSlib.Cryptography.expandRedPre_layout._proof_1_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.ofFn_snoc_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.expandRedPre_layout._proof_1_3	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
-Complexity.NUPPT.wrap_coinLen	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.expandRedPre_layout	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 _private.TCSlib.Cryptography.Asymptotic.HardCoreLemmas.0.TCSlib.Cryptography.glPadDecode.match_1.splitter	def-aux	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 Complexity.NUPPT.wrapCoinsEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
@@ -8353,6 +8359,7 @@ TCSlib.Cryptography.owpPredMachine_predProb	thm	TCSlib.Cryptography.Asymptotic.H
 TCSlib.Cryptography.length_prgIterStep_iterate_le	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 Complexity.NUPPT.runAt.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 Complexity.NUPPT.reparamCoins.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
+TCSlib.Cryptography.glPadInvFun_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.prgIterStep.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 Complexity.NUPPT.reparamCoins._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
 TCSlib.Cryptography.prgIterEmit_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCoreLemmas
@@ -8667,7 +8674,6 @@ TCSlib.Cryptography.Collection.glBit	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.Collection.glPad_encD	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad_decD_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad._proof_5	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
-TCSlib.Cryptography.glPadInvFun.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glBit_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad_toPermCollection	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -8675,6 +8681,7 @@ TCSlib.Cryptography.Collection.glPad_sample_runAtL	thm	TCSlib.Cryptography.Asymp
 _private.TCSlib.Cryptography.Asymptotic.HardCoreCollection.0.TCSlib.Cryptography.Collection.glPad.match_3.eq_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
+TCSlib.Cryptography.Collection.glPad.congr_simp	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad_domEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad_perm	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -8750,17 +8757,14 @@ TCSlib.Cryptography.glK_real	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.PRG.expand	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_inEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.invProb_glInverter	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_outEquiv	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PRG.oneBit_stretch	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.cor_81_7	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_inEquiv	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_outLen_eval	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PermFamily.HardCore.of_easy_hard	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_inEquiv	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.HardCore	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_outEquiv	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.expandRed_eq	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_inEquiv_symm_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_inLen_eval	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.oneBitStep	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_outEquiv_symm_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
@@ -8774,7 +8778,6 @@ TCSlib.Cryptography.PRG.oneBit_G	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_outEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.HardCore.hard	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.prg_expand	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_outEquiv_symm_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PermFamily.HardCore	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.predProb_glPad	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PermFamily.HardCore.easy	thm	TCSlib.Cryptography.Asymptotic.HardCore
@@ -8791,7 +8794,6 @@ TCSlib.Cryptography.FunFamily.glInverter	def	TCSlib.Cryptography.Asymptotic.Hard
 TCSlib.Cryptography.PermFamily.HardCore.hard	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.owpGenPRG.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.owpGenPRG_outEquiv	def	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_inLen_eval	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.exists_owpPredictorSnoc	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PRG.expand_stretch	thm	TCSlib.Cryptography.Asymptotic.HardCore
@@ -8800,9 +8802,8 @@ TCSlib.Cryptography.PRG.oneBit.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_f_bijective	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glInverter.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_outLen_eval	thm	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.expandRed	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PRG.oneBit_secure_iff	thm	TCSlib.Cryptography.Asymptotic.HardCore
+TCSlib.Cryptography.expandRed	def	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.FunFamily.glPad_f	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.owpGenPRG_G_outEquiv	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PRG.expand_G_stretch	thm	TCSlib.Cryptography.Asymptotic.HardCore
@@ -8814,10 +8815,8 @@ TCSlib.Cryptography.goldreich_levin	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.owpGenPRG_outEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.splitPair.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.owpGenPRG	def	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_outEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PermFamily.iterPRG._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.PermFamily.iterPRG	def	TCSlib.Cryptography.Asymptotic.HardCore
-TCSlib.Cryptography.PermFamily.glPad_inEquiv_ofFn	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.not_hardCore_const	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.oneBitStep_eq	thm	TCSlib.Cryptography.Asymptotic.HardCore
 TCSlib.Cryptography.hardCore_iff	thm	TCSlib.Cryptography.Asymptotic.HardCore
