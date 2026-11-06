@@ -38,6 +38,11 @@ inside one finite machine.
   the host: from the host seam at the module's entry state, with any output prefix, the host
   reaches the seam at the module's return state with the module's result word, forwarding exactly
   the module's output, and visits no control state meanwhile; `guard_add` chains such segments.
+* **Head envelopes.** A clean module's heads stay within its budget `B |arg|` of the origin at
+  every time (`Clean.envelope`), and the host's heads stay within `t` cells of the origin up to
+  time `t` of a call (`host_call_envelope`), hence within `B |arg|` during a clean call
+  (`host_clean_envelope`). These are the coarse envelopes from the time bounds and the unit head
+  moves of `Turing.MultiTapeTM.workTapePos_step_le` (gate 03l round 2, finding 1).
 
 ## Origin
 
@@ -62,6 +67,8 @@ machines, the control states and their table, the return map and the start state
   clean install and a clean emit module with a polynomial budget on the argument length.
 * `Turing.ModuleHost.host_call`, `host_clean` — one module call inside the host, with the guard
   that no control state is visited; `guard_add` — chaining guarded segments.
+* `Turing.ModuleHost.Clean.envelope`, `host_call_envelope`, `host_clean_envelope` — the head
+  envelopes of a clean module and of a host call.
 * `Turing.ModuleHost.first_halt`, `live_prefix` — cutting a halting run at its first halt, and
   liveness of the prefix of a live run.
 * `Turing.ModuleHost.request_budget` — a polynomial budget on a bounded request fits a common
@@ -212,6 +219,44 @@ theorem clean_iff (M : FinTM Bool) (result emit : List Bool → List Bool) (B : 
         {Cfg.ofWords M.tm.q₀ (stateWord M.k (result arg)) with
           state := none, output := emit arg} :=
   Iff.rfl
+
+/-- **The head envelope of a clean module** (H14's space clause): if `Clean M result emit B`,
+then for every native input `x` and argument `arg`, at every time `v` of the run of `M` from the
+seam at its start state holding `arg` (before, at and after its first halt), every work head is
+within `B |arg|` cells of the origin, where all heads start (`Cfg.ofWords_workTapePos`).
+
+This is the coarse envelope from the time bound: one step moves each head by at most one cell
+(`Turing.MultiTapeTM.workTapePos_step_le`; over a run,
+`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`), the first halt comes at a time `t ≤ B |arg|`,
+and the run is constant from `t` on. The contract gives nothing sharper: it fixes the terminal
+seam, not the intermediate head positions, and a clean module may move a head out and back
+before it halts at the seam (gate 03l round 2, finding 1).
+
+**Proof sketch.** Take the first halt `t ≤ B |arg|` of `Clean`. At a time `v ≤ t` each head is
+within `v` cells of its start (`MultiTapeTM.workTapePos_runFrom_mem_Icc`); at `v > t` the run
+is halted, so its configuration is the one at `t` (`MultiTapeTM.runFrom_add`,
+`MultiTapeTM.runFrom_of_halt`). -/
+theorem Clean.envelope {M : FinTM Bool} {result emit : List Bool → List Bool} {B : ℕ → ℕ}
+    (h : Clean M result emit B) (x arg : List Bool) (v : ℕ) (j : Fin M.k) :
+    |(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).workTapePos j| ≤
+      (B arg.length : ℤ) := by
+  obtain ⟨t, -, htB, -, hend⟩ := ((clean_iff M result emit B).1 h).2 x arg
+  have hhalt : (M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t).state =
+      none := by
+    rw [hend]
+  obtain ⟨u, hut, hu⟩ : ∃ u ≤ t,
+      M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v =
+        M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) u := by
+    rcases le_total v t with hvt | htv
+    · exact ⟨v, hvt, rfl⟩
+    · refine ⟨t, le_rfl, ?_⟩
+      rw [← Nat.add_sub_of_le htv, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hhalt]
+  obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 (M.tm.workTapePos_runFrom_mem_Icc
+    (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) u j)
+  rw [Cfg.ofWords_workTapePos] at h1 h2
+  have hB : (u : ℤ) ≤ B arg.length := by exact_mod_cast hut.trans htB
+  rw [hu, abs_le]
+  constructor <;> omega
 
 /-- Turn a clean-call bridge contract into the uniform first-halting form.
 
@@ -503,6 +548,42 @@ theorem host_call {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n �
   · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
     exact host_seam M K ret i hp x result pre out q none
 
+/-- **The head envelope of a host call** (H14's space clause for one call, inclusive of its
+endpoint): run from its seam at the entry state of module `i` holding `arg` with output prefix
+`pre`, the host has, at every time `v ≤ t`, every work head within `t` cells of the origin,
+where all heads start (`Cfg.ofWords_workTapePos`). Under the hypotheses of `host_call`, `t` is
+the duration of the call, so this bounds the heads throughout the call.
+
+This is the coarse envelope from the time bound: one step moves each head by at most one cell
+(`Turing.MultiTapeTM.workTapePos_step_le`; over a run,
+`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`). A sharper envelope follows from the proof of
+`host_call` and is not stated here: before the return, the host's tape `j` is module `i`'s
+tape `j` for `j < (M i).k` (the padded module runs in lockstep and the forwarding keeps every
+physical field, `Turing.emit_run`), and every other tape stays blank with its head at the
+origin, so the host's heads obey any head envelope of the module.
+
+**Proof sketch.** `MultiTapeTM.workTapePos_runFrom_mem_Icc` from the host seam, whose heads are
+at the origin, and `v ≤ t`. -/
+theorem host_call_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M) (i : Fin n) (x arg pre : List Bool) (t : ℕ) :
+    ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom
+      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).workTapePos
+        j| ≤ (t : ℤ) := by
+  intro v hv j
+  have key : ∀ c : Cfg K Bool (State C M) x, c.workTapePos j = 0 →
+      |((hostTM M K hk ctrl ret q₀).tm.runFrom c v).workTapePos j| ≤ (t : ℤ) := by
+    intro c hc
+    obtain ⟨h1, h2⟩ :=
+      Finset.mem_Icc.1 ((hostTM M K hk ctrl ret q₀).tm.workTapePos_runFrom_mem_Icc c v j)
+    rw [hc] at h1 h2
+    have hvt : (v : ℤ) ≤ t := by exact_mod_cast hv
+    rw [abs_le]
+    constructor <;> omega
+  exact key {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre}
+    (Cfg.ofWords_workTapePos (input := x) (entry (C := C) M i) (stateWord K arg) j)
+
 /-- **Chaining guarded segments.** If the run from `c` avoids the state `anchor` before time `a`
 and is at `d` at time `a`, and the run from `d` avoids `anchor` before time `b`, then the run
 from `c` avoids `anchor` before time `a + b`. -/
@@ -544,5 +625,39 @@ theorem host_clean {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n �
   obtain ⟨hguard, hend⟩ :=
     host_call M K hk ctrl ret q₀ i h.1 x arg (f arg) (g arg) pre (M i).tm.q₀ t hg he
   exact ⟨t, hp, ht, hguard, hend⟩
+
+/-- **A clean module call inside the host, with its head envelope** (the bounded call of
+`host_clean` together with H14's space clause): if module `i` is `Clean` with result map `f`,
+emitted chunk `g` and budget `B`, then for every native input `x`, argument `arg` and output
+prefix `pre`, the host, run from its seam at the entry state of module `i` holding `arg` with
+output `pre`, reaches at some time `t` with `0 < t ≤ B |arg|` the seam in the return state
+`ret i` holding `f arg`, with output `pre ++ g arg`, visits no control state before `t`, and at
+every time `v ≤ t` has every work head within `B |arg|` cells of the origin.
+
+The envelope is the coarse one from the time bound (`host_call_envelope`, which also describes
+the sharper envelope inherited from the module).
+
+**Proof sketch.** `host_clean` gives `t` and the call; `host_call_envelope` at `t`, with
+`t ≤ B |arg|`, gives the envelope. -/
+theorem host_clean_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
+    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
+    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
+    (ret : Fin n → State C M) (q₀ : State C M)
+    (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ)
+    (h : Clean (M i) f g B) (x arg pre : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
+      (∀ v < t, ∀ c : C, ((hostTM M K hk ctrl ret q₀).tm.runFrom
+        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
+          ≠ some (.inl c)) ∧
+      (hostTM M K hk ctrl ret q₀).tm.runFrom
+        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
+        {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} ∧
+      ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom
+        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre}
+          v).workTapePos j| ≤ (B arg.length : ℤ) := by
+  obtain ⟨t, hp, ht, hguard, hend⟩ := host_clean M K hk ctrl ret q₀ i f g B h x arg pre
+  refine ⟨t, hp, ht, hguard, hend, fun v hv j => ?_⟩
+  have hB : (t : ℤ) ≤ B arg.length := by exact_mod_cast ht
+  exact (host_call_envelope M K hk ctrl ret q₀ i x arg pre t v hv j).trans hB
 
 end Turing.ModuleHost
