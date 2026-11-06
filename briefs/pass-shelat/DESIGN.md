@@ -1220,8 +1220,10 @@ Outright errors (to replace the plan's seeded list):
 18. p. 61 example `N = 77`: numbers garbled.
 19. Theorem 63.1 proof: "hardness amplification from §2.3" should be §2.4; budget `|y|^3`
     becomes `(|y|+1)^3`.
-20. Theorem 49.14: "with probability `1 − 2^{−t}`" should be "at least"; Lemma 50.15: "`N > 2`
-    composite" should be odd composite.
+20. Theorem 49.14: "with probability `1 − 2^{−t}`" should be "at least". (Lemma 50.15's "`N > 2`
+    composite" is right as stated: for even `N > 2` the liars also form a proper subgroup, since
+    `(−1)^{N−1} = −1`; the formal lemma restricts to odd `N` only for convenience. Corrected on gate
+    03f2, F01.)
 21. p. 27: "NP ⊄ BPP ⟺ worst-case OWFs exist" mixes uniform BPP with non-uniform inverters.
 22. Theorem 45.6 / p. 46: the remark that Euler's theorem "removes the restriction `x < N`"
     refers to a restriction Algorithm 45.5 does not have.
@@ -1298,7 +1300,7 @@ Gaps the formalization fills (not errors): Theorem 42.2 (⇒) and Theorem 57.2 (
 the PKE single ⇒ multi-message theorem and the bitwise theorem (p. 103); Theorem 107.3
 ("exercise") with the `1/q` term; Lemma 84.1's range reduction and averaging; the square-root
 algorithm for `p ≡ 1 (mod 4)` (restricted to `3 (mod 4)` instead); Miller–Rabin's composite
-case (deferred); Chernoff (replaced by Chebyshev for pairwise independence); Theorem 112.2's
+case (proved: `two_mul_card_mrLiars_le`, `uprob_millerRabin_le`); Chernoff (replaced by Chebyshev for pairwise independence); Theorem 112.2's
 message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (hypothesis).
 
 ---
