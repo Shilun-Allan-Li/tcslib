@@ -76,6 +76,13 @@ theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
   simp only [List.getElem_take, List.getElem_ofFn]
   rfl
 
+/-- Every bit of a `q·ℓ`-bit string is a bit of one of its blocks:
+`w k = FunFamily.blocks q ℓ w k.divNat k.modNat` (read off `FunFamily.blocks_symm_apply`). -/
+theorem eq_blocks_divNat_modNat {q ℓ : ℕ} (w : Fin (q * ℓ) → Bool) (k : Fin (q * ℓ)) :
+    w k = FunFamily.blocks q ℓ w k.divNat k.modNat := by
+  conv_lhs => rw [← (FunFamily.blocks q ℓ).symm_apply_apply w]
+  exact FunFamily.blocks_symm_apply q ℓ _ k
+
 /-- Block `k` of the encoding of a `q`-tuple of `ℓ`-bit strings (positions `ℓk, …, ℓk + ℓ − 1`)
 is the encoding of the `k`-th component, read through `FunFamily.blocks`. -/
 theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
@@ -88,11 +95,11 @@ theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : �
     omega
   · simp only [List.length_take, List.length_drop, List.length_ofFn] at hj₁
     simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    show w _ = w (finProdFinEquiv (⟨k, hk⟩, ⟨j, by omega⟩))
-    congr 1
-    ext
-    simp only [finProdFinEquiv, Equiv.coe_fn_mk]
-    omega
+    have hℓ : 0 < ℓ := by omega
+    rw [eq_blocks_divNat_modNat w]
+    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
+    · rw [Fin.coe_divNat, Nat.mul_add_div hℓ, Nat.div_eq_of_lt (by omega), Nat.add_zero]
+    · rw [Fin.coe_modNat, Nat.mul_add_mod, Nat.mod_eq_of_lt (by omega)]
 
 /-- The encoding of the `i`-bit prefix `prefixAt x i` (`i ≤ n`) is the first `i` bits of the
 encoding of `x`. -/

@@ -656,8 +656,9 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
     obtain ⟨φ₁, hφ₁⟩ := hB₁ n
     dsimp only
     rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key]
-    exact distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
-      (fun w c => D.distinguisherL n (encodeTuple w) c)
+    exact (distAdv_comp encodeTuple (prfEncReal (F n) (μ n).1) (prfEncReal (F n) (μ n).2)
+      (D.distinguisherL n)).symm.trans_le (distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
+        (fun w c => D.distinguisherL n (encodeTuple w) c))
 
 /-- **Multi-message secure private-key encryption exists if a PRF exists** ([PS10, §3.9]):
 the scheme of Algorithm 99.1 with the evaluator of `PRF.easy`. -/

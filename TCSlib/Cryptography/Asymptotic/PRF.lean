@@ -432,7 +432,9 @@ theorem prfAdv_toOracleAdversary (F : ∀ n, (Fin n → Bool) → (Fin n → Boo
     (D : NUPPT) (n q : ℕ) :
     distAdv ((OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := .var) F).O n) ((OracleEnsemble.random .var .var).O n)
         (oracleDist (D.toOracleAdversary n n n q)) =
-      prfAdv (F n) (D.toOracleAdversary n n n q) := rfl
+      prfAdv (F n) (D.toOracleAdversary n n n q) := by
+  rw [prfAdv_def]
+  rfl
 
 /-- **Pseudorandomness unfolded**: for a PRF `F`, every next-query machine `D` with every
 polynomial budget `q` has negligible concrete PRF advantage `prfAdv (F n) (D^{(q n)})` — the
@@ -440,8 +442,8 @@ form in which the Garg-layer reductions consume [PS10, Definition 96.2]. -/
 theorem PRF.negligible_prfAdv {F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)}
     (hF : PRF F) (D : NUPPT) (q : PolyExpr) :
     Negligible fun n => prfAdv (F n) (D.toOracleAdversary n n n (q.eval n)) := by
-  have h := hF.pseudorandom D q
-  simpa only [prfAdv_toOracleAdversary] using h
+  exact (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary F D n (q.eval n))).mp
+    (hF.pseudorandom D q)
 
 /-! ### Length-doubling generators (Cor-97.a) -/
 
@@ -793,13 +795,16 @@ theorem ggmPRF_prf {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)} (hG 
     PRF (ggmPRF G) := by
   obtain ⟨E, hE, hGE⟩ := hG.easy
   refine ⟨exists_ggmPRF_evaluator hE hGE, fun D q => ?_⟩
-  show Negligible fun n => prfAdv (ggmPRF G n) (D.toOracleAdversary n n n (q.eval n))
+  suffices hμ : Negligible fun n => prfAdv (ggmPRF G n) (D.toOracleAdversary n n n (q.eval n)) from
+    (congrArg Negligible (funext fun n => prfAdv_toOracleAdversary (ggmPRF G) D n (q.eval n))).mpr hμ
   by_contra hneg
   obtain ⟨c, hc⟩ := not_negligible_iff.1 hneg
   have hidx : ∀ n, 0 < n → 0 < q.eval n → ∃ (i : Fin n) (j : Fin (q.eval n)),
       prfAdv (ggmPRF G n) (D.toOracleAdversary n n n (q.eval n)) / (n * q.eval n) ≤
         prgAdv (G n) (ggmBitsDist (G n) (D.toOracleAdversary n n n (q.eval n)) (q.eval n) i j) :=
-    fun n hn hq => exists_ggmBits_dist (G n) _ (D.toOracleAdversary_boundedBy n n n (q.eval n)) hn hq
+    fun n hn hq => by
+      simpa only [ggmPRF_apply, prgAdv_eq] using
+        exists_ggmBits_dist (G n) _ (D.toOracleAdversary_boundedBy n n n (q.eval n)) hn hq
   classical
   let i : ℕ → ℕ := fun n =>
     if h : 0 < n ∧ 0 < q.eval n then (Classical.choose (hidx n h.1 h.2)).val else 0
@@ -807,7 +812,7 @@ theorem ggmPRF_prf {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool)} (hG 
     if h : 0 < n ∧ 0 < q.eval n then
       (Classical.choose (Classical.choose_spec (hidx n h.1 h.2))).val else 0
   obtain ⟨B, hB⟩ := exists_ggmBitsDist_nuppt hE hGE D q i j
-  obtain ⟨n₀, hn₀⟩ := (hG.negligible_prgAdv B).polyExpr_mul (.mul .var q) c
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 ((hG.negligible_prgAdv B).polyExpr_mul (.mul .var q)) c
   obtain ⟨n, hn, hμn⟩ := hc (max n₀ 1)
   have hn1 : 0 < n := le_of_max_le_right hn
   have hpos : (0 : ℝ) < 1 / (n : ℝ) ^ c := by

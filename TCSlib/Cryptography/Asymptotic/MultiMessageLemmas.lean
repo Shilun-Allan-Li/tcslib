@@ -392,11 +392,14 @@ theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (
   · simp only [List.length_take, List.length_drop, List.length_ofFn]
     omega
   · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    show w _ = w (finProdFinEquiv (⟨i, hi⟩, _))
-    congr 1
-    ext
-    simp [finProdFinEquiv]
-    ring
+    have hj : j < s := by simp only [List.length_take, List.length_drop, List.length_ofFn] at h₁; omega
+    have hs : 0 < s := by omega
+    rw [eq_blocks_divNat_modNat w]
+    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
+    · show (i * s + j) / s = i
+      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hs, Nat.div_eq_of_lt hj, Nat.zero_add]
+    · show (i * s + j) % s = j
+      rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hj]
 
 /-! ### The next-query machine of Thm-99.2.1 -/
 
