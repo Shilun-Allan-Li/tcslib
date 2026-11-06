@@ -40,8 +40,15 @@ lines).
 
 - **Elaboration** (`evidence/round5/elab/`): `e6a3f517` against `oleans-ldwa3`, **no output**,
   exit 0.
-- **Rule 10** (`evidence/round5/seal/`): @SEAL95R5@
-- **Axioms** (`evidence/round5/axioms/`): @AX95R5@
+- **Rule 10** (`evidence/round5/seal/`): round 2's generator on `e6a3f517`, candidates by the Lean
+  audit at its seven imports: the same 278 definitions as rounds 3 and 4 (`seal-set.txt`
+  unchanged). Both sealed copies 0 diagnostics; generic controls 278 unsealed (`rfl` 268,
+  equation 277) and 5 sealed, the same five instances; source controls 43 close unsealed and 43
+  fail sealed; `summary.txt` 273 of 278 discriminated by the generic controls, the five by source
+  controls.
+- **Axioms** (`evidence/round5/axioms/`): `NFAx` on `e6a3f517`, the target on
+  `[propext, Classical.choice, Quot.sound]`; `NTHAx` on `oleans-lnf6`, all seven theorems on the
+  same three.
 - **Screen** (`evidence/round5/screen/`): round 2's script and 23-file population at `c8cedd9d`:
   1,446 declarations, 13 pairs, 5,191 characters; the pair lines are byte-identical to round 4's
   (`pairdiff-r4.txt`: 0 new, 0 gone).

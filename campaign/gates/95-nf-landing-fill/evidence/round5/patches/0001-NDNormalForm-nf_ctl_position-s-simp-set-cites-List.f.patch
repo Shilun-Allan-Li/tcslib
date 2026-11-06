@@ -1,0 +1,36 @@
+From b4af93b744e240244d5705e2a3e1508e6cce8ddc Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 01:43:09 +0000
+Subject: [PATCH] NDNormalForm: nf_ctl_position's simp set cites
+ List.foldl_concat (gate 95 round 4, finding 1)
+
+The append_singleton branch reduced the fold over s ++ [b] by foldl_append,
+foldl_cons and foldl_nil inside a simp only set: List.foldl_concat, as the
+other seven sites already cite. Every member of the two chain classes (the
+fold over l ++ [x], and the length of a take) is now checked anywhere in the
+file, simp sets included; the remaining foldl/take lemmas are single citations
+(nil base cases, a fold over a general append, List.take_take).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5MM3PtshNwvNBXBw
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index 0908d0d6..e6a3f517 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -112,8 +112,7 @@ private theorem nf_ctl_position (k : ℕ) (s : List Bool) (f : Bool) :
+     simp only [List.foldl_nil, List.length_nil, Nat.zero_mod]
+     rfl
+   | append_singleton s b ih =>
+-    simp only [List.foldl_append, List.foldl_cons, List.foldl_nil,
+-      List.length_append, List.length_singleton]
++    simp only [List.foldl_concat, List.length_append, List.length_singleton]
+     rw [nf_ctlStep]
+     split_ifs with h
+     · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
+-- 
+2.43.0
+
