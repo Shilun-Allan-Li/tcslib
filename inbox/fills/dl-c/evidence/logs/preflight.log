@@ -1,0 +1,68 @@
+# preflight Fri Nov  6 14:30:05 UTC 2026
+nproc: 4
+cgroup v1: /sys/fs/cgroup/memory/process_api/01a1b142-a66b-7324-aa97-97b5bc7bd3a3/claude-code-bash
+memory.limit_in_bytes: 14337302528
+memory.usage_in_bytes: 537874432
+memory.max_usage_in_bytes: 816226304
+memory.failcnt: 0
+--- memory.stat
+cache 510173184
+rss 831488
+rss_huge 0
+shmem 0
+mapped_file 73728
+dirty 132947968
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 381220
+pgpgout 278415
+pgfault 291311
+pgmajfault 27
+inactive_anon 618496
+active_anon 16384
+inactive_file 388841472
+active_file 121307136
+unevictable 0
+hierarchical_memory_limit 14337302528
+hierarchical_memsw_limit 9223372036854771712
+total_cache 510173184
+total_rss 831488
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 73728
+total_dirty 132947968
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 381220
+total_pgpgout 278415
+total_pgfault 291311
+total_pgmajfault 27
+total_inactive_anon 618496
+total_active_anon 16384
+total_inactive_file 388841472
+total_active_file 121307136
+total_unevictable 0
+--- memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+--- root cgroup limit: 9223372036854771712
+--- /proc/meminfo
+MemTotal:       16472088 kB
+MemFree:        15478300 kB
+MemAvailable:   16006984 kB
+Buffers:           15420 kB
+Cached:           720872 kB
+--- df
+Filesystem     Type    1B-blocks       Used   Available Use% Mounted on
+/dev/vda       ext4 270553174016 9675984896 31607549952  24% /
+/dev/vda       ext4 270553174016 9675984896 31607549952  24% /
+/dev/vda       ext4 270553174016 9675984896 31607549952  24% /
+/dev/vda       ext4 270553174016 9675984896 31607549952  24% /
+headroom (v1) = limit - (usage - total_cache + total_shmem) = 14337302528 - (537874432 - 510173184 + 0) = 14309601280 B (~13.3 GiB) >= 4 GiB: PASS; disk free 31607549952 B (~29.4 GiB) >= 12 GiB: PASS
