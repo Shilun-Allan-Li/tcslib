@@ -91,9 +91,9 @@
 - **Your base's Lean content is the campaign after #197's merge** (`33ceeed1`; at drafting the tip
   was `0d2b3bbd`, records only since; `@TBD@` if a further Lean PR merges before issue, and
   `@ANCESTOR@` adds records only). Lines in this brief are your base's (after region (a)'s import
-  every later line moves down by one: the home at 50, the target's docstring end at 64, its `sorry` at
-  71). `TwoTapes.lean` is #189's landing, 86 lines, 2 public and 0 private declarations, unchanged
-  by #197:
+  every later line moves down by one: the home at 50, the target's docstring end at 64, its `sorry`
+  at 71). `TwoTapes.lean` is #189's landing, 86 lines, 2 public and 0 private declarations,
+  unchanged by #197:
   - the imports, lines 6–8 (`Mathlib.Data.Nat.Log`, `Robustness.AlphabetReduction`,
     `Build.ZoneRebalance`); the module docstring, lines 14–46; `namespace Turing.FinTM`, line 48;
   - `two_work_tapes_run`: docstring 50–63, statement 64–69, its `sorry` on line 70;
