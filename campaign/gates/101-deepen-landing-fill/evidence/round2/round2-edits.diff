@@ -1,0 +1,314 @@
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+index 87f207da..99dada9d 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+@@ -38,10 +38,10 @@ Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
+ **Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved, from the
+ interpreter core `Turing.exists_ndInterpreterCore`
+ (`TCSlib.Complexity.TuringMachine.NDCodeSimulator`), and the exponential decider from it. The
+-hierarchy `Complexity.ntime_hierarchy` is proved from two contracts that are still `sorry`: the
+-diagonalizer `Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
+-`Turing.FinNDTM.exists_codeNDTM_accepts_linear`. The two corollaries are proved from the
+-hierarchy.
++hierarchy `Complexity.ntime_hierarchy` is proved from the diagonalizer
++`Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
++`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, both proved, and the two corollaries are proved
++from the hierarchy: all of them rest on the standard axioms alone.
+ 
+ ## Design (declared deviations, each for the audit)
+ 
+diff --git a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+index 699403b5..7cc29979 100644
+--- a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
++++ b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+@@ -111,9 +111,8 @@ theorem ps_start {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤
+   -- the input length
+   have r1 := inputLength_loop A (ampOr N) x 0 0 .len .lenI (.cp0 .nt) rfl rfl
+     (fun m _ => by
+-      simp only [ampOr, ampAs, Matrix.cons_val_zero, inputLenLang]
+-      rw [indicator_indexLang_pairEncode]
+-      exact decide_eq_decide.mpr Iff.rfl)
++      simp only [ampOr, ampAs, Matrix.cons_val_zero]
++      exact indicator_inputLenLang x m)
+     B (by omega) reg0.v (Reg.le_v (by simp only [Reg.Le, reg0]; omega)) (Nat.zero_le _)
+   refine PSem.of_reach (AReach.mono r1 fun _ h => h.2) ?_
+   refine PS.of_v (σ' := sreg n 0 0 0 0 0 0 0) (by reg_eq) ?_
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
+index f928c71b..044345da 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
+@@ -66,8 +66,8 @@ variable {N : FinNDTM Bool} {x : List Bool}
+ lemma orcN_len (N : FinNDTM Bool) (x : List Bool) :
+     ∀ k ≤ x.length, orcN N 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
+   intro k _
+-  simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
+-  exact decide_eq_decide.mpr Iff.rfl
++  simp only [orcN, decs, Matrix.cons_val_zero]
++  exact indicator_inputLenLang x k
+ 
+ /-- Decider `1` answers whether a code is the initial code. -/
+ lemma ini_orcN (r u : ℕ) :
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+index e885abda..148e95d9 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+@@ -185,8 +185,8 @@ theorem gen_start {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace
+     IG (E := E) (orcN N) x B .scan St.zero (x ∉ L) := by
+   have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
+     intro m _
+-    simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
+-    exact decide_eq_decide.mpr Iff.rfl
++    simp only [orcN, decs, Matrix.cons_val_zero]
++    exact indicator_inputLenLang x m
+   have hlg : 2 ^ lgv x.length ≤ gKv E (lgv x.length) (sp x.length + 1) := by
+     apply Nat.pow_le_pow_right (by norm_num)
+     simp only [gev]; nlinarith
+@@ -204,14 +204,6 @@ namespace Complexity
+ 
+ open Turing LogProg LogProg.ISCount LogProg.ISGen LogProg.SavitchARM
+ 
+-/-- A number `m ≤ 2 ^ e + 1` has a binary expansion of at most `e + 2` digits after one
+-increment. -/
+-private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+-  apply length_bits_le
+-  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
+-    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
+-  omega
+-
+ /-- The binary length is at most the logarithmic width. -/
+ private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
+   rw [← Nat.size_eq_bits_len, logSpace_eq]
+@@ -291,7 +283,7 @@ theorem compl_mem_NSPACE {S : ℕ → ℕ} (hS : ∀ n, logSpace n ≤ S n) {L :
+     obtain ⟨Nn, hNn, hiff⟩ :=
+       (gen_start (x := x) (sp := fun n => c * S n) hN (Nat.le_succ _) hE1 le_rfl).decides
+     rw [ISCount.St.toV_zero] at hNn hiff
+-    refine ⟨Nn, hNn.mono fun a ha => ⟨igA_npreS x a, fun r => bits_succ_le (ha r)⟩, ?_⟩
++    refine ⟨Nn, hNn.mono fun a ha => ⟨igA_npreS x a, fun r => length_bits_succ_le (ha r)⟩, ?_⟩
+     exact hiff
+ 
+ /-- **Nondeterministic logspace is closed under complement** [AB09, §4.3.2, Theorem 4.20 in
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+index 29547e43..efbbbbef 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+@@ -534,7 +534,10 @@ private noncomputable def multOracle : Fin 2 → List Bool → Bool :=
+ private lemma mult_queries (x : List Bool) (i : ℕ) :
+     multOracle 0 (pairEncode x (Nat.bits i)) = x.getD i false ∧
+     multOracle 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
+-  simp [multOracle, inputBitLang, inputLenLang, indicator_indexLang_pairEncode]
++  exact ⟨show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _ from
++      indicator_inputBitLang x i,
++    show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _ from
++      indicator_inputLenLang x i⟩
+ 
+ /-- All table instructions meet their syntactic side conditions for every input and
+ register assignment: comparisons use distinct registers and calls use one register. -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
+index 41188777..f48bd13d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
+@@ -319,15 +319,14 @@ noncomputable def orc (N : FinNDTM Bool) : Fin 5 → List Bool → Bool :=
+ /-- Decider `0` reads the query. -/
+ lemma orc_bit (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
+     orc N 0 (pairEncode y (Nat.bits p)) = y.getD p false := by
+-  simp only [orc, As, Matrix.cons_val_zero, inputBitLang, indicator_indexLang_pairEncode]
+-  cases y.getD p false <;> simp
++  simp only [orc, As, Matrix.cons_val_zero]
++  exact indicator_inputBitLang y p
+ 
+ /-- Decider `1` compares with the query length. -/
+ lemma orc_len (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
+     orc N 1 (pairEncode y (Nat.bits p)) = decide (p < y.length) := by
+-  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero, inputLenLang,
+-    indicator_indexLang_pairEncode]
+-  exact decide_eq_decide.mpr Iff.rfl
++  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero]
++  exact indicator_inputLenLang y p
+ 
+ /-- Decider `2` answers the initial-code language on `⟨x, ⟨bits v, bits s⟩⟩`. -/
+ lemma orc_init (N : FinNDTM Bool) (x β : List Bool) (v s : ℕ) :
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
+index 26364e11..96172f8c 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
+@@ -187,12 +187,14 @@ noncomputable abbrev pathOr : Fin 2 → List Bool → Bool :=
+ /-- Decider `0` reads an input bit. -/
+ lemma pathOr_bit (x : List Bool) (i : ℕ) :
+     pathOr 0 (pairEncode x (Nat.bits i)) = x.getD i false := by
+-  simp [pathOr, pathAs, inputBitLang, indicator_indexLang_pairEncode]
++  show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
++  exact indicator_inputBitLang x i
+ 
+ /-- Decider `1` compares with the input length. -/
+ lemma pathOr_len (x : List Bool) (i : ℕ) :
+     pathOr 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
+-  simp [pathOr, pathAs, inputLenLang, indicator_indexLang_pairEncode]
++  show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
++  exact indicator_inputLenLang x i
+ 
+ /-- The deciders are in `L`. -/
+ lemma pathAs_mem (j : Fin 2) : pathAs j ∈ LOGSPACE := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+index 821ba947..ef71ec26 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+@@ -289,12 +289,7 @@ theorem arm_decides_pspace_val {L : Language Bool} [Fintype Λ] [DecidableEq Λ]
+   refine arm_decides_pspace A l₀ As hAs (C₀ + 2) c₀ fun x =>
+     (hcorr x).mono fun a ⟨h1, h2⟩ => ⟨h1, fun r => ?_⟩
+   set N := C₀ * (x.length + 1) ^ c₀ with hN
+-  have hlt : a.2.1 r + 1 < 2 ^ (N + 2) := by
+-    have := h2 r
+-    have e : 2 ^ (N + 2) = 4 * 2 ^ N := by rw [pow_add]; ring
+-    have := Nat.two_pow_pos N
+-    omega
+-  have h3 := length_bits_le hlt
++  have h3 := length_bits_succ_le ((h2 r).trans (Nat.le_succ _))
+   have h4 : 2 ≤ 2 * (x.length + 1) ^ c₀ :=
+     Nat.le_mul_of_pos_right _ (Nat.one_le_pow _ _ (by omega))
+   have e : (C₀ + 2) * (x.length + 1) ^ c₀ = N + 2 * (x.length + 1) ^ c₀ := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean
+index 54e72608..aef42576 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean
+@@ -301,8 +301,8 @@ theorem searchLang_mem_PSPACE (hP : P ∈ PSPACE) : searchLang P ∈ PSPACE := b
+   -- count `i = |x|`
+   have hq : ∀ k ≤ x.length, orc P 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
+     intro k _
+-    simp only [orc, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
+-    exact decide_eq_decide.mpr Iff.rfl
++    simp only [orc, decs, Matrix.cons_val_zero]
++    exact indicator_inputLenLang x k
+   have hcount := inputLength_loop searchA (orc P) x 0 0 .scan .incI .dbl rfl rfl hq B
+     (by omega) (rf 0 1 0 0) (fun s => (guard_rf x B .init (by omega) h1B (by omega) (by omega)).2 s)
+     (by simp)
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+index 1a1b72c3..5255444d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+@@ -31,6 +31,7 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
+   value is below `2^{length}` and determines the word among words of its length.
+ * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
+ * `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
++  `Complexity.LogProg.length_bits_succ_le` — `|Nat.bits (m + 1)| ≤ e + 2` when `m ≤ 2^e + 1`;
+   `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`;
+   `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+ 
+@@ -125,6 +126,17 @@ lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m :=
+   rw [Nat.size_eq_bits_len]
+   exact Nat.size_le.mpr h
+ 
++/-- A number `m ≤ 2 ^ e + 1` has at most `e + 2` binary digits after one increment: the width
++bound for a register value `m` with `m ≤ 2 ^ e`.
++
++**Proof sketch.** `m + 1 ≤ 2 ^ e + 2 < 4 · 2 ^ e = 2 ^ (e + 2)` since `2 ^ e ≥ 1`, then
++`length_bits_le`. -/
++lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
++  apply length_bits_le
++  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
++    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
++  omega
++
+ /-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
+ 
+ **Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
+diff --git a/TCSlib/Complexity/SpaceComplexity/Savitch.lean b/TCSlib/Complexity/SpaceComplexity/Savitch.lean
+index bfeab39a..0c14e432 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Savitch.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Savitch.lean
+@@ -49,8 +49,9 @@ Savitch register machine of `TCSlib.Complexity.SpaceComplexity.SavitchARM`
+   the search stops by radius `c · S(|x|) + 1`.
+ * **The recursion is realized by a register machine**: the midpoint search is the Savitch
+   register machine (`Complexity.LogProg.SavitchARM.A`), whose explicit stack keeps every
+-  register within `w · w` binary digits for a code width `w = O(S n)`; the deepening machine
+-  holds it twice as a block of its own table (`Complexity.LogProg.Ins.embed`).
++  register value at most `2 ^ (w · w)`, so within `O(w²)` binary digits, for a code width
++  `w = O(S n)`; the deepening machine holds it twice as a block of its own table
++  (`Complexity.LogProg.Ins.embed`).
+ 
+ ## Main definitions
+ 
+@@ -116,7 +117,7 @@ which it decides by the same search. The search stops by `s = c · S |x| + 1`, t
+ `O((S |x|)²)`. -/
+ theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
+     NSPACE S ⊆ SPACE fun n => S n * S n :=
+-  savitch_of_logSpace_le S hS.1
++  savitch_of_logSpace_le S ((spaceConstructible_iff S).mp hS).1
+ 
+ /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
+ space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
+@@ -133,9 +134,9 @@ most `2 ^ w`, every midpoint a code below `2 ^ w`). The Savitch register machine
+ evaluates `REACH` by the midpoint recursion, **reusing the space** of the first recursive
+ call for the second ([AB09]'s crucial point) through an explicit stack: saved endpoints as
+ `w`-bit digits of one register, phase bits as binary digits of another, so every register
+-holds at most `w · w` bits. Its deciders (input length and the initial, accepting and step
+-code languages) are logspace, and `Complexity.LogProg.arm_decides_pspace_val` turns the
+-machine into a polynomial-space decider. -/
++value stays at most `2 ^ (w · w)`, within `O(w²)` bits. Its deciders (input length and the
++initial, accepting and step code languages) are logspace, and
++`Complexity.LogProg.arm_decides_pspace_val` turns the machine into a polynomial-space decider. -/
+ theorem PSPACE_eq_NPSPACE : PSPACE = NPSPACE :=
+   Set.Subset.antisymm PSPACE_subset_NPSPACE NPSPACE_subset_PSPACE
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
+index f13f1100..de68ce1e 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
+@@ -110,8 +110,8 @@ theorem NSPACE_poly_subset_PSPACE (k : ℕ) : NSPACE (fun n => n ^ k + 1) ⊆ PS
+   set n := x.length with hn
+   have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
+     intro m _
+-    simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
+-    exact decide_eq_decide.mpr Iff.rfl
++    simp only [orcN, decs, Matrix.cons_val_zero]
++    exact indicator_inputLenLang x m
+   have h := savitch_halts (E := E) (orc := orcN N) (x := x) hE1 hq
+   have hmem := mem_iff_reach hN x ((n + 2) ^ E) ((n + 2) ^ (2 * E))
+     (radius_le n k c E (by simp only [hE, bigE]; omega))
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
+index b23f4185..558d6174 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
+@@ -761,8 +761,10 @@ open Classical in
+ values at most `2 ^ (dpW · dpW)`.
+ 
+ **Proof sketch.** Count `N := |x|` (`inputLength_loop`, decider `0`), set `ℓ := 1` and halve
+-`N` to `0` (`Complexity.Codec.halvCount_loop`), so `ℓ = 1 + |bits |x||`; set `s := 1` and run the deepening loop
+-(`dp_body`). Every value met is at most `|x| < 2 ^ ℓ ≤ 2 ^ dpW`. -/
++`N` to `0` (`Complexity.Codec.halvCount_loop`), so `ℓ = 1 + |bits |x||`; set `s := 1` and run
++the deepening loop (`dp_body`). Before the loop every value is at most
++`max |x| (1 + |bits |x||)`, below `2 ^ dpW`; the loop keeps every value at most
++`2 ^ (dpW · dpW)`. -/
+ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+     (h : N.DecidesInSpace L sp) (x : List Bool) :
+     AHalt (dpD (codeK N + 1)) (dpOrc N) x
+@@ -809,12 +811,14 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+ machine with five logspace deciders decides `L` with every register of at most
+ `C · (sp |x| + logSpace |x| + 1)²` binary digits. The deciders are `inputLenLang`,
+ `initLang N`, `acceptLang N`, `stepLang N` and `edgeLang N`, and `C = 9 (codeK N + 1)² + 2`.
++The machine never computes `sp`: it searches at radius `s = 1, 2, …` until no configuration
++reaches the window's edge ([Sip13, §8.1, proof of Theorem 8.5]; [AB09, Theorem 4.14]).
+ 
+ **Proof sketch.** `D`'s run (`dp_run`) answers `x ∈ L` with every register at most
+ `2 ^ (W · W)`, `W = (codeK N + 1)(sp |x| + ℓ + 2)` and `ℓ ≤ logSpace |x| + 1`
+ (`dp_bits_logSpace`). A value `v ≤ 2 ^ (W · W)` has `|bits (v + 1)| ≤ W · W + 2`
+-(`length_bits_le`), and `W ≤ 3 (codeK N + 1) X` with `X = sp |x| + logSpace |x| + 1 ≥ 1`, so
+-`W · W + 2 ≤ (9 (codeK N + 1)² + 2) X²`. -/
++(`Complexity.LogProg.length_bits_succ_le`), and `W ≤ 3 (codeK N + 1) X` with
++`X = sp |x| + logSpace |x| + 1 ≥ 1`, so `W · W + 2 ≤ (9 (codeK N + 1)² + 2) X²`. -/
+ theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+     (h : N.DecidesInSpace L sp) : DeepenContract L sp := by
+   refine ⟨25, 5, DpLb (codeK N + 1), inferInstance, inferInstance, dpD (codeK N + 1), .scan,
+@@ -830,12 +834,7 @@ theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
+     have hW3 : W ≤ 3 * (codeK N + 1) * X := by
+       rw [hW, dpW, mul_comm 3, mul_assoc]
+       exact Nat.mul_le_mul_left _ (by omega)
+-    have hlt : a.2.1 r + 1 < 2 ^ (W * W + 2) := by
+-      have := ha.2 r
+-      have e : 2 ^ (W * W + 2) = 4 * 2 ^ (W * W) := by rw [pow_add]; ring
+-      have := Nat.two_pow_pos (W * W)
+-      omega
+-    refine (length_bits_le hlt).trans ?_
++    refine (length_bits_succ_le ((ha.2 r).trans (Nat.le_succ _))).trans ?_
+     have h1 : W * W ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) :=
+       Nat.mul_self_le_mul_self hW3
+     have h2 : 1 ≤ X * X := Nat.one_le_iff_ne_zero.mpr (by positivity)

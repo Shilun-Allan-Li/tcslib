@@ -27,3 +27,6 @@
   re-point all five in #208 (`0140aee2`), then the campaign merge `36ed2deb`. #208 changes 13
   files. `replay-ldp6` (190 modules, from `oleans-lnth`) running; the freeze and lint redone.
 - 2026-11-06: the user: stage round 2 when ready; the user dispatches it.
+- 2026-11-06: `replay-ldp6` passed (190 modules, 0 failed) at `36ed2deb`; the seal (35, 0
+  diagnostics; controls at round 1's 35 positions), the axioms (17 prints, standard), the freeze,
+  lint and the 27-file screen (0 new, 24 gone) in `evidence/round2/`. `pack-r2.md` complete.
