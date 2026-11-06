@@ -1,0 +1,632 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+index 254d220f..87fe5c9d 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+@@ -8,6 +8,7 @@ import Mathlib.Data.Nat.Log
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+ import TCSlib.Complexity.TuringMachine.Build.ZoneStep
++import TCSlib.Complexity.TuringMachine.SymbolLift
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -27,7 +28,14 @@ binary two-work-tape equivalent that reproduces each halting run of `t` steps wi
+   factors so that it covers the empty run (`t = 0`).
+ * The statement includes the converse (every completed output of the simulator is an output of
+   the source), which the universal machine's correctness needs.
+-* The statement holds for every number of work tapes, zero and one included.
++* The statement holds for every number of work tapes, zero and one included. With no work tapes
++  there is nothing to fold: `M` runs on the two-tape host through the forwarding embedding
++  `Turing.embedEmitTM`, beside two idle tapes.
++* For `k ≥ 1` the simulator is built over the zone alphabet `Turing.ZoneSym k` (a binary symbol,
++  or one cell holding a slot of every track), the formal counterpart of the book's alphabet of
++  `k` parallel tracks with a buffer symbol, and is then made binary by the alphabet reduction
++  `Turing.FinTM.alphabet_reduction_run` [AB09, Claim 1.5], which keeps the two work tapes and
++  multiplies the time by a constant.
+ 
+ ## Main definitions
+ 
+@@ -39,6 +47,31 @@ No new definitions: the reduction is an existential contract.
+   run and with the converse [HS66].
+ * `Turing.FinTM.two_work_tapes_binary` — the same at the level of computed functions.
+ 
++## Implementation notes
++
++For `k ≥ 1` the simulator is a phase host (`Turing.phaseHostTM`) over `Turing.ZoneSym k` with two
++work tapes: tape `0` carries `M`'s `k` work tapes as the tracks of one zoned tape
++(`Turing.zonedTape`), every simulated head at the home cell, and tape `1` is scratch; the input
++is read as `x.map Sum.inl`. One round simulates one step of `M`: a transition step reads the
++home tuple and the input symbol, applies `M`'s transition, writes the new home symbols and emits
++the encoded output; then each track runs one track step in the direction of its head move
++(`Turing.exists_zoneTrackStepTM`: a rebalance at the scanned index, preceded by an extension of
++the zones when the scan finds none), a stay taking no time. The rounds are chained as segments
++(`Turing.Segment.iterate_seq`). Along the run every track represents the corresponding work tape
++of `M` and is *full*: at each level `i` its two zones hold `2 · 2^i` cells together and the right
++one holds `0`, `2^i` or `2 · 2^i`. The count of expensive steps uses side totals, the numbers of
++cells in a track's right zones below a level: after a step of scanned index above `i` the levels
++`0, …, i` are half full, so the next such step of the same track comes at least `2^i` rounds
++later, and a zone `j ≥ 1` is rebalanced at most once every `2^(j-1)` steps, as in the sketch of
++`Turing.FinTM.two_work_tapes_run`. An extension to level `ℓ` needs a head displacement of
++`2^ℓ − 1`, so in a run of `T` live rounds every scanned index is at most `log₂ T + 1`, and
++`Turing.sum_cost_le_of_count` sums the rounds' costs.
++
++The file is long because it is one construction and its correctness proof: apart from a few
++arithmetic facts, its lemmas are about the simulator's own definitions (its rounds, the
++invariant along its run and its cost count), so a split would have to make these internals
++public.
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+@@ -498,18 +531,89 @@ private def tt_trackTime (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List
+   if m t = 0 then 0 else
+     (F.R (tt_dir (m t)) t x).time D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)
+ 
++/-- The step of track `t` leaves its phase: `tt_next` is at another phase. -/
++private theorem tt_next_ne (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (q' : M.State)
++    (m : Fin M.k → SignType) (t : Fin M.k) : (tt_next M F q' m t).1 ≠ some (q', m, t) := by
++  unfold tt_next
++  split_ifs <;> simp [Fin.ext_iff]
++
++/-- **A track's contract inside the host** [HS66; AB09, §1.7]: a contract for track `t`'s phase
++from its entry, whose exits are live and are exactly the states that `tt_red` redirects, gives a
++live run of the zone machine from the phase-boundary configuration at that entry, one dispatch
++step past the contract's time, to the phase-boundary configuration at `tt_next` with data `D'`,
++if the contract's endpoint satisfies the rows' precondition at `D'` and keeps head `1`, the input
++head and the output.
++
++**Proof sketch.** The redirect table meets the hypotheses of the phase host's contract form
++`Turing.Contract.inPhase` (`tt_red_track_pos`, `tt_red_track_neg`), every target at another
++phase (`tt_next_ne`). Its run (`Turing.Contract.inPhase_time`) and its liveness
++(`Turing.Contract.live`) give the segment; its exit is the target `tt_next`, and its endpoint is
++the contract's with that state (`Turing.Contract.inPhase_post`), the phase-boundary configuration
++there (`tt_mapState_eq_cfg`). -/
++private theorem tt_phase_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
++    {x : List (ZoneSym M.k)} (q' : M.State) (m : Fin M.k → SignType) (t : Fin M.k)
++    {X : Set (Option (tt_Ph M F (some (q', m, t))))}
++    (C : Contract (tt_Mf M F (some (q', m, t))) (F.entry (tt_dir (m t)) t) X (ZoneData M.k) x)
++    (hnone : none ∉ X)
++    (hX : ∀ s, some s ∈ X ↔ ((m t = 0 ∧ s = F.entry (tt_dir (m t)) t) ∨
++      (m t ≠ 0 ∧ some s ∈ F.X (tt_dir (m t)) t)))
++    (D D' : ZoneData M.k) (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k))
++    (hpre : C.pre D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out))
++    (hpost : zoneRowPre D' (C.post D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)))
++    (h1 : (C.post D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)).workTapePos 1 = 0)
++    (hin : (C.post D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)).inputPos = ip)
++    (hout : (C.post D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out)).output = out) :
++    Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
++      (fun _ => True)
++      (tt_cfg (some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩) D ip out)
++      (tt_cfg (some (tt_next M F q' m t)) D' ip out)
++      (C.time D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out) + 1) := by
++  set c : Cfg 2 (ZoneSym M.k) (tt_Ph M F (some (q', m, t))) x :=
++    tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out
++  set d : Cfg 2 (ZoneSym M.k) (Σ i, tt_Ph M F i) x :=
++    tt_cfg (some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩) D ip out
++  have hdc : d.mapState (fun _ => F.entry (tt_dir (m t)) t) = c := tt_cfg_mapState _ _ _ _ _
++  have hred : ∀ s, some s ∉ X → tt_red M F hk (some (q', m, t)) s = none :=
++    fun s hs => tt_red_track_neg M F hk q' m t s fun h => hs ((hX s).mpr h)
++  have hsome : ∀ s, some s ∈ X →
++      ∃ q, tt_red M F hk (some (q', m, t)) s = some q ∧ q.1 ≠ some (q', m, t) :=
++    fun s hs => ⟨_, tt_red_track_pos M F hk q' m t s ((hX s).mp hs), tt_next_ne M F q' m t⟩
++  set C' := Contract.inPhase (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) (some (q', m, t))
++    C hnone hred hsome with hC'
++  have hs : d.state = some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩ := rfl
++  have hp : C'.pre D d := by
++    rw [hC', Contract.inPhase_pre, hdc]
++    exact hpre
++  have hT : C'.time D d = C.time D c + 1 := by
++    rw [hC', Contract.inPhase_time, hdc]
++  have hP : C'.post D d = (C.post D c).bindState (tt_red M F hk (some (q', m, t))) := by
++    rw [hC', Contract.inPhase_post, hdc]
++  obtain ⟨s, hsX, hst⟩ := C'.exit_mem D d hs hp
++  rw [tt_red_track_pos M F hk q' m t s ((hX s).mp hsX), hP, Cfg.bindState_state] at hst
++  obtain ⟨s', hs', -⟩ := Option.bind_eq_some_iff.mp hst
++  have hE : C'.post D d = tt_cfg (some (tt_next M F q' m t)) D' ip out := by
++    rw [← tt_mapState_eq_cfg D' (C.post D c) hpost (tt_next M F q' m t) (by rw [hs']; rfl) h1 ip
++      hin out hout, hP]
++    refine (Cfg.mapState_eq_of_fields _ _ _ ?_ (by rw [Cfg.bindState_inputPos])
++      (by funext j p; rw [Cfg.bindState_workTapes]) (by funext j; rw [Cfg.bindState_workTapePos])
++      (by rw [Cfg.bindState_output])).symm
++    rw [Cfg.bindState_state, hst, hs']
++    rfl
++  refine (segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩
++  · rw [← hT, ← hE]
++    exact C'.run D d hs hp
++  · rw [Set.mem_singleton_iff]
++    exact C'.live D d hs hp (hT ▸ hu)
++
+ /-- **One track's phase** [HS66; AB09, §1.7]: from the entry of track `t`'s phase, at a
+ phase-boundary configuration with data `D`, the zone machine runs live for the phase's time
+ plus one dispatch step to the phase-boundary configuration at `tt_next` with the data after
+ track `t`'s step, the input head and the output kept; the phase's time is at most
+ `A · (2^{i₀} + 1)` for its scanned index `i₀`.
+ 
+-**Proof sketch.** A stay is redirected at once (`Turing.phaseHostTM_run` with time `0`). A move
+-runs the track step's contract inside the host (`Turing.phaseHostTM_run`): its run gives the
+-phase run, its cut and the redirect table give the guard, and its live exit is redirected to
+-`tt_next`. The endpoint satisfies the rows' precondition at the new data and keeps head `1`,
+-the input head and the output, so it is the phase-boundary configuration there
+-(`tt_mapState_eq_cfg`). Liveness before the end is the contract's (`Turing.Contract.live`). -/
++**Proof sketch.** By `tt_phase_seg`, with the zero-time contract (`Turing.Contract.zero`) for a
++stay, whose only exit is the entry, and the track step's contract for a move, whose specification
++gives the endpoint and the time bound. -/
+ private theorem tt_track_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+     {x : List (ZoneSym M.k)} (q' : M.State) (m : Fin M.k → SignType) (t : Fin M.k)
+     (D : ZoneData M.k) (ip : Fin (x.length + 2)) (out : List (ZoneSym M.k)) :
+@@ -519,67 +623,35 @@ private theorem tt_track_seg (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk :
+         (tt_cfg (some (tt_next M F q' m t)) (tt_trackData (m t) t D) ip out)
+         (tt_trackTime M F x m t D ip out + 1) ∧
+       tt_trackTime M F x m t D ip out ≤ A * (2 ^ tt_idx (m t) t D + 1) := by
+-  set c : Cfg 2 (ZoneSym M.k) (tt_Ph M F (some (q', m, t))) x :=
+-    tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out with hc
+-  have hb : (tt_cfg (some ⟨some (q', m, t), F.entry (tt_dir (m t)) t⟩) D ip out :
+-      Cfg 2 (ZoneSym M.k) (Σ i, tt_Ph M F i) x) = c.mapState (Sigma.mk (some (q', m, t))) :=
+-    (tt_cfg_mapState (S := tt_Ph M F (some (q', m, t))) (some (F.entry (tt_dir (m t)) t)) D ip
+-      out (Sigma.mk (β := tt_Ph M F) (some (q', m, t)))).symm
+-  rw [hb]
+   by_cases h0 : m t = 0
+-  · -- a stay: redirected at once
+-    have hred : tt_red M F hk (some (q', m, t)) (F.entry (tt_dir (m t)) t) =
+-        some (tt_next M F q' m t) := by
+-      exact tt_red_track_pos M F hk q' m t _ (Or.inl ⟨h0, rfl⟩)
+-    have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) (some (q', m, t))
+-      c c 0 MultiTapeTM.runFrom_zero (F.entry (tt_dir (m t)) t) rfl _ hred
+-      (fun u hu => absurd hu (Nat.not_lt_zero u))
++  · -- a stay: the zero-time contract, redirected at once
+     have hT : tt_trackTime M F x m t D ip out = 0 := if_pos h0
+     have hD : tt_trackData (m t) t D = D := if_pos h0
+     rw [hT, hD]
+-    refine ⟨(segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩, Nat.zero_le _⟩
+-    · rw [H.2, hc, tt_cfg_mapState]
+-      rfl
+-    · rw [Nat.lt_one_iff.mp hu, MultiTapeTM.runFrom_zero, Set.mem_singleton_iff,
+-        Cfg.mapState_state]
+-      exact fun h => by cases h
+-  · -- a move: the track step's contract inside the host
+-    set R := F.R (tt_dir (m t)) t x with hR
+-    have hpre : R.pre D c := by
+-      rw [hR, F.pre]
+-      exact tt_cfg_rowPre _ D ip out
+-    obtain ⟨htime, hpost, h1, hin, hout⟩ := F.spec (tt_dir (m t)) t x D c rfl
+-      (tt_cfg_rowPre _ D ip out)
+-    have hx := R.exit_mem D c rfl hpre
+-    obtain ⟨s', hs'⟩ : ∃ s', (R.post D c).state = some s' :=
+-      Option.ne_none_iff_exists'.mp (ne_of_mem_of_not_mem hx (F.none_nmem _ _))
+-    have hs'X : some s' ∈ F.X (tt_dir (m t)) t := hs' ▸ hx
+-    have hred : tt_red M F hk (some (q', m, t)) s' = some (tt_next M F q' m t) := by
+-      exact tt_red_track_pos M F hk q' m t _ (Or.inr ⟨h0, hs'X⟩)
+-    have hguard : ∀ u < R.time D c, ∀ s,
+-        ((tt_Mf M F (some (q', m, t))).runFrom c u).state = some s →
+-          tt_red M F hk (some (q', m, t)) s = none := by
+-      intro u hu s hs
+-      refine tt_red_track_neg M F hk q' m t _ ?_
+-      rintro (⟨h, -⟩ | ⟨-, hm⟩)
+-      · exact h0 h
+-      · exact R.cut D c rfl hpre u hu (hs ▸ hm)
+-    have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) (some (q', m, t))
+-      c (R.post D c) (R.time D c) (R.run D c rfl hpre) s' hs' _ hred hguard
+-    have hT : tt_trackTime M F x m t D ip out = R.time D c := if_neg h0
++    refine ⟨?_, Nat.zero_le _⟩
++    have H := tt_phase_seg M F hk q' m t
++      (Contract.zero (tt_Mf M F (some (q', m, t))) (F.entry (tt_dir (m t)) t) (ZoneData M.k) x)
++      (fun h => Option.noConfusion (Set.mem_singleton_iff.mp h))
++      (fun s => ⟨fun h => Or.inl ⟨h0, Option.some.inj (Set.mem_singleton_iff.mp h)⟩,
++        fun h => h.elim (fun h' => by rw [h'.2]; exact Set.mem_singleton _)
++          (fun h' => absurd h0 h'.1)⟩)
++      D D ip out (by rw [Contract.zero_pre]; trivial)
++      (by rw [Contract.zero_post]; exact tt_cfg_rowPre _ D ip out)
++      (by rw [Contract.zero_post]; rfl) (by rw [Contract.zero_post]; rfl)
++      (by rw [Contract.zero_post]; rfl)
++    rwa [Contract.zero_time] at H
++  · -- a move: the track step's contract
++    obtain ⟨htime, hpost, h1, hin, hout⟩ := F.spec (tt_dir (m t)) t x D
++      (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out) rfl (tt_cfg_rowPre _ D ip out)
++    have hT : tt_trackTime M F x m t D ip out =
++        (F.R (tt_dir (m t)) t x).time D (tt_cfg (some (F.entry (tt_dir (m t)) t)) D ip out) :=
++      if_neg h0
+     have hD : tt_trackData (m t) t D = zoneTrackStepData (tt_dir (m t)) t D := if_neg h0
+     have hI : tt_idx (m t) t D = zoneRebalanceIndex (tt_dir (m t)) t D := if_neg h0
+     rw [hT, hD, hI]
+-    refine ⟨(segment_iff _ _ _ _ _ _).mpr ⟨?_, fun u hu => ?_, fun _ _ => trivial⟩, htime⟩
+-    · rw [H.2]
+-      exact tt_mapState_eq_cfg _ _ hpost _ (by rw [hs']; rfl) h1 ip hin out hout
+-    · rw [H.1 u (by omega), Set.mem_singleton_iff, Cfg.mapState_state]
+-      intro h
+-      rcases Nat.lt_or_ge u (R.time D c) with hlt | hge
+-      · exact R.live D c rfl hpre hlt (Option.map_eq_none_iff.mp h)
+-      · obtain rfl : u = R.time D c := by omega
+-        rw [R.run D c rfl hpre, hs'] at h
+-        cases h
++    refine ⟨tt_phase_seg M F hk q' m t (F.R (tt_dir (m t)) t x) (F.none_nmem _ _)
++      (fun s => ⟨fun h => Or.inr ⟨h0, h⟩, fun h => h.elim (fun h' => absurd h'.1 h0) And.right⟩)
++      D _ ip out (by rw [F.pre]; exact tt_cfg_rowPre _ D ip out) hpost h1 hin hout, htime⟩
+ 
+ /-! ### One round: the transition step, then every track -/
+ 
+@@ -835,16 +907,80 @@ private theorem tt_full_extend {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full
+     rw [hl, hr, Fin.coe_castSucc]
+     exact hz i
+ 
++/-- **Fullness gives the classical state of a right move** [AB09, §1.7]: below the scanned
++index `j` the right zones are empty and the left ones full, the right zone `j` holds at least
++`2^j` cells, and the left zone `j` has room for `2^j` cells (the hypotheses of
++`Turing.zoneCascadeRight_lengths`).
++
++**Proof sketch.** The right zones below `j` are empty (`Turing.zoneShiftIndex_empty`), so by
++fullness the left ones hold the whole capacity; the right zone `j` is nonempty
++(`Turing.zoneShiftIndex_nonempty`), so by fullness it holds `2^j` or `2 · 2^j` cells, and the
++left zone `j` the rest of the capacity `2 · 2^j`. -/
++private theorem tt_full_pre_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z) {j : ℕ}
++    (hj : zoneShiftIndex true z = j) (h : j < ℓ) :
++    (∀ k (hk : k < j), z.right ⟨k, by omega⟩ = []) ∧
++    (∀ k (hk : k < j), (z.left ⟨k, by omega⟩).length = zoneCapacity k) ∧
++    2 ^ j ≤ (z.right ⟨j, h⟩).length ∧ (z.left ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by
++  subst hj
++  have hr (k : ℕ) (hk : k < zoneShiftIndex true z) : z.right ⟨k, by omega⟩ = [] := by
++    have := zoneShiftIndex_empty true z ⟨k, by omega⟩ hk
++    rwa [ZoneContents.words_true] at this
++  have hne := zoneShiftIndex_nonempty true z h
++  rw [ZoneContents.words_true] at hne
++  have hpos : 0 < (z.right ⟨_, h⟩).length := List.length_pos_iff.mpr hne
++  obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
++  have hc := zoneCapacity_eq (zoneShiftIndex true z)
++  have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
++      zoneCapacity (zoneShiftIndex true z) := hsum
++  have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
++      (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex true z ∨
++      (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex true z) := hcase
++  have hdonor : 2 ^ zoneShiftIndex true z ≤ (z.right ⟨_, h⟩).length := by
++    rcases hcase' with h0 | h0 | h0 <;> omega
++  refine ⟨hr, fun k hk => ?_, hdonor, by omega⟩
++  have := (hz ⟨k, by omega⟩).1
++  rwa [hr k hk, List.length_nil, add_zero] at this
++
++/-- **Fullness gives the classical state of a left move**: the mirror of `tt_full_pre_true`, the
++hypotheses of `Turing.zoneCascadeLeft_lengths`.
++
++**Proof sketch.** As for `tt_full_pre_true`, with the left stack feeding: the left zones below
++the index are empty, so the right ones are full, and the left donor holds at least `2^j` cells,
++so the right zone at the index has room for `2^j`. -/
++private theorem tt_full_pre_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z) {j : ℕ}
++    (hj : zoneShiftIndex false z = j) (h : j < ℓ) :
++    (∀ k (hk : k < j), z.left ⟨k, by omega⟩ = []) ∧
++    (∀ k (hk : k < j), (z.right ⟨k, by omega⟩).length = zoneCapacity k) ∧
++    2 ^ j ≤ (z.left ⟨j, h⟩).length ∧ (z.right ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by
++  subst hj
++  have hl (k : ℕ) (hk : k < zoneShiftIndex false z) : z.left ⟨k, by omega⟩ = [] := by
++    have := zoneShiftIndex_empty false z ⟨k, by omega⟩ hk
++    rwa [ZoneContents.words_false] at this
++  have hne := zoneShiftIndex_nonempty false z h
++  rw [ZoneContents.words_false] at hne
++  have hpos : 0 < (z.left ⟨_, h⟩).length := List.length_pos_iff.mpr hne
++  obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
++  have hc := zoneCapacity_eq (zoneShiftIndex false z)
++  have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
++      zoneCapacity (zoneShiftIndex false z) := hsum
++  have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
++      (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex false z ∨
++      (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex false z) := hcase
++  have hdonor : 2 ^ zoneShiftIndex false z ≤ (z.left ⟨_, h⟩).length := by
++    rcases hcase' with h0 | h0 | h0 <;> omega
++  refine ⟨hl, fun k hk => ?_, hdonor, by omega⟩
++  have := (hz ⟨k, by omega⟩).1
++  rwa [hl k hk, List.length_nil, zero_add] at this
++
+ /-- **A right rebalance keeps fullness, and halves the levels below its index** [AB09, §1.7]:
+ under fullness, with a nonempty feeding zone at the scanned index `j`, the rebalanced contents
+ are full, every level below `j` is half full on both sides, and the levels above `j` are kept.
+ 
+-**Proof sketch.** Fullness and the scan (`Turing.zoneShiftIndex_empty`, `_nonempty`) give the
+-classical pre-state of `Turing.zoneCascadeRight_lengths`: right zones below `j` empty, so left
+-ones full; the right zone `j` nonempty, so it holds `2^j` or `2 · 2^j` cells, and the left zone
+-`j` has room for `2^j`. The cascade's lengths are then `2^k` on both sides below `j`, and at `j`
+-the right side loses `2^j` cells to the left; above `j` nothing changes
+-(`Turing.zoneRebalance_frame`). -/
++**Proof sketch.** Fullness and the scan give the classical pre-state of
++`Turing.zoneCascadeRight_lengths` (`tt_full_pre_true`): right zones below `j` empty, left ones
++full, a right donor of `2^j` or `2 · 2^j` cells and room for `2^j` on the left at `j`. The
++cascade's lengths are then `2^k` on both sides below `j`, and at `j` the right side loses `2^j`
++cells to the left; above `j` nothing changes (`Turing.zoneRebalance_frame`). -/
+ private theorem tt_full_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+     (h : zoneShiftIndex true z < ℓ) :
+     tt_full (zoneRebalance true z) ∧
+@@ -852,24 +988,12 @@ private theorem tt_full_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+         ((zoneRebalance true z).left i).length = 2 ^ i.val ∧
+           ((zoneRebalance true z).right i).length = 2 ^ i.val := by
+   set j := zoneShiftIndex true z with hj
+-  have hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [] := fun k hk => by
+-    have := zoneShiftIndex_empty true z ⟨k, by omega⟩ hk
+-    rwa [ZoneContents.words_true] at this
+-  have hl : ∀ k (hk : k < j), (z.left ⟨k, by omega⟩).length = zoneCapacity k := fun k hk => by
+-    have := (hz ⟨k, by omega⟩).1
+-    rwa [hr k hk, List.length_nil, add_zero] at this
+-  have hne : z.right ⟨j, h⟩ ≠ [] := by
+-    have := zoneShiftIndex_nonempty true z h
+-    rwa [ZoneContents.words_true] at this
+-  have hpos : 0 < (z.right ⟨j, h⟩).length := List.length_pos_iff.mpr hne
++  obtain ⟨hr, hl, hdonor, hroom⟩ := tt_full_pre_true z hz hj.symm h
+   obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+   have hc : zoneCapacity j = 2 * 2 ^ j := zoneCapacity_eq j
+   have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+   have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+       (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+-  have hdonor : 2 ^ j ≤ (z.right ⟨j, h⟩).length := by
+-    rcases hcase' with h0 | h0 | h0 <;> omega
+-  have hroom : (z.left ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by omega
+   have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame true z k hk
+   rw [zoneRebalance_of_lt true z h, zoneCascade_true] at hframe ⊢
+   obtain ⟨hlow, hjr, hjl⟩ := zoneCascadeRight_lengths j h z hr hl hdonor hroom
+@@ -907,9 +1031,9 @@ private theorem tt_full_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+ `tt_full_rebalance_true`.
+ 
+ **Proof sketch.** As for `tt_full_rebalance_true`, with the left stack feeding:
+-`Turing.zoneCascadeLeft_lengths` under the mirrored classical pre-state (left zones below the index
+-empty, so right ones full; the left donor holds `2^j` or `2 · 2^j` cells), and
+-`Turing.zoneRebalance_frame` above the index. -/
++`Turing.zoneCascadeLeft_lengths` under the mirrored classical pre-state (`tt_full_pre_false`:
++left zones below the index empty, so right ones full; the left donor holds `2^j` or `2 · 2^j`
++cells), and `Turing.zoneRebalance_frame` above the index. -/
+ private theorem tt_full_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+     (h : zoneShiftIndex false z < ℓ) :
+     tt_full (zoneRebalance false z) ∧
+@@ -917,24 +1041,12 @@ private theorem tt_full_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+         ((zoneRebalance false z).left i).length = 2 ^ i.val ∧
+           ((zoneRebalance false z).right i).length = 2 ^ i.val := by
+   set j := zoneShiftIndex false z with hj
+-  have hl : ∀ k (hk : k < j), z.left ⟨k, by omega⟩ = [] := fun k hk => by
+-    have := zoneShiftIndex_empty false z ⟨k, by omega⟩ hk
+-    rwa [ZoneContents.words_false] at this
+-  have hr : ∀ k (hk : k < j), (z.right ⟨k, by omega⟩).length = zoneCapacity k := fun k hk => by
+-    have := (hz ⟨k, by omega⟩).1
+-    rwa [hl k hk, List.length_nil, zero_add] at this
+-  have hne : z.left ⟨j, h⟩ ≠ [] := by
+-    have := zoneShiftIndex_nonempty false z h
+-    rwa [ZoneContents.words_false] at this
+-  have hpos : 0 < (z.left ⟨j, h⟩).length := List.length_pos_iff.mpr hne
++  obtain ⟨hl, hr, hdonor, hroom⟩ := tt_full_pre_false z hz hj.symm h
+   obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+   have hc : zoneCapacity j = 2 * 2 ^ j := zoneCapacity_eq j
+   have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+   have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+       (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+-  have hdonor : 2 ^ j ≤ (z.left ⟨j, h⟩).length := by
+-    rcases hcase' with h0 | h0 | h0 <;> omega
+-  have hroom : (z.right ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by omega
+   have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame false z k hk
+   rw [zoneRebalance_of_lt false z h, zoneCascade_false] at hframe ⊢
+   obtain ⟨hlow, hjl, hjr⟩ := zoneCascadeLeft_lengths j h z hl hr hdonor hroom
+@@ -965,63 +1077,6 @@ private theorem tt_full_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+     rw [hfl, hfr]
+     exact hz ⟨i, hi⟩
+ 
+-/-- **Fullness gives the classical state of a right move** [AB09, §1.7]: below the scanned
+-index `j` the left zones are full, and the left zone `j` has room for `2^j` cells.
+-
+-**Proof sketch.** The right zones below `j` are empty (`Turing.zoneShiftIndex_empty`), so by
+-fullness the left ones hold the whole capacity; the right zone `j` is nonempty
+-(`Turing.zoneShiftIndex_nonempty`), so by fullness it holds at least `2^j` cells. -/
+-private theorem tt_full_pre_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+-    (h : zoneShiftIndex true z < ℓ) :
+-    (∀ k (hk : k < zoneShiftIndex true z),
+-      (z.left ⟨k, by omega⟩).length = zoneCapacity k) ∧
+-    (z.left ⟨zoneShiftIndex true z, h⟩).length + 2 ^ zoneShiftIndex true z ≤
+-      zoneCapacity (zoneShiftIndex true z) := by
+-  refine ⟨fun k hk => ?_, ?_⟩
+-  · have hr := zoneShiftIndex_empty true z ⟨k, by omega⟩ hk
+-    rw [ZoneContents.words_true] at hr
+-    have := (hz ⟨k, by omega⟩).1
+-    rwa [hr, List.length_nil, add_zero] at this
+-  · have hne := zoneShiftIndex_nonempty true z h
+-    rw [ZoneContents.words_true] at hne
+-    have hpos : 0 < (z.right ⟨_, h⟩).length := List.length_pos_iff.mpr hne
+-    obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
+-    have hc := zoneCapacity_eq (zoneShiftIndex true z)
+-    have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
+-        zoneCapacity (zoneShiftIndex true z) := hsum
+-    have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
+-        (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex true z ∨
+-        (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex true z) := hcase
+-    rcases hcase' with h0 | h0 | h0 <;> omega
+-
+-/-- **Fullness gives the classical state of a left move**: the mirror of `tt_full_pre_true`.
+-
+-**Proof sketch.** As for `tt_full_pre_true`, with the left stack feeding: the left zones below
+-the index are empty, so the right ones are full, and the left donor holds at least `2^j` cells,
+-so the right zone at the index has room for `2^j`. -/
+-private theorem tt_full_pre_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+-    (h : zoneShiftIndex false z < ℓ) :
+-    (∀ k (hk : k < zoneShiftIndex false z),
+-      (z.right ⟨k, by omega⟩).length = zoneCapacity k) ∧
+-    (z.right ⟨zoneShiftIndex false z, h⟩).length + 2 ^ zoneShiftIndex false z ≤
+-      zoneCapacity (zoneShiftIndex false z) := by
+-  refine ⟨fun k hk => ?_, ?_⟩
+-  · have hl := zoneShiftIndex_empty false z ⟨k, by omega⟩ hk
+-    rw [ZoneContents.words_false] at hl
+-    have := (hz ⟨k, by omega⟩).1
+-    rwa [hl, List.length_nil, zero_add] at this
+-  · have hne := zoneShiftIndex_nonempty false z h
+-    rw [ZoneContents.words_false] at hne
+-    have hpos : 0 < (z.left ⟨_, h⟩).length := List.length_pos_iff.mpr hne
+-    obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
+-    have hc := zoneCapacity_eq (zoneShiftIndex false z)
+-    have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
+-        zoneCapacity (zoneShiftIndex false z) := hsum
+-    have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
+-        (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex false z ∨
+-        (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex false z) := hcase
+-    rcases hcase' with h0 | h0 | h0 <;> omega
+-
+ /-- The signed displacement of a head move in direction `dir`. -/
+ private def tt_shift : Bool → ℤ
+   | true => 1
+@@ -1034,10 +1089,10 @@ private theorem tt_tape_rebalance {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ
+     zoneTrackTape (zoneRebalance dir z) p = zoneTrackTape z (p + tt_shift dir) := by
+   have hpow : ∀ j : ℕ, 2 ^ (j - 1) ≤ 2 ^ j := fun j => Nat.pow_le_pow_right (by norm_num) (by omega)
+   cases dir
+-  · obtain ⟨hr, hroom⟩ := tt_full_pre_false z hz h
++  · obtain ⟨-, hr, -, hroom⟩ := tt_full_pre_false z hz rfl h
+     rw [zoneTrackTape_rebalance_left z h hr (le_trans (Nat.add_le_add_left (hpow _) _) hroom)]
+     rfl
+-  · obtain ⟨hl, hroom⟩ := tt_full_pre_true z hz h
++  · obtain ⟨-, hl, -, hroom⟩ := tt_full_pre_true z hz rfl h
+     rw [zoneTrackTape_rebalance_right z h hl (le_trans (Nat.add_le_add_left (hpow _) _) hroom)]
+     rfl
+ 
+@@ -1289,27 +1344,18 @@ private theorem tt_moveInputPos_val {n n' : ℕ} (hn : n = n') (p : Fin (n + 2))
+   rw [Fin.ext h]
+ 
+ /-- **The decoded input symbol** of a configuration on the encoded input `x.map Sum.inl` is the
+-input symbol of a configuration on `x` with the input head at the same position. -/
++input symbol of a configuration on `x` with the input head at the same position.
++
++**Proof sketch.** Lift `c` along `Sum.inl` (`Turing.Cfg.liftSymbols`): the lift is on the
++encoded input with `c`'s input head, so `d` reads what it reads (`Turing.Cfg.inputSymbol_congr`),
++namely `c`'s input symbol mapped by `Sum.inl` (`Turing.Cfg.liftSymbols_inputSymbol`), which
++`tt_decodeIn` decodes back. -/
+ private theorem tt_inputSymbol {k k' : ℕ} {S S' : Type} {x : List Bool}
+     (d : Cfg k (ZoneSym k') S (x.map Sum.inl)) (c : Cfg k' Bool S' x)
+     (h : d.inputPos.val = c.inputPos.val) : tt_decodeIn d.inputSymbol = c.inputSymbol := by
+-  have hlen : (x.map (Sum.inl : Bool → ZoneSym k')).length = x.length := List.length_map _
+-  by_cases h0 : c.inputPos.val = 0
+-  · rw [Cfg.inputSymbol_of_zero (Fin.ext_iff.mpr (by rw [h, h0]; rfl)),
+-      Cfg.inputSymbol_of_zero (Fin.ext_iff.mpr (by rw [h0]; rfl))]
+-    rfl
+-  · by_cases h1 : c.inputPos.val = x.length + 1
+-    · have hd : d.inputPos.val = (x.map (Sum.inl : Bool → ZoneSym k')).length + 1 := by
+-        rw [h, h1, hlen]
+-      rw [Cfg.inputSymbol_of_end h1, Cfg.inputSymbol_of_end hd]
+-      rfl
+-    · have hp : c.inputPos.val - 1 < x.length := by
+-        have := c.inputPos.isLt
+-        omega
+-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hp,
+-        inputSymbolInner (cfg := d) (c.inputPos.val - 1) (by omega) (by rw [hlen]; exact hp),
+-        List.getElem_map]
+-      rfl
++  rw [Cfg.inputSymbol_congr d (c.liftSymbols Function.Embedding.inl)
++    (by rw [Cfg.liftSymbols_inputPos, Fin.coe_cast]; exact h), Cfg.liftSymbols_inputSymbol]
++  cases c.inputSymbol <;> rfl
+ 
+ /-- The input position of `M`'s configuration on `x`, as a position on the encoded input. -/
+ private def tt_ipOf (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x) :
+@@ -1649,25 +1695,19 @@ scanned index `j < ℓ`, the rebalanced side total below `n` is `2^n − 1` for
+ below `j` half full), and one less than before for `j < n ≤ ℓ`.
+ 
+ **Proof sketch.** Induction on `n`, reading the levels through `tt_full_rebalance_true` below
+-`j`, `Turing.zoneCascadeRight_lengths` at `j` (the donor loses `2^j` cells, which fill the
+-`2^j − 1` cells below and the home), and `Turing.zoneRebalance_frame` above `j`. -/
++`j`, `Turing.zoneCascadeRight_lengths` at `j` under the pre-state `tt_full_pre_true` (the donor
++loses `2^j` cells, which fill the `2^j − 1` cells below and the home), and
++`Turing.zoneRebalance_frame` above `j`. -/
+ private theorem tt_rsum_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+     (h : zoneShiftIndex true z < ℓ) (n : ℕ) (hnℓ : n ≤ ℓ) :
+     (n ≤ zoneShiftIndex true z → tt_rsum (zoneRebalance true z) n = 2 ^ n - 1) ∧
+       (zoneShiftIndex true z < n → tt_rsum (zoneRebalance true z) n + 1 = tt_rsum z n) := by
+   set j := zoneShiftIndex true z with hj
++  obtain ⟨hr, hl, hdonor, hroom⟩ := tt_full_pre_true z hz hj.symm h
+   have hlow := (tt_full_rebalance_true z hz h).2
+   have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame true z k hk
+   have hz0 := tt_rsum_low true z hz j le_rfl h.le
+-  obtain ⟨hl, hroom⟩ := tt_full_pre_true z hz h
+-  have hr : ∀ k (hk : k < j), z.right ⟨k, hk.trans h⟩ = [] := fun k hk => by
+-    have := zoneShiftIndex_empty true z ⟨k, hk.trans h⟩ hk
+-    rwa [ZoneContents.words_true] at this
+-  have hne : z.right ⟨j, h⟩ ≠ [] := by
+-    have := zoneShiftIndex_nonempty true z h
+-    rwa [ZoneContents.words_true] at this
+-  have hpos : 0 < (z.right ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+-  have hcas := zoneCascadeRight_lengths j h z hr hl
++  have hcas := zoneCascadeRight_lengths j h z hr hl hdonor hroom
+   clear hr
+   induction n with
+   | zero => exact ⟨fun _ => rfl, fun h' => absurd h' (Nat.not_lt_zero _)⟩
+@@ -1685,13 +1725,7 @@ private theorem tt_rsum_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+         omega
+       · have hnj : n = j := by omega
+         have hfin : (⟨n, (by omega : n < ℓ)⟩ : Fin ℓ) = ⟨j, h⟩ := Fin.ext hnj
+-        have hdonor : 2 ^ j ≤ (z.right ⟨j, h⟩).length := by
+-          obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+-          have hc := zoneCapacity_eq j
+-          have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+-              (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+-          rcases hcase' with h0 | h0 | h0 <;> omega
+-        obtain ⟨-, hjr, -⟩ := hcas hdonor hroom
++        obtain ⟨-, hjr, -⟩ := hcas
+         have hj' : ((zoneRebalance true z).right ⟨j, h⟩).length =
+             (z.right ⟨j, h⟩).length - 2 ^ j := by
+           rw [zoneRebalance_of_lt true z h, zoneCascade_true]
+@@ -1706,26 +1740,19 @@ private theorem tt_rsum_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+ one more than before.
+ 
+ **Proof sketch.** As for `tt_rsum_rebalance_true`, with `tt_full_rebalance_false` below the
+-index, `Turing.zoneCascadeLeft_lengths` at it (the right zone gains `2^j` cells, while the right
+-zones below drop from full to half: `2^{j+1} − 2` cells become `2^j − 1`), and
+-`Turing.zoneRebalance_frame` above. -/
++index, `Turing.zoneCascadeLeft_lengths` at it under the pre-state `tt_full_pre_false` (the right
++zone gains `2^j` cells, while the right zones below drop from full to half: `2^{j+1} − 2` cells
++become `2^j − 1`), and `Turing.zoneRebalance_frame` above. -/
+ private theorem tt_rsum_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+     (h : zoneShiftIndex false z < ℓ) (n : ℕ) (hnℓ : n ≤ ℓ) :
+     (n ≤ zoneShiftIndex false z → tt_rsum (zoneRebalance false z) n = 2 ^ n - 1) ∧
+       (zoneShiftIndex false z < n → tt_rsum (zoneRebalance false z) n = tt_rsum z n + 1) := by
+   set j := zoneShiftIndex false z with hj
++  obtain ⟨hl, hr, hdonor, hroom⟩ := tt_full_pre_false z hz hj.symm h
+   have hlow := (tt_full_rebalance_false z hz h).2
+   have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame false z k hk
+   have hz0 := tt_rsum_low false z hz j le_rfl h.le
+-  obtain ⟨hr, hroom⟩ := tt_full_pre_false z hz h
+-  have hl : ∀ k (hk : k < j), z.left ⟨k, hk.trans h⟩ = [] := fun k hk => by
+-    have := zoneShiftIndex_empty false z ⟨k, hk.trans h⟩ hk
+-    rwa [ZoneContents.words_false] at this
+-  have hne : z.left ⟨j, h⟩ ≠ [] := by
+-    have := zoneShiftIndex_nonempty false z h
+-    rwa [ZoneContents.words_false] at this
+-  have hpos : 0 < (z.left ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+-  have hcas := zoneCascadeLeft_lengths j h z hl hr
++  have hcas := zoneCascadeLeft_lengths j h z hl hr hdonor hroom
+   clear hl
+   induction n with
+   | zero => exact ⟨fun _ => rfl, fun h' => absurd h' (Nat.not_lt_zero _)⟩
+@@ -1743,14 +1770,7 @@ private theorem tt_rsum_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz :
+         omega
+       · have hnj : n = j := by omega
+         have hfin : (⟨n, (by omega : n < ℓ)⟩ : Fin ℓ) = ⟨j, h⟩ := Fin.ext hnj
+-        have hdonor : 2 ^ j ≤ (z.left ⟨j, h⟩).length := by
+-          obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+-          have hc := zoneCapacity_eq j
+-          have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+-          have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+-              (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+-          rcases hcase' with h0 | h0 | h0 <;> omega
+-        obtain ⟨-, -, hjr⟩ := hcas hdonor hroom
++        obtain ⟨-, -, hjr⟩ := hcas
+         have hj' : ((zoneRebalance false z).right ⟨j, h⟩).length =
+             (z.right ⟨j, h⟩).length + 2 ^ j := by
+           rw [zoneRebalance_of_lt false z h, zoneCascade_false]
+@@ -2052,8 +2072,8 @@ rounds, track `t`'s steps of scanned index above `i` number at most `T / 2^i + 1
+ **Proof sketch.** After such a step the levels `0, …, i` of track `t` are half full: its side
+ total below `i + 1` is `2^{i+1} − 1` (`tt_orbit_rsum`). Each later round changes it by at most
+ one, or resets it to `2^{i+1} − 1` after another such step; and such a step needs it to be `0`
+-or `2^{i+2} − 2`. So two such steps are at least `2^{i+1}` rounds apart, and
+-`tt_card_le_of_gap` counts them. -/
++or `2^{i+2} − 2`. So two such steps are at least `2^{i+1} − 1 ≥ 2^i` rounds apart, and
++`tt_card_le_of_gap` counts them with the gap `2^i`. -/
+ private theorem tt_count (M : FinTM Bool) (x : List Bool) (T : ℕ)
+     (hT : ∀ r < T, (tt_c M x r).state ≠ none) (t : Fin M.k) (i : ℕ) :
+     ((Finset.range T).filter (fun s => i < tt_idxR M x t s)).card ≤ T / 2 ^ i + 1 := by
+@@ -2400,10 +2420,10 @@ the same input.
+ `2^i`, so that every simulated head stays at the origin and a tape movement shifts contents
+ between neighbouring zones. Each zone is kept half full. A shift that empties or fills a zone `i`
+ rebalances zones `0, …, i` using the second work tape as scratch, in `O(2^i)` steps, and a zone `i`
+-is rebalanced at most once every `2^(i-1)` simulated steps. Summing over the `log₂ t + 1` zones a
+-run of `t` steps reaches gives `O(t log t)` steps in all. The converse holds because `M'` writes
+-an output symbol exactly when `M` does, in the same order, and halts only when `M` halts. With
+-no work tapes, `M` is run directly beside two idle tapes. -/
++is rebalanced at most once every `2^(i-1)` simulated steps. Summing over the zones
++`0, …, log₂ t + 1` that a run of `t` steps can rebalance gives `O(t log t)` steps in all. The
++converse holds because `M'` writes an output symbol exactly when `M` does, in the same order, and
++halts only when `M` halts. With no work tapes, `M` is run directly beside two idle tapes. -/
+ theorem two_work_tapes_run (M : FinTM Bool) :
+     ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+       (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →

@@ -958,6 +958,9 @@ design that waits for him.
 `SeamLayout` 3 of 36 (8.3%), `Catalog` 4 of 505, `Primitives` 4 of 285, `Loop` 1 of 205, `Encoding`
 1 of 61. The one-fifth rule is not reached. **Disposition:** the dedup window (12.2c): a public
 `MultiTapeTM.runFrom_one` in a non-vendored module, and the 17 sites re-pointed.
+**+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
+identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
+the window.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1338,6 +1341,10 @@ inline twelve times, unfolding `zoneRowPre` with `funext_iff`, `Cfg.mapState_wor
   equation, so they are this 12.2c item, with `zoneRowPre_congr` and `zoneRowPre_mapState_iff`
   as its canonical statements. (Gate 97's pre-dispatch sweep, `evidence/sweep/README.md`, called
   `zs_rowPre_mapState` "RN-1's kind"; by RN-1's scope it belongs here.)
+- **G5 (#211, gate 102; the review's F4):** `TwoTapes` does not cite the pair. Each phase starts at
+  a configuration built at the phase's own state type (`tt_cfg_rowPre`), and each endpoint is
+  converted by `tt_mapState_eq_cfg` through `zoneRowPre_iff` and RN-1's `Cfg.mapState_eq_of_fields`;
+  nothing re-derives the state-independence. Not a member; the maintainer accepts the route.
 
 Census (inline steps inside declarations, counted as RN-1's are; members over all declarations,
 as the style lint counts them, at `20e7fc75`): `ZoneRebalance` 14 of 875 (1.6%: the twelve sites
