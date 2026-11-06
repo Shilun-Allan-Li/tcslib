@@ -1,0 +1,100 @@
+From a4bf57e9dd0dfa463a9cea4dd65731ffda8729f9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:26:59 +0000
+Subject: [PATCH 6/6] Factoring: fill factoringCollection_invProbAt_le and
+ factoringCollection_oneWay
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 61 ++++++++++++++++++-
+ 1 file changed, 59 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 11e51362..8fa50bed 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -1409,6 +1409,36 @@ theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
+     NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+     pairSndD_pairEncode]
+ 
++/-- `f_mult` on a pair of distinct primes is their product (neither is `1`). -/
++private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q := by
++  unfold fmultNat
++  rw [if_neg]
++  push_neg
++  exact ⟨w.p_prime.ne_one, w.q_prime.ne_one⟩
++
++/-- **The reduction at a width `m = n`**: if `A`'s answer on `⟨1^n, ⟨pq⟩_{2m}⟩` decodes to a pair
++of distinct primes with the same product, then `collectionFactorer A` factors `pq`; stated for a
++width `m = n` so that it applies at `m = max n 2`. -/
++private theorem fac_invProb_le (A : NUPPT) (n m : ℕ) (hmn : m = n) :
++    uprob (fun z : DistinctPrimes m × A.Coins n => ∃ w : DistinctPrimes m,
++        decodeDistinctPrimes m (A.runAt n (pairEncode (List.replicate n true)
++          (natToList (2 * m) (z.1.p * z.1.q))) z.2) = some w ∧
++        natToList (2 * m) (w.p * w.q) = natToList (2 * m) (z.1.p * z.1.q)) ≤
++      factorProb (collectionFactorer A) n := by
++  subst hmn
++  rw [factorProb_eq]
++  refine le_trans (uprob_mono ?_) (le_of_eq (uprob_comp_equiv (Equiv.prodCongr
++    (Equiv.refl (DistinctPrimes m)) (collectionFactorer_coinsEquiv A m).symm) _))
++  rintro ⟨z, r⟩ ⟨w, hdec, hmul⟩
++  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
++  have hpq : w.p * w.q = z.p * z.q := natToList_injOn w.mul_lt z.mul_lt hmul
++  have hfac : w.p = z.p ∨ w.p = z.q :=
++    fmultNat_eq_mul_prime z.p_prime z.q_prime ((fac_fmultNat_pq w).trans hpq)
++  refine ⟨natToBits m w.p, ?_, by rwa [bitsToNat_natToBits w.p_lt]⟩
++  rw [NUPPT.inverter_eq_some_iff, collectionFactorer_runAt, Equiv.apply_symm_apply, modulusBits_eq,
++    ← natToList_eq, ← natToList_eq, ← encodeDistinctPrimes_of_decode hdec, encodeDistinctPrimes_eq,
++    pairFstD_pairEncode]
++
+ /-- **Inverting the collection factors** [PS10, proof of Theorem 51.1]: for `n ≥ 2`, the
+ inversion probability of `A` against the factoring collection is at most the factoring
+ probability of `collectionFactorer A`.
+@@ -1427,7 +1457,31 @@ component of the answer is the `n`-bit numeral of `p'` (`decodeFin`,
+ `uprob_comp_equiv`). -/
+ theorem factoringCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
+     (factoringCollection H).invProbAt A n ≤ factorProb (collectionFactorer A) n := by
+-  sorry
++  haveI : Nonempty ((factoringCollection H).gen.Coins n) := ⟨fun _ => false⟩
++  rw [Collection.invProbAt_eq]
++  refine (OneWay.uexp_mono fun r => ?_).trans (OneWay.uexp_const _).le
++  generalize hi : (factoringCollection H).index n r = i
++  rw [factoringCollection_index] at hi
++  subst hi
++  have hm : max (List.replicate n true).length 2 = n := by
++    rw [List.length_replicate]; exact max_eq_left hn
++  refine le_trans (le_of_eq ?_) (fac_invProb_le A n _ hm)
++  refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
++    (factoringCollection_domEquiv H (List.replicate n true)) (Equiv.refl (A.Coins n))) _)
++  rintro ⟨x, r⟩
++  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
++  rw [factoringCollection_f, factoringCollection_decD]
++  constructor
++  · rintro ⟨x', hx', hf⟩
++    rw [Option.map_eq_some_iff] at hx'
++    obtain ⟨w, hw, rfl⟩ := hx'
++    refine ⟨w, hw, ?_⟩
++    rw [factoringCollection_f, Equiv.apply_symm_apply] at hf
++    exact hf
++  · rintro ⟨w, hw, hf⟩
++    refine ⟨(factoringCollection_domEquiv H _).symm w, by rw [hw, Option.map_some], ?_⟩
++    rw [factoringCollection_f, Equiv.apply_symm_apply]
++    exact hf
+ 
+ /-- **Theorem 51.1** [PS10, Theorem 51.1]: under the factoring assumption (and the
+ arithmetic hypotheses), the factoring collection `{f_i(p, q) = pq}` is a collection of
+@@ -1443,6 +1497,9 @@ probability by `factorProb (collectionFactorer A) n` for `n ≥ 2`, which is neg
+ `factorProb_nonneg`, threshold `n₀ = 2`). -/
+ theorem factoringCollection_oneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
+     (factoringCollection H).OneWay := by
+-  sorry
++  refine ⟨factoringCollection_sampleClose H, fun A => ?_⟩
++  refine ((factoringAssumption_iff.1 hF) (collectionFactorer A)).mono ⟨2, fun n hn => ?_⟩
++  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ _ _), abs_of_nonneg (factorProb_nonneg _ _)]
++  exact factoringCollection_invProbAt_le H A hn
+ 
+ end TCSlib.Cryptography.Candidates
+-- 
+2.43.0
+
