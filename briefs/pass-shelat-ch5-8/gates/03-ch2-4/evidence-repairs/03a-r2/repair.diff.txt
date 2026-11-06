@@ -1,0 +1,77 @@
+diff --git a/TCSlib/Complexity/Randomized/PPT.lean b/TCSlib/Complexity/Randomized/PPT.lean
+index 2fdfe96c..3416d340 100644
+--- a/TCSlib/Complexity/Randomized/PPT.lean
++++ b/TCSlib/Complexity/Randomized/PPT.lean
+@@ -41,9 +41,13 @@ empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. `Computes` does
+ `Uniform`: [PS10, Definition 24.6] is about a randomized algorithm, i.e. a PPT, and is the case
+ `A.Uniform ∧ A.Computes f`; for a non-uniform `A`, `Computes` is the advice analogue and holds
+ for uncomputable `f` (advice `[h n]` for an arbitrary `h : ℕ → Bool`, read back by the machine).
+-So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`; efficient computation is
+-`∃ A, A.Uniform ∧ A.Computes f` (`NUPPT.exists_uniform_computes`, and conversely
+-`NUPPT.Computes.polyTimeComputable` of `TCSlib.Complexity.Randomized.Closure`). The
++So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`. Efficient computation of
++`f` on the encodings `⟨1^n, y⟩` is `∃ A, A.Uniform ∧ A.Computes f`
++(`NUPPT.exists_uniform_computes`, and conversely `NUPPT.Computes.polyTimeComputable` of
++`TCSlib.Complexity.Randomized.Closure`, which gives polynomial-time computability of
++`z ↦ f ⟨1^{|fst z|}, snd z⟩`). `Computes` says nothing about `f` off those encodings, so it is
++not [PS10, Definition 24.6] for an arbitrary `f : {0,1}* → {0,1}*`, which constrains every
++input string (gate 03a, round 2, R2-1). The
+ input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the
+ lemmas about it and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
+ 
+@@ -238,7 +242,12 @@ parameter `n` for an arbitrary `h : ℕ → Bool` (`ofPolyTime` of the advice pr
+ computes `w ↦ [h |fst w|]`. So `∃ A : NUPPT, A.Computes f` does **not** mean "a PPT computes
+ `f`"; where the text means efficient computation, the form is `A.Uniform ∧ A.Computes f`
+ (`exists_uniform_computes`; conversely `NUPPT.Computes.polyTimeComputable` of
+-`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`). -/
++`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`).
++
++`Computes f` constrains `f` only on the encodings `advInput n y = ⟨1^n, y⟩`: off them `f` is
++arbitrary, even uncomputable, so `A.Uniform ∧ A.Computes f` is efficient computation of `f` on
++those encodings, not of `f` on every string (the converse gives polynomial-time computability of
++`z ↦ f ⟨1^{|fst z|}, snd z⟩`; gate 03a, round 2, R2-1). -/
+ def Computes (f : List Bool → List Bool) : Prop :=
+   ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 174e38fb..f80ac042 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -103,8 +103,8 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
+ a string function `f : {0,1}* → {0,1}*` the text's experiment also accepts a preimage of
+ another length, so the typed experiment can count fewer successes and typed one-wayness is
+ implied by, but weaker than, the text's, unless `|f(x)|` determines `|x|` (length-regular `f`
+-with non-constant output length; with constant output length neither notion is
+-satisfiable). The proviso is stated where string functions enter the typed world,
++whose output length is a non-constant `PolyExpr`, hence injective in the input length; with
++constant output length neither notion is satisfiable). The proviso is stated where string functions enter the typed world,
+ `FunFamily.ofString` (`Asymptotic/OneWay.lean`; gate 03a, note 15). -/
+ def _root_.Complexity.NUPPT.inverter (A : NUPPT) (n ℓ m : ℕ) :
+     (Fin m → Bool) → A.Coins n → Option (Fin ℓ → Bool) :=
+diff --git a/TCSlib/Cryptography/Asymptotic/Ensembles.lean b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+index e5b14f80..b4a411a9 100644
+--- a/TCSlib/Cryptography/Asymptotic/Ensembles.lean
++++ b/TCSlib/Cryptography/Asymptotic/Ensembles.lean
+@@ -117,8 +117,10 @@ the `ℓ(n)`-bit strings, the distribution `X_n` being the pushforward of the un
+ length `ℓ` is a syntactic polynomial (D9).
+ 
+ **Deviation:** each `X_n` is the pushforward of the uniform distribution on a finite nonempty
+-seed set, so its probabilities are rational (not necessarily dyadic: seeds `Fin 3` give mass
+-`1/3`; the efficiently samplable ensembles, `Samplable`, are the dyadic ones, D6), and it lives
++seed set, so its probabilities are rational (not necessarily dyadic: three seeds mapped to
++distinct strings give masses `1/3`; every efficiently samplable ensemble, `Samplable`, has dyadic
++laws, D6, but not every dyadic ensemble is samplable, e.g. the point mass at an uncomputable bit;
++gate 03a, round 2, R2-3), and it lives
+ on strings of the fixed length `ℓ(n)` that Definition 69.4 requires (Definition 69.3 allows
+ arbitrary distributions over `{0,1}^*`). Every ensemble of chapters 3 and 4 is of this form;
+ the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
+@@ -188,7 +190,8 @@ and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)`
+ output length `ℓ'` is an explicit syntactic polynomial so that the padding is itself
+ polynomial-time (`polyTimeComputable_unaryPoly`). The padding (`padFin`: `false`-padding or
+ truncation) is lossless when `M` outputs exactly `ℓ'(n)` bits, the only case Definition 69.4
+-can type, and lossy otherwise (`[1]` and `[1, 0]` both pad to `[1, 0, …]`): variable-length
++can type (a sufficient condition), and can be lossy otherwise (`[1]` and `[1, 0]` both pad to
++`[1, 0, …]`; gate 03a, round 2, R2-5): variable-length
+ outputs (ciphertexts, views, transcripts) are not ensembles of this kind. -/
+ def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
+   σ n := X.σ n × M.Coins n
