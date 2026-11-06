@@ -1,0 +1,54 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.ClassNP.PClosure
+
+/-! Review probe (hreview): names the route needs but the brief omits, the Bool-only seam space
+lemmas, and whether `captureCfg`'s fields have a published reading under the seal. -/
+
+open Turing Complexity
+
+-- 1. published but unnamed in the brief
+#check @Turing.exists_codeTM_spaceUsed
+#check @Turing.MachineCode.decode_encode
+#check @Turing.summaryTag
+#check @Turing.summaryTag_none
+#check @Turing.outSummaryCode_eq_one_iff
+#check @Turing.windowRun_stop_unique
+#check @Turing.exists_recordTestTM
+#check @Turing.recordAt_iff
+#check @Turing.Cfg.inWindow_init
+#check @Turing.MultiTapeTM.initCfg_eq
+#check @Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt
+#check @Turing.RecSym.digitEmb_apply
+#check @Turing.recordLength_eq
+#check @Turing.posWidth_eq
+#check @Complexity.LogProg.length_bits_le_log
+#check @Turing.seamCompTM_run_ofCfg
+#check @Turing.seamCompTM_visitedByTapeHead_ofCfg
+#check @Turing.embedEmitTM_runFrom
+#check @Turing.embedEmitTM_frame
+#check @Turing.Contract
+#check @Turing.Contract.spaceUsedByTape_le
+#check @Turing.Contract.liftSymbols
+
+-- 2. the seam's space lemmas are `Bool`-only: this must fail to elaborate (by design)
+example {P S : Type} [DecidableEq P] (M₁ : MultiTapeTM 2 (RecSym P (Fin 3)) P) (e : P)
+    (M₂ : MultiTapeTM 2 (RecSym P (Fin 3)) S) (en : S) :=
+  @seamCompTM_spaceUsed_le_add 2 P S [] _ M₁ e M₂ en
+
+-- 3. the capture configuration's fields under the seal: each `exact?` failing = no reading
+attribute [local irreducible] Turing.captureCfg
+example {k : ℕ} {S H : Type} {x : List Bool} (emb : S → H) (ret : H) (pre out₀ : List Bool)
+    (c : Cfg k Bool S x) :
+    (captureCfg emb ret pre out₀ c).workTapePos (Fin.last k) = ((pre ++ c.output).length : ℤ) := by
+  exact?
+example {k : ℕ} {S H : Type} {x : List Bool} (emb : S → H) (ret : H) (pre out₀ : List Bool)
+    (c : Cfg k Bool S x) :
+    (captureCfg emb ret pre out₀ c).workTapes (Fin.last k) = FinTM.bufferTape (pre ++ c.output) := by
+  exact?
+example {k : ℕ} {S H : Type} {x : List Bool} (emb : S → H) (ret : H) (pre out₀ : List Bool)
+    (c : Cfg k Bool S x) :
+    (captureCfg emb ret pre out₀ c).state = some ((c.state.map emb).getD ret) := by
+  exact?
