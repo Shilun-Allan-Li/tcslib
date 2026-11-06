@@ -76,7 +76,7 @@ open Complexity Turing Finset
 /-- The absolute value of an average is at most the average of the absolute values. -/
 theorem abs_uexp_le_uexp_abs {Ω : Type*} [Fintype Ω] (f : Ω → ℝ) :
     |uexp f| ≤ uexp fun ω => |f ω| := by
-  unfold uexp
+  rw [uexp_def, uexp_def]
   rw [abs_div, Nat.abs_cast]
   exact div_le_div_of_nonneg_right (Finset.abs_sum_le_sum_abs _ _) (Nat.cast_nonneg _)
 
@@ -223,17 +223,18 @@ theorem length_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
 /-- The encoded history is the concatenation of its blocks. -/
 theorem encodeHist_eq_flatMap {n : ℕ} : ∀ h : List ((Fin n → Bool) × (Fin n → Bool)),
     encodeHist h = h.flatMap histBlock
-  | [] => rfl
+  | [] => by rw [encodeHist_nil, List.flatMap_nil]
   | p :: h => by
-    show pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h) = _
-    rw [encodeHist_eq_flatMap h, List.flatMap_cons]
-    simp [histBlock, pairEncode]
+    rw [encodeHist_cons, encodeHist_eq_flatMap h, List.flatMap_cons]
+    simp [histBlock, pairEncode_eq]
 
 /-- The syntactic block length `6n + 6` of a history block. -/
 def histBlockLen : PolyExpr := .add (.mul (.const 6) .var) (.const 6)
 
 /-- Evaluating the block length. -/
-theorem eval_histBlockLen (n : ℕ) : histBlockLen.eval n = 6 * n + 6 := rfl
+theorem eval_histBlockLen (n : ℕ) : histBlockLen.eval n = 6 * n + 6 := by
+  simp only [histBlockLen, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+    PolyExpr.eval_var]
 
 /-- The length of a concatenation of chunks of a common length `b`. -/
 theorem length_flatMap_of_length {α : Type*} (f : α → List Bool) (b : ℕ) :
@@ -316,8 +317,10 @@ theorem length_maskBlock {n : ℕ} (w : Fin n → Bool) : (maskBlock w).length =
   omega
 
 /-- Doubling distributes over concatenation. -/
-theorem dbl_append (a b : List Bool) : dbl (a ++ b) = dbl a ++ dbl b :=
-  List.flatMap_append
+theorem dbl_append (a b : List Bool) : dbl (a ++ b) = dbl a ++ dbl b := by
+  induction a with
+  | nil => rw [List.nil_append, dbl_nil, List.nil_append]
+  | cons x a ih => rw [List.cons_append, dbl_cons, dbl_cons, ih, List.cons_append, List.cons_append]
 
 /-- Masking with zeros is the identity. -/
 theorem zipWith_xor_replicate_false : ∀ l : List Bool,
@@ -330,8 +333,8 @@ theorem zipWith_xor_replicate_false : ∀ l : List Bool,
 /-- Exclusive-or commutes with doubling. -/
 theorem zipWith_xor_dbl : ∀ a b : List Bool,
     List.zipWith xor (dbl a) (dbl b) = dbl (List.zipWith xor a b)
-  | [], _ => rfl
-  | _ :: _, [] => rfl
+  | [], _ => by rw [dbl_nil, List.zipWith_nil_left, List.zipWith_nil_left, dbl_nil]
+  | _ :: _, [] => by rw [dbl_nil, List.zipWith_nil_right, List.zipWith_nil_right, dbl_nil]
   | x :: a, y :: b => by
     simp only [dbl_cons, List.zipWith_cons_cons, zipWith_xor_dbl a b]
 
@@ -350,8 +353,8 @@ theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
   have h1 : histBlock (x, y) =
       (dbl (dbl (List.ofFn x)) ++ [false, false, true, true]) ++
         (dbl (List.ofFn y) ++ [false, true]) := by
-    simp only [histBlock, pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc]
-    rfl
+    simp only [histBlock, pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc,
+      dbl_cons, List.cons_append, List.nil_append]
   have h2 : maskBlock w =
       List.replicate (dbl (dbl (List.ofFn x)) ++ [false, false, true, true]).length false ++
         (dbl (List.ofFn w) ++ [false, false]) := by
@@ -361,7 +364,8 @@ theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
     omega
   rw [h1, h2, List.zipWith_append (List.length_replicate ..).symm, zipWith_xor_replicate_false,
     List.zipWith_append (by simp only [length_dbl, List.length_ofFn]), zipWith_xor_dbl, hyw]
-  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc]
+  simp only [pairEncode_eq_dbl, dbl_append, List.append_nil, List.append_assoc, dbl_cons, dbl_nil,
+    List.cons_append, List.nil_append]
   rfl
 
 /-- The exclusive-or of two concatenations of `k` chunks of pairwise equal lengths is the
@@ -537,11 +541,11 @@ def adviceBound (q : PolyExpr) : PolyExpr :=
 /-- Decoding the well-formed query move `⟨[false], x⟩`. -/
 theorem decodeOracleMove_query (ℓ : ℕ) (x : Fin ℓ → Bool) :
     decodeOracleMove ℓ (pairEncode [false] (List.ofFn x)) = .query x := by
-  simp [decodeOracleMove, pairDecode_pairEncode, decodeFin_ofFn]
+  rw [decodeOracleMove_pairEncode_false, decodeFin_ofFn]
 
 /-- Decoding the verdict move `[true, b]`. -/
-theorem decodeOracleMove_ret (ℓ : ℕ) (b : Bool) : decodeOracleMove ℓ [true, b] = .ret b := by
-  cases b <;> rfl
+theorem decodeOracleMove_ret (ℓ : ℕ) (b : Bool) : decodeOracleMove ℓ [true, b] = .ret b :=
+  decodeOracleMove_true_two ℓ b
 
 /-- **The post-processor on the layout of the composite machine**: for a history of `k` pairs
 of `n`-bit strings, the points string `P`, a mask `M`, the budget string `u` and the
@@ -653,7 +657,7 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
   obtain ⟨B, hBc, -, hB⟩ := C₂.exists_split (.mul (.add q (.const 1)) .var)
   refine ⟨B, fun n => ?_⟩
   have hlen : B.coinLen n = (q.eval n + 1) * n + D.coinLen n := by
-    simp only [NUPPT.coinLen, hBc, hC₂c, hCc, hD₁c, NUPPT.coins_ofPolyTimeUniform,
+    simp only [NUPPT.coinLen_eq, hBc, hC₂c, hCc, hD₁c, NUPPT.coins_ofPolyTimeUniform,
       PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, Nat.add_zero]
   let φ : (Fin (q.eval n + 1) → Fin n → Bool) × D.Coins n ≃ B.Coins n :=
     ((FunFamily.blocks (q.eval n + 1) n).symm.prodCongr (Equiv.refl (D.Coins n))).trans
@@ -668,7 +672,7 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
     rw [hφ, hPstr, ← List.ofFn_fin_append]
     exact (List.ofFn_congr hlen.symm _).symm
   -- the activation of `B` on an encoded history
-  have hD₁len : D₁.coinLen n = D.coinLen n := by simp only [NUPPT.coinLen, hD₁c]
+  have hD₁len : D₁.coinLen n = D.coinLen n := by simp only [NUPPT.coinLen_eq, hD₁c]
   have hrun : ∀ hist : List ((Fin n → Bool) × (Fin n → Bool)),
       B.runAt n (encodeHist hist) (φ (ρ, c)) =
         postFun (NUPPT.layout (List.replicate n true)
@@ -677,7 +681,8 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
             (D.runAt n (preFun (pairEncode (pairEncode (encodeHist hist) Pstr)
               (pairEncode (maskOf (v n)) (List.replicate (q.eval n + 1) true)))) c)) [] []) := by
     intro hist
-    have hp : (PolyExpr.mul (.add q (.const 1)) .var).eval n = (q.eval n + 1) * n := rfl
+    have hp : (PolyExpr.mul (.add q (.const 1)) .var).eval n = (q.eval n + 1) * n := by
+      simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_var]
     have hPlen : Pstr.length = (q.eval n + 1) * n := by simp [hPstr]
     have hclen : (List.ofFn c).length = D.coinLen n := by simp
     rw [NUPPT.runAt_eq, hcoins, hB, hp, List.take_left' hPlen, List.drop_left' hPlen]
@@ -685,7 +690,7 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
     simp only at hC₂'
     rw [hC₂', hC, hD₁len, List.take_of_length_le hclen.le, List.drop_of_length_le hclen.le, hD₁,
       NUPPT.runAtL_ofPolyTimeUniform]
-    rfl
+    simp only [NUPPT.layout_eq, NUPPT.advInput_eq, NUPPT.runAt_eq, id]
   -- the canonical history along the points `ρ` against the oracle `g`
   let ρ' : ℕ → Fin n → Bool := fun i => if h : i < q.eval n + 1 then ρ ⟨i, h⟩ else fun _ => false
   let hist : ℕ → List ((Fin n → Bool) × (Fin n → Bool)) :=
@@ -727,17 +732,17 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
     induction j with
     | zero =>
       intro _
-      rw [Nat.sub_zero, buildTree, hret]
-      rfl
+      rw [Nat.sub_zero, buildTree_zero_of_ret hret, QueryTree.eval_ret]
     | succ j ih =>
       intro hj
       have hk : q.eval n + 1 - (j + 1) < q.eval n + 1 := by omega
-      rw [buildTree, hquery _ hk, QueryTree.eval_query, ← hρ' _ hk, ← hist_succ,
+      rw [buildTree_succ_of_query (hquery _ hk), QueryTree.eval_query, ← hρ' _ hk, ← hist_succ,
         show q.eval n + 1 - (j + 1) + 1 = q.eval n + 1 - j by omega]
       exact ih (by omega)
   have h0 : hist 0 = [] := rfl
   have := main (q.eval n + 1) le_rfl
   rw [Nat.sub_self, h0] at this
+  rw [NUPPT.toOracleAdversary_eq]
   exact this
 
 end TCSlib.Cryptography.MultiMsg

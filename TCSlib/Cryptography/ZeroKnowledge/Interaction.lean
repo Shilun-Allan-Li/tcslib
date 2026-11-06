@@ -142,7 +142,9 @@ def encodeMsgs (h : List (List Bool)) : List Bool := h.foldr pairEncode []
 /-- The first projection of an encoded history is its first message (`[]` when empty). -/
 theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h.headD [] := by
   cases h with
-  | nil => rfl
+  | nil =>
+    rw [encodeMsgs_nil, List.headD_nil]
+    exact List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairFstD_le []))
   | cons m h => simp
 
 /-- The strategy computed by a machine `A`: one activation at parameter `|x|` on
@@ -534,7 +536,7 @@ theorem exists_proverCoins_le (π : Protocol) (P' : Strategy) (x y z : List Bool
   have hcard : (0 : ℝ) < Fintype.card (P'.Coins x.length) := by
     exact_mod_cast Fintype.card_pos
   have hsum : ∑ _a : P'.Coins x.length, uexp f ≤ ∑ a, f a := by
-    rw [sum_const, card_univ, nsmul_eq_mul, uexp, mul_div_cancel₀ _ hcard.ne']
+    rw [sum_const, card_univ, nsmul_eq_mul, uexp_def, mul_div_cancel₀ _ hcard.ne']
   obtain ⟨a, -, ha⟩ := exists_le_of_sum_le univ_nonempty hsum
   exact ⟨a, ha⟩
 

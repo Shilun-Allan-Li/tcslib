@@ -157,7 +157,7 @@ theorem abs_sum_sub_le_statDist [Fintype γ] (p q : FinDist γ) (T : Finset γ) 
   have h2 := abs_sum_le_sum_abs (fun g => p g - q g) Tᶜ
   have hneg : ∑ g ∈ Tᶜ, (p g - q g) = -∑ g ∈ T, (p g - q g) := by linarith
   rw [hneg, abs_neg] at h2
-  rw [statDist]
+  rw [statDist_eq]
   linarith
 
 /-- The distinguishing advantage of any distinguisher, deterministic or with coins, is at
@@ -172,7 +172,7 @@ theorem distAdv_le_statDist [Nonempty σ] [Nonempty τ] [Nonempty ρ] [Fintype �
     distAdv X Y D ≤
       statDist ((FinDist.uniform σ).map X) ((FinDist.uniform τ).map Y) := by
   have hρ : (0 : ℝ) < Fintype.card ρ := Nat.cast_pos.2 Fintype.card_pos
-  rw [distAdv, acceptProb_eq_uexp_sum_map X, acceptProb_eq_uexp_sum_map Y, uexp, uexp,
+  rw [distAdv, acceptProb_eq_uexp_sum_map X, acceptProb_eq_uexp_sum_map Y, uexp_def, uexp_def,
     ← sub_div, ← sum_sub_distrib, abs_div, abs_of_pos hρ, div_le_iff₀ hρ]
   refine (abs_sum_le_sum_abs _ _).trans ?_
   rw [mul_comm, ← nsmul_eq_mul, ← card_univ, ← sum_const]

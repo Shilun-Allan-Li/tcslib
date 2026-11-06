@@ -141,7 +141,8 @@ def OracleEnsemble.keyed {ℓ₁ ℓ₂ : PolyExpr}
 /-- Unfolding: the random-function ensemble samples by the identity on tables. -/
 @[simp] theorem OracleEnsemble.random_O (ℓ₁ ℓ₂ : PolyExpr) (n : ℕ)
     (R : (Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)) :
-    (OracleEnsemble.random ℓ₁ ℓ₂).O n R = R := rfl
+    (OracleEnsemble.random ℓ₁ ℓ₂).O n R = R :=
+  randomFunction_apply _ _ R
 
 /-- Unfolding: the keyed ensemble samples by `F n`. -/
 @[simp] theorem OracleEnsemble.keyed_O {ℓ₁ ℓ₂ : PolyExpr}
@@ -194,6 +195,41 @@ def decodeOracleMove (ℓ₁ : ℕ) (w : List Bool) : OracleMove ℓ₁ :=
   | _, [true, b] => .ret b
   | _, _ => .ret false
 
+/-- The two-bit word `[true, b]` is not a pair: its decoding would start with a doubled bit
+(at least four bits) or with the separator `01`. -/
+private theorem pairDecode_true_two (b : Bool) : pairDecode [true, b] = none := by
+  cases h : pairDecode [true, b] with
+  | none => rfl
+  | some p =>
+    obtain ⟨u, v⟩ := p
+    have hz := eq_pairEncode_of_pairDecode _ u v h
+    rw [pairEncode_eq] at hz
+    cases u with
+    | nil => simp at hz
+    | cons x u =>
+      have hl := congrArg List.length hz
+      simp only [List.length_cons, List.length_append, List.flatMap_cons, List.length_nil] at hl
+      omega
+
+/-- Decoding a pair `⟨[false], x⟩`: the query `x` when `x` has `ℓ₁` bits, else the verdict
+`false`: `decodeOracleMove ℓ₁ (pairEncode [false] x) =
+match decodeFin ℓ₁ x with | some y => .query y | none => .ret false`. -/
+theorem decodeOracleMove_pairEncode_false (ℓ₁ : ℕ) (x : List Bool) :
+    decodeOracleMove ℓ₁ (pairEncode [false] x) =
+      match decodeFin ℓ₁ x with
+      | some y => .query y
+      | none => .ret false := by
+  unfold decodeOracleMove
+  rw [pairDecode_pairEncode, pairEncode_eq]
+  rfl
+
+/-- Decoding the two-bit word `[true, b]`: the verdict `b`,
+`decodeOracleMove ℓ₁ [true, b] = .ret b`. -/
+theorem decodeOracleMove_true_two (ℓ₁ : ℕ) (b : Bool) :
+    decodeOracleMove ℓ₁ [true, b] = .ret b := by
+  unfold decodeOracleMove
+  rw [pairDecode_true_two]
+
 /-- The encoding of the history of (query, answer) pairs handed to a next-query machine: the
 nested pair `⟨⟨x₁, y₁⟩, ⟨⟨x₂, y₂⟩, ⟨…, []⟩⟩⟩`. -/
 def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
@@ -202,6 +238,13 @@ def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin �
 /-- The empty history is encoded as the empty string: `encodeHist [] = []`. -/
 theorem encodeHist_nil {ℓ₁ ℓ₂ : ℕ} :
     encodeHist ([] : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) = [] :=
+  rfl
+
+/-- The history encoding is `TCSlib.Cryptography.GGMRed.histEnc`:
+`encodeHist h = GGMRed.histEnc h`. -/
+theorem encodeHist_eq_histEnc {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
+    encodeHist h = GGMRed.histEnc h := by
+  rw [GGMRed.histEnc_eq]
   rfl
 
 /-- A history is encoded pair by pair:
@@ -322,7 +365,7 @@ theorem OracleEnsemble.Indist.refl {ℓ₁ ℓ₂ : PolyExpr} (O : OracleEnsembl
   have h : (fun n => distAdv (O.O n) (O.O n)
       (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n)))) = fun _ => 0 := by
     funext n
-    simp [distAdv]
+    simp [distAdv_def]
   rw [h]
   exact negligible_zero
 
@@ -336,6 +379,7 @@ theorem OracleEnsemble.Indist.symm {ℓ₁ ℓ₂ : PolyExpr} {O O' : OracleEnse
       fun n => distAdv (O.O n) (O'.O n)
       (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))) := by
     funext n
+    rw [distAdv_def, distAdv_def]
     exact abs_sub_comm _ _
   rw [e]
   exact h D q
@@ -349,19 +393,8 @@ theorem OracleEnsemble.Indist.trans {ℓ₁ ℓ₂ : PolyExpr} {O O' O'' : Oracl
     (h₁ : O.Indist O') (h₂ : O'.Indist O'') : O.Indist O'' := by
   intro D q
   refine ((h₁ D q).add (h₂ D q)).mono ⟨0, fun n _ => ?_⟩
-  have t := abs_sub_le (acceptProb (O.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))))
-    (acceptProb (O'.O n) (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))))
-    (acceptProb (O''.O n) (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))))
-  have h0 : 0 ≤ distAdv (O.O n) (O'.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))) +
-      distAdv (O'.O n) (O''.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))) :=
-    add_nonneg (abs_nonneg _) (abs_nonneg _)
-  have h1 : 0 ≤ distAdv (O.O n) (O''.O n)
-      (oracleDist (D.toOracleAdversary n (ℓ₁.eval n) (ℓ₂.eval n) (q.eval n))) := abs_nonneg _
-  rw [abs_of_nonneg h1, abs_of_nonneg h0]
-  exact t
+  simp only [distAdv_def, abs_abs]
+  exact (abs_sub_le _ _ _).trans (le_abs_self _)
 
 /-- **The hybrid lemma for oracles** [PS10, §3.8.2, "oracle indistinguishability satisfies …
 the Hybrid Lemma"] (Claim-96.b), at one parameter: if the oracle adversary `A` distinguishes
@@ -451,7 +484,8 @@ def PRG.truncate (P : PRG) : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool) 
 generator by [PS10, Lemma 80.5]: it exceeds `n` at every `n` (unlike `2n`). -/
 theorem two_mul_add_one_expands (n : ℕ) :
     n < (PolyExpr.add (.mul (.const 2) .var) (.const 1)).eval n := by
-  show n < 2 * n + 1
+  rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+    PolyExpr.eval_const]
   omega
 
 /-- **The length-doubling generator obtained from an arbitrary PRG** (Cor-97.a, the "without
@@ -467,7 +501,9 @@ of the truncated generator applied to the `i`-th iterate of `s ↦ init (G₁(s)
 (`PRG.expand_G`). -/
 theorem PRG.doubling_apply (P : PRG) (n : ℕ) (s : Fin n → Bool) (i : Fin (2 * n)) :
     P.doubling n s i =
-      P.truncate n ((fun x => Fin.init (P.truncate n x))^[i] s) (Fin.last n) := rfl
+      P.truncate n ((fun x => Fin.init (P.truncate n x))^[i] s) (Fin.last n) := by
+  show (PRG.expand P.truncate _ two_mul_add_one_expands).G n s (Fin.castLE (Nat.le_succ (2 * n)) i) = _
+  exact PRG.expand_G _ _ _ n s _
 
 /-- **Truncation preserves pseudorandomness** (first half of Cor-97.a): if `G` is a secure
 PRG then its truncation to `n + 1` bits is a secure one-bit-stretch PRG.
@@ -484,8 +520,10 @@ the sunglass identity `distAdv_comp` with the projection `t ↦ t ∘ castLE` (a
 `Fin.appendEquiv`/`Equiv.funSplitAt`), and `PRG.secure_iff` applied to `hP` gives the
 negligible bound; `Negligible.mono` with the equality. -/
 theorem PRG.Secure.truncate {P : PRG} (hP : P.Secure) : (PRG.oneBit P.truncate).Secure := by
-  have hm : ∀ n, (PolyExpr.add .var (.const 1)).eval n ≤ P.stretch.eval n := fun n => P.expands n
-  refine ⟨?_, fun D => ?_⟩
+  have hm : ∀ n, (PolyExpr.add .var (.const 1)).eval n ≤ P.stretch.eval n := fun n => by
+    rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
+    exact P.expands n
+  refine (PRG.secure_iff _).2 ⟨(PRG.easy_iff _).2 ?_, fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := hP.truncateTo_easy _ hm
     exact ⟨E, hE, fun n s => hEs n s⟩
   · exact hP.truncateTo_negligible _ hm D
@@ -508,8 +546,10 @@ theorem PRG.Secure.doubling {P : PRG} (hP : P.Secure) : DoublingPRG P.doubling :
       two_mul_add_one_expands).Secure :=
     prg_expand P.truncate _ two_mul_add_one_expands hP.truncate
   have hm : ∀ n, (PolyExpr.mul (.const 2) .var).eval n ≤
-      (PolyExpr.add (.mul (.const 2) .var) (.const 1)).eval n := fun n => Nat.le_succ _
-  refine ⟨?_, fun D => ?_⟩
+      (PolyExpr.add (.mul (.const 2) .var) (.const 1)).eval n := fun n => by
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+    omega
+  refine ⟨?_, (Ensemble.pseudorandom_iff_prgAdv _).2 fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := hQ.truncateTo_easy _ hm
     exact ⟨E, hE, fun n s => hEs n s⟩
   · exact hQ.truncateTo_negligible _ hm D
@@ -563,7 +603,7 @@ theorem thm_97_3_1 {ρ : Type*} [Fintype ρ] (G : ∀ n, (Fin n → Bool) → (F
     hybridProb (splitHalves ∘ G n) A 0 = acceptProb (ggmPRF G n) (oracleDist A) ∧
       hybridProb (splitHalves ∘ G n) A n =
         acceptProb ((OracleEnsemble.random .var .var).O n) (oracleDist A) :=
-  ⟨hybridProb_zero _ A, hybridProb_top _ A⟩
+  ⟨by rw [ggmPRF_apply, ggmBits_def]; exact hybridProb_zero _ A, hybridProb_top _ A⟩
 
 /-- **The query sub-hybrids** `HHF^j` of [PS10, proof of Theorem 97.3] (Thm-97.3.2): for an
 adversary making at most `q` queries, the gap between the consecutive level hybrids `HF^i` and
@@ -580,7 +620,7 @@ theorem thm_97_3_2 {ρ : Type*} [Fintype ρ] (G : ∀ n, (Fin n → Bool) → (F
     |hybridProb (splitHalves ∘ G n) A i - hybridProb (splitHalves ∘ G n) A ((i : ℕ) + 1)| ≤
       ∑ j : Fin q, prgAdv (G n) (ggmBitsDist (G n) A q i j) := by
   have h := hybridProb_level (splitHalves ∘ G n) A hA i
-  simpa only [prgAdv, distAdv_ggmBitsDist] using h
+  simpa only [prgAdv_eq, distAdv_ggmBitsDist] using h
 
 /-- `decodeOracleMove` in terms of the `Option` form of `TCSlib.Cryptography.GGMRed`: the
 query `queryOf` if there is one, else the verdict `verdictOf` (`[true, true]` is the only
@@ -600,18 +640,19 @@ private theorem decodeOracleMove_eq (ℓ₁ : ℕ) (w : List Bool) :
   · rename_i w o w' x hx
     have hw := eq_pairEncode_of_pairDecode w _ _ hx
     have hq : GGMRed.queryOf ℓ₁ w = decodeFin ℓ₁ x := by
-      simp only [GGMRed.queryOf, hx]
+      rw [GGMRed.queryOf_eq, hx]
     rw [hq]
     cases decodeFin ℓ₁ x with
     | some y => rfl
     | none =>
       simp only
       congr 1
-      rw [hw]
-      simp [GGMRed.verdictOf, pairEncode]
+      rw [hw, GGMRed.verdictOf_eq]
+      simp [pairEncode_eq]
   · rename_i o w' b hp
-    have hq : GGMRed.queryOf ℓ₁ [true, b] = none := by cases b <;> rfl
-    rw [hq]
+    have hq : GGMRed.queryOf ℓ₁ [true, b] = none := by
+      rw [GGMRed.queryOf_eq, pairDecode_true_two]
+    rw [hq, GGMRed.verdictOf_eq]
     cases b <;> rfl
   · rename_i w o w' hb hp
     have hq : GGMRed.queryOf ℓ₁ w = none := by
@@ -620,7 +661,7 @@ private theorem decodeOracleMove_eq (ℓ₁ : ℕ) (w : List Bool) :
       rw [GGMRed.queryOf_eq_some_iff] at hx
       exact hp (List.ofFn x) hx
     rw [hq]
-    simp only [OracleMove.ret.injEq, GGMRed.verdictOf]
+    simp only [OracleMove.ret.injEq, GGMRed.verdictOf_eq]
     exact (decide_eq_false_iff_not.2 fun h => hb true h).symm
 
 /-- `buildTree` of the decoded moves is `buildTreeQ` of the raw outputs. -/
@@ -685,6 +726,8 @@ theorem exists_ggmBitsDist_nuppt {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) �
   have hA : D.toOracleAdversary n n n (q.eval n) = fun r =>
       GGMRed.buildTreeQ (fun hist => D.runAt n (GGMRed.histEnc hist) r) (q.eval n) [] := by
     funext r
+    rw [NUPPT.toOracleAdversary_eq]
+    simp only [encodeHist_eq_histEnc]
     exact buildTree_eq_buildTreeQ _ (q.eval n) []
   rw [hA]
   let e₁ : (Fin (q.eval n) → (Fin n → Bool) × (Fin n → Bool)) ≃ (Fin (q.eval n * (2 * n)) → Bool) :=
@@ -703,7 +746,7 @@ theorem exists_ggmBitsDist_nuppt {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) �
   show List.ofFn (Fin.appendEquiv (q.eval n * n) (q.eval n * (2 * n) + D.coinLen n)
     ((FunFamily.blocks (q.eval n) n).symm W₁,
       Fin.appendEquiv (q.eval n * (2 * n)) (D.coinLen n) (e₁ W₂, r))) = _
-  rw [ofFn_appendEquiv, ofFn_appendEquiv]
+  rw [ofFn_appendEquiv, ofFn_appendEquiv, GGMRed.coinStr_eq]
   rfl
 
 /-- **A next-query machine with query budget `0` has PRF advantage `0`:** with budget `0` the

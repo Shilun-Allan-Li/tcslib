@@ -238,10 +238,10 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
   classical
   rcases isEmpty_or_nonempty O with hO | hO
   · -- no tables and no tuples: both averages are over empty types
-    intro F
+    refine (HardcoreBit.pushesUniform_iff _).2 fun F => ?_
     haveI : IsEmpty (I → O) := ⟨fun R => hO.false (R (r 0))⟩
     haveI : IsEmpty (Fin (q + 1) → O) := ⟨fun f => hO.false (f 0)⟩
-    simp only [uexp, univ_eq_empty, sum_empty, zero_div]
+    simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
   · -- split `I` into the image of `r` and its complement: `R ↦ R ∘ r` is a projection
     let e₁ : Fin (q + 1) ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
       (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
@@ -282,12 +282,16 @@ theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
   let b : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
     uprob fun w : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
   have ha : acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D =
-      uexp a :=
-    (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+      uexp a := by
+    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin n → Bool) = id from
+      funext fun f => randomFunction_apply _ _ f]
+    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
       ((Fin n → Bool) → (Fin n → Bool)) ρ).symm.trans
-        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans (by rw [uprob_prod]; rfl)
-  have hb : acceptProb (otpEnc m) D = uexp b :=
-    (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans
+      (by rw [uprob_prod]; rfl)
+  have hb : acceptProb (otpEnc m) D = uexp b := by
+    rw [acceptProb_def]
+    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
       (Fin (q + 1) → Fin n → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
   -- at injective points the table values are fresh uniform pads
   have hab : ∀ r : Fin (q + 1) → Fin n → Bool, Function.Injective r → a r = b r := by
@@ -295,7 +299,7 @@ theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
     exact ((pushesUniform_comp_injective (O := Fin n → Bool) hr).prodMap
       (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
       (fun v : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
-  rw [distAdv, ha, hb]
+  rw [distAdv_def, ha, hb]
   exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
     (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩)
     (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
@@ -455,7 +459,7 @@ theorem runAt_prfEnc {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) coins).runAt n (pairEncode k w) r =
       pairEncode (List.ofFn r) (List.zipWith xor w (E (pairEncode k (List.ofFn r)))) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prfEncFun, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [prfEncFun, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The activation of the decryption machine on `⟨k, ⟨r, c⟩⟩` with `n`-bit `r` and `c` is
 `c ⊕ E(⟨k, r⟩)`. -/
@@ -466,7 +470,7 @@ theorem runAt_prfDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
         (pairEncode k (pairEncode r c)) r' =
       List.zipWith xor c (E (pairEncode k r)) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prfDecFun, prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc]
+  simp [prfDecFun, prfDecWF, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq, hr, hc]
 
 /-- On a ciphertext `w` whose two projections `pairFstD w` and `pairSndD w` are not both `n` bits
 long, the decryption machine outputs `⊥`: a string that decodes to no `n`-bit message. -/
@@ -479,11 +483,11 @@ theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : Pol
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
   have hf : prfDecWF (pairEncode (pairEncode (NUPPT.advInput n (pairEncode k w)) [])
       (List.ofFn r')) = false := by
-    simp only [prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, pairFstD_pairEncode,
+    simp only [prfDecWF, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
       pairSndD_pairEncode, List.length_replicate, Bool.and_eq_false_iff, decide_eq_false_iff_not]
     tauto
   rw [prfDecFun, hf]
-  simp [decodeFin, NUPPT.inParam, NUPPT.advInput]
+  simp [decodeFin_eq, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- Masking twice with the same pad (at least as long as the message) is the identity
 (private copy of the helper of `Asymptotic/Encryption.lean`). -/
@@ -529,10 +533,10 @@ def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → 
 /-- `encodeList l` is the concatenation of the self-delimited chunks `⟨c, []⟩`, `c ∈ l`. -/
 private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
     PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
-  | [] => rfl
+  | [] => by rw [PrivateKeyScheme.encodeList_nil, List.flatMap_nil]
   | c :: l => by
     rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, encodeList_eq_flatMap l]
-    simp [pairEncode]
+    simp [pairEncode_eq]
 
 /-- The encoded ciphertext tuple is the concatenation of the chunks `⟨⟨r_j, c_j⟩, []⟩` (the
 form in which the next-query machine of `MultiMsg.exists_queryChain_nuppt` produces it). -/
@@ -550,7 +554,7 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
     (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
     (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) :
     (prfScheme F E hE hFE).multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r) := by
-  unfold PrivateKeyScheme.multiEncDist encodeTuple
+  rw [PrivateKeyScheme.multiEncDist_apply, encodeTuple]
   congr 1
   congr 1
   funext j
@@ -602,7 +606,7 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
     (hF : PRF F) (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) :
     (prfScheme F E hE hFE).MultiMessageSecure := by
-  intro D q
+  refine (PrivateKeyScheme.multiMessageSecure_iff _).2 fun D q => ?_
   -- the worst message pair at each parameter (hard-wired into the reductions)
   have hmax : ∀ n, ∃ p : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
       ∀ w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
@@ -625,9 +629,10 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
       prfAdv (F n) (B₁.toOracleAdversary n n n (q.eval n + 1)) +
       2 * ((Nat.choose (q.eval n + 1) 2 : ℝ) / 2 ^ n), ?_, fun n m m' => ?_⟩
   · -- the asymptotic step: two PRF advantages and the collision term
-    exact ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
-      (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
-      ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
+    simpa only [PolyExpr.eval_add, PolyExpr.eval_const] using
+      ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
+        (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
+        ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
   · refine (hμ n (m, m')).trans ?_
     -- the concrete step: the ciphertext tuples are `encodeTuple ∘ prfEncReal`
     have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
@@ -646,7 +651,7 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
           prfAdv (F n) (multiMsgAdv v fun w c => D.distinguisherL n (encodeTuple w) c) := by
       intro B v φ hφ
       refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g w => ?_
-      rw [hφ g w.1 w.2, multiMsgAdv, eval_chainTree, NUPPT.distinguisherL, encodeTuple_eq_flatten]
+      rw [hφ g w.1 w.2, multiMsgAdv, eval_chainTree, NUPPT.distinguisherL_eq, encodeTuple_eq_flatten]
     obtain ⟨φ₀, hφ₀⟩ := hB₀ n
     obtain ⟨φ₁, hφ₁⟩ := hB₁ n
     dsimp only

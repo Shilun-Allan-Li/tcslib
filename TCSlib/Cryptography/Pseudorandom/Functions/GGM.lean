@@ -103,10 +103,19 @@ theorem ggmFrom_of_le (G : S → S × S) (x : Fin n → Bool) {i : ℕ} (h : n �
 `x = x₁ … x_n`, `F_K(x) = G_{x_n}(G_{x_{n-1}}(⋯ G_{x₁}(K) ⋯))`. -/
 def ggm (G : S → S × S) : S → (Fin n → Bool) → S := fun K x => ggmFrom G x 0 K
 
+/-- The defining equation of `ggm`: the walk from the root, `ggm G K x = ggmFrom G x 0 K`. -/
+theorem ggm_apply (G : S → S × S) (K : S) (x : Fin n → Bool) : ggm G K x = ggmFrom G x 0 K :=
+  rfl
+
 /-- The first `i` bits of `x`, as an `i`-bit string (bits beyond `n` read as `false`;
 only `i ≤ n` is used). -/
 def prefixAt (x : Fin n → Bool) (i : ℕ) : Fin i → Bool :=
   fun k => if h : k.val < n then x ⟨k, h⟩ else false
+
+/-- Bit `k` of the prefix: `prefixAt x i k = x k` for `k < n`, and `false` beyond `n`. -/
+theorem prefixAt_apply (x : Fin n → Bool) (i : ℕ) (k : Fin i) :
+    prefixAt x i k = if h : k.val < n then x ⟨k, h⟩ else false :=
+  rfl
 
 /-- The oracle of the hybrid `H_i` [Gar26, proof of Theorem 3.3]: with `R` a function
 from `i`-bit prefixes to labels (the random function `K_i`), the input `x` is answered by
@@ -293,12 +302,30 @@ def splitHalves : (Fin (2 * n) → Bool) ≃ (Fin n → Bool) × (Fin n → Bool
     rw [dif_neg (by simp)]
     exact congrArg w.2 (Fin.ext (by simp))
 
+/-- The first half of `splitHalves z` is the first `n` bits of `z`:
+`(splitHalves z).1 k = z k` (`k < n`). -/
+theorem splitHalves_apply_fst (z : Fin (2 * n) → Bool) (k : Fin n) :
+    (splitHalves z).1 k = z ⟨k, by omega⟩ :=
+  rfl
+
+/-- The second half of `splitHalves z` is the last `n` bits of `z`:
+`(splitHalves z).2 k = z (n + k)`. -/
+theorem splitHalves_apply_snd (z : Fin (2 * n) → Bool) (k : Fin n) :
+    (splitHalves z).2 k = z ⟨n + k, by omega⟩ :=
+  rfl
+
 /-- The GGM construction on bit strings [Gar26, Construction 3.3]: from a length-doubling
 `G : {0,1}^n → {0,1}^{2n}`, the keyed family `F_K(x) = G_{x_n}(⋯ G_{x₁}(K) ⋯)` on
 `n`-bit keys, inputs and outputs, with `G₀, G₁` the first and last `n` bits of `G`. -/
 def ggmBits (G : (Fin n → Bool) → Fin (2 * n) → Bool) :
     (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool :=
   ggm (splitHalves ∘ G)
+
+/-- The defining equation of `ggmBits`: the GGM family of the halves of `G`,
+`ggmBits G = ggm (splitHalves ∘ G)`. -/
+theorem ggmBits_def (G : (Fin n → Bool) → Fin (2 * n) → Bool) :
+    ggmBits G = ggm (splitHalves ∘ G) :=
+  rfl
 
 /-- The PRG distinguisher `B_{i,j}` for a length-doubling `G` on bit strings: split the
 `2n`-bit challenge into halves and run `ggmDist`. Same cost as `ggmDist`. -/
