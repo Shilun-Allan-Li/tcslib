@@ -124,6 +124,7 @@ replay below chained from it with only its own PR.
 | #213 | `fdc0e425` (CE-1: BPLInP's public copy deleted, five uses cite `ExpBFS.coreSum_eq_of_code_eq`) | `replay-lce1` **passed** (7 modules) | 104 **dispatched** 2026-11-06 | **merged** 2026-11-06 (`a28b8c42`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) running |
 | #214 | `0bc71211` (AS-1: `LogProg.astep_call₁` through `astep_call`) | `replay-las1` **passed** (7 modules) | 105 **dispatched** 2026-11-06 | merge when it closes |
 | #215 | `57939a97`+ (SG-1: `CounterLoop`'s `counterSpan` through `Segment`) | `replay-lsg1` running | gate 106 after the replay | — |
+| #217 | `2fdb84f7` (NZ-1: `NDTM.not_haltsWithin_zero` published; 7 sites re-pointed, both readings, `Loop` and `Advice` included; gate 102 r2's two majors) | replay after `replay-lcamp2` (chained from `oleans-lcamp2`; `Nondeterministic`'s and `Loop`'s closures) | gate 108 after the replay; then gate 102 round 3 cites it | merge when 108 closes, then #211 |
 | #209 | `0b05cc3a` | `replay-lnth` **passed** | 100 **CLOSED** | **merged** 2026-11-06 (`5761d6e0`); `oleans-lnth` is the campaign's snapshot |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
@@ -205,7 +206,7 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    Thm 3.1 statement phase, and Ladner's statement phase. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
-   NZ-1 awaits acknowledgment. CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
+   NZ-1 is #217 (acknowledged; it also carries gate 102 r2's two majors). CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
    `CircuitComplexity` await the owner), SG-1 #215 (`CounterLoop`; `Tautology` and `SingleTape`
    await an import ruling), RP-1 widened (in progress). **NatBits (BL-1, NB-1) is planned, not
    started:** `campaign/items/dedup/natbits-PLAN.md` (one PR, 18 files, a 340-module replay; after

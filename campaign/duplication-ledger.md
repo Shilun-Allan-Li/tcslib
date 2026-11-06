@@ -690,14 +690,32 @@ at gate 101's round-2 minor 1): **10 declarations across eight files, 11 proof s
 `pathOr_bit`) two declarations each, `Mult`'s `mult_queries` two sites in one declaration, every
 other file one. No file is past one fifth. **Retired on #208's merge.**
 
-**NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
-a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
-(`Turing.FinTM.not_computesInTime_zero`, `TuringMachine/Finite`) and cited where it applies. Its
-nondeterministic analogue (`Cfg.init` is live, so `N.tm.HaltsWithin z 0` fails) has no public
-lemma and is proved twice: `ClassNP/ExhaustiveReplay`'s private `xr_not_haltsWithin_zero` and an
-inline step of `ClassNP/NDNormalForm` (`hpos`, through `runWith_nil`, `initCfg_eq` and
-`Cfg.init_state`). One member in each file. **Proposed disposition:** the dedup window (12.2c):
-publish `NDTM.not_haltsWithin_zero` beside the NDTM run equations and re-point both.
+**NZ-1, no machine halts in zero steps** (found 2026-11-06 in gate 102's round-1 search; widened
+by kind in its round 2; **acknowledged, the user 2026-11-06: publish and re-point now**; PR #217,
+`lean/dedup-nz1`, commits `5e77e558` and `2fdb84f7`). One fact in two readings: the initial
+configuration is live, so no run halts within `0` steps.
+- **Deterministic:** public as `Turing.FinTM.not_computesInTime_zero` (`TuringMachine/Finite`).
+  Already cited by `ClassP/DTIME`, `ClassNP/TMSAT`, `CookLevin/Hardness` and
+  `Diagonalization/EXPCOM`, and since #211 by `TwoTapes`' `tt_forward_run`. Re-derived (gate 102
+  r2, finding 1) in `Build/Loop`'s private `emCall_prepared_eval_first` and `CircuitComplexity/Advice`'s
+  `DTIMEAdvice_eq_empty_of_eq_zero`; #217 re-points both.
+- **Nondeterministic:** no public lemma before #217, which publishes `Turing.NDTM.not_haltsWithin_zero`
+  (`TuringMachine/Nondeterministic`). Its five copies, one per file: `ClassNP/ExhaustiveReplay`'s private
+  `xr_not_haltsWithin_zero` (deleted), `ClassNP/NDNormalForm`'s `nf_forward` (`hpos`), `ClassNP/NTIME`'s
+  `NTIME_eq_empty_of_exists_zero`, `Randomized/ExpectedTime`'s `AbortDecidesInTime.restart`,
+  `Randomized/BPTIMEThreshold`'s `BPDecidesInTimeWith.one_le`; #217 re-points all five.
+
+**The search** (by kind, at `1dd510aa`): `rw`/`simp`/`change … at` forms with `runFrom_zero`,
+`runWith_nil`, `initCfg`, `Cfg.init` or `init_state`; zero-case scans (`by_contra`,
+`Nat.pos_of_ne_zero`, `eq_zero_or_pos`, `| zero`) near initial-configuration terms; `[] rfl` and
+`[] (by …)` instantiations of halting hypotheses; literal time-0 `runFrom`/`ComputesInTime`/`HaltsWithin`;
+`show`/`change`. **Not members**, each a different fact: first-halt helpers from an arbitrary `cfg`
+(`Loop:219`, `Catalog:6463`, `SAT:3797`, `Hardness:6176`); runs from non-initial configurations
+ending in a state mismatch (`Hardness`, `NDCodeSimulator`, `NDNormalForm`, `StepBlockLoop`,
+`Contract/Basic`, `Contract/Seam`, `NTimeDiagonalizer`); composite runs at positive times
+(`UniversalK`, `NTimeHierarchy`, `Composition`, `Inclusions`); positive liveness facts
+(`state = some q₀`); and other models (NARM's `narun`, `Yap`'s `badLang`, the oracle machines).
+**Retired on #217's merge.**
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
