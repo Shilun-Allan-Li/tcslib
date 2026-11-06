@@ -393,7 +393,7 @@ noncomputable def bitwiseEncCoins (S : BitPublicKeyScheme) (n : ℕ) :
       (NUPPT.coinsEquiv_ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins) n).symm)
 
 /-- The bitwise encryptor's coin string on the blocks `v` is that of `coinBlocks n B v`. -/
-theorem ofFn_bitwiseEncCoins (S : BitPublicKeyScheme) (n : ℕ) (v : Fin n → S.enc.Coins n) :
+theorem bitwiseEncCoins_ofFn (S : BitPublicKeyScheme) (n : ℕ) (v : Fin n → S.enc.Coins n) :
     List.ofFn (S.bitwiseEncCoins n v) = List.ofFn (coinBlocks n (S.enc.coinLen n) v) := by
   have key : ∀ w, List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform S.bitwiseEncFun_poly
       (.mul .var S.enc.coins) n).symm w) = List.ofFn w := fun w => by
@@ -422,7 +422,7 @@ private theorem bitwise_pkEncDist_coinBlocks (S : BitPublicKeyScheme) (n : ℕ) 
   rw [bitwise_enc_runAt]
   simp only [multiDist]
   refine congrArg _ (congrArg (fun l => encodeList (List.ofFn l)) (funext fun i => ?_))
-  rw [ofFn_bitwiseEncCoins, coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq, ofFn_fin_one]
+  rw [bitwiseEncCoins_ofFn, coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq, ofFn_fin_one]
 
 /-- **The bitwise scheme's ciphertexts as a tuple of single-bit encryptions**: the acceptance
 probability of any distinguisher on `S.bitwise.pkEncDist n m` is its acceptance probability on
