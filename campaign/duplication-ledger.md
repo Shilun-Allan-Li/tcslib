@@ -1089,6 +1089,26 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
 
+**AS-2, implicit `astep` reductions by unification** (gate 105 round 2, finding 1; **acknowledged,
+the user, 2026-11-06**). `AReach.step`/`AHalt.step` leave a premise that starts at `astep`, and a
+following `change`/`exact` on the concrete continuation reduces it with no `astep` in the text.
+Named members: `Logspace/Mult`'s `mult_row_start`, `mult_contribution`, `mult_inner_loop`,
+`mult_outer_loop`, `mult_next_column`, `mult_columns_run` and `mult_last_bit`;
+`Logspace/QueryReshape`'s `comp_factor_run`, `comp_valid_inner`, `comp_multiply` and
+`comp_separator_run`; and `NARMPSem`'s `PSem.of_areach` (`Function.iterate_fixed rfl` at halted
+configurations, inside an exclusion). `Mult` crosses one fifth (13/62). **Resolution:** a census by
+an `astep` irreducibility seal over every consumer, with controls, then a re-pointing PR after
+#214 merges.
+
+**MT-1, machine instruction tables read across files** (gate 105 round 2, finding 2; **acknowledged,
+the user, 2026-11-06**). Consumers read a machine's instruction table (`A`, `CA`, …) by
+`show A .l = _ from rfl` or `simp [A]` in files other than the table's home: `TQBFARM/Machine`,
+`Logspace/PathHardMachine`, `Codec/Machine`, the SavitchARM, ExpBFS, circuit, `CounterProgSimRun`
+and `SpaceAmplifyPolyRun` machines. This predates AS-1. `NARMExample`'s `guessValidA` reduces
+`NARM.detPart` and should use `NARM.detPart_det`. **Resolution:** per-label instruction equations
+(`A_<label>`) published in each machine's own file and the consumers re-pointed, one PR per machine
+directory in the dedup window; colleague files mechanical, with an FYI.
+
 **Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
 (`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
