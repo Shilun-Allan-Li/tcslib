@@ -1955,18 +1955,9 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
     (by funext p; rw [Cfg.mapState_workTapes]; exact congrFun hrt p)
     (by rw [Cfg.mapState_workTapePos]; exact hrp)
   have hwi : (d.mapState Sum.inl).mapState Sum.inl = r.mapState (fun _ => wen) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state,
-        Cfg.mapState_state, hrs']; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,
-        Cfg.mapState_inputPos]
-    · funext j p
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes,
-        Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos,
-        Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+    dsimp only [d]
+    rw [Cfg.mapState_mapState, Cfg.mapState_mapState]
+    rfl
   rw [hwi] at hwr hwc hwh
   let z := W.runFrom (r.mapState fun _ => wen) u
   have hze : z.state = some (Sum.inr RewindPhase.done) := by dsimp only [z]; rw [hwr]
@@ -2000,12 +1991,8 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
         omega
       exact congrFun (hrf j hjr hjc).1 p)
   have hai : (r.mapState (fun _ => wen)).mapState Sum.inl = r.mapState (fun _ => aen) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, hrs']; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+    rw [Cfg.mapState_mapState]
+    rfl
   have hAr := seamCompTM_run_ofCfg W (.inr RewindPhase.done) S sen
     (rfl : W.runFrom (r.mapState fun _ => wen) u = z) hze hwc
     (rfl : S.runFrom y v = S.runFrom y v)
@@ -2367,6 +2354,50 @@ private lemma sph_diagonal_language (M : FinTM Bool) (g : ℕ → ℕ) (hg : Spa
   exact hp (x.map e) x rfl w htime hspace
 
 
+/-- A linear-space decider for the quadratically padded language suffices for the separation
+from `NP`. [AB09, Exercise 3.2]
+
+**Proof sketch.** If linear space were `NP`, the padded language would belong to `NP`. Its
+polynomial-time padding map pulls it back to the original quadratic-space language, by the
+published closure of `NP` under polynomial-time preimages. This reverses the strict inclusion
+given by the space hierarchy at the linear and quadratic bounds. -/
+private lemma sph_linear_ne_NP_of_padding
+    (hH : ∀ f g : ℕ → ℕ, SpaceConstructible f → SpaceConstructible g →
+      (∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) → SPACE f ⊂ SPACE g)
+    (hpad : ∀ L : Language Bool, L ∈ SPACE (fun n => n ^ 2 + 1) →
+      ({y | ∃ x ∈ L,
+        y = pairEncode x (List.replicate (1 * (x.length + 1) ^ 2) true)} : Language Bool) ∈
+        SPACE (fun n => n + 1)) :
+    SPACE (fun n => n + 1) ≠ NP := by
+  intro heq
+  have hback : SPACE (fun n => n ^ 2 + 1) ⊆ SPACE (fun n => n + 1) := by
+    intro L hL
+    let p : List Bool → List Bool := fun x =>
+      pairEncode x (List.replicate (1 * (x.length + 1) ^ 2) true)
+    let L' : Language Bool := {y | ∃ x ∈ L, y = p x}
+    have hp : PolyTimeComputable p :=
+      polyTimeComputable_id.pairEncode (polyTimeComputable_polyUnary 1 2)
+    have hL' : L' ∈ NP := heq ▸ hpad L hL
+    have hpull : p ⁻¹' L' = L := by
+      apply Set.ext
+      intro x
+      constructor
+      · intro hx
+        obtain ⟨y, hy, hxy⟩ := (show ∃ y ∈ L, p x = p y from hx)
+        have he : x = y := by
+          simpa only [p, pairFstD_pairEncode] using congrArg pairFstD hxy
+        exact he.symm ▸ hy
+      · intro hx
+        exact (show ∃ y ∈ L, p x = p y from ⟨x, hx, rfl⟩)
+    have hpre := preimage_mem_NP hp hL'
+    rw [hpull] at hpre
+    exact heq.symm ▸ hpre
+  have hstrict := hH (fun n => n + 1) (fun n => n ^ 2 + 1)
+    spaceConstructible_linear (spaceConstructible_poly 2 (by norm_num))
+    (fun A => ⟨A + 1, fun n hn => by
+      nlinarith [Nat.mul_le_mul_right (n + 1) hn]⟩)
+  exact hstrict.2 hback
+
 /-- **The space hierarchy theorem** ([AB09, Theorem 4.8]; [SHL65] through
 [AB09]): for
 space-constructible `f` and `g`, if every constant multiple of `f` is
@@ -2507,7 +2538,7 @@ two classes is claimed, matching the book's remark.
 **Proof sketch.** Suppose `SPACE (n + 1) = NP`. `NP` is closed downward
 under `≤ₚ` (the chapter-2 bounded-certificate transport — a derived
 obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
-bounded form, named for the brief). Padding transfers space bounds down:
+bounded form). Padding transfers space bounds down:
 for `L ∈ SPACE (n² + 1)`, the padded language
 `L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate (|x|²) true)}` —
 membership restricted to padded members of `L`; padded
@@ -2523,9 +2554,9 @@ at the reduction's polynomial output length. Hence
 `Complexity.space_hierarchy` at the constructible pair
 (`Complexity.spaceConstructible_linear`,
 `Complexity.spaceConstructible_poly` at degree two; domination
-`A · (n + 1) ≤ n² + 1` eventually). Fill obligations, named: the `NP`
-`≤ₚ`-closure lemma; the padded-language space decider; the padding
-reduction machine; the strictness extraction. -/
+`A · (n + 1) ≤ n² + 1` eventually). The argument uses the `NP`
+`≤ₚ`-closure lemma, the padded-language space decider, the padding
+reduction machine and the strictness extraction. -/
 theorem SPACE_linear_ne_NP : SPACE (fun n => n + 1) ≠ NP := by
   sorry
 
