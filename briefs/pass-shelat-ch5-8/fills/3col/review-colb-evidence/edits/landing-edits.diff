@@ -1,0 +1,125 @@
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean
+index 4e837144..b7eed736 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean
+@@ -5,6 +5,8 @@ Authors: TCSlib contributors
+ -/
+ import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language
+ import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
++import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas
++import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKMachine
+ import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+ 
+ set_option maxHeartbeats 0
+@@ -31,6 +33,12 @@ language with a Levin reduction to `3COL`) is `ZeroKnowledge/NP.lean`.
+   committed colouring and its bad edge (Lem-127.f), adaptive sequential soundness
+   (Lem-127.g, Claim-127.h), and the interactive-proof half of [PS10, Proposition 127.6]
+   (Prop-127.6).
++* `ColZKLemmas` — generic lemmas of the `col_zk` ladder: disjoint fields of a uniform tape are
++  independent and uniform, averaging over seeds, first-success searches split at an index, and
++  the negligibility of the error of [PS10, Proposition 128.8].
++* `ColZKMachine` — the hiding reduction of [PS10, proof of Proposition 128.8] with its attempt
++  table fixed, as a machine (`hidingView`, `exists_colHidingRed`), the two-parameter coin
++  transport and the hiding bound for all the fixed reductions at once.
+ * `Simulator` — the distinct colour pairs and `S₃ ≃ ColorPair` (Lem-129.b), the typed views
+   and the attempts of `S`, `S'`, `S''` (Alg-128.7, Claim-129.a, Claim-129.c), the hybrid
+   reduction to multi-value hiding (Claim-129.d), the string simulator and its efficiency
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index 7cbf666e..45d6fef9 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -17,7 +17,7 @@ set_option autoImplicit false
+ Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean`, the proof of
+ [PS10, Proposition 128.8]): reading disjoint fields of a uniform tape gives independent uniform
+ fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
+-function (`negligible_colZKErr`, `colZK_attempts_le`).
++function (`negligible_colZKErr`).
+ 
+ ## Main definitions
+ 
+@@ -194,23 +194,14 @@ theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fint
+     HardcoreBit.uexp_const]
+   exact hk₀
+ 
+-/-- **Moving a seed factor into the distinguisher's coins**, for one sampler
+-(`acceptProb_def`, `Equiv.prodAssoc`). -/
+-theorem acceptProb_seed_to_coins {σ κ γ γ' ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
+-    (X : σ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
+-    acceptProb (fun s : σ × κ => F (X s.1) s.2) D =
+-      acceptProb X fun g (c : κ × ρ) => D (F g c.1) c.2 := by
+-  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ κ ρ).symm]
+-  rfl
+-
+ /-- **Moving a seed factor into the distinguisher's coins**: post-processing two samplers by
+ `F · k` with an independent uniform `k` is post-processing by a distinguisher with coins
+-`κ × ρ` (`acceptProb_seed_to_coins`). -/
++`κ × ρ` (`acceptProb_bind` on both samplers). -/
+ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype τ] [Fintype κ]
+     [Fintype ρ] (X : σ → γ) (Y : τ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
+     distAdv (fun s : σ × κ => F (X s.1) s.2) (fun s : τ × κ => F (Y s.1) s.2) D =
+       distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
+-  rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
++  rw [distAdv_def, distAdv_def, acceptProb_bind, acceptProb_bind]
+ 
+ /-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
+ theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+@@ -252,16 +243,11 @@ theorem ofFn_take_drop {L : ℕ} (b : Fin L → Bool) (a k B : ℕ) (h : a + k =
+ 
+ /-! ### Searches -/
+ 
+-/-- Mapping the values of a search: `l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g`. -/
++/-- Mapping the values of a search: `l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g`
++(core `List.map_findSome?`, read from right to left, with the composite written pointwise). -/
+ theorem findSome?_map_option {α β γ : Type*} (l : List α) (f : α → Option β) (g : β → γ) :
+-    l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g := by
+-  induction l with
+-  | nil => rfl
+-  | cons a l ih =>
+-    rw [List.findSome?_cons, List.findSome?_cons]
+-    cases f a with
+-    | none => exact ih
+-    | some b => rfl
++    l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g :=
++  List.map_findSome?.symm
+ 
+ /-- A search over `List.range K` is the search over `List.finRange K` of the same values. -/
+ theorem findSome?_range_eq_finRange {β : Type*} (K : ℕ) (g : ℕ → Option β) :
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 525c4871..ab5f5b28 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -751,7 +751,8 @@ theorem exists_colSimRed_fixCoins {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G)
+     (colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D')
+   exact ⟨k, e₀, π₀, w₀, h.trans hw₀⟩
+ 
+-/-- **With the attempt table fixed only attempt `k` reads the challenge** (Claim-129.d): the
++/-- **With the attempt table fixed only attempt `k` reads the challenge** [PS10, proof of
++Proposition 128.8, the reduction to the hiding property] (Claim-129.d): the
+ fixed reduction is `cv ↦ D'(pre <|> planted cv <|> post)`, where `pre` and `post` are the first
+ successes among the `S''` attempts before `k` and the `S'` attempts after `k`.
+ 
+@@ -789,6 +790,7 @@ theorem colSimRed_fixed_eq {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : T
+     · rw [if_pos ht, if_pos ht, if_neg (by rw [Fin.lt_def] at ht; omega), if_neg (ne_of_gt ht)]
+     · rw [if_neg ht, if_neg ht]
+   rw [h1, h2]
++
+ /-- **The real view is `(1/4)^{|x|}`-close to the typed honest view** [PS10, proof of
+ Proposition 128.8, "the view of `V*`"] (step (1) of `col_zk`'s sketch): the encoded view of `V'`
+ in `P(encGraph G, encColoring c) ↔ V'(·, z)` is within `(1/4)^{|x|}` of the encoded
+@@ -865,6 +867,7 @@ theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n
+       (edgeAt_eq_none_iff G _).2 hm]
+   · rw [colProver_next_cons Com ℓ (decGraph_encGraph G) hm, decColoring_encColoring, hπ, hr,
+       ColMachines.edgeAt_eq_some_of_pos G hm]
++
+ /-- **`colSim` is `K((1/2)^{|x|} + (1/4)^{|x|})`-close to the typed truncated simulator**
+ [PS10, Algorithm 128.7] (step (2) of `col_zk`'s sketch, `m > 0`): the string simulator on
+ `encGraph G` is within `K((1/2)^{|x|} + (1/4)^{|x|})`, `K = n|E|`, of the encoded `colSimTrunc`
+@@ -1465,8 +1468,6 @@ private theorem colZK_planted_case
+       add_le_add le_rfl (add_le_add le_rfl (add_le_add le_rfl (add_le_add hW h3)))
+     _ ≤ _ := by linarith [hexp]
+ 
+-
+-
+ /-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
+ conditional because the step-5 identification needs these two published equations, E-API).
+ 

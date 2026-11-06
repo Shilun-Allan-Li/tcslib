@@ -1,0 +1,6 @@
+msgAt_eq : ∀ (w : List Bool) (i : ℕ), msgAt w i = Complexity.pairFstD (Complexity.pairSndD^[i] w)
+edgeIdxOfMsg_eq : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m
+'TCSlib.Cryptography.col_zk' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.col_hvzk' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.col_zeroKnowledgeProof' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+[rc=0 time=5s]
