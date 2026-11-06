@@ -508,9 +508,7 @@ theorem PRG.doubling_apply (P : PRG) (n : ℕ) (s : Fin n → Bool) (i : Fin (2 
     P.doubling n s i =
       P.truncate n ((fun x => Fin.init (P.truncate n x))^[i] s) (Fin.last n) := by
   unfold PRG.doubling
-  exact PRG.expand_G P.truncate _ two_mul_add_one_expands n s ⟨i, by
-    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-    omega⟩
+  exact PRG.expand_G_stretch P.truncate _ two_mul_add_one_expands n s _
 
 /-- **Truncation preserves pseudorandomness** (first half of Cor-97.a): if `G` is a secure
 PRG then its truncation to `n + 1` bits is a secure one-bit-stretch PRG.
