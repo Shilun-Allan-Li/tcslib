@@ -47,20 +47,13 @@ namespace Turing
 /-! ### The construction of the exhaustive replay (the `xr_` privates)
 
 The semantic and arithmetic parts of the exhaustive replay, read through the published ND
-semantics only: no branch halts at depth `0`; a branch of length `|w|` stays within the
+semantics only (that no branch halts at depth `0` is the published
+`Turing.NDTM.not_haltsWithin_zero`): a branch of length `|w|` stays within the
 radius-`|w|` window; at an all-halting depth `L ≤ T` acceptance within `L` and within `T`
 agree; the first all-halting depth exists; the ledger's shape. Then two generic tools for the
 machine: the translation of work tapes (a branch started on blank tapes at displaced heads is
 the branch from `initCfg`, translated), and the first arrival at a stationary anchor (the
 phase host's guard for every leaf row of this file). -/
-
-/-- No branch of length `0` has halted: `Cfg.init` is live. -/
-private theorem xr_not_haltsWithin_zero (N : FinNDTM Bool) (z : List Bool) :
-    ¬ N.tm.HaltsWithin z 0 := by
-  intro h
-  have h0 := NDTM.haltsWithin_iff.mp h [] rfl
-  rw [NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at h0
-  exact Option.some_ne_none _ h0
 
 /-- One step from the radius-`s` window stays in the radius-`s + 1` window, with the output
 growing by at most one symbol. -/
@@ -157,7 +150,7 @@ private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
     fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
       (Nat.find_min' hex hT)⟩
   rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
-  · exact absurd (h0 ▸ Nat.find_spec hex) (xr_not_haltsWithin_zero N z)
+  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
   · exact h0
 
 /-- The ledger's shape, with two steps of slack for the dispatch and the answer:

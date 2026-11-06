@@ -629,6 +629,18 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
+**The window (2026-11-06):** `CounterLoop`'s member is retired by #215 (`57939a97`: a private bridge
+`counterSpan_iff_segment`; `counter_span_append` deleted; its three uses through `Segment.trans`
+and `Segment.mono`). The scope search found a **third member**, `Robustness/SingleTape`'s private
+`DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (7 uses). `Tautology`'s and
+`SingleTape`'s members need a new import of `Build/Contract/Basic` (cycle-free; it adds that one
+module to each closure): **parked for the user's ruling.** Also found, not counted: `Primitives`'
+`splitSafe`/`splitSafe_add` and `Catalog`'s `f2_splitSafe`/`f2_splitSafe_add` restate
+`Turing.SafeSegment` (a sibling `SafeSegment` family, for the user); `SAT`'s `sat_guard_add` and
+`Hardness`' `clA5_guard_add` re-prove the cut half of `Segment.trans` with no predicate. If
+`tautDual_segment_add` is deleted, `blueprint/src/chapter/Complexity/ClassNP/Tautology.tex:981`
+changes with it.
+
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
 `m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
@@ -672,17 +684,40 @@ naming `inputBitLang` or `inputLenLang` finds no other unfolding: `TQBFARM/Machi
 `Codec/Run`'s `orc_bit`/`orc_len` and `QueryReshape`'s `drop_bit`/`drop_len` already cite the
 lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
 `drop_lang_pair`, `comp_lang_pair` and `transport`; `PathHardDecide`'s `qLang` step) read other
-languages, which have no published reading; they are not members. Census after widening: one
-declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
+languages, which have no published reading; they are not members. Census after widening (corrected
+at gate 101's round-2 minor 1): **10 declarations across eight files, 11 proof sites**:
+`PathHardRegs` (`orc_len`, `orc_bit`, 2 of 62) and `PathWalkMachine` (`pathOr_len`,
+`pathOr_bit`) two declarations each, `Mult`'s `mult_queries` two sites in one declaration, every
+other file one. No file is past one fifth. **Retired on #208's merge.**
 
-**NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
-a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
-(`Turing.FinTM.not_computesInTime_zero`, `TuringMachine/Finite`) and cited where it applies. Its
-nondeterministic analogue (`Cfg.init` is live, so `N.tm.HaltsWithin z 0` fails) has no public
-lemma and is proved twice: `ClassNP/ExhaustiveReplay`'s private `xr_not_haltsWithin_zero` and an
-inline step of `ClassNP/NDNormalForm` (`hpos`, through `runWith_nil`, `initCfg_eq` and
-`Cfg.init_state`). One member in each file. **Proposed disposition:** the dedup window (12.2c):
-publish `NDTM.not_haltsWithin_zero` beside the NDTM run equations and re-point both.
+**NZ-1, no machine halts in zero steps** (found 2026-11-06 in gate 102's round-1 search; widened
+by kind in its round 2; **acknowledged, the user 2026-11-06: publish and re-point now**; PR #217,
+`lean/dedup-nz1`, commits `5e77e558` and `2fdb84f7`). One fact in two readings: the initial
+configuration is live, so no run halts within `0` steps.
+- **Deterministic:** public as `Turing.FinTM.not_computesInTime_zero` (`TuringMachine/Finite`).
+  Already cited by `ClassP/DTIME`, `ClassNP/TMSAT`, `CookLevin/Hardness` and
+  `Diagonalization/EXPCOM`, and since #211 by `TwoTapes`' `tt_forward_run`. Re-derived (gate 102
+  r2, finding 1) in `Build/Loop`'s private `emCall_prepared_eval_first` and `CircuitComplexity/Advice`'s
+  `DTIMEAdvice_eq_empty_of_eq_zero`; #217 re-points both.
+- **Nondeterministic:** no public lemma before #217, which publishes `Turing.NDTM.not_haltsWithin_zero`
+  (`TuringMachine/Nondeterministic`). Its five copies, one per file: `ClassNP/ExhaustiveReplay`'s private
+  `xr_not_haltsWithin_zero` (deleted), `ClassNP/NDNormalForm`'s `nf_forward` (`hpos`), `ClassNP/NTIME`'s
+  `NTIME_eq_empty_of_exists_zero`, `Randomized/ExpectedTime`'s `AbortDecidesInTime.restart`,
+  `Randomized/BPTIMEThreshold`'s `BPDecidesInTimeWith.one_le`; #217 re-points all five. **+1 (gate 108,
+  minor 1):** `Randomized/ExpectedTime`'s `notHaltedProb_haltRun_zero` (the probability form);
+  re-pointed in #217. Census: 8 sites (6 nondeterministic in 5 files, 2 deterministic).
+
+**The search** (by kind, at `1dd510aa`): `rw`/`simp`/`change … at` forms with `runFrom_zero`,
+`runWith_nil`, `initCfg`, `Cfg.init` or `init_state`; zero-case scans (`by_contra`,
+`Nat.pos_of_ne_zero`, `eq_zero_or_pos`, `| zero`) near initial-configuration terms; `[] rfl` and
+`[] (by …)` instantiations of halting hypotheses; literal time-0 `runFrom`/`ComputesInTime`/`HaltsWithin`;
+`show`/`change`; and, after gate 108, probability and expected-time forms and `simp` closures without `at`. **Not members**, each a different fact: first-halt helpers from an arbitrary `cfg`
+(`Loop:219`, `Catalog:6463`, `SAT:3797`, `Hardness:6176`); runs from non-initial configurations
+ending in a state mismatch (`Hardness`, `NDCodeSimulator`, `NDNormalForm`, `StepBlockLoop`,
+`Contract/Basic`, `Contract/Seam`, `NTimeDiagonalizer`); composite runs at positive times
+(`UniversalK`, `NTimeHierarchy`, `Composition`, `Inclusions`); positive liveness facts
+(`state = some q₀`); and other models (NARM's `narun`, `Yap`'s `badLang`, the oracle machines).
+**Retired: #217 merged 2026-11-06 (`eb8cbf60`).**
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
@@ -718,6 +753,7 @@ files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equati
   with the host's blank fields;
 - `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
   at a seven-fold `Sum.inl` of the embedded blank start `c0`.
+**Partly published (the user, 2026-11-06):** the U2 harvest publishes it as `Turing.MultiTapeTM.initCfg_eq_mapState` in `Build/UniversalParts` (both of `UniversalK`'s uses now cite it). The other sites re-point to it in the dedup window, without a move to `Finite`.
 
 Census (one member per file; each count at the tree named): `CodeSimulator` 1 of 208 declarations at
 #170's head (12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79
@@ -967,7 +1003,7 @@ languages; the acceptance above covers it. The edge member crosses no new file's
 **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
 lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
 with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
-design that waits for him.
+design that waits for him. **Ruled (the user, 2026-11-06; Hydroxyi not active): the full refactor.**
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
@@ -982,6 +1018,25 @@ design that waits for him.
 **+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
 identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
 the window.
+**The window's first pass (2026-11-06; branch `lean/dedup-ro1` at `7c940a8a`, pushed, no PR):**
+`Turing.MultiTapeTM.runFrom_one` in `TuringMachine/CfgFacts` (the user's ruling), the four
+privates deleted and the 13 inline sites re-pointed; every changed file elaborates. **The scope is
+far larger than recorded**, and the PR is parked for the user:
+- a public Bool-only copy already exists: `Turing.runFrom_one` (`Build/EmitIterEmbed:261`,
+  `simp [MultiTapeTM.runFrom]`), used four times by `EmitIterBody`;
+- the rewrite chain `runFrom_succ_eq_step` + `runFrom_zero` (mostly induction base cases) appears
+  in about 186 further declarations in 41 files, among them `Catalog` 26, `Primitives` 23,
+  `CookLevin/Hardness` 14, `SAT` 12, `Universal` 12, `Nondeterminism` 10, `EXP` 7, and several
+  colleague-owned `CircuitComplexity`/`Meyer` files;
+- `have`/`show`/`change` forms: `EmitIterBody`'s `hone`/`honeG`, `NDNormalForm:1766`,
+  `NDCodeSimulator:632`, `Primitives`' `splitSafe_one` and `hdepart`, `Catalog`'s
+  `f2_splitSafe_one`, `hdepart`, `hfirst`, `Loop`'s `hfirst` and `hs`; and fixed-machine
+  statements in `CodeSimulator`, `InputWindow` (`iw_one`), `UniversalK`, `WindowClock`,
+  `Inclusions`, `CircuitSatReductionMachine`, `Universal` and `UniversalBlock`.
+The ledger's census undercounts accordingly. **Questions for the user:** whether the general
+lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
+the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
+authorization).
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1034,7 +1089,7 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
 
-That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+**Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
 (`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
 
@@ -1287,7 +1342,8 @@ walks at the front through the new `Complexity.walkLe_succ_iff_head` (`PathWalk`
 and `Reach` imports `PathWalk` instead of `ISCountMath`. Its remaining uses are in
 `ISCountMath`'s own `mem_succ_iff`. Not a copy. **Disposition:** the dedup window (12.2c): move
 it beside `WalkLe` in `PathWalk`, or re-prove it there from `walkLe_succ_iff_head` without
-unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's.
+unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's. **Ruled (the user, 2026-11-06): move it
+to `PathWalk` as `Complexity.walkLe_succ_iff`, after #216 (which removes its unfolding) merges.**
 
 **WC-1, a window-run closure lemma (optional)** (gate 96, note 10; recorded 2026-11-05).
 `Complexity.ExpBFS.winRun_of_card_eq` (`ExpBFS/Radius`) and the induction inside
@@ -1316,7 +1372,8 @@ lemmas (the design's `BlockFit` probe: `fit_initO`, `fit_edgeO`, `fit_accO`, `fi
 (12.2c): a `def` per query, each with its `_iff` lemma, beside `initLang`, `acceptLang` and
 `edgeLang` (`SpaceComplexity/Codec/Langs`), replacing `ISGen`'s `InitM` and `AccM` and serving
 `mem_iff_reach`, `NoEdge` and the fit lemmas alike. `Codec/Langs` and `ISCountGenRadius` are
-Hydroxyi's: interface design in their files.
+Hydroxyi's: interface design in their files. **Ruled (the user, 2026-11-06): as disposed, with
+`ISGen.InitM`/`AccM` deleted and their uses re-pointed.**
 
 **RP-1, definitional reads that #196's equations can replace** (gate 96, the round-2 shape
 search; recorded 2026-11-05; not duplication). #196 publishes `Iff.rfl` equations for `WalkLe`,
@@ -1327,6 +1384,9 @@ by unfolding or by definitional equality: `WalkLe` in `Logspace/ISCountGenWalk` 
 and `ISCountGenRadius` (88–92); `Rel`, `InitO` and `AccO` in `SavitchARM/Correct` (55–71); lines
 at the campaign tip. **Disposition:** the dedup window (12.2c): re-point them to the equations.
 Not counted.
+**Widened and in PR #216** (2026-11-06; gate 107): a scoping pass and an exhaustive irreducibility
+probe (52 modules) found 23 public proof bodies in 14 files, including `SavitchARM/Reach`'s
+`mem_iff_reach` (probe only); all re-pointed (`f200144b`, `3d0f6ceb`). **Retired: #216 merged 2026-11-06 (`e4e7a419`).**
 
 **CE-1, equal codes of window configurations, copied** (found 2026-11-05 by gate 96's round-2
 screen; **acknowledged by the user for 12.2c, 2026-11-05**). `coreSum_eq_of_code_eq` (equal

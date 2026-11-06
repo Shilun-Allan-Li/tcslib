@@ -1,0 +1,43 @@
+Final frozen commit: 30222bbd264a75057ae0779535a32e1a30dd2394.
+Baseline: 1854 declarations, 1689 pairs, 534736 reproduced characters.
+Final: 1893 declarations, 1701 pairs, 539326 reproduced characters.
+12 new pairs; 0 removed pairs. No new pair reaches 90%.
+
+   Hierarchy.lean::sph_verdict_run  reproduces  InputRewind.lean::Cfg.mapState_mapState: 339/402 = 84%
+  Disposition: idiom. Public field readings establish a branch precondition using its live-state hypothesis and emitted endpoints with changed state/output; this is not the generic composition equation.
+
+   Hierarchy.lean::sph_right_run  reproduces  Hierarchy.lean::sph_emit_run: 490/588 = 83%
+  Disposition: same-file leaf idiom. The two explicitly permitted one-step leaves have different effects and share public action-field readings.
+
+   Hierarchy.lean::sph_rewinds_run  reproduces  InputRewind.lean::Cfg.mapState_mapState: 330/402 = 82%
+  Disposition: idiom. Public field readings for a framed endpoint that changes input position and the radius head; not pure state-map composition.
+
+   Hierarchy.lean::sphWitnessSel  reproduces  Hierarchy.lean::sphInitSel: 70/88 = 80%
+  Disposition: same-file arithmetic idiom. Distinct bank selections share elementary embedding-injectivity arithmetic.
+
+   Hierarchy.lean::sph_record_suffix  reproduces  InputRewind.lean::Cfg.mapState_mapState: 293/402 = 73%
+  Disposition: idiom. Restore the original live entry configuration using its state hypothesis and unchanged physical fields; the conclusion is not the generic composition equation.
+
+   Hierarchy.lean::sph_valid_machine  reproduces  Hierarchy.lean::sph_witness_cap: 69/111 = 62%
+  Disposition: same-file arithmetic idiom. This excludes the entire initializer/runner bank from the witness bank; sph_witness_cap is already cited for the distinct claim excluding radius tape one.
+
+   Hierarchy.lean::sph_runner_run  reproduces  Hierarchy.lean::sph_initial_record: 1059/1728 = 61%
+  Disposition: same-file R1 consumer idiom. Distinct published clocked-runner and initializer hosts, both embedded through R1; shared field transport already factors through sph_select_fields.
+
+   Hierarchy.lean::sph_valid_machine  reproduces  InputRewind.lean::Cfg.mapState_mapState: 245/402 = 61%
+  Disposition: idiom; earlier pure re-derivations repaired. The remaining match is the concrete initial-configuration comparison through capture, lift, blank-frame and initialization fields. Both pure composition calculations now cite Cfg.mapState_mapState directly.
+
+   Hierarchy.lean::sph_runner_run  reproduces  Hierarchy.lean::sph_test_run: 836/1424 = 59%
+  Disposition: same-file R1 consumer idiom. Distinct published clocked-runner and Boolean record-test hosts, with shared R1 field transport through sph_select_fields.
+
+   Hierarchy.lean::sph_validated_machine  reproduces  InputRewind.lean::Cfg.mapState_mapState: 232/402 = 58%
+  Disposition: idiom. Concrete initialization and branch-precondition identities through Cfg.init and mapState field readings.
+
+   Hierarchy.lean::sph_seam_avoids  reproduces  Hierarchy.lean::sph_seam_heads: 137/241 = 57%
+  Disposition: same-file public-trajectory idiom. The same public seam case split supports different conclusions: exit-state avoidance and a physical head envelope.
+
+   Hierarchy.lean::sph_emit_run  reproduces  Hierarchy.lean::sph_right_run: 490/915 = 54%
+  Disposition: same-file leaf idiom. Reverse direction of the same permitted-leaf comparison.
+
+New copies: none. No new pair rederives a foreign private declaration.
+Historical first-screen finding: two pure mapState-composition calculations in sph_valid_machine were replaced by citations before this final run; see screen-first-final-classification.txt.

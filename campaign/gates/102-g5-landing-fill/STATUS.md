@@ -12,3 +12,16 @@
   `a79385da1ad4331dcb6559207ddcfcb29e1ab4dced93f4734015eaf068f0582d`; Lean from `f239dafd`,
   records from `f6954560`. Findings file `g5-landing-fill-findings.md`.
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: round 1 findings received: **HOLD 0/1/1** (F1 `not_computesInTime_zero`, F2 the
+  invariant's prose). Both fixed on #211 (`3a261ba2`; the standing re-point rule); NZ-1 recorded.
+  `replay-lg7` passed (3 modules, 0 `sorry`) at `e7e78aaf`; the seal (44), controls (91/91),
+  axioms, freeze, lint and screen re-run (`evidence/round2/`). `pack-r2.md`.
+- 2026-11-06: round 2 staged (`outbox/gates/102-g5-landing-fill-r2-gate/`, exchange commit `9a9fd310`):
+  bundle `102-g5-landing-fill-r2-bundle.md`, 34 sections, SHA-256
+  `ebc8fc93f33feea0bbfb1057a71ba0d3d9d0a053b2d3859a515b0365c927b83c`; Lean from `e7e78aaf`.
+  Findings file `g5-landing-fill-r2-findings.md`. **Ready to dispatch.**
+- 2026-11-06: **dispatched** (the user).
+- 2026-11-06: pack written (round 3, citing gate 108); staged.
+- 2026-11-06: round 3 **dispatched** by the user (32 sections, bundle `d6e3cfa3…`).
+- 2026-11-06: findings received: PASS (0 majors); **CLOSED**. The missed NZ-1 member is re-pointed in #217; the merge waits on the merged-tree replay.
+- 2026-11-06: `replay-lg8` at `7065aad1` (#211 on the campaign after #217, from `oleans-lcamp4`): **3 modules, 0 failed, 0 `sorry`**. **Clear to merge.**

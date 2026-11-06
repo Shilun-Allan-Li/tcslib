@@ -84,9 +84,9 @@ variable {K R Init Acc}
 /-- A walk from a vertex below `K` ends below `K`. -/
 lemma walkLe_lt {j c t : ℕ} (hc : c < K) (h : WalkLe R K j c t) : t < K := by
   induction j generalizing c with
-  | zero => cases h; exact hc
+  | zero => cases walkLe_zero_iff.mp h; exact hc
   | succ j ih =>
-    rcases h with rfl | ⟨v, hv, -, hw⟩
+    rcases walkLe_succ_iff_head.mp h with rfl | ⟨v, hv, -, hw⟩
     · exact hc
     · exact ih hv hw
 
@@ -121,7 +121,7 @@ lemma walkLe_succ_iff (j c t : ℕ) : WalkLe R K (j + 1) c t ↔
     WalkLe R K j c t ∨ ∃ w, WalkLe R K j c w ∧ R w t ∧ t < K := by
   induction j generalizing c with
   | zero =>
-    simp only [WalkLe]
+    simp only [walkLe_succ_iff_head, walkLe_zero_iff]
     constructor
     · rintro (h | ⟨v, hv, he, rfl⟩)
       · exact Or.inl h
@@ -130,18 +130,21 @@ lemma walkLe_succ_iff (j c t : ℕ) : WalkLe R K (j + 1) c t ↔
       · exact Or.inl h
       · exact Or.inr ⟨t, ht, he, rfl⟩
   | succ j ih =>
+    rw [walkLe_succ_iff_head (j := j + 1)]
     constructor
     · rintro (h | ⟨v, hv, he, hw⟩)
-      · exact Or.inl (Or.inl h)
+      · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inl h))
       · rcases (ih v).mp hw with h | ⟨w, hw', hwt, ht⟩
-        · exact Or.inl (Or.inr ⟨v, hv, he, h⟩)
-        · exact Or.inr ⟨w, Or.inr ⟨v, hv, he, hw'⟩, hwt, ht⟩
-    · rintro ((h | ⟨v, hv, he, hw⟩) | ⟨w, hw | ⟨v, hv, he, hw⟩, hwt, ht⟩)
-      · exact Or.inl h
-      · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
-      · subst hw
-        exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
-      · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
+        · exact Or.inl (walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, h⟩))
+        · exact Or.inr ⟨w, walkLe_succ_iff_head.mpr (Or.inr ⟨v, hv, he, hw'⟩), hwt, ht⟩
+    · rintro (h | ⟨w, hw, hwt, ht⟩)
+      · rcases walkLe_succ_iff_head.mp h with h | ⟨v, hv, he, hw⟩
+        · exact Or.inl h
+        · exact Or.inr ⟨v, hv, he, walkLe_succ hw⟩
+      · rcases walkLe_succ_iff_head.mp hw with hw | ⟨v, hv, he, hw⟩
+        · subst hw
+          exact Or.inr ⟨t, ht, hwt, walkLe_refl _ t⟩
+        · exact Or.inr ⟨v, hv, he, (ih v).mpr (Or.inr ⟨w, hw, hwt, ht⟩)⟩
 
 /-- **The balls grow by one step**: `C_{L+1}` is `C_L` together with the successors below `K`
 of its members. -/
@@ -176,12 +179,12 @@ lemma card_ball_zero {u₀ : ℕ} (hu₀ : u₀ < K) (hI : ∀ u, Init u ↔ u =
   rw [mem_ball, Finset.mem_singleton]
   constructor
   · rintro ⟨u, -, hi, hw⟩
-    have e : u = t := hw
+    have e : u = t := walkLe_zero_iff.mp hw
     rw [← e]
     exact (hI u).mp hi
   · intro h
     rw [h]
-    exact ⟨u₀, hu₀, (hI u₀).mpr rfl, rfl⟩
+    exact ⟨u₀, hu₀, (hI u₀).mpr rfl, walkLe_zero_iff.mpr rfl⟩
 
 /-! ## Guessed enumerations -/
 
