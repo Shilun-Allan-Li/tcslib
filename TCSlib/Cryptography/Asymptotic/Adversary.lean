@@ -177,7 +177,9 @@ noncomputable def invProbOpt {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : �
     (A : β → ρ → Option α) : ℝ :=
   uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
 
-/-- The defining equation of `invProbOpt`. -/
+/-- The defining equation of `invProbOpt`:
+`invProbOpt f A = Pr_{(x, r)}[∃ x', A(f x, r) = some x' ∧ f x' = f x]`, over uniform
+`(x, r) ∈ α × ρ`. -/
 theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
     (A : β → ρ → Option α) :
     invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
