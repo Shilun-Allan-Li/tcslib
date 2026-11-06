@@ -783,17 +783,15 @@ private lemma sph_rewinds_run (KI KR m : ℕ) {Q : Type} [DecidableEq Q]
          workTapePos := Function.update d.workTapePos 1 0
          output := d.output } : Cfg k (RecSym Q (Fin 3))
            ((Bool ⊕ InputRewindPhase) ⊕ RewindPhase) (x.map e)) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state]; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
     · funext j p
-      rw [Cfg.mapState_workTapes]
       exact congrFun (congrFun hbt j) p
     · funext j
-      rw [Cfg.mapState_workTapePos]
       dsimp only [d₃]
       rw [hbh, hpos, sub_self]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
+    · rw [Cfg.mapState_output, Cfg.mapState_output,
         Cfg.mapState_output]
   refine ⟨(1 + 1 + (a.inputPos.val + 1)) + 1 + (ws.length + 2), ?_, ?_, ?_⟩
   · exact (seamCompTM_run_ofCfg A (.inr .done) (rewindTM k 1) .start
@@ -1260,7 +1258,20 @@ private lemma sph_verdict_run {k : ℕ} {Q P : Type} [DecidableEq P]
       rw [(sph_emit_run (RecSym.digit true) _
         (by rw [Cfg.mapState_state]; rfl)).1] at h
       rw [h]
-      apply Cfg.ext
+      refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+      · rfl
+      · rw [Cfg.mapState_inputPos]
+      · funext j p
+        rw [Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output]
+        rfl
+    · have h := hy rfl 1
+      rw [(sph_emit_run (RecSym.digit false) _
+        (by rw [Cfg.mapState_state]; rfl)).1] at h
+      rw [h]
+      refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
       · rw [Cfg.mapState_state]; rfl
       · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
       · funext j p
@@ -1268,19 +1279,6 @@ private lemma sph_verdict_run {k : ℕ} {Q P : Type} [DecidableEq P]
       · funext j
         rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
       · rw [Cfg.mapState_output, Cfg.mapState_output]
-        rfl
-    · have h := hy rfl 1
-      rw [(sph_emit_run (RecSym.digit false) _
-        (by rw [Cfg.mapState_state]; rfl)).1] at h
-      rw [h]
-      apply Cfg.ext
-      · rw [Cfg.mapState_state, Cfg.mapState_state]; rfl
-      · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-      · funext j p
-        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-      · funext j
-        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-      · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
         rfl
   · intro u hu j
     have h := C.env () d₀ hd₀ hp u (htime.symm ▸ hu) j
@@ -1873,17 +1871,17 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
     ((G.tm.initCfg x).liftSymbols e)).mapState (Sum.inl : G.State → G.State ⊕ Unit)
   have hcap := sph_witness_cap KI KR G.k
   have hstart : start.mapState Sum.inl = Cfg.init en (x.map e) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.mapState_state, embedSilentCfg_state,
+    refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.mapState_state, embedSilentCfg_state,
         Cfg.liftSymbols_state, MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_state]
       rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, embedSilentCfg_inputPos,
+    · rw [Cfg.mapState_inputPos, embedSilentCfg_inputPos,
         Cfg.liftSymbols_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Cfg.init_inputPos]
       apply Fin.ext
       change (1 : Fin (x.length + 2)).val = (1 : Fin ((x.map e).length + 2)).val
       rw [Fin.val_one, Fin.val_one]
     · funext j p
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.init_workTapes]
+      rw [Cfg.mapState_workTapes, Cfg.init_workTapes]
       by_cases hj : j ∈ Set.range ι
       · obtain ⟨i, rfl⟩ := hj
         rw [embedSilentCfg_selected_tape, Cfg.liftSymbols_workTapes,
@@ -1895,7 +1893,7 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
             List.map_nil, List.nil_append, FinTM.bufferTape_nil]
         · rw [(embedSilentCfg_unselected ι 1 _ _ [] [] _ j hj hjc).1]
     · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.init_workTapePos]
+      rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos]
       by_cases hj : j ∈ Set.range ι
       · obtain ⟨i, rfl⟩ := hj
         rw [embedSilentCfg_selected_pos, Cfg.liftSymbols_workTapePos,
@@ -1906,7 +1904,7 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
             Cfg.liftSymbols_output, MultiTapeTM.initCfg_eq, Cfg.init_output,
             List.map_nil, List.nil_append, List.length_nil, Nat.cast_zero]
         · rw [(embedSilentCfg_unselected ι 1 _ _ [] [] _ j hj hjc).2]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, embedSilentCfg_output, Cfg.init_output]
+    · rw [Cfg.mapState_output, embedSilentCfg_output, Cfg.init_output]
   obtain ⟨t, hrs, hrc, hrt, hrp, hrf, hro, _, hrh⟩ :=
     sph_radius_run KI KR (Q := M.State) g c G hG x (fun _ _ => none) (fun _ => 0) []
   let r := R.runFrom start t
@@ -2118,12 +2116,12 @@ private lemma sph_validated_machine {k : ℕ} {Q P : Type} [Fintype Q] [Decidabl
         rw [hheads j u hu, Cfg.init_workTapePos, Finset.mem_Icc]
         exact ⟨by omega, hrad⟩ }
   have hstart₁ : a'.mapState (fun _ => entry) = Cfg.init entry ys := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.init_state]; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+    refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.init_state]; rfl
+    · rw [Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext j p; rw [Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext j; rw [Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.init_output, Cfg.init_output]
   have hC₁ : ∃ C₁ : Contract V entry {none} Unit ys,
       (b = true → C₁.pre () (Cfg.init entry ys)) ∧
       (∀ d j, C₁.lo () d j = -(radius : ℤ) ∧ C₁.hi () d j = (radius : ℤ)) ∧
@@ -2175,12 +2173,12 @@ private lemma sph_validated_machine {k : ℕ} {Q P : Type} [Fintype Q] [Decidabl
   have hpre : C.pre () d₀ := by
     rw [Contract.branch_pre]
     change (d₀.mapState fun _ => ScanPhase.fwd true) = a
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state]; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+    refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.init_state, Cfg.init_state]; rfl
+    · rw [Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext j p; rw [Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext j; rw [Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.init_output, Cfg.init_output]
   have hh (u : ℕ) (hu : u ≤ C.time () d₀) (j) :
       |(R.runFrom d₀ u).workTapePos j| ≤ (radius : ℤ) := by
     have h := C.env () d₀ hd₀ hpre u hu j
