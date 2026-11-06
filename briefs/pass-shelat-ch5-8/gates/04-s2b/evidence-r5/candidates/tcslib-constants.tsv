@@ -5618,6 +5618,7 @@ Complexity.NUPPT.distinguisherL_eq	thm	TCSlib.Cryptography.Asymptotic.Adversary
 Complexity.NUPPT.distinguisher	def	TCSlib.Cryptography.Asymptotic.Adversary
 TCSlib.Cryptography.invProbOpt	def	TCSlib.Cryptography.Asymptotic.Adversary
 Complexity.NUPPT.inverter_eq_some_iff	thm	TCSlib.Cryptography.Asymptotic.Adversary
+TCSlib.Cryptography.invProbOpt_def	thm	TCSlib.Cryptography.Asymptotic.Adversary
 TCSlib.Cryptography.decodeFin_eq	thm	TCSlib.Cryptography.Asymptotic.Adversary
 Complexity.NUPPT.distinguisherL	def	TCSlib.Cryptography.Asymptotic.Adversary
 TCSlib.Cryptography.invProbOpt_le_one	thm	TCSlib.Cryptography.Asymptotic.Adversary
@@ -6400,6 +6401,7 @@ TCSlib.Cryptography.HardcoreBit.ind	def	TCSlib.Cryptography.HardcoreBit.Pairwise
 TCSlib.Cryptography.HardcoreBit.subsetSumHom._proof_1	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
 TCSlib.Cryptography.HardcoreBit.uprob_majority_fails_le	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
 TCSlib.Cryptography.HardcoreBit.subsetSumHom.eq_1	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
+TCSlib.Cryptography.HardcoreBit.subsetSum_eq	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
 TCSlib.Cryptography.HardcoreBit.subsetSum.eq_1	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
 TCSlib.Cryptography.HardcoreBit.chebyshev_pairwise	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
 TCSlib.Cryptography.HardcoreBit.PairwiseUniform.comp_right	thm	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
@@ -8189,6 +8191,7 @@ _private.TCSlib.Cryptography.Asymptotic.Collections.0.TCSlib.Cryptography.Collec
 TCSlib.Cryptography.TrapdoorCollection._sizeOf_inst	def-aux	TCSlib.Cryptography.Asymptotic.Collections
 TCSlib.Cryptography.Collection.encD	def-proj	TCSlib.Cryptography.Asymptotic.Collections
 TCSlib.Cryptography.Collection.recOn	def-aux	TCSlib.Cryptography.Asymptotic.Collections
+TCSlib.Cryptography.Collection.evalSampled_iff	thm	TCSlib.Cryptography.Asymptotic.Collections
 TCSlib.Cryptography.Collection.HardCore._proof_1	thm	TCSlib.Cryptography.Asymptotic.Collections
 TCSlib.Cryptography.Collection.sample_eq_encD	thm	TCSlib.Cryptography.Asymptotic.Collections
 TCSlib.Cryptography.Collection.gen	def-proj	TCSlib.Cryptography.Asymptotic.Collections
@@ -8225,6 +8228,7 @@ TCSlib.Cryptography.HardcoreBit.glBit	def	TCSlib.Cryptography.HardcoreBit.InnerP
 TCSlib.Cryptography.HardcoreBit.ip_sum	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.predProb_glPad_eq	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.one_sub_sum_le_uprob_eq	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
+TCSlib.Cryptography.HardcoreBit.glInverter_apply	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.glInverter.eq_1	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.ip.eq_1	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.glPad.eq_1	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
@@ -8236,6 +8240,7 @@ TCSlib.Cryptography.HardcoreBit.ip	def	TCSlib.Cryptography.HardcoreBit.InnerProd
 TCSlib.Cryptography.HardcoreBit.glPad	def	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.pushesUniform_xor	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
+TCSlib.Cryptography.HardcoreBit.glPad_apply	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.ip_single	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.glInverter	def	TCSlib.Cryptography.HardcoreBit.InnerProduct
 TCSlib.Cryptography.HardcoreBit.uprob_recover_le_invProb	thm	TCSlib.Cryptography.HardcoreBit.InnerProduct
@@ -8244,13 +8249,17 @@ TCSlib.Cryptography.HardcoreBit.half_le_uprob_good	thm	TCSlib.Cryptography.Hardc
 TCSlib.Cryptography.HardcoreBit.uprob_idealRecover_ne_le	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.idealRecover	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.GuessCoins	def-reducible	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
+TCSlib.Cryptography.HardcoreBit.guessRecover_apply	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.invProb_guessInverter_cubic	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
+TCSlib.Cryptography.HardcoreBit.guessRecover_coinsCongr	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessRecover	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
+TCSlib.Cryptography.HardcoreBit.guessCoinsCongr_apply	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.uprob_guess_eq	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessInverter_eq	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessRecover_correct_guess	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.idealRecover.eq_1	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessInverter	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
+TCSlib.Cryptography.HardcoreBit.guessCoinsCongr	def	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.idealTrial_correct	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.NESubset	def-reducible	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
 TCSlib.Cryptography.HardcoreBit.guessRecover.eq_1	thm	TCSlib.Cryptography.HardcoreBit.GoldreichLevin
@@ -8458,6 +8467,7 @@ TCSlib.Cryptography.GLLoop.fixed	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.fx_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glMajFun_blocksStr	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLRaw.r₁	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
+TCSlib.Cryptography.glPredictorOf_apply	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glPredictorOf	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.pvotes_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.length_glAdvice_le	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -8467,7 +8477,7 @@ TCSlib.Cryptography.GLLoop.length_glEntry	thm	TCSlib.Cryptography.Asymptotic.Har
 TCSlib.Cryptography.GLRaw.ur	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glVotesFun_wfInput._proof_1_6	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.out.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
-TCSlib.Cryptography.glNeed	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
+TCSlib.Cryptography.glNeed	def-reducible	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.wfInput.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.step_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.filter_betaOf	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -8479,8 +8489,8 @@ TCSlib.Cryptography.GLLoop.orbit_length_le._proof_1_5	thm	TCSlib.Cryptography.As
 TCSlib.Cryptography.GLRaw.ukm	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.pY.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.coins_glMachine	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
+TCSlib.Cryptography.glNeed_le._proof_1_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.puk_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
-TCSlib.Cryptography.glNeed_le._proof_1_3	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.fixed.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glVotesFun	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.ofFn_glCoinsEquiv	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -8530,7 +8540,6 @@ TCSlib.Cryptography.glCoinsEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.bound	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glVotesFun_wfInput._proof_1_4	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.glBlocks_apply	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
-TCSlib.Cryptography.glPredictorOf.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.puk	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 Complexity.NUPPT.coins_precomp	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.pb_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -8592,7 +8601,6 @@ TCSlib.Cryptography.GLRaw.ukm.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.pur	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.pum	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.out_poly	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
-TCSlib.Cryptography.glNeed.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLRaw.uk.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.unaryMulFun	def	TCSlib.Cryptography.Asymptotic.HardCoreGL
 TCSlib.Cryptography.GLLoop.ps.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGL
@@ -8648,7 +8656,6 @@ TCSlib.Cryptography.glKcBound	def	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.glCollPost.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.glCollMachine._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.glKc	def	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
-Complexity.NUPPT.wrap.congr_simp	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.padToLen	def	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.glKc_pos_or._proof_1_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
 TCSlib.Cryptography.glCollPre.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLColl
@@ -8673,6 +8680,7 @@ Complexity.NUPPT.coinsEquivPoly.congr_simp	thm	TCSlib.Cryptography.Asymptotic.Ha
 TCSlib.Cryptography.Collection.glBit	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad_encD	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad_decD_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
+TCSlib.Cryptography.Collection.glPad_invProbAt	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad._proof_5	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glBit_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -8681,7 +8689,6 @@ TCSlib.Cryptography.Collection.glPad_sample_runAtL	thm	TCSlib.Cryptography.Asymp
 _private.TCSlib.Cryptography.Asymptotic.HardCoreCollection.0.TCSlib.Cryptography.Collection.glPad.match_3.eq_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
-TCSlib.Cryptography.Collection.glPad.congr_simp	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad_domEquiv	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad._proof_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad_perm	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -8718,6 +8725,7 @@ TCSlib.Cryptography.PermCollection.OneWay.glPad	thm	TCSlib.Cryptography.Asymptot
 TCSlib.Cryptography.TrapdoorCollection.glPad._proof_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.Collection.glPad.match_1	def-aux	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore_domEquiv	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
+TCSlib.Cryptography.Collection.glPad_index	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.PermCollection.glPad_toCollection	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad	def	TCSlib.Cryptography.Asymptotic.HardCoreCollection
 TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv_apply	thm	TCSlib.Cryptography.Asymptotic.HardCoreCollection
@@ -8739,9 +8747,8 @@ TCSlib.Cryptography.glPredictorOf_precomp_concat	thm	TCSlib.Cryptography.Asympto
 TCSlib.Cryptography.invProbOpt_glFam_eq	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.glFamPre	def	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.glFamMachine.congr_simp	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
-Complexity.NUPPT.wrap.congr_simp	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
-TCSlib.Cryptography.invProbOpt_glFam_eq._simp_1_4	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.glFamPost.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
+TCSlib.Cryptography.invProbOpt_glFam_eq._simp_1_2	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.concatPre.eq_1	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.glFamPost	def	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
 TCSlib.Cryptography.exists_glBitEvaluator	thm	TCSlib.Cryptography.Asymptotic.HardCoreGLFamily

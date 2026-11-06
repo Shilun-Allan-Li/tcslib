@@ -4,7 +4,7 @@ like the reducible abbreviations the collector never lists. Records the dropped 
 <candidate-dir>/unsealable-dropped.tsv."""
 import sys
 from pathlib import Path
-UNSEALABLE = {'Complexity.PolyExpr.eval'}
+UNSEALABLE = {'Complexity.PolyExpr.eval', 'TCSlib.Cryptography.glNeed'}
 for d in map(Path, sys.argv[1:]):
     dropped = []
     for f in sorted(d.glob('*.txt')):
