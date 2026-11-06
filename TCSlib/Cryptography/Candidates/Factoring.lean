@@ -258,7 +258,8 @@ theorem factorProb_le_one (A : NUPPT) (n : ℕ) : factorProb A n ≤ 1 := uprob_
 factors there (sanity: the assumption only constrains `n ≥ 2`). -/
 theorem factorProb_eq_zero_of_lt (A : NUPPT) {n : ℕ} (hn : n < 2) : factorProb A n = 0 := by
   haveI := DistinctPrimes.isEmpty_of_lt hn
-  unfold factorProb uprob
+  unfold factorProb
+  rw [uprob_def]
   simp
 
 /-! ## The one-call reduction `A''` [PS10, Algorithm 33.6] -/

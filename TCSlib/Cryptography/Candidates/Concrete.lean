@@ -106,7 +106,7 @@ is the probability of `S` under the uniform distribution on the subtype `{a // E
 uniformly distributed input … and replaces `xy` with `z` if both are prime"). -/
 theorem uprob_and_eq_mul_subtype (E S : α → Prop) [DecidablePred E] :
     uprob (fun a => E a ∧ S a) = uprob E * uprob (fun z : {a // E a} => S z.1) := by
-  unfold uprob
+  simp only [uprob_def]
   rw [← Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S)]
   rcases (Fintype.card {a // E a}).eq_zero_or_pos with h0 | hpos
   · haveI : IsEmpty {a // E a} := Fintype.card_eq_zero_iff.mp h0
@@ -130,7 +130,7 @@ theorem one_sub_div_le_uprob_subtype (E S : α → Prop) [DecidablePred E] {δ :
     by_contra h
     rw [not_nonempty_iff] at h
     have h0 : uprob E = 0 := by
-      unfold uprob
+      rw [uprob_def]
       simp
     linarith
   have hES := uprob_and_eq_mul_subtype E S
