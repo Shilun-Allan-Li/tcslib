@@ -444,3 +444,11 @@ LD-* decisions, then draft.
 3. **D-F6-4:** E-PAD's continuation of `SPACE_linear_ne_NP` first, then F6's fill.
 4. **T31-1/T31-2:** after #211 merges, admission-free, with `time_hierarchy_book_of_pos`.
 5. **Ladner:** LD-1 to LD-7 as recommended; LD-8 is the maintainer's source check before docstrings.
+
+**LD-8 (the maintainer, 2026-11-06).** The book's text of Exercise 3.6 could not be fetched from this
+session (network policy). Course notes (Princeton COS 522 hw6, Cornell CS 6810 lec. 3/4) confirm the
+book's own pointer: "the definition of `H` implies an `O(n³)`-time recursive algorithm that computes
+`H(n)` from `n` (see Exercise 3.6)". So `ladnerH_polyTime` is Exercise 3.6's first part. The second
+part's wording is unpinned. Until it is pinned against the book, docstrings cite
+[AB09, Theorem 3.3 and its proof] for the Claim and for `H → ∞`, and give no exercise part letter
+beyond the `O(n³)` computation.
