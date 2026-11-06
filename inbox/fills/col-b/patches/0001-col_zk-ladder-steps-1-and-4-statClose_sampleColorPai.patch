@@ -1,0 +1,140 @@
+From cd39e4c8a58bd34e3f9db806896aa8f2b403d608 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:09:54 +0000
+Subject: [PATCH] col_zk ladder: steps 1 and 4 (statClose_sampleColorPair,
+ exists_colSimRed_fixCoins, colSimRed_fixed_eq)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../ThreeColoring/Simulator.lean              | 114 ++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index 8434af2b..bd41a68b 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -583,6 +583,120 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
+ 
+ end Typed
+ 
++/-! ### The fill ladder of `col_zk` -/
++
++section ColZKLadder
++
++variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
++
++/-- `firstSome` splits at `k`: the first success before `k`, else entry `k`, else the first
++success after `k` (`CommitmentLemmas.ofFn_eq_append_cons` on `List.finRange N`). -/
++private theorem colZK_firstSome_eq_split {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
++    firstSome f = ((firstSome fun i : Fin k => f (Fin.castLE k.2.le i)) <|> f k <|>
++      firstSome fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩) := by
++  unfold firstSome
++  have h := CommitmentLemmas.ofFn_eq_append_cons (id : Fin N → Fin N) k
++  rw [List.ofFn_id] at h
++  rw [h, List.findSome?_append, List.findSome?_cons, List.ofFn_eq_map, List.ofFn_eq_map,
++    List.findSome?_map, List.findSome?_map]
++  simp only [Function.comp_def, id_eq]
++  cases List.findSome? (fun i => f (Fin.castLE k.2.le i)) (List.finRange k) <;> cases f k <;> rfl
++
++/-- `firstSome` splits at `k` into the masked searches before and after `k`. -/
++private theorem colZK_firstSome_split_lt {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
++    firstSome f = ((firstSome fun t : Fin N => if (t : ℕ) < k then f t else none) <|> f k <|>
++      firstSome fun t : Fin N => if k < t then f t else none) := by
++  rw [colZK_firstSome_eq_split f k, colZK_firstSome_eq_split (fun t : Fin N => if (t : ℕ) < k then f t else none) k,
++    colZK_firstSome_eq_split (fun t : Fin N => if k < t then f t else none) k]
++  have h1 : (fun i : Fin k => if ((Fin.castLE k.2.le i : Fin N) : ℕ) < k then
++      f (Fin.castLE k.2.le i) else none) = fun i : Fin k => f (Fin.castLE k.2.le i) :=
++    funext fun i => if_pos (by simp)
++  have h2 : (fun i : Fin (N - k - 1) => if (((⟨k + 1 + i, by omega⟩ : Fin N)) : ℕ) < k then
++      f ⟨k + 1 + i, by omega⟩ else none) = fun _ => none :=
++    funext fun i => if_neg (by simp only; omega)
++  have h3 : (fun i : Fin k => if k < (Fin.castLE k.2.le i : Fin N) then
++      f (Fin.castLE k.2.le i) else none) = fun _ => none :=
++    funext fun i => if_neg (by rw [Fin.lt_def]; simp)
++  have h4 : (fun i : Fin (N - k - 1) => if k < (⟨k + 1 + i, by omega⟩ : Fin N) then
++      f ⟨k + 1 + i, by omega⟩ else none) = fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩ :=
++    funext fun i => if_pos (by rw [Fin.lt_def]; simp only; omega)
++  have hn : ∀ {M : ℕ}, firstSome (fun _ : Fin M => (none : Option α)) = none :=
++    fun {M} => (firstSome_eq_none_iff _).2 fun _ => rfl
++  rw [h1, h2, h3, h4, hn, hn, if_neg (lt_irrefl (k : ℕ)), if_neg (lt_irrefl k)]
++  cases firstSome fun i : Fin k => f (Fin.castLE k.2.le i) <;> cases f k <;> rfl
++
++
++/-- **The hiding reduction with its attempt table fixed** [PS10, proof of Proposition 128.8,
++the reduction to the hiding property] (Claim-129.d, step (4) of `col_zk`'s sketch): for `m > 0`
++and `N > 0` attempts there are a hybrid index `k`, a planted `(e₀, π₀)` and a table `w₀` of the
++other attempts' coins such that the advantage of `D'` between the truncated `S'` and `S''`,
++divided by `N`, is at most the advantage between the commitment vectors to the `S'` and `S''`
++colours of the reduction `colSimRed … k e₀ π₀ D'` with its attempt table fixed to `w₀`.
++
++**Proof sketch.** `exists_colSimRed_ge` gives `k, e₀, π₀`; averaging over the reduction's attempt
++table (`CommitmentLemmas.exists_fixCoins`, the table being nonempty as `m > 0` and `ρ ≠ ∅`)
++fixes some `w₀` without loss. -/
++theorem exists_colSimRed_fixCoins {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (c : Fin n → Fin 3)
++    {ρ : Type*} [Fintype ρ] [Nonempty ρ] (V : List Bool → ρ → List Bool) (N : ℕ) (hN : 0 < N)
++    {ρ' : Type*} [Fintype ρ'] (D' : Option (ColView ρ) → ρ' → Bool) :
++    ∃ (k : Fin N) (e₀ : Fin (edgeCount G)) (π₀ : Equiv.Perm (Fin 3))
++      (w₀ : Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin (ℓ.eval n) → Bool)) × ρ),
++      distAdv (colSimTruncW Com (ℓ.eval n) G c V N) (colSimTruncH Com (ℓ.eval n) G c V N) D' / N ≤
++        distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
++            multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
++          (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
++          (fun cv c' => colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D' cv (w₀, c')) := by
++  obtain ⟨k, e₀, π₀, h⟩ := exists_colSimRed_ge Com (ℓ.eval n) G hm c V N hN D'
++  haveI : Nonempty (Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) ×
++      (Fin n → Fin (ℓ.eval n) → Bool)) × ρ) :=
++    ⟨fun _ => (((⟨0, hm⟩, 1), fun _ _ => false), Classical.arbitrary ρ)⟩
++  obtain ⟨w₀, hw₀⟩ := CommitmentLemmas.exists_fixCoins
++    (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
++      multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
++    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
++    (colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D')
++  exact ⟨k, e₀, π₀, w₀, h.trans hw₀⟩
++
++/-- **With the attempt table fixed only attempt `k` reads the challenge** (Claim-129.d): the
++fixed reduction is `cv ↦ D'(pre <|> planted cv <|> post)`, where `pre` and `post` are the first
++successes among the `S''` attempts before `k` and the `S'` attempts after `k`.
++
++**Proof sketch.** Split the search of `colSimRed` at `k` (`List.finRange N` as the indices
++before `k`, then `k`, then those after it, `CommitmentLemmas.ofFn_eq_append_cons`); on each part
++the case split of `colSimRed` selects the `S''`, planted or `S'` attempt. -/
++theorem colSimRed_fixed_eq {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : Type*}
++    (V : List Bool → ρ → List Bool) (N : ℕ) (k : Fin N) (e₀ : Fin (edgeCount G))
++    (π₀ : Equiv.Perm (Fin 3)) {ρ' : Type*} (D' : Option (ColView ρ) → ρ' → Bool) (cv : List Bool)
++    (w₀ : Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin (ℓ.eval n) → Bool)) × ρ)
++    (c' : ρ') :
++    colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D' cv (w₀, c') =
++      D' ((firstSome fun t : Fin N => if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) else none) <|>
++          colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ k) <|>
++          (firstSome fun t : Fin N => if k < t then colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) else none)) c' := by
++  unfold colSimRed
++  dsimp only
++  rw [colZK_firstSome_split_lt _ k, if_neg (lt_irrefl (k : ℕ)), if_pos rfl]
++  have h1 : (fun t : Fin N => if (t : ℕ) < k then
++      (if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t)
++        else if t = k then colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ t)
++        else colSimAttemptW Com (ℓ.eval n) G c V (w₀ t)) else none) =
++      fun t : Fin N => if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) else none := by
++    funext t
++    by_cases ht : (t : ℕ) < k
++    · rw [if_pos ht, if_pos ht, if_pos ht]
++    · rw [if_neg ht, if_neg ht]
++  have h2 : (fun t : Fin N => if k < t then
++      (if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t)
++        else if t = k then colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ t)
++        else colSimAttemptW Com (ℓ.eval n) G c V (w₀ t)) else none) =
++      fun t : Fin N => if k < t then colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) else none := by
++    funext t
++    by_cases ht : k < t
++    · rw [if_pos ht, if_pos ht, if_neg (by rw [Fin.lt_def] at ht; omega), if_neg (ne_of_gt ht)]
++    · rw [if_neg ht, if_neg ht]
++  rw [h1, h2]
++end ColZKLadder
++
+ /-! ### The string simulator [PS10, Algorithm 128.7] (Alg-128.7, Claim-128.a) -/
+ 
+ /-- The coin block of one attempt of the string simulator against `V'` at instance length
+-- 
+2.43.0
+

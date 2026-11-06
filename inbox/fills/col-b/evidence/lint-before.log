@@ -1,0 +1,39 @@
+== style_lint (base) ==
+
+0 findings in 1 files
+
+== campaign_style_lint --check8b ZeroKnowledge (base), ThreeColoring lines ==
+FAIL  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Concrete`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean                facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorMachine`
+FAIL  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     facade does not import child module `TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorNumeric`
+WARN  TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean                  12 public def(s) without a lemma beside them (check 8): Liso, Lniso, coinSlice, gniProtocolRep, gniProver, instanceG, instanceG, permFailBound, prefixLE, prefixLT, samplePerm, wellFormedInstance
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            6 public def(s) without a lemma beside them (check 8): Graph.ofSimpleGraph, L3COL, edgeList, edgeMsg, perm3Equiv, samplePerm3
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            2 public def(s) without a lemma beside them (check 8): firstTrial, ilayout
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean             1 public def(s) without a lemma beside them (check 8): proverCoinsOf
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            3 public def(s) without a lemma beside them (check 8): challengesBefore, challengesUpTo, colProtocolRep
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean      9 public def(s) without a lemma beside them (check 8): colCoinSlice, colCommit, colIterations, colOpen, colProtocol, colProtocolRep, colWellFormed, finOneEquiv, msgAt
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           17 public def(s) without a lemma beside them (check 8): colRealView, colSim, colSimAttempt, colSimAttemptH, colSimAttemptPlanted, colSimAttemptStr, colSimAttemptW, colSimBlock, colSimCoins, colSimRed, colSimTrunc, colSimTruncH, colSimTruncW, pair6Equiv, sampleColorPair, simCoinsEquiv, simColors
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean     7 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, hybStd, plantEP, swapEP, swapR, truncAttempts
+WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean    22 public def(s) without a lemma beside them (check 8): attemptNum, baseR, blockPoly, chunk, colorA, colorB, colorNum, comStr, eIdx, edgePos, kPos, mE, nV, opnStr, pair6Equiv, rVStr, rrStr, sampleNum, sim, simCoins, simColors, vIdx
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean            453 lines; 45 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            997 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean            997 lines; 87 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean             559 lines; 53 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            999 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean            999 lines; 46 public / 12 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean      428 lines; 27 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean           804 lines; 42 public / 3 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean     569 lines; 33 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean    620 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean    620 lines; 42 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean    661 lines > target 600
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean    661 lines; 47 public / 0 private declarations
+INFO  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring.lean                     44 lines; 0 public / 0 private declarations
+style_lint: 9 FAIL, 26 WARN over 33 files
