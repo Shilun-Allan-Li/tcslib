@@ -80,7 +80,7 @@ through the facade (03a #12).
 `GI/Efficiency.lean:141`, `GI/EfficiencyRep.lean:194, 388`, `GGMReductionEval.lean:534`. They go
 through `orbit_zero`.
 
-**J. Gate 04's seal exclusions** (filled in at issue): re-prove the listed inherited ch. 2–4 proofs
+**J. Gate 04's seal exclusions** (`gates/04-s2b/evidence-r4/exclusions.md`: section A, 48 definitional reads; section B, 75 explicit unfolds; all in inherited ch. 2–4 declarations): re-prove the listed inherited ch. 2–4 proofs
 through published equation lemmas, adding missing equation lemmas beside their definitions.
 
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
