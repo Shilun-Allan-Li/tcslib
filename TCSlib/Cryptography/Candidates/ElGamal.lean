@@ -193,6 +193,7 @@ differ**: `|Pr[T(X)] − Pr[T(Y)]| ≤ Pr[X ≠ Y]` (the device for the `1/q` te
 Theorem 107.3: the scheme's `h = g²` and the derived generator's `h` differ only on `g² = 1`). -/
 theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
     StatClose X Y (uprob fun s => X s ≠ Y s) := by
+  rw [statClose_iff]
   intro T
   have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
       uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by

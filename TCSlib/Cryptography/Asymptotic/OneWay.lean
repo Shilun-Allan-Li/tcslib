@@ -222,6 +222,10 @@ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   outLen := p
   f _ x i := (f (List.ofFn x)).getD i false
 
+/-- The input length of `ofString f p` at `n` is `n` (the parameter is the input length). -/
+theorem ofString_inLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
+    (ofString f p).inLen.eval n = n := rfl
+
 /-- `f` is *length-regular* with output length `p`: `|f x| = p(|x|)` for every `x`. -/
 def LengthRegular (f : List Bool → List Bool) (p : PolyExpr) : Prop :=
   ∀ x, (f x).length = p.eval x.length
@@ -944,6 +948,14 @@ theorem PermFamily.toFunFamily_inLen (P : PermFamily) : P.toFunFamily.inLen = .v
 
 /-- Field equation: the output length of `P.toFunFamily` is `var`. -/
 theorem PermFamily.toFunFamily_outLen (P : PermFamily) : P.toFunFamily.outLen = .var := rfl
+
+/-- The input length of `P.toFunFamily` at `n` is `n`. -/
+theorem PermFamily.toFunFamily_inLen_eval (P : PermFamily) (n : ℕ) :
+    P.toFunFamily.inLen.eval n = n := rfl
+
+/-- The output length of `P.toFunFamily` at `n` is `n`. -/
+theorem PermFamily.toFunFamily_outLen_eval (P : PermFamily) (n : ℕ) :
+    P.toFunFamily.outLen.eval n = n := rfl
 
 /-- **The domain of `P.toFunFamily` is `{0,1}^n`**: the published equivalence
 `{0,1}^{inLen(n)} ≃ {0,1}^n` (the identity on the definition), through which a statement reads

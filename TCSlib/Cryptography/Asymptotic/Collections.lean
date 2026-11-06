@@ -948,7 +948,8 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
             ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) :
     ∃ x, G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) r₂) = some x ∧
       ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
-          (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ) = some x' ∧
+          (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+          ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
         G.f (G.index n r₁) x' = G.f (G.index n r₁) x := by
   obtain ⟨x, hx1, hx2⟩ := G.evalSampled n r₁ r₂
   refine ⟨x, hx1, ?_⟩
@@ -969,10 +970,10 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
     simp only [owfRaw, pairSndD_pairEncode] at h
     rw [hidx] at h
     rw [h, hx2]
-  have hout : (G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ =
+  have hout : (G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ) =
       G.sample.runAt n (G.index n r₁) (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) z').2 := by
-    rw [collInverter_runAt, pairFstD_pairEncode, ← hraw, NUPPT.runAt_eq, NUPPT.coinsCongr_ofFn,
-      ← NUPPT.runAt_eq]
+    rw [collInverter_runAt, Equiv.apply_symm_apply, pairFstD_pairEncode, ← hraw]
     have hpad : padStr L (List.replicate n true) (G.owfRaw n r₁ r₂ ++ [true]) =
         List.ofFn ((G.owfFamily L).f n
             ((G.owfCoinsEquiv n).symm
@@ -1006,12 +1007,13 @@ private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ 
         (G.owfFamily L).f n
             ((G.owfCoinsEquiv n).symm
               ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
-    uprob (fun z : G.D (G.index n r₁) × A'.Coins n => ∃ x', G.decD (G.index n r₁)
+    uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x', G.decD (G.index n r₁)
         ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) + δ n := by
   let P : Option (G.D (G.index n r₁)) → A'.Coins n → Prop := fun o ρ => ∃ x, o = some x ∧
     ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
-      (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ) = some x' ∧
+      (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
       G.f (G.index n r₁) x' = G.f (G.index n r₁) x
   have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod P)).2
   have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
@@ -1029,11 +1031,16 @@ private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ 
     obtain ⟨z', hz', hg⟩ := hv
     exact G.collInverter_success L hL A' n r₁ v.1 v.2 z' hz' hg
   have h2 : uprob (fun z : G.D (G.index n r₁) × A'.Coins n => P (some z.1) z.2) =
-      uprob (fun z : G.D (G.index n r₁) × A'.Coins n => ∃ x', G.decD (G.index n r₁)
-        ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
+      uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x',
+        G.decD (G.index n r₁) ((G.collInverter L A').runAt n
+          (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) := by
+    refine Eq.trans ?_ (uprob_comp_equiv ((Equiv.refl (G.D (G.index n r₁))).prodCongr
+      (NUPPT.coinsCongr (G.coins_collInverter L A') n).symm) _)
     refine OneWay.uprob_congr fun z => ?_
-    simp only [P, Option.some.injEq, exists_eq_left']
+    simp only [P, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply, Prod.map_apply,
+      Equiv.refl_apply]
+    exact Iff.rfl
   linarith
 
 /-- **The inversion probability of `g` is at most that of the collection plus the sampling

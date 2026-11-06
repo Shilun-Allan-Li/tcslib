@@ -135,7 +135,8 @@ theorem family_inLen (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) :
 
 /-- The encoding of the padded family's value is `gStr`. -/
 theorem ofFn_family_f (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (m : ℕ)
-    (x : Fin m → Bool) : List.ofFn ((family F ℓ d).f m x) = gStr F ℓ d (List.ofFn x) :=
+    (x : Fin ((family F ℓ d).inLen.eval m) → Bool) :
+    List.ofFn ((family F ℓ d).f m x) = gStr F ℓ d (List.ofFn x) :=
   FunFamily.ofFn_ofString_f (lengthRegular_gStr F ℓ d) m x
 
 /-! ## The computability clauses -/
@@ -183,7 +184,7 @@ evaluator: `Turing.FinTM.one_work_tape_binary` gives a one-work-tape binary mach
 same runs. -/
 theorem quadraticCode_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {d : ℕ}
     (h : ∃ (M' : FinTM Bool) (c' : ℕ), M'.ComputesFunInTime (gStr F ℓ d) fun m => c' * (m + 1)) :
-    ∃ (Mc : CodeTM) (c₀ : ℕ), ∀ m (x : Fin m → Bool),
+    ∃ (Mc : CodeTM) (c₀ : ℕ), ∀ m (x : Fin ((family F ℓ d).inLen.eval m) → Bool),
       Mc.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn ((family F ℓ d).f m x))
         (c₀ * (m + 1) ^ 2) := by
   obtain ⟨M', c', hM'⟩ := h

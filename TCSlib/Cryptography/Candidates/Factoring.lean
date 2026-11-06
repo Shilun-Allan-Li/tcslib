@@ -323,7 +323,9 @@ bound `1 - 1/(8(n+1)²)` is weaker than the text's. -/
 def fmultWeakPoly : PolyExpr := PolyExpr.normal 8 2
 
 /-- `q(n) = 8(n+1)²`. -/
-theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 := rfl
+theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 := by
+  unfold fmultWeakPoly
+  exact PolyExpr.eval_normal 8 2 n
 
 /-- **Theorem 33.5** [PS10, Theorem 33.5]: under the factoring assumption (and the arithmetic
 hypotheses), `f_mult` is a weak one-way function: for every non-uniform PPT `A` and all
@@ -364,7 +366,8 @@ def fmultBlocks : PolyExpr := .mul (.const 4) (.pow .var 3)
 @[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := rfl
 
 /-- The input length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴` (the text's `n'`). -/
-theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := rfl
+theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := by
+  rw [FunFamily.prod_inLen, PolyExpr.eval_mul, eval_fmultBlocks, fmult_inLen]
 
 /-- **The total inverter of the direct product** induced by the machine `A` at parameter
 `n`: encode the tuple of `m_n` values as a `8n⁴`-bit string (`FunFamily.blocks`), run
@@ -376,6 +379,16 @@ noncomputable def prodInverter (A : NUPPT) (n : ℕ) :
   fun ys r => FunFamily.blocks (fmultBlocks.eval n) (2 * n)
     ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD (fun _ => false))
+
+/-- **`prodInverter` with the direct product's lengths read as `m_n · 2n`**: decode
+`A(1^n, ys; r)` as a string of `m_n · 2n` bits (the all-zero string on a wrong length) and split
+it into `m_n` blocks of `2n` bits (`FunFamily.blocks`). -/
+theorem prodInverter_eq (A : NUPPT) (n : ℕ) (ys : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool))
+    (r : A.Coins n) :
+    prodInverter A n ys r = FunFamily.blocks (fmultBlocks.eval n) (2 * n)
+      ((A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
+        ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD (fun _ => false)) :=
+  rfl
 
 /-- **The random-planting one-call reduction** [PS10, Algorithm 37.4, one-call variant
 without primality test] at the concrete level: on the challenge `N` with coins
@@ -567,7 +580,8 @@ theorem samplePairOut_eq_encode (m : ℕ) (hm : 2 ≤ m) (a b : List Bool) :
     ∃ z : DistinctPrimes m, samplePairOut m hm a b = encodeDistinctPrimes m z := by
   unfold samplePairOut
   split_ifs with h
-  · exact ⟨⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩, ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩, rfl⟩
+  · exact ⟨⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩, ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩,
+      by rw [encodeDistinctPrimes_eq, DistinctPrimes.p_eq, DistinctPrimes.q_eq]⟩
   · exact ⟨_, rfl⟩
 
 /-- The string function of the collection's sampler on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`:
@@ -756,8 +770,8 @@ theorem factoringCollection_eval (H : ArithmeticFP) (z : List Bool) :
 theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
     (r : (factoringCollection H).gen.Coins n) :
     (factoringCollection H).index n r = List.replicate n true := by
-  simp [Collection.index_eq, factoringCollection, factoringGen, NUPPT.runAt_eq,
-    NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam_eq, NUPPT.advInput_eq]
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
 
 /-- **The sampler is close to uniform** [PS10, Lemma 51.17 and Theorem 51.1, "sample two
 random prime numbers"]: the decoded output of the factoring collection's sampler is within
