@@ -489,6 +489,44 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
 
+/-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
+(`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
+private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
+  have h := natToList_length_listToNat (natToList k N)
+  have hl : (natToList k N).length = k := by rw [natToList_eq, List.length_ofFn]
+  rw [listToNat_natToList_eq_mod, hl] at h
+  exact h.symm
+
+/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
+private theorem fac_foldl_replicate_false (m : ℕ) :
+    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
+  induction m with
+  | zero => rfl
+  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
+
+/-- **The fallback numeral of `SamplePrime`**: the `k`-bit numeral of `2` is `0^{k+2}` followed
+by `10`, with its first two bits dropped (`0^{k−2}10` for `k ≥ 2`, `0` for `k = 1`, empty for
+`k = 0`). -/
+private theorem fac_natToList_two (k : ℕ) :
+    natToList k 2 = (List.replicate k false ++ [true, false]).drop 2 := by
+  rcases k with _ | _ | m
+  · rw [natToList_zero]; rfl
+  · rw [fac_natToList_mod]
+    have h := natToList_length_listToNat [false]
+    rw [listToNat_eq] at h
+    exact h
+  · have hw : (List.replicate (m + 2) false ++ [true, false]).drop 2 =
+        List.replicate m false ++ [true, false] := by
+      rw [List.replicate_succ, List.replicate_succ]
+      cases m with
+      | zero => rfl
+      | succ m => simp [List.replicate_succ]
+    rw [hw]
+    have h := natToList_length_listToNat (List.replicate m false ++ [true, false])
+    rw [listToNat_eq, List.foldl_append, fac_foldl_replicate_false] at h
+    simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil] at h
+    exact h
+
 /-- **One truncated run of `SamplePrime(n)` is polynomial-time** [PS10, Algorithm 50.16 and
 Lemma 51.17] given a primality test: on `⟨u, r⟩` with `n = |u|`, the `n`-bit output
 `samplePrimeL n r` (the first prime among the first `2n²` blocks of `n` bits of `r`, padded with
@@ -516,7 +554,46 @@ by `polyTimeComputable_ite`). The three pieces agree with
 `samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
 theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
-  sorry
+  obtain ⟨A, hAu, -, hA⟩ := exists_samplePrime_nuppt (primeStr_eq ▸ hP)
+  have hu : PolyTimeComputable fun z => List.replicate (pairFstD z).length true := by
+    simpa only [PolyExpr.eval_var] using (polyTimeComputable_unaryPoly .var).comp polyTimeComputable_pairFstD
+  have hout : PolyTimeComputable fun z => A.output (NUPPT.layout (List.replicate (pairFstD z).length true)
+      [] [] (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) :=
+    A.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout hu (polyTimeComputable_const [])
+      (polyTimeComputable_const []) (polyTimeComputable_padStr samplePrimeCoins))
+  have hfb : PolyTimeComputable fun z =>
+      (List.replicate (pairFstD z).length false ++ [true, false]).drop 2 := by
+    have h := (polyTimeComputable_pairDropPoly (.const 2)).comp ((polyTimeComputable_const []).pairEncode
+      ((polyTimeComputable_zerosPoly .var).append (polyTimeComputable_const [true, false])))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
+      PolyExpr.eval_var] using h
+  have htest := polyTimeComputable_lenEq.comp (hout.pairEncode (polyTimeComputable_const []))
+  have h := polyTimeComputable_ite htest hfb hout
+  convert h using 1
+  funext z
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_nil,
+    List.length_eq_zero_iff]
+  have hpad : padStr samplePrimeCoins (pairFstD z) (pairSndD z) =
+      List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z)) := by
+    rw [← ofFn_padFin_eq_padStr, eval_samplePrimeCoins]
+  have hrun : A.output (NUPPT.layout (List.replicate (pairFstD z).length true) [] []
+      (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) = A.runAtL (pairFstD z).length []
+      (List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) := by
+    rw [NUPPT.runAtL_eq_output_layout, hAu (pairFstD z).length, hpad]
+  rw [hrun, hA]
+  unfold samplePrimeL
+  rcases hs : samplePrime (pairFstD z).length (2 * (pairFstD z).length ^ 2)
+      (chunk (2 * (pairFstD z).length ^ 2) (pairFstD z).length
+        (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) with _ | b
+  · simp only [Option.map_none, Option.getD_none, decide_true, if_true]
+    rw [← natToList_eq, fac_natToList_two]
+  · simp only [Option.map_some, Option.getD_some]
+    by_cases hb : List.ofFn b = []
+    · have hn : (pairFstD z).length = 0 := by
+        simpa only [List.length_ofFn, List.length_nil] using congrArg List.length hb
+      rw [if_pos (by simpa using hb), hb, hn]
+      rfl
+    · rw [if_neg (by simpa using hb)]
 
 /-- The `T` blocks of `n` bits of a coin string as a bijection: `fac_chunkEquiv T n r = chunk T n r`
 (`chunk` is `r` read through `finProdFinEquiv`, `chunk_apply`). -/

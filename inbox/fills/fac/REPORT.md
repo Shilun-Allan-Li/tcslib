@@ -11,7 +11,7 @@ Machine at start: `nproc` 4, MemTotal 16 GB, MemAvailable 15.5 GB (`evidence/log
 |---|---|---|
 | 1 | `statClose_samplePrimeL_pair` (S2) | filled |
 | 2 | `factoringCollection_sampleClose` | filled |
-| 3 | `polyTimeComputable_samplePrimeL` (S1) | open |
+| 3 | `polyTimeComputable_samplePrimeL` (S1) | filled |
 | 4 | `polyTimeComputable_samplePairRaw` | open |
 | 5 | `fmult_easy` | open |
 | 6 | `exists_plantFactorer` | open |
