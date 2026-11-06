@@ -915,7 +915,8 @@ the `n²` entries for the colouring test (`polyTimeComputable_iterate` with an a
 conjunction). -/
 theorem R3COL_witnessRelation : WitnessRelation L3COL R3COL := by
   refine ⟨mem_L3COL_iff, ⟨.mul (.const 2) .var, ?_⟩, ?_⟩
-  · rintro x y ⟨n, G, c, rfl, rfl, -⟩
+  · intro x y hxy
+    obtain ⟨n, G, c, rfl, rfl, -⟩ := (R3COL_iff x y).1 hxy
     rw [length_encColoring, length_encGraph, PolyExpr.eval_mul, PolyExpr.eval_const,
       PolyExpr.eval_var]
     nlinarith [Nat.zero_le n]
