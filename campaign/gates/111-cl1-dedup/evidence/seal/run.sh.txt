@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# CL-1 rule-10 seal: copies of Checks and Deciders with the five code languages irreducible.
+S=/home/user/tcslib-scratch; . $S/env.sh; export TCSLIB_SCRATCH=$S; D=/home/user/tcslib/devtools/seyoon
+T=$S/evidence/g111/seal; W=$S/wt-cl1; OV=$S/ov-cl1
+rm -rf $OV; cp -al $S/oleans-lcamp6 $OV
+M=$OV/TCSlib/Complexity/SpaceComplexity/Codec
+rm -f $M/Langs.olean $M/Langs.ilean $M/Checks.olean $M/Checks.ilean
+bash $D/leanelab-o.sh $W $OV TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean $OV > $T/compile-Langs.out 2>&1; echo "exit=$?" >> $T/compile-Langs.out
+bash $D/leanelab-o.sh $W $OV TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean $OV > $T/compile-Checks.out 2>&1; echo "exit=$?" >> $T/compile-Checks.out
+mkdir -p $W/Scratch
+for f in Checks Deciders; do
+  python3 -I - "$W/TCSlib/Complexity/SpaceComplexity/Codec/$f.lean" "$W/Scratch/Seal$f.lean" <<'PY'
+import sys,re
+src=open(sys.argv[1]).read().split('\n')
+last=max(i for i,l in enumerate(src) if l.startswith('import '))
+ins=['-- unsealed control: the membership destructures',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.validLang N) : True := by',
+     '  obtain ⟨x, c, s, -, -⟩ := h',
+     '  trivial',
+     'attribute [local irreducible] Complexity.Codec.validLang Complexity.Codec.initLang Complexity.Codec.acceptLang Complexity.Codec.stepLang Complexity.Codec.edgeLang',
+     '-- sealed controls: the same destructuring fails for each language',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.validLang N) : True := by',
+     '  fail_if_success obtain ⟨x, c, s, -, -⟩ := h',
+     '  trivial',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.initLang N) : True := by',
+     '  fail_if_success obtain ⟨x, c, s, -, -⟩ := h',
+     '  trivial',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.acceptLang N) : True := by',
+     '  fail_if_success obtain ⟨x, c, s, -, -⟩ := h',
+     '  trivial',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.stepLang N) : True := by',
+     '  fail_if_success obtain ⟨x, c, -, -⟩ := h',
+     '  trivial',
+     'example (N : Turing.FinNDTM Bool) (y : List Bool) (h : y ∈ Complexity.Codec.edgeLang N) : True := by',
+     '  fail_if_success obtain ⟨x, -⟩ := h',
+     '  trivial']
+src[last+1:last+1]=ins
+open(sys.argv[2],'w').write('\n'.join(src))
+PY
+  cp $W/Scratch/Seal$f.lean $T/Seal$f.lean.txt
+  bash $D/leanelab.sh $W $OV Scratch/Seal$f.lean > $T/seal-$f.out 2>&1; echo "exit=$?" >> $T/seal-$f.out
+done
+rm -rf $W/Scratch $OV
+echo DONE > $T/DONE

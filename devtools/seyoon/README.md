@@ -34,3 +34,12 @@ Run Python tools with `python3 -I`.
 | `manifest.py <records worktree> <gate dispatches> <out>` | the 2026-10-18 restructure's dry-run manifest (kept as the record of how paths were mapped) |
 | `issue2.py plan \| apply <base> \| dispatch <ancestor>` | wave 1's brief issuer, kept for reference (its draft paths are wave 1's) |
 | `lean/` | the seed-inclusive definition inventory (`DefInventorySeeds.lean.part.txt`) |
+
+## `scratch-api/`
+
+Helpers that the maintainer's cloud session ran from `$TCSLIB_SCRATCH/api/`: `slotrun.sh` (runs a
+replay script while holding one of the two Lean slots), `staticsorry.py` (the replay's static
+`sorry` check), `chain.py` / `chaincheck.sh` (a change's pre-replay compile chain),
+`wait-needs.sh`, `wrapmd.py`, `env.sh.example`, and `replay-queue.example.sh` (a worked queue of
+merged-tree replays). Copy them to `$TCSLIB_SCRATCH/api/` when setting up a machine
+(`campaign/maintainer/START-HERE.md` §3).

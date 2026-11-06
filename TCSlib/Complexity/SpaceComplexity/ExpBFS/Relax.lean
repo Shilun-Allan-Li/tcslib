@@ -162,7 +162,7 @@ theorem ini_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S
   by_cases hU : S.U = S.K
   · refine ⟨M, ?_, Mono.refl M, Out.refl _ _ M, fun v h1 h2 => by omega, fun v _ h => Or.inl h⟩
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hU, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hU, ↓reduceIte]
     refine reach_cf (MReach.refl _) ?_ rfl
     ext <;> simp [hU]
   · have hlt : S.U < S.K := by omega
@@ -183,7 +183,7 @@ theorem ini_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S
         ⟨hbd1, hB1, hP1, hK1⟩
       refine ⟨M', ?_, hm1.trans hm, ho1.trans ho, fun v h1 h2 h3 => ?_, fun v h1 h2 => ?_⟩
       · refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-        simp only [astep]; regs
+        simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
         exact reach_cf hr (by ext <;> simp) rfl
       · rcases Nat.eq_or_lt_of_le h1 with e | e
         · subst e; exact hm _ (hu1 h3)
@@ -194,9 +194,9 @@ theorem ini_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K - S
     refine ex1_pre (b := ?b1) ?p1 ?q1
     case p1 =>
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs; rw [if_neg hU]
+      simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hU]
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep, vword_whole₂]; regs
+      simp only [astep_call (A := fun _ => Ins.call _ _ _ _ _) rfl, vword_whole₂]; regs
       rw [toV_rad]
       exact MReach.refl _
     by_cases hi : orc 1 (pairEncode x (pairEncode (Nat.bits S.U) (Nat.bits (rr S φ)))) = true
@@ -244,9 +244,9 @@ theorem inner_run (φ : Bool) (u : ℕ) : ∀ (j : ℕ) (S : St) (M : ℤ → Bo
   · refine ⟨M, S.ch, ?_, Mono.refl M, Out.refl _ _ M, hch, fun v _ h => Or.inl h,
       fun v h1 h2 => by omega, fun _ => rfl, fun h => absurd rfl h⟩
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hV, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hV, ↓reduceIte]
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs
+    simp only [astep_clr (A := fun _ => Ins.clr _ _) rfl]; regs
     refine reach_cf (MReach.refl _) ?_ rfl
     ext <;> simp
   · have hlt : S.V < S.K := by omega
@@ -276,7 +276,7 @@ theorem inner_run (φ : Bool) (u : ℕ) : ∀ (j : ℕ) (S : St) (M : ℤ → Bo
         fun e => ?_, fun e => ?_⟩
       · have hbd2 : St.Bd B { S with ch := c1 } := by simp only [St.Bd] at hbd ⊢; omega
         refine step_of rfl hbd2 ⟨le_rfl, by omega⟩ ?_
-        simp only [astep]; regs
+        simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
         exact reach_cf hr (by ext <;> simp) rfl
       · rcases hcl v hv h with h' | h'
         · exact hcl1 v hv h'
@@ -297,7 +297,7 @@ theorem inner_run (φ : Bool) (u : ℕ) : ∀ (j : ℕ) (S : St) (M : ℤ → Bo
     refine ex2_pre (b := ?b2) ?p2 ?q2
     case p2 =>
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs; rw [if_neg hV]
+      simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hV]
       exact MReach.refl _
     have hac := ac_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) (.rV φ) S M hbd hT
       hT2 hZ (by simp [Site.idx]; omega) (by simp [Site.idx]; omega)
@@ -314,7 +314,7 @@ theorem inner_run (φ : Bool) (u : ℕ) : ∀ (j : ℕ) (S : St) (M : ℤ → Bo
       refine ex2_pre (b := ?b3) ?p3 ?q3
       case p3 =>
         refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-        simp only [astep, vword_whole₃]; regs
+        simp only [astep_call (A := fun _ => Ins.call _ _ _ _ _) rfl, vword_whole₃]; regs
         simp only [toV_rad, hUu]
         exact MReach.refl _
       by_cases hs : orc 2 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits S.V)
@@ -328,9 +328,9 @@ theorem inner_run (φ : Bool) (u : ℕ) : ∀ (j : ℕ) (S : St) (M : ℤ → Bo
         refine ex2_pre (b := ?b4) ?p4 ?q4
         case p4 =>
           refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-          simp only [astep]; regs
+          simp only [astep_clr (A := fun _ => Ins.clr _ _) rfl]; regs
           refine step_of rfl hbd0 ⟨le_rfl, by omega⟩ ?_
-          simp only [astep]; regs
+          simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
           exact MReach.refl _
         have hne : Function.update M (cell S.Bs S.V) true ≠ M := by
           intro e
@@ -389,7 +389,7 @@ theorem outer_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
   · refine ⟨M, S.ch, ?_, Mono.refl M, Out.refl _ _ M, hch, fun Q _ h => h,
       fun _ a b h1 h2 => by omega, fun _ => rfl, fun h => absurd rfl h⟩
     refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-    simp only [astep]; regs [hU, ↓reduceIte]
+    simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs [hU, ↓reduceIte]
     refine reach_cf (MReach.refl _) ?_ rfl
     ext <;> simp [hU]
   · have hlt : S.U < S.K := by omega
@@ -424,7 +424,7 @@ theorem outer_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
       refine ⟨M', ch', ?_, hm1.trans hm, ho1.trans ho, hch', fun Q hQ hM => hq Q hQ (hq1 Q hQ hM),
         fun e => ?_, fun e => ?_, fun e => ?_⟩
       · refine step_of rfl hbd2 ⟨le_rfl, by omega⟩ ?_
-        simp only [astep]; regs
+        simp only [astep_inc (A := fun _ => Ins.inc _ _) rfl]; regs
         exact reach_cf hr (by ext <;> simp) rfl
       · have e1 : M1 = M := mono_antisymm hm1 (e ▸ hm)
         intro a b ha hab hb hMa hs
@@ -440,7 +440,7 @@ theorem outer_run (φ : Bool) : ∀ (j : ℕ) (S : St) (M : ℤ → Bool), S.K -
     refine ex2_pre (b := ?b5) ?p5 ?q5
     case p5 =>
       refine step_of rfl hbd ⟨le_rfl, by omega⟩ ?_
-      simp only [astep]; regs; rw [if_neg hU]
+      simp only [astep_jeq (A := fun _ => Ins.jeq _ _ _ _) rfl]; regs; rw [if_neg hU]
       exact MReach.refl _
     have hac := ac_run (orc := orc) (x := x) (B := B) (P := P) (K₀ := K₀) (.rU φ) S M hbd hT
       hT2 hZ (by simp [Site.idx]; omega) (by simp [Site.idx]; omega)

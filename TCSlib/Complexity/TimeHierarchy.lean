@@ -13,10 +13,11 @@ import TCSlib.Complexity.TimeHierarchy.Separation
 # The Time Hierarchy Theorem
 
 [AB09, §3.1, Theorem 3.1]: more time decides more languages. The headline results are
-`Complexity.time_hierarchy` (if `g` is time constructible and `(f(n) + n + 1)² = o(g(n))`
-then `DTIME(f) ⊊ DTIME(g + 1)` — quadratic overhead in place of the book's
-`f log f`, see `TimeHierarchy.Diagonal` for all divergences) and its consequence
-`Complexity.P_ssubset_EXP` (`P ⊊ EXP`).
+`Complexity.time_hierarchy_book` (if `g` is time constructible, `n ≤ f(n)` and
+`f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g + 1)` — the book's overhead, see
+`TimeHierarchy.Diagonal` for all divergences), the quadratic-overhead form
+`Complexity.time_hierarchy` (`(f(n) + n + 1)² = o(g(n))`, no hypothesis on `f`), and its
+consequence `Complexity.P_ssubset_EXP` (`P ⊊ EXP`).
 
 ## Contents
 
