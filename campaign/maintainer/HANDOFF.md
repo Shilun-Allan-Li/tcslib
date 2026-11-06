@@ -187,7 +187,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    wait for Hydroxyi. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
-   NZ-1 awaits acknowledgment. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
+   NZ-1 awaits acknowledgment. CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
+   `CircuitComplexity` await the owner), SG-1 #215 (`CounterLoop`; `Tautology` and `SingleTape`
+   await an import ruling), RP-1 widened (in progress). **NatBits (BL-1, NB-1) is planned, not
+   started:** `campaign/items/dedup/natbits-PLAN.md` (one PR, 18 files, a 340-module replay; after
+   #208), with decisions D1–D9 for the user. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
