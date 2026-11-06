@@ -481,28 +481,21 @@ private theorem dp_hl_run : ∀ t (v : Fin 25 → ℕ), v 21 = t → (∀ r, v r
         · rw [if_pos h2, if_pos h2]
         · rw [if_neg h2, if_neg h2, if_neg h2]
 
-private theorem dpHl_lt : ∀ n, n < 2 ^ dpHl n := by
+/-- The halving count brackets the binary length: `n < 2 ^ dpHl n`, and `2 ^ dpHl n ≤ 2n` for
+`n ≥ 1`. -/
+private theorem dpHl_pow : ∀ n, n < 2 ^ dpHl n ∧ (1 ≤ n → 2 ^ dpHl n ≤ 2 * n) := by
   intro n
   induction n using Nat.strong_induction_on with
   | _ n ih =>
     rcases n with _ | t
     · simp [dpHl]
     · rw [dpHl_succ, pow_succ]
-      have := ih ((t + 1) / 2) (by omega)
-      omega
-
-private theorem dpHl_le : ∀ n, 1 ≤ n → 2 ^ dpHl n ≤ 2 * n := by
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    intro hn
-    rcases n with _ | t
-    · omega
-    · rw [dpHl_succ, pow_succ]
+      obtain ⟨h1, h2⟩ := ih ((t + 1) / 2) (by omega)
+      refine ⟨by omega, fun _ => ?_⟩
       rcases Nat.eq_zero_or_pos ((t + 1) / 2) with h0 | h0
       · rw [h0, show dpHl 0 = 0 by rw [dpHl]]
         omega
-      · have := ih ((t + 1) / 2) (by omega) h0
+      · have := h2 h0
         omega
 
 /-- The halving count against `logSpace`: `logSpace n ≤ 1 + dpHl n ≤ logSpace n + 1`. -/
@@ -511,8 +504,8 @@ private theorem dpHl_logSpace (n : ℕ) :
   rw [logSpace_eq]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [dpHl]
-  · have h1 := dpHl_lt n
-    have h2 := dpHl_le n hn
+  · have h1 := (dpHl_pow n).1
+    have h2 := (dpHl_pow n).2 hn
     have h3 : Nat.log 2 n < dpHl n := Nat.log_lt_of_lt_pow (by omega) h1
     have h4 : n < 2 ^ (Nat.log 2 n + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
     have h5 : 2 ^ dpHl n < 2 ^ (Nat.log 2 n + 2) := by rw [pow_succ]; omega
@@ -866,7 +859,7 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
   have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
     Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)
   have hn : x.length < 2 ^ dpW N sp x :=
-    (dpHl_lt x.length).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+    (dpHl_pow x.length).1.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
   set B := 2 ^ (dpW N sp x * dpW N sp x) with hB
   have hnB : x.length ≤ B := by omega
