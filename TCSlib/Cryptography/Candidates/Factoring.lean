@@ -1796,11 +1796,8 @@ theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     pairSndD_pairEncode]
 
 /-- `f_mult` on a pair of distinct primes is their product (neither is `1`). -/
-private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q := by
-  unfold fmultNat
-  rw [if_neg]
-  push_neg
-  exact ⟨w.p_prime.ne_one, w.q_prime.ne_one⟩
+private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q :=
+  fac_fmultNat_of_prime w.p_prime w.q_prime
 
 /-- **The reduction at a width `m = n`**: if `A`'s answer on `⟨1^n, ⟨pq⟩_{2m}⟩` decodes to a pair
 of distinct primes with the same product, then `collectionFactorer A` factors `pq`; stated for a
