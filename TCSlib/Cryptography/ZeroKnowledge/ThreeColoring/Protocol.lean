@@ -495,8 +495,9 @@ noncomputable def colVerifierRep (Com : List Bool → List Bool) (ℓ : PolyExpr
     else []
 
 /-- The `n|E|`-fold protocol of [PS10, Protocol 127.5] (Prot-127.5): prover first, four moves
-per iteration (commitments, edge, openings, empty verifier message; D8 fixed alternation),
-`4|x|²` moves in all, of which the first `4 n|E|` carry the iterations. -/
+per iteration (commitments, edge, openings, and a verifier message, empty except for the final
+verdict; D8 fixed alternation), `4|x|²` moves in all, of which the first `4 n|E|` carry the
+iterations. -/
 noncomputable def colProtocolRep (Com : List Bool → List Bool) (ℓ : PolyExpr) : Protocol where
   P := colProverRep Com ℓ
   V := colVerifierRep Com ℓ
@@ -607,7 +608,8 @@ theorem colProtocol_proverBounded {Com : List Bool → List Bool} {ℓ : PolyExp
     ∃ B : PolyExpr, (colProtocol Com ℓ).ProverBounded R B ∧
       (colProtocolRep Com ℓ).ProverBounded R B := by
   obtain ⟨B, hB⟩ := colProver_length_le hC.easy ℓ
-  refine ⟨B, fun x y r hist _ => hB x y r hist, fun x y r hist _ => ?_⟩
+  refine ⟨B, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => hB x y r hist,
+    (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => ?_⟩
   show ((colProverRep Com ℓ).next x y r hist).length ≤ B.eval x.length
   simp only [colProverRep]
   split_ifs <;> first | exact hB _ _ _ _ | exact Nat.zero_le _
@@ -878,7 +880,8 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
     obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
     refine ⟨B, fun x hx => ?_⟩
     obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
-    exact ⟨encColoring c, fun r hist => hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+    exact ⟨encColoring c,
+      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
       fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
   efficientP := colProver_efficient hC.easy ℓ

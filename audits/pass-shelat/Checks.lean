@@ -423,6 +423,8 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.Commitment.multiHiding
 -- Ruling G3-3: bounded honest prover messages in the proof systems.
 #print axioms TCSlib.Cryptography.Protocol.ProverBounded.mono
+-- Round 2, finding 2: the reading lemma of `Protocol.ProverBounded`.
+#print axioms TCSlib.Cryptography.Protocol.proverBounded_iff
 #print axioms TCSlib.Cryptography.Protocol.ProverBounded.exists_complete
 #print axioms TCSlib.Cryptography.Protocol.ProverBounded.pullback
 #print axioms TCSlib.Cryptography.InteractiveProof.exists_accept
@@ -439,6 +441,11 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 -- Ruling G3-4: perfect zero-knowledge with abort implies statistical ZK (error 2^{-|x|}).
 #print axioms TCSlib.Cryptography.AbortRetry.statClose_retry
 #print axioms TCSlib.Cryptography.AbortRetry.exists_retrySimulator
+-- Round 2, finding 2: the reading lemmas of `AbortRetry.attempt` and `AbortRetry.retry`.
+#print axioms TCSlib.Cryptography.AbortRetry.attempt_eq
+#print axioms TCSlib.Cryptography.AbortRetry.retry_eq
+#print axioms TCSlib.Cryptography.AbortRetry.retry_eq_attempt
+#print axioms TCSlib.Cryptography.AbortRetry.retry_eq_nil
 #print axioms TCSlib.Cryptography.PerfectZKAbort.statZK
 #print axioms TCSlib.Cryptography.PerfectZKAbort.zk
 #print axioms TCSlib.Cryptography.perfectZK_zeroRounds
