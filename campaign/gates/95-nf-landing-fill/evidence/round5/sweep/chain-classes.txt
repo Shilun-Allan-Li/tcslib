@@ -1,0 +1,15 @@
+# every member of the two chain classes anywhere in NDNormalForm at e6a3f517 (rw, simp only, simpa only): grep -n 'foldl_append|foldl_cons|foldl_nil|length_take|min_eq_left'
+112:    simp only [List.foldl_nil, List.length_nil, Nat.zero_mod]
+448:    simp only [List.ofFn_zero, List.foldl_nil]
+572:  | nil => simp only [List.flatMap_nil, List.foldl_nil]
+574:    rw [List.flatMap_cons, List.foldl_append, nf_sweep_record, ih, List.foldl_cons]
+641:    simp only [List.ofFn_zero, List.foldl_nil, List.take_zero, NDTM.runWith_nil,
+2907:  | 0, _, _ => by rw [List.take_zero, List.foldl_nil, List.take_zero, NDTM.runWith_nil]
+3077:    rw [hw₀, List.take_take, Nat.min_eq_left hr.le]
+
+# length_append with length_singleton (no one-lemma form, NFLibF):
+115:    simp only [List.foldl_concat, List.length_append, List.length_singleton]
+142:        simpa only [List.length_append, List.length_singleton] using hz
+150:        simpa only [List.length_append, List.length_singleton] using hn
+1564:      rw [List.length_append, List.length_ofFn]; omega
+1569:      rw [List.length_append, List.length_ofFn]; omega

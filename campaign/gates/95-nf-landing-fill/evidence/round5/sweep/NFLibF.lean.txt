@@ -1,0 +1,10 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+example {α : Type} (l : List α) (a : α) : (l ++ [a]).length = l.length + 1 := by exact?
+example {α β : Type} (f : α → β → α) (x : α) (l : List β) (b : β) : (l ++ [b]).foldl f x = f (l.foldl f x) b := by exact?
