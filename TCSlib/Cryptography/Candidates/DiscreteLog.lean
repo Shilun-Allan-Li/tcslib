@@ -117,12 +117,24 @@ open Complexity Turing NumberTheory Finset
 /-- The prime `p` read from the index `⟨p, ⟨m, g⟩⟩`. -/
 def dlP (i : List Bool) : ℕ := listToNat (pairFstD i)
 
+/-- The defining equation of `dlP`: `dlP i = listToNat (pairFstD i)`, the number read from the
+first component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlP_eq (i : List Bool) : dlP i = listToNat (pairFstD i) := rfl
+
 /-- The group order `m` read from the index `⟨p, ⟨m, g⟩⟩` (the domain of the exponentiation
 is `Z_m`; `m = q` for the prime-order groups, `m = p − 1` for `Z_p^*`). -/
 def dlM (i : List Bool) : ℕ := listToNat (pairFstD (pairSndD i))
 
+/-- The defining equation of `dlM`: `dlM i = listToNat (pairFstD (pairSndD i))`, the number read
+from the middle component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlM_eq (i : List Bool) : dlM i = listToNat (pairFstD (pairSndD i)) := rfl
+
 /-- The generator `g` read from the index `⟨p, ⟨m, g⟩⟩`. -/
 def dlG (i : List Bool) : ℕ := listToNat (pairSndD (pairSndD i))
+
+/-- The defining equation of `dlG`: `dlG i = listToNat (pairSndD (pairSndD i))`, the number read
+from the last component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlG_eq (i : List Bool) : dlG i = listToNat (pairSndD (pairSndD i)) := rfl
 
 /-- The numeral width of an index: the width of the numeral of `p` (all group elements are
 encoded with this width). -/
@@ -132,6 +144,13 @@ def dlW (i : List Bool) : ℕ := (pairFstD i).length
 `n`-bit numerals (the text's "`p` of length `n`"). -/
 def WellFormedIndex (n : ℕ) (i : List Bool) : Prop :=
   ∃ a b c : List Bool, i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n
+
+/-- Unfolding `WellFormedIndex`: `i` is well formed at `n` iff `i = ⟨a, ⟨b, c⟩⟩` for three
+`n`-bit strings `a`, `b`, `c`. -/
+theorem wellFormedIndex_iff (n : ℕ) (i : List Bool) :
+    WellFormedIndex n i ↔ ∃ a b c : List Bool,
+      i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n :=
+  Iff.rfl
 
 /-- The width of a well-formed index is `n`. -/
 theorem WellFormedIndex.dlW_eq {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) : dlW i = n := by
@@ -155,6 +174,13 @@ ever output valid indices.) -/
 def ExpValid (i : List Bool) : Prop :=
   (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
     orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i
+
+/-- Unfolding `ExpValid`: `i` is valid iff `p` is prime, `0 < m < p`, `0 < g < p` and `g` has
+order `m` in `Z_p` (with `p = dlP i`, `m = dlM i`, `g = dlG i`). -/
+theorem expValid_iff (i : List Bool) :
+    ExpValid i ↔ (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
+      orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i :=
+  Iff.rfl
 
 noncomputable instance : DecidablePred ExpValid := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
@@ -207,6 +233,11 @@ theorem orderOf_expUnit {i : List Bool} (h : ExpValid i) : orderOf (expUnit h) =
 /-- The string encoding of `x ∈ Z_m`: its residue as a numeral of the index width. -/
 noncomputable def expEnc (i : List Bool) (x : ZMod (expOrd i)) : List Bool := natToList (dlW i) x.val
 
+/-- The defining equation of `expEnc`: `expEnc i x = ⟦x.val⟧_{dlW i}`, the residue of `x` as a
+numeral of the index width. -/
+theorem expEnc_eq (i : List Bool) (x : ZMod (expOrd i)) : expEnc i x = natToList (dlW i) x.val :=
+  rfl
+
 /-- The decoder of `Z_m`: a numeral of the index width reading as a number below `m`. -/
 noncomputable def expDec (i : List Bool) (w : List Bool) : Option (ZMod (expOrd i)) :=
   if w.length = dlW i ∧ listToNat w < expOrd i then some ((listToNat w : ℕ) : ZMod (expOrd i))
@@ -231,6 +262,11 @@ theorem expEnc_of_expDec {i w : List Bool} {x : ZMod (expOrd i)} (h : expDec i w
 `Z_m`: the numeral of `g^x mod p` of the index width (the evaluator `modExpStr` mirrored). -/
 noncomputable def expF (i : List Bool) (x : ZMod (expOrd i)) : List Bool :=
   natToList (dlW i) (dlG i ^ x.val % dlP i)
+
+/-- The defining equation of `expF`: `expF i x = ⟦g^x mod p⟧_{dlW i}`, the numeral of
+`dlG i ^ x.val % dlP i` of the index width. -/
+theorem expF_eq (i : List Bool) (x : ZMod (expOrd i)) :
+    expF i x = natToList (dlW i) (dlG i ^ x.val % dlP i) := rfl
 
 /-- The evaluator of the exponentiation collection on `⟨⟨p, ⟨m, g⟩⟩, x⟩`: one modular
 exponentiation `modExpStr ⟨g, ⟨x, p⟩⟩` [PS10, Theorem 52.3, "it is easy to evaluate"]. -/
@@ -334,6 +370,13 @@ cryptographic assumption (contrary to D10 / deviation 15, strict PPT with `2^{-n
 def FullLengthExcept (δ : ℕ → ℝ) : Prop :=
   ∀ n, G.n₀ ≤ n → uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n
 
+/-- Unfolding `FullLengthExcept`: `G.FullLengthExcept δ` iff for every `n ≥ n₀` the probability
+over the generator's coins that `p < 2^{n−1}` is at most `δ n`. -/
+theorem fullLengthExcept_iff (δ : ℕ → ℝ) :
+    G.FullLengthExcept δ ↔ ∀ n, G.n₀ ≤ n →
+      uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n :=
+  Iff.rfl
+
 /-- **The discrete-log experiment** [PS10, Assumption 52.2]:
 `Pr[i ← Gen(1^n); x ← Z_m : A(1^n, ⟨i, g^x⟩) = x]`, the average over the generator's coins
 of the probability, over the ideal uniform `x ∈ Z_m` and the coins of `A`, that the answer of
@@ -348,15 +391,31 @@ noncomputable def dlProb (A : NUPPT) (n : ℕ) : ℝ :=
         decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
           bitsToNat x = z.1.val
 
+/-- The defining equation of `dlProb`: `G.dlProb A n` is the average over the generator's coins
+`r` of the probability, over `x ∈ Z_m` and the coins of `A`, that `A`'s answer on
+`⟨Gen(1^n; r), g^x⟩` decodes to an `n`-bit numeral reading as `x`. -/
+theorem dlProb_eq (A : NUPPT) (n : ℕ) :
+    G.dlProb A n = uexp fun r : G.gen.Coins n =>
+      uprob fun z : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n =>
+        ∃ x : Fin n → Bool,
+          decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
+            bitsToNat x = z.1.val :=
+  rfl
+
 /-- **Discrete-log hardness relative to the generator**: every non-uniform PPT solves the
 discrete-log experiment with negligible probability. The safe-prime instance is
 [PS10, Assumption 52.2] (`DLAssumption`); the full-group instance is the assumption of
 [PS10, Lemma 84.1] (`DiscreteLogHardcore`). -/
 def DLHard : Prop := ∀ A : NUPPT, Negligible fun n => G.dlProb A n
 
+/-- Unfolding `DLHard`: `G.DLHard` iff `n ↦ G.dlProb A n` is negligible for every non-uniform
+PPT `A`. -/
+theorem dlHard_iff : G.DLHard ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n := Iff.rfl
+
 /-- The discrete-log probability is nonnegative. -/
 theorem dlProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ G.dlProb A n := by
-  unfold dlProb uexp
+  unfold dlProb
+  rw [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun z _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The discrete-log probability is at most one. -/
@@ -449,17 +508,60 @@ instance generator (from `n₀` on; `dlDefaultIndex` below), same coins. -/
 noncomputable def expGen {V : List Bool → Prop} (G : ExpGroupGen V) : NUPPT :=
   NUPPT.ofPolyTimeUniform (expGenFun_poly G) G.gen.coins
 
-/-- The activation of the collection's generator: `⟨Gen(1^n; r), []⟩` for `n ≥ n₀`,
-`⟨dlDefaultIndex, []⟩` below. -/
-theorem expGen_runAt {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n) :
+/-- The collection's generator has the coins of the instance generator:
+`(expGen G).coins = G.gen.coins`. -/
+theorem expGen_coins {V : List Bool → Prop} (G : ExpGroupGen V) :
+    (expGen G).coins = G.gen.coins := by
+  unfold expGen
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- The coin length of the collection's generator is the instance generator's:
+`(expGen G).coinLen n = G.gen.coinLen n`. -/
+theorem expGen_coinLen {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) :
+    (expGen G).coinLen n = G.gen.coinLen n := by
+  rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, expGen_coins]
+
+/-- **The coins of the collection's generator are the instance generator's**: the published
+equivalence `(expGen G).Coins n ≃ G.gen.Coins n` (`NUPPT.coinsCongr` along `expGen_coins`), the
+interface between the averages over the collection's coins (`Collection.HardCore`,
+`SampleClose`, `invProbAt`) and those over `G.gen`'s (`dlProb`, `FullLengthExcept`). -/
+noncomputable def expGen_coinsEquiv {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) :
+    (expGen G).Coins n ≃ G.gen.Coins n :=
+  NUPPT.coinsCongr (expGen_coins G) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (expGen_coinsEquiv G n r) = List.ofFn r`. -/
+theorem expGen_coinsEquiv_ofFn {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (r : (expGen G).Coins n) : List.ofFn (expGen_coinsEquiv G n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (expGen_coins G) n r
+
+/-- **The coin equivalence carries the uniform distribution**: for `P` on `G.gen`'s coins,
+`Pr_{r ← (expGen G).Coins n}[P (φ r)] = Pr_{r'}[P r']` with `φ = expGen_coinsEquiv G n`
+(`uprob_comp_equiv`). -/
+theorem expGen_coinsEquiv_uprob {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (P : G.gen.Coins n → Prop) :
+    uprob (fun r : (expGen G).Coins n => P (expGen_coinsEquiv G n r)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- **The coin equivalence carries averages**: for `F` on `G.gen`'s coins,
+`E_{r ← (expGen G).Coins n}[F (φ r)] = E_{r'}[F r']` with `φ = expGen_coinsEquiv G n`
+(`HardcoreBit.uexp_comp_equiv`). -/
+theorem expGen_coinsEquiv_uexp {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (F : G.gen.Coins n → ℝ) :
+    uexp (fun r : (expGen G).Coins n => F (expGen_coinsEquiv G n r)) = uexp F :=
+  HardcoreBit.uexp_comp_equiv _ F
+
+/-- The activation of the collection's generator: `⟨Gen(1^n; φ r), []⟩` for `n ≥ n₀`,
+`⟨dlDefaultIndex, []⟩` below, with the coins read through `φ = expGen_coinsEquiv G n`. -/
+theorem expGen_runAt {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) (r : (expGen G).Coins n) :
     (expGen G).runAt n [] r =
-      if G.n₀ ≤ n then pairEncode (G.gen.runAt n [] r) [] else pairEncode dlDefaultIndex [] := by
-  rw [NUPPT.runAt_eq]
+      if G.n₀ ≤ n then pairEncode (G.gen.runAt n [] (expGen_coinsEquiv G n r)) []
+      else pairEncode dlDefaultIndex [] := by
+  rw [NUPPT.runAt_eq, NUPPT.runAt_eq, expGen_coinsEquiv_ofFn, NUPPT.Uniform.runAtL_eq G.gen_uniform]
   unfold expGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [expGenFun, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    NUPPT.Uniform.runAt_eq G.gen_uniform]
+  simp only [expGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- **Rejection sampling of a number below `m`** from a coin list: `T` trials, trial `t`
 reading the first `k` bits of the `t`-th block of `B` bits as a number `v`, accepted iff
@@ -543,7 +645,7 @@ theorem expSampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool) (s : (expS
   rw [NUPPT.runAt_eq]
   unfold expSampler
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [expSampleRaw, NUPPT.inArg, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [expSampleRaw, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **The domain sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2)]; repair of the run-3 audit, P3-1): at every parameter
@@ -588,20 +690,101 @@ noncomputable def expCollection {V : List Bool → Prop} (H : ArithmeticFP) (G :
   eval_spec := expEval_spec
   sample_spec := expSampler_spec H G hV
 
+/-- **The domain of the exponentiation collection is `Z_m`**: the published equivalence
+`(expCollection H G hV).D i ≃ ZMod (expOrd i)` (the identity). It is the interface to the
+domain: elements of `D i` are read through it (`expCollection_f`, `expCollection_encD`,
+`expCollection_decD`), so no statement needs the collection to reduce at the type level, and
+uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+`StatClose.comp_equiv_right`). -/
+def expCollection_domEquiv {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool) :
+    (expCollection H G hV).D i ≃ ZMod (expOrd i) :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_m`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = expCollection_domEquiv H G hV i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem expCollection_domEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool)
+    (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (expCollection H G hV).D i => P (expCollection_domEquiv H G hV i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the exponentiation collection is `expF`, read through the domain
+equivalence: `(expCollection H G hV).f i x = expF i (expCollection_domEquiv H G hV i x)`. -/
+theorem expCollection_f {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
+    (expCollection H G hV).f i x = expF i (expCollection_domEquiv H G hV i x) := rfl
+
+/-- The encoder of the exponentiation collection is `expEnc`, read through the domain
+equivalence: `(expCollection H G hV).encD i x = expEnc i (expCollection_domEquiv H G hV i x)`. -/
+theorem expCollection_encD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
+    (expCollection H G hV).encD i x = expEnc i (expCollection_domEquiv H G hV i x) := rfl
+
+/-- The decoder of the exponentiation collection is `expDec`, carried back along the domain
+equivalence:
+`(expCollection H G hV).decD i w = (expDec i w).map (expCollection_domEquiv H G hV i).symm`. -/
+theorem expCollection_decD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i w : List Bool) :
+    (expCollection H G hV).decD i w = (expDec i w).map (expCollection_domEquiv H G hV i).symm := by
+  show expDec i w = _
+  cases expDec i w <;> rfl
+
+/-- The index generator of the exponentiation collection is `expGen G`. -/
+theorem expCollection_gen {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).gen = expGen G := rfl
+
+/-- The domain sampler of the exponentiation collection is `expSampler H`. -/
+theorem expCollection_sample {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).sample = expSampler H := rfl
+
+/-- The evaluator of the exponentiation collection is `expEval`. -/
+theorem expCollection_eval {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).eval = expEval := rfl
+
+/-- **The coins of the exponentiation collection's generator are the instance generator's**:
+the published equivalence `(expCollection H G hV).gen.Coins n ≃ G.gen.Coins n`
+(`expGen_coinsEquiv`), through which the collection's averages are read as averages over
+`G.gen`'s coins (`expCollection_coinsEquiv_uprob`, `expCollection_coinsEquiv_uexp`). -/
+noncomputable def expCollection_coinsEquiv {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) :
+    (expCollection H G hV).gen.Coins n ≃ G.gen.Coins n :=
+  expGen_coinsEquiv G n
+
+/-- The collection's coin equivalence carries the uniform distribution:
+`Pr_r[P (φ r)] = Pr_{r'}[P r']` with `φ = expCollection_coinsEquiv H G hV n`. -/
+theorem expCollection_coinsEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) (P : G.gen.Coins n → Prop) :
+    uprob (fun r : (expCollection H G hV).gen.Coins n => P (expCollection_coinsEquiv H G hV n r)) =
+      uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The collection's coin equivalence carries averages:
+`E_r[F (φ r)] = E_{r'}[F r']` with `φ = expCollection_coinsEquiv H G hV n`. -/
+theorem expCollection_coinsEquiv_uexp {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) (F : G.gen.Coins n → ℝ) :
+    uexp (fun r : (expCollection H G hV).gen.Coins n => F (expCollection_coinsEquiv H G hV n r)) =
+      uexp F :=
+  HardcoreBit.uexp_comp_equiv _ F
+
 /-- The index generated by the exponentiation collection from `n₀` on is the instance
-generator's output. -/
+generator's output on the coins read through `expCollection_coinsEquiv`. -/
 theorem expCollection_index {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
-    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n) (hn : G.n₀ ≤ n) :
-    (expCollection H G hV).index n r = G.gen.runAt n [] r := by
-  show pairFstD ((expGen G).runAt n [] r) = _
-  rw [expGen_runAt, if_pos hn, pairFstD_pairEncode]
+    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : (expCollection H G hV).gen.Coins n)
+    (hn : G.n₀ ≤ n) :
+    (expCollection H G hV).index n r = G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r) := by
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (expGen_runAt G n r)).trans (by rw [if_pos hn, pairFstD_pairEncode]; rfl)
 
 /-- The index generated by the exponentiation collection below `n₀` is the default index. -/
 theorem expCollection_index_of_lt {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
-    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n) (hn : n < G.n₀) :
+    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : (expCollection H G hV).gen.Coins n)
+    (hn : n < G.n₀) :
     (expCollection H G hV).index n r = dlDefaultIndex := by
-  show pairFstD ((expGen G).runAt n [] r) = _
-  rw [expGen_runAt, if_neg (not_le.mpr hn), pairFstD_pairEncode]
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (expGen_runAt G n r)).trans
+    (by rw [if_neg (not_le.mpr hn), pairFstD_pairEncode])
 
 /-- The domain of the exponentiation collection at an index is `Z_{expOrd i}`. -/
 theorem expCollection_D {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
@@ -640,7 +823,8 @@ fix `r`; the index `i = Gen(1^n; r)` is valid and well formed (`hV`, `G.valid`,
 `expF i x' = expF i x`, then `x' = x` (`expF_injective`), `w.length = n` and
 `listToNat w = x.val`, so `decodeFin n w = some x''` with `bitsToNat x'' = listToNat w = x.val`
 (`decodeFin`, `bitsToNat_eq_listToNat`, `List.ofFn_get`); `uprob_mono` with the coin types
-identified (`expCollection_index`). -/
+identified through `expCollection_coinsEquiv` (`expCollection_index`,
+`expCollection_coinsEquiv_uexp`). -/
 theorem expCollection_invProbAt_le {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (A : NUPPT) {n : ℕ} (hn : G.n₀ ≤ n) :
     (expCollection H G hV).invProbAt A n ≤ G.dlProb A n := by
@@ -664,6 +848,11 @@ theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : Ex
 [PS10, Assumption 52.2 and p. 52, "the subgroup of squares … has order `q` which is prime"]. -/
 def SafePrimeValid (i : List Bool) : Prop :=
   ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1
+
+/-- Unfolding `SafePrimeValid`: `i` is a safe-prime instance iff it is valid, `m` is prime and
+`p = 2m + 1`. -/
+theorem safePrimeValid_iff (i : List Bool) :
+    SafePrimeValid i ↔ ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1 := Iff.rfl
 
 /-- A safe-prime instance is a valid instance. -/
 theorem SafePrimeValid.expValid {i : List Bool} (h : SafePrimeValid i) : ExpValid i := h.1
@@ -698,9 +887,74 @@ error 8) and the parameter `k` as `n`; the range `G_q` is encoded as residues mo
 noncomputable def dlCollection (H : ArithmeticFP) (G : SafePrimeGen) : Collection :=
   expCollection H G fun _ h => h.expValid
 
-/-- The index generated by `DL` from `n₀` on is the instance generator's output `⟨p, ⟨q, g⟩⟩`. -/
-theorem dlCollection_index (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : G.gen.Coins n)
-    (hn : G.n₀ ≤ n) : (dlCollection H G).index n r = G.gen.runAt n [] r :=
+/-- **The domain of `DL` is `Z_q`**: the published equivalence
+`(dlCollection H G).D i ≃ ZMod (expOrd i)` (the identity), the interface to the domain
+(`dlCollection_f`, `dlCollection_encD`, `dlCollection_decD`; see `expCollection_domEquiv`). -/
+def dlCollection_domEquiv (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool) :
+    (dlCollection H G).D i ≃ ZMod (expOrd i) :=
+  expCollection_domEquiv H G (fun _ h => h.expValid) i
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_q`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = dlCollection_domEquiv H G i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem dlCollection_domEquiv_uprob (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
+    (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (dlCollection H G).D i => P (dlCollection_domEquiv H G i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of `DL` is `expF`, read through the domain equivalence:
+`(dlCollection H G).f i x = expF i (dlCollection_domEquiv H G i x)`. -/
+theorem dlCollection_f (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
+    (x : (dlCollection H G).D i) :
+    (dlCollection H G).f i x = expF i (dlCollection_domEquiv H G i x) :=
+  expCollection_f H G (fun _ h => h.expValid) i x
+
+/-- The encoder of `DL` is `expEnc`, read through the domain equivalence:
+`(dlCollection H G).encD i x = expEnc i (dlCollection_domEquiv H G i x)`. -/
+theorem dlCollection_encD (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool)
+    (x : (dlCollection H G).D i) :
+    (dlCollection H G).encD i x = expEnc i (dlCollection_domEquiv H G i x) :=
+  expCollection_encD H G (fun _ h => h.expValid) i x
+
+/-- The decoder of `DL` is `expDec`, carried back along the domain equivalence:
+`(dlCollection H G).decD i w = (expDec i w).map (dlCollection_domEquiv H G i).symm`. -/
+theorem dlCollection_decD (H : ArithmeticFP) (G : SafePrimeGen) (i w : List Bool) :
+    (dlCollection H G).decD i w = (expDec i w).map (dlCollection_domEquiv H G i).symm :=
+  expCollection_decD H G (fun _ h => h.expValid) i w
+
+/-- The index generator of `DL` is `expGen G`. -/
+theorem dlCollection_gen (H : ArithmeticFP) (G : SafePrimeGen) :
+    (dlCollection H G).gen = expGen G :=
+  expCollection_gen H G (fun _ h => h.expValid)
+
+/-- The domain sampler of `DL` is `expSampler H`. -/
+theorem dlCollection_sample (H : ArithmeticFP) (G : SafePrimeGen) :
+    (dlCollection H G).sample = expSampler H :=
+  expCollection_sample H G (fun _ h => h.expValid)
+
+/-- The evaluator of `DL` is `expEval`. -/
+theorem dlCollection_eval (H : ArithmeticFP) (G : SafePrimeGen) :
+    (dlCollection H G).eval = expEval :=
+  expCollection_eval H G (fun _ h => h.expValid)
+
+/-- **The coins of `DL`'s generator are the instance generator's**: the published equivalence
+`(dlCollection H G).gen.Coins n ≃ G.gen.Coins n` (`expCollection_coinsEquiv`). -/
+noncomputable def dlCollection_coinsEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
+    (dlCollection H G).gen.Coins n ≃ G.gen.Coins n :=
+  expCollection_coinsEquiv H G (fun _ h => h.expValid) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (dlCollection_coinsEquiv H G n r) = List.ofFn r`. -/
+theorem dlCollection_coinsEquiv_ofFn (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
+    (r : (dlCollection H G).gen.Coins n) :
+    List.ofFn (dlCollection_coinsEquiv H G n r) = List.ofFn r :=
+  expGen_coinsEquiv_ofFn G n r
+
+/-- The index generated by `DL` from `n₀` on is the instance generator's output `⟨p, ⟨q, g⟩⟩`
+on the coins read through `dlCollection_coinsEquiv`. -/
+theorem dlCollection_index (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
+    (r : (dlCollection H G).gen.Coins n) (hn : G.n₀ ≤ n) :
+    (dlCollection H G).index n r = G.gen.runAt n [] (dlCollection_coinsEquiv H G n r) :=
   expCollection_index H G _ n r hn
 
 /-- **Theorem 52.3** [PS10, Theorem 52.3]: under the discrete-log assumption (and the

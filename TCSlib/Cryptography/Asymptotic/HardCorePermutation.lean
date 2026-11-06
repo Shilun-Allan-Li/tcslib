@@ -168,15 +168,104 @@ def glHalfBit (n : ℕ) (z : Fin n → Bool) : Bool :=
   HardcoreBit.ip (fun j : Fin (n / 2) => z (Fin.castLE (Nat.div_le_self n 2) j))
     (fun j : Fin (n / 2) => z ⟨n / 2 + j, by omega⟩)
 
+/-! ## `glPad` of a permutation family on `{0,1}^{m+m}` -/
+
+/-- The input length of `g = glPad` of a permutation family at `m` is `m + m`. -/
+theorem PermFamily.glPad_inLen_eval (P : PermFamily) (m : ℕ) :
+    P.toFunFamily.glPad.inLen.eval m = m + m := by
+  rw [FunFamily.glPad_inLen_eval, P.toFunFamily_inLen_eval]
+
+/-- The output length of `g = glPad` of a permutation family at `m` is `m + m`. -/
+theorem PermFamily.glPad_outLen_eval (P : PermFamily) (m : ℕ) :
+    P.toFunFamily.glPad.outLen.eval m = m + m := by
+  rw [FunFamily.glPad_outLen_eval, P.toFunFamily_outLen_eval, P.toFunFamily_inLen_eval]
+
+/-- **The inputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
+equivalence `{0,1}^{inLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along `PermFamily.glPad_inLen_eval`),
+through which the balanced permutation of `Asymptotic/HardCorePermutation.lean` reads `g`. -/
+def PermFamily.glPad_inEquiv (P : PermFamily) (m : ℕ) :
+    (Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
+  Equiv.arrowCongr (finCongr (P.glPad_inLen_eval m)) (Equiv.refl Bool)
+
+/-- **The outputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
+equivalence `{0,1}^{outLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along
+`PermFamily.glPad_outLen_eval`). -/
+def PermFamily.glPad_outEquiv (P : PermFamily) (m : ℕ) :
+    (Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
+  Equiv.arrowCongr (finCongr (P.glPad_outLen_eval m)) (Equiv.refl Bool)
+
+/-- The input equivalence keeps the string: `List.ofFn (P.glPad_inEquiv m z) = List.ofFn z`. -/
+theorem PermFamily.glPad_inEquiv_ofFn (P : PermFamily) (m : ℕ)
+    (z : Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) :
+    List.ofFn (P.glPad_inEquiv m z) = List.ofFn z :=
+  (List.ofFn_congr (P.glPad_inLen_eval m) z).symm
+
+/-- The inverse input equivalence keeps the string. -/
+theorem PermFamily.glPad_inEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    List.ofFn ((P.glPad_inEquiv m).symm z) = List.ofFn z := by
+  rw [← P.glPad_inEquiv_ofFn m, Equiv.apply_symm_apply]
+
+/-- The output equivalence keeps the string: `List.ofFn (P.glPad_outEquiv m y) = List.ofFn y`. -/
+theorem PermFamily.glPad_outEquiv_ofFn (P : PermFamily) (m : ℕ)
+    (y : Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) :
+    List.ofFn (P.glPad_outEquiv m y) = List.ofFn y :=
+  (List.ofFn_congr (P.glPad_outLen_eval m) y).symm
+
+/-- The inverse output equivalence keeps the string. -/
+theorem PermFamily.glPad_outEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (y : Fin (m + m) → Bool) :
+    List.ofFn ((P.glPad_outEquiv m).symm y) = List.ofFn y := by
+  rw [← P.glPad_outEquiv_ofFn m, Equiv.apply_symm_apply]
+
+/-- The input `x ‖ r` of `glPad` of a permutation family, read through the two equivalences:
+`(P.glPad_inEquiv m).symm (x ‖ r) = (glPad_inEquiv m).symm (domEquiv⁻¹ x ‖ domEquiv⁻¹ r)`. -/
+theorem PermFamily.glPad_inEquiv_symm_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    (P.glPad_inEquiv m).symm (Fin.append x r) = (P.toFunFamily.glPad_inEquiv m).symm
+      (Fin.append ((P.toFunFamily_domEquiv m).symm x) ((P.toFunFamily_domEquiv m).symm r)) := by
+  apply List.ofFn_injective
+  rw [P.glPad_inEquiv_symm_ofFn, FunFamily.glPad_inEquiv_symm_ofFn, List.ofFn_fin_append,
+    List.ofFn_fin_append, P.toFunFamily_domEquiv_symm_ofFn, P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- **`g(x ‖ r) = f(x) ‖ r` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`/`glPad_outEquiv`. -/
+theorem PermFamily.glPad_f_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm (Fin.append x r))) =
+      Fin.append (P.f m x) r := by
+  rw [P.glPad_inEquiv_symm_append m x r]
+  apply List.ofFn_injective
+  rw [P.glPad_outEquiv_ofFn, ← FunFamily.glPad_outEquiv_ofFn P.toFunFamily m,
+    FunFamily.glPad_f_equiv, List.ofFn_fin_append, List.ofFn_fin_append,
+    ← P.toFunFamily_codEquiv_ofFn, P.toFunFamily_f_domEquiv, Equiv.apply_symm_apply,
+    P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- The inner product does not see the indexing of equal strings: if `x', r'` and `x, r` have
+the same encodings (over `Fin k` and `Fin m`, `k = m`), then `⟨x', r'⟩ = ⟨x, r⟩`. -/
+theorem HardcoreBit.ip_eq_of_ofFn {k m : ℕ} (h : k = m) {x' r' : Fin k → Bool}
+    {x r : Fin m → Bool} (hx : List.ofFn x' = List.ofFn x) (hr : List.ofFn r' = List.ofFn r) :
+    HardcoreBit.ip x' r' = HardcoreBit.ip x r := by
+  subst h
+  rw [List.ofFn_injective hx, List.ofFn_injective hr]
+
+/-- **`h(x ‖ r) = ⟨x, r⟩` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`. -/
+theorem PermFamily.glBit_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm (Fin.append x r)) = HardcoreBit.ip x r := by
+  rw [P.glPad_inEquiv_symm_append m x r, FunFamily.glBit_equiv]
+  exact HardcoreBit.ip_eq_of_ofFn (P.toFunFamily_inLen_eval m)
+    (P.toFunFamily_domEquiv_symm_ofFn m x) (P.toFunFamily_domEquiv_symm_ofFn m r)
+
 /-! ## Even lengths: the balanced permutation is `glPad` -/
 
 /-- **At even length `m + m` the balanced permutation is the padded family**
 `g(x, r) = (f(x), r)` of Goldreich–Levin at parameter `m`: `P.glHalf.f (m + m) = P.toFunFamily.glPad.f m`
-as functions on `{0,1}^{m+m}` (`FunFamily.glPad`'s input length `var + var` evaluates to
-`m + m`). -/
+as functions on `{0,1}^{m+m}`, read through the published equivalences
+`PermFamily.glPad_inEquiv`/`glPad_outEquiv` (`FunFamily.glPad`'s lengths at `m` are `m + m`). -/
 theorem PermFamily.glHalf_f_even (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
-    P.glHalf.f (m + m) z = P.toFunFamily.glPad.f m z := by
+    P.glHalf.f (m + m) z =
+      P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z)) := by
   have hm : (m + m) / 2 = m := by omega
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glPad_f_append]
   funext i
   change P.glHalfFun (m + m) z i =
     Fin.append (P.f m fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) i
@@ -193,11 +282,13 @@ theorem PermFamily.glHalf_f_even (P : PermFamily) (m : ℕ) (z : Fin (m + m) →
 
 /-- **At even length the hard-core bit is Goldreich–Levin's `⟨x, r⟩`**:
 `glHalfBit (m + m) = P.toFunFamily.glBit m` (`FunFamily.glBit`, the inner product of the two
-halves). -/
+halves), read through `PermFamily.glPad_inEquiv`. -/
 theorem glHalfBit_even (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
-    glHalfBit (m + m) z = P.toFunFamily.glBit m z := by
+    glHalfBit (m + m) z = P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm z) := by
   have hm : (m + m) / 2 = m := by omega
-  change _ = HardcoreBit.ip (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glBit_append]
   unfold glHalfBit
   rw [HardcoreBit.ip_cast hm]
   congr 1
@@ -211,21 +302,26 @@ predicting `⟨x, r⟩` from `glPad f` at parameter `m` (the concrete `predProb`
 theorem predProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (A : (Fin (m + m) → Bool) → ρ → Bool) :
     predProb (P.glHalf.f (m + m)) (glHalfBit (m + m)) A =
-      predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m) A := by
-  unfold predProb
-  congr 1
-  funext z
+      predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m)
+        (fun y r => A (P.glPad_outEquiv m y) r) := by
+  rw [predProb_def, predProb_def]
+  refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
+  obtain ⟨z, r⟩ := z
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id]
   rw [PermFamily.glHalf_f_even, glHalfBit_even]
 
 /-- **Inversion experiments at even length**: inverting `g_{m+m}` is inverting `glPad f` at
 parameter `m`. -/
 theorem invProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (A : (Fin (m + m) → Bool) → ρ → (Fin (m + m) → Bool)) :
-    invProb (P.glHalf.f (m + m)) A = invProb (P.toFunFamily.glPad.f m) A := by
-  unfold invProb
-  congr 1
-  funext z
-  rw [PermFamily.glHalf_f_even, PermFamily.glHalf_f_even]
+    invProb (P.glHalf.f (m + m)) A = invProb (P.toFunFamily.glPad.f m)
+      (fun y r => (P.glPad_inEquiv m).symm (A (P.glPad_outEquiv m y) r)) := by
+  rw [invProb_def, invProb_def]
+  refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
+  obtain ⟨z, r⟩ := z
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+    PermFamily.glHalf_f_even, Equiv.apply_symm_apply]
+  exact (P.glPad_outEquiv m).apply_eq_iff_eq
 
 /-! ## Odd lengths: `glPad` followed by a pass-through bit -/
 
@@ -239,8 +335,12 @@ are bit `j` of `f_m(x)` (`Fin.append_left`; the first block of `x ‖ r ‖ e` i
 `Fin.snoc_castSucc`, transported along `⌊(m + m + 1)/2⌋ = m` by `PermFamily.f_congr`); for
 `m ≤ j` both sides are the copied bit `r_{j − m}` (`Fin.append_right`, `Fin.snoc_castSucc`). -/
 theorem PermFamily.glHalf_f_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) (e : Bool) :
-    P.glHalf.f (m + m + 1) (Fin.snoc z e) = Fin.snoc (P.toFunFamily.glPad.f m z) e := by
+    P.glHalf.f (m + m + 1) (Fin.snoc z e) =
+      Fin.snoc (P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e := by
   have hm : (m + m + 1) / 2 = m := by omega
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glPad_f_append]
   funext i
   change P.glHalfFun (m + m + 1) (Fin.snoc z e) i =
     (Fin.snoc (Fin.append (P.f m fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))) e :
@@ -272,9 +372,11 @@ theorem PermFamily.glHalf_f_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → 
 /-- **At odd length the hard-core bit ignores the pass-through bit**:
 `glHalfBit (m + m + 1) (z ‖ e) = ⟨x, r⟩` for `z = x ‖ r`. -/
 theorem glHalfBit_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) (e : Bool) :
-    glHalfBit (m + m + 1) (Fin.snoc z e) = P.toFunFamily.glBit m z := by
+    glHalfBit (m + m + 1) (Fin.snoc z e) = P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm z) := by
   have hm : (m + m + 1) / 2 = m := by omega
-  change _ = HardcoreBit.ip (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glBit_append]
   unfold glHalfBit
   rw [HardcoreBit.ip_cast hm]
   congr 1
@@ -308,36 +410,51 @@ theorem predProb_glHalf_odd {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (A : (Fin (m + m + 1) → Bool) → ρ → Bool) :
     predProb (P.glHalf.f (m + m + 1)) (glHalfBit (m + m + 1)) A =
       predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m)
-        (fun (y : Fin (m + m) → Bool) (c : Bool × ρ) => A (Fin.snoc y c.1) c.2) := by
-  unfold predProb
-  refine (uprob_eq_of_equiv (snocCoins m ρ) fun w => ?_).symm
+        (fun y (c : Bool × ρ) => A (Fin.snoc (P.glPad_outEquiv m y) c.1) c.2) := by
+  rw [predProb_def, predProb_def]
+  refine (uprob_eq_of_equiv
+    (((P.glPad_inEquiv m).prodCongr (Equiv.refl (Bool × ρ))).trans (snocCoins m ρ))
+    fun w => ?_).symm
   obtain ⟨z, e, c⟩ := w
-  show (A (Fin.snoc (P.toFunFamily.glPad.f m z) e) c = P.toFunFamily.glBit m z) ↔
-    (A (P.glHalf.f (m + m + 1) (Fin.snoc z e)) c = glHalfBit (m + m + 1) (Fin.snoc z e))
-  rw [PermFamily.glHalf_f_odd, glHalfBit_odd P]
+  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+    snocCoins, Equiv.coe_fn_mk]
+  rw [PermFamily.glHalf_f_odd, glHalfBit_odd P, Equiv.symm_apply_apply]
 
 /-- **Inversion experiments at odd length**: an inverter `A` of `g_{m+m+1}` gives the inverter
 of `glPad f` at parameter `m` that draws the pass-through bit `e`, calls `A` on `(f(x) ‖ r) ‖ e`
 and drops the last bit of the answer; it inverts at least as often (a correct answer of `A`
-has the right last bit and a correct `glPad`-preimage in front). -/
+has the right last bit and a correct `glPad`-preimage in front).
+
+**Proof sketch.** Re-encode both sample spaces as `(z, (e, c))` (`snocCoins`, and
+`PermFamily.glPad_inEquiv` on the `glPad` side; `uprob_comp_equiv`) and compare pointwise
+(`uprob_mono`): if `g(A(g(z ‖ e))) = g(z ‖ e)`, write `A`'s answer as `init ‖ last`
+(`Fin.snoc_init_self`); `glHalf_f_odd` on both sides and `Fin.init` of the equality
+(`Fin.init_snoc`) give `glPad f (init) = glPad f (z)` through `glPad_outEquiv`, which is
+injective. -/
 theorem invProb_glHalf_odd_le {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (A : (Fin (m + m + 1) → Bool) → ρ → (Fin (m + m + 1) → Bool)) :
     invProb (P.glHalf.f (m + m + 1)) A ≤
       invProb (P.toFunFamily.glPad.f m)
-        (fun (y : Fin (m + m) → Bool) (c : Bool × ρ) => Fin.init (A (Fin.snoc y c.1) c.2)) := by
-  unfold invProb
-  rw [← uprob_comp_equiv (snocCoins m ρ)]
+        (fun y (c : Bool × ρ) =>
+          (P.glPad_inEquiv m).symm (Fin.init (A (Fin.snoc (P.glPad_outEquiv m y) c.1) c.2))) := by
+  rw [invProb_def, invProb_def, ← uprob_comp_equiv (snocCoins m ρ)]
+  refine le_of_le_of_eq ?_
+    (uprob_comp_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl (Bool × ρ))) _)
   refine uprob_mono fun w hw => ?_
   obtain ⟨z, e, c⟩ := w
-  simp only [snocCoins, Equiv.coe_fn_mk, PermFamily.glHalf_f_odd] at hw ⊢
+  simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
+    id, PermFamily.glHalf_f_odd, Equiv.apply_symm_apply] at hw ⊢
   have hw' : P.glHalf.f (m + m + 1)
-      (Fin.snoc (Fin.init (A (Fin.snoc (P.toFunFamily.glPad.f m z) e) c))
-        (A (Fin.snoc (P.toFunFamily.glPad.f m z) e) c (Fin.last _))) =
-      Fin.snoc (P.toFunFamily.glPad.f m z) e := by
+      (Fin.snoc (Fin.init (A (Fin.snoc (P.glPad_outEquiv m
+          (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e) c))
+        (A (Fin.snoc (P.glPad_outEquiv m
+          (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e) c (Fin.last _))) =
+      Fin.snoc (P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e := by
     rwa [Fin.snoc_init_self]
   rw [PermFamily.glHalf_f_odd] at hw'
   have := congrArg Fin.init hw'
-  simpa only [Fin.init_snoc] using this
+  simp only [Fin.init_snoc] at this
+  exact (P.glPad_outEquiv m).injective this
 
 /-! ## Negligible functions of `⌊n/2⌋` -/
 
@@ -474,7 +591,9 @@ private noncomputable def oddCoins (A : NUPPT) (m : ℕ) {post : List Bool → L
     Bool × A.Coins (m + m + 1) ≃ (NUPPT.wrap (A.reparam oddParam) owpPredPre_poly hpost
       (fun _ => []) (.const 0) (fun _ => by simp) (.const 1)).Coins m :=
   ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (NUPPT.reparamCoins A oddParam m)).trans
-    (Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m))
+    ((Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m)).trans
+      (NUPPT.wrapCoinsEquiv (A.reparam oddParam) owpPredPre_poly hpost (fun _ => []) (.const 0)
+        (fun _ => by simp) (.const 1) m).symm)
 
 /-- The encoding of the coins `(e, c)` is `[e] ++ c`. -/
 private theorem ofFn_oddCoins (A : NUPPT) (m : ℕ) {post : List Bool → List Bool}
@@ -482,6 +601,7 @@ private theorem ofFn_oddCoins (A : NUPPT) (m : ℕ) {post : List Bool → List B
     List.ofFn (oddCoins A m hpost (e, c)) =
       List.ofFn (fun _ : Fin 1 => e) ++ List.ofFn (NUPPT.reparamCoins A oddParam m c) := by
   simp only [oddCoins, Equiv.trans_apply]
+  refine (NUPPT.wrapCoinsEquiv_symm_ofFn _ _ _ _ _ _ _ _ _).trans ?_
   exact (ofFn_appendEquiv ((Equiv.funUnique (Fin 1) Bool).symm e) _).trans
     (congrArg (· ++ _) (by simp [List.ofFn_succ]))
 
@@ -514,48 +634,91 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
   rfl
 
 /-- **Inversion at even length**: inverting `glHalf` at `2m` with `A` is inverting `glPad` at
-`m` with the parameter-change machine `A.reparam (var + var)`. -/
+`m` with the parameter-change machine `A.reparam (var + var)`.
+
+**Proof sketch.** Read the inputs through `e₁ := toFunFamily_domEquiv ∘ glPad_inEquiv⁻¹` and the
+coins through `reparamCoins` (`uprob_comp_equiv`). The encodings of the two values agree
+(`toFunFamily_codEquiv_ofFn`, `toFunFamily_f_domEquiv`, `glHalf_f_even`, `glPad_outEquiv_ofFn`), so
+equal values correspond (`List.ofFn_inj`) and a preimage `x'` of one side is `e₁ x'` on the other
+(`runAt_reparam`, the `ofFn` lemmas of the equivalences). -/
 theorem glHalf_invProbAt_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m) =
       P.toFunFamily.glPad.invProbAt (A.reparam (.add .var .var)) m := by
+  let e₁ := (P.glHalf.toFunFamily_domEquiv (m + m)).trans (P.glPad_inEquiv m).symm
+  have he : ∀ x, List.ofFn (e₁ x) = List.ofFn x := fun x => by
+    simp only [e₁, Equiv.trans_apply]
+    rw [P.glPad_inEquiv_symm_ofFn, P.glHalf.toFunFamily_domEquiv_ofFn]
+  have hF : ∀ x, List.ofFn (P.glHalf.toFunFamily.f (m + m) x) =
+      List.ofFn (P.toFunFamily.glPad.f m (e₁ x)) := fun x => by
+    rw [← P.glHalf.toFunFamily_codEquiv_ofFn, P.glHalf.toFunFamily_f_domEquiv,
+      PermFamily.glHalf_f_even, P.glPad_outEquiv_ofFn]
+    rfl
+  have hI : ∀ x x', P.glHalf.toFunFamily.f (m + m) x' = P.glHalf.toFunFamily.f (m + m) x ↔
+      P.toFunFamily.glPad.f m (e₁ x') = P.toFunFamily.glPad.f m (e₁ x) := fun x x' => by
+    rw [← List.ofFn_inj, hF, hF, List.ofFn_inj]
   rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob]
   refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
-    ((Equiv.refl (Fin (m + m) → Bool)).prodCongr (NUPPT.reparamCoins A (.add .var .var) m)) _)
+    (e₁.prodCongr (NUPPT.reparamCoins A (.add .var .var) m)) _)
   obtain ⟨x, c⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, NUPPT.runAt_reparam,
-    PermFamily.toFunFamily_f, PermFamily.glHalf_f_even]
-  exact Iff.rfl
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, NUPPT.runAt_reparam]
+  constructor
+  · rintro ⟨x', h1, h2⟩
+    exact ⟨e₁ x', by rw [← hF x, he x']; exact h1, (hI x x').1 h2⟩
+  · rintro ⟨x'', h1, h2⟩
+    refine ⟨e₁.symm x'', ?_, (hI x _).2 (by rw [Equiv.apply_symm_apply]; exact h2)⟩
+    rw [← he (e₁.symm x''), Equiv.apply_symm_apply, hF x]
+    exact h1
 
 /-- **Inversion at odd length**: inverting `glHalf` at `2m + 1` with `A` is at most inverting
-`glPad` at `m` with the odd-length inverter. -/
+`glPad` at `m` with the odd-length inverter.
+
+**Proof sketch.** Read the inputs of `glHalf` on `{0,1}^{m+m+1}` (`toFunFamily_domEquiv`), split
+off the pass-through bit (`snocCoins`) and read `glPad`'s inputs and the inverter's coins through
+`glPad_inEquiv` and `oddCoins` (`uprob_comp_equiv`); then compare pointwise (`uprob_mono`). A
+preimage `x'` of `glHalf` gives, by `glHalf_f_odd` and `Fin.init`, a `glPad`-preimage
+`glPad_inEquiv⁻¹ (init x')` (`glPad_outEquiv` is injective), and the odd-length inverter returns
+it (`glHalfOddInv_runAt`, `ofFn_snoc_eq`, `ofFn_eq_init_append`). -/
 theorem glHalf_invProbAt_odd_le (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m + 1) ≤
       P.toFunFamily.glPad.invProbAt (glHalfOddInv A) m := by
-  rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob]
+  let d := P.glHalf.toFunFamily_domEquiv (m + m + 1)
+  have hF : ∀ y, List.ofFn (P.glHalf.toFunFamily.f (m + m + 1) y) =
+      List.ofFn (P.glHalf.f (m + m + 1) (d y)) := fun y => by
+    rw [← P.glHalf.toFunFamily_codEquiv_ofFn, P.glHalf.toFunFamily_f_domEquiv]
+  have hI : ∀ y y', P.glHalf.toFunFamily.f (m + m + 1) y' = P.glHalf.toFunFamily.f (m + m + 1) y ↔
+      P.glHalf.f (m + m + 1) (d y') = P.glHalf.f (m + m + 1) (d y) := fun y y' => by
+    rw [← List.ofFn_inj, hF, hF, List.ofFn_inj]
+  rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob,
+    ← uprob_comp_equiv (d.symm.prodCongr (Equiv.refl (A.Coins (m + m + 1))))]
   refine le_of_eq_of_le (uprob_comp_equiv (snocCoins m (A.Coins (m + m + 1))) _).symm ?_
   refine le_of_le_of_eq ?_ (uprob_comp_equiv
-    ((Equiv.refl (Fin (m + m) → Bool)).prodCongr (oddCoins A m glHalfInvPost_poly)) _)
+    ((P.glPad_inEquiv m).symm.prodCongr (oddCoins A m glHalfInvPost_poly)) _)
   refine uprob_mono fun w hw => ?_
   obtain ⟨z, e, c⟩ := w
   obtain ⟨x', hx', hfx'⟩ := hw
-  simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
-    id, PermFamily.toFunFamily_f, PermFamily.glHalf_f_odd] at hx' hfx' ⊢
-  rw [← Fin.snoc_init_self x', PermFamily.glHalf_f_odd] at hfx'
-  have hinit := congrArg Fin.init hfx'
-  simp only [Fin.init_snoc] at hinit
-  refine ⟨Fin.init x', ?_, hinit⟩
-  rw [glHalfOddInv_runAt, ← ofFn_snoc_eq, hx', List.length_ofFn, ofFn_eq_init_append,
-    List.take_left' List.length_ofFn]
+  simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply,
+    Equiv.refl_apply] at hx' hfx' ⊢
+  rw [hI, Equiv.apply_symm_apply, ← Fin.snoc_init_self (d x'), PermFamily.glHalf_f_odd,
+    PermFamily.glHalf_f_odd] at hfx'
+  have hinit := (P.glPad_outEquiv m).injective
+    (by simpa only [Fin.init_snoc] using congrArg Fin.init hfx')
+  refine ⟨(P.glPad_inEquiv m).symm (Fin.init (d x')), ?_, hinit⟩
+  rw [glHalfOddInv_runAt,
+    ← P.glPad_outEquiv_ofFn m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z)),
+    ← ofFn_snoc_eq, ← PermFamily.glHalf_f_odd, ← Equiv.apply_symm_apply d (Fin.snoc z e), ← hF,
+    hx', ← P.glHalf.toFunFamily_domEquiv_ofFn (m + m + 1) x', ofFn_eq_init_append (d x'),
+    List.length_ofFn, List.take_left' List.length_ofFn, P.glPad_inEquiv_symm_ofFn]
 
 /-- **Prediction at even length**: predicting `glHalfBit` from `glHalf` at `2m` with `A` is
 predicting `⟨x, r⟩` from `glPad` at `m` with `A.reparam (var + var)`. -/
 theorem glHalf_predProb_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     predProb (P.glHalf.f (m + m)) (glHalfBit (m + m)) (A.predictor (m + m) (m + m)) =
       predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m)
-        ((A.reparam (.add .var .var)).predictor m (m + m)) := by
+        ((A.reparam (.add .var .var)).predictor m (P.toFunFamily.glPad.outLen.eval m)) := by
   rw [predProb_glHalf_even]
   refine (predProb_coins_equiv _ _ _ _ (NUPPT.reparamCoins A (.add .var .var) m) fun y c => ?_).symm
-  simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_reparam]
+  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+    NUPPT.runAt_reparam, PermFamily.glPad_outEquiv_ofFn]
   rfl
 
 /-- **Prediction at odd length**: predicting `glHalfBit` from `glHalf` at `2m + 1` with `A` is
@@ -563,12 +726,12 @@ predicting `⟨x, r⟩` from `glPad` at `m` with the odd-length predictor. -/
 theorem glHalf_predProb_odd (P : PermFamily) (A : NUPPT) (m : ℕ) :
     predProb (P.glHalf.f (m + m + 1)) (glHalfBit (m + m + 1)) (A.predictor (m + m + 1) (m + m + 1)) =
       predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m)
-        ((glHalfOddPred A).predictor m (m + m)) := by
+        ((glHalfOddPred A).predictor m (P.toFunFamily.glPad.outLen.eval m)) := by
   rw [predProb_glHalf_odd]
   refine (predProb_coins_equiv _ _ _ _ (oddCoins A m polyTimeComputable_pairSndD) fun y c => ?_).symm
   obtain ⟨e, c⟩ := c
-  simp only [NUPPT.predictor, NUPPT.distinguisher]
-  rw [glHalfOddPred_runAt, ← ofFn_snoc_eq]
+  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
+  rw [glHalfOddPred_runAt, ofFn_snoc_eq, PermFamily.glPad_outEquiv_ofFn]
 
 /-- The absolute value of a negligible function is negligible. -/
 private theorem negligible_abs {μ : ℕ → ℝ} (hμ : Negligible μ) : Negligible fun n => |μ n| :=
@@ -629,11 +792,13 @@ appended to the input) and `exists_reparam`, bounded by `1/2 + ε₂ m` by `hB.h
 negligible function of Definition 78.3 is `ε n := ε₁ (n/2) + ε₂ (n/2)` (`Negligible.comp_div_two`,
 `Negligible.add`). -/
 theorem OneWayPermutation.glHalf {P : PermFamily} (hP : OneWayPermutation P) :
-    OneWayPermutation P.glHalf ∧ HardCore P.glHalf.toFunFamily glHalfBit := by
-  have hG : P.toFunFamily.glPad.StrongOneWay := hP.glPad
-  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit := hP.glPad_hardCore
-  obtain ⟨F, hF, hFx⟩ := hP.easy
-  refine ⟨⟨P.glHalf_easy hF hFx, fun A => ?_⟩, ⟨glHalfBit_easy, fun A => ?_⟩⟩
+    OneWayPermutation P.glHalf ∧ P.glHalf.HardCore glHalfBit := by
+  have hG : P.toFunFamily.glPad.StrongOneWay := ((oneWayPermutation_iff P).1 hP).glPad
+  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit :=
+    ((oneWayPermutation_iff P).1 hP).glPad_hardCore
+  obtain ⟨F, hF, hFx⟩ := hP.evaluator
+  refine ⟨(oneWayPermutation_iff _).2 ⟨P.glHalf_easy hF hFx, fun A => ?_⟩,
+    PermFamily.HardCore.of_easy_hard glHalfBit_easy fun A => ?_⟩
   · have h₁ := hG.hard (A.reparam (.add .var .var))
     have h₂ := hG.hard (glHalfOddInv A)
     refine (h₁.comp_div_two.add h₂.comp_div_two).mono ⟨0, fun n _ => ?_⟩
@@ -669,13 +834,13 @@ theorem OneWayPermutation.glHalf {P : PermFamily} (hP : OneWayPermutation P) :
       exact key.trans (by linarith [le_abs_self (ε₂ m), abs_nonneg (ε₁ m)])
 
 /-- **One-way permutations with a hard-core bit exist if one-way permutations do**
-[PS10, §3.4, p. 86]: the hypothesis `∃ P h, OneWayPermutation P ∧ HardCore P.toFunFamily h`
+[PS10, §3.4, p. 86]: the hypothesis `∃ P h, OneWayPermutation P ∧ P.HardCore h`
 of `exists_commitment_of_owp_hardCore` (Theorem 126.4), `zk_proof_of_owp_levinReduction` and
 `zk_proof_of_mem_NP_of_owp` (Theorem 124.1) follows from `∃ P, OneWayPermutation P` alone, by
 `OneWayPermutation.glHalf`. -/
 theorem exists_owp_hardCore (h : ∃ P : PermFamily, OneWayPermutation P) :
     ∃ (P : PermFamily) (b : ∀ n, (Fin n → Bool) → Bool),
-      OneWayPermutation P ∧ HardCore P.toFunFamily b :=
+      OneWayPermutation P ∧ P.HardCore b :=
   let ⟨P, hP⟩ := h
   ⟨P.glHalf, glHalfBit, hP.glHalf⟩
 

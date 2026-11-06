@@ -66,17 +66,34 @@ noncomputable def _root_.Complexity.NUPPT.withIndexParam (A : NUPPT) : NUPPT :=
 
 /-- `withIndexParam` has the coins of `A`. -/
 @[simp] theorem _root_.Complexity.NUPPT.coins_withIndexParam (A : NUPPT) :
-    A.withIndexParam.coins = A.coins := rfl
+    A.withIndexParam.coins = A.coins := by
+  unfold NUPPT.withIndexParam
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- The activation of `withIndexParam`: `B(1^n, y; r) = A(1^n, ⟨1^n, y⟩; r)`. -/
+/-- **`withIndexParam` runs on the coins of `A`**: the published equivalence
+`A.withIndexParam.Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_withIndexParam`). -/
+noncomputable def _root_.Complexity.NUPPT.withIndexParam_coinsEquiv (A : NUPPT) (n : ℕ) :
+    A.withIndexParam.Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr A.coins_withIndexParam n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (A.withIndexParam_coinsEquiv n r) = List.ofFn r`. -/
+theorem _root_.Complexity.NUPPT.withIndexParam_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : A.withIndexParam.Coins n) : List.ofFn (A.withIndexParam_coinsEquiv n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn A.coins_withIndexParam n r
+
+/-- The activation of `withIndexParam`: `B(1^n, y; r) = A(1^n, ⟨1^n, y⟩; φ r)`, the coins read
+through `φ = A.withIndexParam_coinsEquiv n`. -/
 theorem _root_.Complexity.NUPPT.withIndexParam_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     (r : A.withIndexParam.Coins n) :
-    A.withIndexParam.runAt n y r = A.runAt n (pairEncode (List.replicate n true) y) r := by
-  rw [NUPPT.runAt_eq]
+    A.withIndexParam.runAt n y r =
+      A.runAt n (pairEncode (List.replicate n true) y) (A.withIndexParam_coinsEquiv n r) := by
+  rw [NUPPT.runAt_eq, NUPPT.withIndexParam_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold NUPPT.withIndexParam
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- `|A(1^n, y; r)|` is bounded by the time bound at the length
 `8n + 14 + 4|y| + 2·adv(n) + coins(n)` of the raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/

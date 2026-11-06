@@ -203,6 +203,11 @@ theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
 input handed to the factoring adversary (and the value `f_mult(p, q)`). -/
 def modulusBits (n : ℕ) (z : DistinctPrimes n) : Fin (2 * n) → Bool := natToBits (2 * n) (z.p * z.q)
 
+/-- The defining equation of `modulusBits`: `modulusBits n z = natToBits (2n) (pq)`, the
+`2n`-bit numeral of the modulus. -/
+theorem modulusBits_eq (n : ℕ) (z : DistinctPrimes n) :
+    modulusBits n z = natToBits (2 * n) (z.p * z.q) := rfl
+
 /-- `modulusBits` is `f_mult` at `(p, q)`: `fmultNat p q = pq` since neither prime is `1`. -/
 theorem modulusBits_eq_fmult (n : ℕ) (z : DistinctPrimes n) :
     modulusBits n z = natToBits (2 * n) (fmultNat z.p z.q) := by
@@ -222,6 +227,14 @@ noncomputable def factorProb (A : NUPPT) (n : ℕ) : ℝ :=
     ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
       (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q)
 
+/-- The defining equation of `factorProb`: `factorProb A n` is the probability, over a uniform
+pair `z` of distinct primes of `Π_n` and the coins of `A`, that `A`'s answer on the `2n`-bit
+modulus `modulusBits n z` is an `n`-bit numeral reading as `z.p` or `z.q`. -/
+theorem factorProb_eq (A : NUPPT) (n : ℕ) :
+    factorProb A n = uprob fun w : DistinctPrimes n × A.Coins n =>
+      ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
+        (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q) := rfl
+
 /-- **The factoring assumption** [PS10, Assumption 30.1]: every non-uniform PPT `A`
 factors `N = pq`, for a uniform pair of distinct primes `p, q ∈ Π_n`, with negligible
 probability.
@@ -230,6 +243,10 @@ probability.
 "`Pr[…]` is negligible" (equivalent: take `ε = Pr + 2^{-n}`); see the module docstring for
 the distribution and the input/output conventions. -/
 def FactoringAssumption : Prop := ∀ A : NUPPT, Negligible fun n => factorProb A n
+
+/-- Unfolding: the factoring assumption is the negligibility of every `factorProb`. -/
+theorem factoringAssumption_iff :
+    FactoringAssumption ↔ ∀ A : NUPPT, Negligible fun n => factorProb A n := Iff.rfl
 
 /-- The factoring probability is nonnegative. -/
 theorem factorProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ factorProb A n := uprob_nonneg _
@@ -241,7 +258,8 @@ theorem factorProb_le_one (A : NUPPT) (n : ℕ) : factorProb A n ≤ 1 := uprob_
 factors there (sanity: the assumption only constrains `n ≥ 2`). -/
 theorem factorProb_eq_zero_of_lt (A : NUPPT) {n : ℕ} (hn : n < 2) : factorProb A n = 0 := by
   haveI := DistinctPrimes.isEmpty_of_lt hn
-  unfold factorProb uprob
+  unfold factorProb
+  rw [uprob_def]
   simp
 
 /-! ## The one-call reduction `A''` [PS10, Algorithm 33.6] -/
@@ -272,15 +290,30 @@ noncomputable def oneCallFactorer (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `A''` has the coins of `A` (so `(oneCallFactorer A).Coins n = A.Coins n`). -/
-@[simp] theorem coins_oneCallFactorer (A : NUPPT) : (oneCallFactorer A).coins = A.coins := rfl
+@[simp] theorem coins_oneCallFactorer (A : NUPPT) : (oneCallFactorer A).coins = A.coins := by
+  unfold oneCallFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **`A''` runs on the coins of `A`**: the published equivalence
+`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_oneCallFactorer`). -/
+noncomputable def oneCallFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
+    (oneCallFactorer A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr (coins_oneCallFactorer A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (oneCallFactorer_coinsEquiv A n r) = List.ofFn r`. -/
+theorem oneCallFactorer_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (oneCallFactorer A).Coins n) :
+    List.ofFn (oneCallFactorer_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_oneCallFactorer A) n r
 
 /-- **The activation of `A''`**: `A''(1^n, y; r) = (A(1^n, y; r)).take n`. -/
 theorem oneCallFactorer_runAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
     (oneCallFactorer A).runAtL n y r = (A.runAtL n y r).take n := by
   unfold oneCallFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The polynomial `q(n) = 8(n + 1)²` of the weak one-wayness of `f_mult`
 [PS10, Theorem 33.5: `q(n) = 8n²`].
@@ -290,7 +323,9 @@ bound `1 - 1/(8(n+1)²)` is weaker than the text's. -/
 def fmultWeakPoly : PolyExpr := PolyExpr.normal 8 2
 
 /-- `q(n) = 8(n+1)²`. -/
-theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 := rfl
+theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 := by
+  unfold fmultWeakPoly
+  exact PolyExpr.eval_normal 8 2 n
 
 /-- **Theorem 33.5** [PS10, Theorem 33.5]: under the factoring assumption (and the arithmetic
 hypotheses), `f_mult` is a weak one-way function: for every non-uniform PPT `A` and all
@@ -304,7 +339,7 @@ primality test; the factoring distribution is on distinct primes (module docstri
 **Proof sketch.** *Easy:* `fmult_easy H`. *Hard:* take `q := fmultWeakPoly` (positive) and
 fix `A`. Suppose the bound fails infinitely often: `1 - 1/q(n) < fmult.invProbAt A n` for
 `n` in an infinite set, and let `A'' := oneCallFactorer A` (same coins,
-`coins_oneCallFactorer`; no reparametrisation: `invProbAt` and `factorProb` both activate
+`oneCallFactorer_coinsEquiv`; no reparametrisation: `invProbAt` and `factorProb` both activate
 at parameter `n`, run-3 audit P7-2). On the event `S(x, r)` "`A(1^n, f_mult(x); r)` decodes
 to a preimage `x'`" (`FunFamily.invProbAt_eq_uprob`, `NUPPT.inverter_eq_some_iff`) with `x`
 a `2n`-bit string whose blocks read as primes `p, q`, `fmult_inv_factor` shows that block `0`
@@ -331,18 +366,35 @@ def fmultBlocks : PolyExpr := .mul (.const 4) (.pow .var 3)
 @[simp] theorem eval_fmultBlocks (n : ℕ) : fmultBlocks.eval n = 4 * n ^ 3 := rfl
 
 /-- The input length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴` (the text's `n'`). -/
-theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := rfl
+theorem fmult_prod_inLen (n : ℕ) : (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n) := by
+  rw [FunFamily.prod_inLen, PolyExpr.eval_mul, eval_fmultBlocks, fmult_inLen]
+
+/-- The output length of `f_mult^{m_n}` at parameter `n` is `4n³ · 2n = 8n⁴`. -/
+theorem fmult_prod_outLen (n : ℕ) :
+    (fmult.prod fmultBlocks).outLen.eval n = 4 * n ^ 3 * (2 * n) := by
+  rw [FunFamily.prod_outLen, PolyExpr.eval_mul, eval_fmultBlocks, fmult_outLen]
 
 /-- **The total inverter of the direct product** induced by the machine `A` at parameter
 `n`: encode the tuple of `m_n` values as a `8n⁴`-bit string (`FunFamily.blocks`), run
 `A(1^n, ·)`, decode the answer as a tuple of `m_n` inputs, the all-zero tuple on a
-wrong-length answer (the default of `invProbOpt_le_invProb`). -/
+wrong-length answer (the default of `invProbOpt_le_invProb`). Both lengths of the direct
+product are `m_n · 2n` (`fmult_prod_inLen`, `fmult_prod_outLen`). -/
 noncomputable def prodInverter (A : NUPPT) (n : ℕ) :
     (Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) → A.Coins n →
       (Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) :=
   fun ys r => FunFamily.blocks (fmultBlocks.eval n) (2 * n)
-    ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+    ((A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD (fun _ => false))
+
+/-- **The defining equation of `prodInverter`**: decode `A(1^n, ys; r)` as a string of
+`m_n · 2n` bits (the all-zero string on a wrong length) and split it into `m_n` blocks of `2n`
+bits (`FunFamily.blocks`). -/
+theorem prodInverter_eq (A : NUPPT) (n : ℕ) (ys : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool))
+    (r : A.Coins n) :
+    prodInverter A n ys r = FunFamily.blocks (fmultBlocks.eval n) (2 * n)
+      ((A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
+        ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD (fun _ => false)) :=
+  rfl
 
 /-- **The random-planting one-call reduction** [PS10, Algorithm 37.4, one-call variant
 without primality test] at the concrete level: on the challenge `N` with coins
@@ -456,6 +508,67 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
 
+/-- **One truncated run of `SamplePrime(n)` is polynomial-time** [PS10, Algorithm 50.16 and
+Lemma 51.17] given a primality test: on `⟨u, r⟩` with `n = |u|`, the `n`-bit output
+`samplePrimeL n r` (the first prime among the first `2n²` blocks of `n` bits of `r`, padded with
+zeros to `2n² · n` bits, and the numeral `natToList n 2` of the prime `2` on failure) is
+polynomial-time computable. Shared statement S1 of the factoring fill (decision D1 (A)): used by
+`polyTimeComputable_samplePairRaw` and by `polyTimeComputable_rsaGenRaw` (`RSA.lean`).
+
+**Proof sketch.** Use `NumberTheory.exists_samplePrime_nuppt hP` (`hP` in its form by
+`primeStr_eq`) as a black box: it is a uniform machine `A` with `samplePrimeCoins` coins whose
+activation on the coin list `List.ofFn r'`, `r' : Fin (2n² · n) → Bool`, is
+`((samplePrime n (2n²) (chunk (2n²) n r')).map List.ofFn).getD []`. Do not re-derive its
+`iterateFind` loop. (1) Pad the coins to `2n² · n` bits: `polyTimeComputable_padStr
+samplePrimeCoins` maps `⟨u, r⟩` to `List.ofFn (padFin (2n² · n) r)` (`ofFn_padFin_eq_padStr`,
+`eval_samplePrimeCoins`). (2) Run `A` on the layout `⟨⟨⟨1^n, []⟩, []⟩, coins⟩`, with `1^n`
+computed from `u` (`polyTimeComputable_unaryPoly var`), through `NUPPT.polyTimeComputable_output`
+and `NUPPT.polyTimeComputable_layout` (`NUPPT.runAtL_eq_output_layout`); its output is the
+accepted block as a list, or `[]` when no block is prime. (3) For `n ≥ 1` an accepted block
+has `n` bits, so the output is `[]` exactly on failure (for `n = 0` both sides are `[]`):
+test emptiness against the constant `[]` (`polyTimeComputable_lenEq`) and branch
+(`polyTimeComputable_ite`) between the output and the fallback numeral
+`natToList n 2`, which is `0^{n−2}10` for `n ≥ 2` and the constants `[]` at `n = 0` and
+`[false]` at `n = 1`: a string of unary-polynomial length computed from `1^n`
+(`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`, with the two constant branches
+by `polyTimeComputable_ite`). The three pieces agree with
+`samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
+theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
+    PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
+  sorry
+
+/-- **Two independent runs of `SamplePrime(n)` are close to a uniform pair of distinct primes**
+[PS10, Lemma 51.17 and Theorem 51.1, "sample two random prime numbers"]: for `n ≥ 2`, the
+values of `samplePrimeL n` on the two halves of `2 · (2n² · n)` uniform coins are within
+statistical distance `2 · (1/2)^n + 2n/2^n` of `(p, q)` for a uniform pair of distinct primes of
+`Π_n`. Shared statement S2 of the factoring fill (decision D1 (A)): used by
+`factoringCollection_sampleClose` and by `rsaCollection_invProbAt_le` (`RSA.lean`, step (ii)).
+
+**Proof sketch.** Write `L = 2n² · n`. (1) The halves `(List.ofFn s).take L` and
+`(List.ofFn s).drop L` are `List.ofFn` of the two halves of `s` under the splitting bijection
+`(Fin (2L) → Bool) ≃ (Fin L → Bool) × (Fin L → Bool)` (`uprob_comp_equiv`), which pushes the
+uniform coins to a uniform pair of independent halves. (2) On a half `r : Fin L → Bool`,
+`padFin L (List.ofFn r) = r` (`padFin_ofFn`), and `chunk (2n²) n r` is `r` read through
+`finProdFinEquiv` (`chunk_apply`), a bijection, so the blocks are uniform; and
+`listToNat (List.ofFn b) = bitsToNat b` (`bitsToNat_eq_listToNat`). So each value is
+`bitsToNat ((samplePrime n (2n²) xs).getD (natToBits n 2))` for uniform blocks `xs`. (3) The
+fallback reads as the prime `2` (`bitsToNat_natToBits`, `2 < 2^n`, `Nat.prime_two`), so
+`NumberTheory.statClose_samplePrime n (2n²)` applies to each run: within
+`(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (the bound of `uprob_samplePrime_none_le_two_pow`) of the
+uniform `n`-bit prime, carried to `ℕ` by the injective `bitsToNat` (`StatClose.map`; the
+uniform prime block is the uniform element of `Primes n`). (4) `StatClose.prod` puts the two
+runs together: the pair is within `2 · (1/2)^n` of `(p, q)` for independent uniform
+`p, q ∈ Π_n`. (5) That pair and `(z.p, z.q)` for a uniform `z : DistinctPrimes n` differ only on
+the diagonal `p = q`, of probability `1/|Π_n|` (`uprob_diag`), at most `2n/2^n`
+(`one_div_card_primes_le`); conclude by `StatClose.trans`. -/
+theorem statClose_samplePrimeL_pair (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun s : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
+        (listToNat (samplePrimeL n ((List.ofFn s).take (2 * n ^ 2 * n))),
+          listToNat (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
+      (fun z : DistinctPrimes n => (z.p, z.q))
+      (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
+  sorry
+
 /-- The output of the collection's sampler from two sampled blocks `a`, `b`: the pair of
 `m`-bit numerals of the two numbers they read as, when these are distinct primes below `2^m`,
 and the canonical default pair `encodeDistinctPrimes m default = ⟨2, 3⟩` otherwise (the D10
@@ -473,7 +586,8 @@ theorem samplePairOut_eq_encode (m : ℕ) (hm : 2 ≤ m) (a b : List Bool) :
     ∃ z : DistinctPrimes m, samplePairOut m hm a b = encodeDistinctPrimes m z := by
   unfold samplePairOut
   split_ifs with h
-  · exact ⟨⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩, ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩, rfl⟩
+  · exact ⟨⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩, ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩,
+      by rw [encodeDistinctPrimes_eq, DistinctPrimes.p_eq, DistinctPrimes.q_eq]⟩
   · exact ⟨_, rfl⟩
 
 /-- The string function of the collection's sampler on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`:
@@ -532,7 +646,7 @@ theorem factoringGen_runAt (n : ℕ) (r : factoringGen.Coins n) :
   rw [NUPPT.runAt_eq]
   unfold factoringGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inParam, NUPPT.advInput]
+  simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- The activation of the sampler on any index: `samplePairOut` of the two `SamplePrime(n)`
 runs on the two halves of the coins. -/
@@ -545,7 +659,7 @@ theorem factoringSampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
   rw [NUPPT.runAt_eq]
   unfold factoringSampler
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [samplePairRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [samplePairRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **The factoring sampler's outputs decode and evaluate honestly** (the clause
 `sample_spec` of `Collection`, [PS10, Definition 41.1 (2)]): at every parameter the output of
@@ -569,7 +683,7 @@ theorem factoringSampler_spec (H : ArithmeticFP) (n : ℕ) (r : factoringGen.Coi
     (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))
   rw [hz]
   refine ⟨z, decodeDistinctPrimes_encode _ z, ?_⟩
-  simp only [encodeDistinctPrimes]
+  simp only [encodeDistinctPrimes_eq]
   rw [mulStr_natToList _ _ _ _ z.p_lt z.q_lt, two_mul]
 
 /-- **The factoring collection** [PS10, Theorem 51.1]: indices `1^n` (`Gen(1^n) = ⟨1^n, []⟩`,
@@ -597,16 +711,73 @@ noncomputable def factoringCollection (H : ArithmeticFP) : Collection where
   eval z := mulStr (pairSndD z)
   eval_poly := H.mul.comp polyTimeComputable_pairSndD
   eval_spec i z := by
-    simp only [pairSndD_pairEncode, encodeDistinctPrimes]
+    simp only [pairSndD_pairEncode, encodeDistinctPrimes_eq]
     rw [mulStr_natToList _ _ _ _ z.p_lt z.q_lt, two_mul]
   sample_spec := factoringSampler_spec H
+
+/-- **The domain of the factoring collection is `DistinctPrimes (max |i| 2)`**: the published
+equivalence `(factoringCollection H).D i ≃ DistinctPrimes (max i.length 2)` (the identity). It is
+the interface to the domain: elements of `D i` are read through it (`factoringCollection_f`,
+`factoringCollection_encD`, `factoringCollection_decD`), so no statement needs the collection to
+reduce at the type level, and uniform statements over `D i` transport along it
+(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+def factoringCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (factoringCollection H).D i ≃ DistinctPrimes (max i.length 2) :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on
+`DistinctPrimes (max |i| 2)`, `Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with
+`φ = factoringCollection_domEquiv H i` (`uprob_comp_equiv`), the form in which uniform
+statements over the domain are read. -/
+theorem factoringCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : DistinctPrimes (max i.length 2) → Prop) :
+    uprob (fun x : (factoringCollection H).D i => P (factoringCollection_domEquiv H i x)) =
+      uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the factoring collection, read through the domain equivalence: with
+`z = factoringCollection_domEquiv H i x`,
+`(factoringCollection H).f i x = ⟦z.p · z.q⟧_{2 max |i| 2}`. -/
+theorem factoringCollection_f (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
+    (factoringCollection H).f i x = natToList (2 * max i.length 2)
+      ((factoringCollection_domEquiv H i x).p * (factoringCollection_domEquiv H i x).q) := rfl
+
+/-- The encoder of the factoring collection is `encodeDistinctPrimes`, read through the domain
+equivalence: `(factoringCollection H).encD i x = encodeDistinctPrimes (max |i| 2) z` with
+`z = factoringCollection_domEquiv H i x`. -/
+theorem factoringCollection_encD (H : ArithmeticFP) (i : List Bool)
+    (x : (factoringCollection H).D i) :
+    (factoringCollection H).encD i x =
+      encodeDistinctPrimes (max i.length 2) (factoringCollection_domEquiv H i x) := rfl
+
+/-- The decoder of the factoring collection is `decodeDistinctPrimes`, carried back along the
+domain equivalence: `(factoringCollection H).decD i w =
+(decodeDistinctPrimes (max i.length 2) w).map (factoringCollection_domEquiv H i).symm`. -/
+theorem factoringCollection_decD (H : ArithmeticFP) (i w : List Bool) :
+    (factoringCollection H).decD i w =
+      (decodeDistinctPrimes (max i.length 2) w).map (factoringCollection_domEquiv H i).symm := by
+  show decodeDistinctPrimes (max i.length 2) w = _
+  cases decodeDistinctPrimes (max i.length 2) w <;> rfl
+
+/-- The index generator of the factoring collection is `factoringGen`. -/
+theorem factoringCollection_gen (H : ArithmeticFP) : (factoringCollection H).gen = factoringGen :=
+  rfl
+
+/-- The domain sampler of the factoring collection is `factoringSampler H`. -/
+theorem factoringCollection_sample (H : ArithmeticFP) :
+    (factoringCollection H).sample = factoringSampler H := rfl
+
+/-- The evaluator of the factoring collection is multiplication on the second component:
+`(factoringCollection H).eval z = mulStr (pairSndD z)`. -/
+theorem factoringCollection_eval (H : ArithmeticFP) (z : List Bool) :
+    (factoringCollection H).eval z = mulStr (pairSndD z) := rfl
 
 /-- The index generated by the factoring collection is `1^n`. -/
 theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
     (r : (factoringCollection H).gen.Coins n) :
     (factoringCollection H).index n r = List.replicate n true := by
-  simp [Collection.index, factoringCollection, factoringGen, NUPPT.runAt_eq,
-    NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam, NUPPT.advInput]
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
 
 /-- **The sampler is close to uniform** [PS10, Lemma 51.17 and Theorem 51.1, "sample two
 random prime numbers"]: the decoded output of the factoring collection's sampler is within
@@ -647,17 +818,38 @@ noncomputable def collectionFactorer (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `collectionFactorer` has the coins of `A`. -/
-@[simp] theorem coins_collectionFactorer (A : NUPPT) : (collectionFactorer A).coins = A.coins := rfl
+@[simp] theorem coins_collectionFactorer (A : NUPPT) :
+    (collectionFactorer A).coins = A.coins := by
+  unfold collectionFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- **The activation of the reduction**: `A_fact(1^n, y; r) = fst(A(1^n, ⟨1^n, y⟩; r))`. -/
+/-- **The reduction runs on the coins of `A`**: the published equivalence
+`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
+`coins_collectionFactorer`). -/
+noncomputable def collectionFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
+    (collectionFactorer A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr (coins_collectionFactorer A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (collectionFactorer_coinsEquiv A n r) = List.ofFn r`. -/
+theorem collectionFactorer_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (collectionFactorer A).Coins n) :
+    List.ofFn (collectionFactorer_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_collectionFactorer A) n r
+
+/-- **The activation of the reduction**: `A_fact(1^n, y; r) = fst(A(1^n, ⟨1^n, y⟩; φ r))`, the
+coins read through `φ = collectionFactorer_coinsEquiv A n`. -/
 theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     (r : (collectionFactorer A).Coins n) :
-    (collectionFactorer A).runAt n y r = pairFstD (A.runAt n (pairEncode (List.replicate n true) y) r) := by
-  rw [NUPPT.runAt_eq]
+    (collectionFactorer A).runAt n y r =
+      pairFstD (A.runAt n (pairEncode (List.replicate n true) y)
+        (collectionFactorer_coinsEquiv A n r)) := by
+  rw [NUPPT.runAt_eq, collectionFactorer_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold collectionFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- **Inverting the collection factors** [PS10, proof of Theorem 51.1]: for `n ≥ 2`, the
 inversion probability of `A` against the factoring collection is at most the factoring
@@ -673,7 +865,8 @@ then `p'q' = pq` (`natToList_injOn`, `DistinctPrimes.mul_lt`) and `p' ∈ {p, q}
 component of the answer is the `n`-bit numeral of `p'` (`decodeFin`,
 `length_eq_of_decodeFin_eq_some`), which `collectionFactorer_runAt` returns and
 `NUPPT.inverter` decodes to `natToBits n p'` (`natToBits_bitsToNat`); conclude by
-`uprob_mono` with the coin types identified (`coins_collectionFactorer`). -/
+`uprob_mono` with the coin types identified (`collectionFactorer_coinsEquiv`,
+`uprob_comp_equiv`). -/
 theorem factoringCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     (factoringCollection H).invProbAt A n ≤ factorProb (collectionFactorer A) n := by
   sorry

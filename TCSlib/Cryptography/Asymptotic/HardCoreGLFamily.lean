@@ -167,11 +167,12 @@ theorem concatPre_poly : PolyTimeComputable concatPre := polyTimeComputable_pair
 /-- The predictor of the family, called by the recovery machine on the pair `⟨y, q⟩`, computes
 the concrete predictor `A(1^n, y ‖ q)` of [PS10, Algorithm 89.6]. -/
 theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool)
-    (c : A.Coins n) :
+    (c : (A.precomp concatPre_poly).Coins n) :
     glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c =
-      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) c := by
-  simp only [glPredictorOf, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode, pairSndD_pairEncode,
-    NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, ofFn_appendEquiv]
+      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
+  simp only [glPredictorOf_apply, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode,
+    pairSndD_pairEncode, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+    NUPPT.runAt_eq, ofFn_appendEquiv, NUPPT.precomp_coinsEquiv_ofFn]
 
 
 /-- **The inversion probability of the family inverter is that of the concrete inverter**
@@ -194,16 +195,36 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : �
         (fun y c => A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n)) := by
   set A₁ := A.precomp concatPre_poly with hA₁
-  have hpred : (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
-      A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) =
-      glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y) := by
-    funext y c
-    obtain ⟨y, q⟩ := y
-    exact (glPredictorOf_precomp_concat A n (𝓕.outLen.eval n) (𝓕.inLen.eval n) y q c).symm
-  rw [hpred]
-  unfold invProbOpt invProb
+  have hrec : ∀ y (g : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n)),
+      HardcoreBit.guessRecover
+        (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
+          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
+            (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n) y
+        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n) g) =
+      HardcoreBit.guessRecover
+        (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
+        (k n) y g := fun y g =>
+    (HardcoreBit.guessRecover_coinsCongr _ _ _
+      (fun p c => glPredictorOf_precomp_concat A n (𝓕.outLen.eval n) (𝓕.inLen.eval n) p.1 p.2 c)
+      _ _ _).symm
+  rw [invProbOpt_def, invProb_def, ← uprob_comp_equiv
+    ((Equiv.refl ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool))).prodCongr
+      (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n)))]
+  have hinv : ∀ y (g : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n)),
+      HardcoreBit.guessInverter
+        (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
+          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
+            (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n) y
+        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n) g) =
+      HardcoreBit.guessInverter
+        (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
+        (k n) y g := fun y g => by
+    rw [HardcoreBit.guessInverter_eq, HardcoreBit.guessInverter_eq, HardcoreBit.glInverter_apply,
+      HardcoreBit.glInverter_apply, hrec]
+  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.coe_refl, id_eq, hinv]
   have hcoins : (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).coinLen n = (glCoins 𝓕.inLen K A₁).eval n := by
-    simp [glFamMachine, NUPPT.coinLen]
+    rw [NUPPT.coinLen_eq, glFamMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
+      PolyExpr.eval_const, zero_add]
   let eC : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n) ×
       (Fin ((glCoins 𝓕.inLen K A₁).eval n - glNeed A₁ 𝓕.inLen k n) → Bool) ≃
       (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).Coins n :=
@@ -224,14 +245,21 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : �
       (List.ofFn (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) (HardcoreBit.glPad (𝓕.f n) (x, r)))) (eC (g, ex)) =
       List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
         (k n) (𝓕.f n x) g) ++ List.ofFn r := by
-    rw [ofFn_appendEquiv]
-    show (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).runAt n (List.ofFn (𝓕.f n x) ++ List.ofFn r) _ = _
+    rw [ofFn_appendEquiv, HardcoreBit.glPad_apply]
     rw [glFamMachine_runAt A₁ 𝓕.inLen 𝓕.outLen K k hk n (𝓕.f n x) r
-      (glCoinsEquiv A₁ n (𝓕.inLen.eval n) (k n) _ (glNeed_le A₁ 𝓕.inLen K k hk n) (g, ex)) _
-      (by simp only [eC, Equiv.trans_apply]; exact ofFn_finCastEquiv _ _),
+      ((glMachine_coinsEquiv A₁ 𝓕.inLen K k hk n).symm
+        (glCoinsEquiv A₁ n (𝓕.inLen.eval n) (k n) _ (glNeed_le A₁ 𝓕.inLen K k hk n) (g, ex))) _
+      (by simp only [eC, Equiv.trans_apply, glMachine_coinsEquiv_symm_ofFn]
+          exact ofFn_finCastEquiv _ _),
       glMachine_runAt_guessRecover A₁ 𝓕.inLen K k hk n hM (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y)
         (𝓕.f n x) g ex]
-  rw [hrun]
+  have hgi : HardcoreBit.guessInverter
+      (glPredictorOf A₁ n (𝓕.inLen.eval n) fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y)
+      (k n) (HardcoreBit.glPad (𝓕.f n) (x, r)) g =
+      (HardcoreBit.guessRecover (glPredictorOf A₁ n (𝓕.inLen.eval n)
+        fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y) (k n) (𝓕.f n x) g, r) := by
+    rw [HardcoreBit.guessInverter_eq, HardcoreBit.glInverter_apply, HardcoreBit.glPad_apply]
+  rw [hrun, hgi]
   constructor
   · rintro ⟨x', hx', hfx'⟩
     rw [← ofFn_appendEquiv, List.ofFn_inj] at hx'

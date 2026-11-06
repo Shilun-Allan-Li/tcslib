@@ -77,11 +77,47 @@ def guessRecover (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β)
   fun i => majority fun L : NESubset k =>
     subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
 
+omit [Fintype ρ] in
+/-- The defining equation of `guessRecover`: bit `i` is the majority over `L` of
+`b_L ⊕ A(y, S_L ⊕ e_i)`. -/
+theorem guessRecover_apply (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β)
+    (c : GuessCoins n k ρ) (i : Fin n) :
+    guessRecover A k y c i = majority fun L : NESubset k =>
+      subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L) := rfl
+
 /-- The inverter of [Gar26, Figure 2.5]: on `f(x) ‖ r` it outputs
 `guessRecover A k (f(x)) ‖ r`. -/
 def guessInverter (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
     β × (Fin n → Bool) → GuessCoins n k ρ → (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (guessRecover A k)
+
+omit [Fintype ρ] in
+/-- The defining equation of `guessInverter`:
+`guessInverter A k = glInverter (guessRecover A k)`. -/
+theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
+    guessInverter A k = glInverter (guessRecover A k) := rfl
+
+/-- Reindexing the predictor's coins in `GuessCoins` along `e : ρ' ≃ ρ`. -/
+def guessCoinsCongr {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) : GuessCoins n k ρ' ≃ GuessCoins n k ρ :=
+  (Equiv.refl _).prodCongr
+    ((Equiv.refl _).prodCongr (Equiv.piCongrRight fun _ => Equiv.piCongrRight fun _ => e))
+
+omit [Fintype ρ] in
+/-- The defining equation of `guessCoinsCongr`: it keeps `(s, b)` and applies `e` to every
+predictor coin, `guessCoinsCongr k e (s, b, cs) = (s, b, fun i L => e (cs i L))`. -/
+theorem guessCoinsCongr_apply {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) (c : GuessCoins n k ρ') :
+    guessCoinsCongr k e c = (c.1, c.2.1, fun i L => e (c.2.2 i L)) := rfl
+
+omit [Fintype ρ] in
+/-- `guessRecover` with a predictor read through a coin bijection `e`: if `A' p c = A p (e c)`,
+then `guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c)`. -/
+theorem guessRecover_coinsCongr {ρ' : Type*} (A : β × (Fin n → Bool) → ρ → Bool)
+    (A' : β × (Fin n → Bool) → ρ' → Bool) (e : ρ' ≃ ρ) (h : ∀ p c, A' p c = A p (e c)) (k : ℕ)
+    (y : β) (c : GuessCoins n k ρ') :
+    guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c) := by
+  funext i
+  rw [guessRecover_apply, guessRecover_apply, guessCoinsCongr_apply]
+  simp only [h]
 
 /-- The recovery procedure of [Gar26, Figure 2.5] for a known `x`, run with the correct
 guesses `b_ℓ = ⟨x, s_ℓ⟩`: bit `i` is the majority over `L` of

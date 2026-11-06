@@ -159,6 +159,17 @@ def ZK (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
         distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
           (D.distinguisherL x.length) ≤ ε x.length
 
+/-- The defining property of `ZK`: `ZK π R` iff for every efficient `V'` there is a uniform
+simulator `S` such that for every `Lz` and every distinguisher `D` some negligible `ε` bounds
+`distAdv (view of V' in P(x, y) ↔ V'(x, z)) (S(x, z)) (D at |x|) ≤ ε(|x|)` for all `x`, `y` with
+`R x y`, and `z` with `|z| ≤ Lz(|x|)`. -/
+theorem ZK_iff (π : Protocol) (R : List Bool → List Bool → Prop) :
+    ZK π R ↔ ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧
+      ∀ (Lz : PolyExpr) (D : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
+        ∀ x y z, R x y → z.length ≤ Lz.eval x.length →
+          distAdv (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z)
+            (D.distinguisherL x.length) ≤ ε x.length := Iff.rfl
+
 /-- Statistical zero-knowledge of `π` for `R` with error `δ(|x|)` (Def-122.a, campaign
 addition needed for the truncated simulators): for every efficient `V'` there is a uniform PPT
 simulator whose output on `(x, z)` is `StatClose` (every test set, sup form) within `δ(|x|)`
@@ -200,7 +211,8 @@ def PerfectZKAbort (π : Protocol) (R : List Bool → List Bool → Prop) : Prop
   ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →
     uprob (fun r : S.Coins x.length => S.simulate x z r = []) ≤ 1 / 2 ∧
     ∀ T : List Bool → Prop,
-      uprob (fun r : (π.withV V').ExecCoins π.P x => T ((π.withV V').viewV x y z r).encode) *
+      uprob (fun r : (π.withV V').ExecCoins (π.withV V').P x =>
+          T ((π.withV V').viewV x y z r).encode) *
           uprob (fun r : S.Coins x.length => S.simulate x z r ≠ []) =
         uprob (fun r : S.Coins x.length => S.simulate x z r ≠ [] ∧ T (S.simulate x z r))
 

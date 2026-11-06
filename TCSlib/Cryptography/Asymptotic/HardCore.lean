@@ -177,6 +177,72 @@ theorem HardCore.hard {𝓕 : FunFamily} {h : ∀ n, (Fin (𝓕.inLen.eval n) �
     (hh : HardCore 𝓕 h) (A : NUPPT) : ∃ ε : ℕ → ℝ, Negligible ε ∧
       ∀ n, predProb (𝓕.f n) (h n) (A.predictor n (𝓕.outLen.eval n)) ≤ 1 / 2 + ε n := hh.2 A
 
+/-- `h : ∀ n, {0,1}^n → Bool` is a **hard-core predicate for the permutation family `P`**
+[PS10, Definition 78.3, for the permutations of Theorems 79.4, 87.3 and 126.4]: `h` is hard-core
+for `P.toFunFamily`, read on `{0,1}^{inLen n}` through the domain equivalence
+`P.toFunFamily_domEquiv n : {0,1}^{inLen n} ≃ {0,1}^n`. -/
+def PermFamily.HardCore (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) : Prop :=
+  TCSlib.Cryptography.HardCore P.toFunFamily fun n x => h n (P.toFunFamily_domEquiv n x)
+
+/-- The defining equivalence of `PermFamily.HardCore`:
+`P.HardCore h ↔ HardCore P.toFunFamily (h ∘ domEquiv)`. -/
+theorem PermFamily.hardCore_iff (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) :
+    P.HardCore h ↔
+      TCSlib.Cryptography.HardCore P.toFunFamily fun n x => h n (P.toFunFamily_domEquiv n x) :=
+  Iff.rfl
+
+/-- **The prediction experiment of `P.toFunFamily` is that of the permutation**: predicting
+`h ∘ domEquiv` from `P.toFunFamily.f n` with `A.predictor n (outLen n)` has the probability of
+predicting `h n` from `P.f n` with `A.predictor n n`. -/
+theorem PermFamily.predProb_toFunFamily (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
+    (A : NUPPT) (n : ℕ) :
+    predProb (P.toFunFamily.f n) (fun x => h n (P.toFunFamily_domEquiv n x))
+        (A.predictor n (P.toFunFamily.outLen.eval n)) =
+      predProb (P.f n) (h n) (A.predictor n n) := by
+  rw [predProb_def, predProb_def]
+  refine uprob_eq_of_equiv ((P.toFunFamily_domEquiv n).prodCongr (Equiv.refl _)) fun z => ?_
+  obtain ⟨x, r⟩ := z
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, NUPPT.predictor_eq,
+    NUPPT.distinguisher_eq]
+  rw [← P.toFunFamily_codEquiv_ofFn, P.toFunFamily_f_domEquiv]
+
+/-- The efficiency clause for a permutation family [PS10, Definition 78.3 (1)]: some
+polynomial-time `H` computes `[h n x]` from `⟨1^n, x⟩` for `x ∈ {0,1}^n`. -/
+theorem PermFamily.HardCore.easy {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool}
+    (hh : P.HardCore h) :
+    ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x] := by
+  obtain ⟨H, hH, hHx⟩ := TCSlib.Cryptography.HardCore.easy ((P.hardCore_iff h).1 hh)
+  refine ⟨H, hH, fun n x => ?_⟩
+  have hx := hHx n ((P.toFunFamily_domEquiv n).symm x)
+  rwa [P.toFunFamily_domEquiv_symm_ofFn, Equiv.apply_symm_apply] at hx
+
+/-- The unpredictability clause for a permutation family [PS10, Definition 78.3 (2)]: for every
+non-uniform PPT `A` some negligible `ε` bounds
+`Pr[x ← {0,1}^n : A(1^n, f(x)) = h(x)] ≤ 1/2 + ε(n)` for all `n`. -/
+theorem PermFamily.HardCore.hard {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool}
+    (hh : P.HardCore h) (A : NUPPT) : ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, predProb (P.f n) (h n) (A.predictor n n) ≤ 1 / 2 + ε n := by
+  obtain ⟨ε, hε, hb⟩ := TCSlib.Cryptography.HardCore.hard ((P.hardCore_iff h).1 hh) A
+  exact ⟨ε, hε, fun n => (P.predProb_toFunFamily h A n).symm.trans_le (hb n)⟩
+
+/-- **Hard-core for a permutation family, from the two clauses** [PS10, Definition 78.3]:
+an evaluator of `[h n x]` on `⟨1^n, x⟩` and, for every non-uniform PPT `A`, a negligible `ε`
+with `Pr[x ← {0,1}^n : A(1^n, f(x)) = h(x)] ≤ 1/2 + ε(n)`. -/
+theorem PermFamily.HardCore.of_easy_hard {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool}
+    (he : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x])
+    (hA : ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, predProb (P.f n) (h n) (A.predictor n n) ≤ 1 / 2 + ε n) :
+    P.HardCore h := by
+  refine (P.hardCore_iff h).2 ((hardCore_iff _ _).2 ⟨?_, fun A => ?_⟩)
+  · obtain ⟨H, hH, hHx⟩ := he
+    refine ⟨H, hH, fun n x => ?_⟩
+    rw [← P.toFunFamily_domEquiv_ofFn n x]
+    exact hHx n _
+  · obtain ⟨ε, hε, hb⟩ := hA A
+    exact ⟨ε, hε, fun n => (P.predProb_toFunFamily h A n).trans_le (hb n)⟩
+
 /-- **A constant predicate is never hard-core** (non-vacuity of the hardness clause of
 [PS10, Definition 78.3]): the machine that ignores its input and outputs `[b]` predicts
 `h ≡ b` with probability one at every `n`, and `1 ≤ 1/2 + ε(n)` contradicts negligibility.
@@ -225,10 +291,39 @@ theorem PRG.oneBit_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Boo
 theorem PRG.oneBit_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (n : ℕ)
     (s : Fin n → Bool) : (PRG.oneBit G).G n s = G n s := rfl
 
+/-- **Security of `PRG.oneBit G` unfolded**: it is secure iff some polynomial-time string
+function computes `G n s` from the seed string, and for every non-uniform PPT `D` the PRG
+advantage `prgAdv (G n) (D(1^n, ·))` on `n + 1` bits is negligible (`PRG.secure_iff` at
+`oneBit`, where the generator's type depends on the stretch). -/
+theorem PRG.oneBit_secure_iff (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) :
+    (PRG.oneBit G).Secure ↔
+      (∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+        ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)) ∧
+      ∀ D : NUPPT, Negligible fun n => prgAdv (G n) (D.distinguisher n (n + 1)) := by
+  rw [PRG.secure_iff, PRG.easy_iff]
+  rfl
+
 /-- The generator `G(s) = f(s) ‖ h(s)` of [PS10, Theorem 79.4] for a permutation family `f`
 and a predicate `h`: output length `n + 1`, the bit `h(s)` in the last position. -/
 def owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) : PRG :=
   PRG.oneBit fun n s => Fin.snoc (P.f n s) (h n s)
+
+/-- **The outputs of the generator of Theorem 79.4 are `{0,1}^{n+1}`**: the published
+equivalence `{0,1}^{stretch(n)} ≃ {0,1}^{n+1}` (the identity on the definition). -/
+def owpGenPRG_outEquiv (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ) :
+    (Fin ((owpGenPRG P h).stretch.eval n) → Bool) ≃ (Fin (n + 1) → Bool) :=
+  Equiv.refl _
+
+/-- The generator of Theorem 79.4 through its output equivalence: `G(s) = f(s) ‖ h(s)`. -/
+theorem owpGenPRG_G_outEquiv (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
+    (s : Fin n → Bool) :
+    owpGenPRG_outEquiv P h n ((owpGenPRG P h).G n s) = Fin.snoc (P.f n s) (h n s) := rfl
+
+/-- The output equivalence keeps the string:
+`List.ofFn (owpGenPRG_outEquiv P h n y) = List.ofFn y`. -/
+theorem owpGenPRG_outEquiv_ofFn (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
+    (y : Fin ((owpGenPRG P h).stretch.eval n) → Bool) :
+    List.ofFn (owpGenPRG_outEquiv P h n y) = List.ofFn y := rfl
 
 /-- Unfolding: the generator of Theorem 79.4 outputs `f(s)` on the first `n` positions. -/
 theorem owpGenPRG_G_castSucc (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
@@ -327,10 +422,11 @@ with `c : A.Coins n ≃ Bool × D.Coins n` the coin split (`Fin.consEquiv`), so
 (`uprob_comp_equiv`). Then `hh.hard A` gives a negligible `ε` with the left side `≤ 1/2 + ε n`,
 so `0 ≤ prgAdv ≤ ε n` for all `n` and `Negligible.mono` closes `PRG.secure_iff`. -/
 theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
-    (hP : OneWayPermutation P) (hh : HardCore P.toFunFamily h) : (owpGenPRG P h).Secure := by
-  obtain ⟨F, hF, hFx⟩ := hP.easy
+    (hP : OneWayPermutation P) (hh : P.HardCore h) : (owpGenPRG P h).Secure := by
+  obtain ⟨F, hF, hFx⟩ := hP.evaluator
   obtain ⟨H, hH, hHx⟩ := hh.easy
-  refine ⟨exists_owpGenEvaluator P h hF hH hFx hHx, fun D => ?_⟩
+  rw [PRG.secure_iff]
+  refine ⟨(PRG.easy_iff _).2 (exists_owpGenEvaluator P h hF hH hFx hHx), fun D => ?_⟩
   have hflip : ∀ n, ∃ flip : Bool,
       predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) flip) =
         1 / 2 + prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
@@ -344,11 +440,13 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
   have h2 := hflip n
   have h3 : predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) (flip n)) =
       predProb (P.f n) (h n) (fun y (c : Bool × D.Coins n) =>
-        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := rfl
+        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) :=
+    congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, h2] at h1
   show |prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1))| ≤ |ε n|
-  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
-    abs_nonneg _
+  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) := by
+    rw [prgAdv_eq, distAdv_def]
+    exact abs_nonneg _
   rw [abs_of_nonneg h4]
   exact le_trans (by linarith) (le_abs_self _)
 
@@ -383,12 +481,25 @@ def PRG.expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : P
   G n s := (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1
   expands := hℓ
 
+/-- Field equation: the stretch of `PRG.expand G ℓ hℓ` is `ℓ`. -/
+theorem PRG.expand_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+    (hℓ : ∀ n, n < ℓ.eval n) : (PRG.expand G ℓ hℓ).stretch = ℓ := rfl
+
 /-- Closed form of the expansion: output bit `i` is the last bit of `G(X_i)`, where
 `X_i` is the `i`-th iterate of `s ↦ init (G s)` on the seed (`b_{i+1}` in the text's
 1-indexed notation). -/
 theorem PRG.expand_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
     (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool) (i : Fin (ℓ.eval n)) :
     (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
+
+/-- Closed form of the expansion with the output index typed by the stretch:
+`G'(s)_i = last bit of G((s ↦ init G(s))^i (s))` for
+`i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)` (`PRG.expand_G` on the PRG's own output space). -/
+theorem PRG.expand_G_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+    (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool)
+    (i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)) :
+    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) :=
+  PRG.expand_G G ℓ hℓ n s i
 
 /-- The hybrid-`k` reduction of [PS10, Lemma 80.5] (the machine `M(y)` of the proof) in the
 text's seed-first convention: on `T ∈ {0,1}^{n+1}` read `(b, X) := (T_{n+1}, T_1 ⋯ T_n)`, draw
@@ -547,7 +658,7 @@ with hard-core predicate `h`, `G(x) = h(x) ‖ h(f(x)) ‖ ⋯ ‖ h(f^{ℓ(n)}(
 Theorem 79.4 (`owp_hardcore_prg`) and Lemma 80.5 (`prg_expand`) through the closed form
 `PermFamily.iterPRG_eq_expand`. -/
 theorem cor_81_7 (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (ℓ : PolyExpr)
-    (hℓ : ∀ n, n ≤ ℓ.eval n) (hP : OneWayPermutation P) (hh : HardCore P.toFunFamily h) :
+    (hℓ : ∀ n, n ≤ ℓ.eval n) (hP : OneWayPermutation P) (hh : P.HardCore h) :
     (P.iterPRG h ℓ hℓ).Secure := by
   rw [PermFamily.iterPRG_eq_expand]
   exact prg_expand _ _ _ (owp_hardcore_prg P h hP hh)
@@ -580,6 +691,41 @@ def glInverter {γ : Type*} (n : ℕ) (R : (Fin (𝓕.outLen.eval n) → Bool) �
   fun y c => Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)
     (HardcoreBit.glInverter R ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).symm y) c)
 
+/-- The input length of `g`: `inLen_g(n) = inLen(n) + inLen(n)`. -/
+theorem glPad_inLen_eval (n : ℕ) : 𝓕.glPad.inLen.eval n = 𝓕.inLen.eval n + 𝓕.inLen.eval n := rfl
+
+/-- The output length of `g`: `outLen_g(n) = outLen(n) + inLen(n)`. -/
+theorem glPad_outLen_eval (n : ℕ) :
+    𝓕.glPad.outLen.eval n = 𝓕.outLen.eval n + 𝓕.inLen.eval n := rfl
+
+/-- **The inputs of `g` are strings `x ‖ r`**: the published equivalence
+`{0,1}^{inLen_g(n)} ≃ {0,1}^{inLen(n) + inLen(n)}` (the identity on the definition). -/
+def glPad_inEquiv (n : ℕ) :
+    (Fin (𝓕.glPad.inLen.eval n) → Bool) ≃ (Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool) :=
+  Equiv.refl _
+
+/-- **The outputs of `g` are strings `y ‖ r`**: the published equivalence
+`{0,1}^{outLen_g(n)} ≃ {0,1}^{outLen(n) + inLen(n)}` (the identity on the definition). -/
+def glPad_outEquiv (n : ℕ) :
+    (Fin (𝓕.glPad.outLen.eval n) → Bool) ≃ (Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool) :=
+  Equiv.refl _
+
+/-- The input equivalence keeps the string: `List.ofFn (glPad_inEquiv n z) = List.ofFn z`. -/
+theorem glPad_inEquiv_ofFn (n : ℕ) (z : Fin (𝓕.glPad.inLen.eval n) → Bool) :
+    List.ofFn (𝓕.glPad_inEquiv n z) = List.ofFn z := rfl
+
+/-- The inverse input equivalence keeps the string. -/
+theorem glPad_inEquiv_symm_ofFn (n : ℕ) (z : Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool) :
+    List.ofFn ((𝓕.glPad_inEquiv n).symm z) = List.ofFn z := rfl
+
+/-- The output equivalence keeps the string: `List.ofFn (glPad_outEquiv n y) = List.ofFn y`. -/
+theorem glPad_outEquiv_ofFn (n : ℕ) (y : Fin (𝓕.glPad.outLen.eval n) → Bool) :
+    List.ofFn (𝓕.glPad_outEquiv n y) = List.ofFn y := rfl
+
+/-- The inverse output equivalence keeps the string. -/
+theorem glPad_outEquiv_symm_ofFn (n : ℕ) (y : Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool) :
+    List.ofFn ((𝓕.glPad_outEquiv n).symm y) = List.ofFn y := rfl
+
 /-- Unfolding: `g` on `x ‖ r` is `f(x) ‖ r`. -/
 theorem glPad_f (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
     𝓕.glPad.f n (Fin.append x r) = Fin.append (𝓕.f n x) r := by
@@ -595,6 +741,18 @@ theorem glBit_append (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
   rw [Equiv.symm_apply_apply]
   rfl
 
+/-- `g` through the published equivalences: `g(x ‖ r) = f(x) ‖ r` with `x ‖ r` read by
+`glPad_inEquiv` and the value by `glPad_outEquiv`. -/
+theorem glPad_f_equiv (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
+    𝓕.glPad_outEquiv n (𝓕.glPad.f n ((𝓕.glPad_inEquiv n).symm (Fin.append x r))) =
+      Fin.append (𝓕.f n x) r :=
+  𝓕.glPad_f n x r
+
+/-- `h` through the published equivalence: `h(x ‖ r) = ⟨x, r⟩`. -/
+theorem glBit_equiv (n : ℕ) (x r : Fin (𝓕.inLen.eval n) → Bool) :
+    𝓕.glBit n ((𝓕.glPad_inEquiv n).symm (Fin.append x r)) = HardcoreBit.ip x r :=
+  𝓕.glBit_append n x r
+
 /-- **Bridge to the concrete setting (prediction)**: the prediction probability of `A` for
 `h = ⟨x, r⟩` of the family `g` equals that of `A ∘ (append)` for `glBit` of the concrete
 `HardcoreBit.glPad (f n)` [Gar26, Theorem 2.3]. -/
@@ -602,9 +760,12 @@ theorem predProb_glPad {ρ : Type*} [Fintype ρ] (n : ℕ)
     (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) :
     predProb (𝓕.glPad.f n) (𝓕.glBit n) A =
       predProb (HardcoreBit.glPad (𝓕.f n)) HardcoreBit.glBit
-        (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) := by
-  unfold predProb
-  exact uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) fun _ => Iff.rfl
+        (fun y r => A ((𝓕.glPad_outEquiv n).symm
+          (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) := by
+  rw [predProb_def, predProb_def]
+  exact uprob_eq_of_equiv
+    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm.prodCongr (Equiv.refl ρ))
+    fun _ => Iff.rfl
 
 /-- **Bridge to the concrete setting (inversion)**: the inversion probability of the family
 inverter `glInverter n R` against the family `g` equals that of the concrete

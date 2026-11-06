@@ -153,6 +153,14 @@ def uniform (ℓ : PolyExpr) : Ensemble ℓ where
   σ n := Fin (ℓ.eval n) → Bool
   X _ := id
 
+/-- Field equation of the uniform ensemble: the seed type at `n` is `{0,1}^{ℓ(n)}`. -/
+theorem uniform_σ (ℓ : PolyExpr) (n : ℕ) : (uniform ℓ).σ n = (Fin (ℓ.eval n) → Bool) := rfl
+
+/-- Field equation of the uniform ensemble: the sampler at `n` is the identity on seeds, read
+along `uniform_σ`. -/
+theorem uniform_X (ℓ : PolyExpr) (n : ℕ) (x : (uniform ℓ).σ n) :
+    (uniform ℓ).X n x = cast (uniform_σ ℓ n) x := rfl
+
 /-- **Efficiently samplable** ensemble (distribution level, D6): there is a syntactic
 polynomial `s` and a polynomial-time sampler `S` such that at every `n` the law of
 `S(⟨1^n, r⟩)` for `s(n)` uniform bits `r` (padded or truncated to `ℓ(n)` bits) is exactly the
@@ -184,6 +192,9 @@ def IndistLit (X Y : Ensemble ℓ) : Prop :=
 /-- A **pseudorandom ensemble** [PS10, Definition 74.1]: indistinguishable from the uniform
 ensemble `{U_{ℓ(n)}}`. -/
 def Pseudorandom (X : Ensemble ℓ) : Prop := Indist X (uniform ℓ)
+
+/-- The defining property of `Pseudorandom`: `X.Pseudorandom ↔ Indist X (uniform ℓ)`. -/
+theorem pseudorandom_iff (X : Ensemble ℓ) : X.Pseudorandom ↔ Indist X (uniform ℓ) := Iff.rfl
 
 /-- The image ensemble `{M(X_n)}` of [PS10, Lemma 71.5]: at parameter `n`, draw a seed of `X`
 and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)` bits. The

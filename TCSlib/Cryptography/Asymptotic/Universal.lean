@@ -247,6 +247,11 @@ output length `univOutLen` (the string output padded with `false`, never truncat
 def fUniversal (c : EffectiveMachineCode) : FunFamily :=
   FunFamily.ofString (fUniversalStr c) univOutLen
 
+/-- The input length of `fUniversal c` at `n` is `n`. -/
+theorem fUniversal_inLen_eval (c : EffectiveMachineCode) (n : ℕ) :
+    (fUniversal c).inLen.eval n = n :=
+  FunFamily.ofString_inLen_eval _ _ n
+
 /-- The padded reading of a string: `List.ofFn (fun i : Fin p => w.getD i false)` is
 `(w ++ 0^p).take p` (the encoding of `FunFamily.ofString`'s output). -/
 theorem ofFn_getD_eq_take (w : List Bool) (p : ℕ) :
@@ -255,11 +260,15 @@ theorem ofFn_getD_eq_take (w : List Bool) (p : ℕ) :
 
 /-- The encoding of `fUniversal c` at parameter `n` is the string output padded with `false`
 to `univOutLen n` bits. -/
-theorem ofFn_fUniversal_f (c : EffectiveMachineCode) (n : ℕ) (x : Fin n → Bool) :
+theorem ofFn_fUniversal_f (c : EffectiveMachineCode) (n : ℕ)
+    (x : Fin ((fUniversal c).inLen.eval n) → Bool) :
     List.ofFn ((fUniversal c).f n x) =
       (fUniversalStr c (List.ofFn x) ++ List.replicate (univOutLen.eval n) false).take
-        (univOutLen.eval n) :=
-  ofFn_getD_eq_take _ _
+        (univOutLen.eval n) := by
+  refine (List.ofFn_congr (FunFamily.ofString_outLen_eval (fUniversalStr c) univOutLen n) _).trans
+    (Eq.trans ?_ (ofFn_getD_eq_take _ _))
+  exact congrArg List.ofFn
+    (funext fun i => (FunFamily.ofString_f_apply _ _ n x _).trans (by rw [Fin.coe_cast]))
 
 /-! ## The encoding hypothesis and the polynomial coefficient -/
 
@@ -645,11 +654,14 @@ private theorem padStr_eq_ofFn_fUniversal_f (c : EffectiveMachineCode) {L : Poly
     (hMg : ∀ m (x : Fin m → Bool),
       Mg.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn (g m x)) (c₀ * (m + 1) ^ 2))
     {n : ℕ} {code : List Bool} (hcode : code.length = Nat.log 2 n) (hdec : c.decode code = Mg)
-    (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool) (y : Fin n → Bool)
-    (hy : List.ofFn y = code ++ List.ofFn x) :
+    (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool)
+    (y : Fin ((fUniversal c).inLen.eval n) → Bool) (hy : List.ofFn y = code ++ List.ofFn x) :
     padStr univOutLen (List.replicate n true) (pairEncode code (true :: List.ofFn (g _ x))) =
       List.ofFn ((fUniversal c).f n y) := by
-  rw [ofFn_fUniversal_f, fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y hy, padStr,
+  obtain ⟨y₀, hy₀⟩ := exists_ofFn_eq_of_length (m := n) (w := List.ofFn y)
+    (by rw [List.length_ofFn, fUniversal_inLen_eval])
+  rw [ofFn_fUniversal_f, ← hy₀,
+    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy), padStr_eq,
     List.length_replicate]
 
 /-- **Inverses on the fibre** [PS10, Theorem 63.1, "`A` outputs `⟨M_g, x'⟩` with
@@ -667,21 +679,27 @@ private theorem exists_preimage_of_fUniversal_eq (c : EffectiveMachineCode) {L :
     (hMg : ∀ m (x : Fin m → Bool),
       Mg.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn (g m x)) (c₀ * (m + 1) ^ 2))
     {n : ℕ} {code : List Bool} (hcode : code.length = Nat.log 2 n) (hdec : c.decode code = Mg)
-    (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool) (y y' : Fin n → Bool)
+    (hc₀ : c₀ ≤ n + 1) (x : Fin (n - Nat.log 2 n) → Bool)
+    (y y' : Fin ((fUniversal c).inLen.eval n) → Bool)
     (hy : List.ofFn y = code ++ List.ofFn x) (h : (fUniversal c).f n y' = (fUniversal c).f n y) :
     ∃ x' : Fin (n - Nat.log 2 n) → Bool, List.ofFn x' = univArg (List.ofFn y') ∧ g _ x' = g _ x := by
   have hkn : Nat.log 2 n ≤ n := Nat.log_le_self 2 n
   obtain ⟨x', hx'⟩ := exists_ofFn_eq_of_length (m := n - Nat.log 2 n)
-    (w := univArg (List.ofFn y')) (by simp)
+    (w := univArg (List.ofFn y')) (by simp [fUniversal_inLen_eval])
   refine ⟨x', hx', ?_⟩
+  obtain ⟨y₀, hy₀⟩ := exists_ofFn_eq_of_length (m := n) (w := List.ofFn y)
+    (by rw [List.length_ofFn, fUniversal_inLen_eval])
   have h1 := congrArg List.ofFn h
   rw [ofFn_fUniversal_f, ofFn_fUniversal_f,
-    take_append_replicate_of_le (by simpa using length_fUniversalStr_le c (List.ofFn y')),
-    take_append_replicate_of_le (by simpa using length_fUniversalStr_le c (List.ofFn y)),
-    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y hy] at h1
+    take_append_replicate_of_le
+      (by simpa [fUniversal_inLen_eval] using length_fUniversalStr_le c (List.ofFn y')),
+    take_append_replicate_of_le
+      (by simpa [fUniversal_inLen_eval] using length_fUniversalStr_le c (List.ofFn y)),
+    ← hy₀, fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy)] at h1
   unfold fUniversalStr at h1
   simp only [List.length_ofFn] at h1
-  obtain ⟨hcd, hans⟩ := pairEncode_append_eq (by simp [hcode]) h1
+  rw [show ((fUniversal c).inLen.eval n + 1) ^ 3 = (n + 1) ^ 3 by rw [fUniversal_inLen_eval]] at h1
+  obtain ⟨hcd, hans⟩ := pairEncode_append_eq (by simp [hcode, fUniversal_inLen_eval]) h1
   rw [hcd, ← hx'] at hans
   have hM : (c.decode code).toFinTM.ComputesInTime (List.ofFn x') (List.ofFn (g _ x'))
       ((n + 1) ^ 3) := by

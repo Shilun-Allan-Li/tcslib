@@ -102,6 +102,9 @@ open Complexity Turing
 projection after `i` second projections. -/
 def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
 
+/-- The defining equation of `msgAt`: `msgAt w i = pairFstD (pairSndD^[i] w)`. -/
+theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
+
 /-- `msgAt` reads the `i`-th message of an encoded list. -/
 theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
     msgAt (Strategy.encodeMsgs l) i = l[i] := by
@@ -121,12 +124,22 @@ def colCommit (Com : List Bool → List Bool) (n ℓn : ℕ) (c' : Fin n → Fin
     (r : Fin n → Fin ℓn → Bool) : List Bool :=
   multiCom Com (fun i => padColor n (c' i)) r
 
+/-- The defining equation of `colCommit`: `multiCom Com (fun i => padColor n (c' i)) r`. -/
+theorem colCommit_eq (Com : List Bool → List Bool) (n ℓn : ℕ) (c' : Fin n → Fin 3)
+    (r : Fin n → Fin ℓn → Bool) :
+    colCommit Com n ℓn c' r = multiCom Com (fun i => padColor n (c' i)) r := rfl
+
 /-- The prover's opening message of [PS10, Protocol 127.5] for the edge `p = (i, j)`:
 `⟨⟨c'_i, r_i⟩, ⟨c'_j, r_j⟩⟩`. -/
 def colOpen {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
     List Bool :=
   pairEncode (pairEncode (encColor (c' p.1)) (List.ofFn (r p.1)))
     (pairEncode (encColor (c' p.2)) (List.ofFn (r p.2)))
+
+/-- The defining equation of `colOpen`: `⟨⟨encColor (c' i), r_i⟩, ⟨encColor (c' j), r_j⟩⟩`. -/
+theorem colOpen_eq {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
+    colOpen c' r p = pairEncode (pairEncode (encColor (c' p.1)) (List.ofFn (r p.1)))
+      (pairEncode (encColor (c' p.2)) (List.ofFn (r p.2))) := rfl
 
 /-- The verifier's check of one iteration of [PS10, Protocol 127.5] on the edge of index `e`,
 the commitment message `com` and the opening `opn = ⟨⟨a, r_i⟩, ⟨b, r_j⟩⟩`: the randomness has
@@ -422,6 +435,10 @@ noncomputable def colProver (Com : List Bool → List Bool) (ℓ : PolyExpr) : S
       | some p => colOpen c' rr p
       | none => []
 
+/-- The coin polynomial of `colProver Com ℓ` is `3 n + n ℓ(n)`. -/
+theorem colProver_coins (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+    (colProver Com ℓ).coins = .add (.mul (.const 3) .var) (.mul .var ℓ) := rfl
+
 /-- The verifier of one iteration of [PS10, Protocol 127.5] (Prot-127.5): it samples the
 edge index `e ← [|E|]` from its tape (`sampleEdgeIdx` with `|x|` trials); on the commitment
 message it sends `1^e`; on the complete history `[com, opn]` it outputs `[true]` iff `x` is
@@ -451,16 +468,40 @@ noncomputable def colProtocol (Com : List Bool → List Bool) (ℓ : PolyExpr) :
   rounds := .const 3
   verifierFirst := false
 
+/-- The prover of `colProtocol Com ℓ` is `colProver Com ℓ`. -/
+theorem colProtocol_P (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+    (colProtocol Com ℓ).P = colProver Com ℓ := rfl
+
+/-- The verifier of `colProtocol Com ℓ` is `colVerifier Com ℓ`. -/
+theorem colProtocol_V (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+    (colProtocol Com ℓ).V = colVerifier Com ℓ := rfl
+
+/-- `colProtocol Com ℓ` exchanges three messages. -/
+theorem colProtocol_rounds (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+    (colProtocol Com ℓ).rounds = .const 3 := rfl
+
+/-- In `colProtocol Com ℓ` the prover moves first. -/
+theorem colProtocol_verifierFirst (Com : List Bool → List Bool) (ℓ : PolyExpr) :
+    (colProtocol Com ℓ).verifierFirst = false := rfl
+
 /-! ### The `n|E|`-fold protocol (Prot-127.5, repeated) -/
 
 /-- The `t`-th block of `c` bits of a tape (the coins of iteration `t` of the repeated
 protocol). -/
 def colCoinSlice (c t : ℕ) (r : List Bool) : List Bool := (r.drop (t * c)).take c
 
+/-- The defining equation of `colCoinSlice`: `colCoinSlice c t r = (r.drop (t c)).take c`. -/
+theorem colCoinSlice_eq (c t : ℕ) (r : List Bool) :
+    colCoinSlice c t r = (r.drop (t * c)).take c := rfl
+
 /-- The number of iterations of the repeated protocol on `x`: `n |E|` [PS10, Protocol 127.5,
 "repeat the procedure `n|E|` times"], with `|E| = edgeCount G` the number of ordered edge
 pairs (for the text's simple graph `2n|E|` iterations; run-3 audit P11-3). -/
 def colIterations (x : List Bool) : ℕ := (decGraph x).1 * edgeCount (decGraph x).2
+
+/-- The defining equation of `colIterations`: `n |E|` for `(n, G) = decGraph x`. -/
+theorem colIterations_eq (x : List Bool) :
+    colIterations x = (decGraph x).1 * edgeCount (decGraph x).2 := rfl
 
 /-- The prover of the `n|E|`-fold protocol: iteration `t = hist.length / 2` (it has received
 the challenges and the empty verifier messages of the earlier iterations) runs `colProver`
@@ -664,6 +705,36 @@ private theorem colProver_next_cons_of (Com : List Bool → List Bool) (ℓ : Po
   dsimp only
   rw [edgeAt_eq_some_of_pos G hm]
 
+/-- **The prover's commitments** (public form) on an input decoding to `⟨n, G⟩`: `colCommit` of
+`i ↦ π (c i)`, `π = samplePerm3 |x| (r.take (3|x|))`, `r_i j = r.getD (3|x| + i ℓ(n) + j) false`. -/
+theorem colProver_next_nil (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool}
+    {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (y r : List Bool) :
+    (colProver Com ℓ).next x y r [] = colCommit Com n (ℓ.eval n)
+      (fun i => samplePerm3 x.length (r.take (3 * x.length)) (decColoring n y i))
+      (fun i j => r.getD (3 * x.length + i * ℓ.eval n + j) false) :=
+  colProver_next_nil_of Com ℓ hx y r
+
+/-- **The prover's opening** (public form) on `⟨n, G⟩` with an edge: on `w :: h` it opens the edge
+of index `edgeIdxOfMsg |E| w` (`colOpen`), with `π` and `r_i` as in `colProver_next_nil`. -/
+theorem colProver_next_cons (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool}
+    {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (hm : 0 < edgeCount G) (y r w : List Bool)
+    (h : List (List Bool)) :
+    (colProver Com ℓ).next x y r (w :: h) = colOpen
+      (fun i => samplePerm3 x.length (r.take (3 * x.length)) (decColoring n y i))
+      (fun (i : Fin n) (j : Fin (ℓ.eval n)) => r.getD (3 * x.length + i * ℓ.eval n + j) false)
+      (edgeOf G ⟨edgeIdxOfMsg (edgeCount G) w % edgeCount G, Nat.mod_lt _ hm⟩) :=
+  colProver_next_cons_of Com ℓ hx hm y r w h
+
+/-- **The prover on an edgeless graph** `⟨n, G⟩`: on a history `w :: h` it sends `[]`. -/
+theorem colProver_next_cons_of_edgeCount_eq_zero (Com : List Bool → List Bool) (ℓ : PolyExpr)
+    {x : List Bool} {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (hm : edgeCount G = 0)
+    (y r w : List Bool) (h : List (List Bool)) :
+    (colProver Com ℓ).next x y r (w :: h) = [] := by
+  simp only [colProver]
+  rw [hx]
+  dsimp only
+  rw [(edgeAt_eq_none_iff G _).2 hm]
+
 /-- The verdict of one iteration against any prover `P'`: the verifier's activation on the
 two prover messages, the second being the reply to the challenge. -/
 private theorem colProtocol_outV (Com : List Bool → List Bool) (ℓ : PolyExpr) (P' : Strategy)
@@ -719,7 +790,12 @@ private theorem uprob_check_uniform_le {Com : List Bool → List Bool} {ℓ : Po
   exact he
 
 /-- **Soundness of one iteration** [PS10, Proposition 127.6]: for `x ∉ 3COL` and any prover,
-the verifier rejects with probability at least `1 - (1 - 1/|x| + (1/2)^{|x|})`. -/
+the verifier rejects with probability at least `1 - (1 - 1/|x| + (1/2)^{|x|})`.
+
+**Proof sketch.** Bound acceptance (`uprob_not`, `colProtocol_outV`): if `x` is ill formed or
+`n < 2`, `V` always rejects; otherwise fix the prover's coins (`exists_proverCoins_le`), make
+the edge `(1/2)^{|x|}`-close to uniform (`statClose_sampleEdgeIdx`, `StatClose.uprob_le_add`),
+and a uniform edge passes with probability `≤ 1 - 1/|E|` (`uprob_check_uniform_le`), `|E| ≤ |x|`. -/
 private theorem colProtocol_sound {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ)
     (x : List Bool) (hx : x ∉ L3COL) (P' : Strategy) (z : List Bool) :
     1 - (1 - 1 / (x.length : ℝ) + (1 / 2 : ℝ) ^ x.length) ≤
@@ -839,7 +915,8 @@ the `n²` entries for the colouring test (`polyTimeComputable_iterate` with an a
 conjunction). -/
 theorem R3COL_witnessRelation : WitnessRelation L3COL R3COL := by
   refine ⟨mem_L3COL_iff, ⟨.mul (.const 2) .var, ?_⟩, ?_⟩
-  · rintro x y ⟨n, G, c, rfl, rfl, -⟩
+  · intro x y hxy
+    obtain ⟨n, G, c, rfl, rfl, -⟩ := (R3COL_iff x y).1 hxy
     rw [length_encColoring, length_encGraph, PolyExpr.eval_mul, PolyExpr.eval_const,
       PolyExpr.eval_var]
     nlinarith [Nat.zero_le n]

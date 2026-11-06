@@ -98,13 +98,17 @@ theorem gni_complete {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀ G�
 /-- The verifier's tape of the graph non-isomorphism iteration as its first bit and the
 sampler's `(N + 1)²` coins (`tapeSplit`, at the verifier's coin polynomial
 `1 + (N + 1)²`). -/
-def vTapeSplit (N : ℕ) : Bool × (Fin (1 * (N + 1) ^ 2) → Bool) ≃ gniProtocol.V.Coins N :=
-  tapeSplit (1 * (N + 1) ^ 2)
+noncomputable def vTapeSplit (N : ℕ) :
+    Bool × (Fin (1 * (N + 1) ^ 2) → Bool) ≃ gniProtocol.V.Coins N :=
+  (tapeSplit (1 * (N + 1) ^ 2)).trans
+    (Equiv.arrowCongr (finCongr (gniProtocol_V_coinLen N).symm) (Equiv.refl Bool))
 
 /-- The list of a split verifier tape. -/
 theorem ofFn_vTapeSplit (N : ℕ) (b : Bool) (t : Fin (1 * (N + 1) ^ 2) → Bool) :
-    List.ofFn (vTapeSplit N (b, t)) = b :: List.ofFn t :=
-  ofFn_tapeSplit _ b t
+    List.ofFn (vTapeSplit N (b, t)) = b :: List.ofFn t := by
+  unfold vTapeSplit
+  rw [Equiv.trans_apply]
+  exact (List.ofFn_congr (gniProtocol_V_coinLen N).symm _).symm.trans (ofFn_tapeSplit _ b t)
 
 /-- The sampler's coins fit in the verifier's tape: `permCoinLen n ≤ (|x| + 1)²` for an
 encoded instance `x` on `n` vertices (`permCoinLen_le`, `length_encInstance`). -/
@@ -226,15 +230,21 @@ theorem gi_complete {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
   simp
 
 /-- The single coin of the graph isomorphism verifier as a tape (`Equiv.funUnique`). -/
-def giBitEquiv (N : ℕ) : Bool ≃ giProtocol.V.Coins N := (Equiv.funUnique (Fin 1) Bool).symm
+noncomputable def giBitEquiv (N : ℕ) : Bool ≃ giProtocol.V.Coins N :=
+  (Equiv.funUnique (Fin 1) Bool).symm.trans
+    (Equiv.arrowCongr (finCongr (giProtocol_V_coinLen N).symm) (Equiv.refl Bool))
 
 /-- The list of the verifier's single-coin tape. -/
 theorem ofFn_giBitEquiv (N : ℕ) (b : Bool) : List.ofFn (giBitEquiv N b) = [b] := by
+  unfold giBitEquiv
+  rw [Equiv.trans_apply]
+  refine (List.ofFn_congr (giProtocol_V_coinLen N).symm
+    ((Equiv.funUnique (Fin 1) Bool).symm b)).symm.trans ?_
   show List.ofFn (fun _ : Fin 1 => b) = [b]
   rw [List.ofFn_succ, List.ofFn_zero]
 
 /-- The joint coins of the graph isomorphism iteration as (challenge bit, prover's coins). -/
-def giCoinEquiv (P' : Strategy) (x : List Bool) :
+noncomputable def giCoinEquiv (P' : Strategy) (x : List Bool) :
     Bool × P'.Coins x.length ≃ giProtocol.ExecCoins P' x :=
   (Equiv.prodComm _ _).trans (Equiv.prodCongr (Equiv.refl _) (giBitEquiv x.length))
 

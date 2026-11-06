@@ -244,6 +244,13 @@ def coinStr : List Bool :=
     (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
       List.ofFn d.r)
 
+/-- The defining equation of `coinStr`: the seed blocks, then the pair blocks, then `D`'s
+coins. -/
+theorem coinStr_eq : coinStr d =
+    List.ofFn ((FunFamily.blocks (q.eval n) n).symm d.W.1) ++
+      (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
+        List.ofFn d.r) := rfl
+
 /-- The raw input of the machine at parameter `n`: `⟨⟨⟨1^n, z⟩, ⟨⟨1^i, 1^j⟩, α_D⟩⟩, coins⟩`. -/
 def rawInput : List Bool :=
   NUPPT.layout (List.replicate n true) (List.ofFn d.z)
@@ -672,6 +679,17 @@ def advPoly (D : NUPPT) (q : PolyExpr) : PolyExpr :=
 def coinPoly (D : NUPPT) (q : PolyExpr) : PolyExpr :=
   .add (.mul q .var) (.add (.mul q (.mul (.const 2) .var)) D.coins)
 
+/-- The defining equation of `coinPoly`:
+`coinPoly D q = q·var + (q·(2·var) + D.coins)`. -/
+theorem coinPoly_eq (D : NUPPT) (q : PolyExpr) :
+    coinPoly D q = .add (.mul q .var) (.add (.mul q (.mul (.const 2) .var)) D.coins) := rfl
+
+/-- The value of `coinPoly`: `(coinPoly D q)(n) = q(n)·n + (q(n)·2n + |D's coins at n|)`. -/
+theorem coinPoly_eval (D : NUPPT) (q : PolyExpr) (n : ℕ) :
+    (coinPoly D q).eval n = q.eval n * n + (q.eval n * (2 * n) + D.coinLen n) := by
+  rw [coinPoly_eq, NUPPT.coinLen_eq]
+  rfl
+
 /-- The advice of the reduction machine: the hybrid indices in unary (clamped to their
 ranges, so that the advice is polynomially bounded at every parameter) and `D`'s advice. -/
 def adviceOf (D : NUPPT) (q : PolyExpr) (i j : ℕ → ℕ) (n : ℕ) : List Bool :=
@@ -699,7 +717,28 @@ noncomputable def ggmRedMachine {E : List Bool → List Bool} (hE : PolyTimeComp
 /-- The coin polynomial of the reduction machine. -/
 @[simp] theorem coins_ggmRedMachine {E : List Bool → List Bool} (hE : PolyTimeComputable E)
     (D : NUPPT) (q : PolyExpr) (i j : ℕ → ℕ) :
-    (ggmRedMachine hE D q i j).coins = coinPoly D q := rfl
+    (ggmRedMachine hE D q i j).coins = coinPoly D q := by
+  unfold ggmRedMachine
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **The coins of the reduction machine**: the published equivalence
+`(ggmRedMachine hE D q i j).Coins n ≃ {0,1}^{q(n)·n + (q(n)·2n + |D's coins|)}`, the coin
+layout `W ‖ (challenge blocks ‖ D's coins)` read without reducing the machine or `coinPoly`. -/
+noncomputable def ggmRedMachine_coinsEquiv {E : List Bool → List Bool} (hE : PolyTimeComputable E)
+    (D : NUPPT) (q : PolyExpr) (i j : ℕ → ℕ) (n : ℕ) :
+    (ggmRedMachine hE D q i j).Coins n ≃
+      (Fin (q.eval n * n + (q.eval n * (2 * n) + D.coinLen n)) → Bool) :=
+  (NUPPT.coinsEquivPoly (coins_ggmRedMachine hE D q i j) n).trans
+    (Equiv.arrowCongr (finCongr (coinPoly_eval D q n)) (Equiv.refl Bool))
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (ggmRedMachine_coinsEquiv hE D q i j n c) = List.ofFn c`. -/
+theorem ggmRedMachine_coinsEquiv_ofFn {E : List Bool → List Bool} (hE : PolyTimeComputable E)
+    (D : NUPPT) (q : PolyExpr) (i j : ℕ → ℕ) (n : ℕ) (c : (ggmRedMachine hE D q i j).Coins n) :
+    List.ofFn (ggmRedMachine_coinsEquiv hE D q i j n c) = List.ofFn c := by
+  unfold ggmRedMachine_coinsEquiv
+  rw [Equiv.trans_apply, ← NUPPT.coinsEquivPoly_ofFn (coins_ggmRedMachine hE D q i j) n c]
+  exact (List.ofFn_congr (coinPoly_eval D q n) _).symm
 
 /-- The activation of the reduction machine is the raw function on the layout. -/
 theorem runAt_ggmRedMachine {E : List Bool → List Bool} (hE : PolyTimeComputable E)

@@ -104,6 +104,23 @@ def inAdvice (z : List Bool) : List Bool := pairSndD (pairFstD z)
 /-- The coin slot of a raw input. -/
 def inCoins (z : List Bool) : List Bool := pairSndD z
 
+/-- The defining equation of `layout`:
+`layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r`. -/
+theorem layout_eq (u y α r : List Bool) :
+    layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r := rfl
+
+/-- The defining equation of `inParam`: `inParam z = pairFstD (pairFstD (pairFstD z))`. -/
+theorem inParam_eq (z : List Bool) : inParam z = pairFstD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inArg`: `inArg z = pairSndD (pairFstD (pairFstD z))`. -/
+theorem inArg_eq (z : List Bool) : inArg z = pairSndD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inAdvice`: `inAdvice z = pairSndD (pairFstD z)`. -/
+theorem inAdvice_eq (z : List Bool) : inAdvice z = pairSndD (pairFstD z) := rfl
+
+/-- The defining equation of `inCoins`: `inCoins z = pairSndD z`. -/
+theorem inCoins_eq (z : List Bool) : inCoins z = pairSndD z := rfl
+
 /-- The parameter slot of a layout. -/
 @[simp] theorem inParam_layout (u y α r : List Bool) : inParam (layout u y α r) = u := by
   simp [inParam, layout]
@@ -122,7 +139,9 @@ def inCoins (z : List Bool) : List Bool := pairSndD z
 
 /-- An activation is the output on the layout `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/
 theorem runAtL_eq_output_layout (A : NUPPT) (n : ℕ) (y r : List Bool) :
-    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := rfl
+    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := by
+  rw [runAtL_eq, advInput_eq]
+  rfl
 
 /-- The parameter projection is polynomial-time. -/
 theorem polyTimeComputable_inParam : PolyTimeComputable inParam :=
@@ -215,9 +234,10 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
     (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
       (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
-  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
+    adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
 inventory Claim-26.3(a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
@@ -242,7 +262,7 @@ theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
     (ptc_comp hpost polyTimeComputable_pairSndD)
   refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
   rw [hB, pairSndD_pairEncode]
-  simp [advInput]
+  simp [advInput_eq]
 
 /-- **Parameter change `n ↦ p(n)`** [PS10, §2.1, implicit; inventory Claim-26.3]: for an
 `NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p`
@@ -265,9 +285,10 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
     rw [PolyExpr.eval_subst]
     exact A.advice_length _
   refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
-    rfl, fun hA n => hA _, fun n y r => ?_⟩
+    coins_ofPolyTime _ _ _ _ _, fun hA => (uniform_iff _).2 fun n =>
+      (congrFun (advice_ofPolyTime _ _ _ _ _) n).trans ((uniform_iff A).1 hA _), fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform)
 [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`, `φ` with `φ n ≤ p n`,
@@ -304,9 +325,10 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
     have h₃ := A.adv.eval_mono (hφ n)
     omega
   refine ⟨ofPolyTime hF (A.coins.subst p) _
-    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv, rfl, fun n y r => ?_⟩
+    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, coinLen, layout, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
 
 /-- **Hard-wiring advice** [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`
 and a polynomially bounded family `β n` there is an `NUPPT` `B` with the same coins that
@@ -333,10 +355,10 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
     have h₁ := A.advice_length n
     have h₂ := hβ n
     omega
-  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv, rfl,
-    fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **Extra coins passed as data** [PS10, §2.1, implicit; inventory Claim-26.3(c)]: for an
 `NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins`
@@ -357,10 +379,10 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
     (polyTimeComputable_layout polyTimeComputable_inParam
       (polyTimeComputable_inArg.pairEncode (ptc_comp (polyTimeComputable_pairTakePoly p) hcut))
       polyTimeComputable_inAdvice (ptc_comp (polyTimeComputable_pairDropPoly p) hcut))
-  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length, rfl, rfl,
-    fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
+    coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **Sequential composition with input pass-through and fresh coins** [PS10, §2.1, implicit;
 inventory Claim-26.3(b), (c), (e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT`
@@ -398,12 +420,11 @@ theorem exists_seq (A B : NUPPT) :
     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
   refine ⟨ofPolyTime hF (.add A.coins B.coins) _
-    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, rfl, fun hA hB n => ?_,
-    fun n y r => ?_⟩
-  · show combineAdvice (A.advice n) (B.advice n) = []
-    rw [hA n, hB n, combineAdvice_nil]
+    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, coins_ofPolyTime _ _ _ _ _,
+    fun hA hB => (uniform_iff _).2 fun n => ?_, fun n y r => ?_⟩
+  · rw [advice_ofPolyTime, (uniform_iff A).1 hA n, (uniform_iff B).1 hB n, combineAdvice_nil]
   · rw [runAtL_ofPolyTime]
-    simp [runAtL, advInput, coinLen, layout, inParam, inArg, inAdvice, inCoins]
+    simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
 
 /-- **From "computes with probability one" to FP** [PS10, Definition 24.6; the direction
 "a PPT computing `f` gives a polynomial-time evaluator" behind Deviation 3]: if a uniform
@@ -424,11 +445,11 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
       (ptc_comp (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
   convert hF using 1
   funext z
-  have hz := h (pairFstD z).length (pairSndD z) (fun _ => true)
-  have hadv := hA (pairFstD z).length
-  simp only [runAt, List.ofFn_const] at hz
+  have hz := Computes.runAt_eq A h (pairFstD z).length (pairSndD z) (fun _ => true)
+  have hadv := (uniform_iff A).1 hA (pairFstD z).length
+  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
   rw [← hz]
-  simp [layout, advInput, coinLen, hadv]
+  simp [layout, advInput_eq, coinLen_eq, hadv]
 
 end NUPPT
 

@@ -80,7 +80,12 @@ inductive PolyExpr : Type
 
 namespace PolyExpr
 
-/-- Evaluation of a syntactic polynomial at the parameter `n`, by structural recursion. -/
+/-- Evaluation of a syntactic polynomial at the parameter `n`, by structural recursion.
+
+Evaluation is notation (user ruling 2026-11-07, Q1, extending R-04-4): consumers may read typed
+lengths such as `Fin ((add p q).eval n)` as `Fin (p.eval n + q.eval n)`. It is kept
+semireducible: with `@[reducible]` on this structurally recursive definition `simp` no longer
+finds the `eval_*` lemmas (gate 07 record). -/
 def eval : PolyExpr → ℕ → ℕ
   | const c, _ => c
   | var, n => n

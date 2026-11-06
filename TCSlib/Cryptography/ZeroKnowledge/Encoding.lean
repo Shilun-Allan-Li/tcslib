@@ -232,6 +232,41 @@ def encColoring {n : ℕ} (c : Fin n → Fin 3) : List Bool :=
     let b := (finProdFinEquiv.symm k).2
     if b = 0 then decide ((c i).val / 2 = 1) else decide ((c i).val % 2 = 1)
 
+/-- The defining equation of `encColoring`: bit `k = (i, b)` (`finProdFinEquiv`) of the
+`2n`-bit encoding is `[c i / 2 = 1]` for `b = 0` and `[c i % 2 = 1]` for `b = 1`. -/
+theorem encColoring_eq {n : ℕ} (c : Fin n → Fin 3) :
+    encColoring c = List.ofFn fun k : Fin (n * 2) =>
+      if (finProdFinEquiv.symm k).2 = 0 then decide ((c (finProdFinEquiv.symm k).1).val / 2 = 1)
+      else decide ((c (finProdFinEquiv.symm k).1).val % 2 = 1) := rfl
+
+/-- **The bits of an encoded colouring**: bit `finProdFinEquiv (i, b)` of `encColoring c` is
+`[c i / 2 = 1]` for `b = 0` and `[c i % 2 = 1]` for `b = 1`. -/
+theorem getD_encColoring {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) (b : Fin 2) :
+    (encColoring c).getD (finProdFinEquiv (i, b)) false =
+      if b = 0 then decide ((c i).val / 2 = 1) else decide ((c i).val % 2 = 1) := by
+  have hk : (finProdFinEquiv (i, b) : ℕ) < (List.ofFn fun k : Fin (n * 2) =>
+      if (finProdFinEquiv.symm k).2 = 0 then decide ((c (finProdFinEquiv.symm k).1).val / 2 = 1)
+      else decide ((c (finProdFinEquiv.symm k).1).val % 2 = 1)).length := by
+    rw [List.length_ofFn]
+    exact (finProdFinEquiv (i, b)).isLt
+  rw [encColoring_eq, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hk, Option.getD_some,
+    List.getElem_ofFn]
+  simp only [Fin.eta, Equiv.symm_apply_apply]
+
+/-- Bit `2i` of `encColoring c` is the high bit `[c i / 2 = 1]` of the colour of vertex `i`. -/
+theorem getD_encColoring_two_mul {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) :
+    (encColoring c).getD (2 * i) false = decide ((c i).val / 2 = 1) := by
+  have h := getD_encColoring c i 0
+  rw [finProdFinEquiv_apply_val] at h
+  simpa using h
+
+/-- Bit `2i + 1` of `encColoring c` is the low bit `[c i % 2 = 1]` of the colour of vertex `i`. -/
+theorem getD_encColoring_two_mul_add_one {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) :
+    (encColoring c).getD (2 * i + 1) false = decide ((c i).val % 2 = 1) := by
+  have h := getD_encColoring c i 1
+  rw [finProdFinEquiv_apply_val] at h
+  simpa [Nat.add_comm] using h
+
 /-- The total decoding of a `3`-colouring of `Fin n`: the two bits of vertex `i` are read with
 default `false` and combined modulo `3`. -/
 def decColoring (n : ℕ) (w : List Bool) : Fin n → Fin 3 := fun i =>

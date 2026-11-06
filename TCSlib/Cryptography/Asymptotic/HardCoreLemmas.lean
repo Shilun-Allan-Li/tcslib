@@ -168,6 +168,24 @@ noncomputable def wrap (A : NUPPT) {pre post : List Bool → List Bool}
     (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) :
     (A.wrap hpre hpost β b hβ p).coins = .add p A.coins := rfl
 
+/-- **The coins of the one-call wrapper**: the published equivalence `(A.wrap …).Coins n ≃
+{0,1}^{p(n) + |A's coins at n|}` (data coins, then `A`'s coins; `finCongr` along the coin count). -/
+noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
+    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) :
+    (A.wrap hpre hpost β b hβ p).Coins n ≃ (Fin (p.eval n + A.coinLen n) → Bool) :=
+  Equiv.arrowCongr (finCongr
+    (by rw [coinLen_eq, coins_wrap, PolyExpr.eval_add, coinLen_eq])) (Equiv.refl Bool)
+
+/-- The inverse coin equivalence of the wrapper keeps the coin string:
+`List.ofFn ((wrapCoinsEquiv … n).symm w) = List.ofFn w`. -/
+theorem wrapCoinsEquiv_symm_ofFn (A : NUPPT) {pre post : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
+    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ)
+    (w : Fin (p.eval n + A.coinLen n) → Bool) :
+    List.ofFn ((A.wrapCoinsEquiv hpre hpost β b hβ p n).symm w) = List.ofFn w :=
+  List.ofFn_congr (by rw [coinLen_eq, coins_wrap, PolyExpr.eval_add, coinLen_eq]) _
+
 /-- The untyped activation of the one-call wrapper. -/
 theorem runAtL_wrap (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
@@ -960,6 +978,12 @@ def glPadInvFun (T : TrapdoorCollection) (z : List Bool) : List Bool :=
       (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))) []
       (NUPPT.inCoins z)))
     (pairSndD (pairSndD (NUPPT.inArg z)))
+
+/-- `glPadInvFun T z = ⟨Inv(1^n, ⟨t, y⟩; s), r⟩` on `z = ⟨⟨⟨1^n, ⟨t, ⟨y, r⟩⟩⟩, []⟩, s⟩`. -/
+theorem glPadInvFun_eq (T : TrapdoorCollection) (z : List Bool) : glPadInvFun T z = pairEncode
+    (T.inv.output (NUPPT.layout (NUPPT.inParam z)
+      (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))) []
+      (NUPPT.inCoins z))) (pairSndD (pairSndD (NUPPT.inArg z))) := rfl
 
 /-- The raw trapdoor inverter of the padded collection is polynomial-time. -/
 theorem glPadInvFun_poly (T : TrapdoorCollection) : PolyTimeComputable (glPadInvFun T) :=

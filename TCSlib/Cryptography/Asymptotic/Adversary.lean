@@ -77,6 +77,12 @@ open Complexity Turing Finset
 def decodeFin (ℓ : ℕ) (w : List Bool) : Option (Fin ℓ → Bool) :=
   if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none
 
+/-- The defining equation of `decodeFin`: `decodeFin ℓ w` is `some` of the bits of `w` when
+`|w| = ℓ`, and `none` otherwise. -/
+theorem decodeFin_eq (ℓ : ℕ) (w : List Bool) :
+    decodeFin ℓ w = if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none :=
+  rfl
+
 /-- Pad with `false` or truncate a string to exactly `ℓ` bits (the output convention of
 samplers, where no failure is possible). -/
 def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
@@ -126,6 +132,11 @@ def _root_.Complexity.NUPPT.distinguisher (A : NUPPT) (n m : ℕ) :
 def _root_.Complexity.NUPPT.distinguisherL (A : NUPPT) (n : ℕ) : List Bool → A.Coins n → Bool :=
   fun w r => decide (A.runAt n w r = [true])
 
+/-- The defining equation of `distinguisherL`:
+`A.distinguisherL n w r = decide (A.runAt n w r = [true])`. -/
+theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool)
+    (r : A.Coins n) : A.distinguisherL n w r = decide (A.runAt n w r = [true]) := rfl
+
 /-- `A(1^n, y)` as a predictor of a bit: the same verdict convention as a distinguisher
 [PS10, Definitions 75.2 and 78.3]. -/
 def _root_.Complexity.NUPPT.predictor (A : NUPPT) (n m : ℕ) :
@@ -165,6 +176,13 @@ uniform coins, outputs `some x'` with `f x' = f x` (the typed experiment of
 noncomputable def invProbOpt {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
     (A : β → ρ → Option α) : ℝ :=
   uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
+
+/-- The defining equation of `invProbOpt`:
+`invProbOpt f A = Pr_{(x, r)}[∃ x', A(f x, r) = some x' ∧ f x' = f x]`, over uniform
+`(x, r) ∈ α × ρ`. -/
+theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
+    (A : β → ρ → Option α) :
+    invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
 
 /-- Replacing a failure by any default can only increase the inversion probability: the
 bridge from `invProbOpt` to the concrete `invProb` [Gar26, Definition 2.1]. -/

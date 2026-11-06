@@ -181,8 +181,16 @@ namespace Collection
 /-- The index `i` output by `Gen(1^n; r)`: the first component of `⟨i, t⟩`. -/
 def index (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairFstD (F.gen.runAt n [] r)
 
+/-- The defining equation of `index`: `F.index n r = pairFstD (F.gen.runAt n [] r)`. -/
+theorem index_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
+    F.index n r = pairFstD (F.gen.runAt n [] r) := rfl
+
 /-- The trapdoor `t` output by `Gen(1^n; r)`: the second component [PS10, Definition 56.1 (2)]. -/
 def trap (F : Collection) (n : ℕ) (r : F.gen.Coins n) : List Bool := pairSndD (F.gen.runAt n [] r)
+
+/-- The defining equation of `trap`: `F.trap n r = pairSndD (F.gen.runAt n [] r)`. -/
+theorem trap_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
+    F.trap n r = pairSndD (F.gen.runAt n [] r) := rfl
 
 /-- The domain sampler is within `δ n` of uniform on `D_i` for every index output by
 `Gen(1^n)`: the decoded output of `Sample(1^n, i; s)` on uniform coins `s` is `StatClose` to
@@ -193,6 +201,11 @@ def SampleClose (F : Collection) (δ : ℕ → ℝ) : Prop :=
   ∀ n (r : F.gen.Coins n),
     StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
       (fun x : F.D (F.index n r) => some x) (δ n)
+
+/-- The defining property of `SampleClose` (its body: closeness of every decoded sampler). -/
+theorem sampleClose_iff (F : Collection) (δ : ℕ → ℝ) : F.SampleClose δ ↔ ∀ n (r : F.gen.Coins n),
+    StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
+      (fun x : F.D (F.index n r) => some x) (δ n) := Iff.rfl
 
 /-- The inversion experiment of [PS10, Definition 41.1 (4)]:
 `Pr[i ← Gen(1^n); x ← D_i; y ← f_i(x) : f_i(A(1^n, i, y)) = y]`: the average over the
@@ -207,6 +220,12 @@ noncomputable def invProbAt (F : Collection) (A : NUPPT) (n : ℕ) : ℝ :=
       ∃ x', F.decD (F.index n r)
           (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧
         F.f (F.index n r) x' = F.f (F.index n r) z.1
+
+/-- The defining equation of `invProbAt` (its body: the averaged inversion probability). -/
+theorem invProbAt_eq (F : Collection) (A : NUPPT) (n : ℕ) :
+    F.invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n =>
+      ∃ x', F.decD (F.index n r) (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2)
+        = some x' ∧ F.f (F.index n r) x' = F.f (F.index n r) z.1 := rfl
 
 /-- A *collection of one-way functions* [PS10, Definition 41.1]: the sampler is negligibly
 close to uniform (clause (2)) and every non-uniform PPT inverts with negligible probability
@@ -233,6 +252,20 @@ def HardCore (F : Collection) (h : ∀ i, F.D i → Bool) : Prop :=
       uprob fun z : F.D (F.index n r) × A.Coins n =>
         A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 = h (F.index n r) z.1)
       ≤ 1 / 2 + ε n
+
+/-- The defining property of `HardCore`: a polynomial-time evaluator `H ⟨i, encD_i x⟩ = [h i x]`,
+and every `A` predicts `h_i(x)` from `⟨i, f_i(x)⟩` with probability `≤ 1/2 + ε(n)`,
+`ε` negligible. -/
+theorem hardCore_iff (F : Collection) (h : ∀ i, F.D i → Bool) :
+    F.HardCore h ↔
+      (∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+          ∀ i x, H (pairEncode i (F.encD i x)) = [h i x]) ∧
+        ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+          uexp (fun r : F.gen.Coins n =>
+            uprob fun z : F.D (F.index n r) × A.Coins n =>
+              A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 =
+                h (F.index n r) z.1)
+            ≤ 1 / 2 + ε n := Iff.rfl
 
 /-! ### Unfolding and sanity lemmas -/
 
@@ -311,6 +344,10 @@ structure PermCollection extends Collection where
 is one-way. -/
 def PermCollection.OneWay (P : PermCollection) : Prop := P.toCollection.OneWay
 
+/-- The defining property of `PermCollection.OneWay`: `P.OneWay ↔ P.toCollection.OneWay`. -/
+theorem PermCollection.oneWay_iff (P : PermCollection) : P.OneWay ↔ P.toCollection.OneWay :=
+  Iff.rfl
+
 /-- `f_i` is injective on `D_i`: the composite of the injective encoding and a bijection. -/
 theorem PermCollection.f_injective (P : PermCollection) (i : List Bool) :
     Function.Injective (P.f i) := by
@@ -346,6 +383,21 @@ structure TrapdoorCollection extends PermCollection where
 [PS10, Definition 56.1 (5)]: the underlying collection is one-way. **Deviation:** the text's
 bound "`≤ e(k)`" is `ε(n)` (source error). -/
 def TrapdoorCollection.OneWay (T : TrapdoorCollection) : Prop := T.toCollection.OneWay
+
+/-- The defining property of `TrapdoorCollection.OneWay`: `T.OneWay ↔ T.toCollection.OneWay`. -/
+theorem TrapdoorCollection.oneWay_iff (T : TrapdoorCollection) :
+    T.OneWay ↔ T.toCollection.OneWay := Iff.rfl
+
+/-- **The domain of the underlying collection** (ruling "published domain equivalence",
+2026-11-06): `T.toCollection.D i ≃ T.D i`, the identity (`T.toCollection` is the parent
+projection, so its fields are those of `T`). A generic bridge for the concrete trapdoor
+collections, whose own domain equivalences start from `T.D i`. -/
+def TrapdoorCollection.toCollection_domEquiv (T : TrapdoorCollection) (i : List Bool) :
+    T.toCollection.D i ≃ T.D i := Equiv.refl _
+
+/-- The domain bridge of a trapdoor collection is the identity. -/
+theorem TrapdoorCollection.toCollection_domEquiv_apply (T : TrapdoorCollection) (i : List Bool)
+    (x : T.toCollection.D i) : T.toCollection_domEquiv i x = x := rfl
 
 /-- **The trapdoor inverter wins the inversion game on every `y`** (sanity for
 [PS10, Definition 56.1 (6)], decode level; the string level is `TrapdoorCollection.eval_inv`):
@@ -393,7 +445,7 @@ private theorem toCollection_gen_runAt (n : ℕ)
       (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const [])) (.const 0)).runAt n [] r =
       pairEncode (List.replicate n true) [] := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inParam, NUPPT.advInput]
+  simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- The sampler of `toCollection` returns its coins (stated on the machine so that the
 definition can discharge `sample_spec`). -/
@@ -401,7 +453,7 @@ private theorem toCollection_sample_runAt (n : ℕ) (i : List Bool)
     (s : (NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen).Coins n) :
     (NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen).runAt n i s = List.ofFn s := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inCoins]
+  simp [NUPPT.inCoins_eq]
 
 /-- **The collection of a single function family** [PS10, Theorem 42.2 ⇐]: indices `1^n`
 (`Gen(1^n) = ⟨1^n, []⟩`, no coins), domains `D_i = {0,1}^{inLen |i|}` encoded by `List.ofFn`
@@ -430,6 +482,7 @@ noncomputable def toCollection : Collection where
       polyTimeComputable_pairSndD)
   eval_spec i x := by
     simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+    rw [← NUPPT.advInput_eq]
     exact hspec i.length x
   sample_spec n r s := by
     rw [toCollection_sample_runAt]
@@ -437,21 +490,67 @@ noncomputable def toCollection : Collection where
     revert s
     rw [toCollection_gen_runAt, pairFstD_pairEncode, List.length_replicate]
     intro s
-    exact ⟨s, decodeFin_ofFn s, hspec n s⟩
+    have hs := NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn NUPPT.polyTimeComputable_inCoins 𝓕.inLen n s
+    refine ⟨NUPPT.coinsEquiv_ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen n s, ?_, ?_⟩
+    · rw [← hs]
+      exact decodeFin_ofFn _
+    · rw [← hs, ← NUPPT.advInput_eq]
+      exact hspec n _
+
+/-- **The published domain of `toCollection`** (ruling "published domain equivalence",
+2026-11-06): `D_i ≃ {0,1}^{inLen |i|}`, the identity on the definition. Consumers read the
+domain of `𝓕.toCollection F hF hspec` through it, not by reducing the field `D`. -/
+def toCollection_domEquiv (i : List Bool) :
+    (𝓕.toCollection F hF hspec).D i ≃ (Fin (𝓕.inLen.eval i.length) → Bool) := Equiv.refl _
+
+/-- The domain equivalence of `toCollection` is the identity on the definition. -/
+theorem toCollection_domEquiv_apply (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    𝓕.toCollection_domEquiv F hF hspec i x = x := rfl
+
+/-- The encoding of `toCollection` through its domain equivalence `e`:
+`encD_i x = List.ofFn (e x)`. -/
+theorem toCollection_encD (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    (𝓕.toCollection F hF hspec).encD i x = List.ofFn (𝓕.toCollection_domEquiv F hF hspec i x) := rfl
+
+/-- The decoder of `toCollection` through its domain equivalence `e`:
+`decD_i w = e⁻¹ <$> decodeFin (inLen |i|) w`. -/
+theorem toCollection_decD (i w : List Bool) :
+    (𝓕.toCollection F hF hspec).decD i w =
+      (decodeFin (𝓕.inLen.eval i.length) w).map (𝓕.toCollection_domEquiv F hF hspec i).symm := by
+  show decodeFin (𝓕.inLen.eval i.length) w = _
+  cases decodeFin (𝓕.inLen.eval i.length) w <;> rfl
+
+/-- The function of `toCollection` through its domain equivalence `e`:
+`f_i x = List.ofFn (f_{|i|} (e x))`. -/
+theorem toCollection_f (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    (𝓕.toCollection F hF hspec).f i x =
+      List.ofFn (𝓕.f i.length (𝓕.toCollection_domEquiv F hF hspec i x)) := rfl
+
+/-- The index generator of `toCollection`: the coinless machine `1^n ↦ ⟨1^n, []⟩`. -/
+theorem toCollection_gen : (𝓕.toCollection F hF hspec).gen = NUPPT.ofPolyTimeUniform
+    (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const [])) (.const 0) := rfl
+
+/-- The sampler of `toCollection`: the machine returning its `inLen n` coins. -/
+theorem toCollection_sample_eq : (𝓕.toCollection F hF hspec).sample =
+    NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen := rfl
+
+/-- The evaluator of `toCollection`: `F` on `⟨1^{|i|}, x⟩` for the input `⟨i, x⟩`. -/
+theorem toCollection_eval (z : List Bool) : (𝓕.toCollection F hF hspec).eval z =
+    F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)) := rfl
 
 /-- The index generated by `toCollection` is `1^n`. -/
 theorem toCollection_index (n : ℕ) (r : (𝓕.toCollection F hF hspec).gen.Coins n) :
     (𝓕.toCollection F hF hspec).index n r = List.replicate n true := by
   unfold Collection.index toCollection
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inParam, NUPPT.advInput]
+  simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- The sampler of `toCollection` returns its coins. -/
 theorem toCollection_sample (n : ℕ) (i : List Bool) (s : (𝓕.toCollection F hF hspec).sample.Coins n) :
     (𝓕.toCollection F hF hspec).sample.runAt n i s = List.ofFn s := by
   unfold toCollection
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [NUPPT.inCoins]
+  simp [NUPPT.inCoins_eq]
 
 /-- The sampler of `toCollection` is exactly uniform (`δ = 0`). -/
 theorem toCollection_sampleClose : (𝓕.toCollection F hF hspec).SampleClose fun _ => 0 := by
@@ -501,11 +600,16 @@ theorem toCollection_invProbAt (A : NUPPT) (n : ℕ) :
   subst hi
   rw [toCollection_index] at hidx
   rw [invProbAt_eq_uprob]
+  refine Eq.trans ?_ (uprob_comp_equiv ((𝓕.toCollection_domEquiv F hF hspec i).prodCongr
+    (A.withIndexParam_coinsEquiv i.length).symm) _)
   refine OneWay.uprob_congr fun z => ?_
+  obtain ⟨x, ρ⟩ := z
   show (∃ x', decodeFin (𝓕.inLen.eval i.length)
-      (A.runAt i.length (pairEncode i (List.ofFn (𝓕.f i.length z.1))) z.2) = some x' ∧
-      List.ofFn (𝓕.f i.length x') = List.ofFn (𝓕.f i.length z.1)) ↔ _
-  simp only [NUPPT.withIndexParam_runAt, hidx, decodeFin_eq_some_iff, List.ofFn_inj]
+      (A.runAt i.length (pairEncode i (List.ofFn (𝓕.f i.length x))) ρ) = some x' ∧
+      List.ofFn (𝓕.f i.length x') = List.ofFn (𝓕.f i.length x)) ↔ _
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, NUPPT.withIndexParam_runAt,
+    Equiv.apply_symm_apply, toCollection_domEquiv_apply, hidx, decodeFin_eq_some_iff,
+    List.ofFn_inj]
 
 /-- **A strong one-way function is a collection of one-way functions**
 [PS10, Theorem 42.2 ⇐], explicit form: for every strong one-way family `𝓕` with evaluator
@@ -552,14 +656,12 @@ theorem FunFamily.not_toCollection_oneWay_id (F : List Bool → List Bool)
     (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg) (.const 0)
   have hB : ∀ n y (r : B.withIndexParam.Coins n), B.withIndexParam.runAt n y r = y := by
     intro n y r
-    rw [NUPPT.withIndexParam_runAt, NUPPT.runAt_eq]
+    rw [NUPPT.withIndexParam_runAt, NUPPT.runAt_eq, NUPPT.withIndexParam_coinsEquiv_ofFn]
     show (NUPPT.ofPolyTimeUniform (f := fun z => pairSndD (NUPPT.inArg z)) _ (.const 0)).runAtL n
       (pairEncode (List.replicate n true) y) (List.ofFn r) = y
     rw [NUPPT.runAtL_ofPolyTimeUniform]
-    show pairSndD (NUPPT.inArg (NUPPT.layout (List.replicate n true)
-      (pairEncode (List.replicate n true) y) [] (List.ofFn r))) = y
-    rw [NUPPT.inArg_layout, pairSndD_pairEncode]
-  obtain ⟨n₀, hn₀⟩ := h.hard B 0
+    rw [NUPPT.advInput_eq, ← NUPPT.layout_eq, NUPPT.inArg_layout, pairSndD_pairEncode]
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard B) 0
   have := hn₀ n₀ le_rfl
   simp [toCollection_invProbAt, invProbAt_ofString_id_eq_one hB] at this
 
@@ -590,10 +692,35 @@ def EvalSampled : Prop :=
     G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
       G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
 
+/-- The defining property of `EvalSampled`: for every `n`, `r`, `s`, the sampled string
+`w = Sample(1^n, i; s)` at `i = index n r` has `decD i w = some x` and `eval ⟨i, w⟩ = f_i(x)`. -/
+theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x,
+    G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
+      G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x :=
+  Iff.rfl
+
 /-- **Every collection evaluates honestly on sampled strings**: `EvalSampled` is the field
 `sample_spec` read through `index` (repair of the run-3 audit, P3-1; previously an
 underivable hypothesis). -/
 theorem evalSampled : G.EvalSampled := G.sample_spec
+
+/-- **The input of `g` as the coins of `Gen` and `Sample`**: the published equivalence
+`{0,1}^{gen.coins(n) + sample.coins(n)} ≃ {0,1}^{|Gen's coins| + |Sample's coins|}` (`finCongr` on
+the coin lengths, `NUPPT.coinLen_eq`), through which `owfFamily`'s input is cut by `splitCoins`. -/
+def owfCoinsEquiv (n : ℕ) :
+    (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃
+      (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) :=
+  Equiv.arrowCongr (finCongr (by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string: `List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r`. -/
+theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) :
+    List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]) r).symm
+
+/-- The inverse coin equivalence keeps the coin string. -/
+theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) :
+    List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z := by
+  rw [← G.owfCoinsEquiv_ofFn n, Equiv.apply_symm_apply]
 
 /-- **The function `g(r₁, r₂) = ⟨i, f_i(x)⟩`** of [PS10, Theorem 42.2 ⇒, proof idea] as a
 family: input length `|r₁| + |r₂|` (the coins of `Gen` and `Sample`), output length `L`, the
@@ -601,13 +728,14 @@ raw string followed by the marker `1` and zero-padded to `L n` bits (recovered b
 `splitAtLastTrue`).
 
 **Deviation:** explicit output length `L` (D9) and marker padding for a typed output;
-`OutLenBound L` holds for a suitable `L` (`exists_outLenBound`). -/
+`OutLenBound L` holds for a suitable `L` (`exists_outLenBound`). The input is read as the coins
+`(r₁, r₂)` through `owfCoinsEquiv` and `splitCoins`. -/
 def owfFamily (L : PolyExpr) : FunFamily where
   inLen := .add G.gen.coins G.sample.coins
   outLen := L
   f n r := padFin (L.eval n)
-    (G.owfRaw n (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).1
-      (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).2 ++ [true])
+    (G.owfRaw n (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n r)).1
+      (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n r)).2 ++ [true])
 
 /-- **The output of `g` has polynomial length**: a syntactic polynomial `L` with
 `|⟨i, eval ⟨i, w⟩⟩| < L(n)` for all coins, from the time bounds of `Gen`, `Sample` and `eval`.
@@ -706,12 +834,12 @@ private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
     convert h using 1
     funext z
     simp
-  refine ⟨_, hF, fun n x => ?_⟩
+  refine (FunFamily.easy_iff _).2 ⟨_, hF, fun n x => ?_⟩
   have hx : List.ofFn x =
-      List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) x).1 ++
-        List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) x).2 := by
-    rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply]
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, owfFamily]
+      List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).1 ++
+        List.ofFn (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) (G.owfCoinsEquiv n x)).2 := by
+    rw [← ofFn_splitCoins_symm, Prod.mk.eta, Equiv.symm_apply_apply, owfCoinsEquiv_ofFn]
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, owfFamily]
   rw [hx, owfRawStr_eq, ← ofFn_padFin_eq_padStr, List.length_replicate]
 
 /-! ### The collection inverter built from an inverter of `g` -/
@@ -775,17 +903,23 @@ private noncomputable def collInverter (L : PolyExpr) (A' : NUPPT) : NUPPT :=
 
 /-- The activation of the collection inverter: pad, call `A'`, drop `gen.coins n` bits,
 sample at the first component of the argument (`Sample` is uniform). -/
+private theorem coins_collInverter (L : PolyExpr) (A' : NUPPT) :
+    (G.collInverter L A').coins = A'.coins := by
+  unfold collInverter
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
 private theorem collInverter_runAt (L : PolyExpr) (A' : NUPPT) (n : ℕ) (y : List Bool)
-    (ρ : A'.Coins n) :
+    (ρ : (G.collInverter L A').Coins n) :
     (G.collInverter L A').runAt n y ρ =
       G.sample.runAtL n (pairFstD y)
-        ((A'.runAt n (padStr L (List.replicate n true) (y ++ [true])) ρ).drop (G.gen.coinLen n)) := by
-  have h := NUPPT.runAtL_ofPolyTime (G.collInvRaw_poly L A') A'.coins A'.adv A'.advice
-    A'.advice_length n y (List.ofFn ρ)
-  rw [NUPPT.runAt_eq]
-  refine h.trans ?_
-  simp [collInvRaw, NUPPT.runAtL, NUPPT.runAt, NUPPT.advInput, NUPPT.layout, NUPPT.inParam,
-    NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins, NUPPT.coinLen, G.sample_uniform n]
+        ((A'.runAt n (padStr L (List.replicate n true) (y ++ [true]))
+          (NUPPT.coinsCongr (G.coins_collInverter L A') n ρ)).drop (G.gen.coinLen n)) := by
+  rw [NUPPT.runAt_eq, NUPPT.runAt_coinsCongr]
+  unfold collInverter
+  rw [NUPPT.runAtL_ofPolyTime]
+  simp only [collInvRaw, NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq,
+    NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.coinLen_eq,
+    G.sample_uniform.advice_eq n, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- Honest evaluation on sampled strings at an index known to equal `i`
 (`Collection.evalSampled` transported along `index n r₁ = i`). -/
@@ -811,12 +945,16 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
     (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) (ρ : A'.Coins n)
     (z' : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
     (hz' : A'.runAt n (List.ofFn ((G.owfFamily L).f n
-      ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) ρ = List.ofFn z')
-    (hg : (G.owfFamily L).f n z' =
-      (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))) :
+        ((G.owfCoinsEquiv n).symm
+          ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))))) ρ = List.ofFn z')
+    (hg : (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z') =
+      (G.owfFamily L).f n
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) :
     ∃ x, G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) r₂) = some x ∧
       ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
-          (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ) = some x' ∧
+          (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+          ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
         G.f (G.index n r₁) x' = G.f (G.index n r₁) x := by
   obtain ⟨x, hx1, hx2⟩ := G.evalSampled n r₁ r₂
   refine ⟨x, hx1, ?_⟩
@@ -837,12 +975,14 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
     simp only [owfRaw, pairSndD_pairEncode] at h
     rw [hidx] at h
     rw [h, hx2]
-  have hout : (G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ =
+  have hout : (G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ) =
       G.sample.runAt n (G.index n r₁) (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) z').2 := by
-    rw [collInverter_runAt, pairFstD_pairEncode, ← hraw]
+    rw [collInverter_runAt, Equiv.apply_symm_apply, pairFstD_pairEncode, ← hraw]
     have hpad : padStr L (List.replicate n true) (G.owfRaw n r₁ r₂ ++ [true]) =
         List.ofFn ((G.owfFamily L).f n
-          ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))) := by
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))) := by
       simp only [owfFamily, Equiv.apply_symm_apply]
       rw [← ofFn_padFin_eq_padStr, List.length_replicate]
     rw [hpad, hz', NUPPT.runAt_eq, ← ofFn_splitCoins_snd]
@@ -863,35 +1003,52 @@ moves from the sampled `x` to the ideal uniform `x` at the cost `δ n`; on `some
 `P` is the collection event (`uprob_congr`). -/
 private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ : ℕ → ℝ}
     (hδ : G.SampleClose δ) (n : ℕ) (r₁ : G.gen.Coins n) :
-    uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
+    uprob (fun v : G.sample.Coins n × A'.Coins n =>
+      ∃ w : Fin ((G.owfFamily L).inLen.eval n) → Bool,
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
-        ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) v.2 = List.ofFn z' ∧
-      (G.owfFamily L).f n z' =
-        (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))) ≤
-    uprob (fun z : G.D (G.index n r₁) × A'.Coins n => ∃ x', G.decD (G.index n r₁)
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
+              List.ofFn w ∧
+      (G.owfFamily L).f n w =
+        (G.owfFamily L).f n
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
+    uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x', G.decD (G.index n r₁)
         ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) + δ n := by
-  let P : Option (G.D (G.index n r₁)) → A'.Coins n → Prop := fun o ρ => ∃ x, o = some x ∧
+  let Pev : Option (G.D (G.index n r₁)) → A'.Coins n → Prop := fun o ρ => ∃ x, o = some x ∧
     ∃ x', G.decD (G.index n r₁) ((G.collInverter L A').runAt n
-      (pairEncode (G.index n r₁) (G.f (G.index n r₁) x)) ρ) = some x' ∧
+      (pairEncode (G.index n r₁) (G.f (G.index n r₁) x))
+      ((NUPPT.coinsCongr (G.coins_collInverter L A') n).symm ρ)) = some x' ∧
       G.f (G.index n r₁) x' = G.f (G.index n r₁) x
-  have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod P)).2
-  have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n => ∃ z',
+  have hclose := (abs_le.1 ((hδ n r₁).abs_uprob_sub_le_prod Pev)).2
+  have h1 : uprob (fun v : G.sample.Coins n × A'.Coins n =>
+      ∃ w : Fin ((G.owfFamily L).inLen.eval n) → Bool,
       A'.runAt n (List.ofFn ((G.owfFamily L).f n
-        ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) v.2 = List.ofFn z' ∧
-      (G.owfFamily L).f n z' =
-        (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))) ≤
+          ((G.owfCoinsEquiv n).symm
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))))) v.2 =
+              List.ofFn w ∧
+      (G.owfFamily L).f n w =
+        (G.owfFamily L).f n
+            ((G.owfCoinsEquiv n).symm
+              ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))) ≤
       uprob (fun v : G.sample.Coins n × A'.Coins n =>
-        P (G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) v.1)) v.2) := by
+        Pev (G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) v.1)) v.2) := by
     refine uprob_mono fun v hv => ?_
-    obtain ⟨z', hz', hg⟩ := hv
-    exact G.collInverter_success L hL A' n r₁ v.1 v.2 z' hz' hg
-  have h2 : uprob (fun z : G.D (G.index n r₁) × A'.Coins n => P (some z.1) z.2) =
-      uprob (fun z : G.D (G.index n r₁) × A'.Coins n => ∃ x', G.decD (G.index n r₁)
-        ((G.collInverter L A').runAt n (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
+    obtain ⟨w, hw, hg⟩ := hv
+    exact G.collInverter_success L hL A' n r₁ v.1 v.2 (G.owfCoinsEquiv n w)
+      (by rw [owfCoinsEquiv_ofFn]; exact hw) (by rw [Equiv.symm_apply_apply]; exact hg)
+  have h2 : uprob (fun z : G.D (G.index n r₁) × A'.Coins n => Pev (some z.1) z.2) =
+      uprob (fun z : G.D (G.index n r₁) × (G.collInverter L A').Coins n => ∃ x',
+        G.decD (G.index n r₁) ((G.collInverter L A').runAt n
+          (pairEncode (G.index n r₁) (G.f (G.index n r₁) z.1)) z.2) =
           some x' ∧ G.f (G.index n r₁) x' = G.f (G.index n r₁) z.1) := by
+    refine Eq.trans ?_ (uprob_comp_equiv ((Equiv.refl (G.D (G.index n r₁))).prodCongr
+      (NUPPT.coinsCongr (G.coins_collInverter L A') n).symm) _)
     refine OneWay.uprob_congr fun z => ?_
-    simp only [P, Option.some.injEq, exists_eq_left']
+    simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,
+      Equiv.refl_apply]
+    exact Iff.rfl
   linarith
 
 /-- **The inversion probability of `g` is at most that of the collection plus the sampling
@@ -906,9 +1063,10 @@ private theorem invProbAt_owfFamily_le (L : PolyExpr) (hL : G.OutLenBound L) (A'
   haveI : Nonempty (G.gen.Coins n) := ⟨fun _ => false⟩
   rw [FunFamily.invProbAt_eq_uprob]
   let e : G.gen.Coins n × (G.sample.Coins n × A'.Coins n) ≃
-      (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) × A'.Coins n :=
+      (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) × A'.Coins n :=
     (Equiv.prodAssoc _ _ _).symm.trans
-      (Equiv.prodCongr (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (Equiv.refl _))
+      (Equiv.prodCongr ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm.trans
+        (G.owfCoinsEquiv n).symm) (Equiv.refl _))
   rw [← uprob_comp_equiv e, uprob_prod]
   unfold Collection.invProbAt
   rw [← OneWay.uexp_const (α := G.gen.Coins n) (δ n), ← OneWay.uexp_add]

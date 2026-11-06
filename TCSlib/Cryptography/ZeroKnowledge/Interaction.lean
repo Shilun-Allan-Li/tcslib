@@ -122,6 +122,9 @@ namespace Strategy
 /-- The number of random bits of a strategy at common-input length `n`. -/
 def coinLen (S : Strategy) (n : ℕ) : ℕ := S.coins.eval n
 
+/-- The defining equation of `coinLen`: `S.coinLen n = S.coins.eval n`. -/
+theorem coinLen_eq (S : Strategy) (n : ℕ) : S.coinLen n = S.coins.eval n := rfl
+
 /-- The random tape of a strategy at common-input length `n`: `coinLen n` uniform bits. -/
 abbrev Coins (S : Strategy) (n : ℕ) : Type := Fin (S.coinLen n) → Bool
 
@@ -172,6 +175,12 @@ systems require it, ruling G3-3 of gate 03). -/
 def Efficient (S : Strategy) : Prop :=
   ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
     ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
+
+/-- The defining property of `Efficient`: `S.Efficient` iff some uniform `NUPPT` `A` with
+`S.coins = A.coins` computes every next message: `S.next x z r hist = (ofNUPPT A).next …`. -/
+theorem efficient_iff (S : Strategy) :
+    S.Efficient ↔ ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
+      ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist := Iff.rfl
 
 /-- Non-vacuity of `Strategy.Efficient`: the strategy of a uniform machine is efficient. -/
 theorem ofNUPPT_efficient (A : NUPPT) (hA : A.Uniform) : (ofNUPPT A).Efficient :=
@@ -280,6 +289,12 @@ distinguishers and produced by simulators in the zero-knowledge definitions). -/
 def View.encode (v : View) : List Bool :=
   pairEncode (pairEncode v.x v.z) (pairEncode v.r (Strategy.encodeMsgs v.received))
 
+/-- The defining equation of `View.encode` on a constructed view:
+`View.encode ⟨x, z, r, msgs⟩ = ⟨⟨x, z⟩, ⟨r, encodeMsgs msgs⟩⟩`. -/
+theorem View.encode_mk (x z r : List Bool) (received : List (List Bool)) :
+    View.encode ⟨x, z, r, received⟩ =
+      pairEncode (pairEncode x z) (pairEncode r (Strategy.encodeMsgs received)) := rfl
+
 /-- The output of a party on a view [PS10, §4.4, `out(v)`] (Def-115.d): its next-message
 function on the complete history. -/
 def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
@@ -352,6 +367,17 @@ def withV (π : Protocol) (V' : Strategy) : Protocol := { π with V := V' }
 /-- The verifier of `π.withV V'` is `V'`. -/
 @[simp] theorem withV_V (π : Protocol) (V' : Strategy) : (π.withV V').V = V' := rfl
 
+/-- **The verifier's tape in `π.withV V'` is a tape of `V'`**: the published equivalence
+`(π.withV V').V.Coins n ≃ V'.Coins n` (the identity on the definition), through which a statement
+reads the verifier coins of an execution of `π.withV V'` as `V'`'s. -/
+def withV_vCoinsEquiv (π : Protocol) (V' : Strategy) (n : ℕ) : (π.withV V').V.Coins n ≃ V'.Coins n :=
+  Equiv.refl _
+
+/-- The verifier-coin equivalence of `π.withV V'` keeps the tape:
+`List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r`. -/
+theorem withV_vCoinsEquiv_ofFn (π : Protocol) (V' : Strategy) (n : ℕ) (r : (π.withV V').V.Coins n) :
+    List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r := rfl
+
 /-- The prover of `π.withV V'` is the prover of `π`. -/
 @[simp] theorem withV_P (π : Protocol) (V' : Strategy) : (π.withV V').P = π.P := rfl
 
@@ -373,6 +399,12 @@ def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.E
     List (List Bool) × List (List Bool) :=
   exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 
+/-- The defining equation of `transcriptWith`: the execution `exec` on the two tapes. -/
+theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (r : π.ExecCoins P' x) : π.transcriptWith P' x y z r =
+      exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length) :=
+  rfl
+
 /-- The transcript of the honest execution `P(x, y) ↔ V(x, z)` (Def-115.c). -/
 def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
     List (List Bool) × List (List Bool) :=
@@ -386,6 +418,10 @@ last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
 def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
   π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
 
+/-- The defining equation of `outV`: the verifier's next message on the received messages. -/
+theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
+    π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2 := rfl
+
 /-- The honest prover's output in `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` (Def-115.d). -/
 def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=
   π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1
@@ -394,6 +430,15 @@ def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bo
 (Def-115.b). -/
 def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+
+/-- The view of the verifier `V'` in `π.withV V'`: the common input, `z`, `V'`'s tape and the
+messages `V'` received in the execution of `π.P` against `V'` (the analogue of `outV_withV`). -/
+theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool)
+    (r : (π.withV V').ExecCoins (π.withV V').P x) :
+    (π.withV V').viewV x y z r =
+      ⟨x, z, List.ofFn r.2,
+        (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+          (π.rounds.eval x.length)).2⟩ := rfl
 
 /-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
 (Def-115.b). -/

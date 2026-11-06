@@ -662,6 +662,11 @@ theorem statClose_samplePrime (n T : ℕ) (hn : 2 ≤ n) {d : Fin n → Bool}
 `bitsToNat`. -/
 def listToNat (w : List Bool) : ℕ := w.foldl (fun a c => 2 * a + if c then 1 else 0) 0
 
+/-- The defining equation of `listToNat`:
+`listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0`. -/
+theorem listToNat_eq (w : List Bool) :
+    listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0 := rfl
+
 /-- `bitsToNat` is `listToNat` of the list of bits. -/
 theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
   rfl
@@ -681,6 +686,16 @@ def chunk (T n : ℕ) (r : Fin (T * n) → Bool) : Fin T → Fin n → Bool := f
     calc (t : ℕ) * n + i < (t : ℕ) * n + n := by omega
       _ = ((t : ℕ) + 1) * n := by ring
       _ ≤ T * n := Nat.mul_le_mul_right n ht⟩
+
+/-- The defining equation of `chunk`: bit `i` of block `t` is the coin at position `t·n + i`,
+i.e. `chunk T n r t i = r (finProdFinEquiv (t, i))` (`chunk` is `r` read through the
+row-major bijection `Fin T × Fin n ≃ Fin (T · n)`). -/
+theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) :
+    chunk T n r t i = r (finProdFinEquiv (t, i)) := by
+  unfold chunk
+  congr 1
+  ext
+  simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
 
 /-! #### The `SamplePrime` state loop -/
 
@@ -767,8 +782,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       firstHit E xs = some (xs t)
   | 0, _, t, _, _ => t.elim0
   | T + 1, xs, t, ht, hfirst => by
-    unfold firstHit
-    rw [List.finRange_succ, List.findSome?_cons]
+    rw [firstHit_eq, List.finRange_succ, List.findSome?_cons]
     rcases Fin.eq_zero_or_eq_succ t with rfl | ⟨t', rfl⟩
     · simp [ht]
     · have h0 : ¬ E (xs 0) := hfirst 0 (Fin.succ_pos t')
@@ -776,7 +790,7 @@ private theorem firstHit_eq_some_of_first {α : Type*} (E : α → Prop) [Decida
       rw [List.findSome?_map]
       have ih := firstHit_eq_some_of_first E (fun s => xs s.succ) t' ht
         (fun s hs => hfirst s.succ (Fin.succ_lt_succ_iff.2 hs))
-      unfold firstHit at ih
+      rw [firstHit_eq] at ih
       exact ih
 
 /-- Along the orbit from `⟨1^n, rs⟩`, the acceptance test at round `i` tests block `i`. -/
@@ -894,14 +908,14 @@ theorem exists_samplePrime_nuppt
   have hpre : PolyTimeComputable fun z => pairEncode (NUPPT.inParam z) (NUPPT.inCoins z) :=
     NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
   refine ⟨NUPPT.ofPolyTimeUniform (hF.comp hpre) samplePrimeCoins,
-    NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun n r => ?_⟩
+    NUPPT.ofPolyTimeUniform_uniform _ _, NUPPT.coins_ofPolyTimeUniform _ _, fun n r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   have h1 : NUPPT.inParam (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.replicate n true := by
-    simp [NUPPT.inParam, NUPPT.advInput]
+    simp [NUPPT.inParam_eq, NUPPT.advInput_eq]
   have h2 : NUPPT.inCoins (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.ofFn r := by
-    simp [NUPPT.inCoins]
+    simp [NUPPT.inCoins_eq]
   simp only [Function.comp_apply, h1, h2]
   exact spFind_eq n r
 

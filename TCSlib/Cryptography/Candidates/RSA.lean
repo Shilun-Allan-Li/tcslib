@@ -117,15 +117,21 @@ roots modulo a random `N = pq` with negligible probability.
 module docstring for the distribution and the input/output conventions. -/
 def RSAAssumption : Prop := ∀ A : NUPPT, Negligible fun n => rsaProb A n
 
+/-- Unfolding: the RSA assumption is the negligibility of every `rsaProb`. -/
+theorem rsaAssumption_iff : RSAAssumption ↔ ∀ A : NUPPT, Negligible fun n => rsaProb A n :=
+  Iff.rfl
+
 /-- The RSA probability is nonnegative. -/
 theorem rsaProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ rsaProb A n := by
-  unfold rsaProb uexp
+  unfold rsaProb
+  rw [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun z _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The RSA probability is at most one. -/
 theorem rsaProb_le_one (A : NUPPT) (n : ℕ) : rsaProb A n ≤ 1 := by
   rcases isEmpty_or_nonempty (DistinctPrimes n) with h | h
-  · unfold rsaProb uexp
+  · unfold rsaProb
+    rw [uexp_def]
     simp
   · unfold rsaProb
     exact (OneWay.uexp_mono fun z => uprob_le_one _).trans (OneWay.uexp_const 1).le
@@ -133,7 +139,8 @@ theorem rsaProb_le_one (A : NUPPT) (n : ℕ) : rsaProb A n ≤ 1 := by
 /-- At the degenerate parameters `n < 2` the RSA experiment is empty. -/
 theorem rsaProb_eq_zero_of_lt (A : NUPPT) {n : ℕ} (hn : n < 2) : rsaProb A n = 0 := by
   haveI := DistinctPrimes.isEmpty_of_lt hn
-  unfold rsaProb uexp
+  unfold rsaProb
+  rw [uexp_def]
   simp
 
 /-! ## The RSA permutation [PS10, Theorem 54.3] -/
@@ -188,6 +195,10 @@ def rsaE (i : List Bool) : ℕ := listToNat (pairSndD i)
 which `x ↦ x^e` permutes `Z_N^*` [PS10, Theorem 54.3]. (Not efficiently decidable from the
 index — the generator only ever outputs valid indices.) -/
 def RSAValid (i : List Bool) : Prop := rsaN i ≠ 0 ∧ Nat.Coprime (rsaE i) (Nat.totient (rsaN i))
+
+/-- Unfolding `RSAValid`: `⟨N, e⟩` is valid iff `N ≠ 0` and `gcd(e, Φ(N)) = 1`. -/
+theorem rsaValid_iff (i : List Bool) :
+    RSAValid i ↔ rsaN i ≠ 0 ∧ Nat.Coprime (rsaE i) (Nat.totient (rsaN i)) := Iff.rfl
 
 instance : DecidablePred RSAValid := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
@@ -335,13 +346,23 @@ theorem rsaEnc_of_rsaDec {i w : List Bool} {x : (ZMod (rsaMod i))ˣ} (h : rsaDec
 length of any modulus `N < 2^{2 max(n,2)}`). -/
 def rsaBlock : PolyExpr := .mul (.const 2) (.add .var (.const 2))
 
+/-- `rsaBlock` evaluates to `B(n) = 2(n + 2)`. -/
+theorem eval_rsaBlock (n : ℕ) : rsaBlock.eval n = 2 * (n + 2) := rfl
+
 /-- The number of trials `T(n) = (4n + 8) n` of the rejection samplers: with acceptance rate
 at least `1/(2 ⌈log₂ N⌉) ≥ 1/(4n + 8)` per trial (`NumberTheory.le_totient_mul_log_succ`,
 C9), the failure probability is at most `e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). -/
 def rsaTrials : PolyExpr := .mul (.add (.mul (.const 4) .var) (.const 8)) .var
 
+/-- `rsaTrials` evaluates to `T(n) = (4n + 8) n`. -/
+theorem eval_rsaTrials (n : ℕ) : rsaTrials.eval n = (4 * n + 8) * n := rfl
+
 /-- The coins of the domain sampler: `T(n)` blocks of `B(n)` bits. -/
 def rsaSampleCoins : PolyExpr := .mul rsaTrials rsaBlock
+
+/-- `rsaSampleCoins` evaluates to `T(n) · B(n)`. -/
+theorem eval_rsaSampleCoins (n : ℕ) : rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n :=
+  rfl
 
 /-- The coins of the generator: two `SamplePrime` runs and one unit sampler. -/
 def rsaGenCoins : PolyExpr := .add (.mul (.const 2) samplePrimeCoins) rsaSampleCoins
@@ -356,10 +377,47 @@ Repair (run-3 audit P7-6): an instance of the shared sampler (closeness:
 def sampleUnitL (N k B T : ℕ) (r : List Bool) : Option ℕ :=
   rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r
 
+/-- The defining equation of `sampleUnitL`: block rejection sampling with the test
+`v < N ∧ gcd(v, N) = 1`, i.e.
+`sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r`. -/
+theorem sampleUnitL_eq (N k B T : ℕ) (r : List Bool) :
+    sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r := rfl
+
 /-- A sampled value is below `N` and coprime to `N`. -/
 theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUnitL N k B T r = some v) :
     v < N ∧ Nat.Coprime v N :=
   (rejectBlocksL_spec h).1
+
+/-- **The unit sampler is close to uniform** [PS10, Theorem 53.2, "sample a random element from
+`Z*_{Φ(N)}`" and "the set `D_i` is also easy to sample"]: for a modulus `N ≥ 1` of bit length
+`k = Nat.size N ≤ B(n)`, the sampler `sampleUnitL N k B(n) T(n)` on `T(n) · B(n)` uniform coins,
+with the fallback `1 mod N`, outputs a number within statistical distance `e^{-n}` of the
+residue of a uniform unit of `Z_N`. Shared statement S3 of the factoring fill (decision D1 (A)):
+used by `rsaCollection_sampleClose`, `rsaCollection_invProbAt_le` (step (i), at the modulus
+`Φ(N)`) and the Rabin samplers and reductions (`Rabin.lean`).
+
+**Proof sketch.** (1) `sampleUnitL N k B T` is `rejectBlocksL` with the test
+`v < N ∧ Nat.Coprime v N` (`sampleUnitL_eq`); apply `statClose_rejectBlocksL` with `k ≤ B(n)`
+(`hk`), `T = T(n)` and the default `d = 1 % N`, which passes the test (`Nat.mod_lt`; `1` is
+coprime to `N`, and for `N = 1` the default `0` is coprime to `1`) and is below `2^k`
+(`d < N < 2^k`, `Nat.lt_size_self`). It gives closeness `(1 − Pr_{v < 2^k}[v < N ∧ gcd(v, N) = 1])^{T(n)}` to the uniform element of
+`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1}` read as a number. (2) Transport that target to
+`x ↦ (x : ZMod N).val` on `(ZMod N)ˣ` along the value-preserving bijection
+`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1} ≃ (ZMod N)ˣ` (`ZMod.unitOfCoprime`; inverse by
+`ZMod.val_lt`, `ZMod.val_coe_unit_coprime`, and `N < 2^k`; `StatClose.comp_equiv_right`).
+(3) The acceptance probability is `Φ(N)/2^k` (`uprob_eq_card_filter` and the same bijection).
+`2^k ≤ 2N` by the minimality of `Nat.size` (`Nat.size_le`: `N < 2^{k−1}` would give
+`Nat.size N ≤ k − 1`), and `N ≤ Φ(N) · (log₂ N + 1) ≤ Φ(N) · k`
+(`NumberTheory.le_totient_mul_log_succ`; `2^{log₂ N} ≤ N < 2^k`, `Nat.pow_log_le_self`), so
+`Φ(N)/2^k ≥ 1/(2k) ≥ 1/(4n + 8)` by `hk` and `B(n) = 2(n + 2)` (`eval_rsaBlock`). (4) Hence the
+distance is at most `(1 − 1/(4n + 8))^{(4n + 8) n} ≤ e^{-n}` (`eval_rsaTrials`,
+`one_sub_one_div_pow_le_exp_neg`); conclude by `StatClose.mono`. -/
+theorem statClose_sampleUnitL (n N : ℕ) [NeZero N] (hk : Nat.size N ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        (sampleUnitL N (Nat.size N) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
+          (1 % N))
+      (fun x : (ZMod N)ˣ => (x : ZMod N).val) (Real.exp (-(n : ℝ))) := by
+  sorry
 
 /-- The string function of the domain sampler on the modulus numeral `w` at parameter `n`
 with coins `r`: a unit modulo `N = listToNat w` by rejection (`sampleUnitL` with the bit
@@ -369,6 +427,14 @@ def unitSampleStr (w : List Bool) (n : ℕ) (r : List Bool) : List Bool :=
   natToList w.length
     ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n) r).getD
       (1 % listToNat w))
+
+/-- The defining equation of `unitSampleStr`: the sampled unit modulo `N = listToNat w`
+(fallback `1 mod N`) as a numeral of the width of `w`,
+`unitSampleStr w n r = ⟦(sampleUnitL N (Nat.size N) B(n) T(n) r).getD (1 % N)⟧_{|w|}`. -/
+theorem unitSampleStr_eq (w : List Bool) (n : ℕ) (r : List Bool) :
+    unitSampleStr w n r = natToList w.length
+      ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n)
+        r).getD (1 % listToNat w)) := rfl
 
 /-- The parameters output by the RSA generator at parameter `m`: distinct primes `p, q ∈ Π_m`,
 an exponent `e < Φ(N)` coprime to `Φ(N)` and its inverse `d < Φ(N)`, `ed ≡ 1 (mod Φ(N))`
@@ -506,7 +572,7 @@ theorem rsaGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold rsaGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rsaGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rsaGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The string function of the domain sampler on the raw layout `⟨⟨⟨1^n, ⟨N, e⟩⟩, α⟩, r⟩`:
 `unitSampleStr` on the modulus numeral. -/
@@ -564,7 +630,7 @@ theorem rsaInv_runAt (H : ArithmeticFP) (n : ℕ) (t y : List Bool) (s : (rsaInv
   rw [NUPPT.runAt_eq]
   unfold rsaInv
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rsaInvRaw, NUPPT.inArg, NUPPT.advInput]
+  simp [rsaInvRaw, NUPPT.inArg_eq, NUPPT.advInput_eq]
 
 /-- **The trapdoor inverter decodes to `f⁻¹_{N,e}(y) = y^d`** at every generated index
 (the clause `inv_spec` of `TrapdoorCollection`, [PS10, Theorem 57.2, "`e·d = 1 mod Φ(N)`"]).
@@ -661,14 +727,113 @@ noncomputable def rsaTrapdoor (H : ArithmeticFP) : TrapdoorCollection where
   inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   inv_spec := rsaInv_spec H
 
+/-- **The domain of the RSA trapdoor collection is `Z_N^*`**: the published equivalence
+`(rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ` (the identity). It is the interface to the domain:
+elements of `D i` are read through it (`rsaTrapdoor_f`, `rsaTrapdoor_encD`, `rsaTrapdoor_decD`,
+`rsaTrapdoor_perm`), so no statement needs the collection to reduce at the type level, and
+uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+`StatClose.comp_equiv_right`). -/
+def rsaTrapdoor_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rsaTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : (ZMod (rsaMod i))ˣ → Prop) :
+    uprob (fun x : (rsaTrapdoor H).D i => P (rsaTrapdoor_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the RSA trapdoor collection is `rsaF`, read through the domain equivalence:
+`(rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x)`. -/
+theorem rsaTrapdoor_f (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x) := rfl
+
+/-- The encoder of the RSA trapdoor collection is `rsaEnc`, read through the domain
+equivalence: `(rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x)`. -/
+theorem rsaTrapdoor_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x) := rfl
+
+/-- The decoder of the RSA trapdoor collection is `rsaDec`, carried back along the domain
+equivalence: `(rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm`. -/
+theorem rsaTrapdoor_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm := by
+  show rsaDec i w = _
+  cases rsaDec i w <;> rfl
+
+/-- The permutation of the RSA trapdoor collection is `rsaPermAt` (`x ↦ x^e`), read through the
+domain equivalence: with `φ = rsaTrapdoor_domEquiv H i`,
+`(rsaTrapdoor H).perm i x = φ.symm (rsaPermAt i (φ x))`. -/
+theorem rsaTrapdoor_perm (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).perm i x =
+      (rsaTrapdoor_domEquiv H i).symm (rsaPermAt i (rsaTrapdoor_domEquiv H i x)) := rfl
+
+/-- The index generator of the RSA trapdoor collection is `rsaGen H`. -/
+theorem rsaTrapdoor_gen (H : ArithmeticFP) : (rsaTrapdoor H).gen = rsaGen H := rfl
+
+/-- The domain sampler of the RSA trapdoor collection is `rsaSampler H`. -/
+theorem rsaTrapdoor_sample (H : ArithmeticFP) : (rsaTrapdoor H).sample = rsaSampler H := rfl
+
+/-- The evaluator of the RSA trapdoor collection is `rsaEval`. -/
+theorem rsaTrapdoor_eval (H : ArithmeticFP) : (rsaTrapdoor H).eval = rsaEval := rfl
+
+/-- The trapdoor inverter of the RSA trapdoor collection is `rsaInv H`. -/
+theorem rsaTrapdoor_inv (H : ArithmeticFP) : (rsaTrapdoor H).inv = rsaInv H := rfl
+
 /-- **The RSA collection** [PS10, Theorem 53.2]: the collection underlying `rsaTrapdoor`. -/
 noncomputable def rsaCollection (H : ArithmeticFP) : Collection := (rsaTrapdoor H).toCollection
+
+/-- **The domain of the RSA collection is `Z_N^*`**: the published equivalence
+`(rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ`, that of the underlying trapdoor collection
+(`rsaTrapdoor_domEquiv`); the interface to the domain (`rsaCollection_f`,
+`rsaCollection_encD`, `rsaCollection_decD`). -/
+def rsaCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ :=
+  rsaTrapdoor_domEquiv H i
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaCollection_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rsaCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : (ZMod (rsaMod i))ˣ → Prop) :
+    uprob (fun x : (rsaCollection H).D i => P (rsaCollection_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the RSA collection is `rsaF`, read through the domain equivalence:
+`(rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x)`. -/
+theorem rsaCollection_f (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x) := rsaTrapdoor_f H i x
+
+/-- The encoder of the RSA collection is `rsaEnc`, read through the domain equivalence:
+`(rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x)`. -/
+theorem rsaCollection_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x) := rsaTrapdoor_encD H i x
+
+/-- The decoder of the RSA collection is `rsaDec`, carried back along the domain equivalence:
+`(rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm`. -/
+theorem rsaCollection_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm :=
+  rsaTrapdoor_decD H i w
+
+/-- The index generator of the RSA collection is `rsaGen H`. -/
+theorem rsaCollection_gen (H : ArithmeticFP) : (rsaCollection H).gen = rsaGen H := rfl
+
+/-- The domain sampler of the RSA collection is `rsaSampler H`. -/
+theorem rsaCollection_sample (H : ArithmeticFP) : (rsaCollection H).sample = rsaSampler H := rfl
+
+/-- The evaluator of the RSA collection is `rsaEval`. -/
+theorem rsaCollection_eval (H : ArithmeticFP) : (rsaCollection H).eval = rsaEval := rfl
 
 /-- The index generated by the RSA collection is `⟨N, e⟩` of `rsaGenParams`. -/
 theorem rsaCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rsaCollection H).gen.Coins n) :
     (rsaCollection H).index n r = rsaIndexOf _ (rsaGenParams n (List.ofFn r)) := by
-  show pairFstD ((rsaGen H).runAt n [] r) = _
-  rw [rsaGen_runAt, rsaGenOut, pairFstD_pairEncode]
+  have key : ∀ (g : NUPPT), g = rsaGen H → ∀ r : g.Coins n,
+      pairFstD (g.runAt n [] r) = rsaIndexOf _ (rsaGenParams n (List.ofFn r)) := by
+    rintro g rfl r
+    rw [rsaGen_runAt, rsaGenOut, pairFstD_pairEncode]
+  rw [Collection.index_eq]
+  exact key _ (rsaCollection_gen H) r
 
 /-- The statistical error of the honest samplers at parameter `n`:
 `2 · 2^{-n}` (two `SamplePrime` failures), `2n/2^n` (the diagonal `p = q`) and `e^{-n}`
@@ -732,17 +897,33 @@ noncomputable def rsaBreaker (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `rsaBreaker` has the coins of `A`. -/
-@[simp] theorem coins_rsaBreaker (A : NUPPT) : (rsaBreaker A).coins = A.coins := rfl
+@[simp] theorem coins_rsaBreaker (A : NUPPT) : (rsaBreaker A).coins = A.coins := by
+  unfold rsaBreaker
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- The activation of `rsaBreaker`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = A(1^n, ⟨⟨N, e⟩, y⟩; r)`. -/
+/-- **`rsaBreaker` runs on the coins of `A`**: the published equivalence
+`(rsaBreaker A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_rsaBreaker`). -/
+noncomputable def rsaBreaker_coinsEquiv (A : NUPPT) (n : ℕ) : (rsaBreaker A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr (coins_rsaBreaker A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rsaBreaker_coinsEquiv A n r) = List.ofFn r`. -/
+theorem rsaBreaker_coinsEquiv_ofFn (A : NUPPT) (n : ℕ)
+    (r : (rsaBreaker A).Coins n) :
+    List.ofFn (rsaBreaker_coinsEquiv A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rsaBreaker A) n r
+
+/-- The activation of `rsaBreaker`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = A(1^n, ⟨⟨N, e⟩, y⟩; φ r)`, the
+coins read through `φ = rsaBreaker_coinsEquiv A n`. -/
 theorem rsaBreaker_runAt (A : NUPPT) (n : ℕ) (N e y : List Bool) (r : (rsaBreaker A).Coins n) :
     (rsaBreaker A).runAt n (pairEncode N (pairEncode e y)) r =
-      A.runAt n (pairEncode (pairEncode N e) y) r := by
-  rw [NUPPT.runAt_eq]
+      A.runAt n (pairEncode (pairEncode N e) y) (rsaBreaker_coinsEquiv A n r) := by
+  rw [NUPPT.runAt_eq, rsaBreaker_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rsaBreaker
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- **Inverting the RSA collection breaks the RSA assumption** [PS10, proof of Theorem 53.2]:
 for `n ≥ 2`, the inversion probability of `A` against the RSA collection is at most the RSA
@@ -752,10 +933,11 @@ probability of `rsaBreaker A` plus the statistical error of the generator.
 is `Z_N^*` (`rsaMod_indexOf`), `f_{N,e}(x)` is the numeral of `(x^e).val` (`rsaF_perm`,
 `rsaEnc`), and a decoded answer `x'` with `f x' = f x` has `x' = x` (`PermCollection.f_injective`),
 so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of `x`", which implies the RSA
-event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`, `decodeFin_ofFn`,
-`bitsToNat_natToBits`, `val_units_pow`). Since `x ↦ x^e` pushes uniform to uniform
-(`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the inner probability equals the RSA
-inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]` (over `y` and `A`'s coins).
+event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`,
+`rsaBreaker_coinsEquiv`, `decodeFin_ofFn`, `bitsToNat_natToBits`, `val_units_pow`). Since
+`x ↦ x^e` pushes uniform to uniform (`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the
+inner probability equals the RSA inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]`
+(over `y` and `A`'s coins).
 The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
 uniform product: the comparison is a conditional expectation over `z`. Split the generator's
 coins into the two prime segments and the exponent segment (`rsaGenParams`, `uexp_prod`,
@@ -849,7 +1031,7 @@ theorem rsaFromFactorStep_correct {n : ℕ} (z : DistinctPrimes n) {s : List Boo
   have hv : (y : ZMod (z.p * z.q)).val ^ d % (z.p * z.q) < 2 ^ (2 * n) :=
     (Nat.mod_lt _ (NeZero.pos _)).trans z.mul_lt
   refine ⟨natToBits (2 * n) ((y : ZMod (z.p * z.q)).val ^ d % (z.p * z.q)), ?_, ?_⟩
-  · rw [rsaFromFactorStep, if_pos hpq.1, natToList]
+  · rw [rsaFromFactorStep, if_pos hpq.1, natToList_eq]
     exact decodeFin_ofFn _
   · rw [bitsToNat_natToBits hv, ZMod.natCast_mod, Nat.cast_pow, ZMod.natCast_zmod_val,
       ← Units.val_pow_eq_pow_val, ← Units.val_pow_eq_pow_val, ← pow_mul, mul_comm d e, pow_mul]
@@ -885,25 +1067,43 @@ noncomputable def rsaFromFactorer (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
 
 /-- `rsaFromFactorer` has the coins of `A`. -/
 @[simp] theorem coins_rsaFromFactorer (H : ArithmeticFP) (A : NUPPT) :
-    (rsaFromFactorer H A).coins = A.coins := rfl
+    (rsaFromFactorer H A).coins = A.coins := by
+  unfold rsaFromFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- The activation of `A'`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = rsaFromFactorStep n (A(1^n, N; r)) N e y`. -/
+/-- **`A'` runs on the coins of `A`**: the published equivalence
+`(rsaFromFactorer H A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_rsaFromFactorer`). -/
+noncomputable def rsaFromFactorer_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
+    (rsaFromFactorer H A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr (coins_rsaFromFactorer H A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rsaFromFactorer_coinsEquiv H A n r) = List.ofFn r`. -/
+theorem rsaFromFactorer_coinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+    (r : (rsaFromFactorer H A).Coins n) :
+    List.ofFn (rsaFromFactorer_coinsEquiv H A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rsaFromFactorer H A) n r
+
+/-- The activation of `A'`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = rsaFromFactorStep n (A(1^n, N; φ r)) N e y`,
+the coins read through `φ = rsaFromFactorer_coinsEquiv H A n`. -/
 theorem rsaFromFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N e y : List Bool)
     (r : (rsaFromFactorer H A).Coins n) :
     (rsaFromFactorer H A).runAt n (pairEncode N (pairEncode e y)) r =
-      rsaFromFactorStep n (A.runAt n N r) (listToNat N) (listToNat e) (listToNat y) := by
-  rw [NUPPT.runAt_eq]
+      rsaFromFactorStep n (A.runAt n N (rsaFromFactorer_coinsEquiv H A n r)) (listToNat N)
+        (listToNat e) (listToNat y) := by
+  rw [NUPPT.runAt_eq, rsaFromFactorer_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rsaFromFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rsaFromFactorRaw, NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, rsaFromFactorRaw, List.length_replicate]
 
 /-- **A factorer gives an RSA breaker with the same probability** [PS10, proof of
 Theorem 55.2]: `Pr[A factors N] ≤ Pr[A' breaks RSA]`.
 
 **Proof sketch.** `rsaProb` averages over `z` the probability over `(e, y, r)`; for fixed
 `z` and `r`, if `A(1^n, N; r)` reads as `p` or `q` then `A'` succeeds for *every* `(e, y)`
-(`rsaFromFactorer_runAt`, `rsaFromFactorStep_correct`, `rsaInput`,
+(`rsaFromFactorer_runAt`, `rsaFromFactorer_coinsEquiv`, `rsaFromFactorStep_correct`, `rsaInput`,
 `listToNat_natToList`), so `Pr_{e,y,r}[A' wins | z] ≥ Pr_r[A factors | z]` (`uprob_mono`,
 `uprob_fst`-style marginalization with the coordinates reordered by `uprob_comp_equiv`);
 and `factorProb A n = uexp_z Pr_r[A factors | z]` (`uprob_prod`). -/

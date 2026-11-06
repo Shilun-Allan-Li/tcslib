@@ -56,8 +56,9 @@ construction `NUPPT.ofPartial` and is off every critical path).
 
 * `Complexity.NUPPT.runLit_eq_runAt`, `NUPPT.runLit_eq_runAtL` — the literal activation
   unfolds to the activation at parameter `|y|`.
-* `Complexity.NUPPT.Uniform.advice_eq`, `NUPPT.Uniform.runAtL_eq`, `NUPPT.Uniform.runAt_eq`,
-  `NUPPT.ofPolyTime_uniform` — uniform machines run on `⟨⟨⟨1^n, y⟩, []⟩, r⟩`.
+* `Complexity.NUPPT.Uniform.runAtL_eq`, `NUPPT.Uniform.runAt_eq`, `NUPPT.ofPolyTime_uniform` —
+  uniform machines run on `⟨⟨⟨1^n, y⟩, []⟩, r⟩` (the readings `NUPPT.uniform_iff` and
+  `NUPPT.Uniform.advice_eq` are beside `NUPPT.Uniform` in `Randomized/PPT.lean`).
 * `Complexity.NUPPT.polyTimeComputable_runAtL` — at a fixed parameter the activation is a
   deterministic polynomial-time function of `(y, r)`, with constants that depend on `n` (not a
   uniform size bound on the "`A_n`" of the machine-sequence form).
@@ -90,9 +91,6 @@ theorem runLit_eq_runAt (y : List Bool) (r : A.Coins y.length) :
 theorem runLit_eq_runAtL (y : List Bool) (r : A.Coins y.length) :
     A.runLit y r = A.runAtL y.length y (List.ofFn r) := rfl
 
-/-- A uniform machine has empty advice at every parameter. -/
-theorem Uniform.advice_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) : A.advice n = [] := h n
-
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩`: the advice slot is empty. -/
 theorem Uniform.runAtL_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y r : List Bool) :
     A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) []) r) := by
@@ -106,10 +104,8 @@ theorem Uniform.runAt_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y : List Bool) (
 /-- `ofPolyTime` with an everywhere-empty advice function is uniform. -/
 theorem ofPolyTime_uniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
-    (h : ∀ n, advice n = []) : (ofPolyTime hf coins adv advice hα).Uniform := h
-
-/-- Uniformity is the conjunction of the advice clauses (definitional unfolding). -/
-theorem uniform_iff : A.Uniform ↔ ∀ n, A.advice n = [] := Iff.rfl
+    (h : ∀ n, advice n = []) : (ofPolyTime hf coins adv advice hα).Uniform :=
+  (uniform_iff _).2 fun n => (congrFun (advice_ofPolyTime hf coins adv advice hα) n).trans (h n)
 
 /-- The literal activation of a uniform polynomial-time machine is `f` on
 `⟨⟨⟨1^{|y|}, y⟩, []⟩, r⟩`. -/

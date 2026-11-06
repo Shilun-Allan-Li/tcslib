@@ -74,6 +74,11 @@ variable {α β ρ : Type*} [Fintype α] [DecidableEq β] [Fintype ρ] {q : ℕ}
 def prodFun (f : α → β) (q : ℕ) (xs : Fin q → α) : Fin q → β :=
   fun i => f (xs i)
 
+omit [Fintype α] [DecidableEq β] in
+/-- The defining equation of `prodFun`: `prodFun f q xs i = f (xs i)`. -/
+theorem prodFun_apply (f : α → β) (q : ℕ) (xs : Fin q → α) (i : Fin q) :
+    prodFun f q xs i = f (xs i) := rfl
+
 /-- One iteration of the inverter of [Gar26, Figure 2.2] on challenge `y`, with coins
 `c = (i, xs, r)`: plant `y` at position `i` of `(f(x₁), …, f(x_q))`, call `B` with coins
 `r`, and return the `i`-th component of its answer. (The test `f(xᵢ') = y` is made by
@@ -84,6 +89,13 @@ sampling `i ∈ [q]` and `q` inputs. -/
 def yaoTry (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (y : β)
     (c : Fin q × (Fin q → α) × ρ) : α :=
   B (Function.update (prodFun f q c.2.1) c.1 y) c.2.2 c.1
+
+omit [Fintype α] [DecidableEq β] [Fintype ρ] in
+/-- The defining equation of `yaoTry`: with coins `c = (i, xs, r)`,
+`yaoTry f B y c = B ((f(x₁), …, f(x_q))[i ↦ y]) r i`. -/
+theorem yaoTry_eq (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (y : β)
+    (c : Fin q × (Fin q → α) × ρ) :
+    yaoTry f B y c = B (Function.update (prodFun f q c.2.1) c.1 y) c.2.2 c.1 := rfl
 
 /-- The inverter `A` of [Gar26, Figure 2.2], repeated `T` times with independent coins: run
 `yaoTry` for `t = 0, …, T - 1` and return the first answer that is a preimage of `y`, or

@@ -110,6 +110,10 @@ Assumption holds", restricted to `p ≡ q ≡ 3 (mod 4)`]: every non-uniform PPT
 uniform Blum modulus with negligible probability. -/
 def BlumFactoringAssumption : Prop := ∀ A : NUPPT, Negligible fun n => blumFactorProb A n
 
+/-- Unfolding: the Blum factoring assumption is the negligibility of every `blumFactorProb`. -/
+theorem blumFactoringAssumption_iff :
+    BlumFactoringAssumption ↔ ∀ A : NUPPT, Negligible fun n => blumFactorProb A n := Iff.rfl
+
 /-- **Density of Blum primes** (explicit hypothesis, decision log "Rabin/RSA scope"):
 `2^n ≤ 4n · #{p < 2^n prime, p ≡ 3 (mod 4)}` for `n ≥ 2`, the analogue of
 [PS10, Claim 33.1] for primes `≡ 3 (mod 4)` (true by Dirichlet's theorem with error terms,
@@ -288,15 +292,27 @@ def smallDistinctPrimes (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab
       _ ≤ 2 ^ max m 3 := Nat.pow_le_pow_right (by norm_num) (le_max_right _ _)
   ⟨(⟨⟨a, lt_of_lt_of_le ha8 h8⟩, ha⟩, ⟨⟨b, lt_of_lt_of_le hb8 h8⟩, hb⟩), hab⟩
 
+/-- The first prime of `smallDistinctPrimes m ha hb hab ha8 hb8` is `a`. -/
+theorem smallDistinctPrimes_p (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : a ≠ b)
+    (ha8 : a < 8) (hb8 : b < 8) : (smallDistinctPrimes m ha hb hab ha8 hb8).p = a := by
+  rw [DistinctPrimes.p_eq]
+  rfl
+
+/-- The second prime of `smallDistinctPrimes m ha hb hab ha8 hb8` is `b`. -/
+theorem smallDistinctPrimes_q (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : a ≠ b)
+    (ha8 : a < 8) (hb8 : b < 8) : (smallDistinctPrimes m ha hb hab ha8 hb8).q = b := by
+  rw [DistinctPrimes.q_eq]
+  rfl
+
 /-- The fallback `(3, 5)` of the odd generator. -/
 def oddDefault (m : ℕ) : RabinParams (· ≠ 2) (max m 3) :=
   ⟨smallDistinctPrimes m Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num),
-    (by decide : (3 : ℕ) ≠ 2), (by decide : (5 : ℕ) ≠ 2)⟩
+    by rw [smallDistinctPrimes_p]; decide, by rw [smallDistinctPrimes_q]; decide⟩
 
 /-- The fallback `(3, 7)` of the Blum generator. -/
 def blumDefault (m : ℕ) : RabinParams (· % 4 = 3) (max m 3) :=
   ⟨smallDistinctPrimes m Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
-    (by norm_num), (by decide : 3 % 4 = 3), (by decide : 7 % 4 = 3)⟩
+    (by norm_num), by rw [smallDistinctPrimes_p], by rw [smallDistinctPrimes_q]⟩
 
 /-- **The computation of a Rabin generator** at parameter `m` (primes from `Π_{max m 3}`):
 two restricted `SamplePrime` runs on the two halves of the coins (fallback primes: the
@@ -308,7 +324,8 @@ def rabinGenParams (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinPara
   let p := listToNat (samplePrimePL P (max m 3) (dflt m).z.p (r.take L))
   let q := listToNat (samplePrimePL P (max m 3) (dflt m).z.q ((r.drop L).take L))
   if h : p.Prime ∧ q.Prime ∧ p ≠ q ∧ p < 2 ^ max m 3 ∧ q < 2 ^ max m 3 ∧ P p ∧ P q then
-    ⟨⟨(⟨⟨p, h.2.2.2.1⟩, h.1⟩, ⟨⟨q, h.2.2.2.2.1⟩, h.2.1⟩), h.2.2.1⟩, h.2.2.2.2.2.1, h.2.2.2.2.2.2⟩
+    ⟨⟨(⟨⟨p, h.2.2.2.1⟩, h.1⟩, ⟨⟨q, h.2.2.2.2.1⟩, h.2.1⟩), h.2.2.1⟩,
+      by rw [DistinctPrimes.p_eq]; exact h.2.2.2.2.2.1, by rw [DistinctPrimes.q_eq]; exact h.2.2.2.2.2.2⟩
   else dflt m
 
 /-- The index `N = pq` as a `2m`-bit numeral. -/
@@ -365,7 +382,7 @@ theorem oddGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (oddGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold oddGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rabinGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The activation of the Blum generator. -/
 theorem blumGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n) :
@@ -373,7 +390,7 @@ theorem blumGen_runAt (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold blumGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [rabinGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The modulus read from a Rabin index is `N`. -/
 @[simp] theorem listToNat_rabinIndexOf {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) :
@@ -428,7 +445,7 @@ def rabinEval (z : List Bool) : List Bool :=
 /-- The evaluator computes `rabinF` on encoded elements. -/
 theorem rabinEval_spec (i : List Bool) (x : (ZMod (rabinMod i))ˣ) :
     rabinEval (pairEncode i (rabinEnc i x)) = rabinF i x := by
-  simp [rabinEval, rabinF, listToNat]
+  simp [rabinEval, rabinF, listToNat_eq]
 
 /-- The evaluator is polynomial-time given modular exponentiation. -/
 theorem polyTimeComputable_rabinEval (H : ArithmeticFP) : PolyTimeComputable rabinEval :=
@@ -489,6 +506,52 @@ noncomputable def rabinCollection (H : ArithmeticFP) : Collection where
   eval_poly := polyTimeComputable_rabinEval H
   eval_spec := rabinEval_spec
   sample_spec := rabinSampler_spec H
+
+/-- **The domain of the Rabin collection is `Z_N^*`**: the published equivalence
+`(rabinCollection H).D i ≃ (ZMod (rabinMod i))ˣ` (the identity). It is the interface to the
+domain: elements of `D i` are read through it (`rabinCollection_f`, `rabinCollection_encD`,
+`rabinCollection_decD`), so no statement needs the collection to reduce at the type level, and
+uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+`StatClose.comp_equiv_right`). -/
+def rabinCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rabinCollection H).D i ≃ (ZMod (rabinMod i))ˣ :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinCollection_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rabinCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : (ZMod (rabinMod i))ˣ → Prop) :
+    uprob (fun x : (rabinCollection H).D i => P (rabinCollection_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the Rabin collection is `rabinF`, read through the domain equivalence:
+`(rabinCollection H).f i x = rabinF i (rabinCollection_domEquiv H i x)`. -/
+theorem rabinCollection_f (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
+    (rabinCollection H).f i x = rabinF i (rabinCollection_domEquiv H i x) := rfl
+
+/-- The encoder of the Rabin collection is `rabinEnc`, read through the domain equivalence:
+`(rabinCollection H).encD i x = rabinEnc i (rabinCollection_domEquiv H i x)`. -/
+theorem rabinCollection_encD (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
+    (rabinCollection H).encD i x = rabinEnc i (rabinCollection_domEquiv H i x) := rfl
+
+/-- The decoder of the Rabin collection is `rabinDec`, carried back along the domain
+equivalence:
+`(rabinCollection H).decD i w = (rabinDec i w).map (rabinCollection_domEquiv H i).symm`. -/
+theorem rabinCollection_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rabinCollection H).decD i w = (rabinDec i w).map (rabinCollection_domEquiv H i).symm := by
+  show rabinDec i w = _
+  cases rabinDec i w <;> rfl
+
+/-- The index generator of the Rabin collection is `oddGen H`. -/
+theorem rabinCollection_gen (H : ArithmeticFP) : (rabinCollection H).gen = oddGen H := rfl
+
+/-- The domain sampler of the Rabin collection is `rabinSampler H`. -/
+theorem rabinCollection_sample (H : ArithmeticFP) : (rabinCollection H).sample = rabinSampler H :=
+  rfl
+
+/-- The evaluator of the Rabin collection is `rabinEval`. -/
+theorem rabinCollection_eval (H : ArithmeticFP) : (rabinCollection H).eval = rabinEval := rfl
 
 /-- The index generated by the Rabin collection is the numeral of `N`. -/
 theorem rabinCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rabinCollection H).gen.Coins n) :
@@ -586,8 +649,8 @@ theorem rabinFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N : List B
   rw [NUPPT.runAt_eq]
   unfold rabinFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rabinFactorRaw, NUPPT.runAtL, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp [rabinFactorRaw, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **Inverting the Rabin collection factors** [PS10, Theorem 61.8 ⇒, Algorithm 62.9]: for
 `n ≥ 3`, the inversion probability of `A` against the Rabin collection is at most twice the
@@ -638,6 +701,12 @@ theorem rabinCollection_oneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
 def BlumValid (i : List Bool) : Prop :=
   ∃ p ∈ Finset.range (listToNat i), ∃ q ∈ Finset.range (listToNat i),
     p.Prime ∧ q.Prime ∧ p ≠ q ∧ p % 4 = 3 ∧ q % 4 = 3 ∧ listToNat i = p * q
+
+/-- Unfolding `BlumValid`: `i` is a valid Blum index iff it reads as `N = pq` with `p ≠ q`
+primes below `N`, both `≡ 3 (mod 4)`. -/
+theorem blumValid_iff (i : List Bool) :
+    BlumValid i ↔ ∃ p ∈ Finset.range (listToNat i), ∃ q ∈ Finset.range (listToNat i),
+      p.Prime ∧ q.Prime ∧ p ≠ q ∧ p % 4 = 3 ∧ q % 4 = 3 ∧ listToNat i = p * q := Iff.rfl
 
 instance : DecidablePred BlumValid := fun i => by unfold BlumValid; infer_instance
 
@@ -734,7 +803,7 @@ def blumF (i : List Bool) (x : QR (blumMod i)) : List Bool :=
 /-- The evaluator `rabinEval` computes `blumF` on encoded residues. -/
 theorem blumEval_spec (i : List Bool) (x : QR (blumMod i)) :
     rabinEval (pairEncode i (blumEnc i x)) = blumF i x := by
-  simp [rabinEval, blumF, listToNat]
+  simp [rabinEval, blumF, listToNat_eq]
 
 /-- The permutation of `D_N = QR_N`: squaring [PS10, Theorem 63.10 (1), Claim-63.1] for a
 valid Blum index, the identity of the one-element domain otherwise. -/
@@ -876,6 +945,65 @@ noncomputable def rabinBlumTrapdoor (H : ArithmeticFP) : TrapdoorCollection wher
   inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   inv_spec := blumInv_spec H
 
+/-- **The domain of the Blum Rabin collection is `QR_N`**: the published equivalence
+`(rabinBlumTrapdoor H).D i ≃ QR (blumMod i)` (the identity). It is the interface to the
+domain: elements of `D i` are read through it (`rabinBlumTrapdoor_f`, `rabinBlumTrapdoor_encD`,
+`rabinBlumTrapdoor_decD`, `rabinBlumTrapdoor_perm`), so no statement needs the collection to
+reduce at the type level, and uniform statements over `D i` transport along it
+(`uprob_comp_equiv`, `StatClose.comp_equiv_right`). -/
+def rabinBlumTrapdoor_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rabinBlumTrapdoor H).D i ≃ QR (blumMod i) :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `QR_N`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rabinBlumTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rabinBlumTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : QR (blumMod i) → Prop) :
+    uprob (fun x : (rabinBlumTrapdoor H).D i => P (rabinBlumTrapdoor_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the Blum Rabin collection is `blumF`, read through the domain equivalence:
+`(rabinBlumTrapdoor H).f i x = blumF i (rabinBlumTrapdoor_domEquiv H i x)`. -/
+theorem rabinBlumTrapdoor_f (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).D i) :
+    (rabinBlumTrapdoor H).f i x = blumF i (rabinBlumTrapdoor_domEquiv H i x) := rfl
+
+/-- The encoder of the Blum Rabin collection is `blumEnc`, read through the domain equivalence:
+`(rabinBlumTrapdoor H).encD i x = blumEnc i (rabinBlumTrapdoor_domEquiv H i x)`. -/
+theorem rabinBlumTrapdoor_encD (H : ArithmeticFP) (i : List Bool)
+    (x : (rabinBlumTrapdoor H).D i) :
+    (rabinBlumTrapdoor H).encD i x = blumEnc i (rabinBlumTrapdoor_domEquiv H i x) := rfl
+
+/-- The decoder of the Blum Rabin collection is `blumDec`, carried back along the domain
+equivalence:
+`(rabinBlumTrapdoor H).decD i w = (blumDec i w).map (rabinBlumTrapdoor_domEquiv H i).symm`. -/
+theorem rabinBlumTrapdoor_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rabinBlumTrapdoor H).decD i w = (blumDec i w).map (rabinBlumTrapdoor_domEquiv H i).symm := by
+  show blumDec i w = _
+  cases blumDec i w <;> rfl
+
+/-- The permutation of the Blum Rabin collection is `blumPermAt` (`x ↦ x²` on `QR_N`), read
+through the domain equivalence: with `φ = rabinBlumTrapdoor_domEquiv H i`,
+`(rabinBlumTrapdoor H).perm i x = φ.symm (blumPermAt i (φ x))`. -/
+theorem rabinBlumTrapdoor_perm (H : ArithmeticFP) (i : List Bool)
+    (x : (rabinBlumTrapdoor H).D i) :
+    (rabinBlumTrapdoor H).perm i x =
+      (rabinBlumTrapdoor_domEquiv H i).symm (blumPermAt i (rabinBlumTrapdoor_domEquiv H i x)) :=
+  rfl
+
+/-- The index generator of the Blum Rabin collection is `blumGen H`. -/
+theorem rabinBlumTrapdoor_gen (H : ArithmeticFP) : (rabinBlumTrapdoor H).gen = blumGen H := rfl
+
+/-- The domain sampler of the Blum Rabin collection is `blumSampler H`. -/
+theorem rabinBlumTrapdoor_sample (H : ArithmeticFP) :
+    (rabinBlumTrapdoor H).sample = blumSampler H := rfl
+
+/-- The evaluator of the Blum Rabin collection is `rabinEval`. -/
+theorem rabinBlumTrapdoor_eval (H : ArithmeticFP) : (rabinBlumTrapdoor H).eval = rabinEval := rfl
+
+/-- The trapdoor inverter of the Blum Rabin collection is `blumInv H`. -/
+theorem rabinBlumTrapdoor_inv (H : ArithmeticFP) : (rabinBlumTrapdoor H).inv = blumInv H := rfl
+
 /-- The index generated by the Blum Rabin collection is the numeral of `N`. -/
 theorem rabinBlumTrapdoor_index (H : ArithmeticFP) (n : ℕ) (r : (rabinBlumTrapdoor H).gen.Coins n) :
     (rabinBlumTrapdoor H).index n r =
@@ -955,15 +1083,38 @@ of `A`) [PS10, Theorem 61.8 ⇐]. -/
 noncomputable def rabinBlumInverter (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_rabinRootRaw H A) A.coins A.adv A.advice A.advice_length
 
-/-- The activation of the root finder: `A'(1^n, ⟨N, y⟩; r) = rabinRootStep (A(1^n, N; r)) N y`. -/
+/-- The root finder has the coins of `A`. -/
+theorem coins_rabinBlumInverter (H : ArithmeticFP) (A : NUPPT) :
+    (rabinBlumInverter H A).coins = A.coins := by
+  unfold rabinBlumInverter
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **The root finder runs on the coins of `A`**: the published equivalence
+`(rabinBlumInverter H A).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along
+`coins_rabinBlumInverter`). -/
+noncomputable def rabinBlumInverter_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
+    (rabinBlumInverter H A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsCongr (coins_rabinBlumInverter H A) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (rabinBlumInverter_coinsEquiv H A n r) = List.ofFn r`. -/
+theorem rabinBlumInverter_coinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
+    (r : (rabinBlumInverter H A).Coins n) :
+    List.ofFn (rabinBlumInverter_coinsEquiv H A n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn (coins_rabinBlumInverter H A) n r
+
+/-- The activation of the root finder: `A'(1^n, ⟨N, y⟩; r) = rabinRootStep (A(1^n, N; φ r)) N y`,
+the coins read through `φ = rabinBlumInverter_coinsEquiv H A n`. -/
 theorem rabinBlumInverter_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N y : List Bool)
     (r : (rabinBlumInverter H A).Coins n) :
-    (rabinBlumInverter H A).runAt n (pairEncode N y) r = rabinRootStep (A.runAt n N r) (listToNat N) y := by
-  rw [NUPPT.runAt_eq]
+    (rabinBlumInverter H A).runAt n (pairEncode N y) r =
+      rabinRootStep (A.runAt n N (rabinBlumInverter_coinsEquiv H A n r)) (listToNat N) y := by
+  rw [NUPPT.runAt_eq, rabinBlumInverter_coinsEquiv, NUPPT.runAt_coinsCongr]
   unfold rabinBlumInverter
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rabinRootRaw, NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, rabinRootRaw]
 
 /-- **A Blum factorer inverts the Blum Rabin collection** [PS10, proof of Theorem 61.8 ⇐,
 "from the correct `p, q` we can compute the square root of `u` with probability 1"]: for
@@ -973,9 +1124,9 @@ probability of `rabinBlumInverter A` plus the statistical error.
 **Proof sketch.** When `A(1^n, N; r)` reads as `p` or `q`, `q' = N / p'` is the other prime
 and `blumInvNat p' q' y.val = (blumSqrt y).val` (the CRT argument of `blumInv_spec`), the
 residue root of `y`, which `blumDec` decodes and which is `(blumPermAt N).symm y`; hence
-`A'` wins for every `y` (`rabinBlumInverter_runAt`, `uprob_mono`). The ideal uniform Blum
-pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the generator's law
-(`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
+`A'` wins for every `y` (`rabinBlumInverter_runAt`, `rabinBlumInverter_coinsEquiv`,
+`uprob_mono`). The ideal uniform Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the
+generator's law (`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
 `StatClose.abs_uprob_sub_le_prod`, `uexp_prod`; run-3 audit P7-3). -/
 theorem blumFactorProb_le_invProbAt (H : ArithmeticFP) (hD : BlumDensity) (A : NUPPT) {n : ℕ}
     (hn : 3 ≤ n) :

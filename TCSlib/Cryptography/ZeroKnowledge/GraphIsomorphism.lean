@@ -497,6 +497,9 @@ noncomputable def giProver : Strategy where
     | [] => encGraph (permGraph G₀ π)
     | _ :: _ => encPerm (if (hist.headD []).headD false then π * σ⁻¹ else π)
 
+/-- The prover's tape: `giProver.coins = normal 1 2`, i.e. `(N + 1)²` bits at length `N`. -/
+theorem giProver_coins : giProver.coins = .normal 1 2 := rfl
+
 /-- The verifier of the graph isomorphism protocol [PS10, Protocol 120.6]: with the single
 coin `b` it answers the first message `H` with `[b]`, and on `[H, γ]` outputs
 `[decide (x well formed ∧ γ(G_b) = H)]`.
@@ -523,6 +526,11 @@ noncomputable def giProtocol : Protocol where
   V := giVerifier
   rounds := .const 3
   verifierFirst := false
+
+/-- The defining equation of `giProtocol`: prover `giProver`, verifier `giVerifier`, three
+rounds, the prover moving first. -/
+theorem giProtocol_eq : giProtocol =
+    { P := giProver, V := giVerifier, rounds := .const 3, verifierFirst := false } := rfl
 
 /-- The prover of the `|x|`-fold graph isomorphism protocol: iteration `i` (the prover has
 received `2i` or `2i + 1` messages: the challenges and the verifier's empty fourth messages)

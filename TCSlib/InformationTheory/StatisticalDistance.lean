@@ -45,6 +45,9 @@ variable {α : Type*} [Fintype α]
 `½ ∑ |p a - q a|`. [Vad12, §6.1] -/
 noncomputable def statDist (p q : FinDist α) : ℝ := (1 / 2) * ∑ a, |p a - q a|
 
+/-- The defining equation of `statDist`: `statDist p q = ½ ∑ₐ |p a - q a|`. -/
+theorem statDist_eq (p q : FinDist α) : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
+
 theorem statDist_nonneg (p q : FinDist α) : 0 ≤ statDist p q := by
   refine mul_nonneg (by norm_num) (sum_nonneg fun _ _ => abs_nonneg _)
 

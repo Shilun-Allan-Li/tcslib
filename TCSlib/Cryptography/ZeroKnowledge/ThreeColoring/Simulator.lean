@@ -184,7 +184,7 @@ noncomputable def simCoinsEquiv {c : Fin n → Fin 3} (hc : ProperColoring G c) 
     ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin ℓn → Bool)) × ρ ≃
       ((Fin (edgeCount G) × ColorPair) × (Fin n → Fin ℓn → Bool)) × ρ :=
   Equiv.prodCongr (Equiv.prodCongr
-    (Equiv.prodCongrRight fun e => colorPairEquiv (hc _ _ (edgeOf_adj G e))) (Equiv.refl _))
+    (Equiv.prodCongrRight fun e => colorPairEquiv (hc.ne (edgeOf_adj G e))) (Equiv.refl _))
     (Equiv.refl ρ)
 
 /-- **`S ≡ S'`, one attempt** [PS10, proof of Proposition 128.8, "it directly follows that
@@ -569,17 +569,20 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
   refine ⟨k, ep.1, ep.2, ?_⟩
   have h0 : acceptProb (colSimTruncW Com ℓn G c V N) D =
       acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0) D := by
-    unfold acceptProb
-    exact congrArg uprob (funext fun z => by rw [← colSimHyb_zero Com ℓn G c V N z.1]; rfl)
+    simp only [acceptProb_def]
+    exact congrArg uprob (funext fun z => by
+      rw [← colSimHyb_zero Com ℓn G c V N z.1, ColSimLemmas.hybStd_eq]; rfl)
   have hN' : acceptProb (colSimTruncH Com ℓn G c V N) D =
       acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N N) D := by
-    unfold acceptProb
-    exact congrArg uprob (funext fun z => by rw [← colSimHyb_self Com ℓn G c V N z.1]; rfl)
+    simp only [acceptProb_def]
+    exact congrArg uprob (funext fun z => by
+      rw [← colSimHyb_self Com ℓn G c V N z.1, ColSimLemmas.hybStd_eq]; rfl)
   calc distAdv (colSimTruncW Com ℓn G c V N) (colSimTruncH Com ℓn G c V N) D / N
       = distAdv (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0)
           (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N N) D / N := by
-        rw [distAdv, distAdv, h0, hN']
-    _ ≤ _ := h
+        rw [distAdv_def, distAdv_def, h0, hN']
+    _ ≤ _ := h.trans_eq (congrArg (distAdv _ _) (funext fun cv => funext fun z => by
+        rw [ColSimLemmas.hybGen_eq]; rfl))
 
 end Typed
 

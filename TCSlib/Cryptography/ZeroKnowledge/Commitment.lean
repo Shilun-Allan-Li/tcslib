@@ -446,8 +446,8 @@ theorem bitCom_true {n : ℕ} (f : (Fin n → Bool) ≃ (Fin n → Bool)) (h : (
 hiding of Alg-127.a and the pseudorandomness of `owpGenPRG` rest on the same reduction. -/
 theorem bitCom_false_eq_owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ)
     (r : Fin n → Bool) (i : Fin (n + 1)) :
-    bitCom (P.f n) (h n) false r i = (owpGenPRG P h).G n r i := by
-  simp [bitCom, owpGenPRG, PRG.oneBit]
+    bitCom (P.f n) (h n) false r i = owpGenPRG_outEquiv P h n ((owpGenPRG P h).G n r) i := by
+  rw [owpGenPRG_G_outEquiv, bitCom_false]
 
 /-- **Binding of the one-bit scheme** [PS10, proof of Theorem 126.4, "it directly follows from
 the construction that `Com` is binding"] (Claim-127.b, single bit): `Com(b₀, r₀) = Com(b₁, r₁)`
@@ -636,11 +636,11 @@ machine of Theorem 79.4: advice `⟨[flip_n], D.advice n⟩`, coins `1 + D.coins
 reads the first coin `σ`, calls `D` once on `⟨1^n, y ++ [σ]⟩` with the remaining coins and
 outputs `[xor (if D accepts then σ else !σ) flip_n]`), whose prediction probability is that
 of `owpPredictorSnoc (D.distinguisher n (n+1)) (flip n)` (`owpPredMachine_predProb`). Then
-`hh.hard A` (note `P.toFunFamily.outLen.eval n = n`) gives a negligible `ε_h` with
+`hh.hard A` (`PermFamily.HardCore.hard`, the permutation form) gives a negligible `ε_h` with
 `1/2 + distAdv/2 ≤ 1/2 + ε_h n`, hence `distAdv ≤ 2 ε_h n`; take `ε := 2 ε_h`
 (`Negligible.const_mul`). -/
 theorem HardCore.bitHiding {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool}
-    (hh : HardCore P.toFunFamily h) : BitHiding P h := by
+    (hh : P.HardCore h) : BitHiding P h := by
   intro D
   have hflip : ∀ n, ∃ flip : Bool,
       predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) flip) =
@@ -655,7 +655,8 @@ theorem HardCore.bitHiding {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Boo
   rw [owpPredMachine_predProb] at h1
   have h3 : predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) (flip n)) =
       predProb (P.f n) (h n) (fun y (c : Bool × D.Coins n) =>
-        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := rfl
+        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) :=
+    congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, hflip n] at h1
   linarith
 
@@ -884,20 +885,20 @@ bits).
 hard-core predicate `h` without stating it (source error 47: [PS10, Theorem 87.3] produces one
 for `g(x, r) = (f(x), r)`, not for `f`) and a single permutation family `f` (as in
 Theorem 79.4), not the collection of [PS10, Definition 55.1]. Both `OneWayPermutation P` and
-`HardCore P.toFunFamily h` are hypotheses here; besides the hard-core property only
+`P.HardCore h` are hypotheses here; besides the hard-core property only
 `P.toFunFamily.Easy` and the injectivity of `f` are used. -/
 theorem owp_commitment (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
-    (hP : OneWayPermutation P) (hh : HardCore P.toFunFamily h) :
+    (hP : OneWayPermutation P) (hh : P.HardCore h) :
     Commitment (owpComStr P h) owpComLen where
-  easy := owpComStr_polyTimeComputable P h hP.easy hh.easy
+  easy := owpComStr_polyTimeComputable P h ((oneWayPermutation_iff P).1 hP).easy hh.easy
   binding := owpComStr_binding P h
-  hides := hh.bitHiding.owpComStr_hides
+  hides := (HardCore.bitHiding hh).owpComStr_hides
 
 /-- **[PS10, Theorem 126.4], existential form**: if there is a one-way permutation with a
 hard-core predicate, then commitment schemes exist. -/
 theorem exists_commitment_of_owp_hardCore
     (hex : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool),
-      OneWayPermutation P ∧ HardCore P.toFunFamily h) :
+      OneWayPermutation P ∧ P.HardCore h) :
     ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ := by
   obtain ⟨P, h, hP, hh⟩ := hex
   exact ⟨owpComStr P h, owpComLen, owp_commitment P h hP hh⟩

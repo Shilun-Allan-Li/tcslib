@@ -193,6 +193,7 @@ differ**: `|Pr[T(X)] − Pr[T(Y)]| ≤ Pr[X ≠ Y]` (the device for the `1/q` te
 Theorem 107.3: the scheme's `h = g²` and the derived generator's `h` differ only on `g² = 1`). -/
 theorem statClose_of_uprob_ne {σ γ : Type*} [Fintype σ] (X Y : σ → γ) :
     StatClose X Y (uprob fun s => X s ≠ Y s) := by
+  rw [statClose_iff]
   intro T
   have key : ∀ (X Y : σ → γ), uprob (fun s => T (X s)) ≤
       uprob (fun s => T (Y s)) + uprob (fun s => X s ≠ Y s) := by
@@ -240,7 +241,7 @@ ensembles is lossless). -/
 theorem length_ddhTuple {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) (a b c : ZMod (expOrd i)) :
     (ddhTuple i a b c).length = 15 * n + 14 := by
   have hw := h.dlW_eq
-  simp only [ddhTuple, expF, length_pairEncode, length_natToList, h.length_eq, hw]
+  simp only [ddhTuple, expF_eq, length_pairEncode, length_natToList, h.length_eq, hw]
   ring
 
 /-- **An exponent of `Z_{expOrd i}` from a block of `n · n` coins** by rejection: `n` trials of
@@ -276,7 +277,7 @@ theorem ddhExpo_statClose {n : ℕ} {i : List Bool} (hv : ExpValid i) (hw : Well
   have hm : 0 < expOrd i := NeZero.pos _
   have hmn : expOrd i < 2 ^ n := by
     rw [expOrd_of_valid hv, ← hw.dlW_eq]
-    exact hv.2.2.1.trans (dlP_lt_two_pow i)
+    exact ((expValid_iff i).1 hv).2.2.1.trans (dlP_lt_two_pow i)
   have h := ((statClose_sampleBelowL hm hmn).map fun v : ℕ => (v : ZMod (expOrd i))).comp_equiv_right
     (ZMod.finEquiv (expOrd i)).symm.toEquiv
   have hY : (fun t : ZMod (expOrd i) =>
@@ -325,6 +326,11 @@ in `Z_q` (`ddhExpo`, D10; run-3 audit P8-1 — equivalent to the ideal-exponent 
 negligible statistical term); the tuple is a bit string of `15n + 14` bits; the
 distinguisher receives `1^n` (D5). -/
 def DDHAssumption (G : SafePrimeGen) : Prop := (ddhReal G).Indist (ddhRandom G)
+
+/-- Unfolding: the DDH assumption is the indistinguishability of `ddhReal G` and
+`ddhRandom G`. -/
+theorem ddhAssumption_iff (G : SafePrimeGen) :
+    DDHAssumption G ↔ (ddhReal G).Indist (ddhRandom G) := Iff.rfl
 
 /-! ## Public-key schemes with a key-dependent message space -/
 
@@ -391,14 +397,14 @@ theorem constSelector_runAt (m₀ m₁ : ℕ → List Bool) (b : PolyExpr)
   rw [NUPPT.runAt_eq]
   unfold constSelector
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.inAdvice]
+  simp [NUPPT.inAdvice_eq]
 
 /-- The coins of the constant selector form a one-element type. -/
 instance constSelector_unique (m₀ m₁ : ℕ → List Bool) (b : PolyExpr)
     (hb : ∀ n, (pairEncode (m₀ n) (m₁ n)).length ≤ b.eval n) (n : ℕ) :
     Unique ((constSelector m₀ m₁ b hb).Coins n) :=
   haveI : IsEmpty (Fin ((constSelector m₀ m₁ b hb).coinLen n)) :=
-    ⟨fun i => absurd i.2 (by simp [constSelector, NUPPT.coinLen])⟩
+    ⟨fun i => absurd i.2 (by simp [constSelector, NUPPT.coinLen_eq])⟩
   Pi.uniqueOfIsEmpty _
 
 /-- **Constant messages** (the quantifier form of [PS10, Definition 102.2]): a secure scheme
@@ -423,8 +429,8 @@ theorem GroupPKScheme.Secure.const {S : GroupPKScheme} (h : S.Secure) (m₀ m₁
   let e : S.gen.Coins n × S.enc.Coins n ≃
       S.gen.Coins n × ((constSelector m₀ m₁ b hb).Coins n × S.enc.Coins n) :=
     Equiv.prodCongr (Equiv.refl _) (Equiv.uniqueProd _ _).symm
-  unfold distAdv
-  rw [← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) false),
+  rw [distAdv_def, distAdv_def,
+    ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) false),
     ← acceptProb_comp_equiv e (S.challenge n (constSelector m₀ m₁ b hb) true)]
   have h0 : (fun r : S.gen.Coins n × S.enc.Coins n => pairEncode (pairFstD (S.gen.runAt n [] r.1))
         (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] r.1)) (m₀ n)) r.2)) =
@@ -537,9 +543,9 @@ theorem egGen_runAt (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : (egGen 
   rw [NUPPT.runAt_eq]
   unfold egGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [egGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  simp only [egGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    NUPPT.Uniform.runAtL_eq G.gen_uniform, NUPPT.coinLen]
+    NUPPT.Uniform.runAtL_eq G.gen_uniform, NUPPT.coinLen_eq]
 
 /-- **The ciphertext of El Gamal's `Enc`** [PS10, Algorithm 106.2] on the public key
 `pk = ⟨⟨p, ⟨q, h⟩⟩, A⟩` (`A = h^a`), the message numeral `m` and coins `r`: `b ← Z_q`
@@ -576,7 +582,7 @@ theorem egEnc_runAt (H : ArithmeticFP) (n : ℕ) (pk m : List Bool) (r : (egEnc 
   rw [NUPPT.runAt_eq]
   unfold egEnc
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp [egEncRaw, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [egEncRaw, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- **El Gamal's `Dec`** [PS10, Algorithm 106.2, `Dec_sk(c₁, c₂) = c₂ / c₁^a mod p`] as a
 composition of the bundle's string functions on `⟨⟨⟨p, ⟨q, h⟩⟩, a⟩, ⟨c₁, c₂⟩⟩`:
@@ -762,9 +768,9 @@ theorem egGroupGenMachine_runAt (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
   rw [NUPPT.runAt_eq]
   unfold egGroupGenMachine
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [egGroupGenRaw, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  simp only [egGroupGenRaw, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    NUPPT.Uniform.runAtL_eq G.gen_uniform, NUPPT.coinLen]
+    NUPPT.Uniform.runAtL_eq G.gen_uniform, NUPPT.coinLen_eq]
 
 /-- A string of the right length is the encoding of a typed coin string. -/
 private theorem exists_ofFn_eq {ℓ : ℕ} (w : List Bool) (h : w.length = ℓ) :
@@ -777,8 +783,8 @@ private theorem exists_take_coins (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ
     (r : (egGroupGenMachine H G).Coins n) :
     ∃ r' : G.gen.Coins n, List.ofFn r' = (List.ofFn r).take (G.gen.coinLen n) := by
   apply exists_ofFn_eq
-  simp only [List.length_take, List.length_ofFn, NUPPT.coinLen, egGroupGenMachine,
-    NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add]
+  rw [List.length_take, List.length_ofFn]
+  simp only [NUPPT.coinLen_eq, egGroupGenMachine, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add]
   omega
 
 /-- **The derived generator outputs safe-prime instances** from `G.n₀` on: the index
@@ -794,10 +800,11 @@ theorem egGroupGen_valid (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
   obtain ⟨r', hr'⟩ := exists_take_coins H G n r
   rw [egGroupGenMachine_runAt, ← hr', ← NUPPT.runAt_eq]
   have hv := G.valid n r' hn
-  obtain ⟨a, b, c, ho, ha, hb, -⟩ := G.wellFormed n r' hn
+  obtain ⟨a, b, c, ho, ha, hb, -⟩ := (wellFormedIndex_iff n _).1 (G.wellFormed n r' hn)
   rw [ho] at hv ⊢
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, egGroupParts]
-  simp only [SafePrimeValid, ExpValid, dlP, dlM, dlG, pairFstD_pairEncode, pairSndD_pairEncode] at hv ⊢
+  simp only [safePrimeValid_iff, expValid_iff, dlP_eq, dlM_eq, dlG_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode] at hv ⊢
   -- the occurrence of `p` inside the type `ZMod (dlP …)` is not reached by `simp`; `rw` abstracts it
   rw [pairFstD_pairEncode]
   haveI : Fact (listToNat a).Prime := ⟨hv.1.1⟩
@@ -821,10 +828,10 @@ theorem egGroupGen_wellFormed (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
     WellFormedIndex n ((egGroupGenMachine H G).runAt n [] r) := by
   obtain ⟨r', hr'⟩ := exists_take_coins H G n r
   rw [egGroupGenMachine_runAt, ← hr', ← NUPPT.runAt_eq]
-  obtain ⟨a, b, c, ho, ha, hb, -⟩ := G.wellFormed n r' hn
+  obtain ⟨a, b, c, ho, ha, hb, -⟩ := (wellFormedIndex_iff n _).1 (G.wellFormed n r' hn)
   rw [ho]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, egGroupParts]
-  exact ⟨a, b, _, rfl, ha, hb, length_natToList _ _⟩
+  exact (wellFormedIndex_iff n _).2 ⟨a, b, _, rfl, ha, hb, length_natToList _ _⟩
 
 /-- **The derived safe-prime instance generator** of El Gamal: the same `(p, q)` as `G`,
 `h = g²` for `g ← Z_p^*` with the fallback `4` on `g² = 1`. The DDH assumption of

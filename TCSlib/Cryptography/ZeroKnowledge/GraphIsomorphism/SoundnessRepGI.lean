@@ -379,9 +379,10 @@ theorem giRep_complete {n : ℕ} {G₀ G₁ : Graph n} {σ : Equiv.Perm (Fin n)}
 
 /-- The joint coins of the `|x|`-fold graph isomorphism protocol as (challenges, prover's
 coins). -/
-def giRepCoins (P' : Strategy) (x : List Bool) :
+noncomputable def giRepCoins (P' : Strategy) (x : List Bool) :
     (Fin x.length → Bool) × P'.Coins x.length ≃ giProtocolRep.ExecCoins P' x :=
-  Equiv.prodComm _ _
+  (Equiv.prodComm _ _).trans ((Equiv.refl _).prodCongr
+    (Equiv.arrowCongr (finCongr (giProtocolRep_V_coinLen x.length).symm) (Equiv.refl Bool)))
 
 /-- The decoded graph a prover with coins `r₁` sends in iteration `i` after the challenges `bs`
 (the `H_i` of `uprob_gi_rep_cheat_le`). -/

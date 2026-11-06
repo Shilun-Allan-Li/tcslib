@@ -423,6 +423,11 @@ variable {W α ρ' : Type*}
 def hybStd (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) : Option α :=
   (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t)
 
+/-- The defining equation of `hybStd`: the first success, attempts `< k` of type `H`. -/
+theorem hybStd_eq (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) :
+    hybStd H Wa N k w =
+      (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t) := rfl
+
 /-- The hybrid with an arbitrary attempt `A` at position `k`: attempts `< k` are of type `H`,
 attempt `k` is `A`, the later attempts are of type `Wa`; `D` judges the first success
 (the shape of `colSimRed`, with `A` the planted attempt). -/
@@ -430,6 +435,13 @@ def hybGen (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α)
     (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') : Bool :=
   D ((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (z.1 t)
     else if t = k then A (z.1 t) else Wa (z.1 t)) z.2
+
+/-- The defining equation of `hybGen`: `D` on the first success of attempts `< k` of type `H`,
+attempt `k` of type `A` and the later attempts of type `Wa`. -/
+theorem hybGen_eq (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α)
+    (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') :
+    hybGen H Wa k A D z = D ((List.finRange N).findSome? fun t : Fin N =>
+      if (t : ℕ) < k then H (z.1 t) else if t = k then A (z.1 t) else Wa (z.1 t)) z.2 := rfl
 
 /-- Replacing attempt `k`'s coins and its attempt function consistently leaves the hybrid
 unchanged. -/
@@ -542,13 +554,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
   set kf : Fin N := ⟨k, hk⟩ with hkf
   have hPk : acceptProb (hybStd H Wa N k) D = uexp (hybAcc H Wa kf Wa D) := by
     rw [← uprob_hybGen_eq_uexp hm H Wa kf]
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext z
     rw [← hybGen_W H Wa kf D z.1 z.2]
   have hPk1 : acceptProb (hybStd H Wa N (k + 1)) D = uexp (hybAcc H Wa kf H D) := by
     rw [← uprob_hybGen_eq_uexp hm H Wa kf]
-    unfold acceptProb
+    simp only [acceptProb_def]
     congr 1
     funext z
     rw [← hybGen_H H Wa kf D z.1 z.2]
@@ -556,12 +568,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
     (fun ep => hybAcc H Wa kf Wa D ep - hybAcc H Wa kf H D ep)
   refine ⟨kf, ep₀, ?_⟩
   calc distAdv (hybStd H Wa N 0) (hybStd H Wa N N) D / N
-      ≤ |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D| := hgap
+      ≤ |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D| := by
+        rw [distAdv_def]; exact hgap
     _ = |uexp (fun ep => hybAcc H Wa kf Wa D ep - hybAcc H Wa kf H D ep)| := by
         rw [hPk, hPk1, HardcoreBit.uexp_sub]
     _ ≤ |hybAcc H Wa kf Wa D ep₀ - hybAcc H Wa kf H D ep₀| := hep₀
     _ = _ := by
-        rw [distAdv, acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hX ep₀),
+        rw [distAdv_def, acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hX ep₀),
           acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hY ep₀)]
 
 end HybridCoins

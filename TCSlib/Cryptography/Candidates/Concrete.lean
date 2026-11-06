@@ -106,7 +106,7 @@ is the probability of `S` under the uniform distribution on the subtype `{a // E
 uniformly distributed input … and replaces `xy` with `z` if both are prime"). -/
 theorem uprob_and_eq_mul_subtype (E S : α → Prop) [DecidablePred E] :
     uprob (fun a => E a ∧ S a) = uprob E * uprob (fun z : {a // E a} => S z.1) := by
-  unfold uprob
+  simp only [uprob_def]
   rw [← Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S)]
   rcases (Fintype.card {a // E a}).eq_zero_or_pos with h0 | hpos
   · haveI : IsEmpty {a // E a} := Fintype.card_eq_zero_iff.mp h0
@@ -130,7 +130,7 @@ theorem one_sub_div_le_uprob_subtype (E S : α → Prop) [DecidablePred E] {δ :
     by_contra h
     rw [not_nonempty_iff] at h
     have h0 : uprob E = 0 := by
-      unfold uprob
+      rw [uprob_def]
       simp
     linarith
   have hES := uprob_and_eq_mul_subtype E S
@@ -218,7 +218,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
       m * uprob (fun z : α × (Fin m × ((Fin m → α) × ρ)) =>
         G z.1 ∧ f (yaoTry f B (f z.1) z.2) = f z.1) := by
   classical
-  unfold invProb
+  rw [invProb_def]
   calc uprob (fun z : (Fin m → α) × ρ =>
         prodFun f m (B (prodFun f m z.1) z.2) = prodFun f m z.1)
       ≤ uprob (fun z : (Fin m → α) × ρ => (∀ i, ¬ G (z.1 i)) ∨
@@ -230,7 +230,9 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
         · exact Or.inl hall
         · push_neg at hall
           obtain ⟨i, hi⟩ := hall
-          exact Or.inr ⟨i, mem_univ _, hi, congrFun h i⟩
+          have hfi := congrFun h i
+          rw [OneWay.prodFun_apply, OneWay.prodFun_apply] at hfi
+          exact Or.inr ⟨i, mem_univ _, hi, hfi⟩
     _ ≤ uprob (fun z : (Fin m → α) × ρ => ∀ i, ¬ G (z.1 i)) +
           ∑ i, uprob (fun z : (Fin m → α) × ρ =>
             G (z.1 i) ∧ f (B (prodFun f m z.1) z.2 i) = f (z.1 i)) :=
@@ -248,7 +250,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
               G (xs i) ∧ f (B (prodFun f m xs) r i) = f (xs i))]
             apply uprob_congr
             rintro ⟨x, xs, r⟩
-            simp [yaoTry, prodFun_update]
+            simp [yaoTry_eq, prodFun_update]
           simp only [hplant]
           rw [sum_uprob_eq_card_mul, Fintype.card_fin]
           let e : α × (Fin m × ((Fin m → α) × ρ)) ≃ Fin m × (α × ((Fin m → α) × ρ)) :=
@@ -366,8 +368,16 @@ variable {n : ℕ}
 /-- The first prime `p`. -/
 def p (z : DistinctPrimes n) : ℕ := z.1.1.1
 
+/-- The defining equation of `DistinctPrimes.p`: `z.p` is the value of the first prime of the
+pair, `z.p = ((z.1.1 : Fin (2^n)) : ℕ)`. -/
+theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ) := rfl
+
 /-- The second prime `q`. -/
 def q (z : DistinctPrimes n) : ℕ := z.1.2.1
+
+/-- The defining equation of `DistinctPrimes.q`: `z.q` is the value of the second prime of the
+pair, `z.q = ((z.1.2 : Fin (2^n)) : ℕ)`. -/
+theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ) := rfl
 
 /-- `p` is prime. -/
 theorem p_prime (z : DistinctPrimes n) : z.p.Prime := z.1.1.2
@@ -447,6 +457,12 @@ def default (hn : 2 ≤ n) : DistinctPrimes n :=
     ⟨⟨3, lt_of_lt_of_le (by norm_num) ((Nat.pow_le_pow_right (by norm_num) hn).trans_eq' rfl)⟩,
       Nat.prime_three⟩), (by norm_num : (2 : ℕ) ≠ 3)⟩
 
+/-- The first prime of the default pair is `2`: `(DistinctPrimes.default hn).p = 2`. -/
+theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2 := rfl
+
+/-- The second prime of the default pair is `3`: `(DistinctPrimes.default hn).q = 3`. -/
+theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3 := rfl
+
 end DistinctPrimes
 
 /-! ### Encoding pairs of distinct primes -/
@@ -465,10 +481,16 @@ def decodeDistinctPrimes (m : ℕ) (w : List Bool) : Option (DistinctPrimes m) :
 def encodeDistinctPrimes (m : ℕ) (z : DistinctPrimes m) : List Bool :=
   pairEncode (natToList m z.p) (natToList m z.q)
 
+/-- The defining equation of `encodeDistinctPrimes`:
+`encodeDistinctPrimes m z = ⟨⟦p⟧_m, ⟦q⟧_m⟩`, the pair of the `m`-bit numerals of the two primes. -/
+theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
+    encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q) := rfl
+
 /-- Decoding inverts encoding. -/
 theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
     decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z := by
-  unfold decodeDistinctPrimes encodeDistinctPrimes natToList
+  unfold decodeDistinctPrimes encodeDistinctPrimes
+  rw [natToList_eq, natToList_eq]
   simp only [pairFstD_pairEncode, pairSndD_pairEncode, decodeFin_ofFn,
     bitsToNat_natToBits z.p_lt, bitsToNat_natToBits z.q_lt]
   rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q⟩]

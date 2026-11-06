@@ -101,6 +101,10 @@ def glPad (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool
     β × (Fin n → Bool) :=
   (f z.1, z.2)
 
+/-- The defining equation of `glPad`: `glPad f (x, r) = (f x, r)`. -/
+theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
+    glPad f z = (f z.1, z.2) := rfl
+
 /-- The candidate hard-concentrate bit `B(x, r) = ⟨x, r⟩ mod 2` of [Gar26, Theorem 2.3]. -/
 def glBit (z : (Fin n → Bool) × (Fin n → Bool)) : Bool := ip z.1 z.2
 
@@ -109,6 +113,11 @@ it outputs `R(f(x), c) ‖ r`. All three inverters of [Gar26, §2.5.1] have this
 def glInverter (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) :
     (Fin n → Bool) × (Fin n → Bool) :=
   (R y.1 c, y.2)
+
+omit [Fintype γ] in
+/-- The defining equation of `glInverter`: `glInverter R (y, r) c = (R y c, r)`. -/
+theorem glInverter_apply (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) :
+    glInverter R y c = (R y.1 c, y.2) := rfl
 
 /-- The probability, for a fixed `x`, that the predictor `A` outputs `⟨x, r⟩` on
 `f(x) ‖ r`, over uniform `r` and coins: the quantity `Pr_r[E]` defining the good set `G`
@@ -201,6 +210,12 @@ def perfectRecover (A : β × (Fin n → Bool) → ρ → Bool) (y : β) (c : Fi
 def perfectInverter (A : β × (Fin n → Bool) → ρ → Bool) :
     β × (Fin n → Bool) → (Fin n → ρ) → (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (perfectRecover A)
+
+omit [Fintype ρ] in
+/-- The defining equation of `perfectInverter`:
+`perfectInverter A = glInverter (perfectRecover A)`. -/
+theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) :
+    perfectInverter A = glInverter (perfectRecover A) := rfl
 
 /-- The super simple case of Goldreich–Levin: if `A` predicts `B(x, r) = ⟨x, r⟩` from
 `g(x, r) = f(x) ‖ r` with probability `1`, then `perfectInverter A` inverts `g` with

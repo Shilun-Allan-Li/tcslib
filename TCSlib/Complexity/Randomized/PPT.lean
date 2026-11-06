@@ -159,6 +159,9 @@ def timeBound (m : ℕ) : ℕ := A.Ct * (m + 1) ^ A.ct
 /-- The number of coins of `A` at parameter `n`. -/
 def coinLen (n : ℕ) : ℕ := A.coins.eval n
 
+/-- The defining equation of `coinLen`: `A.coinLen n = A.coins.eval n`. -/
+theorem coinLen_eq (n : ℕ) : A.coinLen n = A.coins.eval n := rfl
+
 /-- The advice-length bound of `A` at parameter `n`. -/
 def adviceLen (n : ℕ) : ℕ := A.adv.eval n
 
@@ -198,6 +201,11 @@ theorem output_length_le (z : List Bool) : (A.output z).length ≤ A.timeBound z
 exactly as the text writes `A(1^n, y)` [PS10, Definition 27.3]. -/
 def advInput (n : ℕ) (y : List Bool) : List Bool := pairEncode (List.replicate n true) y
 
+/-- The defining equation of `advInput`: `advInput n y = pairEncode (List.replicate n true) y`
+(the pair `⟨1^n, y⟩`). -/
+theorem advInput_eq (n : ℕ) (y : List Bool) :
+    advInput n y = pairEncode (List.replicate n true) y := rfl
+
 /-- The length of the adversary input `⟨1^n, y⟩` is `2n + 2 + |y|`. -/
 theorem length_advInput (n : ℕ) (y : List Bool) : (advInput n y).length = 2 * n + 2 + y.length := by
   simp [advInput, length_pairEncode]
@@ -217,9 +225,52 @@ chapters 3–4 hand the machine a coin string of the right length as a list). -/
 def runAtL (n : ℕ) (y r : List Bool) : List Bool :=
   A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)
 
+/-- The defining equation of `runAtL`:
+`A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r)`. -/
+theorem runAtL_eq (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) (A.advice n)) r) := rfl
+
 /-- The typed activation is the untyped one on `List.ofFn r`. -/
 theorem runAt_eq (n : ℕ) (y : List Bool) (r : A.Coins n) :
     A.runAt n y r = A.runAtL n y (List.ofFn r) := rfl
+
+/-- **The coins of two machines with the same coin polynomial**: `A.Coins n ≃ B.Coins n` when
+`A.coins = B.coins` (`finCongr` on the coin lengths). A construction that keeps the coins of the
+machine it is built from publishes its coin identification through it, so that consumers move
+between the two coin types without reducing `coinLen` or the construction. -/
+def coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) : A.Coins n ≃ B.Coins n :=
+  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, coinLen_eq, h])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string: `List.ofFn (coinsCongr h n r) = List.ofFn r`. -/
+theorem coinsCongr_ofFn {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (r : A.Coins n) :
+    List.ofFn (coinsCongr h n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [coinLen_eq, coinLen_eq, h]) r).symm
+
+/-- Running `B` on coins carried over from `A`: `B.runAt n y (coinsCongr h n r) =
+B.runAtL n y (List.ofFn r)`. -/
+theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool)
+    (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r) := by
+  rw [runAt_eq, coinsCongr_ofFn]
+
+/-- **The coins of a machine with a known coin polynomial**: `A.Coins n ≃ {0,1}^{c(n)}` when
+`A.coins = c` (`finCongr` on the coin length). The interface through which a statement reads the
+coins of a construction as bit strings of the polynomial's length, without reducing `coinLen` or
+the construction. -/
+def coinsEquivPoly {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) :
+    A.Coins n ≃ (Fin (c.eval n) → Bool) :=
+  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, h])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (coinsEquivPoly h n r) = List.ofFn r`. -/
+theorem coinsEquivPoly_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ) (r : A.Coins n) :
+    List.ofFn (coinsEquivPoly h n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [coinLen_eq, h]) r).symm
+
+/-- The inverse coin equivalence keeps the coin string:
+`List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w`. -/
+theorem coinsEquivPoly_symm_ofFn {A : NUPPT} {c : PolyExpr} (h : A.coins = c) (n : ℕ)
+    (w : Fin (c.eval n) → Bool) : List.ofFn ((coinsEquivPoly h n).symm w) = List.ofFn w := by
+  rw [← coinsEquivPoly_ofFn h n, Equiv.apply_symm_apply]
 
 /-- The input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8]: the
 parameter is the input length (the `1^{|y|}` prefix carries no information). It is the layout
@@ -229,6 +280,13 @@ def runLit (y : List Bool) (r : A.Coins y.length) : List Bool := A.runAt y.lengt
 /-- `A` is *uniform* — a PPT [PS10, Definition 23.4] — when its advice is empty at every
 parameter. -/
 def Uniform : Prop := ∀ n, A.advice n = []
+
+/-- Uniformity is the conjunction of the advice clauses (definitional unfolding):
+`A.Uniform ↔ ∀ n, A.advice n = []`. -/
+theorem uniform_iff : A.Uniform ↔ ∀ n, A.advice n = [] := Iff.rfl
+
+/-- A uniform machine has empty advice at every parameter. -/
+theorem Uniform.advice_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) : A.advice n = [] := h n
 
 /-- `A` computes `f` with probability one [PS10, Definition 24.6]: at every parameter `n`,
 on every argument `y` and for **every** coin string `r`, `A(1^n, y; r) = f(⟨1^n, y⟩)`. On
@@ -285,6 +343,20 @@ theorem output_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable
     (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
     (ofPolyTime hf coins adv advice hα).coins = coins := rfl
 
+/-- **The coins of `ofPolyTime hf coins …`** are `coins(n)` bits: the published equivalence
+`(ofPolyTime hf coins adv advice hα).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+noncomputable def coinsEquiv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
+    (n : ℕ) : (ofPolyTime hf coins adv advice hα).Coins n ≃ (Fin (coins.eval n) → Bool) :=
+  coinsEquivPoly (coins_ofPolyTime hf coins adv advice hα) n
+
+/-- The coin equivalence of `ofPolyTime` keeps the coin string. -/
+theorem coinsEquiv_ofPolyTime_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n)
+    (n : ℕ) (r : (ofPolyTime hf coins adv advice hα).Coins n) :
+    List.ofFn (coinsEquiv_ofPolyTime hf coins adv advice hα n r) = List.ofFn r :=
+  coinsEquivPoly_ofFn _ n r
+
 /-- The advice polynomial of `ofPolyTime hf coins adv advice hα` is `adv`. -/
 @[simp] theorem adv_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) :
@@ -320,6 +392,18 @@ theorem output_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeCom
 /-- The coin polynomial of `ofPolyTimeUniform hf coins` is `coins`. -/
 @[simp] theorem coins_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins : PolyExpr) : (ofPolyTimeUniform hf coins).coins = coins := rfl
+
+/-- **The coins of `ofPolyTimeUniform hf coins`** are `coins(n)` bits: the published equivalence
+`(ofPolyTimeUniform hf coins).Coins n ≃ {0,1}^{coins(n)}` (`coinsEquivPoly`). -/
+noncomputable def coinsEquiv_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) (n : ℕ) : (ofPolyTimeUniform hf coins).Coins n ≃ (Fin (coins.eval n) → Bool) :=
+  coinsEquivPoly (coins_ofPolyTimeUniform hf coins) n
+
+/-- The coin equivalence of `ofPolyTimeUniform` keeps the coin string. -/
+theorem coinsEquiv_ofPolyTimeUniform_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (coins : PolyExpr) (n : ℕ) (r : (ofPolyTimeUniform hf coins).Coins n) :
+    List.ofFn (coinsEquiv_ofPolyTimeUniform hf coins n r) = List.ofFn r :=
+  coinsEquivPoly_ofFn _ n r
 
 /-- The untyped activation of `ofPolyTimeUniform hf coins` is `f` on the raw layout with
 empty advice. -/
