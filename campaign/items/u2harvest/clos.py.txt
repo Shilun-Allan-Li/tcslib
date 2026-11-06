@@ -1,0 +1,13 @@
+import json, sys
+g = json.load(open(sys.argv[1]))
+def clos(m, seen=None):
+    seen = set() if seen is None else seen
+    for d in g.get(m, []):
+        if d not in seen:
+            seen.add(d); clos(d, seen)
+    return seen
+roots = sys.argv[2].split(',')
+targets = sys.argv[3].split(',')
+for r in roots:
+    c = clos(r)
+    print(r, len(c), {t: (t in c) for t in targets})

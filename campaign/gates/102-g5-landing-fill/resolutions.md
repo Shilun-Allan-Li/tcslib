@@ -26,3 +26,16 @@ round-1 findings are fixed (note 3), and the repair has no soundness defect.
 
 Round 3 cites #217 (its gate, replay and freeze) and re-checks #211 against it; #211's own file
 does not change.
+
+## Round 3 findings (received 2026-11-06)
+
+`findings-r3.md`, verbatim (SHA-256
+`79810d06cbe5c45d89316e65c9c96c62985ac681140e3414bef8d7bd409a75e7`). **Verdict: PASS: 0 blockers,
+0 majors, 1 minor, 6 notes.** Round 2's two majors are discharged by #217, and #211 is unchanged.
+**The gate is CLOSED.** The merge waits for #217 to merge and for a replay of the tree that
+contains #211 (`TwoTapes`, `UniversalTlogT`, the facade; note 7).
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | minor | **Fixed in #217**: the same member as gate 108's finding 1 (see gate 108's `resolutions.md`). |
+| 2–7 | note | No change. Note 7's merge order is carried into HANDOFF. |

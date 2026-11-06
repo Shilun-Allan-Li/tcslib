@@ -83,13 +83,13 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
         isr
         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
         isr
-        exact hQ he
-      · simp only [WalkLe, he, true_and]
+        exact hQ (walkLe_zero_iff.mpr he)
+      · simp only [walkLe_zero_iff, he, true_and]
     · have hL : σ.stp = σ.wb b := by omega
       refine (NSem.jeq_neg rfl (St.greg hσ _ _) (by simp only [St.toV_cur, toV_wT]; exact he)
         (NSem.jeq_pos rfl (St.greg hσ _ _) (by simp only [St.toV_stp, toV_wB]; exact hL)
           (NSem.ret rfl (St.greg hσ _ _)))).congr ?_
-      simp only [WalkLe, he, Bool.false_eq_true, false_and]
+      simp only [walkLe_zero_iff, he, Bool.false_eq_true, false_and]
   | succ dd ih =>
     intro σ hd hσ hK hcur hstp hQ
     by_cases he : σ.cur = σ.wt b
@@ -101,8 +101,8 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
         isr
         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
         isr
-        exact hQ (Or.inl he)
-      · simp only [WalkLe, he, true_or, true_and]
+        exact hQ (walkLe_succ_iff_head.mpr (Or.inl he))
+      · simp only [walkLe_succ_iff_head, he, true_or, true_and]
     have hbd : σ.wb b ≤ B := by simp only [St.wb, St.Bd] at hσ ⊢; cases b <;> simp <;> omega
     refine NSem.jeq_neg rfl (St.greg hσ _ _) (by simp only [St.toV_cur, toV_wT]; exact he) ?_
     have hL : σ.stp ≠ σ.wb b := by omega
@@ -117,7 +117,8 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
     · simp only [St.toV_K] at hj2
       isr
       by_cases hr : RelO orc x σ.s σ.cur j
-      · refine nsem_call₃_pos rfl (St.greg (by isb) _ _) (by isr; exact hr) ?_
+      · refine nsem_call₃_pos rfl (St.greg (by isb) _ _)
+          (by isr; exact SavitchARM.rel_iff_orc.mp hr) ?_
         refine NSem.clr rfl (St.greg (by isb) _ _) ?_
         isr
         refine nsem_copy (igA E) orc x B rcur rg (by decide) (.wc b true) (.wcb b true)
@@ -129,14 +130,15 @@ theorem gwalk_loop (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
           (by show St.wb b σ - (σ.stp + 1) = dd; omega)
           (by isb) hK (by simpa using hj2) (by show σ.stp + 1 ≤ St.wb b σ; omega)
           (fun hw => IG.of_eq (by ext <;> rfl)
-            (hQ (Or.inr ⟨j, by simpa using hj2, hr, by simpa [St.wt] using hw⟩)))).congr ?_
+            (hQ (walkLe_succ_iff_head.mpr
+              (Or.inr ⟨j, by simpa using hj2, hr, by simpa [St.wt] using hw⟩))))).congr ?_
         simp [St.wt, hr]
       · refine (nsem_call₃_neg rfl (St.greg (by isb) _ _)
-          (by isr; simpa [SavitchARM.Rel] using hr)
+          (by isr; simpa [SavitchARM.rel_iff_orc] using hr)
           (NSem.ret rfl (St.greg (by isb) _ _))).congr ?_
         simp only [Bool.false_eq_true, false_iff, not_and]
         exact fun h => absurd h hr
-    · simp only [St.toV_g, St.toV_K, WalkLe, he, false_or]
+    · simp only [St.toV_g, St.toV_K, walkLe_succ_iff_head, he, false_or]
       constructor
       · rintro ⟨j, -, hj, h1, h2, hq⟩; exact ⟨⟨j, hj, h1, h2⟩, hq⟩
       · rintro ⟨⟨j, hj, h1, h2⟩, hq⟩; exact ⟨j, Nat.zero_le _, hj, h1, h2, hq⟩
@@ -164,7 +166,8 @@ theorem gwalk_spec (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
   · simp only [St.toV_K] at hj2
     isr
     by_cases hi : InitO orc x σ.s j
-    · refine nsem_call₂_pos rfl (St.greg (by isb) _ _) (by isr; exact hi) ?_
+    · refine nsem_call₂_pos rfl (St.greg (by isb) _ _)
+        (by isr; exact SavitchARM.initO_iff_orc.mp hi) ?_
       refine NSem.clr rfl (St.greg (by isb) _ _) ?_
       isr
       refine nsem_copy (igA E) orc x B rcur rg (by decide) (.wc b false) (.wcb b false)
@@ -178,7 +181,7 @@ theorem gwalk_spec (b : Bool) (Q : Prop) (σ : St) (hσ : σ.Bd B) (hK : σ.K + 
           (hQ ⟨j, by simpa using hj2, hi, by simpa [St.wb, St.wt] using hw⟩))).congr ?_
       exact ⟨fun h => ⟨hi, h⟩, fun h => h.2⟩
     · refine (nsem_call₂_neg rfl (St.greg (by isb) _ _)
-        (by isr; simpa [SavitchARM.InitO] using hi)
+        (by isr; simpa [SavitchARM.initO_iff_orc] using hi)
         (NSem.ret rfl (St.greg (by isb) _ _))).congr ?_
       simp only [Bool.false_eq_true, false_iff, not_and]
       exact fun h => absurd h hi

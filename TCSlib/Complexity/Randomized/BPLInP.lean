@@ -226,7 +226,7 @@ theorem entryW_eq (s a a' v : ℕ) :
       Nat.bits ((if StepRel (fixCoin N false) x s a a' then v else 0) +
         (if StepRel (fixCoin N true) x s a a' then v else 0)) := by
   simp only [entryW, stepTest, pairFstD_pairEncode, pairSndD_pairEncode, MultiTapeTM.indicator,
-    StepRel]
+    stepRel_iff_mem]
   split_ifs <;> simp_all [add, bitsVal_bits, LogProg.bitsVal]
 
 /-- The initial state is the context and the table after `0` rounds. -/
