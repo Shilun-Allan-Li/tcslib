@@ -7,3 +7,7 @@
   `794ffb48` (N2, N4, F9) and `f239dafd` (F6 through `SymbolLift`, F5 through `Contract.inPhase`,
   both ruled by the user). `replay-lg6` passed (3 modules, 0 failed, 0 `sorry`); the seal (44),
   controls (91/91), axioms, freeze and lint in `evidence/`. The screen: 0 new pairs against the delivery, no cross-file pair. Pack complete.
+- 2026-11-06: staged (`outbox/gates/102-g5-landing-fill-gate/`, exchange commit `047920ad`):
+  bundle `102-g5-landing-fill-bundle.md`, 89 sections, SHA-256
+  `a79385da1ad4331dcb6559207ddcfcb29e1ab4dced93f4734015eaf068f0582d`; Lean from `f239dafd`,
+  records from `f6954560`. Findings file `g5-landing-fill-findings.md`.
