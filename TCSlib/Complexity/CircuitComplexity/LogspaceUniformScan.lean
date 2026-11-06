@@ -300,9 +300,9 @@ lemma uloop (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B p c k : �
       rw [astep_rd hrd _ _ _ rfl, bit_rep h (by omega)]
       simp only [show j < k from by omega, decide_true, ↓reduceIte]
       refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
-      simp only [astep, scan, rg_two, upd_two]
+      simp only [astep_inc (show scan τ (.uB ex) = _ from rfl), rg_two, upd_two]
       refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
-      simp only [astep, scan, rg_zero, upd_zero]
+      simp only [astep_inc (show scan τ (.uC ex) = _ from rfl), rg_zero, upd_zero]
       exact ih (j + 1) (by omega)
   simpa using key k 0 (by omega)
 
@@ -331,7 +331,7 @@ lemma argsSkip (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B : ℕ}
     rw [astep_rd hrd _ _ _ rfl, getD_of_drop (by simpa using h)]
     simp only [Bool.false_eq_true, ↓reduceIte]
     refine AReach.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, Bool.false_eq_true, ↓reduceIte, rg_zero, upd_zero]
+    simp only [astep_inc (show scan τ (.aEnd false) = _ from rfl), rg_zero, upd_zero]
     exact AReach.refl _
   | cons k as ih =>
     intro p c a rest h hc ha
@@ -350,12 +350,12 @@ lemma argsSkip (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B : ℕ}
     rw [astep_rd hrd _ _ _ rfl, getD_of_drop h]
     simp only [↓reduceIte]
     refine AReach.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan τ (.aB false) = _ from rfl), rg_zero, upd_zero]
     refine AReach.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, upd_two]
+    simp only [astep_clr (show scan τ (.aC false) = _ from rfl), upd_two]
     refine (uloop hrd false h1 hB hc).trans ?_
     refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
-    simp only [astep, scan, Bool.false_eq_true, ↓reduceIte, rg_zero, upd_zero]
+    simp only [astep_inc (show scan τ (.uE false) = _ from rfl), rg_zero, upd_zero]
     convert hr using 4
     omega
 
@@ -394,9 +394,9 @@ lemma argsEx {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false
     rw [astep_rd hrd _ _ _ rfl, getD_of_drop h]
     simp only [↓reduceIte]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan Task.edge (.aB true) = _ from rfl), rg_zero, upd_zero]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, upd_two]
+    simp only [astep_clr (show scan Task.edge (.aC true) = _ from rfl), upd_two]
     refine (uloop hrd true h1 hB hc).halt ?_
     refine AHalt.step (gd_rg (by omega) hc (by omega)) ?_
     rw [astep_jeqFst ht]
@@ -406,7 +406,7 @@ lemma argsEx {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false
       exact AHalt.ret (by simp [scan]) (gd_rg (by omega) hc (by omega))
     · simp only [hk, ↓reduceIte, List.mem_cons, Ne.symm hk, false_or]
       refine AHalt.step (gd_rg (by omega) hc (by omega)) ?_
-      simp only [astep, scan, rg_zero, upd_zero]
+      simp only [astep_inc (show scan Task.edge .uF = _ from rfl), rg_zero, upd_zero]
       have := ih (p := p + 1 + k + 1) (c := c) (a := k) (by rw [← hu]; congr 1) hc
         (by omega)
       exact this
@@ -437,13 +437,13 @@ lemma gateSkip (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B : ℕ}
   refine ⟨a', ha', ?_⟩
   rw [length_gate_encode] at hl ⊢
   refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
-  simp only [astep, scan, rg_one, upd_one]
+  simp only [astep_inc (show scan τ .gC = _ from rfl), rg_one, upd_one]
   refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
-  simp only [astep, scan, rg_zero, upd_zero]
+  simp only [astep_inc (show scan τ .gD = _ from rfl), rg_zero, upd_zero]
   refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
-  simp only [astep, scan, rg_zero, upd_zero]
+  simp only [astep_inc (show scan τ .sK1 = _ from rfl), rg_zero, upd_zero]
   refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
-  simp only [astep, scan, rg_zero, upd_zero]
+  simp only [astep_inc (show scan τ .sK2 = _ from rfl), rg_zero, upd_zero]
   convert hr using 4
   omega
 
@@ -481,12 +481,12 @@ lemma hitGate {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p fals
   | size => exact AHalt.ret rfl (gd_rg (by omega) hc ha)
   | type t =>
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan (Task.type t) .hHit = _ from rfl), rg_zero, upd_zero]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
     rw [astep_rd hrd _ _ _ rfl, hb₁]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    cases b₁ <;> simp only [astep, scan, rg_zero, upd_zero, Bool.false_eq_true,
-      ↓reduceIte] <;>
+    cases b₁ <;> simp only [astep_inc (show scan (.type t) (.kB _) = _ from rfl), rg_zero,
+      upd_zero, Bool.false_eq_true, ↓reduceIte] <;>
     · refine AHalt.step (gd_rg (by omega) hc ha) ?_
       rw [astep_rd hrd _ _ _ rfl, hb₂]
       cases b₂ <;>
@@ -494,11 +494,11 @@ lemma hitGate {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p fals
         simp only [scan, hitAns, ← decodeKind_encode g.kind hk, Bool.false_eq_true, ↓reduceIte]
   | edge =>
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan Task.edge .hHit = _ from rfl), rg_zero, upd_zero]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan Task.edge .eK1 = _ from rfl), rg_zero, upd_zero]
     refine AHalt.step (gd_rg (by omega) hc ha) ?_
-    simp only [astep, scan, rg_zero, upd_zero]
+    simp only [astep_inc (show scan Task.edge .eK2 = _ from rfl), rg_zero, upd_zero]
     exact argsEx hrd ht hB g.args h3 hc ha
 
 /-- **The gate loop**: from the start of the gate list `gs` with vertex counter `c ≤ tv`,
@@ -585,7 +585,7 @@ lemma nloop {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
       rw [astep_rd hrd _ _ _ rfl, hb]
       simp only [lt_self_iff_false, decide_false, Bool.false_eq_true, ↓reduceIte]
       refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
-      simp only [astep, scan, rg_zero, upd_zero]
+      simp only [astep_inc (show scan τ .nE = _ from rfl), rg_zero, upd_zero]
       rw [if_neg (by omega)]
       exact hcont hjt
     | succ d ih =>
@@ -603,9 +603,9 @@ lemma nloop {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
         exact AHalt.ret rfl (gd_rg (by omega) (by omega) (by omega))
       · simp only [hjt', ↓reduceIte]
         refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
-        simp only [astep, scan, rg_one, upd_one]
+        simp only [astep_inc (show scan τ .nC = _ from rfl), rg_one, upd_one]
         refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
-        simp only [astep, scan, rg_zero, upd_zero]
+        simp only [astep_inc (show scan τ .nD = _ from rfl), rg_zero, upd_zero]
         exact ih (j + 1) (by omega) (by omega)
   intro j hj hjt
   exact key (n - j) j (by omega) hjt
@@ -648,7 +648,10 @@ theorem scan_halts {τ : Task} {n : ℕ} (C : DAGCircuit n) {w : List Bool}
   refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
   have hst : astep (scan τ) o (X n w) (some .start, rg 0 0 0, none) =
       (some .nA, rg 0 0 0, none) := by
-    cases τ <;> simp only [Valid] at hv <;> simp [astep, scan, hv]
+    cases τ <;> simp only [Valid] at hv
+    · simp [astep_valP (show scan .size .start = _ from rfl), hv]
+    · simp [astep_valP (show scan (.type _) .start = _ from rfl), hv]
+    · simp [astep_valQ (show scan .edge .start = _ from rfl), hv]
   rw [hst]
   refine nloop hrd ht le_rfl h0 (fun hn => ?_) 0 (by omega) (by omega)
   have := gloop hrd ht le_rfl C.gates (p := n + 1) (c := n) (a := 0) h1 hn (by omega)

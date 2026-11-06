@@ -256,7 +256,8 @@ lemma Em.emit (s : Site) {k V U W : ℕ} (hk : k ≤ i) (hB : k + 1 ≤ B) (hV :
       (· = (some s.next, rg (k + 1) V U W, none)) := by
   have hstep : astep (walk lm) o (X n i) (some (.em s), rg k V U W, none) =
       (some (if k = i then .hitL s.bit else .bump s), rg k V U W, none) := by
-    simp [astep, walk, plainWord_pairEncode, bits_injective.eq_iff]
+    simp [astep_jeqIn (show walk lm (.em s) = _ from rfl), plainWord_pairEncode,
+      bits_injective.eq_iff]
   constructor
   · intro _ hi
     obtain rfl : k = i := by simp at hi; omega
@@ -269,7 +270,7 @@ lemma Em.emit (s : Site) {k V U W : ℕ} (hk : k ≤ i) (hB : k + 1 ≤ B) (hV :
     refine ⟨_, rfl, AReach.step (gd_rg (by omega) hV hU hW) ?_⟩
     rw [hstep, if_neg (by omega)]
     refine AReach.step (gd_rg (by omega) hV hU hW) ?_
-    simp only [astep, walk, rg_0, upd_0]
+    simp only [astep_inc (show walk lm (.bump s) = _ from rfl), rg_0, upd_0]
     exact AReach.refl _
 
 end Em
@@ -349,19 +350,20 @@ lemma uLoop {V U : ℕ} (hV : V ≤ B) (hU : U ≤ B) :
     intro W k hW hk hkB
     obtain rfl : W = U := by omega
     refine Em.step (gd_rg (by omega) hV hU hU) ?_
-    simp only [astep, walk, rg_2, rg_3, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .uL = _ from rfl), rg_2, rg_3, ↓reduceIte]
     exact (Em.emit .uEnd hk (by omega) hV hU hU).mono fun b hb => by rw [hb]; rfl
   | succ d ih =>
     intro W k hW hk hkB
     refine Em.step (gd_rg (by omega) hV hU (by omega)) ?_
-    simp only [astep, walk, rg_2, rg_3, show W ≠ U by omega, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .uL = _ from rfl), rg_2, rg_3, show W ≠ U by omega,
+      ↓reduceIte]
     rw [List.replicate_succ, List.cons_append]
     refine Em.append (S := [Site.uOne.bit]) (Em.emit .uOne hk (by omega) hV hU (by omega))
       (fun hki b hb => ?_)
     subst hb
     simp only [Site.next, List.length_singleton] at hki ⊢
     refine Em.step (gd_rg (by omega) hV hU (by omega)) ?_
-    simp only [astep, walk, rg_3, upd_3]
+    simp only [astep_inc (show walk lm .incW = _ from rfl), rg_3, upd_3]
     exact (ih (W + 1) (k + 1) (by omega) hki (by omega)).mono fun b hb => by
       rw [hb]; congr 3; omega
 
@@ -391,17 +393,18 @@ lemma aLoop {V : ℕ} (g : DAGGate) (hg : (C.circuit n).gates[V - n]? = some g) 
     obtain rfl : U = V := by omega
     simp only [List.range'_zero, List.filter_nil, encodeList, List.length_singleton] at hK ⊢
     refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
-    simp only [astep, walk, rg_1, rg_2, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .aL = _ from rfl), rg_1, rg_2, ↓reduceIte]
     refine (Em.emit .aEnd hk (by omega) (by omega) (by omega) hW).cont fun _ b hb => ?_
     subst hb
     refine ⟨_, ⟨W, hW, rfl⟩, AReach.step (gd_rg (by omega) (by omega) (by omega) hW) ?_⟩
-    simp only [Site.next, astep, walk, rg_1, upd_1, hK]
+    simp only [astep_inc (show walk lm Site.aEnd.next = _ from rfl), rg_1, upd_1, hK]
     exact AReach.refl _
   | succ d ih =>
     intro U k W K hU hk hW hK hKB
     rw [List.range'_succ, List.filter_cons] at hK ⊢
     refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
-    simp only [astep, walk, rg_1, rg_2, show U ≠ V by omega, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .aL = _ from rfl), rg_1, rg_2, show U ≠ V by omega,
+      ↓reduceIte]
     refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
     rw [astep_call₂ rfl, rg_2, rg_1, orc_edge]
     by_cases he : U ∈ g.args
@@ -419,20 +422,20 @@ lemma aLoop {V : ℕ} (g : DAGGate) (hg : (C.circuit n).gates[V - n]? = some g) 
       subst hb
       simp only [Site.next, List.length_singleton] at hki ⊢
       refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
-      simp only [astep, walk, upd_3]
+      simp only [astep_clr (show walk lm .clrW = _ from rfl), upd_3]
       refine Em.append (uLoop C (by omega) (by omega) U 0 (k + 1) (by omega) hki (by omega))
         (fun hki' b hb => ?_)
       subst hb
       simp only [List.length_append, List.length_replicate, List.length_singleton] at hki' ⊢
       refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
-      simp only [astep, walk, rg_2, upd_2]
+      simp only [astep_inc (show walk lm .aN = _ from rfl), rg_2, upd_2]
       refine (ih (U + 1) (k + 1 + (U + 1)) U K (by omega) hki' (by omega) ?_ hKB).mono
         fun b hb => hb
       rw [hK]; simp only [List.length_nil]; omega
     · have hne : ¬ (C.circuit n).Edge U V := fun h => he ((edge_iff C hg hnV).mp h)
       simp only [hne, decide_false, Bool.false_eq_true, ↓reduceIte, he] at hK ⊢
       refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
-      simp only [astep, walk, rg_2, upd_2]
+      simp only [astep_inc (show walk lm .aN = _ from rfl), rg_2, upd_2]
       exact ih (U + 1) k W K (by omega) hk hW hK hKB
 
 /-- The arguments of a canonical gate are the candidates below its vertex that are
@@ -557,7 +560,7 @@ lemma gLoop (hcan : (C.circuit n).IsCanonical) (hSB : (C.circuit n).size + 1 ≤
     subst hb
     rw [hkl] at hki' ⊢
     refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
-    simp only [astep, walk, upd_2]
+    simp only [astep_clr (show walk lm .aS = _ from rfl), upd_2]
     refine Em.append (aLoop C g hg hnV (by omega) V 0 (k + 1 + 2) W _ (by omega) hki' hW rfl
       (by omega)) fun hki'' b hb => ?_
     obtain ⟨W', hW', rfl⟩ := hb
@@ -607,7 +610,7 @@ lemma inLoop (hnB : n + 1 ≤ B) :
     subst hb
     simp only [Site.next, List.length_singleton] at hki ⊢
     refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
-    simp only [astep, walk, rg_1, upd_1]
+    simp only [astep_inc (show walk lm .incV = _ from rfl), rg_1, upd_1]
     exact (ih (V + 1) (k + 1) U W (by omega) hki hU hW (by omega)).mono fun b hb => by
       rw [hb]; congr 3; omega
 
@@ -625,19 +628,20 @@ lemma oLoop {V : ℕ} (hVB : V ≤ B) :
     intro W k U hW hk hU hkB
     obtain rfl : W = V := by omega
     refine Em.step (gd_rg (by omega) hVB hU hVB) ?_
-    simp only [astep, walk, rg_1, rg_3, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .oL = _ from rfl), rg_1, rg_3, ↓reduceIte]
     exact (Em.emit .oEnd hk (by omega) hVB hU hVB).mono fun b hb => by rw [hb]; rfl
   | succ d ih =>
     intro W k U hW hk hU hkB
     refine Em.step (gd_rg (by omega) hVB hU (by omega)) ?_
-    simp only [astep, walk, rg_1, rg_3, show W ≠ V by omega, ↓reduceIte]
+    simp only [astep_jeq (show walk lm .oL = _ from rfl), rg_1, rg_3, show W ≠ V by omega,
+      ↓reduceIte]
     rw [List.replicate_succ, List.cons_append]
     refine Em.append (S := [Site.oOne.bit]) (Em.emit .oOne hk (by omega) hVB hU (by omega))
       fun hki b hb => ?_
     subst hb
     simp only [Site.next, List.length_singleton] at hki ⊢
     refine Em.step (gd_rg (by omega) hVB hU (by omega)) ?_
-    simp only [astep, walk, rg_3, upd_3]
+    simp only [astep_inc (show walk lm .incWo = _ from rfl), rg_3, upd_3]
     exact (ih (W + 1) (k + 1) U (by omega) hki hU (by omega)).mono fun b hb => by
       rw [hb]; congr 3; omega
 
@@ -681,15 +685,15 @@ theorem walk_halts (C : DAGCircuitFamily) {n : ℕ} (hcan : (C.circuit n).IsCano
     refine Em.append hg fun hki' b hb => ?_
     obtain ⟨U', hU', W', hW', rfl⟩ := hb
     refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
-    simp only [astep, walk, upd_3]
+    simp only [astep_clr (show walk lm .oS = _ from rfl), upd_3]
     refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
-    simp only [astep, walk, rg_3, upd_3]
+    simp only [astep_inc (show walk lm .oI = _ from rfl), rg_3, upd_3]
     refine (oLoop C (by omega) ((C.circuit n).size - 1) 1 _ U' (by omega) hki' (by omega) (by omega)).mono
       fun b hb => ⟨U', hU', by rw [hb]; congr 3; omega⟩
   rw [rg_init]
   refine AHalt.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
   have hv : ValidPlain (X n i) := ⟨n, _, rfl, canon_bits i⟩
-  simp only [astep, walk, hv, ↓reduceIte]
+  simp only [astep_valP (show walk lm .start = _ from rfl), hv, ↓reduceIte]
   by_cases hi : i < B
   · rw [if_pos hi]
     simpa using hEm.1 (Nat.zero_le _) (by simpa using hi)
