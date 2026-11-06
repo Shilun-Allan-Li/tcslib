@@ -1,0 +1,38 @@
+From 89bbac756cbb46b53abdfdd5e0468350cb2d674d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:23:59 +0000
+Subject: [PATCH 7/7] fill dl-a: expCollection_oneWay
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The sampling clause is expCollection_sampleClose; for the hardness clause,
+expCollection_invProbAt_le bounds the inversion probability by G.dlProb A n from n₀
+on, negligible by hG A (dlHard_iff); Negligible.mono with invProbAt_nonneg and
+dlProb_nonneg.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/DiscreteLog.lean | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 81b24036..0fdc5f19 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -1289,7 +1289,10 @@ probability by `G.dlProb A n` for `n ≥ n₀`, negligible by `hG A`; conclude b
+ `Negligible.mono` (`Collection.invProbAt_nonneg`, threshold `n₀`). -/
+ theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+     (hV : ∀ i, V i → ExpValid i) (hG : G.DLHard) : (expCollection H G hV).OneWay := by
+-  sorry
++  refine ⟨expCollection_sampleClose H G hV, fun A => ?_⟩
++  refine ((ExpGroupGen.dlHard_iff G).1 hG A).mono ⟨G.n₀, fun n hn => ?_⟩
++  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ A n), abs_of_nonneg (G.dlProb_nonneg A n)]
++  exact expCollection_invProbAt_le H G hV A hn
+ 
+ /-! ## Safe primes: the discrete-log assumption and the collection `DL` -/
+ 
+-- 
+2.43.0
+

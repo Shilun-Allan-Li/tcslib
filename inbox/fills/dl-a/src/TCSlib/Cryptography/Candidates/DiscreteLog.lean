@@ -972,7 +972,31 @@ theorem expSampler_spec {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGrou
         ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s) = some x ∧
       expEval (pairEncode (pairFstD ((expGen G).runAt n [] r))
         ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s)) = expF _ x := by
-  sorry
+  -- the generated index is valid at every parameter
+  have hvalid : ExpValid (pairFstD ((expGen G).runAt n [] r)) := by
+    rw [expGen_runAt]
+    split_ifs with hn
+    · rw [pairFstD_pairEncode]
+      exact hV _ (G.valid n _ hn)
+    · rw [pairFstD_pairEncode]
+      exact expValid_dlDefaultIndex
+  generalize pairFstD ((expGen G).runAt n [] r) = i at hvalid ⊢
+  rw [expSampler_runAt]
+  -- the sampled value `v` is below `m` (accepted, or the fallback `0 < m`)
+  set v := (sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn s)).getD 0 with hvdef
+  have hv : v < dlM i := by
+    rcases hs : sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn s) with _ | w
+    · rw [hvdef, hs, Option.getD_none]
+      exact ((expValid_iff i).1 hvalid).2.1
+    · rw [hvdef, hs, Option.getD_some]
+      exact sampleBelowL_lt hs
+  have hvo : v < expOrd i := (expOrd_of_valid hvalid).symm ▸ hv
+  -- `x = (v : Z_m)` is encoded by the same numeral
+  have henc : expEnc i ((v : ℕ) : ZMod (expOrd i)) = natToList (dlW i) v := by
+    rw [expEnc_eq, ZMod.val_natCast, Nat.mod_eq_of_lt hvo]
+  refine ⟨((v : ℕ) : ZMod (expOrd i)), ?_, ?_⟩
+  · rw [← henc, expDec_expEnc]
+  · rw [← henc, expEval_spec]
 
 /-- **The exponentiation collection of an instance generator**: indices `⟨p, ⟨m, g⟩⟩`,
 domains `D_i = Z_m` (valid indices; `Z_1` otherwise), `f_i(x) = g^x mod p`, the generator
@@ -1100,6 +1124,63 @@ theorem expCollection_D {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGrou
     (hV : ∀ i, V i → ExpValid i) (i : List Bool) :
     (expCollection H G hV).D i = ZMod (expOrd i) := rfl
 
+/-- Any two samplers are `1`-close (probabilities lie in `[0, 1]`). -/
+private theorem dla_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) :
+    StatClose X Y 1 := by
+  rw [statClose_iff]
+  intro T
+  have h1 := uprob_nonneg (fun s => T (X s))
+  have h2 := uprob_le_one (fun s => T (X s))
+  have h3 := uprob_nonneg (fun t => T (Y t))
+  have h4 := uprob_le_one (fun t => T (Y t))
+  rw [abs_le]
+  constructor <;> linarith
+
+/-- **The decoded domain sampler is `(1/2)^n`-close to uniform on `Z_m`** at a valid index of
+width `n`: `statClose_sampleBelowL` on the sampler's `n · n` coins (read through
+`NUPPT.coinsEquivPoly`), mapped through the decoder, which reads the numeral back exactly. -/
+private theorem dla_statClose_expDec (H : ArithmeticFP) {n : ℕ} {i : List Bool} (hv : ExpValid i)
+    (hw : dlW i = n) :
+    StatClose (fun s : (expSampler H).Coins n => expDec i ((expSampler H).runAt n i s))
+      (fun x : ZMod (expOrd i) => some x) ((1 / 2 : ℝ) ^ n) := by
+  have hv' := (expValid_iff i).1 hv
+  have hm : 0 < dlM i := hv'.2.1
+  have hmn : dlM i < 2 ^ n := hw ▸ hv'.2.2.1.trans (dlP_lt_two_pow i)
+  have hord : expOrd i = dlM i := expOrd_of_valid hv
+  -- the sampler's coins are `n · n` bits
+  have hcoins : (expSampler H).coins = .mul .var .var := by
+    unfold expSampler
+    exact NUPPT.coins_ofPolyTimeUniform _ _
+  have hlen : (PolyExpr.mul .var .var).eval n = n * n := by
+    rw [PolyExpr.eval_mul, PolyExpr.eval_var]
+  let e : (expSampler H).Coins n ≃ (Fin (n * n) → Bool) :=
+    (NUPPT.coinsEquivPoly hcoins n).trans (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool))
+  have hofn : ∀ s, List.ofFn (e s) = List.ofFn s := by
+    intro s
+    rw [← NUPPT.coinsEquivPoly_ofFn hcoins n s]
+    exact (List.ofFn_congr hlen.symm _).trans rfl
+  -- the residues below `m` are the elements of `Z_m`
+  let e2 : ZMod (expOrd i) ≃ Fin (dlM i) :=
+    { toFun := fun y => ⟨y.val, lt_of_lt_of_eq (ZMod.val_lt y) hord⟩
+      invFun := fun x => ((x : ℕ) : ZMod (expOrd i))
+      left_inv := fun y => ZMod.natCast_zmod_val y
+      right_inv := fun x => Fin.ext (by
+        show ((x : ℕ) : ZMod (expOrd i)).val = x
+        rw [ZMod.val_natCast, Nat.mod_eq_of_lt (lt_of_lt_of_eq x.2 hord.symm)]) }
+  let g : ℕ → Option (ZMod (expOrd i)) := fun v => expDec i (natToList (dlW i) v)
+  have h := (((statClose_sampleBelowL hm hmn).comp_equiv_left e).map g).comp_equiv_right e2
+  have hX : (fun s : (expSampler H).Coins n =>
+      g ((sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn (e s))).getD 0)) =
+      fun s => expDec i ((expSampler H).runAt n i s) := by
+    funext s
+    rw [hofn, expSampler_runAt]
+  have hY : (fun y : ZMod (expOrd i) => g ((e2 y : Fin (dlM i)) : ℕ)) = fun y => some y := by
+    funext y
+    show expDec i (natToList (dlW i) y.val) = some y
+    rw [← expEnc_eq, expDec_expEnc]
+  rw [hX, hY] at h
+  exact h
+
 /-- **The domain sampler is close to uniform** [PS10, Theorem 52.3, "it is easy to sample the
 domain `D_i`"]: the decoded output of `expSampler` at a generated index is within a
 negligible statistical distance of the uniform element of `Z_m`.
@@ -1119,7 +1200,51 @@ value is below `m`; `sampleBelowL` is `firstHit (· < m)` of the numbers read fr
 theorem expCollection_sampleClose {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (expCollection H G hV).SampleClose δ := by
-  sorry
+  refine ⟨fun n => if n < G.n₀ then 1 else (1 / 2 : ℝ) ^ n, ?_, ?_⟩
+  · refine negligible_two_pow_neg.mono ⟨G.n₀, fun n hn => ?_⟩
+    rw [if_neg (not_lt.2 hn), one_div]
+  · rw [Collection.sampleClose_iff]
+    intro n r
+    by_cases hn : n < G.n₀
+    · rw [if_pos hn]
+      exact dla_statClose_one _ _
+    rw [if_neg hn]
+    have hn' : G.n₀ ≤ n := not_lt.1 hn
+    -- the generated index is valid and of width `n`
+    have hidx := expCollection_index H G hV n r hn'
+    have hv : ExpValid ((expCollection H G hV).index n r) := hidx ▸ hV _ (G.valid n _ hn')
+    have hw : dlW ((expCollection H G hV).index n r) = n :=
+      hidx ▸ (G.wellFormed n _ hn').dlW_eq
+    generalize (expCollection H G hV).index n r = j at hv hw ⊢
+    rw [expCollection_sample]
+    simp only [expCollection_decD]
+    have h := ((dla_statClose_expDec H hv hw).map
+      (Option.map (expCollection_domEquiv H G hV j).symm)).comp_equiv_right
+        (expCollection_domEquiv H G hV j)
+    have hY : (fun x : (expCollection H G hV).D j =>
+        Option.map (expCollection_domEquiv H G hV j).symm (some (expCollection_domEquiv H G hV j x))) =
+        fun x => some x := by
+      funext x
+      rw [Option.map_some, Equiv.symm_apply_apply]
+    rw [hY] at h
+    exact h
+
+/-- **An inverter's success is a discrete-log success** at a valid index of width `n`: if `A`'s
+answer `w` decodes under `expDec` to a preimage of `g^y`, then `w` is the `n`-bit numeral of `y`
+(`expF_injective`). -/
+private theorem dla_dl_of_inv {i w : List Bool} {n : ℕ} (hv : ExpValid i) (hw : dlW i = n)
+    {y : ZMod (expOrd i)} (h : ∃ x', expDec i w = some x' ∧ expF i x' = expF i y) :
+    ∃ x : Fin n → Bool, decodeFin n w = some x ∧ bitsToNat x = y.val := by
+  obtain ⟨x', hdec, hf⟩ := h
+  obtain rfl := expF_injective hv hf
+  rw [expDec] at hdec
+  split_ifs at hdec with hc
+  obtain ⟨hlen, hlt⟩ := hc
+  rw [hw] at hlen
+  rw [decodeFin_eq, dif_pos hlen]
+  refine ⟨_, rfl, ?_⟩
+  rw [bitsToNat_eq_listToNat, ← List.ofFn_congr hlen w.get, List.ofFn_get, ← Option.some.inj hdec,
+    ZMod.val_natCast, Nat.mod_eq_of_lt hlt]
 
 /-- **Inverting the collection is the discrete-log experiment** [PS10, proof of Theorem 52.3,
 "the discrete log assumption implies that `f_{p,g}` is hard to invert"]: for `n ≥ n₀`, the
@@ -1137,7 +1262,23 @@ identified through `expCollection_coinsEquiv` (`expCollection_index`,
 theorem expCollection_invProbAt_le {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (A : NUPPT) {n : ℕ} (hn : G.n₀ ≤ n) :
     (expCollection H G hV).invProbAt A n ≤ G.dlProb A n := by
-  sorry
+  rw [Collection.invProbAt_eq, ExpGroupGen.dlProb_eq]
+  refine le_of_le_of_eq (OneWay.uexp_mono fun r => ?_) (expCollection_coinsEquiv_uexp H G hV n _)
+  have hv : ExpValid (G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r)) := hV _ (G.valid n _ hn)
+  have hw : dlW (G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r)) = n :=
+    (G.wellFormed n _ hn).dlW_eq
+  rw [expCollection_index H G hV n r hn]
+  generalize G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r) = i at hv hw ⊢
+  -- read the domain `D i` as `Z_m` (`expCollection_domEquiv`) and compare pointwise
+  rw [← uprob_comp_equiv
+    (Equiv.prodCongr (expCollection_domEquiv H G hV i).symm (Equiv.refl (A.Coins n)))]
+  refine uprob_mono fun z hz => ?_
+  obtain ⟨x', hdec, hf⟩ := hz
+  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply,
+    expCollection_f, expCollection_decD, Equiv.apply_symm_apply] at hdec hf
+  obtain ⟨x'', hx'', rfl⟩ := Option.map_eq_some_iff.1 hdec
+  rw [Equiv.apply_symm_apply] at hf
+  exact dla_dl_of_inv hv hw ⟨x'', hx'', hf⟩
 
 /-- **The exponentiation collection is one-way under discrete-log hardness** (the generic
 form of [PS10, Theorem 52.3]).
@@ -1148,7 +1289,10 @@ probability by `G.dlProb A n` for `n ≥ n₀`, negligible by `hG A`; conclude b
 `Negligible.mono` (`Collection.invProbAt_nonneg`, threshold `n₀`). -/
 theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (hG : G.DLHard) : (expCollection H G hV).OneWay := by
-  sorry
+  refine ⟨expCollection_sampleClose H G hV, fun A => ?_⟩
+  refine ((ExpGroupGen.dlHard_iff G).1 hG A).mono ⟨G.n₀, fun n hn => ?_⟩
+  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ A n), abs_of_nonneg (G.dlProb_nonneg A n)]
+  exact expCollection_invProbAt_le H G hV A hn
 
 /-! ## Safe primes: the discrete-log assumption and the collection `DL` -/
 
