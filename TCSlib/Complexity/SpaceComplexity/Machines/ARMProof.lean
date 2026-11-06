@@ -109,7 +109,7 @@ lemma AHalt.step {a : AConf m Λ} {r : Bool} (hG : G a)
 /-- Answering in one step. -/
 lemma AHalt.ret {l : Λ} {v : Fin m → ℕ} {r : Bool} (hA : A l = .ret r)
     (hG : G (some l, v, none)) : AHalt A oracle x G (some l, v, none) r :=
-  ⟨1, by simp [arun, astep, hA], by simp [arun, astep, hA], fun t ht => by
+  ⟨1, by simp [arun, astep_ret hA], by simp [arun, astep_ret hA], fun t ht => by
     obtain rfl : t = 0 := by omega
     exact hG⟩
 

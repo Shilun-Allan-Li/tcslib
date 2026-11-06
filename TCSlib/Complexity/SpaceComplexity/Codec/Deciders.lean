@@ -288,22 +288,27 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
         (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true)) = false by simp [hscan]]
     have r1 : Reach N .init y B (.vDone st) R.val .rej R.val :=
       Reach.single' (gd_of hv0 (by simp [PreS, CA, goto]))
-        (by simp only [InitScan] at hscan; simp [astep, CA, goto, hscan])
+        (by simp only [InitScan] at hscan
+            simp [astep_jz (show CA N .init (.vDone st) = _ from rfl), hscan])
     exact AReach.halt r1 (hret _ _ _ hv0 rfl)
   have r1 : Reach N .init y B (.vDone st) R.val .iz1 R.val :=
     Reach.single' (gd_of hv0 (by simp [PreS, CA, goto]))
-      (by simp only [InitScan] at hscan; simp [astep, CA, goto, hscan])
+      (by simp only [InitScan] at hscan; simp [astep_jz (show CA N .init (.vDone st) = _ from rfl),
+        hscan])
   by_cases hp0 : R.Pos = 0
   · rw [show decide (InitScan N st.1 ∧ R.Pos = 1 ∧
         (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true)) = false by simp [hp0]]
     have r2 : Reach N .init y B .iz1 R.val .rej R.val :=
-      Reach.single' (gd_of hv0 (by simp [PreS, CA])) (by simp [astep, CA, hp0])
+      Reach.single' (gd_of hv0 (by simp [PreS, CA]))
+        (by simp [astep_jz (show CA N .init .iz1 = _ from rfl), hp0])
     exact AReach.halt (r1.trans r2) (hret _ _ _ hv0 rfl)
   have r2 : Reach N .init y B .iz1 R.val .iz2 R.val :=
-    Reach.single' (gd_of hv0 (by simp [PreS, CA])) (by simp [astep, CA, hp0])
+    Reach.single' (gd_of hv0 (by simp [PreS, CA]))
+      (by simp [astep_jz (show CA N .init .iz1 = _ from rfl), hp0])
   have hv1 : ({R with Pos := R.Pos - 1} : Regs).Bd B := by simp only [Regs.Bd]; omega
   have r3 : Reach N .init y B .iz2 R.val .iz3 ({R with Pos := R.Pos - 1} : Regs).val :=
-    Reach.single' (gd_of hv0 (by simp [PreS, CA])) (by simp [astep, CA])
+    Reach.single' (gd_of hv0 (by simp [PreS, CA]))
+      (by simp [astep_dec (show CA N .init .iz2 = _ from rfl)])
   by_cases hp1 : R.Pos = 1
   swap
   · rw [show decide (InitScan N st.1 ∧ R.Pos = 1 ∧
@@ -311,11 +316,12 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
     have r4 : Reach N .init y B .iz3 ({R with Pos := R.Pos - 1} : Regs).val .rej
         ({R with Pos := R.Pos - 1} : Regs).val :=
       Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
-        (by simp [astep, CA]; omega)
+        (by simp [astep_jz (show CA N .init .iz3 = _ from rfl)]; omega)
     exact AReach.halt (r1.trans (r2.trans (r3.trans r4))) (hret _ _ _ hv1.val_le rfl)
   have r4 : Reach N .init y B .iz3 ({R with Pos := R.Pos - 1} : Regs).val .icen
       ({R with Pos := R.Pos - 1} : Regs).val :=
-    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA])) (by simp [astep, CA]; omega)
+    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
+      (by simp [astep_jz (show CA N .init .iz3 = _ from rfl)]; omega)
   set R1 : Regs := {R with Pos := R.Pos - 1}
   by_cases hk : N.k = 0
   · rw [show decide (InitScan N st.1 ∧ R.Pos = 1 ∧
@@ -330,9 +336,12 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
     omega
   have hAB : R.A ≤ y.length := by rw [hA]; omega
   have r5 : Reach N .init y B .icen R1.val .clrUc R1.val :=
-    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA, hk, goto])) (by simp [astep, CA, hk, goto])
+    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA, hk, goto]))
+      (by simp [astep_jz ((show CA N .init .icen = goto N .clrUc from if_neg hk).trans
+        (goto_eq _))])
   have r6 : Reach N .init y B .clrUc R1.val (.cp .Uc) ({R1 with U := 0} : Regs).val :=
-    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA])) (by simp [astep, CA])
+    Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]))
+      (by simp [astep_clr (show CA N .init .clrUc = _ from rfl)])
   have r7 : Reach N .init y B (.cp .Uc) ({R1 with U := 0} : Regs).val (.cp .Tsc)
       ({R1 with U := R.A} : Regs).val :=
     Reach.cast (cp_run y B .Uc _ (by apply Regs.Bd.val_le; simp only [R1, Regs.Bd]; omega)
@@ -369,12 +378,14 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
   cases hb : (w[W N * s + (hH N + 2)]?).getD false
   · have r11 : Reach N .init y B .cenRead R2.val .rej R2.val :=
       Reach.single' (gd_of hR2.val_le (by simp [PreS, CA]))
-        (by simp [astep, CA, vword_whole₁, orc_bit, R2, hbit, hb])
+        (by simp [astep_call (show CA N .init .cenRead = _ from rfl), vword_whole₁,
+          orc_bit, R2, hbit, hb])
     exact AReach.halt (r1.trans (r2.trans (r3.trans (r4.trans (r5.trans (r6.trans (r7.trans
       (r8.trans (r9.trans (r10.trans r11)))))))))) (hret _ _ _ hR2.val_le rfl)
   · have r11 : Reach N .init y B .cenRead R2.val .acc R2.val :=
       Reach.single' (gd_of hR2.val_le (by simp [PreS, CA]))
-        (by simp [astep, CA, vword_whole₁, orc_bit, R2, hbit, hb])
+        (by simp [astep_call (show CA N .init .cenRead = _ from rfl), vword_whole₁,
+          orc_bit, R2, hbit, hb])
     exact AReach.halt (r1.trans (r2.trans (r3.trans (r4.trans (r5.trans (r6.trans (r7.trans
       (r8.trans (r9.trans (r10.trans r11)))))))))) (hret _ _ _ hR2.val_le rfl)
 

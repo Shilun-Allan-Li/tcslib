@@ -137,76 +137,80 @@ lemma PSem.inc {l l' : Λ} {r : Fin m} (hA : A l = .det (.inc r l')) {v : Fin m 
     (hG : G (some l, v, none))
     (h : PSem A oracle x G (some l', Function.update v r (v r + 1), none) p) :
     PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep] using h)
+  PSem.det hA hG (by simpa only [astep_inc (A := fun _ => .inc r l') rfl] using h)
 
 /-- A clear. -/
 lemma PSem.clr {l l' : Λ} {r : Fin m} (hA : A l = .det (.clr r l')) {v : Fin m → ℕ} {p : ℚ}
     (hG : G (some l, v, none)) (h : PSem A oracle x G (some l', Function.update v r 0, none) p) :
     PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep] using h)
+  PSem.det hA hG (by simpa only [astep_clr (A := fun _ => .clr r l') rfl] using h)
 
 /-- A halving. -/
 lemma PSem.half {l l' : Λ} {r : Fin m} (hA : A l = .det (.half r l')) {v : Fin m → ℕ}
     {p : ℚ} (hG : G (some l, v, none))
     (h : PSem A oracle x G (some l', Function.update v r (v r / 2), none) p) :
     PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep] using h)
+  PSem.det hA hG (by simpa only [astep_half (A := fun _ => .half r l') rfl] using h)
 
 /-- An equality test that succeeds. -/
 lemma PSem.jeq_pos {l l₁ l₀ : Λ} {r s : Fin m} (hA : A l = .det (.jeq r s l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : v r = v s)
     (h : PSem A oracle x G (some l₁, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  PSem.det hA hG (by simpa only [astep_jeq (A := fun _ => .jeq r s l₁ l₀) rfl, if_pos he] using h)
 
 /-- An equality test that fails. -/
 lemma PSem.jeq_neg {l l₁ l₀ : Λ} {r s : Fin m} (hA : A l = .det (.jeq r s l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : v r ≠ v s)
     (h : PSem A oracle x G (some l₀, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  PSem.det hA hG (by simpa only [astep_jeq (A := fun _ => .jeq r s l₁ l₀) rfl, if_neg he] using h)
 
 /-- A zero test that succeeds. -/
 lemma PSem.jz_pos {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jz r l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : v r = 0)
     (h : PSem A oracle x G (some l₁, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  PSem.det hA hG (by simpa only [astep_jz (A := fun _ => .jz r l₁ l₀) rfl, if_pos he] using h)
 
 /-- A zero test that fails. -/
 lemma PSem.jz_neg {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jz r l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : v r ≠ 0)
     (h : PSem A oracle x G (some l₀, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  PSem.det hA hG (by simpa only [astep_jz (A := fun _ => .jz r l₁ l₀) rfl, if_neg he] using h)
 
 /-- A parity test that succeeds. -/
 lemma PSem.jodd_pos {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jodd r l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : v r % 2 = 1)
     (h : PSem A oracle x G (some l₁, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_pos he] using h)
+  PSem.det hA hG (by simpa only [astep_jodd (A := fun _ => .jodd r l₁ l₀) rfl, if_pos he] using h)
 
 /-- A parity test that fails. -/
 lemma PSem.jodd_neg {l l₁ l₀ : Λ} {r : Fin m} (hA : A l = .det (.jodd r l₁ l₀))
     {v : Fin m → ℕ} {p : ℚ} (hG : G (some l, v, none)) (he : ¬ v r % 2 = 1)
     (h : PSem A oracle x G (some l₀, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, if_neg he] using h)
+  PSem.det hA hG (by simpa only [astep_jodd (A := fun _ => .jodd r l₁ l₀) rfl, if_neg he] using h)
 
 /-- A `whole`-mode call on one register that answers `true`. -/
 lemma PSem.call_pos {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m}
     (hA : A l = .det (.call j .whole [r] l₁ l₀)) {v : Fin m → ℕ} {p : ℚ}
     (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = true)
     (h : PSem A oracle x G (some l₁, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, vword_whole₁, he, if_true] using h)
+  PSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r] l₁ l₀) rfl, vword_whole₁, he,
+      if_true] using h)
 
 /-- A `whole`-mode call on one register that answers `false`. -/
 lemma PSem.call_neg {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m}
     (hA : A l = .det (.call j .whole [r] l₁ l₀)) {v : Fin m → ℕ} {p : ℚ}
     (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = false)
     (h : PSem A oracle x G (some l₀, v, none) p) : PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep, vword_whole₁, he, Bool.false_eq_true, if_false] using h)
+  PSem.det hA hG (by
+    simpa only [astep_call (A := fun _ => .call j .whole [r] l₁ l₀) rfl, vword_whole₁, he,
+      Bool.false_eq_true, if_false] using h)
 
 /-- An answer: `true` with probability `1` or `0`. -/
 lemma PSem.ret {l : Λ} {b : Bool} (hA : A l = .det (.ret b)) {v : Fin m → ℕ}
     (hG : G (some l, v, none)) : PSem A oracle x G (some l, v, none) (if b then 1 else 0) :=
   have hh : PSem A oracle x G (none, v, some b) (if b then 1 else 0) := PSem.halted v b
-  PSem.det hA hG (by simpa only [astep] using hh)
+  PSem.det hA hG (by simpa only [astep_ret (A := fun _ => .ret b) rfl] using hh)
 
 /-- A rejection: probability `0`. -/
 lemma PSem.rej {l : Λ} (hA : A l = .det (.ret false)) {v : Fin m → ℕ}
@@ -361,7 +365,7 @@ theorem PSem.of_areach {A : NARM m d Λ} {oracle : Fin d → List Bool → Bool}
         cases hA : A l with
         | choose l₁ l₀ =>
           have : astep (A.detPart false) oracle x (some l, v, none) = (none, v, some false) := by
-            simp [astep, NARM.detPart_choose hA]
+            simp [astep_ret (NARM.detPart_choose hA false)]
           rw [this] at he; cases he
         | det i =>
           have e : astep (A.detPart false) oracle x (some l, v, none) =
@@ -412,7 +416,7 @@ theorem searchUp_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (r
     refine AReach.step ⟨hpre _, hb⟩ ?_
     rw [htest, if_neg hn]
     refine AReach.step ⟨by simp [PreS, hinc], hb⟩ ?_
-    simp only [astep, hinc, Function.update_self, Function.update_idem]
+    simp only [astep_inc hinc, Function.update_self, Function.update_idem]
     exact ih (c₀ + 1) (by omega) (fun c' h1 h2 => hmin c' (by omega) h2) (by omega)
 
 /-- **Searching downwards**: from `r = c₀`, the loop `dec: r--; test: if P r goto yes else
@@ -434,7 +438,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
     have he : c₀ - 1 = c := by omega
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
-    simp only [astep, hdec, Function.update_self, Function.update_idem, he]
+    simp only [astep_dec hdec, Function.update_self, Function.update_idem, he]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_pos hc]
     exact AReach.refl _
@@ -442,7 +446,7 @@ theorem searchDown_run (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
     have hb : ∀ s, Function.update v r c₀ s ≤ B := register_update_le v r B _ hv hB
     have hn : ¬ P (c₀ - 1) := hmax _ (by omega) (by omega)
     refine AReach.step ⟨by simp [PreS, hdec], hb⟩ ?_
-    simp only [astep, hdec, Function.update_self, Function.update_idem]
+    simp only [astep_dec hdec, Function.update_self, Function.update_idem]
     refine AReach.step ⟨hpre _, register_update_le v r B _ hv (by omega)⟩ ?_
     rw [htest, if_neg hn]
     exact ih (c₀ - 1) (by omega) (by omega) (fun c' h1 h2 => hmax c' h1 (by omega)) (by omega)
@@ -457,14 +461,14 @@ lemma PSem.call {l l₁ l₀ : Λ} {j : Fin d} {md : Mode} {args : List (Fin m)}
     (h : PSem A oracle x G (some (if oracle j (vword (callSegs ⟨j, md, args, l₁, l₀⟩ x
       (fun r => Nat.bits (v r)))) then l₁ else l₀), v, none) p) :
     PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep] using h)
+  PSem.det hA hG (by simpa only [astep_call (A := fun _ => .call j md args l₁ l₀) rfl] using h)
 
 /-- A decrement. -/
 lemma PSem.dec {l l' : Λ} {r : Fin m} (hA : A l = .det (.dec r l')) {v : Fin m → ℕ} {p : ℚ}
     (hG : G (some l, v, none)) (h : PSem A oracle x G (some l', Function.update v r (v r - 1),
         none) p) :
     PSem A oracle x G (some l, v, none) p :=
-  PSem.det hA hG (by simpa only [astep] using h)
+  PSem.det hA hG (by simpa only [astep_dec (A := fun _ => .dec r l') rfl] using h)
 
 end CallDec
 
