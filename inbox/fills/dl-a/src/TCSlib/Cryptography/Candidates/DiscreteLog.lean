@@ -924,7 +924,7 @@ theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable 
   -- the trial loop (the repetition lemma, `n` rounds suffice: `R = var`)
   have hF := polyTimeComputable_iterateFind dla_ssStep_poly (dla_ssAcc_poly H) dla_ssOut_poly
     PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
-      rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
       exact dla_length_ssStep_iterate_le x i)
   -- the accepted block (marker dropped), `[]` on failure
   have hb := polyTimeComputable_tail.comp (hF.comp (dla_ssStart_poly H))

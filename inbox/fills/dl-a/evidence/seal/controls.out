@@ -1,0 +1,20 @@
+== ControlConcreteUnsealed
+[probe exit 0, 5 s]
+== ControlConcreteSealed
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-dl-a/seal/ControlConcreteSealed.lean:700:2: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  firstHit E xs = List.findSome? (fun t => if E (xs t) then some (xs t) else none) (List.finRange T)
+[probe exit 1, 6 s]
+== ControlDiscreteLogUnsealed
+[probe exit 0, 12 s]
+== ControlDiscreteLogSealed
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-dl-a/seal/ControlDiscreteLogSealed.lean:1461:2: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  rejectBlocksL (fun x => x < m) k B T r = sampleBelowL m k B T r
+[probe exit 1, 6 s]
