@@ -2472,7 +2472,18 @@ theorem space_hierarchy (f g : ℕ → ℕ) (hf : SpaceConstructible f)
     (hg : SpaceConstructible g)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) :
     SPACE f ⊂ SPACE g := by
-  sorry
+  classical
+  obtain ⟨U, hU⟩ := exists_selfUniversal TimeHierarchy.code
+  obtain ⟨L, hLg, hdiag⟩ := sph_diagonal_language U g hg
+  refine ⟨sph_inclusion hg hfg, ?_⟩
+  intro hback
+  obtain ⟨c, M, hM⟩ := mem_SPACE_iff.mp (hback hLg)
+  obtain ⟨x, t, ht, hs, htime, _⟩ := sph_code_window f g hf hfg U hU L c M hM
+  rw [htime] at ht hs
+  have h := hdiag x [MultiTapeTM.indicator (L : Set (List Bool)) x] ht hs
+  cases hb : MultiTapeTM.indicator (L : Set (List Bool)) x <;>
+    simp only [hb, List.cons.injEq, and_true, Bool.false_eq_true, Bool.true_eq_false, decide_false,
+      decide_true, Bool.not_false, Bool.not_true] at h
 
 /-- **`L ⊊ PSPACE`** — the strict step of the p. 92 chain ([AB09, §4.3.2,
 "the hierarchy theorems imply `L ⊊ PSPACE`"]).
