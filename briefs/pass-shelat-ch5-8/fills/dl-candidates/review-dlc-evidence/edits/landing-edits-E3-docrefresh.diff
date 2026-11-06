@@ -1,0 +1,131 @@
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -1091,13 +1091,20 @@
+ 
+ /-- **El Gamal's `Gen` is polynomial-time** given the arithmetic bundle.
+ 
+-**Proof sketch.** Cut the coins at the unary lengths `1^{coins(n)}` and `1^{n·n}`
+-(`polyTimeComputable_pairTakePoly`/`_pairDropPoly` on `⟨1^n, r⟩`); run `G.gen.output` on the
+-layout (`NUPPT.polyTimeComputable_layout`, `G.gen.polyTimeComputable_output`); the two
+-rejection loops are `Complexity.polyTimeComputable_iterateFind` over `n`-bit blocks with the
+-test `H.le` (the decrement `p − 1` and the bit length `Nat.size`: `H.sub`, `H.size`);
+-`h = g² mod p` and `h^x mod p` by `H.modExp`; the numerals are padded to width `n`
+-(`polyTimeComputable_unaryPoly`, `_blockMap`); pair. -/
++**Proof sketch.** Cut the coins at the lengths `coins(n)` and `n · n`
++(`polyTimeComputable_pairTakePoly`/`_pairDropPoly` against `1^n`); run `G.gen.output` on the
++layout (`NUPPT.polyTimeComputable_layout`, `G.gen.polyTimeComputable_output`). The numbers are
++read through a numeral calculus over the bundle (`H.add`, `H.sub`, `H.mul`, `H.divMod`,
++`H.modExp`, `H.le`, `H.size`, `polyTimeComputable_ite`). The two rejection samplers are one
++trial loop on `Complexity.polyTimeComputable_iterateFind` over `n`-bit blocks with the test `H.le`
++(the decrement `p − 1` by `H.sub`, the bit length by `H.size`); its state carries a trial counter,
++because the loop runs `|x| + 1` rounds and a raw coin segment may be longer than `n · n`. The loop
++is matched with `sampleBelowL` through `sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq`.
++`h = g² mod p` is `H.mul` then `H.divMod`, `h^x mod p` is `H.modExp`; every reduction uses the
++modulus `2^n` where `p` reads as `0` (the `n`-bit numerals agree), so `H.modExp` stays
++polynomial, and the remainder of `H.divMod` is taken against the modulus padded with leading
++zeros, which keeps it lossless. Width-`n` numerals are the last `|b|` bits of `⟦0⟧_n ++ b`
++(`⟦0⟧_n` by `H.sub`, `polyTimeComputable_pairDropPoly`); pair. -/
+ theorem polyTimeComputable_egGenRaw (H : ArithmeticFP) (G : SafePrimeGen) :
+     PolyTimeComputable (egGenRaw G) := by
+   have hu := NUPPT.polyTimeComputable_inParam
+@@ -1217,11 +1224,14 @@
+ 
+ /-- **El Gamal's `Enc` is polynomial-time** given the arithmetic bundle.
+ 
+-**Proof sketch.** The exponent `b` by the rejection loop (`polyTimeComputable_iterateFind`,
+-`H.le`); `h^b`, `A^b`, the membership test `m^q mod p = 1` (`H.modExp`, `polyTimeComputable_pairEq`,
+-`H.le` for `0 < m < p`, `polyTimeComputable_ite` for the canonicalisation); the product by
+-`H.mul` and the reduction modulo `p` by `H.divMod`; width-`n` padding by
+-`polyTimeComputable_unaryPoly`/`_blockMap`; pair. -/
++**Proof sketch.** The calculus of `polyTimeComputable_egGenRaw`: `p`, `q`, `h` are read from the
++key through `dlP_eq`, `dlM_eq`, `dlG_eq`; the exponent `b` by the trial loop
++(`polyTimeComputable_iterateFind`, `H.le`); `h^b mod p` and `A^b · m' mod p` by `H.modExp`, `H.mul`
++and `H.divMod`, with the modulus `2^n` where `p` reads as `0`; the canonicalisation test
++`0 < m < p ∧ m^q mod p = 1` by `H.le` comparisons, the equality with `1` as two comparisons rather
++than `polyTimeComputable_pairEq` (numerals of different widths can read as the same number), and
++the choice by `polyTimeComputable_ite`; width-`n` numerals as the last bits of `⟦0⟧_n ++ b`;
++pair. -/
+ theorem polyTimeComputable_egEncRaw (H : ArithmeticFP) : PolyTimeComputable egEncRaw := by
+   exact dlc_poly_egEncParts H NUPPT.polyTimeComputable_inParam
+     (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg)
+@@ -1498,8 +1508,9 @@
+   exact ha.pairEncode (hb.pairEncode (dlc_poly_natToList H hu hs))
+ 
+ /-- **The derived generator is polynomial-time** given the arithmetic bundle (the first two
+-steps of `polyTimeComputable_egGenRaw`, plus the test `g² mod p = 1` by `H.modExp` and
+-`polyTimeComputable_pairEq` with the constant numeral of `4` on `polyTimeComputable_ite`). -/
++steps of `polyTimeComputable_egGenRaw`, plus the test `g² mod p = 1`, with `g · g` by `H.mul`,
++the remainder by `H.divMod` and the equality with `1` as two `H.le` comparisons, choosing the
++constant numeral of `4` on `polyTimeComputable_ite`). -/
+ theorem polyTimeComputable_egGroupGenRaw (H : ArithmeticFP) (G : SafePrimeGen) :
+     PolyTimeComputable (egGroupGenRaw G) := by
+   have hu := NUPPT.polyTimeComputable_inParam
+@@ -2288,38 +2299,36 @@
+ is exact up to the event `g² = 1`), and `hbig : G.FullLength` became
+ `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`.
+ 
+-**Proof sketch.** Fix `M, D`. For each bit `b` build the DDH distinguisher `D_b` (advice
+-`⟨M.advice n, ⟨D.advice n, [b]⟩⟩`, coins `M.coins + D.coins`): on a tuple `t`
+-(parsed by `pairFstD`/`pairSndD`, the last numeral cut to `n` bits by
+-`polyTimeComputable_pairTakePoly var`) with `t = ⟨i, ⟨A, ⟨B, Z⟩⟩⟩`, set `pk := ⟨i, A⟩`, run
+-`M(1^n, pk)` (`NUPPT.exists_seq`), take the `b`-th message, canonicalise it (`H.modExp`,
+-`H.le`, `polyTimeComputable_ite`), and output `D(1^n, ⟨pk, ⟨B, Z · m' mod p⟩⟩)` (`H.mul`,
+-`H.divMod`, `NUPPT.exists_comp`). *Hybrid 1* (the square-versus-generator event): the coins of
+-`challenge n M b` — `G`'s coins, the `n · n`-bit segments of `g` and `a` (`egGen_runAt`), `M`'s
+-coins and the `n · n` coins of `Enc` for `b'` (`egEnc_runAt`) — are in bijection with the seeds
+-`(r', (e₁, e₂))` of `ddhReal (egGroupGen H G)` together with `D_b`'s coins
+-(`acceptProb_comp_equiv`), `r'` being `G`'s coins followed by the segment of `g`
+-(`egGroupGenMachine_runAt`). Under this bijection the two experiments run `D` on the *same*
+-string unless `g² ≡ 1 (mod p)`: `ddhExpo` is the very sampler `sampleBelowL q (Nat.size q) n n`
+-of `egGenParts`/`egEncParts` (`expOrd_of_valid` at the valid index), `h^{(ab' mod q)} = h^{ab'}`
+-since `h` has order `q` (`egSquareGen_valid`), and `egSquareGen p g = g² mod p` unless
+-`g² ≡ 1`. Hence `|Pr[D(challenge b)] − Pr[D_b(ddhReal)]| ≤ Pr[g² ≡ 1]` (`uprob_mono`,
+-`statClose_of_uprob_ne`); `egUnit` is within `(1/2)^n` of the uniform unit
+-(`statClose_sampleBelowL` with `m = p − 1`, `StatClose.map`), so `Pr[g² ≡ 1] ≤ 1/q + (1/2)^n`
+-(`uprob_sq_eq_one`, `card_sqrt_safe`), and `hbig` gives, for `n ≥ n₀`, a set of `G`'s coins of
+-probability `≤ δ n` outside which `2^{n−1} ≤ p = 2q + 1` and `1/q ≤ 8 (1/2)^n`; altogether the
+-hybrid-1 gap is at most `9 (1/2)^n + δ n =: η n`. *Hybrid 2* (DDH): `hDDH D_b` through
+-`Ensemble.indist_iff_exists_negligible` gives `ε_b` with
+-`|Pr[D_b(ddhReal)] − Pr[D_b(ddhRandom)]| ≤ ε_b n`. *Hybrid 3* (the two random worlds coincide
+-up to the exponent sampler): in `ddhRandom`, `Z = h^z` with `z = ddhExpo n i e₃` independent
+-of the rest; replacing `z` by an ideal uniform `z ∈ Z_q` costs `(1/2)^n` (`ddhExpo_statClose`,
+-`StatClose.abs_uprob_sub_le_prod`) in each world, and for ideal `z` and a fixed rest,
+-`z ↦ h^z · m'_b` is a bijection of `G_q` for `m'_b ∈ G_q` (`expF_injective`, `card_QR_safe`,
+-`Equiv.mulRight`, or `HardcoreBit.pushesUniform_add_right` on the exponent `z + dlog m'_b`), so
+-`uprob_prod` and `uprob_comp_equiv` give `|Pr[D_0(ddhRandom)] − Pr[D_1(ddhRandom)]| ≤ 2 (1/2)^n`.
+-Hence the advantage is at most `2 η n + ε_0 n + ε_1 n + 2 (1/2)^n` for `n ≥ n₀` (and `≤ 1`
+-below), negligible by `negligible_two_pow_neg`, `Negligible.const_mul`, `Negligible.add`,
+-`Negligible.mono`. -/
++**Proof sketch.** Fix `M, D`. For each bit `b` build the DDH distinguisher `D_b`
++(`NUPPT.exists_comp`, `NUPPT.exists_compParam`, `NUPPT.exists_seq`; the advice is `M`'s and `D`'s,
++the bit is fixed in the machine, and the coins `M.coins + D.coins` are identified with
++`M.Coins n × D.Coins n`): on a tuple `t = ⟨i, ⟨X, ⟨Y, Z⟩⟩⟩` it runs `M(1^n, ⟨i, X⟩)`, takes the
++`b`-th message, canonicalises it to `m'_b`, and runs `D(1^n, ⟨⟨i, X⟩, ⟨Y, ⟦Z · m'_b mod p⟧_n⟩⟩)`.
++The numbers are read by value (`listToNat`), so the padding to `15n + 14`, lossless from `n₀` on
++(`length_ddhTuple`), needs no cut; the pre-processing is polynomial-time over the bundle
++(`H.modExp`, `H.mul`, `H.divMod`, `H.le`, `polyTimeComputable_ite`). *Hybrid 1* (the
++square-versus-generator event): the coins of `challenge n M b` and of `D_b` on
++`ddhReal (egGroupGen H G)` are both relabelled from `G`'s coins, the `n · n`-bit segments of `g`,
++`a` and `b'`, and the coins of `M` and `D` (`uprob_comp_equiv`; `egGen_runAt`, `egEnc_runAt`,
++`egGroupGenMachine_runAt`). Off the event `g² ≡ 1 (mod p)` the two runs give `D` the same string
++and coins: `ddhExpo` is the sampler `sampleBelowL q (Nat.size q) n n` of `egGenParts`/`egEncParts`
++(`expOrd_of_valid`), `h^{(ab' mod q)} = h^{ab'}` since `h` has order `q` (`egSquareGen_valid`,
++`pow_mod_orderOf`), and `egSquareGen p g = g² mod p`. Hence the gap is at most `Pr[g² ≡ 1]`
++(`statClose_of_uprob_ne`). By `statClose_sampleBelowL` with `m = p − 1` and the count of the roots
++`v ∈ {0, p − 2}` of `(v + 1)² ≡ 1` in `Fin (p − 1)`, `Pr[g² ≡ 1] ≤ 2/(p − 1) + (1/2)^n`, and
++`2/(p − 1) ≤ 8 (1/2)^n` when `2^{n−1} ≤ p`; for `n ≥ n₀`, `hbig` bounds the coins with
++`p < 2^{n−1}` by `δ n`. Altogether the hybrid-1 gap is at most `η n := δ n + 9 (1/2)^n`.
++*Hybrid 2* (DDH): `hDDH` through `ddhAssumption_iff` and `Ensemble.indist_iff_exists_negligible`
++gives a negligible `ε_b` with `|Pr[D_b(ddhReal)] − Pr[D_b(ddhRandom)]| ≤ ε_b n`. *Hybrid 3* (the
++two random worlds): in `ddhRandom` the coins of `z = ddhExpo n i e₃` are used nowhere else; with
++the other coins fixed, replacing `z` by a uniform `z ∈ Z_q` costs `(1/2)^n` (`ddhExpo_statClose`),
++and `m'_b ∈ G_q` is `h^k` (`zpowers_eq_QR`), so the shift `z ↦ z + k` (`Equiv.addRight`,
++`uprob_comp_equiv`) shows that `h^z · m'_b` has the law of `h^z`; averaging (`uprob_prod`) gives
++`|Pr[D_0(ddhRandom)] − Pr[D_1(ddhRandom)]| ≤ 2 (1/2)^n`. Hence the advantage is at most
++`2 (|δ n| + 9 (1/2)^n) + ε_0 n + ε_1 n + 2 (1/2)^n` for `n ≥ n₀` and at most `1` below (the
++indicator of `n < n₀`), negligible by `negligible_two_pow_neg`, `negligible_zero`,
++`Negligible.const_mul`, `Negligible.add` and `Negligible.mono` (`|δ|`, because `δ` is known to
++be nonnegative only from `n₀` on). -/
+ theorem elGamal_secure (H : ArithmeticFP) (G : SafePrimeGen)
+     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ)
+     (hDDH : DDHAssumption (egGroupGen H G)) : (elGamal H G).Secure := by

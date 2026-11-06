@@ -1,0 +1,279 @@
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -211,7 +211,13 @@
+ 
+ /-- **Removing one point moves every probability by at most `1/|α|`** (the counting step of
+ `statClose_sq_generator`): the uniform element of `α` and the uniform element of `α ∖ {a}` give
+-an event probabilities `t/N` and `s/(N − 1)` with `s ≤ t ≤ s + 1` and `s ≤ N − 1`. -/
++an event probabilities `t/N` and `s/(N − 1)` with `s ≤ t ≤ s + 1` and `s ≤ N − 1`.
++
++**Proof sketch.** Count (`uprob_eq_card_filter`, `Fintype.card_subtype_compl`): `s` is the number of
++points of `T ∖ {a}` (`Equiv.subtypeSubtypeEquivSubtypeInter`), so `s ≤ t ≤ s + 1` (`card_insert_le`)
++and `s ≤ N − 1`. For `N = 1` the punctured side is `0` and `t ≤ 1`. Otherwise `t/N ≤ (s + 1)/N ≤
++s/(N − 1) + 1/N` and `s/(N − 1) ≤ (s + 1)/N ≤ t/N + 1/N`, the step `s/(N − 1) ≤ (s + 1)/N` being `s
++≤ N − 1`. -/
+ private theorem dlc_abs_uprob_sub_uprob_ne_le {α : Type*} [Fintype α] [DecidableEq α] (a : α)
+     (T : α → Prop) :
+     |uprob T - uprob (fun y : {y : α // y ≠ a} => T y)| ≤ 1 / (Fintype.card α : ℝ) := by
+@@ -894,12 +900,20 @@
+       rw [Function.iterate_succ_apply']
+       exact (dlc_length_ssStep_ssStep_le _).trans ih
+ 
+-/-- The trial loop is polynomial-time (the repetition lemma with `R = var`). -/
+-private theorem dlc_ssLoop_poly (H : ArithmeticFP) : PolyTimeComputable dlc_ssLoop :=
+-  polyTimeComputable_iterateFind dlc_ssStep_poly (dlc_ssAcc_poly H) dlc_ssOut_poly
+-    PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
+-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+-      exact dlc_length_ssStep_iterate_le x i)
++/-- The trial loop is polynomial-time (the repetition lemma with `R = var`, its `match` read by
++`split`). -/
++private theorem dlc_ssLoop_poly (H : ArithmeticFP) : PolyTimeComputable dlc_ssLoop := by
++  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp
++    (polyTimeComputable_iterateFind dlc_ssStep_poly (dlc_ssAcc_poly H) dlc_ssOut_poly
++      PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
++        simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++        exact dlc_length_ssStep_iterate_le x i))
++  -- the repetition lemma's `match` is split by its equation lemmas, not matched by defeq
++  rw [PolyExpr.eval_var]
++  unfold dlc_ssLoop
++  split
++  next i hi => rw [hi]
++  next hn => rw [hn]
+ 
+ /-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
+ private theorem dlc_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
+@@ -939,7 +953,15 @@
+ /-- **The trial loop computes the rejection sampler**: from `⟨⟨u, ⟨1^k, m⟩⟩, ⟨u, c⟩⟩` with
+ `k = Nat.size ⟦m⟧`, the number read from the payload (marker dropped) is
+ `sampleBelowL ⟦m⟧ k |u| |u| c` with the fallback `0` (read through
+-`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq`). -/
++`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq`).
++
++**Proof sketch.** After `i` steps the header is unchanged, the counter `u` has lost `i` bits and the
++coins `i` blocks of `|u|` bits (`dlc_ssStep_iterate`), so the trial value is the `Nat.size ⟦m⟧`-bit
++prefix of block `i`, and the test accepts iff `i < |u|` and that value is below `⟦m⟧`. The search
++over the first `|x| + 1 ≥ |u|` rounds is the search over `[0, |u|)` (`dlc_find?_range_lt`), which is
++the search of `sampleBelowL` read through `sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq` and
++`dlc_findSome?_ite`. In the `some i` case the payload without its marker is the prefix of block `i`;
++in the `none` case both sides read `0` (`dlc_listToNat_nil`). -/
+ private theorem dlc_ssLoop_eq (u ks ms c : List Bool) (hk : ks.length = Nat.size (listToNat ms)) :
+     listToNat ((dlc_ssLoop (pairEncode (pairEncode u (pairEncode ks ms)) (pairEncode u c))).drop 1) =
+       (sampleBelowL (listToNat ms) (Nat.size (listToNat ms)) u.length u.length c).getD 0 := by
+@@ -1065,6 +1087,8 @@
+     (polyTimeComputable_const []) (polyTimeComputable_const [])
+     (dlc_poly_take G.gen.coins NUPPT.polyTimeComputable_inParam NUPPT.polyTimeComputable_inCoins))
+ 
++/-! ### El Gamal's algorithms -/
++
+ /-- **El Gamal's `Gen` is polynomial-time** given the arithmetic bundle.
+ 
+ **Proof sketch.** Cut the coins at the unary lengths `1^{coins(n)}` and `1^{n·n}`
+@@ -1087,7 +1111,6 @@
+   simp only [Function.comp_apply, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_var]
+   rfl
+ 
+-
+ /-- **El Gamal's key generator** `Gen(1^n) = ⟨pk, sk⟩` as a uniform `NUPPT`. -/
+ noncomputable def egGen (H : ArithmeticFP) (G : SafePrimeGen) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_egGenRaw H G) (egGenCoins G)
+@@ -1128,7 +1151,13 @@
+   egEncParts (NUPPT.inParam z).length (pairFstD (NUPPT.inArg z)) (pairSndD (NUPPT.inArg z)) (NUPPT.inCoins z)
+ 
+ /-- The canonicalised message `egCanon p q m` of polynomial-time numbers is a polynomial-time
+-number (the test `m^q mod p = 1` through the safe modulus: it is only read when `m < p`). -/
++number (the test `m^q mod p = 1` through the safe modulus: it is only read when `m < p`).
++
++**Proof sketch.** `egCanon` is an `if` on `0 < m ∧ m < p ∧ m^q mod p = 1`. The first two tests are
++`H.le` comparisons (`dlc_poly_le`: `1 ≤ m`, `m + 1 ≤ p`), the third an equality test (`dlc_poly_eq`)
++of `m^q mod p'` with `1` for the safe modulus `p'` (`dlc_numPoly_safeMod`, `dlc_numPoly_powMod`),
++and the choice is `dlc_numPoly_ite`. The test with `p'` agrees with the test with `p` whenever it is
++read: `m < p` forces `p ≠ 0`, so `p' = p`. -/
+ private theorem dlc_numPoly_egCanon (H : ArithmeticFP) {u : List Bool → List Bool}
+     (hu : PolyTimeComputable u) {P Q M : List Bool → ℕ} (hP : dlc_NumPoly P) (hQ : dlc_NumPoly Q)
+     (hM : dlc_NumPoly M) : dlc_NumPoly fun z => egCanon (P z) (Q z) (M z) := by
+@@ -1158,7 +1187,12 @@
+     simp [e1, h1]
+ 
+ /-- The ciphertext `egEncParts` of polynomial-time data is polynomial-time (the index read
+-through `dlP_eq`, `dlM_eq`, `dlG_eq`). -/
++through `dlP_eq`, `dlM_eq`, `dlG_eq`).
++
++**Proof sketch.** Read `p`, `q`, `h` from the index through `dlP_eq`, `dlM_eq`, `dlG_eq`
++(`dlc_numPoly_of_poly` on the projections). The exponent is `dlc_numPoly_sample` and the canonical
++message `dlc_numPoly_egCanon`; the two `n`-bit components are `dlc_poly_natToList_powMod` (`h^b mod
++p`) and `dlc_poly_natToList_powMulMod` (`A^b · m' mod p`), paired. -/
+ private theorem dlc_poly_egEncParts (H : ArithmeticFP) {u pk m r : List Bool → List Bool}
+     (hu : PolyTimeComputable u) (hpk : PolyTimeComputable pk) (hm : PolyTimeComputable m)
+     (hr : PolyTimeComputable r) :
+@@ -1193,7 +1227,6 @@
+     (polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg)
+     (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg) NUPPT.polyTimeComputable_inCoins
+ 
+-
+ /-- **El Gamal's encryptor** as a uniform `NUPPT` with `n · n` coins. -/
+ noncomputable def egEnc (H : ArithmeticFP) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_egEncRaw H) (.mul .var .var)
+@@ -1612,7 +1645,12 @@
+       egCanon (dlP (pairFstD t)) (dlM (pairFstD t)) (listToNat (if b then pairSndD mm else pairFstD mm)) %
+         dlP (pairFstD t))))
+ 
+-/-- The pre-processing of `D_b` is polynomial-time on `⟨1^n, ⟨t, mm⟩⟩`. -/
++/-- The pre-processing of `D_b` is polynomial-time on `⟨1^n, ⟨t, mm⟩⟩`.
++
++**Proof sketch.** The projections of `⟨1^n, ⟨t, mm⟩⟩` give `⟨i, X⟩` and `Y`; `p` and `q` are read
++from `i` (`dlP_eq`, `dlM_eq`), `m_b` is a fixed projection of `mm` (case on `b`), `m'_b` is
++`dlc_numPoly_egCanon`, and `⟦Z · m'_b mod p⟧_n` is `dlc_poly_natToList_powMulMod` with the exponent
++`1` (`pow_one`); pair, and match the definition pointwise. -/
+ private theorem dlc_poly_ddhInput (H : ArithmeticFP) (b : Bool) :
+     PolyTimeComputable fun z =>
+       dlc_ddhInput (pairFstD z).length b (pairFstD (pairSndD z)) (pairSndD (pairSndD z)) := by
+@@ -1677,7 +1715,11 @@
+   exact hne (decide_eq_decide.2 (h ω hc))
+ 
+ /-- **At most two square roots of `1` among `1, …, p − 1`**: `(x + 1)² ≡ 1 (mod p)` forces
+-`x = 0` or `x = p − 2` (`p ∣ x (x + 2)`, `Nat.Prime.dvd_mul`). -/
++`x = 0` or `x = p − 2` (`p ∣ x (x + 2)`, `Nat.Prime.dvd_mul`).
++
++**Proof sketch.** Map the filter into `ℕ` by `Fin.valEmbedding`. From `(x + 1)² mod p = 1`, `p ∣ (x
+++ 1)² − 1 = x (x + 2)` (`Nat.modEq_iff_dvd'`), so `p ∣ x`, hence `x = 0` since `x < p − 1`, or `p ∣
++x + 2`, hence `x = p − 2`. The image lies in `{0, p − 2}` (`card_le_card`, `card_insert_le`). -/
+ private theorem dlc_card_sq_eq_one_le {p : ℕ} (hp : p.Prime) :
+     (univ.filter fun x : Fin (p - 1) => ((x : ℕ) + 1) ^ 2 % p = 1).card ≤ 2 := by
+   have h2 := hp.two_le
+@@ -1739,7 +1781,14 @@
+ 
+ /-- **The bad event of hybrid 1 is negligible**: for `n ≥ n₀`, over the generator's coins and the
+ coins of `g`, `Pr[g² ≡ 1 (mod p)] ≤ δ n + 9 · (1/2)^n` (the short-prime coins cost `δ n` by `hbig`;
+-on the others `2/(p − 1) ≤ 8 · (1/2)^n`). -/
++on the others `2/(p − 1) ≤ 8 · (1/2)^n`).
++
++**Proof sketch.** Average over `G`'s coins (`uprob_prod`). For each coin string `r` (valid and well
++formed from `n₀` on: `wellFormedIndex_iff`, `safePrimeValid_iff`) the inner probability is at most
++`[p < 2^{n−1}] + 9 · (1/2)^n`: at most `1` for a short prime, and otherwise `2/(p − 1) + (1/2)^n ≤ 9
++· (1/2)^n` (`dlc_uprob_egUnit_sq_le`, `dlc_two_div_le`). The average of the indicator is at most `δ
++n` (`fullLengthExcept_iff`, `uprob_eq_uexp`, `HardcoreBit.uexp_mono`, `HardcoreBit.uexp_add`,
++`HardcoreBit.uexp_const`). -/
+ private theorem dlc_uprob_bad_le (G : SafePrimeGen) {δ : ℕ → ℝ} (hδ : G.FullLengthExcept δ) {n : ℕ}
+     (hn : G.n₀ ≤ n) :
+     uprob (fun z : G.gen.Coins n × (Fin (n * n) → Bool) =>
+@@ -1773,7 +1822,12 @@
+ 
+ /-- **Every element of `G_q` is a power of a generator** (NT-105.a; `zpowers_eq_QR`,
+ `mem_powers_iff_mem_zpowers`): if `h` has order `q` in `Z_p` for a safe prime `p = 2q + 1`, then
+-every `0 < c < p` with `c^q ≡ 1 (mod p)` is `h^k` for some `k`. -/
++every `0 < c < p` with `c^q ≡ 1 (mod p)` is `h^k` for some `k`.
++
++**Proof sketch.** `h` and `c` are nonzero in `Z_p`, hence units `h_u`, `c_u`. `h_u` has order `q`,
++so it lies in `G_q` (`mem_QR_iff_pow_eq_one`) and is not `1`; `c_u^q = 1`, so `c_u ∈ G_q`. Since
++`G_q` is generated by `h_u` (`zpowers_eq_QR`) and is finite, `c_u = h_u^k` for some `k : ℕ`
++(`mem_powers_iff_mem_zpowers`); take values. -/
+ private theorem dlc_exists_pow_eq {p q : ℕ} [Fact p.Prime] [hq : Fact q.Prime] (hpq : p = 2 * q + 1)
+     {h c : ℕ} (hord : orderOf ((h : ℕ) : ZMod p) = q) (hc0 : 0 < c) (hcp : c < p)
+     (hcq : c ^ q % p = 1) : ∃ k : ℕ, ((h : ℕ) : ZMod p) ^ k = ((c : ℕ) : ZMod p) := by
+@@ -1886,7 +1940,13 @@
+   dlc_castEquiv_ofFn _ _
+ 
+ /-- **The challenge on split coins**: the keys are `egGenParts` on `G`'s output and the segments of
+-`g` and `a`, the ciphertext is `egEncParts` on the segment of `b` (`egGen_runAt`, `egEnc_runAt`). -/
++`g` and `a`, the ciphertext is `egEncParts` on the segment of `b` (`egGen_runAt`, `egEnc_runAt`).
++
++**Proof sketch.** `dlc_genEquiv_ofFn` writes the coins of `Gen` as `r ++ (u₁ ++ u₂)`, so the cuts of
++`egGen_runAt` at `coinLen n` and `n · n` recover `r`, `u₁` and `u₂` (`List.take_left'`,
++`List.drop_left'`, `List.drop_drop`), and `NUPPT.runAt_eq` reads `G.gen.runAtL` back as
++`G.gen.runAt`. Unfold `challenge`, read the fields of `elGamal`, and rewrite the ciphertext by
++`egEnc_runAt` with `dlc_encEquiv_ofFn`. -/
+ private theorem dlc_challenge_eq (H : ArithmeticFP) (G : SafePrimeGen) (M : NUPPT) (b : Bool) (n : ℕ)
+     (r : G.gen.Coins n) (u₁ u₂ u₃ : Fin (n * n) → Bool) (rM : M.Coins n) :
+     (elGamal H G).challenge n M b (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃)) =
+@@ -1929,7 +1989,18 @@
+ /-- **Hybrid 1, pointwise**: outside the event `g² ≡ 1 (mod p)`, the challenge with bit `b` and the
+ DDH distinguisher `D_b` on the real tuple of the derived generator run `D` on the same string with
+ the same coins (the exponents are the same samplers, `h^{(ab mod q)} = h^{ab}` since `h` has order
+-`q`, and `egSquareGen p g = g² mod p`). -/
++`q`, and `egSquareGen p g = g² mod p`).
++
++**Proof sketch.** Both sides are `D` on one string (`NUPPT.distinguisher_eq`,
++`NUPPT.distinguisherL_eq`, `he`, `dlc_challenge_eq`). The derived index `i` (`dlc_grp_runAt`) is
++valid and well formed, `⟨p, ⟨q, h⟩⟩` with `p`, `q` from `G`'s index (`wellFormedIndex_iff`,
++`safePrimeValid_iff`) and `h = egSquareGen p g = g² mod p` off the bad event, of order `q`
++(`egSquareGen_valid`). The padding of the tuple is lossless (`dlc_ofFn_padFin`, `length_ddhTuple`),
++so `D_b` reads `⟨i, X⟩`, `Y` and `Z` back. The exponent `ddhExpo n i u` has the value of the sampler
++`sampleBelowL q (Nat.size q) n n u` of `egGenParts`/`egEncParts` (`expOrd_of_valid`,
++`ZMod.val_natCast`, `sampleBelowL_lt`), `expF i z` is the numeral of `h^z mod p` (`expF_eq`,
++`WellFormedIndex.dlW_eq`), and `(h^x mod p)^y · c ≡ h^{xy mod q} · c (mod p)` since `h` has order
++`q` (`ZMod.val_mul`, `pow_mod_orderOf`, `ZMod.natCast_eq_natCast_iff'`). -/
+ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : NUPPT) (b : Bool) {n : ℕ}
+     (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
+     (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+@@ -2012,7 +2083,14 @@
+ /-- **Hybrid 1**: for `n ≥ n₀` the challenge with bit `b` and the DDH distinguisher `D_b` on the
+ real ensemble of the derived generator are accepted with probabilities within
+ `Pr[g² ≡ 1] ≤ δ n + 9 · (1/2)^n` (the coins identified by `dlc_genEquiv`, `dlc_encEquiv`,
+-`dlc_grpEquiv` and `e`; `dlc_hyb1_point`, `dlc_uprob_bad_le`). -/
++`dlc_grpEquiv` and `e`; `dlc_hyb1_point`, `dlc_uprob_bad_le`).
++
++**Proof sketch.** Relabel both acceptance probabilities over the common coin space `((r, u₁), (u₂,
++(u₃, (r_M, r_D))))` (`acceptProb_def`, `uprob_comp_equiv` with `E₁`, built from `dlc_genEquiv` and
++`dlc_encEquiv`, and `E₂`, built from `dlc_grpEquiv` and `e`). Off the event `g² ≡ 1 (mod p)` the two
++events coincide (`dlc_hyb1_point`), so the gap is at most the probability of the event
++(`dlc_abs_uprob_sub_le_of_iff`), which depends on `(r, u₁)` only (`uprob_fst`) and is at most `δ n +
++9 · (1/2)^n` (`dlc_uprob_bad_le`). -/
+ private theorem dlc_hyb1 (H : ArithmeticFP) (G : SafePrimeGen) {δ : ℕ → ℝ} (hδ : G.FullLengthExcept δ)
+     (M D Db : NUPPT) (b : Bool) {n : ℕ} (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
+     (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+@@ -2059,7 +2137,12 @@
+ 
+ /-- **Hybrid 3, one world**: at a valid well-formed index, replacing the exponent sampler by a
+ uniform `z ∈ Z_q` costs `(1/2)^n` (`ddhExpo_statClose`), and multiplying `h^z` by an element `c`
+-of `G_q` does not change the law (`dlc_exists_pow_eq`, `dlc_uprob_shift`). -/
++of `G_q` does not change the law (`dlc_exists_pow_eq`, `dlc_uprob_shift`).
++
++**Proof sketch.** At the valid index (`safePrimeValid_iff`, `expValid_iff`) `g` has order `q =
++expOrd i` (`expOrd_of_valid`), and the canonical message is `1 = g^0` or an element of `G_q`, hence
++`g^k` (`dlc_egCanon_cases`, `dlc_exists_pow_eq`). `dlc_uprob_shift` puts the factor on the uniform
++side, and the remaining gap is `ddhExpo_statClose` on the test `z ↦ Ψ ⟦g^z · c mod p⟧_n`. -/
+ private theorem dlc_rand_term {n : ℕ} {i : List Bool} (hvi : SafePrimeValid i) (hwi : WellFormedIndex n i)
+     (Ψ : List Bool → Prop) (m : ℕ) :
+     |uprob (fun u : Fin (n * n) → Bool => Ψ (natToList n (dlG i ^ (ddhExpo n i u).val % dlP i *
+@@ -2083,7 +2166,13 @@
+     (fun z => Ψ (natToList n (dlG i ^ z.val % dlP i * egCanon (dlP i) (dlM i) m % dlP i)))
+ 
+ /-- **The random world's acceptance event**: `D_b` on the random tuple of the derived generator
+-runs `D` on `⟨⟨i, g^a⟩, ⟨g^b, ⟦g^z · m'_b mod p⟧_n⟩⟩` with `z = ddhExpo n i u₃`. -/
++runs `D` on `⟨⟨i, g^a⟩, ⟨g^b, ⟦g^z · m'_b mod p⟧_n⟩⟩` with `z = ddhExpo n i u₃`.
++
++**Proof sketch.** Unfold `D_b` on the random tuple (`NUPPT.distinguisher_eq`,
++`NUPPT.distinguisherL_eq`, `he`, `ddhRandom`). The padding is lossless (`dlc_ofFn_padFin`,
++`length_ddhTuple`), so the projections of `dlc_ddhInput` and `dlc_tuplePk` read the components of
++the tuple back, and the numeral `Z = expF i z` reads as `g^z mod p` (`expF_eq`,
++`listToNat_natToList` below `dlP_lt_two_pow`). -/
+ private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : NUPPT) (b : Bool) {n : ℕ}
+     (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
+     (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+@@ -2118,7 +2207,12 @@
+ 
+ /-- **Hybrid 3, pointwise**: with everything but the coins of `z` fixed, the random worlds of
+ `D_0` and `D_1` are accepted with probabilities within `2 · (1/2)^n` (both are within `(1/2)^n`
+-of the same ideal probability, `dlc_rand_term`). -/
++of the same ideal probability, `dlc_rand_term`).
++
++**Proof sketch.** Rewrite each event by `dlc_rand_accept` (`OneWay.uprob_congr`). With the index,
++`u₁`, `u₂`, `r_M` and `r_D` fixed, the two events differ only in the message `m₀` or `m₁` given to
++`dlc_rand_term`, which puts each within `(1/2)^n` of the same probability over a uniform `z ∈ Z_q`;
++the triangle inequality gives `2 · (1/2)^n`. -/
+ private theorem dlc_hyb3_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
+     (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
+     (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+@@ -2148,7 +2242,11 @@
+   constructor <;> linarith [t₀.1, t₀.2, t₁.1, t₁.2]
+ 
+ /-- **Hybrid 3**: for `n ≥ n₀` the random worlds of `D_0` and `D_1` are accepted with
+-probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other coins). -/
++probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other coins).
++
++**Proof sketch.** Relabel the seeds and the coins of `D_b` so that the coins `u₃` of `z` come last
++(`acceptProb_def`, `uprob_comp_equiv` with `E e_b`), split them off (`uprob_prod`), and bound the
++gap of the averages by the pointwise gap (`dlc_abs_uexp_sub_le`, `dlc_hyb3_point`). -/
+ private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
+     (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
+     (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
