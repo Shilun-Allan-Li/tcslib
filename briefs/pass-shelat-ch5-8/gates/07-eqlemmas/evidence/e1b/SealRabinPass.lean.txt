@@ -1,0 +1,27 @@
+import TCSlib.Cryptography.Candidates.RSA
+import TCSlib.Cryptography.NumberTheory.QuadraticResidues
+
+/-! Seal probe, Rabin route (the imports of `Candidates/Rabin`, consumer of unit rabin): `RSA`
+(P12, S3) readings. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+attribute [local irreducible] sampleUnitL unitSampleStr rsaBlock rsaTrials rsaSampleCoins
+
+example {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUnitL N k B T r = some v) :
+    v < 2 ^ k := by
+  rw [sampleUnitL_eq] at h; exact (rejectBlocksL_spec h).2
+example (w : List Bool) (n : ℕ) (r : List Bool) : (unitSampleStr w n r).length = w.length := by
+  rw [unitSampleStr_eq, length_natToList]
+example (n : ℕ) : rsaSampleCoins.eval n = (4 * n + 8) * n * (2 * (n + 2)) := by
+  rw [eval_rsaSampleCoins, eval_rsaTrials, eval_rsaBlock]
+example (n : ℕ) (N : ℕ) [NeZero N] (hN : N < 2 ^ (2 * n)) : Nat.size N ≤ rsaBlock.eval n := by
+  rw [eval_rsaBlock, Nat.size_le]
+  exact hN.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+example (n N : ℕ) [NeZero N] (hk : Nat.size N ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        (sampleUnitL N (Nat.size N) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
+          (1 % N))
+      (fun x : (ZMod N)ˣ => (x : ZMod N).val) (Real.exp (-(n : ℝ))) :=
+  statClose_sampleUnitL n N hk

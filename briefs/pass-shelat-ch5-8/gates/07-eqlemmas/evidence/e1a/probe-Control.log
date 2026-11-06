@@ -1,0 +1,322 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:22:98: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  A.runAtL n y r = A.output (pairEncode (pairEncode (pairEncode (List.replicate n true) y) (A.advice n)) r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:23:62: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  A.coinLen n = A.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:24:95: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  NUPPT.advInput n y = pairEncode (List.replicate n true) y
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:30:75: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:31:78: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inArg z = pairSndD (pairFstD (pairFstD z))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:32:80: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inParam z = pairFstD (pairFstD (pairFstD z))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:33:70: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inAdvice z = pairSndD (pairFstD z)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:34:58: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inCoins z = pairSndD z
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:40:64: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  A.distinguisherL n w r = decide (A.runAt n w r = [true])
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:43:2: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  decodeFin ℓ w = if h : w.length = ℓ then some fun i => w.get (Fin.cast ⋯ i) else none
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:48:67: error: Type mismatch
+  fun T => ?m.10
+has type
+  (T : ?m.8) → ?m.11 T
+but is expected to have type
+  StatClose X X 0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:48:79: error: `simp` made no progress
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:49:96: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  firstHit E xs = none
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:56:53: error: Function expected at
+  h
+but this term has type
+  F.SampleClose δ
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:58:51: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  F.index n r = pairFstD (F.gen.runAt n [] r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:64:58: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  F.invProbAt A n =
+    uexp fun r =>
+      uprob fun z =>
+        ∃ x',
+          F.decD (F.index n r) (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧
+            F.f (F.index n r) x' = F.f (F.index n r) z.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:70:9: error: Tactic `rcases` failed: `h : 𝓕.Easy` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:73:42: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  OneWay.prodFun f q xs i = f (xs i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:76:94: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  OneWay.yaoTry f B y c = B (Function.update (OneWay.prodFun f q c.2.1) c.1 y) c.2.2 c.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:81:65: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  S.coinLen n = S.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:83:9: error: Tactic `rcases` failed: `h : S.Efficient` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:90:43: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  ((π.withV V').viewV x y z r).encode =
+    pairEncode (pairEncode x z)
+      (pairEncode (List.ofFn r.2)
+        (Strategy.encodeMsgs
+          (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)).2))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:97:23: error: Function expected at
+  h
+but this term has type
+  ZK π R
+
+Note: Expected a function because this term is being applied to the argument
+  V'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:97:9: error: Tactic `rcases` failed: `x✝ : ?m.4` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:105:66: error: Type mismatch
+  rfl
+has type
+  ?m.64 = ?m.64
+but is expected to have type
+  encColoring c =
+    List.ofFn fun k =>
+      if (finProdFinEquiv.symm k).2 = 0 then decide (↑(c (finProdFinEquiv.symm k).1) / 2 = 1)
+      else decide (↑(c (finProdFinEquiv.symm k).1) % 2 = 1)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:111:42: error: Invalid `⟨...⟩` notation: The expected type
+  R3COL (encGraph G) (encColoring c)
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:112:64: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  sampleIdx m k 0 r = none
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:118:45: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (colProtocol Com ℓ).rounds = PolyExpr.const 3
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:120:75: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (colProver Com ℓ).coins = ((PolyExpr.const 3).mul PolyExpr.var).add (PolyExpr.var.mul ℓ)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:122:77: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  colCommit Com n ℓn c' r = multiCom Com (fun i => padColor n (c' i)) r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:123:84: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  colCoinSlice c t r = List.take c (List.drop (t * c) r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:124:89: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  colIterations x = (decGraph x).fst * edgeCount (decGraph x).snd
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:127:62: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  colOpen c' r p =
+    pairEncode (pairEncode (encColor (c' p.1)) (List.ofFn (r p.1))) (pairEncode (encColor (c' p.2)) (List.ofFn (r p.2)))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:133:45: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  prgAdv G D = distAdv G id D
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:134:88: error: Function expected at
+  h
+but this term has type
+  Negligible μ
+
+Note: Expected a function because this term is being applied to the argument
+  0
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:136:80: error: Function expected at
+  h
+but this term has type
+  HardcoreBit.PushesUniform π
+
+Note: Expected a function because this term is being applied to the argument
+  fun _ => 1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:137:105: error: Type mismatch
+  h
+has type
+  X.Pseudorandom
+but is expected to have type
+  X.Indist (Ensemble.uniform ℓ)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:139:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (Ensemble.uniform ℓ).X n x = cast ⋯ x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:141:74: error: Type mismatch
+  rfl
+has type
+  ?m.35 = ?m.35
+but is expected to have type
+  TCSlib.InformationTheory.statDist p q = 1 / 2 * ∑ a, |p.prob a - q.prob a|
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:142:50: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  GGMRed.verdictOf [true, true] = true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:143:50: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  GGMRed.queryOf ℓ₁ [] = none
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:144:93: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  GGMRed.histEnc [] = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:148:57: error: Type mismatch
+  rfl
+has type
+  ?m.50 = ?m.50
+but is expected to have type
+  GGMRed.coinStr d =
+    List.ofFn ((FunFamily.blocks (q.eval n) n).symm d.W.1) ++
+      (List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++ List.ofFn d.r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:149:49: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  PrivateKeyScheme.encodeList [] = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:153:72: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  S.multiEncDist n 0 m r =
+    PrivateKeyScheme.encodeList [S.enc.runAt n (pairEncode (S.gen.runAt n [] r.1) (List.ofFn (m 0))) (r.2 0)]
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:156:23: error: Function expected at
+  h
+but this term has type
+  S.MultiMessageSecure
+
+Note: Expected a function because this term is being applied to the argument
+  D
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:156:9: error: Tactic `rcases` failed: `x✝ : ?m.4` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:164:57: error: Invalid projection: Expected a value whose type is a structure
+  h
+has type
+  F.HardCore hh
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:165:75: error: Type mismatch
+  h
+has type
+  T.OneWay
+but is expected to have type
+  T.OneWay
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:166:71: error: Type mismatch
+  h
+has type
+  P.OneWay
+but is expected to have type
+  P.OneWay
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:175:53: error: Application type mismatch: The argument
+  x
+has type
+  (𝓕.toCollection F hF hspec).D i
+but is expected to have type
+  Fin ?m.8 → Bool
+in the application
+  List.ofFn x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:183:47: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  z
+has type
+  (F.glPad m henc).1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:183:63: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  z
+has type
+  (F.glPad m henc).1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:186:36: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (F.glPad m henc).gen = F.gen
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/Control.lean:189:87: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform ⋯ T.inv.coins
+rc=1

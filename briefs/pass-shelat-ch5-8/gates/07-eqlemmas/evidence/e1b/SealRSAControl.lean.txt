@@ -1,0 +1,51 @@
+import TCSlib.Cryptography.Candidates.Factoring
+import TCSlib.Cryptography.NumberTheory.Units
+import Mathlib.Data.Nat.Size
+
+/-! Seal probe, RSA route (the imports of `Candidates/RSA`, consumer of unit rsa): `Factoring`
+(P10, S1, S2) and `Arithmetic` (P9, `sizeStr_eq`) readings. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+namespace Unsealed
+
+example (A : NUPPT) (n : ℕ) : factorProb A n ≤ 1 := uprob_le_one _
+example (n : ℕ) (z : DistinctPrimes n) :
+    modulusBits n z = natToBits (2 * n) (z.p * z.q) := rfl
+example (a b : List Bool) :
+    xgcdStr (pairEncode a b) = pairEncode (natToList (pairSndD (pairEncode a b)).length
+      (Nat.gcd (listToNat (pairFstD (pairEncode a b))) (listToNat (pairSndD (pairEncode a b)))))
+      (natToList (pairSndD (pairEncode a b)).length (ZMod.val
+        ((listToNat (pairFstD (pairEncode a b)) : ZMod (listToNat (pairSndD (pairEncode a b))))⁻¹)))
+    := rfl
+example (a b : List Bool) :
+    divModStr (pairEncode a b) = pairEncode (natToList (pairFstD (pairEncode a b)).length
+      (listToNat (pairFstD (pairEncode a b)) / listToNat (pairSndD (pairEncode a b))))
+      (natToList (pairSndD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) % listToNat (pairSndD (pairEncode a b)))) := rfl
+example (w : List Bool) : sizeStr w = List.replicate (Nat.size (listToNat w)) true := rfl
+
+end Unsealed
+
+namespace Sealed
+
+attribute [local irreducible] factorProb modulusBits samplePrimeL xgcdStr divModStr sizeStr natToList
+
+example (A : NUPPT) (n : ℕ) : factorProb A n ≤ 1 := uprob_le_one _
+example (n : ℕ) (z : DistinctPrimes n) :
+    modulusBits n z = natToBits (2 * n) (z.p * z.q) := rfl
+example (a b : List Bool) :
+    xgcdStr (pairEncode a b) = pairEncode (natToList (pairSndD (pairEncode a b)).length
+      (Nat.gcd (listToNat (pairFstD (pairEncode a b))) (listToNat (pairSndD (pairEncode a b)))))
+      (natToList (pairSndD (pairEncode a b)).length (ZMod.val
+        ((listToNat (pairFstD (pairEncode a b)) : ZMod (listToNat (pairSndD (pairEncode a b))))⁻¹)))
+    := rfl
+example (a b : List Bool) :
+    divModStr (pairEncode a b) = pairEncode (natToList (pairFstD (pairEncode a b)).length
+      (listToNat (pairFstD (pairEncode a b)) / listToNat (pairSndD (pairEncode a b))))
+      (natToList (pairSndD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) % listToNat (pairSndD (pairEncode a b)))) := rfl
+example (w : List Bool) : sizeStr w = List.replicate (Nat.size (listToNat w)) true := rfl
+
+end Sealed

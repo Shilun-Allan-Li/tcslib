@@ -1,0 +1,98 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:60:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlP i = listToNat (pairFstD i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:61:71: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlM i = listToNat (pairFstD (pairSndD i))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:62:71: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlG i = listToNat (pairSndD (pairSndD i))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:63:60: error: Invalid projection: Expected a value whose type is a structure
+  h
+has type
+  ExpValid i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:66:9: error: Tactic `rcases` failed: `h : WellFormedIndex n i` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:68:74: error: Invalid projection: Expected a value whose type is a structure
+  h
+has type
+  SafePrimeValid i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:70:60: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  expF i x = natToList (dlW i) (dlG i ^ x.val % dlP i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:71:88: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  expEnc i x = natToList (dlW i) x.val
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:74:85: error: Function expected at
+  h
+but this term has type
+  G.FullLengthExcept δ
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:76:40: error: Function expected at
+  h
+but this term has type
+  G.DLHard
+
+Note: Expected a function because this term is being applied to the argument
+  A
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:79:7: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.12
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:82:58: error: Type mismatch
+  expDec i w
+has type
+  Option (ZMod (expOrd i))
+but is expected to have type
+  Option ((expCollection H G hV).D i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:84:59: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (expCollection H G hV).gen.coins = (expGen G).coins
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:85:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:86:86: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  sizeStr w = List.replicate (listToNat w).size true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:91:49: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  divModStr (pairEncode a b) =
+    pairEncode
+      (natToList (pairFstD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) / listToNat (pairSndD (pairEncode a b))))
+      (natToList (pairSndD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) % listToNat (pairSndD (pairEncode a b))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealDLControl.lean:95:82: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  xgcdStr a =
+    pairEncode (natToList (pairSndD a).length ((listToNat (pairFstD a)).gcd (listToNat (pairSndD a))))
+      (natToList (pairSndD a).length (↑(listToNat (pairFstD a)))⁻¹.val)

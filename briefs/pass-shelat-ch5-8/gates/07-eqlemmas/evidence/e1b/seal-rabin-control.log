@@ -1,0 +1,34 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRabinControl.lean:28:77: error: Application type mismatch: The argument
+  h
+has type
+  sampleUnitL N k B T r = some v
+but is expected to have type
+  rejectBlocksL (fun v => v < N ∧ v.Coprime N) ?m.15 ?m.16 ?m.17 ?m.18 = some ?m.19
+in the application
+  rejectBlocksL_spec h
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRabinControl.lean:31:36: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  unitSampleStr w n r =
+    natToList w.length
+      ((sampleUnitL (listToNat w) (listToNat w).size (rsaBlock.eval n) (rsaTrials.eval n) r).getD (1 % listToNat w))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRabinControl.lean:32:80: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRabinControl.lean:33:51: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  rsaBlock.eval n = 2 * (n + 2)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRabinControl.lean:34:56: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  rsaTrials.eval n = (4 * n + 8) * n

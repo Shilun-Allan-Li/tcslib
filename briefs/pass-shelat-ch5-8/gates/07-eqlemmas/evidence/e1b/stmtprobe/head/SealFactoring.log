@@ -1,0 +1,89 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:197:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:335:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:416:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:453:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:495:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:523:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:585:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:686:2: error: Type mismatch
+  Equiv.refl ?m.6
+has type
+  ?m.6 ≃ ?m.6
+but is expected to have type
+  (factoringCollection H).D i ≃ DistinctPrimes (max i.length 2)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:688:0: error: Not a definitional equality: the left-hand side
+  (factoringCollection H).f i x
+is not definitionally equal to the right-hand side
+  natToList (2 * max i.length 2) (((factoringCollection_domEquiv H i) x).p * ((factoringCollection_domEquiv H i) x).q)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:692:91: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (factoringCollection H).f i x =
+    natToList (2 * max i.length 2) (((factoringCollection_domEquiv H i) x).p * ((factoringCollection_domEquiv H i) x).q)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:694:0: error: Not a definitional equality: the left-hand side
+  (factoringCollection H).encD i x
+is not definitionally equal to the right-hand side
+  encodeDistinctPrimes (max i.length 2) ((factoringCollection_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:700:84: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (factoringCollection H).encD i x = encodeDistinctPrimes (max i.length 2) ((factoringCollection_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:708:2: error: 'show' tactic failed, pattern
+  decodeDistinctPrimes (max i.length 2) w = ?m.19
+is not definitionally equal to target
+  (factoringCollection H).decD i w =
+    Option.map (⇑(factoringCollection_domEquiv H i).symm) (decodeDistinctPrimes (max i.length 2) w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:713:2: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (factoringCollection H).gen = factoringGen
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:717:59: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (factoringCollection H).sample = factoringSampler H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:722:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (factoringCollection H).eval z = mulStr (pairSndD z)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:727:65: error: unsolved goals
+H : ArithmeticFP
+n : ℕ
+r : (factoringCollection H).gen.Coins n
+⊢ pairFstD ((NUPPT.ofPolyTimeUniform factoringGen._proof_1 (PolyExpr.const 0)).runAt n [] r) = List.replicate n true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:728:61: warning: This simp argument is unused:
+  NUPPT.runAt_eq
+
+Hint: Omit it from the simp argument list.
+  simp [Collection.index, factoringCollection, factoringGen, N̵U̵P̵P̵T̵.̵r̵u̵n̵A̵t̵_̵e̵q̵,̵NUPPT.runAtL_ofPolyTimeUniform,
+      NUPPT.inParam, NUPPT.advInput]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:729:4: warning: This simp argument is unused:
+  NUPPT.runAtL_ofPolyTimeUniform
+
+Hint: Omit it from the simp argument list.
+  simp [Collection.index, factoringCollection, factoringGen, NUPPT.runAt_eq, N̵U̵P̵P̵T̵.̵r̵u̵n̵A̵t̵L̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵U̵n̵i̵f̵o̵r̵m̵,̵ ̵NUPPT.inParam,
+  ̲  ̲ ̲ ̲NUPPT.advInput]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:729:51: warning: This simp argument is unused:
+  NUPPT.advInput
+
+Hint: Omit it from the simp argument list.
+  simp [Collection.index, factoringCollection, factoringGen, NUPPT.runAt_eq,
+      NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam,̵ ̵N̵U̵P̵P̵T̵.̵a̵d̵v̵I̵n̵p̵u̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:751:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:797:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealFactoring.lean:813:8: warning: declaration uses 'sorry'

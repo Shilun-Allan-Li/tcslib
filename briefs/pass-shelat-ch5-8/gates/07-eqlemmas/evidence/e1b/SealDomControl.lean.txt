@@ -1,0 +1,52 @@
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Candidates.Rabin
+
+/-! Seal probe, published domain equivalences: elements `x : C.D i` of each concrete collection
+read through `C_domEquiv`, with the collection sealed. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+namespace Unsealed
+
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (x : (expCollection H G hV).D i) : (expCollection H G hV).f i x = expF i x := rfl
+example (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool) (x : (dlCollection H G).D i) :
+    (dlCollection H G).encD i x = expEnc i x := rfl
+example (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).f i x = expF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
+    (factoringCollection H).f i x = natToList (2 * max i.length 2) (x.p * x.q) := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).f i x = rsaF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).encD i x = rsaEnc i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
+    (rabinCollection H).f i x = rabinF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).D i) :
+    (rabinBlumTrapdoor H).encD i x = blumEnc i x := rfl
+
+end Unsealed
+
+namespace Sealed
+
+attribute [local irreducible] expCollection dlCollection fullDLCollection factoringCollection rsaTrapdoor rsaCollection rabinCollection rabinBlumTrapdoor
+
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (x : (expCollection H G hV).D i) : (expCollection H G hV).f i x = expF i x := rfl
+example (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool) (x : (dlCollection H G).D i) :
+    (dlCollection H G).encD i x = expEnc i x := rfl
+example (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).f i x = expF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
+    (factoringCollection H).f i x = natToList (2 * max i.length 2) (x.p * x.q) := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).f i x = rsaF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).encD i x = rsaEnc i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
+    (rabinCollection H).f i x = rabinF i x := rfl
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).D i) :
+    (rabinBlumTrapdoor H).encD i x = blumEnc i x := rfl
+
+end Sealed

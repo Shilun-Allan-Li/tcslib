@@ -1,0 +1,134 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:406:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:547:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:585:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:682:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:731:2: error: Type mismatch
+  Equiv.refl ?m.2
+has type
+  ?m.2 ≃ ?m.2
+but is expected to have type
+  (rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:733:0: error: Not a definitional equality: the left-hand side
+  (rsaTrapdoor H).f i x
+is not definitionally equal to the right-hand side
+  rsaF i ((rsaTrapdoor_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:736:67: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (rsaTrapdoor H).f i x = rsaF i ((rsaTrapdoor_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:738:0: error: Not a definitional equality: the left-hand side
+  (rsaTrapdoor H).encD i x
+is not definitionally equal to the right-hand side
+  rsaEnc i ((rsaTrapdoor_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:741:72: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  (rsaTrapdoor H).encD i x = rsaEnc i ((rsaTrapdoor_domEquiv H i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:747:2: error: 'show' tactic failed, pattern
+  rsaDec i w = ?m.9
+is not definitionally equal to target
+  (rsaTrapdoor H).decD i w = Option.map (⇑(rsaTrapdoor_domEquiv H i).symm) (rsaDec i w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:750:0: error: Not a definitional equality: the left-hand side
+  ((rsaTrapdoor H).perm i) x
+is not definitionally equal to the right-hand side
+  (rsaTrapdoor_domEquiv H i).symm ((rsaPermAt i) ((rsaTrapdoor_domEquiv H i) x))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:755:84: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  ((rsaTrapdoor H).perm i) x = (rsaTrapdoor_domEquiv H i).symm ((rsaPermAt i) ((rsaTrapdoor_domEquiv H i) x))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:758:79: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaTrapdoor H).gen = rsaGen H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:761:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaTrapdoor H).sample = rsaSampler H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:764:80: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaTrapdoor H).eval = rsaEval
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:767:79: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaTrapdoor H).inv = rsaInv H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:780:2: error: Type mismatch
+  rsaTrapdoor_domEquiv H i
+has type
+  (rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ
+but is expected to have type
+  (rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:785:89: error: Application type mismatch: The argument
+  x
+has type
+  (rsaCollection H).D i
+but is expected to have type
+  (rsaTrapdoor H).D i
+in the application
+  rsaTrapdoor_f H i x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:790:97: error: Application type mismatch: The argument
+  x
+has type
+  (rsaCollection H).D i
+but is expected to have type
+  (rsaTrapdoor H).D i
+in the application
+  rsaTrapdoor_encD H i x
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:796:2: error: Type mismatch
+  rsaTrapdoor_decD H i w
+has type
+  (rsaTrapdoor H).decD i w = Option.map (⇑(rsaTrapdoor_domEquiv H i).symm) (rsaDec i w)
+but is expected to have type
+  (rsaCollection H).decD i w = Option.map (⇑(rsaCollection_domEquiv H i).symm) (rsaDec i w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:799:83: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaCollection H).gen = rsaGen H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:802:93: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaCollection H).sample = rsaSampler H
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:805:84: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  (rsaCollection H).eval = rsaEval
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:810:39: error: Application type mismatch: The argument
+  r
+has type
+  (rsaCollection H).gen.Coins n
+but is expected to have type
+  (rsaGen H).Coins n
+in the application
+  (rsaGen H).runAt n [] r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:851:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:918:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:933:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:942:2: error: Type mismatch
+  rsaCollection_oneWay H hR
+has type
+  (rsaCollection H).OneWay
+but is expected to have type
+  (rsaTrapdoor H).OneWay
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:1017:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:1050:8: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/stmtprobe/head/SealRSA.lean:1063:8: warning: declaration uses 'sorry'

@@ -1,0 +1,118 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:507:97: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (𝓕.toCollection F hF hspec).encD i x = List.ofFn ((𝓕.toCollection_domEquiv F hF hspec i) x)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:514:2: error: 'show' tactic failed, pattern
+  decodeFin (𝓕.inLen.eval i.length) w = ?m.17
+is not definitionally equal to target
+  (𝓕.toCollection F hF hspec).decD i w =
+    Option.map (⇑(𝓕.toCollection_domEquiv F hF hspec i).symm) (decodeFin (𝓕.inLen.eval i.length) w)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:521:75: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (𝓕.toCollection F hF hspec).f i x = List.ofFn (𝓕.f i.length ((𝓕.toCollection_domEquiv F hF hspec i) x))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:525:94: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (𝓕.toCollection F hF hspec).gen = NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.const 0)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:529:72: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (𝓕.toCollection F hF hspec).sample = NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:533:77: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (𝓕.toCollection F hF hspec).eval z = F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:539:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  NUPPT.runAt ?A ?n ?y ?r
+in the target expression
+  pairFstD
+      ({ D := fun i => Fin (𝓕.inLen.eval i.length) → Bool, fintypeD := fun i => Pi.instFintype,
+              inhabitedD := fun i => Pi.instInhabited, encD := fun x x_1 => List.ofFn x_1,
+              decD := fun i w => decodeFin (𝓕.inLen.eval i.length) w, decD_encD := ⋯, encD_decD := ⋯,
+              f := fun i x => List.ofFn (𝓕.f i.length x),
+              gen := NUPPT.ofPolyTimeUniform toCollection._proof_3 (PolyExpr.const 0),
+              gen_uniform := toCollection._proof_4,
+              sample := NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen, sample_uniform := ⋯,
+              eval := fun z => F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)), eval_poly := ⋯,
+              eval_spec := ⋯, sample_spec := ⋯ }.gen.runAt
+        n [] r) =
+    List.replicate n true
+
+𝓕 : FunFamily
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hspec : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+n : ℕ
+r : (𝓕.toCollection F hF hspec).gen.Coins n
+⊢ pairFstD
+      ({ D := fun i => Fin (𝓕.inLen.eval i.length) → Bool, fintypeD := fun i => Pi.instFintype,
+              inhabitedD := fun i => Pi.instInhabited, encD := fun x x_1 => List.ofFn x_1,
+              decD := fun i w => decodeFin (𝓕.inLen.eval i.length) w, decD_encD := ⋯, encD_decD := ⋯,
+              f := fun i x => List.ofFn (𝓕.f i.length x),
+              gen := NUPPT.ofPolyTimeUniform toCollection._proof_3 (PolyExpr.const 0),
+              gen_uniform := toCollection._proof_4,
+              sample := NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen, sample_uniform := ⋯,
+              eval := fun z => F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)), eval_poly := ⋯,
+              eval_spec := ⋯, sample_spec := ⋯ }.gen.runAt
+        n [] r) =
+    List.replicate n true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:546:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  NUPPT.runAt ?A ?n ?y ?r
+in the target expression
+  { D := fun i => Fin (𝓕.inLen.eval i.length) → Bool, fintypeD := fun i => Pi.instFintype,
+            inhabitedD := fun i => Pi.instInhabited, encD := fun x x_1 => List.ofFn x_1,
+            decD := fun i w => decodeFin (𝓕.inLen.eval i.length) w, decD_encD := ⋯, encD_decD := ⋯,
+            f := fun i x => List.ofFn (𝓕.f i.length x),
+            gen := NUPPT.ofPolyTimeUniform toCollection._proof_3 (PolyExpr.const 0),
+            gen_uniform := toCollection._proof_4,
+            sample := NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen, sample_uniform := ⋯,
+            eval := fun z => F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)), eval_poly := ⋯,
+            eval_spec := ⋯, sample_spec := ⋯ }.sample.runAt
+      n i s =
+    List.ofFn s
+
+𝓕 : FunFamily
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hspec : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+n : ℕ
+i : List Bool
+s : (𝓕.toCollection F hF hspec).sample.Coins n
+⊢ { D := fun i => Fin (𝓕.inLen.eval i.length) → Bool, fintypeD := fun i => Pi.instFintype,
+            inhabitedD := fun i => Pi.instInhabited, encD := fun x x_1 => List.ofFn x_1,
+            decD := fun i w => decodeFin (𝓕.inLen.eval i.length) w, decD_encD := ⋯, encD_decD := ⋯,
+            f := fun i x => List.ofFn (𝓕.f i.length x),
+            gen := NUPPT.ofPolyTimeUniform toCollection._proof_3 (PolyExpr.const 0),
+            gen_uniform := toCollection._proof_4,
+            sample := NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen, sample_uniform := ⋯,
+            eval := fun z => F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)), eval_poly := ⋯,
+            eval_spec := ⋯, sample_spec := ⋯ }.sample.runAt
+      n i s =
+    List.ofFn s
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:557:6: error: Type mismatch
+  fun s => some s
+has type
+  ?m.45 → Option ?m.45
+but is expected to have type
+  (𝓕.toCollection F hF hspec).sample.Coins i.length → Option ((𝓕.toCollection F hF hspec).D i)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:597:9: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.75
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:668:17: error: failed to set `[local irreducible]`, `FunFamily.toCollection` is currently `[irreducible]`, `[semireducible]` expected
+
+Note: Use `set_option allowUnsafeReducibility true` to override reducibility status validation
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:1084:17: error: failed to set `[local irreducible]`, `FunFamily.toCollection` is currently `[irreducible]`, `[semireducible]` expected
+
+Note: Use `set_option allowUnsafeReducibility true` to override reducibility status validation
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/Coll.lean:1090:30: error(lean.unknownIdentifier): Unknown constant `FunFamily.toCollection`
+rc=1

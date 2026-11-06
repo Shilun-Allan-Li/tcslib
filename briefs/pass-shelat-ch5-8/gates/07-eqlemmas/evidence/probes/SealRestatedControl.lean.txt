@@ -1,0 +1,35 @@
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Asymptotic.PublicKey
+
+/-! Seal probe (control): the three OLD statements, with the same seal, must fail to elaborate
+(each `example` is expected to report an error). -/
+
+set_option autoImplicit false
+
+open TCSlib.Cryptography TCSlib.Cryptography.Candidates Complexity
+
+attribute [local irreducible] TCSlib.Cryptography.Candidates.expCollection
+  TCSlib.Cryptography.Candidates.fullDLCollection
+  TCSlib.Cryptography.Collection.glPad TCSlib.Cryptography.PermCollection.glPad
+  TCSlib.Cryptography.TrapdoorCollection.glPad
+
+-- C1. old fullDLCollection_hardCore
+example (H : ArithmeticFP) (G : FullGroupGen)
+    (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
+    (fullDLCollection H G).HardCore halfPred := by
+  sorry
+
+-- C2. old glPad_tdpBitScheme_singleBitSecure
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) :
+    ((T.glPad m henc).tdpBitScheme E).SingleBitSecure := by
+  sorry
+
+-- C3. old exists_glPad_singleBitSecure
+example {T : TrapdoorCollection} (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (hT : T.OneWay) :
+    ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit,
+      ((T.glPad m henc).tdpBitScheme E).SingleBitSecure := by
+  sorry

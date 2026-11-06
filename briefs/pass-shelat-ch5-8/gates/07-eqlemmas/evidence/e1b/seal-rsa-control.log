@@ -1,0 +1,39 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRSAControl.lean:35:52: error: Type mismatch
+  uprob_le_one ?m.7
+has type
+  uprob ?m.7 ≤ 1
+but is expected to have type
+  factorProb A n ≤ 1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRSAControl.lean:37:55: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  modulusBits n z = natToBits (2 * n) (z.p * z.q)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRSAControl.lean:43:7: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  xgcdStr (pairEncode a b) =
+    pairEncode
+      (natToList (pairSndD (pairEncode a b)).length
+        ((listToNat (pairFstD (pairEncode a b))).gcd (listToNat (pairSndD (pairEncode a b)))))
+      (natToList (pairSndD (pairEncode a b)).length (↑(listToNat (pairFstD (pairEncode a b))))⁻¹.val)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRSAControl.lean:48:92: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  divModStr (pairEncode a b) =
+    pairEncode
+      (natToList (pairFstD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) / listToNat (pairSndD (pairEncode a b))))
+      (natToList (pairSndD (pairEncode a b)).length
+        (listToNat (pairFstD (pairEncode a b)) % listToNat (pairSndD (pairEncode a b))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1b/probes/SealRSAControl.lean:49:86: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  sizeStr w = List.replicate (listToNat w).size true

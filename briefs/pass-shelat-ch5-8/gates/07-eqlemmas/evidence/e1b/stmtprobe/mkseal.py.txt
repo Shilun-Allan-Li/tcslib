@@ -1,0 +1,21 @@
+"""mkseal.py <base-file> <out> <top-seal names (comma, may be empty)> <own instance names (comma)>:
+copy a Lean file, sealing the imported instances after the first `open` line and each own instance
+right after its definition (attribute [local irreducible])."""
+import sys, re
+src, out, top, own = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+P = 'TCSlib.Cryptography.Candidates.'
+L = open(src, encoding='utf-8').read().split('\n')
+top = [x for x in top.split(',') if x]; own = [x for x in own.split(',') if x]
+res = []; i = 0; done_top = not top
+START = re.compile(r'^(/--|/-!|theorem |lemma |def |noncomputable |private |protected |@\[|instance |abbrev |end |namespace |section |structure |attribute |open |variable )')
+pending = None
+for k, l in enumerate(L):
+    if pending and k > pending[1] and START.match(l):
+        res.append('attribute [local irreducible] ' + P + pending[0]); res.append('')
+        pending = None
+    res.append(l)
+    if not done_top and l.startswith('open '):
+        res.append(''); res.append('attribute [local irreducible] ' + ' '.join(P + t for t in top)); done_top = True
+    for o in own:
+        if re.match(r'^noncomputable def ' + o + r'\b', l): pending = (o, k)
+open(out, 'w', encoding='utf-8').write('\n'.join(res))

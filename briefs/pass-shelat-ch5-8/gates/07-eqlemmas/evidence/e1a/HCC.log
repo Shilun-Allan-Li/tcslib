@@ -1,0 +1,164 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:283:11: error: Application type mismatch: The argument
+  r
+has type
+  (F.glPad m henc).gen.Coins n
+but is expected to have type
+  F.gen.Coins n
+in the application
+  statClose_glPadSampler F m (F.glPad m henc).sample ?m.38 (glPad_sample_runAtL m henc) hS n r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:283:23: error: Application type mismatch: The argument
+  r
+has type
+  (F.glPad m henc).gen.Coins n
+but is expected to have type
+  F.gen.Coins n
+in the application
+  henc n r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:282:67: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  (F.glPad m henc).sample.coins = F.sample.coins.add m
+in the application
+  statClose_glPadSampler F m (F.glPad m henc).sample rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:292:4: error: Type mismatch
+  key
+has type
+  (uexp fun (r : F.gen.Coins n) =>
+      uprob fun z =>
+        ∃ x',
+          glPadDecode F (F.index n r) ((fun r => (F.encD (F.index n r) default).length) r)
+                (A.runAt n (pairEncode (F.index n r) (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) =
+              some x' ∧
+            pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
+              pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)) ≤
+    uexp fun r =>
+      uprob fun z =>
+        ∃ x',
+          F.decD (F.index n r)
+                ((glPadCollInvMachine A m).runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) =
+              some x' ∧
+            F.f (F.index n r) x' = F.f (F.index n r) z.1
+but is expected to have type
+  (uexp fun (r : (F.glPad m henc).gen.Coins n) =>
+      uprob fun z =>
+        ∃ x',
+          glPadDecode F ((F.glPad m henc).index n r) (F.encD ((F.glPad m henc).index n r) default).length
+                (A.runAt n
+                  (pairEncode ((F.glPad m henc).index n r) ((F.glPad m henc).f ((F.glPad m henc).index n r) z.1)) z.2) =
+              some x' ∧
+            (F.glPad m henc).f ((F.glPad m henc).index n r) x' = (F.glPad m henc).f ((F.glPad m henc).index n r) z.1) ≤
+    uexp fun r =>
+      uprob fun z =>
+        ∃ x',
+          F.decD (F.index n r)
+                ((glPadCollInvMachine A m).runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) =
+              some x' ∧
+            F.f (F.index n r) x' = F.f (F.index n r) z.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:325:47: error: Application type mismatch: The argument
+  F.glBit
+has type
+  (i : List Bool) → F.D i × (Fin (F.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (F.glPad m henc).D i → Bool
+in the application
+  (F.glPad m henc).HardCore F.glBit
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:328:35: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  x
+has type
+  (F.glPad m henc).1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:328:39: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  x
+has type
+  (F.glPad m henc).1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:350:73: error: Application type mismatch: The argument
+  F.glBit
+has type
+  (i : List Bool) → F.D i × (Fin (F.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (F.glPad m henc).D i → Bool
+in the application
+  (F.glPad m henc).HardCore F.glBit
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:359:21: error: Type mismatch
+  (P.perm i).prodCongr (Equiv.refl ?m.10)
+has type
+  P.D i × ?m.10 ≃ P.D i × ?m.10
+but is expected to have type
+  __src✝.D i ≃ __src✝.D i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:360:28: error: invalid projection
+  z.2
+from type
+  (P.glPad m henc).1 i
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:373:2: error: Type mismatch
+  Equiv.refl ?m.7
+has type
+  ?m.7 ≃ ?m.7
+but is expected to have type
+  (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:378:79: error: Type mismatch
+  z
+has type
+  (P.glPad m henc).D i
+but is expected to have type
+  P.D i × (Fin (P.encD i default).length → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:380:0: error: Not a definitional equality: the left-hand side
+  (P.glPad m henc).perm i
+is not definitionally equal to the right-hand side
+  ((P.glPad_domEquiv m henc i).trans ((P.perm i).prodCongr (Equiv.refl (Fin (P.encD i default).length → Bool)))).trans
+    (P.glPad_domEquiv m henc i).symm
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:387:2: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (P.glPad m henc).perm i =
+    ((P.glPad_domEquiv m henc i).trans ((P.perm i).prodCongr (Equiv.refl (Fin (P.encD i default).length → Bool)))).trans
+      (P.glPad_domEquiv m henc i).symm
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:399:60: error: Application type mismatch: The argument
+  P.glBit
+has type
+  (i : List Bool) → P.D i × (Fin (P.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (P.glPad m henc).D i → Bool
+in the application
+  (P.glPad m henc).HardCore P.glBit
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:417:33: error: Application type mismatch: The argument
+  r
+has type
+  (T.glPad m henc).gen.Coins n
+but is expected to have type
+  T.gen.Coins n
+in the application
+  T.inv_spec n r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:417:35: error: Invalid field notation: Type is not of the form `C ...` where C is a constant
+  y
+has type
+  (T.glPad m henc).toCollection.1 (pairFstD ((T.glPad m henc).gen.runAt n [] r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:418:6: error: invalid projection
+  y.2
+from type
+  (T.glPad m henc).toCollection.1 (pairFstD ((T.glPad m henc).gen.runAt n [] r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:420:50: warning: declaration uses 'sorry'
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:437:2: error: Type mismatch
+  Equiv.refl ?m.7
+has type
+  ?m.7 ≃ ?m.7
+but is expected to have type
+  (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:442:79: error: Type mismatch
+  z
+has type
+  (T.glPad m henc).D i
+but is expected to have type
+  T.D i × (Fin (T.encD i default).length → Bool)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:463:60: error: Application type mismatch: The argument
+  T.glBit
+has type
+  (i : List Bool) → T.D i × (Fin (T.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (T.glPad m henc).D i → Bool
+in the application
+  (T.glPad m henc).HardCore T.glBit
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/e1a/probes/dom/HCC.lean:469:30: error(lean.unknownIdentifier): Unknown constant `Collection.glPad`
+rc=1

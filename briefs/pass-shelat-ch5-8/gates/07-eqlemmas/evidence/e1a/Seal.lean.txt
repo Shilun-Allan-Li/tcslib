@@ -1,0 +1,249 @@
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.GGMReductionEval
+import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.OneWayFunctions.Amplification
+import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.InformationTheory.StatisticalDistance
+
+set_option autoImplicit false
+
+open Complexity Turing TCSlib.Cryptography
+
+/-! Seal probe (equation-lemma PR, worker E1a). Each section seals the definitions of one
+lemma group with `attribute [local irreducible]` and reads them as a consumer would. -/
+
+section PPT
+attribute [local irreducible] NUPPT.runAtL NUPPT.advInput NUPPT.coinLen
+example (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r =
+      A.output (pairEncode (pairEncode (pairEncode (List.replicate n true) y) (A.advice n)) r) := by
+  rw [NUPPT.runAtL_eq, NUPPT.advInput_eq]
+example (A : NUPPT) (n : ℕ) (r : A.Coins n) : (List.ofFn r).length = A.coins.eval n := by
+  rw [List.length_ofFn, NUPPT.coinLen_eq]
+end PPT
+
+section Closure
+attribute [local irreducible] NUPPT.layout NUPPT.inParam NUPPT.inArg NUPPT.inAdvice NUPPT.inCoins
+example (u y α r : List Bool) :
+    NUPPT.inArg (NUPPT.layout u y α r) = y ∧ NUPPT.inParam (NUPPT.layout u y α r) = u ∧
+      NUPPT.inAdvice (NUPPT.layout u y α r) = α ∧ NUPPT.inCoins (NUPPT.layout u y α r) = r := by
+  simp only [NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.layout_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, and_self]
+end Closure
+
+section Adversary
+attribute [local irreducible] NUPPT.distinguisherL decodeFin
+example (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) (h : A.runAt n w r = [true]) :
+    A.distinguisherL n w r = true := by
+  rw [NUPPT.distinguisherL_eq, h, decide_eq_true_eq]
+example (ℓ : ℕ) (w : List Bool) (h : w.length ≠ ℓ) : decodeFin ℓ w = none := by
+  rw [decodeFin_eq, dif_neg h]
+end Adversary
+
+section Sampling
+attribute [local irreducible] StatClose firstHit
+example {σ γ : Type*} [Fintype σ] (X : σ → γ) : StatClose X X 0 :=
+  (statClose_iff X X 0).2 fun T => by simp
+example {α : Type*} (E : α → Prop) [DecidablePred E] (xs : Fin 0 → α) : firstHit E xs = none := by
+  rw [firstHit_eq]; rfl
+end Sampling
+
+section Collections
+attribute [local irreducible] Collection.SampleClose Collection.invProbAt Collection.index
+example (F : Collection) (δ : ℕ → ℝ) (h : F.SampleClose δ) (n : ℕ) (r : F.gen.Coins n) :
+    StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s))
+      (fun x : F.D (F.index n r) => some x) (δ n) :=
+  (F.sampleClose_iff δ).1 h n r
+example (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
+    F.index n r = pairFstD (F.gen.runAt n [] r) := by rw [Collection.index_eq]
+example (F : Collection) (A : NUPPT) (n : ℕ) :
+    F.invProbAt A n = uexp fun r : F.gen.Coins n =>
+      uprob fun z : F.D (F.index n r) × A.Coins n =>
+        ∃ x', F.decD (F.index n r)
+            (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧
+          F.f (F.index n r) x' = F.f (F.index n r) z.1 := by
+  rw [Collection.invProbAt_eq]
+end Collections
+
+section OneWay
+attribute [local irreducible] FunFamily.Easy OneWay.yaoTry OneWay.prodFun
+example (𝓕 : FunFamily) (h : 𝓕.Easy) : ∃ F : List Bool → List Bool, PolyTimeComputable F := by
+  obtain ⟨F, hF, -⟩ := (FunFamily.easy_iff 𝓕).1 h
+  exact ⟨F, hF⟩
+example {α β : Type*} (f : α → β) (q : ℕ) (xs : Fin q → α) (i : Fin q) :
+    OneWay.prodFun f q xs i = f (xs i) := by rw [OneWay.prodFun_apply]
+example {α β ρ : Type*} [DecidableEq β] {q : ℕ} (f : α → β)
+    (B : (Fin q → β) → ρ → (Fin q → α)) (y : β) (c : Fin q × (Fin q → α) × ρ) :
+    OneWay.yaoTry f B y c = B (Function.update (OneWay.prodFun f q c.2.1) c.1 y) c.2.2 c.1 := by
+  rw [OneWay.yaoTry_eq]
+end OneWay
+
+section Interaction
+attribute [local irreducible] Strategy.coinLen Strategy.Efficient Protocol.viewV View.encode
+example (S : Strategy) (n : ℕ) (r : S.Coins n) : (List.ofFn r).length = S.coins.eval n := by
+  rw [List.length_ofFn, Strategy.coinLen_eq]
+example (S : Strategy) (h : S.Efficient) : ∃ A : NUPPT, A.Uniform := by
+  obtain ⟨A, hA, -, -⟩ := (Strategy.efficient_iff S).1 h
+  exact ⟨A, hA⟩
+example (π : Protocol) (V' : Strategy) (x y z : List Bool)
+    (r : (π.withV V').ExecCoins (π.withV V').P x) :
+    ((π.withV V').viewV x y z r).encode =
+      pairEncode (pairEncode x z) (pairEncode (List.ofFn r.2) (Strategy.encodeMsgs
+        (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+          (π.rounds.eval x.length)).2)) := by
+  rw [Protocol.viewV_withV, View.encode_mk]
+end Interaction
+
+section ZKDefs
+attribute [local irreducible] ZK
+example (π : Protocol) (R : List Bool → List Bool → Prop) (h : ZK π R) (V' : Strategy)
+    (hV : V'.Efficient) : ∃ S : NUPPT, S.Uniform := by
+  obtain ⟨S, hS, -⟩ := (ZK_iff π R).1 h V' hV
+  exact ⟨S, hS⟩
+end ZKDefs
+
+section Encoding
+attribute [local irreducible] encColoring
+example (c : Fin 2 → Fin 3) : (encColoring c).getD 3 false = decide ((c 1).val % 2 = 1) := by
+  simpa using getD_encColoring_two_mul_add_one c 1
+example {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) :
+    (encColoring c).getD (finProdFinEquiv (i, (0 : Fin 2))) false = decide ((c i).val / 2 = 1) := by
+  rw [getD_encColoring, if_pos rfl]
+example {n : ℕ} (c : Fin n → Fin 3) : (encColoring c).length = n * 2 := by
+  rw [encColoring_eq, List.length_ofFn]
+end Encoding
+
+section Language
+attribute [local irreducible] R3COL ProperColoring sampleIdx
+example {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) (hc : ∀ u v, G u v = true → c u ≠ c v) :
+    R3COL (encGraph G) (encColoring c) :=
+  (R3COL_iff _ _).2 ⟨n, G, c, rfl, rfl, (ProperColoring_iff G c).2 hc⟩
+example (m k T : ℕ) (r : Fin (T * k) → Bool) :
+    sampleIdx m k T (List.ofFn r) = rejectionSample m k T fun t j => r (finProdFinEquiv (t, j)) :=
+  sampleIdx_ofFn_eq_rejectionSample m k T r
+example (m k : ℕ) (r : List Bool) : sampleIdx m k 0 r = none := by
+  rw [sampleIdx_eq_rejectionSample]; rfl
+end Language
+
+section Protocol3col
+attribute [local irreducible] colProtocol colProver colCommit colOpen colCoinSlice colIterations
+example (Com : List Bool → List Bool) (ℓ : PolyExpr) (n : ℕ) :
+    (colProtocol Com ℓ).rounds.eval n = 3 ∧ (colProtocol Com ℓ).verifierFirst = false ∧
+      (colProtocol Com ℓ).P = colProver Com ℓ ∧ (colProtocol Com ℓ).V = colVerifier Com ℓ := by
+  rw [colProtocol_rounds, colProtocol_verifierFirst, colProtocol_P, colProtocol_V,
+    PolyExpr.eval_const]
+  exact ⟨rfl, rfl, rfl, rfl⟩
+example (Com : List Bool → List Bool) (ℓ : PolyExpr) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3)
+    (r : List Bool) :
+    (colProver Com ℓ).next (encGraph G) (encColoring c) r [] =
+      multiCom Com (fun i => padColor n
+        (samplePerm3 (encGraph G).length (r.take (3 * (encGraph G).length)) (c i)))
+        (fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+          r.getD (3 * (encGraph G).length + i * ℓ.eval n + j) false) := by
+  rw [colProver_next_nil Com ℓ (decGraph_encGraph G), colCommit_eq, decColoring_encColoring]
+example (Com : List Bool → List Bool) (ℓ : PolyExpr) {n : ℕ} (G : Graph n) (hm : edgeCount G = 0)
+    (y r w : List Bool) : (colProver Com ℓ).next (encGraph G) y r [w] = [] :=
+  colProver_next_cons_of_edgeCount_eq_zero Com ℓ (decGraph_encGraph G) hm y r w []
+example (Com : List Bool → List Bool) (ℓ : PolyExpr) (x : List Bool) :
+    (colProver Com ℓ).coinLen x.length = 3 * x.length + x.length * ℓ.eval x.length := by
+  rw [Strategy.coinLen_eq, colProver_coins]; rfl
+example (c t : ℕ) (r : List Bool) (x : List Bool) :
+    colCoinSlice c t r = (r.drop (t * c)).take c ∧
+      colIterations x = (decGraph x).1 * edgeCount (decGraph x).2 :=
+  ⟨colCoinSlice_eq c t r, colIterations_eq x⟩
+example {n ℓn : ℕ} (c' : Fin n → Fin 3) (r : Fin n → Fin ℓn → Bool) (p : Fin n × Fin n) :
+    pairFstD (colOpen c' r p) = pairEncode (encColor (c' p.1)) (List.ofFn (r p.1)) := by
+  rw [colOpen_eq, pairFstD_pairEncode]
+end Protocol3col
+
+section Gate04
+attribute [local irreducible] prgAdv Negligible HardcoreBit.PushesUniform Ensemble.Pseudorandom
+  Ensemble.uniform TCSlib.InformationTheory.statDist GGMRed.queryOf GGMRed.verdictOf
+  GGMRed.histEnc GGMRed.coinStr PrivateKeyScheme.encodeList PrivateKeyScheme.multiEncDist
+  PrivateKeyScheme.MultiMessageSecure
+example {σ γ ρ : Type*} [Fintype σ] [Fintype γ] [Fintype ρ] (G : σ → γ) (D : γ → ρ → Bool) :
+    0 ≤ prgAdv G D := by rw [prgAdv_eq]; exact abs_nonneg _
+example (μ : ℕ → ℝ) (h : Negligible μ) : ∃ n₀ : ℕ, ∀ n ≥ n₀, |μ n| < 1 / (n : ℝ) ^ 0 :=
+  (negligible_iff μ).1 h 0
+example {Ω γ : Type*} [Fintype Ω] [Fintype γ] (π : Ω → γ) (h : HardcoreBit.PushesUniform π) :
+    uexp (fun ω => (fun _ : γ => (1 : ℝ)) (π ω)) = uexp fun _ : γ => (1 : ℝ) :=
+  (HardcoreBit.pushesUniform_iff π).1 h fun _ => 1
+example {ℓ : PolyExpr} (X : Ensemble ℓ) (h : X.Pseudorandom) : Ensemble.Indist X (Ensemble.uniform ℓ) :=
+  (Ensemble.pseudorandom_iff X).1 h
+example (ℓ : PolyExpr) (n : ℕ) (x : (Ensemble.uniform ℓ).σ n) :
+    (Ensemble.uniform ℓ).X n x = cast (Ensemble.uniform_σ ℓ n) x := by
+  rw [Ensemble.uniform_X]
+example {α : Type*} [Fintype α] (p q : TCSlib.InformationTheory.FinDist α) :
+    TCSlib.InformationTheory.statDist p q = (1 / 2) * ∑ a, |p a - q a| := by
+  rw [TCSlib.InformationTheory.statDist_eq]
+example : GGMRed.verdictOf [true, true] = true := by rw [GGMRed.verdictOf_eq]; rfl
+example (ℓ₁ : ℕ) : GGMRed.queryOf ℓ₁ [] = none := by rw [GGMRed.queryOf_eq]; rfl
+example {ℓ₁ ℓ₂ : ℕ} : GGMRed.histEnc ([] : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) = [] := by
+  rw [GGMRed.histEnc_eq]; rfl
+example {D : NUPPT} {q : PolyExpr} {n : ℕ} (d : GGMRed.Data D q n) :
+    (List.ofFn d.r).length ≤ (GGMRed.coinStr d).length := by
+  rw [GGMRed.coinStr_eq, List.length_append, List.length_append]; omega
+example : PrivateKeyScheme.encodeList [] = [] := PrivateKeyScheme.encodeList_nil
+example (S : PrivateKeyScheme) (n : ℕ) (m : Fin 1 → Fin n → Bool)
+    (r : S.gen.Coins n × (Fin 1 → S.enc.Coins n)) :
+    S.multiEncDist n 0 m r = PrivateKeyScheme.encodeList [S.enc.runAt n
+      (pairEncode (S.gen.runAt n [] r.1) (List.ofFn (m 0))) (r.2 0)] := by
+  rw [PrivateKeyScheme.multiEncDist_apply]; rfl
+example (S : PrivateKeyScheme) (h : S.MultiMessageSecure) (D : NUPPT) (q : PolyExpr) :
+    ∃ ε : ℕ → ℝ, Negligible ε := by
+  obtain ⟨ε, hε, -⟩ := (PrivateKeyScheme.multiMessageSecure_iff S).1 h D q
+  exact ⟨ε, hε⟩
+end Gate04
+
+section Collections2
+attribute [local irreducible] Collection.HardCore TrapdoorCollection.OneWay PermCollection.OneWay
+example (F : Collection) (hh : ∀ i, F.D i → Bool) (h : F.HardCore hh) :
+    ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      ∀ i x, H (pairEncode i (F.encD i x)) = [hh i x] := ((F.hardCore_iff hh).1 h).1
+example (T : TrapdoorCollection) (h : T.toCollection.OneWay) : T.OneWay :=
+  (TrapdoorCollection.oneWay_iff T).2 h
+example (P : PermCollection) (h : P.toCollection.OneWay) : P.OneWay :=
+  (PermCollection.oneWay_iff P).2 h
+end Collections2
+
+section DomainFunFamily
+attribute [local irreducible] FunFamily.toCollection
+example (𝓕 : FunFamily) (F : List Bool → List Bool) (hF : PolyTimeComputable F)
+    (hspec : ∀ n (x : Fin (𝓕.inLen.eval n) → Bool),
+      F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x))
+    (i : List Bool) (x : Fin (𝓕.inLen.eval i.length) → Bool) :
+    (𝓕.toCollection F hF hspec).decD i ((𝓕.toCollection F hF hspec).encD i
+      ((𝓕.toCollection_domEquiv F hF hspec i).symm x)) =
+      some ((𝓕.toCollection_domEquiv F hF hspec i).symm x) := by
+  rw [FunFamily.toCollection_encD, FunFamily.toCollection_decD, Equiv.apply_symm_apply,
+    decodeFin_ofFn, Option.map_some]
+example (𝓕 : FunFamily) (F : List Bool → List Bool) (hF : PolyTimeComputable F)
+    (hspec : ∀ n (x : Fin (𝓕.inLen.eval n) → Bool),
+      F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)) (i : List Bool)
+    (x : (𝓕.toCollection F hF hspec).D i) :
+    (𝓕.toCollection F hF hspec).f i x =
+      List.ofFn (𝓕.f i.length (𝓕.toCollection_domEquiv F hF hspec i x)) :=
+  FunFamily.toCollection_f 𝓕 F hF hspec i x
+end DomainFunFamily
+
+section DomainGlPad
+attribute [local irreducible] Collection.glPad TrapdoorCollection.glPad
+example (F : Collection) (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (F.glPad m henc).D i) :
+    (F.glPad m henc).f i z = pairEncode (F.f i (Collection.glPad_domEquiv m henc i z).1)
+      (List.ofFn (Collection.glPad_domEquiv m henc i z).2) := by
+  rw [Collection.glPad_f_domEquiv]
+example (F : Collection) (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
+    (F.glPad m henc).gen = F.gen ∧
+      (F.glPad m henc).sample = NUPPT.ofPolyTimeUniform (Collection.glPadSampleFun_poly F) (.add F.sample.coins m) :=
+  ⟨Collection.glPad_gen m henc, Collection.glPad_sample m henc⟩
+example (T : TrapdoorCollection) (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
+    (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins :=
+  TrapdoorCollection.glPad_inv T m henc
+end DomainGlPad

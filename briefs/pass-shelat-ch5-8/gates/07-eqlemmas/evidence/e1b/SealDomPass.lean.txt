@@ -1,0 +1,89 @@
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Candidates.Rabin
+
+/-! Seal probe, published domain equivalences: elements `x : C.D i` of each concrete collection
+read through `C_domEquiv`, with the collection sealed. -/
+
+set_option autoImplicit false
+open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Candidates TCSlib.Cryptography.NumberTheory
+
+attribute [local irreducible] expCollection dlCollection fullDLCollection factoringCollection rsaTrapdoor rsaCollection rabinCollection rabinBlumTrapdoor
+
+-- expCollection: decoding inverts encoding, through the equivalence
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (x : (expCollection H G hV).D i) :
+    (expCollection H G hV).decD i ((expCollection H G hV).encD i x) = some x := by
+  rw [expCollection_encD, expCollection_decD, expDec_expEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+-- expCollection: `f` is injective at a valid index, through the equivalence
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    {i : List Bool} (hi : ExpValid i) (x y : (expCollection H G hV).D i)
+    (h : (expCollection H G hV).f i x = (expCollection H G hV).f i y) : x = y := by
+  rw [expCollection_f, expCollection_f] at h
+  exact (expCollection_domEquiv H G hV i).injective (expF_injective hi h)
+-- expCollection: a uniform statement over `D i` transports to `Z_m`
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (expCollection H G hV).D i => P (expCollection_domEquiv H G hV i x)) =
+      uprob P :=
+  uprob_comp_equiv _ P
+-- dlCollection, fullDLCollection
+example (H : ArithmeticFP) (G : SafePrimeGen) (i : List Bool) (x : (dlCollection H G).D i) :
+    (dlCollection H G).decD i ((dlCollection H G).encD i x) = some x := by
+  rw [dlCollection_encD, dlCollection_decD, expDec_expEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).decD i ((fullDLCollection H G).encD i x) = some x := by
+  rw [fullDLCollection_encD, fullDLCollection_decD, expDec_expEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) (x : (fullDLCollection H G).D i) :
+    ((fullDLCollection H G).f i x).length = dlW i := by
+  rw [fullDLCollection_f, expF_eq, length_natToList]
+example (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) :
+    (fun x : (fullDLCollection H G).D i => halfPred i (fullDLCollection_domEquiv H G i x)) =
+      fun x => halfPred i (fullDLCollection_domEquiv H G i x) := rfl
+-- factoringCollection
+example (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
+    (factoringCollection H).decD i ((factoringCollection H).encD i x) = some x := by
+  rw [factoringCollection_encD, factoringCollection_decD, decodeDistinctPrimes_encode,
+    Option.map_some, Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (i : List Bool) (x : (factoringCollection H).D i) :
+    ((factoringCollection H).f i x).length = 2 * max i.length 2 := by
+  rw [factoringCollection_f, length_natToList]
+-- rsaTrapdoor, rsaCollection
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).decD i ((rsaTrapdoor H).encD i x) = some x := by
+  rw [rsaTrapdoor_encD, rsaTrapdoor_decD, rsaDec_rsaEnc, Option.map_some, Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    rsaTrapdoor_domEquiv H i ((rsaTrapdoor H).perm i x) = rsaPermAt i (rsaTrapdoor_domEquiv H i x) := by
+  rw [rsaTrapdoor_perm, Equiv.apply_symm_apply]
+example (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).decD i ((rsaCollection H).encD i x) = some x := by
+  rw [rsaCollection_encD, rsaCollection_decD, rsaDec_rsaEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+-- rabinCollection, rabinBlumTrapdoor (also through `toCollection`)
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinCollection H).D i) :
+    (rabinCollection H).decD i ((rabinCollection H).encD i x) = some x := by
+  rw [rabinCollection_encD, rabinCollection_decD, rabinDec_rabinEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).toCollection.D i) :
+    (rabinBlumTrapdoor H).toCollection.decD i ((rabinBlumTrapdoor H).toCollection.encD i x) =
+      some x := by
+  rw [rabinBlumTrapdoor_encD, rabinBlumTrapdoor_decD, blumDec_blumEnc, Option.map_some,
+    Equiv.symm_apply_apply]
+example (H : ArithmeticFP) (i : List Bool) (x : (rabinBlumTrapdoor H).D i) :
+    rabinBlumTrapdoor_domEquiv H i ((rabinBlumTrapdoor H).perm i x) =
+      blumPermAt i (rabinBlumTrapdoor_domEquiv H i x) := by
+  rw [rabinBlumTrapdoor_perm, Equiv.apply_symm_apply]
+-- the published uniformity transports
+example {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i)
+    (i : List Bool) (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (expCollection H G hV).D i => P (expCollection_domEquiv H G hV i x)) =
+      uprob P := expCollection_domEquiv_uprob H G hV i P
+example (H : ArithmeticFP) (n : ℕ) (P : DistinctPrimes (max (List.replicate n true).length 2) → Prop) :
+    uprob (fun x : (factoringCollection H).D (List.replicate n true) =>
+      P (factoringCollection_domEquiv H _ x)) = uprob P :=
+  factoringCollection_domEquiv_uprob H _ P
+example (H : ArithmeticFP) (i : List Bool) (P : QR (blumMod i) → Prop) :
+    uprob (fun x : (rabinBlumTrapdoor H).toCollection.D i => P (rabinBlumTrapdoor_domEquiv H i x)) =
+      uprob P := rabinBlumTrapdoor_domEquiv_uprob H i P

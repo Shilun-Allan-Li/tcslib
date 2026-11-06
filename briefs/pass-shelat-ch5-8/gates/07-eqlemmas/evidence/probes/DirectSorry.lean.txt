@@ -1,0 +1,61 @@
+import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.Collections
+import TCSlib.Cryptography.Asymptotic.Encryption
+import TCSlib.Cryptography.Asymptotic.Ensembles
+import TCSlib.Cryptography.Asymptotic.GGMReduction
+import TCSlib.Cryptography.Asymptotic.GGMReductionEval
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+import TCSlib.Cryptography.Asymptotic.OneWay
+import TCSlib.Cryptography.Asymptotic.PublicKey
+import TCSlib.Cryptography.Asymptotic.Sampling
+import TCSlib.Cryptography.Candidates.Arithmetic
+import TCSlib.Cryptography.Candidates.Concrete
+import TCSlib.Cryptography.Candidates.DiscreteLog
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Candidates.Factoring
+import TCSlib.Cryptography.Candidates.RSA
+import TCSlib.Cryptography.Candidates.Rabin
+import TCSlib.Cryptography.Foundations.Negligible
+import TCSlib.Cryptography.HardcoreBit.Basic
+import TCSlib.Cryptography.NumberTheory.Primality
+import TCSlib.Cryptography.OneWayFunctions.Amplification
+import TCSlib.Cryptography.Pseudorandom.Generators
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.ZeroKnowledge.Encoding
+import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs
+import TCSlib.InformationTheory.StatisticalDistance
+
+/-! For each added or restated declaration: does `sorryAx` occur in its own type or value, or in
+its own auxiliary declarations (names extending its name)? DIRECT = it does; otherwise any
+`sorryAx` reported by `#print axioms` is inherited from the constants it uses. -/
+
+open Lean in
+run_cmd do
+  let env ← getEnv
+  let names : List Name := [`Complexity.NUPPT.inAdvice_eq,`Complexity.NUPPT.inArg_eq,`Complexity.NUPPT.inCoins_eq,`Complexity.NUPPT.inParam_eq,`Complexity.NUPPT.layout_eq,`Complexity.NUPPT.advInput_eq,`Complexity.NUPPT.coinLen_eq,`Complexity.NUPPT.runAtL_eq,`Complexity.NUPPT.distinguisherL_eq,`TCSlib.Cryptography.decodeFin_eq,`TCSlib.Cryptography.Collection.hardCore_iff,`TCSlib.Cryptography.Collection.index_eq,`TCSlib.Cryptography.Collection.invProbAt_eq,`TCSlib.Cryptography.Collection.sampleClose_iff,`TCSlib.Cryptography.FunFamily.toCollection_decD,`TCSlib.Cryptography.FunFamily.toCollection_domEquiv,`TCSlib.Cryptography.FunFamily.toCollection_domEquiv_apply,`TCSlib.Cryptography.FunFamily.toCollection_encD,`TCSlib.Cryptography.FunFamily.toCollection_eval,`TCSlib.Cryptography.FunFamily.toCollection_f,`TCSlib.Cryptography.FunFamily.toCollection_gen,`TCSlib.Cryptography.FunFamily.toCollection_sample_eq,`TCSlib.Cryptography.PermCollection.oneWay_iff,`TCSlib.Cryptography.TrapdoorCollection.oneWay_iff,`TCSlib.Cryptography.TrapdoorCollection.toCollection_domEquiv,`TCSlib.Cryptography.TrapdoorCollection.toCollection_domEquiv_apply,`TCSlib.Cryptography.PrivateKeyScheme.encodeList_nil,`TCSlib.Cryptography.PrivateKeyScheme.multiEncDist_apply,`TCSlib.Cryptography.PrivateKeyScheme.multiMessageSecure_iff,`TCSlib.Cryptography.Ensemble.pseudorandom_iff,`TCSlib.Cryptography.Ensemble.uniform_X,`TCSlib.Cryptography.Ensemble.uniform_σ,`TCSlib.Cryptography.GGMRed.histEnc_eq,`TCSlib.Cryptography.GGMRed.queryOf_eq,`TCSlib.Cryptography.GGMRed.verdictOf_eq,`TCSlib.Cryptography.GGMRed.coinStr_eq,`TCSlib.Cryptography.Collection.glPad_decD,`TCSlib.Cryptography.Collection.glPad_domEquiv,`TCSlib.Cryptography.Collection.glPad_domEquiv_apply,`TCSlib.Cryptography.Collection.glPad_encD,`TCSlib.Cryptography.Collection.glPad_eval,`TCSlib.Cryptography.Collection.glPad_f_domEquiv,`TCSlib.Cryptography.Collection.glPad_sample,`TCSlib.Cryptography.PermCollection.glPad_domEquiv,`TCSlib.Cryptography.PermCollection.glPad_domEquiv_apply,`TCSlib.Cryptography.PermCollection.glPad_perm,`TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore_domEquiv,`TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv,`TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv_apply,`TCSlib.Cryptography.TrapdoorCollection.glPad_inv,`TCSlib.Cryptography.FunFamily.easy_iff,`TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure,`TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure,`TCSlib.Cryptography.firstHit_eq,`TCSlib.Cryptography.statClose_iff,`TCSlib.Cryptography.Candidates.divModStr_pairEncode,`TCSlib.Cryptography.Candidates.natToList_eq,`TCSlib.Cryptography.Candidates.sizeStr_eq,`TCSlib.Cryptography.Candidates.xgcdStr_pairEncode,`TCSlib.Cryptography.Candidates.DistinctPrimes.default_p,`TCSlib.Cryptography.Candidates.DistinctPrimes.default_q,`TCSlib.Cryptography.Candidates.DistinctPrimes.p_eq,`TCSlib.Cryptography.Candidates.DistinctPrimes.q_eq,`TCSlib.Cryptography.Candidates.encodeDistinctPrimes_eq,`TCSlib.Cryptography.Candidates.ExpGroupGen.dlHard_iff,`TCSlib.Cryptography.Candidates.ExpGroupGen.dlProb_eq,`TCSlib.Cryptography.Candidates.ExpGroupGen.fullLengthExcept_iff,`TCSlib.Cryptography.Candidates.dlCollection_decD,`TCSlib.Cryptography.Candidates.dlCollection_domEquiv,`TCSlib.Cryptography.Candidates.dlCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.dlCollection_encD,`TCSlib.Cryptography.Candidates.dlCollection_eval,`TCSlib.Cryptography.Candidates.dlCollection_f,`TCSlib.Cryptography.Candidates.dlCollection_gen,`TCSlib.Cryptography.Candidates.dlCollection_sample,`TCSlib.Cryptography.Candidates.dlG_eq,`TCSlib.Cryptography.Candidates.dlM_eq,`TCSlib.Cryptography.Candidates.dlP_eq,`TCSlib.Cryptography.Candidates.expCollection_decD,`TCSlib.Cryptography.Candidates.expCollection_domEquiv,`TCSlib.Cryptography.Candidates.expCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.expCollection_encD,`TCSlib.Cryptography.Candidates.expCollection_eval,`TCSlib.Cryptography.Candidates.expCollection_f,`TCSlib.Cryptography.Candidates.expCollection_gen,`TCSlib.Cryptography.Candidates.expCollection_sample,`TCSlib.Cryptography.Candidates.expEnc_eq,`TCSlib.Cryptography.Candidates.expF_eq,`TCSlib.Cryptography.Candidates.expValid_iff,`TCSlib.Cryptography.Candidates.safePrimeValid_iff,`TCSlib.Cryptography.Candidates.wellFormedIndex_iff,`TCSlib.Cryptography.Candidates.fullDLCollection_decD,`TCSlib.Cryptography.Candidates.fullDLCollection_domEquiv,`TCSlib.Cryptography.Candidates.fullDLCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.fullDLCollection_encD,`TCSlib.Cryptography.Candidates.fullDLCollection_eval,`TCSlib.Cryptography.Candidates.fullDLCollection_f,`TCSlib.Cryptography.Candidates.fullDLCollection_gen,`TCSlib.Cryptography.Candidates.fullDLCollection_hardCore,`TCSlib.Cryptography.Candidates.fullDLCollection_sample,`TCSlib.Cryptography.Candidates.factorProb_eq,`TCSlib.Cryptography.Candidates.factoringCollection_decD,`TCSlib.Cryptography.Candidates.factoringCollection_domEquiv,`TCSlib.Cryptography.Candidates.factoringCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.factoringCollection_encD,`TCSlib.Cryptography.Candidates.factoringCollection_eval,`TCSlib.Cryptography.Candidates.factoringCollection_f,`TCSlib.Cryptography.Candidates.factoringCollection_gen,`TCSlib.Cryptography.Candidates.factoringCollection_sample,`TCSlib.Cryptography.Candidates.modulusBits_eq,`TCSlib.Cryptography.Candidates.polyTimeComputable_samplePrimeL,`TCSlib.Cryptography.Candidates.statClose_samplePrimeL_pair,`TCSlib.Cryptography.Candidates.eval_rsaBlock,`TCSlib.Cryptography.Candidates.eval_rsaSampleCoins,`TCSlib.Cryptography.Candidates.eval_rsaTrials,`TCSlib.Cryptography.Candidates.rsaCollection_decD,`TCSlib.Cryptography.Candidates.rsaCollection_domEquiv,`TCSlib.Cryptography.Candidates.rsaCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.rsaCollection_encD,`TCSlib.Cryptography.Candidates.rsaCollection_eval,`TCSlib.Cryptography.Candidates.rsaCollection_f,`TCSlib.Cryptography.Candidates.rsaCollection_gen,`TCSlib.Cryptography.Candidates.rsaCollection_sample,`TCSlib.Cryptography.Candidates.rsaTrapdoor_decD,`TCSlib.Cryptography.Candidates.rsaTrapdoor_domEquiv,`TCSlib.Cryptography.Candidates.rsaTrapdoor_domEquiv_uprob,`TCSlib.Cryptography.Candidates.rsaTrapdoor_encD,`TCSlib.Cryptography.Candidates.rsaTrapdoor_eval,`TCSlib.Cryptography.Candidates.rsaTrapdoor_f,`TCSlib.Cryptography.Candidates.rsaTrapdoor_gen,`TCSlib.Cryptography.Candidates.rsaTrapdoor_inv,`TCSlib.Cryptography.Candidates.rsaTrapdoor_perm,`TCSlib.Cryptography.Candidates.rsaTrapdoor_sample,`TCSlib.Cryptography.Candidates.sampleUnitL_eq,`TCSlib.Cryptography.Candidates.statClose_sampleUnitL,`TCSlib.Cryptography.Candidates.unitSampleStr_eq,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_decD,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_domEquiv,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_domEquiv_uprob,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_encD,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_eval,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_f,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_gen,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_inv,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_perm,`TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_sample,`TCSlib.Cryptography.Candidates.rabinCollection_decD,`TCSlib.Cryptography.Candidates.rabinCollection_domEquiv,`TCSlib.Cryptography.Candidates.rabinCollection_domEquiv_uprob,`TCSlib.Cryptography.Candidates.rabinCollection_encD,`TCSlib.Cryptography.Candidates.rabinCollection_eval,`TCSlib.Cryptography.Candidates.rabinCollection_f,`TCSlib.Cryptography.Candidates.rabinCollection_gen,`TCSlib.Cryptography.Candidates.rabinCollection_sample,`TCSlib.Cryptography.negligible_iff,`TCSlib.Cryptography.HardcoreBit.pushesUniform_iff,`TCSlib.Cryptography.NumberTheory.chunk_apply,`TCSlib.Cryptography.OneWay.prodFun_apply,`TCSlib.Cryptography.OneWay.yaoTry_eq,`TCSlib.Cryptography.prgAdv_eq,`TCSlib.Cryptography.ZK_iff,`TCSlib.Cryptography.encColoring_eq,`TCSlib.Cryptography.getD_encColoring,`TCSlib.Cryptography.getD_encColoring_two_mul,`TCSlib.Cryptography.getD_encColoring_two_mul_add_one,`TCSlib.Cryptography.Protocol.viewV_withV,`TCSlib.Cryptography.Strategy.coinLen_eq,`TCSlib.Cryptography.Strategy.efficient_iff,`TCSlib.Cryptography.View.encode_mk,`TCSlib.Cryptography.ProperColoring_iff,`TCSlib.Cryptography.R3COL_iff,`TCSlib.Cryptography.sampleIdx_eq_rejectionSample,`TCSlib.Cryptography.sampleIdx_ofFn_eq_rejectionSample,`TCSlib.Cryptography.colCoinSlice_eq,`TCSlib.Cryptography.colCommit_eq,`TCSlib.Cryptography.colIterations_eq,`TCSlib.Cryptography.colOpen_eq,`TCSlib.Cryptography.colProtocol_P,`TCSlib.Cryptography.colProtocol_V,`TCSlib.Cryptography.colProtocol_rounds,`TCSlib.Cryptography.colProtocol_verifierFirst,`TCSlib.Cryptography.colProver_coins,`TCSlib.Cryptography.colProver_next_cons,`TCSlib.Cryptography.colProver_next_cons_of_edgeCount_eq_zero,`TCSlib.Cryptography.colProver_next_nil,`TCSlib.InformationTheory.statDist_eq]
+  for n in names do
+    match env.find? n with
+    | none => logInfo m!"MISSING {n}"
+    | some ci =>
+      let mut seen : NameSet := {}
+      let mut todo : List Name := [n]
+      let mut direct := false
+      while !todo.isEmpty do
+        let c := todo.head!
+        todo := todo.tail!
+        if seen.contains c then continue
+        seen := seen.insert c
+        let some d := env.find? c | continue
+        let cs := d.type.getUsedConstants ++ (d.value?.map (·.getUsedConstants)).getD #[]
+        for k in cs do
+          if k == `sorryAx then direct := true
+          if n.isPrefixOf k && k != n then todo := k :: todo
+      logInfo m!"{if direct then "DIRECT" else "nodirect"} {n}"
+      let _ := ci
