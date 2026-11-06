@@ -43,6 +43,7 @@ import TCSlib.Complexity.PolyHierarchy
 import TCSlib.Complexity.TimeHierarchy
 import TCSlib.Complexity.SpaceComplexity
 import TCSlib.Complexity.Promise
+import TCSlib.Complexity.Counting
 
 import TCSlib.ComputationalModels
 
