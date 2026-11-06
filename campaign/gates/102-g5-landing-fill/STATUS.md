@@ -20,3 +20,4 @@
   bundle `102-g5-landing-fill-r2-bundle.md`, 34 sections, SHA-256
   `ebc8fc93f33feea0bbfb1057a71ba0d3d9d0a053b2d3859a515b0365c927b83c`; Lean from `e7e78aaf`.
   Findings file `g5-landing-fill-r2-findings.md`. **Ready to dispatch.**
+- 2026-11-06: **dispatched** (the user).

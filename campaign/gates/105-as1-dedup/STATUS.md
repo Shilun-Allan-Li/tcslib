@@ -7,3 +7,4 @@
   `105-as1-dedup-bundle.md`, 17 sections, SHA-256
   `c80ff456bad64c7bd5776e930479a2e5c1b192d4d14bf205cd80267e144a456a`; Lean from `0bc71211`.
   Findings file `as1-dedup-findings.md`. **Ready to dispatch.**
+- 2026-11-06: **dispatched** (the user).
