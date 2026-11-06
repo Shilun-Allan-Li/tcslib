@@ -448,7 +448,11 @@ private theorem tt_cfg_rowPre {k : ℕ} {S : Type} {x : List (ZoneSym k)} (s : O
 
 /-- **A row endpoint is a phase-boundary configuration**: a configuration that satisfies the
 zone rows' precondition at `D`, with head `1` at `0`, input head `ip` and output `out`, is
-`tt_cfg` at `D` once its state is renamed to the constant `s`, if it is live. -/
+`tt_cfg` at `D` once its state is renamed to the constant `s`, if it is live.
+
+**Proof sketch.** Field by field (`Turing.Cfg.mapState_eq_of_fields`): the state is `some s`
+since `d` is live; tape `0` and head `0` are the precondition's (`Turing.zoneRowPre_iff`), tape `1`
+is blank by it, head `1` is `h1`, and the input head and the output are the hypotheses. -/
 private theorem tt_mapState_eq_cfg {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
     (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) (hp : zoneRowPre D d) (s : S')
     (hs : d.state.isSome) (h1 : d.workTapePos 1 = 0) (ip : Fin (x.length + 2))
@@ -733,7 +737,8 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
       show a.state.map _ = _
       rw [hq']
       rfl
-    have hred : tt_red M F hk none (.inr (q', tt_moves a)) = some (tt_stAt M F q' (tt_moves a) 0) := by
+    have hred : tt_red M F hk none (.inr (q', tt_moves a)) =
+        some (tt_stAt M F q' (tt_moves a) 0) := by
       show some _ = some _
       rw [show tt_stAt M F q' (tt_moves a) 0 = _ from dif_pos hk]
     have H := phaseHostTM_run (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk) none c₀ _ 1 h1
