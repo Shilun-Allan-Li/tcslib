@@ -1,13 +1,12 @@
 # Ch3–4 fill campaign — G5, Hennie–Stearns on two work tapes (`two_work_tapes_run`)
 
-> **DRAFT, not issued** (maintainer's drafting agent, 2026-11-05). PR #197 (G5's consumer API,
-> gate 97, closed; head `fde50a5a72c7dfa34699a2968255a67dec1965ef`) **merged during the drafting**,
-> as `33ceeed161301fa5147826c25d40265e3d7528a5`: the campaign's Lean tree is #197's head's, and
-> `oleans-lzsa2` is its snapshot. The brief issues after its pre-ship on the merged tree, with
-> every measured item filled in (`@ANCESTOR@` and each `@TBD@`), and after #202
-> (`Turing.Segment.iterate_seq`, gate 98) merges. The questions the drafting raised are ruled (the
-> user, 2026-11-05; G5's plan §8; the last section); the route marks where each enters,
-> `[Q1]`–`[Q3]`.
+> **Issued** (maintainer, 2026-11-06), after G5's API merged: #197 (the consumer side, gate 97),
+> #202 (`Turing.Segment.iterate_seq`, gate 98) and #207 (`zoneRebalanceData_eq`,
+> `zoneExtendData_eq`, gate 99). Its pre-ship ran on the merged tree
+> (`campaign/fills/u2s/logs/u2s-fill-g5-preship.log`), and a review of the draft (2026-11-06;
+> `campaign/fills/u2s/drafts/u2s-fill-g5/review/REVIEW.md`) is folded in. The questions the
+> drafting raised are ruled (the user, 2026-11-05; G5's plan §8; the last section); the route
+> marks where each enters, `[Q1]`–`[Q3]`.
 > - **Decision G5-F1 (the user, 2026-11-05): API first.** #197 publishes the consumer side
 >   (`Build/ZoneStep`, `ZoneRebalance`'s equations, `Contract.zero`); this fill writes the
 >   controller, its invariant and the count bound.
@@ -21,7 +20,8 @@
 
 - Clone `https://github.com/Shilun-Allan-Li/tcslib` and check out branch
   **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it fails, **stop**.
+- Confirm that `git merge-base --is-ancestor 335d31d408f1b4b4164f5b1b3a37d246a42b25cc HEAD`
+  succeeds. If it fails, **stop**.
   That commit contains:
   - **your target as a gated statement** (PR #189, gate 92, `campaign/gates/92-g5-statements/`):
     `Turing.FinTM.two_work_tapes_run` in `TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean`,
@@ -50,8 +50,8 @@
     - the overlay (your file with region (a)'s import): `TwoTapesOverlay.lean.txt`;
     - the import probe: `G5ImportProbe.lean.txt` (217 `#check`s, every name this brief cites);
     - the route probe with its seal and controls: `G5Route.lean.txt`, `G5RouteSealed.lean.txt`,
-      `G5RouteCtl_unsealed.lean.txt`, `G5RouteCtl_sealed.lean.txt` (drafted 2026-11-06,
-      `campaign/fills/u2s/drafts/u2s-fill-g5/route/`; re-run on the merged tree at issue);
+      `G5RouteCtl_unsealed.lean.txt`, `G5RouteCtl_sealed.lean.txt` (re-run on the merged tree;
+      its notes in `G5Route-README.md`);
     - the semantic-duplication probe: `G5RouteExact.lean.txt`;
     - the screen population `screen-population.txt` (22 files);
     - the order list `campaign/fills/u2s/orders/u2s-fill-g5.txt`, the base sorry set, the screen
@@ -65,11 +65,11 @@
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
-  git checkout -b fill/u2s-g5 @ANCESTOR@
-  git rev-parse HEAD        # must print @ANCESTOR@
+  git checkout -b fill/u2s-g5 335d31d408f1b4b4164f5b1b3a37d246a42b25cc
+  git rev-parse HEAD        # must print 335d31d408f1b4b4164f5b1b3a37d246a42b25cc
   git rev-parse HEAD:TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
   # must print cc35767342620a3be6331c57239e5eafa5ea4c45
-  # (git rev-parse at the merged tip; #197 does not change the file; re-check at issue)
+  # (git rev-parse at the ancestor)
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
@@ -88,19 +88,18 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign after #197's merge** (`33ceeed1`; at drafting the tip
-  was `0d2b3bbd`, records only since; `@TBD@` if a further Lean PR merges before issue, and
-  `@ANCESTOR@` adds records only). Lines in this brief are your base's (after region (a)'s import
+- **Your base's Lean content is the campaign after #191, #202 and #207 merged** (`d43a1374`; the
+  ancestor adds records only). Lines in this brief are your base's (after region (a)'s import
   every later line moves down by one: the home at 50, the target's docstring end at 64, its `sorry`
   at 71). `TwoTapes.lean` is #189's landing, 86 lines, 2 public and 0 private declarations,
-  unchanged by #197:
+  unchanged since (blob `cc35767342620a3be6331c57239e5eafa5ea4c45`):
   - the imports, lines 6–8 (`Mathlib.Data.Nat.Log`, `Robustness.AlphabetReduction`,
     `Build.ZoneRebalance`); the module docstring, lines 14–46; `namespace Turing.FinTM`, line 48;
   - `two_work_tapes_run`: docstring 50–63, statement 64–69, its `sorry` on line 70;
   - `two_work_tapes_binary`: docstring 72–77, statement 78–81, proof 82–84; `end`, line 86.
-- **In flight, merging after your base and invisible to it:** `@TBD@` (at drafting: #191, NF's
-  landing, gate 95 round 2; #196, the deepening's API, gate 96 round 2; each is replayed on the
-  merged tree before it merges). Cite nothing they add.
+- **In flight, merging after your base and invisible to it:** #208, the deepening fill's landing
+  (`SavitchARM/Deepen`, `Savitch`; outside your order list). It is replayed on the merged tree
+  before it merges. Cite nothing it adds.
 - **Parallel batches this round:** none in your file. The deepening fill (`SavitchARM/Deepen`,
   `Savitch`) shares no file with you.
 - **Your consumers:** `two_work_tapes_binary` (already proved from your statement),
@@ -231,8 +230,8 @@ theorem two_work_tapes_run (M : FinTM Bool) :
 
 ## The published API you cite (binding)
 
-All public and proved at `@ANCESTOR@`; the import probe checks every name (217). Cite these;
-never re-prove one, and never restate one as a private.
+All public and proved at `335d31d408f1b4b4164f5b1b3a37d246a42b25cc`; the import probe checks every
+name (217). Cite these; never re-prove one, and never restate one as a private.
 
 - **The track step and the amortization** (`Build/ZoneStep`): `Turing.exists_zoneTrackStepTM`
   (per `k`, one constant `A`; per direction and track a machine with `Fintype` and `DecidableEq`
