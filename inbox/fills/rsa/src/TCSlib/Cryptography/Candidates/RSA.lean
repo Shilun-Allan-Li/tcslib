@@ -694,8 +694,11 @@ private theorem rsa_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L
   rw [hnone, Option.or_none]
 
 /-- **The unit test by comparisons**: for `N = ⟦w⟧`, "`¬ (N ≤ v)`, and the `|w|`-bit numeral `g`
-of `gcd(v, N)` reads `≤ 1` and `≥ 1`" is the test `v < N ∧ gcd(v, N) = 1` (for `v < N` the gcd
-is at most `N < 2^{|w|}`, so `g` reads as the gcd). -/
+of `gcd(v, N)` reads `≤ 1` and `≥ 1`" is the test `v < N ∧ gcd(v, N) = 1`.
+
+**Proof sketch.** If `v < N` then `gcd(v, N) ≤ N < 2^{|w|}`, so `g` reads as the gcd
+(`listToNat_natToList`), and "`≤ 1` and `≥ 1`" is "`= 1`", i.e. coprimality; if `v ≥ N` both
+sides are false. -/
 private theorem rsa_unitTest_eq (v : ℕ) (w : List Bool) :
     (!(decide (listToNat w ≤ v)) &&
       decide (listToNat (natToList w.length (Nat.gcd v (listToNat w))) ≤ listToNat [true]) &&
@@ -795,7 +798,13 @@ private theorem rsa_le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
   rw [e] at h
   exact h
 
-/-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, `H.le`, `H.xgcd`). -/
+/-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, `H.le`, `H.xgcd`).
+
+**Proof sketch.** The gcd numeral is `H.xgcd` on `⟨block, w⟩` followed by `pairFstD`, stated in
+applied form (`rsa_comp`) and folded into `rsa_usGcd`; the four one-bit tests are
+`polyTimeComputable_isNil` (negated), `H.le` (negated) and two `H.le` against `[true]`
+(`rsa_le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
+so that no bundle string function is unfolded by unification. -/
 private theorem rsa_usAcc_poly (H : ArithmeticFP) :
     PolyTimeComputable fun x => [rsa_usAcc x] := by
   have hw : PolyTimeComputable fun x => pairSndD (pairSndD (pairFstD x)) :=
@@ -977,8 +986,15 @@ private theorem rsa_usStart_poly (H : ArithmeticFP) {f : List Bool → List Bool
 
 /-- **The unit sampler is polynomial-time** (the proof of `polyTimeComputable_unitSampleStr`,
 stated here so that the generator can use it): for a polynomial-time `f`,
-`z ↦ unitSampleStr (f z) |inParam z| (inCoins z)` is polynomial-time (see the public statement
-for the proof sketch). -/
+`z ↦ unitSampleStr (f z) |inParam z| (inCoins z)` is polynomial-time.
+
+**Proof sketch.** The trial loop on the start state is `rsa_usLoop_poly` composed with
+`rsa_usStart_poly`; the value block is the loop result with its marker dropped
+(`polyTimeComputable_tail`), or `[true]` when the loop finds nothing (`polyTimeComputable_isNil`,
+`polyTimeComputable_ite`); the output is the remainder of `H.divMod ⟨block, w⟩`. It equals
+`unitSampleStr` by `rsa_usFind_eq`: if no trial is accepted, `sampleUnitL` is `none` and the
+remainder of `1` is the fallback `1 mod N`; if trial `i` is accepted, its value is below `N`
+(`sampleUnitL_spec`) and is its own remainder. -/
 private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
     (hf : PolyTimeComputable f) :
     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
@@ -1142,7 +1158,11 @@ private theorem rsa_prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
   rw [primeStr_eq] at h
   exact h
 
-/-- The validity test is polynomial-time. -/
+/-- The validity test is polynomial-time.
+
+**Proof sketch.** Two primality tests (`rsa_prime_poly`, `H.prime`), the negated conjunction of
+the comparisons `p ≤ q`, `q ≤ p`, and the comparisons of `p`, `q` with `⟦1^M⟧` (`rsa_le_poly`),
+combined by `polyTimeComputable_and` and `polyTimeComputable_not` with explicit tests. -/
 private theorem rsa_gValid_poly (H : ArithmeticFP) : PolyTimeComputable fun y => [rsa_gValid y] := by
   have hP := rsa_gP_poly H
   have hQ := rsa_gQ_poly H
@@ -2467,7 +2487,15 @@ private def rsa_fOut (A : NUPPT) (z : List Bool) : List Bool :=
   else []
 
 /-- The string computation of `A'` is polynomial-time (`A.polyTimeComputable_output`, `H.divMod`,
-`H.mul`, `H.le`, `H.sub`, `H.xgcd`, `H.modExp`, `polyTimeComputable_pairDropPoly`). -/
+`H.mul`, `H.le`, `H.sub`, `H.xgcd`, `H.modExp`, `polyTimeComputable_pairDropPoly`).
+
+**Proof sketch.** Each word is one bundle field applied to pairs of earlier words, in applied
+form (`rsa_comp`) and folded into its definition: the answer of `A` on the re-laid-out input
+(`NUPPT.polyTimeComputable_layout`), the cofactor (`H.divMod`), the product (`H.mul`) and the
+test (two `H.le`, `polyTimeComputable_and`), `Φ` (`H.sub`, `H.mul`, a constant prefix), `d`
+(`H.xgcd`), `y^d mod N` (`H.modExp`, with the zero prefix `H.sub ⟨1y, 1y⟩`), and the `2n`-bit
+truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDropPoly var`);
+`polyTimeComputable_ite` selects the output. -/
 private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rsa_fOut A) := by
   have hN : PolyTimeComputable fun z => pairFstD (NUPPT.inArg z) :=
     rsa_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
