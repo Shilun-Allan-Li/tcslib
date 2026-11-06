@@ -366,8 +366,16 @@ variable {n : ℕ}
 /-- The first prime `p`. -/
 def p (z : DistinctPrimes n) : ℕ := z.1.1.1
 
+/-- The defining equation of `DistinctPrimes.p`: `z.p` is the value of the first prime of the
+pair, `z.p = ((z.1.1 : Fin (2^n)) : ℕ)`. -/
+theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ) := rfl
+
 /-- The second prime `q`. -/
 def q (z : DistinctPrimes n) : ℕ := z.1.2.1
+
+/-- The defining equation of `DistinctPrimes.q`: `z.q` is the value of the second prime of the
+pair, `z.q = ((z.1.2 : Fin (2^n)) : ℕ)`. -/
+theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ) := rfl
 
 /-- `p` is prime. -/
 theorem p_prime (z : DistinctPrimes n) : z.p.Prime := z.1.1.2
@@ -447,6 +455,12 @@ def default (hn : 2 ≤ n) : DistinctPrimes n :=
     ⟨⟨3, lt_of_lt_of_le (by norm_num) ((Nat.pow_le_pow_right (by norm_num) hn).trans_eq' rfl)⟩,
       Nat.prime_three⟩), (by norm_num : (2 : ℕ) ≠ 3)⟩
 
+/-- The first prime of the default pair is `2`: `(DistinctPrimes.default hn).p = 2`. -/
+theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2 := rfl
+
+/-- The second prime of the default pair is `3`: `(DistinctPrimes.default hn).q = 3`. -/
+theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3 := rfl
+
 end DistinctPrimes
 
 /-! ### Encoding pairs of distinct primes -/
@@ -464,6 +478,11 @@ def decodeDistinctPrimes (m : ℕ) (w : List Bool) : Option (DistinctPrimes m) :
 /-- Encode a pair of distinct primes of `Π_m` as `⟨p, q⟩` with `m`-bit numerals. -/
 def encodeDistinctPrimes (m : ℕ) (z : DistinctPrimes m) : List Bool :=
   pairEncode (natToList m z.p) (natToList m z.q)
+
+/-- The defining equation of `encodeDistinctPrimes`:
+`encodeDistinctPrimes m z = ⟨⟦p⟧_m, ⟦q⟧_m⟩`, the pair of the `m`-bit numerals of the two primes. -/
+theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
+    encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q) := rfl
 
 /-- Decoding inverts encoding. -/
 theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :

@@ -87,6 +87,10 @@ def natToBits (k N : ℕ) : Fin k → Bool := fun i => N.testBit (k - 1 - i)
 /-- The `k`-bit binary numeral of `N` as a string (most significant bit first). -/
 def natToList (k N : ℕ) : List Bool := List.ofFn (natToBits k N)
 
+/-- The defining equation of `natToList`: `natToList k N = List.ofFn (natToBits k N)`, the
+string of the `k`-bit numeral of `N`. -/
+theorem natToList_eq (k N : ℕ) : natToList k N = List.ofFn (natToBits k N) := rfl
+
 /-- `natToList` has length `k`. -/
 @[simp] theorem length_natToList (k N : ℕ) : (natToList k N).length = k := by
   simp [natToList]
@@ -288,6 +292,11 @@ theorem mulStr_natToList (k l M N : ℕ) (hM : M < 2 ^ k) (hN : N < 2 ^ l) :
     subStr (pairEncode a b) = natToList a.length (listToNat a - listToNat b) := by
   simp [subStr]
 
+/-- The defining equation of `sizeStr`: `sizeStr w = 1^{Nat.size (listToNat w)}`, the bit length
+of the number read from `w`, in unary. -/
+theorem sizeStr_eq (w : List Bool) :
+    sizeStr w = List.replicate (Nat.size (listToNat w)) true := rfl
+
 /-- `sizeStr w` is the unary bit length of the number read from `w`. -/
 @[simp] theorem length_sizeStr (w : List Bool) : (sizeStr w).length = Nat.size (listToNat w) := by
   simp [sizeStr]
@@ -331,6 +340,21 @@ theorem listToNat_subStr (a b : List Bool) :
     listToNat (subStr (pairEncode a b)) = listToNat a - listToNat b := by
   rw [subStr_pairEncode]
   exact listToNat_natToList (lt_of_le_of_lt (Nat.sub_le _ _) (listToNat_lt_two_pow a))
+
+/-- `divModStr` on an encoded pair: `divModStr ⟨a, b⟩ = ⟨⟦a / b⟧_{|a|}, ⟦a mod b⟧_{|b|}⟩`, the
+quotient as an `|a|`-bit and the remainder as a `|b|`-bit numeral (`a / 0 = 0`, `a mod 0 = a`). -/
+theorem divModStr_pairEncode (a b : List Bool) :
+    divModStr (pairEncode a b) = pairEncode (natToList a.length (listToNat a / listToNat b))
+      (natToList b.length (listToNat a % listToNat b)) := by
+  simp [divModStr]
+
+/-- `xgcdStr` on an encoded pair: `xgcdStr ⟨a, b⟩ = ⟨⟦gcd(a, b)⟧_{|b|}, ⟦(a : Z_b)⁻¹⟧_{|b|}⟩`, the
+gcd and the residue of `ZMod.inv` of `a` modulo `b`, both as `|b|`-bit numerals. -/
+theorem xgcdStr_pairEncode (a b : List Bool) :
+    xgcdStr (pairEncode a b) = pairEncode (natToList b.length (Nat.gcd (listToNat a) (listToNat b)))
+      (natToList b.length ((listToNat a : ZMod (listToNat b))⁻¹).val) := by
+  unfold xgcdStr
+  rw [pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- `leStr` on an encoded pair. -/
 @[simp] theorem leStr_pairEncode (a b : List Bool) :

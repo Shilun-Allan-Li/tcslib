@@ -203,6 +203,11 @@ theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
 input handed to the factoring adversary (and the value `f_mult(p, q)`). -/
 def modulusBits (n : ℕ) (z : DistinctPrimes n) : Fin (2 * n) → Bool := natToBits (2 * n) (z.p * z.q)
 
+/-- The defining equation of `modulusBits`: `modulusBits n z = natToBits (2n) (pq)`, the
+`2n`-bit numeral of the modulus. -/
+theorem modulusBits_eq (n : ℕ) (z : DistinctPrimes n) :
+    modulusBits n z = natToBits (2 * n) (z.p * z.q) := rfl
+
 /-- `modulusBits` is `f_mult` at `(p, q)`: `fmultNat p q = pq` since neither prime is `1`. -/
 theorem modulusBits_eq_fmult (n : ℕ) (z : DistinctPrimes n) :
     modulusBits n z = natToBits (2 * n) (fmultNat z.p z.q) := by
@@ -221,6 +226,14 @@ noncomputable def factorProb (A : NUPPT) (n : ℕ) : ℝ :=
   uprob fun w : DistinctPrimes n × A.Coins n =>
     ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
       (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q)
+
+/-- The defining equation of `factorProb`: `factorProb A n` is the probability, over a uniform
+pair `z` of distinct primes of `Π_n` and the coins of `A`, that `A`'s answer on the `2n`-bit
+modulus `modulusBits n z` is an `n`-bit numeral reading as `z.p` or `z.q`. -/
+theorem factorProb_eq (A : NUPPT) (n : ℕ) :
+    factorProb A n = uprob fun w : DistinctPrimes n × A.Coins n =>
+      ∃ x : Fin n → Bool, A.inverter n n (2 * n) (modulusBits n w.1) w.2 = some x ∧
+        (bitsToNat x = w.1.p ∨ bitsToNat x = w.1.q) := rfl
 
 /-- **The factoring assumption** [PS10, Assumption 30.1]: every non-uniform PPT `A`
 factors `N = pq`, for a uniform pair of distinct primes `p, q ∈ Π_n`, with negligible
@@ -455,6 +468,65 @@ fallback reads as `0`, rejected by their validity tests.) -/
 def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
+
+/-- **One truncated run of `SamplePrime(n)` is polynomial-time** [PS10, Algorithm 50.16 and
+Lemma 51.17] given a primality test: on `⟨u, r⟩` with `n = |u|`, the `n`-bit output
+`samplePrimeL n r` (the first prime among the first `2n²` blocks of `n` bits of `r`, padded with
+zeros to `2n² · n` bits, and the numeral `natToList n 2` of the prime `2` on failure) is
+polynomial-time computable. Shared statement S1 of the factoring fill (decision D1 (A)): used by
+`polyTimeComputable_samplePairRaw` and by `polyTimeComputable_rsaGenRaw` (`RSA.lean`).
+
+**Proof sketch.** Use `NumberTheory.exists_samplePrime_nuppt hP` (`hP` in its form by
+`primeStr_eq`) as a black box: it is a uniform machine `A` with `samplePrimeCoins` coins whose
+activation on the coin list `List.ofFn r'`, `r' : Fin (2n² · n) → Bool`, is
+`((samplePrime n (2n²) (chunk (2n²) n r')).map List.ofFn).getD []`. Do not re-derive its
+`iterateFind` loop. (1) Pad the coins to `2n² · n` bits: `polyTimeComputable_padStr
+samplePrimeCoins` maps `⟨u, r⟩` to `List.ofFn (padFin (2n² · n) r)` (`ofFn_padFin_eq_padStr`,
+`eval_samplePrimeCoins`). (2) Run `A` on the layout `⟨⟨⟨1^n, []⟩, []⟩, coins⟩`, with `1^n`
+computed from `u` (`polyTimeComputable_unaryPoly var`), through `NUPPT.polyTimeComputable_output`
+and `NUPPT.polyTimeComputable_layout` (`NUPPT.runAtL_eq_output_layout`); its output is the
+accepted block as a list, or `[]` when no block is prime. (3) For `n ≥ 1` an accepted block
+has `n` bits, so the output is `[]` exactly on failure (for `n = 0` both sides are `[]`):
+test emptiness against the constant `[]` (`polyTimeComputable_lenEq`) and branch
+(`polyTimeComputable_ite`) between the output and the fallback numeral
+`natToList n 2 = 0^{n−2}10`, a string of unary-polynomial length computed from `1^n`
+(`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The three pieces agree with
+`samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
+theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
+    PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
+  sorry
+
+/-- **Two independent runs of `SamplePrime(n)` are close to a uniform pair of distinct primes**
+[PS10, Lemma 51.17 and Theorem 51.1, "sample two random prime numbers"]: for `n ≥ 2`, the
+values of `samplePrimeL n` on the two halves of `2 · (2n² · n)` uniform coins are within
+statistical distance `2 · (1/2)^n + 2n/2^n` of `(p, q)` for a uniform pair of distinct primes of
+`Π_n`. Shared statement S2 of the factoring fill (decision D1 (A)): used by
+`factoringCollection_sampleClose` and by `rsaCollection_invProbAt_le` (`RSA.lean`, step (ii)).
+
+**Proof sketch.** Write `L = 2n² · n`. (1) The halves `(List.ofFn s).take L` and
+`(List.ofFn s).drop L` are `List.ofFn` of the two halves of `s` under the splitting bijection
+`(Fin (2L) → Bool) ≃ (Fin L → Bool) × (Fin L → Bool)` (`uprob_comp_equiv`), which pushes the
+uniform coins to a uniform pair of independent halves. (2) On a half `r : Fin L → Bool`,
+`padFin L (List.ofFn r) = r` (`padFin_ofFn`), and `chunk (2n²) n r` is `r` read through
+`finProdFinEquiv` (`chunk_apply`), a bijection, so the blocks are uniform; and
+`listToNat (List.ofFn b) = bitsToNat b` (`bitsToNat_eq_listToNat`). So each value is
+`bitsToNat ((samplePrime n (2n²) xs).getD (natToBits n 2))` for uniform blocks `xs`. (3) The
+fallback reads as the prime `2` (`bitsToNat_natToBits`, `2 < 2^n`, `Nat.prime_two`), so
+`NumberTheory.statClose_samplePrime n (2n²)` applies to each run: within
+`(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (the bound of `uprob_samplePrime_none_le_two_pow`) of the
+uniform `n`-bit prime, carried to `ℕ` by the injective `bitsToNat` (`StatClose.map`; the
+uniform prime block is the uniform element of `Primes n`). (4) `StatClose.prod` puts the two
+runs together: the pair is within `2 · (1/2)^n` of `(p, q)` for independent uniform
+`p, q ∈ Π_n`. (5) That pair and `(z.p, z.q)` for a uniform `z : DistinctPrimes n` differ only on
+the diagonal `p = q`, of probability `1/|Π_n|` (`uprob_diag`), at most `2n/2^n`
+(`one_div_card_primes_le`); conclude by `StatClose.trans`. -/
+theorem statClose_samplePrimeL_pair (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun s : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
+        (listToNat (samplePrimeL n ((List.ofFn s).take (2 * n ^ 2 * n))),
+          listToNat (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
+      (fun z : DistinctPrimes n => (z.p, z.q))
+      (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
+  sorry
 
 /-- The output of the collection's sampler from two sampled blocks `a`, `b`: the pair of
 `m`-bit numerals of the two numbers they read as, when these are distinct primes below `2^m`,

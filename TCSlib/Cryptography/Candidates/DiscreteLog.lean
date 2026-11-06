@@ -117,12 +117,24 @@ open Complexity Turing NumberTheory Finset
 /-- The prime `p` read from the index `⟨p, ⟨m, g⟩⟩`. -/
 def dlP (i : List Bool) : ℕ := listToNat (pairFstD i)
 
+/-- The defining equation of `dlP`: `dlP i = listToNat (pairFstD i)`, the number read from the
+first component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlP_eq (i : List Bool) : dlP i = listToNat (pairFstD i) := rfl
+
 /-- The group order `m` read from the index `⟨p, ⟨m, g⟩⟩` (the domain of the exponentiation
 is `Z_m`; `m = q` for the prime-order groups, `m = p − 1` for `Z_p^*`). -/
 def dlM (i : List Bool) : ℕ := listToNat (pairFstD (pairSndD i))
 
+/-- The defining equation of `dlM`: `dlM i = listToNat (pairFstD (pairSndD i))`, the number read
+from the middle component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlM_eq (i : List Bool) : dlM i = listToNat (pairFstD (pairSndD i)) := rfl
+
 /-- The generator `g` read from the index `⟨p, ⟨m, g⟩⟩`. -/
 def dlG (i : List Bool) : ℕ := listToNat (pairSndD (pairSndD i))
+
+/-- The defining equation of `dlG`: `dlG i = listToNat (pairSndD (pairSndD i))`, the number read
+from the last component of `⟨p, ⟨m, g⟩⟩`. -/
+theorem dlG_eq (i : List Bool) : dlG i = listToNat (pairSndD (pairSndD i)) := rfl
 
 /-- The numeral width of an index: the width of the numeral of `p` (all group elements are
 encoded with this width). -/
@@ -132,6 +144,13 @@ def dlW (i : List Bool) : ℕ := (pairFstD i).length
 `n`-bit numerals (the text's "`p` of length `n`"). -/
 def WellFormedIndex (n : ℕ) (i : List Bool) : Prop :=
   ∃ a b c : List Bool, i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n
+
+/-- Unfolding `WellFormedIndex`: `i` is well formed at `n` iff `i = ⟨a, ⟨b, c⟩⟩` for three
+`n`-bit strings `a`, `b`, `c`. -/
+theorem wellFormedIndex_iff (n : ℕ) (i : List Bool) :
+    WellFormedIndex n i ↔ ∃ a b c : List Bool,
+      i = pairEncode a (pairEncode b c) ∧ a.length = n ∧ b.length = n ∧ c.length = n :=
+  Iff.rfl
 
 /-- The width of a well-formed index is `n`. -/
 theorem WellFormedIndex.dlW_eq {n : ℕ} {i : List Bool} (h : WellFormedIndex n i) : dlW i = n := by
@@ -155,6 +174,13 @@ ever output valid indices.) -/
 def ExpValid (i : List Bool) : Prop :=
   (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
     orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i
+
+/-- Unfolding `ExpValid`: `i` is valid iff `p` is prime, `0 < m < p`, `0 < g < p` and `g` has
+order `m` in `Z_p` (with `p = dlP i`, `m = dlM i`, `g = dlG i`). -/
+theorem expValid_iff (i : List Bool) :
+    ExpValid i ↔ (dlP i).Prime ∧ 0 < dlM i ∧ dlM i < dlP i ∧ 0 < dlG i ∧ dlG i < dlP i ∧
+      orderOf ((dlG i : ℕ) : ZMod (dlP i)) = dlM i :=
+  Iff.rfl
 
 noncomputable instance : DecidablePred ExpValid := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
@@ -207,6 +233,11 @@ theorem orderOf_expUnit {i : List Bool} (h : ExpValid i) : orderOf (expUnit h) =
 /-- The string encoding of `x ∈ Z_m`: its residue as a numeral of the index width. -/
 noncomputable def expEnc (i : List Bool) (x : ZMod (expOrd i)) : List Bool := natToList (dlW i) x.val
 
+/-- The defining equation of `expEnc`: `expEnc i x = ⟦x.val⟧_{dlW i}`, the residue of `x` as a
+numeral of the index width. -/
+theorem expEnc_eq (i : List Bool) (x : ZMod (expOrd i)) : expEnc i x = natToList (dlW i) x.val :=
+  rfl
+
 /-- The decoder of `Z_m`: a numeral of the index width reading as a number below `m`. -/
 noncomputable def expDec (i : List Bool) (w : List Bool) : Option (ZMod (expOrd i)) :=
   if w.length = dlW i ∧ listToNat w < expOrd i then some ((listToNat w : ℕ) : ZMod (expOrd i))
@@ -231,6 +262,11 @@ theorem expEnc_of_expDec {i w : List Bool} {x : ZMod (expOrd i)} (h : expDec i w
 `Z_m`: the numeral of `g^x mod p` of the index width (the evaluator `modExpStr` mirrored). -/
 noncomputable def expF (i : List Bool) (x : ZMod (expOrd i)) : List Bool :=
   natToList (dlW i) (dlG i ^ x.val % dlP i)
+
+/-- The defining equation of `expF`: `expF i x = ⟦g^x mod p⟧_{dlW i}`, the numeral of
+`dlG i ^ x.val % dlP i` of the index width. -/
+theorem expF_eq (i : List Bool) (x : ZMod (expOrd i)) :
+    expF i x = natToList (dlW i) (dlG i ^ x.val % dlP i) := rfl
 
 /-- The evaluator of the exponentiation collection on `⟨⟨p, ⟨m, g⟩⟩, x⟩`: one modular
 exponentiation `modExpStr ⟨g, ⟨x, p⟩⟩` [PS10, Theorem 52.3, "it is easy to evaluate"]. -/
@@ -334,6 +370,13 @@ cryptographic assumption (contrary to D10 / deviation 15, strict PPT with `2^{-n
 def FullLengthExcept (δ : ℕ → ℝ) : Prop :=
   ∀ n, G.n₀ ≤ n → uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n
 
+/-- Unfolding `FullLengthExcept`: `G.FullLengthExcept δ` iff for every `n ≥ n₀` the probability
+over the generator's coins that `p < 2^{n−1}` is at most `δ n`. -/
+theorem fullLengthExcept_iff (δ : ℕ → ℝ) :
+    G.FullLengthExcept δ ↔ ∀ n, G.n₀ ≤ n →
+      uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n :=
+  Iff.rfl
+
 /-- **The discrete-log experiment** [PS10, Assumption 52.2]:
 `Pr[i ← Gen(1^n); x ← Z_m : A(1^n, ⟨i, g^x⟩) = x]`, the average over the generator's coins
 of the probability, over the ideal uniform `x ∈ Z_m` and the coins of `A`, that the answer of
@@ -348,11 +391,26 @@ noncomputable def dlProb (A : NUPPT) (n : ℕ) : ℝ :=
         decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
           bitsToNat x = z.1.val
 
+/-- The defining equation of `dlProb`: `G.dlProb A n` is the average over the generator's coins
+`r` of the probability, over `x ∈ Z_m` and the coins of `A`, that `A`'s answer on
+`⟨Gen(1^n; r), g^x⟩` decodes to an `n`-bit numeral reading as `x`. -/
+theorem dlProb_eq (A : NUPPT) (n : ℕ) :
+    G.dlProb A n = uexp fun r : G.gen.Coins n =>
+      uprob fun z : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n =>
+        ∃ x : Fin n → Bool,
+          decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧
+            bitsToNat x = z.1.val :=
+  rfl
+
 /-- **Discrete-log hardness relative to the generator**: every non-uniform PPT solves the
 discrete-log experiment with negligible probability. The safe-prime instance is
 [PS10, Assumption 52.2] (`DLAssumption`); the full-group instance is the assumption of
 [PS10, Lemma 84.1] (`DiscreteLogHardcore`). -/
 def DLHard : Prop := ∀ A : NUPPT, Negligible fun n => G.dlProb A n
+
+/-- Unfolding `DLHard`: `G.DLHard` iff `n ↦ G.dlProb A n` is negligible for every non-uniform
+PPT `A`. -/
+theorem dlHard_iff : G.DLHard ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n := Iff.rfl
 
 /-- The discrete-log probability is nonnegative. -/
 theorem dlProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ G.dlProb A n := by
@@ -588,6 +646,32 @@ noncomputable def expCollection {V : List Bool → Prop} (H : ArithmeticFP) (G :
   eval_spec := expEval_spec
   sample_spec := expSampler_spec H G hV
 
+/-- The function of the exponentiation collection is `expF`:
+`(expCollection H G hV).f i x = expF i x`. -/
+theorem expCollection_f {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
+    (expCollection H G hV).f i x = expF i x := rfl
+
+/-- The encoder of the exponentiation collection is `expEnc`:
+`(expCollection H G hV).encD i x = expEnc i x`. -/
+theorem expCollection_encD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i : List Bool) (x : (expCollection H G hV).D i) :
+    (expCollection H G hV).encD i x = expEnc i x := rfl
+
+/-- The decoder of the exponentiation collection is `expDec`:
+`(expCollection H G hV).decD i w = expDec i w`. -/
+theorem expCollection_decD {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) (i w : List Bool) :
+    (expCollection H G hV).decD i w = expDec i w := rfl
+
+/-- The index generator of the exponentiation collection is `expGen G`. -/
+theorem expCollection_gen {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).gen = expGen G := rfl
+
+/-- The domain sampler of the exponentiation collection is `expSampler H`. -/
+theorem expCollection_sample {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
+    (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).sample = expSampler H := rfl
+
 /-- The index generated by the exponentiation collection from `n₀` on is the instance
 generator's output. -/
 theorem expCollection_index {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
@@ -664,6 +748,11 @@ theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : Ex
 [PS10, Assumption 52.2 and p. 52, "the subgroup of squares … has order `q` which is prime"]. -/
 def SafePrimeValid (i : List Bool) : Prop :=
   ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1
+
+/-- Unfolding `SafePrimeValid`: `i` is a safe-prime instance iff it is valid, `m` is prime and
+`p = 2m + 1`. -/
+theorem safePrimeValid_iff (i : List Bool) :
+    SafePrimeValid i ↔ ExpValid i ∧ (dlM i).Prime ∧ dlP i = 2 * dlM i + 1 := Iff.rfl
 
 /-- A safe-prime instance is a valid instance. -/
 theorem SafePrimeValid.expValid {i : List Bool} (h : SafePrimeValid i) : ExpValid i := h.1

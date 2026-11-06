@@ -682,6 +682,16 @@ def chunk (T n : ℕ) (r : Fin (T * n) → Bool) : Fin T → Fin n → Bool := f
       _ = ((t : ℕ) + 1) * n := by ring
       _ ≤ T * n := Nat.mul_le_mul_right n ht⟩
 
+/-- The defining equation of `chunk`: bit `i` of block `t` is the coin at position `t·n + i`,
+i.e. `chunk T n r t i = r (finProdFinEquiv (t, i))` (`chunk` is `r` read through the
+row-major bijection `Fin T × Fin n ≃ Fin (T · n)`). -/
+theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) :
+    chunk T n r t i = r (finProdFinEquiv (t, i)) := by
+  unfold chunk
+  congr 1
+  ext
+  simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
+
 /-! #### The `SamplePrime` state loop -/
 
 /-- The step of the `SamplePrime` loop on the state word `⟨1^n, s⟩`: discard the first `n`

@@ -335,13 +335,23 @@ theorem rsaEnc_of_rsaDec {i w : List Bool} {x : (ZMod (rsaMod i))ˣ} (h : rsaDec
 length of any modulus `N < 2^{2 max(n,2)}`). -/
 def rsaBlock : PolyExpr := .mul (.const 2) (.add .var (.const 2))
 
+/-- `rsaBlock` evaluates to `B(n) = 2(n + 2)`. -/
+theorem eval_rsaBlock (n : ℕ) : rsaBlock.eval n = 2 * (n + 2) := rfl
+
 /-- The number of trials `T(n) = (4n + 8) n` of the rejection samplers: with acceptance rate
 at least `1/(2 ⌈log₂ N⌉) ≥ 1/(4n + 8)` per trial (`NumberTheory.le_totient_mul_log_succ`,
 C9), the failure probability is at most `e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). -/
 def rsaTrials : PolyExpr := .mul (.add (.mul (.const 4) .var) (.const 8)) .var
 
+/-- `rsaTrials` evaluates to `T(n) = (4n + 8) n`. -/
+theorem eval_rsaTrials (n : ℕ) : rsaTrials.eval n = (4 * n + 8) * n := rfl
+
 /-- The coins of the domain sampler: `T(n)` blocks of `B(n)` bits. -/
 def rsaSampleCoins : PolyExpr := .mul rsaTrials rsaBlock
+
+/-- `rsaSampleCoins` evaluates to `T(n) · B(n)`. -/
+theorem eval_rsaSampleCoins (n : ℕ) : rsaSampleCoins.eval n = rsaTrials.eval n * rsaBlock.eval n :=
+  rfl
 
 /-- The coins of the generator: two `SamplePrime` runs and one unit sampler. -/
 def rsaGenCoins : PolyExpr := .add (.mul (.const 2) samplePrimeCoins) rsaSampleCoins
@@ -356,10 +366,47 @@ Repair (run-3 audit P7-6): an instance of the shared sampler (closeness:
 def sampleUnitL (N k B T : ℕ) (r : List Bool) : Option ℕ :=
   rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r
 
+/-- The defining equation of `sampleUnitL`: block rejection sampling with the test
+`v < N ∧ gcd(v, N) = 1`, i.e.
+`sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r`. -/
+theorem sampleUnitL_eq (N k B T : ℕ) (r : List Bool) :
+    sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ Nat.Coprime v N) k B T r := rfl
+
 /-- A sampled value is below `N` and coprime to `N`. -/
 theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUnitL N k B T r = some v) :
     v < N ∧ Nat.Coprime v N :=
   (rejectBlocksL_spec h).1
+
+/-- **The unit sampler is close to uniform** [PS10, Theorem 53.2, "sample a random element from
+`Z*_{Φ(N)}`" and "the set `D_i` is also easy to sample"]: for a modulus `N ≥ 1` of bit length
+`k = Nat.size N ≤ B(n)`, the sampler `sampleUnitL N k B(n) T(n)` on `T(n) · B(n)` uniform coins,
+with the fallback `1 mod N`, outputs a number within statistical distance `e^{-n}` of the
+residue of a uniform unit of `Z_N`. Shared statement S3 of the factoring fill (decision D1 (A)):
+used by `rsaCollection_sampleClose`, `rsaCollection_invProbAt_le` (step (i), at the modulus
+`Φ(N)`) and the Rabin samplers and reductions (`Rabin.lean`).
+
+**Proof sketch.** (1) `sampleUnitL N k B T` is `rejectBlocksL` with the test
+`v < N ∧ Nat.Coprime v N` (`sampleUnitL_eq`); apply `statClose_rejectBlocksL` with `k ≤ B(n)`
+(`hk`), `T = T(n)` and the default `d = 1 % N`, which passes the test (`Nat.mod_lt`; `1` is
+coprime to `N`, and for `N = 1` the default `0` is coprime to `1`) and is below `2^k`
+(`d < N < 2^k`, `Nat.lt_size_self`). It gives closeness `(1 − Pr_{v < 2^k}[v < N ∧ gcd(v, N) = 1])^{T(n)}` to the uniform element of
+`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1}` read as a number. (2) Transport that target to
+`x ↦ (x : ZMod N).val` on `(ZMod N)ˣ` along the value-preserving bijection
+`{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1} ≃ (ZMod N)ˣ` (`ZMod.unitOfCoprime`; inverse by
+`ZMod.val_lt`, `ZMod.val_coe_unit_coprime`, and `N < 2^k`; `StatClose.comp_equiv_right`).
+(3) The acceptance probability is `Φ(N)/2^k` (`uprob_eq_card_filter` and the same bijection).
+`2^k ≤ 2N` by the minimality of `Nat.size` (`Nat.size_le`: `N < 2^{k−1}` would give
+`Nat.size N ≤ k − 1`), and `N ≤ Φ(N) · (log₂ N + 1) ≤ Φ(N) · k`
+(`NumberTheory.le_totient_mul_log_succ`; `2^{log₂ N} ≤ N < 2^k`, `Nat.pow_log_le_self`), so
+`Φ(N)/2^k ≥ 1/(2k) ≥ 1/(4n + 8)` by `hk` and `B(n) = 2(n + 2)` (`eval_rsaBlock`). (4) Hence the
+distance is at most `(1 − 1/(4n + 8))^{(4n + 8) n} ≤ e^{-n}` (`eval_rsaTrials`,
+`one_sub_one_div_pow_le_exp_neg`); conclude by `StatClose.mono`. -/
+theorem statClose_sampleUnitL (n N : ℕ) [NeZero N] (hk : Nat.size N ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        (sampleUnitL N (Nat.size N) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
+          (1 % N))
+      (fun x : (ZMod N)ˣ => (x : ZMod N).val) (Real.exp (-(n : ℝ))) := by
+  sorry
 
 /-- The string function of the domain sampler on the modulus numeral `w` at parameter `n`
 with coins `r`: a unit modulo `N = listToNat w` by rejection (`sampleUnitL` with the bit
@@ -369,6 +416,14 @@ def unitSampleStr (w : List Bool) (n : ℕ) (r : List Bool) : List Bool :=
   natToList w.length
     ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n) r).getD
       (1 % listToNat w))
+
+/-- The defining equation of `unitSampleStr`: the sampled unit modulo `N = listToNat w`
+(fallback `1 mod N`) as a numeral of the width of `w`,
+`unitSampleStr w n r = ⟦(sampleUnitL N (Nat.size N) B(n) T(n) r).getD (1 % N)⟧_{|w|}`. -/
+theorem unitSampleStr_eq (w : List Bool) (n : ℕ) (r : List Bool) :
+    unitSampleStr w n r = natToList w.length
+      ((sampleUnitL (listToNat w) (Nat.size (listToNat w)) (rsaBlock.eval n) (rsaTrials.eval n)
+        r).getD (1 % listToNat w)) := rfl
 
 /-- The parameters output by the RSA generator at parameter `m`: distinct primes `p, q ∈ Π_m`,
 an exponent `e < Φ(N)` coprime to `Φ(N)` and its inverse `d < Φ(N)`, `ed ≡ 1 (mod Φ(N))`
