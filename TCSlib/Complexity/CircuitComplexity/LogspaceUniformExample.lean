@@ -118,7 +118,7 @@ lemma loop (a b : Bool) (n i : ℕ) : ∀ d c, c + d = n → c ≤ i →
       astep (leA a b) orc y (some l, fun _ => c, none) =
         (some (if c = i then l₁ else l₀), fun _ => c, none) := by
     intro l l₁ l₀ c hl
-    simp [astep, hl, hpw, bits_injective.eq_iff]
+    simp [astep_jeqIn hl, hpw, bits_injective.eq_iff]
   intro d
   induction d with
   | zero =>
@@ -150,7 +150,7 @@ lemma loop (a b : Bool) (n i : ℕ) : ∀ d c, c + d = n → c ≤ i →
       rw [e]; exact AHalt.ret rfl (hG .retA c (by omega))
     · rw [if_neg hi]
       refine AHalt.step (hG .inc c (by omega)) ?_
-      simp only [astep, leA, upd_const]
+      simp only [astep_inc (show leA a b .inc = _ from rfl), upd_const]
       exact ih (c + 1) (by omega) (by omega)
 
 /-- **`leLang a b` is in `L`**, decided by the comparison machine with the `ltLang` decider.
@@ -178,7 +178,7 @@ theorem leLang_mem (a b : Bool) : leLang a b ∈ LOGSPACE := by
     refine AHalt.step ⟨by simp [PreS, leA], fun r => by simp⟩ ?_
     have : astep (leA a b) orc (pairEncode (List.replicate n true) (Nat.bits i))
         (some .start, fun _ => 0, none) = (some .test, fun _ => 0, none) := by
-      simp [astep, leA, hval]
+      simp [astep_valP (show leA a b .start = _ from rfl), hval]
     exact this ▸ loop a b n i n 0 (by omega) (Nat.zero_le _)
   · have hn : MultiTapeTM.indicator (leLang a b : Set (List Bool)) y = false := by
       rw [indicator_eq_decide]
@@ -186,8 +186,8 @@ theorem leLang_mem (a b : Bool) : leLang a b ∈ LOGSPACE := by
       rintro ⟨n, i, rfl, -⟩
       exact hv ⟨n, _, rfl, canon_bits i⟩
     rw [hn]
-    refine ⟨1, by simp [arun, astep, leA, hv], by simp [arun, astep, leA, hv],
-      fun t ht => ?_⟩
+    refine ⟨1, by simp [arun, astep_valP (show leA a b .start = _ from rfl), hv],
+      by simp [arun, astep_valP (show leA a b .start = _ from rfl), hv], fun t ht => ?_⟩
     obtain rfl : t = 0 := by omega
     exact ⟨by simp [arun, PreS, leA], fun r => by simp [arun]⟩
 

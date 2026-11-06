@@ -172,7 +172,9 @@ theorem ps_steps {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ 
       have h := ampOr_step hN hs hC c'
       rw [← hct_def, ← hcf_def] at h
       constructor <;>
-      · simp [astep, NARM.detPart, ampA, vword_whole₃, Function.update_apply, hσ, mk, h]
+      · simp [astep_call (show (ampA cS F os).detPart false .uT = _ from rfl),
+          astep_call (show (ampA cS F os).detPart false .dT = _ from rfl), vword_whole₃, hσ, mk,
+          h]
     have hpre : ∀ (l : Lab cS F), (l = .uT ∨ l = .dT) → ∀ w : Fin 15 → ℕ,
         PreS ((ampA cS F os).detPart false) x (some l, w, none) := by
       rintro l (rfl | rfl) w <;> simp [PreS, NARM.detPart, ampA]
@@ -385,7 +387,8 @@ theorem ps_runs {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ S
       (fun c' => by
         have h := ampOr_init (N := N) (x := x) S c'
         rw [← hc₀_def] at h
-        simp [astep, NARM.detPart, ampA, vword_whole₂, Function.update_apply, mk, h])
+        simp [astep_call (show (ampA cS F os).detPart false .iT = _ from rfl), vword_whole₂,
+          mk, h])
       (fun w => by simp [PreS, NARM.detPart, ampA]) rfl c₀ rfl (by omega) 0 (Nat.zero_le _)
       (fun c' _ h => by omega)
     refine PSem.of_reach (AReach.mono hr fun _ h => h.2) ?_

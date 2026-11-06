@@ -7,6 +7,64 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
+## 0. Current state (2026-11-06, evening; read this first; START-HERE.md is the entry point)
+
+**Merged on 2026-11-06** (the user):
+- #208 (Savitch through deepening), #212 (ZP-1), #213 (CE-1), #216 (RP-1);
+- #217 (NZ-1), #211 (G5: `two_work_tapes_run`, so `universal_TlogT` is admission-free);
+- #218 (H: `space_hierarchy`, `LOGSPACE_ssubset_PSPACE`), #219 (the E-PAD statements,
+  `SpaceComplexity/Padding`);
+- #214 (AS-1), #223 (the book-form Thm 3.1: `time_hierarchy_book`, `_of_pos`, `_log`).
+
+**Open PRs and their next step:**
+
+| PR | What | Gate | Next |
+|---|---|---|---|
+| #220 | CL-1, codec languages (`lean/dedup-cl1`) | 111 **CLOSED** (PASS 0/0/3; minors fixed `86979df1`, CK-1 recorded) | `replay-lcl3` on `oleans-lcamp7`, then **clear to merge** |
+| #221 | U2 harvest API, `Build/UniversalParts` (`lean/u2-harvest-api`) | 112 **dispatched** | findings → dispositions; `replay-lhv3` on `oleans-lcamp7` |
+| #215 | SG-1, `CounterLoop`/`Tautology`/`SingleTape` + `Frag`'s pinned step (`lean/dedup-sg1`) | 106: pack not yet written (reserved number) | `replay-lsg7`, then gate 106 pack and stage |
+| #222 | NatBits (BL-1, NB-1, LS-3), new `TuringMachine/NatBits` (`lean/dedup-natbits`) | 114: not yet written (reserved) | `replay-lnb4` (about 343 modules), then gate 114 pack and stage |
+
+**Snapshots** (`$TCSLIB_SCRATCH`):
+- `oleans-lcamp6`: the campaign after #218 and #219.
+- `oleans-lcamp7`: being built by `replay-lcamp7` (120 modules, the campaign after #214 and #223,
+  Lean `72fcfbef`). It becomes the campaign snapshot when it passes. Then delete `lcamp6`.
+
+**Running at the time of writing:** `fills/replay/queue12.sh`. It runs lcamp7, then prepares and
+runs `lcl3`, `lhv3` and `lsg7` (one chain) and `lnb4` (the other). A watcher then runs the E-PAD
+import probe (`campaign/fills/epad/inputs/EPadImportProbe.lean.txt`) against `oleans-lcamp7`. **After
+a container restart all of these die:** re-run the queue (`scratch-api/replay-queue.example.sh` is
+a copy).
+
+**Next, in order:**
+1. **E-PAD fill:** brief `campaign/fills/epad/briefs/epad-fill.md`, base `72fcfbef`.
+   - When the import probe passes, record it in `campaign/fills/epad/logs/`.
+   - Stage the brief in `exchange/…/arora-barak-ch3-4/outbox/fills/` and give the user a
+     pasteable fill prompt (the user picks the agent).
+   - After delivery: review, sweep, landing PR, fill gate. Then the maintainer closes
+     `SPACE_linear_ne_NP` in `Hierarchy` (import `Padding`; body
+     `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`
+     through `mem_padLang_iff`), in a small PR with its own gate.
+2. **Gates 106 (#215) and 114 (#222):** packs after their replays, modelled on 107/108.
+3. **F6 (`space_universal`):** after #221 merges, and after E-PAD lands in `Hierarchy` (the user
+   ruled E-PAD first). Write F6's fill brief on the harvest's rows; the startup route D-F6-3 is
+   still to decide after the consumer probe (`campaign/items/u2harvest/Probe.lean.txt`).
+4. **Ladner's statement phase:** LD-1 to LD-7 accepted as recommended, and LD-8 partly pinned
+   (`campaign/items/roadmap3/PLAN.md` §Ladner, §(f)). Write the statement file and its gate.
+5. **The dedup window** (`campaign/duplication-ledger.md`):
+   - **unblocked now:** WL-1 (move `walkLe_succ_iff` to `PathWalk`) and CQ-1 (query `def` +
+     `_iff` in `Codec/Langs`);
+   - **acknowledged and scheduled:** AS-2 (an `astep` irreducibility census, then re-points),
+     MT-1 (per-label instruction equations in each machine file), CK-1 (`acceptChk_iff` /
+     `initChk_iff` re-points), and DT-1 (`mem_DTIME_iff`, `FinTM.decidesInTime_iff`; large
+     replay);
+   - RS-1's remaining sites now cite `Turing.MultiTapeTM.initCfg_eq_mapState` (from #221);
+   - **parked:** RO-1 (`lean/dedup-ro1`; after the harvest);
+   - also WS-1, RC-1–4, QF-1, WC-1.
+
+**Rulings in force from 2026-11-06** are in §3's notes, the ledger entries and WORKFLOW §5. Fills
+go by pasted prompt while the user is awake; never by sub-agent unless the user says so.
+
 ## 1. Starting a session on a new machine
 
 1. **Environment.**
@@ -122,17 +180,17 @@ replay below chained from it with only its own PR.
 | #211 | `f239dafd` (G5's delivery `71046be0` + the landing edits `c00340d4`, `794ffb48`, `f239dafd`: the sweep's 15 hits, the review's N2/N4/F9, F6 through `SymbolLift` and F5 through `Contract.inPhase`; both imports ruled by the user) | `replay-lg8` **passed** (3 modules on the campaign after #217, 0 `sorry`) | 102 round 3 **dispatched** 2026-11-06 (cites #217/gate 108) | **merged** 2026-11-06 (`f743ee97`, the user); `two_work_tapes_run` proved, `universal_TlogT` admission-free; **`oleans-lcamp5`** (= `oleans-lg8`) is the campaign's snapshot |
 | #212 | `034e72e3` (ZP-1: `ZoneRebalance`'s twelve inline steps cite `zoneRowPre_mapState_iff`) | `replay-lzp1` **passed** (5 modules from `oleans-lnth`) | 103 **dispatched** 2026-11-06 | **merged** 2026-11-06 (`4eb0f801`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) **passed** (0 failed; `campaign/status/2026-11-06-campaign-replay-2/`) |
 | #213 | `fdc0e425` (CE-1: BPLInP's public copy deleted, five uses cite `ExpBFS.coreSum_eq_of_code_eq`) | `replay-lce1` **passed** (7 modules) | 104 **dispatched** 2026-11-06 | **merged** 2026-11-06 (`a28b8c42`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) **passed** (0 failed; `campaign/status/2026-11-06-campaign-replay-2/`) |
-| #214 | `fa1673aa` (AS-1, all of it: 173 in-scope declarations over 40 files; the 48 of round 1 plus `acde1f4e`…`fa1673aa`, 130 more and 3 caveat branches, 501 sites; PathHard's `stp` macro no longer unfolds `astep`) | replay after `replay-lcamp3` (the closure of 38 files) | 105 round 1 HOLD (0/1/0; dispositions written); **round 2** after the replay | **Ruled (the user, 2026-11-06): all of AS-1 in #214.** The widening (`campaign/items/dedup/as1-SCOPE.md`): 181 declarations / 40 files, 8 excluded; 48 re-pointed (`1fd7d4ce`, `1856e771`…`29c41e09`), the other 130 in progress; gate 105 round 2 after |
+| #214 | `fa1673aa` (AS-1, all of it: 173 in-scope declarations over 40 files; the 48 of round 1 plus `acde1f4e`…`fa1673aa`, 130 more and 3 caveat branches, 501 sites; PathHard's `stp` macro no longer unfolds `astep`) | `replay-las2` **passed** (109/0, after #216) | 105 **CLOSED** (round 3 PASS 0/0/1; AS-2 and MT-1 acknowledged by the user) | **merged** 2026-11-06 (`9df4a7bd`, the user) |
 | #215 | `57939a97`+ (SG-1: `CounterLoop`'s `counterSpan` through `Segment`) | `replay-lsg1` running | gate 106 after the replay | — |
 | #216 | `485cfbab` (RP-1, widened: 23 public bodies in 14 files read #196's seven definitions through their equations; `cl_iff`'s sketch `3d0f6ceb`) | `replay-lrp3` **passed** (53 modules from `oleans-lcamp2`) | 107 **CLOSED** 2026-11-06 (PASS 0/0/2, evidence corrections) | **merged** 2026-11-06 (`e4e7a419`, the user); its Lean equals `485cfbab`; `replay-lcamp3` (its 53-module closure from `oleans-lcamp2`) builds the new campaign snapshot `oleans-lcamp3`; then WL-1 and CQ-1 |
 | #217 | `fc8d9093` (NZ-1: `NDTM.not_haltsWithin_zero`; 8 sites, both readings, incl. `ExpectedTime`'s probability form `51006620`) | `replay-lnz2` **passed** (261 modules from `oleans-lcamp3`, after #216) | 108 **CLOSED** (PASS 0/0/2); gate 102 r3 **CLOSED** (PASS 0/0/1) | **merged** 2026-11-06 (`eb8cbf60`, the user); its Lean equals `fc8d9093`, so `oleans-lnz2` is renamed **`oleans-lcamp4`, the campaign's snapshot**; NZ-1 retired |
 | #218 | `2d65a899` (B6's H landing: `space_hierarchy`, `LOGSPACE_ssubset_PSPACE` proved; `SPACE_linear_ne_NP` escalated as E-PAD; the sweep's 35 sites and the review's text fixes) | `replay-lh3` **passed** (2/0 on the campaign after #211; head `118e3d50`) | 109 **CLOSED** (PASS 0/0/4; minor 1 fixed `1a782c36`) | **merged** 2026-11-06 (`d70949ff`, the user) |
 | #219 | `cf4dd831` (E-PAD statements: new `SpaceComplexity/Padding`, `padLang`, `mem_padLang_iff`, `mem_SPACE_padLang` sorried; facade Contents `130b91c3`) | `replay-lep3` **passed** (2/0 on the campaign after #211) | 110 **CLOSED** (PASS 0/0/1) | **merged** 2026-11-06 (`7027dead`, the user) |
-| #223 | `lean/thm31-book` at `a08d70d9`, on #211's branch (`time_hierarchy_log`, `time_hierarchy_book`, `time_hierarchy_book_of_pos` proved on the standard axioms; `twoTapeSelfSimulator` from `exists_selfUniversalK 2`; evidence `campaign/items/t31/`; rule 10: `DTIME`/`DecidesInTime` read directly in `normalForm`, as `oneTapeSelfSimulator` does, no published equations) | replay after #211 merges | statement-and-proof gate after the replay | opened 2026-11-06; `replay-lt31` running |
-| (U2H) | `lean/u2-harvest-api` at `db12c154`: the U2 harvest API (F6's prerequisite). New `Build/UniversalParts` (976 lines, 22 public rows, both generalizations proved); `UniversalK` 2,873 → 2,127 lines, statements byte-identical; evidence `campaign/items/u2harvest/`. **RS-1 ruled (the user, 2026-11-06): publish the restart identity in UniversalParts** (`Turing.MultiTapeTM.initCfg_eq_mapState`) | replay after `replay-lcamp3` | API gate (gates 20/73 precedent) | **#221** opened; `replay-lhv1` **passed** (5 modules, after #216) |
+| #223 | `lean/thm31-book` at `a08d70d9`, on #211's branch (`time_hierarchy_log`, `time_hierarchy_book`, `time_hierarchy_book_of_pos` proved on the standard axioms; `twoTapeSelfSimulator` from `exists_selfUniversalK 2`; evidence `campaign/items/t31/`; rule 10: `DTIME`/`DecidesInTime` read directly in `normalForm`, as `oneTapeSelfSimulator` does, no published equations) | `replay-lt32` **passed** (14/0 on the campaign after #218/#219) | 113 **CLOSED** (PASS 0/0/4; fixes `09a10335`, regenerated seal) | **merged** 2026-11-06 (`72fcfbef`, the user) |
+| (U2H) | `lean/u2-harvest-api` at `db12c154`: the U2 harvest API (F6's prerequisite). New `Build/UniversalParts` (976 lines, 22 public rows, both generalizations proved); `UniversalK` 2,873 → 2,127 lines, statements byte-identical; evidence `campaign/items/u2harvest/`. **RS-1 ruled (the user, 2026-11-06): publish the restart identity in UniversalParts** (`Turing.MultiTapeTM.initCfg_eq_mapState`) | replay after `replay-lcamp3` | 112 **dispatched** 2026-11-06 (37 sections) | **#221** opened; `replay-lhv1` **passed** (5 modules, after #216) |
 | #222 | `345c6371` (NatBits: BL-1, NB-1, LS-3; new `TuringMachine/NatBits`; 21 sites + Meyer×2; `Frag` cherry-pick of #215's) | replay after #217 merges (about 340 modules) | dedup gate after the replay | — |
 | #209 | `0b05cc3a` | `replay-lnth` **passed** | 100 **CLOSED** | **merged** 2026-11-06 (`5761d6e0`); `oleans-lnth` is the campaign's snapshot |
-**Snapshot (2026-11-06, after #218, #219):** `replay-lcamp6` (3 modules from `oleans-lcamp5`) running → `oleans-lcamp6`. **After #211:** **`oleans-lcamp5`** (= `oleans-lg8`, Lean `f743ee97`). **After #217:** `oleans-lcamp4` (= `oleans-lnz2`, Lean `eb8cbf60`). **Before, after #216:** `oleans-lcamp3` (Lean `e4e7a419`; `replay-lcamp3`, #216's 53-module closure from `oleans-lcamp2`, **passed**, `campaign/status/2026-11-06-campaign-replay-3/`; `oleans-lcamp2` deleted). Merged-tree replays on it are queued for #214, #215, #217, #218, #219, #220 and #221. **Earlier:** **`oleans-lcamp2` was the campaign's snapshot** (Lean `a28b8c42`, after #208, #212, #213). `oleans-lnth`, `oleans-cloud0`, `oleans-lg7` and `oleans-lrp2` are deleted (disk). Chained from it: `oleans-lrp3` (#216, 53 modules, **passed**), `oleans-lsg2` (#215), `oleans-lnz1` (#217), `oleans-lh1` (#218).
+**Snapshot (2026-11-06, after #214, #223):** `replay-lcamp7` (120 modules from `oleans-lcamp6`) running → `oleans-lcamp7`; then #220, #221, #215, #222 re-replay on it. **After #218, #219:** `replay-lcamp6` (3 modules from `oleans-lcamp5`) running → `oleans-lcamp6`. **After #211:** **`oleans-lcamp5`** (= `oleans-lg8`, Lean `f743ee97`). **After #217:** `oleans-lcamp4` (= `oleans-lnz2`, Lean `eb8cbf60`). **Before, after #216:** `oleans-lcamp3` (Lean `e4e7a419`; `replay-lcamp3`, #216's 53-module closure from `oleans-lcamp2`, **passed**, `campaign/status/2026-11-06-campaign-replay-3/`; `oleans-lcamp2` deleted). Merged-tree replays on it are queued for #214, #215, #217, #218, #219, #220 and #221. **Earlier:** **`oleans-lcamp2` was the campaign's snapshot** (Lean `a28b8c42`, after #208, #212, #213). `oleans-lnth`, `oleans-cloud0`, `oleans-lg7` and `oleans-lrp2` are deleted (disk). Chained from it: `oleans-lrp3` (#216, 53 modules, **passed**), `oleans-lsg2` (#215), `oleans-lnz1` (#217), `oleans-lh1` (#218).
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 

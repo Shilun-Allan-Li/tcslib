@@ -151,9 +151,9 @@ theorem base_spec (hsw : s ≤ w) (st : St) (h : Inv s w 0 st) :
       (some (.rt (decide (Reach (2 ^ w) (Rel orc x s) 0 st.U st.V))), st.toV, none) := by
   have hbd := h.bd hsw (Nat.zero_le _)
   refine step_of hbd ?_
-  regs [astep, A, h.hI, ↓reduceIte]
+  regs [astep_jz (show A E .cl = _ from rfl), h.hI, ↓reduceIte]
   refine step_of hbd ?_
-  simp only [astep, A, vword_whole₃]
+  simp only [astep_call (show A E .base = _ from rfl), vword_whole₃]
   regs [h.hs]
   by_cases hr : Rel orc x s st.U st.V
   · have hr' : orc 3 (pairEncode x (pairEncode (Nat.bits st.U)
@@ -164,7 +164,7 @@ theorem base_spec (hsw : s ≤ w) (st : St) (h : Inv s w 0 st) :
         (pairEncode (Nat.bits st.V) (Nat.bits s)))) = true := hr
     rw [if_neg hr']
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_jeq (show A E .baseEq = _ from rfl)]
     by_cases he : st.U = st.V
     · rw [if_pos he, decide_eq_true (show Reach (2 ^ w) (Rel orc x s) 0 st.U st.V from Or.inl he)]
       exact AReach.refl _
@@ -218,7 +218,8 @@ theorem desc1 (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E orc x 
   have hw := h.hw
   -- `loop`: the midpoint is below `K`
   refine step_of hbd ?_
-  regs [astep, A, if_neg (show st.M ≠ st.K by rw [h.hK]; exact hm.ne)]
+  regs [astep_jeq (show A E .loop = _ from rfl),
+    if_neg (show st.M ≠ st.K by rw [h.hK]; exact hm.ne)]
   -- push `(V, 0)`
   refine (pushV_run st h.hC h.hT h.hZ hbd (by rw [hw]; omega) (by omega)).trans ?_
   have hbd1 : St.Bd (2 ^ (w * w))
@@ -231,7 +232,7 @@ theorem desc1 (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E orc x 
       { st with SE := st.SE * 2 ^ st.w + st.V, V := st.M, SP := 2 * st.SP, M := 0 } := by
     have := hbd; simp only [St.Bd] at this ⊢; rw [hw]; omega
   refine step_of hbd2 ?_
-  regs [astep, A]
+  regs [astep_dec (show A E .descDec = _ from rfl)]
   refine cont (by ext <;> simp [hw, h.hI]) (hc.trans ?_)
   -- `rt b`: not the root, pop the frame
   have hbd4 := (h3.bd hsw (by omega))
@@ -239,7 +240,7 @@ theorem desc1 (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E orc x 
       { st with SE := st.SE * 2 ^ w + st.V, V := st.M, SP := 2 * st.SP, M := M1, I := i } := by
     simp only [St.Bd] at hbd4 ⊢; omega
   refine step_of hbd4' ?_
-  regs [astep, A, if_neg (show i ≠ st.w by omega)]
+  regs [astep_jeq (show A E (.rt _) = _ from rfl), if_neg (show i ≠ st.w by omega)]
   refine (pop_run _
     { st with SE := st.SE * 2 ^ w + st.V, V := st.M, SP := 2 * st.SP, M := M1, I := i }
     st.SE st.V h.hC h.hT h.hZ h.hQ h.hE hbd4' (by simp [hw]) (by simp [hw]; exact h.hV)).trans ?_
@@ -248,14 +249,14 @@ theorem desc1 (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E orc x 
     have := Nat.le_mul_of_pos_right st.SE (Nat.two_pow_pos w)
     simp only [St.Bd] at hbd4 ⊢; have := h.hV; omega
   refine step_of hbd5 ?_
-  regs [astep, A]
+  regs [astep_inc (show A E (.incI _) = _ from rfl)]
   have hbd6 : St.Bd (2 ^ (w * w))
       { st with SE := st.SE, V := st.M, SP := 2 * st.SP, M := M1, I := i + 1, E := st.V } := by
     simp only [St.Bd] at hbd5 ⊢; omega
   refine step_of hbd6 ?_
-  regs [astep, A, Nat.mul_mod_right, zero_ne_one, if_false]
+  regs [astep_jodd (show A E (.par _) = _ from rfl), Nat.mul_mod_right, zero_ne_one, if_false]
   refine step_of hbd6 ?_
-  regs [astep, A]
+  regs [astep_half (show A E (.h0 _) = _ from rfl)]
   refine reach_of_eq (AReach.refl _) ?_
   congr 3
   ext <;> simp [h.hI]
@@ -301,28 +302,28 @@ theorem desc2 (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E orc x 
     (by show st.SE * 2 ^ st.w + st.U ≤ _; rw [hw]; omega)
     (by show 2 * st.SP ≤ _; omega)).trans ?_
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E .pushInc = _ from rfl)]
   refine (mv_run .a0T1 _ (by bdt) (by regs [mvDst, mvSrc]; omega)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine (mv_run .a0T2 _ (by bdt) (by regs [mvDst, mvSrc]; omega)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_dec (show A E .a0Dec = _ from rfl)]
   refine cont (by ext <;> simp [hw, h.hI, h.hE]) (hc.trans ?_)
   -- `rt b`: not the root, pop the frame
   have hB3 := h3.bd hsw (by omega)
   simp only [St.Bd] at hB3
   refine step_of (by bdt) ?_
-  regs [astep, A, if_neg (show i ≠ st.w by omega)]
+  regs [astep_jeq (show A E (.rt _) = _ from rfl), if_neg (show i ≠ st.w by omega)]
   refine (pop_run _
     { st with SE := st.SE * 2 ^ w + st.U, U := st.M, SP := 2 * st.SP + 1, M := M2, I := i }
     st.SE st.U h.hC h.hT h.hZ h.hQ h.hE (by bdt) (by simp [hw]) (by simp [hw]; exact hU)).trans ?_
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E (.incI _) = _ from rfl)]
   refine step_of (by bdt) ?_
-  regs [astep, A, Nat.mul_add_mod, if_true]
+  regs [astep_jodd (show A E (.par _) = _ from rfl), Nat.mul_add_mod, if_true]
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_half (show A E (.h1 _) = _ from rfl)]
   refine reach_of_eq (AReach.refl _) ?_
   congr 3
   ext <;> simp [h.hI]
@@ -342,11 +343,11 @@ theorem tail0F (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (st : St) (h : Inv s
   simp only [St.Bd] at hB
   have hV := h.hV
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_clr (show A E .a0F = _ from rfl)]
   refine (mv_run .a0FM _ (by bdt) (by regs [mvDst, mvSrc]; omega)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E .a0Finc = _ from rfl)]
   refine reach_of_eq (mv_run .a0FV _ (by bdt) (by regs [mvDst, mvSrc]; omega)) ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   congr 3
@@ -366,7 +367,7 @@ theorem tail1T (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (st : St) (h : Inv s
   simp only [St.Bd] at hB
   have hU := h.hU
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_clr (show A E .a1T = _ from rfl)]
   refine reach_of_eq (mv_run .a1TU _ (by bdt) (by regs [mvDst, mvSrc]; omega)) ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   congr 3
@@ -386,11 +387,11 @@ theorem tail1F (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (st : St) (h : Inv s
   simp only [St.Bd] at hB
   have hU := h.hU
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_clr (show A E .a1F = _ from rfl)]
   refine (mv_run .a1FM _ (by bdt) (by regs [mvDst, mvSrc]; omega)).trans ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   refine step_of (by bdt) ?_
-  regs [astep, A]
+  regs [astep_inc (show A E .a1Finc = _ from rfl)]
   refine reach_of_eq (mv_run .a1FU _ (by bdt) (by regs [mvDst, mvSrc]; omega)) ?_
   regs [mvDst, mvSrc, mvExit, zero_add]
   congr 3
@@ -434,7 +435,7 @@ theorem loop_spec (hsw : s ≤ w) (i : ℕ) (hi : i + 1 ≤ w) (IH : CallOK E or
     intro st h hk
     refine ⟨st.M, h.hM, ?_⟩
     refine step_of (h.bd hsw hi) ?_
-    regs [astep, A, if_pos (show st.M = st.K by rw [h.hK]; omega)]
+    regs [astep_jeq (show A E .loop = _ from rfl), if_pos (show st.M = st.K by rw [h.hK]; omega)]
     rw [decide_eq_false (by rintro ⟨m, h1, h2, -⟩; omega)]
     exact AReach.refl _
   | succ k ih =>
@@ -491,9 +492,9 @@ theorem call_spec (hsw : s ≤ w) : ∀ i, i ≤ w → CallOK E orc x s w i := b
       (by show 0 + 2 ^ w = 2 ^ w; omega)
     refine ⟨M', hM', ?_⟩
     refine step_of hbd ?_
-    regs [astep, A, if_neg (show st.I ≠ 0 by rw [h.hI]; omega)]
+    regs [astep_jz (show A E .cl = _ from rfl), if_neg (show st.I ≠ 0 by rw [h.hI]; omega)]
     refine step_of hbd ?_
-    regs [astep, A]
+    regs [astep_clr (show A E .lInit = _ from rfl)]
     dsimp only at hl
     have e : (∃ m, 0 ≤ m ∧ m < 2 ^ w ∧ Reach (2 ^ w) (Rel orc x s) i st.U m ∧
         Reach (2 ^ w) (Rel orc x s) i m st.V) ↔ Reach (2 ^ w) (Rel orc x s) (i + 1) st.U st.V :=

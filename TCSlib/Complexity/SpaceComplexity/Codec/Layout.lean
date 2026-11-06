@@ -121,7 +121,7 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
   have r2 : Reach N mode y B .halveN ({R with N1 := a} : Regs).val (.cp .Tn)
       ({R with N1 := n + 1} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega) (by simp [PreS, CA]))
-      (by simp [astep, CA, a])
+      (by simp [astep_half (show CA N mode .halveN = _ from rfl), a])
   have r3 : Reach N mode y B (.cp .Tn) ({R with N1 := n + 1} : Regs).val .hcTest
       ({R with N1 := n + 1, T := n + 1} : Regs).val :=
     Reach.cast (cp_run y B .Tn _ (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
@@ -166,7 +166,7 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
       ({R with N1 := n + 1, Wp := wP n, E := e, T := 0, F := f} : Regs).val (.cp .U)
       ({R with N1 := n + 1, Wp := wP n, E := e, T := 0, F := f, U := 0} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
-      (by simp [PreS, CA])) (by simp [astep, CA])
+      (by simp [PreS, CA])) (by simp [astep_clr (show CA N mode .clrU = _ from rfl)])
   have r13 : Reach N mode y B (.cp .U)
       ({R with N1 := n + 1, Wp := wP n, E := e, T := 0, F := f, U := 0} : Regs).val (icL N .U 0)
       ({R with N1 := n + 1, Wp := wP n, E := e, T := 0, F := f, U := f} : Regs).val :=
@@ -189,7 +189,8 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
       rw [hlen]; simp only [f, e, a]; ring
     have r15 : Reach N mode y B .lenChk R14.val .term R14.val :=
       Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; exact fun h => hneq h.symm))
-        (by simp only [astep, CA]; rw [hcmp']; simp [R14, heq])
+        (by simp only [astep_jeq (show CA N mode .lenChk = _ from rfl)]; rw [hcmp']
+            simp [R14, heq])
     have hterm : y.getD f false = w.getD (W N * (2 * s + 1) + wP n) false := by
       rw [show f = 2 * x.length + 2 + 2 * (W N * (2 * s + 1) + wP n) by
           simp only [f, e, a, n]; ring, hy, getD_w _ _ _ _ (by omega)]
@@ -201,9 +202,11 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
       refine ⟨hlen, htm, ?_⟩
       have r16 : Reach N mode y B .term R14.val .clrQ1 R14.val :=
         Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
-          (by simp [astep, CA, vword_whole₁, orc_bit, R14, hterm, htm'])
+          (by simp [astep_call (show CA N mode .term = _ from rfl), vword_whole₁, orc_bit, R14,
+            hterm, htm'])
       have r17 : Reach N mode y B .clrQ1 R14.val (.cp .Q1f) ({R14 with Q1 := 0} : Regs).val :=
-        Reach.single' (gd_of hR14.val_le (by simp [PreS, CA])) (by simp [astep, CA])
+        Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
+          (by simp [astep_clr (show CA N mode .clrQ1 = _ from rfl)])
       have r18 : Reach N mode y B (.cp .Q1f) ({R14 with Q1 := 0} : Regs).val (.dcTest .Pos)
           ({R14 with Q1 := f} : Regs).val :=
         Reach.cast (cp_run y B .Q1f _ (by apply Regs.Bd.val_le; simp only [R14, Regs.Bd]; omega)
@@ -239,7 +242,8 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
       refine ⟨fun h => htm h.2, ?_⟩
       have r16 : Reach N mode y B .term R14.val .rej R14.val :=
         Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
-          (by simp [astep, CA, vword_whole₁, orc_bit, R14, hterm, htm'])
+          (by simp [astep_call (show CA N mode .term = _ from rfl), vword_whole₁, orc_bit, R14,
+            hterm, htm'])
       exact halt_rej (r1_14.trans (r15.trans r16)) hR14.val_le
   · right
     refine ⟨fun h => hlen h.1, ?_⟩
@@ -251,7 +255,8 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
       Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; exact fun h => hneq h.symm))
         (by
           have hne' : ¬ f = 2 * n + 2 * w.length := by omega
-          simp only [astep, CA]; rw [hcmp']; simp [R14, hne'])
+          simp only [astep_jeq (show CA N mode .lenChk = _ from rfl)]; rw [hcmp']
+          simp [R14, hne'])
     exact halt_rej (r1_14.trans r15) hR14.val_le
 
 /-! ## The position comparison and the validity scan -/
@@ -278,7 +283,7 @@ theorem le_phase (y : List Bool) (R : Regs) (hBd : R.Bd (bnd N y)) (hT : R.T = 0
     refine h.trans ?_
     refine Reach.single' (gd_of ?_ (by simp [PreS, CA])) ?_
     · apply Regs.Bd.val_le; simp only [Regs.Bd]; omega
-    · simp [astep, CA]
+    · simp [astep_clr (show CA N mode .leClr = _ from rfl)]
       have : ({R with T := 0} : Regs) = R := by cases R; simp_all
       rw [this]
   · intro hle
@@ -305,11 +310,12 @@ theorem vscan_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
   simp only [Regs.Bd] at hB0
   have hE' : R.E = R.A + 2 * (W N * (2 * s + 1)) := by rw [hE, hA]; ring
   have r1 : Reach N mode y B .clrQ1v R.val .clrQ2v ({R with Q1 := 0} : Regs).val :=
-    Reach.single' (gd_of hBd.val_le (by simp [PreS, CA])) (by simp [astep, CA])
+    Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]))
+      (by simp [astep_clr (show CA N mode .clrQ1v = _ from rfl)])
   have r2 : Reach N mode y B .clrQ2v ({R with Q1 := 0} : Regs).val (.cp .Q1a)
       ({R with Q1 := 0, Q2 := 0} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
-      (by simp [PreS, CA])) (by simp [astep, CA])
+      (by simp [PreS, CA])) (by simp [astep_clr (show CA N mode .clrQ2v = _ from rfl)])
   have r3 : Reach N mode y B (.cp .Q1a) ({R with Q1 := 0, Q2 := 0} : Regs).val (.cp .Q2a)
       ({R with Q1 := R.A, Q2 := 0} : Regs).val :=
     Reach.cast (cp_run y B .Q1a _ (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)

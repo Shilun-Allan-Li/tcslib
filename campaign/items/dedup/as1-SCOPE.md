@@ -1,3 +1,7 @@
+> **Historical** (gate 105 round 3, minor 1): this table describes the base `1fd7d4ce`, counting one
+> site per unfolding call. The census of record is 583 sites, 47 excluded, 536 in scope. #214 re-points
+> every in-scope declaration; the implementation agent's "501 sites" count is withdrawn.
+
 # AS-1 widened scope: proofs that unfold `astep` to compute one instruction step
 
 Base `1fd7d4ce` (branch `lean/dedup-as1`). Scan of every `.lean` file under `TCSlib/` except

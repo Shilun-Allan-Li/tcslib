@@ -153,8 +153,7 @@ lemma astep_call₁ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (o : Fin d → List
     astep A o (pairEncode (List.replicate n true) w) (some l, v, none) =
       (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
         v, none) := by
-  simp only [astep, hl]
-  rw [vword_unary₁]
+  rw [astep_call hl, vword_unary₁]
 
 end LogProg
 
@@ -250,20 +249,25 @@ lemma loop (n i : ℕ) : ∀ d k, k + d = n → k ≤ i →
     by_cases hki' : k = i
     · subst hki'
       have : astep A orc y (some .cmp, vv k (2 * k), none) = (some .yes, vv k (2 * k), none) := by
-        simp [astep, A, hy, plainWord_pairEncode]
+        rw [astep_jeqIn (show A .cmp = _ from rfl)]
+        simp [hy, plainWord_pairEncode]
       rw [this]
       have hlt : decide (k < n) = true := by simp; omega
       rw [hlt]
       exact AHalt.ret rfl (hG _ _ _ (by omega) (by omega))
     · have : astep A orc y (some .cmp, vv k (2 * k), none) = (some .i1, vv k (2 * k), none) := by
-        simp [astep, A, hy, plainWord_pairEncode, bits_injective.eq_iff, hki']
+        rw [astep_jeqIn (show A .cmp = _ from rfl)]
+        simp [hy, plainWord_pairEncode, bits_injective.eq_iff, hki']
       rw [this]
       refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
-      simp only [astep, A, vv_0, upd_0]
+      rw [astep_inc (show A .i1 = _ from rfl)]
+      simp only [vv_0, upd_0]
       refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
-      simp only [astep, A, vv_1, upd_1]
+      rw [astep_inc (show A .i2 = _ from rfl)]
+      simp only [vv_1, upd_1]
       refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
-      simp only [astep, A, vv_1, upd_1]
+      rw [astep_inc (show A .i3 = _ from rfl)]
+      simp only [vv_1, upd_1]
       have := ih (k + 1) (by omega) (by omega)
       rwa [show 2 * k + 1 + 1 = 2 * (k + 1) by ring]
 
@@ -292,7 +296,8 @@ theorem ltLang_mem : ltLang ∈ LOGSPACE := by
     refine AHalt.step ⟨by simp [PreS, A], fun r => by fin_cases r <;> simp⟩ ?_
     have : astep A orc (pairEncode (List.replicate n true) (Nat.bits i))
         (some .start, vv 0 (2 * 0), none) = (some .test, vv 0 (2 * 0), none) := by
-      simp [astep, A, hval]
+      rw [astep_valP (show A .start = _ from rfl)]
+      simp [hval]
     rw [this]
     exact loop n i n 0 (by omega) (Nat.zero_le _)
   · have hn : MultiTapeTM.indicator (ltLang : Set (List Bool)) y = false := by
@@ -301,8 +306,8 @@ theorem ltLang_mem : ltLang ∈ LOGSPACE := by
       exact fun h => hv (validPlain_of_mem_unaryIdx h)
     rw [hn]
     refine ⟨1, ?_, ?_, fun t ht => ?_⟩
-    · simp [arun, astep, A, hv]
-    · simp [arun, astep, A, hv]
+    · simp [arun, astep_valP (show A .start = _ from rfl), hv]
+    · simp [arun, astep_valP (show A .start = _ from rfl), hv]
     · obtain rfl : t = 0 := by omega
       exact ⟨by simp [arun, PreS, A], fun r => by simp [arun]⟩
 

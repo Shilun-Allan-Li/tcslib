@@ -1088,6 +1088,27 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
+**Retired: #214 merged 2026-11-06 (`9df4a7bd`); its widening continues as AS-2 and MT-1.**
+
+**AS-2, implicit `astep` reductions by unification** (gate 105 round 2, finding 1; **acknowledged,
+the user, 2026-11-06**). `AReach.step`/`AHalt.step` leave a premise that starts at `astep`, and a
+following `change`/`exact` on the concrete continuation reduces it with no `astep` in the text.
+Named members: `Logspace/Mult`'s `mult_row_start`, `mult_contribution`, `mult_inner_loop`,
+`mult_outer_loop`, `mult_next_column`, `mult_columns_run` and `mult_last_bit`;
+`Logspace/QueryReshape`'s `comp_factor_run`, `comp_valid_inner`, `comp_multiply` and
+`comp_separator_run`; and `NARMPSem`'s `PSem.of_areach` (`Function.iterate_fixed rfl` at halted
+configurations, inside an exclusion). `Mult` crosses one fifth (13/62). **Resolution:** a census by
+an `astep` irreducibility seal over every consumer, with controls, then a re-pointing PR after
+#214 merges.
+
+**MT-1, machine instruction tables read across files** (gate 105 round 2, finding 2; **acknowledged,
+the user, 2026-11-06**). Consumers read a machine's instruction table (`A`, `CA`, …) by
+`show A .l = _ from rfl` or `simp [A]` in files other than the table's home: `TQBFARM/Machine`,
+`Logspace/PathHardMachine`, `Codec/Machine`, the SavitchARM, ExpBFS, circuit, `CounterProgSimRun`
+and `SpaceAmplifyPolyRun` machines. This predates AS-1. `NARMExample`'s `guessValidA` reduces
+`NARM.detPart` and should use `NARM.detPart_det`. **Resolution:** per-label instruction equations
+(`A_<label>`) published in each machine's own file and the consumers re-pointed, one PR per machine
+directory in the dedup window; colleague files mechanical, with an FYI.
 
 **Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
@@ -1436,3 +1457,18 @@ RN-1's 21 the file holds 31 of 875 (3.5%). The one-fifth rule is not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
+
+**DT-1, `DTIME` and `FinTM.DecidesInTime` read through their bodies** (gate 113, minor 2; 2026-11-06).
+Neither has a published characterization (`ClassP/DTIME`). Readers include `TimeHierarchy/Diagonal`'s
+`oneTapeSelfSimulator` and `twoTapeSelfSimulator` (`normalForm`: `rintro ⟨c₀, M, hM⟩` on a `DTIME`
+membership; `hM` passed as `computesFunInTime_iff`'s right side). **Resolution:** publish
+`mem_DTIME_iff` and `FinTM.decidesInTime_iff` (`Iff.rfl`) beside the definitions and re-point the
+readers; the replay covers most of the tree, so it waits for a quiet point in the window.
+
+**CK-1, the codec check predicates read through their bodies** (gate 111, minor 1; 2026-11-06).
+`SpaceComplexity/Codec/Deciders`' `acceptLang_mem` and `initLang_mem` read `AcceptChk` and `InitChk`
+(homed in `Codec/Checks`) by `rw [AcceptChk]`/`rw [InitChk]` and `h.1`, as at CL-1's base. Both
+have published characterizations (`acceptChk_iff`, `initChk_iff`). **Resolution:** re-point both
+consumers to them in the dedup window (mechanical, Hydroxyi's files, FYI); the seal then adds the
+two predicates.
+
