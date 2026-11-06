@@ -387,60 +387,57 @@ variable (N) in
 `validLang` is the validity test of `w`. -/
 theorem validLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ validLang N ↔ ValidChk (N := N) x.length s w := by
-  rw [validChk_iff]
+  rw [validChk_iff, mem_codeLang_iff bits_injective (mem_validLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, C, hC, hc⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc⟩
+  · rintro ⟨c, rfl, C, hC, rfl⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm⟩
   · rintro ⟨C, hC, rfl⟩
-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl⟩
 
 variable (N) in
 /-- **Initial codes through the check.** -/
 theorem initLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ initLang N ↔ InitChk N x s w := by
-  rw [initChk_iff]
+  rw [initChk_iff, mem_codeLang_iff bits_injective (mem_initLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, hc⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ((cfgWord_eq_bits_iff _ _ c).mp hc).symm
+  · rintro ⟨c, rfl, rfl⟩
+    exact bits_cfgCode s _
   · rintro rfl
-    exact ⟨x, cfgCode s (N.tm.initCfg x), s, by rw [bits_cfgCode], rfl⟩
+    exact ⟨cfgCode s (N.tm.initCfg x), bits_cfgCode s _, rfl⟩
 
 variable (N) in
 /-- **Accepting codes through the check.** -/
 theorem acceptLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ acceptLang N ↔ AcceptChk N x s w := by
-  rw [acceptChk_iff]
+  rw [acceptChk_iff, mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, C, hC, hc, hst, hout⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, hst, hout⟩
+  · rintro ⟨c, rfl, C, hC, rfl, hst, hout⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, hst, hout⟩
   · rintro ⟨C, hC, rfl, hst, hout⟩
-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl, hst, hout⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hst, hout⟩
 
 variable (N) in
 /-- **Step pairs through the check.** -/
 theorem stepLang_iff (x w w' : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (pairEncode w' (Nat.bits s))) ∈ stepLang N ↔
       StepChk N x s w w' := by
-  rw [stepChk_iff]
+  -- the tail `⟨w', bits s⟩` is the injective image of the pair `(w', s)`
+  have henc : Function.Injective fun t : List Bool × ℕ => pairEncode t.1 (Nat.bits t.2) :=
+    fun _ _ h => Prod.ext (pairEncode_inj h).1 (bits_injective (pairEncode_inj h).2)
+  have hL : ∀ y, y ∈ stepLang N ↔ ∃ (x : List Bool) (c : ℕ) (t : List Bool × ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode t.1 (Nat.bits t.2))) ∧
+      ∃ c', Nat.bits c' = t.1 ∧ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow t.2 C ∧
+        cfgCode t.2 C = c ∧ ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧
+          Cfg.InWindow t.2 C' ∧ cfgCode t.2 C' = c' := fun y => (mem_stepLang_iff N y).trans
+    ⟨fun ⟨x, c, c', s, h, hP⟩ => ⟨x, c, (Nat.bits c', s), h, c', rfl, hP⟩,
+      fun ⟨x, c, t, h, c', hc', hP⟩ => ⟨x, c, c', t.2, by rw [hc']; exact h, hP⟩⟩
+  rw [stepChk_iff, mem_codeLang_iff henc hL x w (w', s)]
+  dsimp only
   constructor
-  · rintro ⟨x', c, c', s', h, C, hC, hc, C', hstep, hC', hc'⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain ⟨rfl, h6⟩ := pairEncode_inj h4
-    obtain rfl := bits_injective h6
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, C', hstep, hC',
-      (cfgWord_eq_bits_iff _ C' c').mp hc'⟩
+  · rintro ⟨c, rfl, c', rfl, C, hC, rfl, C', hstep, hC', rfl⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, C', hstep, hC', (bits_cfgCode s C').symm⟩
   · rintro ⟨C, hC, rfl, C', hstep, hC', rfl⟩
-    exact ⟨x, cfgCode s C, cfgCode s C', s, by rw [bits_cfgCode, bits_cfgCode], C, hC, rfl, C',
+    exact ⟨cfgCode s C, bits_cfgCode s C, cfgCode s C', bits_cfgCode s C', C, hC, rfl, C',
       hstep, hC', rfl⟩
 
 /-! ## Edge codes -/
@@ -511,14 +508,11 @@ variable (N) in
 `x`, `w` and `bits s` is in the edge-code language exactly when `w` passes the edge-code check. -/
 theorem edgeLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ edgeLang N ↔ EdgeChk N x s w := by
-  rw [edgeChk_iff, mem_edgeLang_iff]
+  rw [edgeChk_iff, mem_codeLang_iff bits_injective (mem_edgeLang_iff N)]
   constructor
-  · rintro ⟨x', c, s', h, C, hC, hc, hi⟩
-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
-    obtain rfl := bits_injective h4
-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, hi⟩
+  · rintro ⟨c, rfl, C, hC, rfl, hi⟩
+    exact ⟨C, hC, (bits_cfgCode s C).symm, hi⟩
   · rintro ⟨C, hC, rfl, hi⟩
-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl, hi⟩
+    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hi⟩
 
 end Complexity.Codec
