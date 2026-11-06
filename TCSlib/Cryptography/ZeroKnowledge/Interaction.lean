@@ -374,6 +374,17 @@ def withV (π : Protocol) (V' : Strategy) : Protocol := { π with V := V' }
 /-- The verifier of `π.withV V'` is `V'`. -/
 @[simp] theorem withV_V (π : Protocol) (V' : Strategy) : (π.withV V').V = V' := rfl
 
+/-- **The verifier's tape in `π.withV V'` is a tape of `V'`**: the published equivalence
+`(π.withV V').V.Coins n ≃ V'.Coins n` (the identity on the definition), through which a statement
+reads the verifier coins of an execution of `π.withV V'` as `V'`'s. -/
+def withV_vCoinsEquiv (π : Protocol) (V' : Strategy) (n : ℕ) : (π.withV V').V.Coins n ≃ V'.Coins n :=
+  Equiv.refl _
+
+/-- The verifier-coin equivalence of `π.withV V'` keeps the tape:
+`List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r`. -/
+theorem withV_vCoinsEquiv_ofFn (π : Protocol) (V' : Strategy) (n : ℕ) (r : (π.withV V').V.Coins n) :
+    List.ofFn (π.withV_vCoinsEquiv V' n r) = List.ofFn r := rfl
+
 /-- The prover of `π.withV V'` is the prover of `π`. -/
 @[simp] theorem withV_P (π : Protocol) (V' : Strategy) : (π.withV V').P = π.P := rfl
 

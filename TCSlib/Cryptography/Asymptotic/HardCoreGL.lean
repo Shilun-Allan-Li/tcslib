@@ -510,14 +510,29 @@ noncomputable def precomp (A : NUPPT) {pre : List Bool → List Bool} (hpre : Po
 
 /-- The pre-processed machine has the coins of `A`. -/
 @[simp] theorem coins_precomp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) :
-    (A.precomp hpre).coins = A.coins := rfl
+    (A.precomp hpre).coins = A.coins := by
+  unfold precomp
+  exact coins_ofPolyTime _ _ _ _ _
+
+/-- **The pre-processed machine runs on the coins of `A`**: the published equivalence
+`(A.precomp hpre).Coins n ≃ A.Coins n` (`coinsCongr` along `coins_precomp`). -/
+noncomputable def precomp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (n : ℕ) : (A.precomp hpre).Coins n ≃ A.Coins n :=
+  coinsCongr (A.coins_precomp hpre) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (A.precomp_coinsEquiv hpre n c) = List.ofFn c`. -/
+theorem precomp_coinsEquiv_ofFn (A : NUPPT) {pre : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (n : ℕ) (c : (A.precomp hpre).Coins n) :
+    List.ofFn (A.precomp_coinsEquiv hpre n c) = List.ofFn c :=
+  coinsCongr_ofFn (A.coins_precomp hpre) n c
 
 /-- The activation of the pre-processed machine. -/
 theorem runAtL_precomp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre)
     (n : ℕ) (y r : List Bool) : (A.precomp hpre).runAtL n y r = A.runAtL n (pre y) r := by
   unfold precomp
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
 
 end Complexity.NUPPT
 
@@ -667,7 +682,24 @@ noncomputable def glMachine (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
 
 /-- The coins of the recovery machine. -/
 @[simp] theorem coins_glMachine (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
-    (hk : ∀ n, 2 ^ k n ≤ K.eval n) : (glMachine A mP K k hk).coins = glCoins mP K A := rfl
+    (hk : ∀ n, 2 ^ k n ≤ K.eval n) : (glMachine A mP K k hk).coins = glCoins mP K A := by
+  unfold glMachine
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **The coins of the recovery machine are `glCoins` bits**: the published equivalence
+`(glMachine A mP K k hk).Coins n ≃ {0,1}^{glCoins(n)}` (`NUPPT.coinsEquivPoly` along
+`coins_glMachine`). -/
+noncomputable def glMachine_coinsEquiv (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
+    (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) :
+    (glMachine A mP K k hk).Coins n ≃ (Fin ((glCoins mP K A).eval n) → Bool) :=
+  NUPPT.coinsEquivPoly (coins_glMachine A mP K k hk) n
+
+/-- The inverse coin equivalence keeps the coin string:
+`List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w`. -/
+theorem glMachine_coinsEquiv_symm_ofFn (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
+    (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (w : Fin ((glCoins mP K A).eval n) → Bool) :
+    List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w :=
+  NUPPT.coinsEquivPoly_symm_ofFn (coins_glMachine A mP K k hk) n w
 
 /-- The number of coins actually read by the recovery machine at `n`. -/
 def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
@@ -679,7 +711,7 @@ theorem glNeed_le (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2
   have hK := hk n
   have hkK : k n ≤ K.eval n := (le_two_pow (k n)).trans hK
   have hMK : 2 ^ k n - 1 ≤ K.eval n := (Nat.sub_le _ _).trans hK
-  simp only [glNeed, glCoins, PolyExpr.eval_add, PolyExpr.eval_mul, NUPPT.coinLen]
+  simp only [glNeed, glCoins, PolyExpr.eval_add, PolyExpr.eval_mul, NUPPT.coinLen_eq]
   have h1 : k n * mP.eval n ≤ K.eval n * mP.eval n := Nat.mul_le_mul_right _ hkK
   have h2 : mP.eval n * (2 ^ k n - 1) * A.coins.eval n ≤ mP.eval n * (K.eval n * A.coins.eval n) := by
     rw [← Nat.mul_assoc]
@@ -836,11 +868,13 @@ theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ �
     (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n))
     (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) :
     (glMachine A₁ iP K k hk).runAt n (enc y)
-        (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex)) =
+        ((glMachine_coinsEquiv A₁ iP K k hk n).symm
+          (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex))) =
       List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g) := by
   obtain ⟨s, b, c⟩ := g
   rw [glMachine_runAt A₁ iP K k hk n (enc y) s b (glBlocks A₁ n (iP.eval n) (k n) c) (List.ofFn ex) _
-    (ofFn_glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (s, b, c) ex) hM]
+    ((glMachine_coinsEquiv_symm_ofFn A₁ iP K k hk n _).trans
+      (ofFn_glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (s, b, c) ex)) hM]
   refine congrArg List.ofFn (funext fun i => ?_)
   rw [← majority_comp_equiv (nesubsetEquiv (k n))]
   unfold HardcoreBit.guessRecover

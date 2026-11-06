@@ -169,11 +169,12 @@ theorem collPre_poly : PolyTimeComputable collPre :=
 /-- The predictor queried by the recovery machine on `⟨⟨i, y⟩, q⟩` is the collection
 distinguisher `A(1^n, ⟨i, ⟨y, q⟩⟩)`. -/
 theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q : Fin m → Bool)
-    (c : A.Coins n) :
+    (c : (A.precomp collPre_poly).Coins n) :
     glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c =
-      A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) c := by
+      A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q)))
+        (A.precomp_coinsEquiv collPre_poly n c) := by
   simp only [glPredictorOf, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode, pairSndD_pairEncode,
-    NUPPT.distinguisherL, NUPPT.runAt_eq]
+    NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
 
 /-- The pre-processing of the collection inverter: on the view of `⟨1^n, ⟨i, ⟨y, r⟩⟩⟩`, the
 string `⟨i, y⟩`. -/
@@ -262,8 +263,11 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
   simp only [Equiv.trans_apply, Equiv.prodAssoc_apply, Equiv.prodCongr_apply, Prod.map_apply,
     Equiv.coe_refl, id] at hw ⊢
   rw [glCollMachine_runAt A mP K k hk n i (F.f i x) (List.ofFn (finCastEquiv hL.symm ρ))
-      (glCoinsEquiv (A.precomp collPre_poly) n (mP.eval n) (k n) _ (glNeed_le (A.precomp collPre_poly) mP K k hk n) (g, ex)) _
-      (by simp only [eC, Equiv.trans_apply]; exact ofFn_finCastEquiv _ _),
+        ((glMachine_coinsEquiv (A.precomp collPre_poly) mP K k hk n).symm
+        (glCoinsEquiv (A.precomp collPre_poly) n (mP.eval n) (k n) _
+          (glNeed_le (A.precomp collPre_poly) mP K k hk n) (g, ex))) _
+      (by simp only [eC, Equiv.trans_apply, glMachine_coinsEquiv_symm_ofFn]
+          exact ofFn_finCastEquiv _ _),
     glMachine_runAt_guessRecover (A.precomp collPre_poly) mP K k hk n hM (fun y : List Bool => pairEncode i y) (F.f i x) g ex,
     hw, ofFn_padFin_of_length (henc x), glPadDecode_pairEncode_ofFn, F.decD_encD]
   exact ⟨(x, finCastEquiv hL.symm ρ), rfl, rfl⟩

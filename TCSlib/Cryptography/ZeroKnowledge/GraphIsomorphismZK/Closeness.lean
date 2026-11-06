@@ -366,8 +366,9 @@ theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bo
     sim V' (encInstance G₀ G₁) z (List.ofFn r) =
       (Option.map (encView V' (encInstance G₀ G₁) z)
         (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t =>
-          ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2),
-            (readBlocks _ _ M n hn r t).2))).getD [] := by
+          ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1),
+            (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2),
+            (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD [] := by
   unfold sim
   rw [instanceVertexCount_encInstance, ← List.map_coe_finRange, List.findSome?_map, simTrunc,
     List.map_findSome?]
@@ -412,10 +413,11 @@ theorem exec_three_snd (P V : Strategy) (x y z rP rV : List Bool) :
 the typed real view on the rejection-sampled `π` (`exec_three_snd`, `giProver_next_nil`,
 `giProver_next_cons`). -/
 theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool)
-    (r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁)) :
+    (r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁)) :
     ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode =
       encView V' (encInstance G₀ G₁) z
-        (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2)) := by
+        (realView G₀ σ (vstar V' (encInstance G₀ G₁) z)
+          (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2)) := by
   show View.encode ⟨encInstance G₀ G₁, z, List.ofFn r.2,
     (exec giProver V' false (encInstance G₀ G₁) (encPerm σ) z (List.ofFn r.1) (List.ofFn r.2) 3).2⟩ = _
   rw [exec_three_snd, giProver_next_nil, giProver_next_cons]
@@ -441,7 +443,7 @@ theorem le_length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : n ≤ (encInstan
 theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n))
     (z : List Bool) :
     StatClose
-      (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) =>
+      (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) =>
         ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode)
       (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length =>
         encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w))
@@ -508,7 +510,7 @@ theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ :
       (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n))
     (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) :
     StatClose
-      (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) =>
+      (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) =>
         ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode)
       (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r))
       ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n) := by

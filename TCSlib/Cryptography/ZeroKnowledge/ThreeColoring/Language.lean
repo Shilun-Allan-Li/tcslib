@@ -90,6 +90,12 @@ edge `G u v = true`. -/
 theorem ProperColoring_iff {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) :
     ProperColoring G c ↔ ∀ u v, G u v = true → c u ≠ c v := Iff.rfl
 
+/-- **Elimination of `ProperColoring`**: a proper colouring gives the endpoints of an edge
+different colours, `G u v = true → c u ≠ c v`. -/
+theorem ProperColoring.ne {n : ℕ} {G : Graph n} {c : Fin n → Fin 3} (h : ProperColoring G c)
+    {u v : Fin n} (huv : G u v = true) : c u ≠ c v :=
+  (ProperColoring_iff G c).1 h u v huv
+
 instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColoring G c) := by
   unfold ProperColoring
   infer_instance

@@ -632,28 +632,67 @@ noncomputable def tdpGen : NUPPT := NUPPT.ofPolyTimeUniform T.tdpGenFun_poly T.g
 noncomputable def tdpEnc {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) : NUPPT :=
   NUPPT.ofPolyTimeUniform (T.tdpEncFun_poly E.poly) T.sample.coins
 
-/-- Unfolding: `Gen(1^n; r) = ⟨i, ⟨1^n, ⟨i, t⟩⟩⟩` with `⟨i, t⟩ = Gen_T(1^n; r)`. -/
-theorem tdpGen_runAt (n : ℕ) (r : T.gen.Coins n) :
+/-- The key generator has the coins of `Gen_T`. -/
+theorem coins_tdpGen : T.tdpGen.coins = T.gen.coins := by
+  unfold tdpGen
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- **The key generator runs on the coins of `Gen_T`**: the published equivalence
+`T.tdpGen.Coins n ≃ T.gen.Coins n` (`NUPPT.coinsCongr` along `coins_tdpGen`). -/
+noncomputable def tdpGen_coinsEquiv (n : ℕ) : T.tdpGen.Coins n ≃ T.gen.Coins n :=
+  NUPPT.coinsCongr T.coins_tdpGen n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (T.tdpGen_coinsEquiv n r) = List.ofFn r`. -/
+theorem tdpGen_coinsEquiv_ofFn (n : ℕ) (r : T.tdpGen.Coins n) :
+    List.ofFn (T.tdpGen_coinsEquiv n r) = List.ofFn r :=
+  NUPPT.coinsCongr_ofFn T.coins_tdpGen n r
+
+/-- The encryptor has the coins of the sampler. -/
+theorem coins_tdpEnc {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) :
+    (T.tdpEnc E).coins = T.sample.coins := by
+  unfold tdpEnc
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- **The encryptor runs on the coins of the sampler**: the published equivalence
+`(T.tdpEnc E).Coins n ≃ T.sample.Coins n` (`NUPPT.coinsCongr` along `coins_tdpEnc`). -/
+noncomputable def tdpEnc_coinsEquiv {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h)
+    (n : ℕ) : (T.tdpEnc E).Coins n ≃ T.sample.Coins n :=
+  NUPPT.coinsCongr (T.coins_tdpEnc E) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (T.tdpEnc_coinsEquiv E n s) = List.ofFn s`. -/
+theorem tdpEnc_coinsEquiv_ofFn {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h)
+    (n : ℕ) (s : (T.tdpEnc E).Coins n) : List.ofFn (T.tdpEnc_coinsEquiv E n s) = List.ofFn s :=
+  NUPPT.coinsCongr_ofFn (T.coins_tdpEnc E) n s
+
+/-- Unfolding: `Gen(1^n; r) = ⟨i, ⟨1^n, ⟨i, t⟩⟩⟩` with `⟨i, t⟩ = Gen_T(1^n; φ r)`, the coins read
+through `φ = T.tdpGen_coinsEquiv n`. -/
+theorem tdpGen_runAt (n : ℕ) (r : T.tdpGen.Coins n) :
     T.tdpGen.runAt n [] r =
-      pairEncode (T.index n r) (pairEncode (List.replicate n true) (pairEncode (T.index n r) (T.trap n r))) := by
-  rw [NUPPT.runAt_eq]
+      pairEncode (T.index n (T.tdpGen_coinsEquiv n r)) (pairEncode (List.replicate n true)
+        (pairEncode (T.index n (T.tdpGen_coinsEquiv n r)) (T.trap n (T.tdpGen_coinsEquiv n r)))) := by
+  rw [Collection.index_eq, Collection.trap_eq, T.gen_uniform.runAt_eq, T.tdpGen_coinsEquiv_ofFn,
+    NUPPT.runAt_eq]
   unfold tdpGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [tdpGenFun, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode,
-    pairSndD_pairEncode, Collection.index, Collection.trap, T.gen_uniform.runAt_eq]
+  simp only [tdpGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
   rfl
 
-/-- Unfolding: `Enc(1^n, ⟨i, [b]⟩; s) = ⟨eval ⟨i, w⟩, H ⟨i, w⟩ ⊕ [b]⟩` with `w = Sample(1^n, i; s)`. -/
+/-- Unfolding: `Enc(1^n, ⟨i, [b]⟩; s) = ⟨eval ⟨i, w⟩, H ⟨i, w⟩ ⊕ [b]⟩` with
+`w = Sample(1^n, i; φ s)`, the coins read through `φ = T.tdpEnc_coinsEquiv E n`. -/
 theorem tdpEnc_runAt {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) (n : ℕ)
-    (i : List Bool) (b : Bool) (s : T.sample.Coins n) :
+    (i : List Bool) (b : Bool) (s : (T.tdpEnc E).Coins n) :
     (T.tdpEnc E).runAt n (pairEncode i [b]) s =
-      pairEncode (T.eval (pairEncode i (T.sample.runAt n i s)))
-        (List.zipWith xor (E.H (pairEncode i (T.sample.runAt n i s))) [b]) := by
-  rw [NUPPT.runAt_eq]
+      pairEncode (T.eval (pairEncode i (T.sample.runAt n i (T.tdpEnc_coinsEquiv E n s))))
+        (List.zipWith xor (E.H (pairEncode i (T.sample.runAt n i (T.tdpEnc_coinsEquiv E n s))))
+          [b]) := by
+  rw [T.sample_uniform.runAt_eq, T.tdpEnc_coinsEquiv_ofFn, NUPPT.runAt_eq]
   unfold tdpEnc
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [tdpEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
-    pairFstD_pairEncode, pairSndD_pairEncode, T.sample_uniform.runAt_eq]
+  simp only [tdpEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode]
   rfl
 
 /-- Unfolding: `Dec(⟨⟨1^n, ⟨i, t⟩⟩, ⟨c₁, c₂⟩⟩) = H ⟨i, Inv(1^n, ⟨t, c₁⟩; 1^{coins n})⟩ ⊕ c₂`. -/
@@ -661,7 +700,7 @@ theorem tdpDecFun_apply (H : List Bool → List Bool) (n : ℕ) (i t c₁ c₂ :
     T.tdpDecFun H (pairEncode (pairEncode (List.replicate n true) (pairEncode i t)) (pairEncode c₁ c₂)) =
       List.zipWith xor (H (pairEncode i (T.inv.runAt n (pairEncode t c₁) fun _ => true))) c₂ := by
   simp only [tdpDecFun, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    T.inv_uniform.runAt_eq, List.ofFn_const, NUPPT.coinLen]
+    T.inv_uniform.runAt_eq, List.ofFn_const, NUPPT.coinLen_eq]
   rfl
 
 /-- **The single-bit scheme of [PS10, Algorithm 104.3]** from a collection of trapdoor
@@ -689,18 +728,19 @@ noncomputable def tdpBitScheme {h : ∀ i, T.D i → Bool} (E : T.toCollection.P
   enc_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   dec_poly := T.tdpDecFun_poly E.poly
   correct := by
-    intro n b rg re
+    intro n b rg' re'
     rw [tdpGen_runAt]
     simp only [pairFstD_pairEncode, pairSndD_pairEncode]
     rw [tdpEnc_runAt, tdpDecFun_apply]
+    set rg := T.tdpGen_coinsEquiv n rg'
+    set re := T.tdpEnc_coinsEquiv E n re'
     obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n rg re
     rw [hev, T.f_perm]
     have hinv : T.decD (T.index n rg) (T.inv.runAt n
         (pairEncode (T.trap n rg) (T.encD (T.index n rg) (T.perm (T.index n rg) x))) fun _ => true) =
         some x := by
-      have := T.inv_spec n rg (T.perm _ x) (fun _ => true)
-      rw [Equiv.symm_apply_apply] at this
-      exact this
+      rw [T.inv_eq_encD n rg (T.perm _ x) (fun _ => true), Equiv.symm_apply_apply]
+      exact T.decD_encD _ x
     rw [E.spec _ _ _ hinv, E.spec _ _ _ hx]
     cases h (T.index n rg) x <;> cases b <;> rfl
 
@@ -788,16 +828,20 @@ private def tdpSampled (T : TrapdoorCollection) (n : ℕ) (r : T.gen.Coins n) (s
 /-- **The honest ciphertext of Algorithm 104.3** is `⟨i, ⟨f_i(x), [h_i(x) ⊕ b]⟩⟩` for the sampled
 element `x` (`tdpGen_runAt`, `tdpEnc_runAt`, `Collection.evalSampled`, `E.spec`, `f_perm`). -/
 private theorem tdpBitScheme_pkEncDist (T : TrapdoorCollection) {h : ∀ i, T.D i → Bool}
-    (E : T.toCollection.PredEvaluator h) (n : ℕ) (b : Bool) (r : T.gen.Coins n)
-    (s : T.sample.Coins n) :
-    (T.tdpBitScheme E).pkEncDist n b (r, s) =
-      pairEncode (T.index n r) (pairEncode (T.encD _ (T.perm _ (tdpSampled T n r s)))
-        [xor (h _ (tdpSampled T n r s)) b]) := by
-  obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n r s
-  show pairEncode (pairFstD (T.tdpGen.runAt n [] r))
-      ((T.tdpEnc E).runAt n (pairEncode (pairFstD (T.tdpGen.runAt n [] r)) [b]) s) = _
+    (E : T.toCollection.PredEvaluator h) (n : ℕ) (b : Bool) (r₀ : T.tdpGen.Coins n)
+    (s₀ : (T.tdpEnc E).Coins n) :
+    (T.tdpBitScheme E).pkEncDist n b (r₀, s₀) =
+      pairEncode (T.index n (T.tdpGen_coinsEquiv n r₀))
+        (pairEncode (T.encD _ (T.perm _ (tdpSampled T n (T.tdpGen_coinsEquiv n r₀)
+          (T.tdpEnc_coinsEquiv E n s₀))))
+        [xor (h _ (tdpSampled T n (T.tdpGen_coinsEquiv n r₀) (T.tdpEnc_coinsEquiv E n s₀))) b]) := by
+  show pairEncode (pairFstD (T.tdpGen.runAt n [] r₀))
+      ((T.tdpEnc E).runAt n (pairEncode (pairFstD (T.tdpGen.runAt n [] r₀)) [b]) s₀) = _
   rw [TrapdoorCollection.tdpGen_runAt]
   simp only [pairFstD_pairEncode]
+  set r := T.tdpGen_coinsEquiv n r₀
+  set s := T.tdpEnc_coinsEquiv E n s₀
+  obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n r s
   rw [TrapdoorCollection.tdpEnc_runAt, hev, T.f_perm, E.spec _ _ _ hx]
   simp only [tdpSampled, hx, Option.getD_some]
   rfl
@@ -860,16 +904,22 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
           D.distinguisherL n (pairEncode (T.index n r)
             (pairEncode (T.encD _ (T.perm _ (tdpSampled T n r w.1)))
               [xor (h _ (tdpSampled T n r w.1)) b])) w.2 = true := by
-      unfold acceptProb
-      rw [← uprob_comp_equiv (Equiv.prodAssoc (T.gen.Coins n) (T.sample.Coins n) (D.Coins n)).symm,
-        uprob_prod]
+      rw [acceptProb_def, ← uprob_comp_equiv ((Equiv.prodAssoc (T.gen.Coins n) (T.sample.Coins n)
+        (D.Coins n)).symm.trans (((T.tdpGen_coinsEquiv n).symm.prodCongr
+          (T.tdpEnc_coinsEquiv E n).symm).prodCongr (Equiv.refl _))), uprob_prod]
       congr 1
       funext r
       congr 1
       funext w
       obtain ⟨s, ρ⟩ := w
-      simp only [Equiv.prodAssoc_symm_apply]
+      simp only [Equiv.trans_apply, Equiv.prodAssoc_symm_apply, Equiv.prodCongr_apply,
+        Prod.map_apply, Equiv.refl_apply]
       rw [tdpBitScheme_pkEncDist]
+      generalize hr' : (T.tdpGen_coinsEquiv n) ((T.tdpGen_coinsEquiv n).symm r) = r'
+      generalize hs' : (T.tdpEnc_coinsEquiv E n) ((T.tdpEnc_coinsEquiv E n).symm s) = s'
+      rw [Equiv.apply_symm_apply] at hr' hs'
+      subst hr' hs'
+      rfl
     rw [e1]
     refine abs_uexp_sub_le (hδS n (fun _ => false)).nonneg fun r => ?_
     have hs := (hδS n r).abs_uprob_sub_le_prod
