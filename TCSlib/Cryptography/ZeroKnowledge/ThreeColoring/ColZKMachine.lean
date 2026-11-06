@@ -40,6 +40,8 @@ coins (`distAdv_distinguisherL_reparam`).
 * `TCSlib.Cryptography.ColZK.exists_colHidingRed` — the fixed hiding reduction is an `NUPPT`.
 * `TCSlib.Cryptography.ColZK.distAdv_distinguisherL_reparam` — the two-parameter coin
   transport (requested shared lemma).
+* `TCSlib.Cryptography.ColZK.exists_hidingView_bound` — the hiding bound for all the fixed
+  reductions at once (the worst data at each `n`, `Commitment.multiHiding`).
 
 ## References
 
@@ -84,7 +86,9 @@ def hidingView (V' : Strategy) (adv cv : List Bool) : List Bool :=
     else pairFstD (pairSndD^[13] adv)
   else pairFstD (pairSndD^[14] adv)
 
-/-- The defining equation of `hidingView` (its docstring's formula). -/
+/-- The defining equation of `hidingView` (its docstring's formula).
+
+**Proof sketch.** By definition (`rfl`). -/
 theorem hidingView_eq (V' : Strategy) (adv cv : List Bool) :
     hidingView V' adv cv =
       if pairFstD (pairSndD^[3] adv) = [] then
@@ -371,7 +375,11 @@ theorem length_edgelessAdv_le {M : ℕ} {x z ρ : List Bool} (hx : x.length ≤ 
   exacts [hx, hz, hρ, Nat.zero_le _]
 
 /-- The planted advice is short: at most `15 (2M + 2)` bits when each of its fields has at most
-`M` bits (`CommitmentLemmas.length_encodeMsgs_le`). -/
+`M` bits.
+
+**Proof sketch.** `CommitmentLemmas.length_encodeMsgs_le` on the fifteen fields of
+`plantedAdv_eq`: the unary fields have their numbers as lengths (`List.length_replicate`), the
+flags at most one bit, and the optional earlier outcome is empty or bounded by `hpre`. -/
 theorem length_plantedAdv_le {M : ℕ} {x z ρ A₁ A₂ opn post : List Bool} {n p₁ p₂ m e₀ : ℕ}
     {pre : Option (List Bool)} (h1 : 1 ≤ M) (hx : x.length ≤ M) (hz : z.length ≤ M)
     (hρ : ρ.length ≤ M) (hn : n ≤ M) (hp₁ : p₁ ≤ M) (hp₂ : p₂ ≤ M) (hA₁ : A₁.length ≤ M)

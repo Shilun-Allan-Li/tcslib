@@ -1309,7 +1309,16 @@ private theorem colZK_attempt_some {n ℓn : ℕ} {G : Graph n} {ρ : Type*} {V 
 
 /-- **The case `m > 0` of `col_zk`** (conditional on the equations of `msgAt` and
 `edgeIdxOfMsg`): `D`'s advantage is at most
-`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`. -/
+`(1/4)^{|x|} + K((1/2)^{|x|} + (1/4)^{|x|}) + K ε_B(n) + e^{−n}` for the hiding bound `ε_B`.
+
+**Proof sketch.** Steps (1)–(5) of `col_zk`'s sketch along the chain real view, honest typed
+view, `S''`, `S'`, `S`, simulator (triangle inequality, `distAdv_def`, `abs_sub_le`):
+`statClose_colRealView` (`(1/4)^{|x|}`), `statClose_colSimTruncH` with
+`one_sub_inv_pow_mul_le_exp` (`e^{−n}`), `exists_colSimRed_fixCoins` with `N := K` (`K` times the
+fixed reduction's gap), `uprob_colSimTruncW_eq` (exact) and `statClose_colSim_colSimTrunc`. By
+`colSimRed_fixed_eq` and `colZK_planted_eq` the fixed reduction is `cv ↦ D(hidingView adv cv)`
+for the planted advice `adv`, whose fields are bounded by `M` (`colZK_length_view_le`,
+`colZK_attempt_some`), so its gap is at most `ε_B n`. -/
 private theorem colZK_planted_case
     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)
@@ -1462,7 +1471,16 @@ private theorem colZK_planted_case
 
 
 /-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
-conditional because the step-5 identification needs these two published equations, E-API). -/
+conditional because the step-5 identification needs these two published equations, E-API).
+
+**Proof sketch.** `ZK_iff`; `S` from `exists_colSimulator` (its seed is the ladder's tape along
+`NUPPT.coinLen_eq`). A polynomial `M(n)` bounds every field of the reductions' advice (R2-2), and
+`ColZK.exists_hidingView_bound` with `b := 15 (2M + 2)` gives a negligible `ε_B ≥ 0`. Put
+`ε N := N² ε_B (√N) + e^{−√N} + N² ((1/2)^N + (1/4)^N) + (1/4)^N`, negligible by
+`ColZK.negligible_colZKErr` and `Negligible.comp_sqrt`. For `x = encGraph G`: if `n = 0` the
+advantage is at most `1 ≤ ε 0 = 2`; if `m = 0` it is at most `(1/4)^N + ε_B n`
+(`exists_colZK_edgeless`, `ColZK.hidingView_edgelessAdv`); if `m > 0` it is the bound of
+`colZK_planted_case`; in both cases `≤ ε N` since `max(1, K) ≤ N²` and `√N = n`. -/
 private theorem colZK_zk_of_eqs
     (hmsg : ∀ (w : List Bool) (i : ℕ), msgAt w i = pairFstD (pairSndD^[i] w))
     (hidx : ∀ (m : ℕ) (w : List Bool), edgeIdxOfMsg m w = w.length % m)

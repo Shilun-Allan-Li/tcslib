@@ -19,12 +19,21 @@ Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean
 fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
 function (`negligible_colZKErr`, `colZK_attempts_le`).
 
+## Main definitions
+
+* None: this file holds lemmas only.
+
 ## Main results
 
 * `TCSlib.Cryptography.ColZK.pushesUniform_restrict` — restricting a uniform table along an
   injective map gives a uniform table.
-* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable` — a prefix and an `n × k` table at an
-  offset of a uniform tape are independent and uniform.
+* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable`, `pushesUniform_blockFields` — disjoint
+  fields of a uniform tape are independent and uniform.
+* `TCSlib.Cryptography.ColZK.exists_fixSeed`, `distAdv_seed_to_coins`,
+  `acceptProb_comp_pushesUniform` — averaging over seeds.
+* `TCSlib.Cryptography.ColZK.findSome?_finRange_split_lt` — a first-success search split at an
+  index.
+* `TCSlib.Cryptography.ColZK.negligible_colZKErr` — the error of `col_zk` is negligible.
 
 ## References
 
@@ -300,7 +309,12 @@ theorem findSome?_finRange_split {α : Type*} {N : ℕ} (f : Fin N → Option α
 
 /-- **The first success splits at `k` into masked searches**: the search over `List.finRange N`
 is the search masked to the indices before `k`, else entry `k`, else the search masked to the
-indices after `k` (`findSome?_finRange_split` three times; the masks select the parts). -/
+indices after `k`.
+
+**Proof sketch.** Split all three searches at `k` (`findSome?_finRange_split`). On the indices
+before `k` the first mask is the identity and the second is `none`; on those after `k` the
+reverse; at `k` both masks are `none`. The searches of `none` are `none`
+(`List.findSome?_eq_none_iff`), and the remaining `<|>` chain is the original one. -/
 theorem findSome?_finRange_split_lt {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
     (List.finRange N).findSome? f =
       (((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then f t else none) <|> f k <|>
