@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

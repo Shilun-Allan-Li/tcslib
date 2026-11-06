@@ -89,6 +89,7 @@ import TCSlib.Complexity.SpaceComplexity.SavitchARM.Recursion
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Setup
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountRegs
