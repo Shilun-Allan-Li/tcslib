@@ -112,3 +112,12 @@ sweep's repairs are verified (notes 3–7).
 | 1 | major | **Repaired, by the standing ruling's kind (repair).** `have he := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)` replaces the `Nat.mod_add_div` line and its rewrite, as proposed (`698dcdf5b9d66d05a27b684c4b17ca7f80d97001`). The round-3 sweep missed it because its candidates were typed `have`s and proof blocks, and this `have` is untyped, its content stated only by the rewrite after it. So the sweep is extended by that pattern (`evidence/round4/sweep/`): every untyped `have` or `obtain` whose term heads with a core or Mathlib name, with any rewrite `at` it or `▸` transport within eight lines, and every anonymous `have :=`. Of the eleven library-headed sites, one more is rewritten afterwards: `nf_display_flag`'s `hm` (line 231), the round-3 sweep's C02. No library lemma states it (`exact?` fails on two generalisations; `Nat.mod_eq_sub_iff` leaves a divisibility side goal), so it stays an idiom. The nine anonymous `have`s are `min`/`max` bounds for `omega` and local hypotheses. Ledger: the sweep's entry adds the site and the pattern. |
 | 2 | minor | **Erratum** (the dispatched pack is kept): the round-3 change is 3,272 → 3,232 lines, **40 lines shorter**, 39 of them from the sweep (`wc -l` of the blobs; the pack's 3,233 was the linter's count, one more). At round 4 the file is 3,231 lines. |
 | 3–7 | notes | Agreed. Round 4 regenerates the seal, the axioms, the screen and the replay on the new head. |
+
+**Round 4 (2026-11-06):** `pack-r4.md`, at #191's head `b2bac06f2bba0b9318ef24e2d210fe34ea38b540`.
+Staged on the exchange at `arora-barak-ch3-4/outbox/gates/95-nf-landing-fill-r4-gate/` (exchange
+commit `b7ec82c7`): bundle `95-nf-landing-fill-r4-bundle.md`, 96 sections, SHA-256
+`40e36606f285b66e115bc59da63b49cad86e3a7edafd9fc20e80cac8fd71384b`; Lean from `b2bac06f`, records
+from `c86e2b4966d14d132272abcfb250f17120024790`. Findings file `nf-landing-fill-r4-findings.md`.
+**Dispatched (2026-11-06, the user).**
+
+**Not yet clear to merge: #191** (gate 95's round 4 is out).
