@@ -1086,7 +1086,7 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
 
-That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+**Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
 (`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
 
