@@ -1,0 +1,78 @@
+## Part 1: consumers of TCSlib.Cryptography.Protocol.ProverBounded (whole files sealed)
+
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (2 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_InteractiveProofs_sealed_control.lean:236:22: error: Function expected at
+    ctl: TCSlib_Cryptography_ZeroKnowledge_InteractiveProofs_sealed_control.lean:470:2: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+TCSlib/Cryptography/ZeroKnowledge/NP.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_NP_sealed_control.lean:279:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (3 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_sealed_control.lean:928:39: error: Type mismatch
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_sealed_control.lean:932:42: error: Type mismatch
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_sealed_control.lean:938:3: error: Application type mismatch: The argument
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (3 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_sealed_control.lean:611:13: error: Application type mismatch: The argument
+    ctl: TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_sealed_control.lean:612:2: error: No goals to be solved
+    ctl: TCSlib_Cryptography_ZeroKnowledge_ThreeColoring_Protocol_sealed_control.lean:882:40: error: Function expected at
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Soundness_sealed_control.lean:322:21: error: Application type mismatch: The argument
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+  seal: ProverBounded
+  sealed current: PASS
+  control (base text): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI_sealed_control.lean:478:21: error: Application type mismatch: The argument
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of ProverBounded in the current file: 0
+
+## Part 2: new proofs that read another file's definitions (copies in a SealTest namespace)
+
+TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean: Clean.envelope, host_call_envelope, host_clean_envelope
+  seal: ofWords stateWord runFrom step
+  sealed current: PASS
+  control (Clean.envelope with the seam's head position read by `rfl` through `Cfg.ofWords`): FAIL (1 error lines); expected fail: as expected
+    ctl: ModuleHost_envelopes_sealed_control.lean:29:89: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean: attempt_eq, retry_eq, retry_eq_attempt, retry_eq_nil
+  seal: firstIdx layout inParam inArg inCoins output coinLen
+  sealed current: PASS
+  control (the copies plus one `rfl` read of `firstIdx` (seal-active check)): FAIL (1 error lines); expected fail: as expected
+    ctl: Defs_AbortRetry_sealed_control.lean:41:45: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+
+TCSlib/Cryptography/Candidates/DiscreteLog.lean: sampleBelowL_eq_rejectBlocksL
+  seal: rejectBlocksL
+  sealed current: PASS
+  control (the lemma proved by `funext r; rfl`, reading `rejectBlocksL` through its body): FAIL (1 error lines); expected fail: as expected
+    ctl: DiscreteLog_sampleBelowL_sealed_control.lean:15:2: error: Tactic `rfl` failed: The left-hand side
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+

@@ -1,0 +1,1134 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean b/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+index 66f802b8..c51a6ff4 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean
+@@ -38,6 +38,11 @@ inside one finite machine.
+   the host: from the host seam at the module's entry state, with any output prefix, the host
+   reaches the seam at the module's return state with the module's result word, forwarding exactly
+   the module's output, and visits no control state meanwhile; `guard_add` chains such segments.
++* **Head envelopes.** A clean module's heads stay within its budget `B |arg|` of the origin at
++  every time (`Clean.envelope`), and the host's heads stay within `t` cells of the origin up to
++  time `t` of a call (`host_call_envelope`), hence within `B |arg|` during a clean call
++  (`host_clean_envelope`). These are the coarse envelopes from the time bounds and the unit head
++  moves of `Turing.MultiTapeTM.workTapePos_step_le` (gate 03l round 2, finding 1).
+ 
+ ## Origin
+ 
+@@ -62,6 +67,8 @@ machines, the control states and their table, the return map and the start state
+   clean install and a clean emit module with a polynomial budget on the argument length.
+ * `Turing.ModuleHost.host_call`, `host_clean` — one module call inside the host, with the guard
+   that no control state is visited; `guard_add` — chaining guarded segments.
++* `Turing.ModuleHost.Clean.envelope`, `host_call_envelope`, `host_clean_envelope` — the head
++  envelopes of a clean module and of a host call.
+ * `Turing.ModuleHost.first_halt`, `live_prefix` — cutting a halting run at its first halt, and
+   liveness of the prefix of a live run.
+ * `Turing.ModuleHost.request_budget` — a polynomial budget on a bounded request fits a common
+@@ -213,6 +220,44 @@ theorem clean_iff (M : FinTM Bool) (result emit : List Bool → List Bool) (B :
+           state := none, output := emit arg} :=
+   Iff.rfl
+ 
++/-- **The head envelope of a clean module** (H14's space clause): if `Clean M result emit B`,
++then for every native input `x` and argument `arg`, at every time `v` of the run of `M` from the
++seam at its start state holding `arg` (before, at and after its first halt), every work head is
++within `B |arg|` cells of the origin, where all heads start (`Cfg.ofWords_workTapePos`).
++
++This is the coarse envelope from the time bound: one step moves each head by at most one cell
++(`Turing.MultiTapeTM.workTapePos_step_le`; over a run,
++`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`), the first halt comes at a time `t ≤ B |arg|`,
++and the run is constant from `t` on. The contract gives nothing sharper: it fixes the terminal
++seam, not the intermediate head positions, and a clean module may move a head out and back
++before it halts at the seam (gate 03l round 2, finding 1).
++
++**Proof sketch.** Take the first halt `t ≤ B |arg|` of `Clean`. At a time `v ≤ t` each head is
++within `v` cells of its start (`MultiTapeTM.workTapePos_runFrom_mem_Icc`); at `v > t` the run
++is halted, so its configuration is the one at `t` (`MultiTapeTM.runFrom_add`,
++`MultiTapeTM.runFrom_of_halt`). -/
++theorem Clean.envelope {M : FinTM Bool} {result emit : List Bool → List Bool} {B : ℕ → ℕ}
++    (h : Clean M result emit B) (x arg : List Bool) (v : ℕ) (j : Fin M.k) :
++    |(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v).workTapePos j| ≤
++      (B arg.length : ℤ) := by
++  obtain ⟨t, -, htB, -, hend⟩ := ((clean_iff M result emit B).1 h).2 x arg
++  have hhalt : (M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) t).state =
++      none := by
++    rw [hend]
++  obtain ⟨u, hut, hu⟩ : ∃ u ≤ t,
++      M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) v =
++        M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) u := by
++    rcases le_total v t with hvt | htv
++    · exact ⟨v, hvt, rfl⟩
++    · refine ⟨t, le_rfl, ?_⟩
++      rw [← Nat.add_sub_of_le htv, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hhalt]
++  obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 (M.tm.workTapePos_runFrom_mem_Icc
++    (Cfg.ofWords (input := x) M.tm.q₀ (stateWord M.k arg)) u j)
++  rw [Cfg.ofWords_workTapePos] at h1 h2
++  have hB : (u : ℤ) ≤ B arg.length := by exact_mod_cast hut.trans htB
++  rw [hu, abs_le]
++  constructor <;> omega
++
+ /-- Turn a clean-call bridge contract into the uniform first-halting form.
+ 
+ **Proof sketch.** The release wrapper stops one step after the positive exit (`stop_clean`);
+@@ -503,6 +548,42 @@ theorem host_call {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n 
+   · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
+     exact host_seam M K ret i hp x result pre out q none
+ 
++/-- **The head envelope of a host call** (H14's space clause for one call, inclusive of its
++endpoint): run from its seam at the entry state of module `i` holding `arg` with output prefix
++`pre`, the host has, at every time `v ≤ t`, every work head within `t` cells of the origin,
++where all heads start (`Cfg.ofWords_workTapePos`). Under the hypotheses of `host_call`, `t` is
++the duration of the call, so this bounds the heads throughout the call.
++
++This is the coarse envelope from the time bound: one step moves each head by at most one cell
++(`Turing.MultiTapeTM.workTapePos_step_le`; over a run,
++`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`). A sharper envelope follows from the proof of
++`host_call` and is not stated here: before the return, the host's tape `j` is module `i`'s
++tape `j` for `j < (M i).k` (the padded module runs in lockstep and the forwarding keeps every
++physical field, `Turing.emit_run`), and every other tape stays blank with its head at the
++origin, so the host's heads obey any head envelope of the module.
++
++**Proof sketch.** `MultiTapeTM.workTapePos_runFrom_mem_Icc` from the host seam, whose heads are
++at the origin, and `v ≤ t`. -/
++theorem host_call_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M) (i : Fin n) (x arg pre : List Bool) (t : ℕ) :
++    ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom
++      {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).workTapePos
++        j| ≤ (t : ℤ) := by
++  intro v hv j
++  have key : ∀ c : Cfg K Bool (State C M) x, c.workTapePos j = 0 →
++      |((hostTM M K hk ctrl ret q₀).tm.runFrom c v).workTapePos j| ≤ (t : ℤ) := by
++    intro c hc
++    obtain ⟨h1, h2⟩ :=
++      Finset.mem_Icc.1 ((hostTM M K hk ctrl ret q₀).tm.workTapePos_runFrom_mem_Icc c v j)
++    rw [hc] at h1 h2
++    have hvt : (v : ℤ) ≤ t := by exact_mod_cast hv
++    rw [abs_le]
++    constructor <;> omega
++  exact key {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre}
++    (Cfg.ofWords_workTapePos (input := x) (entry (C := C) M i) (stateWord K arg) j)
++
+ /-- **Chaining guarded segments.** If the run from `c` avoids the state `anchor` before time `a`
+ and is at `d` at time `a`, and the run from `d` avoids `anchor` before time `b`, then the run
+ from `c` avoids `anchor` before time `a + b`. -/
+@@ -545,4 +626,38 @@ theorem host_clean {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n 
+     host_call M K hk ctrl ret q₀ i h.1 x arg (f arg) (g arg) pre (M i).tm.q₀ t hg he
+   exact ⟨t, hp, ht, hguard, hend⟩
+ 
++/-- **A clean module call inside the host, with its head envelope** (the bounded call of
++`host_clean` together with H14's space clause): if module `i` is `Clean` with result map `f`,
++emitted chunk `g` and budget `B`, then for every native input `x`, argument `arg` and output
++prefix `pre`, the host, run from its seam at the entry state of module `i` holding `arg` with
++output `pre`, reaches at some time `t` with `0 < t ≤ B |arg|` the seam in the return state
++`ret i` holding `f arg`, with output `pre ++ g arg`, visits no control state before `t`, and at
++every time `v ≤ t` has every work head within `B |arg|` cells of the origin.
++
++The envelope is the coarse one from the time bound (`host_call_envelope`, which also describes
++the sharper envelope inherited from the module).
++
++**Proof sketch.** `host_clean` gives `t` and the call; `host_call_envelope` at `t`, with
++`t ≤ B |arg|`, gives the envelope. -/
++theorem host_clean_envelope {C : Type} [Fintype C] [DecidableEq C] {n : ℕ}
++    (M : Fin n → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K)
++    (ctrl : C → Option Bool → (Fin K → Option Bool) → Action K Bool (State C M))
++    (ret : Fin n → State C M) (q₀ : State C M)
++    (i : Fin n) (f g : List Bool → List Bool) (B : ℕ → ℕ)
++    (h : Clean (M i) f g B) (x arg pre : List Bool) :
++    ∃ t, 0 < t ∧ t ≤ B arg.length ∧
++      (∀ v < t, ∀ c : C, ((hostTM M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} v).state
++          ≠ some (.inl c)) ∧
++      (hostTM M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre} t =
++        {Cfg.ofWords (ret i) (stateWord K (f arg)) with output := pre ++ g arg} ∧
++      ∀ v ≤ t, ∀ j : Fin K, |((hostTM M K hk ctrl ret q₀).tm.runFrom
++        {Cfg.ofWords (input := x) (entry M i) (stateWord K arg) with output := pre}
++          v).workTapePos j| ≤ (B arg.length : ℤ) := by
++  obtain ⟨t, hp, ht, hguard, hend⟩ := host_clean M K hk ctrl ret q₀ i f g B h x arg pre
++  refine ⟨t, hp, ht, hguard, hend, fun v hv j => ?_⟩
++  have hB : (t : ℤ) ≤ B arg.length := by exact_mod_cast ht
++  exact (host_call_envelope M K hk ctrl ret q₀ i x arg pre t v hv j).trans hB
++
+ end Turing.ModuleHost
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWay.lean b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+index b2445e44..7ac5de06 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWay.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+@@ -281,8 +281,9 @@ theorem WorstCaseOneWay.toLit {𝓕 : FunFamily} (h : 𝓕.WorstCaseOneWay) : 
+   simp only [NUPPT.inverter, NUPPT.inverterLit, NUPPT.runAt_eq, hB, hofn]
+ 
+ /-- **The literal form implies the `1^n` form when the output length determines the
+-parameter** (injective `outLen`, the case of every family of the text; repair of the run-3
+-audit, P3-2; the analogue of `Ensemble.IndistLit.toIndist`): a `1^n`-inverter `B` is the literal
++parameter** (injective `outLen`, equivalently non-constant output length for these polynomial
++lengths; repair of the run-3 audit, P3-2; the analogue of `Ensemble.IndistLit.toIndist`): a
++`1^n`-inverter `B` is the literal
+ inverter `NUPPT.exists_reparam_advice B φ var` with `φ (outLen n) = n`, which hard-wires `1^n`
+ and `B.advice n` at the output length and leaves its extra coins unread.
+ 
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index 59dac7c5..938af1fa 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -519,6 +519,15 @@ def rejectBlocksL (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List B
+     if E (listToNat ((r.drop (t * B)).take k)) then some (listToNat ((r.drop (t * B)).take k))
+     else none
+ 
++/-- Block rejection sampling unfolded: `rejectBlocksL E k B T r` is the first `some v` over
++`t ∈ [0, T)` (`List.findSome?` over `List.range T`) with `v` the number read from the first `k`
++bits of the `t`-th block of `B` bits of `r`, kept iff `E v`. -/
++theorem rejectBlocksL_eq (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List Bool) :
++    rejectBlocksL E k B T r = (List.range T).findSome? fun t =>
++      if E (listToNat ((r.drop (t * B)).take k)) then some (listToNat ((r.drop (t * B)).take k))
++      else none :=
++  rfl
++
+ /-- An accepted value satisfies the test and is below `2^k` (it is read from at most `k`
+ bits, `listToNat_lt_two_pow`). -/
+ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r : List Bool} {v : ℕ}
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 767d14fe..b7fbd309 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -49,7 +49,8 @@ collection `expCollection H G hV` therefore takes the validity bridge `hV : ∀
+ as an argument.
+ 
+ **Full-length primes.** Where a proof divides by `q` or `p − 1` (Lemma 84.1's range reduction,
+-the `1/q` term of Theorem 107.3) the prime must have full length `2^{n−1} ≤ p`. This is
++the `1/q` term of Theorem 107.3) the proofs use full length `2^{n−1} ≤ p` (a convenience: the
++hypothesis is dispensable in both headline theorems, gate 03f1 review, M1). This is
+ demanded only *except on a negligible set of coins* (`ExpGroupGen.FullLengthExcept δ` with
+ `Negligible δ`): a strict-PPT generator may fall back to a fixed instance when its rejection
+ loop fails (D10), and demanding full length on every coin string (`ExpGroupGen.FullLength`)
+@@ -316,9 +317,11 @@ def FullLength : Prop :=
+ 
+ /-- The generator outputs primes of full length `n` **except on a set of coins of probability
+ at most `δ n`**: for `n ≥ n₀`, `Pr_r[p < 2^{n−1}] ≤ δ n` (the fallback instance of a strict-PPT
+-rejection sampler, D10). Needed, with `Negligible δ`, where the proofs divide by `q` or
++rejection sampler, D10). Used, with `Negligible δ`, by the proofs that divide by `q` or
+ `p − 1` (Lemma 84.1's range reduction, the `1/q` term of Theorem 107.3): the short-prime coins
+-are discarded and contribute at most `δ n`. Whether safe primes (resp. primes `≡ 3 (mod 4)`
++are discarded and contribute at most `δ n`. This is a convenience: instances with `p − 1` below
++a polynomial can be inverted by exhaustive search, so `hbig` could be dropped (gate 03f1
++review, M1; ruling R-03f1-1 (A) keeps it). Whether safe primes (resp. primes `≡ 3 (mod 4)`
+ with a generator) of full length can be produced for every `n` except with negligible
+ probability is itself open ([PS10, p. 52]: the sampler's "basic theoretical properties are
+ unknown"); the hypothesis `∃ δ, Negligible δ ∧ G.FullLengthExcept δ` of the headline theorems
+@@ -467,6 +470,15 @@ def sampleBelowL (m k B T : ℕ) (r : List Bool) : Option ℕ :=
+     if listToNat ((r.drop (t * B)).take k) < m then some (listToNat ((r.drop (t * B)).take k))
+     else none
+ 
++/-- `sampleBelowL` is block rejection sampling with the test `v < m`:
++`sampleBelowL m k B T = rejectBlocksL (· < m) k B T` (the same blocks, the same test; gate 03f1
++review, M2). -/
++theorem sampleBelowL_eq_rejectBlocksL (m k B T : ℕ) :
++    sampleBelowL m k B T = rejectBlocksL (· < m) k B T := by
++  funext r
++  rw [rejectBlocksL_eq]
++  rfl
++
+ /-- A sampled value is below `m`. -/
+ theorem sampleBelowL_lt {m k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleBelowL m k B T r = some v) :
+     v < m := by
+@@ -484,18 +496,15 @@ distance `(1/2)^n` of the uniform number below `m`. The closeness fact behind
+ `expCollection_sampleClose` and the El Gamal samplers (`egUnit`, `egGenParts`, `egEncParts`,
+ `ddhExpo`).
+ 
+-**Proof sketch.** `k ≤ n` by `Nat.size_le`, so trial `t < n` reads the first `k` bits of the
+-`t`-th block of `n` bits of `List.ofFn b` (`NumberTheory.chunk`; `List.drop`/`List.take` of
+-`List.ofFn`), and `sampleBelowL m k n n` is `firstHit (· < m)` of the numbers read from the
+-blocks (`List.findSome?` over `List.range n` versus `List.finRange n`; `listToNat` of the `k`
+-bits is `bitsToNat` of the block's prefix, `bitsToNat_eq_listToNat`). The map from the `n · n`
+-coins to the `n` prefixes is a product of coordinate projections, so it pushes the uniform
+-distribution to the uniform one on `Fin n → Fin k → Bool` (`StatClose.comp_pushesUniform`),
+-and reading bits is the bijection `bitsEquiv k` onto `Fin (2^k)`; `statClose_firstHit` with
+-`E = {x < m}` and `d = 0` gives closeness `(1 − m/2^k)^n ≤ (1/2)^n` (`Nat.lt_size_self`:
+-`m/2^k ≥ 1/2`), transported along the bijection `{x : Fin (2^k) // x < m} ≃ Fin m` by
+-`StatClose.comp_equiv_right` and `StatClose.map` (`Fin.val`), exactly as in
+-`statClose_rejectionSample`. -/
++**Proof sketch.** A corollary of `statClose_rejectBlocksL` (gate 03f1 review, M2; that lemma is
++filled first, and this one is not filled a second time). With `k = Nat.size m`, `k ≤ n` by
++`Nat.size_le` (`m < 2^n`), and `sampleBelowL m k n n = rejectBlocksL (· < m) k n n`
++(`sampleBelowL_eq_rejectBlocksL`). `statClose_rejectBlocksL (· < m) k n n` with the default
++`d = 0` (`0 < m`, `0 < 2^k`) gives closeness `(1 − Pr_{v < 2^k}[v < m])^n = (1 − m/2^k)^n` to
++the uniform element of `{v : Fin (2^k) // v < m}`, and `(1 − m/2^k)^n ≤ (1/2)^n` since
++`2^k ≤ 2m` (`Nat.lt_size_self` and the minimality of `Nat.size`: `m/2^k ≥ 1/2`). Transport the
++target along the value-preserving bijection `{v : Fin (2^k) // v < m} ≃ Fin m`
++(`StatClose.comp_equiv_right`) and weaken the bound (`StatClose.mono`). -/
+ theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+     StatClose (fun b : Fin (n * n) → Bool => (sampleBelowL m (Nat.size m) n n (List.ofFn b)).getD 0)
+       (fun x : Fin m => (x : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+@@ -514,7 +523,7 @@ def expSampleRaw (z : List Bool) : List Bool :=
+ domain `D_i`"] given the arithmetic bundle.
+ 
+ **Proof sketch.** The bit length `Nat.size m` is the length of the numeral of `m` with its
+-leading zeros stripped (requested shared primitive, as in the RSA sampler); the trial loop is
++leading zeros stripped (`H.size`); the trial loop is
+ `Complexity.polyTimeComputable_iterateFind` over the `n` blocks of `1^n` bits
+ (`polyTimeComputable_pairDropPoly`), each trial comparing the first `k` bits with `m`
+ (`H.le`); the payload is the accepted block, the `none` branch gives the fallback; the output
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 14900a0d..8c1cc2b3 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -558,24 +558,36 @@ set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`expOrd_of_valid`), `f
+ `expo g_u x` with `g_u := expUnit` a generator (`orderOf_expUnit`, `IsGenerator` by
+ `orderOf_eq_card_of_forall_mem_zpowers`-converse `zpowers_eq_top_of_prime_card`-free counting:
+ `Nat.card_zpowers`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so `A`'s per-instance
+-success is `predProb (expo g_u) (halfBit (p−1)) A_i` with `A_i y ρ := A.distinguisherL n ⟨i, encD y⟩ ρ`.
+-Apply `invProb_dlInverter_ge` with `s := ⌊ε(p−1)/4⌋ ≥ 1` (as `p − 1 ≥ 2^{n−1} − 1 ≥ 8n^c` for
+-large `n`), `T := ⌈(p−1)/s⌉ ≤ 8n^c + 1`, `k := n`, `ℓ := 4n · (2n^c)² = 16 n^{2c+1}`: the inverter
+-succeeds on the good instances with probability `≥ (3/4)/T ≥ 3/(4(8n^c + 1))`, hence overall
+-`≥ (ε/2) · 3/(4(8n^c + 1))` (`OneWay.uprob_mul_le_uexp`-style averaging over the good set). The
+-machine `B` realising `dlInverter` is a non-uniform PPT: advice `⟨A.advice n, 1^{n}⟩`, coins
+-`T·n + n·ℓ·(2n + A.coins)` (all `PolyExpr`), on `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`,
+-computes `s` and `T` from `1^n` and `p` (`H.divMod`, `H.mul`), samples `t` and the `r_{j,i}` by
+-rejection (`sampleBelowL` with `H.le`; the statistical term `n·ℓ·(1/2)^n + (1/2)^n` by
+-`statClose_rejectionSample`/`StatClose.prod`, `StatClose.abs_uprob_sub_le_prod`), shifts
+-`y · g^{−ts}` (`H.modExp`, `H.xgcd` for the inverse), and runs the `n` rounds of `dlLoop`
+-(`Complexity.polyTimeComputable_iterate` with the state `⟨y_j, bits⟩`, D11): quadratic
+-residuosity by `H.modExp` (`y^{(p−1)/2} = 1`, Euler), the root `y^{(p+1)/4}` by `H.modExp`
+-(`sqrtMod3`, [PS10, Theorem 58.2]), the `ℓ` oracle calls `A.output` on the layout
+-`⟨⟨⟨1^n, ⟨i, z_i⟩⟩, A.advice n⟩, ρ_i⟩` (`polyTimeComputable_iterateEmit`, `NUPPT.polyTimeComputable_layout`),
+-the comparison with `half(r_i)` (`halfStr`), the majority (`polyTimeComputable_majority`), the
+-negation `p − z` and the bit assembly; finally `(bits + ts) mod (p−1)` as an `n`-bit numeral
+-(`decodeFin n` reads it back, `bitsToNat_natToBits`). Thus `G.dlProb B n ≥ 3ε/(8(8n^c+1)) − 2n^{2c+2}(1/2)^n`
++success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
++`A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`.
++Apply `invProb_dlInverter_ge` with `ε := n^{-c}/2`, `s := ⌊(p−1)/(8n^c)⌋` (so `4s ≤ ε(p−1)`),
++`T := ⌈(p−1)/s⌉` (so `Ts ≥ p − 1`), `k := n` (`s ≤ p − 1 < 2^n`) and `ℓ := 16 n^{2c+1}`
++(so `k/(ε²ℓ) = 1/4`). For large `n` the good instances have `p − 1 ≥ 2^{n−1} − 1 ≥ 16 n^c`, so
++`(p−1)/(8n^c) ≥ 2`, `s ≥ (p−1)/(16 n^c) ≥ 1` and `T ≤ K(n) := 16 n^c < 2^n`; the inverter then
++succeeds with probability `≥ (3/4)/T ≥ 3/(4K(n))` on each good instance, with ideal coins.
++The machine `B` realising `dlInverter` is a non-uniform PPT: advice `⟨A.advice n, ⟦8n^c⟧_n⟩`
++(the `n`-bit numeral of `8n^c`: the bundle has no unary-to-binary conversion); coins
++`n·n + n·ℓ·(n·n + A.coins)` (a `PolyExpr`, `c` being fixed): one block of `n·n` coins for `t`
++and, for each of the `n·ℓ` trials, a block of `n·n` coins for `r_{j,i}` and `A.coins` coins for
++`ρ_{j,i}`. On `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`; computes `s` and `T` (`H.sub`,
++`H.divMod`, `H.add`); outputs `0^n` unless `1 ≤ s` and `T < 2^n` (the analysis uses only the
++good instances); samples `t := (sampleBelowL T (Nat.size T) n n ·).getD 0` and
++`r_{j,i} := (sampleBelowL (p−1) (Nat.size (p−1)) n n ·).getD 0` (`H.le`, `H.size`,
++`polyTimeComputable_iterateFind`); shifts `y · g^{−ts}` (`H.modExp`, `H.xgcd`); and runs the
++`n` rounds of `dlLoop` (`Complexity.polyTimeComputable_iterate` with the state `⟨y_j, bits⟩`,
++D11): quadratic residuosity by `H.modExp` (`y^{(p−1)/2} = 1`, Euler), the root `y^{(p+1)/4}` by
++`H.modExp` (`sqrtMod3`, [PS10, Theorem 58.2]), the `ℓ` oracle calls `A.output` on the layout
++`⟨⟨⟨1^n, ⟨i, z_{j,i}⟩⟩, A.advice n⟩, ρ_{j,i}⟩` (`polyTimeComputable_iterateEmit`,
++`NUPPT.polyTimeComputable_layout`), the comparison with `half(r_{j,i})` (`halfStr`), the
++majority (`polyTimeComputable_majority`), the negation `p − z` and the bit assembly; finally
++`(bits + ts) mod (p−1)` as an `n`-bit numeral (`decodeFin n` reads it back,
++`bitsToNat_natToBits`). Sampling: each of the `1 + nℓ` sampled coordinates is within `(1/2)^n`
++of uniform (`statClose_sampleBelowL`, with `0 < T < 2^n` and `0 < p − 1 < 2^n`); the coins of
++`A` are exact; `StatClose.prod` and `StatClose.abs_uprob_sub_le_prod` give a loss of at most
++`(1 + 16 n^{2c+2})(1/2)^n` at every instance. Averaging over the good set (probability
++`≥ ε/2`, `HardcoreBit.uprob_mul_le_uexp`):
++`G.dlProb B n ≥ (ε/2)·3/(4K(n)) − (1 + 16 n^{2c+2})(1/2)^n`
++`= 3/(256 n^{2c}) − (1 + 16 n^{2c+2})(1/2)^n`
+ for infinitely many `n`, an inverse polynomial, contradicting `hDL B` via `not_negligible_iff`. -/
+ theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
+     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index 1f1d1ab4..be4efe98 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -56,10 +56,11 @@ generator's coins (`ExpGroupGen.FullLengthExcept`).
+ 
+ **Run-3 audit repairs.** P8-1: the run-2 DDH ensembles had dependent-sum seeds
+ `Σ r, Z_{q_r} × Z_{q_r}` (resp. three factors), on which the uniform seed gives the coin string
+-`r` probability `q_r² / Σ q²` (resp. `q_r³ / Σ q³`) instead of `2^{-|r|}` — the two ensembles
+-then had different instance laws whenever `q` varies with the coins, and the threshold test
+-`[q ≥ θ_n]` distinguished them with constant advantage, so `DDHAssumption` was false for every
+-randomized generator. The seeds are now product types (uniform coins for the generator, D6)
++`r` probability `q_r² / Σ q²` (resp. `q_r³ / Σ q³`) instead of `2^{-|r|}` — so the two ensembles
++could have different instance laws, and when `q` varies non-negligibly with the coins (two
++orders `q`, `3q/2` on half the coins each give the laws `(4/13, 9/13)` and `(8/35, 27/35)`) a
++threshold test `[q ≥ θ_n]` distinguished them, making `DDHAssumption` false for reasons
++unrelated to DDH. The seeds are now product types (uniform coins for the generator, D6)
+ with the exponents read by `ddhExpo`. P8-2: `elGamal_secure`'s hypothesis `G.FullLength`
+ (full length on every coin string) became `∃ δ, Negligible δ ∧ G.FullLengthExcept δ`.
+ 
+@@ -294,8 +295,8 @@ run-3 audit P2-2, by instance resolution).
+ 
+ Repair (run-3 audit P8-1): the run-2 seed type `Σ r : G.gen.Coins n, Z_{q_r} × Z_{q_r}` gave
+ the coin string `r` probability `q_r² / Σ_r q_r²` under the uniform seed, so the instance law
+-depended on the fibre sizes and differed from `ddhRandom`'s (cubes), making `DDHAssumption`
+-false for every generator whose `q` varies with the coins. -/
++depended on the fibre sizes and differed from `ddhRandom`'s (cubes), which could make
++`DDHAssumption` false for reasons unrelated to DDH (DESIGN §5 item 20). -/
+ noncomputable def ddhReal (G : SafePrimeGen) : Ensemble ddhLen where
+   σ n := G.gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))
+   X n z := padFin (ddhLen.eval n) (ddhTuple (G.gen.runAt n [] z.1)
+@@ -509,9 +510,9 @@ def egGenRaw (G : SafePrimeGen) (z : List Bool) : List Bool :=
+ (`polyTimeComputable_pairTakePoly`/`_pairDropPoly` on `⟨1^n, r⟩`); run `G.gen.output` on the
+ layout (`NUPPT.polyTimeComputable_layout`, `G.gen.polyTimeComputable_output`); the two
+ rejection loops are `Complexity.polyTimeComputable_iterateFind` over `n`-bit blocks with the
+-test `H.le` (the decrement `p − 1` and the bit length `Nat.size` are requested shared
+-primitives, as in the RSA generator); `h = g² mod p` and `h^x mod p` by `H.modExp`; the
+-numerals are padded to width `n` (`polyTimeComputable_unaryPoly`, `_blockMap`); pair. -/
++test `H.le` (the decrement `p − 1` and the bit length `Nat.size`: `H.sub`, `H.size`);
++`h = g² mod p` and `h^x mod p` by `H.modExp`; the numerals are padded to width `n`
++(`polyTimeComputable_unaryPoly`, `_blockMap`); pair. -/
+ theorem polyTimeComputable_egGenRaw (H : ArithmeticFP) (G : SafePrimeGen) :
+     PolyTimeComputable (egGenRaw G) := by
+   sorry
+@@ -843,8 +844,11 @@ except on a negligible set of the generator's coins (and under the arithmetic hy
+ **Deviation:** message space `G_q` and the chosen-message form of security (the text's
+ `m ∈ Z_p` is insecure, source error 28); the DDH assumption is relative to `egGroupGen H G`
+ and samples its exponents by rejection (`ddhExpo`, D10); `hbig` (`ExpGroupGen.FullLengthExcept`)
+-makes the sampling term `1/q ≤ 8 · 2^{-n}` negligible outside a set of coins of probability
+-`δ n`; the text leaves the proof as an exercise and omits the generator-versus-square term.
++is used to make the sampling term `1/q ≤ 8 · 2^{-n}` negligible outside a set of coins of
++probability `δ n` (a convenience: if `E[1/q]` were not negligible, a DDH distinguisher finding
++`a` by exhaustive search when `q ≤ 2n^c` would contradict the DDH assumption, so `hbig` could be
++dropped; gate 03f1 review, M1; ruling R-03f1-1 (A) keeps it); the text leaves the proof as
++an exercise and omits the generator-versus-square term.
+ 
+ Repair (run-3 audit P8-1, P8-2): the DDH ensembles' seeds became products (so hybrid 1 below
+ is exact up to the event `g² = 1`), and `hbig : G.FullLength` became
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 42944c08..0566c08f 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -499,11 +499,17 @@ with the step dropping `n` bits, the test `hP` on the first `n` bits, the payloa
+ bits, `R = 2n²`, `P = var`), whose `List.range.find?` form is `firstHit` over `chunk`
+ (`samplePrime`); the fallback numeral `natToList n 2 = 0^{n-2}10` of a failed run is the
+ `none` branch of `iterateFind` (a constant string of unary-polynomial length,
+-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`); the acceptance test of
+-`samplePairOut` is two `H.prime` calls, a `pairEq` test and two `H.le`
+-comparisons with `1^{max n 2}` (`polyTimeComputable_ite`), the accepted blocks are re-encoded
+-with `max n 2` bits (`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the
+-default pair is a constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
++`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The acceptance test of
++`samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two prime
++tests are `hP`, and the inequality of the two values is tested by comparing the two `n`-bit
++words directly (a `pairEq` test: words of equal length have equal values iff they are equal);
++the two range checks `< 2^{max n 2}` are discharged from the fixed widths, not computed (each
++`samplePrimeL` output has `n` bits, so its value is `< 2^n ≤ 2^{max n 2}`,
++`listToNat_lt_two_pow`); the branch is `polyTimeComputable_ite`. The accepted words are
++re-encoded with `max n 2` bits by leading-zero padding (the `max n 2`-bit numeral of an `n`-bit
++word is the word preceded by `max n 2 − n` zeros, a constant block of unary-polynomial length:
++`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the default pair is a
++constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
+ theorem polyTimeComputable_samplePairRaw (hP : PolyTimeComputable primeStr) :
+     PolyTimeComputable samplePairRaw := by
+   sorry
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index e548ac26..e2379a32 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -755,14 +755,26 @@ so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of `x`", wh
+ event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`, `decodeFin_ofFn`,
+ `bitsToNat_natToBits`, `val_units_pow`). Since `x ↦ x^e` pushes uniform to uniform
+ (`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the inner probability equals the RSA
+-inner probability at `(z, e)`. The law of `(z, e)` under the generator's coins is within
+-`rsaGenErr n` of the ideal uniform law on `DistinctPrimes n × Z*_{Φ(N)}`
+-(`statClose_samplePrime` with the prime fallback `natToBits n 2` of `samplePrimeL` — run-3
+-audit P7-7 — twice and `StatClose.prod` for `(p, q)`, `StatClose.map` through the validity
+-test with `uprob_diag` and `one_div_card_primes_le` for the fallback on `p = q`,
+-`statClose_rejectBlocksL` for `e` with the acceptance rate of the sampleClose sketch); `StatClose.abs_uprob_sub_le_prod` with the
+-auxiliary coins `(y, r)` turns `uexp` over the generator's coins into `uexp` over `z`
+-(`uexp_prod`, `uprob_prod`) up to `rsaGenErr n`. -/
++inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]` (over `y` and `A`'s coins).
++The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
++uniform product: the comparison is a conditional expectation over `z`. Split the generator's
++coins into the two prime segments and the exponent segment (`rsaGenParams`, `uexp_prod`,
++`uprob_prod`). (i) For each fixed prime pair `z`, the exponent drawn from the exponent segment
++(`sampleUnitL` modulo `Φ(N)`, fallback `1`) is within `e^{-n}` of the uniform element of
++`Z*_{Φ(N)}` (`statClose_rejectBlocksL` with the acceptance rate of the sampleClose sketch), so
++the conditional success at `z` exceeds `g(z) := E_{e uniform}[h(z, e)]` by at most `e^{-n}`
++(`StatClose.abs_uprob_sub_le_prod`, with `(y, r)` as the auxiliary coins). (ii) The law of `z`
++under the two prime segments is within `2 · 2^{-n} + 2n/2^n` of the uniform law on
++`DistinctPrimes n` (`statClose_samplePrime` with the prime fallback `natToBits n 2` of
++`samplePrimeL` — run-3 audit P7-7 — twice and `StatClose.prod` for `(p, q)`, `StatClose.map`
++through the validity test with `uprob_diag` and `one_div_card_primes_le` for the fallback on
++`p = q`); averaging the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
++most that distance (`StatClose.abs_uprob_sub_le_prod` again, with `g(z)` read as a probability
++over the auxiliary coins `ω : Π z', Z*_{Φ(N')} × Z_{N'}^* × A.Coins n` at `ω z`). (iii) Adding
++the conditional exponent error, the inversion probability is at most
++`uexp g + (2 · 2^{-n} + 2n/2^n) + e^{-n} = rsaProb (rsaBreaker A) n + rsaGenErr n`, as
++`rsaProb` is the outer `uexp` over `z` of the inner probability over `(e, y, r)`. No error
++beyond `rsaGenErr n` is needed. -/
+ theorem rsaCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
+     (rsaCollection H).invProbAt A n ≤ rsaProb (rsaBreaker A) n + rsaGenErr n := by
+   sorry
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index d9c93a07..a0a19227 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -146,8 +146,12 @@ theorem blumFactoring_of_factoring (hD : BlumDensity) (hF : FactoringAssumption)
+ 
+ /-! ## The symmetry lemma (Claim-62.2) -/
+ 
+-/-- The unit `u = CRT⁻¹(1, −1)` of `Z_{pq}^*`: a square root of `1` different from `±1`
+-[PS10, proof of Theorem 61.8, "it can only be that they are congruent modulo `p` and `q`"]. -/
++/-- The unit `u = CRT⁻¹(1, −1)` of `Z_{pq}^*`, for coprime moduli `p`, `q`
++[PS10, proof of Theorem 61.8, "it can only be that they are congruent modulo `p` and `q`"].
++It squares to `1` for all coprime moduli (`crtNegOne_sq`). For primes `p`, `q` it differs from
++`1` when `q` is odd and from `−1` when `p` is odd (`crtNegOne_ne_one`, `crtNegOne_ne_neg_one`),
++so for two odd primes it is a square root of `1` other than `±1`. Coprimality alone does not
++give this: for `p = 2`, `q = 3` it is `5 = −1` in `Z_6`. -/
+ noncomputable def crtNegOne {p q : ℕ} (h : p.Coprime q) : (ZMod (p * q))ˣ :=
+   (crtUnits h).symm (1, -1)
+ 
+@@ -495,8 +499,9 @@ theorem rabinCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rabinCollection
+ /-- The statistical error of the Rabin reductions at parameter `n`: two restricted prime
+ samplers and the unit sampler of `rabinFactorer`, the latter counted twice because it enters
+ through the factor `2` of the symmetry lemma (`e^{-n}` each: `4e^{-n}`), and the diagonal
+-`p = q` of the restricted class: `1/(P − 1) ≤ 2/P ≤ 4n/2^n` for the `P = |Π_n| − 1 ≥ 2` odd
+-primes (`one_div_card_primes_le`) and `1/B ≤ 4n/2^n` for the `B` Blum primes (`BlumDensity`).
++`p = q` of the restricted class: `1/(P − 1) ≤ 2/P ≤ 4n/2^n` with `P = |Π_n|` the total prime
++count, of which `P − 1 ≥ 2` are odd (`one_div_card_primes_le`), and `1/B ≤ 4n/2^n` for the `B`
++Blum primes (`BlumDensity`).
+ 
+ Repair (run-3 audit P7-3): the diagonal term was `2n/2^n`, which neither the Chebyshev bound
+ `2^n ≤ 2n|Π_n|` (odd class: `1/(|Π_n| − 1)`) nor `BlumDensity` (`1/B`) yields; both give
+diff --git a/TCSlib/Cryptography/NumberTheory/Chebyshev.lean b/TCSlib/Cryptography/NumberTheory/Chebyshev.lean
+index 423c20bc..ddae2c96 100644
+--- a/TCSlib/Cryptography/NumberTheory/Chebyshev.lean
++++ b/TCSlib/Cryptography/NumberTheory/Chebyshev.lean
+@@ -36,7 +36,8 @@ arguments by the text's monotonicity of `t / log t`.
+ 
+ **Deviation:** [PS10, Theorem 31.3] claims the strict inequality `π(x) > x / (2 log x)` for
+ every real `x > 1`; equality holds at `x = 2` (`π(2) = 1`), so the theorem is stated with `≤`,
+-for natural arguments `m ≥ 2`. **Deviation:** [PS10, Claim 32.4] (`p^{ν_p(X)} < 2x`) fails at
++and for natural arguments `m ≥ 2`, which repairs and restricts the real claim (it fails even with
++`≤` at `x = 3/2`, where `π(x) = 0`). **Deviation:** [PS10, Claim 32.4] (`p^{ν_p(X)} < 2x`) fails at
+ `x = 1, p = 2`; the correct form `p^{ν_p(C(2x,x))} ≤ 2x` is Mathlib's
+ `Nat.pow_factorization_choose_le`. **Deviation:** the density corollary needs `n ≥ 2`
+ (`Π_1 = ∅`); the text's "`n`-bit numbers" silently assumes it.
+@@ -157,7 +158,9 @@ theorem chebyshev_two_mul (x : ℕ) (hx : 0 < x) :
+ `m / (2 log₂ m) ≤ π(m)`.
+ 
+ **Deviation:** stated with `≤` (the text's `>` fails at `m = 2`) and for natural arguments
+-`m ≥ 2` (the text's real `x > 1`; `π` is a step function, so nothing is lost).
++`m ≥ 2`. This repairs and restricts the text's claim for every real `x > 1`, which is false even
++with `≤`: at `x = 3/2`, `π(x) = 0 < x / (2 log₂ x)`. The natural-argument form is the one the
++prime-density uses need.
+ 
+ **Proof sketch.** Even `m = 2x`: `chebyshev_two_mul`. Odd `m = 2x − 1 ≥ 3`: `2x` is composite,
+ so `π(m) = π(2x) ≥ 2x / (2 log₂(2x))`, and `t ↦ t / log₂ t` is increasing for `t ≥ 3`
+diff --git a/TCSlib/Cryptography/NumberTheory/Primality.lean b/TCSlib/Cryptography/NumberTheory/Primality.lean
+index e9e0e712..1c496b08 100644
+--- a/TCSlib/Cryptography/NumberTheory/Primality.lean
++++ b/TCSlib/Cryptography/NumberTheory/Primality.lean
+@@ -41,7 +41,10 @@ The Miller–Rabin test [PS10, §2.6.5] and the prime sampler [PS10, §2.6.6]:
+ test reject primes with positive probability; the test draws `α ∈ [1, N−1]` as in the
+ standard presentation, matching `|L_N| = N − 1`. Even `N > 2` are rejected outright (the text
+ handles only the base case `N = 2`). **Deviation:** [PS10, Theorem 49.14] says "with
+-probability `1 − 2^{−t}`" for "at least"; Lemma 50.15's composite case needs `N` odd.
++probability `1 − 2^{−t}`" for "at least"; Lemma 50.15's composite case is proved for odd `N`
++only, as a convenience: for even `N > 2` the liars also lie in a proper subgroup of `Z_N^*` (the
++kernel of `x ↦ x^{N−1}`, which misses `−1` since `(−1)^{N−1} = −1`), and the test rejects even
++`N` outright.
+ **Deviation:** `SamplePrime` is truncated to `T` trials (strict PPT with failure `⊥`, D10)
+ and tests primality exactly (`Nat.Prime`); with Miller–Rabin in place of the exact test the
+ output would only be statistically close to uniform. §2.6.6 (p. 50) misquotes the prime
+@@ -386,8 +389,11 @@ private theorem liar_pow_mem {N : ℕ} (hN : 2 < N) {j' : ℕ}
+ /-- **Odd composites have few liars** [PS10, Lemma 50.15, second half]: for odd composite
+ `N > 2`, `|L_N| ≤ (N−1)/2`, stated as `2 |L_N| ≤ N − 1`.
+ 
+-**Deviation:** the text says `N > 2` composite (oddness is needed) and `<` (the proof gives
+-`≤ Φ(N)/2 < (N−1)/2`, so `<` also holds; the weaker form suffices for Theorem 49.14).
++**Deviation:** the text says `N > 2` composite and `<`. The restriction to odd `N` is a
++convenience, not a necessity: for even `N > 2` every liar satisfies `α^{N−1} = 1` while the unit
++`−1` does not (`N − 1` is odd and `−1 ≠ 1`), so the liars again lie in a proper subgroup;
++`uprob_millerRabin_le` rejects even `N` outright and needs only the odd case. The proof gives
++`≤ Φ(N)/2 < (N−1)/2`, so `<` also holds; the weaker form suffices for Theorem 49.14.
+ 
+ **Proof sketch.** ([CLRS09, Theorems 31.38–31.39].) Every liar is a unit (`α^{N−1} = 1`,
+ `mrLiar_isUnit`), so it suffices to exhibit a proper subgroup of `Z_N^*` containing every
+@@ -859,10 +865,11 @@ private theorem spFind_eq (n : ℕ) (r : Fin (2 * n ^ 2 * n) → Bool) :
+     rfl
+ 
+ /-- **`SamplePrime` is a PPT** [PS10, Lemma 51.17, "in time `poly(n)`"], given a
+-polynomial-time primality test on binary strings (the hypothesis `Rem-33.2`/Q6 of the plan,
+-AKS or Miller–Rabin): there is a uniform `NUPPT` with coin polynomial `2n² · n` whose
+-activation at parameter `n` on the empty argument with coins `r` (read as `2n²` blocks of
+-`n` bits) outputs the bits of `samplePrime n (2n²)`, or `[]` on failure.
++polynomial-time primality test on binary strings (the hypothesis `Rem-33.2`/Q6 of the plan:
++an exact deterministic primality test such as AKS; a bounded-error Miller–Rabin test does not
++compute `hP`'s function exactly): there is a uniform `NUPPT` with coin polynomial `2n² · n`
++whose activation at parameter `n` on the empty argument with coins `r` (read as `2n²` blocks
++of `n` bits) outputs the bits of `samplePrime n (2n²)`, or `[]` on failure.
+ 
+ **Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` (M3): on the state
+ word `⟨1^n, r⟩`, the step `spStep` drops the first `n` bits of the second component
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+index f6c4bc5f..8e81839e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+@@ -39,13 +39,15 @@ and what the non-uniform reduction of [PS10, Proposition 128.8] needs); the erro
+ a function of `|x|` (the text's `e(n)` leaves `n` undefined); the honest-verifier notion is
+ stated for a protocol and a witness relation without assuming the proof property, which the
+ theorems add separately.
+-The bound `Lz` is necessary, not only convenient (gate 03e, note 9): the distinguisher runs in
+-time polynomial in its input, the encoded view, which contains `z`; with `|z| ≥ 2^n` it could
+-invert a one-way permutation on `n`-bit inputs and open the unopened commitments of the
+-3-colouring protocol, so computational zero-knowledge would fail for every protocol whose
+-hiding is only computational. Read literally, [PS10, Definition 121.2] (every
+-`z ∈ {0,1}*`, with `D` polynomial-time in its input) has the same defect. For the same reason
+-the distinguisher's advice is indexed by the parameter `|x|`, not by its input length.
++The bound `Lz` is necessary for the 3-colouring protocol, not only convenient (gate 03e,
++note 9; round 2, finding 6). The distinguisher runs in time polynomial in its input, the
++encoded view, which contains `z`. With `|z|` exponential in `ℓ(n)` it can open the perfectly
++binding commitments by exhaustive search. On a graph with two proper colourings outside one
++colour-permutation orbit, that tells the two real views apart with advantage 1, while the
++simulator does not see the witness. Read literally, [PS10, Definition 121.2] (every
++`z ∈ {0,1}*`, with `D` polynomial-time in its input) has the same defect for that protocol.
++Protocols with exactly simulable views are not affected. For the same reason the
++distinguisher's advice is indexed by the parameter `|x|`, not by its input length.
+ 
+ **Perfect zero-knowledge (ruling G3-4 of gate 03).** With strict simulators and honest parties
+ drawing polynomially many fair coins (D8, D10), no protocol of the source attains `PerfectZK`
+@@ -307,6 +309,15 @@ def attempt (S : NUPPT) (w : List Bool) (t : ℕ) : List Bool :=
+     (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
+       (S.coinLen (NUPPT.inParam w).length)))
+ 
++/-- One attempt unfolded: `attempt S w t` is `S.output` on the layout with parameter
++`inParam w`, argument `inArg w`, empty advice and coins
++`((inCoins w).drop (t · c)).take c`, where `c = S.coinLen |inParam w|`. -/
++theorem attempt_eq (S : NUPPT) (w : List Bool) (t : ℕ) :
++    attempt S w t = S.output (NUPPT.layout (NUPPT.inParam w) (NUPPT.inArg w) []
++      (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
++        (S.coinLen (NUPPT.inParam w).length))) :=
++  rfl
++
+ /-- The retrying simulator on its machine layout `w = ⟨⟨⟨1^n, y⟩, α⟩, r⟩`
+ (for the abort form of [Gol01, Definition 4.3.1], amplified by repetition): the
+ first of the `n` attempts that does not output `⊥ = []` (the first accepted index,
+@@ -317,6 +328,41 @@ noncomputable def retry (S : NUPPT) (w : List Bool) : List Bool :=
+     attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length)
+   else []
+ 
++/-- The retrying simulator unfolded: with `N = |inParam w|` and `i` the least index below `N`
++whose attempt is not `⊥ = []` (`firstIdx`, equal to `N` if there is none), `retry S w` is
++attempt `i` if `i < N`, and `[]` otherwise. -/
++theorem retry_eq (S : NUPPT) (w : List Bool) :
++    retry S w =
++      if firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length <
++          (NUPPT.inParam w).length then
++        attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length)
++      else [] :=
++  rfl
++
++/-- If attempt `i < |inParam w|` is the first that does not abort (`attempt S w i ≠ []`, and
++`attempt S w j = []` for every `j < i`), then `retry S w` is attempt `i`.
++
++**Proof sketch.** `firstIdx` of the non-abort test is `i` (`firstIdx_eq_of`); rewrite
++`retry_eq` with it and take the `i < |inParam w|` branch. -/
++theorem retry_eq_attempt {S : NUPPT} {w : List Bool} {i : ℕ}
++    (hi : i < (NUPPT.inParam w).length) (hne : attempt S w i ≠ [])
++    (hmin : ∀ j < i, attempt S w j = []) : retry S w = attempt S w i := by
++  have h : firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length = i :=
++    firstIdx_eq_of hi (decide_eq_true hne) fun j hj => decide_eq_false (not_not.2 (hmin j hj))
++  rw [retry_eq, h, if_pos hi]
++
++/-- If all `|inParam w|` attempts abort (`attempt S w t = []` for every `t < |inParam w|`),
++then `retry S w = []`. Together with `retry_eq_attempt` this covers every input.
++
++**Proof sketch.** `firstIdx` of the non-abort test is `|inParam w|` (`firstIdx_eq_of_forall`);
++rewrite `retry_eq` with it and take the `else` branch. -/
++theorem retry_eq_nil {S : NUPPT} {w : List Bool}
++    (h : ∀ t < (NUPPT.inParam w).length, attempt S w t = []) : retry S w = [] := by
++  have h' : firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length =
++      (NUPPT.inParam w).length :=
++    firstIdx_eq_of_forall fun t ht => decide_eq_false (not_not.2 (h t ht))
++  rw [retry_eq, h', if_neg (lt_irrefl _)]
++
+ /-- One attempt is polynomial-time on the indexed layout `⟨1^t, w⟩`.
+ 
+ **Proof sketch.** The block `(r.drop (t · c)).take c` with `c = S.coinLen n` in unary
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+index 9869c680..675fa55e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+@@ -71,9 +71,10 @@ lemmas are proved in this file (the `xor` bijection `adaptiveEquiv` and the chan
+ variables `gniShear`), which certifies the repaired statements.
+ 
+ **Deviation (fixed alternation, D8):** the repeated graph-isomorphism protocol uses four
+-moves per iteration (`H`, `b`, `γ`, and an empty verifier message) so that the strict
+-prover/verifier alternation of `exec` is respected; the repeated protocols run `|x|`
+-iterations instead of the text's `n = |G₁|` (so `2^{-|x|}` is negligible in `|x|` directly).
++moves per iteration (`H`, `b`, `γ`, and a verifier message, empty except for the final
++verdict) so that the strict prover/verifier alternation of `exec` is respected; the repeated
++protocols run `|x|` iterations instead of the text's `n = |G₁|` (so `2^{-|x|}` is negligible in
++`|x|` directly).
+ 
+ **Deviation (well-formedness):** the verifiers reject common inputs that are not the
+ encoding of two graphs on the same vertex set (`wellFormedInstance`); without this check a
+@@ -552,7 +553,8 @@ noncomputable def giVerifierRep : Strategy where
+ 
+ /-- The `|x|`-fold graph isomorphism protocol [PS10, Protocol 120.6, "repeat the procedure
+ `|G₁|` times"] (Prot-120.6): prover first, four moves per iteration (`H_i`, `b_i`, `γ_i`, and
+-an empty verifier message, D8 fixed alternation), `4|x|` messages. -/
++a verifier message, empty except for the final verdict, D8 fixed alternation), `4|x|`
++messages. -/
+ noncomputable def giProtocolRep : Protocol where
+   P := giProverRep
+   V := giVerifierRep
+@@ -924,18 +926,20 @@ theorem gni_interactiveProof : InteractiveProof gniProtocolRep Lniso :=
+ `n² ≤ |x|`, so at most `|x|` bits per message, on every instance (ruling G3-3 of gate 03;
+ `GI.giProver_length_le`). -/
+ theorem giProtocol_proverBounded (R : List Bool → List Bool → Prop) :
+-    giProtocol.ProverBounded R .var := fun x y r hist _ => GI.giProver_length_le x y r hist
++    giProtocol.ProverBounded R .var :=
++  (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.giProver_length_le x y r hist
+ 
+ /-- The `|x|`-fold form of `giProtocol_proverBounded` (`GI.giProverRep_length_le`). -/
+ theorem giProtocolRep_proverBounded (R : List Bool → List Bool → Prop) :
+-    giProtocolRep.ProverBounded R .var := fun x y r hist _ => GI.giProverRep_length_le x y r hist
++    giProtocolRep.ProverBounded R .var :=
++  (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.giProverRep_length_le x y r hist
+ 
+ /-- The honest graph non-isomorphism prover sends one bit per message (ruling G3-3 of gate 03;
+ `GI.gniProver_length_le`), in one iteration and in the `|x|`-fold protocol. -/
+ theorem gniProtocol_proverBounded (R : List Bool → List Bool → Prop) :
+     gniProtocol.ProverBounded R (.const 1) ∧ gniProtocolRep.ProverBounded R (.const 1) :=
+-  ⟨fun x y r hist _ => GI.gniProver_length_le x y r hist,
+-    fun x y r hist _ => GI.gniProver_length_le x y r hist⟩
++  ⟨(Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.gniProver_length_le x y r hist,
++    (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => GI.gniProver_length_le x y r hist⟩
+ 
+ /-- One iteration of the graph isomorphism protocol is an interactive proof for `L_iso`
+ with soundness error `1/2` and efficient prover with respect to `R_iso`
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+index a8918e97..22a93238 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+@@ -318,7 +318,8 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
+       rw [HardcoreBit.uprob_eq_one_of_forall hall]
+       norm_num
+   efficientP := hP
+-  boundedP := ⟨.var, fun x y r hist _ => giProver_length_le x y r hist⟩
++  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
++    giProver_length_le x y r hist⟩
+   completeWitness := by
+     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+     exact gi_complete hσ z
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+index 4aeed143..22b293d7 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+@@ -474,7 +474,8 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
+       have : (0 : ℝ) ≤ (2 : ℝ)⁻¹ ^ x.length := by positivity
+       linarith
+   efficientP := hP
+-  boundedP := ⟨.var, fun x y r hist _ => giProverRep_length_le x y r hist⟩
++  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
++    giProverRep_length_le x y r hist⟩
+   completeWitness := by
+     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+     exact giRep_complete hσ z
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+index 23519614..b6f95458 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+@@ -37,10 +37,12 @@ last message *is* its verdict (`Protocol.outV_eq_getLast_of_moverIsV`); the chap
+ are stated with the prover moving last, and the `n`-fold protocols read the verifier's last
+ message as the verdict.
+ Repetition convention (gate 03e, note 8): an iteration with an odd number of messages (prover,
+-verifier, prover) is repeated under strict alternation by appending one dummy empty verifier
+-message to each iteration, so that every iteration starts with the prover; the fourth move of
+-`giProtocolRep` and of `colProtocolRep`, and the filler moves of the sequential repetition of
+-[PS10, §7.2.1] in ch. 7, follow this convention.
++verifier, prover) is repeated under strict alternation by giving each iteration one additional
++verifier move, so that every iteration starts with the prover. In `giProtocolRep` and
++`colProtocolRep` that move is the empty message, except for the protocol's final move, which
++carries the verifier's verdict (the verdict convention above). The sequential repetition of
++[PS10, §7.2.1] in ch. 7 pads each phase instead with `rounds(|x|)` filler moves of both parties,
++its last filler again carrying the verdict.
+ `Strategy.Efficient` ([PS10, §4.4], time complexity of an interactive machine) is one
+ activation of a uniform `Complexity.NUPPT` at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the
+ whole random tape; the time is polynomial in the total input length rather than in `|x|`
+@@ -331,6 +333,13 @@ of length `2^{rounds}`, which the composition theorems of ch. 7 cannot simulate.
+ def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
+   ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+ 
++/-- **Bounded honest messages unfolded:** `π.ProverBounded R B` iff for every `x` and `y` with
++`R x y`, every tape `r` and every history `hist`, `|π.P.next x y r hist| ≤ B(|x|)`. -/
++theorem proverBounded_iff (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) :
++    π.ProverBounded R B ↔
++      ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length :=
++  Iff.rfl
++
+ /-- A message bound `B` implies every pointwise larger bound `B'`. -/
+ theorem ProverBounded.mono {π : Protocol} {R : List Bool → List Bool → Prop} {B B' : PolyExpr}
+     (h : π.ProverBounded R B) (hle : ∀ n, B.eval n ≤ B'.eval n) : π.ProverBounded R B' :=
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean b/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
+index 6b774497..09042140 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
+@@ -33,8 +33,9 @@ read as the output string `[false]`, the negligible `ε` quantified before the i
+ cheating prover and its auxiliary input; cheating provers are arbitrary strategies with a
+ polynomial random tape (unbounded computation; polynomial coin tapes lose nothing by
+ averaging, `Protocol.exists_proverCoins_le`). Completeness is `uprob = 1`, i.e. acceptance on
+-every pair of random tapes. The parties' efficiency (the text's "p.p.t.") is
+-`Strategy.Efficient`, polynomial time in `|x| + |z| + |messages|` (D8), together with a
++every pair of random tapes. The verifier's efficiency (Definition 116.1's "p.p.t.", and the
++prover's for Definition 119.5) is `Strategy.Efficient`, polynomial time in
++`|x| + |z| + |messages|` (D8), together with a
+ polynomial bound `B(|x|)` on the honest prover's messages (ruling G3-3 of gate 03, the
+ convention of ch. 6): in the completeness clause of `InteractiveProof` and
+ `InteractiveProofErr` for the completeness witness, and as the field `boundedP`
+@@ -43,10 +44,13 @@ witness. The residual deviation is that against a cheating prover the verifier's
+ polynomial in the length of the messages it receives, not in `|x|`. Since the honest messages
+ are short, the verifier can always be capped: `V` reading only the first `B(|x|)` bits of each
+ message is still complete (the honest messages are untouched) and sound (against `P*` it acts
+-as `V` against `P*` with truncated messages, another prover strategy). So the proof systems
+-hold only for languages of the text's class IP — undecidable languages such as the halting
+-problem, whose computation histories are not polynomially bounded, are excluded — while
+-`IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
++as `V` against `P*` with truncated messages, another prover strategy). So `InteractiveProof`
++(and `InteractiveProofErr` with negligible error, by `InteractiveProofErr.interactiveProof`)
++holds only for languages of the text's class IP — undecidable languages such as the halting
++problem, whose computation histories are not polynomially bounded, are excluded — the
++explicit-error forms with a large error say little (with `s = 1` the zero-message,
++always-accepting protocol is an `EfficientProverProofErr` for every language and relation) —
++while `IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
+ (run-3 audit P9-1). The capping argument is not formalized as a lemma.
+ 
+ ## Main definitions
+@@ -111,12 +115,14 @@ on the complete history of the fixed-alternation execution; `P'` ranges over str
+ polynomial random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is
+ `uprob = 1` (every pair of random tapes). The verifier's "p.p.t." is `Strategy.Efficient`,
+ polynomial-time in `|x| + |z| + |messages|` (D8), and the honest messages on the completeness
+-witness are bounded by `B(|x|)` (the text's p.p.t. prover writes at most `t(|x|)` bits; the
+-convention of ch. 6). Against a cheating prover the verifier's work is polynomial in the
+-length of the messages it receives, not in `|x|`; because the honest messages are short the
+-verifier can be capped to their length without losing completeness or soundness (module
+-docstring), so the predicate holds only for languages of the text's class IP. The class `IP`
+-is stated with the message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
++witness are bounded by `B(|x|)` (Definition 116.1's prover need not be efficient; bounding its
++messages is the chosen normal form, harmless because a verifier of time `t(|x|)` reads at most
++`t(|x|)` bits of each message; the convention of ch. 6). Against a cheating prover the
++verifier's work is polynomial in the length of the messages it receives, not in `|x|`; because
++the honest messages are short the verifier can be capped to their length without losing
++completeness or soundness (module docstring), so the predicate holds only for languages of the
++text's class IP. The class `IP` is stated with the message-prefix cap `Strategy.ReadsPrefix`
++(run-3 audit P9-1). -/
+ structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
+   /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
+   efficientV : π.V.Efficient
+@@ -232,7 +238,7 @@ theorem Protocol.ProverBounded.exists_complete {π : Protocol} {L : Language Boo
+       ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 :=
+   ⟨B, fun x hx =>
+     let ⟨y, hy⟩ := hLR x hx
+-    ⟨y, fun r hist => hB x y r hist hy, hc x y hy⟩⟩
++    ⟨y, fun r hist => (π.proverBounded_iff R B).1 hB x y r hist hy, hc x y hy⟩⟩
+ 
+ /-! ### Witness relations -/
+ 
+@@ -466,7 +472,7 @@ theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
+ theorem npProtocol_proverBounded (T : List Bool → Bool) (p : PolyExpr)
+     {R : List Bool → List Bool → Prop} (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
+     (npProtocol T p).ProverBounded R p :=
+-  fun x y _ _ hxy => hp x y hxy
++  ((npProtocol T p).proverBounded_iff R p).2 fun x y _ _ hxy => hp x y hxy
+ 
+ /-- Non-vacuity of Definitions 116.1 and 119.5 [PS10, §4.5, "`NP ⊆ IP`"]: for a witness relation
+ `R` of `L` decided by the polynomial-time predicate `T`, with witnesses of length at most
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/NP.lean b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+index 8ad8b9c0..9e83f76c 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/NP.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+@@ -275,6 +275,7 @@ theorem Protocol.ProverBounded.pullback {L L' : Language Bool}
+     {w : List Bool → List Bool → List Bool} {p : PolyExpr} (h : LevinReduction L L' R R' f w p)
+     {π : Protocol} {B : PolyExpr} (hB : π.ProverBounded R' B) :
+     (π.pullback f w p).ProverBounded R (B.subst p) := by
++  rw [Protocol.proverBounded_iff] at hB ⊢
+   intro x y r hist hxy
+   rw [PolyExpr.eval_subst, ← h.length_eq x]
+   exact hB (f x) (w x y) r hist (h.witness x y hxy)
+@@ -674,25 +675,27 @@ scheme `(Com, ℓ)` and every witness relation `R` of `L` there is a Levin reduc
+ one-iteration 3-colouring protocol is zero-knowledge for `R` with soundness error
+ `1 - 1/p(|x|) + 2^{-p(|x|)}`, and its `n|E|`-fold repetition is an interactive proof with
+ efficient prover (`zk_proof_of_levinReduction`, with `hLR` from `WitnessRelation.mem_iff`).
++The Levin reduction `LevinReduction L L3COL R R3COL f w p` is part of the conclusion (ruling
++R-03e-r2-1 of gate 03e round 2), so further protocols can be pulled back along the same maps.
+ 
+ **Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
+ theorem zk_proof_of_witnessRelation (h3 : LevinNPHard L3COL R3COL)
+     {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) {L : Language Bool}
+     {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
+     ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
+-      (∀ N, N ≤ p.eval N) ∧
++      LevinReduction L L3COL R R3COL f w p ∧ (∀ N, N ≤ p.eval N) ∧
+       EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
+       ZK ((colProtocol Com ℓ).pullback f w p) R ∧
+       EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
+         (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+   obtain ⟨f, w, p, h⟩ := h3 L R hR
+-  exact ⟨f, w, p, h.le_eval, zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx⟩
++  exact ⟨f, w, p, h, h.le_eval, zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx⟩
+ 
+ /-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
+ zero-knowledge proof", for every witness relation** (Thm-124.1; gate 03e, minors 3 and 4):
+ from the text's hypothesis, a one-way permutation, there is a commitment scheme
+-(`exists_commitment_of_owp`) for which the conclusion of `zk_proof_of_witnessRelation` holds,
+-under NP-hardness of `3COL` with Levin reductions.
++(`exists_commitment_of_owp`) for which the conclusion of `zk_proof_of_witnessRelation` holds
++(the Levin reduction included), under NP-hardness of `3COL` with Levin reductions.
+ 
+ **Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
+ theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL)
+@@ -700,7 +703,7 @@ theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL)
+     {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
+     ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧
+       ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
+-        (∀ N, N ≤ p.eval N) ∧
++        LevinReduction L L3COL R R3COL f w p ∧ (∀ N, N ≤ p.eval N) ∧
+         EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
+         ZK ((colProtocol Com ℓ).pullback f w p) R ∧
+         EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
+@@ -734,7 +737,7 @@ theorem zk_proof_of_mem_NP (h3 : LevinNPHard L3COL R3COL) {Com : List Bool → L
+         EfficientProverProofErr π L R
+           (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+   obtain ⟨R, hR⟩ := exists_witnessRelation_of_mem_NP hL
+-  obtain ⟨_, _, p, hp, h1, h2, h3'⟩ := zk_proof_of_witnessRelation h3 hC hR
++  obtain ⟨_, _, p, -, hp, h1, h2, h3'⟩ := zk_proof_of_witnessRelation h3 hC hR
+   exact ⟨R, hR, ⟨_, h1⟩, _, p, hp, h2, h3'⟩
+ 
+ /-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+index 0d3c8409..8e77b389 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+@@ -301,8 +301,9 @@ noncomputable def samplePerm3 (T : ℕ) (r : List Bool) : Equiv.Perm (Fin 3) :=
+   ((sampleIdx 6 3 T r).map perm3Equiv).getD 1
+ 
+ /-- The verifier's random edge `e ← E` of [PS10, Protocol 127.5] as an index in `[m]`: `T`
+-rejection trials of `Nat.size m` bits (so that `m ≤ 2^k < 2m`, success probability `≥ 1/2`),
+-the index `0` on failure (D10). -/
++rejection trials of `k = Nat.size m` bits (for `m > 0`, `m < 2^k ≤ 2m`, so each trial succeeds
++with probability `≥ 1/2`; for `m = 0` the sampler returns the default), the index `0` on
++failure (D10). -/
+ def sampleEdgeIdx (m T : ℕ) (r : List Bool) : ℕ :=
+   ((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index e8cb2fe1..84e5e0a0 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -495,8 +495,9 @@ noncomputable def colVerifierRep (Com : List Bool → List Bool) (ℓ : PolyExpr
+     else []
+ 
+ /-- The `n|E|`-fold protocol of [PS10, Protocol 127.5] (Prot-127.5): prover first, four moves
+-per iteration (commitments, edge, openings, empty verifier message; D8 fixed alternation),
+-`4|x|²` moves in all, of which the first `4 n|E|` carry the iterations. -/
++per iteration (commitments, edge, openings, and a verifier message, empty except for the final
++verdict; D8 fixed alternation), `4|x|²` moves in all, of which the first `4 n|E|` carry the
++iterations. -/
+ noncomputable def colProtocolRep (Com : List Bool → List Bool) (ℓ : PolyExpr) : Protocol where
+   P := colProverRep Com ℓ
+   V := colVerifierRep Com ℓ
+@@ -607,7 +608,8 @@ theorem colProtocol_proverBounded {Com : List Bool → List Bool} {ℓ : PolyExp
+     ∃ B : PolyExpr, (colProtocol Com ℓ).ProverBounded R B ∧
+       (colProtocolRep Com ℓ).ProverBounded R B := by
+   obtain ⟨B, hB⟩ := colProver_length_le hC.easy ℓ
+-  refine ⟨B, fun x y r hist _ => hB x y r hist, fun x y r hist _ => ?_⟩
++  refine ⟨B, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => hB x y r hist,
++    (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => ?_⟩
+   show ((colProverRep Com ℓ).next x y r hist).length ≤ B.eval x.length
+   simp only [colProverRep]
+   split_ifs <;> first | exact hB _ _ _ _ | exact Nat.zero_le _
+@@ -878,7 +880,8 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
+     obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
+     refine ⟨B, fun x hx => ?_⟩
+     obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
+-    exact ⟨encColoring c, fun r hist => hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
++    exact ⟨encColoring c,
++      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+       fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
+   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
+   efficientP := colProver_efficient hC.easy ℓ
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+index c233cc12..955948e3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
+@@ -31,9 +31,10 @@ the distinct colour pairs, the commitment randomness `Fin n → Fin ℓ(n) → B
+ `ρ` of an arbitrary verifier `V*` given as its reply function); the *string* layer is the
+ simulator `colSim` run by a uniform `NUPPT` on the tape layout of `colSimBlock`.
+ 
+-**Deviations** (D8, D10, source errors 42 and 46 of the plan): the simulator is strict PPT,
+-truncated at `n|E|` attempts and outputting `⊥ = []` on failure, which costs the statistical
+-term `(1 - 1/|E|)^{n|E|} ≤ e^{-n}`; `e'`, the colour pair and the honest prover's `π` are
++**Deviations** (D8, D10, source errors 42 and 46 of the plan): the simulator is strict PPT
++(D8's definition of `ZK`); it makes at most `n|E|` attempts and outputs `⊥ = []` on failure, as
++the text does (Algorithm 128.7, steps 4–5), and the failure costs the text's own term
++`(1 − 1/|E|)^{n|E|} ≤ e^{-n}`; `e'`, the colour pair and the honest prover's `π` are
+ rejection-sampled from the bit tapes; the hybrid over attempts has `n|E|` steps (the text says
+ `2n|E|`) and the text's `6|E|` sub-hybrid is replaced by a non-uniform choice of the worst
+ `(e', π)`; "`k ∈ [m] ∖ {i', j'}`" is read as `k ∈ [n]`; if `E = ∅` the simulator commits to
+@@ -318,9 +319,9 @@ theorem uprob_colSimAttemptH_some [Fintype ρ] (hm : 0 < edgeCount G)
+     (fun a => edgeIdxOfMsg_lt hm _) (fun a => T (colRealView Com ℓn G c V a))
+ 
+ /-- **The truncated `S''` fails with probability `(1 - 1/|E|)^N`** [PS10, proof of Proposition
+-128.8, "`S''` fails with probability `(1 - 1/|E|)^{n|E|}`"] (Claim-129.c): the attempts use
+-disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability `1 - 1/|E|`
+-(`uprob_colSimAttemptH_none`). -/
++128.8, "`S'` [sic: `S''`] fails with probability `(1 - 1/|E|)^{n|E|}`"] (Claim-129.c): the
++attempts use disjoint coins (`OneWay.uprob_pi_forall`) and each fails with probability
++`1 - 1/|E|` (`uprob_colSimAttemptH_none`). -/
+ theorem uprob_colSimTruncH_none [Fintype ρ] [Nonempty ρ] (hm : 0 < edgeCount G)
+     (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ) :
+     uprob (fun w => colSimTruncH Com ℓn G c V N w = none) = (1 - 1 / (edgeCount G : ℝ)) ^ N := by
+@@ -633,8 +634,9 @@ noncomputable def colSimAttemptStr (Com : List Bool → List Bool) (ℓ : PolyEx
+ the consecutive coin blocks of the tape `r`, the first successful attempt's view, or `⊥ = []`
+ after `n|E|` failures; a single attempt if `E = ∅`.
+ 
+-**Deviation (D8):** truncated at `n|E|` attempts (strict PPT) instead of restarting until
+-success. -/
++As in [PS10, Algorithm 128.7, steps 4–5], at most `n|E|` attempts, then `fail` (`⊥ = []`).
++**Deviation (D10):** `e'` and the colour pair are rejection-sampled from the tape (defaults `0`
++and `(0, 1)`). -/
+ noncomputable def colSim (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy)
+     (x z r : List Bool) : List Bool :=
+   let B := (colSimBlock ℓ V').eval x.length
+@@ -676,9 +678,10 @@ theorem exists_colSimulator {Com : List Bool → List Bool} (hCom : PolyTimeComp
+ commitment's hiding error `ε(n)` at the vertex count `n = √|x|` into a function of `|x|`,
+ Inf-4.4).
+ 
+-**Proof sketch.** Given `c`, take `n₀` from `hμ (2c + 1)` and `N ≥ max ((n₀ + 1)², 4^c · 4)`:
+-`n := Nat.sqrt N ≥ n₀` (`Nat.le_sqrt`) and `N < (n + 1)² ≤ 4n²` (`Nat.lt_succ_sqrt`), so
+-`N^c ≤ 4^c n^{2c} ≤ n^{2c+1}` once `n ≥ 4^c`, whence `|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
++**Proof sketch.** Given `c`, take `n₀` from `hμ (2c + 1)`, `K := max (n₀, 4^c, 1)` and `N ≥ K²`:
++`n := Nat.sqrt N ≥ K` (`Nat.le_sqrt`), so `n ≥ n₀`, `n ≥ 4^c`, `n ≥ 1`, and
++`N < (n + 1)² ≤ 4n²` (`Nat.lt_succ_sqrt`); hence `N^c ≤ 4^c n^{2c} ≤ n^{2c+1}` and
++`|μ n| < 1/n^{2c+1} ≤ 1/N^c`. -/
+ theorem Negligible.comp_sqrt {μ : ℕ → ℝ} (hμ : Negligible μ) :
+     Negligible fun N => μ (Nat.sqrt N) := by
+   intro c
+@@ -719,48 +722,59 @@ there is a negligible `ε` with, for all `x`, witnesses `y` and `z` with `|z| 
+ advantage of `D` between the view of `V'` in `P(x, y) ↔ V'(x, z)` and `S(x, z)` at most
+ `ε(|x|)`.
+ 
+-**Deviation (D8, D10):** strict PPT simulator truncated at `n|E|` attempts, rejection-sampled
++**Deviation (D8, D10):** strict PPT simulator (D8's definition of `ZK`), rejection-sampled
+ `π`, `e'` and colour pairs; the error bound is in `|x|` (the text's `e(n)` with `n`
+ undefined); one iteration (the `n|E|`-fold protocol's zero-knowledge is sequential
+ composition, [PS10, §7.2.1], out of scope).
+ 
+-**Proof sketch.** Fix `V'` efficient and take `S` from `exists_colSimulator hC.easy`. Fix
+-`Lz` and `D`. Let `B` be the hiding reduction machine of Claim-129.d (`colSimRed` at the
+-string level): at parameter `n` it carries in its advice the worst instance
+-`(x_n, y_n, z_n)` with `|x_n| = n²`, `|y_n| = 2n`, `|z_n| ≤ Lz(n²)` (`NUPPT.exists_withAdvice`
+-with the polynomial bound `add (add (mul var var) (mul (const 2) var)) (Lz.subst (mul var var))`),
+-the hybrid index `k_n`, `e₀`, `π₀` and `D.advice n²`; its coins are the other attempts' blocks
+-and `D`'s coins (`NUPPT.exists_split`); it runs `V'`'s machine and `D`'s machine
+-(`NUPPT.exists_seq`, `NUPPT.exists_comp`, `polyTimeComputable_iterateFind` for the attempts,
+-`polyTimeComputable_blockMap ℓ` with `hC.easy` for the commitments, `msgAt` projections by
+-`polyTimeComputable_iterate_pairFstD`). `hC.multiHiding var B` gives a negligible `ε_B` with
+-`distAdv (multiCom Com v ·) (multiCom Com v' ·) (B.distinguisherL n) ≤ ε_B n` for all `n`-vectors
+-`v, v'`. Put
+-`ε N := N · ε_B (Nat.sqrt N) + Real.exp (-(Nat.sqrt N)) + 2 N² (1/4)^N + N² (1/2)^N + (1/4)^N`,
++**Proof sketch.** Fix `V'` efficient, take `S` from `exists_colSimulator hC.easy`, and fix `Lz`
++and `D`. For `x = encGraph G`, `y = encColoring c` with `c` proper and `|z| ≤ Lz |x|`, let `n` be
++the vertex count, `m = |E|`, `K = n m ≤ n³`, and `D'` the distinguisher `D.distinguisherL |x|`
++on the encoded optional view (`⊥ ↦ []`).
++
++(1) The real view, with `π = samplePerm3 |x| …`, is within `(1/4)^{|x|}` of the view with a
++uniform `π`: `statClose_samplePerm3`, `StatClose.prod`/`StatClose.refl` for the prover's
++randomness and `V'`'s tape, and `StatClose.map`. `exec_succ` three times, `decGraph_encGraph`,
++`decColoring_encColoring`, and `colProver` with `V com r_V := V'.next x z r_V [com]` unfold it to
++`some ∘ colRealView`.
++
++If `m > 0`:
++(2) `colSim` is within `K((1/2)^{|x|} + (1/4)^{|x|})` of `colSimTrunc … K`, with uniform
++`(e'_t, (a_t, b_t))` read from disjoint fields of the `t`-th block (`statClose_sampleEdgeIdx`,
++`statClose_sampleColorPair` — the colour-pair analogue of `statClose_samplePerm3`, still to be
++added: the fill ladder's first step, gate 03g review M3 — and `StatClose.prod` over the blocks).
++(3) `uprob_colSimTruncW_eq`.
++(4) `exists_colSimRed_ge` with `N := K` gives `k, e₀, π₀` with
++`distAdv truncW truncH D' ≤ K · distAdv X Y (colSimRed … k e₀ π₀ D')`.
++`CommitmentLemmas.exists_fixCoins` fixes the reduction's attempt table `w₀` without loss.
++With `w₀` fixed, only attempt `k` reads the challenge `cv`, so the fixed reduction is
++`cv ↦ D'(pre <|> planted cv <|> post)` for two constant optional views.
++(5) `statClose_colSimTruncH` and `one_sub_inv_pow_mul_le_exp` give
++`distAdv truncH (some ∘ colRealView) D' ≤ e^{−n}`.
++
++If `m = 0` and `n ≥ 1`, the two views differ only in the commitment vector (`π ∘ c` against
++`0`). For each fixed `π`, `D`'s advantage is the hiding gap of
++`cv ↦ D(encode ⟨x, z, r_V, [cv, []]⟩)`, with `r_V` fixed by `exists_fixCoins`. Average over `π`.
++If `n = 0`, bound the advantage by `1`: the simulator's tape is empty, so its `r_V = []` differs
++from the real tape when `V'.coinLen 0 > 0`.
++
++The machine `B` at parameter `n`: among the finitely many data at vertex count `n` (finite
++because `|z| ≤ Lz(n²)`: this is where the bound `Lz` is used, see the `Defs.lean` module
++docstring), take those whose fixed reduction (either case) has the largest gap on its own
++vectors. Hard-wire `x`, `z`, the case, `ρ_k`, `e₀`, the two endpoint commitments and openings,
++`pre`, `post` and `D.advice (n²)` as advice (`NUPPT.exists_withAdvice`; polynomially bounded by
++`hC.easy.output_length_le` and `colProtocol_proverBounded`). Call `V'`'s uniform machine once
++(`Strategy.Efficient`) and `D` at parameter `n²` on `B`'s coins (`NUPPT.exists_reparam_advice`,
++`φ n = n²`). Its acceptance probabilities on `multiCom` samples are the fixed reduction's (coin
++transport along `finCongr`). `hC.multiHiding var B` gives a negligible `ε_B ≥ 0` (it bounds a
++`distAdv` at every `n`), so the hiding terms are at most
++`K ε_B n ≤ n³ ε_B n ≤ |x|² ε_B (Nat.sqrt |x|)` for `n ≥ 1`.
++
++Put `ε N := N² ε_B (Nat.sqrt N) + exp (−Nat.sqrt N) + N² ((1/2)^N + (1/4)^N) + (1/4)^N`. It is
+ negligible by `Negligible.comp_sqrt`, `Negligible.mul_pow`, `negligible_exp_neg_sqrt_div`
+-(`C = 1`), `negligible_two_pow_neg` (with `(1/4)^N ≤ (1/2)^N`), `Negligible.add`,
+-`Negligible.const_mul`. Now fix `x = encGraph G`, `y = encColoring c` with `c` proper
+-(`R3COL`), `|z| ≤ Lz |x|`, `n` the vertex count, `m = |E|`. If `m = 0` the real view is
+-`⟨⟨x,z⟩,⟨r_V,[colCommit (π ∘ c) r, []]⟩⟩` and the simulated one has the all-zero colours, so
+-`D`'s advantage is at most `ε_B n` by `hC.multiHiding` applied to a machine `B'` built like
+-`B` (absorbed into `B` by a case split on `m` in its advice). Otherwise `n ≥ 2` and the chain is:
+-(1) the real view with `π = samplePerm3 |x| …` is within `(1/4)^{|x|}` of the view with a
+-uniform `π` (`statClose_samplePerm3`, `StatClose.prod` with `StatClose.refl` for the
+-randomness and `V'`'s tape, `StatClose.map` by the view encoding; `exec_succ` three times,
+-`decGraph_encGraph`, `decColoring_encColoring`, `colProver`/`colVerifier` unfold to
+-`colRealView` with `V com r_V := V'.next x z r_V [com]`); (2) `colSim` is `(Option.map enc
+-(colSimTrunc … (n m) w)).getD []` with the `t`-th attempt's coins read from the `t`-th block
+-(`colCoinSlice`, `colSimBlock`), within `n m ((1/2)^{|x|} + (1/4)^{|x|})` of the same with
+-uniform `(e'_t, (a_t, b_t))` (`statClose_sampleEdgeIdx`, the colour-pair analogue of
+-`statClose_samplePerm3`, `StatClose.prod` over the blocks); (3) `uprob_colSimTruncW_eq` makes
+-that the law of `colSimTruncW`; (4) `exists_colSimRed_ge` with `N := n m` gives `k, e₀, π₀`
+-with `distAdv (truncW) (truncH) D' ≤ n m · distAdv (X) (Y) (colSimRed …)`, and
+-`colSimRed … = B.distinguisherL n` up to the coin bijection (`acceptProb_comp_equiv`), so
+-`≤ n m ε_B n ≤ |x| ε_B (Nat.sqrt |x|)`; (5) `statClose_colSimTruncH` and
+-`one_sub_inv_pow_mul_le_exp` give `distAdv (truncH) (some ∘ colRealView) D' ≤ e^{-n}`
+-(`distAdv_le_of_statClose`). The triangle inequality for `distAdv` (`abs_sub_le` on the
+-acceptance probabilities) sums the five terms, and `Nat.sqrt |x| = n` (`length_encGraph`,
+-`Nat.sqrt_eq`). -/
++(`C = 1`), `negligible_two_pow_neg` and `Negligible.add`. At `N = 0` its exponential term is
++`1`. Use the triangle inequality for `distAdv` (`abs_sub_le`), and `Nat.sqrt |x| = n`
++(`length_encGraph`, `Nat.sqrt_eq`). -/
+ theorem col_zk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
+     ZK (colProtocol Com ℓ) R3COL := by
+   sorry
+diff --git a/audits/pass-shelat/Checks.lean b/audits/pass-shelat/Checks.lean
+index 61fb0276..f6e3c056 100644
+--- a/audits/pass-shelat/Checks.lean
++++ b/audits/pass-shelat/Checks.lean
+@@ -423,6 +423,8 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.Commitment.multiHiding
+ -- Ruling G3-3: bounded honest prover messages in the proof systems.
+ #print axioms TCSlib.Cryptography.Protocol.ProverBounded.mono
++-- Round 2, finding 2: the reading lemma of `Protocol.ProverBounded`.
++#print axioms TCSlib.Cryptography.Protocol.proverBounded_iff
+ #print axioms TCSlib.Cryptography.Protocol.ProverBounded.exists_complete
+ #print axioms TCSlib.Cryptography.Protocol.ProverBounded.pullback
+ #print axioms TCSlib.Cryptography.InteractiveProof.exists_accept
+@@ -439,6 +441,11 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ -- Ruling G3-4: perfect zero-knowledge with abort implies statistical ZK (error 2^{-|x|}).
+ #print axioms TCSlib.Cryptography.AbortRetry.statClose_retry
+ #print axioms TCSlib.Cryptography.AbortRetry.exists_retrySimulator
++-- Round 2, finding 2: the reading lemmas of `AbortRetry.attempt` and `AbortRetry.retry`.
++#print axioms TCSlib.Cryptography.AbortRetry.attempt_eq
++#print axioms TCSlib.Cryptography.AbortRetry.retry_eq
++#print axioms TCSlib.Cryptography.AbortRetry.retry_eq_attempt
++#print axioms TCSlib.Cryptography.AbortRetry.retry_eq_nil
+ #print axioms TCSlib.Cryptography.PerfectZKAbort.statZK
+ #print axioms TCSlib.Cryptography.PerfectZKAbort.zk
+ #print axioms TCSlib.Cryptography.perfectZK_zeroRounds
+diff --git a/machine-library-design.md b/machine-library-design.md
+index 1dea9731..52be0e2d 100644
+--- a/machine-library-design.md
++++ b/machine-library-design.md
+@@ -3087,7 +3087,7 @@ and a statement gate before a second consumer is briefed.
+ | H11 | **Indexed input access** (ours, `SpaceComplexity/Logspace/`): the input bit and length languages `inputBitLang`/`inputLenLang` read by an oracle call on a register-held index (their answers `indicator_inputBitLang`/`indicator_inputLenLang`), the stride decoder `boundedDecodeStride_loop` (with `boundedDecode_loop` its stride-one instance), the increment/decrement chain `arm_chain`, and the preimage host (`PreimageHost.compile_decides`, `mem_LOGSPACE_preimage`) | **existing (2026-10-11), public; now a host with received consumers.** The response proposes it stay under `Logspace/` (addendum 1). D7 and `decChain` were done in the payback (PR #101, landed 2026-10-15): `Codec/Engine`'s `decodeStride_loop` and `incChain`/`decChain` are instances of `boundedDecodeStride_loop` and `arm_chain` | every received ARM customer through its decider bank; `Codec/Engine` (its decoder and chains are instances); `PathHardRegs` (`mem_LOGSPACE_preimage` for `dropIdx`); `ARMLoops`, `NARMKit`, `VWord`, `ARMWidthExample` (direct importers) |
+ | H12 | **Code reachability with a growing window (`ExpBFS`)**: the reachable-code sets `RCode`/`rset` per radius, the stop rule (`mem_iff_of_card_eq`, `card_rset_succ_of_le`), the window lemma `inWin_runWith_of_decides`, and the breadth-first MARM search giving `NSPACE_subset_exp_dtime_of_le` | **received 2026-10-14; public, ungated; accepted exception.** Built at ARM level, so H4's language-first route and MIG-19 are moot for this theorem | `NSPACE_subset_exp_dtime` (`ExpTime.lean`) and its two corollaries; inductive counting (H13b) uses the stop rule (`ISCountGenRadius` directly, `ISCountGenCorrect` transitively) |
+ | H13 | **The customer machines**, each with its named consumers and its own reachability notion: (a) Savitch's midpoint recursion `SavitchARM` with its code-decider bank; (b) inductive counting `ISCount*`; (c) the PATH walk `PathWalk*` with `WalkLe`; (d) PATH hardness `PathHard*` (the code graph `red`); (e) the TQBF walk `TQBFARM`; (f) TQBF hardness `TQBFHard*` (the ∀-folded midpoint formula and Tseitin after the prefix) | **received 2026-10-14; public, ungated; accepted exception.** (a)–(e) are machines over H7–H10; (f) is a reduction over H10 and the polynomial-time closure algebra | (a) `PSPACE_eq_NPSPACE`; (b) `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq`; (c) `PATH_mem_NL`; (d) `PATH_NLComplete`; (e) `TQBF_mem_PSPACE`; (f) `TQBF_PSPACEHard`, `TQBF_PSPACEComplete`. Second uses inside the delivery: (b) uses (a)'s decider bank and H12's stop rule; (b) and (d) use (c)'s `WalkLe` and `rawEdge` |
+-| H14 | **Clean-module host** (`TuringMachine/Build/ModuleHost.lean`, namespace `Turing.ModuleHost`): the first-halting clean-module contract `Clean` (a module with a work tape halts first, at a positive time within a budget of its argument's length, at the seam holding a result word, having emitted a declared chunk), the clean install and emit modules of every polynomial-time word function (`clean_install`, `clean_emit`), and the finite host `hostTM` running `n` such modules over a shared bank of work tapes, generic in the modules, the control states and their table, the return map and the start state (`host_call`, `host_clean`, `guard_add`, `hostTM_step_inl`) | **public; harvested 2026-11-05 (gate 03l, R-03l-1); contract gated at gate 03l's delta round.** Harvested from the private module layer of `ClassNP/SAT.lean` (on `main`) and its copy in `Randomized/Build/IterateFindHost.lean` (duplication ledger DL-16); both copies are deleted. The copier `copyTM` of `IterateFindHost` re-derives the private input copier of `TuringMachine/Build/EmitIterBody.lean` (16 % line overlap, gate 03l review §6.1 (d)): a parallel routine, not a copy | `ClassNP/SAT.lean` (the streaming emitter behind `SAT_reducible_SAT3`: six modules, one control state); `Randomized/Build/IterateFind.lean`, through `Randomized/Build/IterateFindHost.lean` (the repetition machine behind `polyTimeComputable_iterateFind`: five modules, three control states) |
++| H14 | **Clean-module host** (`TuringMachine/Build/ModuleHost.lean`, namespace `Turing.ModuleHost`): the first-halting clean-module contract `Clean` (a module with a work tape halts first, at a positive time within a budget of its argument's length, at the seam holding a result word, having emitted a declared chunk), the clean install and emit modules of every polynomial-time word function (`clean_install`, `clean_emit`), and the finite host `hostTM` running `n` such modules over a shared bank of work tapes, generic in the modules, the control states and their table, the return map and the start state (`host_call`, `host_clean`, `guard_add`, `hostTM_step_inl`); head envelopes `Clean.envelope` (a clean module's heads stay within `B \|arg\|` cells of the origin at every time), `host_call_envelope` (within `t` cells up to time `t` of a call) and `host_clean_envelope` (`host_clean` with the envelope `B \|arg\|` throughout the call), the coarse envelopes from the time bounds and the unit head moves of `Turing.MultiTapeTM.workTapePos_step_le` | **public; harvested 2026-11-05 (gate 03l, R-03l-1); contract gated at gate 03l's delta round; head-envelope clauses added 2026-11-06 (gate 03l round 2, finding 1).** Harvested from the private module layer of `ClassNP/SAT.lean` (on `main`) and its copy in `Randomized/Build/IterateFindHost.lean` (duplication ledger DL-16); both copies are deleted. The copier `copyTM` of `IterateFindHost` re-derives the private input copier of `TuringMachine/Build/EmitIterBody.lean` (16 % line overlap, gate 03l review §6.1 (d)): a parallel routine, not a copy | `ClassNP/SAT.lean` (the streaming emitter behind `SAT_reducible_SAT3`: six modules, one control state); `Randomized/Build/IterateFind.lean`, through `Randomized/Build/IterateFindHost.lean` (the repetition machine behind `polyTimeComputable_iterateFind`: five modules, three control states) |
+ 
+ **The received ARM machinery, H7–H13** (registered 2026-10-14: the ARM fill gate's round 2,
+ finding 5; user decision 3). The rows' public contracts, with file and line, are in
