@@ -229,7 +229,7 @@ theorem red_mem_iff {L : Language Bool} {c₀ : ℕ}
         intro hj
         refine (ih (by omega)).tail ((rawEdge_adjWordE N x s n _ _).mpr
           ⟨hW j (by omega), hW (j + 1) hj, Or.inr (Or.inr ⟨by omega, by omega, ?_⟩)⟩)
-        simpa [StepRel] using hstep j (by omega)
+        simpa [stepRel_iff_mem] using hstep j (by omega)
     have first : rawEdge n (adjWordE N x s n) 0 (c 0 + 2) :=
       (rawEdge_adjWordE N x s n _ _).mpr ⟨by omega, hW 0 (by omega),
         Or.inl ⟨rfl, by omega, by simpa using hinit⟩⟩

@@ -350,6 +350,6 @@ lemma orc_step (N : FinNDTM Bool) (x β : List Bool) (u v s : ℕ) :
         (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =
       @decide (Codec.StepRel N x s u v) (Classical.dec _) := by
   simp only [orc, As, indicator_eq_decide]
-  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.StepRel])
+  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.stepRel_iff_mem])
 
 end Complexity.PathHard

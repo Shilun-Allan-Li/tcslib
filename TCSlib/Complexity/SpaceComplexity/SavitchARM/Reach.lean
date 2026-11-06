@@ -290,8 +290,8 @@ theorem mem_iff_reach {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
     obtain ⟨t, c, ht, hinit, hstep, hacc, hlt⟩ := (mem_iff_codeChain h x s hs).mp hx
     have hK : ∀ j ≤ t, c j < 2 ^ w := fun j hj =>
       (hlt j hj).trans_le (Nat.pow_le_pow_right (by norm_num) hw)
-    have hr := reach_of_chain (2 ^ w) (StepRel N x s) c t hstep hK w 0 t (by omega)
-      (ht.trans hcb)
+    have hr := reach_of_chain (2 ^ w) (StepRel N x s) c t
+      (fun j hj => stepRel_iff_mem.mpr (hstep j hj)) hK w 0 t (by omega) (ht.trans hcb)
     rw [zero_add] at hr
     exact ⟨c 0, hK 0 (Nat.zero_le _), hinit, c t, hK t le_rfl, hacc, hr⟩
   · rintro ⟨u, -, hinit, v, -, hacc, hr⟩
