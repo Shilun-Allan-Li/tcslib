@@ -118,8 +118,12 @@ replay below chained from it with only its own PR.
 | #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
 | #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
 | #207 | `d01332e4` | `replay-lzde2` **passed** | 99 **CLOSED** | **merged** 2026-11-06 (`d43a1374`); G5's fill brief issues |
-| #208 | `d01c56a4` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, and F2–F4; IL-1's six re-points `6a289c50`, both ruled by the user) | `replay-ldp6` **running** (190 modules, from `oleans-lnth`; IL-1 widened, five more re-points `0140aee2`) | 101 round 1 **HOLD** (0/1/3/3); round 2 in preparation (`pack-r2.md`) | merge when it closes |
+| #208 | `d01c56a4` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, and F2–F4; IL-1's six re-points `6a289c50`, both ruled by the user) | `replay-ldp6` **passed** (190 modules, from `oleans-lnth`; head `36ed2deb`) | 101 round 1 **HOLD** (0/1/3/3); round 2 **staged** (74 sections), ready to dispatch | merge when it closes |
 | #211 | `f239dafd` (G5's delivery `71046be0` + the landing edits `c00340d4`, `794ffb48`, `f239dafd`: the sweep's 15 hits, the review's N2/N4/F9, F6 through `SymbolLift` and F5 through `Contract.inPhase`; both imports ruled by the user) | `replay-lg6` **passed** (3 modules from `oleans-lnth`, 0 `sorry`) | 102 round 1 HOLD (0/1/1, both fixed); round 2 **staged** (34 sections), ready to dispatch | merge when it closes |
+| #212 | `034e72e3` (ZP-1: `ZoneRebalance`'s twelve inline steps cite `zoneRowPre_mapState_iff`) | `replay-lzp1` **passed** (5 modules from `oleans-lnth`) | 103 **staged** (17 sections), ready to dispatch | merge when it closes |
+| #213 | `fdc0e425` (CE-1: BPLInP's public copy deleted, five uses cite `ExpBFS.coreSum_eq_of_code_eq`) | `replay-lce1` **passed** (7 modules) | 104 **staged** (22 sections), ready to dispatch | merge when it closes |
+| #214 | `0bc71211` (AS-1: `LogProg.astep_call₁` through `astep_call`) | `replay-las1` **passed** (7 modules) | 105 **staged** (17 sections), ready to dispatch | merge when it closes |
+| #215 | `57939a97`+ (SG-1: `CounterLoop`'s `counterSpan` through `Segment`) | `replay-lsg1` running | gate 106 after the replay | — |
 | #209 | `0b05cc3a` | `replay-lnth` **passed** | 100 **CLOSED** | **merged** 2026-11-06 (`5761d6e0`); `oleans-lnth` is the campaign's snapshot |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
@@ -185,7 +189,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    wait for Hydroxyi. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
-   NZ-1 awaits acknowledgment. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
+   NZ-1 awaits acknowledgment. CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
+   `CircuitComplexity` await the owner), SG-1 #215 (`CounterLoop`; `Tautology` and `SingleTape`
+   await an import ruling), RP-1 widened (in progress). **NatBits (BL-1, NB-1) is planned, not
+   started:** `campaign/items/dedup/natbits-PLAN.md` (one PR, 18 files, a 340-module replay; after
+   #208), with decisions D1–D9 for the user. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
