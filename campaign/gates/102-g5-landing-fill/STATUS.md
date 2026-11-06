@@ -22,3 +22,4 @@
   Findings file `g5-landing-fill-r2-findings.md`. **Ready to dispatch.**
 - 2026-11-06: **dispatched** (the user).
 - 2026-11-06: pack written (round 3, citing gate 108); staged.
+- 2026-11-06: round 3 **dispatched** by the user (32 sections, bundle `d6e3cfa3…`).

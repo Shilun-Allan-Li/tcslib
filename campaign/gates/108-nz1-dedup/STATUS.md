@@ -1,1 +1,2 @@
 - 2026-11-06: pack written (gate 108, #217 at 03052218; replay-lnz1 261/0); staged.
+- 2026-11-06: **dispatched** by the user (38 sections, bundle `117ef54e…`).
