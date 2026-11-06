@@ -202,6 +202,13 @@ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype
       distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
   rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
 
+/-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
+theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+    (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D ≤ 1 :=
+  distAdv_le_of_statClose X Y (fun T => abs_sub_le_iff.2
+    ⟨by linarith [uprob_le_one fun s => T (X s), uprob_nonneg fun t => T (Y t)],
+      by linarith [uprob_le_one fun t => T (Y t), uprob_nonneg fun s => T (X s)]⟩) D
+
 /-! ### Tapes as lists -/
 
 /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
@@ -251,6 +258,28 @@ theorem findSome?_range_eq_finRange {β : Type*} (K : ℕ) (g : ℕ → Option �
     (List.range K).findSome? g = (List.finRange K).findSome? fun t : Fin K => g t := by
   rw [← List.map_coe_finRange, List.findSome?_map]
   rfl
+
+/-! ### The error of `col_zk` -/
+
+/-- **The error function of `col_zk` is negligible**: if `εB (√N)` is negligible in `N` then so
+is `N² εB (√N) + e^{−√N} + N² ((1/2)^N + (1/4)^N) + (1/4)^N` (gate 03g review §2.3).
+
+**Proof sketch.** `Negligible.mul_pow` (twice, with `negligible_two_pow_neg` and
+`(1/4)^N ≤ (1/2)^N`), `negligible_exp_neg_sqrt_div` with `C = 1` (`Nat.div_one`),
+`Negligible.mono` and `Negligible.add`. -/
+theorem negligible_colZKErr {εB : ℕ → ℝ} (hε : Negligible fun N => εB (Nat.sqrt N)) :
+    Negligible fun N : ℕ => (N : ℝ) ^ 2 * εB (Nat.sqrt N) + Real.exp (-(Nat.sqrt N : ℝ)) +
+      (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) + (1 / 4 : ℝ) ^ N := by
+  have h2 : Negligible fun N : ℕ => (1 / 2 : ℝ) ^ N :=
+    negligible_two_pow_neg.mono ⟨0, fun N _ => le_of_eq (by rw [one_div])⟩
+  have h4 : Negligible fun N : ℕ => (1 / 4 : ℝ) ^ N := h2.mono ⟨0, fun N _ => by
+    rw [abs_of_nonneg (by positivity), abs_of_nonneg (by positivity)]
+    exact pow_le_pow_left₀ (by norm_num) (by norm_num) N⟩
+  have he : Negligible fun N : ℕ => Real.exp (-(Nat.sqrt N : ℝ)) :=
+    (negligible_exp_neg_sqrt_div one_pos).mono ⟨0, fun N _ => le_of_eq (by rw [Nat.div_one])⟩
+  have h24 : Negligible fun N : ℕ => (N : ℝ) ^ 2 * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N) :=
+    ((h2.mul_pow 2).add (h4.mul_pow 2)).mono ⟨0, fun N _ => le_of_eq (by rw [mul_add])⟩
+  exact (((hε.mul_pow 2).add he).add h24).add h4
 
 /-! ### Splitting a search at an index -/
 

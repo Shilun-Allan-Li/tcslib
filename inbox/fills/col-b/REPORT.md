@@ -1,4 +1,4 @@
-# Fill col-b (the `col_zk` ladder): REPORT (checkpoint 4, in progress)
+# Fill col-b (the `col_zk` ladder): REPORT (checkpoint 5, in progress)
 
 - Base: `16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1` (issue commit, head of PR #210). Local branch `fill/col-b`, never pushed.
 - Ran as an **internal worker** under the environment note `issue/internal-env.md` (no preflight, no cache step,
@@ -14,7 +14,7 @@
 | 2 | `statClose_colRealView` | filled |
 | 3 | `statClose_colSim_colSimTrunc` | filled |
 | 6 | `exists_colZK_edgeless` | filled |
-| 7 | `col_zk` | in progress (needs the step-5 identification, blocked by E-API) |
+| 7 | `col_zk` | **partial**: the whole assembly is proved as the private `colZK_zk_of_eqs`, conditional on the two missing equations (E-API); `col_zk` keeps its `sorry`; frontier: `col_zk hC := colZK_zk_of_eqs msgAt_eq edgeIdxOfMsg_eq hC` |
 
 ### E-API (found at checkpoint 2)
 
