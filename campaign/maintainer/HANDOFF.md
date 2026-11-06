@@ -119,7 +119,7 @@ replay below chained from it with only its own PR.
 | #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
 | #207 | `d01332e4` | `replay-lzde2` **passed** | 99 **CLOSED** | **merged** 2026-11-06 (`d43a1374`); G5's fill brief issues |
 | #208 | `a074d9b7` (the delivery `c7b179da` + the landing edits `a46e04a9`, `eeceae9f`: the review's two majors and the sweep's five hits) | `replay-ldp2` **passed** (3 modules from `oleans-lcamp1`, 0 `sorry`) | 101 **staged** (`outbox/gates/101-deepen-landing-fill-gate/`, 83 sections) | dispatch gate 101; merge when it closes |
-| #209 | `0b05cc3a`: `NTimeHierarchy`'s Status paragraph (docstring only) | `replay-lnth` **passed** (2 modules from `oleans-lcamp1`, 0 `sorry`) | 100 **dispatched** 2026-11-06 (18 sections) | merge when it closes |
+| #209 | `0b05cc3a`: `NTimeHierarchy`'s Status paragraph (docstring only) | `replay-lnth` **passed** (2 modules from `oleans-lcamp1`, 0 `sorry`) | 100 **CLOSED** 2026-11-06 (PASS 0/0/0/4) | **clear to merge** |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
