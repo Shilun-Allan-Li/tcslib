@@ -2014,6 +2014,170 @@ private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : N
   rw [listToNat_natToList (hhp.trans hpn), listToNat_natToList ((Nat.mod_lt _ hp0).trans hpn),
     listToNat_natToList ((Nat.mod_lt _ hp0).trans hpn), key]
 
+/-- **Hybrid 1**: for `n ≥ n₀` the challenge with bit `b` and the DDH distinguisher `D_b` on the
+real ensemble of the derived generator are accepted with probabilities within
+`Pr[g² ≡ 1] ≤ δ n + 9 · (1/2)^n` (the coins identified by `dlc_genEquiv`, `dlc_encEquiv`,
+`dlc_grpEquiv` and `e`; `dlc_hyb1_point`, `dlc_uprob_bad_le`). -/
+private theorem dlc_hyb1 (H : ArithmeticFP) (G : SafePrimeGen) {δ : ℕ → ℝ} (hδ : G.FullLengthExcept δ)
+    (M D Db : NUPPT) (b : Bool) {n : ℕ} (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
+    (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db.runAt n w (e (rM, rD)) = D.runAt n (dlc_ddhInput n b w (M.runAt n (dlc_tuplePk w) rM)) rD) :
+    |acceptProb ((elGamal H G).challenge n M b) (D.distinguisherL n) -
+      acceptProb ((ddhReal (egGroupGen H G)).X n) (Db.distinguisher n (ddhLen.eval n))| ≤
+      δ n + 9 * (1 / 2) ^ n := by
+  let E₁ : (G.gen.Coins n × (Fin (n * n) → Bool)) × ((Fin (n * n) → Bool) ×
+      ((Fin (n * n) → Bool) × (M.Coins n × D.Coins n))) ≃
+      ((elGamal H G).gen.Coins n × (M.Coins n × (elGamal H G).enc.Coins n)) × D.Coins n :=
+    { toFun := fun ω => ((dlc_genEquiv H G n (ω.1, ω.2.1), (ω.2.2.2.1, dlc_encEquiv H n ω.2.2.1)),
+        ω.2.2.2.2)
+      invFun := fun s => (((dlc_genEquiv H G n).symm s.1.1).1, (((dlc_genEquiv H G n).symm s.1.1).2,
+        ((dlc_encEquiv H n).symm s.1.2.2, (s.1.2.1, s.2))))
+      left_inv := fun ω => by simp
+      right_inv := fun s => by simp }
+  let E₂ : (G.gen.Coins n × (Fin (n * n) → Bool)) × ((Fin (n * n) → Bool) ×
+      ((Fin (n * n) → Bool) × (M.Coins n × D.Coins n))) ≃
+      (ddhReal (egGroupGen H G)).σ n × Db.Coins n :=
+    { toFun := fun ω => ((dlc_grpEquiv H G n ω.1, (ω.2.1, ω.2.2.1)), e ω.2.2.2)
+      invFun := fun s => ((dlc_grpEquiv H G n).symm s.1.1, (s.1.2.1, (s.1.2.2, e.symm s.2)))
+      left_inv := fun ω => by simp
+      right_inv := fun s => by simp }
+  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv E₁, ← uprob_comp_equiv E₂]
+  refine (dlc_abs_uprob_sub_le_of_iff (C := fun ω => egUnit n (dlP (G.gen.runAt n [] ω.1.1))
+    (List.ofFn ω.1.2) ^ 2 % dlP (G.gen.runAt n [] ω.1.1) = 1) fun ω hω => ?_).trans ?_
+  · obtain ⟨⟨r, u₁⟩, u₂, u₃, rM, rD⟩ := ω
+    show D.distinguisherL n ((elGamal H G).challenge n M b
+        (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃))) rD = true ↔
+      Db.distinguisher n (ddhLen.eval n)
+        ((ddhReal (egGroupGen H G)).X n (dlc_grpEquiv H G n (r, u₁), (u₂, u₃))) (e (rM, rD)) = true
+    rw [dlc_hyb1_point H G M D Db b hn e he r u₁ u₂ u₃ rM rD hω]
+  · exact (uprob_fst (fun z : G.gen.Coins n × (Fin (n * n) → Bool) =>
+      egUnit n (dlP (G.gen.runAt n [] z.1)) (List.ofFn z.2) ^ 2 % dlP (G.gen.runAt n [] z.1) = 1)).le.trans
+      (dlc_uprob_bad_le G hδ hn)
+
+/-- The canonicalised message is `1` or an element of `G_q` (`0 < c < p`, `c^q ≡ 1`). -/
+private theorem dlc_egCanon_cases (p q m : ℕ) :
+    egCanon p q m = 1 ∨ (0 < egCanon p q m ∧ egCanon p q m < p ∧ egCanon p q m ^ q % p = 1) := by
+  unfold egCanon
+  split_ifs with h
+  · exact Or.inr h
+  · exact Or.inl rfl
+
+/-- **Hybrid 3, one world**: at a valid well-formed index, replacing the exponent sampler by a
+uniform `z ∈ Z_q` costs `(1/2)^n` (`ddhExpo_statClose`), and multiplying `h^z` by an element `c`
+of `G_q` does not change the law (`dlc_exists_pow_eq`, `dlc_uprob_shift`). -/
+private theorem dlc_rand_term {n : ℕ} {i : List Bool} (hvi : SafePrimeValid i) (hwi : WellFormedIndex n i)
+    (Ψ : List Bool → Prop) (m : ℕ) :
+    |uprob (fun u : Fin (n * n) → Bool => Ψ (natToList n (dlG i ^ (ddhExpo n i u).val % dlP i *
+        egCanon (dlP i) (dlM i) m % dlP i))) -
+      uprob (fun z : ZMod (expOrd i) => Ψ (natToList n (dlG i ^ z.val % dlP i)))| ≤ (1 / 2) ^ n := by
+  obtain ⟨hev, hqp, hpq⟩ := (safePrimeValid_iff i).1 hvi
+  have hev' := (expValid_iff i).1 hev
+  haveI : Fact (dlP i).Prime := ⟨hev'.1⟩
+  haveI : Fact (dlM i).Prime := ⟨hqp⟩
+  have hord := hev'.2.2.2.2.2
+  have hk : ∃ k : ℕ, ((dlG i : ℕ) : ZMod (dlP i)) ^ k =
+      ((egCanon (dlP i) (dlM i) m : ℕ) : ZMod (dlP i)) := by
+    rcases dlc_egCanon_cases (dlP i) (dlM i) m with h1 | ⟨h0, hlt, hq⟩
+    · exact ⟨0, by rw [h1, pow_zero, Nat.cast_one]⟩
+    · exact dlc_exists_pow_eq hpq hord h0 hlt hq
+  obtain ⟨k, hk⟩ := hk
+  have hord' : orderOf ((dlG i : ℕ) : ZMod (dlP i)) = expOrd i := by
+    rw [hord, expOrd_of_valid hev]
+  rw [← dlc_uprob_shift hord' hk n Ψ]
+  exact (ddhExpo_statClose hev hwi).abs_uprob_sub_le
+    (fun z => Ψ (natToList n (dlG i ^ z.val % dlP i * egCanon (dlP i) (dlM i) m % dlP i)))
+
+/-- **The random world's acceptance event**: `D_b` on the random tuple of the derived generator
+runs `D` on `⟨⟨i, g^a⟩, ⟨g^b, ⟦g^z · m'_b mod p⟧_n⟩⟩` with `z = ddhExpo n i u₃`. -/
+private theorem dlc_rand_accept (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : NUPPT) (b : Bool) {n : ℕ}
+    (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
+    (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db.runAt n w (e (rM, rD)) = D.runAt n (dlc_ddhInput n b w (M.runAt n (dlc_tuplePk w) rM)) rD)
+    (r : (egGroupGen H G).gen.Coins n) (u₁ u₂ u₃ : Fin (n * n) → Bool) (rM : M.Coins n) (rD : D.Coins n) :
+    (Db.distinguisher n (ddhLen.eval n) ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃))))
+        (e (rM, rD)) = true) ↔
+      (fun W => D.runAt n (pairEncode (pairEncode ((egGroupGen H G).gen.runAt n [] r)
+          (expF ((egGroupGen H G).gen.runAt n [] r) (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₁)))
+          (pairEncode (expF ((egGroupGen H G).gen.runAt n [] r)
+            (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₂)) W)) rD = [true])
+        (natToList n (dlG ((egGroupGen H G).gen.runAt n [] r) ^
+            (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₃).val % dlP ((egGroupGen H G).gen.runAt n [] r) *
+          egCanon (dlP ((egGroupGen H G).gen.runAt n [] r)) (dlM ((egGroupGen H G).gen.runAt n [] r))
+            (listToNat (if b then pairSndD (M.runAt n (pairEncode ((egGroupGen H G).gen.runAt n [] r)
+                (expF ((egGroupGen H G).gen.runAt n [] r)
+                  (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₁))) rM)
+              else pairFstD (M.runAt n (pairEncode ((egGroupGen H G).gen.runAt n [] r)
+                (expF ((egGroupGen H G).gen.runAt n [] r)
+                  (ddhExpo n ((egGroupGen H G).gen.runAt n [] r) u₁))) rM))) %
+          dlP ((egGroupGen H G).gen.runAt n [] r))) := by
+  have hvi : SafePrimeValid ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).valid n r hn
+  have hwi : WellFormedIndex n ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).wellFormed n r hn
+  rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, he, decide_eq_true_iff]
+  dsimp only [ddhRandom]
+  generalize (egGroupGen H G).gen.runAt n [] r = i at hvi hwi ⊢
+  have hp0 : 0 < dlP i := ((expValid_iff i).1 hvi.expValid).1.pos
+  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
+  unfold dlc_ddhInput dlc_tuplePk ddhTuple
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [expF_eq i (ddhExpo n i u₃), listToNat_natToList ((Nat.mod_lt _ hp0).trans (dlP_lt_two_pow i))]
+
+/-- **Hybrid 3, pointwise**: with everything but the coins of `z` fixed, the random worlds of
+`D_0` and `D_1` are accepted with probabilities within `2 · (1/2)^n` (both are within `(1/2)^n`
+of the same ideal probability, `dlc_rand_term`). -/
+private theorem dlc_hyb3_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
+    (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
+    (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db₀.runAt n w (e₀ (rM, rD)) = D.runAt n (dlc_ddhInput n false w (M.runAt n (dlc_tuplePk w) rM)) rD)
+    (e₁ : M.Coins n × D.Coins n ≃ Db₁.Coins n)
+    (he₁ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db₁.runAt n w (e₁ (rM, rD)) = D.runAt n (dlc_ddhInput n true w (M.runAt n (dlc_tuplePk w) rM)) rD)
+    (r : (egGroupGen H G).gen.Coins n) (u₁ u₂ : Fin (n * n) → Bool) (rM : M.Coins n) (rD : D.Coins n) :
+    |uprob (fun u₃ : Fin (n * n) → Bool => Db₀.distinguisher n (ddhLen.eval n)
+        ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃)))) (e₀ (rM, rD)) = true) -
+      uprob (fun u₃ : Fin (n * n) → Bool => Db₁.distinguisher n (ddhLen.eval n)
+        ((ddhRandom (egGroupGen H G)).X n (r, (u₁, (u₂, u₃)))) (e₁ (rM, rD)) = true)| ≤
+      2 * (1 / 2) ^ n := by
+  rw [OneWay.uprob_congr fun u₃ => dlc_rand_accept H G M D Db₀ false hn e₀ he₀ r u₁ u₂ u₃ rM rD,
+    OneWay.uprob_congr fun u₃ => dlc_rand_accept H G M D Db₁ true hn e₁ he₁ r u₁ u₂ u₃ rM rD]
+  have hvi : SafePrimeValid ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).valid n r hn
+  have hwi : WellFormedIndex n ((egGroupGen H G).gen.runAt n [] r) := (egGroupGen H G).wellFormed n r hn
+  generalize (egGroupGen H G).gen.runAt n [] r = i at hvi hwi ⊢
+  have t₀ := dlc_rand_term hvi hwi (fun W => D.runAt n (pairEncode (pairEncode i (expF i (ddhExpo n i u₁)))
+    (pairEncode (expF i (ddhExpo n i u₂)) W)) rD = [true])
+    (listToNat (pairFstD (M.runAt n (pairEncode i (expF i (ddhExpo n i u₁))) rM)))
+  have t₁ := dlc_rand_term hvi hwi (fun W => D.runAt n (pairEncode (pairEncode i (expF i (ddhExpo n i u₁)))
+    (pairEncode (expF i (ddhExpo n i u₂)) W)) rD = [true])
+    (listToNat (pairSndD (M.runAt n (pairEncode i (expF i (ddhExpo n i u₁))) rM)))
+  simp only [Bool.false_eq_true, if_false, if_true] at t₀ t₁ ⊢
+  rw [abs_le] at t₀ t₁ ⊢
+  constructor <;> linarith [t₀.1, t₀.2, t₁.1, t₁.2]
+
+/-- **Hybrid 3**: for `n ≥ n₀` the random worlds of `D_0` and `D_1` are accepted with
+probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other coins). -/
+private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
+    (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
+    (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db₀.runAt n w (e₀ (rM, rD)) = D.runAt n (dlc_ddhInput n false w (M.runAt n (dlc_tuplePk w) rM)) rD)
+    (e₁ : M.Coins n × D.Coins n ≃ Db₁.Coins n)
+    (he₁ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+      Db₁.runAt n w (e₁ (rM, rD)) = D.runAt n (dlc_ddhInput n true w (M.runAt n (dlc_tuplePk w) rM)) rD) :
+    |acceptProb ((ddhRandom (egGroupGen H G)).X n) (Db₀.distinguisher n (ddhLen.eval n)) -
+      acceptProb ((ddhRandom (egGroupGen H G)).X n) (Db₁.distinguisher n (ddhLen.eval n))| ≤
+      2 * (1 / 2) ^ n := by
+  let E : ∀ {Db : NUPPT}, (M.Coins n × D.Coins n ≃ Db.Coins n) →
+      ((((egGroupGen H G).gen.Coins n × ((Fin (n * n) → Bool) × (Fin (n * n) → Bool))) ×
+        (M.Coins n × D.Coins n)) × (Fin (n * n) → Bool)) ≃
+      (ddhRandom (egGroupGen H G)).σ n × Db.Coins n := fun e =>
+    { toFun := fun ω => ((ω.1.1.1, (ω.1.1.2.1, (ω.1.1.2.2, ω.2))), e ω.1.2)
+      invFun := fun s => (((s.1.1, (s.1.2.1, s.1.2.2.1)), e.symm s.2), s.1.2.2.2)
+      left_inv := fun ω => by simp
+      right_inv := fun s => by simp }
+  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
+    uprob_prod, uprob_prod]
+  refine dlc_abs_uexp_sub_le fun ρ => ?_
+  obtain ⟨⟨r, u₁, u₂⟩, rM, rD⟩ := ρ
+  exact dlc_hyb3_point H G M D Db₀ Db₁ hn e₀ he₀ e₁ he₁ r u₁ u₂ rM rD
+
 /-- **Theorem 107.3** [PS10, Theorem 107.3]: if the DDH assumption holds (for the derived
 generator) then El Gamal with message space `G_q` is secure, for safe primes of full length
 except on a negligible set of the generator's coins (and under the arithmetic hypotheses).
@@ -2066,6 +2230,59 @@ below), negligible by `negligible_two_pow_neg`, `Negligible.const_mul`, `Negligi
 theorem elGamal_secure (H : ArithmeticFP) (G : SafePrimeGen)
     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ)
     (hDDH : DDHAssumption (egGroupGen H G)) : (elGamal H G).Secure := by
-  sorry
+  obtain ⟨δ, hδneg, hδ⟩ := hbig
+  intro M D
+  obtain ⟨Db₀, hDb₀⟩ := dlc_exists_ddhDist H M D false
+  obtain ⟨Db₁, hDb₁⟩ := dlc_exists_ddhDist H M D true
+  have hind := (Ensemble.indist_iff_exists_negligible _ _).1 ((ddhAssumption_iff _).1 hDDH)
+  obtain ⟨ε₀, hε₀, hlt₀⟩ := hind Db₀
+  obtain ⟨ε₁, hε₁, hlt₁⟩ := hind Db₁
+  have hhalf : Negligible fun n => (1 / 2 : ℝ) ^ n := by
+    simpa only [one_div] using negligible_two_pow_neg
+  have habs : Negligible fun n => |δ n| := hδneg.mono ⟨0, fun n _ => by rw [abs_abs]⟩
+  have hsmall : Negligible fun n => if n < G.n₀ then (1 : ℝ) else 0 :=
+    negligible_zero.mono ⟨G.n₀, fun n hn => by rw [if_neg (not_lt.2 hn)]⟩
+  refine ⟨fun n => 2 * (|δ n| + 9 * (1 / 2) ^ n) + ε₀ n + ε₁ n + 2 * (1 / 2) ^ n +
+      (if n < G.n₀ then 1 else 0),
+    (((((habs.add (hhalf.const_mul 9)).const_mul 2).add hε₀).add hε₁).add (hhalf.const_mul 2)).add hsmall,
+    fun n => ?_⟩
+  beta_reduce
+  have hd₀ : 0 ≤ distAdv ((ddhReal (egGroupGen H G)).X n) ((ddhRandom (egGroupGen H G)).X n)
+      (Db₀.distinguisher n (ddhLen.eval n)) := by rw [distAdv_def]; exact abs_nonneg _
+  have hd₁ : 0 ≤ distAdv ((ddhReal (egGroupGen H G)).X n) ((ddhRandom (egGroupGen H G)).X n)
+      (Db₁.distinguisher n (ddhLen.eval n)) := by rw [distAdv_def]; exact abs_nonneg _
+  have hε₀n := (hlt₀ n)
+  have hε₁n := (hlt₁ n)
+  have hδn : 0 ≤ |δ n| := abs_nonneg _
+  have h2n : (0 : ℝ) ≤ (1 / 2) ^ n := by positivity
+  by_cases hn : G.n₀ ≤ n
+  · obtain ⟨e₀, he₀⟩ := hDb₀ n
+    obtain ⟨e₁, he₁⟩ := hDb₁ n
+    have h1₀ := dlc_hyb1 H G hδ M D Db₀ false hn e₀ he₀
+    have h1₁ := dlc_hyb1 H G hδ M D Db₁ true hn e₁ he₁
+    have h3 := dlc_hyb3 H G M D Db₀ Db₁ hn e₀ he₀ e₁ he₁
+    rw [distAdv_def] at hε₀n hε₁n ⊢
+    rw [if_neg (not_lt.2 hn)]
+    have hle : δ n ≤ |δ n| := le_abs_self _
+    rw [abs_le] at h1₀ h1₁ h3 ⊢
+    rw [abs_lt] at hε₀n hε₁n
+    constructor <;> linarith [h1₀.1, h1₀.2, h1₁.1, h1₁.2, h3.1, h3.2, hε₀n.1, hε₀n.2, hε₁n.1, hε₁n.2]
+  · rw [if_pos (not_le.1 hn)]
+    have hb : distAdv ((elGamal H G).challenge n M false) ((elGamal H G).challenge n M true)
+        (D.distinguisherL n) ≤ 1 := by
+      rw [distAdv_def, acceptProb_def, acceptProb_def, abs_le]
+      constructor <;> linarith [uprob_nonneg (fun z : ((elGamal H G).gen.Coins n ×
+          (M.Coins n × (elGamal H G).enc.Coins n)) × D.Coins n =>
+          D.distinguisherL n ((elGamal H G).challenge n M false z.1) z.2 = true),
+        uprob_le_one (fun z : ((elGamal H G).gen.Coins n ×
+          (M.Coins n × (elGamal H G).enc.Coins n)) × D.Coins n =>
+          D.distinguisherL n ((elGamal H G).challenge n M false z.1) z.2 = true),
+        uprob_nonneg (fun z : ((elGamal H G).gen.Coins n ×
+          (M.Coins n × (elGamal H G).enc.Coins n)) × D.Coins n =>
+          D.distinguisherL n ((elGamal H G).challenge n M true z.1) z.2 = true),
+        uprob_le_one (fun z : ((elGamal H G).gen.Coins n ×
+          (M.Coins n × (elGamal H G).enc.Coins n)) × D.Coins n =>
+          D.distinguisherL n ((elGamal H G).challenge n M true z.1) z.2 = true)]
+    linarith
 
 end TCSlib.Cryptography.Candidates
