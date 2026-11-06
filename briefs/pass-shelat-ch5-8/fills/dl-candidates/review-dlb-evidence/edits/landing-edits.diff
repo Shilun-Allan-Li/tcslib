@@ -1,0 +1,361 @@
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -628,6 +628,8 @@
+     (h : ∀ e' < s, 1 - δ ≤ uprob fun c : ρ' => B₀ (g ^ e') c = e') :
+     (1 - δ) / T ≤ invProb (expo g) (shiftInverter g B₀ s T) := by
+   classical
++  -- the bound holds for every `g`; the frozen statement keeps `hg`, which the proof does not need
++  have _ := hg
+   rw [invProb_def]
+   rcases Nat.eq_zero_or_pos T with hT0 | hT0
+   · rw [hT0, Nat.cast_zero, div_zero]; exact uprob_nonneg _
+@@ -1587,7 +1589,14 @@
+ 
+ /-- **The trial loop's result**: on `⟨⟨f, root⟩, blocks ++ rest⟩` with `1^{|blocks|}` as the trial
+ count of `f`, the loop ends with an empty counter, the coins `rest` and the votes of all blocks
+-(last first). -/
++(last first).
++
++**Proof sketch.** The start state is `⟨1^{|bs|}, ⟨cs, []⟩⟩` (`dlb_iStart`, `hL`). After
++`i ≤ |bs|` steps the state is `⟨1^{|bs|−i}, ⟨blocks(bs.drop i) ++ rest, votes(bs.take i)⟩⟩`
++(`dlb_iStep_iterate`), and from `|bs|` steps on the counter is empty and the state is fixed
++(`dlb_iStep_iterate_nil`). Every orbit state is within `3|Y| + 4` (`dlb_iB`), so the guard never
++fires (`StateLoop.gstep_iterate_eq`, `dlb_orbit_eq`); the loop runs `|⟨Y, start Y⟩| ≥ |bs|`
++rounds and ends in the state reached at `|bs|`. -/
+ private theorem dlb_inner_eq (hS : (dlb_fuS f).length = S.coinLen n)
+     (hA : (dlb_fuA f).length = A.coinLen n) (bs : List (S.Coins n × A.Coins n))
+     (hL : dlb_fuL f = List.replicate bs.length true) (rest : List Bool) :
+@@ -1685,7 +1694,13 @@
+   simp only [dlb_oRoot, dlb_oBase, dlb_rootF, dlb_oQr_eq, dlb_oY, dlb_oF, pairFstD_pairEncode,
+     pairSndD_pairEncode]
+ 
+-/-- One round on a state whose counter is nonempty and whose coins begin with `ℓ` blocks. -/
++/-- One round on a state whose counter is nonempty and whose coins begin with `ℓ` blocks.
++
++**Proof sketch.** The trial loop on the round's root `rootF f y` (`dlb_oRoot_eq`)
++returns the rest of the coins and the votes of the `ℓ` blocks, reversed (`dlb_inner_eq`);
++reversal changes neither the length nor the count of `true`s (`List.length_reverse`,
++`List.count_reverse`), so the majority bit is the displayed test. The parity bit is
++`¬ qrF f y` (`dlb_oQr_eq`) and the counter loses one mark. -/
+ private theorem dlb_oStep_cons (hS : (dlb_fuS f).length = S.coinLen n)
+     (hA : (dlb_fuA f).length = A.coinLen n) (bs : List (S.Coins n × A.Coins n))
+     (hL : dlb_fuL f = List.replicate bs.length true) (s0 y acc rest : List Bool) (m : ℕ) :
+@@ -1725,7 +1740,13 @@
+ 
+ /-- **The round loop's shape**: after `i ≤ |rs₀|` rounds from `⟨y, ⟨[], ⟨1^{|rs₀|}, rounds ++ rest⟩⟩⟩`
+ the state is `⟨⟦v⟧_n, ⟨acc, ⟨1^{|rs|}, rounds' ++ rest⟩⟩⟩` with `|acc| = i`, `|rs| = |rs₀| − i` and
+-`rs` a suffix-sized list of full rounds (used for the length bound of the guarded loop). -/
++`rs` a suffix-sized list of full rounds (used for the length bound of the guarded loop).
++
++**Proof sketch.** Since `i < |rs₀|`, `rs = r :: rs'` with `|r| = ℓ`, and
++`dlb_oStep_cons` performs the round. The new root is again an `n`-bit numeral: `rootF` ends in a
++`modExpStr` with modulus `⟦p⟧_n` (`modExpStr_pairEncode`) and `p − root` is a `subStr` of the
++same width (`subStr_pairEncode`). The parity bit extends `acc` by one, and `rs'` keeps the
++invariants (its coin string is a suffix of that of `rs`). -/
+ private theorem dlb_oStep_shape (hS : (dlb_fuS f).length = S.coinLen n)
+     (hA : (dlb_fuA f).length = A.coinLen n) (hL : dlb_fuL f = List.replicate ℓ true)
+     (hp : (dlb_fp f).length = n) (s0 rest : List Bool) (rs₀ : List (List (S.Coins n × A.Coins n))) (s : List Bool) :
+@@ -1770,7 +1791,14 @@
+   omega
+ 
+ /-- **The round loop's result** (strings): from `⟨⟦v₀⟧_n, ⟨[], ⟨1^{|rs₀|}, rounds ++ rest⟩⟩⟩` the loop
+-returns the state after exactly `|rs₀|` round steps. -/
++returns the state after exactly `|rs₀|` round steps.
++
++**Proof sketch.** By induction with `dlb_oStep_shape`, after `i ≤ |rs₀|` rounds the
++state is `⟨⟦v⟧_n, ⟨acc, ⟨1^{|rs|}, rounds(rs) ++ rest⟩⟩⟩` with `|acc| = i`, never longer than the
++initial state, and from `|rs₀|` rounds on it is fixed (`dlb_oStep_iterate_nil`). So every orbit
++state fits `3|X| + 8` (`dlb_oB'`) and the guard never fires (`StateLoop.gstep_iterate_eq`,
++`dlb_orbit_eq`); the loop runs `|⟨X, s₀⟩| ≥ |rs₀|` rounds and ends in the state reached at
++`|rs₀|`. -/
+ private theorem dlb_outer_eq (hS : (dlb_fuS f).length = S.coinLen n)
+     (hA : (dlb_fuA f).length = A.coinLen n) (hL : dlb_fuL f = List.replicate ℓ true)
+     (hp : (dlb_fp f).length = n) (v₀ : ℕ) (rest : List Bool)
+@@ -1848,7 +1876,12 @@
+   (ZMod.val_lt _).trans hpn
+ 
+ /-- Euler's test computes quadratic residuosity: `qrF f ⟦u⟧ = [u ∈ QR_p]` for an odd prime `p`
+-(`ZMod.euler_criterion_units`, `val_units_pow`). -/
++(`ZMod.euler_criterion_units`, `val_units_pow`).
++
++**Proof sketch.** `powMod` on numerals is the numeral of `u^{(p−1)/2} mod p`
++(`dlb_powMod_natToList`, `val_units_pow`), and the two comparisons with `⟦1⟧` (`leStr_pairEncode`)
++say that this value is `1`. For odd `p`, `p / 2 = (p − 1)/2`, and Euler's criterion
++(`ZMod.euler_criterion_units`, `mem_QR_iff`) makes that `u ∈ QR_p`. -/
+ private theorem dlb_qrF_eq (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hfp : dlb_fp f = natToList n p)
+     (hfeH : dlb_feH f = natToList n ((p - 1) / 2)) (u : (ZMod p)ˣ) :
+     dlb_qrF f (natToList n (u : ZMod p).val) = decide (u ∈ QR p) := by
+@@ -1878,7 +1911,12 @@
+   · intro h; omega
+ 
+ /-- The root step computes `dlRoot`: `rootF f ⟦u⟧ = ⟦dlRoot g u⟧` (`dlb_qrF_eq`; `mulMod` is the
+-product of units, `powMod` their power, `val_units_pow`). -/
++product of units, `powMod` their power, `val_units_pow`).
++
++**Proof sketch.** `qrF` decides `u ∈ QR_p` (`dlb_qrF_eq`), the test of `dlRoot`. On a
++residue the root is `powMod ⟦u⟧ ⟦p/4 + 1⟧`, the numeral of `u^{p/4+1}` (`dlb_powMod_natToList`,
++`val_units_pow`); otherwise the base is `mulMod ⟦u⟧ ⟦g⁻¹⟧`, the numeral of `u · g⁻¹`
++(`dlb_mulMod_natToList`, `ZMod.val_mul`), raised to the same power. -/
+ private theorem dlb_rootF_eq (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hfp : dlb_fp f = natToList n p)
+     (hfeH : dlb_feH f = natToList n ((p - 1) / 2)) (hfeR : dlb_feR f = natToList (n + 1) (p / 4 + 1))
+     (g : (ZMod p)ˣ) (hfgI : dlb_fgI f = natToList n ((g⁻¹ : (ZMod p)ˣ) : ZMod p).val) (u : (ZMod p)ˣ) :
+@@ -1963,7 +2001,16 @@
+ 
+ /-- **One trial computes the vote of `majOracle`**: on a sampler block that decodes to `x₀`
+ (so the sampled numeral is `⟦e⟧_n` with `e = φ x₀`, `encD_decD`), the machine's vote is
+-`[A_i(r · g^e) = half_{p−1}(e)]`. -/
++`[A_i(r · g^e) = half_{p−1}(e)]`.
++
++**Proof sketch.** The block decodes to `x₀`, so the sampler's output is the encoding
++`⟦v⟧_n` of `v = (φ x₀).val` (`Collection.encD_decD`, `fullDLCollection_encD`, `expEnc_eq`), and
++the machine computes the same string, the domain sampler being uniform
++(`NUPPT.Uniform.runAt_eq`, `NUPPT.layout_eq`, `NUPPT.advInput_eq`). The query
++`mulMod ⟦r⟧ (powMod ⟦g⟧ ⟦v⟧)` is the numeral of `r · g^v` (`dlb_powMod_natToList`,
++`dlb_mulMod_natToList`, `val_units_pow`); the answer bit is `A.output` on its layout, which is
++`dlb_Ai` (`NUPPT.distinguisherL_eq`, `NUPPT.runAt_eq`, `NUPPT.runAtL_eq_output_layout`); and
++`halfStr ⟨i, ⟦v⟧_n⟩ = [2v + 2 ≤ p] = [2v < p − 1]`, which is `halfBit (p − 1)` of the exponent. -/
+ private theorem dlb_vote_eq {n p gN : ℕ} [Fact p.Prime] {i f : List Bool} (hpn : p < 2 ^ n)
+     (hfu : dlb_fu f = List.replicate n true) (hfi : dlb_fi f = i) (hfα : dlb_fα f = A.advice n)
+     (hiP : pairFstD i = natToList n p) (hiG : pairSndD (pairSndD i) = natToList n gN)
+@@ -2061,7 +2108,15 @@
+ /-- **One round of the machine is one round of `dlLoop`** with the majority test on the decoded
+ coins: the kept root is `±dlRoot g y` as `majOracle` decides, and the recorded bit is the
+ parity bit `[y ∉ QR_p]` (`dlb_oStep_cons`, `dlb_qrF_eq`, `dlb_rootF_eq`, `dlb_vote_dec`,
+-`dlb_majority_eq_of_odd` for the odd trial count). -/
++`dlb_majority_eq_of_odd` for the odd trial count).
++
++**Proof sketch.** `dlb_oStep_cons` performs the round on strings; Euler's test is
++`[y ∈ QR_p]` (`dlb_qrF_eq`) and the root is `⟦dlRoot g y⟧_n` (`dlb_rootF_eq`). Each vote is the
++`majOracle` vote on the decoded coins (`dlb_vote_dec`), so the votes are `List.ofFn` of those
++votes, whose count of `true`s is the cardinality of the agreeing trials (`dlb_count_ofFn`); with
++`ℓ` odd the strict-majority test is `HardcoreBit.majority` (`dlb_majority_eq_of_odd`). In the
++other branch `p − ⟦root⟧` is the numeral of `−root` (`subStr_pairEncode`,
++`ZMod.val_neg_of_ne_zero`). -/
+ private theorem dlb_oStep_round (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 2 = 1)
+     (hfu : dlb_fu f = List.replicate n true) (hfi : dlb_fi f = i) (hfα : dlb_fα f = A.advice n)
+     (hiP : pairFstD i = natToList n p) (hiG : pairSndD (pairSndD i) = natToList n gN)
+@@ -2113,7 +2168,13 @@
+ 
+ /-- **The machine's rounds are the rounds of `dlLoop`**: after `k` rounds on `k` round blocks
+ whose sampler blocks all decode, the bits read `dlLoop g (majOracle g A_i ℓ) k y c·2^{|acc|} + ⟦acc⟧`
+-(induction on `k`, `dlb_oStep_round`, `dlLoop_succ`, `dlb_listToNat_cons`). -/
++(induction on `k`, `dlb_oStep_round`, `dlLoop_succ`, `dlb_listToNat_cons`).
++
++**Proof sketch.** Induction on `k`; nothing runs at `k = 0`. At `k + 1` the round
++coins are the first round's blocks followed by the others (`dlb_roundsL_succ`); one round
++(`dlb_oStep_round`) moves to `±dlRoot g y` as `majOracle` decides and prepends the parity bit
++`[y ∉ QR_p]` to `acc`. The induction hypothesis on the other `k` rounds, `dlLoop_succ` and
++`⟦b :: acc⟧ = b · 2^{|acc|} + ⟦acc⟧` (`dlb_listToNat_cons`) give the claim. -/
+ private theorem dlb_loop_sem (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 2 = 1)
+     (hfu : dlb_fu f = List.replicate n true) (hfi : dlb_fi f = i) (hfα : dlb_fα f = A.advice n)
+     (hiP : pairFstD i = natToList n p) (hiG : pairSndD (pairSndD i) = natToList n gN)
+@@ -2157,7 +2218,18 @@
+ `⟨⟨⟨1^n, ⟨i, ⟦y⟧_n⟩⟩, ⟨α_A, ⟨⟦D⟧_n, 1^κ⟩⟩⟩, ⟦t-block⟧ ++ rounds⟩` at a well-formed full-group index
+ whose sampler blocks all decode: the output is the `n`-bit numeral of
+ `shiftInverter g (dlLoop g (majOracle g A_i ℓ) n) ⌊(p−1)/D⌋ 2^κ y (t, c)` with `t` the first `κ`
+-coins and `c` the decoded rounds. -/
++coins and `c` the decoded rounds.
++
++**Proof sketch.** Read the layout (`NUPPT.inParam_layout`, `inArg_layout`,
++`inAdvice_layout`, `inCoins_layout`): `p` and `g` from the index, `⟦D⟧_n` and `1^κ` from the
++advice, the guess block and the round coins from the coins. Each bundle operation is evaluated on
++numerals (`subStr_pairEncode`, `dlb_quot_natToList`, `mulStr_pairEncode`,
++`dlb_powMod_natToList`, `dlb_invMod_natToList`, `dlb_mulMod_natToList`): `s = ⌊(p − 1)/D⌋`,
++`ts = t · s`, `y₀ = y · (g^{ts})⁻¹`, and the fixed data hold `g⁻¹`, `(p − 1)/2`, `p/4 + 1`, the
++unary coin lengths and `1^ℓ` (`dlb_fix_proj`). The round loop runs exactly `n` rounds
++(`dlb_outer_eq`) and its bits read `dlLoop g (majOracle g A_i ℓ) n y₀ c` (`dlb_loop_sem`); the
++output `(bits + ts) mod (p − 1)` (`addStr_pairEncode`, `dlb_rem_natToList`) is the value of
++`shiftInverter` (`ZMod.val_natCast`). -/
+ private theorem dlb_raw_sem (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 2 = 1) (hℓ : ℓP.eval n = ℓ)
+     (hκ : κ ≤ n) (hD : D < 2 ^ n)
+     (hiP : pairFstD i = natToList n p) (hiG : pairSndD (pairSndD i) = natToList n gN)
+@@ -2391,43 +2463,7 @@
+ 
+ end Machine
+ 
+-/-! ### Closeness of independent coordinates; the guess -/
+-
+-/-- **Independent coordinates add their distances**: if `X` is `δ`-close to `Y`, the tuple of
+-`N` independent copies is `Nδ`-close (`StatClose.prod` and `Fin.consEquiv`, induction on `N`). -/
+-private theorem dlb_statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ}
+-    {δ : ℝ} (h : StatClose X Y δ) :
+-    ∀ N : ℕ, StatClose (fun s : Fin N → σ => fun j => X (s j)) (fun t : Fin N → τ => fun j => Y (t j))
+-      (N * δ)
+-  | 0 => by
+-    rw [statClose_iff]
+-    intro T
+-    have hc : ∀ (s : Fin 0 → σ) (t : Fin 0 → τ), (fun j => X (s j)) = fun j => Y (t j) :=
+-      fun _ _ => funext fun j => j.elim0
+-    have h1 : (fun s : Fin 0 → σ => T fun j => X (s j)) = fun _ => T fun j => Y (Fin.elim0 j) := by
+-      funext s; rw [hc s Fin.elim0]
+-    have h2 : (fun t : Fin 0 → τ => T fun j => Y (t j)) = fun _ => T fun j => Y (Fin.elim0 j) := by
+-      funext t; congr 2; funext j; exact j.elim0
+-    rw [h1, h2, Nat.cast_zero, zero_mul]
+-    by_cases hP : T fun j => Y (Fin.elim0 j)
+-    · simp only [hP]; rw [uprob_true, uprob_true, sub_self, abs_zero]
+-    · simp only [hP]; rw [uprob_false, uprob_false, sub_self, abs_zero]
+-  | N + 1 => by
+-    have hp := (h.prod (dlb_statClose_pi h N)).map (fun z => (Fin.cons z.1 z.2 : Fin (N + 1) → γ))
+-    have hp' := (hp.comp_equiv_left (Fin.consEquiv fun _ => σ).symm).comp_equiv_right
+-      (Fin.consEquiv fun _ => τ).symm
+-    have hX : (fun s : Fin (N + 1) → σ => (Fin.cons ((fun z : σ × (Fin N → σ) => (X z.1, fun j => X (z.2 j)))
+-        ((Fin.consEquiv fun _ => σ).symm s)).1 ((fun z : σ × (Fin N → σ) => (X z.1, fun j => X (z.2 j)))
+-        ((Fin.consEquiv fun _ => σ).symm s)).2 : Fin (N + 1) → γ)) = fun s => fun j => X (s j) := by
+-      funext s j
+-      refine Fin.cases ?_ (fun j => ?_) j <;> simp [Fin.consEquiv, Fin.tail]
+-    have hY : (fun t : Fin (N + 1) → τ => (Fin.cons ((fun z : τ × (Fin N → τ) => (Y z.1, fun j => Y (z.2 j)))
+-        ((Fin.consEquiv fun _ => τ).symm t)).1 ((fun z : τ × (Fin N → τ) => (Y z.1, fun j => Y (z.2 j)))
+-        ((Fin.consEquiv fun _ => τ).symm t)).2 : Fin (N + 1) → γ)) = fun t => fun j => Y (t j) := by
+-      funext t j
+-      refine Fin.cases ?_ (fun j => ?_) j <;> simp [Fin.consEquiv, Fin.tail]
+-    rw [hX, hY] at hp'
+-    exact hp'.mono (by push_cast; ring_nf; rfl)
++/-! ### The guess -/
+ 
+ /-- Splitting an `n`-bit string at `κ ≤ n`: its first `κ` and its last `n − κ` bits. -/
+ private def dlb_cut {n κ : ℕ} (hκ : κ ≤ n) : (Fin n → Bool) ≃ (Fin κ → Bool) × (Fin (n - κ) → Bool) where
+@@ -2521,7 +2557,19 @@
+ has advantage `ε`, with window parameters as in `invProb_dlInverter_ge` and the domain sampler
+ `δ`-close to uniform, `B` solves discrete log with probability at least
+ `(1 − n/(ε²ℓ))/2^κ − n·ℓ·δ` (the concrete bound, minus the sampling loss of the `n·ℓ` sampled
+-exponents, `StatClose.abs_uprob_sub_le_prod`). -/
++exponents, `StatClose.abs_uprob_sub_le_prod`).
++
++**Proof sketch.** At the index, `g = expUnit` generates `Z_p^*` (`dlb_isGenerator`) and
++`A`'s success is `predProb (expo g) (halfBit (p − 1)) A_i` (`dlb_pred_eq`), so
++`invProb_dlInverter_ge` bounds the success of `D := dlInverter g A_i s 2^κ ℓ n` below by
++`(1 − n/(ε²ℓ))/2^κ`. Split `B`'s coins into the guess block and the `n·ℓ` trial blocks
++(`dlb_split`, a bijection by `dlb_ofFn_split`). Let `P` be the event, read on the *decoded*
++sampler outputs, that every block decodes and `D` inverts on the decoded coins; on `P`, `B`
++outputs the numeral of `x` (`dlb_raw_sem`). The decoded outputs are `n·ℓ·δ`-close to `some` of
++uniform domain elements (`StatClose.prod`, `OneWay.statClose_pi` twice,
++`StatClose.abs_uprob_sub_le_prod`), and on uniform coordinates `P` is `D`'s inversion event,
++carried to `D`'s coins by a map that pushes uniform to uniform (`dlb_guess_pushesUniform`,
++`HardcoreBit.PushesUniform.prodMap`, `ZMod.ringEquivCongr`, `expo_injective`). -/
+ private theorem dlb_instance (c : ℕ) {n : ℕ} {i : List Bool} (hwf : WellFormedIndex n i)
+     (hv : FullGroupValid i) [Fact (dlP i).Prime] [NeZero (dlP i - 1)] {δS : ℝ}
+     (hSC : StatClose (fun s : (fullDLCollection H G).sample.Coins n =>
+@@ -2627,7 +2675,7 @@
+       exact bitsToNat_natToBits hxlt
+   -- the sampled exponents are close to uniform
+   have hX1 := hSC.prod (StatClose.refl (fun ρ : A.Coins n => ρ))
+-  have hXn := dlb_statClose_pi (dlb_statClose_pi hX1 ℓ) n
++  have hXn := OneWay.statClose_pi (OneWay.statClose_pi hX1 ℓ) n
+   have hclose := hXn.abs_uprob_sub_le_prod P
+   -- the ideal experiment is the inversion experiment of the concrete inverter
+   let Φ : (Fin n → Fin ℓ → (fullDLCollection H G).D i × A.Coins n) × (ZMod (expOrd i) × (Fin n → Bool)) →
+@@ -2779,7 +2827,17 @@
+ 
+ /-- **The reduction** [PS10, Lemma 84.1]: for every predictor `A` and exponent `c`, the inverter
+ `B = dlb_B H G A c` solves discrete log with probability at least `3/(1024 n^{2c})` at every large
+-`n` where `A` has advantage `n^{−c}`. -/
++`n` where `A` has advantage `n^{−c}`.
++
++**Proof sketch.** Take `n` past `G.n₀` and the thresholds where `δ(n) ≤ ε'/2` for
++`ε' = 1/(2n^c)`, `δ_S(n) < n^{−(4c+3)}`, `n^{c+6} < 2^n` and `n ≥ 6000`. Move the average
++success to `G.gen`'s coins (`fullDLCollection_index`, `fullDLCollection_coinsEquiv_uexp`); by
++`good_instances` (with `2ε'`) and `hbig` (`ExpGroupGen.fullLengthExcept_iff`, `uprob_or_le`) the
++coins with success `≥ 1/2 + ε'` and `p ≥ 2^{n−1}` have probability `≥ ε'/2`. On each of them
++`16n^c ≤ p − 1`, so `dlb_window_params` gives the window, and `dlb_instance` with
++`dlb_arith_success` (`2^κ ≤ 32n^c`, `dlb_two_pow_size_le`) bounds `B`'s success below by
++`3/(128n^c) − n·ℓ·δ_S(n)`. `HardcoreBit.uprob_mul_le_uexp` averages over the good set, and
++`dlb_arith_loss` with `dlb_arith_final` give `3/(1024 n^{2c})` (`ExpGroupGen.dlProb_eq`). -/
+ private theorem dlb_reduction (H : ArithmeticFP) (G : FullGroupGen)
+     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G)
+     (A : NUPPT) (c : ℕ) : ∃ N : ℕ, ∀ n : ℕ, N ≤ n → 1 / 2 + 1 / (n : ℝ) ^ c ≤ dlb_succ H G A n →
+@@ -2949,52 +3007,49 @@
+ 
+ **Proof sketch.** *Easy:* `halfStr` with `polyTimeComputable_halfStr H` and `halfStr_spec`,
+ read through `fullDLCollection_encD`.
+-*Hard:* by contradiction with `not_negligible_iff` (through the quantifier form
+-`Ensemble.indist_iff_exists_negligible`-style of `HardCore`): suppose `A : NUPPT` has
+-`1/2 + n^{-c} ≤ E_r[Pr_{x, ρ}[A(1^n, ⟨i, f_i x⟩) = half_i x]]` for infinitely many `n ≥ n₀`.
+-Set `ε := n^{-c}/2`. By `good_instances` (over the generator's coins `r`, index `i = Gen(1^n; r)`)
+-a set of coins of probability `≥ ε` has per-instance success `≥ 1/2 + ε` (the collection's coins
+-read as `G.gen`'s through `fullDLCollection_coinsEquiv`, `fullDLCollection_index`,
+-`fullDLCollection_coinsEquiv_uexp`); removing the coins
+-with `p < 2^{n−1}` (probability `≤ δ n` by `hbig`, and `δ n ≤ ε/2` for large `n` since `δ` is
+-negligible) leaves a *good* set of probability `≥ ε/2` (`uprob_not`, `uprob_or_le`). At such an
+-index `i = ⟨p, ⟨p−1, g⟩⟩` (valid, `dlW i = n`, `p ≡ 3 (mod 4)`, `2^{n−1} ≤ p < 2^n` on the good
+-set and by `WellFormedIndex`), the domain is `Z_{p−1}` (`fullDLCollection_domEquiv` with
+-`fullDLCollection_domEquiv_uprob`, `expOrd_of_valid`), `f_i x` is the numeral of
+-`expo g_u x` with `g_u := expUnit` a generator (`orderOf_expUnit`, `IsGenerator` by
+-`orderOf_eq_card_of_forall_mem_zpowers`-converse `zpowers_eq_top_of_prime_card`-free counting:
+-`Nat.card_zpowers`; `fullDLCollection_f`), and `half_i x = halfBit (p−1) x` (`halfPred_eq`), so
+-`A`'s per-instance success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
+-`A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`.
+-Apply `invProb_dlInverter_ge` with `ε := n^{-c}/2`, `s := ⌊(p−1)/(8n^c)⌋` (so `4s ≤ ε(p−1)`),
+-`T := ⌈(p−1)/s⌉` (so `Ts ≥ p − 1`), `k := n` (`s ≤ p − 1 < 2^n`) and `ℓ := 16 n^{2c+1}`
+-(so `k/(ε²ℓ) = 1/4`). For large `n` the good instances have `p − 1 ≥ 2^{n−1} − 1 ≥ 16 n^c`, so
+-`(p−1)/(8n^c) ≥ 2`, `s ≥ (p−1)/(16 n^c) ≥ 1` and `T ≤ K(n) := 16 n^c < 2^n`; the inverter then
+-succeeds with probability `≥ (3/4)/T ≥ 3/(4K(n))` on each good instance, with ideal coins.
+-The machine `B` realising `dlInverter` is a non-uniform PPT: advice `⟨A.advice n, ⟦8n^c⟧_n⟩`
+-(the `n`-bit numeral of `8n^c`: the bundle has no unary-to-binary conversion); coins
+-`n·n + n·ℓ·(n·n + A.coins)` (a `PolyExpr`, `c` being fixed): one block of `n·n` coins for `t`
+-and, for each of the `n·ℓ` trials, a block of `n·n` coins for `r_{j,i}` and `A.coins` coins for
+-`ρ_{j,i}`. On `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`; computes `s` and `T` (`H.sub`,
+-`H.divMod`, `H.add`); outputs `0^n` unless `1 ≤ s` and `T < 2^n` (the analysis uses only the
+-good instances); samples `t := (sampleBelowL T (Nat.size T) n n ·).getD 0` and
+-`r_{j,i} := (sampleBelowL (p−1) (Nat.size (p−1)) n n ·).getD 0` (`H.le`, `H.size`,
+-`polyTimeComputable_iterateFind`); shifts `y · g^{−ts}` (`H.modExp`, `H.xgcd`); and runs the
+-`n` rounds of `dlLoop` (`Complexity.polyTimeComputable_iterate` with the state `⟨y_j, bits⟩`,
+-D11): quadratic residuosity by `H.modExp` (`y^{(p−1)/2} = 1`, Euler), the root `y^{(p+1)/4}` by
+-`H.modExp` (`sqrtMod3`, [PS10, Theorem 58.2]), the `ℓ` oracle calls `A.output` on the layout
+-`⟨⟨⟨1^n, ⟨i, z_{j,i}⟩⟩, A.advice n⟩, ρ_{j,i}⟩` (`polyTimeComputable_iterateEmit`,
+-`NUPPT.polyTimeComputable_layout`), the comparison with `half(r_{j,i})` (`halfStr`), the
+-majority (`polyTimeComputable_majority`), the negation `p − z` and the bit assembly; finally
+-`(bits + ts) mod (p−1)` as an `n`-bit numeral (`decodeFin n` reads it back,
+-`bitsToNat_natToBits`). Sampling: each of the `1 + nℓ` sampled coordinates is within `(1/2)^n`
+-of uniform (`statClose_sampleBelowL`, with `0 < T < 2^n` and `0 < p − 1 < 2^n`); the coins of
+-`A` are exact; `StatClose.prod` and `StatClose.abs_uprob_sub_le_prod` give a loss of at most
+-`(1 + 16 n^{2c+2})(1/2)^n` at every instance. Averaging over the good set (probability
+-`≥ ε/2`, `HardcoreBit.uprob_mul_le_uexp`):
+-`G.dlProb B n ≥ (ε/2)·3/(4K(n)) − (1 + 16 n^{2c+2})(1/2)^n`
+-`= 3/(256 n^{2c}) − (1 + 16 n^{2c+2})(1/2)^n`
+-for infinitely many `n`, an inverse polynomial, contradicting `hDL B` via `not_negligible_iff`. -/
++*Hard* (`Collection.hardCore_iff`): the bound `ε(n) := max(succ(n) − 1/2, 0)`, with `succ(n)` the
++predictor's average success, is negligible. Otherwise (`not_negligible_iff`) there is `c` with
++`1/2 + n^{-c} ≤ succ(n)` for infinitely many `n`; fix such an `n`, large, and set
++`ε' := n^{-c}/2`. The average moves to `G.gen`'s coins (`fullDLCollection_index`,
++`fullDLCollection_coinsEquiv_uexp`). By `good_instances` (with `2ε'`) the coins with per-instance
++success `≥ 1/2 + ε'` have probability `≥ ε'`; removing those with `p < 2^{n−1}` (probability
++`≤ δ n ≤ ε'/2` by `hbig`, `ExpGroupGen.fullLengthExcept_iff`, `δ` negligible) leaves a *good* set
++of probability `≥ ε'/2` (`uprob_or_le`). At a good index `i = ⟨p, ⟨p−1, g⟩⟩` (valid,
++`WellFormedIndex`, `p ≡ 3 (mod 4)`, `16 n^c ≤ p − 1 < 2^n`) the domain is `Z_{p−1}`
++(`fullDLCollection_domEquiv`, `expOrd_of_valid`, `ZMod.ringEquivCongr`), `g_u := expUnit` is a
++generator (`orderOf_expUnit`, `Nat.card_zpowers`, `Subgroup.eq_top_of_card_eq`), and `A`'s
++per-instance success is `predProb (expo g_u) (halfBit (p−1)) A_i` with
++`A_i y ρ := A.distinguisherL n (pairEncode i (natToList n (y : ZMod p).val)) ρ`
++(`fullDLCollection_f`, `expF_eq`, `halfPred_eq`). Apply `invProb_dlInverter_ge` with
++`ε := ε'`, `s := ⌊(p−1)/(8n^c)⌋`, `T := 2^κ` for `κ := Nat.size (16 n^c)` (so
++`16 n^c < T ≤ 32 n^c` and `Ts ≥ p − 1`), `k := n` and `ℓ := 16 n^{2c+1} + 1` (odd, and
++`k/(ε'²ℓ) < 1/4`): the inverter succeeds with probability `≥ (3/4)/T ≥ 3/(128 n^c)` on each good
++instance, with ideal coins.
++The machine `B` realising `dlInverter` is a non-uniform PPT (`NUPPT.ofPolyTime`): advice
++`⟨A.advice n, ⟨⟦8n^c⟧_n, 1^κ⟩⟩`; coins `n + n·ℓ·(S.coins + A.coins)` with `S` the collection's
++domain sampler (`fullDLCollection_sample`): `n` coins whose first `κ` bits are the guess `t`
++(exactly uniform on `[0, 2^κ)`), and for each of the `n·ℓ` trials a block of `S`'s coins for
++`r_{j,i}` and a block of `A`'s coins for `ρ_{j,i}`. On `⟨1^n, ⟨i, y⟩⟩` it reads `p`, `g` from `i`;
++computes `s` (`H.sub`, `H.divMod`) and `y₀ = y · (g^{ts})⁻¹ mod p` (`H.mul`, `H.modExp`, `H.xgcd`,
++`H.divMod`); and runs `n` rounds of Algorithm 84.2 as guarded state loops
++(`Complexity.StateLoop.gstep`, `Complexity.polyTimeComputable_iterate`) driven by the unary
++counters `1^n` and `1^ℓ`, so no guard on `s` or `T` is needed (off the good set the success is
++only bounded below by `0`): quadratic residuosity by Euler's test `y^{(p−1)/2} = 1` (`H.modExp`,
++`H.le`), the root `base^{⌊p/4⌋+1}` (`H.modExp`, [PS10, Theorem 58.2]), the `ℓ` trials (`S` on the
++index for `r`, `z = root · g^r mod p`, `A.output` on the layout `⟨⟨⟨1^n, ⟨i, z⟩⟩, A.advice n⟩, ρ⟩`,
++the vote `[A = 1] = halfStr ⟨i, r⟩`), the majority (`polyTimeComputable_majority`, which is
++`HardcoreBit.majority` because `ℓ` is odd), `root` or `p − root` (`H.sub`), and the parity bit;
++finally `(bits + ts) mod (p−1)` as an `n`-bit numeral, which `decodeFin n` reads back. Where every
++sampler block decodes, `B` computes `dlInverter` on the decoded coins.
++Sampling: `S` is `δ_S`-close to uniform with `δ_S` negligible (`fullDLCollection_oneWay`,
++`Collection.sampleClose_iff`); the `n·ℓ` sampled exponents are `n·ℓ·δ_S(n)`-close
++(`OneWay.statClose_pi`, `StatClose.prod`, `StatClose.abs_uprob_sub_le_prod`), and the guess and
++the coins of `A` are exact, so `B` succeeds with probability `≥ 3/(128 n^c) − n·ℓ·δ_S(n)` on each
++good instance. Averaging over the good set (`HardcoreBit.uprob_mul_le_uexp`,
++`ExpGroupGen.dlProb_eq`):
++`G.dlProb B n ≥ (ε'/2)·(3/(128 n^c) − n·ℓ·δ_S(n)) ≥ 3/(1024 n^{2c})`
++for infinitely many `n` (`n·ℓ·δ_S(n) ≤ 3/(1024 n^{2c})` for large `n`), an inverse polynomial,
++contradicting `hDL B` (`fullDLAssumption_iff`, `negligible_iff`). -/
+ theorem fullDLCollection_hardCore (H : ArithmeticFP) (G : FullGroupGen)
+     (hbig : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ) (hDL : FullDLAssumption G) :
+     (fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x) := by
