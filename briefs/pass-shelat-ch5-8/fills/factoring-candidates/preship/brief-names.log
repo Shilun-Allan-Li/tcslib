@@ -1,0 +1,17 @@
+# Remaining names the brief cites (not sketch tokens), checked at the issue tree: Probe/BriefNames.lean, 13 #checks, 0 errors.
+# The templates in Asymptotic/{Encryption, MultiMessageLemmas, Permutations}.lean exist (grep) but are outside the order list: models to read, not imports. ----
+@Equiv.ofBijective : {α : Sort u_1} → {β : Sort u_2} → (f : α → β) → Function.Bijective f → α ≃ β
+OneWay.YaoMachine.off : OneWay.YaoMachine.Data → List Bool → List Bool
+OneWay.YaoMachine.planted : OneWay.YaoMachine.Data → List Bool → List Bool
+@ZMod.val_lt : ∀ {n : ℕ} [NeZero n] (a : ZMod n), a.val < n
+polyTimeComputable_padStr : ∀ (p : PolyExpr), PolyTimeComputable fun z => padStr p (pairFstD z) (pairSndD z)
+ofFn_padFin_eq_padStr : ∀ (p : PolyExpr) (u w : List Bool), List.ofFn (padFin (p.eval u.length) w) = padStr p u w
+@finProdFinEquiv : {m n : ℕ} → Fin m × Fin n ≃ Fin (m * n)
+FunFamily.StrongOneWay.toCollection_oneWay : ∀ (𝓕 : FunFamily) (F : List Bool → List Bool) (hF : PolyTimeComputable F)
+  (hspec : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)),
+  𝓕.StrongOneWay → (𝓕.toCollection F hF hspec).OneWay
+@ZMod.coe_mul_inv_eq_one : ∀ {n : ℕ} (x : ℕ), x.Coprime n → ↑x * (↑x)⁻¹ = 1
+Nat.lt_size_self : ∀ (n : ℕ), n < 2 ^ n.size
+@Nat.size_le : ∀ {m n : ℕ}, m.size ≤ n ↔ m < 2 ^ n
+@Nat.lt_size : ∀ {m n : ℕ}, m < n.size ↔ 2 ^ m ≤ n
+polyTimeComputable_lenLe : PolyTimeComputable fun z => [decide ((pairSndD z).length ≤ (pairFstD z).length)]

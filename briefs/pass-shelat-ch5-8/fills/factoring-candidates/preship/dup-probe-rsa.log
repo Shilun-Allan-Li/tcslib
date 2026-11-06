@@ -1,0 +1,57 @@
+# Duplication probe, unit rsa (TCSlib/Cryptography/Candidates/RSA.lean) at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb
+# Method: Probe/DupRSA.lean is a copy of the owned file (same imports, so the target itself is not in scope)
+# with each target body `sorry` replaced by `exact?` under `set_option maxHeartbeats 400000 in`;
+# checked by scripts/lean_check_tree.sh against the fillfac olean tree. Every target reported an error (no proof term found).
+# targets: 9; hits: 0
+
+polyTimeComputable_rsaGenRaw: no hit (exact? failed)
+polyTimeComputable_unitSampleStr: no hit (exact? failed)
+rsaSampler_spec: no hit (timeout at 400000 heartbeats)
+rsaCollection_sampleClose: no hit (timeout at 400000 heartbeats)
+rsaCollection_invProbAt_le: no hit (exact? failed)
+rsaCollection_oneWay: no hit (timeout at 400000 heartbeats)
+polyTimeComputable_rsaFromFactorRaw: no hit (exact? failed)
+factorProb_le_rsaProb: no hit (exact? failed)
+rsa_imp_factoring: no hit (timeout at 400000 heartbeats)
+
+# Grep for equivalent public lemmas:
+#  - TCSlib/Cryptography/RSA.lean (root of Cryptography, not under Candidates/) is an unrelated, unimported TimeM/textbook
+#    file (rsa_crt, rsa_correctness on ℕ/ZMod): no asymptotic content; NumberTheory.rsa_pow_pow / rsa_pow_bijective
+#    (Units.lean) already cover the algebra the RSA targets need. Not to be imported.
+#  - Unit sampling: only the sorried rejectBlocksL closeness (Concrete.statClose_rejectBlocksL, dl-a's target) and DL's
+#    statClose_sampleBelowL (sorried, `v < q`, not units); no public closeness lemma for sampleUnitL/unitSampleStr.
+#  - Mathlib: nothing at the level of these statements (machine collections); ZMod.unitOfCoprime, ZMod.coe_unitOfCoprime,
+#    ZMod.val_natCast, Nat.size lemmas are cited.
+#  Result: no equivalent of any rsa target exists.
+
+# ---- raw Lean log ----
+start 2026-11-06T02:21:20Z maxHeartbeats=400000 per target (set_option ... in)
+Probe/DupRSA.lean:492:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRSA.lean:533:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRSA.lean:634:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRSA.lean:717:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRSA.lean:785:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRSA.lean:800:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+Probe/DupRSA.lean:886:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRSA.lean:920:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupRSA.lean:933:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (400000) has been reached
+
+Note: Use `set_option maxHeartbeats <num>` to set the limit.
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+FAIL(Probe/DupRSA): lean exited with status 1
+FAIL(Probe/DupRSA): error diagnostics reported
+FAIL(Probe/DupRSA): no fresh .olean produced
+end 2026-11-06T02:24:13Z rc=1 elapsed=173s

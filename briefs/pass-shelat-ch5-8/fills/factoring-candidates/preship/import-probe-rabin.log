@@ -1,0 +1,473 @@
+# Import probe, unit rabin: Probe/Import_rabin.lean imports TCSlib.Cryptography.Candidates.Rabin (issue tree 5f2771631fe853dae9c2aa44791ae5b0e09c95eb)
+# Names: every identifier-like token in the backticks of the rabin targets' docstrings (shorthand mapped: H.f -> ArithmeticFP.f,
+# A.output -> NUPPT.output, _ite/_pairDropPoly/_blockMap -> polyTimeComputable_*, iterateFind -> Complexity.polyTimeComputable_iterateFind,
+# pairEq -> polyTimeComputable_pairEq, prodFun -> OneWay.prodFun; math notation dropped), plus every name the brief cites.
+# Checked with scripts/lean_check_tree.sh against the fillfac olean tree; namespace and opens as in the owned file.
+# #check lines: 241; unknown identifiers: 3
+# Classification:
+#   present: all other names (no present-but-not-imported name: no import is needed or authorized).
+#   absent as written, corrected (sketch names): uexp_prod -> HardcoreBit.uexp_prod (HardcoreBit/Basic, already in the closure);
+#     uprob_eq_one_div_card -> OneWay.uprob_eq_one_div_card (OneWayFunctions/Basic, already in the closure; rabin only).
+#   absent as written, corrected (brief name): ofFn_padFin_of_le -> Collection.ofFn_padFin_of_le.
+#   the corrected names are checked in the same file (HardcoreBit.uexp_prod, OneWay.uprob_eq_one_div_card) and resolve.
+
+# ---- raw Lean log ----
+ArithmeticFP.add : ArithmeticFP → PolyTimeComputable addStr
+ArithmeticFP.divMod : ArithmeticFP → PolyTimeComputable divModStr
+ArithmeticFP.le : ArithmeticFP → PolyTimeComputable leStr
+ArithmeticFP.modExp : ArithmeticFP → PolyTimeComputable modExpStr
+ArithmeticFP.mul : ArithmeticFP → PolyTimeComputable mulStr
+ArithmeticFP.prime : ArithmeticFP → PolyTimeComputable primeStr
+ArithmeticFP.sub : ArithmeticFP → PolyTimeComputable subStr
+ArithmeticFP.xgcd : ArithmeticFP → PolyTimeComputable xgcdStr
+@Collection.OneWay.hard : ∀ {F : Collection}, F.OneWay → ∀ (A : NUPPT), Negligible fun n => F.invProbAt A n
+@Collection.OneWay.mk : ∀ {F : Collection},
+  (∃ δ, Negligible δ ∧ F.SampleClose δ) → (∀ (A : NUPPT), Negligible fun n => F.invProbAt A n) → F.OneWay
+@Collection.OneWay.sampleClose : ∀ {F : Collection}, F.OneWay → ∃ δ, Negligible δ ∧ F.SampleClose δ
+Collection.SampleClose : Collection → (ℕ → ℝ) → Prop
+Collection.decD_eq_some_iff : ∀ (F : Collection) {i w : List Bool} {x : F.D i}, F.decD i w = some x ↔ w = F.encD i x
+Collection.index : (F : Collection) → (n : ℕ) → F.gen.Coins n → List Bool
+Collection.invProbAt : Collection → NUPPT → ℕ → ℝ
+Collection.invProbAt_nonneg : ∀ (F : Collection) (A : NUPPT) (n : ℕ), 0 ≤ F.invProbAt A n
+Collection.sample_spec : ∀ (self : Collection) (n : ℕ) (r : self.gen.Coins n) (s : self.sample.Coins n),
+  ∃ x,
+    self.decD (pairFstD (self.gen.runAt n [] r)) (self.sample.runAt n (pairFstD (self.gen.runAt n [] r)) s) = some x ∧
+      self.eval
+          (pairEncode (pairFstD (self.gen.runAt n [] r)) (self.sample.runAt n (pairFstD (self.gen.runAt n [] r)) s)) =
+        self.f (pairFstD (self.gen.runAt n [] r)) x
+polyTimeComputable_blockMap : ∀ (b : PolyExpr) {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable fun z =>
+      List.flatMap
+        (fun i => g (List.take (b.eval (pairFstD z).length) (List.drop (i * b.eval (pairFstD z).length) (pairSndD z))))
+        (List.range ((pairSndD z).length / b.eval (pairFstD z).length))
+polyTimeComputable_dropPrefixByLength : PolyTimeComputable PrefixByLength.drop
+@polyTimeComputable_iterate : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ (R P : PolyExpr),
+      (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+        PolyTimeComputable fun x => g^[R.eval x.length] x
+@polyTimeComputable_iterateEmit : ∀ {g emit : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable emit →
+      ∀ (R P : PolyExpr),
+        (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+          PolyTimeComputable fun x => List.flatMap (fun i => emit (g^[i] x)) (List.range (R.eval x.length + 1))
+@polyTimeComputable_iterateFind : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          PolyTimeComputable out →
+            ∀ (R P : PolyExpr),
+              (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+                PolyTimeComputable fun x =>
+                  match List.find? (fun i => acc (g^[i] x)) (List.range (R.eval x.length + 1)) with
+                  | some i => out (g^[i] x)
+                  | none => []
+polyTimeComputable_pairDropPoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.drop (p.eval (pairFstD z).length) (pairSndD z)
+polyTimeComputable_pairTakePoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.take (p.eval (pairFstD z).length) (pairSndD z)
+polyTimeComputable_takePrefixByLength : PolyTimeComputable PrefixByLength.take
+polyTimeComputable_unaryPoly : ∀ (p : PolyExpr), PolyTimeComputable fun x => List.replicate (p.eval x.length) true
+@DistinctPrimes.default : {n : ℕ} → 2 ≤ n → DistinctPrimes n
+@DistinctPrimes.one_lt_totient : ∀ {n : ℕ} (z : DistinctPrimes n), 1 < (z.p * z.q).totient
+@DistinctPrimes.totient_mul : ∀ {n : ℕ} (z : DistinctPrimes n), (z.p * z.q).totient = (z.p - 1) * (z.q - 1)
+@Equiv.ofBijective_symm_apply_apply : ∀ {α : Sort u_1} {β : Sort u_2} (f : α → β) (hf : Function.Bijective f) (x : α),
+  (Equiv.ofBijective f hf).symm (f x) = x
+@FunFamily.Easy.prod : ∀ {𝓕 : FunFamily}, 𝓕.Easy → ∀ (q : PolyExpr), (𝓕.prod q).Easy
+FunFamily.StrongOneWay.toCollection_oneWay : ∀ (𝓕 : FunFamily) (F : List Bool → List Bool) (hF : PolyTimeComputable F)
+  (hspec : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)),
+  𝓕.StrongOneWay → (𝓕.toCollection F hF hspec).OneWay
+FunFamily.invProbAt_eq_uprob : ∀ (𝓕 : FunFamily) (A : NUPPT) (n : ℕ),
+  𝓕.invProbAt A n = uprob fun z => ∃ x', A.runAt n (List.ofFn (𝓕.f n z.1)) z.2 = List.ofFn x' ∧ 𝓕.f n x' = 𝓕.f n z.1
+FunFamily.invProbAt_prod_eq : ∀ (𝓕 : FunFamily) (q : PolyExpr) (A : NUPPT) (n : ℕ),
+  (𝓕.prod q).invProbAt A n =
+    invProbOpt (OneWay.prodFun (𝓕.f n) (q.eval n)) fun ys r =>
+      Option.map (⇑(FunFamily.blocks (q.eval n) (𝓕.inLen.eval n)))
+        (A.inverter n (q.eval n * 𝓕.inLen.eval n) (q.eval n * 𝓕.outLen.eval n)
+          ((FunFamily.blocks (q.eval n) (𝓕.outLen.eval n)).symm ys) r)
+@HardcoreBit.uexp_prod : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] (F : α × β → ℝ),
+  uexp F = uexp fun a => uexp fun b => F (a, b)
+NUPPT.inverter_eq_some_iff : ∀ (A : NUPPT) (n ℓ m : ℕ) (y : Fin m → Bool) (r : A.Coins n) (x' : Fin ℓ → Bool),
+  A.inverter n ℓ m y r = some x' ↔ A.runAt n (List.ofFn y) r = List.ofFn x'
+@NUPPT.ofPolyTimeUniform : {f : List Bool → List Bool} → PolyTimeComputable f → PolyExpr → NUPPT
+@NUPPT.ofPolyTimeUniform_uniform : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr),
+  (NUPPT.ofPolyTimeUniform hf coins).Uniform
+NUPPT.polyTimeComputable_inAdvice : PolyTimeComputable NUPPT.inAdvice
+NUPPT.polyTimeComputable_inArg : PolyTimeComputable NUPPT.inArg
+NUPPT.polyTimeComputable_inCoins : PolyTimeComputable NUPPT.inCoins
+NUPPT.polyTimeComputable_inParam : PolyTimeComputable NUPPT.inParam
+@NUPPT.polyTimeComputable_layout : ∀ {f₁ f₂ f₃ f₄ : List Bool → List Bool},
+  PolyTimeComputable f₁ →
+    PolyTimeComputable f₂ →
+      PolyTimeComputable f₃ →
+        PolyTimeComputable f₄ → PolyTimeComputable fun z => NUPPT.layout (f₁ z) (f₂ z) (f₃ z) (f₄ z)
+NUPPT.polyTimeComputable_output : ∀ (A : NUPPT), PolyTimeComputable A.output
+NUPPT.runAtL_eq_output_layout : ∀ (A : NUPPT) (n : ℕ) (y r : List Bool),
+  A.runAtL n y r = A.output (NUPPT.layout (List.replicate n true) y (A.advice n) r)
+@NUPPT.runAtL_ofPolyTime : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+  (advice : ℕ → List Bool) (hα : ∀ (n : ℕ), (advice n).length ≤ adv.eval n) (n : ℕ) (y r : List Bool),
+  (NUPPT.ofPolyTime hf coins adv advice hα).runAtL n y r = f (pairEncode (pairEncode (NUPPT.advInput n y) (advice n)) r)
+@NUPPT.runAtL_ofPolyTimeUniform : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) (n : ℕ)
+  (y r : List Bool),
+  (NUPPT.ofPolyTimeUniform hf coins).runAtL n y r = f (pairEncode (pairEncode (NUPPT.advInput n y) []) r)
+NUPPT.runAt_eq : ∀ (A : NUPPT) (n : ℕ) (y : List Bool) (r : A.Coins n), A.runAt n y r = A.runAtL n y (List.ofFn r)
+@Nat.Coprime.pow_left : ∀ {m k : ℕ} (n : ℕ), m.Coprime k → (m ^ n).Coprime k
+@Nat.chineseRemainder : {m n : ℕ} → n.Coprime m → (a b : ℕ) → { k // k ≡ a [MOD n] ∧ k ≡ b [MOD m] }
+Nat.coprime_one_left : ∀ (n : ℕ), Nat.Coprime 1 n
+Nat.mod_lt : ∀ (x : ℕ) {y : ℕ}, 0 < y → x % y < y
+@Negligible.add : ∀ {μ ν : ℕ → ℝ}, Negligible μ → Negligible ν → Negligible fun n => μ n + ν n
+@Negligible.const_mul : ∀ {μ : ℕ → ℝ}, Negligible μ → ∀ (a : ℝ), Negligible fun n => a * μ n
+@Negligible.mono : ∀ {μ ν : ℕ → ℝ}, Negligible μ → (∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) → Negligible ν
+@Negligible.mul_pow : ∀ {μ : ℕ → ℝ}, Negligible μ → ∀ (d : ℕ), Negligible fun n => ↑n ^ d * μ n
+QR : (N : ℕ) → Subgroup (ZMod N)ˣ
+@blumSqrt : {p q : ℕ} → p.Coprime q → (ZMod (p * q))ˣ → (ZMod (p * q))ˣ
+@blumSqrt_mem_QR : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)] (h : p.Coprime q)
+  {y : (ZMod (p * q))ˣ}, y ∈ QR (p * q) → blumSqrt h y ∈ QR (p * q)
+chunk : (T n : ℕ) → (Fin (T * n) → Bool) → Fin T → Fin n → Bool
+@coe_sqTo : ∀ {N : ℕ} (x : (ZMod N)ˣ), ↑(sqTo N x) = x ^ 2
+@coprime_of_ne : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)], p ≠ q → p.Coprime q
+@crtUnits : {p q : ℕ} → p.Coprime q → (ZMod (p * q))ˣ ≃* (ZMod p)ˣ × (ZMod q)ˣ
+@crtUnits_fst : ∀ {p q : ℕ} (h : p.Coprime q) (x : (ZMod (p * q))ˣ), ↑((crtUnits h) x).1 = (↑x).cast
+@crtUnits_snd : ∀ {p q : ℕ} (h : p.Coprime q) (x : (ZMod (p * q))ˣ), ↑((crtUnits h) x).2 = (↑x).cast
+@eq_blumSqrt_of_sq_eq : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)] (h : p.Coprime q),
+  p % 4 = 3 → q % 4 = 3 → ∀ {x y : (ZMod (p * q))ˣ}, x ∈ QR (p * q) → x ^ 2 = y → x = blumSqrt h y
+eval_samplePrimeCoins : ∀ (n : ℕ), samplePrimeCoins.eval n = 2 * n ^ 2 * n
+exists_samplePrime_nuppt : (PolyTimeComputable fun w => [decide (Nat.Prime (listToNat w))]) →
+  ∃ A,
+    A.Uniform ∧
+      A.coins = samplePrimeCoins ∧
+        ∀ (n : ℕ) (r : Fin (2 * n ^ 2 * n) → Bool),
+          A.runAtL n [] (List.ofFn r) =
+            (Option.map List.ofFn (samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r))).getD []
+@gcd_sub_eq_prime_of_sq_eq_sq : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p ≠ q →
+    ∀ {x z : (ZMod (p * q))ˣ},
+      x ^ 2 = z ^ 2 → z ≠ x → z ≠ -x → (↑x - ↑z).val.gcd (p * q) = p ∨ (↑x - ↑z).val.gcd (p * q) = q
+le_totient_mul_log_succ : ∀ (m : ℕ), 0 < m → m ≤ m.totient * (Nat.log 2 m + 1)
+@mem_QR_iff : ∀ {N : ℕ} (x : (ZMod N)ˣ), x ∈ QR N ↔ ∃ y, y ^ 2 = x
+@mem_QR_mul_iff : ∀ {p q : ℕ} (h : p.Coprime q) (x : (ZMod (p * q))ˣ),
+  x ∈ QR (p * q) ↔ ((crtUnits h) x).1 ∈ QR p ∧ ((crtUnits h) x).2 ∈ QR q
+@pow_div_four_succ_mem_QR : ∀ {p : ℕ} [hp : Fact (Nat.Prime p)] {y : (ZMod p)ˣ}, y ∈ QR p → y ^ (p / 4 + 1) ∈ QR p
+@pushesUniform_sqTo : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p ≠ q → p ≠ 2 → q ≠ 2 → HardcoreBit.PushesUniform (sqTo (p * q))
+samplePrime : (n T : ℕ) → (Fin T → Fin n → Bool) → Option (Fin n → Bool)
+sqTo : (N : ℕ) → (ZMod N)ˣ → ↥(QR N)
+@sqTo_bijective_of_blum : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p.Coprime q → p % 4 = 3 → q % 4 = 3 → Function.Bijective fun x => sqTo (p * q) ↑x
+@sq_crtUnits_symm : ∀ {p q : ℕ} (h : p.Coprime q) {x : (ZMod (p * q))ˣ} {a : (ZMod p)ˣ} {b : (ZMod q)ˣ},
+  a ^ 2 = ((crtUnits h) x).1 → b ^ 2 = ((crtUnits h) x).2 → (crtUnits h).symm (a, b) ^ 2 = x
+@sq_mem_QR : ∀ {N : ℕ} (x : (ZMod N)ˣ), x ^ 2 ∈ QR N
+@sq_pow_div_four_succ : ∀ {p : ℕ} [hp : Fact (Nat.Prime p)],
+  p % 4 = 3 → ∀ {y : (ZMod p)ˣ}, y ∈ QR p → (y ^ (p / 4 + 1)) ^ 2 = y
+statClose_samplePrime : ∀ (n T : ℕ),
+  2 ≤ n →
+    ∀ {d : Fin n → Bool},
+      Nat.Prime (bitsToNat d) → StatClose (fun xs => (samplePrime n T xs).getD d) (fun p => ↑p) ((1 - 1 / (2 * ↑n)) ^ T)
+two_pow_le_two_mul_card_primes : ∀ (n : ℕ), 2 ≤ n → 2 ^ n ≤ 2 * n * Fintype.card (Primes n)
+uprob_samplePrime_none_le_two_pow : ∀ (n : ℕ),
+  2 ≤ n → (uprob fun xs => samplePrime n (2 * n ^ 2) xs = none) ≤ (1 / 2) ^ n
+OneWay.exists_posMachine : ∃ Pm,
+  PolyTimeComputable Pm ∧
+    ∀ (M kk n : ℕ) (hM : 0 < M),
+      0 < kk →
+        2 ^ kk ≤ 2 * M →
+          ∀ (pb' : Fin (n * kk) → Bool),
+            Pm (pairEncode (pairEncode (List.replicate kk true) (List.replicate M true)) (List.ofFn pb')) =
+              List.replicate (↑((rejectionSample M kk n fun t j => pb' (finProdFinEquiv (t, j))).getD ⟨0, hM⟩)) true
+@OneWay.exists_prodEval : ∀ {F : List Bool → List Bool},
+  PolyTimeComputable F →
+    ∀ (inLen q : PolyExpr),
+      ∃ F',
+        PolyTimeComputable F' ∧
+          ∀ (n : ℕ) (x : Fin (q.eval n * inLen.eval n) → Bool),
+            F' (pairEncode (List.replicate n true) (List.ofFn x)) =
+              (List.ofFn fun i =>
+                  F (pairEncode (List.replicate n true) (List.ofFn fun j => x (finProdFinEquiv (i, j))))).flatten
+OneWay.exists_unaryOf : ∃ U,
+  PolyTimeComputable U ∧
+    ∀ (p b : List Bool),
+      OneWay.bitListToNat b ≤ p.length → U (pairEncode p b) = List.replicate (OneWay.bitListToNat b) true
+OneWay.exists_yaoReduction : ∀ (inLen outLen m T : PolyExpr)
+  (f : (n : ℕ) → (Fin (inLen.eval n) → Bool) → Fin (outLen.eval n) → Bool) {Fe : List Bool → List Bool},
+  PolyTimeComputable Fe →
+    (∀ (n : ℕ) (a : Fin (inLen.eval n) → Bool),
+        Fe (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (f n a)) →
+      ∀ (A' : NUPPT),
+        (∀ (n : ℕ), 1 ≤ n → 0 < m.eval n) →
+          ∃ A,
+            ∀ (n : ℕ),
+              1 ≤ n →
+                invProb (f n) (OneWay.yaoInverter (f n) (OneWay.yaoB inLen outLen m A' n) (T.eval n + 1)) -
+                    (↑(T.eval n) + 1) * (1 / 2) ^ n ≤
+                  invProbOpt (f n) (A.inverter n (inLen.eval n) (outLen.eval n))
+@OneWay.ofFn_blocksE_symm_update : ∀ {q ℓ : ℕ} (t : Fin q → Fin ℓ → Bool) (p : Fin q) (v : Fin ℓ → Bool),
+  List.ofFn ((OneWay.blocksE q ℓ).symm (Function.update t p v)) =
+    List.take (↑p * ℓ) (List.ofFn ((OneWay.blocksE q ℓ).symm t)) ++ List.ofFn v ++
+      List.drop (↑p * ℓ + ℓ) (List.ofFn ((OneWay.blocksE q ℓ).symm t))
+@OneWay.uexp_const : ∀ {α : Type u_1} [inst : Fintype α] [Nonempty α] (c : ℝ), (uexp fun x => c) = c
+@OneWay.uexp_mono : ∀ {α : Type u_1} [inst : Fintype α] {f g : α → ℝ}, (∀ (a : α), f a ≤ g a) → uexp f ≤ uexp g
+@OneWay.uprob_eq_one_div_card : ∀ {α : Type u_1} [inst : Fintype α] (a : α),
+  (uprob fun x => x = a) = 1 / ↑(Fintype.card α)
+PermCollection.f_injective : ∀ (P : PermCollection) (i : List Bool), Function.Injective (P.f i)
+@PolyTimeComputable.append : ∀ {f g : List Bool → List Bool},
+  PolyTimeComputable f → PolyTimeComputable g → PolyTimeComputable fun x => f x ++ g x
+@PolyTimeComputable.comp : ∀ {f g : List Bool → List Bool},
+  PolyTimeComputable g → PolyTimeComputable f → PolyTimeComputable (g ∘ f)
+@StatClose.abs_uprob_sub_le_prod : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ]
+  [inst_1 : Fintype τ] {ρ : Type u_4} [inst_2 : Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (P : γ → ρ → Prop), |(uprob fun z => P (X z.1) z.2) - uprob fun z => P (Y z.1) z.2| ≤ δ
+@StatClose.comp_equiv_left : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {σ' : Type u_4} [inst_2 : Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (e : σ' ≃ σ), StatClose (fun s => X (e s)) Y δ
+@StatClose.comp_equiv_right : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {τ' : Type u_4} [inst_2 : Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (e : τ' ≃ τ), StatClose X (fun t => Y (e t)) δ
+@StatClose.comp_pushesUniform : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {Ω : Type u_4} [inst_2 : Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ {π : Ω → σ}, HardcoreBit.PushesUniform π → StatClose (fun ω => X (π ω)) Y δ
+@StatClose.map : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {γ' : Type u_4} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {X : σ → γ} {Y : τ → γ} {δ : ℝ}, StatClose X Y δ → ∀ (g : γ → γ'), StatClose (fun s => g (X s)) (fun t => g (Y t)) δ
+@StatClose.mono : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ] {X : σ → γ}
+  {Y : τ → γ} {δ δ' : ℝ}, StatClose X Y δ → δ ≤ δ' → StatClose X Y δ'
+@StatClose.prod : ∀ {σ : Type u_1} {σ' : Type u_2} {τ : Type u_3} {τ' : Type u_4} {γ : Type u_5} {γ' : Type u_6}
+  [inst : Fintype σ] [inst_1 : Fintype σ'] [inst_2 : Fintype τ] [inst_3 : Fintype τ'] {X : σ → γ} {X' : τ → γ}
+  {Y : σ' → γ'} {Y' : τ' → γ'} {δ δ' : ℝ},
+  StatClose X X' δ → StatClose Y Y' δ' → StatClose (fun z => (X z.1, Y z.2)) (fun z => (X' z.1, Y' z.2)) (δ + δ')
+@StatClose.refl : ∀ {σ : Type u_1} {γ : Type u_2} [inst : Fintype σ] (X : σ → γ), StatClose X X 0
+@StatClose.trans : ∀ {σ : Type u_1} {τ : Type u_2} {υ : Type u_3} {γ : Type u_4} [inst : Fintype σ] [inst_1 : Fintype τ]
+  [inst_2 : Fintype υ] {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ},
+  StatClose X Y δ → StatClose Y Z δ' → StatClose X Z (δ + δ')
+TrapdoorCollection.OneWay : TrapdoorCollection → Prop
+TrapdoorCollection.inv_spec : ∀ (self : TrapdoorCollection) (n : ℕ) (r : self.gen.Coins n)
+  (y : self.D (pairFstD (self.gen.runAt n [] r))) (s : self.inv.Coins n),
+  self.decD (pairFstD (self.gen.runAt n [] r))
+      (self.inv.runAt n (pairEncode (pairSndD (self.gen.runAt n [] r)) (self.encD (pairFstD (self.gen.runAt n [] r)) y))
+        s) =
+    some ((self.perm (pairFstD (self.gen.runAt n [] r))).symm y)
+FinTM.computesFunInTime_unaryMul : ∃ M c,
+  M.ComputesFunInTime
+    (fun z =>
+      match pairDecode z with
+      | some (u, v) => List.replicate (u.length * v.length) true
+      | none => [])
+    fun n => c * (n + 1) ^ 2
+@ZMod.chineseRemainder : {m n : ℕ} → m.Coprime n → ZMod (m * n) ≃+* ZMod m × ZMod n
+@ZMod.coe_mul_inv_eq_one : ∀ {n : ℕ} (x : ℕ), x.Coprime n → ↑x * (↑x)⁻¹ = 1
+@ZMod.coe_unitOfCoprime : ∀ {n : ℕ} (x : ℕ) (h : x.Coprime n), ↑(ZMod.unitOfCoprime x h) = ↑x
+ZMod.euler_criterion : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] {a : ZMod p}, a ≠ 0 → (IsSquare a ↔ a ^ (p / 2) = 1)
+ZMod.euler_criterion_units : ∀ (p : ℕ) [inst : Fact (Nat.Prime p)] (x : (ZMod p)ˣ), (∃ y, y ^ 2 = x) ↔ x ^ (p / 2) = 1
+@ZMod.exists_sq_eq_neg_one_iff : ∀ {p : ℕ} [inst : Fact (Nat.Prime p)], IsSquare (-1) ↔ p % 4 ≠ 3
+@ZMod.unitOfCoprime : {n : ℕ} → (x : ℕ) → x.Coprime n → (ZMod n)ˣ
+ZMod.val_natCast : ∀ (n a : ℕ), (↑a).val = a % n
+addStr_pairEncode : ∀ (a b : List Bool),
+  addStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a + listToNat b)
+@bitsToNat_eq_listToNat : ∀ {n : ℕ} (b : Fin n → Bool), bitsToNat b = listToNat (List.ofFn b)
+@bitsToNat_natToBits : ∀ {k N : ℕ}, N < 2 ^ k → bitsToNat (natToBits k N) = N
+blumDec : (i : List Bool) → List Bool → Option ↥(QR (blumMod i))
+blumDec_blumEnc : ∀ (i : List Bool) (x : ↥(QR (blumMod i))), blumDec i (blumEnc i x) = some x
+blumDefault : (m : ℕ) → RabinParams (fun x => x % 4 = 3) (max m 3)
+blumEnc : (i : List Bool) → ↥(QR (blumMod i)) → List Bool
+blumEval_spec : ∀ (i : List Bool) (x : ↥(QR (blumMod i))), rabinEval (pairEncode i (blumEnc i x)) = blumF i x
+blumFactorProb : NUPPT → ℕ → ℝ
+blumFactorProb_le : BlumDensity → ∀ (A : NUPPT) {n : ℕ}, 6 ≤ n → blumFactorProb A n ≤ 64 * ↑n ^ 2 * factorProb A n
+blumFactorProb_le_invProbAt : ∀ (H : ArithmeticFP),
+  BlumDensity →
+    ∀ (A : NUPPT) {n : ℕ},
+      3 ≤ n → blumFactorProb A n ≤ (rabinBlumTrapdoor H).invProbAt (rabinBlumInverter H A) n + rabinErr n
+blumFactoring_of_factoring : BlumDensity → FactoringAssumption → BlumFactoringAssumption
+blumGen : ArithmeticFP → NUPPT
+blumGen_runAt : ∀ (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n),
+  (blumGen H).runAt n [] r = rabinGenOut (fun x => x % 4 = 3) blumDefault n (List.ofFn r)
+blumInvNat : ℕ → ℕ → ℕ → ℕ
+blumInv_spec : ∀ (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
+  (y : ↥(QR (blumMod (pairFstD ((blumGen H).runAt n [] r))))) (s : (blumInv H).Coins n),
+  blumDec (pairFstD ((blumGen H).runAt n [] r))
+      ((blumInv H).runAt n
+        (pairEncode (pairSndD ((blumGen H).runAt n [] r)) (blumEnc (pairFstD ((blumGen H).runAt n [] r)) y)) s) =
+    some ((blumPermAt (pairFstD ((blumGen H).runAt n [] r))).symm y)
+blumPermAt : (i : List Bool) → ↥(QR (blumMod i)) ≃ ↥(QR (blumMod i))
+blumSampleRaw : List Bool → List Bool
+blumSampler : ArithmeticFP → NUPPT
+@blumSqrt : {p q : ℕ} → p.Coprime q → (ZMod (p * q))ˣ → (ZMod (p * q))ˣ
+@blumSqrt_mem_QR : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)] (h : p.Coprime q)
+  {y : (ZMod (p * q))ˣ}, y ∈ QR (p * q) → blumSqrt h y ∈ QR (p * q)
+@crtUnits : {p q : ℕ} → p.Coprime q → (ZMod (p * q))ˣ ≃* (ZMod p)ˣ × (ZMod q)ˣ
+@crtUnits_fst : ∀ {p q : ℕ} (h : p.Coprime q) (x : (ZMod (p * q))ˣ), ↑((crtUnits h) x).1 = (↑x).cast
+@crtUnits_snd : ∀ {p q : ℕ} (h : p.Coprime q) (x : (ZMod (p * q))ˣ), ↑((crtUnits h) x).2 = (↑x).cast
+decodeDistinctPrimes_encode : ∀ (m : ℕ) (z : DistinctPrimes m),
+  decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z
+@decodeFin_ofFn : ∀ {ℓ : ℕ} (x : Fin ℓ → Bool), decodeFin ℓ (List.ofFn x) = some x
+encodeDistinctPrimes : (m : ℕ) → DistinctPrimes m → List Bool
+@encodeDistinctPrimes_of_decode : ∀ {m : ℕ} {w : List Bool} {z : DistinctPrimes m},
+  decodeDistinctPrimes m w = some z → encodeDistinctPrimes m z = w
+@eq_blumSqrt_of_sq_eq : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)] (h : p.Coprime q),
+  p % 4 = 3 → q % 4 = 3 → ∀ {x y : (ZMod (p * q))ˣ}, x ∈ QR (p * q) → x ^ 2 = y → x = blumSqrt h y
+factorProb : NUPPT → ℕ → ℝ
+@firstHit : {α : Type u_1} → (E : α → Prop) → [DecidablePred E] → {T : ℕ} → (Fin T → α) → Option α
+@gcd_sub_eq_prime_of_sq_eq_sq : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p ≠ q →
+    ∀ {x z : (ZMod (p * q))ˣ},
+      x ^ 2 = z ^ 2 → z ≠ x → z ≠ -x → (↑x - ↑z).val.gcd (p * q) = p ∨ (↑x - ↑z).val.gcd (p * q) = q
+@invProbOpt_le_invProb : ∀ {α : Type u_1} {β : Type u_2} {ρ : Type u_3} [inst : Fintype α] [inst_1 : Fintype ρ]
+  [inst_2 : Inhabited α] (f : α → β) (A : β → ρ → Option α), invProbOpt f A ≤ invProb f fun y r => (A y r).getD default
+leStr_pairEncode : ∀ (a b : List Bool), leStr (pairEncode a b) = [decide (listToNat a ≤ listToNat b)]
+@length_eq_of_decodeFin_eq_some : ∀ {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}, decodeFin ℓ w = some x → w.length = ℓ
+length_natToList : ∀ (k N : ℕ), (natToList k N).length = k
+length_sizeStr : ∀ (w : List Bool), (sizeStr w).length = (listToNat w).size
+listToNat_addStr : ∀ (a b : List Bool), listToNat (addStr (pairEncode a b)) = listToNat a + listToNat b
+listToNat_lt_two_pow : ∀ (w : List Bool), listToNat w < 2 ^ w.length
+@listToNat_natToList : ∀ {k N : ℕ}, N < 2 ^ k → listToNat (natToList k N) = N
+@listToNat_rabinIndexOf : ∀ {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m), listToNat (rabinIndexOf m R) = R.z.p * R.z.q
+listToNat_subStr : ∀ (a b : List Bool), listToNat (subStr (pairEncode a b)) = listToNat a - listToNat b
+modExpStr_pairEncode : ∀ (a x N : List Bool),
+  modExpStr (pairEncode a (pairEncode x N)) = natToList N.length (listToNat a ^ listToNat x % listToNat N)
+mulStr_pairEncode : ∀ (a b : List Bool),
+  mulStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a * listToNat b)
+@natToBits_bitsToNat : ∀ {k : ℕ} (b : Fin k → Bool), natToBits k (bitsToNat b) = b
+natToList_length_listToNat : ∀ (w : List Bool), natToList w.length (listToNat w) = w
+@natToList_val_natCast : ∀ {k M : ℕ} {w : List Bool},
+  w.length = k → listToNat w < M → natToList k (↑(listToNat w)).val = w
+negligible_rabinErr : Negligible rabinErr
+negligible_two_pow_neg : Negligible fun n => 2⁻¹ ^ n
+@not_negligible_iff : ∀ {μ : ℕ → ℝ}, ¬Negligible μ ↔ ∃ c, ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 / ↑n ^ c ≤ |μ n|
+oddDefault : (m : ℕ) → RabinParams (fun x => x ≠ 2) (max m 3)
+oddFactorProb : NUPPT → ℕ → ℝ
+oddFactorProb_le : ∀ (A : NUPPT) {n : ℕ}, 6 ≤ n → oddFactorProb A n ≤ 2 * factorProb A n
+oddGen : ArithmeticFP → NUPPT
+oddGen_runAt : ∀ (H : ArithmeticFP) (n : ℕ) (r : (oddGen H).Coins n),
+  (oddGen H).runAt n [] r = rabinGenOut (fun x => x ≠ 2) oddDefault n (List.ofFn r)
+@ofFn_of_decodeFin_eq_some : ∀ {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}, decodeFin ℓ w = some x → List.ofFn x = w
+ofFn_padFin_eq_take : ∀ (ℓ : ℕ) (w : List Bool), List.ofFn (padFin ℓ w) = List.take ℓ (w ++ List.replicate ℓ false)
+Probe/Import_rabin.lean:179:8: error(lean.unknownIdentifier): Unknown identifier `ofFn_padFin_of_le`
+one_div_card_primes_le : ∀ (n : ℕ), 2 ≤ n → 1 / ↑(Fintype.card (Primes n)) ≤ 2 * ↑n / 2 ^ n
+one_sub_one_div_pow_le_exp_neg : ∀ (a k : ℕ), 0 < a → (1 - 1 / ↑a) ^ (a * k) ≤ Real.exp (-↑k)
+padFin : (ℓ : ℕ) → List Bool → Fin ℓ → Bool
+@padFin_ofFn : ∀ {ℓ : ℕ} (x : Fin ℓ → Bool), padFin ℓ (List.ofFn x) = x
+@polyTimeComputable_and : ∀ {p q : List Bool → Bool},
+  (PolyTimeComputable fun x => [p x]) → (PolyTimeComputable fun x => [q x]) → PolyTimeComputable fun x => [p x && q x]
+polyTimeComputable_blumInvRaw : ArithmeticFP → PolyTimeComputable blumInvRaw
+polyTimeComputable_const : ∀ (w : List Bool), PolyTimeComputable fun x => w
+@polyTimeComputable_ite : ∀ {p : List Bool → Bool} {f g : List Bool → List Bool},
+  (PolyTimeComputable fun x => [p x]) →
+    PolyTimeComputable f → PolyTimeComputable g → PolyTimeComputable fun x => if p x = true then f x else g x
+polyTimeComputable_lenEq : PolyTimeComputable fun z => [decide ((pairFstD z).length = (pairSndD z).length)]
+polyTimeComputable_lenLe : PolyTimeComputable fun z => [decide ((pairSndD z).length ≤ (pairFstD z).length)]
+polyTimeComputable_oddGenRaw : ArithmeticFP → PolyTimeComputable (rabinGenRaw (fun x => x ≠ 2) oddDefault)
+polyTimeComputable_pairDropPoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.drop (p.eval (pairFstD z).length) (pairSndD z)
+polyTimeComputable_pairEq : PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)]
+polyTimeComputable_pairTakePoly : ∀ (p : PolyExpr),
+  PolyTimeComputable fun z => List.take (p.eval (pairFstD z).length) (pairSndD z)
+polyTimeComputable_rsaGenRaw : ArithmeticFP → PolyTimeComputable rsaGenRaw
+polyTimeComputable_unitSampleStr : ArithmeticFP →
+  ∀ {f : List Bool → List Bool},
+    PolyTimeComputable f → PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z)
+primeStr_eq : primeStr = fun w => [decide (Nat.Prime (listToNat w))]
+@pushesUniform_sqTo : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p ≠ q → p ≠ 2 → q ≠ 2 → HardcoreBit.PushesUniform (sqTo (p * q))
+rabinBlumInverter : ArithmeticFP → NUPPT → NUPPT
+rabinBlumInverter_runAt : ∀ (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N y : List Bool)
+  (r : (rabinBlumInverter H A).Coins n),
+  (rabinBlumInverter H A).runAt n (pairEncode N y) r = rabinRootStep (A.runAt n N r) (listToNat N) y
+rabinBlumTrapdoor : ArithmeticFP → TrapdoorCollection
+rabinBlumTrapdoor_invProbAt_le : ∀ (H : ArithmeticFP),
+  BlumDensity →
+    ∀ (A : NUPPT) {n : ℕ},
+      3 ≤ n → (rabinBlumTrapdoor H).invProbAt A n ≤ 2 * blumFactorProb (rabinFactorer H A) n + rabinErr n
+rabinBlumTrapdoor_sampleClose : ∀ (H : ArithmeticFP), ∃ δ, Negligible δ ∧ (rabinBlumTrapdoor H).SampleClose δ
+rabinCollection_index : ∀ (H : ArithmeticFP) (n : ℕ) (r : (rabinCollection H).gen.Coins n),
+  (rabinCollection H).index n r = rabinIndexOf (max n 3) (rabinGenParams (fun x => x ≠ 2) oddDefault n (List.ofFn r))
+rabinCollection_invProbAt_le : ∀ (H : ArithmeticFP) (A : NUPPT) {n : ℕ},
+  3 ≤ n → (rabinCollection H).invProbAt A n ≤ 2 * oddFactorProb (rabinFactorer H A) n + rabinErr n
+rabinCollection_sampleClose : ∀ (H : ArithmeticFP), ∃ δ, Negligible δ ∧ (rabinCollection H).SampleClose δ
+rabinDec : (i : List Bool) → List Bool → Option (ZMod (rabinMod i))ˣ
+rabinEnc : (i : List Bool) → (ZMod (rabinMod i))ˣ → List Bool
+rabinErr : ℕ → ℝ
+rabinEval : List Bool → List Bool
+rabinEval_spec : ∀ (i : List Bool) (x : (ZMod (rabinMod i))ˣ), rabinEval (pairEncode i (rabinEnc i x)) = rabinF i x
+rabinFactorStep : ℕ → ℕ → ℕ → List Bool → List Bool
+rabinFactorer : ArithmeticFP → NUPPT → NUPPT
+rabinFactorer_runAt : ∀ (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N : List Bool) (r : (rabinFactorer H A).Coins n),
+  (rabinFactorer H A).runAt n N r =
+    rabinFactorStep n (listToNat N) (listToNat (unitSampleStr N n (List.take (rsaSampleCoins.eval n) (List.ofFn r))))
+      (A.runAtL n
+        (pairEncode N
+          (natToList N.length
+            (listToNat (unitSampleStr N n (List.take (rsaSampleCoins.eval n) (List.ofFn r))) ^ 2 % listToNat N)))
+        (List.drop (rsaSampleCoins.eval n) (List.ofFn r)))
+rabinGenParams : (P : ℕ → Prop) →
+  [DecidablePred P] → ((m : ℕ) → RabinParams P (max m 3)) → (m : ℕ) → List Bool → RabinParams P (max m 3)
+@rabinIndexOf : {P : ℕ → Prop} → (m : ℕ) → RabinParams P m → List Bool
+rabinMod : List Bool → ℕ
+rabinPrimeCoins : PolyExpr
+rabinSampleRaw : List Bool → List Bool
+@rabin_symmetry : ∀ {p q : ℕ} [hp : Fact (Nat.Prime p)] [hq : Fact (Nat.Prime q)],
+  p ≠ q →
+    p ≠ 2 →
+      q ≠ 2 →
+        ∀ {ρ : Type u_1} [inst : Fintype ρ] (Z : (ZMod (p * q))ˣ → ρ → Option (ZMod (p * q))ˣ),
+          (uprob fun w => ∃ z, Z (w.1 ^ 2) w.2 = some z ∧ z ^ 2 = w.1 ^ 2) ≤
+            2 * uprob fun w => ∃ z, Z (w.1 ^ 2) w.2 = some z ∧ z ^ 2 = w.1 ^ 2 ∧ z ≠ w.1 ∧ z ≠ -w.1
+rejectBlocksL_eq : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ) (r : List Bool),
+  rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (listToNat (List.take k (List.drop (t * B) r))) then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+@rejectBlocksL_spec : ∀ {E : ℕ → Prop} [inst : DecidablePred E] {k B T : ℕ} {r : List Bool} {v : ℕ},
+  rejectBlocksL E k B T r = some v → E v ∧ v < 2 ^ k
+rsaCollection_sampleClose : ∀ (H : ArithmeticFP), ∃ δ, Negligible δ ∧ (rsaCollection H).SampleClose δ
+rsaSampleCoins : PolyExpr
+rsaSampler_spec : ∀ (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n) (s : (rsaSampler H).Coins n),
+  ∃ x,
+    rsaDec (pairFstD ((rsaGen H).runAt n [] r)) ((rsaSampler H).runAt n (pairFstD ((rsaGen H).runAt n [] r)) s) =
+        some x ∧
+      rsaEval
+          (pairEncode (pairFstD ((rsaGen H).runAt n [] r))
+            ((rsaSampler H).runAt n (pairFstD ((rsaGen H).runAt n [] r)) s)) =
+        rsaF (pairFstD ((rsaGen H).runAt n [] r)) x
+samplePairOut_eq_encode : ∀ (m : ℕ) (hm : 2 ≤ m) (a b : List Bool),
+  ∃ z, samplePairOut m hm a b = encodeDistinctPrimes m z
+sampleUnitL : ℕ → ℕ → ℕ → ℕ → List Bool → Option ℕ
+@sampleUnitL_spec : ∀ {N k B T : ℕ} {r : List Bool} {v : ℕ}, sampleUnitL N k B T r = some v → v < N ∧ v.Coprime N
+@sq_mem_QR : ∀ {N : ℕ} (x : (ZMod N)ˣ), x ^ 2 ∈ QR N
+@statClose_firstHit : ∀ {α : Type u_1} (E : α → Prop) [inst : DecidablePred E] [inst_1 : Fintype α] [DecidableEq α]
+  [Nonempty α] (T : ℕ) {d : α}, E d → StatClose (fun xs => (firstHit E xs).getD d) (fun e => ↑e) ((1 - uprob E) ^ T)
+@statClose_of_pushesUniform : ∀ {γ : Type u_1} {Ω : Type u_2} [inst : Fintype Ω] [inst_1 : Fintype γ] {π : Ω → γ},
+  HardcoreBit.PushesUniform π → StatClose π id 0
+statClose_rejectBlocksL : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ),
+  k ≤ B →
+    ∀ {d : ℕ},
+      E d →
+        d < 2 ^ k →
+          StatClose (fun r => (rejectBlocksL E k B T (List.ofFn r)).getD d) (fun e => ↑↑e)
+            ((1 - uprob fun v => E ↑v) ^ T)
+statClose_rejectionSample : ∀ (m k T : ℕ),
+  0 < m → m ≤ 2 ^ k → ∀ (d : Fin m), StatClose (fun b => (rejectionSample m k T b).getD d) id ((1 - ↑m / 2 ^ k) ^ T)
+subStr_pairEncode : ∀ (a b : List Bool), subStr (pairEncode a b) = natToList a.length (listToNat a - listToNat b)
+two_pow_le_two_mul_card_primes : ∀ (n : ℕ), 2 ≤ n → 2 ^ n ≤ 2 * n * Fintype.card (Primes n)
+Probe/Import_rabin.lean:235:8: error(lean.unknownIdentifier): Unknown identifier `uexp_prod`
+unitSampleStr : List Bool → ℕ → List Bool → List Bool
+@uprob_and_eq_mul_subtype : ∀ {α : Type u_1} [inst : Fintype α] (E S : α → Prop) [inst_1 : DecidablePred E],
+  (uprob fun a => E a ∧ S a) = uprob E * uprob fun z => S ↑z
+@uprob_comp_equiv : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] (e : α ≃ β) (p : β → Prop),
+  (uprob fun a => p (e a)) = uprob p
+@uprob_diag : ∀ {γ : Type u_1} [inst : Fintype γ] [DecidableEq γ] [Nonempty γ],
+  (uprob fun z => z.2 = z.1) = 1 / ↑(Fintype.card γ)
+Probe/Import_rabin.lean:240:8: error(lean.unknownIdentifier): Unknown identifier `uprob_eq_one_div_card`
+@uprob_le_one : ∀ {α : Type u_1} [inst : Fintype α] (p : α → Prop), uprob p ≤ 1
+@uprob_mono : ∀ {α : Type u_1} [inst : Fintype α] {p q : α → Prop}, (∀ (a : α), p a → q a) → uprob p ≤ uprob q
+@uprob_nonneg : ∀ {α : Type u_1} [inst : Fintype α] (p : α → Prop), 0 ≤ uprob p
+@uprob_or_le : ∀ {α : Type u_1} [inst : Fintype α] (p q : α → Prop), (uprob fun a => p a ∨ q a) ≤ uprob p + uprob q
+@uprob_prod : ∀ {α : Type u_1} {β : Type u_2} [inst : Fintype α] [inst_1 : Fintype β] (p : α × β → Prop),
+  uprob p = uexp fun a => uprob fun b => p (a, b)
+@uprob_subtype_prod_eq : ∀ {α : Type u_1} {ρ : Type u_2} [inst : Fintype α] [inst_1 : Fintype ρ] (E : α → Prop)
+  [inst_2 : DecidablePred E] (S : α × ρ → Prop), (uprob fun z => S (↑z.1, z.2)) = uprob fun z => S ↑z
+val_units_pow : ∀ (M : ℕ) [NeZero M] (x : (ZMod M)ˣ) (e : ℕ), (↑(x ^ e)).val = (↑x).val ^ e % M
+xgcdStr : List Bool → List Bool
+FAIL(Probe/Import_rabin): lean exited with status 1
+FAIL(Probe/Import_rabin): no fresh .olean produced

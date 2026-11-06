@@ -1,0 +1,22 @@
+# Seal control: Probe/SealControl.lean. Three readings of foreign definitions with no published equation
+# (Collection.SampleClose, NUPPT.inParam, FunFamily.Easy): unsealed (namespace ProbeSealUnsealed) all close; sealed with
+# attribute [local irreducible] (namespace ProbeSealSealed) all three fail, as expected. No TCSlib source was edited. ----
+Probe/SealControl.lean:31:23: error: Type mismatch
+  h
+has type
+  ∀ (n : ℕ) (r : F.gen.Coins n),
+    StatClose (fun s => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s)) (fun x => some x) (δ n)
+but is expected to have type
+  F.SampleClose δ
+Probe/SealControl.lean:33:80: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inParam z = pairFstD (pairFstD (pairFstD z))
+Probe/SealControl.lean:37:14: error: Invalid `⟨...⟩` notation: The expected type `𝓕.Easy` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+FAIL(Probe/SealControl): lean exited with status 1
+FAIL(Probe/SealControl): error diagnostics reported
+FAIL(Probe/SealControl): no fresh .olean produced
