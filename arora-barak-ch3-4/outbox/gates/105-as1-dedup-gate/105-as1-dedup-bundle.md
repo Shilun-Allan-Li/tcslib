@@ -1,0 +1,4250 @@
+## ===== campaign/gates/105-as1-dedup/pack.md =====
+
+# External audit pack: dedup AS-1, `LogProg.astep_call₁` through `astep_call` (PR #214, a dedup gate)
+
+## Why this PR
+
+The dedup window (12.2c), opened on 2026-11-06 by the user, retires the ledger's acknowledged
+families one PR at a time. **AS-1** (`campaign/duplication-ledger.md`) covers machine-specific
+step lemmas that re-prove the general `astep_*` equations of `SpaceComplexity/Machines/ARM`. Its
+six members:
+- `Complexity.LogProg.astep_call₁`, in `SpaceComplexity/UnaryLogspace`;
+- `BoolCircuit.AdjScan.astep_rd`, `astep_hit` and `astep_jeqFst`, in
+  `CircuitComplexity/LogspaceUniformScan`;
+- `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂`, in `CircuitComplexity/LogspaceUniformWalk`.
+
+`CircuitComplexity/` is colleague-owned and needs the owner's authorization, so this PR retires
+only the first member. The other five stay in the ledger. `UnaryLogspace` is Hydroxyi's; the user
+allowed mechanical edits there, with an FYI.
+
+**The PR:** #214 on `lean/dedup-as1`, head `0bc71211` (full hash in the bundle header): the
+change `73629daf`, then a records-only merge of the campaign. One file, one proof
+(`evidence/landing/as1.diff`): `simp only [astep, hl]; rw [vword_unary₁]` becomes
+`rw [astep_call hl, vword_unary₁]`.
+
+## Brief for the auditor
+
+1. **The member:** does `astep_call₁` still unfold `astep` anywhere, and is its statement
+   unchanged?
+2. **Completeness:** outside `CircuitComplexity/`, does any other machine-specific step lemma
+   re-prove a general `astep_*` equation? The scope search found none. It also found that many
+   proofs compute single steps inline with `simp [astep, …]`. Those are not named step lemmas and
+   were not counted; say whether they should be.
+
+## Repository-side attestations (verify or challenge)
+
+- **Freeze** (`evidence/freeze/`): 26 → 26 public; only `astep_call₁`'s body changed.
+- **Lint** (`evidence/lint/`): the campaign lint on `SpaceComplexity`, 0 FAIL, 80 WARN over 111
+  files, as at the base. The policy linter: 0 findings on the file.
+- **Replay** (`evidence/merged-tree/`): `replay-las1` at `0bc71211`, over the downstream closure
+  of `UnaryLogspace` (7 modules), chained from the campaign's `oleans-lnth`: **7 modules, 0 failed,
+  0 `sorry`**; static 0 mismatches.
+
+## Findings format
+
+| # | Severity | File · declaration | Claim | Evidence / counterexample | Proposed fix |
+|---|---|---|---|---|---|
+
+The severity guide is in `campaign/standards/TEMPLATE.md`. Findings are copied verbatim into
+`campaign/gates/105-as1-dedup/findings.md`. The gate closes when it has zero blockers and zero
+majors.
+
+**Deliver your findings as a downloadable Markdown file named `as1-dedup-findings.md`** (the
+findings table and the verdict line, no other wrapping), and also paste its content in your reply.
+
+## ===== campaign/gates/105-as1-dedup/STATUS.md =====
+
+# Gate 105 (#214, the dedup window's AS-1)
+
+- 2026-11-06: the change `73629daf` (a sub-agent; the one member outside `CircuitComplexity`),
+  #214 opened. `replay-las1` passed (7 modules, 0 failed, 0 `sorry`); freeze and lint in
+  `evidence/`. Pack complete.
+
+## ===== campaign/standards/TEMPLATE.md =====
+
+# External audit pack — TEMPLATE
+
+Copy this file to `audits/phaseN-pack.md`, fill every `⟨…⟩`, and hand the result (plus
+the listed attachments) to an external LLM from a different vendor, in a fresh context
+with no access to this repository's development history. Record the findings in
+`audits/phaseN-findings.md`. A phase's findings must be addressed (fixed, or explicitly
+waived with a reason) before the next phase begins.
+
+---
+
+## Brief for the auditor
+
+You are auditing the **trusted surface** of a Lean 4 formalization: definitions, theorem
+statements, and remaining `sorry`s. The proofs that exist are machine-checked — do not
+review tactic scripts for correctness. The failure modes you are hunting are:
+
+1. **Infidelity** — a definition that does not mean what the cited source means.
+2. **Trivialization** — a definition or statement satisfiable for degenerate reasons
+   (vacuous hypotheses, a class that collapses, an encoding that makes a theorem empty).
+3. **Unprovability** — a `sorry`d statement that is false as stated, or whose stated
+   form is subtly weaker/stronger than intended (boundary cases: empty input, `n = 0`,
+   `k = 0` tapes, constant absorption).
+4. **Missing hypotheses** — especially finiteness, positivity, and well-formedness side
+   conditions the informal source leaves implicit.
+5. **Debt** — wholesale duplication of existing proved material (private copies of
+   another file's declarations, re-derivations of registry routines), even when
+   disclosed and mechanically forced by file ownership. Report it at **major** with
+   the proposed fix "human acknowledgment required": it does not block the gate on
+   soundness, but the gate must not close without the human maintainer explicitly
+   accepting the debt and naming its scheduled resolution. Screen for it
+   cumulatively — verify the pack's duplication ledger (per-file copied-material
+   totals) rather than assessing each copy in isolation.
+
+   **Accounting inside an acknowledged family is a minor.** Once the human
+   maintainer has acknowledged a debt family and named its resolution, a later
+   correction to that family's *accounting* is reported at **minor**, not major.
+   Examples are a missed member, a miscounted span, or an imprecise description of
+   the screen. Such a correction does not change what was approved. It is a
+   **major** again only if it changes the approval itself: the correction pushes a
+   further file past the one-fifth threshold, reveals copies outside the
+   acknowledged family's named scope, or shows the named resolution cannot work.
+
+**Seals and reducible abbreviations.** A rule-10 seal (`attribute [local irreducible]` on
+other-file definitions, each with an `rfl` control that closes unsealed and fails sealed) cannot
+include a reducible `abbrev`: Lean's default reducibility validation refuses the attribute (the
+unsafe override `allowUnsafeReducibility` is not used in seals). `policy.md` (*Definitions
+land with their lemmas*) allows reading an abbreviation through its body, so that is not a finding.
+Do report an `abbrev` passed to `simp`, `rw` or `unfold` where a published lemma exists, and a new
+public `abbrev` without its lemma.
+
+For **every definition** in scope: restate it in your own mathematical English *without
+looking at the docstring first*, then compare your restatement against the cited source
+location, and report any daylight. For **every `sorry`d theorem**: argue in 2-5 sentences
+why it is true as literally stated, or exhibit the problem (ideally a concrete
+counterexample or degenerate instance). Attempt at least ⟨3⟩ *adversarial
+instantiations* — concrete pathological objects plugged into the definitions to check
+they behave as the theory intends. Propose any machine-checkable sanity theorems you
+believe are missing.
+
+Do not give a blanket approval. Your deliverable is the findings table; an empty table
+must be accompanied by the per-definition restatements that justify it.
+
+## Scope
+
+| Item | Where |
+|---|---|
+| Lean files under audit | ⟨list of files, with line ranges if partial⟩ |
+| Source text | ⟨book/paper, edition, page/theorem numbers — auditor must have it at hand⟩ |
+| Plan/context documents | `AroraBarakChapter1Plan.md`, `policy.md` §2-3 ⟨adjust⟩ |
+| Out of scope | tactic proofs; vendored files' upstream design ⟨adjust⟩ |
+
+## Known deviations (declared by the authors — verify they are benign, flag any others)
+
+⟨Bulleted list: every deviation the docstrings declare, one line each.⟩
+
+## Specific questions for this phase
+
+⟨Numbered list of the doubts the authors actually have. Be concrete.⟩
+
+## Findings format (auditor fills)
+
+| # | Severity | File · declaration | Claim | Evidence / counterexample | Proposed fix |
+|---|---|---|---|---|---|
+| 1 | blocker / major / minor / note | | | | |
+
+Severity guide: **blocker** = a downstream phase would build on a wrong statement;
+**major** = statement is fixable but materially misleading as is, **or** accumulated
+debt (failure mode 5) that the gate may not close over without explicit human
+acknowledgment (accounting corrections inside an already-acknowledged family are
+minors; see failure mode 5); **minor** = edge case or naming/attribution defect; **note** =
+observation, no change required.
+
+## ===== policy.md =====
+
+# TCSlib Contribution Policy
+
+Standards for all Lean contributions to this repository, whether written by humans or by
+agents. This document covers three things: **modularity** (how code is organized),
+**attribution** (how every result is traced to a source), and **proof sketches** (how every
+formal proof is accompanied by readable mathematics).
+
+It complements, and does not replace:
+
+- `workflow.md` — the campaign formalization process (phases, audit gates, fill epochs)
+  that produces code meeting these standards.
+- `.github/copilot-instructions.md` — build workflows, import rules, CI integration points.
+- `AGENTS.md` / `.claude/CLAUDE.md` — the sorry-ladder proof workflow and agent roster.
+- `blueprint/BLUEPRINT_PIPELINE.md` — how blueprint entries are generated and validated.
+
+Where this document names an existing mechanism (blueprint macros, hygiene scripts), the
+policy is to *use that mechanism*, not to invent a parallel one.
+
+## 1. Modularity
+
+**Layout.** Content lives at `TCSlib/<Area>/<Topic>/<Piece>.lean`, one coherent concept or
+lemma cluster per file, with a facade file `TCSlib/<Area>/<Topic>.lean` that imports every
+child and carries a `/-! -/` module docstring with a `## Contents` list (one line per child).
+See `TCSlib/Complexity/NPReductions.lean` for the reference example.
+
+**File size.** Target 150–600 lines per math file. A file approaching 1000 lines should be
+split unless there is a positive reason not to (e.g. a single long proof that cannot be
+usefully decomposed).
+
+**Exports.** Every new topic facade must be imported from `TCSlib.lean`. CI only builds what
+is reachable from `TCSlib.lean`; an unexported file is invisible to CI, docs, and the
+blueprint.
+
+**Imports.** Precise module imports only. A bare `import Mathlib` fails CI. Import only what
+the file uses.
+
+**Namespaces.** Namespaces are area-local: pick one namespace root per topic and use it
+consistently within that topic. Do not leak auxiliary definitions into the root namespace;
+mark internal helpers `private` or put them in a dedicated inner namespace.
+*Model registry exception*: a model-defining **type** (a machine, circuit, formula, or
+decision-tree model) may live at the root namespace, Mathlib-style, provided it is
+registered in the catalog facade `TCSlib/ComputationalModels.lean`; its operations and
+lemmas still live in the type's own namespace. Anything else at root is a leak.
+
+**Layering.** Keep definition files separate from heavyweight theorem files, so that
+downstream work can import a model or a class definition without pulling in every proof about
+it. When a development has both a "raw/general" layer and a "bundled" layer (e.g. a machine
+model that is parametric in its types, plus a bundled version carrying finiteness instances),
+headline definitions and theorems are stated against the bundled layer; the raw layer is
+internal plumbing.
+
+**Helpers.** Foundational helper lemmas that serve a whole area belong in that area's
+`Basic.lean`, not in the file that first needed them.
+
+**Definitions land with their lemmas** (user, 2026-10-16). Every new public `def` is published,
+in the same PR and beside the definition, with the lemmas that let a consumer read it without
+unfolding:
+- a structure-valued definition (a contract, a configuration, zone contents): its field
+  equations, generated by `simps` with `(config := { isSimp := false })` and explicit
+  projections (`simps!` where the body is another constructor's result);
+- any other definition: an equation lemma `<name>_eq` (by `rfl` where that holds), or case
+  lemmas that together cover every input (`_of_lt`/`_of_le`, `_true`/`_false`, one per
+  constructor);
+- a predicate: an `_iff` characterization;
+- a machine: its run or contract lemma, the only way consumers read a machine.
+
+None carries `@[simp]` unless a gate approves it, and each docstring states its formula. Consumers
+never unfold another file's definition (the no-unfolding rule of the briefs, user 2026-10-16). The
+rule binds TCSlib's own definitions: core and Mathlib definitions may reduce in a `rfl`, `decide`
+or `show` step, but are never passed to `simp`, `rw` or `unfold`; use their equation lemmas
+(`Bool.toNat_true`, not `simp [Bool.toNat]`) (user, 2026-10-23).
+**Reducible abbreviations are notation** (user, 2026-10-26). Lean unfolds a TCSlib `abbrev` (such
+as `Turing.Cfg.Halted`, `cfg.state = none`) at every step, and the standard seal cannot cover it:
+under Lean's default reducibility validation, `attribute [local irreducible]` fails on a reducible
+declaration (only the unsafe override `set_option allowUnsafeReducibility true`, which the
+campaign's seals do not use, lifts the check). So reading an abbreviation through its body,
+for example `¬ c.Halted` as `c.state ≠ none`, is allowed and is not a definitional closure. A
+consumer names it in `simp`, `rw` or `unfold` only through a published lemma where one exists, and
+a new public `abbrev` still lands with its `_iff` or `_eq` lemma.
+They read the machine model's primitives (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
+`Cfg.mapState`) through the existing lemmas. The style lint's check 8 reports, per file, every
+public `def` with no lemma named after it and no `simps` attribute, so a head-against-base diff
+of the lint shows any new definition that lacks one. Definitions that predate the rule are listed
+by the same check and covered as consumers need them.
+
+**Construction reuse.** Machines are built from the verified construction layers, not from
+scratch: the combinators and routine catalog of `TCSlib/Complexity/TuringMachine/Build/`
+(conventions, wrappers, loops, primitives, embeddings, seams, and the catalog rows —
+`machine-library-design.md` is the registry), the registered hosts (**Hosts come first**,
+below), and the program layers (`LogProg.ARM`, `CounterProg`, and the general programming
+layer of `machine-library-design.md` §15 once it lands) where a program-level description
+suffices. Before writing a transition
+table by hand, check the registry; a routine that exists is cited, not re-derived. A routine
+that *almost* exists is the interesting case: do not write a third private variant — either
+consume the general form, or commission the missing form into the shared layer (during a
+fill batch: a `private` local copy plus a "requested shared lemma" in the report, promoted
+at the next shared-file window). A hand-built machine is acceptable only when no layer
+covers the need, and its docstring must say so and name what was missing — that sentence is
+what turns the gap into the next catalog row. The chapter-1/2 files that predate this layer
+re-derived the same bank/relocation/dispatch/frame families four times over (`emitterBank*`,
+`clBank*`, `clSlot*`, …); the retrofit paying that debt back is the standing cautionary
+tale. The same discipline applies to circuit construction once `CircuitComplexity`'s gadget
+layer exists: gadgets, wiring combinators, and size/depth ledgers get one shared home and a
+registry, and new circuits are assembled from it.
+
+**Hosts come first.** A *host* is a control structure that drives other routines rather than
+computing one value: a search or traversal (BFS, DFS, backtracking, an odometer over
+assignments), a recursion or evaluation scheme (AND/OR evaluation, Savitch's midpoint
+recursion), an interpreter or simulation step block, a clocked or windowed runner, a dispatcher
+over a data structure (tables, records), or an input device. Any routine whose natural contract
+does not depend on its first consumer counts as a host; leaf rows (copy, compare, seek,
+arithmetic) do not. **A host is never built `private` inside the proof that first needs it.**
+Its public contract is designed, statement-gated and placed in the shared construction layer
+first, generic in the parts its consumers vary (the leaf test, the step relation, the data
+domain), with time and space (head-envelope) clauses. Consumers cite it, under the campaign's
+proved-modulo rule while its own fill is still running. The host registry is
+`machine-library-design.md` §14. A private host already in the tree is harvested into the
+shared layer before a second consumer is briefed against it. The rule exists because private
+hosts were the main way the library overfitted to single proofs: four configuration encodings,
+three reachability notions and a private search host per theorem, each to be re-derived by the
+next consumer (assessment of 2026-10-12, recorded in the design document). (User, binding,
+2026-10-12.)
+
+**Duplication.** Some duplication is mechanically forced by the campaign discipline —
+exclusive file ownership, the statement freeze, and `private` visibility leave a fill batch
+no other legal way to use another file's unexported machinery — and occasionally it is the
+right engineering call. It is never silently acceptable: **every instance of duplicated
+proved material must be human-approved.** A fill batch discloses each copy in its report;
+the maintainer's integration ledger totals copied material per file (`workflow.md` §4); and
+the audit template treats accumulated duplication as a major finding that a gate cannot
+close over without the human maintainer explicitly accepting the debt and naming where and
+when it is paid back (the registry's dedup/refactor queue). Duplication that was never
+disclosed is a freeze violation, not debt.
+
+**File header.** Every math file begins with the Mathlib-style copyright block, its imports,
+the repo-standard options
+
+```
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+```
+
+then a module docstring containing `# Title`, `## Main definitions`, `## Main results`, and
+`## References` (see §2).
+
+## 2. Attribution
+
+Every mathematical statement in the library must be traceable to a source, at the level of
+precision of a textbook theorem number or a paper section.
+
+**File-level.** Every math file's module docstring contains a `## References` section giving
+full citations with short tags, e.g.
+
+```
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+```
+
+**Declaration-level.** Every definition, theorem, and lemma that corresponds to a result in
+a source carries the tag with a precise location in its docstring: `[AB09, Claim 1.6]`,
+`[AB09, §1.7]`, `[GRS25, Thm 4.2.1]`. Purely technical glue lemmas with no textbook
+counterpart may omit the tag; anything a reader would recognize as "a result" may not.
+
+**Deviations.** If the formal statement deviates from the source — different constants,
+strengthened or weakened hypotheses, a reformulation — the docstring must say so and briefly
+say why (e.g. "stated with explicit constant 5k rather than O(·), following the proof").
+
+**Statement prose.** Every public declaration's docstring begins with a natural-language
+statement of what it asserts (for a definition: what it is), precise enough that a reader
+could judge the formalization's fidelity without parsing the Lean. The `[Tag, location]`
+citation and any deviation note attach to that statement; the proof sketch (§3) follows it.
+A bare label ("Unfolding lemma", "Helper for X") is not a statement. Instances are exempt,
+as are vendored files (which follow upstream style). `private` declarations should carry
+docstrings too, but at reviewer discretion rather than as a hard requirement. The blueprint
+remains the cross-referenced informal layer for dependency structure (see **Blueprint**);
+the docstring statement is what external audits compare blind restatements against, so it
+is part of the trusted surface.
+
+**Blueprint.** When an ingested reference exists under `blueprint/src/references/`, blueprint
+entries use `\statementsource{<ref>}{<anchor>}` and `\proofsource{<ref>}{<anchor>}` to cite
+it, subject to the existing rule that these are written only after an approved proofmatch
+run. When starting a new chapter or paper, ingest it as a reference pair
+(`<name>.raw.md` + `<name>.md`) so these citations are possible: put the PDF under
+`blueprint/src/references/` in the change that formalizes it and run
+`python3 scripts/dataset_pipeline.py --yes`, which ingests it, matches every text the
+blueprint does not cite yet, and carries the new statements into the dataset
+(`python3 scripts/sources.py add TAG=<pdf or md>` does the ingest and match alone, with
+the docstring tag above; `python3 scripts/sources.py` shows which texts are attached and
+which are still missing; see `dataset/INSTRUCTIONS.md`). The dataset builder does not
+search outside that directory for sources; an unattached text leaves the theorems with
+informalized proof notes instead of citations.
+
+**Vendored code.** Lean code adapted from another project keeps the original copyright
+header and license notice, and its file docstring names the source project, the commit it
+was taken from, and a summary of local modifications.
+
+**Design adaptation.** When a construction, proof architecture, or module design is
+adapted from — or materially inspired by — another project's code, the debt is cited even
+when no code is transcribed. The module docstring's `## References` section names the
+source project, author, module or archive entry, the commit or version consulted, and its
+license, with a short tag usable at declaration level; the precedent is
+`TuringMachine/Composition.lean`'s `[Balbach22]` for the Isabelle AFP `Cook_Levin`
+composition-combinator architecture. Design documents and blueprint entries built on the
+adapted design carry the same citation. Examining external code purely for comparison,
+with nothing taken, creates no citation duty, but on a campaign it belongs in the
+campaign's records (plan decision log or backlog) so the provenance question is answerable
+later. (Maintainer guideline, binding, 2026-10-06.)
+
+## 3. Proof sketches
+
+Every nontrivial formal proof is accompanied by a human-readable English proof sketch, kept
+next to the Lean it describes.
+
+**What counts as nontrivial.** Rule of thumb: any proof longer than ~20 lines of tactics, or
+that would rate difficulty ≥ 3 on the blueprint scale. One-line `simp`/`omega`/`exact`
+proofs need no sketch.
+
+**Where sketches live.** In the Lean file itself:
+
+- For most theorems: a `**Proof sketch.**` paragraph at the end of the theorem's docstring,
+  written in mathematical English (not Lean identifiers), naming the key intermediate steps.
+- For long proofs: additionally, short comments at the major `have`/section boundaries tying
+  the tactics back to the sketch's steps.
+
+The named intermediate steps of a sketch should be visible in the formalization as `have`s
+or standalone lemmas — if the sketch says "first reduce to the one-tape case", there should
+be a lemma that is that reduction.
+
+**Where sketches do not live.** Not in the blueprint. Blueprint statement entries state
+claims only; `scripts/dataset_hygiene.py --strict` hard-fails on proof content there. The
+blueprint records *what* is true and its dependency structure; the Lean docstrings record
+*why* it is true.
+
+**Sketches and the sorry ladder.** When landing a sorry-skeleton, write the sketch at
+skeleton time — the sketch *is* the plan, and each `sorry` should correspond to a named step
+of it. A skeleton whose sketch cannot be written is not ready to land.
+
+**Synchronization.** When a proof strategy changes, the sketch changes in the same commit.
+A sketch that describes a proof the code no longer performs is worse than no sketch.
+
+## Review checklist
+
+Before merging new Lean content, check:
+
+1. Files follow the Area/Topic layout with a facade, and `TCSlib.lean` exports are updated.
+2. Imports are precise; no bare `import Mathlib`.
+3. Every file has a `## References` section; every source-derived declaration has a
+   `[Tag, location]` in its docstring; deviations from sources are noted.
+4. Every nontrivial proof (or sorry-stub standing in for one) has a proof sketch.
+5. Every public declaration (instances and vendored files excepted) has a docstring
+   opening with a natural-language statement of what it asserts
+   (`python3 scripts/style_lint.py` checks presence mechanically; statement quality is
+   review judgment).
+6. `zsh scripts/lean_check.sh <file>` reports zero errors for each touched file.
+7. If blueprint content was touched: `python3 scripts/blueprint_validate.py --strict` and
+   `python3 scripts/dataset_hygiene.py --strict` pass.
+8. No new private host: every search, recursion, interpreter, runner or input device the
+   change introduces is a registered public host, or cites one (§1, **Hosts come first**).
+
+## ===== campaign/duplication-ledger.md =====
+
+# Cumulative duplication ledger
+
+The standing per-file accounting of copied proved material that
+`workflow.md` §4 requires at every epoch boundary. Created as the
+retrofit-R1 round-1 repair (R1-2); **rebuilt at round 2** (R2-1/R2-2 of
+`audits/retrofit-r1-r2-findings.md`): the first version's arithmetic was
+inconsistent (summands 261 against a printed 249), its inclusion rule was
+applied asymmetrically, and it **misclassified an exact three-file copy
+family as "design-harvest reimplementation"** — the round-2 auditor
+proved the four relocation declarations byte-identical across `Loop`,
+`Primitives`, and `Hardness` after consistent identifier substitution,
+and found the 13 exact Loop-internal H3 copies omitted. This version
+adopts one inclusion rule, enumerates every family, and uses the
+auditor's independently computed figures wherever they exist.
+
+## Counting convention (one rule)
+
+**Primary rule — expanded correspondence membership**: a declaration is a
+ledger member iff it belongs to a *recorded cross-declaration
+correspondence* — the retrofit inventories' twin maps **including their
+strengthened-counterpart rows**, the A2/F2A reports' declared copies, and
+the round-2 audit's verified relocation and H3 families. Each member is
+counted **once per file it inhabits**. (Secondary, where it differs: the
+*strict normalized-byte-twin* count excludes the five strengthened
+counterparts — Loop's `loopHost_prepare`/`loopHost_contracts`,
+Primitives' `splitSolve_of_body`/`_source`/`_closed` — and H3's one
+near-copy `_init` pair.) Fractions are members over the file's total
+declarations. Line figures use the round-2 audit's span rule — attached
+docstring and intervening closure note through the last code line,
+excluding separating blank/module-note blocks — with the auditor's
+computed values where available and estimates under the same rule marked
+`≈`.
+
+## State after retrofit epoch R1 (the merged PRs #9/#10)
+
+| File | Total decls | Original-side members | Copy-side members | All members | Fraction | Lines in member blocks |
+|---|---:|---:|---:|---:|---:|---:|
+| `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` and `_anchor_return` near-copies are counted as source-side members since round 7 — Catalog twins reproduce them cross-file) | **98** after RB4 (merged, PR #13 `b2833d46`; was 117 — generated, pass 4): 88 historical + 10 from pairs. RB4 deleted 12 H3 copies, the 4 relocation originals and `emLoopHost_init`; `emLoopHost_anchor_return` and `emLoopHost_start` no longer reproduce a Catalog proof after the agreement-transfer rewrite | **49.2%** (98/199) | **2,647** (was 3,153; both totals from the script's span routine, which reproduces the audited 3,153) |
+| `Build/Primitives.lean` | 259 (272 before RB5) | 146 →Catalog (of the historical 150; strict 143) + **6 public originals** reproduced in Catalog (round-5 screen: `computesFunInTime_stripLast` → the adaptation `f2_strip_linear`; `_prepend`, `_pairEncodeFixed`, `_pairFst`, `_pairSnd`, `_pairConcat` → their strengthened `_spaceUsed` counterparts) | **none** — RB5 (PR #14, merged 2026-10-10) deleted the 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run`, formerly byte-identical to Loop's) | **168** after RB5 (was 173) — generated (pass 4): 145 historical (the 4 relocation members and the `splitEmbed_run` twin are deleted) + the same 23 sources of like-kind MEMBER pairs (the 6 round-5 publics, round-6 `emitterP2_control`, and 16 found by the complete round-7 pass: `emitterAppend_run`, `emitterP2EraseTM`, `emitterP2StateDecidableEq`, `emitterP2_erase_scan`, `emitterP2_prepare_rewind_candidate`/`_suffix`, `emitterSplit_find`/`_loop_bound`/`_of_body`/`_result`, `emitterTokenTM`, `emitterToken_double`/`_separator`, `emitter_first_entry`, `mapCfg`, `mapStart`) | **64.9%** (was 63.6%) | **3,790** before RB5 (3,415 + 375 round 7); not re-measured after it |
+| `CookLevin/Hardness.lean` | 545 (549 before RB5) | 0 | **none** — RB5 deleted the 4 relocation copies (`clSlotAction`/`clSlotCfg`/`clSlot_apply`/`clSlot_run`) and `clMap_run`. Not copy debt, but recorded: its replacement certified-layout layer `clPlacement` is a private generic adapter, scheduled for dissolution as 12.2c item 13 | **0** (was 4) | **0%** | 0 (was 73) |
+| `Build/Catalog.lean` | 428 (423 at the R1 close, plus the five §12.6 framed contracts) | 2 in-file originals (`f2_finSumEquiv`, `f2_sum_add` — their `a2_` copies are normalized-identical, round-3 verified) | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` copies + **3 Composition-sourced** (`f2_idTM`, `f2_idTM_run`, `f2_constTM` — maintainer-reconciled normalized-identical to `Composition.lean`'s originals) + **20 counter-block members** (`f2_counterInc` … `f2_counter_computes` — maintainer reconciliation, declaration by declaration: **19 normalized-identical** to `ClassP/TimeConstructible.lean`'s originals, and `f2_counter_computes` a **near-copy adaptation** of the proof body of the public `timeConstructible_id`) + **7 strengthened public counterparts** whose time conjuncts reproduce a public source proof (`computesFunInTime_id_spaceUsed`/`_const_spaceUsed` ← `Composition.lean`, round 4; `_prepend`/`_pairEncodeFixed`/`_pairFst`/`_pairSnd`/`_pairConcat_spaceUsed` ← `Build/Primitives.lean`, round 5 — 89-100% of each source proof reproduced) + **2 F2A adaptations** of public proofs (`f2_strip_linear` ← `computesFunInTime_stripLast`, 86% of the source reproduced — round-5 finding R5-1; `f2_counter_heads` ← `timeConstructible_id`, 64% — round-5 screen) + **20 round-6 members** from the exhaustive screen: R6-1's `f2_counter_count_space` (80.3% of the private `counter_count`) and 19 further cross-file adaptations — 4 F2A (`f2_exists_loopFind_space` 97.8% of `exists_loopFindTM`, `f2_cond_time` 92.0% of Wrappers' `computesFunInTime_cond`, `f2_rewind_heads` 90.8% of `catalogRewind`, `f2_cond_ledger` 70.3% of `timed_start`), 13 A2 (`a2_map_block`/`_suffix`/`_backA`/`_backB`/`_parse`/`_setup`, `a2_mapVirtual_run`, `a2_mapSetup_stationary`/`_run`/`_heads`, `a2_call_run`, `a2_loop_prepare` 86.8% of `loopHost_prepare`, `a2_loop_round`), and 2 public rows (`computesFunInTime_pairLenCheck_spaceUsed` 71.4% of `computesFunInTime_pairFst`; `exists_loopTM_spaceUsed` 85.5% of `exists_loopCfgTM`, 81.0% of `exists_loopTM`) | **318** | **74.3%** (75.2% of 423 at the R1 close; strict — excluding the 34 strengthened counterparts/adaptations and the 1 near-copy: **283, 66.1%**) | **7,539** (6,267 round-4 measured + 224 round 5 + 52 R6-1 + 996 for the 19) |
+| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 + 1 round-6 source (the public `computesFunInTime_cond`) | 0 | **19** — generated (pass 4): 17 historical + `computesFunInTime_cond` (round 6) + `captureCfg` (round 7) | **65.5%** | **355** (297 + 40 + 18) |
+| `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the source of both the near-copy `f2_counter_computes` and the adaptation `f2_counter_heads`; the private `counter_count` is likewise the source of R6-1's `f2_counter_count_space`) | 0 | **20** | **95.2%** (strict: 19, 90.5%) | 355 (round-4 measured) |
+| `TuringMachine/Composition.lean` | 19 | 5 (`idTM`, `idTM_run`, `constTM` + the public `computesFunInTime_id`, `computesFunInTime_const` whose proofs the Catalog rows reproduce) | 0 | **6** — generated (pass 4): + `controlCfg_run` (R7-1) | **31.6%** (strict: 3, 15.8%) | **109** (97 + 12) |
+| `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean` | — | 0 | 0 | 0 | 0% | 0 |
+| `Codes2Tape.lean` (ZF-B/B2/B3, integrated 2026-10-10) | 49 (9 pub + 40 priv; B3 added 16 new, non-copy privates) | 0 | **23 format-specific adaptations** of `CodeParser.lean`'s / `MathlibBridge.lean`'s one-tape top layer (20 retargeted + `zfBParse_full`/`zfBCanonical`/`zfBCanonical_eq`; agent-measured 60–100% body share) — the 46 format-independent copies were deleted after the promotion (f171767f) | **23** | **46.9%** (strict 3, 6.1%) | 290 code lines (agent-measured) — over one fifth: `backlog.md` §1 CH34-D2, **ACKNOWLEDGED (user, 2026-10-10) → 12.2c tasklist item 8** |
+| `Robustness/SingleTape.lean` (ZF-C2) | 100 | 0 | 0 — **3 in-file near-duplicates noted, uncounted** per the in-file convention (maintainer screen: `dgPos_move` 93.1% of `sweepPos_move`, `dgStart` 72.9% of `sweepStart`, `dgInput_read` 64.3% of `sweepInput_read`; the agent disclosed the first and third as borderline) | 0 | 0% | 0 |
+
+**Reconciliation notes (rounds 3-4 repairs)**: the F2A report's 306
+inventory entries decompose as **150 Primitives + 94 Loop + 10 Wrappers +
+3 Composition copies + 20 counter members + 2 in-file originals + 7
+adaptations (`f2_strip_linear`, `f2_counter_heads`, round 5;
+`f2_counter_count_space`, `f2_exists_loopFind_space`, `f2_cond_time`,
+`f2_rewind_heads`, `f2_cond_ledger`, round 6) + 20 nonmembers** (the
+round-4 correction: the old "29 outside" wrongly included the two counted
+in-file originals); the 20 share no member-level material with any
+declaration of the five source files (round-6 exhaustive screen below) (the `f2_polyHeads`/`f2_space_of_time`/
+`f2_segment_heads`-class engines and strengthenings — round-4 sampled and
+accepted). The A2 report's 45 declarations contribute 2 in-file copies +
+`a2_loop_halted_run` (in the Loop 95) + **13 cross-file adaptations**
+(round-6 screen) + 29 new constructions. Catalog's union:
+`318 = 286 F2A + 16 A2 + 7 earlier redirect + 9 public counterparts`.
+
+**The public-proof screen (round-5 repair of R4-1; R5-1/R5-2/R5-3).**
+Published as `audits/evidence/retrofit/r1-public-proof-screen.py` with its
+output `r1-public-proof-screen.out`. *Erratum:* the round-4 run tested
+whether a source proof was contained **whole** in its counterpart, but the
+round-4 text described "segments ≥ 60 characters". The round-5 auditor ran
+the method as described and found six fragment hits that the containment
+test could not see. The method below is the one actually run.
+
+- **Method.** Strip comments and all whitespace. Rename each source
+  identifier `h` to `f2_h` wherever Catalog declares `f2_h` (dotted names
+  split). Report two measures:
+  - the **longest common contiguous segment** (LCS), with the literal ≥ 60
+    candidate threshold;
+  - the **shared length**: greedy string tiling with blocks of at least 25
+    characters, as a fraction of the **source** proof.
+- **Rule.** A pair is a **member** when at least half of the source proof
+  reappears in the target, with an absolute floor of 60 shared characters
+  so that a one-line citation of a public lemma counts as reuse. Any other
+  shared tiling of at least 60 characters is a recorded **fragment**, not
+  counted. The rest are citations or no match.
+- **Population (R5-3).** 17 eligible pairs: 2 from Composition (`id`,
+  `const`) and **15** from Primitives, not the 16 stated in round 4. Five
+  source theorems have no `_spaceUsed` counterpart: `ifEq`, `comp`,
+  `splitSolveWith`, `unaryToken`, `appendBit`.
+- **Pass 1, direct pairs.**
+  - Members (7): `id` 96.5%, `const` 97.1%, `prepend` 93.9%,
+    `pairEncodeFixed` 100%, `pairFst`/`pairSnd` 88.8%, `pairConcat`
+    88.7%.
+  - Fragments, recorded and not counted (3): `polyUnary` (119 characters
+    shared, 46.7%); `pairLenCheck` (305, 21.9%; its LCS is the 91-character
+    `Nat.pow_one` bound); `stripLast` (221, 11.7%; its LCS is the
+    121-character `have hn` weakening).
+  - Citations or no match (7): `lengthBits`, `polyBits`, `pairValid`,
+    `pairDup`, `pairMapSnd`, `splitSolve` (the auditor's 27-character
+    citation), `incFixed`.
+  - The literal ≥ 60 LCS screen reproduces the auditor's hit set exactly
+    (`id` 776, `const` 273, and 62/75/75/75/91/121 for the six Primitives
+    pairs). One member falls below the 60-character LCS threshold:
+    `pairEncodeFixed`, whose longest block is 53 characters but whose whole
+    91-character source proof reappears. This is why the rule measures
+    coverage, not contiguity alone.
+- **Pass 2, residual helpers.** Each of the 27 nonmembers recorded in
+  round 4 is screened against every public proof of Composition,
+  Primitives and TimeConstructible, taking the best match by shared length.
+  - Members (2): `f2_strip_linear` (86.0% of `computesFunInTime_stripLast`;
+    R5-1) and `f2_counter_heads` (64.1% of `timeConstructible_id`; the
+    auditor's 215-character partial-reuse candidate, which crosses the
+    member bar once measured by tiling).
+  - Fragments, recorded (6): `f2_counter_count_space` 6.5%,
+    `f2_unary_sharp` 35.7%, `f2_cond_time` 30.0% (vs
+    `bufferedCompTM_computesInTime`, a candidate the auditor did not list),
+    `f2_rewind_scan_heads` 7.4%, `f2_rewind_heads` 6.0%,
+    `f2_cond_ledger` 11.7%.
+  - The remaining 19 share under 60 characters with any public proof.
+- **Round-6 repair (R6-1, R6-5): pass 3, exhaustive.** Round 6 found
+  R6-1, which the public-only residual pass could not see. Pass 3 replaces
+  that scope limit. **Every one of Catalog's 124 non-members** (all of
+  Catalog minus the post-R6-1 299-member union, computed by name in the
+  script) is screened against **every declaration, public and private, of
+  Composition, Primitives, TimeConstructible, Loop and Wrappers** (553
+  declarations, of which 542 have an extracted body of at least 25
+  characters; the other 11 cannot reach the 60-character floor). An exact 25-character prefilter is used; it loses nothing,
+  because every tile is at least 25 characters. Verdicts compare like with
+  like, proof with proof and term with term, so a proof that spells out a
+  definition's term is reported as a restatement and not counted. **Every**
+  qualifying pair is printed, not just each target's best match (R6-5).
+  - Result: **19 cross-file members**, all counted in the Catalog row
+    above. *Round-7 correction:* the round-6 text derived the source side
+    from each target's best match only, giving "6 new source-side members"
+    (R7-1). Pass 4 below replaces that hand step.
+  - Five A2 members reproduce just over half of one 129-character Loop
+    proof, `emLoop_run_prefix`. They are counted, as the rule requires,
+    and flagged as low-coverage.
+- **Round-7 repair (R7-1, R7-2): pass 4 generates the census.** No
+  per-file member count is assembled by hand any more. **Pass 4** runs the
+  like-kind rule over **all 423 Catalog declarations**, not only the
+  non-members, against all five source files: 537 like-kind MEMBER pairs.
+  **Every** pair's source joins its file's member set, together with the
+  historical rules, stated by name in the script: f2_-twins, the
+  `a2_loop_halted_run` twin, the relocation family, the 13 H3 copies, the
+  counter block and `catalog_` twins. The script prints each file's count
+  and every member beyond the historical rules, with spans. The rows above
+  quote it.
+  - Pass 4 reproduces the auditor's R7-1 additions (`controlCfg_run`,
+    `emCall_right_run`, `exists_emitLoopTM`).
+  - It also finds **24 further source-side members** (Primitives 16, Loop
+    7, Wrappers 1). These are source declarations that a Catalog twin of a
+    *sibling* declaration reproduces by more than half, so their material
+    is duplicated in Catalog. Two of them are Loop's H3 near-copies
+    `emLoopHost_init` and `emLoopHost_anchor_return`, previously
+    "noted, uncounted"; they are now counted through the cross-file path.
+  - Catalog is unchanged at 318.
+  - **R7-2:** the body extractor now handles equation-style definitions and
+    inductives (text from the first depth-0 `|` or `where`). The population
+    labels are exact: 553 source declarations, 542 with an extracted body
+    of at least 25 characters; the other 11 are genuinely shorter. Pass 3b
+    carries the kind guard: **107 like-kind in-file pairs over 62 targets
+    (12 at 90% or more), plus 2 restatements** (`f2_cond_ledger` ~
+    `f2_timedReadyCfg`, `a2_loop_prepare` ~ `f2_loopReady`).
+- **The membership rule in one sentence.** A declaration is a member when
+  it is a historical twin or copy, or when it is either side of a
+  like-kind cross-file pair in which at least half of the source's
+  extracted body, and at least 60 characters, reappears in the target. The
+  **exception** is in-file near-duplicates, which are recorded (pass 3b)
+  and not counted; in-file exact copies are counted.
+- **Standing in-file convention, stated explicitly.** Pass 3b lists
+  in-file near-duplicates among the non-members: **109 raw printed
+  pairs, of which 107 are like-kind, over 62 targets**. Twelve like-kind
+  pairs reach 90%, and the other 2 are kind-mismatched restatements. They
+  are led by the §12 sibling
+  machine rows (`transferTM` against `copyTM` 99.8%, and the
+  clear/compare/increment rows), which are public constructions audited at
+  the §12 and F1 gates. Per the ledger's standing convention, which counts
+  in-file **exact** copies (the H3 thirteen, the `a2_mapSumEquiv`/
+  `a2_map_sum` pair) and **notes in-file near-duplicates without counting
+  them**, they are recorded, not counted. None is an exact copy. Their
+  disposition is the 12.2c per-theme split, which factors these families.
+  An in-file near-match alone never adds a member. A declaration can still
+  be a member independently through a cross-file pair: Loop's
+  `emLoopHost_init` and `emLoopHost_anchor_return` count because their
+  Catalog twins reproduce them.
+- **Coverage qualification.** The screen covers the five source files of
+  Catalog's copy families, in full, at the stated thresholds. Copies from
+  files outside those families, or adaptations restructured below the
+  25-character tile size, are outside it.
+
+Copy-side counts deliberately include copies whose originals were deleted
+in R1 (the copies persist; deletion of an original does not shrink the
+copy side). The Loop inventory's recorded dispositions — the 8 dead
+Loop-twin copies in Catalog (`f2_loop_silent_prefix`,
+`f2_loopBody_capture`, the six `f2_loopDebit*`/`f2_loopBorrow*`) and the
+orphans' dead twins — are **dispositions for 12.2c, not subtractions
+here**; sole-owner/dead labels require Catalog's reference graph and are
+settled at that window. Internal near-duplicates flagged by the
+inventories but outside the rule (`clCountTape ≡ bufferTape`) are noted,
+uncounted. The H3 `_init` pair, once in this list, counts since round 7
+through its cross-file Catalog correspondence.
+
+**Epoch R1 delta**: new copies **0**; the historical maps lost **eleven
+dead originals plus one live original eliminated by replacement**
+(`catalogPair_inverse`, the human-approved E1) — 245 → 233 surviving
+→Catalog originals (R2-3 wording); net −1,639 lines, −83 private
+declarations (76 dead + 7 replaced).
+
+## Epoch 2, B1 (PR #26): the oracle layer and FH-1
+
+Added at the B1 fill-gate close (`audits/b1-fill-findings.md`, finding 2).
+The primary rule applies: each member is counted once per file it
+inhabits, and fractions are over the file's total declarations at
+`integrate/b1-oracle`. None of these files had a ledger row before.
+
+| File | Total decls | Original-side members | Copy-side members | All members | Fraction | Disposition |
+|---|---:|---|---|---:|---:|---|
+| `TuringMachine/Oracle.lean` | 42 | 0 | 2: `OracleTM.runFrom_comm_of_step` (63/63 both ways against Deterministic's) and `OracleTM.ComputesInTime.output_unique` (72/87 = 83% of Finite's) | **2** | **4.8%** | Approved forced mirrors (B1 decision 6; gate note 16) |
+| `TuringMachine/Deterministic.lean` | 34 | 1: `MultiTapeTM.runFrom_comm_of_step` | 0 | **1** | **2.9%** | Mirror source |
+| `TuringMachine/Finite.lean` | 18 | 2: `FinTM.ComputesInTime.output_unique` (mirror source) and `MultiTapeTM.exists_first_halt` (FH-1's public form) | 0 | **2** | **11.1%** | Sources |
+| `ClassNP/EXP.lean` | 153 | 0 | 1 (FH-1): `enumCont_first_halt` | **1** | **0.7%** | FH-1, to retire (`backlog.md`) |
+| `ClassNP/SAT.lean` | 282 | 0 | 2 (FH-1): `sat_first_halt`, `sat_call_first_halt` | **2** | **0.7%** | FH-1 |
+| `CookLevin/Hardness.lean` | 545 | 0 | 1 (FH-1): `clA5_call_first_halt` | **1** (was 0) | **0.2%** | FH-1 |
+| `Build/Catalog.lean`, `Build/Loop.lean` | 428, 194 | — | FH-1: `f2_loop_first_halt`, `f2_splitCount_firstHalt` (Catalog); `loop_first_halt` (Loop) | unchanged | — | `loop_first_halt` and `f2_loop_first_halt` are a 341/341 twin pair, already counted in the Loop→Catalog family. `f2_splitCount_firstHalt` is in the F2A-22 inventory; whether it is one of Catalog's 318 members or one of the 20 F2A nonmembers is settled by the FH-1 retirement census |
+
+The FH-1 copies predate the public form. B1 adds no copies, so no file
+gains a copy in this epoch and none crosses one fifth.
+
+**Exclusions** (screen hits that are not members, with their dispositions
+in `audits/b1-integration.md`, accepted by gate note 17):
+
+- `uw_tail` (Relativization) → E3 `OracleNDTM.stepWith_eq_of_ne_qQuery`
+  (OracleNondeterministic), 57%. Glue: shared citations of the
+  fixed-choice step bridge.
+- `uw_scan_step` → `uw_false_step` (Relativization, in-file), 71%. Glue:
+  the shared `uw_step_scan` call line. It is also uncounted under the
+  in-file convention.
+- `Catalog.f2_loopBody_step` → `queryTM_init` (Classes), 54%. The
+  configuration-equality idiom; no machine argument is shared.
+- `runFrom_ofMultiTapeTM` → `runFrom_plainEmptyOracle` (Oracle, in-file),
+  53%. A screen artifact: both declarations are unchanged (gate note 18).
+
+So Relativization, Classes and OracleNondeterministic have no members.
+`OracleNondeterministic`'s private blank-cell bound moved to `Oracle.lean`
+as the public `queryString_length_le_of_blank` (C1-P1). Both consumers cite
+it, so no copy remains (gate note 8).
+
+## §12.8 statement layer (PR #28)
+
+Added at the §12.8 statement gate, round 1 (`audits/s12-8-statements-findings.md`,
+finding 8 and note 38).
+
+- **Catalog's denominator** (2026-10-11). Part 3 adds 31 public declarations,
+  none of them members, bringing Catalog to 459 declarations (75 public,
+  384 private). The members are unchanged, so the fraction is now
+  **318/459 = 69.3%**; strict, 283/459 = 61.7%. The R1-close figure of
+  318/428 is the historical snapshot. The scheduled resolution is still the
+  12.2c per-theme split.
+- **Same-file similarities, not members.** The screen found twelve new pairs,
+  all within a file. They are uncounted under the in-file convention:
+  - the four seek tables among themselves, including `seekEndTM` ←
+    `skipTM` at 100%;
+  - `writeConstTM` ← `writeAdvTM` at 58%.
+
+  These are distinct small transition tables over shared phase types, with
+  different stop and return behaviour; no proof is copied (gate note 38). The
+  fills must use the one shared trace that the sketches promise.
+- **The new files** (`SymbolLift`, `Build/Scan`, `Build/InputCall`,
+  `Build/CfgRecord`) have no members.
+
+## Wave-1 statements (PR #43): §12.8b, §12.10, §12.11
+
+Added at the wave-1 statement gate, round 2 (`audits/wave1-statements-findings.md`, finding 2;
+`audits/wave1-statements-resolutions.md`).
+
+**Round 1's copy-side member is gone.** `CertShell.certificateShell_proj` reproduced
+`Nondeterminism`'s private `certificate_split_strictMono` (82/99). By user decision
+(2026-10-11) it and both disclosed re-derivations were factored, not acknowledged:
+
+| Mirror (round 1) | Shared home now | Re-derived from it |
+|---|---|---|
+| certificate split uniqueness and certificate-length monotonicity (`CertShell` against `Nondeterminism`) | `TuringMachine/ChoiceWords.lean`: `append_split_unique`, `certificateLength_strictMono`, `expCertificateLength_strictMono` | `CertShell.certificateShell_proj`, `Nondeterminism`'s split proofs (five privates removed) |
+| W2-0, the query-length invariant (`OracleSim` against `Oracle`/`OracleNondeterministic` privates) | `Oracle.lean`: `OracleTM.step_radius`, `OracleTM.runFrom_radius` | W2-0, `Oracle.lean`'s initialized invariant, `runWith_headBlank` |
+| the choice-word certificate law (`OracleSim.mem_iff_exists_choiceOut` against `Nondeterminism.choice_certificate_iff`) | `ChoiceWords.lean`: `choiceBudget_le`, `run_take_of_halted` | both laws (`acceptsWithin_iff_of_halts`, `mem_iff_exists_choiceOut`) |
+
+**Members after round 2.** The five statement modules and `ChoiceWords` have no members.
+`Nondeterminism`'s count does not grow.
+
+**Exclusions** (screen hits that are not members; for the gate to rule on):
+- `Nondeterminism.a3n_unpad_EXP` → `ChoiceWords.expCertificateLength_strictMono`, 82/130
+  (63%). A pre-existing in-file pair: the base screen shows it against the former
+  `e3_split_strictMono`, also at 63%. It became cross-file when the exponential monotonicity
+  moved beside its polynomial sibling. The shared text is one monotone-power inequality
+  (`Nat.mul_le_mul_left C (Nat.pow_le_pow_right … (Nat.pow_le_pow_left … c))`) inside an
+  unrelated padding proof. No argument is copied.
+- `ChoiceWords.certificateLength_strictMono` ↔ `expCertificateLength_strictMono`, 84% / 64%:
+  an in-file pair, uncounted under the in-file convention. These are two monotonicity facts
+  for two different length functions, NP and NEXP; the pair was in-file in `Nondeterminism`
+  before.
+- `CodeSimulator.tableBitsK` reproduced by the frozen serializers: `CodeFormat.oneTapeFormat`
+  (85%), `CodeFormat.codeTable2Bits` (67%), `Codes2Tape.Code2TM.serialize` (56%),
+  `UniversalInterpreter.universalRecords` (56%). This is the **item-8 residual family** (the
+  generic writer against the frozen writers, which cannot be redefined), with the bridges
+  `tableBitsK_two` and `oneTape_serialize_eq` proving the equalities; gate round 1, note 47.
+  The `universalRecords` hit is the same family, visible once round 2 screened the
+  `Universal*` files.
+
+## Watch items (design-parallel, no byte-copies)
+
+| Item | Status |
+|---|---|
+| **ch7 EmitIter layer vs the §12 layer** (merged with PR #11, 2026-10-10): `Build/EmitIterEmbed.lean` exports a **public** tape-padding, state-injecting embedding layer (`padAction`/`embedCfg`/`embed_step`/`embed_run`/`SafeRun` — 18 public declarations, none private; *corrected 2026-10-10: the first version of this row called them private*), written against main (which lacks `Build/Embed.lean`) and structurally parallel to the §12 bank-embedding transformers; the emit-iteration host (`Build/EmitIterBody.lean`, 20 declarations: 1 public, 19 private — corrected at ch7 fill gate round 2, R2-3) parallels the §12/Loop host family. **Body-level screen** (`audits/evidence/ch7/ch7-fill-duplication-screen.md`; the first version of this row rested on a name screen alone): **no copies of pre-existing repository material** — none of the §12 or loop-library material matches; the ch7 modules consume main's public `exists_emitLoopTM`/`exists_emitCallTM`/`exists_installCallTM` rows by citation. This row is design duplication; the stack's own copy family is ledgered below. | **12.2c docket** (user, 2026-10-10): harmonize to one embedding layer and one host family at the per-theme split; the naming of the shared block primitive is settled there too. The ch7 fill gate (`audits/ch7-fill-pack.md`, run on the merged tree; question 7) compares the two layers as facts. Consumption embargo until that gate closes. |
+| **Pre-issue shared lemmas for epoch C1** (maintainer, 2026-10-10): `Turing.MultiTapeTM.spaceUsed_le_mul_succ` (`Finite.lean`) is the bound inside Catalog's private `f2_space_of_time`; `Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff` (`ClassNP/NTIME.lean`) is `DTIME_subset_NTIME`'s per-input content, which now cites it; `Complexity.SPACE.mono_const` and `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` (`SpaceComplexity/Basic.lean`). They were landed so that C1a/C1b cite instead of copying. **Residual:** `f2_space_of_time` should become a citation of the public bound in 12.2c T3 (Catalog core). Also recorded for later tranches (item 11 dossier): private live-prefix copies of `runFrom_state_ne_none_of_le` in Catalog, Hardness and SAT, and Loop's `loop_input_run_le`, which equals the public `timed_input_bound` (removed in 11A) | Watch; T3 / T2 |
+
+## Acknowledgment and disposition state
+
+| Debt family | Acknowledgment | Cleanup owner and window |
+|---|---|---|
+| Catalog's 318 expanded members (↔ Primitives/Loop/Wrappers/Composition/TimeConstructible + in-file) | **D-R2** (user, 2026-10-09) | the **12.2c** per-theme refactor, promoted to the next window after R1; precondition (shrunken `Build/` files) met |
+| **The §12 sibling rows' in-file repetition** (`transferTM`/`copyTM`/`clearTM`/`compareTM`/`incrementTM`, their traces, framed contracts, canonical rows and space rows; pass 3b and the copy-text screen). **Grown by the §12.6 fill:** 16 new directed pairs (5,520 matched characters), against 20 gone and a net −330 characters (`audits/evidence/s12-framed-fill/copytext-diff.txt`). Examples: transfer-framed → copy-framed 97%, and increment success → overflow 90% | **12.2c item 5** on the user-consolidated tasklist (2026-10-10). The §12.6 fill gate ruled the growth inside this acknowledged family, so a minor (`audits/s12-framed-fill-findings.md` F1/F2) | the user's **12.2c**, item 5: a common scanner. Its scope now explicitly includes the generalized traces, the framed consequence proofs, the canonical specializations and the space wrappers |
+| Loop's 13 H3 copies (+1 near-copy) | **D-R3** (user, 2026-10-09) commissioned the collapse mechanism — §13 Z5, **now proved** (vhost-f1) | **ACKNOWLEDGED (user, 2026-10-09): retrofit batch RB4** (Loop), consuming Z5, window: after the A-S1 fill gate closes — **RB4 merged (PR #13, 2026-10-10): 12 of 13 H3 copies deleted by Z5 transfer; `emLoopHost_prepare` survives with a rewritten proof, still counted.** The inlined residue is the row "RB4's inlined residue in Loop" below |
+| The three-file relocation family (4 decls × 3 files; pre-policy legacy, disclosed at its batches as "private harvest" but verbatim in fact) | **the user, 2026-10-09** (the round-2 audit's R2-2 disposition) | **ACKNOWLEDGED (user, 2026-10-09): the same RB4** (all three files), replacing the family with the R1 selected-tape exports (D-R1, proved) + Z5 agreement transfer, per the inventories' own analysis of what unlocks it — **RB4 (2026-10-10): Loop's 4 originals DELETED** (R1 embedding + injective state transport + Z5). **Primitives' and Hardness's 4 + 4 copies REMAIN.** Their generic interfaces are stronger than R1 (aliased host slots, non-injective state maps), so a literal replacement would weaken surviving statements. Continuation: **RB5 (revision 2, 2026-10-10)** promotes `runFrom_mapState_of_agreeOn` into `Build/Embed.lean` (it needs both `StateRenaming` and Z5, and only Embed already imports both), then specializes per concrete layout, Primitives before Hardness. **DISCHARGED (RB5, PR #14, merged by the user 2026-10-10):** all 12 family members are gone. Primitives' and Hardness's copies are deleted, and every relocation pair is gone from the copy-text screen (739 → 692 pairs over the four files, with no new pair). The census twin `f2_splitEmbed_run` in Catalog survives; it is now a special case of the public lemma, and 12.2c item 2 can replace it by a citation |
+| **RB4's inlined residue in Loop** (post-merge copy-text finding, 2026-10-10): the forwarding host's consumers reproduce the original loop host's phase proofs. `emLoopHost_round` reproduces 100% of `loopHost_reject`; `emLoopHost_prepare` 99% of `loopHost_prepare` and 100% of `loopHost_input_rewind`; `emLoopHost_anchor_return` 95%; `emLoopHost_start` 92%. The frame pairs `emCall_bank_*` (94%) and `emCall_finish_*` (79%) grew more alike. In all, 11,476 characters of the forwarding host reproduce the original (`audits/evidence/retrofit/copy-text-screen.py`) | **ACKNOWLEDGED (user, 2026-10-10)**: RB4 accepted as merged, and RB5's Loop task withdrawn. The residue is not removable phase by phase: the `loopHost_*` lemmas state endpoints only, and the anchor-return phase runs in body control from `t = 0`, exactly where the two hosts differ (RB5's first dispatch kernel-checked the counterexample) | the user's **12.2c**, tasklist item 11: unify the two hosts structurally |
+| **ch7 block stack's per-loop lemma family** (PR #11, 2026-10-10): the OR/XOR/majority loops re-prove one orbit/length/init/emit lemma set under renaming. **Census corrected at ch7 fill gate round 2 (R2-2) to the standing source-inclusive rule, as lower bounds:** `PolyTimeBlockTests` **≥ 12/25 (48%)**, `PolyTimeBlockMajority` **≥ 8/14 (57%)**, `PolyTimeBlockLoop` ≥ 1/32. The first record (4/14 and 2/25) counted copy sides only, and the round-2 auditor found four more cross-file adaptations, `anyStep`/`majStep`, `anyEmit`/`majEmit`, the orbit lemmas and the loop outputs (81–93%), plus two length correspondences (`audits/ch7-fill-r2-findings.md`). The pre-screen is `audits/evidence/ch7/ch7-fill-duplication-screen.md`, whose method description is corrected | **ACKNOWLEDGED (user, 2026-10-10)** — `backlog.md` §1 **CH7-D1**, opened under the one-fifth rule and answered. **Extension ACKNOWLEDGED (user, 2026-10-10, round 2)**: the enlarged family and the `PolyTimeBlockTests` threshold crossing | the **12.2c** per-theme refactor (the user's own window; colleagues spared deduplication work): one generic lemma set in `PolyTimeBlockLoop`, statements unchanged, coordinated with the ch7 owner, after the ch7 fill gate closes **DISCHARGED 2026-10-11** (12.2c T1 item 7, PR #18; gate CLOSED round 1, 0/0/3 minors swept): the generic layer `Complexity.BlockLoop`; census Tests 22/25 → 0/8, Majority 12/14 → 0/6, Loop 6/32 → 0/50; six-file screen 125 / 47,734 → 41 / 10,045. Residual: the excluded `length_xorPairStep_le`/`length_sliceDropAt_le` near-copy (watch). |
+| **ch7 `EmitIterEmbed` run-infrastructure re-proofs** (ch7 fill gate round 2, R2-1): five facts are re-proved rather than cited, so **≥ 5/18 = 27.8%, over one fifth**. They are `step_output_prefix` and `runFrom_output_prefix` (Loop's private `emLoop_step_prefix`/`emLoop_run_prefix`), `runFrom_output_extends` (a specialization of `Finite`'s public `MultiTapeTM.output_prefix`), `runFrom_of_halted` (`Deterministic`'s public `runFrom_of_halt`), and `state_isSome_of_runFrom` (Loop's private `loop_live_prefix`). The screen missed all five because the proofs were restructured | **ACKNOWLEDGED (user, 2026-10-10)** — `backlog.md` §1 **CH7-D2** | the user's **12.2c**, item 6: one shared home for the run facts (output-prefix commutation and extension, halting absorption, live prefix) in `Deterministic.lean`/`Finite.lean`, beside `runFrom_of_halt`. `EmitIterEmbed`'s five become citations or re-exports, statements unchanged, and Loop's three private copies are deleted. Coordinated with the ch7 owner |
+| **`Codes2Tape.lean`'s format-specific parse layer** (ZF-B/B2, 2026-10-10): 23/33 two-tape instances of `CodeParser.lean`'s one-tape top layer (69.7%; 3 strict) | **ACKNOWLEDGED (user, 2026-10-10)** — `backlog.md` §1 **CH34-D2** | the **12.2c** tasklist item 8: a format-parameterized parse layer (one-tape, two-tape, ND), statements unchanged. **DISCHARGED 2026-10-11** (PR #19, gate CLOSED round 1, 0/0/0): adaptations 23 → 1 (`zfBFallback`, approved residual); screen 117 / 29,824 → 77 / 12,563; all 44 CodeParser/Codes2Tape and 7 Codes2Tape/MathlibBridge pairs gone. Brief `briefs/ch34-t1-item8.md` (tranche T1); the generic layer's resemblance to the frozen one-tape definitions it bridges (`actionBitsK`↔`actionBits`, `codeSkipActionK`↔`codeSkipAction`, the table writer against the three frozen `serialize` bodies) is pre-named in the brief and stays as a residual watch item |
+
+**R8.0b E1, the mandated `counterLoopTMVia`/`counterLoopTM` definition pair** (§12.8 stream D,
+PR #38): `CounterLoop.counterLoopTMVia` reproduces 261/287 = 91% of the frozen
+`counterLoopTM`, and 84% the other way. It is a definition pair that the R8.0b brief itself
+mandated; there is no copied proof. **ACKNOWLEDGED (user, 2026-10-11)**, as a one-off exception
+for exactly this pair (R8.0b gate finding F1). **Cleanup owner and window:** the maintainer, in
+**12.2c**, through backlog §1 R80B-E1: redefine `counterLoopTM` as the identity-embedding
+instance and re-check consumers. `CounterLoop`'s other new pair, `counterLoopTM_run_done`
+↔ `_run_escape` at 83%/72%, is two Z5 re-derivations sharing transport setup. It is not a
+member (gate note F8).
+
+**RW-1, the rewind row's copies of Catalog's seek frame and skip-back table** (PR #138,
+`Build/Rewind`, 2026-10-18). Two like-kind cross-file pairs, both against `Build/Catalog`:
+- the private `rw_cfg` reproduces Catalog's private `catalogSeekCfg` at 79/79 = 100%, both ways:
+  one record update over a different phase type; no proof is copied;
+- `rewindTM` and `skipBackTM` share one contiguous 140-character block, 80% of `rewindTM`'s
+  175-character body and 69% of `skipBackTM`'s 202: `rewindTM`'s table is `skipBackTM`'s
+  without its first row, with `start` in the role of `gap`. Inside the same 140 characters,
+  `rewindTM` also pairs with the seek tables `seekStartTM` (98 characters, 56% of `rewindTM`),
+  `skipTM` (71, 55% of `skipTM`) and `seekEndTM` (92, 53% of `rewindTM`): the seek family's
+  table pattern.
+
+**Census** (the primary rule, each member counted once per file it inhabits; corrected at gate
+55, finding 1: the first version counted `rw_cfg` alone, 1 of 5, and called the table pairs
+design-parallel, an exception the rule does not make for cross-file pairs; the seek tables'
+resemblance among themselves, §12.8 statement layer above, is uncounted only because it is
+in-file):
+- `Build/Rewind`, the copy side: **2 of 5 declarations (40%)** (3 public, 2 private), **20**
+  lines in member blocks (`rewindTM` 14, `rw_cfg` 6), 219 characters reproduced. `RewindPhase`
+  (a 48-character body, below the floor) and `rw_step` (no pair at half) are not members.
+- `Build/Catalog`, the original side: **5 more members**, `catalogSeekCfg` (6 lines),
+  `skipBackTM` (16), `skipTM` (13), `seekEndTM` (18) and `seekStartTM` (19), 72 lines; 5 of its
+  505 declarations. The file's row is re-totalled at its next census.
+- The v3 screen of the module, `Build/Catalog` and the exhaustive replay at #136's head (563
+  declarations, 416 pairs) regenerates byte-identical at gate 55; screened against the whole
+  library, `rewindTM` and `rw_cfg` pair with nothing else.
+
+**Exclusion** (a screen hit that is not a member; an exception to the rule, approved by the user
+on 2026-10-21): `rewindTM_run_ofCfg` → Catalog's private `a2_mapSetup_run`, 84/163 = 52%. The shared
+text is two tiles, 50 and 34 characters, of the run-by-induction idiom
+(`| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih (` and
+`, MultiTapeTM.runFrom_succ_eq_step'`); no setup argument is shared. Screened against the whole
+library, the same idiom reaches half of 12 short run proofs in 10 files: `a2_mapSetup_run`,
+`Universal`'s `timedFrame_run`, `Robustness/ObliviousSchedule`'s `maskedClock_lockstep`,
+`decorateTM_run` and `parallelTM_run`, `Nondeterminism`'s `b2_unary_run`, `CircuitEvalRun`'s
+`step_rej`, `Build/Seam`'s `seamCompTM_runFrom_left`, `TimeHierarchy/ClockMachine`'s
+`kCfg_run`, `SymbolLift`'s `MultiTapeTM.liftSymbols_runFrom`, `Composition`'s
+`controlCfg_run`, and `Build/NDHost`'s `wr_cfg_scan` (there the frame-read idiom). As with the
+B1 exclusion of the configuration-equality idiom (above), it is recorded, not counted. Counted,
+`Build/Rewind` would be 3/5 = 60%.
+
+**The one-fifth rule** (`workflow.md` §4): `Build/Rewind` is past one fifth. Its §1 item is
+`backlog.md` RW-1, opened and acknowledged on 2026-10-18, before gate 55's pack shipped, for the
+frame alone; gate 55 widens it to the table. `Build/Catalog` was past one fifth already (D-R2).
+
+**Acknowledgment.** The frame: **ACKNOWLEDGED (user, 2026-10-18)**, before gate 55. The table
+and the exclusion: **ACKNOWLEDGED (user, 2026-10-21)** (gate 55, finding 1: the census at 40%,
+the idiom hit excluded), with the retirement by unification below chosen over a frame-only one. **Cleanup owner
+and window:** the user's dedup window, through backlog §1 RW-1, with Catalog's next edit: one
+public frame over any state type, cited from both files; and one left-pass table, the rewind
+being skip back entered at `gap`, with both framed runs derived from one public back-pass run.
+After the retirement, neither file has a member from this family.
+
+**BW-1, the buffer-word identities** (PR #140, `TuringMachine/BufferWords`, 2026-10-18): four of the
+module's six public lemmas restate `Build/StepBlock`'s privates (`bufferTape_append_shift` ↔
+`bufferTape_suffix`, `bufferTape_append_mid` ↔ `bufferTape_reads`, `bufferTape_eq_none_of_not_mem`
+↔ `bufferTape_outside`, `bufferTape_unary` ↔ `bufferTape_unary`): the same statements, with
+different proofs (the new ones read `bufferTape` only through its published equations). The
+copy-text screen pairs none of them, so this is a restated-fact family, not a text copy.
+**ACKNOWLEDGED (user, 2026-10-18)**, in the ruling that chose the public module. **Cleanup owner
+and window:** the user's dedup window: `StepBlock` imports the module and its four privates are
+deleted, their uses re-pointed. **Census** (the primary rule, each member counted once per file it
+inhabits; corrected at gate 57, finding 1: the first version counted `StepBlock`'s side only,
+without fractions or spans):
+- `TuringMachine/BufferWords`, the original side: **4 of 6 declarations (66.7%)** (6 public,
+  0 private; `_drop` and `_take` have no counterpart), **45** lines in member blocks
+  (`_append_shift` 10, `_append_mid` 9, `_eq_none_of_not_mem` 10, `_unary` 16).
+- `Build/StepBlock`, the copy side: **4 of 135 declarations (3.0%)** (64 public, 71 private),
+  **42** lines (`bufferTape_unary` 11, `_outside` 7, `_reads` 16, `_suffix` 8).
+- No copied characters: the v3 screen of the module, `Simulation`, `Build/StepBlock` and
+  `Build/SeamLayout` (140 declarations, 32 pairs) pairs none of the eight, before and after
+  #140's merge of the campaign branch (`7c963897`).
+
+**The one-fifth rule** (`workflow.md` §4): `BufferWords` is past one fifth, and its §1 item is
+`backlog.md` BW-1, opened and acknowledged on 2026-10-18, before gate 57's pack shipped.
+`StepBlock` is under one fifth, and #140 leaves it byte-unchanged. After the retirement, neither
+file has a member.
+
+**IW-1, the window copier's interval patch** (PR #137, `Build/InputWindow`, 2026-10-21): the
+private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`: token for token after
+renaming its binders (`tape`, `head`, `v` for `ct`, `cp`, `u`), and equal by `rfl`
+(`@iw_patch = @wordPatch Bool`). One definition; no proof is copied. The same definition is also
+`Build/CounterLoop`'s private `counterPatch` and `Build/Catalog`'s private `catalogTape` (written
+pointwise), both from 2026-10-10; `wordPatch` (2026-10-14) is the public one. These four are the
+**interval-patch family**: the tree and the open branches hold no other. The B6 F1 record named
+`counterPatch` for the dedup window; `catalogTape` was not recorded before. The worker reported
+"new copies: none" (`StepClock` was outside its screen population and its import context). The
+maintainer disclosed the copy in gate 54's pack (question 6), and gate 54's finding 1 made it a
+debt major. **Not members:** `iw_patch_append` appends one cell (Catalog's public
+`catalog_write_take` states the same fact in take form, with its own proof), and `iw_patch_true`
+reads the patch at the all-true word (the `Bool` case of a step inside `CounterLoop`'s proof, not
+a declaration). **ACKNOWLEDGED (user, 2026-10-21)**, at gate 54, for the whole family. **Cleanup
+owner and window:** the user's dedup window, through backlog §1 IW-1: `wordPatch` moves below
+`Build/Catalog` with Catalog's next edit, and the three private copies re-point to it
+(`InputWindow`'s re-proofs are verified at gate 54's review). **Census** (the primary rule, each
+member counted once per file it inhabits; declarations as the style lint counts them; lines by
+the span rule):
+- `Build/InputWindow`, a copy: **1 of 17 declarations (5.9%)** (1 public, 16 private), **5**
+  lines (`iw_patch`).
+- `Build/StepClock`, the public one: **1 of 41 (2.4%)** (8 public, 33 private), **4** lines
+  (`wordPatch`). From #139 on, **1 of 42 (2.4%)** (9 public): #139 adds `wordPatch_append`, a
+  member of WA-1 below.
+- `Build/CounterLoop`: **1 of 79 (1.3%)** (59 public, 20 private), **4** lines (`counterPatch`).
+- `Build/Catalog`: **1 of 505 (0.2%)** (113 public, 392 private), **5** lines (`catalogTape`). It
+  is in none of the correspondences behind Catalog's row above, so it adds one member there.
+- Copied characters: none by the v3 screen, which pairs none of the four. After renaming, each
+  is the same definition of 175 to 199 characters.
+
+**The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
+`InputWindow` had no earlier copies. `Catalog` had, but #137 adds no copy to it, since
+`catalogTape` predates the delivery. The §1 item IW-1 is opened anyway, as for RW-1, and
+answered. After the retirement only `wordPatch` remains, in its new home.
+
+**WA-1, the adjacent-patch law** (PR #139, `Build/StepClock`, 2026-10-18; ledgered at gate 56,
+finding 2): the public `wordPatch_append`,
+`wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v)`, restates
+`Build/RecordTable`'s private `rt_adjacentWrites` (2026-10-13). With `wordPatch` unfolded and
+beta-reduced, the two elaborated statements are alpha-equivalent: they differ only in binder
+names (`tape`, `o` for `ct`, `cp`), checked on the compiled declarations at #139's merged head
+(gate 56's review). The proofs differ (the new one reads `wordPatch` and `FinTM.bufferTape` only
+through their published equations; `rt_adjacentWrites` unfolds `FinTM.bufferTape`), and the v3
+screen pairs neither, so this is a restated-fact family, not a text copy, as BW-1 is. The F3 review
+that proposed the lemma disclosed the pair, and the ruling that chose it named it (backlog §2, F3
+cont1: "E2 ruled (user, 2026-10-18): B"), but it was not ledgered until gate 56.
+**Acknowledgment:** the ruling of 2026-10-18 that chose option B (F3's E2). The decision put to
+the user named the re-point ("which also opens the `rt_adjacentWrites` re-point"), and the
+ruling's record names `rt_adjacentWrites` as the lemma's private form, to re-point in the user's
+dedup window. The record does not call the pair a copy family, as the same day's BW-1 ruling
+does; gate 56's review (finding 2) reads the ruling as acknowledging it. **Confirmed (user,
+2026-10-22):** the ruling acknowledges the pair. **Cleanup owner and window:**
+the user's dedup window, through backlog §1 WA-1, with IW-1's move: once `wordPatch`, its cell
+lemmas, `wordPatch_append` and the explicit-form lemma are below `Build/Catalog`, they are in
+`RecordTable`'s closure; `rt_adjacentWrites` is deleted, and its one use (`rt_advanceCfg_append`)
+cites `wordPatch_append`. **Census** (the primary rule, each member counted once per file it
+inhabits; declarations as the style lint counts them at #139's merged head `1cd66f1b`; lines by
+the span rule):
+- `Build/StepClock`, the public one: **1 of 42 declarations (2.4%)** (9 public, 33 private),
+  **25** lines (`wordPatch_append`). With IW-1's `wordPatch` (4 lines), the file has **2 members
+  of 42 (4.8%)**, **29** lines.
+- `Build/RecordTable`, the private one: **1 of 129 (0.8%)** (29 public, 100 private), **28** lines
+  (`rt_adjacentWrites`). It had no member before.
+- Copied characters: none. The v3 screen of `StepClock`, `RecordTable`, `WindowClock` and
+  `WindowRun` (176 declarations, 19 pairs) pairs neither.
+
+**The one-fifth rule** (`workflow.md` §4): neither file is past one fifth. #139 adds no copy to a
+file that received copies before: `StepClock`'s earlier member is IW-1's `wordPatch`, the public
+original, and #139 leaves `RecordTable` byte-unchanged. The §1 item WA-1 is opened anyway, as for
+RW-1 and IW-1, and answered. After the retirement only `wordPatch_append` remains, in
+`wordPatch`'s new home.
+
+**C1-E cont1, the exhaustive replay** (PR #136, `ClassNP/ExhaustiveReplay`, 2026-10-21): **no
+member.** The v3 screen's 122 new pairs are all in-file (0 cross-file, 0 gone; 297 → 428
+declarations, 106 → 228 pairs). 26 are at or above the brief's 90% copy threshold, between 17 of
+the module's 185 declarations (9.2%): the twenty `xr_*_ne_*` one-liners, two pairs of leaf tables,
+two buffer-tape facts and the replay's two exits. They are disclosed in-file siblings, listed and
+justified by family in the worker's report (§8) and qualified by its erratum
+(`campaign/fills/c1/reports/exhaustive-2-ERRATUM.md`); gate 53 (minor 2, note 12) found no copied
+material needing acknowledgment. Their consolidation, and the re-points to the public lemmas that
+arrived after the fill's base, are `backlog.md` §1 C1E-1, in the user's dedup window.
+
+**IR-1, the input rewind family** (megafill A, 2026-10-22). Four private input rewinds, each
+with its own exact-time run proof:
+- `ClassNP/ExhaustiveReplay`'s `xr_inRewindTM` (#136) and UN cont1's `un_inRewTM`
+  (`Diagonalization/NTimeHierarchy`, 61% and 59% on the v3 screen): a cross-file pair, which the
+  UN brief forbids;
+- U2-S cont1's `ss_inputRewind` (`UniversalK`, #147);
+- R cont2's `ic_rewind_scan` (`TuringMachine/NDCodeSimulator`), which re-proves the public
+  `Turing.FinTM.rewind_scan` (51%; `Simulation` was outside that brief's screen population, so the
+  worker's screen could not see it).
+
+With them, UN's `un_mapState_comp` shares field-equation proof text with `ExhaustiveReplay`'s
+`xr_E_initCfg` (54%; their statements differ: gate 65, minor 3).
+**Acknowledgment and disposition (user, 2026-10-22):** UN's two pairs are resolved by **an API PR
+first**: a public input rewind with an exact time and a first-visit cut, and a `mapState`
+collapse lemma. UN's landing re-points to them. R's copy lands ledgered and re-points when that
+API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup window.
+**The API: #153** (2026-10-22): `Build/InputRewind`'s `Turing.inputRewindTM` and
+`inputRewindTM_run`, and `Turing.Cfg.mapState_mapState`. Its v3 screen pairs the machine with
+`xr_inRewindTM` (82% and 73%), and the lemma's proof text with `xr_E_initCfg`'s (54%; a shared
+idiom, not a restatement: the composition lemma alone does not replace `xr_E_initCfg`); both are
+in the dedup window, as above.
+**Retirements (2026-10-23):** NDHost's `guessRun_mapState_mapState` with #153; R's
+`ic_rewindLeafTM`, `ic_rewind_scan` and `ic_rewind_leaf_run` with #151; the canonizer's
+`canonGramMapComp` with #152; UN's `un_inRewTM`, `un_inRew_run` and `un_mapState_comp` with #154
+(its landing). Remaining in IR-1: `ExhaustiveReplay`'s `xr_inRewindTM` and `xr_E_initCfg` and U2-S's
+`ss_inputRewind` (`UniversalK`), in the user's dedup window. A fifth copy found while building it, `Build/NDHost`'s private
+`guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
+A sixth, found 2026-10-23 on #152's branch: the canonizer's private `canonGramMapComp`
+(`TuringMachine/CodeSimulator`), the lemma's statement with the composite as `fun s => g (f s)`,
+used at two `rw` sites; 99% each way on the v3 screen. **Disposition (user, 2026-10-23): re-pointed
+at #152's landing** (prepared locally, `local/canon-mapcomp-repoint`), as for R's leaf.
+
+**CC7-1, the canonizer cont7's in-file families** (megafill A item 3, `TuringMachine/CodeSimulator`,
+2026-10-22). 59 new in-file pairs, none cross-file. Four are at or above 90%:
+`canonGramCut_leg`/`canonStageCut_leg` (97% each way), `canonStageLeg4` → `canonStageLeg1` (94%)
+and `canonStageLeg5` → `canonStageLeg1` (91%). Three families: the cut leg, the leg template and
+the per-record bound. **Acknowledged (user, 2026-10-22): recorded as debt**, for the user's dedup
+window, together with the retirement of the now-unused `canonCounterRepeat` link (the user,
+2026-10-22).
+**Census** (gate 67, minor 3; the primary rule, each member counted once per file it inhabits;
+declarations as the style lint counts them; lines by the span rule, at #152's head `aed162fd`):
+- the members, by family (11):
+  - the cut leg (2): `canonGramCut_leg` (lines 7564–7585, 22), `canonStageCut_leg` (6332–6352,
+    21);
+  - the leg template (7): `canonStageLeg0`–`canonStageLeg6` (6354–7046: 90, 86, 91, 109, 106,
+    98 and 107 lines);
+  - the per-record bound (2): `canonStageBlock_consumes` (5669–5687, 19) and the base's frozen
+    private `skipTable_consumes` (233–245, 13), whose local per-record bound it re-proves (61%);
+- with IR-1's `canonGramMapComp` (7595–7607, 13), a cross-file member until #152's landing
+  re-points it.
+
+`TuringMachine/CodeSimulator`: **12 of 198 declarations (6.1%)** at the head (12 public, 186
+private), **775** lines in member blocks; after the re-point, **11 of 197 (5.6%)**, **762** lines.
+The file had no earlier ledger member: the item-8 entry's `tableBitsK` now lives in
+`Build/StepBlock`. The review's other new in-file pairs, those not between two members of these
+families, are screen matches, not members: all below 90%, between declarations with different
+statements. **The one-fifth rule** (`workflow.md` §4): not reached.
+
+**SD-1, the suffix drop** (PR #161, U2's API, 2026-10-24). One fact,
+`(pairEncode u x).drop (2 * u.length + 2) = x`, in four files:
+- `Turing.pairEncode_drop` (public, `Build/InputDevice`, line 198, new in #161), the one U2 cites;
+- `NDCodeSimulator`'s private `ic_input_suffix` (line 340): the same statement and proof, 100% each
+  way on the v3 screen (#161's evidence). **Retired** (2026-10-25): #162 moved it into
+  `Build/InterpreterStartup` as the private `is_input_suffix`, and gate 74's round 2 deleted it
+  there, the window call citing `Turing.pairEncode_drop` (the kit imports `Build/InputDevice`);
+- `Complexity.Codec.pe_drop` (public, `SpaceComplexity/Codec/Parse`, line 69) and `PathWalk`'s
+  private `drop_pairEncode` (line 225): the same statement through `pairEncode_eq_dbl`, different
+  proofs (no screen pair).
+
+*Historical (at #161's opening):* none of the four files could cite another's without a new import
+(`InputDevice` was upstream of none of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged
+(user, 2026-10-24)**: the U2 review's F2 recommendation (publish `pairEncode_drop` with the API PR,
+ledger the family) was the ruling's content. **Disposition:** the startup-kit re-point is **done**
+(gate 74's round 2): the kit imports `Build/InputDevice`, so `NDCodeSimulator` sees it through the
+kit, and the window call cites `Turing.pairEncode_drop`. Only the `Codec/Parse` and `PathWalk`
+members remain, for the user's dedup window: one home beside `pairEncode_eq` in `Encoding` (a large
+replay, hence the window). **Census** (one member per file): `InputDevice` 1 of 57 declarations
+(1.8%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); `NDCodeSimulator` and
+`Build/InterpreterStartup` 0 since gate 74's round 2. The one-fifth rule is not reached.
+
+**SK-1, U2-S's capture start** (PR #162, the startup-kit API PR, 2026-10-24). The kit's public
+`Turing.embedSilentCfg_initCfg` (`Build/InterpreterStartup`) is U2-S's private
+`ss_captureInitial` (`UniversalK`, line 329), harvested verbatim: 100% each way on the v3 screen.
+`UniversalK` cannot cite the kit until `CodeSimulator` imports it (B5a's landing). U2-S's other
+`ss_` startup pieces are the kit's constructions under other contracts (no screen pair). **By the
+ruling (2026-10-24, the B5a review's recommendation)** they go to the user's dedup window, or to
+U2's fill once `UniversalK` sees the kit. **Census** (gate 74, major 1, corrected at its round 2):
+`Build/InterpreterStartup` 1 of 8 declarations (12.5%), the public `embedSilentCfg_initCfg`, 40
+lines with its docstring; `UniversalK` 1 of 51 (2.0%), the private `ss_captureInitial`, 39 lines.
+Round 1's kit had a second member, SD-1's suffix drop (2 of 9, 22.2%, past the one-fifth rule);
+round 2 deleted it (SD-1 above), so the rule is not reached.
+
+**RI-1, the round iteration along a sequence** (§13d G4 continuation 4, its review's F2,
+2026-10-25). `Build/ZoneRebalance`'s private `zr_pinLoop` (line 8266, 71 lines with its docstring)
+iterates pinned rounds by its own induction (`Round.segment`, then `Segment.trans`), which is the
+proof of the published `Turing.Round.iterate` (`Build/Contract/Basic`, line 781), along the sequence
+of pass indices `nxt^[m] j₀` instead of the configuration orbit `roundOrbit`. No published lemma
+states the sequence form, so it re-derives `Round.iterate`'s argument, not its statement (the text
+screen pairs nothing). All seven of the found path's passes go through it (`zr_passContract`). **The
+ruling (user, 2026-10-25): land G4 with this entry; then an API PR adds the sequence form to
+`Build/Contract/Basic`, with `Round.iterate` as its corollary, and re-points `zr_pinLoop` to it.**
+Census (one member per file; the source side added at gate 75's minor 5): `Build/ZoneRebalance` 1 of
+871 declarations (0.1%), the private `zr_pinLoop`, 71 lines with its docstring;
+`Build/Contract/Basic` 1 of 85 (84 public, 1 private; 1.2%), the public `Turing.Round.iterate`, 18
+lines with its docstring. The one-fifth rule is not reached. **The API PR is #167** (gate 78,
+2026-10-25; stacked on #165): `Turing.Round.iterate_seq` beside `Round.iterate`, which becomes its
+corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired. **Retired
+(2026-10-26):** #167 merged as `4c8c2e7e`; `zr_pinLoop` cites `Round.iterate_seq`.
+
+**SG-1, segment concatenation over a private segment predicate** (gate 98's finding 1,
+2026-11-06). Two private predicates restate `Turing.Segment` (`Build/Contract/Basic`) at fixed
+parameters, and each has its own concatenation lemma re-proving `Segment.trans`:
+- `ClassNP/Tautology`'s `tautDualSegment c d t` is `Segment tautDualTM.tm {some .anchor}
+  (fun _ => True) c d t`; `tautDual_segment_add` repeats `Segment.trans`'s endpoint and
+  forbidden-prefix argument (the v3 screen pairs it with `Segment.trans`, 91/168, 54%);
+- `Build/CounterLoop`'s `counterSpan` is a segment from `z` to its run endpoint over
+  `{some .done, some .escape}`, whose head relation combines the counter head's interval and the
+  body heads' `R`; `counter_span_append` repeats `Segment.trans`, then `Segment.mono` for the
+  two relations.
+
+Both predate #202 (the API PR whose gate found them); #202 adds no member. **ACKNOWLEDGED by kind
+(the user, 2026-11-06):** every private predicate that restates `Turing.Segment` at fixed
+parameters, with its concatenation lemma. **Cleanup owner and window:** the maintainer, in the
+dedup window (12.2c): a bridge `tautDualSegment c d t ↔ Segment …` (and the same for
+`counterSpan`), then `Segment.trans`/`Segment.mono` through it, deleting both concatenation
+lemmas. **Census** (gate 98's, each member counted once per file; the source side included):
+- `Build/Contract/Basic`, the public source: **1 of 93 (1.1%)**, `Segment.trans`, 20 lines;
+- `ClassNP/Tautology`: **1 of 93 (1.1%)**, `tautDual_segment_add`, 12 lines. The file has no other
+  recorded member;
+- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. The file's
+  recorded total, every acknowledged member counted once (corrected at gate 98's round-2 minor
+  1): SG-1's `counter_span_append`, IW-1's `counterPatch` and R8.0b E1's pair `counterLoopTM`/
+  `counterLoopTMVia`, **4 of 79 (5.1%)**, 68 lines (28 + 4 + 19 + 17).
+
+**The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
+
+**The window (2026-11-06):** `CounterLoop`'s member is retired by #215 (`57939a97`: a private bridge
+`counterSpan_iff_segment`; `counter_span_append` deleted; its three uses through `Segment.trans`
+and `Segment.mono`). The scope search found a **third member**, `Robustness/SingleTape`'s private
+`DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (7 uses). `Tautology`'s and
+`SingleTape`'s members need a new import of `Build/Contract/Basic` (cycle-free; it adds that one
+module to each closure): **parked for the user's ruling.** Also found, not counted: `Primitives`'
+`splitSafe`/`splitSafe_add` and `Catalog`'s `f2_splitSafe`/`f2_splitSafe_add` restate
+`Turing.SafeSegment` (a sibling `SafeSegment` family, for the user); `SAT`'s `sat_guard_add` and
+`Hardness`' `clA5_guard_add` re-prove the cut half of `Segment.trans` with no predicate. If
+`tautDual_segment_add` is deleted, `blueprint/src/chapter/Complexity/ClassNP/Tautology.tex:981`
+changes with it.
+
+**BL-2, the binary width of an incremented register value** (gate 101's finding 1,
+2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
+`m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
+- `Logspace/ISCountGenCorrect`'s private `bits_succ_le` (BL-1 (i) lists it as a site that cites
+  `length_bits_le`; its successor/exponential step is this family's);
+- `Machines/ARMWidth`'s `arm_decides_pspace_val`, an inline `hlt` block at `N = C₀ (|x| + 1)^c₀`;
+- `SavitchARM/Deepen`'s `deepen_contract` (new in #208), the same block at `W · W`.
+
+Census (gate 101's, one member in each file): `Deepen` 1 of 45, `ARMWidth` 1 of 5,
+`ISCountGenCorrect` 1 of 9. No file is past one fifth (`ARMWidth`'s 1 of 5 is at it).
+**Ruled (the user, 2026-11-06): harvest in #208, all three.** `#208`'s commit `9db4f2ee`
+publishes `Complexity.LogProg.length_bits_succ_le` in `Machines/Bin`, beside `length_bits_le`;
+`bits_succ_le` is deleted, and the two inline blocks cite it. A library search for the
+`4 · 2 ^ e` step (`2 ^ (… + 2) = 4 * 2 ^ …`) finds no other member: `ExpBFS/Main:535–539`
+bounds a `Nat.log` width and a memory range, and `BinaryArith/AddSub:174` a sum of two words, both
+other statements. **Retired on #208's merge.**
+
+**IL-1, the input-length decider's answer** (gate 101's round-2 screen, 2026-11-06). The
+public `Complexity.indicator_inputLenLang` (`Logspace/InputAccess`, since the ARM dedup `56716442`)
+states that `inputLenLang` answers `decide (a < |y|)` on `pairEncode y (bits a)`. Six proofs
+unfolded their decider table and repeated its two-line proof
+(`inputLenLang`, `indicator_indexLang_pairEncode`, `decide_eq_decide.mpr Iff.rfl`):
+- `Logspace/ISCountGenCorrect`'s `gen_start` (`hq`), which the v3 screen pairs with
+  `indicator_inputLenLang` and with `ExpBFS/Main`'s `orcN_len` at 94%;
+- `ExpBFS/Main`'s `orcN_len`, `SavitchARM/Correct`'s `hq`, `Machines/ARMWidthExample`'s `hq`,
+  `Logspace/PathHardRegs`' `orc_len` and `Randomized/SpaceAmplifyPoly`'s input-length loop (each
+  under the screen's cut-off or outside its population; found by `git grep` for the closing step).
+
+All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
+one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates.
+
+**Widened by kind (2026-11-06):** every proof that re-derives one of `InputAccess`'s two
+published readings, `indicator_inputLenLang` or `indicator_inputBitLang`
+(`y.getD a false` on `pairEncode y (bits a)`), by unfolding the language and
+`indicator_indexLang_pairEncode`. The first search matched only the `decide_eq_decide` closing;
+its simp-set variants are five more members: `PathWalkMachine`'s `pathOr_len` and `pathOr_bit`,
+`PathHardRegs`' `orc_bit`, and both halves of `Mult`'s private `mult_queries`. **Ruled (the
+user, 2026-11-06): re-point all five in #208**, done at `0140aee2`. A grep of every code line
+naming `inputBitLang` or `inputLenLang` finds no other unfolding: `TQBFARM/Machine`'s and
+`Codec/Run`'s `orc_bit`/`orc_len` and `QueryReshape`'s `drop_bit`/`drop_len` already cite the
+lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
+`drop_lang_pair`, `comp_lang_pair` and `transport`; `PathHardDecide`'s `qLang` step) read other
+languages, which have no published reading; they are not members. Census after widening: one
+declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
+
+**NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
+a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
+(`Turing.FinTM.not_computesInTime_zero`, `TuringMachine/Finite`) and cited where it applies. Its
+nondeterministic analogue (`Cfg.init` is live, so `N.tm.HaltsWithin z 0` fails) has no public
+lemma and is proved twice: `ClassNP/ExhaustiveReplay`'s private `xr_not_haltsWithin_zero` and an
+inline step of `ClassNP/NDNormalForm` (`hpos`, through `runWith_nil`, `initCfg_eq` and
+`Cfg.init_state`). One member in each file. **Proposed disposition:** the dedup window (12.2c):
+publish `NDTM.not_haltsWithin_zero` beside the NDTM run equations and re-point both.
+
+**TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
+transducer started in a state that copies every bit and is kept is the identity, in three files:
+- `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
+  form: from `∀ b, δ q b = q` and `∀ b, o q b = some b`, `transduce δ o q l = l`;
+- `Complexity.KarpLipton.transduce_drop_true` (public, `CircuitComplexity/KarpLiptonPrefix`, line
+  87) and `Complexity.Meyer.transduce_fT_copy` (public, `CircuitComplexity/MeyerVerifierGlue`,
+  line 145): its instances at `q = true` and `q = none`, each the general lemma with `fun _ => rfl`
+  twice (the megafill D review's `probe/A1ConsumerProbe`; gate 76 checked both specializations),
+  each re-proved by its own induction.
+
+Both instance files import `ClassNP/Transducer`, so each can cite the general form.
+`spaceConstructible_poly`'s landing cites it (`Savitch`'s private `scp_transduce_copy` is the
+one-line application), which avoids a third copy. **The ruling (user, 2026-10-25, Q-D2): include
+the general form in A1; re-point the two instances in the user's dedup window (12.2c), since that
+edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `ClassNP/Transducer` 1 of
+10 declarations (10.0%), `KarpLiptonPrefix` 1 of 16 (6.3%), `MeyerVerifierGlue` 1 of 42 (2.4%). The
+one-fifth rule is not reached.
+
+**RS-1, the restart identity** (PR #170, B5a's landing, 2026-10-27; disclosed in gate 81's pack,
+item 4; completed by gate 81's finding 1). One fact: a machine whose initial state is a relabelled
+`q` starts in the relabelled blank configuration at `q`, i.e.
+`B.q₀ = f A.q₀ → B.initCfg x = (A.initCfg x).mapState f`. It is proved at five sites in four
+files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equations:
+- `Turing.UniversalK`'s `uk_init_mapState` (private, line 1816), the general form, used twice
+  (`uk_loop_init`, the suffix startup);
+- `Turing.UniversalK`'s `exists_selfStartupTMK` (public, line 1425): its local `hinit`
+  (line 1584), `R.initCfg (pairEncode α w) = d₀.mapState Sum.inl` with
+  `R := { W with q₀ := Sum.inl A.q₀ }` (gate 81's finding 1);
+- `CodeSimulator`'s `us_start` (private, line 8984 at #170's head), its instance at
+  `{ W with q₀ := Sum.inl entry }`, after `MultiTapeTM.initCfg_with_q₀`;
+- `ExhaustiveReplay`'s `xr_E_initCfg` (private, line 3133), its instance at a doubled `Sum.inl`
+  with the host's blank fields;
+- `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
+  at a seven-fold `Sum.inl` of the embedded blank start `c0`.
+
+Census (one member per file; each count at the tree named): `CodeSimulator` 1 of 208 declarations at
+#170's head (12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79
+(2.5%), `NTimeHierarchy` 1 of 15 at the campaign tip before #172 (6.7%), 1 of 25 after it (4.0%;
+cumulative with TR-1 below). The one-fifth rule is not reached. **Disposition** (gate 81's finding
+1: publication need not precede #170 under D1(A)): a public row beside `MultiTapeTM.initCfg_with_q₀`
+(`TuringMachine/Finite`) in the user's dedup window (12.2c), with the five sites re-pointed.
+
+**PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
+disclosed in gate 82's pack, item 5). Two copies outside the ruling's scope (E-DUP covered the
+fixed-word and all-`true` tests only):
+- `Nondeterminism`'s private `a3n_poly_linear` (line 3537 at #171's head `d17f63c8`; 13 uses) and
+  `a3n_poly_const` (line 3544), equal in their proofs, up to the names, to the public
+  `Complexity.polyTimeComputable_of_linear` and `Complexity.polyTimeComputable_const`
+  (`ClassNP/PolyTimePairing`, lines 64 and 71). `Nondeterminism` does not import `PolyTimePairing`;
+  the import is acyclic (`PolyTimePairing` imports only `ClassNP/PolyTime` and `Build/Primitives`).
+- `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
+  proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
+  which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+  **Re-pointed by #175's round-1 fix** (gate 86's finding 2, user, 2026-10-27): the proof, now in
+  `Constructible`, takes its decider from `computesFunInTime_decideEq []`; no copy is left there.
+- `SAT`'s private `sat_pt_eq` (line 2886) and `CookLevin/Hardness`'s private `clA5_pt_eq` (line
+  6818), twins (found by gate 82's resolution of its finding 1): each lifts
+  `computesFunInTime_ifEq w [true] [false]`, converts it to `[decide (x = w)]` and composes it with
+  a polynomial field map. Each is `polyTimeComputable_of_linear (computesFunInTime_decideEq w)`
+  composed with that map.
+
+Census (one member per file, at #171's head): `Nondeterminism` 2 of 199 declarations (8 public, 191
+private; 1.0%), `PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%),
+`CookLevin/Hardness` 1 of 545 (0.2%). **Corrected (gate 86's finding 2, 2026-10-27):** the census
+omitted the fixed-word test's public original, `Build/WordTests`'s `computesFunInTime_decideEq`,
+**1 of 4 declarations (25%)**, so the source-inclusive count crosses one fifth in `WordTests`.
+**Human review (user, 2026-10-27): accepted** — a four-declaration module whose member is the
+public row the copies should cite; the consumers' re-points retire the family. **Disposition:** the
+user's dedup window (12.2c): re-point the two privates to the public rows (one import), and the
+twins to `computesFunInTime_decideEq w` (each with the import of `Build/WordTests`); `hD'` is
+re-pointed already (#175).
+
+**TR-1, the truncation of an acceptance at an all-branch budget** (PR #172, H's landing,
+2026-10-27; the H brief review's F1 and gate 84's pack, item 5). One fact: if every branch of `N`
+on `x` halts within `T`, an acceptance at any length is an acceptance within `T` (and conversely
+by `AcceptsWithin.mono`). It is stated privately in three files:
+- `Nondeterminism`'s `acceptsWithin_iff_of_halts` (line 165), through the published
+  `Turing.run_take_of_halted`;
+- `ExhaustiveReplay`'s `xr_accepts_iff_of_halts` (line 134);
+- `NTimeHierarchy`'s `nh_accepts_of_halts` (new in #172), through `run_take_of_halted`. The
+  user's D1 (A) licensed this leaf; the v3 screen pairs it with the first at 61%.
+
+`ClassNP/NTIME`'s `NTIME.mono` does the same truncation inline. Census (one member per file, at
+#172's head `33d68537`, a tree before #171): `Nondeterminism` 1 of 201 (8 public, 193 private; 0.5%;
+1 of 199 after #171), `ExhaustiveReplay` 1 of 185 (0.5%), `NTimeHierarchy` 1 of 25 (4.0%).
+**Cumulative across families** (gate 84's finding 1): after #172, `NTimeHierarchy` carries RS-1's
+`un_setup` and TR-1's `nh_accepts_of_halts`, **2 of 25 (8.0%)**. No file reaches one fifth.
+**Disposition:** the user's dedup window (12.2c): publish the truncation beside
+`FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import `ChoiceWords`; no cycle), and
+re-point the three.
+
+**LS-1, the logarithmic bound below the linear one** (PR #175, the move of
+`spaceConstructible_poly` to `Constructible`, 2026-10-27, pending its merge; gate 86's pack, item 3).
+One fact, `logSpace n ≤ n + 1`, in three places:
+- `Machines/ARMWidth`'s public `Complexity.logSpace_le_succ` (line 51), the lemma (a colleague's
+  file, outside `Constructible`'s closure);
+- `Constructible`'s `spaceConstructible_poly`, the dominance step, inline through `logSpace_eq` and
+  `Nat.log_le_self` (before #175 it cited `logSpace_le_succ` from `Savitch`, whose closure has
+  `ARMWidth`);
+- `Constructible`'s `spaceConstructible_linear`, its dominance conjunct, inline as
+  `Nat.succ_le_succ (Nat.log_le_self 2 n)` by reduction of `logSpace` (another file's definition;
+  the proof predates rule 10).
+
+Two inline steps and one declaration; the one-fifth rule is not in question. **Accepted (user,
+2026-10-27; gate 86's finding 1)** as debt, the new inline step included. **Disposition:** the
+user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic` beside
+`logSpace_eq` (a mechanical edit in `ARMWidth`, FYI to its author), and re-point the two inline
+steps to it. **Brought forward (user, 2026-11-04): PR #181** (gate 89) does exactly that, and also
+moves `logSpace_le_of_le_mul_two_pow` to `Basic` and `LOGSPACE_subset_PSPACE` and
+`SPACE_succ_pow_subset_PSPACE` to `SpaceClasses`. **LS-1 is retired when #181 merges.**
+**Scope corrected (gate 89, round 1, major 1).** Two further inline copies predated #181:
+- `narm_decides` (`Machines/NARMProof`);
+- `narm_logspace_ptm` (`Machines/NARMLogspace`).
+
+Both are `have hLn : logSpace n ≤ n + 1` by `Nat.log_le_self` and `simp only [logSpace]`, in
+Hydroxyi's files, and neither was in this entry. Round 2 of #181 (`1d1247a3`) re-points both to
+`logSpace_le_succ`, a mechanical ARM dedup edit (FYI). A search of the round-2 head
+(`campaign/gates/89-space-facts-api/evidence/round2/ls1-search/`) finds the fact stated only in
+`Basic` and cited everywhere else.
+**Scope corrected again (gate 89, round 2, major 1).** Two more inner steps derived the logarithm's
+form of the fact, `Nat.log 2 m + 1 ≤ m + 1`:
+- `ImplicitlyLogspaceComputable.computesInSpace` (`ImplicitPoly`, Hydroxyi's ARM-program file):
+  `W ≤ F + 2` with `W = Nat.log 2 (F + 1) + 1`;
+- `mem_LOGSPACE_preimage` (`Logspace/PreimageHost`, the campaign's).
+
+Round 2's search had classed both as "polylogarithmic bounds": true of the enclosing bounds, not of
+these steps. Round 3 of #181 (`8d41671c`) re-points both to `logSpace_le_succ` through
+`logSpace_eq`. Its exhaustive classification of every `Nat.log_le_self` use and every
+`logSpace`-by-successor statement
+(`campaign/gates/89-space-facts-api/evidence/round3/ls1-search/classification.md`) finds the fact
+proved once, in `Basic`, and cited at eight sites.
+**Scope corrected a third time (gate 89, round 3, major 1).** Round 3's search had looked for
+`Nat.log_le_self` only, so it missed one more inline copy: `arm_decides` (`Machines/ARMProof`,
+Hydroxyi's) proved `hLn : Ls ≤ n + 1`, with `Ls := logSpace n`, by unfolding `logSpace` and citing
+`Nat.log_lt_self`. Round 4 of #181 (`a7c2a655`) re-points it to `logSpace_le_succ` (a mechanical ARM
+dedup edit, FYI). Round 4's search covers every line that touches `logSpace`'s definition and every
+Mathlib upper bound of `Nat.log`
+(`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/classification.md`). It finds the
+fact proved once, in `Basic`, and cited at nine sites.
+
+**LS-2, the logarithmic bound by the binary length** (gate 89, round 4's search; ruled with it, user,
+2026-11-04: "Fix in #181 now"). The fact is `logSpace n ≤ Nat.size n + 1`, equivalently
+`≤ |bits n| + 1`; its converse is `|bits n| ≤ Nat.log 2 n + 1`. Before round 4:
+- the public `Complexity.LogProg.ISCount.logSpace_le_size_succ` (`Logspace/ISCountMath`);
+- inline re-derivations in `Randomized/BPLInP`, twice (`two_pow_codes_le`, `BPL_subset_P`);
+- the public `Randomized.PolyAmp.logSpace_le_ell` (`Randomized/SpaceAmplifyPoly`, its `ell n` is
+  `|bits n| + 1`), re-proved through `Nat.log_lt_of_lt_pow`;
+- the converse, published as `LogProg.length_bits_le_log` (`Machines/Bin`) and re-derived by the
+  private `size_le_logSpace` (`Logspace/ISCountGenCorrect`).
+
+All in Hydroxyi's files. `BPLInP` did not import `ISCountMath`. **Retired by #181, round 4**
+(`fe4bdb67`, `227d92ee`): `logSpace_le_size_succ` moves verbatim to `SpaceComplexity/Basic` as
+`Complexity.logSpace_le_size_succ`, and the four re-derivations cite it or `length_bits_le_log`
+(copy deletions and re-points, FYI). Same round, same ruling: `ExpBFS/Run`'s `setup_run` cites its
+own file's `lgv_le_succ` for `hv |x| ≤ |x|` instead of re-deriving it (`252bbcb8`).
+
+**LS-3, the binary length as the logarithm** (gate 89, round 4's search). The fact is
+`|bits n| = Nat.log 2 n + 1` for `n ≠ 0`. No public lemma states it. Private copies:
+- `Constructible`'s `b3a_bits_length` (the campaign's);
+- `Randomized/QuasiPolyHierarchy`'s `length_bits_eq` (Hydroxyi's);
+- `Diagonalization/NTimeDiagonalizer`'s `qy_log_bits`, with `Nat.size n = Nat.log 2 n + 1` also
+  inline in its `qy_two_pow_bits_le` (E-D's file, in flight).
+
+**Census** (gate 89, round 4's minor 2; members over all declarations, private included):
+- `Constructible` 1/28;
+- `QuasiPolyHierarchy` 1/25;
+- `NTimeDiagonalizer` 2/236 (`qy_log_bits` and `qy_two_pow_bits_le`'s inline equality).
+
+None reaches one fifth. The halves of these equalities also prove LS-2's converse
+(`QuasiPolyHierarchy:63`, `NTimeDiagonalizer:430`, `:446`); they stay within LS-3, and the one
+public converse lemma is `LogProg.length_bits_le_log`. **Accepted (user, 2026-11-04)** as debt.
+**Disposition:** the dedup window (12.2c): publish the equality beside `LogProg.length_bits_le_log`
+and re-point all four occurrences (the three privates and the inline step) after E-D lands.
+
+**BL-1, elementary bounds on the binary length** (gate 89, round 4's binary-length sweep,
+`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/bitsweep.tsv`). One- and two-line
+steps that carry a Mathlib `Nat.size` fact over to `|Nat.bits n|` through `Nat.size_eq_bits_len`,
+where a lemma already states the bound:
+- (i) `|bits n| ≤ m` from `n < 2 ^ m` (`LogProg.length_bits_le`, `Machines/Bin`): `Meyer:189`,
+  `MeyerTableau:437`, `ISCountGenCorrect`'s private `bits_succ_le` (`:210`);
+- (ii) monotonicity (`LogProg.length_bits_mono`): `NTimeDiagonalizer`'s private `qy_bits_len_mono`,
+  `RecordTable:2762`, `InputLength:418`, `:420`, `Catalog:4125`;
+- (iii) `|bits n| ≤ n` (`Turing.length_bits_le_self`, `TuringMachine/Encoding`):
+  `CodeSimulator:1448`, `NTimeDiagonalizer:455`, `SpaceAmplifyPoly:287` (`ell_le`),
+  `RecordTable:2764`, `:4256`;
+- (iv) `n < 2 ^ |bits n|`: public as `Randomized.PolyAmp.lt_two_pow_bits` and, for `posWidth`,
+  `Turing.record_pos_lt`; inline or private in `NTimeDiagonalizer`'s `qy_lt_two_pow_bits`,
+  `Logspace/Mult:254`, `:255`, `WindowClock:119`;
+- (v) `2 ^ |bits n| ≤ 2n` or `2n + 1`: public as `Complexity.Codec.two_pow_bits_le` (`Codec/Layout`)
+  and `Randomized.PolyAmp.two_pow_bits_le`; inline or private in `Codec/Parse:90`,
+  `NTimeDiagonalizer`'s `qy_two_pow_bits_le`, `BPLInP:399`.
+
+The files are the campaign's, Hydroxyi's, E-D's in-flight `NTimeDiagonalizer` and the
+colleague-owned `CircuitComplexity/Meyer*`. `Machines/Bin` sits above the `CircuitComplexity` and
+`TuringMachine` layers, so several sites cannot import it. Each site is one step, so the one-fifth
+rule is not in question. **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window
+(12.2c): one home for the five bounds below both layers (beside `Turing.length_bits_le_self`), then
+re-points where the imports allow. `CircuitComplexity` needs its own authorization.
+**Scope corrected (gate 89, round 4, major 1).** The list above missed:
+- `Codec/Layout`'s `wP_le` (iii, through logarithms);
+- `PathHard`'s `two_pow_ell_le` (v) and `ell_mono` (ii);
+- `RandomWalkPad`'s `padDegree_le` (v);
+- `PrimeFind:204`, `:318` and `TQBFHardParams`' `wP_le` (iii).
+
+With `Layout`'s `wP_le`, `Layout` stood at 2 of 9 declarations. **Ruled (user, 2026-11-04): "Re-point
+now in #181."** Round 5 of #181 (`d789d6db`, `98912ab2`) re-points every site whose file can reach
+a canonical lemma:
+- (v) `two_pow_bits_le` moves from `Codec/Layout` to `Machines/Bin`. `Parse:90`, `PathHard`'s
+  `two_pow_ell_le`, `RandomWalkPad`'s `padDegree_le`, `BPLInP:399` and `PolyAmp.two_pow_bits_le`
+  cite it;
+- (iii) `Layout`'s `wP_le` cites `Turing.length_bits_le_self` through the new `Codec.wP_eq`, and
+  `TQBFHardParams`' `wP_le`, a restatement of `Codec.wP_le`, is removed. `PrimeFind:204`, `:318`,
+  `CodeSimulator:1448`, `RecordTable:2764`, `:4256` and `SpaceAmplifyPoly`'s `ell_le` cite
+  `length_bits_le_self`;
+- (i) `ISCountGenCorrect`'s `bits_succ_le` cites `length_bits_le`;
+- (ii) `PathHard`'s `ell_mono` cites `length_bits_mono`;
+- (iv) `WindowClock:119` cites `record_pos_lt`.
+
+`Layout` now has no member. **The residual**, every member of the sweep's classification at
+#181's round-5 head (`campaign/gates/89-space-facts-api/evidence/round5/ls1-search/bitsweep-classes.md`):
+- (i) `Meyer:189` and `MeyerTableau:437`: colleague-owned `CircuitComplexity`;
+- (ii) `RecordTable:2762`, `InputLength:418`, `:420` and `Catalog:4125`: `Machines/Bin` is above
+  these files;
+- (iv) `Mult:254`, `:255`: no (iv) lemma that this file can reach. `PolyAmp.lt_two_pow_bits` and
+  `Turing.record_pos_lt` are two public statements of (iv) in different layers and forms;
+- `NTimeDiagonalizer`, E-D's file in flight:
+  - (ii) `qy_bits_len_mono`;
+  - (iii) `qy_call_bound:455`, which E-D's landing already re-points;
+  - (iv) `qy_lt_two_pow_bits`;
+  - (v) `qy_two_pow_bits_le`;
+  - (iv) **`qy_ones_ge:415–417`, new in round 5's sweep** (two inline `Nat.lt_size_self` steps); **acknowledged (user, 2026-11-04)**. The acknowledgment was asked on the
+    premise that E-D's landing re-points it. That premise was wrong: the file does not reach `Machines/Bin`,
+    so its disposition is the dedup window.
+
+**Disposition of the residual:**
+- E-D's landing PR re-points `qy_call_bound:455` (iii), since the file reaches `Encoding`;
+- `NTimeDiagonalizer`'s other four members cannot reach `Machines/Bin`, like `RecordTable`'s, and go
+  to the dedup window with the rest;
+- `CircuitComplexity` comes under its own authorization.
+
+**Scope by kind (gate 89, round 5, majors 1 and 2; ruled by the user, 2026-11-04: "Acknowledge,
+scope by kind").** BL-1's acknowledged scope is every re-derivation of kinds (i)–(vi) anywhere in
+TCSlib, whether or not a sweep lists it. A member found later is an accounting correction (a minor,
+TEMPLATE failure mode 5), unless it pushes a file past one fifth. The kinds are:
+- (i)–(v), above;
+- **(vi)**, new: the word-value bound `bitsVal w < 2 ^ |w|` (`LogProg.bitsVal_lt_two_pow`,
+  `Machines/Bin`).
+
+Round 5's audit found five members outside the site lists, all predating #181 and all acknowledged:
+- (v) `Logspace/QueryReshape`'s private `query_index_bound` (sweep group 90) and
+  `Randomized/UniformSample`'s `le_two_pow_size_pred` (group 62), whose positive branches derive
+  `2 ^ size n ≤ 2n` natively. Both files reach `Machines/Bin`. `UniformSample` is Hydroxyi's;
+- (i) `CookLevin/Hardness`'s private `clCount_width`, by binary induction, and (iii) its
+  `clElapsed_width`, through `clCount_width`. `Hardness` reaches `Encoding` but not `Bin`;
+- (vi) `Codec/Word`'s `Complexity.Codec.bitsVal_lt_two_pow`, an exact copy of `Bin`'s, which
+  `Word` imports. `Word` is Hydroxyi's. Its users would resolve to `Bin`'s through `open LogProg`.
+
+**Census:**
+- `QueryReshape` 1/120, `UniformSample` 1/19, `Hardness` 2/545, `Word` 1/47;
+- `Bin`'s five members (`length_bits_le`, `length_bits_mono`, `two_pow_bits_le`,
+  `length_bits_le_log`, `bitsVal_lt_two_pow`) are the canonical statements the copies re-point to,
+  not copies. That makes 5/15, recorded as the one-fifth review item.
+
+**Disposition:** the dedup window, with the rest. The one home below both layers re-points them
+once.
+
+**CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
+user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own
+membership lemma at an encoded input (`mem_validLang`, …), its own characterization through the
+word-level check (`validLang_iff`, …) and its own decider proof (`validLang_mem`, …). The proofs
+repeat two pieces: the decoding of `⟨x, ⟨bits c, bits s⟩⟩` (`pairEncode_inj` twice, then
+`bits_injective`) and the decider wrapper (`arm_decides_poly` on `CA`, the `one_run` case split and
+the reject branch). The four languages `validLang`, `initLang`, `acceptLang` and `stepLang`
+(Hydroxyi's) already formed 31 copy pairs at the base. The edge-mode PR adds `edgeLang`,
+`mem_edgeLang`, `edgeLang_iff` and `edgeLang_mem`, 25 more pairs. About 25 lines of shared text
+are the decoding proofs and the wrapper's skeleton. The edge mode's own correctness proof
+(`edge_round`, `edge_loop`, `edge_tail`) is in no pair. **Census** (gate 91, minor 3; members of the
+family over all declarations, private included): `Langs` 8/9 → 10/12, `Checks` 4/26 → 5/31,
+`Deciders` 3/16 → 4/22. `Langs` was already above one fifth at the base, from the four existing
+languages; the acceptance above covers it. The edge member crosses no new file's threshold.
+**Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
+lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
+with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
+design that waits for him.
+
+**RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
+2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
+(`MultiTapeTM.runFrom` is in the vendored `Deterministic`). Private copies: `NTimeDiagonalizer`'s
+`qy_run_one` (new), `ExhaustiveReplay`'s `xr_runFrom_one`, `SAT`'s `satRed_one`, `CfgRecord`'s
+`recordStep_runFrom_one`; inline in 13 declarations (`SeamLayout` 3, `Catalog` 4, `Primitives` 4,
+`Loop` 1, `Encoding` 1). Census (declaration members, at #176's head): `NTimeDiagonalizer` 1 of 236
+(0.4%), `ExhaustiveReplay` 1 of 185 (0.5%), `SAT` 1 of 270 (0.4%), `CfgRecord` 1 of 138 (0.7%),
+`SeamLayout` 3 of 36 (8.3%), `Catalog` 4 of 505, `Primitives` 4 of 285, `Loop` 1 of 205, `Encoding`
+1 of 61. The one-fifth rule is not reached. **Disposition:** the dedup window (12.2c): a public
+`MultiTapeTM.runFrom_one` in a non-vendored module, and the 17 sites re-pointed.
+**+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
+identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
+the window.
+**The window's first pass (2026-11-06; branch `lean/dedup-ro1` at `7c940a8a`, pushed, no PR):**
+`Turing.MultiTapeTM.runFrom_one` in `TuringMachine/CfgFacts` (the user's ruling), the four
+privates deleted and the 13 inline sites re-pointed; every changed file elaborates. **The scope is
+far larger than recorded**, and the PR is parked for the user:
+- a public Bool-only copy already exists: `Turing.runFrom_one` (`Build/EmitIterEmbed:261`,
+  `simp [MultiTapeTM.runFrom]`), used four times by `EmitIterBody`;
+- the rewrite chain `runFrom_succ_eq_step` + `runFrom_zero` (mostly induction base cases) appears
+  in about 186 further declarations in 41 files, among them `Catalog` 26, `Primitives` 23,
+  `CookLevin/Hardness` 14, `SAT` 12, `Universal` 12, `Nondeterminism` 10, `EXP` 7, and several
+  colleague-owned `CircuitComplexity`/`Meyer` files;
+- `have`/`show`/`change` forms: `EmitIterBody`'s `hone`/`honeG`, `NDNormalForm:1766`,
+  `NDCodeSimulator:632`, `Primitives`' `splitSafe_one` and `hdepart`, `Catalog`'s
+  `f2_splitSafe_one`, `hdepart`, `hfirst`, `Loop`'s `hfirst` and `hs`; and fixed-machine
+  statements in `CodeSimulator`, `InputWindow` (`iw_one`), `UniversalK`, `WindowClock`,
+  `Inclusions`, `CircuitSatReductionMachine`, `Universal` and `UniversalBlock`.
+The ledger's census undercounts accordingly. **Questions for the user:** whether the general
+lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
+the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
+authorization).
+
+**NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
+`qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
+`qy_log_bits` (whose `≤` half is `Machines/Bin`'s `length_bits_le_log`); before E3 also
+`qy_bits_len_mono` (`Bin`'s `length_bits_mono`) and `qy_lt_two_pow_bits`, now through Mathlib's
+`Nat.size` facts; and, inline, `qy_call_bound`'s `(Nat.bits (f a)).length ≤ f a`, the statement of
+`Encoding`'s `Turing.length_bits_le_self` (gate 87's finding 2). Census, source-inclusive (gate 87's
+finding 3; declaration members, inline steps counted as in RO-1): `NTimeDiagonalizer` 3 of 236
+(1.3%), `Machines/Bin` 2 of 12 (16.7%), `SpaceAmplifyPoly` 1 of 20 (5%; `two_pow_bits_le`, on `main`
+and on the campaign since its merge of `main`), `Encoding` 1 of 61 (1.6%; `length_bits_le_self`);
+the last three are the public originals. Below one fifth. **Disposition:** `qy_call_bound`'s step
+re-points to `length_bits_le_self` in E-D's landing (ruled, user, 2026-11-04); the rest in the dedup
+window: a shared `Nat.bits` module.
+
+**Cumulative per-file accounting for RO-1 and NB-1** (source-inclusive; gate 87's finding 3).
+`NTimeDiagonalizer` 4 of 236 (1.7%: RO-1 1, NB-1 3; 3 after E-D's landing re-points
+`qy_call_bound`); `Encoding` 2 of 61 (3.3%: RO-1 1, NB-1 1). Every other file is in one of the two
+families only, its census above. No file approaches one fifth.
+
+**RC-1, row candidates from E-Q cont1** (PR #176; the brief's and the report's, the review's F9).
+Private leaves and lemmas with no published counterpart, each a candidate public row: the clocked
+install call (`QyClockSpec`, `qy_clocked_call`, `qy_clockHost_*`); the framed length comparison
+with verdict (`qyCmpTM`, `qy_cmp_run`); the repeating emitter (`qyEmitTM`, `qy_emit_run`,
+`qy_emit_stop`); the phase host's segment forms (`qy_hosted*`, `qy_round_of_seg`); the
+`Nat.unpair` successor rule (`qy_unpair_succ_*`). Not copies. **Disposition:** promotion when a
+second consumer appears, or in the dedup window.
+
+**QF-1, two in-file factorings** (PR #176; the review's F6). The `copyMapTM`/`transferMapTM`
+endpoint conversion and the `clockCfg` field conversion recur in `NTimeDiagonalizer` (pairs at
+90–94%, justified as readings of different rows). Optional. **Disposition:** the dedup window.
+
+**RC-2, a framed take-one-cell row** (E-D's brief, 2026-11-04; its review's F1, ruled by the user).
+No published row writes a blank at one cell, and every framed row needs blanks at its word's
+relative positions `-1` and `|w|`, so a word inside a nonblank block cannot be split off by
+published rows. E-D's own leaf `dzTakeTM` (read the cell, blank it, step right) fills the gap,
+privately. Not a copy. **Disposition:** promotion to a public framed row when a second consumer
+appears, or in the dedup window.
+
+**AS-1, machine-specific step lemmas beside the general ones** (#182, gate 90, 2026-11-04). #182
+publishes one step equation per instruction (`Complexity.LogProg.astep_inc` … `astep_jeqSnd`,
+`Machines/ARM`). Three older lemmas state a step of one particular machine at one label:
+`LogProg.astep_call₁` (`UnaryLogspace`: `astep_call` with `vword_unary₁`), and
+`BoolCircuit.AdjScan.astep_hit` and `astep_jeqFst` (`CircuitComplexity/LogspaceUniformScan`). They
+are specializations, not copies; the copy-text screen pairs none of them. The last shares its short
+name with the general `astep_jeqFst`, and resolves by argument type in its own file, which opens
+`Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
+three through the general equations, and rename the circuit one if the shared name is unwanted.
+**Extended (gate 90, minor 3):** three more specializations of `astep_call`:
+- `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
+- `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
+  `vword_unary₁` and `vword_unary₂`).
+
+That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+170 → 179 declarations and 46 → 46 pairs, identical
+(`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
+
+**NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
+`NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
+is three invocations of the published initial-configuration field equations
+(`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
+initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
+
+**E-D's delivery** (`exists_diagonalizer`, #188; review `campaign/fills/eq/reviews/ed-fill/`;
+ruled by the user, 2026-11-04):
+- **BL-1 (vi):** `dz_word_lt` (`Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ |w|`) is a new member,
+  **acknowledged** for the dedup window's single home below both layers; `NTimeDiagonalizer`
+  cannot reach `Machines/Bin`. Census `NTimeDiagonalizer` (vi) 1.
+- **Removed at landing:** `dz_padded_value`'s inline re-derivation of Mathlib's
+  `Nat.ofDigits_append_replicate_zero` (E3), and `dz_top_run`'s inline first halt, FH-1's
+  `MultiTapeTM.exists_first_halt` (E4). Recorded so that the ledger shows them caught.
+- **Promotion requests:** `dz_split_stream` restates `Build/NDHost`'s private `guessRun_split`
+  (98%), to be promoted or given a public `List` form; `dz_word_lt` restates `ExhaustiveReplay`'s
+  private `xr_val_lt` (65%), with BL-1 (vi)'s home.
+- **QF-1, extended:** `dz_initCfg` and `qy_initCfg` state one fact for different machines ("a
+  phase host's initial configuration is the blank seam in normal form"); one generic lemma over
+  `phaseHostTM_q₀` and `initCfg_ofWords`.
+- **RC-3, row candidates:** the clocked hosted run (`DzClockSpec`, `dz_clock_exists`); the
+  silent-transport reconstruction (`dz_silentCfg_eq`), beside `embedEmitCfg_eq`; and the output
+  length of a computed function (`dz_out_le`, `|F y| ≤ T |y|`), also inline in `SAT`,
+  `Nondeterminism`, `TMSAT` and `Build/Loop`'s private `loop_fuel_width`. **Disposition:** the
+  dedup window.
+- **Census, landed (gate 93, finding 4):** 8 of `NTimeDiagonalizer`'s 342 declarations (2.3%),
+  deduplicated: RO-1's one, the five distinct NB-1/BL-1/LS-3 members, `dz_word_lt` and
+  `dz_split_stream`. E1 retires `qy_call_bound`'s BL-1 (iii) step. Row candidates (RC-3) and
+  in-file factorings (QF-1) are not counted as debt.
+- **ED-IN, inline re-derivations, scoped by kind (ruled by the user, 2026-11-04, gate 93 round
+  2):** any inline step in `NTimeDiagonalizer` that re-derives a published run, buffer or segment
+  lemma belongs to this family, for the dedup window; a later find is an accounting minor. The
+  members found so far are all removed: `dz_first` (`Segment.time_eq`), `dz_split`'s separator
+  (`bufferTape_append_mid`), `dz_split_tape`'s prefix (`bufferTape_take`), `dz_top_run`'s output
+  (`runFrom_output_eq_of_halt`), and three natural cells (`bufferTape_nat`).
+  **Further member (gate 93 round 3, finding 1):** `qy_patch_end`'s prefix branch re-derives
+  `FinTM.bufferTape_take` (and so `_take` has a counterpart, against BW-1's note); re-pointed in the
+  dedup window. Census 9 of 342.
+- **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
+  `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
+  `a64f513d`).
+
+**NF cont1's delivery, F2: four kinds re-stated** (review
+`campaign/fills/c1/reviews/nf-cont1-fill/`; ruled by the user, 2026-11-04: **publish homes
+first**). An API PR publishes each fact beside its definitions before NF lands, and NF's landing
+cites them:
+- (i) the input read depends on the input head only (`nf_inputSymbol_congr`; privates
+  `ExhaustiveReplay.xr_inputSymbol_congr`, `ZoneRebalance.zr_inputSymbol_congr`);
+- (ii) a live configuration redirected to `⟨i, q⟩` is phase `i`'s tagged configuration at `q`
+  (`nf_retag`; `SeamLayout`'s private `sl_rewrap`, and inline in 15 declarations);
+- (iii) a configuration tagged by phase `i` is at no state of another phase (`nf_tagged_ne_park`;
+  privates `CfgRecord.record_tag_ne`, `SeamLayout.sl_tagged_ne_done`);
+- (vi) the length of a list of equal-length chunks (`nf_stream_length`; public as
+  `Complexity.CfgTableau.length_flatMap_const` in colleague-owned `CircuitComplexity`, which
+  NF cannot import).
+
+The existing private copies are re-pointed in the API PR where the files are the campaign's.
+*Numbering (gate 95, note 9):* the kinds carry the review's labels, (i)–(iii) and (vi), as in the
+decision put to the user. This entry first numbered the chunk length (iv), which collided with the
+review's F8 (iv), the buffer end (RC-4 below). The review uses no (v).
+
+**RN-1, renamed configurations converted field by field, scoped by kind** (ruled by the user,
+2026-11-04, with gate 94). #190 publishes the general fact, `Turing.Cfg.mapState_eq_of_fields`: a
+renamed configuration equals any configuration with its data fields and the renamed state.
+- **The family:** every inline proof of that fact anywhere in TCSlib (the five-line
+  `Cfg.ext`/`Cfg.mapState_*` block), with the retag (ii) as an instance. A later find is an
+  accounting minor.
+- **Re-pointed in #190:** `CfgRecord`'s `recordStep_mapState_eq` (removed), `SeamLayout`'s
+  `sl_rewrap`, and `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed` (two
+  blocks).
+- **Remaining, for the dedup window** (gate 94's minors 1–2, 2026-11-05; counted as conversions
+  inside declarations, not copies of their statements). By file:
+  - `CodeSimulator`: `canonStageLeg0`–`6`, `canonStageOuterSpec`, `canonStageInnerSpec`,
+    `us_start` (10);
+  - `ZoneRebalance`: 21 of about 870 (2.4%). These are `zr_short_fields`,
+    `zr_rightSeekBack_post`, `zr_rightRuler_post`, `zr_adjustedWalk_post`,
+    `zr_adjustedBack_post`, `zr_writeHalves_post`, `zr_rightPass_post`, `zr_test_post`,
+    `zr_body_post`, `zr_return_post`, `zr_rightReturn_post`, `zr_rightLeft_post`,
+    `zr_twoSteps_fields`, `zr_leftMove_fields`, `zr_leftWrite_fields`, `zr_leftPass_fields`,
+    `zr_final_fields`, `zr_extend_fields`, `zr_scanBody_fields`, `zr_scan_fields` and
+    `zr_countClear_fields`. RI-1's `zr_pinLoop` is retired and not counted;
+  - `NDHost`: `gr_handoff`, `guessCtlRunTM_stop_of_halted`;
+  - one each in `ExhaustiveReplay` (`xr_E_initCfg`), `NDCodeSimulator`
+    (`exists_ndInterpreterCore`), `Seam` (`phaseHostTM_run`), `InputRewind`
+    (`Cfg.mapState_mapState`), `NTimeHierarchy` (`un_setup`; NF-X1's pair too) and `SeamLayout`
+    (`exists_seamLayoutTM`).
+
+  The NF review's F2 list has 19 names, not 15; its `xr_phase_step` and `xr_halt_fixed` are
+  re-pointed. No file crosses one fifth. NF's own copies (`nf_retag`, `nf_tag`, …) are checked at
+  NF's landing (#191), where they cite `CfgFacts`.
+The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
+its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
+`Nat.forall_lt_succ_left'` (E1).
+
+**RN-1, an accounting minor at NF's landing** (gate 95, minor 3; 2026-11-05). `NDNormalForm`'s
+`nf_pack` proved its local `hinit`, `(H.relabelState e).initCfg x = (H.initCfg x).mapState e`
+(lines 62–69 at #191's head `e8994dc1`), by the five-line block: an RN-1 member that the list
+above did not name. It is inside the family, so a minor. #191's repair commit `10c01517` cites
+`(Cfg.mapState_eq_of_fields …).symm` there, as `nf_tag` does since `5732d5bd`. The file's other
+eleven `Cfg.ext` blocks (`nf_sweep_run`, `nf_entry` and nine leaf-run endpoints) are
+configuration-record equations, not renamings, so they are not members. Census: `NDNormalForm`
+1 of 104 declarations at `e8994dc1`, none at `10c01517`.
+
+**NF's landing, gate 95's major 1: repaired, no new family** (#191; ruled by the user,
+2026-11-05: **repair**). At the landed head `NDNormalForm` imports `TuringMachine/BufferWords`,
+but three inline steps still re-proved its identities, outside every acknowledged family (ED-IN
+is scoped to `NTimeDiagonalizer`, BW-1 to `StepBlock`'s privates, RN-1 to renamings):
+- `nf_bClear`'s `hw`, `bufferTape R (p + i) = bufferTape (R.drop i) p` for `0 ≤ p`, by
+  `bufferTape_nat` twice and `List.getElem?_drop`: that is `FinTM.bufferTape_drop`;
+- `nf_aReturn`'s `hw` (cell `|s|`) and `nf_region`'s cell `|R|`, blank at the buffer's end by
+  `bufferTape_nat` and `List.getElem?_eq_none`: that is `FinTM.bufferTape_eq_none_of_not_mem`.
+
+The steps came from the brief's own route probes, written when the fill could not import
+`BufferWords`. #191's repair commit `10c01517` cites the two lemmas at the three sites, and no
+member remains. Recorded so that the ledger shows them caught.
+
+**Gate 95's round-2 major 1** (#191; repaired, the round-1 ruling's kind): `nf_split`'s local `h0`
+rebuilt a list from its indexed entries by `List.ext_getElem`, re-proving Mathlib's
+`List.ofFn_getElem` (with the index length moved by `List.ofFn_congr`). #191's commit `dfc3e990`
+cites the two lemmas. No family; recorded so that the ledger shows it caught.
+
+**The library sweep that followed** (gate 95, round 3; `evidence/round3/sweep/`). Every `have`,
+`obtain` and private theorem of the file about core or Mathlib objects only, probed by `exact?`
+in place, as a generalised `example` and as its normalised core with `apply?`. It found eight
+further inline re-proofs, all of one published lemma each:
+- `Nat.succ_mod_succ_eq_zero_iff` (`nf_ctl_position`), `Nat.pos_of_mul_pos_left`
+  (`nf_display_firstStop`, `nf_firstStop_records`), `Nat.div_lt_of_lt_mul`
+  (`nf_display_firstStop`), `Nat.mul_div_cancel'` (`nf_firstStop_records`);
+- `List.ofFn_eq_nil_iff` (`nf_split`), `List.ne_nil_of_length_pos` (`nf_V_display`,
+  `nf_forward`; the file already cited it twice).
+
+It also found two rewrite chains that are each one lemma: `List.length_take` with
+`Nat.min_eq_left` is `List.length_take_of_le` (eight sites), and `List.foldl_append`,
+`foldl_cons`, `foldl_nil` on `l ++ [x]` is `List.foldl_concat` (seven sites). Separately,
+`nf_prefix_last` and `nf_sweep_record` proved the same completion of the parser's prefix array;
+it is now one private, `nf_update_last`. #191's commit `49c4d0f7` repairs all of them, with no
+statement change. No family; no member remains.
+
+**Gate 95's round-3 major 1**: one more member, which the sweep's candidate list missed because it
+is an untyped `have`. `nf_display_firstStop`'s `he` (`Nat.mod_add_div`, then the zero remainder)
+re-proved `Nat.mul_div_cancel'`; #191's commit `698dcdf5` cites it. The sweep now also takes every
+untyped `have`/`obtain` on a core or Mathlib term with a later rewrite `at` it (gate 95,
+`evidence/round4/sweep/`); the one other such site, `nf_display_flag`'s `hm`, has no library
+statement. No family; no member remains.
+
+**Gate 95's round-4 major 1**: one more fold-concatenation member, in `nf_ctl_position`'s
+`simp only` set, which the round-3 sweep had wrongly exempted as a simp set. #191's commit
+`b4af93b7` cites `List.foldl_concat`. The sweep now checks every member of both chain classes
+anywhere in the file (gate 95, `evidence/round5/sweep/`). No family; no member found by that
+check.
+
+**RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
+note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
+carried here until now.
+- **The first halting time of a choice word**, FH-1's kind for `NDTM.runWith`: `Nat.find` over
+  the run's prefixes (`find_spec`, `find_min`, `find_min'`), then the output after the halt by
+  `NDTM.runWith_append` and `NDTM.runWith_of_halt`. FH-1's public form,
+  `MultiTapeTM.exists_first_halt`, is deterministic, and no `NDTM` form exists. It runs inline at
+  two sites: `NDNormalForm`'s `nf_forward` (lines 3097–3127 at #191's head `e8994dc1`) and
+  `ExhaustiveReplay`'s `xr_replay_host` (lines 2179–2189 at the campaign tip). Neither
+  re-derives a lemma. **Disposition:** a public `NDTM` first-halt row in the dedup window
+  (12.2c), cited at both sites.
+- **(iv) a buffer is blank at and past its end** is not a row candidate after all: the review's
+  "no public form" held only at the fill's frozen imports. `FinTM.bufferTape_eq_none_of_not_mem`
+  (`TuringMachine/BufferWords`, public since PR #140; BW-1) states it. NF's three inline sites
+  cite it: `nf_entry` since `4354cbeb`, `nf_aReturn` and `nf_region` since `10c01517` (major 1
+  above). `CodeSimulator`'s private `canonStageBuffer_none` (lines 5040–5043 at the campaign
+  tip; six invocations at five locations: lines 5203, 6422, 6566, 6778 and twice at 7022, corrected
+  by gate 95's round-2 minor 3) restates it for cells at or past the end. **Disposition:** the dedup
+  window (12.2c): re-point all six invocations to `FinTM.bufferTape_eq_none_of_not_mem` and delete
+  it.
+  `CodeSimulator` does not import `BufferWords` yet; the import is acyclic (`BufferWords`
+  imports only `Simulation`).
+
+Census (members over all declarations, as the style lint counts them, at the campaign tip):
+`CodeSimulator` 1 of 208 (`canonStageBuffer_none`). With CC7-1's eleven and RN-1's three others
+(`canonStageOuterSpec`, `canonStageInnerSpec`, `us_start`, the last also RS-1's), the file holds
+15 of 208 (7.2%). The first-halt sites are row candidates and are not counted, as in RC-1–RC-3.
+The one-fifth rule is not reached.
+
+**WS-1, one step keeps a configuration in a window, and window monotonicity, scoped by kind**
+(#196, the deepening's API; gate 96, major 2; acknowledged by the user, 2026-11-05, and widened by
+kind the same day). #196's public `Turing.Cfg.InWindow.apply_of_lt` (`Build/CfgRecord`)
+re-derived its own file's private `recordStep_window` (line 679 at #196's head `89f4ebbc`), and
+one of its steps repeated `ExpBFS.inWin_mono`'s second component verbatim. The v3 screen paired
+none of them (the proofs are restructured), and no family covered the kind, so it was a debt
+major.
+- **Ruled (user, 2026-11-05): harvest.** On #196's repaired head `b1b5199b`, `recordStep_window` is
+  public as `Turing.Cfg.InWindow.apply_iff`, over any alphabet, beside the new
+  `Turing.Cfg.InWindow.mono`; `apply_of_lt` is proved from the two; and the record step
+  (`recordStep_observed_action`), the private lemma's one use, cites `apply_iff`.
+- **The family, acknowledged by kind for 12.2c (user, 2026-11-05), widened by kind (user,
+  2026-11-05):** every proof, anywhere in TCSlib, that one step keeps a configuration within a
+  window of any shape (the radius window `Cfg.InWindow`, a per-tape radius, an interval, a
+  visited interval), and every proof of window monotonicity. A later find is an accounting minor.
+  The canonical statements:
+  - `Turing.Cfg.InWindow.apply_iff`: for `c` in the radius-`s` window, `(a.apply c).InWindow s`
+    holds iff no work head is at `-s` moving left or at `s` moving right;
+  - `Turing.Cfg.InWindow.mono`: `c.InWindow s → s ≤ s' → c.InWindow s'`;
+  - **the tape half**, to be published in the 12.2c window: an action changes a work cell only
+    under that tape's old head (`z ≠ c.workTapePos i → (a.apply c).workTapes i z =
+    c.workTapes i z`). It exists today as `TuringMachine/Oracle`'s private
+    `apply_workTapes_eq_of_ne` (line 304 at the campaign tip), the natural one to harvest.
+- **Members on `Cfg.InWindow`** (lines at the campaign tip):
+  - `Complexity.ExpBFS.inWin_mono` and `inWin_stepWith` (`SpaceComplexity/ExpBFS/Radius`, lines
+    63 and 70; Hydroxyi's): the monotonicity, and one choice step from radius `s` into `s + 1`;
+  - the window half of `Complexity.Codec.boundary_iff` (`SpaceComplexity/Codec/Step`, line 195;
+    Hydroxyi's): once the two boundary cells are read as head conditions, `apply_iff`;
+  - `codec_step_blank` (private, `ClassPSPACE/TQBF`, line 1505; the campaign's): the tape half at
+    the same radius for one deterministic step;
+  - `xr_window_stepWith` (private, `ClassNP/ExhaustiveReplay`, line 67; the campaign's):
+    `inWin_stepWith` for any machine, with `Cfg.InWindow`'s two clauses written out (its output
+    bound is outside the kind).
+- **Members over other window shapes** (the widening; all the campaign's):
+  - `Turing.FinTM.source_bounds` (`TuringMachine/Sweep`, line 359): the interval `[-t, t]`, its
+    one-step case inline;
+  - `Turing.OracleTM.step_radius` (`TuringMachine/Oracle`, line 346): a per-tape radius, one
+    oracle step, through the private tape half above;
+  - `dgWindow_step` (private, `TuringMachine/Robustness/SingleTape`, line 1933): the window part of
+    a grown interval (its visited, history and size fields are outside the kind);
+  - `emCall_track_support` with `emCall_track_extent` (private, `TuringMachine/Build/Loop`, lines
+    3316 and 3294): the visited interval of a source run, its step inline.
+- **Disposition:** the dedup window (12.2c): publish the tape half, then re-prove the members from
+  the canonical statements or re-point their uses; a member over another window shape keeps its
+  own statement and cites the canonical ones for its step. Eight of the members re-prove the tape
+  half.
+
+Census (members over **all source declarations**, public and private, anonymous instances
+included, as `devtools/seyoon/declfreeze.py` counts them at #196's repair `b1b5199b`; corrected
+by gate 96's round-2 minor 1, which found the style lint's count, without the seven anonymous
+private instances, used before): `Build/CfgRecord` 2 of 137 (1.5%; the canonical pair), 3 of 137
+(2.2%) with RO-1's `recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%) for WS-1, and **3 of
+27 (11.1%) cumulatively** with CE-1's `coreSum_eq_of_code_eq`; `Codec/Step` 1 of 30 (3.3%); one
+member each in `TQBF`, `ExhaustiveReplay`, `Sweep`, `Oracle` (`step_radius`; its private
+`apply_workTapes_eq_of_ne` is the tape half's harvest source, not a copy) and
+`Robustness/SingleTape`, and two declarations in `Build/Loop`. The one-fifth rule is not
+reached.
+
+**WL-1, a `WalkLe` equation in a consumer file** (gate 96, minor 3's residue; recorded
+2026-11-05). `Complexity.LogProg.ISCount.walkLe_succ_iff` (`Logspace/ISCountMath`, line 120),
+the last-edge form
+`WalkLe R K (j + 1) c t ↔ WalkLe R K j c t ∨ ∃ w, WalkLe R K j c w ∧ R w t ∧ t < K`,
+is a fact about `Complexity.WalkLe` (`Logspace/PathWalk`) that lives in a consumer file and
+namespace, and its proof unfolds `WalkLe` by `simp only [WalkLe]`, a cross-file unfolding.
+Since #196's repair (`b1b5199b`) `SavitchARM/Reach` no longer uses it: `chain_of_walkLe` reads
+walks at the front through the new `Complexity.walkLe_succ_iff_head` (`PathWalk`, `Iff.rfl`),
+and `Reach` imports `PathWalk` instead of `ISCountMath`. Its remaining uses are in
+`ISCountMath`'s own `mem_succ_iff`. Not a copy. **Disposition:** the dedup window (12.2c): move
+it beside `WalkLe` in `PathWalk`, or re-prove it there from `walkLe_succ_iff_head` without
+unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's.
+
+**WC-1, a window-run closure lemma (optional)** (gate 96, note 10; recorded 2026-11-05).
+`Complexity.ExpBFS.winRun_of_card_eq` (`ExpBFS/Radius`) and the induction inside
+`Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge` (`SavitchARM/Window`) share about ten
+lines of one skeleton: extend a window run by `WinRun.snoc`, then finish with `rcode_iff` and
+`mem_acceptLang`. The closing steps differ: a shared pattern, not a copy. The induction also
+shows more than it states: under `NoEdge`, every word is a window run. **Disposition
+(optional):** the dedup window (12.2c): one closure lemma, "if every one-step extension of a
+window run stays in the window, every word is a window run", from which `winRun_of_card_eq` and
+a public `winRun_of_noEdge` both follow.
+
+**QL-X1, an idiom exclusion: the query layout** (gate 96, note 11; ruled by the user,
+2026-11-05). `SavitchARM/Window`'s `NoEdge` reproduces 85% of `SavitchARM/Recursion`'s `Rel` on
+the v3 screen. The shared text is the query layout
+`pairEncode x (pairEncode (bits u) … (bits s))`, through which each predicate reads a code
+language or an oracle answer; `NoEdge` restates none of `Rel`'s meaning. **Ruled (user,
+2026-11-05): an idiom**, as with NF-X1's. **Disposition:** excluded; not counted.
+
+**CQ-1, codec-level query predicates** (gate 96, note 11; opened by the user, 2026-11-05, as a
+12.2c item). The queries "`⟨x, ⟨bits u, bits s⟩⟩` is in `initLang N`" (and likewise for
+`acceptLang N` and `edgeLang N`) are spelled out wherever they are used: in
+`Complexity.LogProg.SavitchARM`'s `mem_iff_reach` and `NoEdge`, and in the deepening's block-fit
+lemmas (the design's `BlockFit` probe: `fit_initO`, `fit_edgeO`, `fit_accO`, `fit_edge_block`).
+`Logspace/ISCountGenRadius` names two of them as public `abbrev`s in a consumer file,
+`ISGen.InitM` and `ISGen.AccM`, with no `_iff` lemmas. **Disposition:** the dedup window
+(12.2c): a `def` per query, each with its `_iff` lemma, beside `initLang`, `acceptLang` and
+`edgeLang` (`SpaceComplexity/Codec/Langs`), replacing `ISGen`'s `InitM` and `AccM` and serving
+`mem_iff_reach`, `NoEdge` and the fit lemmas alike. `Codec/Langs` and `ISCountGenRadius` are
+Hydroxyi's: interface design in their files.
+
+**RP-1, definitional reads that #196's equations can replace** (gate 96, the round-2 shape
+search; recorded 2026-11-05; not duplication). #196 publishes `Iff.rfl` equations for `WalkLe`,
+`StepRel`, `RCode`, `WinRun`, `Rel`, `InitO` and `AccO`. Colleagues' files read these definitions
+by unfolding or by definitional equality: `WalkLe` in `Logspace/ISCountGenWalk` (83–105),
+`PathWalkMachine` (429–439) and `ISCountMath` (124); `StepRel` in `ExpBFS/Radius` (167),
+`Logspace/PathHard` (232) and `Randomized/BPLInPCount` (119); `RCode` in `ExpBFS/Main` (98–104)
+and `ISCountGenRadius` (88–92); `Rel`, `InitO` and `AccO` in `SavitchARM/Correct` (55–71); lines
+at the campaign tip. **Disposition:** the dedup window (12.2c): re-point them to the equations.
+Not counted.
+
+**CE-1, equal codes of window configurations, copied** (found 2026-11-05 by gate 96's round-2
+screen; **acknowledged by the user for 12.2c, 2026-11-05**). `coreSum_eq_of_code_eq` (equal
+radius-`s` codes of two configurations in the radius-`s` window give equal vertices) is public, with
+the same statement and the same one-line proof through `coreSum_eq_of_cfgWord_eq`, in
+`SpaceComplexity/ExpBFS/Radius` (`Complexity.ExpBFS`, line 126 at the campaign tip) and in
+`Randomized/BPLInPCount` (`Randomized.BPLInP`, line 106). Both files are Hydroxyi's, and the copy
+predates #196. **Disposition:** the dedup window (12.2c): keep `ExpBFS`'s and re-point
+`BPLInPCount`'s uses. Census: one declaration in each file.
+
+**ZP-1, the zone row's precondition under a change of state** (#197, G5's consumer API; gate 97,
+minor 5; ruled by the user, 2026-11-05). `Turing.zoneRowPre` (`Build/ZoneRebalance`) reads only
+the work tapes and work tape `0`'s head, so it holds of a configuration exactly when it holds
+after the state is renamed or rebound. No public lemma said so. `Build/ZoneStep` re-derived it
+privately (`zs_rowPre_mapState`); G5's controller needs it too (its phase host starts a phase at
+`d.mapState (fun _ => s₀)` and returns `post.bindState (red p)`); and `ZoneRebalance` proves it
+inline twelve times, unfolding `zoneRowPre` with `funext_iff`, `Cfg.mapState_workTapes` and
+`Cfg.mapState_workTapePos`. That is legal in the definition's home, so there is no rule-10 issue.
+- **Ruled (user, 2026-11-05): publish** `zoneRowPre_congr` (across state types: equal work tapes
+  and equal tape-`0` heads give the same precondition, which covers `mapState` and `bindState`)
+  and its corollary `zoneRowPre_mapState_iff`, beside `zoneRowPre`. Done on #197's head
+  `20e7fc75`; `ZoneStep` cites them, and its private copy is gone.
+- **The twelve inline sites are re-pointed in the 12.2c window** (the same ruling): lines 831,
+  884, 906, 1239, 2275, 2301, 2362, 3330, 3354, 3432, 3512 and 3539 at #197's original head
+  `0a1b64d5` (each 22 lines lower at `20e7fc75`), one in each of `zr_rightSeekBack_post`,
+  `zr_rightSeekBack_ruler_pre`, `zr_rightRuler_pre`, `zr_rightPass_pre`, `zr_rightReturn_pre`,
+  `zr_rightReturn_post`, `zr_rightReturn_bounds`, `zr_rightLeft_pre`, `zr_rightLeft_post`,
+  `zr_rightLeft_fields`, `zr_extend_pre` and `zr_extend_fields`.
+- **Not RN-1, by kind.** RN-1's fact is a configuration equation (`Cfg.mapState_eq_of_fields`: a
+  renamed configuration equals any configuration with its data fields and the renamed state),
+  and its family is the five-line `Cfg.ext`/`Cfg.mapState_*` block. These twelve prove one
+  predicate's invariance under a change of state, with no `Cfg.ext` and no configuration
+  equation, so they are this 12.2c item, with `zoneRowPre_congr` and `zoneRowPre_mapState_iff`
+  as its canonical statements. (Gate 97's pre-dispatch sweep, `evidence/sweep/README.md`, called
+  `zs_rowPre_mapState` "RN-1's kind"; by RN-1's scope it belongs here.)
+- **G5 (#211, gate 102; the review's F4):** `TwoTapes` does not cite the pair. Each phase starts at
+  a configuration built at the phase's own state type (`tt_cfg_rowPre`), and each endpoint is
+  converted by `tt_mapState_eq_cfg` through `zoneRowPre_iff` and RN-1's `Cfg.mapState_eq_of_fields`;
+  nothing re-derives the state-independence. Not a member; the maintainer accepts the route.
+
+Census (inline steps inside declarations, counted as RN-1's are; members over all declarations,
+as the style lint counts them, at `20e7fc75`): `ZoneRebalance` 14 of 875 (1.6%: the twelve sites
+and the canonical pair). Four of the twelve declarations also hold an RN-1 block
+(`zr_rightSeekBack_post`, `zr_rightReturn_post`, `zr_rightLeft_post`, `zr_extend_fields`), so with
+RN-1's 21 the file holds 31 of 875 (3.5%). The one-fifth rule is not reached.
+
+Any new copy in a future delivery enters through the per-delivery ledger
+and the one-fifth escalation rule of `workflow.md` §4.
+
+## ===== campaign/gates/105-as1-dedup/evidence/freeze/declfreeze-UnaryLogspace.txt =====
+
+public before/after: 26 26 private before/after: 0 0
+public added: []
+public removed: []
+authorized body change: Complexity.LogProg.astep_call₁
+private removed: []
+private added: []
+private changed: []
+
+## ===== campaign/gates/105-as1-dedup/evidence/landing/as1.diff =====
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean b/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
+index 815b175a..0a958173 100644
+--- a/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
++++ b/TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean
+@@ -153,8 +153,7 @@ lemma astep_call₁ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (o : Fin d → List
+     astep A o (pairEncode (List.replicate n true) w) (some l, v, none) =
+       (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+         v, none) := by
+-  simp only [astep, hl]
+-  rw [vword_unary₁]
++  rw [astep_call hl, vword_unary₁]
+ 
+ end LogProg
+ 
+
+## ===== campaign/gates/105-as1-dedup/evidence/lint/campaign-head.txt =====
+
+WARN  TCSlib/Complexity/SpaceComplexity/Basic.lean                          3 public def(s) without a lemma beside them (check 8): ImplicitlyLogspaceComputable, SPACE, indexLang
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean                   4 public def(s) without a lemma beside them (check 8): Gs, hdOfV, inpOf, movePos
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean                 2 public def(s) without a lemma beside them (check 8): InitScan, PreChk
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean                    5 public def(s) without a lemma beside them (check 8): acceptLang, edgeLang, initLang, stepLang, validLang
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean                   1 public def(s) without a lemma beside them (check 8): layR
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean                  2 public def(s) without a lemma beside them (check 8): lay2R, zcode
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean                  17 public def(s) without a lemma beside them (check 8): dcAcc, dcBase, dcDowns, dcIncs, dcNext, dcPtr, icL, pmNext, prAdvL, prCont, sA1, sA2, sAd0, scIncs, vA1, vA2, vAd0
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean                    3 public def(s) without a lemma beside them (check 8): Shape1, Shape2, bnd
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean                     1 public def(s) without a lemma beside them (check 8): Regs.Bd
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean                     2 public def(s) without a lemma beside them (check 8): adStep, slStep
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean                     13 public def(s) without a lemma beside them (check 8): cellE, effAct, hdOf, idleAct, nbL, nbR, newHd, pairChunk, sChunk, sInit, stepCell, stepG, sumUpd
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean                    7 public def(s) without a lemma beside them (check 8): BlankTogether, VAcc, mkCfg, outOf, vChunk, vInit, vStep
+WARN  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean                     3 public def(s) without a lemma beside them (check 8): codeK, hH, padBits
+WARN  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean                    3 public def(s) without a lemma beside them (check 8): CfgStep, configBound, summaryWord
+WARN  TCSlib/Complexity/SpaceComplexity/CounterProgSim.lean                 5 public def(s) without a lemma beside them (check 8): A, ans, rO, rP, rg
+WARN  TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean              1 public def(s) without a lemma beside them (check 8): Bd
+WARN  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean                 34 public def(s) without a lemma beside them (check 8): A, Bd, Site.idx, Site.set, acExit, acI, clrReg, cpDst, cpExit, cpI, cpSrc, mvI, rBs, rC, rK, rLg, rN, rT, rT2, rU, rV, rX, rZ, rad, rc, rc1, rch, rs, rs1, rw, shI, toPh, wkExit, zero
+WARN  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean                    6 public def(s) without a lemma beside them (check 8): bigB, decs, st1, st2, st3, st5
+WARN  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean                  2 public def(s) without a lemma beside them (check 8): RCode, rset
+WARN  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean                   4 public def(s) without a lemma beside them (check 8): Cl, SBd, rr, stp
+WARN  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean                     1 public def(s) without a lemma beside them (check 8): wkSt
+WARN  TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean                   3 public def(s) without a lemma beside them (check 8): Shape, prog, tm
+WARN  TCSlib/Complexity/SpaceComplexity/Inclusions.lean                     2860 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean        2 public def(s) without a lemma beside them (check 8): gKv, gev
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean     3 public def(s) without a lemma beside them (check 8): grdX, gwX, gwcX
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean           1 public def(s) without a lemma beside them (check 8): GS
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean           26 public def(s) without a lemma beside them (check 8): Bd, St.Clear, St.wb, St.wt, lgv, rK, rT, rY, rc, rcnt, rcp, rcur, re, rg, ri, ri1, rk, rlg, rn, rs, rstp, ru, rv, wB, wT, zero
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean           2156 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean           1 public def(s) without a lemma beside them (check 8): readTr
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean                  1457 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean                  2 public def(s) without a lemma beside them (check 8): GraphReach, encodePATH
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean              2 public def(s) without a lemma beside them (check 8): Edge, expo
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean        1 public def(s) without a lemma beside them (check 8): qLang
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean       24 public def(s) without a lemma beside them (check 8): A, advF, advT, cpDst, cpI, cpNext, cpSrc, dInc, eInc, hvI, leI, leNo, leReg, leYes, sEinc, sSinc, sbExit, sbI, sbReg, shExit, shI, shReg, tAdv, tailAns
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean          2 public def(s) without a lemma beside them (check 8): Bd, zero
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean           1 public def(s) without a lemma beside them (check 8): setSt
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean          2 public def(s) without a lemma beside them (check 8): tailVal, wAns
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean              4 public def(s) without a lemma beside them (check 8): pathEdge, pathRaw, pathRawLang, rawEdge
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean       3 public def(s) without a lemma beside them (check 8): PReg.Le, akEx, akY
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean         1 public def(s) without a lemma beside them (check 8): PReg.zero
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean          8 public def(s) without a lemma beside them (check 8): call, hi, liftAct, lo, nextPh, prog, start, tr
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean          2613 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/SpaceComplexity/Logspace/Reductions.lean            2 public def(s) without a lemma beside them (check 8): LogspaceReducible, NLComplete
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ARM.lean                   10 public def(s) without a lemma beside them (check 8): armCall, armProg, armTr, aseam, goAct, insCall, insTr, junkAct, retAct, rw2Act
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean              3 public def(s) without a lemma beside them (check 8): AHalt, AReach, Ins.embed
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean                1 public def(s) without a lemma beside them (check 8): Pre
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean       4 public def(s) without a lemma beside them (check 8): G, decs, orc, searchA
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean                  4 public def(s) without a lemma beside them (check 8): bankK, bankStart, padCfg, sigCfg
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean                   1 public def(s) without a lemma beside them (check 8): incW
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Call.lean                  1 public def(s) without a lemma beside them (check 8): CleanRun
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean            3 public def(s) without a lemma beside them (check 8): RegBox, leftSide, retPos
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean                 5 public def(s) without a lemma beside them (check 8): markSet, simCfg, simSt, stSt, stg
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean            5 public def(s) without a lemma beside them (check 8): clAct, clNext, eraseAbove, idleK, wr
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean               4 public def(s) without a lemma beside them (check 8): CallOK, compileFinTM, regWords, rstep
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean               6 public def(s) without a lemma beside them (check 8): K, Rch, nilTM, o, prog, tr
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean                  5 public def(s) without a lemma beside them (check 8): eqBAct, eqCAct, halfLAct, halfSt, mv2Act
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean               5 public def(s) without a lemma beside them (check 8): clrEAct, decDAct, decEAct, decLAct, toEndAct
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean                5 public def(s) without a lemma beside them (check 8): TPos.Valid, render, vsym, vword, wlen
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean                   3 public def(s) without a lemma beside them (check 8): incBAct, incCAct, regAct
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean                  3 public def(s) without a lemma beside them (check 8): MHalt, MIns.isMem, MReach
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean           5 public def(s) without a lemma beside them (check 8): MBox, mcompileFinTM, memAct, memTape, mseam
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean              1 public def(s) without a lemma beside them (check 8): MGuard
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean                  5 public def(s) without a lemma beside them (check 8): NAns, NHalts, NIns.targets, NPre, NPreS
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean           2 public def(s) without a lemma beside them (check 8): NBox, ncompileFinNDTM
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean               3 public def(s) without a lemma beside them (check 8): NAcc, NSem, RegLe
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.lean              2 public def(s) without a lemma beside them (check 8): PSem, ansProb
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean               2 public def(s) without a lemma beside them (check 8): NGood, NGuard
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean                 4 public def(s) without a lemma beside them (check 8): backAct, cmpAct, rewAct, skipAct
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean                3 public def(s) without a lemma beside them (check 8): valP1Act, valP2Act, wSt
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean              5 public def(s) without a lemma beside them (check 8): ReachesB, dcmp1Act, dcmp2Act, pskip1Act, pskip2Act
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean            7 public def(s) without a lemma beside them (check 8): FragOK, ValidPair, rejAct, valSAct, valUAct, valWAct, xAct
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Program.lean               13 public def(s) without a lemma beside them (check 8): Mode.seg0, argSegs, compileTM, ctr, dIdle, gstep, isCharRead, nextRet, regMove, segDbl, segReg, toFin, virtSym
+WARN  TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean                   4 public def(s) without a lemma beside them (check 8): Consistent, HaltRel, SimRel, TPos.isCell
+WARN  TCSlib/Complexity/SpaceComplexity/NSPACE.lean                         2 public def(s) without a lemma beside them (check 8): DecidesInSpace, NSPACE
+WARN  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean             3 public def(s) without a lemma beside them (check 8): bigE, decs, orcN
+WARN  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean             34 public def(s) without a lemma beside them (check 8): Bd, cpDst, cpExit, cpI, cpSrc, dmI, hvI, mvDst, mvExit, mvI, mvSrc, rC, rE, rI, rK, rM, rP, rQ, rSE, rSP, rT, rU, rV, rX, rZ, ra, rn, rs, rw, sbI, shExit, shI, shReg, zero
+WARN  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean           1 public def(s) without a lemma beside them (check 8): CallOK
+WARN  TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean                   3 public def(s) without a lemma beside them (check 8): NL, NPSPACE, coNL
+WARN  TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean                  4 public def(s) without a lemma beside them (check 8): A, G, uBit, uLen
+WARN  TCSlib/Complexity/SpaceComplexity/WindowClock.lean                    1676 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  TCSlib/Complexity/SpaceComplexity/Basic.lean                          265 lines; 20 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean                   211 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean                   524 lines; 31 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean                 790 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean                 790 lines; 19 public / 2 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean                   347 lines; 6 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean                    185 lines; 12 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean                   335 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean                  306 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean                  524 lines; 81 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean                    466 lines; 18 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean                     334 lines; 67 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean                      281 lines; 26 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean                     336 lines; 10 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean                     509 lines; 29 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean              425 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean                    601 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean                    601 lines; 34 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean                     511 lines; 49 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ConfigCount.lean                    590 lines; 24 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean                    646 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean                    646 lines; 31 public / 3 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Constructible.lean                  703 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/Constructible.lean                  703 lines; 5 public / 23 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/CounterProgSim.lean                 495 lines; 25 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean              246 lines; 6 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Examples.lean                       147 lines; 4 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean                 608 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean                 608 lines; 77 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean                    618 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean                    618 lines; 23 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean                  356 lines; 27 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean                   475 lines; 24 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean                     630 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean                     630 lines; 40 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean                  280 lines; 6 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ExpTime.lean                        142 lines; 3 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Hierarchy.lean                      317 lines; 4 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean                   418 lines; 16 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Inclusions.lean                     2860 lines; 4 public / 64 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean     305 lines; 7 public / 2 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean        315 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean     363 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean      158 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean       358 lines; 3 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean        192 lines; 2 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean           320 lines; 17 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean           311 lines; 69 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean  120 lines; 3 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean           2156 lines; 27 public / 57 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean                  1457 lines; 2 public / 62 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean                  210 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean              353 lines; 20 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean        243 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean       577 lines; 45 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean          356 lines; 62 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean           303 lines; 4 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean          422 lines; 14 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean              504 lines; 33 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean       476 lines; 37 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean         577 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean          825 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean          825 lines; 13 public / 16 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean          2613 lines; 9 public / 111 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Logspace/Reductions.lean            184 lines; 7 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARM.lean                   408 lines; 35 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean                93 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean              427 lines; 11 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean              505 lines; 26 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean              231 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean                285 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean                551 lines; 30 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean              304 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean       319 lines; 21 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Bank.lean                  226 lines; 14 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean                   210 lines; 15 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Call.lean                  360 lines; 6 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean            495 lines; 13 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean                 438 lines; 15 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean            508 lines; 22 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean               296 lines; 12 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean               358 lines; 20 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean                  455 lines; 15 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean               479 lines; 21 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Layout.lean                423 lines; 29 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean                   333 lines; 16 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean                  295 lines; 28 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean           477 lines; 27 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean              556 lines; 6 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean                  448 lines; 37 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean           403 lines; 19 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean           103 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean               473 lines; 33 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean          195 lines; 2 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.lean              471 lines; 29 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMProb.lean              314 lines; 11 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean             360 lines; 7 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean               270 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean                 376 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean                662 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean                662 lines; 24 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean              445 lines; 14 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain.lean            571 lines; 28 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Program.lean               353 lines; 26 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/Sim.lean                   564 lines; 25 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean                 116 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/NSPACE.lean                         136 lines; 4 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/Savitch.lean                        118 lines; 2 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean             140 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean             635 lines > target 600
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean             635 lines; 80 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean               302 lines; 8 public / 1 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean           506 lines; 18 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean                 337 lines; 19 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean              305 lines; 18 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean               197 lines; 5 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SavitchARM/Window.lean              182 lines; 4 public / 2 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean                   109 lines; 9 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean                  318 lines; 26 public / 0 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/WindowClock.lean                    1676 lines; 4 public / 66 private declarations
+INFO  TCSlib/Complexity/SpaceComplexity/ZeroSpace.lean                      264 lines; 11 public / 2 private declarations
+
+style_lint: 0 FAIL, 80 WARN over 111 files
+
+## ===== campaign/gates/105-as1-dedup/evidence/lint/policy-head.txt =====
+
+
+0 findings in 1 files
+
+
+## ===== campaign/gates/105-as1-dedup/evidence/merged-tree/down-las1.txt =====
+
+TCSlib/Complexity/SpaceComplexity/UnaryLogspace
+TCSlib/Complexity/SpaceComplexity/CounterProgSim
+TCSlib/Complexity/SpaceComplexity/CounterProgSimRun
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample
+TCSlib/Complexity/CircuitComplexity
+TCSlib/Complexity/SpaceComplexity
+
+## ===== campaign/gates/105-as1-dedup/evidence/merged-tree/replay-las1-static.txt =====
+
+modules 7, mismatches 0, static total 0
+
+## ===== campaign/gates/105-as1-dedup/evidence/merged-tree/replay-las1.log =====
+
+# replay-las1 at 0bc71211: AS-1 (7 modules), fresh .oleans into oleans-las1
+TCSlib/Complexity/SpaceComplexity/UnaryLogspace exit=0 errors=0 sorry=0
+TCSlib/Complexity/SpaceComplexity/CounterProgSim exit=0 errors=0 sorry=0
+TCSlib/Complexity/SpaceComplexity/CounterProgSimRun exit=0 errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau exit=0 errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample exit=0 errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity exit=0 errors=0 sorry=0
+TCSlib/Complexity/SpaceComplexity exit=0 errors=0 sorry=0
+# modules=7 failed=0
+
+## ===== campaign/gates/105-as1-dedup/evidence/merged-tree/replay-las1.sh =====
+
+#!/usr/bin/env bash
+# Replay las1 (AS-1; branch lean/dedup-as1, stacked on the campaign after #209): its downstream closure (7 modules),
+# fresh .oleans into oleans-las1, a copy of oleans-lnth, via scripts/lean_check_tree.sh. The root TCSlib
+# module is not listed (replay rule). The precheck pins the changed files' blobs.
+S=/home/user/tcslib-scratch
+WT="$S/wt-as1"
+LIST="/home/user/tcslib-scratch/fills/replay/down-las1.txt"
+LOG="$S/fills/replay/replay-las1.log"
+PINS="TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:0a9581732fc98699e1da71b9a680db7275cd5f40"
+[ -d "$WT/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib" ] || { echo "precheck: $WT/.lake/packages has no Mathlib build; nothing copied" >&2; exit 2; }
+git -C "$WT" fetch -q origin 2>/dev/null
+[ "$(git -C "$WT" rev-parse HEAD)" = "$(git -C "$WT" rev-parse origin/lean/dedup-as1 2>/dev/null)" ] || { echo "precheck: $WT is not at the pushed PR head; nothing copied" >&2; exit 2; }
+[ -z "$(git -C "$WT" status --porcelain --untracked-files=no)" ] || { echo "precheck: $WT has local changes; nothing copied" >&2; exit 2; }
+git -C "$WT" merge-base --is-ancestor 7cdcc9ba359b1115c52ae57d54adf9f10da15544 HEAD || { echo "precheck: the head must contain the campaign after #209; nothing copied" >&2; exit 2; }
+[ "$(git -C "$WT" diff --name-only 7cdcc9ba359b1115c52ae57d54adf9f10da15544 HEAD -- '*.lean' | sort)" = "$(printf '%s\n' "$PINS" | cut -d: -f1 | sort)" ] || { echo "precheck: the Lean diff from the campaign after #209 must be exactly the pinned files; nothing copied" >&2; exit 2; }
+while IFS=: read -r f b; do
+  [ "$(git -C "$WT" rev-parse "HEAD:$f")" = "$b" ] || { echo "precheck: $f is not the checked blob; nothing copied" >&2; exit 2; }
+done <<< "$PINS"
+tail -1 "/home/user/tcslib-scratch/fills/replay/replay-lnth.log" 2>/dev/null | grep -qx "# modules=[0-9]* failed=0" || { echo "precheck: the previous replay must have passed; nothing copied" >&2; exit 2; }
+[ "$(wc -l < "$LIST" | tr -d ' ')" = "7" ] || { echo "precheck: the replay list must have 7 modules; nothing copied" >&2; exit 2; }
+grep -qx "TCSlib" "$LIST" && { echo "precheck: the replay list must not contain the root TCSlib; nothing copied" >&2; exit 2; }
+[ -d "$S/oleans-las1" ] && { echo "precheck: $S/oleans-las1 already exists; remove it for a fresh copy" >&2; exit 2; }
+[ -d "$S/oleans-lnth" ] || { echo "precheck: oleans-lnth is missing; nothing copied" >&2; exit 2; }
+cp -R "$S/oleans-lnth" "$S/oleans-las1" || exit 1
+cd "$WT" || exit 1
+{ echo "# replay-las1 at $(git rev-parse --short HEAD): AS-1 ($(wc -l < "$LIST" | tr -d ' ') modules), fresh .oleans into oleans-las1"
+  n=0; f=0
+  while read -r m; do
+    n=$((n+1))
+    out=$(TCSLIB_OLEANS=$S/oleans-las1 nice -n 10 bash scripts/lean_check_tree.sh "$m" 2>&1); st=$?
+    e=$(printf '%s\n' "$out" | grep -c "error")
+    echo "$m exit=$st errors=$e sorry=$(printf '%s\n' "$out" | grep -c "declaration uses 'sorry'")"
+    [ $st -ne 0 ] && { f=$((f+1)); printf '%s\n' "$out" | grep error | head -3 | sed "s#$PWD/##g"; }
+  done < "$LIST"
+  echo "# modules=$n failed=$f"
+} > "$LOG" 2>&1
+python3 -I "$S/api/staticsorry.py" "$WT" "$LOG" > "${LOG%.log}-static.txt"; sst=$?
+tail -n 6 "$LOG"
+tail -n 1 "${LOG%.log}-static.txt"
+# the exit status: nonzero unless every listed module passed and the static check found no mismatch
+tail -1 "$LOG" | grep -qx "# modules=7 failed=0" || { echo "replay: a module failed, or the count is not 7" >&2; exit 1; }
+[ $sst -eq 0 ] && tail -1 "${LOG%.log}-static.txt" | grep -q "mismatches 0," || { echo "replay: the static sorry check failed" >&2; exit 1; }
+exit 0
+
+## ===== TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import Mathlib.Tactic.FinCases
+import TCSlib.Complexity.SpaceComplexity.Machines.DblLang
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Functions of the unary length computable in logarithmic space
+
+A uniformity function only matters on the inputs `1ⁿ` [AB09, Def 6.14]. For a sequence of
+words `g : ℕ → List Bool` (the value on `1ⁿ`) this file defines the bit and length
+languages `{⟨1ⁿ, bits i⟩ | g(n)ᵢ = 1}`, `{⟨1ⁿ, bits i⟩ | i < |g(n)|}` and calls `g`
+*unary-logspace* when both are in `L`; with a polynomial length bound this makes the
+extension of `g` by `[]` off unary inputs implicitly logspace computable [AB09, Def 4.16].
+The first example is `g(n) = 1ⁿ`, decided by an abstract register machine that counts
+`k = 0, 1, …` and asks the base decider `dblLang` whether `2k = 2n`.
+
+These pieces (`ltLang`, `UnaryLogspace`, `unaryExt`, and the counter-program simulation of
+`TCSlib.Complexity.SpaceComplexity.CounterProgSim`) are generic logspace material; their
+first client is [AB09, Thm 6.15] (`TCSlib.Complexity.CircuitComplexity.LogspaceTableau`).
+
+## Main definitions
+
+* `Complexity.uBit`, `Complexity.uLen` — the bit and length languages of `g`.
+* `Complexity.UnaryLogspace g` — both are in `L`.
+* `Complexity.unaryExt g` — `g |x|` on unary `x`, `[]` elsewhere.
+
+## Main results
+
+* `Complexity.UnaryLogspace.implicitlyLogspaceComputable` — with a polynomial length bound,
+  `unaryExt g` is implicitly logspace computable.
+* `Complexity.unaryLogspace_replicate` — `n ↦ 1ⁿ` is unary-logspace.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§4.1; §4.3, Definition 4.16; §6.2.1, Definition 6.14.)
+-/
+
+namespace Complexity
+
+open Turing LogProg
+
+/-! ## Unary index languages -/
+
+/-- The bit language of `g`: `⟨1ⁿ, bits i⟩` with `g(n)ᵢ = 1`. -/
+def uBit (g : ℕ → List Bool) : Language Bool :=
+  {y | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ (g n).getD i false = true}
+
+/-- The length language of `g`: `⟨1ⁿ, bits i⟩` with `i < |g(n)|`. -/
+def uLen (g : ℕ → List Bool) : Language Bool :=
+  {y | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ i < (g n).length}
+
+/-- `g` is *unary-logspace*: its bit and length languages are in `L`. -/
+def UnaryLogspace (g : ℕ → List Bool) : Prop :=
+  uBit g ∈ LOGSPACE ∧ uLen g ∈ LOGSPACE
+
+/-- Membership of `⟨1ⁿ, bits i⟩` in a language of the form `{⟨1ⁿ, bits i⟩ | p n i}`. -/
+lemma mem_unaryIdx (p : ℕ → ℕ → Prop) (n i : ℕ) :
+    pairEncode (List.replicate n true) (Nat.bits i) ∈
+        {y : List Bool | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ p n i} ↔
+      p n i := by
+  constructor
+  · rintro ⟨n', i', h, hp⟩
+    obtain ⟨rfl, hb⟩ := pairEncode_replicate_inj h
+    rwa [bits_injective hb]
+  · exact fun h => ⟨n, i, rfl, h⟩
+
+/-- Membership in the bit language. -/
+lemma mem_uBit (g : ℕ → List Bool) (n i : ℕ) :
+    pairEncode (List.replicate n true) (Nat.bits i) ∈ uBit g ↔ (g n).getD i false = true :=
+  mem_unaryIdx (fun n i => (g n).getD i false = true) n i
+
+/-- Membership in the length language. -/
+lemma mem_uLen (g : ℕ → List Bool) (n i : ℕ) :
+    pairEncode (List.replicate n true) (Nat.bits i) ∈ uLen g ↔ i < (g n).length :=
+  mem_unaryIdx (fun n i => i < (g n).length) n i
+
+/-- Members of a unary index language are well-formed plain inputs. -/
+lemma validPlain_of_mem_unaryIdx {p : ℕ → ℕ → Prop} {y : List Bool}
+    (h : y ∈ {y : List Bool | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧
+      p n i}) : ValidPlain y := by
+  obtain ⟨n, i, rfl, -⟩ := h
+  exact ⟨n, _, rfl, canon_bits i⟩
+
+/-! ## From unary-logspace to implicitly logspace computable -/
+
+open Classical in
+/-- The extension of `g` to all inputs: `g |x|` on `x = 1^{|x|}`, `[]` elsewhere. -/
+noncomputable def unaryExt (g : ℕ → List Bool) (x : List Bool) : List Bool :=
+  if x = List.replicate x.length true then g x.length else []
+
+/-- On `1ⁿ` the extension is `g n`. -/
+@[simp] lemma unaryExt_replicate (g : ℕ → List Bool) (n : ℕ) :
+    unaryExt g (List.replicate n true) = g n := by
+  simp [unaryExt]
+
+/-- The index languages of the extension are those of `g`. -/
+lemma indexLang_unaryExt (p : List Bool → ℕ → Prop)
+    (hp : ∀ x i, p x i ↔ (x = List.replicate x.length true ∧ p x i))
+    (q : ℕ → ℕ → Prop) (hq : ∀ n i, p (List.replicate n true) i ↔ q n i) :
+    indexLang p =
+      {y : List Bool | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ q n i} := by
+  ext y
+  constructor
+  · rintro ⟨x, i, rfl, h⟩
+    obtain ⟨hx, h⟩ := (hp x i).mp h
+    refine ⟨x.length, i, by rw [← hx], ?_⟩
+    rw [← hq, ← hx]; exact h
+  · rintro ⟨n, i, rfl, h⟩
+    exact ⟨_, i, rfl, (hq n i).mpr h⟩
+
+/-- **Unary-logspace sequences of polynomial length give implicitly logspace computable
+functions** [AB09, Def 4.16]: `unaryExt g`.
+
+**Proof sketch.** Off unary inputs the extension is empty, so its bit and length languages
+are exactly `uBit g` and `uLen g` (`indexLang_unaryExt`). -/
+theorem UnaryLogspace.implicitlyLogspaceComputable {g : ℕ → List Bool} (h : UnaryLogspace g)
+    (hlen : ∃ C c : ℕ, ∀ n, (g n).length ≤ C * (n + 1) ^ c) :
+    ImplicitlyLogspaceComputable (unaryExt g) := by
+  obtain ⟨C, c, hC⟩ := hlen
+  refine ⟨⟨C, c, fun x => ?_⟩, ?_, ?_⟩
+  · unfold unaryExt; split_ifs
+    · exact hC _
+    · simp
+  · rw [indexLang_unaryExt _ (fun x i => by
+        unfold unaryExt; split_ifs with hx
+        · exact ⟨fun h => ⟨hx, h⟩, And.right⟩
+        · simp [hx])
+      (fun n i => (g n).getD i false = true) (fun n i => by simp)]
+    exact h.1
+  · rw [indexLang_unaryExt _ (fun x i => by
+        unfold unaryExt; split_ifs with hx
+        · exact ⟨fun h => ⟨hx, h⟩, And.right⟩
+        · simp [hx])
+      (fun n i => i < (g n).length) (fun n i => by simp)]
+    exact h.2
+
+/-! ## The identity `n ↦ 1ⁿ` -/
+
+namespace LogProg
+
+/-- A `unaryFst` call with one argument `r` on `⟨1ⁿ, w⟩` asks about `⟨1ⁿ, bits (v r)⟩`. -/
+lemma astep_call₁ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (o : Fin d → List Bool → Bool)
+    {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m} (hl : A l = .call j .unaryFst [r] l₁ l₀) (n : ℕ)
+    (w : List Bool) (v : Fin m → ℕ) :
+    astep A o (pairEncode (List.replicate n true) w) (some l, v, none) =
+      (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+        v, none) := by
+  rw [astep_call hl, vword_unary₁]
+
+end LogProg
+
+/-- The inputs `⟨1ⁿ, bits i⟩` with `i < n`. -/
+def ltLang : Language Bool :=
+  {y | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ i < n}
+
+namespace LtM
+
+/-- The labels of the comparison machine. -/
+inductive Lb where
+  | start | test | cmp | i1 | i2 | i3 | yes | no
+  deriving DecidableEq, Fintype
+
+/-- **The comparison machine**: registers `k` (`0`) and `g = 2k` (`1`); at `test` ask
+`dblLang` whether `g = 2n` (then answer `0`), at `cmp` whether `k = i` (then answer `1`),
+else increment `k` once and `g` twice. -/
+def A : ARM 2 1 Lb
+  | .start => .valP 0 .test
+  | .test => .call 0 .unaryFst [1] .no .cmp
+  | .cmp => .jeqIn 0 .yes .i1
+  | .i1 => .inc 0 .i2
+  | .i2 => .inc 1 .i3
+  | .i3 => .inc 1 .test
+  | .yes => .ret true
+  | .no => .ret false
+
+/-- Two register values. -/
+def vv (a b : ℕ) : Fin 2 → ℕ := fun j => if j = 0 then a else b
+
+/-- Reading register `k`. -/
+@[simp] lemma vv_0 (a b : ℕ) : vv a b 0 = a := rfl
+/-- Reading register `g`. -/
+@[simp] lemma vv_1 (a b : ℕ) : vv a b 1 = b := rfl
+
+/-- Writing register `k`. -/
+lemma upd_0 (a b c : ℕ) : Function.update (vv a b) 0 c = vv c b := by
+  funext j; fin_cases j <;> simp [vv]
+
+/-- Writing register `g`. -/
+lemma upd_1 (a b c : ℕ) : Function.update (vv a b) 1 c = vv a c := by
+  funext j; fin_cases j <;> simp [vv]
+
+/-- The oracle: membership in `dblLang`. -/
+noncomputable def orc : Fin 1 → List Bool → Bool :=
+  fun _ V => MultiTapeTM.indicator (dblLang : Set (List Bool)) V
+
+/-- The base decider answers whether `v = 2n`. -/
+lemma orc_eq (n v : ℕ) : orc 0 (pairEncode (List.replicate n true) (Nat.bits v)) =
+    decide (v = 2 * n) := by
+  rw [orc, indicator_eq_decide]
+  refine decide_eq_decide.mpr ⟨fun ⟨n', h⟩ => ?_, fun h => ⟨n, by rw [h]⟩⟩
+  obtain ⟨rfl, hb⟩ := pairEncode_replicate_inj h
+  exact bits_injective hb
+
+/-- The invariant: syntactic preconditions and registers at most `2 (|y| + 1)`. -/
+def G (y : List Bool) (a : AConf 2 Lb) : Prop :=
+  PreS A y a ∧ ∀ r, a.2.1 r ≤ 2 * (y.length + 1) ^ 1
+
+/-- **The loop**: from `test` with `k ≤ n`, `k ≤ i`, `g = 2k`, the machine answers `i < n`.
+
+**Proof sketch.** Induction on `n - k`: if `k = n` the base decider says `2k = 2n` and the
+machine answers `0` (correct, as `i ≥ k = n`); otherwise if `k = i` it answers `1` (`i < n`);
+otherwise it moves to `k + 1`. -/
+lemma loop (n i : ℕ) : ∀ d k, k + d = n → k ≤ i →
+    AHalt A orc (pairEncode (List.replicate n true) (Nat.bits i)) (G (pairEncode
+      (List.replicate n true) (Nat.bits i))) (some .test, vv k (2 * k), none) (decide (i < n)) := by
+  set y := pairEncode (List.replicate n true) (Nat.bits i) with hy
+  have hl : y.length = 2 * n + 2 + (Nat.bits i).length := by
+    simp [hy, pairEncode_eq_dbl, dbl_replicate]; omega
+  have hval : ValidPlain y := ⟨n, _, rfl, canon_bits i⟩
+  have hG : ∀ (l : Lb) (a b : ℕ), a ≤ n + 1 → b ≤ 2 * n + 2 → G y (some l, vv a b, none) := by
+    intro l a b ha hb
+    refine ⟨?_, fun r => ?_⟩
+    · cases l <;> simp [PreS, A, hval]
+    · fin_cases r <;> simp <;> omega
+  intro d
+  induction d with
+  | zero =>
+    intro k hk hki
+    obtain rfl : k = n := by omega
+    refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+    rw [astep_call₁ A orc (show A .test = _ from rfl), orc_eq]
+    have hf : decide (i < k) = false := by simp; omega
+    simp only [vv_1, decide_true, ↓reduceIte, hf]
+    exact AHalt.ret rfl (hG _ _ _ (by omega) (by omega))
+  | succ d ih =>
+    intro k hk hki
+    refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+    rw [astep_call₁ A orc (show A .test = _ from rfl), orc_eq]
+    simp only [vv_1, show 2 * k ≠ 2 * n by omega, decide_false, Bool.false_eq_true, ↓reduceIte]
+    refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+    by_cases hki' : k = i
+    · subst hki'
+      have : astep A orc y (some .cmp, vv k (2 * k), none) = (some .yes, vv k (2 * k), none) := by
+        simp [astep, A, hy, plainWord_pairEncode]
+      rw [this]
+      have hlt : decide (k < n) = true := by simp; omega
+      rw [hlt]
+      exact AHalt.ret rfl (hG _ _ _ (by omega) (by omega))
+    · have : astep A orc y (some .cmp, vv k (2 * k), none) = (some .i1, vv k (2 * k), none) := by
+        simp [astep, A, hy, plainWord_pairEncode, bits_injective.eq_iff, hki']
+      rw [this]
+      refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+      simp only [astep, A, vv_0, upd_0]
+      refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+      simp only [astep, A, vv_1, upd_1]
+      refine AHalt.step (hG _ _ _ (by omega) (by omega)) ?_
+      simp only [astep, A, vv_1, upd_1]
+      have := ih (k + 1) (by omega) (by omega)
+      rwa [show 2 * k + 1 + 1 = 2 * (k + 1) by ring]
+
+end LtM
+
+open LtM in
+/-- **`ltLang` is in `L`**: the comparison machine decides it with the base decider
+`dblLang`.
+
+**Proof sketch.** `arm_decides_poly`: on a malformed input the format check rejects; on
+`⟨1ⁿ, bits i⟩` the loop (`LtM.loop`) answers `i < n` with registers at most `2n + 2`. -/
+theorem ltLang_mem : ltLang ∈ LOGSPACE := by
+  refine arm_decides_poly A .start (fun _ => dblLang) (fun _ => dblLang_mem) 2 1 fun y => ?_
+  by_cases hv : ValidPlain y
+  · obtain ⟨n, w, rfl, hw⟩ := hv
+    rw [canon_eq_bits w hw]
+    set i := bitsVal w
+    have hind : MultiTapeTM.indicator (ltLang : Set (List Bool))
+        (pairEncode (List.replicate n true) (Nat.bits i)) = decide (i < n) := by
+      rw [indicator_eq_decide]; exact decide_eq_decide.mpr (mem_unaryIdx _ n i)
+    rw [hind]
+    have hval : ValidPlain (pairEncode (List.replicate n true) (Nat.bits i)) :=
+      ⟨n, _, rfl, canon_bits i⟩
+    change AHalt A orc _ (G _) _ _
+    rw [show (fun _ => 0 : Fin 2 → ℕ) = vv 0 (2 * 0) from by funext j; fin_cases j <;> rfl]
+    refine AHalt.step ⟨by simp [PreS, A], fun r => by fin_cases r <;> simp⟩ ?_
+    have : astep A orc (pairEncode (List.replicate n true) (Nat.bits i))
+        (some .start, vv 0 (2 * 0), none) = (some .test, vv 0 (2 * 0), none) := by
+      simp [astep, A, hval]
+    rw [this]
+    exact loop n i n 0 (by omega) (Nat.zero_le _)
+  · have hn : MultiTapeTM.indicator (ltLang : Set (List Bool)) y = false := by
+      rw [indicator_eq_decide]
+      simp only [decide_eq_false_iff_not]
+      exact fun h => hv (validPlain_of_mem_unaryIdx h)
+    rw [hn]
+    refine ⟨1, ?_, ?_, fun t ht => ?_⟩
+    · simp [arun, astep, A, hv]
+    · simp [arun, astep, A, hv]
+    · obtain rfl : t = 0 := by omega
+      exact ⟨by simp [arun, PreS, A], fun r => by simp [arun]⟩
+
+/-- **`n ↦ 1ⁿ` is unary-logspace**: both its languages are `ltLang`. -/
+theorem unaryLogspace_replicate : UnaryLogspace fun n => List.replicate n true := by
+  have e1 : uBit (fun n => List.replicate n true) = ltLang := by
+    ext y; simp only [uBit, ltLang]
+    refine exists_congr fun n => exists_congr fun i => and_congr_right fun _ => ?_
+    by_cases h : i < n <;> simp [List.getD_eq_getElem?_getD, h]
+  have e2 : uLen (fun n => List.replicate n true) = ltLang := by
+    ext y; simp [uLen, ltLang]
+  exact ⟨e1 ▸ ltLang_mem, e2 ▸ ltLang_mem⟩
+
+end Complexity
+```
+
+## ===== TCSlib/Complexity/SpaceComplexity/Machines/ARM.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import TCSlib.Complexity.SpaceComplexity.Machines.ParseCmp
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Abstract register machines
+
+Logspace algorithms are usually described with a constant number of counters of logarithmic
+size [AB09, §4.1]. An *abstract register machine* (`Complexity.LogProg.ARM`) is a flowchart
+over finitely many labels whose registers hold natural numbers, with the instructions:
+increment, decrement, clear, halve, zero/parity/equality tests, the input-format checks and
+index comparisons of `TCSlib.Complexity.SpaceComplexity.Machines.Parse`, subroutine calls,
+and `ret b` (answer `b`). Its semantics (`Complexity.LogProg.astep`) is over values; the
+compilation `Complexity.LogProg.armProg` into a register-tape program stores each register
+in binary (`Nat.bits`) and implements each instruction by the fragment proved for it.
+
+Related model: `Complexity.CounterProg` (`TCSlib.Complexity.TuringMachine.CounterProg`) is a
+goto program over unary counters for the polynomial-time emitters of [AB09, §6.2]. It overlaps
+in spirit with the programs here, which store registers in binary (as logarithmic space
+requires) and call deciders on virtual inputs; the two are kept separate, and a polynomially
+running counter program is simulated by an abstract register machine in
+`TCSlib.Complexity.SpaceComplexity.CounterProgSim`.
+
+## Main definitions
+
+* `Complexity.LogProg.Ins`, `Complexity.LogProg.ARM` — instructions and machines.
+* `Complexity.LogProg.astep` — the value semantics.
+* `Complexity.LogProg.armProg` — the compiled register-tape program.
+* `Complexity.LogProg.aseam` — the program configuration of an abstract configuration.
+
+## Main results
+
+* `Complexity.LogProg.astep_inc`, …, `Complexity.LogProg.astep_jeqSnd` — one step at each
+  instruction.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§4.1.)
+-/
+
+namespace Complexity.LogProg
+
+open Turing
+
+/-- The instructions of an abstract register machine over `m` registers calling `d` deciders,
+with labels `Λ`. -/
+inductive Ins (m d : ℕ) (Λ : Type) where
+  /-- `r := r + 1` -/
+  | inc (r : Fin m) (l : Λ)
+  /-- `r := r - 1` (truncated) -/
+  | dec (r : Fin m) (l : Λ)
+  /-- `r := 0` -/
+  | clr (r : Fin m) (l : Λ)
+  /-- `r := r / 2` -/
+  | half (r : Fin m) (l : Λ)
+  /-- branch on `r = 0` -/
+  | jz (r : Fin m) (l₁ l₀ : Λ)
+  /-- branch on `r` odd -/
+  | jodd (r : Fin m) (l₁ l₀ : Λ)
+  /-- branch on `r = s` (distinct registers) -/
+  | jeq (r s : Fin m) (l₁ l₀ : Λ)
+  /-- call decider `j` on the virtual input of `mode` and `args` -/
+  | call (j : Fin d) (mode : Mode) (args : List (Fin m)) (l₁ l₀ : Λ)
+  /-- answer `b` and halt -/
+  | ret (b : Bool)
+  /-- check that the input is `⟨1ⁿ, w⟩` with `w` a canonical binary payload (a `Nat.bits`
+  word — `pairEncode [] [false]` has the pair shape but is rejected); else answer `0`;
+  `r` is any register -/
+  | valP (r : Fin m) (l : Λ)
+  /-- check that the input is `⟨1ⁿ, ⟨u, w⟩⟩` with both inner payloads canonical binary
+  words (else answer `0`) -/
+  | valQ (r : Fin m) (l : Λ)
+  /-- branch on `Nat.bits r = w` for the input `⟨1ⁿ, w⟩` -/
+  | jeqIn (r : Fin m) (l₁ l₀ : Λ)
+  /-- branch on `Nat.bits r = u` for the input `⟨1ⁿ, ⟨u, w⟩⟩` -/
+  | jeqFst (r : Fin m) (l₁ l₀ : Λ)
+  /-- branch on `Nat.bits r = w` for the input `⟨1ⁿ, ⟨u, w⟩⟩` -/
+  | jeqSnd (r : Fin m) (l₁ l₀ : Λ)
+
+/-- An abstract register machine: an instruction at every label. -/
+abbrev ARM (m d : ℕ) (Λ : Type) := Λ → Ins m d Λ
+
+/-- The word `w` of an input `⟨1ⁿ, w⟩`. -/
+def plainWord (x : List Bool) : List Bool := x.drop (tRun x + 2)
+
+/-- The words `u`, `w` of an input `⟨1ⁿ, ⟨u, w⟩⟩`. -/
+def pairWords (x : List Bool) : List Bool × List Bool :=
+  (pairDecode (x.drop (tRun x + 2))).getD ([], [])
+
+/-- The word of the input `⟨1ⁿ, w⟩` is `w`. -/
+lemma plainWord_pairEncode (n : ℕ) (w : List Bool) :
+    plainWord (pairEncode (List.replicate n true) w) = w := by
+  unfold plainWord
+  rw [tRun_pairEncode]
+  simp [pairEncode_eq_dbl, dbl_replicate, List.drop_append]
+
+/-- The words of the input `⟨1ⁿ, ⟨u, w⟩⟩` are `u` and `w`. -/
+lemma pairWords_pairEncode (n : ℕ) (u w : List Bool) :
+    pairWords (pairEncode (List.replicate n true) (pairEncode u w)) = (u, w) := by
+  have : (pairEncode (List.replicate n true) (pairEncode u w)).drop
+      (tRun (pairEncode (List.replicate n true) (pairEncode u w)) + 2) = pairEncode u w := by
+    rw [tRun_pairEncode]; simp [pairEncode_eq_dbl, dbl_replicate, List.drop_append]
+  simp [pairWords, this, pairDecode_pairEncode]
+
+/-- An abstract configuration: the current label (`none` when halted), the register values,
+and the answer once halted. -/
+abbrev AConf (m : ℕ) (Λ : Type) := Option Λ × (Fin m → ℕ) × Option Bool
+
+open Classical in
+/-- **One step of an abstract register machine** on input `x`, deciders answering `oracle`. -/
+noncomputable def astep {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+    (x : List Bool) : AConf m Λ → AConf m Λ
+  | (none, v, res) => (none, v, res)
+  | (some l, v, res) =>
+    match A l with
+    | .inc r l' => (some l', Function.update v r (v r + 1), res)
+    | .dec r l' => (some l', Function.update v r (v r - 1), res)
+    | .clr r l' => (some l', Function.update v r 0, res)
+    | .half r l' => (some l', Function.update v r (v r / 2), res)
+    | .jz r l₁ l₀ => (some (if v r = 0 then l₁ else l₀), v, res)
+    | .jodd r l₁ l₀ => (some (if v r % 2 = 1 then l₁ else l₀), v, res)
+    | .jeq r s l₁ l₀ => (some (if v r = v s then l₁ else l₀), v, res)
+    | .call j md args l₁ l₀ =>
+      (some (if oracle j (vword (callSegs ⟨j, md, args, l₁, l₀⟩ x (fun r => Nat.bits (v r))))
+        then l₁ else l₀), v, res)
+    | .ret b => (none, v, some b)
+    | .valP _ l' => if ValidPlain x then (some l', v, res) else (none, v, some false)
+    | .valQ _ l' => if ValidPair x then (some l', v, res) else (none, v, some false)
+    | .jeqIn r l₁ l₀ => (some (if Nat.bits (v r) = plainWord x then l₁ else l₀), v, res)
+    | .jeqFst r l₁ l₀ => (some (if Nat.bits (v r) = (pairWords x).1 then l₁ else l₀), v, res)
+    | .jeqSnd r l₁ l₀ => (some (if Nat.bits (v r) = (pairWords x).2 then l₁ else l₀), v, res)
+
+/-- The run of an abstract register machine. -/
+noncomputable def arun {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+    (x : List Bool) (a : AConf m Λ) (n : ℕ) : AConf m Λ :=
+  (astep A oracle x)^[n] a
+
+/-- Running no steps stays put. -/
+lemma arun_zero {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+    (x : List Bool) (a : AConf m Λ) : arun A oracle x a 0 = a := rfl
+
+/-! ## One step, instruction by instruction
+
+The value semantics of each instruction, stated as an equation for a live configuration
+whose label holds it. -/
+
+section Steps
+
+variable {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {x : List Bool} {l : Λ} {v : Fin m → ℕ} {res : Option Bool}
+
+/-- A step at an increment. -/
+lemma astep_inc {r : Fin m} {l' : Λ} (h : A l = .inc r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r + 1), res) := by
+  simp [astep, h]
+
+/-- A step at a decrement. -/
+lemma astep_dec {r : Fin m} {l' : Λ} (h : A l = .dec r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r - 1), res) := by
+  simp [astep, h]
+
+/-- A step at a clear. -/
+lemma astep_clr {r : Fin m} {l' : Λ} (h : A l = .clr r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r 0, res) := by
+  simp [astep, h]
+
+/-- A step at a halving. -/
+lemma astep_half {r : Fin m} {l' : Λ} (h : A l = .half r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r / 2), res) := by
+  simp [astep, h]
+
+/-- A step at a zero test. -/
+lemma astep_jz {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jz r l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r = 0 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a parity test. -/
+lemma astep_jodd {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jodd r l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r % 2 = 1 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at an equality test. -/
+lemma astep_jeq {r s : Fin m} {l₁ l₀ : Λ} (h : A l = .jeq r s l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r = v s then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a call: the decider's answer on the call's virtual input picks the branch. -/
+lemma astep_call {j : Fin d} {md : Mode} {args : List (Fin m)} {l₁ l₀ : Λ}
+    (h : A l = .call j md args l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if oracle j (vword (callSegs ⟨j, md, args, l₁, l₀⟩ x fun r => Nat.bits (v r)))
+        then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at an answer halts with it. -/
+lemma astep_ret {b : Bool} (h : A l = .ret b) :
+    astep A oracle x (some l, v, res) = (none, v, some b) := by
+  simp [astep, h]
+
+open Classical in
+/-- A step at the plain-input check. -/
+lemma astep_valP {r : Fin m} {l' : Λ} (h : A l = .valP r l') :
+    astep A oracle x (some l, v, res) =
+      if ValidPlain x then (some l', v, res) else (none, v, some false) := by
+  simp [astep, h]
+
+open Classical in
+/-- A step at the pair-input check. -/
+lemma astep_valQ {r : Fin m} {l' : Λ} (h : A l = .valQ r l') :
+    astep A oracle x (some l, v, res) =
+      if ValidPair x then (some l', v, res) else (none, v, some false) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the word of a plain input. -/
+lemma astep_jeqIn {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqIn r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = plainWord x then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the first word of a pair input. -/
+lemma astep_jeqFst {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqFst r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = (pairWords x).1 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the second word of a pair input. -/
+lemma astep_jeqSnd {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqSnd r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = (pairWords x).2 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+end Steps
+
+/-! ## Compilation -/
+
+/-- The phases of the instruction fragments. -/
+inductive Ph where
+  | start
+  | incB
+  | decL | decE | decB
+  | clrE
+  | h0 | hF | hT
+  | eqBy | eqBn
+  | vU1 | vS | vW0 | vWF | vWT | vrw1 | vrw2
+  | vP1 (l : Option Bool) | vP2 (b : Bool) (l : Option Bool)
+  | jK2 | jC | jRB (b : Bool) | jI1 (b : Bool) | jI2 (b : Bool)
+  | jP1 | jP2F | jP2T | jD1 | jD2F | jD2T
+  deriving DecidableEq, Fintype
+
+/-- A control action: change state, move nothing. -/
+def goAct {m : ℕ} {S : Type} (s : S) : Action m Bool S := ⟨0, fun _ => (none, 0), none, some s⟩
+
+/-- Halt with output `b`. -/
+def retAct {m : ℕ} {S : Type} (b : Bool) : Action m Bool S := ⟨0, fun _ => (none, 0), some b, none⟩
+
+/-- The input rewind scan (moving nothing else): left over symbols, then right into `nx`. -/
+def rw2Act {m : ℕ} {S : Type} (r : Fin m) (s₀ nx : S) (a : Option Bool) : Action m Bool S :=
+  match a with
+  | some _ => xAct r (-1) 0 s₀
+  | none => xAct r 1 0 nx
+
+/-- The halting junk action. -/
+def junkAct {m : ℕ} {S : Type} : Action m Bool S := ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- **The transition table of one instruction's fragment**: phase `start` is the fragment's
+first state. -/
+def insTr {m d : ℕ} {Λ : Type} (i : Ins m d Λ) (l : Λ) (ph : Ph) (a : Option Bool)
+    (w : Fin m → Option Bool) : Action m Bool (Λ × Ph) :=
+  match i with
+  | .inc r l' =>
+    match ph with
+    | .start => incCAct r (l, .start) (l, .incB) (w r)
+    | .incB => incBAct r (l, .incB) (l', .start) (w r)
+    | _ => junkAct
+  | .dec r l' =>
+    match ph with
+    | .start => decDAct r (l, .start) (l, .decL) (l, .decB) (w r)
+    | .decL => decLAct r (l, .decE) (l, .decB) (w r)
+    | .decE => decEAct r (l, .decB)
+    | .decB => incBAct r (l, .decB) (l', .start) (w r)
+    | _ => junkAct
+  | .clr r l' =>
+    match ph with
+    | .start => toEndAct r (l, .start) (l, .clrE) (w r)
+    | .clrE => clrEAct r (l, .clrE) (l', .start) (w r)
+    | _ => junkAct
+  | .half r l' =>
+    match ph with
+    | .start => toEndAct r (l, .start) (l, .h0) (w r)
+    | .h0 => halfLAct r none (l, .hF) (l, .hT) (l', .start) (w r)
+    | .hF => halfLAct r (some false) (l, .hF) (l, .hT) (l', .start) (w r)
+    | .hT => halfLAct r (some true) (l, .hF) (l, .hT) (l', .start) (w r)
+    | _ => junkAct
+  | .jz r l₁ l₀ =>
+    match ph with
+    | .start => goAct (if w r = none then (l₁, .start) else (l₀, .start))
+    | _ => junkAct
+  | .jodd r l₁ l₀ =>
+    match ph with
+    | .start => goAct (if w r = some true then (l₁, .start) else (l₀, .start))
+    | _ => junkAct
+  | .jeq r s l₁ l₀ =>
+    match ph with
+    | .start => eqCAct r s (l, .start) (l, .eqBy) (l, .eqBn) (w r) (w s)
+    | .eqBy => eqBAct r s (l, .eqBy) (l₁, .start) (w r)
+    | .eqBn => eqBAct r s (l, .eqBn) (l₀, .start) (w r)
+    | _ => junkAct
+  | .call _ _ _ _ _ => junkAct
+  | .ret b =>
+    match ph with
+    | .start => retAct b
+    | _ => junkAct
+  | .valP r l' =>
+    match ph with
+    | .start => valUAct r (l, .start) (l, .vU1) (l, .vS) false a
+    | .vU1 => valUAct r (l, .start) (l, .vU1) (l, .vS) true a
+    | .vS => valSAct r (l, .vW0) a
+    | .vW0 => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) none a
+    | .vWF => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) (some false) a
+    | .vWT => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) (some true) a
+    | .vrw1 => xAct r (-1) 0 (l, .vrw2)
+    | .vrw2 => rw2Act r (l, .vrw2) (l', .start) a
+    | _ => junkAct
+  | .valQ r l' =>
+    match ph with
+    | .start => valUAct r (l, .start) (l, .vU1) (l, .vS) false a
+    | .vU1 => valUAct r (l, .start) (l, .vU1) (l, .vS) true a
+    | .vS => valSAct r (l, .vP1 none) a
+    | .vP1 lst => valP1Act r (fun b => (l, .vP2 b lst)) a
+    | .vP2 b lst => valP2Act r (l, .vP1 (some false)) (l, .vP1 (some true)) (l, .vW0) lst b a
+    | .vW0 => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) none a
+    | .vWF => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) (some false) a
+    | .vWT => valWAct r (l, .vWF) (l, .vWT) (l, .vrw1) (some true) a
+    | .vrw1 => xAct r (-1) 0 (l, .vrw2)
+    | .vrw2 => rw2Act r (l, .vrw2) (l', .start) a
+    | _ => junkAct
+  | .jeqIn r l₁ l₀ =>
+    match ph with
+    | .start => skipAct r (l, .start) (l, .jK2) a
+    | .jK2 => xAct r 1 0 (l, .jC)
+    | .jC => cmpAct r (l, .jC) (fun b => (l, .jRB b)) a (w r)
+    | .jRB b => backAct r (l, .jRB b) (l, .jI1 b) (w r)
+    | .jI1 b => xAct r (-1) 0 (l, .jI2 b)
+    | .jI2 b => rewAct r (l, .jI2 b) (if b then (l₁, .start) else (l₀, .start)) a
+    | _ => junkAct
+  | .jeqSnd r l₁ l₀ =>
+    match ph with
+    | .start => skipAct r (l, .start) (l, .jK2) a
+    | .jK2 => xAct r 1 0 (l, .jP1)
+    | .jP1 => pskip1Act r (l, .jP2F) (l, .jP2T) a
+    | .jP2F => pskip2Act r (l, .jP1) (l, .jC) false a
+    | .jP2T => pskip2Act r (l, .jP1) (l, .jC) true a
+    | .jC => cmpAct r (l, .jC) (fun b => (l, .jRB b)) a (w r)
+    | .jRB b => backAct r (l, .jRB b) (l, .jI1 b) (w r)
+    | .jI1 b => xAct r (-1) 0 (l, .jI2 b)
+    | .jI2 b => rewAct r (l, .jI2 b) (if b then (l₁, .start) else (l₀, .start)) a
+    | _ => junkAct
+  | .jeqFst r l₁ l₀ =>
+    match ph with
+    | .start => skipAct r (l, .start) (l, .jK2) a
+    | .jK2 => xAct r 1 0 (l, .jD1)
+    | .jD1 => dcmp1Act r (l, .jD2F) (l, .jD2T) a
+    | .jD2F => dcmp2Act r (l, .jD1) (fun b => (l, .jRB b)) false a (w r)
+    | .jD2T => dcmp2Act r (l, .jD1) (fun b => (l, .jRB b)) true a (w r)
+    | .jRB b => backAct r (l, .jRB b) (l, .jI1 b) (w r)
+    | .jI1 b => xAct r (-1) 0 (l, .jI2 b)
+    | .jI2 b => rewAct r (l, .jI2 b) (if b then (l₁, .start) else (l₀, .start)) a
+    | _ => junkAct
+
+/-- The transition table of the compiled program. -/
+def armTr {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (l : Λ) (ph : Ph) (a : Option Bool)
+    (w : Fin m → Option Bool) : Action m Bool (Λ × Ph) :=
+  insTr (A l) l ph a w
+
+/-- The call node of one instruction. -/
+def insCall {m d : ℕ} {Λ : Type} (i : Ins m d Λ) (ph : Ph) : Option (CallSpec m d (Λ × Ph)) :=
+  match i with
+  | .call j md args l₁ l₀ =>
+    match ph with
+    | .start => some ⟨j, md, args, (l₁, .start), (l₀, .start)⟩
+    | _ => none
+  | _ => none
+
+/-- The call nodes of the compiled program. -/
+def armCall {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (q : Λ × Ph) :
+    Option (CallSpec m d (Λ × Ph)) :=
+  insCall (A q.1) q.2
+
+/-- **The compiled register-tape program** of an abstract register machine. -/
+def armProg {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (l₀ : Λ) : RProg m d (Λ × Ph) where
+  tm := ⟨(l₀, .start), fun q a w => armTr A q.1 q.2 a w⟩
+  call := armCall A
+
+/-- The program configuration representing the abstract configuration at label `l` with
+values `v`, having written `out`. -/
+def aseam {m : ℕ} {Λ : Type} (x : List Bool) (l : Λ) (v : Fin m → ℕ) (out : List Bool) :
+    Cfg m Bool (Λ × Ph) x :=
+  ⟨some (l, .start), ⟨1, by omega⟩, fun r => FinTM.bufferTape (Nat.bits (v r)), fun _ => 0, out⟩
+
+end Complexity.LogProg
+```
+
+## ===== TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import TCSlib.Complexity.CircuitComplexity.LogspaceUniformAdjBasic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Scanning a circuit description in logarithmic space
+
+The "only if" half of [AB09, p. 112]'s robustness remark: from the bits of the description
+`BoolCircuit.DAGCircuit.encode Cₙ` (available through the bit language of an implicitly
+logspace computable function), `SIZE`, `TYPE` and `EDGE` are decided by scanning the
+description with a position counter, a vertex counter and an argument counter.
+
+The scanner is one abstract register machine `BoolCircuit.AdjScan.scan τ` for the three
+tasks `τ`; this file proves its run (`BoolCircuit.AdjScan.scan_halts`): it answers
+`nAns τ` when the target vertex is an input, `hitAns τ i g` when it is the gate `g`, and
+`false` beyond the circuit.
+
+## Main definitions
+
+* `BoolCircuit.AdjScan.Task` — `SIZE`, `TYPE t` or `EDGE`.
+* `BoolCircuit.AdjScan.scan` — the scanner.
+
+## Main results
+
+* `BoolCircuit.AdjScan.scan_halts` — the scanner's answer on a well-formed description.
+
+File size: about 650 lines, over the 600-line target. The file is one abstract machine
+with the run lemmas of its nested loops, which all rely on the machine's definition and step
+lemmas. The language-level theorems are in
+`TCSlib.Complexity.CircuitComplexity.LogspaceUniformAdj`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§6.2.1, p. 112.)
+-/
+
+namespace BoolCircuit
+
+namespace AdjScan
+
+open Turing Complexity LogProg
+
+/-- The three scanning tasks. -/
+inductive Task where
+  | size
+  | type (t : Option GateKind)
+  | edge
+
+/-- The labels of the scanner. -/
+inductive Lbl where
+  | start | nA | nB | nHit | nC | nD | nE
+  | gA | gB | gC | gD | sK1 | sK2
+  | aA (ex : Bool) | aB (ex : Bool) | aC (ex : Bool) | aEnd (ex : Bool)
+  | uA (ex : Bool) | uB (ex : Bool) | uC (ex : Bool) | uE (ex : Bool) | uF
+  | hHit | eK1 | eK2
+  | kA | kB (b : Bool) | kC (b : Bool) | kD (b₁ b₂ : Bool)
+  | acc | rej
+  deriving DecidableEq, Fintype
+
+/-- The gate label of a two-bit code. -/
+def decodeKind : Bool → Bool → GateKind
+  | false, false => .and
+  | false, true => .or
+  | true, _ => .not
+
+/-- Read the description bit at the position register `0`. -/
+def rd (l₁ l₀ : Lbl) : Ins 3 1 Lbl := .call 0 .unaryFst [0] l₁ l₀
+
+/-- Compare the vertex register `1` with the target vertex. -/
+def hit : Task → Lbl → Lbl → Ins 3 1 Lbl
+  | .edge, l₁, l₀ => .jeqSnd 1 l₁ l₀
+  | _, l₁, l₀ => .jeqIn 1 l₁ l₀
+
+/-- The answer when the target vertex is an input. -/
+def nAns : Task → Bool
+  | .size => true
+  | .type t => decide (t = none)
+  | .edge => false
+
+/-- The answer when the target vertex is the gate `g` (`i` the source vertex of `EDGE`). -/
+def hitAns (i : ℕ) (g : DAGGate) : Task → Bool
+  | .size => true
+  | .type t => decide (t = some g.kind)
+  | .edge => decide (i ∈ g.args)
+
+/-- **The scanner** for task `τ`. Registers: `0` the position in the description, `1` the
+vertex counter, `2` the argument counter. -/
+def scan (τ : Task) : ARM 3 1 Lbl
+  | .start => match τ with
+    | .edge => .valQ 0 .nA
+    | _ => .valP 0 .nA
+  | .nA => rd .nB .nE
+  | .nB => hit τ .nHit .nC
+  | .nHit => .ret (nAns τ)
+  | .nC => .inc 1 .nD
+  | .nD => .inc 0 .nA
+  | .nE => .inc 0 .gA
+  | .gA => rd .gB .rej
+  | .gB => hit τ .hHit .gC
+  | .gC => .inc 1 .gD
+  | .gD => .inc 0 .sK1
+  | .sK1 => .inc 0 .sK2
+  | .sK2 => .inc 0 (.aA false)
+  | .aA ex => rd (.aB ex) (.aEnd ex)
+  | .aEnd ex => if ex then .ret false else .inc 0 .gA
+  | .aB ex => .inc 0 (.aC ex)
+  | .aC ex => .clr 2 (.uA ex)
+  | .uA ex => rd (.uB ex) (.uE ex)
+  | .uB ex => .inc 2 (.uC ex)
+  | .uC ex => .inc 0 (.uA ex)
+  | .uE ex => if ex then (match τ with
+      | .edge => .jeqFst 2 .acc .uF
+      | _ => .ret false)
+    else .inc 0 (.aA false)
+  | .uF => .inc 0 (.aA true)
+  | .hHit => match τ with
+    | .size => .ret true
+    | .type _ => .inc 0 .kA
+    | .edge => .inc 0 .eK1
+  | .eK1 => .inc 0 .eK2
+  | .eK2 => .inc 0 (.aA true)
+  | .kA => rd (.kB true) (.kB false)
+  | .kB b => .inc 0 (.kC b)
+  | .kC b => rd (.kD b true) (.kD b false)
+  | .kD b₁ b₂ => .ret (match τ with
+    | .type t => decide (t = some (decodeKind b₁ b₂))
+    | _ => false)
+  | .acc => .ret true
+  | .rej => .ret false
+
+/-! ## Registers -/
+
+/-- The register file `(p, c, a)`. -/
+def rg (p c a : ℕ) : Fin 3 → ℕ := ![p, c, a]
+
+/-- Register `0` of `rg p c a` is the position `p`. -/
+@[simp] lemma rg_zero (p c a : ℕ) : rg p c a 0 = p := rfl
+/-- Register `1` of `rg p c a` is the vertex counter `c`. -/
+@[simp] lemma rg_one (p c a : ℕ) : rg p c a 1 = c := rfl
+/-- Register `2` of `rg p c a` is the argument counter `a`. -/
+@[simp] lemma rg_two (p c a : ℕ) : rg p c a 2 = a := rfl
+
+/-- A property of all three registers follows from the property of each. -/
+lemma fin3_cases {P : Fin 3 → Prop} (h0 : P 0) (h1 : P 1) (h2 : P 2) : ∀ r, P r
+  | ⟨0, _⟩ => h0
+  | ⟨1, _⟩ => h1
+  | ⟨2, _⟩ => h2
+
+/-- Setting register `0` of `rg p c a` to `q` gives `rg q c a`. -/
+@[simp] lemma upd_zero (p c a q : ℕ) : Function.update (rg p c a) 0 q = rg q c a := by
+  funext r; revert r; refine fin3_cases ?_ ?_ ?_ <;> rfl
+/-- Setting register `1` of `rg p c a` to `q` gives `rg p q a`. -/
+@[simp] lemma upd_one (p c a q : ℕ) : Function.update (rg p c a) 1 q = rg p q a := by
+  funext r; revert r; refine fin3_cases ?_ ?_ ?_ <;> rfl
+/-- Setting register `2` of `rg p c a` to `q` gives `rg p c q`. -/
+@[simp] lemma upd_two (p c a q : ℕ) : Function.update (rg p c a) 2 q = rg p c q := by
+  funext r; revert r; refine fin3_cases ?_ ?_ ?_ <;> rfl
+
+/-- The all-zero register file is `rg 0 0 0`. -/
+lemma rg_init : (fun _ : Fin 3 => 0) = rg 0 0 0 := by
+  funext r; revert r; refine fin3_cases ?_ ?_ ?_ <;> rfl
+
+/-- The guard: every register at most `B`. -/
+def Gd (B : ℕ) (a : AConf 3 Lbl) : Prop := ∀ r, a.2.1 r ≤ B
+
+/-- A configuration whose registers are all at most `B` satisfies the guard `Gd B`. -/
+lemma gd_rg {B p c a : ℕ} {l : Option Lbl} {res : Option Bool} (hp : p ≤ B) (hc : c ≤ B)
+    (ha : a ≤ B) : Gd B (l, rg p c a, res) := by
+  intro r; revert r; refine fin3_cases ?_ ?_ ?_ <;> simpa
+
+/-! ## Steps -/
+
+section Steps
+
+variable {τ : Task} {n : ℕ} {w E : List Bool} {o : Fin 1 → List Bool → Bool}
+
+/-- The input `⟨1ⁿ, w⟩`. -/
+abbrev X (n : ℕ) (w : List Bool) : List Bool := pairEncode (List.replicate n true) w
+
+/-- How the target vertex `tv` (and, for `EDGE`, the source vertex `iv`) sit in the input. -/
+def Target (τ : Task) (x : List Bool) (iv tv : ℕ) : Prop :=
+  match τ with
+  | .edge => pairWords x = (Nat.bits iv, Nat.bits tv)
+  | _ => plainWord x = Nat.bits tv
+
+/-- A read step at position `p` branches on description bit `p` (the bit oracle answering
+with `E`). -/
+lemma astep_rd (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) (l l₁ l₀ : Lbl)
+    (hl : scan τ l = rd l₁ l₀) (p c a : ℕ) :
+    astep (scan τ) o (X n w) (some l, rg p c a, none) =
+      (some (if E.getD p false then l₁ else l₀), rg p c a, none) := by
+  simp only [astep, hl, rd]
+  rw [vword_unary₁]
+  simp [hrd]
+
+/-- A hit test branches on whether the vertex counter is the target vertex. -/
+lemma astep_hit {iv tv : ℕ} (ht : Target τ (X n w) iv tv) (l l₁ l₀ : Lbl)
+    (hl : scan τ l = hit τ l₁ l₀) (p c a : ℕ) :
+    astep (scan τ) o (X n w) (some l, rg p c a, none) =
+      (some (if c = tv then l₁ else l₀), rg p c a, none) := by
+  cases τ <;> simp only [Target] at ht <;>
+    simp [astep, hl, hit, ht, bits_injective.eq_iff]
+
+/-- The argument test of `EDGE` branches on whether the argument counter is the source vertex. -/
+lemma astep_jeqFst {iv tv : ℕ} (ht : Target .edge (X n w) iv tv) (p c a : ℕ) :
+    astep (scan .edge) o (X n w) (some (.uE true), rg p c a, none) =
+      (some (if a = iv then .acc else .uF), rg p c a, none) := by
+  simp only [Target] at ht
+  simp [astep, scan, ht, bits_injective.eq_iff]
+
+end Steps
+
+/-! ## Description bits -/
+
+/-- If `E` continues with `b` at position `p`, bit `p` of `E` is `b`. -/
+lemma getD_of_drop {E rest : List Bool} {p : ℕ} {b : Bool} (h : E.drop p = b :: rest) :
+    E.getD p false = b := by
+  have : (E.drop p)[0]? = some b := by rw [h]; rfl
+  rw [List.getElem?_drop, Nat.add_zero] at this
+  simp [List.getD_eq_getElem?_getD, this]
+
+/-- If `E` continues with a nonempty `s` at position `p`, then `p + |s| ≤ |E|`. -/
+lemma le_of_drop {E s rest : List Bool} {p : ℕ} (h : E.drop p = s ++ rest) (hs : s ≠ []) :
+    p + s.length ≤ E.length := by
+  have hs' : 0 < s.length := List.length_pos_iff.mpr hs
+  have := congrArg List.length h
+  simp only [List.length_drop, List.length_append] at this
+  have hs : s.length ≤ E.length - p := by omega
+  by_cases hp : p ≤ E.length
+  · omega
+  · have : E.drop p = [] := List.drop_of_length_le (by omega)
+    rw [this] at h
+    have := congrArg List.length h
+    simp at this
+    omega
+
+/-- If `E` continues with `b :: rest` at position `p`, it continues with `rest` at `p + 1`. -/
+lemma drop_succ_of_drop {E rest : List Bool} {p : ℕ} {b : Bool} (h : E.drop p = b :: rest) :
+    E.drop (p + 1) = rest := by
+  rw [← List.drop_drop, h]; rfl
+
+/-- If `E` continues with `s ++ rest` at position `p`, it continues with `rest` at `p + |s|`. -/
+lemma drop_add_of_drop {E s rest : List Bool} {p : ℕ} (h : E.drop p = s ++ rest) :
+    E.drop (p + s.length) = rest := by
+  rw [← List.drop_drop, h]; simp
+
+/-- If `E` continues with `1ᵏ0` at position `p`, bit `p + j` (for `j ≤ k`) is `1` iff `j < k`. -/
+lemma bit_rep {E rest : List Bool} {p k j : ℕ}
+    (h : E.drop p = List.replicate k true ++ false :: rest) (hj : j ≤ k) :
+    E.getD (p + j) false = decide (j < k) := by
+  have e : E[p + j]? = (List.replicate k true ++ false :: rest)[j]? := by
+    rw [← h, List.getElem?_drop]
+  rw [List.getD_eq_getElem?_getD, e]
+  rcases Nat.lt_or_ge j k with hl | hl
+  · rw [List.getElem?_append_left (by simpa using hl)]; simp [hl]
+  · obtain rfl : j = k := by omega
+    rw [List.getElem?_append_right (by simp)]; simp
+
+/-! ## The loops -/
+
+section Loops
+
+variable {τ : Task} {n : ℕ} {w E : List Bool} {o : Fin 1 → List Bool → Bool}
+
+/-- **Reading a unary number**: from `uA` on `1ᵏ0`, the argument counter counts to `k`.
+
+**Proof sketch.** Induction on the number `k - j` of `1`s left: each `1` is read, counted in the
+argument register and skipped (`bit_rep`); the `0` ends the loop in `uE`. The registers stay
+below `|E|` because the unary number lies inside `E`. -/
+lemma uloop (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B p c k : ℕ}
+    {rest : List Bool} (ex : Bool) (h : E.drop p = List.replicate k true ++ false :: rest)
+    (hB : E.length ≤ B) (hc : c ≤ B) :
+    AReach (scan τ) o (X n w) (Gd B) (some (.uA ex), rg p c 0, none)
+      (some (.uE ex), rg (p + k) c k, none) := by
+  have hl := le_of_drop (s := List.replicate k true ++ [false]) (rest := rest) (by simpa using h)
+    (by simp)
+  simp only [List.length_append, List.length_replicate, List.length_singleton] at hl
+  have key : ∀ d j, j + d = k → AReach (scan τ) o (X n w) (Gd B)
+      (some (.uA ex), rg (p + j) c j, none) (some (.uE ex), rg (p + k) c k, none) := by
+    intro d
+    induction d with
+    | zero =>
+      intro j hj
+      obtain rfl : j = k := by omega
+      refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
+      rw [astep_rd hrd _ _ _ rfl, bit_rep h le_rfl]
+      simpa using AReach.refl _
+    | succ d ih =>
+      intro j hj
+      refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
+      rw [astep_rd hrd _ _ _ rfl, bit_rep h (by omega)]
+      simp only [show j < k from by omega, decide_true, ↓reduceIte]
+      refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
+      simp only [astep, scan, rg_two, upd_two]
+      refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
+      simp only [astep, scan, rg_zero, upd_zero]
+      exact ih (j + 1) (by omega)
+  simpa using key k 0 (by omega)
+
+/-- The code of `a :: as` is a `1`, the code of `a`, and the code of `as`. -/
+lemma length_encodeList_cons {α : Type} (f : α → List Bool) (a : α) (as : List α) :
+    (encodeList f (a :: as)).length = 1 + (f a).length + (encodeList f as).length := by
+  simp [encodeList]; omega
+
+/-- **Skipping an argument list.**
+
+**Proof sketch.** Induction on the argument list. The list end `0` is skipped into `gA`. An
+argument `1 1ᵏ 0` is skipped by reading the leading `1`, clearing the argument register and
+running the unary loop (`uloop`), then skipping the `0`. -/
+lemma argsSkip (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B : ℕ}
+    (hB : E.length ≤ B) (as : List ℕ) :
+    ∀ {p c a : ℕ} {rest : List Bool}, E.drop p = encodeList encodeNat as ++ rest → c ≤ B →
+      a ≤ B → ∃ a' ≤ B, AReach (scan τ) o (X n w) (Gd B) (some (.aA false), rg p c a, none)
+        (some .gA, rg (p + (encodeList encodeNat as).length) c a', none) := by
+  induction as with
+  | nil =>
+    intro p c a rest h hc ha
+    have hl := le_of_drop h (by simp [encodeList])
+    simp only [encodeList, List.length_singleton] at hl h ⊢
+    refine ⟨a, ha, ?_⟩
+    refine AReach.step (gd_rg (by omega) hc ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop (by simpa using h)]
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    refine AReach.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, Bool.false_eq_true, ↓reduceIte, rg_zero, upd_zero]
+    exact AReach.refl _
+  | cons k as ih =>
+    intro p c a rest h hc ha
+    have hl := le_of_drop h (by simp [encodeList])
+    rw [length_encodeList_cons] at hl ⊢
+    simp only [encodeNat, List.length_append, List.length_replicate,
+      List.length_singleton] at hl ⊢
+    simp only [encodeList, encodeNat, List.cons_append, List.append_assoc] at h
+    have h1 := drop_succ_of_drop h
+    have hu := drop_add_of_drop (s := List.replicate k true ++ [false]) (by simpa using h1)
+    simp only [List.length_append, List.length_replicate, List.length_singleton] at hu
+    obtain ⟨a', ha', hr⟩ := ih (p := p + 1 + (k + 1)) (c := c) (a := k) (by rw [hu]) hc
+      (by omega)
+    refine ⟨a', ha', ?_⟩
+    refine AReach.step (gd_rg (by omega) hc ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop h]
+    simp only [↓reduceIte]
+    refine AReach.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    refine AReach.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, upd_two]
+    refine (uloop hrd false h1 hB hc).trans ?_
+    refine AReach.step (gd_rg (by omega) hc (by omega)) ?_
+    simp only [astep, scan, Bool.false_eq_true, ↓reduceIte, rg_zero, upd_zero]
+    convert hr using 4
+    omega
+
+/-- **Examining an argument list** (`EDGE`): the answer is whether the source vertex is an
+argument.
+
+**Proof sketch.** Induction on the argument list. At the list end the scanner answers `false`.
+For an argument `k` it counts `k` with the unary loop and compares it with the source vertex
+(`astep_jeqFst`): on equality it answers `true`, otherwise it continues with the rest, and `iv ∈
+k :: as ↔ iv = k ∨ iv ∈ as`. -/
+lemma argsEx {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
+    (ht : Target .edge (X n w) iv tv) {B : ℕ} (hB : E.length ≤ B) (as : List ℕ) :
+    ∀ {p c a : ℕ} {rest : List Bool}, E.drop p = encodeList encodeNat as ++ rest → c ≤ B →
+      a ≤ B → AHalt (scan .edge) o (X n w) (Gd B) (some (.aA true), rg p c a, none)
+        (decide (iv ∈ as)) := by
+  induction as with
+  | nil =>
+    intro p c a rest h hc ha
+    have hl := le_of_drop h (by simp [encodeList])
+    simp only [encodeList, List.length_singleton] at hl h
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop (by simpa using h)]
+    simp only [Bool.false_eq_true, ↓reduceIte, List.not_mem_nil, decide_false]
+    exact AHalt.ret (by simp [scan]) (gd_rg (by omega) hc ha)
+  | cons k as ih =>
+    intro p c a rest h hc ha
+    have hl := le_of_drop h (by simp [encodeList])
+    rw [length_encodeList_cons] at hl
+    simp only [encodeNat, List.length_append, List.length_replicate,
+      List.length_singleton] at hl
+    simp only [encodeList, encodeNat, List.cons_append, List.append_assoc] at h
+    have h1 := drop_succ_of_drop h
+    have hu := drop_add_of_drop (s := List.replicate k true ++ [false]) (by simpa using h1)
+    simp only [List.length_append, List.length_replicate, List.length_singleton] at hu
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop h]
+    simp only [↓reduceIte]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, upd_two]
+    refine (uloop hrd true h1 hB hc).halt ?_
+    refine AHalt.step (gd_rg (by omega) hc (by omega)) ?_
+    rw [astep_jeqFst ht]
+    by_cases hk : k = iv
+    · subst hk
+      simp only [↓reduceIte, List.mem_cons, true_or, decide_true]
+      exact AHalt.ret (by simp [scan]) (gd_rg (by omega) hc (by omega))
+    · simp only [hk, ↓reduceIte, List.mem_cons, Ne.symm hk, false_or]
+      refine AHalt.step (gd_rg (by omega) hc (by omega)) ?_
+      simp only [astep, scan, rg_zero, upd_zero]
+      have := ih (p := p + 1 + k + 1) (c := c) (a := k) (by rw [← hu]; congr 1) hc
+        (by omega)
+      exact this
+
+/-- A gate's code is its two-bit label followed by the code of its argument list. -/
+lemma length_gate_encode (g : DAGGate) :
+    g.encode.length = 2 + (encodeList encodeNat g.args).length := by
+  have : g.kind.encode.length = 2 := by cases g.kind <;> rfl
+  simp [DAGGate.encode, this]
+
+/-- **Skipping a gate.**
+
+**Proof sketch.** Increment the vertex counter, skip the leading `1` and the two label bits,
+then skip the argument list (`argsSkip`), which ends in `gA` right after the gate's code. -/
+lemma gateSkip (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) {B : ℕ}
+    (hB : E.length ≤ B) (g : DAGGate) {p c a : ℕ} {rest : List Bool}
+    (h : E.drop p = true :: (g.encode ++ rest)) (hc : c + 1 ≤ B) (ha : a ≤ B) :
+    ∃ a' ≤ B, AReach (scan τ) o (X n w) (Gd B) (some .gC, rg p c a, none)
+      (some .gA, rg (p + 1 + g.encode.length) (c + 1) a', none) := by
+  have hl := le_of_drop (s := true :: g.encode) (rest := rest) (by simpa using h) (by simp)
+  simp only [List.length_cons] at hl
+  have hk : g.kind.encode.length = 2 := by cases g.kind <;> rfl
+  have h3 : E.drop (p + 1 + 2) = encodeList encodeNat g.args ++ rest := by
+    have := drop_add_of_drop (s := true :: g.kind.encode) (rest := encodeList encodeNat g.args ++ rest)
+      (by simpa [DAGGate.encode] using h)
+    simpa [hk] using this
+  obtain ⟨a', ha', hr⟩ := argsSkip (τ := τ) (w := w) hrd hB g.args h3 (c := c + 1) (by omega) ha
+  refine ⟨a', ha', ?_⟩
+  rw [length_gate_encode] at hl ⊢
+  refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
+  simp only [astep, scan, rg_one, upd_one]
+  refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
+  simp only [astep, scan, rg_zero, upd_zero]
+  refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
+  simp only [astep, scan, rg_zero, upd_zero]
+  refine AReach.step (gd_rg (by omega) (by omega) ha) ?_
+  simp only [astep, scan, rg_zero, upd_zero]
+  convert hr using 4
+  omega
+
+/-- `decodeKind` inverts the two-bit label code. -/
+lemma decodeKind_encode (k : GateKind) {b₁ b₂ : Bool} (h : k.encode = [b₁, b₂]) :
+    decodeKind b₁ b₂ = k := by
+  cases k <;> simp [GateKind.encode] at h <;> obtain ⟨rfl, rfl⟩ := h <;> rfl
+
+/-- **The target gate**: the answer is `hitAns`.
+
+**Proof sketch.** Case on the task. `SIZE` answers `true` at once. `TYPE t` reads the two label
+bits and answers whether `t` is the decoded label (`decodeKind_encode`). `EDGE` skips the label
+and examines the argument list (`argsEx`). -/
+lemma hitGate {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
+    (ht : Target τ (X n w) iv tv) {B : ℕ} (hB : E.length ≤ B) (g : DAGGate) {p c a : ℕ}
+    {rest : List Bool} (h : E.drop p = true :: (g.encode ++ rest)) (hc : c ≤ B) (ha : a ≤ B) :
+    AHalt (scan τ) o (X n w) (Gd B) (some .hHit, rg p c a, none) (hitAns iv g τ) := by
+  have hl := le_of_drop (s := true :: g.encode) (rest := rest) (by simpa using h) (by simp)
+  simp only [List.length_cons] at hl
+  rw [length_gate_encode] at hl
+  obtain ⟨b₁, b₂, hk⟩ : ∃ b₁ b₂, g.kind.encode = [b₁, b₂] := by
+    cases g.kind
+    · exact ⟨false, false, rfl⟩
+    · exact ⟨false, true, rfl⟩
+    · exact ⟨true, false, rfl⟩
+  have h' : E.drop p = [true, b₁, b₂] ++ (encodeList encodeNat g.args ++ rest) := by
+    simpa [DAGGate.encode, hk] using h
+  have hb₁ : E.getD (p + 1) false = b₁ := getD_of_drop (rest := b₂ :: (encodeList encodeNat g.args ++ rest))
+    (by rw [← List.drop_drop, h']; rfl)
+  have hb₂ : E.getD (p + 1 + 1) false = b₂ := getD_of_drop (rest := encodeList encodeNat g.args ++ rest)
+    (by rw [← List.drop_drop, ← List.drop_drop, h']; rfl)
+  have h3 : E.drop (p + 1 + 1 + 1) = encodeList encodeNat g.args ++ rest := by
+    rw [← List.drop_drop, ← List.drop_drop, ← List.drop_drop, h']; rfl
+  cases τ with
+  | size => exact AHalt.ret rfl (gd_rg (by omega) hc ha)
+  | type t =>
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, hb₁]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    cases b₁ <;> simp only [astep, scan, rg_zero, upd_zero, Bool.false_eq_true,
+      ↓reduceIte] <;>
+    · refine AHalt.step (gd_rg (by omega) hc ha) ?_
+      rw [astep_rd hrd _ _ _ rfl, hb₂]
+      cases b₂ <;>
+      · refine AHalt.ret ?_ (gd_rg (by omega) hc ha)
+        simp only [scan, hitAns, ← decodeKind_encode g.kind hk, Bool.false_eq_true, ↓reduceIte]
+  | edge =>
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    refine AHalt.step (gd_rg (by omega) hc ha) ?_
+    simp only [astep, scan, rg_zero, upd_zero]
+    exact argsEx hrd ht hB g.args h3 hc ha
+
+/-- **The gate loop**: from the start of the gate list `gs` with vertex counter `c ≤ tv`,
+the answer is `hitAns` of the target gate, or `false` beyond the list.
+
+**Proof sketch.** Induction on the gate list. At the list end the scanner rejects. At a gate it
+reads the leading `1` and tests the vertex counter against the target (`astep_hit`). On a hit,
+`hitGate` gives the answer; otherwise `gateSkip` moves to the next gate with the counter
+incremented, and the target's index in the remaining list drops by one. -/
+lemma gloop {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
+    (ht : Target τ (X n w) iv tv) {B : ℕ} (hB : E.length ≤ B) (gs : List DAGGate) :
+    ∀ {p c a : ℕ} {rest : List Bool}, E.drop p = encodeList DAGGate.encode gs ++ rest →
+      c ≤ tv → c + gs.length ≤ B → a ≤ B →
+      AHalt (scan τ) o (X n w) (Gd B) (some .gA, rg p c a, none)
+        (if h : tv - c < gs.length then hitAns iv gs[tv - c] τ else false) := by
+  induction gs with
+  | nil =>
+    intro p c a rest h hct hc ha
+    have hl := le_of_drop h (by simp [encodeList])
+    simp only [encodeList, List.length_singleton] at hl h
+    refine AHalt.step (gd_rg (by omega) (by simpa using hc) ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop (by simpa using h)]
+    simp only [Bool.false_eq_true, ↓reduceIte, List.length_nil, Nat.not_lt_zero,
+      ↓reduceDIte]
+    exact AHalt.ret rfl (gd_rg (by omega) (by simpa using hc) ha)
+  | cons g gs ih =>
+    intro p c a rest h hct hc ha
+    simp only [List.length_cons] at hc
+    have hl := le_of_drop h (by simp [encodeList])
+    simp only [encodeList, List.cons_append, List.append_assoc] at h
+    have h' : E.drop p = true :: (g.encode ++ (encodeList DAGGate.encode gs ++ rest)) := h
+    have hn := drop_add_of_drop (s := true :: g.encode)
+      (rest := encodeList DAGGate.encode gs ++ rest) (by simpa using h')
+    simp only [List.length_cons] at hn
+    refine AHalt.step (gd_rg (by omega) (by omega) ha) ?_
+    rw [astep_rd hrd _ _ _ rfl, getD_of_drop h']
+    simp only [↓reduceIte]
+    refine AHalt.step (gd_rg (by omega) (by omega) ha) ?_
+    rw [astep_hit ht _ _ _ rfl]
+    by_cases hct' : c = tv
+    · subst hct'
+      simp only [↓reduceIte, Nat.sub_self, List.length_cons, Nat.zero_lt_succ, ↓reduceDIte,
+        List.getElem_cons_zero]
+      exact hitGate hrd ht hB g h' (by omega) ha
+    · simp only [hct', ↓reduceIte]
+      obtain ⟨a', ha', hr⟩ := gateSkip (τ := τ) (w := w) hrd hB g h' (c := c) (by omega) ha
+      refine hr.halt ?_
+      have e : tv - c = (tv - (c + 1)) + 1 := by omega
+      have := ih (p := p + (g.encode.length + 1)) (c := c + 1) (a := a') hn (by omega)
+        (by omega) ha'
+      rw [e]
+      simp only [List.length_cons, Nat.add_lt_add_iff_right, List.getElem_cons_succ]
+      convert this using 4
+      omega
+
+/-- **The input loop**: from vertex `j ≤ n` of the unary prefix, the answer is `nAns` if the
+target is an input, and the continuation's answer otherwise.
+
+**Proof sketch.** Induction on the number `n - j` of input vertices left. Each `1` of the prefix
+`1ⁿ` is an input vertex: on a hit (`astep_hit`) the scanner answers `nAns`, otherwise it counts
+the vertex and moves on. At the `0` it skips into the gate loop at vertex `n`, where the
+continuation applies. -/
+lemma nloop {iv tv : ℕ} (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false)
+    (ht : Target τ (X n w) iv tv) {B : ℕ} (hB : E.length ≤ B) {rest : List Bool}
+    (h : E.drop 0 = List.replicate n true ++ false :: rest) {ans : Bool}
+    (hcont : n ≤ tv → AHalt (scan τ) o (X n w) (Gd B) (some .gA, rg (n + 1) n 0, none) ans) :
+    ∀ j, j ≤ n → j ≤ tv →
+      AHalt (scan τ) o (X n w) (Gd B) (some .nA, rg j j 0, none)
+        (if tv < n then nAns τ else ans) := by
+  have hl := le_of_drop (E := E) (p := 0) (s := List.replicate n true ++ [false])
+    (rest := rest) (by rw [h]; simp) (by simp)
+  simp only [List.length_append, List.length_replicate, List.length_singleton] at hl
+  have key : ∀ d j, j + d = n → j ≤ tv →
+      AHalt (scan τ) o (X n w) (Gd B) (some .nA, rg j j 0, none)
+        (if tv < n then nAns τ else ans) := by
+    intro d
+    induction d with
+    | zero =>
+      intro j hj hjt
+      obtain rfl : j = n := by omega
+      have hb := bit_rep h (j := j) le_rfl
+      rw [Nat.zero_add] at hb
+      refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+      rw [astep_rd hrd _ _ _ rfl, hb]
+      simp only [lt_self_iff_false, decide_false, Bool.false_eq_true, ↓reduceIte]
+      refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+      simp only [astep, scan, rg_zero, upd_zero]
+      rw [if_neg (by omega)]
+      exact hcont hjt
+    | succ d ih =>
+      intro j hj hjt
+      have hb := bit_rep h (j := j) (by omega)
+      rw [Nat.zero_add] at hb
+      refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+      rw [astep_rd hrd _ _ _ rfl, hb]
+      simp only [show j < n from by omega, decide_true, ↓reduceIte]
+      refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+      rw [astep_hit ht _ _ _ rfl]
+      by_cases hjt' : j = tv
+      · subst hjt'
+        simp only [↓reduceIte, show j < n from by omega]
+        exact AHalt.ret rfl (gd_rg (by omega) (by omega) (by omega))
+      · simp only [hjt', ↓reduceIte]
+        refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+        simp only [astep, scan, rg_one, upd_one]
+        refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+        simp only [astep, scan, rg_zero, upd_zero]
+        exact ih (j + 1) (by omega) (by omega)
+  intro j hj hjt
+  exact key (n - j) j (by omega) hjt
+
+end Loops
+
+/-- The format check of task `τ`: `⟨1ⁿ, w⟩`, or `⟨1ⁿ, ⟨u, w⟩⟩` for `EDGE`. -/
+def Valid (τ : Task) (x : List Bool) : Prop :=
+  match τ with
+  | .edge => ValidPair x
+  | _ => ValidPlain x
+
+/-- **The scanner's run** on a description `E = encode Cₙ`: it answers `nAns τ` if the target
+vertex is an input, `hitAns` of the target gate if it is a gate, and `false` beyond the
+circuit, with all registers at most `|E|`.
+
+**Proof sketch.** The input loop (`nloop`) walks the unary prefix `1ⁿ0`, then the gate loop
+(`gloop`) walks the gates, skipping each (`gateSkip`, `argsSkip`, `uloop`) until the target
+gate, whose label or argument list is examined (`hitGate`, `argsEx`). -/
+theorem scan_halts {τ : Task} {n : ℕ} (C : DAGCircuit n) {w : List Bool}
+    {o : Fin 1 → List Bool → Bool} {iv tv : ℕ}
+    (hrd : ∀ p, o 0 (X n (Nat.bits p)) = C.encode.getD p false)
+    (ht : Target τ (X n w) iv tv) (hv : Valid τ (X n w)) :
+    AHalt (scan τ) o (X n w) (Gd C.encode.length) (some .start, fun _ => 0, none)
+      (if tv < n then nAns τ else
+        if h : tv - n < C.gates.length then hitAns iv C.gates[tv - n] τ else false) := by
+  set E := C.encode with hE
+  have hsz := C.size_le_length_encode
+  simp only [DAGCircuit.size] at hsz
+  have h0 : E.drop 0 = List.replicate n true ++ false ::
+      (encodeList DAGGate.encode C.gates ++ (List.replicate C.output true ++ [false])) := by
+    rw [List.drop_zero, hE, C.encode_eq]
+  have h1 : E.drop (n + 1) =
+      encodeList DAGGate.encode C.gates ++ (List.replicate C.output true ++ [false]) := by
+    have := drop_add_of_drop (E := E) (p := 0) (s := List.replicate n true ++ [false])
+      (rest := encodeList DAGGate.encode C.gates ++ (List.replicate C.output true ++ [false]))
+      (by rw [h0]; simp)
+    simpa using this
+  rw [rg_init]
+  refine AHalt.step (gd_rg (by omega) (by omega) (by omega)) ?_
+  have hst : astep (scan τ) o (X n w) (some .start, rg 0 0 0, none) =
+      (some .nA, rg 0 0 0, none) := by
+    cases τ <;> simp only [Valid] at hv <;> simp [astep, scan, hv]
+  rw [hst]
+  refine nloop hrd ht le_rfl h0 (fun hn => ?_) 0 (by omega) (by omega)
+  have := gloop hrd ht le_rfl C.gates (p := n + 1) (c := n) (a := 0) h1 hn (by omega)
+    (by omega)
+  exact this
+
+end AdjScan
+
+end BoolCircuit
+```
+
+## ===== TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import TCSlib.Complexity.CircuitComplexity.LogspaceUniformAdjBasic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Writing a circuit description in logarithmic space
+
+The "if" half of [AB09, p. 112]'s robustness remark: from `SIZE`, `TYPE` and `EDGE`, the
+description `BoolCircuit.DAGCircuit.encode Cₙ` of a canonical circuit is produced by a walk
+over the vertices and candidate arguments, emitting its bits in order. Bit `i` of the
+description (and whether `i` is below its length) is decided by running the walk with an
+emission counter and stopping at the `i`-th emitted bit.
+
+The walk is the abstract register machine `BoolCircuit.AdjWalk.walk lm`; emissions are
+tracked by `BoolCircuit.AdjWalk.Em`, which composes along concatenation of emitted words.
+
+## Main definitions
+
+* `BoolCircuit.AdjWalk.walk` — the walk (`lm = true`: answer whether the `i`-th bit exists;
+  `lm = false`: answer the `i`-th bit).
+* `BoolCircuit.AdjWalk.Em` — "this run emits `S` from counter value `k`".
+
+## Main results
+
+* `BoolCircuit.AdjWalk.walk_halts` — the walk's answer is bit `i` of the description (or
+  whether it exists).
+
+File size: about 700 lines, over the 600-line target. The file is one abstract machine
+with the emission calculus and the run lemmas of its nested loops, which all rely on the
+machine's definition. The language-level theorems are in
+`TCSlib.Complexity.CircuitComplexity.LogspaceUniformAdj`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§6.2.1, p. 112.)
+-/
+
+namespace BoolCircuit
+
+namespace AdjWalk
+
+open Turing Complexity LogProg
+
+/-- The emission sites of the walk. -/
+inductive Site where
+  | inOne | inEnd | gOne | gEnd | kA1 | kA2 | kO1 | kO2 | kN1 | kN2
+  | aOne | uOne | uEnd | aEnd | oOne | oEnd
+  deriving DecidableEq, Fintype
+
+/-- The labels of the walk. -/
+inductive Lbl where
+  | start | nI | incV | gS | kA | kB | aS | aL | aE | clrW | uL | incW | aN | incV2
+  | oS | oI | oL | incWo | done
+  | em (s : Site) | bump (s : Site) | hitL (b : Bool)
+  deriving DecidableEq, Fintype
+
+/-- The bit emitted at a site. -/
+def Site.bit : Site → Bool
+  | .inOne | .gOne | .kO2 | .kN1 | .aOne | .uOne | .oOne => true
+  | _ => false
+
+/-- Where the walk continues after an emission. -/
+def Site.next : Site → Lbl
+  | .inOne => .incV
+  | .inEnd => .gS
+  | .gOne => .kA
+  | .gEnd => .oS
+  | .kA1 => .em .kA2
+  | .kA2 => .aS
+  | .kO1 => .em .kO2
+  | .kO2 => .aS
+  | .kN1 => .em .kN2
+  | .kN2 => .aS
+  | .aOne => .clrW
+  | .uOne => .incW
+  | .uEnd => .aN
+  | .aEnd => .incV2
+  | .oOne => .incWo
+  | .oEnd => .done
+
+/-- The deciders called by the walk: `SIZE`, `TYPE none`, `TYPE ∧`, `TYPE ∨`, `EDGE`. -/
+def decs (C : DAGCircuitFamily) : Fin 5 → Language Bool
+  | 0 => C.sizeLang
+  | 1 => C.typeLang none
+  | 2 => C.typeLang (some .and)
+  | 3 => C.typeLang (some .or)
+  | 4 => C.edgeLang
+
+/-- **The walk.** Registers: `0` the emission counter `k`, `1` the vertex `V`, `2` the
+candidate argument `U`, `3` the unary counter `W`. Each emission compares `k` with the
+target index `i` (the input's word): at `k = i` it answers, otherwise it increments `k`. -/
+def walk (lm : Bool) : ARM 4 5 Lbl
+  | .start => .valP 0 .nI
+  | .nI => .call 1 .unaryFst [1] (.em .inOne) (.em .inEnd)
+  | .incV => .inc 1 .nI
+  | .gS => .call 0 .unaryFst [1] (.em .gOne) (.em .gEnd)
+  | .kA => .call 2 .unaryFst [1] (.em .kA1) .kB
+  | .kB => .call 3 .unaryFst [1] (.em .kO1) (.em .kN1)
+  | .aS => .clr 2 .aL
+  | .aL => .jeq 2 1 (.em .aEnd) .aE
+  | .aE => .call 4 .unaryFst [2, 1] (.em .aOne) .aN
+  | .clrW => .clr 3 .uL
+  | .uL => .jeq 3 2 (.em .uEnd) (.em .uOne)
+  | .incW => .inc 3 .uL
+  | .aN => .inc 2 .aL
+  | .incV2 => .inc 1 .gS
+  | .oS => .clr 3 .oI
+  | .oI => .inc 3 .oL
+  | .oL => .jeq 3 1 (.em .oEnd) (.em .oOne)
+  | .incWo => .inc 3 .oL
+  | .done => .ret false
+  | .em s => .jeqIn 0 (.hitL s.bit) (.bump s)
+  | .bump s => .inc 0 s.next
+  | .hitL b => .ret (lm || b)
+
+/-! ## Registers -/
+
+/-- The register file `(k, V, U, W)`. -/
+def rg (k V U W : ℕ) : Fin 4 → ℕ := ![k, V, U, W]
+
+/-- Register `0` of `rg k V U W` is the emission counter `k`. -/
+@[simp] lemma rg_0 (k V U W : ℕ) : rg k V U W 0 = k := rfl
+/-- Register `1` of `rg k V U W` is the vertex `V`. -/
+@[simp] lemma rg_1 (k V U W : ℕ) : rg k V U W 1 = V := rfl
+/-- Register `2` of `rg k V U W` is the candidate argument `U`. -/
+@[simp] lemma rg_2 (k V U W : ℕ) : rg k V U W 2 = U := rfl
+/-- Register `3` of `rg k V U W` is the unary counter `W`. -/
+@[simp] lemma rg_3 (k V U W : ℕ) : rg k V U W 3 = W := rfl
+
+/-- A property of all four registers follows from the property of each. -/
+lemma fin4_cases {P : Fin 4 → Prop} (h0 : P 0) (h1 : P 1) (h2 : P 2) (h3 : P 3) : ∀ r, P r
+  | ⟨0, _⟩ => h0
+  | ⟨1, _⟩ => h1
+  | ⟨2, _⟩ => h2
+  | ⟨3, _⟩ => h3
+
+/-- Setting register `0` of `rg k V U W` to `q` gives `rg q V U W`. -/
+@[simp] lemma upd_0 (k V U W q : ℕ) : Function.update (rg k V U W) 0 q = rg q V U W := by
+  funext r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> rfl
+/-- Setting register `1` of `rg k V U W` to `q` gives `rg k q U W`. -/
+@[simp] lemma upd_1 (k V U W q : ℕ) : Function.update (rg k V U W) 1 q = rg k q U W := by
+  funext r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> rfl
+/-- Setting register `2` of `rg k V U W` to `q` gives `rg k V q W`. -/
+@[simp] lemma upd_2 (k V U W q : ℕ) : Function.update (rg k V U W) 2 q = rg k V q W := by
+  funext r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> rfl
+/-- Setting register `3` of `rg k V U W` to `q` gives `rg k V U q`. -/
+@[simp] lemma upd_3 (k V U W q : ℕ) : Function.update (rg k V U W) 3 q = rg k V U q := by
+  funext r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> rfl
+
+/-- The all-zero register file is `rg 0 0 0 0`. -/
+lemma rg_init : (fun _ : Fin 4 => 0) = rg 0 0 0 0 := by
+  funext r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> rfl
+
+/-- The guard: every register at most `B`. -/
+def Gd (B : ℕ) (a : AConf 4 Lbl) : Prop := ∀ r, a.2.1 r ≤ B
+
+/-- A configuration whose registers are all at most `B` satisfies the guard `Gd B`. -/
+lemma gd_rg {B k V U W : ℕ} {l : Option Lbl} {res : Option Bool} (hk : k ≤ B) (hV : V ≤ B)
+    (hU : U ≤ B) (hW : W ≤ B) : Gd B (l, rg k V U W, res) := by
+  intro r; revert r; refine fin4_cases ?_ ?_ ?_ ?_ <;> simpa
+
+/-! ## Emissions -/
+
+section Em
+
+variable (lm : Bool) (n i B : ℕ) (o : Fin 5 → List Bool → Bool)
+
+/-- The input `⟨1ⁿ, bits i⟩`. -/
+abbrev X : List Bool := pairEncode (List.replicate n true) (Nat.bits i)
+
+/-- **Emission**: from `a`, with emission counter `k ≤ i`, the walk emits `S`: if the `i`-th
+bit falls in `S` the walk answers it, and otherwise it reaches a configuration satisfying
+`P`. -/
+def Em (k : ℕ) (S : List Bool) (a : AConf 4 Lbl) (P : AConf 4 Lbl → Prop) : Prop :=
+  (k ≤ i → i < k + S.length →
+      AHalt (walk lm) o (X n i) (Gd B) a (lm || S.getD (i - k) false)) ∧
+    (k + S.length ≤ i → ∃ b, P b ∧ AReach (walk lm) o (X n i) (Gd B) a b)
+
+variable {lm n i B o}
+
+/-- Emissions compose: emitting `S` and then, from every configuration reached, `T`, emits
+`S ++ T`. -/
+lemma Em.append {k : ℕ} {S T : List Bool} {a : AConf 4 Lbl} {P Q : AConf 4 Lbl → Prop}
+    (h₁ : Em lm n i B o k S a P)
+    (h₂ : k + S.length ≤ i → ∀ b, P b → Em lm n i B o (k + S.length) T b Q) :
+    Em lm n i B o k (S ++ T) a Q := by
+  constructor
+  · intro hk hi
+    rcases Nat.lt_or_ge i (k + S.length) with h | h
+    · rw [List.getD_append _ _ _ _ (by omega)]; exact h₁.1 hk h
+    · obtain ⟨b, hb, hr⟩ := h₁.2 h
+      rw [List.getD_append_right _ _ _ _ (by omega)]
+      have := (h₂ h b hb).1 h (by simp at hi; omega)
+      rw [show i - k - S.length = i - (k + S.length) by omega]
+      exact hr.halt this
+  · intro hi
+    simp only [List.length_append] at hi
+    obtain ⟨b, hb, hr⟩ := h₁.2 (by omega)
+    obtain ⟨c, hc, hr'⟩ := (h₂ (by omega) b hb).2 (by omega)
+    exact ⟨c, hc, hr.trans hr'⟩
+
+/-- A configuration satisfying `P` emits the empty word towards `P`. -/
+lemma Em.nil {k : ℕ} {a : AConf 4 Lbl} {P : AConf 4 Lbl → Prop} (h : P a) :
+    Em lm n i B o k [] a P :=
+  ⟨fun _ hi => absurd hi (by simp; omega), fun _ => ⟨a, h, AReach.refl _⟩⟩
+
+/-- A non-emitting run may precede an emission. -/
+lemma Em.pre {k : ℕ} {S : List Bool} {a b : AConf 4 Lbl} {P : AConf 4 Lbl → Prop}
+    (hr : AReach (walk lm) o (X n i) (Gd B) a b) (h : Em lm n i B o k S b P) :
+    Em lm n i B o k S a P :=
+  ⟨fun hk hi => hr.halt (h.1 hk hi), fun hi => by
+    obtain ⟨c, hc, hr'⟩ := h.2 hi
+    exact ⟨c, hc, hr.trans hr'⟩⟩
+
+/-- A non-emitting step may precede an emission. -/
+lemma Em.step {k : ℕ} {S : List Bool} {a : AConf 4 Lbl} {P : AConf 4 Lbl → Prop}
+    (hG : Gd B a) (h : Em lm n i B o k S (astep (walk lm) o (X n i) a) P) :
+    Em lm n i B o k S a P :=
+  Em.pre (AReach.single hG) h
+
+/-- An emission towards `P` is an emission towards any weaker `Q`. -/
+lemma Em.mono {k : ℕ} {S : List Bool} {a : AConf 4 Lbl} {P Q : AConf 4 Lbl → Prop}
+    (h : Em lm n i B o k S a P) (hPQ : ∀ b, P b → Q b) : Em lm n i B o k S a Q :=
+  ⟨h.1, fun hi => by
+    obtain ⟨c, hc, hr⟩ := h.2 hi
+    exact ⟨c, hPQ c hc, hr⟩⟩
+
+/-- Continue a run after an emission. -/
+lemma Em.cont {k : ℕ} {S : List Bool} {a : AConf 4 Lbl} {P Q : AConf 4 Lbl → Prop}
+    (h : Em lm n i B o k S a P)
+    (h₂ : k + S.length ≤ i → ∀ b, P b → ∃ c, Q c ∧ AReach (walk lm) o (X n i) (Gd B) b c) :
+    Em lm n i B o k S a Q :=
+  ⟨h.1, fun hi => by
+    obtain ⟨b, hb, hr⟩ := h.2 hi
+    obtain ⟨c, hc, hr'⟩ := h₂ hi b hb
+    exact ⟨c, hc, hr.trans hr'⟩⟩
+
+/-- **One emission** at site `s`: from `em s` with emission counter `k`, the walk answers the site's
+bit if `k = i`, and otherwise increments `k` and continues at the site's successor.
+
+**Proof sketch.** The emission is a `jeqIn` on the counter, which compares `bits k` with the
+input's word `bits i` (`plainWord_pairEncode`, `bits_injective`). On equality it moves to `hitL
+s.bit` and returns `lm || s.bit`. Otherwise it moves to `bump s`, which increments the counter
+and jumps to `s.next`. -/
+lemma Em.emit (s : Site) {k V U W : ℕ} (hk : k ≤ i) (hB : k + 1 ≤ B) (hV : V ≤ B) (hU : U ≤ B)
+    (hW : W ≤ B) :
+    Em lm n i B o k [s.bit] (some (.em s), rg k V U W, none)
+      (· = (some s.next, rg (k + 1) V U W, none)) := by
+  have hstep : astep (walk lm) o (X n i) (some (.em s), rg k V U W, none) =
+      (some (if k = i then .hitL s.bit else .bump s), rg k V U W, none) := by
+    simp [astep, walk, plainWord_pairEncode, bits_injective.eq_iff]
+  constructor
+  · intro _ hi
+    obtain rfl : k = i := by simp at hi; omega
+    refine AHalt.step (gd_rg (by omega) hV hU hW) ?_
+    rw [hstep]
+    simp only [↓reduceIte, Nat.sub_self, List.getD_cons_zero]
+    exact AHalt.ret rfl (gd_rg (by omega) hV hU hW)
+  · intro hi
+    simp only [List.length_singleton] at hi
+    refine ⟨_, rfl, AReach.step (gd_rg (by omega) hV hU hW) ?_⟩
+    rw [hstep, if_neg (by omega)]
+    refine AReach.step (gd_rg (by omega) hV hU hW) ?_
+    simp only [astep, walk, rg_0, upd_0]
+    exact AReach.refl _
+
+end Em
+
+/-! ## Calls -/
+
+/-- The oracle: the deciders' languages. -/
+noncomputable def orc (C : DAGCircuitFamily) : Fin 5 → List Bool → Bool :=
+  fun j V => MultiTapeTM.indicator (decs C j : Set (List Bool)) V
+
+section Calls
+
+variable {lm : Bool} {n i : ℕ} {o : Fin 5 → List Bool → Bool}
+
+/-- A `unaryFst` call with one argument `r` asks its decider about `⟨1ⁿ, bits (v r)⟩`. -/
+lemma astep_call₁ {l l₁ l₀ : Lbl} {j : Fin 5} {r : Fin 4}
+    (hl : walk lm l = .call j .unaryFst [r] l₁ l₀) (v : Fin 4 → ℕ) :
+    astep (walk lm) o (X n i) (some l, v, none) =
+      (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+        v, none) := by
+  simp only [astep, hl]
+  rw [vword_unary₁]
+
+/-- A `unaryFst` call with arguments `r, r'` asks its decider about
+`⟨1ⁿ, ⟨bits (v r), bits (v r')⟩⟩`. -/
+lemma astep_call₂ {l l₁ l₀ : Lbl} {j : Fin 5} {r r' : Fin 4}
+    (hl : walk lm l = .call j .unaryFst [r, r'] l₁ l₀) (v : Fin 4 → ℕ) :
+    astep (walk lm) o (X n i) (some l, v, none) =
+      (some (if o j (pairEncode (List.replicate n true)
+        (pairEncode (Nat.bits (v r)) (Nat.bits (v r')))) then l₁ else l₀), v, none) := by
+  simp only [astep, hl]
+  rw [vword_unary₂]
+
+variable (C : DAGCircuitFamily)
+
+open Classical in
+/-- The `SIZE` decider answers whether `v` is a vertex of `Cₙ`. -/
+lemma orc_size (v : ℕ) : orc C 0 (pairEncode (List.replicate n true) (Nat.bits v)) =
+    decide (v < (C.circuit n).size) := by
+  simp only [orc, decs, indicator_eq_decide]
+  exact decide_eq_decide.mpr C.mem_sizeLang
+
+open Classical in
+/-- A `TYPE t` decider answers whether `v` is a vertex of `Cₙ` of type `t`. -/
+lemma orc_type (j : Fin 5) (t : Option GateKind) (hj : decs C j = C.typeLang t) (v : ℕ) :
+    orc C j (pairEncode (List.replicate n true) (Nat.bits v)) =
+      decide (v < (C.circuit n).size ∧ (C.circuit n).vtype v = t) := by
+  simp only [orc, hj, indicator_eq_decide]
+  exact decide_eq_decide.mpr C.mem_typeLang
+
+open Classical in
+/-- The `EDGE` decider answers whether `u → v` is an edge of `Cₙ`. -/
+lemma orc_edge (u v : ℕ) :
+    orc C 4 (pairEncode (List.replicate n true) (pairEncode (Nat.bits u) (Nat.bits v))) =
+      decide ((C.circuit n).Edge u v) := by
+  simp only [orc, decs, indicator_eq_decide]
+  exact decide_eq_decide.mpr C.mem_edgeLang
+
+end Calls
+
+/-! ## The loops -/
+
+section Loops
+
+variable {lm : Bool} {n i B : ℕ} (C : DAGCircuitFamily)
+
+/-- **The unary loop** emits `1^{U - W} 0`.
+
+**Proof sketch.** Induction on the number `d` of `1`s left. While `W ≠ U` the walk emits `1`
+(`Em.emit`) and increments `W`; at `W = U` it emits `0` and moves to `aN`. Emissions compose by
+`Em.append`. -/
+lemma uLoop {V U : ℕ} (hV : V ≤ B) (hU : U ≤ B) :
+    ∀ d W k, W + d = U → k ≤ i → k + d + 1 ≤ B →
+      Em lm n i B (orc C) k (List.replicate d true ++ [false]) (some .uL, rg k V U W, none)
+        (· = (some .aN, rg (k + d + 1) V U U, none)) := by
+  intro d
+  induction d with
+  | zero =>
+    intro W k hW hk hkB
+    obtain rfl : W = U := by omega
+    refine Em.step (gd_rg (by omega) hV hU hU) ?_
+    simp only [astep, walk, rg_2, rg_3, ↓reduceIte]
+    exact (Em.emit .uEnd hk (by omega) hV hU hU).mono fun b hb => by rw [hb]; rfl
+  | succ d ih =>
+    intro W k hW hk hkB
+    refine Em.step (gd_rg (by omega) hV hU (by omega)) ?_
+    simp only [astep, walk, rg_2, rg_3, show W ≠ U by omega, ↓reduceIte]
+    rw [List.replicate_succ, List.cons_append]
+    refine Em.append (S := [Site.uOne.bit]) (Em.emit .uOne hk (by omega) hV hU (by omega))
+      (fun hki b hb => ?_)
+    subst hb
+    simp only [Site.next, List.length_singleton] at hki ⊢
+    refine Em.step (gd_rg (by omega) hV hU (by omega)) ?_
+    simp only [astep, walk, rg_3, upd_3]
+    exact (ih (W + 1) (k + 1) (by omega) hki (by omega)).mono fun b hb => by
+      rw [hb]; congr 3; omega
+
+/-- For a gate `g` at vertex `V`, `U → V` is an edge iff `U` is an argument of `g`. -/
+lemma edge_iff {V U : ℕ} {g : DAGGate} (hg : (C.circuit n).gates[V - n]? = some g)
+    (hnV : n ≤ V) : (C.circuit n).Edge U V ↔ U ∈ g.args := by
+  simp [DAGCircuit.Edge, hg, hnV]
+
+/-- **The argument loop** of the gate `g` at vertex `V`: from candidate `U`, it emits the
+arguments in `[U, V)` and the list end.
+
+**Proof sketch.** Induction on the number `d` of candidates left. At `U = V` the walk emits the
+list end `0` and moves to the next vertex. Otherwise it asks `EDGE(U, V)`, which is `U ∈ g.args`
+(`edge_iff`). If so, it emits `1`, then `1ᵁ0` via the unary loop (`uLoop`); in both cases it
+moves on to `U + 1`, matching the filtered range. -/
+lemma aLoop {V : ℕ} (g : DAGGate) (hg : (C.circuit n).gates[V - n]? = some g) (hnV : n ≤ V)
+    (hVB : V + 1 ≤ B) :
+    ∀ d U k W K, U + d = V → k ≤ i → W ≤ B →
+      K = k + (encodeList encodeNat ((List.range' U d).filter (· ∈ g.args))).length → K ≤ B →
+      Em lm n i B (orc C) k (encodeList encodeNat ((List.range' U d).filter (· ∈ g.args)))
+        (some .aL, rg k V U W, none)
+        (fun b => ∃ W' ≤ B, b = (some .gS, rg K (V + 1) V W', none)) := by
+  intro d
+  induction d with
+  | zero =>
+    intro U k W K hU hk hW hK hKB
+    obtain rfl : U = V := by omega
+    simp only [List.range'_zero, List.filter_nil, encodeList, List.length_singleton] at hK ⊢
+    refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
+    simp only [astep, walk, rg_1, rg_2, ↓reduceIte]
+    refine (Em.emit .aEnd hk (by omega) (by omega) (by omega) hW).cont fun _ b hb => ?_
+    subst hb
+    refine ⟨_, ⟨W, hW, rfl⟩, AReach.step (gd_rg (by omega) (by omega) (by omega) hW) ?_⟩
+    simp only [Site.next, astep, walk, rg_1, upd_1, hK]
+    exact AReach.refl _
+  | succ d ih =>
+    intro U k W K hU hk hW hK hKB
+    rw [List.range'_succ, List.filter_cons] at hK ⊢
+    refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
+    simp only [astep, walk, rg_1, rg_2, show U ≠ V by omega, ↓reduceIte]
+    refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
+    rw [astep_call₂ rfl, rg_2, rg_1, orc_edge]
+    by_cases he : U ∈ g.args
+    · have hE : (C.circuit n).Edge U V := (edge_iff C hg hnV).mpr he
+      simp only [hE, decide_true, ↓reduceIte]
+      simp only [he, decide_true, ↓reduceIte, encodeList, List.length_cons, List.length_append,
+        encodeNat, List.length_replicate] at hK ⊢
+      rw [show true :: (List.replicate U true ++ [false] ++
+          encodeList encodeNat (List.filter (fun x => decide (x ∈ g.args)) (List.range' (U + 1) d)))
+          = [Site.aOne.bit] ++ ((List.replicate U true ++ [false]) ++
+          encodeList encodeNat (List.filter (fun x => decide (x ∈ g.args)) (List.range' (U + 1) d)))
+          from rfl]
+      refine Em.append (Em.emit .aOne hk (by omega) (by omega) (by omega) hW)
+        (fun hki b hb => ?_)
+      subst hb
+      simp only [Site.next, List.length_singleton] at hki ⊢
+      refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
+      simp only [astep, walk, upd_3]
+      refine Em.append (uLoop C (by omega) (by omega) U 0 (k + 1) (by omega) hki (by omega))
+        (fun hki' b hb => ?_)
+      subst hb
+      simp only [List.length_append, List.length_replicate, List.length_singleton] at hki' ⊢
+      refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
+      simp only [astep, walk, rg_2, upd_2]
+      refine (ih (U + 1) (k + 1 + (U + 1)) U K (by omega) hki' (by omega) ?_ hKB).mono
+        fun b hb => hb
+      rw [hK]; simp only [List.length_nil]; omega
+    · have hne : ¬ (C.circuit n).Edge U V := fun h => he ((edge_iff C hg hnV).mp h)
+      simp only [hne, decide_false, Bool.false_eq_true, ↓reduceIte, he] at hK ⊢
+      refine Em.step (gd_rg (by omega) (by omega) (by omega) hW) ?_
+      simp only [astep, walk, rg_2, upd_2]
+      exact ih (U + 1) k W K (by omega) hk hW hK hKB
+
+/-- The arguments of a canonical gate are the candidates below its vertex that are
+arguments, in increasing order. -/
+lemma args_eq_filter {g : DAGGate} {V : ℕ} (hs : g.args.Sorted (· < ·))
+    (hlt : ∀ a ∈ g.args, a < V) : (List.range' 0 V).filter (· ∈ g.args) = g.args := by
+  apply List.eq_of_perm_of_sorted (r := (· < ·))
+  · rw [List.perm_ext_iff_of_nodup ((List.nodup_range' ..).filter _) hs.nodup]
+    intro a
+    simp only [List.mem_filter, List.mem_range'_1, decide_eq_true_eq]
+    exact ⟨fun h => h.2, fun h => ⟨⟨by omega, by simpa using hlt a h⟩, h⟩⟩
+  · exact (List.sorted_lt_range' 0 V (by omega)).filter _
+  · exact hs
+
+/-- For a gate `g` at vertex `V`, `V` is a vertex of type `t` iff `t` is `g`'s label. -/
+lemma vtype_gate {V : ℕ} {g : DAGGate} (hg : (C.circuit n).gates[V - n]? = some g)
+    (hnV : n ≤ V) (t : Option GateKind) :
+    (V < (C.circuit n).size ∧ (C.circuit n).vtype V = t) ↔ some g.kind = t := by
+  have hlt : V - n < (C.circuit n).gates.length := by
+    by_contra h; rw [List.getElem?_eq_none (by omega)] at hg; simp at hg
+  simp only [DAGCircuit.size, DAGCircuit.vtype, show ¬ V < n by omega, ↓reduceIte, hg,
+    Option.map_some]
+  constructor
+  · exact fun h => h.2
+  · exact fun h => ⟨by omega, h⟩
+
+/-- **The label** of the gate `g` at vertex `V`.
+
+**Proof sketch.** Ask `TYPE ∧` and then `TYPE ∨` about `V` (`orc_type`, `vtype_gate`). The
+answers determine the label `∧`, `∨` or `¬`, and the walk emits its two-bit code with two
+emissions. -/
+lemma kindEm {V : ℕ} (g : DAGGate) (hg : (C.circuit n).gates[V - n]? = some g) (hnV : n ≤ V)
+    (hVB : V ≤ B) {k U W : ℕ} (hk : k ≤ i) (hkB : k + 2 ≤ B) (hU : U ≤ B) (hW : W ≤ B) :
+    Em lm n i B (orc C) k g.kind.encode (some .kA, rg k V U W, none)
+      (· = (some .aS, rg (k + 2) V U W, none)) := by
+  have hT := fun t => vtype_gate C hg hnV t
+  refine Em.step (gd_rg (by omega) hVB hU hW) ?_
+  rw [astep_call₁ rfl, rg_1, orc_type C 2 (some .and) rfl]
+  cases hkd : g.kind with
+  | and =>
+    simp only [(hT _).mpr (by rw [hkd])]
+    refine Em.append (S := [Site.kA1.bit]) (Em.emit .kA1 hk (by omega) hVB hU hW)
+      fun hki b hb => ?_
+    subst hb
+    exact (Em.emit .kA2 hki (by simp; omega) hVB hU hW).mono fun b hb => by rw [hb]; rfl
+  | or =>
+    simp only [show ¬ (V < (C.circuit n).size ∧ (C.circuit n).vtype V = some .and) by
+      rw [hT, hkd]; simp, decide_false, Bool.false_eq_true, ↓reduceIte]
+    refine Em.step (gd_rg (by omega) hVB hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_type C 3 (some .or) rfl]
+    simp only [(hT _).mpr (by rw [hkd])]
+    refine Em.append (S := [Site.kO1.bit]) (Em.emit .kO1 hk (by omega) hVB hU hW)
+      fun hki b hb => ?_
+    subst hb
+    exact (Em.emit .kO2 hki (by simp; omega) hVB hU hW).mono fun b hb => by rw [hb]; rfl
+  | not =>
+    simp only [show ¬ (V < (C.circuit n).size ∧ (C.circuit n).vtype V = some .and) by
+      rw [hT, hkd]; simp, decide_false, Bool.false_eq_true, ↓reduceIte]
+    refine Em.step (gd_rg (by omega) hVB hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_type C 3 (some .or) rfl]
+    simp only [show ¬ (V < (C.circuit n).size ∧ (C.circuit n).vtype V = some .or) by
+      rw [hT, hkd]; simp, decide_false, Bool.false_eq_true, ↓reduceIte]
+    refine Em.append (S := [Site.kN1.bit]) (Em.emit .kN1 hk (by omega) hVB hU hW)
+      fun hki b hb => ?_
+    subst hb
+    exact (Em.emit .kN2 hki (by simp; omega) hVB hU hW).mono fun b hb => by rw [hb]; rfl
+
+/-- **The gate loop**: from vertex `V ≥ n`, it emits the gates from `V` on and the list
+end.
+
+**Proof sketch.** Induction on the number of gates left. At `V = |Cₙ|`, `SIZE` says no and the
+walk emits the list end `0`. Otherwise it emits `1`, the label (`kindEm`) and the argument list
+(`aLoop` from `U = 0`), then moves to `V + 1`. For a canonical gate the candidates `< V` with an
+edge to `V`, in increasing order, are exactly its arguments (`args_eq_filter`), so this is the
+gate's code. -/
+lemma gLoop (hcan : (C.circuit n).IsCanonical) (hSB : (C.circuit n).size + 1 ≤ B) :
+    ∀ d V k U W K, V + d = (C.circuit n).size → n ≤ V → k ≤ i → U ≤ B → W ≤ B →
+      K = k + (encodeList DAGGate.encode ((C.circuit n).gates.drop (V - n))).length → K ≤ B →
+      Em lm n i B (orc C) k (encodeList DAGGate.encode ((C.circuit n).gates.drop (V - n)))
+        (some .gS, rg k V U W, none)
+        (fun b => ∃ U' ≤ B, ∃ W' ≤ B, b = (some .oS, rg K (C.circuit n).size U' W', none)) := by
+  intro d
+  induction d with
+  | zero =>
+    intro V k U W K hV hnV hk hU hW hK hKB
+    have hd : (C.circuit n).gates.drop (V - n) = [] :=
+      List.drop_of_length_le (by simp only [DAGCircuit.size] at hV; omega)
+    rw [hd] at hK ⊢
+    simp only [encodeList, List.length_singleton] at hK ⊢
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_size]
+    simp only [show ¬ V < (C.circuit n).size by omega, decide_false, Bool.false_eq_true,
+      ↓reduceIte]
+    exact (Em.emit .gEnd hk (by omega) (by omega) hU hW).mono fun b hb =>
+      ⟨U, hU, W, hW, by rw [hb, hK, ← hV]; rfl⟩
+  | succ d ih =>
+    intro V k U W K hV hnV hk hU hW hK hKB
+    have hlt : V - n < (C.circuit n).gates.length := by
+      simp only [DAGCircuit.size] at hV; omega
+    set g := (C.circuit n).gates[V - n] with hgdef
+    have hg : (C.circuit n).gates[V - n]? = some g := List.getElem?_eq_getElem hlt
+    have hd : (C.circuit n).gates.drop (V - n) = g :: (C.circuit n).gates.drop (V + 1 - n) := by
+      rw [List.drop_eq_getElem_cons hlt]; congr 2; omega
+    have hargs : (List.range' 0 V).filter (· ∈ g.args) = g.args :=
+      args_eq_filter (hcan.1 g (List.getElem_mem hlt)) fun a ha => by
+        have := (C.circuit n).args_lt (V - n) hlt a ha; omega
+    have hS : encodeList DAGGate.encode ((C.circuit n).gates.drop (V - n)) =
+        [Site.gOne.bit] ++ (g.kind.encode ++
+          (encodeList encodeNat ((List.range' 0 V).filter (· ∈ g.args)) ++
+            encodeList DAGGate.encode ((C.circuit n).gates.drop (V + 1 - n)))) := by
+      rw [hd, hargs]; simp [encodeList, DAGGate.encode, Site.bit]
+    have hkl : g.kind.encode.length = 2 := by cases g.kind <;> rfl
+    rw [hS] at hK ⊢
+    simp only [List.length_append, List.length_singleton, hkl] at hK
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_size]
+    simp only [show V < (C.circuit n).size by omega, decide_true, ↓reduceIte]
+    refine Em.append (Em.emit .gOne hk (by omega) (by omega) hU hW) fun hki b hb => ?_
+    subst hb
+    simp only [Site.next, List.length_singleton] at hki ⊢
+    refine Em.append (kindEm C g hg hnV (by omega) hki (by omega) hU hW) fun hki' b hb => ?_
+    subst hb
+    rw [hkl] at hki' ⊢
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    simp only [astep, walk, upd_2]
+    refine Em.append (aLoop C g hg hnV (by omega) V 0 (k + 1 + 2) W _ (by omega) hki' hW rfl
+      (by omega)) fun hki'' b hb => ?_
+    obtain ⟨W', hW', rfl⟩ := hb
+    refine (ih (V + 1) _ V W' K (by omega) (by omega) hki'' (by omega) hW' ?_ hKB).mono
+      fun b hb => hb
+    rw [hK]; omega
+
+/-- A vertex `V ≤ n` is a vertex of input type iff `V < n`. -/
+lemma vtype_none {V : ℕ} (hV : V ≤ n) :
+    (V < (C.circuit n).size ∧ (C.circuit n).vtype V = none) ↔ V < n := by
+  simp only [DAGCircuit.size, DAGCircuit.vtype]
+  rcases Nat.lt_or_ge V n with h | h
+  · simp only [h, ↓reduceIte, and_true, iff_true]; omega
+  · obtain rfl : V = n := by omega
+    simp only [lt_self_iff_false, ↓reduceIte, Nat.sub_self, iff_false, not_and]
+    intro hl
+    rw [List.getElem?_eq_getElem (by omega)]
+    simp
+
+/-- **The input loop** emits `1^{n - V} 0`.
+
+**Proof sketch.** Induction on the number `n - V` of inputs left. `TYPE none` says yes exactly
+for `V < n` (`vtype_none`): then the walk emits `1` and increments `V`; at `V = n` it emits `0`
+and moves to the gate loop. -/
+lemma inLoop (hnB : n + 1 ≤ B) :
+    ∀ d V k U W, V + d = n → k ≤ i → U ≤ B → W ≤ B → k + d + 1 ≤ B →
+      Em lm n i B (orc C) k (List.replicate d true ++ [false]) (some .nI, rg k V U W, none)
+        (· = (some .gS, rg (k + d + 1) n U W, none)) := by
+  intro d
+  induction d with
+  | zero =>
+    intro V k U W hV hk hU hW hkB
+    obtain rfl : V = n := by omega
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_type C 1 none rfl]
+    simp only [(vtype_none C le_rfl).not.mpr (lt_irrefl _), decide_false,
+      Bool.false_eq_true, ↓reduceIte]
+    exact (Em.emit .inEnd hk (by omega) (by omega) hU hW).mono fun b hb => by rw [hb]; rfl
+  | succ d ih =>
+    intro V k U W hV hk hU hW hkB
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    rw [astep_call₁ rfl, rg_1, orc_type C 1 none rfl]
+    simp only [(vtype_none C (by omega)).mpr (by omega : V < n)]
+    rw [List.replicate_succ, List.cons_append]
+    refine Em.append (S := [Site.inOne.bit]) (Em.emit .inOne hk (by omega) (by omega) hU hW)
+      fun hki b hb => ?_
+    subst hb
+    simp only [Site.next, List.length_singleton] at hki ⊢
+    refine Em.step (gd_rg (by omega) (by omega) hU hW) ?_
+    simp only [astep, walk, rg_1, upd_1]
+    exact (ih (V + 1) (k + 1) U W (by omega) hki hU hW (by omega)).mono fun b hb => by
+      rw [hb]; congr 3; omega
+
+/-- **The output loop** emits `1^{V - W} 0`.
+
+**Proof sketch.** Induction on the number `V - W` of `1`s left: while `W ≠ V` the walk emits `1`
+and increments `W`; at `W = V` it emits `0` and moves to `done`. -/
+lemma oLoop {V : ℕ} (hVB : V ≤ B) :
+    ∀ d W k U, W + d = V → k ≤ i → U ≤ B → k + d + 1 ≤ B →
+      Em lm n i B (orc C) k (List.replicate d true ++ [false]) (some .oL, rg k V U W, none)
+        (· = (some .done, rg (k + d + 1) V U V, none)) := by
+  intro d
+  induction d with
+  | zero =>
+    intro W k U hW hk hU hkB
+    obtain rfl : W = V := by omega
+    refine Em.step (gd_rg (by omega) hVB hU hVB) ?_
+    simp only [astep, walk, rg_1, rg_3, ↓reduceIte]
+    exact (Em.emit .oEnd hk (by omega) hVB hU hVB).mono fun b hb => by rw [hb]; rfl
+  | succ d ih =>
+    intro W k U hW hk hU hkB
+    refine Em.step (gd_rg (by omega) hVB hU (by omega)) ?_
+    simp only [astep, walk, rg_1, rg_3, show W ≠ V by omega, ↓reduceIte]
+    rw [List.replicate_succ, List.cons_append]
+    refine Em.append (S := [Site.oOne.bit]) (Em.emit .oOne hk (by omega) hVB hU (by omega))
+      fun hki b hb => ?_
+    subst hb
+    simp only [Site.next, List.length_singleton] at hki ⊢
+    refine Em.step (gd_rg (by omega) hVB hU (by omega)) ?_
+    simp only [astep, walk, rg_3, upd_3]
+    exact (ih (W + 1) (k + 1) U (by omega) hki hU (by omega)).mono fun b hb => by
+      rw [hb]; congr 3; omega
+
+end Loops
+
+/-- **The walk's run** on `⟨1ⁿ, bits i⟩` for a canonical `Cₙ`, with the deciders answering
+`SIZE`, `TYPE`, `EDGE`: it answers `lm || E[i]` if `i < |E|` and `false` otherwise, where
+`E = encode Cₙ`, with all registers at most `|E|`.
+
+**Proof sketch.** The emissions compose (`Em.append`): the input loop emits `1ⁿ0`
+(`inLoop`), the gate loop emits the gate list (`gLoop`: per gate a `1`, the label
+(`kindEm`), the argument list (`aLoop`, `uLoop`), the arguments being the candidates
+`U < V` with an edge `U → V` in increasing order since the circuit is canonical), and the
+output loop emits `1^{|Cₙ| - 1}0`, the output being the last vertex (`oLoop`). -/
+theorem walk_halts (C : DAGCircuitFamily) {n : ℕ} (hcan : (C.circuit n).IsCanonical)
+    (lm : Bool) (i : ℕ) :
+    AHalt (walk lm) (orc C) (X n i) (Gd (C.circuit n).encode.length)
+      (some .start, fun _ => 0, none)
+      (if i < (C.circuit n).encode.length then lm || (C.circuit n).encode.getD i false
+        else false) := by
+  set B := (C.circuit n).encode.length with hB
+  have hlen := length_encodeList_ge DAGGate.encode (C.circuit n).gates
+  have hE : (C.circuit n).encode = (List.replicate n true ++ [false]) ++
+      (encodeList DAGGate.encode (C.circuit n).gates ++ (List.replicate ((C.circuit n).size - 1) true ++ [false])) := by
+    rw [(C.circuit n).encode_eq, show (C.circuit n).output = (C.circuit n).size - 1 by have := hcan.2; omega]; simp
+  have hBv : B = n + 1 + ((encodeList DAGGate.encode (C.circuit n).gates).length + ((C.circuit n).size - 1 + 1)) := by
+    rw [hB, hE]; simp; omega
+  have hS1 : 1 ≤ (C.circuit n).size := by have := hcan.2; omega
+  have hSB : (C.circuit n).size + 1 ≤ B := by simp only [DAGCircuit.size] at hS1 ⊢; omega
+  have hEm : Em lm n i B (orc C) 0 (C.circuit n).encode (some .nI, rg 0 0 0 0, none)
+      (fun b => ∃ U ≤ B, b = (some .done, rg B (C.circuit n).size U (C.circuit n).size, none)) := by
+    rw [hE]
+    refine Em.append (inLoop C (by omega) n 0 0 0 0 (by omega) (Nat.zero_le _) (by omega)
+      (by omega) (by omega)) fun hki b hb => ?_
+    subst hb
+    simp only [List.length_append, List.length_replicate, List.length_singleton,
+      Nat.zero_add] at hki ⊢
+    have hg := gLoop (lm := lm) C hcan hSB ((C.circuit n).size - n) n (n + 1) 0 0 _ (by simp [DAGCircuit.size])
+      le_rfl hki (by omega) (by omega) rfl (by simp only [Nat.sub_self, List.drop_zero]; omega)
+    simp only [Nat.sub_self, List.drop_zero] at hg
+    refine Em.append hg fun hki' b hb => ?_
+    obtain ⟨U', hU', W', hW', rfl⟩ := hb
+    refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
+    simp only [astep, walk, upd_3]
+    refine Em.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
+    simp only [astep, walk, rg_3, upd_3]
+    refine (oLoop C (by omega) ((C.circuit n).size - 1) 1 _ U' (by omega) hki' (by omega) (by omega)).mono
+      fun b hb => ⟨U', hU', by rw [hb]; congr 3; omega⟩
+  rw [rg_init]
+  refine AHalt.step (gd_rg (by omega) (by omega) (by omega) (by omega)) ?_
+  have hv : ValidPlain (X n i) := ⟨n, _, rfl, canon_bits i⟩
+  simp only [astep, walk, hv, ↓reduceIte]
+  by_cases hi : i < B
+  · rw [if_pos hi]
+    simpa using hEm.1 (Nat.zero_le _) (by simpa using hi)
+  · rw [if_neg hi]
+    obtain ⟨b, ⟨U, hU, rfl⟩, hr⟩ := hEm.2 (by simp; omega)
+    exact hr.halt (AHalt.ret rfl (gd_rg le_rfl (by omega) hU (by omega)))
+
+end AdjWalk
+
+end BoolCircuit
+```
