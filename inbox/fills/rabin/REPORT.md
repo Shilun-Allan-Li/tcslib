@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: in progress (checkpoint 4).** Filled so far: steps 1–3 (5 targets).
+**Status: in progress (checkpoint 5).** Filled so far: steps 1–4 (7 targets).
 
 ## Base and environment
 
@@ -38,3 +38,5 @@
 | 2 | `blumInv_spec` | filled by the brief's **Route** (no `blumSqrt` reading): `rabin_blumInvNat_spec` (CRT value is a residue root with residue `blumInvNat p q y.val`), then `Equiv.symm_apply_eq` on `blumPermAt`; Proof sketch paragraph rewritten |
 | 3 | `rabinCollection_sampleClose` | filled: `δ n = 1` for `n < 3` (P3), `e^{-n}` otherwise via S3 (`rabin_statClose_dec`); docstring expanded with a Proof sketch |
 | 3 | `rabinBlumTrapdoor_sampleClose` | filled: S3 mapped through squaring, `pushesUniform_sqTo`, `statClose_of_pushesUniform`, `StatClose.trans` (`rabin_statClose_blumDec`); docstring expanded |
+| 4 | `oddFactorProb_le` | filled (Correction target; Proof sketch rewritten): conditioning bound `rabin_uprob_subtype_le`; `Pr[E] ≥ 1 − 3/|Π_n| ≥ 1/2` from `|Π_n| ≥ 6` |
+| 4 | `blumFactorProb_le` | filled (Proof sketch rewritten): `Pr[E] ≥ B(B−1)/P² ≥ 1/(64n²)` from `hD` |
