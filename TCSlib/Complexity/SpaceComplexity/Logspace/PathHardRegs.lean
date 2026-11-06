@@ -319,8 +319,8 @@ noncomputable def orc (N : FinNDTM Bool) : Fin 5 → List Bool → Bool :=
 /-- Decider `0` reads the query. -/
 lemma orc_bit (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
     orc N 0 (pairEncode y (Nat.bits p)) = y.getD p false := by
-  simp only [orc, As, Matrix.cons_val_zero, inputBitLang, indicator_indexLang_pairEncode]
-  cases y.getD p false <;> simp
+  simp only [orc, As, Matrix.cons_val_zero]
+  exact indicator_inputBitLang y p
 
 /-- Decider `1` compares with the query length. -/
 lemma orc_len (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
