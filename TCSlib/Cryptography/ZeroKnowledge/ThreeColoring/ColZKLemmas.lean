@@ -1,0 +1,158 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines
+import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Generic lemmas for the zero-knowledge proof of graph 3-colouring
+
+Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean`, the proof of
+[PS10, Proposition 128.8]): reading disjoint fields of a uniform tape gives independent uniform
+fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
+function (`negligible_colZKErr`, `colZK_attempts_le`).
+
+## Main results
+
+* `TCSlib.Cryptography.ColZK.pushesUniform_restrict` — restricting a uniform table along an
+  injective map gives a uniform table.
+* `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable` — a prefix and an `n × k` table at an
+  offset of a uniform tape are independent and uniform.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§4.7: Proposition 128.8 and its proof, p. 129.)
+-/
+
+namespace TCSlib.Cryptography.ColZK
+
+open Complexity Turing
+
+/-! ### Uniform fields of a uniform tape -/
+
+/-- **Restricting a uniform table along an injective map gives a uniform table**: for an
+injective `r : J → I`, `R ↦ R ∘ r` pushes the uniform distribution on `I → O` to the uniform
+distribution on `J → O`. Generic form (any finite `J`) of `pushesUniform_comp_injective` of
+`Asymptotic/MultiMessage.lean` (stated there for `J = Fin (q + 1)`; that file is not upstream of
+this one), with the same proof.
+
+**Proof sketch.** Split `I` into the image of `r` and its complement (`Equiv.ofInjective`,
+`Equiv.Set.sumCompl`): the table is the pair of its restrictions
+(`Equiv.sumArrowEquivProdArrow`), and `R ∘ r` is the first one (`pushesUniform_fst`). -/
+theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+    [Fintype O] [Nonempty O] {r : J → I} (hr : Function.Injective r) :
+    HardcoreBit.PushesUniform (fun R : I → O => fun j => R (r j)) := by
+  classical
+  let e₁ : J ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
+    (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
+      (Equiv.Set.sumCompl (Set.range r))
+  let e : (I → O) ≃ (J → O) × (((Set.range r)ᶜ : Set I) → O) :=
+    (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
+  have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
+    funext R j
+    simp [e, e₁]
+  rw [he]
+  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
+
+/-- Entry `(i, j)` of an `n × k` table sits at position `i k + j < n k`. -/
+theorem table_index_lt {n k : ℕ} (i : Fin n) (j : Fin k) : (i : ℕ) * k + j < n * k := by
+  have h1 := i.isLt
+  have h2 := j.isLt
+  calc (i : ℕ) * k + j < (i : ℕ) * k + k := by omega
+    _ = ((i : ℕ) + 1) * k := by ring
+    _ ≤ n * k := Nat.mul_le_mul_right _ h1
+
+/-- The table positions `i k + j` determine `(i, j)`. -/
+theorem table_index_inj {n k : ℕ} {i i' : Fin n} {j j' : Fin k}
+    (h : (i : ℕ) * k + j = (i' : ℕ) * k + j') : i = i' ∧ j = j' := by
+  have hk : 0 < k := Nat.lt_of_le_of_lt (Nat.zero_le _) j.isLt
+  have hd := congrArg (· / k) h
+  have hm := congrArg (· % k) h
+  simp only [Nat.mul_comm _ k, Nat.mul_add_div hk, Nat.div_eq_of_lt j.isLt,
+    Nat.div_eq_of_lt j'.isLt, Nat.mul_add_mod, Nat.mod_eq_of_lt j.isLt,
+    Nat.mod_eq_of_lt j'.isLt] at hd hm
+  exact ⟨Fin.ext (by simpa using hd), Fin.ext hm⟩
+
+/-- **A prefix and a table at an offset of a uniform tape are independent and uniform**: for
+`a + n k ≤ L`, the map sending a tape `t` of `L` bits to its first `a` bits and to the
+`n × k` table `(i, j) ↦ t (a + i k + j)` pushes uniform to uniform.
+
+**Proof sketch.** The two fields read the tape along the injective map
+`Fin a ⊕ (Fin n × Fin k) → Fin L`, `inl i ↦ i`, `inr (i, j) ↦ a + i k + j` (`table_index_inj`),
+so `pushesUniform_restrict` applies; the pair of fields is that restriction followed by the
+bijection `Equiv.sumArrowEquivProdArrow` and `Equiv.curry`. -/
+theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
+    HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
+      ((fun i : Fin a => t (Fin.castLE (by omega) i)),
+        fun (i : Fin n) (j : Fin k) => t ⟨a + (i * k + j), by
+          have := table_index_lt i j
+          omega⟩)) := by
+  let r : Fin a ⊕ (Fin n × Fin k) → Fin L := Sum.elim (fun i => Fin.castLE (by omega) i)
+    fun p => ⟨a + (p.1 * k + p.2), by have := table_index_lt p.1 p.2; omega⟩
+  have hr : Function.Injective r := by
+    rintro (i | ⟨i, j⟩) (i' | ⟨i', j'⟩) hij <;> simp only [r, Sum.elim_inl, Sum.elim_inr,
+      Fin.ext_iff, Fin.coe_castLE] at hij
+    · rw [Fin.ext hij]
+    · have := i.isLt
+      omega
+    · have := i'.isLt
+      omega
+    · obtain ⟨rfl, rfl⟩ := table_index_inj (by omega : (i : ℕ) * k + j = (i' : ℕ) * k + j')
+      rfl
+  let e : (Fin a ⊕ (Fin n × Fin k) → Bool) ≃ (Fin a → Bool) × (Fin n → Fin k → Bool) :=
+    (Equiv.sumArrowEquivProdArrow _ _ _).trans
+      (Equiv.prodCongr (Equiv.refl _) (Equiv.curry _ _ _))
+  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+
+/-! ### Splitting a search at an index -/
+
+/-- **The first success splits at `k`**: the search over `List.finRange N` is the search before
+`k`, else entry `k`, else the search after `k` (`CommitmentLemmas.ofFn_eq_append_cons` on
+`List.finRange N`, `List.findSome?_append`). -/
+theorem findSome?_finRange_split {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
+    (List.finRange N).findSome? f =
+      (((List.finRange k).findSome? fun i : Fin k => f (Fin.castLE k.2.le i)) <|> f k <|>
+        (List.finRange (N - k - 1)).findSome? fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩) := by
+  have h := CommitmentLemmas.ofFn_eq_append_cons (id : Fin N → Fin N) k
+  rw [List.ofFn_id] at h
+  rw [h, List.findSome?_append, List.findSome?_cons, List.ofFn_eq_map, List.ofFn_eq_map,
+    List.findSome?_map, List.findSome?_map]
+  simp only [Function.comp_def, id_eq]
+  cases List.findSome? (fun i => f (Fin.castLE k.2.le i)) (List.finRange k) <;> cases f k <;> rfl
+
+/-- **The first success splits at `k` into masked searches**: the search over `List.finRange N`
+is the search masked to the indices before `k`, else entry `k`, else the search masked to the
+indices after `k` (`findSome?_finRange_split` three times; the masks select the parts). -/
+theorem findSome?_finRange_split_lt {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
+    (List.finRange N).findSome? f =
+      (((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then f t else none) <|> f k <|>
+        (List.finRange N).findSome? fun t : Fin N => if k < t then f t else none) := by
+  rw [findSome?_finRange_split f k,
+    findSome?_finRange_split (fun t : Fin N => if (t : ℕ) < k then f t else none) k,
+    findSome?_finRange_split (fun t : Fin N => if k < t then f t else none) k]
+  have h1 : (fun i : Fin k => if ((Fin.castLE k.2.le i : Fin N) : ℕ) < k then
+      f (Fin.castLE k.2.le i) else none) = fun i : Fin k => f (Fin.castLE k.2.le i) :=
+    funext fun i => if_pos (by simp)
+  have h2 : (fun i : Fin (N - k - 1) => if (((⟨k + 1 + i, by omega⟩ : Fin N)) : ℕ) < k then
+      f ⟨k + 1 + i, by omega⟩ else none) = fun _ => none :=
+    funext fun i => if_neg (by simp only; omega)
+  have h3 : (fun i : Fin k => if k < (Fin.castLE k.2.le i : Fin N) then
+      f (Fin.castLE k.2.le i) else none) = fun _ => none :=
+    funext fun i => if_neg (by rw [Fin.lt_def]; simp)
+  have h4 : (fun i : Fin (N - k - 1) => if k < (⟨k + 1 + i, by omega⟩ : Fin N) then
+      f ⟨k + 1 + i, by omega⟩ else none) = fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩ :=
+    funext fun i => if_pos (by rw [Fin.lt_def]; simp only; omega)
+  have hn : ∀ {M : ℕ}, (List.finRange M).findSome? (fun _ : Fin M => (none : Option α)) = none :=
+    fun {M} => List.findSome?_eq_none_iff.2 fun _ _ => rfl
+  rw [h1, h2, h3, h4, hn, hn, if_neg (lt_irrefl (k : ℕ)), if_neg (lt_irrefl k)]
+  cases (List.finRange k).findSome? fun i : Fin k => f (Fin.castLE k.2.le i) <;> cases f k <;> rfl
+
+end TCSlib.Cryptography.ColZK
