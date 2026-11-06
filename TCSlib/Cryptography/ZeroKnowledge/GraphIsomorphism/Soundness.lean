@@ -318,7 +318,8 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
       rw [HardcoreBit.uprob_eq_one_of_forall hall]
       norm_num
   efficientP := hP
-  boundedP := ⟨.var, fun x y r hist _ => giProver_length_le x y r hist⟩
+  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
+    giProver_length_le x y r hist⟩
   completeWitness := by
     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
     exact gi_complete hσ z
