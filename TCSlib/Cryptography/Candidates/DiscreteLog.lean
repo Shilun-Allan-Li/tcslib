@@ -1289,7 +1289,10 @@ probability by `G.dlProb A n` for `n ≥ n₀`, negligible by `hG A`; conclude b
 `Negligible.mono` (`Collection.invProbAt_nonneg`, threshold `n₀`). -/
 theorem expCollection_oneWay {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (hG : G.DLHard) : (expCollection H G hV).OneWay := by
-  sorry
+  refine ⟨expCollection_sampleClose H G hV, fun A => ?_⟩
+  refine ((ExpGroupGen.dlHard_iff G).1 hG A).mono ⟨G.n₀, fun n hn => ?_⟩
+  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ A n), abs_of_nonneg (G.dlProb_nonneg A n)]
+  exact expCollection_invProbAt_le H G hV A hn
 
 /-! ## Safe primes: the discrete-log assumption and the collection `DL` -/
 
