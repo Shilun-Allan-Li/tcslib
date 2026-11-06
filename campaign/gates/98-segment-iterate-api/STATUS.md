@@ -27,3 +27,5 @@
   erratum). F2: the screen trees were not the audited head (1,341 declarations, not 1,339), and
   the bundle lacked 15 of the 17 population files. The new lemma itself is verified (notes 3–6).
   F1 awaits the user's ruling.
+- 2026-11-06: round 2 prepared: SG-1 in the ledger (the user's ruling), the screen re-run on the
+  audited trees (1,341 declarations, 778 pairs at both; 0 new). `pack-r2.md`.

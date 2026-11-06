@@ -29,7 +29,11 @@ were verified (notes 3–6). The issues were the ledger and the evidence:
 
 ## Repository-side attestations (verify or challenge)
 
-- **Screen** (`evidence/screen-r2/`): @SCREEN98R2@
+- **Screen** (`evidence/screen-r2/`, its `README.md`): base `bdc73ab1` and head `7b5774fb`,
+  17 files, **1,341 declarations, 778 pairs, 285,948 characters at both**; 0 new pairs, 0 gone.
+  The 23 pairs with a `Contract/Basic` declaration on one side are the same at both and the same
+  as round 1's, `Segment.trans` against `tautDual_segment_add` (SG-1) among them. Round 1's count
+  differs only by `CfgRecord` (above).
 - Everything else is round 1's and unchanged: the seal and axioms (re-run on `oleans-lsi2`), the
   freeze, the names, the sweep, lint, and `replay-lsi2` (112 modules, 0 failed, the existing 45
   `sorry`s).
