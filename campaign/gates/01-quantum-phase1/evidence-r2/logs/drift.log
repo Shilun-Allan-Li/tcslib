@@ -1,0 +1,26 @@
+old d2d72d18ed5b5845ff25ae028490ee45600ae38f: 194 declarations; new 4b2c72b3aea92bbe05cb3c2d1af9d1e51310e896: 212 declarations
+REMOVED:
+ADDED:
+   TCSlib/Complexity/Counting/GapP.lean::abs_gap_le
+   TCSlib/Complexity/Counting/GapP.lean::gap_boolVerifier_int
+   TCSlib/Complexity/Counting/Inclusions.lean::inPP_polyTimeModel_headD
+   TCSlib/Quantum/Basic/ApplyOn.lean::applyOn_of_fin_zero
+   TCSlib/Quantum/Basic/ApplyOn.lean::applyOn_wires20_CNOT_mulVec_basis
+   TCSlib/Quantum/Basic/ApplyOn.lean::wires20
+   TCSlib/Quantum/Basic/ApplyOn.lean::wires20_apply
+   TCSlib/Quantum/Basic/Gates.lean::X_mul_X
+   TCSlib/Quantum/Basic/Gates.lean::X_ne_one
+   TCSlib/Quantum/Basic/Gates.lean::Z_mul_Z
+   TCSlib/Quantum/Basic/Protocols.lean::no_cloning_of_overlap
+   TCSlib/Quantum/Basic/Protocols.lean::no_exact_cloning
+   TCSlib/Quantum/Basic/Protocols.lean::superdenseState_vec
+   TCSlib/Quantum/Basic/Register.lean::card_reg
+   TCSlib/Quantum/Basic/Register.lean::isEmpty_of_isEmpty
+   TCSlib/Quantum/Basic/Register.lean::nonempty_reg_zero
+   TCSlib/Quantum/Basic/Register.lean::qubitEquivBool_one
+   TCSlib/Quantum/Basic/Register.lean::qubitEquivBool_zero
+CHANGED SIGNATURE:
+   TCSlib/Quantum/Basic/Protocols.lean::no_cloning 
+     old: theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d) : ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d, (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = (ψ ⊗ᵠ ψ).vec 
+     new: theorem no_cloning {d : Type*} [Fintype d] [DecidableEq d] [Nontrivial d] (e : d) : ¬ ∃ U : 𝐔[d × d], ∀ ψ : Ket d, ∃ c : ℂ, ‖c‖ = 1 ∧ (U : Matrix (d × d) (d × d) ℂ) *ᵥ (ψ ⊗ᵠ Ket.basis e).vec = c • (ψ ⊗ᵠ ψ).vec
+UNCHANGED: 193
