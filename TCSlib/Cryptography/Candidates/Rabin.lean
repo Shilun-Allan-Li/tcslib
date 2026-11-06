@@ -257,7 +257,8 @@ theorem oddFactorProb_le (A : NUPPT) {n : ℕ} (hn : 6 ≤ n) : oddFactorProb A 
 `blumFactorProb A n ≤ 64 n² · factorProb A n`.
 
 **Proof sketch.** As `oddFactorProb_le` with `E` = "both `≡ 3 (mod 4)`":
-`Pr[E] ≥ Pr_{Π_n × Π_n}[p ≠ q ∧ E] ≥ Pr[E] − Pr[E ∧ p = q] ≥ (B/P)² − (1/P)(B/P) = B(B−1)/P²`
+`Pr[E] ≥ Pr_{Π_n × Π_n}[p ≠ q ∧ E] ≥ Pr_{Π_n × Π_n}[E] − Pr_{Π_n × Π_n}[E ∧ p = q]
+≥ (B/P)² − (1/P)(B/P) = B(B−1)/P²`
 with `P = |Π_n|` and `B = #BlumPrimes n` (`HardcoreBit.uprob_prod_and`,
 `OneWay.uprob_and_le_mul`). With `2^n ≤ 4nB` (`hD`), `10n < 2^n` (so `B ≥ 2`) and `P ≤ 2^n`,
 `P² ≤ 4^n ≤ 16n²B² ≤ 64n²B(B−1)`, so `Pr[E] ≥ 1/(64n²)`. -/
@@ -1085,13 +1086,16 @@ private theorem rabin_listToNat_seven : listToNat [true, true, true] = 7 := by
 
 /-- **The odd generator is polynomial-time** [PS10, Theorem 61.7, "`I` is easy to sample"].
 
-**Proof sketch.** As `polyTimeComputable_rsaGenRaw` without the exponent: the coins are cut
-at `1^{4m³}` (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rabinPrimeCoins`); each
-prime is an `iterateFind` loop (`Complexity.polyTimeComputable_iterateFind`) whose test is
-`H.prime` conjoined with the oddness test (the last bit, `polyTimeComputable_lenEq`-style
-projection) and whose `none` branch is the constant fallback numeral; the validity test uses
-`H.prime`, `polyTimeComputable_pairEq`, `H.le`; `N` by `H.mul`; the fallback pair is a
-constant (`polyTimeComputable_ite`). -/
+**Proof sketch.** The generator equals the string computation `rabin_genCore` with the test
+`rabin_oddAcc` ("prime, and the residue modulo `2` (`H.divMod` by `⟦2⟧`) reads `≥ 1`", which
+decides `p.Prime ∧ p ≠ 2` on every word, `Nat.Prime.eq_two_or_odd`) and the fallback words `⟦3⟧`,
+`⟦5⟧` (`rabin_genCore_eq`). That computation is polynomial-time (`rabin_genCore_poly`):
+`1^{max n 3}` by `polyTimeComputable_lenLe`/`_ite`; the coins are cut at `1^{4m³}`
+(`polyTimeComputable_pairTakePoly`/`_pairDropPoly rabinPrimeCoins`); each prime is the block
+loop over the repetition host `Complexity.polyTimeComputable_iterateFind` (`rabin_spOut_poly`),
+its fallback zero-padded to `m` bits by `H.sub` and `H.add` (the width `m` varies, so it is not a
+constant word); the validity test is `polyTimeComputable_pairEq` on the two numerals alone, since
+both are always primes of the class below `2^m` (`rabin_samplePrimePL_spec`); `N` by `H.mul`. -/
 theorem polyTimeComputable_oddGenRaw (H : ArithmeticFP) :
     PolyTimeComputable (rabinGenRaw (· ≠ 2) oddDefault) := by
   have e : rabinGenRaw (· ≠ 2) oddDefault = rabin_genCore rabin_oddAcc [true, true] [true, false, true] :=
@@ -1107,7 +1111,7 @@ theorem polyTimeComputable_oddGenRaw (H : ArithmeticFP) :
   exact rabin_genCore_poly H (rabin_oddAcc_poly H) _ _
 
 /-- **The Blum generator is polynomial-time** [PS10, Theorem 63.10 (2)]: as
-`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`" on the last two bits.
+`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`".
 
 **Proof sketch.** The generator equals the string computation `rabin_genCore` with the test
 `rabin_blumAcc` ("prime, and the residue modulo `4` (`H.divMod` by `⟦4⟧`) reads `≥ 3`", which
@@ -1311,10 +1315,14 @@ unit `v < N` (`unitSampleStr`, `sampleUnitL_spec`, or the fallback `1 % N = 1`),
 `rabinDec` decodes to `ZMod.unitOfCoprime v` with `rabinEnc` the same numeral; `rabinEval_spec`
 gives the evaluator clause.
 
-**Proof sketch.** As `rsaSampler_spec`: unfold the activation
-(`NUPPT.runAtL_ofPolyTimeUniform`, `rabinSampleRaw`), case on `sampleUnitL`, discharge
-`rabinDec`'s test by `length_natToList`, `listToNat_natToList`, `sampleUnitL_spec` /
-`Nat.coprime_one_left`, and read the value back (`ZMod.coe_unitOfCoprime`, `ZMod.val_natCast`). -/
+**Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`, the P5 equations;
+`rabin_sampler_runAt`) and the index (`oddGen_runAt`); at the index `⟦N⟧_{2m}` the sampler's
+string is the numeral of the total S3 sampler's value (`unitSampleStr_eq`,
+`listToNat_rabinIndexOf`); case on `sampleUnitL` (`sampleUnitL_spec`, or the fallback `1 % N`)
+and discharge `rabinDec`'s test by `length_natToList` and `listToNat_natToList`. The decoded
+unit's encoding is the sampler's string (canonical decoding, `rabin_enc_of_dec`:
+`ZMod.coe_unitOfCoprime`, `natToList_val_natCast`), so `rabinEval_spec` gives the evaluator
+clause. -/
 theorem rabinSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (oddGen H).Coins n)
     (s : (rabinSampler H).Coins n) :
     ∃ x, rabinDec (pairFstD ((oddGen H).runAt n [] r))
@@ -1901,17 +1909,6 @@ private theorem rabin_uexp_le {σ τ γ : Type*} [Fintype σ] [Fintype τ] [Fint
   rw [e1, e2] at hh
   linarith [(abs_le.1 hh).2]
 
-/-- Splitting a coin string `Fin (a + b) → Bool` into its two segments (`Fin.append`). -/
-private def rabin_appendEquiv (a b : ℕ) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin (a + b) → Bool) where
-  toFun s := Fin.append s.1 s.2
-  invFun f := (fun i => f (Fin.castAdd b i), fun j => f (Fin.natAdd a j))
-  left_inv s := by
-    obtain ⟨s1, s2⟩ := s
-    ext i
-    · exact Fin.append_left s1 s2 i
-    · exact Fin.append_right s1 s2 i
-  right_inv f := Fin.append_castAdd_natAdd
-
 /-- The coin polynomial of `A'` is `T(n)B(n) + coins(A)`. -/
 private theorem rabin_coins_factorer (H : ArithmeticFP) (A : NUPPT) :
     (rabinFactorer H A).coins = .add rsaSampleCoins A.coins := by
@@ -1923,10 +1920,11 @@ private theorem rabin_factorerCoins_len (A : NUPPT) (n : ℕ) :
     rsaSampleCoins.eval n + A.coinLen n = (PolyExpr.add rsaSampleCoins A.coins).eval n := by
   rw [PolyExpr.eval_add, NUPPT.coinLen_eq]
 
-/-- The coins of `A'` are the unit sampler's coins followed by the coins of `A`, with `ofFn (E (s, ρ)) = ofFn s ++ ofFn ρ`. -/
+/-- The coins of `A'` are the unit sampler's coins followed by the coins of `A`, with
+`ofFn (E (s, ρ)) = ofFn s ++ ofFn ρ` (Mathlib's `Fin.appendEquiv`, then the length cast). -/
 private noncomputable def rabin_fCoinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
     (Fin (rsaSampleCoins.eval n) → Bool) × A.Coins n ≃ (rabinFactorer H A).Coins n :=
-  (rabin_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_factorerCoins_len A n))
+  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_factorerCoins_len A n))
     (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly (rabin_coins_factorer H A) n).symm)
 
 /-- The coin string of the split coins is the concatenation of the segments (`List.ofFn_fin_append`). -/
@@ -1936,7 +1934,7 @@ private theorem rabin_fCoinsEquiv_ofFn (H : ArithmeticFP) (A : NUPPT) (n : ℕ)
   unfold rabin_fCoinsEquiv
   rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
   rw [show ((finCongr (rabin_factorerCoins_len A n)).arrowCongr (Equiv.refl Bool))
-      ((rabin_appendEquiv _ _) s) = fun i => (rabin_appendEquiv _ _) s
+      ((Fin.appendEquiv _ _) s) = fun i => (Fin.appendEquiv _ _) s
         (Fin.cast (rabin_factorerCoins_len A n).symm i)
     from rfl, ← List.ofFn_congr (rabin_factorerCoins_len A n)]
   exact List.ofFn_fin_append _ _
@@ -2194,10 +2192,10 @@ private theorem rabin_genCoins_len (n : ℕ) : 4 * n ^ 2 * n + 4 * n ^ 2 * n = r
   ring
 
 /-- The coins of a Rabin generator are the two prime segments, with
-`ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂`. -/
+`ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂` (Mathlib's `Fin.appendEquiv`, then the length cast). -/
 private noncomputable def rabin_genCoinsEquiv (G : NUPPT) (hG : G.coins = rabinGenCoins) (n : ℕ) :
     (Fin (4 * n ^ 2 * n) → Bool) × (Fin (4 * n ^ 2 * n) → Bool) ≃ G.Coins n :=
-  (rabin_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_genCoins_len n))
+  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rabin_genCoins_len n))
     (Equiv.refl Bool)).trans (NUPPT.coinsEquivPoly hG n).symm)
 
 /-- The coin string of the split generator coins is the concatenation of the segments. -/
@@ -2207,7 +2205,7 @@ private theorem rabin_genCoinsEquiv_ofFn (G : NUPPT) (hG : G.coins = rabinGenCoi
   unfold rabin_genCoinsEquiv
   rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
   rw [show ((finCongr (rabin_genCoins_len n)).arrowCongr (Equiv.refl Bool))
-      ((rabin_appendEquiv _ _) s) = fun i => (rabin_appendEquiv _ _) s
+      ((Fin.appendEquiv _ _) s) = fun i => (Fin.appendEquiv _ _) s
         (Fin.cast (rabin_genCoins_len n).symm i)
     from rfl, ← List.ofFn_congr (rabin_genCoins_len n)]
   exact List.ofFn_fin_append _ _
@@ -3060,9 +3058,14 @@ a unit `u < N` (`blumSampleRaw`, `modExpStr_pairEncode`, `unitSampleStr`, `sampl
 a unit residue (`Nat.Coprime.pow_left`, `sq_mem_QR`), which `blumDec` decodes to that residue
 with `blumEnc` the same numeral; `blumEval_spec` gives the evaluator clause.
 
-**Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`), then the
-computation above with `blumDec`'s tests (`length_natToList`, `listToNat_natToList`,
-`Nat.mod_lt`, `ZMod.coe_unitOfCoprime`, `ZMod.val_natCast`). -/
+**Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`,
+`modExpStr_pairEncode`) and the index (`blumGen_runAt`), which is `BlumValid` with
+`blumMod i = N`. Then the computation above with `blumDec`'s tests (`length_natToList`,
+`listToNat_natToList`, `Nat.mod_lt`, coprimality by `Nat.Coprime.pow_left` and `Nat.gcd_rec`);
+membership in `QR_N` is the square of `ZMod.unitOfCoprime v` (`mem_QR_iff`,
+`ZMod.coe_unitOfCoprime`, `ZMod.natCast_mod`). The decoded residue's encoding is the sampler's
+string (canonical decoding, `rabin_blumEnc_of_dec`), so `blumEval_spec` gives the evaluator
+clause. -/
 theorem blumSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
     (s : (blumSampler H).Coins n) :
     ∃ x, blumDec (pairFstD ((blumGen H).runAt n [] r))
@@ -3293,12 +3296,12 @@ theorem rabinBlumTrapdoor_sampleClose (H : ArithmeticFP) :
   exact h1
 
 /-- A map pushing uniform to uniform on the first coordinate keeps the probability of an event
-with independent coins (`uprob_prod`, the definition of `PushesUniform`). -/
+with independent coins: the library's `PushesUniform.prodMap` with `pushesUniform_id`, then
+`PushesUniform.uprob_eq`. -/
 private theorem rabin_pushesUniform_prod {Ω γ ρ : Type*} [Fintype Ω] [Fintype γ] [Fintype ρ]
     {π : Ω → γ} (h : HardcoreBit.PushesUniform π) (P : γ → ρ → Prop) :
-    uprob (fun w : Ω × ρ => P (π w.1) w.2) = uprob (fun w : γ × ρ => P w.1 w.2) := by
-  rw [uprob_prod, uprob_prod]
-  exact (HardcoreBit.pushesUniform_iff π).1 h (fun a => uprob (fun b => P a b))
+    uprob (fun w : Ω × ρ => P (π w.1) w.2) = uprob (fun w : γ × ρ => P w.1 w.2) :=
+  (h.prodMap HardcoreBit.pushesUniform_id).uprob_eq fun w => P w.1 w.2
 
 /-- A Blum pair's index is a valid Blum index. -/
 private theorem rabin_blumValid_idx {n : ℕ} (z : DistinctPrimes n) (hp3 : z.p % 4 = 3)
@@ -3792,7 +3795,8 @@ hard.
 formalized, text gap) and for the `QR_N`-domain collection of Theorem 63.10.
 
 **Proof sketch.** For every `A`, `blumFactorProb_le_invProbAt` bounds `blumFactorProb A n`
-by `invProbAt (rabinBlumInverter H A) n + rabinErr n`, negligible by `h.hard`,
+by `invProbAt (rabinBlumInverter H A) n + rabinErr n`, negligible by the `hard` clause of `h`
+read through `TrapdoorCollection.oneWay_iff` (P2),
 `negligible_rabinErr`, `Negligible.add`; conclude by `Negligible.mono` (`uprob_nonneg`). -/
 theorem blumFactoring_of_rabinBlum_oneWay (H : ArithmeticFP) (hD : BlumDensity)
     (h : (rabinBlumTrapdoor H).OneWay) : BlumFactoringAssumption := by
