@@ -11,3 +11,6 @@
   from `66f40de528bc43fbd92cefad2042459293cd8520`. The auditor pushes
   `zone-data-eq-api-findings.md` to the exchange inbox (the new protocol).
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: #202 merged; the campaign merged into the branch (`d01332e4a924576bb4ec405b44822c954b233294`, no change to
+  the PR's file). `replay-lzde2` passed (5 modules, 0 failed; `TwoTapes`' one `sorry`), chained from
+  `oleans-lsi2` (`evidence/merged-tree-after-202/`): the replay of record for the merge.

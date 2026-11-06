@@ -148,3 +148,9 @@ from `f2f1afcb1a39f2a89a086898fdb76e6e21f186e9`. Findings file `nf-landing-fill-
 **Round 5 dispatched (2026-11-06, the user).**
 
 **Not yet clear to merge: #191** (gate 95's round 5 is out).
+
+**Replay on the merged tree after #202 (2026-11-06):** `replay-lnf7` passed (4 modules, 0 failed,
+0 `sorry`; static 0 mismatches), at #191's head `11a3a56251bc45ee004876afc792c79a17579afc` (the campaign after #202
+merged in; no file of the PR changed), chained from `oleans-lsi2`
+(`evidence/round5/merged-tree-after-202/`). It is the replay of record for the merge while the
+campaign's Lean stays at #202's.
