@@ -14,3 +14,5 @@
 | R2-03 | minor | **Confirmed.** (1) The `sorry` attestation named the wrong baseline: against the PR base `05fe903f`, Factoring 8 → 10 and RSA 9 → 10 (exactly S1–S3); the round-5 comparison was against `16a7d02d`. A base comparison is regenerated and the wording corrected. (2) `decls.py` stops a statement at a `|` line even inside a statement-level `match` (`GGMRed.queryOf_eq`); the extractor is fixed to continue through match arms before the declaration's `:=`, and the tables are regenerated. |
 
 Round 3 checks R2-01–R2-03 only.
+
+**Repair (2026-11-07):** #210 at `eb99dd7bb2d8a270b2ce17a3cf3e1487a65ad0ee` (one docstring-only commit on `3436321b`). R2-01: sealed consumer probes P1–P7 and controls C1–C5 (`evidence-r3/probes/`, `R2-01-MAPPING.md`); no new equation was needed. `glPad_domEquiv_apply` is an own-file lemma consumers cannot state sealed (C5) and do not need. R2-02: six docstrings. R2-03: `sorry-compare-vs-05fe903f.tsv`; extractor `decls2.py`, tables regenerated (only `queryOf_eq` changes). Round 3 pack: `pack-r3.md`.
