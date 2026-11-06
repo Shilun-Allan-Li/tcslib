@@ -5,3 +5,5 @@
   `replay-lh2` (2/0, after #216). Pack written; staged.
 - 2026-11-06: **staged** (33 sections).
 - 2026-11-06: **dispatched** by the user (33 sections, bundle `a429d34a…`).
+- 2026-11-06: findings PASS (0/0/4); **CLOSED**. Fixes `1a782c36` (RN-1 ×6); seal at the new head 0 errors (standard axioms); `replay-lh3` at `118e3d50` on the campaign after #211: 2/0. **Clear to merge.**
+- 2026-11-06: **merged** by the user.
