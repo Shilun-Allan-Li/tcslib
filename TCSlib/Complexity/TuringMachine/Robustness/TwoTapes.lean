@@ -446,12 +446,6 @@ private theorem tt_cfg_rowPre {k : ℕ} {S : Type} {x : List (ZoneSym k)} (s : O
     zoneRowPre D (tt_cfg s D ip out : Cfg 2 (ZoneSym k) S x) :=
   (zoneRowPre_iff D _).mpr ⟨rfl, rfl, fun _ => rfl⟩
 
-/-- The two work tapes are `0` and `1`. -/
-private theorem tt_fin_two (j : Fin 2) (hj : j ≠ 0) : j = 1 := by
-  fin_cases j
-  · exact absurd rfl hj
-  · rfl
-
 /-- **A row endpoint is a phase-boundary configuration**: a configuration that satisfies the
 zone rows' precondition at `D`, with head `1` at `0`, input head `ip` and output `out`, is
 `tt_cfg` at `D` once its state is renamed to the constant `s`, if it is live. -/
@@ -470,7 +464,7 @@ private theorem tt_mapState_eq_cfg {k : ℕ} {S S' : Type} {x : List (ZoneSym k)
     · subst hj
       rw [h0]
       rfl
-    · obtain rfl := tt_fin_two j hj
+    · obtain rfl := Fin.eq_one_of_ne_zero j hj
       rw [hb p]
       rfl
   · funext j
@@ -478,7 +472,7 @@ private theorem tt_mapState_eq_cfg {k : ℕ} {S S' : Type} {x : List (ZoneSym k)
     · subst hj
       rw [hp0]
       rfl
-    · obtain rfl := tt_fin_two j hj
+    · obtain rfl := Fin.eq_one_of_ne_zero j hj
       rw [h1]
       rfl
 
