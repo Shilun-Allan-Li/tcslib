@@ -26,3 +26,11 @@ Options:
 
 Meanwhile all reads that do not involve `eval` are being fixed (#210 follow-up; #195 stacked
 repair), and the fills are issued on #210's head (no fill target is among the reads).
+
+## Q2. `Asymptotic/PublicKey.lean` is 1038 lines after #210's coin interfaces (was 989)
+
+Options: (A) a size exception, like RSA, Rabin, Collections and `ThreeColoring/Protocol.lean`;
+(B) move the self-contained Lem-104.a block (`pkPredictor`, `predProb_pkPredictor_*`,
+`exists_pkPredictor`, about 70 lines) into `PublicKeyLemmas.lean` (which then imports
+`Asymptotic/HardCore` and `Pseudorandom/GeneratorFromPermutation`). It blocks only gate 07 round 2's
+lint line, not the fills.
