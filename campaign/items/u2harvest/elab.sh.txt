@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# elab.sh <file .lean relative to worktree> <outfile>: read-only elaboration against the overlay.
+source /home/user/tcslib-scratch/env.sh
+OV=/home/user/tcslib-scratch/ov-harvest; WT=/home/user/tcslib-scratch/wt-harvest; F="$1"; OUT="$2"
+cd "$WT" || exit 1
+S=$(date +%s)
+bash devtools/seyoon/leanelab.sh "$WT" "$OV" "$F" > "$OUT" 2>&1
+echo "exit=$? $(( $(date +%s)-S ))s" >> "$OUT"

@@ -6,3 +6,4 @@
 - 2026-11-06: `cl_iff`'s sketch (`3d0f6ceb`); the campaign merged at `485cfbab` (after #208, #212, #213). `replay-lrp3` from `oleans-lcamp2`: 53 modules, 0 failed. Freeze and lint regenerated at the merged head; pack written; staged.
 - 2026-11-06: **dispatched** by the user (57 sections, bundle `e10d6e0d…`).
 - 2026-11-06: findings received: **PASS**, 0/0/2 (evidence corrections). **CLOSED.** The merged-head seal is re-running (minor 1).
+- 2026-11-06: #216 **merged** by the user (`e4e7a419`).

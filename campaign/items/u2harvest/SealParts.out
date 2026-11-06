@@ -1,0 +1,104 @@
+Scratch/SealParts.lean:985:2: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  (StepBlock.forwardLoopCfg entry M c).output = c.output
+Scratch/SealParts.lean:988:55: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (rulerHostCfg ℓ hz q c rt rp).output = c.output
+Scratch/SealParts.lean:990:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+Scratch/SealParts.lean:992:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).output = []
+Scratch/SealParts.lean:993:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+Scratch/SealParts.lean:994:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  StepBlock.summaryCells none w 0 = none
+Scratch/SealParts.lean:999:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+Scratch/SealParts.lean:1000:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+Scratch/SealParts.lean:1002:84: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  (embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] c).output = [] ++ c.output
+Scratch/SealParts.lean:1004:50: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (Cfg.mapState (fun x => ()) c).output = c.output
+Scratch/SealParts.lean:1005:46: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  pairEncode [] [] = [false, true]
+Scratch/SealParts.lean:1006:57: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (rewindTM 1 0).q₀ = RewindPhase.start
+Scratch/SealParts.lean:1008:91: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ en).q₀ = Sum.inl M₁.q₀
+Scratch/SealParts.lean:1010:35: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedEmitTM ι M).q₀ = M.q₀
+Scratch/SealParts.lean:1012:81: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  tapeAction 0 SignType.pos none SignType.pos () =
+    { inputTape := SignType.pos, workTapes := fun j => if j = 0 then (none, SignType.pos) else (none, 0),
+      output := none, state := some () }
+Scratch/SealParts.lean:1014:46: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  inputMoveAction 0 () = { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some () }
+exit=1 4s
