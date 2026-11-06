@@ -425,7 +425,8 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (hP : OneWayPermutation P) (hh : P.HardCore h) : (owpGenPRG P h).Secure := by
   obtain ⟨F, hF, hFx⟩ := hP.evaluator
   obtain ⟨H, hH, hHx⟩ := hh.easy
-  refine ⟨exists_owpGenEvaluator P h hF hH hFx hHx, fun D => ?_⟩
+  rw [PRG.secure_iff]
+  refine ⟨(PRG.easy_iff _).2 (exists_owpGenEvaluator P h hF hH hFx hHx), fun D => ?_⟩
   have hflip : ∀ n, ∃ flip : Bool,
       predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) flip) =
         1 / 2 + prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
@@ -443,8 +444,9 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, h2] at h1
   show |prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1))| ≤ |ε n|
-  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
-    abs_nonneg _
+  have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) := by
+    rw [prgAdv_eq, distAdv_def]
+    exact abs_nonneg _
   rw [abs_of_nonneg h4]
   exact le_trans (by linarith) (le_abs_self _)
 

@@ -234,7 +234,7 @@ private theorem zkSim_runAt (S : PrivateKeyScheme) (n : ℕ) (r₁ : S.gen.Coins
   rw [NUPPT.runAt_eq, ofFn_zkSimCoins]
   unfold zkSim
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform n, S.enc_uniform n, zkSimFun,
+  simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform.advice_eq n, S.enc_uniform.advice_eq n, zkSimFun,
     NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, ht, hd, zipWith_xor_self, List.ofFn_const]
 

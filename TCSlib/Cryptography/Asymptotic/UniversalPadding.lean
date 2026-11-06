@@ -193,7 +193,7 @@ theorem quadraticCode_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {
   refine ⟨Mc, c₁ * (c' + 1) ^ 2, fun m x => ?_⟩
   rw [ofFn_family_f, hMc]
   refine ((FinTM.computesFunInTime_iff _ _ _).1 hM₁ (List.ofFn x)).mono ?_
-  simp only [List.length_ofFn, family_inLen, PolyExpr.eval_var]
+  rw [List.length_ofFn, family_inLen, PolyExpr.eval_var]
   calc c₁ * (c' * (m + 1) + 1) ^ 2 ≤ c₁ * ((c' + 1) * (m + 1)) ^ 2 :=
         Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by rw [Nat.add_mul, Nat.one_mul]; omega) 2)
     _ = c₁ * (c' + 1) ^ 2 * (m + 1) ^ 2 := by ring
