@@ -1,0 +1,49 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:699:31: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  OneWay.yaoB inLen outLen m A' n ys r j =
+    OneWay.padTrue (inLen.eval n)
+      (List.drop (↑j * inLen.eval n) (A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:1068:93: error: Function expected at
+  hA
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:1333:92: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.62 = ?m.62
+but is expected to have type
+  pairEncode (natToList m (listToNat a)) (natToList m (listToNat b)) =
+    encodeDistinctPrimes m ⟨(⟨⟨listToNat a, ⋯⟩, ⋯⟩, ⟨⟨listToNat b, ⋯⟩, ⋯⟩), ⋯⟩
+in the application
+  Exists.intro
+    ⟨(⟨⟨listToNat a, h.right.right.right.left⟩, h.left⟩, ⟨⟨listToNat b, h.right.right.right.right⟩, h.right.left⟩),
+      h.right.right.left⟩
+    rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:1612:65: error: unsolved goals
+H : ArithmeticFP
+n : ℕ
+r : (factoringCollection H).gen.Coins n
+⊢ pairFstD ((NUPPT.ofPolyTimeUniform factoringGen._proof_1 (PolyExpr.const 0)).runAtL n [] []) = List.replicate n true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:1614:4: warning: This simp argument is unused:
+  NUPPT.runAtL_ofPolyTimeUniform
+
+Hint: Omit it from the simp argument list.
+  simp [Collection.index_eq, factoringCollection, factoringGen, NUPPT.runAt_eq, N̵U̵P̵P̵T̵.̵r̵u̵n̵A̵t̵L̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵U̵n̵i̵f̵o̵r̵m̵,̵ ̵NUPPT.inParam_eq,
+  ̲  ̲ ̲ ̲NUPPT.advInput_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fillwork-fac/seal/FactoringSealedExc.lean:1614:54: warning: This simp argument is unused:
+  NUPPT.advInput_eq
+
+Hint: Omit it from the simp argument list.
+  simp [Collection.index_eq, factoringCollection, factoringGen, NUPPT.runAt_eq,
+      NUPPT.runAtL_ofPolyTimeUniform, NUPPT.inParam_eq,̵ ̵N̵U̵P̵P̵T̵.̵a̵d̵v̵I̵n̵p̵u̵t̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+[rc=1 time=132s]

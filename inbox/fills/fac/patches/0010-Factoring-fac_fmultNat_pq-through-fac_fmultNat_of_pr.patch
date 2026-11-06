@@ -1,0 +1,33 @@
+From e932cd15eb564917ca7bc091df0c17d41cc6c046 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:49:25 +0000
+Subject: [PATCH 10/10] Factoring: fac_fmultNat_pq through
+ fac_fmultNat_of_prime
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 05646f9b..cf2904eb 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -1776,11 +1776,8 @@ theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
+     pairSndD_pairEncode]
+ 
+ /-- `f_mult` on a pair of distinct primes is their product (neither is `1`). -/
+-private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q := by
+-  unfold fmultNat
+-  rw [if_neg]
+-  push_neg
+-  exact ⟨w.p_prime.ne_one, w.q_prime.ne_one⟩
++private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q :=
++  fac_fmultNat_of_prime w.p_prime w.q_prime
+ 
+ /-- **The reduction at a width `m = n`**: if `A`'s answer on `⟨1^n, ⟨pq⟩_{2m}⟩` decodes to a pair
+ of distinct primes with the same product, then `collectionFactorer A` factors `pq`; stated for a
+-- 
+2.43.0
+
