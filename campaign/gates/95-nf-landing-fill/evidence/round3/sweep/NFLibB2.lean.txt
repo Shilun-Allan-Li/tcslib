@@ -1,0 +1,80 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+/-! Library-re-derivation sweep, file B2: the candidates that `exact?` did not close in file B,
+restated in the normalized shape a reader reaches after one obvious rewrite of the hypotheses
+(the "core" of the inline argument), again closed by `exact?`; `apply?` on the remaining
+arithmetic. Tags `LIBSWEEP:Dnn`. -/
+
+set_option autoImplicit false
+
+-- D01 (core of C04 and C09: the two `by_contra` positivity blocks)
+example (a b : ℕ) (h : 0 < a * b) : 0 < b := by
+  exact? -- LIBSWEEP:D01
+
+-- D02 (core of C28: `List.ofFn f ≠ []`)
+example {α : Type} (n : ℕ) (f : Fin n → α) (hn : n ≠ 0) : List.ofFn f ≠ [] := by
+  exact? -- LIBSWEEP:D02
+
+-- D03 (core of C29, C32 and C14: a list of positive length is not nil)
+example {α : Type} (l : List α) (h : 0 < l.length) : l ≠ [] := by
+  exact? -- LIBSWEEP:D03
+
+-- D04 (core of the `rw [List.length_take, Nat.min_eq_left h]` chains and of C31)
+example {α : Type} (l : List α) (i : ℕ) (h : i ≤ l.length) : (l.take i).length = i := by
+  exact? -- LIBSWEEP:D04
+
+-- D05 (core of C03)
+example {α : Type} (l : List α) (i : ℕ) (hne : l.take i ≠ []) : i ≠ 0 := by
+  exact? -- LIBSWEEP:D05
+
+-- D06 (C14 in its other natural shape)
+example {α : Type} (l : List α) (m : ℕ) (h0 : m ≠ 0) (hl : l ≠ []) : l.take m ≠ [] := by
+  exact? -- LIBSWEEP:D06
+
+-- D07 (core of C11 / C06: last element of a prefix)
+example {α : Type} (l : List α) (i : ℕ) (h : i ≠ 0) (hi : i ≤ l.length) :
+    (l.take i).getLast? = l[i - 1]? := by
+  exact? -- LIBSWEEP:D07
+
+-- D08 (core of C12)
+example {α : Type} (s : List α) : s.take s.length = s := by
+  exact? -- LIBSWEEP:D08
+
+-- D09 (C08 in divisibility form)
+example (L W : ℕ) (h : W ∣ L) : W * (L / W) = L := by
+  exact? -- LIBSWEEP:D09
+
+-- D10 (C27 over ℕ hypotheses)
+example (W n r p : ℕ) (hr : r < n) (hp : p < W) : W * r + p < W * n := by
+  exact? -- LIBSWEEP:D10
+
+-- D11 (nf_ctl_position, first `split_ifs` branch, core)
+example (a b : ℕ) (h : a % (b + 1) = b) : (a + 1) % (b + 1) = 0 := by
+  exact? -- LIBSWEEP:D11
+
+-- D12 (nf_ctl_position, second `split_ifs` branch, core)
+example (a c : ℕ) (h : a % c + 1 < c) : (a + 1) % c = a % c + 1 := by
+  exact? -- LIBSWEEP:D12
+
+-- D13 (core of the `List.foldl_append, List.foldl_cons, List.foldl_nil` chains)
+example {α β : Type} (f : β → α → β) (b : β) (x : α) (xs : List α) :
+    (xs ++ [x]).foldl f b = f (xs.foldl f b) x := by
+  exact? -- LIBSWEEP:D13
+
+-- D14 (C02, other shape)
+example (W r : ℕ) (hW : 0 < W) : (W * r + (W - 1)) % W = W - 1 := by
+  exact? -- LIBSWEEP:D14
+
+-- D15 (C01, quotient-bracketing shape)
+example (W r x : ℕ) (h1 : r * W ≤ x) (h2 : x < (r + 1) * W) : x / W = r := by
+  exact? -- LIBSWEEP:D15
+
+-- D16 (C02 as stated: partial suggestions)
+example (W r : ℕ) (hW : 0 < W) : (W * (r + 1) - 1) % W = W - 1 := by
+  apply? -- LIBSWEEP:D16

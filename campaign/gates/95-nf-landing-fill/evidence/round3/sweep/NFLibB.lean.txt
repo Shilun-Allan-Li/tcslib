@@ -1,0 +1,202 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+/-! Library-re-derivation sweep of `NDNormalForm.lean`, file B: each candidate as a standalone,
+generalized `example` (its free variables as hypotheses), closed by `exact?`. Same imports as the
+module, so the same library is searched. Tags `LIBSWEEP:Bnn` map back to the candidate list. -/
+
+set_option autoImplicit false
+
+-- B01 (C01, nf_display_flag `hd`)
+example (W r : ℕ) (hW : 0 < W) : (W * (r + 1) - 1) / W = r := by
+  exact? -- LIBSWEEP:B01
+
+-- B02 (C02, nf_display_flag `hm`)
+example (W r : ℕ) (hW : 0 < W) : (W * (r + 1) - 1) % W = W - 1 := by
+  exact? -- LIBSWEEP:B02
+
+-- B03 (C03, nf_display_firstStop `hipos`)
+example (l : List Bool) (i : ℕ) (hne : l.take i ≠ []) : 0 < i := by
+  exact? -- LIBSWEEP:B03
+
+-- B04 (C04, nf_display_firstStop `hn`)
+example (W i : ℕ) (he : W * (i / W) = i) (hipos : 0 < i) : 0 < i / W := by
+  exact? -- LIBSWEEP:B04
+
+-- B05 (C05, nf_display_firstStop `hlt`)
+example (W i n : ℕ) (hi : i < W * n) : i / W < n := by
+  exact? -- LIBSWEEP:B05
+
+-- B06 (C06, nf_display_firstStop rw chain on `hb`)
+example (l : List Bool) (i : ℕ) (hi : i ≤ l.length) (hipos : 0 < i) :
+    (l.take i).getLastD false = l[i - 1]?.getD false := by
+  exact? -- LIBSWEEP:B06
+
+-- B07 (C07, nf_display_firstStop final rw chain)
+example (l : List Bool) (d : Bool) : l.getLastD d = l[l.length - 1]?.getD d := by
+  exact? -- LIBSWEEP:B07
+
+-- B08 (C08, nf_firstStop_records `hlen`)
+example (L W : ℕ) (hmod : L % W = 0) : L = W * (L / W) := by
+  exact? -- LIBSWEEP:B08
+
+-- B09 (C09, nf_firstStop_records `hn`)
+example (L W : ℕ) (hlen : L = W * (L / W)) (hL : 0 < L) : 0 < L / W := by
+  exact? -- LIBSWEEP:B09
+
+-- B10 (C10, nf_firstStop_records `hmle`)
+example (W n r L : ℕ) (hlen : L = W * n) (hr : r < n) : W * (r + 1) ≤ L := by
+  exact? -- LIBSWEEP:B10
+
+-- B11 (C11, nf_firstStop_records `hlasttake`)
+example (s : List Bool) (m : ℕ) (hmpos : 0 < m) (hmle : m ≤ s.length) :
+    (s.take m).getLastD false = s[m - 1]'(by omega) := by
+  exact? -- LIBSWEEP:B11
+
+-- B12 (C12, nf_firstStop_records `htake`)
+example (s : List Bool) (m : ℕ) (hm : m = s.length) : s.take m = s := by
+  exact? -- LIBSWEEP:B12
+
+-- B13 (C13, nf_firstStop_records `hmlt`)
+example (W n r L : ℕ) (hW : 0 < W) (hlen : L = W * n) (h : r + 1 < n) : W * (r + 1) < L := by
+  exact? -- LIBSWEEP:B13
+
+-- B14 (C14, nf_firstStop_records `hniltake`)
+example (s : List Bool) (m : ℕ) (hmpos : 0 < m) (hmle : m ≤ s.length) : s.take m ≠ [] := by
+  exact? -- LIBSWEEP:B14
+
+-- B15 (C15, nf_firstStop_records `hz`)
+example (s : List Bool) (W r : ℕ) (hmle : W * (r + 1) ≤ s.length) :
+    (s.take (W * (r + 1))).length % W = 0 := by
+  exact? -- LIBSWEEP:B15
+
+-- B16 (C16, nf_ctl_stop_iff `hz'`)
+example (s : List Bool) (b : Bool) (W : ℕ) (hz : (s ++ [b]).length % W = 0) :
+    (s.length + 1) % W = 0 := by
+  exact? -- LIBSWEEP:B16
+
+-- B18 (C18 / C33, `harray`: the last update completes the record array)
+example (n : ℕ) (r : Fin (n + 1) → Bool) :
+    Function.update (fun j : Fin (n + 1) => if j.val < n then some (r j) else none) (Fin.last n)
+      (some (r (Fin.last n))) = fun j => some (r j) := by
+  exact? -- LIBSWEEP:B18
+
+-- B19 (C19, nf_sweep_control_prefix `hfalse`)
+example (a : Bool) : (decide (a ≠ a) : Bool) = false := by
+  exact? -- LIBSWEEP:B19
+
+-- B20 (C20, nf_bClear `hdl`)
+example (R : List Bool) (i : ℕ) (hi : i ≤ R.length) :
+    ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
+  exact? -- LIBSWEEP:B20
+
+-- B21 (C21, private theorem `nf_stream_cons`, whole statement)
+example (k : ℕ) (rec : Fin (2 * k + 4) → Bool)
+    (rs : List (Fin (2 * k + 4) → Bool)) (T : ℤ → Option Bool) (h : ℤ)
+    (hT : ∀ p : ℕ, p < ((rec :: rs).flatMap List.ofFn).length →
+      T (h + p) = ((rec :: rs).flatMap List.ofFn)[p]?) :
+    (∀ p : Fin (2 * k + 4), T (h + (p.val : ℤ)) = some (rec p)) ∧
+      ∀ p : ℕ, p < (rs.flatMap List.ofFn).length →
+        T (h + ((2 * k + 4 : ℕ) : ℤ) + p) = (rs.flatMap List.ofFn)[p]? := by
+  exact? -- LIBSWEEP:B21
+
+-- B21b (nf_stream_cons, the list identity behind its first conjunct)
+example {α : Type} (W : ℕ) (rec : Fin W → α) (X : List α) (p : Fin W) :
+    (List.ofFn rec ++ X)[p.val]? = some (rec p) := by
+  exact? -- LIBSWEEP:B21b
+
+-- B21c (nf_stream_cons, the list identity behind its second conjunct)
+example {α : Type} (W : ℕ) (rec : Fin W → α) (X : List α) (p : ℕ) :
+    (List.ofFn rec ++ X)[W + p]? = X[p]? := by
+  exact? -- LIBSWEEP:B21c
+
+-- B23 (C23, private theorem `nf_flags_cons`, whole statement)
+example {k : ℕ} (rec : Fin (2 * k + 4) → Bool)
+    (rs : List (Fin (2 * k + 4) → Bool))
+    (hflag : ∀ r (h : r < (rec :: rs).length),
+      (rec :: rs)[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = (rec :: rs).length)) :
+    rec ⟨2 * k + 3, by omega⟩ = decide (rs = []) ∧
+      ∀ r (h : r < rs.length), rs[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
+  exact? -- LIBSWEEP:B23
+
+-- B24 (C24, nf_blocks_write `hin`)
+example (lo hi y z : ℤ) (h1 : lo - 1 ≤ y) (h2 : y ≤ hi + 1) (hz : z ≠ y) :
+    (min lo y ≤ z ∧ z ≤ max hi y) ↔ (lo ≤ z ∧ z ≤ hi) := by
+  exact? -- LIBSWEEP:B24
+
+-- B25 (C25, private theorem `nf_signType_bound`, whole statement and each conjunct)
+example (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
+  exact? -- LIBSWEEP:B25
+
+example (m : SignType) : -1 ≤ (m : ℤ) := by
+  exact? -- LIBSWEEP:B25a
+
+example (m : SignType) : (m : ℤ) ≤ 1 := by
+  exact? -- LIBSWEEP:B25b
+
+-- B26 (C26, private theorem `nf_stream_length`, as stated and generalized)
+example (k : ℕ) (rs : List (Fin (2 * k + 4) → Bool)) :
+    (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
+  exact? -- LIBSWEEP:B26
+
+example {α : Type} (W : ℕ) (rs : List (Fin W → α)) :
+    (rs.flatMap List.ofFn).length = rs.length * W := by
+  exact? -- LIBSWEEP:B26a
+
+-- B27 (C27, nf_split `hidx`, after `rw [hlen]`, three orientations)
+example (W n : ℕ) (r : Fin n) (p : Fin W) : W * r.val + p.val < W * n := by
+  exact? -- LIBSWEEP:B27
+
+example (W n : ℕ) (r : Fin n) (p : Fin W) : p.val + W * r.val < W * n := by
+  exact? -- LIBSWEEP:B27a
+
+example (W n : ℕ) (r : Fin n) (p : Fin W) : r.val * W + p.val < n * W := by
+  exact? -- LIBSWEEP:B27b
+
+-- B28 (C28, nf_split `rs ≠ []` bullet)
+example {α : Type} (n : ℕ) (f : Fin n → α) (hn : 0 < n) : List.ofFn f ≠ [] := by
+  exact? -- LIBSWEEP:B28
+
+-- B29 (C29, nf_V_display `hne`)
+example {α β : Type} (rs : List α) (w : List β) (hrlen : rs.length = w.length) (hw : w ≠ []) :
+    rs ≠ [] := by
+  exact? -- LIBSWEEP:B29
+
+-- B31 (C31, nf_forward `hw₀len`)
+example (w : List Bool) (t t₀ : ℕ) (hw : w.length = t) (hle : t₀ ≤ t) :
+    (w.take t₀).length = t₀ := by
+  exact? -- LIBSWEEP:B31
+
+-- B32 (C32, nf_forward `hw₀ne`)
+example (w₀ : List Bool) (t₀ : ℕ) (hw₀len : w₀.length = t₀) (hpos : 0 < t₀) : w₀ ≠ [] := by
+  exact? -- LIBSWEEP:B32
+
+-- B34 (C34, nf_sweep_prefix: one more update extends the stored prefix)
+example (W n : ℕ) (hn : n < W) (r : Fin W → Bool) :
+    Function.update (fun j : Fin W => if j.val < n then some (r j) else none) ⟨n, hn⟩
+      (some (r ⟨n, hn⟩)) = fun j => if j.val < n + 1 then some (r j) else none := by
+  exact? -- LIBSWEEP:B34
+
+-- B35 (C35, nf_region `hL'`)
+example (E S : ℤ) (h : 0 ≤ E - S + 1) : ((E - S + 1).toNat : ℤ) = E - S + 1 := by
+  exact? -- LIBSWEEP:B35
+
+-- B36 (nf_ctl_position, the two `split_ifs` branches' arithmetic)
+example (L W : ℕ) (hW : 0 < W) (h : L % W = W - 1) : (L + 1) % W = 0 := by
+  exact? -- LIBSWEEP:B36a
+
+example (L W : ℕ) (h : L % W + 1 < W) : (L + 1) % W = L % W + 1 := by
+  exact? -- LIBSWEEP:B36b
+
+-- B37 (nf_blocks_support `obtain`: every integer is `p₀ + 2z` or `p₀ + 2z + 1`)
+example (q p₀ : ℤ) : ∃ z, q = p₀ + 2 * z ∨ q = p₀ + 2 * z + 1 := by
+  exact? -- LIBSWEEP:B37
+
+-- B38 (the recurring `obtain ⟨v, rfl⟩ : ∃ v, u = a + v := ⟨u - a, by omega⟩`)
+example (u a : ℕ) (h : a ≤ u) : ∃ v, u = a + v := by
+  exact? -- LIBSWEEP:B38

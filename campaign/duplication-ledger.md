@@ -1072,8 +1072,24 @@ member remains. Recorded so that the ledger shows them caught.
 **Gate 95's round-2 major 1** (#191; repaired, the round-1 ruling's kind): `nf_split`'s local `h0`
 rebuilt a list from its indexed entries by `List.ext_getElem`, re-proving Mathlib's
 `List.ofFn_getElem` (with the index length moved by `List.ofFn_congr`). #191's commit `dfc3e990`
-cites the two lemmas. No family; recorded so that the ledger shows it caught. A sweep of the file's
-library-only `have`s by `exact?` follows it (gate 95, round 3's evidence).
+cites the two lemmas. No family; recorded so that the ledger shows it caught.
+
+**The library sweep that followed** (gate 95, round 3; `evidence/round3/sweep/`). Every `have`,
+`obtain` and private theorem of the file about core or Mathlib objects only, probed by `exact?`
+in place, as a generalised `example` and as its normalised core with `apply?`. It found eight
+further inline re-proofs, all of one published lemma each:
+- `Nat.succ_mod_succ_eq_zero_iff` (`nf_ctl_position`), `Nat.pos_of_mul_pos_left`
+  (`nf_display_firstStop`, `nf_firstStop_records`), `Nat.div_lt_of_lt_mul`
+  (`nf_display_firstStop`), `Nat.mul_div_cancel'` (`nf_firstStop_records`);
+- `List.ofFn_eq_nil_iff` (`nf_split`), `List.ne_nil_of_length_pos` (`nf_V_display`,
+  `nf_forward`; the file already cited it twice).
+
+It also found two rewrite chains that are each one lemma: `List.length_take` with
+`Nat.min_eq_left` is `List.length_take_of_le` (eight sites), and `List.foldl_append`,
+`foldl_cons`, `foldl_nil` on `l ++ [x]` is `List.foldl_concat` (seven sites). Separately,
+`nf_prefix_last` and `nf_sweep_record` proved the same completion of the parser's prefix array;
+it is now one private, `nf_update_last`. #191's commit `49c4d0f7` repairs all of them, with no
+statement change. No family; no member remains.
 
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not

@@ -1,0 +1,366 @@
+52:private theorem nf_pack {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+56:  have hpos : 0 < Fintype.card S := Fintype.card_pos_iff.mpr ⟨H.q₀⟩
+62:  have hinit : (H.relabelState e).initCfg x = (H.initCfg x).mapState e := by
+84:private theorem nf_setup {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool) (j : Fin 2) :
+108:private theorem nf_ctl_position (k : ℕ) (s : List Bool) (f : Bool) :
+119:    · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
+121:      have he : 2 * k + 3 + 1 = 2 * k + 4 := by omega
+123:    · have hp := (s.foldl (nf_ctlStep k) (0, f)).1.isLt
+124:      have hm : s.length % (2 * k + 4) + 1 < 2 * k + 4 := by omega
+134:private theorem nf_ctl_stop_iff (k : ℕ) (s : List Bool) :
+140:    have hp := nf_ctl_position k (s ++ [b]) false
+143:    · have hz : (s ++ [b]).length % (2 * k + 4) = 0 := hp.symm
+144:      have hz' : (s.length + 1) % (2 * k + 4) = 0 := by
+147:    · have hn : (s ++ [b]).length % (2 * k + 4) ≠ 0 := by
+149:        have hp' : (s.foldl (nf_ctlStep k) (0, false)).1.val + 1 =
+152:      have hn' : (s.length + 1) % (2 * k + 4) ≠ 0 := by
+167:private theorem nf_record_last (k : ℕ) (b : Bool) (reads : Fin (k + 1) → Option Bool)
+172:private theorem nf_record_choice (k : ℕ) (b : Bool) (reads : Fin (k + 1) → Option Bool)
+180:private theorem nf_record_read (k : ℕ) (b : Bool) (reads : Fin (k + 1) → Option Bool)
+184:  have hi := i.isLt
+186:  · have hq : (2 * i.val + 1 - 1) / 2 = i.val := by omega
+187:    have hr : (2 * i.val + 1 - 1) % 2 = 0 := by omega
+191:  · have hq : (2 * i.val + 2 - 1) / 2 = i.val := by omega
+192:    have hr : (2 * i.val + 2 - 1) % 2 ≠ 0 := by omega
+209:private theorem nf_display_length (N : FinNDTM Bool) (x w : List Bool) :
+218:private theorem nf_display_flag (N : FinNDTM Bool) (x w : List Bool) (r : Fin w.length) :
+222:  have hW : 0 < W := by omega
+223:  have hprod : 0 < W * (r.val + 1) := Nat.mul_pos hW (by omega)
+224:  have hi : W * (r.val + 1) - 1 < (nf_display N x w).length := by
+226:    have hle := Nat.mul_le_mul_left W (show r.val + 1 ≤ w.length by omega)
+229:  have hd : (W * (r.val + 1) - 1) / W = r.val := by
+232:  have hm : (W * (r.val + 1) - 1) % W = 2 * N.k + 3 := by
+233:    have he := Nat.mod_add_div (W * (r.val + 1) - 1) W
+235:    have hdecomp : W * (r.val + 1) = W * r.val + W := by ring
+237:    have he' : W = 2 * N.k + 4 := rfl
+241:  have hp : (⟨(W * (r.val + 1) - 1) % W, Nat.mod_lt _ hW⟩ : Fin W) =
+250:private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ []) :
+254:  have hwpos : 0 < w.length := List.length_pos_iff.mpr hw
+255:  have hW : 0 < 2 * N.k + 4 := by omega
+261:    have hipos : 0 < i := by
+262:      have hp := List.length_pos_iff.mpr hne
+266:    have he := Nat.mod_add_div i (2 * N.k + 4)
+268:    have hn : 0 < i / (2 * N.k + 4) := by
+270:      have hnonneg : 0 ≤ i / (2 * N.k + 4) := Nat.zero_le _
+271:      have hz : i / (2 * N.k + 4) = 0 := by omega
+274:    have hlt : i / (2 * N.k + 4) < w.length := by
+279:    have hr : r.val + 1 = i / (2 * N.k + 4) := by
+282:    have hflag := nf_display_flag N x w r
+289:    have hspos : 0 < (nf_display N x w).length := by
+295:      have hr : r.val + 1 = w.length := by
+298:      have hf := nf_display_flag N x w r
+309:private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
+315:  have hspos := List.length_pos_iff.mpr hsne
+316:  have hW : 0 < 2 * k + 4 := by omega
+318:  have hlen : s.length = (2 * k + 4) * n := by
+319:    have h := Nat.mod_add_div s.length (2 * k + 4)
+322:  have hn : 0 < n := by
+324:    have hnonneg : 0 ≤ n := Nat.zero_le _
+325:    have hz : n = 0 := by omega
+331:  have hmpos : 0 < m := Nat.mul_pos hW (by omega)
+332:  have hmle : m ≤ s.length := by
+335:  have hib : m - 1 < s.length := by omega
+336:  have hlasttake : (s.take m).getLastD false = s[m - 1] := by
+342:  · have hm : m = s.length := by
+345:    have htake : s.take m = s := by rw [hm, List.take_length]
+347:    have hb : s[m - 1] = true := hlasttake.symm.trans hlast
+349:  · have hmlt : m < s.length := by
+352:    have hb : s[m - 1] = false := by
+355:      have hniltake : s.take m ≠ [] := by
+359:      have hz : (s.take m).length % (2 * k + 4) = 0 := by
+362:      have hf := (nf_ctl_stop_iff k (s.take m)).mpr
+369:private theorem nf_display_prefix_length (N : FinNDTM Bool) (x w : List Bool) (t : ℕ)
+382:private theorem nf_decode_record (k : ℕ) (b : Bool) (reads : Fin (k + 1) → Option Bool)
+390:private theorem nf_decode_absent (k : ℕ) (r : Fin (2 * k + 4) → Option Bool)
+436:private theorem nf_complete_record (N : FinNDTM Bool) (b : Bool)
+443:  have hd : nf_decode N.k (fun p => some (nf_record N.k b reads last p)) = reads := by
+449:private theorem nf_complete_failed (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Option Bool)
+455:private theorem nf_complete_other (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Option Bool)
+466:private theorem nf_sweep_prefix (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bool)
+487:      have hne : j.val ≠ n := fun h => he (Fin.ext h)
+497:private theorem nf_sweep_record (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bool)
+502:  have hf : (fun i : Fin (2 * N.k + 3) => r i.castSucc) =
+509:  have harray : Function.update
+518:        have hj := j.isLt
+519:        have hne : j.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
+526:private theorem nf_complete_output (N : FinNDTM Bool) (b : Bool)
+537:private theorem nf_sweepPass_output (N : FinNDTM Bool) (c : nf_SweepState N) (o : List Bool)
+551:private theorem nf_sweep_run (N : FinNDTM Bool) (x s : List Bool) :
+560:  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+588:private theorem nf_sweep_records (N : FinNDTM Bool)
+601:private theorem nf_display_records (N : FinNDTM Bool) (x w : List Bool) :
+617:private theorem nf_sweep_display (N : FinNDTM Bool) (x w : List Bool) :
+629:private theorem nf_complete_step (N : FinNDTM Bool) (x : List Bool)
+650:private theorem nf_sweep_control_prefix (N : FinNDTM Bool) (x w : List Bool)
+665:    have hlt : n < w.length := by omega
+666:    have hnext : N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x) =
+670:    have hflag : decide (n + 1 = w.length) =
+676:        have hnot := hlive (n + 1) (by omega)
+684:    have hfalse : (decide ((N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state.isNone ≠
+695:private theorem nf_sweep_display_pass (N : FinNDTM Bool) (x w : List Bool)
+701:  have hc := nf_sweep_control_prefix N x w hlive hhalt w.length (Nat.le_refl _)
+704:  have ho := (StepBlock.outputSummary_true _).mpr hout
+993:private theorem nf_retag {N : FinNDTM Bool} {SL S : Type} {x : List Bool}
+1002:private theorem nf_tagged_ne_park {N : FinNDTM Bool} {SL : Type} {x : List Bool}
+1023:private theorem nf_aReturn (N : FinNDTM Bool) {SL : Type}
+1039:  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ (([] : List Bool).length : ℤ) →
+1043:    obtain rfl : p = 0 := le_antisymm h1 h0
+1057:      obtain rfl : u = 0 := by simp at hu; omega
+1062:  have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.aFwd j)) c₁ (nf_Ph.aBack j)
+1066:  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+1078:  have hred : nf_red N L exit (nf_Ph.aBack j) SeekPhase.done = some (nf_aNext N L j) := by
+1089:  have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+1108:    · obtain ⟨v, rfl⟩ : ∃ v, u = (([] : List Bool).length + 1 + 1) + v :=
+1125:private theorem nf_bClear (N : FinNDTM Bool) {SL : Type}
+1145:  have hdl : ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
+1148:  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ ((R.drop i).length : ℤ) →
+1151:    have h := htape (p + i) (by omega) (by omega)
+1168:  have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bFwd j)) c₁ (nf_Ph.bBack j)
+1172:  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
+1194:  have hpos3 : c₃.workTapePos 1 = c.workTapePos 1 - i := by
+1199:  have hre2 := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bBack j)) c₃ (nf_Ph.bClr j)
+1205:  have hcw : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
+1208:    have e : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
+1227:  have e : (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) =
+1246:    have e4 : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
+1247:    have ew : c₄.workTapes 1 q = c.workTapes 1 q := by simp only [hc₄, hc₃, hc₂, hc₁]
+1248:    have hq : c₅.workTapes 1 q = if (1 : Fin 2) = 1 ∧ c₄.workTapePos 1 ≤ q ∧
+1259:    · obtain ⟨v, rfl⟩ : ∃ v, u = ((R.drop i).length + 1 + 1) + v :=
+1265:      · obtain ⟨w, rfl⟩ : ∃ w, v = (R.length + 3 + 1) + w := ⟨v - (R.length + 3 + 1), by omega⟩
+1276:private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
+1297:private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_Ph N.k)
+1315:private theorem nf_prefix_last (N : FinNDTM Bool) (rec : Fin (2 * N.k + 4) → Bool)
+1324:  have hp := nf_sweep_prefix N rec ctl (2 * N.k + 3) (by omega)
+1332:    · have hne : p.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
+1333:      have hlt := p.isLt
+1337:  · have h := nf_sweep_record N rec ctl
+1350:private theorem nf_leaf_prefix (N : FinNDTM Bool) (j : Option (Fin N.k)) {x : List Bool}
+1371:    have hp := nf_sweep_prefix N rec ctl m (by omega)
+1372:    have hm1 : ((List.ofFn fun i : Fin m => rec ⟨i.val, by omega⟩).foldl
+1374:    have hsym : ({ d with
+1410:private theorem nf_leaf_toLast (N : FinNDTM Bool) (j : Option (Fin N.k)) {x : List Bool}
+1428:  have hpre := nf_leaf_prefix N j d rec ctl hst hA
+1454:private theorem nf_leaf_record_in (N : FinNDTM Bool) {x : List Bool}
+1474:  have hinp : c.inputSymbol = d.inputSymbol := Cfg.inputSymbol_congr c d rfl
+1530:private theorem nf_vstep_state (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
+1547:private theorem nf_vstep_ctl (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
+1566:private theorem nf_vrun_ctl (N : FinNDTM Bool) {x : List Bool} :
+1584:private theorem nf_stream_cons (k : ℕ) (rec : Fin (2 * k + 4) → Bool)
+1593:  · have hlt : p.val < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+1598:  · have hlt : (2 * k + 4) + p < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+1600:    have e := hT ((2 * k + 4) + p) hlt
+1610:private theorem nf_all_cons (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
+1621:private theorem nf_flags_cons {k : ℕ} (rec : Fin (2 * k + 4) → Bool)
+1628:  · have := hflag 0 (by simp)
+1632:  · have := hflag (r + 1) (by simp; omega)
+1647:private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
+1670:    have hinp : d.inputSymbol = c.inputSymbol := Cfg.inputSymbol_congr d c (by rw [hip])
+1671:    have hall := nf_all_cons N c rec rs (fun c rec => nf_ok N c rec 0)
+1676:      have hdec' : nf_decode N.k (fun p => some (rec p)) 0 = d.inputSymbol := by
+1678:      have hrun := hpass q (hc.trans hq) hdec'
+1681:        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by simpa using hfl
+1692:        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by simpa using hfl
+1700:        have hvc := nf_vstep_state N c ctl rec hc
+1701:        have hvip : d'.inputPos = (nf_vstep N c rec).inputPos := by
+1705:        have hA' : ∀ p : ℕ, p < ((rec' :: rs').flatMap List.ofFn).length →
+1718:          · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+1736:        · have hn : ¬ ∀ r (h : r < (rec' :: rs').length),
+1764:private theorem nf_leaf_block (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
+1795:  have h1 : (nf_leaf N (some t)).runFrom e 1 = e₁ := by
+1799:  have hsym1 : e₁.workTapeSymbols 1 = e.workTapes 1 (b + 1) := by
+1805:  have hpre : ∀ u < 2, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →
+1815:  have hw2 : ∀ (q' : nf_LeafSt N) (m : SignType) (v : Bool),
+1825:    have e2 : (nf_leaf N (some t)).runFrom e 2 =
+1831:  have htape2 : Function.update e₁.workTapes 1
+1862:    have h2 := hw2 (.adj₁ σ mv) m₂ (n.getD false) (by
+1872:    have h3 : (nf_leaf N (some t)).runFrom e 3 = { e₂ with
+1878:    have h4 : (nf_leaf N (some t)).runFrom e 4 = { e₂ with
+1908:  · have e2 : (nf_leaf N (some t)).runFrom e 2 =
+1926:private theorem nf_leaf_record_wk (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
+1983:private theorem nf_blocks_decode {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+2002:private theorem nf_blocks_write {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+2006:  have hin : ∀ z, z ≠ y → ((min lo y ≤ z ∧ z ≤ max hi y) ↔ (lo ≤ z ∧ z ≤ hi)) := by
+2015:  have hy : min lo y ≤ y ∧ y ≤ max hi y := ⟨min_le_right _ _, le_max_right _ _⟩
+2020:      have e2 : p₀ + 2 * y ≠ p₀ + 2 * y + 1 := by omega
+2023:    · have e1 : p₀ + 2 * z ≠ p₀ + 2 * y := by omega
+2024:      have e2 : p₀ + 2 * z ≠ p₀ + 2 * y + 1 := by omega
+2025:      have e3 : p₀ + 2 * z + 1 ≠ p₀ + 2 * y := by omega
+2026:      have e4 : p₀ + 2 * z + 1 ≠ p₀ + 2 * y + 1 := by omega
+2035:  · have hzy : z ≠ y := fun e => hz (e ▸ hy)
+2043:private theorem nf_blocks_support {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+2046:  obtain ⟨z, hz | hz⟩ : ∃ z, q = p₀ + 2 * z ∨ q = p₀ + 2 * z + 1 :=
+2064:private theorem nf_signType_bound (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
+2084:private theorem nf_leaf_run_wk (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool} (p₀ : ℤ) :
+2113:    have hall := nf_all_cons N c rec rs (fun c rec => nf_ok N c rec t.succ)
+2119:    have hrun := hlive q (hc.trans hq)
+2131:    have hew1 : e.workTapes 1 = d.workTapes 1 := rfl
+2132:    have hep1 : e.workTapePos 1 = d.workTapePos 1 := by
+2135:    have hdecB : nf_blockDecode (e.workTapes 1 (e.workTapePos 1))
+2139:    have hpre2 : ∀ u < 2 * N.k + 4 + 2, ∀ s, ((nf_leaf N (some t)).runFrom d u).state = some s →
+2144:      · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+2148:    · have hdec : nf_blockDecode (e.workTapes 1 (e.workTapePos 1))
+2150:      have hok : nf_ok N c rec t.succ := ⟨hlv, hok0⟩
+2152:      have hvt : (nf_vstep N c rec).workTapes t = Function.update (c.workTapes t)
+2156:      have hvp : (nf_vstep N c rec).workTapePos t = c.workTapePos t + (a.workTapes t).2 := by
+2159:      have hBw : nf_blocks (nf_blockWrite (d.workTapes 1) (p₀ + 2 * c.workTapePos t) n) p₀
+2164:      have hmv := nf_signType_bound (a.workTapes t).2
+2167:        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by simpa using hfl
+2168:        have h2s := hpassL hdec hl
+2188:        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by simpa using hfl
+2196:        have hvc := nf_vstep_state N c ctl rec hc
+2197:        have hB' : nf_blocks (d'.workTapes 1) p₀ (min lo (c.workTapePos t))
+2203:        have hpos' : d'.workTapePos 1 = p₀ + 2 * (nf_vstep N c rec).workTapePos t := by
+2207:        have hA' : ∀ p : ℕ, p < ((rec' :: rs').flatMap List.ofFn).length →
+2210:          have hw0 : d'.workTapes 0 = d.workTapes 0 := by
+2213:          have hp0 : d'.workTapePos 0 = d.workTapePos 0 + (2 * N.k + 4 : ℕ) := by
+2225:        have hrun4 : (nf_leaf N (some t)).runFrom d (2 * N.k + 4 + 4) = d' := by
+2231:            · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+2234:            · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4 + 4) + v :=
+2251:              · have hi0 : i = 0 := by omega
+2259:            have := min_le_left lo (c.workTapePos t)
+2260:            have := le_max_left hi (c.workTapePos t)
+2264:            have := min_le_right lo (c.workTapePos t)
+2265:            have := le_max_right hi (c.workTapePos t)
+2267:        · have hn' : ¬ ∀ r (h : r < (rec' :: rs').length),
+2272:    · have hnok : ¬ nf_ok N c rec t.succ := fun h => hok0 h.2
+2285:private theorem nf_region (B : ℤ → Option Bool) (S E h : ℤ)
+2291:  have hL' : (L : ℤ) = E - S + 1 := by rw [hL]; omega
+2296:    have hs : h - ((h - S).toNat : ℤ) = S := by omega
+2302:      have := (hB _).mp hne
+2307:          have := (hB _).mp hne
+2311:      · obtain ⟨m, rfl⟩ : ∃ m : ℕ, p = m := ⟨p.toNat, by omega⟩
+2312:        have hm : m < L := by omega
+2315:        have hne : B (S + m) ≠ none := (hB _).mpr ⟨by omega, by omega⟩
+2324:      have := (hB q).mp hne
+2330:private theorem nf_stream_length (k : ℕ) (rs : List (Fin (2 * k + 4) → Bool)) :
+2361:private theorem nf_V_tail (N : FinNDTM Bool) {x : List Bool}
+2384:    have hk : ¬ m < N.k := by omega
+2385:    have he : nf_tapeEntry N (nf_leaf N) m = ⟨.park, true⟩ := by
+2388:    have hst : (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)).state = some ⟨.park, true⟩ := by
+2398:    have hk : m < N.k := by omega
+2401:    have hslen : s.length = (2 * N.k + 4) * rs.length := nf_stream_length N.k rs
+2402:    have he : nf_tapeEntry N (nf_leaf N) m =
+2407:    have hre := nf_retag (N := N) (SL := nf_LeafSt N) c (nf_Ph.rep (some t))
+2412:    have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
+2414:    have hinit_tape : (N.tm.initCfg x).workTapes t = fun _ => none := by
+2417:    have hinit_pos : (N.tm.initCfg x).workTapePos t = 0 := by
+2419:    have hblk0 : nf_blocks (dL.workTapes 1) (c.workTapePos 1) 0 (-1)
+2433:    have hguard₁ : ∀ u < T₁, ∀ q, ((nf_M N (nf_leaf N) (nf_Ph.rep (some t))).runFrom dL u).state =
+2436:      have h := hpre₁ u hu q hq
+2440:    have hwin₁ : ∀ u ≤ T₁, ∀ b, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2461:      have hre1 := nf_retag (N := N) (SL := nf_LeafSt N)
+2467:      have hA1 : c₁'.workTapePos 0 = s.length := by
+2470:      have htape1 : ∀ p, c₁'.workTapes 0 p = FinTM.bufferTape s p := by
+2476:      have h3' : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2481:      have hre3 := nf_retag (N := N) (SL := nf_LeafSt N) (S := SeekPhase) c₃ (nf_Ph.bFwd t)
+2486:      have hB3 : c₃'.workTapes 1 = B := by
+2491:      have hP3 : c₃'.workTapePos 1 = p₁ + 2 * y + 1 := by
+2504:      have h5' : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2509:      have hc5A : c₅.workTapes 0 = FinTM.bufferTape s := by
+2515:      have hc5A0 : c₅.workTapePos 0 = 0 := by
+2519:      have hc5B : c₅.workTapes 1 = fun _ => none := by
+2523:      have hc5o : c₅.output = [] := by
+2533:      have hrun1 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2540:      have hrun2 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2545:      have hrun3 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2549:      have hall : (∀ (t' : Fin N.k), m ≤ t'.val → ∀ (r : ℕ) (h : r < rs.length),
+2557:          · have : t' = t := Fin.ext he'
+2566:        obtain ⟨v, rfl⟩ : ∃ v, u = (T₁ + 1) + v := ⟨u - (T₁ + 1), by omega⟩
+2570:        obtain ⟨w, rfl⟩ : ∃ w, v = (s.length + 6) + w := ⟨v - (s.length + 6), by omega⟩
+2574:        obtain ⟨z, rfl⟩ : ∃ z, w = TC + z := ⟨w - TC, by omega⟩
+2581:        have hRle : R.length ≤ 2 * rs.length := by omega
+2582:        have e1 : (2 * N.k + 8) * rs.length = 2 * (N.k * rs.length) + 8 * rs.length := by ring
+2583:        have e2 : (2 * N.k + 4) * rs.length = 2 * (N.k * rs.length) + 4 * rs.length := by ring
+2584:        have e3 : (d + 1) * ((2 * (2 * N.k + 4) + 12) * rs.length + 15) =
+2592:      have hrj := hrej₁ hok
+2596:      have hver : ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
+2610:private theorem nf_allPass_iff (N : FinNDTM Bool) (x : List Bool)
+2634:private theorem nf_V_char (N : FinNDTM Bool) (x : List Bool)
+2656:  have hslen : s.length = (2 * N.k + 4) * rs.length := nf_stream_length N.k rs
+2661:  have hguard0 : ∀ u < 2 * s.length + 2, ∀ q,
+2674:  have hwin0 : ∀ u ≤ 2 * s.length + 2, ∀ b, (V.runFrom ((streamStartCfg x 0
+2685:    have hver : (V.runFrom ((streamStartCfg x 0
+2701:  have hre := nf_retag (N := N) (SL := nf_LeafSt N) (S := nf_St N (nf_LeafSt N) nf_Ph.ctl) dS
+2706:  have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
+2718:  have hguard₁ : ∀ u < T₁, ∀ q, ((nf_M N (nf_leaf N) (nf_Ph.rep none)).runFrom dL u).state =
+2721:    have h := hpre₁ u hu q hq
+2725:  have hrun0 : V.runFrom ((streamStartCfg x 0
+2734:  have hwin1 : ∀ u ≤ T₁, ∀ b, (V.runFrom (dL.mapState (Sigma.mk (nf_Ph.rep none))) u).state ≠
+2742:  have hwin01 : ∀ u ≤ 2 * s.length + 2 + 1 + T₁, ∀ b, (V.runFrom ((streamStartCfg x 0
+2748:    obtain ⟨v, rfl⟩ : ∃ v, u = (2 * s.length + 2 + 1) + v := ⟨u - (2 * s.length + 2 + 1), by omega⟩
+2755:    have hrj := hrej₁ hin
+2759:    have hver : (V.runFrom ((streamStartCfg x 0
+2767:    have hnp : ¬ nf_allPass N x rs := fun h => hin ((nf_allPass_iff N x rs).mp h).2.1
+2782:  have hre1 := nf_retag (N := N) (SL := nf_LeafSt N)
+2788:  have hA1 : c₁'.workTapePos 0 = s.length := by
+2791:  have htape1 : ∀ p, c₁'.workTapes 0 p = FinTM.bufferTape s p := by
+2797:  have h3' : V.runFrom
+2801:  have hc3A : c₃.workTapes 0 = FinTM.bufferTape s := by
+2805:  have hc3B : c₃.workTapes 1 = fun _ => none := by
+2810:  have hc3o : c₃.output = [] := by
+2816:  have hrun1 : V.runFrom ((streamStartCfg x 0
+2824:  have hrun2 : V.runFrom ((streamStartCfg x 0
+2835:    obtain ⟨v, rfl⟩ : ∃ v, u = (2 * s.length + 2 + 1 + (T₁ + 1)) + v :=
+2840:    obtain ⟨w, rfl⟩ : ∃ w, v = (s.length + 6) + w := ⟨v - (s.length + 6), by omega⟩
+2848:    have e2 : (2 * N.k + 4) * rs.length = s.length := hslen.symm
+2858:private theorem nf_split (k : ℕ) (s : List Bool)
+2864:  have hidx : ∀ (r : Fin n) (p : Fin (2 * k + 4)), (2 * k + 4) * r.val + p.val < s.length := by
+2867:    have h1 := p.isLt
+2868:    have h2 : (2 * k + 4) * (r.val + 1) ≤ (2 * k + 4) * n := Nat.mul_le_mul_left _ r.isLt
+2874:    have := congrArg List.length h
+2877:  · have h := List.ofFn_mul' (m := 2 * k + 4) (n := n)
+2879:    have h0 : List.ofFn (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt)) =
+2887:    have hf := hfl r hr
+2888:    have e : (2 * k + 4) * (r + 1) - 1 = (2 * k + 4) * r + (2 * k + 3) := by
+2904:private theorem nf_hV (N : FinNDTM Bool) (x s : List Bool)
+2934:private theorem nf_vrun_of_ok (N : FinNDTM Bool) (x : List Bool)
+2942:    have hlt : r < rs.length := by omega
+2943:    have ih := nf_vrun_of_ok N x rs r (by omega) (fun r' h' i => hok r' (by omega) i)
+2944:    have hok' : ∀ i, nf_ok N (N.tm.runWith ((rs.map (fun r => r 0)).take r) (N.tm.initCfg x))
+2947:      have := hok r (by omega) i
+2953:    have hd0 : nf_decode N.k (fun p => some (rs[r] p)) 0 =
+2956:    have hds : (fun j : Fin N.k => nf_decode N.k (fun p => some (rs[r] p)) j.succ) =
+2972:private theorem nf_V_display (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ [])
+2990:  obtain ⟨rs, hrs⟩ : ∃ rs, rs = List.ofFn fun r : Fin w.length =>
+2994:  have hdisp : nf_display N x w = rs.flatMap List.ofFn := by
+2997:  have hrlen : rs.length = w.length := by rw [hrs, List.length_ofFn]
+2998:  have hget : ∀ r (h : r < rs.length), rs[r] =
+3006:  have hne : rs ≠ [] := by
+3008:    have := congrArg List.length h
+3011:  have hflag : ∀ r (h : r < rs.length),
+3016:  have hmap : rs.map (fun r => r 0) = w := by
+3021:  have hok : ∀ r (hr : r < rs.length) (i : Fin (N.k + 1)),
+3031:  have hall : nf_allPass N x rs := by
+3063:private theorem nf_ledger (k t₀ t s TQ : ℕ) (ht : t₀ ≤ t) (hs : s = (2 * k + 4) * t₀)
+3067:  have e1 : 2 * s + (4 * s + 10 + k * ((2 * (2 * k + 4) + 12) * t₀ + 15)) + 11 =
+3071:  have h2 : A * t₀ ≤ A * t := Nat.mul_le_mul_left A ht
+3072:  have h3 : 21 + 15 * k ≤ (21 + 15 * k) * (t + 1) := Nat.le_mul_of_pos_right _ (Nat.succ_pos t)
+3073:  have e4 : nf_C k * (t + 1) = A * t + A + (21 + 15 * k) * (t + 1) := by
+3087:private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
+3094:  have hex : ∃ r, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state = none :=
+3098:  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
+3099:  have hmin : ∀ r < t₀, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none :=
+3101:  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+3102:  have hpos : 0 < t₀ := by
+3104:    have h00 : t₀ = 0 := by omega
+3105:    have := hspec
+3109:  have hw₀len : w₀.length = t₀ := by rw [hw₀, List.length_take]; omega
+3110:  have hw₀ne : w₀ ≠ [] := by
+3112:    have := congrArg List.length h
+3115:  have hlive : ∀ r < w₀.length, (N.tm.runWith (w₀.take r) (N.tm.initCfg x)).state ≠ none := by
+3120:  have hout : (N.tm.runWith w₀ (N.tm.initCfg x)).output = [true] := by
+3121:    have hsplit := NDTM.runWith_append (tm := N.tm) w₀ (w.drop t₀) (N.tm.initCfg x)
+3129:  have hB : 0 + 2 * (nf_display N x w₀).length + TQ + 11 ≤ nf_C N.k * (t + 1) := by
+3147:private theorem nf_backward (N : FinNDTM Bool) (x : List Bool)
+3152:  have hwlen : w.length = rs.length := List.length_map _
+3153:  have hgen : ∀ r ≤ rs.length, (rs.take r).foldl (nf_vstep N) (N.tm.initCfg x) =
+3156:  have hfin := hgen rs.length le_rfl
+3159:  have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
+3161:  have hinit_out : StepBlock.outputSummary (N.tm.initCfg x).output = none := by
+3166:  have hsw : (rs.flatMap List.ofFn).foldl (nf_sweepStep N) (nf_sweepInit N) =
+3171:  have hout := nf_sweepPass_output N _ _ hc2 hctl
+3172:  have hhalt : (rs.foldl (fun d r => nf_complete N (fun p => some (r p)) d)
+3187:private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
+3200:  have hTQ : TQ = TQ' := by
+3206:    have h1 : Segment V F (fun _ => True) st (V.runFrom st TQ) TQ :=
+3211:    have h2 : Segment V F (fun _ => True) st (V.runFrom st TQ') TQ' :=

@@ -73,3 +73,12 @@ exchange commit `bacfe4e2636a0d2a1b6f90da8a99d04719e597f1`), SHA-256 `0d59af4db4
 major is repaired (notes 4–7).
 
 **Not yet clear to merge: #191** (gate 95's round-2 major is open).
+
+## Round 2 dispositions (#191's commits `dfc3e990` and `49c4d0f7`; head `bbf69680`)
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | major | **Repaired, by the round-1 ruling's kind (repair).** `nf_split`'s `h0` is now `(List.ofFn_congr hlen (fun i : Fin s.length => s[i.val])).symm.trans (List.ofFn_getElem s)` (`dfc3e990`). So that round 3 does not find the next one, a library sweep of the whole file followed (`evidence/round3/sweep/`): every `have`, `obtain` and private theorem about core or Mathlib objects only, probed in place by `exact?`, as a generalised `example`, and as its normalised core with `apply?`. It found eight more inline re-proofs, of `Nat.succ_mod_succ_eq_zero_iff`, `Nat.pos_of_mul_pos_left` (2), `Nat.div_lt_of_lt_mul`, `Nat.mul_div_cancel'`, `List.ofFn_eq_nil_iff` and `List.ne_nil_of_length_pos` (2). It also found two chains that are each one lemma, `List.length_take_of_le` (8 sites) and `List.foldl_concat` (7 sites). It flagged an in-file duplicate as well: `nf_prefix_last` and `nf_sweep_record` proved the same prefix-array completion. `49c4d0f7` cites every lemma and makes the duplicate one private, `nf_update_last`. No statement changes; the file is 39 lines shorter. Ledger: the round-2 major's entry records the sweep's results. |
+| 2 | minor | **Fixed** (`dfc3e990`, docstring only). The sketch now says that the time is at most `(6W + k(2W + 12)) t + 21 + 15k`, that `t + 1` absorbs the additive terms, and that at `k = 0` the base terms still pay for the guess and the control and input sweeps. The replay sentence says "a work-tape replay". |
+| 3 | minor | **Fixed** in the ledger (campaign commit `c1134085`): RC-4 reads "six invocations at five locations" (lines 5203, 6422, 6566, 6778, and twice at 7022), and the 12.2c task re-points all six. |
+| 4–7 | notes | Agreed; nothing to do. Round 3 regenerates the evidence note 6 checked: the seal (278 candidates, `Turing.Contract.zero` added by #197), the axioms, the screen and the replay, on the merged tree after #196. |
