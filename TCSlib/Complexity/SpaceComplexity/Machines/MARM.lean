@@ -217,10 +217,11 @@ lemma MHalt.step {a : MConf m Λ} {r : Bool} (hG : G a)
 /-- Answering in one step. -/
 lemma MHalt.ret {l : Λ} {v : Fin m → ℕ} {r : Bool} {μ : Mem} (hA : A l = .det (.ret r))
     (hG : G ((some l, v, none), μ)) : MHalt A oracle x G ((some l, v, none), μ) r :=
-  ⟨1, by obtain ⟨M, p⟩ := μ; simp [mrun, mstep, astep, hA],
-    by obtain ⟨M, p⟩ := μ; simp [mrun, mstep, astep, hA], fun t ht => by
-    obtain rfl : t = 0 := by omega
-    exact hG⟩
+  ⟨1, by obtain ⟨M, p⟩ := μ; simp [mrun, mstep, hA, astep_ret (A := fun _ => .ret r) rfl],
+    by obtain ⟨M, p⟩ := μ; simp [mrun, mstep, hA, astep_ret (A := fun _ => .ret r) rfl],
+    fun t ht => by
+      obtain rfl : t = 0 := by omega
+      exact hG⟩
 
 /-- Rewriting the end configuration of a run along an equation. -/
 lemma MReach.of_eq {a b b' : MConf m Λ} (h : MReach A oracle x G a b) (e : b = b') :
