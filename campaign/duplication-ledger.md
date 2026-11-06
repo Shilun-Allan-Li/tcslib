@@ -622,8 +622,10 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 - `Build/Contract/Basic`, the public source: **1 of 93 (1.1%)**, `Segment.trans`, 20 lines;
 - `ClassNP/Tautology`: **1 of 93 (1.1%)**, `tautDual_segment_add`, 12 lines. The file has no other
   recorded member;
-- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. With IW-1's
-  `counterPatch`, the file's recorded total is **2 of 79 (2.5%)**.
+- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. The file's
+  recorded total, every acknowledged member counted once (corrected at gate 98's round-2 minor
+  1): SG-1's `counter_span_append`, IW-1's `counterPatch` and R8.0b E1's pair `counterLoopTM`/
+  `counterLoopTMVia`, **4 of 79 (5.1%)**, 68 lines (28 + 4 + 19 + 17).
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 

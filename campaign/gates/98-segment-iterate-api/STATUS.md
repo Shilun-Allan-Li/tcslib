@@ -35,3 +35,4 @@
   records from `c337361b0d66e21345d3802649dc0c151b5c56d2`. Findings file
   `segment-iterate-api-r2-findings.md`.
 - 2026-11-06: round 2 **dispatched** (the user).
+- 2026-11-06: round 2 **CLOSE** (0/0/1/4); the minor swept in the ledger. **Clear to merge.**
