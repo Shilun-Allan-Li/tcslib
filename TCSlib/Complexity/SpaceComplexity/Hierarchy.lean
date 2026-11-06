@@ -294,6 +294,574 @@ private lemma sph_logspace_ssubset
   rw [← LOGSPACE_eq]
   exact hlin.trans hP
 
+/-- One input-head move before the lifted rewind. The rewind's published contract requires a
+positive input position; this leaf supplies it even when the radius witness stops at `0`.
+The action changes no work tape or output. [AB09, §1.2]
+
+**Proof sketch.** The transition always moves the input head right and reaches its live anchor.
+At the right boundary it stays put; everywhere else its position increases by one. -/
+private def sphRightTM (k : ℕ) (Γ : Type) : MultiTapeTM k Γ Bool where
+  q₀ := false
+  tr := fun _ _ _ => ⟨.pos, fun _ => (none, 0), none, some true⟩
+
+/-- The right-move leaf's framed run and positive endpoint.
+
+**Proof sketch.** Read the one transition field by field, separate the input's right boundary,
+and use the zero-step and one-step configurations for the cut and head claim. -/
+private lemma sph_right_run {k : ℕ} {Γ : Type} {x : List Γ}
+    (d : Cfg k Γ Bool x) (hd : d.state = some false) :
+    (sphRightTM k Γ).runFrom d 1 =
+        {d with state := some true, inputPos := moveInputPos d.inputPos .pos} ∧
+      1 ≤ (moveInputPos d.inputPos .pos).val ∧
+      (∀ u < 1, ((sphRightTM k Γ).runFrom d u).state ≠ some true) ∧
+      ∀ u ≤ 1, ((sphRightTM k Γ).runFrom d u).workTapePos = d.workTapePos := by
+  have hstep : (sphRightTM k Γ).runFrom d 1 =
+      {d with state := some true, inputPos := moveInputPos d.inputPos .pos} := by
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some hd]
+    apply Cfg.ext
+    · rw [Action.apply_state]; rfl
+    · rw [Action.apply_inputPos]; rfl
+    · funext j p
+      rw [Action.apply_workTapes]
+      simp only [sphRightTM, Option.getD_none, Cfg.workTapeSymbols_eq,
+        Function.update_eq_self]
+    · funext j
+      rw [Action.apply_workTapePos]
+      simp only [sphRightTM, SignType.coe_zero, add_zero]
+    · rw [Action.apply_output]
+      simp only [sphRightTM, Option.toList_none, List.append_nil]
+  refine ⟨hstep, ?_, ?_, ?_⟩
+  · by_cases h : d.inputPos.val = x.length + 1
+    · have hp : d.inputPos = ⟨x.length + 1, by omega⟩ := Fin.ext h
+      rw [hp, SignType.pos_eq_one, moveInputPos_rightBoundary]
+      omega
+    · rw [moveInputPos_pos_of_ne_right _ h]
+      exact Nat.succ_pos _
+  · intro u hu
+    have : u = 0 := by omega
+    subst u
+    rw [MultiTapeTM.runFrom_zero, hd]
+    decide
+  · intro u hu
+    have : u = 0 ∨ u = 1 := by omega
+    rcases this with rfl | rfl
+    · rw [MultiTapeTM.runFrom_zero]
+    · rw [hstep]
+
+/-- Emit the final verdict and halt, preserving the input and work tapes. The only output
+leaf needed after the record test. [AB09, §1.2] -/
+private def sphEmitTM (k : ℕ) {Γ : Type} (b : Γ) : MultiTapeTM k Γ Unit where
+  q₀ := ()
+  tr := fun _ _ _ => ⟨0, fun _ => (none, 0), some b, none⟩
+
+/-- The verdict emitter appends exactly one symbol in one step, with no work-head motion.
+
+**Proof sketch.** Read the five fields of its sole action using the public action equations. -/
+private lemma sph_emit_run {k : ℕ} {Γ : Type} {x : List Γ} (b : Γ)
+    (d : Cfg k Γ Unit x) (hd : d.state = some ()) :
+    (sphEmitTM k b).runFrom d 1 = {d with state := none, output := d.output ++ [b]} ∧
+      ∀ u ≤ 1, ((sphEmitTM k b).runFrom d u).workTapePos = d.workTapePos := by
+  have hstep : (sphEmitTM k b).runFrom d 1 =
+      {d with state := none, output := d.output ++ [b]} := by
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some hd]
+    apply Cfg.ext
+    · rw [Action.apply_state]; rfl
+    · rw [Action.apply_inputPos]
+      exact moveInputPos_zero _
+    · funext j p
+      rw [Action.apply_workTapes]
+      simp only [sphEmitTM, Option.getD_none, Cfg.workTapeSymbols_eq,
+        Function.update_eq_self]
+    · funext j
+      rw [Action.apply_workTapePos]
+      simp only [sphEmitTM, SignType.coe_zero, add_zero]
+    · rw [Action.apply_output]
+      rfl
+  refine ⟨hstep, ?_⟩
+  intro u hu
+  have : u = 0 ∨ u = 1 := by omega
+  rcases this with rfl | rfl
+  · rw [MultiTapeTM.runFrom_zero]
+  · rw [hstep]
+
+/-- The input validator's finite-state test: precisely the embedded binary digits. -/
+private def sphDigit {Q : Type} : RecSym Q (Fin 3) → Bool
+  | .digit _ => true
+  | .cell _ _ => false
+  | .st _ => false
+  | .tag _ => false
+
+/-- The validator accepts precisely embedded binary words, including the empty word.
+
+**Proof sketch.** Induct on the input. A successful fold forces the head symbol to be a digit;
+strip that digit and use the induction hypothesis on the tail. Conversely, prepend the
+corresponding Boolean to the decoded tail. -/
+private lemma sph_fold_valid {Q : Type} (ys : List (RecSym Q (Fin 3))) (a : Bool) :
+    ys.foldl (fun b c => b && sphDigit c) a = true ↔
+      a = true ∧ ∃ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3)) := by
+  induction ys generalizing a with
+  | nil =>
+    rw [List.foldl_nil]
+    exact ⟨fun h => ⟨h, [], rfl⟩, fun h => h.1⟩
+  | cons y ys ih =>
+    rw [List.foldl_cons, ih]
+    constructor
+    · rintro ⟨hay, x, hx⟩
+      obtain ⟨ha, hy⟩ := Bool.and_eq_true_iff.mp hay
+      refine ⟨ha, ?_⟩
+      cases y with
+      | digit b =>
+        refine ⟨b :: x, ?_⟩
+        rw [List.map_cons, RecSym.digitEmb_apply, ← hx]
+      | cell c m => cases hy
+      | st q => cases hy
+      | tag t => cases hy
+    · rintro ⟨ha, x, hx⟩
+      cases x with
+      | nil => cases hx
+      | cons b bs =>
+        rw [List.map_cons] at hx
+        obtain ⟨hy, ht⟩ := List.cons.inj hx
+        refine ⟨Bool.and_eq_true_iff.mpr ⟨ha, ?_⟩, bs, ht⟩
+        rw [hy, RecSym.digitEmb_apply]
+        rfl
+
+/-- The rich-input validation phase, on all of the diagonalizer's work tapes. Its successful
+exit supplies a binary input for every subsequent phase; it moves no work head.
+[AB09, Theorem 4.8, alphabet reduction]
+
+**Proof sketch.** Use the published framed input fold and identify its final flag with
+`sph_fold_valid`. The framed endpoint also restores the input head to its initial position. -/
+private lemma sph_validation_run {k : ℕ} {Q : Type}
+    {ys : List (RecSym Q (Fin 3))} (d : Cfg k (RecSym Q (Fin 3)) (ScanPhase Bool) ys)
+    (hd : d.state = some (.fwd true)) (hin : d.inputPos = 1) :
+    ∃ b : Bool,
+      (inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d (2 * ys.length + 2) =
+        {d with state := some (.done b)} ∧
+      (b = true ↔ ∃ x : List Bool, ys = x.map (RecSym.digitEmb Q (Fin 3))) ∧
+      (∀ u < 2 * ys.length + 2, ∀ a,
+        ((inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d u).state ≠
+          some (.done a)) ∧
+      ∀ j u, u ≤ 2 * ys.length + 2 →
+        ((inputFoldTM k (fun a c => a && sphDigit c) true).runFrom d u).workTapePos j =
+          d.workTapePos j := by
+  obtain ⟨hr, hc, hh⟩ := inputFoldTM_run_ofCfg (fun a c => a && sphDigit c) true d hd hin
+  refine ⟨ys.foldl (fun a c => a && sphDigit c) true, hr, ?_, hc, hh⟩
+  exact ⟨fun h => ((sph_fold_valid ys true).mp h).2,
+    fun h => (sph_fold_valid ys true).mpr ⟨rfl, h⟩⟩
+
+/-- Witness tapes are after the record, radius, initializer scratch and runner scratch banks.
+Separate scratch banks keep the runner disjoint from both the radius and the dirty witness. -/
+private def sphWitnessSel (KI KR m : ℕ) : Fin m ↪ Fin (KI + KR + m + 2) where
+  toFun i := ⟨KI + KR + 2 + i.val, by have := i.isLt; omega⟩
+  inj' := by
+    intro i j h
+    apply Fin.ext
+    have h' : KI + KR + 2 + i.val = KI + KR + 2 + j.val :=
+      congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h
+    omega
+
+/-- The radius tape is outside the witness bank, including for a zero-tape witness. -/
+private lemma sph_witness_cap (KI KR m : ℕ) :
+    (1 : Fin (KI + KR + m + 2)) ∉ Set.range (sphWitnessSel KI KR m) := by
+  rintro ⟨i, hi⟩
+  have := congrArg Fin.val hi
+  simp only [sphWitnessSel, Function.Embedding.coeFn_mk, Fin.val_one] at this
+  omega
+
+/-- The constructibility witness returns with its complete binary radius on tape `1`, preserving
+all tapes outside its bank and the radius tape. Its last emission is included in the captured
+word. [AB09, Theorem 4.8, radius phase]
+
+**Proof sketch.** Choose the witness's first halting time and lift its run to the record
+alphabet. Apply the published returning capture embedding. Its capture and frame equations give
+the endpoint. Its selected, capture and frame space equations bound each tape; summing gives a
+constant multiple of the witness space and radius length. -/
+private lemma sph_radius_run (KI KR : ℕ) {Q : Type} [DecidableEq Q]
+    (g : ℕ → ℕ) (c : ℕ) (M : FinTM Bool)
+    (hM : M.ComputesInSpace (fun x => (g x.length).bits) (fun n => c * g n))
+    (x : List Bool)
+    (tapes : Fin (KI + KR + M.k + 2) → ℤ → Option (RecSym Q (Fin 3)))
+    (heads : Fin (KI + KR + M.k + 2) → ℤ) (out : List (RecSym Q (Fin 3))) :
+    let e := RecSym.digitEmb Q (Fin 3)
+    let ι := sphWitnessSel KI KR M.k
+    let R := embedSilentRetTM ι 1 (M.tm.liftSymbols e)
+    let start := (embedSilentCfg ι 1 tapes heads [] out
+      ((M.tm.initCfg x).liftSymbols e)).mapState (Sum.inl : M.State → M.State ⊕ Unit)
+    ∃ t : ℕ,
+      (R.runFrom start t).state = some (Sum.inr ()) ∧
+      (∀ u < t, (R.runFrom start u).state ≠ some (Sum.inr ())) ∧
+      (R.runFrom start t).workTapes 1 =
+        FinTM.bufferTape ((g x.length).bits.map RecSym.digit) ∧
+      (R.runFrom start t).workTapePos 1 = ((g x.length).bits.length : ℤ) ∧
+      (∀ j, j ∉ Set.range ι → j ≠ 1 →
+        (R.runFrom start t).workTapes j = tapes j ∧
+          (R.runFrom start t).workTapePos j = heads j) ∧
+      (∀ u ≤ t, (R.runFrom start u).output = out) ∧
+      R.spaceUsed start t ≤ (KI + KR + M.k + 2) *
+        (c * g x.length + (g x.length).bits.length + 1) := by
+  classical
+  dsimp only
+  let e := RecSym.digitEmb Q (Fin 3)
+  let ι := sphWitnessSel KI KR M.k
+  let R := embedSilentRetTM ι 1 (M.tm.liftSymbols e)
+  let a := (M.tm.initCfg x).liftSymbols e
+  let start := (embedSilentCfg ι 1 tapes heads [] out a).mapState
+    (Sum.inl : M.State → M.State ⊕ Unit)
+  obtain ⟨v, hv, hsv⟩ := (FinTM.computesInSpace_iff _ _ _).mp hM x
+  obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff _ _ _ _).mp hv
+  obtain ⟨t, htv, hlive, heq⟩ := M.tm.exists_first_halt (M.tm.initCfg x) hhalt
+  have hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * g x.length :=
+    (M.tm.spaceUsed_mono _ htv).trans hsv
+  have ho : (M.tm.runFrom (M.tm.initCfg x) t).output = (g x.length).bits :=
+    (congrArg Cfg.output heq).trans hout
+  have hc : a.state ≠ none := by
+    rw [Cfg.liftSymbols_state, MultiTapeTM.initCfg_eq, Cfg.init_state]
+    exact Option.some_ne_none _
+  have hh : ((M.tm.liftSymbols e).runFrom a t).state = none := by
+    rw [MultiTapeTM.liftSymbols_runFrom, Cfg.liftSymbols_state, heq, hhalt]
+  have hl : ∀ u < t, ((M.tm.liftSymbols e).runFrom a u).state ≠ none := by
+    intro u hu
+    rw [MultiTapeTM.liftSymbols_runFrom, Cfg.liftSymbols_state]
+    exact hlive u hu
+  have hcap := sph_witness_cap KI KR M.k
+  obtain ⟨hpre, hr, hcut⟩ := embedSilentRetTM_run ι 1 hcap (M.tm.liftSymbols e)
+    tapes heads [] out a t hc hl hh
+  have hout' : ((M.tm.liftSymbols e).runFrom a t).output =
+      (g x.length).bits.map RecSym.digit := by
+    rw [MultiTapeTM.liftSymbols_runFrom, Cfg.liftSymbols_output, ho]
+    apply List.map_congr_left
+    intro b _
+    exact RecSym.digitEmb_apply _ _ b
+  refine ⟨t, ?_, hcut, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hr]
+  · rw [hr]
+    have h := (embedSilentCfg_cap ι 1 hcap tapes heads [] out
+      ((M.tm.liftSymbols e).runFrom a t)).1
+    simpa only [List.nil_append, hout'] using h
+  · rw [hr]
+    have h := (embedSilentCfg_cap ι 1 hcap tapes heads [] out
+      ((M.tm.liftSymbols e).runFrom a t)).2
+    simpa only [List.nil_append, hout', List.length_map] using h
+  · intro j hj hjc
+    rw [hr]
+    exact embedSilentCfg_unselected ι 1 tapes heads [] out _ j hj hjc
+  · intro u hu
+    rcases lt_or_eq_of_le hu with hu | rfl
+    · rw [hpre u hu, Cfg.mapState_output, embedSilentCfg_output]
+    · rw [hr, embedSilentCfg_output]
+  · rw [MultiTapeTM.spaceUsed_eq_sum]
+    calc
+      _ ≤ ∑ _j : Fin (KI + KR + M.k + 2),
+          (c * g x.length + (g x.length).bits.length + 1) := by
+        apply Finset.sum_le_sum
+        intro j _
+        rw [MultiTapeTM.spaceUsedByTape_eq_card,
+          embedSilentRetTM_visitedByTapeHead,
+          ← MultiTapeTM.spaceUsedByTape_eq_card]
+        by_cases hj : j ∈ Set.range ι
+        · obtain ⟨i, rfl⟩ := hj
+          rw [(embedSilentTM_visitedByTapeHead ι 1 hcap _ tapes heads [] out a t i).2]
+          have h : (M.tm.liftSymbols e).spaceUsedByTape a t i ≤ c * g x.length :=
+            calc
+              _ ≤ (M.tm.liftSymbols e).spaceUsed a t :=
+                (M.tm.liftSymbols e).spaceUsedByTape_le_spaceUsed a t i
+              _ = M.tm.spaceUsed (M.tm.initCfg x) t :=
+                MultiTapeTM.liftSymbols_spaceUsed M.tm e (M.tm.initCfg x) t
+              _ ≤ _ := hs
+          omega
+        · by_cases hjc : j = 1
+          · subst j
+            have h := embedSilentTM_spaceUsedByTape_cap ι 1 hcap
+              (M.tm.liftSymbols e) tapes heads [] out a t
+            rw [hout', List.length_map] at h
+            exact h.trans (by omega)
+          · rw [(embedSilentTM_visitedByTapeHead_frame ι 1 hcap _
+              tapes heads [] out a t j hj hjc).2]
+            omega
+      _ = _ := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+        rfl
+
+/-- The input rewind uses no work tapes, so its embedding preserves every work tape. -/
+private def sphEmptySel (k : ℕ) : Fin 0 ↪ Fin k where
+  toFun := Fin.elim0
+  inj' := fun i => Fin.elim0 i
+
+/-- The lifted binary input rewind, embedded on the empty bank, is valid from any positive
+input position of an embedded binary word, with the entire physical work bank framed.
+
+**Proof sketch.** Construct the zero-tape binary configuration at the same input position,
+apply the published input rewind, lift its run, and use the R1 reconstruction theorem to
+identify its initial and final embeddings with the physical configurations. -/
+private lemma sph_input_rewind_run {k : ℕ} {Q : Type} [DecidableEq Q] {x : List Bool}
+    (d : Cfg k (RecSym Q (Fin 3)) InputRewindPhase (x.map (RecSym.digitEmb Q (Fin 3))))
+    (hd : d.state = some .start) (hp : 1 ≤ d.inputPos.val) :
+    let R := embedEmitTM (sphEmptySel k)
+      ((inputRewindTM 0).liftSymbols (RecSym.digitEmb Q (Fin 3)))
+    R.runFrom d (d.inputPos.val + 1) = {d with state := some .done, inputPos := 1} ∧
+      (∀ u < d.inputPos.val + 1, (R.runFrom d u).state ≠ some .done) ∧
+      ∀ u ≤ d.inputPos.val + 1, (R.runFrom d u).workTapePos = d.workTapePos := by
+  let e := RecSym.digitEmb Q (Fin 3)
+  let a : Cfg 0 Bool InputRewindPhase x :=
+    ⟨some .start, ⟨d.inputPos.val, by simpa only [List.length_map] using d.inputPos.isLt⟩,
+      Fin.elim0, Fin.elim0, []⟩
+  have ha : a.inputPos.val = d.inputPos.val := rfl
+  have hi : (a.liftSymbols e).inputPos = d.inputPos := by
+    rw [Cfg.liftSymbols_inputPos]
+    exact Fin.ext rfl
+  have hs : embedEmitCfg (sphEmptySel k) d.workTapes d.workTapePos d.output
+      (a.liftSymbols e) = d := by
+    apply embedEmitCfg_eq
+    · rw [Cfg.liftSymbols_state]; exact hd.symm
+    · exact hi
+    · rw [Cfg.liftSymbols_output]
+      exact List.append_nil _
+    · exact fun i => Fin.elim0 i
+    · exact fun _ _ => ⟨rfl, rfl⟩
+  obtain ⟨hr, hc, hh⟩ := inputRewindTM_run a rfl (ha.symm ▸ hp)
+  have hrun (u : ℕ) :
+      (embedEmitTM (sphEmptySel k) ((inputRewindTM 0).liftSymbols e)).runFrom d u =
+        embedEmitCfg (sphEmptySel k) d.workTapes d.workTapePos d.output
+          (((inputRewindTM 0).runFrom a u).liftSymbols e) := by
+    have h := embedEmitTM_runFrom (sphEmptySel k) ((inputRewindTM 0).liftSymbols e)
+      d.workTapes d.workTapePos d.output (a.liftSymbols e) u
+    rw [hs, MultiTapeTM.liftSymbols_runFrom] at h
+    exact h
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hrun, ← ha, hr]
+    apply embedEmitCfg_eq
+    · rw [Cfg.liftSymbols_state]
+    · rw [Cfg.liftSymbols_inputPos]
+      exact Fin.ext rfl
+    · rw [Cfg.liftSymbols_output]
+      exact List.append_nil _
+    · exact fun i => Fin.elim0 i
+    · exact fun _ _ => ⟨rfl, rfl⟩
+  · intro u hu
+    rw [hrun, embedEmitCfg_state, Cfg.liftSymbols_state]
+    exact hc u (ha.symm ▸ hu)
+  · intro u _
+    rw [hrun]
+    funext j
+    exact (embedEmitCfg_unselected (sphEmptySel k) d.workTapes d.workTapePos d.output
+      (((inputRewindTM 0).runFrom a u).liftSymbols e) j
+      (by rintro ⟨i, _⟩; exact Fin.elim0 i)).2
+
+/-- The two rewinds after radius capture: a right move makes the input position positive,
+the zero-tape input rewind restores position one, and the radius rewind restores tape one.
+Both seams use the published general-configuration composition. -/
+private def sphRewindsTM (k : ℕ) (Q : Type) [DecidableEq Q] (cap : Fin k) :
+    MultiTapeTM k (RecSym Q (Fin 3)) ((Bool ⊕ InputRewindPhase) ⊕ RewindPhase) :=
+  seamCompTM
+    (seamCompTM (sphRightTM k (RecSym Q (Fin 3))) true
+      (embedEmitTM (sphEmptySel k) ((inputRewindTM 0).liftSymbols
+        (RecSym.digitEmb Q (Fin 3)))) .start)
+    (.inr .done) (rewindTM k cap) .start
+
+/-- The paired rewinds on the tape plan, including an empty captured word and an input head
+initially at zero. Every work-tape cell and the accumulated output are preserved.
+
+**Proof sketch.** Compose the one-step right move and the lifted zero-tape rewind at their
+first returns. Apply the framed radius rewind at the full captured word's length and compose
+again. Read the endpoint through the public state-map equations. -/
+private lemma sph_rewinds_run (KI KR m : ℕ) {Q : Type} [DecidableEq Q]
+    {x : List Bool} (ws : List Bool)
+    (d : Cfg (KI + KR + m + 2) (RecSym Q (Fin 3)) Bool
+      (x.map (RecSym.digitEmb Q (Fin 3))))
+    (hd : d.state = some false)
+    (hcap : d.workTapes 1 = FinTM.bufferTape (ws.map RecSym.digit))
+    (hpos : d.workTapePos 1 = (ws.length : ℤ)) :
+    ∃ t,
+      (sphRewindsTM (KI + KR + m + 2) Q 1).runFrom
+          ((d.mapState Sum.inl).mapState Sum.inl) t =
+        { state := some (Sum.inr RewindPhase.done)
+          inputPos := 1
+          workTapes := d.workTapes
+          workTapePos := Function.update d.workTapePos 1 0
+          output := d.output } ∧
+      ∀ u < t,
+        ((sphRewindsTM (KI + KR + m + 2) Q 1).runFrom
+          ((d.mapState Sum.inl).mapState Sum.inl) u).state ≠ some (Sum.inr .done) := by
+  let k := KI + KR + m + 2
+  let e := RecSym.digitEmb Q (Fin 3)
+  let I := embedEmitTM (sphEmptySel k) ((inputRewindTM 0).liftSymbols e)
+  let A := seamCompTM (sphRightTM k (RecSym Q (Fin 3))) true I .start
+  let d₁ := {d with state := some true, inputPos := moveInputPos d.inputPos .pos}
+  let a := d₁.mapState (fun _ => InputRewindPhase.start)
+  let d₂ : Cfg k (RecSym Q (Fin 3)) InputRewindPhase (x.map e) :=
+    {a with state := some InputRewindPhase.done, inputPos := 1}
+  obtain ⟨h₁, hp, hc₁, _⟩ := sph_right_run d hd
+  obtain ⟨h₂, hc₂, _⟩ := sph_input_rewind_run a
+    (by rw [Cfg.mapState_state]; rfl)
+    (by rw [Cfg.mapState_inputPos]; exact hp)
+  have hA : A.runFrom (d.mapState Sum.inl) (1 + 1 + (a.inputPos.val + 1)) =
+      d₂.mapState Sum.inr :=
+    seamCompTM_run_ofCfg (sphRightTM k _) true I .start h₁ rfl hc₁ h₂
+  have hAc := seamCompTM_firstReturn_ofCfg (sphRightTM k _) true I .start .done
+    h₁ rfl hc₁ h₂ rfl hc₂
+  let b := (d₂.mapState (Sum.inr : InputRewindPhase → Bool ⊕ InputRewindPhase)).mapState
+    (fun _ => RewindPhase.start)
+  have hb : b.state = some .start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  have hbh : b.workTapePos = d.workTapePos := by
+    funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hbt : b.workTapes = d.workTapes := by
+    funext j p
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  obtain ⟨h₃, hc₃, _⟩ := rewindTM_run_ofCfg (1 : Fin k)
+    (ws.map (RecSym.digit : Bool → RecSym Q (Fin 3))) ws.length
+    (by rw [List.length_map]) b hb (by
+      intro p _ _
+      rw [hbt, hbh, hpos, sub_self, zero_add, hcap])
+  let d₃ := { b with
+    state := some RewindPhase.done
+    workTapePos := Function.update b.workTapePos 1 (b.workTapePos 1 - ws.length) }
+  have hend : d₃.mapState Sum.inr =
+      ({ state := some (Sum.inr RewindPhase.done)
+         inputPos := 1
+         workTapes := d.workTapes
+         workTapePos := Function.update d.workTapePos 1 0
+         output := d.output } : Cfg k (RecSym Q (Fin 3))
+           ((Bool ⊕ InputRewindPhase) ⊕ RewindPhase) (x.map e)) := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j p
+      rw [Cfg.mapState_workTapes]
+      exact congrFun (congrFun hbt j) p
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+      dsimp only [d₃]
+      rw [hbh, hpos, sub_self]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
+        Cfg.mapState_output]
+  refine ⟨(1 + 1 + (a.inputPos.val + 1)) + 1 + (ws.length + 2), ?_, ?_⟩
+  · exact (seamCompTM_run_ofCfg A (.inr .done) (rewindTM k 1) .start
+      hA (by rw [Cfg.mapState_state]; rfl) hAc h₃).trans hend
+  · exact seamCompTM_firstReturn_ofCfg A (.inr .done) (rewindTM k 1) .start .done
+      hA (by rw [Cfg.mapState_state]; rfl) hAc h₃ rfl hc₃
+
+/-- The record initializer occupies the record, radius and its own contiguous scratch bank. -/
+private def sphInitSel (KI KR m : ℕ) : Fin (KI + 2) ↪ Fin (KI + KR + m + 2) where
+  toFun i := ⟨i.val, by have := i.isLt; omega⟩
+  inj' := fun _ _ h => Fin.ext
+    (congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h)
+
+/-- The initial-record phase on the diagonalizer's tape plan. Only the initializer's scratch
+bank must be blank; the witness and runner banks are framed. [AB09, Theorem 4.8]
+
+**Proof sketch.** Select the record, radius and initializer scratch tapes. Read the selected
+configuration through the R1 reconstruction equation and its field equations. Apply the
+published initial-record row, transport its run by R1 and reconstruct the framed endpoint. -/
+private lemma sph_initial_record (M : FinTM Bool) (KR m : ℕ) :
+    ∃ (KI : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (KI + KR + m + 2) (RecSym M.State (Fin 3)) P)
+      (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (KI + KR + m + 2) (RecSym M.State (Fin 3)) P
+          (x.map (RecSym.digitEmb M.State (Fin 3))),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (recordLength M.k x.length s : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (KI + KR + m + 2), 2 ≤ j.val → j.val < KI + 2 →
+          ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * (recordLength M.k x.length s + ws.length + s + x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * (recordLength M.k x.length s + ws.length + s + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + (recordLength M.k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (M.tm.initCfg x) 0) (q - d.workTapePos j)
+                else d.workTapes j q} := by
+  classical
+  obtain ⟨KI, P, hF, hD, I, entry, exit, C, hI⟩ :=
+    exists_recordInitTM M.k M.tm.q₀ (0 : Fin 3)
+  letI := hF
+  letI := hD
+  let ι := sphInitSel KI KR m
+  have h0 : ι 0 = 0 := Fin.ext rfl
+  have h1 : ι 1 = 1 := Fin.ext rfl
+  refine ⟨KI, P, hF, hD, embedEmitTM ι I, entry, exit, C, ?_⟩
+  intro x s ws hws d hd hin hrad hslot hblank
+  let a := d.select ι
+  have hrecon : embedEmitCfg ι d.workTapes d.workTapePos d.output a = d :=
+    embedEmitCfg_select ι d
+  have hstate : a.state = d.state := by
+    have h := congrArg Cfg.state hrecon
+    rwa [embedEmitCfg_state] at h
+  have hinput : a.inputPos = d.inputPos := by
+    have h := congrArg Cfg.inputPos hrecon
+    rwa [embedEmitCfg_inputPos] at h
+  have houtput : d.output ++ a.output = d.output := by
+    have h := congrArg Cfg.output hrecon
+    rwa [embedEmitCfg_output] at h
+  have htapes (i : Fin (KI + 2)) : a.workTapes i = d.workTapes (ι i) := by
+    have h : (embedEmitCfg ι d.workTapes d.workTapePos d.output a).workTapes (ι i) =
+        d.workTapes (ι i) := congrArg (fun c => c.workTapes (ι i)) hrecon
+    rwa [embedEmitCfg_selected_tape] at h
+  have hheads (i : Fin (KI + 2)) : a.workTapePos i = d.workTapePos (ι i) := by
+    have h : (embedEmitCfg ι d.workTapes d.workTapePos d.output a).workTapePos (ι i) =
+        d.workTapePos (ι i) := congrArg (fun c => c.workTapePos (ι i)) hrecon
+    rwa [embedEmitCfg_selected_pos] at h
+  obtain ⟨t, htime, hcut, henv, hr⟩ := hI s ws hws a (hstate.trans hd) (hinput.trans hin)
+    (by intro p hp hp'; rw [htapes, hheads, h1]; exact hrad p hp hp')
+    (by intro p hp hp'; rw [htapes, hheads, h0]; exact hslot p hp hp')
+    (by
+      intro j hj p
+      rw [htapes]
+      exact hblank (ι j) hj (by have := j.isLt; exact this) p)
+  have hrun (u : ℕ) :
+      (embedEmitTM ι I).runFrom d u =
+        embedEmitCfg ι d.workTapes d.workTapePos d.output (I.runFrom a u) := by
+    have h := embedEmitTM_runFrom ι I d.workTapes d.workTapePos d.output a u
+    rwa [hrecon] at h
+  refine ⟨t, htime, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [hrun, embedEmitCfg_state]
+    exact hcut u hu
+  · intro u hu j
+    rw [hrun]
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_pos, ← hheads]
+      exact henv u hu i
+    · rw [(embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).2]
+      simp only [sub_self, abs_zero, Nat.cast_nonneg]
+  · rw [hrun, hr, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [embedEmitCfg_state]
+    · rw [embedEmitCfg_inputPos]
+      exact hinput
+    · funext j q
+      by_cases hj : j ∈ Set.range ι
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_tape]
+        have hz : ι i = 0 ↔ i = 0 := by rw [← h0]; exact ι.injective.eq_iff
+        simp only [hheads, htapes, hz]
+      · rw [(embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).1]
+        have hj0 : j ≠ 0 := fun h => hj ⟨0, h0.trans h.symm⟩
+        simp only [hj0, false_and, ite_false]
+    · funext j
+      by_cases hj : j ∈ Set.range ι
+      · obtain ⟨i, rfl⟩ := hj
+        rw [embedEmitCfg_selected_pos]
+        exact hheads i
+      · exact (embedEmitCfg_unselected ι d.workTapes d.workTapePos d.output _ j hj).2
+    · rw [embedEmitCfg_output]
+      exact houtput
+
 /-- **The space hierarchy theorem** ([AB09, Theorem 4.8]; [SHL65] through
 [AB09]): for
 space-constructible `f` and `g`, if every constant multiple of `f` is
