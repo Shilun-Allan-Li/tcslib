@@ -174,8 +174,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    (base `e6bc1968`; inputs `campaign/fills/b6/inputs/b6-fill-hierarchy/`, the 43-file screen base,
    pre-ship log), after the review (`drafts/b6-fill-hierarchy/review-2026-11-06/`: 1 blocker,
    5 majors, folded in). Staged on the exchange (`outbox/fills/b6-fill-hierarchy/`, `c618ae35`);
-   **dispatched 2026-11-06** (the user). Delivery by attachment: `fill-b6-hierarchy.zip` and the
-   checkpoint zips. **Ruled (the user,
+   **dispatched 2026-11-06** (the user). **Delivered 2026-11-06** (`fill-b6-hierarchy.zip`, SHA-256
+   `9c3817bc…`, final commit `30222bbd`, `deliver/fill-b6-hierarchy-in`): `space_hierarchy` and
+   `LOGSPACE_ssubset_PSPACE` proved; `SPACE_linear_ne_NP` ends in the permitted escalation
+   **E-PAD** (an exact padded-language linear-space decider); REPORT at
+   `campaign/fills/b6/reports/hierarchy-REPORT.md`. Review, sweep and landing next. **Ruled (the user,
    2026-11-06):** `SPACE_linear_ne_NP` stays H's last checkpoint and may end in a named escalation
    (no published host for the padded decider or the padding map's polynomial time). (The other "H",
    `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
