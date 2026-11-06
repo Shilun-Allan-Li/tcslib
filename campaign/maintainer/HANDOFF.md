@@ -166,9 +166,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`;
    **dispatched 2026-11-06** (the user).
 3. **B6's H, the space hierarchy** (`space_hierarchy`, `LOGSPACE_ssubset_PSPACE`,
-   `SPACE_linear_ne_NP`; agent Codex): `campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, its
-   pre-ship re-taken on the merged campaign (`preship-d43a1374/`); reviewed 2026-11-06
-   (`review-2026-11-06/`: 1 blocker, 5 majors), the draft being reworked. **Ruled (the user,
+   `SPACE_linear_ne_NP`; agent Codex): **issued 2026-11-06**, `campaign/fills/b6/briefs/b6-fill-hierarchy.md`
+   (base `e6bc1968`; inputs `campaign/fills/b6/inputs/b6-fill-hierarchy/`, the 43-file screen base,
+   pre-ship log), after the review (`drafts/b6-fill-hierarchy/review-2026-11-06/`: 1 blocker,
+   5 majors, folded in). Staged on the exchange (`outbox/fills/b6-fill-hierarchy/`, `c618ae35`);
+   **ready to dispatch**. **Ruled (the user,
    2026-11-06):** `SPACE_linear_ne_NP` stays H's last checkpoint and may end in a named escalation
    (no published host for the padded decider or the padding map's polynomial time). (The other "H",
    `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
