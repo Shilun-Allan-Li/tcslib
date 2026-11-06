@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Generate the deepening fill's seal test and its controls.
+
+Usage: python3 -I mkseal_deepen.py <Deepen.lean> <out-dir>
+
+The sealed copy (DeepenSealed.lean) is Deepen.lean with, right after `open Turing Codec`, the
+block fit's `attribute [-simp]` line and `attribute [local irreducible]` over SEAL: the 22
+definitions of BlockFitDeepen.lean.txt's fit section, `NoEdge`, the four of its loop section,
+and this fill's extension (astep, arun, the remaining entry-register names rU rV rM, the
+input-length language and the input-format predicates). The seal is local to the namespace
+block, so it covers every declaration of the file. Expected: elaborates, 0 errors.
+
+The controls (DeepenSealControl.lean): for each sealed definition, one `rfl` unfolding, first
+unsealed (each must close) and then under the same attribute (each must FAIL at its own goal).
+"""
+import sys, os
+SEAL = [
+    # BlockFitDeepen.lean.txt, section Fit (22) and NoEdge
+    "Complexity.LogProg.SavitchARM.InitO", "Complexity.LogProg.SavitchARM.AccO",
+    "Complexity.LogProg.SavitchARM.Rel", "Complexity.LogProg.SavitchARM.outerSt",
+    "Complexity.LogProg.SavitchARM.setSt", "Complexity.LogProg.SavitchARM.St.toV",
+    "Complexity.LogProg.SavitchARM.St.zero", "Complexity.LogProg.SavitchARM.rs",
+    "Complexity.LogProg.SavitchARM.rw", "Complexity.LogProg.SavitchARM.rK",
+    "Complexity.LogProg.SavitchARM.A", "Complexity.LogProg.SavitchARM.Reach",
+    "Complexity.Codec.StepRel", "Complexity.Codec.initLang", "Complexity.Codec.acceptLang",
+    "Complexity.Codec.edgeLang", "Complexity.Codec.stepLang", "Turing.MultiTapeTM.indicator",
+    "Complexity.LogProg.Ins.embed", "Complexity.LogProg.AHalt", "Complexity.LogProg.AReach",
+    "Complexity.LogProg.PreS", "Complexity.LogProg.SavitchARM.NoEdge",
+    # BlockFitDeepen.lean.txt, section Loop
+    "Turing.FinNDTM.DecidesInSpace", "Complexity.Codec.codeK", "Complexity.logSpace",
+    "Turing.pairEncode",
+    # this fill's extension
+    "Complexity.LogProg.astep", "Complexity.LogProg.arun",
+    "Complexity.LogProg.SavitchARM.rU", "Complexity.LogProg.SavitchARM.rV",
+    "Complexity.LogProg.SavitchARM.rM", "Complexity.inputLenLang",
+    "Complexity.LogProg.ValidPlain", "Complexity.LogProg.ValidPair",
+]
+NOSIMP = "attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg"
+ATTR = "attribute [local irreducible] " + " ".join(SEAL)
+src, out = sys.argv[1], sys.argv[2]
+s = open(src, encoding="utf-8").read()
+anchor = "namespace Complexity.LogProg.SavitchARM\n\nopen Turing Codec\n"
+assert s.count(anchor) == 1, "anchor"
+s = s.replace(anchor, anchor + "\n" + NOSIMP + "\n" + ATTR + "\n")
+open(os.path.join(out, "DeepenSealed.lean"), "w", encoding="utf-8").write(s)
+print(f"sealed {len(SEAL)} definitions")

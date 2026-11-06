@@ -118,10 +118,14 @@ replay below chained from it with only its own PR.
 | #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
 | #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
 | #207 | `d01332e4` | `replay-lzde2` **passed** | 99 **CLOSED** | **merged** 2026-11-06 (`d43a1374`); G5's fill brief issues |
-| #208 | `d01c56a4` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, and F2–F4; IL-1's six re-points `6a289c50`, both ruled by the user) | `replay-ldp6` **running** (190 modules, from `oleans-lnth`; IL-1 widened, five more re-points `0140aee2`) | 101 round 1 **HOLD** (0/1/3/3); round 2 in preparation (`pack-r2.md`) | merge when it closes |
-| #211 | `f239dafd` (G5's delivery `71046be0` + the landing edits `c00340d4`, `794ffb48`, `f239dafd`: the sweep's 15 hits, the review's N2/N4/F9, F6 through `SymbolLift` and F5 through `Contract.inPhase`; both imports ruled by the user) | `replay-lg6` **passed** (3 modules from `oleans-lnth`, 0 `sorry`) | 102 round 1 HOLD (0/1/1, both fixed); round 2 **staged** (34 sections), ready to dispatch | merge when it closes |
-| #212 | `034e72e3` (ZP-1: `ZoneRebalance`'s twelve inline steps cite `zoneRowPre_mapState_iff`) | `replay-lzp1` **passed** (5 modules from `oleans-lnth`) | 103 **staged** (17 sections), ready to dispatch | merge when it closes |
-| #213 | `fdc0e425` (CE-1: BPLInP's public copy deleted, five uses cite `ExpBFS.coreSum_eq_of_code_eq`) | `replay-lce1` **passed** (7 modules) | 104 **staged** (22 sections), ready to dispatch | merge when it closes |
+| #208 | `d01c56a4` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, and F2–F4; IL-1's six re-points `6a289c50`, both ruled by the user) | `replay-ldp6` **passed** (190 modules, from `oleans-lnth`; head `36ed2deb`) | 101 round 1 **HOLD** (0/1/3/3); round 2 **dispatched** 2026-11-06 (74 sections) | **merged** 2026-11-06 (`1bf65f3e`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) running |
+| #211 | `f239dafd` (G5's delivery `71046be0` + the landing edits `c00340d4`, `794ffb48`, `f239dafd`: the sweep's 15 hits, the review's N2/N4/F9, F6 through `SymbolLift` and F5 through `Contract.inPhase`; both imports ruled by the user) | `replay-lg6` **passed** (3 modules from `oleans-lnth`, 0 `sorry`) | 102 round 1 HOLD (0/1/1, both fixed); round 2 **dispatched** 2026-11-06 (34 sections) | merge when it closes |
+| #212 | `034e72e3` (ZP-1: `ZoneRebalance`'s twelve inline steps cite `zoneRowPre_mapState_iff`) | `replay-lzp1` **passed** (5 modules from `oleans-lnth`) | 103 **dispatched** 2026-11-06 | **merged** 2026-11-06 (`4eb0f801`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) running |
+| #213 | `fdc0e425` (CE-1: BPLInP's public copy deleted, five uses cite `ExpBFS.coreSum_eq_of_code_eq`) | `replay-lce1` **passed** (7 modules) | 104 **dispatched** 2026-11-06 | **merged** 2026-11-06 (`a28b8c42`, the user); `replay-lcamp2` (the combined replay, 195 modules from `oleans-lnth`) running |
+| #214 | `0bc71211` (AS-1: `LogProg.astep_call₁` through `astep_call`) | `replay-las1` **passed** (7 modules) | 105 **dispatched** 2026-11-06 | **Ruled (the user, 2026-11-06): all of AS-1 in #214.** The widening (`campaign/items/dedup/as1-SCOPE.md`): 181 declarations / 40 files, 8 excluded; 48 re-pointed (`1fd7d4ce`, `1856e771`…`29c41e09`), the other 130 in progress; gate 105 round 2 after |
+| #215 | `57939a97`+ (SG-1: `CounterLoop`'s `counterSpan` through `Segment`) | `replay-lsg1` running | gate 106 after the replay | — |
+| #217 | `2fdb84f7` (NZ-1: `NDTM.not_haltsWithin_zero` published; 7 sites re-pointed, both readings, `Loop` and `Advice` included; gate 102 r2's two majors) | replay after `replay-lcamp2` (chained from `oleans-lcamp2`; `Nondeterministic`'s and `Loop`'s closures) | gate 108 after the replay; then gate 102 round 3 cites it | merge when 108 closes, then #211 |
+| #218 | `2d65a899` (B6's H landing: `space_hierarchy`, `LOGSPACE_ssubset_PSPACE` proved; `SPACE_linear_ne_NP` escalated as E-PAD; the sweep's 35 sites and the review's text fixes) | `replay-lh1` queued after `replay-lcamp2` | the fill gate after the replay (review 0/0/4/5) | merge when it closes; then E-PAD's API PR (ruled before F6) |
 | #209 | `0b05cc3a` | `replay-lnth` **passed** | 100 **CLOSED** | **merged** 2026-11-06 (`5761d6e0`); `oleans-lnth` is the campaign's snapshot |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
@@ -172,8 +176,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    (base `e6bc1968`; inputs `campaign/fills/b6/inputs/b6-fill-hierarchy/`, the 43-file screen base,
    pre-ship log), after the review (`drafts/b6-fill-hierarchy/review-2026-11-06/`: 1 blocker,
    5 majors, folded in). Staged on the exchange (`outbox/fills/b6-fill-hierarchy/`, `c618ae35`);
-   **dispatched 2026-11-06** (the user). Delivery by attachment: `fill-b6-hierarchy.zip` and the
-   checkpoint zips. **Ruled (the user,
+   **dispatched 2026-11-06** (the user). **Delivered 2026-11-06** (`fill-b6-hierarchy.zip`, SHA-256
+   `9c3817bc…`, final commit `30222bbd`, `deliver/fill-b6-hierarchy-in`): `space_hierarchy` and
+   `LOGSPACE_ssubset_PSPACE` proved; `SPACE_linear_ne_NP` ends in the permitted escalation
+   **E-PAD** (an exact padded-language linear-space decider); REPORT at
+   `campaign/fills/b6/reports/hierarchy-REPORT.md`. Review, sweep and landing next. **Ruled (the user,
    2026-11-06):** `SPACE_linear_ne_NP` stays H's last checkpoint and may end in a named escalation
    (no published host for the padded decider or the padding map's polynomial time). (The other "H",
    `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
@@ -184,10 +191,27 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    in `TuringMachine/CfgFacts`; BL-1 and NB-1 share a new `TuringMachine/NatBits` module (below
    `Encoding` and `Machines/Bin`; `CircuitComplexity` excluded); mechanical re-points in Hydroxyi's
    files are allowed with an FYI line in each PR, while CL-1, CQ-1 and WL-1 (interface design)
-   wait for Hydroxyi. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
+   wait for Hydroxyi. **Ruled (the user, 2026-11-06, second round):** SG-1's two imports of
+   `Build/Contract/Basic` allowed (`Tautology`, `SingleTape`); RO-1: replace `EmitIterEmbed`'s
+   Bool-only `Turing.runFrom_one` by the general lemma and re-point **every** site, colleague-owned
+   files included; NZ-1 acknowledged, publish `NDTM.not_haltsWithin_zero` and re-point now;
+   mechanical dedup edits in colleague-owned files (`CircuitComplexity/`, Meyer) allowed in every
+   family, with an FYI line (no renames or design changes there without asking); NatBits: the
+   plan's defaults D1–D6 accepted, one PR after #208 merges, D9's families recorded for later.
+   **Ruled (the user, 2026-11-06, Hydroxyi not active):** CL-1 the full refactor (one public
+   membership lemma for encoded triples and one decider wrapper parameterized by the mode's tail,
+   the five languages re-proved through them); CQ-1 a `def` per query with its `_iff` in
+   `Codec/Langs`, `ISGen.InitM`/`AccM` deleted and re-pointed; WL-1 moved beside `WalkLe` in
+   `PathWalk` as `Complexity.walkLe_succ_iff`, after #216 merges.
+   **Next roadmap tracks, all three in parallel:** F6 (U2's harvest, then the fill), the book-form
+   Thm 3.1 statement phase, and Ladner's statement phase (plan: `campaign/items/roadmap3/PLAN.md`). **Ruled (the user, 2026-11-06, on the plan's §(e)):** (1) the U2 harvest's rows go in a **new `Build/` module** (not in place in `UniversalK`), harvest before RO-1's `UniversalK` edits (RO-1 then re-points the published row); (2) in `Hierarchy.lean`, after H lands, **E-PAD's continuation of `SPACE_linear_ne_NP` first**, F6's fill after; (3) book-form Thm 3.1 lands **after #211 merges**, admission-free, **with** `time_hierarchy_book_of_pos`; (4) Ladner: **LD-1 to LD-7 as recommended**; LD-8 (Exercise 3.6's parts against the book) is the maintainer's check before docstrings. Still open: D-F6-3 (F6's startup route), to decide after the harvest's consumer probe. **CL-1 (the user, 2026-11-06):** add `mem_validLang_iff`, `mem_initLang_iff`, `mem_acceptLang_iff`, `mem_stepLang_iff` (`Iff.rfl`, beside `mem_edgeLang_iff`); one `mem_codeLang_iff` with a generic injective tail; `stepLang_mem` stays outside the wrapper (`campaign/items/dedup/cl1-SCOPE.md`). **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
-   NZ-1 awaits acknowledgment. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
+   NZ-1 is #217 (acknowledged; it also carries gate 102 r2's two majors). CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
+   `CircuitComplexity` await the owner), SG-1 #215 (`CounterLoop`; `Tautology` and `SingleTape`
+   await an import ruling), RP-1 widened (in progress). **NatBits (BL-1, NB-1) is planned, not
+   started:** `campaign/items/dedup/natbits-PLAN.md` (one PR, 18 files, a 340-module replay; after
+   #208), with decisions D1–D9 for the user. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
