@@ -328,7 +328,14 @@ theorem predProb_glHalf_odd {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
 /-- **Inversion experiments at odd length**: an inverter `A` of `g_{m+m+1}` gives the inverter
 of `glPad f` at parameter `m` that draws the pass-through bit `e`, calls `A` on `(f(x) ‖ r) ‖ e`
 and drops the last bit of the answer; it inverts at least as often (a correct answer of `A`
-has the right last bit and a correct `glPad`-preimage in front). -/
+has the right last bit and a correct `glPad`-preimage in front).
+
+**Proof sketch.** Re-encode both sample spaces as `(z, (e, c))` (`snocCoins`, and
+`PermFamily.glPad_inEquiv` on the `glPad` side; `uprob_comp_equiv`) and compare pointwise
+(`uprob_mono`): if `g(A(g(z ‖ e))) = g(z ‖ e)`, write `A`'s answer as `init ‖ last`
+(`Fin.snoc_init_self`); `glHalf_f_odd` on both sides and `Fin.init` of the equality
+(`Fin.init_snoc`) give `glPad f (init) = glPad f (z)` through `glPad_outEquiv`, which is
+injective. -/
 theorem invProb_glHalf_odd_le {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (A : (Fin (m + m + 1) → Bool) → ρ → (Fin (m + m + 1) → Bool)) :
     invProb (P.glHalf.f (m + m + 1)) A ≤

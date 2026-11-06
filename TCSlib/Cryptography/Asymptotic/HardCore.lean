@@ -489,6 +489,14 @@ theorem PRG.expand_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (�
     (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool) (i : Fin (ℓ.eval n)) :
     (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
 
+/-- Closed form of the expansion with the output index typed by the stretch:
+`G'(s)_i = last bit of G((s ↦ init G(s))^i (s))` for
+`i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)` (`PRG.expand_G` on the PRG's own output space). -/
+theorem PRG.expand_G_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+    (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool)
+    (i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)) :
+    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
+
 /-- The hybrid-`k` reduction of [PS10, Lemma 80.5] (the machine `M(y)` of the proof) in the
 text's seed-first convention: on `T ∈ {0,1}^{n+1}` read `(b, X) := (T_{n+1}, T_1 ⋯ T_n)`, draw
 `k` uniform bits `b_prev`, put `b` at position `k`, iterate `G` on `X` for the remaining

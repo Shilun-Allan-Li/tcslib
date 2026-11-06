@@ -175,31 +175,22 @@ theorem wrap_coinLen (A : NUPPT) {pre post : List Bool → List Bool}
     (A.wrap hpre hpost β b hβ p).coinLen n = p.eval n + A.coinLen n := by
   rw [coinLen_eq, coins_wrap, PolyExpr.eval_add, coinLen_eq]
 
-/-- **The coins of the one-call wrapper**: the published equivalence
-`(A.wrap …).Coins n ≃ {0,1}^{p(n) + |A's coins at n|}` (`finCongr` along `wrap_coinLen`):
-the data coins followed by the coins of `A`. -/
+/-- **The coins of the one-call wrapper**: the published equivalence `(A.wrap …).Coins n ≃
+{0,1}^{p(n) + |A's coins at n|}` (data coins, then `A`'s coins; `finCongr` along `wrap_coinLen`). -/
 noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
     (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) :
     (A.wrap hpre hpost β b hβ p).Coins n ≃ (Fin (p.eval n + A.coinLen n) → Bool) :=
   Equiv.arrowCongr (finCongr (A.wrap_coinLen hpre hpost β b hβ p n)) (Equiv.refl Bool)
 
-/-- The wrapper's coin equivalence keeps the coin string:
-`List.ofFn (wrapCoinsEquiv … n r) = List.ofFn r`. -/
-theorem wrapCoinsEquiv_ofFn (A : NUPPT) {pre post : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
-    (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ)
-    (r : (A.wrap hpre hpost β b hβ p).Coins n) :
-    List.ofFn (A.wrapCoinsEquiv hpre hpost β b hβ p n r) = List.ofFn r :=
-  (List.ofFn_congr (A.wrap_coinLen hpre hpost β b hβ p n) r).symm
-
-/-- The inverse coin equivalence of the wrapper keeps the coin string. -/
+/-- The inverse coin equivalence of the wrapper keeps the coin string:
+`List.ofFn ((wrapCoinsEquiv … n).symm w) = List.ofFn w`. -/
 theorem wrapCoinsEquiv_symm_ofFn (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
     (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ)
     (w : Fin (p.eval n + A.coinLen n) → Bool) :
-    List.ofFn ((A.wrapCoinsEquiv hpre hpost β b hβ p n).symm w) = List.ofFn w := by
-  rw [← A.wrapCoinsEquiv_ofFn hpre hpost β b hβ p n, Equiv.apply_symm_apply]
+    List.ofFn ((A.wrapCoinsEquiv hpre hpost β b hβ p n).symm w) = List.ofFn w :=
+  List.ofFn_congr (A.wrap_coinLen hpre hpost β b hβ p n) _
 
 /-- The untyped activation of the one-call wrapper. -/
 theorem runAtL_wrap (A : NUPPT) {pre post : List Bool → List Bool}
