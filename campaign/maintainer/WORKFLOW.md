@@ -148,6 +148,10 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 
 - Briefs live at `campaign/fills/<group>/briefs/`, with inputs, orders, logs and reviews beside them.
   Every brief attaches the fill-environment addendum.
+- **Fills may run in parallel** (the user, 2026-11-06: on cloud machines with Claude agents,
+  there is no need to limit how many fills are out at once). Each fill still owns its files, and
+  two fills never share an owned file. The maintainer's own limit of two Lean processes on its VM
+  is unchanged.
 - **Agent choice, a soft suggestion per item:** Codex for a first (maybe second) attempt; Claude
   for an item making slow progress (one stalled Codex round counts); megafills go to Codex.
   Ask the agent as its own question, never inside an option.
