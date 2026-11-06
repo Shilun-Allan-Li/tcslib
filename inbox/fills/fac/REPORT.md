@@ -182,7 +182,7 @@ types:
 
 The delivery is `inbox/fills/fac/` on `exchange/pass-shelat-ch5-8`. It holds:
 - `REPORT.md`;
-- `patches/` (`git format-patch 16a7d02d..fill/fac`, 11 patches);
+- `patches/` (`git format-patch 16a7d02d..fill/fac`, 10 patches);
 - `src/TCSlib/Cryptography/Candidates/Factoring.lean`;
 - `evidence/`.
 
