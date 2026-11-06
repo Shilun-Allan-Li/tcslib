@@ -194,21 +194,46 @@ coins `gen.coins + enc.coins` ("`Sim(1^n)` draws `k ← Gen(1^n)` and outputs `E
 private noncomputable def zkSim (S : PrivateKeyScheme) : NUPPT :=
   NUPPT.ofPolyTimeUniform (polyTimeComputable_zkSimFun S) (.add S.gen.coins S.enc.coins)
 
-/-- On the coin string `r₁ ‖ r₂` (`Fin.appendEquiv`) the simulator outputs exactly the
+/-- The coins of the simulator are pairs `(r₁, r₂)` of generation and encryption coins: the
+split `Fin.appendEquiv` followed by the coin equivalence of `ofPolyTimeUniform`. -/
+private noncomputable def zkSimCoins (S : PrivateKeyScheme) (n : ℕ) :
+    S.gen.Coins n × S.enc.Coins n ≃ (zkSim S).Coins n :=
+  (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)).trans
+    ((Equiv.arrowCongr (finCongr (by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, PolyExpr.eval_add]))
+      (Equiv.refl Bool)).trans
+      (NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_zkSimFun S)
+        (.add S.gen.coins S.enc.coins) n).symm)
+
+/-- The simulator's coin string on `(r₁, r₂)` is `r₁ ‖ r₂`. -/
+private theorem ofFn_zkSimCoins (S : PrivateKeyScheme) (n : ℕ) (r₁ : S.gen.Coins n)
+    (r₂ : S.enc.Coins n) :
+    List.ofFn (zkSimCoins S n (r₁, r₂)) = List.ofFn r₁ ++ List.ofFn r₂ := by
+  have key : ∀ w, List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_zkSimFun S)
+      (.add S.gen.coins S.enc.coins) n).symm w) = List.ofFn w := fun w => by
+    rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, Equiv.apply_symm_apply]
+  have hlen :
+      S.gen.coinLen n + S.enc.coinLen n = (PolyExpr.add S.gen.coins S.enc.coins).eval n := by
+    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, PolyExpr.eval_add]
+  unfold zkSimCoins
+  rw [Equiv.trans_apply, Equiv.trans_apply]
+  refine (key _).trans ((List.ofFn_congr hlen
+    ((Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)) (r₁, r₂))).symm.trans ?_)
+  exact List.ofFn_fin_append r₁ r₂
+
+/-- On the coin string `r₁ ‖ r₂` (`zkSimCoins`) the simulator outputs exactly the
 ciphertext `Enc_k(0^n)` with `k = Gen(1^n; r₁)` and encryption coins `r₂`, i.e.
 `encDist n 0^n (r₁, r₂)` (`runAtL_ofPolyTimeUniform`, `List.ofFn_fin_append`, the cuts
 `List.take_left'`/`List.drop_left'`, `gen_uniform`, `enc_uniform`, `zipWith_xor_self`). -/
 private theorem zkSim_runAt (S : PrivateKeyScheme) (n : ℕ) (r₁ : S.gen.Coins n)
     (r₂ : S.enc.Coins n) :
-    (zkSim S).runAt n [] (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n) (r₁, r₂)) =
-      S.encDist n (fun _ => false) (r₁, r₂) := by
+    (zkSim S).runAt n [] (zkSimCoins S n (r₁, r₂)) = S.encDist n (fun _ => false) (r₁, r₂) := by
   have ht : (List.ofFn r₁ ++ List.ofFn r₂).take (S.gen.coins.eval n) = List.ofFn r₁ :=
     List.take_left' (by simp [NUPPT.coinLen])
   have hd : (List.ofFn r₁ ++ List.ofFn r₂).drop (S.gen.coins.eval n) = List.ofFn r₂ :=
     List.drop_left' (by simp [NUPPT.coinLen])
-  show (NUPPT.ofPolyTimeUniform (polyTimeComputable_zkSimFun S)
-    (.add S.gen.coins S.enc.coins)).runAtL n [] (List.ofFn (Fin.append r₁ r₂)) = _
-  rw [NUPPT.runAtL_ofPolyTimeUniform, List.ofFn_fin_append]
+  rw [NUPPT.runAt_eq, ofFn_zkSimCoins]
+  unfold zkSim
+  rw [NUPPT.runAtL_ofPolyTimeUniform]
   simp only [encDist, NUPPT.runAt, NUPPT.advInput, S.gen_uniform n, S.enc_uniform n, zkSimFun,
     NUPPT.layout, NUPPT.inParam, NUPPT.inCoins, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, ht, hd, zipWith_xor_self, List.ofFn_const]
@@ -220,8 +245,7 @@ and `zkSim_runAt`). -/
 private theorem acceptProb_zkSim (S : PrivateKeyScheme) (n : ℕ) {ρ : Type*} [Fintype ρ]
     (Dst : List Bool → ρ → Bool) :
     acceptProb ((zkSim S).runAt n []) Dst = acceptProb (S.encDist n fun _ => false) Dst := by
-  rw [← acceptProb_comp_equiv (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n) :
-    S.gen.Coins n × S.enc.Coins n ≃ (zkSim S).Coins n) ((zkSim S).runAt n []) Dst]
+  rw [← acceptProb_comp_equiv (zkSimCoins S n) ((zkSim S).runAt n []) Dst]
   congr 1
   funext s
   exact zkSim_runAt S n s.1 s.2

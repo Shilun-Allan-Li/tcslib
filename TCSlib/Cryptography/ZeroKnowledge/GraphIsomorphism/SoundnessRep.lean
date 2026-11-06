@@ -265,14 +265,18 @@ theorem coinSlice_blocksEquiv (m c : ℕ) (F : Fin m → Fin c → Bool) {j : �
 
 /-- The verifier's tape of the `|x|`-fold graph non-isomorphism protocol as the `|x|` bits and
 the `|x|` sampler tapes of its coin blocks. -/
-def gniTapes (N : ℕ) :
+noncomputable def gniTapes (N : ℕ) :
     (Fin N → Bool) × (Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) ≃ gniProtocolRep.V.Coins N :=
   (Equiv.arrowProdEquivProdArrow (Fin N) (fun _ => Bool) (fun _ => Fin (1 * (N + 1) ^ 2) → Bool)).symm.trans
-    ((Equiv.piCongrRight fun _ => tapeSplit (1 * (N + 1) ^ 2)).trans (blocksEquiv N (1 + 1 * (N + 1) ^ 2)))
+    ((Equiv.piCongrRight fun _ => tapeSplit (1 * (N + 1) ^ 2)).trans
+      ((blocksEquiv N (1 + 1 * (N + 1) ^ 2)).trans
+        (Equiv.arrowCongr (finCongr (gniProtocolRep_V_coinLen N).symm) (Equiv.refl Bool))))
 
 /-- The tape of `gniTapes` is the tape of blocks of the split blocks. -/
 theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) :
-    gniTapes N (b, ts) = blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j)) := rfl
+    List.ofFn (gniTapes N (b, ts)) =
+      List.ofFn (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j))) :=
+  (List.ofFn_congr (gniProtocolRep_V_coinLen N).symm _).symm
 
 /-- Coin block `j < N` of the tape `gniTapes N (b, ts)` is `b_j` followed by the sampler tape
 `ts_j`. -/

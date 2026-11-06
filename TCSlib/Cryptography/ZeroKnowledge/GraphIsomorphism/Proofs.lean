@@ -568,6 +568,33 @@ theorem ofFn_tapeSplit (c : ℕ) (b : Bool) (t : Fin c → Bool) :
   rw [List.ofFn_congr (Nat.add_comm 1 c), List.ofFn_succ]
   rfl
 
+/-- The verifier's tape length of one graph non-isomorphism iteration: `1 + (N + 1)²`. -/
+theorem gniProtocol_V_coinLen (N : ℕ) : gniProtocol.V.coinLen N = 1 + 1 * (N + 1) ^ 2 := by
+  rw [Strategy.coinLen_eq]
+  show (PolyExpr.add (.const 1) (.normal 1 2)).eval N = _
+  rw [PolyExpr.eval_add, PolyExpr.eval_const, PolyExpr.eval_normal]
+
+/-- The verifier's tape length of the `N`-fold graph non-isomorphism protocol:
+`N · (1 + (N + 1)²)`. -/
+theorem gniProtocolRep_V_coinLen (N : ℕ) :
+    gniProtocolRep.V.coinLen N = N * (1 + 1 * (N + 1) ^ 2) := by
+  rw [Strategy.coinLen_eq]
+  show (PolyExpr.mul .var (.add (.const 1) (.normal 1 2))).eval N = _
+  rw [PolyExpr.eval_mul, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_const,
+    PolyExpr.eval_normal]
+
+/-- The verifier's tape length of one graph isomorphism iteration: one bit. -/
+theorem giProtocol_V_coinLen (N : ℕ) : giProtocol.V.coinLen N = 1 := by
+  rw [Strategy.coinLen_eq]
+  show (PolyExpr.const 1).eval N = _
+  rw [PolyExpr.eval_const]
+
+/-- The verifier's tape length of the `N`-fold graph isomorphism protocol: `N` bits. -/
+theorem giProtocolRep_V_coinLen (N : ℕ) : giProtocolRep.V.coinLen N = N := by
+  rw [Strategy.coinLen_eq]
+  show PolyExpr.var.eval N = _
+  rw [PolyExpr.eval_var]
+
 /-- The first bit of a split tape. -/
 theorem headD_ofFn_tapeSplit (c : ℕ) (b : Bool) (t : Fin c → Bool) :
     (List.ofFn (tapeSplit c (b, t))).headD false = b := by

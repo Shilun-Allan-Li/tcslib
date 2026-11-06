@@ -367,8 +367,8 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
     rw [flatMap_ofFn_singleton _ _ m (fun i => ?_)]
     · exact decodeFin_ofFn m
     · have hlen : (coinBlock (S.enc.coinLen n) i (List.ofFn re)).length = S.enc.coinLen n := by
-        simp only [coinBlock, List.length_take, List.length_drop, List.length_ofFn, NUPPT.coinLen,
-          NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_var]
+        simp only [coinBlock, List.length_take, List.length_drop, List.length_ofFn,
+          NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_var]
         have hi : (i : ℕ) + 1 ≤ n := i.isLt
         have := Nat.mul_le_mul_right (S.enc.coins.eval n) hi
         rw [Nat.add_mul, one_mul] at this
@@ -378,6 +378,30 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
       rw [NUPPT.runAt_eq (A := S.enc), hre'] at this
       exact this
 
+/-- The coin count of the bitwise encryptor: `n · B(n)`. -/
+theorem bitwise_enc_coinLen (S : BitPublicKeyScheme) (n : ℕ) :
+    n * S.enc.coinLen n = (PolyExpr.mul .var S.enc.coins).eval n := by
+  rw [NUPPT.coinLen_eq, PolyExpr.eval_mul, PolyExpr.eval_var]
+
+/-- **The coins of the bitwise encryptor are `n` single-bit coin blocks**: the published
+equivalence `(Fin n → {0,1}^{B(n)}) ≃ S.bitwise.enc.Coins n` (`coinBlocks`, then `finCongr` along
+`bitwise_enc_coinLen` and the coin equivalence of `ofPolyTimeUniform`). -/
+noncomputable def bitwiseEncCoins (S : BitPublicKeyScheme) (n : ℕ) :
+    (Fin n → S.enc.Coins n) ≃ S.bitwise.enc.Coins n :=
+  (coinBlocks n (S.enc.coinLen n)).trans
+    ((Equiv.arrowCongr (finCongr (S.bitwise_enc_coinLen n)) (Equiv.refl Bool)).trans
+      (NUPPT.coinsEquiv_ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins) n).symm)
+
+/-- The bitwise encryptor's coin string on the blocks `v` is that of `coinBlocks n B v`. -/
+theorem ofFn_bitwiseEncCoins (S : BitPublicKeyScheme) (n : ℕ) (v : Fin n → S.enc.Coins n) :
+    List.ofFn (S.bitwiseEncCoins n v) = List.ofFn (coinBlocks n (S.enc.coinLen n) v) := by
+  have key : ∀ w, List.ofFn ((NUPPT.coinsEquiv_ofPolyTimeUniform S.bitwiseEncFun_poly
+      (.mul .var S.enc.coins) n).symm w) = List.ofFn w := fun w => by
+    rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, Equiv.apply_symm_apply]
+  unfold bitwiseEncCoins
+  rw [Equiv.trans_apply, Equiv.trans_apply]
+  exact (key _).trans (List.ofFn_congr (S.bitwise_enc_coinLen n) _).symm
+
 /-- The single-bit sampler is `singleDist` on the one-bit message `[b]`. -/
 private theorem pkEncDist_eq_singleDist (S : BitPublicKeyScheme) (n : ℕ) (b : Bool) :
     S.pkEncDist n b = singleDist S.gen S.enc n 1 (fun _ => b) := by
@@ -386,19 +410,19 @@ private theorem pkEncDist_eq_singleDist (S : BitPublicKeyScheme) (n : ℕ) (b : 
 
 /-- The ciphertext of the bitwise scheme on the coin blocks `v` is the tuple of the single-bit
 encryptions with coins `v_i` (`bitwise_enc_runAt`, `coinBlock_ofFn_coinBlocks`): the sampler
-`S.bitwise.pkEncDist n m` read through `coinBlocks` is `multiDist` with one-bit blocks. -/
+`S.bitwise.pkEncDist n m` read through `bitwiseEncCoins` is `multiDist` with one-bit blocks. -/
 private theorem bitwise_pkEncDist_coinBlocks (S : BitPublicKeyScheme) (n : ℕ) (m : Fin n → Bool)
     (r : S.gen.Coins n) (v : Fin n → S.enc.Coins n) :
-    S.bitwise.pkEncDist n m (r, coinBlocks n (S.enc.coinLen n) v) =
+    S.bitwise.pkEncDist n m (r, S.bitwiseEncCoins n v) =
       multiDist S.gen S.enc n n 1 (fun i _ => m i) (r, v) := by
   show pairEncode (pairFstD (S.gen.runAt n [] r))
       ((NUPPT.ofPolyTimeUniform S.bitwiseEncFun_poly (.mul .var S.enc.coins)).runAt n
-        (pairEncode (pairFstD (S.gen.runAt n [] r)) (List.ofFn m)) (coinBlocks n (S.enc.coinLen n) v)) =
+        (pairEncode (pairFstD (S.gen.runAt n [] r)) (List.ofFn m)) (S.bitwiseEncCoins n v)) =
     _
   rw [bitwise_enc_runAt]
   simp only [multiDist]
   refine congrArg _ (congrArg (fun l => encodeList (List.ofFn l)) (funext fun i => ?_))
-  rw [coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq, ofFn_fin_one]
+  rw [ofFn_bitwiseEncCoins, coinBlock_ofFn_coinBlocks, ← NUPPT.runAt_eq, ofFn_fin_one]
 
 /-- **The bitwise scheme's ciphertexts as a tuple of single-bit encryptions**: the acceptance
 probability of any distinguisher on `S.bitwise.pkEncDist n m` is its acceptance probability on
@@ -409,7 +433,7 @@ private theorem acceptProb_bitwise_pkEncDist (S : BitPublicKeyScheme) (n : ℕ) 
       acceptProb (multiDist S.gen S.enc n n 1 (fun i _ => m i)) Dst := by
   unfold acceptProb
   rw [← uprob_comp_equiv
-    (((Equiv.refl (S.gen.Coins n)).prodCongr (coinBlocks n (S.enc.coinLen n))).prodCongr
+    (((Equiv.refl (S.gen.Coins n)).prodCongr (S.bitwiseEncCoins n)).prodCongr
       (Equiv.refl ρ))]
   congr 1
   funext z

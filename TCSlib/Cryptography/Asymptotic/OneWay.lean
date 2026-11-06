@@ -222,6 +222,10 @@ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   outLen := p
   f _ x i := (f (List.ofFn x)).getD i false
 
+/-- The input length of `ofString f p` at `n` is `n` (the parameter is the input length). -/
+theorem ofString_inLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
+    (ofString f p).inLen.eval n = n := rfl
+
 /-- `f` is *length-regular* with output length `p`: `|f x| = p(|x|)` for every `x`. -/
 def LengthRegular (f : List Bool → List Bool) (p : PolyExpr) : Prop :=
   ∀ x, (f x).length = p.eval x.length

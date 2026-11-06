@@ -743,7 +743,14 @@ noncomputable def tdpPredictor (D : NUPPT) (flip : Bool) : NUPPT :=
 
 /-- The coin polynomial of the predictor machine. -/
 @[simp] theorem tdpPredictor_coins (D : NUPPT) (flip : Bool) :
-    (tdpPredictor D flip).coins = .add (.const 1) D.coins := rfl
+    (tdpPredictor D flip).coins = .add (.const 1) D.coins := by
+  unfold tdpPredictor
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- The coin count of the predictor machine: `1 + |D's coins at n|`. -/
+theorem tdpPredictor_coinLen (D : NUPPT) (n : ℕ) :
+    1 + D.coinLen n = (PolyExpr.add (.const 1) D.coins).eval n := by
+  rw [NUPPT.coinLen_eq, PolyExpr.eval_add, PolyExpr.eval_const]
 
 /-- Unfolding of the predictor machine: on `⟨i, y⟩` with coins `c :: ρ` it outputs
 `[c ⊕ ¬[D(1^n, ⟨i, ⟨y, [c]⟩⟩; ρ) = 1] ⊕ flip]`. -/
@@ -757,17 +764,22 @@ theorem tdpPredictor_runAtL (D : NUPPT) (flip : Bool) (n : ℕ) (i y : List Bool
     NUPPT.layout, NUPPT.runAtL]
 
 /-- The coins of the predictor machine: the bit `c` followed by the coins of `D`. -/
-def predCoins (D : NUPPT) (flip : Bool) (n : ℕ) :
+noncomputable def predCoins (D : NUPPT) (flip : Bool) (n : ℕ) :
     Bool × D.Coins n ≃ (tdpPredictor D flip).Coins n :=
   ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl _)).trans
-    (Fin.appendEquiv 1 (D.coinLen n))
+    ((Fin.appendEquiv 1 (D.coinLen n)).trans
+      ((Equiv.arrowCongr (finCongr (tdpPredictor_coinLen D n)) (Equiv.refl Bool)).trans
+        (NUPPT.coinsEquivPoly (tdpPredictor_coins D flip) n).symm))
 
 /-- The coin string of `predCoins (c, ρ)` is `c :: ρ`. -/
 theorem ofFn_predCoins (D : NUPPT) (flip : Bool) (n : ℕ) (c : Bool) (ρ : D.Coins n) :
     List.ofFn (predCoins D flip n (c, ρ)) = c :: List.ofFn ρ := by
-  show List.ofFn (Fin.append (fun _ : Fin 1 => c) ρ) = c :: List.ofFn ρ
-  rw [List.ofFn_fin_append]
-  rfl
+  unfold predCoins
+  rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
+  refine (List.ofFn_congr (tdpPredictor_coinLen D n) (Fin.appendEquiv 1 (D.coinLen n)
+    (((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))) (c, ρ)))).symm.trans
+    ?_
+  exact (List.ofFn_fin_append _ _).trans rfl
 
 /-- `if v then c else ¬c` is `c ⊕ ¬v`. -/
 theorem ite_eq_xor_not (v c : Bool) : (if v = true then c else !c) = xor c (!v) := by
