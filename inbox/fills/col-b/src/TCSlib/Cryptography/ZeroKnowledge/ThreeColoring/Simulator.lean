@@ -5,6 +5,8 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorMachine
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKMachine
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -589,43 +591,6 @@ section ColZKLadder
 
 variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
 
-/-- `firstSome` splits at `k`: the first success before `k`, else entry `k`, else the first
-success after `k` (`CommitmentLemmas.ofFn_eq_append_cons` on `List.finRange N`). -/
-private theorem colZK_firstSome_eq_split {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
-    firstSome f = ((firstSome fun i : Fin k => f (Fin.castLE k.2.le i)) <|> f k <|>
-      firstSome fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩) := by
-  unfold firstSome
-  have h := CommitmentLemmas.ofFn_eq_append_cons (id : Fin N → Fin N) k
-  rw [List.ofFn_id] at h
-  rw [h, List.findSome?_append, List.findSome?_cons, List.ofFn_eq_map, List.ofFn_eq_map,
-    List.findSome?_map, List.findSome?_map]
-  simp only [Function.comp_def, id_eq]
-  cases List.findSome? (fun i => f (Fin.castLE k.2.le i)) (List.finRange k) <;> cases f k <;> rfl
-
-/-- `firstSome` splits at `k` into the masked searches before and after `k`. -/
-private theorem colZK_firstSome_split_lt {α : Type*} {N : ℕ} (f : Fin N → Option α) (k : Fin N) :
-    firstSome f = ((firstSome fun t : Fin N => if (t : ℕ) < k then f t else none) <|> f k <|>
-      firstSome fun t : Fin N => if k < t then f t else none) := by
-  rw [colZK_firstSome_eq_split f k, colZK_firstSome_eq_split (fun t : Fin N => if (t : ℕ) < k then f t else none) k,
-    colZK_firstSome_eq_split (fun t : Fin N => if k < t then f t else none) k]
-  have h1 : (fun i : Fin k => if ((Fin.castLE k.2.le i : Fin N) : ℕ) < k then
-      f (Fin.castLE k.2.le i) else none) = fun i : Fin k => f (Fin.castLE k.2.le i) :=
-    funext fun i => if_pos (by simp)
-  have h2 : (fun i : Fin (N - k - 1) => if (((⟨k + 1 + i, by omega⟩ : Fin N)) : ℕ) < k then
-      f ⟨k + 1 + i, by omega⟩ else none) = fun _ => none :=
-    funext fun i => if_neg (by simp only; omega)
-  have h3 : (fun i : Fin k => if k < (Fin.castLE k.2.le i : Fin N) then
-      f (Fin.castLE k.2.le i) else none) = fun _ => none :=
-    funext fun i => if_neg (by rw [Fin.lt_def]; simp)
-  have h4 : (fun i : Fin (N - k - 1) => if k < (⟨k + 1 + i, by omega⟩ : Fin N) then
-      f ⟨k + 1 + i, by omega⟩ else none) = fun i : Fin (N - k - 1) => f ⟨k + 1 + i, by omega⟩ :=
-    funext fun i => if_pos (by rw [Fin.lt_def]; simp only; omega)
-  have hn : ∀ {M : ℕ}, firstSome (fun _ : Fin M => (none : Option α)) = none :=
-    fun {M} => (firstSome_eq_none_iff _).2 fun _ => rfl
-  rw [h1, h2, h3, h4, hn, hn, if_neg (lt_irrefl (k : ℕ)), if_neg (lt_irrefl k)]
-  cases firstSome fun i : Fin k => f (Fin.castLE k.2.le i) <;> cases f k <;> rfl
-
-
 /-- **The hiding reduction with its attempt table fixed** [PS10, proof of Proposition 128.8,
 the reduction to the hiding property] (Claim-129.d, step (4) of `col_zk`'s sketch): for `m > 0`
 and `N > 0` attempts there are a hybrid index `k`, a planted `(e₀, π₀)` and a table `w₀` of the
@@ -673,9 +638,9 @@ theorem colSimRed_fixed_eq {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : T
       D' ((firstSome fun t : Fin N => if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t) else none) <|>
           colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ k) <|>
           (firstSome fun t : Fin N => if k < t then colSimAttemptW Com (ℓ.eval n) G c V (w₀ t) else none)) c' := by
-  unfold colSimRed
+  unfold colSimRed firstSome
   dsimp only
-  rw [colZK_firstSome_split_lt _ k, if_neg (lt_irrefl (k : ℕ)), if_pos rfl]
+  rw [ColZK.findSome?_finRange_split_lt _ k, if_neg (lt_irrefl (k : ℕ)), if_pos rfl]
   have h1 : (fun t : Fin N => if (t : ℕ) < k then
       (if (t : ℕ) < k then colSimAttemptH Com (ℓ.eval n) G c V (w₀ t)
         else if t = k then colSimAttemptPlanted Com (ℓ.eval n) G c V e₀ π₀ cv (w₀ t)
@@ -695,6 +660,82 @@ theorem colSimRed_fixed_eq {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : T
     · rw [if_pos ht, if_pos ht, if_neg (by rw [Fin.lt_def] at ht; omega), if_neg (ne_of_gt ht)]
     · rw [if_neg ht, if_neg ht]
   rw [h1, h2]
+/-- **The real view is `(1/4)^{|x|}`-close to the typed honest view** [PS10, proof of
+Proposition 128.8, "the view of `V*`"] (step (1) of `col_zk`'s sketch): the encoded view of `V'`
+in `P(encGraph G, encColoring c) ↔ V'(·, z)` is within `(1/4)^{|x|}` of the encoded
+`colRealView` with a uniform colour permutation, uniform commitment randomness and a uniform
+tape of `V'`.
+
+**Proof sketch.** The prover's tape of `3|x| + |x| ℓ(|x|)` bits (`Strategy.coinLen_eq`,
+`colProver_coins`) carries the permutation trials in its first `3|x|` bits and the commitment
+randomness `r_i j` at `3|x| + i ℓ(n) + j` (inside the tape: `n ≤ n² = |x|`,
+`PolyExpr.eval_mono`); these fields are independent and uniform
+(`ColZK.pushesUniform_offsetTable`, `StatClose.comp_pushesUniform`), the permutation sampler is
+`(1/4)^{|x|}`-close to uniform (`statClose_samplePerm3`), and `V'`'s tape is carried by
+`withV_vCoinsEquiv` (`StatClose.prod`, `StatClose.map`). The three moves unfold by
+`Protocol.viewV_withV`, `exec_succ` and the public `colProver` equations (`decGraph_encGraph`,
+`decColoring_encColoring`, `ColMachines.edgeAt_eq_some_of_pos`) to the encoded
+`colRealView`. -/
+theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n → Fin 3)
+    (_hc : ProperColoring G c) (z : List Bool) :
+    StatClose (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
+      (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins (encGraph G).length =>
+        (some (colRealView Com (ℓ.eval n) G c
+            (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]) w)).elim []
+          fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩)
+      ((1 / 4 : ℝ) ^ (encGraph G).length) := by
+  set N := (encGraph G).length with hN
+  set Ψ := fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+    (some (colRealView Com (ℓ.eval n) G c
+      (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]) w)).elim []
+        fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩ with hΨ
+  have hNn : N = n * n := length_encGraph G
+  have hnN : n ≤ N := hNn ▸ Nat.le_mul_self n
+  have hL : ((colProtocol Com ℓ).withV V').P.coinLen N = 3 * N + N * ℓ.eval N := by
+    rw [Protocol.withV_P, colProtocol_P, Strategy.coinLen_eq, colProver_coins, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul, PolyExpr.eval_var]
+  have hsz : N * 3 + n * ℓ.eval n ≤ ((colProtocol Com ℓ).withV V').P.coinLen N := by
+    rw [hL]
+    have := Nat.mul_le_mul hnN (PolyExpr.eval_mono ℓ hnN)
+    omega
+  have hF := ColZK.pushesUniform_offsetTable hsz
+  have h1 := ((statClose_samplePerm3 N).prod
+    (StatClose.refl (fun r : Fin n → Fin (ℓ.eval n) → Bool => r))).comp_pushesUniform hF
+  have h2 : StatClose (fun r : ((colProtocol Com ℓ).withV V').V.Coins N =>
+      (colProtocol Com ℓ).withV_vCoinsEquiv V' N r) id 0 :=
+    statClose_of_pushesUniform (HardcoreBit.pushesUniform_equiv _)
+  have h := (h1.prod h2).map Ψ
+  rw [add_zero, add_zero] at h
+  convert h using 1
+  funext r
+  obtain ⟨rP, rV⟩ := r
+  rw [Protocol.viewV_withV, colProtocol_P, colProtocol_verifierFirst, colProtocol_rounds,
+    PolyExpr.eval_const]
+  simp only [exec_succ, exec_zero, moverIsV_false, Nat.reduceMod, decide_eq_true_eq,
+    zero_ne_one, ↓reduceIte, List.nil_append, List.cons_append]
+  have hπ : samplePerm3 N ((List.ofFn rP).take (3 * N)) =
+      samplePerm3 N (List.ofFn fun i : Fin (N * 3) => rP (Fin.castLE (le_trans (Nat.le_add_right _ _) hsz) i)) := by
+    rw [Nat.mul_comm 3 N, OneWay.ofFn_castLE_eq_take]
+  have hr : (fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+      (List.ofFn rP).getD (3 * N + i * ℓ.eval n + j) false) =
+      fun (i : Fin n) (j : Fin (ℓ.eval n)) => rP ⟨N * 3 + (i * ℓ.eval n + j), lt_of_lt_of_le
+        (by have := ColZK.table_index_lt i j; omega) hsz⟩ := by
+    funext i j
+    have hlt : 3 * N + i * ℓ.eval n + j < ((colProtocol Com ℓ).withV V').P.coinLen N := by
+      have := ColZK.table_index_lt i j
+      omega
+    rw [List.getD_eq_getElem?_getD, List.getElem?_ofFn, dif_pos hlt, Option.getD_some]
+    congr 1
+    exact Fin.ext (by simp only; ring)
+  rw [colProver_next_nil Com ℓ (decGraph_encGraph G), decColoring_encColoring, hπ, hr, hΨ]
+  simp only [Option.elim_some]
+  unfold colRealView
+  simp only [Protocol.withV_vCoinsEquiv_ofFn]
+  rcases Nat.eq_zero_or_pos (edgeCount G) with hm | hm
+  · rw [colProver_next_cons_of_edgeCount_eq_zero Com ℓ (decGraph_encGraph G) hm,
+      (edgeAt_eq_none_iff G _).2 hm]
+  · rw [colProver_next_cons Com ℓ (decGraph_encGraph G) hm, decColoring_encColoring, hπ, hr,
+      ColMachines.edgeAt_eq_some_of_pos G hm]
 end ColZKLadder
 
 /-! ### The string simulator [PS10, Algorithm 128.7] (Alg-128.7, Claim-128.a) -/
