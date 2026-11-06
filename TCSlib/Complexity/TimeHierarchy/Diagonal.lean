@@ -25,10 +25,14 @@ set_option autoImplicit false
 
 [AB09, Theorem 3.1]: if `f, g` are time-constructible functions with
 `f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g)`. This file proves the theorem
-in the form supported by this development's universal machine:
+twice. First, through the universal machine `Turing.universal`, with quadratic overhead:
 
   if `g` is time constructible and `(f(n) + n + 1)² = o(g(n))`, then
   `DTIME(f) ⊊ DTIME(g + 1)`.
+
+Then in the book's form (`Complexity.time_hierarchy_book`), through the two-work-tape
+self-universal machine and its `O(t log t)` overhead: if `g` is time constructible, `n ≤ f(n)`
+and `f(n) log f(n) = o(g(n))`, then `DTIME(f) ⊊ DTIME(g + 1)`.
 
 ## The diagonal language
 
@@ -129,6 +133,10 @@ instance at `diagSim` (user authorization, 2026-10-14; design note
   at the level of padded simulation and at the level of a universal machine with a normal
   form; `DiagSimulator.mono`, `SelfSimulator.toDiagSimulator` — weakening and input padding.
 * `Complexity.TimeHierarchy.oneTapeSelfSimulator`, `sqDiagSimulator` — the received instance.
+* `Complexity.TimeHierarchy.logOverhead`, `logDiagOverhead` — the overheads `(t+1)(log₂(t+1)+1)`
+  and `(t+n+1)(log₂(t+n+1)+1)`.
+* `Complexity.TimeHierarchy.code₂`, `twoTapeSelfSimulator` — the two-work-tape scheme and the
+  self-simulator at `logOverhead`, from `Turing.exists_selfUniversalK` at two work tapes.
 
 ## Main results
 
