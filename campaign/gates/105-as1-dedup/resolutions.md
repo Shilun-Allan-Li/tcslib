@@ -35,3 +35,14 @@ window.
 
 **Round 3** checks these dispositions and the ledger's AS-2 and MT-1 entries, with no change to
 #214's code.
+
+## Round 3 findings (received 2026-11-06)
+
+`findings-r3.md`, verbatim (SHA-256 `828db1186938f54c26892ff30cb22d878066dfbc586d6051d0cad9ab2492f49c`). **Verdict: PASS: 0 blockers, 0 majors,
+1 minor, 4 notes.** AS-2's and MT-1's acknowledgments satisfy the debt disposition (notes 2–3),
+and minor 4 of round 2 is discharged (note 4). **The gate is CLOSED.**
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | minor | **Accepted; the 501 is withdrawn.** It was the implementation agent's count of edited sites. It is not reproducible from the retained evidence, and the scope's unit (one per unfolding call, counted at the base; `AHalt.ret`'s line holds two) differs from it. The census of record is the scope table's: 583 sites, 47 in the exclusions, 536 in scope (51 changed by round 1's commits, 485 after). That table is historical: it describes the base `1fd7d4ce`, not the head. The ledger's AS-1 entry and round 2's pack are to be read with this correction. |
+| 2–5 | note | No change. |
