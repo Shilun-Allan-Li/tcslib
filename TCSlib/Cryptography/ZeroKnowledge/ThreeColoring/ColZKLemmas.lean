@@ -154,6 +154,54 @@ theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h
         (Equiv.sumArrowEquivProdArrow _ _ _) (Equiv.curry _ _ _))) (Equiv.refl _))
   exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
 
+/-! ### Averaging over seeds -/
+
+/-- A sampler precomposed with a map pushing uniform to uniform has the same acceptance
+probability (`PushesUniform.prodMap` with the identity on the coins, `acceptProb_def`). -/
+theorem acceptProb_comp_pushesUniform {Ω σ γ ρ : Type*} [Fintype Ω] [Fintype σ] [Fintype ρ]
+    {π : Ω → σ} (hπ : HardcoreBit.PushesUniform π) (X : σ → γ) (D : γ → ρ → Bool) :
+    acceptProb (fun ω => X (π ω)) D = acceptProb X D := by
+  rw [acceptProb_def, acceptProb_def]
+  exact (hπ.prodMap HardcoreBit.pushesUniform_id).uprob_eq fun z : σ × ρ => D (X z.1) z.2 = true
+
+/-- **Fixing a seed factor of the first sampler**: for `X` on seeds `κ × σ` some `k₀` has
+`|Pr[D(X) = 1] − Pr[D(Y) = 1]| ≤ distAdv (X (k₀, ·)) Y D`.
+
+**Proof sketch.** `Pr[D(X) = 1]` is the average over `k` of `Pr[D(X (k, ·)) = 1]`
+(`acceptProb_def`, `Equiv.prodAssoc`, `uprob_prod`) and `Pr[D(Y) = 1]` the average of a constant
+(`HardcoreBit.uexp_const`); some `k₀` has the absolute difference at least the average's
+(`HardcoreBit.uexp_sub`, `CommitmentLemmas.exists_abs_uexp_le`). -/
+theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fintype σ] [Fintype τ]
+    [Fintype ρ] (X : κ × σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
+    ∃ k₀ : κ, |acceptProb X D - acceptProb Y D| ≤ distAdv (fun s => X (k₀, s)) Y D := by
+  have hX : acceptProb X D = uexp fun k => acceptProb (fun s => X (k, s)) D := by
+    rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc κ σ ρ).symm, uprob_prod]
+    rfl
+  obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
+    acceptProb (fun s => X (k, s)) D - acceptProb Y D
+  refine ⟨k₀, ?_⟩
+  rw [distAdv_def, hX, ← HardcoreBit.uexp_const (Ω := κ) (acceptProb Y D), ← HardcoreBit.uexp_sub,
+    HardcoreBit.uexp_const]
+  exact hk₀
+
+/-- **Moving a seed factor into the distinguisher's coins**, for one sampler
+(`acceptProb_def`, `Equiv.prodAssoc`). -/
+theorem acceptProb_seed_to_coins {σ κ γ γ' ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
+    (X : σ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
+    acceptProb (fun s : σ × κ => F (X s.1) s.2) D =
+      acceptProb X fun g (c : κ × ρ) => D (F g c.1) c.2 := by
+  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ κ ρ).symm]
+  rfl
+
+/-- **Moving a seed factor into the distinguisher's coins**: post-processing two samplers by
+`F · k` with an independent uniform `k` is post-processing by a distinguisher with coins
+`κ × ρ` (`acceptProb_seed_to_coins`). -/
+theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype τ] [Fintype κ]
+    [Fintype ρ] (X : σ → γ) (Y : τ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
+    distAdv (fun s : σ × κ => F (X s.1) s.2) (fun s : τ × κ => F (Y s.1) s.2) D =
+      distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
+  rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
+
 /-! ### Tapes as lists -/
 
 /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
@@ -173,6 +221,17 @@ theorem ofFn_drop_eq {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k = L) 
     omega
   · intro i h₁ h₂
     simp only [List.getElem_drop, List.getElem_ofFn]
+
+/-- A window ending at `B ≤ L`: `((List.ofFn b).take B).drop a` is the tape of the `k = B − a`
+bits from `a`. -/
+theorem ofFn_take_drop {L : ℕ} (b : Fin L → Bool) (a k B : ℕ) (h : a + k = B) (hB : B ≤ L) :
+    ((List.ofFn b).take B).drop a =
+      List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+  apply List.ext_getElem
+  · simp only [List.length_drop, List.length_take, List.length_ofFn]
+    omega
+  · intro i h₁ h₂
+    simp only [List.getElem_drop, List.getElem_take, List.getElem_ofFn]
 
 /-! ### Searches -/
 

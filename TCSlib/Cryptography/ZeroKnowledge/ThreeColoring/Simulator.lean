@@ -1017,6 +1017,158 @@ theorem statClose_colSim_colSimTrunc (V' : Strategy) {n : ℕ} (G : Graph n) (hm
     hatt, ColZK.findSome?_map_option]
   cases (List.finRange (n * m)).findSome? _ <;> rfl
 
+/-- **The edgeless case is one multi-value hiding gap** [PS10, proof of Proposition 128.8]
+(the case `m = 0`, `n ≥ 1` of `col_zk`'s sketch; gate 03g round 2, R2-1): for an edgeless graph
+there are a permutation `π₀` and a verifier tape `r_V` such that `D`'s advantage between the real
+view and the simulator is at most `(1/4)^{|x|}` plus `D`'s advantage, on the views
+`⟨x, z, r_V, [cv, []]⟩`, between the commitment vectors to `π₀ ∘ c` and to `0`.
+
+**Proof sketch.** The real view is `(1/4)^{|x|}`-close to the encoded `colRealView`
+(`statClose_colRealView`, `distAdv_le_of_statClose`), which here has the empty opening
+(`edgeAt_eq_none_iff`). The simulator makes one attempt (`colSim`'s edgeless branch), on block
+`0`, whose commitment randomness and verifier tape are independent uniform fields of the tape
+(`ColZK.pushesUniform_blockFields`): it outputs the view of the commitment vector to `0`
+(`colCommit_eq`). The two views differ only in the committed vector; by the triangle inequality
+(`distAdv_def`, `abs_sub_le`), averaging over `π` (`ColZK.exists_fixSeed`) and moving `r_V` into
+the distinguisher's coins (`ColZK.distAdv_seed_to_coins`, `CommitmentLemmas.exists_fixCoins`)
+the gap is that of the fixed `π₀` and `r_V`. -/
+theorem exists_colZK_edgeless (V' : Strategy) {n : ℕ} (hn : 1 ≤ n) (G : Graph n)
+    (hm : edgeCount G = 0) (c : Fin n → Fin 3) (z : List Bool) (D : NUPPT) :
+    ∃ (π₀ : Equiv.Perm (Fin 3)) (rV : V'.Coins (encGraph G).length),
+      distAdv (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G) (encColoring c) z r).encode)
+          (fun r : Fin ((colSimCoins ℓ V').eval (encGraph G).length) → Bool =>
+            colSim Com ℓ V' (encGraph G) z (List.ofFn r))
+          (D.distinguisherL (encGraph G).length) ≤
+        (1 / 4 : ℝ) ^ (encGraph G).length +
+          distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+              multiCom Com (fun i => padColor n (π₀ (c i))) r)
+            (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun _ => padColor n 0) r)
+            (fun cv d => D.distinguisherL (encGraph G).length
+              (View.encode ⟨encGraph G, z, List.ofFn rV, [cv, []]⟩) d) := by
+  set N := (encGraph G).length with hN
+  have hNn : N = n * n := length_encGraph G
+  have hnN : n ≤ N := hNn ▸ Nat.le_mul_self n
+  have hc : ProperColoring G c := fun u v huv => by
+    have hmem := (mem_edgeList_iff G (u, v)).2 huv
+    rw [List.length_eq_zero_iff.1 hm] at hmem
+    exact absurd hmem List.not_mem_nil
+  -- the encoded view with commitment vector `cv` and verifier tape `ρ`
+  set F : List Bool → V'.Coins N → List Bool :=
+    fun cv ρ => View.encode ⟨encGraph G, z, List.ofFn ρ, [cv, []]⟩ with hF
+  -- (1) the real view is `(1/4)^N`-close to the typed honest view
+  have hR := distAdv_le_of_statClose _ _ (statClose_colRealView (Com := Com) (ℓ := ℓ) V' G c hc z)
+    (D.distinguisherL N)
+  have hΨ : (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+      (some (colRealView Com (ℓ.eval n) G c
+          (fun com ρ => V'.next (encGraph G) z (List.ofFn ρ) [com]) w)).elim []
+        fun v => View.encode ⟨encGraph G, z, List.ofFn v.1, [v.2.1, v.2.2]⟩) =
+      fun w => F (multiCom Com (fun i => padColor n (w.1.1 (c i))) w.1.2) w.2 := by
+    funext w
+    rw [hF, Option.elim_some]
+    unfold colRealView
+    dsimp only
+    rw [(edgeAt_eq_none_iff G _).2 hm, colCommit_eq]
+  rw [hΨ] at hR
+  -- (2) the simulator makes one attempt on block `0`; it reads the commitment randomness and
+  -- the verifier's tape, two independent uniform fields
+  have hB : (colSimBlock ℓ V').eval N = (N + 1) ^ 2 + N * 3 + N * ℓ.eval N + V'.coinLen N := by
+    unfold colSimBlock
+    rw [PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_add, PolyExpr.eval_normal,
+      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_mul,
+      PolyExpr.eval_var, Strategy.coinLen_eq]
+    ring
+  have hBL : (colSimBlock ℓ V').eval N ≤ (colSimCoins ℓ V').eval N := by
+    unfold colSimCoins
+    rw [PolyExpr.eval_mul, PolyExpr.eval_mul, PolyExpr.eval_var]
+    have : 1 ≤ N * N := Nat.one_le_iff_ne_zero.2 (by rw [hNn]; positivity)
+    exact Nat.le_mul_of_pos_left _ this
+  have hnℓ : n * ℓ.eval n ≤ N * ℓ.eval N := Nat.mul_le_mul hnN (PolyExpr.eval_mono ℓ hnN)
+  have hfld := (ColZK.pushesUniform_blockFields (L := (colSimCoins ℓ V').eval N) (a₁ := 0)
+    (o₂ := 0) (a₂ := 0) (o₃ := (N + 1) ^ 2 + N * 3) (n := n) (k := ℓ.eval n)
+    (o₄ := (N + 1) ^ 2 + N * 3 + N * ℓ.eval N) (a₄ := V'.coinLen N) le_rfl (by omega) (by omega)
+    (by omega)).comp (HardcoreBit.pushesUniform_snd.prodMap HardcoreBit.pushesUniform_id)
+  have hS : (fun r : Fin ((colSimCoins ℓ V').eval N) → Bool =>
+      colSim Com ℓ V' (encGraph G) z (List.ofFn r)) = fun r =>
+      F (multiCom Com (fun _ => padColor n 0) (fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+          r ⟨(N + 1) ^ 2 + N * 3 + (i * ℓ.eval n + j), by have := ColZK.table_index_lt i j; omega⟩))
+        (fun i : Fin (V'.coinLen N) => r ⟨(N + 1) ^ 2 + N * 3 + N * ℓ.eval N + i,
+          by have := i.isLt; omega⟩) := by
+    funext r
+    have hrr : (fun (i : Fin n) (j : Fin (ℓ.eval n)) =>
+        ((List.ofFn r).take ((colSimBlock ℓ V').eval N)).getD
+          ((N + 1) ^ 2 + 3 * N + i * ℓ.eval n + j) false) =
+        fun (i : Fin n) (j : Fin (ℓ.eval n)) => r ⟨(N + 1) ^ 2 + N * 3 + (i * ℓ.eval n + j),
+          by have := ColZK.table_index_lt i j; omega⟩ := by
+      funext i j
+      have hlt : (N + 1) ^ 2 + 3 * N + i * ℓ.eval n + j < (colSimBlock ℓ V').eval N := by
+        have := ColZK.table_index_lt i j
+        omega
+      rw [List.getD_eq_getElem?_getD, List.getElem?_take_of_lt hlt, ← List.getD_eq_getElem?_getD,
+        ColProofs.ofFn_getD_lt r (lt_of_lt_of_le hlt hBL)]
+      congr 1
+      exact Fin.ext (by simp only; ring)
+    have hrV : ((List.ofFn r).take ((colSimBlock ℓ V').eval N)).drop
+        ((N + 1) ^ 2 + 3 * N + N * ℓ.eval N) =
+        List.ofFn fun i : Fin (V'.coinLen N) => r ⟨(N + 1) ^ 2 + N * 3 + N * ℓ.eval N + i,
+          by have := i.isLt; omega⟩ := by
+      rw [ColZK.ofFn_take_drop r _ (V'.coinLen N) _ (by omega) hBL]
+      congr 1
+      funext i
+      congr 1
+      exact Fin.ext (by simp only; ring)
+    unfold colSim
+    dsimp only
+    rw [if_pos (by rw [decGraph_encGraph]; exact hm), colCoinSlice_eq, zero_mul, List.drop_zero]
+    unfold colSimAttemptStr
+    generalize hd : decGraph (encGraph G) = d
+    rw [decGraph_encGraph] at hd
+    subst hd
+    dsimp only
+    rw [(edgeAt_eq_none_iff G _).2 hm, hrr, hrV, Option.getD_some, hF, colCommit_eq]
+  have hSacc := ColZK.acceptProb_comp_pushesUniform hfld
+    (fun s : (Fin n → Fin (ℓ.eval n) → Bool) × V'.Coins N =>
+      F (multiCom Com (fun _ => padColor n 0) s.1) s.2) (D.distinguisherL N)
+  -- (3) average over the permutation: some `π₀` does at least as well
+  have hΨacc := acceptProb_comp_equiv (Equiv.prodAssoc (Equiv.Perm (Fin 3))
+      (Fin n → Fin (ℓ.eval n) → Bool) (V'.Coins N)).symm
+    (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+      F (multiCom Com (fun i => padColor n (w.1.1 (c i))) w.1.2) w.2) (D.distinguisherL N)
+  obtain ⟨π₀, hπ₀⟩ := ColZK.exists_fixSeed
+    (fun s : Equiv.Perm (Fin 3) × ((Fin n → Fin (ℓ.eval n) → Bool) × V'.Coins N) =>
+      F (multiCom Com (fun i => padColor n (s.1 (c i))) s.2.1) s.2.2)
+    (fun s : (Fin n → Fin (ℓ.eval n) → Bool) × V'.Coins N =>
+      F (multiCom Com (fun _ => padColor n 0) s.1) s.2) (D.distinguisherL N)
+  rw [ColZK.distAdv_seed_to_coins (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+      multiCom Com (fun i => padColor n (π₀ (c i))) r)
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun _ => padColor n 0) r) F] at hπ₀
+  -- (4) fix the verifier's tape
+  obtain ⟨ρ₀, hρ₀⟩ := CommitmentLemmas.exists_fixCoins
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun i => padColor n (π₀ (c i))) r)
+    (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun _ => padColor n 0) r)
+    (fun g (c : V'.Coins N × D.Coins N) => D.distinguisherL N (F g c.1) c.2)
+  refine ⟨π₀, ρ₀, ?_⟩
+  rw [hS]
+  have htri := abs_sub_le (acceptProb (fun r => (((colProtocol Com ℓ).withV V').viewV (encGraph G)
+      (encColoring c) z r).encode) (D.distinguisherL N))
+    (acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) × V'.Coins N =>
+      F (multiCom Com (fun i => padColor n (w.1.1 (c i))) w.1.2) w.2) (D.distinguisherL N))
+    (acceptProb (fun s : (Fin n → Fin (ℓ.eval n) → Bool) × V'.Coins N =>
+      F (multiCom Com (fun _ => padColor n 0) s.1) s.2) (D.distinguisherL N))
+  rw [distAdv_def] at hR
+  rw [distAdv_def, hSacc]
+  have hπ₀' : |acceptProb (fun w : (Equiv.Perm (Fin 3) × (Fin n → Fin (ℓ.eval n) → Bool)) ×
+      V'.Coins N => F (multiCom Com (fun i => padColor n (w.1.1 (c i))) w.1.2) w.2)
+        (D.distinguisherL N) -
+      acceptProb (fun s : (Fin n → Fin (ℓ.eval n) → Bool) × V'.Coins N =>
+        F (multiCom Com (fun _ => padColor n 0) s.1) s.2) (D.distinguisherL N)| ≤
+      distAdv (fun r : Fin n → Fin (ℓ.eval n) → Bool =>
+          multiCom Com (fun i => padColor n (π₀ (c i))) r)
+        (fun r : Fin n → Fin (ℓ.eval n) → Bool => multiCom Com (fun _ => padColor n 0) r)
+        (fun g d => D.distinguisherL N (F g ρ₀) d) := by
+    rw [← hΨacc]
+    exact hπ₀.trans hρ₀
+  exact htri.trans (add_le_add hR hπ₀')
+
 end ColZKLadder
 
 /-! ### Proposition 128.8 -/
