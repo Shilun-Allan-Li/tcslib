@@ -133,9 +133,12 @@ theorem setup_run (y : List Bool) (Y X : ℕ) (hab : a ≤ b) (hX : 2 * X + 2 �
     (by simp [cpDst, cpSrc, St.zero])
   regs [cpDst, cpSrc, cpNext] at h1
   refine h1.trans ?_
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_dec (show A a b f mode .x1 = _ from rfl)]; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_dec (show A a b f mode .x2 = _ from rfl)]; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_half (show A a b f mode .x3 = _ from rfl)]; stp
   have ex : (2 * X + 2 - 1 - 1) / 2 = X := by omega
   simp only [ex]
   -- `t := x + 1`
@@ -144,7 +147,8 @@ theorem setup_run (y : List Bool) (Y X : ℕ) (hab : a ≤ b) (hX : 2 * X + 2 �
     (by simp [cpDst, cpSrc, St.zero])
   regs [cpDst, cpSrc, cpNext] at h2
   refine h2.trans ?_
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_inc (show A a b f mode .t1 = _ from rfl)]; stp
   -- `c := ℓ`
   have h3 := Codec.halvCount_loop (A a b f mode) (orc N) y rT rC (by decide) .hcT .hcH .hcB
     (.cp .TC) rfl rfl rfl B (St.toV { St.zero with y := Y, p := 2 * X + 2, x := X, t := X + 1 })
@@ -191,8 +195,10 @@ theorem setup_run (y : List Bool) (Y X : ℕ) (hab : a ≤ b) (hX : 2 * X + 2 �
     (by simp only [St.Bd, St.zero]; omega) (by simp [cpDst, cpSrc, St.zero])
   regs [cpDst, cpSrc, cpNext] at h8
   refine h8.trans ?_
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
-  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_inc (show A a b f mode .n1 = _ from rfl)]; stp
+  refine step_of (by simp only [St.Bd, St.zero]; omega) ?_
+  rw [astep_inc (show A a b f mode .n2 = _ from rfl)]; stp
   have h9 := sh_run (a := a) (b := b) (f := f) (mode := mode) (o := orc N) (y := y) (B := B)
     .N { St.zero with y := Y, p := 2 * X + 2, x := X, s := a * ℓ, e := E, c := E + 1, n := 1 }
     (by simp only [St.Bd, St.zero]; omega) rfl (by sbd2)
@@ -224,7 +230,7 @@ theorem setup_run (y : List Bool) (Y X : ℕ) (hab : a ≤ b) (hX : 2 * X + 2 �
     (by sbd2) (by simp [cpDst, cpSrc, St.zero])
   regs [cpDst, cpSrc, cpNext] at h13
   refine h13.trans ?_
-  refine step_of (by sbd2) ?_; stp
+  refine step_of (by sbd2) ?_; rw [astep_inc (show A a b f mode .k1 = _ from rfl)]; stp
   have h14 := sh_run (a := a) (b := b) (f := f) (mode := mode) (o := orc N) (y := y) (B := B)
     .K { St.zero with y := Y, p := 2 * X + 2, x := X, s := a * ℓ, e := E, n := 1 * 2 ^ (E + 1),
                       m := 1 * 2 ^ (E + 1) * 2 ^ E, k := 1 * 2 ^ (E + 1) * 2 ^ E, c := 1 }

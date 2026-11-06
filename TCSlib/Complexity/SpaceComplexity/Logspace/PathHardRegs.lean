@@ -285,9 +285,10 @@ set_option hygiene false in
 scoped macro "sbd" : tactic => `(tactic| (simp only [St.Bd] at hbd ⊢ <;> omega))
 
 set_option hygiene false in
-/-- Normalize one step of the query machine (after `step_of`/`stepH_of`). -/
+/-- Normalize one step of the query machine (after `step_of`/`stepH_of` and the step's
+`astep_*` equation). -/
 scoped macro "stp" : tactic =>
-  `(tactic| simp only [astep, A, St.toV_y, St.toV_p, St.toV_x, St.toV_t, St.toV_c, St.toV_s,
+  `(tactic| simp only [St.toV_y, St.toV_p, St.toV_x, St.toV_t, St.toV_c, St.toV_s,
       St.toV_e, St.toV_n, St.toV_m, St.toV_k, St.toV_q, St.toV_i, St.toV_d, St.toV_u, St.toV_z,
       St.upd_y, St.upd_p, St.upd_x, St.upd_t, St.upd_c, St.upd_s, St.upd_e, St.upd_n, St.upd_m,
       St.upd_k, St.upd_q, St.upd_i, St.upd_d, St.upd_u, St.upd_z, ↓reduceIte,

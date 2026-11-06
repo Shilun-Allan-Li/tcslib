@@ -558,9 +558,9 @@ private lemma drop_tail_decode (mode : Bool) (z tail : List Bool) :
     have reset : DropReach mode h (some .tailDone, v, none)
         (some (.copy 2 false), dropValues h.length (tail := p), none) := by
       apply AReach.step ⟨drop_preS mode h _, bv⟩
-      simp only [astep, dropARM]
+      simp only [astep_clr (show dropARM mode .tailDone = _ from rfl)]
       apply AReach.step ⟨drop_preS mode h _, register_update_le v 7 _ 0 bv (by omega)⟩
-      simp only [astep, dropARM]
+      simp only [astep_clr (show dropARM mode (.clearPtr 0) = _ from rfl)]
       have ve : Function.update (Function.update v 7 0) 0 0 = dropValues h.length (tail := p) := by
         apply funext
         have fr := frame
@@ -697,7 +697,7 @@ private lemma drop_lookup (mode : Bool) (w b b' : List Bool) (q : ℕ) (v : Fin 
     have bs : ∀ r, vs r ≤ 4 * h.length + 4 := register_update_le vm 0 _ _ bm (hv 3)
     have move : DropReach mode h (some (.clearPtr 4), vm, none) (some (.seek true), vs, none) := by
       apply AReach.step ⟨drop_preS mode h _, bm⟩
-      simp only [astep, dropARM]
+      simp only [astep_clr (show dropARM mode (.clearPtr 4) = _ from rfl)]
       have copy := drop_copy_run mode h 7 (Function.update vm 0 0)
         (register_update_le vm 0 _ 0 bm (by omega)) (by simp [dropCopy])
       simpa [dropCopy, vs, vm] using copy
@@ -763,7 +763,7 @@ private lemma drop_decrement_run (mode : Bool) (h : List Bool) (r : Fin 9) (coun
   | zero => simpa using AReach.refl (some (path 0), v, none)
   | succ count ih =>
     apply AReach.step ⟨drop_preS mode h _, hv⟩
-    simp only [astep, steps 0 (by omega)]
+    simp only [astep_dec (steps 0 (by omega))]
     have bound := register_update_le v r (4 * h.length + 4) (v r - 1) hv
       (by have := hv r; omega)
     have rest := ih (fun i => path (i + 1)) (Function.update v r (v r - 1)) bound
@@ -798,7 +798,7 @@ private lemma drop_z_prepare (mode : Bool) (h : List Bool) (zlen q : ℕ)
   simp at dec
   apply dec.trans
   apply AReach.step ⟨drop_preS mode h _, by apply dropValues_bound <;> omega⟩
-  simp [astep, dropARM]
+  simp [astep_clr (show dropARM mode (.clearPtr 1) = _ from rfl)]
   exact AReach.refl _
 
 /-- Save the retained suffix start, derive the inner first-field end, and restart the
@@ -836,7 +836,7 @@ private lemma drop_u_prepare (mode : Bool) (h : List Bool) (zlen ulen q : ℕ)
   simp at dec
   apply dec.trans
   apply AReach.step ⟨drop_preS mode h _, by apply dropValues_bound <;> omega⟩
-  simp [astep, dropARM]
+  simp [astep_clr (show dropARM mode (.clearPtr 2) = _ from rfl)]
   exact AReach.refl _
 
 /-- Save the last pair boundary and restart the final segmented lookup. -/
@@ -856,7 +856,7 @@ private lemma drop_lookup_prepare (mode : Bool) (h : List Bool) (zlen ulen wlen 
   simp [dropCopy] at cp
   apply cp.trans
   apply AReach.step ⟨drop_preS mode h _, by apply dropValues_bound <;> omega⟩
-  simp [astep, dropARM]
+  simp [astep_clr (show dropARM mode (.clearPtr 3) = _ from rfl)]
   exact AReach.refl _
 
 /-- Scan the inner pair after the outer payload pair has been recognized.
@@ -1435,7 +1435,7 @@ private lemma comp_product (C e : ℕ) (mode outer : Bool) (f : List Bool → Li
     have eq : v 10 = v 8 := by omega
     have up : Function.update v 10 (v 8) = v := by rw [← eq, Function.update_eq_self]
     simp only [Nat.zero_mul, Nat.add_zero, up, Function.update_eq_self]
-    simpa [astep, compARM, eq] using
+    simpa [astep_jeq (show compARM C e mode (.productTest outer k) = _ from rfl), eq] using
       (AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
         (a := (some (.productTest outer k), v, none)) ⟨comp_preS C e mode h _, hv⟩)
   | succ left ih =>
@@ -1485,11 +1485,13 @@ private lemma comp_product (C e : ℕ) (mode outer : Bool) (f : List Bool → Li
         · simp [vn, va, Function.update_of_ne, h7, h10]
     rw [endeq] at rest
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, if_neg (Nat.ne_of_lt lt)]
+    simp only [astep_jeq (show compARM C e mode (.productTest outer k) = _ from rfl),
+      if_neg (Nat.ne_of_lt lt)]
     apply cp.trans
     apply add.trans
     apply AReach.step ⟨comp_preS C e mode h _, ba⟩
-    simpa only [astep, compARM, va, Function.update_of_ne (by decide : (10 : Fin 14) ≠ 7)] using rest
+    simpa only [astep_inc (show compARM C e mode (.productNext outer k) = _ from rfl), va,
+      Function.update_of_ne (by decide : (10 : Fin 14) ≠ 7)] using rest
 
 
 /-- One power round multiplies the accumulator by its base and restores all scratch.
@@ -1520,7 +1522,7 @@ private lemma comp_multiply (C e : ℕ) (mode outer : Bool) (f : List Bool → L
   have clean : CompReach C e mode f h B (some (.productClean outer k false), ve, none)
       (some (.power outer ⟨k.val - 1, by omega⟩), Function.update v 7 (v 7 * v 8), none) := by
     apply AReach.step ⟨comp_preS C e mode h _, be⟩
-    simp only [astep, compARM]
+    simp only [astep_clr (show compARM C e mode (.productClean outer k false) = _ from rfl)]
     have bound := register_update_le ve 11 B 0 be (Nat.zero_le _)
     have last := AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
       (G := fun a => PreS (compARM C e mode) h a ∧ ∀ r, a.2.1 r ≤ B)
@@ -1535,7 +1537,8 @@ private lemma comp_multiply (C e : ℕ) (mode outer : Bool) (f : List Bool → L
         · by_cases h11 : r = 11
           · subst r; simp [hs]
           · simp [ve, vz, vc, Function.update_of_ne, h7, h10, h11]
-    simpa only [astep, compARM, eq] using last
+    simpa only [astep_clr (show compARM C e mode (.productClean outer k true) = _ from rfl),
+      eq] using last
   apply cp.trans
   apply AReach.step ⟨comp_preS C e mode h _, bc⟩
   exact body.trans clean
@@ -1594,7 +1597,7 @@ private lemma comp_power_run (C e : ℕ) (mode outer : Bool) (f : List Bool → 
   | zero =>
     simp only [pow_zero, Nat.mul_one]
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, ht, ↓reduceIte, hn]
+    simp only [astep_jz (show compARM C e mode (.power outer k) = _ from rfl), ht, ↓reduceIte, hn]
     exact comp_factor_run C e mode outer f h B v hv hs (by simpa [hn] using hf)
   | succ n ih =>
     let vn := Function.update v 7 (v 7 * v 8)
@@ -1619,7 +1622,8 @@ private lemma comp_power_run (C e : ℕ) (mode outer : Bool) (f : List Bool → 
       rw [power]; simp only [vn, Function.update_idem]
     rw [endeq] at rest
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, ht, hn, Nat.succ_ne_zero, ↓reduceIte]
+    simp only [astep_jz (show compARM C e mode (.power outer k) = _ from rfl), ht, hn,
+      Nat.succ_ne_zero, ↓reduceIte]
     exact (comp_multiply C e mode outer f h k B v hv ht hi hs prod).trans rest
 
 
@@ -1641,7 +1645,7 @@ private lemma comp_poly_run (C e : ℕ) (mode outer : Bool) (f : List Bool → L
     (by simp [vn, ht]) (by simp [vn, hi]) (by simp [vn, hs])
     (by simpa [vn] using hbase) (by simpa [vn] using hp) (by simpa [vn] using hf)
   apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-  simpa [astep, compARM, ha, vn] using run
+  simpa [astep_inc (show compARM C e mode (.polyStart outer) = _ from rfl), ha, vn] using run
 
 /-- Every required power, at either base and coefficient, fits the full output cap. -/
 private lemma comp_power_bound (C e n base exponent : ℕ) (outer : Bool)
@@ -1688,13 +1692,14 @@ private lemma comp_length_search (C e : ℕ) (mode : Bool) (f : List Bool → Li
     have vu : Function.update v 12 F = v := by rw [← eq, Function.update_eq_self]
     rw [vu]
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM]
+    simp only [astep_jeq (show compARM C e mode .lengthBound = _ from rfl)]
     by_cases cap : v 12 = v 7
     · simp only [if_pos cap]; exact AReach.refl _
     · simp only [if_neg cap]
       have ans := ho (v 12) (by omega)
       simp only [eq, lt_self_iff_false, decide_false] at ans
-      simpa [astep, compARM, eq, ans, vword_whole₁] using
+      simpa [astep_call (show compARM C e mode .lengthQuery = _ from rfl), eq, ans,
+        vword_whole₁] using
         (AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
           (a := (some .lengthQuery, v, none)) ⟨comp_preS C e mode h _, hv⟩)
   | succ left ih =>
@@ -1707,11 +1712,13 @@ private lemma comp_length_search (C e : ℕ) (mode : Bool) (f : List Bool → Li
     have ans := ho (v 12) (by omega)
     simp only [lt, decide_true] at ans
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, if_neg cap]
+    simp only [astep_jeq (show compARM C e mode .lengthBound = _ from rfl), if_neg cap]
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, vword_whole₁, ans, ↓reduceIte]
+    simp only [astep_call (show compARM C e mode .lengthQuery = _ from rfl), vword_whole₁, ans,
+      ↓reduceIte]
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simpa only [astep, compARM, vn, Function.update_idem] using rest
+    simpa only [astep_inc (show compARM C e mode .lengthInc = _ from rfl), vn,
+      Function.update_idem] using rest
 
 
 /-- Boundary vectors keep the physical positions separate from the bounded query and
@@ -1819,7 +1826,7 @@ private lemma comp_canonical_run (C e : ℕ) (mode : Bool) (f : List Bool → Li
   · subst b
     have eq : v 4 = v 3 := by rw [hb, he, length_pairEncode]; simp only [List.length_nil]; omega
     refine ⟨v, hv, fun _ _ => rfl, ?_⟩
-    simpa [astep, compARM, eq, Canon] using
+    simpa [astep_jeq (show compARM C e mode .canonical = _ from rfl), eq, Canon] using
       (AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
         (a := (some .canonical, v, none)) ⟨comp_preS C e mode h _, hv⟩)
   · have pos : 0 < b.length := List.length_pos_iff.mpr empty
@@ -1844,16 +1851,19 @@ private lemma comp_canonical_run (C e : ℕ) (mode : Bool) (f : List Bool → Li
       have step := AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
         (G := fun a => PreS (compARM C e mode) h a ∧ ∀ r, a.2.1 r ≤ B)
         (a := (some .canonicalRead, vf, none)) ⟨comp_preS C e mode h _, bf⟩
-      simpa only [astep, compARM, vword_whole₁, read, drop_canon] using step
+      simpa only [astep_call (show compARM C e mode .canonicalRead = _ from rfl), vword_whole₁,
+        read, drop_canon] using step
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM, if_neg ne]
+    simp only [astep_jeq (show compARM C e mode .canonical = _ from rfl), if_neg ne]
     apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-    simp only [astep, compARM]
+    simp only [astep_clr (show compARM C e mode .canonicalReset = _ from rfl)]
     apply cp.trans
     apply AReach.step ⟨comp_preS C e mode h _, bc⟩
-    simp only [astep, compARM, vc, Function.update_self, Function.update_idem]
+    simp only [astep_dec (show compARM C e mode (.canonicalDec false) = _ from rfl), vc,
+      Function.update_self, Function.update_idem]
     apply AReach.step ⟨comp_preS C e mode h _, bd⟩
-    simpa only [astep, compARM, vd, vf, Function.update_self, Function.update_idem,
+    simpa only [astep_dec (show compARM C e mode (.canonicalDec true) = _ from rfl), vd, vf,
+      Function.update_self, Function.update_idem,
       Nat.sub_sub, Nat.reduceAdd] using last
 
 
@@ -1906,10 +1916,10 @@ private lemma comp_outer_prepare (C e : ℕ) (mode : Bool) (f : List Bool → Li
   have c₂ : CompReach C e mode f h B (some (.outerDec false), v₂, none)
       (some (.copy 2 false), v₄, none) := by
     apply AReach.step ⟨comp_preS C e mode h _, b₂⟩
-    simp only [astep, compARM]
+    simp only [astep_dec (show compARM C e mode (.outerDec false) = _ from rfl)]
     rw [show Function.update v₂ 3 (v₂ 3 - 1) = v₃ by simp [v₂, v₃]]
     apply AReach.step ⟨comp_preS C e mode h _, b₃⟩
-    simpa [astep, compARM, v₃, v₄, a] using
+    simpa [astep_dec (show compARM C e mode (.outerDec true) = _ from rfl), v₃, v₄, a] using
       (AReach.refl (A := compARM C e mode) (oracle := compOracle f) (x := h)
         (G := fun a => PreS (compARM C e mode) h a ∧ ∀ r, a.2.1 r ≤ B)
         (some (.copy 2 false), v₄, none))
@@ -1923,7 +1933,7 @@ private lemma comp_outer_prepare (C e : ℕ) (mode : Bool) (f : List Bool → Li
     (by simpa [v₆, compValues] using pp.1) (by simpa [v₆, compValues] using pp.2)
   apply (c₀.trans (c₁.trans (c₂.trans c₃))).trans
   apply AReach.step ⟨comp_preS C e mode h _, b₅⟩
-  simpa [astep, compARM, v₅, v₆, compFactor] using pol
+  simpa [astep_inc (show compARM C e mode .baseInc = _ from rfl), v₅, v₆, compFactor] using pol
 
 /-- The bounded outer tail is validated before its numeric value is accumulated.
 
@@ -1989,9 +1999,9 @@ private lemma comp_outer_decode (C e : ℕ) (mode : Bool) (f : List Bool → Lis
       simp [vd, compValues, Fin.forall_fin_succ]; dsimp [a, B] at *; omega
     have reset : CompReach C e mode f h B (some .tailDone, vs, none) (some (.copy 3 false), vz, none) := by
       apply AReach.step ⟨comp_preS C e mode h _, bs⟩
-      simp only [astep, compARM]
+      simp only [astep_clr (show compARM C e mode .tailDone = _ from rfl)]
       apply AReach.step ⟨comp_preS C e mode h _, register_update_le vs 7 B 0 bs (Nat.zero_le _)⟩
-      simp only [astep, compARM]
+      simp only [astep_clr (show compARM C e mode .resetDecode = _ from rfl)]
       have ve : Function.update (Function.update vs 7 0) 0 0 = vz := by
         apply funext
         simp only [Fin.forall_fin_succ] at frame ⊢
@@ -2024,7 +2034,7 @@ private lemma comp_outer_decode (C e : ℕ) (mode : Bool) (f : List Bool → Lis
       simp only [Fin.forall_fin_succ] at ff ⊢
       simp_all [vd, compValues]
     apply (scan'.trans (reset.trans (copy.trans dec))).trans
-    simpa only [astep, compARM, endv] using
+    simpa only [astep_clr (show compARM C e mode .decodeDone = _ from rfl), endv] using
       (AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
         (a := (some .decodeDone, vf, none)) ⟨comp_preS C e mode h _, bf⟩)
   · rw [if_neg good]
@@ -2066,13 +2076,15 @@ private lemma comp_inner_prepare (C e : ℕ) (mode : Bool) (f : List Bool → Li
     (by simp [vp, ht]) (by simp [vp, ha]) (by simp [vp, hi]) (by simp [vp, hs])
     (by simp [vp]) (by simpa [vp] using power.1) (by simpa [vp] using power.2)
   apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-  simp only [astep, compARM]
+  simp only [astep_clr (show compARM C e mode .innerPrepare = _ from rfl)]
   apply cp.trans
   apply AReach.step ⟨comp_preS C e mode h _, bc⟩
-  simp only [astep, compARM, vc, Function.update_self, Function.update_idem]
+  simp only [astep_half (show compARM C e mode (.innerHalf false) = _ from rfl), vc,
+    Function.update_self, Function.update_idem]
   rw [show (4*n+4)/2 = 2*n+2 by omega]
   apply AReach.step ⟨comp_preS C e mode h _, bd⟩
-  simpa [astep, compARM, vd, vp, compFactor, show (2*n+2)/2 = n+1 by omega] using pol
+  simpa [astep_half (show compARM C e mode (.innerHalf true) = _ from rfl), vd, vp, compFactor,
+    show (2*n+2)/2 = n+1 by omega] using pol
 
 /-- The two lookup segments use the received indexing loop at strides one and two. -/
 private def compWalk (C e : ℕ) (suffix : Bool) (i : ℕ) : CompState C e :=
@@ -2229,15 +2241,16 @@ private lemma comp_separator_run (C e : ℕ) (mode : Bool) (f : List Bool → Li
         else (pairEncode (f x) b).getD p false) = mode := by simpa only [first] using firsteq
     rw [ans]
     apply AHalt.step ⟨comp_preS C e mode h _, hv⟩
-    simpa only [astep, compARM, if_pos eq] using comp_ret C e mode mode f h B v hv
+    simpa only [astep_jeq (show compARM C e mode (.separator false) = _ from rfl), if_pos eq] using
+      comp_ret C e mode mode f h B v hv
   · have ne : v 13 ≠ v 5 := by omega
     let v₁ := Function.update v 13 (n+1)
     have b₁ : ∀ r, v₁ r ≤ B := register_update_le v 13 B _ hv (by omega)
     have headRun : CompReach C e mode f h B (some (.separator false), v, none)
         (some (.separator true), v₁, none) := by
       apply AReach.step ⟨comp_preS C e mode h _, hv⟩
-      simp only [astep, compARM, if_neg ne]
-      simpa only [astep, compARM, hi] using
+      simp only [astep_jeq (show compARM C e mode (.separator false) = _ from rfl), if_neg ne]
+      simpa only [astep_inc (show compARM C e mode (.separatorInc false) = _ from rfl), hi] using
         (AReach.single (A := compARM C e mode) (oracle := compOracle f) (x := h)
           (a := (some (.separatorInc false), v, none)) ⟨comp_preS C e mode h _, hv⟩)
     by_cases second : p = n+1
@@ -2254,7 +2267,8 @@ private lemma comp_separator_run (C e : ℕ) (mode : Bool) (f : List Bool → Li
       rw [ans]
       apply headRun.halt
       apply AHalt.step ⟨comp_preS C e mode h _, b₁⟩
-      simpa only [astep, compARM, if_pos eq] using comp_ret C e mode true f h B v₁ b₁
+      simpa only [astep_jeq (show compARM C e mode (.separator true) = _ from rfl), if_pos eq] using
+        comp_ret C e mode true f h B v₁ b₁
     · have beyond : n+2 ≤ p := by omega
       have ne₁ : v₁ 13 ≠ v₁ 5 := by simp [v₁, hq]; omega
       let v₂ := Function.update v 13 (n+2)
@@ -2267,9 +2281,10 @@ private lemma comp_separator_run (C e : ℕ) (mode : Bool) (f : List Bool → Li
         simpa [vz, vs, v₂, compCopy] using comp_copy_run C e mode f h B 7 vz bz (by simp [vz, compCopy])
       have move : CompReach C e mode f h B (some (.separator true), v₁, none) (some (.seek true), vs, none) := by
         apply AReach.step ⟨comp_preS C e mode h _, b₁⟩
-        simp only [astep, compARM, if_neg ne₁]
+        simp only [astep_jeq (show compARM C e mode (.separator true) = _ from rfl), if_neg ne₁]
         apply AReach.step ⟨comp_preS C e mode h _, b₁⟩
-        simp only [astep, compARM, v₁, Function.update_self, Function.update_idem]
+        simp only [astep_inc (show compARM C e mode (.separatorInc true) = _ from rfl), v₁,
+          Function.update_self, Function.update_idem]
         change CompReach C e mode f h B (some .suffixReset, v₂, none) _
         apply AReach.step ⟨comp_preS C e mode h _, b₂⟩
         exact copy
