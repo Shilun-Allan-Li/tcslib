@@ -83,6 +83,11 @@ through `orbit_zero`.
 **J. Gate 04's seal exclusions** (`gates/04-s2b/evidence-r4/exclusions.md`: section A, 48 definitional reads; section B, 75 explicit unfolds; all in inherited ch. 2–4 declarations): re-prove the listed inherited ch. 2–4 proofs
 through published equation lemmas, adding missing equation lemmas beside their definitions.
 
+**K. Docstring (gate 03e round 3, minor 1).** In `ZeroKnowledge/Defs.lean`'s D8 deviation paragraph,
+replace "the rewinding simulators of the chapter are truncated and the theorems become statistical"
+with: expected polynomial time is not formalized; GI uses a truncated simulator and obtains
+statistical ZK, while 3COL remains computational ZK with statistical sampling and failure terms.
+
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
 only where an item says so.
 
