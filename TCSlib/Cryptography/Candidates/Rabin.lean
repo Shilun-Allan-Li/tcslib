@@ -292,15 +292,27 @@ def smallDistinctPrimes (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab
       _ ≤ 2 ^ max m 3 := Nat.pow_le_pow_right (by norm_num) (le_max_right _ _)
   ⟨(⟨⟨a, lt_of_lt_of_le ha8 h8⟩, ha⟩, ⟨⟨b, lt_of_lt_of_le hb8 h8⟩, hb⟩), hab⟩
 
+/-- The first prime of `smallDistinctPrimes m ha hb hab ha8 hb8` is `a`. -/
+theorem smallDistinctPrimes_p (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : a ≠ b)
+    (ha8 : a < 8) (hb8 : b < 8) : (smallDistinctPrimes m ha hb hab ha8 hb8).p = a := by
+  rw [DistinctPrimes.p_eq]
+  rfl
+
+/-- The second prime of `smallDistinctPrimes m ha hb hab ha8 hb8` is `b`. -/
+theorem smallDistinctPrimes_q (m : ℕ) {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : a ≠ b)
+    (ha8 : a < 8) (hb8 : b < 8) : (smallDistinctPrimes m ha hb hab ha8 hb8).q = b := by
+  rw [DistinctPrimes.q_eq]
+  rfl
+
 /-- The fallback `(3, 5)` of the odd generator. -/
 def oddDefault (m : ℕ) : RabinParams (· ≠ 2) (max m 3) :=
   ⟨smallDistinctPrimes m Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num),
-    (by decide : (3 : ℕ) ≠ 2), (by decide : (5 : ℕ) ≠ 2)⟩
+    by rw [smallDistinctPrimes_p]; decide, by rw [smallDistinctPrimes_q]; decide⟩
 
 /-- The fallback `(3, 7)` of the Blum generator. -/
 def blumDefault (m : ℕ) : RabinParams (· % 4 = 3) (max m 3) :=
   ⟨smallDistinctPrimes m Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
-    (by norm_num), (by decide : 3 % 4 = 3), (by decide : 7 % 4 = 3)⟩
+    (by norm_num), by rw [smallDistinctPrimes_p], by rw [smallDistinctPrimes_q]⟩
 
 /-- **The computation of a Rabin generator** at parameter `m` (primes from `Π_{max m 3}`):
 two restricted `SamplePrime` runs on the two halves of the coins (fallback primes: the
@@ -312,7 +324,8 @@ def rabinGenParams (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinPara
   let p := listToNat (samplePrimePL P (max m 3) (dflt m).z.p (r.take L))
   let q := listToNat (samplePrimePL P (max m 3) (dflt m).z.q ((r.drop L).take L))
   if h : p.Prime ∧ q.Prime ∧ p ≠ q ∧ p < 2 ^ max m 3 ∧ q < 2 ^ max m 3 ∧ P p ∧ P q then
-    ⟨⟨(⟨⟨p, h.2.2.2.1⟩, h.1⟩, ⟨⟨q, h.2.2.2.2.1⟩, h.2.1⟩), h.2.2.1⟩, h.2.2.2.2.2.1, h.2.2.2.2.2.2⟩
+    ⟨⟨(⟨⟨p, h.2.2.2.1⟩, h.1⟩, ⟨⟨q, h.2.2.2.2.1⟩, h.2.1⟩), h.2.2.1⟩,
+      by rw [DistinctPrimes.p_eq]; exact h.2.2.2.2.2.1, by rw [DistinctPrimes.q_eq]; exact h.2.2.2.2.2.2⟩
   else dflt m
 
 /-- The index `N = pq` as a `2m`-bit numeral. -/
