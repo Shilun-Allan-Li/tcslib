@@ -14,3 +14,11 @@
   (`evidence/merged-tree-after-209/`): the replay of record for the merge.
 - 2026-11-06: round 1 findings received: **HOLD 0/1/3/3** (F1, the value-to-width bound in three
   files). The user ruled: harvest in #208, all three.
+- 2026-11-06: the repair `9db4f2ee` on #208 (F1 harvested: `Complexity.LogProg.length_bits_succ_le`
+  in `Machines/Bin`, the three sites re-pointed; F2–F4), then the campaign merge `dd8a52c5`.
+  BL-2 in the ledger; dispositions in `resolutions.md`. `replay-ldp4` (190 modules) running; freeze
+  and lint done.
+- 2026-11-06: round 2's screen exposed IL-1 (six re-derivations of `indicator_inputLenLang`,
+  all predating #208); the user ruled: re-point all six in #208 (`6a289c50`), then the campaign
+  merge `d01c56a4`. #208 now changes 11 files. `replay-ldp4` was stopped (superseded);
+  `replay-ldp5` (190 modules, from `oleans-lnth`) running.

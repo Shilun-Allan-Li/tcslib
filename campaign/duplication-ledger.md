@@ -629,6 +629,40 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
+**BL-2, the binary width of an incremented register value** (gate 101's finding 1,
+2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
+`m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
+- `Logspace/ISCountGenCorrect`'s private `bits_succ_le` (BL-1 (i) lists it as a site that cites
+  `length_bits_le`; its successor/exponential step is this family's);
+- `Machines/ARMWidth`'s `arm_decides_pspace_val`, an inline `hlt` block at `N = C₀ (|x| + 1)^c₀`;
+- `SavitchARM/Deepen`'s `deepen_contract` (new in #208), the same block at `W · W`.
+
+Census (gate 101's, one member in each file): `Deepen` 1 of 45, `ARMWidth` 1 of 5,
+`ISCountGenCorrect` 1 of 9. No file is past one fifth (`ARMWidth`'s 1 of 5 is at it).
+**Ruled (the user, 2026-11-06): harvest in #208, all three.** `#208`'s commit `9db4f2ee`
+publishes `Complexity.LogProg.length_bits_succ_le` in `Machines/Bin`, beside `length_bits_le`;
+`bits_succ_le` is deleted, and the two inline blocks cite it. A library search for the
+`4 · 2 ^ e` step (`2 ^ (… + 2) = 4 * 2 ^ …`) finds no other member: `ExpBFS/Main:535–539`
+bounds a `Nat.log` width and a memory range, and `BinaryArith/AddSub:174` a sum of two words, both
+other statements. **Retired on #208's merge.**
+
+**IL-1, the input-length decider's answer** (gate 101's round-2 screen, 2026-11-06). The
+public `Complexity.indicator_inputLenLang` (`Logspace/InputAccess`, since the ARM dedup `56716442`)
+states that `inputLenLang` answers `decide (a < |y|)` on `pairEncode y (bits a)`. Six proofs
+unfolded their decider table and repeated its two-line proof
+(`inputLenLang`, `indicator_indexLang_pairEncode`, `decide_eq_decide.mpr Iff.rfl`):
+- `Logspace/ISCountGenCorrect`'s `gen_start` (`hq`), which the v3 screen pairs with
+  `indicator_inputLenLang` and with `ExpBFS/Main`'s `orcN_len` at 94%;
+- `ExpBFS/Main`'s `orcN_len`, `SavitchARM/Correct`'s `hq`, `Machines/ARMWidthExample`'s `hq`,
+  `Logspace/PathHardRegs`' `orc_len` and `Randomized/SpaceAmplifyPoly`'s input-length loop (each
+  under the screen's cut-off or outside its population; found by `git grep` for the closing step).
+
+All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
+one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates. The
+other closings by `decide_eq_decide.mpr Iff.rfl` in the library (`InputAccess:551`, the lemma
+itself) are not members. **Retired on #208's merge.**
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general

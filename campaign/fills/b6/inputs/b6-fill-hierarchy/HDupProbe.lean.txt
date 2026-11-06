@@ -1,0 +1,31 @@
+/-
+H's duplication probe (a pre-ship record): for each step of the route probe (`HRouteProbe.lean`),
+whether a published declaration closes it outright (`exact?`), from the overlay's imports. A step
+`exact?` closes is cited in the brief; each `exact?` that finds nothing is an error by design.
+-/
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.ClassNP.PClosure
+
+open Turing Complexity
+
+-- the inclusion half
+example {f g : ℕ → ℕ} (hg : SpaceConstructible g)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) : SPACE f ⊆ SPACE g := by exact?
+
+-- a square below a power of two
+example : ∀ L : ℕ, 4 ≤ L → L * L ≤ 2 ^ L := by exact?
+
+-- the logarithm's domination
+example : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * logSpace n ≤ n + 1 := by exact?
+
+-- `logSpace n ≤ n + 1`
+example (n : ℕ) : logSpace n ≤ n + 1 := by exact?
+
+-- `LOGSPACE ⊆ PSPACE`
+example : LOGSPACE ⊆ PSPACE := by exact?
+
+-- linear space within `PSPACE`
+example : SPACE (fun n => n + 1) ⊆ PSPACE := by exact?

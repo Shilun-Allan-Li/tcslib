@@ -1,0 +1,279 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+import TCSlib.Complexity.ClassNP.PClosure
+
+/-! H's import probe (a pre-ship record): every name the route cites, from the overlay's imports. -/
+
+open Turing Complexity
+
+#check @Complexity.space_hierarchy
+#check @Complexity.LOGSPACE_ssubset_PSPACE
+#check @Complexity.SPACE_linear_ne_NP
+#check @Complexity.SPACE
+#check @Complexity.mem_SPACE_iff
+#check @Complexity.SPACE.mono
+#check @Complexity.SPACE.mono_const
+#check @Turing.FinTM.DecidesInSpace
+#check @Turing.FinTM.decidesInSpace_iff
+#check @Turing.FinTM.ComputesInSpace
+#check @Turing.FinTM.computesInSpace_iff
+#check @Complexity.SpaceConstructible
+#check @Complexity.spaceConstructible_iff
+#check @Complexity.spaceConstructible_logSpace
+#check @Complexity.spaceConstructible_linear
+#check @Complexity.logSpace
+#check @Complexity.logSpace_eq
+#check @Complexity.LOGSPACE
+#check @Complexity.LOGSPACE_eq
+#check @Complexity.PSPACE
+#check @Complexity.space_poly_subset_PSPACE
+#check @Turing.exists_selfUniversal
+#check @Complexity.TimeHierarchy.code
+#check @Turing.exists_configWindowRunnerTM
+#check @Turing.exists_windowRunnerTM
+#check @Turing.windowRun
+#check @Turing.WindowExit
+#check @Turing.cfgRecord
+#check @Turing.RecordAt
+#check @Turing.recordLength
+#check @Turing.posWidth
+#check @Turing.RecSym
+#check @Turing.RecSym.digitEmb
+#check @Turing.fieldsTape
+#check @Turing.Cfg.InWindow
+#check @Turing.FinTM.inWindow_of_spaceUsed_le
+#check @Turing.windowRun_summary_of_halts
+#check @Turing.FinTM.configBound_le_two_pow
+#check @Turing.exists_recordInitTM
+#check @Turing.outSummary
+#check @Turing.outSummary_append_congr
+#check @Turing.outSummary_eq_accept_iff
+#check @Turing.FinTM.alphabet_reduction_spaceUsed
+#check @Turing.FinTM.decidesInSpace_of_alphabetReduction
+#check @Turing.inputFoldTM
+#check @Turing.inputFoldTM_run_ofCfg
+#check @Turing.MultiTapeTM.liftSymbols
+#check @Turing.MultiTapeTM.liftSymbols_runFrom
+#check @Turing.MultiTapeTM.liftSymbols_initCfg
+#check @Turing.capture_run
+#check @Turing.capture_visitedByTapeHead
+#check @Turing.seamCompTM_spaceUsed_le_add
+#check @Turing.seamCompTM_spaceUsedByTape_le_max
+#check @Turing.seamCompTM_spaceUsedByTape_le_add
+#check @Turing.FinTM.ComputesInTime.of_spaceUsed_le
+#check @Turing.MultiTapeTM.spaceUsed_mono
+#check @Turing.FinTM.one_work_tape_binary_spaceUsed
+#check @Turing.exists_codeTM
+#check @Turing.MultiTapeTM.relabelState_runFrom_init
+#check @Turing.MultiTapeTM.abs_pos_lt_card_visited
+#check @Turing.MultiTapeTM.mem_visited_of_ne_none
+#check @Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le
+#check @Turing.counterValue
+#check @Turing.counterValue_eq
+#check @Turing.counterValue_bits
+
+-- added at the issue tree (#175's move, #177's API)
+#check @Complexity.spaceConstructible_poly
+#check @Complexity.preimage_mem_NP
+#check @Complexity.preimage_mem_P
+#check @Complexity.logSpace_le_succ
+#check @Complexity.LOGSPACE_subset_PSPACE
+#check @Complexity.logSpace_le_of_le_mul_two_pow
+#check @Complexity.SPACE_succ_pow_subset_PSPACE
+
+-- added by the brief's revision (review 2026-11-06): every name the revised brief newly cites
+-- B1: the radius phase, the returning capture embedding on the lifted witness
+#check @Turing.embedSilentRetTM
+#check @Turing.embedSilentRetTM_run
+#check @Turing.embedSilentRetTM_visitedByTapeHead
+#check @Turing.embedSilentTM
+#check @Turing.embedSilentCfg
+#check @Turing.embedSilentCfg_cap
+#check @Turing.embedSilentCfg_unselected
+#check @Turing.embedSilentCfg_selected_tape
+#check @Turing.embedSilentCfg_selected_pos
+#check @Turing.embedSilentCfg_state
+#check @Turing.embedSilentCfg_inputPos
+#check @Turing.embedSilentCfg_output
+#check @Turing.embedSilentTM_spaceUsedByTape_cap
+#check @Turing.embedSilentTM_visitedByTapeHead
+#check @Turing.embedSilentTM_visitedByTapeHead_frame
+#check @Turing.Cfg.liftSymbols
+#check @Turing.Cfg.liftSymbols_state
+#check @Turing.Cfg.liftSymbols_workTapePos
+#check @Turing.Cfg.liftSymbols_inputPos
+#check @Turing.Cfg.liftSymbols_workTapes
+#check @Turing.Cfg.liftSymbols_output
+#check @Turing.MultiTapeTM.liftSymbols_spaceUsed
+#check @Turing.RecSym.digitEmb_apply
+#check @Turing.FinTM.bufferTape_map
+#check @Turing.FinTM.bufferTape_nil
+#check @Turing.Contract.liftSymbols
+-- M1: composition on general configurations, R1 and the contract layer, space from envelopes
+#check @Turing.seamCompTM
+#check @Turing.seamCompTM_run_ofCfg
+#check @Turing.seamCompTM_firstReturn_ofCfg
+#check @Turing.seamCompTM_visitedByTapeHead_ofCfg
+#check @Turing.seamCompTM₂
+#check @Turing.seamCompTM₂_run_ofCfg
+#check @Turing.embedEmitTM
+#check @Turing.embedEmitCfg
+#check @Turing.embedEmitTM_runFrom
+#check @Turing.embedEmitTM_frame
+#check @Turing.embedEmitCfg_eq
+#check @Turing.embedEmitCfg_select
+#check @Turing.embedEmitCfg_selected_tape
+#check @Turing.embedEmitCfg_selected_pos
+#check @Turing.embedEmitCfg_unselected
+#check @Turing.Cfg.select
+#check @Turing.Contract
+#check @Turing.Contract.seq
+#check @Turing.Contract.embed
+#check @Turing.Contract.spaceUsedByTape_le
+#check @Turing.Contract.within
+#check @Turing.MultiTapeTM.spaceUsed_eq_sum
+#check @Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc
+#check @Turing.MultiTapeTM.spaceUsed_le_of_abs_le
+-- M2: the rewinds, the verdict's test and emitter, and the small readings
+#check @Turing.inputRewindTM
+#check @Turing.inputRewindTM_run
+#check @Turing.moveInputPos_pos_of_ne_right
+#check @Turing.moveInputPos_rightBoundary
+#check @Turing.MultiTapeTM.step_of_some
+#check @Turing.rewindTM
+#check @Turing.rewindTM_run_ofCfg
+#check @Turing.exists_recordTestTM
+#check @Turing.windowRun_stop_unique
+#check @Turing.WindowExit.halted
+#check @Turing.MultiTapeTM.initCfg_eq
+#check @Turing.Cfg.inWindow_init
+#check @Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt
+#check @Turing.recordAt_iff
+#check @Turing.recordLength_eq
+#check @Turing.joinFields_cfgRecord_length
+#check @Turing.posWidth_eq
+#check @Complexity.LogProg.length_bits_le_log
+#check @Turing.length_pairEncode
+#check @Turing.length_bits_le_self
+#check @Turing.pairEncode_injective
+#check @Turing.MultiTapeTM.indicator
+-- M3: the summary update
+#check @Turing.summaryTag
+#check @Turing.summaryTag_none
+#check @Turing.outSummaryCode
+#check @Turing.outSummaryCode_eq_one_iff
+#check @Turing.outSummaryCode_nil
+-- M4: the normalization's published space clause
+#check @Turing.exists_codeTM_spaceUsed
+#check @Turing.MachineCode.decode_encode
+-- M5: `SPACE_linear_ne_NP`, the reductions and the hosts that cover part of the padding
+#check @Complexity.NP
+#check @Complexity.mem_NP_iff_exists_length_le
+#check @Complexity.PolyTimeReducible
+#check @Complexity.PolyTimeComputable
+#check @Complexity.polyTimeComputable_id
+#check @Complexity.PolyTimeComputable.comp
+#check @Complexity.PolyTimeComputable.pairEncode
+#check @Complexity.polyTimeComputable_polyUnary
+#check @Complexity.pairFstD
+#check @Complexity.pairSndD
+#check @Complexity.pairFstD_pairEncode
+#check @Complexity.pairSndD_pairEncode
+#check @Turing.FinTM.exists_inputCallTM
+#check @Turing.FinTM.computesFunInTime_pairFst
+#check @Turing.MultiTapeTM.spaceUsed_le_mul_succ
+#check @Turing.vhostEmitTM
+#check @Turing.vhostCfg
+#check @Turing.vhostCfg_workTapes
+#check @Turing.vhostEmitTM_runFrom
+#check @Turing.vhostEmitTM_spaceUsed_le
+
+-- axiom walks of the hosts this revision binds (and of the main hosts it re-cites)
+#print axioms Turing.embedSilentRetTM_run
+#print axioms Turing.embedSilentRetTM_visitedByTapeHead
+#print axioms Turing.embedSilentCfg_cap
+#print axioms Turing.embedSilentCfg_unselected
+#print axioms Turing.embedSilentCfg_selected_tape
+#print axioms Turing.embedSilentCfg_selected_pos
+#print axioms Turing.embedSilentCfg_state
+#print axioms Turing.embedSilentCfg_inputPos
+#print axioms Turing.embedSilentCfg_output
+#print axioms Turing.embedSilentTM_spaceUsedByTape_cap
+#print axioms Turing.embedSilentTM_visitedByTapeHead
+#print axioms Turing.embedSilentTM_visitedByTapeHead_frame
+#print axioms Turing.Cfg.liftSymbols_state
+#print axioms Turing.Cfg.liftSymbols_workTapePos
+#print axioms Turing.Cfg.liftSymbols_inputPos
+#print axioms Turing.Cfg.liftSymbols_workTapes
+#print axioms Turing.Cfg.liftSymbols_output
+#print axioms Turing.MultiTapeTM.liftSymbols_runFrom
+#print axioms Turing.MultiTapeTM.liftSymbols_initCfg
+#print axioms Turing.MultiTapeTM.liftSymbols_spaceUsed
+#print axioms Turing.RecSym.digitEmb_apply
+#print axioms Turing.FinTM.bufferTape_map
+#print axioms Turing.FinTM.bufferTape_nil
+#print axioms Turing.seamCompTM_run_ofCfg
+#print axioms Turing.seamCompTM_firstReturn_ofCfg
+#print axioms Turing.seamCompTM_visitedByTapeHead_ofCfg
+#print axioms Turing.seamCompTM₂_run_ofCfg
+#print axioms Turing.embedEmitTM_runFrom
+#print axioms Turing.embedEmitTM_frame
+#print axioms Turing.embedEmitCfg_eq
+#print axioms Turing.embedEmitCfg_select
+#print axioms Turing.embedEmitCfg_selected_tape
+#print axioms Turing.embedEmitCfg_selected_pos
+#print axioms Turing.embedEmitCfg_unselected
+#print axioms Turing.Contract.seq
+#print axioms Turing.Contract.embed
+#print axioms Turing.Contract.spaceUsedByTape_le
+#print axioms Turing.Contract.within
+#print axioms Turing.MultiTapeTM.spaceUsed_eq_sum
+#print axioms Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc
+#print axioms Turing.MultiTapeTM.spaceUsed_le_of_abs_le
+#print axioms Turing.inputRewindTM_run
+#print axioms Turing.moveInputPos_pos_of_ne_right
+#print axioms Turing.moveInputPos_rightBoundary
+#print axioms Turing.MultiTapeTM.step_of_some
+#print axioms Turing.rewindTM_run_ofCfg
+#print axioms Turing.inputFoldTM_run_ofCfg
+#print axioms Turing.exists_recordInitTM
+#print axioms Turing.exists_configWindowRunnerTM
+#print axioms Turing.exists_recordTestTM
+#print axioms Turing.windowRun_stop_unique
+#print axioms Turing.MultiTapeTM.initCfg_eq
+#print axioms Turing.Cfg.inWindow_init
+#print axioms Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt
+#print axioms Turing.recordAt_iff
+#print axioms Turing.recordLength_eq
+#print axioms Turing.joinFields_cfgRecord_length
+#print axioms Turing.posWidth_eq
+#print axioms Turing.length_pairEncode
+#print axioms Turing.length_bits_le_self
+#print axioms Turing.pairEncode_injective
+#print axioms Turing.summaryTag_none
+#print axioms Turing.outSummaryCode_eq_one_iff
+#print axioms Turing.outSummaryCode_nil
+#print axioms Turing.windowRun_summary_of_halts
+#print axioms Turing.exists_codeTM_spaceUsed
+#print axioms Turing.MachineCode.decode_encode
+#print axioms Turing.FinTM.decidesInSpace_of_alphabetReduction
+#print axioms Turing.FinTM.one_work_tape_binary_spaceUsed
+#print axioms Turing.exists_selfUniversal
+#print axioms Turing.FinTM.exists_inputCallTM
+#print axioms Turing.FinTM.computesFunInTime_pairFst
+#print axioms Turing.MultiTapeTM.spaceUsed_le_mul_succ
+#print axioms Turing.vhostEmitTM_runFrom
+#print axioms Turing.vhostEmitTM_spaceUsed_le
+#print axioms Complexity.LogProg.length_bits_le_log
+#print axioms Complexity.mem_NP_iff_exists_length_le
+#print axioms Complexity.polyTimeComputable_id
+#print axioms Complexity.PolyTimeComputable.comp
+#print axioms Complexity.PolyTimeComputable.pairEncode
+#print axioms Complexity.polyTimeComputable_polyUnary
+#print axioms Complexity.pairFstD_pairEncode
+#print axioms Complexity.pairSndD_pairEncode
+#print axioms Complexity.preimage_mem_NP
+#print axioms Complexity.spaceConstructible_poly
+#print axioms Complexity.LOGSPACE_subset_PSPACE
