@@ -361,7 +361,9 @@ theorem haltRun_isPrefixStable (N : FinNDTM Bool) (x : List Bool) :
 theorem notHaltedProb_haltRun_zero : notHaltedProb (N.haltRun x) 0 = 1 := by
   unfold notHaltedProb
   rw [randProb_congr (B := fun _ => True) fun w => by
-    simp [List.ofFn_zero, haltRun_eq_none_iff, NDTM.initCfg, Cfg.init]]
+    rw [List.ofFn_zero, haltRun_eq_none_iff, iff_true]
+    exact fun h => NDTM.not_haltsWithin_zero N.tm x
+      (NDTM.haltsWithin_iff.mpr fun v hv => List.length_eq_zero_iff.mp hv ▸ h)]
   exact randProb_true
 
 /-- Every run takes at least one step: `E[T] ≤ B` forces `1 ≤ B`. -/
