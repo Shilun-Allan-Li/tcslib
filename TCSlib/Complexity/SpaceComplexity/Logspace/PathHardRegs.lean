@@ -325,9 +325,8 @@ lemma orc_bit (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
 /-- Decider `1` compares with the query length. -/
 lemma orc_len (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
     orc N 1 (pairEncode y (Nat.bits p)) = decide (p < y.length) := by
-  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero, inputLenLang,
-    indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero]
+  exact indicator_inputLenLang y p
 
 /-- Decider `2` answers the initial-code language on `⟨x, ⟨bits v, bits s⟩⟩`. -/
 lemma orc_init (N : FinNDTM Bool) (x β : List Bool) (v s : ℕ) :

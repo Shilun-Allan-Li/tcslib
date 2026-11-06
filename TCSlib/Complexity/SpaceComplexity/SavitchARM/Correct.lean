@@ -110,8 +110,8 @@ theorem NSPACE_poly_subset_PSPACE (k : ℕ) : NSPACE (fun n => n ^ k + 1) ⊆ PS
   set n := x.length with hn
   have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
     intro m _
-    simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-    exact decide_eq_decide.mpr Iff.rfl
+    simp only [orcN, decs, Matrix.cons_val_zero]
+    exact indicator_inputLenLang x m
   have h := savitch_halts (E := E) (orc := orcN N) (x := x) hE1 hq
   have hmem := mem_iff_reach hN x ((n + 2) ^ E) ((n + 2) ^ (2 * E))
     (radius_le n k c E (by simp only [hE, bigE]; omega))

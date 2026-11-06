@@ -185,8 +185,8 @@ theorem gen_start {L : Language Bool} {sp : ℕ → ℕ} (hN : N.DecidesInSpace 
     IG (E := E) (orcN N) x B .scan St.zero (x ∉ L) := by
   have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
     intro m _
-    simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-    exact decide_eq_decide.mpr Iff.rfl
+    simp only [orcN, decs, Matrix.cons_val_zero]
+    exact indicator_inputLenLang x m
   have hlg : 2 ^ lgv x.length ≤ gKv E (lgv x.length) (sp x.length + 1) := by
     apply Nat.pow_le_pow_right (by norm_num)
     simp only [gev]; nlinarith
