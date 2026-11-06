@@ -565,9 +565,28 @@ noncomputable def prfScheme_coinsEquiv (F : ∀ n, (Fin n → Bool) → (Fin n �
     (Equiv.piCongrRight fun _ =>
       NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n)
 
+/-- The coin equivalence of the multi-message experiment keeps every coin string: the key,
+`List.ofFn (prfScheme_coinsEquiv … r).1 = List.ofFn r.1`, and each point,
+`List.ofFn ((prfScheme_coinsEquiv … r).2 j) = List.ofFn (r.2 j)`. -/
+theorem prfScheme_coinsEquiv_ofFn (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
+    (n q : ℕ)
+    (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) :
+    List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 = List.ofFn r.1 ∧
+      ∀ j, List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) = List.ofFn (r.2 j) :=
+  ⟨NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r.1,
+    fun j => NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n (r.2 j)⟩
+
 /-- **The ciphertext tuple of Algorithm 99.1** is the encoding of the hybrid `H¹`: for the key
 `k` and the points `r_j` read off the coins `r` (`prfScheme_coinsEquiv`),
-`multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv … r))`. -/
+`multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv … r))`.
+
+**Proof sketch.** `multiEncDist_apply` writes the left side as `encodeList` of the encryptions
+`Enc_k(m_j; r_j)`; the key machine outputs its coin string (`runAt_coinKey`) and the encryption
+machine outputs `⟨r_j, m_j ⊕ E(⟨k, r_j⟩)⟩` (`runAt_prfEnc`). The coin strings are those of
+`prfScheme_coinsEquiv … r` (`prfScheme_coinsEquiv_ofFn`), so `hFE` turns `E(⟨k, r_j⟩)` into
+`F n k r_j` and `zipWith_xor_ofFn_add` gives the `j`-th pair of `prfEncReal`. -/
 theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
     (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
@@ -584,9 +603,9 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
       (List.ofFn (m j))) (r.2 j) = _
   rw [runAt_coinKey, runAt_prfEnc hE]
   have h1 : List.ofFn r.1 = List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 :=
-    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r.1).symm
+    (prfScheme_coinsEquiv_ofFn F E hE hFE n q r).1.symm
   have h2 : List.ofFn (r.2 j) = List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) :=
-    (NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n (r.2 j)).symm
+    ((prfScheme_coinsEquiv_ofFn F E hE hFE n q r).2 j).symm
   rw [h1, h2, hFE, zipWith_xor_ofFn_add]
   rfl
 
