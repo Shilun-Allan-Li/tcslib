@@ -1,0 +1,50 @@
+35070b60 Merge remote-tracking branch 'origin/complexity/arora-barak-ch3-4' into lean/b6h-landing
+157 74
+1
+Scratch/HSealHead.lean:147:8: warning: declaration uses 'sorry'
+Scratch/HSealHead.lean:244:21: error: Application type mismatch: The argument
+  ((spaceConstructible_iff g).mp hg).left n
+has type
+  logSpace n ≤ g n
+but is expected to have type
+  ?m.45 n < g n
+in the application
+  Nat.one_le_of_lt (((spaceConstructible_iff g).mp hg).left n)
+Scratch/HSealHead.lean:309:21: error: Application type mismatch: The argument
+  ((spaceConstructible_iff f).mp hf).left x.length
+has type
+  logSpace x.length ≤ f x.length
+but is expected to have type
+  ?m.396 < f x.length
+in the application
+  Nat.one_le_of_lt (((spaceConstructible_iff f).mp hf).left x.length)
+Scratch/HSealHead.lean:1890:44: error: Application type mismatch: The argument
+  hg n
+has type
+  logSpace n ≤ g n
+but is expected to have type
+  ?m.42 < g n
+in the application
+  Nat.one_le_of_lt (hg n)
+Scratch/HSealHead.lean:2086:53: error: Application type mismatch: The argument
+  hg x.length
+has type
+  logSpace x.length ≤ g x.length
+but is expected to have type
+  ?m.2124 < g x.length
+in the application
+  Nat.one_le_of_lt (hg x.length)
+Scratch/HSealHead.lean:2382:42: error: Application type mismatch: The argument
+  hfloor n
+has type
+  logSpace n ≤ g n
+but is expected to have type
+  ?m.570 < g n
+in the application
+  Nat.one_le_of_lt (hfloor n)
+Scratch/HSealHead.lean:2579:8: warning: declaration uses 'sorry'
+'Complexity.space_hierarchy' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.LOGSPACE_ssubset_PSPACE' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+exit=1
+
+[exited with code 0]

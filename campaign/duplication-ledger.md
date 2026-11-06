@@ -717,7 +717,7 @@ ending in a state mismatch (`Hardness`, `NDCodeSimulator`, `NDNormalForm`, `Step
 `Contract/Basic`, `Contract/Seam`, `NTimeDiagonalizer`); composite runs at positive times
 (`UniversalK`, `NTimeHierarchy`, `Composition`, `Inclusions`); positive liveness facts
 (`state = some q₀`); and other models (NARM's `narun`, `Yap`'s `badLang`, the oracle machines).
-**Retired on #217's merge.**
+**Retired: #217 merged 2026-11-06 (`eb8cbf60`).**
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
@@ -1179,6 +1179,7 @@ renamed configuration equals any configuration with its data fields and the rena
     (`exists_ndInterpreterCore`), `Seam` (`phaseHostTM_run`), `InputRewind`
     (`Cfg.mapState_mapState`), `NTimeHierarchy` (`un_setup`; NF-X1's pair too) and `SeamLayout`
     (`exists_seamLayoutTM`).
+**+6 (gate 109, minor 1):** `SpaceComplexity/Hierarchy` (H's landing, #218): six `Cfg.ext` conversions over `Cfg.mapState` in four privates; re-pointed in #218 (`1a782c36`).
 
   The NF review's F2 list has 19 names, not 15; its `xr_phase_step` and `xr_halt_fixed` are
   re-pointed. No file crosses one fifth. NF's own copies (`nf_retag`, `nf_tag`, …) are checked at
