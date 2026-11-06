@@ -1,0 +1,320 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Zero-knowledge for graph 3-colouring: the decider of `R_3COL`
+
+The decider clause of `R3COL_witnessRelation` (`ThreeColoring/Protocol.lean`) for the witness
+relation `R_3COL` of [PS10, §4.7] (Def-124.f, Def-191.11). The decider is the test of the proof
+sketch of `R3COL_witnessRelation`:
+
+`T ⟨x, y⟩ := [x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c]` with
+`⟨n, G⟩ = decGraph x` and `c = decColoring n y`,
+
+correct by `decGraph_encGraph`, `decColoring_encColoring` and `R3COL_iff`. It is polynomial-time
+because it agrees with a **scan form** of three unary tests (`n = √|x|`):
+* the well-formedness test `|x| = n²` (`ColMachines.encGraph_decGraph_eq_take`);
+* the colouring test: `|y| = 2n` and, for every vertex `i < n`, bits `2i`, `2i + 1` of `y` are
+  the two bits of the colour value `ColMachines.colorVal y i` (`getD_encColoring_two_mul`,
+  `getD_encColoring_two_mul_add_one`, `ColMachines.decColoring_val`), i.e. `y` is its own
+  re-encoding;
+* the properness test: no position `j < n²` of the adjacency matrix is set with equal colour
+  values at its endpoints `j / n`, `j % n` (`ProperColoring_iff`, `ColMachines.decGraph_apply`);
+
+each "for every" a bounded search `EncodingMachines.firstIdx` that finds nothing
+(`EncodingMachines.firstIdx_eq_iff`, `EncodingMachines.polyTimeComputable_firstIdx`), with the
+colour values from `ColMachines.colorVal_poly`.
+
+## Main definitions
+
+* `TCSlib.Cryptography.ColRep.r3colTest` — the decider of `R_3COL` on `⟨x, y⟩`.
+
+## Main results
+
+* `TCSlib.Cryptography.ColRep.decGraph_fst` — the decoded vertex count is `√|x|`.
+* `TCSlib.Cryptography.ColRep.r3colTest_iff` — the decider is correct.
+* `TCSlib.Cryptography.ColRep.r3colTest_poly` — the decider is polynomial-time.
+* `TCSlib.Cryptography.ColRep.R3COL_decidable` — the decider clause of `R3COL_witnessRelation`.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§4.7: Theorem 124.1, Protocol 127.5; Appendix B, Definition 191.11.)
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§2.2, the class FP.)
+-/
+
+namespace TCSlib.Cryptography.ColRep
+
+open Complexity Turing TCSlib.Cryptography.EncodingMachines TCSlib.Cryptography.ColMachines
+
+/-! ### The decoded vertex count -/
+
+/-- The vertex count of the graph decoded from `x` is `√|x|` (`GIZK.decGraph_eq_of_sqrt`). -/
+theorem decGraph_fst (x : List Bool) : (decGraph x).1 = Nat.sqrt x.length :=
+  congrArg Sigma.fst (GIZK.decGraph_eq_of_sqrt rfl)
+
+/-! ### The decider -/
+
+/-- The decider of `R_3COL` [PS10, §4.7, Definition 191.11 for `3COL`] (Def-124.f): on `⟨x, y⟩`,
+`[x = encGraph G ∧ y = encColoring c ∧ ProperColoring G c]` with `⟨n, G⟩ = decGraph x` and
+`c = decColoring n y`. -/
+def r3colTest (z : List Bool) : Bool :=
+  decide (pairFstD z = encGraph (decGraph (pairFstD z)).2 ∧
+    pairSndD z = encColoring (decColoring (decGraph (pairFstD z)).1 (pairSndD z)) ∧
+    ProperColoring (decGraph (pairFstD z)).2 (decColoring (decGraph (pairFstD z)).1 (pairSndD z)))
+
+/-- The defining equation of `r3colTest`: `[x = encGraph G ∧ y = encColoring c ∧
+ProperColoring G c]` for `x = fst z`, `y = snd z`, `⟨n, G⟩ = decGraph x`, `c = decColoring n y`. -/
+theorem r3colTest_eq (z : List Bool) :
+    r3colTest z = decide (pairFstD z = encGraph (decGraph (pairFstD z)).2 ∧
+      pairSndD z = encColoring (decColoring (decGraph (pairFstD z)).1 (pairSndD z)) ∧
+      ProperColoring (decGraph (pairFstD z)).2
+        (decColoring (decGraph (pairFstD z)).1 (pairSndD z))) := rfl
+
+/-- **The decider of `R_3COL` is correct** [PS10, §4.7] (Def-124.f):
+`r3colTest ⟨x, y⟩ = true ↔ R3COL x y`.
+
+**Proof sketch.** (→) The decoded graph, its vertex count and the decoded colouring witness
+`R3COL_iff`. (←) For `x = encGraph G`, `y = encColoring c`, `decGraph x = ⟨n, G⟩`
+(`decGraph_encGraph`) and `decColoring n y = c` (`decColoring_encColoring`), so the three
+conjuncts are `rfl`, `rfl` and the properness of `c`. -/
+theorem r3colTest_iff (x y : List Bool) : r3colTest (pairEncode x y) = true ↔ R3COL x y := by
+  rw [r3colTest_eq, pairFstD_pairEncode, pairSndD_pairEncode, decide_eq_true_iff, R3COL_iff]
+  constructor
+  · rintro ⟨h1, h2, h3⟩
+    exact ⟨(decGraph x).1, (decGraph x).2, decColoring (decGraph x).1 y, h1, h2, h3⟩
+  · rintro ⟨n, G, c, rfl, rfl, hc⟩
+    have key : ∀ s : Σ n, Graph n, s = ⟨n, G⟩ → (encGraph G = encGraph s.2 ∧
+        encColoring c = encColoring (decColoring s.1 (encColoring c)) ∧
+        ProperColoring s.2 (decColoring s.1 (encColoring c))) := by
+      intro s hs
+      subst hs
+      exact ⟨rfl, by rw [decColoring_encColoring], by rw [decColoring_encColoring]; exact hc⟩
+    exact key _ (decGraph_encGraph G)
+
+/-! ### The scan form -/
+
+/-- Vertex `i` of the word `y` is badly encoded: bit `2i` or bit `2i + 1` differs from the
+corresponding bit `[a / 2 = 1]`, `[a % 2 = 1]` of the colour value `a = colorVal y i`. -/
+private def badVertex (y : List Bool) (i : ℕ) : Bool :=
+  (y.getD (2 * i) false ^^ decide (colorVal y i / 2 = 1)) ||
+    (y.getD (2 * i + 1) false ^^ decide (colorVal y i % 2 = 1))
+
+/-- Position `j` of the `n × n` matrix `x` is a monochromatic edge for the colour values of `y`:
+it is set and its endpoints `j / n`, `j % n` have equal colour values. -/
+private def badEntry (x y : List Bool) (n j : ℕ) : Bool :=
+  x.getD j false && decide (colorVal y (j / n) = colorVal y (j % n))
+
+/-- The scan form of the decider on `x`, `y`, with `n = √|x|`: `|x| = n²`, `|y| = 2n`, no badly
+encoded vertex below `n`, no monochromatic edge below `n²`. -/
+private noncomputable def scanTest (x y : List Bool) : Bool :=
+  decide (x.length = Nat.sqrt x.length * Nat.sqrt x.length) &&
+    decide (y.length = Nat.sqrt x.length * 2) &&
+    decide (firstIdx (badVertex y) (Nat.sqrt x.length) = Nat.sqrt x.length) &&
+    decide (firstIdx (badEntry x y (Nat.sqrt x.length)) (Nat.sqrt x.length * Nat.sqrt x.length) =
+      Nat.sqrt x.length * Nat.sqrt x.length)
+
+/-- The well-formedness test as a length test: `x = encGraph G` for `⟨n, G⟩ = decGraph x` iff
+`|x| = (√|x|)²` (`encGraph_decGraph_eq_take`, `decGraph_fst`, `Nat.sqrt_le`). -/
+private theorem wf_iff (x : List Bool) :
+    x = encGraph (decGraph x).2 ↔ x.length = Nat.sqrt x.length * Nat.sqrt x.length := by
+  rw [encGraph_decGraph_eq_take, decGraph_fst]
+  constructor
+  · intro h
+    have h1 := congrArg List.length h
+    rw [List.length_take] at h1
+    have h2 := Nat.sqrt_le x.length
+    omega
+  · intro h
+    exact (List.take_of_length_le h.le).symm
+
+/-- The colouring test: `y` is the encoding of the colouring it decodes to on `N` vertices iff
+`|y| = 2N` and no vertex below `N` is badly encoded.
+
+**Proof sketch.** Bits `2i`, `2i + 1` of the re-encoding are the bits of the colour value
+`colorVal y i` (`getD_encColoring_two_mul`, `getD_encColoring_two_mul_add_one`,
+`decColoring_val`). (→) Rewrite `y` by the hypothesis in those bits: every exclusive or vanishes.
+(←) Compare the two lists entrywise (`List.ext_getElem`) at `k = 2i` and `k = 2i + 1`, `i < N`,
+where a vanishing exclusive or (`firstIdx_eq_iff`) gives the equality of the bits. -/
+private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
+    y = encColoring (decColoring N y) ↔ y.length = n * 2 ∧ firstIdx (badVertex y) n = n := by
+  subst hn
+  have hbit0 : ∀ i (hi : i < N), (encColoring (decColoring N y)).getD (2 * i) false =
+      decide (colorVal y i / 2 = 1) := by
+    intro i hi
+    have h := getD_encColoring_two_mul (decColoring N y) ⟨i, hi⟩
+    rw [decColoring_val] at h
+    exact h
+  have hbit1 : ∀ i (hi : i < N), (encColoring (decColoring N y)).getD (2 * i + 1) false =
+      decide (colorVal y i % 2 = 1) := by
+    intro i hi
+    have h := getD_encColoring_two_mul_add_one (decColoring N y) ⟨i, hi⟩
+    rw [decColoring_val] at h
+    exact h
+  constructor
+  · intro h
+    refine ⟨by rw [h, length_encColoring], firstIdx_eq_iff.2 fun i hi => ?_⟩
+    have h0 := hbit0 i hi
+    have h1 := hbit1 i hi
+    rw [← h] at h0 h1
+    rw [badVertex, h0, h1, Bool.xor_self, Bool.xor_self, Bool.or_false]
+  · rintro ⟨hlen, hbad⟩
+    have hgood := firstIdx_eq_iff.1 hbad
+    have hlen' : (encColoring (decColoring N y)).length = y.length := by
+      rw [length_encColoring, hlen]
+    apply List.ext_getElem hlen'.symm
+    intro k hk _
+    obtain ⟨i, rfl | rfl⟩ : ∃ i, k = 2 * i ∨ k = 2 * i + 1 := ⟨k / 2, by omega⟩
+    · have hi : i < N := by omega
+      have hb := hgood i hi
+      rw [badVertex, Bool.or_eq_false_iff] at hb
+      rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit0 i hi]
+      exact bne_eq_false_iff_eq.1 hb.1
+    · have hi : i < N := by omega
+      have hb := hgood i hi
+      rw [badVertex, Bool.or_eq_false_iff] at hb
+      rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit1 i hi]
+      exact bne_eq_false_iff_eq.1 hb.2
+
+/-- The properness test: for a graph `G` on `N` vertices whose entry `(u, v)` is bit `v + N u`
+of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge.
+
+**Proof sketch.** Colours are compared through their values (`decColoring_val`, `Fin.ext`).
+(→) A set position `j < N²` is the edge `(j / N, j % N)` (`Nat.mod_add_div`), whose colours
+differ (`ProperColoring_iff`). (←) An edge `(u, v)` is position `v + N u < N²`, whose quotient
+and remainder by `N` are `u` and `v`, and which is not monochromatic (`firstIdx_eq_iff`). -/
+private theorem proper_iff {N n : ℕ} (hn : N = n) (G : Graph N) (x y : List Bool)
+    (hG : ∀ u v : Fin N, G u v = x.getD (v + N * u) false) :
+    ProperColoring G (decColoring N y) ↔ firstIdx (badEntry x y n) (n * n) = n * n := by
+  subst hn
+  rw [ProperColoring_iff, firstIdx_eq_iff]
+  constructor
+  · intro h j hj
+    have hN : 0 < N := Nat.pos_of_ne_zero fun h0 => by rw [h0] at hj; omega
+    have hu : j / N < N := Nat.div_lt_of_lt_mul hj
+    have hv : j % N < N := Nat.mod_lt _ hN
+    rw [badEntry, Bool.and_eq_false_iff]
+    by_contra hcon
+    push_neg at hcon
+    simp only [ne_eq, Bool.not_eq_false, decide_eq_true_eq] at hcon
+    have hadj : G ⟨j / N, hu⟩ ⟨j % N, hv⟩ = true := by
+      rw [hG]
+      have : j % N + N * (j / N) = j := Nat.mod_add_div j N
+      rw [this]
+      exact hcon.1
+    refine h _ _ hadj (Fin.ext ?_)
+    rw [decColoring_val, decColoring_val]
+    exact hcon.2
+  · intro h u v huv heq
+    have hj : (v : ℕ) + N * u < N * N := by
+      have := u.isLt
+      have := v.isLt
+      nlinarith
+    have hb := h _ hj
+    have hN : 0 < N := lt_of_le_of_lt (Nat.zero_le _) u.isLt
+    have hdiv : ((v : ℕ) + N * u) / N = u := by
+      rw [Nat.add_mul_div_left _ _ hN, Nat.div_eq_of_lt v.isLt, zero_add]
+    have hmod : ((v : ℕ) + N * u) % N = v := by
+      rw [Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt v.isLt]
+    rw [badEntry, hdiv, hmod, ← hG, huv, Bool.true_and, decide_eq_false_iff_not] at hb
+    apply hb
+    rw [← decColoring_val N y u, ← decColoring_val N y v, heq]
+
+/-- The scan form agrees with the decider (`wf_iff`, `enc_iff`, `proper_iff` with
+`decGraph_fst` and `decGraph_apply`). -/
+private theorem scanTest_iff (x y : List Bool) :
+    scanTest x y = true ↔ (x = encGraph (decGraph x).2 ∧
+      y = encColoring (decColoring (decGraph x).1 y) ∧
+      ProperColoring (decGraph x).2 (decColoring (decGraph x).1 y)) := by
+  have hG : ∀ u v : Fin (decGraph x).1,
+      (decGraph x).2 u v = x.getD (v + (decGraph x).1 * u) false := by
+    intro u v
+    rw [decGraph_apply, finProdFinEquiv_apply_val]
+  rw [wf_iff, enc_iff (decGraph_fst x), proper_iff (decGraph_fst x) _ x y hG]
+  simp only [scanTest, Bool.and_eq_true, decide_eq_true_eq, and_assoc]
+
+/-! ### Polynomial time -/
+
+/-- The badly-encoded-vertex test is polynomial-time on `⟨1^i, z⟩` for `y = snd z`
+(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`,
+`StateLoop.xor_poly`). -/
+private theorem badVertex_poly :
+    PolyTimeComputable fun w => [badVertex (pairSndD (pairSndD w)) (pairFstD w).length] := by
+  have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
+    ptc_comp polyTimeComputable_pairSndD polyTimeComputable_pairSndD
+  have hI := unaryLength_poly polyTimeComputable_pairFstD
+  have h2I := unaryMul_poly (unaryConst_poly 2) hI
+  have hcv := colorVal_poly hY hI
+  have hb0 := getBit_poly hY h2I
+  have hb1 := getBit_poly hY (unaryAdd_poly h2I (unaryConst_poly 1))
+  have hd0 := eqTest_poly (divNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+  have hd1 := eqTest_poly (modNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
+  refine ptc_congr (polyTimeComputable_or (StateLoop.xor_poly hb0 hd0)
+    (StateLoop.xor_poly hb1 hd1)) fun w => ?_
+  rw [badVertex, divNum_eq, modNum_eq]
+
+/-- The monochromatic-edge test is polynomial-time on `⟨1^j, z⟩` for `x = fst z`, `y = snd z`,
+`n = √|x|` (`getBit_poly`, `unarySqrt_poly`, `divNum_poly`, `modNum_poly`, `colorVal_poly`,
+`eqTest_poly`). -/
+private theorem badEntry_poly :
+    PolyTimeComputable fun w => [badEntry (pairFstD (pairSndD w)) (pairSndD (pairSndD w))
+      (Nat.sqrt (pairFstD (pairSndD w)).length) (pairFstD w).length] := by
+  have hX : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
+    ptc_comp polyTimeComputable_pairFstD polyTimeComputable_pairSndD
+  have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
+    ptc_comp polyTimeComputable_pairSndD polyTimeComputable_pairSndD
+  have hI := unaryLength_poly polyTimeComputable_pairFstD
+  have hn := unarySqrt_poly (unaryLength_poly hX)
+  have hbit := getBit_poly hX hI
+  have heq := eqTest_poly (colorVal_poly hY (divNum_poly hI hn)) (colorVal_poly hY (modNum_poly hI hn))
+  refine ptc_congr (polyTimeComputable_and hbit heq) fun w => ?_
+  rw [badEntry, divNum_eq, modNum_eq]
+
+/-- The scan form is polynomial-time on `z = ⟨x, y⟩` (`polyTimeComputable_firstIdx` over
+`badVertex_poly` and `badEntry_poly`, `eqTest_poly`, `polyTimeComputable_and`). -/
+private theorem scanTest_poly :
+    PolyTimeComputable fun z => [scanTest (pairFstD z) (pairSndD z)] := by
+  have hX := unaryLength_poly polyTimeComputable_pairFstD
+  have hY := unaryLength_poly polyTimeComputable_pairSndD
+  have hn := unarySqrt_poly hX
+  have hnn := unaryMul_poly hn hn
+  have t1 := eqTest_poly hX hnn
+  have t2 := eqTest_poly hY (unaryMul_poly hn (unaryConst_poly 2))
+  have t3 := eqTest_poly (polyTimeComputable_firstIdx
+    (p := fun z i => badVertex (pairSndD z) i) badVertex_poly hn) hn
+  have t4 := eqTest_poly (polyTimeComputable_firstIdx
+    (p := fun z j => badEntry (pairFstD z) (pairSndD z) (Nat.sqrt (pairFstD z).length) j)
+    badEntry_poly hnn) hnn
+  exact ptc_congr (polyTimeComputable_and (polyTimeComputable_and
+    (polyTimeComputable_and t1 t2) t3) t4) fun z => rfl
+
+/-- **The decider of `R_3COL` is polynomial-time** [PS10, Definition 191.11 for `3COL`]
+(Def-124.f).
+
+**Proof sketch.** Pointwise equal to the scan form (`scanTest_iff`, `r3colTest_eq`): `|x| = n²`,
+`|y| = 2n`, and two bounded searches finding no badly encoded vertex below `n` and no
+monochromatic edge below `n²` (`firstIdx_eq_iff`), each test a combination of `getBit_poly`,
+`colorVal_poly` and unary arithmetic, the searches by `polyTimeComputable_firstIdx`. -/
+theorem r3colTest_poly : PolyTimeComputable fun z => [r3colTest z] := by
+  refine ptc_congr scanTest_poly fun z => ?_
+  congr 1
+  rw [Bool.eq_iff_iff, r3colTest_eq, decide_eq_true_iff, scanTest_iff]
+
+/-- **The decider clause of `R3COL_witnessRelation`** [PS10, Definition 191.11 for `3COL`]
+(Def-124.f): a polynomial-time `T` with `T ⟨x, y⟩ = true ↔ R3COL x y` (`r3colTest`,
+`r3colTest_poly`, `r3colTest_iff`). -/
+theorem R3COL_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z => [T z]) ∧
+    ∀ x y, T (pairEncode x y) = true ↔ R3COL x y :=
+  ⟨r3colTest, r3colTest_poly, r3colTest_iff⟩
+
+end TCSlib.Cryptography.ColRep
