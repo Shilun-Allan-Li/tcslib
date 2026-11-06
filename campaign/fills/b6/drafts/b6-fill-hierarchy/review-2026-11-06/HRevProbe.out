@@ -1,0 +1,106 @@
+exists_codeTM_spaceUsed : ∀ (M : FinTM Bool),
+  M.k = 1 →
+    ∃ M',
+      (∀ (x output : List Bool) (t : ℕ), M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+        ∀ (x : List Bool) (t : ℕ),
+          MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t
+MachineCode.decode_encode : ∀ (c : MachineCode) (M : CodeTM), c.decode (c.encode M) = M
+summaryTag : Fin 3 → Option Bool → Fin 3
+summaryTag_none : ∀ (τ : Fin 3), summaryTag τ none = τ
+outSummaryCode_eq_one_iff : ∀ (u : List Bool), outSummaryCode (outSummary u) = 1 ↔ u = [true]
+@windowRun_stop_unique : ∀ {k : ℕ} {Q T : Type} {x : List Bool} (M : MultiTapeTM k Bool Q) (s : ℕ)
+  (upd : T → Option Bool → T) (N N' : ℕ) (c : Cfg k Bool Q x) (τ : T),
+  (windowRun M s upd N c τ).1 ≠ WindowExit.exhausted →
+    (windowRun M s upd N' c τ).1 ≠ WindowExit.exhausted → windowRun M s upd N c τ = windowRun M s upd N' c τ
+@exists_recordTestTM : ∀ {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T] [DecidableEq T]
+  (P : Option Q → T → Bool),
+  ∃ P' x x R entry yes no C,
+    yes ≠ no ∧
+      ∀ {x : List Bool} (s : ℕ) (c : Cfg k Bool Q x) (τ : T) {y : List (RecSym Q T)} (d : Cfg 1 (RecSym Q T) P' y),
+        d.state = some entry →
+          RecordAt d 0 (cfgRecord s c τ) →
+            ∃ t ≤ C * ((joinFields (cfgRecord s c τ)).length + 1),
+              (∀ u < t, (MultiTapeTM.runFrom d u).state ≠ some yes ∧ (MultiTapeTM.runFrom d u).state ≠ some no) ∧
+                (∀ u ≤ t,
+                    ∀ (j : Fin 1),
+                      |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤
+                        ↑(C * ((joinFields (cfgRecord s c τ)).length + 1))) ∧
+                  MultiTapeTM.runFrom d t =
+                    { state := some (if P c.state τ = true then yes else no), inputPos := d.inputPos,
+                      workTapes := d.workTapes, workTapePos := d.workTapePos, output := d.output }
+@recordAt_iff : ∀ {K : ℕ} {Γ : Type u_1} {S : Type u_2} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K) (fs : List (List Γ)),
+  RecordAt d r fs ↔
+    ∀ (p : ℤ), -1 ≤ p → p ≤ ↑(joinFields fs).length → d.workTapes r (d.workTapePos r + p) = fieldsTape fs p
+@Cfg.inWindow_init : ∀ {k : ℕ} {Symbol State : Type} (q₀ : State) (x : List Symbol) (s : ℕ),
+  Cfg.InWindow s (Cfg.init q₀ x)
+@MultiTapeTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : MultiTapeTM k Symbol State}
+  (input : List Symbol), MultiTapeTM.initCfg input = Cfg.init tm.q₀ input
+@FinTM.ComputesInTime.spaceUsed_le_of_halt : ∀ {Symbol : Type} {M : FinTM Symbol} {x w : List Symbol} {t s : ℕ},
+  M.ComputesInTime x w t →
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ s →
+      ∀ (t' : ℕ), MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t' ≤ s
+RecSym.digitEmb_apply : ∀ (Q T : Type) (b : Bool), (RecSym.digitEmb Q T) b = RecSym.digit b
+recordLength_eq : ∀ (k n s : ℕ), recordLength k n s = k * (2 * s + 1) + posWidth n + k + 4
+posWidth_eq : ∀ (n : ℕ), posWidth n = (n + 1).bits.length
+LogProg.length_bits_le_log : ∀ (n : ℕ), n.bits.length ≤ Nat.log 2 n + 1
+@seamCompTM_run_ofCfg : ∀ {k : ℕ} {S₁ : Type u_1} {S₂ : Type u_2} {Symbol : Type u_3} {x : List Symbol}
+  [inst : DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+  {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ},
+  MultiTapeTM.runFrom c₀ T₁ = c₁ →
+    c₁.state = some exit →
+      (∀ t < T₁, (MultiTapeTM.runFrom c₀ t).state ≠ some exit) →
+        MultiTapeTM.runFrom (Cfg.mapState (fun x => entry) c₁) T₂ = c₃ →
+          MultiTapeTM.runFrom (Cfg.mapState Sum.inl c₀) (T₁ + 1 + T₂) = Cfg.mapState Sum.inr c₃
+@seamCompTM_visitedByTapeHead_ofCfg : ∀ {k : ℕ} {S₁ : Type u_1} {S₂ : Type u_2} {Symbol : Type u_3} {x : List Symbol}
+  [inst : DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+  {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ},
+  MultiTapeTM.runFrom c₀ T₁ = c₁ →
+    c₁.state = some exit →
+      (∀ t < T₁, (MultiTapeTM.runFrom c₀ t).state ≠ some exit) →
+        ∀ (i : Fin k),
+          MultiTapeTM.visitedByTapeHead (Cfg.mapState Sum.inl c₀) (T₁ + 1 + T₂) i ⊆
+            MultiTapeTM.visitedByTapeHead c₀ T₁ i ∪
+              MultiTapeTM.visitedByTapeHead (Cfg.mapState (fun x => entry) c₁) T₂ i
+@embedEmitTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Cfg m Symbol S x) (t : ℕ),
+  MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t = embedEmitCfg ι tapes heads pre (MultiTapeTM.runFrom c t)
+@embedEmitTM_frame : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Cfg m Symbol S x) (t : ℕ),
+  (∀ j ∉ Set.range ⇑ι,
+      (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).workTapes j = tapes j ∧
+        (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).workTapePos j = heads j) ∧
+    (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).inputPos = (MultiTapeTM.runFrom c t).inputPos ∧
+      (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).output = pre ++ (MultiTapeTM.runFrom c t).output
+@Contract : {k : ℕ} → {Γ S : Type} → MultiTapeTM k Γ S → S → Set (Option S) → Type → List Γ → Type
+@Contract.spaceUsedByTape_le : ∀ {k : ℕ} {Γ S : Type} {M : MultiTapeTM k Γ S} {entry : S} {exits : Set (Option S)}
+  {ι : Type} {x : List Γ} (C : Contract M entry exits ι x) (i : ι) (d : Cfg k Γ S x),
+  d.state = some entry →
+    C.pre i d → ∀ (j : Fin k), MultiTapeTM.spaceUsedByTape d (C.time i d) j ≤ (C.hi i d j + 1 - C.lo i d j).toNat
+@Contract.liftSymbols : {k : ℕ} →
+  {Γ : Type} →
+    [inst : DecidableEq Γ] →
+      (e : Bool ↪ Γ) →
+        {S : Type} →
+          {N : MultiTapeTM k Bool S} →
+            (∀ (q : S) (inp inp' : Option Bool) (work : Fin k → Option Bool), N.tr q inp work = N.tr q inp' work) →
+              (∀ (q : S) (inp : Option Bool) (work : Fin k → Option Bool) (j : Fin k),
+                  ((N.tr q inp work).workTapes j).1 ≠ some none) →
+                {entry : S} →
+                  {X : Set (Option S)} →
+                    {ι : Type} →
+                      {x : List Γ} →
+                        Contract N entry X ι (List.map (fun x => false) x) → Contract (N.liftSymbols e) entry X ι x
+rvprobe/hreview/HRevProbe.lean:39:42: error: Application type mismatch: The argument
+  M₁
+has type
+  MultiTapeTM 2 (RecSym P (Fin 3)) P
+but is expected to have type
+  MultiTapeTM 2 Bool P
+in the application
+  seamCompTM_spaceUsed_le_add M₁
+rvprobe/hreview/HRevProbe.lean:46:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/hreview/HRevProbe.lean:50:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/hreview/HRevProbe.lean:54:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+exit=1

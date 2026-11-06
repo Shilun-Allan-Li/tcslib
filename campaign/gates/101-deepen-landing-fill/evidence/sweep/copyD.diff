@@ -1,0 +1,89 @@
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
+@@ -202,8 +202,7 @@
+ private theorem dp_mem (N : FinNDTM Bool) (j : Fin 5) (V : List Bool) :
+     dpOrc N j V = true ↔ V ∈ dpAs N j := by
+   rw [dpOrc, indicator_eq_decide]
+-  exact ⟨fun h => @of_decide_eq_true _ (Classical.dec _) h,
+-    fun h => @decide_eq_true _ (Classical.dec _) h⟩
++  exact @decide_eq_true_iff _ (Classical.dec _)
+ 
+ private theorem dp_rel (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (hσ : σ 3 = 3) (x : List Bool)
+     (s : ℕ) : Rel (dpOrc N ∘ σ) x s = StepRel N x s := by
+@@ -403,14 +402,13 @@
+     congr 3
+     ring
+ 
+-/-- The binary length against `logSpace`: `logSpace n ≤ 1 + |bits n| ≤ logSpace n + 1`, and
+-`n < 2 ^ |bits n|`. -/
++/-- The binary length against `logSpace`: `logSpace n ≤ 1 + |bits n| ≤ logSpace n + 1`. -/
+ private theorem dp_bits_logSpace (n : ℕ) : logSpace n ≤ 1 + (Nat.bits n).length ∧
+-    (Nat.bits n).length ≤ logSpace n ∧ n < 2 ^ (Nat.bits n).length := by
++    (Nat.bits n).length ≤ logSpace n := by
+   have h2 : (Nat.bits n).length ≤ logSpace n :=
+     (length_bits_le_log n).trans_eq (logSpace_eq n).symm
+   rw [Nat.size_eq_bits_len] at h2 ⊢
+-  exact ⟨by have := logSpace_le_size_succ n; omega, h2, Nat.lt_size_self n⟩
++  exact ⟨by have := logSpace_le_size_succ n; omega, h2⟩
+ 
+ end Loops
+ 
+@@ -654,7 +652,7 @@
+           ∃ v < 2 ^ (c * (s + ℓ + 1)), pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ La ∧
+             Reach (2 ^ (c * (s + ℓ + 1))) (StepRel N x s) (c * (s + ℓ + 1)) u v))), v₂, none) ∧
+       v₂ 22 = ℓ ∧ v₂ 23 = s ∧ v₂ 24 = 0 ∧ ∀ r, v₂ r ≤ B := by
+-  have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
++  have hsw : s ≤ c * (s + ℓ + 1) := le_mul_of_one_le_of_le hc (by omega)
+   have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B := (size_facts _).2.trans hBB
+   obtain ⟨v', r1, e1, e2, e3, e4, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc f hB hL hS hZ hv
+   obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw j La hj h1 h2 h3 hD hBB e5 e1
+@@ -724,7 +722,7 @@
+   have hBB : ∀ s, s ≤ sp x.length + 1 →
+       2 ^ ((codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) *
+         ((codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1))) ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
+-    fun s hs => Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul (hWs s hs) (hWs s hs))
++    fun s hs => Nat.pow_le_pow_right (by norm_num) (Nat.mul_self_le_mul_self (hWs s hs))
+   have hw : ∀ s, codeK N * (s + logSpace x.length + 1) ≤
+       (codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) := fun s =>
+     Nat.mul_le_mul (by omega) (by omega)
+@@ -749,7 +747,7 @@
+         have h2 : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
+         have h3 : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
+         have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + (Nat.bits x.length).length) + 1) :=
+-          le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
++          le_mul_of_one_le_of_le hc (by omega)
+         omega
+       refine r.halt (AHalt.step ⟨dp_pre (Or.inl ⟨23, .cb false 0, rfl⟩), e4⟩ ?_)
+       rw [astep_inc (show dpD (codeK N + 1) (dpkE true) = .inc 23 (.cb false 0) from rfl)]
+@@ -772,10 +770,9 @@
+       (some .scan, fun _ => 0, none) (decide (x ∈ L)) := by
+   have hl := dp_bits_logSpace x.length
+   have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
+-    le_trans (by omega) (Nat.le_mul_of_pos_left _ (by omega : 0 < codeK N + 1))
++    le_mul_of_one_le_of_le (by omega : 1 ≤ codeK N + 1) (by omega)
+   have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
+-  have hn : x.length < 2 ^ dpW N sp x :=
+-    (dp_bits_logSpace x.length).2.2.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
++  have hn : x.length < 2 ^ dpW N sp x := Nat.size_le.mp (by rw [← Nat.size_eq_bits_len]; omega)
+   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
+   set B := 2 ^ (dpW N sp x * dpW N sp x) with hB
+   have hnB : x.length ≤ B := by omega
+@@ -826,7 +823,7 @@
+     exacts [inputLenLang_mem, initLang_mem, acceptLang_mem, stepLang_mem, edgeLang_mem]
+   · rw [indicator_eq_decide]
+     refine (dp_run h x).mono fun a ha => ⟨ha.1, fun r => ?_⟩
+-    have hl := (dp_bits_logSpace x.length).2.1
++    have hl := (dp_bits_logSpace x.length).2
+     have hls : 1 ≤ logSpace x.length := by rw [logSpace_eq]; omega
+     set X := sp x.length + logSpace x.length + 1 with hX
+     set W := dpW N sp x with hW
+@@ -839,7 +836,8 @@
+       have := Nat.two_pow_pos (W * W)
+       omega
+     refine (length_bits_le hlt).trans ?_
+-    have h1 : W * W ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) := Nat.mul_le_mul hW3 hW3
++    have h1 : W * W ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) :=
++      Nat.mul_self_le_mul_self hW3
+     have h2 : 1 ≤ X * X := Nat.one_le_iff_ne_zero.mpr (by positivity)
+     calc W * W + 2 ≤ 3 * (codeK N + 1) * X * (3 * (codeK N + 1) * X) + 2 * (X * X) := by omega
+       _ = (9 * (codeK N + 1) ^ 2 + 2) * X ^ 2 := by ring

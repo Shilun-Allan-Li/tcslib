@@ -1,0 +1,73 @@
+# preflight 2026-11-06T00:18:33Z
+## nproc
+4
+## cgroup v1 memory (own cgroup: /sys/fs/cgroup/memory/process_api/01a1ae35-bf26-772f-ba5a-950cbbc97131/claude-code-bash)
+memory.limit_in_bytes: 14337302528 
+memory.usage_in_bytes: 818802688 
+memory.failcnt: 0 
+memory.oom_control: oom_kill_disable 0 under_oom 0 oom_kill 0 
+## memory.stat
+cache 764149760
+rss 970752
+rss_huge 0
+shmem 0
+mapped_file 131072
+dirty 384380928
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 420405
+pgpgout 289161
+pgfault 299016
+pgmajfault 175
+inactive_anon 872448
+active_anon 28672
+inactive_file 543100928
+active_file 221048832
+unevictable 0
+hierarchical_memory_limit 14337302528
+hierarchical_memsw_limit 9223372036854771712
+total_cache 764149760
+total_rss 970752
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 131072
+total_dirty 384380928
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 420405
+total_pgpgout 289161
+total_pgfault 299016
+total_pgmajfault 175
+total_inactive_anon 872448
+total_active_anon 28672
+total_inactive_file 543100928
+total_active_file 221048832
+total_unevictable 0
+## /proc/meminfo (head)
+MemTotal:       16472088 kB
+MemFree:        15213832 kB
+MemAvailable:   15977828 kB
+Buffers:           22512 kB
+Cached:           936492 kB
+## headroom = limit - (usage - total_cache + total_shmem) = 14337302528 - (819032064 - 764149760 + 0) = 14282420224 bytes = 13.3 GiB (floor 4 GiB)
+## host MemAvailable = 16363286528 bytes (15.24 GiB)
+## df -B1 / df -T: clone dir
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9806725120 31476809728  24% /
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9576880  30739072  24% /
+## scratch dir /tmp/claude-0/-home-user/bf682d90-d232-5ac2-baf2-5b26e4d90819/scratchpad
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9806725120 31476809728  24% /
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9576880  30739072  24% /
+## TMPDIR=unset
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9576880  30739072  24% /
+## clone free = 31476809728 bytes = 29.32 GiB (floor 12 GiB)
