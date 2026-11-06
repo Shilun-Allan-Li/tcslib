@@ -982,7 +982,7 @@ languages; the acceptance above covers it. The edge member crosses no new file's
 **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
 lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
 with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
-design that waits for him.
+design that waits for him. **Ruled (the user, 2026-11-06; Hydroxyi not active): the full refactor.**
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
@@ -1321,7 +1321,8 @@ walks at the front through the new `Complexity.walkLe_succ_iff_head` (`PathWalk`
 and `Reach` imports `PathWalk` instead of `ISCountMath`. Its remaining uses are in
 `ISCountMath`'s own `mem_succ_iff`. Not a copy. **Disposition:** the dedup window (12.2c): move
 it beside `WalkLe` in `PathWalk`, or re-prove it there from `walkLe_succ_iff_head` without
-unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's.
+unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's. **Ruled (the user, 2026-11-06): move it
+to `PathWalk` as `Complexity.walkLe_succ_iff`, after #216 (which removes its unfolding) merges.**
 
 **WC-1, a window-run closure lemma (optional)** (gate 96, note 10; recorded 2026-11-05).
 `Complexity.ExpBFS.winRun_of_card_eq` (`ExpBFS/Radius`) and the induction inside
@@ -1350,7 +1351,8 @@ lemmas (the design's `BlockFit` probe: `fit_initO`, `fit_edgeO`, `fit_accO`, `fi
 (12.2c): a `def` per query, each with its `_iff` lemma, beside `initLang`, `acceptLang` and
 `edgeLang` (`SpaceComplexity/Codec/Langs`), replacing `ISGen`'s `InitM` and `AccM` and serving
 `mem_iff_reach`, `NoEdge` and the fit lemmas alike. `Codec/Langs` and `ISCountGenRadius` are
-Hydroxyi's: interface design in their files.
+Hydroxyi's: interface design in their files. **Ruled (the user, 2026-11-06): as disposed, with
+`ISGen.InitM`/`AccM` deleted and their uses re-pointed.**
 
 **RP-1, definitional reads that #196's equations can replace** (gate 96, the round-2 shape
 search; recorded 2026-11-05; not duplication). #196 publishes `Iff.rfl` equations for `WalkLe`,

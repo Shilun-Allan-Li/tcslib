@@ -196,6 +196,11 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    mechanical dedup edits in colleague-owned files (`CircuitComplexity/`, Meyer) allowed in every
    family, with an FYI line (no renames or design changes there without asking); NatBits: the
    plan's defaults D1–D6 accepted, one PR after #208 merges, D9's families recorded for later.
+   **Ruled (the user, 2026-11-06, Hydroxyi not active):** CL-1 the full refactor (one public
+   membership lemma for encoded triples and one decider wrapper parameterized by the mode's tail,
+   the five languages re-proved through them); CQ-1 a `def` per query with its `_iff` in
+   `Codec/Langs`, `ISGen.InitM`/`AccM` deleted and re-pointed; WL-1 moved beside `WalkLe` in
+   `PathWalk` as `Complexity.walkLe_succ_iff`, after #216 merges.
    **Next roadmap tracks, all three in parallel:** F6 (U2's harvest, then the fill), the book-form
    Thm 3.1 statement phase, and Ladner's statement phase. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
