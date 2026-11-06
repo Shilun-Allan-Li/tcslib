@@ -1,0 +1,26 @@
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:434:step equations of `astep` and the published loop runs, without unfolding `CA` or `astep`. -/
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:58:  | ret b => exact Or.inr ⟨b, by simp [astep, hA]⟩
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:59:  | valP r l' => by_cases h : ValidPlain x <;> simp [astep, hA, h]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:60:  | valQ r l' => by_cases h : ValidPair x <;> simp [astep, hA, h]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:61:  | _ => simp [astep, hA]
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:108:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:112:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:116:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:120:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:124:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:128:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:133:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:138:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:143:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:148:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:151:  | ret b' => simp [astep, hA] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:154:    · simp only [astep, hA, hv, if_true, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:157:    · simp [astep, hA, hv] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:160:    · simp only [astep, hA, hv, if_true, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:163:    · simp [astep, hA, hv] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:169:    simp only [astep, hA, Prod.mk.injEq, Option.some.injEq] at hs
+TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean:151:  simp only [mstep, hA, astep, MARM.detPart_det hA β]
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:270:  simp only [astep, MARM.detPart_det hA]
+TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:133:  simp only [nastep, hA, astep, NARM.detPart_det hA β]
+TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.lean:361:              · rw [e] at h; rw [show ((astep (A.detPart false) oracle x)^[n] (none, v₀, some b))
+TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem.lean:379:      · rw [he, show ((astep (A.detPart false) oracle x)^[T] (none, v, some b)) = (none, v, some b)

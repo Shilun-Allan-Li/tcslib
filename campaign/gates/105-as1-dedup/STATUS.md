@@ -11,3 +11,10 @@
 - 2026-11-06: after dispatch, the user allowed colleague-owned edits; `1fd7d4ce` re-proves the five
   `BoolCircuit` members through the general equations (pushed to #214). Round 1 audits
   `0bc71211` as dispatched; the five go into round 2 with a new replay.
+- 2026-11-06: round 2: #214 complete (`92e53e6e`); freeze, lint, replay-las2 (109/0); pack-r2 written; staged.
+- 2026-11-06: round 2 **dispatched** by the user (140 sections, bundle `e935f140…`).
+- 2026-11-06: round 2 findings: **HOLD 0/2/2** (implicit astep reductions; cross-file instruction-table reads). Awaiting the user's ruling.
+- 2026-11-06: the user ruled: land, acknowledge both majors (AS-2, MT-1); round 3 (dispositions only) staged.
+- 2026-11-06: round 3 **dispatched** by the user (13 sections, bundle `055354b3…`).
+- 2026-11-06: round 3 findings **PASS 0/0/1**; **CLOSED**. Minor 1 accepted (the 501 withdrawn; the scope table marked historical).
+- 2026-11-06: **merged** by the user.

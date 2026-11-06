@@ -1,0 +1,534 @@
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
+index b99e6461..a4030d85 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
+@@ -387,60 +387,57 @@ variable (N) in
+ `validLang` is the validity test of `w`. -/
+ theorem validLang_iff (x w : List Bool) (s : ℕ) :
+     pairEncode x (pairEncode w (Nat.bits s)) ∈ validLang N ↔ ValidChk (N := N) x.length s w := by
+-  rw [validChk_iff]
++  rw [validChk_iff, mem_codeLang_iff bits_injective (mem_validLang_iff N)]
+   constructor
+-  · rintro ⟨x', c, s', h, C, hC, hc⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
+-    obtain rfl := bits_injective h4
+-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc⟩
++  · rintro ⟨c, rfl, C, hC, rfl⟩
++    exact ⟨C, hC, (bits_cfgCode s C).symm⟩
+   · rintro ⟨C, hC, rfl⟩
+-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl⟩
++    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl⟩
+ 
+ variable (N) in
+ /-- **Initial codes through the check.** -/
+ theorem initLang_iff (x w : List Bool) (s : ℕ) :
+     pairEncode x (pairEncode w (Nat.bits s)) ∈ initLang N ↔ InitChk N x s w := by
+-  rw [initChk_iff]
++  rw [initChk_iff, mem_codeLang_iff bits_injective (mem_initLang_iff N)]
+   constructor
+-  · rintro ⟨x', c, s', h, hc⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
+-    obtain rfl := bits_injective h4
+-    exact ((cfgWord_eq_bits_iff _ _ c).mp hc).symm
++  · rintro ⟨c, rfl, rfl⟩
++    exact bits_cfgCode s _
+   · rintro rfl
+-    exact ⟨x, cfgCode s (N.tm.initCfg x), s, by rw [bits_cfgCode], rfl⟩
++    exact ⟨cfgCode s (N.tm.initCfg x), bits_cfgCode s _, rfl⟩
+ 
+ variable (N) in
+ /-- **Accepting codes through the check.** -/
+ theorem acceptLang_iff (x w : List Bool) (s : ℕ) :
+     pairEncode x (pairEncode w (Nat.bits s)) ∈ acceptLang N ↔ AcceptChk N x s w := by
+-  rw [acceptChk_iff]
++  rw [acceptChk_iff, mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
+   constructor
+-  · rintro ⟨x', c, s', h, C, hC, hc, hst, hout⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
+-    obtain rfl := bits_injective h4
+-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, hst, hout⟩
++  · rintro ⟨c, rfl, C, hC, rfl, hst, hout⟩
++    exact ⟨C, hC, (bits_cfgCode s C).symm, hst, hout⟩
+   · rintro ⟨C, hC, rfl, hst, hout⟩
+-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl, hst, hout⟩
++    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hst, hout⟩
+ 
+ variable (N) in
+ /-- **Step pairs through the check.** -/
+ theorem stepLang_iff (x w w' : List Bool) (s : ℕ) :
+     pairEncode x (pairEncode w (pairEncode w' (Nat.bits s))) ∈ stepLang N ↔
+       StepChk N x s w w' := by
+-  rw [stepChk_iff]
++  -- the tail `⟨w', bits s⟩` is the injective image of the pair `(w', s)`
++  have henc : Function.Injective fun t : List Bool × ℕ => pairEncode t.1 (Nat.bits t.2) :=
++    fun _ _ h => Prod.ext (pairEncode_inj h).1 (bits_injective (pairEncode_inj h).2)
++  have hL : ∀ y, y ∈ stepLang N ↔ ∃ (x : List Bool) (c : ℕ) (t : List Bool × ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode t.1 (Nat.bits t.2))) ∧
++      ∃ c', Nat.bits c' = t.1 ∧ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow t.2 C ∧
++        cfgCode t.2 C = c ∧ ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧
++          Cfg.InWindow t.2 C' ∧ cfgCode t.2 C' = c' := fun y => (mem_stepLang_iff N y).trans
++    ⟨fun ⟨x, c, c', s, h, hP⟩ => ⟨x, c, (Nat.bits c', s), h, c', rfl, hP⟩,
++      fun ⟨x, c, t, h, c', hc', hP⟩ => ⟨x, c, c', t.2, by rw [hc']; exact h, hP⟩⟩
++  rw [stepChk_iff, mem_codeLang_iff henc hL x w (w', s)]
++  dsimp only
+   constructor
+-  · rintro ⟨x', c, c', s', h, C, hC, hc, C', hstep, hC', hc'⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
+-    obtain ⟨rfl, h6⟩ := pairEncode_inj h4
+-    obtain rfl := bits_injective h6
+-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, C', hstep, hC',
+-      (cfgWord_eq_bits_iff _ C' c').mp hc'⟩
++  · rintro ⟨c, rfl, c', rfl, C, hC, rfl, C', hstep, hC', rfl⟩
++    exact ⟨C, hC, (bits_cfgCode s C).symm, C', hstep, hC', (bits_cfgCode s C').symm⟩
+   · rintro ⟨C, hC, rfl, C', hstep, hC', rfl⟩
+-    exact ⟨x, cfgCode s C, cfgCode s C', s, by rw [bits_cfgCode, bits_cfgCode], C, hC, rfl, C',
++    exact ⟨cfgCode s C, bits_cfgCode s C, cfgCode s C', bits_cfgCode s C', C, hC, rfl, C',
+       hstep, hC', rfl⟩
+ 
+ /-! ## Edge codes -/
+@@ -511,14 +508,11 @@ variable (N) in
+ `x`, `w` and `bits s` is in the edge-code language exactly when `w` passes the edge-code check. -/
+ theorem edgeLang_iff (x w : List Bool) (s : ℕ) :
+     pairEncode x (pairEncode w (Nat.bits s)) ∈ edgeLang N ↔ EdgeChk N x s w := by
+-  rw [edgeChk_iff, mem_edgeLang_iff]
++  rw [edgeChk_iff, mem_codeLang_iff bits_injective (mem_edgeLang_iff N)]
+   constructor
+-  · rintro ⟨x', c, s', h, C, hC, hc, hi⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨rfl, h4⟩ := pairEncode_inj h2
+-    obtain rfl := bits_injective h4
+-    exact ⟨C, hC, (cfgWord_eq_bits_iff _ C c).mp hc, hi⟩
++  · rintro ⟨c, rfl, C, hC, rfl, hi⟩
++    exact ⟨C, hC, (bits_cfgCode s C).symm, hi⟩
+   · rintro ⟨C, hC, rfl, hi⟩
+-    exact ⟨x, cfgCode s C, s, by rw [bits_cfgCode], C, hC, rfl, hi⟩
++    exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hi⟩
+ 
+ end Complexity.Codec
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+index 7e1d6fd2..4cbb3299 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+@@ -18,7 +18,8 @@ parses (`parse_run`), lays out the code word (`layout_run`), compares the input
+ (`le_phase`), scans the chunk region (`vscan_run`), and answers from the scan state — for
+ the initial code after testing the input position and the head flag of the middle cell, for an
+ edge code after testing, tape by tape, the head flags of the first and last cells.
+-`Complexity.LogProg.arm_decides_poly` turns this into membership in `L`.
++`Complexity.LogProg.arm_decides_poly` turns this into membership in `L`, once for all four
++modes in the wrapper `Complexity.Codec.oneCode_mem`, which takes the mode's tail as a hypothesis.
+ 
+ Configuration-graph infrastructure for logspace algorithms ([AB09, §4.1.1, §4.3]); not a
+ result of [AB09] by itself.
+@@ -31,6 +32,7 @@ result of [AB09] by itself.
+ ## Main results
+ 
+ * `Complexity.Codec.one_run` — the common run of the one-code modes.
++* `Complexity.Codec.oneCode_mem` — the decider wrapper of the one-code modes.
+ * `Complexity.Codec.init_tail` — the tail of the initial-code mode.
+ * `Complexity.Codec.edge_round`, `Complexity.Codec.edge_loop`, `Complexity.Codec.edge_tail` —
+   the tail of the edge-code mode.
+@@ -189,63 +191,93 @@ lemma shape_of_code {y x : List Bool} {c s : ℕ}
+   rw [hy, ← hc, bits_cfgCode]
+   exact cfgWord_le_length s C _
+ 
+-/-- **Valid codes form a logspace language** (`Complexity.Codec.validLang`).
+-
+-**Proof sketch.** `arm_decides_poly` with the codec machine in mode `valid`: on a well-shaped
+-input passing the pre-scan checks it answers the scan verdict, which is then membership
+-(`validLang_iff`, `validChk_iff_pre`); otherwise it rejects, and the input is no member
+-(members are well shaped, `shape_of_code`, and pass all checks). -/
+-theorem validLang_mem : validLang N ∈ LOGSPACE := by
+-  refine arm_decides_poly (CA N .valid) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
++/-- **The decider wrapper of the one-code modes.** Let `L` be a language of encoded triples
++`⟨x, ⟨bits c, bits s⟩⟩` with `P x c s`, where `P x c s` makes `c` the code of some
++configuration, and let `Chk` be a word-level check that is membership at `⟨x, ⟨w, bits s⟩⟩` and
++implies the validity test. If, in the one-code mode `mode`, the tail of the codec machine after
++the validity scan answers `Chk x s w` from the registers the common run leaves, on every
++well-shaped input passing the pre-scan checks, then `L` is in `L`.
++
++Configuration-graph infrastructure for logspace algorithms ([AB09, §4.1.1, §4.3]); not a result of
++[AB09] by itself.
++
++**Proof sketch.** `arm_decides_poly` with the codec machine in mode `mode` and the register bound
++`bnd`. By the common run (`one_run`), either the machine reaches the end of the scan, where the
++tail answers the check, which is membership; or it rejects, and then no decomposition of the input
++passes the pre-scan checks, so the input is no member: a member is well shaped
++(`shape_of_code`) and passes the check, hence the validity test and so the pre-scan checks
++(`validChk_iff_pre`). -/
++theorem oneCode_mem (hm : mode ≠ .step) {L : Language Bool} {P : List Bool → ℕ → ℕ → Prop}
++    {Chk : List Bool → ℕ → List Bool → Prop}
++    (hL : ∀ y, y ∈ L ↔ ∃ (x : List Bool) (c s : ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧ P x c s)
++    (hP : ∀ x c s, P x c s → ∃ C : Cfg N.k Bool N.State x, cfgCode s C = c)
++    (hchk : ∀ x w s, pairEncode x (pairEncode w (Nat.bits s)) ∈ L ↔ Chk x s w)
++    (hval : ∀ x s w, Chk x s w → ValidChk (N := N) x.length s w)
++    (htail : ∀ (y x w : List Bool) (s : ℕ) (st : VAd N) (R : Regs), Shape1 y x w s →
++      PreChk N x.length s w → s ≤ 2 * y.length → W N * (2 * s + 1) ≤ w.length →
++      st.1 = vScan N (w.take (W N * (2 * s + 1))) → R.Bd (bnd N y) →
++      R.A = 2 * x.length + 2 → R.S = s → R.T = 0 →
++      R.Pos = bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) →
++      ∃ b : Bool, (Chk x s w ↔ b = true) ∧
++        AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
++          (some (.vDone st), R.val, none) b) :
++    L ∈ LOGSPACE := by
++  refine arm_decides_poly (CA N mode) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
+     fun y => ?_
+   rw [← val_empty]
+   refine AHalt.mono ?_ (fun a h => gd_mono a h)
+-  rcases one_run (N := N) (mode := .valid) (by decide) y with
+-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, -, -, -, -, run⟩ | ⟨hfail, hhalt⟩
+-  · have hind : MultiTapeTM.indicator (validLang N : Set (List Bool)) y =
+-        decide (VAcc N st.1) := by
+-      apply indicator_eq_of_iff
+-      rw [hsh.1, validLang_iff, validChk_iff_pre, hst]
+-      exact ⟨fun h => h.2, fun h => ⟨hpre, h⟩⟩
++  rw [← orc_eq]
++  rcases one_run (N := N) (mode := mode) hm y with
++    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, hPos, run⟩ | ⟨hfail, hhalt⟩
++  · -- the end of the scan: the tail answers the check
++    have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
++      rw [hsh.eq, length_pairEncode, length_pairEncode]; ring
++    have hs := s_le_of_width y s (by omega) hsh.width
++    obtain ⟨b, hb, tail⟩ := htail y x w s st R hsh hpre hs (by have := hpre.1; omega) hst hR hA
++      hS hT hPos
++    have hind : MultiTapeTM.indicator (L : Set (List Bool)) y = b := by
++      rw [indicator_eq_of_iff (P := b = true) (by rw [hsh.eq, hchk, hb])]
++      cases b <;> rfl
+     rw [hind]
+-    exact AReach.halt run (AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩)
+-  · have hind : MultiTapeTM.indicator (validLang N : Set (List Bool)) y = false := by
++    exact AReach.halt run tail
++  · -- a rejection: members are well shaped and pass the pre-scan checks
++    have hind : MultiTapeTM.indicator (L : Set (List Bool)) y = false := by
+       rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
+       · rfl
+-      obtain ⟨x, c, s, hy, C, hC, hc⟩ := h
++      obtain ⟨x, c, s, hy, hPc⟩ := (hL y).mp h
++      obtain ⟨C, hc⟩ := hP x c s hPc
+       have hsh := shape_of_code hy C hc
+-      have hv := (validLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, C, hC, hc⟩
++      have hv := hval x s _ ((hchk x (Nat.bits c) s).mp (hy ▸ h))
+       exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv).1
+     rw [hind]
+     exact hhalt
+ 
++/-- **Valid codes form a logspace language** (`Complexity.Codec.validLang`).
++
++**Proof sketch.** The one-code wrapper (`oneCode_mem`) in mode `valid`: the tail answers the
++scan verdict at once, which on inputs passing the pre-scan checks is the validity test
++(`validChk_iff_pre`), i.e. membership (`validLang_iff`). -/
++theorem validLang_mem : validLang N ∈ LOGSPACE := by
++  refine oneCode_mem (mode := .valid) (by decide) (mem_validLang_iff N)
++    (fun _ _ _ ⟨C, _, hc⟩ => ⟨C, hc⟩) (validLang_iff N) (fun _ _ _ h => h) ?_
++  intro _ x w s st R _ hpre _ _ hst hR _ _ _ _
++  refine ⟨decide (VAcc N st.1), ?_, AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩⟩
++  rw [decide_eq_true_eq, validChk_iff_pre, hst]
++  exact ⟨fun h => h.2, fun h => ⟨hpre, h⟩⟩
++
+ /-- **Accepting codes form a logspace language** (`Complexity.Codec.acceptLang`).
+ 
+ **Proof sketch.** As `validLang_mem`, answering the scan verdict together with the header
+ `(halted, accept)` (`acceptLang_iff`). -/
+ theorem acceptLang_mem : acceptLang N ∈ LOGSPACE := by
+-  refine arm_decides_poly (CA N .accept) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
+-    fun y => ?_
+-  rw [← val_empty]
+-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
+-  rcases one_run (N := N) (mode := .accept) (by decide) y with
+-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, -, -, -, -, run⟩ | ⟨hfail, hhalt⟩
+-  · have hind : MultiTapeTM.indicator (acceptLang N : Set (List Bool)) y =
+-        decide (VAcc N st.1 ∧ st.1.2.1 = some (none, 1)) := by
+-      apply indicator_eq_of_iff
+-      rw [hsh.1, acceptLang_iff, AcceptChk, validChk_iff_pre, hst]
+-      exact ⟨fun h => ⟨h.1.2, h.2⟩, fun h => ⟨⟨hpre, h.1⟩, h.2⟩⟩
+-    rw [hind]
+-    exact AReach.halt run (AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩)
+-  · have hind : MultiTapeTM.indicator (acceptLang N : Set (List Bool)) y = false := by
+-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
+-      · rfl
+-      obtain ⟨x, c, s, hy, C, hC, hc, hst, hout⟩ := h
+-      have hsh := shape_of_code hy C hc
+-      have hv := (acceptLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, C, hC, hc, hst, hout⟩
+-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv.1).1
+-    rw [hind]
+-    exact hhalt
++  refine oneCode_mem (mode := .accept) (by decide) (mem_acceptLang_iff N)
++    (fun _ _ _ ⟨C, _, hc, _⟩ => ⟨C, hc⟩) (acceptLang_iff N) (fun _ _ _ h => h.1) ?_
++  intro _ x w s st R _ hpre _ _ hst hR _ _ _ _
++  refine ⟨decide (VAcc N st.1 ∧ st.1.2.1 = some (none, 1)), ?_,
++    AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩⟩
++  rw [decide_eq_true_eq, AcceptChk, validChk_iff_pre, hst]
++  exact ⟨fun h => ⟨h.1.2, h.2⟩, fun h => ⟨⟨hpre, h.1⟩, h.2⟩⟩
+ 
+ /-! ## The initial code -/
+ 
+@@ -383,37 +415,16 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+ **Proof sketch.** As `validLang_mem`, with the initial-code tail (`init_tail`) and the
+ initial-code check (`initLang_iff`). -/
+ theorem initLang_mem : initLang N ∈ LOGSPACE := by
+-  refine arm_decides_poly (CA N .init) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
+-    fun y => ?_
+-  rw [← val_empty]
+-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
+-  rcases one_run (N := N) (mode := .init) (by decide) y with
+-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, hPos, run⟩ | ⟨hfail, hhalt⟩
+-  · have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
+-      rw [hsh.1, length_pairEncode, length_pairEncode]; ring
+-    have hs := s_le_of_width y s (by omega) hsh.2
+-    have hind : MultiTapeTM.indicator (initLang N : Set (List Bool)) y =
+-        decide (InitScan N st.1 ∧ R.Pos = 1 ∧
+-          (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true)) := by
+-      apply indicator_eq_of_iff
+-      rw [hsh.1, initLang_iff, InitChk, validChk_iff_pre, hst, InitScan, hPos]
+-      constructor
+-      · rintro ⟨⟨-, hv⟩, h2, h3, h4, h5⟩
+-        exact ⟨⟨hv, h2, h3⟩, h4, h5⟩
+-      · rintro ⟨⟨hv, h2, h3⟩, h4, h5⟩
+-        exact ⟨⟨hpre, hv⟩, h2, h3, h4, h5⟩
+-    rw [hind]
+-    exact AReach.halt run (init_tail y x w (Nat.bits s) hsh.1 R s st hR hA hS hT hs
+-      (by have := hpre.1; omega))
+-  · have hind : MultiTapeTM.indicator (initLang N : Set (List Bool)) y = false := by
+-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
+-      · rfl
+-      obtain ⟨x, c, s, hy, hc⟩ := h
+-      have hsh := shape_of_code hy (N.tm.initCfg x) hc
+-      have hv := (initLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, hc⟩
+-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv.1).1
+-    rw [hind]
+-    exact hhalt
++  refine oneCode_mem (mode := .init) (by decide) (mem_initLang_iff N)
++    (fun x _ _ hc => ⟨N.tm.initCfg x, hc⟩) (initLang_iff N) (fun _ _ _ h => h.1) ?_
++  intro y x w s st R hsh hpre hs hw hst hR hA hS hT hPos
++  refine ⟨_, ?_, init_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs hw⟩
++  rw [decide_eq_true_eq, InitChk, validChk_iff_pre, hst, InitScan, hPos]
++  constructor
++  · rintro ⟨⟨-, hv⟩, h2, h3, h4, h5⟩
++    exact ⟨⟨hv, h2, h3⟩, h4, h5⟩
++  · rintro ⟨⟨hv, h2, h3⟩, h4, h5⟩
++    exact ⟨⟨hpre, hv⟩, h2, h3, h4, h5⟩
+ 
+ 
+ /-! ## Edge codes
+@@ -758,33 +769,12 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+ **Proof sketch.** As `validLang_mem`, with the edge-code tail (`edge_tail`) and the edge-code
+ check (`edgeLang_iff`). -/
+ theorem edgeLang_mem : edgeLang N ∈ LOGSPACE := by
+-  refine arm_decides_poly (CA N .edge) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
+-    fun y => ?_
+-  rw [← val_empty]
+-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
+-  rw [← orc_eq]
+-  rcases one_run (N := N) (mode := .edge) (by decide) y with
+-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, -, run⟩ | ⟨hfail, hhalt⟩
+-  · have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
+-      rw [hsh.eq, length_pairEncode, length_pairEncode]; ring
+-    have hs := s_le_of_width y s (by omega) hsh.width
+-    have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y =
+-        decide (VAcc N st.1 ∧ ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
+-          w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true) := by
+-      apply indicator_eq_of_iff
+-      rw [hsh.eq, edgeLang_iff, edgeChk_def, validChk_iff_pre, hst]
+-      exact ⟨fun ⟨⟨_, hv⟩, h⟩ => ⟨hv, h⟩, fun ⟨hv, h⟩ => ⟨⟨hpre, hv⟩, h⟩⟩
+-    rw [hind]
+-    exact AReach.halt run (edge_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs
+-      (by have := hpre.1; omega))
+-  · have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y = false := by
+-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
+-      · rfl
+-      obtain ⟨x, c, s, hy, C, hC, hc, -⟩ := (mem_edgeLang_iff N y).mp h
+-      have hsh := shape_of_code hy C hc
+-      have hv := (edgeLang_iff N x (Nat.bits c) s).mp (hy ▸ h)
+-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp ((edgeChk_def N x s _).mp hv).1).1
+-    rw [hind]
+-    exact hhalt
++  refine oneCode_mem (mode := .edge) (by decide) (mem_edgeLang_iff N)
++    (fun _ _ _ ⟨C, _, hc, _⟩ => ⟨C, hc⟩) (edgeLang_iff N)
++    (fun x s w h => ((edgeChk_def N x s w).mp h).1) ?_
++  intro y x w s st R hsh hpre hs hw hst hR hA hS hT _
++  refine ⟨_, ?_, edge_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs hw⟩
++  rw [decide_eq_true_eq, edgeChk_def, validChk_iff_pre, hst]
++  exact ⟨fun ⟨⟨_, hv⟩, h⟩ => ⟨hv, h⟩, fun ⟨hv, h⟩ => ⟨⟨hpre, hv⟩, h⟩⟩
+ 
+ end Complexity.Codec
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
+index 80233718..5555d7e8 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
+@@ -40,6 +40,9 @@ Configuration-graph infrastructure; not a result of [AB09].
+ 
+ ## Main results
+ 
++* `Complexity.Codec.mem_validLang_iff`, `mem_initLang_iff`, `mem_acceptLang_iff`,
++  `mem_stepLang_iff`, `mem_edgeLang_iff` — the defining equations of the languages.
++* `Complexity.Codec.mem_codeLang_iff` — membership in a language of encoded triples.
+ * `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang`,
+   `mem_edgeLang` —
+   membership through the codec.
+@@ -97,6 +100,40 @@ def edgeLang : Language Bool :=
+     ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+       ∃ i, |C.workTapePos i| = (s : ℤ)}
+ 
++/-- A word is in the valid-code language exactly when it encodes an input `x`, a code `c` and a
++radius `s` such that `c` is the radius-`s` code of a configuration on `x` that stays in the window
++of radius `s`. -/
++lemma mem_validLang_iff (y : List Bool) :
++    y ∈ validLang N ↔ ∃ (x : List Bool) (c s : ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
++      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c := Iff.rfl
++
++/-- A word is in the initial-code language exactly when it encodes an input `x`, a code `c` and a
++radius `s` such that `c` is the radius-`s` code of the initial configuration of `N` on `x`. -/
++lemma mem_initLang_iff (y : List Bool) :
++    y ∈ initLang N ↔ ∃ (x : List Bool) (c s : ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
++      cfgCode s (N.tm.initCfg x) = c := Iff.rfl
++
++/-- A word is in the accepting-code language exactly when it encodes an input `x`, a code `c` and
++a radius `s` such that `c` is the radius-`s` code of a configuration on `x` that stays in the
++window of radius `s`, is halted and has output exactly `[true]`. -/
++lemma mem_acceptLang_iff (y : List Bool) :
++    y ∈ acceptLang N ↔ ∃ (x : List Bool) (c s : ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
++      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧ C.state = none ∧
++        C.output = [true] := Iff.rfl
++
++/-- A word is in the step language exactly when it encodes an input `x`, two codes `c`, `c'` and a
++radius `s` such that `c` and `c'` are the radius-`s` codes of configurations `C`, `C'` on `x` that
++stay in the window of radius `s`, with a configuration-graph edge from `C` to `C'`. -/
++lemma mem_stepLang_iff (y : List Bool) :
++    y ∈ stepLang N ↔ ∃ (x : List Bool) (c c' s : ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits c') (Nat.bits s))) ∧
++      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
++        ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧
++          cfgCode s C' = c' := Iff.rfl
++
+ /-- A word is in the edge-code language exactly when it encodes an input `x`, a code `c` and a
+ radius `s` such that `c` is the radius-`s` code of a configuration on `x` that stays in the
+ window of radius `s` and has some work head at `-s` or `+s`. -/
+@@ -113,42 +150,55 @@ lemma pairEncode_inj {a b a' b' : List Bool} (h : pairEncode a b = pairEncode a'
+     (fun p : List Bool × List Bool => pairEncode p.1 p.2) (a', b') from h)
+   simpa using this
+ 
++/-- **Membership in a language of encoded triples.** Let `L` be a language whose members are
++exactly the encodings `⟨x, ⟨bits c, enc t⟩⟩` with `P x c t`, for an injective encoding `enc` of
++the tail. Then for every word `w`, `⟨x, ⟨w, enc t⟩⟩ ∈ L` exactly when `w` is the binary word of
++some `c` with `P x c t`. The code languages are of this shape: with tail `bits s` for
++`validLang`, `initLang`, `acceptLang` and `edgeLang`, and with tail `⟨w', bits s⟩` for
++`stepLang`.
++
++Configuration-graph infrastructure ([AB09, §4.1.1]); not a result of [AB09].
++
++**Proof sketch.** A member `⟨x', ⟨bits c, enc t'⟩⟩` equal to `⟨x, ⟨w, enc t⟩⟩` has `x' = x` and
++`bits c = w` by injectivity of the pairing, in both layers, and `t' = t` by injectivity of `enc`.
++Conversely `⟨x, ⟨bits c, enc t⟩⟩` is a member when `P x c t` holds. -/
++theorem mem_codeLang_iff {τ : Type} {enc : τ → List Bool} (henc : Function.Injective enc)
++    {L : Language Bool} {P : List Bool → ℕ → τ → Prop}
++    (hL : ∀ y, y ∈ L ↔ ∃ (x : List Bool) (c : ℕ) (t : τ),
++      y = pairEncode x (pairEncode (Nat.bits c) (enc t)) ∧ P x c t)
++    (x w : List Bool) (t : τ) :
++    pairEncode x (pairEncode w (enc t)) ∈ L ↔ ∃ c, Nat.bits c = w ∧ P x c t := by
++  rw [hL]
++  constructor
++  · rintro ⟨x', c, t', h, hP⟩
++    obtain ⟨rfl, h2⟩ := pairEncode_inj h
++    obtain ⟨hw, ht⟩ := pairEncode_inj h2
++    obtain rfl := henc ht
++    exact ⟨c, hw.symm, hP⟩
++  · rintro ⟨c, rfl, hP⟩
++    exact ⟨x, c, t, rfl, hP⟩
++
+ /-- **Membership in the valid-code language.** -/
+ theorem mem_validLang (x : List Bool) (c s : ℕ) :
+     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ validLang N ↔
+       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c := by
+-  constructor
+-  · rintro ⟨x', c', s', h, hC⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+-    rw [bits_injective h3, bits_injective h4]
+-    exact hC
+-  · intro h; exact ⟨x, c, s, rfl, h⟩
++  rw [mem_codeLang_iff bits_injective (mem_validLang_iff N)]
++  simp only [bits_injective.eq_iff, exists_eq_left]
+ 
+ /-- **Membership in the initial-code language.** -/
+ theorem mem_initLang (x : List Bool) (c s : ℕ) :
+     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ initLang N ↔
+       cfgCode s (N.tm.initCfg x) = c := by
+-  constructor
+-  · rintro ⟨x', c', s', h, hC⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+-    rw [bits_injective h3, bits_injective h4]
+-    exact hC
+-  · intro h; exact ⟨x, c, s, rfl, h⟩
++  rw [mem_codeLang_iff bits_injective (mem_initLang_iff N)]
++  simp only [bits_injective.eq_iff, exists_eq_left]
+ 
+ /-- **Membership in the accepting-code language.** -/
+ theorem mem_acceptLang (x : List Bool) (c s : ℕ) :
+     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ acceptLang N ↔
+       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧ C.state = none ∧
+         C.output = [true] := by
+-  constructor
+-  · rintro ⟨x', c', s', h, hC⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+-    rw [bits_injective h3, bits_injective h4]
+-    exact hC
+-  · intro h; exact ⟨x, c, s, rfl, h⟩
++  rw [mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
++  simp only [bits_injective.eq_iff, exists_eq_left]
+ 
+ /-- **Membership in the step language.** -/
+ theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
+@@ -157,14 +207,20 @@ theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
+       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+         ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧
+           cfgCode s C' = c' := by
+-  constructor
+-  · rintro ⟨x', c₁, c₂, s', h, hC⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+-    obtain ⟨h5, h6⟩ := pairEncode_inj h4
+-    rw [bits_injective h3, bits_injective h5, bits_injective h6]
+-    exact hC
+-  · intro h; exact ⟨x, c, c', s, rfl, h⟩
++  -- the tail `⟨bits c', bits s⟩` is the injective image of the pair `(c', s)`
++  have henc : Function.Injective fun t : ℕ × ℕ => pairEncode (Nat.bits t.1) (Nat.bits t.2) :=
++    fun t t' h => by
++      obtain ⟨h1, h2⟩ := pairEncode_inj h
++      exact Prod.ext (bits_injective h1) (bits_injective h2)
++  have hL : ∀ y, y ∈ stepLang N ↔ ∃ (x : List Bool) (c : ℕ) (t : ℕ × ℕ),
++      y = pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits t.1) (Nat.bits t.2))) ∧
++      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow t.2 C ∧ cfgCode t.2 C = c ∧
++        ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow t.2 C' ∧
++          cfgCode t.2 C' = t.1 := fun y => by
++    rw [mem_stepLang_iff]
++    simp only [Prod.exists]
++  rw [mem_codeLang_iff henc hL x (Nat.bits c) (c', s)]
++  simp only [bits_injective.eq_iff, exists_eq_left]
+ 
+ /-- **Membership in the edge-code language.** The encoding of `x`, `bits c` and `bits s` is in
+ the language exactly when `c` is the radius-`s` code of a configuration on `x` inside the window
+@@ -173,13 +229,7 @@ theorem mem_edgeLang (x : List Bool) (c s : ℕ) :
+     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ edgeLang N ↔
+       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+         ∃ i, |C.workTapePos i| = (s : ℤ) := by
+-  rw [mem_edgeLang_iff]
+-  constructor
+-  · rintro ⟨x', c', s', h, hC⟩
+-    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+-    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+-    rw [bits_injective h3, bits_injective h4]
+-    exact hC
+-  · intro h; exact ⟨x, c, s, rfl, h⟩
++  rw [mem_codeLang_iff bits_injective (mem_edgeLang_iff N)]
++  simp only [bits_injective.eq_iff, exists_eq_left]
+ 
+ end Complexity.Codec
