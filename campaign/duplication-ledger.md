@@ -684,8 +684,11 @@ naming `inputBitLang` or `inputLenLang` finds no other unfolding: `TQBFARM/Machi
 `Codec/Run`'s `orc_bit`/`orc_len` and `QueryReshape`'s `drop_bit`/`drop_len` already cite the
 lemmas. The other readers of `indicator_indexLang_pairEncode` (`QueryReshape`'s
 `drop_lang_pair`, `comp_lang_pair` and `transport`; `PathHardDecide`'s `qLang` step) read other
-languages, which have no published reading; they are not members. Census after widening: one
-declaration in each of the eight files, `PathWalkMachine` two. **Retired on #208's merge.**
+languages, which have no published reading; they are not members. Census after widening (corrected
+at gate 101's round-2 minor 1): **10 declarations across eight files, 11 proof sites**:
+`PathHardRegs` (`orc_len`, `orc_bit`, 2 of 62) and `PathWalkMachine` (`pathOr_len`,
+`pathOr_bit`) two declarations each, `Mult`'s `mult_queries` two sites in one declaration, every
+other file one. No file is past one fifth. **Retired on #208's merge.**
 
 **NZ-1, no NDTM branch halts in zero steps** (found 2026-11-06 in gate 102's round-1 search;
 a promotion candidate, **awaiting the user's acknowledgment**). The deterministic fact is public
