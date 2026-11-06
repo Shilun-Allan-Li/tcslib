@@ -249,6 +249,51 @@ private lemma sph_code_window (f g : ℕ → ℕ) (hf : SpaceConstructible f)
   exact ⟨x, t, hhalt, hspace', rfl,
     windowRun_summary_of_halts U₀ x hhalt hspace' (Nat.lt_succ_self t)⟩
 
+/-- A square below a power of two, from `4` on.
+
+**Proof sketch.** Induct from `4`; doubling the previous power absorbs the next square. -/
+private lemma sph_sq_le_two_pow : ∀ L, 4 ≤ L → L * L ≤ 2 ^ L := by
+  intro L hL
+  induction L, hL using Nat.le_induction with
+  | base => norm_num
+  | succ L hL ih =>
+    rw [pow_succ]
+    nlinarith
+
+/-- The logarithm is dominated by the identity at every constant factor, eventually.
+
+**Proof sketch.** Beyond `2 ^ max 4 (2 * A)`, the integer logarithm is at least both `4` and
+`2 * A`. Its square fits below `n`, and dominates `A * (log₂ n + 1)`. -/
+private lemma sph_logSpace_dom : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * logSpace n ≤ n + 1 := by
+  intro A
+  refine ⟨2 ^ (max 4 (2 * A)), fun n hn => ?_⟩
+  have hn0 : n ≠ 0 := by
+    have := Nat.one_le_two_pow (n := max 4 (2 * A)); omega
+  set L := Nat.log 2 n with hL
+  have hLge : max 4 (2 * A) ≤ L := Nat.le_log_of_pow_le (by norm_num) hn
+  have hpow : 2 ^ L ≤ n := Nat.pow_log_le_self 2 hn0
+  have hsq := sph_sq_le_two_pow L (le_trans (le_max_left _ _) hLge)
+  have h2A : 2 * A ≤ L := le_trans (le_max_right _ _) hLge
+  rw [logSpace_eq, ← hL]
+  nlinarith
+
+/-- **`LOGSPACE ⊂ PSPACE`**, from the space hierarchy's statement. [AB09, §4.3.2]
+
+**Proof sketch.** Apply the hierarchy to logarithmic and linear space, then transport strictness
+along the published inclusion of linear space into polynomial space. -/
+private lemma sph_logspace_ssubset
+    (hH : ∀ f g : ℕ → ℕ, SpaceConstructible f → SpaceConstructible g →
+      (∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) → SPACE f ⊂ SPACE g) :
+    LOGSPACE ⊂ PSPACE := by
+  have hlin : SPACE (fun n => n + 1) ⊆ PSPACE := by
+    have := space_poly_subset_PSPACE 1
+    simpa only [pow_one] using this
+  obtain ⟨-, hnot⟩ := hH logSpace (fun n => n + 1) spaceConstructible_logSpace
+    spaceConstructible_linear sph_logSpace_dom
+  refine ⟨LOGSPACE_subset_PSPACE, fun hP => hnot ?_⟩
+  rw [← LOGSPACE_eq]
+  exact hlin.trans hP
+
 /-- **The space hierarchy theorem** ([AB09, Theorem 4.8]; [SHL65] through
 [AB09]): for
 space-constructible `f` and `g`, if every constant multiple of `f` is
@@ -368,7 +413,7 @@ inequality), then `SPACE (n + 1) ⊆ PSPACE`
 (`Complexity.space_poly_subset_PSPACE` at degree one) and strictness
 transports along the inclusion. -/
 theorem LOGSPACE_ssubset_PSPACE : LOGSPACE ⊂ PSPACE := by
-  sorry
+  exact sph_logspace_ssubset space_hierarchy
 
 /-- **`SPACE(n + 1) ≠ NP`** ([AB09, Exercise 3.2], stated at the positive
 normalization `n + 1` — the literal `SPACE(n)` is the zero-work-tape class).
