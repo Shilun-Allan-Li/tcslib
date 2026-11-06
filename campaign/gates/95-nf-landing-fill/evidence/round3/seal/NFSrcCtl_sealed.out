@@ -1,0 +1,312 @@
+rvprobe/r3/NFSrcCtl_sealed.lean:3382:65: error: Tactic `decide` failed for proposition
+  Finset.univ.card = 4
+because its `Decidable` instance
+  instDecidableEqNat Finset.univ.card 4
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : Finset.univ.card.beq 4 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3384:66: error: Tactic `decide` failed for proposition
+  Finset.univ.card = 3
+because its `Decidable` instance
+  instDecidableEqNat Finset.univ.card 3
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : Finset.univ.card.beq 3 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3386:72: error: Tactic `decide` failed for proposition
+  Finset.univ.card = 3
+because its `Decidable` instance
+  instDecidableEqNat Finset.univ.card 3
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : Finset.univ.card.beq 3 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3388:69: error: Tactic `decide` failed for proposition
+  Finset.univ.card = 6
+because its `Decidable` instance
+  instDecidableEqNat Finset.univ.card 6
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : Finset.univ.card.beq 6 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3390:63: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  default.output = []
+rvprobe/r3/NFSrcCtl_sealed.lean:3392:72: error: Tactic `decide` failed for proposition
+  Finset.univ.card = 6
+because its `Decidable` instance
+  instDecidableEqNat Finset.univ.card 6
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : Finset.univ.card.beq 6 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3394:96: error: Tactic `decide` failed for proposition
+  Turing.ScanPhase.fwd true ≠ Turing.ScanPhase.bwd true
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instance `instDecidableNot`, reduction got stuck at the `Decidable` instance
+  Turing.instDecidableEqScanPhase (Turing.ScanPhase.fwd true) (Turing.ScanPhase.bwd true)
+rvprobe/r3/NFSrcCtl_sealed.lean:3396:60: error: Tactic `decide` failed for proposition
+  Turing.SeekPhase.run ≠ Turing.SeekPhase.gap
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instance `instDecidableNot`, reduction got stuck at the `Decidable` instance
+  Turing.instDecidableEqSeekPhase Turing.SeekPhase.run Turing.SeekPhase.gap
+rvprobe/r3/NFSrcCtl_sealed.lean:3398:65: error: Tactic `decide` failed for proposition
+  Turing.SweepPhase.sweep ≠ Turing.SweepPhase.done
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instance `instDecidableNot`, reduction got stuck at the `Decidable` instance
+  Turing.instDecidableEqSweepPhase Turing.SweepPhase.sweep Turing.SweepPhase.done
+rvprobe/r3/NFSrcCtl_sealed.lean:3400:68: error: Tactic `decide` failed for proposition
+  Turing.GuessRunPhase.pre ≠ Turing.GuessRunPhase.run
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instance `instDecidableNot`, reduction got stuck at the `Decidable` instance
+  Turing.instDecidableEqGuessRunPhase Turing.GuessRunPhase.pre Turing.GuessRunPhase.run
+rvprobe/r3/NFSrcCtl_sealed.lean:3402:77: error: Tactic `decide` failed for proposition
+  Turing.InputRewindPhase.start ≠ Turing.InputRewindPhase.done
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instance `instDecidableNot`, reduction got stuck at the `Decidable` instance
+  Turing.instDecidableEqInputRewindPhase Turing.InputRewindPhase.start Turing.InputRewindPhase.done
+rvprobe/r3/NFSrcCtl_sealed.lean:3404:86: error: Tactic `decide` failed for proposition
+  Fintype.card (Turing.GuessRunPhase.CtlState Bool Bool Bool Turing.GuessRunPhase.skip) = 4
+because its `Decidable` instance
+  instDecidableEqNat (Fintype.card (Turing.GuessRunPhase.CtlState Bool Bool Bool Turing.GuessRunPhase.skip)) 4
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (Fintype.card (Turing.GuessRunPhase.CtlState Bool Bool Bool Turing.GuessRunPhase.skip)).beq 4 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3406:70: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  Turing.GuessRunPhase.CtlState Bool Bool Bool Turing.GuessRunPhase.pre = Bool
+rvprobe/r3/NFSrcCtl_sealed.lean:3408:66: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  Turing.FinTM.bufferTape [true, false] 1 = some false
+rvprobe/r3/NFSrcCtl_sealed.lean:3410:53: error: Tactic `decide` failed for proposition
+  Turing.moveInputPos 0 1 = 1
+because its `Decidable` instance
+  instDecidableEqFin (1 + 2) (Turing.moveInputPos 0 1) 1
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `decEq`, `instDecidableEqFin`, `instDecidableEqNat`, and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (↑(Turing.moveInputPos 0 1)).beq ↑1 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+rvprobe/r3/NFSrcCtl_sealed.lean:3412:63: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  Turing.StepBlock.outputSummary [true] = some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3414:71: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  Turing.StepBlock.summaryEmit none (some true) = some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3416:69: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  Turing.scanKeep 3 true = (3, true)
+rvprobe/r3/NFSrcCtl_sealed.lean:3418:82: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  Turing.scanFold (fun a x => a + 1) 3 true = (4, true)
+rvprobe/r3/NFSrcCtl_sealed.lean:3420:103: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (Turing.tapeAction 0 1 none 0 true).state = some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3423:17: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  { state := none, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3426:17: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  { state := none, inputPos := 0, workTapes := fun x x_1 => some true, workTapePos := fun x => 0,
+          output := [] }.workTapeSymbols
+      0 =
+    some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3428:79: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (Turing.Cfg.mapState (fun b => !b) rvC).state = some false
+rvprobe/r3/NFSrcCtl_sealed.lean:3430:103: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (Turing.Cfg.init true []).inputPos = 1
+rvprobe/r3/NFSrcCtl_sealed.lean:3432:75: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (Turing.MultiTapeTM.initCfg []).output = []
+rvprobe/r3/NFSrcCtl_sealed.lean:3434:65: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (Turing.MultiTapeTM.step rvC).state = some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3436:70: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (Turing.MultiTapeTM.runFrom rvC 2).state = some true
+rvprobe/r3/NFSrcCtl_sealed.lean:3439:64: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  ({ inputTape := 0, workTapes := fun x => (none, 1), output := none, state := some false }.apply rvC).state =
+    some false
+rvprobe/r3/NFSrcCtl_sealed.lean:3441:76: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (Turing.skipTM 2 0).q₀ = Turing.SeekPhase.run
+rvprobe/r3/NFSrcCtl_sealed.lean:3443:80: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (Turing.skipBackTM 2 0).q₀ = Turing.SeekPhase.run
+rvprobe/r3/NFSrcCtl_sealed.lean:3445:80: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (Turing.clearTM 2 1).q₀ = Turing.SweepPhase.sweep
+rvprobe/r3/NFSrcCtl_sealed.lean:3448:34: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (Turing.scanTM 2 0 (Turing.scanFold fun a x => a) Turing.scanKeep false).q₀ = Turing.ScanPhase.fwd false
+rvprobe/r3/NFSrcCtl_sealed.lean:3451:105: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (N.nf_V N.nf_leaf N.nf_leafExit).q₀ = ⟨Turing.FinNDTM.nf_Ph.ctl, Turing.ScanPhase.fwd N.nf_sweepInit⟩
+rvprobe/r3/NFSrcCtl_sealed.lean:3453:77: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (Turing.streamStartCfg [] 0 true [true]).inputPos = 1
+rvprobe/r3/NFSrcCtl_sealed.lean:3455:72: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Turing.guessRunCfg rvC 0 [true] false).state = some false
+rvprobe/r3/NFSrcCtl_sealed.lean:3459:52: error: Type mismatch
+  rfl
+has type
+  ?m.41 = ?m.41
+but is expected to have type
+  Turing.NDTM.stepWith true
+      { state := none, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] } =
+    { state := none, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+rvprobe/r3/NFSrcCtl_sealed.lean:3463:52: error: Type mismatch
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  Turing.NDTM.runWith []
+      { state := none, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] } =
+    { state := none, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+rvprobe/r3/NFSrcCtl_sealed.lean:3465:105: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (Turing.NDTM.initCfg []).output = []
+rvprobe/r3/NFSrcCtl_sealed.lean:3467:98: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  N.nf_host.q₀.fst = Turing.GuessRunPhase.pre
+rvprobe/r3/NFSrcCtl_sealed.lean:3469:53: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+rvprobe/r3/NFSrcCtl_sealed.lean:3473:59: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.35 ↔ ?m.35
+but is expected to have type
+  N.AcceptsWithin x t ↔
+    ∃ w,
+      w.length = t ∧
+        (Turing.NDTM.runWith w (Turing.NDTM.initCfg x)).state = none ∧
+          (Turing.NDTM.runWith w (Turing.NDTM.initCfg x)).output = [true]
+rvprobe/r3/NFSrcCtl_sealed.lean:3479:48: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.45 ↔ ?m.45
+but is expected to have type
+  Turing.Segment M F P a b t ↔
+    Turing.MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (Turing.MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (Turing.MultiTapeTM.runFrom a u).workTapePos
+rvprobe/r3/NFSrcCtl_sealed.lean:3482:68: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.15 ↔ ?m.15
+but is expected to have type
+  Turing.HeadBox lo hi p ↔ ∀ (j : Fin 2), p j ∈ Finset.Icc (lo j) (hi j)

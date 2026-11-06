@@ -1,0 +1,287 @@
+"""Build copy A: NDNormalForm.lean with each candidate proof replaced *in place* by `exact?`.
+
+Every replacement's old text must occur exactly once in the source; the tag `LIBSWEEP:<id>` is put
+on the `exact?` line so the elaboration messages can be mapped back to candidates.
+Usage: python3 -I mk_copyA.py <src> <dst>
+"""
+import sys
+
+SRC, DST = sys.argv[1], sys.argv[2]
+src = open(SRC, encoding="utf-8").read()
+
+R = []  # (id, old, new)
+
+R.append(("C01-hd", """  have hd : (W * (r.val + 1) - 1) / W = r.val := by
+    simpa only [Nat.zero_add, Nat.zero_div, Nat.add_sub_cancel] using
+      Nat.mul_sub_div 0 W (r.val + 1) hprod
+""", """  have hd : (W * (r.val + 1) - 1) / W = r.val := by
+    exact? -- LIBSWEEP:C01-hd
+"""))
+
+R.append(("C02-hm", """  have hm : (W * (r.val + 1) - 1) % W = 2 * N.k + 3 := by
+    have he := Nat.mod_add_div (W * (r.val + 1) - 1) W
+    rw [hd] at he
+    have hdecomp : W * (r.val + 1) = W * r.val + W := by ring
+    rw [hdecomp] at he ⊢
+    have he' : W = 2 * N.k + 4 := rfl
+    omega
+""", """  have hm : (W * (r.val + 1) - 1) % W = 2 * N.k + 3 := by
+    exact? -- LIBSWEEP:C02-hm
+"""))
+
+R.append(("C03-hipos", """    have hipos : 0 < i := by
+      have hp := List.length_pos_iff.mpr hne
+      rw [List.length_take, Nat.min_eq_left hi.le] at hp
+      exact hp
+""", """    have hipos : 0 < i := by
+      exact? -- LIBSWEEP:C03-hipos
+"""))
+
+R.append(("C04-hn-div", """    have hn : 0 < i / (2 * N.k + 4) := by
+      by_contra h
+      have hnonneg : 0 ≤ i / (2 * N.k + 4) := Nat.zero_le _
+      have hz : i / (2 * N.k + 4) = 0 := by omega
+      rw [hz, Nat.mul_zero] at he
+      omega
+""", """    have hn : 0 < i / (2 * N.k + 4) := by
+      exact? -- LIBSWEEP:C04-hn-div
+"""))
+
+R.append(("C05-hlt", """    have hlt : i / (2 * N.k + 4) < w.length := by
+      apply (Nat.mul_lt_mul_left hW).mp
+      rw [he, ← nf_display_length N x w]
+      exact hi
+""", """    have hlt : i / (2 * N.k + 4) < w.length := by
+      exact? -- LIBSWEEP:C05-hlt
+"""))
+
+R.append(("C08-hlen", """  have hlen : s.length = (2 * k + 4) * n := by
+    have h := Nat.mod_add_div s.length (2 * k + 4)
+    rw [hmod, Nat.zero_add] at h
+    exact h.symm
+""", """  have hlen : s.length = (2 * k + 4) * n := by
+    exact? -- LIBSWEEP:C08-hlen
+"""))
+
+R.append(("C09-hn-pos", """  have hn : 0 < n := by
+    by_contra h
+    have hnonneg : 0 ≤ n := Nat.zero_le _
+    have hz : n = 0 := by omega
+    rw [hz, Nat.mul_zero] at hlen
+    omega
+""", """  have hn : 0 < n := by
+    exact? -- LIBSWEEP:C09-hn-pos
+"""))
+
+R.append(("C10-hmle", """  have hmle : m ≤ s.length := by
+    rw [hlen]
+    exact Nat.mul_le_mul_left _ (by omega)
+""", """  have hmle : m ≤ s.length := by
+    exact? -- LIBSWEEP:C10-hmle
+"""))
+
+R.append(("C11-hlasttake", """  have hlasttake : (s.take m).getLastD false = s[m - 1] := by
+    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take,
+      Nat.min_eq_left hmle, List.getElem?_take_of_lt (by omega),
+      List.getElem?_eq_getElem hib, Option.getD_some]
+""", """  have hlasttake : (s.take m).getLastD false = s[m - 1] := by
+    exact? -- LIBSWEEP:C11-hlasttake
+"""))
+
+R.append(("C12-htake", """    have htake : s.take m = s := by rw [hm, List.take_length]
+""", """    have htake : s.take m = s := by exact? -- LIBSWEEP:C12-htake
+"""))
+
+R.append(("C13-hmlt", """  · have hmlt : m < s.length := by
+      rw [hlen]
+      exact Nat.mul_lt_mul_of_pos_left (by omega) hW
+""", """  · have hmlt : m < s.length := by
+      exact? -- LIBSWEEP:C13-hmlt
+"""))
+
+R.append(("C14-hniltake", """      have hniltake : s.take m ≠ [] := by
+        apply List.ne_nil_of_length_pos
+        rw [List.length_take, Nat.min_eq_left hmle]
+        exact hmpos
+""", """      have hniltake : s.take m ≠ [] := by
+        exact? -- LIBSWEEP:C14-hniltake
+"""))
+
+R.append(("C15-hz", """      have hz : (s.take m).length % (2 * k + 4) = 0 := by
+        rw [List.length_take, Nat.min_eq_left hmle]
+        exact Nat.mul_mod_right _ _
+""", """      have hz : (s.take m).length % (2 * k + 4) = 0 := by
+        exact? -- LIBSWEEP:C15-hz
+"""))
+
+R.append(("C16a-hz'", """      have hz' : (s.length + 1) % (2 * k + 4) = 0 := by
+        simpa only [List.length_append, List.length_singleton] using hz
+""", """      have hz' : (s.length + 1) % (2 * k + 4) = 0 := by
+        exact? -- LIBSWEEP:C16a-hz'
+"""))
+
+R.append(("C16b-hn'", """      have hn' : (s.length + 1) % (2 * k + 4) ≠ 0 := by
+        simpa only [List.length_append, List.length_singleton] using hn
+""", """      have hn' : (s.length + 1) % (2 * k + 4) ≠ 0 := by
+        exact? -- LIBSWEEP:C16b-hn'
+"""))
+
+R.append(("C17-hf", """  have hf : (fun i : Fin (2 * N.k + 3) => r i.castSucc) =
+      fun i => r ⟨i.val, by omega⟩ := by
+    funext i
+    rfl
+""", """  have hf : (fun i : Fin (2 * N.k + 3) => r i.castSucc) =
+      fun i => r ⟨i.val, by omega⟩ := by
+    exact? -- LIBSWEEP:C17-hf
+"""))
+
+R.append(("C18-harray", """        fun j => some (r j) := by
+    funext j
+    by_cases he : j = (⟨2 * N.k + 3, by omega⟩ : Fin (2 * N.k + 4))
+    · subst j
+      rw [Function.update_self]
+    · rw [Function.update_of_ne he, if_pos (by
+        have hj := j.isLt
+        have hne : j.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
+        omega)]
+""", """        fun j => some (r j) := by
+    exact? -- LIBSWEEP:C18-harray
+"""))
+
+R.append(("C19-hfalse", """        (N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state.isNone) : Bool) = false :=
+      decide_eq_false (fun h => h rfl)
+""", """        (N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state.isNone) : Bool) = false := by
+      exact? -- LIBSWEEP:C19-hfalse
+"""))
+
+R.append(("C20-hdl", """  have hdl : ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
+    rw [List.length_drop]; push_cast [Nat.cast_sub hi]; ring
+""", """  have hdl : ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
+    exact? -- LIBSWEEP:C20-hdl
+"""))
+
+R.append(("C22a-hlt", """  · have hlt : p.val < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+      rw [List.length_append, List.length_ofFn]; omega
+""", """  · have hlt : p.val < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+      exact? -- LIBSWEEP:C22a-hlt
+"""))
+
+R.append(("C22b-hlt", """  · have hlt : (2 * k + 4) + p < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+      rw [List.length_append, List.length_ofFn]; omega
+""", """  · have hlt : (2 * k + 4) + p < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
+      exact? -- LIBSWEEP:C22b-hlt
+"""))
+
+R.append(("C24-hin", """  have hin : ∀ z, z ≠ y → ((min lo y ≤ z ∧ z ≤ max hi y) ↔ (lo ≤ z ∧ z ≤ hi)) := by
+    intro z hz
+    constructor
+    · rintro ⟨ha, hb⟩
+      rw [min_le_iff] at ha
+      rw [le_max_iff] at hb
+      omega
+    · rintro ⟨ha, hb⟩
+      exact ⟨min_le_of_left_le ha, le_max_of_le_left hb⟩
+""", """  have hin : ∀ z, z ≠ y → ((min lo y ≤ z ∧ z ≤ max hi y) ↔ (lo ≤ z ∧ z ≤ hi)) := by
+    intro z hz
+    exact? -- LIBSWEEP:C24-hin
+"""))
+
+R.append(("C26-nf_stream_length", """    (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
+  rw [length_flatMap_uniform rs List.ofFn (fun _ => List.length_ofFn), Nat.mul_comm]
+""", """    (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
+  exact? -- LIBSWEEP:C26-nf_stream_length
+"""))
+
+R.append(("C27-hidx", """  have hidx : ∀ (r : Fin n) (p : Fin (2 * k + 4)), (2 * k + 4) * r.val + p.val < s.length := by
+    intro r p
+    rw [hlen]
+    have h1 := p.isLt
+    have h2 : (2 * k + 4) * (r.val + 1) ≤ (2 * k + 4) * n := Nat.mul_le_mul_left _ r.isLt
+    rw [Nat.mul_add, Nat.mul_one] at h2
+    omega
+""", """  have hidx : ∀ (r : Fin n) (p : Fin (2 * k + 4)), (2 * k + 4) * r.val + p.val < s.length := by
+    intro r p
+    exact? -- LIBSWEEP:C27-hidx
+"""))
+
+R.append(("C28-ofFn-ne-nil", """  · intro h
+    have := congrArg List.length h
+    rw [List.length_ofFn, List.length_nil] at this
+    omega
+""", """  · exact? -- LIBSWEEP:C28-ofFn-ne-nil
+"""))
+
+R.append(("C29-hne", """  have hne : rs ≠ [] := by
+    intro h
+    have := congrArg List.length h
+    rw [hrlen, List.length_nil] at this
+    exact hw (List.eq_nil_of_length_eq_zero this)
+""", """  have hne : rs ≠ [] := by
+    exact? -- LIBSWEEP:C29-hne
+"""))
+
+R.append(("C30-hmap", """  have hmap : rs.map (fun r => r 0) = w := by
+    apply List.ext_getElem (by rw [List.length_map, hrlen])
+    intro r h1 h2
+    rw [List.getElem_map, hget r (by rw [List.length_map] at h1; exact h1)]
+    exact nf_record_choice N.k _ _ _
+""", """  have hmap : rs.map (fun r => r 0) = w := by
+    exact? -- LIBSWEEP:C30-hmap
+"""))
+
+R.append(("C31-hw0len", """  have hw₀len : w₀.length = t₀ := by rw [hw₀, List.length_take]; omega
+""", """  have hw₀len : w₀.length = t₀ := by exact? -- LIBSWEEP:C31-hw0len
+"""))
+
+R.append(("C32-hw0ne", """  have hw₀ne : w₀ ≠ [] := by
+    intro h
+    have := congrArg List.length h
+    rw [hw₀len, List.length_nil] at this
+    omega
+""", """  have hw₀ne : w₀ ≠ [] := by
+    exact? -- LIBSWEEP:C32-hw0ne
+"""))
+
+R.append(("C33-prefix_last-update", """  · rw [hp]
+    funext p
+    by_cases he : p = ⟨2 * N.k + 3, by omega⟩
+    · subst he
+      rw [Function.update_self]
+    · have hne : p.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
+      have hlt := p.isLt
+      rw [Function.update_of_ne he]
+      show (if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)
+      rw [if_pos (by omega)]
+""", """  · rw [hp]
+    exact? -- LIBSWEEP:C33-prefix_last-update
+"""))
+
+R.append(("C34-sweep_prefix-update", """    congr 2
+    funext j
+    by_cases he : j = (⟨n, by omega⟩ : Fin (2 * N.k + 4))
+    · subst j
+      rw [Function.update_self, if_pos (show n < n + 1 by omega)]
+    · rw [Function.update_of_ne he]
+      have hne : j.val ≠ n := fun h => he (Fin.ext h)
+      by_cases hlt : j.val < n
+      · rw [if_pos hlt, if_pos (by omega)]
+      · rw [if_neg hlt, if_neg (by omega)]
+""", """    congr 2
+    exact? -- LIBSWEEP:C34-sweep_prefix-update
+"""))
+
+R.append(("C35-hL'", """  have hL' : (L : ℤ) = E - S + 1 := by rw [hL]; omega
+""", """  have hL' : (L : ℤ) = E - S + 1 := by exact? -- LIBSWEEP:C35-hL'
+"""))
+
+out = src
+for cid, old, new in R:
+    n = out.count(old)
+    if n != 1:
+        sys.exit(f"{cid}: old text occurs {n} times")
+    out = out.replace(old, new)
+
+open(DST, "w", encoding="utf-8").write(out)
+for i, line in enumerate(out.splitlines(), 1):
+    if "LIBSWEEP:" in line:
+        print(f"{i}\t{line.split('LIBSWEEP:')[1].strip()}")

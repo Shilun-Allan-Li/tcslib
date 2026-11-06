@@ -1,0 +1,31 @@
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+set_option autoImplicit false
+
+/-! Scratch: which `Fintype`/`DecidableEq` instances `Turing.ZoneSym k` gets (none is declared in
+`Build/ZoneTape`; the `abbrev` unfolds to `Bool ⊕ (Fin k → Option (Option Bool))`), and what
+sealing the abbrev would break. -/
+
+namespace Turing
+
+section Open
+variable (k : ℕ)
+#synth Fintype (ZoneSym k)
+#synth DecidableEq (ZoneSym k)
+example : (Function.Embedding.inl : Bool ↪ ZoneSym k) = Function.Embedding.inl := rfl
+end Open
+
+section Sealed
+set_option allowUnsafeReducibility true in
+attribute [local irreducible] Turing.ZoneSym Turing.ZoneCell
+variable (k : ℕ)
+#synth Fintype (ZoneSym k)
+#synth DecidableEq (ZoneSym k)
+example : (Function.Embedding.inl : Bool ↪ ZoneSym k) = Function.Embedding.inl := rfl
+end Sealed
+
+end Turing

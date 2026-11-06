@@ -1,0 +1,61 @@
+From dfc3e99046ae130ea1b3abbb8fb6cc08fcfe7906 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 5 Nov 2026 23:33:24 +0000
+Subject: [PATCH] NDNormalForm: nf_split cites List.ofFn_getElem and
+ List.ofFn_congr; the headline's sketch, two wordings
+
+- nf_split's h0 rebuilt the list from its entries by List.ext_getElem; it is
+  List.ofFn_getElem with the index length moved along hlen by List.ofFn_congr
+  (gate 95, round 2, finding 1).
+- The sketch says the base terms pay for k = 0 and t + 1 absorbs the additive
+  terms; the head move left out is a work-tape replay's (finding 2).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5MM3PtshNwvNBXBw
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index ad4202ca..83b2d9fc 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -2877,10 +2877,8 @@ private theorem nf_split (k : ℕ) (s : List Bool)
+   · have h := List.ofFn_mul' (m := 2 * k + 4) (n := n)
+       (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt))
+     have h0 : List.ofFn (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt)) =
+-        s := by
+-      apply List.ext_getElem (by rw [List.length_ofFn, hlen])
+-      intro i h1 h2
+-      rw [List.getElem_ofFn]
++        s :=
++      (List.ofFn_congr hlen (fun i : Fin s.length => s[i.val])).symm.trans (List.ofFn_getElem s)
+     rw [List.flatMap_def, List.map_ofFn]
+     exact h0.symm.trans h
+   · intro r hr
+@@ -3241,8 +3239,9 @@ argument, `Turing.NDTM.runWith_of_halt`).
+    kept there as one two-cell block per visited cell and rewritten at every record. Between
+    sweeps the heads return and the blocks are erased.
+ 3. Each phase is linear in the display, so the simulator runs within `C · (t + 1)` steps, with
+-   `C = 6W + k(2W + 12) + 21 + 15k` and `W = 2k + 4`; the `+ 1` covers `k = 0`, where the guess
+-   and the input sweep remain.
++   `C = 6W + k(2W + 12) + 21 + 15k` and `W = 2k + 4`: the time is at most
++   `(6W + k(2W + 12)) t + 21 + 15k`, and `t + 1` absorbs the additive terms. At `k = 0` the base
++   terms still pay for the guess and the control and input sweeps.
+ 4. Forward transfer: a genuine accepting run of length `t` yields an accepting display, guessed
+    and verified within `C · (t + 1)`. Backward transfer: a verified display **is** a genuine run
+    (the sweeps force consistency), so an accepting branch of the simulator exhibits an accepting
+@@ -3251,8 +3250,8 @@ argument, `Turing.NDTM.runWith_of_halt`).
+ 5. The finite state space is relabeled to `Fin`.
+ 
+ **Implementation.** The guess runs under the controller-stopped host `Turing.guessCtlRunTM` with
+-a trivial setup. The control sweep is a fold by `Turing.scanTM`. A replay does not perform the
+-last record's head move, so the blocks stay contiguous around the head. Between sweeps
++a trivial setup. The control sweep is a fold by `Turing.scanTM`. A work-tape replay does not
++perform the last record's head move, so the blocks stay contiguous around the head. Between sweeps
+ `Turing.skipTM` and `Turing.skipBackTM` return the heads and `Turing.clearTM` erases the blocks.
+ The relabeling is `Turing.NDTM.relabelState` (the nondeterministic mirror of
+ `Turing.MultiTapeTM.relabelState`, as in the `exists_codeTM` precedent). -/
+-- 
+2.43.0
+

@@ -115,7 +115,8 @@ replay below chained from it with only its own PR.
 
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 2 does not close (0/1/2: `nf_split` re-proves `List.ofFn_getElem`); `replay-lnf3` passed | repair, round 3; merge when it closes |
+| #191 | `bbf69680` (round 2's repair `dfc3e990`, the library sweep's `49c4d0f7`, a merge of the campaign after #196) | `replay-lnf4` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
+| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 **dispatched** 2026-11-06 (45 sections) | merge when it closes; then G5's fill brief |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
@@ -123,8 +124,18 @@ replay below chained from it with only its own PR.
 `oleans-ldwa3` is its snapshot (chained `oleans-cloud0` → `oleans-lzsa2` → `oleans-ldwa3`). Every
 open PR's replay chains from it on the merged tree.
 
-**#202** (`Segment.iterate_seq`, G5's iteration; the user's ruling API first): gate 98, its replay
-`replay-lsi2` on the merged tree.
+**#202** (`Segment.iterate_seq`, G5's iteration; the user's ruling API first): gate 98, above.
+
+**The deepening fill is issued** (2026-11-05; agent Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`
+at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11-06** (the user).
+Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
+
+**Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
+(#202's merged tree) and `oleans-lnf4` (#191's). Once #191 or #202 merges, its snapshot is the
+campaign's; delete the other when both have merged and a combined replay has passed.
+
+**G5's fill brief** issues after #202 merges. Its route probe (the frame through
+`alphabet_reduction_run`, and `k = 0` through R1) is proved (`campaign/fills/u2s/drafts/u2s-fill-g5/route/`).
 
 **The user's rulings (2026-11-05):** gate 95 F1 repair; gate 96 F2 harvest; WS-1 acknowledged by
 kind and widened; QL-X1 an idiom and CQ-1 opened; gate 97 F5 publish; CE-1 acknowledged; PFR left
@@ -145,14 +156,13 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
 
 ## 3. Queue after the PRs
 
-1. **The general `savitch`'s deepening fill** (agent: Claude, the user's 2026-11-05 choice). The
-   brief `campaign/fills/ch34/briefs/ch34-fill-deepen-DRAFT.md` issues after #196 merges, with
-   its pre-ship re-run on the merged tree and its `@TBD@` items measured. The design is
-   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8–§10.
-2. **G5's fill brief**, after #197 merges: Hennie–Stearns over the zone layer, citing
-   `Build/ZoneStep`. The fill writes the controller, its invariant and the count bound; `k = 0`
-   is handled separately (plan §2). Codex first, by the soft rule.
-3. **H's brief:** re-take its pre-ship after NF and E-D land. Its screen population includes both
+1. **The deepening fill** is dispatched (2026-11-06, Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`.
+   Its delivery is reviewed by a sub-agent, then landed by PR and a fill gate.
+2. **G5's fill brief** (agent Claude, the user's 2026-11-05 ruling) issues after #202 merges. Its
+   draft, route probe and pre-ship on #202's tree are in `campaign/fills/u2s/drafts/u2s-fill-g5*`
+   (`preship/README.md`); at issue, re-check them on the merged tree, fill the base, the in-flight
+   list and `@ANCESTOR@`, and move the inputs to `inputs/`, `orders/` and `logs/`.
+3. **H's brief:** re-take its pre-ship after NF lands (#191; E-D landed as #188). Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by

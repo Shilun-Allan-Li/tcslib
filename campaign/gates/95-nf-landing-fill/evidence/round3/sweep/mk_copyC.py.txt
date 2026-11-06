@@ -1,0 +1,219 @@
+"""Build copy C: NDNormalForm.lean with every proposed library replacement applied.
+
+Each old text must occur exactly once. Prints, per replacement, its id and the source line where
+the old text started (in the unmodified file). Usage: python3 -I mk_copyC.py <src> <dst>
+"""
+import sys
+
+SRC, DST = sys.argv[1], sys.argv[2]
+src = open(SRC, encoding="utf-8").read()
+
+R = []  # (id, old, new)
+
+# --- G: genuine re-derivations ------------------------------------------------------------------
+R.append(("G1 nf_ctl_position branch (Nat.succ_mod_succ_eq_zero_iff)",
+"""    · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
+      rw [Nat.add_mod, Nat.mod_eq_of_lt (show 1 < 2 * k + 4 by omega), hm]
+      have he : 2 * k + 3 + 1 = 2 * k + 4 := by omega
+      simp only [he, Nat.mod_self, Fin.val_zero]
+""",
+"""    · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
+      simp only [Nat.succ_mod_succ_eq_zero_iff.mpr hm, Fin.val_zero]
+"""))
+
+R.append(("K1+G2+G3 nf_display_firstStop hipos/hm/hn/hlt",
+"""    have hipos : 0 < i := by
+      have hp := List.length_pos_iff.mpr hne
+      rw [List.length_take, Nat.min_eq_left hi.le] at hp
+      exact hp
+    rw [List.length_take, Nat.min_eq_left hi.le] at hm
+    have he := Nat.mod_add_div i (2 * N.k + 4)
+    rw [hm, Nat.zero_add] at he
+    have hn : 0 < i / (2 * N.k + 4) := by
+      by_contra h
+      have hnonneg : 0 ≤ i / (2 * N.k + 4) := Nat.zero_le _
+      have hz : i / (2 * N.k + 4) = 0 := by omega
+      rw [hz, Nat.mul_zero] at he
+      omega
+    have hlt : i / (2 * N.k + 4) < w.length := by
+      apply (Nat.mul_lt_mul_left hW).mp
+      rw [he, ← nf_display_length N x w]
+      exact hi
+""",
+"""    have hipos : 0 < i := (List.length_pos_iff.mpr hne).trans_eq (List.length_take_of_le hi.le)
+    rw [List.length_take_of_le hi.le] at hm
+    have he := Nat.mod_add_div i (2 * N.k + 4)
+    rw [hm, Nat.zero_add] at he
+    have hn : 0 < i / (2 * N.k + 4) := Nat.pos_of_mul_pos_left (hipos.trans_eq he.symm)
+    have hlt : i / (2 * N.k + 4) < w.length :=
+      Nat.div_lt_of_lt_mul (hi.trans_eq (nf_display_length N x w))
+"""))
+
+R.append(("K2 nf_display_firstStop getLastD chain",
+"""    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take,
+      Nat.min_eq_left hi.le, List.getElem?_take_of_lt (by omega), hflag,
+      Option.getD_some] at hb
+""",
+"""    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take_of_le hi.le,
+      List.getElem?_take_of_lt (by omega), hflag, Option.getD_some] at hb
+"""))
+
+R.append(("G4+G5 nf_firstStop_records hlen/hn",
+"""  have hlen : s.length = (2 * k + 4) * n := by
+    have h := Nat.mod_add_div s.length (2 * k + 4)
+    rw [hmod, Nat.zero_add] at h
+    exact h.symm
+  have hn : 0 < n := by
+    by_contra h
+    have hnonneg : 0 ≤ n := Nat.zero_le _
+    have hz : n = 0 := by omega
+    rw [hz, Nat.mul_zero] at hlen
+    omega
+""",
+"""  have hlen : s.length = (2 * k + 4) * n :=
+    (Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hmod)).symm
+  have hn : 0 < n := Nat.pos_of_mul_pos_left (hspos.trans_eq hlen)
+"""))
+
+R.append(("K3 nf_firstStop_records hlasttake chain",
+"""    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take,
+      Nat.min_eq_left hmle, List.getElem?_take_of_lt (by omega),
+      List.getElem?_eq_getElem hib, Option.getD_some]
+""",
+"""    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take_of_le hmle,
+      List.getElem?_take_of_lt (by omega), List.getElem?_eq_getElem hib, Option.getD_some]
+"""))
+
+R.append(("K4 nf_firstStop_records hniltake/hz",
+"""      have hniltake : s.take m ≠ [] := by
+        apply List.ne_nil_of_length_pos
+        rw [List.length_take, Nat.min_eq_left hmle]
+        exact hmpos
+      have hz : (s.take m).length % (2 * k + 4) = 0 := by
+        rw [List.length_take, Nat.min_eq_left hmle]
+        exact Nat.mul_mod_right _ _
+""",
+"""      have hniltake : s.take m ≠ [] :=
+        List.ne_nil_of_length_pos (hmpos.trans_eq (List.length_take_of_le hmle).symm)
+      have hz : (s.take m).length % (2 * k + 4) = 0 := by
+        rw [List.length_take_of_le hmle]
+        exact Nat.mul_mod_right _ _
+"""))
+
+R.append(("K5 nf_display_prefix_length",
+"""  rw [nf_display_length, List.length_take, Nat.min_eq_left ht]
+""",
+"""  rw [nf_display_length, List.length_take_of_le ht]
+"""))
+
+R.append(("G6 nf_split rs ≠ [] (List.ofFn_eq_nil_iff)",
+"""  · intro h
+    have := congrArg List.length h
+    rw [List.length_ofFn, List.length_nil] at this
+    omega
+""",
+"""  · exact mt List.ofFn_eq_nil_iff.mp hn.ne'
+"""))
+
+R.append(("G7 nf_V_display hne (List.ne_nil_of_length_pos)",
+"""  have hne : rs ≠ [] := by
+    intro h
+    have := congrArg List.length h
+    rw [hrlen, List.length_nil] at this
+    exact hw (List.eq_nil_of_length_eq_zero this)
+""",
+"""  have hne : rs ≠ [] := List.ne_nil_of_length_pos (hrlen ▸ List.length_pos_iff.mpr hw)
+"""))
+
+R.append(("K6+G8 nf_forward hw0len/hw0ne",
+"""  have hw₀len : w₀.length = t₀ := by rw [hw₀, List.length_take]; omega
+  have hw₀ne : w₀ ≠ [] := by
+    intro h
+    have := congrArg List.length h
+    rw [hw₀len, List.length_nil] at this
+    omega
+""",
+"""  have hw₀len : w₀.length = t₀ := List.length_take_of_le (by omega)
+  have hw₀ne : w₀ ≠ [] := List.ne_nil_of_length_pos (by omega)
+"""))
+
+# --- F: List.foldl_append, List.foldl_cons, List.foldl_nil  =  List.foldl_concat ----------------
+R.append(("F1 nf_ctl_stop_iff",
+"""    rw [List.foldl_append, List.foldl_cons, List.foldl_nil, nf_ctlStep] at hp ⊢
+""",
+"""    rw [List.foldl_concat, nf_ctlStep] at hp ⊢
+"""))
+
+R.append(("F2 nf_prefix_last",
+"""    rw [List.ofFn_succ_last, List.foldl_append, List.foldl_cons, List.foldl_nil] at h
+""",
+"""    rw [List.ofFn_succ_last, List.foldl_concat] at h
+"""))
+
+R.append(("F3 nf_vrun_of_ok",
+"""    rw [List.take_succ_eq_append_getElem hlt, List.foldl_append, ih, List.foldl_cons,
+      List.foldl_nil, List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt),
+""",
+"""    rw [List.take_succ_eq_append_getElem hlt, List.foldl_concat, ih,
+      List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt),
+"""))
+
+# split chains (the three rewrites separated by other steps): optional
+R.append(("F4 nf_sweep_prefix (split)",
+"""    rw [List.ofFn_succ_last, List.foldl_append]
+    simp only [Fin.coe_castSucc, Fin.val_last]
+    rw [ih (by omega)]
+    simp only [List.foldl_cons, List.foldl_nil, nf_sweepStep]
+""",
+"""    rw [List.ofFn_succ_last, List.foldl_concat]
+    simp only [Fin.coe_castSucc, Fin.val_last]
+    rw [ih (by omega)]
+    simp only [nf_sweepStep]
+"""))
+
+R.append(("F5a nf_sweep_record (split, head)",
+"""  rw [List.ofFn_succ_last, List.foldl_append]
+  have hf""",
+"""  rw [List.ofFn_succ_last, List.foldl_concat]
+  have hf"""))
+
+R.append(("F5b nf_sweep_record (split, tail)",
+"""  simp only [List.foldl_cons, List.foldl_nil, nf_sweepStep]
+  rw [dite_true]
+""",
+"""  simp only [nf_sweepStep]
+  rw [dite_true]
+"""))
+
+R.append(("F6 nf_sweep_control_prefix (split)",
+"""    rw [List.ofFn_succ_last, List.foldl_append]
+    simp only [Fin.coe_castSucc, Fin.val_last]
+    rw [ih (by omega), List.foldl_cons, List.foldl_nil,
+      nf_complete_step N x _ _ _ _ (hlive n hlt), ← hnext, hflag]
+""",
+"""    rw [List.ofFn_succ_last, List.foldl_concat]
+    simp only [Fin.coe_castSucc, Fin.val_last]
+    rw [ih (by omega), nf_complete_step N x _ _ _ _ (hlive n hlt), ← hnext, hflag]
+"""))
+
+R.append(("F7 nf_leaf_prefix (split)",
+"""      rw [List.ofFn_succ_last, List.foldl_append]
+      simp only [Fin.coe_castSucc, Fin.val_last, List.foldl_cons, List.foldl_nil, hp]
+""",
+"""      rw [List.ofFn_succ_last, List.foldl_concat]
+      simp only [Fin.coe_castSucc, Fin.val_last, hp]
+"""))
+
+out = src
+for cid, old, new in R:
+    n = out.count(old)
+    if n != 1:
+        sys.exit(f"{cid}: old text occurs {n} times")
+    line = src[: src.index(old)].count("\n") + 1
+    print(f"{cid}\tsrc line {line}")
+    out = out.replace(old, new)
+
+for i, l in enumerate(out.splitlines(), 1):
+    if len(l) > 100:
+        print(f"WARNING line {i} has {len(l)} chars")
+open(DST, "w", encoding="utf-8").write(out)

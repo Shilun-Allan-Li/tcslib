@@ -1,0 +1,16 @@
+instFintypeSum Bool (ZoneCell k)
+fun a b => instDecidableEqSum a b
+rvprobe/g5route/G5RouteZoneSym.lean:26:0: error: failed to synthesize
+  Fintype (ZoneSym k)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+rvprobe/g5route/G5RouteZoneSym.lean:27:0: error: failed to synthesize
+  DecidableEq (ZoneSym k)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+rvprobe/g5route/G5RouteZoneSym.lean:28:56: error: Type mismatch
+  Function.Embedding.inl
+has type
+  ?m.4 ↪ ?m.4 ⊕ ?m.5
+but is expected to have type
+  Bool ↪ ZoneSym k

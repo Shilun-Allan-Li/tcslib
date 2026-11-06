@@ -1,0 +1,16 @@
+# Every command: from /home/user/tcslib-scratch/wt-hk, after `. /home/user/tcslib-scratch/env.sh`:
+#   bash /home/user/tcslib/devtools/seyoon/leanelab.sh /home/user/tcslib-scratch/wt-hk \
+#     /home/user/tcslib-scratch/oleans-ldwa3 rvprobe/g5route/<F>.lean \
+#     > /home/user/tcslib-scratch/agents/g5route/<O>.out 2>&1; echo "exit $?"
+# One file at a time. <F> -> <O>: exit status (expected)
+G5Route              -> G5Route.out               : exit 0 (expected 0; output empty)
+G5RouteAxioms        -> G5RouteAxioms.out         : exit 0 (expected 0; 3 info lines)
+G5RouteSealed        -> G5RouteSealed.out         : exit 0 (expected 0; output empty)
+G5RouteCtl_unsealed  -> G5RouteCtl_unsealed.out   : exit 0 (33 CONTROL_PASS, 0 FAIL)
+G5RouteCtl_sealed    -> G5RouteCtl_sealed.out     : exit 0 (0 PASS, 33 CONTROL_FAIL)
+G5RouteQ0            -> G5RouteQ0.out             : exit 1 (expected: 2 x "exact? could not close")
+G5RouteZoneSymStrict -> G5RouteZoneSymStrict.out  : exit 1 (expected: Lean refuses [local irreducible] on the two abbrevs)
+G5RouteZoneSym       -> G5RouteZoneSym.out        : exit 1 (expected: forced seal breaks the instances and Embedding.inl)
+G5RouteWalk (v1)     -> G5RouteWalk.out           : exit 0 (KIND and WALK info lines)
+G5RouteWalk (v2)     -> G5RouteWho.out            : exit 0 (v1 plus the #check/WHO lines for the NeZero aux proof)
+G5RouteExact         -> G5RouteExact.out          : exit 1 (expected: 3 x "exact? could not close")
