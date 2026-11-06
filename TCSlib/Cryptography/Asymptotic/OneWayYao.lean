@@ -548,6 +548,14 @@ def yaoB (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ) :
     ((A'.runAt n (List.ofFn ((blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
       (j * inLen.eval n))
 
+/-- The defining equation of `yaoB`: block `j` of the total inverter's answer is
+`padTrue (inLen n) ((A'(1^n, ys; r)).drop (j · inLen n))`. -/
+theorem yaoB_apply (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ)
+    (ys : Fin (m.eval n) → Fin (outLen.eval n) → Bool) (r : A'.Coins n) (j : Fin (m.eval n)) :
+    yaoB inLen outLen m A' n ys r j = padTrue (inLen.eval n)
+      ((A'.runAt n (List.ofFn ((blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
+        (j * inLen.eval n)) := rfl
+
 namespace YaoMachine
 
 variable (D : Data)
@@ -570,7 +578,22 @@ theorem adv_length (n : ℕ) : (adv D n).length ≤ (advP D).eval n := by
 /-- The number of coins of a round, `ρ(n) = n·m + (m·inLen + coins_{A'})`, in the form of
 `roundEquiv`. -/
 theorem ρP_eval (n : ℕ) :
-    (ρP D).eval n = n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n) := rfl
+    (ρP D).eval n = n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n) := by
+  rw [NUPPT.coinLen_eq]
+  rfl
+
+/-- **The coins of a round in the form of `roundEquiv`**: the published equivalence
+`{0,1}^{ρ(n)} ≃ {0,1}^{n·m + (m·inLen + coins_{A'})}` (`finCongr` along `ρP_eval`), through which
+a round's coin block is read by `roundSample`. -/
+def ρPEquiv (n : ℕ) :
+    (Fin ((ρP D).eval n) → Bool) ≃
+      (Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) → Bool) :=
+  Equiv.arrowCongr (finCongr (ρP_eval D n)) (Equiv.refl Bool)
+
+/-- The round-coin equivalence keeps the coin string: `List.ofFn (ρPEquiv D n r) = List.ofFn r`. -/
+theorem ρPEquiv_ofFn (n : ℕ) (r : Fin ((ρP D).eval n) → Bool) :
+    List.ofFn (ρPEquiv D n r) = List.ofFn r :=
+  (List.ofFn_congr (ρP_eval D n) r).symm
 
 /-- `n·kkOf m ≤ n·m` for `0 < m`. -/
 theorem nkk_le (n M : ℕ) (hM : 0 < M) : n * kkOf M ≤ n * M := Nat.mul_le_mul_left n (kkOf_le M hM)
@@ -592,7 +615,7 @@ variable (n : ℕ) (hM : 0 < D.m.eval n)
       List.replicate ((rejectionSample (D.m.eval n) (kkOf (D.m.eval n)) n
         fun t j => pb' (finProdFinEquiv (t, j))).getD ⟨0, hM⟩).val true)
   (y : Fin (D.outLen.eval n) → Bool)
-  (rc : Fin ((ρP D).eval n) → Bool)
+  (rc : Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) → Bool)
   (rest' : List Bool)
 
 include hFe hF' hPm in
@@ -717,7 +740,7 @@ def sampleAll (r : Fin ((T.eval n + 1) * (ρP D).eval n) → Bool) :
     Fin (T.eval n + 1) →
       Fin (D.m.eval n) × (Fin (D.m.eval n) → Fin (D.inLen.eval n) → Bool) × D.A'.Coins n :=
   fun i => roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM
-    (nkk_le n _ hM) (blocksE (T.eval n + 1) ((ρP D).eval n) r i)
+    (nkk_le n _ hM) (ρPEquiv D n (blocksE (T.eval n + 1) ((ρP D).eval n) r i))
 
 /-- **The coins of all rounds are close to uniform:** within `(T(n) + 1)·(1 − m/2^{kk})^n`
 (`statClose_roundSample`, `statClose_pi`, the block bijection on the coin string). -/
@@ -770,9 +793,10 @@ theorem yaoRaw'_layout (y : Fin (D.outLen.eval n) → Bool)
     rw [hx₀, iterate_g_layout]
     simp only [List.length_replicate]
   have hblock : ∀ (i : ℕ) (h : i < T.eval n + 1), (List.ofFn r).drop (i * (ρP D).eval n) =
-      List.ofFn (blocksE (T.eval n + 1) ((ρP D).eval n) r ⟨i, h⟩) ++
+      List.ofFn (ρPEquiv D n (blocksE (T.eval n + 1) ((ρP D).eval n) r ⟨i, h⟩)) ++
         ((List.ofFn r).drop (i * (ρP D).eval n)).drop ((ρP D).eval n) := by
     intro i h
+    rw [ρPEquiv_ofFn]
     conv_lhs => rw [← List.take_append_drop ((ρP D).eval n) ((List.ofFn r).drop (i * (ρP D).eval n))]
     congr 1
     exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm
@@ -788,7 +812,7 @@ theorem yaoRaw'_layout (y : Fin (D.outLen.eval n) → Bool)
       rw [test_layout n hM f hFe hF' hPm y _ _]
       simp only [NUPPT.inParam_layout, NUPPT.inCoins_layout, List.length_replicate,
         List.length_append, List.length_ofFn]
-      simp [sampleAll]
+      simp [sampleAll, ← ρP_eval]
     · have hdrop : (List.ofFn r).drop (i * (ρP D).eval n) = [] := by
         apply List.drop_eq_nil_of_le
         rw [List.length_ofFn]

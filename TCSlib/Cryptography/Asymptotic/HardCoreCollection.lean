@@ -117,23 +117,29 @@ noncomputable def glPad (m : PolyExpr)
     (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
   eval_spec i z := by simp [F.eval_spec]
   sample_spec n r s := by
-    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective s
+    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective
+      (NUPPT.coinsEquiv_ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) n s)
     have hofn : List.ofFn s = List.ofFn s₁ ++ List.ofFn s₂ := by
-      rw [← hs]
+      rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn (glPadSampleFun_poly F)
+        (.add F.sample.coins m) n s, ← hs]
       exact List.ofFn_fin_append s₁ s₂
     have hA : (List.ofFn s).take (F.sample.coinLen n) = List.ofFn s₁ := by
-      rw [hofn, List.take_left' List.length_ofFn]
+      rw [hofn, NUPPT.coinLen_eq, List.take_left' List.length_ofFn]
     have hB : (List.ofFn s).drop (F.sample.coinLen n) = List.ofFn s₂ := by
-      rw [hofn, List.drop_left' List.length_ofFn]
-    obtain ⟨x, hx, hev⟩ := F.sample_spec n r s₁
-    have hL : (F.encD (pairFstD (F.gen.runAt n [] r)) default).length = m.eval n := henc n r default
+      rw [hofn, NUPPT.coinLen_eq, List.drop_left' List.length_ofFn]
+    have h₁ : List.ofFn ((NUPPT.coinsEquivPoly (A := F.sample) rfl n).symm s₁) = List.ofFn s₁ :=
+      NUPPT.coinsEquivPoly_symm_ofFn rfl n s₁
+    obtain ⟨x, hx, hev⟩ := F.sample_spec n r ((NUPPT.coinsEquivPoly (A := F.sample) rfl n).symm s₁)
+    have hL : (F.encD (pairFstD (F.gen.runAt n [] r)) default).length = m.eval n := by
+      have := henc n r default
+      rwa [Collection.index_eq] at this
     have hs₂ : List.ofFn s₂ = List.ofFn
         fun j : Fin (F.encD (pairFstD (F.gen.runAt n [] r)) default).length => s₂ (Fin.cast hL j) :=
       List.ofFn_congr hL.symm s₂
     refine ⟨(x, fun j => s₂ (Fin.cast hL j)), ?_, ?_⟩
-    · simp only [glPadSample_runAt, hA, hB, pairDecode_pairEncode, ← NUPPT.runAt_eq, hx, hs₂,
+    · simp only [glPadSample_runAt, hA, hB, pairDecode_pairEncode, ← h₁, ← NUPPT.runAt_eq, hx, hs₂,
         decodeFin_ofFn]
-    · simp only [glPadSample_runAt, hA, hB, pairFstD_pairEncode, pairSndD_pairEncode,
+    · simp only [glPadSample_runAt, hA, hB, pairFstD_pairEncode, pairSndD_pairEncode, ← h₁,
         ← NUPPT.runAt_eq, hev, hs₂]
 
 /-- The predicate `h_i(x, r) = ⟨x, r⟩` for the padded collection: the inner product of the
@@ -406,11 +412,14 @@ noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExp
     inv := NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
     inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
     inv_spec := fun n r y s => by
-      have hspec := T.inv_spec n r y.1 s
-      simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime, glPadInvFun,
-        NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
-        pairFstD_pairEncode, pairSndD_pairEncode, PermCollection.glPad, Collection.glPad,
-        pairDecode_pairEncode, decodeFin_ofFn, T.inv_uniform n] at hspec ⊢
+      have hspec := T.inv_spec n r y.1 (NUPPT.coinsCongr (NUPPT.coins_ofPolyTimeUniform _ _) n s)
+      rw [NUPPT.runAt_eq T.inv, NUPPT.coinsCongr_ofFn, T.inv_uniform.runAtL_eq] at hspec
+      rw [NUPPT.runAt_eq (NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins),
+        NUPPT.runAtL_ofPolyTimeUniform]
+      simp only [glPadInvFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+        NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+        PermCollection.glPad, Collection.glPad, pairDecode_pairEncode, decodeFin_ofFn,
+        NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform] at hspec ⊢
       rw [hspec]
       rfl }
 
