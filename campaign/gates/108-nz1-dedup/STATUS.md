@@ -2,3 +2,4 @@
 - 2026-11-06: **dispatched** by the user (38 sections, bundle `117ef54e…`).
 - 2026-11-06: findings received: PASS (0 majors); **CLOSED**. The missed NZ-1 member is re-pointed in #217; the merge waits on the merged-tree replay.
 - 2026-11-06: `51006620` (minor 1's re-point); `replay-lnz2` on the campaign after #216 (`oleans-lcamp3`), head `fc8d9093`: **261 modules, 0 failed**, static 0 mismatches. **Clear to merge.**
+- 2026-11-06: #217 **merged** by the user (`eb8cbf60`).
