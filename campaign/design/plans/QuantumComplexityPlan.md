@@ -302,11 +302,11 @@ Dependency order: **Q0 ∥ Q1 → Q2 → (Q3 ∥ Q4 ∥ Q5) → Q6 → Q7**. Q3 
 |---|---|---|---|---|
 | Q0.1 | `PromiseProblem`; promise versions of P and BPP; language ↔ promise lemmas | [Wat08 §II.1] | 1 / S | A |
 | Q0.2 | `InPP E`: `x ∈ L ↔ randProb[M x r] > 1/2` | [AB09 ch. 17], [Wat08 §IV.5] | 1 / S | A |
-| Q0.3 | `gapCount`; GapP closure under `+`, `·`, negation and polynomial-time preprocessing, as hypotheses on `E` | [FR99 §2], [Wat08 §IV.5] | 2 / M | A |
+| Q0.3 | `gap` over abstaining (`Option Bool`) verifiers; GapP closure under `+`, `·`, negation and constants, from named closure hypotheses on `E`. Closure under polynomial-time preprocessing is deferred to Q4, which states what the path-sum argument needs | [FR99 §2], [Wat08 §IV.5] | 2 / M | A |
 | Q0.4 | `PP ↔ ∃ gap function g, x ∈ L ↔ g x > 0` | [FR99] | 2 / S | A |
 | Q0.5 | `NP ⊆ PP`, `BPP ⊆ PP` | [AB09 ch. 17] | 2 / S | A |
 | Q0.6 | PP is closed under complement (the tie-breaking shift) | [AB09 ch. 17] | 3 / M | A |
-| Q0.7 | The Q0.3 closures hold for `polyTimeModel` | — | 3 / L (machine-adjacent; §6) | A |
+| Q0.7 | The Q0.3 closures hold for `polyTimeModel`; the certificate verifier of an `NP` language is efficient. Statements land in P1, so that no closure hypothesis is vacuous; proofs in E3 | — | 3 / L (machine-adjacent; §6) | A |
 | Q0.8 | `PP ⊆ PSPACE` | [AB09 ch. 17] | 4 / L (host HQ-1) | A |
 | Q0.9 | `randProb` cast lemma (FD-11) | — | 1 / S | A |
 
@@ -405,7 +405,7 @@ acceptance operator, positive semidefinite operators and mixed witnesses lean on
 
 | Statement phase | Content | Gate |
 |---|---|---|
-| P1 | Q0.1–Q0.6, Q0.9, Q1 | `quantum-phase1` |
+| P1 | Q0.1–Q0.6, Q0.9, Q1, and Q0.7's statements | `quantum-phase1` |
 | P2 | Q2, Q3 Tier A | `quantum-phase2` |
 | P3 | Q4 Tier A, Q5 Tier A | `quantum-phase3` |
 | P4+ | Tier B, one gate per section | per section |
@@ -542,3 +542,4 @@ Append-only. A superseded row is marked **Superseded** in place, never deleted.
 | 2026-11-06 | **FD-1 and FD-2 revised.** Physlib's pure-state basics measured: their import closure is 38 modules and about 20,000 lines in the newer Lean module system, so copying is ruled out. Tier A keeps a thin Mathlib layer but adopts Physlib's design (`Qubit := Fin 2`, `Ket` fields, `𝐔[d]`, gate names; Physlib commit cdfa609, Apache-2.0, cited per §1c). Registers change from `Fin n → Bool` to `Fin n → Qubit`, with a `Qubit ≃ Bool` bridge. Mixed states, POVMs, channels and entropy are not rebuilt: Q5.4, Q5.5 and Q6.2 onward are blocked on OQ-1. OQ-9 closed provisionally (Physlib); OQ-6 simplified; OQ-11 opened. The overlap with Physlib (kets, standard gates, Born rule) is approved as a deliberate, temporary duplication, to be deleted when the dependency arrives. | a-gupte (approved) |
 | 2026-11-06 | OQ-2, OQ-3 and OQ-10 closed by the owner, following the repository's precedents: references stored as for [AB09] (no PDFs; `sources.py` outputs only); the folder and namespace layout of §4; campaign records under `campaign/` on branch `quantum/campaign`, off `main`, as for Arora–Barak chapters 3–4. The plan moved from the repository root to `campaign/design/plans/`. The open-question register stays in §8 until `campaign/backlog.md` is opened. | a-gupte (decided) |
 | 2026-11-06 | Phase P1 skeleton for Q1 (`TCSlib/Quantum/Basic/`: `Register`, `Gates`, `ApplyOn`, `Measure`, `Protocols`, two facades, export from `TCSlib.lean`) on branch `quantum/p1-basic`. Every module passes `scripts/lean_check_tree.sh` in dependency order; 42 `sorry`s, each under a proof sketch; `style_lint.py` 0 findings, `campaign_style_lint.py` 0 FAIL / 0 WARN. Every sorried statement was also checked numerically against the definitions (a script mirroring them entry by entry; all hold). Proved without `sorry` in the skeleton, to be declared in the audit pack: equation lemmas by `rfl`, `Ket.sum_prob` (the `normalized'` field), `cnotMap_involutive` and `toffoliMap_involutive` (by `decide`), and term-mode well-formedness inside definitions (`Ket.prod`, `Ket.relabel`, `wire`). FD-2 refined: gates on `Reg k`, not Physlib's `Qubit` types. OQ-11 followed: checks by `lean_check_tree.sh`, never `lake build`. | a-gupte (with Claude) |
+| 2026-11-06 | Phase P1 skeleton for Q0 on `quantum/p1-basic`: `TCSlib/Complexity/Promise/Basic.lean` (`Promise.Problem`, `ofLanguage`, promise P and BPP) and `TCSlib/Complexity/Counting/` (`PP`, `GapP`, `PolyTime`, `Inclusions`), with facades and exports. **Design decision:** gap functions use abstaining (`Option Bool`) verifiers, the form `VerifierModel` already supports. Without abstention, exact GapP closure under sums fails on fixed-length random strings: every gap at length `m ≥ 1` is even, and padding multiplies gaps by powers of 2. Closure properties are named hypotheses on `E` (`ClosedUnderGapNeg`, `ClosedUnderPad`, `ClosedUnderGapSum`, `ClosedUnderGapProd`, `HasConstVerifiers`, `ClosedUnderCoinFill`), following `Randomized.ClosedUnderMajority`. P1 now also carries Q0.7's statements (each hypothesis holds for `polyTimeModel`), so no theorem is vacuous. Every gap lemma and every piece of schedule arithmetic in the sketches was checked numerically against the definitions. | a-gupte (with Claude) |
