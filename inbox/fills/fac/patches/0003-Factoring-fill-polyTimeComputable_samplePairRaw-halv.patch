@@ -1,0 +1,168 @@
+From ad8ff09678fe2218ee728a9b6d02f0872405e56c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:15:25 +0000
+Subject: [PATCH 3/3] Factoring: fill polyTimeComputable_samplePairRaw (halves
+ from S1; sketch rewritten to the proof)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Factoring.lean | 136 +++++++++++++++---
+ 1 file changed, 118 insertions(+), 18 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index 3c38fc52..ad3f489c 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -763,30 +763,130 @@ def samplePairRaw (z : List Bool) : List Bool :=
+     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).take (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
+     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).drop (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
+ 
++/-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
++(`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
++private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
++    natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
++  have h := natToList_length_listToNat (List.replicate j false ++ w)
++  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
++    fac_foldl_replicate_false, ← listToNat_eq] at h
++  exact h
++
++/-- A two-bit value `v`, read from the word `w`, as a `k`-bit numeral (`k ≥ 2`):
++`natToList k v = (0^k).drop 2 ++ w`. -/
++private theorem fac_natToList_small {k v : ℕ} (hk : 2 ≤ k) {w : List Bool} (hw : w.length = 2)
++    (hv : listToNat w = v) : natToList k v = (List.replicate k false).drop 2 ++ w := by
++  obtain ⟨m, rfl⟩ : ∃ m, k = m + 2 := ⟨k - 2, by omega⟩
++  rw [← hv, ← hw, fac_natToList_lead, List.drop_replicate, hw]
++  rfl
++
++/-- The default pair `⟨2, 3⟩` at width `max n 2`: `⟨(0^n).drop 2 ++ 10, (0^n).drop 2 ++ 11⟩`. -/
++private theorem fac_encode_default (n : ℕ) :
++    encodeDistinctPrimes (max n 2) (DistinctPrimes.default (le_max_right n 2)) =
++      pairEncode ((List.replicate n false).drop 2 ++ [true, false])
++        ((List.replicate n false).drop 2 ++ [true, true]) := by
++  have hd : (List.replicate (max n 2) false).drop 2 = (List.replicate n false).drop 2 := by
++    rw [List.drop_replicate, List.drop_replicate]
++    congr 1
++    omega
++  rw [encodeDistinctPrimes_eq, DistinctPrimes.default_p, DistinctPrimes.default_q,
++    fac_natToList_small (w := [true, false]) (le_max_right n 2) rfl (by rw [listToNat_eq]; rfl),
++    fac_natToList_small (w := [true, true]) (le_max_right n 2) rfl (by rw [listToNat_eq]; rfl), hd]
++
++/-- Words of the same length are equal iff they read as the same number. -/
++private theorem fac_listToNat_inj {a b : List Bool} (h : a.length = b.length) :
++    listToNat a = listToNat b ↔ a = b := by
++  constructor
++  · intro hab
++    rw [← natToList_length_listToNat a, ← natToList_length_listToNat b, hab, h]
++  · rintro rfl; rfl
++
++/-- `samplePrimeL n r` has `n` bits. -/
++private theorem fac_length_samplePrimeL (n : ℕ) (r : List Bool) : (samplePrimeL n r).length = n := by
++  unfold samplePrimeL
++  rw [List.length_ofFn]
++
+ /-- **The sampler is polynomial-time** [PS10, Lemma 51.17] given a primality test: two
+ runs of the `SamplePrime` loop.
+ 
+ **Proof sketch.** Cut the coins at the unary length `1^{2n³}` (`polyTimeComputable_pairTakePoly`
+-/`_pairDropPoly samplePrimeCoins` on `⟨1^n, r⟩`); each half is handled by the
+-`iterateFind` loop of `NumberTheory.exists_samplePrime_nuppt` (`Complexity.polyTimeComputable_iterateFind`
+-with the step dropping `n` bits, the test `hP` on the first `n` bits, the payload those
+-bits, `R = 2n²`, `P = var`), whose `List.range.find?` form is `firstHit` over `chunk`
+-(`samplePrime`); the fallback numeral `natToList n 2 = 0^{n-2}10` of a failed run is the
+-`none` branch of `iterateFind` (a constant string of unary-polynomial length,
+-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The acceptance test of
+-`samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two prime
+-tests are `hP`, and the inequality of the two values is tested by comparing the two `n`-bit
+-words directly (a `pairEq` test: words of equal length have equal values iff they are equal);
+-the two range checks `< 2^{max n 2}` are discharged from the fixed widths, not computed (each
+-`samplePrimeL` output has `n` bits, so its value is `< 2^n ≤ 2^{max n 2}`,
+-`listToNat_lt_two_pow`); the branch is `polyTimeComputable_ite`. The accepted words are
+-re-encoded with `max n 2` bits by leading-zero padding (the `max n 2`-bit numeral of an `n`-bit
+-word is the word preceded by `max n 2 − n` zeros, a constant block of unary-polynomial length:
+-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the default pair is a
+-constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
++/`_pairDropPoly samplePrimeCoins` on `⟨1^n, r⟩`); each half `a`, `b` is one run of `SamplePrime(n)`
++by the shared statement S1 (`polyTimeComputable_samplePrimeL`), an `n`-bit word. The acceptance
++test of `samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two
++prime tests are `hP`, and the inequality of the two values is tested by comparing the two
++`n`-bit words directly (`polyTimeComputable_pairEq`, negated: words of equal length have equal
++values iff they are equal, `natToList_length_listToNat`); the two range checks
++`< 2^{max n 2}` are discharged from the widths, not computed (`listToNat_lt_two_pow`); the
++branch is `polyTimeComputable_ite`. On acceptance `n ≥ 2` (a prime read from an `n`-bit word
++forces `2 ≤ value < 2^n`), so `max n 2 = n` and the `n`-bit numerals of the two values are the
++words themselves: the accepted output is `⟨a, b⟩`, no padding is needed. The default pair
++`⟨2, 3⟩` at width `max n 2` is `⟨(0^n).drop 2 ++ 10, (0^n).drop 2 ++ 11⟩` for every `n`
++(`encodeDistinctPrimes_eq`, `default_p`/`default_q`, leading zeros by
++`natToList_length_listToNat`; `(0^{max n 2}).drop 2 = (0^n).drop 2`), so no branch on `n < 2`
++is needed: `polyTimeComputable_zerosPoly`, `polyTimeComputable_pairDropPoly (const 2)` and
++`PolyTimeComputable.append`; pair the results (`PolyTimeComputable.pairEncode`). -/
+ theorem polyTimeComputable_samplePairRaw (hP : PolyTimeComputable primeStr) :
+     PolyTimeComputable samplePairRaw := by
+-  sorry
++  have hS1 := polyTimeComputable_samplePrimeL hP
++  have hpc := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
++  have ha : PolyTimeComputable fun z => samplePrimeL (NUPPT.inParam z).length
++      ((NUPPT.inCoins z).take (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)) := by
++    have h := hS1.comp (NUPPT.polyTimeComputable_inParam.pairEncode
++      ((polyTimeComputable_pairTakePoly samplePrimeCoins).comp hpc))
++    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode,
++      eval_samplePrimeCoins] using h
++  have hb : PolyTimeComputable fun z => samplePrimeL (NUPPT.inParam z).length
++      ((NUPPT.inCoins z).drop (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)) := by
++    have h := hS1.comp (NUPPT.polyTimeComputable_inParam.pairEncode
++      ((polyTimeComputable_pairDropPoly samplePrimeCoins).comp hpc))
++    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode,
++      eval_samplePrimeCoins] using h
++  have hpr := primeStr_eq ▸ hP
++  have hpa := hpr.comp ha
++  have hpb := hpr.comp hb
++  have hne := polyTimeComputable_not (polyTimeComputable_pairEq.comp (ha.pairEncode hb))
++  simp only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode] at hpa hpb hne
++  have htest := polyTimeComputable_and hpa (polyTimeComputable_and hpb hne)
++  have hz : PolyTimeComputable fun z =>
++      (List.replicate (NUPPT.inParam z).length false).drop 2 := by
++    have h := (polyTimeComputable_pairDropPoly (.const 2)).comp ((polyTimeComputable_const []).pairEncode
++      ((polyTimeComputable_zerosPoly .var).comp
++        (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const []))))
++    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
++      PolyExpr.eval_var] using h
++  have hdef := (hz.append (polyTimeComputable_const [true, false])).pairEncode
++    (hz.append (polyTimeComputable_const [true, true]))
++  have h := polyTimeComputable_ite htest (ha.pairEncode hb) hdef
++  convert h using 1
++  funext z
++  unfold samplePairRaw samplePairOut
++  rw [fac_encode_default]
++  set n := (NUPPT.inParam z).length
++  set a := samplePrimeL n ((NUPPT.inCoins z).take (2 * n ^ 2 * n))
++  set b := samplePrimeL n ((NUPPT.inCoins z).drop (2 * n ^ 2 * n))
++  have hla : a.length = n := fac_length_samplePrimeL _ _
++  have hlb : b.length = n := fac_length_samplePrimeL _ _
++  have hlta : listToNat a < 2 ^ max n 2 :=
++    (listToNat_lt_two_pow a).trans_le (Nat.pow_le_pow_right (by norm_num) (hla ▸ le_max_left _ _))
++  have hltb : listToNat b < 2 ^ max n 2 :=
++    (listToNat_lt_two_pow b).trans_le (Nat.pow_le_pow_right (by norm_num) (hlb ▸ le_max_left _ _))
++  have hiff : listToNat a ≠ listToNat b ↔ a ≠ b := (fac_listToNat_inj (hla.trans hlb.symm)).not
++  by_cases hc : (listToNat a).Prime ∧ (listToNat b).Prime ∧ a ≠ b
++  · have hn : 2 ≤ n := by
++      by_contra hn
++      have h2 : 2 ^ n ≤ 2 := by
++        calc 2 ^ n ≤ 2 ^ 1 := Nat.pow_le_pow_right (by norm_num) (by omega)
++          _ = 2 := rfl
++      have := listToNat_lt_two_pow a
++      rw [hla] at this
++      exact absurd hc.1.two_le (by omega)
++    rw [if_pos ⟨hc.1, hc.2.1, hiff.2 hc.2.2, hlta, hltb⟩, if_pos (by simp [hc.1, hc.2.1, hc.2.2])]
++    have hm : max n 2 = n := max_eq_left hn
++    rw [hm]
++    conv_lhs => rw [← hla, natToList_length_listToNat, hla, ← hlb, natToList_length_listToNat]
++  · rw [if_neg (fun h' => hc ⟨h'.1, h'.2.1, hiff.1 h'.2.2.1⟩), if_neg]
++    simpa only [Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
++      using hc
+ 
+ /-- **The domain sampler of the factoring collection**: the uniform `NUPPT` running two
+ truncated `SamplePrime(n)` loops with `2 · 2n² · n` coins. -/
+-- 
+2.43.0
+
