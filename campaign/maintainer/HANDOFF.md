@@ -27,12 +27,13 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 **Snapshots** (`$TCSLIB_SCRATCH`):
 - `oleans-lcamp6`: the campaign after #218 and #219.
-- `oleans-lcamp7`: being built by `replay-lcamp7` (120 modules, the campaign after #214 and #223,
-  Lean `72fcfbef`). It becomes the campaign snapshot when it passes. Then delete `lcamp6`.
+- **`oleans-lcamp7` is the campaign's snapshot** (the campaign after #214 and #223, Lean
+  `72fcfbef`; `replay-lcamp7` passed 120/0, `campaign/status/2026-11-06-campaign-replay-7/`).
+  `oleans-lcamp6` is deleted.
 
 **Running at the time of writing:** `fills/replay/queue12.sh`. It runs lcamp7, then prepares and
-runs `lcl3`, `lhv3` and `lsg7` (one chain) and `lnb4` (the other). A watcher then runs the E-PAD
-import probe (`campaign/fills/epad/inputs/EPadImportProbe.lean.txt`) against `oleans-lcamp7`. **After
+runs `lcl3`, `lhv3` and `lsg7` (one chain) and `lnb4` (the other). The E-PAD import probe passed on `oleans-lcamp7`
+(`campaign/fills/epad/logs/epad-preship-importprobe.out`). **After
 a container restart all of these die:** re-run the queue (`scratch-api/replay-queue.example.sh` is
 a copy).
 
