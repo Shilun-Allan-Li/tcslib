@@ -8,7 +8,7 @@ No statement changed; no `sorry` and no `axiom` added. The owned file checks wit
 
 - **Base:** `16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1` (`git rev-parse`), fetched from
   `cryptography/pass-shelat-ch2-4-eqlemmas`. Local branch `fill/rabin`, head
-  `8295c2054dc27b7757353b1c091b8ed1b81e0100` (13 commits). It was never pushed and never rebased.
+  `8295c2054dc27b7757353b1c091b8ed1b81e0100` (12 commits). It was never pushed and never rebased.
 - **Exchange commit read at start:** `22e3c69`, a descendant of `fe9b979c46c63d083e5e004ad91c0c3dec3edead`.
   I read the brief, the addendum v1 and `NOTES-2026-11-07.md`. Items 4 and 7 of the notes were
   applied (see Rule 10, Duplication and Findings).
@@ -383,8 +383,10 @@ their deliveries: not landed, not in my imports), re-proved under my prefix:
 
 `inbox/fills/rabin/` on `exchange/pass-shelat-ch5-8`:
 - `REPORT.md`;
-- `patches/` (`git format-patch 16a7d02d..fill/rabin`, 13 patches);
+- `patches/` (`git format-patch 16a7d02d..fill/rabin`, 12 patches);
 - `src/TCSlib/Cryptography/Candidates/Rabin.lean`;
 - `evidence/` (logs, seal files, probes, `declfreeze.py`, `chk.py`).
 
-The pushes were `fill rabin: checkpoint 1` to `checkpoint 11`, then `fill rabin: final`.
+Replay check: `git am` of `patches/` onto `16a7d02d` reproduces `src/` byte for byte.
+
+The pushes were `fill rabin: checkpoint 1` to `checkpoint 11`, then `fill rabin: final` (pushed twice: the second push corrects the commit and patch counts in this report).
