@@ -636,16 +636,8 @@ theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
     exact uprob_bitsToNat_lt hmk.le
   rw [hacc] at h'
   have hpow : (1 - (m : ℝ) / 2 ^ Nat.size m) ^ n ≤ (1 / 2 : ℝ) ^ n := by
-    have h2k : (0 : ℝ) < 2 ^ Nat.size m := by positivity
-    have hm' : (m : ℝ) ≤ 2 ^ Nat.size m := by exact_mod_cast hmk.le
-    have h2' : (2 : ℝ) ^ Nat.size m ≤ 2 * m := by exact_mod_cast hk2
-    apply pow_le_pow_left₀
-    · rw [sub_nonneg, div_le_one h2k]
-      exact hm'
-    · have : (1 / 2 : ℝ) ≤ m / 2 ^ Nat.size m := by
-        rw [div_le_div_iff₀ (by norm_num) h2k]
-        linarith
-      linarith
+    rw [← uprob_rejectionSample_none m (Nat.size m) n hm hmk.le]
+    exact uprob_rejectionSample_none_le_half_pow m (Nat.size m) n hm hmk.le hk2
   rw [sampleBelowL_eq_rejectBlocksL]
   exact h'.mono hpow
 
@@ -849,7 +841,15 @@ private theorem dla_length_ssStep_iterate_le (x : List Bool) (i : ℕ) :
 
 /-- **The trial loop computes the rejection sampler**: on the start state of `z`, the value
 read from the loop's payload (marker dropped) is `sampleBelowL m k n n r` with the fallback
-`0`, where `m` is the middle numeral of the index, `k = Nat.size m` and `n = |1^n|`. -/
+`0`, where `m` is the middle numeral of the index, `k = Nat.size m` and `n = |1^n|`.
+
+**Proof sketch.** After `i` steps the header is unchanged, the counter `1^n` has lost `i` bits
+and the coins have lost `i` blocks of `n` bits (`dla_ssStep_iterate`): the trial value is the
+`k`-bit prefix of block `i`, and the test accepts iff `i < n` and that value is below `m`. The search over the
+first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)` (`dla_find?_range_lt`),
+which is `sampleBelowL`'s `findSome?` read as a `find?` followed by the value
+(`dla_findSome?_ite`). In the `some i` case the payload with its marker dropped is the prefix of
+block `i`; in the `none` case both sides read `0` (`dla_listToNat_nil`). -/
 private theorem dla_ssFind_eq (z : List Bool) :
     listToNat ((match (List.range ((dla_ssStart z).length + 1)).find?
         (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) with
@@ -911,15 +911,23 @@ private theorem dla_ssStart_poly (H : ArithmeticFP) : PolyTimeComputable dla_ssS
     (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
   exact h
 
+/-! ### The domain sampler and the collection -/
+
 /-- **The domain sampler is polynomial-time** [PS10, Theorem 52.3, "it is easy to sample the
 domain `D_i`"] given the arithmetic bundle.
 
 **Proof sketch.** The bit length `Nat.size m` is the length of the numeral of `m` with its
-leading zeros stripped (`H.size`); the trial loop is
-`Complexity.polyTimeComputable_iterateFind` over the `n` blocks of `1^n` bits
-(`polyTimeComputable_pairDropPoly`), each trial comparing the first `k` bits with `m`
-(`H.le`); the payload is the accepted block, the `none` branch gives the fallback; the output
-is padded to the index width (`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). -/
+leading zeros stripped (`H.size`). The trial loop is `Complexity.polyTimeComputable_iterateFind`
+on the state `⟨⟨1^n, ⟨1^k, ⟦m⟧⟩⟩, ⟨c, r⟩⟩` with a trial counter `c = 1^n`: each step drops one
+bit of the counter and one block of `n` coins (`polyTimeComputable_tail`,
+`polyTimeComputable_pairDropPoly`), and a trial accepts iff the counter is nonempty and the first
+`k` remaining coins read below `m` (`polyTimeComputable_pairTakePoly`, `polyTimeComputable_isNil`,
+`H.le`). The counter is needed because the loop runs `|state| + 1 ≥ n` rounds while
+`sampleBelowL` makes exactly `n` trials, and the raw coin string may be longer than `n · n`. The
+payload is the accepted block; the `none` branch gives the fallback (the empty block reads `0`).
+The output is the last `|p|` bits of `⟦0⟧_{|p|} ++ block`, with `⟦0⟧_{|p|} = ⟦p − p⟧_{|p|}`
+(`H.sub`, `polyTimeComputable_pairDropPoly`, `PolyTimeComputable.append`): the `|p|`-bit numeral
+of the value, also when it is `≥ 2^{|p|}`. -/
 theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable expSampleRaw := by
   -- the trial loop (the repetition lemma, `n` rounds suffice: `R = var`)
   have hF := polyTimeComputable_iterateFind dla_ssStep_poly (dla_ssAcc_poly H) dla_ssOut_poly
@@ -938,9 +946,12 @@ theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable 
   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var,
     subStr_pairEncode, Nat.sub_self]
   rw [dla_drop_natToList_zero_append]
-  refine (congrArg (natToList (pairFstD (NUPPT.inArg z)).length) (dla_ssFind_eq z)).trans ?_
   unfold expSampleRaw dlW
-  rfl
+  congr 1
+  have hF := dla_ssFind_eq z
+  split
+  next i hi => rw [hi] at hF; exact hF
+  next hn => rw [hn] at hF; exact hF
 
 /-- **The domain sampler** of the exponentiation collection: a uniform `NUPPT` with `n · n`
 coins. -/
@@ -1138,7 +1149,16 @@ private theorem dla_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (
 
 /-- **The decoded domain sampler is `(1/2)^n`-close to uniform on `Z_m`** at a valid index of
 width `n`: `statClose_sampleBelowL` on the sampler's `n · n` coins (read through
-`NUPPT.coinsEquivPoly`), mapped through the decoder, which reads the numeral back exactly. -/
+`NUPPT.coinsEquivPoly`), mapped through the decoder, which reads the numeral back exactly.
+
+**Proof sketch.** At a valid index of width `n`, `0 < m` and `m < p < 2^n`. Identify the
+sampler's coins with `Fin (n · n) → Bool` (`NUPPT.coinsEquivPoly`, `finCongr`; the coin list is
+unchanged, `NUPPT.coinsEquivPoly_ofFn`) and `Z_m` with `Fin m` by the value map. Then
+`statClose_sampleBelowL`, moved along the coin identification (`StatClose.comp_equiv_left`),
+mapped through `v ↦ expDec i ⟦v⟧_n` (`StatClose.map`) and moved along `Z_m ≃ Fin m`
+(`StatClose.comp_equiv_right`), is the claim: its left side is the decoded sampler output
+(`expSampler_runAt`), and on its right side `expDec i ⟦y.val⟧_n = some y` (`expEnc_eq`,
+`expDec_expEnc`). -/
 private theorem dla_statClose_expDec (H : ArithmeticFP) {n : ℕ} {i : List Bool} (hv : ExpValid i)
     (hw : dlW i = n) :
     StatClose (fun s : (expSampler H).Coins n => expDec i ((expSampler H).runAt n i s))
