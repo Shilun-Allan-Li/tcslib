@@ -1,0 +1,29 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+index 87fe5c9d..e1ef486e 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+@@ -1599,8 +1599,7 @@ private theorem tt_forward_run (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk
+   | zero =>
+     exfalso
+     have h0 : (M.tm.runFrom (M.tm.initCfg x) 0).state = none := heq ▸ hs
+-    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_state] at h0
+-    cases h0
++    exact not_computesInTime_zero M x _ ((computesInTime_iff M x _ 0).2 ⟨h0, rfl⟩)
+   | succ s =>
+     have hl : ∀ r < s + 1, (tt_c M x r).state ≠ none := fun r hr => hlive r hr
+     refine ⟨s + 1, hu, Nat.le_add_left 1 s, hl, ?_⟩
+@@ -2418,9 +2417,11 @@ the same input.
+ **Proof sketch.** (The Hennie–Stearns simulation.) The first work tape of `M'` holds all `k` of
+ `M`'s work tapes as tracks, folded around a fixed origin cell into zones of doubling sizes
+ `2^i`, so that every simulated head stays at the origin and a tape movement shifts contents
+-between neighbouring zones. Each zone is kept half full. A shift that empties or fills a zone `i`
+-rebalances zones `0, …, i` using the second work tape as scratch, in `O(2^i)` steps, and a zone `i`
+-is rebalanced at most once every `2^(i-1)` simulated steps. Summing over the zones
++between neighbouring zones. Each side of a level is empty, half full or full, and the two sides
++of a level together always hold the same number of cells. A shift that empties or fills a zone `i`
++rebalances zones `0, …, i` using the second work tape as scratch, in `O(2^i)` steps, restoring
++every level below `i` to half full, and a zone `i` is rebalanced at most once every `2^(i-1)`
++simulated steps. Summing over the zones
+ `0, …, log₂ t + 1` that a run of `t` steps can rebalance gives `O(t log t)` steps in all. The
+ converse holds because `M'` writes an output symbol exactly when `M` does, in the same order, and
+ halts only when `M` halts. With no work tapes, `M` is run directly beside two idle tapes. -/

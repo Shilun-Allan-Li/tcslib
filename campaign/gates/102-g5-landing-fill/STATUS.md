@@ -12,3 +12,7 @@
   `a79385da1ad4331dcb6559207ddcfcb29e1ab4dced93f4734015eaf068f0582d`; Lean from `f239dafd`,
   records from `f6954560`. Findings file `g5-landing-fill-findings.md`.
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: round 1 findings received: **HOLD 0/1/1** (F1 `not_computesInTime_zero`, F2 the
+  invariant's prose). Both fixed on #211 (`3a261ba2`; the standing re-point rule); NZ-1 recorded.
+  `replay-lg7` passed (3 modules, 0 `sorry`) at `e7e78aaf`; the seal (44), controls (91/91),
+  axioms, freeze, lint and screen re-run (`evidence/round2/`). `pack-r2.md`.
