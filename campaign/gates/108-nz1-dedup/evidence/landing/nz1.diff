@@ -1,0 +1,192 @@
+diff --git a/TCSlib/Complexity/CircuitComplexity/Advice.lean b/TCSlib/Complexity/CircuitComplexity/Advice.lean
+index c7666898..d14a903d 100644
+--- a/TCSlib/Complexity/CircuitComplexity/Advice.lean
++++ b/TCSlib/Complexity/CircuitComplexity/Advice.lean
+@@ -192,14 +192,16 @@ cannot be taken verbatim: see `Complexity.DTIMEAdvice_pow_eq_empty`.
+ 
+ **Proof sketch.** On the empty input `x = []` the machine must halt within
+ `c · T 0 = 0` steps, but after `0` steps it is still in its initial configuration, whose
+-state is the start state, not the halting state `none`. -/
++state is the start state, not the halting state `none`
++(`Turing.FinTM.not_computesInTime_zero`). -/
+ theorem DTIMEAdvice_eq_empty_of_eq_zero {T : ℕ → ℕ} (hT : T 0 = 0) (a : ℕ → ℕ) :
+     DTIMEAdvice T a = ∅ := by
+   ext L
+   simp only [Set.mem_empty_iff_false, iff_false]
+   rintro ⟨c, α, M, -, hM⟩
+-  have h := ((FinTM.computesInTime_iff _ _ _ _).mp (hM [])).1
+-  simp [hT, MultiTapeTM.runFrom, MultiTapeTM.initCfg] at h
++  have h := hM []
++  simp only [List.length_nil, hT, Nat.mul_zero] at h
++  exact M.not_computesInTime_zero _ _ h
+ 
+ /-- **The literal `DTIME(n^c)/a` is empty for `c ≥ 1`.**  With the time bound `n^c`
+ taken literally, the machine gets `c' · 0^c = 0` steps on the empty input, so no
+diff --git a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+index 2ce883de..e40e5333 100644
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -47,21 +47,14 @@ namespace Turing
+ /-! ### The construction of the exhaustive replay (the `xr_` privates)
+ 
+ The semantic and arithmetic parts of the exhaustive replay, read through the published ND
+-semantics only: no branch halts at depth `0`; a branch of length `|w|` stays within the
++semantics only (that no branch halts at depth `0` is the published
++`Turing.NDTM.not_haltsWithin_zero`): a branch of length `|w|` stays within the
+ radius-`|w|` window; at an all-halting depth `L ≤ T` acceptance within `L` and within `T`
+ agree; the first all-halting depth exists; the ledger's shape. Then two generic tools for the
+ machine: the translation of work tapes (a branch started on blank tapes at displaced heads is
+ the branch from `initCfg`, translated), and the first arrival at a stationary anchor (the
+ phase host's guard for every leaf row of this file). -/
+ 
+-/-- No branch of length `0` has halted: `Cfg.init` is live. -/
+-private theorem xr_not_haltsWithin_zero (N : FinNDTM Bool) (z : List Bool) :
+-    ¬ N.tm.HaltsWithin z 0 := by
+-  intro h
+-  have h0 := NDTM.haltsWithin_iff.mp h [] rfl
+-  rw [NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at h0
+-  exact Option.some_ne_none _ h0
+-
+ /-- One step from the radius-`s` window stays in the radius-`s + 1` window, with the output
+ growing by at most one symbol. -/
+ private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S)
+@@ -157,7 +150,7 @@ private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
+     fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
+       (Nat.find_min' hex hT)⟩
+   rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+-  · exact absurd (h0 ▸ Nat.find_spec hex) (xr_not_haltsWithin_zero N z)
++  · exact absurd (h0 ▸ Nat.find_spec hex) (NDTM.not_haltsWithin_zero N.tm z)
+   · exact h0
+ 
+ /-- The ledger's shape, with two steps of slack for the dispatch and the answer:
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index e6a3f517..f4a4ec59 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -3063,11 +3063,10 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
+     fun r hr => Nat.find_min hex hr
+   have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+   have hpos : 0 < t₀ := by
+-    by_contra h0
+-    have h00 : t₀ = 0 := by omega
+-    have := hspec
+-    rw [h00, List.take_zero, NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at this
+-    exact Option.noConfusion this
++    refine Nat.pos_of_ne_zero fun h00 => NDTM.not_haltsWithin_zero N.tm x
++      (NDTM.haltsWithin_iff.mpr fun v hv => ?_)
++    rw [List.length_eq_zero_iff.mp hv]
++    rwa [h00, List.take_zero] at hspec
+   set w₀ := w.take t₀ with hw₀
+   have hw₀len : w₀.length = t₀ := List.length_take_of_le (by omega)
+   have hw₀ne : w₀ ≠ [] := List.ne_nil_of_length_pos (by omega)
+diff --git a/TCSlib/Complexity/ClassNP/NTIME.lean b/TCSlib/Complexity/ClassNP/NTIME.lean
+index 1b21c9c5..a312c47f 100644
+--- a/TCSlib/Complexity/ClassNP/NTIME.lean
++++ b/TCSlib/Complexity/ClassNP/NTIME.lean
+@@ -249,16 +249,15 @@ halted, so all-branch halting already fails at budget `c * 0 = 0`.
+ 
+ **Proof sketch.** Given `T n = 0` and a claimed decider, instantiate
+ `Turing.FinNDTM.DecidesInTime` at the input `List.replicate n false`
+-(`List.length_replicate`); its `HaltsWithin` conjunct applied to the empty choice word
+-(`Turing.NDTM.runWith_nil`) asserts that the initial configuration is halted,
+-contradicting `Turing.Cfg.init`'s state `some q₀`. -/
++(`List.length_replicate`); its `HaltsWithin` conjunct is then all-branch halting at budget
++`0`, which no machine meets (`Turing.NDTM.not_haltsWithin_zero`: the empty choice word leaves
++the run at the initial configuration, whose state `some q₀` is live). -/
+ theorem NTIME_eq_empty_of_exists_zero {T : ℕ → ℕ} (h : ∃ n, T n = 0) : NTIME T = ∅ := by
+   obtain ⟨n, hn⟩ := h
+   apply Set.eq_empty_iff_forall_not_mem.mpr
+   rintro L ⟨c, N, hN⟩
+   have hhalt := (hN (List.replicate n false)).1
+   simp only [List.length_replicate, hn, Nat.mul_zero] at hhalt
+-  have hzero : (some N.tm.q₀ : Option N.State) = none := hhalt [] rfl
+-  cases hzero
++  exact Turing.NDTM.not_haltsWithin_zero N.tm _ hhalt
+ 
+ end Complexity
+diff --git a/TCSlib/Complexity/Randomized/BPTIMEThreshold.lean b/TCSlib/Complexity/Randomized/BPTIMEThreshold.lean
+index 869afa1c..de3ab2dd 100644
+--- a/TCSlib/Complexity/Randomized/BPTIMEThreshold.lean
++++ b/TCSlib/Complexity/Randomized/BPTIMEThreshold.lean
+@@ -147,8 +147,9 @@ theorem BPDecidesInTimeWith.one_le {N : FinNDTM Bool} {L : Language Bool} {T : 
+     {p : ℕ → ℚ} (h : N.BPDecidesInTimeWith L T p) (n : ℕ) : 1 ≤ T n := by
+   by_contra h0
+   have hT : T (List.replicate n false).length = 0 := by simp only [List.length_replicate]; omega
+-  have := (h (List.replicate n false)).1 [] (by rw [hT]; rfl)
+-  simp at this
++  have hh := (h (List.replicate n false)).1
++  rw [hT] at hh
++  exact NDTM.not_haltsWithin_zero N.tm _ hh
+ 
+ /-- **Majority of `2n + 1` runs** [AB09, §7.4.1]: a decider with success `1/2 + ε` in time `t`
+ gives one with success `1 - 2 (1 - 4ε²)^n` in time `t + 2n (2t + 3) + 1`.
+diff --git a/TCSlib/Complexity/Randomized/ExpectedTime.lean b/TCSlib/Complexity/Randomized/ExpectedTime.lean
+index cbecdc98..1ebf09cc 100644
+--- a/TCSlib/Complexity/Randomized/ExpectedTime.lean
++++ b/TCSlib/Complexity/Randomized/ExpectedTime.lean
+@@ -518,9 +518,8 @@ theorem AbortDecidesInTime.restart (h : N.AbortDecidesInTime L T) (x : List Bool
+   unfold outputProb at hprob
+   set ℓ := MultiTapeTM.indicator (L : Set (List Bool)) x
+   have hT : 0 < T x.length := by
+-    refine Nat.pos_of_ne_zero fun h0 => ?_
+-    have := hhalt [] (by simp [h0])
+-    simp [NDTM.initCfg, Cfg.init] at this
++    refine Nat.pos_of_ne_zero fun h0 => NDTM.not_haltsWithin_zero N.tm x ?_
++    rwa [h0] at hhalt
+   refine ⟨expTimeLe_repeatRun hT ?_, fun w b hw => ?_⟩
+   · show (randProb (T x.length) fun u => bitOfOutput (N.outputWith x u) = none) ≤ 1 / 2
+     have hle : (randProb (T x.length) fun u => bitOfOutput (N.outputWith x u) = none) ≤
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 6a756c7d..ba37b220 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3748,9 +3748,9 @@ private lemma emCall_prepared_eval_first (M : FinTM Bool) (w s out : List Bool)
+   have hright := (emCall_right_computes (emCallTrackTM M) s out (1 + 2 * T) htrack).1
+   obtain ⟨t, ht, b, _, hh, _, hfirst, hr⟩ := emCall_eval_first R w s out D hright
+   have hpos : 0 < t := by
+-    by_contra hn
+-    have ht0 : t = 0 := by omega
+-    simp [ht0, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg, Cfg.init] at hh
++    refine Nat.pos_of_ne_zero fun ht0 => not_computesInTime_zero R s _
++      ((computesInTime_iff R s _ 0).2 ⟨?_, rfl⟩)
++    rwa [ht0] at hh
+   have habs : R.tm.runFrom (R.tm.initCfg s) D = R.tm.runFrom (R.tm.initCfg s) t := by
+     rw [show D = t + (D - t) by omega, MultiTapeTM.runFrom_add,
+       MultiTapeTM.runFrom_of_halt _ hh]
+diff --git a/TCSlib/Complexity/TuringMachine/Nondeterministic.lean b/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
+index 9c8d77e5..7fdd1de1 100644
+--- a/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
+@@ -84,6 +84,8 @@ state embeddings, the slice lemma, state relabelling and input locality.
+   algebra (proved; pure unfoldings, the nondeterministic counterparts of the vendored
+   `runFrom` lemmas).
+ * `Turing.NDTM.HaltsWithin.mono` — all-branch halting is monotone in the time bound.
++* `Turing.NDTM.not_haltsWithin_zero` — no machine halts within `0` steps along every branch: the
++  initial configuration is live (the counterpart of `Turing.FinTM.not_computesInTime_zero`).
+ * `Turing.MultiTapeTM.toNDTM_runWith` — the embedded deterministic machine ignores its
+   choices: every choice word of length `t` reproduces `runFrom` at time `t`.
+ * `Turing.NDTM.runWith_mapState_of_agreeOn`, `Turing.NDTM.runWith_mapState_of_agreeOn_det` —
+@@ -255,6 +257,23 @@ theorem HaltsWithin.mono {tm : NDTM k Symbol State} {input : List Symbol} {t t'
+   rw [hrun]
+   exact hhalt
+ 
++/-- **No branch halts in zero steps**: on every input, a machine
++does not halt within `0` steps along every branch, `¬ tm.HaltsWithin input 0`, because the empty
++choice word leaves the run at the initial configuration, whose state `some tm.q₀` is live. In
++particular an all-branch time budget of `0` (e.g. from a vanishing time bound) is never met. This
++is the nondeterministic counterpart of `Turing.FinTM.not_computesInTime_zero`.
++
++**Proof sketch.** Apply all-branch halting at budget `0` to the empty choice word: the run under
++it is the initial configuration (`Turing.NDTM.runWith_nil`), which is `Cfg.init` at the start
++state (`Turing.NDTM.initCfg_eq`) and so has state `some tm.q₀` (`Turing.Cfg.init_state`), not
++`none`. -/
++theorem not_haltsWithin_zero (tm : NDTM k Symbol State) (input : List Symbol) :
++    ¬ tm.HaltsWithin input 0 := by
++  intro h
++  have h0 := haltsWithin_iff.mp h [] rfl
++  rw [runWith_nil, initCfg_eq, Cfg.init_state] at h0
++  exact Option.some_ne_none _ h0
++
+ end NDTM
+ 
+ /-- A nondeterministic machine bundled with a finite state type, mirroring

@@ -320,15 +320,14 @@ noncomputable def orc (N : FinNDTM Bool) : Fin 5 → List Bool → Bool :=
 /-- Decider `0` reads the query. -/
 lemma orc_bit (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
     orc N 0 (pairEncode y (Nat.bits p)) = y.getD p false := by
-  simp only [orc, As, Matrix.cons_val_zero, inputBitLang, indicator_indexLang_pairEncode]
-  cases y.getD p false <;> simp
+  simp only [orc, As, Matrix.cons_val_zero]
+  exact indicator_inputBitLang y p
 
 /-- Decider `1` compares with the query length. -/
 lemma orc_len (N : FinNDTM Bool) (y : List Bool) (p : ℕ) :
     orc N 1 (pairEncode y (Nat.bits p)) = decide (p < y.length) := by
-  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero, inputLenLang,
-    indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  simp only [orc, As, Matrix.cons_val_one, Matrix.cons_val_zero]
+  exact indicator_inputLenLang y p
 
 /-- Decider `2` answers the initial-code language on `⟨x, ⟨bits v, bits s⟩⟩`. -/
 lemma orc_init (N : FinNDTM Bool) (x β : List Bool) (v s : ℕ) :
@@ -352,6 +351,6 @@ lemma orc_step (N : FinNDTM Bool) (x β : List Bool) (u v s : ℕ) :
         (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =
       @decide (Codec.StepRel N x s u v) (Classical.dec _) := by
   simp only [orc, As, indicator_eq_decide]
-  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.StepRel])
+  exact decide_eq_decide.mpr (by simp [dropIdx_pairEncode, Codec.stepRel_iff_mem])
 
 end Complexity.PathHard

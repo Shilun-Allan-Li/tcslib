@@ -185,6 +185,9 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   while the user is away, the maintainer dispatches it to its own sub-agent (Claude) instead of
   waiting: the brief and addendum as the prompt's inputs, delivery as a zip in the scratch
   `deliveries/` area, reviewed and landed as usual. Gates still wait for the user's dispatch.
+  **Ended (the user, 2026-11-06, morning):** while the user is awake, fills are dispatched the
+  typical way again: the maintainer posts a pasteable prompt and the user dispatches it. No new
+  fill goes to a sub-agent. Fills already running on sub-agents continue.
 
 ## 6. Scripted edits and records
 

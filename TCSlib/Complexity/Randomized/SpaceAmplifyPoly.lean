@@ -111,9 +111,8 @@ theorem ps_start {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ 
   -- the input length
   have r1 := inputLength_loop A (ampOr N) x 0 0 .len .lenI (.cp0 .nt) rfl rfl
     (fun m _ => by
-      simp only [ampOr, ampAs, Matrix.cons_val_zero, inputLenLang]
-      rw [indicator_indexLang_pairEncode]
-      exact decide_eq_decide.mpr Iff.rfl)
+      simp only [ampOr, ampAs, Matrix.cons_val_zero]
+      exact indicator_inputLenLang x m)
     B (by omega) reg0.v (Reg.le_v (by simp only [Reg.Le, reg0]; omega)) (Nat.zero_le _)
   refine PSem.of_reach (AReach.mono r1 fun _ h => h.2) ?_
   refine PS.of_v (σ' := sreg n 0 0 0 0 0 0 0) (by reg_eq) ?_

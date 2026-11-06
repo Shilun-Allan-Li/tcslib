@@ -36,3 +36,14 @@ more members re-derive `indicator_inputLenLang` or its sibling `indicator_inputB
 simp set (`PathWalkMachine`'s `pathOr_len`/`pathOr_bit`, `PathHardRegs`' `orc_bit`, `Mult`'s
 `mult_queries`). **Ruled (the user, 2026-11-06): re-point all five in #208**, done at `0140aee2`;
 the ledger's IL-1 is widened by kind to both readings.
+
+## Round 2 findings (received 2026-11-06)
+
+`findings-r2.md`, verbatim (from the exchange inbox), SHA-256
+`7685adea2675655e227ccd6ed40213b09a379a3e7af0a53d58f54e0902014d2c`.
+**Verdict: PASS — 0 blockers, 0 majors, 1 minor, 4 notes. The gate closes.**
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | minor | **Fixed** in the ledger: IL-1's census is 10 declarations across eight files, 11 proof sites. |
+| 2–5 | note | No change. |

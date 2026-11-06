@@ -31,6 +31,7 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
   value is below `2^{length}` and determines the word among words of its length.
 * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
 * `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
+  `Complexity.LogProg.length_bits_succ_le` — `|Nat.bits (m + 1)| ≤ e + 2` when `m ≤ 2^e + 1`;
   `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`;
   `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
 
@@ -124,6 +125,17 @@ lemma bits_succ (n : ℕ) : Nat.bits (n + 1) = incW (Nat.bits n) := by
 lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
   rw [Nat.size_eq_bits_len]
   exact Nat.size_le.mpr h
+
+/-- A number `m ≤ 2 ^ e + 1` has at most `e + 2` binary digits after one increment: the width
+bound for a register value `m` with `m ≤ 2 ^ e`.
+
+**Proof sketch.** `m + 1 ≤ 2 ^ e + 2 < 4 · 2 ^ e = 2 ^ (e + 2)` since `2 ^ e ≥ 1`, then
+`length_bits_le`. -/
+lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+  apply length_bits_le
+  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
+    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
+  omega
 
 /-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
 

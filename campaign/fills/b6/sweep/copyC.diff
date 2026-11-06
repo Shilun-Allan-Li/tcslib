@@ -1,0 +1,322 @@
+--- a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+@@ -166,7 +166,7 @@
+     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) : SPACE f ⊆ SPACE g := by
+   obtain ⟨N, hN⟩ := hfg 1
+   have hfloor : ∀ n, 1 ≤ g n := fun n =>
+-    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff g).mp hg).1 n)
++    Nat.one_le_of_lt (((spaceConstructible_iff g).mp hg).1 n)
+   set F := (Finset.range N).sup f with hF
+   refine SPACE.mono_const (a := F + 1) fun n => ?_
+   by_cases hn : N ≤ n
+@@ -175,8 +175,7 @@
+       _ ≤ (F + 1) * g n := Nat.le_mul_of_pos_left _ (Nat.succ_pos _)
+   · have hle : f n ≤ F := Finset.le_sup (f := f) (Finset.mem_range.mpr (by omega))
+     calc f n ≤ F + 1 := by omega
+-      _ = (F + 1) * 1 := (Nat.mul_one _).symm
+-      _ ≤ (F + 1) * g n := Nat.mul_le_mul_left _ (hfloor n)
++      _ ≤ (F + 1) * g n := Nat.le_mul_of_pos_right _ (hfloor n)
+ 
+ /-- A decider in the smaller space class has a padded code on which the fixed universal
+ machine halts inside the larger window, before its configuration-count clock expires.
+@@ -232,7 +231,7 @@
+   obtain ⟨u, hu, hsu⟩ := hsim (List.replicate N₀ true)
+     [MultiTapeTM.indicator (L : Set (List Bool)) x] t₀ (c₁ * (c₀ * f x.length + 1)) hn hs
+   have hfloor : 1 ≤ f x.length :=
+-    le_trans (by rw [logSpace_eq]; omega) (((spaceConstructible_iff f).mp hf).1 x.length)
++    Nat.one_le_of_lt (((spaceConstructible_iff f).mp hf).1 x.length)
+   have hsmall : C * (c₁ * (c₀ * f x.length + 1) + 1) ≤ A * f x.length := by
+     calc
+       _ ≤ C * (c₁ * (c₀ * f x.length + f x.length) + f x.length) :=
+@@ -339,12 +338,12 @@
+     · rw [moveInputPos_pos_of_ne_right _ h]
+       exact Nat.succ_pos _
+   · intro u hu
+-    have : u = 0 := by omega
++    have : u = 0 := Nat.lt_one_iff.mp hu
+     subst u
+     rw [MultiTapeTM.runFrom_zero, hd]
+     decide
+   · intro u hu
+-    have : u = 0 ∨ u = 1 := by omega
++    have : u = 0 ∨ u = 1 := Nat.le_one_iff_eq_zero_or_eq_one.mp hu
+     rcases this with rfl | rfl
+     · rw [MultiTapeTM.runFrom_zero]
+     · rw [hstep]
+@@ -381,7 +380,7 @@
+       rfl
+   refine ⟨hstep, ?_⟩
+   intro u hu
+-  have : u = 0 ∨ u = 1 := by omega
++  have : u = 0 ∨ u = 1 := Nat.le_one_iff_eq_zero_or_eq_one.mp hu
+   rcases this with rfl | rfl
+   · rw [MultiTapeTM.runFrom_zero]
+   · rw [hstep]
+@@ -461,7 +460,7 @@
+     apply Fin.ext
+     have h' : KI + KR + 2 + i.val = KI + KR + 2 + j.val :=
+       congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h
+-    omega
++    exact Nat.add_left_cancel h'
+ 
+ /-- The radius tape is outside the witness bank, including for a zero-tape witness. -/
+ private lemma sph_witness_cap (KI KR m : ℕ) :
+@@ -557,9 +556,9 @@
+     · rw [hr, embedSilentCfg_output]
+   · rw [MultiTapeTM.spaceUsed_eq_sum]
+     calc
+-      _ ≤ ∑ _j : Fin (KI + KR + M.k + 2),
++      _ ≤ (Finset.univ : Finset (Fin (KI + KR + M.k + 2))).card •
+           (c * g x.length + (g x.length).bits.length + 1) := by
+-        apply Finset.sum_le_sum
++        apply Finset.sum_le_card_nsmul
+         intro j _
+         rw [MultiTapeTM.spaceUsedByTape_eq_card,
+           embedSilentRetTM_visitedByTapeHead,
+@@ -584,9 +583,7 @@
+           · rw [(embedSilentTM_visitedByTapeHead_frame ι 1 hcap _
+               tapes heads [] out a t j hj hjc).2]
+             omega
+-      _ = _ := by
+-        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+-        rfl
++      _ = _ := by rw [Finset.card_fin, smul_eq_mul]
+   · intro u hu j
+     have hpos : (R.runFrom start u).workTapePos j =
+         (embedSilentCfg ι 1 tapes heads [] out
+@@ -613,14 +610,13 @@
+         push_cast
+         omega
+       · rw [(embedSilentCfg_unselected ι 1 tapes heads [] out _ j hj hjc).2]
+-        have hn : (0 : ℤ) ≤ (c * g x.length + (g x.length).bits.length : ℕ) := by omega
++        have hn : (0 : ℤ) ≤ (c * g x.length + (g x.length).bits.length : ℕ) :=
++          Int.natCast_nonneg _
+         omega
+ 
+ 
+ /-- The input rewind uses no work tapes, so its embedding preserves every work tape. -/
+-private def sphEmptySel (k : ℕ) : Fin 0 ↪ Fin k where
+-  toFun := Fin.elim0
+-  inj' := fun i => Fin.elim0 i
++private def sphEmptySel (k : ℕ) : Fin 0 ↪ Fin k := Function.Embedding.ofIsEmpty
+ 
+ /-- The lifted binary input rewind, embedded on the empty bank, is valid from any positive
+ input position of an embedded binary word, with the entire physical work bank framed.
+@@ -860,10 +856,8 @@
+     rwa [embedEmitCfg_selected_pos] at h
+ 
+ /-- The record initializer occupies the record, radius and its own contiguous scratch bank. -/
+-private def sphInitSel (KI KR m : ℕ) : Fin (KI + 2) ↪ Fin (KI + KR + m + 2) where
+-  toFun i := ⟨i.val, by have := i.isLt; omega⟩
+-  inj' := fun _ _ h => Fin.ext
+-    (congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h)
++private def sphInitSel (KI KR m : ℕ) : Fin (KI + 2) ↪ Fin (KI + KR + m + 2) :=
++  Fin.castLEEmb (by omega)
+ 
+ /-- The initial-record phase on the diagonalizer's tape plan. Only the initializer's scratch
+ bank must be blank; the witness and runner banks are framed. [AB09, Theorem 4.8]
+@@ -1024,7 +1018,7 @@
+     apply Fin.ext
+     simp only [ι, sphRunnerSel, Function.Embedding.coeFn_mk, Fin.val_zero, if_pos]
+   have hv (i : Fin (KR + 1)) (hi : i ≠ 0) : (ι i).val = KI + 1 + i.val := by
+-    have hz : i.val ≠ 0 := fun h => hi (Fin.ext h)
++    have hz : i.val ≠ 0 := Fin.val_ne_zero_iff.mpr hi
+     exact if_neg hz
+   let a := d.select ι
+   obtain ⟨hstate, hinput, houtput, htapes, hheads⟩ := sph_select_fields ι d
+@@ -1039,7 +1033,7 @@
+       rw [htapes]
+       apply hblank (ι i)
+       · rw [hv i hi]
+-        have : 0 < i.val := Nat.pos_of_ne_zero (fun h => hi (Fin.ext h))
++        have : 0 < i.val := Nat.pos_of_ne_zero (Fin.val_ne_zero_iff.mpr hi)
+         omega
+       · rw [hv i hi]
+         have := i.isLt
+@@ -1177,7 +1171,7 @@
+   exit_mem := fun _ _ _ _ => Set.mem_singleton _
+   cut := by
+     intro _ d hd _ u hu
+-    have : u = 0 := by omega
++    have : u = 0 := Nat.lt_one_iff.mp hu
+     subst u
+     rw [MultiTapeTM.runFrom_zero, hd]
+     exact Option.some_ne_none _
+@@ -1250,14 +1244,8 @@
+   have hp : C.pre () d₀ := by
+     rw [Contract.branch_pre]
+     change (d₀.mapState fun _ => entry) = d
+-    apply Cfg.ext
+-    · rw [Cfg.mapState_state, hd₀, hd]; rfl
+-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+-    · funext j p
+-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+-    · funext j
+-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
++    simp only [d₀, Cfg.mapState_mapState]
++    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+   have htime : C.time () d₀ = t + 2 := by
+     rw [Contract.branch_time]
+     dsimp only [C₀, sphEmitContract]
+@@ -1346,11 +1334,10 @@
+     · exact ho u h hh
+     · rw [hr, he] at hh
+       exact hne (Option.some.inj hh)
+-  · obtain ⟨w, rfl⟩ : ∃ w, u = t + 1 + w := ⟨u - (t + 1), by omega⟩
++  · obtain ⟨w, rfl⟩ : ∃ w, u = t + 1 + w := Nat.exists_eq_add_of_le (Nat.lt_of_not_le h)
+     rw [seamCompTM_runFrom_right A exit B entry hr he hc w, Cfg.mapState_state] at hbad
+-    cases hq : (B.runFrom (d'.mapState fun _ => entry) w).state with
+-    | none => rw [hq, Option.map_none] at hbad; cases hbad
+-    | some q => rw [hq, Option.map_some] at hbad; cases hbad
++    obtain ⟨_, _, hq⟩ := Option.map_eq_some_iff.mp hbad
++    exact Sum.inr_ne_inl hq
+ 
+ /-- Writing a layout's interior between its two blank boundary cells installs that record.
+ This is the shared boundary argument for the initializer and the stopped runner.
+@@ -1607,15 +1594,8 @@
+     rw [Cfg.mapState_workTapes]
+     exact hblank j hj hj' p
+   have hstart : (((a.mapState Sum.inl).mapState Sum.inl).mapState Sum.inl) = d := by
+-    apply Cfg.ext
+-    · simp only [a, Cfg.mapState_state, hd, Option.map_some]
+-      rfl
+-    · simp only [a, Cfg.mapState_inputPos]
+-    · funext j p
+-      simp only [a, Cfg.mapState_workTapes]
+-    · funext j
+-      simp only [a, Cfg.mapState_workTapePos]
+-    · simp only [a, Cfg.mapState_output]
++    simp only [a, Cfg.mapState_mapState]
++    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+   obtain ⟨t, out, _, he, hc, hh, ho, hword, hend⟩ := hR KI m s (M.tm.initCfg x) 0
+     (by rw [MultiTapeTM.initCfg_eq]; exact Cfg.inWindow_init _ _ s) a ha har hab
+   let a' := (H KI m).runFrom a t
+@@ -1665,15 +1645,8 @@
+     obtain ⟨hvr, hvh⟩ := sph_verdict_run (J KI m) ten yes no hne z hz b v (CT * (L + 1))
+       (by simpa only [b, decide_eq_true_eq] using hrunT) hcutT hheadsT
+     have hmaps : ((z.mapState Sum.inl).mapState Sum.inl) = a'.mapState (fun _ => ven) := by
+-      apply Cfg.ext
+-      · simp only [z, Cfg.mapState_state, ha', Option.map_some]
+-        rfl
+-      · simp only [z, Cfg.mapState_inputPos]
+-      · funext j p
+-        simp only [z, Cfg.mapState_workTapes]
+-      · funext j
+-        simp only [z, Cfg.mapState_workTapePos]
+-      · simp only [z, Cfg.mapState_output]
++      simp only [z, Cfg.mapState_mapState]
++      rfl
+     rw [hmaps] at hvr hvh
+     refine ⟨v + 2, !b, ?_, ?_, ?_, ?_⟩
+     · rw [hvr]
+@@ -1753,12 +1726,8 @@
+   let a := d.mapState (fun _ => ien)
+   have ha : a.state = some ien := by rw [Cfg.mapState_state, hd]; rfl
+   have hstart : a.mapState Sum.inl = d := by
+-    apply Cfg.ext
+-    · rw [Cfg.mapState_state, Cfg.mapState_state, hd]; rfl
+-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+-    · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+-    · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+-    · rw [Cfg.mapState_output, Cfg.mapState_output]
++    simp only [a, Cfg.mapState_mapState]
++    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+   let L := recordLength M.k x.length s
+   have hblank' (j : Fin (KI + KR + m + 2)) (hj : j.val < KI + KR + 2) (hj1 : j ≠ 1)
+       (p : ℤ) : a.workTapes j p = none := by
+@@ -1772,9 +1741,7 @@
+       exact hrad p hp hp')
+     (by
+       intro p _ _
+-      exact hblank' 0 (by rw [Fin.val_zero]; omega) (by
+-        intro h; have hh := congrArg Fin.val h
+-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
++      exact hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
+     (by
+       intro j hj hj' p
+       exact hblank' j (by omega) (by
+@@ -1787,12 +1754,8 @@
+   have har : RecordAt a' 0 (cfgRecord s (M.tm.initCfg x) 0) := by
+     have hwritten := sph_written_record a (some iex) (cfgRecord s (M.tm.initCfg x) 0) L
+       (joinFields_cfgRecord_length _ _ _)
+-      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
+-        intro h; have hh := congrArg Fin.val h
+-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+-      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
+-        intro h; have hh := congrArg Fin.val h
+-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
++      (hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
++      (hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
+     dsimp only [a']
+     rw [recordAt_iff] at hwritten ⊢
+     intro p hp hp'
+@@ -1821,8 +1784,7 @@
+   have hIB : CI * (L + ws.length + s + 1) ≤ B :=
+     Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+   have hSB : CS * (L + 1) ≤ B :=
+-    (Nat.mul_le_mul_left _ (by omega)).trans
+-      (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
++    Nat.mul_le_mul (Nat.le_add_left _ _) (by omega)
+   refine ⟨t + 1 + v, b, ?_, ?_, ?_, hpred⟩
+   · rw [hrun, Cfg.mapState_state, hvs, Option.map_none]
+   · rw [hrun, Cfg.mapState_output, hvo, Cfg.mapState_output, hao]
+@@ -1850,8 +1812,8 @@
+ formula and absorb the additive constants using the logarithmic floor. -/
+ private lemma sph_record_size (g : ℕ → ℕ) (hg : ∀ n, logSpace n ≤ g n) (k n : ℕ) :
+     recordLength k n (g n) + (g n).bits.length + g n + 1 ≤ (4 * k + 9) * g n := by
+-  have hfloor : 1 ≤ g n := by have h := hg n; rw [logSpace_eq] at h; omega
+-  have hb : (g n).bits.length ≤ g n := LogProg.length_bits_le Nat.lt_two_pow_self
++  have hfloor : 1 ≤ g n := Nat.one_le_of_lt (hg n)
++  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+   have hp : posWidth n ≤ 2 * g n := by
+     rw [posWidth_eq]
+     have hpow : n + 1 < 2 ^ (Nat.log 2 n + 2) :=
+@@ -1862,7 +1824,7 @@
+     rw [logSpace_eq] at hg'
+     omega
+   rw [recordLength_eq]
+-  have hk : k ≤ k * g n := by simpa only [mul_one] using Nat.mul_le_mul_left k hfloor
++  have hk : k ≤ k * g n := Nat.le_mul_of_pos_right k hfloor
+   nlinarith
+ 
+ 
+@@ -2045,8 +2007,8 @@
+   rw [hstart] at hDH
+   have hsize : radius ≤ B * g x.length := by
+     have hrecord := sph_record_size g hg M.k x.length
+-    have hbits : ws.length ≤ g x.length := LogProg.length_bits_le Nat.lt_two_pow_self
+-    have hfloor : 1 ≤ g x.length := by have h := hg x.length; rw [logSpace_eq] at h; omega
++    have hbits : ws.length ≤ g x.length := length_bits_le_self _
++    have hfloor : 1 ≤ g x.length := Nat.one_le_of_lt (hg x.length)
+     have h := Nat.mul_le_mul_left C hrecord
+     dsimp only [radius, rW, rR, rS, B]
+     nlinarith
+@@ -2133,7 +2095,7 @@
+     (Cfg.init_state _ _) (Cfg.init_inputPos _ _)
+   let a' := {a with state := some (ScanPhase.done b)}
+   let radius := S ys.length
+-  have hrad : (0 : ℤ) ≤ radius := by omega
++  have hrad : (0 : ℤ) ≤ radius := Int.natCast_nonneg _
+   let C₀ : Contract F (.fwd true) {some (.done true), some (.done false)} Unit ys :=
+     { pre := fun _ d => d = a
+       time := fun _ _ => 2 * ys.length + 2
+@@ -2329,8 +2291,7 @@
+           rw [hleaf, MultiTapeTM.initCfg_eq, Cfg.init_output, List.nil_append, hb]
+     have htest : answer (x.map e) = true ↔ bit = true := hlang.trans hacc
+     change bit = answer (x.map e)
+-    cases hb : bit <;> cases ha : answer (x.map e) <;>
+-      simp_all only [Bool.false_eq_true, iff_false, iff_true, not_true_eq_false]
++    exact Bool.eq_iff_iff.mpr htest.symm
+   let S (n : ℕ) := k * (2 * (B * g n) + 1)
+   obtain ⟨c', N, hN⟩ := FinTM.decidesInSpace_of_alphabetReduction e D L S
+     (by
+@@ -2343,7 +2304,7 @@
+       exact (ht ys).spaceUsed_le_of_halt (hs ys) u)
+   have hL : L ∈ SPACE (fun n => S n + 1) := mem_SPACE_iff.mpr ⟨c', N, hN⟩
+   have hb (n : ℕ) : S n + 1 ≤ (k * (2 * B + 1) + 1) * g n := by
+-    have hn : 1 ≤ g n := by have h := hfloor n; rw [logSpace_eq] at h; omega
++    have hn : 1 ≤ g n := Nat.one_le_of_lt (hfloor n)
+     calc
+       _ ≤ k * (2 * (B * g n) + g n) + g n :=
+         Nat.add_le_add (Nat.mul_le_mul_left k (Nat.add_le_add_left hn _)) hn

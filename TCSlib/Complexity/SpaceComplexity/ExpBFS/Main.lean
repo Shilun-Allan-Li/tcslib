@@ -66,8 +66,8 @@ variable {N : FinNDTM Bool} {x : List Bool}
 lemma orcN_len (N : FinNDTM Bool) (x : List Bool) :
     ∀ k ≤ x.length, orcN N 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
   intro k _
-  simp only [orcN, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  simp only [orcN, decs, Matrix.cons_val_zero]
+  exact indicator_inputLenLang x k
 
 /-- Decider `1` answers whether a code is the initial code. -/
 lemma ini_orcN (r u : ℕ) :
@@ -77,7 +77,7 @@ lemma ini_orcN (r u : ℕ) :
 
 /-- Decider `2` answers the step relation. -/
 lemma stp_orcN (r u v : ℕ) : stp (orcN N) x r u v = true ↔ Codec.StepRel N x r u v := by
-  simp [stp, orcN, decs, indicator_eq_decide, Codec.StepRel]
+  simp [stp, orcN, decs, indicator_eq_decide, Codec.stepRel_iff_mem]
 
 /-- Decider `3` answers whether a code is accepting. -/
 lemma acc_orcN (r u : ℕ) :
@@ -85,25 +85,31 @@ lemma acc_orcN (r u : ℕ) :
       pairEncode x (pairEncode (Nat.bits u) (Nat.bits r)) ∈ Codec.acceptLang N := by
   simp [orcN, decs, indicator_eq_decide]
 
-/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes. -/
+/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes.
+
+**Proof sketch.** `→`: a search path from the initial code is a path of the step relation
+(`stp_orcN`), so its end is reachable (`ExpBFS.rcode_iff_reflTransGen`). `←`: induct on a
+reachability path; each code on it is reachable, so it is below `K` (`ExpBFS.rcode_lt` and `hK`),
+and each step is a search step (`stp_orcN`). -/
 lemma cl_iff {r K : ℕ} (hK : 2 ^ (Codec.codeK N * (r + logSpace x.length + 1)) ≤ K) (v : ℕ) :
     Cl (orcN N) x r K v ↔ ExpBFS.RCode N x r v := by
   constructor
   · rintro ⟨u, -, hi, hpath⟩
     rw [ini_orcN] at hi
     subst hi
-    exact hpath.mono fun a b h => (stp_orcN r a b).mp h.1
+    exact ExpBFS.rcode_iff_reflTransGen.mpr (hpath.mono fun a b h => (stp_orcN r a b).mp h.1)
   · intro h
     refine ⟨_, (Codec.cfgCode_lt r _).trans_le hK, (ini_orcN r _).mpr rfl, ?_⟩
     have key : ∀ w, ExpBFS.RCode N x r w → Relation.ReflTransGen
         (fun a b => stp (orcN N) x r a b = true ∧ b < K)
         (Codec.cfgCode r (N.tm.initCfg x)) w := by
       intro w hw
+      rw [ExpBFS.rcode_iff_reflTransGen] at hw
       induction hw with
       | refl => exact Relation.ReflTransGen.refl
       | @tail b c hab hbc ih =>
         exact ih.tail ⟨(stp_orcN r b c).mpr hbc,
-          (ExpBFS.rcode_lt (hab.tail hbc)).trans_le hK⟩
+          (ExpBFS.rcode_lt (ExpBFS.rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK⟩
     exact key v h
 
 open Classical in

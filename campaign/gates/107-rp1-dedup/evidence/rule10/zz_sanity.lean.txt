@@ -1,0 +1,20 @@
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+set_option maxHeartbeats 400000
+open Turing
+attribute [local irreducible] Complexity.WalkLe Complexity.Codec.StepRel
+attribute [local irreducible] Complexity.LogProg.SavitchARM.Rel
+
+-- each of these must FAIL (a definitional read through an irreducible definition)
+example (E : ℕ → ℕ → Prop) (n c t : ℕ) (h : Complexity.WalkLe E n 0 c t) : c = t := h
+example (E : ℕ → ℕ → Prop) (n c t : ℕ) (h : Complexity.WalkLe E n 1 c t) : c = t ∨ True := by
+  rcases h with h | h
+  · exact Or.inl h
+  · exact Or.inr trivial
+example (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ)
+    (h : Complexity.LogProg.SavitchARM.Rel orc x s u v) :
+    orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true :=
+  h
+-- this must succeed
+example (E : ℕ → ℕ → Prop) (n c t : ℕ) (h : Complexity.WalkLe E n 0 c t) : c = t :=
+  Complexity.walkLe_zero_iff.mp h

@@ -301,8 +301,8 @@ theorem searchLang_mem_PSPACE (hP : P ∈ PSPACE) : searchLang P ∈ PSPACE := b
   -- count `i = |x|`
   have hq : ∀ k ≤ x.length, orc P 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
     intro k _
-    simp only [orc, decs, Matrix.cons_val_zero, inputLenLang, indicator_indexLang_pairEncode]
-    exact decide_eq_decide.mpr Iff.rfl
+    simp only [orc, decs, Matrix.cons_val_zero]
+    exact indicator_inputLenLang x k
   have hcount := inputLength_loop searchA (orc P) x 0 0 .scan .incI .dbl rfl rfl hq B
     (by omega) (rf 0 1 0 0) (fun s => (guard_rf x B .init (by omega) h1B (by omega) (by omega)).2 s)
     (by simp)
