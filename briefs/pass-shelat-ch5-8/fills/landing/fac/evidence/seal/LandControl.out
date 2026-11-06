@@ -1,0 +1,116 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:43:116: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  OneWay.yaoB inLen outLen m A' n ys r j =
+    OneWay.padTrue (inLen.eval n)
+      (List.drop (↑j * inLen.eval n) (A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:44:66: error: Function expected at
+  hA
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:45:148: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (OneWay.YaoMachine.ρP D).eval n = n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:46:62: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  A.coinLen n = A.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:47:81: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:48:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:49:118: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:55:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:56:80: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  NUPPT.inParam z = pairFstD (pairFstD (pairFstD z))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:60:19: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (listToNat (List.take k (List.drop (t * B) r))) then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:63:2: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.25 ↔ ?m.25
+but is expected to have type
+  StatClose X Y δ ↔ ∀ (T : ℕ → Prop), |(uprob fun s => T (X s)) - uprob fun t => T (Y t)| ≤ δ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:65:2: error: Type mismatch
+  rfl
+has type
+  ?m.4 = ?m.4
+but is expected to have type
+  F.index n r = pairFstD (F.gen.runAt n [] r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:68:52: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (match o with
+    | some i => a i
+    | none => b) =
+    match o with
+    | some i => a i
+    | none => b
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:69:58: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.4 ↔ ?m.4
+but is expected to have type
+  A.Uniform ↔ ∀ (n : ℕ), A.advice n = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:70:62: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  A.coinLen n = A.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:76:51: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  rsaBlock.eval n = 2 * (n + 2)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/land-fac/seal/LandControl.lean:77:52: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  fmultBlocks.eval n = 4 * n ^ 3
+[rc=1 time=2s]

@@ -5,6 +5,10 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColRepWitness
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColRepSound
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKMachine
 import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
 
 set_option maxHeartbeats 0
@@ -31,6 +35,17 @@ language with a Levin reduction to `3COL`) is `ZeroKnowledge/NP.lean`.
   committed colouring and its bad edge (Lem-127.f), adaptive sequential soundness
   (Lem-127.g, Claim-127.h), and the interactive-proof half of [PS10, Proposition 127.6]
   (Prop-127.6).
+* `ColRepWitness` — the decider of `R_3COL` (Def-124.f): the test of `R3COL_witnessRelation`'s
+  sketch, its correctness, and its polynomial time through a scan of bounded searches.
+* `ColRepSound` — generic lemmas of the `n|E|`-fold protocol (Prot-127.5, Prop-127.6): the
+  views of four-move iterations against a challenge verifier, the blocks of a uniform tape,
+  and `K` edge samplers close to uniform.
+* `ColZKLemmas` — generic lemmas of the `col_zk` ladder: disjoint fields of a uniform tape are
+  independent and uniform, averaging over seeds, first-success searches split at an index, and
+  the negligibility of the error of [PS10, Proposition 128.8].
+* `ColZKMachine` — the hiding reduction of [PS10, proof of Proposition 128.8] with its attempt
+  table fixed, as a machine (`hidingView`, `exists_colHidingRed`), the two-parameter coin
+  transport and the hiding bound for all the fixed reductions at once.
 * `Simulator` — the distinct colour pairs and `S₃ ≃ ColorPair` (Lem-129.b), the typed views
   and the attempts of `S`, `S'`, `S''` (Alg-128.7, Claim-129.a, Claim-129.c), the hybrid
   reduction to multi-value hiding (Claim-129.d), the string simulator and its efficiency

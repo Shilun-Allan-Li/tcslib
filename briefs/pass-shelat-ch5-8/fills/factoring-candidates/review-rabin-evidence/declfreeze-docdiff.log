@@ -1,0 +1,289 @@
+base decls 124 head decls 302
+DOC-CHANGED oddFactorProb_le
+filled oddFactorProb_le
+DOC-CHANGED blumFactorProb_le
+filled blumFactorProb_le
+DOC-CHANGED blumFactoring_of_factoring
+filled blumFactoring_of_factoring
+filled polyTimeComputable_oddGenRaw
+DOC-CHANGED polyTimeComputable_blumGenRaw
+filled polyTimeComputable_blumGenRaw
+filled rabinSampler_spec
+DOC-CHANGED rabinCollection_sampleClose
+filled rabinCollection_sampleClose
+DOC-CHANGED polyTimeComputable_rabinFactorRaw
+filled polyTimeComputable_rabinFactorRaw
+DOC-CHANGED rabinCollection_invProbAt_le
+filled rabinCollection_invProbAt_le
+filled rabinCollection_oneWay
+DOC-CHANGED polyTimeComputable_blumInvRaw
+filled polyTimeComputable_blumInvRaw
+DOC-CHANGED blumInv_spec
+filled blumInv_spec
+filled blumSampler_spec
+DOC-CHANGED rabinBlumTrapdoor_sampleClose
+filled rabinBlumTrapdoor_sampleClose
+DOC-CHANGED rabinBlumTrapdoor_invProbAt_le
+filled rabinBlumTrapdoor_invProbAt_le
+DOC-CHANGED rabinBlumTrapdoor_oneWay
+filled rabinBlumTrapdoor_oneWay
+DOC-CHANGED polyTimeComputable_rabinRootRaw
+filled polyTimeComputable_rabinRootRaw
+DOC-CHANGED blumFactorProb_le_invProbAt
+filled blumFactorProb_le_invProbAt
+filled blumFactoring_of_rabinBlum_oneWay
+new 178
+base sorry 19 head sorry 0
+base order preserved
+==== DOC DIFF oddFactorProb_le
+--- 
++++ 
+@@ -5,4 +5,5 @@
+-`uprob_subtype_prod_eq`): `Pr[E] · oddFactorProb = Pr[E ∧ S] ≤ factorProb`, and
+-`Pr[¬E] ≤ Pr[p = 2] + Pr[q = 2] = 2/|Π_n| ≤ 4n/2^n ≤ 1/2` for `n ≥ 6`
+-(`one_div_card_primes_le`, `uprob_eq_one_div_card` on the first coordinate), so
+-`Pr[E] ≥ 1/2`. -/
++`uprob_subtype_prod_eq`): `Pr[E] · oddFactorProb = Pr[E ∧ S] ≤ factorProb`, so
++`oddFactorProb ≤ factorProb / Pr[E]`. For the uniform distinct pair,
++`Pr[E] ≥ Pr_{Π_n × Π_n}[p ≠ q ∧ E] ≥ 1 − Pr[p = q] − Pr[p = 2] − Pr[q = 2] ≥ 1 − 3/|Π_n|`
++(`uprob_diag`, `OneWay.uprob_eq_one_div_card` on each coordinate, `uprob_fst`), and
++`|Π_n| ≥ 6` for `n ≥ 6` (`two_pow_le_two_mul_card_primes`, `10n < 2^n`), so `Pr[E] ≥ 1/2`. -/
+==== DOC DIFF blumFactorProb_le
+--- 
++++ 
+@@ -5,2 +5,4 @@
+-`Pr[E] = B(B−1)/(|Π_n|(|Π_n|−1)) ≥ ((B−1)/2^n)² ≥ 1/(64n²)` with `B = #BlumPrimes n ≥ 2^n/(4n)`
+-(`hD`), `B − 1 ≥ 2^n/(8n)` for `n ≥ 6` and `|Π_n| ≤ 2^n`. -/
++`Pr[E] ≥ Pr_{Π_n × Π_n}[p ≠ q ∧ E] ≥ Pr[E] − Pr[E ∧ p = q] ≥ (B/P)² − (1/P)(B/P) = B(B−1)/P²`
++with `P = |Π_n|` and `B = #BlumPrimes n` (`HardcoreBit.uprob_prod_and`,
++`OneWay.uprob_and_le_mul`). With `2^n ≤ 4nB` (`hD`), `10n < 2^n` (so `B ≥ 2`) and `P ≤ 2^n`,
++`P² ≤ 4^n ≤ 16n²B² ≤ 64n²B(B−1)`, so `Pr[E] ≥ 1/(64n²)`. -/
+==== DOC DIFF blumFactoring_of_factoring
+--- 
++++ 
+@@ -3 +3,6 @@
+-`Negligible.mono` (threshold `6`). -/
++`Negligible.mono` (threshold `6`).
++
++**Proof sketch.** For every `A`, `factorProb A` is negligible (`factoringAssumption_iff`, P14),
++hence so is `n ↦ 64 · (n² · factorProb A n)` (`Negligible.mul_pow`, `Negligible.const_mul`); for
++`n ≥ 6`, `0 ≤ blumFactorProb A n ≤ 64 n² factorProb A n` (`blumFactorProb_le`, `uprob_nonneg`),
++and `Negligible.mono` concludes (`blumFactoringAssumption_iff`). -/
+==== DOC DIFF polyTimeComputable_blumGenRaw
+--- 
++++ 
+@@ -2 +2,11 @@
+-`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`" on the last two bits. -/
++`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`" on the last two bits.
++
++**Proof sketch.** The generator equals the string computation `rabin_genCore` with the test
++`rabin_blumAcc` ("prime, and the residue modulo `4` (`H.divMod` by `⟦4⟧`) reads `≥ 3`", which
++decides `p.Prime ∧ p % 4 = 3` on every word) and the fallback words `⟦3⟧`, `⟦7⟧`
++(`rabin_genCore_eq`). That computation is polynomial-time (`rabin_genCore_poly`): `1^{max n 3}`
++by `polyTimeComputable_lenLe`/`_ite`, the coin segments by `_pairTakePoly`/`_pairDropPoly
++rabinPrimeCoins`, each restricted prime run by the block loop over the public repetition host
++`Complexity.polyTimeComputable_iterateFind` (`rabin_spOut_poly`; the fallback padded to `m`
++bits by `H.sub` and `H.add`), the validity test by `polyTimeComputable_pairEq` (the two primes
++differ; both are always primes of the class below `2^m`), and `N` by `H.mul`. -/
+==== DOC DIFF rabinCollection_sampleClose
+--- 
++++ 
+@@ -4 +4,11 @@
+-`rabinDec`. -/
++`rabinDec`.
++
++**Proof sketch.** Take `δ n := 1` for `n < 3` (any two samplers are `1`-close, `statClose_iff`)
++and `e^{-n}` otherwise, negligible by `exp_neg_le_half_pow`. For `n ≥ 3`, rewrite the index
++(`rabinCollection_index`, the numeral `⟦pq⟧_{2·max(n,3)}`), the sampler
++(`rabinCollection_sample`, its activation `unitSampleStr i n s`) and the decoder
++(`rabinCollection_decD`). The modulus fits the blocks, `Nat.size (pq) ≤ 2·max(n,3) ≤ B(n)`, so
++S3 (`statClose_sampleUnitL` at `N = rabinMod i = pq`) mapped through `v ↦ rabinDec i ⟦v⟧`
++gives closeness `e^{-n}` to `x ↦ some x` (`rabinDec_rabinEnc`); the coins move along
++`NUPPT.coinsEquivPoly` and the domain along `rabinCollection_domEquiv`
++(`StatClose.comp_equiv_left`/`_right`). -/
+==== DOC DIFF polyTimeComputable_rabinFactorRaw
+--- 
++++ 
+@@ -3,7 +3,12 @@
+-**Proof sketch.** Cut the coins at `1^{T(n) B(n)}` (`polyTimeComputable_pairTakePoly`/
+-`_pairDropPoly rsaSampleCoins`); `x` by `polyTimeComputable_unitSampleStr`; `y` by
+-`H.modExp` with the exponent `[true, false]`; the call by `A.polyTimeComputable_output` on
+-`NUPPT.polyTimeComputable_layout`; the test `z² ≡ y` by `H.modExp` and
+-`polyTimeComputable_pairEq`; `(x − z) mod N = (x + (N ∸ (z mod N))) mod N` by `H.divMod`,
+-`H.sub`, `H.add` and `H.divMod` (run-3 audit P7-1); the gcd is the first component of
+-`xgcdStr` (`H.xgcd`); the width `n` by `polyTimeComputable_pairTakePoly var`. -/
++**Proof sketch.** `rabinFactorRaw A` is the string computation `rabin_fOut A`
++(`rabin_fOut_eq`), which is polynomial-time (`rabin_fOut_poly`). Cut the coins at
++`1^{T(n) B(n)}` (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rsaSampleCoins`); `x` by
++`polyTimeComputable_unitSampleStr` on the re-laid-out input; `y` by `H.modExp` with the exponent
++`[true, false]`; the call by `A.polyTimeComputable_output` on `NUPPT.polyTimeComputable_layout`.
++The residues are computed modulo the modulus word with leading zeros, wide enough that every
++numeral reads back exactly (also for the degenerate `N = 0`): the test `z² ≡ x²` by `H.modExp`
++and two `H.le` comparisons; `(x − z) mod N = ((x + N) ∸ (z mod N)) mod N` by `H.divMod`, `H.add`,
++`H.sub` and `H.divMod`; the gcd is the first component of `xgcdStr` (`H.xgcd`). Its `n`-bit
++numeral is the truncation `(⟦0⟧_n ++ g).drop |g|` (`H.sub` on `1^n`,
++`polyTimeComputable_pairDropPoly var`), which keeps the low `n` bits (brief correction: not
++`pairTakePoly var`). P9: `xgcdStr_pairEncode`, `divModStr_pairEncode`. -/
+==== DOC DIFF rabinCollection_invProbAt_le
+--- 
++++ 
+@@ -5,18 +5,20 @@
+-**Proof sketch.** At a generated index `N = pq` (`rabinCollection_index`), the domain is
+-`Z_N^*` and `f_N(x)` is the numeral of `(x²).val` (`val_units_pow`), so the event is "`A`
+-decodes to a root of `x²`". With `Z(y, r) := rabinDec N (A(1^n, ⟨N, y⟩; r))`, the
+-symmetry lemma `rabin_symmetry` (odd `p ≠ q`) shows that with probability at least half of it the
+-root `z` differs from `±x`, and then `gcd((x − z).val, N) ∈ {p, q}`
+-(`NumberTheory.gcd_sub_eq_prime_of_sq_eq_sq`), which `rabinFactorStep` outputs as an
+-`n`-bit numeral (`rabinFactorer_runAt`, `NUPPT.inverter_eq_some_iff`, `natToBits_bitsToNat`).
+-The unit `x` of `A'` is sampled by `unitSampleStr` within `e^{-n}` of uniform
+-(`statClose_rejectBlocksL`, as in `rsaCollection_sampleClose`; `StatClose.abs_uprob_sub_le_prod`),
+-paid twice through the factor `2` of the symmetry step, and the law of `N` under `oddGen` is
+-within `2e^{-n} + 4n/2^n` of the uniform *distinct* odd pair: each restricted sampler is
+-`statClose_rejectBlocksL` with the fallback prime of `oddDefault` and the odd-prime density
+-`(|Π_n| − 1)/2^n ≥ 1/(4n)` for `n ≥ 3` (`two_pow_le_two_mul_card_primes`), `4n²` trials
+-(`one_sub_one_div_pow_le_exp_neg`), then `StatClose.prod` and `StatClose.map` through the
+-validity test, whose pushforward of the uniform odd pair differs from the uniform distinct odd
+-pair by the diagonal `uprob_diag` on the restricted class, `1/(P − 1) ≤ 2/P` (`P ≥ 2`) with
+-`one_div_card_primes_le` (run-3 audit P7-3); `uexp_prod`/`uprob_prod` reorganize the coins
+-(total `rabinErr n`). -/
++**Proof sketch.** The generator's coins split into the two prime segments
++(`rabin_genCoinsEquiv`, `HardcoreBit.uexp_comp_equiv`), and the index is `⟦pq⟧_{2n}` for the
++selection of the two restricted samplers' values (`rabinCollection_index`, `rabin_genIndex`).
++(i) The law of that selection is within `2e^{-n} + 4n/2^n` of the uniform distinct odd pair: each
++restricted sampler is `statClose_rejectBlocksL` with the fallback prime of `oddDefault` and the
++odd-prime density `#{p ≠ 2}/2^n ≥ 1/(4n)` for `n ≥ 2` (`two_pow_le_two_mul_card_primes`), `4n²`
++trials (`one_sub_one_div_pow_le_exp_neg`), then `StatClose.prod`, `StatClose.map` through the
++selection, and the diagonal of the uniform odd pair, `1/(P − 1) ≤ 4n/2^n` (`uprob_diag`; run-3
++audit P7-3; `rabin_pairLaw`). The inversion probability at an index is a probability over coins
++depending on the index, so its average moves by at most that distance (`rabin_uexp_le`, the
++uniform-family device). (ii) At a uniform distinct odd pair the domain is `Z_N^*`, `f_N(x)` is
++the numeral of `x²` (`val_units_pow`), and the event is "`A` decodes to a root of `x²`". With
++`Z(y, r) := rabinDec N (A(1^n, ⟨N, y⟩; r))` transported to `Z_{pq}^*`, the symmetry lemma
++`rabin_symmetry` (odd `p ≠ q`) bounds it by twice the event "the root differs from `±x`", and
++then `gcd((x − z).val, N) ∈ {p, q}` (`NumberTheory.gcd_sub_eq_prime_of_sq_eq_sq`), which
++`rabinFactorStep` outputs as an `n`-bit numeral (`rabinFactorer_runAt`,
++`NUPPT.inverter_eq_some_iff`, `bitsToNat_natToBits`). The unit `x` of `A'` is sampled by
++`unitSampleStr` within `e^{-n}` of uniform (S3, `StatClose.abs_uprob_sub_le_prod`), paid twice
++through the factor `2` (`rabin_core`). (iii) Averaging over the pair, `uprob_prod` gives
++`2 · oddFactorProb (rabinFactorer H A) n + 2e^{-n}`; with (i) the total error is `rabinErr n`. -/
+==== DOC DIFF polyTimeComputable_blumInvRaw
+--- 
++++ 
+@@ -4 +4,9 @@
+-`H.divMod`. -/
++`H.divMod`.
++
++**Proof sketch.** The output is the truncation to the width of `y` of the CRT word
++`rabin_crtW p q y` (`rabin_trunc_eq`), which reads exactly as `blumInvNat p q y`
++(`rabin_listToNat_crtW`): every intermediate numeral is computed at a width that holds its value,
++with leading zeros before the moduli for the degenerate moduli `0` (`modExpStr_pairEncode`,
++`xgcdStr_pairEncode`, `divModStr_pairEncode`, `listToNat_addStr`). Each word is one bundle
++field in applied form (`rabin_crtW_poly`), and the truncation is `H.sub` on `⟨y, y⟩`,
++`PolyTimeComputable.append` and `polyTimeComputable_pairDropPoly var` (`rabin_trunc_poly`). -/
+==== DOC DIFF blumInv_spec
+--- 
++++ 
+@@ -5,8 +5,10 @@
+-`⟨p, q⟩` (`encodeDistinctPrimes`), with `p ≠ q` Blum primes (`rabinGenParams`), so the index
+-is `BlumValid`; `blumEnc i y` is the numeral of `y.val`. The inverter returns the numeral of
+-`blumInvNat p q y.val`, which equals `(blumSqrt y).val`: the CRT formula `s` satisfies
+-`s ≡ y^{(p+1)/4} (mod p)` and `s ≡ y^{(q+1)/4} (mod q)` (`ZMod.coe_mul_inv_eq_one`,
+-`crtUnits_fst`/`crtUnits_snd`), hence `s = crtUnits⁻¹(a, b)` by injectivity of `crtUnits`
+-(`ZMod.chineseRemainder`); `blumSqrt_mem_QR` puts it in `QR_N`, so `blumDec` decodes it
+-(`blumDec_blumEnc`), and `(blumPermAt i).symm y = blumSqrt y` by `eq_blumSqrt_of_sq_eq`
+-(`Equiv.ofBijective_symm_apply_apply`). -/
++`⟨p, q⟩` (`encodeDistinctPrimes_eq`, `DistinctPrimes.p_eq`), with `p ≠ q` Blum primes
++(`rabinGenParams`), so the index is `BlumValid` and `blumMod i = N`; `blumEnc i y` is the numeral
++of `y.val`. The inverter returns the numeral of `blumInvNat p q y.val`. Without reading
++`blumSqrt`: the CRT value `s = crtUnits⁻¹(y_p^{p/4+1}, y_q^{q/4+1})` is a residue
++(`pow_div_four_succ_mem_QR`, `mem_QR_mul_iff`) with `s² = y` (`sq_pow_div_four_succ`,
++`sq_crtUnits_symm`), and `blumInvNat p q y.val = s.val` because both reduce to the same residues
++modulo `p` and `q` (`ZMod.coe_mul_inv_eq_one`, `crtUnits_fst`/`crtUnits_snd`, injectivity of
++`ZMod.chineseRemainder`). Then `(blumPermAt i).symm y = s` since `blumPermAt i s = s² = y`
++(`Equiv.symm_apply_eq`, `Equiv.ofBijective_apply`, `coe_sqTo`), and the inverter's string is
++`blumEnc i s`, which `blumDec` decodes to `s` (`blumDec_blumEnc`). -/
+==== DOC DIFF rabinBlumTrapdoor_sampleClose
+--- 
++++ 
+@@ -4 +4,11 @@
+-`StatClose.map`, `StatClose.trans`); decoding by `blumDec` (`sq_mem_QR`). -/
++`StatClose.map`, `StatClose.trans`); decoding by `blumDec` (`sq_mem_QR`).
++
++**Proof sketch.** Take `δ n := 1` for `n < 3` (`statClose_iff`) and `e^{-n}` otherwise. For
++`n ≥ 3`, rewrite the index (`rabinBlumTrapdoor_index`), the sampler (`rabinBlumTrapdoor_sample`;
++its activation is the numeral of `u² mod N` for `u` the unit sampler's value) and the decoder
++(`rabinBlumTrapdoor_decD`). The generated index is `BlumValid` with `blumMod i = pq`. S3 at
++`N = pq` (`Nat.size (pq) ≤ B(n)`) mapped through `v ↦ blumDec i ⟦v² mod N⟧` is `e^{-n}`-close to
++`x ↦ some (sqTo x)` on uniform units (`val_units_pow`, `coe_sqTo`, `blumDec_blumEnc`), which is
++`0`-close to the uniform residue (`pushesUniform_sqTo` for the odd primes `p ≠ q`,
++`statClose_of_pushesUniform`, `StatClose.map`, `StatClose.trans`). The coins move along
++`NUPPT.coinsEquivPoly` and the domain along `rabinBlumTrapdoor_domEquiv`. -/
+==== DOC DIFF rabinBlumTrapdoor_invProbAt_le
+--- 
++++ 
+@@ -6,11 +6,10 @@
+-**Proof sketch.** As `rabinCollection_invProbAt_le`: the ideal `x ← QR_N` gives `y = x²`
+-uniform on `QR_N` (squaring is a bijection of `QR_N`, `blumPermAt`), and the reduction's
+-`y = r²` for a uniform unit `r` has the same law (`pushesUniform_sqTo`); the answer `z` of
+-`A` decodes to a residue root of `y`, and `rabin_symmetry` (with `Z` the decoded answer,
+-coerced to `Z_N^*`) gives `z ∉ {±r}` half the time, hence a factor by
+-`gcd_sub_eq_prime_of_sq_eq_sq`. The law of `N` under `blumGen` is within `2e^{-n} + 4n/2^n`
+-of the uniform distinct Blum pair by `statClose_rejectBlocksL` with the fallback prime of
+-`blumDefault` and the density `hD` (acceptance `≥ 1/(4n)` per trial, `4n²` trials,
+-`one_sub_one_div_pow_le_exp_neg`), `StatClose.prod`, `StatClose.map` through the validity test
+-and the diagonal `1/B ≤ 4n/2^n` from `hD` (`uprob_diag`; run-3 audit P7-3); the unit sampler's
+-`e^{-n}` is paid twice (total `rabinErr n`). -/
++**Proof sketch.** As `rabinCollection_invProbAt_le`, with the generator's law first: the law of
++the selected Blum pair is within `2e^{-n} + 4n/2^n` of the uniform distinct Blum pair
++(`rabin_pairLaw` with the fallback `(3, 7)` of `blumDefault`, the density `hD` for the
++acceptance `≥ 1/(4n)` per trial and the diagonal `1/B ≤ 4n/2^n`; `rabin_blum_uexp`). At a
++uniform distinct Blum pair, reparametrize the ideal `y ← QR_N` by `w = y²` (squaring is a
++bijection of `QR_N`, `blumPermAt`): `A` receives `w` and wins iff it answers a residue root of
++`w` (`blumF_perm`, `blumDec_blumEnc`); the uniform residue `w` is the square `r²` of a uniform
++unit (`pushesUniform_sqTo`), and `rabin_core` (`rabin_symmetry`, `gcd_sub_eq_prime_of_sq_eq_sq`,
++S3 with its `e^{-n}` paid twice) bounds the success by `2F + 2e^{-n}` (`rabin_inner_blum`); then
++`uprob_prod` and the total error `rabinErr n`. -/
+==== DOC DIFF rabinBlumTrapdoor_oneWay
+--- 
++++ 
+@@ -9 +9,8 @@
+-**Deviation:** factoring assumption restricted to Blum moduli through the density hypothesis. -/
++**Deviation:** factoring assumption restricted to Blum moduli through the density hypothesis.
++
++**Proof sketch.** Through `TrapdoorCollection.oneWay_iff` (P2): sampling is
++`rabinBlumTrapdoor_sampleClose`; for every `A` and `n ≥ 3`,
++`0 ≤ invProbAt A n ≤ 2 · blumFactorProb (rabinFactorer H A) n + rabinErr n`
++(`rabinBlumTrapdoor_invProbAt_le`, `Collection.invProbAt_nonneg`), negligible by
++`blumFactoring_of_factoring hD hF` (`blumFactoringAssumption_iff`), `Negligible.const_mul`,
++`negligible_rabinErr` and `Negligible.add`; conclude by `Negligible.mono`. -/
+==== DOC DIFF polyTimeComputable_rabinRootRaw
+--- 
++++ 
+@@ -3 +3,9 @@
+-CRT formula as in `polyTimeComputable_blumInvRaw`. -/
++CRT formula as in `polyTimeComputable_blumInvRaw`.
++
++**Proof sketch.** `rabinRootRaw A` is the string computation `rabin_rOut A` (`rabin_rOut_eq`):
++the answer `s` of `A` on the re-laid-out input (`A.polyTimeComputable_output`,
++`NUPPT.polyTimeComputable_layout`), the cofactor word `⟦N / s⟧` (`H.divMod`; exact since
++`N / s ≤ N`), the test `s (N / s) = N` by `H.mul` and two `H.le` comparisons (instead of
++`pairEq`, as the widths differ), and the truncated CRT word `rabin_crtW s (N / s) y`
++(`rabin_listToNat_crtW`, `rabin_trunc_eq`); `polyTimeComputable_ite` selects the output
++(`rabin_rOut_poly`). -/
+==== DOC DIFF blumFactorProb_le_invProbAt
+--- 
++++ 
+@@ -7,6 +7,7 @@
+-and `blumInvNat p' q' y.val = (blumSqrt y).val` (the CRT argument of `blumInv_spec`), the
+-residue root of `y`, which `blumDec` decodes and which is `(blumPermAt N).symm y`; hence
+-`A'` wins for every `y` (`rabinBlumInverter_runAt`, `rabinBlumInverter_coinsEquiv`,
+-`uprob_mono`). The ideal uniform Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the
+-generator's law (`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
+-`StatClose.abs_uprob_sub_le_prod`, `uexp_prod`; run-3 audit P7-3). -/
++and `blumInvNat p' q' y.val` is the residue of a residue root of `y` (the CRT argument of
++`blumInv_spec`, `rabin_blumInvNat_spec`), which `blumDec` decodes to a preimage of `y`
++(`blumDec_blumEnc`, `blumF_perm`); hence `A'` wins for every `y` (`rabinBlumInverter_runAt`,
++`rabinBlumInverter_coinsEquiv`, `uprob_fst`, `uprob_mono`; `rabin_inner_inv`), and averaging
++over the uniform distinct Blum pair gives `blumFactorProb A n` (`uprob_prod`). The ideal uniform
++Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the generator's law (`rabin_blum_uexp`:
++`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n`; run-3 audit P7-3). -/
