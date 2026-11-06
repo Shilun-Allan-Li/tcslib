@@ -3,11 +3,17 @@
 *Drafted 2026-11-06. Owner: a-gupte. Status: **plan; nothing landed**. Every "decision" below
 is provisional until a maintainer closes the matching open question (§8).*
 
-This is the campaign plan required by [`workflow.md`](workflow.md) §1. Read it together with
-[`policy.md`](policy.md), the standards every landed file must meet. This file says *what*
+This is the campaign plan required by [`workflow.md`](../../../workflow.md) §1. Read it together with
+[`policy.md`](../../../policy.md), the standards every landed file must meet. This file says *what*
 gets formalized and in what order. `policy.md` says what the Lean must look like, and
 `workflow.md` says how statement phases, audit gates and fills run. Where this plan and
 `policy.md` disagree, `policy.md` wins and this plan gets fixed.
+
+**Where the records live.** This campaign follows the Arora–Barak chapters 3–4 precedent. Its
+records (this plan, audit gates, fill briefs, the backlog) live under `campaign/` on the
+long-lived branch `quantum/campaign`, and they never reach `main`. Only Lean code (and the
+blueprint and reference files that go with it) is merged to `main`, through PRs. See
+`campaign/README.md` (OQ-10).
 
 ## Contents
 
@@ -59,7 +65,11 @@ an option either. The plan therefore splits the work (FD-1, OQ-1):
 ### 1a. The five course texts
 
 Each text is ingested under `blueprint/src/references/` before the first file citing it lands
-(policy §2, *Blueprint*; `dataset/INSTRUCTIONS.md`). Licensing is checked first (OQ-2).
+(policy §2, *Blueprint*; `dataset/INSTRUCTIONS.md`). The procedure is the one used for [AB09]
+(OQ-2): the PDF stays local; `scripts/sources.py add <TAG>=<pdf>` produces `<name>.raw.md`
+(page-by-page text extraction, with the PDF's SHA-256 in its header) and `<name>.md` (the
+validated version, anchored to PDF pages); those two files and the tag's entry in
+`blueprint/src/references/sources.json` are committed. No PDF is committed.
 
 | Tag | Text | Version used | Role |
 |---|---|---|---|
@@ -258,7 +268,7 @@ TCSlib/Quantum/Nonlocal.lean                facade
 TCSlib/Quantum/MixedStates.lean             (Tier B, blocked on OQ-1) consumer files only; MState,
                                             POVM, partial trace come from Physlib, not from here
 TCSlib/Quantum/Algorithms.lean              (Tier B) QFT, PhaseEstimation, Shor/*, AbelianHSP
-TCSlib/Complexity/Promise.lean              facade; Promise/Basic.lean
+TCSlib/Complexity/Promise.lean              facade (namespace `Promise`); Promise/Basic.lean
 TCSlib/Complexity/Counting.lean             facade (namespace `Counting`)
   Counting/PP.lean         InPP E, gapCount, closure predicates
   Counting/GapP.lean       GapP closure under sums, products and negation
@@ -468,15 +478,15 @@ accepted, the stubs move into `backlog.md`.
 | ID | Question | Provisional choice |
 |---|---|---|
 | OQ-1 | When does TCSlib bump Mathlib (and Lean and PFR) and take a dependency on Physlib `QuantumInfo`? Physlib is on Lean v4.35.0; TCSlib is on v4.25.0. | Tier A does not wait: it uses a thin layer with Physlib's design (FD-1, FD-2). Tier B's quantum-information items (Q5.4, Q5.5, Q6.2 onward) are blocked until the bump. On the bump, `Quantum/Basic`'s overlapping definitions are replaced by Physlib's. |
-| OQ-2 | May the arXiv-licensed PDFs ([Wat08], [dW26]) and the CC BY-NC-SA OCW notes ([Aar10]) be ingested into `blueprint/src/references/`? What about [Gha20] and [Yue22], whose licenses are not stated? | Ingest the converted `.md` pairs, as for the existing `PhysRev*` and `arXiv.*` references, subject to the maintainer's licensing check |
-| OQ-3 | Area and namespaces: `TCSlib/Quantum` (namespace `Quantum`) for models plus `TCSlib/Complexity/Quantum` (namespace `QuantumComplexity`) for classes? | Yes |
+| OQ-2 | How are the course texts stored in `blueprint/src/references/`? | **Closed by the owner, 2026-11-06:** as for [AB09]. The PDF stays local; only the `sources.py` outputs (`<name>.raw.md`, `<name>.md`) and the `sources.json` entry are committed (§1a) |
+| OQ-3 | Area and namespaces | **Closed by the owner, 2026-11-06:** `TCSlib/Quantum/` (namespace `Quantum`) for models and algorithms; `TCSlib/Complexity/Quantum/` (`QuantumComplexity`) for quantum classes; `TCSlib/Complexity/Counting/` (`Counting`) for PP and GapP; `TCSlib/Complexity/Promise/` (`Promise`) for promise problems (§4) |
 | OQ-4 | Promise problems first-class from the start, or only from Q6? | Defined in Q0; BQP stated on languages, with a promise version |
 | OQ-5 | Acceptance outcome `1` (de Wolf, Aaronson, AB09) or `0` (Watrous)? | `1`, with a deviation note wherever [Wat08] is cited |
 | OQ-6 | Move `ErrorCorrectingCodes/QuantumHamming.lean` (already `Fin n → Fin 2`, with its own Pauli strings) onto `Quantum/Basic`? | Its register type already matches FD-2. Not in this campaign; queued in `backlog.md` as a later cleanup |
 | OQ-7 | `ℝ`-valued quantum probabilities next to `ℚ`-valued `randProb`? | Keep both, with the Q0.9 cast lemma |
 | OQ-8 | Official gate set: Watrous's {Toffoli, H, P}, {Toffoli, H} (real amplitudes), or gate-set-generic classes? | Watrous's set; gate-set independence waits for Solovay–Kitaev (Tier C) |
 | OQ-9 | Mixed states and entropy: our own minimal layer or Physlib's? | Physlib's (FD-1). Closed by the owner, 2026-11-06, pending maintainer confirmation |
-| OQ-10 | Where do campaign records (this plan, packs, briefs) live, now that `campaign/`, `audits/` and `briefs/` are kept off `main`? | This file on the campaign branch; the maintainer decides what reaches `main` |
+| OQ-10 | Where do campaign records live? | **Closed by the owner, 2026-11-06:** as for Arora–Barak chapters 3–4. Records live under `campaign/` on branch `quantum/campaign` (plan in `campaign/design/plans/`, gates in `campaign/gates/`, fills in `campaign/fills/`, backlog in `campaign/backlog.md`), kept off `main`; only Lean and its blueprint and reference files are merged to `main` |
 | OQ-11 | Which elaboration check do agents run? `.claude/CLAUDE.md` says never to run `lean` or `lake build` and to use the VS Code infoview. `policy.md`'s review checklist (item 6) requires `zsh scripts/lean_check.sh <file>`, and `workflow.md` §6 uses `scripts/lean_check_tree.sh`. Cloud sessions have no infoview. | Follow `policy.md` and `workflow.md`: `lean_check.sh` per touched file, never `lake build` |
 
 ## 9. How this plan meets policy.md
@@ -505,12 +515,14 @@ review checklist is run on every PR of the campaign.
 
 ## 10. Getting started: the first three PRs
 
-1. **This plan.** Open it as a PR (or an issue) so a maintainer can rule on OQ-1, OQ-2,
-   OQ-3 and OQ-10 before any Lean lands.
-2. **References.** Ingest [Wat08] and [dW26], plus [Aar10] once OQ-2 allows:
-   `python3 scripts/sources.py add Wat08=<pdf>` and the same for `dW26`. The `add` step
-   runs paid `claude -p` matching stages; `python3 scripts/dataset_pipeline.py --estimate`
-   shows the cost first.
+1. **This plan.** The owner raises it with the maintainers directly (no PR; the plan stays
+   on `quantum/campaign`). OQ-1 is the question that needs them; OQ-2, OQ-3 and OQ-10 are
+   closed.
+2. **References.** Ingest [Wat08] and [dW26] (then [Aar10] and the rest as their phases
+   start) by the §1a procedure: `python3 scripts/sources.py add Wat08=<local pdf>` and the
+   same for `dW26`. The `add` step runs paid `claude -p` matching stages;
+   `python3 scripts/dataset_pipeline.py --estimate` shows the cost first. The outputs land in
+   the same PR as the first Lean file citing the tag.
 3. **Phase P1 skeleton.** `Complexity/Promise`, `Complexity/Counting/{PP,GapP,Inclusions}`
    and `Quantum/Basic/*`, as statements with a proof sketch under every `sorry`, plus the
    FD-3 sanity theorems. Verify with `zsh scripts/lean_check.sh <file>` on each file,
@@ -528,3 +540,4 @@ Append-only. A superseded row is marked **Superseded** in place, never deleted.
 | 2026-11-06 | FD-1 to FD-12 adopted provisionally; OQ-1 to OQ-10 opened. | a-gupte (with Claude) |
 | 2026-11-06 | Mathlib APIs FD-1 relies on checked to elaborate at the pin (Lean v4.25.0). | a-gupte (with Claude) |
 | 2026-11-06 | **FD-1 and FD-2 revised.** Physlib's pure-state basics measured: their import closure is 38 modules and about 20,000 lines in the newer Lean module system, so copying is ruled out. Tier A keeps a thin Mathlib layer but adopts Physlib's design (`Qubit := Fin 2`, `Ket` fields, `𝐔[d]`, gate names; Physlib commit cdfa609, Apache-2.0, cited per §1c). Registers change from `Fin n → Bool` to `Fin n → Qubit`, with a `Qubit ≃ Bool` bridge. Mixed states, POVMs, channels and entropy are not rebuilt: Q5.4, Q5.5 and Q6.2 onward are blocked on OQ-1. OQ-9 closed provisionally (Physlib); OQ-6 simplified; OQ-11 opened. The overlap with Physlib (kets, standard gates, Born rule) is approved as a deliberate, temporary duplication, to be deleted when the dependency arrives. | a-gupte (approved) |
+| 2026-11-06 | OQ-2, OQ-3 and OQ-10 closed by the owner, following the repository's precedents: references stored as for [AB09] (no PDFs; `sources.py` outputs only); the folder and namespace layout of §4; campaign records under `campaign/` on branch `quantum/campaign`, off `main`, as for Arora–Barak chapters 3–4. The plan moved from the repository root to `campaign/design/plans/`. The open-question register stays in §8 until `campaign/backlog.md` is opened. | a-gupte (decided) |
