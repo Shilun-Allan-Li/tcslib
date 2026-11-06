@@ -184,7 +184,7 @@ noncomputable def simCoinsEquiv {c : Fin n → Fin 3} (hc : ProperColoring G c) 
     ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin ℓn → Bool)) × ρ ≃
       ((Fin (edgeCount G) × ColorPair) × (Fin n → Fin ℓn → Bool)) × ρ :=
   Equiv.prodCongr (Equiv.prodCongr
-    (Equiv.prodCongrRight fun e => colorPairEquiv (hc _ _ (edgeOf_adj G e))) (Equiv.refl _))
+    (Equiv.prodCongrRight fun e => colorPairEquiv (hc.ne (edgeOf_adj G e))) (Equiv.refl _))
     (Equiv.refl ρ)
 
 /-- **`S ≡ S'`, one attempt** [PS10, proof of Proposition 128.8, "it directly follows that

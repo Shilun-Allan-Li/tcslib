@@ -211,7 +211,8 @@ def PerfectZKAbort (π : Protocol) (R : List Bool → List Bool → Prop) : Prop
   ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →
     uprob (fun r : S.Coins x.length => S.simulate x z r = []) ≤ 1 / 2 ∧
     ∀ T : List Bool → Prop,
-      uprob (fun r : (π.withV V').ExecCoins π.P x => T ((π.withV V').viewV x y z r).encode) *
+      uprob (fun r : (π.withV V').ExecCoins (π.withV V').P x =>
+          T ((π.withV V').viewV x y z r).encode) *
           uprob (fun r : S.Coins x.length => S.simulate x z r ≠ []) =
         uprob (fun r : S.Coins x.length => S.simulate x z r ≠ [] ∧ T (S.simulate x z r))
 

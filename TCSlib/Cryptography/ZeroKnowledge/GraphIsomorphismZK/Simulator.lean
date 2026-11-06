@@ -68,6 +68,21 @@ open Complexity Turing Complexity.StateLoop EncodingMachines
 `N` has one guessed bit, `(N + 1)²` permutation-sampling bits and `V'`'s tape. -/
 def blockLen (V' : Strategy) (N : ℕ) : ℕ := 1 + (N + 1) ^ 2 + V'.coinLen N
 
+/-- The defining equation of `blockLen`: `blockLen V' N = 1 + (N + 1)² + V'.coinLen N`. -/
+theorem blockLen_eq (V' : Strategy) (N : ℕ) : blockLen V' N = 1 + (N + 1) ^ 2 + V'.coinLen N := rfl
+
+/-- **A tape of `M` blocks of `blockLen V' N` bits** as a tape of `M` blocks of
+`1 + (N + 1)² + V'.coinLen N` bits (`finCongr` along `blockLen_eq`): the interface through which a
+statement reads the block fields of the simulator's tape without reducing `blockLen`. -/
+def blockTapeEquiv (V' : Strategy) (N M : ℕ) :
+    (Fin (M * blockLen V' N) → Bool) ≃ (Fin (M * (1 + (N + 1) ^ 2 + V'.coinLen N)) → Bool) :=
+  Equiv.arrowCongr (finCongr (by rw [blockLen_eq])) (Equiv.refl Bool)
+
+/-- The tape equivalence keeps the tape: `List.ofFn (blockTapeEquiv V' N M r) = List.ofFn r`. -/
+theorem blockTapeEquiv_ofFn (V' : Strategy) (N M : ℕ) (r : Fin (M * blockLen V' N) → Bool) :
+    List.ofFn (blockTapeEquiv V' N M r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [blockLen_eq]) r).symm
+
 /-- The block length as a syntactic polynomial of the instance length. -/
 def blockPoly (V' : Strategy) : PolyExpr := .add (.add (.const 1) (.normal 1 2)) V'.coins
 
