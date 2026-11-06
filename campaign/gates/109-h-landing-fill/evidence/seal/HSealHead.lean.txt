@@ -57,7 +57,7 @@ space-bounded configuration window.
   full scan, so it cannot guarantee `O(S(n))` space uniformly for sublinear
   `S`.
 * **Both bounds space-constructible**, as in the book; `g`'s witness drives
-  the window radius and the clock width, and of `f` the proof uses only the
+  the window radius, and of `f` the proof uses only the
   bundled floor `1 ≤ logSpace n ≤ f n`.
 * The `SpaceComplexity.lean` facade imports this module.
 
@@ -231,6 +231,7 @@ attribute [local irreducible]
   Turing.summaryTag
   Turing.windowRun
 
+
 /-- The inclusion half: `hfg` at `A = 1` from some `N` on, and `g`'s floor below `N`.
 [AB09, Theorem 4.8, inclusion]
 
@@ -249,8 +250,7 @@ private lemma sph_inclusion {f g : ℕ → ℕ} (hg : SpaceConstructible g)
       _ ≤ (F + 1) * g n := Nat.le_mul_of_pos_left _ (Nat.succ_pos _)
   · have hle : f n ≤ F := Finset.le_sup (f := f) (Finset.mem_range.mpr (by omega))
     calc f n ≤ F + 1 := by omega
-      _ = (F + 1) * 1 := (Nat.mul_one _).symm
-      _ ≤ (F + 1) * g n := Nat.mul_le_mul_left _ (hfloor n)
+      _ ≤ (F + 1) * g n := Nat.le_mul_of_pos_right _ (hfloor n)
 
 /-- A decider in the smaller space class has a padded code on which the fixed universal
 machine halts inside the larger window, before its configuration-count clock expires.
@@ -413,12 +413,12 @@ private lemma sph_right_run {k : ℕ} {Γ : Type} {x : List Γ}
     · rw [moveInputPos_pos_of_ne_right _ h]
       exact Nat.succ_pos _
   · intro u hu
-    have : u = 0 := by omega
+    have : u = 0 := Nat.lt_one_iff.mp hu
     subst u
     rw [MultiTapeTM.runFrom_zero, hd]
     decide
   · intro u hu
-    have : u = 0 ∨ u = 1 := by omega
+    have : u = 0 ∨ u = 1 := Nat.le_one_iff_eq_zero_or_eq_one.mp hu
     rcases this with rfl | rfl
     · rw [MultiTapeTM.runFrom_zero]
     · rw [hstep]
@@ -455,7 +455,7 @@ private lemma sph_emit_run {k : ℕ} {Γ : Type} {x : List Γ} (b : Γ)
       rfl
   refine ⟨hstep, ?_⟩
   intro u hu
-  have : u = 0 ∨ u = 1 := by omega
+  have : u = 0 ∨ u = 1 := Nat.le_one_iff_eq_zero_or_eq_one.mp hu
   rcases this with rfl | rfl
   · rw [MultiTapeTM.runFrom_zero]
   · rw [hstep]
@@ -535,7 +535,7 @@ private def sphWitnessSel (KI KR m : ℕ) : Fin m ↪ Fin (KI + KR + m + 2) wher
     apply Fin.ext
     have h' : KI + KR + 2 + i.val = KI + KR + 2 + j.val :=
       congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h
-    omega
+    exact Nat.add_left_cancel h'
 
 /-- The radius tape is outside the witness bank, including for a zero-tape witness. -/
 private lemma sph_witness_cap (KI KR m : ℕ) :
@@ -631,9 +631,9 @@ private lemma sph_radius_run (KI KR : ℕ) {Q : Type} [DecidableEq Q]
     · rw [hr, embedSilentCfg_output]
   · rw [MultiTapeTM.spaceUsed_eq_sum]
     calc
-      _ ≤ ∑ _j : Fin (KI + KR + M.k + 2),
+      _ ≤ (Finset.univ : Finset (Fin (KI + KR + M.k + 2))).card •
           (c * g x.length + (g x.length).bits.length + 1) := by
-        apply Finset.sum_le_sum
+        apply Finset.sum_le_card_nsmul
         intro j _
         rw [MultiTapeTM.spaceUsedByTape_eq_card,
           embedSilentRetTM_visitedByTapeHead,
@@ -658,9 +658,7 @@ private lemma sph_radius_run (KI KR : ℕ) {Q : Type} [DecidableEq Q]
           · rw [(embedSilentTM_visitedByTapeHead_frame ι 1 hcap _
               tapes heads [] out a t j hj hjc).2]
             omega
-      _ = _ := by
-        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-        rfl
+      _ = _ := by rw [Finset.card_fin, smul_eq_mul]
   · intro u hu j
     have hpos : (R.runFrom start u).workTapePos j =
         (embedSilentCfg ι 1 tapes heads [] out
@@ -687,14 +685,13 @@ private lemma sph_radius_run (KI KR : ℕ) {Q : Type} [DecidableEq Q]
         push_cast
         omega
       · rw [(embedSilentCfg_unselected ι 1 tapes heads [] out _ j hj hjc).2]
-        have hn : (0 : ℤ) ≤ (c * g x.length + (g x.length).bits.length : ℕ) := by omega
+        have hn : (0 : ℤ) ≤ (c * g x.length + (g x.length).bits.length : ℕ) :=
+          Int.natCast_nonneg _
         omega
 
 
 /-- The input rewind uses no work tapes, so its embedding preserves every work tape. -/
-private def sphEmptySel (k : ℕ) : Fin 0 ↪ Fin k where
-  toFun := Fin.elim0
-  inj' := fun i => Fin.elim0 i
+private def sphEmptySel (k : ℕ) : Fin 0 ↪ Fin k := Function.Embedding.ofIsEmpty
 
 /-- The lifted binary input rewind, embedded on the empty bank, is valid from any positive
 input position of an embedded binary word, with the entire physical work bank framed.
@@ -934,10 +931,8 @@ private lemma sph_select_fields {m k : ℕ} {Γ S : Type} {x : List Γ}
     rwa [embedEmitCfg_selected_pos] at h
 
 /-- The record initializer occupies the record, radius and its own contiguous scratch bank. -/
-private def sphInitSel (KI KR m : ℕ) : Fin (KI + 2) ↪ Fin (KI + KR + m + 2) where
-  toFun i := ⟨i.val, by have := i.isLt; omega⟩
-  inj' := fun _ _ h => Fin.ext
-    (congrArg (fun z : Fin (KI + KR + m + 2) => z.val) h)
+private def sphInitSel (KI KR m : ℕ) : Fin (KI + 2) ↪ Fin (KI + KR + m + 2) :=
+  Fin.castLEEmb (by omega)
 
 /-- The initial-record phase on the diagonalizer's tape plan. Only the initializer's scratch
 bank must be blank; the witness and runner banks are framed. [AB09, Theorem 4.8]
@@ -1098,7 +1093,7 @@ private lemma sph_runner_run (M : FinTM Bool) :
     apply Fin.ext
     simp only [ι, sphRunnerSel, Function.Embedding.coeFn_mk, Fin.val_zero, if_pos]
   have hv (i : Fin (KR + 1)) (hi : i ≠ 0) : (ι i).val = KI + 1 + i.val := by
-    have hz : i.val ≠ 0 := fun h => hi (Fin.ext h)
+    have hz : i.val ≠ 0 := Fin.val_ne_zero_iff.mpr hi
     exact if_neg hz
   let a := d.select ι
   obtain ⟨hstate, hinput, houtput, htapes, hheads⟩ := sph_select_fields ι d
@@ -1113,7 +1108,7 @@ private lemma sph_runner_run (M : FinTM Bool) :
       rw [htapes]
       apply hblank (ι i)
       · rw [hv i hi]
-        have : 0 < i.val := Nat.pos_of_ne_zero (fun h => hi (Fin.ext h))
+        have : 0 < i.val := Nat.pos_of_ne_zero (Fin.val_ne_zero_iff.mpr hi)
         omega
       · rw [hv i hi]
         have := i.isLt
@@ -1251,7 +1246,7 @@ private def sphEmitContract {k : ℕ} {Γ : Type} (b : Γ) (x : List Γ) :
   exit_mem := fun _ _ _ _ => Set.mem_singleton _
   cut := by
     intro _ d hd _ u hu
-    have : u = 0 := by omega
+    have : u = 0 := Nat.lt_one_iff.mp hu
     subst u
     rw [MultiTapeTM.runFrom_zero, hd]
     exact Option.some_ne_none _
@@ -1324,14 +1319,8 @@ private lemma sph_verdict_run {k : ℕ} {Q P : Type} [DecidableEq P]
   have hp : C.pre () d₀ := by
     rw [Contract.branch_pre]
     change (d₀.mapState fun _ => entry) = d
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, hd₀, hd]; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j p
-      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j
-      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+    simp only [d₀, Cfg.mapState_mapState]
+    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   have htime : C.time () d₀ = t + 2 := by
     rw [Contract.branch_time]
     dsimp only [C₀, sphEmitContract]
@@ -1420,11 +1409,10 @@ private lemma sph_seam_avoids {k : ℕ} {Γ P Q : Type} [DecidableEq P] {x : Lis
     · exact ho u h hh
     · rw [hr, he] at hh
       exact hne (Option.some.inj hh)
-  · obtain ⟨w, rfl⟩ : ∃ w, u = t + 1 + w := ⟨u - (t + 1), by omega⟩
+  · obtain ⟨w, rfl⟩ : ∃ w, u = t + 1 + w := Nat.exists_eq_add_of_le (Nat.lt_of_not_le h)
     rw [seamCompTM_runFrom_right A exit B entry hr he hc w, Cfg.mapState_state] at hbad
-    cases hq : (B.runFrom (d'.mapState fun _ => entry) w).state with
-    | none => rw [hq, Option.map_none] at hbad; cases hbad
-    | some q => rw [hq, Option.map_some] at hbad; cases hbad
+    obtain ⟨_, _, hq⟩ := Option.map_eq_some_iff.mp hbad
+    exact Sum.inr_ne_inl hq
 
 /-- Writing a layout's interior between its two blank boundary cells installs that record.
 This is the shared boundary argument for the initializer and the stopped runner.
@@ -1681,15 +1669,8 @@ private lemma sph_suffix (M : FinTM Bool) :
     rw [Cfg.mapState_workTapes]
     exact hblank j hj hj' p
   have hstart : (((a.mapState Sum.inl).mapState Sum.inl).mapState Sum.inl) = d := by
-    apply Cfg.ext
-    · simp only [a, Cfg.mapState_state, hd, Option.map_some]
-      rfl
-    · simp only [a, Cfg.mapState_inputPos]
-    · funext j p
-      simp only [a, Cfg.mapState_workTapes]
-    · funext j
-      simp only [a, Cfg.mapState_workTapePos]
-    · simp only [a, Cfg.mapState_output]
+    simp only [a, Cfg.mapState_mapState]
+    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   obtain ⟨t, out, _, he, hc, hh, ho, hword, hend⟩ := hR KI m s (M.tm.initCfg x) 0
     (by rw [MultiTapeTM.initCfg_eq]; exact Cfg.inWindow_init _ _ s) a ha har hab
   let a' := (H KI m).runFrom a t
@@ -1739,15 +1720,8 @@ private lemma sph_suffix (M : FinTM Bool) :
     obtain ⟨hvr, hvh⟩ := sph_verdict_run (J KI m) ten yes no hne z hz b v (CT * (L + 1))
       (by simpa only [b, decide_eq_true_eq] using hrunT) hcutT hheadsT
     have hmaps : ((z.mapState Sum.inl).mapState Sum.inl) = a'.mapState (fun _ => ven) := by
-      apply Cfg.ext
-      · simp only [z, Cfg.mapState_state, ha', Option.map_some]
-        rfl
-      · simp only [z, Cfg.mapState_inputPos]
-      · funext j p
-        simp only [z, Cfg.mapState_workTapes]
-      · funext j
-        simp only [z, Cfg.mapState_workTapePos]
-      · simp only [z, Cfg.mapState_output]
+      simp only [z, Cfg.mapState_mapState]
+      rfl
     rw [hmaps] at hvr hvh
     refine ⟨v + 2, !b, ?_, ?_, ?_, ?_⟩
     · rw [hvr]
@@ -1827,12 +1801,8 @@ private lemma sph_record_suffix (M : FinTM Bool) (m : ℕ) :
   let a := d.mapState (fun _ => ien)
   have ha : a.state = some ien := by rw [Cfg.mapState_state, hd]; rfl
   have hstart : a.mapState Sum.inl = d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, Cfg.mapState_state, hd]; rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output]
+    simp only [a, Cfg.mapState_mapState]
+    exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   let L := recordLength M.k x.length s
   have hblank' (j : Fin (KI + KR + m + 2)) (hj : j.val < KI + KR + 2) (hj1 : j ≠ 1)
       (p : ℤ) : a.workTapes j p = none := by
@@ -1846,9 +1816,7 @@ private lemma sph_record_suffix (M : FinTM Bool) (m : ℕ) :
       exact hrad p hp hp')
     (by
       intro p _ _
-      exact hblank' 0 (by rw [Fin.val_zero]; omega) (by
-        intro h; have hh := congrArg Fin.val h
-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+      exact hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
     (by
       intro j hj hj' p
       exact hblank' j (by omega) (by
@@ -1861,12 +1829,8 @@ private lemma sph_record_suffix (M : FinTM Bool) (m : ℕ) :
   have har : RecordAt a' 0 (cfgRecord s (M.tm.initCfg x) 0) := by
     have hwritten := sph_written_record a (some iex) (cfgRecord s (M.tm.initCfg x) 0) L
       (joinFields_cfgRecord_length _ _ _)
-      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
-        intro h; have hh := congrArg Fin.val h
-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
-      (hblank' 0 (by rw [Fin.val_zero]; omega) (by
-        intro h; have hh := congrArg Fin.val h
-        rw [Fin.val_zero, Fin.val_one] at hh; omega) _)
+      (hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
+      (hblank' 0 (by rw [Fin.val_zero]; omega) Fin.zero_ne_one _)
     dsimp only [a']
     rw [recordAt_iff] at hwritten ⊢
     intro p hp hp'
@@ -1895,8 +1859,7 @@ private lemma sph_record_suffix (M : FinTM Bool) (m : ℕ) :
   have hIB : CI * (L + ws.length + s + 1) ≤ B :=
     Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
   have hSB : CS * (L + 1) ≤ B :=
-    (Nat.mul_le_mul_left _ (by omega)).trans
-      (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
+    Nat.mul_le_mul (Nat.le_add_left _ _) (by omega)
   refine ⟨t + 1 + v, b, ?_, ?_, ?_, hpred⟩
   · rw [hrun, Cfg.mapState_state, hvs, Option.map_none]
   · rw [hrun, Cfg.mapState_output, hvo, Cfg.mapState_output, hao]
@@ -1925,7 +1888,7 @@ formula and absorb the additive constants using the logarithmic floor. -/
 private lemma sph_record_size (g : ℕ → ℕ) (hg : ∀ n, logSpace n ≤ g n) (k n : ℕ) :
     recordLength k n (g n) + (g n).bits.length + g n + 1 ≤ (4 * k + 9) * g n := by
   have hfloor : 1 ≤ g n := by have h := hg n; rw [logSpace_eq] at h; omega
-  have hb : (g n).bits.length ≤ g n := LogProg.length_bits_le Nat.lt_two_pow_self
+  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
   have hp : posWidth n ≤ 2 * g n := by
     rw [posWidth_eq]
     have hpow : n + 1 < 2 ^ (Nat.log 2 n + 2) :=
@@ -1936,7 +1899,7 @@ private lemma sph_record_size (g : ℕ → ℕ) (hg : ∀ n, logSpace n ≤ g n)
     rw [logSpace_eq] at hg'
     omega
   rw [recordLength_eq]
-  have hk : k ≤ k * g n := by simpa only [mul_one] using Nat.mul_le_mul_left k hfloor
+  have hk : k ≤ k * g n := Nat.le_mul_of_pos_right k hfloor
   nlinarith
 
 
@@ -2119,7 +2082,7 @@ private lemma sph_valid_machine (M : FinTM Bool) (g : ℕ → ℕ)
   rw [hstart] at hDH
   have hsize : radius ≤ B * g x.length := by
     have hrecord := sph_record_size g hg M.k x.length
-    have hbits : ws.length ≤ g x.length := LogProg.length_bits_le Nat.lt_two_pow_self
+    have hbits : ws.length ≤ g x.length := length_bits_le_self _
     have hfloor : 1 ≤ g x.length := by have h := hg x.length; rw [logSpace_eq] at h; omega
     have h := Nat.mul_le_mul_left C hrecord
     dsimp only [radius, rW, rR, rS, B]
@@ -2207,7 +2170,7 @@ private lemma sph_validated_machine {k : ℕ} {Q P : Type} [Fintype Q] [Decidabl
     (Cfg.init_state _ _) (Cfg.init_inputPos _ _)
   let a' := {a with state := some (ScanPhase.done b)}
   let radius := S ys.length
-  have hrad : (0 : ℤ) ≤ radius := by omega
+  have hrad : (0 : ℤ) ≤ radius := Int.natCast_nonneg _
   let C₀ : Contract F (.fwd true) {some (.done true), some (.done false)} Unit ys :=
     { pre := fun _ d => d = a
       time := fun _ _ => 2 * ys.length + 2
@@ -2403,8 +2366,7 @@ private lemma sph_diagonal_language (M : FinTM Bool) (g : ℕ → ℕ) (hg : Spa
           rw [hleaf, MultiTapeTM.initCfg_eq, Cfg.init_output, List.nil_append, hb]
     have htest : answer (x.map e) = true ↔ bit = true := hlang.trans hacc
     change bit = answer (x.map e)
-    cases hb : bit <;> cases ha : answer (x.map e) <;>
-      simp_all only [Bool.false_eq_true, iff_false, iff_true, not_true_eq_false]
+    exact Bool.eq_iff_iff.mpr htest.symm
   let S (n : ℕ) := k * (2 * (B * g n) + 1)
   obtain ⟨c', N, hN⟩ := FinTM.decidesInSpace_of_alphabetReduction e D L S
     (by
@@ -2513,25 +2475,20 @@ ruler is needed; only this direction is used.
 (`a = 1` suffices, the code-dependent constant being paid by the hypothesis
 below; a power of two costs only low zero digits) and write `U₀`'s initial
 record on `x` at radius `r`, tagged with the empty-output summary
-(`Turing.exists_recordInitTM`); (iii) run the configuration-count windowed runner: each round
-tests the record for a halted state (`Turing.exists_recordTestTM`), else
-applies one step of `U₀` (`Turing.exists_recordStepTM`, whose `no` verdict
-is the window exit), the tag updated by the three-valued output summary
-`Turing.outSummary` (append-compatible, `Turing.outSummary_append_congr`;
-coded in `Fin 3`), so the emitted word is never buffered. The rounds are driven by
-the configuration-count clock,
-the rich counter loop (`Turing.counterLoopTMVia`) on an
-all-`true` word of width `W = |Q₀| + posWidth n + 3 · k₀ · (2r + 1) + 1`,
-where `Q₀` and `k₀` are `U₀`'s states and tape count. Its value `2^W - 1`
-exceeds `Turing.FinTM.configBound U₀ n r`, which is at most
-`2^(|Q₀| + posWidth n + 3 · k₀ · (2r + 1))`, each of its four factors being
-at most a power of two. (iv) Answer `false` if the runner stopped at a halted
+(`Turing.exists_recordInitTM`); (iii) run the configuration-count windowed runner at `U₀`
+(`Turing.exists_configWindowRunnerTM`): each round tests the record for a halted state, else
+applies one step of `U₀` (leaving the window is an exit), the tag updated by the three-valued
+output summary `Turing.outSummary` (`summaryTag`; append-compatible,
+`Turing.outSummary_append_congr`; coded in `Fin 3`), so the emitted word is never buffered.
+The runner carries its own configuration-count clock, whose value suffices for every round up
+to `Turing.FinTM.configBound U₀ n r + 1`, in `O(record length)` cells.
+(iv) Answer `false` if the runner stopped at a halted
 record with summary `accept` (output exactly `[true]`,
 `Turing.outSummary_eq_accept_iff`), and `true` on every other exit: halted
 with another output, window exit, or clock exhaustion. `D` halts on every
 input. Its cells are the witness's `O(g n)`, the record's
 `k₀ · (2r + 1) + posWidth n + k₀ + 4` (`Turing.recordLength`), the record
-rows' `O(record length)` scratch and the clock's `W`: all `O(g n)` with
+runner's `O(record length)` scratch and clock: all `O(g n)` with
 constants depending only on `U₀` and `g`'s witness, **uniformly in the code
 part of `x`**, because the window, not `U₀`'s constant, bounds the
 simulation; the `posWidth n = O(logSpace n)` terms are
@@ -2544,10 +2501,8 @@ that `D` decides lies in `SPACE g`.
 every time (`Turing.MultiTapeTM.spaceUsed_mono` up to the halt, the halted
 configuration frozen after it). The space-faithful normal form
 `Turing.FinTM.one_work_tape_binary_spaceUsed` gives a one-work-tape binary
-`M'` within `c · (c₀ · f n + 1)` cells. Relabel it to a coded machine `N`
-(`Turing.exists_codeTM`, plus the space clause it does not state:
-relabelling states leaves tapes and heads untouched,
-`Turing.MultiTapeTM.relabelState_runFrom_init`) and set
+`M'` within `c · (c₀ · f n + 1)` cells. Relabel it to a coded machine `N` within the same space
+(`Turing.exists_codeTM_spaceUsed`) and set
 `α_M := code.encode N`, so that `code.decode α_M = N`. Pad the **payload**,
 never the code: on `x = pairEncode α_M w`, `U₀` outputs `N`'s verdict
 `[x ∈ L_D]` within `C_{α_M} · (c · (c₀ · f n + 1) + 1) ≤ A · f n` cells,
@@ -2564,13 +2519,11 @@ whose summary is `accept` exactly when `x ∈ L_D`, and `D` answers the
 opposite: `x ∈ L_D ↔ x ∉ L_D`, a contradiction. The construction uses
 `U₀` with its forward ledger (the step block at one coded work tape, the
 native input device and the chapter-1 startup); the configuration-count
-windowed runner at `U₀` with the output-summary tag, over the record rows
-`exists_recordInitTM` (with `exists_recordTemplateTM` beneath it),
-`exists_recordTestTM` and
-`exists_recordStepTM`, clocked by `counterLoopTMVia`; the radius and
-clock-width phases (`g`'s witness captured, radius digits, width expansion);
-the window-containment lemma from the visited-interval facts; the space
-clause of `exists_codeTM` and the all-times space bound of a decider; the
+windowed runner `exists_configWindowRunnerTM` at `U₀` with the output-summary tag, after
+the record initializer `exists_recordInitTM` and followed by the record test
+`exists_recordTestTM`; the radius phase (`g`'s witness captured, radius digits);
+the window-containment lemma from the visited-interval facts;
+`exists_codeTM_spaceUsed` and the all-times space bound of a decider; the
 contradiction arithmetic; `D`'s `DecidesInSpace` packaging through the
 alphabet reduction. -/
 theorem space_hierarchy (f g : ℕ → ℕ) (hf : SpaceConstructible f)
@@ -2609,93 +2562,24 @@ normalization `n + 1` — the literal `SPACE(n)` is the zero-work-tape class).
 Neither inclusion between the
 two classes is claimed, matching the book's remark.
 
-**Proof sketch.** Suppose `SPACE (n + 1) = NP`. `NP` is closed downward
-under `≤ₚ` (the chapter-2 bounded-certificate transport — a derived
-obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
-bounded form). Padding transfers space bounds down:
-for `L ∈ SPACE (n² + 1)`, the padded language
-`L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate (|x|²) true)}` —
-membership restricted to padded members of `L`; padded
-length exactly `m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
-length (validate, then run the `L`-decider on the first component; the pad
-supplies the room — the chapter-2 padding-cluster discipline,
-`EXP_subset_NEXP`'s precedent), so `L' ∈ NP` by the assumption, and
-`L ≤ₚ L'` by the padding reduction (a `polyUnary` emitter; the **unpadded**
-language reduces to the **padded** one), so `L ∈ NP = SPACE (n + 1)` — the
-`NP` pullback composing the reduction with the bounded-certificate verifier
-at the reduction's polynomial output length. Hence
-`SPACE (n² + 1) ⊆ SPACE (n + 1)`, contradicting
+**Proof sketch.** Suppose `SPACE (n + 1) = NP`. Padding transfers space bounds down: for
+`L ∈ SPACE (n² + 1)`, the padded language
+`L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate ((|x| + 1)²) true)}` (padded members of
+`L` only; padded length exactly `m = (n + 1)² + 2n + 2`) lies in `SPACE (m + 1)`: validate the
+padding, then run the `L`-decider on the first component, the pad supplying the room. So
+`L' ∈ NP` by the assumption. The padding map is polynomial-time computable and `L` is the
+preimage of `L'` under it, so `L ∈ NP` (`Complexity.preimage_mem_NP`), that is
+`L ∈ SPACE (n + 1)`. Hence `SPACE (n² + 1) ⊆ SPACE (n + 1)`, contradicting
 `Complexity.space_hierarchy` at the constructible pair
 (`Complexity.spaceConstructible_linear`,
 `Complexity.spaceConstructible_poly` at degree two; domination
-`A · (n + 1) ≤ n² + 1` eventually). The argument uses the `NP`
-`≤ₚ`-closure lemma, the padded-language space decider, the padding
-reduction machine and the strictness extraction. -/
+`A · (n + 1) ≤ n² + 1` eventually). The argument uses the padded-language space decider,
+the padding map's polynomial-time computability, `preimage_mem_NP` and the strictness
+extraction. -/
 theorem SPACE_linear_ne_NP : SPACE (fun n => n + 1) ≠ NP := by
   sorry
 
-
-open Lean Elab Command Meta in
-run_cmd do
-  let env ← getEnv
-  let mut direct : Std.HashSet Name := {}
-  let mut cited : Std.HashSet Name := {}
-  let mut nlocal := 0
-  for (n, ci) in env.constants.map₂.toList do
-    nlocal := nlocal + 1
-    for c in ci.getUsedConstantsAsSet.toArray do
-      match env.getModuleIdxFor? c with
-      | some idx =>
-        let m := env.header.moduleNames[idx.toNat]!
-        if m.toString.startsWith "TCSlib" then
-          match env.find? c with
-          | some (.defnInfo _) => direct := direct.insert c
-          | some (.thmInfo _) => cited := cited.insert c
-          | _ => pure ()
-      | none => pure ()
-  logInfo m!"HD_LOCAL {nlocal}"
-  let mut sealedN := 0
-  for c in direct.toArray do
-    let st ← getReducibilityStatus c
-    let ci := (env.find? c).get!
-    let hint := match ci with
-      | .defnInfo d => match d.hints with | .abbrev => "abbrevHint" | _ => "regularHint"
-      | _ => "?"
-    let isInst := isInstanceCore env c
-    let isProj := (env.getProjectionFnInfo? c).isSome
-    match st with
-    | .irreducible => sealedN := sealedN + 1
-    | .reducible => logInfo m!"HD_DIRECT_REDUCIBLE {c} {hint} inst={isInst} proj={isProj}"
-    | .semireducible => logInfo m!"HD_DIRECT_UNSEALED {c} {hint} inst={isInst} proj={isProj}"
-  logInfo m!"HD_DIRECT_SEALED {sealedN} of {direct.size}"
-  -- one level out: definitions in the statements of cited TCSlib theorems
-  let mut reach : Std.HashSet Name := {}
-  for t in cited.toArray do
-    for c in ((env.find? t).get!.type.getUsedConstantsAsSet).toArray do
-      if !direct.contains c then
-        match env.getModuleIdxFor? c with
-        | some idx =>
-          if (env.header.moduleNames[idx.toNat]!).toString.startsWith "TCSlib" then
-            match env.find? c with
-            | some (.defnInfo _) => reach := reach.insert c
-            | _ => pure ()
-        | none => pure ()
-  for c in reach.toArray do
-    let st ← getReducibilityStatus c
-    match st with
-    | .semireducible => logInfo m!"HD_REACH_UNSEALED {c}"
-    | _ => pure ()
-  logInfo m!"HD_CITED_THMS {cited.size} HD_REACH {reach.size}"
-  for (n, ci) in env.constants.map₂.toList do
-    if let .thmInfo _ := ci then
-      let ax ← collectAxioms n
-      if ax.contains ``sorryAx then logInfo m!"HD_SORRY {n}"
-      for a in ax do
-        if !([``propext, ``Classical.choice, ``Quot.sound, ``sorryAx].contains a) then
-          logInfo m!"HD_NONSTD {n} {a}"
-
-#print axioms space_hierarchy
-#print axioms LOGSPACE_ssubset_PSPACE
-#print axioms SPACE_linear_ne_NP
-
 end Complexity
+
+#print axioms Complexity.space_hierarchy
+#print axioms Complexity.LOGSPACE_ssubset_PSPACE

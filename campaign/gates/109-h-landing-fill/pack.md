@@ -117,7 +117,10 @@ unchanged) and 43 private `sph_` declarations.
   `#print axioms` at its end gives `space_hierarchy` and `LOGSPACE_ssubset_PSPACE` on
   `[propext, Classical.choice, Quot.sound]`. At `2d65a899`, before M5 was reverted, the same
   seal gave 5 errors; that output is kept (`seal-head-before-M5-revert.out`). The controls are
-  the delivery's, unchanged: the seal block is the delivered one.
+  the delivery's, unchanged, because the seal block is the delivered one. Their sources are
+  `evidence/seal/HSealControl_*.lean.txt`, and their raw logs are in the delivery zip
+  (`arora-barak-ch3-4/archive/deliveries/fill-b6-hierarchy.zip` on the exchange branch,
+  `evidence/logs/`). The sealed head source is `evidence/seal/HSealHead.lean.txt`.
 - **Freeze** (`evidence/freeze/`):
   - Against the campaign's Lean (`a28b8c42`): 4 → 4 public with statements unchanged, and
     0 → 43 private. The authorized changes are `space_hierarchy`'s and
