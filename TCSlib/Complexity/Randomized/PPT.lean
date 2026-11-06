@@ -281,6 +281,13 @@ def runLit (y : List Bool) (r : A.Coins y.length) : List Bool := A.runAt y.lengt
 parameter. -/
 def Uniform : Prop := ∀ n, A.advice n = []
 
+/-- Uniformity is the conjunction of the advice clauses (definitional unfolding):
+`A.Uniform ↔ ∀ n, A.advice n = []`. -/
+theorem uniform_iff : A.Uniform ↔ ∀ n, A.advice n = [] := Iff.rfl
+
+/-- A uniform machine has empty advice at every parameter. -/
+theorem Uniform.advice_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) : A.advice n = [] := h n
+
 /-- `A` computes `f` with probability one [PS10, Definition 24.6]: at every parameter `n`,
 on every argument `y` and for **every** coin string `r`, `A(1^n, y; r) = f(⟨1^n, y⟩)`. On
 the finite uniform coin space "probability one" is the same as "every coin string"

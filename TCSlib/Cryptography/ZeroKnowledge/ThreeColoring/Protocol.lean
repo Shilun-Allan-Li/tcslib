@@ -102,6 +102,9 @@ open Complexity Turing
 projection after `i` second projections. -/
 def msgAt (w : List Bool) (i : ℕ) : List Bool := pairFstD (pairSndD^[i] w)
 
+/-- The defining equation of `msgAt`: `msgAt w i = pairFstD (pairSndD^[i] w)`. -/
+theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w) := rfl
+
 /-- `msgAt` reads the `i`-th message of an encoded list. -/
 theorem msgAt_encodeMsgs (l : List (List Bool)) (i : ℕ) (hi : i < l.length) :
     msgAt (Strategy.encodeMsgs l) i = l[i] := by
