@@ -1,0 +1,65 @@
+-- Exact source: /Users/seyoonr/.elan/toolchains/leanprover--lean4---v4.25.0/src/lean/Lean/Elab/PreDefinition/Eqns.lean, lines 338-400
+        xsNew := xsNew.reverse
+        return (lctx.mkForall xsNew type, lctx.mkLambda xsNew value)
+
+
+/--
+Generate equations for `declName`.
+
+This unfolds the function application on the LHS (using an unfold theorem, if present, or else by
+delta-reduction), calculates the types for the equational theorems using `mkEqnTypes`, and then
+proves them using `mkEqnProof`.
+-/
+def mkEqns (declName : Name) (declNames : Array Name) : MetaM (Array Name) := do
+  trace[Elab.definition.eqns] "mkEqns: {.ofConstName declName}"
+  let info ← getConstInfoDefn declName
+  let us := info.levelParams.map mkLevelParam
+  withOptions (tactic.hygienic.set · false) do
+  let target ← unfoldThmType declName
+  let eqnTypes ← withNewMCtxDepth <|
+    forallTelescope (cleanupAnnotations := true) target fun xs target => do
+      let goal ← mkFreshExprSyntheticOpaqueMVar target
+      withReducible do
+        mkEqnTypes declNames goal.mvarId!
+  let mut thmNames := #[]
+  for h : i in *...eqnTypes.size do
+    let type := eqnTypes[i]
+    trace[Elab.definition.eqns] "eqnType[{i}]: {eqnTypes[i]}"
+    let name := mkEqLikeNameFor (← getEnv) declName s!"{eqnThmSuffixBasePrefix}{i+1}"
+    thmNames := thmNames.push name
+    -- determinism: `type` should be independent of the environment changes since `baseName` was
+    -- added
+    realizeConst declName name (doRealize name info type)
+  return thmNames
+where
+  doRealize name info type := withOptions (tactic.hygienic.set · false) do
+    let value ← mkEqnProof declName type
+    let (type, value) ← removeUnusedEqnHypotheses type value
+    addDecl <| (←mkThmOrUnsafeDef {
+      name, type, value
+      levelParams := info.levelParams
+    })
+    inferDefEqAttr name
+
+def getEqnsFor? (declName : Name) : MetaM (Option (Array Name)) := do
+  if (← isRecursiveDefinition declName) then
+    let some (.defnInfo info) := (← getEnv).find? declName |
+      throwError "internal error: recursive definition `{declName}` is not a definition"
+    let n ← mkEqns declName info.all.toArray
+    return some n
+  if (← getEnv).contains declName then
+    if backward.eqns.nonrecursive.get (← getOptions) then
+      mkEqns declName #[]
+    else
+      let eq1 := mkEqLikeNameFor (← getEnv) declName eqn1ThmSuffix
+      let o ← mkSimpleEqThm declName eq1
+      return o.map (#[·])
+  else
+    return none
+
+builtin_initialize
+  registerGetEqnsFn getEqnsFor?
+
+
+end Lean.Elab.Eqns
+

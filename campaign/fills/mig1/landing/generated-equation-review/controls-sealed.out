@@ -1,0 +1,31 @@
+CONTROL|Turing.solveSplit|point|FAIL
+/private/tmp/tcslib-generated-equation-ke4euhf_/controls-sealed.lean:48:0: error: RFL_CONTROL|Turing.solveSplit|point|Tactic `rfl` failed: equality lhs
+  Turing.solveSplit C e n
+is not definitionally equal to rhs
+  List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+C e n : ℕ
+⊢ Turing.solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+CONTROL|Turing.solveSplit|abstract|FAIL
+/private/tmp/tcslib-generated-equation-ke4euhf_/controls-sealed.lean:48:0: error: RFL_CONTROL|Turing.solveSplit|abstract|Tactic `rfl` failed: equality lhs
+  Turing.solveSplit
+is not definitionally equal to rhs
+  fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+⊢ Turing.solveSplit = fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+CONTROL|Turing.solveSplitWith|point|FAIL
+/private/tmp/tcslib-generated-equation-ke4euhf_/controls-sealed.lean:48:0: error: RFL_CONTROL|Turing.solveSplitWith|point|Tactic `rfl` failed: equality lhs
+  Turing.solveSplitWith f n
+is not definitionally equal to rhs
+  List.find? (fun i => i + f i == n) (List.range (n + 1))
+
+f : ℕ → ℕ
+n : ℕ
+⊢ Turing.solveSplitWith f n = List.find? (fun i => i + f i == n) (List.range (n + 1))
+CONTROL|Turing.solveSplitWith|abstract|FAIL
+/private/tmp/tcslib-generated-equation-ke4euhf_/controls-sealed.lean:48:0: error: RFL_CONTROL|Turing.solveSplitWith|abstract|Tactic `rfl` failed: equality lhs
+  Turing.solveSplitWith
+is not definitionally equal to rhs
+  fun f n => List.find? (fun i => i + f i == n) (List.range (n + 1))
+
+⊢ Turing.solveSplitWith = fun f n => List.find? (fun i => i + f i == n) (List.range (n + 1))

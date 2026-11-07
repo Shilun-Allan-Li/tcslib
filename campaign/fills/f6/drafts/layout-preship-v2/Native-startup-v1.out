@@ -1,0 +1,101 @@
+/private/tmp/tcslib-f6-preship-yath_i4n/Native_startup_v1.lean:75:10: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    MultiTapeTM.runFrom (Cfg.mapState Sum.inl (MultiTapeTM.initCfg (pairEncode α w))) (T + 1 + 0) =
+      Cfg.mapState Sum.inr (MultiTapeTM.runFrom (Cfg.mapState (fun x => ()) d) 0)
+Error: Application type mismatch: The argument
+  R
+has type
+  MultiTapeTM (K + 3) Bool P
+but is expected to have type
+  MultiTapeTM _a Bool P
+in the application
+  seamCompTM R
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+case neg
+c : EffectiveMachineCode
+K : ℕ
+P : Type
+fP : Fintype P
+dP : DecidableEq P
+R : MultiTapeTM (K + 3) Bool P
+exit : P
+hR :
+  ∀ (α : List Bool),
+    ∃ T B,
+      ∀ (w : List Bool),
+        MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+            { state := some exit, inputPos := 1,
+              workTapes := fun j =>
+                if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+                else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+              workTapePos := fun x => 0, output := [] } ∧
+          (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+            (∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []) ∧
+              MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ B
+this✝ : Fintype P := fP
+this : DecidableEq P := dP
+leaf : MultiTapeTM (K + 3) Bool Unit := { q₀ := (), tr := fun x x_1 x_2 => FinTM.controlAction 0 none }
+A : MultiTapeTM (K + 3) Bool (P ⊕ Unit) :=
+  let __src := seamCompTM R exit leaf ();
+  { q₀ := Sum.inl R.q₀, tr := __src.tr }
+hinit : ∀ (y : List Bool), MultiTapeTM.initCfg y = Cfg.mapState Sum.inl (MultiTapeTM.initCfg y)
+hrun : ∀ {y : List Bool} (d : Cfg (K + 3) Bool (P ⊕ Unit) y) (t : ℕ), MultiTapeTM.runFrom d t = MultiTapeTM.runFrom d t
+hleaf :
+  ∀ {y : List Bool} (d : Cfg (K + 3) Bool Unit y),
+    d.state = some () →
+      MultiTapeTM.runFrom d 1 =
+        { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+          output := d.output }
+α : List Bool
+T _B : ℕ
+hα :
+  ∀ (w : List Bool),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+        { state := some exit, inputPos := 1,
+          workTapes := fun j =>
+            if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+            else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+          workTapePos := fun x => 0, output := [] } ∧
+      (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+        (∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []) ∧
+          MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ _B
+w : List Bool
+hr :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+    { state := some exit, inputPos := 1,
+      workTapes := fun j =>
+        if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+        else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+      workTapePos := fun x => 0, output := [] }
+hcut : ∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit
+_hout : ∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []
+_hspace : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ _B
+d : Cfg (K + 3) Bool P (pairEncode α w) :=
+  { state := some exit, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+hd : d.state = some exit
+hs : (Cfg.mapState (fun x => ()) d).state = some ()
+hr' : MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T = d
+hfinal :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) (T + 2) =
+    Cfg.mapState Sum.inr
+      (let __src := Cfg.mapState (fun x => ()) d;
+      { state := none, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+        output := __src.output })
+hu : T + 1 < T + 2
+hut : ¬T + 1 ≤ T
+hdispatch :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl (MultiTapeTM.initCfg (pairEncode α w))) (T + 1 + 0) =
+    Cfg.mapState Sum.inr (MultiTapeTM.runFrom (Cfg.mapState (fun x => ()) d) 0)
+⊢ (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) (T + 1)).state ≠ none
+/private/tmp/tcslib-f6-preship-yath_i4n/Native_startup_v1.lean:83:57: error: No goals to be solved
+/private/tmp/tcslib-f6-preship-yath_i4n/Native_startup_v1.lean:86:53: error: No goals to be solved
+/private/tmp/tcslib-f6-preship-yath_i4n/Native_startup_v1.lean:90:8: error(lean.unknownIdentifier): Unknown constant `List.length_eq_zero.mp`
+'F6LayoutPreship.native_startup_first_halt' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

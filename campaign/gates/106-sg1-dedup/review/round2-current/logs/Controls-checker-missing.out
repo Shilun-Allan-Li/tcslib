@@ -1,0 +1,17 @@
+/private/tmp/tcslib-106r2-1pxvbdpt/Controls_sealed.lean:6:18: warning: `Turing.Segment` does not have the `[simp]` attribute
+/private/tmp/tcslib-106r2-1pxvbdpt/Controls_sealed.lean:20:56: error: Tactic `rfl` failed: The left-hand side
+  Segment M F P
+is not definitionally equal to the right-hand side
+  fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+F : Set (Option S)
+P : (Fin k → ℤ) → Prop
+⊢ Segment M F P = fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos

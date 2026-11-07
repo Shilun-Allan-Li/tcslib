@@ -1,0 +1,84 @@
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:798:57: error: unsolved goals
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+h0 : (MultiTapeTM.initCfg x).workTapePos = fun x => 0
+⊢ D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0 = D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:899:4: error: unsolved goals
+case pos.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hh : ∃ t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none
+d : ℕ := Nat.find hh
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hd : d ≤ T
+hs : c.state = none
+hc : D.ComputesInTime x c.output d
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+hstart :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (d + 2 + r) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+h0 : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos = fun x => 0
+u : ℕ
+hu : u ≤ d
+⊢ D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (fun x => 0)
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (fun x => 0)
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:908:6: error: unsolved goals
+case pos
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hh : ∃ t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none
+d : ℕ := Nat.find hh
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hd : d ≤ T
+hs : c.state = none
+hc : D.ComputesInTime x c.output d
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+hstart :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (d + 2 + r) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+h0 : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos = fun x => 0
+u : ℕ
+hu : ¬u ≤ d
+hread : ¬u ≤ d + 2
+hrew : u ≤ d + 2 + r
+⊢ D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0 =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d).workTapePos (fun x => 0) 0
+FAIL(TCSlib/Complexity/TuringMachine/Build/Wrappers): lean exited with status 1
+FAIL(TCSlib/Complexity/TuringMachine/Build/Wrappers): error diagnostics reported
+FAIL(TCSlib/Complexity/TuringMachine/Build/Wrappers): no fresh .olean produced

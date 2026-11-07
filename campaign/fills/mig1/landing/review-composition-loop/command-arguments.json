@@ -1,0 +1,1466 @@
+[
+  {
+    "home": "Composition",
+    "root": "idTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate,\n      Cfg.inputSymbol_of_end hpos"
+  },
+  {
+    "home": "Composition",
+    "root": "idTM_computes",
+    "kind": "rw",
+    "arguments": "hrun1, Action.apply_state"
+  },
+  {
+    "home": "Composition",
+    "root": "idTM_computes",
+    "kind": "rw",
+    "arguments": "hrun1, Action.apply_output, hout, List.take_length"
+  },
+  {
+    "home": "Composition",
+    "root": "ifEqTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_state"
+  },
+  {
+    "home": "Composition",
+    "root": "ifEqTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one"
+  },
+  {
+    "home": "Composition",
+    "root": "ifEqTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_output"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_branch_run",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 tag, \u2190 branchTM_State M\u2081 M\u2082 tag"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_branch_run",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 tag, \u2190 branchTM_State M\u2081 M\u2082 tag"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_branch_run",
+    "kind": "change",
+    "arguments": "(condTM D M\u2081 M\u2082).tm.runFrom (rightCfg emb c tapes heads) t ="
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_branch_run",
+    "kind": "dsimp",
+    "arguments": "condTM, V, emb"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_branch_run",
+    "kind": "simp",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 tag, \u2190 branchTM_State M\u2081 M\u2082 tag"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "dsimp",
+    "arguments": "start, V"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_add, hstart"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "rw",
+    "arguments": "hr t"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "rightCfg_state, Option.map_eq_none_iff"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "rightCfg_output"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "rw",
+    "arguments": "hr t"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "rightCfg_state, Option.map_eq_none_iff"
+  },
+  {
+    "home": "Composition",
+    "root": "condTM_computes_iff",
+    "kind": "simpa",
+    "arguments": "rightCfg_output"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 tag, \u2190 branchTM_State M\u2081 M\u2082 tag"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "dsimp",
+    "arguments": "start, V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "dsimp",
+    "arguments": "V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "start, V, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_add, hstart', hr"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "timedBranchCfg, leftCfg_state, rightCfg_state,\n      Option.map_eq_none_iff"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "simpa",
+    "arguments": "timedBranchCfg, leftCfg_output, rightCfg_output"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_computes",
+    "kind": "dsimp",
+    "arguments": "B"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_control_heads",
+    "kind": "simp",
+    "arguments": "timedControlCfg, captureCfg_workTapePos, leftCfg_workTapePos, timedHeads, j.isLt"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_control_heads",
+    "kind": "simp",
+    "arguments": "timedControlCfg, captureCfg_workTapePos, leftCfg_output, timedHeads"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_branch_heads",
+    "kind": "simp",
+    "arguments": "timedBranchCfg, leftCfg_workTapePos, rightCfg_workTapePos, timedHeads,\n      Fin.addCases_left"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_branch_heads",
+    "kind": "simp",
+    "arguments": "timedBranchCfg, leftCfg_workTapePos, timedHeads, Fin.addCases_right"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReadyCfg_workTapePos",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 b, \u2190 branchTM_State M\u2081 M\u2082 b"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReadyCfg_workTapePos",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReadyCfg_workTapePos",
+    "kind": "rw",
+    "arguments": "h0"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReadyCfg_workTapePos",
+    "kind": "dsimp",
+    "arguments": "timedReadyCfg, V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReadyCfg_workTapePos",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 b, \u2190 branchTM_State M\u2081 M\u2082 b"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "timedBranchCfg, leftCfg_state, rightCfg_state, MultiTapeTM.initCfg_eq,\n      Cfg.init_state, Option.map_some, id_eq"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos,\n      MultiTapeTM.initCfg_eq, Cfg.init_inputPos"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "timedReadyCfg, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "timedReadyCfg, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedReady_dispatch",
+    "kind": "simp",
+    "arguments": "timedReadyCfg, branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "simpa",
+    "arguments": "ho"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "simp",
+    "arguments": "timedControlCfg, captureCfg_state, leftCfg_state, hs,\n        Option.map_none, Option.getD_none"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hstate"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "rw",
+    "arguments": "Action.apply_workTapePos, timed_control_heads"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "simp",
+    "arguments": "timedCondTM, timedHeads, j.isLt"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "simp",
+    "arguments": "timedCondTM, timedHeads, ho"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_read_heads",
+    "kind": "rw",
+    "arguments": "timed_read D M\u2081 M\u2082 c b hs ho, timedReadyCfg_workTapePos"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 b, \u2190 branchTM_State M\u2081 M\u2082 b"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 b, \u2190 branchTM_State M\u2081 M\u2082 b"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "change",
+    "arguments": "\u2200 u, \u2203 v \u2264 T, \u2203 w \u2264 u, \u2203 z : \u2124, 0 \u2264 z \u2227 z \u2264 1 \u2227"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "change",
+    "arguments": "(D.tm.runFrom (D.tm.initCfg x) d).state = none"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "hcfg"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "change",
+    "arguments": "(D.tm.runFrom (D.tm.initCfg x) d).output = [b]"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "hcfg"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "timed_control_init"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "dsimp",
+    "arguments": "timedCondTM, V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "simp",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap d (le_refl _),\n      timed_read D M\u2081 M\u2082 c b hs ho, hr"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "change",
+    "arguments": "(D.tm.runFrom (D.tm.initCfg x) u).output.length \u2264 c.output.length at hp"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "ho"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "simp",
+    "arguments": "List.length_singleton"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "hcap u hu, timed_control_heads, h0"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "show u = d + (u - d) by omega, MultiTapeTM.runFrom_add, hcap d (le_refl _), h0"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "show",
+    "arguments": "u = d + (u - d) by omega, MultiTapeTM.runFrom_add, hcap d (le_refl _), h0]"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "show u = d + 2 + (u - (d + 2)) by omega, MultiTapeTM.runFrom_add,\n          MultiTapeTM.runFrom_add, hcap d (le_refl _), timed_read D M\u2081 M\u2082 c b hs ho,\n          hrheads _ (by omega), timedReadyCfg_workTapePos, h0"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "show",
+    "arguments": "u = d + 2 + (u - (d + 2)) by omega, MultiTapeTM.runFrom_add,"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "dsimp",
+    "arguments": "V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "rw",
+    "arguments": "show u = d + 2 + r + (u - (d + 2 + r)) by omega,\n          MultiTapeTM.runFrom_add, hstart, hbranch, timed_branch_heads"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "show",
+    "arguments": "u = d + 2 + r + (u - (d + 2 + r)) by omega,"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timed_ledger",
+    "kind": "simp",
+    "arguments": "Nat.add_sub_cancel_left"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "\u2190 branchTM_k M\u2081 M\u2082 b, \u2190 branchTM_State M\u2081 M\u2082 b"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "dsimp",
+    "arguments": "M, V"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "simpa",
+    "arguments": "branchTM_k, branchTM_State"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "change",
+    "arguments": "_ = ((timedCondTM D M\u2081 M\u2082).tm.runFrom _ u).workTapePos _"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "he"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "show (Fin.castAdd (M\u2081.k + M\u2082.k) i).castSucc =\n      Fin.castAdd 1 (Fin.castAdd (M\u2081.k + M\u2082.k) i) from rfl"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "show",
+    "arguments": "(Fin.castAdd (M\u2081.k + M\u2082.k) i).castSucc ="
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "simp",
+    "arguments": "timedHeads, Fin.addCases_left"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "change",
+    "arguments": "_ = timedHeads D M\u2081 M\u2082 _ (V.runFrom (V.initCfg x) w).workTapePos z at he"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "change",
+    "arguments": "_ = ((timedCondTM D M\u2081 M\u2082).tm.runFrom _ u).workTapePos _"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "he"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "show (Fin.natAdd D.k i).castSucc = Fin.castAdd 1 (Fin.natAdd D.k i) from rfl"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "show",
+    "arguments": "(Fin.natAdd D.k i).castSucc = Fin.castAdd 1 (Fin.natAdd D.k i) from rfl]"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "simp",
+    "arguments": "timedHeads, Fin.addCases_left, Fin.addCases_right"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.spaceUsedByTape_eq_card"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "change",
+    "arguments": "((timedCondTM D M\u2081 M\u2082).tm.runFrom _ u).workTapePos _ \u2208 _"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "he"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "show Fin.last (D.k + (M\u2081.k + M\u2082.k)) =\n        Fin.natAdd (D.k + (M\u2081.k + M\u2082.k)) (0 : Fin 1) from rfl"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "show",
+    "arguments": "Fin.last (D.k + (M\u2081.k + M\u2082.k)) ="
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "simpa",
+    "arguments": "timedHeads, Fin.addCases_right"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "change",
+    "arguments": "(\u2211 i : Fin ((D.k + (M\u2081.k + M\u2082.k)) + 1), M.tm.spaceUsedByTape (M.tm.initCfg x) t i) \u2264 _"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "rw",
+    "arguments": "Fin.sum_univ_add, Fin.sum_univ_add"
+  },
+  {
+    "home": "Wrappers",
+    "root": "timedCondTM_spaceUsed",
+    "kind": "simp",
+    "arguments": "Fintype.sum_unique"
+  },
+  {
+    "home": "Loop",
+    "root": "loop_first_halt",
+    "kind": "rw",
+    "arguments": "he"
+  },
+  {
+    "home": "Loop",
+    "root": "loop_first_halt",
+    "kind": "rw",
+    "arguments": "hz, MultiTapeTM.runFrom_zero"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_state"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "dsimp",
+    "arguments": "c"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "hue"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "loopHost_init, loopFuel_init"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "loopHost_fuel_capture"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "loopFuel_run"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "loopFuel_run"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "change",
+    "arguments": "(loopFuelCfg body F (F.tm.runFrom (F.tm.initCfg x) v)).state \u2260 none"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "simpa",
+    "arguments": "loopFuelCfg, rightCfg_state, Option.map_id"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "loopFuelCaptured_frame body F c hc"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "ho"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_inputPos"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "change",
+    "arguments": "(F.tm.runFrom (F.tm.initCfg x) u).inputPos.val \u2264 1 + u"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "simpa",
+    "arguments": "Fin.val_one, Nat.add_comm"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "change",
+    "arguments": "v \u2264 c.inputPos.val + 2 at hv"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_add,\n      MultiTapeTM.runFrom_add (a := u) (b := 3 * c.output.length + 4), hcap, hsetup, hrew"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "rw",
+    "arguments": "h0"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_prepare",
+    "kind": "change",
+    "arguments": "-(T x.length : \u2124) \u2264 (F.tm.runFrom (F.tm.initCfg x) u).workTapePos i \u2227"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "loopCall, captureCfg_workTapePos, loopBodyPadded, leftCfg_output, loopBodyCfg, Cfg.ofWords_workTapePos,\n      Cfg.ofWords_output"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "loopCall, captureCfg_workTapePos, Fin.coe_castSucc, dif_pos j.isLt"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "change",
+    "arguments": "-(B : \u2124) \u2264 (loopBodyPadded body F anchor"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "loopBodyPadded, leftCfg_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "Fin.addCases_left, loopBodyCfg, Cfg.ofWords_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "Fin.addCases_right"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simp",
+    "arguments": "Fin.addCases_left"
+  },
+  {
+    "home": "Loop",
+    "root": "loopCall_heads",
+    "kind": "simpa",
+    "arguments": "Fin.addCases_right"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "dsimp",
+    "arguments": "words"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "loopDebit_iterate_length"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "loopDebit_success"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "dsimp",
+    "arguments": "words"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "loopDebit_iterate_value _ _ hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "change",
+    "arguments": "v \u2264 10 * (T x.length + 1)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "candidate, words, orbit, Function.iterate_succ_apply', hsuccess i hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "time, dif_pos hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "dsimp",
+    "arguments": "terminal"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "ha, Bool.false_eq_true, \u2193reduceIte, Nat.lt_irrefl"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "dsimp",
+    "arguments": "terminal"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "change",
+    "arguments": "ftime + (btime + 2) \u2264 10 * (T x.length + 1)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "hcfg 0 (Nat.zero_le _), MultiTapeTM.runFrom_add, hprepare,\n      loopHost_start body F anchor false findMode (s0 x) btime fuel hbguard hbend"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simp",
+    "arguments": "candidate, words, orbit, Function.iterate_zero_apply, hfo"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "hcfg i hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simp",
+    "arguments": "candidate, loopCall, captureCfg_output"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "cfg, if_neg (by omega : \u00acR x.length + 1 \u2264 R x.length)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "cfg, if_neg (by omega : \u00acR x.length + 1 \u2264 R x.length)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "hcfg i hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "change",
+    "arguments": "(if acceptF x (orbit i) then _ else _)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simp",
+    "arguments": "ha, if_true"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "orbit"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simp",
+    "arguments": "ha, Bool.false_eq_true, \u2193reduceIte"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "hcfg (i + 1) (by omega)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simpa",
+    "arguments": "if_pos hlt"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "show cfg (R x.length + 1) = terminal from if_neg (by omega)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "show",
+    "arguments": "cfg (R x.length + 1) = terminal from if_neg (by omega)]"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "simp",
+    "arguments": "terminal, ha, Bool.false_eq_true, \u2193reduceIte"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "hcfg i hi"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "rw",
+    "arguments": "show cfg (R x.length + 1) = terminal from if_neg (by omega)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHost_contracts",
+    "kind": "show",
+    "arguments": "cfg (R x.length + 1) = terminal from if_neg (by omega)]"
+  },
+  {
+    "home": "Loop",
+    "root": "segment_heads",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_of_halt _ hend"
+  },
+  {
+    "home": "Loop",
+    "root": "segment_heads",
+    "kind": "rw",
+    "arguments": "show t = u + (t - u) by omega, MultiTapeTM.runFrom_add"
+  },
+  {
+    "home": "Loop",
+    "root": "segment_heads",
+    "kind": "show",
+    "arguments": "t = u + (t - u) by omega, MultiTapeTM.runFrom_add]"
+  },
+  {
+    "home": "Loop",
+    "root": "segment_heads",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_of_halt _ he"
+  },
+  {
+    "home": "Loop",
+    "root": "segment_heads",
+    "kind": "rw",
+    "arguments": "he"
+  },
+  {
+    "home": "Loop",
+    "root": "seamed_space",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "seamed_space",
+    "kind": "rw",
+    "arguments": "h0, sub_zero, abs_le"
+  },
+  {
+    "home": "Loop",
+    "root": "seamed_space",
+    "kind": "rw",
+    "arguments": "h0, zero_sub, zero_add"
+  },
+  {
+    "home": "Loop",
+    "root": "seamed_space",
+    "kind": "rw",
+    "arguments": "show u = startup + (u - startup) by omega, MultiTapeTM.runFrom_add, hinit"
+  },
+  {
+    "home": "Loop",
+    "root": "seamed_space",
+    "kind": "show",
+    "arguments": "u = startup + (u - startup) by omega, MultiTapeTM.runFrom_add, hinit]"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_decides",
+    "kind": "rw",
+    "arguments": "hinit"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_decides",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_decides",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_decides",
+    "kind": "rw",
+    "arguments": "Nat.mul_comm (R x.length + 1)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_decides",
+    "kind": "simp",
+    "arguments": "Nat.mul_add, Nat.mul_one, Nat.mul_two"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_finds",
+    "kind": "rw",
+    "arguments": "hinit"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_finds",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_finds",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_finds",
+    "kind": "rw",
+    "arguments": "Nat.mul_comm (R x.length + 1)"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_finds",
+    "kind": "simp",
+    "arguments": "Nat.mul_add, Nat.mul_one, Nat.mul_two"
+  },
+  {
+    "home": "Loop",
+    "root": "loopHostTM_spaceUsed_le_budget",
+    "kind": "rw",
+    "arguments": "Nat.mul_assoc, Nat.mul_left_comm"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_pair_not_mem",
+    "kind": "change",
+    "arguments": "emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_pair_not_mem",
+    "kind": "simp",
+    "arguments": "emCall_triple_inverse, emCall_triple_pair"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_triple_not_mem",
+    "kind": "change",
+    "arguments": "emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_triple_not_mem",
+    "kind": "simp",
+    "arguments": "emCall_triple_inverse, emCall_triple_other, if_neg hji"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,\n      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,\n      emCallClearCfg, emCallBankFrame, emCallFrame"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "rw",
+    "arguments": "Cfg.mapState_workTapes"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "change",
+    "arguments": "(embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "rw",
+    "arguments": "embedEmitCfg_selected_tape"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "change",
+    "arguments": "(embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "rw",
+    "arguments": "embedEmitCfg_selected_pos"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_initial",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,\n      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,\n      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,\n      emCallClearCfg, emCallBankFrame, emCallFrame"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "rw",
+    "arguments": "Cfg.mapState_workTapes"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_pair"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_pair"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "change",
+    "arguments": "(embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "rw",
+    "arguments": "embedEmitCfg_selected_tape"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, hiff"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_workTapePos"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_pair"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_pair"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "change",
+    "arguments": "(embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "rw",
+    "arguments": "embedEmitCfg_selected_pos"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallBankFrame, emCallFrame, emCall_layout_triple, hiff"
+  },
+  {
+    "home": "Loop",
+    "root": "emCall_bank_final",
+    "kind": "simp",
+    "arguments": "emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,\n      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "dsimp",
+    "arguments": "words"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "loopDebit_iterate_length"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "loopDebit_success"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "dsimp",
+    "arguments": "words"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "loopDebit_iterate_value _ _ hi"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simpa",
+    "arguments": "E, candidate, words, orbit, Function.iterate_succ_apply',\n        hsuccess i (by omega), Nat.add_lt_add_iff_right"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "dsimp",
+    "arguments": "startup"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "MultiTapeTM.runFrom_add, hprepare,\n      loopHost_start body F anchor true true (s0 x) btime fuel hbguard hbend"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simp",
+    "arguments": "candidate, words, orbit, Function.iterate_zero_apply, hfo"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simp",
+    "arguments": "candidate, loopCall, captureCfg_output"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simp",
+    "arguments": "candidate, loopCall, captureCfg_output"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "hclean"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "hinit"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "hrun"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simpa",
+    "arguments": "List.nil_append, orbit"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "rw",
+    "arguments": "Nat.mul_comm (R x.length + 1)"
+  },
+  {
+    "home": "Loop",
+    "root": "emitLoopTM_computes",
+    "kind": "simp",
+    "arguments": "Nat.mul_add, Nat.mul_one, Nat.mul_two"
+  }
+]

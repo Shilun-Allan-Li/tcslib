@@ -1,0 +1,29 @@
+/private/tmp/tcslib-f6-preship-9csgstfv/Last_ruler_correction_v3.lean:47:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Function.update ?f ?a ?v ?a
+in the target expression
+  { state := some true, inputPos := d.inputPos, workTapes := d.workTapes,
+          workTapePos := Function.update d.workTapePos (Fin.last (K + 3)) (d.workTapePos (Fin.last (K + 3)) - 1),
+          output := d.output }.workTapePos
+      (Fin.last (K + 3)) =
+    ↑ℓ
+
+case refine_2
+K : ℕ
+C : MultiTapeTM (K + 4) Bool Bool :=
+  { q₀ := false, tr := fun x x_1 x_2 => tapeAction (Fin.last (K + 3)) 0 none (-1) true }
+z : List Bool
+d : Cfg (K + 4) Bool Bool z
+hs : d.state = some false
+hr :
+  MultiTapeTM.runFrom d 1 =
+    { state := some true, inputPos := d.inputPos, workTapes := d.workTapes,
+      workTapePos := Function.update d.workTapePos (Fin.last (K + 3)) (d.workTapePos (Fin.last (K + 3)) - 1),
+      output := d.output }
+ℓ : ℕ
+hℓ : d.workTapePos (Fin.last (K + 3)) = ↑ℓ + 1
+⊢ { state := some true, inputPos := d.inputPos, workTapes := d.workTapes,
+          workTapePos := Function.update d.workTapePos (Fin.last (K + 3)) (d.workTapePos (Fin.last (K + 3)) - 1),
+          output := d.output }.workTapePos
+      (Fin.last (K + 3)) =
+    ↑ℓ
+'F6LayoutPreship.last_ruler_correction' depends on axioms: [propext, sorryAx, Quot.sound]

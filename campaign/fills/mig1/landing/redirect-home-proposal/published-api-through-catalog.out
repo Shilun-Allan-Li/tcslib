@@ -1,0 +1,29 @@
+SHAPE_API|Turing.FinTM.redirectTM_k|exists=false
+SHAPE_API|Turing.FinTM.redirectTM_State|exists=false
+SHAPE_API|Turing.FinTM.redirectTM_eq|exists=false
+REDIRECT_API|Turing.FinTM.redirectTM_runFrom|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=false
+REDIRECT_API|Turing.FinTM.redirectTM_spaceUsedByTape|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=false
+REDIRECT_API|Turing.FinTM.redirectTM.eq_1|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=true
+REDIRECT_API|Turing.FinTM.redirectTM_live|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=false
+REDIRECT_API|Turing.FinTM.redirectTM_computes|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=false
+REDIRECT_API|Turing.FinTM.redirectTM.match_3|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=true
+REDIRECT_API|Turing.FinTM.redirectTM_spaceUsedByTape._simp_1_1|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=true
+REDIRECT_API|Turing.FinTM.redirectTM_live._simp_1_4|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=true
+REDIRECT_API|Turing.FinTM.redirectTM.match_1|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=true
+REDIRECT_API|Turing.FinTM.redirectTM|owner=some (TCSlib.Complexity.TuringMachine.Build.Wrappers)|private=false|internal=false
+MOVED_TYPE|∀ (M : Turing.FinTM Bool) (haltOn : Bool) (x : List Bool) (t : Nat) (i : Fin (@Turing.FinTM.k Bool M)),
+  @Eq Nat
+    (@Turing.MultiTapeTM.spaceUsedByTape (@Turing.FinTM.k Bool (M.redirectTM haltOn))
+      (@Turing.FinTM.State Bool (M.redirectTM haltOn)) Bool x (@Turing.FinTM.tm Bool (M.redirectTM haltOn))
+      (@Turing.MultiTapeTM.initCfg (@Turing.FinTM.k Bool (M.redirectTM haltOn))
+        (@Turing.FinTM.State Bool (M.redirectTM haltOn)) Bool (@Turing.FinTM.tm Bool (M.redirectTM haltOn)) x)
+      t i)
+    (@Turing.MultiTapeTM.spaceUsedByTape (@Turing.FinTM.k Bool M) (@Turing.FinTM.State Bool M) Bool x
+      (@Turing.FinTM.tm Bool M)
+      (@Turing.MultiTapeTM.initCfg (@Turing.FinTM.k Bool M) (@Turing.FinTM.State Bool M) Bool (@Turing.FinTM.tm Bool M)
+        x)
+      t i)
+MOVED_AXIOMS|[propext, Quot.sound, Classical.choice]
+PublishedAPI.lean:11:10: warning: unused variable `ci`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

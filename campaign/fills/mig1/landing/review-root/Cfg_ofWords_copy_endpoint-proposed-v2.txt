@@ -1,0 +1,24 @@
+theorem Cfg.ofWords_copy_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update w dst (w src)) := by
+  apply Cfg.ext
+  · simp only [Cfg.ofWords_state]
+  · simp only [Cfg.ofWords_inputPos]
+  ·
+    funext j p
+    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+    by_cases hj : j = dst
+    · subst j
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
+      exact catalog_buffer_clip (w src) p
+    · simp only [hj, false_and, ite_false, Function.update_of_ne hj]
+  · funext j
+    simp only [Cfg.ofWords_workTapePos]
+  · simp only [Cfg.ofWords_output]

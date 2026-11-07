@@ -1,0 +1,55 @@
+/-- Two- and three-word administrative configurations share one relocation frame.
+
+**Proof sketch.** The slot list optionally includes the candidate before the two bank words.
+The selected-tape contract places these words, and a single three-block split checks the
+ambient frame. Any other cell in either bank has nonzero local index and is blank. The
+candidate is selected exactly in the three-word variant. [AB09, §1.2] -/
+private lemma emitterP2_admin_frame {S H : Type} (candidate : Bool) (k l : ℕ)
+    (hk : 0 < k) (hl : 0 < l)
+    (index : Fin (if candidate then 3 else 2) ↪ Fin (k + l + 1))
+    (hindex : ∀ i, index i =
+      if i.val = 0 then
+        if candidate then 0 else emitterP2LeftIndex k l ⟨0, hk⟩
+      else if candidate then
+        if i.val = 1 then emitterP2LeftIndex k l ⟨0, hk⟩
+        else emitterP2RightIndex k l ⟨0, hl⟩
+      else emitterP2RightIndex k l ⟨0, hl⟩)
+    (emb : S → H) (w s u v : List Bool) (q : S) :
+    (embedEmitCfg index
+      (if candidate then fun _ _ => none
+        else fun i => bufferTape (emitterP2Words k l s [] [] i)) (fun _ => 0) []
+      (Cfg.ofWords (input := w) q (fun i =>
+        if candidate then if i.val = 0 then s else if i.val = 1 then u else v
+        else if i.val = 0 then u else v))).mapState emb =
+          Cfg.ofWords (emb q) (emitterP2Words k l s u v) := by
+  cases candidate <;> dsimp only at hindex ⊢
+  all_goals
+    apply emitterP2_frame q
+    · simp only [Cfg.ofWords_state, Option.map_some]
+    · simp only [Cfg.ofWords_inputPos]
+    · simp only [Cfg.ofWords_output]
+    · intro i
+      fin_cases i <;>
+        simp [hindex, Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos,
+          emitterP2Words, emitterP2LeftIndex, emitterP2RightIndex, stateWord_eq, hk]
+    · intro j hj
+      refine Fin.cases ?_ (fun a => ?_) j hj
+      · intro h
+        first
+          | exact False.elim (h ⟨0, by simp [hindex]⟩)
+          | simp [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, emitterP2Words]
+      · refine Fin.addCases (fun i => ?_) (fun i => ?_) a
+        all_goals
+          intro h
+          have hn : i.val ≠ 0 := by
+            intro he
+            have hi : i = ⟨0, by omega⟩ := Fin.ext he
+            subst i
+            apply h
+            first
+              | exact ⟨0, by simp [hindex]⟩
+              | exact ⟨1, by simp [hindex]⟩
+              | exact ⟨2, by simp [hindex]⟩
+          simp [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, emitterP2Words,
+            stateWord_eq, hn, bufferTape_nil]
+

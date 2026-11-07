@@ -1,0 +1,16 @@
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import Lean
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for n in [`Turing.FinTM.redirectTM_k, `Turing.FinTM.redirectTM_State, `Turing.FinTM.redirectTM_eq] do
+    logInfo m!"SHAPE_API|{n}|exists={(env.find? n).isSome}"
+  for (n, ci) in env.constants.toList do
+    if (`Turing.FinTM.redirectTM).isPrefixOf n || n.toString.startsWith "Turing.FinTM.redirectTM_" then
+      let owner := (env.getModuleIdxFor? n).map (fun i => env.header.moduleNames[i.toNat]!)
+      logInfo m!"REDIRECT_API|{n}|owner={owner}|private={isPrivateName n}|internal={n.isInternalDetail}"
+  let name := `Turing.FinTM.redirectTM_spaceUsedByTape
+  let some ci := env.find? name | throwError "moved theorem absent"
+  logInfo m!"MOVED_TYPE|{ci.type}"
+  logInfo m!"MOVED_AXIOMS|{(← liftCoreM <| Lean.collectAxioms name).toList}"

@@ -1,0 +1,16 @@
+error: no default toolchain configured. run `elan default stable` to install & configure the latest Lean 4 stable release.
+info: backtrace:
+
+   0: <error_chain::backtrace::imp::InternalBacktrace>::new
+   1: <error_chain::State as core::default::Default>::default
+   2: <elan::config::Cfg>::toolchain_for_dir
+   3: elan_init::proxy_mode::main
+   4: elan_init::main
+   5: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+   6: std::rt::lang_start::<()>::{closure#0}
+   7: std::rt::lang_start_internal
+   8: main
+
+FAIL(TCSlib/Complexity/TuringMachine/Configuration): lean exited with status 1
+FAIL(TCSlib/Complexity/TuringMachine/Configuration): error diagnostics reported
+FAIL(TCSlib/Complexity/TuringMachine/Configuration): no fresh .olean produced

@@ -1,0 +1,27 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.CookLevin.Hardness
+import Lean
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  let wanted := ["_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_guard_add",
+    "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5_guard_add"]
+  let mut found := 0
+  for (n, ci) in env.constants.toList do
+    if !wanted.contains n.toString then continue
+    found := found + 1
+    logInfo m!"TARGET|{n}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut defs : Array Name := #[]
+    for c in used do
+      if defs.contains c then continue
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          defs := defs.push c
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{c}|{owner}|{hint}"
+      | _, _ => pure ()
+  if found != 2 then throwError "Expected both exact compiled private guards, found {found}"

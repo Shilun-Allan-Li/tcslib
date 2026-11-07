@@ -1,0 +1,41 @@
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:927:40: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  have __src := timedReadyCfg ?D ?M₁ ?M₂ ?c ?b;
+  { state := some (Sum.inr (Sum.inr (Sum.inr (⋯.mpr (⋯.mpr (branchTM ?M₁ ?M₂ ?b).tm)).q₀))), inputPos := 1,
+    workTapes := __src.workTapes, workTapePos := __src.workTapePos, output := __src.output }
+in the target expression
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output } =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hTs : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none
+hTo : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+d : ℕ
+hd : d ≤ T
+hlive : ∀ v < d, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+hcfg : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hs : c.state = none
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output } =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b

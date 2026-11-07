@@ -1,0 +1,25 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6LayoutPreship
+open Turing
+
+/-- Consumer of the implemented, still-unmerged prerequisite reader, with
+CodeTM.toFinTM sealed before this header. No assumed reader hypothesis. -/
+theorem actual_bundle_consumer (M : CodeTM) (x output : List Bool) (t s : ℕ)
+    (hcomp : M.toFinTM.ComputesInTime x output t)
+    (hspace : M.toFinTM.tm.spaceUsed (M.toFinTM.tm.initCfg x) t ≤ s) :
+    (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = output ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s := by
+  rw [CodeTM.toFinTM_eq] at hcomp hspace
+  obtain ⟨halted, out⟩ := (FinTM.computesInTime_iff
+    { k := 1, State := Fin (M.numStates + 1), tm := M.tm } x output t).mp hcomp
+  exact ⟨halted, out, hspace⟩
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.actual_bundle_consumer

@@ -1,0 +1,56 @@
+/private/tmp/tcslib-sg1-strong-tk40_hup/Controls_sealed.lean:6:18: warning: `Turing.Segment` does not have the `[simp]` attribute
+/private/tmp/tcslib-sg1-strong-tk40_hup/Controls_sealed.lean:13:53: error: Tactic `rfl` failed: The left-hand side
+  Segment M F P a b t
+is not definitionally equal to the right-hand side
+  MultiTapeTM.runFrom a t = b ∧
+    (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+F : Set (Option S)
+P : (Fin k → ℤ) → Prop
+a b : Cfg k Bool S x
+t : ℕ
+⊢ Segment M F P a b t ↔
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+/private/tmp/tcslib-sg1-strong-tk40_hup/Controls_sealed.lean:20:56: error: Tactic `rfl` failed: The left-hand side
+  Segment M F P
+is not definitionally equal to the right-hand side
+  fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+F : Set (Option S)
+P : (Fin k → ℤ) → Prop
+⊢ Segment M F P = fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+/private/tmp/tcslib-sg1-strong-tk40_hup/Controls_sealed.lean:24:39: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c t
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step^[t] c
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+t : ℕ
+⊢ MultiTapeTM.runFrom c t = MultiTapeTM.step^[t] c
+/private/tmp/tcslib-sg1-strong-tk40_hup/Controls_sealed.lean:28:38: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom
+is not definitionally equal to the right-hand side
+  fun c t => MultiTapeTM.step^[t] c
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+⊢ MultiTapeTM.runFrom = fun c t => MultiTapeTM.step^[t] c

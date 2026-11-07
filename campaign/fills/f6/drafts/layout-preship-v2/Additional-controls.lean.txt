@@ -1,0 +1,39 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+-- Returning embedding
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) :
+    (embedEmitRetTM ι M).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) => (embedEmitRetTM ι M).q₀) =
+    fun _ M => Sum.inl M.q₀ := by rfl
+-- Forwarding configuration
+example (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) :
+    (embedEmitCfg ι tapes heads pre c).output = pre ++ c.output := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) =>
+      (embedEmitCfg ι tapes heads pre c).output) = fun _ _ _ pre c => pre ++ c.output := by rfl
+-- Last-ruler configuration
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) (q : Option Bool)
+    (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := by rfl
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) :
+    (fun (q : Option Bool) (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) =>
+      (rulerHostCfg ℓ hz q c rt rp).output) = fun _ c _ _ => c.output := by rfl
+-- Forward-loop configuration
+example (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) :
+    (StepBlock.forwardLoopCfg entry M c).output = c.output := by rfl
+example : (fun (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) =>
+    (StepBlock.forwardLoopCfg entry M c).output) = fun _ _ c => c.output := by rfl
+-- Zero-outer startup-loop controller
+example (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) :
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀ = Sum.inl R.q₀ := by rfl
+example : (fun (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) =>
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀) = fun R _ _ _ => Sum.inl R.q₀ := by rfl
+-- Coded dependent bundle
+example (M : CodeTM) : M.toFinTM.k = 1 := by rfl
+example : (fun M : CodeTM => M.toFinTM.k) = fun _ => 1 := by rfl

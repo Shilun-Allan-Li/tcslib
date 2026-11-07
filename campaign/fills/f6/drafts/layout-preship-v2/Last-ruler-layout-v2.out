@@ -1,0 +1,100 @@
+/private/tmp/tcslib-f6-preship-4jedckr4/Last_ruler_layout_v2.lean:57:34: error: Tactic `rfl` failed: The left-hand side
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+        workTapes := fun i =>
+          Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes
+            i,
+        workTapePos := fun x => 0, output := [] }.workTapes
+    (Fin.last (K + 3)) p
+is not definitionally equal to the right-hand side
+  FinTM.bufferTape (List.replicate ℓ true) p
+
+case workTapes.h.h.refine_1
+K n ℓ : ℕ
+P Q V : Type
+finish : P
+entry : Q
+inj : Q → Bool → V
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x z : List Bool
+hz : z.length = ℓ + x.length
+σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+ec : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg σ (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+bank : Cfg (K + 3) Bool P x :=
+  { state := some finish, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+physical : Cfg (K + 3 + 1) Bool P z :=
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+    workTapes := fun i =>
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i,
+    workTapePos := fun x => 0, output := [] }
+h1 : ∀ (j : Fin (K + 3)), j = 1 ↔ ↑j = 1
+h2 : ∀ (j : Fin (K + 3)), j = 2 ↔ ↑j = 2
+hbank : ec = Cfg.mapState (fun x => entry) bank
+i : Fin (K + 3 + 1)
+p : ℤ
+⊢ { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+          workTapes := fun i =>
+            Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes
+              i,
+          workTapePos := fun x => 0, output := [] }.workTapes
+      (Fin.last (K + 3)) p =
+    FinTM.bufferTape (List.replicate ℓ true) p
+/private/tmp/tcslib-f6-preship-4jedckr4/Last_ruler_layout_v2.lean:58:62: error: Tactic `rfl` failed: The left-hand side
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+        workTapes := fun i =>
+          Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes
+            i,
+        workTapePos := fun x => 0, output := [] }.workTapes
+    j.castSucc p
+is not definitionally equal to the right-hand side
+  bank.workTapes j p
+
+case workTapes.h.h.refine_2
+K n ℓ : ℕ
+P Q V : Type
+finish : P
+entry : Q
+inj : Q → Bool → V
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x z : List Bool
+hz : z.length = ℓ + x.length
+σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+ec : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg σ (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+bank : Cfg (K + 3) Bool P x :=
+  { state := some finish, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+physical : Cfg (K + 3 + 1) Bool P z :=
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+    workTapes := fun i =>
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i,
+    workTapePos := fun x => 0, output := [] }
+h1 : ∀ (j : Fin (K + 3)), j = 1 ↔ ↑j = 1
+h2 : ∀ (j : Fin (K + 3)), j = 2 ↔ ↑j = 2
+hbank : ec = Cfg.mapState (fun x => entry) bank
+i : Fin (K + 3 + 1)
+p : ℤ
+j : Fin (K + 3)
+⊢ { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+          workTapes := fun i =>
+            Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes
+              i,
+          workTapePos := fun x => 0, output := [] }.workTapes
+      j.castSucc p =
+    bank.workTapes j p
+/private/tmp/tcslib-f6-preship-4jedckr4/Last_ruler_layout_v2.lean:53:34: warning: This simp argument is unused:
+  Fin.val_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [bank, Fin.val_one,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'F6LayoutPreship.last_ruler_layout' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'F6LayoutPreship.last_ruler_not_three' depends on axioms: [propext, Quot.sound]

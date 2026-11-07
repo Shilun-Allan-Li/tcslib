@@ -1,0 +1,7 @@
+private def emitterP2SmallIndex (k l : ℕ) (hk : 0 < k) (hl : 0 < l) :
+    Fin 3 ↪ Fin (k + l + 1) where
+  toFun i := if i = 0 then 0 else if i = 1 then emitterP2LeftIndex k l ⟨0, hk⟩
+    else emitterP2RightIndex k l ⟨0, hl⟩
+  inj' := by
+    simpa only [↓reduceIte, Fin.ext_iff, Fin.val_zero, Fin.val_one] using
+      emitterP2_index_injective true k l hk hl

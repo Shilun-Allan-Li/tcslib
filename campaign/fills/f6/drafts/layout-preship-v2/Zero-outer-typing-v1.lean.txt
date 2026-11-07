@@ -1,0 +1,38 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6LayoutPreship
+open Turing
+
+/-- The full-bank emitting embedding at the zero-outer-frame specialization
+is reconstructed by the existing public configuration contract. -/
+theorem full_bank_embedding {m : ℕ} {Q : Type} {z : List Bool} (c : Cfg m Bool Q z) :
+    embedEmitCfg (Fin.castLEEmb (le_refl m)) (fun _ _ => none) (fun _ => 0) [] c = c := by
+  apply embedEmitCfg_eq
+  · rfl
+  · rfl
+  · exact List.nil_append _
+  · intro i
+    exact ⟨rfl, rfl⟩
+  · intro j hj
+    exact False.elim (hj ⟨j, rfl⟩)
+
+/-- Actual constructor typing at k=K+2, outer K=0 gives K+4 physical tapes.
+This is a constructor/type probe only; it supplies no run, cut or space premise. -/
+theorem zero_outer_constructor (K : ℕ) {P Q : Type} [DecidableEq P]
+    (A : MultiTapeTM (K + 4) Bool P) (finish : P)
+    (H : MultiTapeTM (K + 4) Bool Q) (entry : Q) :
+    Nonempty (MultiTapeTM (K + 4) Bool (P ⊕ Q)) := by
+  let A' : MultiTapeTM (0 + ((K + 2) + 2)) Bool P := by
+    simpa only [Nat.zero_add] using A
+  refine ⟨?_⟩
+  simpa only [Nat.zero_add] using
+    (startupLoopTM (k := K + 2) (K := 0) A' finish H entry)
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.full_bank_embedding
+#print axioms F6LayoutPreship.zero_outer_constructor

@@ -1,0 +1,20 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+attribute [local irreducible] Cfg.ofWords Cfg.mapState
+namespace RootCanonicalMap
+ theorem canonical_map {k : ℕ} {S S' : Type*} {x : List Bool}
+    (q : S) (w : Fin k → List Bool) (f : S → S') :
+    (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := by
+  apply Cfg.mapState_eq_of_fields
+  · rw [Cfg.ofWords_state, Cfg.ofWords_state, Option.map_some]
+  · rw [Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+  · funext j p
+    rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapes]
+  · funext j
+    rw [Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos]
+  · rw [Cfg.ofWords_output, Cfg.ofWords_output]
+#print axioms canonical_map
+end RootCanonicalMap

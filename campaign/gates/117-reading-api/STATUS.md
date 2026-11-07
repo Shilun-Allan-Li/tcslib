@@ -1,11 +1,17 @@
-# Gate 117: approved reading/resource APIs — reserved, Codex
+# Gate117: #230 preparing for Codex audit
 
-Seyoon approved **23 theorems** on 2026-11-07: CodeTM bundle equation (1),
-leftCfg/rightCfg fields (10), captureCfg fields (5), branch shape/run equations (3),
-and four canonical zero-space facts in Composition/Primitives (4).
-Codex selected for the external audit, with findings Markdown attached and pasted in chat.
+Seyoon approved23 non-simp theorems: CodeTM bundle equation1, left/right fields10,
+capture fields5, branch shape/run equations3, and four canonical zero-space facts4.
+PR **#230**, draft, head `1160c18f03fd318f0dec25738790935fa61379d4`, base `e3adffac67377a8b6e23bed74bfdbb44a123dd86`.
 
-Bounded pre-ship evidence is in `campaign/fills/mig1/review/` (API-PROPOSALS,
-configuration/branch/zero-space proposals) and `campaign/fills/f6/drafts/`.
-Implementation/PR, freeze, seals/controls, screens and current merged-tree replay precede
-verified staging. No audit is dispatched yet. Next free gate: **118**.
+Five full owner-module preflights pass; the fresh current merged-tree replay **mra2** passes
+**394 modules /0 failures /0 static mismatches** on a complete copy of oleans-mac3.
+The initial failed forward-reference preflight is preserved; only the new branch lemma's
+placement changed, leaving all surviving source bytes identical. Independent source/search/
+lint/eight-file screen finds no new pair; compiled census adds exactly23 public theorems,
+no auxiliary/private changes, all non-simp and standard axioms. Owner-scoped seals and32 paired
+controls pass in their stated scopes; no global legacy seal or full condTM repair is claimed.
+Complete raw evidence is in evidence/ and review/.
+
+Codex selected (findings Markdown attached and pasted). The verified169-section packet is published; exact pins are in dispatch.json.
+**Ready to dispatch**, using prompt.md; **no audit dispatched yet**. **Not yet clear to merge: #230.** Gate118 is reserved for MIG-1 landing; next free119.

@@ -1,0 +1,26 @@
+{
+  "no_source_or_proof_result_affected": true,
+  "corrected_static_preparation_errors": [
+    {
+      "stage": "milestone2 receipt",
+      "error": "AssertionError comparing unqualified expected names with parser full namespace names.",
+      "fix": "Use Turing.FinTM. qualified expectations; receipt then passed."
+    },
+    {
+      "stage": "milestone3 extra-region counting",
+      "error": "29 candidates rather than21 because parser blanks trailing next-doc comments while retaining their differing whitespace.",
+      "fix": "Compare exact comment-free code after exterior whitespace strip;8 comment-only predecessor chunks eliminated,21 actual proof regions remain."
+    },
+    {
+      "stage": "final evidence preparation",
+      "error": "AttributeError: module compare has no attribute strip_comments",
+      "fix": "Use the existing comment-stripped declaration code (later parser.clean was inspected for literal header scan)."
+    },
+    {
+      "stage": "argument-head scanner",
+      "error": "Initial head tokenization truncated List.getElem?_eq_getElem to List.getElem.",
+      "fix": "Accept Lean ?/! identifier suffixes; no actual definition argument was present."
+    }
+  ],
+  "preserved_lean_failures": "Every attempted Lean run has its original inert input, raw .out and immutable receipt. Separate diagnostic-count-errata.json supplements early runner diagnostic counts. Rejected controls and sandbox interruption have explicit own JSON dispositions."
+}

@@ -1,0 +1,24 @@
+/private/tmp/tcslib-mig1-root-nkpyqdd6/CodeSimulator_new_region_sealed_v2.lean:1333:4: error: Type mismatch: After simplification, term
+  first
+ has type
+  ∀ t < t₀ + 1 + t₁,
+    (@MultiTapeTM.runFrom (I.k + 1) (SweepPhase ⊕ I.State) Bool x (seamCompTM P SweepPhase.done E enter)
+          (Cfg.ofWords (Sum.inl SweepPhase.sweep) w) t).state ≠
+      some (Sum.inr leave)
+but is expected to have type
+  ∀ u < t₀ + 1 + t₁,
+    (@MultiTapeTM.runFrom (I.k + 1) (SweepPhase ⊕ I.State) Bool x
+          { q₀ := Sum.inl SweepPhase.sweep, tr := (seamCompTM P SweepPhase.done E enter).tr }
+          (Cfg.ofWords (Sum.inl SweepPhase.sweep) (stateWord (I.k + 1) arg)) u).state ≠
+      some (Sum.inr leave)
+/private/tmp/tcslib-mig1-root-nkpyqdd6/CodeSimulator_new_region_sealed_v2.lean:1334:4: error: Type mismatch: After simplification, term
+  whole
+ has type
+  @MultiTapeTM.runFrom (I.k + 1) (SweepPhase ⊕ I.State) Bool x (seamCompTM P SweepPhase.done E enter)
+      (Cfg.ofWords (Sum.inl SweepPhase.sweep) (stateWord (I.k + 1) arg)) (t₀ + 1 + t₁) =
+    Cfg.ofWords (Sum.inr leave) (Function.update (stateWord (I.k + 1) arg) dst (f arg))
+but is expected to have type
+  @MultiTapeTM.runFrom (I.k + 1) (SweepPhase ⊕ I.State) Bool x
+      { q₀ := Sum.inl SweepPhase.sweep, tr := (seamCompTM P SweepPhase.done E enter).tr }
+      (Cfg.ofWords (Sum.inl SweepPhase.sweep) (stateWord (I.k + 1) arg)) (t₀ + 1 + t₁) =
+    Cfg.ofWords (Sum.inr leave) (Function.update (stateWord (I.k + 1) arg) dst (f arg))

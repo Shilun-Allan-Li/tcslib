@@ -1,0 +1,23 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Turing
+attribute [local irreducible] Cfg.ofWords FinTM.bufferTape
+attribute [-simp] Cfg.init Action.apply MultiTapeTM.initCfg
+/-- Clipping a canonical word to its occupied interval leaves its tape unchanged. -/
+private theorem catalog_buffer_clip (w : List Bool) (p : ℤ) :
+    (if 0 ≤ p ∧ p < (w.length : ℤ) then FinTM.bufferTape w p else none) =
+      FinTM.bufferTape w p := by
+  by_cases h : 0 ≤ p ∧ p < (w.length : ℤ)
+  · rw [if_pos h]
+  · rw [if_neg h]
+    symm
+    rw [FinTM.bufferTape_eq]
+    split_ifs with h0
+    · apply List.getElem?_eq_none_iff.mpr
+      omega
+    · rfl
+#print axioms catalog_buffer_clip
+end Turing

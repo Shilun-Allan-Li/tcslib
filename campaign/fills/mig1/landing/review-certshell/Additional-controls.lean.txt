@@ -1,0 +1,59 @@
+-- C29 Cfg.ofWords
+example (q : Unit) (w : Fin 1 → List Bool) :
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state = some q := by rfl
+example : (fun (q : Unit) (w : Fin 1 → List Bool) =>
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state) = fun q _ => some q := by rfl
+-- C30 Cfg.mapState
+example (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (c.mapState f).output = c.output := by rfl
+example : (fun (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    (c.mapState f).output) = fun _ c => c.output := by rfl
+-- C31 vhostCfg
+example (x y : List Bool) (c : Cfg 1 Bool Unit y) (b : Bool)
+    (p : Fin (x.length + 2)) (pre : List Bool) :
+    (vhostCfg c b p pre).output = pre ++ c.output := by rfl
+example (x y : List Bool) :
+    (fun (c : Cfg 1 Bool Unit y) (b : Bool) (p : Fin (x.length + 2)) (pre : List Bool) =>
+      (vhostCfg c b p pre).output) = fun c _ _ pre => pre ++ c.output := by rfl
+-- C32 vhostBuffer
+example (m : ℕ) : vhostBuffer m = Fin.castAdd m (0 : Fin 1) := by rfl
+example : vhostBuffer = fun m => Fin.castAdd m (0 : Fin 1) := by rfl
+-- C33 vhostBank
+example (m : ℕ) (i : Fin m) : vhostBank i = Fin.natAdd 1 i := by rfl
+example (m : ℕ) : (fun i : Fin m => vhostBank i) = fun i => Fin.natAdd 1 i := by rfl
+-- C34 vhostCap
+example (m : ℕ) : vhostCap m = Fin.natAdd (1 + m) (0 : Fin 1) := by rfl
+example : vhostCap = fun m => Fin.natAdd (1 + m) (0 : Fin 1) := by rfl
+-- C35 vhostEmitTM
+example (M : MultiTapeTM 1 Bool Unit) : (vhostEmitTM M).q₀ = (M.q₀, true) := by rfl
+example : (fun M : MultiTapeTM 1 Bool Unit => (vhostEmitTM M).q₀) =
+    fun M => (M.q₀, true) := by rfl
+-- C36 embedSilentCfg
+example (ι : Fin 1 ↪ Fin 2) (cap : Fin 2) (tapes : Fin 2 → ℤ → Option Bool)
+    (heads : Fin 2 → ℤ) (pre out : List Bool) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (embedSilentCfg ι cap tapes heads pre out c).output = out := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (cap : Fin 2) (tapes : Fin 2 → ℤ → Option Bool)
+    (heads : Fin 2 → ℤ) (pre out : List Bool) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+      (embedSilentCfg ι cap tapes heads pre out c).output) = fun _ _ _ _ _ out _ => out := by rfl
+-- C37 embedEmitTM
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Unit) :
+    (embedEmitTM ι M).q₀ = M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Unit) => (embedEmitTM ι M).q₀) =
+    fun _ M => M.q₀ := by rfl
+-- C38 seamCompTM
+example (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) :
+    (seamCompTM M exit N entry).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) => (seamCompTM M exit N entry).q₀) =
+    fun M _ _ _ => Sum.inl M.q₀ := by rfl
+-- C39 copyTM
+example (k : ℕ) (src dst : Fin k) : (copyTM (Symbol := Bool) k src dst).q₀ = SweepPhase.sweep := by rfl
+example : (fun (k : ℕ) (src dst : Fin k) => (copyTM (Symbol := Bool) k src dst).q₀) =
+    fun _ _ _ => SweepPhase.sweep := by rfl
+-- C40 transferTM
+example (k : ℕ) (src dst : Fin k) : (transferTM (Symbol := Bool) k src dst).q₀ = SweepPhase.sweep := by rfl
+example : (fun (k : ℕ) (src dst : Fin k) => (transferTM (Symbol := Bool) k src dst).q₀) =
+    fun _ _ _ => SweepPhase.sweep := by rfl
+-- C41 stateWord
+example (k : ℕ) (w : List Bool) (i : Fin k) : stateWord k w i = if i.val = 0 then w else [] := by rfl
+example : (fun (k : ℕ) (w : List Bool) (i : Fin k) => stateWord k w i) =
+    fun _ w i => if i.val = 0 then w else [] := by rfl

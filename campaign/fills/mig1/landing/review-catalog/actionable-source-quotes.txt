@@ -1,0 +1,46 @@
+
+Catalog-current.lean.txt
+2223: theorem computesFunInTime_pairDup_spaceUsed :
+2224:     ∃ (M : FinTM Bool) (c : ℕ),
+2225:       M.ComputesFunInTime (fun x => pairEncode x x)
+2226:         (fun n => c * (n + 1)) ∧
+2227:       ∀ (x : List Bool) (t : ℕ),
+2228:         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+2229:   ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+2230:     (pairDiagTM_computes x).mono (by omega), fun x t => by
+2231:     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Catalog-current.lean.txt
+2324: theorem computesFunInTime_incFixed_spaceUsed :
+2325:     ∃ (M : FinTM Bool) (c : ℕ),
+2326:       M.ComputesFunInTime (fun x => (incFixed x).getD [])
+2327:         (fun n => c * (n + 1)) ∧
+2328:       ∀ (x : List Bool) (t : ℕ),
+2329:         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+2330:   ⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
+2331:     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Catalog-current.lean.txt
+2412: theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
+2413:     (x : List Bool) (t : ℕ) (i : Fin M.k) :
+2414:     (redirectTM M haltOn).tm.spaceUsedByTape
+2415:         ((redirectTM M haltOn).tm.initCfg x) t i
+2416:       = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+2417:   rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+2418:   congr 1
+2419:   ext p
+2420:   simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]
+
+CodeSimulator-current.lean.txt
+1309:   have secondCut (u : ℕ) (hu : u < t₁) :
+1310:       (E.runFrom (Cfg.ofWords (input := x) enter copied) u).state ≠ some leave := by
+1311:     rw [lift]
+1312:     exact cut₁ u hu
+1313:   have second' : E.runFrom
+
+CodeSimulator-repaired.lean.txt
+1309:   have secondCut (u : ℕ) (hu : u < t₁) :
+1310:       (E.runFrom (Cfg.ofWords (input := x) enter copied) u).state ≠ some leave := by
+1311:     rw [lift]
+1312:     simpa only [embedEmitCfg_state] using cut₁ u hu
+1313:   have second' : E.runFrom

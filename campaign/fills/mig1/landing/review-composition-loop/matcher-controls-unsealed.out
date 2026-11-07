@@ -1,0 +1,23 @@
+CONTROL|Turing.FinTM.rewind_scan.match_1|point|FAIL
+/private/tmp/tcslib-mig1-comp-loop-2tojweie/matcher-controls-unsealed.lean:61:0: error: RFL_CONTROL|Turing.FinTM.rewind_scan.match_1|point|Tactic `rfl` failed: equality lhs
+  match inp✝ with
+  | some val => h_1 val
+  | none => h_2 ()
+is not definitionally equal to rhs
+  Option.casesOn inp✝ (h_2 ()) fun val => h_1 val
+
+motive : Option Bool → Sort u_1
+inp✝ : Option Bool
+h_1 : (val : Bool) → motive (some val)
+h_2 : Unit → motive none
+⊢ (match inp✝ with
+    | some val => h_1 val
+    | none => h_2 ()) =
+    Option.casesOn inp✝ (h_2 ()) fun val => h_1 val
+CONTROL|Turing.FinTM.rewind_scan.match_1|abstract|FAIL
+/private/tmp/tcslib-mig1-comp-loop-2tojweie/matcher-controls-unsealed.lean:61:0: error: RFL_CONTROL|Turing.FinTM.rewind_scan.match_1|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.rewind_scan.match_1
+is not definitionally equal to rhs
+  fun motive inp h_1 h_2 => Option.casesOn inp (h_2 ()) fun val => h_1 val
+
+⊢ Turing.FinTM.rewind_scan.match_1 = fun motive inp h_1 h_2 => Option.casesOn inp (h_2 ()) fun val => h_1 val

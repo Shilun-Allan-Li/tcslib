@@ -1,0 +1,508 @@
+{
+  "TCSlib/Complexity/ClassNP/SAT.lean": {
+    "public_counts": [
+      5,
+      5
+    ],
+    "private_counts": [
+      265,
+      265
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [
+      {
+        "name": "Complexity.sat_guard_add",
+        "line": 4076,
+        "end": 4094
+      }
+    ],
+    "imports_before": [
+      "import TCSlib.Complexity.Formulas.CNFEncoding",
+      "import TCSlib.Complexity.ClassNP.NP",
+      "import TCSlib.Complexity.ClassNP.Reductions",
+      "import Mathlib.Tactic.FinCases",
+      "import Mathlib.Data.List.MinMax"
+    ],
+    "imports_after": [
+      "import TCSlib.Complexity.Formulas.CNFEncoding",
+      "import TCSlib.Complexity.ClassNP.NP",
+      "import TCSlib.Complexity.ClassNP.Reductions",
+      "import Mathlib.Tactic.FinCases",
+      "import Mathlib.Data.List.MinMax"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/ClassNP/Tautology.lean": {
+    "public_counts": [
+      5,
+      5
+    ],
+    "private_counts": [
+      88,
+      88
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [
+      "Complexity.tautDualSegment_iff_segment"
+    ],
+    "private_removed": [
+      "Complexity.tautDual_segment_add"
+    ],
+    "private_changed": [
+      {
+        "name": "Complexity.tautDual_segment_zero",
+        "line": 1299,
+        "end": 1304
+      },
+      {
+        "name": "Complexity.tautDual_segment_one",
+        "line": 1305,
+        "end": 1319
+      },
+      {
+        "name": "Complexity.tautDual_scan",
+        "line": 1320,
+        "end": 1360
+      },
+      {
+        "name": "Complexity.tautDual_copy",
+        "line": 1361,
+        "end": 1404
+      },
+      {
+        "name": "Complexity.tautDual_rewind",
+        "line": 1405,
+        "end": 1443
+      },
+      {
+        "name": "Complexity.tautDual_valid",
+        "line": 1461,
+        "end": 1493
+      },
+      {
+        "name": "Complexity.tautDual_invalid",
+        "line": 1494,
+        "end": 1524
+      }
+    ],
+    "imports_before": [
+      "import TCSlib.Complexity.Formulas.DNF",
+      "import TCSlib.Complexity.Formulas.CNFEncoding",
+      "import TCSlib.Complexity.ClassNP.CoNP",
+      "import TCSlib.Complexity.ClassNP.Reductions",
+      "import TCSlib.Complexity.CookLevin.Hardness",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "import Mathlib.Data.Sigma.Basic"
+    ],
+    "imports_after": [
+      "import TCSlib.Complexity.Formulas.DNF",
+      "import TCSlib.Complexity.Formulas.CNFEncoding",
+      "import TCSlib.Complexity.ClassNP.CoNP",
+      "import TCSlib.Complexity.ClassNP.Reductions",
+      "import TCSlib.Complexity.CookLevin.Hardness",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "import Mathlib.Data.Sigma.Basic"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/CookLevin/Hardness.lean": {
+    "public_counts": [
+      5,
+      5
+    ],
+    "private_counts": [
+      539,
+      539
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [
+      {
+        "name": "Complexity.clA5_guard_add",
+        "line": 6395,
+        "end": 6413
+      }
+    ],
+    "imports_before": [
+      "import TCSlib.Complexity.ClassNP.SAT",
+      "import TCSlib.Complexity.ClassNP.TMSAT",
+      "import TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+      "import TCSlib.Complexity.CookLevin.Snapshot",
+      "import TCSlib.Complexity.TuringMachine.Build.Seam"
+    ],
+    "imports_after": [
+      "import TCSlib.Complexity.ClassNP.SAT",
+      "import TCSlib.Complexity.ClassNP.TMSAT",
+      "import TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+      "import TCSlib.Complexity.CookLevin.Snapshot",
+      "import TCSlib.Complexity.TuringMachine.Build.Seam"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean": {
+    "public_counts": [
+      15,
+      15
+    ],
+    "private_counts": [
+      0,
+      0
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [],
+    "imports_before": [
+      "import TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+    ],
+    "imports_after": [
+      "import TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": {
+    "public_counts": [
+      113,
+      113
+    ],
+    "private_counts": [
+      392,
+      392
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [],
+    "imports_before": [
+      "import Mathlib.Data.Nat.Size",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import TCSlib.Complexity.TuringMachine.Build.Loop",
+      "import TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "imports_after": [
+      "import Mathlib.Data.Nat.Size",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import TCSlib.Complexity.TuringMachine.Build.Loop",
+      "import TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": {
+    "public_counts": [
+      92,
+      92
+    ],
+    "private_counts": [
+      1,
+      1
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [],
+    "imports_before": [
+      "import Mathlib.Tactic.Linarith",
+      "import TCSlib.Complexity.TuringMachine.Simulation",
+      "import TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    "imports_after": [
+      "import Mathlib.Tactic.Linarith",
+      "import TCSlib.Complexity.TuringMachine.Simulation",
+      "import TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": {
+    "public_counts": [
+      59,
+      59
+    ],
+    "private_counts": [
+      20,
+      20
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [
+      {
+        "name": "Turing.counterLoopTMVia_run_done",
+        "line": 1324,
+        "end": 1414
+      },
+      {
+        "name": "Turing.counterLoopTMVia_done_witness",
+        "line": 1836,
+        "end": 1884
+      },
+      {
+        "name": "Turing.counterLoopTMVia_escape_witness",
+        "line": 1925,
+        "end": 1973
+      },
+      {
+        "name": "Turing.RoundContract.counterLoopDone_traj",
+        "line": 2211,
+        "end": 2241
+      },
+      {
+        "name": "Turing.RoundContract.counterLoopEscape_traj",
+        "line": 2242,
+        "end": 2264
+      }
+    ],
+    "private_added": [
+      "Turing.counterSpan_iff_segment"
+    ],
+    "private_removed": [
+      "Turing.counter_span_append"
+    ],
+    "private_changed": [
+      {
+        "name": "Turing.counter_rounds",
+        "line": 1215,
+        "end": 1323
+      }
+    ],
+    "imports_before": [
+      "import Mathlib.Data.Nat.Digits.Defs",
+      "import Mathlib.Logic.Equiv.Bool",
+      "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "import TCSlib.Complexity.TuringMachine.Build.Scan",
+      "import TCSlib.Complexity.TuringMachine.SymbolLift",
+      "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "import TCSlib.Complexity.TuringMachine.CodeParser"
+    ],
+    "imports_after": [
+      "import Mathlib.Data.Nat.Digits.Defs",
+      "import Mathlib.Logic.Equiv.Bool",
+      "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "import TCSlib.Complexity.TuringMachine.Build.Scan",
+      "import TCSlib.Complexity.TuringMachine.SymbolLift",
+      "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "import TCSlib.Complexity.TuringMachine.CodeParser"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": {
+    "public_counts": [
+      49,
+      49
+    ],
+    "private_counts": [
+      236,
+      236
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [],
+    "imports_before": [
+      "import Mathlib.Data.List.Induction",
+      "import Mathlib.Data.Nat.Bits",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import Mathlib.Tactic.FinCases",
+      "import Mathlib.Tactic.Ring",
+      "import TCSlib.Complexity.ClassP.TimeConstructible",
+      "import TCSlib.Complexity.TuringMachine.Build.Convention",
+      "import TCSlib.Complexity.TuringMachine.Build.Loop",
+      "import TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "import TCSlib.Complexity.TuringMachine.Composition",
+      "import TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "imports_after": [
+      "import Mathlib.Data.List.Induction",
+      "import Mathlib.Data.Nat.Bits",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import Mathlib.Tactic.FinCases",
+      "import Mathlib.Tactic.Ring",
+      "import TCSlib.Complexity.ClassP.TimeConstructible",
+      "import TCSlib.Complexity.TuringMachine.Build.Convention",
+      "import TCSlib.Complexity.TuringMachine.Build.Loop",
+      "import TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "import TCSlib.Complexity.TuringMachine.Composition",
+      "import TCSlib.Complexity.TuringMachine.Encoding"
+    ],
+    "admissions": [
+      {
+        "name": "Turing.FinTM.polyUnaryTM_spaceUsed",
+        "line": 2379
+      },
+      {
+        "name": "Turing.FinTM.unaryTokenTM_computes",
+        "line": 6914
+      },
+      {
+        "name": "Turing.FinTM.appendBitTM_computes",
+        "line": 6996
+      }
+    ],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  },
+  "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": {
+    "public_counts": [
+      4,
+      4
+    ],
+    "private_counts": [
+      96,
+      96
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [
+      "Turing.FinTM.dgSpan_iff_segment"
+    ],
+    "private_removed": [
+      "Turing.FinTM.dgSpan_add"
+    ],
+    "private_changed": [
+      {
+        "name": "Turing.FinTM.dgSpan_one",
+        "line": 1199,
+        "end": 1211
+      },
+      {
+        "name": "Turing.FinTM.dgSpan_mono",
+        "line": 1279,
+        "end": 1290
+      },
+      {
+        "name": "Turing.FinTM.dg_init",
+        "line": 1291,
+        "end": 1375
+      },
+      {
+        "name": "Turing.FinTM.dg_collect",
+        "line": 1437,
+        "end": 1495
+      },
+      {
+        "name": "Turing.FinTM.dg_turn_with_growth",
+        "line": 1581,
+        "end": 1630
+      },
+      {
+        "name": "Turing.FinTM.dg_end_with_growth",
+        "line": 1672,
+        "end": 1724
+      },
+      {
+        "name": "Turing.FinTM.dg_step",
+        "line": 1755,
+        "end": 1897
+      },
+      {
+        "name": "Turing.FinTM.dg_simulate",
+        "line": 2057,
+        "end": 2117
+      }
+    ],
+    "imports_before": [
+      "import Mathlib.Tactic.Ring",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import Mathlib.Data.Fintype.Option",
+      "import Mathlib.Data.Fintype.Pi",
+      "import Mathlib.Data.Fintype.Prod",
+      "import Mathlib.Data.List.FinRange",
+      "import Mathlib.Data.Sigma.Basic",
+      "import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "import TCSlib.Complexity.TuringMachine.Sweep",
+      "import TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    "imports_after": [
+      "import Mathlib.Tactic.Ring",
+      "import Mathlib.Tactic.DeriveFintype",
+      "import Mathlib.Data.Fintype.Option",
+      "import Mathlib.Data.Fintype.Pi",
+      "import Mathlib.Data.Fintype.Prod",
+      "import Mathlib.Data.List.FinRange",
+      "import Mathlib.Data.Sigma.Basic",
+      "import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "import TCSlib.Complexity.TuringMachine.Sweep",
+      "import TCSlib.Complexity.TuringMachine.StateRenaming",
+      "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+    ],
+    "admissions": [],
+    "private_header_changes": [],
+    "private_definition_changes": [],
+    "surviving_private_order_unchanged": true
+  }
+}

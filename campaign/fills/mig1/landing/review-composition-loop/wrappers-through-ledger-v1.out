@@ -1,0 +1,24 @@
+/private/tmp/tcslib-mig1-comp-loop-voelc2gy/wrappers-through-ledger-v1.lean:931:35: error: unsolved goals
+case none
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+V : MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) := ⋯.mpr (⋯.mpr (M₁.branchTM M₂ b).tm)
+hTs : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none
+hTo : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+d : ℕ
+hd : d ≤ T
+hlive : ∀ v < d, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+hcfg : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hs : c.state = none
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+x✝ : Fin (D.timedCondTM M₁ M₂).k → Option Bool
+⊢ controlAction SignType.pos (some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀)))) =
+    controlAction SignType.pos (some (Sum.inr (Sum.inr (Sum.inr (⋯.mpr (⋯.mpr (M₁.branchTM M₂ b).tm)).q₀))))

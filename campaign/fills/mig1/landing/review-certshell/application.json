@@ -1,0 +1,62 @@
+{
+  "at_utc": "2026-11-07T11:01:30.914912+00:00",
+  "path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad/TCSlib/Complexity/TuringMachine/Build/CertShell.lean",
+  "old_sha256": "d792722cc144ae92dc32071b9406025264bd057f132577941cc962ca67daa84c",
+  "new_sha256": "7e291596dd6af5173af437ae20eca7d35b1d75f6a6f9d501c3372ecb00b68f40",
+  "source_freeze": {
+    "public_counts": [
+      2,
+      2
+    ],
+    "private_counts": [
+      20,
+      20
+    ],
+    "public_added": [],
+    "public_removed": [],
+    "visibility_changes": [],
+    "public_order_unchanged": true,
+    "public_header_changes": [],
+    "public_definition_changes": [],
+    "public_proof_changes": [],
+    "private_added": [],
+    "private_removed": [],
+    "private_changed": [
+      {
+        "name": "Turing.cert_prepare_exists",
+        "line": 456,
+        "end": 751
+      }
+    ],
+    "imports_before": [
+      "import TCSlib.Complexity.ClassP.DTIME",
+      "import TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+      "import TCSlib.Complexity.TuringMachine.Build.Seam",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "import TCSlib.Complexity.TuringMachine.Build.InputCall",
+      "import TCSlib.Complexity.TuringMachine.ChoiceWords"
+    ],
+    "imports_after": [
+      "import TCSlib.Complexity.ClassP.DTIME",
+      "import TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+      "import TCSlib.Complexity.TuringMachine.Build.Seam",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "import TCSlib.Complexity.TuringMachine.Build.InputCall",
+      "import TCSlib.Complexity.TuringMachine.ChoiceWords"
+    ],
+    "admissions": []
+  },
+  "all_surviving_public_and_private_headers_unchanged": true,
+  "all_other_declaration_bytes_unchanged": true,
+  "imports_order_definitions_tables_unchanged": true,
+  "old_local_witness": "let D : FinTM Bool := \u27e8K, _, M\u2085\u27e9",
+  "new_local_witness": "let D : FinTM Bool := \u27e8K, _, {M\u2085 with q\u2080 := .inl (.inl (.inl (.inl (.inl SweepPhase.sweep))))}\u27e9",
+  "initializer_diagnostic": "Unsealed diagnostic actually proves M\u2085.q\u2080 equals explicit label, D.tm=M\u2085, and D.tm.tr=M\u2085.tr by rfl. No such foreign reduction is in production.",
+  "production_transport": "MultiTapeTM.runFrom_with_q\u2080; explicit local q\u2080 avoids a foreign machine-shape read.",
+  "actual_source_applied": true,
+  "committed": false,
+  "pushed": false,
+  "other_files_edited": false
+}

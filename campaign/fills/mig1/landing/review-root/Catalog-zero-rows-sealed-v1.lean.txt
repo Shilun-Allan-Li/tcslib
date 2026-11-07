@@ -1,0 +1,54 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Composition
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Turing.FinTM
+attribute [local irreducible] idTM constTM prependTM pairValidTM
+  MultiTapeTM.spaceUsed MultiTapeTM.initCfg MultiTapeTM.runFrom MultiTapeTM.step
+  Cfg.init Action.apply ComputesFunInTime ComputesInTime
+attribute [-simp] Cfg.init Action.apply MultiTapeTM.initCfg
+theorem computesFunInTime_id_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime id (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨idTM, 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (idTM_computes x).mono (le_of_eq (one_mul _).symm), fun x t => by
+    rw [idTM_spaceUsed x t]; omega⟩
+
+theorem computesFunInTime_const_spaceUsed (w : List Bool) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun _ => w) (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨constTM w, w.length + 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (constTM_computes w x).mono (Nat.le_mul_of_pos_right _ (Nat.succ_pos _)), fun x t => by
+    rw [constTM_spaceUsed w x t]; omega⟩
+
+theorem computesFunInTime_prepend_spaceUsed (w : List Bool) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => w ++ x) (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨prependTM w, w.length + 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp (prependTM_computes w) x).mono (by
+      simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one]; omega), fun x t => by
+    rw [prependTM_spaceUsed w x t]; omega⟩
+
+theorem computesFunInTime_pairValid_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => [(pairDecode x).isSome])
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨pairValidTM, 1, (computesFunInTime_iff _ _ _).mpr fun x => by
+    simpa using pairValidTM_computes x, fun x t => by
+    rw [pairValidTM_spaceUsed x t]; omega⟩
+
+#print axioms computesFunInTime_id_spaceUsed
+#print axioms computesFunInTime_const_spaceUsed
+#print axioms computesFunInTime_prepend_spaceUsed
+#print axioms computesFunInTime_pairValid_spaceUsed
+end Turing.FinTM

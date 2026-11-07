@@ -1,0 +1,144 @@
+{
+  "unapproved": true,
+  "implementation": false,
+  "owner_proof_passes_with_run_step_sealed": true,
+  "four_hypothetical_consumers_pass_with_run_step_sealed": true,
+  "positive_controls": {
+    "examples": 8,
+    "diagnostics": 0,
+    "exit": 0,
+    "expected_errors_per_example": 0,
+    "bad_examples": [],
+    "stray": [],
+    "other_error_kinds": [],
+    "accepted": true
+  },
+  "negative_controls": {
+    "examples": 8,
+    "diagnostics": 8,
+    "exit": 1,
+    "expected_errors_per_example": 1,
+    "bad_examples": [],
+    "stray": [],
+    "other_error_kinds": [],
+    "accepted": true
+  },
+  "checker_negative_tests": {
+    "duplicate": {
+      "examples": 8,
+      "diagnostics": 9,
+      "exit": 1,
+      "expected_errors_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 8,
+          "count": 2
+        }
+      ],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    },
+    "missing": {
+      "examples": 8,
+      "diagnostics": 7,
+      "exit": 1,
+      "expected_errors_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 8,
+          "count": 0
+        }
+      ],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    },
+    "exit_zero": {
+      "examples": 8,
+      "diagnostics": 8,
+      "exit": 0,
+      "expected_errors_per_example": 1,
+      "bad_examples": [],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    }
+  },
+  "checker_negative_tests_are_synthetic_not_Lean_runs": true,
+  "axioms": {
+    "Owner-home-v1": {
+      "Turing.MultiTapeTM.exists_first_entry_of_fixed": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    "Consumers-v1": {
+      "Turing.MultiTapeTM.exists_first_entry_of_fixed": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "FirstEntryProposal.loop_private_shape": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "FirstEntryProposal.primitives_private_shape": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "FirstEntryProposal.singleton_stop_shape": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "FirstEntryProposal.comparator_stop_shape": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    }
+  },
+  "all_receipt_hashes_match": true,
+  "source_and_snapshot_hashes_unchanged": true,
+  "receipts": {
+    "Consumers-v1": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.4334092140197754
+    },
+    "Controls-sealed-v2": {
+      "exit": 1,
+      "errors": 8,
+      "seconds": 1.278182029724121
+    },
+    "Controls-unsealed": {
+      "exit": 1,
+      "errors": 2,
+      "seconds": 1.2513017654418945
+    },
+    "Controls-unsealed-v2": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.4725470542907715
+    },
+    "Inspect-step": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.241239070892334
+    },
+    "Owner-home-v1": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.3275480270385742
+    }
+  },
+  "unexecuted_archives": [
+    "Controls-sealed.lean.txt",
+    "Proposed-contract.lean.txt"
+  ],
+  "note": "First Unit-specialized complete-step controls failed before sealing; final v2 uses abstract State. Initial sandboxed wrapper wait was interrupted, no completed Lean receipt; see execution notes."
+}
