@@ -1,0 +1,23 @@
+/-- Neither administrative tape belongs to a selected source-cleaning triple.
+**Proof sketch.** Apply the triple selector to a hypothetical preimage. Its inverse
+returns a selected slot, whereas either administrative index selects nothing. -/
+private lemma emCall_pair_not_mem (M : FinTM Bool) (i : Fin M.k) (r : Fin 2) :
+    emCallPairIndex M r ∉ Set.range (emCallTripleEmbedding M i) := by
+  rintro ⟨r', hr⟩
+  have h := congrArg (emCallTripleSelect M i) hr
+  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+  simp only [emCall_triple_inverse, emCall_triple_pair] at h
+  cases h
+
+/-- Every other source triple is outside the currently selected cleaning bank.
+**Proof sketch.** A hypothetical preimage would select a slot of the current bank;
+the selector's other-bank equation instead returns no selected slot. -/
+private lemma emCall_triple_not_mem (M : FinTM Bool) (i j : Fin M.k) (r : Fin 3)
+    (hji : j ≠ i) :
+    emCallTripleIndex M j r ∉ Set.range (emCallTripleEmbedding M i) := by
+  rintro ⟨r', hr⟩
+  have h := congrArg (emCallTripleSelect M i) hr
+  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+  simp only [emCall_triple_inverse, emCall_triple_other, if_neg hji] at h
+  cases h
+

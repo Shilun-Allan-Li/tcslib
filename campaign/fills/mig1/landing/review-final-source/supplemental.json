@@ -1,0 +1,338 @@
+{
+  "imports_exactly_two_approved": [
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "import Mathlib.Algebra.BigOperators.Fin"
+    ]
+  ],
+  "all_standalone_attributes_unchanged": true,
+  "new_private_runtime_data_moves": [
+    {
+      "source": "Turing.FinTM.f2_condHeads",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.timedHeads",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "a8fb943d6079b7c2ffe635087a4d851aa31338b4753bd4e10cc99aac557582ac",
+      "new_block_sha256": "5dce1cd4af872d4d561f23165e137f54832a9231a65c776133b436f46db415f2"
+    },
+    {
+      "source": "Turing.FinTM.f2_polyHeads",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.polyHeads",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "ecf26d9c4b73715094b3214340edc2deee2b5c1db685c1c0b03628e0561a60ed",
+      "new_block_sha256": "53ea7d780593ee1a237de9b0e3ac21b307cfbcf6b991cdea3e882f274f8a8145"
+    },
+    {
+      "source": "Turing.FinTM.a2_MapState",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.FwdMapState",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "inductive",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "c234a779e33bc431cf2fc73f41c9447bd6a3e22fed81cf37a3f970d445fbbc1a",
+      "new_block_sha256": "55246d39a51b8d8202ea25d1378f494bb0dc4cd3fd720cf306d8f9dae7c0364c"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapStateFintype",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapStateFintype",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "instance",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "b3fcc923bd9d8e2961db2f4ac8c8f469a537a7909d87c164b507354698da2d86",
+      "new_block_sha256": "02793f27d6df34a00b89ac876adbbcefbc28b249948c404857c3dc2596098ab8"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapAct",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapAct",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "705b37e2d61cdf80d37c1fab05a9a4e36fcb21c7230e77676e73f8b299ed5346",
+      "new_block_sha256": "1bff73945cbc7e3ebe898211287fa8f8dd95eea1c4671eee79a938b5fd494183"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapTM",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapTM",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "2a80a4beb38be5ae15069ff157d6ab7e47989c42ce7d02dd350c6b45dd7ecbf7",
+      "new_block_sha256": "8b483e1455c07898785669fe0b971ed5c5439999f673b0668836dbab7e2b8236"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapCfg",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapCfg",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "09bcbfe3b7ffbd7055ac92cf59643d9b3f2b61564b417dc66109f2d207de4a3c",
+      "new_block_sha256": "5cdefa66df59f61e472f567cf77ebddfb80ca4ccb56a3e897c8f0448f6facb9a"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapVirtual",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapVirtual",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "0193f7201a3c47dee92940a8556f653c21e49f5cbd36096e00cebdb9118faa2a",
+      "new_block_sha256": "d3363c04103bf83590ed060fedfcaa2615835ec68435ffc8b0b547fc931aac4c"
+    },
+    {
+      "source": "Turing.FinTM.a2_mapEntered",
+      "source_home": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "target": "Turing.FinTM.fwdMapEntered",
+      "target_home": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "kind": "def",
+      "body_and_header_code_identical_modulo_approved_renaming": true,
+      "old_block_sha256": "0945118ac5beaf1bb0508434724768bbdacdb021a8ebee9aa668eb0a599f3f35",
+      "new_block_sha256": "a37215b50468ad7a4fd53baa01e2f1aa3b498553f1b12a2286e6ba005cc7d9ee"
+    }
+  ],
+  "public_forwarding_wrapper_body_exact_gated_contract": true,
+  "retained_executable_exceptions": [
+    {
+      "name": "Turing.FinTM.emitterP2PairIndex",
+      "all_header_toFun_and_data_prefix_bytes_identical": true,
+      "masked_chunk_sha256": "078a40578adfb3a714f264cbb68f19175233b9871c89facab0c08124520ac4c0",
+      "only_final_Prop_field_masked": true
+    },
+    {
+      "name": "Turing.FinTM.emitterP2SmallIndex",
+      "all_header_toFun_and_data_prefix_bytes_identical": true,
+      "masked_chunk_sha256": "ac6c846b3edf2aa8b520ddfb9fe172f5c1c2febca8adf77908ba5dd906e19d5c",
+      "only_final_Prop_field_masked": true
+    }
+  ],
+  "CertShell_proof_local_initializer": {
+    "source_local_M5_and_table_unchanged": true,
+    "annotation_exact_existing_label": true,
+    "unsealed_extensional_diagnostics_attributed": "campaign/fills/mig1/landing/review-certshell/README.md + initializer diagnostics; not rerun here",
+    "production_transport": "MultiTapeTM.runFrom_with_q\u2080"
+  },
+  "milestone_bindings": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "current_sha256": "72db4da9cff279bfae399dd3b79e2e5f56eb19bf010125f9b4a834f7c55b4b20",
+      "receipt_source": "campaign/fills/mig1/landing/review-composition-loop/source-review.json",
+      "matches": true,
+      "claim": "Source identity to peer actual compile/guard receipt; execution attributed to peer."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "current_sha256": "3846089b096822f7e9233da0afb648b7f2bc0097dcd63245bdf75657d4f88bb9",
+      "receipt_source": "campaign/fills/mig1/landing/review-composition-loop/source-review.json",
+      "matches": true,
+      "claim": "Source identity to peer actual compile/guard receipt; execution attributed to peer."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "current_sha256": "956fe914732375be3aa2121922a8918d1f049f9b7c7f767c3bc2b409bcc7a736",
+      "receipt_source": "campaign/fills/mig1/landing/review-composition-loop/source-review.json",
+      "matches": true,
+      "claim": "Source identity to peer actual compile/guard receipt; execution attributed to peer."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "current_sha256": "72db4da9cff279bfae399dd3b79e2e5f56eb19bf010125f9b4a834f7c55b4b20",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-Composition-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "current_sha256": "263057adff72390645a86ae716be6bc4d9dc021548797912dc5cc46a4af6e6e2",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-Encoding-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "current_sha256": "956fe914732375be3aa2121922a8918d1f049f9b7c7f767c3bc2b409bcc7a736",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-Loop-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "current_sha256": "11500dd5708e97d9f95a2de9066165fa0ff68ac7d23444993958f537ae4b20a8",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-Simulation-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "current_sha256": "d7c722756c6d40c9616e3490b7fa0962dc7be70dc18bca9cd0cda50f0e120cda",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-TimeConstructible-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "current_sha256": "3846089b096822f7e9233da0afb648b7f2bc0097dcd63245bdf75657d4f88bb9",
+      "receipt_source": "campaign/fills/mig1/landing/review-primitives/Dependency-Wrappers-v1.json",
+      "matches": true,
+      "claim": "Read-only receipt and exact inert input identity; no new execution."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "current_sha256": "483ab96b55b400c3c1d4df9796b38cfec20b09f0360c68fe97a560212b1d0b80",
+      "receipt_source": "campaign/fills/mig1/landing/preflight-current2/Primitives-run.json",
+      "matches": true,
+      "claim": "Root current2 actual module compile recorded exit0; independently matched source bytes, not executed by this review."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "current_sha256": "eb55b3b7688f3949667df21151b8dc3036b99bd80ed467b20bf466bcedee213d",
+      "receipt_source": "campaign/fills/mig1/landing/preflight-current2/Catalog-run.json",
+      "matches": true,
+      "claim": "Root current2 actual module compile recorded exit0; independently matched source bytes, not executed by this review."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CertShell.lean",
+      "current_sha256": "7e291596dd6af5173af437ae20eca7d35b1d75f6a6f9d501c3372ecb00b68f40",
+      "receipt_source": "campaign/fills/mig1/landing/preflight-current2/CertShell-run.json",
+      "matches": true,
+      "claim": "Root current2 actual module compile recorded exit0; independently matched source bytes, not executed by this review."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "current_sha256": "57e7dc52dedf3d146499ad5694270d1c6fee7255cad74338d4174c5cce3e1a73",
+      "receipt_source": "campaign/fills/mig1/landing/preflight-current2/CodeSimulator-run.json",
+      "matches": true,
+      "claim": "Root current2 actual module compile recorded exit0; independently matched source bytes, not executed by this review."
+    },
+    {
+      "path": "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+      "current_sha256": "39df779d07e7dfcf854258cd8fafd07187a29ea16feb54d4ea89793ad8f3c9cb",
+      "receipt_source": "campaign/fills/mig1/landing/preflight-current2/WordSize-run.json",
+      "matches": true,
+      "claim": "Root current2 actual module compile recorded exit0; independently matched source bytes, not executed by this review."
+    }
+  ],
+  "long_changed_proofs_missing_leading_sketch": [
+    {
+      "name": "Turing.FinTM.fwdMap_block",
+      "private": true,
+      "kind": "lemma",
+      "line": 2821,
+      "end": 2860,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 27,
+      "leading_doc": "/-- Doubled blocks append one bit to the first buffer. `01` starts suffix\nbuffering; `10` rejects before emitting. Both missing-bit cases are handled\nby the surrounding parser induction. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_suffix",
+      "private": true,
+      "kind": "lemma",
+      "line": 2861,
+      "end": 2915,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 46,
+      "leading_doc": "/-- After validation, the complete suffix is buffered silently. Its right\nblank is turned left exactly once, including when the suffix is empty. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backB",
+      "private": true,
+      "kind": "lemma",
+      "line": 2916,
+      "end": 2950,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 29,
+      "leading_doc": "/-- Rewind the second buffer to zero, preserving the first buffer and the\nblank payload bank. The left-blank step is present even at width zero. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backA",
+      "private": true,
+      "kind": "lemma",
+      "line": 2951,
+      "end": 2989,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 29,
+      "leading_doc": "/-- The corresponding first-buffer rewind, leaving virtual input at zero. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_finish",
+      "private": true,
+      "kind": "lemma",
+      "line": 3045,
+      "end": 3082,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 27,
+      "leading_doc": "/-- Successful suffix buffering, two rewinds, and encoded-prefix emission\nreach the initialized payload seam within `3|a|+2|b|+5` transitions. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_setup",
+      "private": true,
+      "kind": "lemma",
+      "line": 3172,
+      "end": 3206,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 28,
+      "leading_doc": "/-- Starting with empty buffers gives a uniform linear setup budget on every\ninput, including malformed encodings. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual_step",
+      "private": true,
+      "kind": "lemma",
+      "line": 3207,
+      "end": 3259,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 45,
+      "leading_doc": "/-- One forwarded payload step has exactly the source work actions and\nemission. `virtualMove_correct` proves both boundary clamps and preserves\nits arrival tag, without a nonempty-input assumption. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_head_step",
+      "private": true,
+      "kind": "lemma",
+      "line": 3325,
+      "end": 3369,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 39,
+      "leading_doc": "/-- Every setup action leaves each payload work head fixed. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_launch",
+      "private": true,
+      "kind": "lemma",
+      "line": 3382,
+      "end": 3418,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 27,
+      "leading_doc": "/-- Choose the first payload entry, then transfer every prefix to the\noperational host. The stationary setup seam identifies this first entry\nwith the complete validating/buffering/emission endpoint, so no payload\nwork is hidden in the administrative time bound. -/"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_reject",
+      "private": true,
+      "kind": "lemma",
+      "line": 3419,
+      "end": 3456,
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "change": "new-proof",
+      "body_lines": 25,
+      "leading_doc": "/-- A malformed encoding never reaches a payload state, since such a setup\nstate would remain live forever. Hence its entire operational trajectory\nagrees with setup, including the silent halt and every later time. -/"
+    }
+  ]
+}

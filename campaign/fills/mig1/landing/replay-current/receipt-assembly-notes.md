@@ -1,0 +1,1 @@
+The first offline receipt assembly incorrectly converted the log module paths to dots while the retained order uses slashes. Its equality assertion aborted before writing a success receipt. Direct comparison of all394 exact slash paths passes; the native replay and static outputs are unchanged.

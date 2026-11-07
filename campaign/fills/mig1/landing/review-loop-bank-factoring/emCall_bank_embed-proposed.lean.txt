@@ -1,0 +1,44 @@
+/-- Embedding one cleaner into a bank frame realizes any target cleaned prefix that
+agrees with the original prefix away from the selected bank. The cleaner supplies exactly
+the target bank's three tapes and common head, and its state supplies the target control.
+
+**Proof sketch.** Apply `embedEmitCfg_mapState_eq`. The selected-bank equation is the
+three-slot layout equation. Off the selection, the two administrative slots agree directly;
+every other bank agrees because its cleaned-prefix membership is unchanged. -/
+private lemma emCall_bank_embed (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) (j : ℕ) (q : Fin 4)
+    (hrest : ∀ l : Fin M.k, l ≠ i → (l.val < i.val ↔ l.val < j)) :
+    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun s => .inr (.inl (i.castSucc, s)))
+      frame.workTapes frame.workTapePos
+      (emCallClearCfg x 1 q
+        (if i.val < j then fun _ => none else
+          (M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
+        (if i.val < j then fun _ => none else
+          emCallSpan (emCallLo M arg T i) (emCallHi M arg T i))
+        (if i.val < j then fun _ => none else bufferTape [true])
+        (if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) =
+      emCallBankFrame M emit x arg cap T j (.inr (.inl (i.castSucc, q))) := by
+  dsimp only
+  simp only [emCallEmbeddedCfg]
+  refine embedEmitCfg_mapState_eq _ _ _ _ [] _ _ ?_ ?_ ?_ ?_ ?_
+  · simp only [emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+  · rfl
+  · rfl
+  · intro r
+    fin_cases r <;> constructor <;>
+      simp [emCallClearCfg, emCallBankFrame, emCallFrame, emCallTripleEmbedding,
+        emCall_layout_triple]
+  · intro k hk
+    rcases emCall_layout_cases M k with h | h | ⟨l, r, h⟩
+    · subst k
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst k
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst k
+      have he : l ≠ i := by
+        intro he
+        subst l
+        exact hk ⟨r, rfl⟩
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hrest l he]
+

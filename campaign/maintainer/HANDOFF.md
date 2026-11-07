@@ -24,6 +24,7 @@ receipts remain in their dated status folders.
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
+| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, pushed head `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, draft | 118 reserved, Codex selected | **mmig1 PASS394/0**, static0/60 at the pushed head, complete from mac3. Expanded25-file baseline/head screen passed1696→628 with all60new candidates classified; tested extra factoring is now adopted as six uncommitted files, including mechanical VirtualInput scope extension. Actual12-module combined preflight PASS; source freeze/census/refreshed headscreen underway. API/home rulings remain pending. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -58,35 +59,53 @@ remaining seals/factoring are real and no current maintainer replay is claimed.
 
    The five cp07 commits were safely imported, preserving Claude authorship and Codex
 committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, integrated head
-`af3273f75d7602c079169f321e4536a58c7bb034` before uncommitted audit repairs. It is **not pushed and has no PR**.
-Two mechanical merge conflicts preserve both approved readers and delivered helpers, and
-Catalog equals the delivered cp07 bytes at that integration commit. Three independent
-maintainer tasks repair rule10 interface findings in distinct files; they implement no fill
-admissions. Root owns Catalog/CodeSimulator/documentation; subagents own CertShell,
-Composition/Wrappers/Loop and Primitives. Do not commit/reset this worktree while they edit.
+`af3273f75d7602c079169f321e4536a58c7bb034`. Two mechanical merge conflicts preserve approved readers and delivered helpers;
+Catalog equals cp07 at that integration commit. Reviewed interface/factoring repairs are now
+committed as Codex, plus comment-only cleanup and a current-records merge. **Draft PR #233**
+is pushed at `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, base campaign, including the still-unmerged prerequisite #230.
+The pushed generation has passed its complete394-module replay (static0/60). Screen-driven
+body-only factoring proposals are now adopted in six uncommitted files, extending mechanical
+cleanup to VirtualInput under WORKFLOW§3. The actual12-module combined native chain passes.
+The source is frozen for its independent full-header/root review and refreshed head screen;
+metadata census/axioms are running. The first replay and all inert proposal generations remain
+separately pinned. No target proof, new public API or import is added by these repairs.
+No target admission is filled internally. `campaign/fills/mig1/landing/` contains the exact
+source reviews, owner seals/paired controls, compiler comparison and proposal evidence.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
-final landing. The actual untimed condTM bridge now passes a22-definition new-region seal using the
-approved branch readers; other regions and final combined-chain checks remain. A shared absorbing-stop first-entry lemma is proposed,
-not approved, for the assigned MIG24T2 twin proof. Two further constant-space rows may need
-canonical pairDiag/incFixed zero-space APIs, separately unapproved. Do not weaken public
-constant-space claims or silently acknowledge retained factoring debt. These leaves wait
-for Seyoon while other repairs continue. **Codex is already selected for the eventual MIG-1
+final landing. The actual untimed condTM bridge and completed owner scopes now pass their recorded
+strong seals. Primitives finishes the local T1/T2/T2b factoring; Loop's T3 and Catalog's
+T5/T6 helpers are checked. The initial eleven-module chain and its full394-module replay pass. Later same-home
+terminal/bank/rewind/endpoint factoring and existing-Mathlib invariant repoints now pass
+a fresh12-module actual chain; final source/census/screen review remains. These generations
+are separately pinned rather than relabeled as one replay. The generated rewind matcher has no effective
+negative control, explicitly disclosed; no global legacy seal is claimed.
+A shared absorbing-stop first-entry lemma and canonical pairDiag/incFixed exact zero-space
+facts are proposed but unapproved. The two Catalog constant-space rows remain HOLDs.
+A third Catalog HOLD is the redirect-space theorem's hidden tape-count header read;
+its exact move beside redirectTM in Wrappers passes isolated full-module/owner/consumer
+checks, but Seyoon's public-home/order exception remains pending. The separate additional-API
+audit's agent choice is also pending. T7's unchanged tagged-run candidate is being checked
+against lower-layer/Mathlib APIs; no debt acknowledgment or factoring closure is inferred.
+Do not weaken claims or guards. These leaves wait while independent validation continues. **Codex is already selected for the eventual MIG-1
 proof/migration audit**, distinct from gate117; gate118 is reserved for it.
 
 3. **F6 follows the merged consumer and the reading API prerequisite.** Seyoon chose
 D-F6-3's **ruler-hosted suffix** and **Claude**, checkpoint/final zip pushes to its designated
 inbox. Records-only draft/probes live in `campaign/fills/f6/drafts/`; no F6 fill is dispatched
 or implemented internally. The approved CodeTM reader is in #230, pending gate/merge.
-The bounded H5 halt-to-return composition passes without strengthening H5, but the full
-concrete prefix/layout and all actual run/cut/loop-bound witnesses still need pre-ship.
+The six bounded components in `campaign/fills/f6/drafts/layout-preship-v2/` pass native
+elaboration and paired opacity controls without strengthening H5: startup, hosted return,
+last-ruler layout, actual bundle-reader consumer, zero-outer typing and one-cell correction.
+All32 attempts and limits are retained. The full physical prefix, actual run/cut/endpoint,
+loop per-tape space witnesses and coefficient still need pre-ship; this is not an F6 fill.
 Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 
 4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)
 computation but not Exercise3.6's second-part wording. Follow roadmap3 PLAN §(f).
 
 **Gate numbers:** 114/115/116 CLOSED and merged; 106 follow-up pending; 117 reserved/preparing.
-Gate118 is reserved for the eventual MIG-1 landing audit (Codex selected). Next free **119**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
+Gate118 is reserved for draft #233’s MIG-1 landing audit (Codex selected), not ready. Next free **119**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
 choice. Codex returns attached Markdown plus pasted findings; Claude may push only to its
 exact exchange inbox, after pull/rebase, never to a campaign branch.
 

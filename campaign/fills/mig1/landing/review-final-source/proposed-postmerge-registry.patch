@@ -1,0 +1,24 @@
+--- a/machine-library-design.md
++++ b/machine-library-design.md
+@@ -1209,9 +1209,9 @@
+   - No earlier `done b`. Trajectory: both heads in `[pos−1, pos+δ]`.
+ - **Alphabet:** generic with `[DecidableEq Symbol]`. G1 makes `compareTM`'s
+   definition generic and keeps its contracts at `Bool`, so the framed row is
+-  stated generically from the start, and the canonical `compareTM_run` is
+-  re-derived from it by a sanctioned body swap, exactly as §12.6 did for
+-  copy/transfer/clear.
++  stated generically through `compareTM_run_ofCfg`. Canonical configurations
++  use that framed contract; the old canonical-only specialization is retired
++  together with the other canonical catalog rows.
+ - **Trace:** generalize `catalog_compare_trace`, `catalogCompareF` and
+   `catalogCompareR` over an outer frame and two start coordinates, on the
+   shared `catalog_trace_run` skeleton. No second trace.
+@@ -1801,7 +1801,7 @@
+ | **R8.0** transport | **[now]** | `MultiTapeTM.liftSymbols_runFrom` and the rest of §1 (A) | proved |
+ | R8.0 corollaries | [G1-merge] | `FinTM.bufferTape_map`; the R1 composition (B) | proved |
+ | **R8.0b** `counterLoopTMVia` | [Catalog/G1]+§12.7 gate (CounterLoop) | `counterLoopTMVia_run_done/_escape` (E) | exact, as §12.7 |
+-| **R8.1** framed compare | [Catalog/G1] | `compareTM_run_ofCfg {Symbol} [DecidableEq Symbol]` (D) | `∃ δ ≤ min |u| |v|`, exact time `2δ+2`, finish `{d with state := done (decide (u = v))}`, no earlier verdict, trajectory `[pos−1, pos+δ]`. Canonical `compareTM_run` re-derived (body swap); the trace generalizes `catalog_compare_trace` |
++| **R8.1** framed compare | [Catalog/G1] | `compareTM_run_ofCfg {Symbol} [DecidableEq Symbol]` (D) | `∃ δ ≤ min |u| |v|`, exact time `2δ+2`, finish `{d with state := done (decide (u = v))}`, no earlier verdict, trajectory `[pos−1, pos+δ]`. Canonical seams use the framed contract; the trace generalizes `catalog_compare_trace` |
+ | **R8.2** `scanTM δf δb a₀` (two-pass transducer) | **[G2]** | `scanTM_run_ofCfg` (D) | exact `2|w|+2`; interval rewritten to `(scanResult δf δb a₀ w).2`, verdict `done (scanResult …).1`; trajectory `[pos−1, pos+|w|]` |
+ | **R8.3** `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM` | [Catalog/G1] | `skipTM_run_ofCfg` (D); landed with `skipBackTM_run_ofCfg`, `seekEndTM_run_ofCfg`, `seekStartTM_run_ofCfg` | skip: exact `|w|+1`, head to `pos+|w|+1`. Landed: skip back is skip's inverse, exact `|u|+3` from the next field's first cell to `u`'s; seek end exact `D+1` to `pos+D`, `D = fieldOffset ws |ws|`, `ws ≠ []`; seek start exact `D+4` back to the table start. Nothing written; the seeks stop at two consecutive blanks (table ends) |
+ | **R8.4** `writeConstTM i w₀` | [G1-merge] (Scan) | `writeConstTM_run_ofCfg` (C) | exact `2|w₀|+2` (executed), old contents arbitrary, head returns |

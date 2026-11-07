@@ -1,47 +1,57 @@
 # MIG-1 landing state
 
-**Not yet clear to merge.** The partial Claude delivery is integrated on
-`lean/mig1-mega-landing`, after prerequisite #230, at producer head `af3273f75d7602c079169f321e4536a58c7bb034`
-plus uncommitted maintainer repairs. No MIG-1 PR is published yet. Actual Lean changes
-will go through a draft PR targeting the campaign branch; Seyoon merges.
+**Not yet clear to merge: #233.** The source is saved as a campaign-based draft PR,
+`lean/mig1-mega-landing` at `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`. It includes unmerged prerequisite #230,
+whose separate gate117 packet is ready for dispatch. Seyoon merges after the gates and
+current validation close. No design proposal below has been applied.
 
-The immutable producer final equals cp07. All17 original targets and two additional
-forwarding proofs are filled by the delivered work. Maintainer changes repair interface
-reads and factor assigned proof families; they do not perform fill admissions.
-The three frozen RAM admissions remain. The final delivery remains PARTIAL and is
-not accepted as a completed gate/replay.
+The immutable Claude partial final equals cp07:2152 payload checksums,17 original target
+proofs and two additional forwarding proofs, supplied641-module logs independently checked.
+The five producer commits preserve Claude authorship; maintainer interface/factoring and
+comment fixes are separate Codex commits. The delivery remains PARTIAL, with RAM3 frozen.
 
-Completed bounded source/seal/control reviews are in `review-composition-loop/`,
-`review-primitives/`, `review-catalog/`, `review-certshell/` and `review-root/`.
-`preflight-current2/receipt-final2.json` verifies successful actual elaboration of all11
-current source modules in one complete dependency chain. Its all-owned-constant axiom
-scan is standard except the frozen RAM three. The full downstream replay and gate118
-(Codex selected) remain to be prepared after the current source freeze. The independent
-compiler comparison is also checking two lazily generated split-finder equations; these
-non-private compiler additions must be distinguished from authored source exports. Earlier failed
-experiments, ineffectual controls and their corrected successors are retained explicitly.
+Completed bounded review folders: `review-composition-loop/`, `review-primitives/`,
+`review-catalog/`, `review-certshell/`, `review-root/`, `review-final-source/`.
+The source census relative to #230 is364→361 authored public declarations, exactly+3/-6;
+private headers and two private proof-field exceptions are disclosed by comparison phase.
+`preflight-current2/` verifies all11 actual modules in one complete native dependency chain.
+`compiled-comparison/` reconciles all4,372 owned constant axiom closures (only RAM3 use
+sorryAx), nonprivate+132/-179 and the distinct authored export delta. All140 changed roots
+and228 descendants have standard axiom closures (`changed-proof-citations/`).
+Two reserved Convention equations materialize in Primitives; their prior opacity availability
+and exact rule10 assessment boundary are retained in `generated-equation-review/`.
+The reviewed final comments preserve every non-comment code token against the native inputs;
+`comment-cleanup-adoption.json` pins their before/after hashes and WordSize's2021 pointer.
+Campaign lint is0FAIL both sides; stricter policy diagnostics112→63 are classified rather
+than claimed clean (`lint-current/`).
 
-Awaiting Seyoon's decisions, without applying the proposals:
+The pushed generation’s complete394-module replay **mmig1 PASS394/0**, static0/60, is
+archived in `replay-current/`. Its immutable expanded25-file screen is1696→628,60new pairs
+fully classified. Tested follow-up repairs are now adopted as six uncommitted source files:
+shared terminal/bank/rewind/canonical-field proofs and existing-invariant tagged-run repoints.
+Two now-unused private selector helpers are retired. Actual12-module current3 chain PASS;
+full-header review, all-constant compiler checks and a refreshed headscreen are underway.
+The source’s public export delta stays+3/-6; no API/home proposal is applied. The older replay
+and its140-root metadata remain separately pinned; new evidence will not overwrite them.
 
-- Two exact zero-space facts for canonical `pairDiagTM` and `incFixedTM`, separately
-  from gate117's frozen23 APIs. The pairDup/incFixed constant-space corollaries still
-  have two explicit foreign tape-count reads until these are approved and gated.
-- One shared absorbing-stop first-entry contract in Finite, to consolidate the assigned
-  cross-file first-entry twin. Both existing twins remain unchanged meanwhile.
+Awaiting Seyoon's decisions:
+
+- Two non-simp exact zero-space facts for pairDiagTM/incFixedTM, separate from gate117's
+  frozen23 APIs. Their two Catalog constant-space corollaries remain explicit HOLDs.
+- One shared absorbing-stop first-entry theorem in Finite, to consolidate the assigned
+  unchanged cross-file twin. Both existing twins remain while this decision is pending.
 - Agent choice for the separate additional-API audit (Codex or Claude).
-- A home/order exception moving the exact existing `redirectTM_spaceUsedByTape` theorem
-  from Catalog to beside its definition in Wrappers. Strong owner seal, both full proposed
-  modules, importing consumer and re-export probes pass in an isolated whole-tree copy;
-  the exact two-file patch and scoped raw-index limitation are in `redirect-home-proposal/`.
+- The exact existing redirect-space theorem's move from Catalog to beside redirectTM in
+  Wrappers. Strong owner/full proposed modules/importing consumer tests pass in isolation,
+  but the public-home/order exception is not approved. The current header is a third HOLD.
 
-These holds do not authorize retaining new debt or narrowing guards silently. The final
-read-only source/retirement/docstring review is underway; comment-only corrections will
-be applied before committing the source. Complete cited-file screen population remains
-DRAFT until all actual changed proofs and pack discussions are included.
+The generated rewind matcher has no effective negative control and remains disclosed for
+gate118; no broad exemption or global legacy seal is inferred. T4 direct public reuse and
+T7's bounded inspection are recorded in `review-factoring-T4-T7/`. The unchanged tagged-run
+candidate is being checked against existing lower-layer/Mathlib APIs; no factoring closure
+or new debt acknowledgment follows from the inspection.
 
-Prerequisite #230/gate117 and #215/gate106 round2 have published immutable Codex packets,
-ready for Seyoon's dispatch. Neither is clear to merge. F6's ruler-hosted-suffix draft has
-bounded six-component checks in `campaign/fills/f6/drafts/layout-preship-v2/`, but full
-prefix/run/cut/loop/space assembly still needs pre-ship; F6 is not ready.
-
-Recorded `2026-11-07T12:34:36.685183+00:00`. Prerequisite API head: `1160c18f03fd318f0dec25738790935fa61379d4`.
+Codex is selected for eventual gate118, not ready for dispatch. Next free gate119. Ready
+immutable packets remain gate106 round2 for #215 and gate117 for #230; neither is clear
+to merge. F6's six checked draft components remain separate, with the full physical route
+still not pre-shipped (`campaign/fills/f6/drafts/layout-preship-v2/`).

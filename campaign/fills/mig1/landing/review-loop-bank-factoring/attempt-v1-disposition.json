@@ -1,0 +1,11 @@
+{
+  "status": "FAILED; no acceptance or source application",
+  "native_errors": 9,
+  "findings": [
+    "Selected tape premise needs same-home emCallTripleEmbedding coercion exposed before emCall_layout_triple",
+    "Builder/freeze picked the top-level statement let assignment rather than trailing := by; old private statements were truncated in failed v1 only"
+  ],
+  "freeze_v1_invalid_for_let_bearing_headers": true,
+  "terminal_milestone_unaffected": "The three changed terminal headers contain no top-level let; every other declaration was whole-text literal-equal.",
+  "repair": "v2 rebuilds from immutable terminal base using a := by-aware lexical delimiter and explicitly exposes same-home embedding coercion"
+}

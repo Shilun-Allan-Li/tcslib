@@ -1,0 +1,21 @@
+/-- A bounded startup followed by a halted segment yields a computation in time
+`B * (N + 1)` when startup costs at most `B` and the segment costs at most `N * B`.
+
+**Proof sketch.** Compose the two runs with `MultiTapeTM.runFrom_add`, read the halt and
+output with `computesInTime_iff`, and enlarge the summed time by `ComputesInTime.mono`. -/
+private theorem loop_computes_of_startup (M : FinTM Bool) (x output : List Bool)
+    (c : Cfg M.k Bool M.State x) (startup t B N : ℕ)
+    (hs : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = c)
+    (ht : t ≤ N * B) (hhalt : (M.tm.runFrom c t).state = none)
+    (hout : (M.tm.runFrom c t).output = output) :
+    M.ComputesInTime x output (B * (N + 1)) := by
+  have hrun := M.tm.runFrom_add (M.tm.initCfg x) startup t
+  rw [hinit] at hrun
+  have hcompute : M.ComputesInTime x output (startup + t) := by
+    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+    · rw [hrun]; exact hhalt
+    · rw [hrun]; exact hout
+  apply hcompute.mono
+  calc startup + t ≤ B + N * B := Nat.add_le_add hs ht
+    _ = B * (N + 1) := by rw [Nat.mul_succ, Nat.mul_comm N, Nat.add_comm]
+

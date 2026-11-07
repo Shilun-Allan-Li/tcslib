@@ -1,0 +1,53 @@
+/-- **Partial (guarded) sequential composition** — the phase-4 API obligation
+identified by the phase-3 audit (round 2, finding 10 and Argument F):
+`Turing.FinTM.computesFunInTime_comp` requires both components to compute *total*
+functions, so it cannot take a partially computing machine — such as the universal
+evaluator — as a component. This lemma composes two arbitrary machines at the level
+of their halting relations, with **no totality or time hypotheses**: `M` behaves on
+`x` exactly as `M₂` behaves on `M₁`'s completed output — halting, completed outputs,
+and divergence all correspond.
+
+Statement notes. The intermediate string `y` is existentially quantified, but by
+`Turing.FinTM.ComputesInTime.output_unique` at most one `y` satisfies the first
+conjunct, so the right-hand side reads "`M₁` halts on `x` (necessarily with a unique
+`y`), and then `M₂` halts on `y` with `w`". If `M₁` diverges on `x`, or halts but
+`M₂` diverges on its output, both sides are empty — `M` diverges. A time-bounded
+refinement is deliberately not stated; it will be added if and when a result needs
+it.
+
+**Proof sketch** (buffered intermediate output, per the audit's design). `M` carries
+`M₁`'s and `M₂`'s work tapes plus a fresh *buffer* tape. Phase one simulates `M₁` on
+the true input step for step, with each emission of `M₁` written to the buffer tape
+(write, move right) instead of the output tape; the append-only output discipline
+makes the buffer region a verbatim copy of `M₁`'s output, contiguous from the
+initial head cell. If `M₁` never halts, neither does `M`. On `M₁`'s halting
+transition, `M` rewinds the buffer head to the leftmost written cell — the head
+rests on the blank immediately *right* of the written word, so the rewind's first
+left move is unconditional (testing the current cell before moving would stop at the
+wrong end; phase-4 audit, finding 3), then left while reading a symbol, then one
+step right. Phase two simulates `M₂` with its *input-tape
+reads served from the buffer*: the buffer holds exactly `y` with blank cells on both
+sides, and `M` maintains `M₂`'s virtual input position on it, mirroring the clamped
+input-head semantics of `Turing.moveInputPos` at both boundaries — the same
+virtual-boundary emulation as the universal machine's sketch
+(`TCSlib.Complexity.TuringMachine.Universal`); a blank read identifies a boundary,
+and *which* boundary is determined by the direction of arrival, tracked in the
+state — for an empty intermediate word the simulation starts with the right-boundary
+tag already set, the left boundary one inward move away (phase-4 audit, finding 3).
+`M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
+real output tape, untouched during phase one. `M` halts exactly when the simulated
+`M₂` halts; step-for-step run correspondence in each phase gives both directions of
+the iff.
+
+**Implementation note (epoch 2).** The buffer and virtual-input invariants are
+public in `Simulation.lean`. The arrival tag is constrained only at boundaries;
+stationary moves preserve it, including suppressed outward moves. Dispatch always
+sets it to true, which is already the right-boundary tag when the word is empty.
+A simulated phase-one halt remains live through the exact `|y| + 2` rewind.
+The equivalence at this witness is `Turing.FinTM.bufferedCompTM_computes_iff`. -/
+theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
+    ∃ M : FinTM Bool, ∀ x w : List Bool,
+      (∃ t, M.ComputesInTime x w t) ↔
+        ∃ y : List Bool,
+          (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t :=
+  ⟨bufferedCompTM M₁ M₂, bufferedCompTM_computes_iff M₁ M₂⟩

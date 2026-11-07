@@ -1,0 +1,28 @@
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -1073,7 +1073,10 @@
+       (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
+         bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
+   induction t with
+-  | zero => exact ⟨b, hb, rfl⟩
++  | zero =>
++    refine ⟨b, ?_, ?_⟩
++    · simpa only [MultiTapeTM.runFrom_zero] using hb
++    · simp only [MultiTapeTM.runFrom_zero]
+   | succ t ih =>
+     obtain ⟨b', hb', he⟩ := ih
+     obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
+--- a/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
+@@ -282,7 +282,10 @@
+       (vhostEmitTM M).runFrom (vhostCfg c b p pre) t =
+         vhostCfg (M.runFrom c t) b' p pre := by
+   induction t with
+-  | zero => exact ⟨b, hb, rfl⟩
++  | zero =>
++    refine ⟨b, ?_, ?_⟩
++    · simpa only [MultiTapeTM.runFrom_zero] using hb
++    · simp only [MultiTapeTM.runFrom_zero]
+   | succ t ih =>
+     obtain ⟨b', hb', he⟩ := ih
+     obtain ⟨b'', hb'', he'⟩ := vhostEmitTM_step M _ b' hb' p pre

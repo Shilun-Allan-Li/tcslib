@@ -1,0 +1,12 @@
+Set.MapsTo.iterate.{u_1} {α : Type u_1} {f : α → α} {s : Set α} (h : Set.MapsTo f s s) (n : ℕ) : Set.MapsTo f^[n] s s
+/private/tmp/tcslib-tagged-route-brxt_fil/Availability.lean:3:7: error(lean.unknownIdentifier): Unknown constant `Nat.succ_iterate`
+Prod.map_iterate.{u_1, u_2} {α : Type u_1} {β : Type u_2} (f : α → α) (g : β → β) (n : ℕ) :
+  (Prod.map f g)^[n] = Prod.map f^[n] g^[n]
+Function.Semiconj.iterate_right.{u, v} {α : Type u} {β : Type v} {f : α → β} {ga : α → α} {gb : β → β}
+  (h : Function.Semiconj f ga gb) (n : ℕ) : Function.Semiconj f ga^[n] gb^[n]
+Turing.MultiTapeTM.runFrom_zero.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} :
+  Turing.MultiTapeTM.runFrom cfg 0 = cfg
+Turing.MultiTapeTM.runFrom_succ_eq_step'.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} {t : ℕ} :
+  Turing.MultiTapeTM.runFrom cfg (t + 1) = Turing.MultiTapeTM.step (Turing.MultiTapeTM.runFrom cfg t)

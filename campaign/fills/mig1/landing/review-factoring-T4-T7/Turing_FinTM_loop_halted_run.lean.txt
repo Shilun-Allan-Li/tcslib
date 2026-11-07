@@ -1,0 +1,39 @@
+/-- Summation with an already-halted exhaustion terminal. Unlike `loop_run`,
+this lemma requires no empty output at that terminal and charges no final
+extra segment.
+**Proof sketch.** Induct on the remaining candidates, as in `enumLoop_run`.
+An accepting round ends the run; a rejecting round composes with the
+shifted induction hypothesis. Zero candidates use the halted terminal at
+time zero, with its already-written false verdict. -/
+private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hend : (cfg N).state = none ∧ (cfg N).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  induction N generalizing cfg accept with
+  | zero => exact ⟨0, by simp, by simpa using hend⟩
+  | succ N ih =>
+    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
+    have hany : (List.range (N + 1)).any accept =
+        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
+      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
+    by_cases hb : accept 0 = true
+    · simp only [hb, ↓reduceIte] at hc
+      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
+      · exact Nat.le_mul_of_pos_left B (by omega)
+      · simpa [hany, hb] using hc.2
+    · simp only [hb] at hc
+      obtain ⟨s, hs, hhalt, hout⟩ := ih
+        (fun j => cfg (j + 1)) (fun j => accept (j + 1)) hend
+        (fun j hj => hround (j + 1) (by omega))
+      refine ⟨t + s, ?_, ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+      · rw [MultiTapeTM.runFrom_add, hc]
+        simpa [hany, hb] using hout
