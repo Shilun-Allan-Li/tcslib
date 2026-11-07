@@ -111,8 +111,8 @@ proof/migration audit**, distinct from gate117; gate118 is reserved for it.
 
 3. **F6 follows the merged consumer and the reading API prerequisite.** Seyoon chose
 D-F6-3's **ruler-hosted suffix** and **Claude**, checkpoint/final zip pushes to its designated
-inbox. Records-only draft/probes live in `campaign/fills/f6/drafts/`; no F6 fill is dispatched
-or implemented internally. The approved CodeTM reader is merged via #230.
+inbox. Records-only draft/probes live in `campaign/fills/f6/drafts/`; F6 is now dispatched
+externally and no target was implemented internally. The approved CodeTM reader is merged via #230.
 The six bounded components in `campaign/fills/f6/drafts/layout-preship-v2/` pass native
 elaboration and paired opacity controls without strengthening H5: startup, hosted return,
 last-ruler layout, actual bundle-reader consumer, zero-outer typing and one-cell correction.
@@ -127,7 +127,7 @@ space/loop-ledger/target proofs remain external Claude OWN work. Provisional pac
 132/2/229 and65 Mathlib roots independently reproduce; all229 source blobs match. The21-file
 TCSlib provisional baseline passed (1037 declarations,636 candidates,171071 reproduced
 characters), with full raw inputs/output/index and no semantic debt acceptance. Final merged-base verification and624-section bundle rebuild/archive checks passed.
-**Ready to dispatch: Claude F6**, not yet confirmed dispatched. Exact proof pin
+**Dispatched to Claude by Seyoon**, confirmed in chat. Exact proof pin
 `3023dc1408c3d216fc07a7cbba9ae30135b861ed`, records pin `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`;
 exchange `2adb80788611696d2cad6f907285c0c5a197ae09`. `campaign/fills/f6/prompt.md` and
 `dispatch.json` pin the complete packet (SHA256 `8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`).

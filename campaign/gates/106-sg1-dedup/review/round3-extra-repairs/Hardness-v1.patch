@@ -1,0 +1,96 @@
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -6830,56 +6830,24 @@
+     rw [Function.iterate_succ_apply', ih]
+     simp [List.tail_drop]
+ 
+-/-- Both decoded field components are bounded by the complete source word,
+-including malformed input and an empty default. This is a storage estimate.
+-**Proof sketch.** Strong induction on input length handles each two-bit
+-parser prefix; recursive branches consume two bits before the smaller call.
+-This local induction avoids generating an imported public induction theorem. -/
++/-- Both decoded components are bounded by their complete source word, with empty
++defaults on malformed input.
++**Proof sketch.** Split the decode once. On success the public inverse identifies
++an encoded pair, whose published length bounds both components; failure gives empty words. -/
+ private lemma clA5Pair_sizes (w : List Bool) :
+     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
+-  have haux : ∀ n, ∀ w : List Bool, w.length = n → ∀ a b,
+-      pairDecode w = some (a, b) → a.length + b.length ≤ w.length := by
+-    intro n
+-    induction n using Nat.strong_induction_on with
+-    | h n ih =>
+-      intro w hn a b he
+-      cases w with
+-      | nil => simp [pairDecode] at he
+-      | cons c w =>
+-        cases w with
+-        | nil => cases c <;> simp [pairDecode] at he
+-        | cons d rest =>
+-          have hsmall : rest.length < n := by simp only [List.length_cons] at hn; omega
+-          have ihrest := ih rest.length hsmall rest rfl
+-          cases c <;> cases d
+-          · cases hd : pairDecode rest with
+-            | none => simp [pairDecode, hd] at he
+-            | some p =>
+-              have hp := ihrest p.1 p.2 hd
+-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+-              rcases he with ⟨rfl, rfl⟩
+-              simp only [List.length_cons]
+-              omega
+-          · simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
+-            rcases he with ⟨rfl, rfl⟩
+-            simp only [List.length_nil, List.length_cons, zero_add]
+-            omega
+-          · simp [pairDecode] at he
+-          · cases hd : pairDecode rest with
+-            | none => simp [pairDecode, hd] at he
+-            | some p =>
+-              have hp := ihrest p.1 p.2 hd
+-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+-              rcases he with ⟨rfl, rfl⟩
+-              simp only [List.length_cons]
+-              omega
+-  have h (w : List Bool) := haux w.length w rfl
++  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
++    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
+   cases hd : pairDecode w with
+-  | none => simp [clHeaderField, clHeaderTail, hd]
++  | none =>
++    simp only [hd, Option.map_none, Option.getD_none, List.length_nil]
++    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
+   | some p =>
+-    have hp := h w p.1 p.2 hd
+-    simp only [clHeaderField, clHeaderTail, hd, Option.map_some, Option.getD_some]
+-    omega
++    rcases p with ⟨a, b⟩
++    have hlen := congrArg List.length (eq_pairEncode_of_pairDecode w a b hd)
++    rw [length_pairEncode] at hlen
++    simp only [hd, Option.map_some, Option.getD_some]
++    constructor <;> omega
+ 
+ /-- Variable field access is a genuine unary-counted sequence of the native
+ pair-tail projection, followed by the native pair-first projection. -/
+@@ -6906,15 +6874,17 @@
+   | succ k ih =>
+     simpa only [Nat.succ_mul, List.replicate_add] using clNative_append ih hf
+ 
+-/-- Unary comparison is charged subtraction followed by the actual finite
+-empty-word test; no numeric oracle enters the transition table. -/
++/-- Unary comparison is polynomial-time by comparing the lengths of a reversed pair
++of the two unary words, using `Complexity.polyTimeComputable_lenLe`. -/
+ private lemma clA5Le_native {f g : List Bool → ℕ}
+     (hf : PolyTimeComputable (fun x => List.replicate (f x) true))
+     (hg : PolyTimeComputable (fun x => List.replicate (g x) true)) :
+     PolyTimeComputable (fun x => [decide (f x ≤ g x)]) := by
+-  have h := clA5_pt_eq (clA5Drop_native hf hg) []
+-  simpa only [List.length_replicate, List.drop_replicate, List.replicate_eq_nil_iff,
+-    Nat.sub_eq_zero_iff_le] using h
++  have h := polyTimeComputable_lenLe.comp (hg.pairEncode hf)
++  convert h using 1
++  funext x
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate]
+ 
+ /-- A fixed finite template is serialized natively whenever each of its
+ finitely many unary wire indices is native. The variable-index cost is

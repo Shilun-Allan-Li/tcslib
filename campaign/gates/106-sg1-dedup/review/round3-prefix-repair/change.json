@@ -1,0 +1,10 @@
+{
+  "name": "clA5Drop_native",
+  "old_doc": "/-- Removing a computed unary number of leading bits is an actual sequence\nof native tail calls. Each call is charged even after the word becomes empty. -/",
+  "new_doc": "/-- Removing as many leading bits as the length of a computed word is polynomial-time.\n**Proof sketch.** Pair the length word first and the payload second, apply the public\nprefix remover, and read its result through its equation and the public pair projections. -/",
+  "header": "private lemma clA5Drop_native {s u : List Bool \u2192 List Bool}\n    (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :\n    PolyTimeComputable (fun x => (s x).drop (u x).length) := by",
+  "old_body": "  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)\n    (fun w => by simp [List.length_tail])\n  convert h using 1\n  funext x\n  symm\n  induction (u x).length with\n  | zero => rfl\n  | succ j ih =>\n    rw [Function.iterate_succ_apply', ih]\n    simp [List.tail_drop]\n",
+  "new_body": "  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)\n  have he : (PrefixByLength.drop \u2218 (fun x => pairEncode (u x) (s x))) =\n      (fun x => (s x).drop (u x).length) := by\n    funext x\n    rw [Function.comp_apply, PrefixByLength.drop.eq_1,\n      pairFstD_pairEncode, pairSndD_pairEncode]\n  rw [he] at h\n  exact h\n",
+  "new_import": "import TCSlib.Complexity.ClassNP.PolyTimePrefix",
+  "old_line": 6819
+}
