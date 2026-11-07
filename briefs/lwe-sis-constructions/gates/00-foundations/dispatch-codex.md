@@ -1,5 +1,9 @@
 # Codex phase-0 audit dispatch
 
+**Superseded transport.** The user subsequently requested GitHub inputs on the exchange
+branch and Markdown output in chat. Use `dispatch-codex-exchange.md`; the historical
+attachment kickoff below is retained as a record, not the current dispatch instruction.
+
 The user selected Codex on 2026-11-07. This records the choice and prepares the kickoff;
 the user still dispatches the external job. No external execution or verdict is claimed.
 Delivery namespace: `lwe-sis-constructions/phase0-r1-codex`, returned in chat. No exchange

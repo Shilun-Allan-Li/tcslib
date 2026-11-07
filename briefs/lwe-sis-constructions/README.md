@@ -58,10 +58,14 @@ No external audit/fill job has been dispatched or exchange namespace selected. S
 PDFs were inspected through browsing; exact PDF archival, ingestion and proofmatch
 remain open and are disclosed in the review packet.
 
-The user selected Codex for the external phase-0 audit. The selected-worker kickoff is
-`gates/00-foundations/dispatch-codex.md`; the already delivered round-1 ZIP and pack remain
-unchanged. The user dispatches the audit and may publish only this own PR branch. No
-campaign branch push or merge is authorized by that publication.
+The user selected Codex and corrected the input route: the auditor reads pinned inputs
+from GitHub on `exchange/pass-shelat-ch5-8`, then returns Markdown in chat. The dedicated
+path is `lwe-sis-constructions/outbox/gates/00-foundations-r1/`. A separate sparse publisher
+clone stages only this campaign's namespace; the shared exchange checkout is unchanged.
+See `gates/00-foundations/dispatch-codex-exchange.md` and `publish_exchange.py`. The earlier
+ZIP-attachment kickoff is superseded; the frozen bundle and audit scope are unchanged.
+Neither exchange publication nor the own PR-branch publication authorizes a campaign
+push or merge. The user dispatches the audit.
 
 **Not yet clear to merge — the external foundation gate and source archival are pending;
 14 representation proof obligations remain admitted.**

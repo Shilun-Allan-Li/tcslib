@@ -3,8 +3,8 @@
 The review instructions are `audits/lwe-sis-phase0-pack.md`. Mathematical source is
 frozen at `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`, with per-path hashes in
 `evidence/source-freeze.json`. The user selected Codex; no external job has been
-dispatched. See `dispatch-codex.md` for the selected-worker kickoff. The shipped pack
-and ZIP retain their original preparation-time status and are not edited retroactively.
+dispatched. See `dispatch-codex-exchange.md` for the current GitHub-input route. The
+shipped pack and ZIP retain their preparation-time status and are not edited retroactively.
 
 ## Evidence
 
@@ -59,9 +59,13 @@ fill work and all later phases wait for the external statement gate.
 The uploadable bundle and portable Git objects are generated under this worktree's
 ignored `.lake/crypto-dispatch/` directory. Bundles are not committed. Its delivery
 README identifies source/records commits, SHA-256 checksums, section count and kickoff.
-The user chooses Codex or Claude and dispatches the job; no exchange namespace is used.
-Shell GitHub DNS and connector write permissions currently prevent publication of the
-own PR branch; the local commits remain available in the portable delivery.
+The user selected Codex and dispatches the job. Current inputs are prepared for
+`lwe-sis-constructions/outbox/gates/00-foundations-r1/` on the exchange branch. The auditor
+reads them directly from GitHub and returns Markdown in chat. `publish_exchange.py`
+uses the separate sparse `tcslib-exchange-lwe-sis-publish/` clone, checks payload hashes
+and namespace-only changes, rebases before pushing and prints the pinned kickoff.
+It never uses the shared exchange checkout or a campaign push destination. Shell GitHub
+DNS and connector write permissions currently prevent remote publication here.
 
 Exact primary PDF archival and ingestion remain open, as the pack states. An auditor
 must report source fidelity unverified if the primary definitions cannot be checked.
