@@ -1,0 +1,105 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -2528,6 +2528,27 @@
+       · rw [MultiTapeTM.runFrom_add, hc]
+         simpa [hany, hb] using hout
+ 
++/-- A bounded startup followed by a halted segment yields a computation in time
++`B * (N + 1)` when startup costs at most `B` and the segment costs at most `N * B`.
++
++**Proof sketch.** Compose the two runs with `MultiTapeTM.runFrom_add`, read the halt and
++output with `computesInTime_iff`, and enlarge the summed time by `ComputesInTime.mono`. -/
++private theorem loop_computes_of_startup (M : FinTM Bool) (x output : List Bool)
++    (c : Cfg M.k Bool M.State x) (startup t B N : ℕ)
++    (hs : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = c)
++    (ht : t ≤ N * B) (hhalt : (M.tm.runFrom c t).state = none)
++    (hout : (M.tm.runFrom c t).output = output) :
++    M.ComputesInTime x output (B * (N + 1)) := by
++  have hrun := M.tm.runFrom_add (M.tm.initCfg x) startup t
++  rw [hinit] at hrun
++  have hcompute : M.ComputesInTime x output (startup + t) := by
++    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
++    · rw [hrun]; exact hhalt
++    · rw [hrun]; exact hout
++  apply hcompute.mono
++  calc startup + t ≤ B + N * B := Nat.add_le_add hs ht
++    _ = B * (N + 1) := by rw [Nat.mul_succ, Nat.mul_comm N, Nat.add_comm]
++
+ /-- **The decision loop's time**. Under the hypotheses of `loopHostTM_contracts` with accepting
+ output `[true]`, the host in decision mode outputs `[true]` if some orbit point
+ `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted, and `[false]` otherwise, within
+@@ -2579,21 +2600,8 @@
+     (fun i => acceptF x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1))
+     (R x.length + 1) ⟨hend, by simpa using hout⟩
+     (fun j hj => by simpa using hsegments j (by omega))
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      [(List.range (R x.length + 1)).any
+-        (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; exact houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (cfg 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
+ 
+ /-- **The decision loop combinator** (repaired per
+ round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
+@@ -2768,23 +2776,8 @@
+     (fun i => out x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1)) (R x.length + 1)
+     ⟨hend, by simpa using hout⟩
+     (fun j hj => by simpa using hsegments j (by omega))
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      (match (List.range (R x.length + 1)).find?
+-          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+-        | some i => out x ((stepF x)^[i] (s0 x))
+-        | none => []) (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; exact houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (cfg 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
+ 
+ /-- **The loop host's space budget**. Under the hypotheses of `loopHostTM_contracts`, in either
+ mode, at every time the host has visited at most `23·k·(T |x| + 1)` work cells, where `k` is its
+@@ -5191,21 +5184,9 @@
+     refine Cfg.ext rfl rfl rfl rfl ?_
+     simp only [candidate, loopCall, captureCfg_output]
+   rw [hclean] at hhalt houtput
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      ((List.range (R x.length + 1)).flatMap (fun i => emitF x ((stepF x)^[i] (s0 x))))
+-      (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; simpa only [List.nil_append, orbit] using houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (candidate 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt
++    (by simpa only [List.nil_append, orbit] using houtput)
+ 
+ /-- **E1, the emitting loop** (design §11; customers:
+ the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction

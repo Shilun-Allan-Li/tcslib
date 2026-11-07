@@ -1,0 +1,244 @@
+{
+  "T1": {
+    "catalogRewind_removed": true,
+    "callers": [
+      {
+        "name": "lenStart",
+        "only_code_token_change_is_callee": true
+      },
+      {
+        "name": "splitRestore_run",
+        "only_code_token_change_is_callee": true
+      },
+      {
+        "name": "splitBody_rewind",
+        "only_code_token_change_is_callee": true
+      },
+      {
+        "name": "emitterP2_prepare_run",
+        "only_code_token_change_is_callee": true
+      }
+    ],
+    "public_timed_rewind_present": true
+  },
+  "pending_first_entry": {
+    "both_unchanged": [
+      {
+        "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+        "name": "emCall_first_entry",
+        "unchanged_normalized_code": true,
+        "head_line": 3643
+      },
+      {
+        "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "name": "emitter_first_entry",
+        "unchanged_normalized_code": true,
+        "head_line": 5820
+      }
+    ],
+    "same_code_after_own_name_replacement": true,
+    "disposition": "Unchanged exact cross-file proof twin; shared API proposal pending, not discharged or acknowledged by this check."
+  },
+  "T2_T2b": [
+    {
+      "family": "candidate/suffix rewind",
+      "shared_private_helper": "emitterP2_prepare_rewind_bank",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "emitterP2_prepare_rewind_candidate",
+          "base_body_chars": 866,
+          "head_body_chars": 70,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterP2_prepare_rewind_suffix",
+          "base_body_chars": 866,
+          "head_body_chars": 90,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "selected bank frames",
+      "shared_private_helper": "emitterP2_bank_frame",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "emitterP2_left_frame",
+          "base_body_chars": 282,
+          "head_body_chars": 82,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterP2_right_frame",
+          "base_body_chars": 283,
+          "head_body_chars": 62,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "administrative frames",
+      "shared_private_helper": "emitterP2_admin_frame",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "emitterP2_small_frame",
+          "base_body_chars": 582,
+          "head_body_chars": 465,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterP2_pair_frame",
+          "base_body_chars": 583,
+          "head_body_chars": 440,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "embedding proof fields",
+      "shared_private_helper": "emitterP2_index_injective",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "emitterP2SmallIndex",
+          "base_body_chars": 226,
+          "head_body_chars": 186,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterP2PairIndex",
+          "base_body_chars": 212,
+          "head_body_chars": 180,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "left/right erasure",
+      "shared_private_helper": "emitterP2_body_erase",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "emitterP2_body_erase_left",
+          "base_body_chars": 1127,
+          "head_body_chars": 355,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterP2_body_erase_right",
+          "base_body_chars": 1134,
+          "head_body_chars": 338,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "split-finder orbit",
+      "shared_private_helper": "splitOrbit_find",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "splitFind_eq",
+          "base_body_chars": 228,
+          "head_body_chars": 130,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "emitterSplit_find",
+          "base_body_chars": 235,
+          "head_body_chars": 141,
+          "helper_occurrences": 1
+        }
+      ]
+    },
+    {
+      "family": "T2b buffered replay",
+      "shared_private_helper": "bufferReplay_run",
+      "helper_private": true,
+      "helper_kind": "lemma",
+      "consumers": [
+        {
+          "name": "extract_replay",
+          "base_body_chars": 581,
+          "head_body_chars": 131,
+          "helper_occurrences": 1
+        },
+        {
+          "name": "rawStrip_replay",
+          "base_body_chars": 406,
+          "head_body_chars": 117,
+          "helper_occurrences": 1
+        }
+      ]
+    }
+  ],
+  "T3": [
+    {
+      "name": "emCall_bank_initial",
+      "base_repeated_sideproof_marker": 6,
+      "head_repeated_sideproof_marker": 0,
+      "pair_not_mem_uses": 4,
+      "triple_not_mem_uses": 2
+    },
+    {
+      "name": "emCall_bank_final",
+      "base_repeated_sideproof_marker": 6,
+      "head_repeated_sideproof_marker": 0,
+      "pair_not_mem_uses": 4,
+      "triple_not_mem_uses": 2
+    }
+  ],
+  "T5": {
+    "proof_sharing": {
+      "catalog_buffer_clip": [
+        "Cfg.ofWords_transfer_endpoint",
+        "Cfg.ofWords_copy_endpoint"
+      ],
+      "catalog_increment_framed": [
+        "incrementTM_run_succ_ofCfg",
+        "incrementTM_run_overflow_ofCfg"
+      ]
+    },
+    "frozen_tables": [
+      {
+        "name": "copyMapTM",
+        "kind": "def",
+        "normalized_body_unchanged": true,
+        "base_normalized_body_sha256": "3c329d79ab6ea849c7955cc9a4ba17b0d1f2fd2d9d768b469c743ed24c99bc8d",
+        "head_normalized_body_sha256": "3c329d79ab6ea849c7955cc9a4ba17b0d1f2fd2d9d768b469c743ed24c99bc8d"
+      },
+      {
+        "name": "transferMapTM",
+        "kind": "def",
+        "normalized_body_unchanged": true,
+        "base_normalized_body_sha256": "4498405d680d6cbdc6b711577edd4add0e1478d3d79b46f5c872322e0b0c6cba",
+        "head_normalized_body_sha256": "4498405d680d6cbdc6b711577edd4add0e1478d3d79b46f5c872322e0b0c6cba"
+      },
+      {
+        "name": "clearTM",
+        "kind": "def",
+        "normalized_body_unchanged": true,
+        "base_normalized_body_sha256": "de44bf6e27edf795af068aac349ae401a6be730cfc2636d892c0054be1cb8465",
+        "head_normalized_body_sha256": "de44bf6e27edf795af068aac349ae401a6be730cfc2636d892c0054be1cb8465"
+      }
+    ],
+    "disposition": "Distinct frozen executable table data retained. Copy rewind preserves source; transfer rewind writes rest b to source. No table-rewrite exception or new debt approval is inferred."
+  },
+  "T6": {
+    "shared_private_helper": "pairExtract_space_row",
+    "callers": [
+      "computesFunInTime_pairFst_spaceUsed",
+      "computesFunInTime_pairSnd_spaceUsed",
+      "computesFunInTime_pairConcat_spaceUsed"
+    ]
+  }
+}

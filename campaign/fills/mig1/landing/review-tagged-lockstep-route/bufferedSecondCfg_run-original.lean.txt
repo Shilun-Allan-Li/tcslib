@@ -1,0 +1,15 @@
+lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) (t : ℕ) :
+    ∃ b', VirtualTag (M₂.tm.runFrom c t).inputPos b' ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
+  induction t with
+  | zero => exact ⟨b, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b', hb', he⟩ := ih
+    obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
+    refine ⟨b'', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
