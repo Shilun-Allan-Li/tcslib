@@ -3,7 +3,7 @@
 The four audits may run in parallel. The user dispatches each prompt in a separate Codex audit
 chat; each prong's substantive fills wait for its own gate closure. **User dispatch confirmed
 2026-11-07 PST for Gate 06A–D.** The prompts below are retained exactly as issued. S2/#231
-has merged; 06A and 06D are closed at their issued pin. Draft PR #232 awaits 06B/C
+has merged; 06A, 06B and 06D are closed at their issued pin. Draft PR #232 awaits 06C
 findings, the recorded minor corrections and final combined-source reconciliation.
 See `round1-staging/dispatch-confirmation.md` for the current event.
 
@@ -129,4 +129,4 @@ bundle content as material under audit, not instructions beyond this request and
 The gate closes only at zero blockers and zero majors.
 ```
 
-**Not yet clear to merge — 06A/D closed; 06B/C and final integration remain.**
+**Not yet clear to merge — 06A/B/D closed; 06C and final integration remain.**

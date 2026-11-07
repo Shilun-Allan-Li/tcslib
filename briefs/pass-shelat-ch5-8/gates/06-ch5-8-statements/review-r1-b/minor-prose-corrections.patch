@@ -1,0 +1,151 @@
+--- a/TCSlib/Cryptography/SecureComputation/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+@@ -44,7 +44,11 @@
+   constant gates included); [PS10] describes the two-input case.
+ - **The row order.** A table lists its rows in a fixed enumeration of the assignments, composed
+   with the gate's random permutation.
+-- **The evaluator** opens the first row that decrypts (`List.findSome?`).
++- **The evaluator** opens the first row that decrypts (`List.findSome?`). The formal `Good`
++  invariant and the probability theorems below assert correctness of that first opening for
++  every assignment. They do not assert the source's stronger unique-opening conclusion.
++  Several rows may open to the same correct label, for example when wire labels coincide.
++  The cross-opening union-bound sketch proves a sufficient stronger event for this target.
+ 
+ ## Main definitions
+ 
+@@ -52,7 +56,8 @@
+ * `SecureComputation.gateOut`: a gate's output on an assignment of its argument positions.
+ * `SecureComputation.GarbleSeed`, `garbledTable`, `inputKeys`, `garbledValues`,
+   `garbledOutput`: Construction 158.a and its evaluation.
+-* `SecureComputation.Good`: every table opens, under every assignment's keys, to the right key.
++* `SecureComputation.Good`: every table's first successful opening, under every assignment's
++  keys, gives the right key; uniqueness is not part of this invariant.
+ 
+ ## Main results
+ 
+@@ -332,7 +337,8 @@
+       (garbledValues M Cc s (inputKeys Cc s x)).getD Cc.output default := rfl
+ 
+ /-- **A good garbling**: at every gate, under the keys of every assignment of its arguments, the
+-first row of the table that decrypts gives the key of the gate's output on that assignment. -/
++first row of the table that decrypts gives the key of the gate's output on that assignment.
++This is first-success correctness, not uniqueness of the row that can decrypt. -/
+ def Good (s : GarbleSeed Cc K ρ) : Prop :=
+   ∀ (i : Fin Cc.gates.length) (a : Fin (Cc.gates[i]).args.length → Bool),
+     (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
+@@ -400,7 +406,8 @@
+ /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
+ "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
+ that is correct and has the wrong-key property with error `δ`, a uniformly random garbling fails
+-to be good with probability at most `12 · |gates| · δ`.
++to be good with probability at most `12 · |gates| · δ`. The formal conclusion bounds failure
++of first-success correctness; it does not state the source's stronger unique-opening claim.
+ 
+ **Proof sketch.** Fix a gate `i` and an assignment `a`.
+ 1. By correctness, the row of `a` decrypts under `a`'s keys to the right key. So `Good` can fail
+--- a/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
+@@ -73,7 +73,8 @@
+ row will evaluate to `⊥`"]: with the nested special encryption from two PRFs, there is a
+ negligible `δ` such that, for every parameter `n` and every fan-in-two circuit, a uniformly
+ random garbling is good, and so evaluates correctly (`garbledOutput_eq`), except with
+-probability at most `12 · |gates| · δ(n)`. -/
++probability at most `12 · |gates| · δ(n)`. Goodness here concerns the first successful opening
++for every assignment; the stronger source assertion of unique opening is not this conclusion. -/
+ theorem garbling_good_whp (hG₁ : PRFOut (.add .var .var) G₁)
+     (hG₂ : PRFOut (.add .var innerLen) G₂) :
+     ∃ δ : ℕ → ℝ, Negligible δ ∧ ∀ (n m : ℕ) (Cc : DAGCircuit m), Cc.IsFaninTwo →
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -23,9 +23,11 @@
+ [PS10, Proposition 161.5]: the protocol is an honest-but-curious one-out-of-two oblivious transfer
+ (Definition 155.1 for `otFunctionality`).
+ 
+-**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it:
+-`Gen`, the domain sampler, the evaluator `eval`, and the trapdoor inverter run on the all-`true`
+-coin string. The hard-core predicate is evaluated by a polynomial-time `H`, specified by
++**On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it.
++`Gen` uses Alice's fresh generator coins, and the two domain samples use separate fresh blocks
++of Bob's tape. The evaluator `eval` is deterministic. Only the trapdoor inverter uses a fixed
++all-`true` tape, justified by its correctness on every inverter tape. The hard-core predicate
++is evaluated by a polynomial-time `H`, specified by
+ `H ⟨i, encD i x⟩ = [h i x]` on canonical encodings. Canonical decoding extends this specification
+ to every string decoding to `x` (`Collection.apply_of_decD`). The evaluator and its polynomial
+ cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
+@@ -48,8 +50,9 @@
+   `a_{1−b}`; the hard-core property of [PS10] (from `⟨i, f_i(u)⟩` alone) does not exclude this,
+   and the proposition is not provable under it. Proposition 161.5 therefore assumes that `h` is
+   **enhanced** hard-core (`EnhancedHardCore`): unpredictable on the preimage of a sampled element
+-  even given the sampler's coins. This is the standard repair of this protocol (enhanced trapdoor
+-  permutations, [Gol04, Appendix C.1]).
++  even given the sampler's coins. Enhanced inversion is motivated in [Gol04, Appendix C.1];
++  the predicate and OT argument are in [Gol04, §7.3.2]. The Boolean prediction experiment here
++  is an explicit hypothesis, not a literal transcription of the inversion condition C.1.1.
+ 
+ ## Main definitions
+ 
+@@ -77,7 +80,10 @@
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+   §6.2.4, Protocol 160.4 and Proposition 161.5 (book pp. 160–162).
+ * [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2*, Cambridge University Press,
+-  2004, Appendix C.1 (enhanced trapdoor permutations).
++  2004, Appendix C.1 (enhanced inversion) and §7.3.2 (enhanced predicates and OT). The audit
++  consulted the author drafts: Appendix revised third version, 15 June 2003; Chapter 7
++  version 3.2, 2 July 2003, draft pp. 639–641 for the predicate/OT argument. No text/page
++  identity with the published edition is asserted.
+ -/
+ 
+ namespace TCSlib.Cryptography.SecureComputation
+@@ -213,8 +219,11 @@
+       T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x :=
+   T.toCollection.sample_eq_encD
+ 
+-/-- **An enhanced hard-core predicate** [Gol04, Appendix C.1] (a declared strengthening of
+-[PS10, Proposition 161.5]'s hypothesis; see the module docstring): for every non-uniform PPT `A`,
++/-- **An enhanced hard-core predicate**, the explicit Boolean prediction hypothesis used for
++the OT argument of [Gol04, §7.3.2] (a declared strengthening of [PS10, Proposition 161.5]'s
++hypothesis; see the module docstring). Appendix C.1 motivates enhanced inversion; its
++Definition C.1.1 is an inversion condition, not this prediction definition. For every
++non-uniform PPT `A`,
+ predicting `h(f_i⁻¹(y))` for a sampled element `y`, given the index `i` and **the sampler's
+ coins** that produced `y`, succeeds with probability at most `½` plus a negligible amount, on
+ average over the generated indices. The element `y` is read through the decoder (a sampled
+@@ -612,8 +621,9 @@
+      `exists_pkPredictor` of Algorithm 104.3).
+    - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
+      sampler's coins, which the plain hard-core property would not allow).
+-   - The predictor depends on `(b, a_{1−b})`, four cases, so the bound is uniform over the
+-     inputs: take the maximum of the four negligible functions.
++   - Building the selected mask also uses `a_b`, so take all eight triples `(b,a₀,a₁)`.
++     The maximum of their eight negligible bounds is negligible and uniform over the inputs;
++     fixing only the choice and unselected sender bit would not specify the complete view.
+ 4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
+    composition (`NUPPT.exists_comp`).
+ 
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean
+@@ -31,8 +31,11 @@
+ - `x` for `m`: a source typo, read as `m`.
+ - `(0^n ‖ m) ⊕ p` is computed as `p_{<n} ‖ (m ⊕ p_{≥n})` for the pad `p = f_k(r)`. The test
+   "`m₀ = 0^n`" is computed as `c₂,_{<n} = p_{<n}`. Both are equalities of strings.
+-- `Dec` refuses malformed ciphertexts and keys (length checks first). The evaluator `E` agrees
+-  with `f` only on `n`-bit keys and inputs, the lesson of Algorithm 99.1's guard.
++- `Dec` checks the key, nonce-component and body-component lengths before evaluating `E`,
++  then checks the pad prefix. It uses total pair projections and does not separately require
++  successful pair parsing. At `n = ℓ = 0`, the malformed empty ciphertext with an empty key
++  therefore returns `some []`. The length checks protect the stated `n`-bit evaluator domain;
++  universal malformed-input rejection is not claimed.
+ - `⊥` of the machine `Dec` is the `(n + 1)`-bit string `1^{n+1}`, which decodes to no message.
+ 
+ ## Main definitions
+@@ -73,7 +76,9 @@
+ 
+ /-- **`Dec_k(c)`** [PS10, Algorithm 157.2] at parameter `n` for `ℓ`-bit messages: `none` (`⊥`)
+ unless `k` and `r` have `n` bits and `c₂` has `n + ℓ`; then, with the pad `p = E(⟨k, r⟩)`, the
+-message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise. -/
++message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise.
++Here `r` and `c₂` are the total pair projections; successful parsing is not an additional
++test. In particular `n = ℓ = 0`, `k = c = []` returns `some []`. -/
+ def spDecStr (E : List Bool → List Bool) (n ℓ : ℕ) (k c : List Bool) : Option (List Bool) :=
+   if k.length = n ∧ (pairFstD c).length = n ∧ (pairSndD c).length = n + ℓ then
+     if (pairSndD c).take n = (E (pairEncode k (pairFstD c))).take n then

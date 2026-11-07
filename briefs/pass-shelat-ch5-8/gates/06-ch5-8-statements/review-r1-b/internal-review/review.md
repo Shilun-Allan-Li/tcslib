@@ -1,0 +1,43 @@
+# Gate06B round1: independent intake review
+
+**Recommendation: accept the reported PASS at the issued0-blocker/0-major threshold; retain and resolve all5 minors. No hidden blocker or major identified.** The four-file root proposal is a suitable prose-only resolution and remains unapplied. This is neither proof-completion nor overall PR merge clearance.
+
+I read all605 lines/86,865bytes of `gate06B-findings.md` as data, SHA-256 `41e2cbab012ea2f00769c57cb8a7589d47d9557d5e01a5a05b47d132037b1266`, and the actual issued06B pack at records `c81baa7712ab1b43357276ef5df138d02616c9d0`. Assessment uses frozen source `3f6db40e1688c4a0bb922c9575dd3bd2157a650b` and exchange `5928e06c02b382b63b9b384db89d0458b520f351`. Source inspection focused on the five findings, the included correctness/phase contracts and their Yao/composition dependency chain; this is not a fresh audit of every import-closure theorem.
+
+## Findings and chosen resolutions
+
+| Finding | Independent assessment and disposition |
+|---|---|
+| B01, fresh tapes | Confirmed. `otSender.next` passes Alice's actual tape to Gen; `otKnown` and `otRaw` take Bob's separate sampler blocks; eval is a deterministic function. Only `otMask` supplies an all-true inverter tape. `TrapdoorCollection.inv_spec` is quantified over every inverter tape at generated indices/canonical inputs, so fixing that tape preserves correctness. Accept the patch's separated description. No protocol change is needed. |
+| B02, malformed zero width | Confirmed by the actual total definition. With n=ell=0 and k=c=[], both pair projections are[], all length/prefix tests pass, and zipWith on the empty body returns[], independent of E. Thus raw decryption returns `some []`, despite failed pair parsing. Choose the proposed docstring qualification, not a new parse guard. Honest round-trip correctness is unchanged; no theorem promises universal malformed rejection. The probabilistic wrong-key claims concern honestly encrypted ciphertexts. The n=0 behavior can be included in a negligible envelope's finite prefix. |
+| B03, enhanced attribution | Confirmed as an attribution qualification. The Boolean experiment predicts the predicate of the inverse of the raw sampled element, with its exact sampler coins visible. It is an explicit strengthened OT hypothesis; it is not the Appendix inversion definition and is not derived from ordinary one-wayness. The patch correctly cites the Chapter7 OT/predicate argument separately from Appendix C.1 and retains author-draft/published-version limits. I make no new firsthand book-access claim. |
+| B04, Good versus uniqueness | Confirmed. `Good` fixes `findSome?` to `some` of the correct label for every gate/assignment; it neither forbids other successful rows nor constrains their count. Coincident labels allow several rows to open correctly. The deterministic correctness induction only requires this actual first-success contract. The cross-opening union bound proves a sufficient stronger event and therefore supports the weaker probability target. Accept the explicit deviation; do not strengthen `Good` or either theorem. |
+| B05, input count | Confirmed. Building z_b requires a_b as well as b and the unselected bit. The full fixed input space is the8 triples `(b,a0,a1)`. For a fixed distinguisher, construct the predictor for each triple, obtain its negligible envelope, and dominate all8 by a finite maximum (or a nonnegative finite-sum envelope). This retains one bound before all inputs. No new hardness assumption is needed. The original4-case wording did not specify the complete view. |
+
+These are minor corrections because the definitions and formal hypotheses already support the intended mathematical statements. The exact source cases make B01/B02 falsifiable prose claims; the patch repairs their description rather than altering those cases. B04 must remain a disclosed weaker formal target, not be relabelled as proving source uniqueness.
+
+## Yao and composition remain conditional on the right premises
+
+The OT theorem retains canonical-only `henc`, explicit evaluator efficiency `hH`, collection one-wayness and `EnhancedHardCore`. Sampler canonicity is derived from the collection's decoder/sample contracts. Bob's tape reveals raw-sampler coins, so ordinary hard-core security cannot replace the enhanced hypothesis. The8-case bound is important for subsequent composition: its OT guarantee is uniform over each call's possible bits, including bits arising from correlated main tapes.
+
+Yao's hybrid/real security headers retain both marginal PRF hypotheses and the joint shared-key PRF hypothesis `hG12`, the uniform polynomial-size circuit family, sink outputs, and the OT premises above in the real wrapper. Conditional correctness explicitly requires Good **and distinct output-label pairs**. The actual-tape probability theorem separately includes output collisions; it does not infer uniqueness from Good or substitute a uniform24-permutation seed for the implemented XOR shifts. The disjoint tape blocks make row-nonce reindexing a valid coin-space permutation when relabeling active wires; that reindexing remains an eventual security-fill obligation, not a completed formal lemma.
+
+The composition theorem retains `hM : forall n, 0 < main.rounds(n)`. Its output phase lemmas have that condition, and the real Yao wrapper discharges it using the two-message main. The hybrid efficiency contract bounds messages for **all right-length answer strings**, covering rare wrong subprotocol outputs. Fixed simulators precede the distinguisher, and negligible bounds precede the inputs. Appending the opposite party's output prevents constant wrong-output protocols from being considered secure: a nonuniform distinguisher may compare it with the correct polynomial-length value supplied as worst-input advice. Standard sequential composition therefore has the stated prerequisites; no missing semantic premise was identified in this specialized calls-first model. None of this fills the admitted security constructions.
+
+## Independent patch and intake checks
+
+Reviewed root proposal: `.lake/ps-maintainer/gate06-audit-intake-r1/b-corrections/minor-prose-corrections.patch`, SHA-256 `20126e560e0c9a4f8fff67026ca892a5257d7890576045909cba50ff81be76ea`.
+
+All12 hunks in its4 files reconstruct exactly against frozen Git blobs in memory. Removing nested block/line comments leaves byte-identical code in every file. The patch therefore preserves all public headers, definition bodies, guards, hypotheses, proofs and admissions. `patch-check.json` records before/proposed/noncomment hashes. All5 chosen resolutions above are present, including the zero-width qualification, explicit weaker Good target and8 triples. No patch was applied or index/source changed.
+
+The original ZIP SHA-256 is `7ecad26b31a6f243019230149df5c7d88a690ff86bc4ccd403cfe96c627f5880`. I independently compared all6 ZIP member bytes with the extracted data; each matches. `payload-check.json` records names/sizes/hashes. The received Python helpers were **not executed**. The immutable intake record commit resolves to `7138c23ede4107bfd704ac612f58550672fb648d`; no worker push is inferred from the local inbox.
+
+## Evidence limits and closure
+
+The report's finite encryption/OT/history checks remain reported Python-model corroboration, not native evidence or cryptographic hardness proofs. No new primary-source access, draft/published equivalence or exact source-PDF comparison is claimed by this internal review. The auditor states its actual firsthand author-draft comparisons and hash/access limits; these match the issued requirement to disclose unavailable comparisons, rather than silently passing them.
+
+The pinned completed summary records valid zero-error source seals for all13 primary secure-computation modules. Raw frozen source has13 standalone admitted proof bodies; the exact all-stored axiom records retain18 admitted-dependent secure-computation identities, the13 direct statements plus5 wrappers. I read these artifacts and did not rerun Lean, axioms, seals or controls. Reported definitions/theorems can pass a statement audit while these disclosed proof obligations remain.
+
+Root can record B closed under the issued criterion with all5 minor resolutions tied to the reviewed **unapplied** patch. Keep source3f frozen until the remaining audit findings are resolved and the combined follow-up is coordinated. No native/cache/apps, Git/index/library/main-record/exchange mutation or supplied-program execution occurred; only ignored internal review artifacts are saved.
+
+**Not yet clear to merge — remaining Gate06 audit resolutions and unapplied corrections remain.**

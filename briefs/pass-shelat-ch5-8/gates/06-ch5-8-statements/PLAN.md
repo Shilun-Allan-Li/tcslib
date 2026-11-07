@@ -1,9 +1,9 @@
 # Gate 06: four external statement audits of ch. 5–8 (S4; round 1)
 
 **Current status, 2026-11-07 PST:** all four Codex audits were dispatched by the user.
-**06A CLOSED (0B/0M/2 minors), 06D CLOSED (0B/0M/4 minors)**; 06B/C findings remain pending.
-See `resolutions-06A-r1.md`, `resolutions-06D-r1.md` and `review-r1-ad/` for accepted scope/limits
-and the six-file unapplied comment patch. The preparation account below is the issued
+**06A CLOSED (0B/0M/2 minors), 06B CLOSED (0B/0M/5 minors), 06D CLOSED (0B/0M/4 minors)**; 06C findings remain pending.
+See the separate `resolutions-06A-r1.md`, `resolutions-06B-r1.md`, `resolutions-06D-r1.md`
+and `review-r1-ad/`, `review-r1-b/` for accepted scope/limits and two unapplied comment patches (ten files). The preparation account below is the issued
 round-1 snapshot, preserved at records c81baa7712ab1b43357276ef5df138d02616c9d0. Current target
 includes merged S2/#231; the frozen source/common evidence does not. No combined-source
 verification or PR #232 merge clearance is inferred.
