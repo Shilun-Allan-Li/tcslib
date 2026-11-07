@@ -27,12 +27,18 @@
   This changes **statements** of packs 03h, 03i and 03k: list each old → new.
 - **DL-10 `ptc_comp`:** one public form in `Randomized/Closure.lean`; the six copies (`Closure` and
   `Repetition` helpers, `Universal*`, `ThreeColoring/Machines`, …) deleted.
+  **Update 2026-11-07 (shared-lemma rulings Q2 (A)):** the shared-lemma PR S1 publishes
+  `PolyTimeComputable.comp'`/`.congr` in `Closure.lean`. This item reduces to deleting `Closure`'s
+  private `ptc_comp`, re-pointing its 27 uses, and re-pointing the other G6 copies
+  (`fills/shared-lemmas/design.md` §5.4). Base `ptc_congr`s take the reversed hypothesis
+  (`fun w => (h w).symm`).
 - **DL-11, second half:** re-point the `stateFind` copies (`GI.stateFind`,
   `EncodingMachines.polyTimeComputable_stateFind`, `GGMRed.stateLoopFun`, the variant
   `stateIterate`) to `Complexity.polyTimeComputable_stateFind` and delete them. Remove their
   "private" docstrings (`EncodingMachines.lean:468`, `GI/Efficiency.lean:47, 83–84`,
   `GGMReduction.lean:258`). Un-qualify `ThreeColoring/Machines.lean:126`.
-- **DL-12 `abs_uexp_sub_le`, DL-14 `forall_of_uprob_eq_one`:** one public copy each.
+- **DL-12 `abs_uexp_sub_le`:** done by the shared-lemma PR S1 (dropped here). **DL-14
+  `forall_of_uprob_eq_one`:** one public copy.
 - **DL-13:** delete `ZeroKnowledge/Defs.lean`'s `negligible_const_zero` (2 uses) in favour of
   `negligible_zero`.
 - **DL-15:** one public `decodeFin_eq_some_iff` in `Asymptotic/Adversary.lean`, avoiding the
@@ -105,6 +111,20 @@ definition becomes a Mathlib alias: list each old → new.
 
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
 only where an item says so.
+
+**N. Base re-points of the shared-lemma design's deferred groups (added 2026-11-07;
+`fills/shared-lemmas/design.md` §5.4):**
+- G7: `Language.lean`'s `h2`; `two_pow_permBits_le` as a corollary; keep one of
+  `two_pow_size_le`/`two_pow_size_le_two_mul_succ` and re-point the other.
+- G10: the `castLE` triple as corollaries of `HardcoreBit.pushesUniform_restrict`; `dlb_cut`;
+  `pushesUniform_comp_injective` (after #195).
+- G13 (with DL-9), G14, G22 (with DL-11), G23, G25, and optionally G12 (after #195), and G18
+  (`uexp_le_of_statClose`, deferred by Q5).
+- The 764 untouched rule-10 rows recorded by #210 (`gates/07-eqlemmas/evidence-r2/r6c/cleanup-b*.tsv`),
+  and the base reads the fill reviews named: `primesPairEquiv_apply_val`, `exists_fullLengthExcept`,
+  `rabinCollection_index`, `rabinBlumTrapdoor_index`.
+- **Item M (DL-21)** runs after S2's landing, so that the two do not edit the same `Candidates`
+  proofs.
 
 ## Checks (as part 1)
 
