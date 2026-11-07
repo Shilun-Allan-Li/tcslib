@@ -1,8 +1,11 @@
 # Worker brief (DRAFT, not issued): gate 03 clean-up, part 2 (ch. 2–4)
 
-**Status: draft, not issued; refreshed 2026-11-06 PST.** Part 1 is #203 (merged). Gate 04
-is closed and #195 is merged. Under Q2 (A), S1 (#227) and S2 must also merge before this work
-is issued. Ask the user Codex or Claude before preparing the issued fill.
+**Status: preparation draft, not issued; refreshed 2026-11-07 PST.** Part 1/#203, #195,
+S1/#227 and S2/#231 are merged. Post-S2 source prerequisite: `1aa5506f58f77c215e56d24311ec33bd931cacf1`.
+**Worker selected by the user: Claude**, checkpoint/final payloads pushed only to the assigned
+exchange subtree; campaign changes land through a PR the user merges. Reconciliation,
+pre-ship probes and internal brief review remain before issue. Gate 06 audits stay frozen on
+their separate pre-S2 source; this fill must not edit their branch or rely on unmerged APIs.
 
 **Before issue:**
 - the base is the branch head after #195, S1 (#227) and S2 have merged;
