@@ -212,6 +212,12 @@ def rightCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
   workTapePos := Fin.addCases heads c.workTapePos
   output := c.output
 
+-- Field equations for the two configuration embeddings.
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.FinTM.leftCfg
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.FinTM.rightCfg
+
 /-- Extending an action commutes with the left configuration embedding. -/
 lemma leftCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
     (a : Action k Bool S) (c : Cfg k Bool S x)
@@ -321,6 +327,32 @@ def branchTM (M₁ M₂ : FinTM Bool) (b : Bool) : FinTM Bool where
             (M₁.tm.tr q inp (fun i => work (Fin.castAdd M₂.k i)))
         | .inr q => rightAction M₁.k Sum.inr
             (M₂.tm.tr q inp (fun i => work (Fin.natAdd M₁.k i))) }
+
+/-- A branch union has the sum of the two component tape counts. -/
+theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).k = M₁.k + M₂.k := rfl
+
+/-- A branch union's state type is the disjoint union of the component state types. -/
+theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).State = (M₁.State ⊕ M₂.State) := rfl
+
+/-- From a fixed configuration, a branch union has the same run for either Boolean
+initial-state choice. Both machines are explicitly transported to their common tape
+count and state type before comparing configurations. -/
+theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
+    {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    let view : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
+      fun tag => by
+        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
+        exact (branchTM M₁ M₂ tag).tm
+    (view b).runFrom c t = (view b').runFrom c t := by
+  exact MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)
+    (by
+      rw [MultiTapeTM.agreeOn_iff]
+      intro q _ inp work
+      rfl)
+    c t (fun _ _ q _ => Set.mem_univ q)
 
 /-- Each selected branch has exactly its original time and completed output.
 The proof embeds its initial blank configuration, then uses lockstep. -/
