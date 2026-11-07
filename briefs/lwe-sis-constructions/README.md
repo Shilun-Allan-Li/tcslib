@@ -1,49 +1,62 @@
-# LWE/SIS construction campaign: working records
+# LWE/SIS construction campaign
 
-Read `../../LatticeCryptographyPlan.md` for approved scope, architecture, source locations,
-parameter obligations, ownership and phase gates.
+Approved scope, directories, source anchors, parameter decisions and gates are in
+[LatticeCryptographyPlan.md](../../LatticeCryptographyPlan.md).
 
 ## Current checkpoint
 
-The first source drafts introduce finite-seed scalar noise, explicit LWE/SIS numeric
-parameters, the common-secret LWE sample map, the integer SIS solution relation and
-concrete decision/success experiments. Every public definition has an owner-side
-reading lemma. There are no new axioms, nontrivial proof fills or admissions in these
-drafts. This is a source observation, not an elaborated axiom attestation.
+Phase 0 contains finite-seed scalar noise, numeric LWE/SIS parameters, a common-secret
+LWE sample map, the integer SIS relation, concrete experiments, binary encodings and
+asymptotic families with polynomial representation budgets. The public hypotheses are
+`TCSlib.Cryptography.LWE.DLWEAssumption` and
+`TCSlib.Cryptography.SIS.SISAssumption`. Every new public definition has an owner-side
+reader. These define hypotheses; they do not assert axioms or prove hardness.
 
-The source drafts have not yet been checked with Lean. They are not an issued statement
-gate and are not evidence that an asymptotic assumption, sampler, encryption scheme,
-hash family, PRG, trapdoor function or CCA2 theorem has been completed. Canonical
-encodings, polynomial schedules, machine interfaces and the asymptotic assumptions
-remain phase-0 work.
+The 13 new Lean files comprise ten mathematical modules and three facades. At source
+they introduce 61 public declarations: 19 definitions, five structures, 35 theorems and
+two anonymous instances. Fourteen representation statements remain admitted, with
+sketches beside them. Other proof terms are defining equations, one parser case reader
+and the nonzero-modulus instances. All are part of the review surface. No construction
+security proof has started.
 
-`check_finite_models.py` independently checks small-instance conventions: one common
-secret, strict decoding boundaries, correctness with bounded errors, integer SIS
-nonzeroness, collision differences, and universality of binary-subset linear hashing
-including a composite modulus. It is not an interpreter for the Lean definitions and
-does not prove security or replace native elaboration.
+## Verification
 
-No existing shared API, root export or existing facade has been changed. New LWE/SIS
-facades exist as drafts; the two proposed root imports are recorded in the plan for a
-separate export commit. No external worker, audit or fill has been dispatched. The
-shared exchange checkout has not been used.
+A fresh serial sweep checked the facades' complete 55-module transitive TCSlib dependency
+tree through `scripts/lean_check_tree.sh`, with zero errors. Both renamed assumption
+modules and both facades then passed rechecks. This scoped check is not a whole-library
+check of `TCSlib.lean`. Logs contain 14 new and 17 inherited admission warnings.
 
-## Environment
+The final probe imports all three facades, prints axioms for all 61 source declarations
+and enumerates their modules' elaborated constants. Neither assumption nor its reader
+depends on `sorryAx`. Exact results, style logs and order are under
+`gates/00-foundations/evidence/`. Admitted statements are not completed proofs.
+Style reports zero FAIL and two acronym-reader heuristic WARNs; the actual `_iff`
+readers follow the existing RSA/DDH convention. No zero-WARN claim is made.
 
-The installed Lean executable reports version 4.25.0. Shell DNS blocks source/cache
-retrieval from GitHub and the official Regev host. Process inventory through `ps` is
-denied by the execution sandbox; the state of other native/cache jobs is unknown.
-Heavy verification remains deferred. Only source and lightweight finite-model/static
-checks have been run. No other checkout's packages or scratch oleans have been changed
-or used as this branch's build objects.
+`check_finite_models.py` and `finite-model-results.json` record independent exact
+small-instance calculations. They check conventions and boundaries; they do not execute
+the Lean definitions or prove security. `phase0-source-review.md` records internal
+review, which does not close the external gate.
 
-## Worktree isolation
+## Isolation and delivery
 
-The current branch is `cryptography/lwe-sis-constructions` in
-`tcslib-crypto-parallel-kickoff/`. The maintainer's `tcslib-pass-shelat-ch2-4/` remains on
-`cryptography/pass-shelat-ch2-4`; the frozen integration and S2 worktrees retain their
-original branches. The branch rename and fast-forward were performed in this worktree
-only, and `git worktree list --porcelain` confirmed the separation afterward.
+Worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-crypto-parallel-kickoff`.
+Branch: `cryptography/lwe-sis-constructions`.
+Implementation baseline: `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49`.
+PR target: `cryptography/pass-shelat-ch2-4`.
 
-**Not yet clear to merge — drafts need isolated native verification and the remaining
-phase-0 surface before an external statement gate.**
+The only existing shared-file change is three root imports, kept in a separate commit.
+Existing cryptography APIs, dependency pins, Pass--Shelat records, other worktrees and
+exchange files are unchanged. All package/cache/build work is isolated here. Selected
+official pinned Mathlib archives were extracted into the own package tree; no other
+chat's TCSlib scratch objects were borrowed. The approved two-job increase lifted the
+earlier scheduling hold. Root ran native/cache work serially.
+
+Shell GitHub access fails DNS; own remote branch creation through the connector fails
+HTTP 403, `Resource not accessible by integration`. No published branch or PR is claimed.
+No external audit/fill job has been dispatched or exchange namespace selected. Source
+PDFs were inspected through browsing; exact PDF archival, ingestion and proofmatch
+remain open and are disclosed in the review packet.
+
+**Not yet clear to merge — the external foundation gate and source archival are pending;
+14 representation proof obligations remain admitted.**

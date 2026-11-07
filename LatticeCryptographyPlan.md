@@ -2,7 +2,7 @@
 
 ## Scope and ownership
 
-The user approved this scope on 2026-11-07 (America/Los_Angeles):
+The user approved this scope on 2026-11-07:
 
 1. Regev's direct symmetric encryption, not the generic PRF construction.
 2. Regev's CPA-secure public-key encryption.
@@ -15,6 +15,8 @@ lattice Gaussian preimage sampling, search/decision LWE reductions, worst-case l
 reductions, and bridges between SIS and LWE are outside scope. Commitments, PRFs, MACs,
 general signatures, OT, and MPC are not additional headline targets. Supporting
 strongly unforgeable one-time signatures are required by the selected CCA2 route.
+Any LWE-only hashing used to make those signatures compact is supporting CCA2 work;
+the selected standalone CRH target remains the SIS construction.
 
 All work belongs to this PR branch:
 
@@ -45,6 +47,7 @@ under their primitive. A matching facade imports each topic's children.
 
 | Directory under `TCSlib/Cryptography/` | Owner-side content |
 |---|---|
+| `Encoding/` | Fixed-width modular vectors and matrices shared by the two new problem directories |
 | `LWE/` | Parameters, noise, sample distributions, encodings, decisional games and assumptions |
 | `SIS/` | Parameters, integer solution relation, encodings, success experiment and assumption |
 | `Encryption/Symmetric/Regev/` | Direct noisy-inner-product construction and security |
@@ -67,18 +70,22 @@ must avoid creating a competing owner for PR #232's ordinary signature API.
 | Reg10 | O. Regev, *The Learning with Errors Problem*, CCC 2010 invited survey, sections 1 and 4 | https://cims.nyu.edu/~regev/papers/lwesurvey.pdf |
 | Pei16 | C. Peikert, *A Decade of Lattice Cryptography*, author version dated 2016-02-17; Definitions 4.1.1, 4.2.1 and 4.2.3, sections 5.2.1 and 5.7.1 | https://web.eecs.umich.edu/~cpeikert/pubs/lattice-survey.pdf |
 | PW10 | C. Peikert and B. Waters, *Lossy Trapdoor Functions and Their Applications*, author version dated 2010-06-04; sections 3.1--3.2, 4.3 and 6.2--6.5 | https://sites.cc.gatech.edu/fac/cpeikert/pubs/lossy_tdf.pdf |
+| Wu24 | D. Wu, CS395T *Topics in Cryptography* lecture notes, Spring 2024 compilation last updated 2024-04-30; Definition 20.5 and Lecture 21 for direct symmetric Regev encryption | https://www.cs.utexas.edu/~dwu4/courses/sp24/static/notes.pdf |
 
-The browsing service exposed these author versions. Direct shell retrieval of source
+The browsing service exposed these author/instructor versions. Direct shell retrieval of source
 PDF bytes is currently blocked by DNS restrictions. No PDF checksum, byte identity,
-reference ingestion, proofmatch, or bibliography registry update is claimed. Before
-shipping a source-fidelity gate, archive and hash the exact source versions and arrange
-the normal reference ingestion. Changes to shared source registries need a separate,
-reviewable diff. Purely implementation-oriented sampler records cite their deviations.
+reference ingestion, proofmatch, or bibliography registry update is claimed. The foundation
+review packet identifies this limitation and asks the auditor to check the primary links;
+it must not attest a byte-frozen source archive. Source archival and the normal reference
+ingestion remain open before source-fidelity closure. Changes to shared source registries
+need a separate, reviewable diff. Purely implementation-oriented sampler records cite
+their deviations.
 
 The direct symmetric scheme is the elementary noisy-inner-product encryption obtained
 from the LWE distribution: add the encoded bit to a fresh sample's last coordinate.
-Its exact source anchor is to be checked before its statement gate; it is not silently
-attributed to the generic PRF scheme or to a particular numbered PKE algorithm.
+Wu24 Definition 20.5 and Lecture 21 provide an instructor-hosted source anchor. The notes
+describe themselves as lightly edited; their mathematical details still need independent
+checking at that construction's gate. This is not the generic PRF construction.
 
 ## Foundation decisions
 
@@ -93,6 +100,8 @@ fresh secrets per row would state a different problem and is forbidden.
 Hardness for one sample-count schedule and hardness for every polynomial schedule are
 distinct predicates. No sample-extension, small-secret, normal-form, modulus-switching,
 or noise-change equivalence is implicit. Parameters alone do not assert hardness.
+The public predicates are `LWE.DLWEAssumption` and `SIS.SISAssumption`, following the
+user's naming decision; the `D` explicitly identifies decisional LWE.
 
 ### D2. Noise laws versus implementations
 
@@ -101,6 +110,12 @@ nonempty uniform seed type. It specifies its induced noise law, not uniform nois
 its support: repeated seed images retain their multiplicities. Taking an independent
 seed per coordinate gives the product law. Bit samplers are an additional refinement;
 efficient samplability is a separate machine obligation.
+
+The first executable profiles use power-of-two moduli and explicit bit samplers for
+the scalar noise. Fixed-length unbiased coins cannot exactly implement uniform
+residues modulo an odd modulus or an arbitrary rational finite-seed noise law. General
+moduli remain part of the mathematical problem; a general-modulus implementation must
+account for its sampling error explicitly.
 
 This model expresses finite rational laws. It does not claim to sample an infinite
 discrete Gaussian exactly. A Gaussian-to-bounded implementation, if used, needs an
@@ -116,6 +131,11 @@ the symmetric scheme only needs the corresponding one-error bound. The final sta
 must handle the encoding distance for arbitrary allowed moduli, ties, and finite small
 parameters explicitly. A negligible-error Gaussian theorem does not inhabit the existing
 perfect-correctness structure without an additional argument.
+
+For nearest-codepoint decoding with encoded bit one at `floor(q/2)`, sufficient strict
+bounds are `2B < floor(q/2)` for the symmetric scheme and
+`2mB < floor(q/2)` for PKE. For example, at odd modulus five, error one can produce a
+tie even though it is less than `q/4`. The initial dyadic profiles avoid that boundary.
 
 ### D4. SIS is an independent assumption
 
@@ -144,6 +164,12 @@ length, polynomial parameter schedules, unused seed bits, output truncation to a
 syntactic stretch, and finite exceptional lengths. No unproved OWF-to-PRG theorem or
 search-LWE reduction is substituted for these obligations.
 
+The seed-length schedule must be increasing and efficiently computable, with polynomial
+bounds on its value and its next value, so selecting the largest fitting profile does
+not lose the polynomial relationship between the profile index and the actual seed
+length. Independence of copied unused bits and the reindexing of nonuniform adversaries
+are explicit bridge obligations.
+
 ### D6. Cryptographic trapdoors and CCA2
 
 The allowed LWE trapdoor is a secret matrix for decoding a concealed gadget encoding.
@@ -158,11 +184,30 @@ contract and construct an instance from the LWE-derived primitives. An intermedi
 conditional theorem is allowed, but the headline LWE-only CCA2 theorem must discharge
 this dependency; the independent SIS assumption must not leak into it silently.
 
+The source review identified a signature-size cycle in raw Lamport: the signed tuple
+grows with the ABO width, while its uncompressed Lamport verification key is longer
+than that width. Merely increasing the ABO width does not fix this. A proposed route is
+fixed-block LWE-only CRH from lossy functions (PW10 section 3.4.3), canonical domain
+extension, then hash-and-Lamport using the perfectly injective trapdoor evaluator.
+Injectivity gives unique signatures for a fixed digest. Hash security and inversion
+security cover the remaining strong-forgery cases. The hash and signature parameters
+must be independent of the eventual ciphertext length, and the ABO width must be chosen
+after the resulting verification-key width is bounded. This remains a design/proof
+obligation, not a claimed construction or gate closure.
+
 PW10's lattice functions are originally almost-always injective/invertible. The existing
 PKE correctness requirement must be met by an explicit bounded-noise specialization or
 another checked argument, not by ignoring the bad-key event. The CCA proof retains the
 full ciphertext's signature verification, inversion, canonical parsing, recomputation
 checks and exact challenge-ciphertext exclusion.
+
+A proposed exact dyadic specialization takes gadget moduli dividing the LWE modulus,
+so encoding is a group homomorphism. The source review gives candidate deterministic
+inversion and image-cardinality inequalities under bounded errors; these must be proved
+in the statement/fill sequence. PW10's original almost-always Gaussian theorems are not
+relabeled as perfect-correctness results. The ABO anti-cyclic branch matrix is inverted
+over the rationals, not modulo the LWE modulus, so its role must not impose an unstated
+prime-modulus assumption.
 
 ### D7. Efficiency and reuse
 
@@ -200,14 +245,17 @@ is changed. PR #232's CRH and CCA notions are read as prospective consumers, not
 into a competing API or assumed merged. The hash/CCA bridges wait for the owner version
 to land or for an explicit coordination decision.
 
-Root exports are a separate small commit. Phase 0's proposed additions are:
+Root exports are a separate small commit. Phase 0's exact additions are:
 
 ```lean
+import TCSlib.Cryptography.Encoding
 import TCSlib.Cryptography.LWE
 import TCSlib.Cryptography.SIS
 ```
 
-These are a proposed export diff, not a claim of root elaboration or merge clearance.
+These three imports are the branch's only existing shared-file overlap. The three new
+facades and their complete transitive TCSlib dependencies have native checks. This is
+not a claim of whole-library root elaboration or merge clearance.
 Other primitive facades are added as their checked phases become available. Every PR
 calls out root/facade overlap explicitly.
 
@@ -216,14 +264,27 @@ calls out root/facade overlap explicitly.
 Use only this branch's `.lake/packages/` and fresh
 `TCSLIB_OLEANS=<worktree>/.lake/crypto-parallel-oleans`. Do not use another chat's
 TCSlib scratch objects. The installed Lean 4.25.0 executable has been checked. Disk
-space exceeds 400 GiB. Process inspection via `ps` is denied by the execution sandbox;
-current native/cache job activity therefore cannot be established. Resource-heavy
-cache/native work is deferred while this is unresolved; source/review work continues.
+space exceeds 400 GiB. Process inspection via `ps` is denied by the execution sandbox.
+The user subsequently increased the coordination budget by two and authorized up to
+two sub-agents. This resolves the earlier scheduling hold. Root performs cache/native
+work serially; sub-agents receive no native/cache slot unless explicitly allocated.
+Current cache setup independently hashes the pinned sources and extracts only selected
+official archives into this worktree. Other chats' TCSlib build objects are not reused.
 
 Check one module at a time through `scripts/lean_check_tree.sh`. No `lake build`, no
 unfiltered cache download, no package changes in another checkout, no borrowed scratch
 oleans, and no killing another job. Only required Mathlib roots at the manifest pin are
 eligible for the isolated cache. Python commands use `python3 -I`.
+
+Phase 0 now has a fresh, serial 55-module dependency sweep with zero errors, followed
+by rechecks of both renamed assumption modules and both facades. There are 14 new
+admitted representation statements and 17 inherited admission warnings in unchanged
+dependencies. The full library root has not been swept. Gate evidence preserves the
+exact scope, order and logs; admitted statements are not completed proofs.
+
+Shell fetch/push remains blocked by DNS. Creating this branch through the GitHub
+connector returns HTTP 403, `Resource not accessible by integration`. Local commits
+and a portable delivery can be prepared; no published branch or PR is claimed.
 
 ## Decision log
 
@@ -232,4 +293,11 @@ eligible for the isolated cache. Python commands use `python3 -I`.
 | 2026-11-07 | User selected the five headline constructions; SIS assumption independent of LWE. | Approved scope |
 | 2026-11-07 | User approved problem/primitive folder organization and secret-matrix trapdoors for CCA2; excluded short bases/Gaussian preimage sampling. | Approved scope |
 | 2026-11-07 | Own branch renamed; own checkout fast-forwarded to the remotely verified baseline. Other worktree branches verified unchanged. | Executed |
-| 2026-11-07 | Native/cache activity cannot be inspected in this sandbox; heavy checks deferred. | Open environment constraint |
+| 2026-11-07 | Native/cache activity cannot be inspected in this sandbox; heavy checks deferred. | Superseded by the approved budget increase below |
+| 2026-11-07 | User increases the resource coordination budget by two and authorizes up to two sub-agents. Scheduling hold lifted; root cache/native jobs remain serial. | Approved / executing |
+| 2026-11-07 | Read-only source review confirms the five mathematical foundation modules' conventions and identifies dyadic-sampling, odd-modulus tie, PRG indexing and CCA signature-size obligations. No external gate or proof completion inferred. | Internal review data |
+| 2026-11-07 | User selects `DLWEAssumption` and `SISAssumption` for consistency with existing named assumptions; readers are `dlweAssumption_iff` and `sisAssumption_iff`. | Approved naming |
+| 2026-11-07 | Phase-0 foundation modules pass a fresh serial 55-module dependency sweep. Four renamed-module/facade rechecks pass. Fourteen representation obligations remain admitted; no construction/security fill has started. | Native evidence; external gate pending |
+| 2026-11-07 | Own remote branch creation via GitHub connector fails with HTTP 403; shell fetch still fails DNS. | Publication blocked; local work continues |
+| 2026-11-07 | Foundation source frozen in `458d178ab23d06d7cb04f6672af9f8e23eac0b4b`; three root imports isolated in `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`. Final 61-declaration axiom probe passes; 14 admitted statements, 164 elaborated constants. | Prepared external review; no verdict |
+| 2026-11-07 | Final style: zero FAIL, two check-8 acronym-reader heuristic WARNs. Actual `dlweAssumption_iff` and `sisAssumption_iff` readers follow RSA/DDH convention; no shared lint edit or zero-WARN claim. | Explicit review item |

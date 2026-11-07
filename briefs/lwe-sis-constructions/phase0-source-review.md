@@ -1,79 +1,75 @@
-# Phase 0 initial source review
+# Phase 0 internal source review
 
-This is an internal source review, not an external gate or a Lean execution attestation.
+This is internal review data, not an external gate or a proof of the admitted statements.
+Execution evidence is separate, under `gates/00-foundations/evidence/`.
 
-## Drafted surface
+## Reviewed surface
 
-| Module | Surface |
+| Modules | Surface |
 |---|---|
-| `LWE/Noise` | Scalar integer noise from finite nonempty seeds; support-bound predicate |
-| `LWE/Basic` | Numeric parameters; nonzero-modulus instance; common-secret sample map |
-| `LWE/Experiments` | Concrete advantage against the independent uniform comparison |
-| `SIS/Basic` | Numeric parameters; integer nonzero/squared-norm/modular-kernel relation |
-| `SIS/Experiments` | Uniform-matrix success experiment with optional integer-vector output |
-| `LWE`, `SIS` | New facades only; no existing facade or root export changed |
+| `Encoding/Modular` | Fixed-width vectors and row-major matrices; representation obligations |
+| `LWE/Noise`, `LWE/Basic` | Finite nonempty noise seeds; one common secret for all rows |
+| `LWE/Experiments`, `LWE/Encoding` | Concrete distinguishing experiment and canonical input |
+| `LWE/Assumption` | Polynomial input budgets and `DLWEAssumption` against `NUPPT` |
+| `SIS/Basic`, `SIS/Experiments` | Integer short-kernel relation and uniform-matrix success |
+| `SIS/Encoding`, `SIS/Assumption` | Signed outputs, completeness obligations and `SISAssumption` |
+| Three facades | Complete child imports; root additions in a separate commit |
 
-## Source conclusions
+## Conclusions for independent challenge
 
-1. The matrix and secret are different components of a uniform product seed. There is
-   one secret component for all sample rows. Scalar error seeds form a function indexed
-   by the rows, hence the intended independent product under uniform sampling.
-2. The noise law is determined by seed multiplicities. No claim is made that its support
-   is sampled uniformly, or that an infinite Gaussian is represented exactly. Machine
-   efficiency and exact/approximate sampling contracts are still to be supplied.
-3. The ideal comparison sampler is the identity on the *whole* matrix-and-value space.
-   Uniformly sampling this product gives independent uniform components, with the same
-   public output type as the real experiment.
-4. The numeric bundles enforce modulus at least two. Zero dimensions and zero sample
-   counts are permitted for boundary checks. Neither a hardness assumption nor solution
-   existence follows from the numeric bundles; all consumer nonvacuity conditions remain
-   explicit obligations.
-5. SIS nonzeroness is over integer vectors, prior to reduction modulo the modulus.
-   The relation intentionally accepts a modulus multiple when the norm bound allows it;
-   consumer parameter restrictions must exclude this trivial regime. Testing residue
-   nonzeroness instead would misstate SIS.
-6. The SIS norm bound is a bound on the sum of integer coordinate squares. It is not
-   silently an unsquared Euclidean radius. The solver's `none` output is unsuccessful.
-7. All current proof terms are definitional readers or the elementary nonzero-modulus
-   instance. There are no security proofs, nontrivial fills, `sorry` declarations, new
-   axioms, custom machines, or copies of existing proved material in the draft source.
-   Native elaboration and elaborated axiom prints have not been performed.
+1. Real LWE seeds have separate matrix, secret and row-noise components. One secret
+   serves all rows. Independent row seeds give independent copies of the scalar law.
+2. Noise is determined by seed multiplicities, not uniform sampling on its support.
+   This expresses finite rational laws, not an exact infinite discrete Gaussian.
+   Efficient sampling is separate; exact fair-bit sampling at general moduli needs work.
+3. The ideal sampler is the identity on the full matrix/value product. A uniform input
+   gives independent uniform components of the right output type. Concrete adversary
+   coins are explicitly nonempty.
+4. Moduli are at least two. Zero dimensions/sample counts remain permitted for boundary
+   checks. These bundles imply neither hardness nor nonvacuity.
+5. Polynomial bounds cover actual encoded inputs, with widths large enough for residues.
+   DLWE hardness concerns one stored sample-count schedule, not all polynomial schedules.
+   Numeric schedules/noise samplers are not asserted uniformly computable.
+6. SIS nonzeroness is over integers, before modular reduction. The squared-norm bound is
+   explicit. Modulus multiples are accepted when the bound permits them; consumer profiles
+   must exclude that trivial regime. Solution existence and LWE/SIS bridges are not asserted.
+7. SIS machine output has an exact prescribed length. Negative zero represents zero;
+   output-string uniqueness is unnecessary. The family conservatively requires its squared
+   norm bound to fit the magnitude width. Decoder completeness is an admitted theorem,
+   rather than a correctness hypothesis hidden inside the assumption.
+8. Internal mathematical review found no defect in the 14 representation statements.
+   They still have `sorry` bodies. No construction, sampler machine, private host or copy
+   of existing proved material was introduced.
 
-## Lightweight checks observed
+## Execution and limits
 
-- `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography/LWE`: zero FAIL/WARN
-  over the three mathematical modules.
-- `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography/SIS`: zero FAIL/WARN
-  over the two mathematical modules.
-- Independent exact finite calculations passed as recorded in `finite-model-results.json`.
-  Their executable is `check_finite_models.py`. They do not execute the Lean definitions.
-- Lean version inspection reports 4.25.0. Native module checks remain unexecuted.
+An early check exposed a missing matrix finiteness instance; the precise
+`Mathlib.Data.Matrix.Basic` import fixed it. Explicit `Nonempty` binders replaced unused
+section variables that Lean would discard. Final checks supply the evidence, not earlier
+failed attempts.
 
-## Remaining foundation work
+The fresh scoped sweep checks 55 modules; four rechecks cover the subsequent predicate
+renames. There are zero errors, 14 new admission warnings and 17 inherited warnings.
+Final style runs cover all ten mathematical modules. The axiom probe covers all 61
+source declarations and inventories generated constants. The whole-library root was
+not elaborated.
 
-The phase-0 gate still needs canonical modular/integer encodings, faithful-decoding
-statements, polynomial parameter schedules, efficient-sampling contracts, and the
-nonuniform-PPT versions of decisional LWE and SIS hardness. The draft concrete advantage
-and success functions are not those asymptotic hardness assumptions.
+Tracked package sources were exported at manifest pins into the own checkout. Selected
+official dependency archives were source-hashed, SHA-256 recorded, copied to the own cache
+and extracted serially into the own package tree. The evidence preserves provenance.
+Other checkouts' packages and scratch objects were not modified or borrowed as build objects.
 
-An isolated source snapshot for Mathlib and its required upstream packages was exported
-from tracked source at the exact manifest revisions into this worktree's own `.lake/`.
-No build objects were copied, no cache/native jobs were launched, and no source package
-in the other checkout was modified. The local source-export manifest is
-`.lake/source-exports.json`; it is not an elaboration record.
+## Open work
 
-Before native/cache verification, establish the current state of other jobs. The
-execution sandbox denies process inspection. After that constraint is resolved, fetch
-only the Mathlib roots required by the transitive imports, produce fresh dependencies
-and module oleans in this worktree's own tree, and check each module through the
-repository script. Do not describe these drafts as checked in the meantime.
+The external audit must assess source fidelity, representation completeness, sample-count
+quantification, machine adaptation, sketches and all skeleton-time readers/instances.
+PDFs have not been byte-archived or ingested: this remains an explicit source-fidelity
+limitation. No external verdict or gate closure is claimed.
 
-## Shared-file and delivery status
+Later phases must supply efficient samplers, arithmetic/loop contracts, valid profiles,
+reductions and existing-API bridges. The plan records odd-modulus decoding ties, actual
+PRG seed accounting/reindexing and the PW strong-signature size cycle. These are future
+obligations, not completed theorems.
 
-The existing shared owner APIs, existing facades, root exports, dependency pins, and
-other worktrees are unchanged by this branch. No campaign/exchange branch was pushed.
-The proposed root import diff is in the plan and will be a separate commit after its
-modules are checked. No audit vendor has been selected and no external job dispatched.
-
-**Not yet clear to merge — source drafts and finite checks exist; native verification,
-remaining foundation statements, exact source archives, and an external gate are pending.**
+**Not yet clear to merge — external review and source archival remain open; the 14
+representation statements await their statement gate before proof fills.**
