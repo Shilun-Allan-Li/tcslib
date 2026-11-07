@@ -48,6 +48,10 @@ calls to `G`, then runs a protocol `main` of the ch. 2–4 model (D8).
 
 ## Main results
 
+* `HybridProtocol.answersA_eq`, `answersB_eq`, `privA_eq`, `privB_eq`, `coins_eq`: the answers,
+  complete private-input words and coin type.
+* `HybridProtocol.realA_eq`, `realB_eq`, `polyTime_iff`, `hbcSecure_iff`: the sampler, time and
+  security clauses.
 * `HybridProtocol.pairFstD_privA`, `pairSndD_privA`, `pairFstD_privB`, `pairSndD_privB`: a
   party's private input in `main` decodes to its input and its answers.
 
@@ -87,16 +91,36 @@ def answersA (n : ℕ) (x y rA rB : List Bool) : List Bool :=
   (List.ofFn fun j : Fin (H.calls.eval n) =>
     List.ofFn (G.f n (H.callA n x rA j) (H.callB n y rB j)).1).flatten
 
+/-- Alice's answers are the concatenation of her ideal outputs in call order. -/
+theorem answersA_eq (n : ℕ) (x y rA rB : List Bool) :
+    H.answersA n x y rA rB =
+      (List.ofFn fun j : Fin (H.calls.eval n) =>
+        List.ofFn (G.f n (H.callA n x rA j) (H.callB n y rB j)).1).flatten := rfl
+
 /-- **Bob's answers**: his outputs from the ideal calls, concatenated. -/
 def answersB (n : ℕ) (x y rA rB : List Bool) : List Bool :=
   (List.ofFn fun j : Fin (H.calls.eval n) =>
     List.ofFn (G.f n (H.callA n x rA j) (H.callB n y rB j)).2).flatten
 
+/-- Bob's answers are the concatenation of his ideal outputs in call order. -/
+theorem answersB_eq (n : ℕ) (x y rA rB : List Bool) :
+    H.answersB n x y rA rB =
+      (List.ofFn fun j : Fin (H.calls.eval n) =>
+        List.ofFn (G.f n (H.callA n x rA j) (H.callB n y rB j)).2).flatten := rfl
+
 /-- Alice's private input in `main`: `⟨x, her answers⟩`. -/
 def privA (n : ℕ) (x y rA rB : List Bool) : List Bool := pairEncode x (H.answersA n x y rA rB)
 
+/-- Alice's complete private-input word pairs her original input with her ideal answers. -/
+theorem privA_eq (n : ℕ) (x y rA rB : List Bool) :
+    H.privA n x y rA rB = pairEncode x (H.answersA n x y rA rB) := rfl
+
 /-- Bob's private input in `main`: `⟨y, his answers⟩`. -/
 def privB (n : ℕ) (x y rA rB : List Bool) : List Bool := pairEncode y (H.answersB n x y rA rB)
+
+/-- Bob's complete private-input word pairs his original input with his ideal answers. -/
+theorem privB_eq (n : ℕ) (x y rA rB : List Bool) :
+    H.privB n x y rA rB = pairEncode y (H.answersB n x y rA rB) := rfl
 
 /-- Alice's private input decodes to her input. -/
 @[simp] theorem pairFstD_privA (n : ℕ) (x y rA rB : List Bool) :
@@ -121,6 +145,10 @@ def privB (n : ℕ) (x y rA rB : List Bool) : List Bool := pairEncode y (H.answe
 /-- The coins of a hybrid execution at `n`: Alice's and Bob's tapes in `main`. -/
 abbrev Coins (n : ℕ) : Type := H.main.ExecCoins H.main.P (List.replicate n true)
 
+/-- The hybrid coin type is the pair of main-protocol tapes on the unary common input. -/
+theorem coins_eq (n : ℕ) :
+    H.Coins n = H.main.ExecCoins H.main.P (List.replicate n true) := rfl
+
 /-- **The hybrid real sampler for Alice's side**: on the coins of a hybrid execution with common
 input `1^n`, `⟨view_A, out_B⟩`, where Alice's view in `main` holds her input, her answers, her
 coins and the messages she received. -/
@@ -133,6 +161,18 @@ def realA (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
       (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
       (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r)
 
+/-- Alice's hybrid real sampler pairs her main-protocol view with Bob's output, using the
+complete private inputs formed from the parties' inputs and ideal answers. -/
+theorem realA_eq (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : H.Coins n) :
+    H.realA F n x y r =
+      pairEncode (H.main.viewP (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+        (H.main.outV H.main.P (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r) := rfl
+
 /-- **The hybrid real sampler for Bob's side**: `⟨view_B, out_A⟩`. -/
 def realB (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
     (y : Fin (F.inB.eval n) → Bool) : H.Coins n → List Bool := fun r =>
@@ -142,6 +182,18 @@ def realB (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
     (H.main.outP (List.replicate n true)
       (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
       (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r)
+
+/-- Bob's hybrid real sampler pairs his main-protocol view with Alice's output, using the
+complete private inputs formed from the parties' inputs and ideal answers. -/
+theorem realB_eq (F : Functionality) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : H.Coins n) :
+    H.realB F n x y r =
+      pairEncode (H.main.viewV (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r).encode
+        (H.main.outP (List.replicate n true)
+          (H.privA n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2))
+          (H.privB n (List.ofFn x) (List.ofFn y) (List.ofFn r.1) (List.ofFn r.2)) r) := rfl
 
 /-- **The parties run in polynomial time** in the hybrid model, on `F`'s inputs (ruling of
 2026-11-05, as `Functionality.PolyTime`):
@@ -172,6 +224,33 @@ def PolyTime (F : Functionality) : Prop :=
           (pairEncode (List.ofFn y) (List.ofFn aB)) r).2,
         msg.length ≤ B.eval n
 
+/-- Hybrid polynomial time consists of efficient main strategies, polynomial-time call inputs,
+and a polynomial bound on messages for every pair of answer strings of the required lengths.
+
+**Proof sketch.** The right-hand side repeats the definition's strategy, call-input and
+message-bound clauses in the same order, so the equivalence is reflexive. -/
+theorem polyTime_iff (F : Functionality) :
+    H.PolyTime F ↔
+      H.main.P.Efficient ∧ H.main.V.Efficient ∧
+        (∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+          ∀ n (x r : List Bool) (j : Fin (H.calls.eval n)),
+            f (pairEncode (List.replicate n true) (pairEncode x (pairEncode r
+              (List.replicate j true)))) = List.ofFn (H.callA n x r j)) ∧
+        (∃ f : List Bool → List Bool, PolyTimeComputable f ∧
+          ∀ n (y r : List Bool) (j : Fin (H.calls.eval n)),
+            f (pairEncode (List.replicate n true) (pairEncode y (pairEncode r
+              (List.replicate j true)))) = List.ofFn (H.callB n y r j)) ∧
+        ∃ B : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool)
+          (aA : Fin (H.calls.eval n * G.outA.eval n) → Bool)
+          (aB : Fin (H.calls.eval n * G.outB.eval n) → Bool) (r : H.Coins n),
+          ∀ msg ∈ (H.main.transcript (List.replicate n true)
+              (pairEncode (List.ofFn x) (List.ofFn aA))
+              (pairEncode (List.ofFn y) (List.ofFn aB)) r).1 ++
+            (H.main.transcript (List.replicate n true)
+              (pairEncode (List.ofFn x) (List.ofFn aA))
+              (pairEncode (List.ofFn y) (List.ofFn aB)) r).2,
+            msg.length ≤ B.eval n := Iff.rfl
+
 /-- **Honest-but-curious security in the `G`-hybrid model** [PS10, Definition 155.1, with the
 hybrid execution of [Gol04, §7.3.1]]: the parties run in polynomial time (`PolyTime`), and
 there are non-uniform PPT simulators `S_A`, `S_B` such that for every non-uniform PPT
@@ -182,6 +261,15 @@ def HBCSecure (F : Functionality) : Prop :=
     ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
       distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
         distAdv (H.realB F n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n
+
+/-- Hybrid honest-but-curious security consists of hybrid polynomial time and two simulators
+with negligible distinguishing advantages uniform over inputs of each length. -/
+theorem hbcSecure_iff (F : Functionality) :
+    H.HBCSecure F ↔
+      H.PolyTime F ∧ ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+        ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+          distAdv (H.realA F n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+            distAdv (H.realB F n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n := Iff.rfl
 
 end HybridProtocol
 

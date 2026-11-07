@@ -413,10 +413,6 @@ theorem negligible_mul_permFailBound :
       ≤ N * (N * (2 : ℝ)⁻¹ ^ Nat.sqrt (N / 4)) := by gcongr
     _ = (N : ℝ) ^ 2 * (2 : ℝ)⁻¹ ^ Nat.sqrt (N / 4) := by ring
 
-/-- The `i`-th block of `c` bits of a tape (the coins of iteration `i` of a repeated
-protocol). -/
-def coinSlice (c i : ℕ) (r : List Bool) : List Bool := (r.drop (i * c)).take c
-
 /-! ### The graph non-isomorphism protocol [PS10, Protocol 118.3] (Prot-118.3) -/
 
 /-- The honest (unbounded) prover of the graph non-isomorphism protocol [PS10, Protocol
@@ -454,7 +450,7 @@ noncomputable def gniProtocol : Protocol where
 
 /-- The verifier of the `|x|`-fold graph non-isomorphism protocol [PS10, Protocol 118.3,
 "repeat the procedure `|G₁|` times"]: iteration `i` uses the coin block
-`coinSlice (1 + (|x|+1)²) i r` (bit `b_i`, then the permutation coins); after `i < |x|`
+`coinBlock (1 + (|x|+1)²) i r` (bit `b_i`, then the permutation coins); after `i < |x|`
 replies it sends `H_i`, and on the complete history of `|x|` replies it accepts iff `x` is
 well formed and every reply `b'_i` equals `b_i`.
 
@@ -464,12 +460,12 @@ noncomputable def gniVerifierRep : Strategy where
   next x _ r hist :=
     let c := 1 + (x.length + 1) ^ 2
     if hist.length < x.length then
-      let ri := coinSlice c hist.length r
+      let ri := coinBlock c hist.length r
       encGraph (permGraph (if ri.headD false then instanceG₁ x else instanceG₀ x)
         (samplePerm (instanceVertexCount x) (ri.drop 1)))
     else
       [decide (wellFormedInstance x = true ∧
-        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinSlice c j r).headD false)]
+        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinBlock c j r).headD false)]
 
 /-- The `|x|`-fold graph non-isomorphism protocol [PS10, Protocol 118.3] (Prot-118.3):
 verifier first, `2|x|` messages; the honest prover answers each `H_i` as in one iteration. -/
@@ -534,14 +530,14 @@ theorem giProtocol_eq : giProtocol =
 
 /-- The prover of the `|x|`-fold graph isomorphism protocol: iteration `i` (the prover has
 received `2i` or `2i + 1` messages: the challenges and the verifier's empty fourth messages)
-uses `π_i := samplePerm n (coinSlice (|x|+1)² i r)`; on an even history it sends `H_i`, on an
+uses `π_i := samplePerm n (coinBlock (|x|+1)² i r)`; on an even history it sends `H_i`, on an
 odd one `γ_i` for the latest challenge. -/
 noncomputable def giProverRep : Strategy where
   coins := .mul .var (.normal 1 2)
   next x y r hist :=
     let n := instanceVertexCount x
     let σ := decPerm n y
-    let π := samplePerm n (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)
+    let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
     if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) π)
     else encPerm (if (hist.getLastD []).headD false then π * σ⁻¹ else π)
 

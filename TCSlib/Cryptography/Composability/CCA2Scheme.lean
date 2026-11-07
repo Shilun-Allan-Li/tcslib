@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Composability.Defs
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Asymptotic.PRF
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -67,11 +69,25 @@ def ccaGenFun (z : List Bool) : List Bool :=
   pairEncode ((NUPPT.inCoins z).take (NUPPT.inParam z).length)
     ((NUPPT.inCoins z).drop (NUPPT.inParam z).length)
 
+/-- The raw generator pairs the input coins before and after the parameter length:
+`⟨ρ.take n, ρ.drop n⟩`. -/
+theorem ccaGenFun_eq (z : List Bool) :
+    ccaGenFun z =
+      pairEncode ((NUPPT.inCoins z).take (NUPPT.inParam z).length)
+        ((NUPPT.inCoins z).drop (NUPPT.inParam z).length) := rfl
+
 /-- The first ciphertext part `c₁ = m ⊕ E(⟨k₁, r⟩)` of `Enc′`, on the layout
 `⟨⟨⟨1^n, ⟨⟨k₁, k₂⟩, m⟩⟩, α⟩, r⟩`. -/
 def ccaMaskFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
   List.zipWith xor (pairSndD (NUPPT.inArg z))
     (E (pairEncode (pairFstD (pairFstD (NUPPT.inArg z))) (NUPPT.inCoins z)))
+
+/-- The raw ciphertext mask is the decoded message XOR the evaluator's output on the first
+key and the input coins [PS10, Algorithm 169.3]. -/
+theorem ccaMaskFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    ccaMaskFun E z =
+      List.zipWith xor (pairSndD (NUPPT.inArg z))
+        (E (pairEncode (pairFstD (pairFstD (NUPPT.inArg z))) (NUPPT.inCoins z))) := rfl
 
 /-- `Enc′` on the layout `⟨⟨⟨1^n, ⟨⟨k₁, k₂⟩, m⟩⟩, α⟩, r⟩`: the ciphertext
 `⟨r, ⟨c₁, E(⟨k₂, r ++ c₁⟩)⟩⟩` with `c₁ = m ⊕ E(⟨k₁, r⟩)`. -/
@@ -80,6 +96,15 @@ def ccaEncFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
     (pairEncode (ccaMaskFun E z)
       (E (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
         (NUPPT.inCoins z ++ ccaMaskFun E z))))
+
+/-- Raw encryption returns the nonce, the masked message, and the tag of their concatenation
+under the second key [PS10, Algorithm 169.3]. -/
+theorem ccaEncFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    ccaEncFun E z =
+      pairEncode (NUPPT.inCoins z)
+        (pairEncode (ccaMaskFun E z)
+          (E (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
+            (NUPPT.inCoins z ++ ccaMaskFun E z)))) := rfl
 
 /-- The test of `Dec′` on the layout `⟨⟨⟨1^n, ⟨⟨k₁, k₂⟩, ⟨r, ⟨c₁, t⟩⟩⟩⟩, α⟩, r'⟩`: `r` and `c₁`
 have `n` bits, and the tag is valid, `E(⟨k₂, r ++ c₁⟩) = t`. -/
@@ -91,6 +116,18 @@ def ccaDecOK (E : List Bool → List Bool) (z : List Bool) : Bool :=
         (pairFstD (pairSndD (NUPPT.inArg z)) ++ pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) =
       pairSndD (pairSndD (pairSndD (NUPPT.inArg z))))
 
+/-- The raw decryption guard conjoins the two parameter-length checks with equality of the
+computed and supplied tags [PS10, Algorithm 169.3]. -/
+theorem ccaDecOK_eq (E : List Bool → List Bool) (z : List Bool) :
+    ccaDecOK E z =
+      decide ((pairFstD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length) &&
+        decide ((pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))).length =
+          (NUPPT.inParam z).length) &&
+        decide (E (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
+            (pairFstD (pairSndD (NUPPT.inArg z)) ++
+              pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) =
+          pairSndD (pairSndD (pairSndD (NUPPT.inArg z)))) := rfl
+
 /-- `Dec′` on the layout `⟨⟨⟨1^n, ⟨⟨k₁, k₂⟩, ⟨r, ⟨c₁, t⟩⟩⟩⟩, α⟩, r'⟩`: `c₁ ⊕ E(⟨k₁, r⟩)` when
 the test passes, and otherwise `⊥`, here `1^{n+1}`, which decodes to no `n`-bit message. -/
 def ccaDecFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
@@ -98,6 +135,16 @@ def ccaDecFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
     List.zipWith xor (pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))
       (E (pairEncode (pairFstD (pairFstD (NUPPT.inArg z))) (pairFstD (pairSndD (NUPPT.inArg z)))))
   else true :: NUPPT.inParam z
+
+/-- Raw decryption XORs the first ciphertext component with the first-key pad when
+`ccaDecOK` holds, and returns `true :: NUPPT.inParam z` otherwise [PS10, Algorithm 169.3]. -/
+theorem ccaDecFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    ccaDecFun E z =
+      if ccaDecOK E z then
+        List.zipWith xor (pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))
+          (E (pairEncode (pairFstD (pairFstD (NUPPT.inArg z)))
+            (pairFstD (pairSndD (NUPPT.inArg z)))))
+      else true :: NUPPT.inParam z := rfl
 
 /-! ### Efficiency -/
 
@@ -130,7 +177,13 @@ theorem polyTimeComputable_ccaEncFun {E : List Bool → List Bool} (hE : PolyTim
   convert h using 1
 
 /-- The test of `Dec′` is polynomial-time when `E` is: two length comparisons and one equality
-(`polyTimeComputable_lenEq`, `polyTimeComputable_pairEq`). -/
+(`polyTimeComputable_lenEq`, `polyTimeComputable_pairEq`).
+
+**Proof sketch.** Project the nonce, encrypted message, tag and second key from the layout.
+Two polynomial-time length comparisons check that the nonce and encrypted message each have
+`n` bits. Append these two words and evaluate the tag under the second key, using composition
+with the polynomial-time evaluator. A word-equality test compares this result with the supplied
+tag; Boolean conjunction combines that test with the two length checks. -/
 theorem polyTimeComputable_ccaDecOK {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     PolyTimeComputable (fun z => [ccaDecOK E z]) := by
   have hl : ∀ g : List Bool → List Bool, PolyTimeComputable g →
@@ -235,11 +288,11 @@ include hFE in
 theorem length_eval_of_length {n : ℕ} {a b : List Bool} (ha : a.length = n)
     (hb : b.length = n) : (E (pairEncode a b)).length = n := by
   have hA : List.ofFn (padFin n a) = a := by
-    subst ha
-    exact List.ext_getElem (by simp) fun i h₁ h₂ => by simp [padFin, List.getElem?_eq_getElem h₂]
+    simpa only [ha, Nat.sub_self, List.replicate_zero, List.append_nil] using
+      (Collection.ofFn_padFin_of_le (ℓ := n) ha.le)
   have hB : List.ofFn (padFin n b) = b := by
-    subst hb
-    exact List.ext_getElem (by simp) fun i h₁ h₂ => by simp [padFin, List.getElem?_eq_getElem h₂]
+    simpa only [hb, Nat.sub_self, List.replicate_zero, List.append_nil] using
+      (Collection.ofFn_padFin_of_le (ℓ := n) hb.le)
   rw [← hA, ← hB, hFE, List.length_ofFn]
 
 /-- XOR-ing twice with the same pad, at least as long as the message, is the identity. -/
@@ -290,6 +343,8 @@ noncomputable def ccaScheme : FixedLengthScheme where
     simp only [length_pairEncode, hr, hc₁, ht, PolyExpr.eval_add, PolyExpr.eval_mul,
       PolyExpr.eval_const, PolyExpr.eval_var]
     omega
+
+attribute [simps (config := { isSimp := false }) gen enc dec ctLen] ccaScheme
 
 /-- **Theorem 170.4: `π′` is CCA2-secure** [PS10, Theorem 170.4] when `F` is a pseudorandom
 function family.

@@ -25,9 +25,10 @@ predicate `h`,
 
 **On the ch. 2–4 layer.** The collection is a `TrapdoorCollection`, used as Algorithm 104.3 uses it:
 `Gen`, the domain sampler, the evaluator `eval`, and the trapdoor inverter run on the all-`true`
-coin string. The hard-core predicate is evaluated by `H` with `H ⟨i, w⟩ = [h i x]` for every `w`
-decoding to `x` (the fields of `Collection.PredEvaluator`, passed unbundled so that this module
-needs only `Asymptotic/Collections`).
+coin string. The hard-core predicate is evaluated by a polynomial-time `H`, specified by
+`H ⟨i, encD i x⟩ = [h i x]` on canonical encodings. Canonical decoding extends this specification
+to every string decoding to `x` (`Collection.apply_of_decD`). The evaluator and its polynomial
+cost are passed explicitly, so this module needs only `Asymptotic/Collections`.
 
 **Deviations and source notes.**
 - **Five messages.** The ch. 2–4 model (D8) reads a party's output as its next-message function
@@ -38,9 +39,9 @@ needs only `Asymptotic/Collections`).
 - **The source's typo:** Alice sends `(z₁, z₂)`, not `(z₁, …, z₄)` (inventory Prot-160.4).
 - **Random elements, not random strings.** The source's `y_j ← {0,1}^n` becomes the collection's
   domain sampler, as in Algorithm 104.3. `y_b = f_i(x) = encD (perm x)` is a canonical encoding.
-  `y_{1−b}` must be one too, or Alice tells the two apart and learns `b`. A total decoder may
-  accept non-canonical strings, so Proposition 161.5 assumes that the sampler outputs canonical
-  encodings (`SamplerCanonical`).
+  `y_{1−b}` must be one too, or Alice tells the two apart and learns `b`. Canonical decoding and
+  the sampler contract guarantee this (`Collection.sample_eq_encD`, stated here as the theorem
+  `SamplerCanonical`).
 - **An enhanced hard-core predicate** (gate 03b review; ruling of 2026-11-05). `y_{1−b}` is a
   raw sample, and Bob's view holds the coins that produced it. If the sampler computes its
   output as `f_i(u)` from a uniform `u`, those coins reveal `u = f_i⁻¹(y_{1−b})` and so
@@ -54,11 +55,16 @@ needs only `Asymptotic/Collections`).
 
 * `SecureComputation.otSender`, `otReceiver`, `otProtocol`: Protocol 160.4.
 * `SecureComputation.otSimA`, `otSimB`: the simulators of Proposition 161.5.
-* `SecureComputation.SamplerCanonical`: the sampler outputs canonical encodings.
 * `SecureComputation.EnhancedHardCore`: an enhanced hard-core predicate.
 
 ## Main results
 
+* The `otMask_eq`, `otKnown_eq`, `otRaw_eq`, simulator-function equations and explicit
+  `otSender`, `otReceiver`, `otProtocol` field equations expose the protocol's computations.
+* `SecureComputation.enhancedHardCore_iff`: the enhanced prediction bound.
+* `SecureComputation.otSimA_coins`, `otSimA_uniform`, `runAt_otSimA`: Alice's simulator contract.
+* `SecureComputation.otSimB_coins`, `otSimB_uniform`, `runAt_otSimB`: Bob's simulator contract.
+* `SecureComputation.SamplerCanonical`: the sampler outputs canonical encodings.
 * `SecureComputation.otProtocol_outV`, `otProtocol_outP`: correctness: Bob outputs `a_b` and
   Alice outputs `⊥ = []`, on every coin string.
 * `SecureComputation.otProtocol_polyTime` (the parties run in polynomial time, stated; a `sorry`
@@ -88,6 +94,13 @@ def otMask (H : List Bool → List Bool) (n : ℕ) (i t yj : List Bool) (a : Boo
   List.zipWith xor (H (pairEncode i (T.inv.runAtL n (pairEncode t yj)
     (List.replicate (T.inv.coins.eval n) true)))) [a]
 
+/-- Alice's mask XORs her bit with the predicate evaluated on the trapdoor inversion,
+using the all-`true` inverter tape. -/
+theorem otMask_eq (H : List Bool → List Bool) (n : ℕ) (i t yj : List Bool) (a : Bool) :
+    otMask T H n i t yj a =
+      List.zipWith xor (H (pairEncode i (T.inv.runAtL n (pairEncode t yj)
+        (List.replicate (T.inv.coins.eval n) true)))) [a] := rfl
+
 /-- **Alice, the sender** [PS10, Protocol 160.4], on common input `1^n`, input `⟨a₁, a₂⟩` and the
 coins of `Gen`: first `i`, then `⟨z₁, z₂⟩` on Bob's `⟨y₁, y₂⟩`, then `[]`. -/
 def otSender (H : List Bool → List Bool) : Strategy where
@@ -102,13 +115,38 @@ def otSender (H : List Bool → List Bool) : Strategy where
     else []
   coins := T.gen.coins
 
+/-- Alice uses the index generator's coin polynomial. -/
+theorem otSender_coins (H : List Bool → List Bool) : (otSender T H).coins = T.gen.coins := rfl
+
+/-- Alice sends the generated index initially, both masks after one received message,
+and the empty word on every later history. -/
+theorem otSender_next (H : List Bool → List Bool) (x y r : List Bool)
+    (hist : List (List Bool)) :
+    (otSender T H).next x y r hist =
+      if hist.length = 0 then pairFstD (T.gen.runAtL x.length [] r)
+      else if hist.length = 1 then
+        pairEncode
+          (otMask T H x.length (pairFstD (T.gen.runAtL x.length [] r))
+            (pairSndD (T.gen.runAtL x.length [] r)) (pairFstD (hist.headD [])) (y.getD 0 false))
+          (otMask T H x.length (pairFstD (T.gen.runAtL x.length [] r))
+            (pairSndD (T.gen.runAtL x.length [] r)) (pairSndD (hist.headD [])) (y.getD 1 false))
+      else [] := rfl
+
 /-- Bob's sampled element `w` (decoding to `x`), from the first half of his coins. -/
 def otKnown (n : ℕ) (i r : List Bool) : List Bool :=
   T.sample.runAtL n i (r.take (T.sample.coins.eval n))
 
+/-- Bob's known element is the sample obtained from the first sampler-sized coin block. -/
+theorem otKnown_eq (n : ℕ) (i r : List Bool) :
+    otKnown T n i r = T.sample.runAtL n i (r.take (T.sample.coins.eval n)) := rfl
+
 /-- Bob's raw element `y_{1−b}`, from the second half of his coins. -/
 def otRaw (n : ℕ) (i r : List Bool) : List Bool :=
   T.sample.runAtL n i (r.drop (T.sample.coins.eval n))
+
+/-- Bob's raw element is the sample obtained after dropping the first sampler-sized block. -/
+theorem otRaw_eq (n : ℕ) (i r : List Bool) :
+    otRaw T n i r = T.sample.runAtL n i (r.drop (T.sample.coins.eval n)) := rfl
 
 /-- **Bob, the receiver** [PS10, Protocol 160.4], on common input `1^n`, input `[b]` and two
 blocks of sampler coins: on `[i]`, the pair with `y_b = f_i(x)` (by `eval`) and `y_{1−b}` the raw
@@ -127,6 +165,26 @@ def otReceiver (H : List Bool → List Bool) : Strategy where
       (if z.headD false then pairSndD (hist.getD 1 []) else pairFstD (hist.getD 1 []))
   coins := .add T.sample.coins T.sample.coins
 
+/-- Bob uses two consecutive blocks of sampler coins. -/
+theorem otReceiver_coins (H : List Bool → List Bool) :
+    (otReceiver T H).coins = .add T.sample.coins T.sample.coins := rfl
+
+/-- Bob sends the choice-ordered element pair after one message, an empty filler after two,
+and the XOR of the predicate word and selected mask on every other history. -/
+theorem otReceiver_next (H : List Bool → List Bool) (x z r : List Bool)
+    (hist : List (List Bool)) :
+    (otReceiver T H).next x z r hist =
+      if hist.length = 1 then
+        if z.headD false then
+          pairEncode (otRaw T x.length (hist.headD []) r)
+            (T.eval (pairEncode (hist.headD []) (otKnown T x.length (hist.headD []) r)))
+        else
+          pairEncode (T.eval (pairEncode (hist.headD []) (otKnown T x.length (hist.headD []) r)))
+            (otRaw T x.length (hist.headD []) r)
+      else if hist.length = 2 then []
+      else List.zipWith xor (H (pairEncode (hist.headD []) (otKnown T x.length (hist.headD []) r)))
+        (if z.headD false then pairSndD (hist.getD 1 []) else pairFstD (hist.getD 1 [])) := rfl
+
 /-- **Protocol 160.4** [PS10], with five messages, Alice first. -/
 def otProtocol (H : List Bool → List Bool) : Protocol where
   P := otSender T H
@@ -134,11 +192,26 @@ def otProtocol (H : List Bool → List Bool) : Protocol where
   rounds := .const 5
   verifierFirst := false
 
-/-- **The sampler outputs canonical encodings**: at every generated index, every output of the
-domain sampler is `encD i x` for some `x ∈ D_i`. -/
-def SamplerCanonical : Prop :=
-  ∀ n (r : T.gen.Coins n) (s : T.sample.Coins n), ∃ x,
-    T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x
+/-- Alice, the OT sender, is the protocol's prover-side strategy. -/
+theorem otProtocol_P (H : List Bool → List Bool) : (otProtocol T H).P = otSender T H := rfl
+
+/-- Bob, the OT receiver, is the protocol's verifier-side strategy. -/
+theorem otProtocol_V (H : List Bool → List Bool) : (otProtocol T H).V = otReceiver T H := rfl
+
+/-- The OT protocol makes five moves. -/
+theorem otProtocol_rounds (H : List Bool → List Bool) : (otProtocol T H).rounds = .const 5 := rfl
+
+/-- The OT protocol starts with Alice, rather than the verifier-side party. -/
+theorem otProtocol_verifierFirst (H : List Bool → List Bool) :
+    (otProtocol T H).verifierFirst = false := rfl
+
+/-- **The sampler outputs canonical encodings** [PS10, Definition 41.1 (2)]: at every generated
+index, every output of the domain sampler is `encD i x` for some `x ∈ D_i`
+(`Collection.sample_eq_encD`, from the sampler contract and canonical decoding). -/
+theorem SamplerCanonical :
+    ∀ n (r : T.gen.Coins n) (s : T.sample.Coins n), ∃ x,
+      T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x :=
+  T.toCollection.sample_eq_encD
 
 /-- **An enhanced hard-core predicate** [Gol04, Appendix C.1] (a declared strengthening of
 [PS10, Proposition 161.5]'s hypothesis; see the module docstring): for every non-uniform PPT `A`,
@@ -155,29 +228,63 @@ def EnhancedHardCore (h : ∀ i, T.D i → Bool) : Prop :=
             ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) z.1)).getD default)))
       ≤ 1 / 2 + ε n
 
+/-- Enhanced hard-core security bounds prediction of a sampled element's preimage bit by
+one half plus a negligible function, even when the predictor receives the sampler's coins. -/
+theorem enhancedHardCore_iff (h : ∀ i, T.D i → Bool) :
+    EnhancedHardCore T h ↔
+      ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+        uexp (fun r : T.gen.Coins n =>
+          uprob fun z : T.sample.Coins n × A.Coins n =>
+            A.distinguisherL n (pairEncode (T.index n r) (List.ofFn z.1)) z.2 =
+              h (T.index n r) ((T.perm (T.index n r)).symm
+                ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) z.1)).getD default)))
+          ≤ 1 / 2 + ε n := Iff.rfl
+
 /-! ### Correctness -/
 
 section Correctness
 
 variable {h : ∀ i, T.D i → Bool} (H : List Bool → List Bool)
-  (hspec : ∀ i w x, T.decD i w = some x → H (pairEncode i w) = [h i x])
+  (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x])
 
-include hspec in
+include henc in
 /-- **Bob outputs `a_b`** on every coin string (the output clause of Proposition 161.5).
 
 **Proof sketch.**
 1. Unfold the five moves. Bob's known element `w` is the sampler on his first coin block, and it
    decodes to some `x` with `eval ⟨i, w⟩ = encD(perm x)` (`sample_spec`, `f_perm`).
 2. So `y_b = encD(perm x)`, and Alice's trapdoor inverter maps it back to an encoding of `x`
-   (`inv_spec`), whence `H` gives `[h(x)]` on both sides (`hspec`).
+   (`inv_spec`). Canonical decoding extends the supplied specification of `H` to all decodable
+   strings (`Collection.apply_of_decD`), so `H` gives `[h(x)]` on both sides.
 3. Bob outputs `h(x) ⊕ z_b = h(x) ⊕ h(x) ⊕ a_b = a_b`, by cases on `b` and on `h(x)`. -/
 theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool)
     (r : (otProtocol T H).ExecCoins (otProtocol T H).P x) :
     (otProtocol T H).outV (otProtocol T H).P x (List.ofFn a) (List.ofFn b) r =
       [a (if b 0 then 1 else 0)] := by
-  obtain ⟨rA, rB⟩ := r
-  simp [Protocol.outV, Protocol.transcriptWith, otProtocol, exec, otSender, otReceiver]
-  have hg : T.gen.runAtL x.length [] (List.ofFn fun i => rA i) = T.gen.runAt x.length [] rA := rfl
+  have hspec : ∀ i w (xx : T.D i),
+      T.decD i w = some xx → H (pairEncode i w) = [h i xx] :=
+    fun _ _ _ hw =>
+      T.toCollection.apply_of_decD (v := fun i xx => [h i xx]) henc hw
+  obtain ⟨rA₀, rB₀⟩ := r
+  have hA : (otSender T H).coinLen x.length = T.gen.coinLen x.length :=
+    (Strategy.coinLen_eq (otSender T H) x.length).trans (T.gen.coinLen_eq x.length).symm
+  have hB : (otReceiver T H).coinLen x.length =
+      T.sample.coinLen x.length + T.sample.coinLen x.length :=
+    (Strategy.coinLen_eq (otReceiver T H) x.length).trans
+      ((PolyExpr.eval_add T.sample.coins T.sample.coins x.length).trans
+        (congrArg₂ Nat.add (T.sample.coinLen_eq x.length).symm
+          (T.sample.coinLen_eq x.length).symm))
+  let rA : T.gen.Coins x.length := fun j => rA₀ (Fin.cast hA.symm j)
+  let rB : Fin (T.sample.coinLen x.length + T.sample.coinLen x.length) → Bool :=
+    fun j => rB₀ (Fin.cast hB.symm j)
+  have hAr : List.ofFn rA₀ = List.ofFn rA := List.ofFn_congr hA rA₀
+  have hBr : List.ofFn rB₀ = List.ofFn rB := List.ofFn_congr hB rB₀
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, otProtocol, exec_succ, exec_zero,
+    otSender, otReceiver]
+  rw [hAr, hBr]
+  have hg : T.gen.runAtL x.length [] (List.ofFn fun i => rA i) =
+      T.gen.runAt x.length [] rA :=
+    (T.gen.runAt_eq x.length [] rA).symm
   erw [hg]
   -- Bob's first coin block, typed
   let s1 : T.sample.Coins x.length := fun j => rB ⟨j.1,
@@ -186,8 +293,7 @@ theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool
   have hs1 : (List.ofFn fun i => rB i).take (T.sample.coins.eval x.length) = List.ofFn s1 := by
     apply List.ext_getElem
     · simp only [List.length_take, List.length_ofFn]
-      show min (T.sample.coinLen x.length)
-        (T.sample.coinLen x.length + T.sample.coinLen x.length) = T.sample.coinLen x.length
+      rw [← T.sample.coinLen_eq x.length]
       omega
     · intro j h₁ h₂
       simp only [List.getElem_take, List.getElem_ofFn]
@@ -196,7 +302,7 @@ theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool
       (List.ofFn fun i => rB i) =
       T.sample.runAt x.length (pairFstD (T.gen.runAt x.length [] rA)) s1 := by
     rw [otKnown, hs1]
-    rfl
+    exact (T.sample.runAt_eq x.length _ s1).symm
   obtain ⟨xx, hdec, heval⟩ := T.sample_spec x.length rA s1
   have hyb : T.eval (pairEncode (pairFstD (T.gen.runAt x.length [] rA))
       (otKnown T x.length (pairFstD (T.gen.runAt x.length [] rA)) (List.ofFn fun i => rB i))) =
@@ -208,7 +314,7 @@ theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool
       (T.inv.runAtL x.length
         (pairEncode (pairSndD (T.gen.runAt x.length [] rA)) (T.encD _ (T.perm _ xx)))
         (List.replicate (T.inv.coins.eval x.length) true))) = [h _ xx] := by
-    rw [← List.ofFn_const]
+    rw [← T.inv.coinLen_eq x.length, ← List.ofFn_const, ← NUPPT.runAt_eq]
     exact hspec _ _ _ hinv
   have hHw : H (pairEncode (pairFstD (T.gen.runAt x.length [] rA))
       (otKnown T x.length (pairFstD (T.gen.runAt x.length [] rA)) (List.ofFn fun i => rB i))) =
@@ -242,6 +348,13 @@ end Correctness
 def coinSeg (p q : PolyExpr) (z : List Bool) : List Bool :=
   ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take (q.eval (NUPPT.inParam z).length)
 
+/-- The coin segment drops the first `p(|parameter|)` bits and takes the next
+`q(|parameter|)` bits of the raw tape. -/
+theorem coinSeg_eq (p q : PolyExpr) (z : List Bool) :
+    coinSeg p q z =
+      ((NUPPT.inCoins z).drop (p.eval (NUPPT.inParam z).length)).take
+        (q.eval (NUPPT.inParam z).length) := rfl
+
 /-- A coin segment is polynomial-time (`polyTimeComputable_pairDropPoly`,
 `polyTimeComputable_pairTakePoly`). -/
 theorem polyTimeComputable_coinSeg (p q : PolyExpr) : PolyTimeComputable (coinSeg p q) := by
@@ -258,6 +371,12 @@ def simIdx (z : List Bool) : List Bool :=
   pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
     (coinSeg (.const 0) T.gen.coins z)))
 
+/-- The simulated index is the first component of the generator's output on its designated
+coin segment, with empty argument and advice. -/
+theorem simIdx_eq (z : List Bool) :
+    simIdx T z = pairFstD (T.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
+      (coinSeg (.const 0) T.gen.coins z))) := rfl
+
 /-- The simulated index is polynomial-time. -/
 theorem polyTimeComputable_simIdx : PolyTimeComputable (simIdx T) := by
   have h := polyTimeComputable_pairFstD.comp (T.gen.polyTimeComputable_output.comp
@@ -271,6 +390,13 @@ theorem polyTimeComputable_simIdx : PolyTimeComputable (simIdx T) := by
 /-- A sampled element at the simulated index, from the sampler-coin segment after `p(n)` coins. -/
 def simSample (p : PolyExpr) (z : List Bool) : List Bool :=
   T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIdx T z) [] (coinSeg p T.sample.coins z))
+
+/-- A simulated sample runs the sampler at the simulated index on its designated coin
+segment, with empty advice. -/
+theorem simSample_eq (p : PolyExpr) (z : List Bool) :
+    simSample T p z =
+      T.sample.output (NUPPT.layout (NUPPT.inParam z) (simIdx T z) []
+        (coinSeg p T.sample.coins z)) := rfl
 
 /-- A simulated sample is polynomial-time. -/
 theorem polyTimeComputable_simSample (p : PolyExpr) : PolyTimeComputable (simSample T p) := by
@@ -291,6 +417,16 @@ def otSimAFun (z : List Bool) : List Bool :=
           (simSample T (.add T.gen.coins T.sample.coins) z))
         (pairEncode [] [])))
 
+/-- Alice's simulator word encodes her parameter, input and generator coins, followed by
+the two simulated samples and an empty received message. -/
+theorem otSimAFun_eq (z : List Bool) :
+    otSimAFun T z =
+      pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
+        (pairEncode (coinSeg (.const 0) T.gen.coins z)
+          (pairEncode (pairEncode (simSample T T.gen.coins z)
+              (simSample T (.add T.gen.coins T.sample.coins) z))
+            (pairEncode [] []))) := rfl
+
 /-- `S_A` is polynomial-time. -/
 theorem polyTimeComputable_otSimAFun : PolyTimeComputable (otSimAFun T) := by
   have h := (NUPPT.polyTimeComputable_inParam.pairEncode
@@ -308,11 +444,35 @@ noncomputable def otSimA : NUPPT :=
   NUPPT.ofPolyTimeUniform (polyTimeComputable_otSimAFun T)
     (.add T.gen.coins (.add T.sample.coins T.sample.coins))
 
+/-- Alice's simulator uses generator coins followed by two sampler blocks. -/
+theorem otSimA_coins :
+    (otSimA T).coins = .add T.gen.coins (.add T.sample.coins T.sample.coins) :=
+  NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_otSimAFun T) _
+
+/-- Alice's simulator is uniform. -/
+theorem otSimA_uniform : (otSimA T).Uniform :=
+  NUPPT.ofPolyTimeUniform_uniform (polyTimeComputable_otSimAFun T) _
+
+/-- Alice's simulator at parameter `n` computes its view word on the unary-parameter layout,
+with the supplied argument and tape and empty advice. -/
+theorem runAt_otSimA (n : ℕ) (y : List Bool) (r : (otSimA T).Coins n) :
+    (otSimA T).runAt n y r =
+      otSimAFun T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) := by
+  rw [NUPPT.runAt_eq, otSimA, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq,
+    NUPPT.layout_eq]
+
 /-- `S_B`'s mask `z_b = h(x) ⊕ a_b`, with `x` its first sampled element and `[a_b]` the second
 part of its argument. -/
 def otSimZb (H : List Bool → List Bool) (z : List Bool) : List Bool :=
   List.zipWith xor (H (pairEncode (simIdx T z) (simSample T T.gen.coins z)))
     (pairSndD (NUPPT.inArg z))
+
+/-- Bob's selected mask XORs the predicate word of the first simulated sample with the
+second component of the supplied argument. -/
+theorem otSimZb_eq (H : List Bool → List Bool) (z : List Bool) :
+    otSimZb T H z =
+      List.zipWith xor (H (pairEncode (simIdx T z) (simSample T T.gen.coins z)))
+        (pairSndD (NUPPT.inArg z)) := rfl
 
 /-- `S_B`'s pair `(z₁, z₂)`: `z_b` from `otSimZb`, `z_{1−b}` one fresh coin. -/
 def otSimZ (H : List Bool → List Bool) (z : List Bool) : List Bool :=
@@ -323,6 +483,17 @@ def otSimZ (H : List Bool → List Bool) (z : List Bool) : List Bool :=
     pairEncode (otSimZb T H z)
       (coinSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
 
+/-- Bob's simulated mask pair places the final coin segment in the unselected position and
+the computed mask in the position selected by the first input bit. -/
+theorem otSimZ_eq (H : List Bool → List Bool) (z : List Bool) :
+    otSimZ T H z =
+      if (pairFstD (NUPPT.inArg z)).headD false then
+        pairEncode (coinSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z)
+          (otSimZb T H z)
+      else
+        pairEncode (otSimZb T H z)
+          (coinSeg (.add T.gen.coins (.add T.sample.coins T.sample.coins)) (.const 1) z) := rfl
+
 /-- **`S_B`** on `⟨1^n, ⟨[b], [a_b]⟩⟩`: Bob's view, with two blocks of sampler coins as his tape,
 the simulated index as Alice's first message, `(z₁, z₂)` from `otSimZ` as her second, and `[]`:
 `⟨⟨1^n, [b]⟩, ⟨r_B, [i, ⟨z₁, z₂⟩, []]⟩⟩`. -/
@@ -330,6 +501,14 @@ def otSimBFun (H : List Bool → List Bool) (z : List Bool) : List Bool :=
   pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
     (pairEncode (coinSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
       (pairEncode (simIdx T z) (pairEncode (otSimZ T H z) (pairEncode [] []))))
+
+/-- Bob's simulator word encodes his parameter, choice bit and sampler coins, followed by
+the simulated index, mask pair and empty received message. -/
+theorem otSimBFun_eq (H : List Bool → List Bool) (z : List Bool) :
+    otSimBFun T H z =
+      pairEncode (pairEncode (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)))
+        (pairEncode (coinSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
+          (pairEncode (simIdx T z) (pairEncode (otSimZ T H z) (pairEncode [] [])))) := rfl
 
 /-- `S_B` is polynomial-time when `H` is.
 
@@ -376,16 +555,36 @@ noncomputable def otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable 
   NUPPT.ofPolyTimeUniform (polyTimeComputable_otSimBFun T hH)
     (.add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))))
 
+/-- Bob's simulator uses generator coins, two sampler blocks and one fresh mask coin. -/
+theorem otSimB_coins {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+    (otSimB T hH).coins =
+      .add T.gen.coins (.add T.sample.coins (.add T.sample.coins (.const 1))) :=
+  NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_otSimBFun T hH) _
+
+/-- Bob's simulator is uniform. -/
+theorem otSimB_uniform {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
+    (otSimB T hH).Uniform :=
+  NUPPT.ofPolyTimeUniform_uniform (polyTimeComputable_otSimBFun T hH) _
+
+/-- Bob's simulator at parameter `n` computes its view word on the unary-parameter layout,
+with the supplied argument and tape and empty advice. -/
+theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
+    (n : ℕ) (y : List Bool) (r : (otSimB T hH).Coins n) :
+    (otSimB T hH).runAt n y r =
+      otSimBFun T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) := by
+  rw [NUPPT.runAt_eq, otSimB, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq,
+    NUPPT.layout_eq]
+
 /-! ### Proposition 161.5 -/
 
 section Security
 
 variable {h : ∀ i, T.D i → Bool} (H : List Bool → List Bool) (hH : PolyTimeComputable H)
-  (hspec : ∀ i w x, T.decD i w = some x → H (pairEncode i w) = [h i x])
+  (henc : ∀ i (x : T.D i), H (pairEncode i (T.encD i x)) = [h i x])
 
-include hspec in
+include henc in
 /-- **Proposition 161.5 with its simulators** [PS10]: for a collection of trapdoor permutations
-`T` with hard-core predicate `h` (evaluated by `H`), whose sampler outputs canonical encodings,
+`T` with an enhanced hard-core predicate `h` evaluated on encodings by polynomial-time `H`,
 `S_A = otSimA` and `S_B = otSimB` simulate the two sides of Protocol 160.4 within a negligible
 advantage, uniformly over the inputs.
 
@@ -395,7 +594,7 @@ advantage, uniformly over the inputs.
    view.
 2. *Alice's side* (`S_A`). Alice's real view differs from `S_A`'s only in Bob's message.
    - Real: `y_b = encD(perm x)` for a sampled `x`, and `y_{1−b}` a sampled element.
-   - Simulated: two sampled elements, canonical by `hcanon`.
+   - Simulated: two sampled elements, canonical by `SamplerCanonical`.
 
    The sampler is within `δ(n)` of uniform on `D_i` (`T.OneWay.sampleClose`), and `perm` is a
    bijection, so each coordinate is within `δ(n)` of `encD` of a uniform element, independently
@@ -417,8 +616,7 @@ advantage, uniformly over the inputs.
    composition (`NUPPT.exists_comp`).
 
 The source writes out `S_A` only and leaves `S_B` "as an exercise"; step 3 is that exercise. -/
-theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h)
-    (hcanon : SamplerCanonical T) :
+theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
     ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
       ∀ n (x : Fin (otFunctionality.inA.eval n) → Bool)
         (y : Fin (otFunctionality.inB.eval n) → Bool),
@@ -445,14 +643,15 @@ include hH in
 theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) := by
   sorry
 
-include hspec hH in
+include henc hH in
 /-- **Proposition 161.5** [PS10]: Protocol 160.4 is an honest-but-curious one-out-of-two
 oblivious transfer (Definition 155.1 for `otFunctionality`), for a collection of trapdoor
-permutations with a hard-core predicate whose sampler outputs canonical encodings. -/
-theorem otProtocol_hbcSecure (hT : T.OneWay) (hEHC : EnhancedHardCore T h)
-    (hcanon : SamplerCanonical T) : HBCSecure (otProtocol T H) otFunctionality :=
+permutations with an enhanced hard-core predicate evaluated on canonical encodings by a
+polynomial-time `H`. Sampler canonicity follows from the collection contract. -/
+theorem otProtocol_hbcSecure (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
+    HBCSecure (otProtocol T H) otFunctionality :=
   ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
-    otProtocol_simulators T H hH hspec hT hEHC hcanon⟩
+    otProtocol_simulators T H hH henc hT hEHC⟩
 
 end Security
 

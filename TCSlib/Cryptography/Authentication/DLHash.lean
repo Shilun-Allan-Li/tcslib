@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Authentication.Defs
 import TCSlib.Cryptography.Candidates.DiscreteLog
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -62,6 +63,13 @@ def dlHashIdx (G : ExpGroupGen V) (z : List Bool) : List Bool :=
   pairFstD (expGenFun G (NUPPT.layout (NUPPT.inParam z) [] []
     ((NUPPT.inCoins z).take (G.gen.coins.eval (NUPPT.inParam z).length))))
 
+/-- The hash index is the first component of `expGenFun`, run on the parameter and the first
+`G.gen.coins.eval |inParam z|` input coins. -/
+theorem dlHashIdx_eq (G : ExpGroupGen V) (z : List Bool) :
+    dlHashIdx G z =
+      pairFstD (expGenFun G (NUPPT.layout (NUPPT.inParam z) [] []
+        ((NUPPT.inCoins z).take (G.gen.coins.eval (NUPPT.inParam z).length)))) := rfl
+
 /-- `Gen` on the raw layout: the key `⟨i, y⟩`, with `i` the group index and `y = g^w mod p` for
 `w` drawn by the domain sampler from the remaining coins. -/
 def dlHashGenFun (G : ExpGroupGen V) (z : List Bool) : List Bool :=
@@ -69,10 +77,25 @@ def dlHashGenFun (G : ExpGroupGen V) (z : List Bool) : List Bool :=
     (expSampleRaw (NUPPT.layout (NUPPT.inParam z) (dlHashIdx G z) []
       ((NUPPT.inCoins z).drop (G.gen.coins.eval (NUPPT.inParam z).length))))))
 
+/-- The raw hash generator pairs `dlHashIdx G z` with the exponentiation of a sample drawn
+from the remaining input coins [PS10, Protocol 142.2]. -/
+theorem dlHashGenFun_eq (G : ExpGroupGen V) (z : List Bool) :
+    dlHashGenFun G z =
+      pairEncode (dlHashIdx G z) (expEval (pairEncode (dlHashIdx G z)
+        (expSampleRaw (NUPPT.layout (NUPPT.inParam z) (dlHashIdx G z) []
+          ((NUPPT.inCoins z).drop (G.gen.coins.eval (NUPPT.inParam z).length)))))) := rfl
+
 /-- `g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`, with `x` the first `n` bits of `xb`. -/
 def dlHashPow (z : List Bool) : List Bool :=
   expEval (pairEncode (pairFstD (pairFstD (pairSndD z)))
     ((pairSndD (pairSndD z)).take (pairFstD z).length))
+
+/-- The exponentiation step applies `expEval` to the decoded group index and the first
+`|pairFstD z|` exponent bits. -/
+theorem dlHashPow_eq (z : List Bool) :
+    dlHashPow z =
+      expEval (pairEncode (pairFstD (pairFstD (pairSndD z)))
+        ((pairSndD (pairSndD z)).take (pairFstD z).length)) := rfl
 
 /-- `y · g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`: one multiplication and one reduction modulo `p`. -/
 def dlHashMul (z : List Bool) : List Bool :=
@@ -80,12 +103,27 @@ def dlHashMul (z : List Bool) : List Bool :=
     (mulStr (pairEncode (dlHashPow z) (pairSndD (pairFstD (pairSndD z)))))
     (pairFstD (pairFstD (pairFstD (pairSndD z))))))
 
+/-- The multiplication step takes the remainder of `dlHashPow z` times the decoded `y`,
+divided by the decoded modulus `p`. -/
+theorem dlHashMul_eq (z : List Bool) :
+    dlHashMul z =
+      pairSndD (divModStr (pairEncode
+        (mulStr (pairEncode (dlHashPow z) (pairSndD (pairFstD (pairSndD z)))))
+        (pairFstD (pairFstD (pairFstD (pairSndD z)))))) := rfl
+
 /-- **The hash** `h_{p,g,y}(x, b) = y^b g^x mod p` on `⟨1^n, ⟨⟨i, y⟩, xb⟩⟩`, with `x` the first
 `n` bits of `xb` and `b` its bit at position `n`: one modular exponentiation, and for `b = 1` one
 multiplication and one reduction modulo `p` (`dlHashMul`), each a numeral of the width of `p`. -/
 def dlHashEval (z : List Bool) : List Bool :=
   if ((pairSndD (pairSndD z)).drop (pairFstD z).length).headD false then dlHashMul z
   else dlHashPow z
+
+/-- Hash evaluation uses `dlHashMul z` when the decoded selector bit is true and `dlHashPow z`
+otherwise [PS10, Protocol 142.2]. -/
+theorem dlHashEval_eq (z : List Bool) :
+    dlHashEval z =
+      if ((pairSndD (pairSndD z)).drop (pairFstD z).length).headD false then dlHashMul z
+      else dlHashPow z := rfl
 
 /-! ### Efficiency -/
 
@@ -173,6 +211,8 @@ noncomputable def dlHash (H : ArithmeticFP) (G : ExpGroupGen V) : CRH where
   inRange _ k y := decide (0 < listToNat (List.ofFn y) ∧ listToNat (List.ofFn y) < dlP (pairFstD k))
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   eval_poly := polyTimeComputable_dlHashEval H
+
+attribute [simps (config := { isSimp := false }) domLen rangeLen gen eval inDom inRange] dlHash
 
 /-- **Theorem 142.3: Protocol 142.2 is a collision-resistant hash compressing by one bit**
 [PS10, Theorem 142.3], under the discrete-log assumption for an instance generator of the full

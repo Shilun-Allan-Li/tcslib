@@ -9,6 +9,7 @@ import TCSlib.Cryptography.Composability.PublicKey
 import TCSlib.Cryptography.Composability.NonMalleable
 import TCSlib.Cryptography.Composability.SimNonMalleable
 import TCSlib.Cryptography.Composability.SequentialZK
+import TCSlib.Cryptography.Composability.ThreeColoring
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -37,6 +38,7 @@ See the theorem statements and correctness results in the constituent modules.
 * `NonMalleable` — indistinguishability-based non-malleability.
 * `SimNonMalleable` — simulation-based non-malleability in the cited repaired formulation.
 * `SequentialZK` — sequential repetition and zero-knowledge composition statements.
+* `ThreeColoring` — the quadratic soundness estimate and sequential zero-knowledge corollary.
 
 ## References
 

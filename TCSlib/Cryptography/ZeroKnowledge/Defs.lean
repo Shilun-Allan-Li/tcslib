@@ -194,6 +194,10 @@ honest prover drawing polynomially many fair coins cannot draw a uniform permuta
 def PerfectZK (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
   StatZK π R (fun _ => 0)
 
+/-- Perfect zero-knowledge is statistical zero-knowledge with identically zero error. -/
+theorem perfectZK_iff {π : Protocol} {R : List Bool → List Bool → Prop} :
+    PerfectZK π R ↔ StatZK π R (fun _ => 0) := Iff.rfl
+
 /-- Perfect zero-knowledge with abort [Gol01, Definition 4.3.1] (Def-122.a, the GMR form):
 for every efficient `V'` there is a uniform PPT simulator that outputs `⊥ = []` with
 probability at most `1/2` and whose output, conditioned on not aborting, has exactly the law

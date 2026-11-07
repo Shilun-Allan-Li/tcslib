@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Authentication.Defs
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Asymptotic.BlockEncryptor
 import TCSlib.Cryptography.Asymptotic.OneWay
 import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
@@ -48,6 +49,10 @@ Theorem 137.2: if `f` is one-way, the scheme is one-time secure.
 
 ## Main results
 
+* The ordinary `lamportHalf_eq`, emission and string-function equations expose the algorithms.
+* `Authentication.lamportOWF_inLen`, `lamportOWF_outLen`, `lamportOWF_f`: the function-family fields.
+* `Authentication.lamport_msgLen`, `lamport_sigLen`, `lamport_gen`, `lamport_sign`, `lamport_ver`:
+  the signature-scheme data fields.
 * `Authentication.lamportVerFun_sign`: correctness, `Ver` accepts honest signatures.
 * `Authentication.lamport_oneTimeSecure` (Thm 137.2, stated; a `sorry` under the source's sketch).
 
@@ -67,17 +72,15 @@ open TCSlib.Cryptography.PrivateKeyScheme (encodeList)
 /-- The preimage `x_i^b` inside the segment `x_i^0 ‖ x_i^1` of `2n` bits. -/
 def lamportHalf (n : ℕ) (b : Bool) (s : List Bool) : List Bool := if b then s.drop n else s.take n
 
+/-- The selected preimage is the suffix after `n` bits for `true`, and the first `n` bits
+for `false`. -/
+theorem lamportHalf_eq (n : ℕ) (b : Bool) (s : List Bool) :
+    lamportHalf n b s = if b then s.drop n else s.take n := rfl
+
 /-- A half of a `2n`-bit segment has `n` bits. -/
 theorem length_lamportHalf {n : ℕ} (b : Bool) {s : List Bool} (hs : s.length = 2 * n) :
     (lamportHalf n b s).length = n := by
   cases b <;> simp [lamportHalf, hs] <;> omega
-
-/-- A coin segment that lies inside the string has its full length. -/
-theorem length_coinBlock {B i : ℕ} {r : List Bool} (h : (i + 1) * B ≤ r.length) :
-    (coinBlock B i r).length = B := by
-  have h' : i * B + B ≤ r.length := by rw [← Nat.succ_mul]; exact h
-  simp only [coinBlock, List.length_take, List.length_drop]
-  omega
 
 /-- The concatenation of `q` blocks of `B` bits has `q · B` bits. -/
 theorem length_flatten_ofFn {B : ℕ} : ∀ {q : ℕ} (g : Fin q → List Bool),
@@ -94,11 +97,11 @@ theorem coinBlock_flatten {B : ℕ} : ∀ (l : List (List Bool)), (∀ c ∈ l, 
   | [], _, _, hi => by simp at hi
   | c :: cs, hl, 0, _ => by
     have hc : c.length = B := hl c (by simp)
-    simp [coinBlock, ← hc]
+    simp [coinBlock_eq, ← hc]
   | c :: cs, hl, i + 1, hi => by
     have hc : c.length = B := hl c (by simp)
     have hrest := coinBlock_flatten cs (fun d hd => hl d (by simp [hd])) i (by simpa using hi)
-    simp only [List.getElem_cons_succ, ← hrest, coinBlock, List.flatten_cons]
+    simp only [List.getElem_cons_succ, ← hrest, coinBlock_eq, List.flatten_cons]
     rw [show (i + 1) * B = c.length + i * B by rw [hc, Nat.succ_mul]; ring, List.drop_append,
       List.drop_eq_nil_of_le (by omega), List.nil_append, Nat.add_sub_cancel_left]
 
@@ -137,27 +140,40 @@ theorem decListFun_pairSndD (l : List (List Bool)) :
   rw [decListFun_spec pairSndD [] _ l hlen]
   simp
 
-/-- A string of `ℓ` bits is the list of its padded reading at `ℓ`. -/
-theorem ofFn_padFin_of_length {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
-    List.ofFn (padFin ℓ w) = w := by
-  subst h
-  exact List.ext_getElem (by simp) fun i _ h₂ => by simp [padFin, List.getElem?_eq_getElem h₂]
-
 /-! ### The algorithms as string functions -/
 
 /-- `f(x)` on the layout `⟨⟨⟨1^n, y⟩, α⟩, x⟩`: `E(⟨1^n, x⟩)`. -/
 def lamportEvalEmit (E : List Bool → List Bool) (v : List Bool) : List Bool :=
   E (pairEncode (NUPPT.inParam v) (NUPPT.inCoins v))
 
+/-- The evaluation emission applies `E` to the parameter paired with the current coin block. -/
+theorem lamportEvalEmit_eq (E : List Bool → List Bool) (v : List Bool) :
+    lamportEvalEmit E v = E (pairEncode (NUPPT.inParam v) (NUPPT.inCoins v)) := rfl
+
 /-- `Gen`'s emission on the layout `⟨⟨⟨1^n, y⟩, α⟩, x^0 ‖ x^1⟩`: the pair `⟨f(x^0), f(x^1)⟩`. -/
 def lamportPairEmit (E : List Bool → List Bool) (v : List Bool) : List Bool :=
   pairEncode (E (pairEncode (NUPPT.inParam v) ((NUPPT.inCoins v).take (NUPPT.inParam v).length)))
     (E (pairEncode (NUPPT.inParam v) ((NUPPT.inCoins v).drop (NUPPT.inParam v).length)))
 
+/-- The key-generation emission pairs the images of the first and second preimage blocks. -/
+theorem lamportPairEmit_eq (E : List Bool → List Bool) (v : List Bool) :
+    lamportPairEmit E v =
+      pairEncode (E (pairEncode (NUPPT.inParam v)
+          ((NUPPT.inCoins v).take (NUPPT.inParam v).length)))
+        (E (pairEncode (NUPPT.inParam v) ((NUPPT.inCoins v).drop (NUPPT.inParam v).length))) := rfl
+
 /-- `Sign`'s emission on the layout `⟨⟨⟨1^n, ⟨pk, [b]⟩⟩, α⟩, x^0 ‖ x^1⟩`: the preimage `x^b`. -/
 def lamportSelEmit (v : List Bool) : List Bool :=
   if (pairSndD (NUPPT.inArg v)).headD false then (NUPPT.inCoins v).drop (NUPPT.inParam v).length
   else (NUPPT.inCoins v).take (NUPPT.inParam v).length
+
+/-- The signing emission chooses the second or first preimage block according to the message
+bit in the argument. -/
+theorem lamportSelEmit_eq (v : List Bool) :
+    lamportSelEmit v =
+      if (pairSndD (NUPPT.inArg v)).headD false then
+        (NUPPT.inCoins v).drop (NUPPT.inParam v).length
+      else (NUPPT.inCoins v).take (NUPPT.inParam v).length := rfl
 
 /-- `Ver`'s selection on the layout `⟨⟨⟨1^n, ⟨pk, [b]⟩⟩, α⟩, ⟨⟨y^0, y^1⟩, []⟩⟩` (a block of the
 public key): `y^b`. -/
@@ -165,8 +181,19 @@ def lamportPkEmit (v : List Bool) : List Bool :=
   if (pairSndD (NUPPT.inArg v)).headD false then pairSndD (pairFstD (NUPPT.inCoins v))
   else pairFstD (pairFstD (NUPPT.inCoins v))
 
+/-- The public-key emission chooses the second or first image in the current encoded block
+according to the message bit. -/
+theorem lamportPkEmit_eq (v : List Bool) :
+    lamportPkEmit v =
+      if (pairSndD (NUPPT.inArg v)).headD false then pairSndD (pairFstD (NUPPT.inCoins v))
+      else pairFstD (pairFstD (NUPPT.inCoins v)) := rfl
+
 /-- The length of a public-key block `⟨⟨y^0, y^1⟩, []⟩` with `L`-bit images: `6L + 6`. -/
 def lamportPkBlock (L : PolyExpr) : PolyExpr := .add (.mul (.const 6) L) (.const 6)
+
+/-- The public-key block polynomial is `6L + 6`. -/
+theorem lamportPkBlock_eq (L : PolyExpr) :
+    lamportPkBlock L = .add (.mul (.const 6) L) (.const 6) := rfl
 
 /-- `Gen` on the layout `⟨⟨⟨1^n, y⟩, α⟩, ρ⟩` with `2n²` coins `ρ`: `⟨pk, ρ⟩`, where `pk` is the
 tuple of the pairs `⟨f(x_i^0), f(x_i^1)⟩` over the `2n`-bit segments of `ρ`. -/
@@ -177,11 +204,28 @@ def lamportGenFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
         (NUPPT.inCoins z)))
     (NUPPT.inCoins z)
 
+/-- The generator word pairs the public-key block-loop output with the original preimage tape. -/
+theorem lamportGenFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    lamportGenFun E z =
+      pairEncode
+        (blockEncFun (lamportPairEmit E) (.const 1) (.mul (.const 2) .var)
+          (blockState (NUPPT.inParam z) [] (List.replicate (NUPPT.inParam z).length true)
+            (NUPPT.inCoins z)))
+        (NUPPT.inCoins z) := rfl
+
 /-- `Sign` on the layout `⟨⟨⟨1^n, ⟨sk, m⟩⟩, α⟩, r⟩`: the concatenation of the `x_i^{m_i}`. -/
 def lamportSignFun (z : List Bool) : List Bool :=
   decListFun pairSndD (pairEncode []
     (blockEncFun lamportSelEmit (.const 1) (.mul (.const 2) .var)
       (blockState (NUPPT.inParam z) [] (pairSndD (NUPPT.inArg z)) (pairFstD (NUPPT.inArg z)))))
+
+/-- The signing word concatenates the preimage blocks selected by the message bits. -/
+theorem lamportSignFun_eq (z : List Bool) :
+    lamportSignFun z =
+      decListFun pairSndD (pairEncode []
+        (blockEncFun lamportSelEmit (.const 1) (.mul (.const 2) .var)
+          (blockState (NUPPT.inParam z) [] (pairSndD (NUPPT.inArg z))
+            (pairFstD (NUPPT.inArg z))))) := rfl
 
 /-- `Ver` on `⟨1^n, ⟨pk, ⟨m, σ⟩⟩⟩`: `[true]` iff `m` has `n` bits, `σ` has `n²` bits, and the
 images of the `n`-bit blocks of `σ` are the public-key entries selected by `m`. -/
@@ -194,6 +238,20 @@ def lamportVerFun (L : PolyExpr) (E : List Bool → List Bool) (w : List Bool) :
           (pairSndD (pairSndD (pairSndD w)))) =
       blockEncFun lamportPkEmit (.const 1) (lamportPkBlock L)
         (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w))) (pairFstD (pairSndD w))))]
+
+/-- Verification conjoins the message and signature length tests with equality of the
+signature-image word and the selected public-key word. -/
+theorem lamportVerFun_eq (L : PolyExpr) (E : List Bool → List Bool) (w : List Bool) :
+    lamportVerFun L E w =
+      [(decide ((pairFstD (pairSndD (pairSndD w))).length = (pairFstD w).length) &&
+          decide ((pairSndD (pairSndD (pairSndD w))).length =
+            (pairFstD w).length * (pairFstD w).length)) &&
+        decide (blockEncFun (lamportEvalEmit E) (.const 1) .var
+            (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+              (pairSndD (pairSndD (pairSndD w)))) =
+          blockEncFun lamportPkEmit (.const 1) (lamportPkBlock L)
+            (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+              (pairFstD (pairSndD w))))] := rfl
 
 /-! ### Efficiency -/
 
@@ -263,7 +321,13 @@ theorem polyTimeComputable_lamportSignFun : PolyTimeComputable lamportSignFun :=
 
 include hE in
 /-- `Ver` is polynomial-time: two length tests (`polyTimeComputable_lenEq`) and an equality of
-two block loops (`polyTimeComputable_pairEq`). -/
+two block loops (`polyTimeComputable_pairEq`).
+
+**Proof sketch.** Project the parameter, public key, message and signature from the input.
+Compare the message length with `n` and the signature length with `n²`, representing the latter
+bound by a unary square. The two polynomial-time block loops produce the images of the
+signature blocks and the public-key entries selected by the message. Compare these two words
+and conjoin the result with the length tests. -/
 theorem polyTimeComputable_lamportVerFun (L : PolyExpr) :
     PolyTimeComputable (lamportVerFun L E) := by
   have hu := polyTimeComputable_pairFstD
@@ -362,13 +426,24 @@ def lamportOWF : FunFamily where
   outLen := L
   f := f
 
+/-- Lamport's function family has input-length polynomial `n`. -/
+theorem lamportOWF_inLen : (lamportOWF L f).inLen = .var := rfl
+
+/-- Lamport's function family retains the supplied output-length polynomial `L`. -/
+theorem lamportOWF_outLen : (lamportOWF L f).outLen = L := rfl
+
+/-- Lamport's function family retains the supplied family `f`. -/
+theorem lamportOWF_f : (lamportOWF L f).f = f := rfl
+
 include hfE in
 /-- On `n`-bit inputs, `E` returns `L(n)` bits (it agrees with `f`). -/
 theorem length_lamportEval {n : ℕ} {x : List Bool} (hx : x.length = n) :
     (E (pairEncode (List.replicate n true) x)).length = L.eval n := by
   have h := hfE n (padFin n x)
-  rw [ofFn_padFin_of_length hx] at h
-  simp only [NUPPT.advInput] at h
+  have hx' := Collection.ofFn_padFin_of_le (le_of_eq hx)
+  simp only [hx, Nat.sub_self, List.replicate_zero, List.append_nil] at hx'
+  rw [hx'] at h
+  simp only [NUPPT.advInput_eq] at h
   rw [h, List.length_ofFn]
 
 include hfE in
@@ -400,7 +475,9 @@ theorem lamportVerFun_sign (n : ℕ) (m : Fin n → Bool) (rg : (lamportGen hE).
   have hsel : ∀ i : Fin n, (lamportHalf n (m i) (coinBlock (2 * n) i (List.ofFn rg))).length = n :=
     fun i => length_lamportHalf _ (hseg i)
   have hσ := length_flatten_ofFn _ hsel
-  rw [ofFn_padFin_of_length hσ]
+  have hpad := Collection.ofFn_padFin_of_le (le_of_eq hσ)
+  simp only [hσ, Nat.sub_self, List.replicate_zero, List.append_nil] at hpad
+  rw [hpad]
   have hy : ∀ (b : Bool) (i : Fin n), (E (pairEncode (List.replicate n true)
       (lamportHalf n b (coinBlock (2 * n) i (List.ofFn rg))))).length = L.eval n :=
     fun b i => length_lamportEval L f E hfE (length_lamportHalf b (hseg i))
@@ -445,6 +522,21 @@ noncomputable def lamport : SignatureScheme where
   sign_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   ver_poly := polyTimeComputable_lamportVerFun hE L
   correct := fun n m rg rs => lamportVerFun_sign L f E hE hfE n m rg rs
+
+/-- Lamport signs messages of length `n`. -/
+theorem lamport_msgLen : (lamport L f E hE hfE).msgLen = .var := rfl
+
+/-- Lamport's signature-length polynomial is `n²`. -/
+theorem lamport_sigLen : (lamport L f E hE hfE).sigLen = .mul .var .var := rfl
+
+/-- Lamport uses its preimage-pair generator as the scheme's key generator. -/
+theorem lamport_gen : (lamport L f E hE hfE).gen = lamportGen hE := rfl
+
+/-- Lamport uses its deterministic selected-preimage signer. -/
+theorem lamport_sign : (lamport L f E hE hfE).sign = lamportSign := rfl
+
+/-- Lamport uses its length-guarded block verifier. -/
+theorem lamport_ver : (lamport L f E hE hfE).ver = lamportVerFun L E := rfl
 
 /-- **Theorem 137.2: Lamport's scheme is one-time secure** [PS10, Theorem 137.2] when `f` is a
 (strong) one-way function.

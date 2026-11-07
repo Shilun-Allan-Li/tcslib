@@ -8,7 +8,7 @@ import TCSlib.Complexity.Randomized.Primitives
 import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Cryptography.Asymptotic.Adversary
 
-set_option maxHeartbeats 400000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -66,6 +66,11 @@ def spEncStr (E : List Bool → List Bool) (k m r : List Bool) : List Bool :=
   pairEncode r ((E (pairEncode k r)).take r.length ++
     List.zipWith xor m ((E (pairEncode k r)).drop r.length))
 
+/-- Encryption pairs the nonce with a pad prefix and the XOR-masked message. -/
+theorem spEncStr_eq (E : List Bool → List Bool) (k m r : List Bool) :
+    spEncStr E k m r = pairEncode r ((E (pairEncode k r)).take r.length ++
+      List.zipWith xor m ((E (pairEncode k r)).drop r.length)) := rfl
+
 /-- **`Dec_k(c)`** [PS10, Algorithm 157.2] at parameter `n` for `ℓ`-bit messages: `none` (`⊥`)
 unless `k` and `r` have `n` bits and `c₂` has `n + ℓ`; then, with the pad `p = E(⟨k, r⟩)`, the
 message `c₂,_{≥n} ⊕ p_{≥n}` if `c₂,_{<n} = p_{<n}` ("`m₀ = 0^n`"), and `⊥` otherwise. -/
@@ -75,6 +80,17 @@ def spDecStr (E : List Bool → List Bool) (n ℓ : ℕ) (k c : List Bool) : Opt
       some (List.zipWith xor ((pairSndD c).drop n) ((E (pairEncode k (pairFstD c))).drop n))
     else none
   else none
+
+/-- Decryption checks the key, nonce and ciphertext lengths and the pad prefix, returning
+only the unmasked suffix when every check succeeds. -/
+theorem spDecStr_eq (E : List Bool → List Bool) (n ℓ : ℕ) (k c : List Bool) :
+    spDecStr E n ℓ k c =
+      if k.length = n ∧ (pairFstD c).length = n ∧ (pairSndD c).length = n + ℓ then
+        if (pairSndD c).take n = (E (pairEncode k (pairFstD c))).take n then
+          some (List.zipWith xor ((pairSndD c).drop n)
+            ((E (pairEncode k (pairFstD c))).drop n))
+        else none
+      else none := rfl
 
 /-- XOR-ing twice with the same pad, at least as long as the message, is the identity. -/
 private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.length →
@@ -110,11 +126,24 @@ theorem spDecStr_spEncStr (E : List Bool → List Bool) {n ℓ : ℕ} {k m r : L
 def spEncFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
   spEncStr E (pairFstD (NUPPT.inArg z)) (pairSndD (NUPPT.inArg z)) (NUPPT.inCoins z)
 
+/-- The encryption adapter reads the key and message from its argument and its nonce from
+its machine coin word. -/
+theorem spEncFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    spEncFun E z = spEncStr E (pairFstD (NUPPT.inArg z))
+      (pairSndD (NUPPT.inArg z)) (NUPPT.inCoins z) := rfl
+
 /-- `Dec` on the layout `⟨⟨⟨1^n, ⟨k, c⟩⟩, α⟩, r'⟩` for `n`-bit messages: the message, or `⊥` as
 the `(n + 1)`-bit string `1^{n+1}`. -/
 def spDecFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
   (spDecStr E (NUPPT.inParam z).length (NUPPT.inParam z).length (pairFstD (NUPPT.inArg z))
     (pairSndD (NUPPT.inArg z))).getD (true :: NUPPT.inParam z)
+
+/-- The decryption adapter reads both lengths from the unary parameter and returns the
+specified overlong failure word if string decryption fails. -/
+theorem spDecFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    spDecFun E z = (spDecStr E (NUPPT.inParam z).length (NUPPT.inParam z).length
+      (pairFstD (NUPPT.inArg z)) (pairSndD (NUPPT.inArg z))).getD
+        (true :: NUPPT.inParam z) := rfl
 
 /-- The string-level `Enc` is polynomial-time on the layout when `E` is. -/
 theorem polyTimeComputable_spEncFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
@@ -132,7 +161,13 @@ theorem polyTimeComputable_spEncFun {E : List Bool → List Bool} (hE : PolyTime
   simp only [spEncFun, spEncStr, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
     PolyExpr.eval_var]
 
-/-- The guard of `Dec` (`n`-bit key and `r`, `2n`-bit `c₂`) is polynomial-time. -/
+/-- The guard of `Dec` (`n`-bit key and `r`, `2n`-bit `c₂`) is polynomial-time.
+
+**Proof sketch.** Obtain the key, nonce, ciphertext body and unary parameter by polynomial-time
+projections. Compare the key and nonce lengths with the parameter length. Compare the body's
+length with twice that length, represented by appending the parameter word to itself. Each
+comparison is a polynomial-time length test, and two Boolean conjunctions combine the three
+tests into the guard. -/
 private theorem polyTimeComputable_spDecGuard :
     PolyTimeComputable fun z =>
       [decide ((pairFstD (NUPPT.inArg z)).length = (NUPPT.inParam z).length ∧
@@ -163,7 +198,14 @@ private theorem polyTimeComputable_spDecGuard :
   simp only [Function.comp_apply, List.length_append, Bool.decide_and]
 
 /-- The string-level `Dec` is polynomial-time on the layout when `E` is: the guard, the
-comparison of the first `n` bits (`polyTimeComputable_pairEq`), and the masked tail. -/
+comparison of the first `n` bits (`polyTimeComputable_pairEq`), and the masked tail.
+
+**Proof sketch.** Compute the pad by applying the polynomial-time evaluator to the key and
+nonce. Polynomial-time prefix and suffix operations split both the pad and ciphertext body
+after `n` bits. Compare their prefixes, and XOR their suffixes to recover the candidate message.
+Use the shape guard and prefix comparison to select this message when both tests pass;
+otherwise return a `true` bit followed by the unary parameter, the designated failure word.
+Composition and conditional selection preserve polynomial time. -/
 theorem polyTimeComputable_spDecFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     PolyTimeComputable (spDecFun E) := by
   have hP := NUPPT.polyTimeComputable_inParam

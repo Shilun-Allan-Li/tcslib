@@ -70,10 +70,34 @@ ciphertexts. -/
 def nmCodec (n ℓ : ℕ) : MachineCodec (S.indSpec n) (Fin (ℓ * S.ctLen.eval n) → Bool) :=
   bitCodec (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n)
 
+/-- The non-malleability codec uses `decodeBitMove` with the scheme's oracle lengths and an
+output of `ℓ * ctLen(n)` bits. -/
+theorem nmCodec_decodeMove (n ℓ : ℕ) (w : List Bool) :
+    (S.nmCodec n ℓ).decodeMove w =
+      decodeBitMove (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) w :=
+  bitCodec_decodeMove (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) w
+
+/-- The non-malleability codec encodes a log entry `(i, x, y)` as `⟨1^i, ⟨x, y⟩⟩`. -/
+theorem nmCodec_encodeEntry (n ℓ : ℕ)
+    (e : Σ i, (S.indSpec n).dom i × (S.indSpec n).rng i) :
+    (S.nmCodec n ℓ).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n) e
+
+/-- When its query budget expires, the non-malleability codec returns `zeroBits (ℓ * ctLen(n))`.
+-/
+theorem nmCodec_timeout (n ℓ : ℕ) :
+    (S.nmCodec n ℓ).timeout = zeroBits (ℓ * S.ctLen.eval n) :=
+  bitCodec_timeout (S.inLens n) (S.outLens n) (ℓ * S.ctLen.eval n)
+
 /-- The `i`-th of the `ℓ` ciphertexts in the adversary's output. -/
 def nthCt {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
     Fin (S.ctLen.eval n) → Bool :=
   fun j => w (finProdFinEquiv (i, j))
+
+/-- Ciphertext `i` is the block whose bit `j` is output bit `finProdFinEquiv (i, j)`. -/
+theorem nthCt_eq {n ℓ : ℕ} (w : Fin (ℓ * S.ctLen.eval n) → Bool) (i : Fin ℓ) :
+    S.nthCt w i = fun j => w (finProdFinEquiv (i, j)) := rfl
 
 /-- The decryption `m'` of an output ciphertext `c'` against the recorded challenge `s`: `⊥` if
 `c'` is the challenge, and `Dec_sk(c')` otherwise, encoded as `Dec`'s oracle answers are. -/
@@ -82,10 +106,25 @@ def nmDecrypt {n : ℕ} (sk : List Bool) (s : Option (Fin (S.ctLen.eval n) → B
   if s = some c' then zeroBits _
   else FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c'))))
 
+/-- An output ciphertext decrypts to all-false bits when it copies the challenge, and to the
+encoded decryption answer otherwise [PS10, Definition 172.6]. -/
+theorem nmDecrypt_eq {n : ℕ} (sk : List Bool) (s : Option (Fin (S.ctLen.eval n) → Bool))
+    (c' : Fin (S.ctLen.eval n) → Bool) :
+    S.nmDecrypt sk s c' =
+      if s = some c' then zeroBits (S.msgLen.eval n + 1)
+      else FixedLengthScheme.decAnswer
+        (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn c')))) := rfl
+
 /-- The output of `NM_b`: the concatenated decryptions of the adversary's `ℓ` ciphertexts. -/
 def nmOutput {n ℓ : ℕ} (sk : List Bool) (s : Option (Fin (S.ctLen.eval n) → Bool))
     (w : Fin (ℓ * S.ctLen.eval n) → Bool) : List Bool :=
   (List.ofFn fun i : Fin ℓ => List.ofFn (S.nmDecrypt sk s (S.nthCt w i))).flatten
+
+/-- The non-malleability output flattens the encoded decryptions of all `ℓ` output blocks. -/
+theorem nmOutput_eq {n ℓ : ℕ} (sk : List Bool)
+    (s : Option (Fin (S.ctLen.eval n) → Bool)) (w : Fin (ℓ * S.ctLen.eval n) → Bool) :
+    S.nmOutput sk s w =
+      (List.ofFn fun i : Fin ℓ => List.ofFn (S.nmDecrypt sk s (S.nthCt w i))).flatten := rfl
 
 /-- **The experiment `NM_b(Π, A, n)`** [PS10, Definition 172.6] for the attack `atk`, with query
 budget `q` and `ℓ` output ciphertexts, followed by the distinguisher `D`: sample the keys and the
@@ -101,6 +140,21 @@ noncomputable def nmGame (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUPPT) (b
     fun res =>
       .pure (D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) res.2 res.1) ρ)
 
+/-- The non-malleability experiment samples keys and both machines' coins, runs the adversary
+against the IND oracles, and applies the distinguisher to its decrypted output
+[PS10, Definition 172.6]. -/
+theorem nmGame_eq (atk : Attack) (A : NUPPT) (q ℓ : ℕ) (D : NUPPT) (b : Bool) (n : ℕ) :
+    S.nmGame atk A q ℓ D b n =
+      (ProbComp.sample (S.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (A.Coins n)).bind fun r =>
+      (ProbComp.sample (D.Coins n)).bind fun ρ =>
+      (simulate
+          (S.indImpl atk b n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)))
+          (A.toCompOn (S.nmCodec n ℓ) n q (pairFstD (S.gen.runAt n [] rg)) r) none).bind
+        fun res =>
+          .pure (D.distinguisherL n (S.nmOutput (pairSndD (S.gen.runAt n [] rg)) res.2 res.1) ρ)) :=
+  rfl
+
 /-- **Non-malleability** [PS10, Definition 172.6] under the attack `atk`: for every non-uniform
 PPT adversary `A`, every polynomial query budget `q` and number `ℓ` of output ciphertexts, and
 every non-uniform PPT distinguisher `D`, `D`'s advantage between `NM_0` and `NM_1` is
@@ -109,6 +163,15 @@ def NMSecure (atk : Attack) : Prop :=
   ∀ (A : NUPPT) (q ℓ : PolyExpr) (D : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
     ∀ n, advantage (S.nmGame atk A (q.eval n) (ℓ.eval n) D false n)
       (S.nmGame atk A (q.eval n) (ℓ.eval n) D true n) ≤ ε n
+
+/-- Non-malleability holds exactly when every adversary, polynomial query and output budgets,
+and distinguisher have a negligible bound on the two games' advantage
+[PS10, Definition 172.6]. -/
+theorem NMSecure_iff (atk : Attack) :
+    S.NMSecure atk ↔
+      ∀ (A : NUPPT) (q ℓ : PolyExpr) (D : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
+        ∀ n, advantage (S.nmGame atk A (q.eval n) (ℓ.eval n) D false n)
+          (S.nmGame atk A (q.eval n) (ℓ.eval n) D true n) ≤ ε n := Iff.rfl
 
 /-- A copy of the challenge decrypts to `⊥`. -/
 theorem nmDecrypt_challenge {n : ℕ} (sk : List Bool) (c : Fin (S.ctLen.eval n) → Bool) :

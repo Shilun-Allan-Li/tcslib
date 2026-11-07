@@ -64,15 +64,43 @@ uniform coins `r`. -/
 noncomputable def samplerLaw (S : NUPPT) (n : ℕ) : FinDist (Fin n → Bool) :=
   (FinDist.uniform (S.Coins n)).map fun r => padFin n (S.runAt n [] r)
 
+/-- The probability of an `n`-bit word under `samplerLaw S n` is the sum of the uniform
+coin probabilities over tapes whose padded sampler output is that word. -/
+theorem samplerLaw_apply (S : NUPPT) (n : ℕ) (x : Fin n → Bool) :
+    samplerLaw S n x =
+      ∑ r ∈ (Finset.univ : Finset (S.Coins n)).filter
+        (fun r => padFin n (S.runAt n [] r) = x), (Fintype.card (S.Coins n) : ℝ)⁻¹ := by
+  rw [samplerLaw, FinDist.map_apply]
+  simp only [FinDist.uniform_apply]
+
+/-- The probability field of `samplerLaw S n` maps each word to the sum of the uniform
+coin probabilities over its preimage under the padded sampler output. -/
+theorem samplerLaw_prob (S : NUPPT) (n : ℕ) :
+    (samplerLaw S n).prob = fun x =>
+      ∑ r ∈ (Finset.univ : Finset (S.Coins n)).filter
+        (fun r => padFin n (S.runAt n [] r) = x), (Fintype.card (S.Coins n) : ℝ)⁻¹ :=
+  funext (samplerLaw_apply S n)
+
 /-- **The efficiently samplable `k(n)`-sources at `n`** [PS10, Theorem 183.6, "efficiently
 computable sources"]: the laws of uniform PPT samplers that are `k(n)`-sources. -/
 def effSources (k : ℕ → ℝ) (n : ℕ) : Set (FinDist (Fin n → Bool)) :=
   {X | ∃ S : NUPPT, S.Uniform ∧ X = samplerLaw S n ∧ FinDist.IsSource (k n) X}
 
+/-- A distribution belongs to `effSources k n` exactly when it is the law of a uniform PPT
+sampler and is a `k(n)`-source. -/
+theorem effSources_iff (k : ℕ → ℝ) (n : ℕ) (X : FinDist (Fin n → Bool)) :
+    X ∈ effSources k n ↔
+      ∃ S : NUPPT, S.Uniform ∧ X = samplerLaw S n ∧ FinDist.IsSource (k n) X := Iff.rfl
+
 /-- The `1`-bit function induced on `n`-bit strings by a string function: the first bit of its
 output (`padFin 1`). -/
 def extBit (Ext : List Bool → List Bool) (n : ℕ) : (Fin n → Bool) → (Fin 1 → Bool) :=
   fun x => padFin 1 (Ext (List.ofFn x))
+
+/-- On an `n`-bit input `x`, `extBit Ext n` is the one-bit padding of `Ext (List.ofFn x)`:
+`extBit Ext n x = padFin 1 (Ext (List.ofFn x))`. -/
+theorem extBit_eq (Ext : List Bool → List Bool) (n : ℕ) (x : Fin n → Bool) :
+    extBit Ext n x = padFin 1 (Ext (List.ofFn x)) := rfl
 
 /-- **Theorem 183.6: no efficient `1`-bit `1/4`-extractor for efficient `(n − 2)`-sources**
 [PS10, Theorem 183.6]: for every polynomial-time `Ext` and every `n`, `Ext` is not a

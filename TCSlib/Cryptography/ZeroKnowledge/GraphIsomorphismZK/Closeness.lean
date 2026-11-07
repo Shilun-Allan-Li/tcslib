@@ -254,15 +254,15 @@ theorem tapeBlock_bijective (M L : ℕ) : Function.Bijective (tapeBlock M L) := 
 
 /-- The `t`-th coin slice of the list of a tape is the list of its `t`-th block. -/
 theorem coinSlice_ofFn {M L : ℕ} (r : Fin (M * L) → Bool) (t : Fin M) :
-    coinSlice L t (List.ofFn r) = List.ofFn (tapeBlock M L r t) := by
+    coinBlock L t (List.ofFn r) = List.ofFn (tapeBlock M L r t) := by
   have hle : (t : ℕ) * L + L ≤ M * L := by
     calc (t : ℕ) * L + L = ((t : ℕ) + 1) * L := by ring
       _ ≤ M * L := Nat.mul_le_mul_right L t.isLt
   apply List.ext_getElem
-  · simp only [coinSlice, List.length_take, List.length_drop, List.length_ofFn]
+  · simp only [coinBlock_eq, List.length_take, List.length_drop, List.length_ofFn]
     omega
   · intro k h1 h2
-    simp only [coinSlice, List.getElem_take, List.getElem_drop, List.getElem_ofFn, tapeBlock]
+    simp only [coinBlock_eq, List.getElem_take, List.getElem_drop, List.getElem_ofFn, tapeBlock]
 
 /-- The three fields of a coin block of `1 + P + Q` bits: the permutation coins (positions
 `1, …, P`), the guessed bit (position `0`) and the verifier's tape (positions `1 + P, …`). -/
@@ -381,11 +381,11 @@ theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bo
   congr 2
   funext t
   simp only [Function.comp_apply]
-  have hc : coinSlice (blockLen V' (encInstance G₀ G₁).length) (Fin.castLE hn t : ℕ) (List.ofFn r) =
-      coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2 + V'.coinLen (encInstance G₀ G₁).length)
+  have hc : coinBlock (blockLen V' (encInstance G₀ G₁).length) (Fin.castLE hn t : ℕ) (List.ofFn r) =
+      coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2 + V'.coinLen (encInstance G₀ G₁).length)
         (Fin.castLE hn t : ℕ) (List.ofFn (blockTapeEquiv V' _ M r)) := by
     rw [blockTapeEquiv_ofFn]
-    exact congrArg (fun c => coinSlice c _ (List.ofFn r)) (blockLen_eq V' _)
+    exact congrArg (fun c => coinBlock c _ (List.ofFn r)) (blockLen_eq V' _)
   rw [show ((t : Fin n) : ℕ) = ((Fin.castLE hn t : Fin M) : ℕ) from rfl, hc, coinSlice_ofFn,
     attemptStr_ofFn]
   rfl

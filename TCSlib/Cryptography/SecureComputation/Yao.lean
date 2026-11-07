@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.SecureComputation.Hybrid
 import TCSlib.Cryptography.SecureComputation.GarblingSecurity
 import TCSlib.Complexity.CircuitComplexity.Uniform
+import TCSlib.Complexity.ClassP.BinaryArith.Words
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -258,11 +259,20 @@ def xorShift {len : ℕ} (l : Fin len → Bool) : Equiv.Perm (Fin len → Bool) 
 theorem xorShift_apply {len : ℕ} (l a : Fin len → Bool) :
     xorShift l a = fun p => xor (a p) (l p) := rfl
 
+/-- The inverse XOR shift is the same pointwise XOR operation. -/
+theorem xorShift_symm_apply {len : ℕ} (l a : Fin len → Bool) :
+    (xorShift l).symm a = fun p => xor (a p) (l p) := rfl
+
 /-- **Alice's number of coins**: `10 · S(n) · n + 2 · S(n)` for the size bound `S`; `2 · S(n) · n`
 for the keys, `8 · S(n) · n` for the row coins (at most four rows of `2n` coins per gate), and
 `2 · S(n)` for the shifts. -/
 def yaoCoins (Y : YaoCircuit) : PolyExpr :=
   .add (.mul (.mul (.const 10) Y.sizeBound) .var) (.mul (.const 2) Y.sizeBound)
+
+/-- Alice's coin-count expression is `10 S(n)n + 2 S(n)` syntactically. -/
+theorem yaoCoins_eq (Y : YaoCircuit) :
+    yaoCoins Y = .add (.mul (.mul (.const 10) Y.sizeBound) .var)
+      (.mul (.const 2) Y.sizeBound) := rfl
 
 /-- Alice has `10 · S(n) · n + 2 · S(n)` coins. -/
 theorem yaoCoins_eval (Y : YaoCircuit) (n : ℕ) :
@@ -305,19 +315,13 @@ theorem yaoSeed_snd_snd (Y : YaoCircuit) (n : ℕ) (r : List Bool)
     (i : Fin (Y.circ n).gates.length) :
     (yaoSeed Y n r).2.2 i = xorShift (readBits r (10 * Y.sizeBound.eval n * n + 2 * i) _) := rfl
 
-/-- `keyAt` through its body (a local copy of its definition; requested shared lemma
-`keyAt_of_lt` in `Garbling.lean`). -/
-private theorem keyAt_eq' {K ρ : Type} [Inhabited K] {m : ℕ} (Cc : DAGCircuit m)
-    (s : GarbleSeed Cc K ρ) (v : ℕ) (b : Bool) :
-    keyAt Cc s v b = if h : v < Cc.size then s.1 ⟨v, h⟩ b else default := rfl
-
 /-- The key of a vertex `v` of the circuit for the bit `b` is the `n` coins from
 `(b · S + v) · n`. -/
 theorem keyAt_yaoSeed (Y : YaoCircuit) (n : ℕ) (r : List Bool) {v : ℕ}
     (hv : v < (Y.circ n).size) (b : Bool) :
     keyAt (Y.circ n) (yaoSeed Y n r) v b =
       readBits r ((b.toNat * Y.sizeBound.eval n + v) * n) n := by
-  rw [keyAt_eq', dif_pos hv, yaoSeed_fst]
+  rw [keyAt_eq, dif_pos hv, yaoSeed_fst]
 
 /-! ### Message lists -/
 
@@ -329,6 +333,41 @@ private def decodeMsgsFuel : ℕ → List Bool → List (List Bool)
 /-- **Decoding a message list**, the inverse of `Strategy.encodeMsgs`: the first component of the
 string, then the decoding of the second, until the empty string (at most `|w|` components). -/
 def decodeMsgs (w : List Bool) : List (List Bool) := decodeMsgsFuel w.length w
+
+/-- Decoding any word gives `[]` when the word is empty, and otherwise its first pair
+component followed by the decoding of its second component, including on malformed words.
+
+**Proof sketch.** The second projection of a nonempty word is strictly shorter, by the
+public pairing-length lemma. Induct on the fuel to compare the local decoder with the
+existing word-list decoder whenever the fuel is at least the word length. The defining fuel
+is therefore sufficient. The public empty and nonempty equations of the word-list decoder
+give the asserted step without exposing the private fuel function. -/
+theorem decodeMsgs_eq (w : List Bool) :
+    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) := by
+  have hFuel : ∀ (k : ℕ) (v : List Bool), v.length ≤ k →
+      decodeMsgsFuel k v = BinArith.decWords v := by
+    intro k
+    induction k with
+    | zero =>
+      intro v hv
+      have hvnil : v = [] := List.eq_nil_of_length_eq_zero (Nat.eq_zero_of_le_zero hv)
+      subst v
+      rw [decodeMsgsFuel, BinArith.decWords_nil]
+    | succ k ih =>
+      intro v hv
+      by_cases hvnil : v = []
+      · subst v
+        rw [decodeMsgsFuel, if_pos rfl, BinArith.decWords_nil]
+      · rw [decodeMsgsFuel, if_neg hvnil, BinArith.decWords_of_ne hvnil]
+        exact congrArg (List.cons (pairFstD v))
+          (ih (pairSndD v)
+            (Nat.le_of_lt_succ ((BinArith.length_pairSndD_lt hvnil).trans_le hv)))
+  have hdecode : ∀ v : List Bool, decodeMsgs v = BinArith.decWords v :=
+    fun v => hFuel v.length v (Nat.le_refl v.length)
+  by_cases hw : w = []
+  · subst w
+    rw [if_pos rfl, hdecode [], BinArith.decWords_nil]
+  · rw [if_neg hw, hdecode w, BinArith.decWords_of_ne hw, hdecode (pairSndD w)]
 
 /-- An encoded list of `k` messages has at least `k` bits. -/
 private theorem length_le_length_encodeMsgs :
@@ -601,35 +640,13 @@ private theorem getD_ofFn' {α : Type} {k : ℕ} (f : Fin k → α) (i : Fin k) 
     (List.ofFn f).getD i d = f i := by
   rw [List.getD_eq_getElem _ _ (by simp), List.getElem_ofFn]
 
-section Local
-
-variable {K C ρ : Type} [Inhabited K] {m : ℕ} (M : MultiEnc K C ρ) (Cc : DAGCircuit m)
-
-/-- `garbledValues` through its body (local copy; requested shared lemma
-`garbledValues_eq` in `Garbling.lean`). -/
-private theorem garbledValues_eq' (s : GarbleSeed Cc K ρ) (init : List K) :
-    garbledValues M Cc s init =
-      runWith (fun g vs => evalGate M (tableAt M Cc s) vs.length g vs) Cc.gates init := rfl
-
-/-- `inputKeys` through its body (local copy; requested shared lemma `inputKeys_eq`). -/
-private theorem inputKeys_eq' (s : GarbleSeed Cc K ρ) (x : Fin m → Bool) :
-    inputKeys Cc s x = List.ofFn fun i : Fin m => keyAt Cc s i (x i) := rfl
-
-/-- `tableAt` through its body (local copy; requested shared lemma `tableAt_of_not`, the
-off-gate case). -/
-private theorem tableAt_eq' (s : GarbleSeed Cc K ρ) (v : ℕ) :
-    tableAt M Cc s v = if h : m ≤ v ∧ v - m < Cc.gates.length then
-      garbledTable M Cc s ⟨v - m, h.2⟩ else [] := rfl
-
-end Local
-
 /-- **Bob reads the garbled tables**: on Alice's message, the tables Bob reads are the garbled
 tables `tableAt` of her garbling, at every vertex. -/
 theorem yaoBobTables_yaoMsg (n : ℕ) (xs r : List Bool) :
     yaoBobTables Y n (yaoMsg Y E₁ E₂ n xs r) =
       tableAt (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n r) := by
   funext v
-  rw [tableAt_eq', yaoBobTables_eq, yaoMsg_eq, yaoTables_eq, pairFstD_pairEncode,
+  rw [tableAt_eq, yaoBobTables_eq, yaoMsg_eq, yaoTables_eq, pairFstD_pairEncode,
     decodeMsgs_encodeMsgs]
   by_cases h1 : Y.inA.eval n + Y.inB.eval n ≤ v
   · rw [if_pos h1]
@@ -654,7 +671,7 @@ theorem yaoBobInit_yaoMsg (n : ℕ) (x : Fin (Y.inA.eval n) → Bool) (y : Fin (
       keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + i) (y i) t) :
     yaoBobInit Y n (yaoMsg Y E₁ E₂ n (List.ofFn x) r) ans =
       inputKeys (Y.circ n) (yaoSeed Y n r) (Fin.append x y) := by
-  rw [inputKeys_eq', yaoBobInit_eq]
+  rw [inputKeys_eq, yaoBobInit_eq]
   congr 1
   funext v
   rw [yaoMsg_eq, pairSndD_pairEncode, pairFstD_pairEncode, yaoKeysA_eq, decodeMsgs_encodeMsgs]
@@ -684,7 +701,7 @@ theorem yaoBobValues_yaoMsg (n : ℕ) (x : Fin (Y.inA.eval n) → Bool)
       garbledValues (nestedSpecial E₁ E₂ n) (Y.circ n) (yaoSeed Y n r)
         (inputKeys (Y.circ n) (yaoSeed Y n r) (Fin.append x y)) := by
   rw [yaoBobValues_eq, yaoBobTables_yaoMsg, yaoBobInit_yaoMsg Y E₁ E₂ n x y r ans hans,
-    garbledValues_eq']
+    garbledValues_eq]
 
 /-- **Bob computes `f(x, y)`** [PS10, Protocol 162.6, "B evaluates the circuit to compute the
 output `f(x, y)`"; Claim 159.a]: on Alice's message for `x`, with answers holding the keys of

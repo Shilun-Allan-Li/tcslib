@@ -7,7 +7,7 @@ import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Perm
 import TCSlib.Cryptography.Foundations.Probability
 
-set_option maxHeartbeats 400000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -78,7 +78,14 @@ open BoolCircuit TCSlib.Cryptography
 /-- **Indexed simulation of `runWith`.** If the second evaluator, at gate `i`, maps data that
 encode the first evaluator's data (vertex by vertex, through `W v`) on the gate's inputs to the
 encoding of the first evaluator's output, then the two runs agree through `W` at every
-vertex. -/
+vertex.
+
+**Proof sketch.** Use strong induction on the vertex number. At an input vertex, the claim is
+the initial correspondence. At a gate vertex, both runs read their inputs from the preceding
+prefix, whose length identifies this gate's vertex. Acyclicity puts every argument at a smaller
+vertex, so the induction hypothesis relates the two argument lists. Reading an earlier vertex
+is unchanged by the later gates; the gate simulation hypothesis therefore gives the required
+correspondence for the newly appended value. -/
 theorem runWith_sim {α β : Type} (fA : DAGGate → List α → α) (fB : ℕ → DAGGate → List β → β)
     (W : ℕ → α → β) (dA : α) (dB : β) (gs : List DAGGate) (initA : List α) (initB : List β)
     (hlen : initB.length = initA.length)
@@ -129,6 +136,13 @@ variable {K C ρ : Type}
 def DecCorrect (M : MultiEnc K C ρ) : Prop :=
   ∀ ks : List K, ks.length ≤ 2 → ∀ (o : K) (r : ρ), M.dec ks (M.enc ks o r) = some o
 
+/-- `DecCorrect M` holds exactly when decryption inverts encryption under every list of at
+most two keys, for every plaintext key and coin. -/
+theorem decCorrect_iff (M : MultiEnc K C ρ) :
+    M.DecCorrect ↔
+      ∀ ks : List K, ks.length ≤ 2 → ∀ (o : K) (r : ρ),
+        M.dec ks (M.enc ks o r) = some o := Iff.rfl
+
 /-- **The wrong-key property with error `δ`** [PS10, §6.2.2, "the extra property"]: for at most
 two positions, two independent uniform keys per position, and two different choices `a ≠ a'` of
 key per position, a ciphertext of any key `o` under the `a`-keys decrypts to `⊥` under the
@@ -139,6 +153,16 @@ def WrongKeyBot [Fintype K] [Fintype ρ] (M : MultiEnc K C ρ) (δ : ℝ) : Prop
       (M.dec (List.ofFn fun j => t.1 j (a' j))
         (M.enc (List.ofFn fun j => t.1 j (a j)) o t.2)).isSome = true) ≤ δ
 
+/-- `WrongKeyBot M δ` holds exactly when each pair of distinct assignments to at most two
+key positions gives successful wrong-key decryption probability at most `δ`, uniformly in
+the plaintext key, with independent uniform key pairs and coins. -/
+theorem wrongKeyBot_iff [Fintype K] [Fintype ρ] (M : MultiEnc K C ρ) (δ : ℝ) :
+    M.WrongKeyBot δ ↔
+      ∀ (len : ℕ), len ≤ 2 → ∀ (a a' : Fin len → Bool), a ≠ a' → ∀ o : K,
+        uprob (fun t : (Fin len → Bool → K) × ρ =>
+          (M.dec (List.ofFn fun j => t.1 j (a' j))
+            (M.enc (List.ofFn fun j => t.1 j (a j)) o t.2)).isSome = true) ≤ δ := Iff.rfl
+
 end MultiEnc
 
 /-! ### Gates on assignments -/
@@ -147,6 +171,12 @@ end MultiEnc
 the bits `ass 0, …, ass (|args| − 1)`. -/
 def gateOut (g : DAGGate) (ass : Fin g.args.length → Bool) : Bool :=
   (DAGGate.mk g.kind (List.range g.args.length)).eval (List.ofFn ass)
+
+/-- On any assignment of argument positions, `gateOut` evaluates the gate's kind on the
+assignment list, with arguments replaced by their consecutive positions. -/
+theorem gateOut_eq_eval (g : DAGGate) (ass : Fin g.args.length → Bool) :
+    gateOut g ass =
+      (DAGGate.mk g.kind (List.range g.args.length)).eval (List.ofFn ass) := rfl
 
 /-- Reading a list of values at a gate's arguments is the `ofFn` of the positions. -/
 theorem map_args_eq_ofFn {β : Type} (g : DAGGate) (f : ℕ → β) :
@@ -186,16 +216,34 @@ abbrev GarbleSeed (Cc : DAGCircuit n) (K ρ : Type) : Type :=
     ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) ×
     ((i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool))
 
+/-- A garbling seed is the product of the two-key function at each vertex, the coin function
+for each gate assignment, and the row permutation at each gate. -/
+theorem GarbleSeed_eq (Cc : DAGCircuit n) (K ρ : Type) :
+    GarbleSeed Cc K ρ =
+      ((Fin Cc.size → Bool → K) ×
+        ((i : Fin Cc.gates.length) → (Fin (Cc.gates[i]).args.length → Bool) → ρ) ×
+        ((i : Fin Cc.gates.length) → Equiv.Perm (Fin (Cc.gates[i]).args.length → Bool))) := rfl
+
 variable (M : MultiEnc K C ρ) (Cc : DAGCircuit n)
 
 /-- The key of vertex `v` for the bit `b` (a default beyond the circuit). -/
 def keyAt (s : GarbleSeed Cc K ρ) (v : ℕ) (b : Bool) : K :=
   if h : v < Cc.size then s.1 ⟨v, h⟩ b else default
 
+/-- The key at `v` for bit `b` is the seed's key when `v < Cc.size`, and `default` otherwise. -/
+theorem keyAt_eq (s : GarbleSeed Cc K ρ) (v : ℕ) (b : Bool) :
+    keyAt Cc s v b = if h : v < Cc.size then s.1 ⟨v, h⟩ b else default := rfl
+
 /-- The keys of gate `i`'s arguments under the assignment `a` of its positions. -/
 def argKeys (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
     (a : Fin (Cc.gates[i]).args.length → Bool) : List K :=
   List.ofFn fun t => keyAt Cc s ((Cc.gates[i]).args[t]) (a t)
+
+/-- The argument-key list of gate `i` enumerates the wire key selected by `a t` at each
+argument vertex `(Cc.gates[i]).args[t]`. -/
+theorem argKeys_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
+    (a : Fin (Cc.gates[i]).args.length → Bool) :
+    argKeys Cc s i a = List.ofFn fun t => keyAt Cc s ((Cc.gates[i]).args[t]) (a t) := rfl
 
 /-- **The row of gate `i` for the assignment `a`** [PS10, §6.2.3]: the key of the gate's output
 on `a`, encrypted under the keys of its arguments on `a`. -/
@@ -203,15 +251,35 @@ def garbledRow (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
     (a : Fin (Cc.gates[i]).args.length → Bool) : C :=
   M.enc (argKeys Cc s i a) (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a)) (s.2.1 i a)
 
+/-- A garbled row encrypts the output wire key for `gateOut (Cc.gates[i]) a` under
+`argKeys Cc s i a`, using that row's seed coins. -/
+theorem garbledRow_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length)
+    (a : Fin (Cc.gates[i]).args.length → Bool) :
+    garbledRow M Cc s i a =
+      M.enc (argKeys Cc s i a) (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a)) (s.2.1 i a) := rfl
+
 /-- **The garbled table of gate `i`** [PS10, §6.2.3, "the rows … must be randomly shuffled"]: the
 rows in a fixed enumeration of the assignments, composed with the gate's random permutation. -/
 noncomputable def garbledTable (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length) : List C :=
   (Finset.univ : Finset (Fin (Cc.gates[i]).args.length → Bool)).toList.map
     fun a => garbledRow M Cc s i (s.2.2 i a)
 
+/-- Gate `i`'s table enumerates its assignments through `Finset.univ.toList` and applies the
+seed's permutation before forming each garbled row. -/
+theorem garbledTable_eq (s : GarbleSeed Cc K ρ) (i : Fin Cc.gates.length) :
+    garbledTable M Cc s i =
+      (Finset.univ : Finset (Fin (Cc.gates[i]).args.length → Bool)).toList.map
+        fun a => garbledRow M Cc s i (s.2.2 i a) := rfl
+
 /-- The garbled table at vertex `v` (none at the inputs). -/
 noncomputable def tableAt (s : GarbleSeed Cc K ρ) (v : ℕ) : List C :=
   if h : n ≤ v ∧ v - n < Cc.gates.length then garbledTable M Cc s ⟨v - n, h.2⟩ else []
+
+/-- The table at `v` is gate `v - n`'s garbled table when `v` names a gate vertex, and is
+empty otherwise, including input vertices and vertices beyond the circuit. -/
+theorem tableAt_eq (s : GarbleSeed Cc K ρ) (v : ℕ) :
+    tableAt M Cc s v = if h : n ≤ v ∧ v - n < Cc.gates.length then
+      garbledTable M Cc s ⟨v - n, h.2⟩ else [] := rfl
 
 /-- The table at the vertex of gate `i` is its garbled table. -/
 theorem tableAt_gate (s : GarbleSeed Cc K ρ) {i : ℕ} (hi : i < Cc.gates.length) :
@@ -227,18 +295,40 @@ arguments (a default if none does). -/
 def evalGate (T : ℕ → List C) (v : ℕ) (g : DAGGate) (vs : List K) : K :=
   ((T v).findSome? (M.dec (g.args.map fun a => vs.getD a default))).getD default
 
+/-- Evaluating gate `g` at `v` decrypts the first successful row of `T v` under its argument
+keys from `vs`, with `default` when no row decrypts. -/
+theorem evalGate_eq (T : ℕ → List C) (v : ℕ) (g : DAGGate) (vs : List K) :
+    evalGate M T v g vs =
+      ((T v).findSome? (M.dec (g.args.map fun a => vs.getD a default))).getD default := rfl
+
 /-- **The input keys**: the key of each input bit of `x`. -/
 def inputKeys (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) : List K :=
   List.ofFn fun i : Fin n => keyAt Cc s i (x i)
+
+/-- The input-key list enumerates `keyAt Cc s i (x i)` over all input positions `i`. -/
+theorem inputKeys_eq (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) :
+    inputKeys Cc s x = List.ofFn fun i : Fin n => keyAt Cc s i (x i) := rfl
 
 /-- **Garbled evaluation**: `runWith` over the circuit's gates from the input keys, each gate
 opened by `evalGate` at its vertex. -/
 noncomputable def garbledValues (s : GarbleSeed Cc K ρ) (init : List K) : List K :=
   runWith (fun g vs => evalGate M (tableAt M Cc s) vs.length g vs) Cc.gates init
 
+/-- Garbled evaluation runs `runWith` from `init` over `Cc.gates`, opening each gate at the
+vertex given by the current value-list length. -/
+theorem garbledValues_eq (s : GarbleSeed Cc K ρ) (init : List K) :
+    garbledValues M Cc s init =
+      runWith (fun g vs => evalGate M (tableAt M Cc s) vs.length g vs) Cc.gates init := rfl
+
 /-- **The garbled output** on input `x`: the key reached at the output vertex. -/
 noncomputable def garbledOutput (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) : K :=
   (garbledValues M Cc s (inputKeys Cc s x)).getD Cc.output default
+
+/-- The garbled output reads the value at `Cc.output` after garbled evaluation from the
+input keys, using `default` for a missing value. -/
+theorem garbledOutput_eq_getD (s : GarbleSeed Cc K ρ) (x : Fin n → Bool) :
+    garbledOutput M Cc s x =
+      (garbledValues M Cc s (inputKeys Cc s x)).getD Cc.output default := rfl
 
 /-- **A good garbling**: at every gate, under the keys of every assignment of its arguments, the
 first row of the table that decrypts gives the key of the gate's output on that assignment. -/
@@ -247,9 +337,24 @@ def Good (s : GarbleSeed Cc K ρ) : Prop :=
     (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
       some (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a))
 
+/-- `Good M Cc s` holds exactly when every gate table, under every assignment's argument
+keys, first decrypts to the key of that gate's output on the assignment. -/
+theorem good_iff (s : GarbleSeed Cc K ρ) :
+    Good M Cc s ↔
+      ∀ (i : Fin Cc.gates.length) (a : Fin (Cc.gates[i]).args.length → Bool),
+        (garbledTable M Cc s i).findSome? (M.dec (argKeys Cc s i a)) =
+          some (keyAt Cc s (n + i) (gateOut (Cc.gates[i]) a)) := Iff.rfl
+
 /-- **Claim 159.a, deterministic part: a good garbling evaluates to the keys of the circuit's
 values** [PS10, §6.2.3]: at every vertex, garbled evaluation from the input keys of `x` reaches
-the key of the vertex's value on `x` (`runWith_sim`, with the encoding `keyAt`). -/
+the key of the vertex's value on `x` (`runWith_sim`, with the encoding `keyAt`).
+
+**Proof sketch.** Apply indexed simulation with each Boolean wire value encoded by its
+corresponding wire key. The input-key list gives the initial correspondence, and the circuit's
+topological ordering supplies acyclicity. At a gate, the correspondence on its arguments makes
+the supplied keys exactly those for their Boolean assignment. Goodness says that the first
+decrypting row returns the key of this assignment's output. The Boolean gate equation identifies
+that output with the value in the ordinary circuit run, completing the simulation. -/
 theorem garbledValues_getD (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin n → Bool) :
     ∀ v < Cc.size, (garbledValues M Cc s (inputKeys Cc s x)).getD v default =
       keyAt Cc s v ((Cc.values x).getD v false) := by

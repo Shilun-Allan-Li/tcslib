@@ -2,6 +2,7 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.ZeroKnowledge.Defs
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
 
@@ -27,7 +28,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 - A party finds the global move from the number of messages it has received
   (`proverMoveIndex_exec`, `verifierMoveIndex_exec`), hence its phase `j` and position `t`.
   At a position `t < k` it runs `π`'s next-message function on the coin slice `j` of its tape
-  (`phaseSlice`) and on the messages received in phase `j` (all of them real, since `t < k`).
+  (`coinBlock` from `Asymptotic/Adversary.lean`) and on the messages received in phase `j`
+  (all of them real, since `t < k`).
 - The coins of `P_Q` and `V_Q` are `Q` copies of `π`'s.
 - `V_Q`'s verdict, on its complete history (`Q · k` messages), is `[true]` iff every phase's
   verdict, `V.next` on that phase's real messages, is `[true]`; otherwise `[false]`. When
@@ -40,8 +42,8 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   are `[]` and are ignored.
 - **Strict or truncated simulators** (ruling G02-#4, D8): zero-knowledge composes to
   zero-knowledge; statistical error `δ` composes to `Q · δ`; perfect zero-knowledge with abort
-  (Goldreich's form, with which the text's expected-polynomial-time simulators are handled)
-  composes to statistical zero-knowledge with error `Q(n) · 2^{-n}`, by retrying each phase's
+  ([Gol01, Definition 4.3.1], with which the text's expected-polynomial-time simulators are
+  handled) composes to statistical zero-knowledge with error `Q(n) · 2^{-n}`, by retrying each phase's
   simulator `n = |x|` times (any `ω(log n)` retries would do; `n` is the simplest).
 - **Bounded prover messages** (`Protocol.ProverBounded`). Under D8, `Strategy.Efficient` bounds
   a verifier's work per activation in the total length of its input, not in `|x|`. A cheating
@@ -56,12 +58,10 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 
 ## Main definitions
 
-* `Composability.phaseSlice`: the `j`-th block of a random tape.
 * `Composability.proverMoveIndex`, `Composability.verifierMoveIndex`,
   `Composability.proverMoves`: positions from message counts.
 * `TCSlib.Cryptography.Protocol.seqProver`, `seqVerifier`, `seqRep`: the `Q`-fold sequential
   repetition.
-* `TCSlib.Cryptography.Protocol.ProverBounded`: the honest prover's messages are short.
 
 ## Main results
 
@@ -70,8 +70,10 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   position.
 * `Protocol.seqRep_exec_phase`: phase `j` of an honest execution of `π.seqRep Q` is an execution
   of `π` with the coin slices `j`.
-* `ZK.seqRep`, `StatZK.seqRep`, `PerfectZKAbort.seqRep` (Thm 175.1, stated; `sorry`s under the
-  source's sketch), and `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
+* `ZK.seqRep`, `StatZK.seqRep` (Thm 175.1, stated; `sorry`s under the source's sketch), and
+  `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
+* `PerfectZKAbort.seqRep`: the aborting case, derived from `PerfectZKAbort.statZK` and
+  `StatZK.seqRep`, with error `Q(n) · 2^{-n}`.
 * `InteractiveProof.seqRep` (stated; a `sorry` under its sketch): the repetition is an
   interactive proof.
 * `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (stated; `sorry`s under their
@@ -82,7 +84,7 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §7.2.1, Theorem 175.1 and its proof sketch (book pp. 175–176).
-* O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge University
+* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge University
   Press, 2001, §4.3.4 (sequential composition) and Definition 4.3.1 (perfect zero-knowledge
   with abort).
 -/
@@ -95,25 +97,27 @@ namespace Composability
 
 /-! ### Positions -/
 
-/-- The `j`-th block of `c` bits of a random tape: the coins of phase `j`. -/
-def phaseSlice (c j : ℕ) (r : List Bool) : List Bool := (r.drop (j * c)).take c
-
-/-- A block of a long enough tape has `c` bits. -/
-theorem length_phaseSlice {c j : ℕ} {r : List Bool} (h : (j + 1) * c ≤ r.length) :
-    (phaseSlice c j r).length = c := by
-  simp only [phaseSlice, List.length_take, List.length_drop]
-  have : j * c + c = (j + 1) * c := by ring
-  omega
-
 /-- The global index of a prover move, from the number `c` of messages it has received: with
 the verifier first, the prover moves at the odd positions `2c − 1`; otherwise at `2c`. -/
 def proverMoveIndex (vFirst : Bool) (c : ℕ) : ℕ := if vFirst then 2 * c - 1 else 2 * c
 
+/-- The prover move index is `2c-1` when the verifier starts and `2c` otherwise. -/
+theorem proverMoveIndex_eq (vFirst : Bool) (c : ℕ) :
+    proverMoveIndex vFirst c = if vFirst then 2 * c - 1 else 2 * c := rfl
+
 /-- The global index of a verifier move, from the number `c` of messages it has received. -/
 def verifierMoveIndex (vFirst : Bool) (c : ℕ) : ℕ := if vFirst then 2 * c else 2 * c - 1
 
+/-- The verifier move index is `2c` when the verifier starts and `2c-1` otherwise. -/
+theorem verifierMoveIndex_eq (vFirst : Bool) (c : ℕ) :
+    verifierMoveIndex vFirst c = if vFirst then 2 * c else 2 * c - 1 := rfl
+
 /-- The number of prover moves among the first `k` moves. -/
 def proverMoves (vFirst : Bool) (k : ℕ) : ℕ := (List.range k).countP fun t => !moverIsV vFirst t
+
+/-- Prover moves are counted among the positions below the move budget. -/
+theorem proverMoves_eq (vFirst : Bool) (k : ℕ) :
+    proverMoves vFirst k = (List.range k).countP fun t => !moverIsV vFirst t := rfl
 
 /-- The mover pattern has period `2`. -/
 theorem moverIsV_two_mul_add (vFirst : Bool) (m t : ℕ) :
@@ -187,12 +191,13 @@ namespace Protocol
 /-- The prover `P_Q`: at a real position of phase `j`, `π.P` on the coin slice `j` and the
 messages received in phase `j`; at a filler position, `[]`. Its coins are `Q` copies of
 `π.P`'s. -/
+@[simps (config := { isSimp := false }) coins next]
 def seqProver (π : Protocol) (Q : PolyExpr) : Strategy where
   next x y r hist :=
     if proverMoveIndex π.verifierFirst hist.length % (2 * π.rounds.eval x.length) <
         π.rounds.eval x.length then
       π.P.next x y
-        (phaseSlice (π.P.coinLen x.length)
+        (coinBlock (π.P.coinLen x.length)
           (proverMoveIndex π.verifierFirst hist.length / (2 * π.rounds.eval x.length)) r)
         (hist.drop (proverMoveIndex π.verifierFirst hist.length /
           (2 * π.rounds.eval x.length) * π.rounds.eval x.length))
@@ -203,15 +208,26 @@ def seqProver (π : Protocol) (Q : PolyExpr) : Strategy where
 on the coin slice `j` and the real messages of phase `j` outputs `[true]`. -/
 def seqVerdict (π : Protocol) (Q : ℕ) (x z r : List Bool) (hist : List (List Bool)) :
     List Bool :=
-  if (List.range Q).all (fun j => decide (π.V.next x z (phaseSlice (π.V.coinLen x.length) j r)
+  if (List.range Q).all (fun j => decide (π.V.next x z (coinBlock (π.V.coinLen x.length) j r)
       ((hist.drop (j * π.rounds.eval x.length)).take
         (proverMoves π.verifierFirst (π.rounds.eval x.length))) = [true]))
   then [true] else [false]
+
+/-- The repeated verdict is true exactly when every phase's original verdict is true. -/
+theorem seqVerdict_eq (π : Protocol) (Q : ℕ) (x z r : List Bool)
+    (hist : List (List Bool)) :
+    seqVerdict π Q x z r hist =
+      if (List.range Q).all (fun j => decide
+        (π.V.next x z (coinBlock (π.V.coinLen x.length) j r)
+          ((hist.drop (j * π.rounds.eval x.length)).take
+            (proverMoves π.verifierFirst (π.rounds.eval x.length))) = [true]))
+      then [true] else [false] := rfl
 
 /-- The verifier `V_Q`: on its complete history (`Q · k` messages received) its verdict
 (`seqVerdict`); otherwise, at a real position of phase `j`, `π.V` on the coin slice `j` and the
 messages received in phase `j`; at a filler position, `[]`. Its coins are `Q` copies of
 `π.V`'s. -/
+@[simps (config := { isSimp := false }) coins next]
 def seqVerifier (π : Protocol) (Q : PolyExpr) : Strategy where
   next x z r hist :=
     if hist.length = Q.eval x.length * π.rounds.eval x.length then
@@ -219,7 +235,7 @@ def seqVerifier (π : Protocol) (Q : PolyExpr) : Strategy where
     else if verifierMoveIndex π.verifierFirst hist.length % (2 * π.rounds.eval x.length) <
         π.rounds.eval x.length then
       π.V.next x z
-        (phaseSlice (π.V.coinLen x.length)
+        (coinBlock (π.V.coinLen x.length)
           (verifierMoveIndex π.verifierFirst hist.length / (2 * π.rounds.eval x.length)) r)
         (hist.drop (verifierMoveIndex π.verifierFirst hist.length /
           (2 * π.rounds.eval x.length) * π.rounds.eval x.length))
@@ -229,6 +245,7 @@ def seqVerifier (π : Protocol) (Q : PolyExpr) : Strategy where
 /-- **The `Q`-fold sequential repetition** of `π` [PS10, Theorem 175.1, `(P_Q, V_Q)`]:
 `Q(|x|)` phases of `2 · rounds(|x|)` moves, each running `π` on `x` with fresh coins and then
 filler moves. -/
+@[simps (config := { isSimp := false }) P V rounds verifierFirst]
 def seqRep (π : Protocol) (Q : PolyExpr) : Protocol where
   P := π.seqProver Q
   V := π.seqVerifier Q
@@ -260,17 +277,17 @@ theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Boo
     (exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
         (2 * π.rounds.eval x.length * j + π.rounds.eval x.length)).1.drop
           (j * π.rounds.eval x.length) =
-      (exec π.P π.V π.verifierFirst x y z (phaseSlice (π.P.coinLen x.length) j rP)
-        (phaseSlice (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).1 ∧
+      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
+        (coinBlock (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).1 ∧
     (exec (π.seqRep Q).P (π.seqRep Q).V π.verifierFirst x y z rP rV
         (2 * π.rounds.eval x.length * j + π.rounds.eval x.length)).2.drop
           (j * π.rounds.eval x.length) =
-      (exec π.P π.V π.verifierFirst x y z (phaseSlice (π.P.coinLen x.length) j rP)
-        (phaseSlice (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).2 := by
+      (exec π.P π.V π.verifierFirst x y z (coinBlock (π.P.coinLen x.length) j rP)
+        (coinBlock (π.V.coinLen x.length) j rV) (π.rounds.eval x.length)).2 := by
   set k := π.rounds.eval x.length with hk
   set vF := π.verifierFirst with hvF
-  set sP := phaseSlice (π.P.coinLen x.length) j rP
-  set sV := phaseSlice (π.V.coinLen x.length) j rV
+  set sP := coinBlock (π.P.coinLen x.length) j rP
+  set sV := coinBlock (π.V.coinLen x.length) j rV
   have hjk : (j + 1) * k ≤ Q.eval x.length * k := Nat.mul_le_mul_right _ hj
   have hjk' : (j + 1) * k = j * k + k := by ring
   have h2 : 2 * k * j = 2 * (j * k) := by ring
@@ -340,12 +357,6 @@ theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Boo
       simp only [seqProver, ← hk, ← hvF]
       rw [hidx, hmod, if_pos htk, hdiv, ih₁]
 
-/-- **The honest prover's messages are short**: on every instance `x` with a witness `y`, and
-whatever it has received, its message has at most `B(|x|)` bits. The composition theorems need
-it (see the module docstring). -/
-def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
-  ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
-
 end Protocol
 
 /-! ### Theorem 175.1 -/
@@ -355,7 +366,7 @@ variable {π : Protocol} {R : List Bool → List Bool → Prop}
 /-- **Theorem 175.1, computational case** [PS10, Theorem 175.1]: the sequential repetition of a
 zero-knowledge protocol with a bounded prover is zero-knowledge.
 
-**Proof sketch** (the source's, with the hybrids made explicit).
+**Proof sketch** ([Gol01, §4.3.4], with the hybrids made explicit).
 1. Given an efficient `V_Q*`, let `V*` be the verifier of one run of `π` whose auxiliary input
    is `⟨z, r, m̄₁, …, m̄_i⟩`: it runs `V_Q*` on the random tape `r`, feeds it the messages
    `m̄₁, …, m̄_i` of the first `i` phases (fillers `[]` included), and plays phase `i + 1` as
@@ -394,23 +405,23 @@ theorem StatZK.seqRep {B : PolyExpr} {δ : ℕ → ℝ} (h : StatZK π R δ)
 protocol with a bounded prover is perfect zero-knowledge (`StatZK.seqRep` at `δ = 0`). -/
 theorem PerfectZK.seqRep {B : PolyExpr} (h : PerfectZK π R) (hB : π.ProverBounded R B)
     (Q : PolyExpr) : PerfectZK (π.seqRep Q) R := by
-  have h' := StatZK.seqRep h hB Q
-  simpa [PerfectZK] using h'
+  apply perfectZK_iff.mpr
+  simpa only [mul_zero] using StatZK.seqRep h.statZK hB Q
 
-/-- **Theorem 175.1, perfect case with aborting simulators** (the text's expected-polynomial-time
-simulators, truncated per ruling G02-#4): the repetition is statistical zero-knowledge with
-error `Q(n) · 2^{-n}`.
+/-- **Theorem 175.1, perfect case with aborting simulators** [PS10, Theorem 175.1]
+[Gol01, Definition 4.3.1 and §4.3.4]: with the text's expected-polynomial-time simulators
+truncated per ruling G02-#4, the repetition is statistical zero-knowledge with error
+`Q(n) · 2^{-n}`.
 
-**Proof sketch.** In phase `i`, `S_Q` runs the aborting simulator of `V*` (as in `ZK.seqRep`)
-up to `n = |x|` times with fresh coins and keeps the first output that is not `⊥`. A phase fails
-only if all `n` runs abort, with probability at most `2^{-n}` (`PerfectZKAbort`, abort
-probability at most `1/2`, independent runs). Given success, the output has exactly the law of
-the real phase, by the conditional identity of `PerfectZKAbort`. By the union bound over the
-`Q(n)` phases the distance is at most `Q(n) · 2^{-n}`. -/
+**Proof sketch.** First apply `PerfectZKAbort.statZK`: retry the aborting simulator on `n = |x|`
+fresh coin blocks and keep its first non-aborting output. The probability that all trials
+abort is at most `2^{-n}`, and on success the output has the real view's law. Then apply
+`StatZK.seqRep` [Gol01, §4.3.4], which bounds the statistical distance of the `Q(n)` phases by
+the sum of their errors, `Q(n) · 2^{-n}`. -/
 theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
     (hB : π.ProverBounded R B) (Q : PolyExpr) :
     StatZK (π.seqRep Q) R (fun n => Q.eval n * (1 / 2 : ℝ) ^ n) := by
-  sorry
+  simpa only [one_div] using StatZK.seqRep h.statZK hB Q
 
 /-- **The repetition of an interactive proof is an interactive proof** [PS10, Theorem 175.1,
 "`(P_Q, V_Q)` is an interactive proof"], when every input length has at least one phase.

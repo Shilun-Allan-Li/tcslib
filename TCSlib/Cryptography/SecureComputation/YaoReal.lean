@@ -63,6 +63,26 @@ variable (Y : YaoCircuit) (E₁ E₂ : List Bool → List Bool) (T : TrapdoorCol
 (`HybridProtocol.compose`). -/
 noncomputable def yaoProtocol : Protocol := (yaoHybrid Y E₁ E₂).compose (otProtocol T H)
 
+/-- Alice's real Yao strategy is the published composition strategy. -/
+theorem yaoProtocol_P : (yaoProtocol Y E₁ E₂ T H).P =
+    (yaoHybrid Y E₁ E₂).composeP (otProtocol T H) :=
+  (yaoHybrid Y E₁ E₂).compose_P (otProtocol T H)
+
+/-- Bob's real Yao strategy is the published composition strategy. -/
+theorem yaoProtocol_V : (yaoProtocol Y E₁ E₂ T H).V =
+    (yaoHybrid Y E₁ E₂).composeV (otProtocol T H) :=
+  (yaoHybrid Y E₁ E₂).compose_V (otProtocol T H)
+
+/-- Real Yao has the composition's OT-phase rounds, leading filler, and main rounds. -/
+theorem yaoProtocol_rounds : (yaoProtocol Y E₁ E₂ T H).rounds =
+    .add (.add (.mul (yaoHybrid Y E₁ E₂).calls (.mul (.const 2) (otProtocol T H).rounds))
+      (.const (yaoHybrid Y E₁ E₂).lead)) (yaoHybrid Y E₁ E₂).main.rounds :=
+  (yaoHybrid Y E₁ E₂).compose_rounds (otProtocol T H)
+
+/-- Alice moves first in the real Yao composition. -/
+theorem yaoProtocol_verifierFirst : (yaoProtocol Y E₁ E₂ T H).verifierFirst = false :=
+  (yaoHybrid Y E₁ E₂).compose_verifierFirst (otProtocol T H)
+
 /-- **Theorem 163.7** [PS10]: Protocol 162.6, with Protocol 160.4 for the transfers, is an
 honest-but-curious secure protocol for the circuit's function. The hypotheses are those of
 Theorem 163.7 in the OT-hybrid model (the PRFs of the garbling, jointly as well) and of
@@ -85,12 +105,12 @@ theorem yaoProtocol_hbcSecure
     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)))
     {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputable H)
-    (hspec : ∀ i w x, T.decD i w = some x → H (pairEncode i w) = [h i x])
-    (hT : T.OneWay) (hEHC : EnhancedHardCore T h) (hcanon : SamplerCanonical T) :
+    (henc : ∀ i x, H (pairEncode i (T.encD i x)) = [h i x])
+    (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
     HBCSecure (yaoProtocol Y E₁ E₂ T H) (yaoFunctionality Y) :=
   (yaoHybrid Y E₁ E₂).hbcSecure_compose (otProtocol T H)
     (fun n => by show 0 < (PolyExpr.const 2).eval n; simp)
     (yaoHybrid_hbcSecure Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂)
-    (otProtocol_hbcSecure T H hH hspec hT hEHC hcanon)
+    (otProtocol_hbcSecure T H hH henc hT hEHC)
 
 end TCSlib.Cryptography.SecureComputation

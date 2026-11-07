@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.SecureComputation.GarblingSpecial
 import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
 
-set_option maxHeartbeats 400000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -16,6 +16,11 @@ set_option autoImplicit false
 pseudorandom function families (`PRFOut`), a random garbling is good with high probability. This
 combines Claim 157.a's wrong-key property (here for the nesting) with the union bound of
 `Garbling.lean`.
+
+## Main definitions
+
+The imported `SecureComputation.nestedSpecial` construction uses the correctness and
+wrong-key contracts `MultiEnc.DecCorrect` and `MultiEnc.WrongKeyBot` from `Garbling.lean`.
 
 ## Main results
 

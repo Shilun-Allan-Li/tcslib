@@ -87,9 +87,9 @@ theorem halfRem_ne_nil_iff (hist : List (List Bool)) :
   omega
 
 /-- The coin block of the current iteration of the `|x|`-fold graph isomorphism prover:
-`coinSlice ((|x|+1)²) (|hist| / 2) r`. -/
+`coinBlock ((|x|+1)²) (|hist| / 2) r`. -/
 theorem giSlice_poly : PolyTimeComputable fun w =>
-    coinSlice (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w) :=
+    coinBlock (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w) :=
   ptc_congr (coinSlice_poly giBlock NUPPT.polyTimeComputable_inParam halfCnt_poly
     NUPPT.polyTimeComputable_inCoins) fun w => by simp
 
@@ -108,11 +108,11 @@ sampled permutation (`sampleStr_poly`), the graph message by `relabel_poly` and 
 `halfRem_nil_iff` and `lastMsg_encodeMsgs`. -/
 theorem giProverRep_efficient : giProverRep.Efficient := by
   have hπ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w))
-      (coinSlice (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w)) :=
+      (coinBlock (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w)) :=
     ptc_congr (sampleStr_poly.comp (w₀_poly.pairEncode giSlice_poly)) fun w => by simp
   have heven := relabel_poly w₀_poly hπ
   have hmul : PolyTimeComputable fun w => mulInvStr (sampleStr (pairFstD (argX w))
-      (coinSlice (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w))) (argZ w) :=
+      (coinBlock (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w))) (argZ w) :=
     ptc_congr (mulInvStr_poly.comp (hπ.pairEncode argZ_poly)) fun w => by simp
   have hodd := polyTimeComputable_ite lastBit_poly hmul hπ
   refine efficient_of_polyTime giProverRep (polyTimeComputable_ite even_poly heven hodd) ?_

@@ -6,7 +6,7 @@ import TCSlib.Cryptography.SecureComputation.SpecialEncryption
 import TCSlib.Cryptography.Asymptotic.Encryption
 import TCSlib.Cryptography.Asymptotic.PRF
 
-set_option maxHeartbeats 400000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -74,6 +74,7 @@ variable (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → 
 /-- **The special encryption scheme** [PS10, Algorithm 157.2] as a `PrivateKeyScheme` with
 `n`-bit messages, for a length-doubling family `G` with evaluator `E`: the key is `Gen`'s `n`
 coins, `Enc` draws `r` as its `n` coins, and `Dec` is deterministic. -/
+@[simps (config := { isSimp := false }) gen enc dec]
 noncomputable def specialScheme : PrivateKeyScheme where
   gen := NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var
   enc := NUPPT.ofPolyTimeUniform (polyTimeComputable_spEncFun hE) .var

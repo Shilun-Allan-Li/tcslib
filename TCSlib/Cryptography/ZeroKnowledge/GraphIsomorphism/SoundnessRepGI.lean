@@ -211,11 +211,11 @@ theorem giProverRep_next_even {n : ℕ} (G₀ G₁ : Graph n) (y r : List Bool) 
     (h : hist.length % 2 = 0) :
     giProverRep.next (encInstance G₀ G₁) y r hist =
       encGraph (permGraph G₀ (samplePerm n
-        (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) := by
+        (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) := by
   show (if hist.length % 2 = 0 then encGraph (permGraph
     (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
     (samplePerm (instanceVertexCount (encInstance G₀ G₁))
-      (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) else _) = _
+      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) else _) = _
   rw [if_pos h, show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
   rw [instanceVertexCount_encInstance] at hm
@@ -228,14 +228,14 @@ theorem giProverRep_next_odd {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (F
     (hist : List (List Bool)) (h : hist.length % 2 ≠ 0) :
     giProverRep.next (encInstance G₀ G₁) (encPerm σ) r hist =
       encPerm (if (hist.getLastD []).headD false then
-        samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) * σ⁻¹
-      else samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)) := by
+        samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) * σ⁻¹
+      else samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)) := by
   show (if hist.length % 2 = 0 then _ else encPerm (if (hist.getLastD []).headD false then
     samplePerm (instanceVertexCount (encInstance G₀ G₁))
-        (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) *
+        (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) *
       (decPerm (instanceVertexCount (encInstance G₀ G₁)) (encPerm σ))⁻¹
     else samplePerm (instanceVertexCount (encInstance G₀ G₁))
-      (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) = _
+      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) = _
   rw [if_neg h]
   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
   rw [instanceVertexCount_encInstance] at hm
@@ -315,12 +315,12 @@ theorem repViews_fst (P' : Strategy) (x y z rP rV : List Bool) :
 /-- The honest prover's graph of iteration `j`: `π_j(G₀)` for `π_j` sampled from coin block `j`
 (block length `c`) of its tape. -/
 noncomputable def honestH {n : ℕ} (G₀ : Graph n) (c : ℕ) (rP : List Bool) (j : ℕ) : List Bool :=
-  encGraph (permGraph G₀ (samplePerm n (coinSlice c j rP)))
+  encGraph (permGraph G₀ (samplePerm n (coinBlock c j rP)))
 
 /-- The honest prover's reply of iteration `j`: `π_j σ⁻¹` or `π_j` according to the verifier's
 coin `j`. -/
 noncomputable def honestγ {n : ℕ} (σ : Equiv.Perm (Fin n)) (c : ℕ) (rP rV : List Bool) (j : ℕ) : List Bool :=
-  encPerm (if rV.getD j false then samplePerm n (coinSlice c j rP) * σ⁻¹ else samplePerm n (coinSlice c j rP))
+  encPerm (if rV.getD j false then samplePerm n (coinBlock c j rP) * σ⁻¹ else samplePerm n (coinBlock c j rP))
 
 /-- The honest views on an encoded instance with witness `encPerm σ`: the verifier's view
 interleaves `honestH` and `honestγ`.
@@ -338,12 +338,12 @@ theorem honest_views {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (
     obtain ⟨h2, h1⟩ := honest_views G₀ G₁ σ z rP rV i
     have hH : giProverRep.next (encInstance G₀ G₁) (encPerm σ) rP
         (repViews giProverRep giVerifierRep (encInstance G₀ G₁) (encPerm σ) z rP rV i).1 =
-        encGraph (permGraph G₀ (samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) i rP))) := by
+        encGraph (permGraph G₀ (samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) i rP))) := by
       rw [giProverRep_next_even _ _ _ _ _ (by rw [h1]; omega), h1, show 2 * i / 2 = i by omega]
     have hb : giVerifierRep.next (encInstance G₀ G₁) z rV
         (Vs (honestH G₀ (((encInstance G₀ G₁).length + 1) ^ 2) rP)
           (honestγ σ (((encInstance G₀ G₁).length + 1) ^ 2) rP rV) i ++
-          [encGraph (permGraph G₀ (samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) i rP)))]) =
+          [encGraph (permGraph G₀ (samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) i rP)))]) =
         [rV.getD i false] := by
       rw [giVerifierRep_next_odd _ _ _ _ (by rw [List.length_append, length_Vs, List.length_singleton]; omega),
         List.length_append, length_Vs, List.length_singleton, show (2 * i + 1) / 2 = i by omega]

@@ -55,6 +55,10 @@ open Complexity Turing TCSlib.Cryptography
 /-- `main`'s coin schedule `polyLen a k = n ↦ a · (n + 1)^k` as a syntactic polynomial. -/
 def polyLenExpr (a k : ℕ) : PolyExpr := .mul (.const a) (.pow (.add .var (.const 1)) k)
 
+/-- The coin-schedule expression is the product of `a` and `(n+1)^k` in PolyExpr syntax. -/
+theorem polyLenExpr_eq (a k : ℕ) :
+    polyLenExpr a k = .mul (.const a) (.pow (.add .var (.const 1)) k) := rfl
+
 /-- The syntactic polynomial evaluates to `main`'s schedule. -/
 @[simp] theorem eval_polyLenExpr (a k n : ℕ) :
     (polyLenExpr a k).eval n = Randomized.polyLen a k n := rfl

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Composability.Defs
 import TCSlib.Cryptography.Asymptotic.MultiMessage
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -66,6 +67,23 @@ noncomputable def prfFixedScheme : FixedLengthScheme where
         = n := rfl
     simp
     omega
+
+attribute [simps (config := { isSimp := false }) toPrivateKeyScheme ctLen] prfFixedScheme
+
+/-- The fixed-length scheme uses the key generator of `prfScheme`. -/
+theorem prfFixedScheme_gen :
+    (prfFixedScheme F E hE hFE).gen = (prfScheme F E hE hFE).gen :=
+  congrArg PrivateKeyScheme.gen (prfFixedScheme_toPrivateKeyScheme F E hE hFE)
+
+/-- The fixed-length scheme uses the encryption machine of `prfScheme`. -/
+theorem prfFixedScheme_enc :
+    (prfFixedScheme F E hE hFE).enc = (prfScheme F E hE hFE).enc :=
+  congrArg PrivateKeyScheme.enc (prfFixedScheme_toPrivateKeyScheme F E hE hFE)
+
+/-- The fixed-length scheme uses the decryption machine of `prfScheme`. -/
+theorem prfFixedScheme_dec :
+    (prfFixedScheme F E hE hFE).dec = (prfScheme F E hE hFE).dec :=
+  congrArg PrivateKeyScheme.dec (prfFixedScheme_toPrivateKeyScheme F E hE hFE)
 
 /-- **Theorem 168.2 (CPA)** [PS10]: if `F` is a pseudorandom function family, the §3.9 scheme is
 CPA-secure.

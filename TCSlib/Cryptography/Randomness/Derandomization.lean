@@ -55,6 +55,11 @@ open Complexity TCSlib.Cryptography
 /-- The subexponential time bound `n ↦ ⌈2^{n^ε}⌉` (real exponent, rounded up). -/
 noncomputable def subexpBound (ε : ℝ) (n : ℕ) : ℕ := ⌈(2 : ℝ) ^ ((n : ℝ) ^ ε)⌉₊
 
+/-- The subexponential bound is the natural ceiling of `2^{n^ε}` with real exponents:
+`subexpBound ε n = ⌈2^{n^ε}⌉₊`. -/
+theorem subexpBound_eq (ε : ℝ) (n : ℕ) :
+    subexpBound ε n = ⌈(2 : ℝ) ^ ((n : ℝ) ^ ε)⌉₊ := rfl
+
 /-- The subexponential bound is positive at every length. -/
 theorem subexpBound_pos (ε : ℝ) (n : ℕ) : 0 < subexpBound ε n :=
   Nat.ceil_pos.mpr (Real.rpow_pos_of_pos (by norm_num) _)

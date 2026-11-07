@@ -6,7 +6,7 @@ import TCSlib.Cryptography.SecureComputation.Garbling
 import TCSlib.Cryptography.SecureComputation.SpecialEncryption
 import Mathlib.Tactic.Ring
 
-set_option maxHeartbeats 400000
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -47,10 +47,14 @@ open Complexity Turing TCSlib.Cryptography BoolCircuit
 /-- The inner ciphertext length `4n + 2` of a nested row. -/
 def innerLen : PolyExpr := .add (.mul (.const 4) .var) (.const 2)
 
+/-- The inner ciphertext length expression is `4n+2`. -/
+theorem innerLen_eq : innerLen = .add (.mul (.const 4) .var) (.const 2) := rfl
+
 /-- **Nested special encryption at parameter `n`**: no key, the plaintext; one key,
 Algorithm 157.2 with the pad `E₁` (`2n` bits); two keys, Algorithm 157.2 under the second key
 with `E₁`, then under the first key with `E₂` (`n + (4n + 2)` bits). Longer key lists are
 unused. -/
+@[simps (config := { isSimp := false }) enc dec]
 def nestedSpecial (E₁ E₂ : List Bool → List Bool) (n : ℕ) :
     MultiEnc (Fin n → Bool) (List Bool) ((Fin n → Bool) × (Fin n → Bool)) where
   enc ks o r := match ks with
@@ -77,7 +81,14 @@ variable (G₁ : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) �
 include hGE₁ hGE₂ in
 /-- **Nested special encryption is correct**: decryption under at most two keys inverts
 encryption under them (`spDecStr_spEncStr` at each layer, with the inner ciphertext's length
-`4n + 2`). -/
+`4n + 2`).
+
+**Proof sketch.** Split by the number of keys. With no key, decoding the encoded plaintext
+returns the plaintext. With one key, the evaluator specification gives a pad of length `2n`,
+so special-encryption correctness removes the encryption before decoding. With two keys, the
+inner ciphertext has length `4n + 2`; the second evaluator provides the pad of length
+`n + (4n + 2)` required by the outer layer. Remove the outer layer, then the inner layer, and
+decode the original plaintext. Longer key lists are excluded by the correctness contract. -/
 theorem nestedSpecial_decCorrect (n : ℕ) : (nestedSpecial E₁ E₂ n).DecCorrect := by
   intro ks hks o r
   have hlen : ∀ v : Fin n → Bool, (List.ofFn v).length = n := fun v => List.length_ofFn

@@ -5,6 +5,7 @@ Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.ZeroKnowledge.Encoding
 import TCSlib.Cryptography.ZeroKnowledge.InteractiveProofs
+import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
 
@@ -40,7 +41,8 @@ need (Lem-119.a, Lem-120.b–c, the honest replies).
 * `TCSlib.Cryptography.GI.Isomorphic`, `GI.decGraphAt`, `GI.encInstance`,
   `GI.instanceVertexCount`, `GI.instanceG₀`, `GI.instanceG₁`, `GI.wellFormedInstance`,
   `GI.instanceVertices`, `GI.Liso`, `GI.Lniso`, `GI.Riso`, `GI.samplePerm`, `GI.permCoinLen`,
-  `GI.permFailBound`, `GI.coinSlice` — shadows of the definitions of the main file.
+  `GI.permFailBound` — shadows of the definitions of the main file. Coin segments use
+  the shared `TCSlib.Cryptography.coinBlock`.
 * `TCSlib.Cryptography.GI.gniProver`, `GI.gniVerifier`, `GI.gniProtocol`, `GI.gniVerifierRep`,
   `GI.gniProtocolRep`, `GI.giProver`, `GI.giVerifier`, `GI.giProtocol`, `GI.giProverRep`,
   `GI.giVerifierRep`, `GI.giProtocolRep` — shadows of the strategies and protocols.
@@ -132,9 +134,6 @@ def permCoinLen (n : ℕ) : ℕ := n * permTrials n * permBits n
 /-- Shadow of `TCSlib.Cryptography.permFailBound`. -/
 noncomputable def permFailBound (n : ℕ) : ℝ := n * (2 : ℝ)⁻¹ ^ n
 
-/-- Shadow of `TCSlib.Cryptography.coinSlice`. -/
-def coinSlice (c i : ℕ) (r : List Bool) : List Bool := (r.drop (i * c)).take c
-
 /-- Shadow of `TCSlib.Cryptography.gniProver` [PS10, Protocol 118.3]. -/
 def gniProver : Strategy where
   coins := .const 0
@@ -165,12 +164,12 @@ noncomputable def gniVerifierRep : Strategy where
   next x _ r hist :=
     let c := 1 + (x.length + 1) ^ 2
     if hist.length < x.length then
-      let ri := coinSlice c hist.length r
+      let ri := coinBlock c hist.length r
       encGraph (permGraph (if ri.headD false then instanceG₁ x else instanceG₀ x)
         (samplePerm (instanceVertexCount x) (ri.drop 1)))
     else
       [decide (wellFormedInstance x = true ∧
-        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinSlice c j r).headD false)]
+        ∀ j : Fin x.length, (hist.getD j []).headD false = (coinBlock c j r).headD false)]
 
 /-- Shadow of `TCSlib.Cryptography.gniProtocolRep` (Prot-118.3). -/
 noncomputable def gniProtocolRep : Protocol where
@@ -218,7 +217,7 @@ noncomputable def giProverRep : Strategy where
   next x y r hist :=
     let n := instanceVertexCount x
     let σ := decPerm n y
-    let π := samplePerm n (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)
+    let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
     if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) π)
     else encPerm (if (hist.getLastD []).headD false then π * σ⁻¹ else π)
 

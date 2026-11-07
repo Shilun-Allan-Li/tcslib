@@ -47,6 +47,9 @@ collisions the CRH game counts.
 
 ## Main results
 
+* The `hsHashList_eq`, key/index and algorithm equations expose the string computations.
+* `Authentication.hashAndSign_msgLen`, `hashAndSign_sigLen`, `hashAndSign_gen`,
+  `hashAndSign_sign`, `hashAndSign_ver`: the signature-scheme data fields.
 * `Authentication.hashAndSign_oneTimeSecure` (Thm 144.1, stated; a `sorry` under the source's
   sketch).
 * `Authentication.exists_oneTimeSecure_of_crh_owf`: the source's existential form, with
@@ -69,21 +72,46 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 def hsHashList (H : CRH) (u i m : List Bool) : List Bool :=
   padStr H.rangeLen u (H.eval (pairEncode u (pairEncode i m)))
 
+/-- The hash word is the evaluator output padded or truncated to the hash range length. -/
+theorem hsHashList_eq (H : CRH) (u i m : List Bool) :
+    hsHashList H u i m = padStr H.rangeLen u (H.eval (pairEncode u (pairEncode i m))) := rfl
+
 /-- The key `⟨pk, sk⟩ = Gen(1^n)` of the signature scheme, from the first `coins_Gen(n)` coins of
 the layout `⟨⟨⟨1^n, y⟩, α⟩, ρ⟩`. -/
 def hsSigKey (S : SignatureScheme) (z : List Bool) : List Bool :=
   S.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
     ((NUPPT.inCoins z).take (S.gen.coins.eval (NUPPT.inParam z).length)))
 
+/-- The signature-key word runs the original generator with empty argument and advice on
+the first generator-sized segment of the tape. -/
+theorem hsSigKey_eq (S : SignatureScheme) (z : List Bool) :
+    hsSigKey S z =
+      S.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
+        ((NUPPT.inCoins z).take (S.gen.coins.eval (NUPPT.inParam z).length))) := rfl
+
 /-- The index `i = Gen_CRH(1^n)`, from the remaining coins. -/
 def hsIdx (S : SignatureScheme) (H : CRH) (z : List Bool) : List Bool :=
   H.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
     ((NUPPT.inCoins z).drop (S.gen.coins.eval (NUPPT.inParam z).length)))
 
+/-- The hash-index word runs the hash generator with empty argument and advice on the tape
+after the original generator's coin segment. -/
+theorem hsIdx_eq (S : SignatureScheme) (H : CRH) (z : List Bool) :
+    hsIdx S H z =
+      H.gen.output (NUPPT.layout (NUPPT.inParam z) [] []
+        ((NUPPT.inCoins z).drop (S.gen.coins.eval (NUPPT.inParam z).length))) := rfl
+
 /-- `Gen′`: the key `⟨pk′, sk′⟩ = ⟨⟨pk, i⟩, ⟨sk, i⟩⟩`. -/
 def hsGenFun (S : SignatureScheme) (H : CRH) (z : List Bool) : List Bool :=
   pairEncode (pairEncode (pairFstD (hsSigKey S z)) (hsIdx S H z))
     (pairEncode (pairSndD (hsSigKey S z)) (hsIdx S H z))
+
+/-- The new key word pairs the public key with the hash index and the secret key with that
+same index. -/
+theorem hsGenFun_eq (S : SignatureScheme) (H : CRH) (z : List Bool) :
+    hsGenFun S H z =
+      pairEncode (pairEncode (pairFstD (hsSigKey S z)) (hsIdx S H z))
+        (pairEncode (pairSndD (hsSigKey S z)) (hsIdx S H z)) := rfl
 
 /-- `Sign′` on the layout `⟨⟨⟨1^n, ⟨⟨sk, i⟩, m⟩⟩, α⟩, ρ⟩`: `Sign` on `⟨sk, h_i(m)⟩` with the same
 coins. -/
@@ -94,12 +122,31 @@ def hsSignFun (S : SignatureScheme) (H : CRH) (z : List Bool) : List Bool :=
         (pairSndD (NUPPT.inArg z))))
     [] (NUPPT.inCoins z))
 
+/-- The signing word runs the original signer on the secret key paired with the hash word,
+retaining the parameter and coins and using empty advice. -/
+theorem hsSignFun_eq (S : SignatureScheme) (H : CRH) (z : List Bool) :
+    hsSignFun S H z =
+      S.sign.output (NUPPT.layout (NUPPT.inParam z)
+        (pairEncode (pairFstD (pairFstD (NUPPT.inArg z)))
+          (hsHashList H (NUPPT.inParam z) (pairSndD (pairFstD (NUPPT.inArg z)))
+            (pairSndD (NUPPT.inArg z))))
+        [] (NUPPT.inCoins z)) := rfl
+
 /-- `Ver′` on `⟨1^n, ⟨⟨pk, i⟩, ⟨m, σ⟩⟩⟩`: `Ver` on `⟨1^n, ⟨pk, ⟨h_i(m), σ⟩⟩⟩`. -/
 def hsVerFun (S : SignatureScheme) (H : CRH) (w : List Bool) : List Bool :=
   S.ver (pairEncode (pairFstD w) (pairEncode (pairFstD (pairFstD (pairSndD w)))
     (pairEncode (hsHashList H (pairFstD w) (pairSndD (pairFstD (pairSndD w)))
         (pairFstD (pairSndD (pairSndD w))))
       (pairSndD (pairSndD (pairSndD w))))))
+
+/-- The verification word passes the original public key, hashed message and signature to
+the original verifier at the same parameter. -/
+theorem hsVerFun_eq (S : SignatureScheme) (H : CRH) (w : List Bool) :
+    hsVerFun S H w =
+      S.ver (pairEncode (pairFstD w) (pairEncode (pairFstD (pairFstD (pairSndD w)))
+        (pairEncode (hsHashList H (pairFstD w) (pairSndD (pairFstD (pairSndD w)))
+            (pairFstD (pairSndD (pairSndD w))))
+          (pairSndD (pairSndD (pairSndD w)))))) := rfl
 
 /-! ### Efficiency -/
 
@@ -251,6 +298,31 @@ noncomputable def hashAndSign (H : CRH) (S : SignatureScheme)
     simp only [hsHashList]
     rw [← hm₀]
     simpa only [atParam] using S.correct n _ rg₁ rs
+
+/-- Hash-and-sign uses the hash family's domain length as its message length. -/
+theorem hashAndSign_msgLen (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) :
+    (hashAndSign H S hlen).msgLen = H.domLen := rfl
+
+/-- Hash-and-sign retains the original signature length. -/
+theorem hashAndSign_sigLen (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) :
+    (hashAndSign H S hlen).sigLen = S.sigLen := rfl
+
+/-- Hash-and-sign uses the combined signature-key and hash-index generator. -/
+theorem hashAndSign_gen (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) :
+    (hashAndSign H S hlen).gen = hsGen S H := rfl
+
+/-- Hash-and-sign uses the signer that hashes its message before calling the original signer. -/
+theorem hashAndSign_sign (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) :
+    (hashAndSign H S hlen).sign = hsSign S H := rfl
+
+/-- Hash-and-sign uses the verifier that hashes its message before calling the original verifier. -/
+theorem hashAndSign_ver (H : CRH) (S : SignatureScheme)
+    (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) :
+    (hashAndSign H S hlen).ver = hsVerFun S H := rfl
 
 /-! ### Theorem 144.1 -/
 

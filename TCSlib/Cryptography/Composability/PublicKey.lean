@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Composability.Defs
 import TCSlib.Cryptography.Asymptotic.PublicKey
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -71,9 +72,19 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 def padCt (L : ℕ) (c : List Bool) : List Bool :=
   pairEncode c (List.replicate (L - (2 * c.length + 2)) true)
 
+/-- Padding pairs `c` with `L - (2 * c.length + 2)` true bits. -/
+theorem padCt_eq (L : ℕ) (c : List Bool) :
+    padCt L c = pairEncode c (List.replicate (L - (2 * c.length + 2)) true) := rfl
+
 /-- Whether `w` is a canonical padding: a pair `⟨c, s⟩` whose second part `s` is all `true`. -/
 def isPadded (w : List Bool) : Bool :=
   decide (pairEncode (pairFstD w) (pairSndD w) = w) && !BinArith.hasFalse (pairSndD w)
+
+/-- The canonical-padding test checks that `w` is its decoded pair and that its second
+component contains no false bit. -/
+theorem isPadded_eq (w : List Bool) :
+    isPadded w =
+      decide (pairEncode (pairFstD w) (pairSndD w) = w) && !BinArith.hasFalse (pairSndD w) := rfl
 
 /-- A padding to `L ≥ 2|c| + 2` bits has `L` bits. -/
 theorem length_padCt {L : ℕ} {c : List Bool} (h : 2 * c.length + 2 ≤ L) :
@@ -87,7 +98,7 @@ theorem length_padCt {L : ℕ} {c : List Bool} (h : 2 * c.length + 2 ≤ L) :
 
 /-- A padding is canonical. -/
 theorem isPadded_padCt (L : ℕ) (c : List Bool) : isPadded (padCt L c) = true := by
-  simp [isPadded, padCt, BinArith.hasFalse]
+  simp [isPadded, padCt, BinArith.hasFalse_eq]
 
 /-- A canonical string is the padding of its first part to its own length. -/
 theorem padCt_of_isPadded {w : List Bool} (h : isPadded w = true) :
@@ -97,7 +108,7 @@ theorem padCt_of_isPadded {w : List Bool} (h : isPadded w = true) :
   have hall : pairSndD w = List.replicate (pairSndD w).length true := by
     refine List.eq_replicate_iff.2 ⟨rfl, fun b hb => ?_⟩
     cases b
-    · simp only [BinArith.hasFalse, List.any_eq_false, List.mem_map, id_eq,
+    · simp only [BinArith.hasFalse_eq, List.any_eq_false, List.mem_map, id_eq,
         forall_exists_index, and_imp] at h₂
       exact absurd rfl (h₂ _ false hb rfl)
     · rfl
@@ -128,6 +139,12 @@ def padEncFun (enc : NUPPT) (L : PolyExpr) (z : List Bool) : List Bool :=
   padCt (L.eval (NUPPT.inParam z).length)
     (enc.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) [] (NUPPT.inCoins z)))
 
+/-- The padded encryptor's string function pads the original output at the same parameter,
+argument and coins, with empty advice, to the length prescribed by `L`. -/
+theorem padEncFun_eq (enc : NUPPT) (L : PolyExpr) (z : List Bool) :
+    padEncFun enc L z = padCt (L.eval (NUPPT.inParam z).length)
+      (enc.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) [] (NUPPT.inCoins z))) := rfl
+
 /-- The padded encryptor is polynomial-time. -/
 theorem polyTimeComputable_padEncFun (enc : NUPPT) (L : PolyExpr) :
     PolyTimeComputable (padEncFun enc L) := by
@@ -149,6 +166,13 @@ def padDecFun (dec : List Bool → List Bool) (z : List Bool) : List Bool :=
   if isPadded (pairSndD z) then dec (pairEncode (pairFstD z) (pairFstD (pairSndD z)))
   else true :: pairSndD z
 
+/-- The padded decryptor decrypts the unpadded query when its canonical test passes and
+returns `true :: pairSndD z` otherwise. -/
+theorem padDecFun_eq (dec : List Bool → List Bool) (z : List Bool) :
+    padDecFun dec z =
+      if isPadded (pairSndD z) then dec (pairEncode (pairFstD z) (pairFstD (pairSndD z)))
+      else true :: pairSndD z := rfl
+
 /-- The padded decryptor is polynomial-time when `Dec` is. -/
 theorem polyTimeComputable_padDecFun {dec : List Bool → List Bool}
     (hdec : PolyTimeComputable dec) : PolyTimeComputable (padDecFun dec) :=
@@ -160,6 +184,10 @@ theorem polyTimeComputable_padDecFun {dec : List Bool → List Bool}
 /-- The padded encryptor as a machine, with the coins of `Enc`. -/
 noncomputable abbrev padEnc (enc : NUPPT) (L : PolyExpr) : NUPPT :=
   NUPPT.ofPolyTimeUniform (polyTimeComputable_padEncFun enc L) enc.coins
+
+/-- The padded encryptor uses the original encryptor's coin polynomial. -/
+theorem padEnc_coins (enc : NUPPT) (L : PolyExpr) : (padEnc enc L).coins = enc.coins :=
+  NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_padEncFun enc L) enc.coins
 
 /-- The padded encryptor pads the ciphertext of the uniform `Enc` with the same coins. -/
 theorem runAt_padEnc {enc : NUPPT} (henc : enc.Uniform) (L : PolyExpr) (n : ℕ) (y : List Bool)
@@ -241,6 +269,46 @@ noncomputable def ofPadded (msgLen : PolyExpr) (gen enc : NUPPT) (dec : List Boo
     rw [runAt_padEnc enc_uniform]
     exact length_padCt (hL n rg m re)
 
+section PaddedReaders
+
+variable (msgLen : PolyExpr) (gen enc : NUPPT) (dec : List Bool → List Bool)
+    (gen_uniform : gen.Uniform) (enc_uniform : enc.Uniform) (dec_poly : PolyTimeComputable dec)
+    (correct : ∀ n (m : Fin (msgLen.eval n) → Bool) (rg : gen.Coins n) (re : enc.Coins n),
+      decodeFin _ (dec (pairEncode (pairSndD (gen.runAt n [] rg))
+        (enc.runAt n (pairEncode (pairFstD (gen.runAt n [] rg)) (List.ofFn m)) re))) = some m)
+    (L : PolyExpr)
+    (hL : ∀ n (rg : gen.Coins n) (m : Fin (msgLen.eval n) → Bool) (re : enc.Coins n),
+      2 * (enc.runAt n (pairEncode (pairFstD (gen.runAt n [] rg)) (List.ofFn m)) re).length + 2
+        ≤ L.eval n)
+    (hmsg : ∀ n, msgLen.eval n ≤ L.eval n)
+
+/-- The padded constructor preserves the supplied message-length polynomial. -/
+theorem ofPadded_msgLen :
+    (ofPadded msgLen gen enc dec gen_uniform enc_uniform dec_poly correct L hL hmsg).msgLen =
+      msgLen := rfl
+
+/-- The padded constructor's ciphertext-length polynomial is `L`. -/
+theorem ofPadded_ctLen :
+    (ofPadded msgLen gen enc dec gen_uniform enc_uniform dec_poly correct L hL hmsg).ctLen =
+      L := rfl
+
+/-- The padded constructor preserves the supplied key generator. -/
+theorem ofPadded_gen :
+    (ofPadded msgLen gen enc dec gen_uniform enc_uniform dec_poly correct L hL hmsg).gen =
+      gen := rfl
+
+/-- The padded constructor uses `padEnc enc L` as its encryptor. -/
+theorem ofPadded_enc :
+    (ofPadded msgLen gen enc dec gen_uniform enc_uniform dec_poly correct L hL hmsg).enc =
+      padEnc enc L := rfl
+
+/-- The padded constructor uses `padDecFun dec` as its decryptor. -/
+theorem ofPadded_dec :
+    (ofPadded msgLen gen enc dec gen_uniform enc_uniform dec_poly correct L hL hmsg).dec =
+      padDecFun dec := rfl
+
+end PaddedReaders
+
 end FixedLengthPKScheme
 
 /-- **A ch. 2–4 public-key scheme, padded** to `L(n)`-bit ciphertexts. -/
@@ -252,6 +320,36 @@ noncomputable def _root_.TCSlib.Cryptography.PublicKeyScheme.padded (S : PublicK
     (hmsg : ∀ n, n ≤ L.eval n) : FixedLengthPKScheme :=
   .ofPadded .var S.gen S.enc S.dec S.gen_uniform S.enc_uniform S.dec_poly
     (fun n m rg re => S.correct n m rg re) L hL hmsg
+
+section PublicKeyPaddedReaders
+
+variable (S : PublicKeyScheme) (L : PolyExpr)
+    (hL : ∀ n (rg : S.gen.Coins n) (m : Fin n → Bool) (re : S.enc.Coins n),
+      2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) (List.ofFn m)) re).length
+        + 2 ≤ L.eval n)
+    (hmsg : ∀ n, n ≤ L.eval n)
+
+/-- Padding a public-key scheme preserves its message-length polynomial `PolyExpr.var`. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_msgLen :
+    (S.padded L hL hmsg).msgLen = PolyExpr.var := rfl
+
+/-- The padded public-key scheme's ciphertext-length polynomial is `L`. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_ctLen :
+    (S.padded L hL hmsg).ctLen = L := rfl
+
+/-- Padding a public-key scheme preserves its key generator. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_gen :
+    (S.padded L hL hmsg).gen = S.gen := rfl
+
+/-- The padded public-key scheme encrypts with `padEnc S.enc L`. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_enc :
+    (S.padded L hL hmsg).enc = padEnc S.enc L := rfl
+
+/-- The padded public-key scheme decrypts with `padDecFun S.dec`. -/
+theorem _root_.TCSlib.Cryptography.PublicKeyScheme.padded_dec :
+    (S.padded L hL hmsg).dec = padDecFun S.dec := rfl
+
+end PublicKeyPaddedReaders
 
 /-- **A ch. 2–4 single-bit public-key scheme, padded** to `L(n)`-bit ciphertexts: one-bit
 messages, `Enc` activated on `⟨pk, [b]⟩`. -/
@@ -272,9 +370,45 @@ noncomputable def _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded (S : BitP
       exact hL n rg (m 0) re)
     hmsg
 
+section BitPublicKeyPaddedReaders
+
+variable (S : BitPublicKeyScheme) (L : PolyExpr)
+    (hL : ∀ n (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
+      2 * (S.enc.runAt n (pairEncode (pairFstD (S.gen.runAt n [] rg)) [b]) re).length + 2
+        ≤ L.eval n)
+    (hmsg : ∀ n, 1 ≤ L.eval n)
+
+/-- Padding a single-bit public-key scheme preserves its constant one-bit message length. -/
+theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded_msgLen :
+    (S.padded L hL hmsg).msgLen = PolyExpr.const 1 := rfl
+
+/-- The padded single-bit scheme's ciphertext-length polynomial is `L`. -/
+theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded_ctLen :
+    (S.padded L hL hmsg).ctLen = L := rfl
+
+/-- Padding a single-bit public-key scheme preserves its key generator. -/
+theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded_gen :
+    (S.padded L hL hmsg).gen = S.gen := rfl
+
+/-- The padded single-bit scheme encrypts with `padEnc S.enc L`. -/
+theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded_enc :
+    (S.padded L hL hmsg).enc = padEnc S.enc L := rfl
+
+/-- The padded single-bit scheme decrypts with `padDecFun S.dec`. -/
+theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.padded_dec :
+    (S.padded L hL hmsg).dec = padDecFun S.dec := rfl
+
+end BitPublicKeyPaddedReaders
+
 /-- **A padding bound exists** for every ch. 2–4 public-key scheme, from the time bounds of
 `Gen` and `Enc` (`NUPPT.length_runAt_le_runLenPoly`): `|pk| ≤ Q₁(n)`, the input `⟨pk, m⟩` has at
-most `2Q₁(n) + 2 + n` bits, and the ciphertext at most `Q₂(n)`; `L = 2Q₂ + 2 + n` works. -/
+most `2Q₁(n) + 2 + n` bits, and the ciphertext at most `Q₂(n)`; `L = 2Q₂ + 2 + n` works.
+
+**Proof sketch.** Bound the generator's output by its running-time polynomial, which also
+bounds its public-key projection. The pair-encoding length formula then bounds the encryptor's
+input by `2Q₁(n) + 2 + n`. Applying the encryptor's output-length bound to this input gives
+`Q₂(n)`. Choose `L(n) = 2Q₂(n) + 2 + n`: it covers the ciphertext's pair-encoding overhead and
+is at least the message length `n`. -/
 theorem _root_.TCSlib.Cryptography.PublicKeyScheme.exists_padBound (S : PublicKeyScheme) :
     ∃ L : PolyExpr,
       (∀ n (rg : S.gen.Coins n) (m : Fin n → Bool) (re : S.enc.Coins n),
@@ -300,7 +434,13 @@ theorem _root_.TCSlib.Cryptography.PublicKeyScheme.exists_padBound (S : PublicKe
     omega
 
 /-- **A padding bound exists** for every ch. 2–4 single-bit public-key scheme (as for
-`PublicKeyScheme.exists_padBound`). -/
+`PublicKeyScheme.exists_padBound`).
+
+**Proof sketch.** The generator's output-length bound also bounds the public key by `Q₁(n)`.
+Pairing that key with one bit gives an encryptor input of at most `2Q₁(n) + 3` bits. Its
+running-time bound therefore supplies a ciphertext-length polynomial `Q₂(n)`. The polynomial
+`L(n) = 2Q₂(n) + 2` covers the ciphertext encoding and is at least one, as required for the
+single-bit message length. -/
 theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.exists_padBound (S : BitPublicKeyScheme) :
     ∃ L : PolyExpr,
       (∀ n (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
@@ -335,13 +475,39 @@ def inLens (n : ℕ) : Fin 2 → ℕ
   | 0 => S.ctLen.eval n
   | 1 => S.msgLen.eval n + S.msgLen.eval n
 
+/-- Decryption queries have the scheme's ciphertext length. -/
+theorem inLens_zero (n : ℕ) : S.inLens n 0 = S.ctLen.eval n := rfl
+
+/-- Challenge queries contain two messages of the scheme's message length. -/
+theorem inLens_one (n : ℕ) : S.inLens n 1 = S.msgLen.eval n + S.msgLen.eval n := rfl
+
 /-- The answer lengths: `Dec` answers a validity flag and a message; `Challenge` a ciphertext. -/
 def outLens (n : ℕ) : Fin 2 → ℕ
   | 0 => S.msgLen.eval n + 1
   | 1 => S.ctLen.eval n
 
+/-- Decryption answers contain a validity bit followed by one message. -/
+theorem outLens_zero (n : ℕ) : S.outLens n 0 = S.msgLen.eval n + 1 := rfl
+
+/-- Challenge answers have the scheme's ciphertext length. -/
+theorem outLens_one (n : ℕ) : S.outLens n 1 = S.ctLen.eval n := rfl
+
 /-- The two oracles of the experiment at parameter `n`. -/
 abbrev indSpec (n : ℕ) : OracleSpec (Fin 2) := bitSpec (S.inLens n) (S.outLens n)
+
+/-- The public-key IND oracle specification is the bit specification at the scheme's query
+and answer lengths. -/
+theorem indSpec_eq (n : ℕ) : S.indSpec n = bitSpec (S.inLens n) (S.outLens n) := rfl
+
+/-- Oracle `i` accepts bit strings of length `S.inLens n i`. -/
+theorem indSpec_dom (n : ℕ) (i : Fin 2) :
+    (S.indSpec n).dom i = (Fin (S.inLens n i) → Bool) :=
+  bitSpec_dom (S.inLens n) (S.outLens n) i
+
+/-- Oracle `i` returns bit strings of length `S.outLens n i`. -/
+theorem indSpec_rng (n : ℕ) (i : Fin 2) :
+    (S.indSpec n).rng i = (Fin (S.outLens n i) → Bool) :=
+  bitSpec_rng (S.inLens n) (S.outLens n) i
 
 /-- **The oracles of `Ind_b`** at parameter `n`, for the keys `pk`, `sk`; the state is the
 challenge, once asked.
@@ -365,6 +531,32 @@ noncomputable def indImpl (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool
           r)
         .pure (c, some c)
 
+/-- A decryption query checks oracle availability and refuses the recorded challenge;
+otherwise it returns the decoded plaintext with its validity flag, preserving the state. -/
+theorem indImpl_dec (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (c : Fin (S.ctLen.eval n) → Bool) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
+    S.indImpl atk b n pk sk 0 c s =
+      if FixedLengthScheme.decOpen atk s.isSome && !decide (s = some c) then
+        .pure (FixedLengthScheme.decAnswer
+          (decodeFin _ (S.dec (pairEncode sk (List.ofFn c)))), s)
+      else .pure (zeroBits _, s) := rfl
+
+/-- The first challenge query encrypts the selected message half using fresh coins and
+records the padded ciphertext. -/
+theorem indImpl_challenge_none (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (mm : Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) :
+    S.indImpl atk b n pk sk 1 mm none =
+      (ProbComp.sample (S.enc.Coins n)).bind fun r =>
+        let c := padFin (S.ctLen.eval n) (S.enc.runAt n (pairEncode pk (List.ofFn
+          (if b then (FixedLengthScheme.splitHalf mm).2 else (FixedLengthScheme.splitHalf mm).1)))
+          r)
+        .pure (c, some c) := rfl
+
+/-- A repeated challenge query returns the recorded ciphertext and preserves it as state. -/
+theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (pk sk : List Bool)
+    (mm : Fin (S.msgLen.eval n + S.msgLen.eval n) → Bool) (c : Fin (S.ctLen.eval n) → Bool) :
+    S.indImpl atk b n pk sk 1 mm (some c) = .pure (c, some c) := rfl
+
 /-- Under CPA, `Dec` never answers. -/
 theorem indImpl_dec_cpa (b : Bool) (n : ℕ) (pk sk : List Bool)
     (c : Fin (S.ctLen.eval n) → Bool) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
@@ -381,6 +573,24 @@ theorem indImpl_dec_cca2_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
 def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=
   bitCodec (S.inLens n) (S.outLens n) 1
 
+/-- The public-key IND codec decodes a move with the bit decoder at the scheme's oracle
+lengths and a one-bit final output. -/
+theorem indCodec_decodeMove (n : ℕ) (w : List Bool) :
+    (S.indCodec n).decodeMove w = decodeBitMove (S.inLens n) (S.outLens n) 1 w :=
+  bitCodec_decodeMove (S.inLens n) (S.outLens n) 1 w
+
+/-- The public-key IND codec encodes an entry by pairing the unary oracle index with its
+query and answer strings. -/
+theorem indCodec_encodeEntry (n : ℕ)
+    (e : Σ i, (S.indSpec n).dom i × (S.indSpec n).rng i) :
+    (S.indCodec n).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (S.inLens n) (S.outLens n) 1 e
+
+/-- The public-key IND codec returns the false one-bit result on timeout. -/
+theorem indCodec_timeout (n : ℕ) : (S.indCodec n).timeout = zeroBits 1 :=
+  bitCodec_timeout (S.inLens n) (S.outLens n) 1
+
 /-- **The experiment `Ind_b(Π, A, n)`** [PS10, Definition 171.5] for the attack `atk`, with query
 budget `q`: sample `(pk, sk) ← Gen(1^n)` and `A`'s coins, run `A` on `pk` against the oracles
 from the unchallenged state, and output its bit. -/
@@ -391,12 +601,30 @@ noncomputable def indGame (atk : Attack) (A : NUPPT) (q : ℕ) (b : Bool) (n : �
       (A.toCompOn (S.indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r) none).bind
     fun res => .pure (res.1 0)
 
+/-- The public-key IND game samples key-generation and adversary coins, simulates the
+oracles on the public-key input from the unchallenged state, and returns the final bit. -/
+theorem indGame_eq (atk : Attack) (A : NUPPT) (q : ℕ) (b : Bool) (n : ℕ) :
+    S.indGame atk A q b n =
+      (ProbComp.sample (S.gen.Coins n)).bind fun rg =>
+      (ProbComp.sample (A.Coins n)).bind fun r =>
+      (simulate (S.indImpl atk b n (pairFstD (S.gen.runAt n [] rg))
+          (pairSndD (S.gen.runAt n [] rg)))
+        (A.toCompOn (S.indCodec n) n q (pairFstD (S.gen.runAt n [] rg)) r) none).bind
+        fun res => .pure (res.1 0) := rfl
+
 /-- **CPA, CCA1 or CCA2 security of a public-key scheme** [PS10, Definition 171.5]: for every
 non-uniform PPT `A` and every polynomial query budget, `A`'s advantage between `Ind_0` and
 `Ind_1` is negligible. -/
 def INDSecure (atk : Attack) : Prop :=
   ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
     ∀ n, advantage (S.indGame atk A (q.eval n) false n) (S.indGame atk A (q.eval n) true n) ≤ ε n
+
+/-- Public-key IND security is exactly negligible advantage for every non-uniform PPT
+adversary and polynomial query budget, uniformly over the security parameter. -/
+theorem INDSecure_iff (atk : Attack) :
+    S.INDSecure atk ↔ ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, advantage (S.indGame atk A (q.eval n) false n)
+        (S.indGame atk A (q.eval n) true n) ≤ ε n := Iff.rfl
 
 end FixedLengthPKScheme
 

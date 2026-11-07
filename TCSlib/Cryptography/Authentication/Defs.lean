@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Games.BitCodec
 import TCSlib.Cryptography.Games.Advantage
 import TCSlib.Cryptography.Foundations.Negligible
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,8 +46,9 @@ the log.
 
 ## Main results
 
-None yet: the theorems on these notions (Thms 135.4, 137.2, 142.3, 144.1) are stated in the
-statement phase of prong A, in their own modules.
+Reading equations and predicate characterizations expose the definitions without unfolding.
+The theorems on these notions (Thms 135.4, 137.2, 142.3, 144.1) are stated in the statement
+phase of prong A, in their own modules.
 
 ## References
 
@@ -62,8 +64,14 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 def splitBits {a b : ℕ} (w : Fin (a + b) → Bool) : (Fin a → Bool) × (Fin b → Bool) :=
   (fun i => w (Fin.castAdd b i), fun j => w (Fin.natAdd a j))
 
+attribute [simps (config := { isSimp := false }) fst snd] splitBits
+
 /-- The parameter-tagged input `⟨1^n, w⟩` of a deterministic polynomial-time algorithm. -/
 def atParam (n : ℕ) (w : List Bool) : List Bool := pairEncode (List.replicate n true) w
+
+/-- The parameter-tagged input is `pairEncode (List.replicate n true) w`. -/
+theorem atParam_eq (n : ℕ) (w : List Bool) :
+    atParam n w = pairEncode (List.replicate n true) w := rfl
 
 /-! ### Message authentication codes -/
 
@@ -103,6 +111,14 @@ def Accepts (n : ℕ) (k : List Bool) (m : Fin (M.msgLen.eval n) → Bool)
     (σ : Fin (M.tagLen.eval n) → Bool) : Prop :=
   M.ver (atParam n (pairEncode k (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true]
 
+/-- A MAC accepts `(m, σ)` exactly when its verifier on `⟨1^n, ⟨k, ⟨m, σ⟩⟩⟩` returns
+`[true]` [PS10, Definition 134.1]. -/
+theorem accepts_iff (n : ℕ) (k : List Bool) (m : Fin (M.msgLen.eval n) → Bool)
+    (σ : Fin (M.tagLen.eval n) → Bool) :
+    M.Accepts n k m σ ↔
+      M.ver (atParam n (pairEncode k (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] :=
+  Iff.rfl
+
 instance (n : ℕ) (k : List Bool) (m : Fin (M.msgLen.eval n) → Bool)
     (σ : Fin (M.tagLen.eval n) → Bool) : Decidable (M.Accepts n k m σ) :=
   inferInstanceAs (Decidable (_ = _))
@@ -111,15 +127,51 @@ instance (n : ℕ) (k : List Bool) (m : Fin (M.msgLen.eval n) → Bool)
 abbrev oracleSpec (n : ℕ) : OracleSpec (Fin 1) :=
   bitSpec (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
 
+/-- The tagging oracle has message-length queries and tag-length answers:
+`oracleSpec n = bitSpec (fun _ => msgLen(n)) (fun _ => tagLen(n))`. -/
+theorem oracleSpec_eq (n : ℕ) :
+    M.oracleSpec n = bitSpec (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n) := rfl
+
 /-- The **tagging oracle** `Tag_k(·)`: each query `m` is answered by `Tag_k(m)` with fresh coins. -/
 noncomputable def tagImpl (n : ℕ) (k : List Bool) : QueryImpl (M.oracleSpec n) Unit unifSpec :=
   QueryImpl.ofComp fun _ m => (ProbComp.sample (M.tag.Coins n)).bind fun rt =>
     .pure (padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode k (List.ofFn m)) rt))
 
+/-- The tagging implementation samples fresh tag coins and returns the tag padded to its
+declared length, using `QueryImpl.ofComp` [PS10, Definition 134.2]. -/
+theorem tagImpl_eq (n : ℕ) (k : List Bool) :
+    M.tagImpl n k =
+      QueryImpl.ofComp (fun _ m => (ProbComp.sample (M.tag.Coins n)).bind fun rt =>
+        .pure (padFin (M.tagLen.eval n) (M.tag.runAt n (pairEncode k (List.ofFn m)) rt))) :=
+  rfl
+
 /-- The codec of forgers: one oracle, and a final output of `ℓ(n) + t(n)` bits read as `(m, σ)`. -/
 def forgerCodec (n : ℕ) :
     MachineCodec (M.oracleSpec n) (Fin (M.msgLen.eval n + M.tagLen.eval n) → Bool) :=
   bitCodec (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n) (M.msgLen.eval n + M.tagLen.eval n)
+
+/-- The MAC forger codec decodes moves with `decodeBitMove` at message and tag lengths. -/
+theorem forgerCodec_decodeMove (n : ℕ) (w : List Bool) :
+    (M.forgerCodec n).decodeMove w =
+      decodeBitMove (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
+        (M.msgLen.eval n + M.tagLen.eval n) w :=
+  bitCodec_decodeMove (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
+    (M.msgLen.eval n + M.tagLen.eval n) w
+
+/-- The MAC forger codec encodes a log entry `(i, m, σ)` as `⟨1^i, ⟨m, σ⟩⟩`. -/
+theorem forgerCodec_encodeEntry (n : ℕ)
+    (e : Σ i, (M.oracleSpec n).dom i × (M.oracleSpec n).rng i) :
+    (M.forgerCodec n).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
+    (M.msgLen.eval n + M.tagLen.eval n) e
+
+/-- When its query budget expires, the MAC forger codec returns `zeroBits (msgLen(n) +
+tagLen(n))`. -/
+theorem forgerCodec_timeout (n : ℕ) :
+    (M.forgerCodec n).timeout = zeroBits (M.msgLen.eval n + M.tagLen.eval n) :=
+  bitCodec_timeout (fun _ => M.msgLen.eval n) (fun _ => M.tagLen.eval n)
+    (M.msgLen.eval n + M.tagLen.eval n)
 
 /-- **The MAC forgery game** [PS10, Definition 134.2] at parameter `n`, for the forger `A` with
 query budget `b`: sample a key `k ← Gen(1^n)` and `A`'s coins, run `A` against the logged tagging
@@ -132,11 +184,28 @@ noncomputable def forgeGame (A : NUPPT) (b n : ℕ) : ProbComp Bool :=
     .pure (decide (M.Accepts n (M.gen.runAt n [] rg) (splitBits res.1).1 (splitBits res.1).2 ∧
       ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1))
 
+/-- The MAC forgery game samples the key and forger coins, runs the logged tagging oracle,
+and tests acceptance and message freshness [PS10, Definition 134.2]. -/
+theorem forgeGame_eq (A : NUPPT) (b n : ℕ) :
+    M.forgeGame A b n =
+      (ProbComp.sample (M.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (A.Coins n)).bind fun r =>
+      (simulate (M.tagImpl n (M.gen.runAt n [] rg)).withLog (A.toComp (M.forgerCodec n) n b r)
+          ((), [])).bind fun res =>
+        .pure (decide (M.Accepts n (M.gen.runAt n [] rg) (splitBits res.1).1 (splitBits res.1).2 ∧
+          ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1))) := rfl
+
 /-- **A secure MAC** [PS10, Definition 134.2]: for every non-uniform PPT forger and every
 polynomial query budget, the forgery probability is negligible. -/
 def Secure : Prop :=
   ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
     ∀ n, accept (M.forgeGame A (q.eval n) n) ≤ ε n
+
+/-- A MAC is secure exactly when every machine and polynomial query budget have a negligible
+upper bound on forgery acceptance [PS10, Definition 134.2]. -/
+theorem secure_iff :
+    M.Secure ↔ ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, accept (M.forgeGame A (q.eval n) n) ≤ ε n := Iff.rfl
 
 end MAC
 
@@ -177,6 +246,14 @@ def Accepts (n : ℕ) (pk : List Bool) (m : Fin (S.msgLen.eval n) → Bool)
     (σ : Fin (S.sigLen.eval n) → Bool) : Prop :=
   S.ver (atParam n (pairEncode pk (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true]
 
+/-- A signature is accepted exactly when verification on `⟨1^n, ⟨pk, ⟨m, σ⟩⟩⟩` returns
+`[true]` [PS10, Definition 135.1]. -/
+theorem accepts_iff (n : ℕ) (pk : List Bool) (m : Fin (S.msgLen.eval n) → Bool)
+    (σ : Fin (S.sigLen.eval n) → Bool) :
+    S.Accepts n pk m σ ↔
+      S.ver (atParam n (pairEncode pk (pairEncode (List.ofFn m) (List.ofFn σ)))) = [true] :=
+  Iff.rfl
+
 instance (n : ℕ) (pk : List Bool) (m : Fin (S.msgLen.eval n) → Bool)
     (σ : Fin (S.sigLen.eval n) → Bool) : Decidable (S.Accepts n pk m σ) :=
   inferInstanceAs (Decidable (_ = _))
@@ -185,16 +262,53 @@ instance (n : ℕ) (pk : List Bool) (m : Fin (S.msgLen.eval n) → Bool)
 abbrev oracleSpec (n : ℕ) : OracleSpec (Fin 1) :=
   bitSpec (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
 
+/-- The signing oracle has message-length queries and signature-length answers:
+`oracleSpec n = bitSpec (fun _ => msgLen(n)) (fun _ => sigLen(n))`. -/
+theorem oracleSpec_eq (n : ℕ) :
+    S.oracleSpec n = bitSpec (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n) := rfl
+
 /-- The **signing oracle** `Sign_sk(·)`: each query `m` is answered by `Sign_sk(m)` with fresh
 coins. -/
 noncomputable def signImpl (n : ℕ) (sk : List Bool) : QueryImpl (S.oracleSpec n) Unit unifSpec :=
   QueryImpl.ofComp fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
     .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs))
 
+/-- The signing implementation samples fresh signing coins and returns the signature padded
+to its declared length, using `QueryImpl.ofComp` [PS10, Definition 136.2]. -/
+theorem signImpl_eq (n : ℕ) (sk : List Bool) :
+    S.signImpl n sk =
+      QueryImpl.ofComp (fun _ m => (ProbComp.sample (S.sign.Coins n)).bind fun rs =>
+        .pure (padFin (S.sigLen.eval n) (S.sign.runAt n (pairEncode sk (List.ofFn m)) rs))) :=
+  rfl
+
 /-- The codec of forgers: one oracle, and a final output of `ℓ(n) + t(n)` bits read as `(m, σ)`. -/
 def forgerCodec (n : ℕ) :
     MachineCodec (S.oracleSpec n) (Fin (S.msgLen.eval n + S.sigLen.eval n) → Bool) :=
   bitCodec (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n) (S.msgLen.eval n + S.sigLen.eval n)
+
+/-- The signature forger codec decodes moves with `decodeBitMove` at message and signature
+lengths. -/
+theorem forgerCodec_decodeMove (n : ℕ) (w : List Bool) :
+    (S.forgerCodec n).decodeMove w =
+      decodeBitMove (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+        (S.msgLen.eval n + S.sigLen.eval n) w :=
+  bitCodec_decodeMove (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+    (S.msgLen.eval n + S.sigLen.eval n) w
+
+/-- The signature forger codec encodes a log entry `(i, m, σ)` as `⟨1^i, ⟨m, σ⟩⟩`. -/
+theorem forgerCodec_encodeEntry (n : ℕ)
+    (e : Σ i, (S.oracleSpec n).dom i × (S.oracleSpec n).rng i) :
+    (S.forgerCodec n).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+    (S.msgLen.eval n + S.sigLen.eval n) e
+
+/-- When its query budget expires, the signature forger codec returns
+`zeroBits (msgLen(n) + sigLen(n))`. -/
+theorem forgerCodec_timeout (n : ℕ) :
+    (S.forgerCodec n).timeout = zeroBits (S.msgLen.eval n + S.sigLen.eval n) :=
+  bitCodec_timeout (fun _ => S.msgLen.eval n) (fun _ => S.sigLen.eval n)
+    (S.msgLen.eval n + S.sigLen.eval n)
 
 /-- **The signature forgery game** [PS10, Definition 136.2] at parameter `n`, for the forger `A`
 with query budget `b`: sample `⟨pk, sk⟩ ← Gen(1^n)` and `A`'s coins, run `A` on `pk` against the
@@ -210,16 +324,42 @@ noncomputable def forgeGame (A : NUPPT) (b n : ℕ) : ProbComp Bool :=
       (S.Accepts n (pairFstD (S.gen.runAt n [] rg)) (splitBits res.1).1 (splitBits res.1).2 ∧
         ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1))
 
+/-- The signature forgery game samples the keys and forger coins, runs the forger on the public
+key against the logged signing oracle, and tests acceptance and freshness
+[PS10, Definition 136.2]. -/
+theorem forgeGame_eq (A : NUPPT) (b n : ℕ) :
+    S.forgeGame A b n =
+      (ProbComp.sample (S.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (A.Coins n)).bind fun r =>
+      (simulate (S.signImpl n (pairSndD (S.gen.runAt n [] rg))).withLog
+          (A.toCompOn (S.forgerCodec n) n b (pairFstD (S.gen.runAt n [] rg)) r) ((), [])).bind
+        fun res =>
+        .pure (decide
+          (S.Accepts n (pairFstD (S.gen.runAt n [] rg)) (splitBits res.1).1 (splitBits res.1).2 ∧
+            ∀ e ∈ res.2.2, e.2.1 ≠ (splitBits res.1).1))) := rfl
+
 /-- **A secure signature scheme** [PS10, Definition 136.2]: for every non-uniform PPT forger and
 every polynomial query budget, the forgery probability is negligible. -/
 def Secure : Prop :=
   ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
     ∀ n, accept (S.forgeGame A (q.eval n) n) ≤ ε n
 
+/-- A signature scheme is secure exactly when every machine and polynomial query budget have
+a negligible upper bound on forgery acceptance [PS10, Definition 136.2]. -/
+theorem secure_iff :
+    S.Secure ↔ ∀ (A : NUPPT) (q : PolyExpr), ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, accept (S.forgeGame A (q.eval n) n) ≤ ε n := Iff.rfl
+
 /-- **A one-time secure signature scheme** [PS10, the notion after Definition 136.2]: Def 136.2
 for forgers that may query the signing oracle once. -/
 def OneTimeSecure : Prop :=
   ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n, accept (S.forgeGame A 1 n) ≤ ε n
+
+/-- A signature scheme is one-time secure exactly when every machine has a negligible upper
+bound on forgery acceptance with one signing query [PS10, the notion after Definition 136.2]. -/
+theorem oneTimeSecure_iff :
+    S.OneTimeSecure ↔ ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, accept (S.forgeGame A 1 n) ≤ ε n := Iff.rfl
 
 end SignatureScheme
 
@@ -263,6 +403,11 @@ def hash (n : ℕ) (i : List Bool) (x : Fin (H.domLen.eval n) → Bool) :
     Fin (H.rangeLen.eval n) → Bool :=
   padFin (H.rangeLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn x))))
 
+/-- The hash is the evaluator's output on `⟨1^n, ⟨i, x⟩⟩`, padded to `rangeLen(n)` bits. -/
+theorem hash_eq (n : ℕ) (i : List Bool) (x : Fin (H.domLen.eval n) → Bool) :
+    H.hash n i x =
+      padFin (H.rangeLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn x)))) := rfl
+
 /-- **Compression** [PS10, Definition 140.1, "compression"]: from some parameter on, at every
 generated index `i`, `h_i` maps `D_i` into `R_i` and `|R_i| < |D_i|`.
 
@@ -275,6 +420,15 @@ def Compresses : Prop :=
     Fintype.card {y // H.inRange n (H.gen.runAt n [] rg) y = true} <
       Fintype.card {x // H.inDom n (H.gen.runAt n [] rg) x = true}
 
+/-- Compression holds exactly when, eventually at every generated index, hashes lie in the
+range and the range is smaller than the domain [PS10, Definition 140.1, "compression"]. -/
+theorem compresses_iff :
+    H.Compresses ↔ ∃ n₀ : ℕ, ∀ n, n₀ ≤ n → ∀ rg : H.gen.Coins n,
+      (∀ x, H.inDom n (H.gen.runAt n [] rg) x = true →
+        H.inRange n (H.gen.runAt n [] rg) (H.hash n (H.gen.runAt n [] rg) x) = true) ∧
+      Fintype.card {y // H.inRange n (H.gen.runAt n [] rg) y = true} <
+        Fintype.card {x // H.inDom n (H.gen.runAt n [] rg) x = true} := Iff.rfl
+
 /-- **The collision game** [PS10, Definition 140.1] at parameter `n`, for the machine `A`: sample
 `i ← Gen(1^n)` and `A`'s coins, run `A(1^n, i)`, read its output as `(x, x')`, and win when
 `x, x' ∈ D_i`, `x ≠ x'` and `h_i(x) = h_i(x')`. -/
@@ -286,10 +440,27 @@ noncomputable def collisionGame (A : NUPPT) (n : ℕ) : ProbComp Bool :=
     .pure (decide (H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧
       H.hash n i xx.1 = H.hash n i xx.2))
 
+/-- The collision game samples an index and machine coins, splits the machine's output into
+two inputs, and tests distinct domain elements with equal hashes [PS10, Definition 140.1]. -/
+theorem collisionGame_eq (A : NUPPT) (n : ℕ) :
+    H.collisionGame A n =
+      (ProbComp.sample (H.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (A.Coins n)).bind fun r =>
+        let i := H.gen.runAt n [] rg
+        let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (A.runAt n i r))
+        .pure (decide (H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧
+          H.hash n i xx.1 = H.hash n i xx.2))) := rfl
+
 /-- **Collision resistance** [PS10, Definition 140.1]: for every non-uniform PPT `A`, the collision
 probability is negligible. -/
 def CollisionResistant : Prop :=
   ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n, accept (H.collisionGame A n) ≤ ε n
+
+/-- Collision resistance holds exactly when every machine has a negligible upper bound on
+collision-game acceptance [PS10, Definition 140.1]. -/
+theorem collisionResistant_iff :
+    H.CollisionResistant ↔ ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+      ∀ n, accept (H.collisionGame A n) ≤ ε n := Iff.rfl
 
 end CRH
 

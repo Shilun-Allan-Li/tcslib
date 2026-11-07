@@ -12,8 +12,8 @@ set_option autoImplicit false
 /-!
 # Pseudorandom functions make an unlearnable concept class (statement phase)
 
-[PS10, §8.1, Theorem 179.1]: if pseudorandom functions exist, there is a p.p.t.-decidable concept
-class that no non-uniform p.p.t. learner can learn: given polynomially many labelled uniform
+[PS10, §8.1, Theorem 179.1]: if pseudorandom functions exist, there is a p.p.t.-decidable
+concept class that no non-uniform p.p.t. learner can learn: given polynomially many labelled uniform
 examples, it predicts the label of a fresh uniform point with probability at most `½` plus a
 negligible amount.
 
@@ -56,15 +56,33 @@ variable (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
 bit (`false` at `n = 0`). -/
 def prfConcept (n : ℕ) (k x : Fin n → Bool) : Bool := (List.ofFn (F n k x)).headD false
 
+/-- The concept value is the first output bit of `F n k x`, with default `false` for an
+empty output: `prfConcept F n k x = (List.ofFn (F n k x)).headD false`. -/
+theorem prfConcept_eq (n : ℕ) (k x : Fin n → Bool) :
+    prfConcept F n k x = (List.ofFn (F n k x)).headD false := rfl
+
 /-- The encoding of a labelled sample for a learner machine: the nested pairs of `⟨x_j, [b_j]⟩`. -/
 def encodeSample {n m : ℕ} (S : Fin m → (Fin n → Bool) × Bool) : List Bool :=
   (List.ofFn fun j => pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode []
+
+/-- A labelled sample is encoded by folding its list of pairs `⟨x_j, [b_j]⟩` from the right,
+with empty terminal word. -/
+theorem encodeSample_eq {n m : ℕ} (S : Fin m → (Fin n → Bool) × Bool) :
+    encodeSample S =
+      (List.ofFn fun j => pairEncode (List.ofFn (S j).1) [(S j).2]).foldr pairEncode [] := rfl
 
 /-- **The learner of a machine** `A` at parameter `n` with `m` examples: on the labelled sample `S`
 and coins `r`, the hypothesis `x ↦ [A(1^n, ⟨S, x⟩; r) = [true]]`. -/
 def learnerOf (A : NUPPT) (n m : ℕ) :
     (Fin m → (Fin n → Bool) × Bool) → A.Coins n → (Fin n → Bool) → Bool :=
   fun S r x => decide (A.runAt n (pairEncode (encodeSample S) (List.ofFn x)) r = [true])
+
+/-- The learner's prediction on `S`, coins `r` and input `x` is the decision whether the
+machine run on `⟨encodeSample S, List.ofFn x⟩` outputs `[true]`. -/
+theorem learnerOf_eq (A : NUPPT) (n m : ℕ) (S : Fin m → (Fin n → Bool) × Bool)
+    (r : A.Coins n) (x : Fin n → Bool) :
+    learnerOf A n m S r x =
+      decide (A.runAt n (pairEncode (encodeSample S) (List.ofFn x)) r = [true]) := rfl
 
 /-- **Theorem 179.1 (a): the class is p.p.t.-decidable** given the key: the first bit of the PRF's
 evaluator decides membership. -/

@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import TCSlib.Cryptography.Authentication.Defs
 import TCSlib.Cryptography.Asymptotic.Encryption
 import TCSlib.Cryptography.Asymptotic.PRF
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,11 +46,23 @@ open Complexity Turing TCSlib.Cryptography TCSlib.Cryptography.Games
 /-- The tagging function on the raw machine input: `E` applied to the argument `⟨k, m⟩`. -/
 def prfTagFun (E : List Bool → List Bool) : List Bool → List Bool := E ∘ NUPPT.inArg
 
+/-- The raw tagging function returns `E (NUPPT.inArg z)` on input `z`. -/
+theorem prfTagFun_eq (E : List Bool → List Bool) (z : List Bool) :
+    prfTagFun E z = E (NUPPT.inArg z) := rfl
+
 /-- The verification function on `⟨1^n, ⟨k, ⟨m, σ⟩⟩⟩`: `[true]` iff `E ⟨k, m⟩ = σ`. -/
 def prfVerFun (E : List Bool → List Bool) : List Bool → List Bool :=
   (fun z => [decide (pairFstD z = pairSndD z)]) ∘ fun w =>
     pairEncode (E (pairEncode (pairFstD (pairSndD w)) (pairFstD (pairSndD (pairSndD w)))))
       (pairSndD (pairSndD (pairSndD w)))
+
+/-- The raw verifier compares `E ⟨k, m⟩` with `σ`, using the three components decoded from
+the input `w` [PS10, Protocol 134.3]. -/
+theorem prfVerFun_eq (E : List Bool → List Bool) (w : List Bool) :
+    prfVerFun E w =
+      [decide (E (pairEncode (pairFstD (pairSndD w)) (pairFstD (pairSndD (pairSndD w)))) =
+        pairSndD (pairSndD (pairSndD w)))] := by
+  simp only [prfVerFun, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- The tagging function is polynomial-time. -/
 theorem polyTimeComputable_prfTagFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
@@ -94,6 +107,8 @@ noncomputable def prfMAC (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (
     rw [htag, padFin_ofFn]
     simp [prfVerFun, atParam, hFE]
     rfl
+
+attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfMAC
 
 /-- **Theorem 135.4: a PRF gives a secure MAC** [PS10, Theorem 135.4]: if `F` is a pseudorandom
 function family, the PRF MAC is secure.

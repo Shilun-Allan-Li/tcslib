@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Composability.NonMalleable
+import Mathlib.Tactic.Simps.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -110,13 +111,26 @@ variable (M : MsgSampler)
 def draw (ℓ n : ℕ) (a : Fin (M.paramLen.eval n) → Bool) (ρ : M.samp.Coins n) : Fin ℓ → Bool :=
   padFin ℓ (M.samp.runAt n (List.ofFn a) ρ)
 
+/-- Drawing a message pads the sampler's output on parameter `a` and coins `ρ` to `ℓ` bits. -/
+theorem draw_eq (ℓ n : ℕ) (a : Fin (M.paramLen.eval n) → Bool) (ρ : M.samp.Coins n) :
+    M.draw ℓ n a ρ = padFin ℓ (M.samp.runAt n (List.ofFn a) ρ) := rfl
+
 /-- The history `h(m)`, read at `histLen(n)` bits. -/
 def histAt {ℓ : ℕ} (n : ℕ) (m : Fin ℓ → Bool) : Fin (M.histLen.eval n) → Bool :=
   padFin _ (M.hist (List.ofFn m))
 
+/-- The sampled message's history is `M.hist (List.ofFn m)`, padded to `histLen(n)` bits. -/
+theorem histAt_eq {ℓ : ℕ} (n : ℕ) (m : Fin ℓ → Bool) :
+    M.histAt n m = padFin (M.histLen.eval n) (M.hist (List.ofFn m)) := rfl
+
 /-- The simulator's oracle at parameter `n`: the parameter in, the history out. -/
 abbrev simSpec (n : ℕ) : OracleSpec (Fin 1) :=
   bitSpec (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
+
+/-- The simulator's oracle is `bitSpec` with parameter-length queries and history-length
+answers. -/
+theorem simSpec_eq (n : ℕ) :
+    M.simSpec n = bitSpec (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n) := rfl
 
 end MsgSampler
 
@@ -131,20 +145,47 @@ def snmInLens (M : MsgSampler) (n : ℕ) : Fin 2 → ℕ
   | 0 => S.ctLen.eval n
   | 1 => M.paramLen.eval n
 
+/-- A real-experiment decryption query has `ctLen(n)` bits. -/
+theorem snmInLens_zero (M : MsgSampler) (n : ℕ) :
+    S.snmInLens M n 0 = S.ctLen.eval n := rfl
+
+/-- A real-experiment challenge query has `paramLen(n)` bits. -/
+theorem snmInLens_one (M : MsgSampler) (n : ℕ) :
+    S.snmInLens M n 1 = M.paramLen.eval n := rfl
+
 /-- The answer lengths: `Dec` answers a validity flag and a message; `Challenge` the challenge
 ciphertext and the history. -/
 def snmOutLens (M : MsgSampler) (n : ℕ) : Fin 2 → ℕ
   | 0 => S.msgLen.eval n + 1
   | 1 => S.ctLen.eval n + M.histLen.eval n
 
+/-- A real-experiment decryption answer has one validity bit followed by `msgLen(n)` bits. -/
+theorem snmOutLens_zero (M : MsgSampler) (n : ℕ) :
+    S.snmOutLens M n 0 = S.msgLen.eval n + 1 := rfl
+
+/-- A real-experiment challenge answer has `ctLen(n) + histLen(n)` bits. -/
+theorem snmOutLens_one (M : MsgSampler) (n : ℕ) :
+    S.snmOutLens M n 1 = S.ctLen.eval n + M.histLen.eval n := rfl
+
 /-- The two oracles of the real experiment at parameter `n`. -/
 abbrev snmSpec (M : MsgSampler) (n : ℕ) : OracleSpec (Fin 2) :=
   bitSpec (S.snmInLens M n) (S.snmOutLens M n)
+
+/-- The real experiment's oracle specification is `bitSpec` at its published query and
+answer lengths. -/
+theorem snmSpec_eq (M : MsgSampler) (n : ℕ) :
+    S.snmSpec M n = bitSpec (S.snmInLens M n) (S.snmOutLens M n) := rfl
 
 /-- The state of the real experiment's oracles: the challenge, with the parameter it was asked
 on, once asked. -/
 abbrev SnmState (M : MsgSampler) (n : ℕ) : Type :=
   Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (M.paramLen.eval n) → Bool))
+
+/-- The real oracle state is an optional pair of a `ctLen(n)`-bit ciphertext and a
+`paramLen(n)`-bit sampler parameter. -/
+theorem SnmState_eq (M : MsgSampler) (n : ℕ) :
+    S.SnmState M n =
+      Option ((Fin (S.ctLen.eval n) → Bool) × (Fin (M.paramLen.eval n) → Bool)) := rfl
 
 /-- **The oracles of the real experiment** at parameter `n`, for the keys `pk`, `sk` and the
 sampler's coins `ρ`.
@@ -167,6 +208,31 @@ noncomputable def snmImpl (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : Lis
           padFin _ (S.enc.runAt n (pairEncode pk (List.ofFn (M.draw (S.msgLen.eval n) n a ρ))) re)
         .pure (Fin.append y (M.histAt n (M.draw (S.msgLen.eval n) n a ρ)), some (y, a))
 
+/-- A real-experiment decryption query returns the encoded decryption exactly when the oracle
+is open and the ciphertext is not the recorded challenge; otherwise it returns all-false bits. -/
+theorem snmImpl_dec (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List Bool)
+    (ρ : M.samp.Coins n) (c : Fin (S.ctLen.eval n) → Bool) (s : S.SnmState M n) :
+    S.snmImpl atk M n pk sk ρ 0 c s =
+      if FixedLengthScheme.decOpen atk s.isSome && !decide (s.map Prod.fst = some c) then
+        .pure (FixedLengthScheme.decAnswer
+          (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn c)))), s)
+      else .pure (zeroBits (S.msgLen.eval n + 1), s) := rfl
+
+/-- A real-experiment challenge query repeats the recorded ciphertext and history when a
+challenge exists; otherwise it encrypts the sampled message and records the ciphertext and
+parameter [PSV07, Definition 1]. -/
+theorem snmImpl_challenge (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : List Bool)
+    (ρ : M.samp.Coins n) (a : Fin (M.paramLen.eval n) → Bool) (s : S.SnmState M n) :
+    S.snmImpl atk M n pk sk ρ 1 a s =
+      match s with
+      | some (y, a₀) => .pure (Fin.append y (M.histAt n (M.draw (S.msgLen.eval n) n a₀ ρ)), s)
+      | none =>
+        (ProbComp.sample (S.enc.Coins n)).bind fun re =>
+          let y : Fin (S.ctLen.eval n) → Bool :=
+            padFin (S.ctLen.eval n)
+              (S.enc.runAt n (pairEncode pk (List.ofFn (M.draw (S.msgLen.eval n) n a ρ))) re)
+          .pure (Fin.append y (M.histAt n (M.draw (S.msgLen.eval n) n a ρ)), some (y, a)) := rfl
+
 /-- Under CPA, `Dec` never answers. -/
 theorem snmImpl_dec_cpa (M : MsgSampler) (n : ℕ) (pk sk : List Bool) (ρ : M.samp.Coins n)
     (c : Fin (S.ctLen.eval n) → Bool) (s : S.SnmState M n) :
@@ -179,14 +245,41 @@ def snmCodec (M : MsgSampler) (n r sl : ℕ) :
     MachineCodec (S.snmSpec M n) (Fin (r * S.ctLen.eval n + sl) → Bool) :=
   bitCodec (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl)
 
+/-- The real-experiment codec uses `decodeBitMove` with `r * ctLen(n) + sl` output bits. -/
+theorem snmCodec_decodeMove (M : MsgSampler) (n r sl : ℕ) (w : List Bool) :
+    (S.snmCodec M n r sl).decodeMove w =
+      decodeBitMove (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl) w :=
+  bitCodec_decodeMove (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl) w
+
+/-- The real-experiment codec encodes a log entry `(i, x, y)` as `⟨1^i, ⟨x, y⟩⟩`. -/
+theorem snmCodec_encodeEntry (M : MsgSampler) (n r sl : ℕ)
+    (e : Σ i, (S.snmSpec M n).dom i × (S.snmSpec M n).rng i) :
+    (S.snmCodec M n r sl).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl) e
+
+/-- When its query budget expires, the real-experiment codec returns
+`zeroBits (r * ctLen(n) + sl)`. -/
+theorem snmCodec_timeout (M : MsgSampler) (n r sl : ℕ) :
+    (S.snmCodec M n r sl).timeout = zeroBits (r * S.ctLen.eval n + sl) :=
+  bitCodec_timeout (S.snmInLens M n) (S.snmOutLens M n) (r * S.ctLen.eval n + sl)
+
 /-- The `i`-th of the `r` ciphertexts in an adversary's output. -/
 def snmCt {n r sl : ℕ} (w : Fin (r * S.ctLen.eval n + sl) → Bool) (i : Fin r) :
     Fin (S.ctLen.eval n) → Bool :=
   fun j => w (Fin.castAdd sl (finProdFinEquiv (i, j)))
 
+/-- Real output ciphertext `i` has bit `j` at `Fin.castAdd sl (finProdFinEquiv (i, j))`. -/
+theorem snmCt_eq {n r sl : ℕ} (w : Fin (r * S.ctLen.eval n + sl) → Bool) (i : Fin r) :
+    S.snmCt w i = fun j => w (Fin.castAdd sl (finProdFinEquiv (i, j))) := rfl
+
 /-- The final `σ`: the last `sl` bits of an output. -/
 def snmSigma {k sl : ℕ} (w : Fin (k + sl) → Bool) : Fin sl → Bool :=
   fun j => w (Fin.natAdd k j)
+
+/-- The final output string's bit `j` is input bit `Fin.natAdd k j`. -/
+theorem snmSigma_eq {k sl : ℕ} (w : Fin (k + sl) → Bool) :
+    snmSigma w = fun j => w (Fin.natAdd k j) := rfl
 
 /-- **The entry `d_i`** [PSV07, Definition 1]: `COPY` if `copy`, and `Dec_sk(c)` otherwise.
 Encoded as a `COPY` flag followed by `Dec`'s answer (a validity flag and the message; all `false`
@@ -197,11 +290,28 @@ def snmEntry {n : ℕ} (sk : List Bool) (copy : Bool) (c : Fin (S.ctLen.eval n) 
   else Fin.cons (α := fun _ => Bool) false
     (FixedLengthScheme.decAnswer (decodeFin _ (S.dec (pairEncode sk (List.ofFn c)))))
 
+/-- An entry begins with its COPY flag; a copy has an all-false payload, and every other entry
+has the encoded decryption as payload [PSV07, Definition 1]. -/
+theorem snmEntry_eq {n : ℕ} (sk : List Bool) (copy : Bool) (c : Fin (S.ctLen.eval n) → Bool) :
+    S.snmEntry sk copy c =
+      if copy then Fin.cons (α := fun _ => Bool) true (zeroBits (S.msgLen.eval n + 1))
+      else Fin.cons (α := fun _ => Bool) false
+        (FixedLengthScheme.decAnswer
+          (decodeFin (S.msgLen.eval n) (S.dec (pairEncode sk (List.ofFn c))))) := rfl
+
 /-- **The output `(M, m, (d₁, …, d_r), σ)`** handed to the distinguisher, with the parameter `a`
 in place of `M`: the concatenation of its fixed-length parts. -/
 def snmView {n pl r sl : ℕ} (a : Fin pl → Bool) (m : Fin (S.msgLen.eval n) → Bool)
     (d : Fin r → Fin (S.msgLen.eval n + 1 + 1) → Bool) (σ : Fin sl → Bool) : List Bool :=
   List.ofFn a ++ List.ofFn m ++ (List.ofFn fun i => List.ofFn (d i)).flatten ++ List.ofFn σ
+
+/-- The distinguisher's view concatenates the parameter, sampled message, flattened entries,
+and final `σ` [PSV07, Definition 1]. -/
+theorem snmView_eq {n pl r sl : ℕ} (a : Fin pl → Bool) (m : Fin (S.msgLen.eval n) → Bool)
+    (d : Fin r → Fin (S.msgLen.eval n + 1 + 1) → Bool) (σ : Fin sl → Bool) :
+    S.snmView a m d σ =
+      List.ofFn a ++ List.ofFn m ++ (List.ofFn fun i => List.ofFn (d i)).flatten ++ List.ofFn σ :=
+  rfl
 
 /-- **The real experiment** `SIM-NME′(Π, A, n)` [PSV07, Definition 1, `ℓ = 1`] for the attack
 `atk`, the sampler `M`, query budget `q`, `r` output ciphertexts and an `sl`-bit `σ`, followed
@@ -224,6 +334,27 @@ noncomputable def snmReal (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl : 
             (decide (res.2.map Prod.fst = some (S.snmCt res.1 i))) (S.snmCt res.1 i))
           (snmSigma res.1)) rD)
 
+/-- The real simulation experiment samples all coins, runs the adversary against its oracles,
+and applies the distinguisher to the resulting parameter, message, entries, and final output
+[PSV07, Definition 1]. -/
+theorem snmReal_eq (atk : Attack) (M : MsgSampler) (A : NUPPT) (q r sl : ℕ) (D : NUPPT)
+    (n : ℕ) :
+    S.snmReal atk M A q r sl D n =
+      (ProbComp.sample (S.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (M.samp.Coins n)).bind fun ρ =>
+      (ProbComp.sample (A.Coins n)).bind fun rA =>
+      (ProbComp.sample (D.Coins n)).bind fun rD =>
+      (simulate
+          (S.snmImpl atk M n (pairFstD (S.gen.runAt n [] rg)) (pairSndD (S.gen.runAt n [] rg)) ρ)
+          (A.toCompOn (S.snmCodec M n r sl) n q (pairFstD (S.gen.runAt n [] rg)) rA) none).bind
+        fun res =>
+          let a := (res.2.map Prod.snd).getD (zeroBits (M.paramLen.eval n))
+          .pure (D.distinguisherL n
+            (S.snmView a (M.draw (S.msgLen.eval n) n a ρ)
+              (fun i => S.snmEntry (pairSndD (S.gen.runAt n [] rg))
+                (decide (res.2.map Prod.fst = some (S.snmCt res.1 i))) (S.snmCt res.1 i))
+              (snmSigma res.1)) rD)) := rfl
+
 /-! ### The ideal experiment -/
 
 /-- **The oracle of the ideal experiment**: on the parameter `a` (the first one asked, recorded),
@@ -232,6 +363,13 @@ noncomputable def simImpl (M : MsgSampler) (n : ℕ) (ρ : M.samp.Coins n) :
     QueryImpl (M.simSpec n) (Option (Fin (M.paramLen.eval n) → Bool)) unifSpec :=
   fun _ a s => .pure (M.histAt n (M.draw (S.msgLen.eval n) n (s.getD a) ρ), some (s.getD a))
 
+/-- The ideal oracle returns the history of the sampled message at the recorded parameter,
+or at the current query if no parameter has been recorded, and records that parameter. -/
+theorem simImpl_eq (M : MsgSampler) (n : ℕ) (ρ : M.samp.Coins n) :
+    S.simImpl M n ρ =
+      fun _ a s => .pure
+        (M.histAt n (M.draw (S.msgLen.eval n) n (s.getD a) ρ), some (s.getD a)) := rfl
+
 /-- The codec of the simulator: its one oracle, and a final output of `r` entries, each a `COPY`
 flag and a ciphertext, followed by an `sl`-bit `σ`. -/
 def simCodec (M : MsgSampler) (n r sl : ℕ) :
@@ -239,11 +377,37 @@ def simCodec (M : MsgSampler) (n r sl : ℕ) :
   bitCodec (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
     (r * (S.ctLen.eval n + 1) + sl)
 
+/-- The ideal-experiment codec uses `decodeBitMove` with parameter and history lengths and
+`r * (ctLen(n) + 1) + sl` output bits. -/
+theorem simCodec_decodeMove (M : MsgSampler) (n r sl : ℕ) (w : List Bool) :
+    (S.simCodec M n r sl).decodeMove w =
+      decodeBitMove (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
+        (r * (S.ctLen.eval n + 1) + sl) w :=
+  bitCodec_decodeMove (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
+    (r * (S.ctLen.eval n + 1) + sl) w
+
+/-- The ideal-experiment codec encodes a log entry `(i, x, y)` as `⟨1^i, ⟨x, y⟩⟩`. -/
+theorem simCodec_encodeEntry (M : MsgSampler) (n r sl : ℕ)
+    (e : Σ i, (M.simSpec n).dom i × (M.simSpec n).rng i) :
+    (S.simCodec M n r sl).encodeEntry e =
+      pairEncode (List.replicate e.1 true) (pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)) :=
+  bitCodec_encodeEntry (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
+    (r * (S.ctLen.eval n + 1) + sl) e
+
+/-- When its query budget expires, the ideal-experiment codec returns
+`zeroBits (r * (ctLen(n) + 1) + sl)`. -/
+theorem simCodec_timeout (M : MsgSampler) (n r sl : ℕ) :
+    (S.simCodec M n r sl).timeout = zeroBits (r * (S.ctLen.eval n + 1) + sl) :=
+  bitCodec_timeout (fun _ => M.paramLen.eval n) (fun _ => M.histLen.eval n)
+    (r * (S.ctLen.eval n + 1) + sl)
+
 /-- The `i`-th entry of the simulator's output: its `COPY` flag and its ciphertext. -/
 def simEntry {n r sl : ℕ} (w : Fin (r * (S.ctLen.eval n + 1) + sl) → Bool) (i : Fin r) :
     Bool × (Fin (S.ctLen.eval n) → Bool) :=
   (w (Fin.castAdd sl (finProdFinEquiv (i, 0))),
     fun j => w (Fin.castAdd sl (finProdFinEquiv (i, j.succ))))
+
+attribute [simps (config := { isSimp := false }) fst snd] simEntry
 
 /-- **The ideal experiment** `SIM-NME′‾(Π, S, n)` [PSV07, Definition 1, `ℓ = 1`] for the sampler
 `M`, `r` output entries and an `sl`-bit `σ`, followed by the distinguisher `D`: sample the keys
@@ -266,6 +430,25 @@ noncomputable def snmIdeal (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (D : NUPP
             (S.simEntry res.1 i).2)
           (snmSigma res.1)) rD)
 
+/-- The ideal simulation experiment samples all coins, runs the simulator against the history
+oracle, and applies the distinguisher to the parameter, message, decoded entries, and final
+output [PSV07, Definition 1]. -/
+theorem snmIdeal_eq (M : MsgSampler) (Sim : NUPPT) (r sl : ℕ) (D : NUPPT) (n : ℕ) :
+    S.snmIdeal M Sim r sl D n =
+      (ProbComp.sample (S.gen.Coins n)).bind (fun rg =>
+      (ProbComp.sample (M.samp.Coins n)).bind fun ρ =>
+      (ProbComp.sample (Sim.Coins n)).bind fun rS =>
+      (ProbComp.sample (D.Coins n)).bind fun rD =>
+      (simulate (S.simImpl M n ρ)
+          (Sim.toCompOn (S.simCodec M n r sl) n 1 (pairFstD (S.gen.runAt n [] rg)) rS) none).bind
+        fun res =>
+          let a := res.2.getD (zeroBits (M.paramLen.eval n))
+          .pure (D.distinguisherL n
+            (S.snmView a (M.draw (S.msgLen.eval n) n a ρ)
+              (fun i => S.snmEntry (pairSndD (S.gen.runAt n [] rg)) (S.simEntry res.1 i).1
+                (S.simEntry res.1 i).2)
+              (snmSigma res.1)) rD)) := rfl
+
 /-! ### Definition 173.7 and Theorem 174.8 -/
 
 /-- **Simulation-based non-malleability** [PS10, Definition 173.7], in the form SIM-NME′ of
@@ -279,6 +462,16 @@ def SimNMSecure (atk : Attack) : Prop :=
     ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
       advantage (S.snmReal atk M A (q.eval n) (r.eval n) (sl.eval n) D n)
         (S.snmIdeal M Sim (r.eval n) (sl.eval n) D n) ≤ ε n
+
+/-- Simulation-based non-malleability holds exactly when, for every sampler, adversary and
+polynomial budgets, one simulator makes every distinguisher's real/ideal advantage negligible
+[PS10, Definition 173.7; PSV07, Definition 1]. -/
+theorem SimNMSecure_iff (atk : Attack) :
+    S.SimNMSecure atk ↔
+      ∀ (M : MsgSampler) (A : NUPPT) (q r sl : PolyExpr), ∃ Sim : NUPPT,
+        ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+          advantage (S.snmReal atk M A (q.eval n) (r.eval n) (sl.eval n) D n)
+            (S.snmIdeal M Sim (r.eval n) (sl.eval n) D n) ≤ ε n := Iff.rfl
 
 /-- **Theorem 174.8, (relation-based ⇒ indistinguishability-based), for every attack**
 [PSV07, Corollary 1, at one message]: SIM-NME′ implies Definition 172.6.

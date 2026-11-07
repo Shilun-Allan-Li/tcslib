@@ -45,13 +45,17 @@ a view reaches the distinguisher encoded (`View.encode`).
 ## Main definitions
 
 * `SecureComputation.Functionality`: a two-party functionality with private outputs.
-* `SecureComputation.realA`, `idealA`, `realB`, `idealB`: the four samplers of Def 155.1.
+* `Functionality.realA`, `idealA`, `realB`, `idealB`: the four samplers of Def 155.1.
 * `SecureComputation.Functionality.PolyTime`: the parties run in polynomial time.
 * `SecureComputation.HBCSecure`: [PS10, Definition 155.1].
 * `SecureComputation.otFunctionality`: [PS10, Def 160.a], `OT(a₁, a₂, b) = (⊥, a_b)`.
 
 ## Main results
 
+* `Functionality.realA_eq`, `realB_eq`, `idealA_eq`, `idealB_eq`: the four sampler equations.
+* `Functionality.polyTime_iff`, `SecureComputation.hbcSecure_iff`: the time and security clauses.
+* `SecureComputation.otFunctionality_inA`, `otFunctionality_inB`, `otFunctionality_outA`,
+  `otFunctionality_outB`, `otFunctionality_f`: the OT functionality's fields.
 * `SecureComputation.otFunctionality_f_snd`: the OT functionality gives Bob the chosen bit.
 
 ## References
@@ -91,11 +95,25 @@ def realA (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (
   pairEncode (π.viewP (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
     (π.outV π.P (List.replicate n true) (List.ofFn x) (List.ofFn y) r)
 
+/-- Alice's real sampler pairs her encoded view with Bob's output on the honest tapes. -/
+theorem realA_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)) :
+    F.realA π n x y r =
+      pairEncode (π.viewP (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+        (π.outV π.P (List.replicate n true) (List.ofFn x) (List.ofFn y) r) := rfl
+
 /-- **The real sampler for Bob's side**: `⟨view_B, out_A⟩`. -/
 def realB (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
     π.ExecCoins π.P (List.replicate n true) → List Bool := fun r =>
   pairEncode (π.viewV (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
     (π.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) r)
+
+/-- Bob's real sampler pairs his encoded view with Alice's output on the honest tapes. -/
+theorem realB_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)) :
+    F.realB π n x y r =
+      pairEncode (π.viewV (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+        (π.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) r) := rfl
 
 /-- **The ideal sampler for Alice's side**: `⟨S_A(1^n, ⟨x, f_A(x, y)⟩), f_B(x, y)⟩`. -/
 def idealA (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
@@ -103,11 +121,25 @@ def idealA (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.i
   pairEncode (S.runAt n (pairEncode (List.ofFn x) (List.ofFn (F.f n x y).1)) s)
     (List.ofFn (F.f n x y).2)
 
+/-- Alice's ideal sampler pairs her simulation from her input and output with Bob's output. -/
+theorem idealA_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (s : S.Coins n) :
+    F.idealA S n x y s =
+      pairEncode (S.runAt n (pairEncode (List.ofFn x) (List.ofFn (F.f n x y).1)) s)
+        (List.ofFn (F.f n x y).2) := rfl
+
 /-- **The ideal sampler for Bob's side**: `⟨S_B(1^n, ⟨y, f_B(x, y)⟩), f_A(x, y)⟩`. -/
 def idealB (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
     S.Coins n → List Bool := fun s =>
   pairEncode (S.runAt n (pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) s)
     (List.ofFn (F.f n x y).1)
+
+/-- Bob's ideal sampler pairs his simulation from his input and output with Alice's output. -/
+theorem idealB_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (s : S.Coins n) :
+    F.idealB S n x y s =
+      pairEncode (S.runAt n (pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) s)
+        (List.ofFn (F.f n x y).1) := rfl
 
 /-- **The parties run in polynomial time** on `F`'s inputs (ruling of 2026-11-05).
 - Both strategies are PPT (`Strategy.Efficient`).
@@ -124,6 +156,16 @@ def PolyTime (π : Protocol) : Prop :=
         (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
       msg.length ≤ B.eval n
 
+/-- Polynomial time means efficient strategies and a uniform polynomial bound on every
+message in every honest execution on inputs of the functionality's lengths. -/
+theorem polyTime_iff (π : Protocol) :
+    F.PolyTime π ↔
+      π.P.Efficient ∧ π.V.Efficient ∧ ∃ B : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool)
+        (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)),
+        ∀ msg ∈ (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
+            (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
+          msg.length ≤ B.eval n := Iff.rfl
+
 end Functionality
 
 /-- **Honest-but-curious security** [PS10, Definition 155.1]: the parties run in polynomial time
@@ -137,6 +179,15 @@ def HBCSecure (π : Protocol) (F : Functionality) : Prop :=
       distAdv (F.realA π n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
         distAdv (F.realB π n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n
 
+/-- Honest-but-curious security consists of polynomial time and two simulators whose
+distinguishing advantages have a negligible bound uniform over inputs of each length. -/
+theorem hbcSecure_iff (π : Protocol) (F : Functionality) :
+    HBCSecure π F ↔
+      F.PolyTime π ∧ ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+        ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+          distAdv (F.realA π n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+            distAdv (F.realB π n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n := Iff.rfl
+
 /-- **1-out-of-2 oblivious transfer** [PS10, Def 160.a]: the sender Alice holds bits `(a₁, a₂)`,
 the receiver Bob a choice bit `b` (`false` for `1`, `true` for `2`);
 `OT(a₁, a₂, b) = (⊥, a_b)`, with Alice's `⊥` the empty output. -/
@@ -146,6 +197,23 @@ def otFunctionality : Functionality where
   outA := .const 0
   outB := .const 1
   f _ (a : Fin 2 → Bool) (b : Fin 1 → Bool) := (Fin.elim0, fun _ => a (if b 0 then 1 else 0))
+
+/-- Alice's OT input consists of two bits. -/
+theorem otFunctionality_inA : otFunctionality.inA = .const 2 := rfl
+
+/-- Bob's OT input consists of one choice bit. -/
+theorem otFunctionality_inB : otFunctionality.inB = .const 1 := rfl
+
+/-- Alice's OT output is empty. -/
+theorem otFunctionality_outA : otFunctionality.outA = .const 0 := rfl
+
+/-- Bob's OT output consists of one bit. -/
+theorem otFunctionality_outB : otFunctionality.outB = .const 1 := rfl
+
+/-- OT returns the empty output to Alice and the selected input bit to Bob. -/
+theorem otFunctionality_f (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
+    otFunctionality.f n a b =
+      ((Fin.elim0 : Fin 0 → Bool), fun _ : Fin 1 => a (if b 0 then 1 else 0)) := rfl
 
 /-- The OT functionality gives Bob the chosen bit. -/
 theorem otFunctionality_f_snd (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
