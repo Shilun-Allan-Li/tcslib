@@ -1,0 +1,57 @@
+private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime x w T) :
+    ∃ t ≤ T + x.length + 4, ∃ c : Cfg M.k Bool M.State x,
+      c.output = w ∧
+      (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+        lenCfg M c (some (.inr (.inr none))) 0 (by omega) c.output.length := by
+  classical
+  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    ⟨T, ((computesInTime_iff _ _ _ _).mp hM).1⟩
+  let t := Nat.find hh
+  let c := M.tm.runFrom (M.tm.initCfg x) t
+  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hM).1
+  have hs : c.state = none := Nat.find_spec hh
+  have hc : M.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  have ho : c.output = w := hc.output_unique hM
+  let emb : M.State → (pairCountTM M).State := Sum.inl
+  let ret : (pairCountTM M).State := .inr (.inl 0)
+  have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+  have hcap : (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+      captureCfg emb ret [] [] c := by
+    rw [hinit]
+    exact capture_run M.tm (pairCountTM M).tm emb ret (fun _ _ _ => rfl)
+      [] [] _ t (fun s hst => Nat.find_min hh hst)
+  let ready : Cfg (M.k + 1) Bool (pairCountTM M).State x :=
+    {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
+      inputPos := c.inputPos}
+  have hback : (pairCountTM M).tm.step (captureCfg emb ret [] [] c) = ready := by
+    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]
+    simp only [MultiTapeTM.step, hstate]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_zero _
+    · rfl
+    · funext i
+      by_cases hi : i.val < M.k <;>
+        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+          sub_eq_add_neg]
+    · rfl
+  obtain ⟨r, hrle, hr⟩ := timed_rewind (pairCountTM M).tm
+    (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
+  refine ⟨t + 1 + r, ?_, c, ho, ?_⟩
+  · change r ≤ c.inputPos.val + 2 at hrle
+    have := c.inputPos.isLt
+    omega
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]
+    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    rw [hback, hr]
+    rfl
+
+/-- The captured checker compares a valid pair's payload with the length of
+the generator's output, and rejects every malformed input.
+**Proof sketch.** Compose the silent capture/rewind prefix with the aligned
+parser and countdown ledger, then absorb the two linear scans. -/

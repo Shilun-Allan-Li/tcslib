@@ -1,0 +1,11 @@
+theorem compareStop_unique {Symbol : Type*} [DecidableEq Symbol] {u v : List Symbol} {d : ℕ}
+    (h1 : ∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b)
+    (h2 : ¬∃ b, u[d]? = some b ∧ v[d]? = some b) : d = compareStop u v := by
+  obtain ⟨c1, c2⟩ := compareStop_spec u v
+  rcases Nat.lt_trichotomy d (compareStop u v) with h | h | h
+  · exact absurd (c1 d h) h2
+  · exact h
+  · exact absurd (h1 _ h) c2
+
+/-- The stop is at most either word's length: `compareStop u v ≤ min |u| |v|` (MIG-11a, user
+2026-10-16). -/

@@ -1,0 +1,39 @@
+private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime s out T) :
+    ∃ t ≤ T, ∃ b,
+      VirtualTag (M.tm.runFrom (M.tm.initCfg s) t).inputPos b ∧
+      (M.tm.runFrom (M.tm.initCfg s) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg s) t).output = out ∧
+      (∀ j < t, ((emCallEvalTM M).tm.runFrom
+        (emCallEvalCfg (w := w) M (M.tm.initCfg s) true 1) j).state ≠ some (.inr ())) ∧
+      (emCallEvalTM M).tm.runFrom
+        (emCallEvalCfg (w := w) M (M.tm.initCfg s) true 1) t =
+          emCallEvalCfg (w := w) M (M.tm.runFrom (M.tm.initCfg s) t) b 1 := by
+  classical
+  have hspec := (computesInTime_iff M s out T).mp hM
+  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg s) t).state = none := ⟨T, hspec.1⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hspec.1
+  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := Nat.find_spec hex
+  have hlive : ∀ j < t, (M.tm.runFrom (M.tm.initCfg s) j).state ≠ none :=
+    fun j hj => Nat.find_min hex hj
+  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out :=
+    ((computesInTime_iff M s _ t).mpr ⟨hh, rfl⟩).output_unique hM
+  have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
+    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+  obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
+    (1 : Fin (w.length + 2)) t hlive
+  refine ⟨t, ht, b, hb, hh, hout, ?_, hr⟩
+  intro j hj
+  obtain ⟨b', _, hr'⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
+    (1 : Fin (w.length + 2)) j (fun l hl => hlive l (by omega))
+  rw [hr']
+  cases hs : (M.tm.runFrom (M.tm.initCfg s) j).state with
+  | none => exact False.elim (hlive j hj hs)
+  | some q =>
+    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]
+    rw [hs]
+    simp
+
+/-- A contiguous visited interval, marked independently of the simulated data.
+The bounds are proof data; the cleaner reads only the marker tape. -/

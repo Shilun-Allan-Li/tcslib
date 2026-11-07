@@ -1,0 +1,6 @@
+/-- Both decoded components are bounded by their complete source word, with empty
+defaults on malformed input.
+**Proof sketch.** Split the decode once. On success the public inverse identifies
+an encoded pair, whose published length bounds both components; failure gives empty words. -/
+private lemma clA5Pair_sizes (w : List Bool) :
+    (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length 

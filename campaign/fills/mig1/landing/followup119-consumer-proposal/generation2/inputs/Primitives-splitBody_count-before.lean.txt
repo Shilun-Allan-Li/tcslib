@@ -1,0 +1,27 @@
+private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Bool)
+    (out : List Bool) (T : ℕ)
+    (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t ≤ T, (splitBodyTM M start).tm.runFrom
+      (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t =
+      splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s none out) ∧
+      splitSafe (splitBodyTM M start).tm .anchor
+        (splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s (some start) [])) t := by
+  classical
+  let c := splitBank M s (some start) []
+  let d := splitBank M s none out
+  have hh : ∃ t, (M.tm.runFrom c t).state = none := ⟨T, by rw [hT]; rfl⟩
+  let t := Nat.find hh
+  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; rfl)
+  have he : M.tm.runFrom c t = d := by
+    have h := M.tm.runFrom_add c t (T - t)
+    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
+    exact h.symm
+  have hp (j : ℕ) (hj : j ≤ t) := splitCount_run M.tm (splitBodyTM M start).tm
+    SplitBodyState.count SplitBodyState.check (fun _ _ _ _ => rfl) w s c j
+    (fun l hl => Nat.find_min hh (by omega))
+  refine ⟨t, ht, ?_, ?_⟩
+  · rw [hp t (le_refl _), he]
+  · intro j hj
+    rw [hp j hj]
+    cases hq : (M.tm.runFrom c j).state <;> simp [splitCountCfg, hq]
+

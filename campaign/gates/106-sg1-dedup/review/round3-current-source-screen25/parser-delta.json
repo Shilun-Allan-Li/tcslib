@@ -1,0 +1,348 @@
+{
+  "base_count": 1956,
+  "head_count": 1948,
+  "new_eligible": [
+    {
+      "label": "CounterLoop.lean::counterSpan_iff_segment",
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "offset": 20336,
+      "name": "counterSpan_iff_segment",
+      "kind": "proof",
+      "normalized_body": "byrw[Turing.segment_iff]exact\u27e8fun\u27e8hc,hh,hr\u27e9=>\u27e8rfl,funuhuhm=>Or.elimhm(hcuhu).1(hcuhu).2,funuhu=>\u27e8hhuhu,hruhu\u27e9\u27e9,fun\u27e8_,hc,hp\u27e9=>\u27e8funuhu=>\u27e8funh=>hcuhu(Or.inlh),funh=>hcuhu(Or.inrh)\u27e9,funuhu=>(hpuhu).1,funuhu=>(hpuhu).2\u27e9\u27e9",
+      "body_chars": 215
+    },
+    {
+      "label": "SingleTape.lean::dgSpan_iff_segment",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "offset": 47529,
+      "name": "dgSpan_iff_segment",
+      "kind": "proof",
+      "normalized_body": "byrw[Turing.segment_iff]exact\u27e8funh=>\u27e8h.1,fun__hm=>hm,h.2\u27e9,funh=>\u27e8h.1,h.2.2\u27e9\u27e9",
+      "body_chars": 76
+    },
+    {
+      "label": "SingleTape.lean::dgSpan_mono",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "offset": 51462,
+      "name": "dgSpan_mono",
+      "kind": "proof",
+      "normalized_body": "byrw[dgSpan_iff_segment]ath\u22a2exacth.monosubset_rflfunphp=>\u27e8hl.transhp.1,hp.2.transhr\u27e9",
+      "body_chars": 84
+    },
+    {
+      "label": "Tautology.lean::tautDualSegment_iff_segment",
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "offset": 45439,
+      "name": "tautDualSegment_iff_segment",
+      "kind": "proof",
+      "normalized_body": "byrw[Turing.segment_iff]exact\u27e8funh=>\u27e8h.1,h.2,fun__=>trivial\u27e9,funh=>\u27e8h.1,h.2.1\u27e9\u27e9",
+      "body_chars": 79
+    },
+    {
+      "label": "Tautology.lean::tautDual_segment_one",
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "offset": 45929,
+      "name": "tautDual_segment_one",
+      "kind": "proof",
+      "normalized_body": "byrw[tautDualSegment_iff_segment]havehseg:=Segment.one(M:=tautDualTM.tm)(F:={some.anchor})(P:=fun_=>True)(a:=c)(bysimpaonly[Set.mem_singleton_iff]usinghq)trivialtrivialsimpaonly[h]usinghseg",
+      "body_chars": 189
+    }
+  ],
+  "gone_eligible": [
+    {
+      "label": "CounterLoop.lean::counter_span_append",
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "offset": 20336,
+      "name": "counter_span_append",
+      "kind": "proof",
+      "normalized_body": "byhavesuffix(u:\u2115)(hu:s\u2264u):H.runFromzu=H.runFrom(H.runFromzs)(u-s):=byrw[\u2190H.runFrom_add,Nat.add_sub_of_lehu]refine\u27e8?_,?_,?_\u27e9\u00b7introuhuby_caseshs:u<s\u00b7exacth\u2081.1uhs\u00b7rw[suffixu(byomega)];exacth\u2082.1(u-s)(byomega)\u00b7introuhuby_caseshs:u\u2264s\u00b7exacth\u2081.2.1uhs\u00b7rw[suffixu(byomega)];exacth\u2082.2.1(u-s)(byomega)\u00b7introuhuby_caseshs:u\u2264s\u00b7exacthr\u2081_(h\u2081.2.2uhs)\u00b7rw[suffixu(byomega)];exacthr\u2082_(h\u2082.2.2(u-s)(byomega))",
+      "body_chars": 386
+    },
+    {
+      "label": "Hardness.lean::clA5_pt_and",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 272230,
+      "name": "clA5_pt_and",
+      "kind": "proof",
+      "normalized_body": "byhaveh:=clA5_pt_condhphq(clA5_pt_const[false])converthusing1funextxcasespx<;>rfl",
+      "body_chars": 81
+    },
+    {
+      "label": "Hardness.lean::clA5_pt_cond",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 271113,
+      "name": "clA5_pt_cond",
+      "kind": "proof",
+      "normalized_body": "byobtain\u27e8P,A,a,hP\u27e9:=hpobtain\u27e8F,B,b,hF\u27e9:=hfobtain\u27e8G,C,c,hG\u27e9:=hgobtain\u27e8M,K,hM\u27e9:=FinTM.computesFunInTime_condhPhFhGlete:=maxa(maxbc)refine\u27e8M,K*(A+B+C+1),e,funx=>(hMx).mono?_\u27e9haveha:=Nat.mul_le_mul_leftA(Nat.pow_le_pow_right(Nat.succ_posx.length)(showa\u2264ebyexactNat.le_max_left__))havehb:=Nat.mul_le_mul_leftB(Nat.pow_le_pow_right(Nat.succ_posx.length)(showb\u2264ebyomega))havehc:=Nat.mul_le_mul_leftC(Nat.pow_le_pow_right(Nat.succ_posx.length)(showc\u2264ebyomega))haveh1:1\u2264(x.length+1)^e:=Nat.one_le_pow__(Nat.succ_pos_)simponly[Nat.succ_eq_add_one]athahbhccalc_\u2264K*((A+B+C+1)*(x.length+1)^e):=Nat.mul_le_mul_leftK(bysimponly[Nat.add_mul,Nat.one_mul];omega)_=_:=byring",
+      "body_chars": 655
+    },
+    {
+      "label": "Hardness.lean::clNative_append",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 20710,
+      "name": "clNative_append",
+      "kind": "proof",
+      "normalized_body": "bysimpaonly[Function.comp_def,pairDecode_pairEncode]using(clNative_linear_FinTM.computesFunInTime_pairConcat).comp(clNative_pairhfhg)",
+      "body_chars": 133
+    },
+    {
+      "label": "Hardness.lean::clNative_linear",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 18615,
+      "name": "clNative_linear",
+      "kind": "proof",
+      "normalized_body": "byobtain\u27e8M,a,hM\u27e9:=hexact\u27e8M,a,1,bysimpaonly[Nat.pow_one]usinghM\u27e9",
+      "body_chars": 63
+    },
+    {
+      "label": "Hardness.lean::clNative_pair",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 19747,
+      "name": "clNative_pair",
+      "kind": "proof",
+      "normalized_body": "byhavehd:=clNative_linear_FinTM.computesFunInTime_pairDuphavehp:=clNative_linear_FinTM.computesFunInTime_pairFsthavehs:=clNative_linear_FinTM.computesFunInTime_pairSndhavehc:=clNative_linear_FinTM.computesFunInTime_pairConcathavehz:=clNative_linear_(FinTM.computesFunInTime_const[])havehH:=((clNative_maphz).comphd).comphfhavehS:=(clNative_maphH).comphdhavehT:=((clNative_map(hg.comphp)).comphd).comphSconverths.comp(hc.comphT)using1funextxsimponly[Function.comp_apply,pairDecode_pairEncode,Option.map_some,Option.getD_some]havehe(abc:ListBool):pairEncodeab++c=pairEncodea(b++c):=bysimp[pairEncode,List.append_assoc]rw[he,he]simp[pairDecode_pairEncode]",
+      "body_chars": 652
+    },
+    {
+      "label": "Hardness.lean::clNative_unary",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "offset": 21033,
+      "name": "clNative_unary",
+      "kind": "proof",
+      "normalized_body": "byobtain\u27e8M,a,hM\u27e9:=FinTM.computesFunInTime_polyUnaryCeexact\u27e8M,a,e+1,hM\u27e9",
+      "body_chars": 70
+    },
+    {
+      "label": "SAT.lean::sat_pt_append",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "offset": 111228,
+      "name": "sat_pt_append",
+      "kind": "proof",
+      "normalized_body": "bysimpaonly[Function.comp_def,pairDecode_pairEncode]using(sat_pt_linear_FinTM.computesFunInTime_pairConcat).comp(sat_pt_pairhfhg)",
+      "body_chars": 129
+    },
+    {
+      "label": "SAT.lean::sat_pt_pair",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "offset": 110932,
+      "name": "sat_pt_pair",
+      "kind": "proof",
+      "normalized_body": "bysimpaonly[Function.comp_def,pairDecode_pairEncode]using(sat_pt_mapSndhg).comp(sat_pt_pair_inputhf)",
+      "body_chars": 100
+    },
+    {
+      "label": "SAT.lean::sat_pt_pair_input",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "offset": 109184,
+      "name": "sat_pt_pair_input",
+      "kind": "proof",
+      "normalized_body": "byobtain\u27e8M,C,e,hM\u27e9:=hfrefine\u27e8satPairTMM,4*C+10,e+1,funx=>(satPair_computesMf_hMx).mono?_\u27e9havehe:(x.length+1)^e\u2264(x.length+1)^(e+1):=Nat.pow_le_pow_right(Nat.succ_pos_)(byomega)haveh1:x.length+1\u2264(x.length+1)^(e+1):=bysimpausingNat.pow_le_pow_right(Nat.succ_posx.length)(show1\u2264e+1byomega)haveht:=Nat.mul_le_mul_left(4*C)hedsimponlycalc_=4*C*(x.length+1)^e+2*x.length+8:=byring_\u22644*C*(x.length+1)^(e+1)+10*(x.length+1)^(e+1):=byomega_=_:=byring",
+      "body_chars": 439
+    },
+    {
+      "label": "SAT.lean::sat_pt_unaryLength",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "offset": 114773,
+      "name": "sat_pt_unaryLength",
+      "kind": "proof",
+      "normalized_body": "byhaveh:=satMap_poly(S:=Unit)(fun__=>())(fun__=>sometrue)(fun_=>none)()havehe(x:ListBool):satMapWord(fun(_:Unit)_=>())(fun__=>sometrue)(fun_=>none)()x=List.replicatex.lengthtrue:=byinductionxwith|nil=>rfl|consbrih=>simpa[satMapWord,List.replicate_succ]usingcongrArg(true::\u00b7)ihconverthusing1funextxexact(hex).symm",
+      "body_chars": 312
+    },
+    {
+      "label": "SingleTape.lean::dgSpan_add",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "offset": 47469,
+      "name": "dgSpan_add",
+      "kind": "proof",
+      "normalized_body": "byrefine\u27e8byrw[MultiTapeTM.runFrom_add,h\u2081.1,h\u2082.1],?_\u27e9introuhuby_casesh:u\u2264s\u00b7exacth\u2081.2uh\u00b7havehe:u=s+(u-s):=byomegarw[he,MultiTapeTM.runFrom_add,h\u2081.1]exacth\u2082.2(u-s)(byomega)",
+      "body_chars": 169
+    },
+    {
+      "label": "Tautology.lean::tautDual_segment_add",
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "offset": 45805,
+      "name": "tautDual_segment_add",
+      "kind": "proof",
+      "normalized_body": "byrefine\u27e8byrw[MultiTapeTM.runFrom_add,h.1,h'.1],?_\u27e9introjhjby_casesha:j<a\u00b7exacth.2jha\u00b7havehe:j=a+(j-a):=byomegarw[he,MultiTapeTM.runFrom_add,h.1]exacth'.2(j-a)(byomega)",
+      "body_chars": 168
+    }
+  ],
+  "changed_surviving": [
+    {
+      "label": "CounterLoop.lean::RoundContract.counterLoopDone_traj",
+      "base_chars": 555,
+      "head_chars": 583,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "CounterLoop.lean::RoundContract.counterLoopEscape_traj",
+      "base_chars": 533,
+      "head_chars": 561,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "CounterLoop.lean::counterLoopTMVia_done_witness",
+      "base_chars": 969,
+      "head_chars": 991,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "CounterLoop.lean::counterLoopTMVia_escape_witness",
+      "base_chars": 1008,
+      "head_chars": 1030,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "CounterLoop.lean::counterLoopTMVia_run_done",
+      "base_chars": 1759,
+      "head_chars": 1968,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "CounterLoop.lean::counter_rounds",
+      "base_chars": 3346,
+      "head_chars": 3679,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Hardness.lean::clA5Drop_native",
+      "base_chars": 225,
+      "head_chars": 266,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Hardness.lean::clA5Le_native",
+      "base_chars": 149,
+      "head_chars": 167,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Hardness.lean::clA5Pair_sizes",
+      "base_chars": 1165,
+      "head_chars": 408,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Hardness.lean::clA5_guard_add",
+      "base_chars": 127,
+      "head_chars": 525,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Hardness.lean::clNative_map",
+      "base_chars": 502,
+      "head_chars": 176,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SAT.lean::sat_guard_add",
+      "base_chars": 127,
+      "head_chars": 525,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SAT.lean::sat_pt_mapSnd",
+      "base_chars": 552,
+      "head_chars": 176,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dgSpan_one",
+      "base_chars": 128,
+      "head_chars": 141,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_collect",
+      "base_chars": 1631,
+      "head_chars": 1705,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_end_with_growth",
+      "base_chars": 1516,
+      "head_chars": 1564,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_init",
+      "base_chars": 3322,
+      "head_chars": 3379,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_simulate",
+      "base_chars": 1749,
+      "head_chars": 1823,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_step",
+      "base_chars": 4846,
+      "head_chars": 4914,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "SingleTape.lean::dg_turn_with_growth",
+      "base_chars": 1283,
+      "head_chars": 1331,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Tautology.lean::tautDual_copy",
+      "base_chars": 1039,
+      "head_chars": 1130,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Tautology.lean::tautDual_invalid",
+      "base_chars": 832,
+      "head_chars": 854,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Tautology.lean::tautDual_rewind",
+      "base_chars": 1004,
+      "head_chars": 1095,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Tautology.lean::tautDual_scan",
+      "base_chars": 929,
+      "head_chars": 1020,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    },
+    {
+      "label": "Tautology.lean::tautDual_valid",
+      "base_chars": 1053,
+      "head_chars": 1049,
+      "base_kind": "proof",
+      "head_kind": "proof"
+    }
+  ],
+  "scope": "Canonical v3 parser-only eligibility, not compiler declarations. Exact source and full Git diff retained."
+}

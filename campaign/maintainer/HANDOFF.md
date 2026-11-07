@@ -28,16 +28,17 @@ current campaign snapshot (394/0, static0/77); receipt in
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
-| #215 | SG-1, cut repairs and16 canonical closure/encoding repoints; `lean/dedup-sg1`, head `d0c4a292e781b55617e05b33fdd423bb059fd735` | 106 round2 HOLD0/1/0/15; round3 Codex selected | User-approved Hardness PolyTimePrefix import. Final SAT→Hardness compile PASS;16roots+7descendants standardAX; bounded scoped seals/freshcontrols pass. Fresh329-module msg5 from mac4 running; expanded screen/current compiled comparison pending. Six adapter/dispatcher debt kinds retain their ruled window. **Not yet clear to merge.** |
+| #215 | SG-1, cut repairs and16 canonical closure/encoding repoints; `lean/dedup-sg1`, head `d0c4a292e781b55617e05b33fdd423bb059fd735` | 106 round2 HOLD0/1/0/15; round3 Codex selected | User-approved Hardness PolyTimePrefix import. Final SAT→Hardness compile PASS;16roots+7descendants standardAX; bounded scoped seals/freshcontrols pass. Fresh329-module msg5 PASS0failures/static0/66; final25-file screen/current comparison finishing. Six adapter/dispatcher kinds plus the separately accepted unary-clock host retain their ruled window. **Not yet clear to merge.** |
 | #230 (merged) | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, ready | 117 CLOSED PASS0/0/0/14 | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Gate117 CLOSED PASS0/0/0/14; all notes accepted after independent review. Exact source unchanged; current394/0/static0/77 replay remains valid. PR non-draft and mergeable/clean. **Merged by Seyoon** at `3023dc1408c3d216fc07a7cbba9ae30135b861ed`; exact mra2→mac4 adoption. |
 | #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Follow-up API/home changes approved; gate119 implementation/validation underway, not yet merged into landing. **Not yet clear to merge.** |
-| #234 | Approved first-entry/zero-space facts and redirect-space owner move; `lean/mig1-followup-api`, head `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`, draft | 119, Codex selected | Actual5-module chain and owner/consumer seals/controls PASS; source+3/onehome move; compiled3778→3782 without AX regression. Full16-file screens exit0, six staged first-entry similarities disclosed. Fresh401-module mfup2 from mac4 running with enforced-j4; earlier272-row mfup1 intentionally stopped/incomplete and retained. **Not yet clear to merge.** |
+| #234 | Approved first-entry/zero-space facts and redirect-space owner move; `lean/mig1-followup-api`, head `f1ca767a10551960faf36ad9c8ff17bea3a2d88c`, draft | 119, Codex selected | Actual5-module chain and owner/consumer seals/controls PASS; source+3/onehome move; compiled3778→3782 without AX regression. Full16-file screens exit0, six staged first-entry similarities disclosed. Fresh401-module mfup2 PASS0failures/static0/77 with enforced-j4; earlier272-row mfup1 intentionally stopped/incomplete and retained. **Not yet clear to merge.** |
 
 Earlier passed replay generations retain their exact mac3 source pins. Current msg5 and
-mfup2 are fresh complete **oleans-mac4** copies; both are running, with explicit pinned4.25
+mfup2 are fresh complete **oleans-mac4** copies; both PASSED, with explicit pinned4.25
 -j4/nice10/slot locking. The incomplete mfup1 and its correction are retained separately.
 Full logs/orders/scripts/static outputs and receipts live in each gate's evidence folder.
-Original packets/findings remain immutable. No PR is merged by the maintainer.
+Original packets/findings remain immutable. No PR is merged by the maintainer. The campaign helper now permanently passes-j4; the
+current source-pinned branches use their separately archived enforcing launcher.
 
 **Immediate work, in order:**
 
@@ -157,6 +158,11 @@ exchange checkout is used by another chat: touch only arora-barak-ch3-4/, preser
 and untracked files, and pull --rebase immediately before every push. Keep working while
 Seyoon sleeps; pause only dependent leaves needing decisions, then pursue independent work.
 
+
+Current follow-up: fifteen concrete MIG consumer changes are staged only as inert data in
+campaign/fills/mig1/landing/followup119-consumer-proposal/. Five-root native/sealed/14controls
+pass; nine additional rewrites are source-only. Apply scoped hunks after #234gate/merge,
+then actual full-module/AX/seal/replay checks before gate118. Actual #233source remainsb1f.
 
 ## 1. Starting a session on a new machine
 

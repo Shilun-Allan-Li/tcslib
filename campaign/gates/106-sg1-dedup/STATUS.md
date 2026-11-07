@@ -12,7 +12,14 @@ all16 repaired roots and7 generated descendants have standard axioms. Bounded
 scoped seals and fresh36/40/42-control groups pass in their recorded contexts.
 
 Current pushed head `d0c4a292e781b55617e05b33fdd423bb059fd735` incorporates merged#230.
-Fresh329-module msg5 replay is running from complete mac4, with explicit pinned
-Lean4.25 -j4/nice10/slot lock. Current source-inclusive screen and compiled mac4
-comparison are in preparation. Older MSG4 pre-230 compiler counts remain separate.
-No round3 packet is issued and no current full-replay pass is claimed yet.
+Fresh329-module msg5 replay PASSED from complete mac4:0failures,static0mismatches/66.
+Every329order/error/exit row andeffective-j4 launch is checked. The current compiled
+comparison is finishing; final full25-file source screen is running. Seyoon accepted
+the distinct seventh unary-clock-host retention kind under the same cleanup window;
+exact14-member ruling and49/544affected-set accounting are recorded. Older MSG4 pre-230 compiler counts remain separate.
+No round3 packet is issued and the external gate remains open.
+
+Seyoon also approved the additional BlockLoop import for the available stronger pair bound.
+The actual one-body/import repair is in progress; the passed d0/msg5/25-screen generation
+remains separately pinned. Final source validation/chained replay/head screen are required
+before round3 issue. No current new-head pass is claimed in advance.

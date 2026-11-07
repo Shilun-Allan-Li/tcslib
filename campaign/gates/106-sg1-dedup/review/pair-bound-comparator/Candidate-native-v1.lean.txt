@@ -1,0 +1,85 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace Complexity
+open Turing
+/-- Follow a fixed number of encoded header tails using actual native projections. -/
+private def clHeaderTail : ℕ → List Bool → List Bool
+  | 0, z => z
+  | j + 1, z => ((pairDecode (clHeaderTail j z)).map Prod.snd).getD []
+
+/-- Select a fixed encoded header field; this is implemented by charged scans. -/
+private def clHeaderField (j : ℕ) (z : List Bool) : List Bool :=
+  ((pairDecode (clHeaderTail j z)).map Prod.fst).getD []
+
+/-- Both decoded components are bounded by their complete source word, with empty
+defaults on malformed input.
+**Proof sketch.** Split the decode once. On success the public inverse identifies
+an encoded pair, whose published length bounds both components; failure gives empty words. -/
+private lemma clA5Pair_sizes (w : List Bool) :
+    (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
+  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
+    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
+  cases hd : pairDecode w with
+  | none =>
+    simp only [Option.map_none, Option.getD_none, List.length_nil]
+    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
+  | some p =>
+    rcases p with ⟨a, b⟩
+    have heq := eq_pairEncode_of_pairDecode w a b hd
+    have hbound := length_pair_components_le w
+    have hab : 2 * a.length + b.length ≤ w.length := by
+      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
+    simp only [Option.map_some, Option.getD_some]
+    constructor <;> omega
+
+end Complexity
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let wanted : List String := ["clA5Pair_sizes"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if (env.getModuleIdxFor? n).isSome then continue
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then throwError "Root count mismatch: {roots.size}/{wanted.length}"
+  for n in roots.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := kenv.find? n | throwError "missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, kenv.find? c with
+      | some j, some info =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          logInfo m!"CITED|{n}|{c}|{owner}|kind={kind info}|private={isPrivateName c}"
+          if let .defnInfo di := info then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) => logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

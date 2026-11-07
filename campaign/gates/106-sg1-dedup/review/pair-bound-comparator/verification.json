@@ -1,0 +1,64 @@
+{
+  "status": "Passed hypothetical exact-header adapter; new import unapproved, production unchanged",
+  "guard_definitions": [
+    "Turing.pairEncode",
+    "Turing.pairDecode",
+    "Complexity.pairFstD",
+    "Complexity.pairSndD"
+  ],
+  "default_simp_definitions_to_disable": [],
+  "guard_before_header_doc_and_helpers": true,
+  "guard_removal_exact_native_identity": true,
+  "native_sealed_metadata_identical": true,
+  "proof_AX": [
+    {
+      "name": "_private._stdin.0.Complexity.clA5Pair_sizes",
+      "kind": "theorem",
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "_private._stdin.0.Complexity.clA5Pair_sizes._proof_1_1",
+      "kind": "theorem",
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "_private._stdin.0.Complexity.clA5Pair_sizes._proof_1_2",
+      "kind": "theorem",
+      "axioms": [
+        "propext",
+        "Quot.sound"
+      ]
+    }
+  ],
+  "direct_cited_homes": [
+    "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+    "TCSlib.Complexity.ClassNP.PolyTimePairing",
+    "TCSlib.Complexity.TuringMachine.Encoding"
+  ],
+  "direct_foreign_ordinary_definitions": [
+    "Complexity.pairFstD",
+    "Complexity.pairSndD",
+    "Turing.pairDecode",
+    "Turing.pairEncode"
+  ],
+  "no_imported_private_reference": true,
+  "public_named_readers_present_before_use": true,
+  "no_generated_equation_query_or_materialization": true,
+  "paired_controls": 8,
+  "control_checker_rejection_cases": {
+    "duplicate_diagnostic_identity_preserving_count": "rejected",
+    "missing_diagnostic_identity": "rejected",
+    "unexpected_positive_outcome": "rejected",
+    "zero_negative_exit": "rejected"
+  },
+  "explicit_arguments_review": "change unfolds only the two literal same-home clHeader definitions; foreign pairDecode remains symbolic. simp only uses Option/List theorems, the inverse equality, and published projection equations. No foreign ordinary definition is an unfold/rw/simp argument.",
+  "production_input_hashes_unchanged": true,
+  "full_production_module_recompile": false,
+  "limits": "No new import approved/applied, no whole Hardness or merged replay with that import, no seal of upstream legacy theorem proofs, no gate clearance."
+}

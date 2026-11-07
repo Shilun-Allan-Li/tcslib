@@ -1023,16 +1023,35 @@ pair.
 - **Census** (`duplication-ledger.md`, WA-1): `StepClock` 1 of 42 declarations (2.4%; 2 of 42,
   4.8%, with IW-1's `wordPatch`), `RecordTable` 1 of 129 (0.8%); none is past one fifth.
 
+### SG1-UH: unary-clock clean-call host retention (Seyoon,2026-11-07)
+
+**ACKNOWLEDGED by kind; scheduled work remains.** Existing unary-clock repetition of arbitrary
+positive clean calls acrossTCSlib, including frame/run/output/budget and actual-orbit polynomial
+wrappers, may remain until the next12.2c SAT/Hardness consolidation after activeMIG1 and before
+further fills in those files. Owner: maintainer(Codex). Design/gate a shared host contract with
+resource/head-envelope clauses and replace private implementations there. This is a separate
+seventh kind, not a blanket dispatcher/transducer extension or permission for new private hosts.
+
+Fourteen Hardness declarations are enumerated in gate106/review/unary-host-ruling-proposal/;
+independent disjointness gives the named affected lower bound49/544 (not49confirmedduplicates).
+The old pre-ruling review remains unchanged. No public API/import/route is authorized here;
+future extraction decisions return to Seyoon. The distinct on-image class wrapper remains a
+bounded unresolved comparison. Exact user answer: **Accept scheduled host debt (Recommended)**.
+
 ## 2. Campaign work queued or on hold
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
 `campaign/maintainer/HANDOFF.md` §0. Seyoon merged #228, #222 and #229; gates114/115/116
-are CLOSED PASS, all notes dispositioned. The exact current replay tree is **oleans-mac3**.
+are CLOSED PASS, all notes dispositioned. #230 is now merged; current snapshot is **oleans-mac4**.
 SG-1 #215 has both cut-helper audit repairs and explicit scheduled-debt rulings for six
 adapter/dispatcher kinds; its current329-module replay passes, gate106 round2 Codex pending.
-Draft #230 contains23 approved non-simp reader/resource theorems, with all five full owner
-preflights and394-module replay passed; gate117 Codex packet is in preparation. Both open
-PRs are **not yet clear to merge** until their gates close.
+#230 is merged at3023dc14 after gate117 PASS; mac4 is current. #215 now includes16canonical
+closure/encoding repairs and a separate accepted unary-clock-host retention ruling. Its fresh
+329-module replay passes (static0/66); full25-file screen/current compiler comparison are
+finishing for selectedCodex round3. #234's approved first-entry/zero-space/home follow-up
+passes401modules/static0/77 and full16-file screens; gate119Codex packet is being finalized.
+#233's downstream15-change mechanical proposal is prepared but waits for #234gate/merge.
+All three open PRs are **not yet clear to merge** until their required gates/steps close.
 
 The **Claude MIG-1 megafill remains dispatched**; immutable pins are in its dispatch.json.
 cp01–cp07 are reviewed partial deliveries: all17 original targets plus two new gated proof

@@ -1,0 +1,59 @@
+CONTROL|Turing.pairEncode|point|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Turing.pairEncode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairEncode x α
+is not definitionally equal to rhs
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+
+x α : List Bool
+⊢ Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+CONTROL|Turing.pairEncode|abstract|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Turing.pairEncode|abstract|Tactic `rfl` failed: equality lhs
+  Turing.pairEncode
+is not definitionally equal to rhs
+  fun x α => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+
+⊢ Turing.pairEncode = fun x α => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+CONTROL|Turing.pairDecode|point|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Turing.pairDecode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode []
+is not definitionally equal to rhs
+  none
+
+⊢ Turing.pairDecode [] = none
+CONTROL|Turing.pairDecode|abstract|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Turing.pairDecode|abstract|Tactic `rfl` failed: equality lhs
+  fun rest => Turing.pairDecode (false :: true :: rest)
+is not definitionally equal to rhs
+  fun rest => some ([], rest)
+
+⊢ (fun rest => Turing.pairDecode (false :: true :: rest)) = fun rest => some ([], rest)
+CONTROL|Complexity.pairFstD|point|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Complexity.pairFstD|point|Tactic `rfl` failed: equality lhs
+  Complexity.pairFstD z
+is not definitionally equal to rhs
+  (Option.map Prod.fst (Turing.pairDecode z)).getD []
+
+z : List Bool
+⊢ Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []
+CONTROL|Complexity.pairFstD|abstract|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Complexity.pairFstD|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.pairFstD
+is not definitionally equal to rhs
+  fun z => (Option.map Prod.fst (Turing.pairDecode z)).getD []
+
+⊢ Complexity.pairFstD = fun z => (Option.map Prod.fst (Turing.pairDecode z)).getD []
+CONTROL|Complexity.pairSndD|point|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Complexity.pairSndD|point|Tactic `rfl` failed: equality lhs
+  Complexity.pairSndD z
+is not definitionally equal to rhs
+  (Option.map Prod.snd (Turing.pairDecode z)).getD []
+
+z : List Bool
+⊢ Complexity.pairSndD z = (Option.map Prod.snd (Turing.pairDecode z)).getD []
+CONTROL|Complexity.pairSndD|abstract|FAIL
+/private/tmp/tcslib-g106-pair-bound-4awefi4s/Controls_sealed_v1.lean:78:0: error: RFL_CONTROL|Complexity.pairSndD|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.pairSndD
+is not definitionally equal to rhs
+  fun z => (Option.map Prod.snd (Turing.pairDecode z)).getD []
+
+⊢ Complexity.pairSndD = fun z => (Option.map Prod.snd (Turing.pairDecode z)).getD []

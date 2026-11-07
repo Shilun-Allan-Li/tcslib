@@ -725,11 +725,32 @@ closure family; do not subtract16 from them. Separately, the inspected fixed-bit
 clFillTM/clFill_run/clNative_fill trio is an exact Unit-state constant-emission instance
 of the already acknowledged one-way transducer kind. Accounting it once raises the
 Hardness retained named lower bound to35/544; SAT remains34/270. Original correspondence
-sets and all candidate rows remain preserved. Image-only composition and actual-orbit
-iteration have separate bounded interface assessments, with no new acknowledgment,
-API-necessity claim or global clearance. Historical widerRO1/live-prefix/watch statuses
-are unchanged. Source counts, canonical originals, raw screen edges and compiler auxiliaries
-remain different measurements.
+sets and all candidate rows remain preserved. Image-only composition remains a separate
+bounded class-contract comparison; no exact public class-row match, unavoidable new API,
+retention acknowledgment or global clearance is inferred. Historical widerRO1/live-prefix/
+watch statuses remain distinct. Source counts, canonical originals, raw screen edges and
+compiler auxiliaries are different measurements.
+
+**Unary-clock clean-call host retention (separate seventh kind; Seyoon,2026-11-07).**
+Seyoon explicitly accepted existing unary-clock repetition of arbitrary positive clean calls
+anywhere in TCSlib, including matching frame/call/run/clock/output/budget proofs and actual-orbit
+polynomial iteration wrappers. This is an existing-private-host retention exception, separate
+from the six adapter/dispatcher kinds. Exact user answer/scope and source are in
+gate106/review/unary-host-ruling-proposal/RULING.md and ruling.json; the pre-ruling proposal/
+independent review remain historical data.
+
+Fourteen current Hardness members are12clRepeat* declarations plus clA5Iter_native and
+clA5Iter_shrinking (4private definitions/10private lemmas), disjoint from all35 earlier named
+members. The named affected-declaration lower bound is therefore49/544; this is not49confirmed
+duplicates. SAT remains34/270. Full names and independent disjointness checks are in
+review/round3-host-accounting-addon/. No import, statement, new public API, future private-host
+construction or route change is approved by this acknowledgment.
+
+Owner/window: maintainer(Codex), next12.2c consolidation after activeMIG1 and before further
+SAT/Hardness fills. Design/gate the shared host contract, including resource/head-envelope
+clauses, and replace the private implementations there. The on-image class wrapper is outside
+this ruling; the14 repaired Pairing closure/comparison implementations retain their distinct
+retirement-on-merge disposition above.
 
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through

@@ -1,0 +1,38 @@
+[
+  {
+    "label": "PolyTimeBlockLoop.lean::polyTimeComputable_isNil",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+    "offset": 3464,
+    "name": "polyTimeComputable_isNil",
+    "kind": "proof",
+    "normalized_body": "byhavehenc:PolyTimeComputable(funw=>pairEncode[]w):=(polyTimeComputable_const[]).pairEncodepolyTimeComputable_idhaveh:=polyTimeComputable_lenLe.comphencconverthusing1funextwsimponly[Function.comp,pairFstD_pairEncode,pairSndD_pairEncode,List.length_nil,Nat.le_zero,List.length_eq_zero_iff]",
+    "body_chars": 288
+  },
+  {
+    "label": "Hardness.lean::clA5Le_native",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 280413,
+    "name": "clA5Le_native",
+    "kind": "proof",
+    "normalized_body": "byhaveh:=polyTimeComputable_lenLe.comp(hg.pairEncodehf)converthusing1funextxsimponly[Function.comp_apply,pairFstD_pairEncode,pairSndD_pairEncode,List.length_replicate]",
+    "body_chars": 167
+  },
+  {
+    "label": "SingleTape.lean::dg_turn_with_growth",
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+    "offset": 66761,
+    "name": "dg_turn_with_growth",
+    "kind": "proof",
+    "normalized_body": "byletp:=dgPosa₀c.inputPosletout:=c.output.map(sweepEmbedΓM.k)letd:Cfg1(SweepAlphabetΓM.k)(DGStateΓM.StateM.k)x:=sweepCfg(some(.inl(.readqs)))pzl[somesweepBoundary]outlete:Cfg1(SweepAlphabetΓM.k)(DGStateΓM.StateM.k)x:=sweepCfg(some(.inl(.growRightqs0)))pzl[somesweepBoundary]outhavehw:d.workTapeSymbols=fun_=>somesweepBoundary:=byfunextiexactsweepTape_readzl_havehe:=dg_read_boundaryMa₀qsd.inputSymbolrw[dgInput_reada₀cdrfl,hs,hc]athesimponly[↓reduceIte]athehavestep:(dgTMMa₀).tm.stepd=e:=bychange((dgTMMa₀).tm.tr(.inl(.readqs))d.inputSymbold.workTapeSymbols).applyd=erw[hw]exact(congrArg(funact=>act.applyd)he).trans(sweepCfg_stay_______)haveh₁:DGSpan(dgTMMa₀).tmde1(z-1)(z+M.k):=dgSpan_onestep(bydsimp[d,sweepCfg];constructor<;>omega)(bydsimp[e,sweepCfg];constructor<;>omega)havehdrop:([some(sweepBoundary(Γ:=Γ)(k:=M.k))]:List_).dropM.k=[]:=List.drop_eq_nil_of_le(bysimpausinghk)haveh₂:=dgSpan_mono(lo':=z-1)(hi':=z+M.k)(dg_right_spanMa₀qspoutzl[somesweepBoundary])(byomega)(byomega)rw[hdrop]ath₂haveht:=dg_turnMa₀cqshs(z+M.k)(((rightRows).map(funb=>some(sweepSymbolb))).reverse++l)[]haveh₃:=dgSpan_oneht(showz-1≤z+(M.k:ℤ)∧z+(M.k:ℤ)≤z+M.kbyomega)(showz-1≤z+(M.k:ℤ)-1∧z+(M.k:ℤ)-1≤z+M.kbyomega)rw[dgSpan_iff_segment]ath₁h₂h₃haveh:=(dgSpan_iff_segment..).2((h₁.transh₂).transh₃)simpaonly[show1+M.k+1=M.k+2byomega,List.tail_nil]usingh",
+    "body_chars": 1331
+  },
+  {
+    "label": "SingleTape.lean::dg_end_with_growth",
+    "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+    "offset": 71488,
+    "name": "dg_end_with_growth",
+    "kind": "proof",
+    "normalized_body": "byletact:=M.tm.trqinpreadsletheads:=funi=>righti&&decide((act.workTapesi).2=.neg)letd:Cfg1(SweepAlphabetΓM.k)(DGStateΓM.StateM.k)x:=sweepRevCfg(some(.inl(.writeqinpreadsright)))pzl[somesweepBoundary]outlete:Cfg1(SweepAlphabetΓM.k)(DGStateΓM.StateM.k)x:=sweepRevCfg(some(.inr(act.state,heads,0)))pzl[somesweepBoundary]outhavestep:(dgTMMa₀).tm.stepd=e:=byhavehw:d.workTapeSymbols=fun_=>somesweepBoundary:=byfunextiexactsweepTape_read(-z)l_change((dgTMMa₀).tm.tr(.inl(.writeqinpreadsright))d.inputSymbold.workTapeSymbols).applyd=erw[hw]simponly[dgTM,sweepBoundary,hc,↓reduceIte]exactsweepRevCfg_stay_______haveh₁:DGSpan(dgTMMa₀).tmde1(z-M.k)z:=dgSpan_onestep(bydsimp[d,sweepRevCfg];constructor<;>omega)(bydsimp[e,sweepRevCfg];constructor<;>omega)havehdrop:([some(sweepBoundary(Γ:=Γ)(k:=M.k))]:List_).dropM.k=[]:=List.drop_eq_nil_of_le(bysimpausinghk)haveh₂:=dg_left_spanMa₀act.stateheadspoutzl[somesweepBoundary]rw[hdrop]ath₂letL:=(dgLeftRow(Γ:=Γ)heads).map(funb=>some(sweepSymbolb))++lhavelast:(dgTMMa₀).tm.step(sweepRevCfg(some(.inr(act.state,heads,⟨M.k,byomega⟩)))p(z-M.k)L[]out)=sweepRevCfg(act.state.map(funq=>.inl(.growLeftq0)))p(z-M.k)L[somesweepBoundary]out:=bychange((dgTMMa₀).tm.tr(.inr(act.state,heads,⟨M.k,byomega⟩))__).apply_=_simponly[dgTM,lt_self_iff_false,↓reduceDIte]exactdgRev_write_optional(Sum.inlSweepState.back)________haveh₃:=dgSpan_onelast(showz-(M.k:ℤ)≤z-M.k∧z-(M.k:ℤ)≤zbyomega)(showz-(M.k:ℤ)≤z-M.k∧z-(M.k:ℤ)≤zbyomega)rw[dgSpan_iff_segment]ath₁h₂h₃haveh:=(dgSpan_iff_segment..).2((h₁.transh₂).transh₃)simpaonly[show1+M.k+1=M.k+2byomega]usingh",
+    "body_chars": 1564
+  }
+]

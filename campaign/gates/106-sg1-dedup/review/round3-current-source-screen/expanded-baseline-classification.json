@@ -1,0 +1,600 @@
+{
+  "scope": "All51 newly exposed BASELINE directed rows, grouped through bounded source inspection. These are not51 new head rows; final25 evidence follows separately. No exhaustive legacy-debt review or acknowledgement.",
+  "groups": [
+    {
+      "group": "B01",
+      "title": "Live-prefix public/private rederivation",
+      "count": 6,
+      "assessment": "Material generic reuse/watch candidate. Inspected headers: all three private Bool contracts are instances of public runFrom_state_ne_none_of_le; Catalog body is identical156/156. SAT/Hardness differ in the config binder spelling. These source proofs are unchanged by this PR. No new debt approval or sealed consumer success is inferred.",
+      "rows": [
+        {
+          "a": "Finite.lean::runFrom_state_ne_none_of_le",
+          "b": "Catalog.lean::f2_loop_live_prefix",
+          "shared": 156,
+          "denominator": 156,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Catalog.lean::f2_loop_live_prefix",
+          "b": "Finite.lean::runFrom_state_ne_none_of_le",
+          "shared": 156,
+          "denominator": 156,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Finite.lean::runFrom_state_ne_none_of_le",
+          "b": "SAT.lean::sat_live_prefix",
+          "shared": 139,
+          "denominator": 152,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Finite.lean::runFrom_state_ne_none_of_le",
+          "b": "Hardness.lean::clA5_live_prefix",
+          "shared": 139,
+          "denominator": 152,
+          "printed_percent": 91,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "SAT.lean::sat_live_prefix",
+          "b": "Finite.lean::runFrom_state_ne_none_of_le",
+          "shared": 139,
+          "denominator": 156,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clA5_live_prefix",
+          "b": "Finite.lean::runFrom_state_ne_none_of_le",
+          "shared": 139,
+          "denominator": 156,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B02",
+      "title": "Linear-time to polynomial-time wrapper",
+      "count": 2,
+      "assessment": "Material pre-existing public/private proof duplication. The new clNative_linear body is a direct call to polyTimeComputable_of_linear, below the screen threshold. Source-level re-point is retained separately from compiler deletion and actual head-screen measurements.",
+      "rows": [
+        {
+          "a": "PolyTimePairing.lean::polyTimeComputable_of_linear",
+          "b": "Hardness.lean::clNative_linear",
+          "shared": 63,
+          "denominator": 63,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clNative_linear",
+          "b": "PolyTimePairing.lean::polyTimeComputable_of_linear",
+          "shared": 63,
+          "denominator": 63,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B03",
+      "title": "Threaded-map polynomial witness",
+      "count": 2,
+      "assessment": "Material pre-existing public/private witness arithmetic. Current clNative_map uses the public pairMapSnd contract with its published equation; it no longer repeats the old witness/majorization construction. No new public contract or debt waiver is inferred.",
+      "rows": [
+        {
+          "a": "PolyTimePairing.lean::PolyTimeComputable.pairMapSnd",
+          "b": "Hardness.lean::clNative_map",
+          "shared": 338,
+          "denominator": 502,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clNative_map",
+          "b": "PolyTimePairing.lean::PolyTimeComputable.pairMapSnd",
+          "shared": 338,
+          "denominator": 512,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B04",
+      "title": "Pointwise update projections and directive tails",
+      "count": 4,
+      "assessment": "Small funext/update proof scaffold. Canonical declaration spans include trailing omit[Fintype Λ][DecidableEq Λ]in, which belongs to the next declaration; heads_update/tapes_update actual normalized proof portions are below60. Keep all raw75-character scores, but do not call the entire raw span an independent75-character proof or count the directive as copied mathematics. apply_act contains the related field argument.",
+      "rows": [
+        {
+          "a": "CounterProg.lean::tapes_update",
+          "b": "CounterProg.lean::heads_update",
+          "shared": 75,
+          "denominator": 75,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "CounterProg.lean::heads_update",
+          "b": "CounterProg.lean::tapes_update",
+          "shared": 75,
+          "denominator": 75,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "CounterProg.lean::apply_act",
+          "b": "CounterProg.lean::tapes_update",
+          "shared": 67,
+          "denominator": 75,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "CounterProg.lean::apply_act",
+          "b": "CounterProg.lean::heads_update",
+          "shared": 67,
+          "denominator": 75,
+          "printed_percent": 89,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B05",
+      "title": "Unary interval update duals",
+      "count": 2,
+      "assessment": "Existing same-home dual statements use identical82-character pointwise update/split_ifs arithmetic proof schemas. The assertions concern successor versus predecessor interval changes. This is a real shared schema under distinct statements, not newly introduced source and not a debt acknowledgement.",
+      "rows": [
+        {
+          "a": "UnaryTape.lean::update_ones_succ",
+          "b": "UnaryTape.lean::update_ones_pred",
+          "shared": 82,
+          "denominator": 82,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "UnaryTape.lean::update_ones_pred",
+          "b": "UnaryTape.lean::update_ones_succ",
+          "shared": 82,
+          "denominator": 82,
+          "printed_percent": 100,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B06",
+      "title": "Counter-program print/back walk phases",
+      "count": 2,
+      "assessment": "Material existing shared induction/transition scaffold with different commands, endpoints, output and arithmetic direction. back_walk raw body also carries a trailing omit directive. Definitions/tables and both proof bodies are unchanged here. No claim of permanent acceptability or complete factoring follows.",
+      "rows": [
+        {
+          "a": "CounterProg.lean::back_walk",
+          "b": "CounterProg.lean::print_walk",
+          "shared": 538,
+          "denominator": 770,
+          "printed_percent": 70,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "CounterProg.lean::print_walk",
+          "b": "CounterProg.lean::back_walk",
+          "shared": 538,
+          "denominator": 790,
+          "printed_percent": 68,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B07",
+      "title": "Short run-step or induction fragments across clients",
+      "count": 4,
+      "assessment": "SAT.satRed_one is exactly two published run-equation rewrites(63chars). Its matches inside larger walk/visited proofs are those same public rewrites, not the entire surrounding theorem. The print_walk/clCmp_forward edge is a short induction/run-step fragment in distinct phase proofs. Bounded body inspection supports the scaffold classification; no global no-duplication claim.",
+      "rows": [
+        {
+          "a": "Deterministic.lean::visitedByTapeHead_step_subset",
+          "b": "SAT.lean::satRed_one",
+          "shared": 62,
+          "denominator": 63,
+          "printed_percent": 98,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "CounterProg.lean::print_walk",
+          "b": "SAT.lean::satRed_one",
+          "shared": 60,
+          "denominator": 63,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "CounterProg.lean::back_walk",
+          "b": "SAT.lean::satRed_one",
+          "shared": 60,
+          "denominator": 63,
+          "printed_percent": 95,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "CounterProg.lean::print_walk",
+          "b": "Hardness.lean::clCmp_forward",
+          "shared": 71,
+          "denominator": 141,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B08",
+      "title": "Input-position direction/boundary facts",
+      "count": 6,
+      "assessment": "Existing same-home related boundary/direction proofs share Fin/index branch arithmetic. Their statements concern different positions or directions; all are unchanged. Raw directed similarities remain, without approving debt or pretending a new API was authored.",
+      "rows": [
+        {
+          "a": "Configuration.lean::moveInputPos_pos_of_ne_right",
+          "b": "Configuration.lean::moveInputPos_rightBoundary",
+          "shared": 71,
+          "denominator": 73,
+          "printed_percent": 97,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Configuration.lean::moveInputPos_neg_of_ne_left",
+          "b": "Configuration.lean::moveInputPos_rightBoundary",
+          "shared": 68,
+          "denominator": 73,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Configuration.lean::moveInputPos_neg_of_ne_left",
+          "b": "Configuration.lean::moveInputPos_pos_of_ne_right",
+          "shared": 85,
+          "denominator": 108,
+          "printed_percent": 79,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Configuration.lean::moveInputPos_pos_of_ne_right",
+          "b": "Configuration.lean::moveInputPos_neg_of_ne_left",
+          "shared": 85,
+          "denominator": 116,
+          "printed_percent": 73,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Configuration.lean::moveInputPos_rightBoundary",
+          "b": "Configuration.lean::moveInputPos_pos_of_ne_right",
+          "shared": 71,
+          "denominator": 108,
+          "printed_percent": 66,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Configuration.lean::moveInputPos_rightBoundary",
+          "b": "Configuration.lean::moveInputPos_neg_of_ne_left",
+          "shared": 68,
+          "denominator": 116,
+          "printed_percent": 59,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B09",
+      "title": "Prefix take/drop API instantiations",
+      "count": 2,
+      "assessment": "Two existing distinct public results instantiate one shared PrefixByLength program/goes_total proof at true or false. The computational theorem is already shared. The drop raw denominator also includes endComplexity after its proof; raw165/180 denominators are retained exactly.",
+      "rows": [
+        {
+          "a": "PolyTimePrefix.lean::polyTimeComputable_dropPrefixByLength",
+          "b": "PolyTimePrefix.lean::polyTimeComputable_takePrefixByLength",
+          "shared": 153,
+          "denominator": 165,
+          "printed_percent": 93,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimePrefix.lean::polyTimeComputable_takePrefixByLength",
+          "b": "PolyTimePrefix.lean::polyTimeComputable_dropPrefixByLength",
+          "shared": 153,
+          "denominator": 180,
+          "printed_percent": 85,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B10",
+      "title": "Run/output and halt/resource predicate terms",
+      "count": 4,
+      "assessment": "Term/data candidates, not proof copies: step versus outputSymbol share transition lookup but return different objects; ComputesInTimeAndSpace versus haltsAtStep share run-state tests but define different specifications. All eligible term bodies are identical base/head. No new table/data implementation is introduced.",
+      "rows": [
+        {
+          "a": "Deterministic.lean::step",
+          "b": "Deterministic.lean::outputSymbol",
+          "shared": 76,
+          "denominator": 86,
+          "printed_percent": 88,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Deterministic.lean::outputSymbol",
+          "b": "Deterministic.lean::step",
+          "shared": 76,
+          "denominator": 87,
+          "printed_percent": 87,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Deterministic.lean::ComputesInTimeAndSpace",
+          "b": "Deterministic.lean::haltsAtStep",
+          "shared": 64,
+          "denominator": 93,
+          "printed_percent": 69,
+          "kind": "term",
+          "cross_file": false
+        },
+        {
+          "a": "Deterministic.lean::haltsAtStep",
+          "b": "Deterministic.lean::ComputesInTimeAndSpace",
+          "shared": 64,
+          "denominator": 119,
+          "printed_percent": 54,
+          "kind": "term",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B11",
+      "title": "Pair-diagonal phases and token emission",
+      "count": 4,
+      "assessment": "Existing phase/configuration packaging scaffold, including a substantial double/copy overlap398/475, plus shorter separator/run rewrites in other machines. Transition cases, states, emitted words and phase lengths differ; all source is unchanged. Material phase sharing is retained as a watch, not dismissed or newly acknowledged.",
+      "rows": [
+        {
+          "a": "Encoding.lean::pairDiag_double",
+          "b": "Encoding.lean::pairDiag_copy",
+          "shared": 398,
+          "denominator": 475,
+          "printed_percent": 84,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "Encoding.lean::pairDiag_rewind",
+          "b": "Hardness.lean::clCmp_forward",
+          "shared": 90,
+          "denominator": 141,
+          "printed_percent": 64,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Encoding.lean::pairDiag_separator",
+          "b": "Primitives.lean::emitterToken_separator",
+          "shared": 125,
+          "denominator": 215,
+          "printed_percent": 58,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Encoding.lean::pairDiag_double",
+          "b": "Primitives.lean::emitterToken_separator",
+          "shared": 110,
+          "denominator": 215,
+          "printed_percent": 51,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B12",
+      "title": "Finite/code machine transport proofs",
+      "count": 1,
+      "assessment": "Existing bundled-machine elimination/relabel transport scaffold used for distinct time-iff versus existential space-preserving encoding results. The shared fragment does not identify the whole mathematical assertions. No consumer conversion or new equation is proved in this screen task.",
+      "rows": [
+        {
+          "a": "Encoding.lean::exists_codeTM_spaceUsed",
+          "b": "Encoding.lean::FinTM.toCodeTM_computesInTime_iff",
+          "shared": 75,
+          "denominator": 102,
+          "printed_percent": 74,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B13",
+      "title": "Register and input-position run bounds",
+      "count": 2,
+      "assessment": "Existing induction-on-run scaffold for different numeric components. The register proof consumes a step_regs_le bound; position proof establishes a distinct one-step bound. Keep both overlaps without claiming a new generic theorem or accepting legacy debt.",
+      "rows": [
+        {
+          "a": "CounterProgRun.lean::run_pos_le",
+          "b": "CounterProg.lean::run_regs_le",
+          "shared": 94,
+          "denominator": 116,
+          "printed_percent": 81,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "CounterProg.lean::run_regs_le",
+          "b": "CounterProgRun.lean::run_pos_le",
+          "shared": 94,
+          "denominator": 172,
+          "printed_percent": 55,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B14",
+      "title": "Published pairing/append compositions",
+      "count": 2,
+      "assessment": "Existing public closure results share calls to the public linear pairConcat contract and pairEncode composition. Distinct functions/conclusions use an already shared construction, not newly copied executable machines. Source remains unchanged.",
+      "rows": [
+        {
+          "a": "PolyTimePairing.lean::PolyTimeComputable.pairEncode",
+          "b": "PolyTimePairing.lean::PolyTimeComputable.append",
+          "shared": 97,
+          "denominator": 143,
+          "printed_percent": 68,
+          "kind": "proof",
+          "cross_file": false
+        },
+        {
+          "a": "PolyTimePairing.lean::polyTimeComputable_pairConcat",
+          "b": "PolyTimePairing.lean::PolyTimeComputable.append",
+          "shared": 72,
+          "denominator": 143,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": false
+        }
+      ]
+    },
+    {
+      "group": "B15",
+      "title": "Output-length and projection witness fragments",
+      "count": 5,
+      "assessment": "Source inspection finds clients extracting a concrete machine/time witness and applying the existing output_length_le reader with that exact bound; surrounding computation/image statements and visible coefficients differ. The projection edge is a short pairFst/pairSnd witness fragment. This is bounded fragment classification, not proof that the larger legacy image recipe is factored; full Composition comparison is added in the final25 population.",
+      "rows": [
+        {
+          "a": "PolyTimePairing.lean::PolyTimeComputable.pairEncode",
+          "b": "SAT.lean::sat_pt_fields",
+          "shared": 62,
+          "denominator": 93,
+          "printed_percent": 67,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "SAT.lean::satSafeValue_poly",
+          "b": "PolyTime.lean::PolyTimeComputable.output_length_le",
+          "shared": 92,
+          "denominator": 153,
+          "printed_percent": 60,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Tautology.lean::taut_comp_on_image",
+          "b": "PolyTime.lean::PolyTimeComputable.output_length_le",
+          "shared": 85,
+          "denominator": 153,
+          "printed_percent": 56,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "SAT.lean::satPair_computes",
+          "b": "PolyTime.lean::PolyTimeComputable.output_length_le",
+          "shared": 85,
+          "denominator": 153,
+          "printed_percent": 56,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Primitives.lean::pairMap_computes",
+          "b": "PolyTime.lean::PolyTimeComputable.output_length_le",
+          "shared": 77,
+          "denominator": 153,
+          "printed_percent": 50,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B16",
+      "title": "Generic input trajectory bound",
+      "count": 1,
+      "assessment": "Material generic reuse/watch candidate: inspected Catalog Bool header is the instance of public Deterministic.timed_input_bound. Both derive one-step displacement then induct on time. Source is unchanged; a reader re-point is not elaborated by this no-Lean task.",
+      "rows": [
+        {
+          "a": "Deterministic.lean::timed_input_bound",
+          "b": "Catalog.lean::f2_loop_input_run_le",
+          "shared": 224,
+          "denominator": 364,
+          "printed_percent": 62,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    },
+    {
+      "group": "B17",
+      "title": "First halt with positive time",
+      "count": 2,
+      "assessment": "Material related generic proof. SAT/Hardness private statements add0<u from a live-start premise to public exists_first_halt result; least halt time, cut and stabilized endpoint are shared. Statement-level decomposition is explicit; no typed/opaque consumer check was run and no new API gap or approval is inferred.",
+      "rows": [
+        {
+          "a": "SAT.lean::sat_call_first_halt",
+          "b": "Finite.lean::exists_first_halt",
+          "shared": 140,
+          "denominator": 244,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": true
+        },
+        {
+          "a": "Hardness.lean::clA5_call_first_halt",
+          "b": "Finite.lean::exists_first_halt",
+          "shared": 140,
+          "denominator": 244,
+          "printed_percent": 57,
+          "kind": "proof",
+          "cross_file": true
+        }
+      ]
+    }
+  ]
+}

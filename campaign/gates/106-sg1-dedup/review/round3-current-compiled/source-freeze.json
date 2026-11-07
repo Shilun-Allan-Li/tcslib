@@ -1,0 +1,764 @@
+{
+  "base": "3023dc1408c3d216fc07a7cbba9ae30135b861ed",
+  "head": "d0c4a292e781b55617e05b33fdd423bb059fd735",
+  "owners": [
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "source_equal": false,
+      "source_sha256": {
+        "base": "61148b38017f2f86efccba6a93dd6bb671e0a6b4ff2627594f93dce44b0607c5",
+        "head": "682df0cd83abed16dac1e44768bee40a1691030eaeab1cf56373fa0677dbc6ba"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 270,
+          "public": 5,
+          "private": 265
+        },
+        "head": {
+          "total": 270,
+          "public": 5,
+          "private": 265
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [
+        "Complexity.sat_guard_add",
+        "Complexity.sat_pt_append",
+        "Complexity.sat_pt_mapSnd",
+        "Complexity.sat_pt_pair",
+        "Complexity.sat_pt_pair_input",
+        "Complexity.sat_pt_unaryLength"
+      ],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "TCSlib.Complexity.Formulas.CNFEncoding",
+          "TCSlib.Complexity.ClassNP.NP",
+          "TCSlib.Complexity.ClassNP.Reductions",
+          "Mathlib.Tactic.FinCases",
+          "Mathlib.Data.List.MinMax"
+        ],
+        "head": [
+          "TCSlib.Complexity.Formulas.CNFEncoding",
+          "TCSlib.Complexity.ClassNP.NP",
+          "TCSlib.Complexity.ClassNP.Reductions",
+          "Mathlib.Tactic.FinCases",
+          "Mathlib.Data.List.MinMax"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "source_equal": false,
+      "source_sha256": {
+        "base": "407fd18445e063da036b90ca0a36515aff3cb93b65725094c93727c91f157be0",
+        "head": "0b85b289abd864b1f63a9dcdc7f47fdb9b68c0544e57e4de63f0d35dbc09c8a5"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 93,
+          "public": 5,
+          "private": 88
+        },
+        "head": {
+          "total": 93,
+          "public": 5,
+          "private": 88
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [
+        "Complexity.tautDualSegment_iff_segment"
+      ],
+      "private_removed": [
+        "Complexity.tautDual_segment_add"
+      ],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [
+        "Complexity.tautDual_copy",
+        "Complexity.tautDual_invalid",
+        "Complexity.tautDual_rewind",
+        "Complexity.tautDual_scan",
+        "Complexity.tautDual_segment_one",
+        "Complexity.tautDual_segment_zero",
+        "Complexity.tautDual_valid"
+      ],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "TCSlib.Complexity.Formulas.DNF",
+          "TCSlib.Complexity.Formulas.CNFEncoding",
+          "TCSlib.Complexity.ClassNP.CoNP",
+          "TCSlib.Complexity.ClassNP.Reductions",
+          "TCSlib.Complexity.CookLevin.Hardness",
+          "TCSlib.Complexity.TuringMachine.Build.Primitives",
+          "Mathlib.Data.Sigma.Basic"
+        ],
+        "head": [
+          "TCSlib.Complexity.Formulas.DNF",
+          "TCSlib.Complexity.Formulas.CNFEncoding",
+          "TCSlib.Complexity.ClassNP.CoNP",
+          "TCSlib.Complexity.ClassNP.Reductions",
+          "TCSlib.Complexity.CookLevin.Hardness",
+          "TCSlib.Complexity.TuringMachine.Build.Primitives",
+          "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+          "Mathlib.Data.Sigma.Basic"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "source_equal": false,
+      "source_sha256": {
+        "base": "ea688c4da547ea6b47de7fcccbaf435e65e10c52b21b39e14395f66ab27be40a",
+        "head": "a6edf9fe11e89d71a028143d1cedf9be896124bbcbc5a86d779e6c6278b5c597"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 544,
+          "public": 5,
+          "private": 539
+        },
+        "head": {
+          "total": 544,
+          "public": 5,
+          "private": 539
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [
+        "Complexity.clA5Drop_native",
+        "Complexity.clA5Le_native",
+        "Complexity.clA5Pair_sizes",
+        "Complexity.clA5_guard_add",
+        "Complexity.clA5_pt_and",
+        "Complexity.clA5_pt_cond",
+        "Complexity.clA5_pt_const",
+        "Complexity.clNative_append",
+        "Complexity.clNative_linear",
+        "Complexity.clNative_map",
+        "Complexity.clNative_pair",
+        "Complexity.clNative_unary"
+      ],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "TCSlib.Complexity.ClassNP.SAT",
+          "TCSlib.Complexity.ClassNP.TMSAT",
+          "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+          "TCSlib.Complexity.CookLevin.Snapshot",
+          "TCSlib.Complexity.TuringMachine.Build.Seam"
+        ],
+        "head": [
+          "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+          "TCSlib.Complexity.ClassNP.SAT",
+          "TCSlib.Complexity.ClassNP.TMSAT",
+          "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+          "TCSlib.Complexity.CookLevin.Snapshot",
+          "TCSlib.Complexity.TuringMachine.Build.Seam"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.SpaceComplexity.Machines.Frag",
+      "source_equal": true,
+      "source_sha256": {
+        "base": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7",
+        "head": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 15,
+          "public": 15,
+          "private": 0
+        },
+        "head": {
+          "total": 15,
+          "public": 15,
+          "private": 0
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+        ],
+        "head": [
+          "TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "source_equal": true,
+      "source_sha256": {
+        "base": "8b98a78623f46e32582c4858a9ed6c8504cd99a59d81dc94e4079d4519fb6317",
+        "head": "8b98a78623f46e32582c4858a9ed6c8504cd99a59d81dc94e4079d4519fb6317"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 505,
+          "public": 113,
+          "private": 392
+        },
+        "head": {
+          "total": 505,
+          "public": 113,
+          "private": 392
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "Mathlib.Data.Nat.Size",
+          "Mathlib.Tactic.DeriveFintype",
+          "TCSlib.Complexity.TuringMachine.Build.Loop",
+          "TCSlib.Complexity.TuringMachine.Encoding"
+        ],
+        "head": [
+          "Mathlib.Data.Nat.Size",
+          "Mathlib.Tactic.DeriveFintype",
+          "TCSlib.Complexity.TuringMachine.Build.Loop",
+          "TCSlib.Complexity.TuringMachine.Encoding"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "source_equal": true,
+      "source_sha256": {
+        "base": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146",
+        "head": "af6e367018ccfb6e866288ab108397e6cd11d6e190b79329282204015a64d146"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 93,
+          "public": 92,
+          "private": 1
+        },
+        "head": {
+          "total": 93,
+          "public": 92,
+          "private": 1
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "Mathlib.Tactic.Linarith",
+          "TCSlib.Complexity.TuringMachine.Simulation",
+          "TCSlib.Complexity.TuringMachine.StateRenaming"
+        ],
+        "head": [
+          "Mathlib.Tactic.Linarith",
+          "TCSlib.Complexity.TuringMachine.Simulation",
+          "TCSlib.Complexity.TuringMachine.StateRenaming"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "source_equal": false,
+      "source_sha256": {
+        "base": "213cd5ed497d025f5a7d1e2131d0103bacb2c89d588bbad121a4dcfa0f8908e7",
+        "head": "e6fecd8feb2eeb2ad8271630ed5c259e7f1f25b4cf8b3d6fd4437be18a10e2f0"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 79,
+          "public": 59,
+          "private": 20
+        },
+        "head": {
+          "total": 79,
+          "public": 59,
+          "private": 20
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [
+        "Turing.counterSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.counter_span_append"
+      ],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [
+        "Turing.RoundContract.counterLoopDone_traj",
+        "Turing.RoundContract.counterLoopEscape_traj",
+        "Turing.counterLoopTMVia_done_witness",
+        "Turing.counterLoopTMVia_escape_witness",
+        "Turing.counterLoopTMVia_run_done",
+        "Turing.counter_rounds"
+      ],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "Mathlib.Data.Nat.Digits.Defs",
+          "Mathlib.Logic.Equiv.Bool",
+          "TCSlib.Complexity.TuringMachine.Build.Catalog",
+          "TCSlib.Complexity.TuringMachine.Build.Scan",
+          "TCSlib.Complexity.TuringMachine.SymbolLift",
+          "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+          "TCSlib.Complexity.TuringMachine.CodeParser"
+        ],
+        "head": [
+          "Mathlib.Data.Nat.Digits.Defs",
+          "Mathlib.Logic.Equiv.Bool",
+          "TCSlib.Complexity.TuringMachine.Build.Catalog",
+          "TCSlib.Complexity.TuringMachine.Build.Scan",
+          "TCSlib.Complexity.TuringMachine.SymbolLift",
+          "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+          "TCSlib.Complexity.TuringMachine.CodeParser"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "source_equal": true,
+      "source_sha256": {
+        "base": "7355f9634c35fbea36156620405efada8e38abfc54a7c8f7425bf7d3e764468f",
+        "head": "7355f9634c35fbea36156620405efada8e38abfc54a7c8f7425bf7d3e764468f"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 287,
+          "public": 51,
+          "private": 236
+        },
+        "head": {
+          "total": 287,
+          "public": 51,
+          "private": 236
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [],
+      "private_removed": [],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "Mathlib.Data.List.Induction",
+          "Mathlib.Data.Nat.Bits",
+          "Mathlib.Tactic.DeriveFintype",
+          "Mathlib.Tactic.FinCases",
+          "Mathlib.Tactic.Ring",
+          "TCSlib.Complexity.ClassP.TimeConstructible",
+          "TCSlib.Complexity.TuringMachine.Build.Convention",
+          "TCSlib.Complexity.TuringMachine.Build.Loop",
+          "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+          "TCSlib.Complexity.TuringMachine.Composition",
+          "TCSlib.Complexity.TuringMachine.Encoding"
+        ],
+        "head": [
+          "Mathlib.Data.List.Induction",
+          "Mathlib.Data.Nat.Bits",
+          "Mathlib.Tactic.DeriveFintype",
+          "Mathlib.Tactic.FinCases",
+          "Mathlib.Tactic.Ring",
+          "TCSlib.Complexity.ClassP.TimeConstructible",
+          "TCSlib.Complexity.TuringMachine.Build.Convention",
+          "TCSlib.Complexity.TuringMachine.Build.Loop",
+          "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+          "TCSlib.Complexity.TuringMachine.Composition",
+          "TCSlib.Complexity.TuringMachine.Encoding"
+        ]
+      }
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "source_equal": false,
+      "source_sha256": {
+        "base": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+        "head": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328"
+      },
+      "declaration_counts": {
+        "base": {
+          "total": 100,
+          "public": 4,
+          "private": 96
+        },
+        "head": {
+          "total": 100,
+          "public": 4,
+          "private": 96
+        }
+      },
+      "public_added": [],
+      "public_removed": [],
+      "private_added": [
+        "Turing.FinTM.dgSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.FinTM.dgSpan_add"
+      ],
+      "statement_changes": [],
+      "visibility_changes": [],
+      "changed_declarations": [
+        "Turing.FinTM.dgSpan_mono",
+        "Turing.FinTM.dgSpan_one",
+        "Turing.FinTM.dg_collect",
+        "Turing.FinTM.dg_end_with_growth",
+        "Turing.FinTM.dg_init",
+        "Turing.FinTM.dg_simulate",
+        "Turing.FinTM.dg_step",
+        "Turing.FinTM.dg_turn_with_growth"
+      ],
+      "executable_chunks_changed": [],
+      "imports": {
+        "base": [
+          "Mathlib.Tactic.Ring",
+          "Mathlib.Tactic.DeriveFintype",
+          "Mathlib.Data.Fintype.Option",
+          "Mathlib.Data.Fintype.Pi",
+          "Mathlib.Data.Fintype.Prod",
+          "Mathlib.Data.List.FinRange",
+          "Mathlib.Data.Sigma.Basic",
+          "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+          "TCSlib.Complexity.TuringMachine.Sweep",
+          "TCSlib.Complexity.TuringMachine.StateRenaming"
+        ],
+        "head": [
+          "Mathlib.Tactic.Ring",
+          "Mathlib.Tactic.DeriveFintype",
+          "Mathlib.Data.Fintype.Option",
+          "Mathlib.Data.Fintype.Pi",
+          "Mathlib.Data.Fintype.Prod",
+          "Mathlib.Data.List.FinRange",
+          "Mathlib.Data.Sigma.Basic",
+          "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+          "TCSlib.Complexity.TuringMachine.Sweep",
+          "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+        ]
+      }
+    }
+  ],
+  "changed_declarations": [
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_guard_add",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_pt_append",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_pt_mapSnd",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_pt_pair",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_pt_pair_input",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.SAT",
+      "name": "Complexity.sat_pt_unaryLength",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_copy",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_invalid",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_rewind",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_scan",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_segment_one",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_segment_zero",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.ClassNP.Tautology",
+      "name": "Complexity.tautDual_valid",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5Drop_native",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5Le_native",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5Pair_sizes",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5_guard_add",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5_pt_and",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5_pt_cond",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clA5_pt_const",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clNative_append",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clNative_linear",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clNative_map",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clNative_pair",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "name": "Complexity.clNative_unary",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.RoundContract.counterLoopDone_traj",
+      "private": false,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.RoundContract.counterLoopEscape_traj",
+      "private": false,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.counterLoopTMVia_done_witness",
+      "private": false,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.counterLoopTMVia_escape_witness",
+      "private": false,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.counterLoopTMVia_run_done",
+      "private": false,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "name": "Turing.counter_rounds",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dgSpan_mono",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dgSpan_one",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_collect",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_end_with_growth",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_init",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_simulate",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_step",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    },
+    {
+      "owner": "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "name": "Turing.FinTM.dg_turn_with_growth",
+      "private": true,
+      "header_equal": true,
+      "executable": false
+    }
+  ],
+  "source_diff_files": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/ClassNP/Tautology.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+  ],
+  "parser": {
+    "path": "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/declfreeze.py",
+    "sha256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700"
+  },
+  "limits": "Standing lexical declaration parser; exact Git blobs and patch retained. Native raw compiled type/value/attributes are an independent comparison. No private-ID normalization."
+}

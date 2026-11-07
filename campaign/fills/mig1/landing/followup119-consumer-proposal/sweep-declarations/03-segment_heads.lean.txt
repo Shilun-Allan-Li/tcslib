@@ -1,0 +1,42 @@
+private lemma segment_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x) (N B H : ℕ)
+    (hseam : ∀ j < N, ∀ i, -(H : ℤ) ≤ (cfg j).workTapePos i ∧
+      (cfg j).workTapePos i ≤ H)
+    (hend : (cfg N).state = none)
+    (hterminal : ∀ i, -((H + B : ℕ) : ℤ) ≤ (cfg N).workTapePos i ∧
+      (cfg N).workTapePos i ≤ (H + B : ℕ))
+    (hsegment : ∀ j < N, ∃ u ≤ B,
+      (tm.runFrom (cfg j) u).state = none ∨ tm.runFrom (cfg j) u = cfg (j + 1)) :
+    ∀ t i, -((H + B : ℕ) : ℤ) ≤ (tm.runFrom (cfg 0) t).workTapePos i ∧
+      (tm.runFrom (cfg 0) t).workTapePos i ≤ (H + B : ℕ) := by
+  induction N generalizing cfg with
+  | zero =>
+    intro t i
+    rw [MultiTapeTM.runFrom_of_halt _ hend]
+    exact hterminal i
+  | succ N ih =>
+    intro t i
+    obtain ⟨u, hu, he⟩ := hsegment 0 (by omega)
+    have hs := hseam 0 (by omega) i
+    have hp (v : ℕ) (hv : v ≤ B) :
+        -((H + B : ℕ) : ℤ) ≤ (tm.runFrom (cfg 0) v).workTapePos i ∧
+        (tm.runFrom (cfg 0) v).workTapePos i ≤ (H + B : ℕ) := by
+      have hh := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc tm (cfg 0) v i)
+      omega
+    by_cases ht : t ≤ u
+    · exact hp t (ht.trans hu)
+    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+      rcases he with he | he
+      · rw [MultiTapeTM.runFrom_of_halt _ he]
+        exact hp u hu
+      · rw [he]
+        exact ih (fun j => cfg (j + 1))
+          (fun j hj => hseam (j + 1) (by omega)) hend hterminal
+          (fun j hj => hsegment (j + 1) (by omega)) (t - u) i
+
+/-- A bounded startup followed by reusable seams has all-time space linear
+in the common segment budget, independently of the number of rounds.
+**Proof sketch.** Up to `startup ≤ B` steps a head is within `B` of the origin;
+afterwards `segment_heads` applies from `cfg 0`. Every head then stays within
+`H + B` of its origin start, and `Turing.MultiTapeTM.spaceUsed_le_of_abs_le`
+converts the common radius into space. -/
