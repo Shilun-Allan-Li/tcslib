@@ -585,6 +585,186 @@ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r
   refine ⟨hc, lt_of_lt_of_le (listToNat_lt_two_pow _) ?_⟩
   exact Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _)
 
+/-! ### The trial loop behind `polyTimeComputable_rejectBlocksL` (private)
+
+The state is `⟨⟨⟨bw, kw⟩, par⟩, ⟨counter, coins⟩⟩`: the header carries the block length `|bw|`,
+the trial width `|kw|` and the parameter word `par`; the counter carries the remaining trials.
+Harvested from the Rabin fill's private block loop, with the parameter word added to the header
+and the test applied to `⟨par, trial word⟩`. -/
+
+/-- One trial: keep the header, drop one counter bit and one block of `|bw|` coins. -/
+private def rbl_step (x : List Bool) : List Bool :=
+  pairEncode (pairFstD x)
+    (pairEncode ((pairFstD (pairSndD x)).drop 1)
+      ((pairSndD (pairSndD x)).drop (pairFstD (pairFstD (pairFstD x))).length))
+
+/-- The current trial word: the first `|kw|` remaining coins. -/
+private def rbl_block (x : List Bool) : List Bool :=
+  (pairSndD (pairSndD x)).take (pairSndD (pairFstD (pairFstD x))).length
+
+/-- The acceptance test: the counter is nonempty and `acc` accepts `⟨par, trial word⟩`. -/
+private def rbl_acc (acc : List Bool → Bool) (x : List Bool) : Bool :=
+  !(decide (pairFstD (pairSndD x) = [])) && acc (pairEncode (pairSndD (pairFstD x)) (rbl_block x))
+
+/-- The payload of an accepted state: a `true` marker, then the trial word. -/
+private def rbl_out (x : List Bool) : List Bool := [true] ++ rbl_block x
+
+/-- The loop: the payload of the first accepted state among the first `|x| + 1` states of the
+orbit, `[]` if none (the function of `polyTimeComputable_iterateFind`, its `match` written as
+`Option.elim`). -/
+private def rbl_loop (acc : List Bool → Bool) (x : List Bool) : List Bool :=
+  ((List.range (x.length + 1)).find? (fun i => rbl_acc acc (rbl_step^[i] x))).elim []
+    (fun i => rbl_out (rbl_step^[i] x))
+
+/-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
+private theorem rbl_step_poly : PolyTimeComputable rbl_step := by
+  have h := polyTimeComputable_pairFstD.pairEncode
+    ((polyTimeComputable_tail.comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)).pairEncode
+      ((polyTimeComputable_pairDropPoly .var).comp
+        ((polyTimeComputable_pairFstD.comp
+          (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)).pairEncode
+          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
+  refine h.congr fun x => ?_
+  simp only [rbl_step, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+    PolyExpr.eval_var]
+
+/-- The trial word is polynomial-time (`polyTimeComputable_pairTakePoly`). -/
+private theorem rbl_block_poly : PolyTimeComputable rbl_block := by
+  have h := (polyTimeComputable_pairTakePoly .var).comp
+    ((polyTimeComputable_pairSndD.comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)).pairEncode
+      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
+  refine h.congr fun x => ?_
+  simp only [rbl_block, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+    PolyExpr.eval_var]
+
+/-- The test is polynomial-time (`polyTimeComputable_isNil`, `_not`, `_and`, the given `acc`). -/
+private theorem rbl_acc_poly {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x]) :
+    PolyTimeComputable fun x => [rbl_acc acc x] := by
+  have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
+    PolyTimeComputable.comp' polyTimeComputable_isNil
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
+  have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
+    polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
+  have t2 : PolyTimeComputable fun x => [acc (pairEncode (pairSndD (pairFstD x)) (rbl_block x))] :=
+    PolyTimeComputable.comp' hacc
+      ((polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD).pairEncode rbl_block_poly)
+  exact polyTimeComputable_and (p := fun x => !decide (pairFstD (pairSndD x) = []))
+    (q := fun x => acc (pairEncode (pairSndD (pairFstD x)) (rbl_block x))) t1' t2
+
+/-- The payload is polynomial-time (`polyTimeComputable_prepend`). -/
+private theorem rbl_out_poly : PolyTimeComputable rbl_out :=
+  (polyTimeComputable_prepend [true]).comp rbl_block_poly
+
+/-- The orbit: after `i` trials the state is `⟨h, ⟨c.drop i, s.drop (i · |fst (fst h)|)⟩⟩`. -/
+private theorem rbl_step_iterate (h c s : List Bool) (i : ℕ) :
+    rbl_step^[i] (pairEncode h (pairEncode c s)) =
+      pairEncode h (pairEncode (c.drop i) (s.drop (i * (pairFstD (pairFstD h)).length))) := by
+  induction i with
+  | zero => rw [Function.iterate_zero_apply, List.drop_zero, Nat.zero_mul, List.drop_zero]
+  | succ i ih =>
+    rw [Function.iterate_succ_apply', ih]
+    simp only [rbl_step, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
+    rw [Nat.succ_mul]
+
+/-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
+private theorem rbl_length_step_le (x : List Bool) : (rbl_step x).length ≤ 2 * x.length + 4 := by
+  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
+  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
+  simp only [rbl_step, length_pairEncode, List.length_drop]
+  omega
+
+/-- From the first step on the state is a well-formed word, which only shrinks. -/
+private theorem rbl_length_step_step_le (x : List Bool) :
+    (rbl_step (rbl_step x)).length ≤ (rbl_step x).length := by
+  simp only [rbl_step, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
+    List.length_drop]
+  omega
+
+/-- The orbit bound `|step^[i] x| ≤ 2|x| + 4` demanded by the repetition host. -/
+private theorem rbl_length_step_iterate_le (x : List Bool) (i : ℕ) :
+    (rbl_step^[i] x).length ≤ 2 * x.length + 4 := by
+  cases i with
+  | zero => rw [Function.iterate_zero_apply]; omega
+  | succ i =>
+    induction i with
+    | zero => exact rbl_length_step_le x
+    | succ i ih =>
+      rw [Function.iterate_succ_apply'] at ih ⊢
+      rw [Function.iterate_succ_apply']
+      exact (rbl_length_step_step_le _).trans ih
+
+/-- The loop is polynomial-time: an instance of the repetition host
+`polyTimeComputable_iterateFind` (`R = var`, orbit bound `2|x| + 4`), its `match` read by
+`split` (its equation lemmas), never by unfolding the matcher. -/
+private theorem rbl_loop_poly {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x]) :
+    PolyTimeComputable (rbl_loop acc) := by
+  have hF := polyTimeComputable_iterateFind rbl_step_poly (rbl_acc_poly hacc) rbl_out_poly
+    PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
+      rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+        PolyExpr.eval_const]
+      exact rbl_length_step_iterate_le x i)
+  refine hF.congr fun x => ?_
+  rw [rbl_loop, PolyExpr.eval_var]
+  split
+  · next i h => rw [h, Option.elim_some]
+  · next h => rw [h, Option.elim_none]
+
+/-- **The loop computes `rejectBlocksL`**: on the start state `⟨⟨⟨bw, kw⟩, par⟩, ⟨tw, c⟩⟩`, the
+loop is `[]` when `rejectBlocksL (E ⟦par⟧) |kw| |bw| |tw| c` is `none`, and otherwise a nonempty
+word whose tail reads as the accepted value and has at most `|kw|` bits.
+
+**Proof sketch.** After `i` steps the state is `⟨h, ⟨tw.drop i, c.drop (i |bw|)⟩⟩`
+(`rbl_step_iterate`), so trial `i` reads `v_i = ⟦(c.drop (i |bw|)).take |kw|⟧` and the test is
+`i < |tw| ∧ E ⟦par⟧ v_i` (`hspec`). The search over `[0, |x| + 1) ⊇ [0, |tw|)` is the search over
+`[0, |tw|)` (`IterateFind.find?_range_and_lt`), which is `rejectBlocksL` read as a search
+followed by the value (`rejectBlocksL_eq_find?`); the accepted payload is `true :: trial word`
+(`List.length_take_le`). -/
+private theorem rbl_loop_spec (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (E a)]
+    {acc : List Bool → Bool}
+    (hspec : ∀ w b : List Bool, acc (pairEncode w b) = decide (E (listToNat w) (listToNat b)))
+    (par kw bw tw c : List Bool) :
+    (rbl_loop acc (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c))).tail.length ≤
+        kw.length ∧
+      rejectBlocksL (E (listToNat par)) kw.length bw.length tw.length c =
+        if rbl_loop acc (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c)) = []
+        then none
+        else some (listToNat
+          (rbl_loop acc (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c))).tail) := by
+  set x0 := pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c) with hx0
+  have hblock : ∀ i, rbl_block (rbl_step^[i] x0) = (c.drop (i * bw.length)).take kw.length := by
+    intro i
+    rw [hx0, rbl_step_iterate]
+    simp only [rbl_block, pairFstD_pairEncode, pairSndD_pairEncode]
+  have hacc : ∀ i, rbl_acc acc (rbl_step^[i] x0) = (decide (i < tw.length) &&
+      decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
+    intro i
+    rw [rbl_acc, hblock, hspec, hx0, rbl_step_iterate]
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.drop_eq_nil_iff]
+    by_cases h1 : i < tw.length
+    · rw [decide_eq_false (by omega), decide_eq_true h1]
+      rfl
+    · rw [decide_eq_true (by omega), decide_eq_false h1]
+      rfl
+  have hrange : tw.length ≤ x0.length + 1 := by
+    simp only [hx0, length_pairEncode]
+    omega
+  have hfind : (List.range (x0.length + 1)).find? (fun i => rbl_acc acc (rbl_step^[i] x0)) =
+      (List.range tw.length).find?
+        (fun i => decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
+    rw [show (fun i => rbl_acc acc (rbl_step^[i] x0)) = _ from funext hacc]
+    exact IterateFind.find?_range_and_lt _ hrange
+  rw [rejectBlocksL_eq_find?, rbl_loop, hfind]
+  rcases (List.range tw.length).find?
+      (fun i => decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length))))
+    with _ | i
+  · rw [Option.elim_none, Option.map_none, if_pos rfl, List.tail_nil, List.length_nil]
+    exact ⟨Nat.zero_le _, rfl⟩
+  · rw [Option.elim_some, Option.map_some, rbl_out, hblock, List.singleton_append,
+      if_neg (List.cons_ne_nil _ _), List.tail_cons]
+    exact ⟨List.length_take_le _ _, rfl⟩
+
 /-- **Block rejection sampling is polynomial-time** (host H15) [PS10, Theorems 52.3, 53.2, 61.7
 and 63.10: "the domain is easy to sample"]. Let `E a v` be a test on a parameter `a` and a value
 `v`, decided on words by a polynomial-time bit `acc`, so that `acc ⟨w, b⟩ = [E ⟦w⟧ ⟦b⟧]`. Take
@@ -640,7 +820,11 @@ theorem polyTimeComputable_rejectBlocksL (E : ℕ → ℕ → Prop) [∀ a, Deci
       (g z).tail.length ≤ (kw z).length ∧
       rejectBlocksL (E (listToNat (par z))) (kw z).length (bw z).length (tw z).length (c z) =
         if g z = [] then none else some (listToNat (g z).tail) := by
-  sorry
+  exact ⟨fun z => rbl_loop acc
+        (pairEncode (pairEncode (pairEncode (bw z) (kw z)) (par z)) (pairEncode (tw z) (c z))),
+    PolyTimeComputable.comp' (rbl_loop_poly hacc)
+      (((hbw.pairEncode hkw).pairEncode hpar).pairEncode (htw.pairEncode hc)),
+    fun z => rbl_loop_spec E hspec (par z) (kw z) (bw z) (tw z) (c z)⟩
 
 /-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
 `t · B + j`. -/
