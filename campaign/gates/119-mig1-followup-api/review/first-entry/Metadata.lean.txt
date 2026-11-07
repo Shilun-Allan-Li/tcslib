@@ -1,0 +1,38 @@
+import TCSlib.Complexity.TuringMachine.Finite
+#print axioms Turing.MultiTapeTM.exists_first_entry_of_fixed
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let root := ``Turing.MultiTapeTM.exists_first_entry_of_fixed
+  let home := `TCSlib.Complexity.TuringMachine.Finite
+  let st ← liftTermElabM getSimpTheorems
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let some ci := env.find? root | throwError "missing approved theorem"
+  let some idx := env.getModuleIdxFor? root | throwError "owner missing"
+  if env.header.moduleNames[idx.toNat]! != home then throwError "incorrect new theorem home"
+  logInfo m!"ROOT|{root}|owner={home}|kind={kind ci}|private={isPrivateName root}|internal={root.isInternalDetail}|simp={st.isLemma (.decl root)}|unfold={st.toUnfold.contains root}"
+  logInfo m!"TYPE|{root}|{ci.type}"
+  for (n, info) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if owner == home then
+      logInfo m!"OWNERCI|{n}|kind={kind info}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    if !root.isPrefixOf n then continue
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AX|{n}|kind={kind info}|{(axs.qsort Name.lt).toList}"
+    let used := info.type.getUsedConstants ++ (info.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for x in used do
+      if seen.contains x then continue
+      seen := seen.push x
+      match env.getModuleIdxFor? x, env.find? x with
+      | some j, some (.defnInfo di) =>
+        let defHome := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf defHome then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{x}|{defHome}|hints={hint}"
+      | _, _ => pure ()

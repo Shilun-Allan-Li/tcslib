@@ -1,0 +1,23 @@
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing
+namespace Complexity
+attribute [local irreducible] PolyTimeComputable PrefixByLength.drop pairEncode pairDecode pairFstD pairSndD
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+#check PrefixByLength.drop.eq_1
+/-- Conditional use of the existing prefix remover on a pair of computed words. -/
+theorem drop_import_probe {s u : List Bool → List Bool}
+    (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
+    PolyTimeComputable (fun x => (s x).drop (u x).length) := by
+  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
+  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
+      (fun x => (s x).drop (u x).length) := by
+    funext x
+    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
+      pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [he] at h
+  exact h
+end Complexity
+#print axioms Complexity.drop_import_probe

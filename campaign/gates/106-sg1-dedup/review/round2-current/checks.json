@@ -1,0 +1,189 @@
+{
+  "actual_guard_seals_pass": true,
+  "actual_seal_axioms": {
+    "SAT": {
+      "_private._stdin.0.Complexity.sat_guard_add": "propext, Quot.sound"
+    },
+    "Hardness": {
+      "_private._stdin.0.Complexity.clA5_guard_add": "propext, Quot.sound"
+    }
+  },
+  "exact_actual_seal_targets": [
+    {
+      "name": "Complexity.sat_guard_add",
+      "original_imports_and_exact_header_body_tested": true,
+      "all_other_source_bytes_unchanged": true
+    },
+    {
+      "name": "Complexity.clA5_guard_add",
+      "original_imports_and_exact_header_body_tested": true,
+      "all_other_source_bytes_unchanged": true
+    }
+  ],
+  "positive_controls": {
+    "examples": 2,
+    "errors": 0,
+    "exit": 0,
+    "expected_per_example": 0,
+    "bad_examples": [],
+    "stray": [],
+    "other": [],
+    "accepted": true
+  },
+  "negative_controls": {
+    "examples": 2,
+    "errors": 2,
+    "exit": 1,
+    "expected_per_example": 1,
+    "bad_examples": [],
+    "stray": [],
+    "other": [],
+    "accepted": true
+  },
+  "synthetic_checker_negative_tests": {
+    "duplicate": {
+      "examples": 2,
+      "errors": 3,
+      "exit": 1,
+      "expected_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 8,
+          "count": 2
+        }
+      ],
+      "stray": [],
+      "other": [],
+      "accepted": false
+    },
+    "missing": {
+      "examples": 2,
+      "errors": 1,
+      "exit": 1,
+      "expected_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 8,
+          "count": 0
+        }
+      ],
+      "stray": [],
+      "other": [],
+      "accepted": false
+    },
+    "exit_zero": {
+      "examples": 2,
+      "errors": 2,
+      "exit": 0,
+      "expected_per_example": 1,
+      "bad_examples": [],
+      "stray": [],
+      "other": [],
+      "accepted": false
+    }
+  },
+  "all_request_input_output_hashes_match": true,
+  "compiled_private_guard_ids_and_axioms": {
+    "base": {
+      "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_guard_add": [
+        "propext",
+        "Quot.sound"
+      ],
+      "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5_guard_add": [
+        "propext",
+        "Quot.sound"
+      ]
+    },
+    "head": {
+      "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_guard_add": [
+        "propext",
+        "Quot.sound"
+      ],
+      "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5_guard_add": [
+        "propext",
+        "Quot.sound"
+      ]
+    }
+  },
+  "six_public_axioms": {
+    "Complexity.LogProg.halfL_run": "propext, Classical.choice, Quot.sound",
+    "Turing.RoundContract.counterLoopDone_traj": "propext, Classical.choice, Quot.sound",
+    "Turing.RoundContract.counterLoopEscape_traj": "propext, Classical.choice, Quot.sound",
+    "Turing.counterLoopTMVia_done_witness": "propext, Classical.choice, Quot.sound",
+    "Turing.counterLoopTMVia_escape_witness": "propext, Classical.choice, Quot.sound",
+    "Turing.counterLoopTMVia_run_done": "propext, Classical.choice, Quot.sound"
+  },
+  "source_counts": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": {
+      "public": 5,
+      "private": 265,
+      "total": 270
+    },
+    "TCSlib/Complexity/ClassNP/Tautology.lean": {
+      "public": 5,
+      "private": 88,
+      "total": 93
+    },
+    "TCSlib/Complexity/CookLevin/Hardness.lean": {
+      "public": 5,
+      "private": 539,
+      "total": 544
+    },
+    "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean": {
+      "public": 15,
+      "private": 0,
+      "total": 15
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": {
+      "public": 113,
+      "private": 392,
+      "total": 505
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": {
+      "public": 92,
+      "private": 1,
+      "total": 93
+    },
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": {
+      "public": 59,
+      "private": 20,
+      "total": 79
+    },
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": {
+      "public": 49,
+      "private": 236,
+      "total": 285
+    },
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": {
+      "public": 4,
+      "private": 96,
+      "total": 100
+    }
+  },
+  "source_total": 1984,
+  "unchanged_nonprivate_constants": 1349,
+  "compiler_total_before_after": [
+    7099,
+    7087
+  ],
+  "single_tape_consumer_counts": {
+    "dg_init": 3,
+    "dg_collect": 1,
+    "dg_turn_with_growth": 2,
+    "dg_end_with_growth": 2,
+    "dg_step": 3,
+    "dg_simulate": 1
+  },
+  "single_tape_consumer_declarations": 6,
+  "single_tape_total_calls": 12,
+  "current_replay_independently_crosschecked_not_rerun": {
+    "modules": 329,
+    "failures": 0,
+    "static_mismatches": 0,
+    "static_total": 66,
+    "all_artifact_hashes_match": true,
+    "order_matches_raw_log": true
+  },
+  "all_base_head_source_and_selected_olean_hashes_unchanged": true,
+  "no_gate_closure_or_merge_clearance": true
+}

@@ -1,0 +1,111 @@
+{
+  "status": "STABLE mechanical proposal; generic sealed proof and paired controls passed; root source application pending",
+  "context": "Existing complete oleans-msg3, supplied parent replay receipt; SAT/Hardness reach Contract.Basic transitively",
+  "snapshot": "oleans-msg3",
+  "worktree": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-sg1",
+  "public_api": [
+    "Turing.Segment",
+    "Turing.segment_iff",
+    "Turing.Segment.trans"
+  ],
+  "forbidden_set": "{some anchor}",
+  "head_relation": "fun _ => True",
+  "source_preconditions": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "private_name": "sat_guard_add",
+      "original_source_sha256": "61148b38017f2f86efccba6a93dd6bb671e0a6b4ff2627594f93dce44b0607c5",
+      "proposed_source_sha256": "3b6e467e10c28a944d2495b11ca51dc731fd3fb9482207d596a424cbffbdcc4f",
+      "header_sha256": "d1921ab60db1eec71cba8079b5436a55b80489f7abd2f13405bd9ddc0764f9fc",
+      "original_declaration_sha256": "42ba29f0025414f74a7a9d95645a4cce7839660fedb050692fca74d119cb17fd",
+      "replacement_declaration_sha256": "adc9759dca95a12dd3c454ad5ba5fd7c60842f57551184bfc8b22ea3db80f30a",
+      "headers_identical": true,
+      "imports_and_surrounding_bytes_unchanged": true
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "private_name": "clA5_guard_add",
+      "original_source_sha256": "ea688c4da547ea6b47de7fcccbaf435e65e10c52b21b39e14395f66ab27be40a",
+      "proposed_source_sha256": "9f7ad7dc8c2efbb99a51ee2ebf4da7f8a7d7d9bc4c09414d982ab974cd61c0e2",
+      "header_sha256": "ddf5be72e742bdfed6d1c298dc2efeede6f0df90c738baf3b880ce6927b9d415",
+      "original_declaration_sha256": "10e5d02ef288c647f5d10bcdc2cd77dee29fa32c8ddec28d93cf0092a9cec96e",
+      "replacement_declaration_sha256": "c879f9fe1a684eef3ebe376fa642f41c13b05b9e3dca5f42332bfaae5e68bd56",
+      "headers_identical": true,
+      "imports_and_surrounding_bytes_unchanged": true
+    }
+  ],
+  "same_header_modulo_private_names": true,
+  "new_declarations_in_final_patch": 0,
+  "new_imports": 0,
+  "runs": [
+    {
+      "source": "campaign/gates/106-sg1-dedup/review/guard-repair/probes/GuardSegmentSealed.lean.txt",
+      "source_sha256": "add83abadc09d8640f3baf95844c4126acf87732ceefa784acbf94b18c654e3c",
+      "log": "campaign/gates/106-sg1-dedup/review/guard-repair/logs/GuardSegmentSealed.out",
+      "log_sha256": "6daf7d8d84e4dcb2253d879f9bc1ef4d462bb160f114fe4f08c9a6384a8b9faf",
+      "start_utc": "2026-11-07T09:10:15.695001+00:00",
+      "end_utc": "2026-11-07T09:10:18.972257+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [
+        "'GuardRepairProbe.guard_add' depends on axioms: [propext, Quot.sound]"
+      ],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/gates/106-sg1-dedup/review/guard-repair/probes/ControlsUnsealed.lean.txt",
+      "source_sha256": "f33711b228c84823086584d4cd3c662b3ae6a5b25d1d46eb5394050927f88cb3",
+      "log": "campaign/gates/106-sg1-dedup/review/guard-repair/logs/ControlsUnsealed.out",
+      "log_sha256": "8410d792a0f8913fd7ee79d75e1679010139e58c4570b3765ed5710241bdfb39",
+      "start_utc": "2026-11-07T09:10:18.972958+00:00",
+      "end_utc": "2026-11-07T09:10:20.458945+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/gates/106-sg1-dedup/review/guard-repair/probes/ControlsSealed.lean.txt",
+      "source_sha256": "84539d69170069b16a43612d01f97e227ad12ca3e5809155d21389aea69d863e",
+      "log": "campaign/gates/106-sg1-dedup/review/guard-repair/logs/ControlsSealed.out",
+      "log_sha256": "57f5c8c47f0256c440668fec70ef40706245267b6145d8d21ca176772fee2876",
+      "start_utc": "2026-11-07T09:10:20.459504+00:00",
+      "end_utc": "2026-11-07T09:10:21.789070+00:00",
+      "exit_code": 1,
+      "errors": 2,
+      "warnings": 0,
+      "axiom_prints": [],
+      "status": "EXPECTED NEGATIVE CONTROL"
+    }
+  ],
+  "control_check": {
+    "expected_lines": [
+      12,
+      19
+    ],
+    "actual_lines": [
+      12,
+      19
+    ],
+    "multiplicities_exact": true,
+    "positive_exit": 0,
+    "negative_exit": 1,
+    "unexpected_errors": 0
+  },
+  "target_checks": "Both exact existing headers and all surrounding source bytes preserved; no ordinary time-concatenation proof, imports, or declarations added.",
+  "not_run": [
+    "Full SAT/Hardness elaboration",
+    "Merged-tree replay",
+    "Screen/lint",
+    "Git/source application or push",
+    "Gate closure"
+  ],
+  "snapshot_context_parent_receipt": {
+    "path": "campaign/gates/106-sg1-dedup/evidence/current-after-natbits/receipt.json",
+    "sha256": "14b12b773a96872ad252ff1691bc1e148469eccc644cc1b9250e4de5bda84136",
+    "reported_head": "0169f932262d5979bb03bc2c2e5da9c083a52cbd",
+    "execution_note": "Existing parent replay receipt only; this task executed the three small plain-leanelab checks, not that replay."
+  }
+}

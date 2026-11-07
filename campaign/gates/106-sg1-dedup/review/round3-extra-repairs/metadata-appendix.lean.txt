@@ -1,0 +1,41 @@
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let wanted : List String := ["clA5Pair_sizes", "clA5Le_native"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if (env.getModuleIdxFor? n).isSome then continue
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then throwError "Root count mismatch: {roots.size}/{wanted.length}"
+  for n in roots.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := kenv.find? n | throwError "missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, kenv.find? c with
+      | some j, some info =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          logInfo m!"CITED|{n}|{c}|{owner}|kind={kind info}|private={isPrivateName c}"
+          if let .defnInfo di := info then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) => logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

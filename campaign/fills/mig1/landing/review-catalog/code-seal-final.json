@@ -1,0 +1,40 @@
+{
+  "definitions": [
+    "Turing.Cfg.ofWords",
+    "Turing.Cfg.mapState",
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.moveInputPos",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.Computes",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.spaceUsedByTape",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.FinTM.bufferTape",
+    "Turing.copyTM",
+    "Turing.seamCompTM",
+    "Turing.embedEmitTM",
+    "Turing.stateWord",
+    "Turing.embedEmitCfg"
+  ],
+  "count": 22,
+  "target": "Turing.MachineFormat.canonPreserveInstall",
+  "inserted_pieces": [
+    "section CodeCanonStrict\nattribute [local irreducible] Turing.Cfg.ofWords Turing.Cfg.mapState Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.bufferTape Turing.copyTM Turing.seamCompTM Turing.embedEmitTM Turing.stateWord Turing.embedEmitCfg\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "\n#print axioms Turing.MachineFormat.canonPreserveInstall\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CodeCanonStrict\n"
+  ],
+  "source_restore_exact": true,
+  "all_controls_already_in_CertShell41": true,
+  "missing_pairs": [],
+  "source_sha256": "57e7dc52dedf3d146499ad5694270d1c6fee7255cad74338d4174c5cce3e1a73",
+  "previous_source_sha256": "78837a1492da3245b0a5b54573d850294ae5b3f1dacde2e470d111b171be8b70",
+  "repair": "One public embedEmitCfg_state rewrite replaces the implicit state projection read.",
+  "input": "CodeSimulator-strict-current-v3",
+  "compiled_context_limit": "Combined overlay contains old CodeSimulator source78837, while this plain full-source elaboration checks repaired57e7 directly; imports unchanged and do not import CodeSimulator itself."
+}

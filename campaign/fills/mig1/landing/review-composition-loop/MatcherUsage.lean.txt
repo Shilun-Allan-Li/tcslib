@@ -1,0 +1,29 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+
+/-! Locate generated-matcher mentions in each covered root/descendant and in the exact
+published rewind contract types. This is a read-only compiled-term inventory. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let matcher := `Turing.FinTM.rewind_scan.match_1
+  let wanted : List String := ["idTM_computes", "computesFunInTime_id", "ifEqTM_computes", "computesFunInTime_ifEq", "computesFunInTime_comp", "exists_comp_on_image", "exists_comp_partial", "condTM_branch_run", "condTM_computes_iff", "exists_cond", "timedCondTM_computes", "timedHeads", "timed_control_heads", "timed_branch_heads", "timedReadyCfg_workTapePos", "timedReady_dispatch", "timed_read_heads", "timed_ledger", "timedCondTM_spaceUsed", "computesFunInTime_cond", "loop_first_halt", "loopHost_input_rewind", "loopHost_prepare", "loopCall_heads", "loopHost_contracts", "segment_heads", "seamed_space", "loopHostTM_contracts", "exists_loopCfgTM", "loopHostTM_decides", "exists_loopTM", "loopHostTM_finds", "loopHostTM_spaceUsed_le_budget", "exists_loopFindTM", "emCall_pair_not_mem", "emCall_triple_not_mem", "emCall_bank_initial", "emCall_bank_final", "emitLoopTM_computes", "exists_emitLoopTM"]
+  let homes : List Name := [`TCSlib.Complexity.TuringMachine.Composition,
+    `TCSlib.Complexity.TuringMachine.Build.Wrappers, `TCSlib.Complexity.TuringMachine.Build.Loop]
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    if !homes.contains env.header.moduleNames[i.toNat]! then continue
+    match n with
+    | .str _ tail => if wanted.contains tail then roots := roots.push n
+    | _ => pure ()
+  for (n, ci) in env.constants.toList do
+    if !(roots.any (fun r => r.isPrefixOf n)) then continue
+    let inType := ci.type.getUsedConstants.contains matcher
+    let inValue := (ci.value?.map (fun v => v.getUsedConstants.contains matcher)).getD false
+    if inType || inValue then
+      logInfo m!"MATCHERUSE|{n}|inType={inType}|inValue={inValue}|root={roots.contains n}|auxiliary={!roots.contains n}"
+  for n in [`Turing.FinTM.timed_rewind, `Turing.FinTM.rewind_heads,
+      `Turing.FinTM.rewind_from_any, `Turing.FinTM.rewind_scan_heads] do
+    let some ci := env.find? n | throwError "rewind API missing {n}"
+    logInfo m!"MATCHERINTERFACE|{n}|inType={ci.type.getUsedConstants.contains matcher}"
+    logInfo m!"PUBLISHEDTYPE|{n}|{ci.type}"

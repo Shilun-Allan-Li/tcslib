@@ -1,0 +1,23 @@
+--- r1/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ r2/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1276,7 +1276,7 @@
+     have ne : j ≠ dst := fun eq => hj ⟨zero, eq.symm⟩
+     simp only [copied, result, Function.update_of_ne ne]
+   -- The copy, read from the framed contract at the canonical seam.
+-  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) rfl
++  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have run₀ := framed₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w 0 dst fresh)
+   have cut₀ := framed₀.2.1
+@@ -1305,9 +1305,9 @@
+   have cut' (u : ℕ) (hu : u < t₁) :
+       (E.runFrom ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState
+         fun _ => enter) u).state ≠ some leave := secondCut u hu
+-  have whole := seamCompTM_run_ofCfg P .done E enter run₀ rfl cut₀ second'
++  have whole := seamCompTM_run_ofCfg P .done E enter run₀ (Cfg.ofWords_state _ _) cut₀ second'
+   have first := seamCompTM_firstReturn_ofCfg P .done E enter leave
+-    run₀ rfl cut₀ second' rfl cut'
++    run₀ (Cfg.ofWords_state _ _) cut₀ second' rfl cut'
+   refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
+   · calc
+       t₀ + 1 + t₁ ≤ 3 * arg.length + 4 +

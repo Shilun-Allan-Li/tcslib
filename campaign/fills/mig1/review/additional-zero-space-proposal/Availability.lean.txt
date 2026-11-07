@@ -1,0 +1,14 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+open Lean Elab Command
+run_cmd do
+  let env ← getEnv
+  let roots := ["Turing.pairDiagTM", "Turing.FinTM.incFixedTM"]
+  for (name, info) in env.constants.toList do
+    if roots.any (fun root => name.toString.startsWith root) then
+      logInfo m!"{name} : {info.type}"
+  for wanted in ["Turing.pairDiagTM_spaceUsed", "Turing.FinTM.incFixedTM_spaceUsed"] do
+    if env.constants.toList.any (fun item => item.1.toString = wanted) then
+      logInfo m!"REQUESTED {wanted}: PRESENT"
+    else
+      logInfo m!"REQUESTED {wanted}: ABSENT"
+#check Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero

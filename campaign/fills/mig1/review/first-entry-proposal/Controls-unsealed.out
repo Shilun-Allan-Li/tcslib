@@ -1,0 +1,25 @@
+/private/tmp/tcslib-first-entry-rnku4zt6/Controls_unsealed.lean:16:75: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step c
+is not definitionally equal to the right-hand side
+  match c.state with
+  | none => c
+  | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step c =
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+/private/tmp/tcslib-first-entry-rnku4zt6/Controls_unsealed.lean:20:75: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.step c
+is not definitionally equal to the right-hand side
+  fun tm c =>
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+
+⊢ (fun tm c => MultiTapeTM.step c) = fun tm c =>
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c

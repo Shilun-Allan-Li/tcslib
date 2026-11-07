@@ -1,0 +1,136 @@
+{
+  "unapproved": true,
+  "implementation": false,
+  "requested_names_absent": true,
+  "two_owner_context_proofs_pass_with_spaceUsed_initCfg_sealed": true,
+  "two_hypothetical_consumers_pass_with_both_machines_spaceUsed_initCfg_sealed": true,
+  "positive_controls": {
+    "examples": 8,
+    "diagnostics": 0,
+    "exit": 0,
+    "expected_errors_per_example": 0,
+    "bad_examples": [],
+    "stray": [],
+    "other_error_kinds": [],
+    "accepted": true
+  },
+  "negative_controls": {
+    "examples": 8,
+    "diagnostics": 8,
+    "exit": 1,
+    "expected_errors_per_example": 1,
+    "bad_examples": [],
+    "stray": [],
+    "other_error_kinds": [],
+    "accepted": true
+  },
+  "checker_negative_tests": {
+    "duplicate": {
+      "examples": 8,
+      "diagnostics": 9,
+      "exit": 1,
+      "expected_errors_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 6,
+          "count": 2
+        }
+      ],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    },
+    "missing": {
+      "examples": 8,
+      "diagnostics": 7,
+      "exit": 1,
+      "expected_errors_per_example": 1,
+      "bad_examples": [
+        {
+          "line": 6,
+          "count": 0
+        }
+      ],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    },
+    "exit_zero": {
+      "examples": 8,
+      "diagnostics": 8,
+      "exit": 0,
+      "expected_errors_per_example": 1,
+      "bad_examples": [],
+      "stray": [],
+      "other_error_kinds": [],
+      "accepted": false
+    }
+  },
+  "checker_negative_tests_are_synthetic_not_Lean_runs": true,
+  "axioms": {
+    "Encoding-home": {
+      "Turing.pairDiagTM_spaceUsed": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    "Build-Primitives-home": {
+      "Turing.FinTM.incFixedTM_spaceUsed": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    "Consumers": {
+      "AdditionalZeroSpaceConsumers.pairDup_constant_space": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "AdditionalZeroSpaceConsumers.incFixed_constant_space": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    }
+  },
+  "all_receipt_hashes_match": true,
+  "owner_source_and_compiled_module_hashes_unchanged": true,
+  "receipts": {
+    "Availability": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 2.028661012649536
+    },
+    "Build-Primitives-home": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.6682391166687012
+    },
+    "Consumers": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.2699649333953857
+    },
+    "Controls-sealed": {
+      "exit": 1,
+      "errors": 8,
+      "seconds": 1.2697117328643799
+    },
+    "Controls-unsealed": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.28407883644104
+    },
+    "Encoding-home": {
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.4535024166107178
+    }
+  },
+  "limitations": [
+    "Consumer interfaces are theorem parameters, not compiled new library constants.",
+    "No integrated Catalog repair, source change, gate acceptance or new API approval."
+  ]
+}

@@ -1,0 +1,28 @@
+/private/tmp/tcslib-f6-preship-lgal210e/Second_scan_v1.lean:42:2: error: unsolved goals
+case refine_2
+k : ℕ
+z : List Bool
+i : Fin k
+d : Cfg k Bool (Fin 4) z
+ell1 : ℕ
+hp : ↑d.inputPos = 1 + ell1
+hq : d.state = some 0
+hh : d.workTapePos i = ↑ell1
+hw : ∀ (a : ℤ), d.workTapes i a = FinTM.bufferTape (List.replicate ell1 true) a
+u v : List Bool
+hz : List.drop ell1 z = pairEncode u v
+ell2 : ℕ := 2 * u.length + 2
+ht : ↑d.inputPos + ell2 < z.length + 2 :=
+  have h := congrArg List.length hz;
+  id
+    (Decidable.byContradiction fun a =>
+      second_scan._proof_1 i d ell1 hp hh u v
+        (Eq.mp (congrArg (fun _a => z.length - ell1 = _a) (length_pairEncode u v))
+          (Eq.mp (congrArg (fun _a => _a = (pairEncode u v).length) List.length_drop) h))
+        a)
+c : Cfg k Bool (Fin 4) z := headerScanCfg i d 3 ell2 ht
+run : MultiTapeTM.runFrom d (2 * u.length + 2) = headerScanCfg i d 3 (2 * u.length + 2) ⋯
+cut : ∀ t < 2 * u.length + 2, (MultiTapeTM.runFrom d t).state ≠ some 3
+silent : ∀ t ≤ 2 * u.length + 2, (MultiTapeTM.runFrom d t).output = d.output
+⊢ ↑ell1 + (↑(2 * u.length) + ↑2) = ↑(ell1 + ell2)
+'F6PhaseInterfaces.second_scan' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

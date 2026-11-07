@@ -1,0 +1,18 @@
+namespace F6LayoutPreship
+open Turing
+
+/-- Consumer of the implemented, still-unmerged prerequisite reader, with
+CodeTM.toFinTM sealed before this header. No assumed reader hypothesis. -/
+theorem actual_bundle_consumer (M : CodeTM) (x output : List Bool) (t s : ℕ)
+    (hcomp : M.toFinTM.ComputesInTime x output t)
+    (hspace : M.toFinTM.tm.spaceUsed (M.toFinTM.tm.initCfg x) t ≤ s) :
+    (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = output ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s := by
+  rw [CodeTM.toFinTM_eq] at hcomp hspace
+  obtain ⟨halted, out⟩ := (FinTM.computesInTime_iff
+    { k := 1, State := Fin (M.numStates + 1), tm := M.tm } x output t).mp hcomp
+  exact ⟨halted, out, hspace⟩
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.actual_bundle_consumer

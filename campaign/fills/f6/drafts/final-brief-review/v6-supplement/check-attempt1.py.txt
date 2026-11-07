@@ -1,0 +1,57 @@
+from pathlib import Path
+import json,hashlib,re,collections
+OUT=Path(__file__).resolve().parent;PREV=OUT.parent;DRAFTS=PREV.parent;V6=DRAFTS/'phase-interfaces-preship-v6';WT=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-natbits')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+# Validate archived data, never execute its scripts/probes.
+m=json.loads((V6/'MANIFEST.json').read_text())
+for r in m['files']:
+ p=V6/r['path'];assert p.stat().st_size==r['bytes'] and sha(p)==r['sha256']
+sealed=(V6/'Phases-v4.lean.txt').read_text();native=(V6/'Phases-native-v4.lean.txt').read_text()
+guard=next(l for l in sealed.splitlines(True) if l.startswith('attribute [local irreducible]'))
+guards=guard.strip().split('] ',1)[1].split();assert len(guards)==37
+assert sealed.replace(guard,'')==native
+assert sealed.index(guard)<sealed.index('/--')
+assert 'attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg' in native
+pop=set((PREV/'provisional-TCSlib-screen.txt').read_text().splitlines());assert len(pop)==21
+boot={x.replace('/','.') for x in (DRAFTS/'packet-preparation/bootstrap-order.txt').read_text().splitlines()}
+mathroots=set((DRAFTS/'packet-preparation/mathlib-roots.txt').read_text().splitlines());assert len(mathroots)==65
+all_imports={str(p.relative_to(V6)):[line.strip()[7:] for line in p.read_text().splitlines() if line.strip().startswith('import ')] for p in V6.glob('*.lean.txt')}
+assert all(set(im)<={'TCSlib.Complexity.SpaceComplexity.Hierarchy'} for im in all_imports.values())
+raw=(V6/'Phases-v4.out').read_text()
+foreign=[dict(zip(['root','name','owner','hints'],row)) for row in re.findall(r'^FOREIGNDEF\|([^|]+)\|([^|]+)\|([^|]+)\|hints=(\w+)$',raw,re.M)]
+owners={r['owner'].replace('.','/')+'.lean' for r in foreign};assert owners<=pop
+ordinary={r['name'] for r in foreign if r['hints']=='regular'};assert len(ordinary)==18 and ordinary<=set(guards)
+proofs=[{'name':n,'kind':k,'axioms':[x.strip() for x in a.split(',') if x.strip()]} for n,k,a in re.findall(r'^PROOFAX\|([^|]+)\|kind=([^|]+)\|\[([^\]]*)\]',raw,re.M)]
+roots=re.findall(r'^ROOT\|([^|]+)\|private=(\w+)',raw,re.M);assert len(roots)==7 and len(proofs)==13
+assert all(set(p['axioms'])<={'propext','Classical.choice','Quot.sound'} for p in proofs)
+expected=collections.Counter({(n,mode):1 for n in guards for mode in ['point','abstract']})
+for name,wanted in [('Controls-unsealed-v1','PASS'),('Controls-sealed-v1','FAIL')]:
+ text=(V6/(name+'.out')).read_text();rows=re.findall(r'^CONTROL\|([^|]+)\|(point|abstract)\|(PASS|FAIL)',text,re.M)
+ assert collections.Counter((n,m) for n,m,_ in rows)==expected and all(state==wanted for _,_,state in rows)
+ if wanted=='FAIL':assert collections.Counter(re.findall(r'RFL_CONTROL\|([^|\n]+)\|(point|abstract)\|',text))==expected
+# Explicit public proof rows have these actual homes; generated field readers belong to
+# their construction's source and are also reflected in imported-definition inventories.
+public={
+'TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean':['headerScanTM_run','headerScanCfg_inputPos','headerScanCfg_workTapePos','headerScanCfg_workTapes','headerScanCfg_ruler','embedEmitCfg_forwardLoop_init'],
+'TCSlib/Complexity/TuringMachine/Build/Catalog.lean':['skipTM_run_ofCfg','step_of_tapeAction_move','skipTM','tapeAction'],
+'TCSlib/Complexity/TuringMachine/Build/Rewind.lean':['rewindTM_run_ofCfg','rewindTM','RewindPhase'],
+'TCSlib/Complexity/TuringMachine/StateRenaming.lean':['Cfg.mapState_state','Cfg.mapState_workTapePos','Cfg.mapState_workTapes','Cfg.mapState_inputPos','Cfg.mapState_output'],
+'TCSlib/Complexity/TuringMachine/Deterministic.lean':["MultiTapeTM.runFrom_succ_eq_step'",'MultiTapeTM.runFrom_zero'],
+'TCSlib/Complexity/TuringMachine/Configuration.lean':['moveInputPos_zero'],
+'TCSlib/Complexity/TuringMachine/Encoding.lean':['length_pairEncode','unaryFin'],
+'TCSlib/Complexity/TuringMachine/Simulation.lean':['FinTM.bufferTape'],
+'TCSlib/Complexity/TuringMachine/Build/Embed.lean':['embedEmitCfg'],
+'TCSlib/Complexity/TuringMachine/Build/StepBlock.lean':['tableBitsK'],
+'TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean':['StepBlock.forwardLoopCfg']}
+assert set(public)<=pop
+# New explicit mathematical comparison citation, without any new import/cache root.
+newmath='.lake/packages/mathlib/Mathlib/Data/Sign/Defs.lean';sign=WT/newmath
+assert 'Mathlib.Data.Sign.Defs' in mathroots
+assert 'theorem coe_one' in sign.read_text() and 'lemma coe_neg' in sign.read_text()
+cast=WT/'.lake/packages/mathlib/Mathlib/Data/Nat/Cast/Defs.lean';assert 'theorem cast_add' in cast.read_text()
+result={'status':'Read-only v6 coverage crosscheck; no native execution or F6 readiness','v6_manifest_sha256':sha(V6/'MANIFEST.json'),'v6_manifest_payload_files_verified':len(m['files']),'final_sealed_sha256':sha(V6/'Phases-v4.lean.txt'),'final_native_sha256':sha(V6/'Phases-native-v4.lean.txt'),'all_probe_imports':all_imports,'extra_TCSlib_import_roots':[],'extra_direct_Mathlib_cache_roots':[],'guard_definitions':guards,'guard_count':37,'direct_ordinary_count':18,'all_direct_ordinary_guarded':True,'direct_foreign_entries':foreign,'all_direct_foreign_owner_homes_in_previous21':True,'public_proof_homes':public,'additional_TCSlib_screen_homes':[],'recorded_axiom_metadata':proofs,'recorded_root_count':7,'recorded_descendants':6,'raw_controls_checked':74,'additional_separate_Mathlib_comparisons':[{'path':newmath,'names':['SignType.coe_one','SignType.coe_neg'],'sha256':sha(sign),'reason':'Explicit SignType simplifier facts in actual one-cell correction; also occur in prior v2 correction, correcting earlier separate named-home coverage. Already direct Mathlib root50.'}],'existing_Mathlib_comparison_reused':{'path':'.lake/packages/mathlib/Mathlib/Data/Nat/Cast/Defs.lean','name':'Nat.cast_add','sha256':sha(cast)},'limits':'No compiled all-public-theorem CITED inventory was generated; source qualified public rows plus recorded direct-definition metadata were reviewed. No inherited script or proof was executed. Imports/full source/raw logs reviewed, not re-elaborated.'}
+(OUT/'coverage.json').write_text(json.dumps(result,indent=2)+'\n')
+inputs={str(p.relative_to(DRAFTS)):{'bytes':p.stat().st_size,'sha256':sha(p)} for p in [V6/'MANIFEST.json',V6/'README.md',V6/'receipt.json',V6/'context.json',V6/'Phases-v4.lean.txt',V6/'Phases-native-v4.lean.txt',V6/'Phases-v4.out',V6/'Phases-native-v4.out',V6/'Controls-sealed-v1.out',V6/'Controls-unsealed-v1.out',V6/'compiled-inventory.json',V6/'controls-verification.json',PREV/'MANIFEST.json',PREV/'provisional-TCSlib-screen.txt',PREV/'named-Mathlib-comparisons.txt',DRAFTS/'packet-preparation/mathlib-roots.txt',DRAFTS/'packet-preparation/bootstrap-order.txt']}
+(OUT/'inputs.json').write_text(json.dumps(inputs,indent=2)+'\n')
+(OUT/'additional-named-Mathlib-comparisons.txt').write_text(newmath+'\n')
+print(json.dumps({'v6_guard':len(guards),'direct_ordinary':len(ordinary),'recorded_roots':len(roots),'recorded_descendants':len(proofs)-len(roots),'extra_TCSlib_screen_homes':0,'extra_import_cache_roots':0,'new_separate_Mathlib_home':newmath},indent=2))

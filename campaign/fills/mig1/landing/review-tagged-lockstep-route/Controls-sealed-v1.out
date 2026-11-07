@@ -1,0 +1,61 @@
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:7:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:9:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:16:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:18:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:25:65: error: Tactic `rfl` failed: The left-hand side
+  FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+p : Fin (n + 2)
+b : Bool
+⊢ FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+/private/tmp/tcslib-tagged-route-u3fn1ssw/Controls_sealed_v1.lean:27:76: error: Tactic `rfl` failed: The left-hand side
+  fun p b => FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+⊢ (fun p b => FinTM.VirtualTag p b) = fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)

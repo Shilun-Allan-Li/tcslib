@@ -1,0 +1,36 @@
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:933:38: error: No goals to be solved
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:1014:53: error: unsolved goals
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T t : ℕ
+hD : D.ComputesInTime x [b] T
+M : FinTM Bool := D.timedCondTM M₁ M₂
+B : FinTM Bool := M₁.branchTM M₂ b
+hDcard :
+  ∀ (i : Fin D.k),
+    MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t (Fin.castAdd (M₁.k + M₂.k) i).castSucc ≤
+      MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) T i
+i : Fin (M₁.k + M₂.k)
+u : ℕ
+hu : u ≤ t
+hp :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (Fin.natAdd D.k i).castSucc ∈
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.natAdd D.k i).castSucc
+v w : ℕ
+hw : w ≤ u
+z : ℤ
+he :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).workTapePos
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) w).workTapePos z
+⊢ (MultiTapeTM.runFrom
+          { state := some (M₁.branchTM M₂ b).tm.q₀, inputPos := 1, workTapes := fun x x_1 => none,
+            workTapePos := fun x => 0, output := [] }
+          w).workTapePos
+      i =
+    (MultiTapeTM.runFrom
+          { state := some (M₁.branchTM M₂ b).tm.q₀, inputPos := 1, workTapes := fun x x_1 => none,
+            workTapePos := fun x => 0, output := [] }
+          w).workTapePos
+      i

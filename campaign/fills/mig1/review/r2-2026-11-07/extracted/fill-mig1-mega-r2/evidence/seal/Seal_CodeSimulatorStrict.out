@@ -1,0 +1,9 @@
+ScratchProbes/Seal_CodeSimulatorStrict.lean:1282:88: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.317 = ?m.317
+but is expected to have type
+  (Cfg.ofWords SweepPhase.sweep w).state = some SweepPhase.sweep
+in the application
+  copyTM_run_ofCfg 0 dst distinct (w 0) (Cfg.ofWords SweepPhase.sweep w) rfl
+exit=1

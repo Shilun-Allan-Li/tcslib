@@ -1,0 +1,62 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.FinTM.bufferedCompTM Turing.Cfg.ofWords Turing.FinTM.redirectTM Turing.FinTM.incFixedTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+namespace Gate119IncRedirect
+open Turing
+/-- Actual imported incrementer equation, with the machine and model opaque. -/
+theorem importedIncBound (x : List Bool) (t c : ℕ) :
+    FinTM.incFixedTM.tm.spaceUsed (FinTM.incFixedTM.tm.initCfg x) t ≤ c := by
+  rw [FinTM.incFixedTM_spaceUsed]
+  exact Nat.zero_le c
+/-- Actual imported moved fact; result inferred so no new raw-index conversion is claimed. -/
+private def importedRedirectSymmetry (M : FinTM Bool) (b : Bool)
+    (x : List Bool) (t : ℕ) (i : Fin M.k) :=
+  (FinTM.redirectTM_spaceUsedByTape M b x t i).symm
+end Gate119IncRedirect
+#print axioms Gate119IncRedirect.importedIncBound
+#print axioms Gate119IncRedirect.importedRedirectSymmetry
+#print axioms Turing.FinTM.incFixedTM_spaceUsed
+#print axioms Turing.FinTM.redirectTM_spaceUsedByTape
+
+/-! Read-only compiled inventory of the four owner and consumer roots and their descendants.
+Imported theorem proof values are not traversed. Existing same-home legacy helpers remain
+outside the changed proof scope. Root types and compiled values are both inspected. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let wanted : List String := ["incFixedTM_spaceUsed", "redirectTM_spaceUsedByTape", "importedIncBound", "importedRedirectSymmetry"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} for {wanted.length} source roots"
+  for root in roots.qsort Name.lt do
+    logInfo m!"ROOT|{root}|private={isPrivateName root}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := env.find? n | throwError "selected constant missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) =>
+        logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

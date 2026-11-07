@@ -1,0 +1,26 @@
+/private/tmp/tcslib-mig1-comp-loop-nanlj325/wrappers-through-ready-seal-v1.lean:840:4: error: unsolved goals
+case h.refine_1.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+i : Fin (D.timedCondTM M₁ M₂).k
+j✝ : Fin (D.k + (M₁.k + M₂.k))
+j : Fin (M₁.k + M₂.k)
+⊢ (MultiTapeTM.initCfg x).workTapePos j = 0
+/private/tmp/tcslib-mig1-comp-loop-nanlj325/wrappers-through-ready-seal-v1.lean:841:8: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [leftCfg_workTapePos, rightCfg_workTapePos, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_workTapePos, timedHeads,
+        Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-nanlj325/wrappers-through-ready-seal-v1.lean:841:32: warning: This simp argument is unused:
+  Cfg.init_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [leftCfg_workTapePos, rightCfg_workTapePos, MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵timedHeads,
+        Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

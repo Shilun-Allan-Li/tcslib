@@ -1,0 +1,14 @@
+head pairs 621; union of earlier 628; new at head 3; earlier-only 10
+  NEW   Loop.lean::emCall_bank_step  reproduces  Loop.lean::emCall_bank_initial: 336/450 = 75%
+  NEW   Loop.lean::emCall_bank_embed  reproduces  Loop.lean::emCall_bank_initial: 294/450 = 65%
+  NEW   Loop.lean::loopHost_contracts  reproduces  Loop.lean::emitLoopTM_computes: 1166/2057 = 57%
+  GONE  Loop.lean::emCall_triple_not_mem  reproduces  Loop.lean::emCall_pair_not_mem: 153/167 = 92%
+  GONE  Primitives.lean::fwdMap_backB  reproduces  Primitives.lean::fwdMap_backA: 830/951 = 87%
+  GONE  Loop.lean::emCall_pair_not_mem  reproduces  Loop.lean::emCall_triple_not_mem: 153/178 = 86%
+  GONE  Primitives.lean::fwdMap_backA  reproduces  Primitives.lean::fwdMap_backB: 830/999 = 83%
+  GONE  Primitives.lean::fwdMap_emit  reproduces  Primitives.lean::fwdMap_backA: 588/951 = 62%
+  GONE  Loop.lean::emitLoopTM_computes  reproduces  Loop.lean::loopHostTM_decides: 542/882 = 61%
+  GONE  Primitives.lean::fwdMapVirtual_run  reproduces  VirtualInput.lean::vhostEmitTM_runFrom: 161/268 = 60%
+  GONE  Primitives.lean::fwdMap_emit  reproduces  Primitives.lean::fwdMap_backB: 583/999 = 58%
+  GONE  Loop.lean::emitLoopTM_computes  reproduces  Loop.lean::loopHostTM_finds: 545/948 = 57%
+  GONE  Primitives.lean::fwdMapVirtual_run  reproduces  Simulation.lean::bufferedSecondCfg_run: 161/284 = 57%

@@ -1,0 +1,12 @@
+ScratchProbes/Seal_CertShellStrict.lean:184:4: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+ScratchProbes/Seal_CertShellStrict.lean:577:80: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.1322 = ?m.1322
+but is expected to have type
+  (Cfg.ofWords SweepPhase.sweep w₀).state = some SweepPhase.sweep
+in the application
+  copyTM_run_ofCfg v vf hvf (w₀ v) (Cfg.ofWords SweepPhase.sweep w₀) rfl
+exit=1

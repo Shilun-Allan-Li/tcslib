@@ -1,0 +1,25 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+attribute [local irreducible] Turing.pairDiagTM Turing.FinTM.incFixedTM
+attribute [local irreducible] Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+namespace AdditionalZeroSpaceConsumers
+-- Exact proposed interfaces are parameters here; owner proofs are tested separately.
+theorem pairDup_constant_space
+    (pairDiagTM_spaceUsed : ∀ x t, pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t = 0)
+    (x : List Bool) (t bound : ℕ) :
+    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t ≤ bound := by
+  rw [pairDiagTM_spaceUsed]
+  exact Nat.zero_le _
+theorem incFixed_constant_space
+    (incFixedTM_spaceUsed : ∀ x t, incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0)
+    (x : List Bool) (t bound : ℕ) :
+    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t ≤ bound := by
+  rw [incFixedTM_spaceUsed]
+  exact Nat.zero_le _
+end AdditionalZeroSpaceConsumers
+#print axioms AdditionalZeroSpaceConsumers.pairDup_constant_space
+#print axioms AdditionalZeroSpaceConsumers.incFixed_constant_space

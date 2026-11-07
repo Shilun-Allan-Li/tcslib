@@ -1,0 +1,388 @@
+{
+  "definitions": [
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.moveInputPos",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.Computes",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.spaceUsedByTape",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.FinTM.controlAction",
+    "Turing.FinTM.leftAction",
+    "Turing.FinTM.rightAction",
+    "Turing.FinTM.emitAction",
+    "Turing.FinTM.bufferTape",
+    "Turing.Cfg.ofWords",
+    "Turing.Cfg.mapState",
+    "Turing.incFixed",
+    "Turing.pairEncode",
+    "Turing.pairDecode",
+    "Turing.splitAtLastTrue",
+    "Turing.solveSplit",
+    "Turing.stateWord",
+    "Turing.pairDiagTM",
+    "Turing.FinTM.idTM",
+    "Turing.FinTM.constTM",
+    "Turing.FinTM.prependTM",
+    "Turing.FinTM.lengthBitsTM",
+    "Turing.FinTM.polyUnaryTM",
+    "Turing.FinTM.polyBitsTM",
+    "Turing.FinTM.pairExtractTM",
+    "Turing.FinTM.pairValidTM",
+    "Turing.FinTM.pairLenCheckTM",
+    "Turing.FinTM.stripLastTM",
+    "Turing.FinTM.incFixedTM",
+    "Turing.FinTM.pairMapSndTM",
+    "Turing.FinTM.splitSolveTM",
+    "Turing.FinTM.redirectTM",
+    "Turing.FinTM.timedCondTM",
+    "Turing.FinTM.branchTM"
+  ],
+  "count": 44,
+  "guarded_changed_proofs": 25,
+  "pending_rows": [
+    "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+    "Turing.FinTM.computesFunInTime_pairDup_spaceUsed"
+  ],
+  "changed_proof_spans": [
+    {
+      "name": "Turing.catalog_buffer_clip",
+      "start": 70850,
+      "end": 71305,
+      "line": 1404,
+      "hold": false
+    },
+    {
+      "name": "Turing.Cfg.ofWords_transfer_endpoint",
+      "start": 71307,
+      "end": 73708,
+      "line": 1418,
+      "hold": false
+    },
+    {
+      "name": "Turing.Cfg.ofWords_copy_endpoint",
+      "start": 75536,
+      "end": 77330,
+      "line": 1499,
+      "hold": false
+    },
+    {
+      "name": "Turing.catalog_increment_framed",
+      "start": 79317,
+      "end": 81843,
+      "line": 1570,
+      "hold": false
+    },
+    {
+      "name": "Turing.incrementTM_run_succ_ofCfg",
+      "start": 81846,
+      "end": 84202,
+      "line": 1620,
+      "hold": false
+    },
+    {
+      "name": "Turing.incrementTM_run_overflow_ofCfg",
+      "start": 84205,
+      "end": 86296,
+      "line": 1665,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_id_spaceUsed",
+      "start": 98197,
+      "end": 98963,
+      "line": 1963,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_const_spaceUsed",
+      "start": 98965,
+      "end": 99684,
+      "line": 1980,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_prepend_spaceUsed",
+      "start": 99686,
+      "end": 100692,
+      "line": 1995,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_lengthBits_spaceUsed",
+      "start": 100694,
+      "end": 101604,
+      "line": 2014,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_polyUnary_spaceUsed",
+      "start": 101606,
+      "end": 102766,
+      "line": 2032,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_polyBits_spaceUsed",
+      "start": 102768,
+      "end": 105404,
+      "line": 2053,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed",
+      "start": 105407,
+      "end": 106205,
+      "line": 2104,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.pairExtract_space_row",
+      "start": 106207,
+      "end": 107643,
+      "line": 2121,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairFst_spaceUsed",
+      "start": 107645,
+      "end": 108455,
+      "line": 2146,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairSnd_spaceUsed",
+      "start": 108458,
+      "end": 109224,
+      "line": 2163,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairValid_spaceUsed",
+      "start": 109227,
+      "end": 109982,
+      "line": 2180,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairConcat_spaceUsed",
+      "start": 109984,
+      "end": 110787,
+      "line": 2197,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+      "start": 110790,
+      "end": 111598,
+      "line": 2216,
+      "hold": true
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed",
+      "start": 111600,
+      "end": 113936,
+      "line": 2233,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_stripLast_spaceUsed",
+      "start": 113938,
+      "end": 115837,
+      "line": 2278,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+      "start": 115839,
+      "end": 116672,
+      "line": 2316,
+      "hold": true
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed",
+      "start": 116674,
+      "end": 118732,
+      "line": 2333,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_splitSolve_spaceUsed",
+      "start": 118734,
+      "end": 120294,
+      "line": 2372,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.redirectTM_spaceUsedByTape",
+      "start": 120296,
+      "end": 121334,
+      "line": 2402,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_cond_spaceUsed",
+      "start": 121336,
+      "end": 123606,
+      "line": 2422,
+      "hold": false
+    },
+    {
+      "name": "Turing.FinTM.exists_loopTM_spaceUsed",
+      "start": 123608,
+      "end": 128011,
+      "line": 2466,
+      "hold": false
+    }
+  ],
+  "doc_only_with_byte_identical_proofs": [
+    "Turing.transferTM_run_ofCfg",
+    "Turing.copyTM_run_ofCfg",
+    "Turing.clearTM_run_ofCfg",
+    "Turing.compareTM_run_ofCfg"
+  ],
+  "source_restoration": [
+    {
+      "input": "Catalog-strict-v1",
+      "names": [
+        "Turing.Cfg.ofWords_copy_endpoint",
+        "Turing.Cfg.ofWords_transfer_endpoint",
+        "Turing.FinTM.computesFunInTime_cond_spaceUsed",
+        "Turing.FinTM.computesFunInTime_const_spaceUsed",
+        "Turing.FinTM.computesFunInTime_id_spaceUsed",
+        "Turing.FinTM.computesFunInTime_lengthBits_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairConcat_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairFst_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairSnd_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairValid_spaceUsed",
+        "Turing.FinTM.computesFunInTime_polyBits_spaceUsed",
+        "Turing.FinTM.computesFunInTime_polyUnary_spaceUsed",
+        "Turing.FinTM.computesFunInTime_prepend_spaceUsed",
+        "Turing.FinTM.computesFunInTime_splitSolve_spaceUsed",
+        "Turing.FinTM.computesFunInTime_stripLast_spaceUsed",
+        "Turing.FinTM.exists_loopTM_spaceUsed",
+        "Turing.FinTM.pairExtract_space_row",
+        "Turing.FinTM.redirectTM_spaceUsedByTape",
+        "Turing.catalog_buffer_clip",
+        "Turing.catalog_increment_framed",
+        "Turing.incrementTM_run_overflow_ofCfg",
+        "Turing.incrementTM_run_succ_ofCfg"
+      ],
+      "inserted_pieces": [
+        "section CatalogReview01\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.catalog_buffer_clip\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview01\n",
+        "section CatalogReview02\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.Cfg.ofWords_transfer_endpoint\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview02\n",
+        "section CatalogReview03\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.Cfg.ofWords_copy_endpoint\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview03\n",
+        "section CatalogReview04\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.catalog_increment_framed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview04\n",
+        "section CatalogReview05\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.incrementTM_run_succ_ofCfg\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview05\n",
+        "section CatalogReview06\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.incrementTM_run_overflow_ofCfg\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview06\n",
+        "section CatalogReview07\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_id_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview07\n",
+        "section CatalogReview08\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_const_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview08\n",
+        "section CatalogReview09\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_prepend_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview09\n",
+        "section CatalogReview10\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_lengthBits_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview10\n",
+        "section CatalogReview11\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_polyUnary_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview11\n",
+        "section CatalogReview12\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_polyBits_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview12\n",
+        "section CatalogReview13\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview13\n",
+        "section CatalogReview14\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.pairExtract_space_row\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview14\n",
+        "section CatalogReview15\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairFst_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview15\n",
+        "section CatalogReview16\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairSnd_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview16\n",
+        "section CatalogReview17\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairValid_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview17\n",
+        "section CatalogReview18\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairConcat_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview18\n",
+        "section CatalogReview19\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview19\n",
+        "section CatalogReview20\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_stripLast_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview20\n",
+        "section CatalogReview21\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview21\n",
+        "section CatalogReview22\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_splitSolve_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview22\n",
+        "section CatalogReview23\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.redirectTM_spaceUsedByTape\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview23\n",
+        "section CatalogReview24\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_cond_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview24\n",
+        "section CatalogReview25\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.exists_loopTM_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview25\n"
+      ],
+      "restored_sha256": "eb55b3b7688f3949667df21151b8dc3036b99bd80ed467b20bf466bcedee213d",
+      "guarded_sha256": "49396d41459580dbb751b9dcf062bce9dfe8682ba992b10607d661ee3223b6e5"
+    },
+    {
+      "input": "Catalog-pending-strict-v1",
+      "names": [
+        "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+        "Turing.FinTM.computesFunInTime_pairDup_spaceUsed"
+      ],
+      "inserted_pieces": [
+        "section CatalogReview01\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_pairDup_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview01\n",
+        "section CatalogReview02\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.ofWords Turing.Cfg.mapState Turing.incFixed Turing.pairEncode Turing.pairDecode Turing.splitAtLastTrue Turing.solveSplit Turing.stateWord Turing.pairDiagTM Turing.FinTM.idTM Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.lengthBitsTM Turing.FinTM.polyUnaryTM Turing.FinTM.polyBitsTM Turing.FinTM.pairExtractTM Turing.FinTM.pairValidTM Turing.FinTM.pairLenCheckTM Turing.FinTM.stripLastTM Turing.FinTM.incFixedTM Turing.FinTM.pairMapSndTM Turing.FinTM.splitSolveTM Turing.FinTM.redirectTM Turing.FinTM.timedCondTM Turing.FinTM.branchTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+        "\n#print axioms Turing.FinTM.computesFunInTime_incFixed_spaceUsed\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nend CatalogReview02\n"
+      ],
+      "restored_sha256": "eb55b3b7688f3949667df21151b8dc3036b99bd80ed467b20bf466bcedee213d",
+      "guarded_sha256": "fba341ea428d153a629bd5c7875ea41aa41d72eb0258eff6077e632f3f2d90c9"
+    }
+  ],
+  "exceptions": [
+    "loopHostTM is a reducible abbrev, not an ordinary def; structure fields and Core/Mathlib reduction follow standing rules."
+  ],
+  "unchanged_legacy_helpers_outside_guards": true,
+  "guard_before_docstrings_and_headers": true,
+  "default_simp_disabled": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "public_counts": [
+    113,
+    107
+  ],
+  "private_counts": [
+    392,
+    39
+  ],
+  "public_removed": [
+    "Turing.clearTM_run",
+    "Turing.compareTM_run",
+    "Turing.copyTM_run",
+    "Turing.incrementTM_run_overflow",
+    "Turing.incrementTM_run_succ",
+    "Turing.transferTM_run"
+  ],
+  "private_removed": 356,
+  "private_added": [
+    "Turing.catalog_buffer_clip",
+    "Turing.catalog_increment_framed",
+    "Turing.FinTM.pairExtract_space_row"
+  ],
+  "all_retained_headers_literal_equal": true,
+  "all_retained_definition_table_bodies_literal_equal": true,
+  "imports_literal_equal": false,
+  "imports_exact_authorized_addition": "TCSlib.Complexity.TuringMachine.Build.Primitives (megafill brief lines94\u201397)"
+}

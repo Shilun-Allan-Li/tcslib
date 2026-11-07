@@ -158,6 +158,11 @@ def prependTM (w : List Bool) : FinTM Bool where
           | some b => ⟨1, fun i => i.elim0, some b, some q⟩
           | none => ⟨0, fun i => i.elim0, none, none⟩ }
 
+/-- A fixed-word prepending machine visits no work-tape cells, on every input and at every time. -/
+theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
 /-- A prefixing-machine configuration with the vacuous work fields suppressed. -/
 private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
     (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin (w.length + 1)) x :=
@@ -598,6 +603,11 @@ def pairValidTM : FinTM Bool where
           if b = c then ⟨.pos, fun j => j.elim0, none, some none⟩
           else ⟨.pos, fun j => j.elim0, some (!b && c), none⟩
         | _, none => ⟨0, fun j => j.elim0, some false, none⟩ }
+
+/-- The pairing validator visits no work-tape cells, on every input and at every time. -/
+theorem pairValidTM_spaceUsed (x : List Bool) (t : ℕ) :
+    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
 
 /-- One aligned block either continues silently or halts with its verdict. -/
 private lemma pairValid_block (x pre rest : List Bool) (b c : Bool)

@@ -1,0 +1,86 @@
+private lemma fwdMap_parse (M : FinTM Bool) (x rest : List Bool) :
+    ∀ pre a (hx : x = pre ++ rest), ∃ t ≤ 3 * rest.length + 3 * a.length + 5,
+      match pairDecode rest with
+      | some (d, b) => (fwdMapTM M false).tm.runFrom
+          (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+            a [] a.length 0 []) t =
+          fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩
+            (a ++ d) (pairEncode (a ++ d) [])
+      | none =>
+          ((fwdMapTM M false).tm.runFrom
+            (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+              a [] a.length 0 []) t).state = none ∧
+          ((fwdMapTM M false).tm.runFrom
+            (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+              a [] a.length 0 []) t).output = [] := by
+  intro pre a hx
+  cases hd : pairDecode rest with
+  | some db =>
+    rcases db with ⟨d, b⟩
+    have hrest := eq_pairEncode_of_pairDecode rest d b hd
+    subst rest
+    clear hd
+    induction d generalizing pre a with
+    | nil =>
+      have hx' : x = pre ++ false :: true :: b := by
+        simpa only [pairEncode_eq_dbl, dbl_nil, List.nil_append,
+          List.cons_append] using hx
+      refine ⟨2 + (3 * a.length + 2 * b.length + 5), ?_, ?_⟩
+      · simp only [length_pairEncode, List.length_nil]
+        omega
+      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre b a false true hx']
+        simp only [Bool.false_eq_true, ↓reduceIte, List.append_nil]
+        simpa only [List.length_append, List.length_cons, List.length_nil] using
+          fwdMap_finish M x (pre ++ [false, true]) a b
+            (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
+    | cons bit d ih =>
+      have hx' : x = pre ++ bit :: bit :: pairEncode d b := by
+        simpa only [pairEncode_eq_dbl, dbl_cons, List.cons_append] using hx
+      obtain ⟨t, ht, he⟩ := ih (pre ++ [bit, bit]) (a ++ [bit])
+        (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
+      refine ⟨2 + t, ?_, ?_⟩
+      · simp only [length_pairEncode, List.length_append, List.length_cons,
+          List.length_nil] at ht ⊢
+        omega
+      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre (pairEncode d b) a bit bit hx']
+        simp only [if_pos rfl]
+        simpa only [List.length_append, List.length_cons, List.length_nil,
+          List.append_assoc, List.singleton_append, Nat.add_assoc] using he
+  | none =>
+    obtain ⟨w, tail, hrest, htail⟩ := pairDecode_eq_none rest hd
+    subst rest
+    clear hd
+    induction w generalizing pre a with
+    | nil =>
+      simp only [dbl_nil, List.nil_append] at hx ⊢
+      rcases htail with he | ⟨bit, he⟩ | ⟨r, he⟩
+      · subst tail
+        refine ⟨1, by simp only [List.length_nil, mul_zero, zero_add]; omega, ?_⟩
+        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+          MultiTapeTM.step_of_some rfl]
+        rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+        simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, Action.apply_output, fwdMapCfg]
+      · subst tail
+        refine ⟨2, by simp only [List.length_cons, List.length_nil]; omega, ?_⟩
+        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+        rw [fwdMap_first M x pre [] a bit hx]
+        simp only [MultiTapeTM.step_of_some rfl]
+        rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+        cases bit <;>
+          simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, Action.apply_output, fwdMapCfg]
+      · subst tail
+        refine ⟨2, by simp only [List.length_cons]; omega, ?_⟩
+        rw [fwdMap_block M x pre r a true false hx]
+        simp [fwdMapCfg]
+    | cons bit w ih =>
+      have hx' : x = pre ++ bit :: bit :: (dbl w ++ tail) := by
+        simpa only [dbl_cons, List.cons_append] using hx
+      obtain ⟨t, ht, he⟩ := ih (pre ++ [bit, bit]) (a ++ [bit])
+        (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
+      refine ⟨2 + t, ?_, ?_⟩
+      · simp only [dbl_cons, List.length_append, List.length_cons, List.length_nil] at ht ⊢
+        omega
+      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre (dbl w ++ tail) a bit bit hx']
+        simp only [if_pos rfl]
+        simpa only [List.length_append, List.length_cons, List.length_nil,
+          List.append_assoc, List.singleton_append, Nat.add_assoc] using he

@@ -1,0 +1,23 @@
+/-- A canonical seam with a new state and pointwise canonical work tapes is the
+canonical seam for those words. The input head, work heads and output keep their
+canonical values.
+
+**Proof sketch.** Apply configuration extensionality once. The tape hypothesis
+identifies the work tapes; the published seam field equations identify the other
+four fields. -/
+private theorem catalog_ofWords_with_tapes {k : ℕ} {S : Type*} {x : List Bool}
+    (q q' : S) (w w' : Fin k → List Bool)
+    (tapes : Fin k → ℤ → Option Bool)
+    (htapes : ∀ j p, tapes j p = FinTM.bufferTape (w' j) p) :
+    ({ Cfg.ofWords (input := x) q w with
+        state := some q'
+        workTapes := tapes } : Cfg k Bool S x) = Cfg.ofWords q' w' := by
+  apply Cfg.ext
+  · simp only [Cfg.ofWords_state]
+  · simp only [Cfg.ofWords_inputPos]
+  · funext j p
+    rw [Cfg.ofWords_workTapes]
+    exact htapes j p
+  · funext j
+    simp only [Cfg.ofWords_workTapePos]
+  · simp only [Cfg.ofWords_output]

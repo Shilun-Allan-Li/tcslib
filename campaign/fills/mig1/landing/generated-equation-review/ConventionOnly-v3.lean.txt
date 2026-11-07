@@ -1,0 +1,125 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import Lean
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+set_option pp.explicit true
+
+/-! Record availability before any equation-name resolution. Quoted names are
+data; env.contains and isReservedName do not realize a declaration. No import
+of Primitives, Catalog, Wrappers, or a generated-equation consumer is present. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let forbidden := `TCSlib.Complexity.TuringMachine.Build.Primitives
+  if env.header.moduleNames.contains forbidden then
+    throwError "Primitives unexpectedly imported"
+  logInfo m!"CONTEXT|main={env.mainModule}|primitivesImported=false"
+  for mod in env.header.moduleNames do
+    if (`TCSlib).isPrefixOf mod then logInfo m!"TCSLIB_IMPORT|{mod}"
+  let st ← liftTermElabM getSimpTheorems
+  for n in [`Turing.solveSplit, `Turing.solveSplit.eq_def,
+      `Turing.solveSplit.eq_1, `Turing.solveSplit.eq_unfold,
+      `Turing.solveSplitWith, `Turing.solveSplitWith.eq_def,
+      `Turing.solveSplitWith.eq_1, `Turing.solveSplitWith.eq_unfold] do
+    logInfo m!"BEFORE|{n}|containsDefault={env.contains n}|containsRealizations={env.contains n (skipRealize := false)}|containsOnBranch={env.containsOnBranch n}|find={((env.find? n).isSome)}|reserved={isReservedName env n}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"
+  for n in (env.constants.toList.map Prod.fst).toArray.qsort Name.lt do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if owner != `TCSlib.Complexity.TuringMachine.Build.Convention then continue
+    let some ci := env.find? n | throwError "census lookup failed"
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+      | .axiomInfo _ => "axiom" | .opaqueInfo _ => "opaque"
+      | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+      | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    logInfo m!"CONVENTION_CENSUS|{n}|{kind}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}"
+
+attribute [local irreducible] Turing.solveSplit Turing.solveSplitWith
+
+open Lean Elab Command in
+run_cmd do
+  for n in [`Turing.solveSplit, `Turing.solveSplitWith] do
+    let status ← getReducibilityStatus n
+    unless status == .irreducible do throwError "opacity did not apply to {n}"
+    logInfo m!"OPAQUE_BEFORE_EQUATION_REFERENCE|{n}|irreducible=true"
+
+#check Turing.solveSplit.eq_def
+#check Turing.solveSplitWith.eq_def
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for n in [`Turing.solveSplit.eq_def, `Turing.solveSplitWith.eq_def] do
+    logInfo m!"AFTER_CHECK_ONLY|{n}|containsDefault={env.contains n}|containsRealizations={env.contains n (skipRealize := false)}|containsOnBranch={env.containsOnBranch n}|find={((env.find? n).isSome)}|reserved={isReservedName env n}"
+
+namespace GeneratedEquationReview
+
+theorem solveSplit_read (C e n : ℕ) :
+    Turing.solveSplit C e n =
+      (List.range (n + 1)).find? (fun i => i + C * (i + 1) ^ e == n) := by
+  rw [Turing.solveSplit.eq_def]
+
+theorem solveSplitWith_read (f : ℕ → ℕ) (n : ℕ) :
+    Turing.solveSplitWith f n =
+      (List.range (n + 1)).find? (fun i => i + f i == n) := by
+  rw [Turing.solveSplitWith.eq_def]
+
+end GeneratedEquationReview
+
+#print axioms GeneratedEquationReview.solveSplit_read
+#print axioms GeneratedEquationReview.solveSplitWith_read
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  for n in [`Turing.solveSplit.eq_def, `Turing.solveSplitWith.eq_def] do
+    let some ci := env.find? n | throwError "equation was not realized"
+    let owner := (env.getModuleIdxFor? n).map (fun i => env.header.moduleNames[i.toNat]!)
+    let kind := match ci with | .thmInfo _ => "theorem" | _ => "not-theorem"
+    logInfo m!"AFTER_EQDEF|{n}|kind={kind}|containsDefault={env.contains n}|containsRealizations={env.contains n (skipRealize := false)}|containsOnBranch={env.containsOnBranch n}|moduleIdxOwner={owner}|currentMain={env.mainModule}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}|defeq={defeqAttr.hasTag env n}"
+    logInfo m!"EQUATION_TYPE|{n}|{ci.type}"
+    logInfo m!"EQUATION_VALUE|{n}|{ci.value?}"
+    logInfo m!"EQUATION_AXIOMS|{n}|{(← liftCoreM <| collectAxioms n).toList}"
+  for n in [`Turing.solveSplit.eq_1, `Turing.solveSplitWith.eq_1] do
+    logInfo m!"BEFORE_EQ1|{n}|containsDefault={env.contains n}|containsRealizations={env.contains n (skipRealize := false)}|containsOnBranch={env.containsOnBranch n}|find={((env.find? n).isSome)}|reserved={isReservedName env n}"
+
+
+/-! Alternative compiler-provided equations are tested only after preserving
+the separate eq_def before/after observations above. -/
+#check Turing.solveSplit.eq_1
+#check Turing.solveSplitWith.eq_1
+
+namespace GeneratedEquationReview
+
+theorem solveSplit_read_eq1 (C e n : ℕ) :
+    Turing.solveSplit C e n =
+      (List.range (n + 1)).find? (fun i => i + C * (i + 1) ^ e == n) := by
+  rw [Turing.solveSplit.eq_1]
+
+theorem solveSplitWith_read_eq1 (f : ℕ → ℕ) (n : ℕ) :
+    Turing.solveSplitWith f n =
+      (List.range (n + 1)).find? (fun i => i + f i == n) := by
+  rw [Turing.solveSplitWith.eq_1]
+
+end GeneratedEquationReview
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  for n in [`Turing.solveSplit.eq_1, `Turing.solveSplitWith.eq_1] do
+    let some ci := env.find? n | throwError "alternative equation absent"
+    let owner := (env.getModuleIdxFor? n).map (fun i => env.header.moduleNames[i.toNat]!)
+    logInfo m!"AFTER_EQ1|{n}|moduleIdxOwner={owner}|currentMain={env.mainModule}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}|defeq={defeqAttr.hasTag env n}"
+    logInfo m!"ALTERNATIVE_TYPE|{n}|{ci.type}"
+    logInfo m!"ALTERNATIVE_AXIOMS|{n}|{(← liftCoreM <| collectAxioms n).toList}"
+  for n in [`GeneratedEquationReview.solveSplit_read_eq1,
+      `GeneratedEquationReview.solveSplitWith_read_eq1] do
+    logInfo m!"ALTERNATIVE_CONSUMER_AXIOMS|{n}|{(← liftCoreM <| collectAxioms n).toList}"
+  for n in [`Turing.solveSplit, `Turing.solveSplitWith] do
+    let status ← getReducibilityStatus n
+    unless status == .irreducible do throwError "consumer lost opacity {n}"
+    logInfo m!"OPAQUE_AFTER_CONSUMERS|{n}|irreducible=true"

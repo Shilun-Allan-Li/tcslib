@@ -1,0 +1,33 @@
+import TCSlib.Complexity.TuringMachine.Finite
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+attribute [local irreducible] Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+
+-- Step: halting delta, pointwise and abstracted.
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step {c with state := none} = {c with state := none} := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step {c with state := none}) = fun _ c => {c with state := none} := by rfl
+
+-- Step: complete defining equation, pointwise and abstracted.
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step c = (match c.state with
+      | none => c
+      | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c) := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step c) = fun tm c => (match c.state with
+      | none => c
+      | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c) := by rfl
+
+-- Run: zero-time delta, pointwise and abstracted.
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.runFrom c 0 = c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.runFrom c 0) = fun _ c => c := by rfl
+
+-- Run: complete defining equation, pointwise and abstracted.
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (n : ℕ) :
+    tm.runFrom c n = (tm.step)^[n] c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool))
+    (n : ℕ) => tm.runFrom c n) = fun tm c n => (tm.step)^[n] c := by rfl

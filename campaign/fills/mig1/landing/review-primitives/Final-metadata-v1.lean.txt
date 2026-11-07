@@ -1,0 +1,51 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! Unfiltered compiled owner census and axiom/direct-definition inventory for all63 strong-seal roots
+and every compiled descendant. Private spellings are resolved in the actual final module. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let home := `TCSlib.Complexity.TuringMachine.Build.Primitives
+  let wanted : List String := ["FwdMapState", "appendBitTM_computes", "bufferReplay_run", "computesFunInTime_appendBit", "computesFunInTime_pairDup", "computesFunInTime_pairMapSnd", "computesFunInTime_unaryToken", "emitterP2PairIndex", "emitterP2SmallIndex", "emitterP2_admin_frame", "emitterP2_bank_frame", "emitterP2_body_erase", "emitterP2_body_erase_left", "emitterP2_body_erase_right", "emitterP2_index_injective", "emitterP2_left_frame", "emitterP2_pair_frame", "emitterP2_prepare_rewind_bank", "emitterP2_prepare_rewind_candidate", "emitterP2_prepare_rewind_suffix", "emitterP2_right_frame", "emitterP2_small_frame", "emitterSplit_find", "extract_replay", "fwdMapAct", "fwdMapCfg", "fwdMapCfg_read", "fwdMapEntered", "fwdMapSetup_head_step", "fwdMapSetup_heads", "fwdMapSetup_run", "fwdMapSetup_stationary", "fwdMapSetup_step", "fwdMapStateFintype", "fwdMapTM", "fwdMapVirtual", "fwdMapVirtual_run", "fwdMapVirtual_step", "fwdMap_backA", "fwdMap_backB", "fwdMap_block", "fwdMap_emit", "fwdMap_finish", "fwdMap_first", "fwdMap_launch", "fwdMap_move", "fwdMap_parse", "fwdMap_reject", "fwdMap_setup", "fwdMap_space", "fwdMap_suffix", "pairMapSndTM", "pairMapSndTM_computes", "pairMapSndTM_spaceUsed", "polyHeads", "polyHeads_bounds", "polyUnaryTM_spaceUsed", "poly_space", "poly_step", "rawStrip_replay", "splitFind_eq", "splitOrbit_find", "unaryTokenTM_computes"]
+  let st ← liftTermElabM getSimpTheorems
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, ci) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if owner != home then continue
+    logInfo m!"CENSUS|{n}|{owner}|kind={kind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} compiled roots for {wanted.length} source roots"
+  for n in roots.qsort Name.lt do
+    let some ci := env.find? n | throwError "root missing {n}"
+    logInfo m!"TARGET|{n}|{home}|kind={kind ci}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"
+    logInfo m!"TYPE|{n}|{ci.type}"
+  let mut inventory : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then inventory := inventory.push n
+  for n in inventory.qsort Name.lt do
+    let some ci := env.find? n | throwError "inventory missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AXIOMS|{n}|{(axs.qsort Name.lt).toList}"
+    if !roots.contains n then
+      logInfo m!"AUXILIARY|{n}|{home}|kind={kind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut defs : Array Name := #[]
+    for c in used do
+      if defs.contains c then continue
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          defs := defs.push c
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{c}|{owner}|sameOwner={owner == home}|hints={hint}"
+      | _, _ => pure ()

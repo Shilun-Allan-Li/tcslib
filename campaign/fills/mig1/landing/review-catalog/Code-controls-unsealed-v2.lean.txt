@@ -1,0 +1,197 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+set_option autoImplicit false
+open Turing
+
+section IsolatedControl01
+-- ID01 Turing.Cfg.ofWords
+-- C29 Cfg.ofWords
+example (q : Unit) (w : Fin 1 → List Bool) :
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state = some q := by rfl
+example : (fun (q : Unit) (w : Fin 1 → List Bool) =>
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state) = fun q _ => some q := by rfl
+end IsolatedControl01
+
+section IsolatedControl02
+-- ID02 Turing.Cfg.mapState
+-- C30 Cfg.mapState
+example (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (c.mapState f).output = c.output := by rfl
+example : (fun (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    (c.mapState f).output) = fun _ c => c.output := by rfl
+end IsolatedControl02
+
+section IsolatedControl03
+-- ID03 Turing.MultiTapeTM.step
+-- C01 step (pointwise / abstracted)
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step {c with state := none} = {c with state := none} := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step {c with state := none}) = fun _ c => {c with state := none} := by rfl
+end IsolatedControl03
+
+section IsolatedControl04
+-- ID04 Turing.MultiTapeTM.runFrom
+-- C02 runFrom
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.runFrom c 1 = tm.step c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.runFrom c 1) = fun tm c => tm.step c := by rfl
+end IsolatedControl04
+
+section IsolatedControl05
+-- ID05 Turing.MultiTapeTM.initCfg
+-- C03 initCfg
+example (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) : tm.initCfg x = Cfg.init tm.q₀ x := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) => tm.initCfg x) =
+    fun tm x => Cfg.init tm.q₀ x := by rfl
+end IsolatedControl05
+
+section IsolatedControl06
+-- ID06 Turing.Cfg.init
+-- C04 Cfg.init
+example (x : List Bool) : (Cfg.init () x : Cfg 1 Bool Unit x).output = [] := by rfl
+example : (fun x : List Bool => (Cfg.init () x : Cfg 1 Bool Unit x).output) = fun _ => [] := by rfl
+end IsolatedControl06
+
+section IsolatedControl07
+-- ID07 Turing.Action.apply
+-- C05 Action.apply
+example (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (a.apply c).state = a.state := by rfl
+example : (fun (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) => (a.apply c).state) =
+    fun a _ => a.state := by rfl
+end IsolatedControl07
+
+section IsolatedControl08
+-- ID08 Turing.Cfg.inputSymbol
+-- C06 Cfg.inputSymbol
+example (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) :
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol = none := by rfl
+example : (fun (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) =>
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol) = fun _ _ _ => none := by rfl
+end IsolatedControl08
+
+section IsolatedControl09
+-- ID09 Turing.Cfg.workTapeSymbols
+-- C07 Cfg.workTapeSymbols
+example (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+example : (fun (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) => c.workTapeSymbols i) =
+    fun c i => c.workTapes i (c.workTapePos i) := by rfl
+end IsolatedControl09
+
+section IsolatedControl10
+-- ID10 Turing.moveInputPos
+-- C08 moveInputPos
+example : moveInputPos (1 : Fin 3) .zero = 1 := by rfl
+example (n : ℕ) : (fun (pos : Fin (n + 2)) (m : SignType) => moveInputPos pos m) =
+    fun pos m =>
+      let p := ((pos.val : ℤ) + (m.cast : ℤ)).toNat
+      if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, by omega⟩ := by rfl
+end IsolatedControl10
+
+section IsolatedControl11
+-- ID11 Turing.FinTM.ComputesInTime
+-- C09 ComputesInTime
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+example : (fun (M : FinTM Bool) (x y : List Bool) (t : ℕ) => M.ComputesInTime x y t) =
+    fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+end IsolatedControl11
+
+section IsolatedControl12
+-- ID12 Turing.FinTM.ComputesFunInTime
+-- C10 ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = (∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) => M.ComputesFunInTime f T) =
+    (fun M f T => ∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+end IsolatedControl12
+
+section IsolatedControl13
+-- ID13 Turing.FinTM.Computes
+-- C11 Computes
+example (M : FinTM Bool) (f : List Bool → List Bool) :
+    M.Computes f = (∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) => M.Computes f) =
+    (fun M f => ∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+end IsolatedControl13
+
+section IsolatedControl14
+-- ID14 Turing.MultiTapeTM.spaceUsed
+-- C12 spaceUsed
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) :
+    tm.spaceUsed c t = ∑ i, tm.spaceUsedByTape c t i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) =>
+    tm.spaceUsed c t) = fun tm c t => ∑ i, tm.spaceUsedByTape c t i := by rfl
+end IsolatedControl14
+
+section IsolatedControl15
+-- ID15 Turing.MultiTapeTM.spaceUsedByTape
+-- C13 spaceUsedByTape
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.spaceUsedByTape c t i = (tm.visitedByTapeHead c t i).card := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.spaceUsedByTape c t i) = fun tm c t i => (tm.visitedByTapeHead c t i).card := by rfl
+end IsolatedControl15
+
+section IsolatedControl16
+-- ID16 Turing.MultiTapeTM.visitedByTapeHead
+-- C14 visitedByTapeHead
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.visitedByTapeHead c t i = (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.visitedByTapeHead c t i) =
+    fun tm c t i => (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+end IsolatedControl16
+
+section IsolatedControl17
+-- ID17 Turing.FinTM.bufferTape
+-- C19 bufferTape
+example : FinTM.bufferTape ([true] : List Bool) (-1) = none := by rfl
+example : (fun w : List Bool => FinTM.bufferTape w (-1)) = fun _ => none := by rfl
+end IsolatedControl17
+
+section IsolatedControl18
+-- ID18 Turing.copyTM
+-- C39 copyTM
+example (k : ℕ) (src dst : Fin k) : (copyTM (Symbol := Bool) k src dst).q₀ = SweepPhase.sweep := by rfl
+example : (fun (k : ℕ) (src dst : Fin k) => (copyTM (Symbol := Bool) k src dst).q₀) =
+    fun _ _ _ => SweepPhase.sweep := by rfl
+end IsolatedControl18
+
+section IsolatedControl19
+-- ID19 Turing.seamCompTM
+-- C38 seamCompTM
+example (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) :
+    (seamCompTM M exit N entry).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) => (seamCompTM M exit N entry).q₀) =
+    fun M _ _ _ => Sum.inl M.q₀ := by rfl
+end IsolatedControl19
+
+section IsolatedControl20
+-- ID20 Turing.embedEmitTM
+-- C37 embedEmitTM
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) :
+    (embedEmitTM ι M).q₀ = M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) => (embedEmitTM ι M).q₀) =
+    fun _ M => M.q₀ := by rfl
+end IsolatedControl20
+
+section IsolatedControl21
+-- ID21 Turing.stateWord
+-- C41 stateWord
+example (k : ℕ) (w : List Bool) (i : Fin k) : stateWord k w i = if i.val = 0 then w else [] := by rfl
+example : (fun (k : ℕ) (w : List Bool) (i : Fin k) => stateWord k w i) =
+    fun _ w i => if i.val = 0 then w else [] := by rfl
+end IsolatedControl21
+
+section IsolatedControl22
+-- ID22 Turing.embedEmitCfg
+example (ix : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) :
+    (embedEmitCfg ix tapes heads pre c).output = pre ++ c.output := by rfl
+example : (fun (ix : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) =>
+      (embedEmitCfg ix tapes heads pre c).output) = fun _ _ _ pre c => pre ++ c.output := by rfl
+end IsolatedControl22

@@ -138,6 +138,10 @@ def captureCfg {input : List Bool} (emb : S → H) (ret : H)
     else ((pre ++ c.output).length : ℤ)
   output := out₀
 
+-- Field equations for the captured source configuration.
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.captureCfg
+
 /-- Applying a captured action preserves the source fields and appends its
 optional emission to the buffer. The write uses the old head before moving.
 **Proof sketch.** Split the tape index at the source tape count. Source tapes

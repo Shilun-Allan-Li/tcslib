@@ -1,0 +1,122 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+
+namespace Gate117Consumers
+
+attribute [local irreducible] Turing.Action.apply Turing.Cfg.init
+  Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed
+  Turing.FinTM.bufferTape Turing.CodeTM.toFinTM Turing.FinTM.leftCfg
+  Turing.FinTM.rightCfg Turing.captureCfg Turing.FinTM.branchTM Turing.FinTM.idTM
+  Turing.FinTM.constTM Turing.FinTM.prependTM Turing.FinTM.pairValidTM
+  Turing.FinTM.rightAction
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+theorem coded_space (M : CodeTM) (x : List Bool) (t : ℕ) :
+    M.toFinTM.tm.spaceUsed (M.toFinTM.tm.initCfg x) t =
+      M.tm.spaceUsed (M.tm.initCfg x) t := by
+  rw [CodeTM.toFinTM_eq]
+
+theorem left_fields {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    (leftCfg f c tapes heads).state = c.state.map f ∧
+    (leftCfg f c tapes heads).inputPos = c.inputPos ∧
+    (∀ i a, (leftCfg f c tapes heads).workTapes i a =
+      (Fin.addCases c.workTapes tapes) i a) ∧
+    (∀ i, (leftCfg f c tapes heads).workTapePos i =
+      (Fin.addCases c.workTapePos heads) i) ∧
+    (leftCfg f c tapes heads).output = c.output := by
+  exact ⟨leftCfg_state _ _ _ _, leftCfg_inputPos _ _ _ _,
+    leftCfg_workTapes _ _ _ _, leftCfg_workTapePos _ _ _ _, leftCfg_output _ _ _ _⟩
+
+theorem right_fields {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    (rightCfg f c tapes heads).state = c.state.map f ∧
+    (rightCfg f c tapes heads).inputPos = c.inputPos ∧
+    (∀ i a, (rightCfg f c tapes heads).workTapes i a =
+      (Fin.addCases tapes c.workTapes) i a) ∧
+    (∀ i, (rightCfg f c tapes heads).workTapePos i =
+      (Fin.addCases heads c.workTapePos) i) ∧
+    (rightCfg f c tapes heads).output = c.output := by
+  exact ⟨rightCfg_state _ _ _ _, rightCfg_inputPos _ _ _ _,
+    rightCfg_workTapes _ _ _ _, rightCfg_workTapePos _ _ _ _, rightCfg_output _ _ _ _⟩
+
+theorem capture_fields {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x) :
+    (captureCfg emb ret pre out₀ c).state = some ((c.state.map emb).getD ret) ∧
+    (captureCfg emb ret pre out₀ c).inputPos = c.inputPos ∧
+    (∀ i a, (captureCfg emb ret pre out₀ c).workTapes i a =
+      (if h : i.val < k then c.workTapes ⟨i.val, h⟩
+        else bufferTape (pre ++ c.output)) a) ∧
+    (∀ i, (captureCfg emb ret pre out₀ c).workTapePos i =
+      if h : i.val < k then c.workTapePos ⟨i.val, h⟩
+      else ((pre ++ c.output).length : ℤ)) ∧
+    (captureCfg emb ret pre out₀ c).output = out₀ := by
+  exact ⟨captureCfg_state _ _ _ _ _, captureCfg_inputPos _ _ _ _ _,
+    captureCfg_workTapes _ _ _ _ _, captureCfg_workTapePos _ _ _ _ _,
+    captureCfg_output _ _ _ _ _⟩
+
+theorem zero_copy (x : List Bool) (t bound : ℕ) :
+    idTM.tm.spaceUsed (idTM.tm.initCfg x) t ≤ bound := by
+  rw [idTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem zero_const (w x : List Bool) (t bound : ℕ) :
+    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t ≤ bound := by
+  rw [constTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem zero_prepend (w x : List Bool) (t bound : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t ≤ bound := by
+  rw [prependTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem zero_validator (x : List Bool) (t bound : ℕ) :
+    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t ≤ bound := by
+  rw [pairValidTM_spaceUsed]
+  exact Nat.zero_le _
+
+private def branchView (M₁ M₂ : FinTM Bool) (b : Bool) :
+    MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) := by
+  rw [← branchTM_k M₁ M₂ b, ← branchTM_State M₁ M₂ b]
+  exact (branchTM M₁ M₂ b).tm
+
+theorem branch_views_run (M₁ M₂ : FinTM Bool) (b b' : Bool) {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    (branchView M₁ M₂ b).runFrom c t = (branchView M₁ M₂ b').runFrom c t := by
+  exact branchTM_runFrom_independent M₁ M₂ b b' c t
+
+-- Conditional on the actual host's fixed-table agreement; full condTM repair is outside scope.
+theorem branch_conditional {d : ℕ} {HState : Type} {x : List Bool}
+    (M₁ M₂ : FinTM Bool) (b : Bool)
+    (H : MultiTapeTM (d + (M₁.k + M₂.k)) Bool HState)
+    (emb : (M₁.State ⊕ M₂.State) → HState)
+    (htr : ∀ q inp work, H.tr (emb q) inp work =
+      rightAction d emb ((branchView M₁ M₂ false).tr q inp
+        (fun i => work (Fin.natAdd d i))))
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x)
+    (tapes : Fin d → ℤ → Option Bool) (heads : Fin d → ℤ) (t : ℕ) :
+    H.runFrom (rightCfg emb c tapes heads) t =
+      rightCfg emb ((branchView M₁ M₂ b).runFrom c t) tapes heads := by
+  have fixed := rightCfg_run (branchView M₁ M₂ false) H emb htr c tapes heads t
+  exact fixed.trans (congrArg (fun z => rightCfg emb z tapes heads)
+    (branch_views_run M₁ M₂ false b c t))
+
+#print axioms coded_space
+#print axioms left_fields
+#print axioms right_fields
+#print axioms capture_fields
+#print axioms zero_copy
+#print axioms zero_const
+#print axioms zero_prepend
+#print axioms zero_validator
+#print axioms branch_views_run
+#print axioms branch_conditional
+
+end Gate117Consumers

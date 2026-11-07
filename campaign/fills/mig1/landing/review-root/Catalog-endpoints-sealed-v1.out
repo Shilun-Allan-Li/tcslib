@@ -1,0 +1,146 @@
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:39:4: error: Type mismatch
+  catalog_buffer_clip (w src) p
+has type
+  (if 0 ≤ p ∧ p < ↑(w src).length then FinTM.bufferTape (w src) p else none) = FinTM.bufferTape (w src) p
+but is expected to have type
+  (if 0 ≤ p ∧ p < ↑(w src).length then FinTM.bufferTape (w src) p else none) =
+    (ofWords q' (Function.update w dst (w src))).workTapes dst p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:40:2: error: unsolved goals
+case neg
+k : ℕ
+S : Type u_1
+x : List Bool
+q q' : S
+w : Fin k → List Bool
+src dst : Fin k
+hdst : w dst = []
+j : Fin k
+p : ℤ
+hj : ¬j = dst
+⊢ FinTM.bufferTape (w j) p = (ofWords q' (Function.update w dst (w src))).workTapes j p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:32:56: error: unsolved goals
+case workTapePos
+k : ℕ
+S : Type u_1
+x : List Bool
+q q' : S
+w : Fin k → List Bool
+src dst : Fin k
+hdst : w dst = []
+⊢ (ofWords q w).workTapePos = (ofWords q' (Function.update w dst (w src))).workTapePos
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:38:15: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵hdst, FinTM.bufferTape_nil, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:40:41: warning: This simp argument is unused:
+  Function.update_of_ne hj
+
+Hint: Omit it from the simp argument list.
+  simp only [hj, false_and, ite_false,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵j̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:63:6: error: Tactic `rfl` failed: The left-hand side
+  none
+is not definitionally equal to the right-hand side
+  (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapes src p
+
+case pos
+k : ℕ
+S : Type u_1
+x : List Bool
+q q' : S
+w : Fin k → List Bool
+src dst : Fin k
+hne : src ≠ dst
+hdst : w dst = []
+p : ℤ
+hp : 0 ≤ p ∧ p < ↑(w src).length
+⊢ none = (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapes src p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:66:6: error: Type mismatch
+  Eq.symm hc
+has type
+  FinTM.bufferTape (w src) p = none
+but is expected to have type
+  FinTM.bufferTape (w src) p = (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapes src p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:71:6: error: Type mismatch
+  catalog_buffer_clip (w src) p
+has type
+  (if 0 ≤ p ∧ p < ↑(w src).length then FinTM.bufferTape (w src) p else none) = FinTM.bufferTape (w src) p
+but is expected to have type
+  (if 0 ≤ p ∧ p < ↑(w src).length then FinTM.bufferTape (w src) p else none) =
+    (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapes dst p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:72:4: error: unsolved goals
+case neg
+k : ℕ
+S : Type u_1
+x : List Bool
+q q' : S
+w : Fin k → List Bool
+src dst : Fin k
+hne : src ≠ dst
+hdst : w dst = []
+j : Fin k
+p : ℤ
+hs : ¬j = src
+hd : ¬j = dst
+⊢ FinTM.bufferTape (w j) p = (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapes j p
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:54:81: error: unsolved goals
+case workTapePos
+k : ℕ
+S : Type u_1
+x : List Bool
+q q' : S
+w : Fin k → List Bool
+src dst : Fin k
+hne : src ≠ dst
+hdst : w dst = []
+⊢ (ofWords q w).workTapePos = (ofWords q' (Function.update (Function.update w src []) dst (w src))).workTapePos
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:60:15: warning: This simp argument is unused:
+  Function.update_of_ne hne
+
+Hint: Omit it from the simp argument list.
+  simp only [̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵n̵e̵,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵[̲F̲u̲n̲c̲t̲i̲o̲n̲.̲u̲p̲d̲a̲t̲e̲_̲s̲e̲l̲f̲,̲ FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:60:42: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.update_of_ne hne, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:61:6: warning: This simp argument is unused:
+  FinTM.bufferTape_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [Function.update_of_ne hne, Function.update_self, F̵i̵n̵T̵M̵.̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵_̵n̵i̵l̵,̵ ̵hne, false_and, ite_false, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:69:17: warning: This simp argument is unused:
+  Function.update_self
+
+Hint: Omit it from the simp argument list.
+  simp only [̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵h̵d̵s̵t̵,̵[̲h̲d̲s̲t̲,̲ FinTM.bufferTape_nil, hs, false_and, ite_false, true_and]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:72:47: warning: This simp argument is unused:
+  Function.update_of_ne hd
+
+Hint: Omit it from the simp argument list.
+  simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵s]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-root-fh3912y3/Catalog_endpoints_sealed_v1.lean:73:8: warning: This simp argument is unused:
+  Function.update_of_ne hs
+
+Hint: Omit it from the simp argument list.
+  simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'Turing.Cfg.ofWords_copy_endpoint' depends on axioms: [propext, sorryAx, Quot.sound]
+'Turing.Cfg.ofWords_transfer_endpoint' depends on axioms: [propext, sorryAx, Quot.sound]

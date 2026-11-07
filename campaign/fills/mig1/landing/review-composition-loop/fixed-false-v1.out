@@ -1,0 +1,13 @@
+/private/tmp/tcslib-mig1-comp-loop-gd6n9fxu/fixed-false-v1.lean:25:2: error: Tactic `rfl` failed: The left-hand side
+  rightAction D.k (fun s => Sum.inr (Sum.inr s)) ((M₁.branchTM M₂ false).tm.tr q inp fun i => work (Fin.natAdd D.k i))
+is not definitionally equal to the right-hand side
+  rightAction D.k (fun s => Sum.inr (Sum.inr s))
+    ((cast ⋯ (cast ⋯ (M₁.branchTM M₂ false).tm)).tr q inp fun i => work (Fin.natAdd D.k i))
+
+D M₁ M₂ : FinTM Bool
+q : M₁.State ⊕ M₂.State
+inp : Option Bool
+work : Fin (D.k + (M₁.k + M₂.k)) → Option Bool
+⊢ rightAction D.k (fun s => Sum.inr (Sum.inr s)) ((M₁.branchTM M₂ false).tm.tr q inp fun i => work (Fin.natAdd D.k i)) =
+    rightAction D.k (fun s => Sum.inr (Sum.inr s))
+      ((cast ⋯ (cast ⋯ (M₁.branchTM M₂ false).tm)).tr q inp fun i => work (Fin.natAdd D.k i))

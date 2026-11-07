@@ -1,0 +1,62 @@
+MATCHERUSE|_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timed_ledger|inType=false|inValue=true|root=true|auxiliary=false
+MATCHERUSE|_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_input_rewind|inType=false|inValue=true|root=true|auxiliary=false
+MATCHERINTERFACE|Turing.FinTM.timed_rewind|inType=true
+PUBLISHEDTYPE|Turing.FinTM.timed_rewind|∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S)
+  (start scan : S) (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr start inp work = Turing.FinTM.controlAction SignType.neg (some scan)) →
+    (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+        tm.tr scan inp work =
+          match inp with
+          | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+          | none => Turing.FinTM.controlAction SignType.pos dest) →
+      ∀ (c : Turing.Cfg k Bool S x),
+        c.state = some start →
+          ∃ r ≤ ↑c.inputPos + 2,
+            Turing.MultiTapeTM.runFrom c r =
+              { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos,
+                output := c.output }
+MATCHERINTERFACE|Turing.FinTM.rewind_heads|inType=true
+PUBLISHEDTYPE|Turing.FinTM.rewind_heads|∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S)
+  (start scan : S) (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr start inp work = Turing.FinTM.controlAction SignType.neg (some scan)) →
+    (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+        tm.tr scan inp work =
+          match inp with
+          | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+          | none => Turing.FinTM.controlAction SignType.pos dest) →
+      ∀ (c : Turing.Cfg k Bool S x),
+        c.state = some start →
+          ∃ r ≤ ↑c.inputPos + 2,
+            Turing.MultiTapeTM.runFrom c r =
+                { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos,
+                  output := c.output } ∧
+              ∀ u ≤ r, (Turing.MultiTapeTM.runFrom c u).workTapePos = c.workTapePos
+MATCHERINTERFACE|Turing.FinTM.rewind_from_any|inType=true
+PUBLISHEDTYPE|Turing.FinTM.rewind_from_any|∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S)
+  (start scan : S) (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr start inp work = Turing.FinTM.controlAction SignType.neg (some scan)) →
+    (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+        tm.tr scan inp work =
+          match inp with
+          | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+          | none => Turing.FinTM.controlAction SignType.pos dest) →
+      ∀ (cfg : Turing.Cfg k Bool S x),
+        cfg.state = some start →
+          ∃ t,
+            Turing.MultiTapeTM.runFrom cfg t =
+              { state := dest, inputPos := 1, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos,
+                output := cfg.output }
+MATCHERINTERFACE|Turing.FinTM.rewind_scan_heads|inType=true
+PUBLISHEDTYPE|Turing.FinTM.rewind_scan_heads|∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S)
+  (scan : S) (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr scan inp work =
+        match inp with
+        | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+        | none => Turing.FinTM.controlAction SignType.pos dest) →
+    ∀ (j : ℕ) (cfg : Turing.Cfg k Bool S x),
+      cfg.state = some scan →
+        ↑cfg.inputPos = j → j ≤ x.length → ∀ u ≤ j + 1, (Turing.MultiTapeTM.runFrom cfg u).workTapePos = cfg.workTapePos

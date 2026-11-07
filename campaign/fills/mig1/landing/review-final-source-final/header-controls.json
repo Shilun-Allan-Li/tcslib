@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "input": "theorem nested (h : P (input := x)) : True := by\n  trivial\n",
+      "full_header": "theorem nested (h : P (input := x)) : True",
+      "proof_body": "by\n  trivial"
+    },
+    {
+      "input": "private lemma body :\n    let B := existingMachine x\n    P B := by\n  exact h\n",
+      "full_header": "private lemma body :\n    let B := existingMachine x\n    P B",
+      "proof_body": "by\n  exact h"
+    },
+    {
+      "input": "private lemma view :\n    let V : T := by\n      rw [shape]\n      exact t\n    P V := by\n  exact h\n",
+      "full_header": "private lemma view :\n    let V : T := by\n      rw [shape]\n      exact t\n    P V",
+      "proof_body": "by\n  exact h"
+    },
+    {
+      "input": "theorem two :\n    let V : T := by\n      have h := p\n      exact t h\n    let n := f (input := x)\n    Q V n := by\n  exact z\n",
+      "full_header": "theorem two :\n    let V : T := by\n      have h := p\n      exact t h\n    let n := f (input := x)\n    Q V n",
+      "proof_body": "by\n  exact z"
+    }
+  ]
+}

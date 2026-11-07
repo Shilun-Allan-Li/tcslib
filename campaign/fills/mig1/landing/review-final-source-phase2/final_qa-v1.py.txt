@@ -1,0 +1,31 @@
+from pathlib import Path
+import sys,importlib.util,contextlib,io,json,hashlib,re,datetime
+sys.dont_write_bytecode=True
+out=Path(__file__).resolve().parent;root=out.parents[4]
+spec=importlib.util.spec_from_file_location('review',out/'source_review.py');R=importlib.util.module_from_spec(spec)
+with contextlib.redirect_stdout(io.StringIO()):spec.loader.exec_module(R)
+H=R.H;cap=R.CAP;scope=json.loads((out.parent/'phase2-adoption/scope.json').read_text());sm={r['path']:r['sha256'] for r in scope['source_blobs']}
+assert scope['api_base']==cap['api_base'] and scope['prior_pushed_head']==cap['prior_passed_source'];assert set(scope['changed_Lean_from_API_worktree'])==set(R.FILES);assert scope['untracked_Lean']==[] and scope['index_clean'];assert set(scope['dirty_Lean_from_HEAD'])==set(cap['changed_from_prior0d'])
+for f in R.FILES:
+ assert H(R.STAGES['current'][f])==sm[f] and H((Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad')/f).read_bytes())==sm[f]
+parents=json.loads((out.parent/'review-final-source/freeze-summary.json').read_text());oldroots=json.loads((out.parent/'review-final-source/proof-roots140.json').read_text());current=json.loads((out/'proof-roots.json').read_text());oldkeys={(r['path'],r['name']) for r in oldroots};newkeys={(r['path'],r['name']) for r in current};added=sorted(newkeys-oldkeys);removed=sorted(oldkeys-newkeys)
+# Parent's140 native result is historical, retained only for source root reconciliation.
+assert len(added)==6 and len(removed)==2 and len(current)==144
+missing=[]
+for row in current:
+ d=next(x for x in R.DECLS['current'][row['path']] if x['name']==row['name']);lines=d['body'].count('\n')+1
+ if lines>20 and '**Proof sketch.**' not in d['doc']:missing.append(dict(row,body_lines=lines))
+cites=json.loads((out/'source-citations.json').read_text());pop=json.loads((out/'screen-population-proposed.json').read_text());oldpop=set((out.parent/'review-final-source/screen-population-final-review.txt').read_text().splitlines());assert set(pop['population'])>=oldpop
+newfiles=sorted(set(pop['population'])-oldpop);(out/'screen-population-final-review.txt').write_text('\n'.join(pop['population'])+'\n')
+# Exact retired selector identifiers have no code callers anywhere in current TCSlib.
+selector_hits=[];pat=re.compile(r"(?<![\w'])emCall_(?:pair|triple)_not_mem(?![\w'])");wt=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad')
+for p in (wt/'TCSlib').rglob('*.lean'):
+ c=R.P.clean(p.read_text())
+ for m in pat.finditer(c):selector_hits.append({'path':str(p.relative_to(wt)),'line':c.count('\n',0,m.start())+1,'name':m[0]})
+assert not selector_hits
+phase_counts={}
+for label,x in [('api_to_phase2',R.api),('producer_to_phase2',R.producer),('prior0d_to_phase2',R.phase2)]:
+ phase_counts[label]={'existing_proof_bodies_changed':sum(len(r['proof_body_changes']) for r in x['comparisons'].values()),'new_or_moved_proof_declarations':sum(r['kind'] in ['lemma','theorem'] for z in x['comparisons'].values() for r in z['added']),'private_headers_changed':x['all_header_changes'],'public_headers_changed':[(f,n) for f,n,p in x['all_header_changes'] if not p]}
+bodydoc={f:{'existing_changed_proofs':[r['name'] for r in c['proof_body_changes']],'new_proofs':[r['name'] for r in c['added'] if r['kind'] in ['lemma','theorem']],'removed':[r['name'] for r in c['removed']],'doc_or_layout_only':c['doc_or_layout_only_changes']} for f,c in R.phase2['comparisons'].items() if R.STAGES['prior0d'][f]!=R.STAGES['current'][f]}
+result={'QA_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'all12_actual_source_hashes_stable':True,'parent_scope_receipt_reconciled':True,'parent_scope_receipt_sha256':H((out.parent/'phase2-adoption/scope.json').read_bytes()),'parent_reports_exact12_changed_API_and6_dirty_prior0d':True,'parent_reports_no_untracked_Lean_and_index_clean':True,'new_roots_relative_prior140':[{'path':f,'name':n} for f,n in added],'retired_roots_relative_prior140':[{'path':f,'name':n} for f,n in removed],'phase_counts':phase_counts,'phase2_per_file_body_vs_doc_changes':bodydoc,'missing_leading_sketches_over20lines':missing,'source_citation_root_count':cites['proof_roots'],'source_citation_entries':cites['cited_lexical_entries'],'prior25_union_count':len(oldpop),'final_TCSlib_cited_home_population':len(pop['population']),'new_citation_homes_vs25':newfiles,'retired_selector_code_hits':selector_hits,'Mathlib_tagged_route_primary_sources':[{'path':'Mathlib/Data/Set/Function.lean','line':152,'name':'Set.MapsTo.iterate'},{'path':'Mathlib/Algebra/Group/Basic.lean','line':184,'name':'add_right_iterate','source':'Published additive companion of mul_right_iterate; source confirmed in prior isolated route probe.'}],'execution_claim':'Source-only reconciliation; previous140-root native result and parent Git/replay facts are attributed, not rerun.'}
+(out/'QA.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:v for k,v in result.items() if k not in ['phase2_per_file_body_vs_doc_changes','Mathlib_tagged_route_primary_sources']},indent=2))

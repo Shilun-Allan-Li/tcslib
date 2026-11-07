@@ -1,0 +1,89 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Turing
+attribute [local irreducible] Cfg.ofWords FinTM.bufferTape
+attribute [-simp] Cfg.init Action.apply MultiTapeTM.initCfg
+/-- Clipping a canonical word to its occupied interval leaves its tape unchanged. -/
+private theorem catalog_buffer_clip (w : List Bool) (p : ℤ) :
+    (if 0 ≤ p ∧ p < (w.length : ℤ) then FinTM.bufferTape w p else none) =
+      FinTM.bufferTape w p := by
+  by_cases h : 0 ≤ p ∧ p < (w.length : ℤ)
+  · rw [if_pos h]
+  · rw [if_neg h]
+    symm
+    rw [FinTM.bufferTape_eq]
+    split_ifs with h0
+    · apply List.getElem?_eq_none_iff.mpr
+      omega
+    · rfl
+
+theorem Cfg.ofWords_copy_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update w dst (w src)) := by
+  apply Cfg.ext
+  · simp only [Cfg.ofWords_state]
+  · simp only [Cfg.ofWords_inputPos]
+  ·
+    funext j p
+    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+    by_cases hj : j = dst
+    · subst j
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
+      exact catalog_buffer_clip (w src) p
+    · simp only [hj, false_and, ite_false, Function.update_of_ne hj]
+  · funext j
+    simp only [Cfg.ofWords_workTapePos]
+  · simp only [Cfg.ofWords_output]
+
+theorem Cfg.ofWords_transfer_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hne : src ≠ dst) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = src ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then none
+          else if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src)) := by
+  apply Cfg.ext
+  · simp only [Cfg.ofWords_state]
+  · simp only [Cfg.ofWords_inputPos]
+  ·
+    funext j p
+    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+    by_cases hs : j = src
+    · subst j
+      simp only [Function.update_of_ne hne, Function.update_self,
+        FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+      split_ifs with hp
+      · rfl
+      · have hc := catalog_buffer_clip (w src) p
+        rw [if_neg hp] at hc
+        exact hc.symm
+    · by_cases hd : j = dst
+      · subst j
+        simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
+          hs, false_and, ite_false, true_and]
+        exact catalog_buffer_clip (w src) p
+      · simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,
+          Function.update_of_ne hs]
+  · funext j
+    simp only [Cfg.ofWords_workTapePos]
+  · simp only [Cfg.ofWords_output]
+
+#print axioms Cfg.ofWords_copy_endpoint
+#print axioms Cfg.ofWords_transfer_endpoint
+end Turing

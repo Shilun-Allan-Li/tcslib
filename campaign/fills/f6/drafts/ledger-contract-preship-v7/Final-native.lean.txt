@@ -1,0 +1,188 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+
+namespace F6LedgerPreship
+open Turing
+
+/-- Public bundle equation and public one-tape lower bound; output stays arbitrary. -/
+theorem source_bundle_budget (M : CodeTM) (s : ℕ) (x output : List Bool) (t : ℕ)
+    (hcomp : M.toFinTM.ComputesInTime x output t)
+    (hspace : M.toFinTM.tm.spaceUsed (M.toFinTM.tm.initCfg x) t ≤ s) :
+    1 ≤ s ∧ (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) t).output = output ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s := by
+  have hs := (CodeTM.one_le_spaceUsed M x t).trans hspace
+  rw [CodeTM.toFinTM_eq] at hcomp hspace
+  obtain ⟨hh, ho⟩ := (FinTM.computesInTime_iff
+    { k := 1, State := Fin (M.numStates + 1), tm := M.tm } x output t).mp hcomp
+  exact ⟨hs, hh, ho, hspace⟩
+
+/-- Conditional OWN ledger on actual Fin(K+4) tapes: source mirror 0, auxiliaries
+1 and 2, every idle bank tape 3..K+2, and last ruler K+3. Both ruler boundaries
+are included. No claim supplies these hypotheses for the unfinished hosted loop.
+**Proof sketch.** Compare mirror visits at t0 with the source at t; count each
+auxiliary and ruler interval by the public row; count each idle singleton. -/
+theorem conditional_ledger (K s D ℓ : ℕ) {Q : Type} {z : List Bool}
+    (M : CodeTM) (x output : List Bool) (t t0 : ℕ)
+    (hspace : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) (ht0 : t0 ≤ t)
+    (own_source_halt : (M.tm.runFrom (M.tm.initCfg x) t0).state = none)
+    (own_source_first : ∀ u < t0, (M.tm.runFrom (M.tm.initCfg x) u).state ≠ none)
+    (own_source_output : (M.tm.runFrom (M.tm.initCfg x) t0).output = output)
+    (L : MultiTapeTM (K + 4) Bool Q) (c : Cfg (K + 4) Bool Q z) (r : ℕ)
+    (own_loop_halt : (L.runFrom c r).state = none)
+    (own_loop_first : ∀ u < r, (L.runFrom c u).state ≠ none)
+    (own_loop_output : (L.runFrom c r).output = output)
+    (own_mirror : L.visitedByTapeHead c r ⟨0, by omega⟩ =
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t0 0)
+    (own_aux : ∀ i : Fin (K + 4), (i.val = 1 ∨ i.val = 2) →
+      ∀ u ≤ r, (L.runFrom c u).workTapePos i ∈ Finset.Icc (-(D : ℤ)) (D : ℤ))
+    (own_idle : ∀ i : Fin (K + 4), 3 ≤ i.val → i.val < K + 3 →
+      L.visitedByTapeHead c r i = {0})
+    (own_ruler : ∀ u ≤ r, (L.runFrom c u).workTapePos (Fin.last (K + 3)) ∈
+      Finset.Icc (-1 : ℤ) (ℓ : ℤ)) :
+    ((M.tm.runFrom (M.tm.initCfg x) t0).state = none ∧
+      (∀ u < t0, (M.tm.runFrom (M.tm.initCfg x) u).state ≠ none) ∧
+      (M.tm.runFrom (M.tm.initCfg x) t0).output = output) ∧
+    ((L.runFrom c r).state = none ∧
+      (∀ u < r, (L.runFrom c u).state ≠ none) ∧
+      (L.runFrom c r).output = output) ∧
+    ∀ i, L.spaceUsedByTape c r i ≤ s + (2 * D + 1) + ℓ + 3 := by
+  refine ⟨⟨own_source_halt, own_source_first, own_source_output⟩,
+    ⟨own_loop_halt, own_loop_first, own_loop_output⟩, ?_⟩
+  intro i
+  by_cases h0 : i.val = 0
+  · have hi : i = ⟨0, by omega⟩ := Fin.ext h0
+    rw [hi, MultiTapeTM.spaceUsedByTape_eq_card, own_mirror]
+    have hsub : M.tm.visitedByTapeHead (M.tm.initCfg x) t0 0 ⊆
+        M.tm.visitedByTapeHead (M.tm.initCfg x) t 0 := by
+      intro p hp
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp ⊢
+      obtain ⟨u, hu, hp⟩ := hp
+      exact ⟨u, hu.trans ht0, hp⟩
+    have hb := (M.tm.spaceUsedByTape_le_spaceUsed (M.tm.initCfg x) t 0).trans hspace
+    rw [MultiTapeTM.spaceUsedByTape_eq_card] at hb
+    have hm := (Finset.card_le_card hsub).trans hb
+    omega
+  · by_cases ha : i.val = 1 ∨ i.val = 2
+    · have hb := L.spaceUsedByTape_le_card_Icc c r i (-(D : ℤ)) (D : ℤ)
+        (own_aux i ha)
+      have he : ((D : ℤ) + 1 - -(D : ℤ)).toNat = 2 * D + 1 := by omega
+      rw [he] at hb
+      omega
+    · by_cases hr : i = Fin.last (K + 3)
+      · subst i
+        have hb := L.spaceUsedByTape_le_card_Icc c r (Fin.last (K + 3)) (-1) ℓ own_ruler
+        have he : ((ℓ : ℤ) + 1 - -1).toNat = ℓ + 2 := by omega
+        rw [he] at hb
+        omega
+      · have hv : i.val ≠ K + 3 := fun h => hr (Fin.ext h)
+        have hidle := own_idle i (by omega) (by omega)
+        rw [MultiTapeTM.spaceUsedByTape_eq_card, hidle, Finset.card_singleton]
+        omega
+
+/-- Code precedes the positive coefficient, which precedes all run parameters.
+p and q are fixed per-code prefix constants: the OWN prefix bound is B≤p+qℓ.
+**Proof sketch.** s≥1 and bits-length≤s absorb all additive constants. -/
+theorem coefficient_handoff (K : ℕ) (D p q : List Bool → ℕ) :
+    ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
+        (Complexity.TimeHierarchy.code.decode α).toFinTM.ComputesInTime x output t →
+        (Complexity.TimeHierarchy.code.decode α).toFinTM.tm.spaceUsed
+          ((Complexity.TimeHierarchy.code.decode α).toFinTM.tm.initCfg x) t ≤ s →
+        ∀ B : ℕ, B ≤ p α + q α * (2 * (Nat.bits s).length + 2 * α.length + 4) →
+          B + (K + 4) * (s + (2 * D α + 1) +
+            (2 * (Nat.bits s).length + 2 * α.length + 4) + 3) ≤ C * s := by
+  intro α
+  let a := 2 * α.length + 6
+  let d := 2 * D α + 4
+  let C := p α + q α * a + (K + 4) * (1 + d + a) + 1
+  refine ⟨C, by dsimp only [C]; omega, ?_⟩
+  intro s x output t _hcomp hspace B own_prefix
+  have hs := (CodeTM.one_le_spaceUsed (Complexity.TimeHierarchy.code.decode α) x t).trans hspace
+  have hbits := Turing.length_bits_le_self s
+  have ha : 2 * (Nat.bits s).length + 2 * α.length + 4 ≤ a * s := by
+    have hconst := Nat.mul_le_mul_left (2 * α.length + 4) hs
+    dsimp only [a]
+    nlinarith
+  have hd : 2 * D α + 4 ≤ d * s := by
+    simpa only [d, Nat.mul_one] using Nat.mul_le_mul_left (2 * D α + 4) hs
+  have hp := Nat.mul_le_mul_left (p α) hs
+  have hq := Nat.mul_le_mul_left (q α) ha
+  have hS : s + (2 * D α + 1) +
+      (2 * (Nat.bits s).length + 2 * α.length + 4) + 3 ≤ (1 + d + a) * s := by
+    nlinarith
+  have hN := Nat.mul_le_mul_left (K + 4) hS
+  dsimp only [C]
+  nlinarith
+
+/-- The actual first-three-bank embedding followed by H5 castSucc has exactly
+physical indices 0,1,2. The ruler is last at K+3, after all idle bank tapes. -/
+theorem physical_index_transport (K : ℕ) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    ((σ 0).castSucc : Fin ((K + 3) + 1)) = ⟨0, by omega⟩ ∧
+    ((σ 1).castSucc : Fin ((K + 3) + 1)) = ⟨1, by omega⟩ ∧
+    ((σ 2).castSucc : Fin ((K + 3) + 1)) = ⟨2, by omega⟩ ∧
+    (Fin.last (K + 3)).val = K + 3 ∧
+    ∀ j : Fin (K + 3), 3 ≤ j.val →
+      (∀ i : Fin 3, σ i ≠ j) ∧ j.castSucc ≠ Fin.last (K + 3) := by
+  intro σ
+  refine ⟨rfl, rfl, rfl, rfl, ?_⟩
+  intro j hj
+  constructor
+  · intro i he
+    have hv := congrArg Fin.val he
+    change i.val = j.val at hv
+    have := i.isLt
+    omega
+  · exact Fin.castSucc_ne_last j
+
+end F6LedgerPreship
+
+
+/-! Read-only compiled inventory of the four proposed proof roots and their descendants.
+Imported theorem proof values are not traversed. Existing same-home legacy helpers remain
+outside the changed proof scope. Root types and compiled values are both inspected. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let wanted : List String := ["source_bundle_budget", "conditional_ledger",
+    "coefficient_handoff", "physical_index_transport"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} for {wanted.length} source roots"
+  for root in roots.qsort Name.lt do
+    logInfo m!"ROOT|{root}|private={isPrivateName root}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := env.find? n | throwError "selected constant missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) =>
+        logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

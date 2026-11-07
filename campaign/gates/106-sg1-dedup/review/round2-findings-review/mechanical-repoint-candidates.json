@@ -1,0 +1,145 @@
+[
+  {
+    "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_mapSnd",
+    "line": 2731,
+    "header": "private lemma sat_pt_mapSnd {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => [])",
+    "source_span": "private lemma sat_pt_mapSnd {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []) := by\n  obtain \u27e8M, C, e, hM\u27e9 := hg\n  obtain \u27e8N, K, hN\u27e9 := FinTM.computesFunInTime_pairMapSnd hM\n    (by intro a b hab; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))\n  refine \u27e8N, K * (C + 1), e + 1, fun x => (hN x).mono ?_\u27e9\n  have he : (x.length + 1) ^ e \u2264 (x.length + 1) ^ (e + 1) :=\n    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)\n  have h1 : x.length + 1 \u2264 (x.length + 1) ^ (e + 1) := by\n    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 \u2264 e + 1 by omega)\n  calc\n    _ \u2264 K * ((C + 1) * (x.length + 1) ^ (e + 1)) := by\n      apply Nat.mul_le_mul_left\n      calc\n        _ \u2264 (x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1) :=\n          Nat.add_le_add h1 (Nat.mul_le_mul_left C he)\n        _ = _ := by ring\n    _ = _ := by ring\n\n/-- Independently computed fields can be paired without losing the original\ninput needed by the second computation. -/",
+    "source_span_sha256": "50d9e204030d23ee90d317d04ffe5d75bbb9a9ab4db24a55186603a538c5c6f8",
+    "replacement": "PolyTimeComputable.pairMapSnd + existing pairMapSnd.eq_1 function equality",
+    "bounded_probe": "map_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clNative_map",
+    "line": 634,
+    "header": "private lemma clNative_map {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => [])",
+    "source_span": "private lemma clNative_map {g : List Bool \u2192 List Bool} (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []) := by\n  obtain \u27e8G, C, e, hG\u27e9 := hg\n  obtain \u27e8M, a, hM\u27e9 := FinTM.computesFunInTime_pairMapSnd hG\n    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))\n  refine \u27e8M, a * (C + 1), e + 1, fun x => (hM x).mono ?_\u27e9\n  have hlin : x.length + 1 \u2264 (x.length + 1) ^ (e + 1) := by\n    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)\n      (show 1 \u2264 e + 1 by omega)\n  have hp := Nat.mul_le_mul_left C\n    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ e))\n  calc\n    _ \u2264 a * ((x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1)) :=\n      Nat.mul_le_mul_left a (Nat.add_le_add hlin hp)\n    _ = _ := by ring\n\n/-- Two separately computed fields can be paired while preserving the\noriginal input needed by both computations.\n**Proof sketch.** Use the audited retained-request construction: compute\nthe first field paired with an empty payload, retain the original input,\nthen compute the second field from the retained input. Pair concatenation\nand projection remove the administrative layers. All scans and simulations\nare the native public catalog machines, with their proved runtime bounds. -/",
+    "source_span_sha256": "93e1178f5b022777b1b64a93e689725c15a1b48cfc1d5a5d3e48aa8727c8f940",
+    "replacement": "PolyTimeComputable.pairMapSnd + existing pairMapSnd.eq_1 function equality",
+    "bounded_probe": "map_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_pair",
+    "line": 2754,
+    "header": "private lemma sat_pt_pair {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x))",
+    "source_span": "private lemma sat_pt_pair {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by\n  simpa only [Function.comp_def, pairDecode_pairEncode] using\n    (sat_pt_mapSnd hg).comp (sat_pt_pair_input hf)\n\n/-- Independently computed word fragments can be concatenated in polynomial time. -/",
+    "source_span_sha256": "83f79ea80834cfa6eb0a672cc7fd836ecc69674a631a5b9ddf932a9c7eb546df",
+    "replacement": "PolyTimeComputable.pairEncode hf hg",
+    "bounded_probe": "pair_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clNative_pair",
+    "line": 659,
+    "header": "private lemma clNative_pair {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x))",
+    "source_span": "private lemma clNative_pair {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by\n  have hd := clNative_linear _ FinTM.computesFunInTime_pairDup\n  have hp := clNative_linear _ FinTM.computesFunInTime_pairFst\n  have hs := clNative_linear _ FinTM.computesFunInTime_pairSnd\n  have hc := clNative_linear _ FinTM.computesFunInTime_pairConcat\n  have hz := clNative_linear _ (FinTM.computesFunInTime_const [])\n  have hH := ((clNative_map hz).comp hd).comp hf\n  have hS := (clNative_map hH).comp hd\n  have hT := ((clNative_map (hg.comp hp)).comp hd).comp hS\n  convert hs.comp (hc.comp hT) using 1\n  funext x\n  simp only [Function.comp_apply, pairDecode_pairEncode, Option.map_some, Option.getD_some]\n  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by\n    simp [pairEncode, List.append_assoc]\n  rw [he, he]\n  simp [pairDecode_pairEncode]\n\n/-- Concatenating computed fields uses the validated native pair scanner. -/",
+    "source_span_sha256": "fa98dc92743ccca2dd570dff524e6c1f27a01306b7320136191fb0b5d64cec08",
+    "replacement": "PolyTimeComputable.pairEncode hf hg",
+    "bounded_probe": "pair_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_append",
+    "line": 2761,
+    "header": "private lemma sat_pt_append {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x)",
+    "source_span": "private lemma sat_pt_append {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x) := by\n  simpa only [Function.comp_def, pairDecode_pairEncode] using\n    (sat_pt_linear _ FinTM.computesFunInTime_pairConcat).comp (sat_pt_pair hf hg)\n\n/-- Pure semantics for a finite one-way word transducer with at most one\nemitted bit per input bit and one optional final bit. -/",
+    "source_span_sha256": "8ab248b0f982b7145d2c4cc58bcabedbbf8239a6136828ad9d39cec6ebef4695",
+    "replacement": "PolyTimeComputable.append hf hg",
+    "bounded_probe": "append_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clNative_append",
+    "line": 679,
+    "header": "private lemma clNative_append {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x)",
+    "source_span": "private lemma clNative_append {f g : List Bool \u2192 List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => f x ++ g x) := by\n  simpa only [Function.comp_def, pairDecode_pairEncode] using\n    (clNative_linear _ FinTM.computesFunInTime_pairConcat).comp (clNative_pair hf hg)\n\n/-- The exact certificate polynomial is computed in unary, including zero\ncoefficient and zero degree. Its value is never replaced by a majorant. -/",
+    "source_span_sha256": "a01676333274b9f4c22fb41e2cc8df78b16eb65388fc631fe0b1a549e4c7a880",
+    "replacement": "PolyTimeComputable.append hf hg",
+    "bounded_probe": "append_consumer",
+    "classification": "audit6"
+  },
+  {
+    "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_pair_input",
+    "line": 2714,
+    "header": "private lemma sat_pt_pair_input {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) :\n    PolyTimeComputable (fun x => pairEncode (f x) x)",
+    "source_span": "private lemma sat_pt_pair_input {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) :\n    PolyTimeComputable (fun x => pairEncode (f x) x) := by\n  obtain \u27e8M, C, e, hM\u27e9 := hf\n  refine \u27e8satPairTM M, 4 * C + 10, e + 1, fun x => (satPair_computes M f _ hM x).mono ?_\u27e9\n  have he : (x.length + 1) ^ e \u2264 (x.length + 1) ^ (e + 1) :=\n    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)\n  have h1 : x.length + 1 \u2264 (x.length + 1) ^ (e + 1) := by\n    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 \u2264 e + 1 by omega)\n  have ht := Nat.mul_le_mul_left (4 * C) he\n  dsimp only\n  calc\n    _ = 4 * C * (x.length + 1) ^ e + 2 * x.length + 8 := by ring\n    _ \u2264 4 * C * (x.length + 1) ^ (e + 1) + 10 * (x.length + 1) ^ (e + 1) := by omega\n    _ = _ := by ring\n\n/-- Mapping a paired payload by a polynomial-time function preserves\npolynomial time, by the audited data-retaining catalog constructor. -/",
+    "source_span_sha256": "eabc099064f245e248fda2cde535968ddc8f90629b97064ca1350c5ac79d149f",
+    "replacement": "PolyTimeComputable.pairEncode hf polyTimeComputable_id",
+    "bounded_probe": "pair_input_consumer",
+    "classification": "additional_generic_closure"
+  },
+  {
+    "file": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_pt_unaryLength",
+    "line": 2844,
+    "header": "private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true)",
+    "source_span": "private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by\n  have h := satMap_poly (S := Unit) (fun _ _ => ()) (fun _ _ => some true) (fun _ => none) ()\n  have he (x : List Bool) :\n      satMapWord (fun (_ : Unit) _ => ()) (fun _ _ => some true) (fun _ => none) () x =\n        List.replicate x.length true := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simpa [satMapWord, List.replicate_succ] using congrArg (true :: \u00b7) ih\n  convert h using 1\n  funext x\n  exact (he x).symm\n\n/-- Removing the first bit is a two-state finite transduction. -/",
+    "source_span_sha256": "f032035926850b44e525f4d42695d5f04ab3ba78bf3dce6576211b828a449f3f",
+    "replacement": "polyTimeComputable_unary",
+    "bounded_probe": "unary_length_consumer",
+    "classification": "additional_generic_closure"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clNative_unary",
+    "line": 687,
+    "header": "private lemma clNative_unary (C e : \u2115) :\n    PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true)",
+    "source_span": "private lemma clNative_unary (C e : \u2115) :\n    PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true) := by\n  obtain \u27e8M, a, hM\u27e9 := FinTM.computesFunInTime_polyUnary C e\n  exact \u27e8M, a, e + 1, hM\u27e9\n\n/-- Replace each native input bit by a fixed bit, with no work tapes.\nThe boundary transition halts silently, so length zero is included. -/",
+    "source_span_sha256": "63c8aef0155adf1901fbacaded29364142e9d679dc019f64323bb1d8131f15fd",
+    "replacement": "polyTimeComputable_polyUnary C e",
+    "bounded_probe": "unary_consumer",
+    "classification": "additional_generic_closure"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clNative_linear",
+    "line": 626,
+    "header": "private lemma clNative_linear (f : List Bool \u2192 List Bool)\n    (h : \u2203 (M : FinTM Bool) (a : \u2115),\n      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f",
+    "source_span": "private lemma clNative_linear (f : List Bool \u2192 List Bool)\n    (h : \u2203 (M : FinTM Bool) (a : \u2115),\n      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by\n  obtain \u27e8M, a, hM\u27e9 := h\n  exact \u27e8M, a, 1, by simpa only [Nat.pow_one] using hM\u27e9\n\n/-- Payload maps retain the first field, including its exact bytes. The\nlinear scan and the computed payload both fit the displayed polynomial. -/",
+    "source_span_sha256": "c469f3bc74d368ed9c15915cd80516dede243f7f429af068737b73d27dce0ed8",
+    "replacement": "polyTimeComputable_of_linear h",
+    "bounded_probe": "not separately native-tested; exact source public signature",
+    "classification": "additional_linear_lift"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_const",
+    "line": 6654,
+    "header": "private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w)",
+    "source_span": "private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by\n  exact clNative_linear _ (FinTM.computesFunInTime_const w)\n\n/-- Polynomial-time branches on the original input, using W3's captured\nsingle-bit decision. All three budgets fit their maximum degree.\n\n**Proof sketch.** Use the audited conditional constructor on the three witnessing machines. Bound each\nmonomial by the common maximum exponent and absorb the constructor overhead into one\ncoefficient. -/",
+    "source_span_sha256": "ffb62b0208a65746027f7a57a341e29b1a42b4ee8650db433dba508e7ffe4c05",
+    "replacement": "polyTimeComputable_const w",
+    "bounded_probe": "const_consumer",
+    "classification": "additional_constant_lift"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_cond",
+    "line": 6663,
+    "header": "private lemma clA5_pt_cond {p : List Bool \u2192 Bool} {f g : List Bool \u2192 List Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => if p x then f x else g x)",
+    "source_span": "private lemma clA5_pt_cond {p : List Bool \u2192 Bool} {f g : List Bool \u2192 List Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => if p x then f x else g x) := by\n  obtain \u27e8P, A, a, hP\u27e9 := hp\n  obtain \u27e8F, B, b, hF\u27e9 := hf\n  obtain \u27e8G, C, c, hG\u27e9 := hg\n  obtain \u27e8M, K, hM\u27e9 := FinTM.computesFunInTime_cond hP hF hG\n  let e := max a (max b c)\n  refine \u27e8M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_\u27e9\n  have ha := Nat.mul_le_mul_left A\n    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a \u2264 e by exact Nat.le_max_left _ _))\n  have hb := Nat.mul_le_mul_left B\n    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b \u2264 e by omega))\n  have hc := Nat.mul_le_mul_left C\n    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c \u2264 e by omega))\n  have h1 : 1 \u2264 (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)\n  simp only [Nat.succ_eq_add_one] at ha hb hc\n  calc\n    _ \u2264 K * ((A + B + C + 1) * (x.length + 1) ^ e) :=\n      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)\n    _ = _ := by ring\n\n\n/-- Short-circuit conjunction preserves the order of two polynomial tests. -/",
+    "source_span_sha256": "e17af0b2657722dbe8979db3b460d5277bc2bd6eb274ddb5f88cf4f7275505fb",
+    "replacement": "polyTimeComputable_ite hp hf hg",
+    "bounded_probe": "cond_consumer",
+    "classification": "additional_generic_closure"
+  },
+  {
+    "file": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_and",
+    "line": 6688,
+    "header": "private lemma clA5_pt_and {p q : List Bool \u2192 Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hq : PolyTimeComputable (fun x => [q x])) :\n    PolyTimeComputable (fun x => [p x && q x])",
+    "source_span": "private lemma clA5_pt_and {p q : List Bool \u2192 Bool}\n    (hp : PolyTimeComputable (fun x => [p x]))\n    (hq : PolyTimeComputable (fun x => [q x])) :\n    PolyTimeComputable (fun x => [p x && q x]) := by\n  have h := clA5_pt_cond hp hq (clA5_pt_const [false])\n  convert h using 1\n  funext x\n  cases p x <;> rfl\n\n/-- Pure semantics for a finite one-way word transducer with at most one\nemitted bit per input bit and one optional final bit. -/",
+    "source_span_sha256": "4bb276ac697bc1d47f779cd5eafdf9f5a76b73555ed589eaab48a79ffb9c9fb4",
+    "replacement": "polyTimeComputable_and hp hq",
+    "bounded_probe": "and_consumer",
+    "classification": "additional_generic_closure"
+  }
+]

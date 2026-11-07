@@ -1,0 +1,98 @@
+'F6SeamPreship.last_ruler_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.full_bank_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.conditional_final_seam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.F6SeamPreship.cast_init_run' depends on axioms: [propext, Quot.sound]
+'_private._stdin.0.F6SeamPreship.cast_init_space' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.F6SeamPreship.cast_cfg_state' does not depend on any axioms
+'_private._stdin.0.F6SeamPreship.cast_cfg_mapState' does not depend on any axioms
+'_private._stdin.0.F6SeamPreship.cast_cfg_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.F6SeamPreship.cast_back_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.common_budget_positive' depends on axioms: [propext, Quot.sound]
+'F6SeamPreship.actual_bundle_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+ROOT|F6SeamPreship.actual_bundle_consumer|private=false
+ROOT|F6SeamPreship.common_budget_positive|private=false
+ROOT|F6SeamPreship.conditional_final_seam|private=false
+ROOT|F6SeamPreship.full_bank_embedding|private=false
+ROOT|F6SeamPreship.last_ruler_layout|private=false
+ROOT|_private._stdin.0.F6SeamPreship.cast_back_embedding|private=true
+ROOT|_private._stdin.0.F6SeamPreship.cast_cfg_embedding|private=true
+ROOT|_private._stdin.0.F6SeamPreship.cast_cfg_mapState|private=true
+ROOT|_private._stdin.0.F6SeamPreship.cast_cfg_state|private=true
+ROOT|_private._stdin.0.F6SeamPreship.cast_init_run|private=true
+ROOT|_private._stdin.0.F6SeamPreship.cast_init_space|private=true
+PROOFAX|F6SeamPreship.actual_bundle_consumer|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.FinTM.ComputesInTime|TCSlib.Complexity.TuringMachine.Finite|hints=regular
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.CodeTM.toFinTM|TCSlib.Complexity.TuringMachine.Encoding|hints=regular
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.MultiTapeTM.spaceUsed|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.FinTM.k|TCSlib.Complexity.TuringMachine.Finite|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.FinTM.State|TCSlib.Complexity.TuringMachine.Finite|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.FinTM.tm|TCSlib.Complexity.TuringMachine.Finite|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.CodeTM.numStates|TCSlib.Complexity.TuringMachine.Encoding|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.MultiTapeTM.runFrom|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.CodeTM.tm|TCSlib.Complexity.TuringMachine.Encoding|hints=abbrev
+FOREIGNDEF|F6SeamPreship.actual_bundle_consumer|Turing.Cfg.output|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+PROOFAX|F6SeamPreship.common_budget_positive|kind=theorem|[propext, Quot.sound]
+PROOFAX|F6SeamPreship.conditional_final_seam|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.embedEmitCfg|TCSlib.Complexity.TuringMachine.Build.Embed|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.StepBlock.forwardLoopCfg|TCSlib.Complexity.TuringMachine.Build.StepBlockForward|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.FinTM.bufferTape|TCSlib.Complexity.TuringMachine.Simulation|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.tableBitsK|TCSlib.Complexity.TuringMachine.Build.StepBlock|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.tr|TCSlib.Complexity.TuringMachine.Deterministic|hints=abbrev
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.unaryFin|TCSlib.Complexity.TuringMachine.Encoding|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.q₀|TCSlib.Complexity.TuringMachine.Deterministic|hints=abbrev
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.Cfg.workTapes|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.rulerHostCfg|TCSlib.Complexity.TuringMachine.Build.InputDevice|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.runFrom|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.spaceUsed|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.MultiTapeTM.spaceUsedByTape|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.startupLoopTM|TCSlib.Complexity.TuringMachine.Build.UniversalParts|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam|Turing.Cfg.mapState|TCSlib.Complexity.TuringMachine.StateRenaming|hints=regular
+PROOFAX|F6SeamPreship.full_bank_embedding|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.embedEmitCfg|TCSlib.Complexity.TuringMachine.Build.Embed|hints=regular
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.Cfg.inputPos|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.Cfg.output|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.Cfg.workTapes|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.full_bank_embedding|Turing.Cfg.workTapePos|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+PROOFAX|F6SeamPreship.last_ruler_layout|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.embedEmitCfg|TCSlib.Complexity.TuringMachine.Build.Embed|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.StepBlock.forwardLoopCfg|TCSlib.Complexity.TuringMachine.Build.StepBlockForward|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.FinTM.bufferTape|TCSlib.Complexity.TuringMachine.Simulation|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.tableBitsK|TCSlib.Complexity.TuringMachine.Build.StepBlock|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.MultiTapeTM.tr|TCSlib.Complexity.TuringMachine.Deterministic|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.unaryFin|TCSlib.Complexity.TuringMachine.Encoding|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.MultiTapeTM.q₀|TCSlib.Complexity.TuringMachine.Deterministic|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.workTapes|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.mapState|TCSlib.Complexity.TuringMachine.StateRenaming|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.rulerHostCfg|TCSlib.Complexity.TuringMachine.Build.InputDevice|hints=regular
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.inputPos|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.workTapePos|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+FOREIGNDEF|F6SeamPreship.last_ruler_layout|Turing.Cfg.output|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_back_embedding|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_back_embedding|Turing.embedEmitCfg|TCSlib.Complexity.TuringMachine.Build.Embed|hints=regular
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_cfg_embedding|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_cfg_embedding|Turing.embedEmitCfg|TCSlib.Complexity.TuringMachine.Build.Embed|hints=regular
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_cfg_mapState|kind=theorem|[]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_cfg_mapState|Turing.Cfg.mapState|TCSlib.Complexity.TuringMachine.StateRenaming|hints=regular
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_cfg_state|kind=theorem|[]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_cfg_state|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_init_run|kind=theorem|[propext, Quot.sound]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_init_run|Turing.MultiTapeTM.runFrom|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_init_run|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+PROOFAX|_private._stdin.0.F6SeamPreship.cast_init_space|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_init_space|Turing.MultiTapeTM.spaceUsed|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|_private._stdin.0.F6SeamPreship.cast_init_space|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+PROOFAX|F6SeamPreship.common_budget_positive._proof_1_1|kind=theorem|[propext, Quot.sound]
+PROOFAX|F6SeamPreship.conditional_final_seam._proof_1_1|kind=theorem|[propext, Classical.choice, Quot.sound]
+FOREIGNDEF|F6SeamPreship.conditional_final_seam._proof_1_1|Turing.MultiTapeTM.spaceUsed|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+FOREIGNDEF|F6SeamPreship.conditional_final_seam._proof_1_1|Turing.MultiTapeTM.initCfg|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+PROOFAX|F6SeamPreship.last_ruler_layout._proof_1|kind=theorem|[propext, Quot.sound]
+PROOFAX|F6SeamPreship.last_ruler_layout._proof_1_1|kind=theorem|[propext, Quot.sound]
+PROOFAX|F6SeamPreship.last_ruler_layout._proof_1_2|kind=theorem|[propext, Quot.sound]
+PROOFAX|F6SeamPreship.last_ruler_layout._proof_2|kind=theorem|[propext, Quot.sound]

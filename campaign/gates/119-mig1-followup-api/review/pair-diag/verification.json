@@ -1,0 +1,101 @@
+{
+  "status": "One approved source theorem implemented; bounded native/seal/control checks pass; not integrated replay/gate clearance",
+  "one_source_addition_only_removal_reconstructs_before": true,
+  "imports_existing_source_bytes_and_machine_table_frozen": true,
+  "production_new_theorems": 1,
+  "production_new_helpers": 0,
+  "production_new_imports": 0,
+  "production_new_simp_attributes": 0,
+  "owner_foreign_regular_defs": [
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.MultiTapeTM.spaceUsed"
+  ],
+  "conservative_additional_guard": "Turing.Cfg.init",
+  "same_home_machine_read": "pairDiagTM k=0 by rfl only in approved owner proof; actual consumer seals pairDiagTM",
+  "public_projection_abbrevs": [
+    "Turing.FinTM.State",
+    "Turing.FinTM.k",
+    "Turing.FinTM.tm"
+  ],
+  "roots": [
+    [
+      "Turing.pairDiagTM_spaceUsed",
+      "false"
+    ],
+    [
+      "_private._stdin.0.PairDiagFollowupCheck.pair_diag_zero_consumer",
+      "true"
+    ]
+  ],
+  "axiom_roots_and_descendants": [
+    {
+      "name": "Turing.pairDiagTM_spaceUsed",
+      "kind": "theorem",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "_private._stdin.0.PairDiagFollowupCheck.pair_diag_zero_consumer",
+      "kind": "theorem",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    }
+  ],
+  "new_source_root_descendants": 0,
+  "consumer_root_descendants": 0,
+  "all_selected_standard_axioms": true,
+  "exact_guard_removal_native_identity": true,
+  "actual_source_after_sha256": "e953191d81fde8300e4de1d30ec7e54bb733c32cfa450b44047f1d3a0f36a6b1",
+  "actual_source_stable_at_check": true,
+  "baseline_raw_sorry_tokens": 1,
+  "after_raw_sorry_tokens": 1,
+  "inherited_admission": "Turing.pairDiagTM_computes; source line507\u2192514; new theorem/consumer do not depend on sorryAx",
+  "attempts": [
+    {
+      "name": "Controls-sealed-v1",
+      "exit": 1,
+      "errors": 8,
+      "seconds": 2.146435022354126,
+      "input_sha256": "a57539d40e976150468fef0711aa9bba9ffb391415c44cf2c73c7767292896ae",
+      "output_sha256": "377b07f16d685942494c002a644deffaecacf805a065a1314df57931ce1a9695",
+      "warnings": 1
+    },
+    {
+      "name": "Controls-unsealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 2.1883797645568848,
+      "input_sha256": "33b98ee1c0125d369bc0f51500b0e0b2bc629f8b62bcbe4fe38b26ca78766b55",
+      "output_sha256": "70a089c543f4e5c5f589f7dea71e56b9b73d4409efe6fc24c5e46b476ee9b94c",
+      "warnings": 1
+    },
+    {
+      "name": "Owner-native",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 4.835829019546509,
+      "input_sha256": "109f266f8878b8bdf2fde30baa5c6814b4606e5a75aee49a874976e86f05c37d",
+      "output_sha256": "8bb3c2149af5e79cf9df994cb0b35da8028aaf627a30b5ecd4e6c666ca0ba0e7",
+      "warnings": 1
+    },
+    {
+      "name": "Owner-sealed",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 2.581378936767578,
+      "input_sha256": "f5b2ecf2f7572d90da831e1db2dfd1f5b9b6c7bd427feb9a680d41c97b639b15",
+      "output_sha256": "5a7f2aa5bfe8562781b1bea3d583ea3f3aa86b9e857c409a910aa4fdc24ebaa4",
+      "warnings": 1
+    }
+  ],
+  "failed_proof_attempts": 0,
+  "expected_negative_control_errors": 8,
+  "no_explicit_foreign_definition_unfold_arguments": true,
+  "no_snapshot_compiledoutput_Git_commit_push_changes": true
+}

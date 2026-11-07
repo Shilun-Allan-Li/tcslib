@@ -1,20 +1,30 @@
-# F6: ruler-hosted suffix, Claude — draft only
+# F6 — dispatched to Claude
 
-The user selected the ruler-hosted suffix route and Claude delivery. F6 follows the
-`SPACE_linear_ne_NP` consumer (#229), whose Codex gate 116 is dispatched and must close before
-Seyoon merges it. No F6 fill is dispatched or implemented here.
+Seyoon selected Claude and the ruler-hosted suffix route, and merged #229/#230.
+Exact proof base `3023dc1408c3d216fc07a7cbba9ae30135b861ed` matches API1160's entire Lean tree; passed mra2
+is adopted whole as mac4. No F6 target or physical prefix was implemented here.
 
-The draft brief and route assessment are in `drafts/`. Seven small pre-ship executions are
-recorded with source/log hashes, including the retained failed intermediate attempt and the
-expected sealed negative control. The bounded first-halt → ruler-host → fresh-return
-composition passes on the standard axioms and avoids a new H5 contract. The full concrete
-prefix, first-return/layout reconstruction, final source pins/orders/cache roots and baseline
-screens remain unfinished; conditional component probes do not certify that full route.
+All bounded v2–v7 interface checks and fresh merged-base public first-halt bridge
+pass with their exact native/sealed/control/axiom limits. Full actual prefix/run/
+cut/space and hosted-loop ledger remain external OWN work, as PLAN§(f)/Gate112
+permits. The brief preserves fixed SU beforealpha and positive C before all run
+parameters, every code string, arbitrary output and the exact C*s statement.
 
-The proposed same-home `CodeTM.toFinTM_eq` reader in Encoding and its conditional sealed
-computation/space conversion pass. **Seyoon approved the new public API**. It is included in the 19-reader prerequisite
-PR/gate 117, assigned to Codex; implementation/audit/replay/merge are still required. Keep gate 112's withdrawn arbitrary-machine route_space
-out of every final brief and require actual run/cut/loop-bound witnesses.
+Final inputs verify132bootstrap/2downstream/229final modules,65 direct Mathlib
+roots,22source admissions (one owned target+17MIG+4RecordTable), target header/
+Hierarchy/source/environment/tool hashes. The executed21-file baseline is adopted
+by exact merged source/population/tool equality, with no new screen claim.
 
-**Not ready to dispatch.** Complete the prerequisite reader, #229 merge and full concrete
-pre-ship before issuing a checksum-pinned Claude packet.
+**Dispatched by Seyoon: Claude F6.** The complete mixed-pin bundle passed624-section
+rebuild and independent archive verification (zero problems), and is published on the
+exchange branch at `2adb80788611696d2cad6f907285c0c5a197ae09`. SHA256:
+`8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`;8707327bytes.
+
+Issued brief scope is briefs/f6-space-universal.md; complete uncapped UTF8 list
+is BUNDLE-FILES.txt. Immutable proof pin `3023dc1408c3d216fc07a7cbba9ae30135b861ed`;
+records pin `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`. `publication.json` and `dispatch.json`
+record the exact packet; `prompt.md` preserves the issued dispatch. Seyoon confirmed
+dispatch in chat. Cumulative Claude ZIPs go only under
+arora-barak-ch3-4/inbox/fill-f6/.
+
+Independent final review also verifies all624 mixed-pin payloads and623 inventory entries; no substantive packet/scope blocker. This is packet verification, not a target elaboration.

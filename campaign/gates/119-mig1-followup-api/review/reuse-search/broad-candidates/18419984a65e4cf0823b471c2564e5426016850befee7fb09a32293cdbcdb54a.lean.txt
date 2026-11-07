@@ -1,0 +1,79 @@
+theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :
+    ∃ (E : FinTM Bool) (C : ℕ), ∀ (z : List Bool) (T : ℕ), N.tm.HaltsWithin z T →
+      (N.AcceptsWithin z T → E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) ∧
+      (¬N.AcceptsWithin z T → E.ComputesInTime z [false] (C * 2 ^ (C * (T + 1)))) := by
+  classical
+  obtain ⟨C⟩ := xr_Clock.exists N
+  refine ⟨xr_E C, 18 * N.k + 41, fun z T hT => ?_⟩
+  obtain ⟨Ls, -, hLsT, hLs, hmin, hiff⟩ := xr_first_depth N z T hT
+  obtain ⟨T₀, hT₀, wL', u', h', hrun⟩ := xr_run_host C z Ls hLs hmin Ls 0 [] [] (fun _ => 0)
+    (Nat.zero_add Ls) rfl xr_val_nil (Nat.zero_le 0)
+  rw [List.replicate_zero] at hrun
+  simp only [Nat.zero_add] at hT₀
+  -- the time: the ledger over the depths `0, …, L*`, then the dispatch and the answer
+  have hled := xr_ledger (18 * N.k + 38) Ls
+  rw [show 18 * N.k + 38 + 3 = 18 * N.k + 41 by omega] at hled
+  have hpow : (18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (Ls + 1)) ≤
+      (18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (T + 1)) :=
+    Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (by omega) (Nat.mul_le_mul_left _ (by omega)))
+  -- `E`'s run, read through the seam
+  have hE : ∀ t, (xr_E C).tm.runFrom ((xr_E C).tm.initCfg z) t =
+      (seamCompTM₂ (xr_host C) (xr_anchor C true) (xr_anchor C false)
+        (xr_answerTM (N.k + 2 + 2) true) xr_St.start (xr_answerTM (N.k + 2 + 2) false)
+        xr_St.start).runFrom
+        (((xr_cycle C z false false [] [] [] (fun _ => 0)).mapState Sum.inl).mapState Sum.inl)
+        t :=
+    fun t => (congrArg (fun c => (xr_E C).tm.runFrom c t) (xr_E_initCfg C z)).trans
+      (MultiTapeTM.runFrom_with_q₀ (xr_seam C) _ _ t)
+  have hstat : ∀ (d : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) q, d.state = some q →
+      (q = xr_anchor C true ∨ q = xr_anchor C false) → (xr_host C).step d = d := by
+    rintro d q hd (rfl | rfl)
+    · exact xr_halt_fixed C d true false hd
+    · exact xr_halt_fixed C d false false hd
+  have he : xr_anchor C true ≠ xr_anchor C false := fun h =>
+    Bool.false_ne_true (congrArg (fun q : Σ i, xr_PhSt C i => q.1.2.1) h).symm
+  -- the answer, for either value of the accept flag
+  have key : ∀ b, decide (N.AcceptsWithin z Ls) = b →
+      (xr_E C).ComputesInTime z [b] ((18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (T + 1))) := by
+    intro b hb
+    rw [hb] at hrun
+    have hend : (xr_depthEnd C z b false Ls wL' u' h').state = some (xr_anchor C b) := rfl
+    have hA : xr_anchor C b = xr_anchor C true ∨ xr_anchor C b = xr_anchor C false := by
+      cases b
+      exacts [Or.inr rfl, Or.inl rfl]
+    obtain ⟨T₁, hT₁, hrun₁, hcut⟩ := xr_firstArrival' (xr_host C)
+      (fun q => q = xr_anchor C true ∨ q = xr_anchor C false) hstat hrun hend hA
+    have hcut' : ∀ t < T₁,
+        ((xr_host C).runFrom (xr_cycle C z false false [] [] [] (fun _ => 0)) t).state ≠
+          some (xr_anchor C true) ∧
+        ((xr_host C).runFrom (xr_cycle C z false false [] [] [] (fun _ => 0)) t).state ≠
+          some (xr_anchor C false) :=
+      fun t ht => ⟨fun h => hcut t ht _ h (Or.inl rfl), fun h => hcut t ht _ h (Or.inr rfl)⟩
+    have hseam := seamCompTM₂_run_ofCfg (xr_host C) (xr_anchor C true) (xr_anchor C false) he
+      (xr_answerTM (N.k + 2 + 2) true) xr_St.start (xr_answerTM (N.k + 2 + 2) false) xr_St.start
+      hrun₁ hcut'
+    have hcomp : (xr_E C).ComputesInTime z [b] (T₁ + 1 + 1) := by
+      rw [FinTM.computesInTime_iff, hE]
+      cases b
+      · rw [hseam.2 hend 1]
+        exact xr_answer_tail false _ _ hend rfl Sum.inr
+      · rw [hseam.1 hend 1]
+        obtain ⟨h1, h2⟩ := xr_answer_tail true _ _ hend rfl
+          (Sum.inr : xr_St → (Σ i, xr_PhSt C i) ⊕ xr_St)
+        exact ⟨by rw [Cfg.mapState_state, h1]; rfl, by rw [Cfg.mapState_output, h2]⟩
+    exact hcomp.mono (by omega)
+  exact ⟨fun hacc => key true (decide_eq_true (hiff.mpr hacc)),
+    fun hrej => key false (decide_eq_false fun h => hrej (hiff.mp h))⟩
+
+/-- **The exponential decider from the universal NDTM**, `BF := E(UN)`: if `UN` is a timed
+universal NDTM for the scheme `c` (the statement of `Turing.exists_timed_universal_NDTM`), then
+there is a deterministic machine `BF` such that for every code `α` there is a constant `C` with
+`BF` outputting `[true]` or `[false]` on `⟨⟨bits t, α⟩, x⟩`, according to whether the coded
+machine accepts `x` within `t`, within `C·2^{C·(t + 1)}` steps (the statement of
+`Turing.exists_ndAcceptsWithin_decider`). [AB09, §3.2, proof of Theorem 3.2, step 2]
+
+**Proof sketch.** `BF` is the exhaustive replay of `UN`
+(`Turing.FinNDTM.exists_exhaustiveDecider`) with constant `C_E`. Every branch of `UN` halts
+within `C_α·(t + 1)`, so `E` decides `UN`'s acceptance within that bound, which is the coded
+machine's acceptance within `t`, in time `C_E·2^{C_E·(C_α·(t + 1) + 1)}`; with
+`C := C_E·(C_α + 1)` this is at most `C·2^{C·(t + 1)}`. -/

@@ -1,0 +1,21 @@
+/private/tmp/tcslib-mig1-root-sga_eg25/CodeSimulator_new_region_sealed_v1.lean:1240:76: error: unexpected token 'section'; expected 'lemma'
+/private/tmp/tcslib-mig1-root-sga_eg25/CodeSimulator_new_region_sealed_v1.lean:1319:34: error: Type mismatch
+  second
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords enter copied) t₁ = Cfg.ofWords leave result
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) t₁ = Cfg.ofWords leave result
+/private/tmp/tcslib-mig1-root-sga_eg25/CodeSimulator_new_region_sealed_v1.lean:1322:49: error: Type mismatch
+  secondCut u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords enter copied) u).state ≠ some leave
+but is expected to have type
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) u).state ≠ some leave
+/private/tmp/tcslib-mig1-root-sga_eg25/CodeSimulator_new_region_sealed_v1.lean:1323:58: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.743 = ?m.743
+but is expected to have type
+  (Cfg.ofWords SweepPhase.done (Function.update w dst arg)).state = some SweepPhase.done
+in the application
+  seamCompTM_run_ofCfg P SweepPhase.done E enter run₀ rfl

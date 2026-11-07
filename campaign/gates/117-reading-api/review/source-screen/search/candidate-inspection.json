@@ -1,0 +1,730 @@
+{
+  "distinct_header_groups": 39,
+  "candidate_records": 293,
+  "all_groups_inspected": true,
+  "groups": [
+    {
+      "group": 0,
+      "name": "Complexity.enumCont_clean_undo_entry",
+      "private": true,
+      "header": "private lemma enumCont_clean_undo_entry (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x) (h : List (EnumContEntry M.k)) (hs : c.state = none) : (enumCont_cleanTM M).tm.step (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c h)) = captureCfg (fun q => .inr (.inr q)) (.inr (.inl 1)) c.output [] (enumCont_undoCfg c h c.inputPos)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "53dcb8b9cb4170f16c7b36edf9d09233c302eec8"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 1,
+      "name": "Complexity.enumCont_clean_restore",
+      "private": true,
+      "header": "private lemma enumCont_clean_restore (M : FinTM Bool) {x : List Bool} (c\u2080 : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : \u2115) (hlive : \u2200 j < t, \u00ac(M.tm.runFrom c\u2080 j).Halted) : \u2203 r \u2264 2 * t + 1, (enumCont_cleanTM M).tm.runFrom (captureCfg (fun q => .inr (.inr q)) (.inr (.inl 1)) (M.tm.runFrom c\u2080 t).output [] (enumCont_undoCfg (M.tm.runFrom c\u2080 t) (enumCont_history M.tm c\u2080 t) p)) r = enumCont_cleanCfg M c\u2080 (M.tm.runFrom c\u2080 t).output (some (.inr (.inl 1))) p ((M.tm.runFrom c\u2080 t).output.length : \u2124)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "53dcb8b9cb4170f16c7b36edf9d09233c302eec8"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 2,
+      "name": "Complexity.enumCont_clean_complete",
+      "private": true,
+      "header": "private lemma enumCont_clean_complete (M : FinTM Bool) {x : List Bool} (c\u2080 : Cfg M.k Bool M.State x) (y : List Bool) (T : \u2115) (hh : (M.tm.runFrom c\u2080 T).state = none) (ho : (M.tm.runFrom c\u2080 T).output = y) : \u2203 \u03c4 \u2264 3 * T + x.length + y.length + 8, (enumCont_cleanTM M).tm.runFrom (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c\u2080 [])) \u03c4 = enumCont_cleanCfg M c\u2080 y none 1 0",
+      "candidate_records": 1,
+      "source_blobs": [
+        "53dcb8b9cb4170f16c7b36edf9d09233c302eec8"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 3,
+      "name": "Complexity.clLeft_until",
+      "private": true,
+      "header": "private lemma clLeft_until {k l : \u2115} {S S' : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (host : MultiTapeTM (k + l) Bool S') (emb : S \u2192 S') (exit : S) (htr : \u2200 q inp work, q \u2260 exit \u2192 host.tr (emb q) inp work = FinTM.leftAction l emb (tm.tr q inp (fun i => work (Fin.castAdd l i)))) (c : Cfg k Bool S x) (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) (t : \u2115) (hf : \u2200 j < t, (tm.runFrom c j).state \u2260 some exit) : \u2200 j \u2264 t, host.runFrom (FinTM.leftCfg emb c tapes heads) j = FinTM.leftCfg emb (tm.runFrom c j) tapes heads",
+      "candidate_records": 5,
+      "source_blobs": [
+        "0998d738c6edf27a53c70f4d412decc2c8dc5dbe",
+        "3a2ce42c54f78c447638ee4a65fc77a7a73fdeeb",
+        "70c09f23b3769906f846f6ac4aadc553b819557e",
+        "a27121c634337c9179e6531a3a0748132c0c5d16",
+        "c63b4e7c2a15d80557d7627768d0cd8d43fa5b8d"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 4,
+      "name": "Complexity.clTrack_frame",
+      "private": true,
+      "header": "private lemma clTrack_frame (M : FinTM Bool) {x y : List Bool} (c : Cfg M.k Bool M.State y) (b : Bool) (qs : Fin ((1 + M.k) + (1 + M.k)) \u2192 Fin 4) (n : Fin ((1 + M.k) + (1 + M.k)) \u2192 \u2115) : FinTM.leftCfg (fun s => (c.state, b, some s)) (clBankCfg (1 : Fin (x.length + 2)) (fun i => clCountCfg x (qs i) 1 0 (n i).bits [])) (Fin.addCases (fun _ : Fin 1 => FinTM.bufferTape y) c.workTapes) (Fin.addCases (fun _ : Fin 1 => (c.inputPos.val : \u2124) - 1) c.workTapePos) = clRefCfg M (fun s b => (s, b, some (fun i => some (qs i)))) c b (1 : Fin (x.length + 2)) (fun i => FinTM.bufferTape (n i).bits) (fun _ => 0) []",
+      "candidate_records": 5,
+      "source_blobs": [
+        "0998d738c6edf27a53c70f4d412decc2c8dc5dbe",
+        "3a2ce42c54f78c447638ee4a65fc77a7a73fdeeb",
+        "70c09f23b3769906f846f6ac4aadc553b819557e",
+        "a27121c634337c9179e6531a3a0748132c0c5d16",
+        "c63b4e7c2a15d80557d7627768d0cd8d43fa5b8d"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 5,
+      "name": "Turing.catalog_space_one",
+      "private": true,
+      "header": "private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : \u2115) (i : Fin k) (h : \u2200 u, (M.runFrom c u).workTapePos i = 0) : M.spaceUsedByTape c t i = 1",
+      "candidate_records": 23,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "297bdf35d5243c3d4a083eb23e00794276188da4",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 6,
+      "name": "Turing.capture_visitedByTapeHead",
+      "private": false,
+      "header": "theorem capture_visitedByTapeHead {k : \u2115} {S H : Type*} {x : List Bool} (tm : MultiTapeTM k Bool S) (host : MultiTapeTM (k + 1) Bool H) (emb : S \u2192 H) (ret : H) (hagree : \u2200 (s : S) (inp : Option Bool) (w : Fin (k + 1) \u2192 Option Bool), host.tr (emb s) inp w = captureAction emb ret (tm.tr s inp fun i => w i.castSucc)) (pre out\u2080 : List Bool) (c\u2080 : Cfg k Bool S x) (t : \u2115) (hlive : \u2200 t' < t, \u00ac(tm.runFrom c\u2080 t').Halted) : (\u2200 i : Fin k, host.visitedByTapeHead (captureCfg emb ret pre out\u2080 c\u2080) t i.castSucc = tm.visitedByTapeHead c\u2080 t i \u2227 host.spaceUsedByTape (captureCfg emb ret pre out\u2080 c\u2080) t i.castSucc = tm.spaceUsedByTape c\u2080 t i) \u2227 host.spaceUsedByTape (captureCfg emb ret pre out\u2080 c\u2080) t (Fin.last k) \u2264 (tm.runFrom c\u2080 t).output.length - c\u2080.output.length + 1",
+      "candidate_records": 23,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "297bdf35d5243c3d4a083eb23e00794276188da4",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Public run-dependent capture tape visits/space under transition-agreement and live-prefix hypotheses. It does not expose all five instantaneous fields for arbitrary captureCfg."
+    },
+    {
+      "group": 7,
+      "name": "Turing.FinTM.f2_loopBody_capture",
+      "private": true,
+      "header": "private lemma f2_loopBody_capture (body : FinTM Bool) (anchor : body.State) {H : Type*} {x : List Bool} (host : MultiTapeTM (body.k + 1 + 1) Bool H) (emb : body.State \u00d7 Bool \u2192 H) (ret : H) (hagree : \u2200 s inp work, host.tr (emb s) inp work = captureAction emb ret ((f2_loopBodyTM body anchor).tm.tr s inp fun i => work i.castSucc)) (c : Cfg body.k Bool body.State x) (release : Bool) (hc : c.state \u2260 none) (t : \u2115) (hlive : \u2200 u < t, (body.tm.runFrom c u).state \u2260 none) (hanchor : \u2200 u < t, (u = 0 \u2227 release = true) \u2228 (body.tm.runFrom c u).state \u2260 some anchor) : host.runFrom (captureCfg emb ret [] [] (f2_loopBodyCfg body anchor c release none)) t = captureCfg emb ret [] [] (f2_loopBodyCfg body anchor (body.tm.runFrom c t) (if t = 0 then release else false) (if (body.tm.runFrom c t).state = none then some true else none))",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 8,
+      "name": "Turing.FinTM.f2_timed_branch_run",
+      "private": true,
+      "header": "private lemma f2_timed_branch_run (D M\u2081 M\u2082 : FinTM Bool) {x : List Bool} (c : Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x) (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124) (b : Bool) (t : \u2115) : (f2_timedCondTM D M\u2081 M\u2082).tm.runFrom (f2_timedBranchCfg D M\u2081 M\u2082 c tapes heads b) t = f2_timedBranchCfg D M\u2081 M\u2082 ((branchTM M\u2081 M\u2082 b).tm.runFrom c t) tapes heads b",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 9,
+      "name": "Turing.FinTM.f2_timed_start",
+      "private": true,
+      "header": "private lemma f2_timed_start (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115) (hD : D.ComputesInTime x [b] T) : \u2203 a \u2264 2 * T + 5, \u2203 (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124), (f2_timedCondTM D M\u2081 M\u2082).tm.runFrom ((f2_timedCondTM D M\u2081 M\u2082).tm.initCfg x) a = f2_timedBranchCfg D M\u2081 M\u2082 ((branchTM M\u2081 M\u2082 b).tm.initCfg x) tapes heads b",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 10,
+      "name": "Turing.FinTM.f2_cond_ledger",
+      "private": true,
+      "header": "private lemma f2_cond_ledger (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115) (hD : D.ComputesInTime x [b] T) : \u2200 u, \u2203 v \u2264 T, \u2203 w \u2264 u, \u2203 z : \u2124, 0 \u2264 z \u2227 z \u2264 1 \u2227 ((f2_timedCondTM D M\u2081 M\u2082).tm.runFrom ((f2_timedCondTM D M\u2081 M\u2082).tm.initCfg x) u).workTapePos = f2_condHeads D M\u2081 M\u2082 (D.tm.runFrom (D.tm.initCfg x) v).workTapePos ((branchTM M\u2081 M\u2082 b).tm.runFrom ((branchTM M\u2081 M\u2082 b).tm.initCfg x) w).workTapePos z",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 11,
+      "name": "Turing.FinTM.a2_source_radius",
+      "private": true,
+      "header": "private lemma a2_source_radius {k : \u2115} {Q : Type} {x : List Bool} (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (t B : \u2115) (hc : \u2200 i, c.workTapePos i = 0) (hb : tm.spaceUsed c t \u2264 B) (i : Fin k) : -(B : \u2124) \u2264 (tm.runFrom c t).workTapePos i \u2227 (tm.runFrom c t).workTapePos i \u2264 B",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 12,
+      "name": "Turing.FinTM.a2_call_prefix",
+      "private": true,
+      "header": "private lemma a2_call_prefix (body F : FinTM Bool) (anchor : body.State) (startup : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x) (release : Bool) (t B : \u2115) (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state \u2260 none) (hzero : \u2200 i, c.workTapePos i = 0) (hlive : \u2200 u < t, (body.tm.runFrom c u).state \u2260 none) (hanchor : \u2200 u < t, (u = 0 \u2227 release = true) \u2228 (body.tm.runFrom c u).state \u2260 some anchor) (hspace : \u2200 u \u2264 t, body.tm.spaceUsed c u \u2264 B) (hf : a2_heads fuel B) (hout : (body.tm.runFrom c t).output.length \u2264 B) : \u2200 u \u2264 t, a2_heads ((f2_loopHost body F anchor false).tm.runFrom (f2_loopCall body F anchor startup c release none word fuel) u) B",
+      "candidate_records": 22,
+      "source_blobs": [
+        "00dd563c036a5d18885330881b7976f54931091d",
+        "0c6a1339d6672a34f3f1e1d47002527b98bd8b43",
+        "1472162d3a58b39123e3971b8555dbf6d113dec8",
+        "16750f8c1c122959307d56d970236edc0d770a4d",
+        "2ae9750d18a22a8843f6da5ecc5df52a574437b4",
+        "398405d2cd58838e40533394ed1d237dca7a5bda",
+        "49e0b602385d2a87ca249f8864c0a20ebf67f229",
+        "4d5b414ae907f6e6f9ab68c3f524ca71ffeb0e9c",
+        "57afa3f99ffeb846252592f4e26ed095bd17ea89",
+        "5f582dd83dc557f3bc6e5f912d01b53c97b10856",
+        "6059376bb3d2f28b005ae6fa4d3048271504eda6",
+        "88e3bac8b3a99c86139184615ba6b9fb2af09265",
+        "8c50e94d5dc796f9e7ff58dcccdb1fcbba5167d5",
+        "8d8cb704798f02af6014f8f27fa05075930c5521",
+        "98e3947f289b95645fbf0f2ed7d1a84a23f08c69",
+        "c1381746c99e14dba760ac8e8f6a4b0e6c061a8c",
+        "c2802df79735b55693fa060ab0c257bacc7c682b",
+        "d900b690eb6b87595c42bf68b5992d2522da8360",
+        "e05270f574fe81fec5066fecdab81434ade38cf8",
+        "e436b444d5d7ff9f2464efa7f7cecac24219ac6b",
+        "f283a93e6cd4b25b962d825c7c2693db64f19e2b",
+        "f3019bc059b1e7c836bee89138a1f0167bb51275"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 13,
+      "name": "Turing.OracleTM.capture_reaches_qQuery",
+      "private": false,
+      "header": "theorem capture_reaches_qQuery {S H : Type*} {x : List Bool} (tm : MultiTapeTM k Bool S) (M : OracleTM k Bool H) (O : Language Bool) (emb : S \u2192 H) (hemb : \u2200 s, emb s \u2260 M.qQuery) (hagree : \u2200 (s : S) (inp : Option Bool) (w : Fin (k + 1) \u2192 Option Bool), M.tr (emb s) inp w = captureAction emb M.qQuery (tm.tr s inp fun i => w i.castSucc)) (pre out\u2080 : List Bool) (c\u2080 : Cfg k Bool S x) (T : \u2115) (hhalt : (tm.runFrom c\u2080 T).state = none) : \u2203 u \u2264 T, M.runFrom O (captureCfg emb M.qQuery pre out\u2080 c\u2080) u = captureCfg emb M.qQuery pre out\u2080 (tm.runFrom c\u2080 T)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "290f6ac78072358afab5bf73a4934712c43cfc73"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Public OracleTM query-reaching simulation, with agreement and halted-source hypotheses, not unconditional captureCfg field projections."
+    },
+    {
+      "group": 14,
+      "name": "Turing.FinTM.timed_branch_run",
+      "private": true,
+      "header": "private lemma timed_branch_run (D M\u2081 M\u2082 : FinTM Bool) {x : List Bool} (c : Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x) (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124) (b : Bool) (t : \u2115) : (timedCondTM D M\u2081 M\u2082).tm.runFrom (timedBranchCfg D M\u2081 M\u2082 c tapes heads b) t = timedBranchCfg D M\u2081 M\u2082 ((branchTM M\u2081 M\u2082 b).tm.runFrom c t) tapes heads b",
+      "candidate_records": 6,
+      "source_blobs": [
+        "2daabe85f4349b0ef834621087a29e0a48114cf6",
+        "9137edffcd333548ccb6c076adc222bf81f2c230",
+        "98d8db2067d42230cc28a95fc5b46e318795d867",
+        "af54cbd6247438070ca2f7f37debd8615bbc1d3a",
+        "b26dc46b426820e262445fd0e06e514863701b0c",
+        "e5b91a59d653d7aa5b057e6dc303546ce48766e7"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 15,
+      "name": "Turing.FinTM.timed_start",
+      "private": true,
+      "header": "private lemma timed_start (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115) (hD : D.ComputesInTime x [b] T) : \u2203 a \u2264 2 * T + 5, \u2203 (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124), (timedCondTM D M\u2081 M\u2082).tm.runFrom ((timedCondTM D M\u2081 M\u2082).tm.initCfg x) a = timedBranchCfg D M\u2081 M\u2082 ((branchTM M\u2081 M\u2082 b).tm.initCfg x) tapes heads b",
+      "candidate_records": 6,
+      "source_blobs": [
+        "2daabe85f4349b0ef834621087a29e0a48114cf6",
+        "9137edffcd333548ccb6c076adc222bf81f2c230",
+        "98d8db2067d42230cc28a95fc5b46e318795d867",
+        "af54cbd6247438070ca2f7f37debd8615bbc1d3a",
+        "b26dc46b426820e262445fd0e06e514863701b0c",
+        "e5b91a59d653d7aa5b057e6dc303546ce48766e7"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 16,
+      "name": "Turing.FinTM.condTM_start",
+      "private": true,
+      "header": "private lemma condTM_start (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (hD : \u2203 t, D.ComputesInTime x [b] t) : \u2203 (t : \u2115) (tapes : Fin D.k \u2192 \u2124 \u2192 Option Bool) (heads : Fin D.k \u2192 \u2124), (condTM D M\u2081 M\u2082).tm.runFrom ((condTM D M\u2081 M\u2082).tm.initCfg x) t = rightCfg (fun q => .inr (.inr q)) ((branchTM M\u2081 M\u2082 b).tm.initCfg x) tapes heads",
+      "candidate_records": 5,
+      "source_blobs": [
+        "13b5591983b46d64925ce88c7a586fceaf362f7a",
+        "2faec5a4676629463216658fc46e72db42b4a411",
+        "736f618f684fac94b5600aa6a37f3800701f8cd3",
+        "7d045b42e4d8425b85540337356f1852ef5bc2f1",
+        "d2941141d05d848acdb51c152412f3096efdfccd"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 17,
+      "name": "Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero",
+      "private": false,
+      "header": "@[simp] lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg k Symbol State input) (t : \u2115) (h_zero : k = 0) : tm.spaceUsed cfg t = 0",
+      "candidate_records": 7,
+      "source_blobs": [
+        "13d5c294f8dbe8c3132ac00f85de03c39e0d0150",
+        "2e60877df8498baa6618db84708916df675a3e39",
+        "2e6edafd5d85c04b89a9d1f06d5b448d493c8bd9",
+        "48e3393640ccd88585288b01353ec2d02dcf466d",
+        "5b3f881e8ce6720d0adc10653dac27ede4501681",
+        "af14c1c6344bfd5ebb95005a69010e65f7e650d0",
+        "efd291b1605e49546badd471ed5b8c0152071d93"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Existing public zero-tape space theorem is deliberately consumed by all four new canonical-witness specializations. No existing canonical witness-specific zero-space conclusion found."
+    },
+    {
+      "group": 18,
+      "name": "Turing.CodeTM.toFinTM_k",
+      "private": false,
+      "header": "@[simp] lemma CodeTM.toFinTM_k (M : CodeTM) : M.toFinTM.k = 1",
+      "candidate_records": 14,
+      "source_blobs": [
+        "11ed81dfdc7077e35da0921c657b89669fc7fe7b",
+        "1be1085ceea289536923f764eda561921b4d494f",
+        "1c6e3a42367337f5af145c6d93de23bf32a60975",
+        "2427f1124bdaced29c5c95fec0ab0484a8d1b445",
+        "30a021379a0f7f2d100be6a501898bc039441450",
+        "3948815ec7f3c2691245e0f7ace4eea0f3bd99f7",
+        "5296ffe7b99f47edc9b9577ef4ff14520867a796",
+        "5f0e2e1fcdaa411b9eaa46d965355230205730d7",
+        "c11a2803cdddde11b92b2cc2c74e4cd99eed07d3",
+        "c1d171e6fa550e6f9dce58f96021552307dbd8c0",
+        "c6ad27d183ea9be25b5d838e39d6987b91913ebb",
+        "cb812c0dd6125832b60cbe01bd74e140a907f076",
+        "cf0c8c63fd04216f5b49255535a8abb94812db92",
+        "d861225b6e8f26d5112738f9cf9cdd293bd78595"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Existing public one-tape reader reveals only k. The approved constructor equality additionally exposes State and tm; the old reader survives unchanged."
+    },
+    {
+      "group": 19,
+      "name": "Turing.exists_codeTM",
+      "private": false,
+      "header": "theorem exists_codeTM (M : FinTM Bool) (hk : M.k = 1) : \u2203 M' : CodeTM, \u2200 (x output : List Bool) (t : \u2115), M'.toFinTM.ComputesInTime x output t \u2194 M.ComputesInTime x output t",
+      "candidate_records": 14,
+      "source_blobs": [
+        "11ed81dfdc7077e35da0921c657b89669fc7fe7b",
+        "1be1085ceea289536923f764eda561921b4d494f",
+        "1c6e3a42367337f5af145c6d93de23bf32a60975",
+        "2427f1124bdaced29c5c95fec0ab0484a8d1b445",
+        "30a021379a0f7f2d100be6a501898bc039441450",
+        "3948815ec7f3c2691245e0f7ace4eea0f3bd99f7",
+        "5296ffe7b99f47edc9b9577ef4ff14520867a796",
+        "5f0e2e1fcdaa411b9eaa46d965355230205730d7",
+        "c11a2803cdddde11b92b2cc2c74e4cd99eed07d3",
+        "c1d171e6fa550e6f9dce58f96021552307dbd8c0",
+        "c6ad27d183ea9be25b5d838e39d6987b91913ebb",
+        "cb812c0dd6125832b60cbe01bd74e140a907f076",
+        "cf0c8c63fd04216f5b49255535a8abb94812db92",
+        "d861225b6e8f26d5112738f9cf9cdd293bd78595"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Existing existential coding/behavior correspondence, not equality of a given CodeTM.toFinTM bundle."
+    },
+    {
+      "group": 20,
+      "name": "Turing.MultiTapeTM.runFrom_eq_of_agreeOn",
+      "private": false,
+      "header": "theorem runFrom_eq_of_agreeOn {k : \u2115} {Symbol State : Type*} {M N : MultiTapeTM k Symbol State} {Q : Set State} (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input) (t : \u2115) (hq : \u2200 u < t, \u2200 q, (M.runFrom c u).state = some q \u2192 q \u2208 Q) : N.runFrom c t = M.runFrom c t",
+      "candidate_records": 10,
+      "source_blobs": [
+        "0d0233c91d5f6ce3fdb70db22ca5eee58ab8ef5c",
+        "119871d44159fc627e41efebf4f3f94f69790041",
+        "2a008de92182ae675c9ecddb22a2562eae1c3899",
+        "3db1eab39d6bb156556c724102cdb8cc0839281b",
+        "40f509d9c4255fac5c86648743d356c916a018d5",
+        "4adca020e88b09aceb2850c9d58484c59ff14deb",
+        "646d91f673397b875153e641e457e028374e02a4",
+        "7e944f1848174074950fb6da1d60cc38cf743b5a",
+        "873340ca3be1b091c97ab2bcaef5f5bbe170d46b",
+        "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Existing public arbitrary-start agreement theorem is deliberately consumed by the new branch-specific transported result. It is not an existing branch shape reader."
+    },
+    {
+      "group": 21,
+      "name": "Turing.timed_universal_concrete",
+      "private": false,
+      "header": "theorem timed_universal_concrete (c : EffectiveMachineCode) : \u2203 U : FinTM Bool, \u2200 (\u03b1 x : List Bool) (t : \u2115), (\u2200 output : List Bool, (c.decode \u03b1).toFinTM.ComputesInTime x output t \u2192 U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) \u03b1) x) (true :: output) ((3 * \u03b1.length + c.canonizerTime \u03b1.length + (c.decode \u03b1).serialize.length + 2 * (Nat.bits (c.decode \u03b1).numStates).length + 2 * (c.decode \u03b1).tm.q\u2080.val + 16 + universalBlockBound c \u03b1 + 14) * (t + 1) ^ 2)) \u2227 ((\u2200 output : List Bool, \u00ac(c.decode \u03b1).toFinTM.ComputesInTime x output t) \u2192 U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) \u03b1) x) [false] ((3 * \u03b1.length + c.canonizerTime \u03b1.length + (c.decode \u03b1).serialize.length + 2 * (Nat.bits (c.decode \u03b1).numStates).length + 2 * (c.decode \u03b1).tm.q\u2080.val + 16 + universalBlockBound c \u03b1 + 14) * (t + 1) ^ 2))",
+      "candidate_records": 1,
+      "source_blobs": [
+        "b3f23b0546a29171ad401f0a8956bff4cb0840f8"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Universal timed behavior statement mentioning decoded coded machines; does not expose conversion constructor or field equations."
+    },
+    {
+      "group": 22,
+      "name": "Turing.universalCaptured_right",
+      "private": true,
+      "header": "private lemma universalCaptured_right {S : Type} [Fintype S] [DecidableEq S] (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) {x : List Bool} (src : Cfg M.k Bool M.State x) : universalCapturedCfg M D src = rightCfg Sum.inr (\u27e8some D.q\u2080, src.inputPos, universalFour (bufferTape src.output) (fun _ => none) (fun _ => none) (fun _ => none), universalFour src.output.length 0 0 0, []\u27e9 : Cfg 4 Bool S x) src.workTapes src.workTapePos",
+      "candidate_records": 2,
+      "source_blobs": [
+        "94ea51ff9c7f9705332c9de08140641823ed5dba",
+        "b60ddd9bda28a043cf0e13fa3eda1624a7e974aa"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 23,
+      "name": "Turing.universal_from_blocks",
+      "private": false,
+      "header": "lemma universal_from_blocks (c : EffectiveMachineCode) (U : FinTM Bool) (S B : List Bool \u2192 \u2115) (relation : \u2200 \u03b1 x : List Bool, Cfg 1 Bool (Fin ((c.decode \u03b1).numStates + 1)) x \u2192 Cfg U.k Bool U.State (pairEncode \u03b1 x) \u2192 Prop) (hstart : \u2200 \u03b1 x, \u2203 t, t \u2264 S \u03b1 \u2227 relation \u03b1 x ((c.decode \u03b1).tm.initCfg x) (U.tm.runFrom (U.tm.initCfg (pairEncode \u03b1 x)) t)) (hstep : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 \u2203 d, 1 \u2264 d \u2227 d \u2264 B \u03b1 \u2227 relation \u03b1 x ((c.decode \u03b1).tm.step src) (U.tm.runFrom dst d)) (hhalt : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 (src.state = none \u2194 dst.state = none)) (hout : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 src.output = dst.output) : \u2200 \u03b1 : List Bool, \u2203 C : \u2115, \u2200 x : List Bool, (\u2200 (output : List Bool) (t : \u2115), (c.decode \u03b1).toFinTM.ComputesInTime x output t \u2192 U.ComputesInTime (pairEncode \u03b1 x) output (C * (t + 1))) \u2227 (\u2200 output : List Bool, (\u2203 t, U.ComputesInTime (pairEncode \u03b1 x) output t) \u2192 \u2203 t, (c.decode \u03b1).toFinTM.ComputesInTime x output t)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "94ea51ff9c7f9705332c9de08140641823ed5dba"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Block-based universal-machine simulation route; mentions coded carrier but gives behavioral bounds, not conversion constructor or configuration readers. Historical public/private variants preserved."
+    },
+    {
+      "group": 24,
+      "name": "Turing.MachineFormat.us_tail",
+      "private": true,
+      "header": "private theorem us_tail {K : \u2115} {Q : Type} [DecidableEq Q] (\u03b1 x : List Bool) (t : \u2115) (U : MultiTapeTM K Bool Q) (done : Q) (g : Fin (1 + (F.k + 2 + 1)) \u21aa Fin K) (\u03b9P : Fin F.k \u21aa Fin K) (jctr jwin jtbl jsm : Fin K) (gw : g (Fin.castAdd (F.k + 2 + 1) 0) = jwin) (gP : \u2200 i, g (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = \u03b9P i) (gt : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 0))) = jtbl) (gs : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 1))) = jsm) (gc : g (Fin.natAdd 1 (Fin.last (F.k + 2))) = jctr) (c\u2080 c : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) \u03b1) x)) (T\u2081 : \u2115) (run : U.runFrom c\u2080 T\u2081 = c) (hst : c.state = some done) (cut : \u2200 u < T\u2081, (U.runFrom c\u2080 u).state \u2260 some done) (hout : c.output = []) (hctr : c.workTapes jctr = FinTM.bufferTape (Nat.bits t)) (hctrp : c.workTapePos jctr = 0) (hwin : c.workTapes jwin = FinTM.bufferTape (x.take t)) (hwinp : c.workTapePos jwin = 0) (htbl : c.workTapes jtbl = FinTM.bufferTape (tableBitsK (F.machine (F.decode \u03b1)).tr)) (htblp : c.workTapePos jtbl = 0) (hsm : c.workTapes jsm = StepBlock.summaryCells none (unaryFin (F.machine (F.decode \u03b1)).q\u2080)) (hsmp : c.workTapePos jsm = 0) (hpas : \u2200 i, c.workTapes (\u03b9P i) = (fun _ => none) \u2227 c.workTapePos (\u03b9P i) = 0) : \u2203 T\u2082 \u2264 t * (50 * ((tableBitsK (F.machine (F.decode \u03b1)).tr).length + 1)) + 4 * t + 2 * t.bits.length + 3, \u2203 answer : Bool, ((seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k)) (CounterLoopState.dec FlagPhase.run, true)).runFrom (c\u2080.mapState Sum.inl) (T\u2081 + 1 + T\u2082)).state = none \u2227 ((seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k)) (CounterLoopState.dec FlagPhase.run, true)).runFrom (c\u2080.mapState Sum.inl) (T\u2081 + 1 + T\u2082)).output = [answer] \u2227 (answer = true \u2194 (F.toFinTM (F.decode \u03b1)).ComputesInTime x [true] t)",
+      "candidate_records": 3,
+      "source_blobs": [
+        "0d232852433ade293e1d7842291e877b89b72ac2",
+        "a86ee5129283da4f137aa63ef412765fe4c492ae",
+        "f71f4002384b45d5397b28e955d506bcc3e6938b"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 25,
+      "name": "Turing.exists_code2TM",
+      "private": false,
+      "header": "theorem exists_code2TM (M : FinTM Bool) (hk : M.k = 2) : \u2203 M' : Code2TM, \u2200 (x output : List Bool) (t : \u2115), M'.toFinTM.ComputesInTime x output t \u2194 M.ComputesInTime x output t",
+      "candidate_records": 1,
+      "source_blobs": [
+        "06d9339d3f17bc38bda991ccd68185d1fcb57eff"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Two-tape existential coding/behavior correspondence, a different code type and conclusion."
+    },
+    {
+      "group": 26,
+      "name": "Turing.exists_codeTM_spaceUsed",
+      "private": false,
+      "header": "theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) : \u2203 M' : CodeTM, (\u2200 (x output : List Bool) (t : \u2115), M'.toFinTM.ComputesInTime x output t \u2194 M.ComputesInTime x output t) \u2227 \u2200 (x : List Bool) (t : \u2115), M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t = M.tm.spaceUsed (M.tm.initCfg x) t",
+      "candidate_records": 10,
+      "source_blobs": [
+        "11ed81dfdc7077e35da0921c657b89669fc7fe7b",
+        "1c6e3a42367337f5af145c6d93de23bf32a60975",
+        "2427f1124bdaced29c5c95fec0ab0484a8d1b445",
+        "30a021379a0f7f2d100be6a501898bc039441450",
+        "3948815ec7f3c2691245e0f7ace4eea0f3bd99f7",
+        "5296ffe7b99f47edc9b9577ef4ff14520867a796",
+        "c11a2803cdddde11b92b2cc2c74e4cd99eed07d3",
+        "c1d171e6fa550e6f9dce58f96021552307dbd8c0",
+        "cb812c0dd6125832b60cbe01bd74e140a907f076",
+        "d861225b6e8f26d5112738f9cf9cdd293bd78595"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Existential coding preserving computation and space, not constructor equality of the supplied coded machine."
+    },
+    {
+      "group": 27,
+      "name": "Turing.FinTM.toCodeTM_computesInTime_iff",
+      "private": false,
+      "header": "theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1) (x output : List Bool) (t : \u2115) : (M.toCodeTM hk).toFinTM.ComputesInTime x output t \u2194 M.ComputesInTime x output t",
+      "candidate_records": 9,
+      "source_blobs": [
+        "11ed81dfdc7077e35da0921c657b89669fc7fe7b",
+        "2427f1124bdaced29c5c95fec0ab0484a8d1b445",
+        "30a021379a0f7f2d100be6a501898bc039441450",
+        "3948815ec7f3c2691245e0f7ace4eea0f3bd99f7",
+        "5296ffe7b99f47edc9b9577ef4ff14520867a796",
+        "c11a2803cdddde11b92b2cc2c74e4cd99eed07d3",
+        "c1d171e6fa550e6f9dce58f96021552307dbd8c0",
+        "cb812c0dd6125832b60cbe01bd74e140a907f076",
+        "d861225b6e8f26d5112738f9cf9cdd293bd78595"
+      ],
+      "classification": "existing public related API",
+      "disposition": "Computational correspondence after a toCodeTM conversion, not a toFinTM bundle equation."
+    },
+    {
+      "group": 28,
+      "name": "Turing.universal_from_blocks",
+      "private": true,
+      "header": "private lemma universal_from_blocks (c : EffectiveMachineCode) (U : FinTM Bool) (S B : List Bool \u2192 \u2115) (relation : \u2200 \u03b1 x : List Bool, Cfg 1 Bool (Fin ((c.decode \u03b1).numStates + 1)) x \u2192 Cfg U.k Bool U.State (pairEncode \u03b1 x) \u2192 Prop) (hstart : \u2200 \u03b1 x, \u2203 t, t \u2264 S \u03b1 \u2227 relation \u03b1 x ((c.decode \u03b1).tm.initCfg x) (U.tm.runFrom (U.tm.initCfg (pairEncode \u03b1 x)) t)) (hstep : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 \u2203 d, 1 \u2264 d \u2227 d \u2264 B \u03b1 \u2227 relation \u03b1 x ((c.decode \u03b1).tm.step src) (U.tm.runFrom dst d)) (hhalt : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 (src.state = none \u2194 dst.state = none)) (hout : \u2200 \u03b1 x src dst, relation \u03b1 x src dst \u2192 src.output = dst.output) : \u2200 \u03b1 : List Bool, \u2203 C : \u2115, \u2200 x : List Bool, (\u2200 (output : List Bool) (t : \u2115), (c.decode \u03b1).toFinTM.ComputesInTime x output t \u2192 U.ComputesInTime (pairEncode \u03b1 x) output (C * (t + 1))) \u2227 (\u2200 output : List Bool, (\u2203 t, U.ComputesInTime (pairEncode \u03b1 x) output t) \u2192 \u2203 t, (c.decode \u03b1).toFinTM.ComputesInTime x output t)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "b60ddd9bda28a043cf0e13fa3eda1624a7e974aa"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Private operational helper whose header mentions a searched family; it does not expose a missing public constructor/field/zero-space contract."
+    },
+    {
+      "group": 29,
+      "name": "Turing.FinTM.prependTM_spaceUsed",
+      "private": false,
+      "header": "theorem prependTM_spaceUsed (w x : List Bool) (t : \u2115) : (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0",
+      "candidate_records": 1,
+      "source_blobs": [
+        "37165dcf8dcfff4140a786e36aa8c827aa0d5878"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 30,
+      "name": "Turing.FinTM.pairValidTM_spaceUsed",
+      "private": false,
+      "header": "theorem pairValidTM_spaceUsed (x : List Bool) (t : \u2115) : pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t = 0",
+      "candidate_records": 1,
+      "source_blobs": [
+        "37165dcf8dcfff4140a786e36aa8c827aa0d5878"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 31,
+      "name": "Turing.FinTM.idTM_spaceUsed",
+      "private": false,
+      "header": "theorem idTM_spaceUsed (x : List Bool) (t : \u2115) : idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0",
+      "candidate_records": 1,
+      "source_blobs": [
+        "13b5591983b46d64925ce88c7a586fceaf362f7a"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 32,
+      "name": "Turing.FinTM.constTM_spaceUsed",
+      "private": false,
+      "header": "theorem constTM_spaceUsed (w x : List Bool) (t : \u2115) : (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0",
+      "candidate_records": 1,
+      "source_blobs": [
+        "13b5591983b46d64925ce88c7a586fceaf362f7a"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 33,
+      "name": "Turing.CodeTM.toFinTM_eq",
+      "private": false,
+      "header": "theorem CodeTM.toFinTM_eq (M : CodeTM) : M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm }",
+      "candidate_records": 1,
+      "source_blobs": [
+        "c1d171e6fa550e6f9dce58f96021552307dbd8c0"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 34,
+      "name": "Turing.FinTM.branchTM_k",
+      "private": false,
+      "header": "theorem branchTM_k (M\u2081 M\u2082 : FinTM Bool) (b : Bool) : (branchTM M\u2081 M\u2082 b).k = M\u2081.k + M\u2082.k",
+      "candidate_records": 1,
+      "source_blobs": [
+        "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 35,
+      "name": "Turing.FinTM.branchTM_State",
+      "private": false,
+      "header": "theorem branchTM_State (M\u2081 M\u2082 : FinTM Bool) (b : Bool) : (branchTM M\u2081 M\u2082 b).State = (M\u2081.State \u2295 M\u2082.State)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope."
+    },
+    {
+      "group": 36,
+      "name": "Turing.FinTM.branchTM_runFrom_independent",
+      "private": false,
+      "header": "theorem branchTM_runFrom_independent (M\u2081 M\u2082 : FinTM Bool) (b b' : Bool) {x : List Bool} (c : Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x) (t : \u2115) : let view : Bool \u2192 MultiTapeTM (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State)",
+      "candidate_records": 1,
+      "source_blobs": [
+        "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510"
+      ],
+      "classification": "approved new source theorem",
+      "disposition": "Only the PR230 source tree supplies this new exact name/contract. Matches the approved scope. Generic parser stops at the type-level let assignment; its complete source insertion was separately inspected, including the transported view and run equality."
+    },
+    {
+      "group": 37,
+      "name": "Turing.FinTM.loopBody_capture",
+      "private": true,
+      "header": "private lemma loopBody_capture (body : FinTM Bool) (anchor : body.State) {H : Type*} {x : List Bool} (host : MultiTapeTM (body.k + 1 + 1) Bool H) (emb : body.State \u00d7 Bool \u2192 H) (ret : H) (hagree : \u2200 s inp work, host.tr (emb s) inp work = captureAction emb ret ((loopBodyTM body anchor).tm.tr s inp fun i => work i.castSucc)) (c : Cfg body.k Bool body.State x) (release : Bool) (hc : c.state \u2260 none) (t : \u2115) (hlive : \u2200 u < t, (body.tm.runFrom c u).state \u2260 none) (hanchor : \u2200 u < t, (u = 0 \u2227 release = true) \u2228 (body.tm.runFrom c u).state \u2260 some anchor) : host.runFrom (captureCfg emb ret [] [] (loopBodyCfg body anchor c release none)) t = captureCfg emb ret [] [] (loopBodyCfg body anchor (body.tm.runFrom c t) (if t = 0 then release else false) (if (body.tm.runFrom c t).state = none then some true else none))",
+      "candidate_records": 2,
+      "source_blobs": [
+        "1d92b234ad4677a2cb9792318dc8a9e65986dc6e",
+        "c33e04c15651eb39b6d8367032a032cb96e810ab"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    },
+    {
+      "group": 38,
+      "name": "Turing.FinTM.timed_ledger",
+      "private": true,
+      "header": "private lemma timed_ledger (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T : \u2115) (hD : D.ComputesInTime x [b] T) : \u2200 u, \u2203 v \u2264 T, \u2203 w \u2264 u, \u2203 z : \u2124, 0 \u2264 z \u2227 z \u2264 1 \u2227 ((timedCondTM D M\u2081 M\u2082).tm.runFrom ((timedCondTM D M\u2081 M\u2082).tm.initCfg x) u).workTapePos = timedHeads D M\u2081 M\u2082 (D.tm.runFrom (D.tm.initCfg x) v).workTapePos ((branchTM M\u2081 M\u2082 b).tm.runFrom ((branchTM M\u2081 M\u2082 b).tm.initCfg x) w).workTapePos z",
+      "candidate_records": 1,
+      "source_blobs": [
+        "e5b91a59d653d7aa5b057e6dc303546ce48766e7"
+      ],
+      "classification": "existing private lookalike/use",
+      "disposition": "Instance-specific capture or wrapper simulation/start/ledger property, not a public configuration field reader or tag-independent arbitrary-start branch theorem."
+    }
+  ],
+  "limit": "Source statement-shape inspection; no claim to compiled-name inventory for all historical trees or an exhaustive semantic equivalence decision procedure."
+}

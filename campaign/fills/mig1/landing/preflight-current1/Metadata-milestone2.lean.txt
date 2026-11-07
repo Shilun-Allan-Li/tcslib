@@ -1,0 +1,58 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.RAMSimulation.WordSize
+import Lean
+set_option maxHeartbeats 0
+open Lean Elab Command
+private def evidenceKind : ConstantInfo → String
+  | .thmInfo _ => "theorem"
+  | .defnInfo _ => "def"
+  | .axiomInfo _ => "axiom"
+  | .opaqueInfo _ => "opaque"
+  | .ctorInfo _ => "constructor"
+  | .recInfo _ => "recursor"
+  | .inductInfo _ => "inductive"
+  | .quotInfo _ => "quotient"
+run_cmd do
+  let env ← getEnv
+  let owners : List String := ["TCSlib.Complexity.TuringMachine.Simulation", "TCSlib.Complexity.TuringMachine.Composition", "TCSlib.Complexity.TuringMachine.Encoding", "TCSlib.Complexity.ClassP.TimeConstructible", "TCSlib.Complexity.TuringMachine.Build.Wrappers", "TCSlib.Complexity.TuringMachine.Build.Loop", "TCSlib.Complexity.TuringMachine.Build.Primitives", "TCSlib.Complexity.TuringMachine.Build.Catalog", "TCSlib.Complexity.TuringMachine.Build.CertShell", "TCSlib.Complexity.TuringMachine.CodeSimulator", "TCSlib.Complexity.RAMSimulation.WordSize"]
+  let requested : List String := ["Turing.FinTM.idTM_computes", "Turing.FinTM.ifEqTM_computes", "Turing.FinTM.condTM_computes_iff", "Turing.FinTM.branchTM_spaceUsed", "Turing.FinTM.timedCondTM_computes", "Turing.FinTM.timedCondTM_spaceUsed", "Turing.pairDiagTM_computes", "Turing.FinTM.lengthBitsTM_computes", "Turing.FinTM.lengthBitsTM_spaceUsed", "Turing.FinTM.loopHostTM_contracts", "Turing.FinTM.loopHostTM_decides", "Turing.FinTM.loopHostTM_finds", "Turing.FinTM.loopHostTM_spaceUsed_le_budget", "Turing.FinTM.emitLoopTM_computes", "Turing.FinTM.polyUnaryTM_spaceUsed", "Turing.FinTM.unaryTokenTM_computes", "Turing.FinTM.appendBitTM_computes", "Turing.FinTM.pairMapSndTM_computes", "Turing.FinTM.pairMapSndTM_spaceUsed", "Turing.FinTM.pairMapSndTM", "Turing.FinTM.computesFunInTime_id", "Turing.FinTM.computesFunInTime_ifEq", "Turing.FinTM.computesFunInTime_comp", "Turing.FinTM.exists_comp_on_image", "Turing.FinTM.exists_comp_partial", "Turing.FinTM.exists_cond", "Turing.FinTM.branchTM_computes", "Turing.FinTM.rewind_from_any", "Turing.FinTM.timed_rewind", "Turing.FinTM.rewind_heads", "Turing.FinTM.computesFunInTime_cond", "Turing.computesFunInTime_pairEncode_diag", "Complexity.timeConstructible_id", "Turing.FinTM.exists_loopCfgTM", "Turing.FinTM.exists_loopTM", "Turing.FinTM.exists_loopFindTM", "Turing.FinTM.exists_emitLoopTM", "Turing.FinTM.computesFunInTime_pairDup", "Turing.FinTM.computesFunInTime_pairMapSnd", "Turing.FinTM.computesFunInTime_unaryToken", "Turing.FinTM.computesFunInTime_appendBit", "Turing.FinTM.computesFunInTime_id_spaceUsed", "Turing.FinTM.computesFunInTime_const_spaceUsed", "Turing.FinTM.computesFunInTime_prepend_spaceUsed", "Turing.FinTM.computesFunInTime_lengthBits_spaceUsed", "Turing.FinTM.computesFunInTime_polyUnary_spaceUsed", "Turing.FinTM.computesFunInTime_polyBits_spaceUsed", "Turing.FinTM.computesFunInTime_pairFst_spaceUsed", "Turing.FinTM.computesFunInTime_pairSnd_spaceUsed", "Turing.FinTM.computesFunInTime_pairValid_spaceUsed", "Turing.FinTM.computesFunInTime_pairConcat_spaceUsed", "Turing.FinTM.computesFunInTime_pairDup_spaceUsed", "Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed", "Turing.FinTM.computesFunInTime_stripLast_spaceUsed", "Turing.FinTM.computesFunInTime_incFixed_spaceUsed", "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed", "Turing.FinTM.computesFunInTime_splitSolve_spaceUsed", "Turing.FinTM.redirectTM_spaceUsedByTape", "Turing.FinTM.computesFunInTime_cond_spaceUsed", "Turing.FinTM.exists_loopTM_spaceUsed", "Turing.Cfg.ofWords_copy_endpoint", "Turing.Cfg.ofWords_transfer_endpoint", "Turing.incrementTM_run_succ_ofCfg", "Turing.incrementTM_run_overflow_ofCfg", "Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed", "Turing.CodeTM.toFinTM_eq", "Turing.FinTM.branchTM_State", "Turing.FinTM.branchTM_k", "Turing.FinTM.branchTM_runFrom_independent", "Turing.FinTM.constTM_spaceUsed", "Turing.FinTM.idTM_spaceUsed", "Turing.FinTM.leftCfg_inputPos", "Turing.FinTM.leftCfg_output", "Turing.FinTM.leftCfg_state", "Turing.FinTM.leftCfg_workTapePos", "Turing.FinTM.leftCfg_workTapes", "Turing.FinTM.pairValidTM_spaceUsed", "Turing.FinTM.prependTM_spaceUsed", "Turing.FinTM.rightCfg_inputPos", "Turing.FinTM.rightCfg_output", "Turing.FinTM.rightCfg_state", "Turing.FinTM.rightCfg_workTapePos", "Turing.FinTM.rightCfg_workTapes", "Turing.captureCfg_inputPos", "Turing.captureCfg_output", "Turing.captureCfg_state", "Turing.captureCfg_workTapePos", "Turing.captureCfg_workTapes"]
+  let privateTails := [".pairExtract_space_row", ".catalog_buffer_clip", ".catalog_increment_framed",
+    ".canonPreserveInstall", ".cert_prepare_exists"]
+  let mut found : List String := []
+  for (n, ci) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if !owners.contains owner.toString then continue
+    logInfo m!"CENSUS|{owner}|{n}|{evidenceKind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    if !isPrivateName n then
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"PUBLICAX|{n}|{(axs.qsort Name.lt).toList}"
+    if requested.contains n.toString || privateTails.any n.toString.endsWith then
+      found := n.toString :: found
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"ROOTAX|{n}|{(axs.qsort Name.lt).toList}"
+      let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      let mut seen : Array Name := #[]
+      for c in used do
+        if seen.contains c then continue
+        seen := seen.push c
+        let some j := env.getModuleIdxFor? c | continue
+        let mod := env.header.moduleNames[j.toNat]!
+        if !(`TCSlib).isPrefixOf mod then continue
+        let some cinfo := env.find? c | continue
+        logInfo m!"CITED|{n}|{c}|{mod}|{evidenceKind cinfo}"
+  for n in requested do
+    if !found.contains n then throwError "missing requested compiled root {n}"
+  for n in [`Turing.pairDiagTM_spaceUsed, `Turing.FinTM.incFixedTM_spaceUsed,
+    `Turing.MultiTapeTM.exists_first_entry_of_fixed] do
+    if env.contains n then throwError "unapproved API unexpectedly present: {n}"
+    logInfo m!"PENDINGABSENT|{n}"

@@ -1,0 +1,16 @@
+{
+  "new_body": "  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)\n  have he : (PrefixByLength.drop \u2218 (fun x => pairEncode (u x) (s x))) =\n      (fun x => (s x).drop (u x).length) := by\n    funext x\n    rw [Function.comp_apply, PrefixByLength.drop.eq_1,\n      pairFstD_pairEncode, pairSndD_pairEncode]\n  rw [he] at h\n  exact h\n",
+  "explicit_rw_arguments": [
+    "Function.comp_apply public Core equation",
+    "PrefixByLength.drop.eq_1 existing serialized public theorem",
+    "pairFstD_pairEncode public theorem",
+    "pairSndD_pairEncode public theorem",
+    "local equality he"
+  ],
+  "foreign_or_Core_definition_arguments": [],
+  "simp_unfold_arguments": [],
+  "new_source_imports": [
+    "TCSlib.Complexity.ClassNP.PolyTimePrefix"
+  ],
+  "source_public_API_additions": 0
+}

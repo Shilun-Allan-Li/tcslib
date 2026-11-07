@@ -1,0 +1,11 @@
+{
+  "status": "FAILED instrumentation only; not a strict-seal pass",
+  "source_unchanged": "Loop-cumulative-proposed-v2.lean.txt",
+  "reason": "Extra guard/control used Turing.tapeBlocks rather than actual compiled Turing.FinTM.tapeBlocks",
+  "actual_name_source": "FRAMEDEF metadata in Loop-sealed-v3.out",
+  "strict_errors": 7,
+  "unsealed_control_errors": 1,
+  "sealed_control_errors": 2,
+  "checker_rejected_missing_control_records": true,
+  "repair": "v4 seal and additional-control v2 use exact compiled name; native proof source remains byte-identical"
+}

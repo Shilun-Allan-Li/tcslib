@@ -1,0 +1,87 @@
+/-- **The emitting loop's time**. Under the hypotheses of `exists_emitLoopTM` (fuel, invariant,
+startup, and rounds that advance to the stepped seam in positive time at most `T |x|` while emitting
+exactly `emitF x s`), the emitting loop outputs the concatenation of
+`emitF x ((stepF x)^[i] (s0 x))` over `i = 0, …, R |x|` within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The fuel preparation and the body startup take at most `10·(T |x| + 1)` steps
+(`loopHost_prepare`, `loopHost_start`); each round, its anchor stop and its debit take at most
+`10·(T |x| + 1)` (`emLoopHost_round`); the prefix-summation lemma `emLoop_sum` concatenates the
+`R |x| + 1` chunks. -/
+theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF emitF : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        body.tm.runFrom
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+            { Cfg.ofWords (input := x) anchor (stateWord body.k (stepF x s))
+                with output := emitF x s }) :
+    (emitLoopTM body F anchor).ComputesFunInTime
+      (fun x => (List.range (R x.length + 1)).flatMap
+        (fun i => emitF x ((stepF x)^[i] (s0 x))))
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
+  let E := emitLoopTM body F anchor
+  obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare, -⟩ :=
+    loopHost_prepare body F anchor true true R T hF x
+  obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
+  let words (i : ℕ) := (fun w => (loopDebit w).1)^[i] (Nat.bits (R x.length))
+  let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
+  let candidate (i : ℕ) := loopCall body F anchor false
+    (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
+  have hwidth (i : ℕ) : (words i).length ≤ T x.length := by
+    dsimp only [words]
+    rw [loopDebit_iterate_length]
+    exact loop_fuel_width F R T hF x
+  have hsuccess (i : ℕ) (hi : i ≤ R x.length) :
+      (loopDebit (words i)).2 = true ↔ i < R x.length := by
+    rw [loopDebit_success]
+    dsimp only [words]
+    rw [loopDebit_iterate_value _ _ hi]
+    omega
+  have hsegments : ∀ i < R x.length + 1, ∃ t ≤ 10 * (T x.length + 1),
+      if i + 1 < R x.length + 1 then
+        E.tm.runFrom (candidate i) t = {candidate (i + 1) with output := emitF x (orbit i)}
+      else
+        (E.tm.runFrom (candidate i) t).state = none ∧
+        (E.tm.runFrom (candidate i) t).output = emitF x (orbit i) := by
+    intro i hi
+    obtain ⟨t, htpos, ht, hguard, hend⟩ := hround x (orbit i)
+      (loop_orbit_inv Inv stepF s0 hInv0 hInvStep x i)
+    obtain ⟨v, hv, hsegment⟩ := emLoopHost_round body F anchor
+      (orbit i) (stepF x (orbit i)) (emitF x (orbit i)) (words i) fuel t htpos hguard hend
+    refine ⟨v, ?_, ?_⟩
+    · have hw := hwidth i
+      omega
+    · simpa only [E, candidate, words, orbit, Function.iterate_succ_apply',
+        hsuccess i (by omega), Nat.add_lt_add_iff_right] using hsegment
+  let startup := ftime + (btime + 2)
+  have hs : startup ≤ 10 * (T x.length + 1) := by dsimp only [startup]; omega
+  have hinit : E.tm.runFrom (E.tm.initCfg x) startup = candidate 0 := by
+    rw [MultiTapeTM.runFrom_add, hprepare,
+      loopHost_start body F anchor true true (s0 x) btime fuel hbguard hbend]
+    simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
+  obtain ⟨t, ht, hhalt, houtput⟩ := emLoop_sum E.tm candidate
+    (fun i => emitF x (orbit i)) (10 * (T x.length + 1)) (R x.length + 1)
+    (by intro j hj; simp only [candidate, loopCall, captureCfg_output]) hsegments (by omega) []
+  have hclean : {candidate 0 with output := []} = candidate 0 := by
+    refine Cfg.ext rfl rfl rfl rfl ?_
+    simp only [candidate, loopCall, captureCfg_output]
+  rw [hclean] at hhalt houtput
+  exact loop_computes_of_startup E x _ (candidate 0) startup t
+    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt
+    (by simpa only [List.nil_append, orbit] using houtput)
+

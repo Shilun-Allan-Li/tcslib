@@ -5,19 +5,49 @@ Prepared 2026-11-07 for the user's selected **Claude** fill. The user selected t
 The earlier roadmap/retriage descriptions of an open choice, Codex, buffered
 canonization, or F6 before that consumer are historical and superseded by those rulings.
 
-This is a records-only assessment. No F6 proof was attempted, no shared API was changed,
-and no fill was dispatched. The proposed fill is **not pre-shipped**. A direct
-live-anchor use of the ruler-host contract needs a cut that it does not expose, but
-the existing return embedding avoids that gap; the separate coded-bundle reader
-and the full concrete route still need resolution/checking before issue.
+This is a records-only assessment; no F6 target or full physical prefix was
+implemented and no fill was dispatched. The original diagnostics below are
+historical. Later bounded component/interface checks pass using the approved
+reader implemented in #230; its gate/merge and final packet work remain pending.
+The existing returning embedding supplies the required live return cut; no
+strengthened H5 contract or new route is commissioned.
+
+## 2026-11-07 clarification of the unissued ownership boundary
+
+The earlier assessment promised a supplied full concrete prefix before dispatch.
+That promise was a maintainer draft overstatement. The binding PLAN§(f):466–468 and
+accepted Gate112-01 resolution permit explicit conditional `aRun`, `aCut`, `hloop`
+inputs or actual F6 witnesses. We adopt the conditional pre-ship alternative for
+the typed final consumer, with all actual prefix/cut/space/loop proofs assigned
+to Claude as OWN-1–OWN-3. This corrects the unissued draft; it does not waive a
+mathematical premise or change the selected route, target, imports or public API.
+See `readiness-review/README.md` for the exact authority and earlier wording.
+
+The active supplied boundary is concrete component/phase/layout contracts plus
+a typed conditional run-and-space consumer on the last-ruler bank. Full physical
+prefix execution and ledger proofs remain external work on the actual fixed
+assembly; an arbitrary-machine route_space is still withdrawn. No supplied
+conditional input may be represented as a proved execution fact.
+
+The consumer #229 is merged. The CodeTM reader is approved and implemented in
+#230, with its actual sealed consumption checked in `layout-preship-v2/`; the
+old missing-reader diagnostic below is historical, not an outstanding design
+question. Gate117/merge remains required. The first-header/H5 presentation(v3/v4), typed final zero-outer run/space
+consumer(v5), phase interfaces(v6) and conditional ledger/coefficient contracts(v7)
+pass in their exact recorded scopes. `PRESHIP-INDEX.md` distinguishes those from
+external actual-prefix/ledger/target work. The provisional21-file TCSlib baseline
+passed (1037 declarations,636 candidates); final merged-base pins/packet remain unissued. No final packet or
+F6 fill is issued by this clarification.
 
 ## Pins and evidence boundaries
 
 - Provisional consumer head: `74494d669ad9f8f926844f9280812449f57263d6` (#229).
 - Provisional campaign base: `3555163f40d9c101a2ef4e81407c1bda58fe5ca4`.
 - Existing snapshot used for the small component checks: `oleans-mlin2`, at the
-  provisional consumer head. The root maintainer's replay log records two successful
-  modules and Hierarchy's one unchanged admission. This drafting task did not rerun it.
+  provisional consumer head, for the historical initial probes only. The root
+  maintainer’s replay log records two successful modules and Hierarchy’s one
+  unchanged admission. The newer v2–v7 bounded probes use the approved-reader
+  API1160 / complete mra2 context, not that historical snapshot.
 - **Final base, source blobs, gate number, order lists, cache roots, screen population,
   bundle and checksum remain unissued.** Recompute on the merged prerequisite tree.
 - Gate 112 is closed. Its four proved component probes remain useful; its admitted
@@ -74,8 +104,8 @@ authorization to edit their homes or to unfold their definitions in Hierarchy.
 | Idle extra bank | `embedEmitTM_runFrom`, `embedEmitTM_visitedByTapeHead`, `_frame`, `embedEmitCfg_eq` / `_mapState_eq` | An unused bank head visits its singleton starting cell. Avoid re-deriving a generic embedding/frame ledger. |
 | Loop under H5 | `exists_rulerHostTM`, generated `rulerHostCfg_*` fields | Instantiate the length/drop relation at `ℓ`, now on `x`. Halting/output and visited-set clauses suffice here; no live-anchor transfer out of this final host is needed. |
 | Final seam + space | `startupLoopTM_runFrom`, `startupLoopTM_spaceUsed_le` | Actual `aRun`, `hexit`, `aCut`, layout equality `hcfg`, prefix bound `hB`, `S≥1`, and hosted per-tape bounds `hloop`. These must be hypotheses in a conditional probe, or proved for the actual F6 witnesses. |
-| Source-bundle conversion | `FinTM.computesInTime_iff`, `CodeTM.toFinTM_k`; possibly `EffectiveMachineCode.toK_toFinTM` / `_machine` | The raw/source bundle bridge still needs a Rule-10-safe reader or a verified alternate public route; see diagnostic below. |
-| Addend-free absorption | `CodeTM.one_le_spaceUsed`, `length_bits_le_self`, `MultiTapeTM.spaceUsed_le_mul_succ`, space/visited monotonicity and card lemmas | Obtain `1≤s` before dividing or absorbing constants. The final `C_α` is independent of payload, time, output and budget. |
+| Source-bundle conversion | Actual `CodeTM.toFinTM_eq`, `FinTM.computesInTime_iff`, `CodeTM.one_le_spaceUsed` | Approved reader implemented in #230; actual computation/arbitrary-output/space conversion passes under opacity in v2/v5/v7. Gate117/merge remains pending; no further reader decision is requested. |
+| Addend-free absorption | `CodeTM.one_le_spaceUsed`, `length_bits_le_self`, `MultiTapeTM.spaceUsed_le_mul_succ`, `mem_visitedByTapeHead_iff`, `spaceUsedByTape_eq_card`, `spaceUsedByTape_le_spaceUsed`, `spaceUsedByTape_le_card_Icc`, `Finset.card_le_card` | Obtain `1≤s` before dividing or absorbing constants. The final `C_α` is independent of payload, time, output and budget. |
 
 ## Direct live-anchor gap avoided by existing returning embedding
 
@@ -113,9 +143,9 @@ same returned time for the endpoint, strict cut, output and visited sets. It pas
 with zero errors and only the standard three axioms. The first failed elaboration
 attempt (two local proof-script errors) is preserved as `HaltedHostReturn-attempt1`
 source/log; the successful corrected attempt is in `logs/preship-DRAFT.json`.
-It does not construct the native
-startup+halt leaf or the complete F6 prefix; those remain named OWN leaves and
-must be concretely checked before issue.
+That historical probe does not construct the native startup+halt leaf or complete
+F6 prefix. The later v2 startup component now checks the former; full prefix/run/cut/space
+proofs remain external OWN work under the dated conditional-boundary clarification.
 
 **No H5 contract extension is required by this route assessment.** An earlier draft
 proposed a strengthened host theorem because the direct live-exit cut is absent;
@@ -123,7 +153,13 @@ the returning-embedding route replaces that proposal. The final brief must name
 this actual composition rather than commission either a false cut or unnecessary
 new public API.
 
-## Rule-10 diagnostic: coded bundle to raw source
+## Historical Rule-10 diagnostic: coded bundle to raw source
+
+**Superseded technical diagnostic.** The following records the initial reader
+gap/proposal before approval. Seyoon approved `CodeTM.toFinTM_eq`; #230 implements
+it and the later v2/v5/v7 probes consume the actual theorem under opacity.
+The historical request below is not a new pending API choice. Only its gate/merge
+remains before issue; do not use the hypothetical-reader probe as final evidence.
 
 The frozen target supplies `(c.decode α).toFinTM` computations and space, while
 `exists_selfStartupTM` installs the raw `(c.decode α).tm`. `CodeTM.toFinTM` currently
@@ -170,13 +206,16 @@ leave the other `K` bank tapes idle, then apply H5 to that entire bank. The star
 host and final loop host both have `N` tapes and the same last ruler. Use the generic
 `startupLoopTM` seam with zero outer frame (`k:=K+2`, outer `K:=0`) and an explicit
 endpoint equality. The ready-made `suffixRulerCfg_embed` is then comparison evidence,
-not the literal layout lemma for this assembly. Alternatively relocate/permutate
-the hosted startup with the existing emitting embedding and prove its frame.
+not the literal layout lemma for this assembly. The active unissued brief uses
+the last-ruler full-bank assembly above. The earlier alternative of relocating
+the startup is not a prescribed second route or an authorized new host.
 
-Whichever assembly is finally selected must be checked concretely before dispatch.
-It may not be silently left as the old arbitrary `aRun`, nor treated as a new generic
-private relocation host. The assessment does not claim either full assembly has
-already elaborated.
+The last-ruler assembly above must have its actual component/layout types and
+conditional seam applications checked before dispatch. Its concrete prefix `aRun`,
+strict `aCut`, bound `hB` and hosted ledger `hloop` are explicit external OWN
+contracts under the dated clarification, never assumed facts about arbitrary
+machines. No new generic private relocation host is authorized. Full assembly
+execution has not been supplied by the component checks.
 
 ## Remaining OWN leaves, beyond these conditional components
 
@@ -214,8 +253,12 @@ do not add a well-formed-code premise or replace the all-`α` clause by canonica
 
 ## Issue checklist
 
-Hold the fill until #229 has merged, the source-conversion route is resolved, and the full
-concrete conditional route probe discharges every prescribed premise. Then refresh
+Hold the fill until #230/gate117 has closed and merged, the typed conditional
+last-ruler run/space consumer and phase interfaces pass, and every public-side
+premise/transport is discharged or an actual external OWN contract is explicit.
+The completed target must prove those OWN contracts at its actual fixed machine.
+This replaces the earlier unissued promise that the maintainer supply the full
+physical prefix, for the binding conditional alternative explained above. Then refresh
 the source pins, exact target/admission census and ownership overlap; generate
 bootstrap/downstream/final orders and narrowed cache roots from that tree; run the
 baseline screen and candidate searches, complete home/guard/statement probes, and

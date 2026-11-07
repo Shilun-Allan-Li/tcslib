@@ -1,0 +1,19 @@
+/-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
+by exactly one, while retaining every inactive tape and head.
+**Proof sketch.** Separate the completed bank from every other tape slot.
+Its three tapes and heads equal the cleaner's blank endpoint. Arithmetic on
+the bank indices identifies this update with increasing the cleaned prefix. -/
+private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) :
+    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q)))
+      frame.workTapes frame.workTapePos
+      (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =
+      emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) := by
+  dsimp only
+  simpa only [Nat.lt_succ_self, ↓reduceIte] using
+    emCall_bank_embed M emit x arg cap T i (i.val + 1) 3 (by
+      intro l hl
+      have hi : l.val ≠ i.val := fun h => hl (Fin.ext h)
+      omega)
+

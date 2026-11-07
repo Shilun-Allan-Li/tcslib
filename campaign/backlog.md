@@ -1026,20 +1026,23 @@ pair.
 ## 2. Campaign work queued or on hold
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. The user merged #228 and #222; the exact NatBits replay tree
-is now **oleans-mac2**. Gate 114 is **CLOSED, PASS 0/0/0/8**; all notes dispositioned. Gate
-106/#215 awaits the Codex audit; the current 329-module replay passed on
-**oleans-msg3**, zero failures/static mismatches.
-Draft #229 proves `SPACE_linear_ne_NP`; its fresh post-NatBits two-module replay and refreshed
-context checks passed (**oleans-mlin2**), gate 116 **dispatched to Codex** by the user. Next free gate
-117. The reviewed **Claude MIG-1 megafill is dispatched**, with checkpoint/final pushes to its
-exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`. cp01–cp03
-are reviewed as partial, with 14 target source admissions filled and three F-B targets
-remaining; reader/contract rulings, seal coverage and factoring repairs remain. F6 follows
-#229's merge: the user chose the **ruler-hosted suffix** route and **Claude**; the route/brief
-assessment is records-only work in progress, and gate 112's explicit premises remain binding.
-Ladner needs its statement phase. Records stay direct; actual Lean changes still need PRs,
-gates/replays and the user's merge.
+`campaign/maintainer/HANDOFF.md` §0. Seyoon merged #228, #222 and #229; gates114/115/116
+are CLOSED PASS, all notes dispositioned. The exact current replay tree is **oleans-mac3**.
+SG-1 #215 has both cut-helper audit repairs and explicit scheduled-debt rulings for six
+adapter/dispatcher kinds; its current329-module replay passes, gate106 round2 Codex pending.
+Draft #230 contains23 approved non-simp reader/resource theorems, with all five full owner
+preflights and394-module replay passed; gate117 Codex packet is in preparation. Both open
+PRs are **not yet clear to merge** until their gates close.
+
+The **Claude MIG-1 megafill remains dispatched**; immutable pins are in its dispatch.json.
+cp01–cp07 are reviewed partial deliveries: all17 original targets plus two new gated proof
+bodies are source-filled, only frozen RAM3 remains; cp07 deletes356 private Catalog copies
+and retires six public rows. Final worker evidence is awaited. Maintainer audit/interface
+repairs are underway in an unpushed landing branch; no new fill is run internally. New
+first-entry and two zero-space API proposals remain unapproved, separate from #230's scope.
+F6's ruler-hosted suffix/Claude choice is settled; #229 is merged, #230 audit/merge and full
+concrete route pre-ship remain. Ladner needs its statement phase. Records remain direct;
+every actual Lean change requires a PR, gate/replay and Seyoon's merge.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 
@@ -4321,3 +4324,20 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     WC-1 and QL-X1 (`duplication-ledger.md`).
   - Next: G5's fill brief (drafting; issues after its pre-ship on the merged tree), the deepening
     fill's brief after #196 merges, and H's brief after NF lands.
+
+
+## Gate106 round2: polynomial-closure cleanup (2026-11-07)
+
+The Codex follow-up found one unacknowledged generic polynomial-closure kind in
+SAT/Hardness, outside the six accepted adapter/dispatcher kinds. The broader
+bounded sweep identifies at least9distinct canonical source statements out of26
+in PolyTimePairing, crossing onefifth on the pre-fix source-inclusive accounting.
+This is a review item, not an accepted debt family or an exhaustive count.
+
+**Disposition in progress:** mechanical all-member citations under WORKFLOW§3,
+with13 checked source repoints and two further already-imported candidates under
+validation. Existing total-match pairMapSnd.eq_1 works under opacity, so no new
+API/import is needed for those fixes. Source imports/headers/data stay frozen.
+No retention acknowledgment is requested; closure awaits complete source/ledger
+accounting, current replay and Codex round3. Separate on-image/iteration/prefix
+candidates retain their exact checked/missing-interface boundaries.

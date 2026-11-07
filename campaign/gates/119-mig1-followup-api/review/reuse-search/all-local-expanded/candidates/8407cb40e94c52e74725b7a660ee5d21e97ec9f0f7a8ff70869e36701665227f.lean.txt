@@ -1,0 +1,42 @@
+theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t : ℕ} (h : (tm.runFrom cfg t).state = none) :
+    ∃ u ≤ t, (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  classical
+  have hex : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, h⟩
+  have hle : Nat.find hex ≤ t := Nat.find_min' hex h
+  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩
+  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+
+end MultiTapeTM
+
+/-- A multi-tape Turing machine over the alphabet `Option Symbol` bundled with a finite
+state type. This is the machine of [AB09, §1.2] up to the declared model variations
+(append-only output tape, start-marker-free initialization — see the deviations list in
+`TCSlib.Complexity.ClassP.DTIME`): the raw `MultiTapeTM` is internal plumbing, and
+every headline complexity-theoretic definition is stated over `FinTM`.
+
+The instances are data (`Fintype`/`DecidableEq`, not `Finite`) because encoding a machine
+as a string requires enumerating its transition table. -/
+structure FinTM (Symbol : Type) : Type 1 where
+  /-- number of work tapes -/
+  k : ℕ
+  /-- the state type -/
+  State : Type
+  /-- the state type is finite, as data -/
+  [fintypeState : Fintype State]
+  /-- states are decidably discernible, needed to tabulate the transition function -/
+  [decEqState : DecidableEq State]
+  /-- the underlying machine -/
+  tm : MultiTapeTM k Symbol State
+
+namespace FinTM
+
+attribute [instance] FinTM.fintypeState FinTM.decEqState
+
+variable {Symbol : Type}
+
+/-- The machine `M` halts on `input` within `t` steps with `output` written on its output
+tape. Time-only variant of `Turing.MultiTapeTM.ComputesInTimeAndSpace` (the space used is
+existentially discarded). [AB09, Definition 1.3] -/

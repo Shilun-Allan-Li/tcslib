@@ -1,0 +1,83 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! Dynamic inventory of every actual new compiled name, not a source-name filter.
+All new constants are inspected, including any private/internal names in the census delta. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let roots : List Name := [`Turing.CodeTM.toFinTM_eq,
+    `Turing.FinTM.branchTM_State,
+    `Turing.FinTM.branchTM_k,
+    `Turing.FinTM.branchTM_runFrom_independent,
+    `Turing.FinTM.constTM_spaceUsed,
+    `Turing.FinTM.idTM_spaceUsed,
+    `Turing.FinTM.leftCfg_inputPos,
+    `Turing.FinTM.leftCfg_output,
+    `Turing.FinTM.leftCfg_state,
+    `Turing.FinTM.leftCfg_workTapePos,
+    `Turing.FinTM.leftCfg_workTapes,
+    `Turing.FinTM.pairValidTM_spaceUsed,
+    `Turing.FinTM.prependTM_spaceUsed,
+    `Turing.FinTM.rightCfg_inputPos,
+    `Turing.FinTM.rightCfg_output,
+    `Turing.FinTM.rightCfg_state,
+    `Turing.FinTM.rightCfg_workTapePos,
+    `Turing.FinTM.rightCfg_workTapes,
+    `Turing.captureCfg_inputPos,
+    `Turing.captureCfg_output,
+    `Turing.captureCfg_state,
+    `Turing.captureCfg_workTapePos,
+    `Turing.captureCfg_workTapes]
+  let st ← liftTermElabM getSimpTheorems
+  for n in roots do
+    let some ci := env.find? n | throwError "missing new constant {n}"
+    let some i := env.getModuleIdxFor? n | throwError "no owner for {n}"
+    let owner := env.header.moduleNames[i.toNat]!
+    logInfo m!"TARGET|{n}|{owner}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"
+    logInfo m!"TYPE|{n}|{ci.type}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AXIOMS|{n}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut defs : Array Name := #[]
+    for c in used do
+      if defs.contains c then continue
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let defOwner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf defOwner then
+          defs := defs.push c
+          logInfo m!"DEF|{n}|{c}|{defOwner}|sameOwner={i == j}|hints={reprStr di.hints}"
+      | _, _ => pure ()
+  -- Include any compiler auxiliaries extending the new names, even if not a public name.
+  for (n, ci) in env.constants.toList do
+    if roots.contains n || !(roots.any (fun r => r.isPrefixOf n)) then continue
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if !(`TCSlib).isPrefixOf owner then continue
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AUXILIARY|{n}|{owner}|private={isPrivateName n}|internal={n.isInternalDetail}|axioms={(axs.qsort Name.lt).toList}"
+  -- Actual default simp definition/equation membership across the imported TCSlib closure.
+  let mut simpDefs : Array Name := #[]
+  for n in st.toUnfold.toList do
+    match env.getModuleIdxFor? n, env.find? n with
+    | some i, some (.defnInfo _) =>
+      if (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && !simpDefs.contains n then
+        simpDefs := simpDefs.push n
+    | _, _ => pure ()
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str p s =>
+      if !(s.startsWith "eq_") || !st.isLemma (.decl n) then continue
+      match env.getModuleIdxFor? p, env.find? p with
+      | some i, some (.defnInfo _) =>
+        if (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && !simpDefs.contains p then
+          simpDefs := simpDefs.push p
+      | _, _ => pure ()
+    | _ => pure ()
+  for n in simpDefs.qsort Name.lt do
+    let some i := env.getModuleIdxFor? n | throwError "simp owner absent {n}"
+    logInfo m!"SIMPDEF|{n}|{env.header.moduleNames[i.toNat]!}|direct={st.toUnfold.contains n}"

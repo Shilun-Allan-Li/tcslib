@@ -1,0 +1,24 @@
+/-- Every buffered pair-extraction choice has a linear work-space bound obtained
+from its linear time contract, with its fixed tape count absorbed in the constant.
+
+**Proof sketch.** The general space-from-time estimate bounds visited cells by the
+number of tapes times one more than the runtime. The extraction time is at most
+five times the positive input length bound. Six times one more than the fixed tape
+count therefore bounds both time and space with the same existential constant. -/
+private theorem pairExtract_space_row (a b : Bool) (f : List Bool → List Bool)
+    (h : (pairExtractTM a b).ComputesFunInTime f (fun n => 5 * (n + 1))) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime f (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (x.length + 1) := by
+  have hT := (computesFunInTime_iff _ _ _).mp h
+  refine ⟨pairExtractTM a b, 6 * ((pairExtractTM a b).k + 1),
+    (computesFunInTime_iff _ _ _).mpr (fun x => (hT x).mono
+      (Nat.mul_le_mul_right _ (by omega))), fun x t => ?_⟩
+  refine (ComputesInTime.spaceUsed_le (hT x) t).trans ?_
+  calc (pairExtractTM a b).k * (5 * (x.length + 1) + 1)
+      ≤ (pairExtractTM a b).k * (6 * (x.length + 1)) :=
+        Nat.mul_le_mul_left _ (by omega)
+    _ = 6 * (pairExtractTM a b).k * (x.length + 1) := by ring
+    _ ≤ 6 * ((pairExtractTM a b).k + 1) * (x.length + 1) :=
+        Nat.mul_le_mul_right _ (by omega)

@@ -1,0 +1,82 @@
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:836:33: error: Application type mismatch: The argument
+  MultiTapeTM.initCfg x
+has type
+  Cfg (M₁.branchTM M₂ b).k Bool (M₁.branchTM M₂ b).State x
+but is expected to have type
+  Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) ?m.56
+in the application
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x)
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:846:40: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:848:29: error: Application type mismatch: The argument
+  MultiTapeTM.initCfg x
+has type
+  Cfg (M₁.branchTM M₂ b).k Bool (M₁.branchTM M₂ b).State x
+but is expected to have type
+  Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) ?m.24
+in the application
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x)
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:894:10: error: Application type mismatch: The argument
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) w).workTapePos
+has type
+  Fin (M₁.branchTM M₂ b).k → ℤ
+but is expected to have type
+  Fin (M₁.k + M₂.k) → ℤ
+in the application
+  D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).workTapePos
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) w).workTapePos
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:913:28: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:918:29: error: Application type mismatch: The argument
+  MultiTapeTM.initCfg x
+has type
+  Cfg (M₁.branchTM M₂ b).k Bool (M₁.branchTM M₂ b).State x
+but is expected to have type
+  Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) ?m.343
+in the application
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x)
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:988:48: error: Application type mismatch: The argument
+  i
+has type
+  Fin (M₁.k + M₂.k)
+but is expected to have type
+  Fin B.k
+in the application
+  MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i
+/private/tmp/tcslib-mig1-comp-loop-qkdu0nv0/wrappers-new-seal-v1.lean:988:53: error: unsolved goals
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T t : ℕ
+hD : D.ComputesInTime x [b] T
+M : FinTM Bool := D.timedCondTM M₁ M₂
+B : FinTM Bool := M₁.branchTM M₂ b
+hDcard :
+  ∀ (i : Fin D.k),
+    MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t (Fin.castAdd (M₁.k + M₂.k) i).castSucc ≤
+      MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) T i
+i : Fin (M₁.k + M₂.k)
+u : ℕ
+hu : u ≤ t
+hp :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (Fin.natAdd D.k i).castSucc ∈
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.natAdd D.k i).castSucc
+v w : ℕ
+hw : w ≤ u
+z : ℤ
+he :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).workTapePos sorry z
+⊢ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) w).workTapePos (sorry ()) = sorry () i

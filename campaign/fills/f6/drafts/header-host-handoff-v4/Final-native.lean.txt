@@ -1,0 +1,273 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace F6FirstHeaderPreship
+open Turing
+
+/-- The fixed first physical header row, from its real initial configuration, reads any
+doubled header and delimiter, rewinds the last ruler to zero, and preserves every bank tape.
+The exact elapsed time and strict return cut are those of `headerRulerTM_run`.
+
+**Proof sketch.** Override the public rows' initial controls locally. The public restart
+identity matches the header row's actual initialization with the scan's real initialization.
+Instantiate the header-ruler contract at offset zero and blank initial tapes, normalize its
+endpoint through initialization field equations, and read all endpoint fields. Public output
+monotonicity and the generic time-space bound give silence and a header-linear envelope. -/
+private theorem first_header_component (K : ℕ) :
+    ∃ H : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), H.q₀ = Sum.inl 0 ∧
+      ∀ u v : List Bool,
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let i : Fin (K + 4) := Fin.last (K + 3)
+        let hlen : ℓ + 1 < z.length + 2 := by
+          have hz := length_pairEncode u v
+          dsimp only [z, ℓ]
+          omega
+        let e : Cfg (K + 4) Bool (Fin 4 ⊕ RewindPhase) z :=
+          ⟨some (Sum.inr .done), ⟨ℓ + 1, hlen⟩,
+            Function.update (fun _ _ => none) i (FinTM.bufferTape (List.replicate ℓ true)),
+            fun _ => 0, []⟩
+        H.runFrom (H.initCfg z) (2 * ℓ + 3) = e ∧
+        (H.runFrom (H.initCfg z) (2 * ℓ + 3)).inputPos.val = ℓ + 1 ∧
+        (∀ a : ℤ, (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapes i a =
+          FinTM.bufferTape (List.replicate ℓ true) a) ∧
+        (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapePos i = 0 ∧
+        (∀ j : Fin (K + 4), j ≠ i →
+          (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapes j = (H.initCfg z).workTapes j ∧
+          (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapePos j = (H.initCfg z).workTapePos j) ∧
+        (∀ t ≤ 2 * ℓ + 3, (H.runFrom (H.initCfg z) t).output = []) ∧
+        (∀ t < 2 * ℓ + 3, (H.runFrom (H.initCfg z) t).state ≠ some (Sum.inr .done)) ∧
+        (∀ t ≤ 2 * ℓ + 3, H.spaceUsed (H.initCfg z) t ≤ (K + 4) * (2 * ℓ + 4)) := by
+  classical
+  let i : Fin (K + 4) := Fin.last (K + 3)
+  let S : MultiTapeTM (K + 4) Bool (Fin 4) := { headerScanTM i with q₀ := 0 }
+  let H : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase) :=
+    { headerRulerTM i with q₀ := Sum.inl 0 }
+  refine ⟨H, rfl, ?_⟩
+  intro u v z ℓ index hlen e
+  let d := S.initCfg z
+  have hd : d = Cfg.init (0 : Fin 4) z :=
+    MultiTapeTM.initCfg_with_q₀ (headerScanTM i) 0 z
+  have hpos : d.inputPos.val = 1 + 0 := by rw [hd, Cfg.init_inputPos]; rfl
+  have hstate : d.state = some 0 := by rw [hd, Cfg.init_state]
+  have hblank (a : ℤ) : d.workTapes i a = none := by rw [hd, Cfg.init_workTapes]
+  have hinit : H.initCfg z = d.mapState Sum.inl :=
+    MultiTapeTM.initCfg_eq_mapState S H Sum.inl rfl z
+  obtain ⟨hrow, hcut⟩ := headerRulerTM_run i d 0 hpos hstate u v
+    (by rw [List.drop_zero]) hblank
+  have transport (t : ℕ) : H.runFrom (H.initCfg z) t =
+      (headerRulerTM i).runFrom (d.mapState Sum.inl) t := by
+    calc H.runFrom (H.initCfg z) t = H.runFrom (d.mapState Sum.inl) t :=
+        congrArg (fun c => H.runFrom c t) hinit
+      _ = (headerRulerTM i).runFrom (d.mapState Sum.inl) t :=
+        MultiTapeTM.runFrom_with_q₀ (headerRulerTM i) (Sum.inl 0) _ t
+  have hw : d.workTapes = fun _ _ => none := by
+    funext j a
+    rw [hd, Cfg.init_workTapes]
+  have hh : d.workTapePos = fun _ => 0 := by
+    funext j
+    rw [hd, Cfg.init_workTapePos]
+  have ho : d.output = [] := by rw [hd, Cfg.init_output]
+  have hip : d.inputPos.val = 1 := by simpa only [Nat.add_zero] using hpos
+  have hend : H.runFrom (H.initCfg z) (2 * ℓ + 3) = e := by
+    rw [transport]
+    simpa only [e, ℓ, hw, hh, ho, hip, Nat.cast_zero, sub_zero, Nat.one_add] using hrow
+  refine ⟨hend, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hend]
+  · intro a
+    rw [hend]
+    exact congrFun (Function.update_self index (FinTM.bufferTape (List.replicate ℓ true))
+      (fun _ _ => none)) a
+  · rw [hend]
+  · intro j hj
+    rw [hend, MultiTapeTM.initCfg_with_q₀]
+    constructor
+    · funext a
+      simp only [e, Function.update_of_ne hj, Cfg.init_workTapes]
+    · rw [Cfg.init_workTapePos]
+  · intro t ht
+    have hp := (H.output_prefix (H.initCfg z) ht).length_le
+    rw [hend, List.length_nil] at hp
+    exact List.length_eq_zero_iff.mp (Nat.eq_zero_of_le_zero hp)
+  · intro t ht
+    rw [transport]
+    exact hcut t ht
+  · intro t ht
+    exact (H.spaceUsed_le_mul_succ (H.initCfg z) t).trans
+      (Nat.mul_le_mul_left (K + 4) (by omega))
+
+end F6FirstHeaderPreship
+#print axioms F6FirstHeaderPreship.first_header_component
+
+namespace F6HeaderHostHandoff
+open Turing
+
+/-- The actual doubled header has positive length and dropping it exposes precisely the suffix.
+Only the published pairing/doubling length and pairing equation are used. -/
+private theorem pair_header_geometry (u v : List Bool) :
+    let ℓ := 2 * u.length + 2
+    (pairEncode u v).length = ℓ + v.length ∧ 0 < ℓ ∧ (pairEncode u v).drop ℓ = v := by
+  dsimp only
+  refine ⟨length_pairEncode u v, by omega, ?_⟩
+  have hlen : (dbl u ++ [false, true]).length = 2 * u.length + 2 := by
+    simp only [List.length_append, length_dbl, List.length_cons, List.length_nil]
+  rw [pairEncode_eq_dbl, ← hlen, List.drop_left]
+
+/-- After the actual first header, changing only its control label gives H5's exact initial
+presentation for a fixed native machine on the real suffix. This is a configuration identity,
+not a run or cut of an outer seam.
+
+**Proof sketch.** Use the checked header row from its real initialization. Its endpoint has
+blank bank tapes, zero heads, the last ruler and physical input position `ℓ+1`. Compare that
+endpoint after state relabelling with the public ruler-host fields at `M.initCfg v`. The pairing
+geometry, ruler window and false initial boundary tag are then discharged directly. -/
+private theorem header_handoff (K : ℕ) {S Q : Type}
+    (M : MultiTapeTM (K + 3) Bool S) (inj : S → Bool → Q) :
+    ∃ A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), A.q₀ = Sum.inl 0 ∧
+      ∀ u v : List Bool,
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let hz : z.length = ℓ + v.length := (pair_header_geometry u v).1
+        let rt := FinTM.bufferTape (List.replicate ℓ true)
+        (A.runFrom (A.initCfg z) (2 * ℓ + 3)).mapState (fun _ => inj M.q₀ false) =
+          rulerHostCfg ℓ hz ((M.initCfg v).state.map fun q => inj q false)
+            (M.initCfg v) rt 0 ∧
+        (∀ t < 2 * ℓ + 3, (A.runFrom (A.initCfg z) t).state ≠ some (Sum.inr .done)) ∧
+        0 < ℓ ∧ z.drop ℓ = v ∧
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          rt (0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) ∧
+        (false = true ↔ (M.initCfg v).inputPos.val = 0) := by
+  classical
+  obtain ⟨A, hA0, hA⟩ := F6FirstHeaderPreship.first_header_component K
+  refine ⟨A, hA0, ?_⟩
+  intro u v z ℓ hz rt
+  obtain ⟨he, _, _, _, _, _, hcut, _⟩ := hA u v
+  refine ⟨?_, hcut, (pair_header_geometry u v).2.1,
+    (pair_header_geometry u v).2.2, ?_, ?_⟩
+  · rw [he]
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, rulerHostCfg_state, MultiTapeTM.initCfg_eq,
+        Cfg.init_state, Option.map_some]
+    · apply Fin.ext
+      rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ (M.initCfg v) rt 0).1]
+      simp only [ℓ, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one]
+    · funext j p
+      rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes]
+      change Function.update (fun _ _ => none) (Fin.last (K + 3))
+          (FinTM.bufferTape (List.replicate ℓ true)) j p =
+        Fin.lastCases (motive := fun _ => ℤ → Option Bool) rt (M.initCfg v).workTapes j p
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Function.update_self, Fin.lastCases_last]
+      · rw [Function.update_of_ne (Fin.castSucc_ne_last i), Fin.lastCases_castSucc,
+          MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · simp only [Cfg.mapState_output, rulerHostCfg_output, MultiTapeTM.initCfg_eq,
+        Cfg.init_output]
+  · intro p _ _
+    simp only [rt, zero_add]
+  · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one,
+      Bool.false_eq_true, Nat.one_ne_zero]
+
+/-- H5 is instantiated uniformly on the actual post-header data after the explicit state-only
+label transport. All presentation premises are proved, and every run/visit/frame clause is kept.
+The liveness clause remains conditional on actual source liveness; no source halt is assumed.
+
+**Proof sketch.** Choose H5 before either input word. The preceding configuration identity
+supplies its concrete start; pairing geometry and real initialization discharge its premises.
+Apply the published host contract at each source time and rewrite only the start configuration. -/
+private theorem host_after_header (K : ℕ) {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM (K + 3) Bool S) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q)
+      (H : MultiTapeTM (K + 4) Bool Q) (inj : S → Bool → Q) (C : ℕ), 0 < C ∧
+      ∃ A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), A.q₀ = Sum.inl 0 ∧
+      ∀ (u v : List Bool) (t : ℕ),
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let hz : z.length = ℓ + v.length := (pair_header_geometry u v).1
+        let rt := FinTM.bufferTape (List.replicate ℓ true)
+        let d := (A.runFrom (A.initCfg z) (2 * ℓ + 3)).mapState (fun _ => inj M.q₀ false)
+        ∃ t', t ≤ t' ∧ t' ≤ C * (ℓ + 1) * t ∧
+          (∃ b' : Bool, (b' = true ↔ (M.runFrom (M.initCfg v) t).inputPos.val = 0) ∧
+            H.runFrom d t' =
+              rulerHostCfg ℓ hz ((M.runFrom (M.initCfg v) t).state.map fun q => inj q b')
+                (M.runFrom (M.initCfg v) t) rt 0) ∧
+          ((∀ s < t, (M.runFrom (M.initCfg v) s).state ≠ none) →
+            ∀ s < t', (H.runFrom d s).state ≠ none) ∧
+          (∀ s ≤ t', ∃ r ≤ t,
+            (∀ i : Fin (K + 3),
+              (H.runFrom d s).workTapes i.castSucc = (M.runFrom (M.initCfg v) r).workTapes i ∧
+              (H.runFrom d s).workTapePos i.castSucc = (M.runFrom (M.initCfg v) r).workTapePos i) ∧
+            (H.runFrom d s).output = (M.runFrom (M.initCfg v) r).output ∧
+            (H.runFrom d s).workTapes (Fin.last (K + 3)) = rt ∧
+            (H.runFrom d s).workTapePos (Fin.last (K + 3)) ∈ Finset.Icc (-1) (ℓ : ℤ)) ∧
+          (∀ i : Fin (K + 3), H.visitedByTapeHead d t' i.castSucc =
+            M.visitedByTapeHead (M.initCfg v) t i) ∧
+          H.visitedByTapeHead d t' (Fin.last (K + 3)) ⊆ Finset.Icc (-1) (ℓ : ℤ) := by
+  classical
+  obtain ⟨Q, fQ, dQ, H, inj, C, hC, hH⟩ := exists_rulerHostTM M
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  obtain ⟨A, hA0, hA⟩ := header_handoff K M inj
+  refine ⟨Q, fQ, dQ, H, inj, C, hC, A, hA0, ?_⟩
+  intro u v t z ℓ hz rt d
+  obtain ⟨start, _, positive, suffix, ruler, tag⟩ := hA u v
+  have whole := hH ℓ hz positive suffix rt 0 ruler (M.initCfg v) false tag t
+  have actualStart : d = rulerHostCfg ℓ hz ((M.initCfg v).state.map fun q => inj q false)
+      (M.initCfg v) rt 0 := start
+  rw [actualStart]
+  simpa only [zero_sub, zero_add, sub_zero] using whole
+
+end F6HeaderHostHandoff
+#print axioms F6HeaderHostHandoff.pair_header_geometry
+#print axioms F6HeaderHostHandoff.header_handoff
+#print axioms F6HeaderHostHandoff.host_after_header
+
+/-! Read-only compiled inventory of the four proposed proof roots and their descendants.
+Imported theorem proof values are not traversed. Existing same-home legacy helpers remain
+outside the changed proof scope. Root types and compiled values are both inspected. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let wanted : List String := ["first_header_component", "pair_header_geometry",
+    "header_handoff", "host_after_header"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} for {wanted.length} source roots"
+  for root in roots.qsort Name.lt do
+    logInfo m!"ROOT|{root}|private={isPrivateName root}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := env.find? n | throwError "selected constant missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) =>
+        logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

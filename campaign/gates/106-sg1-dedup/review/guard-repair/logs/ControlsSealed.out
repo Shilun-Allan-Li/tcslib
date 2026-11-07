@@ -1,0 +1,51 @@
+/private/tmp/sg1-guard-repair/ControlsSealed.lean:12:53: error: Tactic `rfl` failed: The left-hand side
+  Segment M F P a b t
+is not definitionally equal to the right-hand side
+  MultiTapeTM.runFrom a t = b ∧
+    (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+F : Set (Option S)
+P : (Fin k → ℤ) → Prop
+a b : Cfg k Bool S x
+t : ℕ
+⊢ Segment M F P a b t ↔
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+/private/tmp/sg1-guard-repair/ControlsSealed.lean:19:56: error: Tactic `rfl` failed: The left-hand side
+  Segment M F P
+is not definitionally equal to the right-hand side
+  fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+
+k : ℕ
+S : Type
+x : List Bool
+M : MultiTapeTM k Bool S
+F : Set (Option S)
+P : (Fin k → ℤ) → Prop
+⊢ Segment M F P = fun a b t =>
+    MultiTapeTM.runFrom a t = b ∧
+      (∀ u < t, (MultiTapeTM.runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (MultiTapeTM.runFrom a u).workTapePos
+        1.32 real         0.66 user         0.66 sys
+          1458601984  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              118872  page reclaims
+                  96  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   5  voluntary context switches
+                1212  involuntary context switches
+            30569344  instructions retired
+            14065377  cycles elapsed
+             1638736  peak memory footprint

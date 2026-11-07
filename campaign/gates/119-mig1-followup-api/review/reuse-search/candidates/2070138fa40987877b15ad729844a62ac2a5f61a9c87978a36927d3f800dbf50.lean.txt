@@ -1,0 +1,38 @@
+theorem computesFunInTime_stripLast_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun x => match pairDecode x with
+          | some (a, v) =>
+            match splitAtLastTrue v with
+            | some u => pairEncode a u
+            | none => []
+          | none => [])
+        (fun n => c * (n + 1) ^ 2) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (x.length + 1) := by
+  obtain ⟨M, a, hM⟩ := f2_strip_linear
+  refine ⟨M, a + M.k * (a + 1), ?_, ?_⟩
+  · intro x
+    apply (hM x).mono
+    have hn : x.length + 1 ≤ (x.length + 1) ^ 2 := by
+      simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+        (show 1 ≤ 2 by omega)
+    exact (Nat.mul_le_mul_left a hn).trans
+      (Nat.mul_le_mul_right _ (Nat.le_add_right _ _))
+  · intro x t
+    have h := f2_space_of_time (hM x) t
+    have hb : a * (x.length + 1) + 1 ≤ (a + 1) * (x.length + 1) := by
+      simp only [Nat.add_mul, Nat.one_mul]
+      omega
+    exact h.trans ((Nat.mul_le_mul_left M.k hb).trans (by
+      rw [← Nat.mul_assoc]
+      exact Nat.mul_le_mul_right _ (Nat.le_add_left _ _)))
+
+/-- **P11 space row, fixed-width increment** (design
+§12 R3; annotates `Turing.FinTM.computesFunInTime_incFixed`; the
+string-function counterpart of `Turing.incrementTM`). The incrementer
+runs in constant work-tape space: it validates and emits from two native
+input scans with the carry resident in control.
+
+**Proof sketch.** The existing witness `incFixedTM` has no work tapes
+(`k = 0`), so `spaceUsed` is identically `0`. -/

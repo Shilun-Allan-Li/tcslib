@@ -1,0 +1,62 @@
+@[reducible] def Turing.FinTM.loopHostTM : (body : Turing.FinTM Bool) →
+  Turing.FinTM Bool → body.State → Bool → Turing.FinTM Bool :=
+fun body F anchor findMode =>
+  _private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM body F anchor false findMode
+def Turing.FinTM.pairLenCheckTM : ℕ → ℕ → Turing.FinTM Bool :=
+fun C e =>
+  _private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM
+    ((Turing.FinTM.pairExtractTM true false).bufferedCompTM (Turing.FinTM.polyUnaryTM C e))
+def Turing.FinTM.splitSolveTM : ℕ → ℕ → Turing.FinTM Bool :=
+fun C x =>
+  match x with
+  | 0 =>
+    (_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM
+          (Turing.FinTM.prependTM (List.replicate C true)) 0).loopHostTM
+      Turing.FinTM.lengthBitsTM
+      _private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.anchor true
+  | e.succ =>
+    (_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM
+          (_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyUnaryTM e C)
+          (_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl.loop
+            (Fin.last e))).loopHostTM
+      Turing.FinTM.lengthBitsTM
+      _private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.anchor true
+def Turing.FinTM.bufferedCompTM : Turing.FinTM Bool → Turing.FinTM Bool → Turing.FinTM Bool :=
+fun M₁ M₂ =>
+  { k := M₁.k + (1 + M₂.k), State := Option M₁.State ⊕ Unit ⊕ M₂.State × Bool,
+    fintypeState := instFintypeSum (Option M₁.State) (Unit ⊕ M₂.State × Bool),
+    decEqState := fun a b => instDecidableEqSum a b,
+    tm :=
+      { q₀ := Sum.inl (some M₁.tm.q₀),
+        tr := fun q inp work =>
+          match q with
+          | Sum.inl (some q) =>
+            have a := M₁.tm.tr q inp fun i => work (Fin.castAdd (1 + M₂.k) i);
+            { inputTape := a.inputTape,
+              workTapes :=
+                Turing.FinTM.tapeBlocks a.workTapes
+                  (Option.map some a.output, if a.output = none then 0 else SignType.pos) fun x => (none, 0),
+              output := none, state := some (Sum.inl a.state) }
+          | Sum.inl none =>
+            { inputTape := 0,
+              workTapes := Turing.FinTM.tapeBlocks (fun x => (none, 0)) (none, SignType.neg) fun x => (none, 0),
+              output := none, state := some (Sum.inr (Sum.inl ())) }
+          | Sum.inr (Sum.inl PUnit.unit) =>
+            if work (Fin.natAdd M₁.k (Fin.castAdd M₂.k 0)) = none then
+              { inputTape := 0,
+                workTapes := Turing.FinTM.tapeBlocks (fun x => (none, 0)) (none, SignType.pos) fun x => (none, 0),
+                output := none, state := some (Sum.inr (Sum.inr (M₂.tm.q₀, true))) }
+            else
+              { inputTape := 0,
+                workTapes := Turing.FinTM.tapeBlocks (fun x => (none, 0)) (none, SignType.neg) fun x => (none, 0),
+                output := none, state := some (Sum.inr (Sum.inl ())) }
+          | Sum.inr (Sum.inr (q, b)) =>
+            have v := work (Fin.natAdd M₁.k (Fin.castAdd M₂.k 0));
+            have a := M₂.tm.tr q v fun i => work (Fin.natAdd M₁.k (Fin.natAdd 1 i));
+            have m := Turing.FinTM.virtualMove b v a.inputTape;
+            { inputTape := 0, workTapes := Turing.FinTM.tapeBlocks (fun x => (none, 0)) (none, m) a.workTapes,
+              output := a.output,
+              state := Option.map (fun q => Sum.inr (Sum.inr (q, Turing.FinTM.virtualNextTag b m))) a.state } } }
+/private/tmp/tcslib-catalog-review-1u1ky57o/Interface_inventory_v2.lean:8:7: error(lean.unknownIdentifier): Unknown identifier `_private.TCSlib.Complexity.TuringMachine.Build.Loop`
+/private/tmp/tcslib-catalog-review-1u1ky57o/Interface_inventory_v2.lean:8:58: error: Invalid field notation: Identifier or numeral expected
+/private/tmp/tcslib-catalog-review-1u1ky57o/Interface_inventory_v2.lean:8:59: error: unexpected identifier after decimal point; consider parenthesizing the number

@@ -1,0 +1,53 @@
+{
+  "trees": 245,
+  "family_source_blobs": 102,
+  "family_definition_prefix_records": 30,
+  "distinct_prefixes": [
+    "def captureCfg {input : List Bool} (emb : S \u2192 H) (ret : H)",
+    "def leftCfg {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S')",
+    "def rightCfg {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S')"
+  ],
+  "attached_attributes_found": false,
+  "commands": [
+    {
+      "blob": "af54cbd6247438070ca2f7f37debd8615bbc1d3a",
+      "line": 142,
+      "command": "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.captureCfg",
+      "occurrences": [
+        {
+          "commit": "1160c18f03fd318f0dec25738790935fa61379d4",
+          "tcslib_subtree": "1a40165e5ee009f88716fba3d64659e9e4e51f7d",
+          "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean"
+        }
+      ],
+      "disposition": "Approved new PR230 command; no matching command found in another enumerated TCSlib source tree."
+    },
+    {
+      "blob": "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510",
+      "line": 216,
+      "command": "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.FinTM.leftCfg",
+      "occurrences": [
+        {
+          "commit": "1160c18f03fd318f0dec25738790935fa61379d4",
+          "tcslib_subtree": "1a40165e5ee009f88716fba3d64659e9e4e51f7d",
+          "path": "TCSlib/Complexity/TuringMachine/Simulation.lean"
+        }
+      ],
+      "disposition": "Approved new PR230 command; no matching command found in another enumerated TCSlib source tree."
+    },
+    {
+      "blob": "bf0bb4900665e7ca0559d6ed1a7e936c0f7b5510",
+      "line": 218,
+      "command": "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.FinTM.rightCfg",
+      "occurrences": [
+        {
+          "commit": "1160c18f03fd318f0dec25738790935fa61379d4",
+          "tcslib_subtree": "1a40165e5ee009f88716fba3d64659e9e4e51f7d",
+          "path": "TCSlib/Complexity/TuringMachine/Simulation.lean"
+        }
+      ],
+      "disposition": "Approved new PR230 command; no matching command found in another enumerated TCSlib source tree."
+    }
+  ],
+  "source_evidence_limit": "No historical compiled namespaces were loaded. These source inventories rule out an observed concurrent simps generation site in the enumerated refs, not all possible compiler-generated aliases. Exact current-head generated names and attributes belong to the separate compiled census."
+}

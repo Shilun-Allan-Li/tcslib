@@ -1,0 +1,28 @@
+-- Exact source: /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad/TCSlib/Complexity/TuringMachine/Build/Primitives.lean, lines 4008-4017
+/-- The orbit predicate and `solveSplit` use the same finite search, including
+its unsuccessful branch. The Boolean equality is converted explicitly. -/
+private lemma splitFind_eq (C e : ℕ) (w : List Bool) :
+    (List.range (w.length + 1)).find?
+      (fun i => splitAccept C e w ((splitStep w)^[i] [])) = solveSplit C e w.length := by
+  rw [Turing.solveSplit.eq_def]
+  apply splitOrbit_find
+  intro s
+  apply Bool.eq_iff_iff.mpr
+  simp only [splitAccept, decide_eq_true_eq, beq_iff_eq]
+
+-- Exact source: /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad/TCSlib/Complexity/TuringMachine/Build/Primitives.lean, lines 5567-5580
+private def emitterSplitAccept (f : ℕ → ℕ) (w s : List Bool) : Bool :=
+  decide (s.length + f s.length = w.length)
+
+/-- The existing unary-candidate orbit tests the very same predicate, in the
+same order, as the width-parametric specification. -/
+private lemma emitterSplit_find (f : ℕ → ℕ) (w : List Bool) :
+    (List.range (w.length + 1)).find?
+      (fun i => emitterSplitAccept f w ((splitStep w)^[i] [])) =
+        solveSplitWith f w.length := by
+  rw [Turing.solveSplitWith.eq_def]
+  apply splitOrbit_find
+  intro s
+  apply Bool.eq_iff_iff.mpr
+  simp only [emitterSplitAccept, decide_eq_true_eq, beq_iff_eq]
+

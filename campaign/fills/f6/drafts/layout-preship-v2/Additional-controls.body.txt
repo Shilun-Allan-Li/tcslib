@@ -1,0 +1,32 @@
+-- Returning embedding
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) :
+    (embedEmitRetTM ι M).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) => (embedEmitRetTM ι M).q₀) =
+    fun _ M => Sum.inl M.q₀ := by rfl
+-- Forwarding configuration
+example (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) :
+    (embedEmitCfg ι tapes heads pre c).output = pre ++ c.output := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) =>
+      (embedEmitCfg ι tapes heads pre c).output) = fun _ _ _ pre c => pre ++ c.output := by rfl
+-- Last-ruler configuration
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) (q : Option Bool)
+    (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := by rfl
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) :
+    (fun (q : Option Bool) (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) =>
+      (rulerHostCfg ℓ hz q c rt rp).output) = fun _ c _ _ => c.output := by rfl
+-- Forward-loop configuration
+example (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) :
+    (StepBlock.forwardLoopCfg entry M c).output = c.output := by rfl
+example : (fun (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) =>
+    (StepBlock.forwardLoopCfg entry M c).output) = fun _ _ c => c.output := by rfl
+-- Zero-outer startup-loop controller
+example (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) :
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀ = Sum.inl R.q₀ := by rfl
+example : (fun (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) =>
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀) = fun R _ _ _ => Sum.inl R.q₀ := by rfl
+-- Coded dependent bundle
+example (M : CodeTM) : M.toFinTM.k = 1 := by rfl
+example : (fun M : CodeTM => M.toFinTM.k) = fun _ => 1 := by rfl

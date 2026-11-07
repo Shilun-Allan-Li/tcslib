@@ -1,0 +1,20 @@
+ROOT|_private._stdin.0.Complexity.clA5Drop_native|private=true
+PROOFAX|_private._stdin.0.Complexity.clA5Drop_native|kind=theorem|[propext, Classical.choice, Quot.sound]
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PolyTimeComputable|TCSlib.Complexity.ClassNP.PolyTime|kind=definition|private=false
+FOREIGNDEF|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PolyTimeComputable|TCSlib.Complexity.ClassNP.PolyTime|hints=regular
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PrefixByLength.drop|TCSlib.Complexity.ClassNP.PolyTimePrefix|kind=definition|private=false
+FOREIGNDEF|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PrefixByLength.drop|TCSlib.Complexity.ClassNP.PolyTimePrefix|hints=regular
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Turing.pairEncode|TCSlib.Complexity.TuringMachine.Encoding|kind=definition|private=false
+FOREIGNDEF|_private._stdin.0.Complexity.clA5Drop_native|Turing.pairEncode|TCSlib.Complexity.TuringMachine.Encoding|hints=regular
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PolyTimeComputable.comp|TCSlib.Complexity.ClassNP.PolyTime|kind=theorem|private=false
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.polyTimeComputable_dropPrefixByLength|TCSlib.Complexity.ClassNP.PolyTimePrefix|kind=theorem|private=false
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PolyTimeComputable.pairEncode|TCSlib.Complexity.ClassNP.PolyTimePairing|kind=theorem|private=false
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairFstD|TCSlib.Complexity.ClassNP.PolyTimePairing|kind=definition|private=false
+FOREIGNDEF|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairFstD|TCSlib.Complexity.ClassNP.PolyTimePairing|hints=regular
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairSndD|TCSlib.Complexity.ClassNP.PolyTimePairing|kind=definition|private=false
+FOREIGNDEF|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairSndD|TCSlib.Complexity.ClassNP.PolyTimePairing|hints=regular
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.PrefixByLength.drop.eq_1|TCSlib.Complexity.ClassNP.PolyTimePrefix|kind=theorem|private=false
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairFstD_pairEncode|TCSlib.Complexity.ClassNP.PolyTimePairing|kind=theorem|private=false
+CITED|_private._stdin.0.Complexity.clA5Drop_native|Complexity.pairSndD_pairEncode|TCSlib.Complexity.ClassNP.PolyTimePairing|kind=theorem|private=false
+SERIALIZED_READER|Complexity.PrefixByLength.drop.eq_1|owner=some (TCSlib.Complexity.ClassNP.PolyTimePrefix)|AX=[]|type=∀
+  (z : List Bool), Complexity.PrefixByLength.drop z = List.drop (Complexity.pairFstD z).length (Complexity.pairSndD z)

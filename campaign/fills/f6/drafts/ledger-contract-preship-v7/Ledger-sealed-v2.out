@@ -1,0 +1,9 @@
+/private/tmp/tcslib-f6-ledger-sjy6j3gh/Ledger_sealed_v2.lean:68:6: error: Application type mismatch: The argument
+  LE.le.trans (MultiTapeTM.spaceUsedByTape_le_spaceUsed (MultiTapeTM.initCfg x) t 0) hspace
+has type
+  MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t 0 ≤ s
+but is expected to have type
+  (MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t 0).card ≤ ?m.458
+in the application
+  LE.le.trans (Finset.card_le_card hsub)
+    (LE.le.trans (MultiTapeTM.spaceUsedByTape_le_spaceUsed (MultiTapeTM.initCfg x) t 0) hspace)

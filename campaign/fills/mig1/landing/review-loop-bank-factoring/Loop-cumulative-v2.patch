@@ -1,0 +1,297 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -2528,6 +2528,27 @@
+       · rw [MultiTapeTM.runFrom_add, hc]
+         simpa [hany, hb] using hout
+ 
++/-- A bounded startup followed by a halted segment yields a computation in time
++`B * (N + 1)` when startup costs at most `B` and the segment costs at most `N * B`.
++
++**Proof sketch.** Compose the two runs with `MultiTapeTM.runFrom_add`, read the halt and
++output with `computesInTime_iff`, and enlarge the summed time by `ComputesInTime.mono`. -/
++private theorem loop_computes_of_startup (M : FinTM Bool) (x output : List Bool)
++    (c : Cfg M.k Bool M.State x) (startup t B N : ℕ)
++    (hs : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = c)
++    (ht : t ≤ N * B) (hhalt : (M.tm.runFrom c t).state = none)
++    (hout : (M.tm.runFrom c t).output = output) :
++    M.ComputesInTime x output (B * (N + 1)) := by
++  have hrun := M.tm.runFrom_add (M.tm.initCfg x) startup t
++  rw [hinit] at hrun
++  have hcompute : M.ComputesInTime x output (startup + t) := by
++    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
++    · rw [hrun]; exact hhalt
++    · rw [hrun]; exact hout
++  apply hcompute.mono
++  calc startup + t ≤ B + N * B := Nat.add_le_add hs ht
++    _ = B * (N + 1) := by rw [Nat.mul_succ, Nat.mul_comm N, Nat.add_comm]
++
+ /-- **The decision loop's time**. Under the hypotheses of `loopHostTM_contracts` with accepting
+ output `[true]`, the host in decision mode outputs `[true]` if some orbit point
+ `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted, and `[false]` otherwise, within
+@@ -2579,21 +2600,8 @@
+     (fun i => acceptF x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1))
+     (R x.length + 1) ⟨hend, by simpa using hout⟩
+     (fun j hj => by simpa using hsegments j (by omega))
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      [(List.range (R x.length + 1)).any
+-        (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; exact houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (cfg 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
+ 
+ /-- **The decision loop combinator** (repaired per
+ round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
+@@ -2768,23 +2776,8 @@
+     (fun i => out x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1)) (R x.length + 1)
+     ⟨hend, by simpa using hout⟩
+     (fun j hj => by simpa using hsegments j (by omega))
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      (match (List.range (R x.length + 1)).find?
+-          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+-        | some i => out x ((stepF x)^[i] (s0 x))
+-        | none => []) (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; exact houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (cfg 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
+ 
+ /-- **The loop host's space budget**. Under the hypotheses of `loopHostTM_contracts`, in either
+ mode, at every time the host has visited at most `23·k·(T |x| + 1)` work cells, where `k` is its
+@@ -4437,6 +4430,50 @@
+     (fun i => if i.val < j then fun _ => none else bufferTape [true])
+     (fun i => if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
+ 
++/-- Embedding one cleaner into a bank frame realizes any target cleaned prefix that
++agrees with the original prefix away from the selected bank. The cleaner supplies exactly
++the target bank's three tapes and common head, and its state supplies the target control.
++
++**Proof sketch.** Apply `embedEmitCfg_mapState_eq`. The selected-bank equation is the
++three-slot layout equation. Off the selection, the two administrative slots agree directly;
++every other bank agrees because its cleaned-prefix membership is unchanged. -/
++private lemma emCall_bank_embed (M : FinTM Bool) (emit : Bool)
++    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) (j : ℕ) (q : Fin 4)
++    (hrest : ∀ l : Fin M.k, l ≠ i → (l.val < i.val ↔ l.val < j)) :
++    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
++    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun s => .inr (.inl (i.castSucc, s)))
++      frame.workTapes frame.workTapePos
++      (emCallClearCfg x 1 q
++        (if i.val < j then fun _ => none else
++          (M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
++        (if i.val < j then fun _ => none else
++          emCallSpan (emCallLo M arg T i) (emCallHi M arg T i))
++        (if i.val < j then fun _ => none else bufferTape [true])
++        (if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) =
++      emCallBankFrame M emit x arg cap T j (.inr (.inl (i.castSucc, q))) := by
++  dsimp only
++  simp only [emCallEmbeddedCfg]
++  refine embedEmitCfg_mapState_eq _ _ _ _ [] _ _ ?_ ?_ ?_ ?_ ?_
++  · simp only [emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
++  · rfl
++  · rfl
++  · intro r
++    fin_cases r <;> constructor <;>
++      simp [emCallClearCfg, emCallBankFrame, emCallFrame, emCallTripleEmbedding,
++        emCall_layout_triple]
++  · intro k hk
++    rcases emCall_layout_cases M k with h | h | ⟨l, r, h⟩
++    · subst k
++      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
++    · subst k
++      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
++    · subst k
++      have he : l ≠ i := by
++        intro he
++        subst l
++        exact hk ⟨r, rfl⟩
++      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hrest l he]
++
+ /-- Embedding one cleaner at the current bank reproduces the full bank frame.
+ Every other bank and both administrative tapes are retained exactly.
+ **Proof sketch.** Extensionality reduces the claim to individual tape slots.
+@@ -4451,64 +4488,8 @@
+         (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])
+         ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame := by
+   dsimp only
+-  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,
+-      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,
+-      emCallClearCfg, emCallBankFrame, emCallFrame]
+-  · funext j
+-    simp only [emCallEmbeddedCfg]
+-    conv_lhs =>
+-      ext z
+-      rw [Cfg.mapState_workTapes]
+-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).1
+-      · rfl
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).1
+-      · rfl
+-    · subst j
+-      by_cases he : l = i
+-      · subst l
+-        change (embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _
+-        rw [embedEmitCfg_selected_tape]
+-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+-        fin_cases r <;> simp
+-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).1
+-        · rfl
+-  · funext j
+-    simp only [emCallEmbeddedCfg, Cfg.mapState_workTapePos]
+-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).2
+-      · rfl
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).2
+-      · rfl
+-    · subst j
+-      by_cases he : l = i
+-      · subst l
+-        change (embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _
+-        rw [embedEmitCfg_selected_pos]
+-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+-        fin_cases r <;> simp
+-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).2
+-        · rfl
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,
+-      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append]
++  simpa only [Nat.lt_irrefl, ↓reduceIte] using
++    emCall_bank_embed M emit x arg cap T i i.val 0 (fun _ _ => Iff.rfl)
+ 
+ /-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
+ by exactly one, while retaining every inactive tape and head.
+@@ -4523,68 +4504,11 @@
+       (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =
+       emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) := by
+   dsimp only
+-  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,
+-      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,
+-      emCallClearCfg, emCallBankFrame, emCallFrame]
+-  · funext j
+-    simp only [emCallEmbeddedCfg]
+-    conv_lhs =>
+-      ext z
+-      rw [Cfg.mapState_workTapes]
+-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).1
+-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).1
+-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+-    · subst j
+-      by_cases he : l = i
+-      · subst l
+-        change (embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _
+-        rw [embedEmitCfg_selected_tape]
+-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+-        fin_cases r <;> simp
+-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).1
+-        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+-          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+-          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+-  · funext j
+-    simp only [emCallEmbeddedCfg, Cfg.mapState_workTapePos]
+-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).2
+-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+-    · subst j
+-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).2
+-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+-    · subst j
+-      by_cases he : l = i
+-      · subst l
+-        change (embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _
+-        rw [embedEmitCfg_selected_pos]
+-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+-        fin_cases r <;> simp
+-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+-            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).2
+-        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+-          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+-          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+-  · simp only [emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,
+-      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append]
++  simpa only [Nat.lt_succ_self, ↓reduceIte] using
++    emCall_bank_embed M emit x arg cap T i (i.val + 1) 3 (by
++      intro l hl
++      have hi : l.val ≠ i.val := fun h => hl (Fin.ext h)
++      omega)
+ 
+ /-- One native bank-cleaning segment, including its dispatch to the next
+ bank, costs at most six source deadlines plus eight. Dispatch occurs at the
+@@ -5191,21 +5115,9 @@
+     refine Cfg.ext rfl rfl rfl rfl ?_
+     simp only [candidate, loopCall, captureCfg_output]
+   rw [hclean] at hhalt houtput
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      ((List.range (R x.length + 1)).flatMap (fun i => emitF x ((stepF x)^[i] (s0 x))))
+-      (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; simpa only [List.nil_append, orbit] using houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (candidate 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt
++    (by simpa only [List.nil_append, orbit] using houtput)
+ 
+ /-- **E1, the emitting loop** (design §11; customers:
+ the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction

@@ -1,0 +1,57 @@
+/private/tmp/tcslib-f6-final-seam-sh0dpby3/Seam_sealed_v4.lean:208:15: error: unsolved goals
+case h
+K n ℓ : ℕ
+P Q V : Type
+inst✝ : DecidableEq P
+A : MultiTapeTM (K + 4) Bool P
+finish : P
+H : MultiTapeTM (K + 4) Bool V
+entry : Q
+inj : Q → Bool → V
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x z : List Bool
+hz : z.length = ℓ + x.length
+σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+ec : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg σ (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+bank : Cfg (K + 3) Bool P x :=
+  { state := some finish, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+d : Cfg (K + 4) Bool P z :=
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+    workTapes := fun i =>
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i,
+    workTapePos := fun x => 0, output := [] }
+c : Cfg (K + 3 + 1) Bool V z :=
+  rulerHostCfg ℓ hz (Option.map (fun q => inj q false) ec.state) ec (FinTM.bufferTape (List.replicate ℓ true)) 0
+T t B S : ℕ
+aRun : MultiTapeTM.runFrom (MultiTapeTM.initCfg z) T = d
+aCut : ∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some finish
+hB : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) T ≤ B
+hS : 1 ≤ S
+hloop : ∀ (i : Fin (K + 4)), MultiTapeTM.spaceUsedByTape c t i ≤ S
+A0 : MultiTapeTM (0 + (K + 2 + 2)) Bool P := ⋯ ▸ A
+U0 : MultiTapeTM (0 + (K + 2 + 2)) Bool (P ⊕ V) := startupLoopTM A0 finish H (inj entry false)
+U : MultiTapeTM (K + 4) Bool (P ⊕ V) := ⋯ ▸ U0
+hexit : d.state = some finish
+hphysical : Cfg.mapState (fun x => inj entry false) d = c
+hcfg : Cfg.mapState (fun x => inj entry false) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c
+e : K + 4 = 0 + (K + 2 + 2) := Eq.symm (Nat.zero_add (K + 2 + 2))
+d0 : Cfg (0 + (K + 2 + 2)) Bool P z := e ▸ d
+aRun0 : MultiTapeTM.runFrom (MultiTapeTM.initCfg z) T = d0
+hexit0 : d0.state = some finish
+aCut0 : ∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some finish
+hcfg0 :
+  Cfg.mapState (fun x => inj entry false) d0 = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c
+hB0 : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) T ≤ B
+hr :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (T + 1 + t) =
+    Cfg.mapState Sum.inr (embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] (MultiTapeTM.runFrom c t))
+hs : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) (T + 1 + t) ≤ B + (0 + (K + 2 + 2)) * S
+⊢ K + 4 = 0 + (K + 2 + 2)
+'F6SeamPreship.last_ruler_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.full_bank_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.conditional_final_seam' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

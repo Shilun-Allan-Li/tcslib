@@ -1,0 +1,598 @@
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:11:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:13:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:16:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:18:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:20:95: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:22:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:24:80: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  []
+
+x : List Bool
+⊢ (Cfg.init () x).output = []
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:25:96: error: Tactic `rfl` failed: The left-hand side
+  fun x => (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  fun x => []
+
+⊢ (fun x => (Cfg.init () x).output) = fun x => []
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:28:38: error: Tactic `rfl` failed: The left-hand side
+  (a.apply c).state
+is not definitionally equal to the right-hand side
+  a.state
+
+a : Action 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ (a.apply c).state = a.state
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:30:29: error: Tactic `rfl` failed: The left-hand side
+  fun a c => (a.apply c).state
+is not definitionally equal to the right-hand side
+  fun a x => a.state
+
+⊢ (fun a c => (a.apply c).state) = fun a x => a.state
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:33:83: error: Tactic `rfl` failed: The left-hand side
+  { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+q : Option Unit
+w : Fin 1 → ℤ → Option Bool
+h : Fin 1 → ℤ
+⊢ { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol = none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:35:97: error: Tactic `rfl` failed: The left-hand side
+  fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => none
+
+⊢ (fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol) =
+    fun x x_1 x_2 => none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:38:64: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+c : Cfg 1 Bool Unit []
+i : Fin 1
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:40:53: error: Tactic `rfl` failed: The left-hand side
+  fun c i => c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  fun c i => c.workTapes i (c.workTapePos i)
+
+⊢ (fun c i => c.workTapeSymbols i) = fun c i => c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:42:51: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 SignType.zero
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 SignType.zero = 1
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:46:64: error: Tactic `rfl` failed: The left-hand side
+  fun pos m => moveInputPos pos m
+is not definitionally equal to the right-hand side
+  fun pos m =>
+    let p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+n : ℕ
+⊢ (fun pos m => moveInputPos pos m) = fun pos m =>
+    let p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:49:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:51:66: error: Tactic `rfl` failed: The left-hand side
+  fun M x y t => M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+⊢ (fun M x y t => M.ComputesInTime x y t) = fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:54:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:56:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:59:64: error: Tactic `rfl` failed: The left-hand side
+  M.Computes f
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+M : FinTM Bool
+f : List Bool → List Bool
+⊢ M.Computes f = ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:61:60: error: Tactic `rfl` failed: The left-hand side
+  fun M f => M.Computes f
+is not definitionally equal to the right-hand side
+  fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+⊢ (fun M f => M.Computes f) = fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:64:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:66:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:69:71: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.visitedByTapeHead c t i).card
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:71:103: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+
+⊢ (fun tm c t i => MultiTapeTM.spaceUsedByTape c t i) = fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:74:108: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:77:95: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+⊢ (fun tm c t i => MultiTapeTM.visitedByTapeHead c t i) = fun tm c t i =>
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:80:92: error: Tactic `rfl` failed: The left-hand side
+  FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+m : SignType
+q : Option Unit
+⊢ FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:82:54: error: Tactic `rfl` failed: The left-hand side
+  fun m q => FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  fun m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ (fun m q => FinTM.controlAction m q) = fun m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:84:91: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.leftAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:85:107: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:87:92: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.rightAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:88:108: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:90:95: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.emitAction [] id 0).output
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (FinTM.emitAction [] id 0).output = none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:92:24: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.emitAction [] e 0).output
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun e => (FinTM.emitAction [] e 0).output) = fun x => none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:94:66: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] (-1)
+is not definitionally equal to the right-hand side
+  none
+
+⊢ FinTM.bufferTape [true] (-1) = none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:95:79: error: Tactic `rfl` failed: The left-hand side
+  fun w => FinTM.bufferTape w (-1)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun w => FinTM.bufferTape w (-1)) = fun x => none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:99:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  true
+
+⊢ FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0)) = true
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:101:71: error: Tactic `rfl` failed: The left-hand side
+  fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  fun x x_1 b => b
+
+⊢ (fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))) = fun x x_1 b => b
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:104:65: error: Tactic `rfl` failed: The left-hand side
+  FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+p : Fin (n + 2)
+b : Bool
+⊢ FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:106:76: error: Tactic `rfl` failed: The left-hand side
+  fun p b => FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+⊢ (fun p b => FinTM.VirtualTag p b) = fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:108:71: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  SignType.pos
+
+b : Bool
+⊢ FinTM.virtualMove b (some true) SignType.pos = SignType.pos
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:109:95: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  fun x => SignType.pos
+
+⊢ (fun b => FinTM.virtualMove b (some true) SignType.pos) = fun x => SignType.pos
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:111:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  b
+
+b : Bool
+⊢ FinTM.virtualNextTag b SignType.zero = b
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:112:76: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  fun b => b
+
+⊢ (fun b => FinTM.virtualNextTag b SignType.zero) = fun b => b
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:115:60: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x y
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+x y : List Bool
+⊢ pairEncode x y = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:117:71: error: Tactic `rfl` failed: The left-hand side
+  fun x y => pairEncode x y
+is not definitionally equal to the right-hand side
+  fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+⊢ (fun x y => pairEncode x y) = fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:119:51: error: Tactic `rfl` failed: The left-hand side
+  pairDecode []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ pairDecode [] = none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:121:59: error: Tactic `rfl` failed: The left-hand side
+  fun r => pairDecode (true :: false :: r)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun r => pairDecode (true :: false :: r)) = fun x => none
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:123:68: error: Tactic `rfl` failed: The left-hand side
+  dbl w
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) w
+
+w : List Bool
+⊢ dbl w = List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:124:84: error: Tactic `rfl` failed: The left-hand side
+  fun w => dbl w
+is not definitionally equal to the right-hand side
+  fun w => List.flatMap (fun b => [b, b]) w
+
+⊢ (fun w => dbl w) = fun w => List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:126:56: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  0
+
+w : List Bool
+⊢ (FinTM.constTM w).k = 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:127:72: error: Tactic `rfl` failed: The left-hand side
+  fun w => (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun w => (FinTM.constTM w).k) = fun x => 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:129:33: error: Tactic `rfl` failed: The left-hand side
+  pairDiagTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ pairDiagTM.k = 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:130:60: error: Tactic `rfl` failed: The left-hand side
+  fun x => pairDiagTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => pairDiagTM.k) = fun x => 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:134:71: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  some q
+
+q : Unit
+w : Fin 1 → List Bool
+⊢ (Cfg.ofWords q w).state = some q
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:136:83: error: Tactic `rfl` failed: The left-hand side
+  fun q w => (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  fun q x => some q
+
+⊢ (fun q w => (Cfg.ofWords q w).state) = fun q x => some q
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:139:43: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.mapState f c).output
+is not definitionally equal to the right-hand side
+  c.output
+
+f : Unit → Unit
+c : Cfg 1 Bool Unit []
+⊢ (Cfg.mapState f c).output = c.output
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:141:55: error: Tactic `rfl` failed: The left-hand side
+  fun f c => (Cfg.mapState f c).output
+is not definitionally equal to the right-hand side
+  fun x c => c.output
+
+⊢ (fun f c => (Cfg.mapState f c).output) = fun x c => c.output
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:145:56: error: Tactic `rfl` failed: The left-hand side
+  (vhostCfg c b p pre).output
+is not definitionally equal to the right-hand side
+  pre ++ c.output
+
+x y : List Bool
+c : Cfg 1 Bool Unit y
+b : Bool
+p : Fin (x.length + 2)
+pre : List Bool
+⊢ (vhostCfg c b p pre).output = pre ++ c.output
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:148:76: error: Tactic `rfl` failed: The left-hand side
+  fun c b p pre => (vhostCfg c b p pre).output
+is not definitionally equal to the right-hand side
+  fun c x_1 x pre => pre ++ c.output
+
+x y : List Bool
+⊢ (fun c b p pre => (vhostCfg c b p pre).output) = fun c x_1 x pre => pre ++ c.output
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:150:66: error: Tactic `rfl` failed: The left-hand side
+  vhostBuffer m
+is not definitionally equal to the right-hand side
+  Fin.castAdd m 0
+
+m : ℕ
+⊢ vhostBuffer m = Fin.castAdd m 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:151:65: error: Tactic `rfl` failed: The left-hand side
+  vhostBuffer
+is not definitionally equal to the right-hand side
+  fun m => Fin.castAdd m 0
+
+⊢ vhostBuffer = fun m => Fin.castAdd m 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:153:65: error: Tactic `rfl` failed: The left-hand side
+  vhostBank i
+is not definitionally equal to the right-hand side
+  Fin.natAdd 1 i
+
+m : ℕ
+i : Fin m
+⊢ vhostBank i = Fin.natAdd 1 i
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:154:81: error: Tactic `rfl` failed: The left-hand side
+  fun i => vhostBank i
+is not definitionally equal to the right-hand side
+  fun i => Fin.natAdd 1 i
+
+m : ℕ
+⊢ (fun i => vhostBank i) = fun i => Fin.natAdd 1 i
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:156:68: error: Tactic `rfl` failed: The left-hand side
+  vhostCap m
+is not definitionally equal to the right-hand side
+  Fin.natAdd (1 + m) 0
+
+m : ℕ
+⊢ vhostCap m = Fin.natAdd (1 + m) 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:157:67: error: Tactic `rfl` failed: The left-hand side
+  vhostCap
+is not definitionally equal to the right-hand side
+  fun m => Fin.natAdd (1 + m) 0
+
+⊢ vhostCap = fun m => Fin.natAdd (1 + m) 0
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:159:80: error: Tactic `rfl` failed: The left-hand side
+  (vhostEmitTM M).q₀
+is not definitionally equal to the right-hand side
+  (M.q₀, true)
+
+M : MultiTapeTM 1 Bool Unit
+⊢ (vhostEmitTM M).q₀ = (M.q₀, true)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:161:32: error: Tactic `rfl` failed: The left-hand side
+  fun M => (vhostEmitTM M).q₀
+is not definitionally equal to the right-hand side
+  fun M => (M.q₀, true)
+
+⊢ (fun M => (vhostEmitTM M).q₀) = fun M => (M.q₀, true)
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:165:68: error: Tactic `rfl` failed: The left-hand side
+  (embedSilentCfg ι cap tapes heads pre out c).output
+is not definitionally equal to the right-hand side
+  out
+
+ι : Fin 1 ↪ Fin 2
+cap : Fin 2
+tapes : Fin 2 → ℤ → Option Bool
+heads : Fin 2 → ℤ
+pre out : List Bool
+c : Cfg 1 Bool Unit []
+⊢ (embedSilentCfg ι cap tapes heads pre out c).output = out
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:168:94: error: Tactic `rfl` failed: The left-hand side
+  fun ι cap tapes heads pre out c => (embedSilentCfg ι cap tapes heads pre out c).output
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 x_3 x_4 out x_5 => out
+
+⊢ (fun ι cap tapes heads pre out c => (embedSilentCfg ι cap tapes heads pre out c).output) =
+    fun x x_1 x_2 x_3 x_4 out x_5 => out
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:171:38: error: Tactic `rfl` failed: The left-hand side
+  (embedEmitTM ι M).q₀
+is not definitionally equal to the right-hand side
+  M.q₀
+
+ι : Fin 1 ↪ Fin 2
+M : MultiTapeTM 1 Bool Bool
+⊢ (embedEmitTM ι M).q₀ = M.q₀
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:173:26: error: Tactic `rfl` failed: The left-hand side
+  fun ι M => (embedEmitTM ι M).q₀
+is not definitionally equal to the right-hand side
+  fun x M => M.q₀
+
+⊢ (fun ι M => (embedEmitTM ι M).q₀) = fun x M => M.q₀
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:176:56: error: Tactic `rfl` failed: The left-hand side
+  (seamCompTM M exit N entry).q₀
+is not definitionally equal to the right-hand side
+  Sum.inl M.q₀
+
+M N : MultiTapeTM 1 Bool Unit
+exit entry : Unit
+⊢ (seamCompTM M exit N entry).q₀ = Sum.inl M.q₀
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:178:38: error: Tactic `rfl` failed: The left-hand side
+  fun M N exit entry => (seamCompTM M exit N entry).q₀
+is not definitionally equal to the right-hand side
+  fun M x x_1 x_2 => Sum.inl M.q₀
+
+⊢ (fun M N exit entry => (seamCompTM M exit N entry).q₀) = fun M x x_1 x_2 => Sum.inl M.q₀
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:180:100: error: Tactic `rfl` failed: The left-hand side
+  (copyTM k src dst).q₀
+is not definitionally equal to the right-hand side
+  SweepPhase.sweep
+
+k : ℕ
+src dst : Fin k
+⊢ (copyTM k src dst).q₀ = SweepPhase.sweep
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:182:40: error: Tactic `rfl` failed: The left-hand side
+  fun k src dst => (copyTM k src dst).q₀
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => SweepPhase.sweep
+
+⊢ (fun k src dst => (copyTM k src dst).q₀) = fun x x_1 x_2 => SweepPhase.sweep
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:184:104: error: Tactic `rfl` failed: The left-hand side
+  (transferTM k src dst).q₀
+is not definitionally equal to the right-hand side
+  SweepPhase.sweep
+
+k : ℕ
+src dst : Fin k
+⊢ (transferTM k src dst).q₀ = SweepPhase.sweep
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:186:40: error: Tactic `rfl` failed: The left-hand side
+  fun k src dst => (transferTM k src dst).q₀
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => SweepPhase.sweep
+
+⊢ (fun k src dst => (transferTM k src dst).q₀) = fun x x_1 x_2 => SweepPhase.sweep
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:188:98: error: Tactic `rfl` failed: The left-hand side
+  stateWord k w i
+is not definitionally equal to the right-hand side
+  if ↑i = 0 then w else []
+
+k : ℕ
+w : List Bool
+i : Fin k
+⊢ stateWord k w i = if ↑i = 0 then w else []
+/private/tmp/tcslib-certshell-probe-jckye6d5/Controls_sealed_v4.lean:190:51: error: Tactic `rfl` failed: The left-hand side
+  fun k w i => stateWord k w i
+is not definitionally equal to the right-hand side
+  fun x w i => if ↑i = 0 then w else []
+
+⊢ (fun k w i => stateWord k w i) = fun x w i => if ↑i = 0 then w else []

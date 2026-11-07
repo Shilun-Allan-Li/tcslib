@@ -1,0 +1,54 @@
+/private/tmp/tcslib-f6-first-header-nnpwuit9/First_header_sealed_v1.lean:61:14: error: Function expected at
+  List.drop_zero
+but this term has type
+  List.drop 0 ?m.573 = ?m.573
+
+Note: Expected a function because this term is being applied to the argument
+  z
+/private/tmp/tcslib-f6-first-header-nnpwuit9/First_header_sealed_v1.lean:80:6: error: Tactic `assumption` failed
+
+case refine_4.left
+K : ℕ
+i : Fin (K + 4) := Fin.last (K + 3)
+S : MultiTapeTM (K + 4) Bool (Fin 4) :=
+  let __src := headerScanTM i;
+  { q₀ := 0, tr := __src.tr }
+H : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase) :=
+  let __src := headerRulerTM i;
+  { q₀ := Sum.inl 0, tr := __src.tr }
+u v : List Bool
+z : List Bool := pairEncode u v
+ℓ : ℕ := 2 * u.length + 2
+index : Fin (K + 4) := Fin.last (K + 3)
+hlen : ℓ + 1 < z.length + 2 :=
+  have hz := length_pairEncode u v;
+  id (Decidable.byContradiction fun a => first_header_component._proof_1 u v hz a)
+e : Cfg (K + 4) Bool (Fin 4 ⊕ RewindPhase) z :=
+  { state := some (Sum.inr RewindPhase.done), inputPos := ⟨ℓ + 1, hlen⟩,
+    workTapes := Function.update (fun x x_1 => none) index (FinTM.bufferTape (List.replicate ℓ true)),
+    workTapePos := fun x => 0, output := [] }
+d : Cfg (K + 4) Bool (Fin 4) z := MultiTapeTM.initCfg z
+hd : d = Cfg.init 0 z
+hpos : ↑d.inputPos = 1 + 0
+hstate : d.state = some 0
+hblank : ∀ (a : ℤ), d.workTapes i a = none
+hinit : MultiTapeTM.initCfg z = Cfg.mapState Sum.inl d
+hrow :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl d) (2 * (2 * u.length + 2) + 3) =
+    { state := some (Sum.inr RewindPhase.done), inputPos := ⟨↑d.inputPos + (2 * u.length + 2), ⋯⟩,
+      workTapes :=
+        Function.update d.workTapes i fun a =>
+          FinTM.bufferTape (List.replicate (2 * u.length + 2) true) (a - d.workTapePos i),
+      workTapePos := d.workTapePos, output := d.output }
+hcut :
+  ∀ t < 2 * (2 * u.length + 2) + 3,
+    (MultiTapeTM.runFrom (Cfg.mapState Sum.inl d) t).state ≠ some (Sum.inr RewindPhase.done)
+transport : ∀ (t : ℕ), MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t = MultiTapeTM.runFrom (Cfg.mapState Sum.inl d) t
+hend : MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3) = e
+j : Fin (K + 4)
+hj : j ≠ index
+⊢ (fun x => none) = (Cfg.init (Sum.inl 0) z).workTapes j
+'_private._stdin.0.F6FirstHeaderPreship.first_header_component' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
