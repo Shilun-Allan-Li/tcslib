@@ -592,7 +592,7 @@ polynomial-time words `par z` (the parameter), `kw z`, `bw z` and `tw z`, whose 
 trial width `k`, the block length `B` and the trial count `T`, and `c z` (the coins). Then some
 polynomial-time `g` computes the sampler `rejectBlocksL (E ⟦par z⟧) k B T (c z)`:
 - `g z = []` when every trial is rejected;
-- otherwise `g z = true :: b`, where `b` reads as the accepted value and has at most `k` bits.
+- otherwise `g z` is nonempty, and its tail reads as the accepted value and has at most `k` bits.
 
 That is, `(g z).tail.length ≤ k` and
 `rejectBlocksL (E ⟦par z⟧) k B T (c z) = if g z = [] then none else some ⟦(g z).tail⟧`.

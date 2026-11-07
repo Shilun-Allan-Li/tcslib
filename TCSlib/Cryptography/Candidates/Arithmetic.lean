@@ -192,7 +192,7 @@ theorem listToNat_natToList_zero_append (k : ℕ) (w : List Bool) :
     listToNat (natToList k 0 ++ w) = listToNat w := by
   rw [listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
 
-/-- **Width normalization by truncation**: the last `|b|` bits of `⟦0⟧_W ++ b` are the
+/-- **Width normalization by truncation**: the last `W` bits of `⟦0⟧_W ++ b` are the
 `W`-bit numeral of `⟦b⟧`, `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W` (the low `W` bits, also when
 `⟦b⟧ ≥ 2^W`).
 
