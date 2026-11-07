@@ -5,6 +5,13 @@ only sees the brief, the environment addendum and the repository). Your verdict 
 "issue after edits" or "do not issue", with a suggested diff. You do not edit the brief yourself and
 do not commit or push. `SP=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad`.
 
+## Delivery model — refresh before using this historical template
+
+The maintainer must ask the user Codex or Claude before preparing the fill and record the answer.
+Check that the issued brief and prompt use that route: Codex returns Markdown/ZIP in chat and
+cannot push; Claude may push only its own exchange delivery path. Campaign landing changes go
+through a user-approved PR; D-0 still permits direct maintainer record pushes.
+
 ## Context
 - The brief will be issued on `cryptography/pass-shelat-ch2-4` once PR #210 (the equation-lemma PR,
   head `fff0430c7c9db136e60ed14b069e972c2ea56fc8`, branch `wip/eqlemmas`, worktree `$SP/wt-e1`) merges.
@@ -39,7 +46,9 @@ do not commit or push. `SP=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0
    `$SP/ab-ref/fillinputs.py /home/user/tcslib fff0430c7c9db136e60ed14b069e972c2ea56fc8 <module> <outdir>`
    — it reads git objects, so the hash works — and say if they changed), delivery via
    `inbox/fills/<unit>/` on the exchange branch, checkpoints, REPORT checklist, escalation rules,
-   statement freeze, budget order. No zip/attachment language remains.
+   statement freeze, budget order. Codex requires a complete chat Markdown/ZIP payload and no
+   push instruction; Claude uses its assigned exchange path. Missing model selection or
+   contradictory transport instructions must be fixed before issue.
 6. **Parallel safety:** units own disjoint files; no unit needs another unit's unfinished proof (only
    statements); authorized imports create no cycles.
 7. **Clarity:** plain, unambiguous English; flag anything a worker could misread.

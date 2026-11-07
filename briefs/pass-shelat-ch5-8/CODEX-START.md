@@ -23,6 +23,14 @@ Notes:
 - **No exchange access.** If the new agent cannot push to the exchange branch, it can still prepare
   everything in the records and ask the user to relay.
 
+## Delivery model (user update, 2026-11-06 PST)
+
+Before preparing **each** audit or fill, ask whether the external worker will be **Codex or
+Claude**. Codex returns Markdown/ZIP in chat and cannot push; Claude may push its delivery to
+the exchange. Workers never directly push a campaign branch; their changes land through a
+user-approved PR. The user explicitly kept D-0 for maintainer records (direct push) and the
+Lean-only-by-PR rule. Use the matching `EXCHANGE.md` prompt template.
+
 ## The user's local layout (2026-11-07)
 
 `~/phd_experiments/tcslib_all_branches/` holds two checkouts:

@@ -14,7 +14,11 @@ fetch, bootstrap), because the environment is already built for you:
   workers run on the same machine with their own trees: never touch anything outside `$WT`, `$OL`,
   `$EX` and your own scratch directory `$SP/fillwork-<unit>/`.
 - Python as `python3 -I`. Commit hashes from `git rev-parse`.
-- **Delivery** (the brief's exchange protocol): `$EX` is a detached checkout of
+- **Delivery model:** ask the user Codex or Claude before preparing the job. An external Codex
+  worker returns Markdown/ZIP in chat and cannot push; the exchange-push example below is only
+  for the Claude route. The maintainer handles Codex intake. No worker directly pushes a
+  campaign branch; landing goes through a user-approved PR.
+- **Claude delivery** (the brief's exchange protocol): `$EX` is a detached checkout of
   `exchange/pass-shelat-ch5-8`. For each checkpoint and the final delivery: `cd $EX && git fetch -q
   origin exchange/pass-shelat-ch5-8 && git checkout -q --detach origin/exchange/pass-shelat-ch5-8`,
   write `inbox/fills/<unit>/` (REPORT.md, `patches/` from `git -C $WT format-patch
