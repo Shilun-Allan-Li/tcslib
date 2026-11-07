@@ -57,6 +57,10 @@ This folder only carries files in transit. The maintainer's rules are in that br
   **PARTIAL**. The immutable issued packet is in `archive/fills/megafill-mig1/`; all checkpoint/
   final ZIPs and report are in `archive/deliveries/fill-mig1-mega-2026-11-07/`. The source equals
   reviewed cp07; maintainer interface/factoring repairs and gate118 remain, no acceptance or merge.
+  Later R2 ZIP/report are preserved in `archive/deliveries/fill-mig1-mega-r2-2026-11-07/`,
+  after campaign records and both independent reviews were committed. Its4028 payload hashes
+  and864 supplied attempts reconcile; remaining strict seal gaps make it **PARTIAL/superseded**.
+  No R2 source is adopted. Maintainer final checks/replay and pending interface rulings are separate.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
