@@ -698,8 +698,8 @@ private theorem rbl_length_step_iterate_le (x : List Bool) (i : ℕ) :
 /-- The loop is polynomial-time: an instance of the repetition host
 `polyTimeComputable_iterateFind` (`R = var`, orbit bound `2|x| + 4`), its `match` read by
 `split` (its equation lemmas), never by unfolding the matcher. -/
-private theorem rbl_loop_poly {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x]) :
-    PolyTimeComputable (rbl_loop acc) := by
+private theorem rbl_loop_poly {acc : List Bool → Bool}
+    (hacc : PolyTimeComputable fun x => [acc x]) : PolyTimeComputable (rbl_loop acc) := by
   have hF := polyTimeComputable_iterateFind rbl_step_poly (rbl_acc_poly hacc) rbl_out_poly
     PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
       rw [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
@@ -730,8 +730,8 @@ private theorem rbl_loop_spec (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (
       rejectBlocksL (E (listToNat par)) kw.length bw.length tw.length c =
         if rbl_loop acc (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c)) = []
         then none
-        else some (listToNat
-          (rbl_loop acc (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c))).tail) := by
+        else some (listToNat (rbl_loop acc
+          (pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c))).tail) := by
   set x0 := pairEncode (pairEncode (pairEncode bw kw) par) (pairEncode tw c) with hx0
   have hblock : ∀ i, rbl_block (rbl_step^[i] x0) = (c.drop (i * bw.length)).take kw.length := by
     intro i
@@ -751,8 +751,8 @@ private theorem rbl_loop_spec (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (
     simp only [hx0, length_pairEncode]
     omega
   have hfind : (List.range (x0.length + 1)).find? (fun i => rbl_acc acc (rbl_step^[i] x0)) =
-      (List.range tw.length).find?
-        (fun i => decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
+      (List.range tw.length).find? (fun i =>
+        decide (E (listToNat par) (listToNat ((c.drop (i * bw.length)).take kw.length)))) := by
     rw [show (fun i => rbl_acc acc (rbl_step^[i] x0)) = _ from funext hacc]
     exact IterateFind.find?_range_and_lt _ hrange
   rw [rejectBlocksL_eq_find?, rbl_loop, hfind]
