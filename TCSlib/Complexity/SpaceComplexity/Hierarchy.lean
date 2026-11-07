@@ -88,16 +88,6 @@ seek and correction, the code header scan and the rewind) and its pieces, the ho
 loop with its per-tape ledger, and the startup–loop seam at the last-ruler endpoint, consumed only
 by `Complexity.space_universal`. -/
 
-/-- The doubled header `pairEncode u v` has the positive length `2|u| + 2` before its suffix,
-and dropping that many cells exposes `v` (glue for [AB09, Exercise 4.1]). -/
-private theorem f6_pair_geometry (u v : List Bool) :
-    (pairEncode u v).length = (2 * u.length + 2) + v.length ∧ 0 < 2 * u.length + 2 ∧
-      (pairEncode u v).drop (2 * u.length + 2) = v := by
-  refine ⟨length_pairEncode u v, by omega, ?_⟩
-  have hlen : (dbl u ++ [false, true]).length = 2 * u.length + 2 := by
-    simp only [List.length_append, length_dbl, List.length_cons, List.length_nil]
-  rw [pairEncode_eq_dbl, ← hlen, List.drop_left]
-
 /-- Embedding a configuration into the same number of tapes along `Fin.castLEEmb`, with a
 blank frame and no prior output, gives it back (`Turing.embedEmitCfg_eq`). -/
 private theorem f6_full_embed {m : ℕ} {Q : Type} {z : List Bool} (c : Cfg m Bool Q z) :
@@ -308,7 +298,9 @@ private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S]
   letI : DecidableEq Q := dQ
   refine ⟨Q, fQ, dQ, H, inj, C, ?_⟩
   intro u y bank T R q hrun hlive ℓ hp e₁ e₂
-  obtain ⟨hz, hℓ, hdrop⟩ := f6_pair_geometry u y
+  have hz : (pairEncode u y).length = ℓ + y.length := length_pairEncode u y
+  have hℓ : 0 < ℓ := Nat.succ_pos _
+  have hdrop : (pairEncode u y).drop ℓ = y := pairEncode_drop u y
   have hc : (M.initCfg y).state = some M.q₀ := by
     rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
   have hci : (M.initCfg y).inputPos.val = 1 := by
@@ -427,64 +419,63 @@ private theorem f6_skip {K : ℕ} {z : List Bool} {S : Type}
   · change (e.mapState fun _ => SeekPhase.run).output = _
     rw [Cfg.mapState_output]
 
-/-- The fourth prefix phase: one step moving only the ruler head one cell left, correcting
-the skip's step past the ruler, so that the next scan starts at the ruler's end
-([AB09, Exercise 4.1]). It is the two-control machine whose every transition is
-`Turing.tapeAction` on the last tape with move `-1` into the exit control; no catalog row moves
-one head by one cell.
+/-- The fourth prefix phase: the catalog walk `Turing.walkTM` over the empty word, leftwards on
+the ruler tape, moves the ruler head from one cell past the blank after the ruler `true^ℓ` back to
+that blank, correcting the skip's step past it, so that the next scan starts at the ruler's end
+([AB09, Exercise 4.1]).
 
-**Proof sketch.** `Turing.step_of_tapeAction_move` gives the one step; the input head stays
-(`Turing.moveInputPos_zero`) and only the ruler head changes, from `ℓ + 1` to `ℓ`. The entry
-control differs from the exit, so the cut is immediate. -/
-private theorem f6_correction (K : ℕ) :
-    ∃ C : MultiTapeTM (K + 4) Bool Bool,
-      ∀ {z : List Bool} (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ)
-        (hp : ℓ + 1 < z.length + 2) {S : Type} (q : S),
-        let r : Fin (K + 4) := Fin.last (K + 3)
-        let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩,
-          Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
-          Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1), []⟩
-        let f : Cfg (K + 4) Bool Bool z := ⟨some true, ⟨ℓ + 1, hp⟩,
-          Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
-          Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ), []⟩
-        C.runFrom (e.mapState fun _ => false) 1 = f ∧
-          ∀ t < 1, (C.runFrom (e.mapState fun _ => false) t).state ≠ some true := by
-  let C : MultiTapeTM (K + 4) Bool Bool :=
-    ⟨false, fun _ _ _ => tapeAction (Fin.last (K + 3)) 0 none (-1) true⟩
-  refine ⟨C, ?_⟩
-  intro z bank ℓ hp S q r e f
-  have hs : (e.mapState fun _ => false).state = some false := by
-    rw [Cfg.mapState_state]; rfl
-  have hstep := step_of_tapeAction_move C (e.mapState fun _ => false) r 0 (-1) hs rfl
-  refine ⟨?_, ?_⟩
-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hstep]
-    apply Cfg.ext
-    · rfl
-    · change moveInputPos (e.mapState fun _ => false).inputPos 0 = _
-      rw [moveInputPos_zero, Cfg.mapState_inputPos]
-    · funext j p
-      change (e.mapState fun _ => false).workTapes j p = _
-      rw [Cfg.mapState_workTapes]
-    · funext j
-      change Function.update (e.mapState fun _ => false).workTapePos r
-        ((e.mapState fun _ => false).workTapePos r + ((-1 : SignType) : ℤ)) j =
-          Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ) j
-      by_cases hj : j = r
-      · rw [hj, Function.update_self, Function.update_self, Cfg.mapState_workTapePos,
-          SignType.coe_neg, SignType.coe_one]
-        change Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) r + -1 = ℓ
-        rw [Function.update_self]
-        omega
-      · rw [Function.update_of_ne hj, Function.update_of_ne hj, Cfg.mapState_workTapePos]
-        change Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) j = 0
-        rw [Function.update_of_ne hj]
-    · change (e.mapState fun _ => false).output = _
-      rw [Cfg.mapState_output]
-  · intro t ht
-    have h0 : t = 0 := by omega
-    subst h0
-    rw [MultiTapeTM.runFrom_zero, hs]
-    exact fun h => Bool.noConfusion (Option.some.inj h)
+**Proof sketch.** `Turing.walkTM_run_ofCfg` with the empty word: the one cell it reads is the
+blank under the head (`Turing.FinTM.bufferTape_eq`), and its endpoint moves only the ruler head,
+by `-1`, in one step. -/
+private theorem f6_correction {K : ℕ} {z : List Bool} {S : Type}
+    (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ) (hp : ℓ + 1 < z.length + 2) (q : S) :
+    let r : Fin (K + 4) := Fin.last (K + 3)
+    let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1), []⟩
+    let f : Cfg (K + 4) Bool SeekPhase z := ⟨some .done, ⟨ℓ + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ), []⟩
+    (walkTM (Symbol := Bool) (K + 4) r (· = r) .neg).runFrom (e.mapState fun _ => .run) 1 = f ∧
+      ∀ t < 1, ((walkTM (Symbol := Bool) (K + 4) r (· = r) .neg).runFrom
+        (e.mapState fun _ => .run) t).state ≠ some .done := by
+  intro r e f
+  have hhead : (e.mapState fun _ => SeekPhase.run).workTapePos r = (ℓ : ℤ) + 1 := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self r ((ℓ : ℤ) + 1) (fun _ => (0 : ℤ))
+  obtain ⟨run, cut, _⟩ := walkTM_run_ofCfg r (· = r) rfl SignType.neg ([] : List Bool)
+    (e.mapState fun _ => SeekPhase.run) (by rw [Cfg.mapState_state]; rfl)
+    (fun p hp => by
+      have hp0 : p = 0 := Nat.le_zero.mp hp
+      subst hp0
+      rw [hhead, Cfg.mapState_workTapes, Nat.cast_zero, mul_zero, add_zero]
+      change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate ℓ true)) bank (Fin.last (K + 3)) ((ℓ : ℤ) + 1) = _
+      rw [Fin.lastCases_last, FinTM.bufferTape_eq, FinTM.bufferTape_eq, if_pos (by omega),
+        if_pos le_rfl, List.getElem?_replicate, if_neg (by omega), List.getElem?_nil])
+  refine ⟨run.trans ?_, cut⟩
+  apply Cfg.ext
+  · rfl
+  · change (e.mapState fun _ => SeekPhase.run).inputPos = _
+    rw [Cfg.mapState_inputPos]
+  · funext j p
+    change (e.mapState fun _ => SeekPhase.run).workTapes j p = _
+    rw [Cfg.mapState_workTapes]
+  · funext j
+    change (e.mapState fun _ => SeekPhase.run).workTapePos j +
+      (if j = r then ((SignType.neg : SignType) : ℤ) * ((([] : List Bool).length + 1 : ℕ) : ℤ)
+        else 0) = Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ) j
+    by_cases hj : j = r
+    · rw [hj, if_pos rfl, hhead, Function.update_self]
+      simp only [List.length_nil, Nat.zero_add, Nat.cast_one, mul_one, SignType.neg_eq_neg_one,
+        SignType.coe_neg, SignType.coe_one]
+      omega
+    · rw [if_neg hj, Cfg.mapState_workTapePos, add_zero]
+      change Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) j =
+        Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ) j
+      rw [Function.update_of_ne hj, Function.update_of_ne hj]
+  · change (e.mapState fun _ => SeekPhase.run).output = _
+    rw [Cfg.mapState_output]
 
 /-- The fifth prefix phase: from the ruler's end, `Turing.headerScanTM` reads the code header
 `pairEncode u v` and extends the ruler `true^ℓ` to `true^(ℓ + ℓ₂)`, `ℓ₂ = 2|u| + 2`, at a first
@@ -656,15 +647,15 @@ private theorem f6_prefix (c : EffectiveMachineCode) :
   obtain ⟨Q₁, fQ₁, dQ₁, H₁, inj₁, C₁, hH₁⟩ := f6_hosted A₁
   letI : Fintype Q₁ := fQ₁
   letI : DecidableEq Q₁ := dQ₁
-  obtain ⟨Cor, hCor⟩ := f6_correction K
   let r : Fin (K + 4) := Fin.last (K + 3)
   let P2 := embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H₁
   let S2 := seamCompTM (headerRulerTM r) (Sum.inr RewindPhase.done) P2
     (Sum.inl (inj₁ A₁.q₀ false))
   let S3 := seamCompTM S2 (Sum.inr (Sum.inr ())) (skipTM (Symbol := Bool) (K + 4) r)
     SeekPhase.run
-  let S4 := seamCompTM S3 (Sum.inr SeekPhase.done) Cor false
-  let S5 := seamCompTM S4 (Sum.inr true) (headerScanTM r) (0 : Fin 4)
+  let S4 := seamCompTM S3 (Sum.inr SeekPhase.done)
+    (walkTM (Symbol := Bool) (K + 4) r (· = r) .neg) SeekPhase.run
+  let S5 := seamCompTM S4 (Sum.inr SeekPhase.done) (headerScanTM r) (0 : Fin 4)
   let S6 := seamCompTM S5 (Sum.inr (3 : Fin 4)) (rewindTM (Symbol := Bool) (K + 4) r)
     RewindPhase.start
   let A : MultiTapeTM (K + 4) Bool _ :=
@@ -691,17 +682,20 @@ private theorem f6_prefix (c : EffectiveMachineCode) :
   obtain ⟨s3, _, c3⟩ := f6_seam S2 _ (skipTM (Symbol := Bool) (K + 4) r) _ SeekPhase.done
     s2 rfl c2 h3 rfl k3
   replace s3 := s3.trans (f6_mapState_mk _ _ _ _ _ _)
-  obtain ⟨h4, k4⟩ := hCor bank (2 * u.length + 2) hp₁
+  obtain ⟨h4, k4⟩ := f6_correction (z := z) bank (2 * u.length + 2) hp₁
     (Sum.inr SeekPhase.done : ((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase)
-  obtain ⟨s4, _, c4⟩ := f6_seam S3 _ Cor _ true s3 rfl c3 h4 rfl k4
+  obtain ⟨s4, _, c4⟩ := f6_seam S3 _ (walkTM (Symbol := Bool) (K + 4) r (· = r) .neg) _
+    SeekPhase.done s3 rfl c3 h4 rfl k4
   replace s4 := s4.trans (f6_mapState_mk _ _ _ _ _ _)
   obtain ⟨h5, k5⟩ := f6_scan (z := z) bank (2 * u.length + 2) hp₁
-    (Sum.inr true : (((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ Bool) α x
-    (f6_pair_geometry u (pairEncode α x)).2.2
+    (Sum.inr SeekPhase.done : (((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ SeekPhase)
+    α x
+    (pairEncode_drop u (pairEncode α x))
   obtain ⟨s5, _, c5⟩ := f6_seam S4 _ (headerScanTM r) _ (3 : Fin 4) s4 rfl c4 h5 rfl k5
   replace s5 := s5.trans (f6_mapState_mk _ _ _ _ _ _)
   obtain ⟨h6, k6⟩ := f6_rewind (z := z) bank ℓ hp
-    (Sum.inr (3 : Fin 4) : ((((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ Bool) ⊕ Fin 4)
+    (Sum.inr (3 : Fin 4) :
+      ((((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ SeekPhase) ⊕ Fin 4)
   obtain ⟨s6, _, c6⟩ := f6_seam S5 _ (rewindTM (Symbol := Bool) (K + 4) r) _ RewindPhase.done
     s5 rfl c5 h6 rfl k6
   replace s6 := s6.trans (f6_mapState_mk _ _ _ _ _ _)
@@ -1053,14 +1047,15 @@ forwarding loop, glued by `Turing.startupLoopTM`. (i) **Prefix.** Six phases glu
 `Turing.headerRulerTM` reads `bits s` and leaves the ruler `true^ℓ₁` rewound; the startup, seamed
 to a one-step halt leaf, runs on the suffix `⟨α, x⟩` through the ruler device
 `Turing.exists_rulerHostTM`, and the returning embedding `Turing.embedEmitRetTM` turns its first
-halt into a live return; the skip `Turing.skipTM` and a one-cell left move bring the ruler head to
-`ℓ₁`; the header scan `Turing.headerScanTM` reads `α` and extends the ruler to `true^ℓ`
-(`Turing.headerScanCfg_ruler`); `Turing.rewindTM` rewinds it. The prefix first returns at the
-startup's installed bank (the decoded machine's table and initial state; the target's bundled
-machine is that raw machine by `Turing.CodeTM.toFinTM_eq`), with the ruler `true^ℓ` and the input
-head at `ℓ + 1`, the virtual position `1` on `x`; the budget is never read. Its time is at most
-`C_H (ℓ + 1)(T_α + 2) + 4ℓ + 11` for the startup time `T_α` of `α`, so it uses at most `K + 4`
-times that many cells plus one (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`). (ii) **Loop.** The forwarding round loop of
+halt into a live return; the skip `Turing.skipTM` and the walk `Turing.walkTM` over the empty word
+(one cell back) bring the ruler head to `ℓ₁`; the header scan `Turing.headerScanTM` reads `α` and
+extends the ruler to `true^ℓ` (`Turing.headerScanCfg_ruler`); `Turing.rewindTM` rewinds it. The
+prefix first returns at the startup's installed bank (the decoded machine's table and initial
+state; the target's bundled machine is that raw machine by `Turing.CodeTM.toFinTM_eq`), with the
+ruler `true^ℓ` and the input head at `ℓ + 1`, the virtual position `1` on `x`; the budget is never
+read. Its time is at most `C_H (ℓ + 1)(T_α + 2) + 4ℓ + 11` for the startup time `T_α` of `α`, so
+it uses at most `K + 4` times that many cells plus one
+(`Turing.MultiTapeTM.spaceUsed_le_mul_succ`). (ii) **Loop.** The forwarding round loop of
 `Turing.StepBlock.exists_forwardLoopTM` on the first three bank tapes, hosted on the suffix `x` by
 the ruler device; the prefix endpoint is the host's presentation of the loop's initial encoding
 (`Turing.embedEmitCfg_forwardLoop_init`, `Turing.rulerHostCfg_fields`). From the coded machine's
@@ -1104,13 +1099,14 @@ theorem space_universal :
   obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff _ x output t).mp hcomp
   -- The prefix run on the two headers, and the hosted loop on the suffix `x`.
   obtain ⟨T, hTle, hrun, hcut⟩ := hT (Nat.bits s) x
-  obtain ⟨hz, hℓ1, hdrop1⟩ := f6_pair_geometry (Nat.bits s) (pairEncode α x)
-  obtain ⟨hz2, _, hdrop2⟩ := f6_pair_geometry α x
   have hzl : (pairEncode (Nat.bits s) (pairEncode α x)).length =
-      ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + x.length := by omega
+      ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + x.length := by
+    rw [pairEncode_pairEncode_length]; omega
   have hdrop : (pairEncode (Nat.bits s) (pairEncode α x)).drop
       ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) = x := by
-    rw [← List.drop_drop, hdrop1, hdrop2]
+    rw [show (2 * (Nat.bits s).length + 2) + (2 * α.length + 2) =
+      2 * (Nat.bits s).length + 2 * α.length + 4 by ring]
+    exact pairEncode_pairEncode_drop (Nat.bits s) α x
   obtain ⟨t'', hHhalt, hHout, hHsp⟩ := hD x _ _ hzl (by omega) hdrop t hhalt
   -- The seam: run and per-tape space, with the prefix space bounded by its time.
   have hB := A.spaceUsed_le_mul_succ (A.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) T
