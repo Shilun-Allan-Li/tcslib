@@ -1,0 +1,19 @@
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+/-! Paired Segment delta controls; the same source must fail when sealed. -/
+set_option autoImplicit false
+open Turing
+attribute [local irreducible] Turing.Segment
+
+example {k : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool S) (F : Set (Option S)) (P : (Fin k → ℤ) → Prop)
+    (a b : Cfg k Bool S x) (t : ℕ) :
+    Segment M F P a b t ↔ M.runFrom a t = b ∧
+      (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+      (∀ u ≤ t, P (M.runFrom a u).workTapePos) := by rfl
+
+example {k : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool S) (F : Set (Option S)) (P : (Fin k → ℤ) → Prop) :
+    (Segment M F P : Cfg k Bool S x → Cfg k Bool S x → ℕ → Prop) =
+      (fun a b t => M.runFrom a t = b ∧
+        (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+        (∀ u ≤ t, P (M.runFrom a u).workTapePos)) := by rfl

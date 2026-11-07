@@ -1,7 +1,7 @@
 # F6 fill — DRAFT ONLY, Claude, awaiting prerequisites
 
 **Do not dispatch this file.** It contains intentionally unissued source/package
-pins and an unresolved shared API prerequisite described in `ROUTE-ASSESSMENT.md`.
+pins and an unmerged shared API prerequisite described in `ROUTE-ASSESSMENT.md`.
 The user selected **Claude**, the ruler-hosted suffix route, and checkpoint/final
 zip delivery by push to the exchange inbox. Fill execution follows the merge of
 the `SPACE_linear_ne_NP` consumer (#229), never overlaps another Hierarchy fill,
@@ -18,10 +18,10 @@ and also waits for the coded-bundle conversion check and concrete route pre-ship
 - Bundle SHA-256 and section count: **UNISSUED**.
 - Target source blob / statement freeze / base sorry inventory: **UNISSUED**.
 - Rule-10-safe coded-bundle conversion reader or approved existing conversion
-  route: **UNRESOLVED**. The minimal proposed prerequisite is
+  route: **APPROVED, implemented in #230, audit/merge pending**. The prerequisite is
   `CodeTM.toFinTM_eq (M) : M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm }`
   in Encoding; its syntax and conditional sealed consumption passed, but it is
-  **approved by Seyoon on 2026-11-07, but not yet published**. No H5 strengthening is required: use R2 → H5 → R1' below.
+  **approved by Seyoon on 2026-11-07, implemented in #230, gate117 pending**. No H5 strengthening is required: use R2 → H5 → R1' below.
 - `inputs/bootstrap-order.txt`, `downstream-order.txt`, `final-order.txt`,
   `mathlib-roots.txt`, `owned-files.txt`, `target-admissions.json`, source/gate
   receipts, baseline screen and exact scope record: **not yet generated**.

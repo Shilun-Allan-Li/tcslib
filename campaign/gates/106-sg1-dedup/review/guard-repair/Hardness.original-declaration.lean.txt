@@ -1,0 +1,12 @@
+private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : ℕ)
+    (ha : ∀ v < a, (tm.runFrom c v).state ≠ some anchor)
+    (he : tm.runFrom c a = d)
+    (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
+    ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
+  intro v hv
+  by_cases h : v < a
+  · exact ha v h
+  · have hva : a ≤ v := by omega
+    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+    exact hb (v - a) (by omega)

@@ -1,0 +1,17 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! Intentional exclusion controls: default reducibility validation must reject
+marking each reached reducible structure projection irreducible. No unsafe override. -/
+attribute [local irreducible] Turing.Cfg.inputPos
+attribute [local irreducible] Turing.Cfg.output
+attribute [local irreducible] Turing.Cfg.state
+attribute [local irreducible] Turing.Cfg.workTapePos
+attribute [local irreducible] Turing.Cfg.workTapes
+attribute [local irreducible] Turing.FinTM.State
+attribute [local irreducible] Turing.FinTM.k
+attribute [local irreducible] Turing.FinTM.tm
+attribute [local irreducible] Turing.MultiTapeTM.tr

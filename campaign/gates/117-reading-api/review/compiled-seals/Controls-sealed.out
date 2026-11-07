@@ -1,0 +1,531 @@
+CONTROL|Turing.Action.apply|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.Action.apply|point|Tactic `rfl` failed: equality lhs
+  (action.apply cfg).1
+is not definitionally equal to rhs
+  { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }.1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+action : Turing.Action k Symbol State
+cfg : Turing.Cfg k Symbol State input
+⊢ (action.apply cfg).1 =
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+        workTapes := fun i =>
+          match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+          | none => cfg.workTapes i
+          | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+        workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+        output := cfg.output ++ action.output.toList }.1
+CONTROL|Turing.Action.apply|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.Action.apply|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Action.apply
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+
+⊢ @Turing.Action.apply = fun {k} {State} {Symbol} {input} action cfg =>
+    { state := action.state, inputPos := Turing.moveInputPos cfg.inputPos action.inputTape,
+      workTapes := fun i =>
+        match (motive := Option (Option Symbol) → ℤ → Option Symbol) (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s,
+      workTapePos := fun i => cfg.workTapePos i + ↑(action.workTapes i).2,
+      output := cfg.output ++ action.output.toList }
+CONTROL|Turing.Cfg.init|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.Cfg.init|point|Tactic `rfl` failed: equality lhs
+  (Turing.Cfg.init q₀ input).1
+is not definitionally equal to rhs
+  { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }.1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+q₀ : State
+input : List Symbol
+⊢ (Turing.Cfg.init q₀ input).1 =
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }.1
+CONTROL|Turing.Cfg.init|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.Cfg.init|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Cfg.init
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} q₀ input =>
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+
+⊢ @Turing.Cfg.init = fun {k} {State} {Symbol} q₀ input =>
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+CONTROL|Turing.MultiTapeTM.initCfg|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.initCfg|point|Tactic `rfl` failed: equality lhs
+  (Turing.MultiTapeTM.initCfg input).1
+is not definitionally equal to rhs
+  (Turing.Cfg.init tm.q₀ input).1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+tm : Turing.MultiTapeTM k Symbol State
+input : List Symbol
+⊢ (Turing.MultiTapeTM.initCfg input).1 = (Turing.Cfg.init tm.q₀ input).1
+CONTROL|Turing.MultiTapeTM.initCfg|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.initCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.initCfg
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+
+⊢ @Turing.MultiTapeTM.initCfg = fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+CONTROL|Turing.MultiTapeTM.runFrom|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.runFrom|point|Tactic `rfl` failed: equality lhs
+  (Turing.MultiTapeTM.runFrom cfg t).1
+is not definitionally equal to rhs
+  (Turing.MultiTapeTM.step^[t] cfg).1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+t : ℕ
+⊢ (Turing.MultiTapeTM.runFrom cfg t).1 = (Turing.MultiTapeTM.step^[t] cfg).1
+CONTROL|Turing.MultiTapeTM.runFrom|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.runFrom|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.runFrom
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+
+⊢ @Turing.MultiTapeTM.runFrom = fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+CONTROL|Turing.MultiTapeTM.spaceUsed|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.spaceUsed|point|Tactic `rfl` failed: equality lhs
+  Turing.MultiTapeTM.spaceUsed cfg t
+is not definitionally equal to rhs
+  ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+t : ℕ
+⊢ Turing.MultiTapeTM.spaceUsed cfg t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+CONTROL|Turing.MultiTapeTM.spaceUsed|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.MultiTapeTM.spaceUsed|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.spaceUsed
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg t => ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+
+⊢ @Turing.MultiTapeTM.spaceUsed = fun {k} {State} {Symbol} {input} {tm} cfg t =>
+    ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+CONTROL|Turing.FinTM.bufferTape|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.bufferTape|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.bufferTape w z
+is not definitionally equal to rhs
+  if 0 ≤ z then w[z.toNat]? else none
+
+Symbol : Type u_1
+w : List Symbol
+z : ℤ
+⊢ Turing.FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none
+CONTROL|Turing.FinTM.bufferTape|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.bufferTape|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.bufferTape
+is not definitionally equal to rhs
+  fun {Symbol} w z => if 0 ≤ z then w[z.toNat]? else none
+
+⊢ @Turing.FinTM.bufferTape = fun {Symbol} w z => if 0 ≤ z then w[z.toNat]? else none
+CONTROL|Turing.CodeTM.toFinTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.CodeTM.toFinTM|point|Tactic `rfl` failed: equality lhs
+  M.toFinTM.1
+is not definitionally equal to rhs
+  { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }.1
+
+M : Turing.CodeTM
+⊢ M.toFinTM.1 =
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+        decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }.1
+CONTROL|Turing.CodeTM.toFinTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.CodeTM.toFinTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.CodeTM.toFinTM
+is not definitionally equal to rhs
+  fun M =>
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+
+⊢ Turing.CodeTM.toFinTM = fun M =>
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+CONTROL|Turing.FinTM.leftCfg|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.leftCfg|point|Tactic `rfl` failed: equality lhs
+  (Turing.FinTM.leftCfg f c tapes heads).1
+is not definitionally equal to rhs
+  { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes tapes i,
+      workTapePos := fun i => Fin.addCases c.workTapePos heads i, output := c.output }.1
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Turing.Cfg k Bool S x
+tapes : Fin l → ℤ → Option Bool
+heads : Fin l → ℤ
+⊢ (Turing.FinTM.leftCfg f c tapes heads).1 =
+    { state := Option.map f c.state, inputPos := c.inputPos,
+        workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes tapes i,
+        workTapePos := fun i => Fin.addCases c.workTapePos heads i, output := c.output }.1
+CONTROL|Turing.FinTM.leftCfg|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.leftCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.leftCfg
+is not definitionally equal to rhs
+  fun {k l} {S S'} {x} f c tapes heads =>
+    { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes tapes i,
+      workTapePos := fun i => Fin.addCases c.workTapePos heads i, output := c.output }
+
+⊢ @Turing.FinTM.leftCfg = fun {k l} {S S'} {x} f c tapes heads =>
+    { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes tapes i,
+      workTapePos := fun i => Fin.addCases c.workTapePos heads i, output := c.output }
+CONTROL|Turing.FinTM.rightCfg|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.rightCfg|point|Tactic `rfl` failed: equality lhs
+  (Turing.FinTM.rightCfg f c tapes heads).1
+is not definitionally equal to rhs
+  { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i,
+      workTapePos := fun i => Fin.addCases heads c.workTapePos i, output := c.output }.1
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Turing.Cfg l Bool S x
+tapes : Fin k → ℤ → Option Bool
+heads : Fin k → ℤ
+⊢ (Turing.FinTM.rightCfg f c tapes heads).1 =
+    { state := Option.map f c.state, inputPos := c.inputPos,
+        workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i,
+        workTapePos := fun i => Fin.addCases heads c.workTapePos i, output := c.output }.1
+CONTROL|Turing.FinTM.rightCfg|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.rightCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.rightCfg
+is not definitionally equal to rhs
+  fun {k l} {S S'} {x} f c tapes heads =>
+    { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i,
+      workTapePos := fun i => Fin.addCases heads c.workTapePos i, output := c.output }
+
+⊢ @Turing.FinTM.rightCfg = fun {k l} {S S'} {x} f c tapes heads =>
+    { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i,
+      workTapePos := fun i => Fin.addCases heads c.workTapePos i, output := c.output }
+CONTROL|Turing.captureCfg|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.captureCfg|point|Tactic `rfl` failed: equality lhs
+  (Turing.captureCfg emb ret pre out₀ c).1
+is not definitionally equal to rhs
+  { state := some ((Option.map emb c.state).getD ret), inputPos := c.inputPos,
+      workTapes := fun i => if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output),
+      workTapePos := fun i => if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length,
+      output := out₀ }.1
+
+k : ℕ
+S : Type u_1
+H : Type u_2
+input : List Bool
+emb : S → H
+ret : H
+pre out₀ : List Bool
+c : Turing.Cfg k Bool S input
+⊢ (Turing.captureCfg emb ret pre out₀ c).1 =
+    { state := some ((Option.map emb c.state).getD ret), inputPos := c.inputPos,
+        workTapes := fun i => if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output),
+        workTapePos := fun i => if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length,
+        output := out₀ }.1
+CONTROL|Turing.captureCfg|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.captureCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.captureCfg
+is not definitionally equal to rhs
+  fun {k} {S} {H} {input} emb ret pre out₀ c =>
+    { state := some ((Option.map emb c.state).getD ret), inputPos := c.inputPos,
+      workTapes := fun i => if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output),
+      workTapePos := fun i => if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length, output := out₀ }
+
+⊢ @Turing.captureCfg = fun {k} {S} {H} {input} emb ret pre out₀ c =>
+    { state := some ((Option.map emb c.state).getD ret), inputPos := c.inputPos,
+      workTapes := fun i => if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output),
+      workTapePos := fun i => if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length, output := out₀ }
+CONTROL|Turing.FinTM.branchTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.branchTM|point|Tactic `rfl` failed: equality lhs
+  (M₁.branchTM M₂ b).1
+is not definitionally equal to rhs
+  { k := M₁.k + M₂.k, State := M₁.State ⊕ M₂.State, fintypeState := instFintypeSum M₁.State M₂.State,
+      decEqState := fun a b => instDecidableEqSum a b,
+      tm :=
+        { q₀ := bif b then Sum.inl M₁.tm.q₀ else Sum.inr M₂.tm.q₀,
+          tr := fun q inp work =>
+            match q with
+            | Sum.inl q => Turing.FinTM.leftAction M₂.k Sum.inl (M₁.tm.tr q inp fun i => work (Fin.castAdd M₂.k i))
+            | Sum.inr q =>
+              Turing.FinTM.rightAction M₁.k Sum.inr (M₂.tm.tr q inp fun i => work (Fin.natAdd M₁.k i)) } }.1
+
+M₁ M₂ : Turing.FinTM Bool
+b : Bool
+⊢ (M₁.branchTM M₂ b).1 =
+    { k := M₁.k + M₂.k, State := M₁.State ⊕ M₂.State, fintypeState := instFintypeSum M₁.State M₂.State,
+        decEqState := fun a b => instDecidableEqSum a b,
+        tm :=
+          { q₀ := bif b then Sum.inl M₁.tm.q₀ else Sum.inr M₂.tm.q₀,
+            tr := fun q inp work =>
+              match q with
+              | Sum.inl q => Turing.FinTM.leftAction M₂.k Sum.inl (M₁.tm.tr q inp fun i => work (Fin.castAdd M₂.k i))
+              | Sum.inr q =>
+                Turing.FinTM.rightAction M₁.k Sum.inr (M₂.tm.tr q inp fun i => work (Fin.natAdd M₁.k i)) } }.1
+CONTROL|Turing.FinTM.branchTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.branchTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.branchTM
+is not definitionally equal to rhs
+  fun M₁ M₂ b =>
+    { k := M₁.k + M₂.k, State := M₁.State ⊕ M₂.State, fintypeState := instFintypeSum M₁.State M₂.State,
+      decEqState := fun a b => instDecidableEqSum a b,
+      tm :=
+        { q₀ := bif b then Sum.inl M₁.tm.q₀ else Sum.inr M₂.tm.q₀,
+          tr := fun q inp work =>
+            match q with
+            | Sum.inl q => Turing.FinTM.leftAction M₂.k Sum.inl (M₁.tm.tr q inp fun i => work (Fin.castAdd M₂.k i))
+            | Sum.inr q => Turing.FinTM.rightAction M₁.k Sum.inr (M₂.tm.tr q inp fun i => work (Fin.natAdd M₁.k i)) } }
+
+⊢ Turing.FinTM.branchTM = fun M₁ M₂ b =>
+    { k := M₁.k + M₂.k, State := M₁.State ⊕ M₂.State, fintypeState := instFintypeSum M₁.State M₂.State,
+      decEqState := fun a b => instDecidableEqSum a b,
+      tm :=
+        { q₀ := bif b then Sum.inl M₁.tm.q₀ else Sum.inr M₂.tm.q₀,
+          tr := fun q inp work =>
+            match q with
+            | Sum.inl q => Turing.FinTM.leftAction M₂.k Sum.inl (M₁.tm.tr q inp fun i => work (Fin.castAdd M₂.k i))
+            | Sum.inr q => Turing.FinTM.rightAction M₁.k Sum.inr (M₂.tm.tr q inp fun i => work (Fin.natAdd M₁.k i)) } }
+CONTROL|Turing.FinTM.idTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.idTM|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.idTM.1
+is not definitionally equal to rhs
+  { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+      tm :=
+        { q₀ := (),
+          tr := fun x inp x_1 =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+
+⊢ Turing.FinTM.idTM.1 =
+    { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+        tm :=
+          { q₀ := (),
+            tr := fun x inp x_1 =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+              | none =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+CONTROL|Turing.FinTM.idTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.idTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.idTM
+is not definitionally equal to rhs
+  { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+    tm :=
+      { q₀ := (),
+        tr := fun x inp x_1 =>
+          match inp with
+          | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+          | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+
+⊢ Turing.FinTM.idTM =
+    { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+      tm :=
+        { q₀ := (),
+          tr := fun x inp x_1 =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+CONTROL|Turing.FinTM.constTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.constTM|point|Tactic `rfl` failed: equality lhs
+  (Turing.FinTM.constTM w).1
+is not definitionally equal to rhs
+  { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm := { q₀ := 0, tr := fun i x x_1 => Turing.FinTM.emitAction w id i } }.1
+
+w : List Bool
+⊢ (Turing.FinTM.constTM w).1 =
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+        decEqState := instDecidableEqFin (w.length + 1),
+        tm := { q₀ := 0, tr := fun i x x_1 => Turing.FinTM.emitAction w id i } }.1
+CONTROL|Turing.FinTM.constTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.constTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.constTM
+is not definitionally equal to rhs
+  fun w =>
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm := { q₀ := 0, tr := fun i x x_1 => Turing.FinTM.emitAction w id i } }
+
+⊢ Turing.FinTM.constTM = fun w =>
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm := { q₀ := 0, tr := fun i x x_1 => Turing.FinTM.emitAction w id i } }
+CONTROL|Turing.FinTM.prependTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.prependTM|point|Tactic `rfl` failed: equality lhs
+  (Turing.FinTM.prependTM w).1
+is not definitionally equal to rhs
+  { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            if h : ↑q < w.length then
+              { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+            else
+              match inp with
+              | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+              | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+
+w : List Bool
+⊢ (Turing.FinTM.prependTM w).1 =
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+        decEqState := instDecidableEqFin (w.length + 1),
+        tm :=
+          { q₀ := 0,
+            tr := fun q inp x =>
+              if h : ↑q < w.length then
+                { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+              else
+                match inp with
+                | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+                | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+CONTROL|Turing.FinTM.prependTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.prependTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.prependTM
+is not definitionally equal to rhs
+  fun w =>
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            if h : ↑q < w.length then
+              { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+            else
+              match inp with
+              | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+              | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }
+
+⊢ Turing.FinTM.prependTM = fun w =>
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            if h : ↑q < w.length then
+              { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+            else
+              match inp with
+              | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+              | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }
+CONTROL|Turing.FinTM.pairValidTM|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.pairValidTM|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.pairValidTM.1
+is not definitionally equal to rhs
+  { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+      tm :=
+        { q₀ := none,
+          tr := fun q inp x =>
+            match q, inp with
+            | none, some b =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+            | some b, some c =>
+              if b = c then
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+              else { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+            | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }.1
+
+⊢ Turing.FinTM.pairValidTM.1 =
+    { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+        tm :=
+          { q₀ := none,
+            tr := fun q inp x =>
+              match q, inp with
+              | none, some b =>
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+              | some b, some c =>
+                if b = c then
+                  { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+                else
+                  { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+              | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }.1
+CONTROL|Turing.FinTM.pairValidTM|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.pairValidTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.pairValidTM
+is not definitionally equal to rhs
+  { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+    tm :=
+      { q₀ := none,
+        tr := fun q inp x =>
+          match q, inp with
+          | none, some b =>
+            { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+          | some b, some c =>
+            if b = c then
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+            else { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+          | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }
+
+⊢ Turing.FinTM.pairValidTM =
+    { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+      tm :=
+        { q₀ := none,
+          tr := fun q inp x =>
+            match q, inp with
+            | none, some b =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+            | some b, some c =>
+              if b = c then
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+              else { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+            | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }
+CONTROL|Turing.FinTM.rightAction|point|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.rightAction|point|Tactic `rfl` failed: equality lhs
+  (Turing.FinTM.rightAction k f a).1
+is not definitionally equal to rhs
+  { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i, output := a.output,
+      state := Option.map f a.state }.1
+
+l : ℕ
+S S' : Type
+k : ℕ
+f : S → S'
+a : Turing.Action l Bool S
+⊢ (Turing.FinTM.rightAction k f a).1 =
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+        output := a.output, state := Option.map f a.state }.1
+CONTROL|Turing.FinTM.rightAction|abstract|FAIL
+/private/tmp/tcslib-gate117-seals-l88o6aed/Controls_sealed.lean:80:0: error: RFL_CONTROL|Turing.FinTM.rightAction|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.rightAction
+is not definitionally equal to rhs
+  fun {l} {S S'} k f a =>
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }
+
+⊢ @Turing.FinTM.rightAction = fun {l} {S S'} k f a =>
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }

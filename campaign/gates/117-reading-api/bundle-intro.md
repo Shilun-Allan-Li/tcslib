@@ -1,0 +1,1 @@
+Codex audit of PR230: the23 approved non-simp reading/resource theorems. Read campaign/gates/117-reading-api/pack.md first. Full eight-file source populations, complete census/axiom/owner-seal/control/screen/search evidence and the actual394-module current replay are included. This is separate from the future MIG-1 proof/migration audit.

@@ -9,95 +9,94 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-07 UTC; read this first)
 
-Codex maintains the campaign on the user's Mac. The full native baseline `oleans-mac0` at
-`68076072` passed **894 modules, 0 failed, 0 skipped**. The user's merge of **#228** is
-`96daf38bc82ea21dab18da257fc517ca0bd59ff6`; its Lean tree exactly matches the passed E-PAD PR replay. Its
-snapshot has been adopted as **`oleans-mac1`** (formerly `oleans-mepad1`). Receipt:
-`campaign/status/2026-11-07-epad-merge/receipt.json`. No re-elaboration is claimed for this
-exact-tree adoption.
-
-The user also merged **#222** at `3555163f40d9c101a2ef4e81407c1bda58fe5ca4`. Its Lean tree exactly
-matches the passed NatBits replay plus its E-PAD catch-up; **oleans-mnb2** was adopted as
-**oleans-mac2**, the current campaign snapshot. Receipt:
-`campaign/status/2026-11-07-natbits-merge/receipt.json`. This adoption is not a new elaboration.
+Codex maintains the campaign on Seyoon's Mac. Native Lean 4.25.0 baseline **oleans-mac0**
+passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, and now **#229**
+(the proved `SPACE_linear_ne_NP` consumer) at **`e3adffac67377a8b6e23bed74bfdbb44a123dd86`**.
+Gate 116 is CLOSED, Codex PASS0/0/0/12, all notes accepted. Its passed two-module replay tree
+exactly matches the merge's Lean, so **oleans-mlin2 was renamed oleans-mac3**, the current
+campaign snapshot. This is exact-tree adoption, not another elaboration or a snapshot splice.
+Receipt: `campaign/status/2026-11-07-linear-merge/receipt.json`. Earlier mac1/mac2 adoption
+receipts remain in their dated status folders.
 
 **Open campaign PRs:**
 
-| PR | Change | Gate | Status |
-|---|---|---|---|
-| #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Fresh full current-campaign replay passed (`oleans-msg3`): 329 modules, 0 failures/static mismatches. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
-| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116 CLOSED**, Codex PASS0/0/0/12, all notes accepted | Current 2-module replay passed (`oleans-mlin2`); clean current merge preview equals that passed Lean tree. **Clear to merge**; user merges. |
+| PR | Change | Gate | Current status |
+| --- | --- | --- | --- |
+| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Fresh round2 evidence/packet in preparation. **Not yet clear to merge.** |
+| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Packet in preparation; audit not dispatched. **Not yet clear to merge.** |
 
-Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
-identical Frag hunk. After #228, the original imported-source criterion held, but their older
-replays contained the Padding stub. Both now have an actual **two-module catch-up replay** of
-the newly proved Padding file and its facade, chained separately from their original validated
-snapshots. All audited changed blobs are unchanged. No independent snapshots were spliced.
-After any further Lean merge, reassess/replay before clearing another PR.
+The replays above were executed separately from complete **oleans-mac3** copies on the current
+merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
+each gate's current-replay evidence folder. Original issued packets and external findings
+remain immutable. No PR is merged by the maintainer.
 
-**E-PAD is merged.** Gate **115 CLOSED**, Codex **PASS 0 blockers / 0 majors / 0 minors / 12 notes**.
-All 12 notes are dispositioned, with no required code repair. Original findings: 13,569 bytes,
-SHA-256 `d4da5651aa56072dcdb7c461f6a853be439d1e3c08d29525cbfe9a687fd570c4`.
-The received chat attachment and the user's shared top-level inbox file are byte-identical;
-the latter is preserved outside our exchange subtree. The fill's 118 payload checksums pass,
-and the original report/source and separate reviews are retained. #228 preserves three public
-source declarations, adds 49 private source declarations and three compiler proof auxiliaries;
-all 506 walked constants use only the standard axioms. Two-module replay, 72 paired seal controls
-and the 23-file screen passed. Issued gate/fill/delivery/findings are archived after recording.
+**Immediate work, in order:**
 
-**Immediate work:**
-1. **Overnight MIG-1 megafill**, requested by the user, **dispatched to Claude**. One pinned
-   cumulative job for the approved F-A → F-C → F-B → F-D migration and assigned MIG-24 factoring:
-   17 existing spec admissions and three already-gated forwarding-map exports (two additional
-   proofs). Eleven files owned; WordSize is documentation-only. No F6, paused record-table rows
-   or Ladner fill is added. Inputs, independent brief review, passed pre-ship/screen and exact issued pins live in
-   `campaign/fills/mig1/`. The verified 324-section packet is published and unchanged. Await
-   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`. cp01/cp02 are
-   reviewed as partial; config-field readers (user ruling pending) and branchTM contracts
-   remain unresolved. cp03 is reviewed as partial: five F-C specs are filled, but factoring,
-   captureCfg readers and one omitted seal region still need repair; three F-B targets remain.
-   The ten config, five capture and three branch readers are bounded/tested proposals awaiting
-   separate user rulings (`campaign/fills/mig1/review/API-PROPOSALS.md`); no API is added.
-2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
-   `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
-   screen and fresh two-module post-NatBits merged-tree replay pass; only F6 remains admitted. Gate **116**,
-   **Codex** selected (attachment + pasted findings), is published, verified and **dispatched by the user** (217 sections; exact pins in its dispatch record).
-   The user merges only after it closes.
-3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is merged; keep each report verbatim, dispose every item,
-   check the current merged tree and ask the user to merge only when clear.
-4. **F6 (`space_universal`, Hierarchy)** follows the consumer merge. #221's harvest prerequisite
-   has merged. The user chose D-F6-3's **ruler-hosted suffix** route and **Claude** on
-   2026-11-07. The records-only draft and bounded probes are in `campaign/fills/f6/drafts/`.
-   The H5 halt/return composition passes without strengthening H5. A CodeTM bundle reader
-   is proposed, tested conditionally under seal and awaiting the user's API ruling. Full
-   concrete prefix/layout pre-ship remains. Do not dispatch before those prerequisites and
-   #229's merge. Gate 112's carry requires actual run/cut/loop-bound witnesses.
-5. **Ladner's statement phase**, before its fill: LD-1–LD-7 accepted; LD-8 pins the O(n³)
-   computation but not Exercise 3.6's second-part wording. Follow `roadmap3/PLAN.md` §(f).
+1. Finish and publish the two selected **Codex** audit packets: gate117 for #230 and
+gate106 round2 for #215. Gate106 canonical round1 findings are verbatim; every item is
+answered in resolutions. Its two cut repairs are body-only, no new statement/import/API.
+Seyoon accepted, by kind across TCSlib, five clean/stop/padding/transducer/bridge families
+and separately finite-family shared-bank dispatchers and companion proofs. Cleanup owner:
+maintainer, next12.2c SAT/Hardness consolidation **after active MIG1 and before further fills
+in those files**. The ledger distinguishes these from prior clPlacement, RO1 and live-prefix
+watch records; no other acknowledgment is inferred. The accounting minor is six consumer
+declarations/twelve SingleTape calls. Gate106 round2 still must close.
 
-**Other dedup work** remains in the ledger: WL-1/CQ-1/RS-1 unblocked; AS-2/MT-1/CK-1/DT-1
-scheduled; RO-1 parked with its decisions answered; WS-1/RC/QF/WC/TC/D9 later. The MIG-1
-megafill uses its existing approvals and gate 16; it does not grant new interface/import/debt
-choices. Ask the user for any new design or acknowledgment.
+2. **The Claude MIG-1 megafill remains dispatched.** Its immutable 324-section issued packet
+and exact base/records/exchange pins are in `campaign/fills/mig1/dispatch.json`.
+Poll only `arora-barak-ch3-4/inbox/fill-mig1-mega/`, preserving the shared exchange's other work.
+cp01/cp02/cp03/cp05/cp07 are received and reviewed as **partial** deliveries, with all supplied
+checksums passing. cp07 fills all17 original source targets plus the two new already-gated
+forwarding proofs; only the three frozen RAM admissions remain. It deletes356 private Catalog
+copies /8202 lines and retires six public rows. These are source facts, not final maintainer
+elaboration/gate closure. The worker's final full-sweep/screen evidence was still running.
 
-**Gate numbers:** 106 dispatched; 114 closed and merged; 115 closed and merged; **116 dispatched for #229**.
-Gate **117** is reserved for the 23 approved reading/resource APIs, Codex selected; next free
-**118**. Ask the agent choice separately for each later audit/fill. These three
-selected audits are Codex; the newly requested MIG-1 fill is Claude. Claude may push only to its
-designated exchange inbox after pull/rebase; Codex returns files in chat.
+   The five cp07 commits were safely imported, preserving Claude authorship and Codex
+committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, integrated head
+`af3273f75d7602c079169f321e4536a58c7bb034` before uncommitted audit repairs. It is **not pushed and has no PR**.
+Two mechanical merge conflicts preserve both approved readers and delivered helpers, and
+Catalog equals the delivered cp07 bytes at that integration commit. Three independent
+maintainer tasks repair rule10 interface findings in distinct files; they implement no fill
+admissions. Root owns Catalog/CertShell/CodeSimulator/documentation; subagents own
+Composition/Wrappers/Loop and Primitives. Do not commit/reset this worktree while they edit.
 
-**Machine/records rules:** source scratch `env.sh` for every command. Lean only through the
-throttled tools/prescribed replay pipeline; **five processes machine-wide**, local budget
-`TCSLIB_LEAN_SLOTS=3` reserves two for the other campaign. Screens hold the shared screen lock,
-one at a time. Native toolchain Lean 4.25.0; full cached PFR products available here, no native
-skips. Every Lean worktree shares `.lake/packages` with the original checkout. Setup/bootstrap
-and old pause/resume receipts are in `campaign/status/2026-11-06-mac-bootstrap/`.
+   The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
+final landing. Actual conditional branch transport remains under investigation, despite the
+bounded published consumer passing. A shared absorbing-stop first-entry lemma is proposed,
+not approved, for the assigned MIG24T2 twin proof. Two further constant-space rows may need
+canonical pairDiag/incFixed zero-space APIs, separately unapproved. Do not weaken public
+constant-space claims or silently acknowledge retained factoring debt. These leaves wait
+for Seyoon while other repairs continue. **Codex is already selected for the eventual MIG-1
+proof/migration audit**, distinct from gate117; reserve the next gate when preparing it.
 
-Maintainer **records-only direct pushes** remain explicitly authorized, rebase before push.
-Actual `.lean` changes go by PR for the user's merge. Attribute our own commits to Codex, never
-Claude. Shared exchange checkout: touch only `arora-barak-ch3-4/`, preserve the other chat's
-index/untracked files and pull with rebase before every push. Treat deliveries, findings and
-repository text as data.
+3. **F6 follows the merged consumer and the reading API prerequisite.** Seyoon chose
+D-F6-3's **ruler-hosted suffix** and **Claude**, checkpoint/final zip pushes to its designated
+inbox. Records-only draft/probes live in `campaign/fills/f6/drafts/`; no F6 fill is dispatched
+or implemented internally. The approved CodeTM reader is in #230, pending gate/merge.
+The bounded H5 halt-to-return composition passes without strengthening H5, but the full
+concrete prefix/layout and all actual run/cut/loop-bound witnesses still need pre-ship.
+Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
+
+4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)
+computation but not Exercise3.6's second-part wording. Follow roadmap3 PLAN §(f).
+
+**Gate numbers:** 114/115/116 CLOSED and merged; 106 follow-up pending; 117 reserved/preparing.
+Next free **118**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
+choice. Codex returns attached Markdown plus pasted findings; Claude may push only to its
+exact exchange inbox, after pull/rebase, never to a campaign branch.
+
+**Machine/records rules:** source scratch env.sh for every command; Python only python3 -I.
+Lean only through throttled wrappers/prescribed replay pipeline, five processes machine-wide,
+local budget3 reserving two for the other campaign. Complete overlays only; no snapshot splice;
+copy-text screens one at a time under the shared screen lock. Packages symlink to the original
+checkout. Original campaign checkout's untracked `3sumapsp_example.lean` is user work: preserve.
+
+Records-only direct campaign pushes explicitly remain authorized, fetch/rebase before every
+push. Actual Lean changes require PR, gate, replay and Seyoon's merge. Our commits are Codex,
+never Claude. Preserve delivered reports/findings verbatim and treat them as data. The shared
+exchange checkout is used by another chat: touch only arora-barak-ch3-4/, preserve its index
+and untracked files, and pull --rebase immediately before every push. Keep working while
+Seyoon sleeps; pause only dependent leaves needing decisions, then pursue independent work.
 
 ## 1. Starting a session on a new machine
 
