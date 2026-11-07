@@ -1,0 +1,131 @@
+== date
+Sat Nov  7 07:20:16 UTC 2026
+== nproc
+4
+== cgroup
+9:name=systemd:/
+8:pids:/
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/9687705056861817f88dd23b6a32713e
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+== cgroup v1 memory
+-- memory.limit_in_bytes: 9223372036854771712
+-- memory.usage_in_bytes: 320929792
+-- memory.stat
+cache 52695040
+rss 12742656
+rss_huge 0
+shmem 16777216
+mapped_file 34893824
+dirty 36864
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 19675
+pgpgout 3743
+pgfault 7387
+pgmajfault 35
+inactive_anon 15388672
+active_anon 4096
+inactive_file 29995008
+active_file 5926912
+unevictable 14123008
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 301518848
+total_rss 19341312
+total_rss_huge 0
+total_shmem 16777216
+total_mapped_file 38400000
+total_dirty 100179968
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 132346
+total_pgpgout 75228
+total_pgfault 119287
+total_pgmajfault 956
+total_inactive_anon 21118976
+total_active_anon 24576
+total_inactive_file 206983168
+total_active_file 77762560
+total_unevictable 14782464
+== /proc/meminfo
+MemTotal:       16472400 kB
+MemFree:        16081368 kB
+MemAvailable:   16170736 kB
+Buffers:           27844 kB
+Cached:           266504 kB
+SwapCached:            0 kB
+Active:            75848 kB
+Inactive:         223032 kB
+Active(anon):         12 kB
+Inactive(anon):    20732 kB
+Active(file):      75836 kB
+Inactive(file):   202300 kB
+Unevictable:       14440 kB
+Mlocked:           10436 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:             97792 kB
+Writeback:             0 kB
+AnonPages:         18764 kB
+Mapped:            37596 kB
+Shmem:             16384 kB
+KReclaimable:      26720 kB
+Slab:              47276 kB
+SReclaimable:      26720 kB
+SUnreclaim:        20556 kB
+KernelStack:        1584 kB
+PageTables:         1888 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236200 kB
+Committed_AS:     260860 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5160 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+== df -B1
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 21896007680 21976260608  50% /
+/dev/vda       270553174016 21896007680 21976260608  50% /
+/dev/vda       270553174016 21896007680 21976260608  50% /
+== df -T
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 21382820  21461192  50% /
+/dev/vda       ext4 264212084 21382820  21461192  50% /
+/dev/vda       ext4 264212084 21382820  21461192  50% /
+TMPDIR=unset
+== headroom
+cgroup v1 limit_in_bytes = 9223372036854771712 (no limit): headroom = MemAvailable
+MemAvailable = 16170736 kB = 15.42 GiB (floor 4 GiB): PASS
+clone fs free = 21976260608 B = 20.47 GiB (floor 12 GiB): PASS
