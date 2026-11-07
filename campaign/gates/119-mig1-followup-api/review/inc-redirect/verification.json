@@ -1,0 +1,112 @@
+{
+  "checked_utc": "2026-11-07T20:52:33.648067+00:00",
+  "status": "PASS bounded actual incFixed and relocated redirect owner sections/imported consumers",
+  "runs": [
+    {
+      "name": "Controls-native",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 1.469088077545166,
+      "warnings": 0
+    },
+    {
+      "name": "Controls-sealed",
+      "exit": 1,
+      "errors": 52,
+      "seconds": 1.5937731266021729,
+      "warnings": 0
+    },
+    {
+      "name": "Primitives-native",
+      "exit": 1,
+      "errors": 1,
+      "seconds": 1.0868141651153564,
+      "warnings": 0
+    },
+    {
+      "name": "Primitives-native-v2",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 14.036856174468994,
+      "warnings": 51
+    },
+    {
+      "name": "Primitives-sealed",
+      "exit": 1,
+      "errors": 1,
+      "seconds": 1.1428868770599365,
+      "warnings": 0
+    },
+    {
+      "name": "Primitives-sealed-v2",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 14.397310972213745,
+      "warnings": 51
+    },
+    {
+      "name": "Published-consumers",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 2.205204963684082,
+      "warnings": 0
+    },
+    {
+      "name": "Raw-header-boundary",
+      "exit": 1,
+      "errors": 1,
+      "seconds": 1.3356468677520752,
+      "warnings": 0
+    },
+    {
+      "name": "Wrappers-native",
+      "exit": 1,
+      "errors": 1,
+      "seconds": 1.5038278102874756,
+      "warnings": 0
+    },
+    {
+      "name": "Wrappers-native-v2",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 2.476435899734497,
+      "warnings": 2
+    },
+    {
+      "name": "Wrappers-sealed",
+      "exit": 1,
+      "errors": 1,
+      "seconds": 109.19505000114441,
+      "warnings": 0
+    },
+    {
+      "name": "Wrappers-sealed-v2",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 8.949322938919067,
+      "warnings": 2
+    }
+  ],
+  "source_recoveries": [
+    {
+      "owner": "Wrappers",
+      "guard_removal_recovers_native": true,
+      "insertion_removal_recovers_API1160": true,
+      "historical_prefix_omits_approved_trailing_newline": true,
+      "actual_live_bytes_equal": true
+    },
+    {
+      "owner": "Primitives",
+      "guard_removal_recovers_native": true,
+      "insertion_removal_recovers_API1160": true,
+      "historical_prefix_omits_approved_trailing_newline": false,
+      "actual_live_bytes_equal": true
+    }
+  ],
+  "complete_private_overlay_oleans": 895,
+  "shared_target_snapshot_objects_unchanged": true,
+  "expected_raw_index_header_failure": true,
+  "no_actual_source_or_Git_or_shared_snapshot_or_screen_mutation": true,
+  "toolchain_side_effect": "Initial temporary project omitted pin: elan installed4.35, four incompatible-header failures. Corrected to4.25; root notified; no removal by this agent.",
+  "limits": "Partial2-owner native import chain on complete mra2 clone; root owns integrated5-module chain/full replay/gate. No global legacy seal or merge clearance."
+}

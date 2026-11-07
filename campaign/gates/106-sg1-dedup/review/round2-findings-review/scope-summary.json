@@ -1,0 +1,48 @@
+{
+  "bounded_header_candidates": 110,
+  "by_file": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": 34,
+    "TCSlib/Complexity/CookLevin/Hardness.lean": 76
+  },
+  "audit_generic_members": 6,
+  "additional_confirmed_generic_closure_members": 5,
+  "additional_linear_lift_member": 1,
+  "additional_constant_lift_member": 1,
+  "mechanically_repointable_total": 13,
+  "unrepaired_canonical_PolyTimePairing_source_inclusive_lower_bound": {
+    "members": [
+      "polyTimeComputable_of_linear",
+      "polyTimeComputable_const",
+      "PolyTimeComputable.pairMapSnd",
+      "PolyTimeComputable.pairEncode",
+      "PolyTimeComputable.append",
+      "polyTimeComputable_unary",
+      "polyTimeComputable_polyUnary",
+      "polyTimeComputable_ite",
+      "polyTimeComputable_and"
+    ],
+    "count": 9,
+    "denominator": 26,
+    "fraction": 0.34615384615384615,
+    "one_fifth_crossing": true,
+    "not_acknowledged_or_exhaustive": true
+  },
+  "already_direct_public_adapters": [
+    "sat_pt_linear",
+    "sat_pt_const",
+    "sat_pt_cond",
+    "sat_pt_and",
+    "sat_comp_on_image"
+  ],
+  "explicit_existing_transducer_scope": [
+    "satMap_poly",
+    "sat_pt_head",
+    "sat_pt_tail"
+  ],
+  "separate_candidates_not_cleared": {
+    "clNative_image": "Generic polynomial composition correct only on source image. No exact class-level public theorem found in bounded ClassNP search; public PolyTimeComputable.comp has total correctness premise, not this weaker image premise. Do not call acknowledged/clean or infer API necessity from this bounded check.",
+    "clNative_fill": "Bit-parametric length-preserving native scan; true specialization matches unaryLength, but complete arbitrary-bit contract has no exact public FP closure identified in this bounded search. Not counted as confirmed canonical duplicate.",
+    "clA5Iter_native": "Generic iteration candidate; existing PolyTimeBlockLoop public loop family is not imported by either file. No exact statement/repoint was tested here; no import/API/debt permission inferred.",
+    "other_header_candidates": "Many mention private client encodings/numeric operators/fields. Full raw catalogue retained; not a semantic all-repository audit or acknowledgment."
+  }
+}

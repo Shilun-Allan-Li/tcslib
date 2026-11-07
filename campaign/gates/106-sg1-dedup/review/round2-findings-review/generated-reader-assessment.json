@@ -1,0 +1,95 @@
+{
+  "eq_def": {
+    "before_environment": "absent",
+    "after_check_environment": "absent",
+    "check_elaborates": true,
+    "not_a_newly_materialized_declaration": true,
+    "not_used_by_successful_consumer": true
+  },
+  "eq_1": {
+    "before_environment": "present",
+    "after_environment": "present",
+    "owner": "TCSlib.Complexity.ClassNP.PolyTimePairing",
+    "AX": [],
+    "formula": "forall g z, pairMapSnd g z = match pairDecode z with | some(a,b) => pairEncode a(g b) | none => []",
+    "used_by_successful_sealed_consumer": true
+  },
+  "successful_probe": "Generated-reader-v3",
+  "AX_selected_roots": [
+    {
+      "name": "G106FPReaderCheck.map_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.pair_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.append_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.pair_input_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.unary_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.unary_length_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.const_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.cond_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    },
+    {
+      "name": "G106FPReaderCheck.and_consumer",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ]
+    }
+  ],
+  "no_new_API_needed_for_observed_map_reader_route": true,
+  "no_reserved_name_materialization_or_source_edit": true,
+  "not_an_approval_of_uninspected_other_generated_auxiliaries": true
+}

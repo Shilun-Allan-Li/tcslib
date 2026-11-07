@@ -10,21 +10,27 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-07 UTC; read this first)
 
 Codex maintains the campaign on Seyoon's Mac. Native Lean 4.25.0 baseline **oleans-mac0**
-passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, and now **#229**
+passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, **#229**, and now **#230**
 (the proved `SPACE_linear_ne_NP` consumer) at **`e3adffac67377a8b6e23bed74bfdbb44a123dd86`**.
 Gate 116 is CLOSED, Codex PASS0/0/0/12, all notes accepted. Its passed two-module replay tree
-exactly matches the merge's Lean, so **oleans-mlin2 was renamed oleans-mac3**, the current
+exactly matches the merge's Lean, so **oleans-mlin2 was renamed oleans-mac3**, the then-current
 campaign snapshot. This is exact-tree adoption, not another elaboration or a snapshot splice.
 Receipt: `campaign/status/2026-11-07-linear-merge/receipt.json`. Earlier mac1/mac2 adoption
 receipts remain in their dated status folders.
+
+#230 merged at `3023dc1408c3d216fc07a7cbba9ae30135b861ed`, exactly matching the passed
+API1160 Lean tree. The whole passed mra2 tree was renamed **oleans-mac4**, now the
+current campaign snapshot (394/0, static0/77); receipt in
+`campaign/status/2026-11-07-readers-merge/`. No new elaboration or splice is claimed.
 
 **Open campaign PRs:**
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Round2 Codex HOLD0/1/0/15 received; F1/F3 accepted, F2 generic polynomial-closure repairs underway under WORKFLOW§3. Round3 Codex selected. **Not yet clear to merge.** |
-| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, ready | 117 CLOSED PASS0/0/0/14 | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Gate117 CLOSED PASS0/0/0/14; all notes accepted after independent review. Exact source unchanged; current394/0/static0/77 replay remains valid. PR non-draft and mergeable/clean. **Clear to merge.** |
+| #230 (merged) | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, ready | 117 CLOSED PASS0/0/0/14 | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Gate117 CLOSED PASS0/0/0/14; all notes accepted after independent review. Exact source unchanged; current394/0/static0/77 replay remains valid. PR non-draft and mergeable/clean. **Merged by Seyoon** at `3023dc1408c3d216fc07a7cbba9ae30135b861ed`; exact mra2→mac4 adoption. |
 | #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Follow-up API/home changes approved; gate119 implementation/validation underway, not yet merged into landing. **Not yet clear to merge.** |
+| #234 | Approved first-entry/zero-space facts and exact redirect-space owner move; `lean/mig1-followup-api`, head `626b1a81ddd33f4b0e0dabd4e874a16a0fe71724`, draft | 119, Codex selected | Actual5-module native chain and owner/consumer seals/controls pass; exact authored+3/onehome move, compiled3778→3782 (+3theorems+1generatedaux), no AX regression. Source-inclusive screens and current401-module replay are running. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -34,7 +40,7 @@ remain immutable. No PR is merged by the maintainer.
 **Immediate work, in order:**
 
 1. Seyoon has dispatched **Codex gate117** for #230 (prompt.md/dispatch.json) and
-**Codex gate106 round2** for #215 (prompt-r2.md/dispatch-r2.json). Gate117 returned PASS0/0/0/14 and is CLOSED; #230 is clear to merge. Gate106 round2 returned HOLD0/1/0/15; its additional generic closure family is being mechanically repaired, round3 Codex selected. Issued packets/pins remain unchanged. Gate106 canonical round1 findings are verbatim; every item is
+**Codex gate106 round2** for #215 (prompt-r2.md/dispatch-r2.json). Gate117 returned PASS0/0/0/14 and is CLOSED; Seyoon merged #230. Gate106 round2 returned HOLD0/1/0/15; its additional generic closure family is being mechanically repaired, round3 Codex selected. Issued packets/pins remain unchanged. Gate106 canonical round1 findings are verbatim; every item is
 answered in resolutions. Its two cut repairs are body-only, no new statement/import/API.
 Seyoon accepted, by kind across TCSlib, five clean/stop/padding/transducer/bridge families
 and separately finite-family shared-bank dispatchers and companion proofs. Cleanup owner:
@@ -119,7 +125,7 @@ control evidence. `drafts/PRESHIP-INDEX.md` records limits. Full actual prefix, 
 space/loop-ledger/target proofs remain external Claude OWN work. Provisional packet orders
 132/2/229 and65 Mathlib roots independently reproduce; all229 source blobs match. The21-file
 TCSlib provisional baseline passed (1037 declarations,636 candidates,171071 reproduced
-characters), with full raw inputs/output/index and no semantic debt acceptance. After gate117/#230 closes and merges, refresh/verify final
+characters), with full raw inputs/output/index and no semantic debt acceptance. With gate117 closed and #230 merged, refresh/verify final
 pins/source/census/orders/cache roots/population/baseline and checksum packet. F6 remains
 unissued; no target was filled internally or new API gap found in these bounded scopes.
 Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
