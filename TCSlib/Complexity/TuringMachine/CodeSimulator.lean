@@ -1275,9 +1275,14 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
   have offBank (j : Fin (I.k + 1)) (hj : j ∉ Set.range bank) : copied j = result j := by
     have ne : j ≠ dst := fun eq => hj ⟨zero, eq.symm⟩
     simp only [copied, result, Function.update_of_ne ne]
-  obtain ⟨t₀, budget₀, cut₀, run₀⟩ :=
-    copyTM_run (x := x) (I.k + 1) 0 dst distinct w fresh
-  rw [source] at budget₀ run₀
+  -- The copy, read from the framed contract at the canonical seam.
+  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) rfl
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+  have run₀ := framed₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w 0 dst fresh)
+  have cut₀ := framed₀.2.1
+  rw [source] at run₀ cut₀
+  set t₀ := 2 * arg.length + 2 with t₀def
+  have budget₀ : t₀ ≤ 3 * arg.length + 3 := by omega
   obtain ⟨t₁, budget₁, _, cut₁, run₁⟩ := installed x arg
   have lift (u : ℕ) : E.runFrom (Cfg.ofWords (input := x) enter copied) u =
       embedEmitCfg bank (fun j => FinTM.bufferTape (copied j)) (fun _ => 0) []

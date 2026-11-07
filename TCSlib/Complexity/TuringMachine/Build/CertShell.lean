@@ -449,8 +449,10 @@ source tape `j`. Normalize both clean-call cuts with `cert_call_cut`; embed thei
 contracts with `cert_embed_call`. Chain the copy, two clean calls and three transfers
 using the public R2 endpoint and first-return contracts. All work heads return to
 zero, the capture is blank, and the sum of six linear costs is linear in `|x|+|u|+1`.
-The canonical `copyTM_run`/`transferTM_run` rows already specialize the required
-framed contracts, so their word-layout proofs must be cited, not repeated. -/
+The copy and transfers are read from the framed contracts `copyTM_run_ofCfg` and
+`transferTM_run_ofCfg` at canonical seams, whose endpoints are canonical seams again by
+`Cfg.ofWords_copy_endpoint` and `Cfg.ofWords_transfer_endpoint`; their word-layout
+proofs are cited, not repeated. -/
 private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm : 0 < m) :
     ∃ (D : FinTM Bool) (exit : D.State) (ρ : Fin m ↪ Fin D.k)
       (ι : Fin (1 + P.k) ↪ Fin D.k) (cap : Fin D.k) (a : ℕ),
@@ -568,10 +570,15 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
         have hi := i.isLt
         omega
     simp [w₃, w₂, w₀, hn.1, hn.2.1, hn.2.2]
-  obtain ⟨t₀, ht₀, hc₀, hr₀⟩ := copyTM_run (x := y) K v vf hvf w₀
-    (by simp [w₀, hvf.symm])
+  -- The copy, read from the framed contract at the canonical seam.
+  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) rfl
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+  have hr₀ := hk₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w₀ v vf (by simp [w₀, hvf.symm]))
+  have hc₀ := hk₀.2.1
   have h0 : w₀ v = pair := Function.update_self _ _ _
-  simp only [h0] at ht₀ hr₀
+  simp only [h0] at hr₀ hc₀
+  set t₀ := 2 * pair.length + 2 with ht₀def
+  have ht₀ : t₀ ≤ 3 * pair.length + 3 := by omega
   obtain ⟨t₁, ht₁, hc₁, hr₁⟩ := hF (y, pair)
   simp only [pair, pairDecode_pairEncode, Option.map_some, Option.getD_some] at ht₁ hr₁ hc₁
   obtain ⟨hfRun, hfCut⟩ := cert_embed_call FM σF fe fx (stateWord F₀.k pair)
@@ -582,13 +589,23 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       have hn : i ≠ vf := fun he => hi ⟨⟨0, hkF⟩, he.symm⟩
       simp [w₁, w₂, hn]) hr₁ hc₁
   have h2 : w₂ vf = x := Function.update_self _ _ _
-  obtain ⟨t₂, ht₂, hc₂, hr₂⟩ := transferTM_run (x := y) K vf vx hfx w₂
-    (by simp [w₂, w₀, hfx.symm, hvx.symm])
-  simp only [h2] at ht₂ hr₂
+  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) rfl
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+  have hr₂ := hk₂.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₂ vf vx hfx
+    (by simp [w₂, w₀, hfx.symm, hvx.symm]))
+  have hc₂ := hk₂.2.1
+  simp only [h2] at hr₂ hc₂
+  set t₂ := 2 * x.length + 2 with ht₂def
+  have ht₂ : t₂ ≤ 3 * x.length + 3 := by omega
   have h3 : w₃ v = pair := by simp [w₃, w₂, w₀, hvx, hvf]
-  obtain ⟨t₃, ht₃, hc₃, hr₃⟩ := transferTM_run (x := y) K v vs hvs w₃
-    (by simp [w₃, w₂, w₀, hxs.symm, hfs.symm, hvs.symm])
-  simp only [h3] at ht₃ hr₃
+  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) rfl
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+  have hr₃ := hk₃.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₃ v vs hvs
+    (by simp [w₃, w₂, w₀, hxs.symm, hfs.symm, hvs.symm]))
+  have hc₃ := hk₃.2.1
+  simp only [h3] at hr₃ hc₃
+  set t₃ := 2 * pair.length + 2 with ht₃def
+  have ht₃ : t₃ ≤ 3 * pair.length + 3 := by omega
   obtain ⟨t₄, ht₄, hc₄, hr₄⟩ := hS (y, pair)
   simp only [pair, pairDecode_pairEncode, Option.map_some, Option.getD_some] at ht₄ hr₄ hc₄
   obtain ⟨hsRun, hsCut⟩ := cert_embed_call SM σS se sx (stateWord S₀.k pair)
@@ -599,9 +616,14 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       have hn : i ≠ vs := fun he => hi ⟨⟨0, hkS⟩, he.symm⟩
       simp [w₄, w₅, hn]) hr₄ hc₄
   have h5 : w₅ vs = u := Function.update_self _ _ _
-  obtain ⟨t₅, ht₅, hc₅, hr₅⟩ := transferTM_run (x := y) K vs vu hsu w₅
-    (by simp [w₅, w₃, w₂, w₀, hsu.symm, hvu.symm, hxu.symm, hfu.symm])
-  simp only [h5] at ht₅ hr₅
+  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) rfl
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+  have hr₅ := hk₅.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₅ vs vu hsu
+    (by simp [w₅, w₃, w₂, w₀, hsu.symm, hvu.symm, hxu.symm, hfu.symm]))
+  have hc₅ := hk₅.2.1
+  simp only [h5] at hr₅ hc₅
+  set t₅ := 2 * u.length + 2 with ht₅def
+  have ht₅ : t₅ ≤ 3 * u.length + 3 := by omega
   have h01 := cert_seq M₀ CF .sweep .done fe fx w₀ w₁ w₂ hr₀ hc₀ hfRun hfCut
   have h02 := cert_seq M₁ (transferTM K vf vx) (.inl .sweep) (.inr fx) .sweep .done
     w₀ w₂ w₃ h01.1 h01.2 hr₂ hc₂
@@ -703,8 +725,9 @@ loader and `choiceCore`), harvested with the core made a parameter.
 **Fill appendix.** The empty split value is rejected by a one-step guard before any
 source run. Positive clean-call cuts are strengthened to include time zero using
 `seamReleaseTM_firstReturn` when entry and exit coincide. The loader uses disjoint
-banks and cites `copyTM_run` and `transferTM_run`, the canonical-word corollaries of
-the required `_run_ofCfg` rows, together with the two install calls and R2.
+banks and reads the copy and transfers from the `_run_ofCfg` rows at canonical seams
+(`Cfg.ofWords_copy_endpoint`, `Cfg.ofWords_transfer_endpoint`), together with the two
+install calls and R2.
 The returning capture already places its head just past the output. The three-state
 verdict therefore scans left: one move, a last-cell `true` test, and a preceding-blank
 test. On a finite captured word these two tests characterize exactly `[true]`, including
