@@ -16,5 +16,7 @@ screens pass2222→2228 with six material first-entry harvest rows and no gone/c
 retained rows. Lints unchanged; old private consumers remain for downstream MIG cleanup.
 No permanent-debt waiver or completed migration is inferred.
 
-Codex selected; final uncapped packet/bundle/pins/publication and pasteable prompt are
-being verified. Gate119 has not been dispatched or closed. Next free120.
+**Dispatched to Codex by Seyoon.** The complete640-section/76546940-byte bundle
+passed rebuild/archive verification and is published at exchange `8d58d0cf63be3fdd24bbb929d859562972c17931`.
+SHA256 `60a0b7ca5095ee1c619c4343aa59f1010054bcefaa39daec08bb91de89ef8a0e`. Exact pins and pasteable prompt are in
+dispatch.json/prompt.md. Seyoon confirmed dispatch in chat; audit open. Next free120.

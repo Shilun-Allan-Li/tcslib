@@ -28,3 +28,5 @@ dispatch in chat. Cumulative Claude ZIPs go only under
 arora-barak-ch3-4/inbox/fill-f6/.
 
 Independent final review also verifies all624 mixed-pin payloads and623 inventory entries; no substantive packet/scope blocker. This is packet verification, not a target elaboration.
+
+Relocation checkpoint: cp01/cp02received and raw ZIP/status bytes saved in incoming/checkpoints-2026-11-07/. Producer reports target still admitted; no extraction/native review or adoption yet. External fill remains dispatched.

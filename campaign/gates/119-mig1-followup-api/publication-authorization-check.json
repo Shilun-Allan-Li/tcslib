@@ -1,0 +1,22 @@
+{
+  "utc": "2026-11-07T23:29:02.428776+00:00",
+  "purpose": "Authorization/low-risk check after automatic publication review rejection; no transfer/mutation in this check",
+  "repository": {
+    "full_name": "Shilun-Allan-Li/tcslib",
+    "html_url": "https://github.com/Shilun-Allan-Li/tcslib",
+    "private": false
+  },
+  "both_origins_same_repository": "https://github.com/Shilun-Allan-Li/tcslib.git",
+  "remote_refs": {
+    "refs/heads/complexity/arora-barak-ch3-4": "c40d52d570953d32b570bf4c9eeecc07e24e23f1",
+    "refs/heads/lean/mig1-followup-api": "f1ca767a10551960faf36ad9c8ff17bea3a2d88c"
+  },
+  "bundle_derived_only_from_already_pushed_commits": true,
+  "input_count": 640,
+  "derivation_evidence": "Full mkbundle-mixed rebuild and independent Git archive verification,640segments0problems, finalstage receipt",
+  "exact_input_bundle_sha256": "60a0b7ca5095ee1c619c4343aa59f1010054bcefaa39daec08bb91de89ef8a0e",
+  "destination": "same repository, exchange/pass-shelat-ch5-8, arora-barak-ch3-4/outbox/gates/119-mig1-followup-api-gate/",
+  "selected_agent_rule": "  - **Agents read from the exchange branch; delivery depends on the chosen agent** (the user,\n    2026-11-06, superseding the attachment-only rule). Prompts name the bundle or brief by its\n    path on `exchange/pass-shelat-ch5-8` rather than as an upload.\n    - **Codex:** return the findings Markdown or delivery zip as an attachment in chat; it cannot\n      push to GitHub. Findings are also pasted in the reply.\n    - **Claude:** may push the findings or delivery directly to the designated\n      `arora-barak-ch3-4/inbox/` folder of the exchange branch, touching nothing else, with\n      `git pull --rebase` before every push and no force-push.\n    - External agents do not push changes directly to any campaign branch. Lean changes go by\n      PR for the user's approval. **The maintainer's records-only exception in \u00a71 is retained**\n      (explicitly confirmed by the user with this routing update).\n",
+  "routing_distinction": "Maintainer publishes input packet to exchange; selected Codex auditor returns findings Markdown in chat and does not push.",
+  "user_authorization": "Initial maintainer assignment to build gate packs/bundles; user-designated binding WORKFLOW; explicit per-gate Codex choice; records-direct exception retained."
+}
