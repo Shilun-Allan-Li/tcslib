@@ -1,0 +1,24 @@
+/private/tmp/f6-draft-route-probes/BundleSealedControl.lean:10:2: error: Type mismatch
+  ((FinTM.computesInTime_iff M.toFinTM x output t).mp h).left
+has type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg M.toFinTM.k M.toFinTM.State Bool M.toFinTM.tm x) t).state = none
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin (M.numStates + 1)) Bool M.tm x) t).state = none
+        1.61 real         0.80 user         0.78 sys
+          1685700608  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              133759  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   5  voluntary context switches
+                2080  involuntary context switches
+            30728838  instructions retired
+            13724986  cycles elapsed
+             1622352  peak memory footprint

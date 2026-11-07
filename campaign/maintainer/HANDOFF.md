@@ -25,8 +25,8 @@ matches the passed NatBits replay plus its E-PAD catch-up; **oleans-mnb2** was a
 
 | PR | Change | Gate | Status |
 |---|---|---|---|
-| #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Original replay and E-PAD catch-up passed; fresh full current-campaign replay (`oleans-msg3`) is running. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
-| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, **Ready to dispatch** | Fresh 2-module post-NatBits replay passed (`oleans-mlin2`); current source/CI/seal/control/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
+| #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Fresh full current-campaign replay passed (`oleans-msg3`): 329 modules, 0 failures/static mismatches. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
+| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, **dispatched by the user** | Fresh 2-module post-NatBits replay passed (`oleans-mlin2`); current source/CI/seal/control/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
 
 Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
 identical Frag hunk. After #228, the original imported-source criterion held, but their older
@@ -52,19 +52,23 @@ and the 23-file screen passed. Issued gate/fill/delivery/findings are archived a
    proofs). Eleven files owned; WordSize is documentation-only. No F6, paused record-table rows
    or Ladner fill is added. Inputs, independent brief review, passed pre-ship/screen and exact issued pins live in
    `campaign/fills/mig1/`. The verified 324-section packet is published and unchanged. Await
-   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`.
+   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`. cp01/cp02 are
+   reviewed as partial; config-field readers (user ruling pending) and branchTM contracts
+   remain unresolved. cp03 arrived and is under separate review.
 2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
    `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
    screen and fresh two-module post-NatBits merged-tree replay pass; only F6 remains admitted. Gate **116**,
-   **Codex** selected (attachment + pasted findings), is published, verified and **Ready to dispatch** (217 sections; exact pins in its dispatch record).
+   **Codex** selected (attachment + pasted findings), is published, verified and **dispatched by the user** (217 sections; exact pins in its dispatch record).
    The user merges only after it closes.
 3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is merged; keep each report verbatim, dispose every item,
    check the current merged tree and ask the user to merge only when clear.
 4. **F6 (`space_universal`, Hierarchy)** follows the consumer merge. #221's harvest prerequisite
    has merged. The user chose D-F6-3's **ruler-hosted suffix** route and **Claude** on
-   2026-11-07. A records-only route/brief assessment is in progress; do not dispatch before
-   #229 merges or infer approval for a missing shared contract. Gate 112's carry requires
-   `aRun`, `aCut`, `hloop` as hypotheses or F6's actual witnesses.
+   2026-11-07. The records-only draft and bounded probes are in `campaign/fills/f6/drafts/`.
+   The H5 halt/return composition passes without strengthening H5. A CodeTM bundle reader
+   is proposed, tested conditionally under seal and awaiting the user's API ruling. Full
+   concrete prefix/layout pre-ship remains. Do not dispatch before those prerequisites and
+   #229's merge. Gate 112's carry requires actual run/cut/loop-bound witnesses.
 5. **Ladner's statement phase**, before its fill: LD-1–LD-7 accepted; LD-8 pins the O(n³)
    computation but not Exercise 3.6's second-part wording. Follow `roadmap3/PLAN.md` §(f).
 

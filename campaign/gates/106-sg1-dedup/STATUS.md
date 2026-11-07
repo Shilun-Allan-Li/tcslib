@@ -1,17 +1,18 @@
 # Gate 106: SG-1 (#215)
 
-- Final source, screen, seal, axiom and census evidence is complete in `evidence/current/`.
-- Independent merged-tree replay: **329 modules, 0 failures, 0 static mismatches**,
-  chained from the complete 894-module `oleans-mac0` campaign snapshot. The closure
-  retains its existing 68 admitted declarations; this is a mechanical deduplication PR.
-- Unfiltered non-private constant census: **293 → 293, with no name, kind or module-owner changes**.
-- The user selected **Codex**: attached findings Markdown in chat and its content pasted
-  in the reply. The pack is finalized; bundle verification/publication is next. The gate
-  has not been dispatched.
-- **Not yet clear to merge: #215**; the external gate remains open.
+The user dispatched the immutable Codex packet pinned by `dispatch.json` / `prompt.md`.
+Await the findings attachment; the issued bundle is unchanged.
 
-- **Ready to dispatch:** the verified immutable bundle is published; `dispatch.json` and
-  `prompt.md` pin the exact package. Await the user's dispatch confirmation.
+After #222 merged, the **current-campaign full replay passes: 329 modules, 0 failures,
+0 static mismatches**, chained from complete **oleans-mac2** into **oleans-msg3**.
+The closure has 67 remaining admitted declarations (68 in the original replay, minus the
+now-merged E-PAD proof). No admission change belongs to SG-1. Raw order, precheck, replay,
+static check, source pins and receipt are in `evidence/current-after-natbits/`.
 
-- **Dispatched by the user** in this session. Await the findings attachment; the PR remains
-  **not yet clear to merge** until the external gate closes.
+All four originally audited file blobs remain byte-identical. The current PR diff has three
+Lean files because the identical Frag repair is already common through #222. Earlier source,
+screen, seal, axiom and census evidence remains in `evidence/current/`: non-private compiled
+census **293 → 293**, no name/kind/module-owner change; all six originally changed public
+proof bodies have standard axioms. Earlier replays remain historical evidence.
+
+**Not yet clear to merge: #215**; external gate 106 must close.

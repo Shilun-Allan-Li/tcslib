@@ -1028,9 +1028,10 @@ pair.
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
 `campaign/maintainer/HANDOFF.md` §0. The user merged #228 and #222; the exact NatBits replay tree
 is now **oleans-mac2**. Gate 114 is **CLOSED, PASS 0/0/0/8**; all notes dispositioned. Gate
-106/#215 awaits the Codex audit; the current campaign replay on **oleans-msg3** is running.
+106/#215 awaits the Codex audit; the current 329-module replay passed on
+**oleans-msg3**, zero failures/static mismatches.
 Draft #229 proves `SPACE_linear_ne_NP`; its fresh post-NatBits two-module replay and refreshed
-context checks passed (**oleans-mlin2**), gate 116 finalized for Codex dispatch. Next free gate
+context checks passed (**oleans-mlin2**), gate 116 **dispatched to Codex** by the user. Next free gate
 117. The reviewed **Claude MIG-1 megafill is dispatched**, with checkpoint/final pushes to its
 exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`. F6 follows
 #229's merge: the user chose the **ruler-hosted suffix** route and **Claude**; the route/brief

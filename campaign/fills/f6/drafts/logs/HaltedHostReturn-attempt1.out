@@ -1,0 +1,136 @@
+/private/tmp/f6-draft-route-probes/HaltedHostReturn.lean:52:28: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Option.map ?m.453 ?m.451 = none
+in the target expression
+  Option.map (fun q => inj q b) c.state ≠ none
+
+m : ℕ
+P : Type
+inst✝¹ : Fintype P
+inst✝ : DecidableEq P
+M : MultiTapeTM m Bool P
+y z : List Bool
+ℓ : ℕ
+hz : z.length = ℓ + y.length
+hℓ : 0 < ℓ
+hdrop : List.drop ℓ z = y
+rt : ℤ → Option Bool
+rp : ℤ
+hr : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑ℓ → rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p
+c : Cfg m Bool P y
+b : Bool
+hb : b = true ↔ ↑c.inputPos = 0
+t : ℕ
+hc : c.state ≠ none
+hlive : ∀ u < t, (MultiTapeTM.runFrom c u).state ≠ none
+hhalt : (MultiTapeTM.runFrom c t).state = none
+Q : Type
+fQ : Fintype Q
+dQ : DecidableEq Q
+H : MultiTapeTM (m + 1) Bool Q
+inj : P → Bool → Q
+C : ℕ
+hC : 0 < C
+hH :
+  ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length),
+    0 < ℓ →
+      List.drop ℓ z = y →
+        ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+          (∀ (p : ℤ), -1 ≤ p → p ≤ ↑ℓ → rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+            ∀ (c : Cfg m Bool P y) (b : Bool),
+              (b = true ↔ ↑c.inputPos = 0) →
+                ∀ (t : ℕ),
+                  have d := rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp;
+                  ∃ t',
+                    t ≤ t' ∧
+                      t' ≤ C * (ℓ + 1) * t ∧
+                        (∃ b',
+                            (b' = true ↔ ↑(MultiTapeTM.runFrom c t).inputPos = 0) ∧
+                              MultiTapeTM.runFrom d t' =
+                                rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom c t).state)
+                                  (MultiTapeTM.runFrom c t) rt rp) ∧
+                          ((∀ u < t, (MultiTapeTM.runFrom c u).state ≠ none) →
+                              ∀ u < t', (MultiTapeTM.runFrom d u).state ≠ none) ∧
+                            (∀ u ≤ t',
+                                ∃ v ≤ t,
+                                  (∀ (i : Fin m),
+                                      (MultiTapeTM.runFrom d u).workTapes i.castSucc =
+                                          (MultiTapeTM.runFrom c v).workTapes i ∧
+                                        (MultiTapeTM.runFrom d u).workTapePos i.castSucc =
+                                          (MultiTapeTM.runFrom c v).workTapePos i) ∧
+                                    (MultiTapeTM.runFrom d u).output = (MultiTapeTM.runFrom c v).output ∧
+                                      (MultiTapeTM.runFrom d u).workTapes (Fin.last m) = rt ∧
+                                        (MultiTapeTM.runFrom d u).workTapePos (Fin.last m) ∈
+                                          Finset.Icc (rp - 1) (rp + ↑ℓ)) ∧
+                              (∀ (i : Fin m),
+                                  MultiTapeTM.visitedByTapeHead d t' i.castSucc = MultiTapeTM.visitedByTapeHead c t i) ∧
+                                MultiTapeTM.visitedByTapeHead d t' (Fin.last m) ⊆ Finset.Icc (rp - 1) (rp + ↑ℓ)
+this✝ : Fintype Q := fQ
+this : DecidableEq Q := dQ
+t' : ℕ
+hlo : t ≤ t'
+hhi : t' ≤ C * (ℓ + 1) * t
+b' : Bool
+left✝¹ : b' = true ↔ ↑(MultiTapeTM.runFrom c t).inputPos = 0
+hend :
+  MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) t' =
+    rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom c t).state) (MultiTapeTM.runFrom c t) rt rp
+hinner :
+  (∀ u < t, (MultiTapeTM.runFrom c u).state ≠ none) →
+    ∀ u < t', (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).state ≠ none
+left✝ :
+  ∀ u ≤ t',
+    ∃ v ≤ t,
+      (∀ (i : Fin m),
+          (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).workTapes
+                i.castSucc =
+              (MultiTapeTM.runFrom c v).workTapes i ∧
+            (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).workTapePos
+                i.castSucc =
+              (MultiTapeTM.runFrom c v).workTapePos i) ∧
+        (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).output =
+            (MultiTapeTM.runFrom c v).output ∧
+          (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).workTapes
+                (Fin.last m) =
+              rt ∧
+            (MultiTapeTM.runFrom (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) u).workTapePos
+                (Fin.last m) ∈
+              Finset.Icc (rp - 1) (rp + ↑ℓ)
+hbank :
+  ∀ (i : Fin m),
+    MultiTapeTM.visitedByTapeHead (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) t' i.castSucc =
+      MultiTapeTM.visitedByTapeHead c t i
+hruler :
+  MultiTapeTM.visitedByTapeHead (rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp) t' (Fin.last m) ⊆
+    Finset.Icc (rp - 1) (rp + ↑ℓ)
+d : Cfg (m + 1) Bool Q z := rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp
+ι : Fin (m + 1) ↪ Fin (m + 1) := Function.Embedding.refl (Fin (m + 1))
+ec : Cfg (m + 1) Bool Q z := embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] d
+⊢ Option.map (fun q => inj q b) c.state ≠ none
+/private/tmp/f6-draft-route-probes/HaltedHostReturn.lean:67:8: error: Type mismatch
+  embedEmitTM_visitedByTapeHead ι H (fun x x_1 => none) (fun x => 0) [] d t' j
+has type
+  MultiTapeTM.visitedByTapeHead (embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] d) t' (ι j) =
+      MultiTapeTM.visitedByTapeHead d t' j ∧
+    MultiTapeTM.spaceUsedByTape (embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] d) t' (ι j) =
+      MultiTapeTM.spaceUsedByTape d t' j
+but is expected to have type
+  MultiTapeTM.visitedByTapeHead ec t' (ι j) = MultiTapeTM.visitedByTapeHead d t' j
+'F6DraftReturn.hosted_return' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+        2.15 real         0.94 user         0.80 sys
+          1711079424  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125213  page reclaims
+               10335  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 278  voluntary context switches
+                6718  involuntary context switches
+            31606663  instructions retired
+            17442273  cycles elapsed
+             1622352  peak memory footprint

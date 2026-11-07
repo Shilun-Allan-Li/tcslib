@@ -16,6 +16,6 @@ The earlier unpublished 135-section candidate was withdrawn before publication/d
 #222 merged. Its metadata is retained in `evidence/prepublication-candidate.json`; it is not an
 issued audit packet. The current pack is published and verified: **217 sections, zero problems**.
 `dispatch.json` and `prompt.md` pin the exact issued packet.
-**Ready to dispatch: gate 116**, Codex. Await the user's dispatch confirmation.
+**Dispatched by the user: gate 116**, Codex. Await the findings attachment.
 
 **Not yet clear to merge: #229**; the external Codex gate must close. Next free gate **117**.

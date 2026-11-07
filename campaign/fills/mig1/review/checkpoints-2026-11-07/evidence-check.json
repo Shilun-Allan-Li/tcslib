@@ -1,0 +1,262 @@
+{
+  "limitation": "Static parsing of delivered source/logs; not an independent elaboration.",
+  "controls": {
+    "unsealed": {
+      "examples": 38,
+      "diagnostics": 0,
+      "exit": [
+        "0"
+      ],
+      "bad_examples": [],
+      "stray": [],
+      "unexpected_diagnostic_kind": [],
+      "unexpected_diagnostic_file": [],
+      "accepted": true
+    },
+    "sealed": {
+      "examples": 38,
+      "diagnostics": 38,
+      "exit": [
+        "1"
+      ],
+      "bad_examples": [],
+      "stray": [],
+      "unexpected_diagnostic_kind": [],
+      "unexpected_diagnostic_file": [],
+      "accepted": true
+    },
+    "duplicate_negative": {
+      "examples": 38,
+      "diagnostics": 39,
+      "exit": [
+        "1"
+      ],
+      "bad_examples": [
+        {
+          "line": 14,
+          "count": 2
+        }
+      ],
+      "stray": [],
+      "unexpected_diagnostic_kind": [],
+      "unexpected_diagnostic_file": [],
+      "accepted": false
+    },
+    "missing_negative": {
+      "examples": 38,
+      "diagnostics": 37,
+      "exit": [
+        "1"
+      ],
+      "bad_examples": [
+        {
+          "line": 18,
+          "count": 0
+        }
+      ],
+      "stray": [],
+      "unexpected_diagnostic_kind": [],
+      "unexpected_diagnostic_file": [],
+      "accepted": false
+    },
+    "exit0_negative": {
+      "examples": 38,
+      "diagnostics": 38,
+      "exit": [
+        "0"
+      ],
+      "bad_examples": [],
+      "stray": [],
+      "unexpected_diagnostic_kind": [],
+      "unexpected_diagnostic_file": [],
+      "accepted": false
+    }
+  },
+  "control_pairs": [
+    [
+      "01",
+      "step (pointwise / abstracted)"
+    ],
+    [
+      "02",
+      "runFrom"
+    ],
+    [
+      "03",
+      "initCfg"
+    ],
+    [
+      "04",
+      "Cfg.init"
+    ],
+    [
+      "05",
+      "Action.apply"
+    ],
+    [
+      "06",
+      "Cfg.inputSymbol"
+    ],
+    [
+      "07",
+      "Cfg.workTapeSymbols"
+    ],
+    [
+      "08",
+      "moveInputPos"
+    ],
+    [
+      "09",
+      "ComputesInTime"
+    ],
+    [
+      "10",
+      "ComputesFunInTime"
+    ],
+    [
+      "11",
+      "Computes"
+    ],
+    [
+      "12",
+      "spaceUsed"
+    ],
+    [
+      "13",
+      "spaceUsedByTape"
+    ],
+    [
+      "14",
+      "visitedByTapeHead"
+    ],
+    [
+      "15",
+      "controlAction"
+    ],
+    [
+      "16",
+      "leftAction"
+    ],
+    [
+      "17",
+      "rightAction"
+    ],
+    [
+      "18",
+      "emitAction"
+    ],
+    [
+      "19",
+      "bufferTape"
+    ]
+  ],
+  "seal_regions": {
+    "Composition": {
+      "regions": 9,
+      "names": [
+        "Turing.FinTM.idTM_computes",
+        "Turing.FinTM.computesFunInTime_id",
+        "Turing.FinTM.ifEqTM_computes",
+        "Turing.FinTM.computesFunInTime_ifEq",
+        "Turing.FinTM.computesFunInTime_comp",
+        "Turing.FinTM.exists_comp_on_image",
+        "Turing.FinTM.exists_comp_partial",
+        "Turing.FinTM.condTM_computes_iff",
+        "Turing.FinTM.exists_cond"
+      ],
+      "irreducible_sets": [
+        "Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape"
+      ],
+      "nosimp_sets": [
+        "Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+      ],
+      "restored_source_code_equal": true,
+      "supplied_output": "exit=0"
+    },
+    "Encoding": {
+      "regions": 2,
+      "names": [
+        "Turing.pairDiagTM_computes",
+        "Turing.computesFunInTime_pairEncode_diag"
+      ],
+      "irreducible_sets": [
+        "Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.branchTM"
+      ],
+      "nosimp_sets": [
+        "Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+      ],
+      "restored_source_code_equal": true,
+      "supplied_output": "exit=0"
+    },
+    "TimeConstructible": {
+      "regions": 6,
+      "names": [
+        "Turing.FinTM.lengthBitsTM_computes",
+        "Turing.FinTM.lengthBitsTM_spaceUsed",
+        "Complexity.timeConstructible_id",
+        "Complexity.counter_emit_start",
+        "Complexity.counter_halt",
+        "Complexity.counter_count"
+      ],
+      "irreducible_sets": [
+        "Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.branchTM"
+      ],
+      "nosimp_sets": [
+        "Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+      ],
+      "restored_source_code_equal": true,
+      "supplied_output": "exit=0"
+    },
+    "Simulation": {
+      "regions": 8,
+      "names": [
+        "Turing.FinTM.branchTM_computes",
+        "Turing.FinTM.branchTM_spaceUsed",
+        "Turing.FinTM.rewind_from_any",
+        "Turing.FinTM.timed_rewind",
+        "Turing.FinTM.rewind_heads",
+        "Turing.FinTM.branchTM_initCfg_false",
+        "Turing.FinTM.branchTM_initCfg_true",
+        "Turing.FinTM.rewind_first_step"
+      ],
+      "irreducible_sets": [
+        "Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead"
+      ],
+      "nosimp_sets": [
+        "Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+      ],
+      "restored_source_code_equal": true,
+      "supplied_output": "exit=0"
+    },
+    "Wrappers": {
+      "regions": 10,
+      "names": [
+        "Turing.FinTM.timedCondTM_computes",
+        "Turing.FinTM.timedCondTM_spaceUsed",
+        "Turing.FinTM.computesFunInTime_cond",
+        "Turing.FinTM.timedHeads",
+        "Turing.FinTM.timed_control_heads",
+        "Turing.FinTM.timed_branch_heads",
+        "Turing.FinTM.timedReadyCfg_workTapePos",
+        "Turing.FinTM.timedReady_dispatch",
+        "Turing.FinTM.timed_read_heads",
+        "Turing.FinTM.timed_ledger"
+      ],
+      "irreducible_sets": [
+        "Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape"
+      ],
+      "nosimp_sets": [
+        "Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+      ],
+      "restored_source_code_equal": true,
+      "supplied_output": "exit=0"
+    }
+  },
+  "axiom_logs": {
+    "public_names": 22,
+    "exactly_covers_changed_public_proofs": true,
+    "only_standard_axioms_in_supplied_output": true,
+    "compiler_auxiliaries_census": "NOT RUN (worker disclosure)"
+  },
+  "header_regression_nested_binder": "PASS"
+}
