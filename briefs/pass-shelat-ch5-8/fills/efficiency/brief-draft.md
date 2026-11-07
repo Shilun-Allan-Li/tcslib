@@ -327,7 +327,7 @@ The private `decodeOracleMove_eq` (PRF.lean) is not citable (rule 11). The same 
    every other-file TCSlib definition your proofs mention, and `attribute [-simp]` on those of
    them that are `@[simp]`. Add one control that closes unsealed and fails sealed. List the sealed
    names in `REPORT.md`.
-5. **Lint.** `python3 scripts/campaign_style_lint.py TCSlib/Cryptography/Games --check8b` reports
+5. **Lint.** `python3 -I scripts/campaign_style_lint.py TCSlib/Cryptography/Games --check8b` reports
    0 FAIL on the owned file(s). The file-size WARN is recorded as the layout ruling says.
 6. **Freeze and scope.** The diff touches only the owned file(s) and changes only the four bodies,
    the `EffFill` helpers and the allowed sketch edits. The maintainer checks the freeze at intake.

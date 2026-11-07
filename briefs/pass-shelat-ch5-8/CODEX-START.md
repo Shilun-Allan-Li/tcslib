@@ -32,3 +32,8 @@ Notes:
 Work in `tcslib-pass-shelat-ch2-4/`: records, Lean worktrees for PR branches, builds. Stage gates and
 fills in `tcslib-exchange/`. Make PR branches as `git worktree`s of the campaign checkout, not as
 branch switches in it, so that the records checkout stays on its branch.
+
+**Shared exchange checkout (user, 2026-11-06 PST).** Other chats also use
+`tcslib-exchange/` for different formalizations. Preserve their files and staged changes.
+Before an exchange Git mutation, inspect the working tree and index; stage and commit only
+explicit Pass–shelat paths. Do not use blanket staging or overwrite another chat's work.

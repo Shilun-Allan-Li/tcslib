@@ -102,6 +102,11 @@ in this folder (identical).
 ## 5. How the work is done
 
 **Environment.** Lean 4.25.0 with the pinned Mathlib (`lake-manifest.json`).
+
+**Local Mac setup (2026-11-06 PST):** `maintainer/environment-2026-11-06/README.md` records
+a successful narrowed cache and 62-module bootstrap of the base `Candidates/Concrete` upstream
+closure, with source fingerprints and native resource measurements. This is not a PR replay.
+
 - **Set-up:**
   - On a fresh machine, follow `fills/fill-environment-addendum.md`: preflight, then a *narrowed*
     Mathlib cache fetch for the roots you need, then a bootstrap of the TCSlib modules in order.
@@ -172,7 +177,7 @@ event, hashes). Never leave untracked files.
 | Fills | All 8 units delivered and reviewed (land after edits). Nothing is still being filled. |
 | **Shared lemmas / next** | **#227** (S1) is open at `c6affb3a92535d3f1de2e0a52c205a84c0cff551`. Gate 08 is **dispatched** (user confirmation); findings are not yet in the exchange inbox. After gate 08 closes and the user merges #227, write the S2 external fill brief for `polyTimeComputable_rejectBlocksL`, per Q4 (B), including deletion of the four loops and the six sketch refreshes. S1/S2 precede clean-up part 2 per Q2 (A). |
 | Gate 03 | Closed: 03a, 03b, 03c, 03e, 03f1, 03f2, 03g, 03l. To re-stage after #195 and clean-up part 2: 03d, 03h, 03i, 03j, 03k (`gates/03-ch2-4/`). |
-| Efficiency fill | `fills/efficiency/brief-draft.md` (T1/T2 in #195's `Games/Efficiency.lean`; rulings EF-1/EF-2 in the log). Issue after #195 merges. |
+| Efficiency fill | `fills/efficiency/brief-draft.md` (four targets in #195's `Games/Efficiency.lean`; rulings EF-1/EF-2 in the log). Issue after #195 and the remaining clean-up interface prerequisites land, with the required issue-time probes and brief review. Existing PPT equations and #195's two decoder equations are recorded in the refreshed draft. |
 | Gate 06 | ch. 5–8 statement packs `gates/06-ch5-8-statements/06{A,B,C}-pack.md`; staged after #195. |
 | Later | PS10 ingest per policy §2; DL-22 (newer Mathlib's Chebyshev bound and Korselt at the next bump). A lattice-based prong was discussed but **not** started (brainstorm only). |
 
