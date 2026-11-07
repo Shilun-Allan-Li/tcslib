@@ -1,8 +1,11 @@
-# Gate 114: NatBits (PR #222)
+# Gate 114: NatBits (#222)
 
-- 2026-11-06 (PST, Codex takeover): preparing the reserved gate. Source freeze, lint, blueprint
-  checks and candidate searches are in `evidence/current/`. The Mathlib-only module plus boundary
-  probes passed locally; all ten theorem axiom prints use only the standard three axioms.
-- The full merged-tree replay is pending the campaign snapshot bootstrap. **Not yet clear to merge.**
-- The user selected **Codex** for this audit: findings as an attached Markdown file in chat,
-  also pasted in the reply. The gate has not been dispatched.
+- Final source, screen, seal, axiom and census evidence is complete in `evidence/current/`.
+- Independent merged-tree replay: **344 modules, 0 failures, 0 static mismatches**,
+  chained from the complete 894-module `oleans-mac0` campaign snapshot. The closure
+  retains its existing 68 admitted declarations; this is a mechanical deduplication PR.
+- Unfiltered non-private constant census: **2,377 → 2,374, including all internal auxiliaries and 12 module-owner moves**.
+- The user selected **Codex**: attached findings Markdown in chat and its content pasted
+  in the reply. The pack is finalized; bundle verification/publication is next. The gate
+  has not been dispatched.
+- **Not yet clear to merge: #222**; the external gate remains open.

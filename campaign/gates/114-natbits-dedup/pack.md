@@ -13,7 +13,9 @@ D8 blueprint decision and D9 record-only ruling are recorded in
 older line numbers; use the current diff and census for the audited tree.
 
 The new `TCSlib/Complexity/TuringMachine/NatBits.lean` has 144 lines, ten public theorems, no
-private declarations and Mathlib imports only. Keeping the two namespace roots was explicitly
+private source declarations and Mathlib imports only. The compiled module has **16 constants**:
+the ten source theorems plus six moved internal proof auxiliaries. All 16 receive axiom checks.
+Keeping the two namespace roots was explicitly
 approved to preserve names. Encoding and Bin import it; no consumer site gets an additional
 import. The TuringMachine facade imports and lists it.
 

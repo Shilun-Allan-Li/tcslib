@@ -25,24 +25,23 @@ Lean. Setup and the complete bootstrap evidence are in `campaign/status/2026-11-
 
 | PR | What | Gate | Next |
 |---|---|---|---|
-| #215 | SG-1, all three consumers; approved Basic imports; identical Frag repair. Three bridges now use `segment_iff`; four older zero/one/mono helpers use the API and four public CounterLoop reads use its equation (`lean/dedup-sg1`) | **106**, Codex; fresh pack written; four seal probes passed | 329-module merged-tree replay running on `oleans-mac0`; then finish/stage the gate |
-| #222 | NatBits, 22 Lean files; 21 sites + Meyer ×2; identical Frag repair; new module's provenance prose corrected (`lean/dedup-natbits`) | **114**, Codex; fresh pack written; standalone preflight and screen passed | 344-module merged-tree replay running on `oleans-mac0`; imported census/axioms and staging next |
-| #228 | E-PAD delivery plus mechanical reuse/prose repairs; three public statements frozen, 49 private declarations (`lean/epad-padding-fill`, draft) | **115**, Codex; pack/evidence finalized; all 506 constants use only the standard axioms; non-private census 3 → 6 (three generated proof auxiliaries) | 2-module merged-tree replay passed (zero static mismatches); sealed source, 72 positive/72 negative controls and 23-file screen passed; stage the bundle, then the user dispatches |
+| #215 | SG-1, all three consumers plus the shared Frag repair (`lean/dedup-sg1`) | **106**, Codex; final pack/evidence complete | 329-module replay passed, zero failures/static mismatches; verify/stage bundle, then user dispatches. **Not yet clear to merge.** |
+| #222 | NatBits, 22 Lean files; 10 source theorems / 16 compiled constants in the new module (`lean/dedup-natbits`) | **114**, Codex; final pack/evidence complete | 344-module replay passed, zero failures/static mismatches; verify/stage bundle, then user dispatches. **Not yet clear to merge.** |
+| #228 | E-PAD fill and mechanical repairs, three public statements frozen (`lean/epad-padding-fill`) | **115 CLOSED**, Codex PASS 0/0/0/12; every note dispositioned | 2-module replay passed; current merge preview has exactly that Lean tree. Ready for review, **Clear to merge**; the user merges. |
 
 The previous VM's pre-#220/#221 replays were stopped as stale and are not used. #215 and #222
-carry the identical `Frag` hunk. All three current PRs remain **not yet clear to merge**: their
-external gates have not been dispatched. After any merge, reassess replay validity against the
-new campaign before clearing another PR; do not compose independent PR snapshots.
+carry the identical `Frag` hunk. After any merge, reassess replay validity against the new
+campaign before clearing another PR; do not compose independent PR snapshots. The final
+checks and source pins are in each gate's `evidence/current/`.
 
-**E-PAD received** (`campaign/fills/epad/STATUS.md`). The final exchange archive passed all 118
-payload checksums; the original source/report and a separate internal/landing review are under
-`campaign/fills/epad/reviews/epad-fill/`. The four delivered patches retain their original
-authorship in #228. Redundant binary bounds, the soon-deleted Codec name and missing sketches
-were repaired in that PR. The report's three-source-declarations versus six-non-private-constants
-discrepancy is explicitly recorded and independently confirmed by the fresh census.
-1. Finish the evidence and stage gate 115; the user dispatches it.
-2. Resolve findings, replay as necessary and let the user merge #228.
-3. Then the maintainer closes `SPACE_linear_ne_NP` in `Hierarchy` in a small PR with its own gate.
+**E-PAD received and audited** (`campaign/fills/epad/STATUS.md`). All 118 payload checksums pass.
+The original source/report and separate internal/landing reviews are retained. Gate 115's
+original attachment is preserved byte-for-byte: 13,569 bytes, SHA-256
+`d4da5651aa56072dcdb7c461f6a853be439d1e3c08d29525cbfe9a687fd570c4`.
+The audit has no mandatory repairs. Its optional extra validator/bank Lean examples are deferred;
+the auditor's finite-model tests are attributed to the auditor, not claimed as maintainer runs.
+1. The user merges #228 (gate closed; current merged-tree check passed).
+2. The maintainer closes `SPACE_linear_ne_NP` in `Hierarchy` in a small PR with its own gate 116.
    It imports `Padding` (allowed by the user), and its body is
    `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`,
    going through `mem_padLang_iff` with `Set.ext`. Gate 110's consumer probe
@@ -50,12 +49,12 @@ discrepancy is explicitly recorded and independently confirmed by the fresh cens
 
 **Snapshots.** The Mac's complete **`oleans-mac0`** at `68076072` passed **894 modules, 0 failed,
 0 skipped**. Available cached PFR dependencies made the old cloud skip unnecessary.
-`oleans-mepad1` passed #228's two-module closure from it. Independent `oleans-msg1` and
-`oleans-mnb1` replays are running. The previous VM's snapshots do not travel and are not used.
+`oleans-mepad1` passed #228's two-module closure from it. Independent `oleans-msg1` (329 modules) and `oleans-mnb1` (344 modules) both passed, with
+zero failures/static mismatches. All three start independently from `oleans-mac0`. The previous VM's snapshots do not travel and are not used.
 
 **Next, in order** (the roadmap is `campaign/items/roadmap3/PLAN.md`, with the user's rulings in §(f)):
-1. **E-PAD:** land the delivery, then close `SPACE_linear_ne_NP` (above).
-2. **Gates 106 (#215) and 114 (#222):** replay, pack, stage, then the user dispatches.
+1. **E-PAD:** user merges the audited #228, then close `SPACE_linear_ne_NP` (above).
+2. **Gates 106 (#215) and 114 (#222):** replays/packs complete; stage, then the user dispatches.
 3. **F6 (`space_universal`, `Hierarchy`):** its prerequisite #221 has merged, and the user ruled
    E-PAD first in `Hierarchy`.
    - Write F6's fill brief on `Build/UniversalParts`' rows.
@@ -77,7 +76,7 @@ discrepancy is explicitly recorded and independently confirmed by the fresh cens
      questions in the ledger are answered by the 2026-11-06 rulings);
    - **later:** WS-1, RC-1–4, QF-1, WC-1, TC-1 and the D9 families from the NatBits plan.
 
-**Gate numbers:** 106 (#215), 114 (#222) and 115 (#228) are reserved; the next free number is **116**.
+**Gate numbers:** 106 (#215) and 114 (#222) are reserved; 115 (#228) is closed; the next free number is **116**.
 
 **Routing confirmed by the user:** these three audits use **Codex**, returning an attached
 findings Markdown file in chat and pasting its content. Ask the agent choice afresh before each

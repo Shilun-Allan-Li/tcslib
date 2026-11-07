@@ -1,17 +1,16 @@
-# Gate 115: E-PAD fill landing
+# Gate 115: E-PAD fill landing (#228)
 
-- 2026-11-06 (PST): reserved for the final E-PAD delivery's landing. The final archive was
-  received from the exchange and all 118 payload checksums passed. Its receipt, verbatim report
-  and internal source review are under `campaign/fills/epad/reviews/epad-fill/`.
-- The delivery's four patches were applied with `git am -3` on `lean/epad-padding-fill`,
-  preserving the contributor's authorship. Draft PR **#228** includes the mechanical reuse,
-  Core-equation and prose repairs. Its independent replay passed **2 modules, 0 failures and
-  0 static mismatches**, removing the one admission. The sealed source passes; all **72**
-  controls close unsealed and fail sealed. All **506** compiled constants use only the standard
-  three axioms. The unfiltered census is **3 → 6** non-private constants: three source declarations
-  and three internal proof auxiliaries. The full 23-file screen has **0 new pairs**.
-- `pack.md` and `evidence/current/README.md` are finalized. Bundle staging follows this records
-  commit; its exact checksum/source pins are recorded with the exchange package. **Not yet
-  clear to merge:** the external gate has not closed.
-- The user selected **Codex** for this audit: findings as an attached Markdown file in chat,
-  also pasted in the reply. The gate has not been dispatched.
+- Final delivery: all 118 payload checksums pass; original report/source retained under
+  `campaign/fills/epad/reviews/epad-fill/`. The four patches retain their original authorship.
+- Executed validation: 2-module independent merged-tree replay, zero failures/static
+  mismatches; one admission removed; 506 constants use only the standard axioms; three public
+  source declarations preserved, 49 private source declarations, three generated proof
+  auxiliaries. Full source seal and 72 paired controls pass; 23-file screen has no new pairs.
+- **Dispatched** by the user to Codex after the verified 324-section package was published.
+  `dispatch.json` and `prompt.md` retain the immutable source, records and checksum pins.
+- **Received and CLOSED:** `findings.md` is the exact attached Markdown, checksum-verified;
+  **PASS — 0 blockers, 0 majors, 0 minors, 12 notes**. All 12 notes are dispositioned in
+  `resolutions.md`; no code change is required. The optional extra Lean examples are deferred.
+- #228 is ready for review. The fresh merge preview has the exact Lean tree of the passed
+  replay; see `evidence/current/merged-tree/current-merge-check.json`. **Clear to merge: #228**.
+  The user merges; then the maintainer prepares the small Hierarchy consumer PR (gate 116).

@@ -31,4 +31,8 @@ The initial failed preflight and control-design attempts remain labeled separate
 
 The user raised this Mac's global cap to five during these runs. The two long replays were suspended during the earlier cross-campaign overlap and resumed; this campaign now budgets three slots, leaving two for Pass–Shelat. No external process was signaled.
 
-**Ready to dispatch** once the verified bundle is staged. **Not yet clear to merge:** gate 115 has not closed. After another Lean merge, reassess/replay the combined tree before clearing a PR.
+**Gate 115 CLOSED:** external PASS, 0 blockers, 0 majors, 0 minors, 12 notes; all notes are
+dispositioned in `resolutions.md`. The immutable issued bundle and its pins remain in
+`dispatch.json`; this current status is a later records update. The fresh merge-tree check
+finds exactly the passed replay head's Lean tree. **Clear to merge: #228**; the user merges it.
+After another Lean merge, reassess/replay the combined tree before clearing a PR.

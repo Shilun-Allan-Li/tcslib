@@ -1027,10 +1027,11 @@ pair.
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-06 PST / 2026-11-07 UTC).** Codex's
 current state is `campaign/maintainer/HANDOFF.md` §0. The Mac baseline bootstrap passed all 894
-modules. Open campaign PRs: #215 (SG-1, gate 106), #222 (NatBits, gate 114), and draft #228
-(E-PAD, gate 115). The E-PAD delivery is received and its two-module merged-tree replay passed;
-the other two replays and final gate evidence are in progress. All three audits are prepared for
-Codex findings attachments; none has been dispatched. The user confirmed that maintainer records
+modules. Open campaign PRs: #215 (SG-1, gate 106), #222 (NatBits, gate 114), and #228
+(E-PAD, gate 115). All three independent replays and final evidence passed. Gates 106/114
+are finalized for staging and user dispatch to Codex. Gate 115 was dispatched and is now
+**CLOSED: PASS 0/0/0/12**, all notes dispositioned; #228 is clear to merge on the checked current
+merged Lean tree. The user merges it. The user confirmed that maintainer records
 continue by direct campaign push. Next free gate: 116. E-PAD's merge precedes the small
 `SPACE_linear_ne_NP` PR and then F6 in Hierarchy; no later fill has been dispatched.
 

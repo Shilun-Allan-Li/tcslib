@@ -6,4 +6,6 @@ Validation: all 118 delivery checksums pass. The public-statement, visibility an
 
 The full source passes with 36 foreign definitions sealed; all 72 controls close unsealed and fail sealed. The fresh inventory accounts for every direct foreign definition and explicitly documents the matcher/abbreviation/projection exclusions. Three boundary probes pass, and the complete 23-file screen finds zero new pairs. Evidence and the audit pack are under `campaign/gates/115-epad-fill/`.
 
-**Not yet clear to merge.** External gate 115 must close; Seyoon merges the PR.
+**Clear to merge.** External gate 115 is closed: PASS, 0 blockers, 0 majors, 0 minors, 12 notes,
+all dispositioned without code changes. The current campaign merge preview has exactly the
+Lean tree of the passed replay. Seyoon merges the PR.
