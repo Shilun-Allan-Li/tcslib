@@ -23,8 +23,8 @@ concrete-instance scaffold matches retained for assessment. Factoring dispositio
 source populations and lint diagnostics remain in `campaign/fills/mig1/landing/`.
 
 The earlier generation's complete mmig1 replay PASSED394/0, static0/60. The fresh final
-mmig2 replay at the head above is **running** from complete mac3; no final replay pass is
-claimed yet. Its12-file downstream closure has394 modules. Source remains frozen.
+mmig2 replay at the head above **PASSED394/0, static0/60**, pipeline exit0, from complete mac3.
+Its12-file downstream closure has394 modules and the source is clean/exact at receipt.
 
 The later Claude R2 partial delivery is preserved and independently reviewed offline:4028
 payload checksums,864 supplied attempts and418 carried source closures reconcile. Strict

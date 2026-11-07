@@ -159,5 +159,5 @@ returned HOLD; its round2 packet is published and ready for user dispatch. Gates
 (#229, the Hierarchy consumer) is closed and merged. Gate **117** is reserved for the
 23 approved reading/resource APIs (Codex selected), ready for dispatch. Gate118 is reserved
 for draft #233’s MIG-1 landing (Codex selected): final12-module/source/axiom/screen checks
-pass, its fresh394-module replay is running, and interface rulings remain pending; next free: **119**.
+pass along with its fresh394-module replay (static0/60); interface rulings remain pending. Next free: **119**.
 **The current state is HANDOFF §0.**

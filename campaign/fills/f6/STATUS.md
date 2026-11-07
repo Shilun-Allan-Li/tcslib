@@ -1,19 +1,25 @@
-# F6: ruler-hosted suffix, Claude — draft only
+# F6: ruler-hosted suffix, Claude — unissued draft
 
-The user selected the ruler-hosted suffix route and Claude delivery. F6 follows the
-`SPACE_linear_ne_NP` consumer (#229), now merged by Seyoon after gate116 closed PASS. No F6 fill is dispatched or implemented here.
+Seyoon chose the ruler-hosted suffix route and Claude checkpoint/final ZIP pushes.
+#229 is merged; no F6 fill is dispatched or target implemented internally.
+The approved `CodeTM.toFinTM_eq` is implemented in prerequisite #230/gate117; its
+actual sealed computation/space consumer passes. Gate/merge remains pending.
 
-The draft brief and route assessment are in `drafts/`. Seven small pre-ship executions are
-recorded with source/log hashes, including the retained failed intermediate attempt and the
-expected sealed negative control. The bounded first-halt → ruler-host → fresh-return
-composition passes on the standard axioms and avoids a new H5 contract. The full concrete
-prefix, first-return/layout reconstruction, final source pins/orders/cache roots and baseline
-screens remain unfinished; conditional component probes do not certify that full route.
+Six bounded v2 components pass native/sealed/control checks with their exact
+limits preserved. `first-header-preship-v3/` additionally proves the actual first
+header run/cut/silence/space component; `header-host-handoff-v4/` proves its exact
+presentation after the state-only reset and uniformly instantiates H5 with
+public readers. This does not prove the outer prefix seam or assume first halt.
 
-The proposed same-home `CodeTM.toFinTM_eq` reader in Encoding and its conditional sealed
-computation/space conversion pass. **Seyoon approved the new public API**. It is included in the 23-theorem prerequisite
-PR #230/gate117, assigned to Codex; implementation and394-module replay pass, audit/merge pending. Keep gate 112's withdrawn arbitrary-machine route_space
-out of every final brief and require actual run/cut/loop-bound witnesses.
+The dated clarification in both unissued drafts corrects our earlier supplied
+full-prefix promise to PLAN§(f)/Gate112-01's expressly permitted conditional OWN
+boundary. Public interfaces, concrete geometry and typed final run/space
+applications must be pre-shipped. Full actual prefix/run/cut/space, final hosted
+ledger and target proofs remain Claude OWN-1–OWN-3. No premise is silently waived
+or asserted for arbitrary machines; no new design or API is approved.
 
-**Not ready to dispatch.** Complete the prerequisite reader audit/merge and full concrete
-pre-ship before issuing a checksum-pinned Claude packet.
+**Not ready to dispatch.** The actual zero-outer last-ruler run/space consumer,
+remaining phase interfaces and conditional ledger arithmetic are being checked.
+Final source pins/freeze/admission census/orders/cache roots/citation population/
+baseline screen/checksum packet must then be generated on the merged prerequisite
+base. No historical gate112 or component-only pass substitutes for these checks.

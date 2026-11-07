@@ -24,7 +24,7 @@ receipts remain in their dated status folders.
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
-| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 replay394 running** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Additional API/home rulings pending; no unapproved proposal applied. **Not yet clear to merge.** |
+| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Additional API/home rulings pending; no unapproved proposal applied. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -67,8 +67,8 @@ The earlier0d generation passed its complete394-module replay (static0/60). Scre
 body-only factoring is now committed, including mechanical VirtualInput cleanup under WORKFLOW§3.
 The actual12-module native chain and final five-module tail rerun pass. Full-header/source QA,
 4413-constant full axiom accounting,144 roots+224 descendants standard and final25-file screen
-1696→622 are complete. A fresh394-module mmig2 replay is running from mac3 at the final pushed
-head; no final replay pass is claimed. Source stays frozen. Earlier evidence generations remain
+1696→622 are complete. The fresh394-module mmig2 replay PASSED394/0, static0/60, pipeline exit0 from mac3 at the
+final pushed head. Source is clean/exact at receipt. Earlier evidence generations remain
 separately pinned. No target proof, new public API or import is added by these repairs.
 No target admission is filled internally. `campaign/fills/mig1/landing/` contains the exact
 source reviews, owner seals/paired controls, compiler comparison and proposal evidence.
@@ -77,14 +77,16 @@ source reviews, owner seals/paired controls, compiler comparison and proposal ev
 payload checksums and864 supplied attempt records reconcile, with418 carried source closures
 verified byte-identical. Independent source review recommends no adoption: our current repairs
 cover its useful changes, and its strict seal gaps remain. It is producer evidence, not a native
-replay or gate clearance. Archive only after records are committed.
+replay or gate clearance. Raw delivery/reviews are committed; the two received files are now
+archived in our exchange subtree, receipt `exchange-archive-receipt.json`, with all eight
+unrelated shared untracked files preserved.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
 final landing. The actual untimed condTM bridge and completed owner scopes now pass their recorded
 strong seals. Primitives finishes the local T1/T2/T2b factoring; Loop's T3 and Catalog's
 T5/T6 helpers are checked. The initial eleven-module chain and its full394-module replay pass. Later same-home
 terminal/bank/rewind/endpoint factoring and all three existing-Mathlib invariant repoints pass
-the final12-module chain/source/census/screen checks; their fresh394-module replay is running. These generations
+the final12-module chain/source/census/screen checks and fresh394-module replay (static0/60). These generations
 are separately pinned rather than relabeled as one replay. The generated rewind matcher has no effective
 negative control, explicitly disclosed; no global legacy seal is claimed.
 A shared absorbing-stop first-entry lemma and canonical pairDiag/incFixed exact zero-space

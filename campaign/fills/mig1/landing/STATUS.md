@@ -39,8 +39,9 @@ classified in `lint-final/`, not claimed globally clean. WordSize's current poin
 
 The first immutable replay `mmig1` PASSED394/0, static0/60, at the earlier
 `0d6b6f842a48be813dcde7fdfd2a1a161fab2383` generation (`replay-current/`).
-A fresh complete394-module replay **mmig2 is running** from mac3 at the final pushed head
-above (`replay-final/`); it is not yet claimed passed. The source is frozen during that run.
+The fresh complete394-module replay **mmig2 PASSED394/0, static0/60**, pipeline exit0,
+from mac3 at the final pushed head above (`replay-final/`). Committed/actual source is clean
+and exact at receipt; campaign Lean remains unchanged from the snapshot.
 
 ## Delivery review
 

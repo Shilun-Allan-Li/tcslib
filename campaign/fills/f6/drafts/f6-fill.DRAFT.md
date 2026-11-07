@@ -5,7 +5,7 @@ pins and an unmerged shared API prerequisite described in `ROUTE-ASSESSMENT.md`.
 The user selected **Claude**, the ruler-hosted suffix route, and checkpoint/final
 zip delivery by push to the exchange inbox. Fill execution follows the merge of
 the `SPACE_linear_ne_NP` consumer (#229), never overlaps another Hierarchy fill,
-and also waits for the coded-bundle conversion check and concrete route pre-ship.
+and also waits for the approved reader’s gate/merge and concrete interface pre-ship.
 
 ## Base and supplied packet — maintainer must finalize
 
@@ -77,8 +77,25 @@ existential. Do not restrict codes to canonical encodings or outputs to decision
 
 ## Required route and explicit consumer leaves
 
-Use the public shared hosts and equations named in `ROUTE-ASSESSMENT.md`; the final
-issued packet must supply checked concrete prefix and bundle-conversion contracts.
+Use the public shared hosts and equations named in `ROUTE-ASSESSMENT.md`.
+
+**2026-11-07 maintainer clarification of this unissued draft.** The previous draft
+promised supplied “checked concrete prefix and bundle-conversion contracts.” That
+full-prefix promise was an overstatement of maintainer pre-ship, not another user
+ruling. PLAN§(f) and the accepted Gate112-01 resolution explicitly permit a route
+probe conditional on named `aRun`, `aCut` and `hloop` inputs. The supplied evidence
+will check concrete component interfaces and the typed conditional final consumer
+at the actual last-ruler bank. It will not claim a completed physical prefix or
+`space_universal`. Claude must prove every OWN input at the fixed actual assembly;
+none is a fact about arbitrary machines or an admission hidden in the consumer.
+The route, target, API/import freeze and gate/merge prerequisite are unchanged.
+
+**Current check state:** actual first header and first-header→H5 presentation are
+checked in `first-header-preship-v3/` and `header-host-handoff-v4/`; actual
+zero-outer run/space consumer, remaining phase interfaces and conditional ledger
+arithmetic are being checked. Do not dispatch until their results and limits
+are incorporated and the final packet is pinned. Older component probes do not
+become those newer checks.
 
 1. Obtain the fixed one-tape startup from `exists_selfStartupTM`. On native
    `pairEncode α x`, its startup time and bank-space bound depend on `α` only.
@@ -102,9 +119,8 @@ issued packet must supply checked concrete prefix and bundle-conversion contract
    Do not copy `x` or use the blank-only header-ruler theorem on the existing ruler.
 4. Reconcile the actual tape bank, not merely its cardinality. H5's ruler is last;
    `suffixRulerCfg` puts it immediately after the three simulation tapes. Use the
-   concretely prechecked assembly in the issued packet (candidate: embed the
-   three-tape H2-F loop into the entire startup bank, then host that bank, keeping
-   the common ruler last). Prove the final endpoint equality through public
+   assembly checked in the issued packet: embed the three-tape H2-F loop into
+   the entire startup bank, then host that bank, keeping the common ruler last. Prove the final endpoint equality through public
    embedding/layout fields. The last-ruler candidate does **not** literally match
    `suffixRulerCfg_embed` for arbitrary scratch-bank size.
 5. Apply H2-F's `exists_forwardLoopTM` and `forwardLoop_forward` to the source's
@@ -125,9 +141,21 @@ from an endpoint equality. The actual prefix time may depend on `s` and `x`; its
 upper bound, hence its space coefficient, must depend on `α` and the header
 lengths only. No time bound is required in the final statement.
 
-The permitted private work is the concrete prefix/endpoint/cut, its one-step
-stationary silent halt leaf, layout glue, hosted loop ledger, and arithmetic/output
-closure. A one-step ruler correction is
+The named external proof obligations are:
+
+- **OWN-1 — fixed physical prefix:** choose its finite control before `α,s,x`;
+  prove actual `aRun`, live exit, strict first-return `aCut`, silence, installed
+  bank/heads/input/ruler endpoint and header-linear `hB`, counting every dispatch.
+- **OWN-2 — final loop and layout:** instantiate the fixed H2-F loop, emitting
+  embedding and last-ruler H5 host; prove exact `hcfg`, first-halt/output transport
+  and `hloop` for the mirrored tape, two auxiliaries, every idle singleton tape
+  and both ruler boundary cells.
+- **OWN-3 — arithmetic and target:** derive `1≤s`, choose positive `C_α` in the
+  frozen quantifier order, supply all proved OWN inputs to the checked run/space
+  contracts and close the exact target with the actual arbitrary output.
+
+These are consumer-specific private work, including the stationary silent halt
+leaf and layout glue. A one-step ruler correction is
 a leaf rather than a host, but the issued packet must explicitly authorize and
 probe its exact contract if no existing catalog row serves it. Do not replicate
 an existing seam, embedding ledger, forwarding controller or ruler host privately.
