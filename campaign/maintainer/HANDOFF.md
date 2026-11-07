@@ -20,8 +20,8 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 | PR | What | Gate | Next |
 |---|---|---|---|
-| #220 | CL-1, codec languages (`lean/dedup-cl1`) | 111 **CLOSED** (PASS 0/0/3; minors fixed `86979df1`, CK-1 recorded) | `replay-lcl3` on `oleans-lcamp7`, then **clear to merge** |
-| #221 | U2 harvest API, `Build/UniversalParts` (`lean/u2-harvest-api`) | 112 **dispatched** | findings → dispositions; `replay-lhv3` on `oleans-lcamp7` |
+| #220 | CL-1, codec languages (`lean/dedup-cl1`) | 111 **CLOSED** (PASS 0/0/3; minors fixed `86979df1`, CK-1 recorded) | `replay-lcl3` **passed** (60/0) — **clear to merge** |
+| #221 | U2 harvest API, `Build/UniversalParts` (`lean/u2-harvest-api`) | 112 **CLOSED** (PASS 0/0/2) | `replay-lhv3` **passed** (19/0) — **clear to merge** |
 | #215 | SG-1, `CounterLoop`/`Tautology`/`SingleTape` + `Frag`'s pinned step (`lean/dedup-sg1`) | 106: pack not yet written (reserved number) | `replay-lsg7`, then gate 106 pack and stage |
 | #222 | NatBits (BL-1, NB-1, LS-3), new `TuringMachine/NatBits` (`lean/dedup-natbits`) | 114: not yet written (reserved) | `replay-lnb4` (about 343 modules), then gate 114 pack and stage |
 
