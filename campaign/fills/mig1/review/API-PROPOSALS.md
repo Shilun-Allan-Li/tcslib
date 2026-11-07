@@ -1,9 +1,11 @@
-# Proposed reading APIs: pending user rulings
+# Approved reading APIs: implementation and gate pending
 
-2026-11-07. Four separate new-public-API scopes were asked in chat under START-HERE §2.
-**All are pending; no library API or fill-scope change is authorized by these records.**
+2026-11-07. **Seyoon approved all four scopes below in chat**, 19 theorems total.
+The prerequisite PR/gate 117 is assigned to **Codex** for attached Markdown findings.
+Implementation, external audit and current replay remain required before publication/merge.
 Existing definitions/statements/imports remain fixed and no new global simp attribute is
-proposed. The total proposed surface is 19 theorems; the tests below are bounded proposals.
+proposed. The approved surface is now **23 theorems** after the additional four-fact ruling below;
+the tests here are bounded proposals.
 
 | Scope | Proposed home and surface | Actual evidence |
 | --- | --- | --- |
@@ -26,11 +28,20 @@ refined let-view statement in TransportedConsumer-v1.lean.txt, not the earlier r
 The real condTM/timedCondTM host premise and all final consumers remain untested; these
 bounded probes do not close the checkpoint's branchTM exclusion.
 
-After the user rules, implement only approved scopes by Lean PR, ask the audit-agent choice
-before preparing its gate, and complete the current merged-tree replay. Consumer repairs
+Implement these approved scopes by Lean PR and complete gate 117 (Codex selected) plus
+the current merged-tree replay. Additional proposed scopes require another user ruling. Consumer repairs
 must replace implicit rfl/type conversions as well as explicit unfolding arguments and then
 pass complete section seals/controls. No proof consumer or API is cleared by this proposal.
 
 Further MIG-24 first-entry sharing is a separately reported gap, not one of these approved
 or proposed scopes. T3 same-home factoring, complete seal coverage and final validation
 remain required. The immutable MIG-1 brief/base and in-flight Claude job are unchanged.
+
+## Additional user ruling: four zero-space facts
+
+Seyoon approved idTM_spaceUsed/constTM_spaceUsed in Composition and
+prependTM_spaceUsed/pairValidTM_spaceUsed in Primitives, each zero work space at every
+input/time. Their exact owner-local proofs, sealed consumers and 12 paired controls pass;
+see `zero-space-proposal/README.md`. No k-field API, simp/import/definition change is added.
+These four join gate117's original19, for **23 approved theorems**. The forthcoming MIG-1
+landing audit is separately assigned to **Codex**; it is not gate117's prerequisite audit.

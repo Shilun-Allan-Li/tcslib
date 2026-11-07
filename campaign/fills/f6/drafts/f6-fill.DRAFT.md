@@ -21,7 +21,7 @@ and also waits for the coded-bundle conversion check and concrete route pre-ship
   route: **UNRESOLVED**. The minimal proposed prerequisite is
   `CodeTM.toFinTM_eq (M) : M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm }`
   in Encoding; its syntax and conditional sealed consumption passed, but it is
-  **not approved or published**. No H5 strengthening is required: use R2 → H5 → R1' below.
+  **approved by Seyoon on 2026-11-07, but not yet published**. No H5 strengthening is required: use R2 → H5 → R1' below.
 - `inputs/bootstrap-order.txt`, `downstream-order.txt`, `final-order.txt`,
   `mathlib-roots.txt`, `owned-files.txt`, `target-admissions.json`, source/gate
   receipts, baseline screen and exact scope record: **not yet generated**.

@@ -1,0 +1,27 @@
+import TCSlib.Complexity.TuringMachine.Composition
+
+/-! Unapproved proposal: these two pairs would be proved in the stated owner files.
+No library declaration is changed by this import-context probe. -/
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+
+namespace ZeroSpaceProposal
+
+section CompositionHome
+attribute [local irreducible] Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+theorem idTM_spaceUsed (x : List Bool) (t : ℕ) :
+    idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+theorem constTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+end CompositionHome
+
+#print axioms idTM_spaceUsed
+#print axioms constTM_spaceUsed
+end ZeroSpaceProposal

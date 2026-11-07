@@ -1,0 +1,204 @@
+
+Turing.FinTM.computesFunInTime_id_spaceUsed line1927
+⟨idTM, 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (idTM_computes x).mono (le_of_eq (one_mul _).symm), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_const_spaceUsed line1942
+⟨constTM w, w.length + 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (constTM_computes w x).mono (Nat.le_mul_of_pos_right _ (Nat.succ_pos _)), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_prepend_spaceUsed line1960
+⟨prependTM w, w.length + 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp (prependTM_computes w) x).mono (by
+      simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one]; omega), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_lengthBits_spaceUsed line1980
+⟨lengthBitsTM, 5, lengthBitsTM_computes, lengthBitsTM_spaceUsed⟩
+
+Turing.FinTM.computesFunInTime_polyUnary_spaceUsed line1997
+⟨polyUnaryTM C e, C + 10 * e + 4, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp (polyUnaryTM_computes C e) x).mono (Nat.mul_le_mul (by omega)
+      (Nat.pow_le_pow_right (Nat.succ_pos _) (Nat.le_succ e))),
+    fun x t => (polyUnaryTM_spaceUsed C e x t).trans (Nat.mul_le_mul_right _ (by omega))⟩
+
+Turing.FinTM.computesFunInTime_polyBits_spaceUsed line2027
+by
+  have hT := (computesFunInTime_iff _ _ _).mp (polyBitsTM_computes C e)
+  refine ⟨polyBitsTM C e, (polyBitsTM C e).k * (7 * C + 5 * e + 11 + 1) + (7 * C + 5 * e + 11),
+    (computesFunInTime_iff _ _ _).mpr fun x => (hT x).mono (Nat.mul_le_mul (Nat.le_add_left _ _)
+      (Nat.pow_le_pow_right (Nat.succ_pos _) (Nat.le_succ e))), fun x t => ?_⟩
+  by_cases hC : C = 0
+  ·                                                                                
+    have hk : (polyBitsTM C e).k = 0 := by subst hC; rfl
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ hk]
+    exact Nat.zero_le _
+  ·                                                             
+    refine (ComputesInTime.spaceUsed_le (hT x) t).trans ?_
+    dsimp only
+    have hP : (x.length + 1) ^ e ≤ C * (x.length + 1) ^ e := Nat.le_mul_of_pos_left _ (by omega)
+    generalize (x.length + 1) ^ e = P at hP ⊢
+    have h1 := Nat.mul_le_mul_left (7 * C + 5 * e + 11) hP
+    have hb : (7 * C + 5 * e + 11) * P + 1 ≤ (7 * C + 5 * e + 11 + 1) * (C * P + 1) := by
+      have h2 : (7 * C + 5 * e + 11 + 1) * (C * P + 1) =
+          (7 * C + 5 * e + 11) * (C * P) + (7 * C + 5 * e + 11) + C * P + 1 := by ring
+      omega
+    calc (polyBitsTM C e).k * ((7 * C + 5 * e + 11) * P + 1)
+        ≤ (polyBitsTM C e).k * ((7 * C + 5 * e + 11 + 1) * (C * P + 1)) :=
+          Nat.mul_le_mul_left _ hb
+      _ = (polyBitsTM C e).k * (7 * C + 5 * e + 11 + 1) * (C * P + 1) := by ring
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+
+Turing.FinTM.computesFunInTime_pairFst_spaceUsed line2084
+⟨pairExtractTM true false, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp pairExtractTM_fst x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (ComputesInTime.spaceUsed_le ((computesFunInTime_iff _ _ _).mp pairExtractTM_fst x) t).trans
+      (by change 1 * (5 * (x.length + 1) + 1) ≤ 6 * (x.length + 1); omega)⟩
+
+Turing.FinTM.computesFunInTime_pairSnd_spaceUsed line2102
+⟨pairExtractTM false true, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp pairExtractTM_snd x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (ComputesInTime.spaceUsed_le ((computesFunInTime_iff _ _ _).mp pairExtractTM_snd x) t).trans
+      (by change 1 * (5 * (x.length + 1) + 1) ≤ 6 * (x.length + 1); omega)⟩
+
+Turing.FinTM.computesFunInTime_pairValid_spaceUsed line2120
+⟨pairValidTM, 1, (computesFunInTime_iff _ _ _).mpr fun x => by
+    simpa using pairValidTM_computes x, fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_pairConcat_spaceUsed line2137
+⟨pairExtractTM true true, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp pairExtractTM_concat x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (ComputesInTime.spaceUsed_le ((computesFunInTime_iff _ _ _).mp pairExtractTM_concat x) t).trans
+      (by change 1 * (5 * (x.length + 1) + 1) ≤ 6 * (x.length + 1); omega)⟩
+
+Turing.FinTM.computesFunInTime_pairDup_spaceUsed line2158
+⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (pairDiagTM_computes x).mono (by omega), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed line2178
+by
+  have hT := (computesFunInTime_iff _ _ _).mp (pairLenCheckTM_computes C e)
+  refine ⟨pairLenCheckTM C e,
+    2 * (C + 5 * e + 17) + (pairLenCheckTM C e).k * (C + 5 * e + 17 + 1),
+    (computesFunInTime_iff _ _ _).mpr fun x => ?_, fun x t => ?_⟩
+  · have h1 : (x.length + 1) ^ e ≤ (x.length + 1) ^ (e + 1) :=
+      Nat.pow_le_pow_right (Nat.succ_pos _) (Nat.le_succ e)
+    have h2 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := Nat.le_self_pow (Nat.succ_ne_zero e) _
+    refine (hT x).mono ?_
+    calc (C + 5 * e + 17) * ((x.length + 1) ^ e + x.length + 1)
+        ≤ (C + 5 * e + 17) * (2 * (x.length + 1) ^ (e + 1)) :=
+          Nat.mul_le_mul_left _ (by omega)
+      _ = 2 * (C + 5 * e + 17) * (x.length + 1) ^ (e + 1) := by ring
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+  · refine (ComputesInTime.spaceUsed_le (hT x) t).trans ?_
+    dsimp only
+    have hQ : 1 ≤ (x.length + 1) ^ e + x.length + 1 := by omega
+    generalize (x.length + 1) ^ e + x.length + 1 = Q at hQ ⊢
+    calc (pairLenCheckTM C e).k * ((C + 5 * e + 17) * Q + 1)
+        ≤ (pairLenCheckTM C e).k * ((C + 5 * e + 17 + 1) * Q) :=
+          Nat.mul_le_mul_left _ (by
+            have : (C + 5 * e + 17 + 1) * Q = (C + 5 * e + 17) * Q + Q := by ring
+            omega)
+      _ = (pairLenCheckTM C e).k * (C + 5 * e + 17 + 1) * Q := by ring
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
+
+Turing.FinTM.computesFunInTime_stripLast_spaceUsed line2226
+by
+  have hT := (computesFunInTime_iff _ _ _).mp stripLastTM_computes
+  refine ⟨stripLastTM, 150 + stripLastTM.k * 151, (computesFunInTime_iff _ _ _).mpr fun x => ?_,
+    fun x t => ?_⟩
+  · refine (hT x).mono ?_
+    calc 150 * (x.length + 1) ≤ 150 * (x.length + 1) ^ 2 :=
+          Nat.mul_le_mul_left _ (Nat.le_self_pow (by norm_num) _)
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+  · refine (ComputesInTime.spaceUsed_le (hT x) t).trans ?_
+    calc stripLastTM.k * (150 * (x.length + 1) + 1) ≤ stripLastTM.k * (151 * (x.length + 1)) :=
+          Nat.mul_le_mul_left _ (by omega)
+      _ = stripLastTM.k * 151 * (x.length + 1) := by ring
+      _ ≤ _ := Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
+
+Turing.FinTM.computesFunInTime_incFixed_spaceUsed line2259
+⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed line2290
+⟨pairMapSndTM Mg, 22, pairMapSndTM_computes hg hTg, pairMapSndTM_spaceUsed Sg hgs hSg⟩
+
+Turing.FinTM.computesFunInTime_splitSolve_spaceUsed line2319
+by
+  refine ⟨splitSolveTM C e,
+    (20 + 23 * (splitSolveTM C e).k) * ((C + 1 + 5 * e) * 2 ^ e + 46),
+    (computesFunInTime_iff _ _ _).mpr fun x =>
+      ((computesFunInTime_iff _ _ _).mp (splitSolveTM_computes C e) x).mono
+        (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (Nat.le_add_right _ _))),
+    fun x t => (splitSolveTM_spaceUsed C e x t).trans ?_⟩
+  rw [Nat.add_mul (20 : ℕ) (23 * (splitSolveTM C e).k), Nat.mul_assoc 23]
+  exact Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
+
+Turing.FinTM.redirectTM_spaceUsedByTape line2347
+by
+  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+  congr 1
+  ext p
+  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]
+
+Turing.FinTM.computesFunInTime_cond_spaceUsed line2370
+by
+  refine ⟨timedCondTM D M₁ M₂, 7 + M₁.k + M₂.k, (computesFunInTime_iff _ _ _).mpr fun x => ?_,
+    fun x t => ?_⟩
+  · exact ((computesFunInTime_iff _ _ _).mp (timedCondTM_computes hD h₁ h₂) x).mono
+      (Nat.mul_le_mul_right _ (by omega))
+  · have h := timedCondTM_spaceUsed D M₁ M₂ x (p x) (T₀ x.length) t
+      ((computesFunInTime_iff _ _ _).mp hD x)
+    rw [branchTM_spaceUsed] at h
+    have hd := hsD x (T₀ x.length)
+    have h1 := hs₁ x t
+    have h2 := hs₂ x t
+    have hm1 := Nat.le_max_left (s₁ x.length) (s₂ x.length)
+    have hm2 := Nat.le_max_right (s₁ x.length) (s₂ x.length)
+    split at h <;> omega
+
+Turing.FinTM.exists_loopTM_spaceUsed line2427
+x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+    (hFspace : ∀ (x : List Bool) (t : ℕ),
+      F.tm.spaceUsed (F.tm.initCfg x) t ≤ S x.length)
+    (hstartSpace : ∀ (x : List Bool) (t : ℕ), t ≤ T x.length →
+      body.tm.spaceUsed (body.tm.initCfg x) t ≤ S x.length)
+    (hroundSpace : ∀ (x s : List Bool), Inv x s →
+      ∀ t ≤ T x.length,
+        body.tm.spaceUsed
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t
+            ≤ S x.length) :
+    ∃ (E : FinTM Bool) (c : ℕ),
+      E.ComputesFunInTime
+        (fun x => [(List.range (R x.length + 1)).any
+          fun i => acceptF x ((stepF x)^[i] (s0 x))])
+        (fun n => c * (T n + 1) * (R n + 2)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        E.tm.spaceUsed (E.tm.initCfg x) t
+          ≤ c * (S x.length + T x.length + 1) := by
+  refine ⟨loopHostTM body F anchor false, 10 + 23 * (loopHostTM body F anchor false).k,
+    (computesFunInTime_iff _ _ _).mpr fun x =>
+      ((computesFunInTime_iff _ _ _).mp (loopHostTM_decides body F anchor Inv stepF acceptF s0 R T
+        hF hInv0 hInvStep hstart hround) x).mono
+        (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _ (Nat.le_add_right _ _))), fun x t => ?_⟩
+  refine (loopHostTM_spaceUsed_le_budget body F anchor Inv stepF acceptF (fun _ _ => [true])
+    false s0 R T hF hInv0 hInvStep hstart hround x t).trans ?_
+  rw [Nat.add_mul 10]
+  exact (Nat.mul_le_mul_left _ (by omega)).trans (Nat.le_add_left _ _)

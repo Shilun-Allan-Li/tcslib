@@ -1,0 +1,102 @@
+{
+  "original_source": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-exchange/arora-barak-ch3-4/inbox/fill-mig1-mega/fill-mig1-mega-cp07.zip",
+  "zip_file": "campaign/fills/mig1/review/checkpoint07-2026-11-07/original/fill-mig1-mega-cp07.zip",
+  "zip_bytes": 1614062,
+  "zip_sha256": "22d64f8fa9de04e3c82ab3a8a79c06b6a1679917509e409de7a78d3b4b141c9f",
+  "members": 770,
+  "regular_files": 739,
+  "uncompressed_bytes": 7061267,
+  "zip_root": "fill-mig1-mega-cp07",
+  "payload_sha256_checks": 738,
+  "uncovered": [],
+  "crc": "PASS",
+  "safe_names": "PASS",
+  "symlinks_and_special_files": "NONE",
+  "duplicate_or_case_or_unicode_or_postrename_collisions": "NONE",
+  "extraction": "Manual inert copies; all .lean filenames renamed .lean.txt; no payload code executed",
+  "base_txt": "83ac315ed9e7089466bd16a32f3b71fbadc556d2",
+  "head_txt": "cbfdba8102e6a5d956a1fdd2be7518b490a5abac",
+  "review_status": "STABLE bounded static review; partial checkpoint, not accepted or clear to merge",
+  "source_check_summary": {
+    "public_before": 357,
+    "public_after": 354,
+    "public_added": [
+      "Turing.FinTM.pairMapSndTM",
+      "Turing.FinTM.pairMapSndTM_computes",
+      "Turing.FinTM.pairMapSndTM_spaceUsed"
+    ],
+    "public_removed": [
+      "Turing.transferTM_run",
+      "Turing.copyTM_run",
+      "Turing.clearTM_run",
+      "Turing.compareTM_run",
+      "Turing.incrementTM_run_succ",
+      "Turing.incrementTM_run_overflow"
+    ],
+    "header_changes": [],
+    "definition_changes": [],
+    "visibility_changes": [],
+    "order_changes": [],
+    "imports_changed": {
+      "TCSlib/Complexity/TuringMachine/Simulation.lean": {
+        "before": [
+          "import Mathlib.Data.Fintype.Sum",
+          "import Mathlib.Data.Fintype.Prod",
+          "import Mathlib.Data.Fintype.Option",
+          "import TCSlib.Complexity.TuringMachine.Finite"
+        ],
+        "after": [
+          "import Mathlib.Algebra.BigOperators.Fin",
+          "import Mathlib.Data.Fintype.Sum",
+          "import Mathlib.Data.Fintype.Prod",
+          "import Mathlib.Data.Fintype.Option",
+          "import TCSlib.Complexity.TuringMachine.Finite"
+        ]
+      },
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": {
+        "before": [
+          "import Mathlib.Data.Nat.Size",
+          "import Mathlib.Tactic.DeriveFintype",
+          "import TCSlib.Complexity.TuringMachine.Build.Loop",
+          "import TCSlib.Complexity.TuringMachine.Encoding"
+        ],
+        "after": [
+          "import Mathlib.Data.Nat.Size",
+          "import Mathlib.Tactic.DeriveFintype",
+          "import TCSlib.Complexity.TuringMachine.Build.Loop",
+          "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+          "import TCSlib.Complexity.TuringMachine.Encoding"
+        ]
+      }
+    },
+    "changed_public_proofs": 57,
+    "admissions": [
+      [
+        "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+        {
+          "name": "WordRAM.WordSizeComputable.mono",
+          "line": 62
+        }
+      ],
+      [
+        "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+        {
+          "name": "WordRAM.wordSizeComputable_logSpace",
+          "line": 78
+        }
+      ],
+      [
+        "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+        {
+          "name": "WordRAM.wordSizeComputable_of_spaceConstructible",
+          "line": 93
+        }
+      ]
+    ]
+  },
+  "target_bodies_proof_filled": 17,
+  "approved_forwarding_contracts_match": true,
+  "scope": "No Lean/Lake/cache/screen/Git/payload code execution; writes only in this new review folder",
+  "root_separate_git_check": "campaign/fills/mig1/review/checkpoint07-git-objects/receipt.json (root verified/imported objects; this reviewer did not run Git)",
+  "latest_user_ruling_from_root": "Existing 19 proposed reader theorems approved; their implementation/consumer repairs/seals remain separate. New constant-space witness facts are unapproved and under separate peer assessment."
+}

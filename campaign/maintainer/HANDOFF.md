@@ -26,7 +26,7 @@ matches the passed NatBits replay plus its E-PAD catch-up; **oleans-mnb2** was a
 | PR | Change | Gate | Status |
 |---|---|---|---|
 | #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Fresh full current-campaign replay passed (`oleans-msg3`): 329 modules, 0 failures/static mismatches. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
-| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, **dispatched by the user** | Fresh 2-module post-NatBits replay passed (`oleans-mlin2`); current source/CI/seal/control/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
+| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116 CLOSED**, Codex PASS0/0/0/12, all notes accepted | Current 2-module replay passed (`oleans-mlin2`); clean current merge preview equals that passed Lean tree. **Clear to merge**; user merges. |
 
 Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
 identical Frag hunk. After #228, the original imported-source criterion held, but their older
@@ -81,7 +81,8 @@ megafill uses its existing approvals and gate 16; it does not grant new interfac
 choices. Ask the user for any new design or acknowledgment.
 
 **Gate numbers:** 106 dispatched; 114 closed and merged; 115 closed and merged; **116 dispatched for #229**.
-Next free: **117**. Ask the agent choice separately for each later audit/fill. These three
+Gate **117** is reserved for the 23 approved reading/resource APIs, Codex selected; next free
+**118**. Ask the agent choice separately for each later audit/fill. These three
 selected audits are Codex; the newly requested MIG-1 fill is Claude. Claude may push only to its
 designated exchange inbox after pull/rebase; Codex returns files in chat.
 

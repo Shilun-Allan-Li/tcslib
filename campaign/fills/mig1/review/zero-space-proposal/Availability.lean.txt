@@ -1,0 +1,13 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+open Lean Elab Command
+
+run_cmd do
+  let env ← getEnv
+  let roots := ["Turing.FinTM.idTM", "Turing.FinTM.constTM",
+    "Turing.FinTM.prependTM", "Turing.FinTM.pairValidTM"]
+  for (name, info) in env.constants.toList do
+    if roots.any (fun root => name.toString.startsWith root) then
+      logInfo m!"{name} : {info.type}"
+
+#check Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero

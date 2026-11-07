@@ -1,0 +1,287 @@
+ScratchProbes/ControlsSealed.lean:8:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ScratchProbes/ControlsSealed.lean:10:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ScratchProbes/ControlsSealed.lean:13:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+ScratchProbes/ControlsSealed.lean:15:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+ScratchProbes/ControlsSealed.lean:17:95: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ScratchProbes/ControlsSealed.lean:19:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x
+ScratchProbes/ControlsSealed.lean:21:80: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  []
+
+x : List Bool
+⊢ (Cfg.init () x).output = []
+ScratchProbes/ControlsSealed.lean:22:96: error: Tactic `rfl` failed: The left-hand side
+  fun x => (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  fun x => []
+
+⊢ (fun x => (Cfg.init () x).output) = fun x => []
+ScratchProbes/ControlsSealed.lean:25:38: error: Tactic `rfl` failed: The left-hand side
+  (a.apply c).state
+is not definitionally equal to the right-hand side
+  a.state
+
+a : Action 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ (a.apply c).state = a.state
+ScratchProbes/ControlsSealed.lean:27:29: error: Tactic `rfl` failed: The left-hand side
+  fun a c => (a.apply c).state
+is not definitionally equal to the right-hand side
+  fun a x => a.state
+
+⊢ (fun a c => (a.apply c).state) = fun a x => a.state
+ScratchProbes/ControlsSealed.lean:30:83: error: Tactic `rfl` failed: The left-hand side
+  { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+q : Option Unit
+w : Fin 1 → ℤ → Option Bool
+h : Fin 1 → ℤ
+⊢ { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol = none
+ScratchProbes/ControlsSealed.lean:32:97: error: Tactic `rfl` failed: The left-hand side
+  fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => none
+
+⊢ (fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol) =
+    fun x x_1 x_2 => none
+ScratchProbes/ControlsSealed.lean:35:64: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+c : Cfg 1 Bool Unit []
+i : Fin 1
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ScratchProbes/ControlsSealed.lean:37:53: error: Tactic `rfl` failed: The left-hand side
+  fun c i => c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  fun c i => c.workTapes i (c.workTapePos i)
+
+⊢ (fun c i => c.workTapeSymbols i) = fun c i => c.workTapes i (c.workTapePos i)
+ScratchProbes/ControlsSealed.lean:39:51: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 SignType.zero
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 SignType.zero = 1
+ScratchProbes/ControlsSealed.lean:40:101: error: Tactic `rfl` failed: The left-hand side
+  (fun (m : SignType) => moveInputPos 1 m) SignType.zero
+is not definitionally equal to the right-hand side
+  (fun (x : Unit) => 1) ()
+
+⊢ (fun m => moveInputPos 1 m) SignType.zero = (fun x => 1) ()
+ScratchProbes/ControlsSealed.lean:43:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+ScratchProbes/ControlsSealed.lean:45:66: error: Tactic `rfl` failed: The left-hand side
+  fun M x y t => M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+⊢ (fun M x y t => M.ComputesInTime x y t) = fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+ScratchProbes/ControlsSealed.lean:48:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+ScratchProbes/ControlsSealed.lean:50:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+ScratchProbes/ControlsSealed.lean:53:64: error: Tactic `rfl` failed: The left-hand side
+  M.Computes f
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+M : FinTM Bool
+f : List Bool → List Bool
+⊢ M.Computes f = ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+ScratchProbes/ControlsSealed.lean:55:60: error: Tactic `rfl` failed: The left-hand side
+  fun M f => M.Computes f
+is not definitionally equal to the right-hand side
+  fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+⊢ (fun M f => M.Computes f) = fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+ScratchProbes/ControlsSealed.lean:58:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+ScratchProbes/ControlsSealed.lean:60:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+ScratchProbes/ControlsSealed.lean:63:71: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.visitedByTapeHead c t i).card
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+ScratchProbes/ControlsSealed.lean:65:103: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+
+⊢ (fun tm c t i => MultiTapeTM.spaceUsedByTape c t i) = fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+ScratchProbes/ControlsSealed.lean:68:108: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+ScratchProbes/ControlsSealed.lean:71:95: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+⊢ (fun tm c t i => MultiTapeTM.visitedByTapeHead c t i) = fun tm c t i =>
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+ScratchProbes/ControlsSealed.lean:74:92: error: Tactic `rfl` failed: The left-hand side
+  FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+m : SignType
+q : Option Unit
+⊢ FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+ScratchProbes/ControlsSealed.lean:76:54: error: Tactic `rfl` failed: The left-hand side
+  fun m q => FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  fun m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ (fun m q => FinTM.controlAction m q) = fun m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+ScratchProbes/ControlsSealed.lean:78:91: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.leftAction 1 id a).inputTape = a.inputTape
+ScratchProbes/ControlsSealed.lean:79:107: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape
+ScratchProbes/ControlsSealed.lean:81:92: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.rightAction 1 id a).inputTape = a.inputTape
+ScratchProbes/ControlsSealed.lean:82:108: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape
+ScratchProbes/ControlsSealed.lean:84:95: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.emitAction [] id 0).output
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (FinTM.emitAction [] id 0).output = none
+ScratchProbes/ControlsSealed.lean:86:24: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.emitAction [] e 0).output
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun e => (FinTM.emitAction [] e 0).output) = fun x => none
+ScratchProbes/ControlsSealed.lean:88:66: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] (-1)
+is not definitionally equal to the right-hand side
+  none
+
+⊢ FinTM.bufferTape [true] (-1) = none
+ScratchProbes/ControlsSealed.lean:89:79: error: Tactic `rfl` failed: The left-hand side
+  fun w => FinTM.bufferTape w (-1)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun w => FinTM.bufferTape w (-1)) = fun x => none
+exit=1

@@ -1,0 +1,104 @@
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:13:24: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  idTM.k = 0
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:18:71: error: Type mismatch
+  rfl
+has type
+  ?m.44 = ?m.44
+but is expected to have type
+  idTM =
+    { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+      tm :=
+        { q₀ := (),
+          tr := fun x inp x_1 =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:21:47: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (constTM w).k = 0
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:24:67: error: Type mismatch
+  rfl
+has type
+  ?m.28 = ?m.28
+but is expected to have type
+  constTM w =
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1), tm := { q₀ := 0, tr := fun i x x_1 => FinTM.emitAction w id i } }
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:27:49: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (prependTM w).k = 0
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:35:61: error: Type mismatch
+  rfl
+has type
+  ?m.104 = ?m.104
+but is expected to have type
+  prependTM w =
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            if h : ↑q < w.length then
+              { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+            else
+              match inp with
+              | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+              | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:38:31: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  pairValidTM.k = 0
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:46:68: error: Type mismatch
+  rfl
+has type
+  ?m.91 = ?m.91
+but is expected to have type
+  pairValidTM =
+    { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+      tm :=
+        { q₀ := none,
+          tr := fun q inp x =>
+            match q, inp with
+            | none, some b =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+            | some b, some c =>
+              if b = c then
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+              else { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+            | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:51:54: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:54:76: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (fun c t => MultiTapeTM.spaceUsed c t) = fun c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:58:39: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (MultiTapeTM.initCfg x).state = some M.q₀
+/private/tmp/tcslib-zero-space-nwys8ck_/Controls_sealed.lean:60:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x

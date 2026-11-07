@@ -1,0 +1,156 @@
+# preflight 2026-11-07T07:23:28Z
+nproc: 4
+## cgroup
+9:name=systemd:/
+8:pids:/
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/15b603755d28e68b69330647566bdf11
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+blkio
+cpu
+cpuacct
+cpuset
+devices
+freezer
+memory
+pids
+systemd
+unified
+--- memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+--- memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+--- memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+--- memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+--- v1 memory.limit_in_bytes
+9223372036854771712
+--- v1 memory.usage_in_bytes
+1067708416
+## /proc/meminfo
+MemTotal:       16472400 kB
+MemFree:        15297736 kB
+MemAvailable:   16128580 kB
+Buffers:           24104 kB
+Cached:           999124 kB
+SwapCached:            0 kB
+Active:           307156 kB
+Inactive:         721196 kB
+Active(anon):         12 kB
+Inactive(anon):    21492 kB
+Active(file):     307144 kB
+Inactive(file):   699704 kB
+Unevictable:       14396 kB
+Mlocked:           10468 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:            422896 kB
+Writeback:             0 kB
+AnonPages:         19604 kB
+Mapped:            37404 kB
+Shmem:             16384 kB
+KReclaimable:      61208 kB
+Slab:              84656 kB
+SReclaimable:      61208 kB
+SUnreclaim:        23448 kB
+KernelStack:        1824 kB
+PageTables:         2600 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8236200 kB
+Committed_AS:     339800 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:        5480 kB
+VmallocChunk:          0 kB
+Percpu:             1040 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Balloon:               0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:       20480 kB
+DirectMap2M:     2076672 kB
+DirectMap1G:    16777216 kB
+## df
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 12639485952 31232782336  29% /
+/dev/vda       270553174016 12639485952 31232782336  29% /
+/dev/vda       270553174016 12639485952 31232782336  29% /
+/dev/vda       270553174016 12639485952 31232782336  29% /
+/dev/vda       270553174016 12639485952 31232782336  29% /
+Filesystem     Type 1K-blocks     Used Available Use% Mounted on
+/dev/vda       ext4 264212084 12343248  30500764  29% /
+/dev/vda       ext4 264212084 12343248  30500764  29% /
+/dev/vda       ext4 264212084 12343248  30500764  29% /
+/dev/vda       ext4 264212084 12343248  30500764  29% /
+## cgroup v1 memory dir
+cache 52789248
+rss 13357056
+rss_huge 0
+shmem 16777216
+mapped_file 34615296
+dirty 32768
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 21284
+pgpgout 5181
+pgfault 11274
+pgmajfault 35
+inactive_anon 15994880
+active_anon 4096
+inactive_file 30011392
+active_file 6004736
+unevictable 14131200
+hierarchical_memory_limit 9223372036854771712
+hierarchical_memsw_limit 9223372036854771712
+total_cache 1047814144
+total_rss 19951616
+total_rss_huge 0
+total_shmem 16777216
+total_mapped_file 38182912
+total_dirty 433074176
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 614097
+total_pgpgout 447027
+total_pgfault 552717
+total_pgmajfault 644
+total_inactive_anon 21729280
+total_active_anon 20480
+total_inactive_file 716406784
+total_active_file 314634240
+total_unevictable 14790656
+--- memory.failcnt 0
+--- memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+## computation
+limit=9223372036854771712 usage=1067843584 total_cache=1047814144 total_shmem=16777216 in_use=36806656
+cgroup limit is effectively unlimited (>= physical); headroom taken as min(limit-in_use, MemAvailable)=MemAvailable=16522690560 bytes = 15.39 GiB
+clone free disk = 31232778240 bytes = 29.09 GiB (floor 12 GiB)
+fs types: ext4 (/dev/vda) for clone, scratch, TMPDIR, HOME; not tmpfs
+VERDICT: PASS (disk >= 12 GiB, headroom >= 4 GiB)

@@ -1,0 +1,855 @@
+From 3012d8dc89f454c34c7fb8dcfbf5a9e3866921aa Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 07:54:05 +0000
+Subject: [PATCH 2/4] MIG-1 F-A (2/2): branch-union, timed-conditional and
+ length-counter specs
+
+Fill Turing.FinTM.branchTM_spaceUsed (Simulation), timedCondTM_computes and
+timedCondTM_spaceUsed (Wrappers), lengthBitsTM_computes and
+lengthBitsTM_spaceUsed (TimeConstructible). The intrinsic space arguments are
+relocated from Catalog's private copies (f2_branch_space, f2_cond_ledger /
+f2_cond_space, f2_counter_count_space / f2_counter_heads / f2_counter_space)
+to the witnesses' homes, using Fin.sum_univ_add (approved import
+Mathlib.Algebra.BigOperators.Fin in Simulation), mem_visitedByTapeHead_iff,
+spaceUsed_eq_sum, spaceUsedByTape_eq_card, workTapePos_runFrom_mem_Icc and
+exists_first_halt instead of copies. The Catalog sources are deleted in F-D.
+Re-point computesFunInTime_cond and timeConstructible_id to the specs.
+MIG-24 T1 (Simulation part): one private first-step lemma for
+rewind_from_any, timed_rewind and rewind_heads.
+---
+ .../Complexity/ClassP/TimeConstructible.lean  | 195 +++++++++----
+ .../TuringMachine/Build/Wrappers.lean         | 268 +++++++++++++++---
+ .../Complexity/TuringMachine/Simulation.lean  | 188 +++++++-----
+ 3 files changed, 497 insertions(+), 154 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassP/TimeConstructible.lean b/TCSlib/Complexity/ClassP/TimeConstructible.lean
+index 05c92a4d..1b75ba4b 100644
+--- a/TCSlib/Complexity/ClassP/TimeConstructible.lean
++++ b/TCSlib/Complexity/ClassP/TimeConstructible.lean
+@@ -53,8 +53,7 @@ budget as an explicit extra input and needs no constructibility hypothesis.
+ * `Complexity.timeConstructible_id` — the identity function is time constructible,
+   restoring [AB09]'s example under the repaired definition.
+ * `Turing.FinTM.lengthBitsTM_computes`, `Turing.FinTM.lengthBitsTM_spaceUsed` — the
+-  counter's time `5 · (n + 1)` and space `5 · (Nat.size |x| + 1)` (MIG-1; sorried until
+-  the fill F-A).
++  counter's time `5 · (n + 1)` and space `5 · (Nat.size |x| + 1)`.
+ 
+ ## References
+ 
+@@ -343,36 +342,67 @@ private lemma counter_increment (x : List Bool) (i : ℕ) (hi : i < x.length)
+   exact counter_rewind x ⟨i + 2, by omega⟩ (counterInc bs) (counterCarry bs)
+     (counterInc_length bs).2
+ 
+-/-- The counting invariant carries a nonnegative potential of twice the popcount.
++/-- The counting invariant carries a nonnegative potential of twice the popcount, and every
++head position of the elapsed run lies within twice one plus the final input length's binary
++width of the origin.
+ **Proof sketch.** Initially both elapsed time and potential are zero. An increment
+ with `r` cleared bits costs `2r + 2` steps and changes the potential by `2 - 2r`.
+ Thus elapsed time plus potential increases by exactly four per input symbol.
+-The semantic invariant records the exact canonical binary word and head positions. -/
++The semantic invariant records the exact canonical binary word and head positions.
++Each increment starts at the origin and lasts `2r + 2 ≤ 2 · (Nat.size |x| + 1)` steps, since the
++carry length is at most the counter's binary width, which is monotone in the count; the
++time-derived head envelope (`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`) bounds the head
++during the current increment. -/
+ private lemma counter_count (x : List Bool) : ∀ i (hi : i ≤ x.length),
+     ∃ t, t + 2 * i.bits.count true ≤ 4 * i ∧
+       FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =
+-        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits [] := by
++        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits [] ∧
++      ∀ u ≤ t, ∀ j : Fin 1,
++        (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈
++          Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
+   intro i
+   induction i with
+   | zero =>
+     intro hi
+-    refine ⟨0, by simp, ?_⟩
+-    apply Cfg.ext
+-    · rfl
+-    · rfl
+-    · funext j z
+-      simp [MultiTapeTM.initCfg, counterCfg, counterTape]
+-    · rfl
+-    · rfl
++    refine ⟨0, by simp, ?_, ?_⟩
++    · rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
++      apply Cfg.ext
++      · rw [Cfg.init_state]
++        rfl
++      · rw [Cfg.init_inputPos]
++        rfl
++      · funext j z
++        rw [Cfg.init_workTapes]
++        simp only [counterCfg, counterTape, Nat.zero_bits, List.getElem?_nil, ite_self]
++      · funext j
++        rw [Cfg.init_workTapePos]
++        rfl
++      · rw [Cfg.init_output]
++        rfl
++    · intro u hu j
++      rw [show u = 0 by omega, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq,
++        Cfg.init_workTapePos, Finset.mem_Icc]
++      omega
+   | succ i ih =>
+     intro hi
+-    obtain ⟨t, ht, hc⟩ := ih (by omega)
+-    refine ⟨t + 2 * counterCarry i.bits + 2, ?_, ?_⟩
++    obtain ⟨t, ht, hc, hb⟩ := ih (by omega)
++    refine ⟨t + (2 * counterCarry i.bits + 2), ?_, ?_, ?_⟩
+     · have hp := counterInc_potential i.bits
+       rw [counterInc_bits] at hp
+       omega
+-    · rw [show t + 2 * counterCarry i.bits + 2 = t + (2 * counterCarry i.bits + 2) by omega,
+-        MultiTapeTM.runFrom_add, hc, counter_increment x i (by omega), counterInc_bits]
++    · rw [MultiTapeTM.runFrom_add, hc, counter_increment x i (by omega), counterInc_bits]
++    · intro u hu j
++      by_cases hut : u ≤ t
++      · exact hb u hut j
++      · rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add, hc]
++        have hp := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
++          FinTM.lengthBitsTM.tm (counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits []) (u - t) j)
++        have hcarry := (counterInc_length i.bits).2
++        rw [counterInc_bits, Nat.size_eq_bits_len] at hcarry
++        have hwidth := Nat.size_le_size hi
++        change 0 - ((u - t : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((u - t : ℕ) : ℤ) at hp
++        rw [Finset.mem_Icc]
++        constructor <;> omega
+ 
+ /-- The emit phase appends exactly the stored prefix, one bit per step.
+ **Proof sketch.** Induct on the emitted length, using the nonblank cell at each
+@@ -422,29 +452,110 @@ private lemma counter_emit (x : List Bool) (p : Fin (x.length + 2)) (bs : List B
+     ↓reduceIte, hw]
+   simp [Action.apply, counterCfg]
+ 
++/-- Reading the blank after the input, the count state enters emission without moving.
++
++**Proof sketch.** The input head is at `|x| + 1`, so the input symbol is the right blank; the count
++state's transition on a blank changes only the state. -/
++private lemma counter_emit_start (x : List Bool) :
++    FinTM.lengthBitsTM.tm.step (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) =
++      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
++  have hin : (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []).inputSymbol = none :=
++    Cfg.inputSymbol_of_end rfl
++  rw [MultiTapeTM.step_of_some rfl, hin]
++  apply Cfg.ext
++  · rw [Action.apply_state]
++    rfl
++  · rw [Action.apply_inputPos]
++    exact moveInputPos_zero _
++  · funext j
++    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
++    exact Function.update_eq_self _ _
++  · funext j
++    rw [Action.apply_workTapePos]
++    rfl
++  · rw [Action.apply_output]
++    rfl
++
++/-- After counting, entering emission and emitting the stored word, the counter is halted with
++output `Nat.bits |x|` at time `t + 1 + (|Nat.bits |x|| + 1)`, where `t` is the counting time. -/
++private lemma counter_halt (x : List Bool) (t : ℕ)
++    (hc : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =
++      counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) :
++    FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
++        counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] ∧
++      FinTM.lengthBitsTM.ComputesInTime x x.length.bits
++        ((t + 1) + (x.length.bits.length + 1)) := by
++  have hstart : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
++      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
++    rw [MultiTapeTM.runFrom_succ_eq_step', hc, counter_emit_start]
++  have he := counter_emit x ⟨x.length + 1, by omega⟩ x.length.bits
++  refine ⟨hstart, (FinTM.computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩⟩
++  · rw [MultiTapeTM.runFrom_add, hstart]
++    exact he.1
++  · rw [MultiTapeTM.runFrom_add, hstart]
++    exact he.2
++
+ /-- **The length counter's time**. The counter computes `x ↦ Nat.bits |x|` within `5·(n + 1)` steps.
+ [AB09, §1.3]
+ 
+-**Proof sketch.** The body of today's `timeConstructible_id`, which `f2_counter_computes` copies:
+-with twice the number of `true` counter bits as potential, elapsed time plus potential is at most
+-`4n` after `n` increments (the private `counter_count`); entering emission and the final halt add
+-two steps, and the emitted word, of length at most `n`, costs one step per bit. -/
++**Proof sketch.** With twice the number of `true` counter bits as potential, elapsed time plus
++potential is at most `4n` after `n` increments (`counter_count`); entering emission and the final
++halt add two steps, and the emitted word, of length at most `n`, costs one step per bit
++(`counter_halt`). -/
+ theorem _root_.Turing.FinTM.lengthBitsTM_computes : FinTM.lengthBitsTM.ComputesFunInTime
+     (fun x => Nat.bits x.length) (fun n => 5 * (n + 1)) := by
+-  sorry
++  refine (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_
++  obtain ⟨t, ht, hc, -⟩ := counter_count x x.length (le_refl _)
++  apply (counter_halt x t hc).2.mono
++  have hl := Turing.length_bits_le_self x.length
++  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
++  omega
+ 
+ /-- **The length counter's space**. At every time, the counter's work tape has visited at most
+ `5·(Nat.size |x| + 1)` cells: logarithmic space.
+ 
+-**Proof sketch.** Catalog's `f2_counter_space`: every counting round returns the head to the
+-origin, a carry walks at most the counter's binary width, which never exceeds `Nat.size |x|`,
+-and emission walks the stored word once, so at every time the head stays in an interval of at
+-most `5·(Nat.size |x| + 1)` cells (the head ledger `f2_counter_heads`, from the increment
+-ledger `f2_counter_count_space`). -/
++**Proof sketch.** Every counting round returns the head to the origin and a carry walks at most
++the counter's binary width, which never exceeds `Nat.size |x|` (`counter_count`); emission walks
++the stored word once, and after the halt nothing moves. So at every time the head stays in the
++interval `[-2·(Nat.size |x| + 1), 2·(Nat.size |x| + 1)]`, which has at most
++`5·(Nat.size |x| + 1)` cells. -/
+ theorem _root_.Turing.FinTM.lengthBitsTM_spaceUsed (x : List Bool) (t : ℕ) :
+     FinTM.lengthBitsTM.tm.spaceUsed (FinTM.lengthBitsTM.tm.initCfg x) t ≤
+       5 * (Nat.size x.length + 1) := by
+-  sorry
++  obtain ⟨t₀, -, hc, hb⟩ := counter_count x x.length (le_refl _)
++  obtain ⟨hstart, hdone⟩ := counter_halt x t₀ hc
++  let T := t₀ + 1 + (x.length.bits.length + 1)
++  have hhalt : (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) T).state =
++      none := ((FinTM.computesInTime_iff _ _ _ _).mp hdone).1
++  -- Before the halt: the counting ledger, then the emission walk from the origin.
++  have hpre (v : ℕ) (hv : v ≤ T) (j : Fin 1) :
++      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) v).workTapePos j ∈
++        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
++    by_cases hvt : v ≤ t₀
++    · exact hb v hvt j
++    · rw [show v = (t₀ + 1) + (v - (t₀ + 1)) by omega, MultiTapeTM.runFrom_add, hstart]
++      have hp := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
++        FinTM.lengthBitsTM.tm (counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [])
++        (v - (t₀ + 1)) j)
++      change 0 - ((v - (t₀ + 1) : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((v - (t₀ + 1) : ℕ) : ℤ) at hp
++      have hlen := Nat.size_eq_bits_len x.length
++      dsimp only [T] at hv
++      rw [Finset.mem_Icc]
++      constructor <;> omega
++  -- After the halt the configuration is frozen.
++  have hall (u : ℕ) (j : Fin 1) :
++      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈
++        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
++    by_cases hu : u ≤ T
++    · exact hpre u hu j
++    · rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
++        MultiTapeTM.runFrom_of_halt _ hhalt]
++      exact hpre T (le_refl _) j
++  rw [MultiTapeTM.spaceUsed_eq_sum]
++  change (∑ i : Fin 1, _) ≤ _
++  rw [Fin.sum_univ_one]
++  exact (MultiTapeTM.spaceUsedByTape_le_card_Icc _ _ t (0 : Fin 1) _ _
++    fun u _ => hall u 0).trans (by omega)
+ 
+ /-- The identity function is time constructible. [AB09, §1.3 examples]
+ 
+@@ -461,30 +572,8 @@ each bit to the output tape (`O(log n)` steps) and halts. The total is at most
+ potential: elapsed time plus potential is at most `4n` after `n` increments.
+ Entering emission and its final halting transition add two steps; the output length
+ is at most `n`, so `c = 5` suffices. -/
+-theorem timeConstructible_id : TimeConstructible id := by
+-  refine ⟨fun n => le_refl n, 5, by decide, FinTM.lengthBitsTM, fun x => ?_⟩
+-  obtain ⟨t, ht, hc⟩ := counter_count x x.length (le_refl _)
+-  have hs : FinTM.lengthBitsTM.tm.step
+-      (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) =
+-      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
+-    have hin : (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []).inputSymbol =
+-        none := by simp [Cfg.inputSymbol, counterCfg]
+-    unfold MultiTapeTM.step
+-    change (FinTM.lengthBitsTM.tm.tr (0 : Fin 4) _ _).apply _ = _
+-    rw [hin]
+-    apply Cfg.ext <;> simp [FinTM.lengthBitsTM, Action.apply, counterCfg]
+-  have hstart : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
+-      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
+-    rw [MultiTapeTM.runFrom_succ_eq_step', hc, hs]
+-  have he := counter_emit x ⟨x.length + 1, by omega⟩ x.length.bits
+-  have hbase : FinTM.lengthBitsTM.ComputesInTime x x.length.bits
+-      ((t + 1) + (x.length.bits.length + 1)) := by
+-    refine ⟨_, ?_, ?_, rfl⟩
+-    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.1
+-    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.2
+-  apply hbase.mono
+-  have hl := Turing.length_bits_le_self x.length
+-  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
+-  omega
++theorem timeConstructible_id : TimeConstructible id :=
++  ⟨fun n => le_refl n, 5, by decide, FinTM.lengthBitsTM,
++    (FinTM.computesFunInTime_iff _ _ _).mp FinTM.lengthBitsTM_computes⟩
+ 
+ end Complexity
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+index 2daabe85..e5b91a59 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -63,9 +63,9 @@ infrastructure round.
+ * `Turing.FinTM.redirectTM_computes`, `Turing.FinTM.redirectTM_live` — the
+   W2 contract pair.
+ * `Turing.FinTM.redirectTM_runFrom` — the W2 run correspondence, field by field (MIG-1).
+-* `Turing.FinTM.timedCondTM` — the W3 controller (MIG-1, the named witness), with
++* `Turing.FinTM.timedCondTM` — the W3 controller (the named witness), with
+   `Turing.FinTM.timedCondTM_computes` (time) and `Turing.FinTM.timedCondTM_spaceUsed`
+-  (space), both sorried until the fill F-A.
++  (space).
+ * `Turing.FinTM.computesFunInTime_cond` — the W3 timed branch.
+ 
+ ## References
+@@ -732,11 +732,10 @@ compute `f₁`, `f₂` within `T₁`, `T₂`, the timed conditional computes `if
+ within `5·(T₀ n + max (T₁ n) (T₂ n) + 1)` steps; no monotonicity is needed, since the selected
+ branch runs on the same physical input.
+ 
+-**Proof sketch.** The body of today's `computesFunInTime_cond`, which `f2_cond_time` copies: the
+-captured decider run, the two-step verdict read and the input rewind take at most `2·T₀ + 5` steps
+-(the private `timed_start`; the input head has moved at most once per decider step), and the
+-selected branch then runs from its own initial configuration (`timed_branch_run`,
+-`branchTM_computes`). -/
++**Proof sketch.** The captured decider run, the two-step verdict read and the input rewind take
++at most `2·T₀ + 5` steps (`timed_start`; the input head has moved at most once per decider step),
++and the selected branch then runs from its own initial configuration (`timed_branch_run`,
++`branchTM_computes`) within `max T₁ T₂`; `2·T₀ + 5 + max T₁ T₂` is at most the stated bound. -/
+ theorem timedCondTM_computes {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
+     {f₁ f₂ : List Bool → List Bool} {T₀ T₁ T₂ : ℕ → ℕ}
+     (hD : D.ComputesFunInTime (fun x => [p x]) T₀)
+@@ -744,23 +743,241 @@ theorem timedCondTM_computes {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
+     (timedCondTM D M₁ M₂).ComputesFunInTime
+       (fun x => if p x then f₁ x else f₂ x)
+       (fun n => 5 * (T₀ n + max (T₁ n) (T₂ n) + 1)) := by
+-  sorry
++  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
++  let B := max (T₁ x.length) (T₂ x.length)
++  have hb : (branchTM M₁ M₂ (p x)).ComputesInTime x
++      (if p x then f₁ x else f₂ x) B := by
++    apply (branchTM_computes M₁ M₂ (p x) x _ B).mpr
++    cases hp : p x with
++    | false => exact ((computesFunInTime_iff _ _ _).mp h₂ x).mono (Nat.le_max_right _ _)
++    | true => exact ((computesFunInTime_iff _ _ _).mp h₁ x).mono (Nat.le_max_left _ _)
++  obtain ⟨a, ha, tapes, heads, hstart⟩ :=
++    timed_start D M₁ M₂ x (p x) (T₀ x.length) ((computesFunInTime_iff _ _ _).mp hD x)
++  have hc : (timedCondTM D M₁ M₂).ComputesInTime x
++      (if p x then f₁ x else f₂ x) (a + B) := by
++    apply (computesInTime_iff _ _ _ _).mpr
++    rw [MultiTapeTM.runFrom_add, hstart, timed_branch_run]
++    obtain ⟨hs, ho⟩ := (computesInTime_iff _ _ _ _).mp hb
++    exact ⟨by simpa only [timedBranchCfg, leftCfg, rightCfg, Option.map_eq_none_iff] using hs, ho⟩
++  -- The controller prefix and selected branch fit one uniform coefficient.
++  apply hc.mono
++  dsimp only [B] at *
++  omega
++
++/-- Head layout of the timed controller: decider heads, branch-bank heads, and one scalar
++capture position. -/
++private def timedHeads (D M₁ M₂ : FinTM Bool) (d : Fin D.k → ℤ)
++    (b : Fin (M₁.k + M₂.k) → ℤ) (z : ℤ) :
++    Fin ((D.k + (M₁.k + M₂.k)) + 1) → ℤ :=
++  Fin.addCases (Fin.addCases d b) (fun _ => z)
++
++/-- The captured decider has its source positions, idle branches, and a
++capture head at its output length. -/
++private lemma timed_control_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}
++    (c : Cfg D.k Bool D.State x) :
++    (timedControlCfg D M₁ M₂ c).workTapePos =
++      timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) c.output.length := by
++  funext i
++  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++  · simp [timedControlCfg, captureCfg, leftCfg, timedHeads, j.isLt]
++  · simp [timedControlCfg, captureCfg, leftCfg, timedHeads]
++
++/-- A dispatched branch keeps the completed decider's heads and the
++capture head fixed while simulating precisely its selected bank. -/
++private lemma timed_branch_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}
++    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x)
++    (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ) (b : Bool) :
++    (timedBranchCfg D M₁ M₂ c tapes heads b).workTapePos =
++      timedHeads D M₁ M₂ heads c.workTapePos 0 := rfl
++
++/-- After the verdict read, the decider heads are where it halted, the branch bank is at its
++origin and the capture head at zero. -/
++private lemma timedReadyCfg_workTapePos (D M₁ M₂ : FinTM Bool) {x : List Bool}
++    (c : Cfg D.k Bool D.State x) (b : Bool) :
++    (timedReadyCfg D M₁ M₂ c b).workTapePos =
++      timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) 0 := by
++  have h0 : ((branchTM M₁ M₂ b).tm.initCfg x).workTapePos = fun _ => 0 := by
++    funext i
++    rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
++  change (timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x)
++    c.workTapes c.workTapePos b).workTapePos = _
++  rw [timed_branch_heads, h0]
++  rfl
++
++/-- Dispatching from the ready configuration, with the input head back at `1`, gives the
++selected branch union's initial configuration in the branch bank. -/
++private lemma timedReady_dispatch (D M₁ M₂ : FinTM Bool) {x : List Bool}
++    (c : Cfg D.k Bool D.State x) (b : Bool) :
++    ({timedReadyCfg D M₁ M₂ c b with
++        state := some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))), inputPos := 1} :
++      Cfg (timedCondTM D M₁ M₂).k Bool (timedCondTM D M₁ M₂).State x) =
++      timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) c.workTapes c.workTapePos b := by
++  refine Cfg.ext ?_ ?_ rfl rfl rfl
++  · simp only [timedBranchCfg, leftCfg, rightCfg, MultiTapeTM.initCfg_eq, Cfg.init_state,
++      Option.map_some, id_eq]
++  · simp only [timedBranchCfg, leftCfg, rightCfg, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
++
++/-- The mandatory back/read pair preserves both machine banks and moves
++only the singleton capture head from one to zero. -/
++private lemma timed_read_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}
++    (c : Cfg D.k Bool D.State x) (b : Bool) (hs : c.state = none) (ho : c.output = [b]) :
++    ∀ u ≤ 2, ∃ z : ℤ, 0 ≤ z ∧ z ≤ 1 ∧
++      ((timedCondTM D M₁ M₂).tm.runFrom (timedControlCfg D M₁ M₂ c) u).workTapePos =
++        timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) z := by
++  intro u hu
++  have hu : u = 0 ∨ u = 1 ∨ u = 2 := by omega
++  rcases hu with rfl | rfl | rfl
++  · refine ⟨1, by omega, by omega, ?_⟩
++    simpa [ho] using timed_control_heads D M₁ M₂ c
++  · refine ⟨0, by omega, by omega, ?_⟩
++    have hstate : (timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by
++      simp [timedControlCfg, captureCfg, leftCfg, hs]
++    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
++      MultiTapeTM.step_of_some hstate]
++    funext i
++    rw [Action.apply_workTapePos, timed_control_heads]
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++    · simp [timedCondTM, timedHeads, j.isLt]
++    · simp [timedCondTM, timedHeads, ho]
++  · refine ⟨0, by omega, by omega, ?_⟩
++    rw [timed_read D M₁ M₂ c b hs ho, timedReadyCfg_workTapePos]
++
++/-- **The timed conditional's head ledger.** At every time the controller's heads are a decider
++head layout at some time `v ≤ T`, a branch-union head layout at some time `w ≤ u`, and a capture
++head in `{0, 1}`.
++
++**Proof sketch.** Split at the decider's first halt `d ≤ T` (`exists_first_halt`). Before it, the captured run
++(`timed_capture`) shows the decider at time `u` and the capture head at its output length, at
++most one. During the two-step verdict read (`timed_read_heads`) and the input rewind
++(`rewind_heads`), the decider heads stay at time `d` and the branch bank at its origin. After the
++dispatch, the branch union runs in lockstep (`timed_branch_run`) from its initial
++configuration. -/
++private lemma timed_ledger (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)
++    (hD : D.ComputesInTime x [b] T) :
++    ∀ u, ∃ v ≤ T, ∃ w ≤ u, ∃ z : ℤ, 0 ≤ z ∧ z ≤ 1 ∧
++      ((timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) u).workTapePos =
++        timedHeads D M₁ M₂ (D.tm.runFrom (D.tm.initCfg x) v).workTapePos
++          ((branchTM M₁ M₂ b).tm.runFrom ((branchTM M₁ M₂ b).tm.initCfg x) w).workTapePos z := by
++  obtain ⟨hTs, hTo⟩ := (computesInTime_iff _ _ _ _).mp hD
++  obtain ⟨d, hd, hlive, hcfg⟩ := MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hTs
++  let c := D.tm.runFrom (D.tm.initCfg x) d
++  have hs : c.state = none := by
++    change (D.tm.runFrom (D.tm.initCfg x) d).state = none
++    rw [hcfg]
++    exact hTs
++  have ho : c.output = [b] := by
++    change (D.tm.runFrom (D.tm.initCfg x) d).output = [b]
++    rw [hcfg]
++    exact hTo
++  have hcap (u : ℕ) (hu : u ≤ d) :
++      (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) u =
++        timedControlCfg D M₁ M₂ (D.tm.runFrom (D.tm.initCfg x) u) := by
++    rw [timed_control_init]
++    exact timed_capture D M₁ M₂ _ u (fun s hsu => hlive s (by omega))
++  obtain ⟨r, hrle, hr, hrheads⟩ := rewind_heads (timedCondTM D M₁ M₂).tm
++    (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
++    (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
++    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
++    (timedReadyCfg D M₁ M₂ c b) rfl
++  have hstart : (timedCondTM D M₁ M₂).tm.runFrom
++      ((timedCondTM D M₁ M₂).tm.initCfg x) (d + 2 + r) =
++      timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x)
++        c.workTapes c.workTapePos b := by
++    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap d (le_refl _),
++      timed_read D M₁ M₂ c b hs ho, hr, timedReady_dispatch]
++  have h0 : ((branchTM M₁ M₂ b).tm.runFrom ((branchTM M₁ M₂ b).tm.initCfg x) 0).workTapePos =
++      fun _ => 0 := by
++    funext i
++    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
++  intro u
++  by_cases hu : u ≤ d
++  · -- The captured decider phase.
++    refine ⟨u, hu.trans hd, 0, Nat.zero_le _,
++      (D.tm.runFrom (D.tm.initCfg x) u).output.length, by omega, ?_, ?_⟩
++    · have hp := (D.tm.output_prefix (D.tm.initCfg x) hu).length_le
++      change (D.tm.runFrom (D.tm.initCfg x) u).output.length ≤ c.output.length at hp
++      rw [ho] at hp
++      simp only [List.length_singleton] at hp
++      exact_mod_cast hp
++    · rw [hcap u hu, timed_control_heads, h0]
++      rfl
++  · refine ⟨d, hd, ?_⟩
++    by_cases hread : u ≤ d + 2
++    · -- The verdict read.
++      obtain ⟨z, hz0, hz1, he⟩ := timed_read_heads D M₁ M₂ c b hs ho (u - d) (by omega)
++      refine ⟨0, Nat.zero_le _, z, hz0, hz1, ?_⟩
++      rw [show u = d + (u - d) by omega, MultiTapeTM.runFrom_add, hcap d (le_refl _), h0]
++      exact he
++    · by_cases hrew : u ≤ d + 2 + r
++      · -- The input rewind moves no work head.
++        refine ⟨0, Nat.zero_le _, 0, by omega, by omega, ?_⟩
++        rw [show u = d + 2 + (u - (d + 2)) by omega, MultiTapeTM.runFrom_add,
++          MultiTapeTM.runFrom_add, hcap d (le_refl _), timed_read D M₁ M₂ c b hs ho,
++          hrheads _ (by omega), timedReadyCfg_workTapePos, h0]
++        rfl
++      · -- The dispatched branch union.
++        refine ⟨u - (d + 2 + r), by omega, 0, by omega, by omega, ?_⟩
++        rw [show u = d + 2 + r + (u - (d + 2 + r)) by omega,
++          MultiTapeTM.runFrom_add, hstart, timed_branch_run, timed_branch_heads]
++        simp only [Nat.add_sub_cancel_left]
++        rfl
+ 
+ /-- **The timed conditional's space**. If `D` outputs `[b]` on `x` within `T` steps, then at every
+ time `t` the conditional's space is at most `D`'s space at time `T`, plus the branch union's space
+ at time `t`, plus two cells for the capture tape.
+ 
+-**Proof sketch.** Catalog's `f2_cond_space`: the three tape groups are disjoint. The decider
+-bank is touched only during the captured run, which halts by `T`; the branch bank only after
+-the dispatch, along the branch union's own trajectory; the capture head stays in `{0, 1}`. The
+-ledger `f2_cond_ledger` (moved with it) gives the head positions of the three groups at every
+-time. -/
++**Proof sketch.** The three tape groups are disjoint. By the head ledger `timed_ledger`, every
++decider-bank head position the controller visits is one the decider visits by time `T`, every
++branch-bank position is one the branch union visits by time `t`, and the capture head stays in
++`{0, 1}`. Compare the visited sets tape by tape and split the sum over the three groups with
++`Fin.sum_univ_add`. -/
+ theorem timedCondTM_spaceUsed (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T t : ℕ)
+     (hD : D.ComputesInTime x [b] T) :
+     (timedCondTM D M₁ M₂).tm.spaceUsed ((timedCondTM D M₁ M₂).tm.initCfg x) t ≤
+       D.tm.spaceUsed (D.tm.initCfg x) T +
+         (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t + 2 := by
+-  sorry
++  let M := timedCondTM D M₁ M₂
++  let B := branchTM M₁ M₂ b
++  have hDcard (i : Fin D.k) :
++      M.tm.spaceUsedByTape (M.tm.initCfg x) t ((Fin.castAdd (M₁.k + M₂.k) i).castSucc) ≤
++        D.tm.spaceUsedByTape (D.tm.initCfg x) T i := by
++    rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
++    refine Finset.card_le_card fun p hp => ?_
++    obtain ⟨u, -, rfl⟩ := (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mp hp
++    obtain ⟨v, hv, w, -, z, -, -, he⟩ := timed_ledger D M₁ M₂ x b T hD u
++    refine (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨v, hv, ?_⟩
++    change _ = ((timedCondTM D M₁ M₂).tm.runFrom _ u).workTapePos _
++    rw [he]
++    simp [timedHeads, Fin.castSucc]
++  have hBcard (i : Fin (M₁.k + M₂.k)) :
++      M.tm.spaceUsedByTape (M.tm.initCfg x) t ((Fin.natAdd D.k i).castSucc) ≤
++        B.tm.spaceUsedByTape (B.tm.initCfg x) t i := by
++    rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
++    refine Finset.card_le_card fun p hp => ?_
++    obtain ⟨u, hu, rfl⟩ := (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mp hp
++    obtain ⟨v, -, w, hw, z, -, -, he⟩ := timed_ledger D M₁ M₂ x b T hD u
++    refine (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨w, hw.trans hu, ?_⟩
++    change _ = ((timedCondTM D M₁ M₂).tm.runFrom _ u).workTapePos _
++    rw [he]
++    simp [timedHeads, Fin.castSucc, B]
++  have hcap : M.tm.spaceUsedByTape (M.tm.initCfg x) t (Fin.last _) ≤ 2 := by
++    rw [MultiTapeTM.spaceUsedByTape_eq_card]
++    have hsub : M.tm.visitedByTapeHead (M.tm.initCfg x) t (Fin.last _) ⊆
++        Finset.Icc (0 : ℤ) 1 := by
++      intro p hp
++      obtain ⟨u, -, rfl⟩ := (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mp hp
++      obtain ⟨v, -, w, -, z, hz0, hz1, he⟩ := timed_ledger D M₁ M₂ x b T hD u
++      change ((timedCondTM D M₁ M₂).tm.runFrom _ u).workTapePos _ ∈ _
++      rw [he]
++      simpa [timedHeads, Fin.last, Fin.addCases] using Finset.mem_Icc.mpr ⟨hz0, hz1⟩
++    exact (Finset.card_le_card hsub).trans (by decide)
++  rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
++  change (∑ i : Fin ((D.k + (M₁.k + M₂.k)) + 1), M.tm.spaceUsedByTape (M.tm.initCfg x) t i) ≤ _
++  rw [Fin.sum_univ_add, Fin.sum_univ_add]
++  simp only [Fintype.sum_unique]
++  exact Nat.add_le_add (Nat.add_le_add
++    (Finset.sum_le_sum (fun i _ => hDcard i))
++    (Finset.sum_le_sum (fun i _ => hBcard i))) hcap
+ 
+ /-- **W3, the timed branch**: the quantitative form of
+ `Turing.FinTM.exists_cond`. If a decider machine computes the test bit
+@@ -781,26 +998,7 @@ theorem computesFunInTime_cond {D M₁ M₂ : FinTM Bool} {p : List Bool → Boo
+     (h₁ : M₁.ComputesFunInTime f₁ T₁) (h₂ : M₂.ComputesFunInTime f₂ T₂) :
+     ∃ (M : FinTM Bool) (c : ℕ),
+       M.ComputesFunInTime (fun x => if p x then f₁ x else f₂ x)
+-        (fun n => c * (T₀ n + max (T₁ n) (T₂ n) + 1)) := by
+-  refine ⟨timedCondTM D M₁ M₂, 5, fun x => ?_⟩
+-  let B := max (T₁ x.length) (T₂ x.length)
+-  have hb : (branchTM M₁ M₂ (p x)).ComputesInTime x
+-      (if p x then f₁ x else f₂ x) B := by
+-    apply (branchTM_computes M₁ M₂ (p x) x _ B).mpr
+-    cases hp : p x with
+-    | false => exact (h₂ x).mono (Nat.le_max_right _ _)
+-    | true => exact (h₁ x).mono (Nat.le_max_left _ _)
+-  obtain ⟨a, ha, tapes, heads, hstart⟩ :=
+-    timed_start D M₁ M₂ x (p x) (T₀ x.length) (hD x)
+-  have hc : (timedCondTM D M₁ M₂).ComputesInTime x
+-      (if p x then f₁ x else f₂ x) (a + B) := by
+-    apply (computesInTime_iff _ _ _ _).mpr
+-    rw [MultiTapeTM.runFrom_add, hstart, timed_branch_run]
+-    obtain ⟨hs, ho⟩ := (computesInTime_iff _ _ _ _).mp hb
+-    exact ⟨by simpa only [timedBranchCfg, leftCfg, rightCfg, Option.map_eq_none_iff] using hs, ho⟩
+-  -- The controller prefix and selected branch fit one uniform coefficient.
+-  apply hc.mono
+-  dsimp only [B] at *
+-  omega
++        (fun n => c * (T₀ n + max (T₁ n) (T₂ n) + 1)) :=
++  ⟨timedCondTM D M₁ M₂, 5, timedCondTM_computes hD h₁ h₂⟩
+ 
+ end Turing.FinTM
+diff --git a/TCSlib/Complexity/TuringMachine/Simulation.lean b/TCSlib/Complexity/TuringMachine/Simulation.lean
+index 40f509d9..2a008de9 100644
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import Mathlib.Algebra.BigOperators.Fin
+ import Mathlib.Data.Fintype.Sum
+ import Mathlib.Data.Fintype.Prod
+ import Mathlib.Data.Fintype.Option
+@@ -47,8 +48,8 @@ gadget needs.
+   top.
+ * **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
+   machines in disjoint tape and state blocks; the Boolean chooses only the
+-  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed` (MIG-1; sorried until
+-  the fill F-A): the selected machine's space plus one origin cell per idle tape.
++  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed`: the selected machine's
++  space plus one origin cell per idle tape.
+ * **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
+   that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
+ * **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
+@@ -322,31 +323,53 @@ def branchTM (M₁ M₂ : FinTM Bool) (b : Bool) : FinTM Bool where
+         | .inr q => rightAction M₁.k Sum.inr
+             (M₂.tm.tr q inp (fun i => work (Fin.natAdd M₁.k i))) }
+ 
++/-- The branch union selecting the second machine starts as that machine's initial
++configuration in the right bank, with the first bank blank at the origin. -/
++private lemma branchTM_initCfg_false (M₁ M₂ : FinTM Bool) (x : List Bool) :
++    (branchTM M₁ M₂ false).tm.initCfg x =
++      rightCfg Sum.inr (M₂.tm.initCfg x) (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
++  rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
++  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++  · simp only [rightCfg, Cfg.init_state, Option.map_some]
++    rfl
++  · simp only [rightCfg, Cfg.init_inputPos]
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;> funext z <;>
++      simp only [rightCfg, Cfg.init_workTapes, Fin.addCases_left, Fin.addCases_right]
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
++      simp only [rightCfg, Cfg.init_workTapePos, Fin.addCases_left, Fin.addCases_right]
++  · simp only [rightCfg, Cfg.init_output]
++
++/-- The branch union selecting the first machine starts as that machine's initial
++configuration in the left bank, with the second bank blank at the origin. -/
++private lemma branchTM_initCfg_true (M₁ M₂ : FinTM Bool) (x : List Bool) :
++    (branchTM M₁ M₂ true).tm.initCfg x =
++      leftCfg Sum.inl (M₁.tm.initCfg x) (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
++  rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
++  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++  · simp only [leftCfg, Cfg.init_state, Option.map_some]
++    rfl
++  · simp only [leftCfg, Cfg.init_inputPos]
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;> funext z <;>
++      simp only [leftCfg, Cfg.init_workTapes, Fin.addCases_left, Fin.addCases_right]
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
++      simp only [leftCfg, Cfg.init_workTapePos, Fin.addCases_left, Fin.addCases_right]
++  · simp only [leftCfg, Cfg.init_output]
++
+ /-- Each selected branch has exactly its original time and completed output.
+ The proof embeds its initial blank configuration, then uses lockstep. -/
+ lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :
+     (branchTM M₁ M₂ b).ComputesInTime x w t ↔ (cond b M₁ M₂).ComputesInTime x w t := by
+   cases b with
+   | false =>
+-    have hi : (branchTM M₁ M₂ false).tm.initCfg x =
+-        rightCfg Sum.inr (M₂.tm.initCfg x) (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
+-      refine Cfg.ext rfl rfl ?_ ?_ rfl
+-      · funext i
+-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
+-      · funext i
+-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
+-    rw [computesInTime_iff, computesInTime_iff, hi,
++    rw [computesInTime_iff, computesInTime_iff, branchTM_initCfg_false,
+       rightCfg_run M₂.tm (branchTM M₁ M₂ false).tm Sum.inr (fun _ _ _ => rfl)]
+     simp only [rightCfg, Option.map_eq_none_iff]
+   | true =>
+-    have hi : (branchTM M₁ M₂ true).tm.initCfg x =
+-        leftCfg Sum.inl (M₁.tm.initCfg x) (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
+-      refine Cfg.ext rfl rfl ?_ ?_ rfl
+-      · funext i
+-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
+-      · funext i
+-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
+-    rw [computesInTime_iff, computesInTime_iff, hi,
++    rw [computesInTime_iff, computesInTime_iff, branchTM_initCfg_true,
+       leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl)]
+     simp only [leftCfg, Option.map_eq_none_iff]
+ 
+@@ -387,15 +410,68 @@ theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}
+ /-- **The branch union's space**. The branch union selecting `b` uses exactly the selected machine's
+ space plus one origin cell for each tape of the idle bank.
+ 
+-**Proof sketch.** Catalog's `f2_branch_space`: the branch union runs the selected machine on its
+-own bank (`leftCfg_run`, `rightCfg_run`) and never moves the other bank's heads, whose visited
+-sets stay the origin singletons; split the sum over the two banks with `Fin.sum_univ_add`, which
+-replaces the copied `f2_sum_add`. -/
++**Proof sketch.** The branch union runs the selected machine on its own bank (`leftCfg_run`,
++`rightCfg_run`) and never moves the other bank's heads, whose visited sets stay the origin
++singletons, while each selected tape visits exactly the cells of the corresponding tape of the
++selected machine. Split the sum over the two banks with `Fin.sum_univ_add`. -/
+ theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
+     (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t =
+       if b then M₁.tm.spaceUsed (M₁.tm.initCfg x) t + M₂.k
+       else M₂.tm.spaceUsed (M₂.tm.initCfg x) t + M₁.k := by
+-  sorry
++  cases b with
++  | false =>
++    have hr (u : ℕ) : (branchTM M₁ M₂ false).tm.runFrom
++        ((branchTM M₁ M₂ false).tm.initCfg x) u =
++        rightCfg Sum.inr (M₂.tm.runFrom (M₂.tm.initCfg x) u)
++          (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
++      rw [branchTM_initCfg_false]
++      exact rightCfg_run M₂.tm (branchTM M₁ M₂ false).tm Sum.inr (fun _ _ _ => rfl) _ _ _ u
++    -- The idle bank's heads never leave the origin.
++    have hidle (j : Fin M₁.k) : (branchTM M₁ M₂ false).tm.visitedByTapeHead
++        ((branchTM M₁ M₂ false).tm.initCfg x) t (Fin.castAdd M₂.k j) = {0} := by
++      ext z
++      rw [MultiTapeTM.mem_visitedByTapeHead_iff, Finset.mem_singleton]
++      simp only [hr, rightCfg, Fin.addCases_left]
++      exact ⟨fun ⟨_, _, h⟩ => h.symm, fun h => ⟨0, Nat.zero_le _, h.symm⟩⟩
++    -- The selected bank visits exactly the selected machine's cells.
++    have hsel (j : Fin M₂.k) : (branchTM M₁ M₂ false).tm.visitedByTapeHead
++        ((branchTM M₁ M₂ false).tm.initCfg x) t (Fin.natAdd M₁.k j) =
++        M₂.tm.visitedByTapeHead (M₂.tm.initCfg x) t j := by
++      ext z
++      rw [MultiTapeTM.mem_visitedByTapeHead_iff, MultiTapeTM.mem_visitedByTapeHead_iff]
++      simp only [hr, rightCfg, Fin.addCases_right]
++    simp only [Bool.false_eq_true, ↓reduceIte]
++    rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
++    change (∑ i : Fin (M₁.k + M₂.k), _) = _
++    rw [Fin.sum_univ_add]
++    simp only [MultiTapeTM.spaceUsedByTape_eq_card, hidle, hsel, Finset.card_singleton,
++      Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
++    exact Nat.add_comm _ _
++  | true =>
++    have hr (u : ℕ) : (branchTM M₁ M₂ true).tm.runFrom
++        ((branchTM M₁ M₂ true).tm.initCfg x) u =
++        leftCfg Sum.inl (M₁.tm.runFrom (M₁.tm.initCfg x) u)
++          (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
++      rw [branchTM_initCfg_true]
++      exact leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl) _ _ _ u
++    have hsel (j : Fin M₁.k) : (branchTM M₁ M₂ true).tm.visitedByTapeHead
++        ((branchTM M₁ M₂ true).tm.initCfg x) t (Fin.castAdd M₂.k j) =
++        M₁.tm.visitedByTapeHead (M₁.tm.initCfg x) t j := by
++      ext z
++      rw [MultiTapeTM.mem_visitedByTapeHead_iff, MultiTapeTM.mem_visitedByTapeHead_iff]
++      simp only [hr, leftCfg, Fin.addCases_left]
++    have hidle (j : Fin M₂.k) : (branchTM M₁ M₂ true).tm.visitedByTapeHead
++        ((branchTM M₁ M₂ true).tm.initCfg x) t (Fin.natAdd M₁.k j) = {0} := by
++      ext z
++      rw [MultiTapeTM.mem_visitedByTapeHead_iff, Finset.mem_singleton]
++      simp only [hr, leftCfg, Fin.addCases_right]
++      exact ⟨fun ⟨_, _, h⟩ => h.symm, fun h => ⟨0, Nat.zero_le _, h.symm⟩⟩
++    simp only [↓reduceIte]
++    rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
++    change (∑ i : Fin (M₁.k + M₂.k), _) = _
++    rw [Fin.sum_univ_add]
++    simp only [MultiTapeTM.spaceUsedByTape_eq_card, hidle, hsel, Finset.card_singleton,
++      Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
+ 
+ /-- A control action leaves all work tapes, work heads, and output unchanged. -/
+ lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
+@@ -472,6 +548,19 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
+   intro cfg hs hp
+   exact aux cfg.inputPos.val cfg hs rfl hp
+ 
++/-- The rewind's mandatory first step: a left move into the scan state, which leaves the head
++at most at the last input symbol, so that `rewind_scan` applies. -/
++private lemma rewind_first_step {k : ℕ} {S : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool S) (start scan : S)
++    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
++    (c : Cfg k Bool S x) (hs : c.state = some start) :
++    tm.step c = {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} ∧
++      (moveInputPos c.inputPos .neg).val ≤ x.length := by
++  refine ⟨by rw [MultiTapeTM.step_of_some hs, hstart, controlAction_apply], ?_⟩
++  rw [moveInputPos_neg_val]
++  have := c.inputPos.isLt
++  omega
++
+ /-- From any valid input position, take the mandatory first left move and then
+ scan left. This returns to position `1`, even for an empty input or a start at a
+ boundary. No work tape or output is changed. -/
+@@ -484,23 +573,9 @@ lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}
+       | none => controlAction .pos dest)
+     (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
+     ∃ t, tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
+-  have hstep : tm.step cfg =
+-      {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+-    unfold MultiTapeTM.step
+-    rw [hs]
+-    dsimp only
+-    rw [hstart, controlAction_apply]
+-  let c := tm.step cfg
+-  have hc : c.state = some scan := by simp only [c, hstep]
+-  have hp : c.inputPos.val ≤ x.length := by
+-    simp only [c, hstep, moveInputPos_neg_val]
+-    have := cfg.inputPos.isLt
+-    omega
+-  refine ⟨1 + (c.inputPos.val + 1), ?_⟩
+-  rw [MultiTapeTM.runFrom_add]
+-  have hfirst : tm.runFrom cfg 1 = c := rfl
+-  rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
+-  simp only [c, hstep]
++  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart cfg hs
++  refine ⟨(moveInputPos cfg.inputPos .neg).val + 1 + 1, ?_⟩
++  rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
+ 
+ /-- A quantitative refinement of `rewind_from_any`: its construction takes
+ at most the current input position plus two steps, preserving all work and output.
+@@ -515,21 +590,10 @@ lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
+     (c : Cfg k Bool S x) (hs : c.state = some start) :
+     ∃ r ≤ c.inputPos.val + 2,
+       tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+-  have hstep : tm.step c =
+-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+-    unfold MultiTapeTM.step
+-    rw [hs]
+-    dsimp only
+-    rw [hstart, controlAction_apply]
+-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+-    rw [moveInputPos_neg_val]
+-    have := c.inputPos.isLt
+-    omega
+-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
++  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart c hs
++  refine ⟨(moveInputPos c.inputPos .neg).val + 1 + 1, ?_, ?_⟩
+   · rw [moveInputPos_neg_val]; omega
+-  · rw [MultiTapeTM.runFrom_add]
+-    change tm.runFrom (tm.step c) _ = _
+-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
++  · rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
+ 
+ /-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
+ every prefix, including its dispatch step.
+@@ -584,21 +648,13 @@ theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
+     ∃ r ≤ c.inputPos.val + 2,
+       tm.runFrom c r = {c with state := dest, inputPos := 1} ∧
+       ∀ u ≤ r, (tm.runFrom c u).workTapePos = c.workTapePos := by
+-  have hstep : tm.step c =
+-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+-    simp only [MultiTapeTM.step, hs, hstart, controlAction_apply]
+-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+-    rw [moveInputPos_neg_val]
+-    have := c.inputPos.isLt
+-    omega
+-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_, ?_⟩
++  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart c hs
++  refine ⟨(moveInputPos c.inputPos .neg).val + 1 + 1, ?_, ?_, ?_⟩
+   · rw [moveInputPos_neg_val]; omega
+-  · rw [MultiTapeTM.runFrom_add]
+-    change tm.runFrom (tm.step c) _ = _
+-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
++  · rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
+   · intro u hu
+     cases u with
+-    | zero => rfl
++    | zero => rw [MultiTapeTM.runFrom_zero]
+     | succ u =>
+       rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+       exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u
+-- 
+2.43.0
+

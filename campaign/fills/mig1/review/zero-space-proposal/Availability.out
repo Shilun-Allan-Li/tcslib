@@ -1,0 +1,63 @@
+Turing.FinTM.idTM : Turing.FinTM Bool
+Turing.FinTM.prependTM._proof_3 : ∀ (w : List Bool) (q : Fin (w.length + 1)),
+  ↑q < w.length → ¬↑q + 1 < w.length + 1 → False
+Turing.FinTM.pairValidTM_computes : ∀ (x : List Bool),
+  Turing.FinTM.pairValidTM.ComputesInTime x [(Turing.pairDecode x).isSome] (x.length + 1)
+Turing.FinTM.pairValidTM.eq_1 : Turing.FinTM.pairValidTM =
+  { k := 0, State := Option Bool, fintypeState := instFintypeOption, decEqState := fun a b => a.instDecidableEq b,
+    tm :=
+      { q₀ := none,
+        tr := fun q inp x =>
+          match q, inp with
+          | none, some b =>
+            { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some (some b) }
+          | some b, some c =>
+            if b = c then
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some none }
+            else { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some (!b && c), state := none }
+          | x, none => { inputTape := 0, workTapes := fun j => j.elim0, output := some false, state := none } } }
+Turing.FinTM.prependTM.match_1 : (motive : Option Bool → Sort u_1) →
+  (inp : Option Bool) → ((b : Bool) → motive (some b)) → (Unit → motive none) → motive inp
+Turing.FinTM.prependTM._proof_2 : ∀ (w : List Bool) (q : Fin (w.length + 1)), ↑q < w.length → ↑q + 1 < w.length + 1
+Turing.FinTM.pairValidTM.match_1 : (motive : Option Bool → Option Bool → Sort u_1) →
+  (q inp : Option Bool) →
+    ((b : Bool) → motive none (some b)) →
+      ((b c : Bool) → motive (some b) (some c)) → ((x : Option Bool) → motive x none) → motive q inp
+Turing.FinTM.prependTM_computes._proof_1_1 : ∀ (w x : List Bool),
+  ¬w.length + x.length + 1 = w.length + (x.length + 1) → False
+Turing.FinTM.idTM_computes : ∀ (x : List Bool), Turing.FinTM.idTM.ComputesInTime x x (x.length + 1)
+Turing.FinTM.prependTM : List Bool → Turing.FinTM Bool
+Turing.FinTM.prependTM.eq_1 : ∀ (w : List Bool),
+  Turing.FinTM.prependTM w =
+    { k := 0, State := Fin (w.length + 1), fintypeState := Fin.fintype (w.length + 1),
+      decEqState := instDecidableEqFin (w.length + 1),
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            if h : ↑q < w.length then
+              { inputTape := 0, workTapes := fun i => i.elim0, output := some w[↑q], state := some ⟨↑q + 1, ⋯⟩ }
+            else
+              match inp with
+              | some b => { inputTape := 1, workTapes := fun i => i.elim0, output := some b, state := some q }
+              | none => { inputTape := 0, workTapes := fun i => i.elim0, output := none, state := none } } }
+Turing.FinTM.idTM.eq_1 : Turing.FinTM.idTM =
+  { k := 0, State := Unit, fintypeState := PUnit.fintype, decEqState := instDecidableEqPUnit,
+    tm :=
+      { q₀ := (),
+        tr := fun x inp x_1 =>
+          match inp with
+          | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some () }
+          | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+Turing.FinTM.prependTM._proof_1 : ∀ (w : List Bool), NeZero (w.length + 1)
+Turing.FinTM.prependTM_computes._simp_1_4 : ∀ {n : ℕ} {a b : Fin n}, (a = b) = (↑a = ↑b)
+Turing.FinTM.prependTM_computes : ∀ (w : List Bool),
+  (Turing.FinTM.prependTM w).ComputesFunInTime (fun x => w ++ x) fun n => w.length + n + 1
+Turing.FinTM.constTM._proof_1 : ∀ (w : List Bool), NeZero (w.length + 1)
+Turing.FinTM.constTM : List Bool → Turing.FinTM Bool
+Turing.FinTM.pairValidTM : Turing.FinTM Bool
+Turing.FinTM.idTM.match_1 : (motive : Option Bool → Sort u_1) →
+  (inp : Option Bool) → ((b : Bool) → motive (some b)) → (Unit → motive none) → motive inp
+Turing.FinTM.constTM_computes : ∀ (w x : List Bool), (Turing.FinTM.constTM w).ComputesInTime x w (w.length + 1)
+Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2}
+  {input : List Symbol} {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (t : ℕ)
+  (h_zero : k = 0) : Turing.MultiTapeTM.spaceUsed cfg t = 0

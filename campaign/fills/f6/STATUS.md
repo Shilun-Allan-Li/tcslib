@@ -12,8 +12,8 @@ prefix, first-return/layout reconstruction, final source pins/orders/cache roots
 screens remain unfinished; conditional component probes do not certify that full route.
 
 The proposed same-home `CodeTM.toFinTM_eq` reader in Encoding and its conditional sealed
-computation/space conversion pass. **The new public API is awaiting Seyoon's ruling**; no
-source addition is authorized yet. Keep gate 112's withdrawn arbitrary-machine route_space
+computation/space conversion pass. **Seyoon approved the new public API**. It is included in the 19-reader prerequisite
+PR/gate 117, assigned to Codex; implementation/audit/replay/merge are still required. Keep gate 112's withdrawn arbitrary-machine route_space
 out of every final brief and require actual run/cut/loop-bound witnesses.
 
 **Not ready to dispatch.** Complete the prerequisite reader, #229 merge and full concrete

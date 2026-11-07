@@ -1,0 +1,76 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! Unapproved proposal: these two pairs would be proved in the stated owner files.
+No library declaration is changed by this import-context probe. -/
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+
+namespace ZeroSpaceProposal
+
+section CompositionHome
+attribute [local irreducible] Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+theorem idTM_spaceUsed (x : List Bool) (t : ℕ) :
+    idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+theorem constTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+end CompositionHome
+
+section PrimitivesHome
+attribute [local irreducible] Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+theorem prependTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+theorem pairValidTM_spaceUsed (x : List Bool) (t : ℕ) :
+    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+end PrimitivesHome
+
+section CatalogConsumer
+attribute [local irreducible] Turing.FinTM.idTM Turing.FinTM.constTM
+  Turing.FinTM.prependTM Turing.FinTM.pairValidTM
+  Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+theorem copy_bound (x : List Bool) (t bound : ℕ) :
+    idTM.tm.spaceUsed (idTM.tm.initCfg x) t ≤ bound := by
+  rw [idTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem const_bound (w x : List Bool) (t bound : ℕ) :
+    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t ≤ bound := by
+  rw [constTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem prepend_bound (w x : List Bool) (t bound : ℕ) :
+    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t ≤ bound := by
+  rw [prependTM_spaceUsed]
+  exact Nat.zero_le _
+
+theorem validator_bound (x : List Bool) (t bound : ℕ) :
+    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t ≤ bound := by
+  rw [pairValidTM_spaceUsed]
+  exact Nat.zero_le _
+
+end CatalogConsumer
+
+#print axioms idTM_spaceUsed
+#print axioms constTM_spaceUsed
+#print axioms prependTM_spaceUsed
+#print axioms pairValidTM_spaceUsed
+#print axioms copy_bound
+#print axioms const_bound
+#print axioms prepend_bound
+#print axioms validator_bound
+
+end ZeroSpaceProposal

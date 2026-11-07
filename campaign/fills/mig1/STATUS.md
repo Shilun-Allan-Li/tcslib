@@ -31,8 +31,9 @@ F-A still needs rule-10 repairs: proposed ten leftCfg/rightCfg field readers awa
 ruling; branchTM's shape and operational-independence exclusion is separately unresolved.
 A three-lemma run-contract proposal now has a passing bounded sealed consumer, with the
 actual condTM integration still untested. Fifteen non-simp configuration readers also pass
-same-home generation and conditional seals. The ten left/right, five capture and three
-branch-lemma scopes are separately **awaiting user rulings**; see `review/API-PROPOSALS.md`.
+same-home generation and conditional seals. Seyoon **approved** the ten left/right, five capture and three branch-lemma scopes;
+with F6's CodeTM reader they form prerequisite gate 117, assigned to Codex. See
+`review/API-PROPOSALS.md`; implementation and consumer repair remain pending.
 No new debt is accepted.
 Claude can continue independent F-C/F-B; final census, screens and full sweep remain required.
 **cp03 is received and reviewed as partial** in `review/checkpoint03-2026-11-07/`: all
