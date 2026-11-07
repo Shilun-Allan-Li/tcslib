@@ -56,6 +56,9 @@ import TCSlib.Cryptography.Pseudorandom
 import TCSlib.Cryptography.Asymptotic
 import TCSlib.Cryptography.Candidates
 import TCSlib.Cryptography.NumberTheory
+import TCSlib.Cryptography.Encoding
+import TCSlib.Cryptography.LWE
+import TCSlib.Cryptography.SIS
 import TCSlib.Cryptography.ZeroKnowledge
 import TCSlib.Cryptography.Games
 import TCSlib.Cryptography.Games.Bridges
