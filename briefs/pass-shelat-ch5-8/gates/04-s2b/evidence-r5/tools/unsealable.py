@@ -1,5 +1,5 @@
 """unsealable.py <candidate-dir>...: drop from every candidate list the definitions ruled to be
-notation (user ruling of 2026-11-07: `Complexity.PolyExpr.eval` is notation, made reducible by #210),
+notation (user ruling of 2026-11-07: `Complexity.PolyExpr.eval` stays semireducible and is notation),
 like the reducible abbreviations the collector never lists. Records the dropped rows in
 <candidate-dir>/unsealable-dropped.tsv."""
 import sys

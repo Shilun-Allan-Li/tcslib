@@ -1,5 +1,11 @@
 # Gate 04 (S2b, #195): round 4 resolutions (repair in progress)
 
+**Round 5 follow-through:** R4-01 and F02 are fixed. R4-02's general collector coverage claim
+is not fully repaired: anonymous commands remain a tooling follow-up. The round 5 auditor's
+broader seal covers the current head. See [round 5 resolutions](resolutions-r5.md) for the
+closing verdict, scanner repair and exact limits; the historical account below is not a claim
+of universal collector/scanner coverage.
+
 - **Round 4:** findings `findings/gate04-s2b-r4-findings.md`, verbatim, SHA-256 `4340ef76b07b324721a3b634335c303384eabe11c634a2a6b85fd6611956df43`; head
   `a588adfed01eefe6971abd0846e3938ad02e8624`. **DO NOT CLOSE: 0 blockers, 1 major (R4-01), 1 minor (R4-02).**
   R3-01, R3-02 and N7 fixed; F02 not resolved (through R4-01). The thirteen re-proofs and the two

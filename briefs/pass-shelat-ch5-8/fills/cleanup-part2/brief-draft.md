@@ -101,6 +101,14 @@ rows and the fill reviews as the current inventory; remove rows already repaired
 S1 or S2, and commission each remaining declaration once. Re-prove those consumers through
 published equation lemmas, adding missing equations beside their definitions.
 
+**Gate 04 round 5, inherited core unfolds:** replace the four explicit `Function.comp`
+arguments in `Asymptotic/MultiMessage.lean` and `MultiMessageLemmas.lean` by the published
+equation `Function.comp_apply` (or a verified equivalent lemma-based proof). These are outside
+the TCSlib-only scanner. Locations and a proposed, **not yet Lean-checked** patch are in
+`gates/04-s2b/evidence-r5-review/{inherited-core-unfolds.tsv,core-comp-equations.diff}`.
+Check the four proofs at the issue/landing tree; do not mistake the prepared patch for a repair
+already on #195.
+
 **K. Docstring (gate 03e round 3, minor 1).** In `ZeroKnowledge/Defs.lean`'s D8 deviation paragraph,
 replace "the rewinding simulators of the chapter are truncated and the theorems become statistical"
 with: expected polynomial time is not formalized; GI uses a truncated simulator and obtains
@@ -114,6 +122,12 @@ statistical ZK, while 3COL remains computational ZK with statistical sampling an
   "The contract gives nothing sharper" with: this theorem deliberately publishes the coarse
   time-derived bound and exposes no module-specific envelope (the contract implies the factor-two
   bound `⌊B/2⌋`, since the head starts and ends at 0).
+- **Gate 04 round 5, R5-03:** restore the complete formula docstrings of
+  `Protocol.transcriptWith_eq` and `Protocol.outV_eq` in `ZeroKnowledge/Interaction.lean`,
+  naming all inputs, tapes, the verifier-first flag and round count where present in the
+  statement. Prepared docstring-only patch:
+  `gates/04-s2b/evidence-r5-review/interaction-docstrings.diff`. Statements and proofs stay
+  byte-identical; this patch is queued, not landed.
 
 **M. Mathlib replacements (DL-21; user direction 2026-11-06).** The DUP and WRAP rows of
 `mathlib-overlap-nt.md` in `NumberTheory/*` and in files no fill owns: replace by the Mathlib

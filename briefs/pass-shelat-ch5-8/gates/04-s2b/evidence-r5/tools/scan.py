@@ -2,7 +2,7 @@
 
 scan.py <worktree> <files.txt> <constants.tsv> <candidate-dir> <seal-results.txt> <out.log> [--rev REV]
 
-For every Lean file F: find every explicit `unfold X`, `delta X`, and every name X passed in the
+For every Lean file F: inspect the supported textual forms of `unfold X`, `delta X`, and names in the
 lemma list of `rw`/`rwa`/`rewrite`/`erw`/`nth_rw`/`nth_rewrite`/`simp_rw`/`simp`/`simp only`/
 `simp_all`/`simpa`/`dsimp`/`dsimp only`/`norm_num`/`field_simp`/`simp_arith`/`push_cast`, and
 resolve X (namespace and `open` context of the line) against the table of TCSlib constants written
@@ -12,7 +12,9 @@ by the collector. A hit is an X that resolves to a definition (kind `def`, `def-
 seal (they are checked by definitional unification at default transparency, which the
 `local irreducible` seal blocks); the scan lists every `show`/`change` that sits on a line where the
 seal failed. The proof-term check of the collector (references to generated equation lemmas of a
-foreign definition) is appended."""
+foreign definition) is appended. This is a TCSlib-name text scan, not Lean's syntax parser;
+candidate coverage, name resolution and the seal's treatment of anonymous commands require
+separate checks. Round-5 hardening skips blank/comment-only continuation lines in unfold/delta."""
 import re, sys, os
 from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -193,11 +195,18 @@ for path in files:
                     toks.append((t, cur))
                 if stop or len(part) > 1 or cur >= len(lines):
                     break
-                nxt = lines[cur]
-                ind = len(nxt) - len(nxt.lstrip())
-                if not nxt.strip() or ind <= col:
+                nxt_idx = cur
+                # Comments have already been blanked while preserving line numbers. They and
+                # empty lines do not terminate an indented Lean identifier continuation.
+                while nxt_idx < len(lines) and not lines[nxt_idx].strip():
+                    nxt_idx += 1
+                if nxt_idx >= len(lines):
                     break
-                cur += 1; seg = nxt
+                nxt = lines[nxt_idx]
+                ind = len(nxt) - len(nxt.lstrip())
+                if ind <= col:
+                    break
+                cur = nxt_idx + 1; seg = nxt
         else:
             br = bracket_list(src, m.end())
             if not br:

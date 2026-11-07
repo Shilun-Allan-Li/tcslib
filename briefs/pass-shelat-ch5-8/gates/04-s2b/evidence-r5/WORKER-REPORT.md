@@ -23,7 +23,7 @@ Against 8dcdc8a5 itself the count is 52 files (3727+/287−). The 26 extra files
   - First pass (`r10/replay.log`): the 108 modules of the closure changed since f4b2c95d, including all 23 landed Candidates/ThreeColoring modules and `audits/pass-shelat/Checks`. All rc=0, no errors.
   - Second pass (`r10/replay-extra.log`): the 23 remaining modules downstream of the 26 files anywhere in the repository (`tools/downstream.py`), including `audits/garg-ch1-3/Checks`. All rc=0, no errors.
   - The root facade `TCSlib` was not replayed.
-  - The 26 files and Checks have no sorry. The only sorry left in the replayed set is in Universal (1), UniversalPadding (1) and Games/Efficiency (4); the Candidates modules are now at 0.
+  - **Post-audit correction:** the audited implementation set has four explicit deferred `sorry` proofs in Games/Efficiency: `exists_handlerMachine`, `exists_interactiveHandlerMachine`, `exists_toCompOn_of_toComp`, and `exists_toOracleAdversary_of_bitCodec`. The replay also has Universal (1) and UniversalPadding (1), outside that implementation set; Candidates and Checks have 0. See `../evidence-r5-review/ERRATUM.md` for file-set and axiom-print scopes.
 - **Seal:**
   - Derivation from an empty seed: `unseal.json` = `{}`.
   - Head seal: 26/26 PASS with no entries. Plain seal: 26/26 PASS.

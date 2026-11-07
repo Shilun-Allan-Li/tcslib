@@ -90,7 +90,7 @@ in this folder (identical).
 | Open questions / user queue | `OPEN-QUESTIONS.md`, `QUEUE.md` (historical; §6 here is current) |
 | Gates | `gates/<NN>-<slug>/`: packs, `findings/`, `resolutions-*.md`, evidence |
 | **Post-landing check** | Passed (`fills/landing/postland/SUMMARY.md`): `sorry` in `TCSlib/Cryptography` 65 → 2, every fill headline standard-axiom-only. |
-| **#195 / gate 04 round 5** | #195 pushed at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e` (merged the landed base; zero exclusions). Gate 04 round 5 **dispatched** (`outbox/gates/04-s2b-r5-gate/`, exchange `7868fba2`, records `c39f0e11`); findings go to `inbox/gate04-s2b-r5-findings.md` or arrive by upload. On findings: file, resolve, then #195 clear to merge. |
+| **#195 / gate 04 round 5** | Gate 04 is **CLOSED**, round 5 returned CLOSE, 0 blockers, 0 majors, 3 minors (local inbox delivery announced by the user, 2026-11-06 PST). #195 at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e` is **clear to merge**; the user merges. Verbatim findings and SHA-256 are in `gates/04-s2b/findings/`; `resolutions-r5.md` records the scanner repair, scope/count erratum and queued minor Lean edits. No Lean head moved. |
 | **Shared-lemma work** | Design `fills/shared-lemmas/design.md`; rulings Q1–Q8 recorded (log, 2026-11-07). **S1 is PR [#227](https://github.com/Shilun-Allan-Li/tcslib/pull/227)** at `c6affb3a92535d3f1de2e0a52c205a84c0cff551`: 22 new lemmas, 2 visibility changes, the **sorried host** `polyTimeComputable_rejectBlocksL` in `Concrete.lean`, 2 removals, 0 changed statements. **Gate 08** is dispatched (user confirmation at Codex intake, 2026-11-06 PST; `outbox/gates/08-shared-gate/`, exchange `963cfd16`, records `1c623a6c`). Its findings go to `inbox/gate08-shared-findings.md` or arrive by upload. **Next:** resolve gate 08; #227 is then clear to merge. After that, write the **S2 fill brief** (the host's proof, an external fill per Q4 (B); route in the host's Proof sketch and design §4), with landing edits that delete the four copied loops (dl-a, dl-c, rsa, rabin) and refresh the six sketches (Q7). |
 | Fills | `fills/<group>/`: `brief.md`, `brief-issued.md`, `review.md`, `inputs/<unit>/`, `delivery-review-<unit>.md`, `review-*-evidence/`; `fills/NOTES-2026-11-07.md` (issue notes); `fills/fill-environment-addendum.md` (external host set-up) |
 | Landing branches (backup) | `fills/landing/{dl,3col,fac}/`: patch series, `BASE.txt`, `HEAD.txt`, evidence |
@@ -134,6 +134,14 @@ closure, with source fingerprints and native resource measurements. This is not 
 | `dupnames.py`, `fullnames.py`, `codeonly.py`, `decldiff.py` | Duplicate names and code-only diffs. |
 
 **Rule-10 checks.**
+- **Round 5 coverage qualification:** the term collector sees stored constants, not every anonymous
+  command. A future whole-file check must cover anonymous commands through conservative ordinary
+  foreign-definition candidates from the import closure or command-aware collection, with an
+  anonymous-command control. See `maintainer/tooling-followups.md` and gate 04's `resolutions-r5.md`.
+  The source scanner is a TCSlib-name text scan; it does not certify core/Mathlib explicit unfolds.
+  Its blank/comment-only continuation bug is repaired and tested; its output remains 0/0/0 on
+  #195's audited head. The auditor's broader 6,322-pair seal covers that head.
+
 - The full method is gate 04's seal package (`gates/04-s2b/evidence-r5/`: classifier, collector,
   seal, `$BASE` control, source scan) and #210's three layers
   (`gates/07-eqlemmas/evidence-r2/`): a statement/definition-body sweep, a whole-file proof seal
@@ -170,7 +178,7 @@ event, hashes). Never leave untracked files.
 | Item | State |
 |---|---|
 | **#210** equation lemmas (rule-10 interface) | **Merged.** Base `cryptography/pass-shelat-ch2-4` at merge `a3cca8ab0c456088132501a57eb751bccdf98ef5`. Gate 07 closed (round 3 PASS). |
-| **#195** S2b Games framework | Open at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e`; merged #210 and the fill landings. Gate 04 round 5 is **dispatched** (`outbox/gates/04-s2b-r5-gate/`). Its findings are not yet in the exchange inbox. **Next:** file the findings verbatim with SHA-256, write resolutions; #195 becomes clear to merge only after gate 04 closes. |
+| **#195** S2b Games framework | **Clear to merge** at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e`. Gate 04 round 5 is **CLOSED**, 0 blockers/0 majors/3 minors returned; see `gates/04-s2b/resolutions-r5.md`. The user merges. Queued nonblocking items: two formula docstrings and four inherited core unfolds in clean-up part 2; anonymous-command collector hardening in `maintainer/tooling-followups.md`. |
 | **#224** DL landing (dl-a/b/c, 21 targets) | **Merged** (user, 2026-11-07). |
 | **#225** 3-colouring landing (col-a/b, 3 targets incl. `col_zk`) | **Merged** (user, 2026-11-07). |
 | **#226** factoring landing (fac/rsa/rabin, 39 targets incl. S1–S3) | **Merged** (user, 2026-11-07). All 63 fill targets are on the base. |

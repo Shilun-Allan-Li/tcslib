@@ -1,0 +1,44 @@
+# Historical source comparator (not elaborated signatures); OLD a588adfed01eefe6971abd0846e3938ad02e8624
+# NEW 9ac1c4260adb8fbfe8c6f50df7786dbdd015656e
+ADDED	TCSlib/Cryptography/Asymptotic/MultiMessage.lean	TCSlib.Cryptography.prfScheme_coinsEquiv
+ADDED	TCSlib/Cryptography/Asymptotic/MultiMessage.lean	TCSlib.Cryptography.prfScheme_coinsEquiv_ofFn
+STATEMENT CHANGED	TCSlib/Cryptography/Asymptotic/MultiMessage.lean	TCSlib.Cryptography.prfScheme_multiEncDist
+  old: theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) (E : List Bool → List Bool) (hE : PolyTimeComputable E) (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool) (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) : (prfScheme F E hE hFE).multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r)
+  new: theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) (E : List Bool → List Bool) (hE : PolyTimeComputable E) (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool) (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) : (prfScheme F E hE hFE).multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv F E hE hFE n q r))
+DOCSTRING CHANGED	TCSlib/Cryptography/Asymptotic/MultiMessage.lean	TCSlib.Cryptography.prfScheme_multiEncDist
+ADDED	TCSlib/Cryptography/Asymptotic/PRF.lean	TCSlib.Cryptography.pairDecode_true_two
+ADDED	TCSlib/Cryptography/Asymptotic/PRF.lean	TCSlib.Cryptography.decodeOracleMove_pairEncode_false
+ADDED	TCSlib/Cryptography/Asymptotic/PRF.lean	TCSlib.Cryptography.decodeOracleMove_true_two
+ADDED	TCSlib/Cryptography/Asymptotic/PRF.lean	TCSlib.Cryptography.encodeHist_eq_histEnc
+ADDED	TCSlib/Cryptography/Asymptotic/PRFLemmas.lean	TCSlib.Cryptography.eq_blocks_divNat_modNat
+ADDED	TCSlib/Cryptography/Asymptotic/PRFLemmas.lean	Complexity.NUPPT.preComp_coinsEquiv
+ADDED	TCSlib/Cryptography/Asymptotic/PRFLemmas.lean	Complexity.NUPPT.preComp_coinsEquiv_ofFn
+STATEMENT CHANGED	TCSlib/Cryptography/Asymptotic/PRFLemmas.lean	Complexity.NUPPT.runAt_preComp
+  old: theorem runAt_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) (y : List Bool) (r : (A.preComp hpre).Coins n) : (A.preComp hpre).runAt n y r = A.runAt n (pre (pairEncode (List.replicate n true) y)) r
+  new: theorem runAt_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) (y : List Bool) (r : (A.preComp hpre).Coins n) : (A.preComp hpre).runAt n y r = A.runAt n (pre (pairEncode (List.replicate n true) y)) (A.preComp_coinsEquiv hpre n r)
+DOCSTRING CHANGED	TCSlib/Cryptography/Asymptotic/PRFLemmas.lean	Complexity.NUPPT.runAt_preComp
+DOCSTRING CHANGED	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.invProb_def
+DOCSTRING CHANGED	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.predProb_def
+DOCSTRING CHANGED	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.acceptProb_def
+DOCSTRING CHANGED	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.distAdv_def
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean	TCSlib.Cryptography.randomFunction_apply
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean	TCSlib.Cryptography.prfAdv_def
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.pairSel_false
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.pairSel_true
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.ggm_apply
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.prefixAt_apply
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.splitHalves_apply_fst
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.splitHalves_apply_snd
+ADDED	TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean	TCSlib.Cryptography.ggmBits_def
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Strategy.coinLen_eq
+DOCSTRING CHANGED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Strategy.Efficient
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Strategy.efficient_iff
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.View.encode_mk
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.ProverBounded
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.proverBounded_iff
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.ProverBounded.mono
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.withV_vCoinsEquiv
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.withV_vCoinsEquiv_ofFn
+DOCSTRING CHANGED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.transcriptWith_eq
+DOCSTRING CHANGED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.outV_eq
+ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.viewV_withV

@@ -1,5 +1,12 @@
 # Gate 04 (Pass–shelat ch. 5–8, S2b), round 5: closing audit pack
 
+**Post-audit status, 2026-11-06 PST: CLOSED (0 blockers, 0 majors, 3 minors returned).**
+See [round 5 resolutions](resolutions-r5.md) and the
+[evidence scope/count erratum](evidence-r5-review/ERRATUM.md). The dispatched version is frozen
+at records `c39f0e118f1c0f89325cbc828401a5c024bb36d1`. The PR's 26-file delta, the 26-module
+seal set and the replay lists are different sets. Collection covers stored constants; the
+auditor's broader import-closure seal supplies anonymous-command coverage for this head.
+
 **What is audited:** PR [Shilun-Allan-Li/tcslib#195](https://github.com/Shilun-Allan-Li/tcslib/pull/195)
 at its head `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e`, against the current base `7018d13e243df4d8b54b99444c34c934199755f5`
 (`cryptography/pass-shelat-ch2-4`, which now contains #210, the equation-lemma PR closed by gate 07, and
