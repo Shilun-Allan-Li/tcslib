@@ -62,6 +62,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
 import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+import TCSlib.Complexity.TuringMachine.Build.UniversalParts
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -223,6 +224,11 @@ for the local modifications.
   H2-F, `machine-library-design.md` §14): any `k`-tape table simulated in macro-step lockstep with
   its emissions forwarded, per-step cost bounded by the table's length, and a space ledger.
   Statement gate passed 2026-10-15; the contract is sorried.
+* `Build/UniversalParts` — the parts of the `k`-generic universal machines [AB09, §1.4.1,
+  Theorem 1.9]: the startup–loop seam with its run and space ledger from any seam endpoint, the
+  forwarding loop's readings at an initial configuration, the header ruler (a doubled-header scan
+  that extends a ruler, then the rewind) and the suffix-ruler layout. Proved; harvested from
+  `UniversalK` (the U2 harvest, 2026-11-06).
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its

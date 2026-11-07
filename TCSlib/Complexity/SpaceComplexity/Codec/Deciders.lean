@@ -18,7 +18,8 @@ parses (`parse_run`), lays out the code word (`layout_run`), compares the input 
 (`le_phase`), scans the chunk region (`vscan_run`), and answers from the scan state — for
 the initial code after testing the input position and the head flag of the middle cell, for an
 edge code after testing, tape by tape, the head flags of the first and last cells.
-`Complexity.LogProg.arm_decides_poly` turns this into membership in `L`.
+`Complexity.LogProg.arm_decides_poly` turns this into membership in `L`, once for all four
+modes in the wrapper `Complexity.Codec.oneCode_mem`, which takes the mode's tail as a hypothesis.
 
 Configuration-graph infrastructure for logspace algorithms ([AB09, §4.1.1, §4.3]); not a
 result of [AB09] by itself.
@@ -31,6 +32,7 @@ result of [AB09] by itself.
 ## Main results
 
 * `Complexity.Codec.one_run` — the common run of the one-code modes.
+* `Complexity.Codec.oneCode_mem` — the decider wrapper of the one-code modes.
 * `Complexity.Codec.init_tail` — the tail of the initial-code mode.
 * `Complexity.Codec.edge_round`, `Complexity.Codec.edge_loop`, `Complexity.Codec.edge_tail` —
   the tail of the edge-code mode.
@@ -189,63 +191,93 @@ lemma shape_of_code {y x : List Bool} {c s : ℕ}
   rw [hy, ← hc, bits_cfgCode]
   exact cfgWord_le_length s C _
 
-/-- **Valid codes form a logspace language** (`Complexity.Codec.validLang`).
+/-- **The decider wrapper of the one-code modes.** Let `L` be a language of encoded triples
+`⟨x, ⟨bits c, bits s⟩⟩` with `P x c s`, where `P x c s` makes `c` the code of some
+configuration, and let `Chk` be a word-level check that is membership at `⟨x, ⟨w, bits s⟩⟩` and
+implies the validity test. If, in the one-code mode `mode`, the tail of the codec machine after
+the validity scan answers `Chk x s w` from the registers the common run leaves, on every
+well-shaped input passing the pre-scan checks, then the language `L` belongs to `LOGSPACE`.
 
-**Proof sketch.** `arm_decides_poly` with the codec machine in mode `valid`: on a well-shaped
-input passing the pre-scan checks it answers the scan verdict, which is then membership
-(`validLang_iff`, `validChk_iff_pre`); otherwise it rejects, and the input is no member
-(members are well shaped, `shape_of_code`, and pass all checks). -/
-theorem validLang_mem : validLang N ∈ LOGSPACE := by
-  refine arm_decides_poly (CA N .valid) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
+Configuration-graph infrastructure for logspace algorithms ([AB09, §4.1.1, §4.3]); not a result of
+[AB09] by itself.
+
+**Proof sketch.** `arm_decides_poly` with the codec machine in mode `mode` and the register bound
+`bnd`. By the common run (`one_run`), either the machine reaches the end of the scan, where the
+tail answers the check, which is membership; or it rejects, and then no decomposition of the input
+passes the pre-scan checks, so the input is no member: a member is well shaped
+(`shape_of_code`) and passes the check, hence the validity test and so the pre-scan checks
+(`validChk_iff_pre`). -/
+theorem oneCode_mem (hm : mode ≠ .step) {L : Language Bool} {P : List Bool → ℕ → ℕ → Prop}
+    {Chk : List Bool → ℕ → List Bool → Prop}
+    (hL : ∀ y, y ∈ L ↔ ∃ (x : List Bool) (c s : ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧ P x c s)
+    (hP : ∀ x c s, P x c s → ∃ C : Cfg N.k Bool N.State x, cfgCode s C = c)
+    (hchk : ∀ x w s, pairEncode x (pairEncode w (Nat.bits s)) ∈ L ↔ Chk x s w)
+    (hval : ∀ x s w, Chk x s w → ValidChk (N := N) x.length s w)
+    (htail : ∀ (y x w : List Bool) (s : ℕ) (st : VAd N) (R : Regs), Shape1 y x w s →
+      PreChk N x.length s w → s ≤ 2 * y.length → W N * (2 * s + 1) ≤ w.length →
+      st.1 = vScan N (w.take (W N * (2 * s + 1))) → R.Bd (bnd N y) →
+      R.A = 2 * x.length + 2 → R.S = s → R.T = 0 →
+      R.Pos = bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) →
+      ∃ b : Bool, (Chk x s w ↔ b = true) ∧
+        AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+          (some (.vDone st), R.val, none) b) :
+    L ∈ LOGSPACE := by
+  refine arm_decides_poly (CA N mode) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
     fun y => ?_
   rw [← val_empty]
   refine AHalt.mono ?_ (fun a h => gd_mono a h)
-  rcases one_run (N := N) (mode := .valid) (by decide) y with
-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, -, -, -, -, run⟩ | ⟨hfail, hhalt⟩
-  · have hind : MultiTapeTM.indicator (validLang N : Set (List Bool)) y =
-        decide (VAcc N st.1) := by
-      apply indicator_eq_of_iff
-      rw [hsh.1, validLang_iff, validChk_iff_pre, hst]
-      exact ⟨fun h => h.2, fun h => ⟨hpre, h⟩⟩
+  rw [← orc_eq]
+  rcases one_run (N := N) (mode := mode) hm y with
+    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, hPos, run⟩ | ⟨hfail, hhalt⟩
+  · -- the end of the scan: the tail answers the check
+    have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
+      rw [hsh.eq, length_pairEncode, length_pairEncode]; ring
+    have hs := s_le_of_width y s (by omega) hsh.width
+    obtain ⟨b, hb, tail⟩ := htail y x w s st R hsh hpre hs (by have := hpre.1; omega) hst hR hA
+      hS hT hPos
+    have hind : MultiTapeTM.indicator (L : Set (List Bool)) y = b := by
+      rw [indicator_eq_of_iff (P := b = true) (by rw [hsh.eq, hchk, hb])]
+      cases b <;> rfl
     rw [hind]
-    exact AReach.halt run (AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩)
-  · have hind : MultiTapeTM.indicator (validLang N : Set (List Bool)) y = false := by
+    exact AReach.halt run tail
+  · -- a rejection: members are well shaped and pass the pre-scan checks
+    have hind : MultiTapeTM.indicator (L : Set (List Bool)) y = false := by
       rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
       · rfl
-      obtain ⟨x, c, s, hy, C, hC, hc⟩ := h
+      obtain ⟨x, c, s, hy, hPc⟩ := (hL y).mp h
+      obtain ⟨C, hc⟩ := hP x c s hPc
       have hsh := shape_of_code hy C hc
-      have hv := (validLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, C, hC, hc⟩
+      have hv := hval x s _ ((hchk x (Nat.bits c) s).mp (hy ▸ h))
       exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv).1
     rw [hind]
     exact hhalt
+
+/-- **Valid codes form a logspace language** (`Complexity.Codec.validLang`).
+
+**Proof sketch.** The one-code wrapper (`oneCode_mem`) in mode `valid`: the tail answers the
+scan verdict at once, which on inputs passing the pre-scan checks is the validity test
+(`validChk_iff_pre`), i.e. membership (`validLang_iff`). -/
+theorem validLang_mem : validLang N ∈ LOGSPACE := by
+  refine oneCode_mem (mode := .valid) (by decide) (mem_validLang_iff N)
+    (fun _ _ _ ⟨C, _, hc⟩ => ⟨C, hc⟩) (validLang_iff N) (fun _ _ _ h => h) ?_
+  intro _ x w s st R _ hpre _ _ hst hR _ _ _ _
+  refine ⟨decide (VAcc N st.1), ?_, AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩⟩
+  rw [decide_eq_true_eq, validChk_iff_pre, hst]
+  exact ⟨fun h => h.2, fun h => ⟨hpre, h⟩⟩
 
 /-- **Accepting codes form a logspace language** (`Complexity.Codec.acceptLang`).
 
 **Proof sketch.** As `validLang_mem`, answering the scan verdict together with the header
 `(halted, accept)` (`acceptLang_iff`). -/
 theorem acceptLang_mem : acceptLang N ∈ LOGSPACE := by
-  refine arm_decides_poly (CA N .accept) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
-    fun y => ?_
-  rw [← val_empty]
-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
-  rcases one_run (N := N) (mode := .accept) (by decide) y with
-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, -, -, -, -, run⟩ | ⟨hfail, hhalt⟩
-  · have hind : MultiTapeTM.indicator (acceptLang N : Set (List Bool)) y =
-        decide (VAcc N st.1 ∧ st.1.2.1 = some (none, 1)) := by
-      apply indicator_eq_of_iff
-      rw [hsh.1, acceptLang_iff, AcceptChk, validChk_iff_pre, hst]
-      exact ⟨fun h => ⟨h.1.2, h.2⟩, fun h => ⟨⟨hpre, h.1⟩, h.2⟩⟩
-    rw [hind]
-    exact AReach.halt run (AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩)
-  · have hind : MultiTapeTM.indicator (acceptLang N : Set (List Bool)) y = false := by
-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
-      · rfl
-      obtain ⟨x, c, s, hy, C, hC, hc, hst, hout⟩ := h
-      have hsh := shape_of_code hy C hc
-      have hv := (acceptLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, C, hC, hc, hst, hout⟩
-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv.1).1
-    rw [hind]
-    exact hhalt
+  refine oneCode_mem (mode := .accept) (by decide) (mem_acceptLang_iff N)
+    (fun _ _ _ ⟨C, _, hc, _⟩ => ⟨C, hc⟩) (acceptLang_iff N) (fun _ _ _ h => h.1) ?_
+  intro _ x w s st R _ hpre _ _ hst hR _ _ _ _
+  refine ⟨decide (VAcc N st.1 ∧ st.1.2.1 = some (none, 1)), ?_,
+    AHalt.ret rfl ⟨by simp [PreS, CA], hR.val_le⟩⟩
+  rw [decide_eq_true_eq, AcceptChk, validChk_iff_pre, hst]
+  exact ⟨fun h => ⟨h.1.2, h.2⟩, fun h => ⟨⟨hpre, h.1⟩, h.2⟩⟩
 
 /-! ## The initial code -/
 
@@ -394,37 +426,16 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
 **Proof sketch.** As `validLang_mem`, with the initial-code tail (`init_tail`) and the
 initial-code check (`initLang_iff`). -/
 theorem initLang_mem : initLang N ∈ LOGSPACE := by
-  refine arm_decides_poly (CA N .init) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
-    fun y => ?_
-  rw [← val_empty]
-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
-  rcases one_run (N := N) (mode := .init) (by decide) y with
-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, hPos, run⟩ | ⟨hfail, hhalt⟩
-  · have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
-      rw [hsh.1, length_pairEncode, length_pairEncode]; ring
-    have hs := s_le_of_width y s (by omega) hsh.2
-    have hind : MultiTapeTM.indicator (initLang N : Set (List Bool)) y =
-        decide (InitScan N st.1 ∧ R.Pos = 1 ∧
-          (N.k = 0 ∨ w.getD (W N * s + (hH N + 2)) false = true)) := by
-      apply indicator_eq_of_iff
-      rw [hsh.1, initLang_iff, InitChk, validChk_iff_pre, hst, InitScan, hPos]
-      constructor
-      · rintro ⟨⟨-, hv⟩, h2, h3, h4, h5⟩
-        exact ⟨⟨hv, h2, h3⟩, h4, h5⟩
-      · rintro ⟨⟨hv, h2, h3⟩, h4, h5⟩
-        exact ⟨⟨hpre, hv⟩, h2, h3, h4, h5⟩
-    rw [hind]
-    exact AReach.halt run (init_tail y x w (Nat.bits s) hsh.1 R s st hR hA hS hT hs
-      (by have := hpre.1; omega))
-  · have hind : MultiTapeTM.indicator (initLang N : Set (List Bool)) y = false := by
-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
-      · rfl
-      obtain ⟨x, c, s, hy, hc⟩ := h
-      have hsh := shape_of_code hy (N.tm.initCfg x) hc
-      have hv := (initLang_iff N x (Nat.bits c) s).mp ⟨x, c, s, rfl, hc⟩
-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp hv.1).1
-    rw [hind]
-    exact hhalt
+  refine oneCode_mem (mode := .init) (by decide) (mem_initLang_iff N)
+    (fun x _ _ hc => ⟨N.tm.initCfg x, hc⟩) (initLang_iff N) (fun _ _ _ h => h.1) ?_
+  intro y x w s st R hsh hpre hs hw hst hR hA hS hT hPos
+  refine ⟨_, ?_, init_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs hw⟩
+  rw [decide_eq_true_eq, InitChk, validChk_iff_pre, hst, InitScan, hPos]
+  constructor
+  · rintro ⟨⟨-, hv⟩, h2, h3, h4, h5⟩
+    exact ⟨⟨hv, h2, h3⟩, h4, h5⟩
+  · rintro ⟨⟨hv, h2, h3⟩, h4, h5⟩
+    exact ⟨⟨hpre, hv⟩, h2, h3, h4, h5⟩
 
 
 /-! ## Edge codes
@@ -769,33 +780,12 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
 **Proof sketch.** As `validLang_mem`, with the edge-code tail (`edge_tail`) and the edge-code
 check (`edgeLang_iff`). -/
 theorem edgeLang_mem : edgeLang N ∈ LOGSPACE := by
-  refine arm_decides_poly (CA N .edge) .lenScan codecAs codecAs_mem (8 * W N + 8) 1
-    fun y => ?_
-  rw [← val_empty]
-  refine AHalt.mono ?_ (fun a h => gd_mono a h)
-  rw [← orc_eq]
-  rcases one_run (N := N) (mode := .edge) (by decide) y with
-    ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, -, run⟩ | ⟨hfail, hhalt⟩
-  · have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
-      rw [hsh.eq, length_pairEncode, length_pairEncode]; ring
-    have hs := s_le_of_width y s (by omega) hsh.width
-    have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y =
-        decide (VAcc N st.1 ∧ ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
-          w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true) := by
-      apply indicator_eq_of_iff
-      rw [hsh.eq, edgeLang_iff, edgeChk_def, validChk_iff_pre, hst]
-      exact ⟨fun ⟨⟨_, hv⟩, h⟩ => ⟨hv, h⟩, fun ⟨hv, h⟩ => ⟨⟨hpre, hv⟩, h⟩⟩
-    rw [hind]
-    exact AReach.halt run (edge_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs
-      (by have := hpre.1; omega))
-  · have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y = false := by
-      rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
-      · rfl
-      obtain ⟨x, c, s, hy, C, hC, hc, -⟩ := (mem_edgeLang_iff N y).mp h
-      have hsh := shape_of_code hy C hc
-      have hv := (edgeLang_iff N x (Nat.bits c) s).mp (hy ▸ h)
-      exact hfail x _ s hsh ((validChk_iff_pre _ _ _).mp ((edgeChk_def N x s _).mp hv).1).1
-    rw [hind]
-    exact hhalt
+  refine oneCode_mem (mode := .edge) (by decide) (mem_edgeLang_iff N)
+    (fun _ _ _ ⟨C, _, hc, _⟩ => ⟨C, hc⟩) (edgeLang_iff N)
+    (fun x s w h => ((edgeChk_def N x s w).mp h).1) ?_
+  intro y x w s st R hsh hpre hs hw hst hR hA hS hT _
+  refine ⟨_, ?_, edge_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs hw⟩
+  rw [decide_eq_true_eq, edgeChk_def, validChk_iff_pre, hst]
+  exact ⟨fun ⟨⟨_, hv⟩, h⟩ => ⟨hv, h⟩, fun ⟨hv, h⟩ => ⟨⟨hpre, hv⟩, h⟩⟩
 
 end Complexity.Codec

@@ -1003,7 +1003,7 @@ languages; the acceptance above covers it. The edge member crosses no new file's
 **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
 lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
 with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
-design that waits for him. **Ruled (the user, 2026-11-06; Hydroxyi not active): the full refactor.**
+design that waits for him. **Ruled (the user, 2026-11-06; Hydroxyi not active): the full refactor.** **Retired: #220 merged 2026-11-07 (`b9855020`); gate 111; follow-up CK-1.**
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it

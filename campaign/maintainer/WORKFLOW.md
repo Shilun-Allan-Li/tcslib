@@ -188,6 +188,11 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   **Ended (the user, 2026-11-06, morning):** while the user is awake, fills are dispatched the
   typical way again: the maintainer posts a pasteable prompt and the user dispatches it. No new
   fill goes to a sub-agent. Fills already running on sub-agents continue.
+- **Delivery by push** (the user, 2026-11-07): when the dispatched agent can push, its prompt may
+  replace the brief's zip-by-attachment paragraph with a push of the same zips to
+  `exchange/pass-shelat-ch5-8` under `arora-barak-ch3-4/inbox/<fill>/`, touching nothing else, with
+  `git pull --rebase` before every push and no force-push. The brief is not edited, so its checksums
+  stand. The first was E-PAD.
 
 ## 6. Scripted edits and records
 
