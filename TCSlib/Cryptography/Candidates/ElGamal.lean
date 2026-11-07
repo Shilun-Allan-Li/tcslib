@@ -596,62 +596,6 @@ operations (lossless at the widths used here), under a polynomial-time `if`, and
 rejection sampler `sampleBelowL` (a trial loop, `Complexity.polyTimeComputable_iterateFind`);
 `dlc_poly_natToList` writes such a number as a numeral of a given width. -/
 
-/-- The empty numeral reads as `0`. -/
-private theorem dlc_listToNat_nil : listToNat [] = 0 := by
-  rw [listToNat_eq]
-  rfl
-
-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). -/
-private theorem dlc_listToNat_append (a b : List Bool) :
-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
-  have key : ∀ (l : List Bool) (acc : ℕ),
-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
-    intro l
-    induction l with
-    | nil => intro acc; simp
-    | cons c l ih =>
-      intro acc
-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
-      ring
-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
-
-/-- The one-bit numeral `1` reads as `1`. -/
-private theorem dlc_listToNat_true : listToNat [true] = 1 := by
-  rw [listToNat_eq]
-  rfl
-
-/-- The `k`-bit numeral keeps the `k` low-order bits: `⟦N mod 2^k⟧_k = ⟦N⟧_k`. -/
-private theorem dlc_natToList_mod (k N : ℕ) : natToList k (N % 2 ^ k) = natToList k N := by
-  have h := natToList_length_listToNat (natToList k N)
-  rw [length_natToList, listToNat_natToList_eq_mod] at h
-  exact h
-
-/-- Leading zeros do not change the number read. -/
-private theorem dlc_listToNat_zeros_append (k : ℕ) (b : List Bool) :
-    listToNat (natToList k 0 ++ b) = listToNat b := by
-  rw [dlc_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
-
-/-- **Width normalization**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`. -/
-private theorem dlc_drop_natToList_zero_append (W : ℕ) (b : List Bool) :
-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
-  set w := natToList W 0 ++ b with hw
-  have hlen : (w.drop b.length).length = W := by
-    rw [List.length_drop, hw, List.length_append, length_natToList]
-    omega
-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
-    conv_lhs => rw [← List.take_append_drop b.length w]
-    rw [dlc_listToNat_append, hlen]
-  have hlt := listToNat_lt_two_pow (w.drop b.length)
-  rw [hlen] at hlt
-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
-    rw [← dlc_listToNat_zeros_append W b, ← hw, hsplit, Nat.mul_add_mod_of_lt hlt]
-  rw [← dlc_natToList_mod, hmod, ← hlen, natToList_length_listToNat]
-
-/-- The zero numeral of the width of `w`: `subStr ⟨w, w⟩ = ⟦0⟧_{|w|}`. -/
-private theorem dlc_subStr_self (w : List Bool) : subStr (pairEncode w w) = natToList w.length 0 := by
-  rw [subStr_pairEncode, Nat.sub_self]
-
 /-- `F z` is the number read from a polynomial-time string function of `z`. -/
 private def dlc_NumPoly (F : List Bool → ℕ) : Prop :=
   ∃ g : List Bool → List Bool, PolyTimeComputable g ∧ ∀ z, listToNat (g z) = F z
@@ -695,9 +639,7 @@ private theorem dlc_numPoly_mul (H : ArithmeticFP) {F G : List Bool → ℕ} (hF
   obtain ⟨g, hg, hgG⟩ := hG
   refine ⟨fun z => mulStr (pairEncode (f z) (g z)), H.mul.comp (hf.pairEncode hg), fun z => ?_⟩
   simp only
-  rw [mulStr_pairEncode, listToNat_natToList, hfF, hgG]
-  rw [pow_add]
-  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow _) (listToNat_lt_two_pow _)
+  rw [listToNat_mulStr, hfF, hgG]
 
 /-- Remainders (`H.divMod` on the modulus padded by `|a|` leading zeros, so that the
 remainder is lossless also for the modulus `0`). -/
@@ -709,7 +651,7 @@ private theorem dlc_numPoly_mod (H : ArithmeticFP) {F G : List Bool → ℕ} (hF
     polyTimeComputable_pairSndD.comp (H.divMod.comp (hf.pairEncode ((H.sub.comp (hf.pairEncode hf)).append hg))),
     fun z => ?_⟩
   simp only
-  rw [divModStr_pairEncode, pairSndD_pairEncode, dlc_subStr_self, dlc_listToNat_zeros_append,
+  rw [divModStr_pairEncode, pairSndD_pairEncode, subStr_self, listToNat_natToList_zero_append,
     listToNat_natToList, hfF, hgG]
   rw [List.length_append, length_natToList, pow_add]
   calc listToNat (f z) % listToNat (g z) ≤ listToNat (f z) := Nat.mod_le _ _
@@ -737,7 +679,7 @@ private theorem dlc_numPoly_two_pow (H : ArithmeticFP) {u : List Bool → List B
   refine ⟨fun z => [true] ++ subStr (pairEncode (u z) (u z)),
     (polyTimeComputable_prepend [true]).comp (H.sub.comp (hu.pairEncode hu)), fun z => ?_⟩
   simp only
-  rw [dlc_subStr_self, dlc_listToNat_append, dlc_listToNat_true, length_natToList,
+  rw [subStr_self, listToNat_append, listToNat_singleton_true, length_natToList,
     listToNat_natToList (Nat.two_pow_pos _), one_mul, add_zero]
 
 /-- Comparisons are polynomial-time tests (`H.le`). -/
@@ -781,7 +723,7 @@ private theorem dlc_poly_natToList (H : ArithmeticFP) {u : List Bool → List Bo
     (hb.pairEncode ((H.sub.comp (hu.pairEncode hu)).append hb))
   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hq
   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
-  rw [dlc_subStr_self, dlc_drop_natToList_zero_append, hbF]
+  rw [subStr_self, natToList_zero_append_drop, hbF]
 
 /-- The safe modulus: `M`, or `2^n` in place of the modulus `0`. -/
 private def dlc_safeMod (n M : ℕ) : ℕ := if M = 0 then 2 ^ n else M
@@ -799,7 +741,7 @@ private theorem dlc_natToList_mod_safeMod (n V M : ℕ) :
     natToList n (V % M) = natToList n (V % dlc_safeMod n M) := by
   unfold dlc_safeMod
   split_ifs with h
-  · rw [h, Nat.mod_zero, dlc_natToList_mod]
+  · rw [h, Nat.mod_zero, natToList_mod_two_pow]
   · rfl
 
 /-- The safe modulus of a polynomial-time number at the width of `u`. -/
@@ -916,53 +858,19 @@ private theorem dlc_ssLoop_poly (H : ArithmeticFP) : PolyTimeComputable dlc_ssLo
   next i hi => rw [hi]
   next hn => rw [hn]
 
-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
-private theorem dlc_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
-    (l : List α) :
-    l.findSome? (fun t => if p t then some (h t) else none) = (l.find? fun t => decide (p t)).map h := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.findSome?_cons, List.find?_cons]
-    by_cases ha : p a
-    · rw [if_pos ha, decide_eq_true ha]
-      rfl
-    · rw [if_neg ha, decide_eq_false ha, ih]
-
-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`. -/
-private theorem dlc_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
-    intro l
-    induction l with
-    | nil => intro _; rfl
-    | cons a l ih =>
-      intro hl
-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
-      (fun i => decide (i < N) && p i) = none := by
-    rw [List.find?_eq_none]
-    intro x hx
-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
-    simp
-  rw [hnone, Option.or_none]
-
 /-- **The trial loop computes the rejection sampler**: from `⟨⟨u, ⟨1^k, m⟩⟩, ⟨u, c⟩⟩` with
 `k = Nat.size ⟦m⟧`, the number read from the payload (marker dropped) is
 `sampleBelowL ⟦m⟧ k |u| |u| c` with the fallback `0` (read through
-`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq`).
+`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq_find?`).
 
 **Proof sketch.** After `i` steps the header is unchanged, the counter `u` has lost `i` bits and the
 coins `i` blocks of `|u|` bits (`dlc_ssStep_iterate`), so the trial value is the `Nat.size ⟦m⟧`-bit
 prefix of block `i`, and the test accepts iff `i < |u|` and that value is below `⟦m⟧`. The search
-over the first `|x| + 1 ≥ |u|` rounds is the search over `[0, |u|)` (`dlc_find?_range_lt`), which is
-the search of `sampleBelowL` read through `sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq` and
-`dlc_findSome?_ite`. In the `some i` case the payload without its marker is the prefix of block `i`;
-in the `none` case both sides read `0` (`dlc_listToNat_nil`). -/
+over the first `|x| + 1 ≥ |u|` rounds is the search over `[0, |u|)`
+(`IterateFind.find?_range_and_lt`), which is the search of `sampleBelowL` read through
+`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq_find?`. In the `some i` case the payload
+without its marker is the prefix of block `i`; in the `none` case both sides read `0`
+(`listToNat_nil`). -/
 private theorem dlc_ssLoop_eq (u ks ms c : List Bool) (hk : ks.length = Nat.size (listToNat ms)) :
     listToNat ((dlc_ssLoop (pairEncode (pairEncode u (pairEncode ks ms)) (pairEncode u c))).drop 1) =
       (sampleBelowL (listToNat ms) (Nat.size (listToNat ms)) u.length u.length c).getD 0 := by
@@ -991,16 +899,15 @@ private theorem dlc_ssLoop_eq (u ks ms c : List Bool) (hk : ks.length = Nat.size
       (List.range u.length).find? (fun i => decide (val i < listToNat ms)) := by
     rw [show (fun i => dlc_ssAcc (dlc_ssStep^[i] x0)) =
       fun i => decide (i < u.length) && decide (val i < listToNat ms) from funext hacc]
-    exact dlc_find?_range_lt _ hrange
+    exact IterateFind.find?_range_and_lt _ hrange
   have hsample : sampleBelowL (listToNat ms) (Nat.size (listToNat ms)) u.length u.length c =
       ((List.range u.length).find? (fun i => decide (val i < listToNat ms))).map val := by
-    rw [sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq]
-    exact dlc_findSome?_ite (fun i => val i < listToNat ms) val _
+    rw [sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq_find?]
   rw [hsample]
   unfold dlc_ssLoop
   rw [hfind]
   rcases hf : (List.range u.length).find? (fun i => decide (val i < listToNat ms)) with _ | i
-  · exact dlc_listToNat_nil
+  · exact listToNat_nil
   · show listToNat ((dlc_ssOut (dlc_ssStep^[i] x0)).drop 1) = val i
     rw [dlc_ssOut, List.singleton_append, List.drop_one, List.tail_cons, hblock]
 
@@ -1263,17 +1170,10 @@ def egDecStr (z : List Bool) : List Bool :=
         (pairFstD (pairFstD (pairFstD z))))))))
     (pairFstD (pairFstD (pairFstD z)))))
 
-/-- Transport of polynomial-time computability along a pointwise equation (used to avoid
-the unifier unfolding the arithmetic string functions when matching a composition chain
-against a definition; integration note, run 2). -/
-private theorem polyTimeComputable_of_forall_eq {f g : List Bool → List Bool}
-    (hf : PolyTimeComputable f) (h : ∀ x, f x = g x) : PolyTimeComputable g :=
-  (funext h : f = g) ▸ hf
-
 /-- **`Dec` is polynomial-time** given the arithmetic bundle (a composition of its functions).
 
 The chain is assembled in composition form and transported to `egDecStr` pointwise
-(`polyTimeComputable_of_forall_eq` with `Function.comp_apply`): matching the composition
+(`PolyTimeComputable.congr` with `Function.comp_apply`): matching the composition
 directly against the unfolded definition makes the unifier unfold `xgcdStr`/`modExpStr`
 and does not terminate in practice. -/
 theorem polyTimeComputable_egDecStr (H : ArithmeticFP) : PolyTimeComputable egDecStr := by
@@ -1284,7 +1184,7 @@ theorem polyTimeComputable_egDecStr (H : ArithmeticFP) : PolyTimeComputable egDe
   have hexp := H.modExp.comp (hc₁.pairEncode (ha.pairEncode hp))
   have hinv := polyTimeComputable_pairSndD.comp (H.xgcd.comp (hexp.pairEncode hp))
   have hmul := H.mul.comp (hc₂.pairEncode hinv)
-  refine polyTimeComputable_of_forall_eq
+  refine PolyTimeComputable.congr
     (polyTimeComputable_pairSndD.comp (H.divMod.comp (hmul.pairEncode hp))) (fun z => ?_)
   simp only [Function.comp_apply, egDecStr]
 
@@ -1616,21 +1516,11 @@ noncomputable def egGroupGen (H : ArithmeticFP) (G : SafePrimeGen) : SafePrimeGe
 
 /-! ### Helpers of `elGamal_secure` (unit dl-c) -/
 
-/-- A coin string read along a length cast. -/
-private def dlc_castEquiv {a L : ℕ} (h : a = L) : (Fin a → Bool) ≃ (Fin L → Bool) :=
-  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
-
-/-- The cast keeps the coin string. -/
-private theorem dlc_castEquiv_ofFn {a L : ℕ} (h : a = L) (u : Fin a → Bool) :
-    List.ofFn (dlc_castEquiv h u) = List.ofFn u := by
-  subst h
-  rfl
-
 /-- Splitting a coin string `Fin L → Bool` with `L = a + b` into its two segments: the length
 cast, then `TCSlib.Cryptography.splitCoins`. -/
 private def dlc_splitEquiv {L a b : ℕ} (h : L = a + b) :
     (Fin L → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
-  (dlc_castEquiv h).trans (splitCoins a b)
+  (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)).trans (splitCoins a b)
 
 /-- The coin string of two joined segments is the concatenation of their coin strings
 (`ofFn_splitCoins_symm`). -/
@@ -1892,18 +1782,6 @@ private theorem dlc_uprob_shift {p q : ℕ} [NeZero q] {h c k : ℕ}
     rwa [Nat.mod_mod, Nat.mod_mod] at this
   rw [hval]
 
-/-- Averages of pointwise `c`-close functions are `c`-close. -/
-private theorem dlc_abs_uexp_sub_le {α : Type*} [Fintype α] [Nonempty α] {f g : α → ℝ} {c : ℝ}
-    (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
-  rw [← HardcoreBit.uexp_sub, abs_le]
-  constructor
-  · have := HardcoreBit.uexp_mono (f := fun _ : α => -c) (g := fun a => f a - g a)
-      fun a => (abs_le.1 (h a)).1
-    rwa [HardcoreBit.uexp_const] at this
-  · have := HardcoreBit.uexp_mono (f := fun a => f a - g a) (g := fun _ : α => c)
-      fun a => (abs_le.1 (h a)).2
-    rwa [HardcoreBit.uexp_const] at this
-
 /-- The coin count of El Gamal's `Gen`: `G`'s coins, then `n · n` for `g` and `n · n` for `a`. -/
 private theorem dlc_egGen_coinLen (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
     (egGen H G).coinLen n = G.gen.coinLen n + (n * n + n * n) := by
@@ -1939,7 +1817,7 @@ private theorem dlc_genEquiv_ofFn (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ
 
 /-- The coins of `Enc` from one segment of `n · n` coins. -/
 private noncomputable def dlc_encEquiv (H : ArithmeticFP) (n : ℕ) : (Fin (n * n) → Bool) ≃ (egEnc H).Coins n :=
-  dlc_castEquiv (dlc_egEnc_coinLen H n).symm
+  Equiv.arrowCongr (finCongr (dlc_egEnc_coinLen H n).symm) (Equiv.refl Bool)
 
 /-- The coins of the derived generator from `G`'s coins and the segment of `g`. -/
 private noncomputable def dlc_grpEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
@@ -1949,7 +1827,7 @@ private noncomputable def dlc_grpEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n 
 /-- The coin string of `Enc` read from its segment. -/
 private theorem dlc_encEquiv_ofFn (H : ArithmeticFP) (n : ℕ) (u : Fin (n * n) → Bool) :
     List.ofFn (dlc_encEquiv H n u) = List.ofFn u :=
-  dlc_castEquiv_ofFn _ _
+  (List.ofFn_congr (dlc_egEnc_coinLen H n).symm u).symm
 
 /-- **The challenge on split coins**: the keys are `egGenParts` on `G`'s output and the segments of
 `g` and `a`, the ciphertext is `egEncParts` on the segment of `b` (`egGen_runAt`, `egEnc_runAt`).
@@ -2258,7 +2136,7 @@ probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other 
 
 **Proof sketch.** Relabel the seeds and the coins of `D_b` so that the coins `u₃` of `z` come last
 (`acceptProb_def`, `uprob_comp_equiv` with `E e_b`), split them off (`uprob_prod`), and bound the
-gap of the averages by the pointwise gap (`dlc_abs_uexp_sub_le`, `dlc_hyb3_point`). -/
+gap of the averages by the pointwise gap (`abs_uexp_sub_le`, `dlc_hyb3_point`). -/
 private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
     (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
     (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
@@ -2279,7 +2157,7 @@ private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ 
       right_inv := fun s => by simp }
   rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
     uprob_prod, uprob_prod]
-  refine dlc_abs_uexp_sub_le fun ρ => ?_
+  refine abs_uexp_sub_le (by positivity) fun ρ => ?_
   obtain ⟨⟨r, u₁, u₂⟩, rM, rD⟩ := ρ
   exact dlc_hyb3_point H G M D Db₀ Db₁ hn e₀ he₀ e₁ he₁ r u₁ u₂ rM rD
 
