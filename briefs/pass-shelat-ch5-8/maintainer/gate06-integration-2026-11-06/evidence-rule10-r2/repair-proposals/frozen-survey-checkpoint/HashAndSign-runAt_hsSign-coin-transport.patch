@@ -1,0 +1,15 @@
+--- a/TCSlib/Cryptography/Authentication/HashAndSign.lean
++++ b/TCSlib/Cryptography/Authentication/HashAndSign.lean
+@@ -262,6 +262,9 @@
+     (r : S.sign.Coins n) :
+-    (hsSign S H).runAt n (pairEncode (pairEncode sk i) m) r =
++    (hsSign S H).runAt n (pairEncode (pairEncode sk i) m)
++        (NUPPT.coinsCongr (A := S.sign) (B := hsSign S H)
++          (NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_hsSignFun S H)
++            S.sign.coins).symm n r) =
+       S.sign.runAt n (pairEncode sk (hsHashList H (List.replicate n true) i m)) r := by
+-  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, S.sign_uniform.runAt_eq]
+-  simp only [hsSignFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
++  rw [NUPPT.runAt_coinsCongr, NUPPT.runAtL_ofPolyTimeUniform, S.sign_uniform.runAt_eq]
++  simp only [hsSignFun_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+     NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode]

@@ -1,0 +1,1502 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Lean
+import TCSlib.Cryptography.ZeroKnowledge.Interaction
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Foundations.Experiments
+import TCSlib.Cryptography.Foundations.Negligible
+/- G06-HARNESS INSTALL G06Seal_026_TCSlib_Cryptography_SecureComputation_Defs_HarnessV2 -/
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+run_cmd do
+  let label : String := "G06Seal_026_TCSlib_Cryptography_SecureComputation_Defs_HarnessV2"
+  let mut requests : Array (String × String) := #[]
+  requests := requests ++ #[
+    ("Complexity.NUPPT.Computes", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.Uniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT._sizeOf_1", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.advInput", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.adviceLen", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinLen", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsCongr", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquivPoly", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquiv_ofPolyTime", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.distinguisher", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.distinguisherL", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.inverter", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.inverterLit", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.mk._flat_ctor", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.ofPolyTime", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.ofPolyTimeUniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.output", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.predictor", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.runAt", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.runAtL", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.runLit", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.timeBound", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.PPT", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.PolyBound", "TCSlib.Complexity.ClassNP.PolyTime"),
+    ("Complexity.PolyExpr._sizeOf_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.normal", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyTimeComputable", "TCSlib.Complexity.ClassNP.PolyTime"),
+    ("Complexity.TimeConstructible", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Complexity.instDecidableEqPolyExpr.decEq", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.pairFstD", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairMapSnd", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairMapSnd.match_1", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairSndD", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.polyTimeComputable_unary.match_1_1", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("TCSlib.Cryptography.Negligible", "TCSlib.Cryptography.Foundations.Negligible"),
+    ("TCSlib.Cryptography.Noticeable", "TCSlib.Cryptography.Foundations.Negligible"),
+    ("TCSlib.Cryptography.Protocol.ProverBounded", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.execution", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.outP", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.outV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.transcript", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.transcriptWith", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.viewP", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.viewV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.withV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.withV_vCoinsEquiv", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.Efficient", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.ReadsPrefix", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.coinLen", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.encodeMsgs", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.ofNUPPT", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.out", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View.encode", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.acceptProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.coinBlock", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.decodeFin", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.distAdv", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.exec", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec._sunfold", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec._unsafe_rec", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec.match_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.invProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.invProbOpt", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.moverIsV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.padFin", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.predProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.uexp", "TCSlib.Cryptography.Foundations.Probability"),
+    ("TCSlib.Cryptography.uprob", "TCSlib.Cryptography.Foundations.Probability"),
+    ("TCSlib.InformationTheory.FinDist.HasMinEntropy", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist._sizeOf_1", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.collision", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.map", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.mk._flat_ctor", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.probTrue", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.prod", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.uniform", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.statDist", "TCSlib.InformationTheory.StatisticalDistance"),
+    ("Turing.Action._sizeOf_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.apply", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.apply.match_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.mapState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.Action.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg._sizeOf_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.ext.match_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.init", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.inputSymbol", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.mapState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.Cfg.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.ofWords", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.Cfg.select", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.Cfg.workTapeSymbols", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.CodeTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.serialize", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.toFinTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.EffectiveMachineCode._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.EffectiveMachineCode.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.Computes", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesFunInTime", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesFunInTimeVia", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesInTime", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.VirtualTag", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.appendBitTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.branchTM", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.branchTM.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferTape", "TCSlib.Complexity.TuringMachine.Simulation")
+  ]
+  requests := requests ++ #[
+    ("Turing.FinTM.bufferedCompTM", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedCompTM.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedFirstCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedScanCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedSecondCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.callEntry", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callExit", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.condTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.condTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.constTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.controlAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.emitAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.idTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.idTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.ifEqTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.ifEqTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.incFixedTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.incFixedTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.incFixedTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.indexedVisit", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.leftAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.leftCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.lengthBitsTM", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Turing.FinTM.lengthBitsTM.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Turing.FinTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.pairExtractTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairLenCheckTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairValidTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairValidTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyBitsTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyUnaryTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyUnaryTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.prependTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.prependTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.redirectTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.redirectTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.redirectTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.rewind_scan.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.rightAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.rightCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.splitSolveTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.splitSolveWithTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.stripLastTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.stripLastTM_computes.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.sweepAct", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepCfg", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold._sunfold", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold._unsafe_rec", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold.match_1", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepRevCfg", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepTape", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.tapeBlocks", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.timedCondTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.timedCondTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.toCodeTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.toCodeTM.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.unaryTokenTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.unaryTokenTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.virtualMove", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.virtualNextTag", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.virtualNextTag.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.MachineCode._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.MachineCode.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.MultiTapeTM.AgreeOn", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.MultiTapeTM.ComputableInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.ComputesFunInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.ComputesInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.DecidableInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.haltsAtStep", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.indicator", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.initCfg", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.outputSymbol", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.relabelState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.MultiTapeTM.runFrom", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.spaceUsed", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.spaceUsedByTape", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.step", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.step.match_1", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.visitedByTapeHead", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.actionBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.captureAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.captureAction.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.captureCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.dbl", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.embedEmitCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedEmitRetTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedEmitTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentRetTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentRetTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.emitAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.emitCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.incFixed", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed._sunfold", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.instInhabitedCfg.default", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.moveInputPos", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.optBoolBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optBoolBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optOptBoolBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optOptBoolBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optStateBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optStateBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode._sunfold", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode._unsafe_rec", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM.match_3", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairEncode", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.signBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.signBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.solveSplit", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.solveSplitWith", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.spaceUsedOfCfgs", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.splitAtLastTrue", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.splitAtLastTrue.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention")
+  ]
+  requests := requests ++ #[
+    ("Turing.stateWord", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.unaryFin", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.unaryTokenSplit", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit._sunfold", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.visitedOfCfgs", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.pairMapSnd.match_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.polyTimeComputable_unary.match_1_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Turing.FinTM.extract_run.match_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterBump", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._sunfold", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._unsafe_rec", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCfg", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._sunfold", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._unsafe_rec", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterTape", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.FinTM.lengthBitsTM.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.MultiTapeTM.step.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.eval.match_1.splitter", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.subst.match_1.splitter", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnAction", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedSlot", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.callTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallBankFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallCleared", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEmbeddedCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallIdleTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallInterval", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLayout", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairEmbedding", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairIndex", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairSelect", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightScan", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSlots", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSpan", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackMid", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleEmbedding", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleIndex", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleSelect", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopCall", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopForwardCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyDispatch", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyImage", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyPadded", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodySource", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCall", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopControlAction", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCopyTape", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCaptured", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelSource", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_bound", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReady", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop")
+  ]
+  requests := requests ++ #[
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.List.filter.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCopyCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._sunfold", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyMove", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyTape", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyUnaryTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPrefixCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2LeftIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2OneIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PairIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2RightIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2SmallIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2Words", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterSplitAccept", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extractCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_5.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairValidTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.polyUnaryTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.prependTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.rawStripTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.scanCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitAccept", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBank", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitLoop_result.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPos", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareReady", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareScan", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreClean", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreScan", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRewindTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitSafe", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitScratch", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitStep", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.stripCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.unaryTokenTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.incFixed.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.splitAtLastTrue.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.unaryTokenSplit.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedBranchCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedCondTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedControlCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedPadTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedReadyCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.captureAction.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.controlCfg", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.idTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.ifEqTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Configuration.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.TuringMachine.Configuration.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.TuringMachine.Deterministic.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.FinTM.toCodeTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding")
+  ]
+  requests := requests ++ #[
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDecode.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagCfg", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBit", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBuffer", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCell", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCode", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arDecode", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arIndex", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arMoveCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPending", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPos", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReadCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReady", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpaceBlock", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpacePhase", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTail", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTape", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arWriteCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGSpan", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGWindow.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState._sizeOf_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.blankRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCost", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCross", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgLeftRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgPos", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgRetract", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgStart", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.headAt", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readState", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readVisit", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.rightRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepBoundary", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepEmbed", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepMove", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepPos", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStart", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_3", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_5", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepSymbol", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._sunfold", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._unsafe_rec", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._sunfold", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._unsafe_rec", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeCfg", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.virtualNextTag.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Sweep.0.Turing.FinTM.sweepFold.match_1.splitter", "TCSlib.Complexity.TuringMachine.Sweep")
+  ]
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+set_option maxRecDepth 512
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Two-party secure computation in the honest-but-curious model (definitions)
+
+[PS10, Definition 155.1]: a protocol `π` with security parameter `1^n` securely computes
+`f(x, y)` in the honest-but-curious model if there are non-uniform PPT simulators `S_A`, `S_B`
+such that, for all inputs `x, y`,
+- `{S_A(x, f(x, y)), f(x, y)} ≈ {e ← [A(x) ↔ B(y)] : view_A(e), out_B(e)}`, and
+- `{S_B(y, f(x, y)), f(x, y)} ≈ {e ← [A(x) ↔ B(y)] : view_B(e), out_A(e)}`.
+
+The output clause makes the definition imply correctness: without it, a protocol in which both
+parties output `0` would be secure (the source's remark).
+
+**On the ch. 2–4 interaction model** (D8; ruling of 2026-11-05: strategies define). Alice plays
+the prover's role and Bob the verifier's. The common input is `1^n`; Alice's input travels as the
+prover's private input `y` of `Protocol` and Bob's as the verifier's auxiliary input `z`. The views
+are `Protocol.viewP` and `Protocol.viewV`, the outputs `Protocol.outP` and `Protocol.outV`, and
+a view reaches the distinguisher encoded (`View.encode`).
+
+**Deviations.**
+- **Private outputs.** The functionality has an output for each party, `f = (f_A, f_B)`. The
+  definition writes one `f(x, y)` for both, but the oblivious-transfer functionality it is
+  applied to (Def 160.a) has private outputs `(⊥, a_b)`.
+- **Lengths.** Inputs and outputs have polynomial lengths in `n`, not exactly `n` (OT's inputs
+  are bits).
+- **Uniformity.** "For all `x, y`" is read with one negligible bound for all inputs of each
+  length (`ε` before `x, y`), the convention of the ch. 2–4 layer's security definitions.
+- **Polynomial time** (ruling of 2026-11-05). The definition leaves the parties' efficiency to
+  §4.4's convention; here it is required (`Functionality.PolyTime`). Both strategies are PPT, and
+  the messages of honest executions are polynomially bounded. Under D8, `Strategy.Efficient`
+  alone bounds an activation by the length of the messages received, not by `n`.
+
+## Main definitions
+
+* `SecureComputation.Functionality`: a two-party functionality with private outputs.
+* `Functionality.realA`, `idealA`, `realB`, `idealB`: the four samplers of Def 155.1.
+* `SecureComputation.Functionality.PolyTime`: the parties run in polynomial time.
+* `SecureComputation.HBCSecure`: [PS10, Definition 155.1].
+* `SecureComputation.otFunctionality`: [PS10, Def 160.a], `OT(a₁, a₂, b) = (⊥, a_b)`.
+
+## Main results
+
+* `Functionality.realA_eq`, `realB_eq`, `idealA_eq`, `idealB_eq`: the four sampler equations.
+* `Functionality.polyTime_iff`, `SecureComputation.hbcSecure_iff`: the time and security clauses.
+* `SecureComputation.otFunctionality_inA`, `otFunctionality_inB`, `otFunctionality_outA`,
+  `otFunctionality_outB`, `otFunctionality_f`: the OT functionality's fields.
+* `SecureComputation.otFunctionality_f_snd`: the OT functionality gives Bob the chosen bit.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §6.2, Definition 155.1 and §6.2.4 (book pp. 155–156, 160).
+-/
+
+namespace TCSlib.Cryptography.SecureComputation
+
+open Complexity Turing TCSlib.Cryptography
+
+/-- A **two-party functionality** with private outputs: Alice's and Bob's inputs have
+`inA(n)` and `inB(n)` bits, and `f` gives Alice an `outA(n)`-bit and Bob an `outB(n)`-bit
+output. -/
+structure Functionality where
+  /-- Alice's input length. -/
+  inA : PolyExpr
+  /-- Bob's input length. -/
+  inB : PolyExpr
+  /-- Alice's output length. -/
+  outA : PolyExpr
+  /-- Bob's output length. -/
+  outB : PolyExpr
+  /-- The function `(x, y) ↦ (f_A(x, y), f_B(x, y))`. -/
+  f : ∀ n, (Fin (inA.eval n) → Bool) → (Fin (inB.eval n) → Bool) →
+    (Fin (outA.eval n) → Bool) × (Fin (outB.eval n) → Bool)
+
+namespace Functionality
+
+variable (F : Functionality)
+
+/-- **The real sampler for Alice's side**: on the coins of an honest execution
+`A(x) ↔ B(y)` with common input `1^n`, the pair `⟨view_A, out_B⟩`. -/
+def realA (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
+    π.ExecCoins π.P (List.replicate n true) → List Bool := fun r =>
+  pairEncode (π.viewP (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+    (π.outV π.P (List.replicate n true) (List.ofFn x) (List.ofFn y) r)
+
+/-- Alice's real sampler pairs her encoded view with Bob's output on the honest tapes. -/
+theorem realA_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)) :
+    F.realA π n x y r =
+      pairEncode (π.viewP (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+        (π.outV π.P (List.replicate n true) (List.ofFn x) (List.ofFn y) r) := rfl
+
+/-- **The real sampler for Bob's side**: `⟨view_B, out_A⟩`. -/
+def realB (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
+    π.ExecCoins π.P (List.replicate n true) → List Bool := fun r =>
+  pairEncode (π.viewV (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+    (π.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) r)
+
+/-- Bob's real sampler pairs his encoded view with Alice's output on the honest tapes. -/
+theorem realB_eq (π : Protocol) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)) :
+    F.realB π n x y r =
+      pairEncode (π.viewV (List.replicate n true) (List.ofFn x) (List.ofFn y) r).encode
+        (π.outP (List.replicate n true) (List.ofFn x) (List.ofFn y) r) := rfl
+
+/-- **The ideal sampler for Alice's side**: `⟨S_A(1^n, ⟨x, f_A(x, y)⟩), f_B(x, y)⟩`. -/
+def idealA (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
+    S.Coins n → List Bool := fun s =>
+  pairEncode (S.runAt n (pairEncode (List.ofFn x) (List.ofFn (F.f n x y).1)) s)
+    (List.ofFn (F.f n x y).2)
+
+/-- Alice's ideal sampler pairs her simulation from her input and output with Bob's output. -/
+theorem idealA_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (s : S.Coins n) :
+    F.idealA S n x y s =
+      pairEncode (S.runAt n (pairEncode (List.ofFn x) (List.ofFn (F.f n x y).1)) s)
+        (List.ofFn (F.f n x y).2) := rfl
+
+/-- **The ideal sampler for Bob's side**: `⟨S_B(1^n, ⟨y, f_B(x, y)⟩), f_A(x, y)⟩`. -/
+def idealB (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool) :
+    S.Coins n → List Bool := fun s =>
+  pairEncode (S.runAt n (pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) s)
+    (List.ofFn (F.f n x y).1)
+
+/-- Bob's ideal sampler pairs his simulation from his input and output with Alice's output. -/
+theorem idealB_eq (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (s : S.Coins n) :
+    F.idealB S n x y s =
+      pairEncode (S.runAt n (pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) s)
+        (List.ofFn (F.f n x y).1) := rfl
+
+/-- **The parties run in polynomial time** on `F`'s inputs (ruling of 2026-11-05).
+- Both strategies are PPT (`Strategy.Efficient`).
+- For a polynomial `B`, in every honest execution with common input `1^n` and inputs of `F`'s
+  lengths, every message has at most `B(n)` bits.
+
+Under D8 a PPT strategy's activation is polynomial in its whole input, the messages received
+included. With the honest messages bounded and `rounds(n)` activations, each party's work in an
+honest execution (the only kind in this model) is polynomial in `n`. -/
+def PolyTime (π : Protocol) : Prop :=
+  π.P.Efficient ∧ π.V.Efficient ∧ ∃ B : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)),
+    ∀ msg ∈ (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
+        (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
+      msg.length ≤ B.eval n
+
+/-- Polynomial time means efficient strategies and a uniform polynomial bound on every
+message in every honest execution on inputs of the functionality's lengths. -/
+theorem polyTime_iff (π : Protocol) :
+    F.PolyTime π ↔
+      π.P.Efficient ∧ π.V.Efficient ∧ ∃ B : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool)
+        (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)),
+        ∀ msg ∈ (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
+            (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
+          msg.length ≤ B.eval n := Iff.rfl
+
+end Functionality
+
+/-- **Honest-but-curious security** [PS10, Definition 155.1]: the parties run in polynomial time
+(`Functionality.PolyTime`; see the module docstring), and there are non-uniform PPT simulators
+`S_A`, `S_B` such that for every non-uniform PPT distinguisher `D` there is a negligible `ε` with,
+for all `n` and all inputs `x`, `y`, `D`'s advantage between Alice's real and ideal samplers, and
+between Bob's, at most `ε(n)`. -/
+def HBCSecure (π : Protocol) (F : Functionality) : Prop :=
+  F.PolyTime π ∧ ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+    ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+      distAdv (F.realA π n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+        distAdv (F.realB π n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n
+
+/-- Honest-but-curious security consists of polynomial time and two simulators whose
+distinguishing advantages have a negligible bound uniform over inputs of each length. -/
+theorem hbcSecure_iff (π : Protocol) (F : Functionality) :
+    HBCSecure π F ↔
+      F.PolyTime π ∧ ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+        ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
+          distAdv (F.realA π n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
+            distAdv (F.realB π n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n := Iff.rfl
+
+/-- **1-out-of-2 oblivious transfer** [PS10, Def 160.a]: the sender Alice holds bits `(a₁, a₂)`,
+the receiver Bob a choice bit `b` (`false` for `1`, `true` for `2`);
+`OT(a₁, a₂, b) = (⊥, a_b)`, with Alice's `⊥` the empty output. -/
+def otFunctionality : Functionality where
+  inA := .const 2
+  inB := .const 1
+  outA := .const 0
+  outB := .const 1
+  f _ (a : Fin 2 → Bool) (b : Fin 1 → Bool) := (Fin.elim0, fun _ => a (if b 0 then 1 else 0))
+
+/-- Alice's OT input consists of two bits. -/
+theorem otFunctionality_inA : otFunctionality.inA = .const 2 := rfl
+
+/-- Bob's OT input consists of one choice bit. -/
+theorem otFunctionality_inB : otFunctionality.inB = .const 1 := rfl
+
+/-- Alice's OT output is empty. -/
+theorem otFunctionality_outA : otFunctionality.outA = .const 0 := rfl
+
+/-- Bob's OT output consists of one bit. -/
+theorem otFunctionality_outB : otFunctionality.outB = .const 1 := rfl
+
+/-- OT returns the empty output to Alice and the selected input bit to Bob. -/
+theorem otFunctionality_f (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
+    otFunctionality.f n a b =
+      ((Fin.elim0 : Fin 0 → Bool), fun _ : Fin 1 => a (if b 0 then 1 else 0)) := rfl
+
+/-- The OT functionality gives Bob the chosen bit. -/
+theorem otFunctionality_f_snd (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
+    ((otFunctionality.f n a b).2 : Fin 1 → Bool) = fun _ => a (if b 0 then 1 else 0) := rfl
+
+end TCSlib.Cryptography.SecureComputation
+/- G06-HARNESS EOF-VERIFY G06Seal_026_TCSlib_Cryptography_SecureComputation_Defs_HarnessV2 -/
+set_option maxHeartbeats 0
+set_option maxRecDepth 8192
+run_cmd do
+  let label : String := "G06Seal_026_TCSlib_Cryptography_SecureComputation_Defs_HarnessV2"
+  let mut requests : Array (String × String) := #[]
+  requests := requests ++ #[
+    ("Complexity.NUPPT.Computes", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.Uniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT._sizeOf_1", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.advInput", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.adviceLen", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinLen", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsCongr", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquivPoly", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquiv_ofPolyTime", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.distinguisher", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.distinguisherL", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.inverter", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.inverterLit", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.mk._flat_ctor", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.ofPolyTime", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.ofPolyTimeUniform", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.output", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.predictor", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("Complexity.NUPPT.runAt", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.runAtL", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.runLit", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.NUPPT.timeBound", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.PPT", "TCSlib.Complexity.Randomized.PPT"),
+    ("Complexity.PolyBound", "TCSlib.Complexity.ClassNP.PolyTime"),
+    ("Complexity.PolyExpr._sizeOf_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.eval.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.normal", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyExpr.subst.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.PolyTimeComputable", "TCSlib.Complexity.ClassNP.PolyTime"),
+    ("Complexity.TimeConstructible", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Complexity.instDecidableEqPolyExpr.decEq", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instDecidableEqPolyExpr.decEq.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr._sunfold", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr._unsafe_rec", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.instReprPolyExpr.repr.match_1", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("Complexity.pairFstD", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairMapSnd", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairMapSnd.match_1", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.pairSndD", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("Complexity.polyTimeComputable_unary.match_1_1", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("TCSlib.Cryptography.Negligible", "TCSlib.Cryptography.Foundations.Negligible"),
+    ("TCSlib.Cryptography.Noticeable", "TCSlib.Cryptography.Foundations.Negligible"),
+    ("TCSlib.Cryptography.Protocol.ProverBounded", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.execution", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.outP", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.outV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.transcript", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.transcriptWith", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.viewP", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.viewV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.withV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Protocol.withV_vCoinsEquiv", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.Efficient", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.ReadsPrefix", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.coinLen", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.encodeMsgs", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.ofNUPPT", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.Strategy.out", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View._sizeOf_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View.encode", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.View.mk._flat_ctor", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.acceptProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.coinBlock", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.decodeFin", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.distAdv", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.exec", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec._sunfold", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec._unsafe_rec", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.exec.match_1", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.invProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.invProbOpt", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.moverIsV", "TCSlib.Cryptography.ZeroKnowledge.Interaction"),
+    ("TCSlib.Cryptography.padFin", "TCSlib.Cryptography.Asymptotic.Adversary"),
+    ("TCSlib.Cryptography.predProb", "TCSlib.Cryptography.Foundations.Experiments"),
+    ("TCSlib.Cryptography.uexp", "TCSlib.Cryptography.Foundations.Probability"),
+    ("TCSlib.Cryptography.uprob", "TCSlib.Cryptography.Foundations.Probability"),
+    ("TCSlib.InformationTheory.FinDist.HasMinEntropy", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist._sizeOf_1", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.collision", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.map", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.mk._flat_ctor", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.probTrue", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.prod", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.uniform", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.statDist", "TCSlib.InformationTheory.StatisticalDistance"),
+    ("Turing.Action._sizeOf_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.apply", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.apply.match_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Action.mapState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.Action.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg._sizeOf_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.ext.match_1", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.init", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.inputSymbol", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.mapState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.Cfg.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.Cfg.ofWords", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.Cfg.select", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.Cfg.workTapeSymbols", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.CodeTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.serialize", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.CodeTM.toFinTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.EffectiveMachineCode._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.EffectiveMachineCode.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.Computes", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesFunInTime", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesFunInTimeVia", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.ComputesInTime", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.VirtualTag", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.appendBitTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.branchTM", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.branchTM.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferTape", "TCSlib.Complexity.TuringMachine.Simulation")
+  ]
+  requests := requests ++ #[
+    ("Turing.FinTM.bufferedCompTM", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedCompTM.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedFirstCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedScanCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.bufferedSecondCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.callEntry", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callExit", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.callTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.FinTM.condTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.condTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.constTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.controlAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.emitAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.idTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.idTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.ifEqTM", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.ifEqTM.match_1", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("Turing.FinTM.incFixedTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.incFixedTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.incFixedTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.indexedVisit", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.leftAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.leftCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.lengthBitsTM", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Turing.FinTM.lengthBitsTM.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("Turing.FinTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("Turing.FinTM.pairExtractTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairExtractTM.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairLenCheckTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairValidTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.pairValidTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyBitsTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyUnaryTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.polyUnaryTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.prependTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.prependTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.redirectTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.redirectTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.redirectTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.rewind_scan.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.rightAction", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.rightCfg", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.splitSolveTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.splitSolveWithTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.stripLastTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.stripLastTM_computes.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.sweepAct", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepCfg", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold._sunfold", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold._unsafe_rec", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepFold.match_1", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepRevCfg", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.sweepTape", "TCSlib.Complexity.TuringMachine.Sweep"),
+    ("Turing.FinTM.tapeBlocks", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.timedCondTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.timedCondTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.FinTM.toCodeTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.toCodeTM.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.FinTM.unaryTokenTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.unaryTokenTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("Turing.FinTM.virtualMove", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.virtualNextTag", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.FinTM.virtualNextTag.match_1", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.MachineCode._sizeOf_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.MachineCode.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.MultiTapeTM.AgreeOn", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("Turing.MultiTapeTM.ComputableInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.ComputesFunInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.ComputesInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.DecidableInTimeAndSpace", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM._sizeOf_1", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.haltsAtStep", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.indicator", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.initCfg", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.outputSymbol", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.relabelState", "TCSlib.Complexity.TuringMachine.StateRenaming"),
+    ("Turing.MultiTapeTM.runFrom", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.spaceUsed", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.spaceUsedByTape", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.step", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.step.match_1", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.MultiTapeTM.visitedByTapeHead", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("Turing.actionBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.captureAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.captureAction.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.captureCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.dbl", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.embedEmitCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedEmitRetTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedEmitTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentRetTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentRetTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.embedSilentTM", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("Turing.emitAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.emitCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("Turing.incFixed", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed._sunfold", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.incFixed.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.instInhabitedCfg.default", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.moveInputPos", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.optBoolBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optBoolBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optOptBoolBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optOptBoolBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optStateBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.optStateBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode._sunfold", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode._unsafe_rec", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDecode.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairDiagTM.match_3", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.pairEncode", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.signBits", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.signBits.match_1", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.solveSplit", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.solveSplitWith", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.spaceUsedOfCfgs", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("Turing.splitAtLastTrue", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.splitAtLastTrue.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention")
+  ]
+  requests := requests ++ #[
+    ("Turing.stateWord", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("Turing.unaryFin", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("Turing.unaryTokenSplit", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit._sunfold", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.unaryTokenSplit.match_1", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("Turing.visitedOfCfgs", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.pairMapSnd.match_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.polyTimeComputable_unary.match_1_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Turing.FinTM.extract_run.match_1.splitter", "TCSlib.Complexity.ClassNP.PolyTimePairing"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterBump", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._sunfold", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._unsafe_rec", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCfg", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._sunfold", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._unsafe_rec", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterTape", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.FinTM.lengthBitsTM.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.MultiTapeTM.step.match_1.splitter", "TCSlib.Complexity.ClassP.TimeConstructible"),
+    ("_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.eval.match_1.splitter", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.subst.match_1.splitter", "TCSlib.Complexity.Randomized.PolyExpr"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Convention"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnAction", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnCfg", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedSlot", "TCSlib.Complexity.TuringMachine.Build.Embed"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.callTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallBankFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallCleared", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEmbeddedCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallIdleTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallInterval", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLayout", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairEmbedding", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairIndex", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairSelect", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightScan", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSlots", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSpan", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackMid", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleEmbedding", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleIndex", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleSelect", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopCall", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopForwardCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyDispatch", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyImage", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyPadded", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodySource", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCall", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopControlAction", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCopyTape", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFrame", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCaptured", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelSource", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_bound", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReady", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayCfg", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayTM", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._sunfold", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop")
+  ]
+  requests := requests ++ #[
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Loop"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.List.filter.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState._sizeOf_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCopyCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._sunfold", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._unsafe_rec", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyMove", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyTape", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyUnaryTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPrefixCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2LeftIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2OneIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PairIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2RightIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2SmallIndex", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2Words", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterSplitAccept", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extractCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_5.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairValidTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.polyUnaryTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.prependTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.rawStripTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.scanCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitAccept", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBank", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_3", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_5", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitLoop_result.match_1", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPos", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareReady", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareScan", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreClean", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreScan", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRewindTM", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitSafe", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitScratch", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitStep", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.stripCfg", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.unaryTokenTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.incFixed.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.splitAtLastTrue.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.unaryTokenSplit.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Primitives"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectAction", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedBranchCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedCondTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedControlCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedPadTM", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedReadyCfg", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.captureAction.match_1.splitter", "TCSlib.Complexity.TuringMachine.Build.Wrappers"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.controlCfg", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.idTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.ifEqTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Composition"),
+    ("_private.TCSlib.Complexity.TuringMachine.Configuration.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.TuringMachine.Configuration.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Configuration"),
+    ("_private.TCSlib.Complexity.TuringMachine.Deterministic.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Deterministic"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.FinTM.toCodeTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding")
+  ]
+  requests := requests ++ #[
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDecode.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagCfg", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Encoding"),
+    ("_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Finite"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBit", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBuffer", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCell", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCode", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arDecode", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arIndex", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arMoveCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPending", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPos", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReadCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReady", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpaceBlock", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpacePhase", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTail", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTape", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arWriteCfg", "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.SignType.fin3Equiv.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGSpan", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGWindow.mk._flat_ctor", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState._sizeOf_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState.proxyTypeEquiv", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.blankRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCost", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCross", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgLeftRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgPos", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgRetract", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgStart", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.headAt", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readState", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readVisit", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.rightRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepBoundary", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepEmbed", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepMove", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepPos", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStart", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_3", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_5", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepSymbol", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._sunfold", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._unsafe_rec", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeRow", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._sunfold", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._unsafe_rec", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1.splitter", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeCfg", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeTM", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit.match_1", "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.Action.apply.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.virtualNextTag.match_1.splitter", "TCSlib.Complexity.TuringMachine.Simulation"),
+    ("_private.TCSlib.Complexity.TuringMachine.Sweep.0.Turing.FinTM.sweepFold.match_1.splitter", "TCSlib.Complexity.TuringMachine.Sweep")
+  ]
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+
+set_option maxRecDepth 512
+

@@ -1,0 +1,55 @@
+--- a/TCSlib/Cryptography/Authentication/HashAndSign.lean
++++ b/TCSlib/Cryptography/Authentication/HashAndSign.lean
+@@ -226,6 +226,18 @@
+ noncomputable abbrev hsGen (S : SignatureScheme) (H : CRH) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_hsGenFun S H) (.add S.gen.coins H.gen.coins)
+ 
++/-- The hash-and-sign generator uses `S.gen.coinLen n + H.gen.coinLen n` coins at parameter
++`n`, with the signature-generator segment first and the hash-index segment second. -/
++theorem hsGen_coinLen (S : SignatureScheme) (H : CRH) (n : ℕ) :
++    (hsGen S H).coinLen n = S.gen.coinLen n + H.gen.coinLen n :=
++  (NUPPT.coinLen_eq (hsGen S H) n).trans
++    ((congrArg (fun p : PolyExpr => p.eval n)
++      (NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_hsGenFun S H)
++        (.add S.gen.coins H.gen.coins))).trans
++      ((PolyExpr.eval_add S.gen.coins H.gen.coins n).trans
++        (congrArg₂ Nat.add (NUPPT.coinLen_eq S.gen n).symm
++          (NUPPT.coinLen_eq H.gen n).symm)))
++
+ /-- The machine `Sign′`, with the coins of `Sign`. -/
+ noncomputable abbrev hsSign (S : SignatureScheme) (H : CRH) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_hsSignFun S H) S.sign.coins
+@@ -243,19 +255,22 @@
+ `i = Gen_CRH(1^n)` on the rest. -/
+ theorem runAt_hsGen (S : SignatureScheme) (H : CRH) (n : ℕ) (ρ : (hsGen S H).Coins n) :
+     (hsGen S H).runAt n [] ρ =
++      let σ : Fin (S.gen.coinLen n + H.gen.coinLen n) → Bool :=
++        fun j => ρ (Fin.cast (hsGen_coinLen S H n).symm j)
+       pairEncode
+-        (pairEncode (pairFstD (S.gen.runAt n [] fun j => ρ (Fin.castAdd _ j)))
+-          (H.gen.runAt n [] fun j => ρ (Fin.natAdd _ j)))
+-        (pairEncode (pairSndD (S.gen.runAt n [] fun j => ρ (Fin.castAdd _ j)))
+-          (H.gen.runAt n [] fun j => ρ (Fin.natAdd _ j))) := by
+-  obtain ⟨h₁, h₂⟩ := ofFn_coins_split (a := S.gen.coins.eval n) (b := H.gen.coins.eval n) ρ
+-  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, S.gen_uniform.runAt_eq,
+-    H.gen_uniform.runAt_eq]
+-  simp only [hsGenFun, hsSigKey, hsIdx, NUPPT.inParam_eq, NUPPT.inCoins_eq,
++        (pairEncode (pairFstD (S.gen.runAt n [] fun j => σ (Fin.castAdd (H.gen.coinLen n) j)))
++          (H.gen.runAt n [] fun j => σ (Fin.natAdd (S.gen.coinLen n) j)))
++        (pairEncode (pairSndD (S.gen.runAt n [] fun j => σ (Fin.castAdd (H.gen.coinLen n) j)))
++          (H.gen.runAt n [] fun j => σ (Fin.natAdd (S.gen.coinLen n) j))) := by
++  let σ : Fin (S.gen.coinLen n + H.gen.coinLen n) → Bool :=
++    fun j => ρ (Fin.cast (hsGen_coinLen S H n).symm j)
++  have hρ : List.ofFn ρ = List.ofFn σ := List.ofFn_congr (hsGen_coinLen S H n) ρ
++  obtain ⟨h₁, h₂⟩ := ofFn_coins_split σ
++  simp only [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform,
++    S.gen_uniform.runAtL_eq, H.gen_uniform.runAtL_eq,
++    hsGenFun_eq, hsSigKey_eq, hsIdx_eq, NUPPT.inParam_eq, NUPPT.inCoins_eq,
+     NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+-    List.length_replicate]
+-  rw [h₁, h₂]
+-  rfl
++    List.length_replicate, ← NUPPT.coinLen_eq S.gen n, hρ, h₁, h₂]
+ 
+ /-- `Sign′` on `⟨⟨sk, i⟩, m⟩` is `Sign` on `⟨sk, h_i(m)⟩` with the same coins. -/
+ theorem runAt_hsSign (S : SignatureScheme) (H : CRH) (n : ℕ) (sk i m : List Bool)
