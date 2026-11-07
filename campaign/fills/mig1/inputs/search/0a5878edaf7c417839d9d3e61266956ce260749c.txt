@@ -1,0 +1,374 @@
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/CircuitEvalNP.lean:58:circuit has length `n ≤ size ≤ |w|`, and `pairEncode w (ofFn a) ∈ CVALPrefix`. Backward:
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean:387:        (Turing.pairEncode (swapKinds w) (List.replicate w.length false))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean:439:  have h1 := hE.comp (Complexity.polyTimeComputable_id.pairEncode (hc true))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean:440:  have h2 := hE.comp (hS.pairEncode (hc false))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean:448:      (Turing.pairEncode (swapKinds w) (List.replicate w.length false)) <;> rfl
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:239:  have hy : PolyTimeComputable (fun z => pairEncode (gx z) (gu z)) := hx.pairEncode hu
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:306:    refine ⟨pairEncode (pairEncode (gu z) (gj z)) (gp z), ?_, ?_⟩
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:316:      have e1 : gx (pairEncode w (pairEncode (pairEncode (gu z) (gj z)) (gp z))) = gx z := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:318:      have e2 : gU (pairEncode w (pairEncode (pairEncode (gu z) (gj z)) (gp z))) = gU z := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:320:      have e3 : gu (pairEncode w (pairEncode (pairEncode (gu z) (gj z)) (gp z))) = gu z := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:322:      have e4 : gj (pairEncode w (pairEncode (pairEncode (gu z) (gj z)) (gp z))) = gj z := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLipton.lean:324:      have e5 : gp (pairEncode w (pairEncode (pairEncode (gu z) (gj z)) (gp z))) = gp z := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:121:    pairEncode (pairFstD q) (dropMarker (pairSndD q) ++ s) ∈ V}
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:127:        pairEncode (pairFstD q) (dropMarker (pairSndD q) ++ s) ∈ V := Iff.rfl
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:163:      z ∈ (fun z => pairEncode (pairFstD (pairFstD z))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:171:      pairEncode (pairFstD (pairFstD z)) (dropMarker (pairSndD (pairFstD z)) ++ pairSndD z) ∈ V :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:194:        pairEncode (pairFstD q) (dropMarker (pairSndD q) ++ s) ∈ V := Iff.rfl
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj.lean:148:      have hm := pairEncode_mem_indexLang (fun x i => (f x).getD i false = true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.lean:291:      (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk.lean:302:        (pairEncode (Nat.bits (v r)) (Nat.bits (v r')))) then l₁ else l₀), v, none) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/MeyerVerifier.lean:84:  decide (pairEncode D (query (encodeSel sel) T A x) ∈ CVAL)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/MeyerVerifier.lean:100:  | .xbit, z => decide (pairEncode (idxDesc (vx z).length (vj z).length) (vx z) ∈ CVAL)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/MeyerVerifier.lean:140:      (pt_vD.pairEncode (pt_query (encodeSel sel) (pt_twd Cw cw T) (pt_awd Cw cw A) pt_vx))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/MeyerVerifier.lean:353:    set u := pairEncode (pairEncode (vt z) (va z)) (pairEncode (vj z) (vp z)) with hu
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean:168:      fun z => List.ofFn bits ++ fT (pairEncode (T z) (fT (pairEncode (A z) (X z)))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2702:      | some i => pairEncode (w.take ((e3SplitStep w)^[i] []).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3598:  | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3625:**Proof sketch.** First compute `H x = pairEncode (f x) []`, then retain the
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3626:whole input in `s x = pairEncode x (H x)`. Duplicate `s x` and map
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3627:`g ∘ pairFst` on its payload to obtain `t x = pairEncode (s x) (g x)`.
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3629:`pairEncode (f x) (g x)`. Every payload map acts only on its own payload. -/
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3632:    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3640:  have hH : PolyTimeComputable (fun x => pairEncode (f x) []) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3643:  have hs : PolyTimeComputable (fun x => pairEncode x (pairEncode (f x) [])) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3647:      (fun x => pairEncode (pairEncode x (pairEncode (f x) [])) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3654:  have heq : pairEncode x (pairEncode (f x) []) ++ g x =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3655:      pairEncode x (pairEncode (f x) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3956:  have hc := a3n_comp_at M a3nEqTM x (pairEncode (f x) (g x)) [decide (f x = g x)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3960:  have hl : (pairEncode (f x) (g x)).length ≤ A * (x.length + 1) ^ d := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:3964:  have hsize : (pairEncode (f x) (g x)).length = 2 * (f x).length + 2 + (g x).length := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PClosure.lean:218:      pairEncode (pairFstD z) (blockAt a k z i) ∈ V} ∈ P := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PClosure.lean:237:        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i)))} ∈ P := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PClosure.lean:249:      pairEncode (pairFstD (pairFstD w))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:80:  pairEncode (pairFstD z) ((pairSndD z).take (a * ((pairFstD z).length + 1) ^ k))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:86:  pairEncode (pairFstD z) ((pairSndD z).drop (a * ((pairFstD z).length + 1) ^ k))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:198:    z = pairEncode (pairFstD z) (pairSndD z) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:231:    (pairEncode ((pairFstD s).drop i) ((pairSndD s).drop j)).length ≤ max s.length 2 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:372:    pairEncode (upd (pairFstD s) (pairSndD (pairSndD s)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:373:      (pairEncode ((pairFstD (pairSndD s)).drop 1) (nxt (pairFstD s) (pairSndD (pairSndD s))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:417:/-- The initial state `pairEncode h₀ (pairEncode cd (r z))`, with unary countdown `cd` of
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:422:      (pairEncode (List.replicate (a' * ((x z).length + 1) ^ k') true) (r z))) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:539:    g^[i] s₀ = pairEncode (P i) (pairEncode (List.replicate (K - i) true) (Q i)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:583:      pairEncode (P i) (pairEncode (List.replicate (K - i) true) (Q i)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:587:      out (pairEncode (P K) (pairEncode [] (Q K))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:610:      out (pairEncode (P K) (pairEncode [] (Q K))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:668:  pairEncode ((pairFstD s).drop 1) ((pairSndD s).drop 1)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:780:`(pairEncode (pairFstD z) (pairSndD z)).length + 2`, which dominates the shorter
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean:790:      1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:54:        pairEncode (true :: pairFstD (pairFstD r)) (pairSndD (pairFstD r))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:56:        pairEncode (pairFstD (pairFstD r)) (true :: pairSndD (pairFstD r)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:69:    (pairEncode (List.replicate (a' * ((pairFstD z).length + 1) ^ k') true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:71:        (pairEncode (pairFstD z) (pairSndD z))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:75:    (if b then pairEncode (true :: pairFstD acc) (pairSndD acc)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:76:      else pairEncode (pairFstD acc) (true :: pairSndD acc)).length ≤ acc.length + 4 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:99:            (pairEncode (pairFstD z) (blockAt a k z j))))] := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:105:      MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) ≤ i :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:111:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j)))) true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:113:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j)))) true))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:114:      (pairEncode (pairFstD z)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:121:        MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:123:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) +
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:124:        (if MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:129:    cases hb : MultiTapeTM.indicator V (pairEncode (pairFstD z)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:133:      have hb' : MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:136:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:138:            MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) + 1 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:143:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) + 1) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:145:            MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:148:      have hb' : MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:151:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:153:            MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:158:          MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j))) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:160:            MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z j)))) + 1
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:186:            (pairEncode (pairFstD z) (blockAt a k z i))))]) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:206:        pairEncode (true :: pairFstD (pairFstD (pairSndD (pairSndD s))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:209:        pairEncode (pairFstD (pairFstD (pairSndD (pairSndD s))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockMajority.lean:222:          (fun s => pairEncode (pairSndD (pairFstD (pairSndD (pairSndD s))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:139:        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD (pairFstD w))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:150:    (t := fun q => MultiTapeTM.indicator V (pairEncode (pairFstD (pairSndD q))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:151:      (xorD (pairEncode (pairFstD q) (pairSndD (sliceTakeAt a k (pairSndD q)))))))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:152:    (nxt := fun q => pairEncode (pairFstD q) (sliceDropAt a k (pairSndD q)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:153:    (fun w i => pairEncode (pairSndD w) (pairEncode (pairFstD (pairFstD w))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean:218:        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i)))]) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:28:* `Complexity.pairMapSnd` — on `pairEncode a b`, output `pairEncode a (g b)`; malformed
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:40:* `Complexity.PolyTimeComputable.pairEncode` — `x ↦ pairEncode (f x) (g x)` is
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:75:`pairEncode a (g b)` (the first component is carried unchanged), and on a word that is
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:79:  | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:85:    pairMapSnd g (pairEncode a b) = pairEncode a (g b) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:118:polynomial-time computable, so is `x ↦ pairEncode (f x) (g x)`.
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:123:the payload gives `H x = pairEncode (f x) []`; duplicating `x` and mapping `H` gives
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:124:`s x = pairEncode x (H x)`; duplicating `s x` and mapping `g ∘ fst` gives
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:125:`t x = pairEncode (s x) (g x)`. Concatenating the components of `t x`
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:127:`pairEncode x (pairEncode (f x) (g x))`, whose second component is the result. -/
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:130:    PolyTimeComputable (fun x => Turing.pairEncode (f x) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:135:  -- `H x = pairEncode (f x) []`, `s x = pairEncode x (H x)`, `t x = pairEncode (s x) (g x)`
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:258:    PolyTimeComputable (fun z => pairEncode (pairSndD z) (pairFstD z)) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:316:  have hpair : PolyTimeComputable (fun z => pairEncode (pairFstD z) (true :: pairSndD z)) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:762:      E.ComputesInTime (pairEncode (CNF.serialize φ) u) [φ.eval (satAssignment u)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2448:separator, then copy native `x`. Thus the output is `pairEncode (f x) x`.
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2695:    (satPairTM M).ComputesFunInTime (fun x => pairEncode (f x) x)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2705:  have hc : (satPairTM M).ComputesInTime x (pairEncode (f x) x)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2715:    PolyTimeComputable (fun x => pairEncode (f x) x) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2733:      | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:2756:    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3201:    have hs := satDrop_double (pairEncode u v) (satBits pre) (satBits r ++ [false, true] ++ v) b pre.length hh
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3390:  let f (z : List Bool) := pairEncode (satStreamFst z) (satStreamSnd z)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3508:    satReqFresh (pairEncode (satStreamWord s) x) = List.replicate s.fresh true ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3509:    satReqUsed (pairEncode (satStreamWord s) x) = List.replicate s.used true ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3510:    satReqPhase (pairEncode (satStreamWord s) x) = List.replicate s.phase.val true ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3511:    satReqRest (pairEncode (satStreamWord s) x) = x.drop s.used := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3522:    satReqStep (pairEncode (satStreamWord s) x) = satStreamWord (satStreamRound x s).1 ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3523:    satReqEmit (pairEncode (satStreamWord s) x) = (satStreamRound x s).2 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/SAT.lean:3582:  have ht : PolyTimeComputable (fun z => pairEncode (unaryTokenSplit (satReqRest z)).1
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1129:  have hT (x : List Bool) : tmsatTakeTM.ComputesInTime (pairEncode (f x) (g x))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1147:    z = pairEncode (pairFstD z) (pairSndD z) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1242:  change tmsatY z = pairEncode (tmsatCode z)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1243:    (pairEncode (tmsatInput z) (pairEncode (List.replicate _ true) (List.replicate _ true)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1245:  exact h₀.trans (congrArg (pairEncode (tmsatCode z))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1246:    (h₁.trans (congrArg (pairEncode (tmsatInput z)) h₂)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1286:    pairEncode (pairEncode (Nat.bits (tmsatClock z).length) (tmsatCode z))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1287:      (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1294:      (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassNP/TMSAT.lean:1442:            (pairEncode (tmsatInput z) ((tmsatW z).take (tmsatWidth z).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:274:        (List.replicate (redT N d c CV cV x.length) true ++ false :: pairEncode (id x) [])) x =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:168:def lbStep (s : List Bool) : List Bool := pairEncode (pairFstD s) ((pairSndD s).drop 1)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:212:      pairEncode (List.replicate (w x) true) (List.replicate (w x) true) := hw.pairEncode hw
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:179:  MultiTapeTM.indicator (initLang N) (pairEncode (pairFstD y)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:180:    (pairEncode (cpAt N d c y (vwid A a (pairFstD y).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:185:  MultiTapeTM.indicator (acceptLang N) (pairEncode (pairFstD y)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:186:    (pairEncode (cpAt N d c y (2 * vwid A a (pairFstD y).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:194:    MultiTapeTM.indicator (stepLang N) (pairEncode (pairFstD y)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:211:  pairEncode (pairEncode (pairFstD y) (List.replicate (vwid A a (pairFstD y).length) true))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:323:  pairEncode (pairFstD q) ((pairSndD q).drop (3 * (pairSndD (pairFstD q)).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:339:        pairEncode (pairEncode (pairFstD y) (List.replicate (vwid A a (pairFstD y).length) true))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:636:      | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:661:    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:2105:        clRowCfg x p i.succ 0 w (record ++ pairEncode (w i) []) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:2115:      clRowCfg x p i.castSucc 4 w (record ++ pairEncode (w i) []) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:2118:      (lift.trans (clRow_frame x p i 4 w (record ++ pairEncode (w i) [])))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3109:  | w :: ws => pairEncode w (clFields ws)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3607:    ((clWipeCfg x p 0 (pre ++ pairEncode word tail) (old i) pre.length 0).mapState Sum.inl) t
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3610:  have start := clLoad_frame x p i (.inl 0) old (pre ++ pairEncode word tail) (old i) pre.length
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3651:        pairEncode (w i) (clFields ((List.ofFn w).drop (i.val + 1)) ++ tail) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3692:        clFields ((List.ofFn new).take j) ++ pairEncode (new i) [] := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/CookLevin/Hardness.lean:3695:    have hlen : (pairEncode (new i) []).length = 2 * (new i).length + 2 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Diagonalization/EXPCOM.lean:333:  pairEncode (pairEncode ((incFixed (expcom_tail z ++ [false])).getD []) (pairFstD z))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Diagonalization/EXPCOM.lean:396:      pairEncode ((incFixed (expcom_tail z ++ [false])).getD []) (pairFstD z)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:223:        false :: pairEncode (pairEncode (Nat.bits (g n)) (stageCode (stage f n)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Formulas/QBFEncoding.lean:27:* `encode Q := Turing.pairEncode (prefix bits) (CNF.serialize Q.matrix)` —
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Levels.lean:231:    pairEncode (pairEncode (pairFstD p)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Normalize.lean:100:    (hF : ∀ n w v, F (n + 1) (pairEncode w v) = pairEncode (F n w) (dec v)) :
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Normalize.lean:125:  f (pairEncode (pairFstD w) (padDecode (pairFstD s) (pairSndD w)))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Normalize.lean:261:    have hf' : PolyTimeComputable (fun p => pairEncode (f (pairFstD p)) (pairSndD p)) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Padding.lean:163:  | n + 1, s, z => pairEncode (tupleDecode base dec n s (pairFstD z)) (dec s (pairSndD z))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Padding.lean:185:    have r1 : PolyTimeComputable (fun p => pairEncode (pairFstD p) (pairFstD (pairSndD p))) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/PolyHierarchy/Padding.lean:188:    have r2 : PolyTimeComputable (fun p => pairEncode (pairFstD p) (pairSndD (pairSndD p))) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:88:  Turing.pairEncode (pairFstD z) ((pairSndD z).take (polyLen a k (pairFstD z).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:94:  Turing.pairEncode (pairFstD z) ((pairSndD z).drop (polyLen a k (pairFstD z).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:280:            (Turing.pairEncode (pairFstD z) (blockAt a k z i)))} ↔
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:318:        Turing.pairEncode (pairFstD z) (blockAt a k z i) ∈ V₁} ↔
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:376:        Turing.pairEncode (pairFstD (pairFstD w))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/Randomized/PolyTimeModel.lean:421:    BoolCircuit.DAGCircuit.pairEncode_isFaninTwo r C (hF ell)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean:144:      (∀ i < t, pairEncode x (pairEncode (Nat.bits (c i))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean:146:      pairEncode x (pairEncode (Nat.bits (c t)) (Nat.bits s)) ∈ acceptLang N ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:60:  rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:70:  rw [pairEncode_eq_dbl, List.append_assoc, show 2 * u.length + 2 = (dbl u).length + 2 by simp,
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean:164:          (pairEncode (List.replicate n true) (Nat.bits h)) = decide (h < (u n).length) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean:169:          (pairEncode (List.replicate n true) (Nat.bits h)) = (u n).getD h false := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:118:  (ho0 : ∀ x i, o 0 (pairEncode x (Nat.bits i)) = decide (i < (f x).length))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:119:  (ho1 : ∀ x i, o 1 (pairEncode x (Nat.bits i)) = (f x).getD i false)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:288:  have ho0 : ∀ x i, o 0 (pairEncode x (Nat.bits i)) = decide (i < (f x).length) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:290:    have := pairEncode_mem_indexLang (fun x i => i < (f x).length) x i
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:293:  have ho1 : ∀ x i, o 1 (pairEncode x (Nat.bits i)) = (f x).getD i false := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:295:    have := pairEncode_mem_indexLang (fun x i => (f x).getD i false = true) x i
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:102:    vword (callSegs ⟨j, .whole, [r], l₁, l₀⟩ u V) = pairEncode u (V r) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:596:  rw [pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:762:      oracle j (pairEncode x (Nat.bits (v r))) = b →
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1209:      have bit : oracle j (pairEncode x (Nat.bits (vd ptr))) = b := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2016:      (pairEncode z (Nat.bits r)) 0 k (2 * k) (by simp) (by omega) (by omega)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2136:`LogProg.dblLang_mem` (`compile_space`): on `y`, validate `y = pairEncode z (bits r)` (an
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:497:    rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:501:    rw [pairEncode_getD_snd, pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1391:      rw [eqx, pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean:27:  `pairEncode 1ⁿ (pairEncode (row-major adjacency bits) (pairEncode (bits s) (bits t)))`:
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean:77:    (pairEncode ((List.finRange n).flatMap fun u => (List.finRange n).map (A u))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:66:    (∀ x β, y = pairEncode x β → AReach (A a b f mode) (orc N) y (GuardLe (A a b f mode) y B)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:235:      (y := pairEncode x β) (B := B) .UI (St.mk y' p xx 0 0 s e n m k q j d 0 0) (by sbd)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:241:      (y := pairEncode x β) (B := B) .CU (St.mk y' p xx 0 0 s e n m k q j d j 0) (by sbd)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:247:      (y := pairEncode x β) (B := B) (St.mk y' p xx 0 e s e n m k q j d j 0) (by sbd)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:254:    · rw [key, pairEncode_getD, if_pos (by omega)]; congr 1; omega
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:255:    · rw [Nat.add_assoc, key, pairEncode_getD, if_pos (by omega)]; congr 1; omega
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:256:    · rw [key, pairEncode_getD, if_neg (by omega), if_pos rfl]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:257:    · rw [Nat.add_assoc, key, pairEncode_getD, if_neg (by omega), if_neg (by omega), if_pos rfl]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:85:  | some (x, b) => if Nat.bits (LogProg.bitsVal b) = b then pairEncode (f x) b else []
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:90:    compQ f (pairEncode x (Nat.bits i)) = pairEncode (f x) (Nat.bits i) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:154:    rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:159:    rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:178:    rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:750:  rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:1787:  rw [pairEncode_getD, if_pos (by omega)]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2121:    CompHalt C e mode f h B (some l, v, none) (compOracle f j (pairEncode h (Nat.bits (v r)))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2124:  cases ans : compOracle f j (pairEncode h (Nat.bits (v r))) <;>
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2211:    (total : (pairEncode (f x) b).length ≤ B) :
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2213:      (if mode then decide (p < (pairEncode (f x) b).length) else (pairEncode (f x) b).getD p false) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2216:  have outlen : (pairEncode (f x) b).length = n+2+b.length := length_pairEncode _ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2217:  have firsteq : (if mode then decide (n < (pairEncode (f x) b).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2218:      else (pairEncode (f x) b).getD n false) = mode := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2219:    have lt : n < (pairEncode (f x) b).length := by omega
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2222:      change (pairEncode (f x) b).getD n false = false
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2227:    have ans : (if mode then decide (p < (pairEncode (f x) b).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2228:        else (pairEncode (f x) b).getD p false) = mode := by simpa only [first] using firsteq
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2244:      have ans : (if mode then decide (p < (pairEncode (f x) b).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2245:          else (pairEncode (f x) b).getD p false) = true := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2246:        have lt : p < (pairEncode (f x) b).length := by omega
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2249:          change (pairEncode (f x) b).getD p false = true
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2278:      have bit : (pairEncode (f x) b).getD p false = b.getD (p-(n+2)) false := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2294:    (total : (pairEncode (f x) b).length ≤ B) :
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2296:      (if mode then decide (p < (pairEncode (f x) b).length) else (pairEncode (f x) b).getD p false) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2311:        (if mode then decide (p < (pairEncode (f x) b).length) else (pairEncode (f x) b).getD p false) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2312:      have lt : p < (pairEncode (f x) b).length := by rw [length_pairEncode]; dsimp [n] at inside; omega
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2315:        change (f x).getD (p/2) false = (pairEncode (f x) b).getD p false
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2332:    compQ f (pairEncode x b) = if Canon b then pairEncode (f x) b else [] := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2395:      (if mode then decide (p < (pairEncode (f x) b).length) else (pairEncode (f x) b).getD p false) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2400:  have output : (pairEncode (f x) b).length ≤ B := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2403:    change (pairEncode (f x) b).length ≤ (2*C+3)*(h.length+1)^(e+1) at cap
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean:53:      pairEncode (List.replicate n true) (V r) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean:63:      pairEncode (List.replicate n true) (pairEncode (V r) (V s)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:256:    (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:263:    (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = false)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:278:    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:286:    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = false)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:294:    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:295:      (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = true)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:303:    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:304:      (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = false)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean:103:      pairEncode u (pairEncode (V r) (V s)) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean:111:      pairEncode u (pairEncode (V r) (pairEncode (V s) (V t))) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:54:  {y | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ (g n).getD i false = true}
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:58:  {y | ∃ n i, y = pairEncode (List.replicate n true) (Nat.bits i) ∧ i < (g n).length}
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:77:    pairEncode (List.replicate n true) (Nat.bits i) ∈ uBit g ↔ (g n).getD i false = true :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:82:    pairEncode (List.replicate n true) (Nat.bits i) ∈ uLen g ↔ i < (g n).length :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:154:      (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5498:private def a2_mapTM (M : FinTM Bool) (forward : Bool) : FinTM Bool where
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5592:    (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5598:  change ((a2_mapTM M false).tm.tr (.parse none) _ _).apply _ = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5614:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5623:  change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5626:  change ((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5633:  cases b <;> cases c <;> simp only [a2_mapTM, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5651:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5661:    change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5670:    have hs : (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5676:      change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5686:        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5688:          · simpa only [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply, tapeBlocks_buffer] using
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5690:          · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5693:        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5695:            simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5705:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5714:    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer,
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5725:    have hs : (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5729:      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer, hr]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5740:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5749:    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5760:    have hs : (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5764:      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5779:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5788:    have hs : (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5792:      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5798:    change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5806:    have hs : (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5809:      change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5810:      have hfirst : (a2_mapTM M false).tm.step
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5814:        simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5832:    (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5861:      | some (d, b) => (a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5867:          ((a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5870:          ((a2_mapTM M false).tm.runFrom
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5879:    change (((a2_mapTM M false).tm.tr (.parse none) _ _).apply _).state = none ∧ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5881:    simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5887:    change ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).state = none ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5888:      ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).output = []
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5891:    change (((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5893:    cases b <;> simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg, pairDecode]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5932:      | some (a, b) => (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5934:      | none => ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).state = none ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5935:          ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).output = [] := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5937:  have hi : (a2_mapTM M false).tm.initCfg x =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5961:      (a2_mapTM M true).tm.step (a2_mapVirtual M c tag p a pre) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5987:      dsimp only [a2_mapTM]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6010:      (a2_mapTM M true).tm.runFrom (a2_mapVirtual M c tag p a pre) t =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6030:    (h : a2_mapEntered M c) (t : ℕ) : (a2_mapTM M false).tm.runFrom c t = c := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6032:  have he : (a2_mapTM M false).tm.step c = c := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6033:    simp only [MultiTapeTM.step, hs, a2_mapTM, Bool.false_eq_true, ↓reduceIte,
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6046:    (a2_mapTM M true).tm.step c = (a2_mapTM M false).tm.step c := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6052:    | parse pending => cases pending <;> simp only [MultiTapeTM.step, hs, a2_mapTM]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6053:    | _ => simp only [MultiTapeTM.step, hs, a2_mapTM]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6058:      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u)) :
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6059:    (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) t =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6060:      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6070:    ((a2_mapTM M false).tm.step c).workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6074:      ((a2_mapTM M false).tm.tr q inp work).workTapes (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6079:      | none => cases inp <;> simp [a2_mapTM, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6082:        | none => simp [a2_mapTM, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6085:          · simp [a2_mapTM, he, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6086:          · cases b <;> simp [a2_mapTM, he, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6087:    | copyB => cases inp <;> simp [a2_mapTM, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6090:        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6093:        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6096:        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6097:    | emitAgain b => simp [a2_mapTM, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6098:    | separator => simp [a2_mapTM, a2_mapAct]
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6108:    ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).workTapePos
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6121:      (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6123:      ∀ v ≤ u, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6124:        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6129:      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6136:      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) :=
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6143:  have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6144:      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6155:      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).state = none ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6156:      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).output = [] ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6157:      ∀ v, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6158:        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6162:      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6166:    · have hrun : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6167:          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6173:    · have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v =
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6174:          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6221:        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6223:      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6226:        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6228:      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6230:    (hsource : ∀ i, (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6233:    (a2_mapTM M true).tm.spaceUsed ((a2_mapTM M true).tm.initCfg x) t ≤ S + 2 * (2 * D + 1) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6236:          ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ∧
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6237:        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ≤ D) :
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6238:      (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i ≤ 2 * D + 1 := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6239:    have hsub : (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t i ⊆
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6247:  have hp : (∑ i : Fin M.k, (a2_mapTM M true).tm.spaceUsedByTape
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6248:      ((a2_mapTM M true).tm.initCfg x) t (Fin.natAdd 1 (Fin.natAdd 1 i))) ≤ S := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6251:    (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i) ≤ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6279:theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool}
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6288:          | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6294:  let M := a2_mapTM Mg true
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6318:      have ht : M.ComputesInTime x (pairEncode a (g b)) (u + Tg b.length) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6327:            (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6356:        change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6410:        · change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8951:      | some i => pairEncode (w.take ((f2_splitStep w)^[i] []).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:178:`⟨bits s, ⟨α, x⟩⟩ = pairEncode (bits s) (pairEncode α x)` is a header of length
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2812:        | some (a, _) => pairEncode a (f x)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2855:    have hc : (pairMapTM M).ComputesInTime x (pairEncode a (f x))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2890:          | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2897:      | some (a, _) => pairEncode a (g ((pairDecode x).map Prod.snd |>.getD []))
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2899:      | some (a, b) => pairEncode a (g b)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3217:      | some i => pairEncode (w.take ((splitStep w)^[i] []).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4781:      | some i => pairEncode (w.take ((splitStep w)^[i] []).length)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6711:          (out ++ pairEncode (unaryTokenSplit rest).1 (unaryTokenSplit rest).2) := by
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6772:`x ↦ pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2` within `3·(n + 1)` steps.
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6779:      (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6796:        (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6801:      (pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+0a5878edaf7c417839d9d3e61266956ce260749c:TCSlib/Complexity/TuringMachine/Universal.lean:160:        U.ComputesInTime (pairEncode α x) (f x) (C * (T x.length + 1) ^ 2) := by

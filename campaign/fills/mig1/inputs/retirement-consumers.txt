@@ -1,0 +1,23 @@
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1363: `Turing.transferTM_run`.
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1405: **Proof sketch.** Today's `Cfg.ext` computation in the proof of `Turing.transferTM_run`: as the copy
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1448: unchanged. This specializes to `Turing.copyTM_run`.
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1482: **Proof sketch.** Today's `Cfg.ext` computation in the proof of `Turing.copyTM_run`: at the origin
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1514: interval. This specializes to `Turing.clearTM_run`.
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1551: `[pos - 1, pos + p]`. This specializes to `Turing.incrementTM_run_succ`,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1610: `[pos - 1, pos + |w|]`. This specializes to `Turing.incrementTM_run_overflow`.
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1671: theorem transferTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1755: **Proof sketch.** As `transferTM_run` without the erasure clause: sweep
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1758: theorem copyTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1832: theorem clearTM_run (k : ℕ) (i : Fin k) (w : Fin k → List Bool) :
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1900: theorem compareTM_run (k : ℕ) (fst snd : Fin k) (w : Fin k → List Bool) :
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1982: theorem incrementTM_run_succ (k : ℕ) (i : Fin k) (w : Fin k → List Bool)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2029: theorem incrementTM_run_overflow (k : ℕ) (i : Fin k)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:12006: `Turing.compareTM_run`). From any configuration in the working phase whose
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:12014: arbitrary. The canonical `Turing.compareTM_run` and this row re-derive from the same framed trace.
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:452: The canonical `copyTM_run`/`transferTM_run` rows already specialize the required
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:571:   obtain ⟨t₀, ht₀, hc₀, hr₀⟩ := copyTM_run (x := y) K v vf hvf w₀
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:585:   obtain ⟨t₂, ht₂, hc₂, hr₂⟩ := transferTM_run (x := y) K vf vx hfx w₂
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:589:   obtain ⟨t₃, ht₃, hc₃, hr₃⟩ := transferTM_run (x := y) K v vs hvs w₃
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:602:   obtain ⟨t₅, ht₅, hc₅, hr₅⟩ := transferTM_run (x := y) K vs vu hsu w₅
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean:706: banks and cites `copyTM_run` and `transferTM_run`, the canonical-word corollaries of
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1279:     copyTM_run (x := x) (I.k + 1) 0 dst distinct w fresh

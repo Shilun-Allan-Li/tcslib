@@ -1,0 +1,8 @@
+import TCSlib.Complexity.TuringMachine.Finite
+set_option autoImplicit false
+open Turing Turing.FinTM
+attribute [local irreducible] Turing.FinTM.ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = (∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) => M.ComputesFunInTime f T) =
+    (fun M f T => ∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl

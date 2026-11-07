@@ -1,0 +1,52 @@
+-- Historical statement-gated additions, not existing exports at the fill base.
+-- fwdMapTM denotes the private forwarding controller moved from Catalog a2_mapTM.
+-- Treat this as contract data; the worker supplies complete proofs.
+namespace Turing.FinTM
+
+/-- **The threaded map** (landing: `Turing.FinTM.pairMapSndTM`, new in `Primitives` at the fill
+stage, when the forwarding-controller family moves from Catalog; the body is the witness of
+today's `computesFunInTime_pairMapSnd_spaceUsed`, `Build/Catalog.lean:5901`). On
+`pairEncode a b` it validates the pair while buffering both components on two work tapes,
+emits the encoding of `a` followed by the separator, and then runs `Mg` on the buffered `b`
+through clamped virtual input, forwarding `Mg`'s emissions, so that it outputs
+`pairEncode a (g b)`; a malformed input gives `[]`. It replaces the captured-payload
+`pairMapTM` of `Primitives`, whose capture tape cannot carry a linear space bound
+(consolidation). -/
+def pairMapSndTM (Mg : FinTM Bool) : FinTM Bool := fwdMapTM Mg true
+
+/-- **The threaded map's time** (landing: `Turing.FinTM.pairMapSndTM_computes`, new in
+`Primitives` before `computesFunInTime_pairMapSnd`). If `Mg` computes `g` within a monotone
+`Tg`, the threaded map computes `pairEncode a b ↦ pairEncode a (g b)` (and `[]` off the
+encodings) within `22·(n + 1 + Tg n)` steps.
+
+**Proof sketch.** The time half of Catalog's `computesFunInTime_pairMapSnd_spaceUsed`: rejection
+and the launch of the payload each take at most `5·(n + 1)` steps (`a2_map_reject`,
+`a2_map_launch`, moved); the forwarded payload then runs `Tg |b|` steps in lockstep
+(`a2_mapVirtual_run`), and `|b| ≤ n` with monotonicity gives `Tg n`. -/
+theorem pairMapSndTM_computes {Mg : FinTM Bool} {g : List Bool → List Bool} {Tg : ℕ → ℕ}
+    (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) :
+    (pairMapSndTM Mg).ComputesFunInTime
+      (fun z => match pairDecode z with
+        | some (a, b) => pairEncode a (g b)
+        | none => [])
+      (fun n => 22 * (n + 1 + Tg n)) := by
+  sorry
+
+/-- **The threaded map's space** (landing: `Turing.FinTM.pairMapSndTM_spaceUsed`, new in
+`Primitives` after `pairMapSndTM_computes`). If `Mg` uses at most `Sg |y|` work cells on every
+input `y` at every time, with `Sg` monotone, then the threaded map uses at most
+`Sg |x| + 22·(|x| + 1)` cells: coefficient one on the payload's space, plus linear
+administration. No time hypothesis is needed.
+
+**Proof sketch.** The space half of the same Catalog row (`a2_map_space`, moved): the two
+buffer heads stay in `[-5(n + 1), 5(n + 1)]`, and each payload tape's visited set is contained
+in `Mg`'s own on `b` (or on `x`, after a rejection, where the payload bank never moves), which
+`Sg |b| ≤ Sg |x|` bounds; the total is `Sg |x| + 2·(10(n + 1) + 1)`. -/
+theorem pairMapSndTM_spaceUsed {Mg : FinTM Bool} (Sg : ℕ → ℕ)
+    (hgs : ∀ (y : List Bool) (t : ℕ), Mg.tm.spaceUsed (Mg.tm.initCfg y) t ≤ Sg y.length)
+    (hSg : Monotone Sg) (x : List Bool) (t : ℕ) :
+    (pairMapSndTM Mg).tm.spaceUsed ((pairMapSndTM Mg).tm.initCfg x) t ≤
+      Sg x.length + 22 * (x.length + 1) := by
+  sorry
+
+end Turing.FinTM
