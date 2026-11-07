@@ -1,0 +1,31 @@
+START 2026-11-07T05:45:45.046800+00:00
+SUPPLEMENT-SEAL active=978 already=0
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedRSA.lean:2249:2: error: Type mismatch
+  rsaCollection_oneWay H hR
+has type
+  (rsaCollection H).OneWay
+but is expected to have type
+  (rsaTrapdoor H).OneWay
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRSA): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRSA): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRSA): no fresh .olean produced
+       25.91 real        29.97 user         1.28 sys
+          2463858688  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              213629  page reclaims
+                4557  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  89  voluntary context switches
+               40313  involuntary context switches
+            33213874  instructions retired
+            16132851  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:46:10.963675+00:00 RC 1

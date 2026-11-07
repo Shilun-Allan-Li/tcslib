@@ -1,0 +1,123 @@
+START 2026-11-07T05:17:26.098882+00:00
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:11:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:13:93: error: Type mismatch
+  rfl
+has type
+  ?m.45 = ?m.45
+but is expected to have type
+  listToNat w = List.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 w
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:18:19: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (listToNat (List.take k (List.drop (t * B) r))) then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:22:2: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.25 ↔ ?m.25
+but is expected to have type
+  StatClose X Y δ ↔ ∀ (T : ℕ → Prop), |(uprob fun s => T (X s)) - uprob fun t => T (Y t)| ≤ δ
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:24:72: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  uexp f = (∑ a, f a) / ↑(Fintype.card (Fin 3))
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:27:87: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.17 ↔ ?m.17
+but is expected to have type
+  HardcoreBit.PushesUniform π ↔ ∀ (F : Fin 2 → ℝ), (uexp fun ω => F (π ω)) = uexp F
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:30:84: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.24 ↔ ?m.24
+but is expected to have type
+  PolyTimeComputable f ↔ ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:33:88: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ v.Coprime N) k B T r
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:36:87: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  subStr z = natToList (pairFstD z).length (listToNat (pairFstD z) - listToNat (pairSndD z))
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:40:52: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (match o with
+    | some i => a i
+    | none => b) =
+    match o with
+    | some i => a i
+    | none => b
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:44:17: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  sampleBelowL m k B T r =
+    List.findSome?
+      (fun t =>
+        if listToNat (List.take k (List.drop (t * B) r)) < m then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:47:85: error: Type mismatch
+  rfl
+has type
+  ?m.50 = ?m.50
+but is expected to have type
+  bitsToNat b = List.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 (List.ofFn b)
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:50:57: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  mulStr z = natToList ((pairFstD z).length + (pairSndD z).length) (listToNat (pairFstD z) * listToNat (pairSndD z))
+.lake/ps-maintainer/gate08-r2/ControlsSealed.lean:54:71: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  primeStr w = [decide (Nat.Prime (listToNat w))]
+FAIL(.lake/ps-maintainer/gate08-r2/ControlsSealed): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ControlsSealed): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ControlsSealed): no fresh .olean produced
+        1.84 real         1.19 user         0.73 sys
+          2367832064  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              186539  page reclaims
+                  30  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  16  voluntary context switches
+                2656  involuntary context switches
+            32105028  instructions retired
+            24105769  cycles elapsed
+             1638736  peak memory footprint
+
+END 2026-11-07T05:17:27.951263+00:00 RC 1

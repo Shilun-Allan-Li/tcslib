@@ -1,7 +1,15 @@
-# Shared-lemma PR: design (DRAFT, not implemented)
+# Shared-lemma PR: design and implementation status
 
-**Status: design draft, 2026-11-07** (decision log: "shared-lemma PR design started"). No Lean has been changed, committed or pushed. Nothing here is
-issued. Rulings Q1–Q8 (§6) are pending.
+**Status update, 2026-11-06 PST:** Q1–Q8 are ruled (§6 and the decision log). S1 and the
+statement-only host are implemented in PR #227; gate 08 remains on HOLD pending the Codex follow-up audit of the H15, prose and tooling
+repairs. H15 is registered in the campaign records; the checked repair head is
+`84f35910912bd3d1cd520beea9469e0ed45ce504`. The proof is still reserved for the external S2 fill, not yet issued. Ask Codex or
+Claude before preparing that fill. See `gates/08-shared/resolutions-r1.md` for current status.
+
+The inventory, estimates and proposal below were originally drafted at the pinned base on
+2026-11-07 (source-session date). They are historical design data, not a claim that S1 is still
+unimplemented. The host's success/width wording is corrected below to agree with its unchanged
+formal contract and the gate 08 findings.
 
 - **Base read:** `origin/cryptography/pass-shelat-ch2-4` at
   `7018d13e243df4d8b54b99444c34c934199755f5` ("Records: post-landing work started"). Its Lean
@@ -433,7 +441,7 @@ theorem natToList_mod_two_pow (k N : ℕ) : natToList k (N % 2 ^ k) = natToList 
 theorem listToNat_natToList_zero_append (k : ℕ) (w : List Bool) :
     listToNat (natToList k 0 ++ w) = listToNat w
 
-/-- **Width normalization by truncation**: the last `|b|` bits of `⟦0⟧_W ++ b` are the
+/-- **Width normalization by truncation**: the last `W` bits of `⟦0⟧_W ++ b` are the
 `W`-bit numeral of `⟦b⟧`, `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W` (the low `W` bits, also when
 `⟦b⟧ ≥ 2^W`).
 
@@ -560,7 +568,7 @@ polynomial-time words `par z` (the parameter), `kw z`, `bw z` and `tw z`, whose 
 trial width `k`, the block length `B` and the trial count `T`, and `c z` (the coins). Then some
 polynomial-time `g` computes the sampler `rejectBlocksL (E ⟦par z⟧) k B T (c z)`:
 - `g z = []` when every trial is rejected;
-- otherwise `g z = true :: b`, where `b` reads as the accepted value and has at most `k` bits.
+- otherwise `g z` is nonempty, and its tail reads as the accepted value and has at most `k` bits.
 
 In particular `(rejectBlocksL …).getD 0 = ⟦(g z).tail⟧`. The statement is existential: the trial
 loop that realizes it is internal, and no consumer reads it.

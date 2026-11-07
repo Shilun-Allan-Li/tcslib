@@ -1,0 +1,30 @@
+START 2026-11-07T05:15:01.269566+00:00
+.lake/ps-maintainer/gate08-r2/SealedConcrete.lean:345:59: error: unsolved goals
+n : ℕ
+z : { z // Nat.Prime (bitsToNat z.1) ∧ Nat.Prime (bitsToNat z.2) }
+⊢ ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).1 = bitsToNat (↑z).1 ∧
+    ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).2 = bitsToNat (↑z).2
+.lake/ps-maintainer/gate08-r2/SealedConcrete.lean:635:8: warning: declaration uses 'sorry'
+FAIL(.lake/ps-maintainer/gate08-r2/SealedConcrete): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/SealedConcrete): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/SealedConcrete): no fresh .olean produced
+        2.62 real         3.84 user         0.91 sys
+          2398273536  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              193254  page reclaims
+                 547  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  59  voluntary context switches
+               26199  involuntary context switches
+            33208725  instructions retired
+            17437997  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:15:03.901850+00:00 RC 1

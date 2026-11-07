@@ -1,0 +1,34 @@
+START 2026-11-07T05:46:10.988759+00:00
+SUPPLEMENT-SEAL active=1061 already=0
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedRabin.lean:1370:2: error: 'show' tactic failed, pattern
+  pairFstD ((oddGen H).runAt n [] r) = ?m.14
+is not definitionally equal to target
+  (rabinCollection H).index n r = rabinIndexOf (max n 3) (rabinGenParams (fun x => x ≠ 2) oddDefault n (List.ofFn r))
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedRabin.lean:3097:2: error: 'show' tactic failed, pattern
+  pairFstD ((blumGen H).runAt n [] r) = ?m.20
+is not definitionally equal to target
+  (rabinBlumTrapdoor H).index n r =
+    rabinIndexOf (max n 3) (rabinGenParams (fun x => x % 4 = 3) blumDefault n (List.ofFn r))
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRabin): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRabin): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedRabin): no fresh .olean produced
+       31.30 real        40.90 user         1.84 sys
+          2371633152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              230976  page reclaims
+                7385  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  90  voluntary context switches
+              138332  involuntary context switches
+            32711647  instructions retired
+            14826532  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:46:42.294637+00:00 RC 1

@@ -1,0 +1,3 @@
+import TCSlib.Cryptography.Candidates.Concrete
+attribute [local irreducible] TCSlib.Cryptography.Candidates.primeStr
+example (w : List Bool) : TCSlib.Cryptography.Candidates.primeStr w = [decide (TCSlib.Cryptography.NumberTheory.listToNat w).Prime] := rfl

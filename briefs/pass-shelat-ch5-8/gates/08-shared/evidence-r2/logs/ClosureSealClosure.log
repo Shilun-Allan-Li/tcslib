@@ -1,0 +1,38 @@
+START 2026-11-07T05:34:38.846049+00:00
+.lake/ps-maintainer/gate08-r2/ClosureSealClosure.lean:217:4: error: Tactic `rfl` failed: The left-hand side
+  pairFstD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairFstD [] = []
+.lake/ps-maintainer/gate08-r2/ClosureSealClosure.lean:225:4: error: Tactic `rfl` failed: The left-hand side
+  pairSndD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairSndD [] = []
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealClosure): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealClosure): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealClosure): no fresh .olean produced
+        1.57 real         1.40 user         0.63 sys
+          1544339456  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127981  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+               13203  involuntary context switches
+            32097934  instructions retired
+            15642186  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:34:40.423421+00:00 RC 1

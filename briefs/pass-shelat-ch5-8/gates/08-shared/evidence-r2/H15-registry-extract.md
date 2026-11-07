@@ -1,0 +1,23 @@
+# H15 registry excerpt
+
+Source: `machine-library-design.md`, on the records branch. SHA-256 of the full source
+file at this preparation: `79574cc5abbf4de0341f1401960a781efd4368ab96f34303e538bd2d4e317adb`. The final dispatch pins
+the records commit. This excerpt copies the rule and the exact H14/H15 rows; intervening rows
+are omitted. Verify H15 in the full source, not only this excerpt.
+
+## 14. Hosts first: the rule and the host registry (user, 2026-10-12)
+
+**The rule** (`policy.md` §1, **Hosts come first**; `workflow.md` §2 and §4,
+ground rule 4). A *host* is a control structure that drives other routines:
+a search or traversal, a recursion or evaluation scheme, an interpreter step
+block, a clocked or windowed runner, a dispatcher over a data structure, or an
+input device. A host is never built `private` inside the proof that first
+needs it. Its public contract is designed and statement-gated first, generic
+in what its consumers vary, with time and head-envelope clauses; consumers
+cite it, proved modulo while its fill runs. Leaf rows (copy, compare, seek,
+arithmetic) are not hosts and keep the §4 rule of admission.
+
+| # | Host | Status | Named consumers |
+|---|---|---|---|
+| H14 | **Clean-module host** (`TuringMachine/Build/ModuleHost.lean`, namespace `Turing.ModuleHost`): the first-halting clean-module contract `Clean` (a module with a work tape halts first, at a positive time within a budget of its argument's length, at the seam holding a result word, having emitted a declared chunk), the clean install and emit modules of every polynomial-time word function (`clean_install`, `clean_emit`), and the finite host `hostTM` running `n` such modules over a shared bank of work tapes, generic in the modules, the control states and their table, the return map and the start state (`host_call`, `host_clean`, `guard_add`, `hostTM_step_inl`); head envelopes `Clean.envelope` (a clean module's heads stay within `B \|arg\|` cells of the origin at every time), `host_call_envelope` (within `t` cells up to time `t` of a call) and `host_clean_envelope` (`host_clean` with the envelope `B \|arg\|` throughout the call), the coarse envelopes from the time bounds and the unit head moves of `Turing.MultiTapeTM.workTapePos_step_le` | **public; harvested 2026-11-05 (gate 03l, R-03l-1); contract gated at gate 03l's delta round; head-envelope clauses added 2026-11-06 (gate 03l round 2, finding 1).** Harvested from the private module layer of `ClassNP/SAT.lean` (on `main`) and its copy in `Randomized/Build/IterateFindHost.lean` (duplication ledger DL-16); both copies are deleted. The copier `copyTM` of `IterateFindHost` re-derives the private input copier of `TuringMachine/Build/EmitIterBody.lean` (16 % line overlap, gate 03l review §6.1 (d)): a parallel routine, not a copy | `ClassNP/SAT.lean` (the streaming emitter behind `SAT_reducible_SAT3`: six modules, one control state); `Randomized/Build/IterateFind.lean`, through `Randomized/Build/IterateFindHost.lean` (the repetition machine behind `polyTimeComputable_iterateFind`: five modules, three control states) |
+| H15 | **Block-rejection string-function host:** `TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL`, in `TCSlib/Cryptography/Candidates/Concrete.lean`. Given a parameter-dependent decidable test `E`, a polynomial-time bit test on paired parameter/value words, and polynomial-time words `par`, `kw`, `bw`, `tw`, `c`, publishes an existential polynomial-time output `g`: rejection is `g z = []`; otherwise the value is read from `(g z).tail`, whose length is at most `(kw z).length`. Sizes and trial count are the supplied words' lengths; no `k ≤ B`, positivity or full-coin-length premise is imposed. Depends on `Complexity.polyTimeComputable_iterateFind` (the repetition host in `Randomized/Repetition.lean`, via `Build/IterateFind.lean` and the H14 clean-module host). This layer exposes polynomial time and the payload-length bound; a separate machine head-envelope clause is not exposed. | **Statement only**, in PR #227; gate 08 pending (round-1 finding G08-01 repaired by this registry entry). The host proof is `sorry`, assigned to the **external S2 fill** under Q4 (B); it is not proved or dispatched by this registration. The user dispatches S2 after gate closure and #227's merge. Registered 2026-11-06 PST. | **dl-a:** `polyTimeComputable_expSampleRaw`; **dl-c:** `dlc_numPoly_sample`, serving ElGamal generators/encryption; **rsa:** the unit sampler and `rsaGenRaw`; **rabin:** the prime/Blum-prime generators, with the tail bound feeding padding. S2 replaces their four private rejection loops and refreshes the six sketches (Q7). |

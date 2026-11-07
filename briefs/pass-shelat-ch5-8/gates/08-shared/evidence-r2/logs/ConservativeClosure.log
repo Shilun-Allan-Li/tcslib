@@ -1,0 +1,40 @@
+START 2026-11-07T05:30:26.302656+00:00
+.lake/ps-maintainer/gate08-r2/ConservativeClosure.lean:89:7384: error(lean.unknownIdentifier): Unknown constant `_root_._private.TCSlib.Complexity.ClassNP.PolyTimePairing`
+.lake/ps-maintainer/gate08-r2/ConservativeClosure.lean:89:7441: error: unexpected token '.'; expected command
+.lake/ps-maintainer/gate08-r2/ConservativeClosure.lean:208:4: error: Tactic `rfl` failed: The left-hand side
+  pairFstD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairFstD [] = []
+.lake/ps-maintainer/gate08-r2/ConservativeClosure.lean:216:4: error: Tactic `rfl` failed: The left-hand side
+  pairSndD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairSndD [] = []
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeClosure): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeClosure): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeClosure): no fresh .olean produced
+        1.19 real         1.01 user         0.63 sys
+          1503150080  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              123069  page reclaims
+                  12  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+               14128  involuntary context switches
+            32390393  instructions retired
+            16127953  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:30:27.500472+00:00 RC 1

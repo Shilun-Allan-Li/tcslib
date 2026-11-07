@@ -1,0 +1,744 @@
+START 2026-11-07T05:13:32.284101+00:00
+MODULE TCSlib.Complexity.Randomized.Build.IterateFind: touched 1, constants 2, reached 129
+AXIOMS TCSlib.Complexity.Randomized.Build.IterateFind | Complexity.IterateFind.find?_range_and_lt | [Quot.sound,
+ propext]
+MODULE TCSlib.Complexity.Randomized.Closure: touched 2, constants 2, reached 9
+SEALROW TCSlib.Complexity.Randomized.Closure | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Complexity.Randomized.Closure | Complexity.PolyTimeComputable.comp' | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Complexity.Randomized.Closure | Complexity.PolyTimeComputable.congr | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Asymptotic.PublicKeyLemmas: touched 1, constants 1, reached 209
+SEALROW TCSlib.Cryptography.Asymptotic.PublicKeyLemmas | TCSlib.Cryptography.uexp | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.Asymptotic.PublicKeyLemmas | TCSlib.Cryptography.uexp_half_sub | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Asymptotic.Sampling: touched 4, constants 4, reached 387
+SEALROW TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.uexp | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.abs_uexp_sub_le | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.statClose_one | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.foldl_bits_eq | [propext]
+AXIOMS TCSlib.Cryptography.Asymptotic.Sampling | TCSlib.Cryptography.two_pow_size_le_two_mul | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.Arithmetic: touched 10, constants 14, reached 267
+SEALROW TCSlib.Cryptography.Candidates.Arithmetic | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Arithmetic | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Arithmetic | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Arithmetic | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.natToList_mod_two_pow | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.listToNat_natToList_zero_append | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.natToList_zero_append_drop | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.listToNat_replicate_true | [Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.listToNat_replicate_false | [propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.listToNat_mulStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.subStr_self | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.val_inv_natCast_zmod_zero_le | [Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.ArithmeticFP.le_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Arithmetic | TCSlib.Cryptography.Candidates.ArithmeticFP.prime_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.Concrete: touched 3, constants 3, reached 167
+SEALROW TCSlib.Cryptography.Candidates.Concrete | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.HardcoreBit.PushesUniform | TCSlib.Cryptography.HardcoreBit.Basic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.bitsEquiv | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.bitsToNat | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.firstHit | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Concrete | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.Candidates.rejectBlocksL_eq_find? | [Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL | [Classical.choice,
+ Quot.sound,
+ propext,
+ sorryAx]
+AXIOMS TCSlib.Cryptography.Candidates.Concrete | TCSlib.Cryptography.Candidates.statClose_rejectBlocksL | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.DiscreteLog: touched 6, constants 10, reached 491
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.Uniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.coinsCongr | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.inArg | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.layout | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.ofPolyTimeUniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.output | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Complexity.polyTimeComputable_iterateFind.match_1 | TCSlib.Complexity.Randomized.Repetition | matcher=true | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.modExpStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.rejectBlocksL | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.sizeStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.subStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Collection.SampleClose | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Collection.index | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Negligible | TCSlib.Cryptography.Foundations.Negligible | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.bitsEquiv | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.bitsToNat | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.rejectionSample | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLog | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Collection.D | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.decD | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.gen | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.sample | TCSlib.Cryptography.Asymptotic.Collections
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.statClose_sampleBelowL | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.expSampleRaw | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.dla_ssFind_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.polyTimeComputable_expSampleRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.expCollection_D | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLog | TCSlib.Cryptography.Candidates.expCollection_sampleClose | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.DiscreteLogHardcore: touched 25, constants 45, reached 1214
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.distinguisherL | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.inAdvice | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.inArg | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.layout | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.ofPolyTime | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.output | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.StateLoop.gstep | TCSlib.Complexity.Randomized.Build.StateLoop | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.StateLoop.gstepBound | TCSlib.Complexity.Randomized.Build.StateLoop | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.ExpGroupGen.DLHard | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.ExpGroupGen.FullLengthExcept | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.ExpGroupGen.dlProb | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.ExpValid | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.WellFormedIndex | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.addStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.divModStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlG | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlM | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlP | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlW | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expCollection | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expCollection_coinsEquiv | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expCollection_domEquiv | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expF | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expOrd | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.expUnit | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.leStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.modExpStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.mulStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.natToBits | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.subStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.xgcdStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Collection.SampleClose | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Collection.index | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.HardcoreBit.PushesUniform | TCSlib.Cryptography.HardcoreBit.Basic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.HardcoreBit.majority | TCSlib.Cryptography.HardcoreBit.PairwiseIndependence | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Negligible | TCSlib.Cryptography.Foundations.Negligible | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.NumberTheory.QR | TCSlib.Cryptography.NumberTheory.QuadraticResidues | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.bitsToNat | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.decodeFin | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.invProb | TCSlib.Cryptography.Foundations.Experiments | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.predProb | TCSlib.Cryptography.Foundations.Experiments | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.uexp | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.DiscreteLogHardcore | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.adv | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.advice | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Candidates.ExpGroupGen.gen | TCSlib.Cryptography.Candidates.DiscreteLog
+REDUCIBLE TCSlib.Cryptography.Candidates.ExpGroupGen.n₀ | TCSlib.Cryptography.Candidates.DiscreteLog
+REDUCIBLE TCSlib.Cryptography.Collection.D | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.decD | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.f | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.gen | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.sample | TCSlib.Cryptography.Asymptotic.Collections
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.polyTimeComputable_halfStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_mulMod_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_powMod_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_invMod_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_quot_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_rem_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_take_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_drop_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_eq_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_stateIterate_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_vote_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_iStep_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_iStart_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_oQr_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_oRoot_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_oFin_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_oNext_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_oStep_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_zfix_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_zacc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_raw_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_rootF_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_loop_sem | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_instance | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.DiscreteLogHardcore | TCSlib.Cryptography.Candidates.dlb_reduction | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.ElGamal: touched 16, constants 22, reached 562
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.Uniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.distinguisher | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.inArg | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.layout | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.ofPolyTimeUniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.output | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Complexity.polyTimeComputable_iterateFind.match_1 | TCSlib.Complexity.Randomized.Repetition | matcher=true | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.SafePrimeValid | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.WellFormedIndex | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.divModStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlG | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlM | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlP | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.expF | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.expOrd | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.modExpStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.mulStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.rejectBlocksL | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.sampleBelowL | TCSlib.Cryptography.Candidates.DiscreteLog | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.subStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.xgcdStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.acceptProb | TCSlib.Cryptography.Foundations.Experiments | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.padFin | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.splitCoins | TCSlib.Cryptography.Asymptotic.CollectionsHelpers | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.uexp | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.ElGamal | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Candidates.ExpGroupGen.gen | TCSlib.Cryptography.Candidates.DiscreteLog
+REDUCIBLE TCSlib.Cryptography.Candidates.ExpGroupGen.n₀ | TCSlib.Cryptography.Candidates.DiscreteLog
+REDUCIBLE TCSlib.Cryptography.Candidates.SafePrimeGen | TCSlib.Cryptography.Candidates.DiscreteLog
+REDUCIBLE TCSlib.Cryptography.Ensemble.X | TCSlib.Cryptography.Asymptotic.Ensembles
+REDUCIBLE TCSlib.Cryptography.Ensemble.σ | TCSlib.Cryptography.Asymptotic.Ensembles
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.egGenRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_numPoly_mul | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_numPoly_mod | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_numPoly_two_pow | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_poly_natToList | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_natToList_mod_safeMod | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_ssLoop_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_ssLoop_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.egDecStr | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.polyTimeComputable_egDecStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.egGroupGen | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_splitEquiv | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_uprob_shift | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_encEquiv | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_encEquiv_ofFn | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.ElGamal | TCSlib.Cryptography.Candidates.dlc_hyb3 | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.Factoring: touched 8, constants 8, reached 442
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.Uniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.ofPolyTimeUniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.DistinctPrimes.default | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.DistinctPrimes.p | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.DistinctPrimes.q | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.decodeDistinctPrimes | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.encodeDistinctPrimes | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.leStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.mulStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.natToBits | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Collection.SampleClose | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Collection.index | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.FunFamily.blocks | TCSlib.Cryptography.Asymptotic.OneWay | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Negligible | TCSlib.Cryptography.Foundations.Negligible | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.NumberTheory.chunk | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.NumberTheory.samplePrime | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.NumberTheory.samplePrimeCoins | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.bitsToNat | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.padFin | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Factoring | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Candidates.DistinctPrimes | TCSlib.Cryptography.Candidates.Concrete
+REDUCIBLE TCSlib.Cryptography.Collection.D | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.decD | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.gen | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.sample | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.FunFamily.f | TCSlib.Cryptography.Asymptotic.OneWay
+REDUCIBLE TCSlib.Cryptography.FunFamily.inLen | TCSlib.Cryptography.Asymptotic.OneWay
+REDUCIBLE TCSlib.Cryptography.FunFamily.outLen | TCSlib.Cryptography.Asymptotic.OneWay
+REDUCIBLE TCSlib.Cryptography.NumberTheory.Primes | TCSlib.Cryptography.NumberTheory.Chebyshev
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.fmult_inv_factor | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.fac_natToList_lead | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.fac_polyTimeComputable_isOne | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.fac_bitsToNat_false | [Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.samplePrimeL | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.fac_natToList_two | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.factoringCollection_index | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Factoring | TCSlib.Cryptography.Candidates.factoringCollection_sampleClose | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.RSA: touched 25, constants 51, reached 729
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.inAdvice | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.inArg | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.layout | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.ofPolyTimeUniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.output | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.DistinctPrimes.default | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.DistinctPrimes.p | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.DistinctPrimes.q | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.divModStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.modExpStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.mulStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.primeStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rejectBlocksL | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.samplePrimeL | TCSlib.Cryptography.Candidates.Factoring | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.sizeStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.subStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.xgcdStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.NumberTheory.samplePrimeCoins | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.RSA | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Candidates.DistinctPrimes | TCSlib.Cryptography.Candidates.Concrete
+REDUCIBLE TCSlib.Cryptography.NumberTheory.Primes | TCSlib.Cryptography.NumberTheory.Chebyshev
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.sampleUnitL_getD_spec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsaGenRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_unitTest_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_usOut | []
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_usBlock_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_usAcc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_usFind_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_ptc_unitSampleStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_listToNat_three | []
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_norm | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gP_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gQ_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gValid_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gPhi_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gE_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_gNorm_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_genCore_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_genCore_spec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.polyTimeComputable_rsaGenRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_dec_unitSampleStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsaSampler_spec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsaFromFactorRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_fOut_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.rsa_fOut_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.RSA | TCSlib.Cryptography.Candidates.polyTimeComputable_rsaFromFactorRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.Candidates.Rabin: touched 38, constants 65, reached 1040
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.Uniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.coinLen | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.coinsEquivPoly | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.inAdvice | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.inArg | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.inCoins | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.inParam | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.inverter | TCSlib.Cryptography.Asymptotic.Adversary | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.layout | TCSlib.Complexity.Randomized.Closure | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.ofPolyTime | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.ofPolyTimeUniform | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.output | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.runAt | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.NUPPT.runAtL | TCSlib.Complexity.Randomized.PPT | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.DistinctPrimes.p | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.DistinctPrimes.q | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.addStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.divModStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.encodeDistinctPrimes | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.modExpStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.modulusBits | TCSlib.Cryptography.Candidates.Factoring | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.mulStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.natToBits | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.natToList | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rejectBlocksL | TCSlib.Cryptography.Candidates.Concrete | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rsaBlock | TCSlib.Cryptography.Candidates.RSA | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rsaSampleCoins | TCSlib.Cryptography.Candidates.RSA | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rsaTrials | TCSlib.Cryptography.Candidates.RSA | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.sampleUnitL | TCSlib.Cryptography.Candidates.RSA | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.subStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.unitSampleStr | TCSlib.Cryptography.Candidates.RSA | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.xgcdStr | TCSlib.Cryptography.Candidates.Arithmetic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Collection.SampleClose | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Collection.index | TCSlib.Cryptography.Asymptotic.Collections | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.HardcoreBit.PushesUniform | TCSlib.Cryptography.HardcoreBit.Basic | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Negligible | TCSlib.Cryptography.Foundations.Negligible | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.NumberTheory.QR | TCSlib.Cryptography.NumberTheory.QuadraticResidues | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.NumberTheory.listToNat | TCSlib.Cryptography.NumberTheory.Primality | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.NumberTheory.sqTo | TCSlib.Cryptography.NumberTheory.QuadraticResidues | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.bitsToNat | TCSlib.Cryptography.Asymptotic.Sampling | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+SEALROW TCSlib.Cryptography.Candidates.Rabin | Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | matcher=false | Lean.ReducibilityStatus.semireducible
+REDUCIBLE Complexity.NUPPT.Coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.adv | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.advice | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE Complexity.NUPPT.coins | TCSlib.Complexity.Randomized.PPT
+REDUCIBLE TCSlib.Cryptography.Candidates.DistinctPrimes | TCSlib.Cryptography.Candidates.Concrete
+REDUCIBLE TCSlib.Cryptography.Collection.D | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.decD | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.encD | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.f | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.gen | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.Collection.sample | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.NumberTheory.Primes | TCSlib.Cryptography.NumberTheory.Chebyshev
+REDUCIBLE TCSlib.Cryptography.PermCollection.perm | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.PermCollection.toCollection | TCSlib.Cryptography.Asymptotic.Collections
+REDUCIBLE TCSlib.Cryptography.TrapdoorCollection.toPermCollection | TCSlib.Cryptography.Asymptotic.Collections
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabinGenRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_rbAcc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_rbFind_eq | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_pad_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_spOut_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_four | []
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_mod_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_oddAcc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_blumAcc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_oddAcc_spec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_gU_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_gC1_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_gC2_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_genCore_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabinSampler | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_dec_unitSampleStr | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_coins_sampler | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabinCollection_sampleClose | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabinFactorRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_fOut_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_fOut_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_core | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.blumInvRaw | [Quot.sound, propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_zpad | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_zpad_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_cE | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_cInv | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_cTerm | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_listToNat_crtW | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_crtW_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_trunc_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_trunc_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.polyTimeComputable_blumInvRaw | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.blumSampler_spec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_statClose_blumDec | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabinBlumTrapdoor_sampleClose | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_rOut_eq | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.Candidates.Rabin | TCSlib.Cryptography.Candidates.rabin_rOut_poly | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.HardcoreBit.Basic: touched 1, constants 1, reached 56
+SEALROW TCSlib.Cryptography.HardcoreBit.Basic | TCSlib.Cryptography.uexp | TCSlib.Cryptography.Foundations.Probability | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.HardcoreBit.Basic | TCSlib.Cryptography.HardcoreBit.pushesUniform_restrict | [Classical.choice,
+ Quot.sound,
+ propext]
+MODULE TCSlib.Cryptography.NumberTheory.Primality: touched 4, constants 4, reached 51
+AXIOMS TCSlib.Cryptography.NumberTheory.Primality | TCSlib.Cryptography.NumberTheory.listToNat_nil | []
+AXIOMS TCSlib.Cryptography.NumberTheory.Primality | TCSlib.Cryptography.NumberTheory.listToNat_cons | [propext]
+AXIOMS TCSlib.Cryptography.NumberTheory.Primality | TCSlib.Cryptography.NumberTheory.listToNat_append | [Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.NumberTheory.Primality | TCSlib.Cryptography.NumberTheory.listToNat_singleton_true | []
+MODULE TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas: touched 2, constants 30, reached 209
+SEALROW TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas | TCSlib.Cryptography.HardcoreBit.PushesUniform | TCSlib.Cryptography.HardcoreBit.Basic | matcher=false | Lean.ReducibilityStatus.semireducible
+AXIOMS TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas | TCSlib.Cryptography.ColZK.pushesUniform_offsetTable | [Classical.choice,
+ Quot.sound,
+ propext]
+AXIOMS TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas | TCSlib.Cryptography.ColZK.pushesUniform_blockFields | [Classical.choice,
+ Quot.sound,
+ propext]
+       46.07 real        44.49 user         0.97 sys
+          2477473792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              186146  page reclaims
+                8178  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 301  voluntary context switches
+               12933  involuntary context switches
+            32400811  instructions retired
+            15351327  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:14:18.358446+00:00 RC 0

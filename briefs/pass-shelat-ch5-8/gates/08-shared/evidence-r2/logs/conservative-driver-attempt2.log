@@ -1,0 +1,23 @@
+CollectConservative rc=0 (completed pinned check retained)
+ConservativeIterateFind rc=1
+ConservativeClosure rc=1
+ConservativePublicKeyLemmas rc=1
+ConservativeSampling rc=1
+ConservativeArithmetic rc=1
+ConservativeConcrete rc=1
+ConservativeDiscreteLog rc=1
+ConservativeDiscreteLogHardcore rc=1
+ConservativeElGamal rc=1
+ConservativeFactoring rc=1
+ConservativeRSA rc=1
+ConservativeRabin rc=1
+ConservativeBasic rc=1
+ConservativePrimality rc=1
+ConservativeColZKLemmas rc=1
+AnonymousOnlyUnsealed rc=1
+AnonymousOnlySealed rc=1
+Traceback (most recent call last):
+  File "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/gates/08-shared/evidence-r2/conservative-checks.py", line 131, in <module>
+    assert rc_plain == 0 and rc_sealed != 0 and len(re.findall(r"\.lean:\d+:\d+: error:", text)) == 1
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

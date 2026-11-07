@@ -1,0 +1,119 @@
+import TCSlib.Cryptography.Candidates.Rabin
+import TCSlib.Cryptography.Candidates.DiscreteLogHardcore
+import TCSlib.Cryptography.Candidates.ElGamal
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas
+import TCSlib.Cryptography.Asymptotic.PublicKeyLemmas
+open Lean Meta Elab Command
+
+/-- user-facing name of a constant (private prefix removed) -/
+def userStr (n : Name) : String := ((privateToUserName? n).getD n).toString
+
+def matchesTouched (ts : List String) (n : Name) : Bool :=
+  let s := userStr n
+  ts.any fun t => s == t || s.endsWith ("." ++ t) ||
+    (s.splitOn (t ++ ".")).length > 1 && (s.startsWith (t ++ ".") || (s.splitOn ("." ++ t ++ ".")).length > 1)
+
+def isTCS (env : Environment) (c : Name) : Option Name :=
+  match env.getModuleIdxFor? c with
+  | some mi => let m := env.header.moduleNames[mi.toNat]!; if (`TCSlib).isPrefixOf m then some m else none
+  | none => none
+
+syntax (name := collectCmd) "#collect " ident "[" str,* "]" : command
+
+@[command_elab collectCmd] def elabCollect : CommandElab := fun stx => do
+  let modN := stx[1].getId
+  let ts : List String := (stx[3].getSepArgs.map fun s => s.isStrLit?.getD "").toList
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? modN | throwError "no module {modN}"
+  let mut ours : Array Name := #[]
+  for (n, _) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some modIdx && matchesTouched ts n then ours := ours.push n
+  -- every touched name must be found
+  for t in ts do
+    unless ours.any (fun n => userStr n == t || (userStr n).endsWith ("." ++ t)) do
+      logWarning m!"TOUCHED-NOT-FOUND {t}"
+  -- wide pass: types of all constants reached; values of own-module definitions, transitively
+  let mut cs : NameSet := {}
+  let mut seen : NameSet := {}
+  let mut stack : List Name := []
+  for n in ours do
+    let some ci := env.find? n | continue
+    stack := stack ++ ci.type.getUsedConstants.toList ++ (ci.value?.map (·.getUsedConstants.toList) |>.getD [])
+  while !stack.isEmpty do
+    let c := stack.head!
+    stack := stack.tail!
+    if seen.contains c then continue
+    seen := seen.insert c
+    cs := cs.insert c
+    let some cc := env.find? c | continue
+    stack := stack ++ cc.type.getUsedConstants.toList
+    if env.getModuleIdxFor? c == some modIdx && cc.isDefinition then
+      stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
+  let mut rows : Array String := #[]
+  let mut reds : Array String := #[]
+  for c in cs.toList do
+    let some m := isTCS env c | continue
+    if m == modN then continue
+    let some cinfo := env.find? c | continue
+    unless cinfo.isDefinition do continue
+    if isInstanceCore env c then continue
+    let isM := (Match.Extension.getMatcherInfo? env c).isSome
+    let st ← liftCoreM <| getReducibilityStatus c
+    if !isM && st == .reducible then
+      reds := reds.push s!"REDUCIBLE {c} | {m}"
+      continue
+    rows := rows.push s!"SEALROW {modN} | {c} | {m} | matcher={isM} | {repr st}"
+  logInfo m!"MODULE {modN}: touched {ts.length}, constants {ours.size}, reached {cs.size}"
+  for r in rows.qsort (· < ·) do logInfo m!"{r}"
+  for r in reds.qsort (· < ·) do logInfo m!"{r}"
+
+syntax (name := axsCmd) "#axs " ident "[" str,* "]" : command
+
+/-- axioms of every touched top-level declaration of a module (private ones included) -/
+@[command_elab axsCmd] def elabAxs : CommandElab := fun stx => do
+  let modN := stx[1].getId
+  let ts : List String := (stx[3].getSepArgs.map fun s => s.isStrLit?.getD "").toList
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? modN | throwError "no module {modN}"
+  for t in ts do
+    let mut found := false
+    for (n, _) in env.constants.map₁.toList do
+      if env.getModuleIdxFor? n == some modIdx then
+        let s := userStr n
+        if s == t || s.endsWith ("." ++ t) then
+          found := true
+          let axs ← liftCoreM <| collectAxioms n
+          let axs := axs.qsort (fun a b => a.toString < b.toString)
+          logInfo m!"AXIOMS {modN} | {s} | {axs.toList}"
+    unless found do logWarning m!"AXIOMS-NOT-FOUND {t}"
+
+#collect TCSlib.Complexity.Randomized.Build.IterateFind ["find?_range_and_lt"]
+#axs TCSlib.Complexity.Randomized.Build.IterateFind ["find?_range_and_lt"]
+#collect TCSlib.Complexity.Randomized.Closure ["PolyTimeComputable.comp'", "PolyTimeComputable.congr"]
+#axs TCSlib.Complexity.Randomized.Closure ["PolyTimeComputable.comp'", "PolyTimeComputable.congr"]
+#collect TCSlib.Cryptography.Asymptotic.PublicKeyLemmas ["uexp_half_sub"]
+#axs TCSlib.Cryptography.Asymptotic.PublicKeyLemmas ["uexp_half_sub"]
+#collect TCSlib.Cryptography.Asymptotic.Sampling ["abs_uexp_sub_le", "statClose_one", "foldl_bits_eq", "two_pow_size_le_two_mul"]
+#axs TCSlib.Cryptography.Asymptotic.Sampling ["abs_uexp_sub_le", "statClose_one", "foldl_bits_eq", "two_pow_size_le_two_mul"]
+#collect TCSlib.Cryptography.Candidates.Arithmetic ["natToList_mod_two_pow", "listToNat_natToList_zero_append", "natToList_zero_append_drop", "listToNat_replicate_true", "listToNat_replicate_false", "listToNat_mulStr", "subStr_self", "val_inv_natCast_zmod_zero_le", "ArithmeticFP.le_poly", "ArithmeticFP.prime_poly"]
+#axs TCSlib.Cryptography.Candidates.Arithmetic ["natToList_mod_two_pow", "listToNat_natToList_zero_append", "natToList_zero_append_drop", "listToNat_replicate_true", "listToNat_replicate_false", "listToNat_mulStr", "subStr_self", "val_inv_natCast_zmod_zero_le", "ArithmeticFP.le_poly", "ArithmeticFP.prime_poly"]
+#collect TCSlib.Cryptography.Candidates.Concrete ["rejectBlocksL_eq_find?", "polyTimeComputable_rejectBlocksL", "statClose_rejectBlocksL"]
+#axs TCSlib.Cryptography.Candidates.Concrete ["rejectBlocksL_eq_find?", "polyTimeComputable_rejectBlocksL", "statClose_rejectBlocksL"]
+#collect TCSlib.Cryptography.Candidates.DiscreteLog ["statClose_sampleBelowL", "expSampleRaw", "dla_ssFind_eq", "polyTimeComputable_expSampleRaw", "expCollection_D", "expCollection_sampleClose"]
+#axs TCSlib.Cryptography.Candidates.DiscreteLog ["statClose_sampleBelowL", "expSampleRaw", "dla_ssFind_eq", "polyTimeComputable_expSampleRaw", "expCollection_D", "expCollection_sampleClose"]
+#collect TCSlib.Cryptography.Candidates.DiscreteLogHardcore ["polyTimeComputable_halfStr", "dlb_mulMod_poly", "dlb_powMod_poly", "dlb_invMod_poly", "dlb_quot_poly", "dlb_rem_poly", "dlb_take_poly", "dlb_drop_poly", "dlb_eq_poly", "dlb_stateIterate_poly", "dlb_vote_poly", "dlb_iStep_poly", "dlb_iStart_poly", "dlb_oQr_poly", "dlb_oRoot_poly", "dlb_oFin_poly", "dlb_oNext_poly", "dlb_oStep_poly", "dlb_zfix_poly", "dlb_zacc_poly", "dlb_raw_poly", "dlb_rootF_eq", "dlb_loop_sem", "dlb_instance", "dlb_reduction"]
+#axs TCSlib.Cryptography.Candidates.DiscreteLogHardcore ["polyTimeComputable_halfStr", "dlb_mulMod_poly", "dlb_powMod_poly", "dlb_invMod_poly", "dlb_quot_poly", "dlb_rem_poly", "dlb_take_poly", "dlb_drop_poly", "dlb_eq_poly", "dlb_stateIterate_poly", "dlb_vote_poly", "dlb_iStep_poly", "dlb_iStart_poly", "dlb_oQr_poly", "dlb_oRoot_poly", "dlb_oFin_poly", "dlb_oNext_poly", "dlb_oStep_poly", "dlb_zfix_poly", "dlb_zacc_poly", "dlb_raw_poly", "dlb_rootF_eq", "dlb_loop_sem", "dlb_instance", "dlb_reduction"]
+#collect TCSlib.Cryptography.Candidates.ElGamal ["egGenRaw", "dlc_numPoly_mul", "dlc_numPoly_mod", "dlc_numPoly_two_pow", "dlc_poly_natToList", "dlc_natToList_mod_safeMod", "dlc_ssLoop_poly", "dlc_ssLoop_eq", "egDecStr", "polyTimeComputable_egDecStr", "egGroupGen", "dlc_splitEquiv", "dlc_uprob_shift", "dlc_encEquiv", "dlc_encEquiv_ofFn", "dlc_hyb3"]
+#axs TCSlib.Cryptography.Candidates.ElGamal ["egGenRaw", "dlc_numPoly_mul", "dlc_numPoly_mod", "dlc_numPoly_two_pow", "dlc_poly_natToList", "dlc_natToList_mod_safeMod", "dlc_ssLoop_poly", "dlc_ssLoop_eq", "egDecStr", "polyTimeComputable_egDecStr", "egGroupGen", "dlc_splitEquiv", "dlc_uprob_shift", "dlc_encEquiv", "dlc_encEquiv_ofFn", "dlc_hyb3"]
+#collect TCSlib.Cryptography.Candidates.Factoring ["fmult_inv_factor", "fac_natToList_lead", "fac_polyTimeComputable_isOne", "fac_bitsToNat_false", "samplePrimeL", "fac_natToList_two", "factoringCollection_index", "factoringCollection_sampleClose"]
+#axs TCSlib.Cryptography.Candidates.Factoring ["fmult_inv_factor", "fac_natToList_lead", "fac_polyTimeComputable_isOne", "fac_bitsToNat_false", "samplePrimeL", "fac_natToList_two", "factoringCollection_index", "factoringCollection_sampleClose"]
+#collect TCSlib.Cryptography.Candidates.RSA ["sampleUnitL_getD_spec", "rsaGenRaw", "rsa_unitTest_eq", "rsa_usOut", "rsa_usBlock_poly", "rsa_usAcc_poly", "rsa_usFind_eq", "rsa_ptc_unitSampleStr", "rsa_listToNat_three", "rsa_norm", "rsa_gP_poly", "rsa_gQ_poly", "rsa_gValid_poly", "rsa_gPhi_poly", "rsa_gE_poly", "rsa_gNorm_poly", "rsa_genCore_poly", "rsa_genCore_spec", "polyTimeComputable_rsaGenRaw", "rsa_dec_unitSampleStr", "rsaSampler_spec", "rsaFromFactorRaw", "rsa_fOut_poly", "rsa_fOut_eq", "polyTimeComputable_rsaFromFactorRaw"]
+#axs TCSlib.Cryptography.Candidates.RSA ["sampleUnitL_getD_spec", "rsaGenRaw", "rsa_unitTest_eq", "rsa_usOut", "rsa_usBlock_poly", "rsa_usAcc_poly", "rsa_usFind_eq", "rsa_ptc_unitSampleStr", "rsa_listToNat_three", "rsa_norm", "rsa_gP_poly", "rsa_gQ_poly", "rsa_gValid_poly", "rsa_gPhi_poly", "rsa_gE_poly", "rsa_gNorm_poly", "rsa_genCore_poly", "rsa_genCore_spec", "polyTimeComputable_rsaGenRaw", "rsa_dec_unitSampleStr", "rsaSampler_spec", "rsaFromFactorRaw", "rsa_fOut_poly", "rsa_fOut_eq", "polyTimeComputable_rsaFromFactorRaw"]
+#collect TCSlib.Cryptography.Candidates.Rabin ["rabinGenRaw", "rabin_rbAcc_poly", "rabin_rbFind_eq", "rabin_pad_poly", "rabin_spOut_poly", "rabin_listToNat_four", "rabin_mod_poly", "rabin_oddAcc_poly", "rabin_blumAcc_poly", "rabin_oddAcc_spec", "rabin_gU_poly", "rabin_gC1_poly", "rabin_gC2_poly", "rabin_genCore_poly", "rabinSampler", "rabin_dec_unitSampleStr", "rabin_coins_sampler", "rabinCollection_sampleClose", "rabinFactorRaw", "rabin_fOut_poly", "rabin_fOut_eq", "rabin_core", "blumInvRaw", "rabin_listToNat_zpad", "rabin_zpad_poly", "rabin_listToNat_cE", "rabin_listToNat_cInv", "rabin_listToNat_cTerm", "rabin_listToNat_crtW", "rabin_crtW_poly", "rabin_trunc_eq", "rabin_trunc_poly", "polyTimeComputable_blumInvRaw", "blumSampler_spec", "rabin_statClose_blumDec", "rabinBlumTrapdoor_sampleClose", "rabin_rOut_eq", "rabin_rOut_poly"]
+#axs TCSlib.Cryptography.Candidates.Rabin ["rabinGenRaw", "rabin_rbAcc_poly", "rabin_rbFind_eq", "rabin_pad_poly", "rabin_spOut_poly", "rabin_listToNat_four", "rabin_mod_poly", "rabin_oddAcc_poly", "rabin_blumAcc_poly", "rabin_oddAcc_spec", "rabin_gU_poly", "rabin_gC1_poly", "rabin_gC2_poly", "rabin_genCore_poly", "rabinSampler", "rabin_dec_unitSampleStr", "rabin_coins_sampler", "rabinCollection_sampleClose", "rabinFactorRaw", "rabin_fOut_poly", "rabin_fOut_eq", "rabin_core", "blumInvRaw", "rabin_listToNat_zpad", "rabin_zpad_poly", "rabin_listToNat_cE", "rabin_listToNat_cInv", "rabin_listToNat_cTerm", "rabin_listToNat_crtW", "rabin_crtW_poly", "rabin_trunc_eq", "rabin_trunc_poly", "polyTimeComputable_blumInvRaw", "blumSampler_spec", "rabin_statClose_blumDec", "rabinBlumTrapdoor_sampleClose", "rabin_rOut_eq", "rabin_rOut_poly"]
+#collect TCSlib.Cryptography.HardcoreBit.Basic ["pushesUniform_restrict"]
+#axs TCSlib.Cryptography.HardcoreBit.Basic ["pushesUniform_restrict"]
+#collect TCSlib.Cryptography.NumberTheory.Primality ["listToNat_nil", "listToNat_cons", "listToNat_append", "listToNat_singleton_true"]
+#axs TCSlib.Cryptography.NumberTheory.Primality ["listToNat_nil", "listToNat_cons", "listToNat_append", "listToNat_singleton_true"]
+#collect TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas ["pushesUniform_offsetTable", "pushesUniform_blockFields"]
+#axs TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColZKLemmas ["pushesUniform_offsetTable", "pushesUniform_blockFields"]

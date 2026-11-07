@@ -1,0 +1,35 @@
+START 2026-11-07T05:44:01.214504+00:00
+SUPPLEMENT-SEAL active=1212 already=18
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog.lean:469:22: error: Application type mismatch: The argument
+  fun c => ?m.14
+has type
+  (c : ?m.12) → ?m.15 c
+but is expected to have type
+  Negligible fun x => 0
+in the application
+  And.intro fun c => ?m.14
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog.lean:469:31: error: Invalid `⟨...⟩` notation: The expected type of this term could not be determined
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog.lean:470:2: error: No goals to be solved
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedDiscreteLog): no fresh .olean produced
+       22.75 real        23.23 user         1.04 sys
+          2483961856  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              197981  page reclaims
+                2110  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 103  voluntary context switches
+               25830  involuntary context switches
+            33424545  instructions retired
+            23831384  cycles elapsed
+             1655120  peak memory footprint
+
+END 2026-11-07T05:44:23.976740+00:00 RC 1

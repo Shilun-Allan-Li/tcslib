@@ -1,0 +1,31 @@
+START 2026-11-07T05:46:42.326086+00:00
+SUPPLEMENT-SEAL active=2 already=0
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedBasic.lean:111:2: error: Type mismatch
+  div_le_div_of_nonneg_right (sum_le_sum fun ω x => h ω) (Nat.cast_nonneg ?m.31)
+has type
+  (∑ i ∈ ?m.23, f i) / ↑?m.31 ≤ (∑ i ∈ ?m.23, g i) / ↑?m.31
+but is expected to have type
+  uexp f ≤ uexp g
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedBasic): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedBasic): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedBasic): no fresh .olean produced
+       11.04 real        10.03 user         0.77 sys
+          1663533056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              132827  page reclaims
+                6138  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 941  voluntary context switches
+               21328  involuntary context switches
+            32718419  instructions retired
+            14725437  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:46:53.371034+00:00 RC 1

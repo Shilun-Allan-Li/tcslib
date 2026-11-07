@@ -1,0 +1,44 @@
+diff --git a/TCSlib/Cryptography/Candidates/Arithmetic.lean b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+index d635c8f2..bf6e09f2 100644
+--- a/TCSlib/Cryptography/Candidates/Arithmetic.lean
++++ b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+@@ -192,7 +192,7 @@ theorem listToNat_natToList_zero_append (k : ℕ) (w : List Bool) :
+     listToNat (natToList k 0 ++ w) = listToNat w := by
+   rw [listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+ 
+-/-- **Width normalization by truncation**: the last `|b|` bits of `⟦0⟧_W ++ b` are the
++/-- **Width normalization by truncation**: the last `W` bits of `⟦0⟧_W ++ b` are the
+ `W`-bit numeral of `⟦b⟧`, `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W` (the low `W` bits, also when
+ `⟦b⟧ ≥ 2^W`).
+ 
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index 5578b755..99283dfa 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -592,7 +592,7 @@ polynomial-time words `par z` (the parameter), `kw z`, `bw z` and `tw z`, whose
+ trial width `k`, the block length `B` and the trial count `T`, and `c z` (the coins). Then some
+ polynomial-time `g` computes the sampler `rejectBlocksL (E ⟦par z⟧) k B T (c z)`:
+ - `g z = []` when every trial is rejected;
+-- otherwise `g z = true :: b`, where `b` reads as the accepted value and has at most `k` bits.
++- otherwise `g z` is nonempty, and its tail reads as the accepted value and has at most `k` bits.
+ 
+ That is, `(g z).tail.length ≤ k` and
+ `rejectBlocksL (E ⟦par z⟧) k B T (c z) = if g z = [] then none else some ⟦(g z).tail⟧`.
+diff --git a/briefs/pass-shelat-ch5-8/gates/08-shared/evidence/tools/collect_body.lean b/briefs/pass-shelat-ch5-8/gates/08-shared/evidence/tools/collect_body.lean
+index 26111bd1..11452051 100644
+--- a/briefs/pass-shelat-ch5-8/gates/08-shared/evidence/tools/collect_body.lean
++++ b/briefs/pass-shelat-ch5-8/gates/08-shared/evidence/tools/collect_body.lean
+@@ -41,10 +41,9 @@ syntax (name := collectCmd) "#collect " ident "[" str,* "]" : command
+     seen := seen.insert c
+     cs := cs.insert c
+     let some cc := env.find? c | continue
+-    if env.getModuleIdxFor? c == some modIdx then
+-      stack := stack ++ cc.type.getUsedConstants.toList
+-      if cc.isDefinition then
+-        stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
++    stack := stack ++ cc.type.getUsedConstants.toList
++    if env.getModuleIdxFor? c == some modIdx && cc.isDefinition then
++      stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
+   let mut rows : Array String := #[]
+   let mut reds : Array String := #[]
+   for c in cs.toList do

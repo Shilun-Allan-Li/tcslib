@@ -1,0 +1,48 @@
+START 2026-11-07T05:31:05.026630+00:00
+.lake/ps-maintainer/gate08-r2/ConservativePrimality.lean:97:10563: error(lean.unknownIdentifier): Unknown constant `_root_._private.TCSlib.Complexity.ClassNP.PolyTimePairing`
+.lake/ps-maintainer/gate08-r2/ConservativePrimality.lean:97:10620: error: unexpected token '.'; expected command
+.lake/ps-maintainer/gate08-r2/ConservativePrimality.lean:676:2: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  bitsToNat b = listToNat (List.ofFn b)
+.lake/ps-maintainer/gate08-r2/ConservativePrimality.lean:944:2: error: Type mismatch
+  spFind_eq n r
+has type
+  (match
+      List.find? (fun i => spAcc (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r))))
+        (List.range (PolyExpr.var.eval (pairEncode (List.replicate n true) (List.ofFn r)).length + 1)) with
+    | some i => spOut (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r)))
+    | none => []) =
+    (Option.map List.ofFn (samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r))).getD []
+but is expected to have type
+  (match
+      List.find? (fun i => spAcc (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r))))
+        (List.range (PolyExpr.var.eval (pairEncode (List.replicate n true) (List.ofFn r)).length + 1)) with
+    | some i => spOut (spStep^[i] (pairEncode (List.replicate n true) (List.ofFn r)))
+    | none => []) =
+    (Option.map List.ofFn (samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n r))).getD []
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativePrimality): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativePrimality): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativePrimality): no fresh .olean produced
+        2.71 real         4.55 user         0.81 sys
+          2422030336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              195484  page reclaims
+                  14  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  17  voluntary context switches
+               16699  involuntary context switches
+            32198884  instructions retired
+            16603491  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:31:07.739539+00:00 RC 1

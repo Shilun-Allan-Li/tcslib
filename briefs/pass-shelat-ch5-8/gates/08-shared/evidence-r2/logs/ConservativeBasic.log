@@ -1,0 +1,30 @@
+START 2026-11-07T05:31:03.590232+00:00
+.lake/ps-maintainer/gate08-r2/ConservativeBasic.lean:86:2: error: Type mismatch
+  div_le_div_of_nonneg_right (sum_le_sum fun ω x => h ω) (Nat.cast_nonneg ?m.31)
+has type
+  (∑ i ∈ ?m.23, f i) / ↑?m.31 ≤ (∑ i ∈ ?m.23, g i) / ↑?m.31
+but is expected to have type
+  uexp f ≤ uexp g
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeBasic): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeBasic): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeBasic): no fresh .olean produced
+        1.39 real         1.36 user         0.64 sys
+          1617969152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              135957  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  18  voluntary context switches
+               15369  involuntary context switches
+            32193844  instructions retired
+            14831943  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:31:04.988980+00:00 RC 1

@@ -1,0 +1,30 @@
+START 2026-11-07T05:37:15.462744+00:00
+.lake/ps-maintainer/gate08-r2/ClosureAllConcrete.lean:361:59: error: unsolved goals
+n : ℕ
+z : { z // Nat.Prime (bitsToNat z.1) ∧ Nat.Prime (bitsToNat z.2) }
+⊢ ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).1 = bitsToNat (↑z).1 ∧
+    ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).2 = bitsToNat (↑z).2
+.lake/ps-maintainer/gate08-r2/ClosureAllConcrete.lean:651:8: warning: declaration uses 'sorry'
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureAllConcrete): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureAllConcrete): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureAllConcrete): no fresh .olean produced
+       20.01 real        20.71 user         0.93 sys
+          2453848064  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              199868  page reclaims
+                 755  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 147  voluntary context switches
+               23517  involuntary context switches
+            33397980  instructions retired
+            15493148  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:37:35.480279+00:00 RC 1

@@ -1,0 +1,37 @@
+START 2026-11-07T05:42:56.807022+00:00
+SUPPLEMENT-SEAL active=15 already=0
+.lake/ps-maintainer/gate08-r2/ClosureVerifiedSampling.lean:314:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+Ω : Type u_1
+γ : Type u_2
+inst✝² : Fintype Ω
+inst✝¹ : Fintype γ
+inst✝ : DecidableEq γ
+π : Ω → γ
+c : ℕ
+hc : 0 < c
+hfib : ∀ (g : γ), #{ω | π ω = g} = c
+⊢ HardcoreBit.PushesUniform π
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedSampling): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedSampling): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureVerifiedSampling): no fresh .olean produced
+       19.21 real        21.70 user         0.89 sys
+          2261172224  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184427  page reclaims
+                 533  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   3  signals received
+                  55  voluntary context switches
+               19901  involuntary context switches
+            32545068  instructions retired
+            24300896  cycles elapsed
+             1655120  peak memory footprint
+
+END 2026-11-07T05:43:16.023681+00:00 RC 1

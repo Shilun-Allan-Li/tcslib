@@ -1,0 +1,556 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import Mathlib.Data.Nat.Bits
+import Mathlib.Tactic.FinCases
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.Randomized.Build.IterateFindHost
+import TCSlib.Complexity.Randomized.Primitives
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The machine behind the repetition lemma
+
+The finite machine behind `Complexity.polyTimeComputable_iterateFind`
+(`TCSlib.Complexity.Randomized.Repetition`, the load-bearing lemma of the Pass–shelat campaign,
+foundation decision D11 of `PassShelatChapter2-4Plan.md`): iterate a polynomial-time step `g`
+at most `R(|x|)` times on a polynomially bounded orbit and return the payload `out` of the first
+orbit point accepted by `acc` (`[]` on exhaustion). Every theorem of [PS10, ch. 2–4] that
+repeats an adversary — Algorithm 38.5's `2nm²p(n)` attempts with first success
+[PS10, Theorem 35.1], the `n(2^k − 1)` calls of Goldreich–Levin [PS10, Theorem 87.3], the
+truncated simulators [PS10, Algorithms 123.4 and 128.7] — reduces to this machine.
+
+## Construction (DESIGN.md §2.6, the three panel repairs built in)
+
+The machine is an instance of the result-bearing loop combinator
+`Turing.FinTM.exists_loopFindTM` (`TCSlib.Complexity.TuringMachine.Build.Loop`).
+
+1. *State word.* The loop state is the pair `⟨x, s⟩` (`Turing.pairEncode x s`) of the input
+   and the current orbit point; the loop invariant `Inv` says the word *is* such a pair with
+   `|s| ≤ P|x|`; the step is the length-guarded `Complexity.IterateFind.step`
+   (`⟨x, g s⟩` if `|g s| ≤ P|x|`, else unchanged), under which the invariant is closed for
+   every admissible word; on the orbit the guard never fires (the pure lemmas of
+   `TCSlib.Complexity.Randomized.Repetition`).
+2. *Modules.* Three clean-call modules over the state word, from
+   `Turing.FinTM.exists_installCallTM`/`exists_emitCallTM` applied to FP functions: the
+   **verdict** install `w ↦ ⟨[acc (snd w)], w⟩` (the verdict as the first cell of the installed
+   word), the **step** install `w' ↦ step` on the pair carried by `w'`, and the **payload** emit
+   `w' ↦ out (snd (snd w'))`; plus the startup module `x ↦ ⟨x, x⟩`
+   (`Turing.FinTM.computesFunInTime_pairDup`) and a two-state copier that puts the native
+   input on tape 0 first.
+3. *Gluing.* Each module is converted into a first-halting source (a release flag stops it one
+   silent step after its first positive exit), padded to the common tape count, and embedded
+   into one finite host through the forwarding transformer `Turing.emitAction`; the host's own
+   control has three fresh states — the loop **anchor** (never a module-internal state), a
+   **branch** state reading the verdict cell of tape 0, and a **halt** state. Modules return
+   to fixed host states: copier → startup install → anchor; verdict → branch; branch → payload
+   emit (verdict `true`) or step install (verdict `false`); payload emit → halt; step → anchor.
+4. *Budgets.* All requests are state words of length at most `Q n + 4` with
+   `Q n = 2n + 2 + P n`; every module's polynomial budget on its argument is majorised by one
+   common `A · (Q n + 5)^D`, which also pays for the fuel machine `x ↦ Nat.bits (R|x|)`
+   (`Complexity.polyTimeComputable_unaryPoly R` composed with
+   `Turing.FinTM.computesFunInTime_lengthBits`, so that the `find?` range is exactly
+   `R|x| + 1`). The loop combinator returns a machine within `c (T n + 1)(R n + 2)`, which
+   `PolyExpr.eval_le` puts in the normal form of `Complexity.PolyTimeComputable`.
+
+The clean modules and the finite host (steps 2–3: release-flag stop, padding, forwarding host,
+first-halt cutting) are the public clean-module host
+`TCSlib.Complexity.TuringMachine.Build.ModuleHost` (host H14 of `machine-library-design.md` §14);
+its instance for this machine (the copier, the control table, the return states) lives in
+`TCSlib.Complexity.Randomized.Build.IterateFindHost`.
+This file supplies the pure step, the FP functions of the modules, the budget arithmetic, and the
+assembly through `Turing.FinTM.exists_loopFindTM`.
+
+## Main definitions
+
+* `Complexity.IterateFind.step` — the length-guarded step on the state word (definitionally
+  `Complexity.guardedStep`).
+
+## Main results
+
+* `Complexity.IterateFind.polyTimeComputable_find` — the loop-level form of the repetition
+  lemma: the first accepted orbit point's payload along the guarded orbit of `⟨x, x⟩` is
+  polynomial-time computable.
+* `Complexity.IterateFind.find?_congr_of_mem` — `List.find?` depends only on the predicate's
+  values on the list (used to identify the guarded orbit with `g^[i] x`).
+* `Complexity.IterateFind.find?_range_and_lt` — a search over `[0, L)` whose test also demands
+  `i < N` is the search over `[0, N)`, for `N ≤ L`.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (Algorithm 38.5 and Theorem 35.1; Theorem 87.3; Algorithms 123.4 and 128.7.)
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2–1.3, time-bounded machines.)
+-/
+
+namespace Complexity.IterateFind
+
+open Turing
+-- S1 SEAL: ordinary foreign TCSlib definitions from the complete source import closure, plus matchers (PolyExpr.eval and glNeed left unsealed)
+attribute [local irreducible] _root_.Complexity.IterateFind.copyTM _root_.Complexity.IterateFind.copyTM.match_1 _root_.Complexity.IterateFind.hostCtrl _root_.Complexity.IterateFind.hostRet _root_.Complexity.PolyBound _root_.Complexity.PolyExpr._sizeOf_1 _root_.Complexity.PolyExpr.eval._sunfold _root_.Complexity.PolyExpr.eval._unsafe_rec _root_.Complexity.PolyExpr.eval.match_1 _root_.Complexity.PolyExpr.normal _root_.Complexity.PolyExpr.subst _root_.Complexity.PolyExpr.subst._sunfold _root_.Complexity.PolyExpr.subst._unsafe_rec _root_.Complexity.PolyExpr.subst.match_1 _root_.Complexity.PolyTimeComputable _root_.Complexity.TimeConstructible _root_.Complexity.instDecidableEqPolyExpr.decEq _root_.Complexity.instDecidableEqPolyExpr.decEq._sunfold _root_.Complexity.instDecidableEqPolyExpr.decEq._unsafe_rec _root_.Complexity.instDecidableEqPolyExpr.decEq.match_1 _root_.Complexity.instReprPolyExpr.repr _root_.Complexity.instReprPolyExpr.repr._sunfold _root_.Complexity.instReprPolyExpr.repr._unsafe_rec _root_.Complexity.instReprPolyExpr.repr.match_1 _root_.Complexity.pairFstD _root_.Complexity.pairMapSnd _root_.Complexity.pairMapSnd.match_1 _root_.Complexity.pairSndD _root_.Complexity.polyTimeComputable_unary.match_1_1 _root_.Turing.Action._sizeOf_1 _root_.Turing.Action.apply _root_.Turing.Action.apply.match_1 _root_.Turing.Action.mapState _root_.Turing.Action.mk._flat_ctor _root_.Turing.Cfg._sizeOf_1 _root_.Turing.Cfg.ext.match_1 _root_.Turing.Cfg.init _root_.Turing.Cfg.inputSymbol _root_.Turing.Cfg.mapState _root_.Turing.Cfg.mk._flat_ctor _root_.Turing.Cfg.ofWords _root_.Turing.Cfg.select _root_.Turing.Cfg.workTapeSymbols _root_.Turing.CodeTM._sizeOf_1 _root_.Turing.CodeTM.mk._flat_ctor _root_.Turing.CodeTM.serialize _root_.Turing.CodeTM.toFinTM _root_.Turing.EffectiveMachineCode._sizeOf_1 _root_.Turing.EffectiveMachineCode.mk._flat_ctor _root_.Turing.FinTM.Computes _root_.Turing.FinTM.ComputesFunInTime _root_.Turing.FinTM.ComputesFunInTimeVia _root_.Turing.FinTM.ComputesInTime _root_.Turing.FinTM.VirtualTag _root_.Turing.FinTM._sizeOf_1 _root_.Turing.FinTM.appendBitTM _root_.Turing.FinTM.branchTM _root_.Turing.FinTM.branchTM.match_1 _root_.Turing.FinTM.bufferTape _root_.Turing.FinTM.bufferedCompTM _root_.Turing.FinTM.bufferedCompTM.match_1 _root_.Turing.FinTM.bufferedFirstCfg _root_.Turing.FinTM.bufferedScanCfg _root_.Turing.FinTM.bufferedSecondCfg _root_.Turing.FinTM.callEntry _root_.Turing.FinTM.callExit _root_.Turing.FinTM.callTM _root_.Turing.FinTM.callTM.match_1 _root_.Turing.FinTM.computesFunInTime_pairSplitAt.match_1 _root_.Turing.FinTM.condTM _root_.Turing.FinTM.condTM.match_1 _root_.Turing.FinTM.constTM _root_.Turing.FinTM.controlAction _root_.Turing.FinTM.emitAction _root_.Turing.FinTM.idTM _root_.Turing.FinTM.idTM.match_1 _root_.Turing.FinTM.ifEqTM _root_.Turing.FinTM.ifEqTM.match_1 _root_.Turing.FinTM.incFixedTM _root_.Turing.FinTM.incFixedTM.match_1 _root_.Turing.FinTM.incFixedTM.match_3 _root_.Turing.FinTM.indexedVisit _root_.Turing.FinTM.leftAction _root_.Turing.FinTM.leftCfg _root_.Turing.FinTM.lengthBitsTM _root_.Turing.FinTM.lengthBitsTM.match_1 _root_.Turing.FinTM.mk._flat_ctor _root_.Turing.FinTM.pairExtractTM _root_.Turing.FinTM.pairExtractTM.match_1 _root_.Turing.FinTM.pairExtractTM.match_3 _root_.Turing.FinTM.pairExtractTM.match_5 _root_.Turing.FinTM.pairLenCheckTM _root_.Turing.FinTM.pairValidTM _root_.Turing.FinTM.pairValidTM.match_1 _root_.Turing.FinTM.polyBitsTM _root_.Turing.FinTM.polyUnaryTM _root_.Turing.FinTM.polyUnaryTM.match_1 _root_.Turing.FinTM.prependTM _root_.Turing.FinTM.prependTM.match_1 _root_.Turing.FinTM.redirectTM _root_.Turing.FinTM.redirectTM.match_1 _root_.Turing.FinTM.redirectTM.match_3 _root_.Turing.FinTM.rewind_scan.match_1 _root_.Turing.FinTM.rightAction _root_.Turing.FinTM.rightCfg _root_.Turing.FinTM.splitSolveTM _root_.Turing.FinTM.splitSolveWithTM _root_.Turing.FinTM.stripLastTM _root_.Turing.FinTM.stripLastTM_computes.match_1 _root_.Turing.FinTM.sweepAct _root_.Turing.FinTM.sweepCfg _root_.Turing.FinTM.sweepFold _root_.Turing.FinTM.sweepFold._sunfold _root_.Turing.FinTM.sweepFold._unsafe_rec _root_.Turing.FinTM.sweepFold.match_1 _root_.Turing.FinTM.sweepRevCfg _root_.Turing.FinTM.sweepTape _root_.Turing.FinTM.tapeBlocks _root_.Turing.FinTM.timedCondTM _root_.Turing.FinTM.timedCondTM.match_1 _root_.Turing.FinTM.toCodeTM _root_.Turing.FinTM.toCodeTM.match_1 _root_.Turing.FinTM.unaryTokenTM _root_.Turing.FinTM.unaryTokenTM.match_1 _root_.Turing.FinTM.virtualMove _root_.Turing.FinTM.virtualNextTag _root_.Turing.FinTM.virtualNextTag.match_1 _root_.Turing.MachineCode._sizeOf_1 _root_.Turing.MachineCode.mk._flat_ctor _root_.Turing.ModuleHost.Clean _root_.Turing.ModuleHost.entry _root_.Turing.ModuleHost.hostTM _root_.Turing.ModuleHost.hostTM.match_1 _root_.Turing.MultiTapeTM.AgreeOn _root_.Turing.MultiTapeTM.ComputableInTimeAndSpace _root_.Turing.MultiTapeTM.ComputesFunInTimeAndSpace _root_.Turing.MultiTapeTM.ComputesInTimeAndSpace _root_.Turing.MultiTapeTM.DecidableInTimeAndSpace _root_.Turing.MultiTapeTM._sizeOf_1 _root_.Turing.MultiTapeTM.haltsAtStep _root_.Turing.MultiTapeTM.indicator _root_.Turing.MultiTapeTM.initCfg _root_.Turing.MultiTapeTM.mk._flat_ctor _root_.Turing.MultiTapeTM.outputSymbol _root_.Turing.MultiTapeTM.relabelState _root_.Turing.MultiTapeTM.runFrom _root_.Turing.MultiTapeTM.spaceUsed _root_.Turing.MultiTapeTM.spaceUsedByTape _root_.Turing.MultiTapeTM.step _root_.Turing.MultiTapeTM.step.match_1 _root_.Turing.MultiTapeTM.visitedByTapeHead _root_.Turing.PairParse.cfg _root_.Turing.PairParse.rewind_run.match_1 _root_.Turing.actionBits _root_.Turing.captureAction _root_.Turing.captureAction.match_1 _root_.Turing.captureCfg _root_.Turing.dbl _root_.Turing.embedEmitCfg _root_.Turing.embedEmitRetTM _root_.Turing.embedEmitTM _root_.Turing.embedSilentCfg _root_.Turing.embedSilentRetTM _root_.Turing.embedSilentRetTM.match_1 _root_.Turing.embedSilentTM _root_.Turing.emitAction _root_.Turing.emitCfg _root_.Turing.incFixed _root_.Turing.incFixed._sunfold _root_.Turing.incFixed._unsafe_rec _root_.Turing.incFixed.match_1 _root_.Turing.instInhabitedCfg.default _root_.Turing.moveInputPos _root_.Turing.optBoolBits _root_.Turing.optBoolBits.match_1 _root_.Turing.optOptBoolBits _root_.Turing.optOptBoolBits.match_1 _root_.Turing.optStateBits _root_.Turing.optStateBits.match_1 _root_.Turing.pairDecode _root_.Turing.pairDecode._sunfold _root_.Turing.pairDecode._unsafe_rec _root_.Turing.pairDecode.match_1 _root_.Turing.pairDiagTM _root_.Turing.pairDiagTM.match_1 _root_.Turing.pairDiagTM.match_3 _root_.Turing.pairEncode _root_.Turing.signBits _root_.Turing.signBits.match_1 _root_.Turing.solveSplit _root_.Turing.solveSplitWith _root_.Turing.spaceUsedOfCfgs _root_.Turing.splitAtLastTrue _root_.Turing.splitAtLastTrue.match_1 _root_.Turing.stateWord _root_.Turing.unaryFin _root_.Turing.unaryTokenSplit _root_.Turing.unaryTokenSplit._sunfold _root_.Turing.unaryTokenSplit._unsafe_rec _root_.Turing.unaryTokenSplit.match_1 _root_.Turing.visitedOfCfgs _root_._private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.pairMapSnd.match_1.splitter _root_._private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.polyTimeComputable_unary.match_1_1.splitter _root_._private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Turing.FinTM.extract_run.match_1.splitter _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterBump _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._sunfold _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._unsafe_rec _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1 _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1.splitter _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCfg _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._sunfold _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._unsafe_rec _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1 _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1.splitter _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterTape _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.FinTM.lengthBitsTM.match_1.splitter _root_._private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.MultiTapeTM.step.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.IterateFindHost.0.Complexity.IterateFind.copyCfg _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.SplitControl._sizeOf_1 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.SplitControl.proxyTypeEquiv _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_1 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_3 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_3.splitter _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.splitControlFintype.match_3 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.splitControlFintype.match_5 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.split_run.match_1 _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.split_run.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.PairParse.rewind_run.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.MulControl._sizeOf_1 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.MulControl.proxyTypeEquiv _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mulControlFintype.match_3 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mulControlFintype.match_5 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mul_run.match_1 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mul_run.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_1 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_3 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_3.splitter _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_5 _root_._private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_5.splitter _root_._private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.eval.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.subst.match_1.splitter _root_._private.TCSlib.Complexity.Randomized.Primitives.0.Turing.FinTM.computesFunInTime_pairSplitAt.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedSlot _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.bufferedCompTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.callTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallBankFrame _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallCleared _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEmbeddedCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFrame _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallIdleTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallInterval _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLayout _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairEmbedding _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairSelect _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightScan _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSlots _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSpan _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackMid _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleEmbedding _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleSelect _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopCall _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopForwardCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyDispatch _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyImage _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyPadded _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodySource _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCall _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopControlAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCopyTape _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFrame _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCaptured _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelSource _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_bound _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReady _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.ModuleHost.padAction _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.ModuleHost.padCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.ModuleHost.padTM _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.ModuleHost.stopCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.ModuleHost.0.Turing.ModuleHost.stopTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.List.filter.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl._sizeOf_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl.proxyTypeEquiv _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State._sizeOf_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State.proxyTypeEquiv _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState._sizeOf_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.proxyTypeEquiv _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCopyCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyMove _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyTape _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyUnaryTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPrefixCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2LeftIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2OneIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PairIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2RightIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2SmallIndex _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_5 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2Words _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterSplitAccept _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extractCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_5.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairValidTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.polyUnaryTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.prependTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.rawStripTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.scanCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitAccept _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBank _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_5 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitLoop_result.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPos _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareReady _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareScan _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreClean _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreScan _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRewindTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitSafe _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitScratch _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitStep _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.stripCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.unaryTokenTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.incFixed.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.splitAtLastTrue.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.unaryTokenSplit.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectAction _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedBranchCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedCondTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedControlCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedPadTM _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedReadyCfg _root_._private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.captureAction.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.controlCfg _root_._private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.idTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.ifEqTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Configuration.0.SignType.fin3Equiv.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Configuration.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Deterministic.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.FinTM.toCodeTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDecode.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagCfg _root_._private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.SignType.fin3Equiv.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBit _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBuffer _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCell _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCfg _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCode _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arDecode _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arIndex _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arMoveCfg _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPending _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPos _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReadCfg _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReady _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpaceBlock _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpacePhase _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTail _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTape _root_._private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arWriteCfg _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.SignType.fin3Equiv.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGSpan _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGWindow.mk._flat_ctor _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState._sizeOf_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState.proxyTypeEquiv _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.blankRow _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCost _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCross _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgLeftRow _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgPos _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgRetract _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgStart _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.headAt _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readState _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readVisit _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.rightRow _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepBoundary _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepEmbed _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepMove _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepPos _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStart _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_5 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepSymbol _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeRow _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._sunfold _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._unsafe_rec _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeCfg _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeTM _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit _root_._private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit.match_1 _root_._private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.Action.apply.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.bufferedCompTM.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.virtualNextTag.match_1.splitter _root_._private.TCSlib.Complexity.TuringMachine.Sweep.0.Turing.FinTM.sweepFold.match_1.splitter
+
+/-! ### The guarded step on the state word and its FP pieces -/
+
+/-- The length-guarded step on the state word `w = ⟨x, s⟩`: advance to `⟨x, g s⟩` if the new
+orbit point fits the bound `P|x|`, else stay (DESIGN.md §2.6, step 1). This is definitionally
+`Complexity.guardedStep g P x w`; it is restated here because this file is imported by the
+file defining `guardedStep`. -/
+def step (g : List Bool → List Bool) (P : PolyExpr) (x w : List Bool) : List Bool :=
+  if (g (pairSndD w)).length ≤ P.eval x.length then pairEncode x (g (pairSndD w)) else w
+
+/-- The guarded step: `step g P x w = ⟨x, g (snd w)⟩` if `|g (snd w)| ≤ P|x|`, and `w`
+otherwise. -/
+theorem step_eq (g : List Bool → List Bool) (P : PolyExpr) (x w : List Bool) :
+    step g P x w =
+      if (g (pairSndD w)).length ≤ P.eval x.length then pairEncode x (g (pairSndD w)) else w :=
+  rfl
+
+/-- The loop invariant used by the machine: the state word *is* a pair `⟨x, s⟩` with
+`|s| ≤ P|x|` (stronger than the pure `Complexity.LoopInv`, which also admits malformed
+words; the machine needs the well-formedness to bound the word's length). -/
+private def Inv (P : PolyExpr) (x w : List Bool) : Prop :=
+  ∃ s, w = pairEncode x s ∧ s.length ≤ P.eval x.length
+
+/-- The initial word `⟨x, x⟩` is admissible when `|x| ≤ P|x|`. -/
+private theorem inv_init (P : PolyExpr) (x : List Bool) (h0 : x.length ≤ P.eval x.length) :
+    Inv P x (pairEncode x x) :=
+  ⟨x, rfl, h0⟩
+
+/-- The invariant is closed under the guarded step (the guard keeps the word unchanged when
+the new point would be too long). -/
+private theorem inv_step (g : List Bool → List Bool) (P : PolyExpr) (x w : List Bool)
+    (h : Inv P x w) : Inv P x (step g P x w) := by
+  obtain ⟨s, rfl, hs⟩ := h
+  unfold step
+  rw [pairSndD_pairEncode]
+  split_ifs with hg
+  · exact ⟨g s, rfl, hg⟩
+  · exact ⟨s, rfl, hs⟩
+
+/-- The length of an admissible state word is at most `2|x| + 2 + P|x|`. -/
+private theorem inv_length (P : PolyExpr) (x w : List Bool) (h : Inv P x w) :
+    w.length ≤ 2 * x.length + 2 + P.eval x.length := by
+  obtain ⟨s, rfl, hs⟩ := h
+  rw [length_pairEncode]
+  omega
+
+/-- The verdict word: `w ↦ ⟨[acc (snd w)], w⟩` (the verdict as the first cell, since
+`pairEncode [b] w = [b, b, false, true] ++ w`). -/
+private def verdictWord (acc : List Bool → Bool) (w : List Bool) : List Bool :=
+  pairEncode [acc (pairSndD w)] w
+
+/-- The step on a verdict word: strip the verdict, then take the guarded step on the pair
+`⟨x, s⟩` carried by the word, with `x` recovered from the word itself. -/
+private def stepWord (g : List Bool → List Bool) (P : PolyExpr) (w' : List Bool) : List Bool :=
+  if (g (pairSndD (pairSndD w'))).length ≤ P.eval (pairFstD (pairSndD w')).length then
+    pairEncode (pairFstD (pairSndD w')) (g (pairSndD (pairSndD w')))
+  else pairSndD w'
+
+/-- The payload of a verdict word: `out` of the orbit point `snd (snd w')`. -/
+private def outWord (out : List Bool → List Bool) (w' : List Bool) : List Bool :=
+  out (pairSndD (pairSndD w'))
+
+/-- The first cell of a verdict word is the verdict. -/
+private theorem verdictWord_head (acc : List Bool → Bool) (w : List Bool) :
+    (verdictWord acc w)[0]? = some (acc (pairSndD w)) := by
+  simp [verdictWord, pairEncode]
+
+/-- The length of a verdict word. -/
+private theorem verdictWord_length (acc : List Bool → Bool) (w : List Bool) :
+    (verdictWord acc w).length = w.length + 4 := by
+  simp [verdictWord, length_pairEncode]
+  omega
+
+/-- On the verdict word of a pair `⟨x, s⟩`, `stepWord` is the guarded step. -/
+private theorem stepWord_verdictWord (g : List Bool → List Bool) (P : PolyExpr)
+    (acc : List Bool → Bool) (x s : List Bool) :
+    stepWord g P (verdictWord acc (pairEncode x s)) = step g P x (pairEncode x s) := by
+  simp [stepWord, verdictWord, step]
+
+/-- On the verdict word of a pair, `outWord` is `out` of the orbit point. -/
+private theorem outWord_verdictWord (out : List Bool → List Bool) (acc : List Bool → Bool)
+    (x s : List Bool) : outWord out (verdictWord acc (pairEncode x s)) = out s := by
+  simp [outWord, verdictWord]
+
+/-- The verdict word is polynomial-time computable (`PolyTimeComputable.pairEncode` of the
+test composed with the projection and the identity). -/
+private theorem verdictWord_poly {acc : List Bool → Bool}
+    (hacc : PolyTimeComputable fun s => [acc s]) : PolyTimeComputable (verdictWord acc) := by
+  have h := (hacc.comp polyTimeComputable_pairSndD).pairEncode polyTimeComputable_id
+  exact h
+
+/-- The step on verdict words is polynomial-time computable.
+
+**Proof sketch.** `Complexity.polyTimeComputable_ite`: the test
+`|g (snd (snd w'))| ≤ P|fst (snd w')|` is `Complexity.polyTimeComputable_lenLe` on the pair
+`⟨1^{P|fst (snd w')|}, g (snd (snd w'))⟩`, built with the unary evaluator
+`Complexity.polyTimeComputable_unaryPoly P` and `PolyTimeComputable.pairEncode`; the `then`
+branch is the pairing of the two projections (with `g`), the `else` branch the projection
+`snd`; the Boolean test is identified with the propositional `if` by `decide_eq_true_eq`. -/
+private theorem stepWord_poly {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+    (P : PolyExpr) : PolyTimeComputable (stepWord g P) := by
+  have hs2 : PolyTimeComputable fun w' => pairSndD (pairSndD w') :=
+    polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
+  have hf1 : PolyTimeComputable fun w' => pairFstD (pairSndD w') :=
+    polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hgg : PolyTimeComputable fun w' => g (pairSndD (pairSndD w')) := hg.comp hs2
+  have hun : PolyTimeComputable fun w' =>
+      List.replicate (P.eval (pairFstD (pairSndD w')).length) true :=
+    (polyTimeComputable_unaryPoly P).comp hf1
+  have htest : PolyTimeComputable fun w' =>
+      [decide ((g (pairSndD (pairSndD w'))).length ≤ P.eval (pairFstD (pairSndD w')).length)] := by
+    have h := polyTimeComputable_lenLe.comp (hun.pairEncode hgg)
+    convert h using 1
+    funext w'
+    simp
+  have hthen : PolyTimeComputable fun w' =>
+      pairEncode (pairFstD (pairSndD w')) (g (pairSndD (pairSndD w'))) := hf1.pairEncode hgg
+  have h := polyTimeComputable_ite htest hthen polyTimeComputable_pairSndD
+  convert h using 1
+  funext w'
+  simp [stepWord]
+
+/-- The payload map on verdict words is polynomial-time computable. -/
+private theorem outWord_poly {out : List Bool → List Bool} (hout : PolyTimeComputable out) :
+    PolyTimeComputable (outWord out) :=
+  hout.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+
+/-- The duplication `x ↦ ⟨x, x⟩` is polynomial-time computable. -/
+private theorem dupWord_poly : PolyTimeComputable fun x => pairEncode x x :=
+  polyTimeComputable_of_linear FinTM.computesFunInTime_pairDup
+
+/-! ### Assembly -/
+
+/-- `List.find?` depends only on the values of the predicate on the list's elements. -/
+theorem find?_congr_of_mem {α : Type*} {p q : α → Bool} :
+    ∀ l : List α, (∀ a ∈ l, p a = q a) → l.find? p = l.find? q
+  | [], _ => rfl
+  | a :: l, h => by
+    have ha : p a = q a := h a (List.mem_cons_self ..)
+    by_cases hq : q a = true
+    · rw [List.find?_cons_of_pos (by rw [ha]; exact hq), List.find?_cons_of_pos hq]
+    · rw [List.find?_cons_of_neg (by rw [ha]; exact hq), List.find?_cons_of_neg hq]
+      exact find?_congr_of_mem l (fun b hb => h b (List.mem_cons_of_mem a hb))
+
+/-- **A bounded search is a search over a shorter range**: for `N ≤ L`, searching `[0, L)` for
+the first `i` with `i < N` and `p i` is searching `[0, N)` for the first `i` with `p i`:
+`(List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p`.
+
+**Proof sketch.** Write `L = N + d` (`List.range_add`, `List.find?_append`). On `[0, N)` the guard
+`i < N` holds, so the two predicates agree (`find?_congr_of_mem`). On the shifted tail `N + [0, d)`
+it fails, so that search is `none` (`List.find?_eq_none`), and `o <|> none = o`. -/
+theorem find?_range_and_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+  rw [List.range_add, List.find?_append,
+    find?_congr_of_mem _ (fun i hi => by rw [decide_eq_true (List.mem_range.1 hi), Bool.true_and])]
+  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+      (fun i => decide (i < N) && p i) = none := by
+    rw [List.find?_eq_none]
+    intro x hx
+    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+    rw [decide_eq_false (by omega), Bool.false_and]
+    exact Bool.false_ne_true
+  rw [hnone, Option.or_none]
+
+/-- The final budget arithmetic: the loop combinator's bound `c (T n + 1)(R n + 2)` with
+`T n = A (2n + 2 + P n + 5)^D` is in the normal form `C (n + 1)^e` once `P` and `R` are
+majorised by `CP (n+1)^cP` and `CR (n+1)^cR`.
+
+**Proof sketch.** `2n + 7 + P n ≤ (CP + 7)(n+1)^{cP+1}` (both `7(n+1)` and `CP (n+1)^{cP}`
+are at most the corresponding multiples of `(n+1)^{cP+1}`); raise to the `D`-th power
+(`Nat.pow_le_pow_left`, `Nat.mul_pow`, `Nat.pow_mul`), absorb the `+ 1` with
+`1 ≤ (n+1)^{(cP+1)D}`, bound `R n + 2 ≤ (CR + 2)(n+1)^{cR}` likewise, and multiply
+(`Nat.mul_le_mul`, `Nat.pow_add`). -/
+private lemma final_bound (c A D CP cP CR cR n Pn Rn : ℕ)
+    (hP : Pn ≤ CP * (n + 1) ^ cP) (hR : Rn ≤ CR * (n + 1) ^ cR) :
+    c * (A * (2 * n + 2 + Pn + 5) ^ D + 1) * (Rn + 2) ≤
+      c * (A * (CP + 7) ^ D + 1) * (CR + 2) * (n + 1) ^ ((cP + 1) * D + cR) := by
+  have hpos : 0 < n + 1 := Nat.succ_pos n
+  have h1 : 2 * n + 2 + Pn + 5 ≤ (CP + 7) * (n + 1) ^ (cP + 1) := by
+    have ha : n + 1 ≤ (n + 1) ^ (cP + 1) := by
+      simpa using Nat.pow_le_pow_right hpos (show 1 ≤ cP + 1 by omega)
+    have hb : (n + 1) ^ cP ≤ (n + 1) ^ (cP + 1) := Nat.pow_le_pow_right hpos (by omega)
+    have hc := Nat.mul_le_mul_left CP hb
+    calc 2 * n + 2 + Pn + 5 ≤ 7 * (n + 1) + CP * (n + 1) ^ cP := by omega
+      _ ≤ 7 * (n + 1) ^ (cP + 1) + CP * (n + 1) ^ (cP + 1) :=
+          Nat.add_le_add (Nat.mul_le_mul_left 7 ha) hc
+      _ = (CP + 7) * (n + 1) ^ (cP + 1) := by ring
+  have h2 : (2 * n + 2 + Pn + 5) ^ D ≤ (CP + 7) ^ D * (n + 1) ^ ((cP + 1) * D) := by
+    calc (2 * n + 2 + Pn + 5) ^ D ≤ ((CP + 7) * (n + 1) ^ (cP + 1)) ^ D :=
+          Nat.pow_le_pow_left h1 D
+      _ = (CP + 7) ^ D * (n + 1) ^ ((cP + 1) * D) := by rw [Nat.mul_pow, ← Nat.pow_mul]
+  have hone : 1 ≤ (n + 1) ^ ((cP + 1) * D) := Nat.one_le_pow _ _ hpos
+  have h3 : A * (2 * n + 2 + Pn + 5) ^ D + 1 ≤
+      (A * (CP + 7) ^ D + 1) * (n + 1) ^ ((cP + 1) * D) := by
+    calc A * (2 * n + 2 + Pn + 5) ^ D + 1
+        ≤ A * ((CP + 7) ^ D * (n + 1) ^ ((cP + 1) * D)) + (n + 1) ^ ((cP + 1) * D) :=
+          Nat.add_le_add (Nat.mul_le_mul_left A h2) hone
+      _ = (A * (CP + 7) ^ D + 1) * (n + 1) ^ ((cP + 1) * D) := by ring
+  have h4 : Rn + 2 ≤ (CR + 2) * (n + 1) ^ cR := by
+    have hone' : 1 ≤ (n + 1) ^ cR := Nat.one_le_pow _ _ hpos
+    calc Rn + 2 ≤ CR * (n + 1) ^ cR + 2 * (n + 1) ^ cR := by omega
+      _ = (CR + 2) * (n + 1) ^ cR := by ring
+  calc c * (A * (2 * n + 2 + Pn + 5) ^ D + 1) * (Rn + 2)
+      ≤ c * ((A * (CP + 7) ^ D + 1) * (n + 1) ^ ((cP + 1) * D)) * ((CR + 2) * (n + 1) ^ cR) :=
+        Nat.mul_le_mul (Nat.mul_le_mul_left c h3) h4
+    _ = c * (A * (CP + 7) ^ D + 1) * (CR + 2) * (n + 1) ^ ((cP + 1) * D + cR) := by
+        rw [Nat.pow_add]; ring
+
+/-- **The loop-level repetition lemma.** Let `g` be a polynomial-time step, `acc` a
+polynomial-time test, `out` a polynomial-time payload map, and `R, P` syntactic polynomials
+with `|g^[i] x| ≤ P|x|` for `i ≤ R|x|`. Then the function returning `out` of the orbit point
+of the first index `i ≤ R|x|` at which `acc` accepts the second component of the `i`-fold
+guarded step `Complexity.IterateFind.step g P x` from `⟨x, x⟩` (`[]` if none) is
+polynomial-time computable. This is the machine behind
+`Complexity.polyTimeComputable_iterateFind` [PS10, Algorithm 38.5, Theorem 35.1]; the pure
+identification of the guarded orbit with `g^[i] x` is done there.
+
+**Proof sketch.** Instance of `Turing.FinTM.exists_loopFindTM` for the host `hostTM` (the
+clean-module host `Turing.ModuleHost.hostTM` with the control table `hostCtrl`) over the five
+clean modules (the copier, and `Turing.ModuleHost.clean_install`/`clean_emit` of
+`x ↦ ⟨x, x⟩`, `verdictWord acc`, `stepWord g P`, `outWord out`), with anchor `inl 0`,
+invariant `Inv P`,
+step `step g P`, acceptance `acc ∘ snd`, payload `out ∘ snd`, start word `⟨x, x⟩`. The fuel
+machine computes `Nat.bits (R|x|)` (`polyTimeComputable_unaryPoly R` composed with
+`computesFunInTime_lengthBits`). `hstart`: the copier (`copy_clean`, `ModuleHost.host_call`)
+then the startup install (`ModuleHost.host_clean`) reach the anchor seam with `⟨x, x⟩` in
+`2|x| + 2 + t_S` steps
+with no earlier anchor visit. `hround`: from the anchor seam with an admissible word `⟨x, s⟩`,
+the dispatch step, the verdict call, the branch step (`host_branch`), then either the payload
+call and the halt step (`host_halt`) — state `none`, output `out s` — or the step call
+returning to the anchor seam with `step g P x ⟨x, s⟩` (`stepWord_verdictWord`); the anchor
+guard is `ModuleHost.guard_add` over the segments. All requests have length at most
+`2|x| + 2 + P|x| + 4`, so every call fits the common budget `T n = A (2n + 2 + P n + 5)^D`
+(`ModuleHost.request_budget`), and
+`final_bound` puts the combinator's bound `c (T n + 1)(R n + 2)` in normal form. -/
+theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComputable g)
+    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun s => [acc s])
+    {out : List Bool → List Bool} (hout : PolyTimeComputable out)
+    (R P : PolyExpr)
+    (horbit : ∀ (x : List Bool) (i : ℕ), i ≤ R.eval x.length →
+      (g^[i] x).length ≤ P.eval x.length) :
+    PolyTimeComputable fun x =>
+      match (List.range (R.eval x.length + 1)).find?
+          (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x x)))) with
+      | some i => out (pairSndD ((step g P x)^[i] (pairEncode x x)))
+      | none => [] := by
+  obtain ⟨S, aS, dS, hS⟩ := ModuleHost.clean_install dupWord_poly
+  obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
+  obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
+  obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
+  obtain ⟨F, aF, dF, hF⟩ : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
+    have h := (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits).comp
+      (polyTimeComputable_unaryPoly R)
+    convert h using 1
+    funext x
+    simp
+  let M : Fin 5 → FinTM Bool := fun i => match i.val with
+    | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
+  let K := S.k + V.k + I.k + E.k
+  have hk : ∀ i, (M i).k ≤ K + 1 := by
+    intro i; fin_cases i <;> simp [M, K, copyTM_k] <;> omega
+  let H := hostTM M K hk
+  let anchor : H.State := .inl 0
+  have hclean := ModuleHost.host_clean M (K + 1) hk (hostCtrl M K) (hostRet M)
+    (ModuleHost.entry M 0)
+  let D := dS + dV + dI + dE + dF + 1
+  let A := aS + aV + aI + aE + aF + 5
+  let pow (n : ℕ) := (2 * n + 2 + P.eval n + 5) ^ D
+  let T (n : ℕ) := A * pow n
+  have hpow (n : ℕ) : n + 1 ≤ pow n := by
+    have h := Nat.pow_le_pow_right (show 0 < 2 * n + 2 + P.eval n + 5 by omega)
+      (show 1 ≤ D by dsimp [D]; omega)
+    simp only [Nat.pow_one] at h
+    exact (by omega : n + 1 ≤ 2 * n + 2 + P.eval n + 5).trans h
+  have hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ v < t, (H.tm.runFrom (H.tm.initCfg x) v).state ≠ some anchor) ∧
+      H.tm.runFrom (H.tm.initCfg x) t = Cfg.ofWords anchor (stateWord H.k (pairEncode x x)) := by
+    intro x
+    obtain ⟨hcg, hce⟩ := copy_clean x
+    obtain ⟨hcGuard, hcEnd⟩ := ModuleHost.host_call M (K + 1) hk (hostCtrl M K) (hostRet M)
+      (ModuleHost.entry M 0) 0 (by simp [M, copyTM_k]) x [] x [] [] (0 : Fin 2)
+      (2 * x.length + 2) hcg (by simpa using hce)
+    have hi : H.tm.initCfg x = Cfg.ofWords (ModuleHost.entry M 0) (stateWord (K + 1) []) := by
+      refine Cfg.ext ?_ rfl ?_ rfl rfl
+      · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
+          (ModuleHost.entry M 0))
+      funext i z
+      simp [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord]
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
+      (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
+    rw [hostRet_zero] at hcEnd
+    obtain ⟨ts, hspos, hst, hsGuard, hsEnd⟩ := hclean 1
+      (fun x => pairEncode x x) (fun _ => []) (fun n => aS * (n + 1) ^ dS)
+      (by simpa [M] using hS) x x []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 1) (stateWord (K + 1) x))
+      ts = Cfg.ofWords (hostRet M 1) (stateWord (K + 1) (pairEncode x x)) at hsEnd
+    rw [hostRet_one] at hsEnd
+    have hsB := ModuleHost.request_budget aS dS D (2 * x.length + 2 + P.eval x.length + 5) x.length
+      (by dsimp [D]; omega) (by omega)
+    have hp := hpow x.length
+    refine ⟨2 * x.length + 2 + ts, ?_, ?_, ?_⟩
+    · dsimp only [T, A, pow]
+      simp only [Nat.add_mul]
+      dsimp only [pow] at hp
+      omega
+    · rw [hi]
+      exact ModuleHost.guard_add H.tm anchor _ _ _ ts (fun v hv => hcGuard v hv 0) hcEnd
+        (fun v hv => hsGuard v hv 0)
+    · rw [hi, MultiTapeTM.runFrom_add, hcEnd, hsEnd]
+      rfl
+  have hround : ∀ x w : List Bool, Inv P x w → ∃ t, 0 < t ∧ t ≤ T x.length ∧
+      (∀ t', 0 < t' → t' < t →
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t').state
+          ≠ some anchor) ∧
+      if acc (pairSndD w) then
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).state = none ∧
+        (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t).output =
+          out (pairSndD w)
+      else
+        H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord H.k w)) t =
+          Cfg.ofWords anchor (stateWord H.k (step g P x w)) := by
+    intro x w hw
+    obtain ⟨s, rfl, hs⟩ := hw
+    have hwlen : (pairEncode x s).length ≤ 2 * x.length + 2 + P.eval x.length := by
+      rw [length_pairEncode]; omega
+    have hw'len : (verdictWord acc (pairEncode x s)).length =
+        (pairEncode x s).length + 4 := verdictWord_length acc _
+    have hpow' := hpow x.length
+    -- the dispatch, the verdict call, the branch
+    have hdisp := host_dispatch M K hk x (pairEncode x s)
+    obtain ⟨tv, hvpos, hvt, hvGuard, hvEnd⟩ := hclean 2 (verdictWord acc)
+      (fun _ => []) (fun n => aV * (n + 1) ^ dV) (by simpa [M] using hV) x (pairEncode x s) []
+    change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2) (stateWord (K + 1)
+      (pairEncode x s))) tv = Cfg.ofWords (hostRet M 2) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s))) at hvEnd
+    rw [hostRet_two] at hvEnd
+    have hbr := host_branch M K hk x (acc s) (verdictWord acc (pairEncode x s))
+      (by rw [verdictWord_head, pairSndD_pairEncode])
+    have hvB := ModuleHost.request_budget aV dV D (2 * x.length + 2 + P.eval x.length + 5)
+      (pairEncode x s).length (by dsimp [D]; omega) (by omega)
+    have hseg : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+        (stateWord (K + 1) (pairEncode x s))) (tv + 1) =
+        Cfg.ofWords (ModuleHost.entry M (if acc s then 4 else 3))
+          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step', hvEnd, hbr]
+    have hsegGuard : ∀ v < tv + 1, (H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+        (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+      refine ModuleHost.guard_add H.tm anchor _ _ tv 1 (fun v hv => hvGuard v hv 0) hvEnd ?_
+      intro v hv
+      have hv0 : v = 0 := by omega
+      subst hv0
+      simp [Cfg.ofWords, anchor]
+    by_cases hb : acc s = true
+    · -- accepting round: the payload call, then the halt
+      rw [if_pos hb] at hseg
+      obtain ⟨te, hepos, het, heGuard, heEnd⟩ := hclean 4 id (outWord out)
+        (fun n => aE * (n + 1) ^ dE) (by simpa [M] using hE) x
+        (verdictWord acc (pairEncode x s)) []
+      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 4) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s)))) te = {Cfg.ofWords (hostRet M 4) (stateWord (K + 1)
+          (verdictWord acc (pairEncode x s))) with
+            output := [] ++ outWord out (verdictWord acc (pairEncode x s))} at heEnd
+      rw [hostRet_four, List.nil_append, outWord_verdictWord] at heEnd
+      have hhalt := host_halt M K hk x (verdictWord acc (pairEncode x s)) (out s)
+      have heB := ModuleHost.request_budget aE dE D (2 * x.length + 2 + P.eval x.length + 5)
+        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + te + 1) =
+          {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1)
+            (verdictWord acc (pairEncode x s))) with state := none, output := out s} := by
+        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hseg, heEnd, hhalt]
+      have hallGuard : ∀ v < tv + 1 + te + 1, (H.tm.runFrom (Cfg.ofWords (input := x)
+          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor := by
+        refine ModuleHost.guard_add H.tm anchor _ {Cfg.ofWords (input := x)
+          (.inl 2 : ModuleHost.State (Fin 3) M)
+          (stateWord (K + 1) (verdictWord acc (pairEncode x s))) with output := out s}
+          (tv + 1 + te) 1 ?_ ?_ ?_
+        · exact ModuleHost.guard_add H.tm anchor _ _ (tv + 1) te hsegGuard hseg
+            (fun v hv => heGuard v hv 0)
+        · rw [MultiTapeTM.runFrom_add, hseg, heEnd]
+        · intro v hv
+          have hv0 : v = 0 := by omega
+          subst hv0
+          simp [Cfg.ofWords, anchor]
+      refine ⟨tv + 1 + te + 1 + 1, by omega, ?_, ?_, ?_⟩
+      · dsimp only [T, A, pow]
+        simp only [Nat.add_mul]
+        dsimp only [pow] at hpow'
+        omega
+      · intro v hv hvt
+        have hvform : v = (v - 1) + 1 := by omega
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+          (pairEncode x s))) v).state ≠ some anchor
+        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+        exact hallGuard (v - 1) (by omega)
+      · rw [pairSndD_pairEncode, if_pos hb]
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + te + 1 + 1)).state = none ∧
+          (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + te + 1 + 1)).output = out s
+        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+        exact ⟨rfl, rfl⟩
+    · -- advancing round: the step call returns to the anchor
+      rw [if_neg hb] at hseg
+      obtain ⟨ti, hipos, hit, hiGuard, hiEnd⟩ := hclean 3 (stepWord g P)
+        (fun _ => []) (fun n => aI * (n + 1) ^ dI) (by simpa [M] using hI) x
+        (verdictWord acc (pairEncode x s)) []
+      change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 3) (stateWord (K + 1)
+        (verdictWord acc (pairEncode x s)))) ti = Cfg.ofWords (hostRet M 3) (stateWord (K + 1)
+          (stepWord g P (verdictWord acc (pairEncode x s)))) at hiEnd
+      rw [hostRet_three, stepWord_verdictWord] at hiEnd
+      have hiB := ModuleHost.request_budget aI dI D (2 * x.length + 2 + P.eval x.length + 5)
+        (verdictWord acc (pairEncode x s)).length (by dsimp [D]; omega) (by omega)
+      have hall : H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 2)
+          (stateWord (K + 1) (pairEncode x s))) (tv + 1 + ti) =
+          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s))) := by
+        rw [MultiTapeTM.runFrom_add, hseg, hiEnd]
+      have hallGuard : ∀ v < tv + 1 + ti, (H.tm.runFrom (Cfg.ofWords (input := x)
+          (ModuleHost.entry M 2) (stateWord (K + 1) (pairEncode x s))) v).state ≠ some anchor :=
+        ModuleHost.guard_add H.tm anchor _ _ (tv + 1) ti hsegGuard hseg
+          (fun v hv => hiGuard v hv 0)
+      refine ⟨tv + 1 + ti + 1, by omega, ?_, ?_, ?_⟩
+      · dsimp only [T, A, pow]
+        simp only [Nat.add_mul]
+        dsimp only [pow] at hpow'
+        omega
+      · intro v hv hvt
+        have hvform : v = (v - 1) + 1 := by omega
+        change (H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+          (pairEncode x s))) v).state ≠ some anchor
+        rw [hvform, MultiTapeTM.runFrom_succ_eq_step, hdisp]
+        exact hallGuard (v - 1) (by omega)
+      · rw [pairSndD_pairEncode, if_neg hb]
+        change H.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord (K + 1)
+            (pairEncode x s))) (tv + 1 + ti + 1) =
+          Cfg.ofWords anchor (stateWord (K + 1) (step g P x (pairEncode x s)))
+        rw [MultiTapeTM.runFrom_succ_eq_step, hdisp, hall]
+  have hFuel : F.ComputesFunInTime (fun x => Nat.bits (R.eval x.length)) T := by
+    intro x
+    apply (hF x).mono
+    have h := ModuleHost.request_budget aF dF D (2 * x.length + 2 + P.eval x.length + 5) x.length
+      (by dsimp [D]; omega) (by omega)
+    have hp := hpow x.length
+    dsimp only [T, A, pow]
+    simp only [Nat.add_mul]
+    dsimp only [pow] at hp
+    omega
+  obtain ⟨L, c, hL⟩ := FinTM.exists_loopFindTM H F anchor (Inv P) (step g P)
+    (fun _ w => acc (pairSndD w)) (fun _ w => out (pairSndD w)) (fun x => pairEncode x x)
+    (fun n => R.eval n) T hFuel
+    (fun x => inv_init P x (by simpa using horbit x 0 (Nat.zero_le _)))
+    (fun x w h => inv_step g P x w h) hstart hround
+  obtain ⟨CP, cP, hCP⟩ := P.eval_le
+  obtain ⟨CR, cR, hCR⟩ := R.eval_le
+  refine ⟨L, c * (A * (CP + 7) ^ D + 1) * (CR + 2), (cP + 1) * D + cR, fun x => (hL x).mono ?_⟩
+  exact final_bound c A D CP cP CR cR x.length (P.eval x.length) (R.eval x.length)
+    (hCP _) (hCR _)
+
+end Complexity.IterateFind

@@ -1,0 +1,492 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Complexity.Randomized.Primitives
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The closure calculus of non-uniform PPTs
+
+The class of non-uniform PPTs is closed under the operations every reduction of
+[PS10, ch. 2–4] performs silently (inventory item Claim-26.3, "implicit throughout"):
+pre- and post-composition with polynomial-time maps, parameter changes, hard-wiring advice,
+using fresh coin segments as data, and sequential composition with fresh coins. Each lemma
+here exhibits the composite machine as `Complexity.NUPPT.ofPolyTime` of an FP function of
+the raw input `⟨⟨⟨1^n, y⟩, α⟩, r⟩` (foundation decision D2), built from
+`NUPPT.polyTimeComputable_output`, the pairing calculus of
+`TCSlib.Complexity.ClassNP.PolyTimePairing`, the unary evaluator
+`Complexity.polyTimeComputable_unaryPoly` and the typed coin cuts
+`polyTimeComputable_pairTakePoly`/`pairDropPoly` of
+`TCSlib.Complexity.Randomized.Primitives`; the functional equation is
+`NUPPT.runAtL_ofPolyTime` followed by the projection identities of the layout.
+`Uniform` is preserved whenever the advice is the given machine's or empty.
+
+The supplier table (DESIGN.md §2.5):
+
+| Lemma | Raw function on `⟨⟨⟨1^n, y⟩, α⟩, r⟩` | Supplier |
+| --- | --- | --- |
+| `exists_compParam` | `pre ⟨1^n, y⟩`, then `A.output`, then `post ⟨1^n, ·⟩` | projections, `comp` |
+| `exists_comp` | `exists_compParam` with `pre`, `post` ignoring `1^n` | `exists_compParam` |
+| `exists_reparam p` | advice `A.advice (p n)`; replace `1^n` by `1^{p n}` (`unaryPoly p`) | `unaryPoly` |
+| `exists_reparam_advice φ p` | advice `⟨1^{φ n}, A.advice (φ n)⟩`; cut `A.coins (φ n)` coins | `pairTakePoly`, `eval_mono` |
+| `exists_withAdvice` | advice `⟨A.advice n, β n⟩`; re-pair `y` with `β n` | pairing calculus |
+| `exists_split p` | cut `r` at `p n`; pass the head as data | `pairTakePoly`, `pairDropPoly` |
+| `exists_seq` | cut at `A.coins n`; run `A`, then `B` on `⟨y, a⟩`; advice `⟨α_A, α_B⟩` | both outputs, cuts, pairing |
+
+Not in this file (they are FP-level facts the campaign uses directly): negation and
+`[true]`-normalisation of verdicts (`Turing.FinTM.computesFunInTime_ifEq` through
+`exists_comp`), branching (`Complexity.polyTimeComputable_ite`), length tests
+(`polyTimeComputable_lenEq`/`_lenLe`), and the loop fuel of the repetition lemma
+(`TCSlib.Complexity.Randomized.Repetition`).
+
+## Main definitions
+
+* `Complexity.NUPPT.layout`, `NUPPT.inParam`, `NUPPT.inArg`, `NUPPT.inAdvice`,
+  `NUPPT.inCoins` — the raw input layout `⟨⟨⟨u, y⟩, α⟩, r⟩` and its four projections.
+* `Complexity.NUPPT.combineAdvice` — two advice strings as one, keeping `[]` when both are
+  empty (so that sequential composition preserves uniformity).
+
+## Main results
+
+* `Complexity.NUPPT.exists_compParam` — closure under polynomial-time pre- and post-processing
+  that reads the parameter (`pre` sees `⟨1^n, y⟩`, `post` sees `⟨1^n, output⟩`).
+* `Complexity.NUPPT.exists_comp` — its case that does not read the parameter (`pre` sees only
+  `y`, `post` only the output).
+* `Complexity.NUPPT.exists_reparam` — parameter change `n ↦ p(n)` (uniformity preserved).
+* `Complexity.NUPPT.exists_reparam_advice` — parameter change along a polynomially bounded
+  `φ : ℕ → ℕ`, hard-wiring `1^{φ n}` and the advice at `φ n`; extra coins unread.
+* `Complexity.NUPPT.exists_withAdvice` — hard-wiring an extra polynomial-length advice.
+* `Complexity.NUPPT.exists_split` — the first `p(n)` coins passed as data.
+* `Complexity.NUPPT.exists_seq` — sequential composition with input pass-through and fresh
+  coins (the "sunglass" composition of [Gar26]'s reductions, at the machine level).
+* `Complexity.NUPPT.Computes.polyTimeComputable` — a PPT computing `f` with probability one
+  gives `f ∘ advInput` as a polynomial-time function (coins hard-wired to `1^{coins n}`).
+* `Complexity.NUPPT.polyTimeComputable_layout` and the projection lemmas — the FP calculus of
+  the layout.
+* `Complexity.PolyTimeComputable.comp'`, `Complexity.PolyTimeComputable.congr` — composition in
+  applied form, and transfer of polynomial time along a pointwise equality.
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§2.1, the closure properties of (non-uniform) p.p.t. machines used implicitly throughout.)
+* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+  draft of 22 January 2026 (the concrete reductions these machines package).
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.2, closure of FP under composition.)
+-/
+
+namespace Complexity
+
+open Turing
+-- Import-closure seal, independent of stored-constant reads.
+run_cmd do
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for spelling in (#["Complexity.NUPPT.Computes", "Complexity.NUPPT.Uniform", "Complexity.NUPPT._sizeOf_1", "Complexity.NUPPT.advInput", "Complexity.NUPPT.adviceLen", "Complexity.NUPPT.coinLen", "Complexity.NUPPT.coinsCongr", "Complexity.NUPPT.coinsEquivPoly", "Complexity.NUPPT.coinsEquiv_ofPolyTime", "Complexity.NUPPT.coinsEquiv_ofPolyTimeUniform", "Complexity.NUPPT.mk._flat_ctor", "Complexity.NUPPT.ofPolyTime", "Complexity.NUPPT.ofPolyTimeUniform", "Complexity.NUPPT.output", "Complexity.NUPPT.runAt", "Complexity.NUPPT.runAtL", "Complexity.NUPPT.runLit", "Complexity.NUPPT.timeBound", "Complexity.PPT", "Complexity.PolyBound", "Complexity.PolyExpr._sizeOf_1", "Complexity.PolyExpr.eval._sunfold", "Complexity.PolyExpr.eval._unsafe_rec", "Complexity.PolyExpr.eval.match_1", "Complexity.PolyExpr.normal", "Complexity.PolyExpr.subst", "Complexity.PolyExpr.subst._sunfold", "Complexity.PolyExpr.subst._unsafe_rec", "Complexity.PolyExpr.subst.match_1", "Complexity.PolyTimeComputable", "Complexity.TimeConstructible", "Complexity.instDecidableEqPolyExpr.decEq", "Complexity.instDecidableEqPolyExpr.decEq._sunfold", "Complexity.instDecidableEqPolyExpr.decEq._unsafe_rec", "Complexity.instDecidableEqPolyExpr.decEq.match_1", "Complexity.instReprPolyExpr.repr", "Complexity.instReprPolyExpr.repr._sunfold", "Complexity.instReprPolyExpr.repr._unsafe_rec", "Complexity.instReprPolyExpr.repr.match_1", "Complexity.pairFstD", "Complexity.pairMapSnd", "Complexity.pairMapSnd.match_1", "Complexity.pairSndD", "Complexity.polyTimeComputable_unary.match_1_1", "Turing.Action._sizeOf_1", "Turing.Action.apply", "Turing.Action.apply.match_1", "Turing.Action.mapState", "Turing.Action.mk._flat_ctor", "Turing.Cfg._sizeOf_1", "Turing.Cfg.ext.match_1", "Turing.Cfg.init", "Turing.Cfg.inputSymbol", "Turing.Cfg.mapState", "Turing.Cfg.mk._flat_ctor", "Turing.Cfg.ofWords", "Turing.Cfg.select", "Turing.Cfg.workTapeSymbols", "Turing.CodeTM._sizeOf_1", "Turing.CodeTM.mk._flat_ctor", "Turing.CodeTM.serialize", "Turing.CodeTM.toFinTM", "Turing.EffectiveMachineCode._sizeOf_1", "Turing.EffectiveMachineCode.mk._flat_ctor", "Turing.FinTM.Computes", "Turing.FinTM.ComputesFunInTime", "Turing.FinTM.ComputesFunInTimeVia", "Turing.FinTM.ComputesInTime", "Turing.FinTM.VirtualTag", "Turing.FinTM._sizeOf_1", "Turing.FinTM.appendBitTM", "Turing.FinTM.branchTM", "Turing.FinTM.branchTM.match_1", "Turing.FinTM.bufferTape", "Turing.FinTM.bufferedCompTM", "Turing.FinTM.bufferedCompTM.match_1", "Turing.FinTM.bufferedFirstCfg", "Turing.FinTM.bufferedScanCfg", "Turing.FinTM.bufferedSecondCfg", "Turing.FinTM.callEntry", "Turing.FinTM.callExit", "Turing.FinTM.callTM", "Turing.FinTM.callTM.match_1", "Turing.FinTM.computesFunInTime_pairSplitAt.match_1", "Turing.FinTM.condTM", "Turing.FinTM.condTM.match_1", "Turing.FinTM.constTM", "Turing.FinTM.controlAction", "Turing.FinTM.emitAction", "Turing.FinTM.idTM", "Turing.FinTM.idTM.match_1", "Turing.FinTM.ifEqTM", "Turing.FinTM.ifEqTM.match_1", "Turing.FinTM.incFixedTM", "Turing.FinTM.incFixedTM.match_1", "Turing.FinTM.incFixedTM.match_3", "Turing.FinTM.indexedVisit", "Turing.FinTM.leftAction", "Turing.FinTM.leftCfg", "Turing.FinTM.lengthBitsTM", "Turing.FinTM.lengthBitsTM.match_1", "Turing.FinTM.mk._flat_ctor", "Turing.FinTM.pairExtractTM", "Turing.FinTM.pairExtractTM.match_1", "Turing.FinTM.pairExtractTM.match_3", "Turing.FinTM.pairExtractTM.match_5", "Turing.FinTM.pairLenCheckTM", "Turing.FinTM.pairValidTM", "Turing.FinTM.pairValidTM.match_1", "Turing.FinTM.polyBitsTM", "Turing.FinTM.polyUnaryTM", "Turing.FinTM.polyUnaryTM.match_1", "Turing.FinTM.prependTM", "Turing.FinTM.prependTM.match_1", "Turing.FinTM.redirectTM", "Turing.FinTM.redirectTM.match_1", "Turing.FinTM.redirectTM.match_3", "Turing.FinTM.rewind_scan.match_1", "Turing.FinTM.rightAction", "Turing.FinTM.rightCfg", "Turing.FinTM.splitSolveTM", "Turing.FinTM.splitSolveWithTM", "Turing.FinTM.stripLastTM", "Turing.FinTM.stripLastTM_computes.match_1", "Turing.FinTM.sweepAct", "Turing.FinTM.sweepCfg", "Turing.FinTM.sweepFold", "Turing.FinTM.sweepFold._sunfold", "Turing.FinTM.sweepFold._unsafe_rec", "Turing.FinTM.sweepFold.match_1", "Turing.FinTM.sweepRevCfg", "Turing.FinTM.sweepTape", "Turing.FinTM.tapeBlocks", "Turing.FinTM.timedCondTM", "Turing.FinTM.timedCondTM.match_1", "Turing.FinTM.toCodeTM", "Turing.FinTM.toCodeTM.match_1", "Turing.FinTM.unaryTokenTM", "Turing.FinTM.unaryTokenTM.match_1", "Turing.FinTM.virtualMove", "Turing.FinTM.virtualNextTag", "Turing.FinTM.virtualNextTag.match_1", "Turing.MachineCode._sizeOf_1", "Turing.MachineCode.mk._flat_ctor", "Turing.MultiTapeTM.AgreeOn", "Turing.MultiTapeTM.ComputableInTimeAndSpace", "Turing.MultiTapeTM.ComputesFunInTimeAndSpace", "Turing.MultiTapeTM.ComputesInTimeAndSpace", "Turing.MultiTapeTM.DecidableInTimeAndSpace", "Turing.MultiTapeTM._sizeOf_1", "Turing.MultiTapeTM.haltsAtStep", "Turing.MultiTapeTM.indicator", "Turing.MultiTapeTM.initCfg", "Turing.MultiTapeTM.mk._flat_ctor", "Turing.MultiTapeTM.outputSymbol", "Turing.MultiTapeTM.relabelState", "Turing.MultiTapeTM.runFrom", "Turing.MultiTapeTM.spaceUsed", "Turing.MultiTapeTM.spaceUsedByTape", "Turing.MultiTapeTM.step", "Turing.MultiTapeTM.step.match_1", "Turing.MultiTapeTM.visitedByTapeHead", "Turing.PairParse.cfg", "Turing.PairParse.rewind_run.match_1", "Turing.actionBits", "Turing.captureAction", "Turing.captureAction.match_1", "Turing.captureCfg", "Turing.dbl", "Turing.embedEmitCfg", "Turing.embedEmitRetTM", "Turing.embedEmitTM", "Turing.embedSilentCfg", "Turing.embedSilentRetTM", "Turing.embedSilentRetTM.match_1", "Turing.embedSilentTM", "Turing.emitAction", "Turing.emitCfg", "Turing.incFixed", "Turing.incFixed._sunfold", "Turing.incFixed._unsafe_rec", "Turing.incFixed.match_1", "Turing.instInhabitedCfg.default", "Turing.moveInputPos", "Turing.optBoolBits", "Turing.optBoolBits.match_1", "Turing.optOptBoolBits", "Turing.optOptBoolBits.match_1", "Turing.optStateBits", "Turing.optStateBits.match_1", "Turing.pairDecode", "Turing.pairDecode._sunfold", "Turing.pairDecode._unsafe_rec", "Turing.pairDecode.match_1", "Turing.pairDiagTM", "Turing.pairDiagTM.match_1", "Turing.pairDiagTM.match_3", "Turing.pairEncode", "Turing.signBits", "Turing.signBits.match_1", "Turing.solveSplit", "Turing.solveSplitWith", "Turing.spaceUsedOfCfgs", "Turing.splitAtLastTrue", "Turing.splitAtLastTrue.match_1", "Turing.stateWord", "Turing.unaryFin", "Turing.unaryTokenSplit", "Turing.unaryTokenSplit._sunfold", "Turing.unaryTokenSplit._unsafe_rec", "Turing.unaryTokenSplit.match_1", "Turing.visitedOfCfgs", "_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.pairMapSnd.match_1.splitter", "_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.polyTimeComputable_unary.match_1_1.splitter", "_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Turing.FinTM.extract_run.match_1.splitter", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterBump", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._sunfold", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry._unsafe_rec", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCarry.match_1.splitter", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterCfg", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._sunfold", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc._unsafe_rec", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterInc.match_1.splitter", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Complexity.counterTape", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.FinTM.lengthBitsTM.match_1.splitter", "_private.TCSlib.Complexity.ClassP.TimeConstructible.0.Turing.MultiTapeTM.step.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.SplitControl._sizeOf_1", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.SplitControl.proxyTypeEquiv", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_1", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_3", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.pairSplitTM.match_3.splitter", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.splitControlFintype.match_3", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.splitControlFintype.match_5", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.split_run.match_1", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.FinTM.split_run.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.PairSplit.0.Turing.PairParse.rewind_run.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.MulControl._sizeOf_1", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.MulControl.proxyTypeEquiv", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mulControlFintype.match_3", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mulControlFintype.match_5", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mul_run.match_1", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.mul_run.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_1", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_3", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_3.splitter", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_5", "_private.TCSlib.Complexity.Randomized.Build.UnaryMul.0.Turing.FinTM.unaryMulTM.match_5.splitter", "_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.eval.match_1.splitter", "_private.TCSlib.Complexity.Randomized.PolyExpr.0.Complexity.PolyExpr.subst.match_1.splitter", "_private.TCSlib.Complexity.Randomized.Primitives.0.Turing.FinTM.computesFunInTime_pairSplitAt.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedActionCore.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnAction", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedReturnCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Embed.0.Turing.embedSlot", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.callTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallBankFrame", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearCfg.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallClearTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallCleared", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEmbeddedCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallEvalTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFinishTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallFrame", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallHi._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallIdleTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallInterval", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLayout", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallLo.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairEmbedding", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallPairSelect", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightScan", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallRightTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSlots", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallSpan", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackMid", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTrackTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleEmbedding", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emCallTripleSelect", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopCall", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.emLoopForwardCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyDispatch", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyImage", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyPadded", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodySource", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBodyTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopBorrowPos.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCall", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopControlAction", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopCopyTape", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopDebit.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFrame", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCaptured", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopFuelSource", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHostM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_bound", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReady", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopReplayTM", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopValue.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopWrite.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_find_run.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loop_rewind_bounded.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.List.filter.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl._sizeOf_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.CatalogPolyControl.proxyTypeEquiv", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State._sizeOf_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.EmitterP2State.proxyTypeEquiv", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState._sizeOf_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.SplitBodyState.proxyTypeEquiv", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.anyTrueTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyControlFintype.match_5.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCopyCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._sunfold", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyCost._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyMove", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyTape", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPolyUnaryTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.catalogPrefixCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterCompareTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2BodyTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2EraseTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2LeftIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2OneIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PairIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2PrepareTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2RightIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2SmallIndex", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2StateFintype.match_5", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterP2Words", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.emitterSplitAccept", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extractCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.extract_run.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.incFixedTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenAction", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.lenCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapAction", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.mapCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairCountTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairDupTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairExtractTM.match_5.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairMapTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.pairValidTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.polyUnaryTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.prependTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.rawStripTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.scanCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitAccept", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBank", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_3", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyStateFintype.match_5", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitBodyTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountAction.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitCountCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitEmitTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitLoop_result.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPos", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareReady", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareScan", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitPrepareTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreClean", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreScan", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRestoreTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitRewindTM", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitSafe", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitScratch", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.splitStep", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.stripCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.FinTM.unaryTokenTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.incFixed.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.splitAtLastTrue.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Primitives.0.Turing.unaryTokenSplit.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectAction", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectState.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.redirectTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedBranchCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedCondTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedControlCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedPadTM", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timedReadyCfg", "_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.captureAction.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.controlCfg", "_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.idTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Composition.0.Turing.FinTM.ifEqTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Configuration.0.SignType.fin3Equiv.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Configuration.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Deterministic.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.FinTM.toCodeTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDecode.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagCfg", "_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Encoding.0.Turing.pairDiagTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.SignType.fin3Equiv.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBit", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arBuffer", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCell", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCfg", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arCode", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arDecode", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arIndex", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arMoveCfg", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPending", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arPos", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReadCfg", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arReady", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpaceBlock", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arSpacePhase", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTail", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arTape", "_private.TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction.0.Turing.FinTM.arWriteCfg", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.SignType.fin3Equiv.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGSpan", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.DGWindow.mk._flat_ctor", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState._sizeOf_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.SweepState.proxyTypeEquiv", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.blankRow", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCost", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgCross", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgLeftRow", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgPos", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgRetract", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgStart", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dgTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.headAt", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readState", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.readVisit", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.rightRow", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepBoundary", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepEmbed", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepInput.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepMove", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepPos", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStart", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_3", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepStateFintype.match_5", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepSymbol", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_3.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTM.match_5.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._sunfold", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.sweepTime._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeRow", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._sunfold", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone._unsafe_rec", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.tapeZone.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeCfg", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.unusedTapeTM", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit", "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.writeVisit.match_1", "_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.Action.apply.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.bufferedCompTM.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Simulation.0.Turing.FinTM.virtualNextTag.match_1.splitter", "_private.TCSlib.Complexity.TuringMachine.Sweep.0.Turing.FinTM.sweepFold.match_1.splitter"] : Array String) do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "seal name not found or ambiguous: {spelling}"
+    let n := ns[0]!
+    let id := Lean.mkIdent n
+    Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+    let status ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless status == .irreducible do throwError "seal not installed: {n}"
+
+
+/-! ### Composition in applied form and transfer along pointwise equality -/
+
+/-- **Composition in applied form**: if `g` and `f` are polynomial-time, so is `x ↦ g (f x)`.
+This is `PolyTimeComputable.comp` stated without `Function.comp`, so that unification never has
+to unfold a composite against a lambda (such matches can unfold bundle string functions). -/
+theorem PolyTimeComputable.comp' {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
+  hg.comp hf
+
+/-- **Polynomial time transfers along pointwise equality**: if `f` is polynomial-time and
+`f x = g x` for every `x`, then `g` is polynomial-time (Mathlib's `Continuous.congr`
+orientation). -/
+theorem PolyTimeComputable.congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
+    (e : ∀ x, f x = g x) : PolyTimeComputable g :=
+  (funext e : f = g) ▸ h
+
+namespace NUPPT
+
+/-! ### The raw input layout and its projections -/
+
+/-- The raw machine input `⟨⟨⟨u, y⟩, α⟩, r⟩`: unary parameter `u`, argument `y`, advice `α`,
+coins `r` (`runAtL n y r` is `output (layout 1^n y (advice n) r)`). -/
+def layout (u y α r : List Bool) : List Bool := pairEncode (pairEncode (pairEncode u y) α) r
+
+/-- The unary-parameter slot of a raw input. -/
+def inParam (z : List Bool) : List Bool := pairFstD (pairFstD (pairFstD z))
+
+/-- The argument slot of a raw input. -/
+def inArg (z : List Bool) : List Bool := pairSndD (pairFstD (pairFstD z))
+
+/-- The advice slot of a raw input. -/
+def inAdvice (z : List Bool) : List Bool := pairSndD (pairFstD z)
+
+/-- The coin slot of a raw input. -/
+def inCoins (z : List Bool) : List Bool := pairSndD z
+
+/-- The defining equation of `layout`:
+`layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r`. -/
+theorem layout_eq (u y α r : List Bool) :
+    layout u y α r = pairEncode (pairEncode (pairEncode u y) α) r := rfl
+
+/-- The defining equation of `inParam`: `inParam z = pairFstD (pairFstD (pairFstD z))`. -/
+theorem inParam_eq (z : List Bool) : inParam z = pairFstD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inArg`: `inArg z = pairSndD (pairFstD (pairFstD z))`. -/
+theorem inArg_eq (z : List Bool) : inArg z = pairSndD (pairFstD (pairFstD z)) := rfl
+
+/-- The defining equation of `inAdvice`: `inAdvice z = pairSndD (pairFstD z)`. -/
+theorem inAdvice_eq (z : List Bool) : inAdvice z = pairSndD (pairFstD z) := rfl
+
+/-- The defining equation of `inCoins`: `inCoins z = pairSndD z`. -/
+theorem inCoins_eq (z : List Bool) : inCoins z = pairSndD z := rfl
+
+/-- The parameter slot of a layout. -/
+@[simp] theorem inParam_layout (u y α r : List Bool) : inParam (layout u y α r) = u := by
+  simp [inParam, layout]
+
+/-- The argument slot of a layout. -/
+@[simp] theorem inArg_layout (u y α r : List Bool) : inArg (layout u y α r) = y := by
+  simp [inArg, layout]
+
+/-- The advice slot of a layout. -/
+@[simp] theorem inAdvice_layout (u y α r : List Bool) : inAdvice (layout u y α r) = α := by
+  simp [inAdvice, layout]
+
+/-- The coin slot of a layout. -/
+@[simp] theorem inCoins_layout (u y α r : List Bool) : inCoins (layout u y α r) = r := by
+  simp [inCoins, layout]
+
+/-- An activation is the output on the layout `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/
+theorem runAtL_eq_output_layout (A : NUPPT) (n : ℕ) (y r : List Bool) :
+    A.runAtL n y r = A.output (layout (List.replicate n true) y (A.advice n) r) := by
+  rw [runAtL_eq, advInput_eq]
+  rfl
+
+/-- The parameter projection is polynomial-time. -/
+theorem polyTimeComputable_inParam : PolyTimeComputable inParam :=
+  polyTimeComputable_pairFstD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
+
+/-- The argument projection is polynomial-time. -/
+theorem polyTimeComputable_inArg : PolyTimeComputable inArg :=
+  polyTimeComputable_pairSndD.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
+
+/-- The advice projection is polynomial-time. -/
+theorem polyTimeComputable_inAdvice : PolyTimeComputable inAdvice :=
+  polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD
+
+/-- The coin projection is polynomial-time. -/
+theorem polyTimeComputable_inCoins : PolyTimeComputable inCoins :=
+  polyTimeComputable_pairSndD
+
+/-- Assembling a layout from four polynomial-time functions is polynomial-time
+(three applications of `PolyTimeComputable.pairEncode`). -/
+theorem polyTimeComputable_layout {f₁ f₂ f₃ f₄ : List Bool → List Bool}
+    (h₁ : PolyTimeComputable f₁) (h₂ : PolyTimeComputable f₂) (h₃ : PolyTimeComputable f₃)
+    (h₄ : PolyTimeComputable f₄) :
+    PolyTimeComputable fun z => layout (f₁ z) (f₂ z) (f₃ z) (f₄ z) :=
+  ((h₁.pairEncode h₂).pairEncode h₃).pairEncode h₄
+
+/-- Composition of polynomial-time functions, in applied form. -/
+private theorem ptc_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
+  hg.comp hf
+
+/-! ### Combined advice -/
+
+/-- Two advice strings as one: `⟨a, b⟩`, except that two empty strings combine to `[]`
+(so that composing uniform machines gives a uniform machine). Decoded by `pairFstD` and
+`pairSndD`, which return `[]` on `[]`. -/
+def combineAdvice (a b : List Bool) : List Bool :=
+  if a = [] ∧ b = [] then [] else pairEncode a b
+
+/-- Decoding the first combined advice string. -/
+@[simp] theorem pairFstD_combineAdvice (a b : List Bool) : pairFstD (combineAdvice a b) = a := by
+  unfold combineAdvice
+  split_ifs with h
+  · obtain ⟨rfl, rfl⟩ := h
+    rfl
+  · simp
+
+/-- Decoding the second combined advice string. -/
+@[simp] theorem pairSndD_combineAdvice (a b : List Bool) : pairSndD (combineAdvice a b) = b := by
+  unfold combineAdvice
+  split_ifs with h
+  · obtain ⟨rfl, rfl⟩ := h
+    rfl
+  · simp
+
+/-- Two empty advice strings combine to the empty string. -/
+theorem combineAdvice_nil : combineAdvice [] [] = [] := by
+  simp [combineAdvice]
+
+/-- The combined advice has length at most `2|a| + 2 + |b|`. -/
+theorem length_combineAdvice_le (a b : List Bool) :
+    (combineAdvice a b).length ≤ 2 * a.length + 2 + b.length := by
+  unfold combineAdvice
+  split_ifs
+  · simp
+  · rw [length_pairEncode]
+
+/-! ### The closure catalogue -/
+
+/-- **Closure under parameter-aware pre- and post-processing** [PS10, §2.1, implicit;
+inventory Claim-26.3(a), (b)] (gate 03a, finding 3): for an `NUPPT` `A` and polynomial-time
+`pre`, `post` there is an `NUPPT` `B` with the same coins and advice that, at parameter `n` on
+argument `y` with coins `r`, computes `post ⟨1^n, A(1^n, pre ⟨1^n, y⟩; r)⟩`: `pre` sees the
+adversary input `⟨1^n, y⟩` (`advInput n y`), and `post` sees the parameter `1^n` paired with
+`A`'s output. `exists_comp` is the case where `pre` and `post` ignore `1^n`.
+
+**Proof sketch.** The raw function is
+`z ↦ post ⟨inParam z, A.output (layout (inParam z) (pre ⟨inParam z, inArg z⟩) (inAdvice z)
+(inCoins z))⟩`, polynomial-time by `polyTimeComputable_layout`,
+`PolyTimeComputable.pairEncode`, `PolyTimeComputable.comp`, `NUPPT.polyTimeComputable_output`,
+`hpre`, `hpost`; `B := ofPolyTime` of it with `A`'s coins and advice. On the layout
+`⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` the projections return the slots (`runAtL_ofPolyTime`, the
+`pairFstD_pairEncode`/`pairSndD_pairEncode` identities), so `⟨inParam z, inArg z⟩` is
+`⟨1^n, y⟩ = advInput n y` and the value is `post ⟨1^n, A.runAtL n (pre (advInput n y)) r⟩`. -/
+theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
+    ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
+      ∀ n y r, B.runAtL n y r =
+        post (pairEncode (List.replicate n true) (A.runAtL n (pre (advInput n y)) r)) := by
+  have hF := ptc_comp hpost (polyTimeComputable_inParam.pairEncode
+    (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
+      (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
+      polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
+  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
+    adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **Closure under polynomial-time pre- and post-processing** [PS10, §2.1, implicit;
+inventory Claim-26.3(a), (b)]: for an `NUPPT` `A` and polynomial-time `pre`, `post` there is an
+`NUPPT` `B` with the same coins and advice that computes `post (A(1^n, pre y; r))`.
+
+**Scope** (gate 03a, finding 3): `pre` sees only the argument `y` and `post` only `A`'s output;
+neither sees `1^n`. Pre- and post-processing that depends on the parameter (padding or cutting
+to `ℓ'(n)` bits, slicing `p(n)` bits, planting at a position that depends on `n`) is the
+parameter-aware form `exists_compParam`, where `pre` sees `⟨1^n, y⟩` and `post` sees `1^n`
+paired with the output. Reductions that also read the advice or the coins are built as
+`ofPolyTime` of a raw function of the layout (`inParam`, `inArg`, `inAdvice`, `inCoins`,
+`polyTimeComputable_layout`), as `EnsembleLemmas.exists_pushRed` does for [PS10, Lemma 71.5].
+
+**Proof sketch.** `exists_compParam` with `pre ∘ snd` and `post ∘ snd`: the second component of
+`advInput n y = ⟨1^n, y⟩` is `y`, and that of `⟨1^n, A.runAtL n (pre y) r⟩` is `A`'s output
+(`pairSndD_pairEncode`). -/
+theorem exists_comp (A : NUPPT) {pre post : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) :
+    ∃ B : NUPPT, B.coins = A.coins ∧ B.adv = A.adv ∧ B.advice = A.advice ∧
+      ∀ n y r, B.runAtL n y r = post (A.runAtL n (pre y) r) := by
+  obtain ⟨B, hc, ha, hα, hB⟩ := exists_compParam A (ptc_comp hpre polyTimeComputable_pairSndD)
+    (ptc_comp hpost polyTimeComputable_pairSndD)
+  refine ⟨B, hc, ha, hα, fun n y r => ?_⟩
+  rw [hB, pairSndD_pairEncode]
+  simp [advInput_eq]
+
+/-- **Parameter change `n ↦ p(n)`** [PS10, §2.1, implicit; inventory Claim-26.3]: for an
+`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `A.coins.subst p`
+that at parameter `n` behaves as `A` at parameter `p(n)`; `B` is uniform when `A` is (the
+prefix `1^{p(n)}` is computed, not hard-wired).
+
+**Proof sketch.** Advice `A.advice (p n)` of length `≤ (A.adv.subst p).eval n`
+(`PolyExpr.eval_subst`); the raw function replaces the parameter slot `1^n` by
+`1^{p(|1^n|)} = 1^{p n}` (`polyTimeComputable_unaryPoly p` on `inParam`) and re-pairs
+(`polyTimeComputable_layout`), then applies `A.output`; the equation is `runAtL_ofPolyTime`
+plus the projection identities and `List.length_replicate`. -/
+theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
+    ∃ B : NUPPT, B.coins = A.coins.subst p ∧ (A.Uniform → B.Uniform) ∧
+      ∀ n y r, B.runAtL n y r = A.runAtL (p.eval n) y r := by
+  have hF := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout
+      (ptc_comp (polyTimeComputable_unaryPoly p) polyTimeComputable_inParam)
+      polyTimeComputable_inArg polyTimeComputable_inAdvice polyTimeComputable_inCoins)
+  have hadv : ∀ n, (A.advice (p.eval n)).length ≤ (A.adv.subst p).eval n := fun n => by
+    rw [PolyExpr.eval_subst]
+    exact A.advice_length _
+  refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun hA => (uniform_iff _).2 fun n =>
+      (congrFun (advice_ofPolyTime _ _ _ _ _) n).trans ((uniform_iff A).1 hA _), fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **Parameter change along an arbitrary polynomially bounded `φ : ℕ → ℕ`** (non-uniform)
+[PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`, `φ` with `φ n ≤ p n`,
+there is an `NUPPT` `B` with coins `A.coins.subst p` that at parameter `n` behaves as `A` at
+parameter `φ n` on the first `A.coins (φ n)` coins (extra coins are unread). This is the one
+place an abstract `ℕ → ℕ` appears (as a hypothesis with a `PolyExpr` majorant, D9); it serves
+Lemma 64.3's `m(n) = n − ⌊log₂ n⌋`, the literal/`1^n` bridges of Definitions 26.1 and 69.4, and
+the interdefinability argument of D3/D4.
+
+**Proof sketch.** Advice `⟨1^{φ n}, A.advice (φ n)⟩`, of length
+`2 φ n + 2 + |A.advice (φ n)| ≤ 2 p n + 2 + A.adv (p n)` by `hφ`, `advice_length` and
+`PolyExpr.eval_mono` — the bound `add (add (mul (const 2) p) (const 2)) (A.adv.subst p)`. The
+raw function reads `w := 1^{φ n}` and `α := A.advice (φ n)` from the advice slot
+(`pairFstD`/`pairSndD` of `inAdvice`), cuts the coins to `A.coins.eval |w|` bits
+(`polyTimeComputable_pairTakePoly A.coins` on `⟨w, inCoins z⟩`), and runs `A.output` on
+`layout w (inArg z) α coins'`; `B.coins = A.coins.subst p ≥ A.coins (φ n)` by `eval_mono`, so
+the cut reads existing coins. The equation is `runAtL_ofPolyTime` plus the projection
+identities. -/
+theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+    (hφ : ∀ n, φ n ≤ p.eval n) :
+    ∃ B : NUPPT, B.coins = A.coins.subst p ∧
+      ∀ n y r, B.runAtL n y r = A.runAtL (φ n) y (r.take (A.coinLen (φ n))) := by
+  have hw := ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice
+  have hF := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout hw polyTimeComputable_inArg
+      (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice)
+      (ptc_comp (polyTimeComputable_pairTakePoly A.coins) (hw.pairEncode polyTimeComputable_inCoins)))
+  have hadv : ∀ n, (pairEncode (List.replicate (φ n) true) (A.advice (φ n))).length ≤
+      (PolyExpr.add (.add (.mul (.const 2) p) (.const 2)) (A.adv.subst p)).eval n := fun n => by
+    rw [length_pairEncode, List.length_replicate]
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_subst]
+    have h₁ := hφ n
+    have h₂ := A.advice_length (φ n)
+    have h₃ := A.adv.eval_mono (hφ n)
+    omega
+  refine ⟨ofPolyTime hF (A.coins.subst p) _
+    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
+
+/-- **Hard-wiring advice** [PS10, §2.1, implicit; inventory Claim-26.3(d)]: for an `NUPPT` `A`
+and a polynomially bounded family `β n` there is an `NUPPT` `B` with the same coins that
+computes `A(1^n, ⟨y, β n⟩; r)` (the reductions of chapters 2–4 hard-wire hybrid indices,
+worst-case inputs and the given adversary's advice this way).
+
+**Proof sketch.** Advice `⟨A.advice n, β n⟩` of length `2 A.adv n + 2 + b n`
+(`length_pairEncode`); the raw function re-pairs the argument slot with the second half of
+the advice slot and runs `A.output` with the first half as advice
+(`polyTimeComputable_layout`, projections). -/
+theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+    (hβ : ∀ n, (β n).length ≤ b.eval n) :
+    ∃ B : NUPPT, B.coins = A.coins ∧
+      ∀ n y r, B.runAtL n y r = A.runAtL n (pairEncode y (β n)) r := by
+  have hF := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout polyTimeComputable_inParam
+      (polyTimeComputable_inArg.pairEncode
+        (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice))
+      (ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice) polyTimeComputable_inCoins)
+  have hadv : ∀ n, (pairEncode (A.advice n) (β n)).length ≤
+      (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) b).eval n := fun n => by
+    rw [length_pairEncode]
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+    have h₁ := A.advice_length n
+    have h₂ := hβ n
+    omega
+  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **Extra coins passed as data** [PS10, §2.1, implicit; inventory Claim-26.3(c)]: for an
+`NUPPT` `A` and a syntactic polynomial `p` there is an `NUPPT` `B` with coins `p + A.coins`
+and `A`'s advice such that `B(1^n, y; r) = A(1^n, ⟨y, r.take (p n)⟩; r.drop (p n))`: the first
+`p n` coins become part of the input (a uniformly random string of length `p n`), the rest are
+`A`'s coins.
+
+**Proof sketch.** The raw function cuts the coin slot at `p(|1^n|)` with
+`polyTimeComputable_pairTakePoly p`/`pairDropPoly p` on `⟨inParam z, inCoins z⟩`, re-pairs the
+argument with the head and runs `A.output` with the tail as coins; the equation is
+`runAtL_ofPolyTime`, the projection identities and `List.length_replicate`. -/
+theorem exists_split (A : NUPPT) (p : PolyExpr) :
+    ∃ B : NUPPT, B.coins = .add p A.coins ∧ B.advice = A.advice ∧
+      ∀ n y r, B.runAtL n y r =
+        A.runAtL n (pairEncode y (r.take (p.eval n))) (r.drop (p.eval n)) := by
+  have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
+  have hF := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout polyTimeComputable_inParam
+      (polyTimeComputable_inArg.pairEncode (ptc_comp (polyTimeComputable_pairTakePoly p) hcut))
+      polyTimeComputable_inAdvice (ptc_comp (polyTimeComputable_pairDropPoly p) hcut))
+  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
+    coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+  rw [runAtL_ofPolyTime]
+  simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **Sequential composition with input pass-through and fresh coins** [PS10, §2.1, implicit;
+inventory Claim-26.3(b), (c), (e) with one call]: for `NUPPT`s `A`, `B` there is an `NUPPT`
+`C` with coins `A.coins + B.coins`, uniform when both are, computing
+`B(1^n, ⟨y, A(1^n, y; r₁)⟩; r₂)` where `r = r₁ ++ r₂` is cut at `A.coins n`. This is the
+machine-level form of the "sunglass" reduction `D' := D ∘ (sampler)` of [Gar26] used by
+Lemma 71.5 (`Indist.push`) and every two-stage reduction.
+
+**Proof sketch.** Advice `combineAdvice (A.advice n) (B.advice n)` of length
+`≤ 2 A.adv n + 2 + B.adv n` (`length_combineAdvice_le`), equal to `[]` when both are empty
+(`combineAdvice_nil`, so uniformity is preserved). The raw function cuts the coins at
+`A.coins(|1^n|)` (`pairTakePoly`/`pairDropPoly` on `⟨inParam z, inCoins z⟩`), runs `A.output` on
+`layout (inParam z) (inArg z) (pairFstD (inAdvice z)) r₁`, pairs the result with the argument
+and runs `B.output` on `layout (inParam z) ⟨inArg z, a⟩ (pairSndD (inAdvice z)) r₂`; the
+equation is `runAtL_ofPolyTime`, the projection identities, `pairFstD_combineAdvice`,
+`pairSndD_combineAdvice` and `List.length_replicate`. -/
+theorem exists_seq (A B : NUPPT) :
+    ∃ C : NUPPT, C.coins = .add A.coins B.coins ∧ (A.Uniform → B.Uniform → C.Uniform) ∧
+      ∀ n y r, C.runAtL n y r =
+        B.runAtL n (pairEncode y (A.runAtL n y (r.take (A.coinLen n)))) (r.drop (A.coinLen n)) := by
+  have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
+  have hr₁ := ptc_comp (polyTimeComputable_pairTakePoly A.coins) hcut
+  have hr₂ := ptc_comp (polyTimeComputable_pairDropPoly A.coins) hcut
+  have ha := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout polyTimeComputable_inParam polyTimeComputable_inArg
+      (ptc_comp polyTimeComputable_pairFstD polyTimeComputable_inAdvice) hr₁)
+  have hF := ptc_comp B.polyTimeComputable_output
+    (polyTimeComputable_layout polyTimeComputable_inParam (polyTimeComputable_inArg.pairEncode ha)
+      (ptc_comp polyTimeComputable_pairSndD polyTimeComputable_inAdvice) hr₂)
+  have hadv : ∀ n, (combineAdvice (A.advice n) (B.advice n)).length ≤
+      (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) B.adv).eval n := fun n => by
+    have h₁ := length_combineAdvice_le (A.advice n) (B.advice n)
+    have h₂ := A.advice_length n
+    have h₃ := B.advice_length n
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+    omega
+  refine ⟨ofPolyTime hF (.add A.coins B.coins) _
+    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, coins_ofPolyTime _ _ _ _ _,
+    fun hA hB => (uniform_iff _).2 fun n => ?_, fun n y r => ?_⟩
+  · rw [advice_ofPolyTime, (uniform_iff A).1 hA n, (uniform_iff B).1 hB n, combineAdvice_nil]
+  · rw [runAtL_ofPolyTime]
+    simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
+
+/-- **From "computes with probability one" to FP** [PS10, Definition 24.6; the direction
+"a PPT computing `f` gives a polynomial-time evaluator" behind Deviation 3]: if a uniform
+`A` computes `f`, then `z ↦ f ⟨1^{|fst z|}, snd z⟩` is polynomial-time computable — run `A`
+with the coins hard-wired to the all-`true` string of length `coins n`.
+
+**Proof sketch.** The raw function `z ↦ A.output (layout 1^{|fst z|} (snd z) [] 1^{A.coins |fst z|})`
+is polynomial-time (`polyTimeComputable_unary`, `polyTimeComputable_unaryPoly A.coins`,
+`polyTimeComputable_layout`); by `Computes` at parameter `|fst z|`, argument `snd z` and
+the constant coin string `fun _ => true` (`List.ofFn_const`), it equals
+`f (advInput |fst z| (snd z))` everywhere. -/
+theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (hA : A.Uniform)
+    (h : A.Computes f) :
+    PolyTimeComputable fun z => f (advInput (pairFstD z).length (pairSndD z)) := by
+  have hF := ptc_comp A.polyTimeComputable_output
+    (polyTimeComputable_layout (ptc_comp polyTimeComputable_unary polyTimeComputable_pairFstD)
+      polyTimeComputable_pairSndD (polyTimeComputable_const [])
+      (ptc_comp (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
+  convert hF using 1
+  funext z
+  have hz := Computes.runAt_eq A h (pairFstD z).length (pairSndD z) (fun _ => true)
+  have hadv := (uniform_iff A).1 hA (pairFstD z).length
+  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
+  rw [← hz]
+  simp [layout, advInput_eq, coinLen_eq, hadv]
+
+end NUPPT
+
+end Complexity

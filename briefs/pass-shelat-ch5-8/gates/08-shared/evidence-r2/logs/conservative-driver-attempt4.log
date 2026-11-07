@@ -1,0 +1,43 @@
+CollectConservative rc=0 (completed pinned check retained)
+ClosureSealIterateFind rc=1
+ClosureSealClosure rc=1
+ClosureSealPublicKeyLemmas rc=1
+ClosureSealSampling rc=1
+ClosureSealArithmetic rc=0
+ClosureSealConcrete rc=1
+Traceback (most recent call last):
+  File "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/gates/08-shared/evidence-r2/conservative-checks.py", line 132, in <module>
+    assert not re.search(r"unknownIdentifier|unexpected token|seal name not found|seal not installed", text), text
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: START 2026-11-07T05:34:49.101974+00:00
+.lake/ps-maintainer/gate08-r2/ClosureSealConcrete.lean:102:0: error: seal name not found: [anonymous]
+.lake/ps-maintainer/gate08-r2/ClosureSealConcrete.lean:354:59: error: unsolved goals
+n : ℕ
+z : { z // Nat.Prime (bitsToNat z.1) ∧ Nat.Prime (bitsToNat z.2) }
+⊢ ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).1 = bitsToNat (↑z).1 ∧
+    ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).2 = bitsToNat (↑z).2
+.lake/ps-maintainer/gate08-r2/ClosureSealConcrete.lean:644:8: warning: declaration uses 'sorry'
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealConcrete): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealConcrete): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ClosureSealConcrete): no fresh .olean produced
+        2.90 real         3.87 user         0.85 sys
+          2434105344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              199397  page reclaims
+                  16  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  17  voluntary context switches
+               23973  involuntary context switches
+            32352344  instructions retired
+            15955909  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:34:52.005756+00:00 RC 1
+

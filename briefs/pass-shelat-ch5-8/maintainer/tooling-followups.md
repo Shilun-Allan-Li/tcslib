@@ -28,3 +28,20 @@ For gate 08 intake, account for this coverage qualification if the same stored-c
 is used; do not inherit an unqualified whole-command-coverage claim from its presence.
 
 Source: [Gate 04 round 5 resolutions](../gates/04-s2b/resolutions-r5.md) and the verbatim findings.
+
+## Gate 08 round 2: head-specific conservative coverage
+
+At `84f35910912bd3d1cd520beea9469e0ed45ce504`, the supplement in
+`gates/08-shared/evidence-r2/` checks 13,056 import-closure pairs: 12,966 active local seals
+and 90 already irreducible pairs. It covers anonymous commands conservatively and includes
+a standalone anonymous control under the full RSA seal. This does **not** close the general
+collector implementation issue above. Numerical and hygienic private Names are resolved from
+the environment; failed attribute/harness attempts are excluded before classification.
+
+The 17 failing untouched declarations all have code identical to the checked base (comments
+and following namespace commands excluded); broad base seals were not rerun. Fifteen match
+the historical 764-row inventory. Two additional inherited rows must be reconciled at the
+clean-up issue base: `Randomized/Build/IterateFind.polyTimeComputable_find` and
+`NumberTheory/Primality.exists_samplePrime_nuppt`. See `conservative-failure-preservation.json`
+and `historical-cleanup-reconciliation.json` for exact module names, lines and hashes.
+This is a recorded inventory input, not a fill dispatch or a claim those proofs are repaired.

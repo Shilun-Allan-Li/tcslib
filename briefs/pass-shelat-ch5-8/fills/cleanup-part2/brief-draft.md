@@ -1,10 +1,8 @@
 # Worker brief (DRAFT, not issued): gate 03 clean-up, part 2 (ch. 2–4)
 
-**Status: draft, 2026-11-05.** Issued after gate 04 closes and #195 (S2b) merges into
-`cryptography/pass-shelat-ch2-4`. Part 1 is #203 (merged).
-
-**Pre-issue refresh, 2026-11-06 PST.** Gate 04 is at dispatched round 5, with zero seal
-exclusions. S1 (#227) and S2 precede this work under Q2 (A); this remains an unissued draft.
+**Status: draft, not issued; refreshed 2026-11-06 PST.** Part 1 is #203 (merged). Gate 04
+is closed and #195 is merged. Under Q2 (A), S1 (#227) and S2 must also merge before this work
+is issued. Ask the user Codex or Claude before preparing the issued fill.
 
 **Before issue:**
 - the base is the branch head after #195, S1 (#227) and S2 have merged;

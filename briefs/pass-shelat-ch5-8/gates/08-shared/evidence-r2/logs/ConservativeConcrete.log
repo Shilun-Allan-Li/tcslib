@@ -1,0 +1,32 @@
+START 2026-11-07T05:30:34.564832+00:00
+.lake/ps-maintainer/gate08-r2/ConservativeConcrete.lean:102:14986: error(lean.unknownIdentifier): Unknown constant `_root_._private.TCSlib.Complexity.ClassNP.NP`
+.lake/ps-maintainer/gate08-r2/ConservativeConcrete.lean:102:15030: error: unexpected token '.'; expected command
+.lake/ps-maintainer/gate08-r2/ConservativeConcrete.lean:345:59: error: unsolved goals
+n : ℕ
+z : { z // Nat.Prime (bitsToNat z.1) ∧ Nat.Prime (bitsToNat z.2) }
+⊢ ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).1 = bitsToNat (↑z).1 ∧
+    ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).2 = bitsToNat (↑z).2
+.lake/ps-maintainer/gate08-r2/ConservativeConcrete.lean:635:8: warning: declaration uses 'sorry'
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeConcrete): lean exited with status 1
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeConcrete): error diagnostics reported
+FAIL(.lake/ps-maintainer/gate08-r2/ConservativeConcrete): no fresh .olean produced
+        2.35 real         3.20 user         0.85 sys
+          2400665600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              193903  page reclaims
+                  46  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                  19  voluntary context switches
+               22054  involuntary context switches
+            32080169  instructions retired
+            16121999  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T05:30:36.917510+00:00 RC 1
