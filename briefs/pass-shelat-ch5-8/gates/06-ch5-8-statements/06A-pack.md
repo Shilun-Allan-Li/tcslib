@@ -1,14 +1,17 @@
 # Gate 06A (Pass–shelat ch. 5, authentication): external statement audit pack
 
-**Status: draft** (2026-11-05). It pins to the integration commit of gate 06 (`PLAN.md`: after
-#195 lands, prongs A–D merged onto it, one fresh replay). The content below is prong A (`cryptography/pass-shelat-ch5-8-prong-a`) at
-`2d7b5441`, complete in the statement phase. The attestations are filled at staging.
+**Status: internal reconciliation draft (2026-11-07); not issued or staged.** Reviewed source
+reference: `e9d64158461bfe24ddc88ab885bc4017899b4c16` on the pushed integration branch. This is
+not an issued audit pin: Rule-10 seals remain pending. The current 467-module source/object
+manifest has zero stale records; any subsequent source repair requires an affected replay.
+Historical prong heads are provenance only. The recorded auditor choice is Codex (findings
+Markdown in chat); the user dispatches the job. No readiness attestation is made here.
 
 **What is audited:** [PS10] ch. 5 as formalized in `TCSlib/Cryptography/Authentication/`: definitions, statements, docstrings and proof sketches, against the
 sources. Proofs are out of scope, except the short ones that carry a definition's correctness
 (`correct` fields, length lemmas). The deliverable is **`gate06A-findings.md`**.
 
-**Sources attached separately:** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
+**Sources required at issue (availability is not yet attested):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
 January 2010 (book page = PDF page − 12), §5.1–5.6, book pp. 133–145.
 
 ## Scope
@@ -23,7 +26,7 @@ January 2010 (book page = PDF page − 12), §5.1–5.6, book pp. 133–145.
 | Prot 142.2 and Thm 142.3 (the discrete-log hash) | `DLHash.lean` | Thm stated |
 | Prot 144.2 and Thm 144.1 (hash-and-sign) | `HashAndSign.lean` | correctness proved; Thm stated; the existence corollary proved |
 
-## Findings already made (check the repairs, do not re-find them)
+## Prior findings (verify the repairs)
 
 1. **`CRH` carries membership tests for `D_i` and `R_i`**, compression is a proved property from a
    threshold on, and the collision game requires both inputs in `D_i`. With fixed-length domains
@@ -33,6 +36,15 @@ January 2010 (book page = PDF page − 12), §5.1–5.6, book pp. 133–145.
 3. **Thm 144.1 needs a full-domain CRH:** the CRH game counts only in-domain collisions, so
    without the hypothesis the theorem is false.
 4. **Thm 137.2:** p. 138's "greater than" means "at least".
+
+## Integrated API and dedup context
+
+Public ordinary-function/predicate readers, explicit structure-field equations, machine
+run/coin contracts, and topic/root exports are present. Lamport uses the shared
+`TCSlib.Cryptography.coinBlock` and length lemma from `Asymptotic/Adversary.lean`. Its local
+padding theorem is deleted in favor of `Collection.ofFn_padFin_of_le` from
+`Asymptotic/CollectionsHelpers.lean`, with the empty padding suffix simplified at equal
+length (DL-6/DL-7). These interface repairs do not fill the substantive security admissions.
 
 ## Brief for the auditor
 
@@ -62,9 +74,18 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
    the source's conclusion?
 5. **Lamport.** Is the key layout (`lamportPkBlock`) and `Ver`'s length check faithful?
 
-## Attestations (filled at staging)
+## Pending issue-time attestations
 
-- Elaboration (the integration replay), `sorry` list, axioms, lint.
+- Exact final source/records commits and matching source bundle/manifest, after the common
+  preparation in `PLAN.md`; the internal source reference above is not an issued pin.
+- Final source-matched affected replay/downstream checks, `sorry` census and axiom records.
+- Rule-10 elaborated-term/anonymous-command coverage, installed seals, sensitivity controls and
+  explicit-unfold scan; inherited failures classified against the actual PR base.
+- Style/API lint comparison and precise existing exceptions; source attachments with hashes.
+  Earlier union/API replay summaries concern staged sources. The later
+  `evidence-run/seal-ready-pinned.json` reconciles all 467 current source/object/prerequisite
+  records; seal-driven repairs must be checked again in their affected closure.
+
 
 ## Findings format (auditor fills)
 
@@ -79,3 +100,5 @@ Severity guide:
 - **note:** an observation; no change required.
 
 The gate closes at **0 blockers and 0 majors**.
+
+**Not yet clear to merge — common verification, source attachments and user dispatch remain.**
