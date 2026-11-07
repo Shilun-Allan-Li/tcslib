@@ -12,9 +12,8 @@ tracing RSA to public-key encryption and observing the uncomposed encoding bridg
 ## Proposed layout
 
 - `TCSlib/Cryptography/Implications.lean`: facade, exported from `TCSlib.lean`.
-- `Implications/PublicKey.lean`: first pilot. Proposed catalog endpoints are multi-message
-  IND-CPA PKE and multi-message IND-CCA2 PKE; this two-endpoint selection is a maintainer
-  recommendation awaiting the user's ruling. CCA1 would be a documented intermediate.
+- `Implications/PublicKey.lean`: first pilot. The user-selected catalog endpoints are multi-message
+  IND-CPA PKE and multi-message IND-CCA2 PKE (2026-11-07 PST). CCA1 is a documented intermediate.
   Existing single-bit, hard-core-TDP, bitwise and security-lifting lemmas stay supporting APIs.
 - Later coherent modules for pseudorandomness/private-key encryption, authentication,
   commitments/zero knowledge, and oblivious transfer. Split by primitive as contents grow;
@@ -56,7 +55,7 @@ Likewise, ElGamal's GroupPKScheme security is not silently a theorem about the o
 ## Execution
 
 1. Complete and review this draft inventory while Gate 06 integration/checking continues.
-2. Select the fundamental endpoints with the user, then index the already-proved generic
+2. Use the selected public-key endpoints and index the already-proved generic
    public-key chain as supporting material. Draft assumption-set-to-endpoint statements;
    add only useful missing final compositions on an isolated PR branch;
    check headers, source fidelity, axioms, seals and exports. The user approves/merges Lean.

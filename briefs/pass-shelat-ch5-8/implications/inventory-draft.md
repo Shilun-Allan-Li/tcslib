@@ -3,8 +3,8 @@
 **2026-11-07 PST.** Source-level inventory reviewed by an internal maintainer agent.
 This is a route survey, **not an adopted list of fundamental catalog primitives**. The user
 requires a selective catalog of assumption-set-to-final-primitive implications; intermediate
-steps below are supporting APIs, not automatic entries. Public-key endpoint selection is
-pending the user's ruling in `public-key-draft.md`.
+steps below are supporting APIs, not automatic entries. The user selected multi-message IND-CPA and IND-CCA2 public-key encryption, with CCA1 as
+a documented intermediate; see `public-key-draft.md`.
 
 No fresh combined axiom sweep was run for this inventory. “Source-level proved” means the
 inspected route is implemented; it does not certify an unexamined composition or erase its
@@ -50,9 +50,8 @@ end-to-end witness or composes a useful chain. All names below are relative to
 
 ## First implementation slice
 
-1. Select the fundamental endpoint set with the user. For PKE the recommendation is
-   multi-message IND-CPA and multi-message IND-CCA2, with CCA1 indexed as an intermediate;
-   this selection is not yet a ruling.
+1. Use the selected PKE endpoint set: multi-message IND-CPA and multi-message IND-CCA2,
+   with CCA1 indexed as a documented intermediate (user ruling, 2026-11-07 PST).
 2. Draft assumption-set-to-endpoint statements. For the PKE pilot, keep RSA, factoring and
    DDH rows blocked on their actual bridges. Index the already-proved generic chain as
    supporting material; do not add single-bit/bitwise/lifting tiers as catalog entries.
