@@ -336,24 +336,6 @@ theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
 theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
     (branchTM M₁ M₂ b).State = (M₁.State ⊕ M₂.State) := rfl
 
-/-- From a fixed configuration, a branch union has the same run for either Boolean
-initial-state choice. Both machines are explicitly transported to their common tape
-count and state type before comparing configurations. -/
-theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
-    {x : List Bool}
-    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
-    let view : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
-      fun tag => by
-        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
-        exact (branchTM M₁ M₂ tag).tm
-    (view b).runFrom c t = (view b').runFrom c t := by
-  exact MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)
-    (by
-      rw [MultiTapeTM.agreeOn_iff]
-      intro q _ inp work
-      rfl)
-    c t (fun _ _ q _ => Set.mem_univ q)
-
 /-- Each selected branch has exactly its original time and completed output.
 The proof embeds its initial blank configuration, then uses lockstep. -/
 lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :
@@ -1242,3 +1224,25 @@ theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
     exact step_eq_of_agreeOn h _ (hq t (by omega))
 
 end Turing.MultiTapeTM
+
+namespace Turing.FinTM
+
+/-- From a fixed configuration, a branch union has the same run for either Boolean
+initial-state choice. Both machines are explicitly transported to their common tape
+count and state type before comparing configurations. -/
+theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
+    {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    let view : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
+      fun tag => by
+        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
+        exact (branchTM M₁ M₂ tag).tm
+    (view b).runFrom c t = (view b').runFrom c t := by
+  exact MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)
+    (by
+      rw [MultiTapeTM.agreeOn_iff]
+      intro q _ inp work
+      rfl)
+    c t (fun _ _ q _ => Set.mem_univ q)
+
+end Turing.FinTM
