@@ -1,0 +1,39 @@
+{
+  "status": "DEFERRED_HOST_BUSY_NO_NATIVE_PFR_OR_CACHE_RUN",
+  "recorded_utc": "2026-11-07T21:56:05.293743+00:00",
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "cache_get_started": false,
+  "pfr_native_checks_started": 0,
+  "import_owner_probe_started": false,
+  "native_success_claimed": false,
+  "attempts": [
+    {
+      "phase": "cache",
+      "attempt": "r1",
+      "return_code": 75,
+      "defer_native_host_busy_lean_pids": [
+        78121
+      ]
+    },
+    {
+      "phase": "cache",
+      "attempt": "r2",
+      "return_code": 75,
+      "defer_native_host_busy_lean_pids": [
+        78121
+      ]
+    },
+    {
+      "phase": "cache",
+      "attempt": "r3",
+      "return_code": 75,
+      "defer_native_host_busy_lean_pids": [
+        78121,
+        85556
+      ]
+    }
+  ],
+  "attempt_provenance": "Captured maintainer tool stdout; each gate stopped before configure/cache/native work. PIDs are observations, not jobs owned or interrupted by the maintainer.",
+  "required_worker_validation": "Checkpoint0: own-clone narrowed cache/probe, all31PFR checks then ordinary-PATH module/constant owner probe before dependent checks.",
+  "limit": "Static/guard review cannot establish successful module compilation, imported owner identity, full-root baseline or cleanup completion."
+}

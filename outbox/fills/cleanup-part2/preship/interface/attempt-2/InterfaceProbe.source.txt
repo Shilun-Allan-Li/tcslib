@@ -1,0 +1,38 @@
+import TCSlib.Cryptography.Candidates.Rabin
+import TCSlib.Cryptography.Asymptotic.MultiMessageLemmas
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace CleanupPart2Probe
+open Complexity
+open TCSlib.Cryptography
+
+#check @PolyTimeComputable.comp'
+#check @PolyTimeComputable.congr
+#check @NUPPT.coinLen_eq
+#check @NUPPT.advInput_eq
+#check @NUPPT.runAtL_eq
+#check @StateLoop.orbit_zero
+#check @polyTimeComputable_headD
+#check @polyTimeComputable_tail
+#check @polyTimeComputable_isNil
+#check @polyTimeComputable_not
+#check @polyTimeComputable_or
+#check @polyTimeComputable_stateFind
+#check @HardcoreBit.pushesUniform_restrict
+#check @decodeOracleMove_pairEncode_false
+#check @decodeOracleMove_true_two
+#check @Function.comp_apply
+#check @List.drop_one
+
+theorem coinLengthReader (A : NUPPT) (n : Nat) : A.coinLen n = A.coins.eval n :=
+  A.coinLen_eq n
+
+theorem orbitZeroReader (start step : List Bool → List Bool) (x : List Bool) :
+    StateLoop.orbit start step x 0 = start x := StateLoop.orbit_zero start step x
+
+#print axioms coinLengthReader
+#print axioms orbitZeroReader
+end CleanupPart2Probe

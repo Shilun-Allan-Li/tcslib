@@ -1,0 +1,1329 @@
+{
+  "status": "READ_ONLY_SCOPE_REVIEW_NOT_ISSUANCE",
+  "reviewed_records_head": "9db11986edfce462d91958856a763577ee15457f",
+  "post_S2_source_commit": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "source_diff_after_S2": [],
+  "tracked_source_worktree_diff": [],
+  "Gate06_unmerged_frozen_source": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "input_sha256": {
+    "policy.md": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4",
+    "AGENTS.md": "c0c081f3465f06b79c806a5e5d2ee2a04387965cbbbeca5b67d542d17443e29f",
+    "briefs/pass-shelat-ch5-8/AGENTS.md": "2a39b53bf038376979bd694a2d6deeb40dd4d6203dcdd419dee56ea610f69664",
+    "briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md": "a6f43ac0f3a84baeba2e8a092235020b9ee26c7ce80258ead1746f4e14f652f4",
+    "PassShelatChapter5-8Plan.md": "d0f56a31624d509560fa67e961793b4d47e24da3bab38ec39d6ac291d0e15c88",
+    "briefs/pass-shelat-ch5-8/fills/cleanup-part2/brief-draft.md": "321ca52b2556726896bbee9aa8456e2242060632aa07df468cc572e6f98c23ed",
+    "briefs/pass-shelat-ch5-8/fills/shared-lemmas/design.md": "c2de326b205656f502ef68464fdbfe3443dfd7babd2f6bed975cdd81845e3e07",
+    "briefs/pass-shelat-ch5-8/duplication-ledger.md": "a6d03108f3a0b9b0f59abfa5238bb60303290e1751d710b4fd8a220d166156ff",
+    "briefs/pass-shelat-ch5-8/mathlib-overlap-nt.md": "64d127286588fd474fb0c9d410aa1f66ccd159115019dd71c5b781da21eb0363"
+  },
+  "source_sha256": {
+    "TCSlib/Complexity/Randomized/Build/StateLoop.lean": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+    "TCSlib/Complexity/Randomized/Build/StringLoops.lean": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+    "TCSlib/Complexity/Randomized/Closure.lean": "6c00fec9cd9c2c86b6584eb921b910baf50b8c2cfe000928aa734fe56121d50d",
+    "TCSlib/Complexity/Randomized/NonUniform.lean": "236412255666423692ca677af39b1ebcd433efc2d204f5a243f63ccc9363e066",
+    "TCSlib/Complexity/Randomized/PPT.lean": "1766685ee73e2221d7cdecffe8a8cafedc43dc46af2d1b06da8c750973a453f4",
+    "TCSlib/Complexity/Randomized/Repetition.lean": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+    "TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502",
+    "TCSlib/Cryptography/Asymptotic/Adversary.lean": "4e9b47534922e6397b823173b00ab6ed2cb393b4e88ad4bc81a9065d4656cb0d",
+    "TCSlib/Cryptography/Asymptotic/Collections.lean": "a8bd04f2ec336aa48aa0de3914e53760ae6b3ab2edc18961e6d0e80262e4eb92",
+    "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean": "723389b4d10f7939154b3172527b11bcb67de0d928789d571f266c26860ae021",
+    "TCSlib/Cryptography/Asymptotic/Ensembles.lean": "75b41f87253d2342334345c332467c5bf859469e7222b903fdc53fbce9257c7f",
+    "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean": "ab6aa036e7d2e8f4311162ffa33de06b8a9252b6a8b1150e9c34e5f5164ce934",
+    "TCSlib/Cryptography/Asymptotic/GGMReduction.lean": "50f29fd7520dda80b870e5de46804a4a9ebde4145fddd2f0dac4190a52d9e207",
+    "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean": "abd72338b164f5f28a941b85b52dd5d69acc88e64ac29ede4cf1720b98e77cde",
+    "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean": "ed63f57f499036a397a9301d4d9b9483f00b2bf0ba7938c2e8c1d8dc51447482",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean": "bc99f2d58396047638ded42372f9e0c9356cef09a418ad83e3d1addfb224e5a5",
+    "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean": "eafeddde6eedbc6a1dc19fd2850f04589f688a817b1aa210d2ea70bade80ef6f",
+    "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean": "6e993c78434ed94281caff85b314a57b0faa240564a4d815b600f1c020d51bb7",
+    "TCSlib/Cryptography/Asymptotic/NextBit.lean": "093835a3bfa999a525ae9812b44ee009b1b2eb5a6b859270159a9faafafcdb8c",
+    "TCSlib/Cryptography/Asymptotic/OneWay.lean": "91692d69d8d6e279fd449ba2551fdd38a2035ac446225d358e311ecf729e7874",
+    "TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean": "bf32d98a79fa2537a9368b93cb2c7569d926593bdf8e9167f3202e356bfadd1b",
+    "TCSlib/Cryptography/Asymptotic/OneWayYao.lean": "a2d591271d69e0b2c4574b4c5612270e0d924efc58300ba095ffd0e006625245",
+    "TCSlib/Cryptography/Asymptotic/PRF.lean": "5c51d36722d20ce625d9a7af65ae3225d8e9e5b74f903dc7a1490bf3c21ab5a4",
+    "TCSlib/Cryptography/Asymptotic/PRFLemmas.lean": "b85ab443b742a21d3fa8936af0d7ec63d4f864984fd2229b0db85dad6d03a4f9",
+    "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean": "f9cd3da4534484ff5be898a5c74783c3d0274610324e2d346f976f1579b17b6e",
+    "TCSlib/Cryptography/Asymptotic/Universal.lean": "3ebedcabc1e80f58946d716d12af27ad218b0017d1aa8208f793ae716824da2a",
+    "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean": "a1e7a50e7a1e4dbe04eaac65996efac9d085433f7d40844d2aa150463c18b04a",
+    "TCSlib/Cryptography/Candidates/Concrete.lean": "9fc5305bd21a279744d26e92f8478d8cd0795d2538e30b02a5b52945f6d5f4f1",
+    "TCSlib/Cryptography/Candidates/DiscreteLog.lean": "28da85a424400651368db003a4375d58b155a11bf06dcbe9c99b8aa858363f93",
+    "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean": "aa166c72f3abbbb2eef27e19fb0a527a1fc8fd945f96879210299921660d2a71",
+    "TCSlib/Cryptography/Candidates/ElGamal.lean": "6d90bbb78b60e644eb4fe63c10a9f7ca35a4d30019a54bc558995b773e52df31",
+    "TCSlib/Cryptography/Candidates/Factoring.lean": "95b98b054792ebcd336fe3d4937aa2dc13ec3501d4af69af87101a21d52df497",
+    "TCSlib/Cryptography/Candidates/RSA.lean": "2d0b9e00ab0f21686f64429686405eb3e7bc249c46ecaa087f04e50236e17f7f",
+    "TCSlib/Cryptography/Candidates/Rabin.lean": "52caca6649c820283c00faf32bca36de4c24c8ea6e6b4f0c2d73ad71fe68b5ea",
+    "TCSlib/Cryptography/Games/BitCodec.lean": "391a7ebacd59880ec9cdb36f270b6495ebcfd331caf3f5cbb269080af79f7e90",
+    "TCSlib/Cryptography/HardcoreBit/Basic.lean": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688",
+    "TCSlib/Cryptography/NumberTheory/Primality.lean": "c1aabf599529e54b4f092e800bb53d46a53346007b11bde4631a0a8e907a9d58",
+    "TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean": "34b988e7929b0d4567590f31951e41f17028c4e6e4c1a10709edf963833ba9df",
+    "TCSlib/Cryptography/NumberTheory/Units.lean": "b180af654ba6358d37b9641a94c0d282d56a0883640301ad9c5c909ddcf7ba26",
+    "TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean": "79911b73a3c5f762a1b5703f4eca5aa960d6d34b0cd3373016f1b2f217700da2",
+    "TCSlib/Cryptography/ZeroKnowledge/Defs.lean": "d8b5b65dfb5b090f8b9e0b7a6a654596c8fce9756b1bdfe08bf6064e7b147d63",
+    "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+    "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean": "6acfb41fcd0064da15bb3ff847c4fe8b96184aee2bcb9e35b950adf8e13980e6",
+    "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean": "9c4a4a5a88d71aa3fc93c32de52a8616ccb8a792e98e4399f95fae3ad4533703",
+    "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean": "90617bfdd4f7a3fb198b279b78c9cc5106c00132d5aa0251943381923ca0d951",
+    "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean": "a861f13456e4687b67493ec0c598917aeb2bf79c7f297eb39a522b9a8dd8ff3f",
+    "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean": "0c960ad61306b63a71fccb5a07bac36bd5fd8332efa64ad799d2934933f791ca",
+    "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean": "12141ce2905f6be5a7266b4e0abce797abe75c8c1d802f32b5ee6a30a0440198",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean": "bb5b7cafb80e705116bc52cedada09f2bcbc6d78eff6f9c92e7f35688c264292",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean": "d56cde6a8b5bcbbb12cb2154998ee7ec921b555b29de5c59ab37506f198d2aaf",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean": "b69de17a34ca72d36e057bf0660a3073c537e2d3f5ff0d0b036f296435468b74",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean": "51aab74ba3246a09fae1769e2648514ce313e54abdcd54bc55aa3a766f171792",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean": "9c94162cf8214a10c07bd99132ab200b1d7cc1ae24537442c716d7c5f9bc7ad0",
+    "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean": "e36c292249668acceb42cbf6421342efc810b7c6028d28bf8a6c1f14063db3c9"
+  },
+  "source_key_convention": "Qualified source spellings where verified; private keys are always disambiguated by file and line. Not an elaborated actual-Lean.Name census.",
+  "A_remaining_source_keys": {
+    "DL9": [
+      [
+        "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+        "TCSlib.Cryptography.FunFamily.blocks",
+        243,
+        "public Bool form, keep semantics; direct Mathlib construction"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+        "TCSlib.Cryptography.OneWay.blocksE",
+        62,
+        "public Bool copy"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+        "TCSlib.Cryptography.blocksEquiv",
+        93,
+        "public Bool copy"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+        "TCSlib.Cryptography.blocksEquivX",
+        801,
+        "public GENERIC Type* codomain, must preserve"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+        "TCSlib.Cryptography.EnsembleLemmas.blocks",
+        366,
+        "public Bool copy"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+        "TCSlib.Cryptography.GI.blocksEquiv",
+        230,
+        "public REVERSE orientation"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/Ensembles.lean",
+        "TCSlib.Cryptography.Ensemble.blocks",
+        213,
+        "private Bool copy"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean",
+        "TCSlib.Cryptography.MultiMsg.take_drop_ofFn_blocks",
+        386,
+        "public duplicate; canonical EnsembleLemmas.take_drop_ofFn_blocks at386"
+      ]
+    ],
+    "DL10": [
+      [
+        "TCSlib/Complexity/Randomized/Closure.lean",
+        "Complexity.NUPPT.ptc_comp",
+        189,
+        "private; 26 calls, 27 tokens including declaration"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/Collections.lean",
+        "TCSlib.Cryptography.Collection.ptc_comp",
+        772,
+        "private"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+        "TCSlib.Cryptography.EnsembleLemmas.ptc_comp",
+        175,
+        "private"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/Universal.lean",
+        "TCSlib.Cryptography.ptc_comp",
+        346,
+        "private file identity differs from UniversalLemmas"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean",
+        "TCSlib.Cryptography.ptc_comp",
+        66,
+        "private file identity differs from Universal"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+        "TCSlib.Cryptography.ColMachines.ptc_comp",
+        93,
+        "public"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+        "TCSlib.Cryptography.ptcComp",
+        367,
+        "public"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+        "TCSlib.Cryptography.GI.ptc_congr",
+        71,
+        "public, reversed pointwise equality"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+        "TCSlib.Cryptography.GIZK.ptc_congr",
+        126,
+        "private, reversed pointwise equality"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+        "TCSlib.Cryptography.ColMachines.ptc_congr",
+        84,
+        "public, reversed pointwise equality"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean",
+        "TCSlib.Cryptography.ColSimMachine.ptc_congr",
+        58,
+        "public, reversed pointwise equality"
+      ]
+    ],
+    "DL11": [
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+        "TCSlib.Cryptography.GI.stateFind",
+        92,
+        "same theorem as Complexity.polyTimeComputable_stateFind"
+      ],
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+        "TCSlib.Cryptography.EncodingMachines.polyTimeComputable_stateFind",
+        482,
+        "same theorem as Complexity.polyTimeComputable_stateFind"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "TCSlib.Cryptography.GGMRed.stateLoopFun",
+        281,
+        "FUNCTION: retain algorithm/evaluation contract unless exact replacement is specified"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "TCSlib.Cryptography.GGMRed.stateLoopFun_poly",
+        290,
+        "different raw-loop computability contract"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+        "TCSlib.Cryptography.GGMRed.stateLoopFun_eval",
+        309,
+        "raw-loop evaluation contract"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+        "TCSlib.Cryptography.polyTimeComputable_stateIterate",
+        70,
+        "different fixed-round contract; move unchanged low, not substitute stateFind"
+      ],
+      [
+        "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean",
+        "TCSlib.Cryptography.Candidates.dlb_stateIterate_poly",
+        1114,
+        "private specialization; use moved fixed-round theorem"
+      ]
+    ],
+    "DL13": [
+      [
+        "TCSlib/Cryptography/ZeroKnowledge/Defs.lean",
+        "TCSlib.Cryptography.negligible_const_zero",
+        262,
+        "public; exactly one use PerfectZK.zk at274"
+      ]
+    ],
+    "DL14": [
+      [
+        "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+        "TCSlib.Cryptography.forall_of_uprob_eq_one",
+        216,
+        "private copy"
+      ],
+      [
+        "TCSlib/Cryptography/HardcoreBit/Basic.lean",
+        "TCSlib.Cryptography.HardcoreBit.forall_of_uprob_eq_one",
+        109,
+        "existing public theorem"
+      ]
+    ],
+    "DL15": [
+      [
+        "TCSlib/Cryptography/Asymptotic/Collections.lean",
+        "TCSlib.Cryptography.FunFamily.decodeFin_eq_some_iff",
+        571,
+        "private"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+        "TCSlib.Cryptography.GGMRed.decodeFin_eq_some_iff",
+        163,
+        "public"
+      ],
+      [
+        "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+        "TCSlib.Cryptography.ofFn_of_decodeFin_eq_some",
+        206,
+        "public forward direction has reversed conclusion"
+      ],
+      [
+        "TCSlib/Cryptography/Games/BitCodec.lean",
+        "TCSlib.Cryptography.Games.eq_ofFn_of_decodeFin",
+        218,
+        "private copy; source namespace TCSlib.Cryptography.Games verified"
+      ]
+    ]
+  },
+  "B_owner_key_prefix": "Complexity.StateLoop",
+  "B_restatement_keys": [
+    "headBit_poly",
+    "tail_poly",
+    "isNil_poly",
+    "not_poly",
+    "or_poly",
+    "xor_poly",
+    "length_pairFstD_add_pairSndD_le"
+  ],
+  "B_comment_stripped_lexical_file_count_including_owner": 27,
+  "B_owner_and_26_consumer_files": [
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+      "sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+      "references": [
+        {
+          "line": 95,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 105,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 117,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 123,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 131,
+          "source_spellings": [
+            "or_poly"
+          ]
+        },
+        {
+          "line": 138,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 141,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 146,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Build/StringLoops.lean",
+      "sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+      "references": [
+        {
+          "line": 134,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 135,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 142,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 277,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 279,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 280,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 289,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 290,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 295,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 297,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 298,
+          "source_spellings": [
+            "or_poly"
+          ]
+        },
+        {
+          "line": 327,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 406,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 407,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 414,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 416,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 418,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 463,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 618,
+          "source_spellings": [
+            "or_poly"
+          ]
+        },
+        {
+          "line": 656,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/Randomized/Repetition.lean",
+      "sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+      "references": [
+        {
+          "line": 410,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 440,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 475,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+      "sha256": "50f29fd7520dda80b870e5de46804a4a9ebde4145fddd2f0dac4190a52d9e207",
+      "references": [
+        {
+          "line": 363,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 370,
+          "source_spellings": [
+            "or_poly"
+          ]
+        },
+        {
+          "line": 375,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 393,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 801,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 817,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 836,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 842,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 859,
+          "source_spellings": [
+            "not_poly",
+            "or_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+      "sha256": "ed63f57f499036a397a9301d4d9b9483f00b2bf0ba7938c2e8c1d8dc51447482",
+      "references": [
+        {
+          "line": 210,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 228,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 237,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+      "sha256": "bc99f2d58396047638ded42372f9e0c9356cef09a418ad83e3d1addfb224e5a5",
+      "references": [
+        {
+          "line": 294,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 297,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 301,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 304,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+      "sha256": "eafeddde6eedbc6a1dc19fd2850f04589f688a817b1aa210d2ea70bade80ef6f",
+      "references": [
+        {
+          "line": 240,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 242,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 250,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/NextBit.lean",
+      "sha256": "093835a3bfa999a525ae9812b44ee009b1b2eb5a6b859270159a9faafafcdb8c",
+      "references": [
+        {
+          "line": 611,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 613,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 623,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 626,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 856,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+      "sha256": "bf32d98a79fa2537a9368b93cb2c7569d926593bdf8e9167f3202e356bfadd1b",
+      "references": [
+        {
+          "line": 437,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 438,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 553,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 565,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 566,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 585,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 771,
+          "source_spellings": [
+            "not_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+      "sha256": "a2d591271d69e0b2c4574b4c5612270e0d924efc58300ba095ffd0e006625245",
+      "references": [
+        {
+          "line": 455,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/PRFLemmas.lean",
+      "sha256": "b85ab443b742a21d3fa8936af0d7ec63d4f864984fd2229b0db85dad6d03a4f9",
+      "references": [
+        {
+          "line": 360,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 363,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 365,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean",
+      "sha256": "f9cd3da4534484ff5be898a5c74783c3d0274610324e2d346f976f1579b17b6e",
+      "references": [
+        {
+          "line": 729,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 734,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 743,
+          "source_spellings": [
+            "not_poly",
+            "xor_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean",
+      "sha256": "a1e7a50e7a1e4dbe04eaac65996efac9d085433f7d40844d2aa150463c18b04a",
+      "references": [
+        {
+          "line": 186,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Candidates/Concrete.lean",
+      "sha256": "9fc5305bd21a279744d26e92f8478d8cd0795d2538e30b02a5b52945f6d5f4f1",
+      "references": [
+        {
+          "line": 673,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 674,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean",
+      "sha256": "aa166c72f3abbbb2eef27e19fb0a527a1fc8fd945f96879210299921660d2a71",
+      "references": [
+        {
+          "line": 1277,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 1394,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "sha256": "c1aabf599529e54b4f092e800bb53d46a53346007b11bde4631a0a8e907a9d58",
+      "references": [
+        {
+          "line": 764,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas.lean",
+      "sha256": "79911b73a3c5f762a1b5703f4eca5aa960d6d34b0cd3373016f1b2f217700da2",
+      "references": [
+        {
+          "line": 392,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 440,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 441,
+          "source_spellings": [
+            "headBit_poly",
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 442,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+      "sha256": "e7a757204adc1e2f072855fb79de32d9beb6f08f7af5ad890192269eec7f782d",
+      "references": [
+        {
+          "line": 178,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 220,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 334,
+          "source_spellings": [
+            "or_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+      "sha256": "6acfb41fcd0064da15bb3ff847c4fe8b96184aee2bcb9e35b950adf8e13980e6",
+      "references": [
+        {
+          "line": 152,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 369,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 482,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 484,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 518,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 520,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 522,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 568,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 570,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 572,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 578,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "sha256": "9c4a4a5a88d71aa3fc93c32de52a8616ccb8a792e98e4399f95fae3ad4533703",
+      "references": [
+        {
+          "line": 247,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 305,
+          "source_spellings": [
+            "isNil_poly",
+            "or_poly"
+          ]
+        },
+        {
+          "line": 339,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 437,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 482,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 484,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 600,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 603,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean",
+      "sha256": "90617bfdd4f7a3fb198b279b78c9cc5106c00132d5aa0251943381923ca0d951",
+      "references": [
+        {
+          "line": 67,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 72,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 99,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 135,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 143,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 180,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 192,
+          "source_spellings": [
+            "headBit_poly",
+            "tail_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+      "sha256": "0c960ad61306b63a71fccb5a07bac36bd5fd8332efa64ad799d2934933f791ca",
+      "references": [
+        {
+          "line": 280,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        },
+        {
+          "line": 291,
+          "source_spellings": [
+            "tail_poly"
+          ]
+        },
+        {
+          "line": 364,
+          "source_spellings": [
+            "headBit_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness.lean",
+      "sha256": "bb5b7cafb80e705116bc52cedada09f2bcbc6d78eff6f9c92e7f35688c264292",
+      "references": [
+        {
+          "line": 262,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        },
+        {
+          "line": 263,
+          "source_spellings": [
+            "xor_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine.lean",
+      "sha256": "d56cde6a8b5bcbbb12cb2154998ee7ec921b555b29de5c59ab37506f198d2aaf",
+      "references": [
+        {
+          "line": 256,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 257,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+      "sha256": "b69de17a34ca72d36e057bf0660a3073c537e2d3f5ff0d0b036f296435468b74",
+      "references": [
+        {
+          "line": 210,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 747,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 979,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+      "sha256": "51aab74ba3246a09fae1769e2648514ce313e54abdcd54bc55aa3a766f171792",
+      "references": [
+        {
+          "line": 72,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 192,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 265,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 287,
+          "source_spellings": [
+            "or_poly"
+          ]
+        },
+        {
+          "line": 303,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 304,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 306,
+          "source_spellings": [
+            "isNil_poly"
+          ]
+        },
+        {
+          "line": 418,
+          "source_spellings": [
+            "not_poly"
+          ]
+        },
+        {
+          "line": 419,
+          "source_spellings": [
+            "or_poly"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean",
+      "sha256": "e36c292249668acceb42cbf6421342efc810b7c6028d28bf8a6c1f14063db3c9",
+      "references": [
+        {
+          "line": 231,
+          "source_spellings": [
+            "length_pairFstD_add_pairSndD_le"
+          ]
+        },
+        {
+          "line": 501,
+          "source_spellings": [
+            "or_poly"
+          ]
+        }
+      ]
+    }
+  ],
+  "C_status": "ALREADY_DONE: Closure uses runAtL_eq/advInput_eq/coinLen_eq at cited sites",
+  "D_remaining": [
+    "decodeOracleMove full total equation or complementary malformed-word cases beside definition; reuse existing pairEncode_false and true_two",
+    "fold private decodeOracleMove_eq through public readers"
+  ],
+  "F_remaining": [
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+      "key": "TCSlib.Cryptography.EncodingMachines.orbit_eq",
+      "line": 572
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+      "key": "TCSlib.Cryptography.GI.SqrtLoop.orbit_eq",
+      "line": 141
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "key": "TCSlib.Cryptography.GI.peelLoop_poly",
+      "line": 194
+    },
+    {
+      "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "key": "TCSlib.Cryptography.GI.iterUnary_poly",
+      "line": 388
+    }
+  ],
+  "M_recommended_closed_scope": [
+    [
+      "TCSlib/Cryptography/NumberTheory/Units.lean",
+      "TCSlib.Cryptography.NumberTheory.units_val_mem",
+      72,
+      "shorten proof; preserve statement"
+    ],
+    [
+      "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "TCSlib.Cryptography.NumberTheory.two_mul_card_le_of_ne_top",
+      189,
+      "private; shorten proof, preserve statement"
+    ],
+    [
+      "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "TCSlib.Cryptography.NumberTheory.powOneSubgroup",
+      217,
+      "private data alias to (powMonoidHom m).ker; retain membership reader"
+    ],
+    [
+      "TCSlib/Cryptography/NumberTheory/Primality.lean",
+      "TCSlib.Cryptography.NumberTheory.mem_powOneSubgroup",
+      230,
+      "private reader; adapt to public Mathlib kernel API"
+    ],
+    [
+      "TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean",
+      "TCSlib.Cryptography.NumberTheory.card_QR_prime",
+      167,
+      "shorten proof; preserve statement"
+    ],
+    [
+      "TCSlib/Cryptography/NumberTheory/QuadraticResidues.lean",
+      "TCSlib.Cryptography.NumberTheory.sq_pow_div_four_succ",
+      183,
+      "shorten proof; preserve statement"
+    ],
+    [
+      "TCSlib/Cryptography/Candidates/Factoring.lean",
+      "TCSlib.Cryptography.Candidates.fmultNat_eq_mul_prime",
+      110,
+      "shorten key argument; preserve statement"
+    ]
+  ],
+  "optional_groups_recommended_excluded": [
+    "G12 optional exec_four_mul relocation",
+    "G14 optional table-index rewrite",
+    "G25 distAdv_seed_to_coins explicitly left by ruling",
+    "M optional pow_mod_totient_modEq, private unit coercion wrapper inlining, card_units_eq_mul_card_QR hypothesis change, rsaPerm redefinition",
+    "Q8 G5 numeral constants and G24 numeral calculi"
+  ],
+  "limitations": [
+    "No Lean/native/build/cache command, helper execution, source edit, Git mutation or external dispatch.",
+    "Import graph is a static import-line analysis; proposed routes and all new/public interfaces need existing pre-ship applicability checks before issue.",
+    "A-F/K-M source review plus binding shared-design boundary; this does not itself reconcile all 764 historical rows and 48 Gate06 additional observation keys.",
+    "No merge/gate-pass or proof-completeness claim."
+  ],
+  "BitCodec_namespace_lines": [
+    "TCSlib.Cryptography.Games"
+  ]
+}

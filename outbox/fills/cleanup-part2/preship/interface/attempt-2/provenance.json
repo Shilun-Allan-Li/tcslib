@@ -1,0 +1,703 @@
+{
+  "observed_utc": "2026-11-07T20:32:38.001791+00:00",
+  "source_records_head": "9f054ddda8257376de0a8ce39641b59b4b1b9c82",
+  "source_ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "module": ".lake/ps-maintainer/cleanup-part2-prep/native/r2/InterfaceProbe",
+  "source_sha256": "07abd03c8dab3f360cb0b74d72bd18caa6ea526ee69bb0e87262bbda897aa1dd",
+  "olean_tree": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/oleans-s2-final",
+  "checked_dependencies": [
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Configuration",
+      "source_sha256": "3081733db115d264eac736a0359e6db3ec5f0238aa3639d2f905fec1972681dc",
+      "object_sha256": "ce9ee2e58b28c9226eeaa3e8733b57f698ece429a22c614edb107b2bbbc326b3",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Deterministic",
+      "source_sha256": "1e3347f8f768b69a0cb266aaad7bc298f726af4d51a21ab6f3397f47e19769d5",
+      "object_sha256": "d5059e1bbbfae5f5c95c2cbaa157d3bb7129859c5bc387d99ae968dd6d4c5a38",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Finite",
+      "source_sha256": "454e4ab5da22d833873674676293c35154f17f1a371533d53b473b1b912cf9f8",
+      "object_sha256": "dc9e88160da06cba4b8c5214caf9ea517a6ae67f54c70f17c3f4a53b9ec1335a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Simulation",
+      "source_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "object_sha256": "dea3383ae9ab96838f78fb795136d3316761d64522ea43371e90526c30caaac0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Composition",
+      "source_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "object_sha256": "6c4add455df46c06c56c6e563000799fd4be57d39afa706af75891d30d964cf0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTime",
+      "source_sha256": "333fc6e93739bc4e977308e0ccf16ff9e837fd638e48a91270f8c56a85371bd1",
+      "object_sha256": "6bdaf3a6ce7906c38ab16c3c2a5236e8de1a75f5c307f5f88603a32f05dd0606",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/StateRenaming",
+      "source_sha256": "0b9ac758e248b875bbadb898f178d459fd90d15a0ec536bb81c427e9b2d6019e",
+      "object_sha256": "50b350669fb1b82782ba0c0771a9dbb7a03ab4027816ba46b4102a499b1d77b0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction",
+      "source_sha256": "0bf453573719a9a1bb6a9ab13cf1728318668aa76fd3578d3a94f08fc2a5d1dd",
+      "object_sha256": "b5ea1e8f588b7aea32779cd6603da27a4e2c428dcf396ed59e403bb54c5e9adb",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Sweep",
+      "source_sha256": "d43e9b6dd7bdc291f8c657b12f72e068e96fbe0a74ffec60137eb27295a1b4c3",
+      "object_sha256": "1615718b1145577a5b0d3d5fb697858acf95f1f8a7790bfcd1389eec2a7abe4b",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape",
+      "source_sha256": "4b05f7dfbee29ca8b2dee1507f2187bf392134acca51389361d9c538c744dff7",
+      "object_sha256": "1aafbf9041b538db9ebc692295906f7a50fe7dffee595d46e0894df838a1803c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Encoding",
+      "source_sha256": "76f3ff653c82ed8e825071871f2ab12fc9de4e2123b81a43d06be0cedcd1db12",
+      "object_sha256": "4150be5b394b2230fedb3eff2dccc2ca54a63a58bb7bf09b7904aa82791e915e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/TimeConstructible",
+      "source_sha256": "9dbfce574194ed387488b24eafe9500a384e8ba8cf7b21846e7023582c9ed481",
+      "object_sha256": "589a938db9e2a251191f4fa52a0bb26066c396bee5b4b860b11ac113971d720c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Convention",
+      "source_sha256": "7de288c338b6f6a2a5d90b5258f552049feb28929e15842b2bde93b825ce183f",
+      "object_sha256": "800a2a88e38a75386281bf1181b8581c72e5e38ddaec03499a7d63a5ea6d8a89",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Wrappers",
+      "source_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "object_sha256": "97082697d2ef8860c9f01b02f31b21d57076ba34816b0dcbf3bcfbbfe2543947",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Embed",
+      "source_sha256": "95ae78fafbc8c7585f9b0c603796ae843d1e7ae25788359cb6a94c8e9ad25575",
+      "object_sha256": "8d9efd3966f147d1b525ab2a52e0afa110032292f5449422bca5182b8304bd47",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Loop",
+      "source_sha256": "d993af6f3d31495ea2ae34d7f9cbcfc1a1c522de825a88b5345236351c7ab9b5",
+      "object_sha256": "ddcc738075b9cc03515e7b058e7fe7684bc18304b33d99dcd5fe98c8a42638b3",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/Primitives",
+      "source_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "object_sha256": "72795fd684543fdea9e94b67e08581dcc6f04fd8611152be692c926c92758fb9",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePairing",
+      "source_sha256": "b92a70cf956c3045e3e4629f8a7f1d0d298f7822faecaa1e2d7541b533ca7616",
+      "object_sha256": "41d000310b42e035f7b41e88d3f2f76601e4ef584d2665b382bffbfac1957930",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Probability",
+      "source_sha256": "4cce091a97edade88da63511b189b602e25a88ff4f671eb5467c435e4a3a6d46",
+      "object_sha256": "339604cd349d7cf1e3d3e1e262f4ffac2fe3a74aabb6d7b923df0e7cc6f83410",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/InformationTheory/FinDist",
+      "source_sha256": "868c2211ee852e556e2b828a5edfd8d01817f6f82cbbfef3b271e903be9136a9",
+      "object_sha256": "e9a4c06298cf6a1b49891ee7fddd808291930cb351a940ce4132c245faf6b071",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/InformationTheory/StatisticalDistance",
+      "source_sha256": "f15ff63330a6985a4f018fd57aaedfdc54b45472477271952271c40277c23739",
+      "object_sha256": "e52d2e19b168165931479ab34a90ce98f5572faa519ea2382b76dbfeba38b2ae",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Experiments",
+      "source_sha256": "426ecc19b13a50fcb2bf7db87eca6425285ba47e48f50c72c5088906765fa220",
+      "object_sha256": "2eaeb274ded66f8168654d11b5a8ec3f11430a41feea7333b7f078d6c4f15384",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/Basic",
+      "source_sha256": "68b66cde472539498d0c0913fd591b739c4918301387f7f92cf2e40facce0ab0",
+      "object_sha256": "ed30356b86e3f228f5925202503e065d447ed91b14a631595d04c79bde2aea89",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/Basic",
+      "source_sha256": "ab7209d03d6fffc5c682fe018d389c2edcbfb8ab325e6649315dde0085f7f688",
+      "object_sha256": "6e47bc7966e5bc8810d82cfa423d171206278d74f419710d62e0d3cc54771a40",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Sampling",
+      "source_sha256": "9860769695ceada5454be8b9012183d015083cd2e5a1c916b3f9f6b68a4f50f3",
+      "object_sha256": "235171d25088a8e867b1a88714ceb38aa04ea004b03240f566c357e51e91dde0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Chebyshev",
+      "source_sha256": "397f9a14c8ab21501b8135d007459ca0b3ba210dadf48d9ac78849acdaccddf1",
+      "object_sha256": "2e8467b6f4171bd700b2c14fbcff4c1e23b6b7b3716908df577252a0c4113985",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PolyExpr",
+      "source_sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903",
+      "object_sha256": "a0b693ceca37f588bad554b2ba9d3aa87ec4be6292b41fbc3f651d4781a8eaa4",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/PPT",
+      "source_sha256": "1766685ee73e2221d7cdecffe8a8cafedc43dc46af2d1b06da8c750973a453f4",
+      "object_sha256": "6264cf52e8fdaf136531ccbe93de9bec0b9b0acadc4740c3bc1a22e54cae3a5b",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/ModuleHost",
+      "source_sha256": "1be257b9b7b825bba9c2f6f5ed12e94500f71745e2650e9c3225433e22d76502",
+      "object_sha256": "07732014f229a303d83393a4638203cabb8c52d889bb8bf9b7259df28c67307b",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFindHost",
+      "source_sha256": "0348140038e0978463a4d727e97b2e3f034829a0313dee432371c84ad743f4ca",
+      "object_sha256": "78adafa1c46b0a391868eaa246deb9780c06e400b23a7be272548d4b07686e2d",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/PairSplit",
+      "source_sha256": "c7fcf877294a8a11a88bcd5803059b88aea71033a359f6c00e0a0334bbe59cf7",
+      "object_sha256": "0c064a77c60d64f47d3ea5ee6f19cac636e0db0ce03818e982b0e0ce6ed39104",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/UnaryMul",
+      "source_sha256": "131790bd75b421ab914a10cfa5ce27a28c4c49f5bb4b2b03899f104f7b56018f",
+      "object_sha256": "cfc227f6908b84478e1cac468c7ae2241571daf2b60513efcd46130a3c86d59e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Primitives",
+      "source_sha256": "806389a7b0492af8836938156f0424b0a374791fd576cca6bf6018c00534823b",
+      "object_sha256": "bb2d57d9e86792bacb68ade96da281bdf7fb75c6aa3dfd715885092af7f8841f",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/IterateFind",
+      "source_sha256": "81e21a15b6ee3da6d1a788ecdab5213aca7ec853d9a8b3ec5dc4cf22da00a7b7",
+      "object_sha256": "9db6b99cbb62e1902ef2b0eed7e07f9710937ccca66a119035e8a03253d61b71",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StateLoop",
+      "source_sha256": "f099880dcd90cd0f8939eb088104cd244e5172cf784c35f204ade93330ae276f",
+      "object_sha256": "e231904de3cb98f874a8d23c0188c2896c5c4702fda1041b813fe2001533840d",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Build/StringLoops",
+      "source_sha256": "86d363135ca8c65d9597a39f166f57a8314ebd1ddae169dca0ecbe315480e063",
+      "object_sha256": "c4f7d074cc51a16a056cc00751ea78e731c8ca3a712dd43d6da067dd367fb182",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Repetition",
+      "source_sha256": "bd2f698ee3164f48bf5673bea8b6e9aa8b775e27ce11330a722ae5b266583913",
+      "object_sha256": "c6d27e95ccf5011d63fdc9cf235185f8d41a26e76a74c327118fb11ae312d1a5",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/Closure",
+      "source_sha256": "6c00fec9cd9c2c86b6584eb921b910baf50b8c2cfe000928aa734fe56121d50d",
+      "object_sha256": "4cd83c9e674bc711b32db509bd7ae2d5783751bca4d30faa2835454009996182",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Primality",
+      "source_sha256": "c1aabf599529e54b4f092e800bb53d46a53346007b11bde4631a0a8e907a9d58",
+      "object_sha256": "9ecccd2771094ee443e6746c97649c38daa3399e92bf1ded2d76896b58968d72",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Arithmetic",
+      "source_sha256": "3cd1e07b3e5ccdb06a978d23babd34fdf098de649ec0f4f4fe6dc3dc83b61efd",
+      "object_sha256": "2f2f04a58ea27180b834228074626f24f009a94d5bc284107e38aa51814cd3cf",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/Amplification",
+      "source_sha256": "a258eca2b4172cb38fde46aa9e551093ca1af42c1081b67ef628f1ec0a1fc016",
+      "object_sha256": "eb11d0d7d4f271434a98c7a72e346b343c4e4cb38b0322b0191f3438e2f9bfbe",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/Units",
+      "source_sha256": "b180af654ba6358d37b9641a94c0d282d56a0883640301ad9c5c909ddcf7ba26",
+      "object_sha256": "4f4f2e0a16fbdb1e60ccbadae383aeafc0e1246abcaf2c8d33288255959b3da0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Adversary",
+      "source_sha256": "4e9b47534922e6397b823173b00ab6ed2cb393b4e88ad4bc81a9065d4656cb0d",
+      "object_sha256": "d400d3768b0a0c083d4da2746e1b444b4dfb1b6e6b07ab38fb4b079898dd871a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/DTIME",
+      "source_sha256": "54795908ce0a394d59cc7ca91a0c9f9377ff687e1bc805af3e65889212c3cc84",
+      "object_sha256": "517d1cb340b855bde31e38e3f00dfb789ecdc16b6c7c4a26b7d3d2eaee4c2ae2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassP/P",
+      "source_sha256": "b9a52ed504708642a83705fcd597f5afe99e902deb1cd0ace2fd56d4bd4a66e7",
+      "object_sha256": "5ed8450b54b197f7107946f3ba49533a322cac9711de063b1645e18655b697f2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/NP",
+      "source_sha256": "efe31055353bf652e3ca410a7f58e2e578af0b4ccaf036586095b1e03a5dbf68",
+      "object_sha256": "ed875d39cd1eaff913e73195e6ca2c77237c519c8002a2fec86f67e4f62f9aa5",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CoNP",
+      "source_sha256": "bcf23fe2e091282f6ed51d417e47d04503e2247180edfbe093a8905ffdd0955c",
+      "object_sha256": "01583fb8bf0afe961fb80a6f85f489c776b630280eb1891f44e6eee61771d503",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/UnaryTape",
+      "source_sha256": "3c7c639b324fa577af524310b93e7ec8c39494cbd5ddf5f5482ed90ae6d134d4",
+      "object_sha256": "c4fca9a3bc6fa4ff043057b1054db236617f67ac211528461e8108dd4d0521be",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProg",
+      "source_sha256": "a9d858f6cb848fef51d41cf44589328e363a02ea98e1e431a6f9fba1969658c4",
+      "object_sha256": "8e212501f3b03676f1a6a13820320eea5f478df2db7b1ea5588e8b52e24255b3",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgRun",
+      "source_sha256": "9bfc54704f6f86e6925741753872da717e685cca7f2ba118fb3722510b817928",
+      "object_sha256": "51ed7d55c15427f7f2a48b29750d1c7c18a82cede66b8a76e5cf0332b66b52da",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/CounterProgPolyTime",
+      "source_sha256": "a40e9e33042e619444ae2d89f46a55113bdcc92aa6e84536524720f95c988428",
+      "object_sha256": "fd05df7282f4ee25b2ba959a6ab1e39449259dafb58da52eb760cba5565cb955",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/CounterProgInput",
+      "source_sha256": "770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3",
+      "object_sha256": "c56d7549fd8b1eff10e08516638cd920604936d4fce718b1e241b6156374182c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimePrefix",
+      "source_sha256": "c8273e26ec20e4c18177df26ec463e01f628017fbc28fffd038e40192e028fe5",
+      "object_sha256": "119cbdb2c971457f6f931538571d020281931ea941faeab729564ac00963a3aa",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed",
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "object_sha256": "a8b8ba17e5bc7eb1992681a50122968e16ecf139fceef96246e677af7971ec3e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/TuringMachine/Build/EmitIterBody",
+      "source_sha256": "bc35c3485cad1755dcfdb43d2c77c3a21af390c4201db1d15c2ccfe77e3bd3fe",
+      "object_sha256": "ff902d2499427039248b65c20d27ad4058a5267933236864dd52779b50450361",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop",
+      "source_sha256": "6793d5f2ff0f964cecb753851be395d2b5a5f37a8b92a5b937f42ddbea610048",
+      "object_sha256": "e5edf7e34fabca6fdc96f62cf19e25ce9b80d0db0d5e11541a770e3dbd0639f7",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests",
+      "source_sha256": "c5d091944b891adcf4cae2ffadd532e39a84e5deffb0c7045ab10afa6a829def",
+      "object_sha256": "0915f0fea6b2641db1ab3a337011b6c5b52cf2b17059005895b0180cbd9b0618",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PolyTimeBlockMajority",
+      "source_sha256": "6416d537aa1de62932ed3d74f3c22a7314ec6fe18087663fc559452ea62baa87",
+      "object_sha256": "26a77aa4cf00f4b59b1ea9335da4f8cdf80d19488d9484085dd2d988b445aaff",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/ClassNP/PClosure",
+      "source_sha256": "4967e19a746a5a602018b6b8dca89363aee7b3e691d0786fdc3a490015338d44",
+      "object_sha256": "c27f219c0331c18387353c1b8fef60869c43a6d8243db0ba4ac024b963a6bd0c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/PolyHierarchy/Padding",
+      "source_sha256": "61ecc05184a2c5b06f34d947bc00a5697cc7594dfbffce6dfb246932cef0c981",
+      "object_sha256": "969963331409331e93c10cfb07009e96cecb8aa7ef7f5864f7c12c2f17468833",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers",
+      "source_sha256": "723389b4d10f7939154b3172527b11bcb67de0d928789d571f266c26860ae021",
+      "object_sha256": "25538088dc5148c3d980d3291f2a372f0bfd8e1bb4a7edc150f7c3917328dc25",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Concrete",
+      "source_sha256": "9fc5305bd21a279744d26e92f8478d8cd0795d2538e30b02a5b52945f6d5f4f1",
+      "object_sha256": "96c3a2536fe4312929d0d6aec662a7974dd69e99ddbe617c393667957e43785f",
+      "provenance": "S2 final native receipt"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWayLemmas",
+      "source_sha256": "bf32d98a79fa2537a9368b93cb2c7569d926593bdf8e9167f3202e356bfadd1b",
+      "object_sha256": "ec5aa8effd584fdd2b2cb40ee5bd92d137ba0d0aba664d388c04fdd0bea939b0",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWayYao",
+      "source_sha256": "a2d591271d69e0b2c4574b4c5612270e0d924efc58300ba095ffd0e006625245",
+      "object_sha256": "78ed4c79425199c57197865d3c86d9065b92f80abf88ecd098747f2169bdc453",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Foundations/Negligible",
+      "source_sha256": "5e6d2c9e69dbfe012c36a92bad05ec27e691c044dae73a7277b9599902074e1a",
+      "object_sha256": "8a8e6630a66733a58a3058ee6cd431553f9134cb214e0a6c16e1bed6bf87ef2f",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/OneWay",
+      "source_sha256": "91692d69d8d6e279fd449ba2551fdd38a2035ac446225d358e311ecf729e7874",
+      "object_sha256": "9277110432145559b2f13eddc72602405a1dfb32183fbe9446319dc19210c38c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/CollectionsLemmas",
+      "source_sha256": "97efc0c699e5d536c8f4f68d6b64929a7e2d98e9de60fdfd6fbc1a46268b15a6",
+      "object_sha256": "c8fe92d876daf7b6a102e79dcaddd785eaf0738682f9ae8211b412c5295a3164",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Collections",
+      "source_sha256": "a8bd04f2ec336aa48aa0de3914e53760ae6b3ab2edc18961e6d0e80262e4eb92",
+      "object_sha256": "346658ad5ed6e0818dea17647785cf05d75ef2f91a964ee2d4ea2a8cd3029f6a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Factoring",
+      "source_sha256": "95b98b054792ebcd336fe3d4937aa2dc13ec3501d4af69af87101a21d52df497",
+      "object_sha256": "1fb81583f8f540d184f832fa7db6c71a6650f99f1a6647e8ca0065e08d00539c",
+      "provenance": "S2 final native receipt"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/RSA",
+      "source_sha256": "2d0b9e00ab0f21686f64429686405eb3e7bc249c46ecaa087f04e50236e17f7f",
+      "object_sha256": "d18f8e6c23418ac0b83d14c09eaa98daf22549685a3e3d50a516a24b6a8bbc54",
+      "provenance": "S2 final native receipt"
+    },
+    {
+      "module": "TCSlib/Cryptography/NumberTheory/QuadraticResidues",
+      "source_sha256": "34b988e7929b0d4567590f31951e41f17028c4e6e4c1a10709edf963833ba9df",
+      "object_sha256": "d87330afbcff23241f3811087d2497c78a1c77300657ce6fb87cac8c12c7ef96",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Candidates/Rabin",
+      "source_sha256": "52caca6649c820283c00faf32bca36de4c24c8ea6e6b4f0c2d73ad71fe68b5ea",
+      "object_sha256": "3ffc78c6255d3489da29bfea21948a9df28024639ef30c21050ba75a39a93440",
+      "provenance": "S2 final native receipt"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGCircuit",
+      "source_sha256": "212175e3d2cb4bbaf5be2f7d5f265b738d0cadff256ebd6f60444d7805c5f735",
+      "object_sha256": "3042f1733f54e5b92b264b3af8d9d8c43aadd24de971651fb272eff366f9ee4b",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/Basic",
+      "source_sha256": "05d5f8769bfa5384b306f4f9d51f092d6e23368c748f994438a98bbf56bf39af",
+      "object_sha256": "7379adf14d255bda30678431882d87d84da5e54452ad53cf955f152a76b11dee",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/TreeDAG",
+      "source_sha256": "2b9824996de35e2f56a69e589113bebaf035a5c05de4062eef781151cb01f8a2",
+      "object_sha256": "22c479da2756bb03db4d80f0d7ee9db49bb764086815a45a8826b39c2bb1e684",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGTransform",
+      "source_sha256": "023b6115dd010206120f1c0cb642db8f5588db7c4be5d9e699572b4f68488a9f",
+      "object_sha256": "9ce97a41dd84676bdbfc497488b3b7754f16a920ffe73104c9847a3aa992634c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/DAGFanin",
+      "source_sha256": "b98f2bba415114f9b18fd1e34427d35d32df526a043787359c49c5d925b1c9ed",
+      "object_sha256": "87415f814a5c9c90f723b3c3eb37638f55ffd5c6598603a355ca2ba8e5b0319f",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredCircuit",
+      "source_sha256": "cde5dd40b1350f8d6356bba7a612618189b030a225cdf54faf244e3efd20dbaf",
+      "object_sha256": "da5c7d2a1daec7d40672e7fe1bad2f8d55c17ac0729e48a8f942ea8781fab254",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredPPoly",
+      "source_sha256": "e5c6cb3c13f2fb60b4f5ed4944d51fb300b3e8a9d02c095ccabf13fe230d77cf",
+      "object_sha256": "7f5386255b1c1f7153437eeee07aec2ea3efd8f65860e2009f03755369fd769d",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/PPoly",
+      "source_sha256": "41b4471a828c99c2db4163725f005e309aa01f6825f33d8507196439435f2bff",
+      "object_sha256": "e167ee24dd5f00220d90c327c166cebe777a95077c2c8b7efc41a74ede247e0a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/LayeredDAG",
+      "source_sha256": "bf677328d1f77e164ce3de30bf51602a1b9e05f147000f312560bffab2be0684",
+      "object_sha256": "94c420532c81e6d0e222f61ed42822037695c8787055e260164b4f3a759872bc",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/SizeClasses",
+      "source_sha256": "c1825d1aa9e761d49c16616915d8ccc8d4e93f058c8e510472d2d0c5bdaf2765",
+      "object_sha256": "e983fbd89ff56dfbf2bda96d4a495e76a5fab3053f60d8865b371d2425bf5e4e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/CircuitComplexity/Advice",
+      "source_sha256": "512af5c3fa784b4f04318f657d1c325c36b4182e5c9bea28cd7e64cd50c77a4e",
+      "object_sha256": "78ad607c93867b0ebb7a71d7c57a67e3ad449afde82ec615927e81b17aec0c87",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Complexity/Randomized/NonUniform",
+      "source_sha256": "236412255666423692ca677af39b1ebcd433efc2d204f5a243f63ccc9363e066",
+      "object_sha256": "5c3c387cad3437283148786c7f6994abb0da39133b2ae833ed39d4ae287e551a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Indistinguishability",
+      "source_sha256": "ad14d4e190a56344860a856a1b9ff0eaeb66286c1c1c1b46312a870f50dd22eb",
+      "object_sha256": "cf242cb2cb5ed796446282a87e72132e133d88beeaa7e76a8cfd7e60295fa466",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas",
+      "source_sha256": "ab6aa036e7d2e8f4311162ffa33de06b8a9252b6a8b1150e9c34e5f5164ce934",
+      "object_sha256": "4c025ccae4b76e6d8589bbdf3b714cb6b361b520d7805d65e289685207fb265e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Generators",
+      "source_sha256": "f3ac4cba8a9ad823551be322661bcbf6b7264c039088b28b8c1b03890a39cd36",
+      "object_sha256": "f82f4d5c4911ec14cc24b38dc94071658b3027a3d67e1a95779ad3cfb5429fd2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation",
+      "source_sha256": "98e5508596486b980eb95dfe96d84703b9881436e309964732c46032520ca89a",
+      "object_sha256": "79a99ab5d8c7d0b5dcd3dc2f3cff278f231a48bff2432b59dd57b8131e0a04a4",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence",
+      "source_sha256": "f66d476ded6cfdc3b613f2bfc48360b5dab6bb629ed6a05124006fbcf2c935ae",
+      "object_sha256": "96382424bf86d3da3dc3ea64570e0d846afc97afd02655a6b25ee5e3c08b2125",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Ensembles",
+      "source_sha256": "75b41f87253d2342334345c332467c5bf859469e7222b903fdc53fbce9257c7f",
+      "object_sha256": "f21237135887d864e03e398549b8a7b55ead90fc7a9fe94db035bc11bbc874bb",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/Pseudorandom",
+      "source_sha256": "6e6e855fe0bc1beb8b56fbc9d4b3335c15047df41c3780f5aa475b5534a5ca19",
+      "object_sha256": "5e2a9d5e70effd6bd7374abdd3cf42f8e459c219ac1f36249098babe5e65dc18",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/NextBit",
+      "source_sha256": "093835a3bfa999a525ae9812b44ee009b1b2eb5a6b859270159a9faafafcdb8c",
+      "object_sha256": "35e05a870e8a01443ba9780d2f6c59872e191b2418d412fe778757213df35c98",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/InnerProduct",
+      "source_sha256": "3c961d166ec3dbb5cc3977fdbcd1947b36c83d71d3c35907ed9a9b0c9b9009b1",
+      "object_sha256": "d1978e81dc91321e8958c730071686b35886a5105feba279171e96b0a74700aa",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/GoldreichLevin",
+      "source_sha256": "e1b1d9b3de55cc1ce190dda59f99a6c61ef0a3a250203796bc95b13767a4ad20",
+      "object_sha256": "0ff90565c13da0e82be8b10a0debd3633b2dcf8e6626b274f3ae8cfb81729177",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain",
+      "source_sha256": "1bea9e80f0c710575f8857d5e632319f235ab4aaa10358ba34075d03d4966cff",
+      "object_sha256": "911f3666d870d1917e1eb7cc9f6692a2220a0113fec1bad4b6883286758eafc5",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/HardcoreBit/ThreeQuarters",
+      "source_sha256": "bac82dd8716270719b7eadeb8f92a73ac875008e06e5d2147a650e0986eb76e6",
+      "object_sha256": "900d822beaf8fe0c66b3b95f29f619c45ea1c6461d664ccf116aa9993f3fe4b3",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/OneWayFunctions/OutputLength",
+      "source_sha256": "3cc8be5723e0dfd07d11377142b3923fe3e92115ea5fcaf243c34bfe29399d6b",
+      "object_sha256": "e6f84a0dda23eedaea52a8eec6844361ba0466218c0776e0a548c61d3d12681d",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas",
+      "source_sha256": "bc99f2d58396047638ded42372f9e0c9356cef09a418ad83e3d1addfb224e5a5",
+      "object_sha256": "a59c59d43440577782df6ce30db5f251ec1a4f7e7e41a59b28d7bbc54c24a2c2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreLoops",
+      "source_sha256": "eafeddde6eedbc6a1dc19fd2850f04589f688a817b1aa210d2ea70bade80ef6f",
+      "object_sha256": "29a37e84b40ee9029a764aae1a6bc0719dde89547f41dfd8dc442ee7bfa2c1b1",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreGL",
+      "source_sha256": "ed63f57f499036a397a9301d4d9b9483f00b2bf0ba7938c2e8c1d8dc51447482",
+      "object_sha256": "ec02399aad175be13ebc63523c947927157edaed26cd8db10b4510ec97cdb54a",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreGLColl",
+      "source_sha256": "fb93a1ed8673936a22841df6416d936c1d839681b03ff4d52e8b2abfd7290105",
+      "object_sha256": "cc42cf1a1e8e0c1ad94d237b4713b867763805e32a4c518b1887027fab561fc2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreCollection",
+      "source_sha256": "37963c9ffce5814305586d0474c0c719abcc2bc386251a004005282ccbdc27b1",
+      "object_sha256": "ba190993471b166af82a14b25a8c90dede1c30f73ac9a0806628ec027eb479d1",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily",
+      "source_sha256": "d1f38ebe43eaa1993e8ceb109295178f02c41db648208f842a8f1275a3db469b",
+      "object_sha256": "c86f76dbce68a8fded51d0f859492d98019ddcea9d96dad0ff5a29cba07f13ca",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/HardCore",
+      "source_sha256": "6aa85b4e12665e386b59261368f161ca9b66140958f7904962309ec74bb9cb26",
+      "object_sha256": "a14b84e6d8447b54fa3f19ae7ffa7563c1ec75d3cf932b0290d8a59aa459900e",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Games/OracleComp",
+      "source_sha256": "13914fce8c1b681411a391510a59d3b1663edfd6d3aff4d886227394bc8aea98",
+      "object_sha256": "55db77adbda2a0a6623189c786b92617f65b2c8d49b981e35824170d9c2ea81c",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary",
+      "source_sha256": "1bd9ff4a8eb8a9561f218bc49b0b4cbc524ca7fea55d952a934218604c453bfd",
+      "object_sha256": "e898149e329163df61803292b5a8f2b61ceb85973dd8aff89a9c431e505592c3",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling",
+      "source_sha256": "c7ba03a03ed91625a1c40f4f29bacba20cc7d69f443bc661cf9f4c047bfb78b4",
+      "object_sha256": "7e6f3161c18936ae44693f7eae6cc8066418aa8ff143aefae1be7118f8d393d9",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Functions/Defs",
+      "source_sha256": "28a68e0d8cc0621216923b5515d2c78c2eb6014a7823fe2fd4837e0301bd03e6",
+      "object_sha256": "cd73a02d104f4443a2e696c61d9c54af6fda9c56b299c7671c29b39fefa6fa1b",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids",
+      "source_sha256": "76ffc482cb304f07a86b397cc03c156be18bcd59cf01843cad9889659e57f4e7",
+      "object_sha256": "2a6836891497c94410eb15466918587106df38bbab03ddb096a8d9a7e022ab00",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Pseudorandom/Functions/GGM",
+      "source_sha256": "193bbe7a5553286c999c79c951bf8a2a482da70b57b610342487cd243e67666e",
+      "object_sha256": "46c973a7ebe32c8b5ef7a94cd524a9e6d592320c032d6357d95f5150e67f42a2",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/PRFLemmas",
+      "source_sha256": "b85ab443b742a21d3fa8936af0d7ec63d4f864984fd2229b0db85dad6d03a4f9",
+      "object_sha256": "f619abc9b618fec8c8afa8585c4f668e622a6bbd4f7d8b901120240e4c36ee57",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/GGMReduction",
+      "source_sha256": "50f29fd7520dda80b870e5de46804a4a9ebde4145fddd2f0dac4190a52d9e207",
+      "object_sha256": "bc7942de149958841dbfe792c3d3f401a2cd939833c1166ccc3d1d3c673c2b54",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/GGMReductionEval",
+      "source_sha256": "abd72338b164f5f28a941b85b52dd5d69acc88e64ac29ede4cf1720b98e77cde",
+      "object_sha256": "eb77cacd0941697a3e17d5fbc26aa5f37a805e84e5d8e7446f67205d2ede53d8",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/PRF",
+      "source_sha256": "5c51d36722d20ce625d9a7af65ae3225d8e9e5b74f903dc7a1490bf3c21ab5a4",
+      "object_sha256": "abb4ba8d7d2c25afc322731d5020fe98a821bea097b9dc93688667dd9bf7d427",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    },
+    {
+      "module": "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas",
+      "source_sha256": "6e993c78434ed94281caff85b314a57b0faa240564a4d815b600f1c020d51bb7",
+      "object_sha256": "086e02445ee9159d2377f9f3e966856933b469705342052e9718ed65a4047c01",
+      "provenance": "same-chat copied-tree object, source unchanged at verified landing base"
+    }
+  ],
+  "dependency_count": 115,
+  "native_probe_pending": true,
+  "limit": "Selected interface route probe on source/object-verified same-chat S2 tree, not cleanup implementation or full baseline/aggregate replay."
+}
