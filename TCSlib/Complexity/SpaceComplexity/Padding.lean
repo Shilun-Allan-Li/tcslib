@@ -7,7 +7,6 @@ import TCSlib.Complexity.SpaceComplexity.Basic
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.ClassNP.PolyTimePairing
-import TCSlib.Complexity.SpaceComplexity.Codec.Word
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -31,14 +30,13 @@ and dominates `S` at the padded length. This is the space form of the padding ar
 ## Main results
 
 * `Complexity.mem_padLang_iff` — `padLang`'s defining formula.
-* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
-  a fill.)
+* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`.
 
 ## Implementation notes
 
 The pad is a unary block after `pairEncode`, so a member's first component and its length are
 recovered from the padded word (`Turing.length_pairEncode`). The lower bound `m + 1 ≤ T m` pays
-for checking that the input is a padded word at all, and for the copy of its first component;
+for checking that the input is a padded word and querying its first component as a virtual input;
 `S n ≤ T (2n + 2 + C (n + 1)^d)` pays for deciding `L` on that component.
 
 ## References
@@ -62,7 +60,7 @@ theorem mem_padLang_iff {L : Language Bool} {pad : ℕ → ℕ} {y : List Bool} 
     y ∈ padLang L pad ↔ ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true) :=
   Iff.rfl
 
-/-! ### The padded words, the virtual input and the bank's languages (E-PAD) -/
+/-! ### The padded words, the virtual input and the bank's languages -/
 
 /-- **Padded words**: `y` is the pair of some `a` with `C (|a| + 1)^d` ones. -/
 private def epadValid (C d : ℕ) (y : List Bool) : Prop :=
@@ -145,7 +143,7 @@ private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : 
     LogProg.length_bits_mono hi, h⟩⟩
 
 /-! ### Register machines: syntactic preconditions, counting loops, the validity block and
-the validator (E-PAD checkpoint 2)
+the validator
 
 The validator and the bank are abstract register machines (`Complexity.LogProg.ARM`) over the
 eighteen registers `Fin 18`, calling the two input deciders `inputBitLang` (`0`) and
@@ -190,7 +188,12 @@ local macro "epad_upd" : tactic =>
 /-- **The ones scan**: the loop `test: jeq ptr lim exit read; read: call j [ptr] inc fail;
 inc: inc cnt adv₀; adv_i: inc ptr adv_{i+1}` (`stride` advances back to `test`) walks a
 strided segment `w`: if every letter is `1` it exits with the pointer at the end and `|w|`
-added to `cnt`, and at the first `0` it fails. -/
+added to `cnt`, and at the first `0` it fails.
+
+**Proof sketch.** Induct on the remaining word. The empty word takes the equality branch.
+A zero bit reaches failure. A one bit increments the count and advances the pointer through
+the verified instruction chain; the induction hypothesis then applies to the tail, with the
+updated register bounds and the unchanged registers carried along. -/
 private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
     (x : List Bool) (ptr lim cnt : Fin m) (hpl : ptr ≠ lim) (hpc : ptr ≠ cnt) (hlc : lim ≠ cnt)
     (j : Fin d) (test read inc exit fail : Λ) (adv : ℕ → Λ) (stride B : ℕ)
@@ -299,7 +302,12 @@ private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool �
 /-- **Multiplying by counting**: the loop `ml: jz kr exit md; md: dec kr addT`, then
 `t := p` (`addT: jeq t p scT addB; addB: inc t addT`, the published `registerCopy_loop`) and
 `q += t, t := 0` (`scT: jz t ml scD; scD: dec t scI; scI: inc q scT`, the published
-`registerScale_loop` at factor `1`), adds `kr · p` to `q` and clears `kr`. -/
+`registerScale_loop` at factor `1`), adds `kr · p` to `q` and clears `kr`.
+
+**Proof sketch.** Induct on the multiplier. At zero the test exits. At a successor, decrement
+the multiplier, copy the multiplicand to the temporary register, and use the verified unit
+scaling loop to add it to the accumulator while clearing the temporary register. Apply the
+induction hypothesis. The final-product bound also bounds every intermediate register. -/
 private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
     (x : List Bool) (kr t p q : Fin m) (hkt : kr ≠ t) (hkp : kr ≠ p) (hkq : kr ≠ q)
     (htp : t ≠ p) (htq : t ≠ q) (hpq : p ≠ q)
@@ -315,9 +323,7 @@ private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool →
   | zero =>
     intro v hk _ hv _
     have e : Function.update (Function.update v kr 0) q (v q + 0 * v p) = v := by
-      funext s
-      simp only [Function.update_apply, Nat.zero_mul, Nat.add_zero]
-      split_ifs <;> subst_vars <;> simp_all
+      rw [Nat.zero_mul, Nat.add_zero, ← hk, Function.update_eq_self, Function.update_eq_self]
     rw [e]
     have hstep := AReach.single (A := A) (oracle := oracle) (x := x)
       (G := fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B) (a := (some ml, v, none))
@@ -377,7 +383,12 @@ private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool →
 
 /-- **Powering by counting**: the loop `pw: jz dc exit pd; pd: dec dc mkTest`, then
 `kr := n` (`mkTest`, `mkBump`), the multiplication loop (`q := kr · p`), then `p := q`
-(`mv: clr p`, `mvTest`, `mvBump`) and `mvc: clr q pw`, multiplies `p` by `n ^ dc`. -/
+(`mv: clr p`, `mvTest`, `mvBump`) and `mvc: clr q pw`, multiplies `p` by `n ^ dc`.
+
+**Proof sketch.** Induct on the remaining exponent. The zero case exits. Each successor copies
+the base into the multiplier register, applies the multiplication loop, moves the product
+back to the accumulator, and clears the scratch registers before continuing. Since the base
+is at least one, the final power bounds all partial products and hence all registers. -/
 private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
     (x : List Bool) (n dc kr t p q : Fin m)
     (hnd : n ≠ dc) (hnk : n ≠ kr) (hnp : n ≠ p) (hnq : n ≠ q)
@@ -400,9 +411,7 @@ private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool →
   | zero =>
     intro v he _ _ _ _ hv _
     have eq : Function.update (Function.update v dc 0) p (v p * v n ^ 0) = v := by
-      funext s
-      simp only [Function.update_apply, pow_zero, Nat.mul_one]
-      split_ifs <;> subst_vars <;> simp_all
+      rw [pow_zero, Nat.mul_one, ← he, Function.update_eq_self, Function.update_eq_self]
     rw [eq]
     have hstep := AReach.single (A := A) (oracle := oracle) (x := x)
       (G := fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B) (a := (some pw, v, none))
@@ -627,7 +636,13 @@ open Classical in
 `s · |y|` (`s` the stride) and its working registers `2 … 8` clear, on an input whose
 letters at `s · j` spell `y`, the block reaches `yes` if `y` is a padded word and `no`
 otherwise. It leaves the registers from `9` on unchanged, keeps every register at most `B`,
-and on a padded word leaves `|a| + 1` in register `2`. -/
+and on a padded word leaves `|a| + 1` in register `2`.
+
+**Proof sketch.** The verified pair scan either rejects malformed input or identifies both
+fields. Copy and halve the first-field pointer to obtain its length plus one. Scan and count
+the second field, rejecting any zero. Load the fixed constants, apply the power loop, and
+compare the count with the computed padding length. The common polynomial register bound
+covers every phase, and each phase preserves the registers reserved for the surrounding code. -/
 private theorem epad_val_run {Λ : Type} (A : ARM 18 2 Λ) (oracle : Fin 2 → List Bool → Bool)
     (x y : List Bool) (wide : Bool) (C d : ℕ) (ι : EPadVL C d → Λ) (yes no : Λ)
     (hA : ∀ l, A (ι l) = epadValCode wide C d ι yes no l)
@@ -950,7 +965,7 @@ private lemma epad_bound (C d n : ℕ) :
     Nat.le_mul_of_pos_right _ (by omega)
   omega
 
-/-- **The validator** (checkpoint 2): the padded words are decided in logarithmic space,
+/-- **The validator**: the padded words are decided in logarithmic space,
 malformed inputs included.
 
 **Proof sketch.** `arm_decides_poly` on `epadVA`: `inputLength_loop` loads `|y|`, then
@@ -988,7 +1003,7 @@ private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
     rw [if_neg hv, hy]
     exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .no) = .ret false from rfl) trivial, hb⟩
 
-/-! ### The bank (E-PAD checkpoint 3)
+/-! ### The bank
 
 The bank answers the simulator's queries `⟨y, bits i⟩` about the virtual input `epadVirt y`.
 On an input `z` it counts `|z|`, parses `z = ⟨y, w⟩`, checks that the index word `w` is
@@ -1202,16 +1217,6 @@ private theorem epad_bank_post (C d : ℕ) (mode : Bool) (z : List Bool) (B na i
     exact hseek.halt (AHalt.ret rfl ⟨epad_preS
       (show epadBA C d mode (.inr .no) = .ret false from rfl) trivial, b₄⟩)
 
-/-- A number of `|bits n|` binary digits is below `2 n + 2`: `2 ^ |bits n| ≤ 2 n + 1`. -/
-private lemma epad_two_pow_bits (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [Nat.zero_bits]
-  · have h1 := length_bits_le_log n
-    have h2 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
-    calc 2 ^ (Nat.bits n).length ≤ 2 ^ (Nat.log 2 n + 1) := Nat.pow_le_pow_right (by omega) h1
-      _ = 2 * 2 ^ Nat.log 2 n := by rw [pow_succ]; ring
-      _ ≤ 2 * n + 1 := by omega
-
 /-- **The bank's first phase.** From the start, the bank counts `|z|` and parses
 `z = ⟨y, w⟩`; it rejects a word that is not a pair, or whose index word `w` is not canonical
 or wider than `|y|`; otherwise it decodes `i = bitsVal w` into register `13` and enters the
@@ -1222,7 +1227,7 @@ seek registers `15`–`17` clear, all registers at most `B`.
 `registerCopy_loop`s, two decrements and a halving set the tail base `2|y| + 2`, the block's
 limit `2|y|` and the cap `|y|`; `canonicalTail_loop` checks the index word; one more copy moves
 the pointer to the end, and `boundedDecode_loop` decodes the index (its values stay below
-`2 ^ |bits |y||` by `Codec.bitsVal_lt_two_pow`). -/
+`2 ^ |bits |y||` by `LogProg.bitsVal_lt_two_pow`). -/
 private theorem epad_bank_pre (C d : ℕ) (mode : Bool) (z : List Bool) (B : ℕ)
     (hB : 2 * z.length + 1 ≤ B) :
     (pairDecode z = none → ∃ v, (∀ r, v r ≤ B) ∧
@@ -1383,11 +1388,14 @@ private theorem epad_bank_pre (C d : ℕ) (mode : Bool) (z : List Bool) (B : ℕ
   have hw : w.length ≤ (Nat.bits y.length).length := hok.2
   have hval : ∀ i ≤ w.length, LogProg.bitsVal (w.drop i) ≤ B := by
     intro i _
-    have h1 := Codec.bitsVal_lt_two_pow (w.drop i)
+    have h1 := LogProg.bitsVal_lt_two_pow (w.drop i)
     have h2 : 2 ^ (w.drop i).length ≤ 2 ^ (Nat.bits y.length).length :=
       Nat.pow_le_pow_right (by omega) ((by simp : (w.drop i).length ≤ w.length).trans hw)
-    have h3 := epad_two_pow_bits y.length
-    omega
+    by_cases hy0 : y.length = 0
+    · rw [hy0, Nat.zero_bits, List.length_nil, pow_zero] at h2
+      omega
+    · have h3 := LogProg.two_pow_bits_le y.length (by omega)
+      omega
   have hdec := boundedDecode_loop (epadBA C d mode) epadOr z 10 11 13 14 (by decide)
     (by decide) (by decide) (by decide) (by decide) (by decide) 0 (.inr .dtest) (.inr .ddown)
     (.inr .dread) (.inl .scan) (fun b => .inr (.dcopy b)) (fun b => .inr (.dbump b))
@@ -1438,7 +1446,7 @@ private lemma epad_getD_four (a b w : List Bool) (i : ℕ) (hi : i < a.length) :
     show 4 * i / 2 = 2 * i by omega, pairEncode_getD, if_pos (by omega),
     show 2 * i / 2 = i by omega]
 
-/-- **The bank** (checkpoint 3): both query languages are decided in logarithmic space.
+/-- **The bank**: both query languages are decided in logarithmic space.
 
 **Proof sketch.** `arm_decides_poly` on `epadBA`: the first phase `epad_bank_pre` parses the
 query and decodes its index (rejecting malformed queries), the validity block `epad_val_run`
@@ -1536,9 +1544,9 @@ private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPA
       rw [hans]
       exact hr.halt (hno v hv)
 
-/-! ### The run phase (E-PAD checkpoint 3) -/
+/-! ### The run phase -/
 
-/-- **The run phase** (checkpoint 3): the oracle-input simulator runs `L`'s decider on the
+/-- **The run phase**: the oracle-input simulator runs `L`'s decider on the
 virtual input `epadVirt y`, answered by the bank, within `K · T |y|` work cells, on every input.
 
 **Proof sketch.** `LogProg.OIS.compile_decides` with `L`'s decider `M` (space `c · S`) and the
@@ -1589,9 +1597,7 @@ private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL
   set B := (c0 + c1) * (3 * y.length + 4) + 1 with hB
   have hbits : ∀ i ≤ v.length, (Nat.bits i).length ≤ y.length + 1 := by
     intro i hi
-    have h1 := LogProg.length_bits_le_log i
-    have h2 := Nat.log_le_self 2 i
-    omega
+    exact (Turing.length_bits_le_self i).trans ((hi.trans hvm).trans (Nat.le_succ _))
   have hBnd : ∀ j, ∀ i ≤ v.length,
       max (sb j (pairEncode y (Nat.bits i)).length) 1 ≤ B := by
     intro j i hi
@@ -1649,8 +1655,7 @@ private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL
   have hsp : M.tm.spaceUsed (M.tm.initCfg v) t ≤ c * ((S 0 + 1) * T y.length) :=
     hs.trans (Nat.mul_le_mul_left c hS)
   have hW : (Nat.bits (v.length + 1)).length + 2 ≤ 4 * T y.length := by
-    have h1 := LogProg.length_bits_le_log (v.length + 1)
-    have h2 := Nat.log_le_self 2 (v.length + 1)
+    have h1 := Turing.length_bits_le_self (v.length + 1)
     omega
   have h2B : 2 * B + 1 ≤ (8 * (c0 + c1) + 3) * T y.length := by
     have h1 : (c0 + c1) * (3 * y.length + 4) ≤ (c0 + c1) * (4 * T y.length) :=
