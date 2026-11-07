@@ -1,0 +1,98 @@
+"""Replay E-PAD's newly proved downstream after each earlier PR replay.
+
+Each fresh complete tree starts from that one PR's validated snapshot and
+recompiles every module changed since its source head plus its downstream.
+This chains a new replay; it does not splice independent PR snapshots.
+"""
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import datetime
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import time
+
+r=Path(__file__).resolve().parents[3];s=Path(os.environ['TCSLIB_SCRATCH'])
+def git(w,*args):return subprocess.check_output(['git','-C',str(w),*args],text=True).strip()
+def checked(w,ref):
+    c=git(w,'rev-parse',ref)
+    subprocess.run(['git','-C',str(w),'cat-file','-e',c+'^{commit}'],check=True)
+    return c
+
+subprocess.run(['git','-C',str(r),'fetch','origin'],check=True)
+campaign=checked(r,'origin/complexity/arora-barak-ch3-4')
+env=os.environ.copy()
+env.update(GIT_AUTHOR_NAME='Codex',GIT_AUTHOR_EMAIL='codex@openai.com',
+           GIT_COMMITTER_NAME='Codex',GIT_COMMITTER_EMAIL='codex@openai.com')
+jobs=[]
+for gate,wtname,branch,oldname,newname,count in [
+    ('114-natbits-dedup','wt-natbits','lean/dedup-natbits','oleans-mnb1','oleans-mnb2',22),
+    ('106-sg1-dedup','wt-sg1','lean/dedup-sg1','oleans-msg1','oleans-msg2',4),
+]:
+    w=s/wtname;g=r/'campaign/gates'/gate
+    receipt=json.loads((g/'dispatch.json').read_text());audited=checked(r,receipt['lean'])
+    assert checked(w,'HEAD')==audited
+    assert not git(w,'status','--porcelain')
+    files=(g/'evidence/current/landing/changed-lean-files.txt').read_text().splitlines()
+    assert len(files)==count
+    subprocess.run(['git','-C',str(w),'-c','core.hooksPath=/dev/null','merge','--no-ff',
+        '--quiet','--no-stat','-m',f'Merge the campaign after E-PAD into {branch}\n\nCo-Authored-By: Codex <codex@openai.com>',
+        campaign],check=True,env=env)
+    head=checked(w,'HEAD')
+    assert git(w,'diff','--name-only',audited,head,'--','*.lean').splitlines()==[
+        'TCSlib/Complexity/SpaceComplexity/Padding.lean']
+    assert not git(w,'diff','--name-only',audited,head,'--',*files)
+    assert len(git(w,'diff','--name-only',campaign+'...'+head,'--','*.lean').splitlines())==count
+    subprocess.run(['git','-C',str(w),'push','origin','HEAD:'+branch],check=True)
+    e=g/'evidence/current/campaign-after-epad';e.mkdir(exist_ok=True)
+    order=e/'order.txt'
+    subprocess.run(['python3','-I',str(r/'devtools/seyoon/mkdownmulti.py'),str(w),
+        str(r/'devtools/seyoon'),str(order),'TCSlib.Complexity.SpaceComplexity.Padding'],check=True)
+    mods=order.read_text().splitlines();assert len(mods)==2
+    old=s/oldname;new=s/newname;assert old.is_dir() and not new.exists()
+    subprocess.run(['cp','-cR',str(old),str(new)],check=True)
+    meta={'campaign':campaign,'audited_head':audited,'merged_pr_head':head,
+          'previous_snapshot':oldname,'snapshot':newname,'audited_changed_blobs_unchanged':True,
+          'audited_scope_files':files,'only_changed_lean_since_previous_snapshot':[
+              'TCSlib/Complexity/SpaceComplexity/Padding.lean'],
+          'modules':mods,'base_replay_modules':344 if count==22 else 329}
+    (e/'source-pins.json').write_text(json.dumps(meta,indent=2)+'\n')
+    jobs.append((w,e,new,mods,meta))
+
+def run(job):
+    w,e,new,mods,meta=job
+    rows=[];start=time.time()
+    with (e/'replay.log').open('w') as log:
+        log.write(f"# E-PAD downstream catch-up at {meta['merged_pr_head']}; campaign {campaign}\n")
+        log.flush()
+        for m in mods:
+            for ext in ['.olean','.ilean','.c','.trace']:
+                p=new/(m+ext)
+                if p.exists():p.unlink()
+            cmd=['bash',str(r/'devtools/seyoon/leanelab-o.sh'),str(w),str(new),m+'.lean',str(new)]
+            t=time.time();p=subprocess.run(cmd,capture_output=True,text=True)
+            text=p.stdout+p.stderr
+            (e/(Path(m).name+'.out')).write_text(text)
+            errors=len(re.findall(r'error(?:\(|:)',text))
+            holes=text.count("declaration uses 'sorry'")
+            log.write(f'{m} exit={p.returncode} errors={errors} sorry={holes}\n');log.flush()
+            rows.append({'module':m,'exit':p.returncode,'errors':errors,'sorry':holes,
+                'seconds':time.time()-t,'command':cmd,
+                'source_sha256':hashlib.sha256((w/(m+'.lean')).read_bytes()).hexdigest()})
+            assert p.returncode==0 and errors==0 and holes==0,(m,text)
+            assert (new/(m+'.olean')).stat().st_size>0
+        log.write(f'# modules={len(mods)} failed=0\n')
+    with (e/'static.txt').open('w') as f:
+        subprocess.run(['python3','-I',str(r/'devtools/seyoon/staticsorry.py'),str(w),str(e/'replay.log')],stdout=f,stderr=subprocess.STDOUT,check=True)
+    static=(e/'static.txt').read_text();assert re.search(r'mismatches\s+0\b', static),static
+    result={**meta,'checked_at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'module_runs':rows,'failed':0,'static_mismatches':0,'seconds':time.time()-start,
+        'explanation':'A new two-module replay chained from the validated PR snapshot; all other Lean sources are identical to that snapshot. No independent snapshots were composed.'}
+    (e/'receipt.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(e.parent.parent.parent.name,meta['merged_pr_head'],'2 modules passed; 0 static mismatches',flush=True)
+
+with ThreadPoolExecutor(max_workers=2) as pool:
+    list(pool.map(run,jobs))

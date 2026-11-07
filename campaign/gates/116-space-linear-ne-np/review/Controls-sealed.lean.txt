@@ -1,0 +1,27 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+open Turing Complexity
+attribute [local irreducible] Complexity.SPACE Complexity.NP Complexity.padLang Turing.pairEncode
+
+-- Pointwise controls.
+example (s : ℕ → ℕ) : SPACE s =
+    {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L (fun n => c * s n)} := by rfl
+example : NP = {L | ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
+    ∀ x : List Bool, x ∈ L ↔ ∃ u : List Bool, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V} := by rfl
+example (L : Language Bool) (pad : ℕ → ℕ) : padLang L pad =
+    {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)} := by rfl
+example (x y : List Bool) : pairEncode x y =
+    (x.flatMap fun b => [b,b]) ++ [false,true] ++ y := by rfl
+
+-- Parameter-abstracted controls. NP has no parameters: the second control
+-- puts its value under a fresh constant-function binder.
+example : SPACE = (fun s => {L | ∃ (c : ℕ) (M : FinTM Bool),
+    M.DecidesInSpace L (fun n => c * s n)}) := by rfl
+example : (fun (_ : Unit) => NP) = (fun _ => {L | ∃ (C c : ℕ) (V : Language Bool), V ∈ P ∧
+    ∀ x : List Bool, x ∈ L ↔ ∃ u : List Bool, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}) := by rfl
+example : padLang = (fun L pad =>
+    {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}) := by rfl
+example : pairEncode = (fun x y =>
+    (x.flatMap fun b => [b,b]) ++ [false,true] ++ y) := by rfl

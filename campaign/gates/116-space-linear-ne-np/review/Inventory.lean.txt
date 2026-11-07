@@ -1,0 +1,27 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+
+/-! Direct foreign-definition and axiom inventory of the changed theorem and
+every compiled auxiliary whose full name extends it. This is a target-region
+check, not an inventory of the unchanged legacy Hierarchy implementation. -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let owner := `TCSlib.Complexity.SpaceComplexity.Hierarchy
+  let some modIdx := env.getModuleIdx? owner | throwError "Hierarchy module missing"
+  let target := `Complexity.SPACE_linear_ne_NP
+  let mut lines : Array String := #[]
+  for (n, ci) in env.constants.toList do
+    if env.getModuleIdxFor? n != some modIdx then continue
+    if !(n == target || target.isPrefixOf n) then continue
+    let cs := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut defs : Array Name := #[]
+    for c in cs do
+      match env.getModuleIdxFor? c, env.find? c with
+      | some i, some (.defnInfo _) =>
+        if i != modIdx && (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && !defs.contains c then
+          defs := defs.push c
+      | _, _ => pure ()
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    lines := lines.push s!"TARGET {n} module={owner} internal={n.isInternalDetail}\nFOREIGN {(defs.qsort Name.lt).toList}\nAXIOMS {(axs.qsort Name.lt).toList}"
+  logInfo (String.intercalate "\n" (lines.qsort (· < ·)).toList)

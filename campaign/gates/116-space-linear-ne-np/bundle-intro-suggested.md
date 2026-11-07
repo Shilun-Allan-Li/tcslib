@@ -1,0 +1,1 @@
+Independent Codex audit of the small Hierarchy consumer for SPACE_linear_ne_NP. Read campaign/gates/116-space-linear-ne-np/pack.md first. This source/evidence manifest is a draft before PR publication/current-campaign replay; finalize its pins and add the actual replay evidence before staging.
