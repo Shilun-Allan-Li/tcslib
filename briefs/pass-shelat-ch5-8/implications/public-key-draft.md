@@ -3,78 +3,60 @@
 **Draft, 2026-11-07 PST.** Names below are proposals, not declarations claimed to exist.
 Proof snippets are source-level drafts and have not been elaborated as a new module.
 
-## Target predicates
+## Proposed first-class endpoints — selection awaiting user ruling
 
-| Predicate | Meaning and source |
-|---|---|
-| `BitPublicKeyScheme.SingleBitSecure` | Indistinguishability of encryptions of bits; `Asymptotic/PublicKey.lean:250`. |
-| `PublicKeyScheme.Secure` | Indistinguishability for every equal-length pair of messages, with the public key included; `Asymptotic/PublicKey.lean:142`. |
-| `PublicKeyScheme.MultiMessageSecure` | The corresponding polynomially many-message experiment; `Asymptotic/PublicKey.lean:166`. |
-| `Composability.FixedLengthPKScheme.INDSecure .cpa` | Gate 06's two-stage, key-visible CPA oracle game; `Composability/PublicKey.lean` on the integration branch only. |
-| `Candidates.GroupPKScheme.Secure` | ElGamal's key-dependent group-message selector model; `Candidates/ElGamal.lean:458`. Retain its separate admissible-message correctness theorem. |
+| Endpoint | Intended guarantee | Why include it |
+|---|---|---|
+| Multi-message IND-CPA public-key encryption | Correct efficient public-key encryption on a meaningful message space, indistinguishable under chosen-plaintext attack for polynomially many encryptions under one public key. State whether the theorem uses a batch or adaptive experiment. | The basic confidential-channel primitive; the first end-to-end target for RSA, factoring and DDH routes. |
+| Multi-message IND-CCA2 public-key encryption | Correct efficient public-key encryption with adaptive decryption access, excluding all challenge ciphertexts in a multi-challenge formulation. | The robust encryption endpoint when the adversary can submit ciphertexts for decryption. |
 
-The index must distinguish these conclusions. A proof for one does not acquire another label.
+This two-endpoint set is the maintainer's recommendation, **not an adopted ruling**. The user
+is also considering IND-CCA1 as a third catalog endpoint. Always write CCA1 or CCA2 explicitly;
+“CCA” alone does not choose a game. CCA1 permits decryption queries only before the challenge;
+CCA2 permits them afterwards subject to the challenge restriction. The taxonomy is reviewed
+in [Pass, Cornell CS 6830, lecture 13 (2009), §1](https://www.cs.cornell.edu/courses/cs6830/2009fa/scribes/lecture13.pdf).
 
-## Existing proved generic chain: index first
+Do not add separate first-class entries for single-bit encryption, single-message security,
+the bitwise construction, every weaker notion, or each padding stage. These are supporting
+APIs. Non-malleability variants and stronger public-key functionalities can be considered
+later when they provide a distinct endpoint required by a construction, rather than an
+extra name for an already indexed guarantee.
 
-The mathematical hard-core-TDP → single-bit → message → multi-message implication is
-already proved by the existing theorems below. This pilot adds discoverability and, only where
-useful, named existential composition entry points. It does not commission a new encryption
-construction or security proof. PK-1–PK-4 are optional names, not four required new layers.
+No multi-message IND-CCA2 public-key construction is currently established in the surveyed
+campaign source. Gate 06's encrypt-then-tag CCA2 construction is **private-key encryption**.
+A public-key CCA2 row is a future target requiring its own construction/bridge work; no new
+external audit or fill is prepared here.
 
-### PK-1: hard-core trapdoor permutations give single-bit PKE
+## Shape of a catalog theorem
 
-Proposed name: `exists_singleBitSecure_of_hardCoreTDP`.
+Each theorem has the form `(assumption A) → (assumption B) → … → ∃ S, targetSecurity S`, with
+correctness and algorithmic efficiency bundled or explicitly conjoined. Use named concrete
+hardness assumptions when available, keep all remaining premises visible, and show that S
+has a meaningful message space. For the fixed-length model, a constraint such as
+`S.msgLen = PolyExpr.var` prevents a vacuous empty-message-only witness. The exact final
+Lean header and multi-message predicate still require design and checking.
 
-```lean
-(T : TrapdoorCollection) {h : ∀ i, T.D i → Bool}
-(hT : T.OneWay) (hHC : T.toCollection.HardCore h) :
-  ∃ S : BitPublicKeyScheme, S.SingleBitSecure
-```
+Several assumption sets can lead to the same endpoint; those are useful separate theorems.
+A chain of intermediate predicates for the same route is not a separate set of catalog
+entries. RSA plus its retained infrastructure, factoring plus its retained infrastructure,
+and DDH plus its retained infrastructure are the candidate rows below. Generic hard-core-TDP
+facts remain available as the composition API behind these entries.
 
-Draft proof: obtain `E` from `hHC.nonempty_predEvaluator`, then return
-`⟨T.tdpBitScheme E, T.tdpBitScheme_singleBitSecure E hT hHC⟩`.
-The construction's record includes uniform key generation/encryption, polynomial-time
-decryption and correctness. Source: `Asymptotic/PublicKey.lean:749` and `:911`;
-[PS10, Algorithm 104.3 and Theorem 104.4].
+## Existing APIs and their exact security models
 
-### PK-2: the same assumption gives message encryption
+| Existing predicate | Meaning and source | Role here |
+|---|---|---|
+| `BitPublicKeyScheme.SingleBitSecure` | Indistinguishability of encryptions of bits; `Asymptotic/PublicKey.lean:250`. | Intermediate. |
+| `PublicKeyScheme.Secure` | Indistinguishability for every equal-length pair of messages, public key included; `Asymptotic/PublicKey.lean:142`. | Input to the existing many-message lifting. |
+| `PublicKeyScheme.MultiMessageSecure` | Polynomially many-message experiment; `Asymptotic/PublicKey.lean:166`. | Existing generic endpoint; do not silently equate this batch predicate with an adaptive oracle game. |
+| `Composability.FixedLengthPKScheme.INDSecure .cpa` | Gate 06's two-stage, key-visible CPA oracle game; `Composability/PublicKey.lean` on integration only. | Precise CPA bridge, currently admitted. |
+| `Candidates.GroupPKScheme.Secure` | ElGamal's key-dependent group-message selector model; `Candidates/ElGamal.lean:458`. | Separate current model; retain admissible-message correctness and prove the required conversion. |
 
-Proposed name: `exists_securePublicKey_of_hardCoreTDP`, with the same premises as PK-1 and
-conclusion `∃ S : PublicKeyScheme, S.Secure`.
+## Existing generic chain — supporting material, not new catalog tiers
 
-Draft proof: obtain `⟨S, hS⟩` from PK-1; return `⟨S.bitwise, hS.bitwise⟩`.
-Source: `Asymptotic/PublicKey.lean:353` and `:471`; [PS10, p. 103].
-
-### PK-3: the same assumption gives multi-message encryption
-
-Proposed name: `exists_multiMessageSecurePublicKey_of_hardCoreTDP`, conclusion
-`∃ S : PublicKeyScheme, S.MultiMessageSecure`.
-
-Draft proof: obtain `⟨S, hS⟩` from PK-2; return `⟨S, hS.multiMessageSecure⟩`.
-Source: `Asymptotic/PublicKey.lean:529`; [PS10, p. 103].
-
-### PK-4: fixed-width trapdoor permutations supply the hard-core bit
-
-Proposed names: `exists_singleBitSecure_of_fixedWidthTDP` and
-`exists_securePublicKey_of_fixedWidthTDP`.
-
-Retain explicitly `m : PolyExpr`, `hT : T.OneWay`, and
-
-```lean
-henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)),
-  (T.encD (T.index n r) x).length = m.eval n
-```
-
-Use `hT.exists_glPad_singleBitSecure m henc`, then bitwise encryption for the second form.
-Source: `Asymptotic/HardCoreCollection.lean:92`, `:489`, `:498` and
-`Asymptotic/PublicKey.lean:1059`; [PS10, Theorems 87.3 and 104.4].
-This generic fixed-width result is useful on its stated domain. It is not an RSA instantiation.
-
-## Minimal optional entry point for the existing full chain
-
-If one new theorem is useful, expose the final multi-message existential directly, with the
-same T, h, hT and hHC premises as PK-1:
+The hard-core-TDP → single-bit → bitwise → multi-message chain is already proved by existing
+components. For T : TrapdoorCollection, one-wayness hT and ordinary hard-core security hHC,
+the complete composition has the short source-level term:
 
 ```lean
   obtain ⟨E⟩ := hHC.nonempty_predEvaluator
@@ -82,22 +64,36 @@ same T, h, hT and hHC premises as PK-1:
     (T.tdpBitScheme_singleBitSecure E hT hHC).bitwise.multiMessageSecure⟩
 ```
 
-This is a draft proof term, not yet checked in a new module. The component proofs already
-exist. The intermediate levels can be documented/imported without duplicating their theorems.
-The fixed-width GL route and the candidate instantiation gaps keep their existing premises.
+This snippet has not been elaborated as a new wrapper. Reuse/index the existing APIs instead
+of adding four theorem tiers. Sources: `Asymptotic/PublicKey.lean:749`, `:911`, `:353`,
+`:471`, `:529`; [PS10, Algorithm 104.3, Theorem 104.4 and p. 103].
+The public-key single-to-many-message hybrid argument also appears in
+[Pass, Cornell CS 6830, lecture 13 (2009), Theorem 2](https://www.cs.cornell.edu/courses/cs6830/2009fa/scribes/lecture13.pdf).
+This CPA-style bitwise construction must not be reused as a CCA2 length-extension argument.
 
-## Exact CPA route: waiting on Gate 06C
+`OneWay.exists_glPad_singleBitSecure` supplies the hard-core step for fixed-width encodings,
+retaining m : PolyExpr and the exact premise
 
-Proposed name: `exists_cpaSecurePublicKey_of_hardCoreTDP`.
+```lean
+henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)),
+  (T.encD (T.index n r) x).length = m.eval n
+```
 
-Start with PK-1. `BitPublicKeyScheme.exists_padBound` supplies `L`, its ciphertext padding
-bound and `1 ≤ L.eval n`; then `hS.padded_cpa L hL hmsg` supplies the CPA claim for
-`S.padded L hL hmsg`. Alternatively compose the existing
-`TrapdoorCollection.tdpBitScheme_padded_cpa` directly, retaining all premises.
+Sources: `Asymptotic/HardCoreCollection.lean:92`, `:489`, `:498` and
+`Asymptotic/PublicKey.lean:1059`; [PS10, Theorems 87.3 and 104.4]. This is a useful generic
+API on its actual domain, not an RSA instantiation.
 
-The key bridge `BitPublicKeyScheme.SingleBitSecure.padded_cpa` is currently an admission on
-the Gate 06 integration branch. Its statement gate and fill are prerequisites for calling
-this a completed CPA implication. The wrapper itself needs no new reduction proof.
+## Exact CPA bridge: waiting on Gate 06C
+
+`BitPublicKeyScheme.exists_padBound` supplies L, its ciphertext padding bound and
+`1 ≤ L.eval n`; then `hS.padded_cpa L hL hmsg` supplies the CPA claim for
+`S.padded L hL hmsg`. `TrapdoorCollection.tdpBitScheme_padded_cpa` already composes this
+route. These remain supporting APIs; the catalog theorem should start from its assumption
+set and end at the chosen primitive.
+
+`BitPublicKeyScheme.SingleBitSecure.padded_cpa` is an admission on the integration branch.
+Its statement gate and fill precede any claim of a completed exact CPA implication. The
+many-message endpoint still needs its precise game and a checked lifting in that model.
 
 ## Concrete assumptions: index their actual current endpoints
 

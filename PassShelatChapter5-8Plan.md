@@ -41,13 +41,19 @@ explicit assumption-to-existence theorems with short proofs. Start with the publ
 at `Cryptography/Implications/PublicKey.lean` and a root-exported `Implications.lean` facade.
 Drafts and the route/status inventory are in `briefs/pass-shelat-ch5-8/implications/`.
 
-Preserve exact security predicates and every remaining hypothesis. First index the already
-proved generic hard-core-TDP → single-bit → message → multi-message chain, adding only useful
-missing existential entry points. Track exact CPA as a
-separate conclusion dependent on Gate 06C's bridge. Record RSA/Rabin length normalization and
-ElGamal's model conversion as explicit pending bridges; do not disguise them with impossible
-extra premises. Substantive missing bridges follow contract/gate/fill discipline; ask the user
-Codex or Claude before any new external job. Thin wrappers are maintainer work and land by PR.
+The first-class entries are explicit sets of assumptions jointly implying a fundamental
+primitive (user clarification, 2026-11-07 PST). Keep only useful final endpoints; intermediate
+hard-core-TDP, single-bit, bitwise, padding and security-lifting steps remain linked supporting
+APIs. The maintainer recommends multi-message IND-CPA PKE and multi-message IND-CCA2 PKE,
+with CCA1 as an intermediate; endpoint selection awaits the user's ruling. The broader
+13-family inventory is a route survey, not an approved list of primitives.
+
+Preserve exact security predicates, meaningful message capacity, correctness, algorithmic
+cost and every remaining hypothesis. Record RSA/Rabin normalization and ElGamal's model
+conversion as pending bridges; do not disguise them with impossible premises. No current
+public-key CCA2 construction is claimed: Gate 06's CCA2 scheme is private-key. Substantive
+missing bridges follow contract/gate/fill discipline; ask Codex or Claude before new external
+jobs. Thin final compositions are maintainer work and land by PR.
 This is a companion front while Gate 06 continues; S2 remains dispatched and its order before
 clean-up part 2 is unchanged.
 
@@ -423,3 +429,5 @@ These need agreement before S1 completes. Suggested points:
 | 2026-11-07 (PST) | **Implications contents inventory drafted** (`implications/inventory-draft.md`), 13 primitive families. Reuse existing existential results; add short missing endpoint compositions. Source survey distinguishes OWP→PRG from arbitrary OWF, one-time from many-query signatures, GroupPKScheme from generic CPA PKE, separate 3COL protocols from the admitted composition corollary, and conditional NP ZK with unformalized LevinNPHard. Records real candidate normalization, subgroup/full-group CRH, restricted/full-domain hashing and enhanced-hard-core gaps. No fresh combined axiom claim, new external job or Lean wrapper module. | record |
 | 2026-11-07 (PST) | **Implications draft clarified after user review:** the hard-core-TDP → single-bit → bitwise → multi-message PKE chain is already proved by existing components. The new layer supplies discoverability/re-exports and at most a short useful existential composition wrapper, not a new cryptographic proof or four redundant theorem tiers. The public-key draft now gives the direct final-result proof term and labels it unelaborated as a new wrapper. RSA normalization and exact CPA remain separate gaps. | record |
 | 2026-11-07 (PST) | **Gate 06 WIP integration backed up on PR branch**, head `29cf8f05e5758d367e03a5f0975b3a14eaa0ca56`, source checkpoint `1447719991b52681d13b4f397ba7a0722c6c05f0`. No campaign Lean push, PR or audit issue. Shared coin-segment and padding reuse, canonical OT premises, public sequential-ZK bridges and a quadratic 3COL corollary are in place; initial compile failures were repaired with direct imports and an explicit positivity step. Added reading interfaces following a full source review of 208 original public defs/15 abbrevs; latest style lint has 0 findings in 34 files, campaign lint 0 FAIL with four naming/machine-contract warnings. Native reordered union replay is 467 modules and remains ongoing; the known long DetMod check passed in 774.603 seconds, no timeout. Later API additions require affected replay before final axiom/seal/explicit-unfold checks. Two failed equation-alias syntax probes are retained and excluded. | record |
+| 2026-11-07 (PST) | **Implications scope clarified (user):** first-class entries are assumption sets jointly implying a selective set of fundamental primitives; avoid restating intermediate deductions. Drafts now separate catalog endpoints from supporting APIs and label the 13-family inventory as a survey. Maintainer recommends multi-message IND-CPA and IND-CCA2 PKE, with CCA1 documented as intermediate; multiple-choice endpoint ruling is pending, not adopted. Retain meaningful message capacity and exact game distinctions; no public-key CCA2 result is currently claimed, since Gate 06's encrypt-then-tag scheme is private-key. No new external job or Lean module. | ruling / proposal |
+| 2026-11-07 (PST) | **Gate 06 first serial union replay complete:** all 467 modules reached a successful native check across recorded passes 1–5. The reading-interface batch then required 27 affected rechecks; all 27 have successful checks across api1–api5 after two Boolean-equation precedence corrections and two owner-local simulator rewrite repairs. All failed attempts/logs are retained; earlier successful checks span source versions. Explicit-unfold repairs and full axiom/seal/source-fingerprint reconciliation remain; no final-head replay or Gate 06 audit readiness is claimed. Integration checkpoint remains `29cf8f05e5758d367e03a5f0975b3a14eaa0ca56` plus local repairs. | record |

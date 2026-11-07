@@ -1,0 +1,49 @@
+START 2026-11-07T08:26:34.552485+00:00
+SOURCE_SHA256 b62bbf8f65e985996eae4b2a3a749659363d546c5b935f420affb566dffa3bd4
+TCSlib/Cryptography/Composability/CCA2Scheme.lean:119:0: error: Not a definitional equality: the left-hand side
+  decide (ccaDecOK E z = decide ((pairFstD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length)) &&
+      decide ((pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))).length = (NUPPT.inParam z).length) &&
+    decide
+      (E
+          (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
+            (pairFstD (pairSndD (NUPPT.inArg z)) ++ pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) =
+        pairSndD (pairSndD (pairSndD (NUPPT.inArg z))))
+is not definitionally equal to the right-hand side
+  true
+TCSlib/Cryptography/Composability/CCA2Scheme.lean:129:61: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (decide (ccaDecOK E z = decide ((pairFstD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length)) &&
+        decide ((pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))).length = (NUPPT.inParam z).length) &&
+      decide
+        (E
+            (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
+              (pairFstD (pairSndD (NUPPT.inArg z)) ++ pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) =
+          pairSndD (pairSndD (pairSndD (NUPPT.inArg z))))) =
+    true
+TCSlib/Cryptography/Composability/CCA2Scheme.lean:375:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Composability/CCA2Scheme): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/CCA2Scheme): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/CCA2Scheme): no fresh .olean produced
+        8.46 real         8.88 user         0.81 sys
+          2223783936  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177426  page reclaims
+                  11  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  19  voluntary context switches
+               12791  involuntary context switches
+            33376029  instructions retired
+            15345986  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T08:26:43.021689+00:00 RC 1
