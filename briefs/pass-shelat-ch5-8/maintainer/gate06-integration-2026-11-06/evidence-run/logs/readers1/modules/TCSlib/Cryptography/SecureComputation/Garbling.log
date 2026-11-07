@@ -1,0 +1,66 @@
+START 2026-11-07T08:45:01.591530+00:00
+SOURCE_SHA256 63ed1b5107ddeb2b464b78b9a1927a6422d39f42edc02f8a1fa554a25bcf4afb
+TCSlib/Cryptography/SecureComputation/Garbling.lean:198:70: error: unsolved goals
+case and
+g : DAGGate
+vals : List Bool
+hA :
+  List.map (fun a => (List.ofFn fun t => vals.getD g.args[t] false).getD a false) (List.range g.args.length) =
+    List.ofFn fun t => vals.getD g.args[t] false
+hB : List.map (fun a => vals.getD a false) g.args = List.ofFn fun t => vals.getD g.args[t] false
+hall : ∀ (l : List ℕ) (p : ℕ → Bool), l.all p = (List.map p l).all id
+hany : ∀ (l : List ℕ) (p : ℕ → Bool), l.any p = (List.map p l).any id
+⊢ (List.ofFn fun t => vals.getD g.args[t] false).all id = g.eval vals
+
+case or
+g : DAGGate
+vals : List Bool
+hA :
+  List.map (fun a => (List.ofFn fun t => vals.getD g.args[t] false).getD a false) (List.range g.args.length) =
+    List.ofFn fun t => vals.getD g.args[t] false
+hB : List.map (fun a => vals.getD a false) g.args = List.ofFn fun t => vals.getD g.args[t] false
+hall : ∀ (l : List ℕ) (p : ℕ → Bool), l.all p = (List.map p l).all id
+hany : ∀ (l : List ℕ) (p : ℕ → Bool), l.any p = (List.map p l).any id
+⊢ (List.ofFn fun t => vals.getD g.args[t] false).any id = g.eval vals
+
+case not
+g : DAGGate
+vals : List Bool
+hA :
+  List.map (fun a => (List.ofFn fun t => vals.getD g.args[t] false).getD a false) (List.range g.args.length) =
+    List.ofFn fun t => vals.getD g.args[t] false
+hB : List.map (fun a => vals.getD a false) g.args = List.ofFn fun t => vals.getD g.args[t] false
+hall : ∀ (l : List ℕ) (p : ℕ → Bool), l.all p = (List.map p l).all id
+hany : ∀ (l : List ℕ) (p : ℕ → Bool), l.any p = (List.map p l).any id
+⊢ (!(List.ofFn fun t => vals.getD g.args[t] false).all id) = g.eval vals
+TCSlib/Cryptography/SecureComputation/Garbling.lean:207:46: warning: This simp argument is unused:
+  hB
+
+Hint: Omit it from the simp argument list.
+  simp only [hall, hany, hA,̵ ̵h̵B̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/SecureComputation/Garbling.lean:410:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Garbling): no fresh .olean produced
+        2.43 real         2.20 user         0.59 sys
+          1558446080  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              127563  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  19  voluntary context switches
+                5467  involuntary context switches
+            33275443  instructions retired
+            15880865  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T08:45:04.025375+00:00 RC 1

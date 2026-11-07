@@ -1,0 +1,44 @@
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+@@ -239,6 +239,19 @@
+     let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
+     if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) π)
+     else encPerm (if (hist.getLastD []).headD false then π * σ⁻¹ else π)
++
++/-- The repeated GI prover uses one permutation coin block per input bit. -/
++theorem giProverRep_coins : giProverRep.coins = .mul .var (.normal 1 2) := rfl
++
++/-- At an even message count the repeated GI prover sends the relabelled first graph;
++at an odd count it returns the sampled permutation, multiplied by the inverse witness
++exactly when the last challenge bit is true. -/
++theorem giProverRep_next (x y r : List Bool) (hist : List (List Bool)) :
++    giProverRep.next x y r hist =
++      let n := Nat.sqrt (pairFstD x).length
++      let π := samplePerm n (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
++      if hist.length % 2 = 0 then encGraph (permGraph (decGraphAt n (pairFstD x)) π)
++      else encPerm (if (hist.getLastD []).headD false then π * (decPerm n y)⁻¹ else π) := rfl
+ 
+ /-- Shadow of `TCSlib.Cryptography.giVerifierRep`. -/
+ noncomputable def giVerifierRep : Strategy where
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
+@@ -104,8 +104,8 @@
+ half loop (`halfLoop_poly`), the coin block of the current iteration (`giSlice_poly`), the
+ sampled permutation (`sampleStr_poly`), the graph message by `relabel_poly` and the reply by
+ `mulInvStr_poly` or the identity according to the first bit of the last message
+-(`lastMsg_poly`); the equation with `giProverRep.next` is `halfCount_encodeMsgs`,
+-`halfRem_nil_iff` and `lastMsg_encodeMsgs`. -/
++(`lastMsg_poly`); the equation with `giProverRep.next` first reads `giProverRep_next`,
++then uses `halfCount_encodeMsgs`, `halfRem_nil_iff` and `lastMsg_encodeMsgs`. -/
+ theorem giProverRep_efficient : giProverRep.Efficient := by
+   have hπ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w))
+       (coinBlock (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w)) :=
+@@ -117,7 +117,7 @@
+   have hodd := polyTimeComputable_ite lastBit_poly hmul hπ
+   refine efficient_of_polyTime giProverRep (polyTimeComputable_ite even_poly heven hodd) ?_
+   intro x z r hist
+-  show (if hist.length % 2 = 0 then _ else _) = _
++  rw [giProverRep_next]
+   simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_nil_iff, inParam_ilayout, List.length_replicate,
+     inCoins_ilayout, argX_ilayout, argZ_ilayout, vcount_ilayout, giBlock_eval, decide_eq_true_eq,
+     lastMsg_encodeMsgs]

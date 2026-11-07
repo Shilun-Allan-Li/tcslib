@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+@@ -85,7 +85,9 @@
+   correct := by
+     intro n m rg re rd
+     rw [runAt_coinKey, runAt_spEnc hE, runAt_spDec hE]
+-    have hk : (List.ofFn rg).length = n := by rw [List.length_ofFn]; rfl
++    have hk : (List.ofFn rg).length = n := by
++      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
++        PolyExpr.eval_var]
+     have hr : (List.ofFn re).length = n := by rw [List.length_ofFn]; rfl
+     have hp : (E (pairEncode (List.ofFn rg) (List.ofFn re))).length = n + n := by
+       rw [hGE n rg re, List.length_ofFn]

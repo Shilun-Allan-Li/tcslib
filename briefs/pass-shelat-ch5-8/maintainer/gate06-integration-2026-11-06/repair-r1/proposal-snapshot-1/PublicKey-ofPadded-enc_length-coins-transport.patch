@@ -1,0 +1,11 @@
+--- a/TCSlib/Cryptography/Composability/PublicKey.lean
++++ b/TCSlib/Cryptography/Composability/PublicKey.lean
+@@ -272,7 +272,7 @@
+   enc_length := by
+     intro n rg m re
+     rw [runAt_padEnc enc_uniform]
+-    exact length_padCt (hL n rg m re)
++    exact length_padCt (hL n rg m (NUPPT.coinsCongr (padEnc_coins enc L) n re))
+ 
+ section PaddedReaders
+ 

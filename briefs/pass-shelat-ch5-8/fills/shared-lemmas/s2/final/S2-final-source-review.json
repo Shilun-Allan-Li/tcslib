@@ -1,0 +1,454 @@
+{
+  "reviewer": "/root/s2_route_review",
+  "date": "2026-11-07",
+  "review_kind": "independent source/freeze FINAL review; not native replay or external gate closure",
+  "verdict": "Source/freeze review acceptable after the three documented minor landing corrections; no blocker or major found.",
+  "severity_counts": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 3
+  },
+  "verification": {
+    "ancestor": "31348fcf7dee32f84db1fc8f929d80653137995e",
+    "exchange_payload": "7a2e14829e0f2c43aae20b249f90e838822a7dc1",
+    "archive_sha256": "f0cd4239b8ac1fac0f1f0d74fe9d7566217692f58fc5f8df84466a5888813109",
+    "report_sha256": "0ba3e76869da060f190a48de04ce3efbd34c44a58909ef08e0b5ea3bbec32f47",
+    "manifest_files_verified": 101,
+    "patches": [
+      {
+        "patch": "patches/0001-S2-milestone-2-prove-polyTimeComputable_rejectBlocks.patch",
+        "from_commit": "144c99ea798e9d22d591e993dd749ac417075923",
+        "paths": [
+          "TCSlib/Cryptography/Candidates/Concrete.lean"
+        ],
+        "sha256": "31b240785a0c36239d9bf6ac68484ee214299ce7ae89f2bcdc15e06d3e4a7fec"
+      },
+      {
+        "patch": "patches/0002-S2-milestone-3-dl-a-and-dl-c-consume-H15-retire-dla_.patch",
+        "from_commit": "5a6f802114dc5a44f9e515b73c06d5e3e0d80dca",
+        "paths": [
+          "TCSlib/Cryptography/Candidates/Concrete.lean",
+          "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+          "TCSlib/Cryptography/Candidates/ElGamal.lean"
+        ],
+        "sha256": "148e9f3080a893c1426a4cab238b8ca814f7380db1f9aa58a23b329ebecf80ac"
+      },
+      {
+        "patch": "patches/0003-S2-milestone-4-RSA-unit-sampler-and-Rabin-generators.patch",
+        "from_commit": "538b932d7f66c494ff3e9116a9541a4d617c02cc",
+        "paths": [
+          "TCSlib/Cryptography/Candidates/RSA.lean",
+          "TCSlib/Cryptography/Candidates/Rabin.lean"
+        ],
+        "sha256": "4d658c27ac212c0cd35de2b69b5e3fcfbb30c69727b8b9311f3e42fb92fc7604"
+      },
+      {
+        "patch": "patches/0004-S2-final-proof-sketch-for-rsa_unitAcc_poly-style-lin.patch",
+        "from_commit": "125a29633892daebde9fbad46a131d5b66febbb7",
+        "paths": [
+          "TCSlib/Cryptography/Candidates/RSA.lean"
+        ],
+        "sha256": "3598d7a4dbb3bf044f8efbd0403e1cc1c762f2b0974e57d1f43dd0e4cdc1a853"
+      }
+    ],
+    "patches_reproduce_sources": true,
+    "freeze": [
+      {
+        "path": "TCSlib/Cryptography/Candidates/Concrete.lean",
+        "public_count": 47,
+        "changed_public_headers": [],
+        "changed_public_non_theorem_code_blocks": [],
+        "sha256": "97372d7a2de19901f0e648ebb6d99cb0d53a75a27aaaddf4fbcd3a6c59acd01b",
+        "lines": 935
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+        "public_count": 104,
+        "changed_public_headers": [],
+        "changed_public_non_theorem_code_blocks": [],
+        "sha256": "5e556ce3d733469b1887794414af3454dfe90f51db14273dfa7d322898dce91c",
+        "lines": 1194
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/ElGamal.lean",
+        "public_count": 61,
+        "changed_public_headers": [],
+        "changed_public_non_theorem_code_blocks": [],
+        "sha256": "6d90bbb78b60e644eb4fe63c10a9f7ca35a4d30019a54bc558995b773e52df31",
+        "lines": 2134
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/RSA.lean",
+        "public_count": 116,
+        "changed_public_headers": [],
+        "changed_public_non_theorem_code_blocks": [],
+        "sha256": "2d0b9e00ab0f21686f64429686405eb3e7bc249c46ecaa087f04e50236e17f7f",
+        "lines": 2417
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/Rabin.lean",
+        "public_count": 121,
+        "changed_public_headers": [],
+        "changed_public_non_theorem_code_blocks": [],
+        "sha256": "52caca6649c820283c00faf32bca36de4c24c8ea6e6b4f0c2d73ad71fe68b5ea",
+        "lines": 3553
+      }
+    ],
+    "private": [
+      {
+        "path": "TCSlib/Cryptography/Candidates/Concrete.lean",
+        "removed": [],
+        "added": [
+          "rbl_acc",
+          "rbl_acc_poly",
+          "rbl_block",
+          "rbl_block_poly",
+          "rbl_length_step_iterate_le",
+          "rbl_length_step_le",
+          "rbl_length_step_step_le",
+          "rbl_loop",
+          "rbl_loop_poly",
+          "rbl_loop_spec",
+          "rbl_out",
+          "rbl_out_poly",
+          "rbl_step",
+          "rbl_step_iterate",
+          "rbl_step_poly"
+        ]
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+        "removed": [
+          "dla_length_ssStep_iterate_le",
+          "dla_length_ssStep_le",
+          "dla_length_ssStep_ssStep_le",
+          "dla_ssAcc",
+          "dla_ssAcc_poly",
+          "dla_ssBlock",
+          "dla_ssBlock_poly",
+          "dla_ssFind_eq",
+          "dla_ssOut",
+          "dla_ssOut_poly",
+          "dla_ssStart",
+          "dla_ssStart_poly",
+          "dla_ssStep",
+          "dla_ssStep_iterate",
+          "dla_ssStep_poly"
+        ],
+        "added": [
+          "dla_belowAcc",
+          "dla_belowAcc_poly",
+          "dla_belowAcc_spec"
+        ]
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/ElGamal.lean",
+        "removed": [
+          "dlc_length_ssStep_iterate_le",
+          "dlc_length_ssStep_le",
+          "dlc_length_ssStep_ssStep_le",
+          "dlc_ssAcc",
+          "dlc_ssAcc_poly",
+          "dlc_ssBlock",
+          "dlc_ssBlock_poly",
+          "dlc_ssLoop",
+          "dlc_ssLoop_eq",
+          "dlc_ssLoop_poly",
+          "dlc_ssOut",
+          "dlc_ssOut_poly",
+          "dlc_ssStep",
+          "dlc_ssStep_iterate",
+          "dlc_ssStep_poly"
+        ],
+        "added": [
+          "dlc_belowAcc",
+          "dlc_belowAcc_spec"
+        ]
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/RSA.lean",
+        "removed": [
+          "rsa_length_usStep_iterate_le",
+          "rsa_length_usStep_le",
+          "rsa_length_usStep_usStep_le",
+          "rsa_usAcc",
+          "rsa_usAcc_poly",
+          "rsa_usBlock",
+          "rsa_usBlock_poly",
+          "rsa_usFind_eq",
+          "rsa_usGcd",
+          "rsa_usLoop",
+          "rsa_usLoop_poly",
+          "rsa_usOut",
+          "rsa_usOut_poly",
+          "rsa_usStart",
+          "rsa_usStart_poly",
+          "rsa_usStep",
+          "rsa_usStep_iterate",
+          "rsa_usStep_poly"
+        ],
+        "added": [
+          "rsa_unitAcc",
+          "rsa_unitAcc_poly",
+          "rsa_unitAcc_spec"
+        ]
+      },
+      {
+        "path": "TCSlib/Cryptography/Candidates/Rabin.lean",
+        "removed": [
+          "rabin_length_rbStep_iterate_le",
+          "rabin_length_rbStep_le",
+          "rabin_length_rbStep_rbStep_le",
+          "rabin_rbAcc",
+          "rabin_rbAcc_poly",
+          "rabin_rbBlock",
+          "rabin_rbBlock_poly",
+          "rabin_rbFind_eq",
+          "rabin_rbLoop",
+          "rabin_rbLoop_poly",
+          "rabin_rbOut",
+          "rabin_rbOut_poly",
+          "rabin_rbStep",
+          "rabin_rbStep_iterate",
+          "rabin_rbStep_poly",
+          "rabin_spStart"
+        ],
+        "added": []
+      }
+    ],
+    "census_owned": {
+      "TCSlib/Cryptography/Candidates/Concrete.lean": {
+        "ancestor": {
+          "sorry": 1,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        },
+        "final": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        }
+      },
+      "TCSlib/Cryptography/Candidates/DiscreteLog.lean": {
+        "ancestor": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        },
+        "final": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        }
+      },
+      "TCSlib/Cryptography/Candidates/ElGamal.lean": {
+        "ancestor": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        },
+        "final": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        }
+      },
+      "TCSlib/Cryptography/Candidates/RSA.lean": {
+        "ancestor": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        },
+        "final": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        }
+      },
+      "TCSlib/Cryptography/Candidates/Rabin.lean": {
+        "ancestor": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        },
+        "final": {
+          "sorry": 0,
+          "admit": 0,
+          "axiom": 0,
+          "sorryAx": 0
+        }
+      }
+    },
+    "census_global": {
+      "ancestor": {
+        "sorry": 511,
+        "admit": 0,
+        "axiom": 0,
+        "sorryAx": 1
+      },
+      "final": {
+        "sorry": 510,
+        "admit": 0,
+        "axiom": 0,
+        "sorryAx": 1
+      }
+    },
+    "checkpoint4_to_final": {
+      "TCSlib/Cryptography/Candidates/Concrete.lean": {
+        "bytes_equal": true,
+        "code_equal": true,
+        "code_tokens_equal": true
+      },
+      "TCSlib/Cryptography/Candidates/DiscreteLog.lean": {
+        "bytes_equal": true,
+        "code_equal": true,
+        "code_tokens_equal": true
+      },
+      "TCSlib/Cryptography/Candidates/ElGamal.lean": {
+        "bytes_equal": true,
+        "code_equal": true,
+        "code_tokens_equal": true
+      },
+      "TCSlib/Cryptography/Candidates/RSA.lean": {
+        "bytes_equal": false,
+        "code_equal": false,
+        "code_tokens_equal": true
+      },
+      "TCSlib/Cryptography/Candidates/Rabin.lean": {
+        "bytes_equal": true,
+        "code_equal": true,
+        "code_tokens_equal": true
+      }
+    }
+  },
+  "additional_verification": {
+    "exchange_subtree_matches_archived_payload": true,
+    "files": 101,
+    "verified_exchange_identities": {
+      "ae2be1b7": "ae2be1b7ab37baf0ae08159fd0f7c86e3d0f2577",
+      "6fc5aca0": "6fc5aca0d6bbda7541a28763ed683141adc4e62c",
+      "9b27244a": "9b27244a5f583cde43040bfe6560cab7faf14436",
+      "d14a685": "d14a685250097d379744c4ecdf0e2b9bd083fc8d",
+      "d38aea96": "d38aea9614bf072264e954a89e7078e7dd7dc24b",
+      "7a2e1482": "7a2e14829e0f2c43aae20b249f90e838822a7dc1"
+    },
+    "anonymous_instance_blocks_unchanged": {
+      "Concrete": 0,
+      "DiscreteLog": 2,
+      "ElGamal": 0,
+      "RSA": 2,
+      "Rabin": 3
+    }
+  },
+  "checkpoint4_minors": [
+    {
+      "id": "CP4-m1",
+      "status": "still present in FINAL",
+      "severity": "minor",
+      "path": "src/TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+      "line": 678,
+      "issue": "Sketch says last |t| bits, while the implementation retains |p| bits.",
+      "replacement": "Replace `The output is the last |t| bits of` with `The output is the last |p| bits of`.",
+      "proof_impact": "none; lines 698-703 implement the stated |p|-width normalization correctly"
+    },
+    {
+      "id": "CP4-m2",
+      "status": "still present in FINAL",
+      "severity": "minor",
+      "path": "src/TCSlib/Cryptography/Candidates/Concrete.lean",
+      "line": 85,
+      "issue": "Module prose still calls H15 statement-only/an open fill.",
+      "replacement": "Replace `is polynomial-time (host H15; statement only, its proof is an open fill).` with `is polynomial-time (host H15, via the repetition host).`",
+      "proof_impact": "none"
+    },
+    {
+      "id": "CP4-m3",
+      "status": "abbreviations remain in verbatim FINAL REPORT; full known identities supplied by this review for a companion landing record",
+      "severity": "minor",
+      "path": "REPORT.md",
+      "lines": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "issue": "Worker source and historical exchange identities remain abbreviated.",
+      "resolution": "Preserve archived REPORT verbatim. Add a maintainer identity table with full format-patch From identities explicitly labelled as patch metadata, and the full locally resolved exchange identities.",
+      "worker_source_commit_provenance": "Format-patch From lines only; not independently materialized/authenticated worker source Git commits.",
+      "exchange_commit_provenance": "Read-only local exchange Git object resolution; exact FINAL subtree independently matches archive."
+    }
+  ],
+  "technical_review": {
+    "H15": {
+      "header": "unchanged",
+      "route": "Existing polyTimeComputable_iterateFind with R=var, orbit bound 2n+4, no new runner",
+      "state": "header <<bw,kw>,par>; counter and remaining coins",
+      "orbit": "counter=tw.drop i; coins=c.drop(i*|bw|)",
+      "test": "i<|tw| and supplied acc on <par, trial>; supplied hacc/hspec retained",
+      "payload": "implementation true::trial, but consumers use only nonemptiness, tail value and tail length bound",
+      "edge_cases": [
+        "T=0: counter gate rejects all orbit states",
+        "k=0: trial is [], success may be [true] with empty tail",
+        "B=0: coins unchanged while counter decreases",
+        "k>B: overlapping takes are preserved",
+        "short/empty coins: take/drop use truncated words exactly",
+        "kw/bw/tw contents arbitrary; only their lengths determine widths/count",
+        "no added positivity/full-coin-length/k<=B premise"
+      ]
+    },
+    "consumers": {
+      "DiscreteLog": "Below-modulus public equation; tail supplies zero on failure; natToList_zero_append_drop normalizes to |p|.",
+      "ElGamal": "dlc_numPoly_sample uses numeric below predicate with supplied parameter; no marker-head/exact-width assumption.",
+      "RSA": "Unit acceptance supplied through hacc/hspec; remainder normalization retained and fallback is 1 % N, including N=0.",
+      "Rabin": "Uses H15 tail bound for padding; numeric predicate specifications threaded through private adapters; actual fallback words are <=3 bits and |U|=max n 3."
+    },
+    "private_behavior": {
+      "changed": "rabin_spOut now always returns the |U|-bit numeral of the selected numeric value/fallback.",
+      "comparison": "Old and new coincide when |ds|<=|U|. Overlong fallback may differ; for U=[] and ds=[true], the old failed-sampling fallback has one bit while the new result is [].",
+      "authorization": "Within issued allowance for private test/output adapters; disclosed in FINAL REPORT lines 138-154.",
+      "public_effect": "No public definition or hypothesis changes. Actual odd/Blum callers use fallback lengths <=3<=max n 3."
+    },
+    "copied_loops": {
+      "removed": 64,
+      "new_private_declarations": 23,
+      "harvest": "Rabin loop generalized once in Concrete; all four copies removed"
+    },
+    "unproved_route_assumptions": "No new premise or missing API route assumption identified by source review. This does not replace Lean elaboration/axiom/seal replay."
+  },
+  "final_delta": {
+    "from_checkpoint4": "Only RSA rsa_unitAcc_poly docstring changes; all five files have identical Lean code tokens to checkpoint 4.",
+    "fourth_patch": "Adds the missing private proof sketch; it does not resolve any of the three checkpoint-4 review minors."
+  },
+  "worker_evidence_observations": {
+    "report": "FINAL claims Checks/prerequisites, axiom multiset comparison, whole-file ancestor/head seals and controls, and lint comparisons; read as worker evidence only.",
+    "declared_limits": [
+      "Base Checks comparison reuses Gate08 round-2 native log rather than rerunning ancestor Checks.",
+      "Ancestor source seals use current imported owned-module objects; no independent ancestor olean tree was rebuilt.",
+      "No delivered tool, probe or driver was executed by this reviewer."
+    ]
+  },
+  "landing_needs": [
+    "Apply the two exact source-prose corrections in the landing change, separately from the immutable delivery archive.",
+    "Record full identities/provenance in a maintainer addendum; do not edit verbatim REPORT.",
+    "Retain the disclosed Rabin private behavior change and harvest/payback in the landing record.",
+    "Root coordinates native/seal replay and user-approved PR; this source review establishes neither acceptance nor merge clearance."
+  ],
+  "limits": [
+    "No Lean/cache/build or delivered-program execution.",
+    "No Git mutation or library-source edit; only read-only Git show/archive/rev-parse used as data access.",
+    "Freeze comparison is source-based: 449 named public declarations plus seven anonymous instance code blocks, not Lean AST elaboration.",
+    "Patch From identities are unverified source-commit metadata; exchange payload identity and bytes were independently checked.",
+    "The final-source and evidence archives remain verbatim."
+  ]
+}

@@ -1,0 +1,24 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+@@ -162,13 +162,17 @@
+     (by rw [H.runInputB_of_lt _ _ _ hj, List.length_ofFn, List.length_replicate])
+   obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := ρ.P.coinLen (List.replicate n true).length)
+     (l := runTape (H.main.P.coins.eval (List.replicate n true).length)
+-      (ρ.P.coins.eval (List.replicate n true).length) j rA) (length_runTape hrA hj)
++      (ρ.P.coins.eval (List.replicate n true).length) j rA)
++    ((length_runTape hrA hj).trans
++      (Strategy.coinLen_eq ρ.P (List.replicate n true).length).symm)
+   obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := ρ.V.coinLen (List.replicate n true).length)
+     (l := runTape (H.main.V.coins.eval (List.replicate n true).length)
+-      (ρ.V.coins.eval (List.replicate n true).length) j rB) (length_runTape hrB hj)
++      (ρ.V.coins.eval (List.replicate n true).length) j rB)
++    ((length_runTape hrB hj).trans
++      (Strategy.coinLen_eq ρ.V (List.replicate n true).length).symm)
+   refine ⟨xA, yB, (tA, tB), ?_⟩
+   rw [runExec_eq, ← hxA, ← hyB, ← htA, ← htB]
+-  rfl
++  rw [Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq]
+ 
+ /-- `ρ`'s move `p < R` of the honest run `j` is a message of that run's transcript. -/
+ theorem runMsg_mem (x zA zB rA rB : List Bool) (j : ℕ) {p : ℕ}

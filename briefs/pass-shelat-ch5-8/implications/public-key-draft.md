@@ -109,6 +109,12 @@ is `:105`/`:118`. The generic padding documentation explicitly states the cost:
 Rabin's width is `2*max(n,3)`; no current candidate satisfies the exact `PolyExpr` equality as
 parameterized. The documented per-index-width/bounded-length version is not formalized.
 
+A smaller proposed normalization route is now in `normalization-design.md`: run RSA at n+2
+and Blum Rabin at n+3, so their widths become exact polynomials. Existing machine-level
+parameter-change APIs are available, but collection construction, one-wayness transport,
+negligible-shift closure and candidate-home width readers are not yet proved. This is a
+source-level design, not a completed bridge or a new catalog tier.
+
 **Do not declare a candidate-level theorem by adding that impossible premise.** A future
 normalization or generalized padding construction must have a real public contract and proof.
 Its statement/fill work is separate from the short Implications wrappers.

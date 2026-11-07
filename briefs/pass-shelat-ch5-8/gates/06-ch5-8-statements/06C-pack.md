@@ -1,9 +1,11 @@
 # Gate 06C (Pass–shelat ch. 7, composability): external statement audit pack
 
-**Status: draft** (2026-11-05). It pins to the integration commit of gate 06 (`PLAN.md`: after
-#195 lands, prongs A–D merged onto it, one fresh replay). The content below is prong C's head
-`aa71d0e784a84c68172895fd5db79a253fba79c9`, complete in the statement phase. The attestations are
-filled at staging.
+**Status: internal reconciliation draft (2026-11-07); not issued or staged.** Reviewed source
+reference: `e9d64158461bfe24ddc88ab885bc4017899b4c16` on the pushed integration branch. This is
+not an issued audit pin: Rule-10 seals remain pending. The current 467-module source/object
+manifest has zero stale records; any subsequent source repair requires an affected replay.
+Historical prong heads are provenance only. The recorded auditor choice is Codex (findings
+Markdown in chat); the user dispatches the job. No readiness attestation is made here.
 
 **What is audited:** the trusted surface of [PS10] ch. 7 as formalized in
 `TCSlib/Cryptography/Composability/`: definitions, statements, docstrings and proof sketches,
@@ -11,12 +13,20 @@ against the sources. Proofs are out of scope, except the short ones that carry a
 correctness (for example `correct` fields and the phase lemma of `seqRep`). The deliverable is
 **`gate06C-findings.md`**.
 
-**Sources attached separately:**
+**Sources required at issue (availability is not yet attested):**
 - [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed., January 2010. Book page = PDF
   page − 12. §7.1–7.2, book pp. 167–176.
 - [PSV06] Pass, shelat, Vaikuntanathan, CRYPTO 2006, LNCS 4117, pp. 271–289 (Definition 3).
 - [PSV07] Pass, shelat, Vaikuntanathan, ASIACRYPT 2007, LNCS 4833, pp. 519–535 (Definitions 1–4,
   Theorems 3 and 4, Corollary 1).
+- [Gol01] O. Goldreich, *Foundations of Cryptography, Volume 1*, Cambridge University Press,
+  2001, Definition 4.3.1 and §4.3.4 (aborting simulation and sequential composition).
+- The 3COL corollary also uses [PS10], Theorem 124.1 and Propositions 127.6 and 128.8
+  (book pp. 124–129). Its negligibility source tag [Gar26, §1.2] and existing probability API
+  are context; source-attachment status is recorded separately, not implied here.
+
+Primary author versions and draft/published-edition comparison limits are in
+`source-manifest.md`; Goldreich access is through official links, not redistributed copies.
 
 ## Scope
 
@@ -29,9 +39,10 @@ correctness (for example `correct` fields and the phase lemma of `seqRep`). The 
 | Def 171.5 (public-key CPA/CCA) and Claim 172.a (Construction 104.3 is CPA-secure) | `PublicKey.lean` | Claim 172.a proved from a stated lemma and Thm 104.4 |
 | Def 172.6 (non-malleability) and Thm 175.9 (CCA2: secrecy ⇔ non-malleability) | `NonMalleable.lean` | Thm 175.9 stated |
 | Def 173.7 (relation-based non-malleability) and Thm 174.8 | `SimNonMalleable.lean` | in [PSV07]'s form; both directions stated |
-| Thm 175.1 (sequential composition of ZK) | `SequentialZK.lean` | stated; `seqRep`'s phase lemma proved |
+| Thm 175.1 (sequential composition of ZK) | `SequentialZK.lean` | generic repetition statements admitted; phase and zero-error/abort corollaries proved from public interfaces |
+| Sequential 3COL corollary with explicit count | `ThreeColoring.lean` | `negligible_colSeqSound`, `colSeq_efficientProverProof_zk`; corollary uses admitted generic repetition statements |
 
-## Findings already made (check the repairs, do not re-find them)
+## Prior findings (verify the repairs)
 
 1. **The `Dec` guard** ([Shilun-Allan-Li/tcslib#193](https://github.com/Shilun-Allan-Li/tcslib/pull/193), ch. 2–4): Algorithm 99.1's `Dec`
    refuses malformed ciphertexts. Without the guard, Thm 168.2's CCA1 half is false.
@@ -44,6 +55,25 @@ correctness (for example `correct` fields and the phase lemma of `seqRep`). The 
    line up. [PSV07] shows the equivalence holds under CPA only.
 5. **Thm 175.1 assumes `ProverBounded`** (ruling on Q-1): under D8, a verifier may double its
    message length each phase, so the views of a sequential repetition can grow exponentially.
+
+## Integration repairs present for audit
+
+- The duplicate `Protocol.ProverBounded` is deleted. The canonical definition is in
+  `ZeroKnowledge/Interaction.lean`; efficient-prover proof structures expose `boundedP`.
+- `PerfectZK.seqRep` is `StatZK.seqRep` at zero error, via public `perfectZK_iff`.
+  `PerfectZKAbort.seqRep` uses `PerfectZKAbort.statZK` and concludes **statistical** ZK at
+  error `Q(n)·2^{-n}`. The formal premise uses strict-PPT aborting simulation; bounded independent retries yield
+  the error. PS10's expected-time wording is a distinct source convention; arbitrary expected-
+  time truncation is not asserted to preserve an exact conditional law. Source tags are `[Gol01]`.
+- The 3COL module fixes `Q(N)=2(N+1)^2`, proves negligibility of
+  `(1 - 1/N + 2^{-N})^Q(N)`, and obtains its efficient-prover/computational-ZK corollary
+  from `col_efficientProverProofErr`, `col_zk` and generic repetition statements. The count
+  replaces the source's graph-dependent one with a declared sufficient polynomial; this
+  `seqRep` schedule is not `colProtocolRep`.
+- Sequential ZK uses shared `coinBlock` from `Asymptotic/Adversary.lean`. CCA2's equal-length
+  padding step uses `Collection.ofFn_padFin_of_le` in `CollectionsHelpers.lean` (DL-6/DL-7).
+  Public reading interfaces and topic/root exports are present; seals are pending. The current
+  native source/object manifest is reconciled; further source repairs require an affected replay.
 
 ## Brief for the auditor
 
@@ -80,13 +110,27 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
 5. **Thm 174.8.** Is "under CPA, plus SIM ⇒ IND for every attack" the strongest true reading,
    given [PSV07, Theorems 3 and 4, Corollary 1]? [PSV07] defers both proofs; **check the
    maintainer's two sketches** (`nmSecure_of_simNMSecure`, `simNMSecure_of_nmSecure_cpa`) as
-   arguments.
+   arguments. Distinguish PSV06's copy-to-bottom convention from PSV07's COPY marker;
+   check the complementary-pair copy-flag export and the L=0 case in the one-challenge model.
 6. **Thm 175.1.** Is `seqRep` the source's `Q(n)`-phase repetition, with fresh coins per phase?
-   Is `ProverBounded` the minimal repair, and is it satisfied by the source's protocols?
+   Is canonical `ProverBounded` faithful and supplied by the efficient-prover interfaces?
+   Check the abort conclusion `StatZK` at error `Q(n)·2^{-n}`. For 3COL, check the repeated
+   soundness formula, eventual negligibility (including the finite `N=0` prefix), sufficient
+   quadratic count, scheduling deviation, and attribution to Theorem 124.1/Propositions 127.6,
+   128.8 and Theorem 175.1.
 
-## Attestations (filled at staging)
+## Pending issue-time attestations
 
-- Elaboration (the integration replay), `sorry` list, axioms, lint.
+- Exact final source/records commits and matching source bundle/manifest, after the common
+  preparation in `PLAN.md`; the internal source reference above is not an issued pin.
+- Final source-matched affected replay/downstream checks, `sorry` census and axiom records.
+- Rule-10 elaborated-term/anonymous-command coverage, installed seals, sensitivity controls and
+  explicit-unfold scan; inherited failures classified against the actual PR base.
+- Style/API lint comparison and precise existing exceptions; source attachments with hashes.
+  Earlier union/API replay summaries concern staged sources. The later
+  `evidence-run/seal-ready-pinned.json` reconciles all 467 current source/object/prerequisite
+  records; seal-driven repairs must be checked again in their affected closure.
+
 
 ## Findings format (auditor fills)
 
@@ -101,3 +145,5 @@ Severity guide:
 - **note:** an observation; no change required.
 
 The gate closes at **0 blockers and 0 majors**.
+
+**Not yet clear to merge — common verification, source attachments and user dispatch remain.**

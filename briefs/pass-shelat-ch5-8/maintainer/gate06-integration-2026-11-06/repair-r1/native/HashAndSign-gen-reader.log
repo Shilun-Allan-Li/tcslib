@@ -1,0 +1,129 @@
+START 2026-11-07T11:40:58.794722+00:00
+SOURCE_SHA256 40477fff696109352893e698e4d7d23f65ec1fb1b7b5927ee11afa837d603d91
+TCSlib/Cryptography/Authentication/HashAndSign.lean:264:77: error: unsolved goals
+S : SignatureScheme
+H : CRH
+n : ℕ
+ρ : (hsGen S H).Coins n
+σ : Fin (S.gen.coinLen n + H.gen.coinLen n) → Bool := fun j => ρ (Fin.cast ⋯ j)
+hρ : List.ofFn ρ = List.ofFn σ
+h₁ : List.take (S.gen.coinLen n) (List.ofFn σ) = List.ofFn fun j => σ (Fin.castAdd (H.gen.coinLen n) j)
+h₂ : List.drop (S.gen.coinLen n) (List.ofFn σ) = List.ofFn fun j => σ (Fin.natAdd (S.gen.coinLen n) j)
+⊢ pairEncode
+      (pairEncode
+        (pairFstD
+          (S.gen.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+              (List.ofFn fun j => σ (Fin.castAdd (H.gen.coinLen n) j)))))
+        (H.gen.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+            (List.ofFn fun j => σ (Fin.natAdd (S.gen.coinLen n) j)))))
+      (pairEncode
+        (pairSndD
+          (S.gen.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+              (List.ofFn fun j => σ (Fin.castAdd (H.gen.coinLen n) j)))))
+        (H.gen.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+            (List.ofFn fun j => σ (Fin.natAdd (S.gen.coinLen n) j))))) =
+    pairEncode
+      (pairEncode
+        (pairFstD
+          (S.gen.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+              (List.ofFn fun j => ρ (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))))
+        (H.gen.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+            (List.ofFn fun j => ρ (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j))))))
+      (pairEncode
+        (pairSndD
+          (S.gen.output
+            (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+              (List.ofFn fun j => ρ (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))))
+        (H.gen.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) []) [])
+            (List.ofFn fun j => ρ (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j))))))
+TCSlib/Cryptography/Authentication/HashAndSign.lean:315:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  padStr H.rangeLen (List.replicate n true) w
+in the target expression
+  S.ver
+      (pairEncode (List.replicate n true)
+        (pairEncode (pairFstD (S.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))
+          (pairEncode
+            (padStr H.rangeLen (List.replicate n true)
+              (H.eval
+                (pairEncode (List.replicate n true)
+                  (pairEncode (H.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j)))
+                    (List.ofFn m)))))
+            (List.ofFn
+              (padFin (S.sigLen.eval n)
+                (S.sign.runAt n
+                  (pairEncode (pairSndD (S.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))
+                    (padStr H.rangeLen (List.replicate n true)
+                      (H.eval
+                        (pairEncode (List.replicate n true)
+                          (pairEncode (H.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j)))
+                            (List.ofFn m))))))
+                  rs)))))) =
+    [true]
+
+H : CRH
+S : SignatureScheme
+hlen : ∀ (n : ℕ), H.rangeLen.eval n = S.msgLen.eval n
+n : ℕ
+m : Fin (H.domLen.eval n) → Bool
+rg : (hsGen S H).Coins n
+rs : (hsSign S H).Coins n
+rg₁ : S.gen.Coins n := fun j => rg (Fin.castAdd (H.gen.coins.eval n) j)
+w : List Bool :=
+  H.eval
+    (pairEncode (List.replicate n true)
+      (pairEncode (H.gen.runAt n [] fun j => rg (Fin.natAdd (S.gen.coins.eval n) j)) (List.ofFn m)))
+hl : H.rangeLen.eval (List.replicate n true).length = S.msgLen.eval n
+hm₀ :
+  (List.ofFn fun j => padFin (H.rangeLen.eval (List.replicate n true).length) w (Fin.cast ⋯ j)) =
+    padStr H.rangeLen (List.replicate n true) w
+⊢ S.ver
+      (pairEncode (List.replicate n true)
+        (pairEncode (pairFstD (S.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))
+          (pairEncode
+            (padStr H.rangeLen (List.replicate n true)
+              (H.eval
+                (pairEncode (List.replicate n true)
+                  (pairEncode (H.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j)))
+                    (List.ofFn m)))))
+            (List.ofFn
+              (padFin (S.sigLen.eval n)
+                (S.sign.runAt n
+                  (pairEncode (pairSndD (S.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.castAdd (H.gen.coinLen n) j))))
+                    (padStr H.rangeLen (List.replicate n true)
+                      (H.eval
+                        (pairEncode (List.replicate n true)
+                          (pairEncode (H.gen.runAt n [] fun j => rg (Fin.cast ⋯ (Fin.natAdd (S.gen.coinLen n) j)))
+                            (List.ofFn m))))))
+                  rs)))))) =
+    [true]
+TCSlib/Cryptography/Authentication/HashAndSign.lean:364:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/HashAndSign): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/HashAndSign): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/HashAndSign): no fresh .olean produced
+        1.68 real         1.17 user         0.77 sys
+          2182201344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              173488  page reclaims
+                  26  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  61  voluntary context switches
+                8956  involuntary context switches
+            33510343  instructions retired
+            15297717  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T11:41:00.481051+00:00 RC 1

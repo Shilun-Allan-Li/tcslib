@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/Composability/PRFScheme.lean
++++ b/TCSlib/Cryptography/Composability/PRFScheme.lean
+@@ -142,8 +142,10 @@
+ to `1` at every positive `n` is not negligible (Claim 169.a). -/
+ theorem not_prfFixedScheme_cca2 : ¬ (prfFixedScheme F E hE hFE).INDSecure .cca2 := by
+   intro h
++  rw [FixedLengthScheme.INDSecure_iff] at h
+   obtain ⟨A, q, hA⟩ := prfFixedScheme_not_cca2 F E hE hFE
+   obtain ⟨ε, hε, hle⟩ := h A q
++  rw [negligible_iff] at hε
+   obtain ⟨n₀, hn₀⟩ := hε 0
+   have h1 := hn₀ (n₀ + 1) (by omega)
+   have h2 := hle (n₀ + 1)

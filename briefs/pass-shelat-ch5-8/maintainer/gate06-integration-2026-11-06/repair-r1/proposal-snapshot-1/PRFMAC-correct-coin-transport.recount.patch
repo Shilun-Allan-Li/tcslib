@@ -1,0 +1,30 @@
+--- a/TCSlib/Cryptography/Authentication/PRFMAC.lean
++++ b/TCSlib/Cryptography/Authentication/PRFMAC.lean
+@@ -97,15 +97,18 @@
+   ver_poly := polyTimeComputable_prfVerFun hE
+   correct := by
+     intro n m rg rt
+-    rw [runAt_coinKey]
+-    have htag : (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfTagFun hE) (.const 0)).runAt n
+-        (pairEncode (List.ofFn rg) (List.ofFn m)) rt = List.ofFn (F n rg m) := by
+-      rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+-      simp [prfTagFun, NUPPT.inArg_eq, NUPPT.advInput_eq, hFE]
+-      rfl
+     simp only [PolyExpr.eval_var] at m ⊢
+-    rw [htag, padFin_ofFn]
+-    simp [prfVerFun, atParam_eq, hFE]
+-    rfl
++    have hlen : (NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var).coinLen n = n :=
++      (NUPPT.coinLen_eq _ n).trans
++        ((congrArg (fun p : PolyExpr => p.eval n)
++          (NUPPT.coins_ofPolyTimeUniform polyTimeComputable_pairSndD .var)).trans
++            (PolyExpr.eval_var n))
++    let k : Fin n → Bool := fun j => rg (Fin.cast hlen.symm j)
++    have hk : List.ofFn rg = List.ofFn k := List.ofFn_congr hlen rg
++    simp only [runAt_coinKey, hk]
++    simp only [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform,
++      prfTagFun_eq, NUPPT.inArg_eq, NUPPT.advInput_eq,
++      pairFstD_pairEncode, pairSndD_pairEncode, hFE, padFin_ofFn,
++      prfVerFun_eq, atParam_eq, eq_self_iff_true, decide_true]
+ 
+ attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfMAC

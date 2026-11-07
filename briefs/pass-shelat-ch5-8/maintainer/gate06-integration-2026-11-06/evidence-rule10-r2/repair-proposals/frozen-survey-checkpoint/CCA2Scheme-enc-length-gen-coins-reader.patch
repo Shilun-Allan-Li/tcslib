@@ -1,0 +1,9 @@
+--- a/TCSlib/Cryptography/Composability/CCA2Scheme.lean
++++ b/TCSlib/Cryptography/Composability/CCA2Scheme.lean
+@@ -331,3 +331,5 @@
+     show ((ccaEnc hE).runAt n (pairEncode (ccaGen.runAt n [] rg) (List.ofFn m)) r).length = _
+-    have hρ : (List.ofFn rg).length = 3 * n := by simp; rfl
++    have hρ : (List.ofFn rg).length = 3 * n := by
++      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
++        PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+     have hk₁ : ((List.ofFn rg).take n).length = n := by simp [hρ]; omega

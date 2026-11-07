@@ -1,0 +1,15 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -652,8 +652,9 @@
+ polynomial-time `H`. Sampler canonicity follows from the collection contract. -/
+ theorem otProtocol_hbcSecure (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
+     HBCSecure (otProtocol T H) otFunctionality :=
+-  ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
+-    otProtocol_simulators T H hH henc hT hEHC⟩
++  (hbcSecure_iff (otProtocol T H) otFunctionality).mpr
++    ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
++      otProtocol_simulators T H hH henc hT hEHC⟩
+ 
+ end Security
+ 

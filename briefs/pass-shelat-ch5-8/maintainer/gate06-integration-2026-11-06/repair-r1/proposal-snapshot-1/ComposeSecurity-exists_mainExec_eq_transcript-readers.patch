@@ -1,0 +1,20 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+@@ -126,13 +126,13 @@
+     (by rw [length_answersRealB, List.length_replicate])
+   obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := H.main.P.coinLen (List.replicate n true).length)
+     (l := rA.take (H.main.P.coins.eval (List.replicate n true).length))
+-    (by rw [List.length_take]; exact Nat.min_eq_left hrA)
++    (by rw [Strategy.coinLen_eq, List.length_take]; exact Nat.min_eq_left hrA)
+   obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := H.main.V.coinLen (List.replicate n true).length)
+     (l := rB.take (H.main.V.coins.eval (List.replicate n true).length))
+-    (by rw [List.length_take]; exact Nat.min_eq_left hrB)
++    (by rw [Strategy.coinLen_eq, List.length_take]; exact Nat.min_eq_left hrB)
+   refine ⟨aA, aB, (tA, tB), ?_⟩
+   rw [mainExec_eq, ← haA, ← haB, ← htA, ← htB]
+-  rfl
++  rw [Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq]
+ 
+ /-- **Run `j` is an execution of `ρ` on inputs of `G`'s lengths**: on common input `1^n`, for
+ `j < calls(n)` and composed tapes of the right lengths, the honest run `j` is the transcript of

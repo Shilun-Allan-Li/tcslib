@@ -1,0 +1,59 @@
+START 2026-11-07T12:05:13.478409+00:00
+SOURCE_SHA256 7c833ef63102f50483ad73202637cb5784cf5265b7e9195a33e6e2a7d7471396
+TCSlib/Cryptography/SecureComputation/Yao.lean:728:34: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (List.ofFn fun j =>
+      List.ofFn
+        (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten
+in the target expression
+  (List.ofFn fun j =>
+            List.ofFn
+              (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+                  ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten.getD
+      (↑i * n + ↑t) false =
+    keyAt (Y.circ n) (yaoSeed Y n rA) (Y.inA.eval n + ↑i) (ys.getD (↑i) false) t
+
+Y : YaoCircuit
+E₁ E₂ : List Bool → List Bool
+n : ℕ
+xs ys rA rB : List Bool
+i : Fin (Y.inB.eval n)
+t : Fin n
+h :
+  (List.ofFn fun j =>
+        List.ofFn
+          (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten =
+    List.ofFn fun j =>
+      (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2 ⟨0, ⋯⟩
+hj : ↑i * n + ↑t = ↑(finProdFinEquiv (i, t))
+⊢ (List.ofFn fun j =>
+            List.ofFn
+              (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+                  ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten.getD
+      (↑i * n + ↑t) false =
+    keyAt (Y.circ n) (yaoSeed Y n rA) (Y.inA.eval n + ↑i) (ys.getD (↑i) false) t
+TCSlib/Cryptography/SecureComputation/Yao.lean:818:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/SecureComputation/Yao.lean:845:8: warning: declaration uses 'sorry'
+TCSlib/Cryptography/SecureComputation/Yao.lean:911:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): lean exited with status 1
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): error diagnostics reported
+FAIL(TCSlib/Cryptography/SecureComputation/Yao): no fresh .olean produced
+        2.05 real         1.96 user         0.82 sys
+          2240217088  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177742  page reclaims
+                 169  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  32  voluntary context switches
+               10428  involuntary context switches
+            33062642  instructions retired
+            15739754  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T12:05:15.537119+00:00 RC 1

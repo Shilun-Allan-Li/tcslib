@@ -1,0 +1,130 @@
+import Lean
+import TCSlib.Cryptography.Candidates.Concrete
+import TCSlib.Cryptography.Candidates.DiscreteLog
+import TCSlib.Cryptography.Candidates.ElGamal
+import TCSlib.Cryptography.Candidates.RSA
+import TCSlib.Cryptography.Candidates.Rabin
+set_option maxHeartbeats 0
+open Lean Meta Elab Command
+
+/-- user-facing name of a constant (private prefix removed) -/
+def userStr (n : Name) : String := ((privateToUserName? n).getD n).toString
+
+def matchesTouched (ts : List String) (n : Name) : Bool :=
+  let s := userStr n
+  ts.any fun t => t == "*" || s == t || s.endsWith ("." ++ t) ||
+    (s.splitOn (t ++ ".")).length > 1 && (s.startsWith (t ++ ".") || (s.splitOn ("." ++ t ++ ".")).length > 1)
+
+def isTCS (env : Environment) (c : Name) : Option Name :=
+  match env.getModuleIdxFor? c with
+  | some mi => let m := env.header.moduleNames[mi.toNat]!; if (`TCSlib).isPrefixOf m then some m else none
+  | none => none
+
+syntax (name := collectCmd) "#collect " ident "[" str,* "]" : command
+
+@[command_elab collectCmd] def elabCollect : CommandElab := fun stx => do
+  let modN := stx[1].getId
+  let ts : List String := (stx[3].getSepArgs.map fun s => s.isStrLit?.getD "").toList
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? modN | throwError "no module {modN}"
+  let mut ours : Array Name := #[]
+  for (n, _) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some modIdx && matchesTouched ts n then ours := ours.push n
+  -- every touched name must be found
+  for t in ts do
+    if t == "*" then continue
+    unless ours.any (fun n => userStr n == t || (userStr n).endsWith ("." ++ t)) do
+      logWarning m!"TOUCHED-NOT-FOUND {t}"
+  -- wide pass: types of all constants reached; values of own-module definitions, transitively
+  let mut cs : NameSet := {}
+  let mut seen : NameSet := {}
+  let mut stack : List Name := []
+  for n in ours do
+    let some ci := env.find? n | continue
+    stack := stack ++ ci.type.getUsedConstants.toList ++ (ci.value?.map (·.getUsedConstants.toList) |>.getD [])
+  while !stack.isEmpty do
+    let c := stack.head!
+    stack := stack.tail!
+    if seen.contains c then continue
+    seen := seen.insert c
+    cs := cs.insert c
+    let some cc := env.find? c | continue
+    stack := stack ++ cc.type.getUsedConstants.toList
+    if env.getModuleIdxFor? c == some modIdx && cc.isDefinition then
+      stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
+  let mut rows : Array String := #[]
+  let mut reds : Array String := #[]
+  for c in cs.toList do
+    let some m := isTCS env c | continue
+    if m == modN then continue
+    let some cinfo := env.find? c | continue
+    unless cinfo.isDefinition do continue
+    if isInstanceCore env c then continue
+    let isM := (Match.Extension.getMatcherInfo? env c).isSome
+    let st ← liftCoreM <| getReducibilityStatus c
+    if !isM && st == .reducible then
+      reds := reds.push s!"REDUCIBLE {c} | {m}"
+      continue
+    rows := rows.push s!"SEALROW {modN} | {c} | {m} | matcher={isM} | {repr st}"
+  logInfo m!"MODULE {modN}: touched {ts.length}, constants {ours.size}, reached {cs.size}"
+  for r in rows.qsort (· < ·) do logInfo m!"{r}"
+  for r in reds.qsort (· < ·) do logInfo m!"{r}"
+
+syntax (name := axsCmd) "#axs " ident "[" str,* "]" : command
+
+/-- axioms of every touched top-level declaration of a module (private ones included) -/
+@[command_elab axsCmd] def elabAxs : CommandElab := fun stx => do
+  let modN := stx[1].getId
+  let ts : List String := (stx[3].getSepArgs.map fun s => s.isStrLit?.getD "").toList
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? modN | throwError "no module {modN}"
+  for t in ts do
+    let mut found := false
+    for (n, _) in env.constants.map₁.toList do
+      if env.getModuleIdxFor? n == some modIdx then
+        let s := userStr n
+        if t == "*" || s == t || s.endsWith ("." ++ t) then
+          found := true
+          let axs ← liftCoreM <| collectAxioms n
+          let axs := axs.qsort (fun a b => a.toString < b.toString)
+          logInfo m!"AXIOMS {modN} | {s} | {axs.toList}"
+          logInfo m!"AXIOMSID {modN} | {n.toString} | display={s} | {axs.toList}"
+    unless found do logWarning m!"AXIOMS-NOT-FOUND {t}"
+
+
+syntax (name := closureSealCmd) "#sealclosure " ident "[" ident,* "]" : command
+@[command_elab closureSealCmd] def closureSeal : CommandElab := fun stx => do
+  let audited := stx[1].getId
+  let deps := stx[3].getSepArgs.map Syntax.getId
+  let env ← getEnv
+  for dep in deps do
+    unless (env.getModuleIdx? dep).isSome do throwError "missing dependency {dep}"
+  let mut rows : Array String := #[]
+  for (n, ci) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    let home := env.header.moduleNames[mi.toNat]!
+    unless deps.contains home do continue
+    unless ci.isDefinition do continue
+    if isInstanceCore env n then continue
+    let matcher := (Match.Extension.getMatcherInfo? env n).isSome
+    let status ← liftCoreM <| getReducibilityStatus n
+    if !matcher && status == .reducible then continue
+    if n == `Complexity.PolyExpr.eval || n == `TCSlib.Cryptography.glNeed then continue
+    rows := rows.push s!"CLOSUREROW {audited} | {n} | {home} | matcher={matcher} | {repr status}"
+  for row in rows.qsort (· < ·) do logInfo m!"{row}"
+
+#collect TCSlib.Cryptography.Candidates.Concrete ["*"]
+#axs TCSlib.Cryptography.Candidates.Concrete ["*"]
+#sealclosure TCSlib.Cryptography.Candidates.Concrete [TCSlib.Complexity.ClassNP.CoNP, TCSlib.Complexity.ClassNP.CounterProgPolyTime, TCSlib.Complexity.ClassNP.NP, TCSlib.Complexity.ClassNP.PClosure, TCSlib.Complexity.ClassNP.PolyTime, TCSlib.Complexity.ClassNP.PolyTimeBlockLoop, TCSlib.Complexity.ClassNP.PolyTimeBlockMajority, TCSlib.Complexity.ClassNP.PolyTimeBlockTests, TCSlib.Complexity.ClassNP.PolyTimePairing, TCSlib.Complexity.ClassNP.PolyTimePrefix, TCSlib.Complexity.ClassP.DTIME, TCSlib.Complexity.ClassP.P, TCSlib.Complexity.ClassP.TimeConstructible, TCSlib.Complexity.PolyHierarchy.Padding, TCSlib.Complexity.Randomized.Build.IterateFind, TCSlib.Complexity.Randomized.Build.IterateFindHost, TCSlib.Complexity.Randomized.Build.PairSplit, TCSlib.Complexity.Randomized.Build.StateLoop, TCSlib.Complexity.Randomized.Build.StringLoops, TCSlib.Complexity.Randomized.Build.UnaryMul, TCSlib.Complexity.Randomized.Closure, TCSlib.Complexity.Randomized.PPT, TCSlib.Complexity.Randomized.PolyExpr, TCSlib.Complexity.Randomized.Primitives, TCSlib.Complexity.Randomized.Repetition, TCSlib.Complexity.TuringMachine.Build.Convention, TCSlib.Complexity.TuringMachine.Build.Embed, TCSlib.Complexity.TuringMachine.Build.EmitIterBody, TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed, TCSlib.Complexity.TuringMachine.Build.Loop, TCSlib.Complexity.TuringMachine.Build.ModuleHost, TCSlib.Complexity.TuringMachine.Build.Primitives, TCSlib.Complexity.TuringMachine.Build.Wrappers, TCSlib.Complexity.TuringMachine.Composition, TCSlib.Complexity.TuringMachine.Configuration, TCSlib.Complexity.TuringMachine.CounterProg, TCSlib.Complexity.TuringMachine.CounterProgInput, TCSlib.Complexity.TuringMachine.CounterProgRun, TCSlib.Complexity.TuringMachine.Deterministic, TCSlib.Complexity.TuringMachine.Encoding, TCSlib.Complexity.TuringMachine.Finite, TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, TCSlib.Complexity.TuringMachine.Robustness.SingleTape, TCSlib.Complexity.TuringMachine.Simulation, TCSlib.Complexity.TuringMachine.StateRenaming, TCSlib.Complexity.TuringMachine.Sweep, TCSlib.Complexity.TuringMachine.UnaryTape, TCSlib.Cryptography.Asymptotic.Adversary, TCSlib.Cryptography.Asymptotic.CollectionsHelpers, TCSlib.Cryptography.Asymptotic.Sampling, TCSlib.Cryptography.Candidates.Arithmetic, TCSlib.Cryptography.Foundations.Experiments, TCSlib.Cryptography.Foundations.Probability, TCSlib.Cryptography.HardcoreBit.Basic, TCSlib.Cryptography.NumberTheory.Chebyshev, TCSlib.Cryptography.NumberTheory.Primality, TCSlib.Cryptography.NumberTheory.Units, TCSlib.Cryptography.OneWayFunctions.Amplification, TCSlib.Cryptography.OneWayFunctions.Basic, TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.StatisticalDistance]
+#collect TCSlib.Cryptography.Candidates.DiscreteLog ["*"]
+#axs TCSlib.Cryptography.Candidates.DiscreteLog ["*"]
+#sealclosure TCSlib.Cryptography.Candidates.DiscreteLog [TCSlib.Complexity.CircuitComplexity.Advice, TCSlib.Complexity.CircuitComplexity.Basic, TCSlib.Complexity.CircuitComplexity.DAGCircuit, TCSlib.Complexity.CircuitComplexity.DAGFanin, TCSlib.Complexity.CircuitComplexity.DAGTransform, TCSlib.Complexity.CircuitComplexity.LayeredCircuit, TCSlib.Complexity.CircuitComplexity.LayeredDAG, TCSlib.Complexity.CircuitComplexity.LayeredPPoly, TCSlib.Complexity.CircuitComplexity.PPoly, TCSlib.Complexity.CircuitComplexity.SizeClasses, TCSlib.Complexity.CircuitComplexity.TreeDAG, TCSlib.Complexity.ClassNP.CoNP, TCSlib.Complexity.ClassNP.CounterProgPolyTime, TCSlib.Complexity.ClassNP.NP, TCSlib.Complexity.ClassNP.PClosure, TCSlib.Complexity.ClassNP.PolyTime, TCSlib.Complexity.ClassNP.PolyTimeBlockLoop, TCSlib.Complexity.ClassNP.PolyTimeBlockMajority, TCSlib.Complexity.ClassNP.PolyTimeBlockTests, TCSlib.Complexity.ClassNP.PolyTimePairing, TCSlib.Complexity.ClassNP.PolyTimePrefix, TCSlib.Complexity.ClassP.DTIME, TCSlib.Complexity.ClassP.P, TCSlib.Complexity.ClassP.TimeConstructible, TCSlib.Complexity.PolyHierarchy.Padding, TCSlib.Complexity.Randomized.Build.IterateFind, TCSlib.Complexity.Randomized.Build.IterateFindHost, TCSlib.Complexity.Randomized.Build.PairSplit, TCSlib.Complexity.Randomized.Build.StateLoop, TCSlib.Complexity.Randomized.Build.StringLoops, TCSlib.Complexity.Randomized.Build.UnaryMul, TCSlib.Complexity.Randomized.Closure, TCSlib.Complexity.Randomized.NonUniform, TCSlib.Complexity.Randomized.PPT, TCSlib.Complexity.Randomized.PolyExpr, TCSlib.Complexity.Randomized.Primitives, TCSlib.Complexity.Randomized.Repetition, TCSlib.Complexity.TuringMachine.Build.Convention, TCSlib.Complexity.TuringMachine.Build.Embed, TCSlib.Complexity.TuringMachine.Build.EmitIterBody, TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed, TCSlib.Complexity.TuringMachine.Build.Loop, TCSlib.Complexity.TuringMachine.Build.ModuleHost, TCSlib.Complexity.TuringMachine.Build.Primitives, TCSlib.Complexity.TuringMachine.Build.Wrappers, TCSlib.Complexity.TuringMachine.Composition, TCSlib.Complexity.TuringMachine.Configuration, TCSlib.Complexity.TuringMachine.CounterProg, TCSlib.Complexity.TuringMachine.CounterProgInput, TCSlib.Complexity.TuringMachine.CounterProgRun, TCSlib.Complexity.TuringMachine.Deterministic, TCSlib.Complexity.TuringMachine.Encoding, TCSlib.Complexity.TuringMachine.Finite, TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, TCSlib.Complexity.TuringMachine.Robustness.SingleTape, TCSlib.Complexity.TuringMachine.Simulation, TCSlib.Complexity.TuringMachine.StateRenaming, TCSlib.Complexity.TuringMachine.Sweep, TCSlib.Complexity.TuringMachine.UnaryTape, TCSlib.Cryptography.Asymptotic.Adversary, TCSlib.Cryptography.Asymptotic.Collections, TCSlib.Cryptography.Asymptotic.CollectionsHelpers, TCSlib.Cryptography.Asymptotic.CollectionsLemmas, TCSlib.Cryptography.Asymptotic.OneWay, TCSlib.Cryptography.Asymptotic.OneWayLemmas, TCSlib.Cryptography.Asymptotic.OneWayYao, TCSlib.Cryptography.Asymptotic.Sampling, TCSlib.Cryptography.Candidates.Arithmetic, TCSlib.Cryptography.Candidates.Concrete, TCSlib.Cryptography.Foundations.Experiments, TCSlib.Cryptography.Foundations.Negligible, TCSlib.Cryptography.Foundations.Probability, TCSlib.Cryptography.HardcoreBit.Basic, TCSlib.Cryptography.NumberTheory.Chebyshev, TCSlib.Cryptography.NumberTheory.Primality, TCSlib.Cryptography.NumberTheory.Units, TCSlib.Cryptography.OneWayFunctions.Amplification, TCSlib.Cryptography.OneWayFunctions.Basic, TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.StatisticalDistance]
+#collect TCSlib.Cryptography.Candidates.ElGamal ["*"]
+#axs TCSlib.Cryptography.Candidates.ElGamal ["*"]
+#sealclosure TCSlib.Cryptography.Candidates.ElGamal [TCSlib.Complexity.CircuitComplexity.Advice, TCSlib.Complexity.CircuitComplexity.Basic, TCSlib.Complexity.CircuitComplexity.DAGCircuit, TCSlib.Complexity.CircuitComplexity.DAGFanin, TCSlib.Complexity.CircuitComplexity.DAGTransform, TCSlib.Complexity.CircuitComplexity.LayeredCircuit, TCSlib.Complexity.CircuitComplexity.LayeredDAG, TCSlib.Complexity.CircuitComplexity.LayeredPPoly, TCSlib.Complexity.CircuitComplexity.PPoly, TCSlib.Complexity.CircuitComplexity.SizeClasses, TCSlib.Complexity.CircuitComplexity.TreeDAG, TCSlib.Complexity.ClassNP.CoNP, TCSlib.Complexity.ClassNP.CounterProgPolyTime, TCSlib.Complexity.ClassNP.NP, TCSlib.Complexity.ClassNP.PClosure, TCSlib.Complexity.ClassNP.PolyTime, TCSlib.Complexity.ClassNP.PolyTimeBlockLoop, TCSlib.Complexity.ClassNP.PolyTimeBlockMajority, TCSlib.Complexity.ClassNP.PolyTimeBlockTests, TCSlib.Complexity.ClassNP.PolyTimePairing, TCSlib.Complexity.ClassNP.PolyTimePrefix, TCSlib.Complexity.ClassP.DTIME, TCSlib.Complexity.ClassP.P, TCSlib.Complexity.ClassP.TimeConstructible, TCSlib.Complexity.PolyHierarchy.Padding, TCSlib.Complexity.Randomized.Build.IterateFind, TCSlib.Complexity.Randomized.Build.IterateFindHost, TCSlib.Complexity.Randomized.Build.PairSplit, TCSlib.Complexity.Randomized.Build.StateLoop, TCSlib.Complexity.Randomized.Build.StringLoops, TCSlib.Complexity.Randomized.Build.UnaryMul, TCSlib.Complexity.Randomized.Closure, TCSlib.Complexity.Randomized.NonUniform, TCSlib.Complexity.Randomized.PPT, TCSlib.Complexity.Randomized.PolyExpr, TCSlib.Complexity.Randomized.Primitives, TCSlib.Complexity.Randomized.Repetition, TCSlib.Complexity.TuringMachine.Build.Convention, TCSlib.Complexity.TuringMachine.Build.Embed, TCSlib.Complexity.TuringMachine.Build.EmitIterBody, TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed, TCSlib.Complexity.TuringMachine.Build.Loop, TCSlib.Complexity.TuringMachine.Build.ModuleHost, TCSlib.Complexity.TuringMachine.Build.Primitives, TCSlib.Complexity.TuringMachine.Build.Wrappers, TCSlib.Complexity.TuringMachine.Composition, TCSlib.Complexity.TuringMachine.Configuration, TCSlib.Complexity.TuringMachine.CounterProg, TCSlib.Complexity.TuringMachine.CounterProgInput, TCSlib.Complexity.TuringMachine.CounterProgRun, TCSlib.Complexity.TuringMachine.Deterministic, TCSlib.Complexity.TuringMachine.Encoding, TCSlib.Complexity.TuringMachine.Finite, TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, TCSlib.Complexity.TuringMachine.Robustness.SingleTape, TCSlib.Complexity.TuringMachine.Simulation, TCSlib.Complexity.TuringMachine.StateRenaming, TCSlib.Complexity.TuringMachine.Sweep, TCSlib.Complexity.TuringMachine.UnaryTape, TCSlib.Cryptography.Asymptotic.Adversary, TCSlib.Cryptography.Asymptotic.Collections, TCSlib.Cryptography.Asymptotic.CollectionsHelpers, TCSlib.Cryptography.Asymptotic.CollectionsLemmas, TCSlib.Cryptography.Asymptotic.Ensembles, TCSlib.Cryptography.Asymptotic.EnsemblesLemmas, TCSlib.Cryptography.Asymptotic.OneWay, TCSlib.Cryptography.Asymptotic.OneWayLemmas, TCSlib.Cryptography.Asymptotic.OneWayYao, TCSlib.Cryptography.Asymptotic.Sampling, TCSlib.Cryptography.Candidates.Arithmetic, TCSlib.Cryptography.Candidates.Concrete, TCSlib.Cryptography.Candidates.DiscreteLog, TCSlib.Cryptography.Foundations.Experiments, TCSlib.Cryptography.Foundations.Negligible, TCSlib.Cryptography.Foundations.Probability, TCSlib.Cryptography.HardcoreBit.Basic, TCSlib.Cryptography.HardcoreBit.PairwiseIndependence, TCSlib.Cryptography.NumberTheory.Chebyshev, TCSlib.Cryptography.NumberTheory.Primality, TCSlib.Cryptography.NumberTheory.QuadraticResidues, TCSlib.Cryptography.NumberTheory.Units, TCSlib.Cryptography.OneWayFunctions.Amplification, TCSlib.Cryptography.OneWayFunctions.Basic, TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation, TCSlib.Cryptography.Pseudorandom.Generators, TCSlib.Cryptography.Pseudorandom.Indistinguishability, TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.StatisticalDistance]
+#collect TCSlib.Cryptography.Candidates.RSA ["*"]
+#axs TCSlib.Cryptography.Candidates.RSA ["*"]
+#sealclosure TCSlib.Cryptography.Candidates.RSA [TCSlib.Complexity.ClassNP.CoNP, TCSlib.Complexity.ClassNP.CounterProgPolyTime, TCSlib.Complexity.ClassNP.NP, TCSlib.Complexity.ClassNP.PClosure, TCSlib.Complexity.ClassNP.PolyTime, TCSlib.Complexity.ClassNP.PolyTimeBlockLoop, TCSlib.Complexity.ClassNP.PolyTimeBlockMajority, TCSlib.Complexity.ClassNP.PolyTimeBlockTests, TCSlib.Complexity.ClassNP.PolyTimePairing, TCSlib.Complexity.ClassNP.PolyTimePrefix, TCSlib.Complexity.ClassP.DTIME, TCSlib.Complexity.ClassP.P, TCSlib.Complexity.ClassP.TimeConstructible, TCSlib.Complexity.PolyHierarchy.Padding, TCSlib.Complexity.Randomized.Build.IterateFind, TCSlib.Complexity.Randomized.Build.IterateFindHost, TCSlib.Complexity.Randomized.Build.PairSplit, TCSlib.Complexity.Randomized.Build.StateLoop, TCSlib.Complexity.Randomized.Build.StringLoops, TCSlib.Complexity.Randomized.Build.UnaryMul, TCSlib.Complexity.Randomized.Closure, TCSlib.Complexity.Randomized.PPT, TCSlib.Complexity.Randomized.PolyExpr, TCSlib.Complexity.Randomized.Primitives, TCSlib.Complexity.Randomized.Repetition, TCSlib.Complexity.TuringMachine.Build.Convention, TCSlib.Complexity.TuringMachine.Build.Embed, TCSlib.Complexity.TuringMachine.Build.EmitIterBody, TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed, TCSlib.Complexity.TuringMachine.Build.Loop, TCSlib.Complexity.TuringMachine.Build.ModuleHost, TCSlib.Complexity.TuringMachine.Build.Primitives, TCSlib.Complexity.TuringMachine.Build.Wrappers, TCSlib.Complexity.TuringMachine.Composition, TCSlib.Complexity.TuringMachine.Configuration, TCSlib.Complexity.TuringMachine.CounterProg, TCSlib.Complexity.TuringMachine.CounterProgInput, TCSlib.Complexity.TuringMachine.CounterProgRun, TCSlib.Complexity.TuringMachine.Deterministic, TCSlib.Complexity.TuringMachine.Encoding, TCSlib.Complexity.TuringMachine.Finite, TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, TCSlib.Complexity.TuringMachine.Robustness.SingleTape, TCSlib.Complexity.TuringMachine.Simulation, TCSlib.Complexity.TuringMachine.StateRenaming, TCSlib.Complexity.TuringMachine.Sweep, TCSlib.Complexity.TuringMachine.UnaryTape, TCSlib.Cryptography.Asymptotic.Adversary, TCSlib.Cryptography.Asymptotic.Collections, TCSlib.Cryptography.Asymptotic.CollectionsHelpers, TCSlib.Cryptography.Asymptotic.CollectionsLemmas, TCSlib.Cryptography.Asymptotic.OneWay, TCSlib.Cryptography.Asymptotic.OneWayLemmas, TCSlib.Cryptography.Asymptotic.OneWayYao, TCSlib.Cryptography.Asymptotic.Sampling, TCSlib.Cryptography.Candidates.Arithmetic, TCSlib.Cryptography.Candidates.Concrete, TCSlib.Cryptography.Candidates.Factoring, TCSlib.Cryptography.Foundations.Experiments, TCSlib.Cryptography.Foundations.Negligible, TCSlib.Cryptography.Foundations.Probability, TCSlib.Cryptography.HardcoreBit.Basic, TCSlib.Cryptography.NumberTheory.Chebyshev, TCSlib.Cryptography.NumberTheory.Primality, TCSlib.Cryptography.NumberTheory.Units, TCSlib.Cryptography.OneWayFunctions.Amplification, TCSlib.Cryptography.OneWayFunctions.Basic, TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.StatisticalDistance]
+#collect TCSlib.Cryptography.Candidates.Rabin ["*"]
+#axs TCSlib.Cryptography.Candidates.Rabin ["*"]
+#sealclosure TCSlib.Cryptography.Candidates.Rabin [TCSlib.Complexity.ClassNP.CoNP, TCSlib.Complexity.ClassNP.CounterProgPolyTime, TCSlib.Complexity.ClassNP.NP, TCSlib.Complexity.ClassNP.PClosure, TCSlib.Complexity.ClassNP.PolyTime, TCSlib.Complexity.ClassNP.PolyTimeBlockLoop, TCSlib.Complexity.ClassNP.PolyTimeBlockMajority, TCSlib.Complexity.ClassNP.PolyTimeBlockTests, TCSlib.Complexity.ClassNP.PolyTimePairing, TCSlib.Complexity.ClassNP.PolyTimePrefix, TCSlib.Complexity.ClassP.DTIME, TCSlib.Complexity.ClassP.P, TCSlib.Complexity.ClassP.TimeConstructible, TCSlib.Complexity.PolyHierarchy.Padding, TCSlib.Complexity.Randomized.Build.IterateFind, TCSlib.Complexity.Randomized.Build.IterateFindHost, TCSlib.Complexity.Randomized.Build.PairSplit, TCSlib.Complexity.Randomized.Build.StateLoop, TCSlib.Complexity.Randomized.Build.StringLoops, TCSlib.Complexity.Randomized.Build.UnaryMul, TCSlib.Complexity.Randomized.Closure, TCSlib.Complexity.Randomized.PPT, TCSlib.Complexity.Randomized.PolyExpr, TCSlib.Complexity.Randomized.Primitives, TCSlib.Complexity.Randomized.Repetition, TCSlib.Complexity.TuringMachine.Build.Convention, TCSlib.Complexity.TuringMachine.Build.Embed, TCSlib.Complexity.TuringMachine.Build.EmitIterBody, TCSlib.Complexity.TuringMachine.Build.EmitIterEmbed, TCSlib.Complexity.TuringMachine.Build.Loop, TCSlib.Complexity.TuringMachine.Build.ModuleHost, TCSlib.Complexity.TuringMachine.Build.Primitives, TCSlib.Complexity.TuringMachine.Build.Wrappers, TCSlib.Complexity.TuringMachine.Composition, TCSlib.Complexity.TuringMachine.Configuration, TCSlib.Complexity.TuringMachine.CounterProg, TCSlib.Complexity.TuringMachine.CounterProgInput, TCSlib.Complexity.TuringMachine.CounterProgRun, TCSlib.Complexity.TuringMachine.Deterministic, TCSlib.Complexity.TuringMachine.Encoding, TCSlib.Complexity.TuringMachine.Finite, TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, TCSlib.Complexity.TuringMachine.Robustness.SingleTape, TCSlib.Complexity.TuringMachine.Simulation, TCSlib.Complexity.TuringMachine.StateRenaming, TCSlib.Complexity.TuringMachine.Sweep, TCSlib.Complexity.TuringMachine.UnaryTape, TCSlib.Cryptography.Asymptotic.Adversary, TCSlib.Cryptography.Asymptotic.Collections, TCSlib.Cryptography.Asymptotic.CollectionsHelpers, TCSlib.Cryptography.Asymptotic.CollectionsLemmas, TCSlib.Cryptography.Asymptotic.OneWay, TCSlib.Cryptography.Asymptotic.OneWayLemmas, TCSlib.Cryptography.Asymptotic.OneWayYao, TCSlib.Cryptography.Asymptotic.Sampling, TCSlib.Cryptography.Candidates.Arithmetic, TCSlib.Cryptography.Candidates.Concrete, TCSlib.Cryptography.Candidates.Factoring, TCSlib.Cryptography.Candidates.RSA, TCSlib.Cryptography.Foundations.Experiments, TCSlib.Cryptography.Foundations.Negligible, TCSlib.Cryptography.Foundations.Probability, TCSlib.Cryptography.HardcoreBit.Basic, TCSlib.Cryptography.NumberTheory.Chebyshev, TCSlib.Cryptography.NumberTheory.Primality, TCSlib.Cryptography.NumberTheory.QuadraticResidues, TCSlib.Cryptography.NumberTheory.Units, TCSlib.Cryptography.OneWayFunctions.Amplification, TCSlib.Cryptography.OneWayFunctions.Basic, TCSlib.InformationTheory.FinDist, TCSlib.InformationTheory.StatisticalDistance]

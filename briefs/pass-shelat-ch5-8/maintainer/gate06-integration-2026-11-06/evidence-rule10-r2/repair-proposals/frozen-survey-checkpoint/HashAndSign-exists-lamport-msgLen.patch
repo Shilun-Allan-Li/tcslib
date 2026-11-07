@@ -1,0 +1,18 @@
+--- a/TCSlib/Cryptography/Authentication/HashAndSign.lean
++++ b/TCSlib/Cryptography/Authentication/HashAndSign.lean
+@@ -363,8 +363,13 @@
+     (hfE : ∀ n (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x))
+     (hf : (lamportOWF L f).StrongOneWay) :
+     ∃ S : SignatureScheme, S.msgLen = H.domLen ∧ S.OneTimeSecure :=
+-  ⟨hashAndSign H (lamport L f E hE hfE) hn, rfl,
+-    hashAndSign_oneTimeSecure H (lamport L f E hE hfE) hn hdom hH
++  let hlen : ∀ n, H.rangeLen.eval n = (lamport L f E hE hfE).msgLen.eval n :=
++    fun n => (hn n).trans
++      ((congrArg (fun p : PolyExpr => p.eval n)
++        (lamport_msgLen L f E hE hfE)).trans (PolyExpr.eval_var n)).symm
++  ⟨hashAndSign H (lamport L f E hE hfE) hlen,
++    hashAndSign_msgLen H (lamport L f E hE hfE) hlen,
++    hashAndSign_oneTimeSecure H (lamport L f E hE hfE) hlen hdom hH
+       (lamport_oneTimeSecure L f E hE hfE hf)⟩
+ 
+ end TCSlib.Cryptography.Authentication

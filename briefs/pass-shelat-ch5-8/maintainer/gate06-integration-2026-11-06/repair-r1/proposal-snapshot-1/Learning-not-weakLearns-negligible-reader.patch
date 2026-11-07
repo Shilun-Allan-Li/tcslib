@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/Randomness/Learning.lean
++++ b/TCSlib/Cryptography/Randomness/Learning.lean
+@@ -119,7 +119,9 @@
+     (hδγ : δ < γ) (hγ : γ ≤ 1 / 2) :
+     ∃ n₀ : ℕ, ∀ n ≥ n₀, ¬ WeakLearnsUnder (FinDist.uniform (Fin n → Bool)) (prfConcept F n)
+       (m.eval n) (learnerOf A n (m.eval n)) γ δ := by
+-  obtain ⟨n₁, hn₁⟩ := predictAdv_prfConcept_negligible F hF A m 1
++  have hneg := predictAdv_prfConcept_negligible F hF A m
++  rw [negligible_iff] at hneg
++  obtain ⟨n₁, hn₁⟩ := hneg 1
+   obtain ⟨n₂, hn₂⟩ := exists_nat_gt (2 / (γ - δ))
+   refine ⟨max n₁ (n₂ + 1), fun n hn => ?_⟩
+   have h1 := hn₁ n (le_trans (le_max_left _ _) hn)

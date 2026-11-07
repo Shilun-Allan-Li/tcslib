@@ -1,0 +1,15 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+--- a/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
++++ b/TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+@@ -279,9 +279,8 @@
+     fun j => rB₀ (Fin.cast hB.symm j)
+   have hAr : List.ofFn rA₀ = List.ofFn rA := List.ofFn_congr hA rA₀
+   have hBr : List.ofFn rB₀ = List.ofFn rB := List.ofFn_congr hB rB₀
+-  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, otProtocol, exec_succ, exec_zero,
+-    otSender, otReceiver]
+-  rw [hAr, hBr]
++  rw [Protocol.outV_eq, Protocol.transcriptWith_eq, hAr, hBr]
++  simp [otProtocol, exec_succ, exec_zero, otSender, otReceiver]
+   have hg : T.gen.runAtL x.length [] (List.ofFn fun i => rA i) =
+       T.gen.runAt x.length [] rA :=
+     (T.gen.runAt_eq x.length [] rA).symm

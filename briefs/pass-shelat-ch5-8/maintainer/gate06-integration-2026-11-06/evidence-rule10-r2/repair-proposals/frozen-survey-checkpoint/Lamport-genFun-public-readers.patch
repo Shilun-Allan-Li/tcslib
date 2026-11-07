@@ -1,0 +1,12 @@
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -305,7 +305,8 @@
+     ((polyTimeComputable_unary.comp hu).pairEncode NUPPT.polyTimeComputable_inCoins))
+   have h := ((blockEncFun_poly (polyTimeComputable_lamportPairEmit hE) (.const 1)
+     (.mul (.const 2) .var)).comp hst).pairEncode NUPPT.polyTimeComputable_inCoins
+-  convert h using 1
++  refine h.congr fun z => ?_
++  simp only [lamportGenFun_eq, blockState_eq, Function.comp_apply]
+ 
+ /-- `Sign` is polynomial-time. -/
+ theorem polyTimeComputable_lamportSignFun : PolyTimeComputable lamportSignFun := by

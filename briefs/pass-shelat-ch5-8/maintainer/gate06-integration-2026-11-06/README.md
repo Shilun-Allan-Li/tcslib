@@ -1,4 +1,47 @@
-# Gate 06 integration checkpoint, 2026-11-06 PST
+# Gate 06 integration checkpoint, 2026-11-06/07 PST
+
+## Current checkpoint (2026-11-07 PST)
+
+Integration head **`e9d64158461bfe24ddc88ab885bc4017899b4c16`**, pushed on
+`cryptography/pass-shelat-ch5-8-integration`. No PR is open and no Gate 06 pack is issued.
+All four next-round audits remain selected for Codex, with chat Markdown delivery.
+
+- The initial serial union replay reached all 467 modules. Final interface edits required
+  27 affected checks, reader repairs 158 checks, and the graph-sampler reader 25 checks;
+  all completed across the retained attempts, including each first failure and its repair.
+- `evidence-run/seal-ready-pinned.json`: **467 modules, zero stale source/object/prerequisite
+  records** at the current head. This reconciles source bytes and object hashes against the
+  latest successful checks, including direct TCSlib import freshness; it is not a second cold
+  build. The root `TCSlib.lean` export module is outside this 467-module union. Its added
+  imports and the six changed facades are verified import/options-only by the preparer.
+- Precise 145-root Mathlib fetch, native setup and one-process checks are recorded in
+  `evidence-run/`; no project olean tree was copied or borrowed from another chat.
+- Source comparison against `c7d8753a548ced71c1e1ea70e012c365af5c2171` covers 58 Lean files:
+  794 ADDED / 7 REMOVED / 13 CHANGED public source headers. These are parser rows (moves can
+  appear removed/added), not a count of unique new semantic constants.
+- Lexical `TCSlib/` sorry census: **511 → 544**. This includes the statement-phase prong
+  admissions; the new wrapper/API proofs do not establish completion of those reductions.
+- Full changed-file style comparison: ten inherited findings, **zero new findings**. Six
+  are the root facade, three InformationTheory facade options, one inherited Classes size
+  finding. The small new Classes reading equations stay beside their definitions; no general
+  size waiver is introduced.
+- Five missing owner reading equations plus the GI sampler equation were published; named
+  foreign-definition unfolds in the traced new/touched consumer proofs were replaced by
+  readers. The three internal source audits and supplementary touched-proof review remain
+  source-level checks, not implicit-read attestations. Untouched upstream debt is retained.
+- `evidence-rule10-r1/` is an **unrun initial preparation**, retained for provenance. Internal
+  review caught incomplete generic exclusion/pinning guards. R2 checks every library Lean
+  byte against HEAD, rejects extra/missing library sources, verifies excluded files have only
+  imports/options, checks base ancestry, and records actual constant identities. One moving
+  records ref was refused by the ancestry guard before any Lean process; the rerun pins the
+  exact records ancestor. `evidence-rule10-r2/` is the active collector/seal line.
+- The elaborated-term/axiom/import-closure collector is running. Whole-file seals, controls,
+  final axiom dispositions, ledger/pack reconciliation and the user-dispatched external
+  statement audits remain. There is no claim of a rule-10 seal pass or merge readiness.
+
+**Not yet clear to merge — elaborated-term seals and external statement audits remain.**
+
+## Historical intake checkpoints
 
 This is an initial merge checkpoint, not a checked or issued audit tree. Main's PAC/G5 changes
 and the four prongs are merged on the dedicated integration PR branch. The sole conflict was

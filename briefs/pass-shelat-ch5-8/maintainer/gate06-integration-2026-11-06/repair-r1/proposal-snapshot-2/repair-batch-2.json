@@ -1,0 +1,32 @@
+[
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/ComposePhases",
+    "label": "ComposePhases-public-readers-r1",
+    "patches": [
+      "ComposePhases-exec-run-zero-reader.patch",
+      "ComposePhases-transcript-readers.patch",
+      "ComposePhases-viewP-readers.patch",
+      "ComposePhases-viewV-readers.patch",
+      "ComposePhases-outP-readers.patch",
+      "ComposePhases-outV-readers.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/ComposeSecurity",
+    "label": "ComposeSecurity-public-readers-r1",
+    "patches": [
+      "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch",
+      "ComposeSecurity-exists_runExec_eq_transcript-readers.patch",
+      "ComposeSecurity-compose_msg_bound-readers.patch",
+      "ComposeSecurity-polyTime_compose-readers.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/Garbling",
+    "label": "Garbling-public-readers-r1",
+    "patches": [
+      "Garbling-values-size-transport.patch",
+      "Garbling-output-readers.patch"
+    ]
+  }
+]

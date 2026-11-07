@@ -1,0 +1,108 @@
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+@@ -568,6 +568,44 @@
+       encPerm (if m.headD false then
+         samplePerm (decGraph (pairFstD x)).1 r * (decPerm (decGraph (pairFstD x)).1 y)⁻¹
+       else samplePerm (decGraph (pairFstD x)).1 r) := rfl
++
++/-- On an even history, the repeated GI prover sends the single prover's first message
++on the current permutation tape.
++
++**Proof sketch.** Read the even branch, map the decoded-graph equation through its graph
++message, then reverse the single prover's first-message equation. -/
++theorem giProverRep_next_graph (x y r : List Bool) (hist : List (List Bool))
++    (h : hist.length % 2 = 0) :
++    giProverRep.next x y r hist =
++      giProver.next x y (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r) [] :=
++  let tape := coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r
++  let F : (Σ n : ℕ, Graph n) → List Bool :=
++    fun d => encGraph (permGraph d.2 (samplePerm d.1 tape))
++  (giProverRep_next x y r hist).trans
++    ((if_pos h).trans
++      ((congrArg F (decGraph_eq_of_sqrt (w := pairFstD x)
++          (n := Nat.sqrt (pairFstD x).length) rfl)).symm.trans
++        (giProver_next_nil' x y tape).symm))
++
++/-- On an odd history, the repeated GI prover sends the single prover's reply to the
++last challenge, using the current permutation tape.
++
++**Proof sketch.** Read the odd branch, map the decoded-graph equation through its permutation
++reply, then reverse the single prover's one-challenge equation. -/
++theorem giProverRep_next_reply (x y r : List Bool) (hist : List (List Bool))
++    (h : hist.length % 2 ≠ 0) :
++    giProverRep.next x y r hist =
++      giProver.next x y (coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r)
++        [hist.getLastD []] :=
++  let tape := coinBlock ((x.length + 1) ^ 2) (hist.length / 2) r
++  let F : (Σ n : ℕ, Graph n) → List Bool := fun d =>
++    encPerm (if (hist.getLastD []).headD false then
++      samplePerm d.1 tape * (decPerm d.1 y)⁻¹ else samplePerm d.1 tape)
++  (giProverRep_next x y r hist).trans
++    ((if_neg h).trans
++      ((congrArg F (decGraph_eq_of_sqrt (w := pairFstD x)
++          (n := Nat.sqrt (pairFstD x).length) rfl)).symm.trans
++        (giProver_next_cons' x y tape (hist.getLastD []) []).symm))
+ 
+ /-- The graph isomorphism verifier's verdict, unfolded. -/
+ theorem giVerifier_next_two' (x z r H γ : List Bool) :
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+@@ -206,41 +206,34 @@
+   simp only [decGraphAt_encGraph, Bool.cond_eq_ite]
+ 
+ /-- The `|x|`-fold prover's graph on an even history of an encoded instance: `π(G₀)` for the
+-permutation sampled from coin block `|hist| / 2`. -/
++permutation sampled from coin block `|hist| / 2`.
++
++**Proof sketch.** Read the repeated move as the single prover's first message on the current
++tape (`giProverRep_next_graph`), then use its encoded-instance equation (`giProver_next_nil`). -/
+ theorem giProverRep_next_even {n : ℕ} (G₀ G₁ : Graph n) (y r : List Bool) (hist : List (List Bool))
+     (h : hist.length % 2 = 0) :
+     giProverRep.next (encInstance G₀ G₁) y r hist =
+       encGraph (permGraph G₀ (samplePerm n
+-        (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) := by
+-  show (if hist.length % 2 = 0 then encGraph (permGraph
+-    (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+-    (samplePerm (instanceVertexCount (encInstance G₀ G₁))
+-      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) else _) = _
+-  rw [if_pos h, show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
+-  generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
+-  rw [instanceVertexCount_encInstance] at hm
+-  subst hm
+-  rw [decGraphAt_encGraph]
++        (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) :=
++  (giProverRep_next_graph (encInstance G₀ G₁) y r hist h).trans
++    (giProver_next_nil G₀ G₁ y
++      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))
+ 
+ /-- The `|x|`-fold prover's reply on an odd history of an encoded instance with witness
+-`encPerm σ`: `π σ⁻¹` or `π` according to the last challenge received. -/
++`encPerm σ`: `π σ⁻¹` or `π` according to the last challenge received.
++
++**Proof sketch.** Read the repeated move as the single prover's response to the last challenge
++on the current tape (`giProverRep_next_reply`), then use `giProver_next_cons`. -/
+ theorem giProverRep_next_odd {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (r : List Bool)
+     (hist : List (List Bool)) (h : hist.length % 2 ≠ 0) :
+     giProverRep.next (encInstance G₀ G₁) (encPerm σ) r hist =
+       encPerm (if (hist.getLastD []).headD false then
+         samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) * σ⁻¹
+-      else samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)) := by
+-  show (if hist.length % 2 = 0 then _ else encPerm (if (hist.getLastD []).headD false then
+-    samplePerm (instanceVertexCount (encInstance G₀ G₁))
+-        (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r) *
+-      (decPerm (instanceVertexCount (encInstance G₀ G₁)) (encPerm σ))⁻¹
+-    else samplePerm (instanceVertexCount (encInstance G₀ G₁))
+-      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) = _
+-  rw [if_neg h]
+-  generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
+-  rw [instanceVertexCount_encInstance] at hm
+-  subst hm
+-  rw [decPerm_encPerm]
++      else samplePerm n (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)) :=
++  (giProverRep_next_reply (encInstance G₀ G₁) (encPerm σ) r hist h).trans
++    (giProver_next_cons G₀ G₁ σ
++      (coinBlock (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)
++      (hist.getLastD []) [])
+ 
+ /-- The verdict of the `|x|`-fold protocol against `P'`: the verifier's next-message function on
+ the `4|x|`-move execution. -/

@@ -1,0 +1,28 @@
+--- a/TCSlib/Complexity/Randomized/PolyTimeModel.lean
++++ b/TCSlib/Complexity/Randomized/PolyTimeModel.lean
+@@ -82,2 +82,11 @@
+       (N x u v = true ↔ Turing.pairEncode (Turing.pairEncode x u) v ∈ V)
++
++/-- A verifier is efficient in the polynomial-time model exactly when its `some true` and
++`some false` sets, on encoded input/random-string pairs, are languages in `P`. -/
++theorem polyTimeModel_eff_iff (M : List Bool → List Bool → Option Bool) :
++    polyTimeModel.Eff M ↔
++      ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧
++        ∀ x r : List Bool,
++          (M x r = some true ↔ Turing.pairEncode x r ∈ V₁) ∧
++          (M x r = some false ↔ Turing.pairEncode x r ∈ V₀) := Iff.rfl
+ 
+--- a/TCSlib/Cryptography/Randomness/BPPBridge.lean
++++ b/TCSlib/Cryptography/Randomness/BPPBridge.lean
+@@ -81,3 +81,4 @@
+       ∀ n (y : List Bool) (r : D.Coins n), D.runAt n y r = [M (xs n) y] := by
+-  obtain ⟨V₁, V₀, h₁, -, hV⟩ := hM
++  obtain ⟨V₁, V₀, h₁, -, hV⟩ :=
++    (Randomized.polyTimeModel_eff_iff (Randomized.boolVerifier M)).mp hM
+   have hM₁ : ∀ x r, M x r = true ↔ pairEncode x r ∈ V₁ := fun x r => by
+@@ -94,3 +95,4 @@
+     simp only [Function.comp_apply]
+-  refine ⟨NUPPT.ofPolyTime hf (.const 0) p xs hxs, rfl, fun n y r => ?_⟩
++  refine ⟨NUPPT.ofPolyTime hf (.const 0) p xs hxs,
++    NUPPT.advice_ofPolyTime hf (.const 0) p xs hxs, fun n y r => ?_⟩
+   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime]

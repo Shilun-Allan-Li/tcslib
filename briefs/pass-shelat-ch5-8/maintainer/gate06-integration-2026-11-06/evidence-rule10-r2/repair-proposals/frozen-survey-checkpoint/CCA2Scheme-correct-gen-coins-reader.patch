@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/Composability/CCA2Scheme.lean
++++ b/TCSlib/Cryptography/Composability/CCA2Scheme.lean
+@@ -317,7 +317,9 @@
+   dec_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
+   correct := by
+     intro n m rg re rd
+-    have hρ : (List.ofFn rg).length = 3 * n := by simp; rfl
++    have hρ : (List.ofFn rg).length = 3 * n := by
++      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
++        PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+     have hk₁ : ((List.ofFn rg).take n).length = n := by simp [hρ]; omega
+     have hr : (List.ofFn re).length = n := by simp; rfl
+     have hp := length_eval_of_length F E hFE hk₁ hr

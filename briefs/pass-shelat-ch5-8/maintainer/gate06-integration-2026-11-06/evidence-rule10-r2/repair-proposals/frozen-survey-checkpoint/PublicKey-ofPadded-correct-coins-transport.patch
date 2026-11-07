@@ -1,0 +1,11 @@
+--- a/TCSlib/Cryptography/Composability/PublicKey.lean
++++ b/TCSlib/Cryptography/Composability/PublicKey.lean
+@@ -268,7 +268,7 @@
+   correct := by
+     intro n m rg re
+     rw [runAt_padEnc enc_uniform, padDecFun_padCt]
+-    exact correct n m rg re
++    exact correct n m rg (NUPPT.coinsCongr (padEnc_coins enc L) n re)
+   enc_length := by
+     intro n rg m re
+     rw [runAt_padEnc enc_uniform]

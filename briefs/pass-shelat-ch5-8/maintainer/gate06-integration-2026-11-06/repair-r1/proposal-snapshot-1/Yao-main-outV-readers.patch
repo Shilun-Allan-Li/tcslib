@@ -1,0 +1,14 @@
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -584,7 +584,10 @@
+     (r : (yaoMain Y E₁ E₂).ExecCoins (yaoMain Y E₁ E₂).P w) :
+     (yaoMain Y E₁ E₂).outV (yaoMain Y E₁ E₂).P w zA zB r =
+       yaoBobOut Y E₁ E₂ w.length (yaoMsg Y E₁ E₂ w.length (pairFstD zA) (List.ofFn r.1))
+-        (pairSndD zB) := rfl
++        (pairSndD zB) := by
++  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, yaoMain_P, yaoMain_V,
++    yaoMain_rounds, yaoMain_verifierFirst, PolyExpr.eval_const, exec_succ, exec_zero,
++    moverIsV_false, yaoAlice_next_nil, yaoBob_next]
+ 
+ /-- **Alice's output in the message phase**: the message Bob sent, his result. -/
+ theorem yaoMain_outP (w zA zB : List Bool)

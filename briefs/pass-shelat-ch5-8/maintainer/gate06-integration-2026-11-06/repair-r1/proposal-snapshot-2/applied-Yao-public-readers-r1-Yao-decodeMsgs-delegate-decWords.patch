@@ -1,0 +1,105 @@
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -325,78 +325,39 @@
+ 
+ /-! ### Message lists -/
+ 
+-/-- Decoding with fuel: at most `k` components, stopping at the empty string. -/
+-private def decodeMsgsFuel : ℕ → List Bool → List (List Bool)
+-  | 0, _ => []
+-  | k + 1, w => if w = [] then [] else pairFstD w :: decodeMsgsFuel k (pairSndD w)
+-
+ /-- **Decoding a message list**, the inverse of `Strategy.encodeMsgs`: the first component of the
+-string, then the decoding of the second, until the empty string (at most `|w|` components). -/
+-def decodeMsgs (w : List Bool) : List (List Bool) := decodeMsgsFuel w.length w
++string, then the decoding of the second, until the empty string (at most `|w|` components).
++Delegates to the public word-list decoder, including on malformed words. -/
++def decodeMsgs (w : List Bool) : List (List Bool) := BinArith.decWords w
+ 
+ /-- Decoding any word gives `[]` when the word is empty, and otherwise its first pair
+ component followed by the decoding of its second component, including on malformed words.
+ 
+-**Proof sketch.** The second projection of a nonempty word is strictly shorter, by the
+-public pairing-length lemma. Induct on the fuel to compare the local decoder with the
+-existing word-list decoder whenever the fuel is at least the word length. The defining fuel
+-is therefore sufficient. The public empty and nonempty equations of the word-list decoder
+-give the asserted step without exposing the private fuel function. -/
++**Proof sketch.** Apply the public empty or nonempty equation of `BinArith.decWords`, according
++to whether the input word is empty. -/
+ theorem decodeMsgs_eq (w : List Bool) :
+-    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) := by
+-  have hFuel : ∀ (k : ℕ) (v : List Bool), v.length ≤ k →
+-      decodeMsgsFuel k v = BinArith.decWords v := by
+-    intro k
+-    induction k with
+-    | zero =>
+-      intro v hv
+-      have hvnil : v = [] := List.eq_nil_of_length_eq_zero (Nat.eq_zero_of_le_zero hv)
+-      subst v
+-      rw [decodeMsgsFuel, BinArith.decWords_nil]
+-    | succ k ih =>
+-      intro v hv
+-      by_cases hvnil : v = []
+-      · subst v
+-        rw [decodeMsgsFuel, if_pos rfl, BinArith.decWords_nil]
+-      · rw [decodeMsgsFuel, if_neg hvnil, BinArith.decWords_of_ne hvnil]
+-        exact congrArg (List.cons (pairFstD v))
+-          (ih (pairSndD v)
+-            (Nat.le_of_lt_succ ((BinArith.length_pairSndD_lt hvnil).trans_le hv)))
+-  have hdecode : ∀ v : List Bool, decodeMsgs v = BinArith.decWords v :=
+-    fun v => hFuel v.length v (Nat.le_refl v.length)
+-  by_cases hw : w = []
+-  · subst w
+-    rw [if_pos rfl, hdecode [], BinArith.decWords_nil]
+-  · rw [if_neg hw, hdecode w, BinArith.decWords_of_ne hw, hdecode (pairSndD w)]
+-
+-/-- An encoded list of `k` messages has at least `k` bits. -/
+-private theorem length_le_length_encodeMsgs :
+-    ∀ l : List (List Bool), l.length ≤ (Strategy.encodeMsgs l).length
+-  | [] => le_refl _
+-  | m :: l => by
+-    rw [Strategy.encodeMsgs_cons, length_pairEncode, List.length_cons]
+-    have := length_le_length_encodeMsgs l
+-    omega
+-
+-/-- With enough fuel, decoding an encoded list gives the list back. -/
+-private theorem decodeMsgsFuel_encodeMsgs :
+-    ∀ (l : List (List Bool)) (k : ℕ), l.length ≤ k →
+-      decodeMsgsFuel k (Strategy.encodeMsgs l) = l
+-  | [], 0, _ => rfl
+-  | [], _ + 1, _ => by simp [decodeMsgsFuel]
+-  | _ :: _, 0, h => absurd h (by simp)
+-  | m :: l, k + 1, h => by
+-    rw [Strategy.encodeMsgs_cons, decodeMsgsFuel, if_neg (pairEncode_ne_nil _ _),
+-      pairFstD_pairEncode, pairSndD_pairEncode,
+-      decodeMsgsFuel_encodeMsgs l k (by simpa using h)]
+-
+-/-- **Decoding inverts the message-list encoding**: `decodeMsgs (encodeMsgs l) = l`. -/
++    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) :=
++  if hw : w = [] then
++    (congrArg decodeMsgs hw).trans (BinArith.decWords_nil.trans (if_pos hw).symm)
++  else
++    (BinArith.decWords_of_ne hw).trans (if_neg hw).symm
++
++/-- **Decoding inverts the message-list encoding**: `decodeMsgs (encodeMsgs l) = l`.
++
++**Proof sketch.** The public nil and cons equations identify `Strategy.encodeMsgs` with
++`BinArith.encWords` by list recursion. Apply `BinArith.decWords_encWords`. -/
+ theorem decodeMsgs_encodeMsgs (l : List (List Bool)) :
+-    decodeMsgs (Strategy.encodeMsgs l) = l :=
+-  decodeMsgsFuel_encodeMsgs l _ (length_le_length_encodeMsgs l)
++    decodeMsgs (Strategy.encodeMsgs l) = l := by
++  have henc : ∀ ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=
++    List.rec (motive := fun ms : List (List Bool) =>
++      Strategy.encodeMsgs ms = BinArith.encWords ms)
++      (Strategy.encodeMsgs_nil.trans BinArith.encWords_nil.symm)
++      (fun m ms ih => (Strategy.encodeMsgs_cons m ms).trans
++        ((congrArg (pairEncode m) ih).trans (BinArith.encWords_cons m ms).symm))
++  exact (congrArg BinArith.decWords (henc l)).trans (BinArith.decWords_encWords l)
+ 
+ /-- The empty string decodes to the empty list. -/
+-theorem decodeMsgs_nil : decodeMsgs [] = [] := rfl
++theorem decodeMsgs_nil : decodeMsgs [] = [] := BinArith.decWords_nil
+ 
+ /-! ### Alice's message -/
+ 
