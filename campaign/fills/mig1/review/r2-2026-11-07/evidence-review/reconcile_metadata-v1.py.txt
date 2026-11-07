@@ -1,0 +1,70 @@
+"""Offline parse/source-index checks only; no delivered code, pair search, Lean or screen is run."""
+from pathlib import Path
+import json,re,hashlib,sys,ast,subprocess,os,collections,importlib.util
+sys.dont_write_bytecode=True
+out=Path(__file__).resolve().parent;root=out.parents[5];incoming=out.parent;delivery=incoming/'extracted/fill-mig1-mega-r2';ev=delivery/'evidence';wt=Path(os.environ['TCSLIB_SCRATCH'])/'wt-epad';H=lambda b:hashlib.sha256(b.encode() if isinstance(b,str) else b).hexdigest();maps=json.loads((out/'git-source-blob-maps.json').read_text());trees=maps['trees'];commits=maps['commits'];pm={r['local_path']:r for r in json.loads((incoming/'payload-manifest.json').read_text())};verified=json.loads((out/'verified-payload-evidence-hashes.json').read_text())
+def read(p):
+ b=p.read_bytes();key=str(p.relative_to(incoming/'extracted'));r=pm[key];assert H(b)==r['sha256'] and len(b)==r['bytes'];verified[key]={'sha256':H(b),'bytes':len(b)};return b
+spec=importlib.util.spec_from_file_location('P',root/'campaign/fills/mig1/review/checkpoint07-2026-11-07/compare-source.py');P=importlib.util.module_from_spec(spec);spec.loader.exec_module(P)
+text=(root/'campaign/fills/mig1/landing/review-final-source/source_review.py').read_text();tree=ast.parse(text);fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='split_header');ns={'P':P,'re':re};exec(compile(ast.Module(body=[fn],type_ignores=[]),'trusted-balanced-header','exec'),ns);split=ns['split_header']
+population=read(ev/'screens/screen-population.txt').decode().splitlines();assert len(population)==len(set(population))==16
+owned=json.loads((root/'campaign/fills/mig1/inputs/owned-files.txt').read_text()) if (root/'campaign/fills/mig1/inputs/owned-files.txt').read_text().lstrip().startswith('[') else (root/'campaign/fills/mig1/inputs/owned-files.txt').read_text().splitlines();assert len(owned)==11 and set(owned)<=set(population)
+oids=sorted({trees[stage][p]['oid'] for stage in ['base','head'] for p in population});r=subprocess.run(['git','-C',str(wt),'cat-file','--batch'],input=''.join(x+'\n' for x in oids).encode(),env=dict(os.environ,GIT_OPTIONAL_LOCKS='0'),stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True);data=r.stdout;i=0;objects={}
+for oid in oids:
+ e=data.index(b'\n',i);h=data[i:e].decode().split();assert h[:2]==[oid,'blob'];n=int(h[2]);b=data[e+1:e+1+n];assert hashlib.sha1(b'blob '+str(n).encode()+b'\0'+b).hexdigest()==oid;objects[oid]=b.decode();i=e+2+n
+assert i==len(data);source={stage:{p:objects[trees[stage][p]['oid']] for p in population} for stage in ['base','head']}
+def decls(s):
+ rows=[]
+ for d in P.decls(s):
+  raw=d['raw'];m=re.search(r'(?m)^/(?:--|-!)',raw)
+  if m:raw=raw[:m.start()]
+  h,_,b=split(raw);rows.append(dict(d,header_raw=h,body=b,body_code=P.norm(P.clean(b))))
+ return rows
+D={st:{p:decls(s) for p,s in tree.items()} for st,tree in source.items()};authored={st:{d['name']:(p,d) for p,ds in files.items() for d in ds if not d['private']} for st,files in D.items()};added=set(authored['head'])-set(authored['base']);removed=set(authored['base'])-set(authored['head']);expected_added={'Turing.FinTM.pairMapSndTM','Turing.FinTM.pairMapSndTM_computes','Turing.FinTM.pairMapSndTM_spaceUsed'};expected_removed=set((root/'campaign/fills/mig1/inputs/retired-public-names.txt').read_text().splitlines());assert added==expected_added and removed==expected_removed
+changed_public=[]
+for n in sorted(set(authored['base'])&set(authored['head'])):
+ p,a=authored['base'][n];q,b=authored['head'][n]
+ if a['body_code']!=b['body_code']:changed_public.append({'name':n,'path':q,'kind':b['kind']})
+source_counts={st:{'population16':{'public_named_declarations':sum(not d['private'] for ds in D[st].values() for d in ds),'private_named_declarations':sum(d['private'] for ds in D[st].values() for d in ds)},'owned11':{'public_named_declarations':sum(not d['private'] for p,ds in D[st].items() if p in owned for d in ds),'private_named_declarations':sum(d['private'] for p,ds in D[st].items() if p in owned for d in ds)}} for st in D}
+(out/'source-census.json').write_text(json.dumps({'counts':source_counts,'public_added':sorted(added),'public_removed':sorted(removed),'changed_public_body_declarations':changed_public,'method':'Trusted source parser plus balanced complete-header/body reader; authored named declaration census distinct from compiled constants.'},indent=2)+'\n')
+# All60 source #print requests and raw closures, with exact coverage comparison.
+axsrc=read(ev/'logs/axioms/Ax_final-r3.lean.txt').decode();axout=read(ev/'logs/axioms/Ax_final-r3.out').decode();requested=re.findall(r'^#print axioms (\S+)',axsrc,re.M);axrows=[{'name':n,'axioms':[x.strip() for x in a.split(',') if x.strip()]} for n,a in re.findall(r"^'([^']+)' depends on axioms: \[(.*?)\]$",axout,re.M)];empty=re.findall(r"^'([^']+)' does not depend on any axioms$",axout,re.M);axrows+=[{'name':n,'axioms':[]} for n in empty];assert len(requested)==len(set(requested))==60 and len(axrows)==60 and len({r['name'] for r in axrows})==60;assert set(requested)=={r['name'] for r in axrows};assert axout.splitlines()[-1]=='exit=0';assert 'error:' not in axout;assert all(set(r['axioms'])<={'propext','Classical.choice','Quot.sound'} for r in axrows)
+namelist=read(ev/'axiom-name-lists/ax-final-names.txt').decode().splitlines();assert set(namelist)==set(requested);expectedax={r['name'] for r in changed_public}|expected_added;axcoverage={'expected_from_all_changed_public_bodies_plus3exports':sorted(expectedax),'requested60':requested,'missing_requested':sorted(expectedax-set(requested)),'extra_requested':sorted(set(requested)-expectedax)};(out/'axiom-crosscheck.json').write_text(json.dumps({'rows':axrows,'coverage':axcoverage,'all60_standard_axiom_sets':True,'raw_exit':0,'raw_hash':H(axout),'source_request_hash':H(axsrc),'claim':'Supplied producer print-axioms transcript, checked offline; not independent Lean execution or full private/transitive source census.'},indent=2)+'\n')
+# Non-private compiled constant population, not a complete private census.
+def census(path):
+ t=read(path).decode();rows=[tuple(m) for m in re.findall(r'^CENSUS (\S+) (\S+) (\S+)$',t,re.M)];assert len(rows)==len(set(rows));assert t.splitlines()[-1]=='exit=0' and 'error:' not in t;assert all(not n.startswith('_private.') for _,_,n in rows);assert {o.replace('.','/')+'.lean' for o,_,_ in rows}==set(owned);return rows
+base=census(ev/'logs/census-base.out');head=census(ev/'logs/census-head-final-r3.out');rev1=census(ev/'logs/census-head.out');assert len(base)==1234 and len(head)==1205;A=sorted(set(head)-set(base));R=sorted(set(base)-set(head));assert set(head)==set(rev1);assert len(A)==130 and len(R)==159
+(out/'compiled-census-delta.json').write_text(json.dumps({'base_nonprivate':len(base),'head_nonprivate':len(head),'added_count':len(A),'removed_count':len(R),'added':A,'removed':R,'head_constant_set_identical_revision1':True,'authored_public_added3':sorted(added),'authored_public_removed6':sorted(removed),'extra_derived_public_instance_added':'Turing.FinTM.instDecidableEqFwdMapState','extra_derived_public_instance_removed':'Turing.FinTM.instDecidableEqA2_MapState','private_population_not_supplied':True,'no_independent_native_census':True},indent=2)+'\n')
+# Rebuild only the cheap declaration index, using PURE functions from our trusted repository tool.
+# No delivered tool, lcs, tiled, grams or pair search is executed.
+tool=root/'scripts/copy-text-screen-v3.py';ts=tool.read_text();ta=ast.parse(ts);parts=[n for n in ta.body if isinstance(n,ast.FunctionDef) and n.name in ['strip','scopes','qualify','body']];namespace={'re':re,'sys':sys};scope_regex=next(n for n in ta.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='SCOPE' for t in n.targets));exec(compile(ast.Module(body=[scope_regex,*parts],type_ignores=[]),'trusted-index-only-functions','exec'),namespace);declregex=re.compile(r'^(?:@\[[^\]]*\]\s*)?((?:(?:noncomputable|private|protected)\s+)*)(def|theorem|lemma|abbrev|instance|structure|inductive)\s+(\S+)',re.M)
+def index(stage):
+ result={}
+ for p,s in source[stage].items():
+  t=namespace['strip'](s);ms=list(declregex.finditer(t));evs=namespace['scopes'](p,t);found=[]
+  for j,m in enumerate(ms):
+   e=ms[j+1].start() if j+1<len(ms) else len(t);bd=re.sub(r'\s+','',namespace['body'](t[m.start():e]));nsp=[n for off,n in evs if off<=m.start()][-1]
+   if len(bd)>=60:found.append((m.start(),m[3],namespace['qualify'](nsp,m[3]),'proof' if m[2] in ['theorem','lemma'] else 'term',bd))
+  short=collections.Counter(x[1] for x in found);qual=collections.Counter(x[2] for x in found);seen=collections.Counter()
+  for pos,n,qn,kind,bd in found:
+   if short[n]==1:name=n
+   elif qual[qn]==1:name=qn
+   else:seen[qn]+=1;name=f'{qn}#{seen[qn]}'
+   label=Path(p).name+'::'+name;assert label not in result;result[label]={'path':p,'kind':kind,'body_chars':len(bd),'body_sha256':H(bd)}
+ return result
+indexes={st:index(st) for st in ['base','head']};screenrows={};screenstats={};perfile={}
+for stage,filename,receiptname in [('base','screen-base.txt','screen-base-run.json'),('head','screen-final-r3.txt','screen-final-r3-run.json')]:
+ raw=read(ev/'screens'/filename);rec=json.loads(read(ev/'screens'/receiptname));assert rec['exit']==0 and rec['output_sha256']==H(raw);assert H(tool.read_bytes()) in rec['tool'];t=raw.decode();lines=t.splitlines();m=re.fullmatch(r'declarations screened: (\d+); copy pairs \(target reproduces >= half of source\): (\d+); reproduced text: ([\d,]+) chars',lines[0]);assert m;rows=[];counts=collections.Counter()
+ for line in lines[1:]:
+  m2=re.fullmatch(r'\s+(.*?)  reproduces  (.*?): (\d+)/(\d+) = (\d+)%',line);assert m2,line;a,b,sh,ln,percent=m2.groups();sh,ln,percent=map(int,[sh,ln,percent]);assert a in indexes[stage] and b in indexes[stage];assert a!=b and indexes[stage][a]['kind']==indexes[stage][b]['kind'];assert ln==indexes[stage][b]['body_chars'];assert sh>=60 and 2*sh>=ln and sh<=min(indexes[stage][a]['body_chars'],ln);assert f'{sh/ln:.0%}'==f'{percent}%';rows.append({'target':a,'source':b,'shared_chars':sh,'source_body_chars':ln,'rounded_percent':percent});counts.update({indexes[stage][a]['path'],indexes[stage][b]['path']})
+ assert len(indexes[stage])==int(m[1]) and len(rows)==int(m[2]) and sum(r['shared_chars'] for r in rows)==int(m[3].replace(',',''));assert len({(r['target'],r['source']) for r in rows})==len(rows);screenrows[stage]=rows;perfile[stage]=dict(counts);screenstats[stage]={'declarations_screened':len(indexes[stage]),'reported_and_parsed_pairs':len(rows),'sum_shared_chars':sum(r['shared_chars'] for r in rows),'output_sha256':H(raw),'receipt':receiptname,'receipt_seconds':rec['seconds'],'all_labels_denominators_kinds_ratios_validated':True}
+pairs=lambda stage:{(r['target'],r['source']) for r in screenrows[stage]};new=pairs('head')-pairs('base');gone=pairs('base')-pairs('head');assert len(new)==93 and len(gone)==1059
+(out/'screen-crosscheck.json').write_text(json.dumps({'population16':population,'tool_hash_equals_current_trusted_repo_version':H(tool.read_bytes()),'index_only_no_pair_search_or_tiling_executed':True,'stats':screenstats,'head_only_pairs':sorted(new),'base_only_pairs':sorted(gone),'head_only_count':len(new),'base_only_count':len(gone),'per_file_involvement_counts':perfile,'scope_limit':'Producer16-file scope only; no substitution for maintainer25-file finalhead screen, no semantic duplication/debt clearance. Shared substrings were not re-tiled.'},indent=2)+'\n');(out/'screen-declaration-index.json').write_text(json.dumps(indexes,indent=2)+'\n')
+# Preserve every supplied seal diagnostic outcome, including failed/early/strict attempts.
+sealrows=[]
+for p in sorted((ev/'seal').rglob('*.out')):
+ t=read(p).decode();errs=[{'line':int(m[1]),'col':int(m[2]),'message':m[3]} for m in re.finditer(r'^.*?:(\d+):(\d+): error(?:\([^)]*\))?: (.*)$',t,re.M)];exitmatch=re.findall(r'(?m)^exit=(\d+)$',t);sealrows.append({'path':str(p.relative_to(delivery)),'sha256':H(t),'raw_error_diagnostics':len(errs),'reported_exit':int(exitmatch[-1]) if exitmatch else None,'diagnostics':errs})
+pr=next(x for x in sealrows if x['path'].endswith('/Seal_PrimitivesR3.out'));assert pr['raw_error_diagnostics']==17 and pr['reported_exit']==1
+loop=next(x for x in sealrows if x['path'].endswith('/Seal_LoopR2.out'));assert loop['raw_error_diagnostics']==0 and loop['reported_exit']==0
+(out/'supplied-seal-outcomes.json').write_text(json.dumps(sealrows,indent=2)+'\n');(out/'verified-payload-evidence-hashes.json').write_text(json.dumps(verified,indent=2)+'\n')
+summary={'source_counts':source_counts,'authored_public_added3':sorted(added),'authored_public_removed6':sorted(removed),'axiom_requested_count':60,'all60_raw_axiom_sets_standard':True,'AX_expected_coverage_missing':axcoverage['missing_requested'],'AX_expected_coverage_extra':axcoverage['extra_requested'],'compiled_nonprivate':[len(base),len(head)],'compiled_added_removed':[len(A),len(R)],'census_head_name_kind_owner_set_equals_revision1':True,'screen_stats':screenstats,'screen_pair_delta':[len(new),len(gone)],'PrimitivesR3_seal_errors':17,'LoopR2_seal_errors':0,'strict_remaining_gaps':[x for x in sealrows if 'StrictR2' in x['path']],'verified_payload_evidence_files':len(verified),'no_native_or_delivered_script_execution':True};(out/'metadata-summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps({k:v for k,v in summary.items() if k!='strict_remaining_gaps'},indent=2))

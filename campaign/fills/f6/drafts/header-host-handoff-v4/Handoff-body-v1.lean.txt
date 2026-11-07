@@ -1,0 +1,121 @@
+namespace F6HeaderHostHandoff
+open Turing
+
+/-- The actual doubled header has positive length and dropping it exposes precisely the suffix.
+Only the published pairing/doubling length and pairing equation are used. -/
+private theorem pair_header_geometry (u v : List Bool) :
+    let ℓ := 2 * u.length + 2
+    (pairEncode u v).length = ℓ + v.length ∧ 0 < ℓ ∧ (pairEncode u v).drop ℓ = v := by
+  dsimp only
+  refine ⟨length_pairEncode u v, by omega, ?_⟩
+  have hlen : (dbl u ++ [false, true]).length = 2 * u.length + 2 := by
+    simp only [List.length_append, length_dbl, List.length_cons, List.length_nil]
+    omega
+  rw [pairEncode_eq_dbl, ← List.append_assoc, ← hlen, List.drop_left]
+
+/-- After the actual first header, changing only its control label gives H5's exact initial
+presentation for a fixed native machine on the real suffix. This is a configuration identity,
+not a run or cut of an outer seam.
+
+**Proof sketch.** Use the checked header row from its real initialization. Its endpoint has
+blank bank tapes, zero heads, the last ruler and physical input position `ℓ+1`. Compare that
+endpoint after state relabelling with the public ruler-host fields at `M.initCfg v`. The pairing
+geometry, ruler window and false initial boundary tag are then discharged directly. -/
+private theorem header_handoff (K : ℕ) {S Q : Type}
+    (M : MultiTapeTM (K + 3) Bool S) (inj : S → Bool → Q) :
+    ∃ A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), A.q₀ = Sum.inl 0 ∧
+      ∀ u v : List Bool,
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let hz : z.length = ℓ + v.length := (pair_header_geometry u v).1
+        let rt := FinTM.bufferTape (List.replicate ℓ true)
+        (A.runFrom (A.initCfg z) (2 * ℓ + 3)).mapState (fun _ => inj M.q₀ false) =
+          rulerHostCfg ℓ hz ((M.initCfg v).state.map fun q => inj q false)
+            (M.initCfg v) rt 0 ∧
+        (∀ t < 2 * ℓ + 3, (A.runFrom (A.initCfg z) t).state ≠ some (Sum.inr .done)) ∧
+        0 < ℓ ∧ z.drop ℓ = v ∧
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          rt (0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) ∧
+        (false = true ↔ (M.initCfg v).inputPos.val = 0) := by
+  classical
+  obtain ⟨A, hA0, hA⟩ := F6FirstHeaderPreship.first_header_component K
+  refine ⟨A, hA0, ?_⟩
+  intro u v z ℓ hz rt
+  obtain ⟨he, _, _, _, _, _, hcut, _⟩ := hA u v
+  refine ⟨?_, hcut, (pair_header_geometry u v).2.1,
+    (pair_header_geometry u v).2.2, ?_, ?_⟩
+  · rw [he]
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, rulerHostCfg_state, MultiTapeTM.initCfg_eq,
+        Cfg.init_state, Option.map_some]
+    · apply Fin.ext
+      rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ (M.initCfg v) rt 0).1]
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one]
+    · funext j p
+      rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Function.update_self, Fin.lastCases_last]
+      · rw [Function.update_of_ne (Fin.castSucc_ne_last i), Fin.lastCases_castSucc,
+          MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · simp only [Cfg.mapState_output, rulerHostCfg_output, MultiTapeTM.initCfg_eq,
+        Cfg.init_output]
+  · intro p _ _
+    simp only [rt, zero_add]
+  · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one,
+      Bool.false_eq_true, Nat.one_ne_zero]
+
+/-- H5 is instantiated uniformly on the actual post-header data after the explicit state-only
+label transport. All presentation premises are proved, and every run/visit/frame clause is kept.
+The liveness clause remains conditional on actual source liveness; no source halt is assumed.
+
+**Proof sketch.** Choose H5 before either input word. The preceding configuration identity
+supplies its concrete start; pairing geometry and real initialization discharge its premises.
+Apply the published host contract at each source time and rewrite only the start configuration. -/
+private theorem host_after_header (K : ℕ) {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM (K + 3) Bool S) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q)
+      (H : MultiTapeTM (K + 4) Bool Q) (inj : S → Bool → Q) (C : ℕ), 0 < C ∧
+      ∃ A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), A.q₀ = Sum.inl 0 ∧
+      ∀ (u v : List Bool) (t : ℕ),
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let hz : z.length = ℓ + v.length := (pair_header_geometry u v).1
+        let rt := FinTM.bufferTape (List.replicate ℓ true)
+        let d := (A.runFrom (A.initCfg z) (2 * ℓ + 3)).mapState (fun _ => inj M.q₀ false)
+        ∃ t', t ≤ t' ∧ t' ≤ C * (ℓ + 1) * t ∧
+          (∃ b' : Bool, (b' = true ↔ (M.runFrom (M.initCfg v) t).inputPos.val = 0) ∧
+            H.runFrom d t' =
+              rulerHostCfg ℓ hz ((M.runFrom (M.initCfg v) t).state.map fun q => inj q b')
+                (M.runFrom (M.initCfg v) t) rt 0) ∧
+          ((∀ s < t, (M.runFrom (M.initCfg v) s).state ≠ none) →
+            ∀ s < t', (H.runFrom d s).state ≠ none) ∧
+          (∀ s ≤ t', ∃ r ≤ t,
+            (∀ i : Fin (K + 3),
+              (H.runFrom d s).workTapes i.castSucc = (M.runFrom (M.initCfg v) r).workTapes i ∧
+              (H.runFrom d s).workTapePos i.castSucc = (M.runFrom (M.initCfg v) r).workTapePos i) ∧
+            (H.runFrom d s).output = (M.runFrom (M.initCfg v) r).output ∧
+            (H.runFrom d s).workTapes (Fin.last (K + 3)) = rt ∧
+            (H.runFrom d s).workTapePos (Fin.last (K + 3)) ∈ Finset.Icc (-1) (ℓ : ℤ)) ∧
+          (∀ i : Fin (K + 3), H.visitedByTapeHead d t' i.castSucc =
+            M.visitedByTapeHead (M.initCfg v) t i) ∧
+          H.visitedByTapeHead d t' (Fin.last (K + 3)) ⊆ Finset.Icc (-1) (ℓ : ℤ) := by
+  classical
+  obtain ⟨Q, fQ, dQ, H, inj, C, hC, hH⟩ := exists_rulerHostTM M
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  obtain ⟨A, hA0, hA⟩ := header_handoff K M inj
+  refine ⟨Q, fQ, dQ, H, inj, C, hC, A, hA0, ?_⟩
+  intro u v t z ℓ hz rt d
+  obtain ⟨start, _, positive, suffix, ruler, tag⟩ := hA u v
+  have whole := hH ℓ hz positive suffix rt 0 ruler (M.initCfg v) false tag t
+  simpa only [← start, zero_sub, zero_add, sub_zero] using whole
+
+end F6HeaderHostHandoff
+#print axioms F6HeaderHostHandoff.pair_header_geometry
+#print axioms F6HeaderHostHandoff.header_handoff
+#print axioms F6HeaderHostHandoff.host_after_header

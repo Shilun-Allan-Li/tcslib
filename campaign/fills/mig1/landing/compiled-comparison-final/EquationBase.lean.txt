@@ -1,0 +1,33 @@
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import Lean
+set_option maxHeartbeats 0
+set_option pp.all true
+set_option pp.universes true
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  for n in [`Turing.splitAtLastTrue, `Turing.splitAtLastTrue.eq_1] do
+    let some ci := env.find? n | throwError "missing actual constant {n}"
+    let some i := env.getModuleIdxFor? n | throwError "missing owner {n}"
+    let kind := match ci with
+      | .defnInfo _ => "def"
+      | .thmInfo _ => "theorem"
+      | _ => "unexpected"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"DETAIL|{n}|{env.header.moduleNames[i.toNat]!}|{kind}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"
+    logInfo m!"TYPE_REPR|{n}|{reprStr ci.type}"
+    logInfo m!"VALUE_REPR|{n}|{reprStr ci.value?}"
+    logInfo m!"PRETTY_TYPE|{n}|{ci.type}"
+    logInfo m!"AXIOMS|{n}|{(axs.qsort Name.lt).toList}"

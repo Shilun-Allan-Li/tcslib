@@ -1,0 +1,126 @@
+--- r2/TCSlib/Complexity/TuringMachine/Composition.lean
++++ current/TCSlib/Complexity/TuringMachine/Composition.lean
+@@ -108,6 +108,11 @@
+         match inp with
+         | some b => ⟨SignType.pos, fun i => i.elim0, some b, some ()⟩
+         | none => ⟨SignType.zero, fun i => i.elim0, none, none⟩ }
++
++/-- The copy machine visits no work-tape cells, on every input and at every time. -/
++theorem idTM_spaceUsed (x : List Bool) (t : ℕ) :
++    idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0 := by
++  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+ 
+ /-- Run invariant of the copy machine: after `t ≤ n` steps it is live, its input head
+ sits at position `t + 1`, and it has emitted exactly the first `t` input bits. -/
+@@ -180,6 +185,11 @@
+   k := 0
+   State := Fin (w.length + 1)
+   tm := { q₀ := 0, tr := fun i _ _ => emitAction w id i }
++
++/-- A fixed-word constant machine visits no work-tape cells, on every input and at every time. -/
++theorem constTM_spaceUsed (w x : List Bool) (t : ℕ) :
++    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0 := by
++  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+ 
+ /-- **The constant machine's time**. On every input the constant machine halts within `|w| + 1`
+ steps with output `w`. [AB09, §1.2]
+@@ -700,6 +710,43 @@
+   rw [MultiTapeTM.runFrom_add, hrun, hr]
+   rfl
+ 
++/-- After dispatch, the conditional follows the selected branch on its common tape and
++state carrier, while the controller bank remains fixed.
++
++**Proof sketch.** The conditional's table agrees with the false-tag branch after the
++published shape equations normalize the carrier transport. Apply the right-bank run
++contract, then change the Boolean tag using `Turing.FinTM.branchTM_runFrom_independent`.
++[AB09, §1.2] -/
++private lemma condTM_branch_run (D M₁ M₂ : FinTM Bool) (b : Bool) {x : List Bool}
++    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x)
++    (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ) (t : ℕ) :
++    let V : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
++      fun tag => by
++        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
++        exact (branchTM M₁ M₂ tag).tm
++    (condTM D M₁ M₂).tm.runFrom
++        (rightCfg (fun q => .inr (.inr q)) c tapes heads) t =
++      rightCfg (fun q => .inr (.inr q)) ((V b).runFrom c t) tapes heads := by
++  dsimp only
++  let V : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
++    fun tag => by
++      rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
++      exact (branchTM M₁ M₂ tag).tm
++  let emb : (M₁.State ⊕ M₂.State) → (condTM D M₁ M₂).State :=
++    fun q => .inr (.inr q)
++  change (condTM D M₁ M₂).tm.runFrom (rightCfg emb c tapes heads) t =
++    rightCfg emb ((V b).runFrom c t) tapes heads
++  have htr : ∀ q inp work, (condTM D M₁ M₂).tm.tr (emb q) inp work =
++      rightAction D.k emb ((V false).tr q inp (fun i => work (Fin.natAdd D.k i))) := by
++    intro q inp work
++    dsimp only [condTM, V, emb]
++    simp only [branchTM_k, branchTM_State]
++    rfl
++  have fixed := rightCfg_run (V false) (condTM D M₁ M₂).tm emb htr c tapes heads t
++  have same : (V false).runFrom c t = (V b).runFrom c t :=
++    branchTM_runFrom_independent M₁ M₂ false b c t
++  exact fixed.trans (congrArg (fun d => rightCfg emb d tapes heads) same)
++
+ /-- **The untimed conditional's halting relation**. If `D` computes `x ↦ [p x]`, then on every input
+ `x` the conditional halts with output `w` if and only if the branch `cond (p x) M₁ M₂` halts on `x`
+ with output `w`.
+@@ -715,30 +762,46 @@
+       ∃ t, (cond (p x) M₁ M₂).ComputesInTime x w t := by
+   obtain ⟨a, tapes, heads, ha⟩ :=
+     condTM_start D M₁ M₂ x (p x) ((computes_iff _ _).mp hD x)
+-  -- After the prefix `a`, the composite is the selected branch union, embedded in lockstep.
++  let V : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
++    fun tag => by
++      rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
++      exact (branchTM M₁ M₂ tag).tm
++  let start := (V (p x)).initCfg x
++  have hstart :
++      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) a =
++        rightCfg (fun q => .inr (.inr q)) start tapes heads := by
++    dsimp only [start, V]
++    simpa only [branchTM_k, branchTM_State] using ha
+   have hr (t : ℕ) :
+       (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) (a + t) =
+-        rightCfg (fun q => .inr (.inr q))
+-          ((branchTM M₁ M₂ (p x)).tm.runFrom ((branchTM M₁ M₂ (p x)).tm.initCfg x) t)
+-          tapes heads := by
+-    rw [MultiTapeTM.runFrom_add, ha]
+-    exact rightCfg_run (branchTM M₁ M₂ (p x)).tm (condTM D M₁ M₂).tm
+-      (fun q => .inr (.inr q)) (fun _ _ _ => rfl) _ tapes heads t
++        rightCfg (fun q => .inr (.inr q)) ((V (p x)).runFrom start t) tapes heads := by
++    rw [MultiTapeTM.runFrom_add, hstart]
++    exact condTM_branch_run D M₁ M₂ (p x) start tapes heads t
+   constructor
+   · rintro ⟨t, ht⟩
+     have hc := (computesInTime_iff (condTM D M₁ M₂) x w (a + t)).mp
+       (ht.mono (by omega))
+     rw [hr t] at hc
++    have halted : ((V (p x)).runFrom start t).state = none := by
++      simpa only [rightCfg_state, Option.map_eq_none_iff] using hc.1
++    have output : ((V (p x)).runFrom start t).output = w := by
++      simpa only [rightCfg_output] using hc.2
+     have hb : (branchTM M₁ M₂ (p x)).ComputesInTime x w t :=
+       (computesInTime_iff _ x w t).mpr
+-        ⟨by simpa only [rightCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
++        ⟨by simpa only [start, V, branchTM_k, branchTM_State] using halted,
++          by simpa only [start, V, branchTM_k, branchTM_State] using output⟩
+     exact ⟨t, (branchTM_computes M₁ M₂ (p x) x w t).mp hb⟩
+   · rintro ⟨t, ht⟩
+     have hb := (computesInTime_iff (branchTM M₁ M₂ (p x)) x w t).mp
+       ((branchTM_computes M₁ M₂ (p x) x w t).mpr ht)
++    have halted : ((V (p x)).runFrom start t).state = none := by
++      simpa only [start, V, branchTM_k, branchTM_State] using hb.1
++    have output : ((V (p x)).runFrom start t).output = w := by
++      simpa only [start, V, branchTM_k, branchTM_State] using hb.2
+     refine ⟨a + t, (computesInTime_iff _ x w (a + t)).mpr ?_⟩
+     rw [hr t]
+-    exact ⟨by simpa only [rightCfg, Option.map_eq_none_iff] using hb.1, hb.2⟩
++    exact ⟨by simpa only [rightCfg_state, Option.map_eq_none_iff] using halted,
++      by simpa only [rightCfg_output] using output⟩
+ 
+ /-- **Branching on a decided predicate** — the second phase-4 combinator (phase-3
+ audit, round 2, Argument F, step 2 of the `HALT → UC` reduction): given a total

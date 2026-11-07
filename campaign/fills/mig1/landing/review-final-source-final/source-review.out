@@ -1,0 +1,153 @@
+{
+  "public_source_census": {
+    "api": 384,
+    "producer": 381,
+    "prior0d": 381,
+    "prior429": 381,
+    "current": 381
+  },
+  "private_source_census": {
+    "api": 1080,
+    "producer": 752,
+    "prior0d": 764,
+    "prior429": 766,
+    "current": 766
+  },
+  "public_added_API": [
+    "Turing.FinTM.pairMapSndTM",
+    "Turing.FinTM.pairMapSndTM_computes",
+    "Turing.FinTM.pairMapSndTM_spaceUsed"
+  ],
+  "public_removed_API": [
+    "Turing.clearTM_run",
+    "Turing.compareTM_run",
+    "Turing.copyTM_run",
+    "Turing.incrementTM_run_overflow",
+    "Turing.incrementTM_run_succ",
+    "Turing.transferTM_run"
+  ],
+  "public_delta_prior0d": 0,
+  "all_surviving_public_headers_homes_visibility_kind_order_frozen": true,
+  "private_header_changes_API": [
+    [
+      "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "Complexity.counter_count",
+      true
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.loopHost_contracts",
+      true
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.loopHost_prepare",
+      true
+    ]
+  ],
+  "private_header_changes_producer": [
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "Turing.FinTM.timedReady_dispatch",
+      true
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "Turing.FinTM.timed_ledger",
+      true
+    ]
+  ],
+  "private_header_changes_phase2": [],
+  "phase2_added_private_proof_helpers": [
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "Turing.catalog_ofWords_with_tapes",
+      true,
+      "theorem"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.loop_computes_of_startup",
+      true,
+      "theorem"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.emCall_bank_embed",
+      true,
+      "lemma"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "Turing.FinTM.fwdMap_back",
+      true,
+      "lemma"
+    ]
+  ],
+  "phase2_removed_private_proof_helpers": [
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.emCall_pair_not_mem",
+      true,
+      "lemma"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "Turing.FinTM.emCall_triple_not_mem",
+      true,
+      "lemma"
+    ]
+  ],
+  "API_proof_roots": 144,
+  "API_proof_root_public": 66,
+  "API_proof_root_private": 78,
+  "phase2_proof_roots": 16,
+  "only_existing_runtime_differences": [
+    {
+      "name": "Turing.FinTM.emitterP2PairIndex",
+      "only_final_inj_Prop_field_masked": true,
+      "header_toFun_data_prefix_bytes_equal": true,
+      "masked_sha256": "078a40578adfb3a714f264cbb68f19175233b9871c89facab0c08124520ac4c0"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2SmallIndex",
+      "only_final_inj_Prop_field_masked": true,
+      "header_toFun_data_prefix_bytes_equal": true,
+      "masked_sha256": "ac6c846b3edf2aa8b520ddfb9fe172f5c1c2febca8adf77908ba5dd906e19d5c"
+    }
+  ],
+  "phase2_existing_runtime_differences": [],
+  "all_full_attribute_commands_equal": true,
+  "imports_only_two_preapproved_API_edges": [
+    [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "import TCSlib.Complexity.TuringMachine.Build.Primitives"
+    ],
+    [
+      "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "import Mathlib.Algebra.BigOperators.Fin"
+    ]
+  ],
+  "target_admissions_filled": 17,
+  "RAM_residuals_frozen": 3,
+  "final_vs429": {
+    "authored_added": [],
+    "authored_removed": [],
+    "header_changes": [],
+    "definition_changes": [],
+    "changed_proof_roots": [
+      {
+        "name": "Turing.FinTM.fwdMapVirtual_run",
+        "private": true,
+        "kind": "lemma",
+        "line": 3300,
+        "end": 3325,
+        "before_body_sha256": "568d697f716936732befa2f7703adf98dfeff8836d2c5ad083cb7f9fdb2916de",
+        "after_body_sha256": "69fe7d2136e065816b419492334f4c9dbdefd68cf9b544d36952e6574855d97a",
+        "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+        "change": "existing-proof"
+      }
+    ]
+  },
+  "source_only": "Read-only Git/full-source comparison; no Lean/screen/source/cache/snapshot mutations. Parent owns native/replay evidence."
+}

@@ -1,0 +1,190 @@
+--- r1/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ r2/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -4428,6 +4428,24 @@
+     (fun i => if i.val < j then fun _ => none else bufferTape [true])
+     (fun i => if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
+ 
++/-- The argument and capture tapes lie outside every cleaner bank. -/
++private lemma emCall_pair_not_mem (M : FinTM Bool) (i : Fin M.k) (r : Fin 2) :
++    emCallPairIndex M r ∉ Set.range (emCallTripleEmbedding M i) := by
++  rintro ⟨r', hr⟩
++  have h := congrArg (emCallTripleSelect M i) hr
++  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
++  simp only [emCall_triple_inverse, emCall_triple_pair] at h
++  cases h
++
++/-- Another source bank's slots lie outside the cleaner bank of `i`. -/
++private lemma emCall_triple_not_mem (M : FinTM Bool) {i l : Fin M.k} (he : l ≠ i) (r : Fin 3) :
++    emCallTripleIndex M l r ∉ Set.range (emCallTripleEmbedding M i) := by
++  rintro ⟨r', hr⟩
++  have h := congrArg (emCallTripleSelect M i) hr
++  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
++  simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
++  cases h
++
+ /-- Embedding one cleaner at the current bank reproduces the full bank frame.
+ Every other bank and both administrative tapes are retained exactly.
+ **Proof sketch.** Extensionality reduces the claim to individual tape slots.
+@@ -4448,21 +4466,13 @@
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
++          (emCall_pair_not_mem M i 0)).1
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
++          (emCall_pair_not_mem M i 1)).1
+       · rfl
+     · subst j
+       by_cases he : l = i
+@@ -4472,33 +4482,21 @@
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).1
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
++            (emCall_triple_not_mem M he r)).1
+         · rfl
+   · funext j
+     simp only [emCallEmbeddedCfg, Cfg.mapState]
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
++          (emCall_pair_not_mem M i 0)).2
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
++          (emCall_pair_not_mem M i 1)).2
+       · rfl
+     · subst j
+       by_cases he : l = i
+@@ -4508,12 +4506,8 @@
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).2
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
++            (emCall_triple_not_mem M he r)).2
+         · rfl
+ 
+ /-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
+@@ -4535,21 +4529,13 @@
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
++          (emCall_pair_not_mem M i 0)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
++          (emCall_pair_not_mem M i 1)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       by_cases he : l = i
+@@ -4559,12 +4545,8 @@
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).1
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
++            (emCall_triple_not_mem M he r)).1
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+@@ -4573,21 +4555,13 @@
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
++          (emCall_pair_not_mem M i 0)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
++          (emCall_pair_not_mem M i 1)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       by_cases he : l = i
+@@ -4597,12 +4571,8 @@
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).2
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
++            (emCall_triple_not_mem M he r)).2
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]

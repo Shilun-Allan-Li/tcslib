@@ -1,0 +1,138 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction Turing.headerRulerTM Turing.headerScanTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6FirstHeaderPreship
+open Turing
+
+/-- The fixed first physical header row, from its real initial configuration, reads any
+doubled header and delimiter, rewinds the last ruler to zero, and preserves every bank tape.
+The exact elapsed time and strict return cut are those of `headerRulerTM_run`.
+
+**Proof sketch.** Override the public rows' initial controls locally. The public restart
+identity matches the header row's actual initialization with the scan's real initialization.
+Instantiate the header-ruler contract at offset zero and blank initial tapes, normalize its
+endpoint through initialization field equations, and read all endpoint fields. Public output
+monotonicity and the generic time-space bound give silence and a header-linear envelope. -/
+private theorem first_header_component (K : ℕ) :
+    ∃ H : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase), H.q₀ = Sum.inl 0 ∧
+      ∀ u v : List Bool,
+        let z := pairEncode u v
+        let ℓ := 2 * u.length + 2
+        let i : Fin (K + 4) := Fin.last (K + 3)
+        let hlen : ℓ + 1 < z.length + 2 := by
+          have hz := length_pairEncode u v
+          dsimp only [z, ℓ]
+          omega
+        let e : Cfg (K + 4) Bool (Fin 4 ⊕ RewindPhase) z :=
+          ⟨some (Sum.inr .done), ⟨ℓ + 1, hlen⟩,
+            Function.update (fun _ _ => none) i (FinTM.bufferTape (List.replicate ℓ true)),
+            fun _ => 0, []⟩
+        H.runFrom (H.initCfg z) (2 * ℓ + 3) = e ∧
+        (H.runFrom (H.initCfg z) (2 * ℓ + 3)).inputPos.val = ℓ + 1 ∧
+        (∀ a : ℤ, (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapes i a =
+          FinTM.bufferTape (List.replicate ℓ true) a) ∧
+        (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapePos i = 0 ∧
+        (∀ j : Fin (K + 4), j ≠ i →
+          (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapes j = (H.initCfg z).workTapes j ∧
+          (H.runFrom (H.initCfg z) (2 * ℓ + 3)).workTapePos j = (H.initCfg z).workTapePos j) ∧
+        (∀ t ≤ 2 * ℓ + 3, (H.runFrom (H.initCfg z) t).output = []) ∧
+        (∀ t < 2 * ℓ + 3, (H.runFrom (H.initCfg z) t).state ≠ some (Sum.inr .done)) ∧
+        (∀ t ≤ 2 * ℓ + 3, H.spaceUsed (H.initCfg z) t ≤ (K + 4) * (2 * ℓ + 4)) := by
+  classical
+  let i : Fin (K + 4) := Fin.last (K + 3)
+  let S : MultiTapeTM (K + 4) Bool (Fin 4) := { headerScanTM i with q₀ := 0 }
+  let H : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase) :=
+    { headerRulerTM i with q₀ := Sum.inl 0 }
+  refine ⟨H, rfl, ?_⟩
+  intro u v z ℓ index hlen e
+  let d := S.initCfg z
+  have hd : d = Cfg.init (0 : Fin 4) z :=
+    MultiTapeTM.initCfg_with_q₀ (headerScanTM i) 0 z
+  have hpos : d.inputPos.val = 1 + 0 := by rw [hd, Cfg.init_inputPos]; rfl
+  have hstate : d.state = some 0 := by rw [hd, Cfg.init_state]
+  have hblank (a : ℤ) : d.workTapes i a = none := by rw [hd, Cfg.init_workTapes]
+  have hinit : H.initCfg z = d.mapState Sum.inl :=
+    MultiTapeTM.initCfg_eq_mapState S H Sum.inl rfl z
+  obtain ⟨hrow, hcut⟩ := headerRulerTM_run i d 0 hpos hstate u v
+    (by rw [List.drop_zero]) hblank
+  have transport (t : ℕ) : H.runFrom (H.initCfg z) t =
+      (headerRulerTM i).runFrom (d.mapState Sum.inl) t := by
+    rw [hinit]
+    exact MultiTapeTM.runFrom_with_q₀ (headerRulerTM i) (Sum.inl 0) _ t
+  have hend : H.runFrom (H.initCfg z) (2 * ℓ + 3) = e := by
+    rw [transport]
+    simpa only [hd, Cfg.init_inputPos, Cfg.init_workTapes, Cfg.init_workTapePos,
+      Cfg.init_output, Nat.cast_zero, sub_zero, Nat.one_add] using hrow
+  refine ⟨hend, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hend]
+  · intro a
+    rw [hend]
+    exact congrFun (Function.update_self index (FinTM.bufferTape (List.replicate ℓ true))
+      (fun _ _ => none)) a
+  · rw [hend]
+  · intro j hj
+    rw [hend, MultiTapeTM.initCfg_with_q₀]
+    constructor
+    · funext a
+      simp only [e, Function.update_of_ne hj, Cfg.init_workTapes]
+    · rw [Cfg.init_workTapePos]
+  · intro t ht
+    have hp := (H.output_prefix (H.initCfg z) ht).length_le
+    rw [hend, List.length_nil] at hp
+    exact List.length_eq_zero_iff.mp (Nat.eq_zero_of_le_zero hp)
+  · intro t ht
+    rw [transport]
+    exact hcut t ht
+  · intro t ht
+    exact (H.spaceUsed_le_mul_succ (H.initCfg z) t).trans
+      (Nat.mul_le_mul_left (K + 4) (by omega))
+
+end F6FirstHeaderPreship
+#print axioms F6FirstHeaderPreship.first_header_component
+
+/-! Read-only compiled inventory of the four proposed proof roots and their descendants.
+Imported theorem proof values are not traversed. Existing same-home legacy helpers remain
+outside the changed proof scope. Root types and compiled values are both inspected. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let wanted : List String := ["first_header_component"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} for {wanted.length} source roots"
+  for root in roots.qsort Name.lt do
+    logInfo m!"ROOT|{root}|private={isPrivateName root}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := env.find? n | throwError "selected constant missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) =>
+        logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()

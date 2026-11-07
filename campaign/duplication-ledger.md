@@ -1565,3 +1565,29 @@ have published characterizations (`acceptChk_iff`, `initChk_iff`). **Resolution:
 consumers to them in the dedup window (mechanical, Hydroxyi's files, FYI); the seal then adds the
 two predicates.
 
+
+
+## MIG-1 proof factoring proposed in #233 (2026-11-07)
+
+**Proposed, not retired on the campaign branch; gate118 open.** The partial fill and subsequent
+maintainer review identify the following kinds, with canonical reuse implemented in draft#233:
+input/work-buffer rewind variants; selected/unselected bank and phase frames; buffer replay;
+split-orbit/erase/embedding variants; startup-plus-halted-segment computation certificates;
+clean-bank boundary reconstruction; canonical tape-update/clipping and framed increment
+endpoints; projection-space corollaries; and unrestricted equal-time tagged-step propagation.
+The last uses Mathlib's existing invariant iterator, with no new public host/API/import.
+
+Canonical statements, exact remaining scope and references to each tested implementation are
+in `campaign/fills/mig1/landing/factoring-dispositions-final.md`. Full source-inclusive screens
+retain every new and weighted-existing candidate, including data matches and let-header parser
+limits. This is bounded candidate enumeration plus inspection, not a global optimality claim.
+The two superseded private selector helpers are removed once the whole bank reconstruction
+uses its existing shared equation. Short constructor/field-reader packages already call the
+canonical API; their remaining source similarity is disclosed rather than converted into a
+new blanket exception.
+
+**Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
+Seyoon's proposed shared absorbing-stop API ruling. The two constant-space reader gaps and
+redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
+and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
+retirement accounting is updated only after the gated PR merges.

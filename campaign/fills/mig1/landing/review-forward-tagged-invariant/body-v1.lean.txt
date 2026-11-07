@@ -1,0 +1,17 @@
+  let P : Set ℕ := {u | ∃ b, VirtualTag (M.tm.runFrom c u).inputPos b ∧
+    (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) u =
+      fwdMapVirtual M (M.tm.runFrom c u) b p a pre}
+  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
+    intro u hu
+    obtain ⟨b, hb, he⟩ := hu
+    obtain ⟨b', hb', he'⟩ := fwdMapVirtual_step M _ b hb p a pre
+    refine ⟨b', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb'
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+  have initial : 0 ∈ P := by
+    refine ⟨tag, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_zero] using hb
+    · simp only [MultiTapeTM.runFrom_zero]
+  have endpoint := preserve.iterate t initial
+  change t ∈ P
+  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint

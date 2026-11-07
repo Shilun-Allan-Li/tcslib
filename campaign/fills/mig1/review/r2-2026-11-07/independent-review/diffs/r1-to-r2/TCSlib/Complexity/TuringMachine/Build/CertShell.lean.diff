@@ -1,0 +1,38 @@
+--- r1/TCSlib/Complexity/TuringMachine/Build/CertShell.lean
++++ r2/TCSlib/Complexity/TuringMachine/Build/CertShell.lean
+@@ -571,7 +571,7 @@
+         omega
+     simp [w₃, w₂, w₀, hn.1, hn.2.1, hn.2.2]
+   -- The copy, read from the framed contract at the canonical seam.
+-  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) rfl
++  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₀ := hk₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w₀ v vf (by simp [w₀, hvf.symm]))
+   have hc₀ := hk₀.2.1
+@@ -589,7 +589,7 @@
+       have hn : i ≠ vf := fun he => hi ⟨⟨0, hkF⟩, he.symm⟩
+       simp [w₁, w₂, hn]) hr₁ hc₁
+   have h2 : w₂ vf = x := Function.update_self _ _ _
+-  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) rfl
++  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₂ := hk₂.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₂ vf vx hfx
+     (by simp [w₂, w₀, hfx.symm, hvx.symm]))
+@@ -598,7 +598,7 @@
+   set t₂ := 2 * x.length + 2 with ht₂def
+   have ht₂ : t₂ ≤ 3 * x.length + 3 := by omega
+   have h3 : w₃ v = pair := by simp [w₃, w₂, w₀, hvx, hvf]
+-  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) rfl
++  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₃ := hk₃.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₃ v vs hvs
+     (by simp [w₃, w₂, w₀, hxs.symm, hfs.symm, hvs.symm]))
+@@ -616,7 +616,7 @@
+       have hn : i ≠ vs := fun he => hi ⟨⟨0, hkS⟩, he.symm⟩
+       simp [w₄, w₅, hn]) hr₄ hc₄
+   have h5 : w₅ vs = u := Function.update_self _ _ _
+-  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) rfl
++  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₅ := hk₅.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₅ vs vu hsu
+     (by simp [w₅, w₃, w₂, w₀, hsu.symm, hvu.symm, hxu.symm, hfu.symm]))

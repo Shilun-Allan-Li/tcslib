@@ -1,0 +1,14 @@
+ScratchProbes/Seal_CertShellStrictR2.lean:184:4: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+ScratchProbes/Seal_CertShellStrictR2.lean:657:32: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.2354 = ?m.2354
+but is expected to have type
+  (vhostCfg (Cfg.ofWords P.tm.q₀ (Function.update (fun x => []) j u)) true 1 []).state = some (P.tm.q₀, true)
+in the application
+  cert_silent_words (vhostEmitTM P.tm) ι cap hcap w₆
+    (vhostCfg (Cfg.ofWords P.tm.q₀ (Function.update (fun x => []) j u)) true 1 []) (P.tm.q₀, true)
+    (Sum.inr SweepPhase.done) rfl
+exit=1

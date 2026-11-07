@@ -24,7 +24,7 @@ receipts remain in their dated status folders.
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
-| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, pushed head `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, draft | 118 reserved, Codex selected | **mmig1 PASS394/0**, static0/60 at the pushed head, complete from mac3. Expanded25-file baseline/head screen passed1696→628 with all60new candidates classified; tested extra factoring is now adopted as six uncommitted files, including mechanical VirtualInput scope extension. Actual12-module combined preflight PASS; source freeze/census/refreshed headscreen underway. API/home rulings remain pending. **Not yet clear to merge.** |
+| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 replay394 running** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Additional API/home rulings pending; no unapproved proposal applied. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -62,22 +62,29 @@ committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, inte
 `af3273f75d7602c079169f321e4536a58c7bb034`. Two mechanical merge conflicts preserve approved readers and delivered helpers;
 Catalog equals cp07 at that integration commit. Reviewed interface/factoring repairs are now
 committed as Codex, plus comment-only cleanup and a current-records merge. **Draft PR #233**
-is pushed at `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, base campaign, including the still-unmerged prerequisite #230.
-The pushed generation has passed its complete394-module replay (static0/60). Screen-driven
-body-only factoring proposals are now adopted in six uncommitted files, extending mechanical
-cleanup to VirtualInput under WORKFLOW§3. The actual12-module combined native chain passes.
-The source is frozen for its independent full-header/root review and refreshed head screen;
-metadata census/axioms are running. The first replay and all inert proposal generations remain
+is now pushed cleanly at `b1f553b315f31b949076e91119473ce4070e7d53`, base campaign, including the still-unmerged prerequisite #230.
+The earlier0d generation passed its complete394-module replay (static0/60). Screen-driven
+body-only factoring is now committed, including mechanical VirtualInput cleanup under WORKFLOW§3.
+The actual12-module native chain and final five-module tail rerun pass. Full-header/source QA,
+4413-constant full axiom accounting,144 roots+224 descendants standard and final25-file screen
+1696→622 are complete. A fresh394-module mmig2 replay is running from mac3 at the final pushed
+head; no final replay pass is claimed. Source stays frozen. Earlier evidence generations remain
 separately pinned. No target proof, new public API or import is added by these repairs.
 No target admission is filled internally. `campaign/fills/mig1/landing/` contains the exact
 source reviews, owner seals/paired controls, compiler comparison and proposal evidence.
+
+   A later R2 partial delivery is preserved in `campaign/fills/mig1/review/r2-2026-11-07/`:4028
+payload checksums and864 supplied attempt records reconcile, with418 carried source closures
+verified byte-identical. Independent source review recommends no adoption: our current repairs
+cover its useful changes, and its strict seal gaps remain. It is producer evidence, not a native
+replay or gate clearance. Archive only after records are committed.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
 final landing. The actual untimed condTM bridge and completed owner scopes now pass their recorded
 strong seals. Primitives finishes the local T1/T2/T2b factoring; Loop's T3 and Catalog's
 T5/T6 helpers are checked. The initial eleven-module chain and its full394-module replay pass. Later same-home
-terminal/bank/rewind/endpoint factoring and existing-Mathlib invariant repoints now pass
-a fresh12-module actual chain; final source/census/screen review remains. These generations
+terminal/bank/rewind/endpoint factoring and all three existing-Mathlib invariant repoints pass
+the final12-module chain/source/census/screen checks; their fresh394-module replay is running. These generations
 are separately pinned rather than relabeled as one replay. The generated rewind matcher has no effective
 negative control, explicitly disclosed; no global legacy seal is claimed.
 A shared absorbing-stop first-entry lemma and canonical pairDiag/incFixed exact zero-space
@@ -85,8 +92,9 @@ facts are proposed but unapproved. The two Catalog constant-space rows remain HO
 A third Catalog HOLD is the redirect-space theorem's hidden tape-count header read;
 its exact move beside redirectTM in Wrappers passes isolated full-module/owner/consumer
 checks, but Seyoon's public-home/order exception remains pending. The separate additional-API
-audit's agent choice is also pending. T7's unchanged tagged-run candidate is being checked
-against lower-layer/Mathlib APIs; no debt acknowledgment or factoring closure is inferred.
+audit's agent choice is also pending. All three core T7 tagged-run drivers now cite existing Mathlib iterator contracts; six
+directed concrete-instance scaffolding matches remain disclosed for gate assessment. No new
+debt acknowledgment or blanket factoring closure is inferred.
 Do not weaken claims or guards. These leaves wait while independent validation continues. **Codex is already selected for the eventual MIG-1
 proof/migration audit**, distinct from gate117; gate118 is reserved for it.
 
@@ -97,8 +105,12 @@ or implemented internally. The approved CodeTM reader is in #230, pending gate/m
 The six bounded components in `campaign/fills/f6/drafts/layout-preship-v2/` pass native
 elaboration and paired opacity controls without strengthening H5: startup, hosted return,
 last-ruler layout, actual bundle-reader consumer, zero-outer typing and one-cell correction.
-All32 attempts and limits are retained. The full physical prefix, actual run/cut/endpoint,
-loop per-tape space witnesses and coefficient still need pre-ship; this is not an F6 fill.
+All32 attempts and limits are retained. The actual first-header component now also passes native/sealed/paired controls in
+`first-header-preship-v3/`. The read-only `readiness-review/` identifies PLAN(f)/Gate112
+permission for explicit conditional OWN run/cut/loop inputs, distinct from our unissued draft
+promise of a supplied full prefix. That draft promise is being explicitly reconciled; actual
+zero-outer run/space seam and phase-interface checks remain in progress. Full physical prefix,
+actual run/cut/space/loop-ledger/target proofs remain external Claude OWN work. This is not an F6 fill.
 Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 
 4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)

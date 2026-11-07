@@ -1,0 +1,8 @@
+ScratchProbes/SealComposition.lean:759:8: error: Type mismatch
+  rightCfg (fun q => ?m.61) (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t) tapes heads
+has type
+  Cfg (D.k + (M₁.branchTM M₂ (p x)).k) Bool ?m.58 x
+but is expected to have type
+  Cfg (D.condTM M₁ M₂).k Bool (D.condTM M₁ M₂).State x
+ScratchProbes/SealComposition.lean:759:27: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inr` could not be determined
+exit=1

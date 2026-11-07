@@ -1,0 +1,10 @@
+@Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k)
+  (x_1 : ℤ), (Cfg.init q₀ input).workTapes x x_1 = none
+@Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k),
+  (Cfg.init q₀ input).workTapePos x = 0
+@Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).state = some q₀
+@Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+ScratchProbes/P1.lean:7:8: error(lean.unknownIdentifier): Unknown constant `Fin.sum_univ_add`

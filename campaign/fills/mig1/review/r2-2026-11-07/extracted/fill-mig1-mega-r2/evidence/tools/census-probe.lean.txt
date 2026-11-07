@@ -1,0 +1,40 @@
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.RAMSimulation.WordSize
+
+/-! Unfiltered compiled census: every non-private constant owned by each changed module
+(compiler auxiliaries, derived instances, recursors and constructors included), with its kind
+and owning module, one line each, sorted. -/
+
+open Lean in
+run_cmd do
+  let env ← getEnv
+  let mods : List Name := [`TCSlib.Complexity.TuringMachine.Composition,
+    `TCSlib.Complexity.TuringMachine.Simulation, `TCSlib.Complexity.TuringMachine.Build.Wrappers,
+    `TCSlib.Complexity.TuringMachine.Encoding, `TCSlib.Complexity.ClassP.TimeConstructible,
+    `TCSlib.Complexity.TuringMachine.Build.Loop, `TCSlib.Complexity.TuringMachine.Build.Primitives,
+    `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.CertShell,
+    `TCSlib.Complexity.TuringMachine.CodeSimulator, `TCSlib.Complexity.RAMSimulation.WordSize]
+  let mut out : Array String := #[]
+  for (n, ci) in env.constants.toList do
+    if isPrivateName n then continue
+    match env.getModuleIdxFor? n with
+    | none => pure ()
+    | some idx =>
+      let m := env.header.moduleNames[idx.toNat]!
+      if mods.contains m then
+        let k := match ci with
+          | .thmInfo _ => "theorem" | .defnInfo _ => "def" | .axiomInfo _ => "axiom"
+          | .inductInfo _ => "inductive" | .ctorInfo _ => "ctor" | .recInfo _ => "recursor"
+          | .opaqueInfo _ => "opaque" | .quotInfo _ => "quot"
+        out := out.push s!"CENSUS {m} {k} {n}"
+  for l in out.qsort (· < ·) do
+    IO.println l
