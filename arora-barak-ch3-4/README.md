@@ -41,12 +41,15 @@ This folder only carries files in transit. The maintainer's rules are in that br
 ## Current outbound work
 
 - Gate 106, SG-1 (#215): `outbox/gates/106-sg1-dedup-gate/`, Codex, dispatched by the user.
-- Gate 114, NatBits (#222): `outbox/gates/114-natbits-dedup-gate/`, Codex, dispatched by the user.
+- Gate 114, NatBits (#222): CLOSED PASS 0/0/0/8 and merged by the user. The issued gate and
+  exact findings copy are archived; the matching shared top-level inbox file is preserved.
 - Gate 115, E-PAD (#228): CLOSED, PASS 0/0/0/12. The user has merged #228. Its gate, fill brief,
   delivery and exact findings are archived after the records were committed. The user's matching
   top-level `inbox/epad-fill-findings.md` is preserved outside this subtree.
-- MIG-1 overnight megafill: `outbox/fills/megafill-mig1/`, **Claude**, verified and ready for
-  user dispatch; checkpoint/final delivery to `inbox/fill-mig1-mega/`.
+- Gate 116, the Hierarchy padding consumer (#229): `outbox/gates/116-space-linear-ne-np-gate/`,
+  **Codex**, verified and ready for user dispatch; return attached Markdown in chat.
+- MIG-1 overnight megafill: `outbox/fills/megafill-mig1/`, **Claude**, dispatched by the user;
+  checkpoint/final delivery to `inbox/fill-mig1-mega/`.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
