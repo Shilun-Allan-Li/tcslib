@@ -645,185 +645,22 @@ def expSampleRaw (z : List Bool) : List Bool :=
     ((sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z)))
       (NUPPT.inParam z).length (NUPPT.inParam z).length (NUPPT.inCoins z)).getD 0)
 
-/-! ### The domain sampler as a trial loop (helpers of `polyTimeComputable_expSampleRaw`) -/
+/-! ### The comparison test of the domain sampler (helper of `polyTimeComputable_expSampleRaw`) -/
 
-/-- The start state of the trial loop on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`:
-`⟨⟨1^n, ⟨1^k, ⟦m⟧⟩⟩, ⟨1^n, r⟩⟩` with `⟦m⟧` the middle numeral of `i` and `1^k = sizeStr ⟦m⟧`
-its bit length (the header, then the trial counter and the remaining coins). -/
-private def dla_ssStart (z : List Bool) : List Bool :=
-  pairEncode (pairEncode (NUPPT.inParam z)
-      (pairEncode (sizeStr (pairFstD (pairSndD (NUPPT.inArg z)))) (pairFstD (pairSndD (NUPPT.inArg z)))))
-    (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))
+/-- The comparison test on a pair `⟨w, b⟩`: not `⟦w⟧ ≤ ⟦b⟧`, i.e. the trial value is below `⟦w⟧`. -/
+private def dla_belowAcc (x : List Bool) : Bool :=
+  !decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x))
 
-/-- One trial step: keep the header, decrement the counter, drop one block of `n` coins. -/
-private def dla_ssStep (x : List Bool) : List Bool :=
-  pairEncode (pairFstD x)
-    (pairEncode ((pairFstD (pairSndD x)).drop 1) ((pairSndD (pairSndD x)).drop (pairFstD (pairFstD x)).length))
+/-- The comparison test is polynomial-time (`ArithmeticFP.le_poly`, `polyTimeComputable_not`). -/
+private theorem dla_belowAcc_poly (H : ArithmeticFP) :
+    PolyTimeComputable fun x => [dla_belowAcc x] :=
+  polyTimeComputable_not (H.le_poly polyTimeComputable_pairFstD polyTimeComputable_pairSndD)
 
-/-- The current trial value: the first `k` bits of the remaining coins. -/
-private def dla_ssBlock (x : List Bool) : List Bool :=
-  (pairSndD (pairSndD x)).take (pairFstD (pairSndD (pairFstD x))).length
-
-/-- The acceptance test: the counter is nonzero and the trial value is below `m`. -/
-private def dla_ssAcc (x : List Bool) : Bool :=
-  !(decide (pairFstD (pairSndD x) = [])) &&
-    !(decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (dla_ssBlock x)))
-
-/-- The payload: a `true` marker, then the accepted block. -/
-private def dla_ssOut (x : List Bool) : List Bool := [true] ++ dla_ssBlock x
-
-/-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
-private theorem dla_ssStep_poly : PolyTimeComputable dla_ssStep := by
-  have h := polyTimeComputable_pairFstD.pairEncode
-    ((polyTimeComputable_tail.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)).pairEncode
-      ((polyTimeComputable_pairDropPoly .var).comp
-        ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
-          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
-  convert h using 1
-  funext x
-  simp only [dla_ssStep, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
-    PolyExpr.eval_var]
-
-/-- The trial value is polynomial-time (`polyTimeComputable_pairTakePoly`). -/
-private theorem dla_ssBlock_poly : PolyTimeComputable dla_ssBlock := by
-  have h := (polyTimeComputable_pairTakePoly .var).comp
-    ((polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
-  convert h using 1
-  funext x
-  simp only [dla_ssBlock, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
-    PolyExpr.eval_var]
-
-/-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, the comparison `H.le`). -/
-private theorem dla_ssAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun x => [dla_ssAcc x] := by
-  have hle : PolyTimeComputable fun x =>
-      [decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (dla_ssBlock x))] := by
-    have h := H.le.comp
-      ((polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)).pairEncode
-        dla_ssBlock_poly)
-    convert h using 1
-    funext x
-    rw [Function.comp_apply, leStr_pairEncode]
-    rfl
-  have h1 := polyTimeComputable_not
-    (polyTimeComputable_isNil.comp (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))
-  have h := polyTimeComputable_and h1 (polyTimeComputable_not hle)
-  convert h using 1
-
-
-/-- The payload is polynomial-time (`polyTimeComputable_prepend`). -/
-private theorem dla_ssOut_poly : PolyTimeComputable dla_ssOut :=
-  (polyTimeComputable_prepend [true]).comp dla_ssBlock_poly
-
-/-- The orbit of the step from `⟨h, ⟨c, s⟩⟩`: after `i` trials the state is
-`⟨h, ⟨c.drop i, s.drop (i · |fst h|)⟩⟩`. -/
-private theorem dla_ssStep_iterate (h c s : List Bool) (i : ℕ) :
-    dla_ssStep^[i] (pairEncode h (pairEncode c s)) =
-      pairEncode h (pairEncode (c.drop i) (s.drop (i * (pairFstD h).length))) := by
-  induction i with
-  | zero => simp
-  | succ i ih =>
-    rw [Function.iterate_succ_apply', ih]
-    simp only [dla_ssStep, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
-    rw [Nat.succ_mul]
-
-/-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
-private theorem dla_length_ssStep_le (x : List Bool) : (dla_ssStep x).length ≤ 2 * x.length + 4 := by
-  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
-  simp only [dla_ssStep, length_pairEncode, List.length_drop]
-  omega
-
-/-- From the first step on the state is a well-formed state word, which only shrinks. -/
-private theorem dla_length_ssStep_ssStep_le (x : List Bool) :
-    (dla_ssStep (dla_ssStep x)).length ≤ (dla_ssStep x).length := by
-  simp only [dla_ssStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
-    List.length_drop]
-  omega
-
-/-- The orbit bound `|step^[i] x| ≤ 2|x| + 4` demanded by the repetition lemma (for every word). -/
-private theorem dla_length_ssStep_iterate_le (x : List Bool) (i : ℕ) :
-    (dla_ssStep^[i] x).length ≤ 2 * x.length + 4 := by
-  cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
-  | succ i =>
-    induction i with
-    | zero => exact dla_length_ssStep_le x
-    | succ i ih =>
-      rw [Function.iterate_succ_apply'] at ih ⊢
-      rw [Function.iterate_succ_apply']
-      exact (dla_length_ssStep_ssStep_le _).trans ih
-
-/-- **The trial loop computes the rejection sampler**: on the start state of `z`, the value
-read from the loop's payload (marker dropped) is `sampleBelowL m k n n r` with the fallback
-`0`, where `m` is the middle numeral of the index, `k = Nat.size m` and `n = |1^n|`.
-
-**Proof sketch.** After `i` steps the header is unchanged, the counter `1^n` has lost `i` bits
-and the coins have lost `i` blocks of `n` bits (`dla_ssStep_iterate`): the trial value is the
-`k`-bit prefix of block `i`, and the test accepts iff `i < n` and that value is below `m`. The search over the
-first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)`
-(`IterateFind.find?_range_and_lt`), which is `sampleBelowL` read as a `find?` followed by the
-value (`sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq_find?`). In the `some i` case the
-payload with its marker dropped is the prefix of block `i`; in the `none` case both sides read `0`
-(`listToNat_nil`). -/
-private theorem dla_ssFind_eq (z : List Bool) :
-    listToNat ((match (List.range ((dla_ssStart z).length + 1)).find?
-        (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) with
-      | some i => dla_ssOut (dla_ssStep^[i] (dla_ssStart z))
-      | none => []).drop 1) =
-      (sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z)))
-        (NUPPT.inParam z).length (NUPPT.inParam z).length (NUPPT.inCoins z)).getD 0 := by
-  set u := NUPPT.inParam z
-  set c := NUPPT.inCoins z
-  set ms := pairFstD (pairSndD (NUPPT.inArg z))
-  have hm : dlM (NUPPT.inArg z) = listToNat ms := dlM_eq _
-  have hk : (sizeStr ms).length = Nat.size (listToNat ms) := length_sizeStr ms
-  have hstart : dla_ssStart z = pairEncode (pairEncode u (pairEncode (sizeStr ms) ms)) (pairEncode u c) :=
-    rfl
-  -- the value read at trial `i`
-  let val : ℕ → ℕ := fun i => listToNat ((c.drop (i * u.length)).take (Nat.size (listToNat ms)))
-  have hblock : ∀ i, dla_ssBlock (dla_ssStep^[i] (dla_ssStart z)) =
-      (c.drop (i * u.length)).take (Nat.size (listToNat ms)) := by
-    intro i
-    rw [hstart, dla_ssStep_iterate]
-    simp only [dla_ssBlock, pairFstD_pairEncode, pairSndD_pairEncode, hk]
-  have hacc : ∀ i, dla_ssAcc (dla_ssStep^[i] (dla_ssStart z)) =
-      (decide (i < u.length) && decide (val i < listToNat ms)) := by
-    intro i
-    have hb := hblock i
-    rw [dla_ssAcc, hb, hstart, dla_ssStep_iterate]
-    simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.drop_eq_nil_iff]
-    by_cases h1 : i < u.length <;> by_cases h2 : val i < listToNat ms
-    · simp [h1, h2, val]
-    · simp [h1, h2, val, not_lt.1 h2]
-    · simp [h1, h2, val]
-    · simp [h1, h2, val]
-  have hrange : u.length ≤ (dla_ssStart z).length + 1 := by
-    rw [hstart, length_pairEncode, length_pairEncode]
-    omega
-  have hfind : (List.range ((dla_ssStart z).length + 1)).find?
-      (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) =
-      (List.range u.length).find? (fun i => decide (val i < listToNat ms)) := by
-    rw [show (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) =
-      fun i => decide (i < u.length) && decide (val i < listToNat ms) from funext hacc]
-    exact IterateFind.find?_range_and_lt _ hrange
-  have hsample : sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z))) u.length u.length c =
-      ((List.range u.length).find? (fun i => decide (val i < listToNat ms))).map val := by
-    rw [hm, sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq_find?]
-  rw [hfind, hsample]
-  rcases hf : (List.range u.length).find? (fun i => decide (val i < listToNat ms)) with _ | i
-  · exact listToNat_nil
-  · show listToNat ((dla_ssOut (dla_ssStep^[i] (dla_ssStart z))).drop 1) = val i
-    rw [dla_ssOut, List.singleton_append, List.drop_one, List.tail_cons, hblock]
-
-
-/-- The start state is polynomial-time (the layout projections, `H.size` for `1^k`). -/
-private theorem dla_ssStart_poly (H : ArithmeticFP) : PolyTimeComputable dla_ssStart := by
-  have hms : PolyTimeComputable fun z => pairFstD (pairSndD (NUPPT.inArg z)) :=
-    polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg)
-  have h := (NUPPT.polyTimeComputable_inParam.pairEncode ((H.size.comp hms).pairEncode hms)).pairEncode
-    (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
-  exact h
+/-- The comparison test decides `⟦b⟧ < ⟦w⟧` on `⟨w, b⟩`. -/
+private theorem dla_belowAcc_spec (w b : List Bool) :
+    dla_belowAcc (pairEncode w b) = decide (listToNat b < listToNat w) := by
+  rw [dla_belowAcc, pairFstD_pairEncode, pairSndD_pairEncode, ← decide_not, decide_eq_decide,
+    Nat.not_le]
 
 /-! ### The domain sampler and the collection -/
 
@@ -831,41 +668,50 @@ private theorem dla_ssStart_poly (H : ArithmeticFP) : PolyTimeComputable dla_ssS
 domain `D_i`"] given the arithmetic bundle.
 
 **Proof sketch.** The bit length `Nat.size m` is the length of the numeral of `m` with its
-leading zeros stripped (`H.size`). The trial loop is `Complexity.polyTimeComputable_iterateFind`
-on the state `⟨⟨1^n, ⟨1^k, ⟦m⟧⟩⟩, ⟨c, r⟩⟩` with a trial counter `c = 1^n`: each step drops one
-bit of the counter and one block of `n` coins (`polyTimeComputable_tail`,
-`polyTimeComputable_pairDropPoly`), and a trial accepts iff the counter is nonempty and the first
-`k` remaining coins read below `m` (`polyTimeComputable_pairTakePoly`, `polyTimeComputable_isNil`,
-`H.le`). The counter is needed because the loop runs `|state| + 1 ≥ n` rounds while
-`sampleBelowL` makes exactly `n` trials, and the raw coin string may be longer than `n · n`. The
-payload is the accepted block; the `none` branch gives the fallback (the empty block reads `0`).
-The output is the last `|p|` bits of `⟦0⟧_{|p|} ++ block`, with `⟦0⟧_{|p|} = ⟦p − p⟧_{|p|}`
-(`H.sub`, `polyTimeComputable_pairDropPoly`, `PolyTimeComputable.append`): the `|p|`-bit numeral
-of the value, also when it is `≥ 2^{|p|}`. -/
+leading zeros stripped (`H.size`). The sampler is `sampleBelowL m k n n = rejectBlocksL (· < m)
+k n n` (`sampleBelowL_eq_rejectBlocksL`), an instance of the block-rejection host H15
+(`polyTimeComputable_rejectBlocksL`): the test `v < m` on `⟨⟦m⟧, v⟩` is `H.le`, negated; the
+parameter word is the middle numeral `⟦m⟧` of the index, the width word `1^k = sizeStr ⟦m⟧`, and
+`1^n` serves as both the block-length and the trial-count word. H15 returns a polynomial-time `g`
+whose output is `[]` when every trial is rejected and otherwise has a tail reading as the accepted
+value; so the tail of `g z` (`polyTimeComputable_tail`, `List.drop_one`) reads as the sampler's
+value with the fallback `0` (the empty tail reads `0`). The output is the last `|p|` bits of
+`⟦0⟧_{|p|} ++ t` for that tail `t`, with `⟦0⟧_{|p|} = ⟦p − p⟧_{|p|}` (`H.sub`,
+`polyTimeComputable_pairDropPoly`, `PolyTimeComputable.append`): the `|p|`-bit numeral of the
+value, also when it is `≥ 2^{|p|}` (`natToList_zero_append_drop`). -/
 theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable expSampleRaw := by
-  -- the trial loop (the repetition lemma, `n` rounds suffice: `R = var`)
-  have hF := polyTimeComputable_iterateFind dla_ssStep_poly (dla_ssAcc_poly H) dla_ssOut_poly
-    PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-      exact dla_length_ssStep_iterate_le x i)
-  -- the accepted block (marker dropped), `[]` on failure
-  have hb := polyTimeComputable_tail.comp (hF.comp (dla_ssStart_poly H))
+  -- the middle numeral `⟦m⟧` of the index
+  have hms : PolyTimeComputable fun z => pairFstD (pairSndD (NUPPT.inArg z)) :=
+    polyTimeComputable_pairFstD.comp
+      (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg)
+  -- host H15 with the test `v < ⟦m⟧`: width `|sizeStr ⟦m⟧| = Nat.size ⟦m⟧`, `n` blocks of `n` coins
+  obtain ⟨g, hg, hs⟩ := polyTimeComputable_rejectBlocksL (fun a v => v < a) (dla_belowAcc_poly H)
+    dla_belowAcc_spec hms (H.size.comp hms) NUPPT.polyTimeComputable_inParam
+    NUPPT.polyTimeComputable_inParam NUPPT.polyTimeComputable_inCoins
+  -- the accepted value's word (the payload's tail), `[]` on failure
+  have hb : PolyTimeComputable fun z => (g z).tail :=
+    (PolyTimeComputable.comp' polyTimeComputable_tail hg).congr fun z => List.drop_one
   -- the numeral of `0` at the index width, `⟦p − p⟧_{|p|}` (`H.sub`)
   have hp : PolyTimeComputable fun z => pairFstD (NUPPT.inArg z) :=
     polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg
   have hz := H.sub.comp (hp.pairEncode hp)
-  -- width normalization: the last `|p|` bits of `⟦0⟧_{|p|} ++ block`
+  -- width normalization: the last `|p|` bits of `⟦0⟧_{|p|} ++ payload`
   have hq := (polyTimeComputable_pairDropPoly .var).comp (hb.pairEncode (hz.append hb))
-  refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hq
+  refine hq.congr fun z => ?_
   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var,
     subStr_pairEncode, Nat.sub_self]
   rw [natToList_zero_append_drop]
   unfold expSampleRaw dlW
   congr 1
-  have hF := dla_ssFind_eq z
-  split
-  next i hi => rw [hi] at hF; exact hF
-  next hn => rw [hn] at hF; exact hF
+  rw [dlM_eq, ← length_sizeStr, sampleBelowL_eq_rejectBlocksL,
+    show rejectBlocksL (· < listToNat (pairFstD (pairSndD (NUPPT.inArg z))))
+        (sizeStr (pairFstD (pairSndD (NUPPT.inArg z)))).length (NUPPT.inParam z).length
+        (NUPPT.inParam z).length (NUPPT.inCoins z) =
+      if g z = [] then none else some (listToNat (g z).tail) from (hs z).2]
+  split_ifs with he
+  · rw [he, List.tail_nil, listToNat_nil]
+    rfl
+  · rfl
 
 /-- **The domain sampler** of the exponentiation collection: a uniform `NUPPT` with `n · n`
 coins. -/
