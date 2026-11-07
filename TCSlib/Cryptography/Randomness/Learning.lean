@@ -114,7 +114,12 @@ theorem predictAdv_prfConcept_negligible (hF : PRF F) (A : NUPPT) (m : PolyExpr)
 
 /-- **Theorem 179.1 (c): no efficient weak PAC learner** under the uniform distribution: for edges
 `δ < γ ≤ ½`, every efficient learner fails to `(γ, δ)`-weakly learn the class from some
-parameter on. Proved from part (b) and the PAC layer's `not_weakLearnsUnder_of_predictAdv_le`. -/
+parameter on. Proved from part (b) and the PAC layer's `not_weakLearnsUnder_of_predictAdv_le`.
+
+**Proof sketch.** Part (b) eventually bounds the prediction advantage by `1/n`. Since
+`γ - δ > 0`, choose a second cutoff beyond which `1/n ≤ (γ - δ)/2`. Above both cutoffs,
+the advantage is strictly smaller than the edge required for weak learning, so the PAC
+prediction-to-learning bound rules out a weak learner. -/
 theorem not_weakLearnsUnder_prfConcept (hF : PRF F) (A : NUPPT) (m : PolyExpr) {γ δ : ℝ}
     (hδγ : δ < γ) (hγ : γ ≤ 1 / 2) :
     ∃ n₀ : ℕ, ∀ n ≥ n₀, ¬ WeakLearnsUnder (FinDist.uniform (Fin n → Bool)) (prfConcept F n)
