@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""E-PAD inspection table: every rw/rwa/simp/simpa/dsimp/simp_all/unfold/show/change/erw/
+nth_rewrite argument on an added line of the diff of Padding.lean (base..commit), with the
+argument's kind, resolved by a Lean probe (`Probe/EPadKinds.lean`) in the module's namespace.
+Usage: epad_inspect.py <tag> <commit>
+"""
+import re, subprocess, sys, os, collections
+tag, commit = sys.argv[1], sys.argv[2]
+F = '/workspace/tcslib-fill'
+E = '/workspace/epad-evidence'
+BASE = '72fcfbef3c1deb331aedc95d4a158a9ed4c56524'
+PATH = 'TCSlib/Complexity/SpaceComplexity/Padding.lean'
+diff = subprocess.run(['git', '-C', F, 'diff', '-U0', BASE, commit, '--', PATH],
+                      capture_output=True, text=True).stdout
+added = []  # (new line number, text)
+ln = 0
+for line in diff.splitlines():
+    m = re.match(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@', line)
+    if m: ln = int(m.group(1)); continue
+    if line.startswith('+') and not line.startswith('+++'):
+        added.append((ln, line[1:])); ln += 1
+# join continuation lines of bracket lists: track open brackets within the added text
+src = {n: t for n, t in added}
+TAC = re.compile(r'\b(rwa|rw|erw|nth_rewrite\s+\d+|simp_all|simpa|simp|dsimp|unfold|show|change)\b')
+rows = []
+nums = sorted(src)
+i = 0
+while i < len(nums):
+    n = nums[i]; t = src[n]
+    code = t.split('--')[0]
+    for m in TAC.finditer(code):
+        tac = m.group(1)
+        # skip occurrences inside identifiers like `simp_arith`/`show_term` handled by \b; skip doc text
+        if re.match(r'^\s*(/-|\*|--)', code): break
+        rest = code[m.end():]
+        j = i
+        if tac in ('show', 'change'):
+            expr = rest.strip()
+            k = i + 1
+            # continuation lines (more indented, no tactic separator)
+            while k < len(nums) and nums[k] == nums[k-1] + 1 and re.match(r'^\s{6,}', src[nums[k]]) \
+                    and not TAC.search(src[nums[k]].split('--')[0]) and not src[nums[k]].strip().startswith(('·', 'exact', 'refine', 'have', 'rw', 'simp', 'apply', 'obtain', 'intro', 'omega')):
+                expr += ' ' + src[nums[k]].strip(); k += 1
+            expr = re.split(r'\s+(?:from|by|using)\s|;', expr)[0].strip()
+            rows.append((n, tac, expr, 'goal restatement'))
+            continue
+        if tac == 'unfold':
+            for a in re.findall(r'[^\s]+', rest.split(' at ')[0]):
+                rows.append((n, tac, a, None))
+            continue
+        # bracketed argument list (may span lines)
+        k0 = rest.find('[')
+        if k0 < 0:
+            if tac in ('simp', 'simp_all', 'dsimp', 'simpa'):
+                rows.append((n, tac, '(no lemma list)', 'default simp set'))
+            continue
+        # make sure the bracket belongs to this tactic: only whitespace/`only`/config before it
+        pre = rest[:k0]
+        if not re.fullmatch(r'\s*(only\s*)?(\(config[^)]*\)\s*)?(only\s*)?', pre):
+            continue
+        buf = rest[k0+1:]; depth = 1; out = ''
+        while True:
+            for ch in buf:
+                if ch == '[': depth += 1
+                elif ch == ']':
+                    depth -= 1
+                    if depth == 0: break
+                out += ch
+            if depth == 0 or j + 1 >= len(nums): break
+            j += 1; buf = src[nums[j]].split('--')[0]; out += ' '
+        args, d, cur = [], 0, ''
+        for ch in out:
+            if ch in '([{⟨': d += 1
+            if ch in ')]}⟩': d -= 1
+            if ch == ',' and d == 0: args.append(cur.strip()); cur = ''
+            else: cur += ch
+        if cur.strip(): args.append(cur.strip())
+        for a in args:
+            rows.append((n, tac, a, None))
+    i += 1
+# resolve kinds with Lean
+idents = []
+for n, tac, a, kind in rows:
+    if kind: continue
+    core = a.lstrip('←').strip()
+    core = re.sub(r'^-\s*', '', core)
+    head = re.match(r"[A-Za-z_][A-Za-z0-9_'.₀-₉ᵢ?!]*", core)
+    if head: idents.append(head.group(0))
+idents = sorted(set(idents))
+probe = '''import TCSlib.Complexity.SpaceComplexity.Padding
+open Lean Elab Command in
+elab "#epad_kind " id:ident : command => do
+  let env ← getEnv
+  let n := id.getId
+  let cands ← (do let r ← liftCoreM <| (Lean.resolveGlobalName n); pure (r.map (·.1)))
+  let cands := cands ++ (if (env.find? n).isSome then [n] else [])
+  let privN := mkPrivateName env n
+  let cands := cands ++ (if (env.find? (mkPrivateName env (`Complexity ++ n))).isSome then [mkPrivateName env (`Complexity ++ n)] else [])
+  let _ := privN
+  match cands.head? with
+  | none => logInfo m!"KIND\\t{n}\\tlocal (not a global constant)"
+  | some c =>
+    let kind := match env.find? c with
+      | some (.thmInfo _) => "theorem"
+      | some (.defnInfo _) => "definition"
+      | some (.ctorInfo _) => "constructor"
+      | some (.recInfo _) => "recursor"
+      | some (.inductInfo _) => "inductive"
+      | some (.axiomInfo _) => "axiom"
+      | some (.opaqueInfo _) => "opaque"
+      | some (.quotInfo _) => "quot"
+      | none => "?"
+    let mod := match env.getModuleIdxFor? c with
+      | some i => toString env.header.moduleNames[i.toNat]!
+      | none => "this file"
+    logInfo m!"KIND\\t{n}\\t{kind}\\t{c}\\t{mod}"
+namespace Complexity
+open Turing
+''' + '\n'.join(f'#epad_kind {x}' for x in idents) + '\nend Complexity\n'
+open(f'{F}/Probe/EPadKinds.lean', 'w').write(probe)
+env = dict(os.environ)
+r = subprocess.run(['python3', '/workspace/bin/chkE.py', 'Probe/EPadKinds'], cwd=F, capture_output=True, text=True, env=env)
+kinds = {}
+for line in (r.stdout + r.stderr).splitlines():
+    m = re.search(r'KIND\t(\S+)\t(.*)$', line)
+    if m: kinds[m.group(1)] = m.group(2)
+own = {}
+srcnow = subprocess.run(['git', '-C', F, 'show', f'{commit}:{PATH}'], capture_output=True, text=True).stdout
+for m in re.finditer(r'^(?:@\[[^\]]*\]\s*)?(?:private\s+)?(?:noncomputable\s+)?(def|lemma|theorem|abbrev|inductive|structure)\s+(\S+)', srcnow, re.M):
+    own[m.group(2)] = {'lemma': 'theorem'}.get(m.group(1), m.group(1))
+def classify(a):
+    core = re.sub(r'^-\s*', '', a.lstrip('←').strip())
+    if core.startswith('↓'): return f'simproc {core[1:]} (Lean core)'
+    if core.startswith('show '): return 'term (an inline `show … from …` equation)'
+    head = re.match(r"[A-Za-z_][A-Za-z0-9_'.₀-₉ᵢ?!]*", core)
+    if not head: return 'term'
+    h0 = head.group(0)
+    if h0 in own or h0.split('.')[0] in own:
+        base = h0.split('.')[0]
+        return f'own file: {own.get(h0, own.get(base))} `{base}`' + (' (its equation lemma)' if h0 != base else '')
+    k = kinds.get(head.group(0), '?')
+    if k.startswith('local'): return 'local hypothesis / let-bound name'
+    parts = k.split('\t')
+    if len(parts) >= 3:
+        kind, c, mod = parts[0], parts[1], parts[2]
+        if mod == 'this file' or 'SpaceComplexity.Padding' in mod or '_private' in c and 'Padding' in c:
+            return f'{kind}, own file ({c.split(".")[-1]})'
+        if mod.startswith('Lean.Meta.Tactic.Simp'):
+            return f'simproc {c} (Lean core)'
+        if kind == 'definition' and mod.startswith('TCSlib'):
+            return f'DEFINITION {c} ({mod})'
+        if kind == 'definition':
+            return f'core/Mathlib definition {c} ({mod})'
+        return f'{kind} {c} ({mod})'
+    return k
+out = ['| line | tactic | argument | kind |', '|---:|---|---|---|']
+cnt = collections.Counter()
+for n, tac, a, kind in rows:
+    kd = kind or classify(a)
+    cnt[kd.split(' ')[0]] += 1
+    out.append(f'| {n} | `{tac}` | `{a}` | {kd} |')
+open(f'{E}/logs/inspection-{tag}.md', 'w').write(
+    f'# Inspection table ({tag}, commit {commit})\n\nEvery `rw`/`rwa`/`erw`/`nth_rewrite`/`simp`/`simpa`/`simp_all`/`dsimp`/`unfold`/`show`/`change` argument on an added line of `git diff {BASE[:8]} {commit[:8]} -- {PATH}`. Kinds resolved by `Probe/EPadKinds.lean` in `namespace Complexity` with `open Turing`.\n\n'
+    + '\n'.join(out) + '\n\nCounts by kind (first word): ' + ', '.join(f'{k}: {v}' for k, v in sorted(cnt.items())) + '\n')
+print(len(rows), 'rows;', dict(cnt))
+defs = [l for l in out if 'DEFINITION' in l]
+print('definition arguments:', len(defs))
+for l in defs: print(l)

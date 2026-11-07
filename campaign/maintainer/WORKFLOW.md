@@ -1,6 +1,6 @@
 # The maintainer's standing rules (Arora–Barak ch. 3–4 campaign)
 
-The maintainer is a Claude Code session. It builds PRs, replay scripts, gate packs, bundles and
+The maintainer is an AI-assisted session (currently Codex). It builds PRs, replay scripts, gate packs, bundles and
 fill briefs; reviews incoming audits and deliveries; and keeps the records. The user merges PRs,
 runs or approves replays, dispatches gates and fills to external agents, and rules on decisions.
 These rules were kept as the local session's memory until the move to a cloud VM (2026-11-04),
@@ -45,7 +45,9 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 
 - **Never `lake build`.** Elaborate only through `devtools/seyoon/leanelab.sh <worktree> <olean
   dir> <file>` (plain) or `leanelab-o.sh <worktree> <olean dir> <file> <overlay>` (writes the
-  `.olean`). At most **2 elaborations at once machine-wide** (slot locks under
+  `.olean`). At most **5 elaborations at once machine-wide** (the user's 2026-11-06 update;
+  the maintainer currently uses `TCSLIB_LEAN_SLOTS=3`, reserving two for the other campaign;
+  slot locks under
   `$TCSLIB_SCRATCH/locks/`), each `lean -j4` under `nice -n 10`. Replays use
   `scripts/lean_check_tree.sh` through the generated replay scripts.
 - **Screens one at a time**, machine-wide: `scripts/copy-text-screen-v3.py` under `nice -n 10`,
@@ -137,16 +139,24 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
     `git cat-file -e` it. Never complete a short hash by hand.
   - **Findings file:** every prompt asks the auditor for `<name>-findings.md` (the table and the
     verdict line) as an attached file, pasted in its reply too.
-  - **Agents read from the exchange branch, and deliver by attachment** (the user, 2026-11-06).
-    Auditors and fill agents can read `exchange/pass-shelat-ch5-8`, so prompts name the bundle or
-    brief by its path there rather than as an upload. They do not push: ChatGPT's GitHub connector
-    is read-only and Codex writes only through its own PRs, so findings files and delivery zips
-    are attached in chat, and the user hands them on. Every change to
-    `complexity/arora-barak-ch3-4` is still a PR the user merges.
-  - **A pack's closing paragraph** (since 2026-11-06): "**Deliver your findings as a downloadable
+  - **Ask the agent choice before preparing each audit or fill** (the user, 2026-11-06):
+    Codex or Claude. Ask per item; do not infer a standing choice from an earlier dispatch.
+  - **Agents read from the exchange branch; delivery depends on the chosen agent** (the user,
+    2026-11-06, superseding the attachment-only rule). Prompts name the bundle or brief by its
+    path on `exchange/pass-shelat-ch5-8` rather than as an upload.
+    - **Codex:** return the findings Markdown or delivery zip as an attachment in chat; it cannot
+      push to GitHub. Findings are also pasted in the reply.
+    - **Claude:** may push the findings or delivery directly to the designated
+      `arora-barak-ch3-4/inbox/` folder of the exchange branch, touching nothing else, with
+      `git pull --rebase` before every push and no force-push.
+    - External agents do not push changes directly to any campaign branch. Lean changes go by
+      PR for the user's approval. **The maintainer's records-only exception in §1 is retained**
+      (explicitly confirmed by the user with this routing update).
+  - **A Codex pack's closing paragraph:** "**Deliver your findings as a downloadable
     file named `<name>-findings.md`** (the findings table and the verdict line, no other
-    wrapping), and also paste its content in your reply."
-    The prompt names the bundle by its path on that branch.
+    wrapping), and also paste its content in your reply." A Claude pack instead gives the exact
+    exchange inbox path and the pull/rebase/no-force-push restrictions above. The prompt names
+    the bundle by its path on that branch.
   - **Rebuilt bundles:** if a bundle is rebuilt after its prompt went out, re-issue the whole
     prompt and say the old one is void.
 - **The exchange** is the `arora-barak-ch3-4/` subfolder of the orphan branch
@@ -169,8 +179,9 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   Every brief attaches the fill-environment addendum.
 - **Fills may run in parallel** (the user, 2026-11-06: on cloud machines with Claude agents,
   there is no need to limit how many fills are out at once). Each fill still owns its files, and
-  two fills never share an owned file. The maintainer's own limit of two Lean processes on its VM
-  is unchanged.
+  two fills never share an owned file. The maintainer's limit
+  is five machine-wide on the current Mac, with three slots budgeted here while the other chat
+  uses two; this does not change an external worker's brief-specific limit.
 - **Agent choice, a soft suggestion per item:** Codex for a first (maybe second) attempt; Claude
   for an item making slow progress (one stalled Codex round counts); megafills go to Codex.
   Ask the agent as its own question, never inside an option.

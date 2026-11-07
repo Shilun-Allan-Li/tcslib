@@ -1,0 +1,1 @@
+The sealed source failed only at the copied delivery attribute [-simp] Turing.NDTM.initCfg: that declaration is absent after removing Codec.Word. The fresh probe removes that absent simp attribute; the 36-definition seal list is unchanged.

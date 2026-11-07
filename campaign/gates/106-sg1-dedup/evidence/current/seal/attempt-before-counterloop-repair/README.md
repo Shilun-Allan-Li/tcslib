@@ -1,0 +1,1 @@
+Source head: `0e5e5b4e725836d6503985b70c7d8f2dc4da69f4`. SingleTape passed; CounterLoop failed with four direct Segment reads. Tautology and FragCell were not executed in this attempt. These failures prompted the mechanical repair in the same PR.

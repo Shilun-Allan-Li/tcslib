@@ -1,0 +1,313 @@
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3602:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3635:    have h1 := qy_lt_two_pow_bits F
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:259:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:279:  have := lt_two_pow_bits n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7678:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:125:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:134:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:154:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:158:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3602:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3635:    have h1 := qy_lt_two_pow_bits F
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:259:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:279:  have := lt_two_pow_bits n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7678:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:125:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:134:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:154:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:158:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1802:  exact Complexity.LogProg.ofDigits_lt_two_pow w
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:419:  have hn := Complexity.LogProg.lt_two_pow_bits n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:420:  have hD := Complexity.LogProg.lt_two_pow_bits D
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3566:  have hnLb : n < 2 ^ Lb := Complexity.LogProg.lt_two_pow_bits n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3600:    have h1 := Complexity.LogProg.lt_two_pow_bits F
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3603:    have h3 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3745:    have h1 := (Complexity.LogProg.length_bits_eq_log hn0).symm
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4347:2 ^ |bits D₀| (2 n + 1)` (`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`); `|bits n| ≤ n`;
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4354:  have h2L := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4399:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4419:  have hLb := (Complexity.LogProg.length_bits_eq_log (n := x.length) (by omega)).symm
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4473:    Complexity.LogProg.two_pow_bits_le_two_mul_add_one x.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7645:(`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7648:  have h1 := Complexity.LogProg.ofDigits_lt_two_pow w
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7649:  have h2 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one G
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:207:  · rw [Complexity.LogProg.length_bits_eq_log h0]
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:249:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:262:    have := two_pow_bits_le_two_mul_add_one n; simp only [ell, pow_succ]; omega
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:269:  have := lt_two_pow_bits n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Constructible.lean:79:  (LogProg.length_bits_eq_log hn).trans (logSpace_eq n).symm
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:254:  have ha : a < 2 ^ (Nat.bits a).length := lt_two_pow_bits a
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:255:  have hb : b < 2 ^ (Nat.bits b).length := lt_two_pow_bits b
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:195:    (LogProg.lt_two_pow_bits r).trans_le (Nat.pow_le_pow_right (by norm_num) hwidth)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:778:    (lt_two_pow_bits _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:242:the power of its bit length (`Complexity.LogProg.lt_two_pow_bits`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:245:  exact Complexity.LogProg.lt_two_pow_bits _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:630:    have := Complexity.LogProg.lt_two_pow_bits (n + 1)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:32:* `Complexity.LogProg.lt_two_pow_bits` — `n < 2^{|bits n|}`.
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:34:  `Complexity.LogProg.two_pow_bits_le_two_mul_add_one` — `2^{|bits n|} ≤ 2n + 1` for every `n`.
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:37:  `Complexity.LogProg.length_bits_eq_log` — `|bits n| = ⌊log₂ n⌋ + 1` for `n ≠ 0`.
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:38:* `Complexity.LogProg.ofDigits_lt_two_pow` — a word's `Nat.ofDigits` value is below
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:82:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:103:theorem two_pow_bits_le_two_mul_add_one (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:123:theorem length_bits_eq_log {n : ℕ} (hn : n ≠ 0) : (Nat.bits n).length = Nat.log 2 n + 1 := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:135:theorem ofDigits_lt_two_pow (w : List Bool) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:86:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:57:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:66:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:75:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:82:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:89:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:103:theorem two_pow_bits_le_two_mul_add_one (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:109:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:113:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:123:theorem length_bits_eq_log {n : ℕ} (hn : n ≠ 0) : (Nat.bits n).length = Nat.log 2 n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3602:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3635:    have h1 := qy_lt_two_pow_bits F
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:259:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:279:  have := lt_two_pow_bits n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7678:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:125:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:134:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:154:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:158:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3602:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3635:    have h1 := qy_lt_two_pow_bits F
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:259:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:279:  have := lt_two_pow_bits n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7678:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:248:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:125:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:134:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:154:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:158:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1206:private lemma epad_two_pow_bits (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2427:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Constructible.lean:76:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2427:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Constructible.lean:66:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2427:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Constructible.lean:66:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2427:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Constructible.lean:76:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Constructible.lean:76:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Constructible.lean:76:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2427:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:342:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Constructible.lean:66:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:103:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:108:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:112:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3602:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3635:    have h1 := qy_lt_two_pow_bits F
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:249:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:260:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have := lt_two_pow_bits n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7678:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:243:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:249:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:87:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:124:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:132:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:142:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:146:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3253:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3597:  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3630:    have h1 := qy_lt_two_pow_bits F
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:249:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:260:    have := lt_two_pow_bits n; simp only [ell, pow_succ]; omega
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have := lt_two_pow_bits n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434:theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:114:private theorem length_bits_mod_le (x : ℕ) (w : List Bool) (hw : 0 < bitsVal w) :
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3253:private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7673:private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:59:private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:243:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:249:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Constructible.lean:77:private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:87:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:124:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:132:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:142:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:146:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Encoding.lean:291:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+
+REFS origin/complexity/arora-barak-ch3-4
+
+REFS origin/lean/dedup-sg1, origin/pr/215, ccdc033f402781ecb4bb5b097e4018b8d9da1b90
+
+REFS origin/lean/dedup-natbits, origin/pr/222, a02d0531898764d363474fe4d65ccbeff0e7ea5e
+
+REFS origin/lean/epad-padding-fill, origin/pr/228, b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205
+
+REFS refs/deliver/epad-2026-11-06
+
+REFS refs/heads/deliver/fill-eq-query-in
+
+REFS refs/heads/deliver/fill-s13d-g4-cont4-in
+
+REFS refs/heads/deliver/fill-u2s-universal-in
+
+REFS refs/heads/local/eq-cp1-landing
+
+REFS refs/heads/local/eq-cp1-landing-v2
+
+REFS refs/heads/local/eq-cp1-landing-v3
+
+REFS refs/heads/local/f3c2-landing
+
+REFS refs/remotes/origin/deliver/fill-b6-hierarchy-in
+
+REFS refs/remotes/origin/lean/dedup-ro1

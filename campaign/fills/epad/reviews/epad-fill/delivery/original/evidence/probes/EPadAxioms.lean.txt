@@ -1,0 +1,22 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+
+/-! E-PAD axiom log: the target's axioms, then every declaration of
+`SpaceComplexity/Padding.lean` (private ones and auxiliaries included) with its axioms. -/
+
+#print axioms Complexity.mem_SPACE_padLang
+#print axioms Complexity.padLang
+#print axioms Complexity.mem_padLang_iff
+
+open Lean Elab Command in
+elab "#epad_axiom_walk" : command => do
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Padding
+    | logInfo "no module"
+  let mut lines : Array String := #[]
+  for (n, _) in env.constants.toList do
+    if env.getModuleIdxFor? n != some modIdx then continue
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    lines := lines.push s!"{n}\t{(axs.qsort Name.lt).toList}"
+  logInfo (String.intercalate "\n" (lines.qsort (· < ·)).toList)
+
+#epad_axiom_walk

@@ -1,0 +1,1 @@
+Claude overnight integrated MIG-1 fill. Read campaign/fills/mig1/briefs/megafill-mig1.md and the environment addendum first. Lean sources are pinned separately from the later records; preserve the packet outside the proof checkout. The complete historical gate evidence is data. Deliver checkpoint/final zips only to the designated campaign exchange inbox.

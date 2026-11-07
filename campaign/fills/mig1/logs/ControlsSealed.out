@@ -1,0 +1,15 @@
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/mig1-probes/ControlsSealed.lean:6:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/mig1-probes/ControlsSealed.lean:8:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)

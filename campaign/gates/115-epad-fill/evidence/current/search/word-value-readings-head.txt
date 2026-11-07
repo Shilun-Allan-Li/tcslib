@@ -1,0 +1,36 @@
+TCSlib/Complexity/CircuitComplexity/HardFunctions.lean:107:  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (by norm_num) (bitsToNat_digits_lt w)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1801:  have := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:114:  have h1 := (bitsVal_lt_two_pow (pairFstD z)).trans_le
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:116:  have h2 := (bitsVal_lt_two_pow (pairSndD z)).trans_le
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:130:  have hR := bitsVal_lt_two_pow
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:170:    have h1 := (bitsVal_lt_two_pow (pairFstD z)).trans_le
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:172:    have h2 := (bitsVal_lt_two_pow (pairSndD z)).trans_le
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:70:  length_bits_le (bitsVal_lt_two_pow w)
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:452:  have hpK : bitsVal (pairFstD z) < 2 ^ K := (bitsVal_lt_two_pow _).trans_le
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:619:      have h2 := (bitsVal_lt_two_pow e).trans_le (Nat.pow_le_pow_right (by norm_num) h1)
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:345:              · exact Nat.mul_lt_mul_of_lt_of_le (bitsVal_lt_two_pow _)
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:346:                  (bitsVal_lt_two_pow _).le (by positivity)
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:370:              · exact Nat.mul_lt_mul_of_lt_of_le (bitsVal_lt_two_pow _)
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:371:                  (bitsVal_lt_two_pow _).le (by positivity)
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:196:          · exact Nat.mul_lt_mul_of_lt_of_le (bitsVal_lt_two_pow _)
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:197:              (bitsVal_lt_two_pow _).le (by positivity)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7679:  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+TCSlib/Complexity/Randomized/BPLInPWords.lean:124:      exact ((LogProg.bitsVal_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num)
+TCSlib/Complexity/Randomized/Primality.lean:242:        have := LogProg.bitsVal_lt_two_pow x
+TCSlib/Complexity/Randomized/PrimalityMath.lean:419:open Complexity.LogProg (bitsVal bitsVal_lt_two_pow eq_of_bitsVal_eq)
+TCSlib/Complexity/Randomized/PrimalityMath.lean:457:      have := bitsVal_lt_two_pow (List.ofFn r)
+TCSlib/Complexity/Randomized/RandomBits.lean:54:open Complexity.LogProg (bitsVal bitsVal_lt_two_pow)
+TCSlib/Complexity/Randomized/RandomBits.lean:206:  (bitsVal_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _))
+TCSlib/Complexity/Randomized/RandomBits.lean:243:    simpa [hr] using bitsVal_lt_two_pow (List.ofFn r)
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:143:        have h1 := bitsVal_lt_two_pow ((w.drop (W N * (2 * s + 1))).take (wP x.length))
+TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:221:            have h1 := bitsVal_lt_two_pow (pf.drop i)
+TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:170:            have h1 := bitsVal_lt_two_pow (pf.drop i)
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:88:  have h1 : bitsVal (w.drop i) < 2 ^ (w.drop i).length := bitsVal_lt_two_pow _
+TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:364:    have h1 := bitsVal_lt_two_pow ((w.drop (W N * (2 * s + 1))).take (wP x.length))
+TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:393:    have h1 := bitsVal_lt_two_pow ((w'.drop (W N * (2 * s + 1))).take (wP x.length))
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:473:  (bitsVal_lt_two_pow _).trans_le
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:30:* `Complexity.LogProg.bitsVal_lt_two_pow`, `Complexity.LogProg.eq_of_bitsVal_eq` — a word's
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+TCSlib/Complexity/SpaceComplexity/Padding.lean:1230:`2 ^ |bits |y||` by `LogProg.bitsVal_lt_two_pow`). -/
+TCSlib/Complexity/SpaceComplexity/Padding.lean:1391:    have h1 := LogProg.bitsVal_lt_two_pow (w.drop i)

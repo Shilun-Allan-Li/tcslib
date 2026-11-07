@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Push one E-PAD zip (and, for the final, REPORT.md beside it) to the exchange branch.
+# Usage: epad_push.sh <zipname> "<commit message>" [with-report]
+set -eu
+ZIP="$1"; MSG="$2"; WITHREP="${3:-}"
+X=/workspace/tcslib
+D=arora-barak-ch3-4/inbox/fill-epad
+cd $X
+git checkout -q exchange/pass-shelat-ch5-8
+for i in 0 1 2 3 4; do
+  if git pull -q --rebase origin exchange/pass-shelat-ch5-8; then break; fi
+  sleep $((2 ** (i + 1)))
+done
+mkdir -p $D
+cp /workspace/epad-zips/$ZIP $D/$ZIP
+if [ "$WITHREP" = "with-report" ]; then cp /workspace/epad-REPORT.md $D/REPORT.md; git add $D/REPORT.md; fi
+git add $D/$ZIP
+if git status --porcelain | grep -v "^[AM]  $D/"; then echo "UNEXPECTED CHANGES OUTSIDE $D"; exit 1; fi
+git commit -q -m "$MSG"
+for i in 0 1 2 3 4; do
+  if git push -q origin exchange/pass-shelat-ch5-8; then
+    echo pushed; git log --oneline -1; git rev-parse HEAD; exit 0
+  fi
+  sleep $((2 ** (i + 1)))
+  git pull -q --rebase origin exchange/pass-shelat-ch5-8
+done
+echo "push failed"; exit 1

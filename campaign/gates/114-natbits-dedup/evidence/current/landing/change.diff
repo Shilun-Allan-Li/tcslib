@@ -1,0 +1,879 @@
+diff --git a/TCSlib/Complexity/CircuitComplexity/Meyer.lean b/TCSlib/Complexity/CircuitComplexity/Meyer.lean
+index a3df6860..f176feda 100644
+--- a/TCSlib/Complexity/CircuitComplexity/Meyer.lean
++++ b/TCSlib/Complexity/CircuitComplexity/Meyer.lean
+@@ -185,8 +185,7 @@ theorem lenAll_inst (M : FinTM Bool) (Cw cw : ℕ) (x U : List Bool) {t a j : 
+     evalAtom Cw cw M .lenAll (vin x U (enumWord (wd Cw cw x.length) t) (enumWord (wd Cw cw x.length) a)
+       (List.replicate j true)
+       (List.replicate (wd Cw cw x.length - (Nat.bits j).length) false)) = true := by
+-  have hb : (Nat.bits j).length ≤ wd Cw cw x.length := by
+-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hjW
++  have hb : (Nat.bits j).length ≤ wd Cw cw x.length := Complexity.LogProg.length_bits_le hjW
+   simp only [evalAtom, vt_vin, va_vin, vj_vin, vx_vin, bjw, vp_vin, length_enumWord,
+     List.length_replicate, List.length_append, decide_eq_true_eq]
+   refine ⟨trivial, trivial, hj, by omega⟩
+diff --git a/TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean b/TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean
+index bf53bad9..f27d92e5 100644
+--- a/TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean
++++ b/TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean
+@@ -433,8 +433,7 @@ theorem ctrVal_append_zeros (l : List Bool) (k : ℕ) :
+ width-`w` word of `j`. -/
+ theorem bits_pad (w j : ℕ) (hj : j < 2 ^ w) :
+     Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false = enumWord w j := by
+-  have hlen : (Nat.bits j).length ≤ w := by
+-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
++  have hlen : (Nat.bits j).length ≤ w := Complexity.LogProg.length_bits_le hj
+   have h := enumWord_ctrVal (Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false)
+   rw [ctrVal_append_zeros, ctrVal_bits] at h
+   simp only [List.length_append, List.length_replicate] at h
+diff --git a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+index e40e5333..0ebadde8 100644
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -1798,9 +1798,8 @@ private theorem xr_val_cons (b : Bool) (w : List Bool) :
+   simp [xr_val, Nat.ofDigits_cons]
+ 
+ private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
+-  have := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+-    (by intro x hx; obtain ⟨b, -, rfl⟩ := List.mem_map.mp hx; cases b <;> simp)
+-  simpa [xr_val] using this
++  unfold xr_val
++  exact Complexity.LogProg.ofDigits_lt_two_pow w
+ 
+ private theorem xr_val_inj :
+     ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'
+diff --git a/TCSlib/Complexity/CookLevin/Hardness.lean b/TCSlib/Complexity/CookLevin/Hardness.lean
+index 3a2ce42c..0998d738 100644
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -1124,25 +1124,6 @@ private lemma clCountTape_eq (w : List Bool) : clCountTape w = FinTM.bufferTape
+   funext z
+   by_cases hz : z < 0 <;> simp [clCountTape, FinTM.bufferTape, hz, show 0 ≤ z ↔ ¬z < 0 by omega]
+ 
+-/-- A counter below `2^w` occupies at most `w` bits. Together with the
+-counter runtime bound, this charges one administrative increment by two
+-binary scans plus two transitions, with no unary-position representation. -/
+-private lemma clCount_width (n w : ℕ) (hn : n < 2 ^ w) : n.bits.length ≤ w := by
+-  induction n using Nat.binaryRec' generalizing w with
+-  | zero => simp
+-  | bit b n hb ih =>
+-    cases w with
+-    | zero =>
+-      have hz : Nat.bit b n = 0 := by simpa using hn
+-      cases b <;> simp [Nat.bit_val] at hz
+-      have h := hb (by omega)
+-      contradiction
+-    | succ w =>
+-      rw [Nat.bits_append_bit n b hb, List.length_cons]
+-      apply Nat.succ_le_succ
+-      apply ih
+-      cases b <;> simp [Nat.bit_val, Nat.pow_succ] at hn <;> omega
+-
+ /-- One simultaneous counter action. A stopped component is stationary.
+ The product construction is locally adapted from the audited
+ `emitterBank*` construction in `Build/Primitives.lean`; the component here
+@@ -2253,7 +2234,7 @@ private lemma clRowPrefix_length {l : ℕ} (w : Fin l → List Bool) (W : ℕ)
+ width theorem. This is a coarse bound for native scans, not an alternative
+ representation: all stored movement counts remain canonical binary. -/
+ private lemma clElapsed_width (n t : ℕ) (hn : n ≤ t) : n.bits.length ≤ t :=
+-  clCount_width n t (lt_of_le_of_lt hn (Nat.lt_two_pow_self (n := t)))
++  (Turing.length_bits_le_self n).trans hn
+ 
+ /-- A deterministic valid virtual-input tag, used only in the pure record
+ specification. At an interior cell either tag gives the same displacement. -/
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 5c25b20d..442078d6 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -415,39 +415,14 @@ private theorem qy_rung_val (m : ℕ) :
+ least `D (n + 1)`. -/
+ private theorem qy_ones_ge (n D : ℕ) :
+     D * (n + 1) ≤ 2 ^ ((Nat.bits n).length + (Nat.bits D).length) - 1 := by
+-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len, pow_add]
+-  have hn := Nat.lt_size_self n
+-  have hD := Nat.lt_size_self D
+-  have hprod : (n + 1) * (D + 1) ≤ 2 ^ Nat.size n * 2 ^ Nat.size D :=
++  rw [pow_add]
++  have hn := Complexity.LogProg.lt_two_pow_bits n
++  have hD := Complexity.LogProg.lt_two_pow_bits D
++  have hprod : (n + 1) * (D + 1) ≤ 2 ^ (Nat.bits n).length * 2 ^ (Nat.bits D).length :=
+     Nat.mul_le_mul hn hD
+   have : D * (n + 1) + 1 ≤ (n + 1) * (D + 1) := by nlinarith
+   omega
+ 
+-/-- **The counter is not too large**: `2 ^ |bits n| ≤ 2 n + 1`. -/
+-private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+-  rcases Nat.eq_zero_or_pos n with rfl | hn
+-  · simp
+-  · rw [Nat.size_eq_bits_len]
+-    have hsz : Nat.size n = Nat.log 2 n + 1 := by
+-      apply le_antisymm
+-      · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+-      · by_contra h
+-        have hlt : n < 2 ^ Nat.log 2 n :=
+-          Nat.size_le.mp (by omega)
+-        exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+-    rw [hsz, pow_succ]
+-    have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
+-    omega
+-
+-/-- **`⌊log₂ n⌋` from `bits n`**: for `n ≥ 1`, `Nat.log 2 n + 1 = |bits n|`. -/
+-private theorem qy_log_bits {n : ℕ} (hn : 1 ≤ n) : Nat.log 2 n + 1 = (Nat.bits n).length := by
+-  rw [Nat.size_eq_bits_len]
+-  apply le_antisymm
+-  · by_contra h
+-    have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
+-    exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+-  · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+-
+ /-- **The install call's bound under `f a ≤ n`** (the timeout certificate's arithmetic): with
+ `a ≤ n` and `f a ≤ n`, the call's time bound `c' (c (f a + 1) + a + |bits (f a)| + 1)` is at most
+ `c' (c + 2) (n + 1)`. -/
+@@ -3248,17 +3223,6 @@ private theorem qy_setup_short {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bo
+ 
+ /-! ### The locator's round: arithmetic -/
+ 
+-/-- The length of `bits` is monotone. -/
+-private theorem qy_bits_len_mono {a b : ℕ} (h : a ≤ b) :
+-    (Nat.bits a).length ≤ (Nat.bits b).length := by
+-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]
+-  exact Nat.size_le_size h
+-
+-/-- Every number is below two to the length of its bits. -/
+-private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+-  rw [Nat.size_eq_bits_len]
+-  exact Nat.lt_size_self n
+-
+ /-- The successor of a pair below the diagonal's next corner: `(j, k) ↦ (j + 1, k)` when
+ `j + 1 < k`. -/
+ private theorem qy_unpair_succ_lt {h j k : ℕ} (H : Nat.unpair h = (j, k)) (hjk : j + 1 < k) :
+@@ -3599,7 +3563,7 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
+   set TA := qyTA κ n a j k F w' with hTA
+   unfold qyLoc
+   have hX : F + a + 1 ≤ X4 := Nat.le_self_pow (by norm_num) _
+-  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
++  have hnLb : n < 2 ^ Lb := Complexity.LogProg.lt_two_pow_bits n
+   have hesc : ∀ T : Fin κ.K → ℤ → Option Bool, (∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 →
+       t ≠ κ.tp 6 → t ≠ κ.tp 7 → t ≠ κ.tp 8 → T t = T₀ t) → QyEscT κ n a j k T P₀ :=
+     fun T hT t ht => by
+@@ -3627,15 +3591,16 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
+       simp [hTA, qyTA, hT₀, Function.update_of_ne h7, Function.update_of_ne h8]⟩
+     have hFn : n < F := by
+       by_contra hc
+-      exact absurd (compare_gt_iff_gt.mp hgt) (not_lt.mpr (qy_bits_len_mono (not_lt.mp hc)))
++      exact absurd (compare_gt_iff_gt.mp hgt)
++        (not_lt.mpr (Complexity.LogProg.length_bits_mono (not_lt.mp hc)))
+     have := Nat.lt_two_pow_self (n := X4)
+     omega
+   have hFL : (Nat.bits F).length ≤ Lb := not_lt.mp fun h => hgt (compare_gt_iff_gt.mpr h)
+   have hF2 : F ≤ 2 * n := by
+-    have h1 := qy_lt_two_pow_bits F
++    have h1 := Complexity.LogProg.lt_two_pow_bits F
+     have h2 : 2 ^ (Nat.bits F).length ≤ 2 ^ (Nat.bits n).length :=
+       Nat.pow_le_pow_right (by norm_num) hFL
+-    have h3 := qy_two_pow_bits_le n
++    have h3 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+     omega
+   have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r3 .scan
+     (.done (compare (Nat.bits F).length Lb)) ⟨.r4, CounterLoopState.dec .run⟩ 1 1 TA TA P₀ P₀ []
+@@ -3777,7 +3742,7 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
+       rintro h0
+       rw [h0, Nat.zero_bits, List.length_nil] at hLb
+       omega
+-    have h1 := qy_log_bits (Nat.pos_of_ne_zero hn0)
++    have h1 := (Complexity.LogProg.length_bits_eq_log hn0).symm
+     have h2 := Nat.pow_log_le_self 2 hn0
+     have h3 : 2 ^ X4 ≤ 2 ^ Nat.log 2 n := Nat.pow_le_pow_right (by norm_num) (by omega)
+     omega
+@@ -4379,13 +4344,14 @@ private theorem qy_rndP_le {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' j k : 
+ `qyDk (n + 1)` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`.
+ 
+ **Proof sketch.** `6 a ≤ 6 n`; the clock's budget `2 ^ m = 2 ^ |bits D₀| · 2 ^ |bits n| ≤
+-2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+-`(|bits n| + 1) ^ 5` times their constants. Expand both products and add. -/
++2 ^ |bits D₀| (2 n + 1)` (`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`); `|bits n| ≤ n`;
++the two calls' terms are at most `(|bits n| + 1) ^ 5` times their constants. Expand both products
++and add. -/
+ private theorem qy_rndS_le {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) (ha : a ≤ n) :
+     qyRndS κ n a ≤ qyDk κ * (n + 1) + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
+   unfold qyRndS qyDk qyCk QyKit.m
+   have hLn := length_bits_le_self n
+-  have h2L := qy_two_pow_bits_le n
++  have h2L := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+   set L := (Nat.bits n).length with hL
+   set D := (Nat.bits (κ.cfA * (κ.cfc + 2))).length with hD
+   set P := (L + 1) ^ 5 with hP
+@@ -4430,7 +4396,7 @@ rung `ladder f (i + 1) + 1` (`qy_ladder_succ_eq`); their times are chosen first,
+ most `11 ∑ ℓᵢ₊₁ ≤ 22 ℓ_s` (`qy_ledger`) plus `s · qyCk (|bits n| + 1)⁵` (`qy_rndP_le`, with
+ `j + k ≤ i < s < log₂ n`, `Nat.unpair_add_le`, `qy_stage_lt_log`); the stopping round at most
+ `qyDk (n + 1) + qyCk (|bits n| + 1)⁵` (`qy_rndS_le`); and `(|bits n| + 1)⁶ ≤ 6⁶ · 2 ^ (|bits n| + 1)
+-≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
++≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn : 3 ≤ x.length) :
+     ∃ t ≤ qyLoopA κ * (x.length + 1), ∃ c' : Cfg κ.K Bool (Σ i, QyLPh κ i) x,
+       Segment (qyLoc κ) (qyLocE κ) (fun _ => True) (qyAt κ x 0) c' t ∧
+@@ -4450,7 +4416,7 @@ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn
+             P (κ.tp 4) = 0)) := by
+   have hspec := stage_spec f hn
+   have hlog := qy_stage_lt_log f hn
+-  have hLb := qy_log_bits (n := x.length) (by omega)
++  have hLb := (Complexity.LogProg.length_bits_eq_log (n := x.length) (by omega)).symm
+   have hanc : some (qyAnc κ) ∉ qyLocE κ := fun ⟨p, hp, hpe⟩ => by
+     rw [← Option.some.inj hp] at hpe
+     exact Bool.false_ne_true hpe
+@@ -4503,7 +4469,8 @@ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn
+           omega
+   set L := (Nat.bits x.length).length with hL
+   have hP6 := qy_pow6_le (L + 1)
+-  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
++  have h2L : 2 ^ L ≤ 2 * x.length + 1 :=
++    Complexity.LogProg.two_pow_bits_le_two_mul_add_one x.length
+   have hsP : stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ qyCk κ * (L + 1) ^ 6 := by
+     calc stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ (L + 1) * (qyCk κ * (L + 1) ^ 5) :=
+           Nat.mul_le_mul_right _ (by omega)
+@@ -7674,20 +7641,12 @@ private theorem dz_top_run {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF
+ 
+ /-! ### The run's three cases -/
+ 
+-/-- A word's binary value is below `2 ^ |w|`. -/
+-private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+-  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+-    (by
+-      intro d hd
+-      obtain ⟨a, -, rfl⟩ := List.mem_map.mp hd
+-      cases a <;> decide)
+-  rwa [List.length_map] at h
+-
+-/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
++/-- A budget word as wide as `bits G` is worth at most `2G`
++(`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+ private theorem dz_budget_le (G : ℕ) (w : List Bool) (hw : w.length = (Nat.bits G).length) :
+     Nat.ofDigits 2 (w.map Bool.toNat) ≤ 2 * G := by
+-  have h1 := dz_word_lt w
+-  have h2 := qy_two_pow_bits_le G
++  have h1 := Complexity.LogProg.ofDigits_lt_two_pow w
++  have h2 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one G
+   rw [hw] at h1
+   omega
+ 
+@@ -8263,9 +8222,10 @@ stage's code `α`: if `α` accepts `1^{n + 1}` within `t'` with `C (t' + 1) ≤
+ 
+ **Proof sketch.** Take the accepting word `v₀` (`Turing.FinNDTM.acceptsWithin_iff`), the stream
+ `v₀` padded with `false` to `g n` cells, any separator, and the budget word `bits t'` padded with
+-zeros to the width `|bits (g n)|` (`qy_bits_len_mono`), worth `t'` (`dz_padded_value`). The stream's
+-first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause gives the acceptance, and its segment
+-gives `D`'s acceptance condition (`dz_seg_read`, `dz_accepts_iff`). -/
++zeros to the width `|bits (g n)|` (`Complexity.LogProg.length_bits_mono`), worth `t'`
++(`dz_padded_value`). The stream's first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause
++gives the acceptance, and its segment gives `D`'s acceptance condition (`dz_seg_read`,
++`dz_accepts_iff`). -/
+ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (hmid : n ≠ ladder f (stage f n + 1)) (C : ℕ)
+     (hC : ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
+@@ -8299,7 +8259,7 @@ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
+     rw [hs₁, hgz, List.length_append, List.length_replicate]
+     omega
+   have hwl : w.length = (Nat.bits (g (List.replicate n true).length)).length := by
+-    have := qy_bits_len_mono ht'
++    have := Complexity.LogProg.length_bits_mono ht'
+     rw [hw, hgz, List.length_append, List.length_replicate]
+     omega
+   have hb : Nat.ofDigits 2 (w.map Bool.toNat) = t' := dz_padded_value _ _
+diff --git a/TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean b/TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean
+index 5de28255..4cea80dc 100644
+--- a/TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean
++++ b/TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean
+@@ -55,14 +55,6 @@ def quasiPolyBudget (n : ℕ) : ℕ := 2 ^ (Nat.log 2 n ^ 2 + 1)
+ 
+ /-! ### Arithmetic of the budget -/
+ 
+-/-- `n` has `log n + 1` binary digits (none for `n = 0`). -/
+-private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
+-  rw [Nat.size_eq_bits_len]
+-  split_ifs with hn
+-  · subst hn; simp
+-  · refine le_antisymm (Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)) ?_
+-    exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
+-
+ /-- `n ≤ 2^{(log n)² + 1}`. -/
+ theorem le_quasiPolyBudget (n : ℕ) : n ≤ quasiPolyBudget n := by
+   have h1 := Nat.lt_pow_succ_log_self (b := 2) (by norm_num) n
+@@ -208,12 +200,12 @@ private def budgetSeed (x : List Bool) : List Bool :=
+ private theorem budgetSeed_eq (x : List Bool) : budgetSeed x =
+     List.replicate (Nat.log 2 x.length - 1) true ++ false ::
+       List.replicate (Nat.log 2 x.length) true := by
+-  have h := length_bits_eq x.length
+   unfold budgetSeed
+-  rw [allTrue_eq, allTrue_eq, List.length_drop, List.length_drop, h]
+-  split_ifs with h0
++  rw [allTrue_eq, allTrue_eq, List.length_drop, List.length_drop]
++  by_cases h0 : x.length = 0
+   · simp [h0]
+-  · congr 2
++  · rw [Complexity.LogProg.length_bits_eq_log h0]
++    congr 2
+ 
+ /-- The budget word is the seed's emission loop followed by `01`. -/
+ private theorem bits_quasiPolyBudget (x : List Bool) :
+diff --git a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+index 7cc29979..8a9da5fa 100644
+--- a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
++++ b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+@@ -238,16 +238,6 @@ theorem two_mul_pow_le {K n d : ℕ} (hK : 32 * (n + 1) ^ d ≤ K) :
+ 
+ /-! ### Sizes -/
+ 
+-/-- `2^{|bits n|} ≤ 2n + 1`. -/
+-theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+-  rcases Nat.eq_zero_or_pos n with rfl | hn
+-  · simp
+-  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+-
+-/-- `n < 2^{|bits n|}`. -/
+-theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+-  rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
+-
+ /-- `logSpace n ≤ ℓ`. -/
+ theorem logSpace_le_ell (n : ℕ) : logSpace n ≤ ell n := by
+   rw [ell, Nat.size_eq_bits_len]
+@@ -269,7 +259,7 @@ theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n
+ /-- `K ≤ 4^F (n + 1)^F`. -/
+ theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
+   have h : 2 ^ ell n ≤ 4 * (n + 1) := by
+-    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
++    have := two_pow_bits_le_two_mul_add_one n; simp only [ell, pow_succ]; omega
+   calc bigK F n = (2 ^ ell n) ^ F := by rw [bigK, ← pow_mul, Nat.mul_comm]
+     _ ≤ (4 * (n + 1)) ^ F := Nat.pow_le_pow_left h F
+     _ = 4 ^ F * (n + 1) ^ F := mul_pow _ _ _
+diff --git a/TCSlib/Complexity/Randomized/UniformSample.lean b/TCSlib/Complexity/Randomized/UniformSample.lean
+index 6541950d..9dc08dd8 100644
+--- a/TCSlib/Complexity/Randomized/UniformSample.lean
++++ b/TCSlib/Complexity/Randomized/UniformSample.lean
+@@ -93,11 +93,10 @@ theorem lt_of_uniformSample_eq_some {N k : ℕ} {r : List Bool} {i : ℕ}
+ theorem le_two_pow_size_pred {N : ℕ} (hN : 1 ≤ N) :
+     N ≤ 2 ^ Nat.size (N - 1) ∧ 2 ^ Nat.size (N - 1) < 2 * N := by
+   refine ⟨by have := Nat.lt_size_self (N - 1); omega, ?_⟩
+-  rcases Nat.eq_zero_or_pos (Nat.size (N - 1)) with h | h
+-  · rw [h]; omega
+-  · have h2 : 2 ^ (Nat.size (N - 1) - 1) ≤ N - 1 := Nat.lt_size.mp (by omega)
+-    have : 2 ^ Nat.size (N - 1) = 2 * 2 ^ (Nat.size (N - 1) - 1) := by
+-      rw [← pow_succ']; congr 1; omega
++  rw [← Nat.size_eq_bits_len]
++  rcases Nat.eq_or_lt_of_le hN with rfl | hN2
++  · simp
++  · have := Complexity.LogProg.two_pow_bits_le (N - 1) (by omega)
+     omega
+ 
+ /-! ### The output distribution -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+index 9c5c46b8..5de22c6d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+@@ -459,14 +459,6 @@ theorem length_cfgWord_le (s : ℕ) (C : Cfg N.k Bool N.State x) :
+   rw [e1, e2]
+   omega
+ 
+-/-- A word of `L` letters has value below `2 ^ L`. -/
+-lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+-  induction w with
+-  | nil => simp [bitsVal]
+-  | cons b w ih =>
+-    simp only [bitsVal, List.length_cons, pow_succ]
+-    cases b <;> simp <;> omega
+-
+ /-- **The code is below `2 ^ (codeK N · (s + logSpace |x| + 1))`.** -/
+ theorem cfgCode_lt (s : ℕ) (C : Cfg N.k Bool N.State x) :
+     cfgCode s C < 2 ^ (codeK N * (s + logSpace x.length + 1)) :=
+diff --git a/TCSlib/Complexity/SpaceComplexity/Constructible.lean b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+index b629cc8f..b830f01a 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Constructible.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+@@ -75,12 +75,8 @@ theorem spaceConstructible_iff (S : ℕ → ℕ) :
+ 
+ /-- Positive binary words have exactly the normalized logarithmic width. -/
+ private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+-    n.bits.length = logSpace n := by
+-  have lower := Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn)
+-  have upper := LogProg.length_bits_le_log n
+-  rw [← Nat.size_eq_bits_len] at lower
+-  unfold logSpace
+-  omega
++    n.bits.length = logSpace n :=
++  (LogProg.length_bits_eq_log hn).trans (logSpace_eq n).symm
+ 
+ /-- The counter word with its first cell overwritten by `true`. -/
+ private def b3a_word (n : ℕ) : List Bool := true :: n.bits.tail
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+index 9111e206..ebe2da70 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+@@ -251,8 +251,8 @@ private lemma mult_product_length (a b : ℕ) :
+     (Nat.bits (a * b)).length ≤ (Nat.bits a).length + (Nat.bits b).length := by
+   apply length_bits_le
+   rw [pow_add]
+-  have ha : a < 2 ^ (Nat.bits a).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self a
+-  have hb : b < 2 ^ (Nat.bits b).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self b
++  have ha : a < 2 ^ (Nat.bits a).length := lt_two_pow_bits a
++  have hb : b < 2 ^ (Nat.bits b).length := lt_two_pow_bits b
+   exact lt_of_le_of_lt (Nat.mul_le_mul_right b ha.le)
+     (Nat.mul_lt_mul_of_pos_left hb (Nat.pow_pos (by omega)))
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
+index 49beea19..5d7b664b 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
+@@ -187,22 +187,17 @@ private lemma dropIdx_suffix_address (w b b' tail : List Bool) (j : ℕ) (hj : j
+ /-- Passing a binary-width check bounds the decoded value by twice the cap, including a
+ zero cap. This also bounds every partial value in a most-significant-bit-first decoder.
+ 
+-**Proof sketch.** The value is below `2 ^ size n`. For positive `n`, its top binary place
+-is at most `n`, hence `2 ^ size n ≤ 2*n`; at zero both canonical representations are empty. -/
++**Proof sketch.** The value is below `2 ^ |bits r| ≤ 2 ^ |bits n|`. For positive `n`,
++`2 ^ |bits n| ≤ 2*n`; at zero both canonical representations are empty. -/
+ private lemma query_index_bound (r n : ℕ)
+     (hwidth : (Nat.bits r).length ≤ (Nat.bits n).length) : r ≤ 2 * n := by
+-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len] at hwidth
+-  have hr := Nat.size_le.mp hwidth
++  have hr : r < 2 ^ (Nat.bits n).length :=
++    (LogProg.lt_two_pow_bits r).trans_le (Nat.pow_le_pow_right (by norm_num) hwidth)
+   by_cases hn : n = 0
+   · subst n
+-    simp only [Nat.size_zero, pow_zero] at hr
++    simp only [Nat.zero_bits, List.length_nil, pow_zero] at hr
+     omega
+-  · have hs : 0 < n.size := Nat.size_pos.mpr (Nat.pos_of_ne_zero hn)
+-    have htop : 2 ^ (n.size - 1) ≤ n := Nat.lt_size.mp (by omega)
+-    have hpow : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
+-      conv_lhs => rw [show n.size = (n.size - 1) + 1 by omega, pow_succ]
+-      omega
+-    rw [hpow] at hr
++  · have := LogProg.two_pow_bits_le n (by omega)
+     omega
+ 
+ /-- Discarding low-order digits cannot increase a binary word's value. -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+index 5255444d..610c35ae 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+@@ -3,7 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Hydroxyi
+ -/
+-import Mathlib.Data.Nat.Size
++import TCSlib.Complexity.TuringMachine.NatBits
+ import Mathlib.Data.Nat.Log
+ import Mathlib.Tactic.Ring
+ 
+@@ -17,7 +17,9 @@ set_option autoImplicit false
+ Register-tape programs keep counters in little-endian binary, as the words `Nat.bits n`
+ (least significant bit first, no redundant zeros). This file collects the word-level facts the
+ counter machines need: the value of a word, injectivity of `Nat.bits`, the carry rule of
+-the increment (`Complexity.LogProg.bits_succ`), and length bounds.
++the increment (`Complexity.LogProg.bits_succ`). The length bounds on `Nat.bits` (`length_bits_le`,
++`length_bits_mono`, `two_pow_bits_le`, …) live in `TCSlib.Complexity.TuringMachine.NatBits`, below
++both the machine and the register-program layers; this file imports it.
+ 
+ ## Main definitions
+ 
+@@ -30,10 +32,6 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
+ * `Complexity.LogProg.bitsVal_lt_two_pow`, `Complexity.LogProg.eq_of_bitsVal_eq` — a word's
+   value is below `2^{length}` and determines the word among words of its length.
+ * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
+-* `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
+-  `Complexity.LogProg.length_bits_succ_le` — `|Nat.bits (m + 1)| ≤ e + 2` when `m ≤ 2^e + 1`;
+-  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`;
+-  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+ 
+ ## References
+ 
+@@ -121,43 +119,6 @@ lemma bits_succ (n : ℕ) : Nat.bits (n + 1) = incW (Nat.bits n) := by
+           bits_two_mul_add (m + 1) false (by omega), ih m (by omega)]
+         rfl
+ 
+-/-- The binary word of `n` has at most `m` letters when `n < 2^m`. -/
+-lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+-  rw [Nat.size_eq_bits_len]
+-  exact Nat.size_le.mpr h
+-
+-/-- A number `m ≤ 2 ^ e + 1` has at most `e + 2` binary digits after one increment: the width
+-bound for a register value `m` with `m ≤ 2 ^ e`.
+-
+-**Proof sketch.** `m + 1 ≤ 2 ^ e + 2 < 4 · 2 ^ e = 2 ^ (e + 2)` since `2 ^ e ≥ 1`, then
+-`length_bits_le`. -/
+-lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+-  apply length_bits_le
+-  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
+-    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
+-  omega
+-
+-/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
+-
+-**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
+-`2 ^ |bits L| = 2 · 2 ^ (Nat.size L - 1) ≤ 2L`. -/
+-lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+-  rw [Nat.size_eq_bits_len]
+-  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
+-  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
+-    rw [← Nat.size_le]; omega
+-  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
+-    rw [← pow_succ']; congr 1; omega
+-  omega
+-
+-/-- Binary words of larger numbers are not shorter. -/
+-lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
+-
+-/-- The binary word of `n` has at most `⌊log₂ n⌋ + 1` letters. -/
+-lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+-  length_bits_le (Nat.lt_pow_succ_log_self (by norm_num) n)
+-
+ /-- Every letter of `Nat.bits n` is followed by more letters or is a `1`: the word has no
+ trailing `0`. (The last letter is `true`.) -/
+ lemma bits_getLast (n : ℕ) (h : Nat.bits n ≠ []) : (Nat.bits n).getLast h = true := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean b/TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean
+index 26102e8a..ef8863ad 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean
+@@ -126,7 +126,7 @@ lemma halfL_run (c : Cfg m Bool Λ x) (w : List Bool) :
+         rw [hlen]; push_cast; ring
+       have hrd : FinTM.bufferTape (w.take k ++ w[k] :: w.drop (k + 2))
+           (((k + 1 : ℕ) : ℤ) - 1) = some w[k] := by
+-        rw [hpos]; simp
++        rw [hpos, FinTM.bufferTape_nat, List.getElem?_append_right le_rfl, Nat.sub_self]; rfl
+       rw [hrd]
+       simp only [halfLAct]
+       rw [apply_regAct]
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
+index 558d6174..f31a7a8b 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean
+@@ -774,7 +774,8 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+   have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
+     le_mul_of_one_le_of_le (by omega : 1 ≤ codeK N + 1) (by omega)
+   have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
+-  have hn : x.length < 2 ^ dpW N sp x := Nat.size_le.mp (by rw [← Nat.size_eq_bits_len]; omega)
++  have hn : x.length < 2 ^ dpW N sp x :=
++    (lt_two_pow_bits _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
+   set B := 2 ^ (dpW N sp x * dpW N sp x) with hB
+   have hnB : x.length ≤ B := by omega
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 42807f2d..e817d6f2 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -74,6 +74,7 @@ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger
+ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
++import TCSlib.Complexity.TuringMachine.NatBits
+ import TCSlib.Complexity.TuringMachine.Encoding
+ import TCSlib.Complexity.TuringMachine.CodeParser
+ import TCSlib.Complexity.TuringMachine.CodeFormat
+@@ -270,6 +271,8 @@ for the local modifications.
+ * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
+ * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
+   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
++* `NatBits` — the elementary bounds on the binary length `|Nat.bits n|` (below `Encoding` and
++  `SpaceComplexity/Machines/Bin`; no TCSlib import).
+ * `Encoding` — machines as strings [AB09, §1.4]: the code normal form `CodeTM`, the
+   fixed canonical serialization, the representation-scheme laws `MachineCode`, and
+   the effective scheme `EffectiveMachineCode` that the universal machine requires.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index c2802df7..d900b690 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -4121,8 +4121,9 @@ private lemma f2_counter_count_space (x : List Bool) : ∀ i (hi : i ≤ x.lengt
+         have hp := f2_head_steps f2_counterTM.tm
+           (f2_counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits []) (u - t) j
+         have hcarry := (f2_counterInc_length i.bits).2
+-        rw [f2_counterInc_bits, Nat.size_eq_bits_len] at hcarry
+-        have hwidth := Nat.size_le_size hi
++        rw [f2_counterInc_bits] at hcarry
++        have hwidth :=
++          (Complexity.LogProg.length_bits_mono hi).trans_eq (Nat.size_eq_bits_len x.length)
+         change 0 - ((u - t : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((u - t : ℕ) : ℤ) at hp
+         constructor <;> omega
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+index c840bc54..5d1f674b 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -238,11 +238,11 @@ theorem cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) (c : C
+ /-- Every native input position is strictly below the power of two specified by its width:
+ `n + 2 ≤ 2 ^ posWidth n`. (Public since the specification API, user 2026-10-16.)
+ 
+-**Proof sketch.** `posWidth n` is the bit length of `n + 1`, which is its `Nat.size`. -/
++**Proof sketch.** `posWidth n` is the bit length of `n + 1`, and every number is below two to
++the power of its bit length (`Complexity.LogProg.lt_two_pow_bits`). -/
+ theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
+   unfold posWidth
+-  rw [Nat.size_eq_bits_len]
+-  exact Nat.lt_size_self _
++  exact Complexity.LogProg.lt_two_pow_bits _
+ 
+ /-- Decoding the fixed-width digits recovers any value below the width's power of two.
+ 
+@@ -625,15 +625,13 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
+ /-- Width one is exactly the empty-input case, where no native movement is needed. -/
+ private theorem recordStep_width_one (n : ℕ) : posWidth n = 1 ↔ n = 0 := by
+   unfold posWidth
+-  rw [Nat.size_eq_bits_len]
+   constructor
+   · intro h
+-    have : ¬ 2 ≤ n + 1 := fun hn => by
+-      have : 1 < Nat.size (n + 1) := Nat.lt_size.mpr (by simpa using hn)
+-      omega
++    have := Complexity.LogProg.lt_two_pow_bits (n + 1)
++    rw [h, pow_one] at this
+     omega
+   · rintro rfl
+-    exact Nat.size_one
++    exact congrArg List.length Nat.one_bits
+ 
+ /-- Complementing a fixed-width counter exchanges its value with the distance from all ones.
+ **Proof sketch.** The two low bits sum to one; the tail values have weight two. -/
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputLength.lean b/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+index a0e83283..af10cbf1 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+@@ -414,10 +414,10 @@ private theorem inputLength_count {x : List Bool}
+     have accounting := inputLength_charge n p v old next
+     let ip : Fin (x.length + 2) := ⟨n + 1, by omega⟩
+     let c := inputLengthCfg d n.bits n.bits.length .count ip 0
+-    have oldwidth : n.bits.length ≤ x.length.bits.length := by
+-      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (show n ≤ x.length by omega)
+-    have newwidth : n.bits.length ≤ (n + 1).bits.length := by
+-      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ n)
++    have oldwidth : n.bits.length ≤ x.length.bits.length :=
++      Complexity.LogProg.length_bits_mono (show n ≤ x.length by omega)
++    have newwidth : n.bits.length ≤ (n + 1).bits.length :=
++      Complexity.LogProg.length_bits_mono (Nat.le_succ n)
+     have field (a : ℤ) (ha : -1 ≤ a) (hb : a ≤ (n.bits.length : ℤ)) :
+         c.workTapes 0 (c.workTapePos 0 + a) = FinTM.bufferTape n.bits a := by
+       simpa only [c, inputLengthCfg, add_zero] using
+diff --git a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+index 6338fe14..7d447bf8 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+@@ -2758,8 +2758,8 @@ private theorem rt_exists_boundTM :
+       · simp [FinTM.bufferTape, show 0 ≤ p by omega,
+           List.getElem?_eq_none (show x.length.bits.length ≤ p.toNat by omega)]
+   obtain ⟨u, ub, ucut, uheads, urun⟩ := rt_succ_run (0 : Fin (K + 1)) x.length.bits c rfl framed
+-  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length := by
+-    simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
++  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length :=
++    Complexity.LogProg.length_bits_mono (Nat.le_succ x.length)
+   have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+   let B : ℤ := ((C + 20) * ((x.length + 1).bits.length + 1) : ℕ)
+   have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index 11ed81df..c11a2803 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
+ import Mathlib.Data.Fintype.EquivFin
+ import Mathlib.Data.List.FinRange
+ import Mathlib.Data.Nat.Bits
+-import Mathlib.Data.Nat.Size
++import TCSlib.Complexity.TuringMachine.NatBits
+ import TCSlib.Complexity.TuringMachine.StateRenaming
+ import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+ 
+@@ -72,7 +72,6 @@ self-delimiting pairing used by the universal machine.
+ * `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
+   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
+   the pairing, shared by the machine-side developments.
+-* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+ * `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
+   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
+ * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
+@@ -286,11 +285,6 @@ lemma pairEncode_replicate_inj {n n' : ℕ} {u u' : List Bool}
+   obtain ⟨h1, h2⟩ := this
+   exact ⟨by simpa using congrArg List.length h1, h2⟩
+ 
+-/-- The binary expansion of `m` has at most `m` bits. -/
+-lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+-  rw [Nat.size_eq_bits_len]
+-  exact Nat.size_le.mpr Nat.lt_two_pow_self
+-
+ /-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
+ prepends `j` low zero bits to its little-endian binary expansion,
+ `(2^j·m).bits = 0^j ++ m.bits`. (Positivity is needed: `Nat.bits 0 = []`.)
+diff --git a/TCSlib/Complexity/TuringMachine/NatBits.lean b/TCSlib/Complexity/TuringMachine/NatBits.lean
+new file mode 100644
+index 00000000..0bfe1d6c
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/NatBits.lean
+@@ -0,0 +1,144 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: Seyoon Ragavan, Hydroxyi
++-/
++import Mathlib.Data.Nat.Size
++import Mathlib.Data.Nat.Log
++import Mathlib.Data.Nat.Digits.Defs
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The binary length of a natural number
++
++Machines and register programs store numbers as little-endian binary words `Nat.bits n` (least
++significant bit first, no redundant zeros). This file is the one home of the elementary bounds on
++the length `|Nat.bits n|` of such a word, below both the machine layer
++(`TCSlib.Complexity.TuringMachine.Encoding` imports it) and the register-program layer
++(`TCSlib.Complexity.SpaceComplexity.Machines.Bin` imports it). It imports no TCSlib module.
++
++## Main definitions
++
++None — this file states bounds on Mathlib's `Nat.bits` only.
++
++## Main results
++
++* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
++* `Complexity.LogProg.length_bits_le` — `|bits n| ≤ m` when `n < 2^m`;
++  `Complexity.LogProg.length_bits_succ_le` — `|bits (m + 1)| ≤ e + 2` when `m ≤ 2^e + 1`.
++* `Complexity.LogProg.lt_two_pow_bits` — `n < 2^{|bits n|}`.
++* `Complexity.LogProg.two_pow_bits_le` — `2^{|bits L|} ≤ 2L` for `L ≥ 1`;
++  `Complexity.LogProg.two_pow_bits_le_two_mul_add_one` — `2^{|bits n|} ≤ 2n + 1` for every `n`.
++* `Complexity.LogProg.length_bits_mono` — `|bits n|` is monotone in `n`.
++* `Complexity.LogProg.length_bits_le_log` — `|bits n| ≤ ⌊log₂ n⌋ + 1`;
++  `Complexity.LogProg.length_bits_eq_log` — `|bits n| = ⌊log₂ n⌋ + 1` for `n ≠ 0`.
++* `Complexity.LogProg.ofDigits_lt_two_pow` — a word's `Nat.ofDigits` value is below
++  `2^{length}`. (The `bitsVal` form, `Complexity.LogProg.bitsVal_lt_two_pow`, stays with
++  `bitsVal` in `Machines/Bin`.)
++
++## Implementation notes
++
++The declarations retain their names in the `Turing` and `Complexity.LogProg` namespaces so
++that machine and register-program consumers keep their existing references. This module sits
++below both layers and gives them a shared home for binary-length bounds.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§4.1: counters in logarithmic space.)
++-/
++
++namespace Turing
++
++/-- The binary expansion of `m` has at most `m` bits. -/
++lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
++  rw [Nat.size_eq_bits_len]
++  exact Nat.size_le.mpr Nat.lt_two_pow_self
++
++end Turing
++
++namespace Complexity.LogProg
++
++/-- The binary word of `n` has at most `m` letters when `n < 2^m`. -/
++lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
++  rw [Nat.size_eq_bits_len]
++  exact Nat.size_le.mpr h
++
++/-- A number `m ≤ 2 ^ e + 1` has at most `e + 2` binary digits after one increment: the width
++bound for a register value `m` with `m ≤ 2 ^ e`.
++
++**Proof sketch.** `m + 1 ≤ 2 ^ e + 2 < 4 · 2 ^ e = 2 ^ (e + 2)` since `2 ^ e ≥ 1`, then
++`length_bits_le`. -/
++lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
++  apply length_bits_le
++  have : 2 ^ e + 2 < 2 ^ (e + 2) := by
++    rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
++  omega
++
++/-- `n < 2^{|bits n|}`. -/
++theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
++  rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
++
++/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
++
++**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
++`2 ^ |bits L| = 2 · 2 ^ (Nat.size L - 1) ≤ 2L`. -/
++lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
++  rw [Nat.size_eq_bits_len]
++  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
++  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
++    rw [← Nat.size_le]; omega
++  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
++    rw [← pow_succ']; congr 1; omega
++  omega
++
++/-- For every `n`, including `0`, two to the binary length of `n` is at most `2n + 1`:
++`2 ^ |bits n| ≤ 2n + 1`. (Technical glue; the counter widths of [AB09, §4.1].)
++
++**Proof sketch.** At `n = 0` the word is empty and `2 ^ 0 = 1`. Otherwise
++`2 ^ |bits n| ≤ 2n` (`Complexity.LogProg.two_pow_bits_le`). -/
++theorem two_pow_bits_le_two_mul_add_one (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
++  rcases Nat.eq_zero_or_pos n with rfl | hn
++  · simp
++  · exact (two_pow_bits_le n hn).trans (Nat.le_succ _)
++
++/-- Binary words of larger numbers are not shorter. -/
++lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
++  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
++
++/-- The binary word of `n` has at most `⌊log₂ n⌋ + 1` letters. -/
++lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
++  length_bits_le (Nat.lt_pow_succ_log_self (by norm_num) n)
++
++/-- For `n ≠ 0`, the binary word of `n` has exactly `⌊log₂ n⌋ + 1` letters:
++`|bits n| = Nat.log 2 n + 1`. (At `n = 0` the word is empty while the right side is `1`.)
++(Technical glue; the logarithmic counter widths of [AB09, §4.1].)
++
++**Proof sketch.** The upper bound is `Complexity.LogProg.length_bits_le_log`. For the lower
++bound, `|bits n| = Nat.size n`, and `2 ^ ⌊log₂ n⌋ ≤ n` since `n ≠ 0`, so
++`⌊log₂ n⌋ < Nat.size n`. -/
++theorem length_bits_eq_log {n : ℕ} (hn : n ≠ 0) : (Nat.bits n).length = Nat.log 2 n + 1 := by
++  refine le_antisymm (length_bits_le_log n) ?_
++  rw [Nat.size_eq_bits_len]
++  exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
++
++/-- A word `w` of `|w|` letters, read as a little-endian binary number
++`Nat.ofDigits 2 (w.map Bool.toNat)`, has value below `2 ^ |w|`. This is the `Nat.ofDigits` form
++of `Complexity.LogProg.bitsVal_lt_two_pow`. (Technical glue; the binary counters of
++[AB09, §4.1].)
++
++**Proof sketch.** Every digit `b.toNat` is below `2`, so Mathlib's
++`Nat.ofDigits_lt_base_pow_length` applies, and mapping keeps the length. -/
++theorem ofDigits_lt_two_pow (w : List Bool) :
++    Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
++  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
++    (by
++      intro d hd
++      obtain ⟨a, -, rfl⟩ := List.mem_map.mp hd
++      cases a <;> decide)
++  rwa [List.length_map] at h
++
++end Complexity.LogProg
+diff --git a/blueprint/src/chapter/Complexity/CookLevin/Hardness.tex b/blueprint/src/chapter/Complexity/CookLevin/Hardness.tex
+index 03529b5b..cf9d4246 100644
+--- a/blueprint/src/chapter/Complexity/CookLevin/Hardness.tex
++++ b/blueprint/src/chapter/Complexity/CookLevin/Hardness.tex
+@@ -737,14 +737,6 @@ For a source machine, the host is a machine that runs the four-state binary incr
+ For every source configuration, tag bit, and counter value $n$, there is a strictly positive time $t$, at most twice the binary length of $n$ plus two, such that the counter-beside-reference host first reaches its return control exactly at $t$, at which point the counter tape holds the binary representation of $n+1$ with its head restored to zero, while the source configuration, tag, and every bank tape and head are untouched, and the represented source clock has not advanced.
+ \end{lemma}
+ 
+-\begin{lemma}[Binary width bound]
+-\lean{Complexity.clCount_width}
+-\label{Complexity.clCount_width}
+-\leanok
+-\difficulty{4}
+-For all naturals $n$ and $w$ with $n < 2^w$, the binary representation of $n$ has at most $w$ bits, so one administrative increment is charged by two $w$-bit scans plus two transitions, with no unary representation of positions.
+-\end{lemma}
+-
+ \begin{definition}[Component action of the counter bank]
+ \lean{Complexity.clBankPart}
+ \label{Complexity.clBankPart}
+@@ -1227,7 +1219,7 @@ For counter words of length at most $W$ and every count $j$, the stored row pref
+ \lean{Complexity.clElapsed_width}
+ \label{Complexity.clElapsed_width}
+ \leanok
+-\uses{Complexity.clCount_width}
++\uses{Turing.length_bits_le_self}
+ \difficulty{1}
+ For all naturals $n \le t$, the binary representation of $n$ has at most $t$ bits. The bound coarsely charges native scans; all stored movement counts remain in canonical binary form.
+ \end{lemma}

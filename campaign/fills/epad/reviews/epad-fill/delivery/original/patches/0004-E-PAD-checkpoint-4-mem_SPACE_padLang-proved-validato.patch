@@ -1,0 +1,102 @@
+From 7d16731e963f60a4ba97e79ec7dba41c86dca1bb Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 03:57:07 +0000
+Subject: [PATCH 4/4] E-PAD checkpoint 4: mem_SPACE_padLang proved (validator,
+ run phase and the conditional; the space ledger)
+
+---
+ .../Complexity/SpaceComplexity/Padding.lean   | 76 ++++++++++++++++++-
+ 1 file changed, 72 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Padding.lean b/TCSlib/Complexity/SpaceComplexity/Padding.lean
+index abe35250..3eb59e38 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Padding.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Padding.lean
+@@ -1683,12 +1683,80 @@ component) and `S n ≤ T (2n + 2 + C (n + 1)^d)` (room for `L`'s decider, at th
+ 
+ **Proof sketch.** Let `M` decide `L` within `c · S` cells. On input `y`, first check that `y` is a
+ pair `pairEncode x w` whose second component `w` consists of exactly `C (|x| + 1)^d` ones;
+-reject otherwise. That needs `O(|y|)` cells. Then run `M` on `x` (copied to a work tape, or read
+-in place through a bounded input device) and answer as `M` does, within `c · S |x|` cells. For a
+-validated `y`, `|y| = 2|x| + 2 + C (|x| + 1)^d`, so both phases fit in `O(T |y|)`. -/
++reject otherwise. That needs `O(log |y|) ⊆ O(|y| + 1)` cells, on malformed inputs too, and never
++writes the pad. Then run `M` on `x`, read in place as a virtual input, and answer as `M` does,
++within `c · S |x|` cells for `M` plus `O(|y| + 1)` for the simulation. For a validated `y`,
++`|y| = 2|x| + 2 + C (|x| + 1)^d`, so `S |x| ≤ T |y|`, and both phases fit in `O(T |y|)`.
++
++**Implementation.** Three machines and the catalog's conditional
++(`Turing.FinTM.computesFunInTime_cond_spaceUsed`): the validator decides the padded words in
++logarithmic space (`epad_V_mem`, an abstract register machine through
++`Complexity.LogProg.arm_decides_poly`); on a padded word the run phase (`epad_run`) runs `M`
++through the oracle-input simulator `Complexity.LogProg.OIS.compile_decides` on the virtual
++input `epadVirt y` (the first component of a padded word, `[]` otherwise), whose length and bit
++queries a bank of two logspace deciders answers (`epad_Q_mem`); otherwise the constant `[false]`
++machine answers. The run phase's space is
++`M.k (2 c S |v| + 1) + |bits (|v| + 1)| + 2 + k_D (2B + 1)` with `B = O(|y| + 1)`;
++`S |v| ≤ (S 0 + 1) T |y|` both on padded words (by `hST`) and off them (`v = []`), and
++`|y| + 1 ≤ T |y|` absorbs the rest. -/
+ theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+     (hST : ∀ n, S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) (hT : ∀ m, m + 1 ≤ T m) :
+     padLang L (fun n => C * (n + 1) ^ d) ∈ SPACE T := by
+-  sorry
++  classical
++  obtain ⟨K, O, hO⟩ := epad_run C d hL hST hT
++  have hV := epad_V_mem C d
++  rw [LOGSPACE_eq, mem_SPACE_iff] at hV
++  obtain ⟨cV, D, hD⟩ := hV
++  rw [FinTM.decidesInSpace_iff] at hD
++  obtain ⟨hDt, hDs⟩ := hD.computesFunInTime_and_forall_spaceUsed_le
++  obtain ⟨hOt, hOs⟩ := hO.computesFunInTime_and_forall_spaceUsed_le
++  obtain ⟨Mf, cf, hMf, hMfs⟩ := FinTM.computesFunInTime_const_spaceUsed [false]
++  obtain ⟨Mc, cc, hMc, hMcs⟩ := FinTM.computesFunInTime_cond_spaceUsed
++    (p := fun y => MultiTapeTM.indicator (epadV C d : Set (List Bool)) y)
++    (fun n => cV * logSpace n) (fun n => K * T n) (fun _ => cf) hDt hOt hMf hDs hOs hMfs
++  rw [mem_SPACE_iff]
++  refine ⟨cV + K + cf + cc, Mc, ?_⟩
++  rw [FinTM.decidesInSpace_iff, FinTM.computesInSpace_iff]
++  intro y
++  have hout : (if MultiTapeTM.indicator (epadV C d : Set (List Bool)) y = true then
++      [MultiTapeTM.indicator (L : Set (List Bool)) (epadVirt C d y)] else [false]) =
++      [MultiTapeTM.indicator (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) y] := by
++    rw [LogProg.indicator_eq_decide, LogProg.indicator_eq_decide, LogProg.indicator_eq_decide]
++    by_cases hval : epadValid C d y
++    · have hmem : y ∈ (epadV C d : Set (List Bool)) := epad_mem_V.mpr hval
++      rw [epadVirt_of_valid hval]
++      obtain ⟨a, ha⟩ := hval
++      have hpad : y ∈ (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) ↔
++          pairFstD y ∈ (L : Set (List Bool)) := by
++        rw [ha, pairFstD_pairEncode]
++        constructor
++        · intro h
++          obtain ⟨x, hx, hxe⟩ := mem_padLang_iff.mp h
++          have := congrArg pairFstD hxe
++          rw [pairFstD_pairEncode, pairFstD_pairEncode] at this
++          rw [this]; exact hx
++        · intro h
++          exact mem_padLang_iff.mpr ⟨a, h, rfl⟩
++      simp only [hmem, decide_true, if_true, List.cons.injEq, and_true]
++      exact decide_eq_decide.mpr hpad.symm
++    · have hmem : y ∉ (epadV C d : Set (List Bool)) := fun h => hval (epad_mem_V.mp h)
++      have hpad : y ∉ (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) := by
++        intro h
++        obtain ⟨x, -, hxe⟩ := mem_padLang_iff.mp h
++        exact hval ⟨x, hxe⟩
++      simp only [hmem, decide_false, Bool.false_eq_true, if_false, hpad]
++  have hc := (FinTM.computesFunInTime_iff _ _ _).mp hMc y
++  rw [hout] at hc
++  refine ⟨_, hc, (hMcs y _).trans ?_⟩
++  have hTy := hT y.length
++  have h1 : cV * logSpace y.length ≤ cV * T y.length :=
++    Nat.mul_le_mul_left _ ((logSpace_le_succ _).trans hTy)
++  have h2 : max (K * T y.length) cf ≤ K * T y.length + cf * T y.length :=
++    max_le (Nat.le_add_right _ _) (le_add_left (Nat.le_mul_of_pos_right _ (by omega)))
++  have h3 : cc ≤ cc * T y.length := Nat.le_mul_of_pos_right _ (by omega)
++  have e : (cV + K + cf + cc) * T y.length =
++      cV * T y.length + K * T y.length + cf * T y.length + cc * T y.length := by ring
++  rw [e]
++  omega
+ 
+ end Complexity
+-- 
+2.43.0
+
