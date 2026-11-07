@@ -827,34 +827,25 @@ private def counterSpan {k : ℕ} {Γ S : Type} {x : List Γ}
     Finset.Icc (cp - 1) (cp + (width : ℤ))) ∧
   (∀ u ≤ t, R (fun j => (H.runFrom z u).workTapePos j.castSucc))
 
-/-- Adjacent segments concatenate their cuts and trajectory bounds.
-**Proof sketch.** Split a queried time at the first segment's length and
-use run addition on the suffix. The two head-vector relations imply the
-requested relation separately. -/
-private lemma counter_span_append {k : ℕ} {Γ S : Type} {x : List Γ}
+/-- `counterSpan` is the segment layer at the counter loop's parameters: the segment
+(`Turing.Segment`) from `z` to its run endpoint over both exits, whose head relation puts the
+counter head in its interval and the body heads in `R`. Concatenation and weakening are
+`Turing.Segment.trans` and `Turing.Segment.mono` through this bridge. -/
+private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
     (H : MultiTapeTM (k + 1) Γ (CounterLoopState S))
-    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (s t : ℕ) (cp : ℤ) (width : ℕ)
-    (R₁ R₂ R : (Fin k → ℤ) → Prop)
-    (h₁ : counterSpan H z s cp width R₁)
-    (h₂ : counterSpan H (H.runFrom z s) t cp width R₂)
-    (hr₁ : ∀ p, R₁ p → R p) (hr₂ : ∀ p, R₂ p → R p) :
-    counterSpan H z (s + t) cp width R := by
-  have suffix (u : ℕ) (hu : s ≤ u) :
-      H.runFrom z u = H.runFrom (H.runFrom z s) (u - s) := by
-    rw [← H.runFrom_add, Nat.add_sub_of_le hu]
-  refine ⟨?_, ?_, ?_⟩
-  · intro u hu
-    by_cases hs : u < s
-    · exact h₁.1 u hs
-    · rw [suffix u (by omega)]; exact h₂.1 (u - s) (by omega)
-  · intro u hu
-    by_cases hs : u ≤ s
-    · exact h₁.2.1 u hs
-    · rw [suffix u (by omega)]; exact h₂.2.1 (u - s) (by omega)
-  · intro u hu
-    by_cases hs : u ≤ s
-    · exact hr₁ _ (h₁.2.2 u hs)
-    · rw [suffix u (by omega)]; exact hr₂ _ (h₂.2.2 (u - s) (by omega))
+    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (t : ℕ) (cp : ℤ) (width : ℕ)
+    (R : (Fin k → ℤ) → Prop) :
+    counterSpan H z t cp width R ↔
+      Segment H {some .done, some .escape}
+        (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (width : ℤ)) ∧
+          R fun j => p j.castSucc)
+        z (H.runFrom z t) t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun ⟨hc, hh, hr⟩ => ⟨rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,
+      fun u hu => ⟨hh u hu, hr u hu⟩⟩,
+    fun ⟨_, hc, hp⟩ =>
+      ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
+        fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
 
 /-- A width-preserving overwrite of just the counter word interval. -/
 private def counterPatch {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (w : List Γ) : ℤ → Option Γ :=
@@ -1293,10 +1284,15 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     have rs : counterSpan (counterLoopTMVia e M a exit)
         (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) cp w.length
         (fun p => ∃ u ≤ τ cn, ∀ j, p j = (M.runFrom cn u).workTapePos j) := by
-      apply counter_span_append _ _ cost (τ cn) cp w.length _ _ _
-        (by simpa only [List.length_map, wn, counterWord_length] using ds) (by rw [debit]; exact bs)
-      · intro p hp; exact ⟨0, Nat.zero_le _, by simpa using hp⟩
-      · exact fun _ h => h
+      have h₁ : counterSpan (counterLoopTMVia e M a exit)
+          (counterLoopCfg (some (.dec .run)) cn pn cp) cost cp w.length
+          (fun p => ∀ j, p j = cn.workTapePos j) := by
+        simpa only [List.length_map, wn, counterWord_length] using ds
+      have s₁ := (counterSpan_iff_segment ..).1 h₁
+      rw [debit] at s₁
+      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, debit]
+      refine (s₁.mono subset_rfl ?_).trans ((counterSpan_iff_segment ..).1 bs)
+      exact fun p hp => ⟨hp.1, 0, Nat.zero_le _, by simpa using hp.2⟩
     have time : (∑ r ∈ Finset.range (n + 1), τ (counterLoopOrbit M τ c r)) +
         counterOverhead w (n + 1) =
         ((∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r)) + counterOverhead w n) +
@@ -1308,17 +1304,18 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
     refine ⟨?_, ?_⟩
     · rw [MultiTapeTM.runFrom_add, before, round]
       rfl
-    · apply counter_span_append _ _ _ (cost + τ cn) cp w.length _ _ _ span
-        (by rw [before]; exact rs)
-      · intro p hp
-        obtain ⟨r, u, hr, heads⟩ := hp
-        refine ⟨r, u, Or.inl ?_, heads⟩
+    · have s₁ := (counterSpan_iff_segment ..).1 span
+      rw [before] at s₁
+      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, before]
+      refine (s₁.mono subset_rfl ?_).trans
+        (((counterSpan_iff_segment ..).1 rs).mono subset_rfl ?_)
+      · rintro p ⟨hc, r, u, hr, heads⟩
+        refine ⟨hc, r, u, Or.inl ?_, heads⟩
         rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
         · exact ⟨by omega, hu⟩
         · exact ⟨by omega, Nat.zero_le _⟩
-      · intro p hp
-        obtain ⟨u, hu, heads⟩ := hp
-        exact ⟨n, u, Or.inl ⟨by omega, hu⟩, heads⟩
+      · rintro p ⟨hc, u, hu, heads⟩
+        exact ⟨hc, n, u, Or.inl ⟨by omega, hu⟩, heads⟩
 
 /-- The rich-alphabet counter host returns after all rounds
 (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
@@ -1402,9 +1399,14 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
   rw [time]
   refine ⟨?_, ?_⟩
   · rw [MultiTapeTM.runFrom_add, before, debit]
-  · exact counter_span_append _ _ _ _ cp w.length _ _ _ span
-      (by rw [before]; simpa only [width] using ds) (fun _ h => h)
-      (fun p hp => ⟨d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp⟩)
+  · rw [width, ← before] at ds
+    have s := ((counterSpan_iff_segment ..).1 span).trans
+      (((counterSpan_iff_segment ..).1 ds).mono subset_rfl fun p hp =>
+        ⟨hp.1, d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp.2⟩)
+    rw [← MultiTapeTM.runFrom_add] at s
+    exact (counterSpan_iff_segment (R := fun p => ∃ r u,
+      ((r < d ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧
+        ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) ..).2 s
 
 /-- The rich-alphabet counter host takes an early body exit
 (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
@@ -1866,6 +1868,7 @@ theorem counterLoopTMVia_done_witness {S : Type} [DecidableEq S] [DecidableEq Γ
       (counterLoopCfg (some .done) (roundOrbit M τ c d)
         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp)
       (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1)) := by
+    rw [Turing.segment_iff]
     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
     rcases hm with hm | hm
     · exact (hcut t ht).1 hm
@@ -1956,6 +1959,7 @@ theorem counterLoopTMVia_escape_witness {S : Type} [DecidableEq S] [DecidableEq 
         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
           then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q) cp)
       (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1)) := by
+    rw [Turing.segment_iff]
     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
     rcases hm with hm | hm
     · exact (hcut t ht).1 hm
@@ -2227,6 +2231,7 @@ theorem RoundContract.counterLoopDone_traj {S : Type} [DecidableEq S] [Decidable
           (hpre r hr)]
         exact (hp.2 r hr).2⟩)
   rw [← hd, counterLoopCfg_body] at hseg
+  rw [Turing.segment_iff] at hseg
   exact (hseg.2.2 u hu).2
 
 /-- **The escaping counter loop's contract keeps the shared witness**: as
@@ -2254,6 +2259,7 @@ theorem RoundContract.counterLoopEscape_traj {S : Type} [DecidableEq S] [Decidab
     (counterLoopBody a d) p.2.1 (d.workTapes (Fin.last k)) (d.workTapePos (Fin.last k)) hw
     p.2.2 hr₀ (fun r hr => R.orbit_round p.1 _ hc _ hpre hret r (by omega)) hexit
   rw [← hd, counterLoopCfg_body] at hseg
+  rw [Turing.segment_iff] at hseg
   exact (hseg.2.2 u hu).2
 
 end Turing

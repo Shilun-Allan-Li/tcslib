@@ -977,23 +977,25 @@ to $d$ and $c$ is not in the anchor state. Then one step from $c$ reaches $d$ wi
 anchor visit before it, i.e.\ $c$ to $d$ is an anchor-free segment of length $1$.
 \end{lemma}
 
-\begin{lemma}[Segments compose]
-\lean{Complexity.tautDual_segment_add}
-\label{Complexity.tautDual_segment_add}
+\begin{lemma}[Anchor-free runs are contract segments]
+\lean{Complexity.tautDualSegment_iff_segment}
+\label{Complexity.tautDualSegment_iff_segment}
 \leanok
-\uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg, Turing.MultiTapeTM.runFrom_add}
-\difficulty{4}
-Let $c, d, e$ be configurations of the dual transducer. If running $a$ steps from $c$
-reaches $d$ without visiting the anchor state before time $a$, and running $b$ steps
-from $d$ reaches $e$ without visiting the anchor before time $b$, then running $a + b$
-steps from $c$ reaches $e$ without visiting the anchor before time $a + b$.
+\uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg}
+\difficulty{1}
+For configurations $c, d$ of the dual transducer and a time $t$, running $t$ steps from
+$c$ reaches $d$ without visiting the anchor state before time $t$ exactly when $c$ to $d$
+is a segment of length $t$ of the general contract layer that forbids the anchor state and
+constrains no head. In particular, such runs compose: an anchor-free run of $a$ steps
+followed by one of $b$ steps is an anchor-free run of $a + b$ steps (the general segment
+concatenation).
 \end{lemma}
 
 \begin{lemma}[Silent syntax scan of a suffix]
 \lean{Complexity.tautDual_scan}
 \label{Complexity.tautDual_scan}
 \leanok
-\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let the input be $x = p \mathbin{+\!\!+} r$, let $q$ be a formula-scanner state, and
 let $o$ be an output word. Started in the scanning state carrying $q$ at head position
@@ -1006,7 +1008,7 @@ still $o$, in exactly $|r|$ steps and without visiting the anchor state before t
 \lean{Complexity.tautDual_copy}
 \label{Complexity.tautDual_copy}
 \leanok
-\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualBit, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualBit, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let the input be $x = p \mathbin{+\!\!+} r$, let $q$ be a formula-scanner state, and
 let $o$ be an output word. Started in the copying state carrying $q$ at head position
@@ -1020,7 +1022,7 @@ followed by the polarity-flipping scan of $r$ from $q$.
 \lean{Complexity.tautDual_rewind}
 \label{Complexity.tautDual_rewind}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
 Let $x$ be an input, $o$ an output word, $f$ a flag, and $p \le |x|$. Started in the
 rewind state with flag $f$ at head position $p$ and output $o$, the dual transducer
@@ -1045,7 +1047,7 @@ at position $|x|$ with output still $o$, and the anchor state is not visited.
 \lean{Complexity.tautDual_valid}
 \label{Complexity.tautDual_valid}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_copy, Complexity.tautDual_copy_end, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_copy, Complexity.tautDual_copy_end, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{5}
 Let $x$ be a binary string on which the six-state formula syntax scan from formula
 level ends in the exact-end state. Started in the formula-level scanning state at head
@@ -1058,7 +1060,7 @@ and without visiting the anchor before then.
 \lean{Complexity.tautDual_invalid}
 \label{Complexity.tautDual_invalid}
 \leanok
-\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
+\uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDualSegment_iff_segment, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{4}
 Let $x$ be a binary string on which the six-state formula syntax scan from formula
 level does not end in the exact-end state. Started in the formula-level scanning state
