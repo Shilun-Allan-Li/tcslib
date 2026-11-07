@@ -1201,14 +1201,11 @@ private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
     (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)
     (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :
     DGSpan tm c d 1 lo hi := by
-  have hr : tm.runFrom c 1 = d := by simpa using h
-  refine ⟨hr, ?_⟩
-  intro u hu
-  have he : u = 0 ∨ u = 1 := by omega
-  rcases he with rfl | rfl
-  · simpa using hc
-  · rw [hr]
-    exact hd
+  rw [dgSpan_iff_segment]
+  have hseg := Segment.one (M := tm) (F := ∅)
+    (P := fun p => lo ≤ p 0 ∧ p 0 ≤ hi) (a := c)
+    (fun hmem => hmem) hc (by rw [h]; exact hd)
+  simpa only [h] using hseg
 
 /-- The canonical boundary configuration uses the received interleaved zone,
 with the source read position interpreted on the native, unretracted input. -/
@@ -1282,8 +1279,9 @@ private lemma dgSpan_generate_left {A Q : Type} {x : List A}
 private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
     {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}
     (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :
-    DGSpan tm c d t lo' hi' :=
-  ⟨h.1, fun u hu => ⟨hl.trans (h.2 u hu).1, (h.2 u hu).2.trans hr⟩⟩
+    DGSpan tm c d t lo' hi' := by
+  rw [dgSpan_iff_segment] at h ⊢
+  exact h.mono subset_rfl fun p hp => ⟨hl.trans hp.1, hp.2.trans hr⟩
 
 /-- Initialization on every native input stays in the origin block and its
 two boundary cells. It uses the generic writer and reverse-sweep APIs.

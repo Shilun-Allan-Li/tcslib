@@ -1285,21 +1285,6 @@ private def tautDualSegment {x : List Bool}
   tautDualTM.tm.runFrom c t = d ∧
     ∀ j < t, (tautDualTM.tm.runFrom c j).state ≠ some .anchor
 
-/-- A zero-length segment has no strict prefix. -/
-private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
-    tautDualSegment c c 0 := by
-  exact ⟨rfl, by intro j hj; omega⟩
-
-/-- A single non-anchor transition is a first-return segment. -/
-private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
-    (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
-    tautDualSegment c d 1 := by
-  refine ⟨h, ?_⟩
-  intro j hj
-  have : j = 0 := by omega
-  subst j
-  exact hq
-
 /-- `tautDualSegment` is the segment layer at the transducer's parameters: the segment
 (`Turing.Segment`) of `tautDualTM.tm` with the anchor forbidden and no head relation.
 Consecutive segments compose, without hiding an earlier anchor visit, by
@@ -1309,6 +1294,22 @@ private lemma tautDualSegment_iff_segment {x : List Bool}
     tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by
   rw [Turing.segment_iff]
   exact ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
+
+/-- A zero-length segment has no strict prefix. -/
+private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
+    tautDualSegment c c 0 := by
+  rw [tautDualSegment_iff_segment]
+  exact Segment.zero trivial
+
+/-- A single non-anchor transition is a first-return segment. -/
+private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
+    (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
+    tautDualSegment c d 1 := by
+  rw [tautDualSegment_iff_segment]
+  have hseg := Segment.one (M := tautDualTM.tm) (F := {some .anchor})
+    (P := fun _ => True) (a := c)
+    (by simpa only [Set.mem_singleton_iff] using hq) trivial trivial
+  simpa only [h] using hseg
 
 /-- A silent syntax pass consumes exactly the suffix length and preserves
 physical output. Its endpoint records the complete inherited scanner state.
