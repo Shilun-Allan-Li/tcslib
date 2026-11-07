@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
@@ -620,74 +621,44 @@ private lemma clNPVerifier {L : Language Bool} (hL : L ∈ NP) :
   obtain ⟨M, c, A, d, hc, hA, hd, ho, hM⟩ := clObliviousVerifier hV
   exact ⟨C, e, V, M, c, A, d, hcert, hc, hA, hd, ho, hM⟩
 
-/-- Linear catalog contracts in the polynomial-time normal form. This and
-the next two assembly lemmas locally repeat the public-catalog construction
-used in `ClassNP/TMSAT.lean`; no foreign private declaration is referenced. -/
+/-- Linear-time computation is polynomial-time, by
+`Complexity.polyTimeComputable_of_linear`. -/
 private lemma clNative_linear (f : List Bool → List Bool)
     (h : ∃ (M : FinTM Bool) (a : ℕ),
       M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
-  obtain ⟨M, a, hM⟩ := h
-  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+  exact polyTimeComputable_of_linear h
 
-/-- Payload maps retain the first field, including its exact bytes. The
-linear scan and the computed payload both fit the displayed polynomial. -/
+/-- Threaded payload mapping preserves polynomial time, including malformed inputs,
+by `Complexity.PolyTimeComputable.pairMapSnd`. -/
 private lemma clNative_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun z => match pairDecode z with
       | some (a, b) => pairEncode a (g b)
       | none => []) := by
-  obtain ⟨G, C, e, hG⟩ := hg
-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
-    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
-  refine ⟨M, a * (C + 1), e + 1, fun x => (hM x).mono ?_⟩
-  have hlin : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
-      (show 1 ≤ e + 1 by omega)
-  have hp := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ e))
-  calc
-    _ ≤ a * ((x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1)) :=
-      Nat.mul_le_mul_left a (Nat.add_le_add hlin hp)
-    _ = _ := by ring
+  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with
+      | some (a, b) => pairEncode a (g b)
+      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)
+  rw [← he]
+  exact PolyTimeComputable.pairMapSnd hg
 
-/-- Two separately computed fields can be paired while preserving the
-original input needed by both computations.
-**Proof sketch.** Use the audited retained-request construction: compute
-the first field paired with an empty payload, retain the original input,
-then compute the second field from the retained input. Pair concatenation
-and projection remove the administrative layers. All scans and simulations
-are the native public catalog machines, with their proved runtime bounds. -/
+/-- Two separately computed polynomial-time fields can be paired on their shared
+input, by `Complexity.PolyTimeComputable.pairEncode`. -/
 private lemma clNative_pair {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
-  have hd := clNative_linear _ FinTM.computesFunInTime_pairDup
-  have hp := clNative_linear _ FinTM.computesFunInTime_pairFst
-  have hs := clNative_linear _ FinTM.computesFunInTime_pairSnd
-  have hc := clNative_linear _ FinTM.computesFunInTime_pairConcat
-  have hz := clNative_linear _ (FinTM.computesFunInTime_const [])
-  have hH := ((clNative_map hz).comp hd).comp hf
-  have hS := (clNative_map hH).comp hd
-  have hT := ((clNative_map (hg.comp hp)).comp hd).comp hS
-  convert hs.comp (hc.comp hT) using 1
-  funext x
-  simp only [Function.comp_apply, pairDecode_pairEncode, Option.map_some, Option.getD_some]
-  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
-    simp [pairEncode, List.append_assoc]
-  rw [he, he]
-  simp [pairDecode_pairEncode]
+  exact PolyTimeComputable.pairEncode hf hg
 
-/-- Concatenating computed fields uses the validated native pair scanner. -/
+/-- Concatenating polynomial-time field computations preserves polynomial time,
+by `Complexity.PolyTimeComputable.append`. -/
 private lemma clNative_append {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => f x ++ g x) := by
-  simpa only [Function.comp_def, pairDecode_pairEncode] using
-    (clNative_linear _ FinTM.computesFunInTime_pairConcat).comp (clNative_pair hf hg)
+  exact PolyTimeComputable.append hf hg
 
-/-- The exact certificate polynomial is computed in unary, including zero
-coefficient and zero degree. Its value is never replaced by a majorant. -/
+/-- The exact unary polynomial `1^(C * (|x| + 1)^e)` is polynomial-time computable,
+by `Complexity.polyTimeComputable_polyUnary`. -/
 private lemma clNative_unary (C e : ℕ) :
     PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true) := by
-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyUnary C e
-  exact ⟨M, a, e + 1, hM⟩
+  exact polyTimeComputable_polyUnary C e
 
 /-- Replace each native input bit by a fixed bit, with no work tapes.
 The boundary transition halts silently, so length zero is included. -/
@@ -6652,47 +6623,22 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
 
 /-- A fixed word is emitted from finite control. -/
 private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
-  exact clNative_linear _ (FinTM.computesFunInTime_const w)
+  exact polyTimeComputable_const w
 
-/-- Polynomial-time branches on the original input, using W3's captured
-single-bit decision. All three budgets fit their maximum degree.
-
-**Proof sketch.** Use the audited conditional constructor on the three witnessing machines. Bound each
-monomial by the common maximum exponent and absorb the constructor overhead into one
-coefficient. -/
+/-- Polynomial-time branching on a polynomial-time bit preserves polynomial time,
+by `Complexity.polyTimeComputable_ite`. -/
 private lemma clA5_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
     (hp : PolyTimeComputable (fun x => [p x]))
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => if p x then f x else g x) := by
-  obtain ⟨P, A, a, hP⟩ := hp
-  obtain ⟨F, B, b, hF⟩ := hf
-  obtain ⟨G, C, c, hG⟩ := hg
-  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
-  let e := max a (max b c)
-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
-  have ha := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
-  have hb := Nat.mul_le_mul_left B
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
-  have hc := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
-  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
-  simp only [Nat.succ_eq_add_one] at ha hb hc
-  calc
-    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
-      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
-    _ = _ := by ring
-
+  exact polyTimeComputable_ite hp hf hg
 
 /-- Short-circuit conjunction preserves the order of two polynomial tests. -/
 private lemma clA5_pt_and {p q : List Bool → Bool}
     (hp : PolyTimeComputable (fun x => [p x]))
     (hq : PolyTimeComputable (fun x => [q x])) :
     PolyTimeComputable (fun x => [p x && q x]) := by
-  have h := clA5_pt_cond hp hq (clA5_pt_const [false])
-  convert h using 1
-  funext x
-  cases p x <;> rfl
+  exact polyTimeComputable_and hp hq
 
 /-- Pure semantics for a finite one-way word transducer with at most one
 emitted bit per input bit and one optional final bit. -/
@@ -6869,72 +6815,39 @@ private lemma clA5Iter_shrinking {f s : List Bool → List Bool} {N : List Bool 
   simp only [one_mul]
   omega
 
-/-- Removing a computed unary number of leading bits is an actual sequence
-of native tail calls. Each call is charged even after the word becomes empty. -/
+/-- Removing as many leading bits as the length of a computed word is polynomial-time.
+**Proof sketch.** Pair the length word first and the payload second, apply the public
+prefix remover, and read its result through its equation and the public pair projections. -/
 private lemma clA5Drop_native {s u : List Bool → List Bool}
     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
     PolyTimeComputable (fun x => (s x).drop (u x).length) := by
-  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)
-    (fun w => by simp [List.length_tail])
-  convert h using 1
-  funext x
-  symm
-  induction (u x).length with
-  | zero => rfl
-  | succ j ih =>
-    rw [Function.iterate_succ_apply', ih]
-    simp [List.tail_drop]
+  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
+  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
+      (fun x => (s x).drop (u x).length) := by
+    funext x
+    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
+      pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [he] at h
+  exact h
 
-/-- Both decoded field components are bounded by the complete source word,
-including malformed input and an empty default. This is a storage estimate.
-**Proof sketch.** Strong induction on input length handles each two-bit
-parser prefix; recursive branches consume two bits before the smaller call.
-This local induction avoids generating an imported public induction theorem. -/
+/-- Both decoded components are bounded by their complete source word, with empty
+defaults on malformed input.
+**Proof sketch.** Split the decode once. On success the public inverse identifies
+an encoded pair, whose published length bounds both components; failure gives empty words. -/
 private lemma clA5Pair_sizes (w : List Bool) :
     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
-  have haux : ∀ n, ∀ w : List Bool, w.length = n → ∀ a b,
-      pairDecode w = some (a, b) → a.length + b.length ≤ w.length := by
-    intro n
-    induction n using Nat.strong_induction_on with
-    | h n ih =>
-      intro w hn a b he
-      cases w with
-      | nil => simp [pairDecode] at he
-      | cons c w =>
-        cases w with
-        | nil => cases c <;> simp [pairDecode] at he
-        | cons d rest =>
-          have hsmall : rest.length < n := by simp only [List.length_cons] at hn; omega
-          have ihrest := ih rest.length hsmall rest rfl
-          cases c <;> cases d
-          · cases hd : pairDecode rest with
-            | none => simp [pairDecode, hd] at he
-            | some p =>
-              have hp := ihrest p.1 p.2 hd
-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-              rcases he with ⟨rfl, rfl⟩
-              simp only [List.length_cons]
-              omega
-          · simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
-            rcases he with ⟨rfl, rfl⟩
-            simp only [List.length_nil, List.length_cons, zero_add]
-            omega
-          · simp [pairDecode] at he
-          · cases hd : pairDecode rest with
-            | none => simp [pairDecode, hd] at he
-            | some p =>
-              have hp := ihrest p.1 p.2 hd
-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-              rcases he with ⟨rfl, rfl⟩
-              simp only [List.length_cons]
-              omega
-  have h (w : List Bool) := haux w.length w rfl
+  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
+    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
   cases hd : pairDecode w with
-  | none => simp [clHeaderField, clHeaderTail, hd]
+  | none =>
+    simp only [Option.map_none, Option.getD_none, List.length_nil]
+    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
   | some p =>
-    have hp := h w p.1 p.2 hd
-    simp only [clHeaderField, clHeaderTail, hd, Option.map_some, Option.getD_some]
-    omega
+    rcases p with ⟨a, b⟩
+    have hlen := congrArg List.length (eq_pairEncode_of_pairDecode w a b hd)
+    rw [length_pairEncode] at hlen
+    simp only [Option.map_some, Option.getD_some]
+    constructor <;> omega
 
 /-- Variable field access is a genuine unary-counted sequence of the native
 pair-tail projection, followed by the native pair-first projection. -/
@@ -6961,15 +6874,17 @@ private lemma clA5Times_native {f : List Bool → ℕ}
   | succ k ih =>
     simpa only [Nat.succ_mul, List.replicate_add] using clNative_append ih hf
 
-/-- Unary comparison is charged subtraction followed by the actual finite
-empty-word test; no numeric oracle enters the transition table. -/
+/-- Unary comparison is polynomial-time by comparing the lengths of a reversed pair
+of the two unary words, using `Complexity.polyTimeComputable_lenLe`. -/
 private lemma clA5Le_native {f g : List Bool → ℕ}
     (hf : PolyTimeComputable (fun x => List.replicate (f x) true))
     (hg : PolyTimeComputable (fun x => List.replicate (g x) true)) :
     PolyTimeComputable (fun x => [decide (f x ≤ g x)]) := by
-  have h := clA5_pt_eq (clA5Drop_native hf hg) []
-  simpa only [List.length_replicate, List.drop_replicate, List.replicate_eq_nil_iff,
-    Nat.sub_eq_zero_iff_le] using h
+  have h := polyTimeComputable_lenLe.comp (hg.pairEncode hf)
+  convert h using 1
+  funext x
+  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate]
 
 /-- A fixed finite template is serialized natively whenever each of its
 finitely many unary wire indices is native. The variable-index cost is
