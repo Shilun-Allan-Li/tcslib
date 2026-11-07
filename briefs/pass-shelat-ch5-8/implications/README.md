@@ -21,7 +21,9 @@ tracing RSA to public-key encryption and observing the uncomposed encoding bridg
 
 Dependencies point toward Implications. Definitions, candidate modules and reduction modules
 never import it. The short proofs cite their public APIs and preserve every cost, domain,
-length and auxiliary hardness hypothesis. No new definition/host is needed for the pilot.
+length and auxiliary hardness hypothesis. Thin compositions through existing APIs need no new host. Precise multi-message target
+predicates and model conversions still require design where the existing APIs do not express
+the selected guarantee.
 
 ## Admission to the catalog
 

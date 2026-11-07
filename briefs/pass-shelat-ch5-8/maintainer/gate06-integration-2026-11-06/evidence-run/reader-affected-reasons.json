@@ -1,0 +1,664 @@
+{
+  "TCSlib/Complexity/CircuitComplexity/TreeDAG": [
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGTransform": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/TreeDAG"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGFanin": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/DAGTransform"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PPoly": [
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/LayeredDAG": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/DAGFanin",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PPoly"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/SizeClasses": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/LayeredDAG"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/Advice": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/SizeClasses"
+  ],
+  "TCSlib/Complexity/Randomized/NonUniform": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/Advice"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Ensembles": [
+    "dirty import TCSlib/Complexity/Randomized/NonUniform"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Pseudorandom": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Ensembles"
+  ],
+  "TCSlib/Cryptography/Asymptotic/Encryption": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Pseudorandom"
+  ],
+  "TCSlib/Cryptography/Asymptotic/NextBit": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Pseudorandom"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreLemmas": [
+    "dirty import TCSlib/Cryptography/Asymptotic/NextBit"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreLoops": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreLemmas"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGL": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreLoops"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLColl": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreGL"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreCollection": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreGLColl",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreLemmas"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreGLFamily": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreGL"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCore": [
+    "dirty import TCSlib/Cryptography/Asymptotic/NextBit",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreGL",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreCollection",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreGLFamily",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreLemmas",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreLoops"
+  ],
+  "TCSlib/Cryptography/Asymptotic/PRFLemmas": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore"
+  ],
+  "TCSlib/Cryptography/Asymptotic/GGMReduction": [
+    "dirty import TCSlib/Cryptography/Asymptotic/PRFLemmas"
+  ],
+  "TCSlib/Cryptography/Asymptotic/GGMReductionEval": [
+    "dirty import TCSlib/Cryptography/Asymptotic/GGMReduction"
+  ],
+  "TCSlib/Cryptography/Asymptotic/PRF": [
+    "dirty import TCSlib/Cryptography/Asymptotic/GGMReduction",
+    "dirty import TCSlib/Cryptography/Asymptotic/GGMReductionEval",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore",
+    "dirty import TCSlib/Cryptography/Asymptotic/PRFLemmas"
+  ],
+  "TCSlib/Cryptography/Authentication/PRFMAC": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption",
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF"
+  ],
+  "TCSlib/Cryptography/Asymptotic/BlockEncryptor": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption"
+  ],
+  "TCSlib/Cryptography/Authentication/Lamport": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Asymptotic/BlockEncryptor"
+  ],
+  "TCSlib/Cryptography/Candidates/DiscreteLog": [
+    "dirty import TCSlib/Complexity/Randomized/NonUniform"
+  ],
+  "TCSlib/Cryptography/Authentication/DLHash": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Candidates/DiscreteLog"
+  ],
+  "TCSlib/Cryptography/Authentication/HashAndSign": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Authentication/Lamport"
+  ],
+  "TCSlib/Cryptography/Authentication": [
+    "dirty import TCSlib/Cryptography/Authentication/PRFMAC",
+    "dirty import TCSlib/Cryptography/Authentication/Lamport",
+    "dirty import TCSlib/Cryptography/Authentication/DLHash",
+    "dirty import TCSlib/Cryptography/Authentication/HashAndSign"
+  ],
+  "TCSlib/Cryptography/Composability/Defs": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption"
+  ],
+  "TCSlib/Cryptography/Asymptotic/MultiMessageLemmas": [
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF"
+  ],
+  "TCSlib/Cryptography/Asymptotic/MultiMessage": [
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF",
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption",
+    "dirty import TCSlib/Cryptography/Asymptotic/MultiMessageLemmas"
+  ],
+  "TCSlib/Cryptography/Composability/PRFScheme": [
+    "dirty import TCSlib/Cryptography/Composability/Defs",
+    "dirty import TCSlib/Cryptography/Asymptotic/MultiMessage"
+  ],
+  "TCSlib/Cryptography/Composability/CCA2Scheme": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Composability/Defs",
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF"
+  ],
+  "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas": [
+    "dirty import TCSlib/Cryptography/Asymptotic/BlockEncryptor"
+  ],
+  "TCSlib/Cryptography/Asymptotic/PublicKey": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore",
+    "dirty import TCSlib/Cryptography/Asymptotic/Ensembles",
+    "dirty import TCSlib/Cryptography/Asymptotic/BlockEncryptor",
+    "dirty import TCSlib/Cryptography/Asymptotic/PublicKeyLemmas"
+  ],
+  "TCSlib/Cryptography/Composability/PublicKey": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Composability/Defs",
+    "dirty import TCSlib/Cryptography/Asymptotic/PublicKey"
+  ],
+  "TCSlib/Cryptography/Composability/NonMalleable": [
+    "dirty import TCSlib/Cryptography/Composability/PublicKey"
+  ],
+  "TCSlib/Cryptography/Composability/SimNonMalleable": [
+    "source changed",
+    "dirty import TCSlib/Cryptography/Composability/NonMalleable"
+  ],
+  "TCSlib/Cryptography/Composability/SequentialZK": [
+    "source changed"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCoreClaims": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore"
+  ],
+  "TCSlib/Cryptography/Asymptotic/HardCorePermutation": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreClaims"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/Commitment": [
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCorePermutation"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/Commitment"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/Commitment"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/Commitment",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine"
+  ],
+  "TCSlib/Cryptography/Composability/ThreeColoring": [
+    "dirty import TCSlib/Cryptography/Composability/SequentialZK",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator"
+  ],
+  "TCSlib/Cryptography/Composability": [
+    "dirty import TCSlib/Cryptography/Composability/Defs",
+    "dirty import TCSlib/Cryptography/Composability/PRFScheme",
+    "dirty import TCSlib/Cryptography/Composability/CCA2Scheme",
+    "dirty import TCSlib/Cryptography/Composability/PublicKey",
+    "dirty import TCSlib/Cryptography/Composability/NonMalleable",
+    "dirty import TCSlib/Cryptography/Composability/SimNonMalleable",
+    "dirty import TCSlib/Cryptography/Composability/SequentialZK",
+    "dirty import TCSlib/Cryptography/Composability/ThreeColoring"
+  ],
+  "TCSlib/Cryptography/Randomness/Learning": [
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF"
+  ],
+  "TCSlib/Complexity/Randomized/SipserGacs": [
+    "import rebuilt later TCSlib/Complexity/Randomized/Classes"
+  ],
+  "TCSlib/Complexity/Randomized/Adleman": [
+    "import rebuilt later TCSlib/Complexity/Randomized/Classes",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PPoly"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/HardWire": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/PPoly"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/HardWire",
+    "dirty import TCSlib/Complexity/CircuitComplexity/DAGFanin"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/UnaryLanguages": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/SizeClasses"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/UHaltMachine": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/UnaryLanguages"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PSubsetPPoly": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect",
+    "dirty import TCSlib/Complexity/CircuitComplexity/UHaltMachine",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PPoly"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/PairEncode": [
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Complexity/Randomized/PolyTimeModel": [
+    "dirty import TCSlib/Complexity/Randomized/SipserGacs",
+    "dirty import TCSlib/Complexity/Randomized/Adleman",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PSubsetPPoly",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PairEncode"
+  ],
+  "TCSlib/Cryptography/Randomness/BPPBridge": [
+    "source changed",
+    "dirty import TCSlib/Complexity/Randomized/PolyTimeModel"
+  ],
+  "TCSlib/Cryptography/Randomness/Derandomization": [
+    "dirty import TCSlib/Cryptography/Randomness/BPPBridge",
+    "dirty import TCSlib/Cryptography/Asymptotic/Pseudorandom"
+  ],
+  "TCSlib/Cryptography/Randomness": [
+    "dirty import TCSlib/Cryptography/Randomness/Learning",
+    "dirty import TCSlib/Cryptography/Randomness/BPPBridge",
+    "dirty import TCSlib/Cryptography/Randomness/Derandomization"
+  ],
+  "TCSlib/Cryptography/SecureComputation/ObliviousTransfer": [
+    "source changed"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryption": [
+    "source changed"
+  ],
+  "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity": [
+    "dirty import TCSlib/Cryptography/SecureComputation/SpecialEncryption",
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption",
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Garbling": [
+    "source changed",
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSpecial": [
+    "dirty import TCSlib/Cryptography/SecureComputation/Garbling",
+    "dirty import TCSlib/Cryptography/SecureComputation/SpecialEncryption"
+  ],
+  "TCSlib/Cryptography/SecureComputation/GarblingSecurity": [
+    "dirty import TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "dirty import TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/Uniform": [
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Cryptography/SecureComputation/Yao": [
+    "dirty import TCSlib/Cryptography/SecureComputation/GarblingSecurity",
+    "dirty import TCSlib/Complexity/CircuitComplexity/Uniform"
+  ],
+  "TCSlib/Cryptography/SecureComputation/YaoReal": [
+    "dirty import TCSlib/Cryptography/SecureComputation/Yao",
+    "dirty import TCSlib/Cryptography/SecureComputation/ObliviousTransfer"
+  ],
+  "TCSlib/Cryptography/SecureComputation": [
+    "dirty import TCSlib/Cryptography/SecureComputation/ObliviousTransfer",
+    "dirty import TCSlib/Cryptography/SecureComputation/SpecialEncryption",
+    "dirty import TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "dirty import TCSlib/Cryptography/SecureComputation/Garbling",
+    "dirty import TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "dirty import TCSlib/Cryptography/SecureComputation/GarblingSecurity",
+    "dirty import TCSlib/Cryptography/SecureComputation/Yao",
+    "dirty import TCSlib/Cryptography/SecureComputation/YaoReal"
+  ],
+  "TCSlib/Complexity/Randomized/RandomBits": [
+    "import rebuilt later TCSlib/Complexity/Randomized/Classes"
+  ],
+  "TCSlib/Complexity/Randomized/PTM": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/Uniform"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalRun": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitEval": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect",
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalRun"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSat": [
+    "import rebuilt later TCSlib/Complexity/CircuitComplexity/DAGCircuit"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/DAGCircuitSat",
+    "dirty import TCSlib/Complexity/CircuitComplexity/Uniform"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEval",
+    "dirty import TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEvalRun",
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/KarpLipton": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEval",
+    "dirty import TCSlib/Complexity/CircuitComplexity/PPoly",
+    "dirty import TCSlib/Complexity/CircuitComplexity/Uniform"
+  ],
+  "TCSlib/Complexity/Randomized/Inclusions": [
+    "dirty import TCSlib/Complexity/Randomized/PTM",
+    "dirty import TCSlib/Complexity/Randomized/PolyTimeModel",
+    "dirty import TCSlib/Complexity/CircuitComplexity/KarpLipton"
+  ],
+  "TCSlib/Complexity/Randomized/PTMEquiv": [
+    "dirty import TCSlib/Complexity/Randomized/Inclusions"
+  ],
+  "TCSlib/Complexity/Randomized/PrimalityMath": [
+    "import rebuilt later TCSlib/Complexity/Randomized/Classes"
+  ],
+  "TCSlib/Complexity/Randomized/Primality": [
+    "dirty import TCSlib/Complexity/Randomized/PrimalityMath",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv"
+  ],
+  "TCSlib/Complexity/Randomized/Fingerprint": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/ZeroP": [
+    "dirty import TCSlib/Complexity/Randomized/Fingerprint",
+    "dirty import TCSlib/Complexity/Randomized/Primality"
+  ],
+  "TCSlib/Complexity/Randomized/ZeroPPIT": [
+    "dirty import TCSlib/Complexity/Randomized/ZeroP"
+  ],
+  "TCSlib/Complexity/Randomized/MatchingMath": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/Matching": [
+    "dirty import TCSlib/Complexity/Randomized/MatchingMath",
+    "dirty import TCSlib/Complexity/Randomized/Primality"
+  ],
+  "TCSlib/Complexity/Randomized/ExpectedTime": [
+    "dirty import TCSlib/Complexity/Randomized/PTM"
+  ],
+  "TCSlib/Complexity/Randomized/Coins": [
+    "dirty import TCSlib/Complexity/Randomized/ExpectedTime"
+  ],
+  "TCSlib/Complexity/Randomized/Reductions": [
+    "dirty import TCSlib/Complexity/Randomized/Inclusions",
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/ZPPEquiv": [
+    "dirty import TCSlib/Complexity/Randomized/ExpectedTime",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv",
+    "dirty import TCSlib/Complexity/Randomized/Reductions"
+  ],
+  "TCSlib/Complexity/Randomized/ZPPHosts": [
+    "dirty import TCSlib/Complexity/Randomized/ZPPEquiv"
+  ],
+  "TCSlib/Complexity/Randomized/ZPPHostsClasses": [
+    "dirty import TCSlib/Complexity/Randomized/ZPPHosts"
+  ],
+  "TCSlib/Complexity/Randomized/NPPoly": [
+    "dirty import TCSlib/Complexity/Randomized/Reductions"
+  ],
+  "TCSlib/Complexity/Randomized/Yap": [
+    "dirty import TCSlib/Complexity/Randomized/NPPoly",
+    "dirty import TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix",
+    "dirty import TCSlib/Complexity/CircuitComplexity/CircuitEval",
+    "dirty import TCSlib/Complexity/CircuitComplexity/Uniform"
+  ],
+  "TCSlib/Complexity/Randomized/BPPHard": [
+    "dirty import TCSlib/Complexity/Randomized/PTM"
+  ],
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMProb": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplify": [
+    "dirty import TCSlib/Complexity/Randomized/PTM",
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMProb"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplifyRun": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplify"
+  ],
+  "TCSlib/Complexity/Randomized/Space": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyRun"
+  ],
+  "TCSlib/Complexity/Randomized/BPLInPCount": [
+    "dirty import TCSlib/Complexity/Randomized/Space",
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/BPLInP": [
+    "dirty import TCSlib/Complexity/Randomized/BPLInPCount"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalk": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalkCover": [
+    "dirty import TCSlib/Complexity/Randomized/RandomWalk"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalkMixing": [
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkCover"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalkHitting": [
+    "dirty import TCSlib/Complexity/Randomized/RandomWalk"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalkPad": [
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkHitting",
+    "dirty import TCSlib/Complexity/Randomized/Fingerprint"
+  ],
+  "TCSlib/Complexity/Randomized/RandomWalkMixingPad": [
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkPad"
+  ],
+  "TCSlib/Complexity/Randomized/UniformSample": [
+    "dirty import TCSlib/Complexity/Randomized/RandomBits",
+    "dirty import TCSlib/Complexity/Randomized/PolyTimeModel"
+  ],
+  "TCSlib/Complexity/Randomized/BiasedCoin": [
+    "dirty import TCSlib/Complexity/Randomized/Coins",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv"
+  ],
+  "TCSlib/Complexity/CircuitComplexity/UHalt": [
+    "dirty import TCSlib/Complexity/CircuitComplexity/UnaryLanguages"
+  ],
+  "TCSlib/Complexity/Randomized/BiasedCoinHalting": [
+    "dirty import TCSlib/Complexity/Randomized/BiasedCoin",
+    "dirty import TCSlib/Complexity/CircuitComplexity/UHalt"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode": [
+    "dirty import TCSlib/Complexity/Randomized/Space",
+    "dirty import TCSlib/Complexity/Randomized/BPLInPCount"
+  ],
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem": [
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMProb"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode",
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine"
+  ],
+  "TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace": [
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem",
+    "dirty import TCSlib/Complexity/Randomized/Space"
+  ],
+  "TCSlib/Complexity/Randomized/SpaceAmplifyPoly": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun",
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace"
+  ],
+  "TCSlib/Complexity/Randomized/ZeroPReduce": [
+    "dirty import TCSlib/Complexity/Randomized/ZeroPPIT"
+  ],
+  "TCSlib/Complexity/Randomized/BPPAmplify": [
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv",
+    "dirty import TCSlib/Complexity/Randomized/Reductions"
+  ],
+  "TCSlib/Complexity/Randomized/RPExpected": [
+    "dirty import TCSlib/Complexity/Randomized/ExpectedTime",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv"
+  ],
+  "TCSlib/Complexity/Randomized/BPOperator": [
+    "dirty import TCSlib/Complexity/Randomized/Reductions",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv"
+  ],
+  "TCSlib/Complexity/Randomized/BPPEqP": [
+    "dirty import TCSlib/Complexity/Randomized/BPPHard"
+  ],
+  "TCSlib/Complexity/Randomized/BPTIMEThreshold": [
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyRun",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv"
+  ],
+  "TCSlib/Complexity/Randomized/UPathMachine": [
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem"
+  ],
+  "TCSlib/Complexity/Randomized/UPathLoops": [
+    "dirty import TCSlib/Complexity/Randomized/UPathMachine"
+  ],
+  "TCSlib/Complexity/Randomized/UPathParse": [
+    "dirty import TCSlib/Complexity/Randomized/UPathLoops"
+  ],
+  "TCSlib/Complexity/Randomized/UPathSearch": [
+    "dirty import TCSlib/Complexity/Randomized/UPathParse"
+  ],
+  "TCSlib/Complexity/Randomized/UPathWalk": [
+    "dirty import TCSlib/Complexity/Randomized/UPathLoops",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkPad"
+  ],
+  "TCSlib/Complexity/Randomized/UPathRL": [
+    "dirty import TCSlib/Complexity/Randomized/UPathSearch",
+    "dirty import TCSlib/Complexity/Randomized/UPathWalk",
+    "dirty import TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace"
+  ],
+  "TCSlib/Complexity/Randomized": [
+    "import rebuilt later TCSlib/Complexity/Randomized/Classes",
+    "dirty import TCSlib/Complexity/Randomized/Adleman",
+    "dirty import TCSlib/Complexity/Randomized/SipserGacs",
+    "dirty import TCSlib/Complexity/Randomized/PolyTimeModel",
+    "dirty import TCSlib/Complexity/Randomized/PTM",
+    "dirty import TCSlib/Complexity/Randomized/Inclusions",
+    "dirty import TCSlib/Complexity/Randomized/PTMEquiv",
+    "dirty import TCSlib/Complexity/Randomized/PrimalityMath",
+    "dirty import TCSlib/Complexity/Randomized/Primality",
+    "dirty import TCSlib/Complexity/Randomized/RandomBits",
+    "dirty import TCSlib/Complexity/Randomized/Fingerprint",
+    "dirty import TCSlib/Complexity/Randomized/ZeroP",
+    "dirty import TCSlib/Complexity/Randomized/ZeroPPIT",
+    "dirty import TCSlib/Complexity/Randomized/MatchingMath",
+    "dirty import TCSlib/Complexity/Randomized/Matching",
+    "dirty import TCSlib/Complexity/Randomized/ExpectedTime",
+    "dirty import TCSlib/Complexity/Randomized/Coins",
+    "dirty import TCSlib/Complexity/Randomized/ZPPEquiv",
+    "dirty import TCSlib/Complexity/Randomized/ZPPHosts",
+    "dirty import TCSlib/Complexity/Randomized/ZPPHostsClasses",
+    "dirty import TCSlib/Complexity/Randomized/Reductions",
+    "dirty import TCSlib/Complexity/Randomized/NPPoly",
+    "dirty import TCSlib/Complexity/Randomized/Yap",
+    "dirty import TCSlib/Complexity/Randomized/BPPHard",
+    "dirty import TCSlib/Complexity/Randomized/BPLInPCount",
+    "dirty import TCSlib/Complexity/Randomized/BPLInP",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkCover",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkMixing",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkMixingPad",
+    "dirty import TCSlib/Complexity/Randomized/UniformSample",
+    "dirty import TCSlib/Complexity/Randomized/BiasedCoin",
+    "dirty import TCSlib/Complexity/Randomized/BiasedCoinHalting",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyPoly",
+    "dirty import TCSlib/Complexity/Randomized/ZeroPReduce",
+    "dirty import TCSlib/Complexity/Randomized/BPPAmplify",
+    "dirty import TCSlib/Complexity/Randomized/RPExpected",
+    "dirty import TCSlib/Complexity/Randomized/BPOperator",
+    "dirty import TCSlib/Complexity/Randomized/BPPEqP",
+    "dirty import TCSlib/Complexity/Randomized/BPTIMEThreshold",
+    "dirty import TCSlib/Complexity/Randomized/Space",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplify",
+    "dirty import TCSlib/Complexity/Randomized/SpaceAmplifyRun",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalk",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkHitting",
+    "dirty import TCSlib/Complexity/Randomized/RandomWalkPad",
+    "dirty import TCSlib/Complexity/Randomized/UPathMachine",
+    "dirty import TCSlib/Complexity/Randomized/UPathLoops",
+    "dirty import TCSlib/Complexity/Randomized/UPathParse",
+    "dirty import TCSlib/Complexity/Randomized/UPathSearch",
+    "dirty import TCSlib/Complexity/Randomized/UPathWalk",
+    "dirty import TCSlib/Complexity/Randomized/UPathRL",
+    "dirty import TCSlib/Complexity/Randomized/NonUniform"
+  ],
+  "TCSlib/Cryptography/Asymptotic": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Ensembles",
+    "dirty import TCSlib/Cryptography/Asymptotic/Pseudorandom",
+    "dirty import TCSlib/Cryptography/Asymptotic/NextBit",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCoreCollection",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCore",
+    "dirty import TCSlib/Cryptography/Asymptotic/HardCorePermutation",
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption",
+    "dirty import TCSlib/Cryptography/Asymptotic/PRF",
+    "dirty import TCSlib/Cryptography/Asymptotic/MultiMessage",
+    "dirty import TCSlib/Cryptography/Asymptotic/BlockEncryptor",
+    "dirty import TCSlib/Cryptography/Asymptotic/PublicKey"
+  ],
+  "TCSlib/Cryptography/Candidates/DiscreteLogHardcore": [
+    "dirty import TCSlib/Cryptography/Candidates/DiscreteLog"
+  ],
+  "TCSlib/Cryptography/Candidates/ElGamal": [
+    "dirty import TCSlib/Cryptography/Candidates/DiscreteLog",
+    "dirty import TCSlib/Cryptography/Asymptotic/Ensembles"
+  ],
+  "TCSlib/Cryptography/Candidates": [
+    "dirty import TCSlib/Cryptography/Candidates/DiscreteLog",
+    "dirty import TCSlib/Cryptography/Candidates/DiscreteLogHardcore",
+    "dirty import TCSlib/Cryptography/Candidates/ElGamal"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepWitness",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColRepSound",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKMachine",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/NP": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge/Encryption": [
+    "dirty import TCSlib/Cryptography/Asymptotic/Encryption"
+  ],
+  "TCSlib/Cryptography/ZeroKnowledge": [
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/Commitment",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/ThreeColoring",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/NP",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge/Encryption"
+  ],
+  "audits/pass-shelat/Checks": [
+    "dirty import TCSlib/Complexity/Randomized",
+    "dirty import TCSlib/Cryptography/Asymptotic",
+    "dirty import TCSlib/Cryptography/Candidates",
+    "dirty import TCSlib/Cryptography/ZeroKnowledge"
+  ]
+}
