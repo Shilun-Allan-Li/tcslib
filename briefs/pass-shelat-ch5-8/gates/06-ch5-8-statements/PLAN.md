@@ -16,9 +16,10 @@ preparation below. No A → B → C → D audit order was imposed.
   repaired PAC/main transfer are incorporated. The current source includes the integration
   repairs below, public reading interfaces, four topic facades and their root exports.
 - **Every pack carries:** relevant S2a/S2b APIs as context; the inventory and errata; the decision
-  log and applicable rulings; `policy.md`; the exact source bundle/manifest; and the required
-  primary-source attachments. Attachment availability is still being reconciled; see the
-  internal draft `README.md`. Do not describe an unlocated file as attached.
+  log and applicable rulings; `policy.md`; the exact source bundle/manifest; and primary-source
+  access information in `source-manifest.md`. Goldreich drafts are linked for personal retrieval
+  rather than redistributed. The author-hosted PSV copies have distinct recorded hashes from
+  the historical publisher uploads; no byte identity is asserted.
 - **Delivery:** the recorded external-auditor choice is Codex, with findings Markdown returned
   in chat. The user dispatches the jobs; the maintainer intakes and records the findings.
 
