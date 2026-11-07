@@ -1,21 +1,15 @@
-# Gate 114: NatBits (#222)
+# Gate 114: NatBits (#222), CLOSED and MERGED
 
-- Final source, screen, seal, axiom and census evidence is complete in `evidence/current/`.
-- Independent merged-tree replay: **344 modules, 0 failures, 0 static mismatches**,
-  chained from the complete 894-module `oleans-mac0` campaign snapshot. The closure
-  retains its existing 68 admitted declarations; this is a mechanical deduplication PR.
-- Unfiltered non-private constant census: **2,377 → 2,374, including all internal auxiliaries and 12 module-owner moves**.
-- The user selected **Codex**: attached findings Markdown in chat and its content pasted
-  in the reply. The pack is finalized; bundle verification/publication is next. The gate
-  has not been dispatched.
-- **Not yet clear to merge: #222**; the external gate remains open.
+Seyoon merged #222 at `3555163f40d9c101a2ef4e81407c1bda58fe5ca4`. Gate 114 is **CLOSED**, independent Codex
+**PASS 0 blockers / 0 majors / 0 minors / 8 notes**, all eight notes accepted without code repair.
+The original findings and separate per-note resolutions are retained.
 
-- **Ready to dispatch:** the verified immutable bundle is published; `dispatch.json` and
-  `prompt.md` pin the exact package. Await the user's dispatch confirmation.
+The 344-module original replay and fresh two-module E-PAD catch-up passed with zero
+failures/static mismatches. All 22 audited file blobs remained identical. The merged Lean tree
+exactly equals the passed replay tree; **oleans-mnb2 was adopted as oleans-mac2**, without
+re-elaboration. Receipt: `campaign/status/2026-11-07-natbits-merge/receipt.json`.
 
-- **Dispatched by the user** in this session. Await the findings attachment; the PR remains
-  **not yet clear to merge** until the external gate closes.
-
-- **Gate CLOSED:** external PASS 0/0/0/8, all notes accepted without code changes.
-  A current two-module E-PAD catch-up replay passed on `oleans-mnb2`; the clean merge preview
-  has its exact Lean tree and all 22 audited blobs are unchanged. **Clear to merge: #222**.
+Census evidence remains under `evidence/current/`: 10 source NatBits theorems / 16 compiled
+constants including six moved auxiliaries; 2,377 → 2,374 unfiltered non-private constants,
+with 12 module-owner moves. Historical dispatch pins remain immutable. The issued outbox may
+now be archived because the canonical findings were committed.

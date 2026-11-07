@@ -10,7 +10,8 @@ the standard three axioms. The four-definition seal passes with default-simp unf
 all eight positive/negative controls have the exact expected results. Existing lint findings are
 unchanged. Independent internal review found no required fix.
 
-The current-campaign merged-tree replay passes **2 modules, zero failures/static mismatches**,
+The current-campaign merged-tree replay after NatBits passes **2 modules, zero failures/static
+mismatches** (`oleans-mlin2`),
 leaving only F6's existing admission. The complete eleven-file screen has 31→31 pairs, zero
 new or removed; every reviewed source blob matches the published PR.
 

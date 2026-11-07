@@ -1026,15 +1026,17 @@ pair.
 ## 2. Campaign work queued or on hold
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. #228 is merged; its exact replay tree is `oleans-mac1`.
-Gate 114 is **CLOSED, PASS 0/0/0/8**; #222 is **clear to merge** after its two-module E-PAD
-catch-up and clean merge check (`oleans-mnb2`). Gate 106/#215 awaits the Codex audit; its
-analogous catch-up also passed (`oleans-msg2`). Draft #229 proves `SPACE_linear_ne_NP`; all
-checks and its two-module replay passed (`oleans-mlin1`), gate116 finalized for Codex dispatch.
-Next free gate117. The reviewed **Claude MIG-1 megafill is dispatched**, with checkpoint/final
-pushes to its exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`.
-F6 follows the consumer merge; Ladner needs its statement phase. Records stay direct; actual
-Lean changes still need PRs, gates/replays and the user's merge.
+`campaign/maintainer/HANDOFF.md` §0. The user merged #228 and #222; the exact NatBits replay tree
+is now **oleans-mac2**. Gate 114 is **CLOSED, PASS 0/0/0/8**; all notes dispositioned. Gate
+106/#215 awaits the Codex audit; the current campaign replay on **oleans-msg3** is running.
+Draft #229 proves `SPACE_linear_ne_NP`; its fresh post-NatBits two-module replay and refreshed
+context checks passed (**oleans-mlin2**), gate 116 finalized for Codex dispatch. Next free gate
+117. The reviewed **Claude MIG-1 megafill is dispatched**, with checkpoint/final pushes to its
+exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`. F6 follows
+#229's merge: the user chose the **ruler-hosted suffix** route and **Claude**; the route/brief
+assessment is records-only work in progress, and gate 112's explicit premises remain binding.
+Ladner needs its statement phase. Records stay direct; actual Lean changes still need PRs,
+gates/replays and the user's merge.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

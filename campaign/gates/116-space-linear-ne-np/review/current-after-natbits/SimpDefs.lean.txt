@@ -1,0 +1,29 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+
+/-! E-PAD seal support: every TCSlib definition (of another module than `Padding`) that the
+default simp set may unfold: tagged `@[simp]` itself (`toUnfold`), or through an equation lemma
+`f.eq_*` registered as a simp lemma. -/
+open Lean Elab Command Meta in
+elab "#epad_simp_defs" : command => do
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Hierarchy
+    | logInfo "no module"
+  let isTCSOtherDef : Name → Bool := fun c =>
+    match env.getModuleIdxFor? c, env.find? c with
+    | some i, some (.defnInfo _) =>
+      (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && i != modIdx
+    | _, _ => false
+  let st ← liftTermElabM getSimpTheorems
+  let mut out : Std.HashSet Name := {}
+  for n in st.toUnfold.toList do
+    if isTCSOtherDef n then out := out.insert n
+  for (n, _) in env.constants.toList do
+    -- equation lemmas `f.eq_k` / `f.eq_def` of TCSlib definitions that are simp lemmas
+    match n with
+    | .str p s =>
+      if (s.startsWith "eq_") && isTCSOtherDef p && st.isLemma (.decl n) then
+        out := out.insert p
+    | _ => pure ()
+  logInfo (String.intercalate "\n" ((out.toArray.qsort Name.lt).toList.map toString))
+
+#epad_simp_defs

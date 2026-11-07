@@ -10,9 +10,9 @@ conditional consumer proofs elaborate; the computation-predicate seal and paired
 The 17 existing admissions and three already-gated future exports are separately inventoried.
 Independent brief review has 0 blockers, 0 majors and 0 open minors; both wording findings
 are resolved. The fresh 104-ref/76-tree name/shape search and candidate inspection are recorded.
-Bundle verification/publication follows this records snapshot.
-**Not yet dispatched.** The user dispatches the verified published packet; the maintainer later
-reviews delivery and builds the Lean PR(s), external gate(s) and current merged-tree replay(s).
+The verified packet is published and **dispatched by the user**. The maintainer reviews
+checkpoint/final deliveries and builds the Lean PR(s), external gate(s) and current merged-tree
+replay(s).
 
 **Dispatched by the user** after the verified 324-section packet was published. Immutable
 source/records/exchange pins are in `dispatch.json`; the issued bundle is unchanged. Await
