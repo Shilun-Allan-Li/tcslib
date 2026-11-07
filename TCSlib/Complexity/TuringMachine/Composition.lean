@@ -70,8 +70,8 @@ The named witnesses of the combinators below (MIG-1): `Turing.FinTM.idTM` (copy)
   `Turing.FinTM.condTM_computes_iff`, and the buffered composition's
   `Turing.FinTM.bufferedCompTM_computesFunInTime`,
   `Turing.FinTM.bufferedCompTM_computesFunInTime_on_image` and
-  `Turing.FinTM.bufferedCompTM_computes_iff`. `idTM_computes`, `ifEqTM_computes` and
-  `condTM_computes_iff` are sorried until the fill F-A; the others are proved.
+  `Turing.FinTM.bufferedCompTM_computes_iff`. All are proved; the existential rows below are
+  their corollaries.
 * Time-bounded combinators (all over the binary alphabet):
   `Turing.FinTM.computesFunInTime_id`, `Turing.FinTM.computesFunInTime_const`,
   `Turing.FinTM.computesFunInTime_ifEq`, `Turing.FinTM.computesFunInTime_comp`.
@@ -153,45 +153,30 @@ private lemma idTM_run (x : List Bool) : ∀ t, t ≤ x.length →
 /-- **The copy machine's time**. On every input `x` the copy machine halts within `|x| + 1` steps
 with output `x`. [AB09, §1.2]
 
-**Proof sketch.** The body of today's `computesFunInTime_id` up to its final weakening: by the
-private run invariant `idTM_run`, after `|x|` steps the machine is live, its input head is at cell
-`|x| + 1` and it has written `x`; there it reads the blank, and the next step halts without writing.
--/
+**Proof sketch.** By the run invariant `idTM_run`, after `|x|` steps the machine is live, its input
+head is at cell `|x| + 1` and it has written `x`; there it reads the blank, and the next step halts
+without writing. -/
 theorem idTM_computes (x : List Bool) : idTM.ComputesInTime x x (x.length + 1) := by
-  sorry
-
-/-- The identity function is computable in linear time: the copy machine halts within
-`n + 1` steps having emitted its input verbatim (invariant `idTM_run`, then one
-halting step on the boundary blank). -/
-theorem computesFunInTime_id :
-    ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime id fun n => c * (n + 1) := by
-  refine ⟨idTM, 1, fun x => ?_⟩
   obtain ⟨hstate, hpos, hout⟩ := idTM_run x x.length (le_refl _)
-  have h0 : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputPos ≠ 0 := by
-    intro h
-    rw [h] at hpos
-    simp at hpos
-  have hsym : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputSymbol = none := by
-    unfold Cfg.inputSymbol
-    rw [dif_neg h0, dif_pos (by omega)]
+  -- At cell `|x| + 1` the head reads the right blank, and the copy machine halts silently.
   have hrun1 : idTM.tm.runFrom (idTM.tm.initCfg x) (x.length + 1) =
       (idTM.tm.tr () none
         ((idTM.tm.runFrom (idTM.tm.initCfg x) x.length).workTapeSymbols)).apply
         (idTM.tm.runFrom (idTM.tm.initCfg x) x.length) := by
-    rw [MultiTapeTM.runFrom_succ_eq_step']
-    unfold MultiTapeTM.step
-    rw [hstate]
-    dsimp only
-    rw [hsym]
-  have hbase : idTM.ComputesInTime x x (x.length + 1) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [hrun1]
-      simp [idTM, Action.apply]
-    · rw [hrun1]
-      simp only [idTM, Action.apply]
-      rw [hout]
-      simp
-  exact hbase.mono (le_of_eq (one_mul _).symm)
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_of_some hstate,
+      Cfg.inputSymbol_of_end hpos]
+  refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+  · rw [hrun1, Action.apply_state]
+    rfl
+  · rw [hrun1, Action.apply_output, hout, List.take_length]
+    exact List.append_nil x
+
+/-- The identity function is computable in linear time: the copy machine halts within
+`n + 1` steps having emitted its input verbatim (`Turing.FinTM.idTM_computes`). -/
+theorem computesFunInTime_id :
+    ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime id fun n => c * (n + 1) :=
+  ⟨idTM, 1, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (idTM_computes x).mono (le_of_eq (one_mul _).symm)⟩
 
 /-- **The constant machine**. A machine with no work tapes whose `|w| + 1` states form the emission
 chain of the fixed word `w`: it writes `w`, one symbol per step, ignoring its input, and halts.
@@ -372,13 +357,20 @@ private lemma ifEq_run (w₀ u v x : List Bool) : ∀ (r i : ℕ) (hlen : w₀.l
 /-- **The comparator's time**. The comparator computes `w ↦ if w = w₀ then u else v` within
 `(|w₀| + max |u| |v| + 3)·(n + 1)` steps, the constant of today's row made explicit.
 
-**Proof sketch.** The body of today's `computesFunInTime_ifEq`: the private comparison run
-`ifEq_run` reaches the halt within `|w₀| + max |u| |v| + 3` steps with the selected word as output,
-and that constant is at most its product with `n + 1`. -/
+**Proof sketch.** The comparison run `ifEq_run`, started at the initial configuration, reaches
+the halt within `|w₀| + max |u| |v| + 3` steps with the selected word as output, and that constant
+is at most its product with `n + 1`. -/
 theorem ifEqTM_computes (w₀ u v : List Bool) :
     (ifEqTM w₀ u v).ComputesFunInTime (fun w => if w = w₀ then u else v)
       (fun n => (w₀.length + max u.length v.length + 3) * (n + 1)) := by
-  sorry
+  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
+  obtain ⟨t, ht, hs, ho⟩ := ifEq_run w₀ u v x w₀.length 0 (by omega) (by omega) rfl
+    ((ifEqTM w₀ u v).tm.initCfg x)
+    (by rw [MultiTapeTM.initCfg_eq, Cfg.init_state]; rfl)
+    (by rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one])
+    (by rw [MultiTapeTM.initCfg_eq, Cfg.init_output])
+  exact ((computesInTime_iff _ _ _ _).mpr ⟨hs, ho⟩).mono
+    (Nat.le_trans (by omega) (Nat.le_mul_of_pos_right _ (by omega)))
 
 /-- Testing equality with a fixed string is computable in linear time: for any fixed
 `w₀ u v`, the function `w ↦ u` if `w = w₀` and `w ↦ v` otherwise. (Instantiated by
@@ -395,13 +387,8 @@ states, one emitted symbol per step). Every run halts within
 `|w₀| + max |u| |v| + 3` steps — a constant, absorbed as `c * (n + 1)`. -/
 theorem computesFunInTime_ifEq (w₀ u v : List Bool) :
     ∃ (M : FinTM Bool) (c : ℕ),
-      M.ComputesFunInTime (fun w => if w = w₀ then u else v) fun n => c * (n + 1) := by
-  refine ⟨ifEqTM w₀ u v, w₀.length + max u.length v.length + 3, fun x => ?_⟩
-  obtain ⟨t, ht, hs, ho⟩ := ifEq_run w₀ u v x w₀.length 0 (by omega) (by omega) rfl
-    ((ifEqTM w₀ u v).tm.initCfg x) rfl (by simp) rfl
-  have hbase : (ifEqTM w₀ u v).ComputesInTime x (if x = w₀ then u else v) t :=
-    ⟨_, hs, ho, rfl⟩
-  exact hbase.mono (Nat.le_trans (by omega) (Nat.le_mul_of_pos_right _ (by omega)))
+      M.ComputesFunInTime (fun w => if w = w₀ then u else v) fun n => c * (n + 1) :=
+  ⟨ifEqTM w₀ u v, w₀.length + max u.length v.length + 3, ifEqTM_computes w₀ u v⟩
 
 /-- **Timed partial composition.** If `M₁` halts on `x` with output `y` within `t₁`
 steps and `M₂` halts on `y` with output `o` within `t₂` steps, then
@@ -469,21 +456,15 @@ on the intermediate tape) is absorbed into `c`.
 `M₁.k + (1 + M₂.k)` tapes and uses one physical step per simulated step.
 The first halting time is at most `T₁ |x|`; rewind and dispatch take exactly
 `|f x| + 2` steps, including the unconditional first left move. Consequently
-`2 * T₁ |x| + T₂ (T₁ |x|) + 2` suffices, and the theorem uses `c = 2`. -/
+`2 * T₁ |x| + T₂ (T₁ |x|) + 2` suffices, and the theorem uses `c = 2`: it is
+`Turing.FinTM.bufferedCompTM_computesFunInTime` at that witness. -/
 theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool}
     {T₁ T₂ : ℕ → ℕ}
     (h₁ : M₁.ComputesFunInTime f T₁) (h₂ : M₂.ComputesFunInTime g T₂)
     (hT₂ : Monotone T₂) :
     ∃ (M : FinTM Bool) (c : ℕ),
-      M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) := by
-  refine ⟨bufferedCompTM M₁ M₂, 2, fun x => ?_⟩
-  have hlen : (f x).length ≤ T₁ x.length := by
-    have ho := ((computesInTime_iff _ _ _ _).mp (h₁ x)).2
-    simpa only [ho] using M₁.tm.output_length_le x (T₁ x.length)
-  -- This is the only use of monotonicity: transfer the intermediate length bound.
-  have htime : T₂ (f x).length ≤ T₂ (T₁ x.length) := hT₂ hlen
-  exact (bufferedCompTM_computesInTime M₁ M₂ (h₁ x) (h₂ (f x))).mono
-    (by dsimp only; omega)
+      M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) :=
+  ⟨bufferedCompTM M₁ M₂, 2, bufferedCompTM_computesFunInTime h₁ h₂ hT₂⟩
 
 /-- **The buffered composition on the first machine's image**. If `M` computes `f` within `T₁` and,
 for every input `x`, `U` maps `f x` to `g x` within `T₂ |x|` steps, then `bufferedCompTM M U`
@@ -509,16 +490,13 @@ monotonicity is assumed.
 
 **Proof sketch.** `bufferedCompTM M U` runs both phases
 (`bufferedCompTM_computesInTime`); the intermediate output is no longer than `M`'s
-running time, so capture and rewind cost at most `T₁ n + 2` more steps. -/
+running time, so capture and rewind cost at most `T₁ n + 2` more steps
+(`Turing.FinTM.bufferedCompTM_computesFunInTime_on_image`). -/
 theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
     (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
     (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
-    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) := by
-  refine ⟨bufferedCompTM M U, fun x => ?_⟩
-  have hlen : (f x).length ≤ T₁ x.length := by
-    have ho := ((computesInTime_iff _ _ _ _).mp (hM x)).2
-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
-  exact (bufferedCompTM_computesInTime M U (hM x) (hU x)).mono (by dsimp only; omega)
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=
+  ⟨bufferedCompTM M U, bufferedCompTM_computesFunInTime_on_image M U f g T₁ T₂ hM hU⟩
 
 /-- **The buffered composition's halting relation**. For all machines `M₁`, `M₂` and words `x`, `w`:
 the buffered composition halts on `x` with output `w` if and only if `M₁` halts on `x` with some
@@ -610,47 +588,13 @@ public in `Simulation.lean`. The arrival tag is constrained only at boundaries;
 stationary moves preserve it, including suppressed outward moves. Dispatch always
 sets it to true, which is already the right-boundary tag when the word is empty.
 A simulated phase-one halt remains live through the exact `|y| + 2` rewind.
-For the forward implication, phase-one divergence contradicts a completed run;
-otherwise extend that completed run beyond the verified phase-two start using
-absorbing halting, and recover the second completed computation by lockstep. -/
+The equivalence at this witness is `Turing.FinTM.bufferedCompTM_computes_iff`. -/
 theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
     ∃ M : FinTM Bool, ∀ x w : List Bool,
       (∃ t, M.ComputesInTime x w t) ↔
         ∃ y : List Bool,
-          (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t := by
-  classical
-  refine ⟨bufferedCompTM M₁ M₂, fun x w => ?_⟩
-  constructor
-  · rintro ⟨t, ht⟩
-    -- A divergent first component would keep every composite configuration live.
-    have hh : ∃ s, (M₁.tm.runFrom (M₁.tm.initCfg x) s).state = none := by
-      by_contra h
-      have hr := bufferedFirstCfg_run M₁ M₂ (M₁.tm.initCfg x) t
-        (fun s _ hs => h ⟨s, hs⟩)
-      rw [← bufferedFirstCfg_init] at hr
-      have hc := ((computesInTime_iff _ _ _ _).mp ht).1
-      rw [hr] at hc
-      simp only [bufferedFirstCfg, Option.some_ne_none] at hc
-    obtain ⟨s, hs⟩ := hh
-    let y := (M₁.tm.runFrom (M₁.tm.initCfg x) s).output
-    have hy : M₁.ComputesInTime x y s := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-    obtain ⟨a, p, tapes, heads, _, ha⟩ := bufferedComp_start M₁ M₂ x y s hy
-    -- Extend a completed run past the verified administrative prefix.
-    have hc := (computesInTime_iff _ x w (a + t)).mp (ht.mono (by omega))
-    rw [MultiTapeTM.runFrom_add, ha] at hc
-    obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg y) true
-      (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
-    rw [hr] at hc
-    refine ⟨y, ⟨s, hy⟩, t, (computesInTime_iff _ _ _ _).mpr ?_⟩
-    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
-  · rintro ⟨y, ⟨s, hs⟩, ⟨t, ht⟩⟩
-    obtain ⟨a, p, tapes, heads, _, ha⟩ := bufferedComp_start M₁ M₂ x y s hs
-    obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg y) true
-      (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
-    have hc := (computesInTime_iff _ _ _ _).mp ht
-    refine ⟨a + t, (computesInTime_iff _ _ _ _).mpr ?_⟩
-    rw [MultiTapeTM.runFrom_add, ha, hr]
-    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+          (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t :=
+  ⟨bufferedCompTM M₁ M₂, bufferedCompTM_computes_iff M₁ M₂⟩
 
 /-- **The untimed conditional**. Run `D` with its first emission captured in a state register,
 rewind the input, then enter `M₁` or `M₂` on disjoint fresh tapes according to the register; an
@@ -770,48 +714,18 @@ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
 `x` the conditional halts with output `w` if and only if the branch `cond (p x) M₁ M₂` halts on `x`
 with output `w`.
 
-**Proof sketch.** The body of today's `exists_cond`: the private `condTM_start` reaches the selected
-branch's initial configuration, after which `rightCfg_run` tracks the branch union step for step and
+**Proof sketch.** `condTM_start` reaches the selected branch union's initial configuration after a
+finite prefix, after which `rightCfg_run` tracks the branch union step for step. For the forward
+direction, extend a completed composite run past that prefix (halting is absorbing) and read the
+branch run off the embedding; for the converse, concatenate the prefix with the branch run.
 `branchTM_computes` identifies the selected branch. -/
 theorem condTM_computes_iff (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool)
     (hD : D.Computes fun x => [p x]) (x w : List Bool) :
     (∃ t, (condTM D M₁ M₂).ComputesInTime x w t) ↔
       ∃ t, (cond (p x) M₁ M₂).ComputesInTime x w t := by
-  sorry
-
-/-- **Branching on a decided predicate** — the second phase-4 combinator (phase-3
-audit, round 2, Argument F, step 2 of the `HALT → UC` reduction): given a total
-decider `D` for `p` and two branch machines, some machine behaves on every input
-exactly as the branch selected by `p` does *on that same input*. The input tape is
-read-only, so both branches see the original input.
-
-**Proof sketch.** `D` computes the singleton output `[p x]` on every input, and
-output is append-only, so along any run `D` emits exactly one symbol; simulate `D`
-with that single emission recorded in a state register instead of emitted (no buffer
-tape needed). On `D`'s halting transition, rewind the true input head to its initial
-position: one step left, then left while reading a symbol, then one step right —
-from any position this ends at input position `1`, the initial position, the clamp
-at position `0` making the walk safe (including on empty input). Then transfer
-control to a disjoint copy of `M₁` or `M₂` according to the register. The branches'
-work tapes are fresh tapes `D` never touched, the output tape is untouched by phase
-one, and the input head is back at its initial position, so the selected branch's
-run is reproduced verbatim; determinism (`Turing.FinTM.ComputesInTime.output_unique`)
-identifies `D`'s completed output with `[p x]`, so the selected branch is
-`cond (p x) M₁ M₂`.
-
-The implementation retains the first emission, with the exact invariant that the
-register is the head of the simulated output. A live administrative state follows
-the simulated halt before the first left move. For the forward implication, extend
-any completed composite run beyond the verified branch-start prefix using absorbing
-halting, then apply branch lockstep; the reverse implication concatenates that
-prefix with the selected branch run. -/
-theorem exists_cond (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool)
-    (hD : D.Computes fun x => [p x]) :
-    ∃ M : FinTM Bool, ∀ x w : List Bool,
-      (∃ t, M.ComputesInTime x w t) ↔
-        ∃ t, (cond (p x) M₁ M₂).ComputesInTime x w t := by
-  refine ⟨condTM D M₁ M₂, fun x w => ?_⟩
-  obtain ⟨a, tapes, heads, ha⟩ := condTM_start D M₁ M₂ x (p x) (hD x)
+  obtain ⟨a, tapes, heads, ha⟩ :=
+    condTM_start D M₁ M₂ x (p x) ((computes_iff _ _).mp hD x)
+  -- After the prefix `a`, the composite is the selected branch union, embedded in lockstep.
   have hr (t : ℕ) :
       (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) (a + t) =
         rightCfg (fun q => .inr (.inr q))
@@ -835,5 +749,35 @@ theorem exists_cond (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool)
     refine ⟨a + t, (computesInTime_iff _ x w (a + t)).mpr ?_⟩
     rw [hr t]
     exact ⟨by simpa only [rightCfg, Option.map_eq_none_iff] using hb.1, hb.2⟩
+
+/-- **Branching on a decided predicate** — the second phase-4 combinator (phase-3
+audit, round 2, Argument F, step 2 of the `HALT → UC` reduction): given a total
+decider `D` for `p` and two branch machines, some machine behaves on every input
+exactly as the branch selected by `p` does *on that same input*. The input tape is
+read-only, so both branches see the original input.
+
+**Proof sketch.** `D` computes the singleton output `[p x]` on every input, and
+output is append-only, so along any run `D` emits exactly one symbol; simulate `D`
+with that single emission recorded in a state register instead of emitted (no buffer
+tape needed). On `D`'s halting transition, rewind the true input head to its initial
+position: one step left, then left while reading a symbol, then one step right —
+from any position this ends at input position `1`, the initial position, the clamp
+at position `0` making the walk safe (including on empty input). Then transfer
+control to a disjoint copy of `M₁` or `M₂` according to the register. The branches'
+work tapes are fresh tapes `D` never touched, the output tape is untouched by phase
+one, and the input head is back at its initial position, so the selected branch's
+run is reproduced verbatim; determinism (`Turing.FinTM.ComputesInTime.output_unique`)
+identifies `D`'s completed output with `[p x]`, so the selected branch is
+`cond (p x) M₁ M₂`.
+
+The witness is `Turing.FinTM.condTM`, which retains the first emission with the exact
+invariant that the register is the head of the simulated output; the equivalence is
+`Turing.FinTM.condTM_computes_iff`. -/
+theorem exists_cond (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool)
+    (hD : D.Computes fun x => [p x]) :
+    ∃ M : FinTM Bool, ∀ x w : List Bool,
+      (∃ t, M.ComputesInTime x w t) ↔
+        ∃ t, (cond (p x) M₁ M₂).ComputesInTime x w t :=
+  ⟨condTM D M₁ M₂, condTM_computes_iff D M₁ M₂ p hD⟩
 
 end Turing.FinTM
