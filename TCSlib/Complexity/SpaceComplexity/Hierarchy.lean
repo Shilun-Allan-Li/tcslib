@@ -81,6 +81,645 @@ namespace Complexity
 
 open Turing
 
+/-! ### The space-universal machine: private assembly glue
+
+The fixed prefix (budget header and ruler, the hosted startup with its return, the ruler-end
+seek and correction, the code header scan and the rewind) and its pieces, consumed only by
+`Complexity.space_universal`. -/
+
+/-- The doubled header `pairEncode u v` has the positive length `2|u| + 2` before its suffix,
+and dropping that many cells exposes `v` (glue for [AB09, Exercise 4.1]). -/
+private theorem f6_pair_geometry (u v : List Bool) :
+    (pairEncode u v).length = (2 * u.length + 2) + v.length ∧ 0 < 2 * u.length + 2 ∧
+      (pairEncode u v).drop (2 * u.length + 2) = v := by
+  refine ⟨length_pairEncode u v, by omega, ?_⟩
+  have hlen : (dbl u ++ [false, true]).length = 2 * u.length + 2 := by
+    simp only [List.length_append, length_dbl, List.length_cons, List.length_nil]
+  rw [pairEncode_eq_dbl, ← hlen, List.drop_left]
+
+/-- Embedding a configuration into the same number of tapes along `Fin.castLEEmb`, with a
+blank frame and no prior output, gives it back (`Turing.embedEmitCfg_eq`). -/
+private theorem f6_full_embed {m : ℕ} {Q : Type} {z : List Bool} (c : Cfg m Bool Q z) :
+    embedEmitCfg (Fin.castLEEmb (le_refl m)) (fun _ _ => none) (fun _ => 0) [] c = c := by
+  apply embedEmitCfg_eq
+  · rfl
+  · rfl
+  · exact List.nil_append _
+  · intro i
+    exact ⟨rfl, rfl⟩
+  · intro j hj
+    exact False.elim (hj ⟨j, rfl⟩)
+
+/-- One seam of the prefix: `Turing.seamCompTM_run_ofCfg` and
+`Turing.seamCompTM_firstReturn_ofCfg` together, with the composite's exit control. -/
+private theorem f6_seam {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
+    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry q₂ : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
+    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) (hq : c₃.state = some q₂)
+    (hcut₂ : ∀ t < T₂, (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
+    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) (T₁ + 1 + T₂) =
+        c₃.mapState Sum.inr ∧
+      (c₃.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr q₂) ∧
+      ∀ t < T₁ + 1 + T₂,
+        ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+          some (Sum.inr q₂) :=
+  ⟨seamCompTM_run_ofCfg M₁ exit M₂ entry h₁ hexit hcut h₂,
+    by rw [Cfg.mapState_state, hq, Option.map_some],
+    seamCompTM_firstReturn_ofCfg M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂⟩
+
+/-- The startup of `Turing.exists_selfStartupTM`, seamed at its exit to a one-step stationary
+silent halt leaf, first halts at `T + 2` on `⟨α, w⟩` for every suffix `w`, with the startup's
+installed bank, input head `1`, every head at `0` and empty output ([AB09, Exercise 4.1]: the
+universal machine's preparation of its work tapes). The leaf is the one-state machine whose
+transition halts in place; no catalog row is a single halting step.
+
+**Proof sketch.** The public seam run composes the startup's endpoint and exit cut with the
+leaf's one step (`Turing.FinTM.controlAction_apply`). Before the dispatch the composite follows
+the live startup (`Turing.seamCompTM_runFrom_left`), and the dispatch step lands at the leaf's
+live entry (`Turing.seamCompTM_runFrom_right`), so it is live before `T + 2`. -/
+private theorem f6_native_halt (c : EffectiveMachineCode) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (A : MultiTapeTM (K + 3) Bool (P ⊕ Unit)),
+      ∀ α : List Bool, ∃ T : ℕ, ∀ w : List Bool,
+        A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =
+          ⟨none, 1,
+            fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+              else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+              else fun _ => none,
+            fun _ => 0, []⟩ ∧
+        (∀ u < T + 2, (A.runFrom (A.initCfg (pairEncode α w)) u).state ≠ none) := by
+  classical
+  obtain ⟨K, P, fP, dP, R, exit, hR⟩ := exists_selfStartupTM c
+  letI : Fintype P := fP
+  letI : DecidableEq P := dP
+  let leaf : MultiTapeTM (K + 3) Bool Unit :=
+    ⟨(), fun _ _ _ => FinTM.controlAction 0 none⟩
+  let A : MultiTapeTM (K + 3) Bool (P ⊕ Unit) :=
+    {seamCompTM R exit leaf () with q₀ := Sum.inl R.q₀}
+  have hinit (y : List Bool) : A.initCfg y = (R.initCfg y).mapState Sum.inl :=
+    MultiTapeTM.initCfg_eq_mapState R A Sum.inl rfl y
+  have hrun {y : List Bool} (d : Cfg (K + 3) Bool (P ⊕ Unit) y) (t : ℕ) :
+      A.runFrom d t = (seamCompTM R exit leaf ()).runFrom d t :=
+    MultiTapeTM.runFrom_with_q₀ _ _ _ _
+  have hleaf {y : List Bool} (d : Cfg (K + 3) Bool Unit y) (hs : d.state = some ()) :
+      leaf.runFrom d 1 = {d with state := none} := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some hs]
+    change (FinTM.controlAction 0 none).apply d = _
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  refine ⟨K, P, fP, dP, A, fun α => ?_⟩
+  obtain ⟨T, _B, hα⟩ := hR α
+  refine ⟨T, fun w => ?_⟩
+  obtain ⟨hr, hcut, _hout, _hspace⟩ := hα w
+  let d : Cfg (K + 3) Bool P (pairEncode α w) :=
+    ⟨some exit, 1,
+      fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+        else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+        else fun _ => none,
+      fun _ => 0, []⟩
+  have hd : d.state = some exit := rfl
+  have hs : (d.mapState (fun _ => ())).state = some () := by
+    rw [Cfg.mapState_state, hd, Option.map_some]
+  have hr' : R.runFrom (R.initCfg (pairEncode α w)) T = d := hr
+  have hfinal : A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =
+      ({d.mapState (fun _ => ()) with state := none}).mapState Sum.inr := by
+    rw [hinit, hrun]
+    exact seamCompTM_run_ofCfg R exit leaf () hr' hd hcut (hleaf _ hs)
+  refine ⟨?_, fun u hu => ?_⟩
+  · rw [hfinal]
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext i p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext i; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output]
+  · by_cases hut : u ≤ T
+    · rw [hinit, hrun, seamCompTM_runFrom_left R exit leaf () hcut u hut,
+        Cfg.mapState_state]
+      intro h
+      apply MultiTapeTM.runFrom_state_ne_none_of_le R (R.initCfg (pairEncode α w)) T
+        (by rw [hr', hd]; exact Option.some_ne_none _) u hut
+      exact Option.map_eq_none_iff.mp h
+    · have he : u = T + 1 := by omega
+      subst u
+      have hdispatch := seamCompTM_runFrom_right R exit leaf () hr' hd hcut 0
+      have hdispatch' : (seamCompTM R exit leaf ()).runFrom
+          ((R.initCfg (pairEncode α w)).mapState Sum.inl) (T + 1) =
+          (d.mapState (fun _ => ())).mapState Sum.inr := by
+        simpa only [Nat.add_zero, MultiTapeTM.runFrom_zero] using hdispatch
+      rw [hinit, hrun, hdispatch', Cfg.mapState_state, hs, Option.map_some]
+      exact Option.some_ne_none _
+
+/-- The first prefix phase: from the physical start, `Turing.headerRulerTM` on the last tape
+reads the budget header `pairEncode u v`, leaves the ruler `true^ℓ` (`ℓ = 2|u| + 2`) rewound to
+its first cell and the input head just past the header, every other tape blank, at a first
+return to its exit ([AB09, Exercise 4.1]).
+
+**Proof sketch.** Instantiate `Turing.headerRulerTM_run` at offset `0` from the initial
+configuration of the scan's control, whose tapes are blank and heads at `0`, and normalize its
+endpoint through the initialization field equations. -/
+private theorem f6_header (K : ℕ) (u v : List Bool) :
+    let z := pairEncode u v
+    let ℓ := 2 * u.length + 2
+    let r : Fin (K + 4) := Fin.last (K + 3)
+    let e : Cfg (K + 4) Bool (Fin 4 ⊕ RewindPhase) z :=
+      ⟨some (Sum.inr .done), ⟨ℓ + 1, by
+        show 2 * u.length + 2 + 1 < (pairEncode u v).length + 2
+        have := length_pairEncode u v; omega⟩,
+        Function.update (fun _ _ => none) r (FinTM.bufferTape (List.replicate ℓ true)),
+        fun _ => 0, []⟩
+    (headerRulerTM r).runFrom ((Cfg.init (0 : Fin 4) z).mapState Sum.inl) (2 * ℓ + 3) = e ∧
+      ∀ t < 2 * ℓ + 3, ((headerRulerTM r).runFrom
+        ((Cfg.init (0 : Fin 4) z).mapState Sum.inl) t).state ≠ some (Sum.inr .done) := by
+  intro z ℓ r e
+  let d : Cfg (K + 4) Bool (Fin 4) z := Cfg.init 0 z
+  have hpos : d.inputPos.val = 1 + 0 := by
+    change (Cfg.init (0 : Fin 4) z : Cfg (K + 4) Bool (Fin 4) z).inputPos.val = 1 + 0
+    rw [Cfg.init_inputPos]; rfl
+  have hstate : d.state = some 0 := Cfg.init_state _ _
+  have hblank (a : ℤ) : d.workTapes r a = none := by
+    change (Cfg.init (0 : Fin 4) z : Cfg (K + 4) Bool (Fin 4) z).workTapes r a = none
+    rw [Cfg.init_workTapes]
+  obtain ⟨hrow, hcut⟩ := headerRulerTM_run r d 0 hpos hstate u v
+    (by rw [List.drop_zero]) hblank
+  have hw : d.workTapes = fun _ _ => none := by
+    funext j a
+    change (Cfg.init (0 : Fin 4) z : Cfg (K + 4) Bool (Fin 4) z).workTapes j a = none
+    rw [Cfg.init_workTapes]
+  have hh : d.workTapePos = fun _ => 0 := by
+    funext j
+    change (Cfg.init (0 : Fin 4) z : Cfg (K + 4) Bool (Fin 4) z).workTapePos j = 0
+    rw [Cfg.init_workTapePos]
+  have ho : d.output = [] := Cfg.init_output _ _
+  have hip : d.inputPos.val = 1 := by simpa only [Nat.add_zero] using hpos
+  refine ⟨?_, hcut⟩
+  simpa only [e, ℓ, hw, hh, ho, hip, Nat.cast_zero, sub_zero, Nat.one_add] using hrow
+
+/-- Relabelling a literal configuration relabels only its control
+(`Turing.Cfg.mapState_eq_of_fields`). -/
+private theorem f6_mapState_mk {k : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (q : Option S) (i : Fin (x.length + 2)) (w : Fin k → ℤ → Option Bool) (h : Fin k → ℤ)
+    (o : List Bool) :
+    (⟨q, i, w, h, o⟩ : Cfg k Bool S x).mapState f = ⟨q.map f, i, w, h, o⟩ :=
+  Cfg.mapState_eq_of_fields _ f _ rfl rfl rfl rfl rfl
+
+/-- The second prefix phase: a machine `M` on `K + 3` tapes, hosted on the suffix by the
+ruler device `Turing.exists_rulerHostTM` and returned by the identity returning embedding
+`Turing.embedEmitRetTM`. If `M` first halts at `T` from its initial configuration on `y` with
+data `bank`, heads `0` and empty output, then from the first header's endpoint on
+`pairEncode u y` (control relabelled to the host's entry) the returned host reaches the live
+return anchor at some `t' ≤ C (ℓ + 1) T`, not earlier, with `bank`, the ruler `true^ℓ` last,
+every head at `0`, input head `ℓ + 1` and empty output ([AB09, Exercise 4.1]: the simulated input
+is a suffix of the input).
+
+**Proof sketch.** The header endpoint relabelled at the host's entry is the ruler host's
+presentation of `M`'s initial configuration (pairing geometry, field equations). The host's
+endpoint at `T` is halted and its none-liveness clause gives liveness before `t'`; the returning
+embedding turns that first halt into the live anchor at the same time, with its strict cut, and
+its endpoint fields are the host presentation's of `M`'s halted configuration. -/
+private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM (K + 3) Bool S) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (K + 4) Bool Q)
+      (inj : S → Bool → Q) (C : ℕ),
+      ∀ (u y : List Bool) (bank : Fin (K + 3) → ℤ → Option Bool) (T : ℕ) {R : Type} (q : R),
+        M.runFrom (M.initCfg y) T = ⟨none, 1, bank, fun _ => 0, []⟩ →
+        (∀ v < T, (M.runFrom (M.initCfg y) v).state ≠ none) →
+        let ℓ := 2 * u.length + 2
+        let hp : ℓ + 1 < (pairEncode u y).length + 2 := by
+          have := length_pairEncode u y; omega
+        let e₁ : Cfg (K + 4) Bool R (pairEncode u y) := ⟨some q, ⟨ℓ + 1, hp⟩,
+          Function.update (fun _ _ => none) (Fin.last (K + 3))
+            (FinTM.bufferTape (List.replicate ℓ true)), fun _ => 0, []⟩
+        let e₂ : Cfg (K + 4) Bool (Q ⊕ Unit) (pairEncode u y) :=
+          ⟨some (Sum.inr ()), ⟨ℓ + 1, hp⟩,
+            Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank, fun _ => 0, []⟩
+        ∃ t', t' ≤ C * (ℓ + 1) * T ∧
+          (embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H).runFrom
+            (e₁.mapState fun _ => Sum.inl (inj M.q₀ false)) t' = e₂ ∧
+          ∀ v < t', ((embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H).runFrom
+            (e₁.mapState fun _ => Sum.inl (inj M.q₀ false)) v).state ≠ some (Sum.inr ()) := by
+  classical
+  obtain ⟨Q, fQ, dQ, H, inj, C, _, hH⟩ := exists_rulerHostTM M
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  refine ⟨Q, fQ, dQ, H, inj, C, ?_⟩
+  intro u y bank T R q hrun hlive ℓ hp e₁ e₂
+  obtain ⟨hz, hℓ, hdrop⟩ := f6_pair_geometry u y
+  have hc : (M.initCfg y).state = some M.q₀ := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
+  have hci : (M.initCfg y).inputPos.val = 1 := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos]; rfl
+  obtain ⟨t', _, hhi, ⟨b', _, hend⟩, hinner, _, _, _⟩ :=
+    hH ℓ hz hℓ hdrop (FinTM.bufferTape (List.replicate ℓ true)) 0
+      (fun p _ _ => by rw [zero_add]) (M.initCfg y) false
+      (by rw [hci]; exact ⟨fun h => Bool.noConfusion h, fun h => absurd h Nat.one_ne_zero⟩) T
+  let d := rulerHostCfg ℓ hz ((M.initCfg y).state.map fun q => inj q false) (M.initCfg y)
+    (FinTM.bufferTape (List.replicate ℓ true)) 0
+  have hdlive : d.state ≠ none := by
+    rw [rulerHostCfg_state, hc, Option.map_some]; exact Option.some_ne_none _
+  have hHlive : ∀ v < t', (H.runFrom d v).state ≠ none := hinner hlive
+  have hHhalt : (H.runFrom d t').state = none := by
+    rw [hend, rulerHostCfg_state, hrun]; rfl
+  obtain ⟨_, hret, hcut⟩ := embedEmitRetTM_run (Fin.castLEEmb (le_refl (K + 4))) H
+    (fun _ _ => none) (fun _ => 0) [] d t' hdlive hHlive hHhalt
+  have hhand : e₁.mapState (fun _ => inj M.q₀ false) = d := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, rulerHostCfg_state, hc]; rfl
+    · apply Fin.ext
+      rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ (M.initCfg y) _ 0).1, hci]
+    · funext j p
+      rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes]
+      change Function.update (fun _ _ => none) (Fin.last (K + 3))
+          (FinTM.bufferTape (List.replicate ℓ true)) j p =
+        Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+          (FinTM.bufferTape (List.replicate ℓ true)) (M.initCfg y).workTapes j p
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Function.update_self, Fin.lastCases_last]
+      · rw [Function.update_of_ne (Fin.castSucc_ne_last i), Fin.lastCases_castSucc,
+          MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, rulerHostCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
+  have hstart : e₁.mapState (fun _ => Sum.inl (inj M.q₀ false)) =
+      (embedEmitCfg (Fin.castLEEmb (le_refl (K + 4))) (fun _ _ => none) (fun _ => 0) []
+        d).mapState (Sum.inl : Q → Q ⊕ Unit) := by
+    rw [f6_full_embed, ← hhand, Cfg.mapState_mapState]
+    rfl
+  refine ⟨t', hhi, ?_, ?_⟩
+  · rw [hstart, hret, f6_full_embed, hend, hrun]
+    apply Cfg.ext
+    · rfl
+    · apply Fin.ext
+      change (rulerHostCfg ℓ hz _ _ (FinTM.bufferTape (List.replicate ℓ true)) 0).inputPos.val =
+        ℓ + 1
+      rw [(rulerHostCfg_fields ℓ hz _ _ _ 0).1]
+      rfl
+    · funext j p
+      change (rulerHostCfg ℓ hz _ _ (FinTM.bufferTape (List.replicate ℓ true)) 0).workTapes j p =
+        _
+      rw [rulerHostCfg_workTapes]
+    · funext j
+      change (rulerHostCfg ℓ hz _ _ (FinTM.bufferTape (List.replicate ℓ true)) 0).workTapePos j =
+        0
+      rw [rulerHostCfg_workTapePos]
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · rw [Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc]
+    · change (rulerHostCfg ℓ hz _ _ (FinTM.bufferTape (List.replicate ℓ true)) 0).output = []
+      rw [rulerHostCfg_output]
+  · rw [hstart]
+    exact hcut
+
+/-- The third prefix phase: the catalog skip `Turing.skipTM` along the ruler `true^ℓ` from
+its first cell stops one cell past the ruler, at a first return, preserving every other field
+([AB09, Exercise 4.1]).
+
+**Proof sketch.** `Turing.skipTM_run_ofCfg` with the ruler as the skipped word; its endpoint
+updates only the control and the ruler head, read through the relabelling field equations. -/
+private theorem f6_skip {K : ℕ} {z : List Bool} {S : Type}
+    (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ) (hp : ℓ + 1 < z.length + 2) (q : S) :
+    let r : Fin (K + 4) := Fin.last (K + 3)
+    let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank, fun _ => 0, []⟩
+    let f : Cfg (K + 4) Bool SeekPhase z := ⟨some .done, ⟨ℓ + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1), []⟩
+    (skipTM (K + 4) r).runFrom (e.mapState fun _ => .run) (ℓ + 1) = f ∧
+      ∀ t < ℓ + 1, ((skipTM (K + 4) r).runFrom (e.mapState fun _ => .run) t).state ≠
+        some .done := by
+  intro r e f
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ ((List.replicate ℓ true).length : ℤ) →
+      (e.mapState fun _ => SeekPhase.run).workTapes r
+        ((e.mapState fun _ => SeekPhase.run).workTapePos r + p) =
+        FinTM.bufferTape (List.replicate ℓ true) p := by
+    intro p _ _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+    change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+      (FinTM.bufferTape (List.replicate ℓ true)) bank (Fin.last (K + 3)) (0 + p) = _
+    rw [Fin.lastCases_last, zero_add]
+  obtain ⟨run, cut, _⟩ := skipTM_run_ofCfg r (List.replicate ℓ true)
+    (e.mapState fun _ => SeekPhase.run) (by rw [Cfg.mapState_state]; rfl) hw
+  rw [List.length_replicate] at run cut
+  refine ⟨run.trans ?_, cut⟩
+  apply Cfg.ext
+  · rfl
+  · change (e.mapState fun _ => SeekPhase.run).inputPos = _
+    rw [Cfg.mapState_inputPos]
+  · funext j p
+    change (e.mapState fun _ => SeekPhase.run).workTapes j p = _
+    rw [Cfg.mapState_workTapes]
+  · funext j
+    change Function.update (e.mapState fun _ => SeekPhase.run).workTapePos r
+      ((e.mapState fun _ => SeekPhase.run).workTapePos r + (ℓ : ℤ) + 1) j =
+        Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) j
+    by_cases hj : j = r
+    · rw [hj, Function.update_self, Function.update_self, Cfg.mapState_workTapePos]
+      change (0 : ℤ) + ℓ + 1 = ℓ + 1
+      rw [zero_add]
+    · rw [Function.update_of_ne hj, Function.update_of_ne hj, Cfg.mapState_workTapePos]
+  · change (e.mapState fun _ => SeekPhase.run).output = _
+    rw [Cfg.mapState_output]
+
+/-- The fourth prefix phase: one step moving only the ruler head one cell left, correcting
+the skip's step past the ruler, so that the next scan starts at the ruler's end
+([AB09, Exercise 4.1]). It is the two-control machine whose every transition is
+`Turing.tapeAction` on the last tape with move `-1` into the exit control; no catalog row moves
+one head by one cell.
+
+**Proof sketch.** `Turing.step_of_tapeAction_move` gives the one step; the input head stays
+(`Turing.moveInputPos_zero`) and only the ruler head changes, from `ℓ + 1` to `ℓ`. The entry
+control differs from the exit, so the cut is immediate. -/
+private theorem f6_correction (K : ℕ) :
+    ∃ C : MultiTapeTM (K + 4) Bool Bool,
+      ∀ {z : List Bool} (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ)
+        (hp : ℓ + 1 < z.length + 2) {S : Type} (q : S),
+        let r : Fin (K + 4) := Fin.last (K + 3)
+        let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩,
+          Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+          Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1), []⟩
+        let f : Cfg (K + 4) Bool Bool z := ⟨some true, ⟨ℓ + 1, hp⟩,
+          Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+          Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ), []⟩
+        C.runFrom (e.mapState fun _ => false) 1 = f ∧
+          ∀ t < 1, (C.runFrom (e.mapState fun _ => false) t).state ≠ some true := by
+  let C : MultiTapeTM (K + 4) Bool Bool :=
+    ⟨false, fun _ _ _ => tapeAction (Fin.last (K + 3)) 0 none (-1) true⟩
+  refine ⟨C, ?_⟩
+  intro z bank ℓ hp S q r e f
+  have hs : (e.mapState fun _ => false).state = some false := by
+    rw [Cfg.mapState_state]; rfl
+  have hstep := step_of_tapeAction_move C (e.mapState fun _ => false) r 0 (-1) hs rfl
+  refine ⟨?_, ?_⟩
+  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hstep]
+    apply Cfg.ext
+    · rfl
+    · change moveInputPos (e.mapState fun _ => false).inputPos 0 = _
+      rw [moveInputPos_zero, Cfg.mapState_inputPos]
+    · funext j p
+      change (e.mapState fun _ => false).workTapes j p = _
+      rw [Cfg.mapState_workTapes]
+    · funext j
+      change Function.update (e.mapState fun _ => false).workTapePos r
+        ((e.mapState fun _ => false).workTapePos r + ((-1 : SignType) : ℤ)) j =
+          Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ) j
+      by_cases hj : j = r
+      · rw [hj, Function.update_self, Function.update_self, Cfg.mapState_workTapePos,
+          SignType.coe_neg, SignType.coe_one]
+        change Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) r + -1 = ℓ
+        rw [Function.update_self]
+        omega
+      · rw [Function.update_of_ne hj, Function.update_of_ne hj, Cfg.mapState_workTapePos]
+        change Function.update (fun _ => (0 : ℤ)) r ((ℓ : ℤ) + 1) j = 0
+        rw [Function.update_of_ne hj]
+    · change (e.mapState fun _ => false).output = _
+      rw [Cfg.mapState_output]
+  · intro t ht
+    have h0 : t = 0 := by omega
+    subst h0
+    rw [MultiTapeTM.runFrom_zero, hs]
+    exact fun h => Bool.noConfusion (Option.some.inj h)
+
+/-- The fifth prefix phase: from the ruler's end, `Turing.headerScanTM` reads the code header
+`pairEncode u v` and extends the ruler `true^ℓ` to `true^(ℓ + ℓ₂)`, `ℓ₂ = 2|u| + 2`, at a first
+return, with the input head `ℓ₂` cells further ([AB09, Exercise 4.1]).
+
+**Proof sketch.** `Turing.headerScanTM_run` from input offset `ℓ`; the extended ruler is
+`Turing.headerScanCfg_ruler` at the existing prefix length `ℓ`, read from the ruler's first
+cell `0`; every other tape and the output are unchanged. -/
+private theorem f6_scan {K : ℕ} {z : List Bool} {S : Type}
+    (bank : Fin (K + 3) → ℤ → Option Bool) (ℓ : ℕ) (hp : ℓ + 1 < z.length + 2) (q : S)
+    (u v : List Bool) (hz : z.drop ℓ = pairEncode u v) :
+    let ℓ₂ := 2 * u.length + 2
+    let r : Fin (K + 4) := Fin.last (K + 3)
+    let hp' : ℓ + ℓ₂ + 1 < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      omega
+    let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨ℓ + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ), []⟩
+    let f : Cfg (K + 4) Bool (Fin 4) z := ⟨some 3, ⟨ℓ + ℓ₂ + 1, hp'⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate (ℓ + ℓ₂) true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r ((ℓ + ℓ₂ : ℕ) : ℤ), []⟩
+    (headerScanTM r).runFrom (e.mapState fun _ => 0) ℓ₂ = f ∧
+      ∀ t < ℓ₂, ((headerScanTM r).runFrom (e.mapState fun _ => 0) t).state ≠ some 3 := by
+  intro ℓ₂ r hp' e f
+  have hpd : (e.mapState fun _ => (0 : Fin 4)).inputPos.val = 1 + ℓ := by
+    rw [Cfg.mapState_inputPos]
+    change ℓ + 1 = 1 + ℓ
+    omega
+  have hqd : (e.mapState fun _ => (0 : Fin 4)).state = some 0 := by
+    rw [Cfg.mapState_state]; rfl
+  obtain ⟨run, cut, _⟩ := headerScanTM_run r (e.mapState fun _ => (0 : Fin 4)) ℓ hpd hqd u v hz
+  refine ⟨run.trans ?_, cut⟩
+  have hhead : (e.mapState fun _ => (0 : Fin 4)).workTapePos r = (ℓ : ℤ) := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self r (ℓ : ℤ) (fun _ => (0 : ℤ))
+  apply Cfg.ext
+  · rw [headerScanCfg_state]
+  · apply Fin.ext
+    rw [headerScanCfg_inputPos]
+    change (e.mapState fun _ => (0 : Fin 4)).inputPos.val + ℓ₂ = ℓ + ℓ₂ + 1
+    rw [hpd]
+    omega
+  · funext j a
+    by_cases hj : j = r
+    · rw [hj]
+      have hpre (b : ℤ) : (e.mapState fun _ => (0 : Fin 4)).workTapes r
+          ((e.mapState fun _ => (0 : Fin 4)).workTapePos r - (ℓ : ℤ) + b) =
+          FinTM.bufferTape (List.replicate ℓ true) b := by
+        rw [hhead, sub_self, zero_add, Cfg.mapState_workTapes]
+        change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+          (FinTM.bufferTape (List.replicate ℓ true)) bank (Fin.last (K + 3)) b = _
+        rw [Fin.lastCases_last]
+      have h := headerScanCfg_ruler r (e.mapState fun _ => (0 : Fin 4)) 3
+        (2 * u.length + 2) (by
+          have h : ℓ + (2 * u.length + 2) + 1 < z.length + 2 := hp'
+          rw [hpd]; omega) ℓ hpre a
+      rw [hhead, sub_self, zero_add] at h
+      rw [h]
+      change _ = Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate (ℓ + ℓ₂) true)) bank (Fin.last (K + 3)) a
+      rw [Fin.lastCases_last]
+    · rw [headerScanCfg_workTapes, Function.update_of_ne hj, Cfg.mapState_workTapes]
+      obtain ⟨i, rfl⟩ := Fin.exists_castSucc_eq.mpr hj
+      change Fin.lastCases (motive := fun _ => ℤ → Option Bool) _ bank i.castSucc a =
+        Fin.lastCases (motive := fun _ => ℤ → Option Bool) _ bank i.castSucc a
+      rw [Fin.lastCases_castSucc, Fin.lastCases_castSucc]
+  · funext j
+    rw [headerScanCfg_workTapePos]
+    by_cases hj : j = r
+    · rw [hj, Function.update_self, hhead]
+      change _ = Function.update (fun _ => (0 : ℤ)) r ((ℓ + ℓ₂ : ℕ) : ℤ) r
+      rw [Function.update_self]
+      push_cast
+      rfl
+    · rw [Function.update_of_ne hj, Cfg.mapState_workTapePos]
+      change Function.update (fun _ => (0 : ℤ)) r (ℓ : ℤ) j =
+        Function.update (fun _ => (0 : ℤ)) r ((ℓ + ℓ₂ : ℕ) : ℤ) j
+      rw [Function.update_of_ne hj, Function.update_of_ne hj]
+  · rw [headerScanCfg_output, Cfg.mapState_output]
+
+/-- The sixth prefix phase: `Turing.rewindTM` rewinds the ruler `true^N` from its end to its
+first cell at a first return, preserving every other field ([AB09, Exercise 4.1]).
+
+**Proof sketch.** `Turing.rewindTM_run_ofCfg` with the ruler window including its left blank;
+its endpoint resets the ruler head to `0`, which restores every head to `0`. -/
+private theorem f6_rewind {K : ℕ} {z : List Bool} {S : Type}
+    (bank : Fin (K + 3) → ℤ → Option Bool) (N : ℕ) (hp : N + 1 < z.length + 2) (q : S) :
+    let r : Fin (K + 4) := Fin.last (K + 3)
+    let e : Cfg (K + 4) Bool S z := ⟨some q, ⟨N + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate N true)) bank,
+      Function.update (fun _ => (0 : ℤ)) r (N : ℤ), []⟩
+    let f : Cfg (K + 4) Bool RewindPhase z := ⟨some .done, ⟨N + 1, hp⟩,
+      Fin.lastCases (FinTM.bufferTape (List.replicate N true)) bank, fun _ => 0, []⟩
+    (rewindTM (K + 4) r).runFrom (e.mapState fun _ => .start) (N + 2) = f ∧
+      ∀ t < N + 2, ((rewindTM (K + 4) r).runFrom (e.mapState fun _ => .start) t).state ≠
+        some .done := by
+  intro r e f
+  have hhead : (e.mapState fun _ => RewindPhase.start).workTapePos r = (N : ℤ) := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self r (N : ℤ) (fun _ => (0 : ℤ))
+  obtain ⟨run, cut, _⟩ := rewindTM_run_ofCfg r (List.replicate N true) N
+    (by rw [List.length_replicate]) (e.mapState fun _ => RewindPhase.start)
+    (by rw [Cfg.mapState_state]; rfl)
+    (fun p _ _ => by
+      rw [hhead, sub_self, zero_add, Cfg.mapState_workTapes]
+      change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate N true)) bank (Fin.last (K + 3)) p = _
+      rw [Fin.lastCases_last])
+  refine ⟨run.trans ?_, cut⟩
+  apply Cfg.ext
+  · rfl
+  · change (e.mapState fun _ => RewindPhase.start).inputPos = _
+    rw [Cfg.mapState_inputPos]
+  · funext j p
+    change (e.mapState fun _ => RewindPhase.start).workTapes j p = _
+    rw [Cfg.mapState_workTapes]
+  · funext j
+    change Function.update (e.mapState fun _ => RewindPhase.start).workTapePos r
+      ((e.mapState fun _ => RewindPhase.start).workTapePos r - N) j = 0
+    by_cases hj : j = r
+    · rw [hj, Function.update_self, hhead, sub_self]
+    · rw [Function.update_of_ne hj, Cfg.mapState_workTapePos]
+      change Function.update (fun _ => (0 : ℤ)) r (N : ℤ) j = 0
+      rw [Function.update_of_ne hj]
+  · change (e.mapState fun _ => RewindPhase.start).output = _
+    rw [Cfg.mapState_output]
+
+
+/-- **The physical prefix.** One finite control on `K + 4` tapes, chosen before
+the code: scan the budget header writing the ruler and rewind it; run the native startup (seamed
+to its halt leaf) on the suffix through the ruler host and return; skip to the ruler end and
+correct one cell; scan the code header extending the ruler; rewind the whole ruler. For every
+code `α` its run on `⟨u, ⟨α, x⟩⟩` reaches the installed bank with the ruler `true^ℓ` at a first
+return to `finish`, within a time linear in `ℓ` with a per-code coefficient
+([AB09, Exercise 4.1]).
+
+**Proof sketch.** Six phase contracts give exact runs and first-return cuts between literal
+configurations; five public seams compose them, each adding its dispatch step. The startup's
+first halt is hosted and returned (`f6_hosted`); the initial configuration is the scan's,
+relabelled. The time is the sum of the phase times. -/
+private theorem f6_prefix (c : EffectiveMachineCode) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (A : MultiTapeTM (K + 4) Bool P) (finish : P) (C : ℕ),
+      ∀ α : List Bool, ∃ T₀ : ℕ, ∀ u x : List Bool,
+        let ℓ := (2 * u.length + 2) + (2 * α.length + 2)
+        let z := pairEncode u (pairEncode α x)
+        let hp : ℓ + 1 < z.length + 2 := by
+          show (2 * u.length + 2) + (2 * α.length + 2) + 1 <
+            (pairEncode u (pairEncode α x)).length + 2
+          have h1 := length_pairEncode u (pairEncode α x)
+          have h2 := length_pairEncode α x
+          omega
+        ∃ T : ℕ, T ≤ C * (ℓ + 1) * (T₀ + 2) + 4 * ℓ + 11 ∧
+          A.runFrom (A.initCfg z) T =
+            ⟨some finish, ⟨ℓ + 1, hp⟩,
+              Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true))
+                (fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+                  else if j = 2 then
+                    fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+                  else fun _ => none),
+              fun _ => 0, []⟩ ∧
+          ∀ v < T, (A.runFrom (A.initCfg z) v).state ≠ some finish := by
+  classical
+  obtain ⟨K, P₀, fP₀, dP₀, A₁, hA₁⟩ := f6_native_halt c
+  letI : Fintype P₀ := fP₀
+  letI : DecidableEq P₀ := dP₀
+  obtain ⟨Q₁, fQ₁, dQ₁, H₁, inj₁, C₁, hH₁⟩ := f6_hosted A₁
+  letI : Fintype Q₁ := fQ₁
+  letI : DecidableEq Q₁ := dQ₁
+  obtain ⟨Cor, hCor⟩ := f6_correction K
+  let r : Fin (K + 4) := Fin.last (K + 3)
+  let P2 := embedEmitRetTM (Fin.castLEEmb (le_refl (K + 4))) H₁
+  let S2 := seamCompTM (headerRulerTM r) (Sum.inr RewindPhase.done) P2
+    (Sum.inl (inj₁ A₁.q₀ false))
+  let S3 := seamCompTM S2 (Sum.inr (Sum.inr ())) (skipTM (Symbol := Bool) (K + 4) r)
+    SeekPhase.run
+  let S4 := seamCompTM S3 (Sum.inr SeekPhase.done) Cor false
+  let S5 := seamCompTM S4 (Sum.inr true) (headerScanTM r) (0 : Fin 4)
+  let S6 := seamCompTM S5 (Sum.inr (3 : Fin 4)) (rewindTM (Symbol := Bool) (K + 4) r)
+    RewindPhase.start
+  let A : MultiTapeTM (K + 4) Bool _ :=
+    { S6 with q₀ := Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (0 : Fin 4)))))) }
+  refine ⟨K, _, inferInstance, inferInstance, A, Sum.inr RewindPhase.done, C₁, fun α => ?_⟩
+  obtain ⟨T₀, hT₀⟩ := hA₁ α
+  refine ⟨T₀, fun u x => ?_⟩
+  intro ℓ z hp
+  obtain ⟨hrun₁, hlive₁⟩ := hT₀ x
+  let bank : Fin (K + 3) → ℤ → Option Bool :=
+    fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+      else fun _ => none
+  have hp₁ : 2 * u.length + 2 + 1 < z.length + 2 := by
+    have h1 := length_pairEncode u (pairEncode α x)
+    omega
+  obtain ⟨h1, k1⟩ := f6_header K u (pairEncode α x)
+  obtain ⟨t₂, ht₂, h2, k2⟩ := hH₁ u (pairEncode α x) bank (T₀ + 2)
+    (Sum.inr RewindPhase.done : Fin 4 ⊕ RewindPhase) hrun₁ hlive₁
+  obtain ⟨s2, _, c2⟩ := f6_seam (headerRulerTM r) _ P2 _ (Sum.inr ()) h1 rfl k1 h2 rfl k2
+  replace s2 := s2.trans (f6_mapState_mk _ _ _ _ _ _)
+  obtain ⟨h3, k3⟩ := f6_skip (z := z) bank (2 * u.length + 2) hp₁
+    (Sum.inr (Sum.inr ()) : (Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit))
+  obtain ⟨s3, _, c3⟩ := f6_seam S2 _ (skipTM (Symbol := Bool) (K + 4) r) _ SeekPhase.done
+    s2 rfl c2 h3 rfl k3
+  replace s3 := s3.trans (f6_mapState_mk _ _ _ _ _ _)
+  obtain ⟨h4, k4⟩ := hCor bank (2 * u.length + 2) hp₁
+    (Sum.inr SeekPhase.done : ((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase)
+  obtain ⟨s4, _, c4⟩ := f6_seam S3 _ Cor _ true s3 rfl c3 h4 rfl k4
+  replace s4 := s4.trans (f6_mapState_mk _ _ _ _ _ _)
+  obtain ⟨h5, k5⟩ := f6_scan (z := z) bank (2 * u.length + 2) hp₁
+    (Sum.inr true : (((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ Bool) α x
+    (f6_pair_geometry u (pairEncode α x)).2.2
+  obtain ⟨s5, _, c5⟩ := f6_seam S4 _ (headerScanTM r) _ (3 : Fin 4) s4 rfl c4 h5 rfl k5
+  replace s5 := s5.trans (f6_mapState_mk _ _ _ _ _ _)
+  obtain ⟨h6, k6⟩ := f6_rewind (z := z) bank ℓ hp
+    (Sum.inr (3 : Fin 4) : ((((Fin 4 ⊕ RewindPhase) ⊕ (Q₁ ⊕ Unit)) ⊕ SeekPhase) ⊕ Bool) ⊕ Fin 4)
+  obtain ⟨s6, _, c6⟩ := f6_seam S5 _ (rewindTM (Symbol := Bool) (K + 4) r) _ RewindPhase.done
+    s5 rfl c5 h6 rfl k6
+  replace s6 := s6.trans (f6_mapState_mk _ _ _ _ _ _)
+  have hinit : A.initCfg z = ((((((Cfg.init (0 : Fin 4) z).mapState Sum.inl).mapState
+      Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl := by
+    rw [MultiTapeTM.initCfg_eq_mapState { headerScanTM r with q₀ := (0 : Fin 4) } A
+      (Sum.inl ∘ Sum.inl ∘ Sum.inl ∘ Sum.inl ∘ Sum.inl ∘ Sum.inl) rfl z,
+      MultiTapeTM.initCfg_with_q₀]
+    simp only [Cfg.mapState_mapState]
+  have hrunA (t : ℕ) : A.runFrom (A.initCfg z) t = S6.runFrom (((((((Cfg.init (0 : Fin 4)
+      z).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState
+      Sum.inl).mapState Sum.inl) t :=
+    (congrArg (fun d => A.runFrom d t) hinit).trans (MultiTapeTM.runFrom_with_q₀ _ _ _ _)
+  refine ⟨_, ?_, (hrunA _).trans s6, fun v hv => by rw [hrunA]; exact c6 v hv⟩
+  have hmono : C₁ * (2 * u.length + 2 + 1) * (T₀ + 2) ≤ C₁ * (ℓ + 1) * (T₀ + 2) :=
+    Nat.mul_le_mul_right _ (Nat.mul_le_mul_left _ (by omega))
+  omega
+
+
 /-- **The space-bounded universal machine** ([AB09, Exercise 4.1], p. 93,
 forward clause; spec, fill pending — phase P4.3, restated forward-only
 2026-10-12 by design §16b item 3, RD-3 statement gate passed 2026-10-13;
