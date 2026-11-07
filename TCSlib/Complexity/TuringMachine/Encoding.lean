@@ -118,6 +118,11 @@ def CodeTM.toFinTM (M : CodeTM) : FinTM Bool where
   State := Fin (M.numStates + 1)
   tm := M.tm
 
+/-- A coded machine's bundled form has one work tape, its canonical finite state type,
+and the same underlying machine. -/
+theorem CodeTM.toFinTM_eq (M : CodeTM) :
+    M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := rfl
+
 /-- The bundled form of a coded machine has exactly one work tape. -/
 @[simp]
 lemma CodeTM.toFinTM_k (M : CodeTM) : M.toFinTM.k = 1 := rfl

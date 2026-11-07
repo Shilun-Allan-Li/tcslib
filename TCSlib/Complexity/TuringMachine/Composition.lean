@@ -109,6 +109,11 @@ def idTM : FinTM Bool where
         | some b => ⟨SignType.pos, fun i => i.elim0, some b, some ()⟩
         | none => ⟨SignType.zero, fun i => i.elim0, none, none⟩ }
 
+/-- The copy machine visits no work-tape cells, on every input and at every time. -/
+theorem idTM_spaceUsed (x : List Bool) (t : ℕ) :
+    idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
 /-- Run invariant of the copy machine: after `t ≤ n` steps it is live, its input head
 sits at position `t + 1`, and it has emitted exactly the first `t` input bits. -/
 private lemma idTM_run (x : List Bool) : ∀ t, t ≤ x.length →
@@ -195,6 +200,11 @@ def constTM (w : List Bool) : FinTM Bool where
   k := 0
   State := Fin (w.length + 1)
   tm := { q₀ := 0, tr := fun i _ _ => emitAction w id i }
+
+/-- A fixed-word constant machine visits no work-tape cells, on every input and at every time. -/
+theorem constTM_spaceUsed (w x : List Bool) (t : ℕ) :
+    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
 
 /-- **The constant machine's time**. On every input the constant machine halts within `|w| + 1`
 steps with output `w`. [AB09, §1.2]
