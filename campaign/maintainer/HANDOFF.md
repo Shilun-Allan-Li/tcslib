@@ -10,8 +10,9 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 ## 0. Current state (2026-11-07 UTC; read this first)
 
 Codex maintains the campaign on Seyoon's Mac. Native Lean 4.25.0 baseline **oleans-mac0**
-passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, **#229**, and now **#230**
-(the proved `SPACE_linear_ne_NP` consumer) at **`e3adffac67377a8b6e23bed74bfdbb44a123dd86`**.
+passed 894 modules, zero failures/skips. Seyoon merged **#228**, **#222**, **#229**, and **#230**.
+The proved `SPACE_linear_ne_NP` consumer (#229) merged at
+**`e3adffac67377a8b6e23bed74bfdbb44a123dd86`**.
 Gate 116 is CLOSED, Codex PASS0/0/0/12, all notes accepted. Its passed two-module replay tree
 exactly matches the merge's Lean, so **oleans-mlin2 was renamed oleans-mac3**, the then-current
 campaign snapshot. This is exact-tree adoption, not another elaboration or a snapshot splice.
@@ -111,7 +112,7 @@ proof/migration audit**, distinct from gate117; gate118 is reserved for it.
 3. **F6 follows the merged consumer and the reading API prerequisite.** Seyoon chose
 D-F6-3's **ruler-hosted suffix** and **Claude**, checkpoint/final zip pushes to its designated
 inbox. Records-only draft/probes live in `campaign/fills/f6/drafts/`; no F6 fill is dispatched
-or implemented internally. The approved CodeTM reader is in #230, pending gate/merge.
+or implemented internally. The approved CodeTM reader is merged via #230.
 The six bounded components in `campaign/fills/f6/drafts/layout-preship-v2/` pass native
 elaboration and paired opacity controls without strengthening H5: startup, hosted return,
 last-ruler layout, actual bundle-reader consumer, zero-outer typing and one-cell correction.
@@ -125,9 +126,13 @@ control evidence. `drafts/PRESHIP-INDEX.md` records limits. Full actual prefix, 
 space/loop-ledger/target proofs remain external Claude OWN work. Provisional packet orders
 132/2/229 and65 Mathlib roots independently reproduce; all229 source blobs match. The21-file
 TCSlib provisional baseline passed (1037 declarations,636 candidates,171071 reproduced
-characters), with full raw inputs/output/index and no semantic debt acceptance. With gate117 closed and #230 merged, refresh/verify final
-pins/source/census/orders/cache roots/population/baseline and checksum packet. F6 remains
-unissued; no target was filled internally or new API gap found in these bounded scopes.
+characters), with full raw inputs/output/index and no semantic debt acceptance. Final merged-base verification and624-section bundle rebuild/archive checks passed.
+**Ready to dispatch: Claude F6**, not yet confirmed dispatched. Exact proof pin
+`3023dc1408c3d216fc07a7cbba9ae30135b861ed`, records pin `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`;
+exchange `2adb80788611696d2cad6f907285c0c5a197ae09`. `campaign/fills/f6/prompt.md` and
+`dispatch.json` pin the complete packet (SHA256 `8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`).
+Cumulative checkpoint/final ZIPs go only to arora-barak-ch3-4/inbox/fill-f6/.
+No target was filled internally or new API gap found in these bounded scopes.
 Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 
 4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)

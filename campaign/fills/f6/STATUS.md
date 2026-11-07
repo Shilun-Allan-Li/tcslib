@@ -1,4 +1,4 @@
-# F6 — Claude packet source-pinned, publication pending
+# F6 — Ready to dispatch to Claude
 
 Seyoon selected Claude and the ruler-hosted suffix route, and merged #229/#230.
 Exact proof base `3023dc1408c3d216fc07a7cbba9ae30135b861ed` matches API1160's entire Lean tree; passed mra2
@@ -15,7 +15,14 @@ roots,22source admissions (one owned target+17MIG+4RecordTable), target header/
 Hierarchy/source/environment/tool hashes. The executed21-file baseline is adopted
 by exact merged source/population/tool equality, with no new screen claim.
 
+**Ready to dispatch: Claude F6.** The complete mixed-pin bundle passed624-section
+rebuild and independent archive verification (zero problems), and is published on the
+exchange branch at `2adb80788611696d2cad6f907285c0c5a197ae09`. SHA256:
+`8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`;8707327bytes.
+
 Issued brief scope is briefs/f6-space-universal.md; complete uncapped UTF8 list
-is BUNDLE-FILES.txt. Root is committing the records and constructing/verifying
-the immutable mixed-pin bundle before exchange publication. No fill dispatched.
-Delivery will be cumulative Claude ZIPs only under arora-barak-ch3-4/inbox/fill-f6/.
+is BUNDLE-FILES.txt. Immutable proof pin `3023dc1408c3d216fc07a7cbba9ae30135b861ed`;
+records pin `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`. `publication.json` and `dispatch.json`
+record the exact packet; `prompt.md` is the pasteable dispatch. The user has not yet
+confirmed dispatch. Cumulative Claude ZIPs go only under
+arora-barak-ch3-4/inbox/fill-f6/.
