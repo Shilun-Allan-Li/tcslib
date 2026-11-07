@@ -64,8 +64,8 @@ space-bounded configuration window.
 
 ## Main results
 
-* `Complexity.space_universal` — [AB09, Exercise 4.1], forward clause
-  (restated 2026-10-12; addend-free `C · s` since 2026-10-13).
+* `Complexity.space_universal` — [AB09, Exercise 4.1], forward clause, with the
+  addend-free bound `C · s`; proved by the ruler-hosted suffix assembly.
 * `Complexity.space_hierarchy` — [AB09, Theorem 4.8].
 * `Complexity.LOGSPACE_ssubset_PSPACE` — `L ⊊ PSPACE` on the p. 92 chain.
 * `Complexity.SPACE_linear_ne_NP` — [AB09, Exercise 3.2], normalized.
@@ -84,8 +84,9 @@ open Turing
 /-! ### The space-universal machine: private assembly glue
 
 The fixed prefix (budget header and ruler, the hosted startup with its return, the ruler-end
-seek and correction, the code header scan and the rewind) and its pieces, consumed only by
-`Complexity.space_universal`. -/
+seek and correction, the code header scan and the rewind) and its pieces, the hosted forwarding
+loop with its per-tape ledger, and the startup–loop seam at the last-ruler endpoint, consumed only
+by `Complexity.space_universal`. -/
 
 /-- The doubled header `pairEncode u v` has the positive length `2|u| + 2` before its suffix,
 and dropping that many cells exposes `v` (glue for [AB09, Exercise 4.1]). -/
@@ -1017,10 +1018,7 @@ private theorem f6_final_seam (K n ℓ : ℕ) {P Q V : Type} [DecidableEq P]
 
 
 /-- **The space-bounded universal machine** ([AB09, Exercise 4.1], p. 93,
-forward clause; spec, fill pending — phase P4.3, restated forward-only
-2026-10-12 by design §16b item 3, RD-3 statement gate passed 2026-10-13;
-strengthened to the addend-free `C · s` 2026-10-13, statement gate passed
-2026-10-14):
+forward clause, with the addend-free bound `C · s`):
 for the fixed scheme there is a machine `SU` such that for every code `α`
 there is a constant `C > 0` with: whenever the coded machine halts on `x`
 with `output`, having visited at most `s` work cells by then, `SU` on input
@@ -1046,40 +1044,34 @@ There is no input-device addend: the gated `+ logSpace |x| + 1` (a binary
 position for the simulated input head) is replaced by a unary ruler of the
 header's length, whose cells the bound absorbs (the RD-3 gate's minor 1).
 
-**Proof sketch.** A code-first interpreter in three parts. (i) **Startup.**
-Parse the header `bits s`, `α` and the two separators by a finite-state pair
-scan, writing one ruler cell per header cell, so that the ruler is `true^ℓ`
-with `ℓ = 2|bits s| + 2|α| + 4` (`Turing.pairEncode_pairEncode_length`,
-`Turing.pairEncode_pairEncode_drop`) and the physical input head ends at
-`ℓ + 1`, the virtual position `1`; the budget is never read. Canonize `α`
-into the table and state tapes as `U₀`'s startup does
-(`Turing.exists_selfStartupTM`'s phases, reading the code where the header
-holds it). Its cells are a constant depending only on `α`
-(`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's halting time);
-the effective scheme supplies no bound linear in `|α|`, and none is claimed.
-(ii) **Input device and step block** (H5's bounded-prefix ruler device and
-H2). Run `U₀`'s wrapped round loop (`Turing.exists_selfUniversal`'s sketch:
-H2's step block on the output-erased source, with the leaf that forwards each
-emission before the next round and before the halt) through the ruler host
-`Turing.exists_rulerHostTM` on the virtual input `x`. The host is a positive
-finite block simulation: it reads a blank and suppresses left moves at the
-virtual left boundary, which it tests by restoring sweeps of `ℓ` cells
-(`Turing.exists_rulerTestTM`), so `SU` halts exactly when the round loop does,
-with its output, the coded machine's. The chapter-1 interpreter's device
-cannot serve: its fourth tape holds a unary boundary marker whose head
-`applyRecord` moves with the input head (`Turing.universalInterpreter`), so
-that tape uses one plus the largest simulated input position reached,
-`Θ(|x| + 1)` cells on a full scan, which a budget `s = o(|x|)` does not
-cover (Finding B). (iii) **Space.** The host's bank visits exactly the round
-loop's cells: the mirrored tape only the coded machine's, at most `s`, and the
-table and summary tapes `O(|table| + 1)`, a constant for fixed `α`. Its ruler
-visits `ℓ + 2` cells. Every qualifying run has `s ≥ 1`
-(`Turing.CodeTM.one_le_spaceUsed`) and `|bits s| ≤ s`
-(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
-the total `C_α + s + ℓ + 2` is at most `C · s`. Fill obligations, named: the
-header-ruler startup with the buffered canonization; the H5 ruler host;
-`U₀`'s wrapped round loop (H2 at one coded work tape, with its head
-envelope); the per-code constant ledger. -/
+**Proof sketch.** The ruler-hosted suffix assembly. Write `z = ⟨bits s, ⟨α, x⟩⟩`,
+`ℓ₁ = 2|bits s| + 2` and `ℓ = ℓ₁ + 2|α| + 2`, the two header lengths
+(`Turing.length_pairEncode`). `SU` has the `K + 3` bank tapes of the startup of
+`Turing.exists_selfStartupTM` and a ruler tape last; it runs a fixed prefix, then the hosted
+forwarding loop, glued by `Turing.startupLoopTM`. (i) **Prefix.** Six phases glued by
+`Turing.seamCompTM`, each seam with its dispatch step and its first-return cut: the header ruler
+`Turing.headerRulerTM` reads `bits s` and leaves the ruler `true^ℓ₁` rewound; the startup, seamed
+to a one-step halt leaf, runs on the suffix `⟨α, x⟩` through the ruler device
+`Turing.exists_rulerHostTM`, and the returning embedding `Turing.embedEmitRetTM` turns its first
+halt into a live return; the skip `Turing.skipTM` and a one-cell left move bring the ruler head to
+`ℓ₁`; the header scan `Turing.headerScanTM` reads `α` and extends the ruler to `true^ℓ`
+(`Turing.headerScanCfg_ruler`); `Turing.rewindTM` rewinds it. The prefix first returns at the
+startup's installed bank (the decoded machine's table and initial state; the target's bundled
+machine is that raw machine by `Turing.CodeTM.toFinTM_eq`), with the ruler `true^ℓ` and the input
+head at `ℓ + 1`, the virtual position `1` on `x`; the budget is never read. Its time is at most
+`C_H (ℓ + 1)(T_α + 2) + 4ℓ + 11` for the startup time `T_α` of `α`, so it uses at most `K + 4`
+times that many cells plus one (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`). (ii) **Loop.** The forwarding round loop of
+`Turing.StepBlock.exists_forwardLoopTM` on the first three bank tapes, hosted on the suffix `x` by
+the ruler device; the prefix endpoint is the host's presentation of the loop's initial encoding
+(`Turing.embedEmitCfg_forwardLoop_init`, `Turing.rulerHostCfg_fields`). From the coded machine's
+first halt (`Turing.StepBlock.forwardLoop_forward`, via `Turing.FinTM.computesInTime_iff`) the
+host halts with the same output, and `Turing.startupLoopTM_runFrom` gives `SU`'s halt with it.
+(iii) **Space.** `Turing.startupLoopTM_spaceUsed_le`, tape by tape: the mirrored tape visits only
+cells the coded machine visits, at most `s`; the table and summary tapes stay in `[-D_α, D_α]`,
+`D_α` depending on the table only; every idle bank tape visits its start cell; the ruler stays in
+`[-1, ℓ]`. Every qualifying run has `s ≥ 1` (`Turing.CodeTM.one_le_spaceUsed`) and
+`|bits s| ≤ s` (`Turing.length_bits_le_self`), so `ℓ ≤ (2|α| + 6) · s` and the whole bound is at
+most `C_α · s` for a positive `C_α` depending on `α` only. -/
 theorem space_universal :
     ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
       ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
@@ -1091,7 +1083,85 @@ theorem space_universal :
             SU.tm.spaceUsed
                 (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t'
               ≤ C * s := by
-  sorry
+  -- The fixed machine: the prefix, then the hosted forwarding loop, by the startup–loop seam.
+  obtain ⟨K, P, fP, dP, A, finish, CH, hA⟩ := f6_prefix TimeHierarchy.code
+  obtain ⟨Q, V, fV, dV, H, entry, inj, hH⟩ := f6_loop K
+  let A0 : MultiTapeTM (0 + ((K + 2) + 2)) Bool P := (Nat.zero_add ((K + 2) + 2)).symm ▸ A
+  let U : MultiTapeTM (K + 4) Bool (P ⊕ V) := (Nat.zero_add ((K + 2) + 2)) ▸
+    startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)
+  refine ⟨{ k := K + 4, State := P ⊕ V, tm := U }, fun α => ?_⟩
+  -- The per-code constant, chosen before the budget, input, output and time.
+  obtain ⟨T₀, hT⟩ := hA α
+  obtain ⟨D, hD⟩ := hH ((TimeHierarchy.code).decode α).tm
+  let a := 2 * α.length + 6
+  let p := (K + 4) * (CH * (T₀ + 2) + 12)
+  let q := (K + 4) * (CH * (T₀ + 2) + 4)
+  refine ⟨p + q * a + (K + 4) * (1 + (2 * D + 4) + a) + 1, by omega, ?_⟩
+  intro s x output t hcomp hspace
+  -- The source run, through the bundle equation; every qualifying budget is positive.
+  have hs1 : 1 ≤ s := (CodeTM.one_le_spaceUsed _ x t).trans hspace
+  rw [CodeTM.toFinTM_eq] at hcomp hspace
+  obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff _ x output t).mp hcomp
+  -- The prefix run on the two headers, and the hosted loop on the suffix `x`.
+  obtain ⟨T, hTle, hrun, hcut⟩ := hT (Nat.bits s) x
+  obtain ⟨hz, hℓ1, hdrop1⟩ := f6_pair_geometry (Nat.bits s) (pairEncode α x)
+  obtain ⟨hz2, _, hdrop2⟩ := f6_pair_geometry α x
+  have hzl : (pairEncode (Nat.bits s) (pairEncode α x)).length =
+      ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + x.length := by omega
+  have hdrop : (pairEncode (Nat.bits s) (pairEncode α x)).drop
+      ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) = x := by
+    rw [← List.drop_drop, hdrop1, hdrop2]
+  obtain ⟨t'', hHhalt, hHout, hHsp⟩ := hD x _ _ hzl (by omega) hdrop t hhalt
+  -- The seam: run and per-tape space, with the prefix space bounded by its time.
+  have hB := A.spaceUsed_le_mul_succ (A.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) T
+  obtain ⟨hU, hUsp⟩ := f6_final_seam K _ _ A finish H entry inj
+    ((TimeHierarchy.code).decode α).tm x _ hzl T t'' _
+    (s + (2 * D + 1) + ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + 3)
+    hrun hcut hB (by omega) (fun i => (hHsp i).trans (by omega))
+  refine ⟨T + 1 + t'', (FinTM.computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩, ?_⟩
+  · change (U.runFrom (U.initCfg _) (T + 1 + t'')).state = none
+    rw [hU, Cfg.mapState_state, hHhalt, Option.map_none]
+  · change (U.runFrom (U.initCfg _) (T + 1 + t'')).output = output
+    rw [hU, Cfg.mapState_output, hHout]
+    exact hout
+  · change U.spaceUsed (U.initCfg _) (T + 1 + t'') ≤ _
+    refine hUsp.trans ?_
+    -- Absorb the prefix bound and the per-tape budget into `C_α · s`.
+    have hbits := length_bits_le_self s
+    have hLa : (2 * (Nat.bits s).length + 2) + (2 * α.length + 2) ≤ a * s := by
+      have h4 : 2 * α.length + 4 ≤ (2 * α.length + 4) * s := Nat.le_mul_of_pos_right _ hs1
+      have he : a * s = 2 * s + (2 * α.length + 4) * s := by
+        simp only [a]; ring
+      omega
+    have hT1 : T + 1 ≤ (CH * (T₀ + 2) + 12) + (CH * (T₀ + 2) + 4) *
+        ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) := by
+      have he : CH * ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2) + 1) * (T₀ + 2) +
+          4 * ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + 12 =
+          (CH * (T₀ + 2) + 12) + (CH * (T₀ + 2) + 4) *
+            ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) := by ring
+      omega
+    have hB' : (K + 4) * (T + 1) ≤ p * s + q * a * s := by
+      calc (K + 4) * (T + 1)
+          ≤ (K + 4) * ((CH * (T₀ + 2) + 12) + (CH * (T₀ + 2) + 4) *
+            ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2))) :=
+            Nat.mul_le_mul_left _ hT1
+        _ = p + q * ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) := by
+            simp only [p, q]; ring
+        _ ≤ p * s + q * (a * s) :=
+            Nat.add_le_add (Nat.le_mul_of_pos_right _ hs1) (Nat.mul_le_mul_left _ hLa)
+        _ = p * s + q * a * s := by ring
+    have hS' : (K + 4) * (s + (2 * D + 1) +
+        ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + 3) ≤
+        (K + 4) * (1 + (2 * D + 4) + a) * s := by
+      have h1 : 2 * D + 4 ≤ (2 * D + 4) * s := Nat.le_mul_of_pos_right _ hs1
+      have he : (1 + (2 * D + 4) + a) * s = s + (2 * D + 4) * s + a * s := by ring
+      calc (K + 4) * (s + (2 * D + 1) +
+            ((2 * (Nat.bits s).length + 2) + (2 * α.length + 2)) + 3)
+          ≤ (K + 4) * ((1 + (2 * D + 4) + a) * s) := Nat.mul_le_mul_left _ (by omega)
+        _ = (K + 4) * (1 + (2 * D + 4) + a) * s := by ring
+    have he : (p + q * a + (K + 4) * (1 + (2 * D + 4) + a) + 1) * s =
+        p * s + q * a * s + (K + 4) * (1 + (2 * D + 4) + a) * s + s := by ring
+    omega
 
 /-- The inclusion half: `hfg` at `A = 1` from some `N` on, and `g`'s floor below `N`.
 [AB09, Theorem 4.8, inclusion]
