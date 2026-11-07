@@ -1,0 +1,118 @@
+== unsealed
+== Probe/EPadSealControlUnsealed start 03:21:54
+rfl closes: Complexity.LOGSPACE   [Complexity.LOGSPACE.eq_1 : Complexity.LOGSPACE =
+  Complexity.SPACE Complexity.logSpace]
+rfl closes: Complexity.LogProg.AHalt   [Complexity.LogProg.AHalt.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a : Complexity.LogProg.AConf m Λ) (b : Bool),
+  Complexity.LogProg.AHalt A oracle x G a b =
+    ∃ T,
+      (Complexity.LogProg.arun A oracle x a T).1 = none ∧
+        (Complexity.LogProg.arun A oracle x a T).2.2 = some b ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+rfl closes: Complexity.LogProg.AReach   [Complexity.LogProg.AReach.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a a' : Complexity.LogProg.AConf m Λ),
+  Complexity.LogProg.AReach A oracle x G a a' =
+    ∃ T, Complexity.LogProg.arun A oracle x a T = a' ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+rfl closes: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+rfl closes: Complexity.LogProg.PreS   [Complexity.LogProg.PreS.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (x : List Bool) (l : Λ) (fst : Fin m → ℕ) (snd : Option Bool),
+  Complexity.LogProg.PreS A x (some l, fst, snd) =
+    match A l with
+    | Complexity.LogProg.Ins.jeq r s l₁ l₀ => r ≠ s
+    | Complexity.LogProg.Ins.jeqIn r l₁ l₀ => Complexity.LogProg.ValidPlain x
+    | Complexity.LogProg.Ins.jeqFst r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.jeqSnd r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.call j mode args l₁ l₀ => args.Nodup
+    | x => True]
+rfl closes: Complexity.LogProg.ValidPair   [Complexity.LogProg.ValidPair.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPair y =
+    ∃ n u w,
+      y = Turing.pairEncode (List.replicate n true) (Turing.pairEncode u w) ∧
+        Complexity.LogProg.Canon u ∧ Complexity.LogProg.Canon w]
+rfl closes: Complexity.LogProg.ValidPlain   [Complexity.LogProg.ValidPlain.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPlain y = ∃ n w, y = Turing.pairEncode (List.replicate n true) w ∧ Complexity.LogProg.Canon w]
+rfl closes: Complexity.LogProg.astep   [Complexity.LogProg.astep.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool) (v : Fin m → ℕ)
+  (res : Option Bool), Complexity.LogProg.astep A oracle x (none, v, res) = (none, v, res)]
+rfl closes: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+rfl closes: Complexity.LogProg.callSegs   [Complexity.LogProg.callSegs.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (cs : Complexity.LogProg.CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool),
+  Complexity.LogProg.callSegs cs x W = cs.mode.seg0 x :: Complexity.LogProg.argSegs (List.map W cs.args)]
+rfl closes: Complexity.LogProg.vword   [Complexity.LogProg.vword.eq_1 : Complexity.LogProg.vword [] = []]
+rfl closes: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+rfl closes: Complexity.inputBitLang   [Complexity.inputBitLang.eq_1 : Complexity.inputBitLang =
+  Complexity.indexLang fun u i => u.getD i false = true]
+rfl closes: Complexity.inputLenLang   [Complexity.inputLenLang.eq_1 : Complexity.inputLenLang =
+  Complexity.indexLang fun u i => i < u.length]
+rfl closes: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+rfl closes: Turing.MultiTapeTM.indicator   [Turing.MultiTapeTM.indicator.eq_1 : ∀ {α : Type u_3} (L : Set α) (x : α),
+  Turing.MultiTapeTM.indicator L x = if x ∈ L then true else false]
+rfl closes: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+rfl closes: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+== Probe/EPadSealControlUnsealed end 03:21:55 rc=0 wall=1.3s maxrss=1799MiB
+== sealed (every #epad_seal_rfl must fail)
+== Probe/EPadSealControlSealed start 03:21:55
+Probe/EPadSealControlSealed.lean:54:0: error: rfl FAILS: Complexity.LOGSPACE   [Complexity.LOGSPACE.eq_1 : Complexity.LOGSPACE = Complexity.SPACE Complexity.logSpace]
+Probe/EPadSealControlSealed.lean:55:0: error: rfl FAILS: Complexity.LogProg.AHalt   [Complexity.LogProg.AHalt.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a : Complexity.LogProg.AConf m Λ) (b : Bool),
+  Complexity.LogProg.AHalt A oracle x G a b =
+    ∃ T,
+      (Complexity.LogProg.arun A oracle x a T).1 = none ∧
+        (Complexity.LogProg.arun A oracle x a T).2.2 = some b ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+Probe/EPadSealControlSealed.lean:56:0: error: rfl FAILS: Complexity.LogProg.AReach   [Complexity.LogProg.AReach.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a a' : Complexity.LogProg.AConf m Λ),
+  Complexity.LogProg.AReach A oracle x G a a' =
+    ∃ T, Complexity.LogProg.arun A oracle x a T = a' ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+Probe/EPadSealControlSealed.lean:57:0: error: rfl FAILS: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+Probe/EPadSealControlSealed.lean:58:0: error: rfl FAILS: Complexity.LogProg.PreS   [Complexity.LogProg.PreS.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (x : List Bool) (l : Λ) (fst : Fin m → ℕ) (snd : Option Bool),
+  Complexity.LogProg.PreS A x (some l, fst, snd) =
+    match A l with
+    | Complexity.LogProg.Ins.jeq r s l₁ l₀ => r ≠ s
+    | Complexity.LogProg.Ins.jeqIn r l₁ l₀ => Complexity.LogProg.ValidPlain x
+    | Complexity.LogProg.Ins.jeqFst r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.jeqSnd r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.call j mode args l₁ l₀ => args.Nodup
+    | x => True]
+Probe/EPadSealControlSealed.lean:59:0: error: rfl FAILS: Complexity.LogProg.ValidPair   [Complexity.LogProg.ValidPair.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPair y =
+    ∃ n u w,
+      y = Turing.pairEncode (List.replicate n true) (Turing.pairEncode u w) ∧
+        Complexity.LogProg.Canon u ∧ Complexity.LogProg.Canon w]
+Probe/EPadSealControlSealed.lean:60:0: error: rfl FAILS: Complexity.LogProg.ValidPlain   [Complexity.LogProg.ValidPlain.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPlain y = ∃ n w, y = Turing.pairEncode (List.replicate n true) w ∧ Complexity.LogProg.Canon w]
+Probe/EPadSealControlSealed.lean:61:0: error: rfl FAILS: Complexity.LogProg.astep   [Complexity.LogProg.astep.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool) (v : Fin m → ℕ)
+  (res : Option Bool), Complexity.LogProg.astep A oracle x (none, v, res) = (none, v, res)]
+Probe/EPadSealControlSealed.lean:62:0: error: rfl FAILS: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+Probe/EPadSealControlSealed.lean:63:0: error: rfl FAILS: Complexity.LogProg.callSegs   [Complexity.LogProg.callSegs.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (cs : Complexity.LogProg.CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool),
+  Complexity.LogProg.callSegs cs x W = cs.mode.seg0 x :: Complexity.LogProg.argSegs (List.map W cs.args)]
+Probe/EPadSealControlSealed.lean:64:0: error: rfl FAILS: Complexity.LogProg.vword   [Complexity.LogProg.vword.eq_1 : Complexity.LogProg.vword [] = []]
+Probe/EPadSealControlSealed.lean:65:0: error: rfl FAILS: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+Probe/EPadSealControlSealed.lean:66:0: error: rfl FAILS: Complexity.inputBitLang   [Complexity.inputBitLang.eq_1 : Complexity.inputBitLang =
+  Complexity.indexLang fun u i => u.getD i false = true]
+Probe/EPadSealControlSealed.lean:67:0: error: rfl FAILS: Complexity.inputLenLang   [Complexity.inputLenLang.eq_1 : Complexity.inputLenLang =
+  Complexity.indexLang fun u i => i < u.length]
+Probe/EPadSealControlSealed.lean:68:0: error: rfl FAILS: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+Probe/EPadSealControlSealed.lean:69:0: error: rfl FAILS: Turing.MultiTapeTM.indicator   [Turing.MultiTapeTM.indicator.eq_1 : ∀ {α : Type u_3} (L : Set α) (x : α),
+  Turing.MultiTapeTM.indicator L x = if x ∈ L then true else false]
+Probe/EPadSealControlSealed.lean:70:0: error: rfl FAILS: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+Probe/EPadSealControlSealed.lean:71:0: error: rfl FAILS: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+FAIL(Probe/EPadSealControlSealed): lean exited with status 1
+FAIL(Probe/EPadSealControlSealed): error diagnostics reported
+FAIL(Probe/EPadSealControlSealed): no fresh .olean produced
+== Probe/EPadSealControlSealed end 03:21:56 rc=1 wall=1.5s maxrss=1786MiB

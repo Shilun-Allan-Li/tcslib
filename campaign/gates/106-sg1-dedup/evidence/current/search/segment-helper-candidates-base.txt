@@ -1,0 +1,89 @@
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Basis.lean:81:lemma gaussianPolynomialLp_mem_span_hermiteL2 (P : MvPolynomial (Fin n) ℝ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Span.lean:70:lemma coordinatePolynomialProduct_mem_span_hermite (p : Fin n → Polynomial ℝ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Hermite/Span.lean:98:theorem span_multivariateHermitePolynomial_eq_top :
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Torus.lean:115:lemma span_mFourier_toLp_dense {ι : Type*} [Fintype ι]
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Torus.lean:170:lemma span_gaussianTorusFourier_dense (μ : Measure (Fin n → ℝ)) [IsFiniteMeasure μ]
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/UniformTransfer.lean:169:lemma tendsto_clm_of_dense_span {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+TCSlib/Complexity/ClassNP/SAT.lean:4076:private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
+TCSlib/Complexity/ClassNP/Tautology.lean:1282:private def tautDualSegment {x : List Bool}
+TCSlib/Complexity/ClassNP/Tautology.lean:1288:private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
+TCSlib/Complexity/ClassNP/Tautology.lean:1293:private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
+TCSlib/Complexity/ClassNP/Tautology.lean:1303:private lemma tautDual_segment_add {x : List Bool}
+TCSlib/Complexity/CookLevin/Hardness.lean:6414:private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8712:private lemma f2_segment_heads {k : ℕ} {S : Type} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9560:private def f2_splitSafe {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9565:private lemma f2_splitSafe_add {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10022:private lemma f2_splitSafe_one {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10034:private lemma f2_splitSafe_join {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11425:private lemma a2_segments {k : ℕ} {Q : Type} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:603:private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:1633:lemma adds one dispatch; the existing tagged-segment helper supplies the verdict cut. -/
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:1713:/-- Package a record-step phase by the public host theorem and the inherited segment
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:424:def Segment {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:432:theorem segment_iff {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:444:theorem zero {a : Cfg k Γ S x} (h : P a.workTapePos) : Segment M F P a a 0 :=
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:464:theorem trans {a b c : Cfg k Γ S x} {t v : ℕ} (h : Segment M F P a b t)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:503:theorem and {Q : (Fin k → ℤ) → Prop} {a b : Cfg k Γ S x} {t : ℕ} (h : Segment M F P a b t)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:508:theorem take {a b : Cfg k Γ S x} {t u : ℕ} (h : Segment M F P a b t) (hu : u ≤ t) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:515:theorem drop {a b : Cfg k Γ S x} {t u : ℕ} (h : Segment M F P a b t) (hu : u ≤ t) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:554:theorem live {a b : Cfg k Γ S x} {t : ℕ} (h : Segment M F P a b t) (hb : b.state ≠ none) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:566:def SafeSegment {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:573:theorem safeSegment_iff {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {F : Set (Option S)}
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:601:theorem trans {a b c : Cfg k Γ S x} {t v : ℕ} (h : SafeSegment M F P a b t)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:613:theorem endpoint_not_mem {a b : Cfg k Γ S x} {t : ℕ} (h : SafeSegment M F P a b t) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:626:theorem segment (C : Contract M entry exits ι x) (i : ι) (d : Cfg k Γ S x)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:634:def ofSegment (pre : ι → Cfg k Γ S x → Prop) (time : ι → Cfg k Γ S x → ℕ)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:769:theorem segment {c c' : Cfg k Γ S x} {t : ℕ} (h : Round M a E P c c' t) (ha : some a ∉ E) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1143:theorem Traj.segment {C : Contract M entry exits ι x}
+TCSlib/Complexity/TuringMachine/Build/Contract.lean:53:reconstruction lemma) and `Build/Seam` (the right segment and the release lockstep). The
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:820:private def counterSpan {k : ℕ} {Γ S : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:834:private lemma counter_span_append {k : ℕ} {Γ S : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1832:public theorem's round hypothesis; its conclusion is the segment, and the live endpoint adds
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1882:theorem counterLoopTMVia_done_segment {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1970:theorem counterLoopTMVia_escape_segment {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3152:private def emCallSpan (lo hi z : ℤ) : Option Bool :=
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3157:private lemma emCall_span_extend (lo hi h : ℤ) (hord : lo ≤ hi)
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3344:private lemma emCall_span_zero : emCallSpan 0 0 = bufferTape [true] := by
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3443:private lemma emCall_span_interval (lo hi : ℤ) (h : lo ≤ hi) :
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:5063:lemma. Silent startup plus these `R + 1` segments satisfies the coefficient
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3921:private def splitSafe {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3926:private lemma splitSafe_add {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4379:private lemma splitSafe_one {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4391:private lemma splitSafe_join {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2350:private def RoundSpan {k n : ℕ} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2361:private lemma RoundSpan.add {k n : ℕ} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:641:private theorem sc_observedSegment {k : ℕ} {Γ Q : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:664:segment. The public uniqueness theorem equates its length with the full segment's length. -/
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:482:private theorem wl_phase_segment {K : ℕ} {Q T Pt Ps : Type}
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:542:(only for a live source) the record step, using the public phase-host theorem and segment
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:2007:private lemma zr_loop_segment {k : ℕ} {x : List (ZoneSym k)} (Z : ZoneData k)
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:4197:private lemma zr_scanLoop_segment {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:546:private lemma guardBlock_segment (b : ℕ) (x : List Bool) (j : ℕ)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1182:private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1190:private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1203:private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1237:private lemma dgSpan_generate_right {A Q : Type} {x : List A}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1261:private lemma dgSpan_generate_left {A Q : Type} {x : List A}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1286:private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1381:private lemma dg_right_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1412:private lemma dg_left_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+TCSlib/ErrorCorrectingCodes/JohnsonBound.lean:335:lemma finrank_orthogonal_span_singleton {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:472:as linear independence of *columns*, and theorem 12.4 count spanning trees by a
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:494:**Book definition** (B&M §2.2).  A spanning subgraph that is a tree.
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:510:def IsSpanningTree (tail head : A → V) (T : Finset A) : Prop :=
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:569:is to bonds and cotrees as theorem 2.5 is to cycles and spanning trees.
+TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:643:**Book definition** (B&M §2.4).  `τ(G)` denotes the number of spanning trees of `G`.
+TCSlib/GraphTheory/Core/DirectedGraphs.lean:145:Ghouila-Houri (theorem 10.4) finds a spanning one under a degree condition.
+TCSlib/GraphTheory/Core/DirectedGraphs.lean:1264:   turns theorem 10.1's *length* bound into the goal's *spanning* claim.
+TCSlib/GraphTheory/Core/DirectedGraphs.lean:1442:theorem isUnilateral_iff_exists_spanning_directedWalk
+TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:674:theorem exists_bipartite_spanning_subgraph :
+TCSlib/GraphTheory/Core/Trees.lean:151:**Book definition (§2.4).**  *We denote the number of spanning trees of `G` by
+TCSlib/GraphTheory/Core/Trees.lean:164:noncomputable def numSpanningTrees {W : Type*} (H : SimpleGraph W) : ℕ :=
+TCSlib/GraphTheory/Core/Trees.lean:413:theorem exists_spanningTree (hG : G.Connected) :
+TCSlib/GraphTheory/Core/Trees.lean:471:theorem spanningTree_add_edge_exists_cycle
+TCSlib/GraphTheory/Core/Trees.lean:507:**Reading.**  The exact mirror of theorem 2.5, with *cycle* → *bond* and *spanning
+TCSlib/GraphTheory/Core/Trees.lean:633:theorem numSpanningTrees_deletion_contraction (e : Sym2 V) (he : e ∈ G.edgeSet) :
+TCSlib/GraphTheory/Core/Trees.lean:751:theorem exists_min_weight_spanningTree (hG : G.Connected) (w : Sym2 V → ℝ) :
+TCSlib/GraphTheory/Kruskal/Optimality.lean:156:theorem kruskal_spans {n : ℕ} (E : List (WEdge n)) : SpansLike (kruskal n E) E := by
+TCSlib/GraphTheory/Kruskal/Reach.lean:41:def SpansLike {n : ℕ} (F E : List (WEdge n)) : Prop :=
+TCSlib/Programs/Light/Lib/Seg.lean:35:of indices.  The file has the lemmas for reading a cell of a segment, writing into it, writing

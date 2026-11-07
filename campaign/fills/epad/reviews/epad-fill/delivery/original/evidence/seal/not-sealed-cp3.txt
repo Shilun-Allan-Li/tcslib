@@ -1,0 +1,10 @@
+Complexity.LogProg.AConf	type synonym (`abbrev AConf m Λ := Option Λ × (Fin m → ℕ) × Option Bool`): the published run lemmas take configurations as triples
+Complexity.LogProg.ARM	type synonym (`abbrev ARM m d Λ := Λ → Ins m d Λ`): every published ARM run lemma applies `A l`; sealing it makes the published statements themselves ill-typed at a concrete machine
+Complexity.LogProg.BankS	type synonym (`abbrev BankS := Option (Σ j, (Ms j).State)`), the state type in `compile_decides`'s statement; `[reducible]` by declaration (Lean refuses `[local irreducible]` on it); never unfolded
+Complexity.LogProg.Ins.casesOn	auto-generated eliminator of an inductive type (from this file's own `match` on it), `[reducible]` by construction: Lean refuses `[local irreducible]` on it
+Complexity.LogProg.alignedPair_loop.match_1	auto-generated `match` auxiliary of a published statement (its `match` on `pairDecode w`); Lean reduces matchers by its matcher reduction whatever their reducibility, so `[local irreducible]` has no effect (logs/seal-control-matcher-demo.log: its control closes sealed)
+Turing.FinTM.State	structure projection
+Turing.FinTM.decEqState	structure projection
+Turing.FinTM.fintypeState	structure projection
+Turing.FinTM.k	structure projection
+Turing.FinTM.tm	structure projection

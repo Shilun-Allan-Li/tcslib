@@ -1,0 +1,911 @@
+TCSlib/Complexity/CircuitComplexity/Advice.lean:506:    rw [MultiTapeTM.runFrom_of_halt _ hh.1]
+TCSlib/Complexity/CircuitComplexity/Advice.lean:536:      rw [MultiTapeTM.runFrom_of_halt _ hh.1]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:455:        · rw [MultiTapeTM.runFrom_add, hl, hq', hvw, ho, hmt, hhm]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:488:      rw [MultiTapeTM.runFrom_add _ (2 + (vals.length + 1)) (vals.length + 1),
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:489:        MultiTapeTM.runFrom_add _ 2 (vals.length + 1), hl, hq', hvw, ho, hmw', hhm]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:548:      · rw [MultiTapeTM.runFrom_add, hrun, hcfg, h1]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine.lean:549:      · rw [MultiTapeTM.runFrom_add, hrun, hcfg, h2]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:117:    conv_lhs => rw [htime, MultiTapeTM.runFrom_add, hstep,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:264:    rw [MultiTapeTM.runFrom_add, hscan]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:276:    rw [show 2 * w.length + 1 + 1 = 2 * w.length + (1 + 1) by ring, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:290:    rw [show 2 * w.length + 1 + 1 = 2 * w.length + (1 + 1) by ring, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:373:      rw [MultiTapeTM.runFrom_add _ (2 * code.length + 2) (n + 1),
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:374:        MultiTapeTM.runFrom_add _ (2 * code.length) 2, hscan]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:388:        rw [MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1)) n, hsetup1, hcopy]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:404:        rw [hv, MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + n) 1, hB]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:472:            rw [MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + n + 1 + (n + 1)) r,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:473:              MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + n + 1) (n + 1),
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:474:              MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + n) 1, hB, h1step,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:476:          rw [MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + n + 1 + (n + 1) + r) t,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:495:      rw [hv, MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1) + x.length) 1,
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:496:        MultiTapeTM.runFrom_add _ (2 * code.length + 2 + (n + 1)) x.length, hsetup1, hcopy]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:507:    rw [hv, MultiTapeTM.runFrom_add _ (2 * code.length) 2, hscan]
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:543:  have he := (evalTM exact).tm.runFrom_add ((evalTM exact).tm.initCfg z) t
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean:545:  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ h1] at he
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:132:      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step,
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:160:        rw [MultiTapeTM.runFrom_add _ (1 + (v t + 1) + (v t + 1)) T,
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:161:          MultiTapeTM.runFrom_add _ (1 + (v t + 1)) (v t + 1),
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:162:          MultiTapeTM.runFrom_add _ 1 (v t + 1), h1, h2, h3, hrun]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:259:    rw [MultiTapeTM.runFrom_add, show (0 : Fin 64) = ⟨0, by decide⟩ from rfl, h₁,
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:260:      MultiTapeTM.runFrom_add, h₂, MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, h₄,
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:261:      MultiTapeTM.runFrom_add, h₅, h₆, hv]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:314:      · rw [MultiTapeTM.runFrom_add, hrun, h1]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:315:      · rw [MultiTapeTM.runFrom_add, hrun, h2, hem, List.append_assoc]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:360:      · rw [MultiTapeTM.runFrom_add, rd_step, hb]
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:384:  have he := emTM.tm.runFrom_add (emTM.tm.initCfg w) T (200 * (w.length + 1) ^ 2 - T)
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean:385:  rw [Nat.add_sub_of_le hT', hinit, MultiTapeTM.runFrom_of_halt _ h1] at he
+TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:362:      · obtain ⟨i, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.mp hvL)
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:346:      · rw [hrun, MultiTapeTM.runFrom_of_halt _ hst]; exact hb1
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:348:          MultiTapeTM.runFrom_of_halt _ hst, hst]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:368:        rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, e1, hret, hrest, hrun]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:105:  rw [show s' = s + (s' - s) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:106:    MultiTapeTM.runFrom_of_halt _ h.1]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:338:        rw [MultiTapeTM.runFrom_add, hsel]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:359:          rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hsel, hft]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:417:          rw [MultiTapeTM.runFrom_add, hsel, hft]; simp
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:422:          rw [MultiTapeTM.runFrom_add, s2, hfa]; simp
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:427:          rw [MultiTapeTM.runFrom_add, s3, hcp]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:432:          rw [MultiTapeTM.runFrom_add, s4, hrx]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:438:          rw [MultiTapeTM.runFrom_add, s5, hrc]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:441:        rw [MultiTapeTM.runFrom_add, s6, hro]
+TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean:279:      rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, e1, hret, hiter]
+TCSlib/Complexity/CircuitComplexity/MeyerTab.lean:140:      rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, h₁]
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean:197:    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+TCSlib/Complexity/CircuitComplexity/StrictCircuit.lean:306:    · obtain ⟨i, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.mp hvn)
+TCSlib/Complexity/ClassNP/EXP.lean:307:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/ClassNP/EXP.lean:308:      · rw [MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/ClassNP/EXP.lean:807:      rw [hsrun, hhist, he, MultiTapeTM.runFrom_add, htwo]
+TCSlib/Complexity/ClassNP/EXP.lean:822:  obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+TCSlib/Complexity/ClassNP/EXP.lean:823:  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+TCSlib/Complexity/ClassNP/EXP.lean:995:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/EXP.lean:1064:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step', hcap, hentry, hrest, hout]
+TCSlib/Complexity/ClassNP/EXP.lean:1091:      MultiTapeTM.runFrom_add _ _ (y.length + 1),
+TCSlib/Complexity/ClassNP/EXP.lean:1093:      MultiTapeTM.runFrom_add _ _ u, hfirst, hrew', hback,
+TCSlib/Complexity/ClassNP/EXP.lean:1214:    MultiTapeTM.runFrom_add, hn, hs]
+TCSlib/Complexity/ClassNP/EXP.lean:1242:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hfirst, hrew, hrun]
+TCSlib/Complexity/ClassNP/EXP.lean:1685:    MultiTapeTM.runFrom_add, hc']
+TCSlib/Complexity/ClassNP/EXP.lean:1821:  · rw [MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/ClassNP/EXP.lean:1947:    · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step' (t := t), he,
+TCSlib/Complexity/ClassNP/EXP.lean:1983:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step', he,
+TCSlib/Complexity/ClassNP/EXP.lean:2044:    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+TCSlib/Complexity/ClassNP/EXP.lean:2045:    rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hend]
+TCSlib/Complexity/ClassNP/EXP.lean:2063:    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le hj
+TCSlib/Complexity/ClassNP/EXP.lean:2065:      rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hjq]
+TCSlib/Complexity/ClassNP/EXP.lean:2455:    rw [MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/ClassNP/EXP.lean:2618:    MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/EXP.lean:2814:    MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/ClassNP/EXP.lean:2882:  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/EXP.lean:2923:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:267:  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:281:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:651:      MultiTapeTM.runFrom_add, ← MultiTapeTM.runFrom_succ_eq_step']
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:882:        MultiTapeTM.runFrom_add, ← MultiTapeTM.runFrom_succ_eq_step']
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1033:        MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 (L.length + 1), xr_runFrom_two, hstart,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1067:          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1121:          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d (2 + 1) (L'.length + 1),
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1122:          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1604:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2542:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2543:    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hrun₀, hrun₁, hrun₂, hrun₃, hrun₄, hrun₅]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2614:    rw [hstart, MultiTapeTM.runFrom_add, hrun₁, hrun₂, htp]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2708:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2709:      MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, h1, h2, h3, h4, h5,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2818:      · rw [MultiTapeTM.runFrom_add, hsucc s' hinc, hrun₂]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2943:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:3056:    · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hrun₁, hrun₂, hrun₃]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1069:  · rw [e, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1088:      rw [MultiTapeTM.runFrom_add, hA, hre, hpB v (by simp at hu ⊢; omega)]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1209:  · rw [e, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1211:    rw [hA, hre, MultiTapeTM.runFrom_add, hB, hre2]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1239:      rw [MultiTapeTM.runFrom_add, hA, hre]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1244:        rw [MultiTapeTM.runFrom_add, hB, hre2, hpC w (by rw [List.length_drop] at hu; omega)]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1689:            rw [MultiTapeTM.runFrom_add, hrun] at hs
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1693:          rw [MultiTapeTM.runFrom_add, hrun, hcfg]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1709:          rw [MultiTapeTM.runFrom_add, hrun]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2115:        rw [MultiTapeTM.runFrom_add, hrun] at hs
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2144:        rw [MultiTapeTM.runFrom_add, hrun, h2s]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2196:          rw [MultiTapeTM.runFrom_add, hrun, h4s]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2202:              rw [MultiTapeTM.runFrom_add, hrun] at hs
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2206:              rw [MultiTapeTM.runFrom_add, hrun4] at hs
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2211:          · rw [MultiTapeTM.runFrom_add, hrun4, hcfg]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2240:          rw [MultiTapeTM.runFrom_add, hrun4]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2244:      rw [MultiTapeTM.runFrom_add, hrun]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2514:        rw [MultiTapeTM.runFrom_add, hrun1, h3', hre3]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2518:        rw [MultiTapeTM.runFrom_add, hrun2, h5']
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2532:      · rw [MultiTapeTM.runFrom_add, hrun3]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2537:        rw [MultiTapeTM.runFrom_add, hrun1]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2541:        rw [MultiTapeTM.runFrom_add, h3', hre3]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2545:        rw [MultiTapeTM.runFrom_add, h5']
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2547:      · rw [MultiTapeTM.runFrom_add, hrun3, hacc2]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2550:        refine ⟨by rw [MultiTapeTM.runFrom_add, hrun3]; exact ho, ?_⟩
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2719:    rw [MultiTapeTM.runFrom_add, hrun0]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2733:      rw [MultiTapeTM.runFrom_add, hrun0, hV]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2791:    rw [MultiTapeTM.runFrom_add, hrun0, hV]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2798:    rw [MultiTapeTM.runFrom_add, hrun1, h3']
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2801:  · rw [MultiTapeTM.runFrom_add, hrun2]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2807:    rw [MultiTapeTM.runFrom_add, hrun1]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2811:    rw [MultiTapeTM.runFrom_add, h3']
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2813:  · rw [MultiTapeTM.runFrom_add, hrun2, hacc2, nf_allPass_iff]
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:2816:    refine ⟨by rw [MultiTapeTM.runFrom_add, hrun2]; exact ho, ?_⟩
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:722:  rw [MultiTapeTM.runFrom_add _ (1 + (x.length + 1)) (u.length + 1),
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:723:    MultiTapeTM.runFrom_add _ 1 (x.length + 1)]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:741:  rw [MultiTapeTM.runFrom_add _
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:743:    MultiTapeTM.runFrom_add _ u.length (1 + (x.length + 1) + (u.length + 1)),
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:833:    rw [MultiTapeTM.runFrom_add _ 2 (2 * x.length + 2), hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:872:    rw [MultiTapeTM.runFrom_add, hi, hp]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:965:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2519:    MultiTapeTM.runFrom_add]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2639:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3118:    MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3145:      rw [MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3163:      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hr, hs, hstep]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3259:    MultiTapeTM.runFrom_add, henter]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3271:    rw [MultiTapeTM.runFrom_add, a2_start]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3307:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3673:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3811:      MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3940:    MultiTapeTM.runFrom_add _ ((2 * u.length + 2) + (u.length + 1)) (v.length + 1),
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3941:    MultiTapeTM.runFrom_add _ (2 * u.length + 2) (u.length + 1), hinit]
+TCSlib/Complexity/ClassNP/Reductions.lean:361:    MultiTapeTM.runFrom_add, prefixTM_emit w x w.length (Nat.le_refl _)]
+TCSlib/Complexity/ClassNP/SAT.lean:504:    conv_lhs => rw [show 2 * (n + 1) = 2 + 2 * n by omega, MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/SAT.lean:573:    MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
+TCSlib/Complexity/ClassNP/SAT.lean:574:    MultiTapeTM.runFrom_add, hh₃, MultiTapeTM.runFrom_add, hh₄, hh₅]
+TCSlib/Complexity/ClassNP/SAT.lean:620:    rw [MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/SAT.lean:681:    rw [MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hc']
+TCSlib/Complexity/ClassNP/SAT.lean:696:  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)
+TCSlib/Complexity/ClassNP/SAT.lean:697:  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he
+TCSlib/Complexity/ClassNP/SAT.lean:750:      rw [MultiTapeTM.runFrom_add, hcap, hrew]
+TCSlib/Complexity/ClassNP/SAT.lean:751:    rw [MultiTapeTM.runFrom_add, hprefix, MultiTapeTM.runFrom_succ_eq_step, hleft, htape]
+TCSlib/Complexity/ClassNP/SAT.lean:776:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/ClassNP/SAT.lean:1724:    MultiTapeTM.runFrom_add, h₁, MultiTapeTM.runFrom_add, hh₂,
+TCSlib/Complexity/ClassNP/SAT.lean:1725:    MultiTapeTM.runFrom_add, h₃, MultiTapeTM.runFrom_add, hh₄, h₅]
+TCSlib/Complexity/ClassNP/SAT.lean:1781:    rw [MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/SAT.lean:1834:    rw [MultiTapeTM.runFrom_add, hs, MultiTapeTM.runFrom_add, hsrun]
+TCSlib/Complexity/ClassNP/SAT.lean:1913:  rw [MultiTapeTM.runFrom_add, satRed_init, MultiTapeTM.runFrom_add, hr']
+TCSlib/Complexity/ClassNP/SAT.lean:2583:      rw [MultiTapeTM.runFrom_add, hcap, hrew]
+TCSlib/Complexity/ClassNP/SAT.lean:2584:    rw [MultiTapeTM.runFrom_add, hpre, MultiTapeTM.runFrom_succ_eq_step, hs,
+TCSlib/Complexity/ClassNP/SAT.lean:2708:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add _ s (2 * (f x).length + 2), hstart, hrep, hcopy]
+TCSlib/Complexity/ClassNP/SAT.lean:3016:    rw [MultiTapeTM.runFrom_add, hs, satMax_finish]
+TCSlib/Complexity/ClassNP/SAT.lean:3204:      MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/SAT.lean:3360:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/SAT.lean:3361:      MultiTapeTM.runFrom_add _ (2 * u.length + 2) (u.length + 1),
+TCSlib/Complexity/ClassNP/SAT.lean:3362:      MultiTapeTM.runFrom_add _ (2 * u.length) 2, hinit, hparse,
+TCSlib/Complexity/ClassNP/SAT.lean:3370:    rw [MultiTapeTM.runFrom_add, hstart, hcopy]
+TCSlib/Complexity/ClassNP/SAT.lean:3800:    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
+TCSlib/Complexity/ClassNP/SAT.lean:3824:    rw [hi, MultiTapeTM.runFrom_add _ _ r,
+TCSlib/Complexity/ClassNP/SAT.lean:3825:      MultiTapeTM.runFrom_add _ _ ((w ++ x).length + 1),
+TCSlib/Complexity/ClassNP/SAT.lean:3826:      MultiTapeTM.runFrom_add _ (w.length + 1) (x.length + 1)]
+TCSlib/Complexity/ClassNP/SAT.lean:3943:    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/ClassNP/SAT.lean:4086:    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/ClassNP/SAT.lean:4272:    · rw [hi, MultiTapeTM.runFrom_add, haEnd, hsEnd]
+TCSlib/Complexity/ClassNP/SAT.lean:4326:      rw [MultiTapeTM.runFrom_add, hpEnd, haEnd]
+TCSlib/Complexity/ClassNP/SAT.lean:4331:      rw [MultiTapeTM.runFrom_add, hpAE, heEnd]
+TCSlib/Complexity/ClassNP/SAT.lean:4345:      rw [MultiTapeTM.runFrom_succ_eq_step, hdispatch, MultiTapeTM.runFrom_add, hpAEE, hiEnd]
+TCSlib/Complexity/ClassNP/TMSAT.lean:306:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/TMSAT.lean:342:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassNP/TMSAT.lean:370:        MultiTapeTM.runFrom_add, hbody j hjq]
+TCSlib/Complexity/ClassNP/TMSAT.lean:499:    MultiTapeTM.runFrom_add, hpre]
+TCSlib/Complexity/ClassNP/TMSAT.lean:527:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, poly_start, hloop]
+TCSlib/Complexity/ClassNP/TMSAT.lean:1005:    rw [MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/TMSAT.lean:1078:    rw [MultiTapeTM.runFrom_add, hi, hs]
+TCSlib/Complexity/ClassNP/Tautology.lean:527:    rw [MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/Tautology.lean:671:    rw [MultiTapeTM.runFrom_add, taut_init, hs]
+TCSlib/Complexity/ClassNP/Tautology.lean:692:    rw [MultiTapeTM.runFrom_add, hstart, hw]
+TCSlib/Complexity/ClassNP/Tautology.lean:701:  · rw [MultiTapeTM.runFrom_add, hnext, hrew]
+TCSlib/Complexity/ClassNP/Tautology.lean:758:    rw [MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/ClassNP/Tautology.lean:817:    rw [MultiTapeTM.runFrom_add, hs₁]
+TCSlib/Complexity/ClassNP/Tautology.lean:824:    rw [MultiTapeTM.runFrom_add, h₂]
+TCSlib/Complexity/ClassNP/Tautology.lean:831:    rw [MultiTapeTM.runFrom_add, h₃]
+TCSlib/Complexity/ClassNP/Tautology.lean:834:    MultiTapeTM.runFrom_add, h₄, hs₅]
+TCSlib/Complexity/ClassNP/Tautology.lean:886:    · rw [MultiTapeTM.runFrom_add, hl]
+TCSlib/Complexity/ClassNP/Tautology.lean:944:      rw [MultiTapeTM.runFrom_add, hfirst]
+TCSlib/Complexity/ClassNP/Tautology.lean:961:      · rw [MultiTapeTM.runFrom_add, hprefix, htail]
+TCSlib/Complexity/ClassNP/Tautology.lean:1015:      rw [MultiTapeTM.runFrom_add, hstart, heval]
+TCSlib/Complexity/ClassNP/Tautology.lean:1070:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/ClassOracle/Classes.lean:257:    rw [OracleTM.runFrom_add, queryTM_init, hrun, htail]
+TCSlib/Complexity/ClassP/Examples.lean:306:      rw [MultiTapeTM.runFrom_of_halt _ hc.1]
+TCSlib/Complexity/ClassP/Examples.lean:335:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/ClassP/Examples.lean:352:    rw [ht, MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/ClassP/Examples.lean:355:    rw [ht, MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/ClassP/TimeConstructible.lean:342:    MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/ClassP/TimeConstructible.lean:375:        MultiTapeTM.runFrom_add, hc, counter_increment x i (by omega), counterInc_bits]
+TCSlib/Complexity/ClassP/TimeConstructible.lean:483:    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.1
+TCSlib/Complexity/ClassP/TimeConstructible.lean:484:    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.2
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:1404:  obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hC
+TCSlib/Complexity/CookLevin/Hardness.lean:1101:    MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/CookLevin/Hardness.lean:1254:      MultiTapeTM.runFrom_add]
+TCSlib/Complexity/CookLevin/Hardness.lean:1319:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+TCSlib/Complexity/CookLevin/Hardness.lean:1678:      MultiTapeTM.runFrom_add, clCopy_pair]
+TCSlib/Complexity/CookLevin/Hardness.lean:1749:    MultiTapeTM.runFrom_add, hf, MultiTapeTM.runFrom_add, clCopy_separator,
+TCSlib/Complexity/CookLevin/Hardness.lean:1795:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+TCSlib/Complexity/CookLevin/Hardness.lean:2162:    · rw [MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/CookLevin/Hardness.lean:2225:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+TCSlib/Complexity/CookLevin/Hardness.lean:2707:    · rw [MultiTapeTM.runFrom_add, he, MultiTapeTM.runFrom_add, hea]
+TCSlib/Complexity/CookLevin/Hardness.lean:2733:  · rw [MultiTapeTM.runFrom_add, he, MultiTapeTM.runFrom_succ_eq_step', hea]
+TCSlib/Complexity/CookLevin/Hardness.lean:3020:    MultiTapeTM.runFrom_add, clCmp_forward x p w _ le_rfl,
+TCSlib/Complexity/CookLevin/Hardness.lean:3070:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay
+TCSlib/Complexity/CookLevin/Hardness.lean:3085:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
+TCSlib/Complexity/CookLevin/Hardness.lean:3216:      MultiTapeTM.runFrom_add, pair, clRead_pair]
+TCSlib/Complexity/CookLevin/Hardness.lean:3306:    MultiTapeTM.runFrom_add, hf, MultiTapeTM.runFrom_add, hword, hs,
+TCSlib/Complexity/CookLevin/Hardness.lean:3355:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay
+TCSlib/Complexity/CookLevin/Hardness.lean:3464:    MultiTapeTM.runFrom_add]
+TCSlib/Complexity/CookLevin/Hardness.lean:3703:    · rw [MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/CookLevin/Hardness.lean:3865:    MultiTapeTM.runFrom_add, forward, MultiTapeTM.runFrom_succ_eq_step, turn,
+TCSlib/Complexity/CookLevin/Hardness.lean:3967:  rw [MultiTapeTM.runFrom_add, he, lift]
+TCSlib/Complexity/CookLevin/Hardness.lean:4219:  · rw [MultiTapeTM.runFrom_add, arrived]
+TCSlib/Complexity/CookLevin/Hardness.lean:4531:    clMatch_tick pos neg x _ _ _ _ N j flags hj, MultiTapeTM.runFrom_add, he, hr]
+TCSlib/Complexity/CookLevin/Hardness.lean:4573:    · rw [MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/CookLevin/Hardness.lean:4787:    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/CookLevin/Hardness.lean:4864:    rw [MultiTapeTM.runFrom_add, arrived, replay]
+TCSlib/Complexity/CookLevin/Hardness.lean:4928:  rw [MultiTapeTM.runFrom_add, arrived]
+TCSlib/Complexity/CookLevin/Hardness.lean:5274:    MultiTapeTM.runFrom_succ_eq_step, release, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/CookLevin/Hardness.lean:5327:    rw [MultiTapeTM.runFrom_add, arrived, replay]
+TCSlib/Complexity/CookLevin/Hardness.lean:5850:      · rw [MultiTapeTM.runFrom_add, he, clRepeat_round C entry exit x _ _ N j b (by omega) hp hf hr,
+TCSlib/Complexity/CookLevin/Hardness.lean:6179:    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]
+TCSlib/Complexity/CookLevin/Hardness.lean:6282:    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/CookLevin/Hardness.lean:6424:    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/CookLevin/Hardness.lean:6660:    rw [MultiTapeTM.runFrom_add, e0, e1]
+TCSlib/Complexity/CookLevin/Hardness.lean:6665:  · rw [hi, MultiTapeTM.runFrom_add, e01, e2]
+TCSlib/Complexity/CookLevin/Hardness.lean:7177:    rw [MultiTapeTM.runFrom_succ_eq_step, dispatch, MultiTapeTM.runFrom_add, he, hi]
+TCSlib/Complexity/CookLevin/Hardness.lean:7360:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
+TCSlib/Complexity/Diagonalization/EXPCOM.lean:678:      rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs1]
+TCSlib/Complexity/Diagonalization/EXPCOM.lean:681:      rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs1]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1438:          rw [MultiTapeTM.runFrom_add, hstep2, hem']
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1448:        · rw [MultiTapeTM.runFrom_add, hrd, hrun, List.append_assoc]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1469:              rw [MultiTapeTM.runFrom_add, hstep2]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1478:              rw [MultiTapeTM.runFrom_add, hrd]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1509:  · rw [MultiTapeTM.runFrom_add _ (pre.length + 1 + tb) (suf.length + 1),
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1510:      MultiTapeTM.runFrom_add _ (pre.length + 1) tb, hpre', hbrun, hsuf']
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1519:        rw [MultiTapeTM.runFrom_add, hpre']
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1522:        rw [MultiTapeTM.runFrom_add _ (pre.length + 1 + tb) v,
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:1523:          MultiTapeTM.runFrom_add _ (pre.length + 1) tb, hpre', hbrun, hsuf _ _ v (by omega)]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3410:  · rw [MultiTapeTM.runFrom_add, h1, hrun]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3412:    rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4836:  rw [MultiTapeTM.runFrom_add, hrun]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4945:  · rw [MultiTapeTM.runFrom_add, hseg.1]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5034:  · rw [MultiTapeTM.runFrom_add, hseg.1]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5198:    · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5233:    · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5279:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7542:rejects. A halted run is fixed (`MultiTapeTM.runFrom_of_halt`), so the output at every later
+TCSlib/Complexity/Randomized/BPLInPWords.lean:97:  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hlen
+TCSlib/Complexity/Randomized/BiasedCoin.lean:106:  obtain ⟨e, rfl⟩ := Nat.exists_eq_add_of_le h
+TCSlib/Complexity/Randomized/Classes.lean:235:  obtain ⟨m₂, rfl⟩ := Nat.exists_eq_add_of_le h
+TCSlib/Complexity/Randomized/RandomWalkMixing.lean:520:    obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hj
+TCSlib/Complexity/Randomized/RandomWalkMixing.lean:537:  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le (show M ≤ N by omega)
+TCSlib/Complexity/Randomized/RandomWalkMixingPad.lean:93:  obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_le hD
+TCSlib/Complexity/Randomized/Reductions.lean:320:  obtain ⟨m₂, hm₂⟩ := Nat.exists_eq_add_of_le (le_trans (Nat.le_add_right q _) hq)
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:128:    rw [e1, runFrom_add, runFrom_add c t₁]
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:407:      runFrom_add, runFrom_of_halt _ hT]
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:409:    rw [show t = T + (t - T) by omega, runFrom_add, runFrom_of_halt _ hT]
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:515:(`Turing.MultiTapeTM.runFrom_of_halt`). So each visited set at `t'` is contained in the one at
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:530:      rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:531:        MultiTapeTM.runFrom_of_halt _ hhalt]
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1335:  · obtain ⟨w, rfl⟩ : ∃ w, u = t + 1 + w := Nat.exists_eq_add_of_le (Nat.lt_of_not_le h)
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1204:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1225:      rw [hsplit, MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1343:    rw [MultiTapeTM.runFrom_add, h₁, h₂end]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1345:    rw [MultiTapeTM.runFrom_add, hA]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1348:  · rw [MultiTapeTM.runFrom_add, hB, h₄end]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1358:          rw [heq, MultiTapeTM.runFrom_add, h₁]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1361:        rw [heq, MultiTapeTM.runFrom_add, hA]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1364:      rw [heq, MultiTapeTM.runFrom_add, hB, h₄bound _ (by omega)]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1918:    rw [show A = 1 + (I + 1) from rfl, MultiTapeTM.runFrom_add, h0, hpi.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1921:    rw [show B = A + (R + 1) from rfl, MultiTapeTM.runFrom_add, h1, hpr.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1924:    rw [show C = B + (2 * u.length + 2 + 1) from rfl, MultiTapeTM.runFrom_add, h2, hpc.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1927:    rw [show F = C + (V + 1) from rfl, MultiTapeTM.runFrom_add, h3, hpv.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1930:    rw [show T = F + 2 from rfl, MultiTapeTM.runFrom_add, h4, hpz, hzRun]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1950:      conv_lhs => rw [show t = 1 + (t - 1) by omega, MultiTapeTM.runFrom_add, h0]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1956:      conv_lhs => rw [show t = A + (t - A) by dsimp [A]; omega, MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1962:      conv_lhs => rw [show t = B + (t - B) by dsimp [B]; omega, MultiTapeTM.runFrom_add, h2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1968:      conv_lhs => rw [show t = C + (t - C) by dsimp [C]; omega, MultiTapeTM.runFrom_add, h3]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1972:    conv_lhs => rw [show t = F + (t - F) by dsimp [F]; omega, MultiTapeTM.runFrom_add, h4, hpz]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2005:      rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2006:        MultiTapeTM.runFrom_of_halt _ hh] at hf
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2129:    rw [show T = (C + 1) + (I + 1) from rfl, MultiTapeTM.runFrom_add, hmid, pi.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2141:        MultiTapeTM.runFrom_add, hmid]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2224:      rw [show T = r + (T - r) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2225:        MultiTapeTM.runFrom_of_halt _ hh] at hf
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2269:    · rw [MultiTapeTM.runFrom_add, hmid, hsRun]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2284:              MultiTapeTM.runFrom_add, hmid]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2293:            MultiTapeTM.runFrom_add, hmid]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2389:    rw [MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2426:          MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2623:      rw [MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2644:            MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2700:      rw [MultiTapeTM.runFrom_add, hp.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2724:            MultiTapeTM.runFrom_add, hp.2]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2785:      rw [heq, MultiTapeTM.runFrom_add, hsetup]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2790:  · rw [MultiTapeTM.runFrom_add, hsetup]
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2792:  · rw [MultiTapeTM.runFrom_add, hsetup]
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:68:    rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:183:    rw [show T = T0 + (T - T0) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:184:      MultiTapeTM.runFrom_of_halt _ hT0]
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:351:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:353:    rw [MultiTapeTM.runFrom_add, ← hgH, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean:355:      MultiTapeTM.runFrom_add, hr2, hr3, hfinal]
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:489:        rw [MultiTapeTM.runFrom_add, hr₁]
+TCSlib/Complexity/SpaceComplexity/Machines/CallReturn.lean:491:    · rw [hnr, MultiTapeTM.runFrom_add, hr₁, hr₂]
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:302:    · rw [MultiTapeTM.runFrom_add, hr₁, hstg, hr₂]
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:335:    rw [show T = T0 + (T - T0) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:336:      MultiTapeTM.runFrom_of_halt _ hT0]
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:396:    rw [MultiTapeTM.runFrom_add, hstart, MultiTapeTM.runFrom_add, hsim T0 le_rfl, hstg0, hr₂,
+TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean:501:  · rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep.lean:503:      MultiTapeTM.runFrom_add, hr1, MultiTapeTM.runFrom_add, hr2, hr3]
+TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean:190:    refine ⟨T + T', by rw [MultiTapeTM.runFrom_add, hT, hT'], ?_⟩
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:110:      refine ⟨S + T', by rw [MultiTapeTM.runFrom_add, hS]; exact e1,
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:111:        by rw [MultiTapeTM.runFrom_add, hS]; exact e2, runFrom_forall_append hbS ?_⟩
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:325:    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hT0,
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:326:    show T = T₀ + (T - T₀) by omega, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hT0]
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:547:    rw [← Nat.add_sub_of_le hb, MultiTapeTM.runFrom_add, hcount, MultiTapeTM.runFrom_of_halt _ e1]
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:551:    rw [← Nat.add_sub_of_le hb, MultiTapeTM.runFrom_add, hcount, MultiTapeTM.runFrom_of_halt _ e1]
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:98:  rw [show T = (t + 1) + (T - (t + 1)) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:99:    MultiTapeTM.runFrom_of_halt _ h1]
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:127:    rw [show T = (t + 1) + (T - (t + 1)) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:128:      MultiTapeTM.runFrom_of_halt _ h1]
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:296:        simp only [loopAnswer, MultiTapeTM.runFrom_of_halt _ hh, hh, true_and]
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:323:        rw [MultiTapeTM.runFrom_add, h1step]
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:329:      · rw [MultiTapeTM.runFrom_add, hrun]; exact h1
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:330:      · rw [MultiTapeTM.runFrom_add, hrun, h2, hn, hans]
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:354:    rw [computesInTime_iff, MultiTapeTM.runFrom_add, hsetup]
+TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:535:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, kCfg_init,
+TCSlib/Complexity/TimeHierarchy/CodePrefix.lean:202:      · rw [MultiTapeTM.runFrom_add, hrun2]; exact h1
+TCSlib/Complexity/TimeHierarchy/CodePrefix.lean:203:      · rw [MultiTapeTM.runFrom_add, hrun2, h2, hout2]
+TCSlib/Complexity/TimeHierarchy/CodePrefix.lean:266:    rw [MultiTapeTM.runFrom_add _ (t₁ + r), MultiTapeTM.runFrom_add _ t₁ r]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2294:    MultiTapeTM.runFrom_add, f2_catalogPrefixTM_emit w x w.length (Nat.le_refl _)]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2447:    rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2455:    (x.length + 1) by omega, MultiTapeTM.runFrom_add, h3,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2613:      rw [MultiTapeTM.runFrom_add, hdet]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2634:      rw [MultiTapeTM.runFrom_add, hrew, MultiTapeTM.runFrom_add, hemit]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2731:      rw [MultiTapeTM.runFrom_add, f2_pairValid_block x pre rest b b hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2975:    rw [MultiTapeTM.runFrom_add, f2_extract_rewind first second x a _ _ _ (by omega),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2984:    rw [MultiTapeTM.runFrom_add, hp, f2_extract_suffix first x rest a pre _ hx]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3028:      rw [MultiTapeTM.runFrom_add, f2_extract_block first second x pre rest a b b hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3040:        rw [MultiTapeTM.runFrom_add, f2_extract_block first second x pre rest a false true hx]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3258:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3294:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3322:        MultiTapeTM.runFrom_add, hbody j hjq]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3451:    MultiTapeTM.runFrom_add, hpre]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3479:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, f2_catalogPoly_start, hloop]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3692:        MultiTapeTM.runFrom_add, f2_catalogPoly_start]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3962:    MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:3995:        MultiTapeTM.runFrom_add, hc, f2_counter_increment x i (by omega), f2_counterInc_bits]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4069:    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.1
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4070:    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.2
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4115:    · rw [MultiTapeTM.runFrom_add, hc,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4120:      · rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4153:      MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4163:        MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4171:  · rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4172:      MultiTapeTM.runFrom_of_halt _ hhalt]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4318:      rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4412:      rw [MultiTapeTM.runFrom_add, f2_lenParse_block M c pre rest b b r hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4423:        rw [MultiTapeTM.runFrom_add, f2_lenParse_block M c pre rest false true r hx]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4457:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4514:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4537:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4583:        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4584:          MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5194:  rw [htime, MultiTapeTM.runFrom_add, f2_rawStrip_rewind x a i hi a.length (le_refl _),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5261:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5824:      MultiTapeTM.runFrom_add, hs]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5838:    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1) + (a.length + 1)) (b := 2 * a.length + 2),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5839:    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1)) (b := a.length + 1),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5840:    MultiTapeTM.runFrom_add (a := b.length + 1) (b := b.length + 1)]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5907:        rw [MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5912:        rw [MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:5918:        rw [MultiTapeTM.runFrom_add, a2_map_block M x pre rest a false true hx]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6145:    rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6168:        rw [show u = v + (u - v) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6175:        rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6176:          MultiTapeTM.runFrom_of_halt _ he.1]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6316:        rw [MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6349:        · rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6350:            MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6379:        rw [MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6431:    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6432:      MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6468:    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6469:      MultiTapeTM.runFrom_of_halt _ hu]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6562:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6804:    MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7601:  rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7602:    MultiTapeTM.runFrom_add (a := word.length + 1) (b := word.length + 1),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7724:  · rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7725:      MultiTapeTM.runFrom_add (a := u) (b := 3 * c.output.length + 4), hcap, hsetup, hrew]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8128:    MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8365:      rw [MultiTapeTM.runFrom_add, f2_loopHost_payload_rewind body F anchor true base
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8415:    rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8437:    rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8638:  · rw [hcfg 0 (Nat.zero_le _), MultiTapeTM.runFrom_add, hprepare,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8704:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8705:      · rw [MultiTapeTM.runFrom_add, hc, hout, List.range_succ_eq_map]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8726:    rw [MultiTapeTM.runFrom_of_halt _ hend]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8739:    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8741:      · rw [MultiTapeTM.runFrom_of_halt _ he]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8785:  · rw [show u = startup + (u - startup) by omega, MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8843:    have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9186:  · rw [MultiTapeTM.runFrom_add _ _ r,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9187:      MultiTapeTM.runFrom_add _ (s.length + 1) (s.length + 1),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9346:  have he := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9408:  have he := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9409:  rw [Nat.add_sub_of_le ht, hT, tm.runFrom_of_halt _ hs] at he
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9536:    MultiTapeTM.runFrom_add, hfirst, f2_splitPrepare_rewind k w s s.length (le_refl _)]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9573:    rw [he, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9599:    have hh := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9819:    have h := M.tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:9820:    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10013:  rw [ht, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10014:    MultiTapeTM.runFrom_add _ (2 * s.length) 2,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10039:  refine ⟨by rw [MultiTapeTM.runFrom_add, h1, h2], ?_⟩
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10131:      rw [MultiTapeTM.runFrom_add, hdepart]; exact h5
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10135:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10169:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10173:      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hdepart, h5, hreturn]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10718:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10742:    rw [MultiTapeTM.runFrom_add, hstart, f2_timed_branch_run]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10905:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap d (le_refl _),
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10923:      rw [show u = d + (u - d) by omega, MultiTapeTM.runFrom_add, hcap d (le_refl _)]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10927:        rw [show u = d + 2 + (u - (d + 2)) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10928:          MultiTapeTM.runFrom_add, hcap d (le_refl _), f2_timed_read D M₁ M₂ c b hs ho,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:10933:          MultiTapeTM.runFrom_add, hstart, f2_timed_branch_run, f2_branch_heads]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11100:  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11112:  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11113:      MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11280:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11290:    · rw [MultiTapeTM.runFrom_add, hcap u (le_refl _), hsetup]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11387:    · rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11414:      rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11418:      rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11440:    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11442:      · rw [MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11485:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11486:      · rw [MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11575:    have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11633:      rw [MultiTapeTM.runFrom_add, hprepare,
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11653:          MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:221:    rw [MultiTapeTM.runFrom_add, C₁.run i d hd hp]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:230:    · obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.mp h)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:231:      rw [MultiTapeTM.runFrom_add, C₁.run i d hd hp]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:238:    · obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le (le_of_lt (not_le.mp h))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:239:      rw [MultiTapeTM.runFrom_add, C₁.run i d hd hp]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:463:it, the run is the second segment's from `b` (`Turing.MultiTapeTM.runFrom_add`). -/
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:466:  refine ⟨by rw [MultiTapeTM.runFrom_add, h.1, g.1], ?_, ?_⟩
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:471:      rw [he, MultiTapeTM.runFrom_add, h.1]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:477:      rw [he, MultiTapeTM.runFrom_add, h.1]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:514:**Proof sketch.** Shift every time by `u` (`Turing.MultiTapeTM.runFrom_add`). -/
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:518:  · rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' hu]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:520:  · rw [← MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:522:  · rw [← MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1166:  · obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le (le_of_lt (not_le.mp h))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1167:    rw [MultiTapeTM.runFrom_add, C₁.run i d hd hp]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1336:(`Turing.MultiTapeTM.runFrom_add`). -/
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1343:    rw [Finset.sum_range_succ, MultiTapeTM.runFrom_add, ih fun u hu => ht u (by omega),
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1361:    · obtain ⟨w, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.mp hlt)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1362:      rw [MultiTapeTM.runFrom_add, L.runFrom d t fun u hu => ht u (by omega)]
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1386:    · obtain ⟨w, rfl⟩ := Nat.exists_eq_add_of_le (le_of_lt (not_le.mp hle))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1388:      rw [MultiTapeTM.runFrom_add, L.runFrom d t fun u hu => ht u (by omega)]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1079:    rw [Nat.succ_eq_add_one, Nat.add_comm n 1, MultiTapeTM.runFrom_add, first]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1087:        rw [MultiTapeTM.runFrom_add] at he
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1093:    rw [tr, ← MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1281:      rw [MultiTapeTM.runFrom_add, debit, body]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1293:      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, debit]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1305:    · rw [MultiTapeTM.runFrom_add, before, round]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1309:      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, before]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1401:  · rw [MultiTapeTM.runFrom_add, before, debit]
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1406:    rw [← MultiTapeTM.runFrom_add] at s
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:918:  · rw [R.runFrom_of_halt _ (by simp [Cfg.mapState, hc]), N.runFrom_of_halt _ hc]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:261:    rw [runFrom_add, runFrom_one, hstep₁]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:264:    · rw [runFrom_add, hone]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:269:      rw [runFrom_add, hone] at hq
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:274:      rw [runFrom_add, hone] at this
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:288:    rw [runFrom_add, hA, runFrom_one, control_step (q := BodyState.callE ex) ?_ rfl]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:319:    rw [runFrom_add, runFrom_one, hstep₂]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:322:    · rw [runFrom_add, honeG]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:327:      rw [runFrom_add, honeG] at hq
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:332:      rw [runFrom_add, honeG] at this
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:339:    rw [show tE + 1 + u = (tE + 1) + u from rfl, runFrom_add, hB]
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:350:      rw [← runFrom_add, show u + (tG - u) = tG from by omega, hGrun] at h2
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:364:  · rw [show tE + 1 + tG + 1 = (tE + 1 + tG) + 1 from rfl, runFrom_add, hC,
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:84:  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:90:      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:98:  · rw [runFrom_add, h₁.1]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:104:      rw [runFrom_add, h₁.1]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:160:theorem runFrom_of_halted (H : MultiTapeTM k Bool B)
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:165:    rw [runFrom_add, ih]
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean:179:      rw [runFrom_add, runFrom_of_halted H hq]
+TCSlib/Complexity/TuringMachine/Build/InputCall.lean:181:      rw [show r = u + (r - u) by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:570:    rw [show 2 * ℓ + 5 = (2 * ℓ + 3) + 2 by omega, MultiTapeTM.runFrom_add, hjoin]
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:589:      rw [hv, MultiTapeTM.runFrom_add, hjoin,
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:606:        rw [hv, MultiTapeTM.runFrom_add, hjoin,
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:1027:    have fixed (u : ℕ) := MultiTapeTM.runFrom_of_halt (tm := rd_hostTM M)
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:1186:      · conv_lhs => rw [ha, MultiTapeTM.runFrom_add, L.runFrom c t (by simp)]
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:431:    · rw [MultiTapeTM.runFrom_add, ctime, round.1, inext]
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:438:        rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add, ctime]
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:515:    rw [MultiTapeTM.runFrom_add, reachedBack, returned]
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:527:        MultiTapeTM.runFrom_add, reachedBack, returnHeads _ hu']
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:545:      MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/InputWindow.lean:294:    · rw [MultiTapeTM.runFrom_add, iw_join_step _ hex, hsame t le_rfl, hend, hfinal]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:157:`Turing.MultiTapeTM.runFrom_add` and absorbing halted tails with
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:158:`Turing.MultiTapeTM.runFrom_of_halt`; empty round outputs make the final
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:193:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:194:      · rw [MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:224:    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:225:      MultiTapeTM.runFrom_of_halt _ hu]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:288:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1179:  rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1180:    MultiTapeTM.runFrom_add (a := word.length + 1) (b := word.length + 1),
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1301:  · rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1302:      MultiTapeTM.runFrom_add (a := u) (b := 3 * c.output.length + 4), hcap, hsetup, hrew]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1804:    MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1988:      rw [MultiTapeTM.runFrom_add, loopHost_payload_scan body F anchor false true 12 13 (fun _ _ => rfl) base
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2038:    rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2063:    rw [MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2214:  · rw [hcfg 0 (Nat.zero_le _), MultiTapeTM.runFrom_add, hprepare,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2417:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2418:      · rw [MultiTapeTM.runFrom_add, hc]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2548:  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2598:      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2599:      · rw [MultiTapeTM.runFrom_add, hc, hout, List.range_succ_eq_map]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:2762:  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3146:    rw [MultiTapeTM.runFrom_add, emCall_clear_left w p data left width j hj, hforward]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3148:  rw [MultiTapeTM.runFrom_add, hfirst, emCall_clear_origin]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3394:    rw [show 1 + 2 * (t + 1) = (1 + 2 * t) + 2 by omega, MultiTapeTM.runFrom_add, ih]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3411:      rw [MultiTapeTM.runFrom_of_halt _ hhalt, MultiTapeTM.step_of_halt hs]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3511:  have he := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3673:  rw [MultiTapeTM.runFrom_add, show (emCallRightTM M).tm.runFrom (emCallRightCfg M c) 1 = _ from hs]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3693:    rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3694:      MultiTapeTM.runFrom_of_halt _ hs]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3700:    rw [hi, MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3704:    MultiTapeTM.runFrom_add, hrun, MultiTapeTM.runFrom_of_halt _ (by rfl), hcT]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3755:    rw [show D = t + (D - t) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3756:      MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4034:  have h1 := (emCallFinishTM emit).tm.runFrom_add
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4038:  have h2 := (emCallFinishTM emit).tm.runFrom_add
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4042:  have h3 := (emCallFinishTM emit).tm.runFrom_add
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4046:  have h4 := (emCallFinishTM emit).tm.runFrom_add
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4527:    · rw [MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4786:  · rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4787:      (callTM M emit).tm.runFrom_add _ a b, he, hf]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4930:    rw [MultiTapeTM.runFrom_add, hr, hp]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4936:    rw [MultiTapeTM.runFrom_add, hr, hp]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4981:      · rw [MultiTapeTM.runFrom_add, hp]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4983:      · rw [MultiTapeTM.runFrom_add, hp, ho]
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:5130:    rw [MultiTapeTM.runFrom_add, hprepare,
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:5138:  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean:1846:    rw [← hP, show TP = u + (TP - u) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean:1847:      MultiTapeTM.runFrom_of_halt _ h] at this
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:990:        MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:993:      rw [oracleMark_step f p side hp, MultiTapeTM.runFrom_add, reach,
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1001:          rw [show u = 1 + (u - 1) from by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1008:          rw [show u = 1 + (p.natAbs + 1) from by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1105:      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1145:    rw [show u = 3 + (u - 3) from by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1656:  rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1836:  · rw [MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1837:      (oracleHost M C hc en ex).tm.runFrom_add _ prep
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:2031:          MultiTapeTM.runFrom_add, hrun]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:2213:    ← Nat.add_sub_of_le hs, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h1]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:2536:      rw [OracleTM.runFrom_add, hstep]
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:2604:    rw [OracleTM.runFrom_add, OracleTM.runFrom_of_halt _ O _ hhalt]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:224:    MultiTapeTM.runFrom_add, catalogPrefixTM_emit w x w.length (Nat.le_refl _)]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:377:    rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:385:    (x.length + 1) by omega, MultiTapeTM.runFrom_add, h3,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:543:      rw [MultiTapeTM.runFrom_add, hdet]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:564:      rw [MultiTapeTM.runFrom_add, hrew, MultiTapeTM.runFrom_add, hemit]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:662:      rw [MultiTapeTM.runFrom_add, pairValid_block x pre rest b b hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:909:    rw [MultiTapeTM.runFrom_add, extract_rewind first second x a _ _ _ (by omega),
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:918:    rw [MultiTapeTM.runFrom_add, hp, extract_suffix first x rest a pre _ hx]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:962:      rw [MultiTapeTM.runFrom_add, extract_block first second x pre rest a b b hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:974:        rw [MultiTapeTM.runFrom_add, extract_block first second x pre rest a false true hx]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1079:    rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1123:    rw [MultiTapeTM.runFrom_add, extract_rewind true false x a _ _ _ (by omega),
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1151:    rw [MultiTapeTM.runFrom_add _ (2 * a.length + 2), MultiTapeTM.runFrom_add _ (2 * a.length) 2,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1181:    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, h, MultiTapeTM.runFrom_of_halt _ rfl]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1394:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1430:          MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1458:        MultiTapeTM.runFrom_add, hbody j hjq]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1587:    MultiTapeTM.runFrom_add, hpre]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1615:    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, catalogPoly_start, hloop]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1764:      rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1858:      rw [MultiTapeTM.runFrom_add, lenParse_block M c pre rest b b r hx, if_pos rfl]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1869:        rw [MultiTapeTM.runFrom_add, lenParse_block M c pre rest false true r hx]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1903:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1960:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1983:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2112:  rw [htime, MultiTapeTM.runFrom_add, rawStrip_rewind x a i hi a.length (le_refl _),
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2179:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2318:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2752:  · rw [MultiTapeTM.runFrom_add _ _ r,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2753:      MultiTapeTM.runFrom_add _ (t + 1) (c.output.length + 1), hfirst,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2849:      rw [MultiTapeTM.runFrom_add, mapParse_block M c pre rest [] b b false hx]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2895:      MultiTapeTM.runFrom_add, mapParse_block M c pre (pairEncode a b) out bit bit true hx']
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2968:      rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2989:      rw [MultiTapeTM.runFrom_add _ _ (2 * a.length + 2),
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2990:        MultiTapeTM.runFrom_add _ _ r, MultiTapeTM.runFrom_add _ t u,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2995:      rw [MultiTapeTM.runFrom_add _ _ (c.output.length + 1), hprefix]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3589:  · rw [MultiTapeTM.runFrom_add _ _ r,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3590:      MultiTapeTM.runFrom_add _ (s.length + 1) (s.length + 1),
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3749:  have he := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3918:    MultiTapeTM.runFrom_add, hfirst, splitPrepare_rewind k w s s.length (le_refl _)]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3934:    rw [he, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3960:    have hh := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4176:    have h := M.tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4177:    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4370:  rw [ht, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4371:    MultiTapeTM.runFrom_add _ (2 * s.length) 2,
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4396:  refine ⟨by rw [MultiTapeTM.runFrom_add, h1, h2], ?_⟩
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4493:      rw [MultiTapeTM.runFrom_add, hdepart]; exact h5
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4497:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4531:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4535:      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hdepart, h5, hreturn]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5143:    MultiTapeTM.runFrom_add, hfirst]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5166:  have he := tm.runFrom_add c t (T - t)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5338:    MultiTapeTM.runFrom_add, ha]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5546:  rw [MultiTapeTM.runFrom_add, ha, hb]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5721:        rw [MultiTapeTM.runFrom_add, hq, he])
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5722:      (by simpa only [← MultiTapeTM.runFrom_add, Nat.add_comm 1] using hr)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5725:      rw [Nat.add_comm t 1, MultiTapeTM.runFrom_add, first]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5731:        rw [Nat.add_comm j 1, MultiTapeTM.runFrom_add, first]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6435:    rw [MultiTapeTM.runFrom_add, h4]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6447:  · rw [show j = a + (j - a) by omega, MultiTapeTM.runFrom_add, hr]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6499:      rw [MultiTapeTM.runFrom_add, hdepart, MultiTapeTM.runFrom_add, h2]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6505:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6525:      rw [MultiTapeTM.runFrom_add, hdepart, MultiTapeTM.runFrom_add, h2]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6535:      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6881:        MultiTapeTM.runFrom_add, emitterToken_double x pre rest out false hx]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6883:      rw [MultiTapeTM.runFrom_add, emitterToken_separator]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6894:        MultiTapeTM.runFrom_add, emitterToken_double x pre rest out true hx]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1555:      MultiTapeTM.runFrom_add, hr, hstart, hr']
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1563:      rw [hsplit, MultiTapeTM.runFrom_add, hr, hstart, hpre' _ (by omega)]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1664:            MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1666:      · rw [MultiTapeTM.runFrom_add, hstart, hrt]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1763:    rw [MultiTapeTM.runFrom_add, hr, hstart, hrun]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1776:    · rw [show u = 2 + (u - 2) by omega, MultiTapeTM.runFrom_add, hr, hstart]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2653:        simp [zeros]; omega, MultiTapeTM.runFrom_add, middle]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2661:          MultiTapeTM.runFrom_add, middle, growPre _ (by simp [zeros]; omega)]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2680:            MultiTapeTM.runFrom_add, middle, growPre _ (by simp [zeros]; omega)]
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:238:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step',
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:328:`Turing.MultiTapeTM.runFrom_add`. (i) *Phase one lockstep*: on left
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:311:    · rw [hT, MultiTapeTM.runFrom_add, hrun2, ihrun]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:323:      · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:329:      · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:642:  · rw [show q + 3 = 2 + (q + 1) from by omega, MultiTapeTM.runFrom_add, hrun2, crun]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:658:    · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:664:    · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1648:    rw [MultiTapeTM.runFrom_add, hc1]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1655:    rw [MultiTapeTM.runFrom_add, hc2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1665:    rw [MultiTapeTM.runFrom_add, hc3]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1676:    rw [MultiTapeTM.runFrom_add, hc4]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1687:    rw [MultiTapeTM.runFrom_add, hc5]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1697:    rw [MultiTapeTM.runFrom_add, hc6]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1707:    rw [MultiTapeTM.runFrom_add, hc7]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1749:        rw [MultiTapeTM.runFrom_add, hc1]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1756:          rw [MultiTapeTM.runFrom_add, hc2]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1764:            rw [MultiTapeTM.runFrom_add, hc3]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1773:              rw [MultiTapeTM.runFrom_add, hc4]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1785:                rw [MultiTapeTM.runFrom_add, hc5]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1799:                  rw [MultiTapeTM.runFrom_add, hc6]
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:1811:                  rw [MultiTapeTM.runFrom_add, hc7]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1024:    MultiTapeTM.runFrom_add, he, recordSkipTM_tail,
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1090:      rw [MultiTapeTM.runFrom_add, dispatch]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1401:        rw [hcost, MultiTapeTM.runFrom_add, one.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1417:          rw [he, MultiTapeTM.runFrom_add, one.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1424:          rw [he, MultiTapeTM.runFrom_add, one.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1654:    · rw [cost, MultiTapeTM.runFrom_add, seam, recur.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1674:          MultiTapeTM.runFrom_add, seam]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1687:          MultiTapeTM.runFrom_add, seam]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1991:  · rw [cost, MultiTapeTM.runFrom_add, introRun.1, bodyRun.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2005:    · rw [show u = 2 + (u - 2) by omega, MultiTapeTM.runFrom_add, introRun.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2011:    · rw [show u = 2 + (u - 2) by omega, MultiTapeTM.runFrom_add, introRun.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2367:  · rw [MultiTapeTM.runFrom_add, left.1, right.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2371:    · rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add, left.1]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2381:`MultiTapeTM.runFrom_of_halt` would freeze it until `T`, contradicting the live endpoint
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2402:      rw [show T = u + (T - u) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2403:        MultiTapeTM.runFrom_of_halt _ stopped]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:3439:    · rw [MultiTapeTM.runFrom_add]; exact hent
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:3440:    · rw [MultiTapeTM.runFrom_add (tm := roundTM k) d T₁ T₂,
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:3459:        rw [hu', MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:802:    · rw [MultiTapeTM.runFrom_add, reached, MultiTapeTM.runFrom_add, debit]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:810:        rw [splitTime, MultiTapeTM.runFrom_add, reached]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:817:          rw [last, MultiTapeTM.runFrom_add, debit]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:959:    · rw [MultiTapeTM.runFrom_add, reached]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:966:        rw [last, MultiTapeTM.runFrom_add, reached]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:1041:    rw [MultiTapeTM.runFrom_add, reached, debit, state]
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:1048:      rw [splitTime, MultiTapeTM.runFrom_add, reached]
+TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean:617:        MultiTapeTM.runFrom_add _ 1 1
+TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean:679:          rw [MultiTapeTM.runFrom_add, hpair, tail.1]
+TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean:685:        rw [show r = 2 + (r - 2) by omega, MultiTapeTM.runFrom_add, hpair]
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:129:    · rw [MultiTapeTM.runFrom_of_halt c hc]
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:733:`Turing.MultiTapeTM.runFrom_add`.
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:893:        rw [show u = t + (u - t) from by omega, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:726:  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:798:    rw [MultiTapeTM.runFrom_add, hstart, timed_branch_run]
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:1735:  · rw [MultiTapeTM.runFrom_add, h1, C.run i c₁ hc₁ hp]
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:1738:    rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:1753:      rw [MultiTapeTM.runFrom_add, h1]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3600:    rw [MultiTapeTM.runFrom_add d (l + 1 + 2) c,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3601:      MultiTapeTM.runFrom_add d (l + 1) 2, first.2, second.2, clearJoin,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3689:      rw [index, MultiTapeTM.runFrom_add, first.2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3697:        rw [tailIndex, MultiTapeTM.runFrom_add, second.2, clearJoin,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3985:            rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4016:              rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4031:              rw [MultiTapeTM.runFrom_add (tm := M), run2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4042:                rw [index, MultiTapeTM.runFrom_add (tm := M), run2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4300:          MultiTapeTM.runFrom_add d (ft + 1) 1, firstRun, second.1 1 le_rfl]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4303:          MultiTapeTM.runFrom_add d (ft + 1) (1 + 1), firstRun, second.2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4396:            rw [MultiTapeTM.runFrom_add d (ft + 3) (ut + 1), tagDispatch, uJoin, third.2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4416:                rw [index, MultiTapeTM.runFrom_add d (ft + 3) (u - (ft + 3)), tagDispatch,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4520:        · rw [MultiTapeTM.runFrom_add, step, done, newTail]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4522:        · rw [MultiTapeTM.runFrom_add, step]; exact silent
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4523:        · rw [MultiTapeTM.runFrom_add, step]; exact tapes
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4524:        · rw [MultiTapeTM.runFrom_add, step]; exact heads
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4529:            rw [show u + 1 = 1 + u by omega, MultiTapeTM.runFrom_add, step]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4602:  rw [show t + 2 = (t + 1) + 1 by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4675:      rw [MultiTapeTM.runFrom_add, launch.2, source.1 u hu]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4677:    · rw [show t + 2 = 1 + (t + 1) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:6340:  rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7180:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7188:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7198:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7208:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7219:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7230:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7337:    rw [MultiTapeTM.runFrom_add d
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7573:  rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7966:        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8000:        rw [MultiTapeTM.runFrom_add d ((tF + 1) + (τ₃ sel + 1)) (tS + 1), hhost2, hc2]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8092:        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
+TCSlib/Complexity/TuringMachine/Composition.lean:415:    rw [MultiTapeTM.runFrom_add, hstart, hr]
+TCSlib/Complexity/TuringMachine/Composition.lean:542:    rw [MultiTapeTM.runFrom_add, ha] at hc
+TCSlib/Complexity/TuringMachine/Composition.lean:554:    rw [MultiTapeTM.runFrom_add, ha, hr]
+TCSlib/Complexity/TuringMachine/Composition.lean:630:    rw [MultiTapeTM.runFrom_add, ha] at hc
+TCSlib/Complexity/TuringMachine/Composition.lean:642:    rw [MultiTapeTM.runFrom_add, ha, hr]
+TCSlib/Complexity/TuringMachine/Composition.lean:756:  rw [MultiTapeTM.runFrom_add, hrun, hr]
+TCSlib/Complexity/TuringMachine/Composition.lean:810:    rw [MultiTapeTM.runFrom_add, ha]
+TCSlib/Complexity/TuringMachine/CounterProg.lean:451:    rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, hone (MultiTapeTM.runFrom _ 1),
+TCSlib/Complexity/TuringMachine/CounterProg.lean:490:    rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, hone (MultiTapeTM.runFrom _ 1),
+TCSlib/Complexity/TuringMachine/CounterProg.lean:539:    rw [MultiTapeTM.runFrom_add _ (1 + (ρ r + 1)) (ρ r + 1),
+TCSlib/Complexity/TuringMachine/CounterProg.lean:540:      MultiTapeTM.runFrom_add _ 1 (ρ r + 1), h1]
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:330:      rw [MultiTapeTM.runFrom_add, h₁, h₂, run_succ]
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:361:    rw [MultiTapeTM.runFrom_add, hstep, hsuffix, ← run_add, Nat.add_comm 1 t]
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:383:  · have := (toTM P l₀).tm.runFrom_add ((toTM P l₀).tm.initCfg x) t' (t * (2 * t + 3) - t')
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:384:    rw [Nat.add_sub_of_le ht', MultiTapeTM.runFrom_of_halt _ hhalt] at this
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:386:  · have := (toTM P l₀).tm.runFrom_add ((toTM P l₀).tm.initCfg x) t' (t * (2 * t + 3) - t')
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:387:    rw [Nat.add_sub_of_le ht', MultiTapeTM.runFrom_of_halt _ hhalt] at this
+TCSlib/Complexity/TuringMachine/Deterministic.lean:223:lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
+TCSlib/Complexity/TuringMachine/Deterministic.lean:262:lemma runFrom_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none) {n : ℕ} :
+TCSlib/Complexity/TuringMachine/Deterministic.lean:371:    rw [← MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Deterministic.lean:409:  rw [runFrom_add, runFrom_of_halt _ hhalt]
+TCSlib/Complexity/TuringMachine/Deterministic.lean:494:  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+TCSlib/Complexity/TuringMachine/Deterministic.lean:504:    rw [Nat.add_comm, runFrom_add, tm.runFrom_of_halt _ halts₁]
+TCSlib/Complexity/TuringMachine/Deterministic.lean:510:using `tm.runFrom_add`. -/
+TCSlib/Complexity/TuringMachine/Deterministic.lean:528:    obtain ⟨tΔ , htΔ⟩ := Nat.exists_eq_add_of_le hle
+TCSlib/Complexity/TuringMachine/Deterministic.lean:529:    rw [htΔ, tm.runFrom_add]
+TCSlib/Complexity/TuringMachine/Encoding.lean:488:      MultiTapeTM.runFrom_add, hd, MultiTapeTM.runFrom_add, pairDiag_separator,
+TCSlib/Complexity/TuringMachine/Encoding.lean:493:      MultiTapeTM.runFrom_add, hr, pairDiag_copy x _ x.length (le_refl _)]
+TCSlib/Complexity/TuringMachine/Finite.lean:128:`Turing.MultiTapeTM.runFrom_add` and transitivity of `List.IsPrefix`. -/
+TCSlib/Complexity/TuringMachine/Finite.lean:132:  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+TCSlib/Complexity/TuringMachine/Finite.lean:134:  rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Finite.lean:199:**Proof sketch.** A halt at some `u ≤ t` would, by `runFrom_add` and `runFrom_of_halt`,
+TCSlib/Complexity/TuringMachine/Finite.lean:206:    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Finite.lean:216:gives liveness below `u`; since `u ≤ t`, `runFrom_add` and `runFrom_of_halt` identify the
+TCSlib/Complexity/TuringMachine/Finite.lean:226:  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Finite.lean:227:    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+TCSlib/Complexity/TuringMachine/Finite.lean:332:**Proof sketch.** By `Turing.MultiTapeTM.runFrom_add` the run to step `t'` factors through
+TCSlib/Complexity/TuringMachine/Finite.lean:333:step `t`; the state there is `none`, so `Turing.MultiTapeTM.runFrom_of_halt` shows the
+TCSlib/Complexity/TuringMachine/Finite.lean:344:    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hhalt]
+TCSlib/Complexity/TuringMachine/MathlibBridge.lean:482:  exact ⟨s + t, by rw [MultiTapeTM.runFrom_add, hs, ht]⟩
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:739:    rw [show T + 2 = (T + 1) + 1 by omega, MultiTapeTM.runFrom_add, dispatch]
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean:173:configuration — the counterpart of `Turing.MultiTapeTM.runFrom_add`. -/
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean:217:counterpart of `Turing.MultiTapeTM.runFrom_of_halt`. Extending a choice word beyond the
+TCSlib/Complexity/TuringMachine/Oracle.lean:96:  `Turing.OracleTM.runFrom_add`, `Turing.OracleTM.runFrom_of_halt`,
+TCSlib/Complexity/TuringMachine/Oracle.lean:236:`Turing.MultiTapeTM.runFrom_add`). -/
+TCSlib/Complexity/TuringMachine/Oracle.lean:237:theorem runFrom_add (M : OracleTM k Symbol State) (O : Language Symbol)
+TCSlib/Complexity/TuringMachine/Oracle.lean:244:theorem runFrom_of_halt (M : OracleTM k Symbol State) (O : Language Symbol)
+TCSlib/Complexity/TuringMachine/Oracle.lean:253:**Proof sketch.** Factor the run to `t'` through `t` (`runFrom_add`); the configuration
+TCSlib/Complexity/TuringMachine/Oracle.lean:254:at `t` is halted, so `runFrom_of_halt` fixes it. -/
+TCSlib/Complexity/TuringMachine/Oracle.lean:260:    rw [← Nat.add_sub_of_le hle, runFrom_add, runFrom_of_halt M O _ hh]
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:491:      MultiTapeTM.runFrom_of_halt _ (show (arCfg E e c).state = none by simp [arCfg, hs])]
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:494:      MultiTapeTM.runFrom_add, arReadCfg_run E e M c q hs (N + 1) (le_refl _)]
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:495:    rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:498:    rw [arReadCfg_dispatch, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:510:    rw [Nat.mul_succ, MultiTapeTM.runFrom_add, ih, arCfg_cycle,
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:542:  · obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show T x.length ≤ t by omega)
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:543:    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs,
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:637:  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hle
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean:638:  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at hrun
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:417:      MultiTapeTM.runFrom_add, dataCfg_seek_run W M a base u R q b read tapes out hg,
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:418:      MultiTapeTM.runFrom_add, hforward, MultiTapeTM.runFrom_succ_eq_step,
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:420:      MultiTapeTM.runFrom_add, hback, MultiTapeTM.runFrom_succ_eq_step,
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:950:  rw [MultiTapeTM.runFrom_add, hclock, hinit]
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:1026:    · rw [Nat.succ_mul, MultiTapeTM.runFrom_add, hrun, hstep, MultiTapeTM.runFrom_succ_eq_step']
+TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:1065:  rw [FinTM.computesInTime_iff, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hready, hrun]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:1092:    MultiTapeTM.runFrom_add, hcheck, MultiTapeTM.runFrom_add, hseek,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:1093:    MultiTapeTM.runFrom_add, hfwd, MultiTapeTM.runFrom_add, hback, hcenter]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:1109:    rw [Nat.succ_mul, MultiTapeTM.runFrom_add, ih (by omega),
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger.lean:126:    rw [MultiTapeTM.runFrom_add, hclock, MultiTapeTM.runFrom_add, hinit]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:162:    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hs1,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:554:    MultiTapeTM.runFrom_add, setupCfg_budget_start, MultiTapeTM.runFrom_add, setupCfg_append,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:597:      MultiTapeTM.runFrom_add, setupCfg_budget_round, hf]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:995:    MultiTapeTM.runFrom_add, setupCfg_unary_start, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:996:    setupCfg_layout_right W a base p b bt n B hn, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:997:    setupCfg_layout_return, MultiTapeTM.runFrom_add, setupCfg_layout_left W a base p b bt B (by omega),
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:998:    MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:1016:    MultiTapeTM.runFrom_add, setupCfg_copy_left, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:1096:  rw [MultiTapeTM.runFrom_add, setupCfg_reset, MultiTapeTM.runFrom_add, setupCfg_copy,
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:1097:    MultiTapeTM.runFrom_add, hcounter]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:584:    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:677:  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:796:  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:817:    MultiTapeTM.runFrom_add, sweep_prepare M hk c q hs a n z (fun i => (hp i).1) hl,
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:882:    rw [sweepTime, MultiTapeTM.runFrom_add, ih (by omega)]
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2156:      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:1589:`Turing.MultiTapeTM.runFrom_add`. -/
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:1616:    rw [MultiTapeTM.runFrom_add, hseg.1]
+TCSlib/Complexity/TuringMachine/Simulation.lean:374:        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/Simulation.lean:375:          MultiTapeTM.runFrom_of_halt _ hh]
+TCSlib/Complexity/TuringMachine/Simulation.lean:500:  rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Simulation.lean:530:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Simulation.lean:596:  · rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Simulation.lean:1133:  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+TCSlib/Complexity/TuringMachine/Universal.lean:132:      · rw [MultiTapeTM.step_of_halt hs, MultiTapeTM.runFrom_of_halt _ hu]
+TCSlib/Complexity/TuringMachine/Universal.lean:351:    rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Universal.lean:561:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1)) (n + 2),
+TCSlib/Complexity/TuringMachine/Universal.lean:562:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2)) (n + 1),
+TCSlib/Complexity/TuringMachine/Universal.lean:563:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1)) (2 * bits.length + 2),
+TCSlib/Complexity/TuringMachine/Universal.lean:564:    MultiTapeTM.runFrom_add _ 1 (table.length + 1)]
+TCSlib/Complexity/TuringMachine/Universal.lean:692:  rw [hlen, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/Universal.lean:724:    rw [List.flatMap_cons, List.length_append, MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/TuringMachine/Universal.lean:780:    rw [htime, MultiTapeTM.runFrom_add _ (1 + (g.flatMap universalRecordBits).length)
+TCSlib/Complexity/TuringMachine/Universal.lean:782:      MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
+TCSlib/Complexity/TuringMachine/Universal.lean:915:      MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
+TCSlib/Complexity/TuringMachine/Universal.lean:916:      MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
+TCSlib/Complexity/TuringMachine/Universal.lean:1109:    MultiTapeTM.runFrom_add _ ((groups.length + pg.length + 1) + (groups.length + 2)) pb.length,
+TCSlib/Complexity/TuringMachine/Universal.lean:1110:    MultiTapeTM.runFrom_add _ (groups.length + pg.length + 1) (groups.length + 2),
+TCSlib/Complexity/TuringMachine/Universal.lean:1118:  rw [MultiTapeTM.runFrom_add, hs, ht]
+TCSlib/Complexity/TuringMachine/Universal.lean:1735:  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
+TCSlib/Complexity/TuringMachine/Universal.lean:1736:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
+TCSlib/Complexity/TuringMachine/Universal.lean:2234:  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show s ≤ 4 * bs.length + 2 * α.length + 5 by omega)
+TCSlib/Complexity/TuringMachine/Universal.lean:2236:  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h] at hp
+TCSlib/Complexity/TuringMachine/Universal.lean:2257:    MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+TCSlib/Complexity/TuringMachine/Universal.lean:2271:  rw [MultiTapeTM.runFrom_add, timedCanon_start]
+TCSlib/Complexity/TuringMachine/Universal.lean:2333:      rw [MultiTapeTM.runFrom_add, hreplay]
+TCSlib/Complexity/TuringMachine/Universal.lean:2347:      simpa only [universalSimulationCfg, timedAnswer, MultiTapeTM.runFrom_of_halt _ hs, hs, ↓reduceIte] using h
+TCSlib/Complexity/TuringMachine/Universal.lean:2363:      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hreplay, hc]
+TCSlib/Complexity/TuringMachine/Universal.lean:2524:    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
+TCSlib/Complexity/TuringMachine/Universal.lean:2525:    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+TCSlib/Complexity/TuringMachine/Universal.lean:2696:    rw [MultiTapeTM.runFrom_add, he, timedCaptured_frame _ _ _ bs hc.2.2.2.1 hc.2.2.2.2]
+TCSlib/Complexity/TuringMachine/Universal.lean:2770:    rw [MultiTapeTM.runFrom_add, hstart]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:120:  rw [hlen, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:152:    rw [List.flatMap_cons, List.length_append, MultiTapeTM.runFrom_add, he]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:208:    rw [htime, MultiTapeTM.runFrom_add _ (1 + (g.flatMap universalRecordBits).length)
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:210:      MultiTapeTM.runFrom_add _ 1 (g.flatMap universalRecordBits).length]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:343:      MultiTapeTM.runFrom_add _ (1 + (q.val + 1)) (q.val + 2),
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:344:      MultiTapeTM.runFrom_add _ 1 (q.val + 1)]
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:581:    MultiTapeTM.runFrom_add _ ((groups.length + pg.length + 1) + (groups.length + 2)) pb.length,
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:582:    MultiTapeTM.runFrom_add _ (groups.length + pg.length + 1) (groups.length + 2),
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:590:  rw [MultiTapeTM.runFrom_add, hs, ht]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:371:    rw [MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:706:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1)) (n + 2),
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:707:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1) + (2 * bits.length + 2)) (n + 1),
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:708:    MultiTapeTM.runFrom_add _ (1 + (table.length + 1)) (2 * bits.length + 2),
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:709:    MultiTapeTM.runFrom_add _ 1 (table.length + 1)]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:829:    rw [MultiTapeTM.runFrom_add, he, universalCaptured_right]
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:878:    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/UniversalK.lean:246:    obtain ⟨extra, heq⟩ := Nat.exists_eq_add_of_le (hbound α)
+TCSlib/Complexity/TuringMachine/UniversalK.lean:250:            (time α)) extra := by rw [heq, MultiTapeTM.runFrom_add]
+TCSlib/Complexity/TuringMachine/UniversalK.lean:251:      _ = _ := MultiTapeTM.runFrom_of_halt _ (htime α).1
+TCSlib/Complexity/TuringMachine/UniversalK.lean:1263:    rw [← ht, MultiTapeTM.runFrom_add,
+TCSlib/Complexity/TuringMachine/UniversalK.lean:1276:    rw [← MultiTapeTM.runFrom_add, hsum, hstop] at hf
+TCSlib/Complexity/TuringMachine/UniversalK.lean:1296:      rw [← hret, ← MultiTapeTM.runFrom_add, hsum, hrun, hret] at hf
+TCSlib/Complexity/TuringMachine/UniversalK.lean:1828:    obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le hafter
+TCSlib/Complexity/TuringMachine/UniversalK.lean:2101:    obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le after
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:237:  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:238:  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:286:    MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:304:  rw [MultiTapeTM.runFrom_add, prefixCanon_start]
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:603:    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
+TCSlib/Complexity/TuringMachine/UniversalStartup.lean:604:    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+TCSlib/GraphTheory/Core/PlanarGraphs.lean:602:   In practice: obtain `m` from `hν` by `Nat.exists_eq_add_of_le`, substitute, then
+TCSlib/Programs/Util/List.lean:214:  obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_le h

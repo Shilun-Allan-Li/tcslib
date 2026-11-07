@@ -629,17 +629,36 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
-**The window (2026-11-06):** `CounterLoop`'s member is retired by #215 (`57939a97`: a private bridge
+**The window (2026-11-06):** #215 prepares `CounterLoop`'s retirement (`57939a97`: a private bridge
 `counterSpan_iff_segment`; `counter_span_append` deleted; its three uses through `Segment.trans`
 and `Segment.mono`). The scope search found a **third member**, `Robustness/SingleTape`'s private
 `DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (7 uses). `Tautology`'s and
 `SingleTape`'s members need a new import of `Build/Contract/Basic` (cycle-free; it adds that one
-module to each closure): **parked for the user's ruling.** Also found, not counted: `Primitives`'
+module to each closure). **The user approved both imports (HANDOFF §0); #215 now covers all three
+members.** Gate 106 records the complete diff and source checks. None is retired on the campaign
+until the user merges the PR. Also found, not counted: `Primitives`'
 `splitSafe`/`splitSafe_add` and `Catalog`'s `f2_splitSafe`/`f2_splitSafe_add` restate
 `Turing.SafeSegment` (a sibling `SafeSegment` family, for the user); `SAT`'s `sat_guard_add` and
 `Hardness`' `clA5_guard_add` re-prove the cut half of `Segment.trans` with no predicate. If
 `tautDual_segment_add` is deleted, `blueprint/src/chapter/Complexity/ClassNP/Tautology.tex:981`
 changes with it.
+
+**Mac landing review (Codex, 2026-11-06 PST).** All three bridges explicitly use `segment_iff`.
+The same-PR mechanical sweep also re-points four older helpers: `tautDual_segment_zero` and
+`tautDual_segment_one` use `Segment.zero`/`.one`; `dgSpan_one` and `dgSpan_mono` use `.one`/`.mono`.
+This extension is scoped by kind to the zero/one/monotonicity proofs for these private Segment
+specializations and is **retired on merge**, under WORKFLOW §3's mechanical-reuse rule; it is not
+a new debt acknowledgment. Its four declarations are counted once each, despite repeated uses.
+The full-file Segment seal also exposed four older public constructor/projection reads in
+CounterLoop's witness/trajectory API; they now use `segment_iff`, with statements unchanged.
+
+Current touched-file source counts are Tautology 93, CounterLoop 79 and SingleTape 100, unchanged
+by this PR. SG-1's three concatenation members become zero on merge. Including the mechanical
+extension, Tautology's three members become zero; SingleTape's three become zero (its separate
+WS-1 member remains). CounterLoop's historical cumulative total 4/79 becomes 3/79, from its
+unchanged IW-1 and R8.0b E1 members. No newly affected file reaches one fifth. The full nine-file
+base/head screen and its classifications are in gate 106; historical cumulative debt in its
+Primitives/Catalog/SAT/Hardness population remains governed by the existing entries.
 
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
@@ -985,6 +1004,38 @@ Round 5's audit found five members outside the site lists, all predating #181 an
 
 **Disposition:** the dedup window, with the rest. The one home below both layers re-points them
 once.
+
+**NatBits landing (Codex, 2026-11-06 PST; PR #222, gate 114).** The user approved the plan's
+D1–D6 defaults, one PR, the two mechanical Meyer edits (D7), the retained Encoding blueprint
+binding (D8), and recording D9 without implementing it. The 22-file PR moves the six
+preserved-name bounds into the Mathlib-only NatBits home, moves the public lower bound out of
+PolyAmp, supplies the approved 2n+1/log-equality/ofDigits forms, and removes the Codec exact copy.
+The refreshed scope's 21 sites plus Meyer ×2 are re-pointed. Its two later finds (Deepen's
+inline lower bound and CfgRecord's width-one proof) are within the approved kinds. BL-2's already
+published lemma moves too; its retired copies do not return.
+
+The known scoped residuals of BL-1/NB-1/LS-3 are **retired on merge**, not before it. Seven
+redundant private declarations disappear; the touched-file census is 2,366 → 2,360. Bin's five
+moved bounds leave its `bitsVal` bound beside its definition (11 source declarations remain).
+The current candidate enumeration covers the open campaign PRs, prepared landings and delivery
+refs, with the historical plan's non-member/D9 classification retained for review. A raw screen
+pair count is not a debt census; the new in-file near-pair is separately classified in gate 114.
+
+**E-PAD delivery caught while landing (PR #228, gate 115).** Its private `epad_two_pow_bits`
+re-derived the 2n+1 bound and the reachable positive bound. Two inline bounds in the single
+`epad_run` declaration re-derived `length_bits_le_self`. These are two declaration members in
+the 53-declaration incoming file, not three. The helper is deleted; both inline steps cite the
+published lemma. They are **retired on merge**, with no new acknowledgment. The final source has
+52 declarations and zero such re-derivations found by this review. The explicit use of the Codec
+copy is also re-pointed to Bin's canonical `LogProg.bitsVal_lt_two_pow`, so either PR merge order
+is supported at that use. The original delivery/report and the review remain verbatim in the
+E-PAD receipt records; their execution claims are distinct from the maintainer's fresh evidence.
+
+Two further mechanical repairs in that delivery replace identity-update re-proofs in
+`epad_mul_loop` and `epad_pow_loop` with `Function.update_eq_self`. These two declaration
+members are distinct from the two binary-bound members above: the union is 4/53 incoming
+declarations (7.5%), becoming zero for these kinds on merge. This is a record of caught and
+repaired reuse, not an acknowledgment of new debt.
 
 **CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
 user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own

@@ -7,10 +7,11 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-07; read this first; START-HERE.md is the entry point)
+## 0. Current state (2026-11-06 PST / 2026-11-07 UTC; read this first)
 
-The Claude maintainer session ended here; the next maintainer (Codex) picks up from this section.
-The campaign tip is `95390090` (the merge of #221).
+Codex has taken over on the user's Mac. The previous maintainer stopped after `95390090`
+(the merge of #221). The replay baseline is its records-only successor `68076072`, with identical
+Lean. Setup and the complete bootstrap evidence are in `campaign/status/2026-11-06-mac-bootstrap/`.
 
 **Merged on 2026-11-06/07** (the user):
 - #208 (Savitch through deepening), #212 (ZP-1), #213 (CE-1), #216 (RP-1);
@@ -24,27 +25,33 @@ The campaign tip is `95390090` (the merge of #221).
 
 | PR | What | Gate | Next |
 |---|---|---|---|
-| #215 | SG-1: `CounterLoop`'s `counterSpan` through `Segment`; `Tautology` and `SingleTape` import `Build/Contract/Basic` (ruled); `Frag`'s pinned `hrd` step (`4801588a`, needed because that import changes simp sets downstream) (`lean/dedup-sg1`) | **106**: pack not yet written (the number is reserved). The old draft is in the Claude VM's scratch and is lost; write it fresh, modelled on 107/108 | a merged-tree replay on the campaign at `95390090` (about 330 modules, including `TwoTapes`, `Hierarchy` and the AS-1 files), then gate 106 |
-| #222 | NatBits (BL-1, NB-1, LS-3): new `TuringMachine/NatBits` below `Encoding` and `Bin`; 21 sites + Meyer ×2; the same `Frag` cherry-pick as #215 (`lean/dedup-natbits`) | **114**: not yet written (reserved) | a merged-tree replay on `95390090` (about 345 modules), then gate 114 (scope: `campaign/items/dedup/natbits-SCOPE.md`; plan: `natbits-PLAN.md`) |
+| #215 | SG-1, all three consumers; approved Basic imports; identical Frag repair. Three bridges now use `segment_iff`; four older zero/one/mono helpers use the API and four public CounterLoop reads use its equation (`lean/dedup-sg1`) | **106**, Codex; fresh pack written; four seal probes passed | 329-module merged-tree replay running on `oleans-mac0`; then finish/stage the gate |
+| #222 | NatBits, 22 Lean files; 21 sites + Meyer ×2; identical Frag repair; new module's provenance prose corrected (`lean/dedup-natbits`) | **114**, Codex; fresh pack written; standalone preflight and screen passed | 344-module merged-tree replay running on `oleans-mac0`; imported census/axioms and staging next |
+| #228 | E-PAD delivery plus mechanical reuse/prose repairs; three public statements frozen, 49 private declarations (`lean/epad-padding-fill`, draft) | **115**, Codex; pack/evidence finalized; all 506 constants use only the standard axioms; non-private census 3 → 6 (three generated proof auxiliaries) | 2-module merged-tree replay passed (zero static mismatches); sealed source, 72 positive/72 negative controls and 23-file screen passed; stage the bundle, then the user dispatches |
 
-Both replays were running on the pre-#220/#221 snapshot and were **stopped as stale**. #215 and
-#222 both carry the `Frag` hunk, so whichever merges second merges it cleanly (identical hunk).
+The previous VM's pre-#220/#221 replays were stopped as stale and are not used. #215 and #222
+carry the identical `Frag` hunk. All three current PRs remain **not yet clear to merge**: their
+external gates have not been dispatched. After any merge, reassess replay validity against the
+new campaign before clearing another PR; do not compose independent PR snapshots.
 
-**Fill in flight: E-PAD** (`campaign/fills/epad/STATUS.md`). It was dispatched 2026-11-07 and
-proves `mem_SPACE_padLang`. **Delivery arrives by push** in `exchange/pass-shelat-ch5-8` under
-`arora-barak-ch3-4/inbox/fill-epad/`: checkpoint zips and the final `fill-epad.zip` with
-`REPORT.md`. Then:
-1. review the delivery and run the library sweep;
-2. land it in a PR against the campaign, with a merged-tree replay and a fill gate;
-3. then the maintainer closes `SPACE_linear_ne_NP` in `Hierarchy` in a small PR with its own gate.
+**E-PAD received** (`campaign/fills/epad/STATUS.md`). The final exchange archive passed all 118
+payload checksums; the original source/report and a separate internal/landing review are under
+`campaign/fills/epad/reviews/epad-fill/`. The four delivered patches retain their original
+authorship in #228. Redundant binary bounds, the soon-deleted Codec name and missing sketches
+were repaired in that PR. The report's three-source-declarations versus six-non-private-constants
+discrepancy is explicitly recorded and independently confirmed by the fresh census.
+1. Finish the evidence and stage gate 115; the user dispatches it.
+2. Resolve findings, replay as necessary and let the user merge #228.
+3. Then the maintainer closes `SPACE_linear_ne_NP` in `Hierarchy` in a small PR with its own gate.
    It imports `Padding` (allowed by the user), and its body is
    `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`,
    going through `mem_padLang_iff` with `Set.ext`. Gate 110's consumer probe
    (`campaign/gates/110-epad-statements/evidence/probe/`) has the exact derivation.
 
-**Snapshots.** The Claude VM's `oleans-*` trees do not travel. A new machine bootstraps one
-(§1, item 4) at the campaign tip. The last campaign snapshot here was `oleans-lcamp7`, at `72fcfbef`,
-before #220 and #221.
+**Snapshots.** The Mac's complete **`oleans-mac0`** at `68076072` passed **894 modules, 0 failed,
+0 skipped**. Available cached PFR dependencies made the old cloud skip unnecessary.
+`oleans-mepad1` passed #228's two-module closure from it. Independent `oleans-msg1` and
+`oleans-mnb1` replays are running. The previous VM's snapshots do not travel and are not used.
 
 **Next, in order** (the roadmap is `campaign/items/roadmap3/PLAN.md`, with the user's rulings in §(f)):
 1. **E-PAD:** land the delivery, then close `SPACE_linear_ne_NP` (above).
@@ -70,12 +77,29 @@ before #220 and #221.
      questions in the ledger are answered by the 2026-11-06 rulings);
    - **later:** WS-1, RC-1–4, QF-1, WC-1, TC-1 and the D9 families from the NatBits plan.
 
-**Gate numbers:** 106 and 114 are reserved; the next free number is **115**.
+**Gate numbers:** 106 (#215), 114 (#222) and 115 (#228) are reserved; the next free number is **116**.
+
+**Routing confirmed by the user:** these three audits use **Codex**, returning an attached
+findings Markdown file in chat and pasting its content. Ask the agent choice afresh before each
+later audit/fill. Claude agents may push to the designated exchange inbox; Codex agents cannot.
+The maintainer's **records-only direct-push exception remains in force**, explicitly confirmed.
+Another chat shares the exchange checkout for other formalizations: preserve its work, stage only
+`arora-barak-ch3-4/` and pull with rebase before every exchange push.
+
+**Resource ruling (same session):** the other chat's two Lean jobs use different locks. Our two
+replays were suspended without losing their elaboration state. The user then raised the
+**machine-wide cap to five**; our replays resumed, and `TCSLIB_LEAN_SLOTS=3` reserves two slots
+for the other campaign. The wrapper setting and the resource receipts are in the Mac setup
+records. Keep the overall machine total within five, not five per campaign.
 
 **Standing rulings from 2026-11-06/07** are recorded in WORKFLOW §3 and §5 (fills by pasted prompt;
 delivery by push allowed), in the ledger entries, and in the roadmap plan's §(f).
 
 ## 1. Starting a session on a new machine
+
+**Current Mac setup:** use `campaign/status/2026-11-06-mac-bootstrap/setup.md` and the existing
+scratch environment/worktree aliases. The instructions below retain the previous cloud recipe;
+the current native toolchain is Lean 4.25.0, with `.lake/packages` linked to the original checkout.
 
 1. **Environment.**
    - Network access to Mathlib's cache hosts (`lakecache.blob.core.windows.net`,

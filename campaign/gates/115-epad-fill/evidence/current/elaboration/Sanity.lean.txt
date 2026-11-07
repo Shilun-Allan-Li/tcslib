@@ -1,0 +1,22 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+
+set_option autoImplicit false
+open Turing Complexity
+
+-- Zero padding permits every original member.
+example (L : Language Bool) (x : List Bool) (hx : x ∈ L) :
+    pairEncode x [] ∈ padLang L (fun _ => 0) := by
+  exact mem_padLang_iff.mpr ⟨x, hx, rfl⟩
+
+-- At degree zero the padding length is the constant coefficient, including x = [].
+example (L : Language Bool) (C : ℕ) (hx : ([] : List Bool) ∈ L) :
+    pairEncode [] (List.replicate C true) ∈ padLang L (fun n => C * (n + 1) ^ 0) := by
+  apply mem_padLang_iff.mpr
+  exact ⟨[], hx, by rw [pow_zero, Nat.mul_one]⟩
+
+-- Empty languages cannot acquire members by padding.
+example (pad : ℕ → ℕ) (y : List Bool) :
+    y ∉ padLang (fun _ => False : Language Bool) pad := by
+  intro h
+  obtain ⟨x, hx, _⟩ := mem_padLang_iff.mp h
+  exact hx

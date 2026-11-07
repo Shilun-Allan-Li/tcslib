@@ -6,3 +6,16 @@
   `exchange/pass-shelat-ch5-8` under `arora-barak-ch3-4/inbox/fill-epad/` (a zip per checkpoint and
   the final `fill-epad.zip`, with `REPORT.md`), replacing the brief's zip-by-attachment paragraph;
   no push elsewhere, no PR. The maintainer lands the fill.
+- 2026-11-06 PST / 2026-11-07 UTC: final delivery received; all 118 payload checksums pass.
+  Original source/report and the internal/landing review are retained in `reviews/epad-fill/`.
+  Four patches landed with original authorship on **draft PR #228**, plus Codex mechanical
+  repairs. Public statements remain frozen (3 public, 49 private source declarations).
+- Local module/boundary preflight and the 36-definition sealed source pass. Both control forms
+  close for all 36 definitions unsealed and fail for all 36 sealed. The independent merged-tree
+  replay passes **2 modules, 0 failed, 0 static mismatches** on `oleans-mac0`.
+- Gate **115** is being finalized; the user selected **Codex**, with findings as a Markdown
+  attachment in chat and pasted in the reply. All **506** compiled constants use only the standard
+  axioms; the non-private census is **3 → 6**, including three new internal proof auxiliaries.
+  The fresh citation/seal inventories reconcile and the complete 23-file screen has zero new
+  pairs. The gate pack/evidence are finalized for staging. **Not yet clear to merge.** After the user merges #228,
+  prepare the small `SPACE_linear_ne_NP` consumer PR with its own gate (next free: 116).

@@ -1,0 +1,52 @@
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/114/NatBitsPreflight.lean:149:40: error: Tactic `decide` failed for proposition
+  (Nat.bits 0).length = 0
+because its `Decidable` instance
+  instDecidableEqNat (Nat.bits 0).length 0
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (Nat.bits 0).length.beq 0 with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/114/NatBitsPreflight.lean:150:56: error: Tactic `decide` failed for proposition
+  ¬(Nat.bits 0).length = Nat.log 2 0 + 1
+because its `Decidable` instance
+  instDecidableNot
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat`, `instDecidableNot`, and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (Nat.bits 0).length.beq (Nat.log 2 0 + 1) with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/114/NatBitsPreflight.lean:151:54: error: Tactic `decide` failed for proposition
+  (Nat.bits 1).length = Nat.log 2 1 + 1
+because its `Decidable` instance
+  instDecidableEqNat (Nat.bits 1).length (Nat.log 2 1 + 1)
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (Nat.bits 1).length.beq (Nat.log 2 1 + 1) with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/114/NatBitsPreflight.lean:152:52: error: Tactic `decide` failed for proposition
+  2 ^ (Nat.bits 0).length = 2 * 0 + 1
+because its `Decidable` instance
+  instDecidableEqNat (2 ^ (Nat.bits 0).length) (2 * 0 + 1)
+did not reduce to `isTrue` or `isFalse`.
+
+After unfolding the instances `instDecidableEqNat` and `Nat.decEq`, reduction got stuck at the `Decidable` instance
+  match h : (2 ^ (Nat.bits 0).length).beq (2 * 0 + 1) with
+  | true => isTrue ⋯
+  | false => isFalse ⋯
+'Turing.length_bits_le_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.length_bits_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.length_bits_succ_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.lt_two_pow_bits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.two_pow_bits_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.two_pow_bits_le_two_mul_add_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.length_bits_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.length_bits_le_log' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.length_bits_eq_log' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.LogProg.ofDigits_lt_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+exit=1

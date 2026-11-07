@@ -1,0 +1,987 @@
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2295:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2346:    have hb := length_bits_le_self x.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2377:    have hb := length_bits_le_self y.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2397:    have hb := length_bits_le_self (g x.length)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3190:  have hbn := length_bits_le_self n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3244:  have hbn := length_bits_le_self n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3638:    have h3 := qy_two_pow_bits_le n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3659:  have hbF := length_bits_le_self F
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4296:      have hbF := length_bits_le_self (f a)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4387:  have hLn := length_bits_le_self n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4388:  have h2L := qy_two_pow_bits_le n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4433:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4506:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935:  · have hbg := length_bits_le_self (g x.length)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4936:    have hbj := length_bits_le_self (j + 1)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5026:    have hbj := length_bits_le_self (j + 1)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5988:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6037:    have hb := length_bits_le_self (g x.length)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6053:    have hb := length_bits_le_self y.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6581:  have hbG := length_bits_le_self G
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7686:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7690:  have h2 := qy_two_pow_bits_le G
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7791:  have hb := length_bits_le_self (g z.length)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7903:  have hbG := length_bits_le_self G
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7949:      have hbb := length_bits_le_self b
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8118:  have hb := length_bits_le_self G
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:245:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:272:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity.lean:217:  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:148:          exact two_pow_bits_le _ (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:216:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:165:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:369:      exact two_pow_bits_le _ (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:398:      exact two_pow_bits_le _ (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:36:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Padding.lean:30:* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Padding.lean:72:theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:232:  have h1 := length_bits_le_self (g x.length)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+680760723d72826469d0fc294e4d7ee2ecac3e6c:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2295:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2346:    have hb := length_bits_le_self x.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2377:    have hb := length_bits_le_self y.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2397:    have hb := length_bits_le_self (g x.length)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3190:  have hbn := length_bits_le_self n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3244:  have hbn := length_bits_le_self n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3638:    have h3 := qy_two_pow_bits_le n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3659:  have hbF := length_bits_le_self F
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4296:      have hbF := length_bits_le_self (f a)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4387:  have hLn := length_bits_le_self n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4388:  have h2L := qy_two_pow_bits_le n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4433:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4506:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935:  · have hbg := length_bits_le_self (g x.length)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4936:    have hbj := length_bits_le_self (j + 1)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5026:    have hbj := length_bits_le_self (j + 1)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5988:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6037:    have hb := length_bits_le_self (g x.length)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6053:    have hb := length_bits_le_self y.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6581:  have hbG := length_bits_le_self G
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7686:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7690:  have h2 := qy_two_pow_bits_le G
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7791:  have hb := length_bits_le_self (g z.length)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7903:  have hbG := length_bits_le_self G
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7949:      have hbb := length_bits_le_self b
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8118:  have hb := length_bits_le_self G
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:245:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:272:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity.lean:217:  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:148:          exact two_pow_bits_le _ (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:216:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:165:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:369:      exact two_pow_bits_le _ (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:398:      exact two_pow_bits_le _ (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:36:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Padding.lean:30:* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Padding.lean:72:theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:232:  have h1 := length_bits_le_self (g x.length)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+ccdc033f402781ecb4bb5b097e4018b8d9da1b90:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/CookLevin/Hardness.lean:2237:  (Turing.length_bits_le_self n).trans hn
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:431:  have hb := Turing.length_bits_le_self (f a)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2270:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2321:    have hb := length_bits_le_self x.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2352:    have hb := length_bits_le_self y.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2359:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2372:    have hb := length_bits_le_self (g x.length)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3165:  have hbn := length_bits_le_self n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3219:  have hbn := length_bits_le_self n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3603:    have h3 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3624:  have hbF := length_bits_le_self F
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4261:      have hbF := length_bits_le_self (f a)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4347:2 ^ |bits D₀| (2 n + 1)` (`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`); `|bits n| ≤ n`;
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4353:  have hLn := length_bits_le_self n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4354:  have h2L := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4399:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4473:    Complexity.LogProg.two_pow_bits_le_two_mul_add_one x.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4902:  · have hbg := length_bits_le_self (g x.length)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4903:    have hbj := length_bits_le_self (j + 1)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4992:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4993:    have hbj := length_bits_le_self (j + 1)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5955:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6004:    have hb := length_bits_le_self (g x.length)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6020:    have hb := length_bits_le_self y.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6548:  have hbG := length_bits_le_self G
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7645:(`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7649:  have h2 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one G
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7750:  have hb := length_bits_le_self (g z.length)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7862:  have hbG := length_bits_le_self G
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7908:      have hbb := length_bits_le_self b
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8077:  have hb := length_bits_le_self G
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:262:    have := two_pow_bits_le_two_mul_add_one n; simp only [ell, pow_succ]; omega
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:270:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/Randomized/UniformSample.lean:99:  · have := Complexity.LogProg.two_pow_bits_le (N - 1) (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity.lean:217:  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:148:          exact two_pow_bits_le _ (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:216:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:165:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:369:      exact two_pow_bits_le _ (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:398:      exact two_pow_bits_le _ (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Constructible.lean:439:      exact length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:200:  · have := LogProg.two_pow_bits_le n (by omega)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:21:`length_bits_mono`, `two_pow_bits_le`, …) live in `TCSlib.Complexity.TuringMachine.NatBits`, below
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Padding.lean:30:* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Padding.lean:72:theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:232:  have h1 := length_bits_le_self (g x.length)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:29:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:33:* `Complexity.LogProg.two_pow_bits_le` — `2^{|bits L|} ≤ 2L` for `L ≥ 1`;
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:34:  `Complexity.LogProg.two_pow_bits_le_two_mul_add_one` — `2^{|bits n|} ≤ 2n + 1` for every `n`.
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:57:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:89:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:102:`2 ^ |bits n| ≤ 2n` (`Complexity.LogProg.two_pow_bits_le`). -/
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:103:theorem two_pow_bits_le_two_mul_add_one (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/NatBits.lean:106:  · exact (two_pow_bits_le n hn).trans (Nat.le_succ _)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:86:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+a02d0531898764d363474fe4d65ccbeff0e7ea5e:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2295:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2346:    have hb := length_bits_le_self x.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2377:    have hb := length_bits_le_self y.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2397:    have hb := length_bits_le_self (g x.length)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3190:  have hbn := length_bits_le_self n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3244:  have hbn := length_bits_le_self n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3638:    have h3 := qy_two_pow_bits_le n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3659:  have hbF := length_bits_le_self F
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4296:      have hbF := length_bits_le_self (f a)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4387:  have hLn := length_bits_le_self n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4388:  have h2L := qy_two_pow_bits_le n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4433:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4506:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935:  · have hbg := length_bits_le_self (g x.length)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4936:    have hbj := length_bits_le_self (j + 1)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5026:    have hbj := length_bits_le_self (j + 1)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5988:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6037:    have hb := length_bits_le_self (g x.length)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6053:    have hb := length_bits_le_self y.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6581:  have hbG := length_bits_le_self G
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7686:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7690:  have h2 := qy_two_pow_bits_le G
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7791:  have hb := length_bits_le_self (g z.length)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7903:  have hbG := length_bits_le_self G
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7949:      have hbb := length_bits_le_self b
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8118:  have hb := length_bits_le_self G
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:245:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:272:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity.lean:217:  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:148:          exact two_pow_bits_le _ (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:216:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:165:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:369:      exact two_pow_bits_le _ (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:398:      exact two_pow_bits_le _ (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:36:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:33:* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`.
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:73:private lemma epad_mem_V {C d : ℕ} {y : List Bool} :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:113:private lemma epad_mem_Q_iff {C d : ℕ} {mode : Bool} {z y w : List Bool}
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:128:private lemma epad_not_mem_Q {C d : ℕ} {mode : Bool} {z : List Bool} (hd : pairDecode z = none) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:136:private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:141:  rw [epad_mem_Q_iff (pairDecode_pairEncode y (Nat.bits i)), LogProg.bitsVal_bits]
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:169:private lemma epad_preS {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {x : List Bool} {l : Λ}
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:184:local macro "epad_upd" : tactic =>
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:197:private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:229:      ⟨epad_preS htest hpl, hv⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:241:      refine AReach.step ⟨epad_preS htest hpl, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:245:        ⟨epad_preS hread (List.nodup_singleton _), hv⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:263:        refine AReach.step ⟨epad_preS hinc trivial, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:293:          epad_upd
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:311:private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:330:      ⟨epad_preS hml trivial, hv⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:371:    refine AReach.step ⟨epad_preS hml trivial, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:373:    refine AReach.step ⟨epad_preS hmd trivial, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:392:private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:418:      ⟨epad_preS hpw trivial, hv⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:434:    have hm := epad_mul_loop A oracle x kr t p q hkt hkp hkq htp htq hpq ml md addT addB scT
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:475:    refine AReach.step ⟨epad_preS hpw trivial, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:477:    refine AReach.step ⟨epad_preS hpd trivial, hv⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:480:    refine AReach.step ⟨epad_preS hmv trivial, b₃⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:483:    refine AReach.step ⟨epad_preS hmvc trivial, b₅⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:600:private lemma epad_valid_iff_of_decode {C d : ℕ} {y a b : List Bool}
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:612:private lemma epad_not_valid_of_decode {C d : ℕ} {y : List Bool} (h : pairDecode y = none) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:620:private lemma epad_eq_replicate_iff (b : List Bool) (n : ℕ) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:646:private theorem epad_val_run {Λ : Type} (A : ARM 18 2 Λ) (oracle : Fin 2 → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:691:    have hnv := epad_not_valid_of_decode (C := C) (d := d) hd
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:705:      epad_valid_iff_of_decode hd
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:736:        refine AReach.step ⟨epad_preS hc trivial, b₂⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:745:        refine AReach.step ⟨epad_preS hc trivial, b₂⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:748:          ⟨epad_preS hc' trivial, register_update_le v₂ 2 B _ b₂ (by omega)⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:779:    have hos := epad_ones_loop A oracle x 0 1 3 (by decide) (by decide) (by decide) 0
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:843:      have hpw := epad_pow_loop A oracle x 2 8 6 7 4 5 (by decide) (by decide) (by decide)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:882:        rw [hval, epad_eq_replicate_iff]
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:890:        ⟨epad_preS hcmp (show (3 : Fin 18) ≠ 4 by decide), b₇⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:903:      have hnv : ¬ epadValid C d y := fun h => hones ((epad_eq_replicate_iff _ _).mp
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:956:private lemma epad_bound (C d n : ℕ) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:972:`epad_val_run` at stride `1` reaches the answer `[y ∈ epadV]`; every register stays below
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:974:private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:980:  have hB := epad_bound C d y.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:985:  obtain ⟨v', -, hb, -, hr⟩ := epad_val_run (epadVA C d) epadOr y y false C d Sum.inl
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:998:      rw [indicator_eq_decide]; exact decide_eq_true (epad_mem_V.mpr hv)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1000:    exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .yes) = .ret true from rfl) trivial, hb⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1002:      rw [indicator_eq_decide]; exact decide_eq_false (fun h => hv (epad_mem_V.mp h))
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1004:    exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .no) = .ret false from rfl) trivial, hb⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1123:private theorem epad_bank_post (C d : ℕ) (mode : Bool) (z : List Bool) (B na i : ℕ)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1141:    refine AReach.step ⟨epad_preS hc trivial, b₁⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1196:      exact AHalt.ret rfl ⟨epad_preS (show epadBA C d false (.inr .hit) = .ret true from rfl)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1200:      refine AHalt.step ⟨epad_preS hc (List.nodup_singleton _), b₄⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1206:      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .no) = .ret false from rfl)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1208:      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .yes) = .ret true from rfl)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1217:    exact hseek.halt (AHalt.ret rfl ⟨epad_preS
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1231:private theorem epad_bank_pre (C d : ℕ) (mode : Bool) (z : List Bool) (B : ℕ)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1306:    refine AReach.step ⟨epad_preS hc trivial, b₃⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1308:    refine AReach.step ⟨epad_preS hc' trivial,
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1334:    refine AReach.step ⟨epad_preS hc trivial, b₅⟩ ?_
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1397:    · have h3 := LogProg.two_pow_bits_le y.length (by omega)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1443:private lemma epad_getD_four (a b w : List Bool) (i : ℕ) (hi : i < a.length) :
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1451:**Proof sketch.** `arm_decides_poly` on `epadBA`: the first phase `epad_bank_pre` parses the
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1452:query and decodes its index (rejecting malformed queries), the validity block `epad_val_run`
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1453:runs at stride `2` on the first field (rejecting unpadded words), and `epad_bank_post` answers.
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1455:private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPACE := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1461:  have hB := epad_bound C d z.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1462:  obtain ⟨hnone, hsome⟩ := epad_bank_pre C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1468:    AHalt.ret rfl ⟨epad_preS (show epadBA C d mode (.inr .no) = .ret false from rfl) trivial, hv⟩
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1473:      rw [indicator_eq_decide]; exact decide_eq_false (epad_not_mem_Q hd)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1485:      obtain ⟨v', hfr, hb', hval2, hr'⟩ := epad_val_run (epadBA C d mode) epadOr z y true C d
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1497:        have hpost := epad_bank_post C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1505:          have hm := epad_mem_Q_iff (C := C) (d := d) (mode := mode) hd
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1514:                by rw [hz, ha, epad_getD_four a _ w _ hi]
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1537:          exact decide_eq_false (fun h => hvy ((epad_mem_Q_iff hd).mp h).2.2.1)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1543:        exact decide_eq_false (fun h => hw ⟨((epad_mem_Q_iff hd).mp h).1,
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1544:          ((epad_mem_Q_iff hd).mp h).2.1⟩)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1555:are `epad_query_mem_iff`. With `m = |y|` and `v = epadVirt y`: on a padded `y = ⟨a, 1^{…}⟩`,
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1559:private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1566:  have hQ0 := epad_Q_mem C d false
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1567:  have hQ1 := epad_Q_mem C d true
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1601:    exact (Turing.length_bits_le_self i).trans ((hi.trans hvm).trans (Nat.le_succ _))
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1617:    rw [epad_query_mem_iff C d false y i (hi.trans hvm)]
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1628:    rw [epad_query_mem_iff C d true y i (hi.le.trans hvm)]
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1659:    have h1 := Turing.length_bits_le_self (v.length + 1)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1699:logarithmic space (`epad_V_mem`, an abstract register machine through
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1700:`Complexity.LogProg.arm_decides_poly`); on a padded word the run phase (`epad_run`) runs `M`
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1703:queries a bank of two logspace deciders answers (`epad_Q_mem`); otherwise the constant `[false]`
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1708:theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1712:  obtain ⟨K, O, hO⟩ := epad_run C d hL hST hT
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1713:  have hV := epad_V_mem C d
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1732:    · have hmem : y ∈ (epadV C d : Set (List Bool)) := epad_mem_V.mpr hval
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:1748:    · have hmem : y ∉ (epadV C d : Set (List Bool)) := fun h => hval (epad_mem_V.mp h)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:232:  have h1 := length_bits_le_self (g x.length)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:197:private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:311:private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:392:private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/SpaceComplexity/Padding.lean:646:private theorem epad_val_run {Λ : Type} (A : ARM 18 2 Λ) (oracle : Fin 2 → List Bool → Bool)
+b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2295:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2346:    have hb := length_bits_le_self x.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2377:    have hb := length_bits_le_self y.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2397:    have hb := length_bits_le_self (g x.length)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3190:  have hbn := length_bits_le_self n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3244:  have hbn := length_bits_le_self n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3638:    have h3 := qy_two_pow_bits_le n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3659:  have hbF := length_bits_le_self F
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4296:      have hbF := length_bits_le_self (f a)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4387:  have hLn := length_bits_le_self n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4388:  have h2L := qy_two_pow_bits_le n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4433:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4506:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935:  · have hbg := length_bits_le_self (g x.length)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4936:    have hbj := length_bits_le_self (j + 1)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5026:    have hbj := length_bits_le_self (j + 1)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5988:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6037:    have hb := length_bits_le_self (g x.length)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6053:    have hb := length_bits_le_self y.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6581:  have hbG := length_bits_le_self G
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7686:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7690:  have h2 := qy_two_pow_bits_le G
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7791:  have hb := length_bits_le_self (g z.length)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7903:  have hbG := length_bits_le_self G
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7949:      have hbb := length_bits_le_self b
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8118:  have hb := length_bits_le_self G
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:242:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:245:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:272:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:280:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity.lean:217:  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:146:          exact two_pow_bits_le _ (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:216:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:165:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:369:      exact two_pow_bits_le _ (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:398:      exact two_pow_bits_le _ (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:36:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:144:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:34:* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:75:private lemma epad_mem_V {C d : ℕ} {y : List Bool} :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:115:private lemma epad_mem_Q_iff {C d : ℕ} {mode : Bool} {z y w : List Bool}
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:130:private lemma epad_not_mem_Q {C d : ℕ} {mode : Bool} {z : List Bool} (hd : pairDecode z = none) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:138:private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:143:  rw [epad_mem_Q_iff (pairDecode_pairEncode y (Nat.bits i)), LogProg.bitsVal_bits]
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:171:private lemma epad_preS {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {x : List Bool} {l : Λ}
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:186:local macro "epad_upd" : tactic =>
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:194:private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:226:      ⟨epad_preS htest hpl, hv⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:238:      refine AReach.step ⟨epad_preS htest hpl, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:242:        ⟨epad_preS hread (List.nodup_singleton _), hv⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:260:        refine AReach.step ⟨epad_preS hinc trivial, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:290:          epad_upd
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:303:private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:324:      ⟨epad_preS hml trivial, hv⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:365:    refine AReach.step ⟨epad_preS hml trivial, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:367:    refine AReach.step ⟨epad_preS hmd trivial, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:381:private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:409:      ⟨epad_preS hpw trivial, hv⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:425:    have hm := epad_mul_loop A oracle x kr t p q hkt hkp hkq htp htq hpq ml md addT addB scT
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:466:    refine AReach.step ⟨epad_preS hpw trivial, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:468:    refine AReach.step ⟨epad_preS hpd trivial, hv⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:471:    refine AReach.step ⟨epad_preS hmv trivial, b₃⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:474:    refine AReach.step ⟨epad_preS hmvc trivial, b₅⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:591:private lemma epad_valid_iff_of_decode {C d : ℕ} {y a b : List Bool}
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:603:private lemma epad_not_valid_of_decode {C d : ℕ} {y : List Bool} (h : pairDecode y = none) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:611:private lemma epad_eq_replicate_iff (b : List Bool) (n : ℕ) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:631:private theorem epad_val_run {Λ : Type} (A : ARM 18 2 Λ) (oracle : Fin 2 → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:676:    have hnv := epad_not_valid_of_decode (C := C) (d := d) hd
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:690:      epad_valid_iff_of_decode hd
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:721:        refine AReach.step ⟨epad_preS hc trivial, b₂⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:730:        refine AReach.step ⟨epad_preS hc trivial, b₂⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:733:          ⟨epad_preS hc' trivial, register_update_le v₂ 2 B _ b₂ (by omega)⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:764:    have hos := epad_ones_loop A oracle x 0 1 3 (by decide) (by decide) (by decide) 0
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:828:      have hpw := epad_pow_loop A oracle x 2 8 6 7 4 5 (by decide) (by decide) (by decide)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:867:        rw [hval, epad_eq_replicate_iff]
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:875:        ⟨epad_preS hcmp (show (3 : Fin 18) ≠ 4 by decide), b₇⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:888:      have hnv : ¬ epadValid C d y := fun h => hones ((epad_eq_replicate_iff _ _).mp
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:941:private lemma epad_bound (C d n : ℕ) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:957:`epad_val_run` at stride `1` reaches the answer `[y ∈ epadV]`; every register stays below
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:959:private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:965:  have hB := epad_bound C d y.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:970:  obtain ⟨v', -, hb, -, hr⟩ := epad_val_run (epadVA C d) epadOr y y false C d Sum.inl
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:983:      rw [indicator_eq_decide]; exact decide_eq_true (epad_mem_V.mpr hv)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:985:    exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .yes) = .ret true from rfl) trivial, hb⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:987:      rw [indicator_eq_decide]; exact decide_eq_false (fun h => hv (epad_mem_V.mp h))
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:989:    exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .no) = .ret false from rfl) trivial, hb⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1108:private theorem epad_bank_post (C d : ℕ) (mode : Bool) (z : List Bool) (B na i : ℕ)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1126:    refine AReach.step ⟨epad_preS hc trivial, b₁⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1181:      exact AHalt.ret rfl ⟨epad_preS (show epadBA C d false (.inr .hit) = .ret true from rfl)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1185:      refine AHalt.step ⟨epad_preS hc (List.nodup_singleton _), b₄⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1191:      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .no) = .ret false from rfl)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1193:      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .yes) = .ret true from rfl)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1202:    exact hseek.halt (AHalt.ret rfl ⟨epad_preS
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1206:private lemma epad_two_pow_bits (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1226:private theorem epad_bank_pre (C d : ℕ) (mode : Bool) (z : List Bool) (B : ℕ)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1301:    refine AReach.step ⟨epad_preS hc trivial, b₃⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1303:    refine AReach.step ⟨epad_preS hc' trivial,
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1329:    refine AReach.step ⟨epad_preS hc trivial, b₅⟩ ?_
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1389:    have h3 := epad_two_pow_bits y.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1435:private lemma epad_getD_four (a b w : List Bool) (i : ℕ) (hi : i < a.length) :
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1443:**Proof sketch.** `arm_decides_poly` on `epadBA`: the first phase `epad_bank_pre` parses the
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1444:query and decodes its index (rejecting malformed queries), the validity block `epad_val_run`
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1445:runs at stride `2` on the first field (rejecting unpadded words), and `epad_bank_post` answers.
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1447:private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPACE := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1453:  have hB := epad_bound C d z.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1454:  obtain ⟨hnone, hsome⟩ := epad_bank_pre C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1460:    AHalt.ret rfl ⟨epad_preS (show epadBA C d mode (.inr .no) = .ret false from rfl) trivial, hv⟩
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1465:      rw [indicator_eq_decide]; exact decide_eq_false (epad_not_mem_Q hd)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1477:      obtain ⟨v', hfr, hb', hval2, hr'⟩ := epad_val_run (epadBA C d mode) epadOr z y true C d
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1489:        have hpost := epad_bank_post C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1497:          have hm := epad_mem_Q_iff (C := C) (d := d) (mode := mode) hd
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1506:                by rw [hz, ha, epad_getD_four a _ w _ hi]
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1528:          exact decide_eq_false (fun h => hvy ((epad_mem_Q_iff hd).mp h).2.2.1)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1534:        exact decide_eq_false (fun h => hw ⟨((epad_mem_Q_iff hd).mp h).1,
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1535:          ((epad_mem_Q_iff hd).mp h).2.1⟩)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1546:are `epad_query_mem_iff`. With `m = |y|` and `v = epadVirt y`: on a padded `y = ⟨a, 1^{…}⟩`,
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1550:private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1557:  have hQ0 := epad_Q_mem C d false
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1558:  have hQ1 := epad_Q_mem C d true
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1610:    rw [epad_query_mem_iff C d false y i (hi.trans hvm)]
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1621:    rw [epad_query_mem_iff C d true y i (hi.le.trans hvm)]
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1693:logarithmic space (`epad_V_mem`, an abstract register machine through
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1694:`Complexity.LogProg.arm_decides_poly`); on a padded word the run phase (`epad_run`) runs `M`
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1697:queries a bank of two logspace deciders answers (`epad_Q_mem`); otherwise the constant `[false]`
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1702:theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1706:  obtain ⟨K, O, hO⟩ := epad_run C d hL hST hT
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1707:  have hV := epad_V_mem C d
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1726:    · have hmem : y ∈ (epadV C d : Set (List Bool)) := epad_mem_V.mpr hval
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:1742:    · have hmem : y ∉ (epadV C d : Set (List Bool)) := fun h => hval (epad_mem_V.mp h)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:232:  have h1 := length_bits_le_self (g x.length)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:88:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:194:private theorem epad_ones_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:303:private theorem epad_mul_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:381:private theorem epad_pow_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/SpaceComplexity/Padding.lean:631:private theorem epad_val_run {Λ : Type} (A : ARM 18 2 Λ) (oracle : Fin 2 → List Bool → Bool)
+7d16731e963f60a4ba97e79ec7dba41c86dca1bb:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:603:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:744:  have hbtt : bt.length ≤ t := length_bits_le_self t
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Constructible.lean:442:      exact length_bits_le_self _
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+9d93626dadf1561c757494cfff992d1951a458e2:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/ClassP/TimeConstructible.lean:476:  have hl := Turing.length_bits_le_self x.length
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:624:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:765:  have hbtt : bt.length ≤ t := length_bits_le_self t
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Constructible.lean:432:      exact length_bits_le_self _
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:700:        · exact length_bits_le_self t
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+374337b0697bc0fb9fb3f6795e214d441be83482:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/ClassP/TimeConstructible.lean:476:  have hl := Turing.length_bits_le_self x.length
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:603:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:744:  have hbtt : bt.length ≤ t := length_bits_le_self t
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Constructible.lean:432:      exact length_bits_le_self _
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+2410022fee818a1206616571e6a972db9338a150:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:603:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:744:  have hbtt : bt.length ≤ t := length_bits_le_self t
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Constructible.lean:442:      exact length_bits_le_self _
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+a83aa226758b0c624897e15616624455e1d821ab:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:603:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:744:  have hbtt : bt.length ≤ t := length_bits_le_self t
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Constructible.lean:442:      exact length_bits_le_self _
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+27ca2927f7ddbae798c870bf0fe6948d3e18830f:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:603:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:744:  have hbtt : bt.length ≤ t := length_bits_le_self t
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Constructible.lean:442:      exact length_bits_le_self _
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9122:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+599497bc69889781f34b1925c8772b3645b00608:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/ClassP/TimeConstructible.lean:476:  have hl := Turing.length_bits_le_self x.length
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:624:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:765:  have hbtt : bt.length ≤ t := length_bits_le_self t
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:142:          exact two_pow_bits_le _ (by omega)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:29:* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:47:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:225:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Constructible.lean:432:      exact length_bits_le_self _
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:700:        · exact length_bits_le_self t
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+1911b1ca7a91779b89cd125371d0f105f80d211f:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2295:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2346:    have hb := length_bits_le_self x.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2377:    have hb := length_bits_le_self y.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2397:    have hb := length_bits_le_self (g x.length)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3190:  have hbn := length_bits_le_self n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3244:  have hbn := length_bits_le_self n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3638:    have h3 := qy_two_pow_bits_le n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3659:  have hbF := length_bits_le_self F
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4296:      have hbF := length_bits_le_self (f a)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4387:  have hLn := length_bits_le_self n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4388:  have h2L := qy_two_pow_bits_le n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4433:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4506:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935:  · have hbg := length_bits_le_self (g x.length)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4936:    have hbj := length_bits_le_self (j + 1)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5026:    have hbj := length_bits_le_self (j + 1)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5988:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6037:    have hb := length_bits_le_self (g x.length)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6053:    have hb := length_bits_le_self y.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6581:  have hbG := length_bits_le_self G
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7686:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7690:  have h2 := qy_two_pow_bits_le G
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7791:  have hb := length_bits_le_self (g z.length)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7903:  have hbG := length_bits_le_self G
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7949:      have hbb := length_bits_le_self b
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8118:  have hb := length_bits_le_self G
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:243:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:246:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:273:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:281:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:146:          exact two_pow_bits_le _ (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:213:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:142:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:35:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:132:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Encoding.lean:75:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Encoding.lean:290:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:87:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+30222bbd264a75057ae0779535a32e1a30dd2394:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2822:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204:        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/ClassP/TimeConstructible.lean:486:  have hl := Turing.length_bits_le_self x.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427:private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:456:  have hb := Turing.length_bits_le_self (f a)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2290:(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2341:    have hb := length_bits_le_self x.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2372:    have hb := length_bits_le_self y.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2379:    have hb := length_bits_le_self ((y.length + 1) ^ 2)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2392:    have hb := length_bits_le_self (g x.length)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3185:  have hbn := length_bits_le_self n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3239:  have hbn := length_bits_le_self n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3633:    have h3 := qy_two_pow_bits_le n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3654:  have hbF := length_bits_le_self F
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4291:      have hbF := length_bits_le_self (f a)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4377:2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4382:  have hLn := length_bits_le_self n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4383:  have h2L := qy_two_pow_bits_le n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4428:≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4501:  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4930:  · have hbg := length_bits_le_self (g x.length)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4931:    have hbj := length_bits_le_self (j + 1)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5020:  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5021:    have hbj := length_bits_le_self (j + 1)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5983:(`Turing.length_bits_le_self`) and `n ≤ g n`. -/
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6032:    have hb := length_bits_le_self (g x.length)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6048:    have hb := length_bits_le_self y.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6576:  have hbG := length_bits_le_self G
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7681:/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7685:  have h2 := qy_two_pow_bits_le G
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7786:  have hb := length_bits_le_self (g z.length)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7898:  have hbG := length_bits_le_self G
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7944:      have hbb := length_bits_le_self b
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8113:  have hb := length_bits_le_self G
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608:`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749:  have hbtt : bt.length ≤ t := length_bits_le_self t
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInP.lean:326:  have h1 := Turing.length_bits_le_self s
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInP.lean:350:    Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInP.lean:390:and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInP.lean:402:    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInPWords.lean:172:    exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/BPLInPWords.lean:187:  have h1 := Turing.length_bits_le_self i
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/RandomWalkPad.lean:155:  exact Complexity.LogProg.two_pow_bits_le n hn
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:243:theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:246:  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:273:    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:281:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/UPathRL.lean:126:  have hjb := length_bits_le_self j
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/Randomized/UPathSearch.lean:251:    have hjb := length_bits_le_self σ.u
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:146:          exact two_pow_bits_le _ (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49:  exact Turing.length_bits_le_self (n + 1)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:213:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:163:      have hpow : 2 ^ wP n ≤ 2 * (n + 1) := two_pow_bits_le (n + 1) (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:351:      exact two_pow_bits_le _ (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:380:      exact two_pow_bits_le _ (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Constructible.lean:443:      exact length_bits_le_self _
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145:(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:90:  two_pow_bits_le (m + 1) (by omega)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288:    have hjb := length_bits_le_self j
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548:    have hjb := length_bits_le_self j
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:35:  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:132:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200:  have h1 := length_bits_le_self (g x.length)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072:  have hl := Turing.length_bits_le_self x.length
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417:`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436:      have := Turing.length_bits_le_self C
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120:      (by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Encoding.lean:76:* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Encoding.lean:291:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832:        · exact length_bits_le_self t
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Universal.lean:2763:    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/CircuitComplexity/StraightLineDualRail.lean:279:theorem _root_.BoolCircuit.SLOperand.eval_runLines_append (x : Fin n → Bool) {o : SLOperand n}
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:97:theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:463:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:87:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+7c940a8ab398885fb0255c550a5a28f77d7010cc:TCSlib/Complexity/TuringMachine/Build/Loop.lean:2823:private lemma emCall_eval_run (M : FinTM Bool) {w s : List Bool}
+
+REFS origin/complexity/arora-barak-ch3-4
+
+REFS origin/lean/dedup-sg1, origin/pr/215, ccdc033f402781ecb4bb5b097e4018b8d9da1b90
+
+REFS origin/lean/dedup-natbits, origin/pr/222, a02d0531898764d363474fe4d65ccbeff0e7ea5e
+
+REFS origin/lean/epad-padding-fill, origin/pr/228, b6c2f5e4b8ce3bc18c385a09a3bf5dc26b75c205
+
+REFS refs/deliver/epad-2026-11-06
+
+REFS refs/heads/deliver/fill-eq-query-in
+
+REFS refs/heads/deliver/fill-s13d-g4-cont4-in
+
+REFS refs/heads/deliver/fill-u2s-universal-in
+
+REFS refs/heads/local/eq-cp1-landing
+
+REFS refs/heads/local/eq-cp1-landing-v2
+
+REFS refs/heads/local/eq-cp1-landing-v3
+
+REFS refs/heads/local/f3c2-landing
+
+REFS refs/remotes/origin/deliver/fill-b6-hierarchy-in
+
+REFS refs/remotes/origin/lean/dedup-ro1
