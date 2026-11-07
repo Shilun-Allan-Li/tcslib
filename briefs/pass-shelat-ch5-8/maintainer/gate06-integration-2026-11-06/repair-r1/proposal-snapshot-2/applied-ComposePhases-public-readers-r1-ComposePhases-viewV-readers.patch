@@ -1,0 +1,18 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+@@ -543,9 +543,12 @@
+         (List.range (H.calls.eval x.length * ρ.rounds.eval x.length)).map
+           (H.slotFromA ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++ List.replicate H.lead [] ++
+           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+-            (H.main.rounds.eval x.length)).2⟩ := by
+-  show (⟨x, zB, List.ofFn r.2, ((H.compose ρ).transcript x zA zB r).2⟩ : View) = _
+-  rw [compose_transcript]
++            (H.main.rounds.eval x.length)).2⟩ :=
++  (Protocol.viewV_eq (H.compose ρ) x zA zB r).trans
++    (congrArg (fun t : List (List Bool) × List (List Bool) =>
++      (⟨x, zB, List.ofFn r.2, t.2⟩ : View))
++      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
++        (H.compose_transcript ρ x zA zB r)))
+ 
+ /-- **Phase lemma (c), Alice's output** in terms of `Protocol.outP`: when `main` has at least one
+ move, Alice's output in `H.compose ρ` is her `main`-output on `⟨zA, her honest answers⟩`, her

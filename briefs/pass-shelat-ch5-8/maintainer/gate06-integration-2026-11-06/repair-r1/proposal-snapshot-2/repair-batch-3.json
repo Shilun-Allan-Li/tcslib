@@ -1,0 +1,60 @@
+[
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity",
+    "label": "SpecialEncryptionSecurity-public-readers-r1",
+    "patches": [
+      "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+      "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+      "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/GarblingSpecial",
+    "label": "GarblingSpecial-public-readers-r1",
+    "patches": [
+      "GarblingSpecial-decCorrect-reader.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/Defs",
+    "label": "Defs-public-readers-r1",
+    "patches": [
+      "Defs-otFunctionality_f_snd_apply-typed-reader.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/ObliviousTransfer",
+    "label": "ObliviousTransfer-public-readers-r1",
+    "patches": [
+      "ObliviousTransfer-otProtocol_outV-reader-order.patch",
+      "ObliviousTransfer-otProtocol_hbcSecure-reader.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/Yao",
+    "label": "Yao-public-readers-r1",
+    "patches": [
+      "Yao-decodeMsgs-delegate-decWords.patch",
+      "Yao-main-outV-readers.patch",
+      "Yao-main-outP-readers.patch",
+      "Yao-yaoHybrid_callA-typed-input.patch",
+      "Yao-yaoHybrid_callB-typed-input.patch",
+      "Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+      "Yao-hybrid-HBC-reader.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/Cryptography/SecureComputation/YaoReal",
+    "label": "YaoReal-public-readers-r1",
+    "patches": [
+      "YaoReal-main-rounds-reader.patch"
+    ]
+  },
+  {
+    "module": "TCSlib/LearningTheory/PAC/Prediction",
+    "label": "Prediction-public-readers-r1",
+    "patches": [
+      "Prediction-expectedErr-pacLearnsUnder-reader.patch"
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+@@ -205,20 +205,20 @@
+       ∀ msg ∈ ((H.compose ρ).transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
+           ((H.compose ρ).transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
+         msg.length ≤ B.eval n := by
+-  obtain ⟨-, -, -, -, B₁, hB₁⟩ := hH
+-  obtain ⟨-, -, B₂, hB₂⟩ := hρ
++  obtain ⟨-, -, -, -, B₁, hB₁⟩ := (HybridProtocol.polyTime_iff H F).mp hH
++  obtain ⟨-, -, B₂, hB₂⟩ := (Functionality.polyTime_iff G ρ).mp hρ
+   refine ⟨.add B₁ B₂, fun n x y r msg hmsg => ?_⟩
+   rw [PolyExpr.eval_add]
+   have hrA : (List.ofFn r.1).length = H.main.P.coins.eval (List.replicate n true).length +
+       H.calls.eval (List.replicate n true).length *
+         ρ.P.coins.eval (List.replicate n true).length := by
+-    rw [List.length_ofFn]
+-    rfl
++    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
++      H.compose_P_coinLen ρ (List.replicate n true).length
+   have hrB : (List.ofFn r.2).length = H.main.V.coins.eval (List.replicate n true).length +
+       H.calls.eval (List.replicate n true).length *
+         ρ.V.coins.eval (List.replicate n true).length := by
+-    rw [List.length_ofFn]
+-    rfl
++    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
++      H.compose_V_coinLen ρ (List.replicate n true).length
+   -- a message of an honest run
+   have hrun : ∀ j p, j < H.calls.eval (List.replicate n true).length →
+       p < ρ.rounds.eval (List.replicate n true).length →

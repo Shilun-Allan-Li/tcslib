@@ -1,0 +1,14 @@
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -937,8 +937,9 @@
+     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
+       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
+     (yaoHybrid Y E₁ E₂).HBCSecure (yaoFunctionality Y) :=
+-  ⟨yaoHybrid_polyTime Y E₁ E₂ hE₁ hE₂,
+-    yaoHybrid_simulators Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂⟩
++  (HybridProtocol.hbcSecure_iff (yaoHybrid Y E₁ E₂) (yaoFunctionality Y)).mpr
++    ⟨yaoHybrid_polyTime Y E₁ E₂ hE₁ hE₂,
++      yaoHybrid_simulators Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂⟩
+ 
+ end Security
+ 
