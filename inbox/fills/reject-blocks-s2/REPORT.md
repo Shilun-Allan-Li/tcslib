@@ -1,8 +1,9 @@
 # Fill `reject-blocks-s2` — REPORT
 
-**Status: CHECKPOINT 3 (milestone 3 reached).** H15 is proved (milestone 2); dl-a
-(`DiscreteLog.lean`) and dl-c (`ElGamal.lean`) consume it, their copied loops are deleted and
-their three sketches refreshed. RSA/Rabin (milestone 4) and the final checks (milestone 5) follow.
+**Status: CHECKPOINT 4 (milestone 4 reached).** H15 is proved (milestone 2); all four consumers
+(dl-a `DiscreteLog.lean`, dl-c `ElGamal.lean`, the RSA unit sampler, the Rabin odd/Blum
+generators) consume it; every copied loop is deleted and all six public sketches are refreshed.
+The final checks (milestone 5) follow.
 
 ## Identity
 
@@ -11,7 +12,8 @@ their three sketches refreshed. RSA/Rabin (milestone 4) and the final checks (mi
 | frozen source ancestor | `31348fcf7dee32f84db1fc8f929d80653137995e` (exact; `git rev-parse HEAD` after checkout) |
 | fill branch | local `fill/reject-blocks-s2`, never rebased, never pushed |
 | checkpoint 2 head | `144c99ea` — "S2 milestone 2: prove polyTimeComputable_rejectBlocksL (H15) via the repetition host" (exchange `ae2be1b7`) |
-| checkpoint 3 head | `5a6f8021` — "S2 milestone 3: dl-a and dl-c consume H15; retire dla_ss*/dlc_ss* loops; refresh three sketches" |
+| checkpoint 3 head | `5a6f8021` — "S2 milestone 3: dl-a and dl-c consume H15; retire dla_ss*/dlc_ss* loops; refresh three sketches" (exchange `6fc5aca0`) |
+| checkpoint 4 head | `538b932d` — "S2 milestone 4: RSA unit sampler and Rabin generators consume H15; retire rsa_us*/rabin_rb* loops; refresh three sketches" |
 | exchange read | `exchange/pass-shelat-ch5-8` at `d14a685` (≥ `d38aea96`); pack `SHA256SUMS` verified (all OK) |
 | owned baseline | all five fingerprints and line counts equal `inputs/owned-baseline.json` (`evidence/logs/owned-baseline-check.log`) |
 | worker | one Claude session, no sub-agents |
@@ -109,8 +111,57 @@ unchanged (`census-ancestor.json`, `census-m2.json`).
 * Checks (`evidence/logs/checks-m3.log`): Concrete, Factoring, RSA, Rabin, DiscreteLog,
   DiscreteLogHardcore, ElGamal, the facade: all exit 0, fresh objects.
 
+## Milestone 4: RSA and Rabin
+
+* **RSA.** The private `rsa_ptc_unitSampleStr` (the proof behind the public
+  `polyTimeComputable_unitSampleStr`; statement unchanged) applies H15 with
+  `E a v := v < a ∧ Nat.Coprime v a`, the parameter word `f z` (the modulus numeral `w`), width
+  word `sizeStr w` (`H.size`), block and trial words `1^{B(n)}`, `1^{T(n)}`
+  (`polyTimeComputable_unaryPoly rsaBlock/rsaTrials`), coins `inCoins z`, read through
+  `sampleUnitL_eq` and `length_sizeStr`. The output step (`H.divMod` remainder of the tail or of
+  the fallback `[true]`) is as before. Deleted (18): `rsa_usStart`, `rsa_usStep`, `rsa_usBlock`,
+  `rsa_usGcd`, `rsa_usAcc`, `rsa_usOut`, `rsa_usLoop`, `rsa_usStep_poly`, `rsa_usBlock_poly`,
+  `rsa_usAcc_poly`, `rsa_usOut_poly`, `rsa_usStep_iterate`, `rsa_length_usStep_le`,
+  `rsa_length_usStep_usStep_le`, `rsa_length_usStep_iterate_le`, `rsa_usLoop_poly`,
+  `rsa_usFind_eq`, `rsa_usStart_poly`. Added (3): `rsa_unitAcc` (the test on `⟨w, b⟩`: not
+  `⟦w⟧ ≤ ⟦b⟧`, the `xgcdStr` gcd numeral reads `≤ 1` and `≥ 1`), `rsa_unitAcc_poly`,
+  `rsa_unitAcc_spec` (via the retained `rsa_unitTest_eq`). The section header now names H15.
+* **Rabin.** Deleted (16): `rabin_rbStep`, `rabin_rbBlock`, `rabin_rbAcc`, `rabin_rbOut`,
+  `rabin_rbLoop`, `rabin_rbStep_poly`, `rabin_rbBlock_poly`, `rabin_rbAcc_poly`,
+  `rabin_rbOut_poly`, `rabin_rbStep_iterate`, `rabin_length_rbStep_le`,
+  `rabin_length_rbStep_rbStep_le`, `rabin_length_rbStep_iterate_le`, `rabin_rbLoop_poly`,
+  `rabin_rbFind_eq`, `rabin_spStart`. Changed private adapters (old → new):
+  * `rabin_spOut acc0 U ds c` — old: the padded payload of the deleted loop on
+    `rabin_spStart U c`, or the padded fallback `ds`; new: `⟦v⟧_{|U|}` where `v` is the value of
+    the first of the `4m²` trial words `(c.drop (t·m)).take m` accepted by `acc0` (`List.find?`),
+    or `⟦ds⟧`. The two agree whenever `|ds| ≤ |U|` (both are then `⟦(rejectBlocksL …).getD ⟦ds⟧⟧_{|U|}`);
+    they can differ only for `|ds| > |U|`, where the old fallback was `rabin_pad U ds` (no
+    correctness lemma covered that case). Every use has `|ds| ≤ 3 ≤ |U|`.
+  * `rabin_spOut_eq` — the hypothesis `|ds| ≤ |U|` is dropped (now `rejectBlocksL_eq_find?` and
+    `hspec`); its two call sites in `rabin_genCore_eq` drop that argument.
+  * `rabin_spOut_poly` — now takes `E`, `hspec` and `∀ z, |fds z| ≤ |fU z|`; proof: H15 with
+    `E' _ v := E v`, test `acc0 ∘ pairSndD`, parameter word `[]`, width and block word `U`,
+    trial word `1^{4m²}`; the result or fallback is padded (`rabin_pad_poly`) and identified by
+    `rabin_pad_eq` using H15's tail bound.
+  * `rabin_genCore_poly` — now takes `E`, `hspec`, `|ds1| ≤ 3`, `|ds2| ≤ 3` and passes them on
+    (bound `3 ≤ max n 3` from `rabin_gU_eq`, which moved above it unchanged).
+  * The two public callers pass `(fun v => v.Prime ∧ v ≠ 2)`/`rabin_oddAcc_spec`, resp.
+    `(fun v => v.Prime ∧ v % 4 = 3)`/`rabin_blumAcc_spec`, and `(by decide)` lengths; their
+    headers are unchanged.
+* **Sketches refreshed:** `polyTimeComputable_unitSampleStr` (RSA), `polyTimeComputable_oddGenRaw`,
+  `polyTimeComputable_blumGenRaw` (Rabin) now describe the H15 application in place of the loop.
+  All six sketches are now refreshed.
+* Checks (`evidence/logs/checks-m4.log`): Concrete 4.4 s, Factoring 6.9 s, RSA 19.9 s, Rabin
+  12.3 s, DiscreteLog 4.0 s, DiscreteLogHardcore 24.3 s, ElGamal 10.1 s, the facade 2.1 s: all
+  exit 0, fresh objects, peak RSS ≤ 3018 MiB; RSA and Rabin elaborate with no warnings.
+* Declaration diff vs the ancestor: `evidence/logs/decl-diff-m4.md` (Concrete +15; DiscreteLog
+  −15/+3; ElGamal −15/+2; RSA −18/+3; Rabin −16/+0; all private). Census
+  (`census-m4.json`): `TCSlib/` 510 `sorry`, owned 0; the sole delta from the ancestor is
+  Concrete's H15 `sorry`. Axiom walk (`axioms-m4.log`): 1280 declarations of the five modules,
+  none on `sorryAx`; H15 `[propext, Classical.choice, Quot.sound]`.
+
 ## Still to do
 
-Milestone 4 (RSA, Rabin; the remaining three sketches) and milestone 5
-(328 remaining prerequisites, `audits/pass-shelat/Checks`, header diff, census, axiom
-comparison, Rule-10 seals with the anonymous-read and repetition-matcher controls, lints).
+Milestone 5 (328 remaining prerequisites, `audits/pass-shelat/Checks`, header diff, axiom
+comparison with the base, Rule-10 seals with the anonymous-read and repetition-matcher controls,
+lints, final sizes).
