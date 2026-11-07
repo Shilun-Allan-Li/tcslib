@@ -4324,3 +4324,20 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     WC-1 and QL-X1 (`duplication-ledger.md`).
   - Next: G5's fill brief (drafting; issues after its pre-ship on the merged tree), the deepening
     fill's brief after #196 merges, and H's brief after NF lands.
+
+
+## Gate106 round2: polynomial-closure cleanup (2026-11-07)
+
+The Codex follow-up found one unacknowledged generic polynomial-closure kind in
+SAT/Hardness, outside the six accepted adapter/dispatcher kinds. The broader
+bounded sweep identifies at least9distinct canonical source statements out of26
+in PolyTimePairing, crossing onefifth on the pre-fix source-inclusive accounting.
+This is a review item, not an accepted debt family or an exhaustive count.
+
+**Disposition in progress:** mechanical all-member citations under WORKFLOW§3,
+with13 checked source repoints and two further already-imported candidates under
+validation. Existing total-match pairMapSnd.eq_1 works under opacity, so no new
+API/import is needed for those fixes. Source imports/headers/data stay frozen.
+No retention acknowledgment is requested; closure awaits complete source/ledger
+accounting, current replay and Codex round3. Separate on-image/iteration/prefix
+candidates retain their exact checked/missing-interface boundaries.

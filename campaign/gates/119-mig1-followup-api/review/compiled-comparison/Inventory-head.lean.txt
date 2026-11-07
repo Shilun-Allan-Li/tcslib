@@ -1,0 +1,63 @@
+import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+/-! Read-only native census and axiom closure for every constant in all five owned modules.
+Private/internal/generated names are retained; no owner constant is filtered away. -/
+set_option maxHeartbeats 0
+set_option pp.universes true
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let owners : List Name := [`TCSlib.Complexity.TuringMachine.Finite,
+    `TCSlib.Complexity.TuringMachine.Encoding,
+    `TCSlib.Complexity.TuringMachine.Build.Wrappers,
+    `TCSlib.Complexity.TuringMachine.Build.Primitives,
+    `TCSlib.Complexity.TuringMachine.Build.Catalog]
+  let targets : List Name := [`Turing.MultiTapeTM.exists_first_entry_of_fixed,
+    `Turing.pairDiagTM_spaceUsed, `Turing.FinTM.incFixedTM_spaceUsed,
+    `Turing.FinTM.redirectTM_spaceUsedByTape]
+  for home in owners do
+    unless (env.getModuleIdx? home).isSome do throwError "missing owned import {home}"
+  let st ← liftTermElabM getSimpTheorems
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let entries := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let home := env.header.moduleNames[i.toNat]!
+      if owners.contains home then some (n, ci, home) else none
+    | none => none
+  for (n, ci, home) in entries.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let hints := match ci with
+      | .defnInfo di => match di.hints with
+        | .abbrev => "abbrev" | .opaque => "opaque" | .regular h => s!"regular:{h}"
+      | _ => "not_definition"
+    let ip ← liftCoreM <| getInstancePriority? n
+    let row := Json.mkObj [
+      ("name", toJson n.toString), ("owner", toJson home.toString),
+      ("kind", toJson (kind ci)), ("private", toJson (isPrivateName n)),
+      ("internal", toJson n.isInternalDetail), ("levelParams", toJson (ci.levelParams.map Name.toString)),
+      ("typeExpr", toJson (reprStr ci.type)), ("unsafe", toJson ci.isUnsafe),
+      ("partial", toJson ci.isPartial), ("kernelHints", toJson hints),
+      ("reducibility", toJson (reprStr (getReducibilityStatusCore env n))),
+      ("simp", toJson (st.isLemma (.decl n))), ("unfold", toJson (st.toUnfold.contains n)),
+      ("protected", toJson (isProtected env n)), ("instancePriority", toJson ip)]
+    logInfo m!"CENSUS|{row.compress}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    let axrow := Json.mkObj [("name", toJson n.toString),
+      ("owner", toJson home.toString), ("kind", toJson (kind ci)),
+      ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]
+    logInfo m!"ALLAX|{axrow.compress}"
+    if !isPrivateName n then logInfo m!"PUBLICAX|{axrow.compress}"
+    if targets.any (fun r => r.isPrefixOf n) then
+      logInfo m!"TARGET|{row.compress}"
+      logInfo m!"TARGETAX|{axrow.compress}"
+      logInfo m!"TARGETTYPE|{n}|{ci.type}"
+  for n in targets do
+    unless env.contains n do logInfo m!"MISSING_TARGET|{n}"
+  logInfo m!"COMPLETE|{entries.length}|owners=5"

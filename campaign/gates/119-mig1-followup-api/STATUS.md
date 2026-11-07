@@ -1,12 +1,20 @@
-# Gate119: approved MIG-1 interface follow-up — Codex
+# Gate119: approved interface follow-up — Codex, draft #234
 
-**Not ready to dispatch.** Seyoon approved the two exact zero-space facts, generic
-absorbing-stop first-entry theorem and exact redirect-space home move. Codex was
-selected; findings must be downloadable Markdown and pasted. Exact rulings and
-limits are in rulings.json. No packet, audit or gate closure is claimed.
+**Not ready to dispatch. Not yet clear to merge: #234.** Three approved non-simp
+facts and exact redirect-space owner move are implemented on lean/mig1-followup-api.
+Current pushed head626b1a81ddd33f4b0e0dabd4e874a16a0fe71724 contains Seyoon's #230 merge.
 
-A separate campaign-based prerequisite PR will preserve gate117/#230's dispatched
-source unchanged. That PR must close this gate and pass replay before its merge
-is clear. Consumer re-points belong in the MIG-1 landing after source review;
-the user approval is not implementation, proof/gate acceptance or merge permission.
-Next free gate120.
+Actual5-module native chain passes. Fresh full-owner scoped seals and real published
+consumers pass; paired controls are8first-entry,8pairDiag,52inc/redirect examples in
+their recorded contexts. Whole-file source recovery preserves all old statements,
+imports, attributes and runtime definitions except the oneapproved home move.
+Source public259→262; compiled3778→3782 is3authored additions plus onegenerated
+internal redirect proof auxiliary. Shared metadata changes only the redirect owner;
+all sharedAXclosures are identical, and no formerlyproved constant acquires sorryAx.
+The raw-index header limitation and failed/corrected toolchain setup attempts remain
+explicit. The proof outputs are losslessly archived and UTF8encoded for the packet.
+
+Fresh401-module current merged-tree replay is running from complete mac4; complete
+16-file source-inclusive baseline/head screens and final pack work also remain.
+No fullreplay/screen pass, gate dispatch/closure or merge clearance is claimed.
+Codex selected; downloadable findings Markdown plus pasted content. Next free120.

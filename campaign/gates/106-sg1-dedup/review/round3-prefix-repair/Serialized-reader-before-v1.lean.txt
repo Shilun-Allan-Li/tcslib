@@ -1,0 +1,14 @@
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let n := `Complexity.PrefixByLength.drop.eq_1
+  let some ci := kenv.find? n | throwError "Reader absent in kernel immediately after import"
+  let some ownerIdx := env.getModuleIdxFor? n | throwError "Reader has no imported owner"
+  let owner := env.header.moduleNames[ownerIdx.toNat]!
+  let axs ← liftCoreM <| Lean.collectAxioms n
+  let kind := match ci with | .thmInfo _ => "theorem" | _ => "other"
+  logInfo m!"BEFORE_ANY_REFERENCE|{n}|owner={owner}|kind={kind}|private={isPrivateName n}|AX={axs}"
+  logInfo m!"READER_TYPE|{ci.type}"
+  if let some val := ci.value? then logInfo m!"READER_VALUE|{val}"

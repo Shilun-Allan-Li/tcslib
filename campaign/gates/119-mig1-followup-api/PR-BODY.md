@@ -1,0 +1,9 @@
+Adds three approved non-simp interfaces: `pairDiagTM_spaceUsed`, `incFixedTM_spaceUsed`, and `MultiTapeTM.exists_first_entry_of_fixed`. The first two expose exact zero work space for every input/time. The third extracts the earliest entry into live stopping states whose configurations are fixed by one step, retaining the full endpoint and strict earlier cut.
+
+Moves `FinTM.redirectTM_spaceUsedByTape` from Catalog beside its owning machine in Wrappers. Its public name, complete header and docstring are unchanged. The moved proof is exactly the approved public-reader proof from the MIG-1 landing; the older Catalog baseline still used an unfolding/private-clone proof. No machine, existing statement, import or simp attribute changes. Arbitrary new raw-index headers remain outside the published equation’s inferred-type reuse guarantee.
+
+Prerequisite #230 is merged (gate117 CLOSED); this draft is based on the current campaign tree. The PR targets `complexity/arora-barak-ch3-4`; Seyoon merges. Relative to the prerequisite tree: three authored public additions and one home move. Complete five-owner compiler inventory is 3,778→3,782: three new theorems plus one generated internal proof auxiliary; no constant removed or newly dependent on `sorryAx`.
+
+Validation so far: actual five-module native dependency chain passes, owner-section opacity checks and real published consumers pass with paired controls, full source-byte recovery preserves existing declarations/data. A fresh 401-module merged-tree replay is running from current campaign snapshot mac4. Complete 16-file source-inclusive screens and gate119 (Codex selected) remain pending. Failed isolated setup attempts and the corrected pinned-toolchain results are retained in campaign/gates/119-mig1-followup-api/.
+
+Not yet clear to merge.

@@ -1,0 +1,75 @@
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Complexity.PolyTimeComputable Complexity.pairMapSnd Turing.pairEncode Turing.pairDecode Complexity.pairFstD Complexity.pairSndD Complexity.PrefixByLength.drop
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace Complexity
+open Turing
+/-- Removing as many leading bits as the length of a computed word is polynomial-time.
+**Proof sketch.** Pair the length word first and the payload second, apply the public
+prefix remover, and read its result through its equation and the public pair projections. -/
+private lemma clA5Drop_native {s u : List Bool → List Bool}
+    (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
+    PolyTimeComputable (fun x => (s x).drop (u x).length) := by
+  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
+  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
+      (fun x => (s x).drop (u x).length) := by
+    funext x
+    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
+      pairFstD_pairEncode, pairSndD_pairEncode]
+  rw [he] at h
+  exact h
+
+end Complexity
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let wanted : List String := ["clA5Drop_native"]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if (env.getModuleIdxFor? n).isSome then continue
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then throwError "Root count mismatch: {roots.size}/{wanted.length}"
+  for n in roots.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  let mut selected : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n
+  for n in selected.qsort Name.lt do
+    let some ci := kenv.find? n | throwError "missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, kenv.find? c with
+      | some j, some info =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          logInfo m!"CITED|{n}|{c}|{owner}|kind={kind info}|private={isPrivateName c}"
+          if let .defnInfo di := info then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            logInfo m!"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) => logInfo m!"HOMEDEF|{n}|{c}"
+      | _, _ => pure ()
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let n := `Complexity.PrefixByLength.drop.eq_1
+  let some info := env.find? n | throwError "Serialized reader absent before any reserved-name query"
+  let axs ← liftCoreM <| Lean.collectAxioms n
+  let owner := (env.getModuleIdxFor? n).map (fun i => env.header.moduleNames[i.toNat]!)
+  logInfo m!"SERIALIZED_READER|{n}|owner={owner}|AX={axs}|type={info.type}"

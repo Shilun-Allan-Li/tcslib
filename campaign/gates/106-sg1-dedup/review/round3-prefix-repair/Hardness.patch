@@ -1,0 +1,43 @@
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -3,6 +3,7 @@
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import TCSlib.Complexity.ClassNP.PolyTimePrefix
+ import TCSlib.Complexity.ClassNP.SAT
+ import TCSlib.Complexity.ClassNP.TMSAT
+ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+@@ -6814,21 +6815,20 @@
+   simp only [one_mul]
+   omega
+ 
+-/-- Removing a computed unary number of leading bits is an actual sequence
+-of native tail calls. Each call is charged even after the word becomes empty. -/
++/-- Removing as many leading bits as the length of a computed word is polynomial-time.
++**Proof sketch.** Pair the length word first and the payload second, apply the public
++prefix remover, and read its result through its equation and the public pair projections. -/
+ private lemma clA5Drop_native {s u : List Bool → List Bool}
+     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
+     PolyTimeComputable (fun x => (s x).drop (u x).length) := by
+-  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)
+-    (fun w => by simp [List.length_tail])
+-  convert h using 1
+-  funext x
+-  symm
+-  induction (u x).length with
+-  | zero => rfl
+-  | succ j ih =>
+-    rw [Function.iterate_succ_apply', ih]
+-    simp [List.tail_drop]
++  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
++  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
++      (fun x => (s x).drop (u x).length) := by
++    funext x
++    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
++      pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [he] at h
++  exact h
+ 
+ /-- Both decoded components are bounded by their complete source word, with empty
+ defaults on malformed input.

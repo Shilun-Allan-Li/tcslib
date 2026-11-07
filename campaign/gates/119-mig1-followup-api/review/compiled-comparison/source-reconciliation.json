@@ -1,0 +1,155 @@
+{
+  "source_declarations_by_file": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "base_declarations": 26,
+      "head_declarations": 27,
+      "added": [
+        "Turing.MultiTapeTM.exists_first_entry_of_fixed"
+      ],
+      "removed": [],
+      "shared_changed_full_header": [],
+      "shared_changed_kind_privacy": [],
+      "shared_changed_complete_declaration": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_declarations": 64,
+      "head_declarations": 65,
+      "added": [
+        "Turing.pairDiagTM_spaceUsed"
+      ],
+      "removed": [],
+      "shared_changed_full_header": [],
+      "shared_changed_kind_privacy": [],
+      "shared_changed_complete_declaration": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "base_declarations": 32,
+      "head_declarations": 33,
+      "added": [
+        "Turing.FinTM.redirectTM_spaceUsedByTape"
+      ],
+      "removed": [],
+      "shared_changed_full_header": [],
+      "shared_changed_kind_privacy": [],
+      "shared_changed_complete_declaration": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_declarations": 287,
+      "head_declarations": 288,
+      "added": [
+        "Turing.FinTM.incFixedTM_spaceUsed"
+      ],
+      "removed": [],
+      "shared_changed_full_header": [],
+      "shared_changed_kind_privacy": [],
+      "shared_changed_complete_declaration": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "base_declarations": 505,
+      "head_declarations": 504,
+      "added": [],
+      "removed": [
+        "Turing.FinTM.redirectTM_spaceUsedByTape"
+      ],
+      "shared_changed_full_header": [],
+      "shared_changed_kind_privacy": [],
+      "shared_changed_complete_declaration": []
+    }
+  ],
+  "base_source_public_total": 259,
+  "head_source_public_total": 262,
+  "authored_public_additions": [
+    "Turing.FinTM.incFixedTM_spaceUsed",
+    "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+    "Turing.pairDiagTM_spaceUsed"
+  ],
+  "authored_public_removals": [],
+  "same_name_public_home_moves": [
+    {
+      "name": "Turing.FinTM.redirectTM_spaceUsedByTape",
+      "before": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "after": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "full_header_identical": true,
+      "proof_body_differs_from_API_baseline": true,
+      "approved_body_adoption_receipt": "campaign/gates/119-mig1-followup-api/source/redirect-home-adoption.json"
+    }
+  ],
+  "same_owner_old_complete_declarations_and_full_headers_unchanged": true,
+  "source_attribute_annotations_and_commands_unchanged": true,
+  "attribute_snapshots": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "mode": "base",
+      "attribute_texts": [
+        "\nattribute [instance] FinTM.fintypeState FinTM.decEqState\n\nvariable {Symbol : Type}"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "mode": "head",
+      "attribute_texts": [
+        "\nattribute [instance] FinTM.fintypeState FinTM.decEqState\n\nvariable {Symbol : Type}"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "mode": "base",
+      "attribute_texts": [
+        "@[simp]",
+        "@[simp]",
+        "@[simp]",
+        "@[simp]"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "mode": "head",
+      "attribute_texts": [
+        "@[simp]",
+        "@[simp]",
+        "@[simp]",
+        "@[simp]"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "mode": "base",
+      "attribute_texts": [
+        "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.captureCfg"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "mode": "head",
+      "attribute_texts": [
+        "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.captureCfg"
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "mode": "base",
+      "attribute_texts": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "mode": "head",
+      "attribute_texts": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "mode": "base",
+      "attribute_texts": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "mode": "head",
+      "attribute_texts": []
+    }
+  ],
+  "note": "No source/compiled API exceptions inferred: three additions plus one approved existing-name home move. Source parser is supplemental; compiled census includes every private/internal/generated constant."
+}

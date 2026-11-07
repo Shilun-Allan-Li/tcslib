@@ -1,0 +1,29 @@
+BEFORE|Complexity.pairMapSnd|present
+BEFORE|Complexity.pairMapSnd.eq_def|absent
+BEFORE|Complexity.pairMapSnd.eq_1|present
+Complexity.pairMapSnd.eq_def (g : List Bool → List Bool) (z : List Bool) :
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+Complexity.pairMapSnd.eq_1 (g : List Bool → List Bool) (z : List Bool) :
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+AFTER|Complexity.pairMapSnd.eq_def|absent
+AFTER|Complexity.pairMapSnd.eq_1|owner=some (TCSlib.Complexity.ClassNP.PolyTimePairing)|type=∀
+  (g : List Bool → List Bool) (z : List Bool),
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []|AX=[]
+/private/tmp/tcslib-g106-r2-fp-qt6y_5ld/Generated_reader_v1.lean:29:2: error: Type mismatch: After simplification, term
+  PolyTimeComputable.pairMapSnd hg
+ has type
+  PolyTimeComputable (pairMapSnd g)
+but is expected to have type
+  PolyTimeComputable fun z =>
+    match pairDecode z with
+    | some (a, b) => pairEncode a (g b)
+    | none => []

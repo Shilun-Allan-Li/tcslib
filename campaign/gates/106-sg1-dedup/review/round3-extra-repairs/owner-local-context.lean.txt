@@ -1,0 +1,6 @@
+private def clHeaderTail : ℕ → List Bool → List Bool
+  | 0, z => z
+  | j + 1, z => ((pairDecode (clHeaderTail j z)).map Prod.snd).getD []
+
+private def clHeaderField (j : ℕ) (z : List Bool) : List Bool :=
+  ((pairDecode (clHeaderTail j z)).map Prod.fst).getD []

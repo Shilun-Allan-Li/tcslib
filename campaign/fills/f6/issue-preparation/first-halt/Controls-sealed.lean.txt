@@ -1,0 +1,189 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+open Turing
+-- C01 step (pointwise / abstracted)
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step {c with state := none} = {c with state := none} := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step {c with state := none}) = fun _ c => {c with state := none} := by rfl
+
+-- C02 runFrom
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.runFrom c 1 = tm.step c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.runFrom c 1) = fun tm c => tm.step c := by rfl
+
+-- C03 initCfg
+example (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) : tm.initCfg x = Cfg.init tm.q₀ x := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) => tm.initCfg x) =
+    fun tm x => Cfg.init tm.q₀ x := by rfl
+
+-- C04 Cfg.init
+example (x : List Bool) : (Cfg.init () x : Cfg 1 Bool Unit x).output = [] := by rfl
+example : (fun x : List Bool => (Cfg.init () x : Cfg 1 Bool Unit x).output) = fun _ => [] := by rfl
+
+-- C05 Action.apply
+example (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (a.apply c).state = a.state := by rfl
+example : (fun (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) => (a.apply c).state) =
+    fun a _ => a.state := by rfl
+
+-- C06 Cfg.inputSymbol
+example (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) :
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol = none := by rfl
+example : (fun (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) =>
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol) = fun _ _ _ => none := by rfl
+
+-- C07 Cfg.workTapeSymbols
+example (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+example : (fun (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) => c.workTapeSymbols i) =
+    fun c i => c.workTapes i (c.workTapePos i) := by rfl
+
+-- C08 moveInputPos
+example : moveInputPos (1 : Fin 3) .zero = 1 := by rfl
+example (n : ℕ) : (fun (pos : Fin (n + 2)) (m : SignType) => moveInputPos pos m) =
+    fun pos m =>
+      let p := ((pos.val : ℤ) + (m.cast : ℤ)).toNat
+      if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, by omega⟩ := by rfl
+
+-- C09 ComputesInTime
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+example : (fun (M : FinTM Bool) (x y : List Bool) (t : ℕ) => M.ComputesInTime x y t) =
+    fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+
+-- C10 ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = (∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) => M.ComputesFunInTime f T) =
+    (fun M f T => ∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+
+-- C11 Computes
+example (M : FinTM Bool) (f : List Bool → List Bool) :
+    M.Computes f = (∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) => M.Computes f) =
+    (fun M f => ∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+
+-- C12 spaceUsed
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) :
+    tm.spaceUsed c t = ∑ i, tm.spaceUsedByTape c t i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) =>
+    tm.spaceUsed c t) = fun tm c t => ∑ i, tm.spaceUsedByTape c t i := by rfl
+
+-- C13 spaceUsedByTape
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.spaceUsedByTape c t i = (tm.visitedByTapeHead c t i).card := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.spaceUsedByTape c t i) = fun tm c t i => (tm.visitedByTapeHead c t i).card := by rfl
+
+-- C14 visitedByTapeHead
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.visitedByTapeHead c t i = (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.visitedByTapeHead c t i) =
+    fun tm c t i => (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+
+-- C15 controlAction
+example (m : SignType) (q : Option Unit) :
+    (FinTM.controlAction m q : Action 1 Bool Unit) = ⟨m, fun _ => (none, 0), none, q⟩ := by rfl
+example : (fun (m : SignType) (q : Option Unit) => (FinTM.controlAction m q : Action 1 Bool Unit)) =
+    fun m q => ⟨m, fun _ => (none, 0), none, q⟩ := by rfl
+
+-- C16 leftAction
+example (a : Action 1 Bool Unit) : (FinTM.leftAction 1 id a).inputTape = a.inputTape := by rfl
+example : (fun a : Action 1 Bool Unit => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape := by rfl
+
+-- C17 rightAction
+example (a : Action 1 Bool Unit) : (FinTM.rightAction 1 id a).inputTape = a.inputTape := by rfl
+example : (fun a : Action 1 Bool Unit => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape := by rfl
+
+-- C18 emitAction
+example : (FinTM.emitAction ([] : List Bool) id 0 : Action 1 Bool (Fin 1)).output = none := by rfl
+example : (fun e : Fin 1 → Fin 1 => (FinTM.emitAction ([] : List Bool) e 0 : Action 1 Bool (Fin 1)).output) =
+    fun _ => none := by rfl
+
+-- C19 bufferTape
+example : FinTM.bufferTape ([true] : List Bool) (-1) = none := by rfl
+example : (fun w : List Bool => FinTM.bufferTape w (-1)) = fun _ => none := by rfl
+
+
+-- C24 pairEncode
+example (x y : List Bool) : pairEncode x y =
+    x.flatMap (fun b => [b, b]) ++ [false, true] ++ y := by rfl
+example : (fun x y : List Bool => pairEncode x y) =
+    fun x y => x.flatMap (fun b => [b, b]) ++ [false, true] ++ y := by rfl
+
+-- C30 Cfg.mapState
+example (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (c.mapState f).output = c.output := by rfl
+example : (fun (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    (c.mapState f).output) = fun _ c => c.output := by rfl
+
+-- C37 embedEmitTM
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) :
+    (embedEmitTM ι M).q₀ = M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) => (embedEmitTM ι M).q₀) =
+    fun _ M => M.q₀ := by rfl
+
+-- C38 seamCompTM
+example (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) :
+    (seamCompTM M exit N entry).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (M N : MultiTapeTM 1 Bool Unit) (exit entry : Unit) => (seamCompTM M exit N entry).q₀) =
+    fun M _ _ _ => Sum.inl M.q₀ := by rfl
+
+-- Returning embedding
+example (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) :
+    (embedEmitRetTM ι M).q₀ = Sum.inl M.q₀ := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (M : MultiTapeTM 1 Bool Bool) => (embedEmitRetTM ι M).q₀) =
+    fun _ M => Sum.inl M.q₀ := by rfl
+-- Forwarding configuration
+example (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) :
+    (embedEmitCfg ι tapes heads pre c).output = pre ++ c.output := by rfl
+example : (fun (ι : Fin 1 ↪ Fin 2) (tapes : Fin 2 → ℤ → Option Bool) (heads : Fin 2 → ℤ)
+    (pre : List Bool) (c : Cfg 1 Bool Bool ([] : List Bool)) =>
+      (embedEmitCfg ι tapes heads pre c).output) = fun _ _ _ pre c => pre ++ c.output := by rfl
+-- Last-ruler configuration
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) (q : Option Bool)
+    (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := by rfl
+example (y z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + y.length) :
+    (fun (q : Option Bool) (c : Cfg 1 Bool Bool y) (rt : ℤ → Option Bool) (rp : ℤ) =>
+      (rulerHostCfg ℓ hz q c rt rp).output) = fun _ c _ _ => c.output := by rfl
+-- Forward-loop configuration
+example (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) :
+    (StepBlock.forwardLoopCfg entry M c).output = c.output := by rfl
+example : (fun (entry : Bool) (M : MultiTapeTM 1 Bool (Fin 2)) (c : Cfg 1 Bool (Fin 2) ([] : List Bool)) =>
+    (StepBlock.forwardLoopCfg entry M c).output) = fun _ _ c => c.output := by rfl
+-- Zero-outer startup-loop controller
+example (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) :
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀ = Sum.inl R.q₀ := by rfl
+example : (fun (R L : MultiTapeTM 2 Bool Bool) (exit entry : Bool) =>
+    (startupLoopTM (k := 0) (K := 0) R exit L entry).q₀) = fun R _ _ _ => Sum.inl R.q₀ := by rfl
+-- Coded dependent bundle
+example (M : CodeTM) : M.toFinTM.k = 1 := by rfl
+example : (fun M : CodeTM => M.toFinTM.k) = fun _ => 1 := by rfl
+-- C30 tapeAction, pointwise and abstracted
+example (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) :
+    (tapeAction i inp wr m q).output = none := by rfl
+example : (fun (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) =>
+    (tapeAction i inp wr m q).output) = fun _ _ _ _ _ => none := by rfl
+
+-- Symbolic table encoder, pointwise and abstracted
+example (k n : ℕ)
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := by rfl
+example (k n : ℕ) :
+    (fun tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)) =>
+      tableBitsK tr) = fun tr => (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := by rfl
+-- Symbolic state encoder, pointwise and abstracted
+example (n : ℕ) (s : Fin n) : unaryFin s = List.replicate (s : ℕ) true ++ [false] := by rfl
+example (n : ℕ) : (fun s : Fin n => unaryFin s) =
+    fun s : Fin n => List.replicate (s : ℕ) true ++ [false] := by rfl

@@ -157,7 +157,7 @@ stated).
 Gates are numbered upward; the latest are in `campaign/gates/`. Gate106 round1 (#215, SG-1)
 returned HOLD; its round2 Codex audit returned HOLD0/1/0/15; mechanical closure repairs and Codex round3 preparation are underway. Gates 114 (#222, NatBits) and 115 (#228, E-PAD) are closed and merged. Gate 116
 (#229, the Hierarchy consumer) is closed and merged. Gate **117** is reserved for the
-23 approved reading/resource APIs, CLOSED PASS0/0/0/14; #230 is clear to merge. Gate118 is reserved
+23 approved reading/resource APIs, CLOSED PASS0/0/0/14 and merged as #230; mac4 is current. Gate118 is reserved
 for draft #233’s MIG-1 landing (Codex selected): final12-module/source/axiom/screen checks
-pass along with its fresh394-module replay (static0/60); its approved interface follow-up is being prepared under gate119 (Codex). Next free: **120**.
+pass along with its fresh394-module replay (static0/60); its approved interface follow-up is draft #234 under gate119 (Codex), with401-module replay and fullscreens running. Next free: **120**.
 **The current state is HANDOFF §0.**
