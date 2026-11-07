@@ -1,5 +1,7 @@
 # Gate 08 (S1 / #227): round 1 resolutions
 
+**Historical round-1 disposition. Gate 08 closed at round 2; see `resolutions-r2.md`.**
+
 **HOLD: 0 blockers, 1 major, 3 minors returned.** The gate remains open pending the selected
 Codex follow-up audit; the maintainer's repairs are not an auditor's closing verdict.
 
