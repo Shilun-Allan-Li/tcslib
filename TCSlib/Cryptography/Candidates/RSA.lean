@@ -640,13 +640,10 @@ def rsaGenOut (m : ℕ) (r : List Bool) : List Bool :=
 `rsaGenOut` at the parameter `n` read from `1^n` on the coins. -/
 def rsaGenRaw (z : List Bool) : List Bool := rsaGenOut (NUPPT.inParam z).length (NUPPT.inCoins z)
 
-/-! ### The unit sampler as a trial loop (helpers of `polyTimeComputable_unitSampleStr`)
+/-! ### The unit test of the domain sampler (helpers of `polyTimeComputable_unitSampleStr`)
 
-The loop is an instance of the public repetition host `polyTimeComputable_iterateFind`; its
-state is `⟨⟨1^B, ⟨1^k, w⟩⟩, ⟨counter, coins⟩⟩` (the header, then a unary trial counter and the
-remaining coins). The family follows the pattern of the discrete-log fill's private trial loop
-(`dla_ss*`, `DiscreteLog.lean`), with the stride `B` read from the header and the unit test in
-place of the comparison. -/
+The unit sampler is the public block-rejection host `polyTimeComputable_rejectBlocksL` (H15)
+with the unit test below, read on pairs `⟨w, b⟩` of the modulus and the trial value. -/
 
 /-- **The unit test by comparisons**: for `N = ⟦w⟧`, "`¬ (N ≤ v)`, and the `|w|`-bit numeral `g`
 of `gcd(v, N)` reads `≤ 1` and `≥ 1`" is the test `v < N ∧ gcd(v, N) = 1`.
@@ -677,298 +674,105 @@ private theorem rsa_unitTest_eq (v : ℕ) (w : List Bool) :
   · have h1 : listToNat w ≤ v := by omega
     simp [h1, h]
 
-/-- The start state of the trial loop on the raw layout `z` with modulus numeral `w = f z`:
-`⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨1^{T(n)}, r⟩⟩` with `1^k = sizeStr w` the bit length of `⟦w⟧`. -/
-private def rsa_usStart (f : List Bool → List Bool) (z : List Bool) : List Bool :=
-  pairEncode
-    (pairEncode (List.replicate (rsaBlock.eval (NUPPT.inParam z).length) true)
-      (pairEncode (sizeStr (f z)) (f z)))
-    (pairEncode (List.replicate (rsaTrials.eval (NUPPT.inParam z).length) true) (NUPPT.inCoins z))
+/-- The unit test on a pair `⟨w, b⟩`: not `⟦w⟧ ≤ ⟦b⟧`, and the `|w|`-bit numeral of
+`gcd(⟦b⟧, ⟦w⟧)` (`xgcdStr`) reads `≤ 1` and `≥ 1`. -/
+private def rsa_unitAcc (x : List Bool) : Bool :=
+  !(decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x))) &&
+    decide (listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))) ≤
+      listToNat [true]) &&
+    decide (listToNat [true] ≤
+      listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))))
 
-/-- One trial step: keep the header, decrement the counter, drop one block of `B` coins. -/
-private def rsa_usStep (x : List Bool) : List Bool :=
-  pairEncode (pairFstD x)
-    (pairEncode ((pairFstD (pairSndD x)).drop 1)
-      ((pairSndD (pairSndD x)).drop (pairFstD (pairFstD x)).length))
-
-/-- The current trial value: the first `k` bits of the remaining coins. -/
-private def rsa_usBlock (x : List Bool) : List Bool :=
-  (pairSndD (pairSndD x)).take (pairFstD (pairSndD (pairFstD x))).length
-
-/-- The gcd numeral of the trial value and the modulus (`xgcdStr`, width of the modulus). -/
-private def rsa_usGcd (x : List Bool) : List Bool :=
-  pairFstD (xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x)))))
-
-/-- The acceptance test: the counter is nonzero, the trial value is below `N`, and its gcd
-with `N` reads `≤ 1` and `≥ 1`. -/
-private def rsa_usAcc (x : List Bool) : Bool :=
-  !(decide (pairFstD (pairSndD x) = [])) &&
-    (!(decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))) &&
-      decide (listToNat (rsa_usGcd x) ≤ listToNat [true]) &&
-      decide (listToNat [true] ≤ listToNat (rsa_usGcd x)))
-
-/-- The payload: a `true` marker, then the accepted block. -/
-private def rsa_usOut (x : List Bool) : List Bool := [true] ++ rsa_usBlock x
-
-/-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
-private theorem rsa_usStep_poly : PolyTimeComputable rsa_usStep := by
-  have h := polyTimeComputable_pairFstD.pairEncode
-    ((polyTimeComputable_tail.comp
-      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)).pairEncode
-      ((polyTimeComputable_pairDropPoly .var).comp
-        ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
-          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
-  convert h using 1
-  funext x
-  simp only [rsa_usStep, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
-    PolyExpr.eval_var]
-
-/-- The trial value is polynomial-time (`polyTimeComputable_pairTakePoly`). -/
-private theorem rsa_usBlock_poly : PolyTimeComputable rsa_usBlock := by
-  have h := (polyTimeComputable_pairTakePoly .var).comp
-    ((polyTimeComputable_pairFstD.comp
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
-  convert h using 1
-  funext x
-  simp only [rsa_usBlock, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
-    PolyExpr.eval_var]
-
-/-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, `H.le`, `H.xgcd`).
-
-**Proof sketch.** The gcd numeral is `H.xgcd` on `⟨block, w⟩` followed by `pairFstD`, stated in
-applied form (`PolyTimeComputable.comp'`) and folded into `rsa_usGcd`; the four one-bit tests are
-`polyTimeComputable_isNil` (negated), `H.le` (negated) and two `H.le` against `[true]`
-(`ArithmeticFP.le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
-so that no bundle string function is unfolded by unification. -/
-private theorem rsa_usAcc_poly (H : ArithmeticFP) :
-    PolyTimeComputable fun x => [rsa_usAcc x] := by
-  have hw : PolyTimeComputable fun x => pairSndD (pairSndD (pairFstD x)) :=
-    polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
-  have hx : PolyTimeComputable fun x =>
-      xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x)))) :=
-    PolyTimeComputable.comp' H.xgcd (rsa_usBlock_poly.pairEncode hw)
-  have hg' : PolyTimeComputable fun x =>
-      pairFstD (xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x))))) :=
-    PolyTimeComputable.comp' polyTimeComputable_pairFstD hx
-  have e : (fun x => pairFstD (xgcdStr (pairEncode (rsa_usBlock x)
-      (pairSndD (pairSndD (pairFstD x)))))) = rsa_usGcd := by
-    funext x
-    rw [rsa_usGcd]
-  have hg : PolyTimeComputable rsa_usGcd := by
-    rw [← e]
-    exact hg'
-  have hc : PolyTimeComputable fun x => pairFstD (pairSndD x) :=
-    polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
-  have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
-    PolyTimeComputable.comp' polyTimeComputable_isNil hc
-  have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
-    polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
+/-- The unit test is polynomial-time (`H.le`, `H.xgcd`; `ArithmeticFP.le_poly`, the tests
+combined by `polyTimeComputable_and` with the tests given explicitly). -/
+private theorem rsa_unitAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun x => [rsa_unitAcc x] := by
+  have hg : PolyTimeComputable fun x => pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x))) :=
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD
+      (PolyTimeComputable.comp' H.xgcd (polyTimeComputable_pairSndD.pairEncode polyTimeComputable_pairFstD))
+  have t1 : PolyTimeComputable fun x => [!decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x))] :=
+    polyTimeComputable_not (p := fun x => decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x)))
+      (H.le_poly polyTimeComputable_pairFstD polyTimeComputable_pairSndD)
   have t2 : PolyTimeComputable fun x =>
-      [decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
-    H.le_poly hw rsa_usBlock_poly
-  have t2' : PolyTimeComputable fun x =>
-      [!decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
-    polyTimeComputable_not
-      (p := fun x => decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))) t2
-  have t3 : PolyTimeComputable fun x => [decide (listToNat (rsa_usGcd x) ≤ listToNat [true])] :=
+      [decide (listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))) ≤
+        listToNat [true])] :=
     H.le_poly hg (polyTimeComputable_const [true])
-  have t4 : PolyTimeComputable fun x => [decide (listToNat [true] ≤ listToNat (rsa_usGcd x))] :=
+  have t3 : PolyTimeComputable fun x =>
+      [decide (listToNat [true] ≤ listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))))] :=
     H.le_poly (polyTimeComputable_const [true]) hg
-  have t23 := polyTimeComputable_and
-    (p := fun x => !decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x)))
-    (q := fun x => decide (listToNat (rsa_usGcd x) ≤ listToNat [true])) t2' t3
-  have t234 := polyTimeComputable_and
-    (p := fun x => !decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x)) &&
-      decide (listToNat (rsa_usGcd x) ≤ listToNat [true]))
-    (q := fun x => decide (listToNat [true] ≤ listToNat (rsa_usGcd x))) t23 t4
-  exact polyTimeComputable_and (p := fun x => !decide (pairFstD (pairSndD x) = []))
-    (q := fun x => !decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x)) &&
-      decide (listToNat (rsa_usGcd x) ≤ listToNat [true]) &&
-      decide (listToNat [true] ≤ listToNat (rsa_usGcd x))) t1' t234
+  have t12 := polyTimeComputable_and
+    (p := fun x => !decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x)))
+    (q := fun x => decide (listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))) ≤
+      listToNat [true])) t1 t2
+  exact polyTimeComputable_and
+    (p := fun x => !decide (listToNat (pairFstD x) ≤ listToNat (pairSndD x)) &&
+      decide (listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))) ≤
+        listToNat [true]))
+    (q := fun x => decide (listToNat [true] ≤
+      listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))))) t12 t3
 
-/-- The payload is polynomial-time (`polyTimeComputable_prepend`). -/
-private theorem rsa_usOut_poly : PolyTimeComputable rsa_usOut :=
-  (polyTimeComputable_prepend [true]).comp rsa_usBlock_poly
-
-/-- The orbit of the step from `⟨h, ⟨c, s⟩⟩`: after `i` trials the state is
-`⟨h, ⟨c.drop i, s.drop (i · |fst h|)⟩⟩`. -/
-private theorem rsa_usStep_iterate (h c s : List Bool) (i : ℕ) :
-    rsa_usStep^[i] (pairEncode h (pairEncode c s)) =
-      pairEncode h (pairEncode (c.drop i) (s.drop (i * (pairFstD h).length))) := by
-  induction i with
-  | zero => simp
-  | succ i ih =>
-    rw [Function.iterate_succ_apply', ih]
-    simp only [rsa_usStep, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
-    rw [Nat.succ_mul]
-
-/-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
-private theorem rsa_length_usStep_le (x : List Bool) :
-    (rsa_usStep x).length ≤ 2 * x.length + 4 := by
-  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
-  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
-  simp only [rsa_usStep, length_pairEncode, List.length_drop]
-  omega
-
-/-- From the first step on the state is a well-formed state word, which only shrinks. -/
-private theorem rsa_length_usStep_usStep_le (x : List Bool) :
-    (rsa_usStep (rsa_usStep x)).length ≤ (rsa_usStep x).length := by
-  simp only [rsa_usStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
-    List.length_drop]
-  omega
-
-/-- The orbit bound `|step^[i] x| ≤ 2|x| + 4` demanded by the repetition lemma. -/
-private theorem rsa_length_usStep_iterate_le (x : List Bool) (i : ℕ) :
-    (rsa_usStep^[i] x).length ≤ 2 * x.length + 4 := by
-  cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
-  | succ i =>
-    induction i with
-    | zero => exact rsa_length_usStep_le x
-    | succ i ih =>
-      rw [Function.iterate_succ_apply'] at ih ⊢
-      rw [Function.iterate_succ_apply']
-      exact (rsa_length_usStep_usStep_le _).trans ih
-
-
-/-- The trial loop's result on a start state `x`: the payload of the first accepted state among
-the first `|x| + 1` states of the orbit, `[]` if none is accepted (the function of the
-repetition host `polyTimeComputable_iterateFind`, with its `match` written as `Option.elim`). -/
-private def rsa_usLoop (x : List Bool) : List Bool :=
-  ((List.range (x.length + 1)).find? (fun i => rsa_usAcc (rsa_usStep^[i] x))).elim []
-    (fun i => rsa_usOut (rsa_usStep^[i] x))
-
-/-- The trial loop is polynomial-time: an instance of the repetition host
-`polyTimeComputable_iterateFind` (`R = var`, orbit bound `2|x| + 4`), its `match` read by
-`split`. -/
-private theorem rsa_usLoop_poly (H : ArithmeticFP) : PolyTimeComputable rsa_usLoop := by
-  have hF := polyTimeComputable_iterateFind rsa_usStep_poly (rsa_usAcc_poly H) rsa_usOut_poly
-    PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
-      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-      exact rsa_length_usStep_iterate_le x i)
-  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp hF
-  rw [rsa_usLoop, PolyExpr.eval_var]
-  split
-  · next i h => rw [h, Option.elim_some]
-  · next h => rw [h, Option.elim_none]
-
-/-- **The trial loop computes the unit sampler**: on the start state of `z`, the search of the
-repetition host finds a trial exactly when `sampleUnitL` accepts, and then its payload is the
-marker followed by a block reading as the accepted value:
-`sampleUnitL N k B(n) T(n) r` is `none` when the search fails, and `some ⟦b⟧` when the payload
-is `true :: b`.
-
-**Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (i B)⟩⟩`
-(`rsa_usStep_iterate`), so trial `i` reads `(r.drop (i B)).take k` and the test is
-`i < T ∧ (v < N ∧ gcd(v, N) = 1)` (`rsa_unitTest_eq`, `xgcdStr_pairEncode`). The search over
-`[0, |x| + 1) ⊇ [0, T)` is then the search over `[0, T)` (`IterateFind.find?_range_and_lt`), and
-`sampleUnitL = rejectBlocksL` is that search followed by reading the block
-(`rejectBlocksL_eq`, `rejectBlocksL_eq_find?`). -/
-private theorem rsa_usFind_eq (f : List Bool → List Bool) (z : List Bool) :
-    sampleUnitL (listToNat (f z)) (Nat.size (listToNat (f z))) (rsaBlock.eval (NUPPT.inParam z).length)
-        (rsaTrials.eval (NUPPT.inParam z).length) (NUPPT.inCoins z) =
-      ((List.range ((rsa_usStart f z).length + 1)).find?
-        (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z)))).map
-          (fun i => listToNat (rsa_usBlock (rsa_usStep^[i] (rsa_usStart f z)))) := by
-  set B := rsaBlock.eval (NUPPT.inParam z).length
-  set T := rsaTrials.eval (NUPPT.inParam z).length
-  set c := NUPPT.inCoins z
-  set w := f z
-  have hstart : rsa_usStart f z = pairEncode (pairEncode (List.replicate B true)
-      (pairEncode (sizeStr w) w)) (pairEncode (List.replicate T true) c) := rfl
-  let val : ℕ → ℕ := fun i => listToNat ((c.drop (i * B)).take (Nat.size (listToNat w)))
-  have hblock : ∀ i, rsa_usBlock (rsa_usStep^[i] (rsa_usStart f z)) =
-      (c.drop (i * B)).take (Nat.size (listToNat w)) := by
-    intro i
-    rw [hstart, rsa_usStep_iterate]
-    simp only [rsa_usBlock, pairFstD_pairEncode, pairSndD_pairEncode, length_sizeStr,
-      List.length_replicate]
-  have hacc : ∀ i, rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z)) =
-      (decide (i < T) && decide (val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w))) := by
-    intro i
-    have hb := hblock i
-    rw [rsa_usAcc, rsa_usGcd, hb, ← rsa_unitTest_eq, hstart, rsa_usStep_iterate]
-    simp only [pairFstD_pairEncode, pairSndD_pairEncode, xgcdStr_pairEncode, List.drop_eq_nil_iff,
-      List.length_replicate]
-    by_cases h1 : i < T
-    · simp [h1, val]
-    · simp [h1]
-  have hrange : T ≤ (rsa_usStart f z).length + 1 := by
-    rw [hstart]
-    simp only [length_pairEncode, List.length_replicate]
-    omega
-  have hfind : (List.range ((rsa_usStart f z).length + 1)).find?
-      (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) =
-      (List.range T).find?
-        (fun i => decide (val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w))) := by
-    rw [show (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) =
-      fun i => decide (i < T) &&
-        decide (val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w)) from funext hacc]
-    exact IterateFind.find?_range_and_lt _ hrange
-  rw [hfind, sampleUnitL_eq, rejectBlocksL_eq_find?]
-  simp only [hblock]
-  rfl
-
-/-- The start state is polynomial-time (the layout projections, `H.size` for `1^k`,
-`polyTimeComputable_unaryPoly` for `1^{B(n)}` and `1^{T(n)}`). -/
-private theorem rsa_usStart_poly (H : ArithmeticFP) {f : List Bool → List Bool}
-    (hf : PolyTimeComputable f) : PolyTimeComputable (rsa_usStart f) :=
-  ((((polyTimeComputable_unaryPoly rsaBlock).comp NUPPT.polyTimeComputable_inParam).pairEncode
-      ((H.size.comp hf).pairEncode hf)).pairEncode
-    (((polyTimeComputable_unaryPoly rsaTrials).comp NUPPT.polyTimeComputable_inParam).pairEncode
-      NUPPT.polyTimeComputable_inCoins))
+/-- The unit test decides `⟦b⟧ < ⟦w⟧ ∧ gcd(⟦b⟧, ⟦w⟧) = 1` on `⟨w, b⟩` (`xgcdStr_pairEncode`,
+`rsa_unitTest_eq`). -/
+private theorem rsa_unitAcc_spec (w b : List Bool) :
+    rsa_unitAcc (pairEncode w b) =
+      decide (listToNat b < listToNat w ∧ Nat.Coprime (listToNat b) (listToNat w)) := by
+  rw [rsa_unitAcc, pairFstD_pairEncode, pairSndD_pairEncode, xgcdStr_pairEncode,
+    pairFstD_pairEncode, rsa_unitTest_eq]
 
 /-- **The unit sampler is polynomial-time** (the proof of `polyTimeComputable_unitSampleStr`,
 stated here so that the generator can use it): for a polynomial-time `f`,
 `z ↦ unitSampleStr (f z) |inParam z| (inCoins z)` is polynomial-time.
 
-**Proof sketch.** The trial loop on the start state is `rsa_usLoop_poly` composed with
-`rsa_usStart_poly`; the value block is the loop result with its marker dropped
-(`polyTimeComputable_tail`), or `[true]` when the loop finds nothing (`polyTimeComputable_isNil`,
-`polyTimeComputable_ite`); the output is the remainder of `H.divMod ⟨block, w⟩`. It equals
-`unitSampleStr` by `rsa_usFind_eq`: if no trial is accepted, `sampleUnitL` is `none` and the
-remainder of `1` is the fallback `1 mod N`; if trial `i` is accepted, its value is below `N`
-(`sampleUnitL_spec`) and is its own remainder. -/
+**Proof sketch.** Host H15 (`polyTimeComputable_rejectBlocksL`) with the unit test
+(`rsa_unitAcc`, deciding `v < N ∧ gcd(v, N) = 1` by `rsa_unitAcc_spec`), the parameter word `f z`,
+the width word `sizeStr (f z)` (`H.size`), the block and trial words `1^{B(n)}`, `1^{T(n)}`
+(`polyTimeComputable_unaryPoly`) and the coins, read through `sampleUnitL_eq`. The value block is
+the payload's tail (`polyTimeComputable_tail`, `List.drop_one`), or `[true]` when the payload is
+empty (`polyTimeComputable_isNil`, `polyTimeComputable_ite`); the output is the remainder of
+`H.divMod ⟨block, w⟩`: an accepted `v < N` (`sampleUnitL_spec`) is its own remainder, and the
+fallback is `1 mod N`. -/
 private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
     (hf : PolyTimeComputable f) :
     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
-  -- the trial loop on the start state (the repetition host)
-  have hL : PolyTimeComputable fun z => rsa_usLoop (rsa_usStart f z) :=
-    PolyTimeComputable.comp' (rsa_usLoop_poly H) (rsa_usStart_poly H hf)
-  have hN : PolyTimeComputable fun z => [decide (rsa_usLoop (rsa_usStart f z) = [])] :=
-    PolyTimeComputable.comp' polyTimeComputable_isNil hL
-  have hT : PolyTimeComputable fun z => (rsa_usLoop (rsa_usStart f z)).drop 1 :=
-    PolyTimeComputable.comp' polyTimeComputable_tail hL
-  -- the value block: the accepted block (marker dropped), or `[true]` (the fallback `1`)
-  have hG : PolyTimeComputable fun z => if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
-      else (rsa_usLoop (rsa_usStart f z)).drop 1 :=
-    polyTimeComputable_ite (p := fun z => decide (rsa_usLoop (rsa_usStart f z) = []))
-      (f := fun _ => [true]) (g := fun z => (rsa_usLoop (rsa_usStart f z)).drop 1) hN
-      (polyTimeComputable_const [true]) hT
+  have hB : PolyTimeComputable fun z => List.replicate (rsaBlock.eval (NUPPT.inParam z).length) true :=
+    PolyTimeComputable.comp' (g := fun x => List.replicate (rsaBlock.eval x.length) true)
+      (polyTimeComputable_unaryPoly rsaBlock) NUPPT.polyTimeComputable_inParam
+  have hT : PolyTimeComputable fun z => List.replicate (rsaTrials.eval (NUPPT.inParam z).length) true :=
+    PolyTimeComputable.comp' (g := fun x => List.replicate (rsaTrials.eval x.length) true)
+      (polyTimeComputable_unaryPoly rsaTrials) NUPPT.polyTimeComputable_inParam
+  -- host H15 with the unit test
+  obtain ⟨g, hg, hs⟩ := polyTimeComputable_rejectBlocksL
+    (fun a v => v < a ∧ Nat.Coprime v a) (rsa_unitAcc_poly H) rsa_unitAcc_spec hf
+    (H.size.comp hf) hB hT NUPPT.polyTimeComputable_inCoins
+  have hN : PolyTimeComputable fun z => [decide (g z = [])] :=
+    PolyTimeComputable.comp' polyTimeComputable_isNil hg
+  have hTl : PolyTimeComputable fun z => (g z).tail :=
+    (PolyTimeComputable.comp' polyTimeComputable_tail hg).congr fun z => List.drop_one
+  -- the value block: the payload's tail, or `[true]` (the fallback `1`)
+  have hG : PolyTimeComputable fun z => if decide (g z = []) then [true] else (g z).tail :=
+    polyTimeComputable_ite (p := fun z => decide (g z = [])) (f := fun _ => [true])
+      (g := fun z => (g z).tail) hN (polyTimeComputable_const [true]) hTl
   -- `⟦v mod N⟧_{|w|}` (`H.divMod`)
   have hq : PolyTimeComputable fun z => pairSndD (divModStr (pairEncode
-      (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
-        else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z))) :=
-    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hG.pairEncode hf))
-  have e : (fun z => pairSndD (divModStr (pairEncode
-      (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
-        else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z)))) =
-      fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
-    funext z
-    rw [divModStr_pairEncode, pairSndD_pairEncode, unitSampleStr_eq, rsa_usFind_eq f z, rsa_usLoop]
-    rcases hres : (List.range ((rsa_usStart f z).length + 1)).find?
-        (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) with _ | i
-    · rw [Option.elim_none, Option.map_none, Option.getD_none, if_pos (by rfl), listToNat_singleton_true]
-    · have hE : listToNat (rsa_usBlock (rsa_usStep^[i] (rsa_usStart f z))) < listToNat (f z) := by
-        have hs := rsa_usFind_eq f z
-        rw [hres, Option.map_some] at hs
-        exact (sampleUnitL_spec hs).1
-      rw [Option.elim_some, Option.map_some, Option.getD_some, if_neg (by
-        rw [rsa_usOut, List.singleton_append]; simp), rsa_usOut, List.singleton_append,
-        List.drop_one, List.tail_cons, Nat.mod_eq_of_lt hE]
-  rw [e] at hq
-  exact hq
+      (if decide (g z = []) then [true] else (g z).tail) (f z))) :=
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD
+      (PolyTimeComputable.comp' H.divMod (hG.pairEncode hf))
+  refine hq.congr fun z => ?_
+  have hsz : sampleUnitL (listToNat (f z)) (Nat.size (listToNat (f z)))
+      (rsaBlock.eval (NUPPT.inParam z).length) (rsaTrials.eval (NUPPT.inParam z).length)
+      (NUPPT.inCoins z) = if g z = [] then none else some (listToNat (g z).tail) := by
+    rw [sampleUnitL_eq, ← length_sizeStr]
+    have h := (hs z).2
+    rw [List.length_replicate, List.length_replicate] at h
+    exact h
+  rw [divModStr_pairEncode, pairSndD_pairEncode, unitSampleStr_eq, hsz]
+  by_cases he : g z = []
+  · rw [if_pos he, if_pos (decide_eq_true he), Option.getD_none, listToNat_singleton_true]
+  · have hlt : listToNat (g z).tail < listToNat (f z) := by
+      have hs' := hsz
+      rw [if_neg he] at hs'
+      exact (sampleUnitL_spec hs').1
+    rw [if_neg he, if_neg (by rw [decide_eq_true_eq]; exact he), Option.getD_some,
+      Nat.mod_eq_of_lt hlt]
 
 /-! ### The generator as a string computation (helpers of `polyTimeComputable_rsaGenRaw`)
 
@@ -1329,20 +1133,18 @@ easy to sample"]: for any polynomial-time projection `f` of the raw input to the
 numeral, `z ↦ unitSampleStr (f z) n (coins z)` is polynomial-time (shared by the RSA and
 Rabin samplers).
 
-**Proof sketch.** The unary bit length `1^{Nat.size N}` of `N = f z` is `H.size` (run-3
-audit P7-1), and `1^{B(n)}`, `1^{T(n)}` are `polyTimeComputable_unaryPoly`. The trial loop
-(`sampleUnitL = rejectBlocksL`) is the repetition host `polyTimeComputable_iterateFind` on the
-state `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨counter, coins⟩⟩` from `⟨⟨1^{B(n)}, ⟨1^k, w⟩⟩, ⟨1^{T(n)}, r⟩⟩`:
-each step drops one counter token and one block of `B(n)` coins
-(`polyTimeComputable_pairDropPoly var`), each trial reads the first `k` coins
-(`polyTimeComputable_pairTakePoly var` on `⟨1^k, coins⟩`) and is accepted iff the counter is
-nonempty, the value is below `N` (`H.le`), and the numeral of `gcd(v, N)` — which `xgcdStr`
-returns at the width of `w` — reads `≤ 1` and `≥ 1` (two `H.le` tests against `[true]`); the
-payload is the block behind a marker. The search over `|x| + 1 ≥ T(n)` rounds is the search of
-`sampleUnitL` (the counter stops it at `T(n)`). The output is the remainder of
-`H.divMod ⟨b, w⟩`, a numeral of the width of `w`, where `b` is the accepted block, or `[true]`
-when no trial is accepted (`polyTimeComputable_isNil`, `polyTimeComputable_ite`): an accepted
-`v < N` is its own remainder, and the fallback is `1 mod N`. -/
+**Proof sketch.** The sampler is `sampleUnitL N k B(n) T(n) = rejectBlocksL (v < N ∧ gcd(v, N) = 1)
+k B(n) T(n)` (`sampleUnitL_eq`), an instance of the block-rejection host H15
+(`polyTimeComputable_rejectBlocksL`): the test on `⟨⟦N⟧, v⟩` accepts iff `⟦N⟧ ≤ v` fails (`H.le`)
+and the numeral of `gcd(v, N)` — which `xgcdStr` returns at the width of `⟦N⟧` — reads `≤ 1` and
+`≥ 1` (two `H.le` tests against `[true]`). The parameter word is the modulus numeral `w = f z`, the
+width word `1^k = sizeStr w` is `H.size` (run-3 audit P7-1), and the block-length and trial-count
+words `1^{B(n)}`, `1^{T(n)}` are `polyTimeComputable_unaryPoly`. H15 returns a polynomial-time `g`
+whose output is `[]` when every trial is rejected and otherwise has a tail reading as the accepted
+value. The output is the remainder of `H.divMod ⟨b, w⟩`, a numeral of the width of `w`, where `b`
+is the tail of `g z` (`polyTimeComputable_tail`), or `[true]` when `g z = []`
+(`polyTimeComputable_isNil`, `polyTimeComputable_ite`): an accepted `v < N` is its own remainder,
+and the fallback is `1 mod N`. -/
 theorem polyTimeComputable_unitSampleStr (H : ArithmeticFP) {f : List Bool → List Bool}
     (hf : PolyTimeComputable f) :
     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
