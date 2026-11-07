@@ -4079,12 +4079,16 @@ private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
     (he : tm.runFrom c a = d)
     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  intro v hv
-  by_cases h : v < a
-  · exact ha v h
-  · have hva : a ≤ v := by omega
-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
-    exact hb (v - a) (by omega)
+  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
+    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
+      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
+  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
+    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
+      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
+  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
+    (a + b)).mp (Turing.Segment.trans h₁ h₂)
+  intro v hv hm
+  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
 
 /-- Uniform clean-module contract: a first halt with a prescribed replacement
 word and emitted chunk, over every untouched native input. -/
