@@ -1,0 +1,17 @@
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -362,9 +362,11 @@
+         blockEncFun lamportPkEmit (.const 1) (lamportPkBlock L)
+           (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
+             (pairFstD (pairSndD w))))] := by
+-    convert polyTimeComputable_pairEq.comp (hX.pairEncode hY) using 1
+-    funext w
+-    simp [blockState_eq, Function.comp_apply]
++    refine (polyTimeComputable_pairEq.comp (hX.pairEncode hY)).congr fun w => ?_
++    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
++    apply congrArg (fun b : Bool => [b])
++    apply decide_eq_decide.mpr
++    simp only [blockState_eq]
+   exact polyTimeComputable_and (polyTimeComputable_and h₁ h₂) h₃
+ 
+ /-! ### The machines -/

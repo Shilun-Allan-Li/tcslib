@@ -148,10 +148,10 @@ only where an item says so.
 - G13 (with DL-9), G14, G22 (with DL-11), G23, G25, and optionally G12 (after #195), and G18
   (`uexp_le_of_statClose`, deferred by Q5).
 - The 764 untouched rule-10 rows recorded by #210 (`gates/07-eqlemmas/evidence-r2/r6c/cleanup-b*.tsv`),
-  plus the fifteen unchanged-declaration observations from Gate 06
-  (`maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/inherited-observations/`):
-  five link to the historical inventory; ten `BinaryArith/Loops` declarations are newly
-  observed inherited debt. Deduplicate these at the post-S2 issue base; do not add ten
+  plus the 95 unchanged-declaration observations from the full Gate 06 survey
+  (`maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/inherited-full-survey/`
+  and its linked initial fifteen witnesses): 60 match historical keys; 35 are newly
+  observed inherited keys. Deduplicate at the post-S2 issue base; do not add 35
   blindly to the historical 764-row count or treat inventory additions as repairs;
   and the base reads the fill reviews named: `primesPairEquiv_apply_val`, `exists_fullLengthExcept`,
   `rabinCollection_index`, `rabinBlumTrapdoor_index`.

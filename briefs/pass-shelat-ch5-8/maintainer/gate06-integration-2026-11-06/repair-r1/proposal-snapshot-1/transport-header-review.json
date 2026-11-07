@@ -1,0 +1,536 @@
+{
+  "status": "STATIC_REVIEW_COMPLETE_NO_FINDINGS",
+  "verdict": {
+    "blockers": 0,
+    "majors": 0,
+    "minors": 0,
+    "native_checked_by_this_review": false
+  },
+  "context": {
+    "head": "e9d64158461bfe24ddc88ab885bc4017899b4c16",
+    "root": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4",
+    "source_context": "exact read-only git show; mutable source not used",
+    "manifest": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/seal-manifest.json",
+    "manifest_sha256": "75b11d1cf5324eea8066b898e5c37a677de266513cdde4be697ef8bf8149ba73",
+    "policy_sha256": "6599b12230e3879bc0e1fb22c0376ea6201bca8b7edd79dfc55da43986f991d4",
+    "approved_notation_exclusions": [
+      "Complexity.PolyExpr.eval",
+      "TCSlib.Cryptography.glNeed"
+    ]
+  },
+  "scope": {
+    "transport_patch_count": 11,
+    "decoder_prerequisites_composed": 1,
+    "new_proofs_authored": 0,
+    "library_edits": 0,
+    "other_agents_programs_executed": false
+  },
+  "sources": [
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "frozen_sha256": "3cf353234d367d3526b2a76ecb1e45448540cb1082041771b3d8a9ccdfa719bd",
+      "composed_sha256": "c333e65b4874978780fb468a42982cc4d6ef6a73d7c6cf6f6a36faaccc7ec379",
+      "patch_order": [
+        "HashAndSign-runAt_hsGen-coin-transport.patch",
+        "HashAndSign-runAt_hsSign-coin-transport.patch",
+        "HashAndSign-correct-coin-transport.patch",
+        "HashAndSign-exists-lamport-msgLen.patch"
+      ],
+      "admissions_unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "frozen_sha256": "8bc99296a28985a783285c42db1bc0e27787538e78d3c909bbff594dc0ef9717",
+      "composed_sha256": "8bae0ef1abea902f1c99bd0979932d48b1b8169ff4281b19bef8cdf30a863dc9",
+      "patch_order": [
+        "PublicKey-runAt_padEnc-coins-transport.patch",
+        "PublicKey-ofPadded-correct-coins-transport.patch",
+        "PublicKey-ofPadded-enc_length-coins-transport.patch"
+      ],
+      "admissions_unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "frozen_sha256": "d7d42232e9b74a02c2c24db0df85daa53f2b0c3e310f6e5e1afa7620441c3310",
+      "composed_sha256": "07a706e5ab0e535adf90b8e9508422897fff7bf2c3ae4e1f9f9eef29fe919e8a",
+      "patch_order": [
+        "Yao-decodeMsgs-delegate-decWords.patch",
+        "Yao-yaoHybrid_callA-typed-input.patch",
+        "Yao-yaoHybrid_callB-typed-input.patch",
+        "Yao-yaoHybrid_answersB_getD-typed-OT.patch"
+      ],
+      "admissions_unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Defs.lean",
+      "frozen_sha256": "b761c437034a6d808d09357d6d8a4c1a841d332e1e3d12c707d506cd8c996b51",
+      "composed_sha256": "b6a86a5b9f0843642cf3d6a9e3ef05cb34cb4081d24c80a5c139f9cbbdc2452b",
+      "patch_order": [
+        "Defs-otFunctionality_f_snd_apply-typed-reader.patch"
+      ],
+      "admissions_unchanged": true
+    }
+  ],
+  "patches": [
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsGen-coin-transport.patch",
+      "name": "HashAndSign-runAt_hsGen-coin-transport.patch",
+      "sha256": "4787152aec98c9c8397647a30cff0c6288a1ed8be527e56e208e7aa50dd933fb",
+      "bytes": 3302,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -226,6 +226,18 @@",
+          "actual_input_line": 226,
+          "old_rows": 6,
+          "new_rows": 18,
+          "counts_valid": true,
+          "unique_context": true
+        },
+        {
+          "header": "@@ -243,19 +255,22 @@",
+          "actual_input_line": 255,
+          "old_rows": 19,
+          "new_rows": 22,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsSign-coin-transport.patch",
+      "name": "HashAndSign-runAt_hsSign-coin-transport.patch",
+      "sha256": "698714417719bec91b768ef2b208465c9cde72fee6d4d6f8acc543c7329379ba",
+      "bytes": 958,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -262,6 +262,9 @@",
+          "actual_input_line": 277,
+          "old_rows": 6,
+          "new_rows": 9,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-correct-coin-transport.patch",
+      "name": "HashAndSign-correct-coin-transport.patch",
+      "sha256": "1b77738ecbb05dd4d064a8289f902d8487661fcdec53bba29ef219c28e93b722",
+      "bytes": 3572,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -272,3 +272,9 @@",
+          "actual_input_line": 290,
+          "old_rows": 3,
+          "new_rows": 9,
+          "counts_valid": true,
+          "unique_context": true
+        },
+        {
+          "header": "@@ -285,17 +291,31 @@",
+          "actual_input_line": 309,
+          "old_rows": 17,
+          "new_rows": 31,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-exists-lamport-msgLen.patch",
+      "name": "HashAndSign-exists-lamport-msgLen.patch",
+      "sha256": "9edc940b0ddf1063dce639afa3368f75addc1d7fc50148acf6ca24b02989b70e",
+      "bytes": 965,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -363,8 +363,13 @@",
+          "actual_input_line": 401,
+          "old_rows": 8,
+          "new_rows": 13,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-runAt_padEnc-coins-transport.patch",
+      "name": "PublicKey-runAt_padEnc-coins-transport.patch",
+      "sha256": "f7e52d031b254d58ae8047576ed4972d4f4a9fda35b9698e2e0e7a371cd09e0a",
+      "bytes": 1518,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -189,12 +189,16 @@",
+          "actual_input_line": 189,
+          "old_rows": 12,
+          "new_rows": 16,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-ofPadded-correct-coins-transport.patch",
+      "name": "PublicKey-ofPadded-correct-coins-transport.patch",
+      "sha256": "637181610c6bf4996d0270787aebe3f4ca55de5985e5006dbcd218fee0a48318",
+      "bytes": 396,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -268,7 +268,7 @@",
+          "actual_input_line": 268,
+          "old_rows": 7,
+          "new_rows": 7,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-ofPadded-enc_length-coins-transport.patch",
+      "name": "PublicKey-ofPadded-enc_length-coins-transport.patch",
+      "sha256": "c89c07f4238068843e9812987f9b03160e778cc5a129aa73473bd184a05561ae",
+      "bytes": 353,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -272,7 +272,7 @@",
+          "actual_input_line": 272,
+          "old_rows": 7,
+          "new_rows": 7,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-decodeMsgs-delegate-decWords.patch",
+      "name": "Yao-decodeMsgs-delegate-decWords.patch",
+      "sha256": "df8ad758103ae54ecaa42fdfc5c7ca889665459a1b9437372eeda47e4c18e976",
+      "bytes": 5378,
+      "role": "decoder_composition_prerequisite",
+      "hunks": [
+        {
+          "header": "@@ -324,80 +324,41 @@",
+          "actual_input_line": 324,
+          "old_rows": 80,
+          "new_rows": 41,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callA-typed-input.patch",
+      "name": "Yao-yaoHybrid_callA-typed-input.patch",
+      "sha256": "84cb220ccc7c6d7099bee5591354c893f5a2e11fb38a931f77b5b363d0f21a5a",
+      "bytes": 776,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -586,7 +586,9 @@",
+          "actual_input_line": 586,
+          "old_rows": 7,
+          "new_rows": 9,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callB-typed-input.patch",
+      "name": "Yao-yaoHybrid_callB-typed-input.patch",
+      "sha256": "acb5dbebe258635557923797c60569bdc0f6125e6635179ed196ac993ba8b599",
+      "bytes": 727,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -594,7 +594,9 @@",
+          "actual_input_line": 594,
+          "old_rows": 7,
+          "new_rows": 9,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+      "name": "Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+      "sha256": "a4613412cafe9001d416493f854cf0a91f5890de3e2f6ecfb3a1666d142a9ac8",
+      "bytes": 1882,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -712,21 +712,15 @@",
+          "actual_input_line": 712,
+          "old_rows": 21,
+          "new_rows": 15,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    },
+    {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+      "name": "Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+      "sha256": "6061db3e8cc5dd2113feceda8b46b0626d19216aca6020e229853c15b718476a",
+      "bytes": 1213,
+      "role": "reviewed_transport",
+      "hunks": [
+        {
+          "header": "@@ -219,4 +219,16 @@",
+          "actual_input_line": 219,
+          "old_rows": 4,
+          "new_rows": 16,
+          "counts_valid": true,
+          "unique_context": true
+        }
+      ]
+    }
+  ],
+  "data_identity_checks": [
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsHashList ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsSigKey ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsIdx ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsGenFun ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsSignFun ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "def hsVerFun ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "noncomputable abbrev hsGen ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "noncomputable abbrev hsSign ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "component": "def padCt ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "component": "def padEncFun ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "component": "def padDecFun ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "component": "noncomputable abbrev padEnc ",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "component": "noncomputable def yaoHybrid :",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Defs.lean",
+      "component": "def otFunctionality :",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "component": "construction header and every data/uniformity field before correct",
+      "byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "component": "construction header and every data/uniformity field before correct",
+      "byte_identical": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "hash_gen",
+      "verdict": "no_static_finding",
+      "original_domain": "rho : (hsGen S H).Coins n",
+      "transport": "sigma j = rho (Fin.cast (hsGen_coinLen S H n).symm j)",
+      "equivalence": "Canonical value-preserving index identification, then unchanged prefix/suffix split. List.ofFn_congr gives the entire same coin word; ofFn_coins_split gives exactly its take/drop segments.",
+      "zero_case": "Arbitrary n, including 0; no positivity premise. Empty first/second coin segment works with take/drop; nonzero constant coin lengths at n=0 are also covered.",
+      "owner_reader_rhs_exact": true,
+      "new_premises": false,
+      "data_changed": false
+    },
+    {
+      "id": "hash_sign_and_correctness",
+      "verdict": "no_static_finding",
+      "original_domain": "r : S.sign.Coins n; arbitrary rs : (hsSign S H).Coins n in correctness",
+      "transport": "e = NUPPT.coinsCongr (coins_ofPolyTimeUniform ...).symm n; use e r / e.symm rs",
+      "equivalence": "e is a bijection. coinsCongr_ofFn preserves the forward word; apply_symm_apply transfers the same fact to inverse tapes. runAt_coinsCongr preserves the literal activation. The typed hashed message is identified with the original padded hash word by List.ofFn_congr and ofFn_padFin_eq_padStr.",
+      "zero_case": "All finite lengths, including 0; no chosen bit or nonempty assumption.",
+      "owner_reader_rhs_exact": true,
+      "new_premises": false,
+      "data_changed": false
+    },
+    {
+      "id": "public_pad_enc",
+      "verdict": "no_static_finding",
+      "original_domain": "r : enc.Coins n",
+      "new_domain": "r : (padEnc enc L).Coins n",
+      "transport": "e = NUPPT.coinsCongr (padEnc_coins enc L) n maps padded coins to original coins",
+      "equivalence": "The new forall ranges over the equivalent full coin domain; e is bijective and coinsCongr_ofFn preserves the exact word. Uniform enc and arbitrary y,n,L are retained. Both ofPadded callers pass e re to their unchanged correct/hL premises.",
+      "zero_case": "n=0 and zero coin lengths are covered; no new length bound or positivity hypothesis.",
+      "owner_reader_rhs_exact": true,
+      "new_premises": false,
+      "data_changed": false
+    },
+    {
+      "id": "yao_call_headers",
+      "verdict": "no_static_finding",
+      "original_domain": "c : Fin 2 / c : Fin 1; j : Fin (Y.inB.eval n * n)",
+      "transport": "Fin.cast of symmetric evaluated otFunctionality_inA/inB equalities",
+      "equivalence": "Fin.cast preserves c.val and is invertible. Alice selects the same c=1 key bit; Bob ignores c and returns the same getD value. Arbitrary input/tape words and defaults remain covered.",
+      "zero_case": "At n=0 the call index type is empty, so no call is excluded by a new premise. The fixed two-bit/one-bit OT domains remain meaningful for the owner point reader.",
+      "owner_reader_rhs_exact": true,
+      "new_premises": false,
+      "data_changed": false
+    },
+    {
+      "id": "ot_point_reader_and_answers",
+      "verdict": "no_static_finding",
+      "transport": "Typed OT point reader casts choice 0 and selected 0/1 through the identical input equalities; answers uses outB=1 under evaluation.",
+      "equivalence": "The owner f outputs the selected sender bit as a constant one-bit function, so the reader is exact for arbitrary typed a,b and every typed output index. Public answersB_eq, singleton flattening, finProdFinEquiv indexing and the repaired call headers preserve call order and index i*n+t. Both foreign-body show steps are removed.",
+      "zero_case": "n=0 makes t : Fin n impossible; Y.inB.eval n=0 makes i impossible. No positivity premise is added. xs,ys,rA,rB remain arbitrary words.",
+      "owner_reader_rhs_exact": true,
+      "new_premises": false,
+      "data_changed": false
+    }
+  ],
+  "callers": {
+    "coverage": "all tracked *.lean files at pinned commit, plus added matching lines in all scratch proposal patches",
+    "frozen_search_lines": [
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Authentication/HashAndSign.lean:244:theorem runAt_hsGen (S : SignatureScheme) (H : CRH) (n : ℕ) (ρ : (hsGen S H).Coins n) :",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Authentication/HashAndSign.lean:261:theorem runAt_hsSign (S : SignatureScheme) (H : CRH) (n : ℕ) (sk i m : List Bool)",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Authentication/HashAndSign.lean:286:    rw [runAt_hsGen]",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Authentication/HashAndSign.lean:288:    rw [runAt_hsSign]",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Composability/PublicKey.lean:193:theorem runAt_padEnc {enc : NUPPT} (henc : enc.Uniform) (L : PolyExpr) (n : ℕ) (y : List Bool)",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Composability/PublicKey.lean:266:    rw [runAt_padEnc enc_uniform, padDecFun_padCt]",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/Composability/PublicKey.lean:270:    rw [runAt_padEnc enc_uniform]",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/SecureComputation/Yao.lean:613:`yaoHybrid_main`, `yaoHybrid_calls`, `yaoHybrid_callA`, `yaoHybrid_callB`.",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/SecureComputation/Yao.lean:627:theorem yaoHybrid_callA (n : ℕ) (xs r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 2) :",
+      "e9d64158461bfe24ddc88ab885bc4017899b4c16:TCSlib/Cryptography/SecureComputation/Yao.lean:633:theorem yaoHybrid_callB (n : ℕ) (ys r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 1) :"
+    ],
+    "added_proposal_lines": [
+      {
+        "patch": "Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+        "patch_line": 10,
+        "text": "+theorem otFunctionality_f_snd_apply (n : ℕ)"
+      },
+      {
+        "patch": "HashAndSign-correct-coin-transport.patch",
+        "patch_line": 45,
+        "text": "+      runAt_hsGen S H n rg"
+      },
+      {
+        "patch": "HashAndSign-correct-coin-transport.patch",
+        "patch_line": 47,
+        "text": "+    rw [← e.apply_symm_apply rs, runAt_hsSign]"
+      },
+      {
+        "patch": "Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+        "patch_line": 26,
+        "text": "+  rw [HybridProtocol.answersB_eq, h, hj, getD_ofFn', otFunctionality_f_snd_apply,"
+      },
+      {
+        "patch": "Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+        "patch_line": 27,
+        "text": "+    yaoHybrid_callA, yaoHybrid_callB, yaoCall_finProdFinEquiv]"
+      }
+    ],
+    "missing_callers_found": [],
+    "resolved": [
+      "hashAndSign.correct covers runAt_hsGen and runAt_hsSign",
+      "ofPadded.correct and enc_length cover both runAt_padEnc callers",
+      "new yaoHybrid_answersB_getD uses both typed call readers and the new typed OT point reader"
+    ]
+  },
+  "rule10": {
+    "necessary_foreign_ordinary_TCSlib_body_reads_found": [],
+    "explicit_foreign_definition_names_in_added_tactic_lists_found": [],
+    "owner_term_readers_checked": [
+      "hsGen_coinLen in HashAndSign",
+      "otFunctionality_f_snd_apply in Defs"
+    ],
+    "permitted_core_reduction": "policy.md:69-70 permits Core/Mathlib reduction in rfl/decide/show; Fin.cast value projection reductions here use that permission. No Core/Mathlib definition is added to an unfold/rw/simp list.",
+    "proof_interfaces": [
+      "List.ofFn_congr",
+      "ofFn_coins_split",
+      "NUPPT.coinsCongr_ofFn",
+      "NUPPT.runAt_coinsCongr",
+      "Equiv.apply_symm_apply",
+      "NUPPT.Uniform.runAtL_eq",
+      "NUPPT.Uniform.runAt_eq",
+      "HybridProtocol.answersB_eq",
+      "otFunctionality field readers",
+      "finProdFinEquiv_apply_val"
+    ]
+  },
+  "owner_fingerprints": [
+    {
+      "source": "TCSlib/Complexity/Randomized/PPT.lean",
+      "sha256": "1766685ee73e2221d7cdecffe8a8cafedc43dc46af2d1b06da8c750973a453f4"
+    },
+    {
+      "source": "TCSlib/Complexity/Randomized/NonUniform.lean",
+      "sha256": "236412255666423692ca677af39b1ebcd433efc2d204f5a243f63ccc9363e066"
+    },
+    {
+      "source": "TCSlib/Complexity/Randomized/PolyExpr.lean",
+      "sha256": "69b3f23c2eddbaa479c1ea23c3cee9960cc30553bb846be1a4a9d408bae69903"
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Hybrid.lean",
+      "sha256": "e38f497172aa47fd000d4185445d8544a7e71535f9252b44a4c951ace8618dde"
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "sha256": "91dcee4158e54b53372ea573067d8bb08576f73f2b4c08af2889c80d0eebd391"
+    },
+    {
+      "source": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/packages/mathlib/Mathlib/Data/List/OfFn.lean",
+      "sha256": "44af0461f05ce0e57d6906cbe82398aaab953d998e5ec2011e1a25a7ca5c8731"
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "No Lean/cache/native check was run by this review; elaboration, simp/rw matching and sealed replay remain root-owned verification.",
+    "Source inspection identifies no necessary foreign ordinary definition read, but it is not an implicit-read certificate; completed native seals must supply that evidence.",
+    "The decoder patch is composed as a prerequisite; its own implementation/equivalence verdict remains the separate recorded decoder review."
+  ]
+}

@@ -1,0 +1,17 @@
+--- a/TCSlib/Complexity/Randomized/Classes.lean
++++ b/TCSlib/Complexity/Randomized/Classes.lean
+@@ -254,2 +254,5 @@
+ def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
++
++/-- The canonical polynomial length schedule at `n` is `a * (n + 1) ^ k`. -/
++theorem polyLen_eq (a k n : ℕ) : polyLen a k n = a * (n + 1) ^ k := rfl
+ 
+--- a/TCSlib/Cryptography/Randomness/BPPBridge.lean
++++ b/TCSlib/Cryptography/Randomness/BPPBridge.lean
+@@ -64,3 +64,5 @@
+ @[simp] theorem eval_polyLenExpr (a k n : ℕ) :
+-    (polyLenExpr a k).eval n = Randomized.polyLen a k n := rfl
++    (polyLenExpr a k).eval n = Randomized.polyLen a k n := by
++  simp only [polyLenExpr_eq, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
++    PolyExpr.eval_add, PolyExpr.eval_var, Randomized.polyLen_eq]
+ 

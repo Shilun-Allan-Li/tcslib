@@ -1,0 +1,14 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao.lean b/TCSlib/Cryptography/SecureComputation/Yao.lean
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -586,7 +586,9 @@
+ 
+ /-- Alice's input to call `j = (i, t)` is `c ↦ k_{inA + i}^{c = 1}[t]`. -/
+ theorem yaoHybrid_callA (n : ℕ) (xs r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 2) :
+-    (yaoHybrid Y E₁ E₂).callA n xs r j c =
++    (yaoHybrid Y E₁ E₂).callA n xs r j
++        (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inA).trans
++          (PolyExpr.eval_const 2 n)).symm c) =
+       keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1) (decide ((c : ℕ) = 1))
+         (yaoCall Y n j).2 := rfl
+ 

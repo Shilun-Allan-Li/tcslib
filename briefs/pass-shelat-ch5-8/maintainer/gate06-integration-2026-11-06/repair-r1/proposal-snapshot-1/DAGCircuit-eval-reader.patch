@@ -1,0 +1,13 @@
+--- a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -473,6 +473,10 @@
+ def eval (x : Fin n → Bool) : Bool :=
+   (C.values x).getD C.output false
+ 
++/-- The output equation [AB09, Def 6.1]: `C.eval x = (C.values x).getD C.output false`. -/
++theorem eval_eq (x : Fin n → Bool) :
++    C.eval x = (C.values x).getD C.output false := rfl
++
+ /-- The depths of all vertices: `0` at the inputs, one more than the deepest input at a
+ gate. -/
+ def depths : List ℕ :=

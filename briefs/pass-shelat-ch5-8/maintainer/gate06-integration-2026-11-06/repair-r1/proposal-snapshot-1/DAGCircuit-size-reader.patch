@@ -1,0 +1,12 @@
+--- a/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
++++ b/TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean
+@@ -488,6 +488,9 @@
+ /-- The size of the circuit: its number of vertices, inputs included.  [AB09, Def 6.1] -/
+ def size : ℕ := n + C.gates.length
+ 
++/-- The size equation [AB09, Def 6.1]: `C.size = n + C.gates.length`. -/
++theorem size_eq : C.size = n + C.gates.length := rfl
++
+ /-- `¬` gates have exactly one input, and no gate reads a vertex twice. -/
+ def IsWellFormed : Prop :=
+   ∀ g ∈ C.gates, g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)

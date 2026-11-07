@@ -1,0 +1,50 @@
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+@@ -170,6 +170,25 @@
+     else
+       [decide (wellFormedInstance x = true ∧
+         ∀ j : Fin x.length, (hist.getD j []).headD false = (coinBlock c j r).headD false)]
++
++/-- The repeated GNI verifier uses one challenge-and-permutation coin block per input bit. -/
++theorem gniVerifierRep_coins :
++    gniVerifierRep.coins = .mul .var (.add (.const 1) (.normal 1 2)) := rfl
++
++/-- Before `|x|` replies, the repeated GNI verifier sends the graph selected and relabelled
++using the current coin block; afterwards it tests well-formedness and every reply's challenge bit. -/
++theorem gniVerifierRep_next (x z r : List Bool) (hist : List (List Bool)) :
++    gniVerifierRep.next x z r hist =
++      if hist.length < x.length then
++        let ri := coinBlock (1 + (x.length + 1) ^ 2) hist.length r
++        encGraph (permGraph
++          (if ri.headD false then decGraphAt (Nat.sqrt (pairFstD x).length) (pairSndD x)
++            else decGraphAt (Nat.sqrt (pairFstD x).length) (pairFstD x))
++          (samplePerm (Nat.sqrt (pairFstD x).length) (ri.drop 1)))
++      else
++        [decide (wellFormedInstance x = true ∧
++          ∀ j : Fin x.length, (hist.getD j []).headD false =
++            (coinBlock (1 + (x.length + 1) ^ 2) j r).headD false)] := rfl
+ 
+ /-- Shadow of `TCSlib.Cryptography.gniProtocolRep` (Prot-118.3). -/
+ noncomputable def gniProtocolRep : Protocol where
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+@@ -590,8 +590,8 @@
+ test `|hist| < |x|` (`ltLen_poly`), the coin block of the current iteration (`gniSlice_poly`)
+ and the message `relabel_poly` of `G_b` by the sampled permutation on the one hand, the
+ well-formedness test conjoined with the verdict scan (`gniScan_poly`) on the other; the
+-equation with `gniVerifierRep.next` is `msgCount_encodeMsgs`, `gniBlock_eval` and
+-`gni_verdict_iff`. -/
++equation with `gniVerifierRep.next` first reads `gniVerifierRep_next`, then uses
++`msgCount_encodeMsgs`, `gniBlock_eval` and `gni_verdict_iff`. -/
+ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
+   have hri := gniSlice_poly
+   have hsel : PolyTimeComputable fun w =>
+@@ -606,7 +606,7 @@
+   have hverdict := polyTimeComputable_and hwf gniScan_poly
+   refine efficient_of_polyTime gniVerifierRep (polyTimeComputable_ite ltLen_poly hmsg hverdict) ?_
+   intro x z r hist
+-  show (if hist.length < x.length then _ else _) = _
++  rw [gniVerifierRep_next]
+   simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
+     argX_ilayout, vcount_ilayout, gniBlock_eval, decide_eq_true_eq]
+   by_cases hlt : hist.length < x.length

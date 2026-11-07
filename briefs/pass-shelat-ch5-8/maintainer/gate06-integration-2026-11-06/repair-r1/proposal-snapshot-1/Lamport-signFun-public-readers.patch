@@ -1,0 +1,12 @@
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -318,7 +318,8 @@
+     ((polyTimeComputable_const []).pairEncode
+       ((blockEncFun_poly polyTimeComputable_lamportSelEmit (.const 1)
+         (.mul (.const 2) .var)).comp hst))
+-  convert h using 1
++  refine h.congr fun z => ?_
++  simp only [lamportSignFun_eq, blockState_eq, Function.comp_apply]
+ 
+ include hE in
+ /-- `Ver` is polynomial-time: two length tests (`polyTimeComputable_lenEq`) and an equality of

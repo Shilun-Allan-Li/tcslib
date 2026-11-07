@@ -1,0 +1,4014 @@
+{
+  "schema": "gate06-new-changed-diagnostic-proposal-coverage/v1",
+  "status": "STATIC_PLANNING_CHECKLIST_NOT_PROOF_OR_NATIVE_PASS",
+  "created_utc": "2026-11-07T11:38:07.583101+00:00",
+  "head": "e9d64158461bfe24ddc88ab885bc4017899b4c16",
+  "base": "c7d8753a548ced71c1e1ea70e012c365af5c2171",
+  "source_review": {
+    "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/inherited-full-survey-review.json",
+    "sha256": "a62cef848378623bb19825112c65d067eb574561a51bc8690daa11ae5d171053"
+  },
+  "survey_summary": {
+    "path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/survey-summary.json",
+    "sha256": "672085e62d50fa3e4f710de667e2a135fee52fc5e9164556a4526a6dc4a7cbfd"
+  },
+  "scope": {
+    "survey_diagnostics": 195,
+    "source_identical_inherited_observations_still_failed": 120,
+    "new_file_diagnostics": 68,
+    "changed_code_diagnostics": 7,
+    "selected_diagnostics": 75,
+    "selected_declarations": 54,
+    "preliminary_touched_diagnostics": 76,
+    "excluded_doc_only_false_positive": "GraphIsomorphismZK.gi_statZK, one source-identical diagnostic; inherited classification is not a pass or waiver"
+  },
+  "diagnostic_coverage_counts": {
+    "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED": 66,
+    "POTENTIAL_CASCADES_PENDING_NATIVE": 6,
+    "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED": 3
+  },
+  "declaration_coverage_counts": {
+    "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED": 49,
+    "POTENTIAL_CASCADES_PENDING_NATIVE": 2,
+    "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED": 3
+  },
+  "declarations": [
+    {
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "file": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "name": "runAt_hsGen",
+      "canonical": "TCSlib.Cryptography.Authentication.runAt_hsGen",
+      "classification": "NEW_FILE",
+      "head_range": [
+        244,
+        258
+      ],
+      "source_lines": [
+        250
+      ],
+      "probe_lines": [
+        1683
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "HashAndSign-runAt_hsGen-coin-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsGen-coin-transport.patch",
+          "sha256": "4787152aec98c9c8397647a30cff0c6288a1ed8be527e56e208e7aa50dd933fb",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+          ],
+          "hunks": [
+            "@@ -226,6 +226,18 @@",
+            "@@ -243,19 +255,22 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_008_TCSlib_Cryptography_Authentication_HashAndSign.log",
+      "log_sha256": "a08294108c399a4d5483016466c2e1ab82d57789ca12b3425c8ae505211de229",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "file": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "name": "runAt_hsSign",
+      "canonical": "TCSlib.Cryptography.Authentication.runAt_hsSign",
+      "classification": "NEW_FILE",
+      "head_range": [
+        261,
+        267
+      ],
+      "source_lines": [
+        263,
+        264
+      ],
+      "probe_lines": [
+        1696,
+        1697
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "HashAndSign-runAt_hsSign-coin-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsSign-coin-transport.patch",
+          "sha256": "698714417719bec91b768ef2b208465c9cde72fee6d4d6f8acc543c7329379ba",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+          ],
+          "hunks": [
+            "@@ -262,6 +262,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_008_TCSlib_Cryptography_Authentication_HashAndSign.log",
+      "log_sha256": "a08294108c399a4d5483016466c2e1ab82d57789ca12b3425c8ae505211de229",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "file": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "name": "hashAndSign",
+      "canonical": "TCSlib.Cryptography.Authentication.hashAndSign",
+      "classification": "NEW_FILE",
+      "head_range": [
+        274,
+        301
+      ],
+      "source_lines": [
+        286,
+        284
+      ],
+      "probe_lines": [
+        1719,
+        1717
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "HashAndSign-correct-coin-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-correct-coin-transport.patch",
+          "sha256": "1b77738ecbb05dd4d064a8289f902d8487661fcdec53bba29ef219c28e93b722",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+          ],
+          "hunks": [
+            "@@ -272,3 +272,9 @@",
+            "@@ -285,17 +291,31 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_008_TCSlib_Cryptography_Authentication_HashAndSign.log",
+      "log_sha256": "a08294108c399a4d5483016466c2e1ab82d57789ca12b3425c8ae505211de229",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "file": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "name": "exists_oneTimeSecure_of_crh_owf",
+      "canonical": "TCSlib.Cryptography.Authentication.exists_oneTimeSecure_of_crh_owf",
+      "classification": "NEW_FILE",
+      "head_range": [
+        359,
+        368
+      ],
+      "source_lines": [
+        366,
+        367
+      ],
+      "probe_lines": [
+        1799,
+        1800
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "HashAndSign-exists-lamport-msgLen.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-exists-lamport-msgLen.patch",
+          "sha256": "9edc940b0ddf1063dce639afa3368f75addc1d7fc50148acf6ca24b02989b70e",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+          ],
+          "hunks": [
+            "@@ -363,8 +363,13 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_008_TCSlib_Cryptography_Authentication_HashAndSign.log",
+      "log_sha256": "a08294108c399a4d5483016466c2e1ab82d57789ca12b3425c8ae505211de229",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "file": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "name": "polyTimeComputable_lamportGenFun",
+      "canonical": "TCSlib.Cryptography.Authentication.polyTimeComputable_lamportGenFun",
+      "classification": "NEW_FILE",
+      "head_range": [
+        302,
+        308
+      ],
+      "source_lines": [
+        302
+      ],
+      "probe_lines": [
+        1719
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Lamport-genFun-public-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-genFun-public-readers.patch",
+          "sha256": "fe42b7f9951d5023489527a2396851607d66aee00d7bbb7d4e790e001e9a21d8",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/Lamport.lean"
+          ],
+          "hunks": [
+            "@@ -305,7 +305,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_009_TCSlib_Cryptography_Authentication_Lamport.log",
+      "log_sha256": "221db482e69a6091cb3a139fc2f88aea82426c019d635ef55cb3643eba652daa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "file": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "name": "polyTimeComputable_lamportSignFun",
+      "canonical": "TCSlib.Cryptography.Authentication.polyTimeComputable_lamportSignFun",
+      "classification": "NEW_FILE",
+      "head_range": [
+        311,
+        320
+      ],
+      "source_lines": [
+        311
+      ],
+      "probe_lines": [
+        1728
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Lamport-signFun-public-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-signFun-public-readers.patch",
+          "sha256": "4e830b0dbbafbfa26fdb470ac0e4b92a5da33311d2c1aa8970802a03597b35dd",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/Lamport.lean"
+          ],
+          "hunks": [
+            "@@ -318,7 +318,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_009_TCSlib_Cryptography_Authentication_Lamport.log",
+      "log_sha256": "221db482e69a6091cb3a139fc2f88aea82426c019d635ef55cb3643eba652daa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "file": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "name": "polyTimeComputable_lamportVerFun",
+      "canonical": "TCSlib.Cryptography.Authentication.polyTimeComputable_lamportVerFun",
+      "classification": "NEW_FILE",
+      "head_range": [
+        331,
+        366
+      ],
+      "source_lines": [
+        362
+      ],
+      "probe_lines": [
+        1779
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Lamport-verFun-decision-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-verFun-decision-transport.patch",
+          "sha256": "04e79864f8ca38cc315bf97d57c5e8efb3cb4fa4f1a40f2c746d2409a6ac46a9",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/Lamport.lean"
+          ],
+          "hunks": [
+            "@@ -362,9 +362,11 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_009_TCSlib_Cryptography_Authentication_Lamport.log",
+      "log_sha256": "221db482e69a6091cb3a139fc2f88aea82426c019d635ef55cb3643eba652daa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "file": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "name": "lamportVerFun_sign",
+      "canonical": "TCSlib.Cryptography.Authentication.lamportVerFun_sign",
+      "classification": "NEW_FILE",
+      "head_range": [
+        459,
+        512
+      ],
+      "source_lines": [
+        470
+      ],
+      "probe_lines": [
+        1887
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Lamport-correctness-coinLen-public-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-correctness-coinLen-public-readers.patch",
+          "sha256": "ff6425e2abf388147808c946e425e485bd135d1c80aedfb65dcf64fda2f9a05a",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/Lamport.lean"
+          ],
+          "hunks": [
+            "@@ -470,8 +470,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_009_TCSlib_Cryptography_Authentication_Lamport.log",
+      "log_sha256": "221db482e69a6091cb3a139fc2f88aea82426c019d635ef55cb3643eba652daa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Authentication.PRFMAC",
+      "file": "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+      "name": "prfMAC",
+      "canonical": "TCSlib.Cryptography.Authentication.prfMAC",
+      "classification": "NEW_FILE",
+      "head_range": [
+        86,
+        109
+      ],
+      "source_lines": [
+        102
+      ],
+      "probe_lines": [
+        1875
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "PRFMAC-correct-coin-transport.recount.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFMAC-correct-coin-transport.recount.patch",
+          "sha256": "82b5e21581012900aadf61253f13022b2df47b4410326617ac4e9bd57d4a222d",
+          "target_files": [
+            "TCSlib/Cryptography/Authentication/PRFMAC.lean"
+          ],
+          "hunks": [
+            "@@ -97,15 +97,18 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/pilot-PRFMAC.log",
+      "log_sha256": "60142eda570251ca2c7b0efeaee6dcef44247df868e4e763f0f3861c0c271ac3",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability.CCA2Scheme",
+      "file": "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+      "name": "ccaScheme",
+      "canonical": "TCSlib.Cryptography.Composability.ccaScheme",
+      "classification": "NEW_FILE",
+      "head_range": [
+        311,
+        346
+      ],
+      "source_lines": [
+        320,
+        322,
+        332,
+        335
+      ],
+      "probe_lines": [
+        2092,
+        2094,
+        2104,
+        2107
+      ],
+      "diagnostics": 4,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "CCA2Scheme-correct-gen-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-correct-gen-coins-reader.patch",
+          "sha256": "ac644eb1ed3d76b21090cc1b3b523c9c1c0c72336b86a7be93e5fc92eb82118e",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+          ],
+          "hunks": [
+            "@@ -317,7 +317,9 @@"
+          ]
+        },
+        {
+          "name": "CCA2Scheme-correct-enc-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-correct-enc-coins-reader.patch",
+          "sha256": "495d121f73ea23071af855ffdb2cb65b83ae50d670a81d770e919e2b370f0ce1",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+          ],
+          "hunks": [
+            "@@ -321,3 +321,5 @@"
+          ]
+        },
+        {
+          "name": "CCA2Scheme-enc-length-gen-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-enc-length-gen-coins-reader.patch",
+          "sha256": "c09a9240c7d4686d80fe5815de6909be4e32767df536d7b87cca2ee55ef9c0fe",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+          ],
+          "hunks": [
+            "@@ -331,3 +331,5 @@"
+          ]
+        },
+        {
+          "name": "CCA2Scheme-enc-length-enc-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-enc-length-enc-coins-reader.patch",
+          "sha256": "6dab03ce654e5fa5fbbb112eec8a9dbb22ca08f16289d23015847cd4546de399",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+          ],
+          "hunks": [
+            "@@ -334,3 +334,5 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_011_TCSlib_Cryptography_Composability_CCA2Scheme.log",
+      "log_sha256": "1abdabf3b1873802a82990064ad656e183983758355b571cefef57c846327fdc",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability.PRFScheme",
+      "file": "TCSlib/Cryptography/Composability/PRFScheme.lean",
+      "name": "prfFixedScheme",
+      "canonical": "TCSlib.Cryptography.Composability.prfFixedScheme",
+      "classification": "NEW_FILE",
+      "head_range": [
+        55,
+        69
+      ],
+      "source_lines": [
+        61
+      ],
+      "probe_lines": [
+        1880
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "PRFScheme-enc-length-coin-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFScheme-enc-length-coin-transport.patch",
+          "sha256": "4405173abcba7a95e4cd204c76cfc21e23c44835549f8018a66844b6e39e5354",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/PRFScheme.lean"
+          ],
+          "hunks": [
+            "@@ -56,16 +56,24 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [
+        {
+          "name": "MultiMessage-prfScheme-machine-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/MultiMessage-prfScheme-machine-readers.patch",
+          "sha256": "8e58b3ab478459a3d0ed731c2cfcf38546099578fa15eb628ef8c5b16faa3ba1",
+          "target_files": [
+            "TCSlib/Cryptography/Asymptotic/MultiMessage.lean"
+          ],
+          "hunks": [
+            "@@ -529,6 +529,23 @@"
+          ]
+        }
+      ],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_014_TCSlib_Cryptography_Composability_PRFScheme.log",
+      "log_sha256": "1bfe44e0530eccdbfd5a2e9c131e7d2584e2c5f50d6904dd162451cfe8785794",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability.PRFScheme",
+      "file": "TCSlib/Cryptography/Composability/PRFScheme.lean",
+      "name": "not_prfFixedScheme_cca2",
+      "canonical": "TCSlib.Cryptography.Composability.not_prfFixedScheme_cca2",
+      "classification": "NEW_FILE",
+      "head_range": [
+        143,
+        152
+      ],
+      "source_lines": [
+        146,
+        146
+      ],
+      "probe_lines": [
+        1965,
+        1965
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "PRFScheme-not-cca2-predicate-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFScheme-not-cca2-predicate-readers.patch",
+          "sha256": "4813e8c4ab9ba334d095a35dd2c4be326761c2c2c1a121768f7f6bf9114847ab",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/PRFScheme.lean"
+          ],
+          "hunks": [
+            "@@ -142,8 +142,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_014_TCSlib_Cryptography_Composability_PRFScheme.log",
+      "log_sha256": "1bfe44e0530eccdbfd5a2e9c131e7d2584e2c5f50d6904dd162451cfe8785794",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability.PublicKey",
+      "file": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "name": "runAt_padEnc",
+      "canonical": "TCSlib.Cryptography.Composability.runAt_padEnc",
+      "classification": "NEW_FILE",
+      "head_range": [
+        193,
+        197
+      ],
+      "source_lines": [
+        194,
+        194
+      ],
+      "probe_lines": [
+        1939,
+        1939
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "PublicKey-runAt_padEnc-coins-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-runAt_padEnc-coins-transport.patch",
+          "sha256": "f7e52d031b254d58ae8047576ed4972d4f4a9fda35b9698e2e0e7a371cd09e0a",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/PublicKey.lean"
+          ],
+          "hunks": [
+            "@@ -189,12 +189,16 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_015_TCSlib_Cryptography_Composability_PublicKey.log",
+      "log_sha256": "cc40fde56ebe4e42d24a7d66f58d8e91abcd1e806fc1eec3fa3104a5cfe225f3",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Composability.SequentialZK",
+      "file": "TCSlib/Cryptography/Composability/SequentialZK.lean",
+      "name": "seqRep_exec_phase",
+      "canonical": "TCSlib.Cryptography.Protocol.seqRep_exec_phase",
+      "classification": "NEW_FILE",
+      "head_range": [
+        275,
+        358
+      ],
+      "source_lines": [
+        305,
+        309
+      ],
+      "probe_lines": [
+        1212,
+        1216
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "SequentialZK-seqRep_exec_phase-zero-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SequentialZK-seqRep_exec_phase-zero-readers.patch",
+          "sha256": "3cf5f9cf0b0f8cade6ea2d2e87d468eaa4667acdd6810343b42981b4c587ef64",
+          "target_files": [
+            "TCSlib/Cryptography/Composability/SequentialZK.lean"
+          ],
+          "hunks": [
+            "@@ -307,11 +307,11 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs/G06Seal_016_TCSlib_Cryptography_Composability_SequentialZK.log",
+      "log_sha256": "61de8218db1b6a86604600c725fdb7c84f5822fcdf169f37c93d141392a9b129",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.BPPBridge",
+      "file": "TCSlib/Cryptography/Randomness/BPPBridge.lean",
+      "name": "eval_polyLenExpr",
+      "canonical": "TCSlib.Cryptography.Randomness.eval_polyLenExpr",
+      "classification": "NEW_FILE",
+      "head_range": [
+        64,
+        65
+      ],
+      "source_lines": [
+        65
+      ],
+      "probe_lines": [
+        115
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "BPPBridge-eval_polyLenExpr-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/BPPBridge-eval_polyLenExpr-reader.patch",
+          "sha256": "c896c767653d011e38de1bf1088909922049c244b8fe0770609f0925e4b59c4f",
+          "target_files": [
+            "TCSlib/Complexity/Randomized/Classes.lean",
+            "TCSlib/Cryptography/Randomness/BPPBridge.lean"
+          ],
+          "hunks": [
+            "@@ -254,2 +254,5 @@",
+            "@@ -64,3 +64,5 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_019_TCSlib_Cryptography_Randomness_BPPBridge_HarnessV3.log",
+      "log_sha256": "d039a8a3f0bf9c1ea71df44a14a0c999b49c894258b2ffacfbdd78bdbbce19f2",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.BPPBridge",
+      "file": "TCSlib/Cryptography/Randomness/BPPBridge.lean",
+      "name": "verifier_toNUPPT",
+      "canonical": "TCSlib.Cryptography.Randomness.verifier_toNUPPT",
+      "classification": "NEW_FILE",
+      "head_range": [
+        77,
+        104
+      ],
+      "source_lines": [
+        82
+      ],
+      "probe_lines": [
+        132
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "BPPBridge-verifier_toNUPPT-model-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/BPPBridge-verifier_toNUPPT-model-reader.patch",
+          "sha256": "2f23d8461d200e18f3d038bdb430ac7da92f42c94b1192459881b76320348cb3",
+          "target_files": [
+            "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+            "TCSlib/Cryptography/Randomness/BPPBridge.lean"
+          ],
+          "hunks": [
+            "@@ -82,2 +82,11 @@",
+            "@@ -81,3 +81,4 @@",
+            "@@ -94,3 +95,4 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_019_TCSlib_Cryptography_Randomness_BPPBridge_HarnessV3.log",
+      "log_sha256": "d039a8a3f0bf9c1ea71df44a14a0c999b49c894258b2ffacfbdd78bdbbce19f2",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "file": "TCSlib/Cryptography/Randomness/Learning.lean",
+      "name": "not_weakLearnsUnder_prfConcept",
+      "canonical": "TCSlib.Cryptography.Randomness.not_weakLearnsUnder_prfConcept",
+      "classification": "NEW_FILE",
+      "head_range": [
+        118,
+        136
+      ],
+      "source_lines": [
+        122,
+        122
+      ],
+      "probe_lines": [
+        172,
+        172
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Learning-not-weakLearns-negligible-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Learning-not-weakLearns-negligible-reader.patch",
+          "sha256": "7418e24ea8a841ebf77fc2d45bd65643ececb656c191075fd39ecf4f09008396",
+          "target_files": [
+            "TCSlib/Cryptography/Randomness/Learning.lean"
+          ],
+          "hunks": [
+            "@@ -119,7 +119,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_022_TCSlib_Cryptography_Randomness_Learning_HarnessV3.log",
+      "log_sha256": "d6044e20febc1a86db99b33d85a311c64cbd07549344debfcd86efe41e13181f",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "file": "TCSlib/Cryptography/SecureComputation/Compose.lean",
+      "name": "exec_eq_map",
+      "canonical": "TCSlib.Cryptography.SecureComputation.Compose.exec_eq_map",
+      "classification": "NEW_FILE",
+      "head_range": [
+        112,
+        133
+      ],
+      "source_lines": [
+        117
+      ],
+      "probe_lines": [
+        167
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Compose-exec-map-zero-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Compose-exec-map-zero-reader.patch",
+          "sha256": "a8181d18dcae586ab6c2eb32c807aada29f17f40d23929a4ad3437330ea70bfa",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Compose.lean"
+          ],
+          "hunks": [
+            "@@ -114,7 +114,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_023_TCSlib_Cryptography_SecureComputation_Compose_HarnessV3.log",
+      "log_sha256": "de02f24541b057e83ef64010413c2888787f9ffb91469f120ff42ec2c3d169d5",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "file": "TCSlib/Cryptography/SecureComputation/Compose.lean",
+      "name": "compose_P_coinLen",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_P_coinLen",
+      "classification": "NEW_FILE",
+      "head_range": [
+        440,
+        441
+      ],
+      "source_lines": [
+        441
+      ],
+      "probe_lines": [
+        491
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Compose-coinLen-public-readers-term.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Compose-coinLen-public-readers-term.patch",
+          "sha256": "d6ad8ca9633c82ed1f559975173653b90a1cd6a5a50ce9d88fb0a444ff155600",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Compose.lean"
+          ],
+          "hunks": [
+            "@@ -436,13 +436,45 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_023_TCSlib_Cryptography_SecureComputation_Compose_HarnessV3.log",
+      "log_sha256": "de02f24541b057e83ef64010413c2888787f9ffb91469f120ff42ec2c3d169d5",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "file": "TCSlib/Cryptography/SecureComputation/Compose.lean",
+      "name": "compose_V_coinLen",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_V_coinLen",
+      "classification": "NEW_FILE",
+      "head_range": [
+        444,
+        445
+      ],
+      "source_lines": [
+        445
+      ],
+      "probe_lines": [
+        495
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Compose-coinLen-public-readers-term.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Compose-coinLen-public-readers-term.patch",
+          "sha256": "d6ad8ca9633c82ed1f559975173653b90a1cd6a5a50ce9d88fb0a444ff155600",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Compose.lean"
+          ],
+          "hunks": [
+            "@@ -436,13 +436,45 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_023_TCSlib_Cryptography_SecureComputation_Compose_HarnessV3.log",
+      "log_sha256": "de02f24541b057e83ef64010413c2888787f9ffb91469f120ff42ec2c3d169d5",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_exec_run",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_exec_run",
+      "classification": "NEW_FILE",
+      "head_range": [
+        240,
+        287
+      ],
+      "source_lines": [
+        245
+      ],
+      "probe_lines": [
+        295
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-exec-run-zero-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-exec-run-zero-reader.patch",
+          "sha256": "031225a7090492de66a98fbc732ae4a1f527f3aba4c6b9ff3738f1cd29cf8d12",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -242,7 +242,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_transcript",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_transcript",
+      "classification": "NEW_FILE",
+      "head_range": [
+        509,
+        519
+      ],
+      "source_lines": [
+        519
+      ],
+      "probe_lines": [
+        569
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-transcript-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-transcript-readers.patch",
+          "sha256": "f86e1a9f2a52813d99cb8ad4d16330854cb9401c26d088948b150b886d55008b",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -516,7 +516,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_viewP",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_viewP",
+      "classification": "NEW_FILE",
+      "head_range": [
+        523,
+        531
+      ],
+      "source_lines": [
+        530
+      ],
+      "probe_lines": [
+        580
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-viewP-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-viewP-readers.patch",
+          "sha256": "33e74adfb327bd6bfb888a1d74846774bf3d2ac57ccff04382d093e8c5e43f66",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -528,5 +528,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_viewV",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_viewV",
+      "classification": "NEW_FILE",
+      "head_range": [
+        535,
+        543
+      ],
+      "source_lines": [
+        542
+      ],
+      "probe_lines": [
+        592
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-viewV-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-viewV-readers.patch",
+          "sha256": "7a99643dea367280a49c748c168f457b3eef383f459ba5e4a5267aedcab6d6fb",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -540,5 +540,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_outP",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_outP",
+      "classification": "NEW_FILE",
+      "head_range": [
+        552,
+        562
+      ],
+      "source_lines": [
+        558
+      ],
+      "probe_lines": [
+        608
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-outP-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-outP-readers.patch",
+          "sha256": "99253fd81e8f49ee0ee8034812c2388043b70466882ff59487a1ba791d5dd438",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -556,8 +556,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "name": "compose_outV",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_outV",
+      "classification": "NEW_FILE",
+      "head_range": [
+        571,
+        581
+      ],
+      "source_lines": [
+        577
+      ],
+      "probe_lines": [
+        627
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposePhases-outV-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-outV-readers.patch",
+          "sha256": "82a900fbfe0c203594ec1fe3a080214b97a9044a5d7699062a1e71e97cdce59f",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+          ],
+          "hunks": [
+            "@@ -575,8 +575,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_024_TCSlib_Cryptography_SecureComputation_ComposePhases_HarnessV3.log",
+      "log_sha256": "b4d1ab69ff032e744552059308049fa74c70806655bc1a876a7a0af4a750b759",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean",
+      "name": "exists_mainExec_eq_transcript",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.exists_mainExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "head_range": [
+        111,
+        135
+      ],
+      "source_lines": [
+        129,
+        132,
+        135
+      ],
+      "probe_lines": [
+        179,
+        182,
+        185
+      ],
+      "diagnostics": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-exists_mainExec_eq_transcript-readers.patch",
+          "sha256": "907503b8fcf3504c67c7b2c1dca73cde26586b36a6aeb3a1647116d9acdeecc5",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -126,13 +126,13 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_025_TCSlib_Cryptography_SecureComputation_ComposeSecurity_HarnessV3.log",
+      "log_sha256": "d17288c1f5fa1cf74a5356e58deacb207e04d998a12ed9870963c10ffc1629aa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean",
+      "name": "exists_runExec_eq_transcript",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.exists_runExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "head_range": [
+        145,
+        171
+      ],
+      "source_lines": [
+        165,
+        168,
+        171
+      ],
+      "probe_lines": [
+        215,
+        218,
+        221
+      ],
+      "diagnostics": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposeSecurity-exists_runExec_eq_transcript-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-exists_runExec_eq_transcript-readers.patch",
+          "sha256": "165f782c1798627ebce33e8d176b1b403467158c48392dca5c3c35f2532680c9",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -162,13 +162,17 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_025_TCSlib_Cryptography_SecureComputation_ComposeSecurity_HarnessV3.log",
+      "log_sha256": "d17288c1f5fa1cf74a5356e58deacb207e04d998a12ed9870963c10ffc1629aa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean",
+      "name": "compose_msg_bound",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.compose_msg_bound",
+      "classification": "NEW_FILE",
+      "head_range": [
+        198,
+        268
+      ],
+      "source_lines": [
+        204
+      ],
+      "probe_lines": [
+        254
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposeSecurity-compose_msg_bound-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-compose_msg_bound-readers.patch",
+          "sha256": "e2015ed45fadd7b7ea955e80964a666b671d6028a255adb1b4abf9404657f50f",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -205,20 +205,20 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_025_TCSlib_Cryptography_SecureComputation_ComposeSecurity_HarnessV3.log",
+      "log_sha256": "d17288c1f5fa1cf74a5356e58deacb207e04d998a12ed9870963c10ffc1629aa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean",
+      "name": "polyTime_compose",
+      "canonical": "TCSlib.Cryptography.SecureComputation.HybridProtocol.polyTime_compose",
+      "classification": "NEW_FILE",
+      "head_range": [
+        304,
+        306
+      ],
+      "source_lines": [
+        306
+      ],
+      "probe_lines": [
+        356
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ComposeSecurity-polyTime_compose-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-polyTime_compose-readers.patch",
+          "sha256": "8c96cc500bb7fa74642f1d34157090eaa23bec96d26a10003249e6ecacb3787c",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -307,7 +307,12 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_025_TCSlib_Cryptography_SecureComputation_ComposeSecurity_HarnessV3.log",
+      "log_sha256": "d17288c1f5fa1cf74a5356e58deacb207e04d998a12ed9870963c10ffc1629aa",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Garbling",
+      "file": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+      "name": "garbledValues_getD",
+      "canonical": "TCSlib.Cryptography.SecureComputation.garbledValues_getD",
+      "classification": "NEW_FILE",
+      "head_range": [
+        359,
+        387
+      ],
+      "source_lines": [
+        366
+      ],
+      "probe_lines": [
+        416
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Garbling-values-size-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Garbling-values-size-transport.patch",
+          "sha256": "1bb941b1646f496f8c72499eb9d104675c3d86af63b25f0b3139d22172f722dc",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Garbling.lean"
+          ],
+          "hunks": [
+            "@@ -363,7 +363,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [
+        {
+          "name": "DAGCircuit-size-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-size-reader.patch",
+          "sha256": "7dffc286e01fc08c85b1680f9223597c712d705a3d534dfb2aa030585dc95eae",
+          "target_files": [
+            "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+          ],
+          "hunks": [
+            "@@ -488,6 +488,9 @@"
+          ]
+        },
+        {
+          "name": "DAGCircuit-eval-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-eval-reader.patch",
+          "sha256": "199619c44f8f6fc9d1c1e208d7e46a220f922f0a6d75141d0962935c9cc7288d",
+          "target_files": [
+            "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+          ],
+          "hunks": [
+            "@@ -473,6 +473,10 @@"
+          ]
+        }
+      ],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_027_TCSlib_Cryptography_SecureComputation_Garbling_HarnessV3.log",
+      "log_sha256": "4d0f98d9800652edcb41098df08ad960f10c0871193dc11d20659f17d2ace20b",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Garbling",
+      "file": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+      "name": "garbledOutput_eq",
+      "canonical": "TCSlib.Cryptography.SecureComputation.garbledOutput_eq",
+      "classification": "NEW_FILE",
+      "head_range": [
+        391,
+        393
+      ],
+      "source_lines": [
+        393
+      ],
+      "probe_lines": [
+        443
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Garbling-output-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Garbling-output-readers.patch",
+          "sha256": "e81b24063f507873f342fd2e463cbfbf3808a3d12997b5f95b2286c7e2ccb122",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Garbling.lean"
+          ],
+          "hunks": [
+            "@@ -390,7 +390,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [
+        {
+          "name": "DAGCircuit-size-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-size-reader.patch",
+          "sha256": "7dffc286e01fc08c85b1680f9223597c712d705a3d534dfb2aa030585dc95eae",
+          "target_files": [
+            "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+          ],
+          "hunks": [
+            "@@ -488,6 +488,9 @@"
+          ]
+        },
+        {
+          "name": "DAGCircuit-eval-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-eval-reader.patch",
+          "sha256": "199619c44f8f6fc9d1c1e208d7e46a220f922f0a6d75141d0962935c9cc7288d",
+          "target_files": [
+            "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+          ],
+          "hunks": [
+            "@@ -473,6 +473,10 @@"
+          ]
+        }
+      ],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_027_TCSlib_Cryptography_SecureComputation_Garbling_HarnessV3.log",
+      "log_sha256": "4d0f98d9800652edcb41098df08ad960f10c0871193dc11d20659f17d2ace20b",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.GarblingSpecial",
+      "file": "TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean",
+      "name": "nestedSpecial_decCorrect",
+      "canonical": "TCSlib.Cryptography.SecureComputation.nestedSpecial_decCorrect",
+      "classification": "NEW_FILE",
+      "head_range": [
+        92,
+        126
+      ],
+      "source_lines": [
+        93
+      ],
+      "probe_lines": [
+        143
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "GarblingSpecial-decCorrect-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GarblingSpecial-decCorrect-reader.patch",
+          "sha256": "6084d10b4dbeb0646a09e5c3f844a9edd3588b99c2ac7275495b9ce759757e6f",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean"
+          ],
+          "hunks": [
+            "@@ -90,6 +90,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_029_TCSlib_Cryptography_SecureComputation_GarblingSpecial_HarnessV3.log",
+      "log_sha256": "b90909deb22294aa0e69261b299312a981ceef6a0eef76e3a29acdb6d22426f2",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ObliviousTransfer",
+      "file": "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean",
+      "name": "otProtocol_outV",
+      "canonical": "TCSlib.Cryptography.SecureComputation.otProtocol_outV",
+      "classification": "NEW_FILE",
+      "head_range": [
+        260,
+        334
+      ],
+      "source_lines": [
+        284
+      ],
+      "probe_lines": [
+        334
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ObliviousTransfer-otProtocol_outV-reader-order.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ObliviousTransfer-otProtocol_outV-reader-order.patch",
+          "sha256": "b1faa50f47fa7207dd67ba0246d6820ab95a4316ab854e2b0d0139408fa6d959",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean"
+          ],
+          "hunks": [
+            "@@ -279,9 +279,8 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_031_TCSlib_Cryptography_SecureComputation_ObliviousTransfer_HarnessV3.log",
+      "log_sha256": "48f872bebd44a58c10490b72de18cd4665ab989ed99378f1d867488ac99b4d44",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.ObliviousTransfer",
+      "file": "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean",
+      "name": "otProtocol_hbcSecure",
+      "canonical": "TCSlib.Cryptography.SecureComputation.otProtocol_hbcSecure",
+      "classification": "NEW_FILE",
+      "head_range": [
+        654,
+        657
+      ],
+      "source_lines": [
+        656
+      ],
+      "probe_lines": [
+        706
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "ObliviousTransfer-otProtocol_hbcSecure-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ObliviousTransfer-otProtocol_hbcSecure-reader.patch",
+          "sha256": "0ab1d177dbc3d2d6b4f4506e238b17d90641f219cbead694059a0466eadd8771",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean"
+          ],
+          "hunks": [
+            "@@ -652,8 +652,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_031_TCSlib_Cryptography_SecureComputation_ObliviousTransfer_HarnessV3.log",
+      "log_sha256": "48f872bebd44a58c10490b72de18cd4665ab989ed99378f1d867488ac99b4d44",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      "name": "specialScheme",
+      "canonical": "TCSlib.Cryptography.SecureComputation.specialScheme",
+      "classification": "NEW_FILE",
+      "head_range": [
+        78,
+        93
+      ],
+      "source_lines": [
+        88,
+        89,
+        91
+      ],
+      "probe_lines": [
+        138,
+        139,
+        141
+      ],
+      "diagnostics": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "sha256": "4d432c16a773f770b2027e97d66a7beef12d28f43b0c5cbca7a0bf4cf605044a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -85,7 +85,9 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "sha256": "c2bb891d9ce89f485f17206ed48f82a0581c997cad56fa3eb083821f9bc9e859",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -89,2 +89,4 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "sha256": "c6101eea03a6f5452120ed6b82c259abef1f819fa91812f50dc73aeef8e87626",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -90,3 +90,5 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_033_TCSlib_Cryptography_SecureComputation_SpecialEncryptionSecurity_HarnessV3.log",
+      "log_sha256": "8d66b2f5d9f584f1479ad78cc1b7ffa6a7e8f5adfbe336b1a18772f1fb74c3fe",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      "name": "specialScheme_multiMessageSecure",
+      "canonical": "TCSlib.Cryptography.SecureComputation.specialScheme_multiMessageSecure",
+      "classification": "NEW_FILE",
+      "head_range": [
+        105,
+        107
+      ],
+      "source_lines": [
+        106
+      ],
+      "probe_lines": [
+        156
+      ],
+      "diagnostics": 1,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patches": [],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [
+        {
+          "name": "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "sha256": "4d432c16a773f770b2027e97d66a7beef12d28f43b0c5cbca7a0bf4cf605044a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -85,7 +85,9 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "sha256": "c2bb891d9ce89f485f17206ed48f82a0581c997cad56fa3eb083821f9bc9e859",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -89,2 +89,4 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "sha256": "c6101eea03a6f5452120ed6b82c259abef1f819fa91812f50dc73aeef8e87626",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -90,3 +90,5 @@"
+          ]
+        }
+      ],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_033_TCSlib_Cryptography_SecureComputation_SpecialEncryptionSecurity_HarnessV3.log",
+      "log_sha256": "8d66b2f5d9f584f1479ad78cc1b7ffa6a7e8f5adfbe336b1a18772f1fb74c3fe",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Six later SpecialEncryptionSecurity diagnostics are potential cascades after the three specialScheme.correct repairs; native checking decides whether separate proof repairs are required. They are not counted as covered or proved."
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "file": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      "name": "specialScheme_wrongKey",
+      "canonical": "TCSlib.Cryptography.SecureComputation.specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "head_range": [
+        137,
+        147
+      ],
+      "source_lines": [
+        139,
+        140,
+        140,
+        141,
+        142
+      ],
+      "probe_lines": [
+        189,
+        190,
+        190,
+        191,
+        192
+      ],
+      "diagnostics": 5,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patches": [],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [
+        {
+          "name": "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+          "sha256": "4d432c16a773f770b2027e97d66a7beef12d28f43b0c5cbca7a0bf4cf605044a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -85,7 +85,9 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+          "sha256": "c2bb891d9ce89f485f17206ed48f82a0581c997cad56fa3eb083821f9bc9e859",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -89,2 +89,4 @@"
+          ]
+        },
+        {
+          "name": "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+          "sha256": "c6101eea03a6f5452120ed6b82c259abef1f819fa91812f50dc73aeef8e87626",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+          ],
+          "hunks": [
+            "@@ -90,3 +90,5 @@"
+          ]
+        }
+      ],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_033_TCSlib_Cryptography_SecureComputation_SpecialEncryptionSecurity_HarnessV3.log",
+      "log_sha256": "8d66b2f5d9f584f1479ad78cc1b7ffa6a7e8f5adfbe336b1a18772f1fb74c3fe",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Six later SpecialEncryptionSecurity diagnostics are potential cascades after the three specialScheme.correct repairs; native checking decides whether separate proof repairs are required. They are not counted as covered or proved."
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "length_le_length_encodeMsgs",
+      "canonical": "TCSlib.Cryptography.SecureComputation.length_le_length_encodeMsgs",
+      "classification": "NEW_FILE",
+      "head_range": [
+        373,
+        379
+      ],
+      "source_lines": [
+        375
+      ],
+      "probe_lines": [
+        425
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-decodeMsgs-delegate-decWords.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-decodeMsgs-delegate-decWords.patch",
+          "sha256": "df8ad758103ae54ecaa42fdfc5c7ca889665459a1b9437372eeda47e4c18e976",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -324,80 +324,41 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Codec delegation proposal removes this private copied lemma and reuses the existing shared decoder; all-input behavior/typing still requires root validation."
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoMain_outV",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoMain_outV",
+      "classification": "NEW_FILE",
+      "head_range": [
+        583,
+        587
+      ],
+      "source_lines": [
+        587
+      ],
+      "probe_lines": [
+        637
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-main-outV-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-main-outV-readers.patch",
+          "sha256": "5550b3908a7f23d05ee368200af11960cb4c08fec23b3ced0142434d1bfb0ac2",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -584,7 +584,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoMain_outP",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoMain_outP",
+      "classification": "NEW_FILE",
+      "head_range": [
+        590,
+        594
+      ],
+      "source_lines": [
+        594
+      ],
+      "probe_lines": [
+        644
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-main-outP-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-main-outP-readers.patch",
+          "sha256": "ec31652d251edf6ec14b8192d101b29d81774e3aed83ca60e6787f594b30e04b",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -591,7 +591,10 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoHybrid_callA",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoHybrid_callA",
+      "classification": "NEW_FILE",
+      "head_range": [
+        627,
+        630
+      ],
+      "source_lines": [
+        628
+      ],
+      "probe_lines": [
+        678
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-yaoHybrid_callA-typed-input.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callA-typed-input.patch",
+          "sha256": "84cb220ccc7c6d7099bee5591354c893f5a2e11fb38a931f77b5b363d0f21a5a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -586,7 +586,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoHybrid_callB",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoHybrid_callB",
+      "classification": "NEW_FILE",
+      "head_range": [
+        633,
+        634
+      ],
+      "source_lines": [
+        634
+      ],
+      "probe_lines": [
+        684
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-yaoHybrid_callB-typed-input.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callB-typed-input.patch",
+          "sha256": "acb5dbebe258635557923797c60569bdc0f6125e6635179ed196ac993ba8b599",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -594,7 +594,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoHybrid_answersB_getD",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoHybrid_answersB_getD",
+      "classification": "NEW_FILE",
+      "head_range": [
+        746,
+        765
+      ],
+      "source_lines": [
+        750
+      ],
+      "probe_lines": [
+        800
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+          "sha256": "a4613412cafe9001d416493f854cf0a91f5890de3e2f6ecfb3a1666d142a9ac8",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -712,21 +712,15 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [
+        {
+          "name": "Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+          "sha256": "6061db3e8cc5dd2113feceda8b46b0626d19216aca6020e229853c15b718476a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Defs.lean"
+          ],
+          "hunks": [
+            "@@ -219,4 +219,16 @@"
+          ]
+        },
+        {
+          "name": "Yao-yaoHybrid_callA-typed-input.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callA-typed-input.patch",
+          "sha256": "84cb220ccc7c6d7099bee5591354c893f5a2e11fb38a931f77b5b363d0f21a5a",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -586,7 +586,9 @@"
+          ]
+        },
+        {
+          "name": "Yao-yaoHybrid_callB-typed-input.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callB-typed-input.patch",
+          "sha256": "acb5dbebe258635557923797c60569bdc0f6125e6635179ed196ac993ba8b599",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -594,7 +594,9 @@"
+          ]
+        }
+      ],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "file": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "name": "yaoHybrid_hbcSecure",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoHybrid_hbcSecure",
+      "classification": "NEW_FILE",
+      "head_range": [
+        970,
+        976
+      ],
+      "source_lines": [
+        975
+      ],
+      "probe_lines": [
+        1025
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Yao-hybrid-HBC-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-hybrid-HBC-reader.patch",
+          "sha256": "f9cf130e98ec25d524635c45e056e501506d82e22953ccb0fded4318642fd909",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/Yao.lean"
+          ],
+          "hunks": [
+            "@@ -972,8 +972,9 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_034_TCSlib_Cryptography_SecureComputation_Yao_HarnessV3.log",
+      "log_sha256": "f33d4bba691e2e9f79958fdd9d0bc8cbcfcc3593980eed489f06a2361063a8d7",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.SecureComputation.YaoReal",
+      "file": "TCSlib/Cryptography/SecureComputation/YaoReal.lean",
+      "name": "yaoProtocol_hbcSecure",
+      "canonical": "TCSlib.Cryptography.SecureComputation.yaoProtocol_hbcSecure",
+      "classification": "NEW_FILE",
+      "head_range": [
+        95,
+        114
+      ],
+      "source_lines": [
+        112
+      ],
+      "probe_lines": [
+        162
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "YaoReal-main-rounds-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/YaoReal-main-rounds-reader.patch",
+          "sha256": "9459e58f1b94042097c904f17ebe6432dee067f8ae018c8f21654b36e63fa340",
+          "target_files": [
+            "TCSlib/Cryptography/SecureComputation/YaoReal.lean"
+          ],
+          "hunks": [
+            "@@ -109,7 +109,13 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_035_TCSlib_Cryptography_SecureComputation_YaoReal_HarnessV3.log",
+      "log_sha256": "7427645cab36776ea1cefe602481ffd278badb0890c319c3b7864d73b214ef6d",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "This diagnostic is the main-round positivity witness, not a tuple constructor; the saved patch transports public rounds equations."
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "name": "gniVerifierRep_efficient",
+      "canonical": "TCSlib.Cryptography.GI.gniVerifierRep_efficient",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        595,
+        617
+      ],
+      "source_lines": [
+        609
+      ],
+      "probe_lines": [
+        659
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "GI-gniVerifierRep-efficient-public-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-gniVerifierRep-efficient-public-readers.patch",
+          "sha256": "6252fce6b336b07f58834da02137a3c59505c51c55a714d376a4afa81ecc524f",
+          "target_files": [
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean"
+          ],
+          "hunks": [
+            "@@ -170,6 +170,25 @@",
+            "@@ -590,8 +590,8 @@",
+            "@@ -606,7 +606,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_039_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep_HarnessV3.log",
+      "log_sha256": "354ac046a20615b66260ea1119e6e6bf31989cf39831966d42cbd55df1694e83",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRepGI",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean",
+      "name": "giProverRep_efficient",
+      "canonical": "TCSlib.Cryptography.GI.giProverRep_efficient",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        109,
+        128
+      ],
+      "source_lines": [
+        120
+      ],
+      "probe_lines": [
+        170
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "GI-giProverRep-efficient-public-readers.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-giProverRep-efficient-public-readers.patch",
+          "sha256": "fc4dffddcd8ca9c4f9628ccee6e41ccf91b7accfc022c7bb4141322dd198243e",
+          "target_files": [
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean"
+          ],
+          "hunks": [
+            "@@ -239,6 +239,19 @@",
+            "@@ -104,8 +104,8 @@",
+            "@@ -117,7 +117,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_040_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRepGI_HarnessV3.log",
+      "log_sha256": "4694ca76d8b5f164d00b8d070618416577e8ed2799c53a42cba909f2e312fc93",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+      "name": "gniVerifierRep_next_lt",
+      "canonical": "TCSlib.Cryptography.GI.gniVerifierRep_next_lt",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        146,
+        166
+      ],
+      "source_lines": [
+        152
+      ],
+      "probe_lines": [
+        202
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "GI-gniVerifierRep-next-terms.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-gniVerifierRep-next-terms.patch",
+          "sha256": "d572d42f26fd3e321eb5ec3e645729fab31d213c8e9513ba59770069e1304da0",
+          "target_files": [
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean"
+          ],
+          "hunks": [
+            "@@ -189,6 +189,14 @@",
+            "@@ -139,39 +139,25 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_042_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep_HarnessV3.log",
+      "log_sha256": "a6f6c7623be3bbc015746cbf58ed7c585db3d9a66720806d814a6128b247ce7a",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+      "name": "gniVerifierRep_next_ge",
+      "canonical": "TCSlib.Cryptography.GI.gniVerifierRep_next_ge",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        169,
+        174
+      ],
+      "source_lines": [
+        173
+      ],
+      "probe_lines": [
+        223
+      ],
+      "diagnostics": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "GI-gniVerifierRep-next-terms.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-gniVerifierRep-next-terms.patch",
+          "sha256": "d572d42f26fd3e321eb5ec3e645729fab31d213c8e9513ba59770069e1304da0",
+          "target_files": [
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+            "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean"
+          ],
+          "hunks": [
+            "@@ -189,6 +189,14 @@",
+            "@@ -139,39 +139,25 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_042_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRep_HarnessV3.log",
+      "log_sha256": "a6f6c7623be3bbc015746cbf58ed7c585db3d9a66720806d814a6128b247ce7a",
+      "proof_status": "NOT_ASSESSED",
+      "notes": ""
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean",
+      "name": "giProverRep_next_even",
+      "canonical": "TCSlib.Cryptography.GI.giProverRep_next_even",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        210,
+        223
+      ],
+      "source_lines": [
+        215
+      ],
+      "probe_lines": [
+        265
+      ],
+      "diagnostics": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patches": [],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_043_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI_HarnessV3.log",
+      "log_sha256": "60e46e64a7e8ed522230ce7be89eac6b02eea17cf7088f010202a535a4b2b729",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Coordinator says the changed GI proof remains in the agent workflow queue; no saved repair found in this snapshot."
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean",
+      "name": "giProverRep_next_odd",
+      "canonical": "TCSlib.Cryptography.GI.giProverRep_next_odd",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        227,
+        243
+      ],
+      "source_lines": [
+        233
+      ],
+      "probe_lines": [
+        283
+      ],
+      "diagnostics": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patches": [],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_043_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_SoundnessRepGI_HarnessV3.log",
+      "log_sha256": "60e46e64a7e8ed522230ce7be89eac6b02eea17cf7088f010202a535a4b2b729",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Coordinator says the changed GI proof remains in the agent workflow queue; no saved repair found in this snapshot."
+    },
+    {
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator",
+      "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+      "name": "attemptAt_poly",
+      "canonical": "TCSlib.Cryptography.GIZK.attemptAt_poly",
+      "classification": "CHANGED_CODE",
+      "head_range": [
+        254,
+        388
+      ],
+      "source_lines": [
+        257
+      ],
+      "probe_lines": [
+        307
+      ],
+      "diagnostics": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patches": [],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_046_TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphismZK_Simulator_HarnessV3.log",
+      "log_sha256": "16c93aebe5cad1e0d7a6af047d2e86dca59f9681b1367a32decfff4bfa3b405b",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Coordinator says the changed GI proof remains in the agent workflow queue; no saved repair found in this snapshot."
+    },
+    {
+      "module": "TCSlib.LearningTheory.PAC.Prediction",
+      "file": "TCSlib/LearningTheory/PAC/Prediction.lean",
+      "name": "expectedErr_le_of_pacLearnsUnder",
+      "canonical": "TCSlib.LearningTheory.PAC.expectedErr_le_of_pacLearnsUnder",
+      "classification": "NEW_FILE",
+      "head_range": [
+        159,
+        175
+      ],
+      "source_lines": [
+        170,
+        162
+      ],
+      "probe_lines": [
+        220,
+        212
+      ],
+      "diagnostics": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patches": [
+        {
+          "name": "Prediction-expectedErr-pacLearnsUnder-reader.patch",
+          "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Prediction-expectedErr-pacLearnsUnder-reader.patch",
+          "sha256": "d3e59f48faf5e38056ebcde8961a69514f4453d26df33f73378b44c63a7d5739",
+          "target_files": [
+            "TCSlib/LearningTheory/PAC/Prediction.lean"
+          ],
+          "hunks": [
+            "@@ -167,7 +167,7 @@"
+          ]
+        }
+      ],
+      "supporting_owner_or_typed_interface_patches": [],
+      "related_upstream_proposals": [],
+      "log": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2/runs-v3/G06Seal_051_TCSlib_LearningTheory_PAC_Prediction_HarnessV3.log",
+      "log_sha256": "cfc07154b67aeca571413a309bcabc557765a191067fa4a6f186e36f9f3cba74",
+      "proof_status": "NOT_ASSESSED",
+      "notes": "Two diagnostics map to one opaque PACLearnsUnder application; the residual bound is an intended cascade repair, unverified."
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "D001",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "runAt_hsGen",
+      "classification": "NEW_FILE",
+      "source_line": 250,
+      "probe_line": 1683,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-runAt_hsGen-coin-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D002",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "runAt_hsSign",
+      "classification": "NEW_FILE",
+      "source_line": 263,
+      "probe_line": 1696,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-runAt_hsSign-coin-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D003",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "runAt_hsSign",
+      "classification": "NEW_FILE",
+      "source_line": 264,
+      "probe_line": 1697,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-runAt_hsSign-coin-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D004",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "hashAndSign",
+      "classification": "NEW_FILE",
+      "source_line": 286,
+      "probe_line": 1719,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-correct-coin-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D005",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "hashAndSign",
+      "classification": "NEW_FILE",
+      "source_line": 284,
+      "probe_line": 1717,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-correct-coin-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D006",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "exists_oneTimeSecure_of_crh_owf",
+      "classification": "NEW_FILE",
+      "source_line": 366,
+      "probe_line": 1799,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-exists-lamport-msgLen.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D007",
+      "module": "TCSlib.Cryptography.Authentication.HashAndSign",
+      "declaration": "exists_oneTimeSecure_of_crh_owf",
+      "classification": "NEW_FILE",
+      "source_line": 367,
+      "probe_line": 1800,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "HashAndSign-exists-lamport-msgLen.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D008",
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "declaration": "polyTimeComputable_lamportGenFun",
+      "classification": "NEW_FILE",
+      "source_line": 302,
+      "probe_line": 1719,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Lamport-genFun-public-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D009",
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "declaration": "polyTimeComputable_lamportSignFun",
+      "classification": "NEW_FILE",
+      "source_line": 311,
+      "probe_line": 1728,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Lamport-signFun-public-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D010",
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "declaration": "polyTimeComputable_lamportVerFun",
+      "classification": "NEW_FILE",
+      "source_line": 362,
+      "probe_line": 1779,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Lamport-verFun-decision-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D011",
+      "module": "TCSlib.Cryptography.Authentication.Lamport",
+      "declaration": "lamportVerFun_sign",
+      "classification": "NEW_FILE",
+      "source_line": 470,
+      "probe_line": 1887,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Lamport-correctness-coinLen-public-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D012",
+      "module": "TCSlib.Cryptography.Authentication.PRFMAC",
+      "declaration": "prfMAC",
+      "classification": "NEW_FILE",
+      "source_line": 102,
+      "probe_line": 1875,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PRFMAC-correct-coin-transport.recount.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D013",
+      "module": "TCSlib.Cryptography.Composability.CCA2Scheme",
+      "declaration": "ccaScheme",
+      "classification": "NEW_FILE",
+      "source_line": 320,
+      "probe_line": 2092,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "CCA2Scheme-correct-gen-coins-reader.patch",
+        "CCA2Scheme-correct-enc-coins-reader.patch",
+        "CCA2Scheme-enc-length-gen-coins-reader.patch",
+        "CCA2Scheme-enc-length-enc-coins-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D014",
+      "module": "TCSlib.Cryptography.Composability.CCA2Scheme",
+      "declaration": "ccaScheme",
+      "classification": "NEW_FILE",
+      "source_line": 322,
+      "probe_line": 2094,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "CCA2Scheme-correct-gen-coins-reader.patch",
+        "CCA2Scheme-correct-enc-coins-reader.patch",
+        "CCA2Scheme-enc-length-gen-coins-reader.patch",
+        "CCA2Scheme-enc-length-enc-coins-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D015",
+      "module": "TCSlib.Cryptography.Composability.CCA2Scheme",
+      "declaration": "ccaScheme",
+      "classification": "NEW_FILE",
+      "source_line": 332,
+      "probe_line": 2104,
+      "within_declaration_ordinal": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "CCA2Scheme-correct-gen-coins-reader.patch",
+        "CCA2Scheme-correct-enc-coins-reader.patch",
+        "CCA2Scheme-enc-length-gen-coins-reader.patch",
+        "CCA2Scheme-enc-length-enc-coins-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D016",
+      "module": "TCSlib.Cryptography.Composability.CCA2Scheme",
+      "declaration": "ccaScheme",
+      "classification": "NEW_FILE",
+      "source_line": 335,
+      "probe_line": 2107,
+      "within_declaration_ordinal": 4,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "CCA2Scheme-correct-gen-coins-reader.patch",
+        "CCA2Scheme-correct-enc-coins-reader.patch",
+        "CCA2Scheme-enc-length-gen-coins-reader.patch",
+        "CCA2Scheme-enc-length-enc-coins-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D017",
+      "module": "TCSlib.Cryptography.Composability.PRFScheme",
+      "declaration": "prfFixedScheme",
+      "classification": "NEW_FILE",
+      "source_line": 61,
+      "probe_line": 1880,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PRFScheme-enc-length-coin-transport.patch"
+      ],
+      "supporting_patch_names": [
+        "MultiMessage-prfScheme-machine-readers.patch"
+      ]
+    },
+    {
+      "id": "D018",
+      "module": "TCSlib.Cryptography.Composability.PRFScheme",
+      "declaration": "not_prfFixedScheme_cca2",
+      "classification": "NEW_FILE",
+      "source_line": 146,
+      "probe_line": 1965,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PRFScheme-not-cca2-predicate-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D019",
+      "module": "TCSlib.Cryptography.Composability.PRFScheme",
+      "declaration": "not_prfFixedScheme_cca2",
+      "classification": "NEW_FILE",
+      "source_line": 146,
+      "probe_line": 1965,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PRFScheme-not-cca2-predicate-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D020",
+      "module": "TCSlib.Cryptography.Composability.PublicKey",
+      "declaration": "runAt_padEnc",
+      "classification": "NEW_FILE",
+      "source_line": 194,
+      "probe_line": 1939,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PublicKey-runAt_padEnc-coins-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D021",
+      "module": "TCSlib.Cryptography.Composability.PublicKey",
+      "declaration": "runAt_padEnc",
+      "classification": "NEW_FILE",
+      "source_line": 194,
+      "probe_line": 1939,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "PublicKey-runAt_padEnc-coins-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D022",
+      "module": "TCSlib.Cryptography.Composability.SequentialZK",
+      "declaration": "seqRep_exec_phase",
+      "classification": "NEW_FILE",
+      "source_line": 305,
+      "probe_line": 1212,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "SequentialZK-seqRep_exec_phase-zero-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D023",
+      "module": "TCSlib.Cryptography.Composability.SequentialZK",
+      "declaration": "seqRep_exec_phase",
+      "classification": "NEW_FILE",
+      "source_line": 309,
+      "probe_line": 1216,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "SequentialZK-seqRep_exec_phase-zero-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D024",
+      "module": "TCSlib.Cryptography.Randomness.BPPBridge",
+      "declaration": "eval_polyLenExpr",
+      "classification": "NEW_FILE",
+      "source_line": 65,
+      "probe_line": 115,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "BPPBridge-eval_polyLenExpr-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D025",
+      "module": "TCSlib.Cryptography.Randomness.BPPBridge",
+      "declaration": "verifier_toNUPPT",
+      "classification": "NEW_FILE",
+      "source_line": 82,
+      "probe_line": 132,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "BPPBridge-verifier_toNUPPT-model-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D026",
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "declaration": "not_weakLearnsUnder_prfConcept",
+      "classification": "NEW_FILE",
+      "source_line": 122,
+      "probe_line": 172,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Learning-not-weakLearns-negligible-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D027",
+      "module": "TCSlib.Cryptography.Randomness.Learning",
+      "declaration": "not_weakLearnsUnder_prfConcept",
+      "classification": "NEW_FILE",
+      "source_line": 122,
+      "probe_line": 172,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Learning-not-weakLearns-negligible-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D028",
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "declaration": "exec_eq_map",
+      "classification": "NEW_FILE",
+      "source_line": 117,
+      "probe_line": 167,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Compose-exec-map-zero-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D029",
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "declaration": "compose_P_coinLen",
+      "classification": "NEW_FILE",
+      "source_line": 441,
+      "probe_line": 491,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Compose-coinLen-public-readers-term.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D030",
+      "module": "TCSlib.Cryptography.SecureComputation.Compose",
+      "declaration": "compose_V_coinLen",
+      "classification": "NEW_FILE",
+      "source_line": 445,
+      "probe_line": 495,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Compose-coinLen-public-readers-term.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D031",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_exec_run",
+      "classification": "NEW_FILE",
+      "source_line": 245,
+      "probe_line": 295,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-exec-run-zero-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D032",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 519,
+      "probe_line": 569,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D033",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_viewP",
+      "classification": "NEW_FILE",
+      "source_line": 530,
+      "probe_line": 580,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-viewP-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D034",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_viewV",
+      "classification": "NEW_FILE",
+      "source_line": 542,
+      "probe_line": 592,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-viewV-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D035",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_outP",
+      "classification": "NEW_FILE",
+      "source_line": 558,
+      "probe_line": 608,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-outP-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D036",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposePhases",
+      "declaration": "compose_outV",
+      "classification": "NEW_FILE",
+      "source_line": 577,
+      "probe_line": 627,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposePhases-outV-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D037",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_mainExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 129,
+      "probe_line": 179,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D038",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_mainExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 132,
+      "probe_line": 182,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D039",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_mainExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 135,
+      "probe_line": 185,
+      "within_declaration_ordinal": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D040",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_runExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 165,
+      "probe_line": 215,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_runExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D041",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_runExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 168,
+      "probe_line": 218,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_runExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D042",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "exists_runExec_eq_transcript",
+      "classification": "NEW_FILE",
+      "source_line": 171,
+      "probe_line": 221,
+      "within_declaration_ordinal": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-exists_runExec_eq_transcript-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D043",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "compose_msg_bound",
+      "classification": "NEW_FILE",
+      "source_line": 204,
+      "probe_line": 254,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-compose_msg_bound-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D044",
+      "module": "TCSlib.Cryptography.SecureComputation.ComposeSecurity",
+      "declaration": "polyTime_compose",
+      "classification": "NEW_FILE",
+      "source_line": 306,
+      "probe_line": 356,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ComposeSecurity-polyTime_compose-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D045",
+      "module": "TCSlib.Cryptography.SecureComputation.Garbling",
+      "declaration": "garbledValues_getD",
+      "classification": "NEW_FILE",
+      "source_line": 366,
+      "probe_line": 416,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Garbling-values-size-transport.patch"
+      ],
+      "supporting_patch_names": [
+        "DAGCircuit-size-reader.patch",
+        "DAGCircuit-eval-reader.patch"
+      ]
+    },
+    {
+      "id": "D046",
+      "module": "TCSlib.Cryptography.SecureComputation.Garbling",
+      "declaration": "garbledOutput_eq",
+      "classification": "NEW_FILE",
+      "source_line": 393,
+      "probe_line": 443,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Garbling-output-readers.patch"
+      ],
+      "supporting_patch_names": [
+        "DAGCircuit-size-reader.patch",
+        "DAGCircuit-eval-reader.patch"
+      ]
+    },
+    {
+      "id": "D047",
+      "module": "TCSlib.Cryptography.SecureComputation.GarblingSpecial",
+      "declaration": "nestedSpecial_decCorrect",
+      "classification": "NEW_FILE",
+      "source_line": 93,
+      "probe_line": 143,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "GarblingSpecial-decCorrect-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D048",
+      "module": "TCSlib.Cryptography.SecureComputation.ObliviousTransfer",
+      "declaration": "otProtocol_outV",
+      "classification": "NEW_FILE",
+      "source_line": 284,
+      "probe_line": 334,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ObliviousTransfer-otProtocol_outV-reader-order.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D049",
+      "module": "TCSlib.Cryptography.SecureComputation.ObliviousTransfer",
+      "declaration": "otProtocol_hbcSecure",
+      "classification": "NEW_FILE",
+      "source_line": 656,
+      "probe_line": 706,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "ObliviousTransfer-otProtocol_hbcSecure-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D050",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme",
+      "classification": "NEW_FILE",
+      "source_line": 88,
+      "probe_line": 138,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D051",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme",
+      "classification": "NEW_FILE",
+      "source_line": 89,
+      "probe_line": 139,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D052",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme",
+      "classification": "NEW_FILE",
+      "source_line": 91,
+      "probe_line": 141,
+      "within_declaration_ordinal": 3,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+        "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D053",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_multiMessageSecure",
+      "classification": "NEW_FILE",
+      "source_line": 106,
+      "probe_line": 156,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D054",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "source_line": 139,
+      "probe_line": 189,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D055",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "source_line": 140,
+      "probe_line": 190,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D056",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "source_line": 140,
+      "probe_line": 190,
+      "within_declaration_ordinal": 3,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D057",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "source_line": 141,
+      "probe_line": 191,
+      "within_declaration_ordinal": 4,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D058",
+      "module": "TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity",
+      "declaration": "specialScheme_wrongKey",
+      "classification": "NEW_FILE",
+      "source_line": 142,
+      "probe_line": 192,
+      "within_declaration_ordinal": 5,
+      "coverage_status": "POTENTIAL_CASCADES_PENDING_NATIVE",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D059",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "length_le_length_encodeMsgs",
+      "classification": "NEW_FILE",
+      "source_line": 375,
+      "probe_line": 425,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-decodeMsgs-delegate-decWords.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D060",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoMain_outV",
+      "classification": "NEW_FILE",
+      "source_line": 587,
+      "probe_line": 637,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-main-outV-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D061",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoMain_outP",
+      "classification": "NEW_FILE",
+      "source_line": 594,
+      "probe_line": 644,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-main-outP-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D062",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoHybrid_callA",
+      "classification": "NEW_FILE",
+      "source_line": 628,
+      "probe_line": 678,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-yaoHybrid_callA-typed-input.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D063",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoHybrid_callB",
+      "classification": "NEW_FILE",
+      "source_line": 634,
+      "probe_line": 684,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-yaoHybrid_callB-typed-input.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D064",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoHybrid_answersB_getD",
+      "classification": "NEW_FILE",
+      "source_line": 750,
+      "probe_line": 800,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-yaoHybrid_answersB_getD-typed-OT.patch"
+      ],
+      "supporting_patch_names": [
+        "Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+        "Yao-yaoHybrid_callA-typed-input.patch",
+        "Yao-yaoHybrid_callB-typed-input.patch"
+      ]
+    },
+    {
+      "id": "D065",
+      "module": "TCSlib.Cryptography.SecureComputation.Yao",
+      "declaration": "yaoHybrid_hbcSecure",
+      "classification": "NEW_FILE",
+      "source_line": 975,
+      "probe_line": 1025,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Yao-hybrid-HBC-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D066",
+      "module": "TCSlib.Cryptography.SecureComputation.YaoReal",
+      "declaration": "yaoProtocol_hbcSecure",
+      "classification": "NEW_FILE",
+      "source_line": 112,
+      "probe_line": 162,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "YaoReal-main-rounds-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D067",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep",
+      "declaration": "gniVerifierRep_efficient",
+      "classification": "CHANGED_CODE",
+      "source_line": 609,
+      "probe_line": 659,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "GI-gniVerifierRep-efficient-public-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D068",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRepGI",
+      "declaration": "giProverRep_efficient",
+      "classification": "CHANGED_CODE",
+      "source_line": 120,
+      "probe_line": 170,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "GI-giProverRep-efficient-public-readers.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D069",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep",
+      "declaration": "gniVerifierRep_next_lt",
+      "classification": "CHANGED_CODE",
+      "source_line": 152,
+      "probe_line": 202,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "GI-gniVerifierRep-next-terms.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D070",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep",
+      "declaration": "gniVerifierRep_next_ge",
+      "classification": "CHANGED_CODE",
+      "source_line": 173,
+      "probe_line": 223,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "GI-gniVerifierRep-next-terms.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D071",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI",
+      "declaration": "giProverRep_next_even",
+      "classification": "CHANGED_CODE",
+      "source_line": 215,
+      "probe_line": 265,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D072",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI",
+      "declaration": "giProverRep_next_odd",
+      "classification": "CHANGED_CODE",
+      "source_line": 233,
+      "probe_line": 283,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D073",
+      "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator",
+      "declaration": "attemptAt_poly",
+      "classification": "CHANGED_CODE",
+      "source_line": 257,
+      "probe_line": 307,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "NO_SAVED_PROPOSAL_WORKFLOW_QUEUED",
+      "patch_names": [],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D074",
+      "module": "TCSlib.LearningTheory.PAC.Prediction",
+      "declaration": "expectedErr_le_of_pacLearnsUnder",
+      "classification": "NEW_FILE",
+      "source_line": 170,
+      "probe_line": 220,
+      "within_declaration_ordinal": 1,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Prediction-expectedErr-pacLearnsUnder-reader.patch"
+      ],
+      "supporting_patch_names": []
+    },
+    {
+      "id": "D075",
+      "module": "TCSlib.LearningTheory.PAC.Prediction",
+      "declaration": "expectedErr_le_of_pacLearnsUnder",
+      "classification": "NEW_FILE",
+      "source_line": 162,
+      "probe_line": 212,
+      "within_declaration_ordinal": 2,
+      "coverage_status": "SAVED_PROPOSAL_PRESENT_NOT_VERIFIED",
+      "patch_names": [
+        "Prediction-expectedErr-pacLearnsUnder-reader.patch"
+      ],
+      "supporting_patch_names": []
+    }
+  ],
+  "patch_inventory": {
+    "BPPBridge-eval_polyLenExpr-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/BPPBridge-eval_polyLenExpr-reader.patch",
+      "sha256": "c896c767653d011e38de1bf1088909922049c244b8fe0770609f0925e4b59c4f",
+      "target_files": [
+        "TCSlib/Complexity/Randomized/Classes.lean",
+        "TCSlib/Cryptography/Randomness/BPPBridge.lean"
+      ],
+      "hunks": [
+        "@@ -254,2 +254,5 @@",
+        "@@ -64,3 +64,5 @@"
+      ]
+    },
+    "BPPBridge-verifier_toNUPPT-model-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/BPPBridge-verifier_toNUPPT-model-reader.patch",
+      "sha256": "2f23d8461d200e18f3d038bdb430ac7da92f42c94b1192459881b76320348cb3",
+      "target_files": [
+        "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+        "TCSlib/Cryptography/Randomness/BPPBridge.lean"
+      ],
+      "hunks": [
+        "@@ -82,2 +82,11 @@",
+        "@@ -81,3 +81,4 @@",
+        "@@ -94,3 +95,4 @@"
+      ]
+    },
+    "CCA2Scheme-correct-enc-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-correct-enc-coins-reader.patch",
+      "sha256": "495d121f73ea23071af855ffdb2cb65b83ae50d670a81d770e919e2b370f0ce1",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+      ],
+      "hunks": [
+        "@@ -321,3 +321,5 @@"
+      ]
+    },
+    "CCA2Scheme-correct-gen-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-correct-gen-coins-reader.patch",
+      "sha256": "ac644eb1ed3d76b21090cc1b3b523c9c1c0c72336b86a7be93e5fc92eb82118e",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+      ],
+      "hunks": [
+        "@@ -317,7 +317,9 @@"
+      ]
+    },
+    "CCA2Scheme-enc-length-enc-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-enc-length-enc-coins-reader.patch",
+      "sha256": "6dab03ce654e5fa5fbbb112eec8a9dbb22ca08f16289d23015847cd4546de399",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+      ],
+      "hunks": [
+        "@@ -334,3 +334,5 @@"
+      ]
+    },
+    "CCA2Scheme-enc-length-gen-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/CCA2Scheme-enc-length-gen-coins-reader.patch",
+      "sha256": "c09a9240c7d4686d80fe5815de6909be4e32767df536d7b87cca2ee55ef9c0fe",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/CCA2Scheme.lean"
+      ],
+      "hunks": [
+        "@@ -331,3 +331,5 @@"
+      ]
+    },
+    "Compose-coinLen-public-readers-term.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Compose-coinLen-public-readers-term.patch",
+      "sha256": "d6ad8ca9633c82ed1f559975173653b90a1cd6a5a50ce9d88fb0a444ff155600",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Compose.lean"
+      ],
+      "hunks": [
+        "@@ -436,13 +436,45 @@"
+      ]
+    },
+    "Compose-exec-map-zero-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Compose-exec-map-zero-reader.patch",
+      "sha256": "a8181d18dcae586ab6c2eb32c807aada29f17f40d23929a4ad3437330ea70bfa",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Compose.lean"
+      ],
+      "hunks": [
+        "@@ -114,7 +114,7 @@"
+      ]
+    },
+    "ComposePhases-exec-run-zero-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-exec-run-zero-reader.patch",
+      "sha256": "031225a7090492de66a98fbc732ae4a1f527f3aba4c6b9ff3738f1cd29cf8d12",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -242,7 +242,7 @@"
+      ]
+    },
+    "ComposePhases-outP-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-outP-readers.patch",
+      "sha256": "99253fd81e8f49ee0ee8034812c2388043b70466882ff59487a1ba791d5dd438",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -556,8 +556,10 @@"
+      ]
+    },
+    "ComposePhases-outV-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-outV-readers.patch",
+      "sha256": "82a900fbfe0c203594ec1fe3a080214b97a9044a5d7699062a1e71e97cdce59f",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -575,8 +575,10 @@"
+      ]
+    },
+    "ComposePhases-transcript-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-transcript-readers.patch",
+      "sha256": "f86e1a9f2a52813d99cb8ad4d16330854cb9401c26d088948b150b886d55008b",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -516,7 +516,9 @@"
+      ]
+    },
+    "ComposePhases-viewP-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-viewP-readers.patch",
+      "sha256": "33e74adfb327bd6bfb888a1d74846774bf3d2ac57ccff04382d093e8c5e43f66",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -528,5 +528,8 @@"
+      ]
+    },
+    "ComposePhases-viewV-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposePhases-viewV-readers.patch",
+      "sha256": "7a99643dea367280a49c748c168f457b3eef383f459ba5e4a5267aedcab6d6fb",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposePhases.lean"
+      ],
+      "hunks": [
+        "@@ -540,5 +540,8 @@"
+      ]
+    },
+    "ComposeSecurity-compose_msg_bound-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-compose_msg_bound-readers.patch",
+      "sha256": "e2015ed45fadd7b7ea955e80964a666b671d6028a255adb1b4abf9404657f50f",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -205,20 +205,20 @@"
+      ]
+    },
+    "ComposeSecurity-exists_mainExec_eq_transcript-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-exists_mainExec_eq_transcript-readers.patch",
+      "sha256": "907503b8fcf3504c67c7b2c1dca73cde26586b36a6aeb3a1647116d9acdeecc5",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -126,13 +126,13 @@"
+      ]
+    },
+    "ComposeSecurity-exists_runExec_eq_transcript-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-exists_runExec_eq_transcript-readers.patch",
+      "sha256": "165f782c1798627ebce33e8d176b1b403467158c48392dca5c3c35f2532680c9",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -162,13 +162,17 @@"
+      ]
+    },
+    "ComposeSecurity-polyTime_compose-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ComposeSecurity-polyTime_compose-readers.patch",
+      "sha256": "8c96cc500bb7fa74642f1d34157090eaa23bec96d26a10003249e6ecacb3787c",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -307,7 +307,12 @@"
+      ]
+    },
+    "DAGCircuit-eval-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-eval-reader.patch",
+      "sha256": "199619c44f8f6fc9d1c1e208d7e46a220f922f0a6d75141d0962935c9cc7288d",
+      "target_files": [
+        "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+      ],
+      "hunks": [
+        "@@ -473,6 +473,10 @@"
+      ]
+    },
+    "DAGCircuit-size-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/DAGCircuit-size-reader.patch",
+      "sha256": "7dffc286e01fc08c85b1680f9223597c712d705a3d534dfb2aa030585dc95eae",
+      "target_files": [
+        "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean"
+      ],
+      "hunks": [
+        "@@ -488,6 +488,9 @@"
+      ]
+    },
+    "Defs-otFunctionality_f_snd_apply-typed-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+      "sha256": "6061db3e8cc5dd2113feceda8b46b0626d19216aca6020e229853c15b718476a",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Defs.lean"
+      ],
+      "hunks": [
+        "@@ -219,4 +219,16 @@"
+      ]
+    },
+    "GI-giProverRep-efficient-public-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-giProverRep-efficient-public-readers.patch",
+      "sha256": "fc4dffddcd8ca9c4f9628ccee6e41ccf91b7accfc022c7bb4141322dd198243e",
+      "target_files": [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean"
+      ],
+      "hunks": [
+        "@@ -239,6 +239,19 @@",
+        "@@ -104,8 +104,8 @@",
+        "@@ -117,7 +117,7 @@"
+      ]
+    },
+    "GI-gniVerifierRep-efficient-public-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-gniVerifierRep-efficient-public-readers.patch",
+      "sha256": "6252fce6b336b07f58834da02137a3c59505c51c55a714d376a4afa81ecc524f",
+      "target_files": [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean"
+      ],
+      "hunks": [
+        "@@ -170,6 +170,25 @@",
+        "@@ -590,8 +590,8 @@",
+        "@@ -606,7 +606,7 @@"
+      ]
+    },
+    "GI-gniVerifierRep-next-terms.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GI-gniVerifierRep-next-terms.patch",
+      "sha256": "d572d42f26fd3e321eb5ec3e645729fab31d213c8e9513ba59770069e1304da0",
+      "target_files": [
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+        "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean"
+      ],
+      "hunks": [
+        "@@ -189,6 +189,14 @@",
+        "@@ -139,39 +139,25 @@"
+      ]
+    },
+    "Garbling-output-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Garbling-output-readers.patch",
+      "sha256": "e81b24063f507873f342fd2e463cbfbf3808a3d12997b5f95b2286c7e2ccb122",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Garbling.lean"
+      ],
+      "hunks": [
+        "@@ -390,7 +390,10 @@"
+      ]
+    },
+    "Garbling-values-size-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Garbling-values-size-transport.patch",
+      "sha256": "1bb941b1646f496f8c72499eb9d104675c3d86af63b25f0b3139d22172f722dc",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Garbling.lean"
+      ],
+      "hunks": [
+        "@@ -363,7 +363,8 @@"
+      ]
+    },
+    "GarblingSpecial-decCorrect-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/GarblingSpecial-decCorrect-reader.patch",
+      "sha256": "6084d10b4dbeb0646a09e5c3f844a9edd3588b99c2ac7275495b9ce759757e6f",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean"
+      ],
+      "hunks": [
+        "@@ -90,6 +90,7 @@"
+      ]
+    },
+    "HashAndSign-correct-coin-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-correct-coin-transport.patch",
+      "sha256": "1b77738ecbb05dd4d064a8289f902d8487661fcdec53bba29ef219c28e93b722",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+      ],
+      "hunks": [
+        "@@ -272,3 +272,9 @@",
+        "@@ -285,17 +291,31 @@"
+      ]
+    },
+    "HashAndSign-exists-lamport-msgLen.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-exists-lamport-msgLen.patch",
+      "sha256": "9edc940b0ddf1063dce639afa3368f75addc1d7fc50148acf6ca24b02989b70e",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+      ],
+      "hunks": [
+        "@@ -363,8 +363,13 @@"
+      ]
+    },
+    "HashAndSign-runAt_hsGen-coin-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsGen-coin-transport.patch",
+      "sha256": "4787152aec98c9c8397647a30cff0c6288a1ed8be527e56e208e7aa50dd933fb",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+      ],
+      "hunks": [
+        "@@ -226,6 +226,18 @@",
+        "@@ -243,19 +255,22 @@"
+      ]
+    },
+    "HashAndSign-runAt_hsSign-coin-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/HashAndSign-runAt_hsSign-coin-transport.patch",
+      "sha256": "698714417719bec91b768ef2b208465c9cde72fee6d4d6f8acc543c7329379ba",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/HashAndSign.lean"
+      ],
+      "hunks": [
+        "@@ -262,6 +262,9 @@"
+      ]
+    },
+    "Lamport-correctness-coinLen-public-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-correctness-coinLen-public-readers.patch",
+      "sha256": "ff6425e2abf388147808c946e425e485bd135d1c80aedfb65dcf64fda2f9a05a",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/Lamport.lean"
+      ],
+      "hunks": [
+        "@@ -470,8 +470,8 @@"
+      ]
+    },
+    "Lamport-genFun-public-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-genFun-public-readers.patch",
+      "sha256": "fe42b7f9951d5023489527a2396851607d66aee00d7bbb7d4e790e001e9a21d8",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/Lamport.lean"
+      ],
+      "hunks": [
+        "@@ -305,7 +305,8 @@"
+      ]
+    },
+    "Lamport-signFun-public-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-signFun-public-readers.patch",
+      "sha256": "4e830b0dbbafbfa26fdb470ac0e4b92a5da33311d2c1aa8970802a03597b35dd",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/Lamport.lean"
+      ],
+      "hunks": [
+        "@@ -318,7 +318,8 @@"
+      ]
+    },
+    "Lamport-verFun-decision-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Lamport-verFun-decision-transport.patch",
+      "sha256": "04e79864f8ca38cc315bf97d57c5e8efb3cb4fa4f1a40f2c746d2409a6ac46a9",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/Lamport.lean"
+      ],
+      "hunks": [
+        "@@ -362,9 +362,11 @@"
+      ]
+    },
+    "Learning-not-weakLearns-negligible-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Learning-not-weakLearns-negligible-reader.patch",
+      "sha256": "7418e24ea8a841ebf77fc2d45bd65643ececb656c191075fd39ecf4f09008396",
+      "target_files": [
+        "TCSlib/Cryptography/Randomness/Learning.lean"
+      ],
+      "hunks": [
+        "@@ -119,7 +119,9 @@"
+      ]
+    },
+    "MultiMessage-prfScheme-machine-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/MultiMessage-prfScheme-machine-readers.patch",
+      "sha256": "8e58b3ab478459a3d0ed731c2cfcf38546099578fa15eb628ef8c5b16faa3ba1",
+      "target_files": [
+        "TCSlib/Cryptography/Asymptotic/MultiMessage.lean"
+      ],
+      "hunks": [
+        "@@ -529,6 +529,23 @@"
+      ]
+    },
+    "NonMalleable-doc-source-fidelity.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/NonMalleable-doc-source-fidelity.patch",
+      "sha256": "520aafab481c51679e04aedc3db1dbd98da854271ac87c8d05b096a5dd6ba283",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/NonMalleable.lean"
+      ],
+      "hunks": [
+        "@@ -33,8 +33,15 @@"
+      ]
+    },
+    "ObliviousTransfer-otProtocol_hbcSecure-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ObliviousTransfer-otProtocol_hbcSecure-reader.patch",
+      "sha256": "0ab1d177dbc3d2d6b4f4506e238b17d90641f219cbead694059a0466eadd8771",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean"
+      ],
+      "hunks": [
+        "@@ -652,8 +652,9 @@"
+      ]
+    },
+    "ObliviousTransfer-otProtocol_outV-reader-order.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/ObliviousTransfer-otProtocol_outV-reader-order.patch",
+      "sha256": "b1faa50f47fa7207dd67ba0246d6820ab95a4316ab854e2b0d0139408fa6d959",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean"
+      ],
+      "hunks": [
+        "@@ -279,9 +279,8 @@"
+      ]
+    },
+    "PRFMAC-correct-coin-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFMAC-correct-coin-transport.patch",
+      "sha256": "cbb0602e66b0bdca7acbf8b7e09266cb7ae38d6058b53f090e1f9bb3bf0ef7a6",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/PRFMAC.lean"
+      ],
+      "hunks": [
+        "@@ -97,16 +97,19 @@"
+      ]
+    },
+    "PRFMAC-correct-coin-transport.recount.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFMAC-correct-coin-transport.recount.patch",
+      "sha256": "82b5e21581012900aadf61253f13022b2df47b4410326617ac4e9bd57d4a222d",
+      "target_files": [
+        "TCSlib/Cryptography/Authentication/PRFMAC.lean"
+      ],
+      "hunks": [
+        "@@ -97,15 +97,18 @@"
+      ]
+    },
+    "PRFScheme-enc-length-coin-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFScheme-enc-length-coin-transport.patch",
+      "sha256": "4405173abcba7a95e4cd204c76cfc21e23c44835549f8018a66844b6e39e5354",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/PRFScheme.lean"
+      ],
+      "hunks": [
+        "@@ -56,16 +56,24 @@"
+      ]
+    },
+    "PRFScheme-not-cca2-predicate-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PRFScheme-not-cca2-predicate-readers.patch",
+      "sha256": "4813e8c4ab9ba334d095a35dd2c4be326761c2c2c1a121768f7f6bf9114847ab",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/PRFScheme.lean"
+      ],
+      "hunks": [
+        "@@ -142,8 +142,10 @@"
+      ]
+    },
+    "Prediction-expectedErr-pacLearnsUnder-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Prediction-expectedErr-pacLearnsUnder-reader.patch",
+      "sha256": "d3e59f48faf5e38056ebcde8961a69514f4453d26df33f73378b44c63a7d5739",
+      "target_files": [
+        "TCSlib/LearningTheory/PAC/Prediction.lean"
+      ],
+      "hunks": [
+        "@@ -167,7 +167,7 @@"
+      ]
+    },
+    "PublicKey-ofPadded-correct-coins-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-ofPadded-correct-coins-transport.patch",
+      "sha256": "637181610c6bf4996d0270787aebe3f4ca55de5985e5006dbcd218fee0a48318",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/PublicKey.lean"
+      ],
+      "hunks": [
+        "@@ -268,7 +268,7 @@"
+      ]
+    },
+    "PublicKey-ofPadded-enc_length-coins-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-ofPadded-enc_length-coins-transport.patch",
+      "sha256": "c89c07f4238068843e9812987f9b03160e778cc5a129aa73473bd184a05561ae",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/PublicKey.lean"
+      ],
+      "hunks": [
+        "@@ -272,7 +272,7 @@"
+      ]
+    },
+    "PublicKey-runAt_padEnc-coins-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/PublicKey-runAt_padEnc-coins-transport.patch",
+      "sha256": "f7e52d031b254d58ae8047576ed4972d4f4a9fda35b9698e2e0e7a371cd09e0a",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/PublicKey.lean"
+      ],
+      "hunks": [
+        "@@ -189,12 +189,16 @@"
+      ]
+    },
+    "SequentialZK-doc-abort-premise.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SequentialZK-doc-abort-premise.patch",
+      "sha256": "71754da3f546cd37b3392edf019f6e316cb110d9d5f8071a0d4ed33508530b81",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/SequentialZK.lean"
+      ],
+      "hunks": [
+        "@@ -40,11 +40,16 @@",
+        "@@ -408,16 +413,21 @@"
+      ]
+    },
+    "SequentialZK-seqRep_exec_phase-zero-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SequentialZK-seqRep_exec_phase-zero-readers.patch",
+      "sha256": "3cf5f9cf0b0f8cade6ea2d2e87d468eaa4667acdd6810343b42981b4c587ef64",
+      "target_files": [
+        "TCSlib/Cryptography/Composability/SequentialZK.lean"
+      ],
+      "hunks": [
+        "@@ -307,11 +307,11 @@"
+      ]
+    },
+    "SpecialEncryptionSecurity-correct-enc-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-enc-coins-reader.patch",
+      "sha256": "c2bb891d9ce89f485f17206ed48f82a0581c997cad56fa3eb083821f9bc9e859",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -89,2 +89,4 @@"
+      ]
+    },
+    "SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-evaluator-tape-transport.patch",
+      "sha256": "c6101eea03a6f5452120ed6b82c259abef1f819fa91812f50dc73aeef8e87626",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -90,3 +90,5 @@"
+      ]
+    },
+    "SpecialEncryptionSecurity-correct-gen-coins-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/SpecialEncryptionSecurity-correct-gen-coins-reader.patch",
+      "sha256": "4d432c16a773f770b2027e97d66a7beef12d28f43b0c5cbca7a0bf4cf605044a",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean"
+      ],
+      "hunks": [
+        "@@ -85,7 +85,9 @@"
+      ]
+    },
+    "Yao-decodeMsgs-delegate-decWords.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-decodeMsgs-delegate-decWords.patch",
+      "sha256": "df8ad758103ae54ecaa42fdfc5c7ca889665459a1b9437372eeda47e4c18e976",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -324,80 +324,41 @@"
+      ]
+    },
+    "Yao-hybrid-HBC-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-hybrid-HBC-reader.patch",
+      "sha256": "f9cf130e98ec25d524635c45e056e501506d82e22953ccb0fded4318642fd909",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -972,8 +972,9 @@"
+      ]
+    },
+    "Yao-main-outP-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-main-outP-readers.patch",
+      "sha256": "ec31652d251edf6ec14b8192d101b29d81774e3aed83ca60e6787f594b30e04b",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -591,7 +591,10 @@"
+      ]
+    },
+    "Yao-main-outV-readers.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-main-outV-readers.patch",
+      "sha256": "5550b3908a7f23d05ee368200af11960cb4c08fec23b3ced0142434d1bfb0ac2",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -584,7 +584,10 @@"
+      ]
+    },
+    "Yao-yaoHybrid_answersB_getD-typed-OT.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_answersB_getD-typed-OT.patch",
+      "sha256": "a4613412cafe9001d416493f854cf0a91f5890de3e2f6ecfb3a1666d142a9ac8",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -712,21 +712,15 @@"
+      ]
+    },
+    "Yao-yaoHybrid_callA-typed-input.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callA-typed-input.patch",
+      "sha256": "84cb220ccc7c6d7099bee5591354c893f5a2e11fb38a931f77b5b363d0f21a5a",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -586,7 +586,9 @@"
+      ]
+    },
+    "Yao-yaoHybrid_callB-typed-input.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/Yao-yaoHybrid_callB-typed-input.patch",
+      "sha256": "acb5dbebe258635557923797c60569bdc0f6125e6635179ed196ac993ba8b599",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/Yao.lean"
+      ],
+      "hunks": [
+        "@@ -594,7 +594,9 @@"
+      ]
+    },
+    "YaoReal-main-rounds-reader.patch": {
+      "path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/YaoReal-main-rounds-reader.patch",
+      "sha256": "9459e58f1b94042097c904f17ebe6432dee067f8ae018c8f21654b36e63fa340",
+      "target_files": [
+        "TCSlib/Cryptography/SecureComputation/YaoReal.lean"
+      ],
+      "hunks": [
+        "@@ -109,7 +109,13 @@"
+      ]
+    }
+  },
+  "supporting_or_ancillary_artifacts_not_counted_as_direct_75_diagnostic_repairs": [
+    "DAGCircuit-eval-reader.patch",
+    "DAGCircuit-size-reader.patch",
+    "Defs-otFunctionality_f_snd_apply-typed-reader.patch",
+    "MultiMessage-prfScheme-machine-readers.patch",
+    "NonMalleable-doc-source-fidelity.patch",
+    "PRFMAC-correct-coin-transport.patch",
+    "PublicKey-ofPadded-correct-coins-transport.patch",
+    "PublicKey-ofPadded-enc_length-coins-transport.patch",
+    "SequentialZK-doc-abort-premise.patch"
+  ],
+  "limits": [
+    "Saved artifact presence and declared target scope only; no claim that a proposal elaborates, applies cleanly in the final aggregate, removes every diagnostic, or passes a full seal.",
+    "No applied/native status inferred from this checklist; prior successful checks are not final-source replay evidence.",
+    "Six SpecialEncryptionSecurity later diagnostics remain potential cascades pending native checking, not covered/proved.",
+    "Three changed GI diagnostics have no saved proposal in this snapshot and remain workflow queued.",
+    "All 120 source-identical inherited observations remain failures outside this new/changed planning subset.",
+    "No Lean/cache/build, library edits, Git mutations, worker-program execution, or active evidence writes performed."
+  ]
+}

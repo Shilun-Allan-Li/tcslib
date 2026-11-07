@@ -1,0 +1,16 @@
+--- a/TCSlib/Cryptography/Composability/SequentialZK.lean
++++ b/TCSlib/Cryptography/Composability/SequentialZK.lean
+@@ -307,11 +307,11 @@
+     intro _
+     constructor
+     · rw [List.drop_eq_nil_of_le]
+-      · rfl
++      · exact (congrArg Prod.fst (exec_zero π.P π.V vF x y z sP sV)).symm
+       · rw [exec_fst_length, countP_moverIsV]
+         cases vF <;> simp <;> omega
+     · rw [List.drop_eq_nil_of_le]
+-      · rfl
++      · exact (congrArg Prod.snd (exec_zero π.P π.V vF x y z sP sV)).symm
+       · rw [exec_snd_length, countP_not_moverIsV]
+         cases vF <;> simp <;> omega
+   | succ t ih =>

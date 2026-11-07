@@ -1,0 +1,9 @@
+--- a/TCSlib/Cryptography/Composability/CCA2Scheme.lean
++++ b/TCSlib/Cryptography/Composability/CCA2Scheme.lean
+@@ -334,3 +334,5 @@
+     have hk₂ : ((List.ofFn rg).drop n).length = 2 * n := by simp [hρ]; omega
+-    have hr : (List.ofFn r).length = n := by simp; rfl
++    have hr : (List.ofFn r).length = n := by
++      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
++        PolyExpr.eval_var]
+     have hp := length_eval_of_length F E hFE hk₁ hr
