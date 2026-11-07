@@ -34,6 +34,22 @@ Formalize Chapters 5–8 of [PS10] R. Pass, a. shelat, *A Course in Cryptography
 Out of scope: [PS10] ch. 1 (classical ciphers, Shannon secrecy) and the appendices, which are not
 requested; and the sections the notes leave as outlines (§5.9; §7.2.3–7.3).
 
+## Implications layer (I1; user, 2026-11-07 PST)
+
+Add a discoverable composition layer, one file per cryptographic primitive, collecting
+explicit assumption-to-existence theorems with short proofs. Start with the public-key pilot
+at `Cryptography/Implications/PublicKey.lean` and a root-exported `Implications.lean` facade.
+Drafts and the route/status inventory are in `briefs/pass-shelat-ch5-8/implications/`.
+
+Preserve exact security predicates and every remaining hypothesis. First implement the closed
+generic hard-core-TDP → single-bit → message → multi-message wrappers. Track exact CPA as a
+separate conclusion dependent on Gate 06C's bridge. Record RSA/Rabin length normalization and
+ElGamal's model conversion as explicit pending bridges; do not disguise them with impossible
+extra premises. Substantive missing bridges follow contract/gate/fill discipline; ask the user
+Codex or Claude before any new external job. Thin wrappers are maintainer work and land by PR.
+This is a companion front while Gate 06 continues; S2 remains dispatched and its order before
+clean-up part 2 is unchanged.
+
 ## What ch. 5–8 need from ch. 2–4
 
 They need ch. 2–4's **definitions**, almost never its **proofs**. The ch. 2–4 layer's 63 open
@@ -402,3 +418,4 @@ These need agreement before S1 completes. Suggested points:
 | 2026-11-06 (PST) | **Gate 06 resumed after S2 dispatch preparation.** Current campaign `9e51bf9cd4ee35ff0dd373155f6c9c7bd573c170` merged into isolated integration at `0a549ec16dd44b8d3694c3a23a04f943b63fcf2d`; local checkpoint `2b202357876c21664b8c7db97bae14661f0ea610` adds four complete topic facades/root exports and eight T1/T2 sketch recitations. Static comparison confirms code bodies unchanged in all seven existing sketch files; dependency order now 466 modules/145 roots. Two internal read-only reviews recorded concrete remaining repairs and their unchecked-term limits; canonical evaluator correctness/cost must remain in OT, and 3COL requires a quantitative negligibility lemma. No cache/Lean run, branch push, PR or Gate 06 audit issue yet. S2 remains ready for user dispatch, not confirmed dispatched. | record |
 | 2026-11-06 (PST) | **S2 dispatched to Claude (user confirmation).** Frozen source `31348fcf7dee32f84db1fc8f929d80653137995e`, records `2ea9feca33e39a93ea514fff5197f043882ed8e8`, exchange pack `d38aea9614bf072264e954a89e7078e7dd7dc24b`, `outbox/fills/reject-blocks-s2/`. Await complete checkpoint/final payloads only under `inbox/fills/reject-blocks-s2/`; no worker campaign/fill branch push. Gate 06 resumes in its isolated PR worktree. User excludes computer apps; checking-method clarification is pending because the latest supplied AGENTS requires LeanInfoView while the campaign instruction requires scripts/lean_check_tree.sh. Static repairs continue without either checking method meanwhile. | record |
 | 2026-11-06 (PST) | **Checking-method ruling (user): use scripts/lean_check_tree.sh**, retaining campaign one-module-at-a-time checks; do not use computer apps. This resolves the latest generic AGENTS/LeanInfoView conflict. **Gate 06 native setup passed:** 145-root narrowed cache exited 0, all 11 present packages match manifest, four documentation packages absent, zero-length object scan empty, one-root cache probe passed. Native memory proxy 6608830464 bytes and disk 480281387008 bytes passed the initial floors; proxy is not Linux MemAvailable. Fresh serial 466-module replay started in campaign `.lake/ps-maintainer/oleans-gate06-r1`; no completion claim. Source/API repairs continue in the isolated integration worktree; no computer apps, library-wide build or unfiltered cache used. | ruling / record |
+| 2026-11-07 (PST) | **Implications layer authorized (user).** Add per-primitive assumption-to-existence theorems and short composition proofs; maintainer starts the contents draft internally, with a public-key pilot and a cross-primitive inventory. Draft `implications/public-key-draft.md` distinguishes SingleBitSecure, PublicKeyScheme.Secure/MultiMessageSecure, exact CPA and GroupPKScheme security, retains ArithmeticFP/length/hardness premises, and records the known RSA/Rabin glPad length gap. Closed generic wrappers come first; exact CPA waits for Gate 06C; substantial missing bridges need separate public contracts/gates/fills. No new external job or Lean PR is issued by this draft. Gate 06 continues. | ruling / record |
