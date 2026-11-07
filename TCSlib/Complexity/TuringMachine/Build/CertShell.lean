@@ -502,7 +502,8 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
   have hσF (i : Fin F₀.k) : (σF i).val = m + i.val := rfl
   have hσS (i : Fin S₀.k) : (σS i).val = m + (F₀.k + i.val) := rfl
   have hι (i : Fin (1 + P.k)) : (ι i).val = m + (F₀.k + (S₀.k + i.val)) := rfl
-  have hcapval : cap.val = m + (F₀.k + (S₀.k + (1 + P.k))) := rfl
+  have hcapval : cap.val = m + (F₀.k + (S₀.k + (1 + P.k))) := by
+    simp only [cap, vhostCap_eq, Fin.coe_natAdd, Fin.val_zero, Nat.add_zero]
   let v := ρ ⟨0, hm⟩
   let vf := σF ⟨0, hkF⟩
   let vs := σS ⟨0, hkS⟩
@@ -520,7 +521,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
     all_goals
       apply Fin.ne_of_val_ne
       simp only [v, vf, vs, vx, vu, hρ, hσF, hσS, hι,
-        vhostBuffer, vhostBank, Fin.coe_castAdd, Fin.coe_natAdd]
+        vhostBuffer_eq, vhostBank_eq, Fin.coe_castAdd, Fin.coe_natAdd]
       omega
   rcases hdistinct with ⟨hvf, hvx, hvs, hvu, hfx, hfs, hfu, hxs, hxu, hsu⟩
   let CF := embedEmitTM σF FM
@@ -531,7 +532,11 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
   let M₃ := seamCompTM M₂ (.inr .done) (transferTM K v vs) .sweep
   let M₄ := seamCompTM M₃ (.inr .done) CS se
   let M₅ := seamCompTM M₄ (.inr sx) (transferTM K vs vu) .sweep
-  let D : FinTM Bool := ⟨K, _, M₅⟩
+  let D : FinTM Bool := ⟨K, _,
+    {M₅ with q₀ := .inl (.inl (.inl (.inl (.inl SweepPhase.sweep))))}⟩
+  have hD_run {y : List Bool} (c : Cfg K Bool D.State y) (t : ℕ) :
+      D.tm.runFrom c t = M₅.runFrom c t :=
+    MultiTapeTM.runFrom_with_q₀ _ _ _ _
   refine ⟨D, .inr .done, ρ, ι, cap, 30 + af * (3 * f + 4) + as * (3 * s + 4), hcap, ?_⟩
   intro y x u
   let pair := pairEncode x u
@@ -566,12 +571,12 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       all_goals
         apply Fin.ne_of_val_ne
         simp only [v, vf, vx, hρ, hσF, hσS, hι,
-        vhostBuffer, Fin.coe_castAdd]
+        vhostBuffer_eq, Fin.coe_castAdd]
         have hi := i.isLt
         omega
     simp [w₃, w₂, w₀, hn.1, hn.2.1, hn.2.2]
   -- The copy, read from the framed contract at the canonical seam.
-  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) rfl
+  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) (Cfg.ofWords_state _ _)
     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
   have hr₀ := hk₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w₀ v vf (by simp [w₀, hvf.symm]))
   have hc₀ := hk₀.2.1
@@ -589,7 +594,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       have hn : i ≠ vf := fun he => hi ⟨⟨0, hkF⟩, he.symm⟩
       simp [w₁, w₂, hn]) hr₁ hc₁
   have h2 : w₂ vf = x := Function.update_self _ _ _
-  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) rfl
+  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) (Cfg.ofWords_state _ _)
     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
   have hr₂ := hk₂.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₂ vf vx hfx
     (by simp [w₂, w₀, hfx.symm, hvx.symm]))
@@ -598,7 +603,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
   set t₂ := 2 * x.length + 2 with ht₂def
   have ht₂ : t₂ ≤ 3 * x.length + 3 := by omega
   have h3 : w₃ v = pair := by simp [w₃, w₂, w₀, hvx, hvf]
-  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) rfl
+  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) (Cfg.ofWords_state _ _)
     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
   have hr₃ := hk₃.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₃ v vs hvs
     (by simp [w₃, w₂, w₀, hxs.symm, hfs.symm, hvs.symm]))
@@ -616,7 +621,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       have hn : i ≠ vs := fun he => hi ⟨⟨0, hkS⟩, he.symm⟩
       simp [w₄, w₅, hn]) hr₄ hc₄
   have h5 : w₅ vs = u := Function.update_self _ _ _
-  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) rfl
+  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) (Cfg.ofWords_state _ _)
     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
   have hr₅ := hk₅.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₅ vs vu hsu
     (by simp [w₅, w₃, w₂, w₀, hsu.symm, hvu.symm, hxu.symm, hfu.symm]))
@@ -634,7 +639,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
   have h05 := cert_seq M₄ (transferTM K vs vu) (.inl (.inl (.inl (.inl .sweep))))
     (.inr sx) .sweep .done w₀ w₅ w₆ h04.1 h04.2 hr₅ hc₅
   refine ⟨(((((t₀ + 1 + t₁) + 1 + t₂) + 1 + t₃) + 1 + t₄) + 1 + t₅), ?_,
-    (fun i => FinTM.bufferTape (w₆ i)), (fun _ => 0), h05.2, ?_⟩
+    (fun i => FinTM.bufferTape (w₆ i)), (fun _ => 0), ?_, ?_⟩
   · simp only [pair, length_pairEncode] at ht₀ ht₁ ht₃ ht₄
     have hfbound : t₁ ≤ af * (3 * f + 4) * (x.length + u.length + 1) := by
       apply ht₁.trans
@@ -648,23 +653,30 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
       nlinarith
     rw [Nat.add_mul, Nat.add_mul]
     omega
-  · refine h05.1.trans ?_
+  · simpa only [hD_run] using h05.2
+  · rw [hD_run]
+    refine h05.1.trans ?_
     symm
     apply cert_silent_words (vhostEmitTM P.tm) ι cap hcap w₆ _ (P.tm.q₀, true)
-      (Sum.inr SweepPhase.done) rfl rfl
+      (Sum.inr SweepPhase.done)
+      (by rw [vhostCfg_state, Cfg.ofWords_state, Option.map_some])
+      (vhostCfg_inputPos ..)
     · intro i
+      funext p
+      rw [vhostCfg_workTapes]
       refine Fin.addCases ?_ ?_ i
       · intro z
         have hz : z = 0 := Subsingleton.elim _ _
         subst z
-        change FinTM.bufferTape x = FinTM.bufferTape (w₆ vx)
+        simp only [Fin.addCases_left]
+        rw [← vhostBuffer_eq]
+        change FinTM.bufferTape x p = FinTM.bufferTape (w₆ vx) p
         rw [hfinal]
         simp [hxu]
       · intro z
-        simp only [vhostCfg, Fin.addCases_right, Cfg.ofWords]
-        change FinTM.bufferTape (Function.update (fun _ => []) j u z) =
-          FinTM.bufferTape (w₆ (ι (vhostBank z)))
-        apply congrArg FinTM.bufferTape
+        simp only [Fin.addCases_right, Cfg.ofWords_workTapes]
+        rw [← vhostBank_eq]
+        apply congrArg (fun word => FinTM.bufferTape word p)
         rw [hfinal]
         by_cases hz : z = j
         · subst z
@@ -675,20 +687,21 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
               apply hz
               apply Fin.ext
               have he' := congrArg Fin.val he
-              simp only [ vu, hι, vhostBank, Fin.coe_natAdd] at he'
+              simp only [ vu, hι, vhostBank_eq, Fin.coe_natAdd] at he'
               omega
             · apply Fin.ne_of_val_ne
               simp only [ vx, hι,
-        vhostBuffer, vhostBank, Fin.coe_castAdd, Fin.coe_natAdd]
+        vhostBuffer_eq, vhostBank_eq, Fin.coe_castAdd, Fin.coe_natAdd]
               omega
           simp [hz, hn.1, hn.2]
     · intro i
       refine Fin.addCases ?_ ?_ i
       · intro z
-        simp [vhostCfg, Cfg.ofWords]
+        simp only [vhostCfg_workTapePos, Fin.addCases_left, Cfg.ofWords_inputPos,
+          Fin.val_one, Nat.cast_one, sub_self]
       · intro z
-        simp [vhostCfg, Cfg.ofWords]
-    · rfl
+        simp only [vhostCfg_workTapePos, Fin.addCases_right, Cfg.ofWords_workTapePos]
+    · rw [vhostCfg_output, Cfg.ofWords_output, List.nil_append]
     · rw [hfinal]
       have hcx : cap ≠ vx := fun he => hcap ⟨vhostBuffer P.k, he.symm⟩
       have hcu : cap ≠ vu := fun he => hcap ⟨vhostBank j, he.symm⟩

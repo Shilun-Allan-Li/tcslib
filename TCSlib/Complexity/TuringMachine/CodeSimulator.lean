@@ -1248,6 +1248,17 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
           C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
             Cfg.ofWords exit (Function.update (stateWord C.k arg) dst (f arg)) := by
   classical
+  have canonical_map {k : ℕ} {S S' : Type} {x : List Bool}
+      (q : S) (w : Fin k → List Bool) (f : S → S') :
+      (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := by
+    apply Cfg.mapState_eq_of_fields
+    · rw [Cfg.ofWords_state, Cfg.ofWords_state, Option.map_some]
+    · rw [Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+    · funext j p
+      rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapes]
+    · funext j
+      rw [Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos]
+    · rw [Cfg.ofWords_output, Cfg.ofWords_output]
   obtain ⟨I, enter, leave, a, positive, installed⟩ := canonStrictInstall M f T hM
   let zero : Fin I.k := ⟨0, positive⟩
   let dst : Fin (I.k + 1) := zero.succ
@@ -1263,20 +1274,20 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
   let w := stateWord (I.k + 1) arg
   let copied := Function.update w dst arg
   let result := Function.update w dst (f arg)
-  have source : w 0 = arg := by simp [w, stateWord]
-  have fresh : w dst = [] := by simp [w, stateWord, dst]
+  have source : w 0 = arg := by simp [w, stateWord_eq]
+  have fresh : w dst = [] := by simp [w, stateWord_eq, dst]
   have distinct : (0 : Fin (I.k + 1)) ≠ dst := by
     intro h
     have := congrArg Fin.val h
     simp [dst] at this
   have onBank (v : List Bool) (i : Fin I.k) :
       (Function.update w dst v) (bank i) = stateWord I.k v i := by
-    simp [w, stateWord, dst, bank, zero, Function.update_apply, Fin.ext_iff]
+    simp [w, stateWord_eq, dst, bank, zero, Function.update_apply, Fin.ext_iff]
   have offBank (j : Fin (I.k + 1)) (hj : j ∉ Set.range bank) : copied j = result j := by
     have ne : j ≠ dst := fun eq => hj ⟨zero, eq.symm⟩
     simp only [copied, result, Function.update_of_ne ne]
   -- The copy, read from the framed contract at the canonical seam.
-  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) rfl
+  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) (Cfg.ofWords_state _ _)
     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
   have run₀ := framed₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w 0 dst fresh)
   have cut₀ := framed₀.2.1
@@ -1298,16 +1309,16 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
   have secondCut (u : ℕ) (hu : u < t₁) :
       (E.runFrom (Cfg.ofWords (input := x) enter copied) u).state ≠ some leave := by
     rw [lift]
-    exact cut₁ u hu
+    simpa only [embedEmitCfg_state] using cut₁ u hu
   have second' : E.runFrom
       ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState fun _ => enter) t₁ =
-      Cfg.ofWords leave result := second
+      Cfg.ofWords leave result := by simpa only [canonical_map] using second
   have cut' (u : ℕ) (hu : u < t₁) :
       (E.runFrom ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState
-        fun _ => enter) u).state ≠ some leave := secondCut u hu
-  have whole := seamCompTM_run_ofCfg P .done E enter run₀ rfl cut₀ second'
+        fun _ => enter) u).state ≠ some leave := by simpa only [canonical_map] using secondCut u hu
+  have whole := seamCompTM_run_ofCfg P .done E enter run₀ (Cfg.ofWords_state _ _) cut₀ second'
   have first := seamCompTM_firstReturn_ofCfg P .done E enter leave
-    run₀ rfl cut₀ second' rfl cut'
+    run₀ (Cfg.ofWords_state _ _) cut₀ second' (Cfg.ofWords_state _ _) cut'
   refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
   · calc
       t₀ + 1 + t₁ ≤ 3 * arg.length + 4 +
@@ -1315,8 +1326,8 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
       _ ≤ (a + 4) * (T arg.length + arg.length + (f arg).length + 1) := by
         rw [Nat.add_mul]
         omega
-  · simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using first
-  · simpa only [C, result, w, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+  · simpa only [C, MultiTapeTM.runFrom_with_q₀, canonical_map] using first
+  · simpa only [C, result, w, MultiTapeTM.runFrom_with_q₀, canonical_map] using whole
 
 
 /-- Load the undoubled header and install its nonoverflowing successor on

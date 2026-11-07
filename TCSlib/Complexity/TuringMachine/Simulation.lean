@@ -20,9 +20,9 @@ Generic building blocks for machine constructions, split out of
 `TCSlib.Complexity.TuringMachine.Composition` at the epoch-1/epoch-2 boundary
 (epoch-1 audit, findings 5 and 11, and the policy file-size standard): the
 machines of the composition file, and the heavier constructions of later
-epochs, are assembled from these. Everything here is public — it is shared
-audited surface — and carries no finiteness assumptions beyond what each
-gadget needs.
+epochs, are assembled from these. The constructions and their specification API are
+public shared surface, with local proof helpers for their intrinsic bounds.
+Each gadget carries only the finiteness assumptions it needs.
 
 ## Contents
 

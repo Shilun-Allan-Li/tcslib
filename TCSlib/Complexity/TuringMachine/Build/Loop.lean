@@ -110,22 +110,12 @@ and `exists_emitLoopTM` are corollaries of the specs at coefficient `10`.
   the folklore engine of the enumeration and diagonalization arguments,
   §2.1 / §3.1–3.2.)
 
-**Fill checkpoint (batch L).** `loop_run` is proved. The three finite-machine
-exports are derived from the single admitted private `loopHost_contracts`.
-The concrete controller, source-body simulation, fixed-width counter,
-input rewind, capture instances, payload replay, and both terminal summation
-lemmas are supplied below. Controller-level phase assembly and its uniform
-budget remain the continuation frontier; this file is not an admission-free
-completion of the loop combinators.
-
-**Fill completion (batch L2).** The historical checkpoint above is now
-closed: the actual fuel, startup, body-return, counter, and payload phases
-are proved and assembled in `loopHost_contracts`, with uniform coefficient
-`loopHost_bound = 10`. The canonical seams retain the completed fuel residue
-and fixed-width debit iterates. Underflow and its final emission are inside
-the last rejecting segment; an accepting last candidate has an arbitrary
-unreachable rejection terminal. The entire file has no admissions, including
-the capture helpers now that batch W's `capture_run` proof is integrated.
+The concrete controller assembles the completed fuel, startup, body-return,
+counter and payload phases in `loopHost_contracts`, with uniform coefficient
+`loopHost_bound = 10`. Canonical seams retain the fuel residue and fixed-width
+debit iterates. Underflow and its final emission belong to the last rejecting
+segment; an accepting last candidate has an arbitrary unreachable rejection
+terminal. The capture helpers consume the proved `capture_run` contract.
 -/
 
 namespace Turing
@@ -1246,7 +1236,9 @@ private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forw
     · rw [loopFuel_run]; rfl
     · intro v hv
       rw [loopFuel_run]
-      simpa [Cfg.Halted, loopFuelCfg, rightCfg] using hlive v hv
+      have live : (F.tm.runFrom (F.tm.initCfg x) v).state ≠ none := hlive v hv
+      change (loopFuelCfg body F (F.tm.runFrom (F.tm.initCfg x) v)).state ≠ none
+      simpa only [loopFuelCfg, rightCfg_state, Option.map_id] using live
   let prepared := loopFrame body F (loopFuelCaptured body F c)
     (some (.inr (.inr 4))) c.inputPos (bufferTape []) (bufferTape c.output)
     (bufferTape []) 0 0 []
@@ -2053,14 +2045,14 @@ private lemma loopCall_heads (body F : FinTM Bool) (anchor : body.State)
         (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos i ≤ B := by
   intro i
   refine Fin.lastCases ?_ (fun j => ?_) i
-  · simp [loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, Cfg.ofWords_workTapePos,
+  · simp [loopCall, captureCfg_workTapePos, loopBodyPadded, leftCfg_output, loopBodyCfg, Cfg.ofWords_workTapePos,
       Cfg.ofWords_output]
-  · simp only [loopCall, captureCfg, Fin.coe_castSucc, dif_pos j.isLt]
+  · simp only [loopCall, captureCfg_workTapePos, Fin.coe_castSucc, dif_pos j.isLt]
     change -(B : ℤ) ≤ (loopBodyPadded body F anchor
         (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos j ∧
       (loopBodyPadded body F anchor
         (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos j ≤ B
-    simp only [loopBodyPadded, leftCfg]
+    simp only [loopBodyPadded, leftCfg_workTapePos]
     refine Fin.addCases (fun j => ?_) (fun j => ?_) j
     · simp [Fin.addCases_left, loopBodyCfg, Cfg.ofWords_workTapePos]
     · simp only [Fin.addCases_right]
@@ -2069,14 +2061,11 @@ private lemma loopCall_heads (body F : FinTM Bool) (anchor : body.State)
         omega
       · simpa only [Fin.addCases_right] using hf j
 
-/-- The audit's single maximum: startup coefficient nine, body coefficient
+/-- The controller's uniform maximum: startup coefficient nine, body coefficient
 three, counter coefficient two, and dispatch allowance five. -/
 private def loopHost_bound : ℕ := max 1 (max 9 (3 + 2 + 5))
 
 /-- Configuration contracts for the concrete controller in both output modes.
-**Continuation frontier: unproved.** The public corollaries below are conditional
-on this one machine-construction obligation; this is not a closed batch.
-
 **Proof sketch.** Run the relocated fuel source to its first halt using
 `loopHost_fuel_capture`. Phases 0--5 copy and retain its binary fuel, clear
 the capture tape, and rewind the two work heads and the input head. Run
@@ -2089,9 +2078,9 @@ Phase 7 either emits/replays that payload or starts the width-bounded
 borrow. The host performs the counter borrow and rewind
 in phases 8--10. Final zero underflow and phase 11 belong to the
 last rejecting segment. If the last candidate accepts, choose any halted
-false/empty terminal. Sum the phase constants with the audit's maximum
-ledger. The missing proof is precisely the controller-level lifting and
-assembly of these phase contracts, including startup and replay bounds.
+false/empty terminal. Sum the phase constants with the controller's maximum
+ledger. This assembles the controller-level phase contracts, including the
+startup and replay bounds.
 
 The coefficient is explicit, `10 = loopHost_bound`, and two head clauses are
 included: every candidate seam `cfg i`, `i ≤ R |x|`, has its work heads within
@@ -2100,9 +2089,6 @@ included: every candidate seam `cfg i`, `i ≤ R |x|`, has its work heads within
 `T |x| + 10·(T |x| + 1)`: either the halted copy of the next seam, after an
 accepting last candidate, or the last segment's endpoint, at most
 `10·(T |x| + 1)` steps from a seam. The space budget uses both. -/
-/- Batch L2 closure: the preceding continuation docstring is retained as
-historical evidence. Its listed obligations are discharged below by the phase
-lemmas and the canonical family; there is no remaining construction admission. -/
 private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
@@ -2254,7 +2240,7 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
     simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
   · intro i hi
     rw [hcfg i hi]
-    rfl
+    simp only [candidate, loopCall, captureCfg_output]
   · simpa only [cfg, if_neg (by omega : ¬R x.length + 1 ≤ R x.length)] using hterminal.1
   · simpa only [cfg, if_neg (by omega : ¬R x.length + 1 ≤ R x.length)] using hterminal.2
   · intro i hi
@@ -4408,6 +4394,29 @@ private lemma emCall_pair_triple (M : FinTM Bool) (i : Fin M.k) (r : Fin 3) :
     emCallIdleTM, emCallRightTM, emCallTrackTM]
   all_goals repeat first | rfl | omega | split
 
+/-- Neither administrative tape belongs to a selected source-cleaning triple.
+**Proof sketch.** Apply the triple selector to a hypothetical preimage. Its inverse
+returns a selected slot, whereas either administrative index selects nothing. -/
+private lemma emCall_pair_not_mem (M : FinTM Bool) (i : Fin M.k) (r : Fin 2) :
+    emCallPairIndex M r ∉ Set.range (emCallTripleEmbedding M i) := by
+  rintro ⟨r', hr⟩
+  have h := congrArg (emCallTripleSelect M i) hr
+  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+  simp only [emCall_triple_inverse, emCall_triple_pair] at h
+  cases h
+
+/-- Every other source triple is outside the currently selected cleaning bank.
+**Proof sketch.** A hypothetical preimage would select a slot of the current bank;
+the selector's other-bank equation instead returns no selected slot. -/
+private lemma emCall_triple_not_mem (M : FinTM Bool) (i j : Fin M.k) (r : Fin 3)
+    (hji : j ≠ i) :
+    emCallTripleIndex M j r ∉ Set.range (emCallTripleEmbedding M i) := by
+  rintro ⟨r', hr⟩
+  have h := congrArg (emCallTripleSelect M i) hr
+  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+  simp only [emCall_triple_inverse, emCall_triple_other, if_neg hji] at h
+  cases h
+
 /-- Full host frame during cleanup. The argument and capture are retained
 at their known right boundaries while all three source banks are normalized. -/
 private def emCallFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool)
@@ -4442,27 +4451,26 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
         (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])
         ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame := by
   dsimp only
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,
+      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,
+      emCallClearCfg, emCallBankFrame, emCallFrame]
   · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
+    simp only [emCallEmbeddedCfg]
+    conv_lhs =>
+      ext z
+      rw [Cfg.mapState_workTapes]
     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).1
       · rfl
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).1
       · rfl
     · subst j
       by_cases he : l = i
@@ -4472,33 +4480,21 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
         fin_cases r <;> simp
       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).1
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).1
         · rfl
   · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
+    simp only [emCallEmbeddedCfg, Cfg.mapState_workTapePos]
     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).2
       · rfl
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).2
       · rfl
     · subst j
       by_cases he : l = i
@@ -4508,13 +4504,11 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
         fin_cases r <;> simp
       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).2
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).2
         · rfl
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,
+      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append]
 
 /-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
 by exactly one, while retaining every inactive tape and head.
@@ -4529,27 +4523,26 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
       (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =
       emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) := by
   dsimp only
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,
+      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,
+      emCallClearCfg, emCallBankFrame, emCallFrame]
   · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
+    simp only [emCallEmbeddedCfg]
+    conv_lhs =>
+      ext z
+      rw [Cfg.mapState_workTapes]
     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).1
       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).1
       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
     · subst j
       by_cases he : l = i
@@ -4559,35 +4552,23 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
         fin_cases r <;> simp
       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).1
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).1
         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
   · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
+    simp only [emCallEmbeddedCfg, Cfg.mapState_workTapePos]
     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).2
       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
     · subst j
       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).2
       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
     · subst j
       by_cases he : l = i
@@ -4597,15 +4578,13 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
         fin_cases r <;> simp
       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).2
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).2
         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,
+      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append]
 
 /-- One native bank-cleaning segment, including its dispatch to the next
 bank, costs at most six source deadlines plus eight. Dispatch occurs at the
@@ -5207,8 +5186,10 @@ theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
     simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
   obtain ⟨t, ht, hhalt, houtput⟩ := emLoop_sum E.tm candidate
     (fun i => emitF x (orbit i)) (10 * (T x.length + 1)) (R x.length + 1)
-    (fun _ _ => rfl) hsegments (by omega) []
-  have hclean : {candidate 0 with output := []} = candidate 0 := rfl
+    (by intro j hj; simp only [candidate, loopCall, captureCfg_output]) hsegments (by omega) []
+  have hclean : {candidate 0 with output := []} = candidate 0 := by
+    refine Cfg.ext rfl rfl rfl rfl ?_
+    simp only [candidate, loopCall, captureCfg_output]
   rw [hclean] at hhalt houtput
   have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
   rw [hinit] at hrun
