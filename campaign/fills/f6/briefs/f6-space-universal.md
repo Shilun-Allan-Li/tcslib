@@ -36,6 +36,10 @@ claim that 132 prerequisites are all proved. Final229 is the upstream closure of
 downstream pair Hierarchy/SpaceComplexity, excluding root TCSlib.
 
 The complete packet file list is `campaign/fills/f6/BUNDLE-FILES.txt`.
+Use `campaign/fills/f6/final-content-inventory.json` for final input hashes (excluding
+that inventory itself). Earlier candidate inventories preserve preparation-time
+bytes and can predate final status/brief updates; they do not override the final list
+or the dispatch prompt’s checksum.
 The evidence map in this folder identifies all historical component probes, their exact
 limits and current merged-base adoption. Historical reviews retain their original draft/
 merge-pending wording as data; the source pin and OWN scope in this brief govern the fill.

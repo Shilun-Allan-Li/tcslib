@@ -48,3 +48,8 @@ Their superseded provisional-source/merge-pending sentences remain historical da
 selected source pin, ownership, route and explicit OWN scope in the current candidate brief
 are authoritative once root finalizes the issue fields. This packet does not discharge
 OWN-1/OWN-2/OWN-3, prove the target or permit a new public API/import/host/debt acknowledgment.
+
+The final selected inventory is campaign/fills/f6/final-content-inventory.json,
+with only its own checksum omitted. The issue-preparation candidate inventory is
+historical preparation data; final status and issued-brief edits can postdate it.
+The final BUNDLE-FILES list and immutable dispatch checksum govern verification.
