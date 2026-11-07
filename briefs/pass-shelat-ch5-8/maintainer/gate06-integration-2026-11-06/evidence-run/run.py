@@ -3,7 +3,8 @@ import datetime, hashlib, json, os, re, subprocess, sys, time
 r=Path.cwd(); out=Path(__file__).resolve().parent
 start=int(sys.argv[1]) if len(sys.argv)>1 else 1
 label=sys.argv[2] if len(sys.argv)>2 else "pass1"
-order=(r/".lake/ps-maintainer/gate06/order-current.txt").read_text().splitlines()
+order_path=Path(sys.argv[3]) if len(sys.argv)>3 else r/".lake/ps-maintainer/gate06/order-current.txt"
+order=order_path.read_text().splitlines()
 logs=out/"logs"/label; logs.mkdir(parents=True,exist_ok=True)
 assert not (logs/"replay.jsonl").exists(),"Do not overwrite a previous attempt"
 (out/(label+"-order.txt")).write_text("\n".join(order)+"\n")

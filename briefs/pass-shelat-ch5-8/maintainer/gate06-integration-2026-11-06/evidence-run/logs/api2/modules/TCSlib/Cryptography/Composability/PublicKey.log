@@ -1,0 +1,36 @@
+START 2026-11-07T08:30:06.490371+00:00
+SOURCE_SHA256 0019209a5a47b99fad658a5e17217526d8b244156f1fe984bc30cfd07a66a99d
+TCSlib/Cryptography/Composability/PublicKey.lean:83:0: error: Not a definitional equality: the left-hand side
+  decide (isPadded w = decide (pairEncode (pairFstD w) (pairSndD w) = w)) && !BinArith.hasFalse (pairSndD w)
+is not definitionally equal to the right-hand side
+  true
+TCSlib/Cryptography/Composability/PublicKey.lean:87:94: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (decide (isPadded w = decide (pairEncode (pairFstD w) (pairSndD w) = w)) && !BinArith.hasFalse (pairSndD w)) = true
+TCSlib/Cryptography/Composability/PublicKey.lean:648:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Composability/PublicKey): lean exited with status 1
+FAIL(TCSlib/Cryptography/Composability/PublicKey): error diagnostics reported
+FAIL(TCSlib/Cryptography/Composability/PublicKey): no fresh .olean produced
+        2.49 real         2.92 user         0.88 sys
+          2232565760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176686  page reclaims
+                 355  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  48  voluntary context switches
+               15041  involuntary context switches
+            34201236  instructions retired
+            15381341  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T08:30:08.988016+00:00 RC 1

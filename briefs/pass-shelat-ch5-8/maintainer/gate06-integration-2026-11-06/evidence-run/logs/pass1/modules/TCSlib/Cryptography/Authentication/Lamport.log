@@ -1,0 +1,65 @@
+START 2026-11-07T07:31:50.788826+00:00
+SOURCE_SHA256 9af4f9de4001b9f476ea17396bbab370c3e5baf3f9cfbeaafcd28fa354d4ccd1
+TCSlib/Cryptography/Authentication/Lamport.lean:357:14: error(lean.unknownIdentifier): Unknown identifier `Collection.ofFn_padFin_of_le`
+TCSlib/Cryptography/Authentication/Lamport.lean:355:68: error: unsolved goals
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+n : ℕ
+x : List Bool
+hx : x.length = n
+h : E (NUPPT.advInput n (List.ofFn (padFin n x))) = List.ofFn (f n (padFin n x))
+⊢ (E (pairEncode (List.replicate n true) x)).length = L.eval n
+TCSlib/Cryptography/Authentication/Lamport.lean:392:15: error(lean.unknownIdentifier): Unknown identifier `Collection.ofFn_padFin_of_le`
+TCSlib/Cryptography/Authentication/Lamport.lean:376:16: error: unsolved goals
+L : PolyExpr
+f : (n : ℕ) → (Fin n → Bool) → Fin (L.eval n) → Bool
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hfE : ∀ (n : ℕ) (x : Fin n → Bool), E (NUPPT.advInput n (List.ofFn x)) = List.ofFn (f n x)
+n : ℕ
+m : Fin n → Bool
+rg : (lamportGen hE).Coins n
+rs : lamportSign.Coins n
+hρ : (List.ofFn rg).length = 2 * n * n
+hseg : ∀ (i : Fin n), (coinBlock (2 * n) (↑i) (List.ofFn rg)).length = 2 * n
+hsel : ∀ (i : Fin n), (lamportHalf n (m i) (coinBlock (2 * n) (↑i) (List.ofFn rg))).length = n
+hσ : (List.ofFn fun i => lamportHalf n (m i) (coinBlock (2 * n) (↑i) (List.ofFn rg))).flatten.length = n * n
+⊢ lamportVerFun L E
+      (atParam n
+        (pairEncode
+          (encodeList
+            (List.ofFn fun i =>
+              pairEncode
+                (E (pairEncode (List.replicate n true) (lamportHalf n false (coinBlock (2 * n) (↑i) (List.ofFn rg)))))
+                (E (pairEncode (List.replicate n true) (lamportHalf n true (coinBlock (2 * n) (↑i) (List.ofFn rg)))))))
+          (pairEncode (List.ofFn m)
+            (List.ofFn
+              (padFin (n * n)
+                (List.ofFn fun i => lamportHalf n (m i) (coinBlock (2 * n) (↑i) (List.ofFn rg))).flatten))))) =
+    [true]
+TCSlib/Cryptography/Authentication/Lamport.lean:459:8: warning: declaration uses 'sorry'
+FAIL(TCSlib/Cryptography/Authentication/Lamport): lean exited with status 1
+FAIL(TCSlib/Cryptography/Authentication/Lamport): error diagnostics reported
+FAIL(TCSlib/Cryptography/Authentication/Lamport): no fresh .olean produced
+       34.73 real        39.61 user         1.15 sys
+          2225946624  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              179200  page reclaims
+                  48  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  20  voluntary context switches
+               43554  involuntary context switches
+            33948401  instructions retired
+            15253229  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T07:32:25.530635+00:00 RC 1

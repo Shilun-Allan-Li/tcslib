@@ -1,6 +1,11 @@
 # Implications inventory — draft contents by primitive
 
 **2026-11-07 PST.** Source-level inventory reviewed by an internal maintainer agent.
+This is a route survey, **not an adopted list of fundamental catalog primitives**. The user
+requires a selective catalog of assumption-set-to-final-primitive implications; intermediate
+steps below are supporting APIs, not automatic entries. Public-key endpoint selection is
+pending the user's ruling in `public-key-draft.md`.
+
 No fresh combined axiom sweep was run for this inventory. “Source-level proved” means the
 inspected route is implemented; it does not certify an unexamined composition or erase its
 hypotheses. Gate 06 rows refer to the unmerged integration worktree. Proposed wrapper names
@@ -45,14 +50,18 @@ end-to-end witness or composes a useful chain. All names below are relative to
 
 ## First implementation slice
 
-1. Index the existing generic public-key chain. Add the minimum useful existential entry point
-   (optionally the final multi-message result), checked against exact APIs and full axioms.
-   PK-1–PK-4 describe the existing levels; they are not four required new proof tasks.
-2. OWP → PRF and OWP → multi-message private-key encryption, composed from existing proved
-   existential results; document/re-export existing endpoints rather than duplicating them.
-3. Add the admitted Gate 06 families only as their statement gates/fills close. A small wrapper
-   with a dependency on sorryAx remains an unfinished implication in the index.
-4. Handle the substantial bridge list through separate public design/gate/fill tasks. Ask the
-   user for the worker choice before preparing an external audit/fill; none is issued here.
+1. Select the fundamental endpoint set with the user. For PKE the recommendation is
+   multi-message IND-CPA and multi-message IND-CCA2, with CCA1 indexed as an intermediate;
+   this selection is not yet a ruling.
+2. Draft assumption-set-to-endpoint statements. For the PKE pilot, keep RSA, factoring and
+   DDH rows blocked on their actual bridges. Index the already-proved generic chain as
+   supporting material; do not add single-bit/bitwise/lifting tiers as catalog entries.
+3. For other primitives, retain only useful final endpoints. Reuse existing existential
+   results; add short missing compositions only where they produce a useful end-to-end
+   theorem. The 13 survey rows do not commit us to 13 Implications modules.
+4. Add the admitted Gate 06 families only as their statement gates/fills close. A small
+   wrapper with a dependency on sorryAx remains an unfinished implication in the index.
+5. Handle substantive gaps through separate public design/gate/fill tasks. Ask the user for
+   the worker choice before preparing an external audit/fill; none is issued here.
 
 **Not yet clear to merge — draft inventory; missing bridges and Gate 06 admissions remain.**
