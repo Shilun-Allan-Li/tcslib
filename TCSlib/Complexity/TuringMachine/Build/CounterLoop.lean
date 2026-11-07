@@ -839,8 +839,9 @@ private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
       Segment H {some .done, some .escape}
         (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (width : ℤ)) ∧
           R fun j => p j.castSucc)
-        z (H.runFrom z t) t :=
-  ⟨fun ⟨hc, hh, hr⟩ => ⟨rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,
+        z (H.runFrom z t) t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun ⟨hc, hh, hr⟩ => ⟨rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,
       fun u hu => ⟨hh u hu, hr u hu⟩⟩,
     fun ⟨_, hc, hp⟩ =>
       ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,

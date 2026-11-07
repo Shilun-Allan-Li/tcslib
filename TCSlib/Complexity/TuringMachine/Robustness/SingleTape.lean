@@ -1191,8 +1191,9 @@ which preserves containment at every physical time, is `Turing.Segment.trans` th
 bridge. -/
 private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
     (c d : Cfg 1 A Q x) (t : ℕ) (lo hi : ℤ) :
-    DGSpan tm c d t lo hi ↔ Segment tm ∅ (fun p => lo ≤ p 0 ∧ p 0 ≤ hi) c d t :=
-  ⟨fun h => ⟨h.1, fun _ _ hm => hm, h.2⟩, fun h => ⟨h.1, h.2.2⟩⟩
+    DGSpan tm c d t lo hi ↔ Segment tm ∅ (fun p => lo ≤ p 0 ∧ p 0 ≤ hi) c d t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun h => ⟨h.1, fun _ _ hm => hm, h.2⟩, fun h => ⟨h.1, h.2.2⟩⟩
 
 /-- A single transition has only its two endpoints as prefixes. -/
 private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}

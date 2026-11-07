@@ -1306,8 +1306,9 @@ Consecutive segments compose, without hiding an earlier anchor visit, by
 `Turing.Segment.trans` through this bridge. -/
 private lemma tautDualSegment_iff_segment {x : List Bool}
     (c d : Cfg 0 Bool TautDualControl x) (t : ℕ) :
-    tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t :=
-  ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
+    tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by
+  rw [Turing.segment_iff]
+  exact ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
 
 /-- A silent syntax pass consumes exactly the suffix length and preserves
 physical output. Its endpoint records the complete inherited scanner state.
