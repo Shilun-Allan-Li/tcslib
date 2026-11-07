@@ -1,0 +1,15 @@
+--- a/TCSlib/Cryptography/Authentication/Lamport.lean
++++ b/TCSlib/Cryptography/Authentication/Lamport.lean
+@@ -470,8 +470,10 @@
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+   rw [runAt_lamportSign]
+   have hρ : (List.ofFn rg).length = 2 * n * n := by
+-    simp only [List.length_ofFn, NUPPT.coinLen_eq, lamportGen,
+-      NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++    refine (List.length_ofFn (f := rg)).trans
++      (((lamportGen hE).coinLen_eq n).trans ?_)
++    simp only [lamportGen, NUPPT.coins_ofPolyTimeUniform,
++      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+   have hseg : ∀ i : Fin n, (coinBlock (2 * n) i (List.ofFn rg)).length = 2 * n := by
+     intro i
+     apply length_coinBlock

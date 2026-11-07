@@ -1,0 +1,18 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+@@ -528,9 +528,12 @@
+         (List.range (H.calls.eval x.length * ρ.rounds.eval x.length)).map
+           (H.slotFromB ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++
+           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+-            (H.main.rounds.eval x.length)).1⟩ := by
+-  show (⟨x, zA, List.ofFn r.1, ((H.compose ρ).transcript x zA zB r).1⟩ : View) = _
+-  rw [compose_transcript]
++            (H.main.rounds.eval x.length)).1⟩ :=
++  (Protocol.viewP_eq (H.compose ρ) x zA zB r).trans
++    (congrArg (fun t : List (List Bool) × List (List Bool) =>
++      (⟨x, zA, List.ofFn r.1, t.1⟩ : View))
++      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
++        (H.compose_transcript ρ x zA zB r)))
+ 
+ /-- **Bob's view in `H.compose ρ`**: the common input, his input, his whole tape, and Alice's run
+ messages, the leading filler and `main`'s messages to him. -/

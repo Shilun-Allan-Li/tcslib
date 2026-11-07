@@ -1,0 +1,29 @@
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -718,21 +718,15 @@
+     (t : Fin n) :
+     ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).getD (i * n + t) false =
+       keyAt (Y.circ n) (yaoSeed Y n rA) (Y.inA.eval n + i) (ys.getD i false) t := by
+-  have h := flatten_ofFn_one (k := Y.inB.eval n * n) (l := otFunctionality.outB.eval n) rfl
++  have h := flatten_ofFn_one (k := Y.inB.eval n * n) (l := otFunctionality.outB.eval n)
++    ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_outB).trans
++      (PolyExpr.eval_const 1 n))
+     fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2
+   have hj : i * n + t = (finProdFinEquiv (i, t) : ℕ) := by
+     rw [finProdFinEquiv_apply_val]; ring
+-  -- `answersB` through its body (requested shared lemma `HybridProtocol.answersB_eq`)
+-  show (List.ofFn fun j : Fin (Y.inB.eval n * n) => List.ofFn (otFunctionality.f n
+-      ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten.getD
+-      (i * n + t) false = _
+-  rw [h, hj, getD_ofFn', otFunctionality_f_snd]
+-  show keyAt (Y.circ n) (yaoSeed Y n rA)
+-    (Y.inA.eval n + (yaoCall Y n (finProdFinEquiv (i, t))).1)
+-    (decide (((if ys.getD (yaoCall Y n (finProdFinEquiv (i, t))).1 false then 1 else 0 :
+-      Fin 2) : ℕ) = 1)) (yaoCall Y n (finProdFinEquiv (i, t))).2 = _
+-  rw [yaoCall_finProdFinEquiv]
++  rw [HybridProtocol.answersB_eq, h, hj, getD_ofFn', otFunctionality_f_snd_apply,
++    yaoHybrid_callA, yaoHybrid_callB, yaoCall_finProdFinEquiv]
+   cases ys.getD i false <;> rfl
+ 
+ /-- `yaoBobOut_yaoMsg` at a parameter `L` equal to `n` (for the common input `1^n`, whose length

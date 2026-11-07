@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -600,7 +600,9 @@
+ 
+ /-- Bob's input to call `j = (i, t)` is his bit `y_i`. -/
+ theorem yaoHybrid_callB (n : ℕ) (ys r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 1) :
+-    (yaoHybrid Y E₁ E₂).callB n ys r j c = ys.getD (yaoCall Y n j).1 false := rfl
++    (yaoHybrid Y E₁ E₂).callB n ys r j
++        (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inB).trans
++          (PolyExpr.eval_const 1 n)).symm c) = ys.getD (yaoCall Y n j).1 false := rfl
+ 
+ /-! ### Correctness -/
+ 

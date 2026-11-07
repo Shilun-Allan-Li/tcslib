@@ -1,0 +1,130 @@
+--- a/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
+@@ -130,6 +130,14 @@
+ entries are read with default `false`. -/
+ def decGraph (w : List Bool) : Σ n, Graph n :=
+   ⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩
++
++/-- Total graph decoding returns the square-root vertex count and default-false entries. -/
++theorem decGraph_eq (w : List Bool) :
++    decGraph w = ⟨Nat.sqrt w.length,
++      fun u v => w.getD (finProdFinEquiv (u, v)) false⟩ := rfl
++
++/-- The vertex count returned by total graph decoding is the square root of the word length. -/
++theorem decGraph_fst (w : List Bool) : (decGraph w).1 = Nat.sqrt w.length := rfl
+ 
+ /-- An encoded graph on `n` vertices has `n²` bits. -/
+ @[simp] theorem length_encGraph {n : ℕ} (G : Graph n) : (encGraph G).length = n * n := by
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+@@ -227,12 +227,18 @@
+ /-- The vertex count read from a common input: `Nat.sqrt` of the length of the first
+ component (the `n` of `decGraph`). -/
+ def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
++/-- The instance vertex count is the square root of the first graph word's length. -/
++theorem instanceVertexCount_eq (x : List Bool) : instanceVertexCount x = Nat.sqrt (pairFstD x).length := rfl
+ 
+ /-- The first graph of a common input, on the decoded vertex set. -/
+ def instanceG₀ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairFstD x)
++/-- The first instance graph decodes its first word on the common vertex set. -/
++theorem instanceG₀_eq (x : List Bool) : instanceG₀ x = decGraphAt (instanceVertexCount x) (pairFstD x) := rfl
+ 
+ /-- The second graph of a common input, on the vertex set of the first. -/
+ def instanceG₁ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairSndD x)
++/-- The second instance graph decodes its second word on the common vertex set. -/
++theorem instanceG₁_eq (x : List Bool) : instanceG₁ x = decGraphAt (instanceVertexCount x) (pairSndD x) := rfl
+ 
+ /-- A common input is well formed when it is a pair whose two components are adjacency
+ matrices of the same size `n²` (the "same number of vertices" of [PS10, §4.5]). -/
+@@ -350,6 +356,10 @@
+ (the run-2 file used `Nat.size n` bits and `n²` trials locally). -/
+ noncomputable def samplePerm (n : ℕ) (r : List Bool) : Equiv.Perm (Fin n) :=
+   (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1
++/-- Permutation sampling uses the campaign trial table and returns the identity on failure. -/
++theorem samplePerm_eq (n : ℕ) (r : List Bool) :
++    samplePerm n r = (permFromCoins n (permBits n) (permTrials n)
++      (coinTable n (permTrials n) (permBits n) r)).getD 1 := rfl
+ 
+ /-- The number of tape bits consumed by `samplePerm n`: `n · permTrials n · permBits n`
+ (`= 2n³ · Nat.size n`).
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+@@ -250,11 +250,12 @@
+ `polyTimeComputable_encPermFromCoins` on `⟨fst x, coins⟩`, the graph `H` is
+ `encPermGraphAt_poly` on `⟨1^n, ⟨G_{b'}, encPerm π⟩⟩` (`decPerm_encPerm`), the comparison is
+ `polyTimeComputable_pairEq` on the two one-bit words, and the view is assembled by
+-`PolyTimeComputable.pairEncode`. -/
++`PolyTimeComputable.pairEncode`. The public efficiency, graph-decoding, sampler, uniform-advice
++and view/history equations identify each compositional function without foreign unfolding. -/
+ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
+     PolyTimeComputable (fun u => [(attemptAt V' (pairSndD u) (pairFstD u).length).isSome]) ∧
+     PolyTimeComputable (fun u => (attemptAt V' (pairSndD u) (pairFstD u).length).getD []) := by
+-  obtain ⟨A, hA, -, hnext⟩ := hV'
++  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').mp hV'
+   have hx : PolyTimeComputable fun u => simX (pairSndD u) := simX_poly.comp polyTimeComputable_pairSndD
+   have hz : PolyTimeComputable fun u => simZ (pairSndD u) := simZ_poly.comp polyTimeComputable_pairSndD
+   have hr : PolyTimeComputable fun u => simR (pairSndD u) := simR_poly.comp polyTimeComputable_pairSndD
+@@ -272,7 +273,7 @@
+     simp
+   have hc : PolyTimeComputable fun u =>
+       coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)) :=
+-    truncate_poly hdrop hL
++    ptc_congr (truncate_poly hdrop hL) fun u => coinBlock_eq _ _ _
+   -- the guessed bit
+   have hb : PolyTimeComputable fun u =>
+       [(coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+@@ -303,7 +304,8 @@
+     simp
+   -- the vertex count in unary
+   have hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true :=
+-    unarySqrt_poly (unaryLength_poly (polyTimeComputable_pairFstD.comp hx))
++    ptc_congr (unarySqrt_poly (unaryLength_poly (polyTimeComputable_pairFstD.comp hx))) fun u =>
++      congrArg (fun n : ℕ => List.replicate n true) (instanceVertexCount_eq _)
+   -- the sampled permutation as a word
+   have hπ : PolyTimeComputable fun u => encPerm (samplePerm (instanceVertexCount (simX (pairSndD u)))
+       (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop 1).take
+@@ -312,7 +314,7 @@
+     refine ptc_congr this fun u => ?_
+     simp only [Function.comp_apply]
+     rw [pairFstD_pairEncode, pairSndD_pairEncode]
+-    rfl
++    simp only [instanceVertexCount_eq, samplePerm_eq, decGraph_fst]
+   -- the guessed graph's word
+   have hGb : PolyTimeComputable fun u =>
+       if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+@@ -330,6 +332,7 @@
+     simp only [Function.comp_apply]
+     rw [pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode,
+       List.length_replicate, decPerm_encPerm]
++    simp only [instanceG₀_eq, instanceG₁_eq]
+     split_ifs <;> rfl
+   -- the verifier's reply
+   have hmsg : PolyTimeComputable fun u => V'.next (simX (pairSndD u)) (simZ (pairSndD u))
+@@ -345,10 +348,10 @@
+       ((hx.pairEncode hz).pairEncode (hH.pairEncode (polyTimeComputable_const [])))
+       (polyTimeComputable_const []) hrV
+     have := A.polyTimeComputable_output.comp hlay
+-    have hadv : ∀ k, A.advice k = [] := hA
++    have hadv : ∀ k, A.advice k = [] := fun k => hA.advice_eq k
+     refine ptc_congr this fun u => ?_
+     rw [hnext, Strategy.ofNUPPT_next, NUPPT.runAtL_eq_output_layout, hadv]
+-    rfl
++    simp only [Function.comp_apply, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil]
+   -- the success test
+   have htest : PolyTimeComputable fun u => [decide ((V'.next (simX (pairSndD u)) (simZ (pairSndD u))
+       ((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+@@ -378,7 +381,13 @@
+           (((coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).drop
+             1).take (((simX (pairSndD u)).length + 1) ^ 2)))]⟩ :=
+     ptc_congr ((hx.pairEncode hz).pairEncode (hrV.pairEncode (hH.pairEncode
+-      (hπ.pairEncode (polyTimeComputable_const []))))) fun u => rfl
++      (hπ.pairEncode (polyTimeComputable_const []))))) fun u =>
++        (View.encode_mk _ _ _ _).trans
++          (congrArg (fun msgs : List Bool => pairEncode _ (pairEncode _ msgs))
++            ((Strategy.encodeMsgs_cons _ _).trans
++              (congrArg (pairEncode _)
++                ((Strategy.encodeMsgs_cons _ _).trans
++                  (congrArg (pairEncode _) Strategy.encodeMsgs_nil)))))
+   refine ⟨?_, ?_⟩
+   · refine ptc_congr htest fun u => ?_
+     simp only [attemptAt, attemptStr]

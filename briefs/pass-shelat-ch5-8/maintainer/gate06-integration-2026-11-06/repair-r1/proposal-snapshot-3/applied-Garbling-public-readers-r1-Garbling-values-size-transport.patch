@@ -1,0 +1,12 @@
+--- a/TCSlib/Cryptography/SecureComputation/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+@@ -363,7 +363,8 @@
+   have hlenA : (List.ofFn x).length = n := List.length_ofFn
+   refine runWith_sim DAGGate.eval (fun v g vs => evalGate M (tableAt M Cc s) v g vs)
+     (keyAt Cc s) false default Cc.gates (List.ofFn x) (inputKeys Cc s x)
+-    (by simp [inputKeys]) ?_ ?_ ?_ v (by rw [hlenA]; exact hv)
++    (by simp [inputKeys]) ?_ ?_ ?_ v
++    (by simpa only [hlenA, DAGCircuit.size_eq] using hv)
+   · intro w hw
+     rw [hlenA] at hw
+     have h1 : w < (inputKeys Cc s x).length := by simp [inputKeys, hw]

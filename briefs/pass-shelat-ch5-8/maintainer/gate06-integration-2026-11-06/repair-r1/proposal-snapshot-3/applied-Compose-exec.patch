@@ -1,0 +1,11 @@
+--- a/TCSlib/Cryptography/SecureComputation/Compose.lean
++++ b/TCSlib/Cryptography/SecureComputation/Compose.lean
+@@ -114,7 +114,7 @@
+       (((List.range k).filter (moverIsV vF)).map (moveMsg P V vF x zP zV rP rV),
+         ((List.range k).filter fun i => !moverIsV vF i).map (moveMsg P V vF x zP zV rP rV)) := by
+   induction k with
+-  | zero => rfl
++  | zero => simp only [exec_zero, List.range_zero, List.filter_nil, List.map_nil]
+   | succ k ih =>
+     rw [exec_succ, List.range_succ, List.filter_append, List.filter_append, List.map_append,
+       List.map_append]

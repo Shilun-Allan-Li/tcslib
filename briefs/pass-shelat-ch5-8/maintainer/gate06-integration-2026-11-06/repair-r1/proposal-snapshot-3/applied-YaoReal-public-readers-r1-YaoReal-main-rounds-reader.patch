@@ -1,0 +1,17 @@
+--- a/TCSlib/Cryptography/SecureComputation/YaoReal.lean
++++ b/TCSlib/Cryptography/SecureComputation/YaoReal.lean
+@@ -109,7 +109,13 @@
+     (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
+     HBCSecure (yaoProtocol Y E₁ E₂ T H) (yaoFunctionality Y) :=
+   (yaoHybrid Y E₁ E₂).hbcSecure_compose (otProtocol T H)
+-    (fun n => by show 0 < (PolyExpr.const 2).eval n; simp)
++    (fun n =>
++      Eq.mpr
++        (congrArg (fun k : ℕ => 0 < k)
++          ((congrArg (fun π : Protocol => π.rounds.eval n) (yaoHybrid_main Y E₁ E₂)).trans
++            ((congrArg (fun p : PolyExpr => p.eval n) (yaoMain_rounds Y E₁ E₂)).trans
++              (PolyExpr.eval_const 2 n))))
++        (Nat.succ_pos 1))
+     (yaoHybrid_hbcSecure Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂)
+     (otProtocol_hbcSecure T H hH henc hT hEHC)
+ 

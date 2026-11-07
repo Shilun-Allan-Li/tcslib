@@ -1,0 +1,14 @@
+--- a/TCSlib/Cryptography/SecureComputation/Garbling.lean
++++ b/TCSlib/Cryptography/SecureComputation/Garbling.lean
+@@ -391,7 +391,10 @@
+ key of `C(x)` on the output wire. -/
+ theorem garbledOutput_eq (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin n → Bool) :
+     garbledOutput M Cc s x = keyAt Cc s Cc.output (Cc.eval x) :=
+-  garbledValues_getD M Cc s hgood x Cc.output Cc.output_lt
++  (garbledOutput_eq_getD M Cc s x).trans
++    ((garbledValues_getD M Cc s hgood x Cc.output
++      ((DAGCircuit.size_eq Cc).symm ▸ Cc.output_lt)).trans
++      (congrArg (keyAt Cc s Cc.output) (DAGCircuit.eval_eq Cc x).symm))
+ 
+ /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
+ "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption
