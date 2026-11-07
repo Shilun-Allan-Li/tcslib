@@ -1,0 +1,152 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.SpaceComplexity.Basic
+import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Padding transfers space bounds down
+
+Padding a language by a polynomial number of ones lowers the space it needs, measured in the
+padded length: if `L ∈ SPACE S`, the language of its members padded by `C · (|x| + 1)^d` ones,
+`padLang L (fun n => C * (n + 1) ^ d)`, lies in `SPACE T` for every `T` that is at least linear
+and dominates `S` at the padded length. This is the space form of the padding argument
+[AB09, Exercise 3.2] calls for; `Complexity.SPACE_linear_ne_NP` uses it at `S n = n² + 1`,
+`T n = n + 1` and the pad `(|x| + 1)²`.
+
+## Main definitions
+
+* `Complexity.padLang` — the members `x` of `L`, each padded by `pad |x|` ones:
+  `pairEncode x 1^{pad |x|}`.
+
+## Main results
+
+* `Complexity.mem_padLang_iff` — `padLang`'s defining formula.
+* `Complexity.mem_SPACE_padLang` — the padded language is in `SPACE T`. (Statement; its proof is
+  a fill.)
+
+## Implementation notes
+
+The pad is a unary block after `pairEncode`, so a member's first component and its length are
+recovered from the padded word (`Turing.length_pairEncode`). The lower bound `m + 1 ≤ T m` pays
+for checking that the input is a padded word at all, and for the copy of its first component;
+`S n ≤ T (2n + 2 + C (n + 1)^d)` pays for deciding `L` on that component.
+
+## References
+
+* [AB09] S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009.
+-/
+
+namespace Complexity
+
+open Turing
+
+-- RULE-7 SEAL (evidence copy; not part of the delivery source)
+attribute [local irreducible]
+  Complexity.LogProg.Canon
+  Complexity.LogProg.bitsVal
+  Complexity.SPACE
+  Complexity.pairFstD
+  Turing.pairDecode
+  Turing.pairEncode
+
+/-- **The padded language**: the members `x` of `L`, each followed by `pad |x|` ones, as the
+pair `pairEncode x 1^{pad |x|}`. [AB09, Exercise 3.2] -/
+def padLang (L : Language Bool) (pad : ℕ → ℕ) : Language Bool :=
+  {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+
+/-- **Membership in `padLang`, unfolded**: `y ∈ padLang L pad` exactly when `y` is a member `x`
+of `L` paired with `pad |x|` ones. -/
+theorem mem_padLang_iff {L : Language Bool} {pad : ℕ → ℕ} {y : List Bool} :
+    y ∈ padLang L pad ↔ ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true) :=
+  Iff.rfl
+
+/-! ### The padded words, the virtual input and the bank's languages (E-PAD) -/
+
+/-- **Padded words**: `y` is the pair of some `a` with `C (|a| + 1)^d` ones. -/
+private def epadValid (C d : ℕ) (y : List Bool) : Prop :=
+  ∃ a, y = pairEncode a (List.replicate (C * (a.length + 1) ^ d) true)
+
+/-- The language of padded words: the validator's language. -/
+private def epadV (C d : ℕ) : Language Bool := {y | epadValid C d y}
+
+open Classical in
+/-- **The virtual input** of the run phase: the first component of a padded word, and the
+empty word on every other input. -/
+private noncomputable def epadVirt (C d : ℕ) (y : List Bool) : List Bool :=
+  if epadValid C d y then pairFstD y else []
+
+/-- **The bank's languages.** On a query word `⟨y, w⟩` whose index word `w` is canonical
+(`w.getLastD true = true`) and no wider than `|y|` in binary, mode `false` asks whether `y`
+is padded and the index is below the first component's length, mode `true` whether `y` is
+padded and the first component's indexed bit is `1`. -/
+private def epadQ (C d : ℕ) (mode : Bool) : Language Bool :=
+  {z | ∃ y w, pairDecode z = some (y, w) ∧ w.getLastD true = true ∧
+    w.length ≤ (Nat.bits y.length).length ∧ epadValid C d y ∧
+    (if mode = true then (pairFstD y).getD (LogProg.bitsVal w) false = true
+      else LogProg.bitsVal w < (pairFstD y).length)}
+
+/-- On a padded word the virtual input is its first component. -/
+private lemma epadVirt_of_valid {C d : ℕ} {y : List Bool} (h : epadValid C d y) :
+    epadVirt C d y = pairFstD y := by
+  classical
+  rw [epadVirt, if_pos h]
+
+/-- Off the padded words the virtual input is empty. -/
+private lemma epadVirt_of_not_valid {C d : ℕ} {y : List Bool} (h : ¬ epadValid C d y) :
+    epadVirt C d y = [] := by
+  classical
+  rw [epadVirt, if_neg h]
+
+/-- The virtual input is no longer than the input. -/
+private lemma epadVirt_length_le (C d : ℕ) (y : List Bool) :
+    (epadVirt C d y).length ≤ y.length := by
+  by_cases h : epadValid C d y
+  · rw [epadVirt_of_valid h]; exact length_pairFstD_le y
+  · rw [epadVirt_of_not_valid h]; exact Nat.zero_le _
+
+/-- **A genuine query** `⟨y, bits i⟩` with `i ≤ |y|` is in the bank's language exactly when `y`
+is padded and the mode's question holds at `i`. -/
+private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
+    (hi : i ≤ y.length) :
+    pairEncode y (Nat.bits i) ∈ epadQ C d mode ↔ epadValid C d y ∧
+      (if mode = true then (pairFstD y).getD i false = true else i < (pairFstD y).length) := by
+  constructor
+  · rintro ⟨y', w, hd, -, -, hv, hq⟩
+    rw [pairDecode_pairEncode, Option.some.injEq, Prod.mk.injEq] at hd
+    obtain ⟨rfl, rfl⟩ := hd
+    rw [LogProg.bitsVal_bits] at hq
+    exact ⟨hv, hq⟩
+  · rintro ⟨hv, hq⟩
+    refine ⟨y, Nat.bits i, pairDecode_pairEncode y (Nat.bits i),
+      (LogProg.drop_canon (Nat.bits i)).mpr (LogProg.canon_bits i),
+      LogProg.length_bits_mono hi, hv, ?_⟩
+    rw [LogProg.bitsVal_bits]
+    exact hq
+
+/-- **Padding transfers space bounds down** ([AB09, Exercise 3.2], the padding argument in space
+form): if `L ∈ SPACE S`, then the language of `L`'s members padded by `C · (|x| + 1)^d` ones lies
+in `SPACE T` for every `T` with `m + 1 ≤ T m` (room to validate the padding and to copy the first
+component) and `S n ≤ T (2n + 2 + C (n + 1)^d)` (room for `L`'s decider, at the padded length
+`|pairEncode x 1^{C (|x|+1)^d}| = 2|x| + 2 + C (|x| + 1)^d`).
+
+**Proof sketch.** Let `M` decide `L` within `c · S` cells. On input `y`, first check that `y` is a
+pair `pairEncode x w` whose second component `w` consists of exactly `C (|x| + 1)^d` ones;
+reject otherwise. That needs `O(|y|)` cells. Then run `M` on `x` (copied to a work tape, or read
+in place through a bounded input device) and answer as `M` does, within `c · S |x|` cells. For a
+validated `y`, `|y| = 2|x| + 2 + C (|x| + 1)^d`, so both phases fit in `O(T |y|)`. -/
+theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+    (hST : ∀ n, S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) (hT : ∀ m, m + 1 ≤ T m) :
+    padLang L (fun n => C * (n + 1) ^ d) ∈ SPACE T := by
+  sorry
+
+end Complexity

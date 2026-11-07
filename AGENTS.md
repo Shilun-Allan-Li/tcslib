@@ -4,8 +4,10 @@
 > `complexity/arora-barak-ch3-4`)? Start at
 > [`campaign/maintainer/START-HERE.md`](campaign/maintainer/START-HERE.md). It and
 > `campaign/maintainer/WORKFLOW.md` take precedence over the generic workflow below. In
-> particular, elaborate only with `devtools/seyoon/leanelab.sh` (two Lean processes at most), never
-> `lake build`. The latest state is in `campaign/maintainer/HANDOFF.md` §0.
+> particular, elaborate only with `devtools/seyoon/leanelab.sh` (the current cap is below), never
+> `lake build`. The latest state is in `campaign/maintainer/HANDOFF.md` §0. The user's latest
+> machine-wide Lean cap is **five** (2026-11-06); this maintainer currently budgets three slots
+> while the Pass–Shelat chat uses two.
 
 This directory contains a coordinated multi-agent system for writing Lean 4 proofs incrementally, using **sorry-driven development** to avoid token-limit failures.
 

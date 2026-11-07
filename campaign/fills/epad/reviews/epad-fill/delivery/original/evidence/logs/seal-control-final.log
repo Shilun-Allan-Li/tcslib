@@ -1,0 +1,234 @@
+== unsealed
+== Probe/EPadSealControlUnsealed start 04:03:50
+rfl closes: Complexity.LOGSPACE   [Complexity.LOGSPACE.eq_1 : Complexity.LOGSPACE =
+  Complexity.SPACE Complexity.logSpace]
+rfl closes: Complexity.LogProg.AHalt   [Complexity.LogProg.AHalt.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a : Complexity.LogProg.AConf m Λ) (b : Bool),
+  Complexity.LogProg.AHalt A oracle x G a b =
+    ∃ T,
+      (Complexity.LogProg.arun A oracle x a T).1 = none ∧
+        (Complexity.LogProg.arun A oracle x a T).2.2 = some b ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+rfl closes: Complexity.LogProg.AReach   [Complexity.LogProg.AReach.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a a' : Complexity.LogProg.AConf m Λ),
+  Complexity.LogProg.AReach A oracle x G a a' =
+    ∃ T, Complexity.LogProg.arun A oracle x a T = a' ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+rfl closes: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+rfl closes: Complexity.LogProg.OIS.instDecidableEqPh   [Complexity.LogProg.OIS.instDecidableEqPh.eq_1 : Complexity.LogProg.OIS.instDecidableEqPh =
+  Complexity.LogProg.OIS.instDecidableEqPh.decEq]
+rfl closes: Complexity.LogProg.OIS.instFintypePh   [Complexity.LogProg.OIS.instFintypePh.eq_1 : Complexity.LogProg.OIS.instFintypePh =
+  Fintype.ofEquiv (Unit ⊕ Unit ⊕ (_ : Option Bool) × Bool ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit)
+    Complexity.LogProg.OIS.Ph.proxyTypeEquiv]
+rfl closes: Complexity.LogProg.OIS.prog   [Complexity.LogProg.OIS.prog.eq_1 : ∀ (M : Turing.FinTM Bool),
+  Complexity.LogProg.OIS.prog M =
+    { tm := { q₀ := (M.tm.q₀, Complexity.LogProg.OIS.Ph.ask), tr := Complexity.LogProg.OIS.tr M },
+      call := Complexity.LogProg.OIS.call M }]
+rfl closes: Complexity.LogProg.OIS.start   [Complexity.LogProg.OIS.start.eq_1 : ∀ (M : Turing.FinTM Bool),
+  Complexity.LogProg.OIS.start M = (M.tm.q₀, Complexity.LogProg.OIS.Ph.ask)]
+rfl closes: Complexity.LogProg.PreS   [Complexity.LogProg.PreS.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (x : List Bool) (l : Λ) (fst : Fin m → ℕ) (snd : Option Bool),
+  Complexity.LogProg.PreS A x (some l, fst, snd) =
+    match A l with
+    | Complexity.LogProg.Ins.jeq r s l₁ l₀ => r ≠ s
+    | Complexity.LogProg.Ins.jeqIn r l₁ l₀ => Complexity.LogProg.ValidPlain x
+    | Complexity.LogProg.Ins.jeqFst r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.jeqSnd r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.call j mode args l₁ l₀ => args.Nodup
+    | x => True]
+rfl closes: Complexity.LogProg.ValidPair   [Complexity.LogProg.ValidPair.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPair y =
+    ∃ n u w,
+      y = Turing.pairEncode (List.replicate n true) (Turing.pairEncode u w) ∧
+        Complexity.LogProg.Canon u ∧ Complexity.LogProg.Canon w]
+rfl closes: Complexity.LogProg.ValidPlain   [Complexity.LogProg.ValidPlain.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPlain y = ∃ n w, y = Turing.pairEncode (List.replicate n true) w ∧ Complexity.LogProg.Canon w]
+rfl closes: Complexity.LogProg.astep   [Complexity.LogProg.astep.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool) (v : Fin m → ℕ)
+  (res : Option Bool), Complexity.LogProg.astep A oracle x (none, v, res) = (none, v, res)]
+rfl closes: Complexity.LogProg.bankK   [Complexity.LogProg.bankK.eq_1 : ∀ {d : ℕ} (Ms : Fin d → Turing.FinTM Bool),
+  Complexity.LogProg.bankK Ms = Finset.univ.sup fun j => (Ms j).k]
+rfl closes: Complexity.LogProg.bankStart   [Complexity.LogProg.bankStart.eq_1 : ∀ {d : ℕ}
+  (Ms : Fin d → Turing.FinTM Bool) (j : Fin d),
+  Complexity.LogProg.bankStart Ms j = Complexity.LogProg.CleanSt.init (some ⟨j, (Ms j).tm.q₀⟩)]
+rfl closes: Complexity.LogProg.bankTM   [Complexity.LogProg.bankTM.eq_1 : ∀ {d : ℕ} (Ms : Fin d → Turing.FinTM Bool),
+  Complexity.LogProg.bankTM Ms =
+    Complexity.LogProg.cleanTM
+      (Complexity.LogProg.sigmaTM fun j => Complexity.LogProg.padTM (Ms j).tm (Complexity.LogProg.bankK Ms)) none]
+rfl closes: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+rfl closes: Complexity.LogProg.callSegs   [Complexity.LogProg.callSegs.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (cs : Complexity.LogProg.CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool),
+  Complexity.LogProg.callSegs cs x W = cs.mode.seg0 x :: Complexity.LogProg.argSegs (List.map W cs.args)]
+rfl closes: Complexity.LogProg.compileFinTM   [Complexity.LogProg.compileFinTM.eq_1 : ∀ {m d kD : ℕ} {Λ SD : Type}
+  [inst : Fintype Λ] [inst_1 : DecidableEq Λ] [inst_2 : Fintype SD] [inst_3 : DecidableEq SD]
+  (P : Complexity.LogProg.RProg m d Λ) (l₀ : Λ) (D : Turing.MultiTapeTM kD Bool SD) (q0 : Fin d → SD),
+  Complexity.LogProg.compileFinTM P l₀ D q0 =
+    { k := m + kD, State := Complexity.LogProg.CSt Λ SD m, fintypeState := Complexity.LogProg.instFintypeCSt,
+      decEqState := fun a b => Complexity.LogProg.instDecidableEqCSt a b,
+      tm := Complexity.LogProg.compileTM P l₀ D q0 }]
+rfl closes: Complexity.LogProg.instDecidableEqCleanSt   [Complexity.LogProg.instDecidableEqCleanSt.eq_1 : ∀ {S : Type}
+  {k : ℕ} [inst : DecidableEq S],
+  Complexity.LogProg.instDecidableEqCleanSt = Complexity.LogProg.instDecidableEqCleanSt.decEq]
+rfl closes: Complexity.LogProg.instFintypeCleanSt   [Complexity.LogProg.instFintypeCleanSt.eq_1 : ∀ {S : Type} {k : ℕ}
+  [inst : Fintype S],
+  Complexity.LogProg.instFintypeCleanSt =
+    Fintype.ofEquiv (S ⊕ S ⊕ (_ : Fin k) × Complexity.LogProg.CPh) (Complexity.LogProg.CleanSt.proxyTypeEquiv S k)]
+rfl closes: Complexity.LogProg.vword   [Complexity.LogProg.vword.eq_1 : Complexity.LogProg.vword [] = []]
+rfl closes: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+rfl closes: Complexity.inputBitLang   [Complexity.inputBitLang.eq_1 : Complexity.inputBitLang =
+  Complexity.indexLang fun u i => u.getD i false = true]
+rfl closes: Complexity.inputLenLang   [Complexity.inputLenLang.eq_1 : Complexity.inputLenLang =
+  Complexity.indexLang fun u i => i < u.length]
+rfl closes: Complexity.logSpace   [Complexity.logSpace.eq_1 : ∀ (n : ℕ), Complexity.logSpace n = Nat.log 2 n + 1]
+rfl closes: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+rfl closes: Turing.FinTM.ComputesFunInTime   [Turing.FinTM.ComputesFunInTime.eq_1 : ∀ {Symbol : Type}
+  (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T = ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)]
+rfl closes: Turing.FinTM.ComputesInSpace   [Turing.FinTM.ComputesInSpace.eq_1 : ∀ (M : Turing.FinTM Bool)
+  (f : List Bool → List Bool) (s : ℕ → ℕ),
+  M.ComputesInSpace f s =
+    ∀ (x : List Bool),
+      ∃ t, M.ComputesInTime x (f x) t ∧ Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ s x.length]
+rfl closes: Turing.FinTM.ComputesInTime   [Turing.FinTM.ComputesInTime.eq_1 : ∀ {Symbol : Type}
+  (M : Turing.FinTM Symbol) (input output : List Symbol) (t : ℕ),
+  M.ComputesInTime input output t = ∃ s, M.tm.ComputesInTimeAndSpace input output t s]
+rfl closes: Turing.FinTM.DecidesInSpace   [Turing.FinTM.DecidesInSpace.eq_1 : ∀ (M : Turing.FinTM Bool)
+  (L : Language Bool) (s : ℕ → ℕ),
+  M.DecidesInSpace L s = M.ComputesInSpace (fun x => [Turing.MultiTapeTM.indicator L x]) s]
+rfl closes: Turing.FinTM.configBound   [Turing.FinTM.configBound.eq_1 : ∀ (M : Turing.FinTM Bool) (n s : ℕ),
+  M.configBound n s = (Fintype.card M.State + 1) * (n + 2) * 3 ^ (M.k * (2 * s + 1)) * (2 * s + 1) ^ M.k]
+rfl closes: Turing.MultiTapeTM.indicator   [Turing.MultiTapeTM.indicator.eq_1 : ∀ {α : Type u_3} (L : Set α) (x : α),
+  Turing.MultiTapeTM.indicator L x = if x ∈ L then true else false]
+rfl closes: Turing.MultiTapeTM.initCfg   [Turing.MultiTapeTM.initCfg.eq_1 : ∀ {k : ℕ} {State : Type u_1}
+  {Symbol : Type u_2} {tm : Turing.MultiTapeTM k Symbol State} (input : List Symbol),
+  Turing.MultiTapeTM.initCfg input = Turing.Cfg.init tm.q₀ input]
+rfl closes: Turing.MultiTapeTM.spaceUsed   [Turing.MultiTapeTM.spaceUsed.eq_1 : ∀ {k : ℕ} {State : Type u_1}
+  {Symbol : Type u_2} {input : List Symbol} {tm : Turing.MultiTapeTM k Symbol State}
+  (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.spaceUsed cfg t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i]
+rfl closes: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+rfl closes: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+== Probe/EPadSealControlUnsealed end 04:03:51 rc=0 wall=1.5s maxrss=1881MiB
+== sealed (every #epad_seal_rfl must fail)
+== Probe/EPadSealControlSealed start 04:03:51
+Probe/EPadSealControlSealed.lean:73:0: error: rfl FAILS: Complexity.LOGSPACE   [Complexity.LOGSPACE.eq_1 : Complexity.LOGSPACE = Complexity.SPACE Complexity.logSpace]
+Probe/EPadSealControlSealed.lean:74:0: error: rfl FAILS: Complexity.LogProg.AHalt   [Complexity.LogProg.AHalt.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a : Complexity.LogProg.AConf m Λ) (b : Bool),
+  Complexity.LogProg.AHalt A oracle x G a b =
+    ∃ T,
+      (Complexity.LogProg.arun A oracle x a T).1 = none ∧
+        (Complexity.LogProg.arun A oracle x a T).2.2 = some b ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+Probe/EPadSealControlSealed.lean:75:0: error: rfl FAILS: Complexity.LogProg.AReach   [Complexity.LogProg.AReach.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (G : Complexity.LogProg.AConf m Λ → Prop) (a a' : Complexity.LogProg.AConf m Λ),
+  Complexity.LogProg.AReach A oracle x G a a' =
+    ∃ T, Complexity.LogProg.arun A oracle x a T = a' ∧ ∀ t < T, G (Complexity.LogProg.arun A oracle x a t)]
+Probe/EPadSealControlSealed.lean:76:0: error: rfl FAILS: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+Probe/EPadSealControlSealed.lean:77:0: error: rfl FAILS: Complexity.LogProg.OIS.instDecidableEqPh   [Complexity.LogProg.OIS.instDecidableEqPh.eq_1 : Complexity.LogProg.OIS.instDecidableEqPh =
+  Complexity.LogProg.OIS.instDecidableEqPh.decEq]
+Probe/EPadSealControlSealed.lean:78:0: error: rfl FAILS: Complexity.LogProg.OIS.instFintypePh   [Complexity.LogProg.OIS.instFintypePh.eq_1 : Complexity.LogProg.OIS.instFintypePh =
+  Fintype.ofEquiv (Unit ⊕ Unit ⊕ (_ : Option Bool) × Bool ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit ⊕ Unit)
+    Complexity.LogProg.OIS.Ph.proxyTypeEquiv]
+Probe/EPadSealControlSealed.lean:79:0: error: rfl FAILS: Complexity.LogProg.OIS.prog   [Complexity.LogProg.OIS.prog.eq_1 : ∀ (M : Turing.FinTM Bool),
+  Complexity.LogProg.OIS.prog M =
+    { tm := { q₀ := (M.tm.q₀, Complexity.LogProg.OIS.Ph.ask), tr := Complexity.LogProg.OIS.tr M },
+      call := Complexity.LogProg.OIS.call M }]
+Probe/EPadSealControlSealed.lean:80:0: error: rfl FAILS: Complexity.LogProg.OIS.start   [Complexity.LogProg.OIS.start.eq_1 : ∀ (M : Turing.FinTM Bool),
+  Complexity.LogProg.OIS.start M = (M.tm.q₀, Complexity.LogProg.OIS.Ph.ask)]
+Probe/EPadSealControlSealed.lean:81:0: error: rfl FAILS: Complexity.LogProg.PreS   [Complexity.LogProg.PreS.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (x : List Bool) (l : Λ) (fst : Fin m → ℕ) (snd : Option Bool),
+  Complexity.LogProg.PreS A x (some l, fst, snd) =
+    match A l with
+    | Complexity.LogProg.Ins.jeq r s l₁ l₀ => r ≠ s
+    | Complexity.LogProg.Ins.jeqIn r l₁ l₀ => Complexity.LogProg.ValidPlain x
+    | Complexity.LogProg.Ins.jeqFst r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.jeqSnd r l₁ l₀ => Complexity.LogProg.ValidPair x
+    | Complexity.LogProg.Ins.call j mode args l₁ l₀ => args.Nodup
+    | x => True]
+Probe/EPadSealControlSealed.lean:82:0: error: rfl FAILS: Complexity.LogProg.ValidPair   [Complexity.LogProg.ValidPair.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPair y =
+    ∃ n u w,
+      y = Turing.pairEncode (List.replicate n true) (Turing.pairEncode u w) ∧
+        Complexity.LogProg.Canon u ∧ Complexity.LogProg.Canon w]
+Probe/EPadSealControlSealed.lean:83:0: error: rfl FAILS: Complexity.LogProg.ValidPlain   [Complexity.LogProg.ValidPlain.eq_1 : ∀ (y : List Bool),
+  Complexity.LogProg.ValidPlain y = ∃ n w, y = Turing.pairEncode (List.replicate n true) w ∧ Complexity.LogProg.Canon w]
+Probe/EPadSealControlSealed.lean:84:0: error: rfl FAILS: Complexity.LogProg.astep   [Complexity.LogProg.astep.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (A : Complexity.LogProg.ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool) (v : Fin m → ℕ)
+  (res : Option Bool), Complexity.LogProg.astep A oracle x (none, v, res) = (none, v, res)]
+Probe/EPadSealControlSealed.lean:85:0: error: rfl FAILS: Complexity.LogProg.bankK   [Complexity.LogProg.bankK.eq_1 : ∀ {d : ℕ} (Ms : Fin d → Turing.FinTM Bool),
+  Complexity.LogProg.bankK Ms = Finset.univ.sup fun j => (Ms j).k]
+Probe/EPadSealControlSealed.lean:86:0: error: rfl FAILS: Complexity.LogProg.bankStart   [Complexity.LogProg.bankStart.eq_1 : ∀ {d : ℕ}
+  (Ms : Fin d → Turing.FinTM Bool) (j : Fin d),
+  Complexity.LogProg.bankStart Ms j = Complexity.LogProg.CleanSt.init (some ⟨j, (Ms j).tm.q₀⟩)]
+Probe/EPadSealControlSealed.lean:87:0: error: rfl FAILS: Complexity.LogProg.bankTM   [Complexity.LogProg.bankTM.eq_1 : ∀ {d : ℕ} (Ms : Fin d → Turing.FinTM Bool),
+  Complexity.LogProg.bankTM Ms =
+    Complexity.LogProg.cleanTM
+      (Complexity.LogProg.sigmaTM fun j => Complexity.LogProg.padTM (Ms j).tm (Complexity.LogProg.bankK Ms)) none]
+Probe/EPadSealControlSealed.lean:88:0: error: rfl FAILS: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+Probe/EPadSealControlSealed.lean:89:0: error: rfl FAILS: Complexity.LogProg.callSegs   [Complexity.LogProg.callSegs.eq_1 : ∀ {m d : ℕ} {Λ : Type}
+  (cs : Complexity.LogProg.CallSpec m d Λ) (x : List Bool) (W : Fin m → List Bool),
+  Complexity.LogProg.callSegs cs x W = cs.mode.seg0 x :: Complexity.LogProg.argSegs (List.map W cs.args)]
+Probe/EPadSealControlSealed.lean:90:0: error: rfl FAILS: Complexity.LogProg.compileFinTM   [Complexity.LogProg.compileFinTM.eq_1 : ∀ {m d kD : ℕ} {Λ SD : Type}
+  [inst : Fintype Λ] [inst_1 : DecidableEq Λ] [inst_2 : Fintype SD] [inst_3 : DecidableEq SD]
+  (P : Complexity.LogProg.RProg m d Λ) (l₀ : Λ) (D : Turing.MultiTapeTM kD Bool SD) (q0 : Fin d → SD),
+  Complexity.LogProg.compileFinTM P l₀ D q0 =
+    { k := m + kD, State := Complexity.LogProg.CSt Λ SD m, fintypeState := Complexity.LogProg.instFintypeCSt,
+      decEqState := fun a b => Complexity.LogProg.instDecidableEqCSt a b,
+      tm := Complexity.LogProg.compileTM P l₀ D q0 }]
+Probe/EPadSealControlSealed.lean:91:0: error: rfl FAILS: Complexity.LogProg.instDecidableEqCleanSt   [Complexity.LogProg.instDecidableEqCleanSt.eq_1 : ∀ {S : Type}
+  {k : ℕ} [inst : DecidableEq S],
+  Complexity.LogProg.instDecidableEqCleanSt = Complexity.LogProg.instDecidableEqCleanSt.decEq]
+Probe/EPadSealControlSealed.lean:92:0: error: rfl FAILS: Complexity.LogProg.instFintypeCleanSt   [Complexity.LogProg.instFintypeCleanSt.eq_1 : ∀ {S : Type} {k : ℕ}
+  [inst : Fintype S],
+  Complexity.LogProg.instFintypeCleanSt =
+    Fintype.ofEquiv (S ⊕ S ⊕ (_ : Fin k) × Complexity.LogProg.CPh) (Complexity.LogProg.CleanSt.proxyTypeEquiv S k)]
+Probe/EPadSealControlSealed.lean:93:0: error: rfl FAILS: Complexity.LogProg.vword   [Complexity.LogProg.vword.eq_1 : Complexity.LogProg.vword [] = []]
+Probe/EPadSealControlSealed.lean:94:0: error: rfl FAILS: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+Probe/EPadSealControlSealed.lean:95:0: error: rfl FAILS: Complexity.inputBitLang   [Complexity.inputBitLang.eq_1 : Complexity.inputBitLang =
+  Complexity.indexLang fun u i => u.getD i false = true]
+Probe/EPadSealControlSealed.lean:96:0: error: rfl FAILS: Complexity.inputLenLang   [Complexity.inputLenLang.eq_1 : Complexity.inputLenLang =
+  Complexity.indexLang fun u i => i < u.length]
+Probe/EPadSealControlSealed.lean:97:0: error: rfl FAILS: Complexity.logSpace   [Complexity.logSpace.eq_1 : ∀ (n : ℕ), Complexity.logSpace n = Nat.log 2 n + 1]
+Probe/EPadSealControlSealed.lean:98:0: error: rfl FAILS: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+Probe/EPadSealControlSealed.lean:99:0: error: rfl FAILS: Turing.FinTM.ComputesFunInTime   [Turing.FinTM.ComputesFunInTime.eq_1 : ∀ {Symbol : Type}
+  (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T = ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)]
+Probe/EPadSealControlSealed.lean:100:0: error: rfl FAILS: Turing.FinTM.ComputesInSpace   [Turing.FinTM.ComputesInSpace.eq_1 : ∀ (M : Turing.FinTM Bool)
+  (f : List Bool → List Bool) (s : ℕ → ℕ),
+  M.ComputesInSpace f s =
+    ∀ (x : List Bool),
+      ∃ t, M.ComputesInTime x (f x) t ∧ Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ s x.length]
+Probe/EPadSealControlSealed.lean:101:0: error: rfl FAILS: Turing.FinTM.ComputesInTime   [Turing.FinTM.ComputesInTime.eq_1 : ∀ {Symbol : Type} (M : Turing.FinTM Symbol)
+  (input output : List Symbol) (t : ℕ),
+  M.ComputesInTime input output t = ∃ s, M.tm.ComputesInTimeAndSpace input output t s]
+Probe/EPadSealControlSealed.lean:102:0: error: rfl FAILS: Turing.FinTM.DecidesInSpace   [Turing.FinTM.DecidesInSpace.eq_1 : ∀ (M : Turing.FinTM Bool)
+  (L : Language Bool) (s : ℕ → ℕ),
+  M.DecidesInSpace L s = M.ComputesInSpace (fun x => [Turing.MultiTapeTM.indicator L x]) s]
+Probe/EPadSealControlSealed.lean:103:0: error: rfl FAILS: Turing.FinTM.configBound   [Turing.FinTM.configBound.eq_1 : ∀ (M : Turing.FinTM Bool) (n s : ℕ),
+  M.configBound n s = (Fintype.card M.State + 1) * (n + 2) * 3 ^ (M.k * (2 * s + 1)) * (2 * s + 1) ^ M.k]
+Probe/EPadSealControlSealed.lean:104:0: error: rfl FAILS: Turing.MultiTapeTM.indicator   [Turing.MultiTapeTM.indicator.eq_1 : ∀ {α : Type u_3} (L : Set α) (x : α),
+  Turing.MultiTapeTM.indicator L x = if x ∈ L then true else false]
+Probe/EPadSealControlSealed.lean:105:0: error: rfl FAILS: Turing.MultiTapeTM.initCfg   [Turing.MultiTapeTM.initCfg.eq_1 : ∀ {k : ℕ} {State : Type u_1}
+  {Symbol : Type u_2} {tm : Turing.MultiTapeTM k Symbol State} (input : List Symbol),
+  Turing.MultiTapeTM.initCfg input = Turing.Cfg.init tm.q₀ input]
+Probe/EPadSealControlSealed.lean:106:0: error: rfl FAILS: Turing.MultiTapeTM.spaceUsed   [Turing.MultiTapeTM.spaceUsed.eq_1 : ∀ {k : ℕ} {State : Type u_1}
+  {Symbol : Type u_2} {input : List Symbol} {tm : Turing.MultiTapeTM k Symbol State}
+  (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.spaceUsed cfg t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i]
+Probe/EPadSealControlSealed.lean:107:0: error: rfl FAILS: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+Probe/EPadSealControlSealed.lean:108:0: error: rfl FAILS: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+FAIL(Probe/EPadSealControlSealed): lean exited with status 1
+FAIL(Probe/EPadSealControlSealed): error diagnostics reported
+FAIL(Probe/EPadSealControlSealed): no fresh .olean produced
+== Probe/EPadSealControlSealed end 04:03:53 rc=1 wall=1.4s maxrss=1876MiB

@@ -1,0 +1,32 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+
+/-! E-PAD citation walk: every constant of another TCSlib module that occurs in the type or
+value of a declaration of `SpaceComplexity/Padding.lean` (private ones and auxiliaries
+included), with its kind and module. -/
+open Lean Elab Command in
+elab "#epad_cites" : command => do
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Padding
+    | logInfo "no module"
+  let mut seen : Std.HashSet Name := {}
+  let mut lines : Array String := #[]
+  for (n, ci) in env.constants.toList do
+    if env.getModuleIdxFor? n != some modIdx then continue
+    let cs := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    for c in cs do
+      if seen.contains c then continue
+      match env.getModuleIdxFor? c with
+      | some i =>
+        let mod := env.header.moduleNames[i.toNat]!
+        if (`TCSlib).isPrefixOf mod && i != modIdx then
+          seen := seen.insert c
+          let kind := match env.find? c with
+            | some (.thmInfo _) => "theorem" | some (.defnInfo _) => "definition"
+            | some (.ctorInfo _) => "constructor" | some (.inductInfo _) => "inductive"
+            | some (.recInfo _) => "recursor" | some (.axiomInfo _) => "axiom"
+            | some (.opaqueInfo _) => "opaque" | _ => "other"
+          lines := lines.push s!"CITE\t{c}\t{kind}\t{mod}"
+      | none => pure ()
+  logInfo (String.intercalate "\n" (lines.qsort (· < ·)).toList)
+
+#epad_cites

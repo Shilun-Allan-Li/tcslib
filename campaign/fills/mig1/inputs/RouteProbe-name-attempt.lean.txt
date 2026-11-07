@@ -1,0 +1,105 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.RAMSimulation.WordSize
+import Mathlib.Algebra.BigOperators.Fin
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing Turing.FinTM
+
+namespace MIG1PreShip
+
+-- These are conditional consumer checks. The unfilled specifications are
+-- explicit hypotheses, never asserted as proved by this pre-ship.
+theorem idRow
+    (h : ∀ x, idTM.ComputesInTime x x (x.length + 1)) :
+    ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime id (fun n => c * (n + 1)) := by
+  refine ⟨idTM, 1, ?_⟩
+  intro x
+  simpa only [one_mul] using h x
+
+theorem pairRow
+    (h : ∀ x, pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5)) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => pairEncode x x) (fun n => c * (n + 1)) := by
+  refine ⟨pairDiagTM, 5, ?_⟩
+  intro x
+  exact (h x).mono (by change 4 * x.length + 5 ≤ 5 * (x.length + 1); omega)
+
+theorem appendRow (b : Bool)
+    (h : ∀ x, (appendBitTM b).ComputesInTime x (x ++ [b]) (x.length + 1)) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => x ++ [b]) (fun n => c * (n + 1)) := by
+  refine ⟨appendBitTM b, 1, ?_⟩
+  intro x
+  simpa only [one_mul] using h x
+
+theorem decidesRow (h : type_of% @loopHostTM_decides) : type_of% @exists_loopTM := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor false, 10,
+    h body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround⟩
+
+theorem findsRow (h : type_of% @loopHostTM_finds) : type_of% @exists_loopFindTM := by
+  intro body F anchor Inv stepF acceptF out s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor true, 10,
+    h body F anchor Inv stepF acceptF out s0 R T hF hInv0 hInvStep hstart hround⟩
+
+theorem emitRow (h : type_of% @emitLoopTM_computes) : type_of% @exists_emitLoopTM := by
+  intro body F anchor Inv stepF emitF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨emitLoopTM body F anchor, 10,
+    h body F anchor Inv stepF emitF s0 R T hF hInv0 hInvStep hstart hround⟩
+
+#print axioms idRow
+#print axioms pairRow
+#print axioms appendRow
+#print axioms decidesRow
+#print axioms findsRow
+#print axioms emitRow
+
+end MIG1PreShip
+
+-- Public route rows whose signatures/import contexts must be present.
+#check Turing.FinTM.idTM_computes
+#check Turing.FinTM.ifEqTM_computes
+#check Turing.FinTM.condTM_computes_iff
+#check Turing.FinTM.branchTM_spaceUsed
+#check Turing.FinTM.timedCondTM_computes
+#check Turing.FinTM.timedCondTM_spaceUsed
+#check Turing.pairDiagTM_computes
+#check Turing.FinTM.lengthBitsTM_computes
+#check Turing.FinTM.lengthBitsTM_spaceUsed
+#check Turing.FinTM.loopHostTM_contracts
+#check Turing.FinTM.loopHostTM_decides
+#check Turing.FinTM.loopHostTM_finds
+#check Turing.FinTM.loopHostTM_spaceUsed_le_budget
+#check Turing.FinTM.emitLoopTM_computes
+#check Turing.FinTM.polyUnaryTM_spaceUsed
+#check Turing.FinTM.unaryTokenTM_computes
+#check Turing.FinTM.appendBitTM_computes
+#check Turing.FinTM.bufferedCompTM_computesInTime
+#check Turing.FinTM.bufferedCompTM_computesFunInTime
+#check Turing.FinTM.bufferedCompTM_computesFunInTime_on_image
+#check Turing.FinTM.bufferedCompTM_computes_iff
+#check Turing.FinTM.branchTM_computes
+#check Turing.FinTM.redirectTM_runFrom
+#check Turing.FinTM.ComputesInTime.spaceUsed_le
+#check Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc
+#check Turing.FinTM.timed_rewind
+#check Turing.FinTM.rewind_from_any
+#check Turing.FinTM.polyUnaryTM_computes
+#check Turing.FinTM.polyBitsTM_computes
+#check Turing.FinTM.pairMapSndTM_computes
+#check Turing.FinTM.pairMapSndTM_spaceUsed
+#check Turing.FinTM.splitSolveTM_computes
+#check Turing.FinTM.splitSolveTM_spaceUsed
+#check Turing.FinTM.splitSolveWithTM_computes
+#check Turing.FinTM.callTM_install
+#check Turing.FinTM.callTM_emit
+#check Turing.copyTM_run_ofCfg
+#check Turing.transferTM_run_ofCfg
+#check Turing.Cfg.ofWords_copy_endpoint
+#check Turing.Cfg.ofWords_transfer_endpoint

@@ -1,0 +1,31 @@
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+
+
+example (w : List Bool) (z : ℤ) : Turing.FinTM.bufferTape w z =
+    (if 0 ≤ z then w[z.toNat]? else none) := by
+  rfl
+example (w : List Bool) : Turing.FinTM.bufferTape w 0 = w[0]? := by
+  rfl
+
+attribute [local irreducible] Turing.FinTM.bufferTape
+
+example (w : List Bool) (z : ℤ) : Turing.FinTM.bufferTape w z =
+    (if 0 ≤ z then w[z.toNat]? else none) := by
+  fail_if_success rfl
+  exact Turing.FinTM.bufferTape_eq w z
+example (w : List Bool) : Turing.FinTM.bufferTape w 0 = w[0]? := by
+  fail_if_success rfl
+  exact Turing.FinTM.bufferTape_nat w 0
+
+
+set_option autoImplicit false
+open Turing
+
+example (w : List Bool) (k : ℕ) (hkw : k < w.length) :
+    FinTM.bufferTape (w.take k ++ w[k] :: w.drop (k + 2))
+      (((k + 1 : ℕ) : ℤ) - 1) = some w[k] := by
+  have hlen : (w.take k).length = k := List.length_take_of_le (Nat.le_of_lt hkw)
+  have hpos : (((k + 1 : ℕ) : ℤ) - 1) = ((w.take k).length : ℤ) := by
+    rw [hlen]; push_cast; ring
+  rw [hpos, FinTM.bufferTape_nat, List.getElem?_append_right le_rfl, Nat.sub_self]
+  rfl

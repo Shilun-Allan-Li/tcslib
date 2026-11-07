@@ -1,0 +1,547 @@
+TCSlib/BooleanAnalysis/GaussianSpace/MaxCutAlgorithm.lean:60:            expect (n := C * (bits.length + 1) ^ k) (fun r =>
+TCSlib/BooleanAnalysis/GaussianSpace/MaxCutAlgorithm.lean:79:            expect (n := C * (bits.length + 1) ^ k) (fun r =>
+TCSlib/BooleanAnalysis/RazborovSmolensky/CircuitSize.lean:167:          F.size * Ps.length := by
+TCSlib/Complexity/CircuitComplexity/Adder.lean:137:    bitsVal l = prefixVal (fun j => l.getD j false) l.length := by
+TCSlib/Complexity/CircuitComplexity/BookModelBasics.lean:298:    (C.binarize hwf).size ≤ n + (C.gates.map fun g => max 1 (g.args.length - 1)).sum := by
+TCSlib/Complexity/CircuitComplexity/BookModelBasics.lean:315:      C'.size ≤ n + (C.gates.map fun g => max 1 (g.args.length - 1)).sum :=
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:367:    (C.binarize hwf).size ≤ n + C.gates.length * (C.size + 2) := by
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean:628:    (C.deMorgan hwf).size ≤ n + C.gates.length * (C.size + 2) := by
+TCSlib/Complexity/CircuitComplexity/Encoding.lean:331:    C.size ≤ (encodeCircuit C).length := by
+TCSlib/Complexity/CircuitComplexity/Encoding.lean:336:          ds.foldr (fun d acc => d.size + acc) 0 ≤ (encodeChildren ds).length := by
+TCSlib/Complexity/CircuitComplexity/Encoding.lean:353:    C.2.size ≤ (encodeSigma C).length := by
+TCSlib/Complexity/CircuitComplexity/FanOut.lean:362:theorem DAGCircuit.fanoutTwo_size_le : (C.fanoutTwo hC).size ≤ n + 3 * C.gates.length := by
+TCSlib/Complexity/CircuitComplexity/FormulaFanOut.lean:496:    (hfo : ∀ v, n ≤ v → C.fanout v ≤ 1) : C.toTree.size ≤ 3 * C.gates.length + 1 := by
+TCSlib/Complexity/CircuitComplexity/FormulaFanOut.lean:516:      t.size ≤ 3 * C.gates.length + 1 ∧ t.size ≤ 4 * C.size := by
+TCSlib/Complexity/CircuitComplexity/HardFunctions.lean:106:private theorem bitsToNat_lt (w : List Bool) : bitsToNat w < 2 ^ (w.length + 1) := by
+TCSlib/Complexity/CircuitComplexity/HardFunctions.lean:211:      calc bitsToNat (encodeCircuit (g f)) < 2 ^ ((encodeCircuit (g f)).length + 1) :=
+TCSlib/Complexity/CircuitComplexity/Hierarchy.lean:185:    (∀ n, (C n).size ≤ T n) ∧ ∀ w : List Bool, w ∈ L ↔ (C w.length).eval w.get = true
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:119:    (C.rewire k srcs hlen hsrc).size = k + 3 + C.gates.length := by
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:232:      S.IsFaninTwo ∧ S.size ≤ q₀ * (n + 1) ^ e ∧ S.outputs.length = C * (n + 1) ^ c ∧
+TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean:297:theorem toLayered_size_le : (C.toLayered hwf).size ≤ (C.gates.length + 1) * (C.size + 1) := by
+TCSlib/Complexity/CircuitComplexity/LayeredDAG.lean:714:    calc ((E n).toLayered (hwfE n)).size ≤ ((E n).gates.length + 1) * ((E n).size + 1) :=
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj.lean:351:      have h1 : (C.circuit x.length).size + 1 ≤ (a + 1) * (x.length + 1) ^ k := by
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:182:++ 0^{W - |bits j|}` has length `W` because `|bits j| = size j ≤ W` for `j < 2^W`. -/
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:187:      (List.replicate (wd Cw cw x.length - (Nat.bits j).length) false)) = true := by
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:188:  have hb : (Nat.bits j).length ≤ wd Cw cw x.length := Complexity.LogProg.length_bits_le hjW
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:96:    (query bits t a x).length = nb + 2 * t.length + 2 * a.length + 4 + x.length := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:60:      (tabTM M).tm.runFrom (pcfg M (.fA f bits) (fpos y p) [] wC wO) (2 * w.length + 2) =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:159:      (tabTM M).tm.runFrom (pcfg M (.cpy bits) (fpos y p) wX wC wO) (rest.length + 1) =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:350:          have hlr : (y.drop (nbits M)).length = 2 * t.length + 2 + r.length := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:352:          have hdr : y.drop (nbits M + 1 + 2 * t.length + 2 - 1) = r := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:353:            rw [show nbits M + 1 + 2 * t.length + 2 - 1 = nbits M + (2 * t.length + 2) by omega,
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:364:    have hlen : nbits M ≤ y.length := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:385:        have hylen : y.length = nbits M + 2 * t.length + 2 * a.length + 4 + x.length := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:393:        have hdr : y.drop (nbits M + 1 + 2 * t.length + 2 - 1) = r := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:394:          rw [show nbits M + 1 + 2 * t.length + 2 - 1 = nbits M + (2 * t.length + 2) by omega,
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:399:        have hdx : y.drop (nbits M + 1 + 2 * t.length + 2 + 2 * a.length + 2 - 1) = x := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:402:          rw [show nbits M + 1 + 2 * t.length + 2 + 2 * a.length + 2 - 1 =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:414:        have s2 : (tabTM M).tm.runFrom ((tabTM M).tm.initCfg y) (nbits M + (2 * t.length + 2)) =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:419:            (nbits M + (2 * t.length + 2) + (2 * a.length + 2)) =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:421:              (fpos y (nbits M + 1 + 2 * t.length + 2 + 2 * a.length + 2)) [] t a := by
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:424:            (nbits M + (2 * t.length + 2) + (2 * a.length + 2) + (x.length + 1)) =
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:429:            (nbits M + (2 * t.length + 2) + (2 * a.length + 2) + (x.length + 1) + (x.length + 1)) =
+TCSlib/Complexity/CircuitComplexity/MeyerSigma.lean:125:    have hp : pw.length = wd Cw cw x.length - (Nat.bits jw.length).length := by
+TCSlib/Complexity/CircuitComplexity/MeyerSigma.lean:230:    AnsOf M W x (F.circuit (nbits M + 2 * W + 2 * W + 4 + x.length)).encode sel t a =
+TCSlib/Complexity/CircuitComplexity/MeyerSigma.lean:236:      nbits M + 2 * W + 2 * W + 4 + x.length := by simp
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:435:    Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false = enumWord w j := by
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:436:  have hlen : (Nat.bits j).length ≤ w := Complexity.LogProg.length_bits_le hj
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:440:  rw [show (Nat.bits j).length + (w - (Nat.bits j).length) = w by omega] at h
+TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean:109:theorem pt_lengthBits : PolyTimeComputable (fun u => Nat.bits u.length) := by
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:264:          have hSdef : (C.circuit n).size = n + (C.circuit n).gates.length := rfl
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram.lean:447:    (progCircuit m w F n prog i j).size = progBase m w F n prog prog.length := by
+TCSlib/Complexity/CircuitComplexity/SequentialCircuit.lean:218:    have hp : M.size * k + (r + i) < (M.unroll T).gates.length := by
+TCSlib/Complexity/CircuitComplexity/SequentialCircuit.lean:244:  have hp : M.size * k + j < (M.unroll T).gates.length := by
+TCSlib/Complexity/CircuitComplexity/StraightLine.lean:421:theorem toCircuit_size : P.toCircuit.size = 2 * n + max P.length 1 := by
+TCSlib/Complexity/CircuitComplexity/StrictFanOut.lean:402:theorem DAGCircuit.fanoutTwoNN_size_le : (C.fanoutTwoNN hC).size ≤ n + 5 * C.gates.length := by
+TCSlib/Complexity/CircuitComplexity/StrictFanOut.lean:442:  have h2 : D.size ≤ n + 5 * C.gates.length := C.fanoutTwoNN_size_le hC
+TCSlib/Complexity/CircuitComplexity/TreeDAG.lean:690:theorem toTree_size_le (hwf : C.IsWellFormed) {k : ℕ} (hk : ∀ g ∈ C.gates, g.args.length ≤ k) :
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:348:    (combine b cs).size ≤ TreeCircuit.sumSize cs + cs.length + 1 :=
+TCSlib/Complexity/CircuitComplexity/Uniform.lean:200:    C.size ≤ C.encode.length := by
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit.lean:311:    (tabCircuit m w F n z prog o j).size = n + 2 + z.length + tabW m w F * (prog.length + 1) := by
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.lean:397:            (ibits M n z T (e.i + (1 + z.length) + j)) (Ki M + 1) := by
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.lean:450:        (ibits M n z T (e.i + (1 + z.length + n))) (Ki M) := by
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer.lean:467:      (ibits M n z T (e.i + (1 + z.length + n))) (Ki M + 2) := by
+TCSlib/Complexity/CircuitComplexity/Universal.lean:89:    (l.map g).foldr (fun c acc => c.size + acc) 0 = l.length * k := by
+TCSlib/Complexity/ClassNP/EXP.lean:2248:      (fun x => Nat.bits (2 ^ (C * (x.length + 1) ^ c) - 1)) T := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2428:private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:2429:    (Nat.bits (C * 2 ^ (n + 1) ^ c)).length ≤ (m + 1) ^ c + (Nat.bits C).length := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3293:  have hlen : bits.length ≤ A * P := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3318:    have hlin : a + (2 * bits.length + 2) ≤ (4 * A + 4) * P := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3319:      calc a + (2 * bits.length + 2) ≤ 4 * (A * P) + 4 := by omega
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3322:    have hround : 2 * bits.length + 3 ≤ (2 * A + 3) * P := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3323:      calc 2 * bits.length + 3 ≤ 2 * (A * P) + 3 * P := by omega
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3328:             (R + 1) * (2 * bits.length + 3) := by dsimp [T]; omega
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3965:  have hsize : (pairEncode (f x) (g x)).length = 2 * (f x).length + 2 + (g x).length := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:4040:  have he : PolyTimeComputable (fun x => Nat.bits (C * 2 ^ (x.length + 1) ^ c)) :=
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:4146:      (Nat.bits (C * 2 ^ (x.length + 1) ^ c)).length ≤
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:4147:        (w.length + 1) ^ c + (Nat.bits C).length := by
+TCSlib/Complexity/ClassNP/SAT.lean:4348:  have hFuel : F.ComputesFunInTime (fun x => Nat.bits x.length) T := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:639:    (Nat.bits M.numStates).length ≤ M.serialize.length ∧
+TCSlib/Complexity/ClassNP/TMSAT.lean:1290:  have hclock : PolyTimeComputable (fun z => Nat.bits (tmsatClock z).length) := by
+TCSlib/Complexity/ClassNP/Tautology.lean:1569:  have hf : F.ComputesFunInTime (fun x => Nat.bits ((fun _ : ℕ => 0) x.length)) T := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:113:    bitsVal (pairFstD z) < 2 ^ (z.length + 2) ∧ bitsVal (pairSndD z) < 2 ^ (z.length + 2) := by
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:169:  have hlt : bitsVal (pairFstD z) + bitsVal (pairSndD z) < 2 ^ (z.length + 2) := by
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:57:    bitsVal (w ++ [b]) = bitsVal w + b.toNat * 2 ^ w.length := by
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:69:theorem length_bits_bitsVal_le (w : List Bool) : (Nat.bits (bitsVal w)).length ≤ w.length :=
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73:theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:74:    (Nat.bits n).length ≤ m :=
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:340:    initW z = encState (bitsVal (pairFstD z)) (initRows z, 1, (initRows z).length, 0) := by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:435:    (Nat.bits x).length ≤ K + 2 :=
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:448:    (encState (bitsVal (pairFstD z)) s).length ≤ 64 * (z.length + 1) ^ 3 := by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:454:  have hbp : (Nat.bits (bitsVal (pairFstD z))).length ≤ K :=
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:647:      Nat.bits (matOfRows p rows.length rows).det.val := by
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:109:      (bitsVal q * bitsVal (pairSndD z) + bitsVal r) * 2 ^ R.length + bitsVal R.reverse =
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:148:    have hrev : bitsVal (c :: R).reverse = bitsVal R.reverse + c.toNat * 2 ^ R.length := by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:339:      have hs : Nat.size (bitsVal (pairFstD z) * bitsVal (pairSndD z)) ≤ z.length := by
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:376:    getW (pairEncode J (encWords (vs.map Nat.bits))) = Nat.bits (vs.getD J.length 0) := by
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:115:    (Nat.bits (x % bitsVal w)).length ≤ w.length :=
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:364:      have hs : Nat.size (bitsVal (pairFstD z) * bitsVal (pairSndD z)) ≤ z.length := by
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:144:    C = Nat.bits (bitsVal C) ∧ A.length + B.length ≤ (pairFstD z).length + (pairSndD z).length
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:149:    bitsVal acc + rest.length = z.length
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:172:theorem countLoop_eq (z : List Bool) : countLoop z = pairEncode (Nat.bits z.length) [] := by
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317:    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:443:    PolyTimeComputable (fun z => Nat.bits (lovaszPrime z.length)) := by
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:469:      have hc : (Nat.bits c).length ≤ z.length + 4 :=
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:473:      have hd : (Nat.bits d).length ≤ z.length + 4 :=
+TCSlib/Complexity/ClassP/TimeConstructible.lean:85:        M.ComputesInTime x (T x.length).bits (c * (T x.length + 1)) :=
+TCSlib/Complexity/ClassP/TimeConstructible.lean:433:    (fun x => Nat.bits x.length) (fun n => 5 * (n + 1)) := by
+TCSlib/Complexity/ClassP/TimeConstructible.lean:446:      5 * (Nat.size x.length + 1) := by
+TCSlib/Complexity/ClassP/TimeConstructible.lean:481:      ((t + 1) + (x.length.bits.length + 1)) := by
+TCSlib/Complexity/ClassP/TimeConstructible.lean:487:  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:143:bits, for input length `n` and window radius `s` (`k = M.k`, `Q = card M.State + 1`, window
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:91:    orc 1 (pairEncode y (Nat.bits a)) = decide (a < y.length) := by
+TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean:152:    have hlen : ∀ i ≤ t, (Nat.bits (c i)).length = Lc := by
+TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:246:theorem pt_bits_vrad : PolyTimeComputable fun y => Nat.bits (vrad d c (pairFstD y).length) := by
+TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:262:      List.replicate (Nat.bits ((pairFstD y) ++ [true]).length).length true :=
+TCSlib/Complexity/CookLevin/Hardness.lean:1222:    (a : Bool) (n W : ℕ) (hW : n.bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:1244:    (hW : ∀ i, (n i).bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:1276:    (hW : ∀ i, (n i).bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:1528:    (hW : ∀ i, (n i).bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:2236:private lemma clElapsed_width (n t : ℕ) (hn : n ≤ t) : n.bits.length ≤ t :=
+TCSlib/Complexity/CookLevin/Hardness.lean:2430:    (record : List Bool) (T t W : ℕ) (hW : ∀ i, (n i).bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:2601:    (hW : ∀ i, (n i).bits.length ≤ W) :
+TCSlib/Complexity/CookLevin/Hardness.lean:2675:    have widths (i : Fin (clRecFields M)) : (clCounts M y j i).bits.length ≤ T :=
+TCSlib/Complexity/CookLevin/Hardness.lean:3301:    have widths (i : Fin (clRecFields M)) : (clCounts M y t i).bits.length ≤ T :=
+TCSlib/Complexity/CookLevin/Hardness.lean:7248:  have hfuel : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) P := by
+TCSlib/Complexity/CookLevin/Hardness.lean:7320:  have size : clCmpSize w ≤ arg.length := Finset.sup_le (fun i _ => widths i)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:417:    D * (n + 1) ≤ 2 ^ ((Nat.bits n).length + (Nat.bits D).length) - 1 := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:421:  have hprod : (n + 1) * (D + 1) ≤ 2 ^ (Nat.bits n).length * 2 ^ (Nat.bits D).length :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:430:    c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * (c + 2) * (n + 1) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:433:  have h2 : c * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤ (c + 2) * (n + 1) := by nlinarith
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:434:  calc c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * ((c + 2) * (n + 1)) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:459:    (hlate : 2 ^ ((Nat.bits n).length + (Nat.bits (c' * (c + 2))).length) - 1 < t) :
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2167:  cbS : QyInSpec cb cbE cbX (fun x => Nat.bits x.length) (fun n => cbA * (n + 1))
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2217:  clS : QySpec cl clE clX (fun y => Nat.bits y.length) (fun y => clA * (y.length + 1))
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2232:  cgS : QyInSpec cg cgE cgX (fun x => Nat.bits (g x.length)) (fun n => cgA * (g n + 1))
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2276:  have hMf' : Mf.ComputesFunInTime (fun y => Nat.bits (f y.length)) (fun m => cfc * (f m + 1)) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2278:  have hMg' : Mg.ComputesFunInTime (fun y => Nat.bits (g y.length)) (fun m => cgc * (g m + 1)) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2306:    have he : (fun y : List Bool => Nat.bits (1 * (y.length + 1) ^ 2)) =
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2307:        fun y => Nat.bits ((y.length + 1) ^ 2) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2344:      (fun y => prc * (cp + (Nat.bits (cfA * (cfc + 2))).length + 3) * (y.length + 1)) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2364:      (Nat.bits ((y.length + 1) ^ 2)).length + 1) ≤ pbc * (cq + 3) * (y.length + 1) ^ 3
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2384:           prA := prc * (cp + (Nat.bits (cfA * (cfc + 2))).length + 3), prS := prS'
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3115:    (FinTM.bufferTape ([] ++ (List.replicate (Nat.bits n).length true).map fun b => b)) with hT8
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3140:      List.replicate (Nat.bits n).length true = List.replicate (κ.m n) true := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3168:  have ht9' : t9 ≤ κ.prA * ((Nat.bits n).length + 1) := by simpa using ht9
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3169:  have h1 : κ.prA * ((Nat.bits n).length + 1) ≤ κ.prA * (n + 1) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3171:  have h2 : (Nat.bits (κ.cfA * (κ.cfc + 2))).length ≤
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3172:      (Nat.bits (κ.cfA * (κ.cfc + 2))).length * (n + 1) := Nat.le_mul_of_pos_right _ (by omega)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3480:    · have hm : κ.m n = (Nat.bits n).length + (Nat.bits (κ.cfA * (κ.cfc + 2))).length := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3584:  by_cases hgt : compare (Nat.bits F).length Lb = .gt
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3598:  have hFL : (Nat.bits F).length ≤ Lb := not_lt.mp fun h => hgt (compare_gt_iff_gt.mpr h)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3601:    have h2 : 2 ^ (Nat.bits F).length ≤ 2 ^ (Nat.bits n).length :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4262:      have hq1 : κ.cfc * (f a + 1) ≤ κ.cfc * ((Nat.bits x.length).length + 1) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4264:      have hq2 : κ.cfc * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4265:          (κ.cfc + 3) * ((Nat.bits x.length).length + 1) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4321:    qyRndP κ n ℓ' j k ≤ 11 * ℓ' + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4351:    qyRndS κ n a ≤ qyDk κ * (n + 1) + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4426:        t ≤ 11 * ladder f (i + 1) + qyCk κ * ((Nat.bits x.length).length + 1) ^ 5 := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4459:        stage f x.length * (qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4462:            (11 * ladder f (r + 1) + qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4465:            stage f x.length * (qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4907:    have e4 : (Nat.bits (g x.length)).length * (3 + 3) ≤ 6 * g x.length := by omega
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4908:    have e5 : (Nat.bits (j + 1)).length * (1 + 3) ≤ 4 * (j + 1) := by omega
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4996:    have e4 : (Nat.bits ((f a + a + 1) ^ 2)).length * (3 + 3) ≤ 6 * (f a + a + 1) ^ 2 := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4998:    have e5 : (Nat.bits (j + 1)).length * (1 + 3) ≤ 4 * (j + 1) := by omega
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5135:      (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5236:        (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5873:  gcS : QyInSpec gc gcE gcX (fun x => Nat.bits (g x.length)) (fun n => gcA * (g n + 1))
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5887:  lcS : QySpec lc lcE lcX (fun y => Nat.bits y.length) (fun y => lcA * (y.length + 1))
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5960:  have hMg' : Mg.ComputesFunInTime (fun y => Nat.bits (g y.length)) (fun m => cgc * (g m + 1)) :=
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:6307:private theorem dzBlk_length (G : ℕ) : (dzBlk G).length = G + 1 + (Nat.bits G).length := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:7668:      L 3 = FinTM.bufferTape (Nat.bits (g z.length)) ∧ L 6 = FinTM.bufferTape s ∧
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8020:      have hw : (s.drop (g z.length + 1)).length = (Nat.bits (g z.length)).length := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8202:      (Nat.bits (g (List.replicate n true).length)).length := by
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:8261:  have hwl : w.length = (Nat.bits (g (List.replicate n true).length)).length := by
+TCSlib/Complexity/Randomized/AlgCircuit.lean:524:    c.1 + c.2.size < (encode c).length := by
+TCSlib/Complexity/Randomized/BPLInP.lean:218:    ctxOf x (c * ((Nat.bits x.length).length + 1)) (B * (x.length + 1) ^ e) := by
+TCSlib/Complexity/Randomized/BPLInP.lean:234:    (vecW N x (c * ((Nat.bits x.length).length + 1)) (B * (x.length + 1) ^ e) 0) := by
+TCSlib/Complexity/Randomized/BPLInP.lean:268:    (vecW N x (c * ((Nat.bits x.length).length + 1)) (B * (x.length + 1) ^ e) i) := by
+TCSlib/Complexity/Randomized/BPLInP.lean:393:    2 ^ (codeK N * (c * ((Nat.bits n).length + 1) + logSpace n + 1)) ≤
+TCSlib/Complexity/Randomized/BPLInPWords.lean:92:  have hlen : L.length ≤ 1 * ((encWords (L.map Nat.bits)).length + 1) ^ 1 := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:122:    have hterm : ∀ j ∈ Finset.range i, bitsVal (pairFstD (pairSndD^[j] w)) ≤ 2 ^ w.length := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:168:    (encWords ((List.range V).map Nat.bits)).length ≤ V * (2 * V + 2) := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:205:  have hlb : PolyTimeComputable (fun u : List Bool => Nat.bits u.length) :=
+TCSlib/Complexity/Randomized/BPLInPWords.lean:208:      (fun x : List Bool => List.replicate ((Nat.bits x.length).length + 1) true) := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:212:      (fun x : List Bool => List.replicate (c * ((Nat.bits x.length).length + 1)) true) := by
+TCSlib/Complexity/Randomized/BPLInPWords.lean:235:    bitsVal (pow2W B e x) = 2 ^ (B * (x.length + 1) ^ e) := by
+TCSlib/Complexity/Randomized/Fingerprint.lean:404:    testLen c.1 c.2.size ≤ polyLen 2400 2 (AlgCircuit.encode c).length := by
+TCSlib/Complexity/Randomized/Primality.lean:241:      have hℓ : 8 * bitsVal x ≤ 2 ^ (x.length + 3) := by
+TCSlib/Complexity/Randomized/Primality.lean:247:            (fun r => eulerLiarRounds (bitsVal x) (x.length + 3) 2 r = true) := by
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:231:  have hbits : PolyTimeComputable (fun x : List Bool => x.length.bits) := by
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:105:  have hbits : (Nat.bits n).length + 1 = ℓ := rfl
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:109:  have hlb : (Nat.bits n).length ≤ B := by omega
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:270:  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+TCSlib/Complexity/Randomized/UPathSearch.lean:52:    σ.p + 2 * (Nat.bits σ.tmp).length + 2 ≤ B →
+TCSlib/Complexity/Randomized/UPathSearch.lean:54:      UPS x B (cp .sCur) { σ with p := σ.p + 2 * (Nat.bits σ.tmp).length + 2, tmp := 0 } q) →
+TCSlib/Complexity/Randomized/UPathSearch.lean:238:        u := j, cur := j, p := σ.q + 2 * (Nat.bits j).length + 2, tmp := 0 } q) →
+TCSlib/Complexity/Randomized/UniformSample.lean:242:        (if out = [] then encSample (sampleTries (bitsVal Nw) Lw.length j r) else out)) := by
+TCSlib/Complexity/Randomized/UniformSample.lean:252:    · by_cases hb : bitsVal (r.take Lw.length) < bitsVal Nw
+TCSlib/Complexity/Randomized/ZeroPPIT.lean:146:      have hlen : testLen n (C.subCircuit C').size ≤ polyLen 2400 2 x.length := by
+TCSlib/Complexity/Randomized/ZeroPRun.lean:288:        ((absStep n (bitsVal R + 1) (ptVal P))^[G.length] (G, [])).2 := by
+TCSlib/Complexity/Randomized/ZeroPRun.lean:321:    runVal (encState ctx w vs) = Nat.bits (vs.getD (vs.length - 1) 0) := by
+TCSlib/Complexity/Randomized/ZeroPRun.lean:336:  have hs' : (absStep n (bitsVal R + 1) (ptVal P))^[G.length] (G, []) = ([false], s.2) := by
+TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:95:    bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) = 1 ∧
+TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:273:      bitsVal ((w'.drop (W N * (2 * s + 1))).take (wP x.length)) =
+TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:314:        inpOf x (bitsVal (((cfgWord s C).drop (W N * (2 * s + 1))).take (wP x.length)))) b =
+TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:389:    pairEncode x (pairEncode w (Nat.bits s)) ∈ validLang N ↔ ValidChk (N := N) x.length s w := by
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:61:    (Nat.bits s).length ≤ (Nat.bits y.length).length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:84:    (h : (Nat.bits s).length ≤ (Nat.bits y.length).length) : s ≤ 2 * y.length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:122:    have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:234:    have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:248:    (hc : v c + (Nat.bits (v t)).length ≤ B) :
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:256:    · have e : Function.update (Function.update v t 0) c (v c + (Nat.bits 0).length) = v := by
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:268:      have hlen : (Nat.bits (n / 2)).length + 1 = (Nat.bits n).length :=
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:277:      have e : Function.update (Function.update v₂ t 0) c (v₂ c + (Nat.bits (n / 2)).length) =
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:278:          Function.update (Function.update v t 0) c (v c + (Nat.bits n).length) := by
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:87:    (hw : w.length ≤ (Nat.bits L).length) (i : ℕ) : bitsVal (w.drop i) ≤ 2 * L := by
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:88:  have h1 : bitsVal (w.drop i) < 2 ^ (w.drop i).length := bitsVal_lt_two_pow _
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:89:  have h2 : (w.drop i).length ≤ (Nat.bits L).length := by simp; omega
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:90:  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:155:  have hc : (y.drop p).length ≤ (Nat.bits y.length).length ∧ (y.drop p).getLastD true = true ↔
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:156:      Canon (y.drop p) ∧ (y.drop p).length ≤ (Nat.bits y.length).length :=
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:194:  y = pairEncode x (pairEncode w (Nat.bits s)) ∧ (Nat.bits s).length ≤ (Nat.bits y.length).length
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:202:    (Nat.bits s).length ≤ (Nat.bits y.length).length := h.2
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:208:    (Nat.bits s).length ≤ (Nat.bits y.length).length
+TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:69:    orc jLen (pairEncode y (Nat.bits a)) = decide (a < y.length) := by
+TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:230:    (hc : v rWp + (Nat.bits (v rT)).length ≤ B) :
+TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:232:      (Function.update (Function.update v rT 0) rWp (v rWp + (Nat.bits (v rT)).length)) :=
+TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:336:  have hyl : y.length = 2 * x.length + 2 * w.length + 2 * w'.length + 6 + (Nat.bits s).length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:283:lemma wP_eq (n : ℕ) : wP n = (Nat.bits (n + 1)).length := rfl
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:313:      List.replicate (w.length - (Nat.bits (bitsVal w)).length) false := by
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:317:    have hl : (Nat.bits (bitsVal w)).length ≤ w.length := by
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:335:      rw [show w.length + 1 - ((Nat.bits (bitsVal w)).length + 1) =
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:340:lemma length_padBits {w v : ℕ} (h : (Nat.bits v).length ≤ w) : (padBits w v).length = w := by
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:353:lemma length_bits_pos_le (v n : ℕ) (hv : v ≤ n + 1) : (Nat.bits v).length ≤ wP n :=
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:78:    n.bits.length = logSpace n :=
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:215:        R.spaceUsed (b3a_cfg entry x []) t ≤ B * (x.length.bits.length + 1) := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:235:        2 * (C * (x.length.bits.length + 1)) + 1 := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:238:            ((C * (x.length.bits.length + 1) : ℕ) : ℤ)).card := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:246:      _ ≤ ∑ _j : Fin (K + 1), (2 * (C * (x.length.bits.length + 1)) + 1) :=
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:248:      _ = (K + 1) * (2 * (C * (x.length.bits.length + 1)) + 1) := by simp
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:249:      _ ≤ (K + 1) * ((2 * C + 1) * (x.length.bits.length + 1)) := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:437:    have sizeBound : Nat.size y.length ≤ y.length := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:577:      else Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length) =
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:578:      Nat.bits (x.length ^ c + 1) := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:674:      fun x => Nat.bits (x.length ^ c + 1) := by
+TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean:164:          (pairEncode (List.replicate n true) (Nat.bits h)) = decide (h < (u n).length) := by
+TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean:222:      have hn : n + 1 ≤ (pairEncode (List.replicate n true) (Nat.bits p)).length + 1 := by
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:67:    ∀ k ≤ x.length, orcN N 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:506:          |heads j| + (c * g x.length + (g x.length).bits.length : ℕ) := by
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:560:          (c * g x.length + (g x.length).bits.length + 1) := by
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:613:        have hn : (0 : ℤ) ≤ (c * g x.length + (g x.length).bits.length : ℕ) :=
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1812:    recordLength k n (g n) + (g n).bits.length + g n + 1 ≤ (4 * k + 9) * g n := by
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:1814:  have hb : (g n).bits.length ≤ g n := length_bits_le_self _
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2006:  have hsize : radius ≤ B * g x.length := by
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:2008:    have hbits : ws.length ≤ g x.length := length_bits_le_self _
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:145:    (hW : (Nat.bits (i + 1)).length ≤ W) :
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:199:    (hW : ∀ i < (f x).length, (Nat.bits (i + 1)).length ≤ W) :
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:223:    (hW : ∀ i < (f x).length, (Nat.bits (i + 1)).length ≤ W) :
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:288:  have ho0 : ∀ x i, o 0 (pairEncode x (Nat.bits i)) = decide (i < (f x).length) := by
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:307:  have hbitsW : ∀ i ≤ F + 1, (Nat.bits i).length ≤ W := fun i hi =>
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:348:        have hlenV : (pairEncode x (Nat.bits i)).length ≤ 2 * n + 2 + W := by
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:351:        have hsj : s cs.dec (pairEncode x (Nat.bits i)).length ≤
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:186:  have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:63:  have : 0 < m.bits.length := by rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr (by omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:478:        -1 ≤ q' ∧ q' ≤ (Nat.bits (x.length + 1)).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:996:    (Nat.bits (n / 2)).length + 1 = (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:997:  have hp : 0 < (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1084:          w.length ≤ (Nat.bits (next cap)).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1779:    have hq' : q' ≤ (Nat.bits k).length := Nat.min_le_right _ _
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1784:      · have he : q = (Nat.bits k).length := by omega
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:1791:      · have he : q = (Nat.bits k).length := by omega
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:251:    (Nat.bits (a * b)).length ≤ (Nat.bits a).length + (Nat.bits b).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:254:  have ha : a < 2 ^ (Nat.bits a).length := lt_two_pow_bits a
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:255:  have hb : b < 2 ^ (Nat.bits b).length := lt_two_pow_bits b
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:536:    multOracle 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:971:  have size : x.length = 2 * a.length + 2 + 2 * b.length + 2 + c.length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1213:  have size : x.length = 2 * a.length + 2 + 2 * b.length + 2 + c.length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1258:        rw [rb.length, size, show 2 * a.length + 2 + 2 * b.length + 2 + c.length - 1 =
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:1424:      have size : x.length = 2 * a.length + 2 + 2 * b.length + 2 + c.length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean:51:/-- The query languages of the reduction: bits (`mode = false`) and length (`mode = true`). -/
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:328:    orc N 1 (pairEncode y (Nat.bits p)) = decide (p < y.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:156:    (by have h : (Nat.bits (X + 1)).length = ℓ := rfl
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:160:  simp only [St.zero, Nat.zero_add, show (Nat.bits (X + 1)).length = ℓ from rfl]
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:264:    (β.length ≤ (Nat.bits st.k).length ∧ Canon β ∧ ∃ q' k' : ℕ, q' ≤ B ∧ k' ≤ B ∧
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:273:  have hread : ∀ i, orc N 0 (pairEncode y (Nat.bits (2 * x.length + 2 + i))) = β.getD i false := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:284:  by_cases ok : β.length ≤ (Nat.bits st.k).length ∧ β.getLastD true = true
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:304:      PlainAt x (2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2) (Nat.bits t) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:317:        (2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2) = Nat.bits t := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:318:      rw [show 2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2 =
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:327:    · rw [d2, show 2 * n + 2 + 2 * M.length + 2 + 2 * (Nat.bits s).length + 2 =
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:195:    pathOr 1 (pairEncode x (Nat.bits i)) = decide (i < x.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:64:    (hK : PlainAt x σ.p (Nat.bits σ.tmp) → PS x B w0 { σ with p := x.length, tmp := 0 } K) :
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:67:      (PlainAt x σ.p (Nat.bits σ.tmp) → PS x B w0 { σ with p := x.length, tmp := 0 } K) →
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:170:    (hp : σ.p + 2 * (Nat.bits σ.tmp).length + 2 ≤ B)
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:172:      PS x B tg { σ with p := σ.p + 2 * (Nat.bits σ.tmp).length + 2, tmp := 0 } K) :
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:174:  suffices H : ∀ w (σ : PReg), σ.tmp = w → σ.Le B → σ.p + 2 * (Nat.bits σ.tmp).length + 2 ≤ B →
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:176:        PS x B tg { σ with p := σ.p + 2 * (Nat.bits σ.tmp).length + 2, tmp := 0 } K) →
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:215:    have hlen : 1 ≤ (Nat.bits w).length := by rw [hbits]; simp
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:281:      PS x B tg { σ with s := j, p := σ.p + 2 * (Nat.bits j).length + 2, tmp := 0 } (K j)) :
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:646:    (hB : ∀ j, ∀ i ≤ v.length, max (sb j (pairEncode x (Nat.bits i)).length) 1 ≤ B) :
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:651:          ((Nat.bits (v.length + 1)).length + 2) + (bankK Ms + bankK Ms) * (2 * B + 1) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:654:  have ho0 : ∀ i ≤ v.length, oracle 0 (pairEncode x (Nat.bits i)) = decide (i < v.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:752:      max (sb j (pairEncode x (Nat.bits i)).length) 1 ≤ B := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:754:    have hquery : (pairEncode x (Nat.bits i)).length ≤ 2 * x.length + 2 + W := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:756:      have hw : (Nat.bits i).length ≤ W := LogProg.length_bits_mono (by omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:759:    have hcoef : sb j (pairEncode x (Nat.bits i)).length ≤
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:193:    (hwidth : (Nat.bits r).length ≤ (Nat.bits n).length) : r ≤ 2 * n := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:194:  have hr : r < 2 ^ (Nat.bits n).length :=
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:219:    (hwidth : w.length ≤ (Nat.bits n).length) : LogProg.bitsVal (w.drop j) ≤ 2 * n := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:227:    (hlarge : (Nat.bits ((pairEncode z (Nat.bits r)).length)).length < (Nat.bits r).length) :
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:229:  have hr : (pairEncode z (Nat.bits r)).length < r := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:405:    dropOracle 1 (pairEncode h (Nat.bits i)) = decide (i < h.length) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:572:    have vals : ∀ i ≤ tail.length, bitsVal (tail.drop i) ≤ 4 * h.length + 4 := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:993:    have width : (Nat.bits (pairEncode z (Nat.bits q)).length).length < (Nat.bits q).length := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:994:      have notle : ¬ (Nat.bits q).length ≤ (Nat.bits (pairEncode z (Nat.bits q)).length).length :=
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:1156:    (wide : (Nat.bits ((2 * C + 3) * ((pairEncode w (Nat.bits p)).length + 1) ^ (e + 1))).length <
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:1159:  have large : (2 * C + 3) * ((pairEncode w (Nat.bits p)).length + 1) ^ (e + 1) < p :=
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:1390:    compOracle f 1 (pairEncode h (Nat.bits i)) = decide (i < h.length) :=
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2027:        (query := bitsVal tail) (base := h.length+1) := by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2377:    have wide : (Nat.bits ((2*C+3)*((pairEncode z (Nat.bits p)).length+1)^(e+1))).length <
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2378:        (Nat.bits p).length := Nat.lt_of_not_ge (fun width => bad ⟨canon_bits p, width⟩)
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2472:  have len : h.length = 2*z.length+2+(Nat.bits p).length := length_pairEncode _ _
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:2572:      have bounded : p ≤ compBound C e (pairEncode z (Nat.bits p)).length :=
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:230:      (fun a => PreS A x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ K * logSpace x.length)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:288:          show (Nat.bits (v r)).length ≤ W
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:289:          have h0 : (Nat.bits (v r + 1)).length ≤ W := hbd r
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:290:          have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:293:      have hVQ : (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x fun r => Nat.bits (v r))).length ≤
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:313:          fun r => Nat.bits (v r))).length ≤ cs * K2 * Ls := by
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:94:    (hw : ∀ r, ((Nat.bits (v r + 1)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:98:  have hlen : ∀ r, ((Nat.bits (v r)).length : ℤ) ≤ W := by
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:101:    have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length :=
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:203:        ∀ r, ((Nat.bits ((arun A oracle x (some l, v, none) t).2.1 r + 1)).length : ℤ) ≤ W) →
+TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean:125:        ∀ r, ((Nat.bits ((arun A oracle x (some l, v, none) t).2.1 r + 1)).length : ℤ) ≤ W) →
+TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean:139:    have hlen : ∀ r, ((Nat.bits (v r)).length : ℤ) ≤ W := by
+TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean:142:      have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean:266:      ∀ r, ((Nat.bits ((arun A oracle x (some l₀, fun _ => 0, none) t).2.1 r + 1)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:157:    (W : ℤ) (hW : ((Nat.bits (v r + 1)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:180:    (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:204:    (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:224:    (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:301:    (v : Fin m → ℕ) (out : List Bool) (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:457:    (out : List Bool) (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) (hx : ValidPlain x) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:487:    (out : List Bool) (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) (hx : ValidPair x) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMSim.lean:522:    (out : List Bool) (W : ℤ) (hW : ((Nat.bits (v r)).length : ℤ) ≤ W) (hx : ValidPair x) :
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:73:      (fun a => PreS A x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ W x.length)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:121:          show (Nat.bits (v r)).length ≤ W n
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:122:          have h0 : (Nat.bits (v r + 1)).length ≤ W n := hbd r
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:123:          have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length :=
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:160:      (fun a => PreS A x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ K * S x.length)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:208:        ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ C₀ * (x.length + 1) ^ c₀)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:271:        ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ C₀ * (x.length + 1) ^ c₀)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean:302:  have hq : ∀ k ≤ x.length, orc P 0 (pairEncode x (Nat.bits k)) = decide (k < x.length) := by
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:86:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:92:lemma eq_of_bitsVal_eq : ∀ {a b : List Bool}, a.length = b.length →
+TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean:299:      have hW' : (Nat.bits (2 * n)).length ≤ W := length_bits_mono (by omega)
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:176:        regCfg c s r f q ∧ P.call s = none ∧ -1 ≤ q ∧ q ≤ (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean:421:        P.call s = none ∧ -1 ≤ q ∧ q ≤ (Nat.bits a).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:294:        regCfg c s r f q ∧ P.call s = none ∧ -1 ≤ q ∧ q ≤ (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:301:  have hlen : (Nat.bits (n - 1)).length ≤ (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:462:        regCfg c s r f q ∧ P.call s = none ∧ -1 ≤ q ∧ q ≤ (Nat.bits n).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:310:        regCfg c s r f q ∧ (s = cC ∨ s = cB) ∧ -1 ≤ q ∧ q ≤ (Nat.bits (n + 1)).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/Lib.lean:319:    have hl : (Nat.bits n).length ≤ (Nat.bits (n + 1)).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:345:    (hw : ∀ r, ((Nat.bits (v r + 1)).length : ℤ) ≤ W) (hP : |p| ≤ P) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:380:    (hw : ∀ r, ((Nat.bits (v r + 1)).length : ℤ) ≤ W) (hP : |p| ≤ P) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:67:    (∀ r, ((Nat.bits (c.1.2.1 r + 1)).length : ℤ) ≤ W) ∧ |c.2.2| ≤ P
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:448:        (∀ r, (Nat.bits (c.1.2.1 r + 1)).length ≤ W x.length) ∧ |c.2.2| ≤ (P x.length : ℤ))
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:504:          show (Nat.bits (v r)).length ≤ Wn
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:505:          have h0 : (Nat.bits (v r + 1)).length ≤ Wn := hbd r
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:506:          have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length :=
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:511:          fun r => Nat.bits (v r))).length ≤ logSpace (2 * n + 2 + m * (2 * Wn + 2)) := by
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:516:          fun r => Nat.bits (v r))).length ≤ cs * logSpace (2 * n + 2 + m * (2 * Wn + 2)) :=
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:331:    (hw : ∀ r, ((Nat.bits (v r + 1)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:369:    (hw : ∀ r, ((Nat.bits (v r + 1)).length : ℤ) ≤ W) :
+TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:102:  have hw : (Nat.bits (0 + 1)).length ≤ 1 * logSpace x.length := by
+TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:103:    have : (Nat.bits (0 + 1)).length ≤ 1 := length_bits_le (by norm_num)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:120:        ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ W := by
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:88:    (a : AConf m Λ) (hps : NPreS A x a) (hbd : ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ Wd) :
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:117:          show (Nat.bits (v r)).length ≤ Wd
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:118:          have h0 : (Nat.bits (v r + 1)).length ≤ Wd := hbd r
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:119:          have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length :=
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:146:        (fun a => NPreS A x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ W x.length)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:199:        (fun a => NPreS A x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ K * logSpace x.length)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:283:          ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ C₀ * (x.length + 1) ^ c₀)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:353:          ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ C₀ * (x.length + 1) ^ c₀)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:127:  NPre A oracle D q0 B x a ∧ ∀ r, ((Nat.bits (a.2.1 r + 1)).length : ℤ) ≤ W
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:296:        P.call s = none ∧ -1 ≤ q ∧ q ≤ (Nat.bits a).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:370:      (xCfg c (if w = Nat.bits a then yes else no) ⟨1, by omega⟩ r 0) c r (Nat.bits a).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:391:  have hb : ((-1 : ℤ) ≤ 0 ∧ (0 : ℤ) ≤ (Nat.bits a).length) := ⟨by omega, by omega⟩
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:418:      (xCfg c (if u = Nat.bits a then yes else no) ⟨1, by omega⟩ r 0) c r (Nat.bits a).length := by
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:433:  have hb : ((-1 : ℤ) ≤ 0 ∧ (0 : ℤ) ≤ (Nat.bits a).length) := ⟨by omega, by omega⟩
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean:111:  have hq : ∀ m ≤ x.length, orcN N 0 (pairEncode x (Nat.bits m)) = decide (m < x.length) := by
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:68:        (fun a => PreS D x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:407:    (Nat.bits n).length ≤ logSpace n := by
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:408:  have h2 : (Nat.bits n).length ≤ logSpace n :=
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:712:      v 22 = 1 + (Nat.bits x.length).length → v 23 = s → v 24 = 0 →
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:720:      (codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) ≤ dpW N sp x := fun s hs =>
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:724:        ((codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1))) ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:727:      (codeK N + 1) * (s + (1 + (Nat.bits x.length).length) + 1) := fun s =>
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:749:        have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + (Nat.bits x.length).length) + 1) :=
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:774:  have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:782:  have hlB : 1 + (Nat.bits x.length).length ≤ B := by omega
+TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:82:    pairEncode (List.replicate n true) (Nat.bits i) ∈ uLen g ↔ i < (g n).length :=
+TCSlib/Complexity/SpaceComplexity/UnaryLogspace.lean:225:  have hl : y.length = 2 * n + 2 + (Nat.bits i).length := by
+TCSlib/Complexity/TimeHierarchy/Separation.lean:93:  have hhalt : twoPowTM.ComputesInTime x (2 ^ x.length).bits (x.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4050:    (fun x => Nat.bits x.length) (fun n => 5 * (n + 1)) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4067:      ((t + 1) + (x.length.bits.length + 1)) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4073:  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4087:        -(2 * (Nat.size x.length + 1) : ℤ) ≤
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4090:          (2 * (Nat.size x.length + 1) : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4135:    -(2 * (Nat.size x.length + 1) : ℤ) ≤
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4138:      (2 * (Nat.size x.length + 1) : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4157:      -(2 * (Nat.size x.length + 1) : ℤ) ≤
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4160:        (2 * (Nat.size x.length + 1) : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4180:      5 * (Nat.size x.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4183:        5 * (Nat.size x.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4186:          (2 * (Nat.size x.length + 1) : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4702:        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (Nat.size x.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:6486:    (Nat.bits (R x.length)).length ≤ T x.length := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7694:      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:7703:  have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11222:      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11228:        (S x.length + 4 * (Nat.bits (R x.length)).length + 4) := by
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11235:  have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11602:    have hwidth (i : ℕ) : (words i).length = (Nat.bits (R x.length)).length :=
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:215:theorem posWidth_eq (n : ℕ) : posWidth n = (Nat.bits (n + 1)).length :=
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:4163:  have sizes : fs.map (fun u => u.length + 1) = gs.map (fun u => u.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:4526:      have size : (fs[r + 2]'(by omega)).length = 2 * s + 1 := by
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:762:      (fun x => Nat.bits (a' * (x.length + 1) ^ k')) T := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:128:      p < (n + 1).bits.length := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:218:  have oldlen : p ≤ n.bits.length := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:352:      inputLengthCfg d (n + 1).bits (n + 1).bits.length .count ip' 0 := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:353:  have plen : p < (n + 1).bits.length := (inputLength_charge n p v old next).2
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:358:    · have hnew : a < d.workTapePos 0 + ((n + 1).bits.length : ℤ) := by omega
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:362:          a < d.workTapePos 0 + ((n + 1).bits.length : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:397:        (inputLengthMachine.runFrom d u).workTapePos 0 ≤ d.workTapePos 0 + (n.bits.length : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:417:    have oldwidth : n.bits.length ≤ x.length.bits.length :=
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:419:    have newwidth : n.bits.length ≤ (n + 1).bits.length :=
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:522:        d.workTapePos 0 + (x.length.bits.length : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:98:      d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:100:      5 * ((pairEncode (Nat.bits t) α).length + 1) =
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:101:      16 * (Nat.bits t).length + 8 * α.length + 25 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:104:  have position : 2 * (pairEncode (Nat.bits t) α).length + 3 =
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:105:      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:264:  have position : d.inputPos.val = 2 * (pairEncode (Nat.bits t) α).length + 2 + 1 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:740:      e₃.workTapePos jbt = ((Nat.bits t).length : ℤ) := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:759:          (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length + p) =
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:763:    have harith : ((Nat.bits t).length : ℤ) - (Nat.bits t).length + p = p := by ring
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:903:      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:1527:      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:1532:      4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:1560:      45 * (Nat.bits t).length + CW * (min t x.length + 1) + 2 * min t x.length + 84 := by
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:1566:      (47 + CW) * ((Nat.bits t).length + min t x.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:241:    (Nat.bits (R x.length)).length ≤ T x.length := by
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1271:      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1279:  have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2350:      M.ComputesFunInTime (fun x => Nat.bits x.length) fun n => c * (n + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5218:    (Nat.bits (f s.length) = Nat.bits (w.drop s.length).length) ↔
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5231:      (Nat.bits (f s.length)).length ≤ TE s.length ∧ TE s.length ≤ TE (w.length + 1) := by
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6562:    exists_installCallTM L (fun s => Nat.bits s.length) (fun n => d * (n + 1)) hL
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6685:      hCall lengthBitsTM (fun s => Nat.bits s.length) (fun n => 5 * (n + 1)) hL w
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2759:          List.getElem?_eq_none (show x.length.bits.length ≤ p.toNat by omega)]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2761:  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length :=
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763:  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2765:  have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2766:      (C + 20) * ((x.length + 1).bits.length + 1) := by nlinarith
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2767:  have nextBound : (x.length.bits.length : ℤ) + 4 ≤ B := by
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2769:    exact_mod_cast (show x.length.bits.length + 4 ≤
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2796:      · rw [List.getElem?_eq_none (show (x.length + 1).bits.length ≤
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4244:  have length : w.length = (x.length + 1).bits.length := by simp [w]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253:  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4259:      (show C * ((x.length + 1).bits.length + 1) ≤
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4265:      (show (x.length + 1).bits.length + 1 ≤
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4409:  have wl : wb.length = (x.length + 1).bits.length := by simp [wb]
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4486:      (show C * ((x.length + 1).bits.length + 1) ≤ (C + 60) * (L + ws.length + 1) by
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:2636:  obtain ⟨bits, split, length, fixedReads, fieldReads⟩ := actionBitsK_reads d0 a reads
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:257:    (4 * F.k + 5) * 3 ^ (F.k + 1) * (codeBitsNat bits + 1) ≤ rest.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446:  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1740:  have size : bits.length ≤ α.length := header ▸ canonHeader_length α
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1793:      then 2 * bits.length + 2 + B * (codeBitsNat bits + 1) + 1 else α.length + 1) := posG
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1795:      b * ((canonOffset bits).length + pos + p + 1) ≤ 5 * b * (α.length + 1) := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1804:      _ ≤ (B + 4) * (α.length + 1) + 2 * (bits.length + 1) := timeG
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2095:  have length : bits.length ≤ x.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2168:    have size : bits.length ≤ x.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2175:        c * ((canonOffset bits).length + pos + p + 1) ≤ 5 * c * (x.length + 1) := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2513:        have fits : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length :=
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2676:  have hguard : F.guard * (codeBitsNat bits + 1) ≤ rest.length :=
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3504:  have size : x.length = p + r + rest.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4260:      have size : x.length = p + pre.length + ys.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5073:            (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5093:              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5717:              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5758:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5784:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:5822:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:6035:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:6080:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:6147:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:6161:      (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7722:  have hxlen : x.length = 2 * bits.length + 2 + rest.length := by
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7737:  have hc₀pos : c₀.inputPos.val = 2 * bits.length + 3 := hpos
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7739:    have h2 : x.length - rest.length = 2 * bits.length + 2 := by omega
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:7851:        (∀ q : ℤ, q < 0 ∨ ((3 ^ (F.k + 1) : ℕ).bits.length : ℤ) ≤ q →
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:8236:    have native : g.inputPos.val = 2 * bits.length + 3 := by
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:826:        (50 * (L + 1) + 4) * r ≤ C * (r + x + (Nat.bits t).length + 1)) := by
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:1333:      B * (Nat.bits t).length + B * min t x.length + B := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:57:lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:66:lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:75:lemma length_bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:82:theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:89:lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:103:theorem two_pow_bits_le_two_mul_add_one (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:109:lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:113:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+TCSlib/Complexity/TuringMachine/NatBits.lean:123:theorem length_bits_eq_log {n : ℕ} (hn : n ≠ 0) : (Nat.bits n).length = Nat.log 2 n + 1 := by
+TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean:186:    ∀ x, (maskedClock W false).ComputesInTime x (T x.length).bits (b * (T x.length + 1)) := by
+TCSlib/Complexity/TuringMachine/Universal.lean:304:      (2 * bits.length + 2) =
+TCSlib/Complexity/TuringMachine/Universal.lean:306:      (l.length + 2 * bits.length + 2) state sp := by
+TCSlib/Complexity/TuringMachine/Universal.lean:349:    conv_lhs => rw [show 2 * (b :: bits).length + 2 =
+TCSlib/Complexity/TuringMachine/Universal.lean:538:      (table.length + 2 * bits.length + 2 * n + 7) =
+TCSlib/Complexity/TuringMachine/Universal.lean:540:      (2 * bits.length + 2 + n + 1) (universalStateTape n) 1 := by
+TCSlib/Complexity/TuringMachine/Universal.lean:547:  have hlen : countPrefix.length = 2 * bits.length + 2 := by
+TCSlib/Complexity/TuringMachine/Universal.lean:558:  have htime : table.length + 2 * bits.length + 2 * n + 7 =
+TCSlib/Complexity/TuringMachine/Universal.lean:559:      1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1) + (n + 2) := by omega
+TCSlib/Complexity/TuringMachine/Universal.lean:570:          (table.length + 1)) (2 * bits.length + 2)) (n + 1)) (n + 2) = _
+TCSlib/Complexity/TuringMachine/Universal.lean:574:      (2 * bits.length + 2) =
+TCSlib/Complexity/TuringMachine/Universal.lean:575:    universalEvalCfg base .initialCopy table (2 * bits.length + 2) (universalStateTape 0) 1 := by
+TCSlib/Complexity/TuringMachine/Universal.lean:806:      universalEvalCfg base (.nextState bits) table (l.length + 8) state sp := by
+TCSlib/Complexity/TuringMachine/Universal.lean:1904:      (timed_laneCfg base 4 (some (.borrow bits halt carry)) z l (bs.map some ++ r)) bs.length =
+TCSlib/Complexity/TuringMachine/Universal.lean:2001:    timedInterpreter.runFrom (timedClockCfg base (.borrow bits halt carry) bs 0) bs.length =
+TCSlib/Complexity/TuringMachine/Universal.lean:2022:    timedClockCfg (timedLift cfg bs) (.clockBack bits halt) bs (bs.length - 1) := by
+TCSlib/Complexity/TuringMachine/Universal.lean:2039:      timedClockCfg (timedLift cfg bs) (.clockBack bits halt) bs (bs.length - 1) := by
+TCSlib/Complexity/TuringMachine/Universal.lean:2655:    2 * (Nat.bits M.numStates).length + 2 + M.tm.q₀.val + 1 ≤ M.serialize.length := by
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:234:      universalEvalCfg base (.nextState bits) table (l.length + 8) state sp := by
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:764:    2 * (Nat.bits M.numStates).length + 2 + M.tm.q₀.val + 1 ≤ M.serialize.length := by
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:324:      (2 * bits.length + 2) =
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:326:      (l.length + 2 * bits.length + 2) state sp := by
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:369:    conv_lhs => rw [show 2 * (b :: bits).length + 2 =
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:683:      (table.length + 2 * bits.length + 2 * n + 7) =
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:685:      (2 * bits.length + 2 + n + 1) (universalStateTape n) 1 := by
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:692:  have hlen : countPrefix.length = 2 * bits.length + 2 := by
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:703:  have htime : table.length + 2 * bits.length + 2 * n + 7 =
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:704:      1 + (table.length + 1) + (2 * bits.length + 2) + (n + 1) + (n + 2) := by omega
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:715:          (table.length + 1)) (2 * bits.length + 2)) (n + 1)) (n + 2) = _
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:719:      (2 * bits.length + 2) =
+TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:720:    universalEvalCfg base .initialCopy table (2 * bits.length + 2) (universalStateTape 0) 1 := by

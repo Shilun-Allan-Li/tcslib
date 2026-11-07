@@ -1,0 +1,104 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "name": "Turing.FinTM.idTM_computes",
+    "private": false,
+    "statement": "theorem idTM_computes (x : List Bool) : idTM.ComputesInTime x x (x.length + 1)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "name": "Turing.FinTM.ifEqTM_computes",
+    "private": false,
+    "statement": "theorem ifEqTM_computes (w\u2080 u v : List Bool) : (ifEqTM w\u2080 u v).ComputesFunInTime (fun w => if w = w\u2080 then u else v) (fun n => (w\u2080.length + max u.length v.length + 3) * (n + 1))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "name": "Turing.FinTM.condTM_computes_iff",
+    "private": false,
+    "statement": "theorem condTM_computes_iff (D M\u2081 M\u2082 : FinTM Bool) (p : List Bool \u2192 Bool) (hD : D.Computes fun x => [p x]) (x w : List Bool) : (\u2203 t, (condTM D M\u2081 M\u2082).ComputesInTime x w t) \u2194 \u2203 t, (cond (p x) M\u2081 M\u2082).ComputesInTime x w t"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "name": "Turing.FinTM.branchTM_spaceUsed",
+    "private": false,
+    "statement": "theorem branchTM_spaceUsed (M\u2081 M\u2082 : FinTM Bool) (b : Bool) (x : List Bool) (t : \u2115) : (branchTM M\u2081 M\u2082 b).tm.spaceUsed ((branchTM M\u2081 M\u2082 b).tm.initCfg x) t = if b then M\u2081.tm.spaceUsed (M\u2081.tm.initCfg x) t + M\u2082.k else M\u2082.tm.spaceUsed (M\u2082.tm.initCfg x) t + M\u2081.k"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "name": "Turing.FinTM.timedCondTM_computes",
+    "private": false,
+    "statement": "theorem timedCondTM_computes {D M\u2081 M\u2082 : FinTM Bool} {p : List Bool \u2192 Bool} {f\u2081 f\u2082 : List Bool \u2192 List Bool} {T\u2080 T\u2081 T\u2082 : \u2115 \u2192 \u2115} (hD : D.ComputesFunInTime (fun x => [p x]) T\u2080) (h\u2081 : M\u2081.ComputesFunInTime f\u2081 T\u2081) (h\u2082 : M\u2082.ComputesFunInTime f\u2082 T\u2082) : (timedCondTM D M\u2081 M\u2082).ComputesFunInTime (fun x => if p x then f\u2081 x else f\u2082 x) (fun n => 5 * (T\u2080 n + max (T\u2081 n) (T\u2082 n) + 1))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "name": "Turing.FinTM.timedCondTM_spaceUsed",
+    "private": false,
+    "statement": "theorem timedCondTM_spaceUsed (D M\u2081 M\u2082 : FinTM Bool) (x : List Bool) (b : Bool) (T t : \u2115) (hD : D.ComputesInTime x [b] T) : (timedCondTM D M\u2081 M\u2082).tm.spaceUsed ((timedCondTM D M\u2081 M\u2082).tm.initCfg x) t \u2264 D.tm.spaceUsed (D.tm.initCfg x) T + (branchTM M\u2081 M\u2082 b).tm.spaceUsed ((branchTM M\u2081 M\u2082 b).tm.initCfg x) t + 2"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "name": "Turing.pairDiagTM_computes",
+    "private": false,
+    "statement": "theorem pairDiagTM_computes (x : List Bool) : pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5)"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "name": "Turing.FinTM.lengthBitsTM_computes",
+    "private": false,
+    "statement": "theorem _root_.Turing.FinTM.lengthBitsTM_computes : FinTM.lengthBitsTM.ComputesFunInTime (fun x => Nat.bits x.length) (fun n => 5 * (n + 1))"
+  },
+  {
+    "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "name": "Turing.FinTM.lengthBitsTM_spaceUsed",
+    "private": false,
+    "statement": "theorem _root_.Turing.FinTM.lengthBitsTM_spaceUsed (x : List Bool) (t : \u2115) : FinTM.lengthBitsTM.tm.spaceUsed (FinTM.lengthBitsTM.tm.initCfg x) t \u2264 5 * (Nat.size x.length + 1)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "name": "Turing.FinTM.loopHostTM_contracts",
+    "private": false,
+    "statement": "theorem loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool \u2192 List Bool \u2192 Prop) (stepF : List Bool \u2192 List Bool \u2192 List Bool) (acceptF : List Bool \u2192 List Bool \u2192 Bool) (out : List Bool \u2192 List Bool \u2192 List Bool) (findMode : Bool) (s0 : List Bool \u2192 List Bool) (R T : \u2115 \u2192 \u2115) (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (hInv0 : \u2200 x : List Bool, Inv x (s0 x)) (hInvStep : \u2200 (x s : List Bool), Inv x s \u2192 Inv x (stepF x s)) (hstart : \u2200 x : List Bool, \u2203 t \u2264 T x.length, (\u2200 t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state \u2260 some anchor) \u2227 body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))) (hround : \u2200 (x s : List Bool), Inv x s \u2192 \u2203 t, 0 < t \u2227 t \u2264 T x.length \u2227 (\u2200 t', 0 < t' \u2192 t' < t \u2192 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state \u2260 some anchor) \u2227 if acceptF x s then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none \u2227 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = out x s else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k (stepF x s))) : \u2200 x : List Bool, \u2203 (cfg : \u2115 \u2192 Cfg (loopHostTM body F anchor findMode).k Bool (loopHostTM body F anchor findMode).State x) (startup : \u2115), startup \u2264 10 * (T x.length + 1) \u2227 (loopHostTM body F anchor findMode).tm.runFrom ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 \u2227 (\u2200 i \u2264 R x.length, (cfg i).output = []) \u2227 (cfg (R x.length + 1)).state = none \u2227 (cfg (R x.length + 1)).output = (if findMode then [] else [false]) \u2227 (\u2200 i \u2264 R x.length, \u2203 t \u2264 10 * (T x.length + 1), if acceptF x ((stepF x)^[i] (s0 x)) then ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none \u2227 ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output = (if findMode then out x ((stepF x)^[i] (s0 x)) else [true]) else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "name": "Turing.FinTM.loopHostTM_decides",
+    "private": false,
+    "statement": "theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool \u2192 List Bool \u2192 Prop) (stepF : List Bool \u2192 List Bool \u2192 List Bool) (acceptF : List Bool \u2192 List Bool \u2192 Bool) (s0 : List Bool \u2192 List Bool) (R T : \u2115 \u2192 \u2115) (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (hInv0 : \u2200 x : List Bool, Inv x (s0 x)) (hInvStep : \u2200 (x s : List Bool), Inv x s \u2192 Inv x (stepF x s)) (hstart : \u2200 x : List Bool, \u2203 t \u2264 T x.length, (\u2200 t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state \u2260 some anchor) \u2227 body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))) (hround : \u2200 (x s : List Bool), Inv x s \u2192 \u2203 t, 0 < t \u2227 t \u2264 T x.length \u2227 (\u2200 t', 0 < t' \u2192 t' < t \u2192 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state \u2260 some anchor) \u2227 if acceptF x s then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none \u2227 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = [true] else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k (stepF x s))) : (loopHostTM body F anchor false).ComputesFunInTime (fun x => [(List.range (R x.length + 1)).any fun i => acceptF x ((stepF x)^[i] (s0 x))]) (fun n => 10 * (T n + 1) * (R n + 2))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "name": "Turing.FinTM.loopHostTM_finds",
+    "private": false,
+    "statement": "theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool \u2192 List Bool \u2192 Prop) (stepF : List Bool \u2192 List Bool \u2192 List Bool) (acceptF : List Bool \u2192 List Bool \u2192 Bool) (out : List Bool \u2192 List Bool \u2192 List Bool) (s0 : List Bool \u2192 List Bool) (R T : \u2115 \u2192 \u2115) (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (hInv0 : \u2200 x : List Bool, Inv x (s0 x)) (hInvStep : \u2200 (x s : List Bool), Inv x s \u2192 Inv x (stepF x s)) (hstart : \u2200 x : List Bool, \u2203 t \u2264 T x.length, (\u2200 t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state \u2260 some anchor) \u2227 body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))) (hround : \u2200 (x s : List Bool), Inv x s \u2192 \u2203 t, 0 < t \u2227 t \u2264 T x.length \u2227 (\u2200 t', 0 < t' \u2192 t' < t \u2192 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state \u2260 some anchor) \u2227 if acceptF x s then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none \u2227 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = out x s else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k (stepF x s))) : (loopHostTM body F anchor true).ComputesFunInTime (fun x => match (List.range (R x.length + 1)).find? (fun i => acceptF x ((stepF x)^[i] (s0 x))) with | some i => out x ((stepF x)^[i] (s0 x)) | none => []) (fun n => 10 * (T n + 1) * (R n + 2))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "name": "Turing.FinTM.loopHostTM_spaceUsed_le_budget",
+    "private": false,
+    "statement": "theorem loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool \u2192 List Bool \u2192 Prop) (stepF : List Bool \u2192 List Bool \u2192 List Bool) (acceptF : List Bool \u2192 List Bool \u2192 Bool) (out : List Bool \u2192 List Bool \u2192 List Bool) (findMode : Bool) (s0 : List Bool \u2192 List Bool) (R T : \u2115 \u2192 \u2115) (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (hInv0 : \u2200 x : List Bool, Inv x (s0 x)) (hInvStep : \u2200 (x s : List Bool), Inv x s \u2192 Inv x (stepF x s)) (hstart : \u2200 x : List Bool, \u2203 t \u2264 T x.length, (\u2200 t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state \u2260 some anchor) \u2227 body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))) (hround : \u2200 (x s : List Bool), Inv x s \u2192 \u2203 t, 0 < t \u2227 t \u2264 T x.length \u2227 (\u2200 t', 0 < t' \u2192 t' < t \u2192 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state \u2260 some anchor) \u2227 if acceptF x s then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none \u2227 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = out x s else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k (stepF x s))) (x : List Bool) (t : \u2115) : (loopHostTM body F anchor findMode).tm.spaceUsed ((loopHostTM body F anchor findMode).tm.initCfg x) t \u2264 23 * (loopHostTM body F anchor findMode).k * (T x.length + 1)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "name": "Turing.FinTM.emitLoopTM_computes",
+    "private": false,
+    "statement": "theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool \u2192 List Bool \u2192 Prop) (stepF emitF : List Bool \u2192 List Bool \u2192 List Bool) (s0 : List Bool \u2192 List Bool) (R T : \u2115 \u2192 \u2115) (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (hInv0 : \u2200 x : List Bool, Inv x (s0 x)) (hInvStep : \u2200 (x s : List Bool), Inv x s \u2192 Inv x (stepF x s)) (hstart : \u2200 x : List Bool, \u2203 t \u2264 T x.length, (\u2200 t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state \u2260 some anchor) \u2227 body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))) (hround : \u2200 (x s : List Bool), Inv x s \u2192 \u2203 t, 0 < t \u2227 t \u2264 T x.length \u2227 (\u2200 t', 0 < t' \u2192 t' < t \u2192 (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state \u2260 some anchor) \u2227 body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = { Cfg.ofWords (input := x) anchor (stateWord body.k (stepF x s)) with output := emitF x s }) : (emitLoopTM body F anchor).ComputesFunInTime (fun x => (List.range (R x.length + 1)).flatMap (fun i => emitF x ((stepF x)^[i] (s0 x)))) (fun n => 10 * (T n + 1) * (R n + 2))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "name": "Turing.FinTM.polyUnaryTM_spaceUsed",
+    "private": false,
+    "statement": "theorem polyUnaryTM_spaceUsed (C e : \u2115) (x : List Bool) (t : \u2115) : (polyUnaryTM C e).tm.spaceUsed ((polyUnaryTM C e).tm.initCfg x) t \u2264 5 * e * (x.length + 1)"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "name": "Turing.FinTM.unaryTokenTM_computes",
+    "private": false,
+    "statement": "theorem unaryTokenTM_computes : unaryTokenTM.ComputesFunInTime (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2) (fun n => 3 * (n + 1))"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "name": "Turing.FinTM.appendBitTM_computes",
+    "private": false,
+    "statement": "theorem appendBitTM_computes (b : Bool) (x : List Bool) : (appendBitTM b).ComputesInTime x (x ++ [b]) (x.length + 1)"
+  }
+]

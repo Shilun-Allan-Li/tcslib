@@ -1,0 +1,60 @@
+import TCSlib.Complexity.CircuitComplexity.Meyer
+import TCSlib.Complexity.CircuitComplexity.MeyerTableau
+import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.Randomized.QuasiPolyHierarchy
+import TCSlib.Complexity.Randomized.SpaceAmplifyPoly
+import TCSlib.Complexity.Randomized.UniformSample
+import TCSlib.Complexity.SpaceComplexity.Codec.Word
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
+import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
+import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen
+import TCSlib.Complexity.TuringMachine
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.NatBits
+
+#print axioms Complexity.LogProg.halfL_run
+#print axioms Complexity.LogProg.length_bits_eq_log
+#print axioms Complexity.LogProg.length_bits_le
+#print axioms Complexity.LogProg.length_bits_le_log
+#print axioms Complexity.LogProg.length_bits_mono
+#print axioms Complexity.LogProg.length_bits_succ_le
+#print axioms Complexity.LogProg.lt_two_pow_bits
+#print axioms Complexity.LogProg.ofDigits_lt_two_pow
+#print axioms Complexity.LogProg.two_pow_bits_le
+#print axioms Complexity.LogProg.two_pow_bits_le_two_mul_add_one
+#print axioms Complexity.Meyer.bits_pad
+#print axioms Complexity.Meyer.lenAll_inst
+#print axioms Randomized.PolyAmp.bigK_le
+#print axioms Randomized.le_two_pow_size_pred
+#print axioms Turing.length_bits_le_self
+#print axioms Turing.record_pos_lt
+
+
+-- Enumerate every non-private imported constant from the new module, including auxiliaries.
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let some target := env.getModuleIdx? `TCSlib.Complexity.TuringMachine.NatBits
+    | throwError "NatBits is missing from the imported module table"
+  let names := env.constants.toList.filterMap fun (n, ci) =>
+    if env.getModuleIdxFor? n == some target && !isPrivateName n then some (n, ci) else none
+  for (n, ci) in names.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let kind := match ci with
+      | .thmInfo _ => "theorem"
+      | .defnInfo _ => "definition"
+      | .opaqueInfo _ => "opaque"
+      | .axiomInfo _ => "axiom"
+      | .ctorInfo _ => "constructor"
+      | .recInfo _ => "recursor"
+      | .inductInfo _ => "inductive"
+      | .quotInfo _ => "quotient"
+    logInfo m!"PUBLIC_CONSTANT {n} kind={kind} internal={n.isInternalDetail}"

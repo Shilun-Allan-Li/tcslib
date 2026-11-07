@@ -1,0 +1,36 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "name": "Turing.FinTM.f2_strip_linear",
+    "private": true,
+    "header": "private lemma f2_strip_linear : \u2203 (M : FinTM Bool) (c : \u2115), M.ComputesFunInTime (fun x => match pairDecode x with | some (a, v) => match splitAtLastTrue v with | some u => pairEncode a u | none => [] | none => []) fun n => c * (n + 1)",
+    "example_commit": "1cf3da65fcfb39fbda4350551e98da78a8b86932",
+    "source_blob": "c2802df79735b55693fa060ab0c257bacc7c682b",
+    "occurrences": 6
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "name": "Turing.FinTM.computesFunInTime_stripLast_spaceUsed",
+    "private": false,
+    "header": "theorem computesFunInTime_stripLast_spaceUsed : \u2203 (M : FinTM Bool) (c : \u2115), M.ComputesFunInTime (fun x => match pairDecode x with | some (a, v) => match splitAtLastTrue v with | some u => pairEncode a u | none => [] | none => []) (fun n => c * (n + 1) ^ 2) \u2227 \u2200 (x : List Bool) (t : \u2115), M.tm.spaceUsed (M.tm.initCfg x) t \u2264 c * (x.length + 1)",
+    "example_commit": "1cf3da65fcfb39fbda4350551e98da78a8b86932",
+    "source_blob": "c2802df79735b55693fa060ab0c257bacc7c682b",
+    "occurrences": 6
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "name": "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed",
+    "private": false,
+    "header": "theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool} {g : List Bool \u2192 List Bool} {Tg : \u2115 \u2192 \u2115} (Sg : \u2115 \u2192 \u2115) (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) (hgs : \u2200 (y : List Bool) (t : \u2115), Mg.tm.spaceUsed (Mg.tm.initCfg y) t \u2264 Sg y.length) (hSg : Monotone Sg) : \u2203 (M : FinTM Bool) (c : \u2115), M.ComputesFunInTime (fun z => match pairDecode z with | some (a, b) => pairEncode a (g b) | none => []) (fun n => c * (n + 1 + Tg n)) \u2227 \u2200 (x : List Bool) (t : \u2115), M.tm.spaceUsed (M.tm.initCfg x) t \u2264 Sg x.length + c * (x.length + 1)",
+    "example_commit": "1cf3da65fcfb39fbda4350551e98da78a8b86932",
+    "source_blob": "c2802df79735b55693fa060ab0c257bacc7c682b",
+    "occurrences": 6
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "name": "Turing.FinTM.computesFunInTime_pairMapSnd",
+    "private": false,
+    "header": "theorem computesFunInTime_pairMapSnd {Mg : FinTM Bool} {g : List Bool \u2192 List Bool} {Tg : \u2115 \u2192 \u2115} (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) : \u2203 (M : FinTM Bool) (c : \u2115), M.ComputesFunInTime (fun z => match pairDecode z with | some (a, b) => pairEncode a (g b) | none => []) fun n => c * (n + 1 + Tg n)",
+    "method": "Additional inspection of the already-known existing time-only consumer row; the broad raw shape search contains its body."
+  }
+]

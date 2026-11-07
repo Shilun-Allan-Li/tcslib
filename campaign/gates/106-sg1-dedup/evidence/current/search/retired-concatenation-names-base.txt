@@ -1,0 +1,18 @@
+TCSlib/Complexity/ClassNP/Tautology.lean:1303:private lemma tautDual_segment_add {x : List Bool}
+TCSlib/Complexity/ClassNP/Tautology.lean:1353:      tautDual_segment_add h1 (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')
+TCSlib/Complexity/ClassNP/Tautology.lean:1394:      tautDual_segment_add h1
+TCSlib/Complexity/ClassNP/Tautology.lean:1436:    simpa only [Nat.add_comm] using tautDual_segment_add h1 (ih (by omega))
+TCSlib/Complexity/ClassNP/Tautology.lean:1482:  have h := tautDual_segment_add (tautDual_segment_add (tautDual_segment_add
+TCSlib/Complexity/ClassNP/Tautology.lean:1483:    (tautDual_segment_add (tautDual_segment_add hscan hend) hback) hcopy) hclose) hreturn
+TCSlib/Complexity/ClassNP/Tautology.lean:1512:  have h := tautDual_segment_add (tautDual_segment_add hscan hend) hreturn
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:834:private lemma counter_span_append {k : ℕ} {Γ S : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1296:      apply counter_span_append _ _ cost (τ cn) cp w.length _ _ _
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1311:    · apply counter_span_append _ _ _ (cost + τ cn) cp w.length _ _ _ span
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1405:  · exact counter_span_append _ _ _ _ cp w.length _ _ _ span
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1190:private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1377:  have h := dgSpan_add (dgSpan_add (dgSpan_add hgen hturn) hback) hlast
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1493:  exact dgSpan_add first scan
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1629:  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1720:  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:1892:  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean:2108:    · exact dgSpan_add (dgSpan_mono hspan hlower hupper) hcycle

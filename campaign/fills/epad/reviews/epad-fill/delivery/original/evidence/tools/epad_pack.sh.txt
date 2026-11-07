@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# E-PAD checkpoint/final packaging. Usage: epad_pack.sh <tag> <zipname>
+#   tag: cp1 | cp2 | cp3 | final ; zipname: fill-epad-cp1.zip | ... | fill-epad.zip
+# Runs (one Lean process at a time): module checks (Padding, SpaceComplexity facade), axiom log,
+# seal + controls, inspection table, import-probe extension, screens; then assembles the zip.
+set -u
+TAG="$1"; ZIP="$2"; MODE="${3:-full}"
+F=/workspace/tcslib-fill
+E=/workspace/epad-evidence
+BASE=72fcfbef3c1deb331aedc95d4a158a9ed4c56524
+export PATH=$HOME/.elan/bin:$PATH
+cd $F
+COMMIT=$(git rev-parse HEAD)
+test -z "$(git status --porcelain --untracked-files=no)" || { echo "dirty tree"; exit 1; }
+if [ "$MODE" = full ]; then
+# 1. module checks with per-module time and max memory
+{ echo "# module checks at $COMMIT ($TAG), via scripts/lean_check_tree.sh (TCSLIB_OLEANS=/workspace/epad-oleans)"
+  python3 /workspace/bin/chkE.py TCSlib/Complexity/SpaceComplexity/Padding
+  python3 /workspace/bin/chkE.py TCSlib/Complexity/SpaceComplexity; } > $E/logs/module-checks-$TAG.log 2>&1
+grep "^== .* end" $E/logs/module-checks-$TAG.log
+# 2. axioms
+python3 /workspace/bin/chkE.py Probe/EPadAxioms > $E/logs/axioms-$TAG.log 2>&1
+grep "mem_SPACE_padLang'" $E/logs/axioms-$TAG.log
+# 3. seal
+/workspace/bin/epad_seal.sh $TAG
+# 4. inspection
+python3 /workspace/bin/epad_inspect.py $TAG $COMMIT | tail -3
+# 5. import probe extension: every cited declaration of another TCSlib module
+python3 /workspace/bin/chkE.py Probe/EPadCites > $E/logs/cites-$TAG.txt 2>&1
+python3 - "$TAG" <<'PY'
+import sys, re
+tag = sys.argv[1]
+E = '/workspace/epad-evidence'; F = '/workspace/tcslib-fill'
+cites = [l.split('\t') for l in open(f'{E}/logs/cites-{tag}.txt') if l.startswith('CITE\t')]
+base = open(f'{F}/Probe/EPadImportProbe.lean').read()
+src = open(f'{F}/TCSlib/Complexity/SpaceComplexity/Padding.lean').read()
+imps = [l for l in src.splitlines() if l.startswith('import ') and 'Padding' not in l]
+lines = base.splitlines()
+head = [l for l in lines if l.startswith('import ')]
+for i in imps:
+    if i not in head: head.append(i)
+out = '\n'.join(head) + '\n\n/-! E-PAD import probe, extended (' + tag + '): the brief\'s probe, plus every declaration of\nanother TCSlib module occurring in `Padding.lean`\'s declarations (the citation walk\n`Probe/EPadCites.lean`), each `#check`ed at the base. Private names cannot occur. -/\n\n'
+body = [l for l in lines if not l.startswith('import ') and not l.startswith('#print axioms')]
+out += '\n'.join(body) + '\n\nsection EPadExtension\n'
+for c in cites:
+    name = c[1]
+    if name.startswith('_private') or '.match_' in name or '._' in name: continue
+    out += f'#check @{name}\n'
+out += 'end EPadExtension\n\n#print axioms Complexity.mem_SPACE_padLang\n'
+open(f'{F}/Probe/EPadImportProbeExt.lean', 'w').write(out)
+PY
+python3 /workspace/bin/chkE.py Probe/EPadImportProbeExt > $E/logs/importprobe-ext-$TAG.out 2>&1
+tail -2 $E/logs/importprobe-ext-$TAG.out
+# 6. screens
+/workspace/bin/epad_screen.sh $TAG $COMMIT
+# 6b. duplication probe (exact? before every private lemma)
+python3 /workspace/bin/epad_dup.py $TAG | tail -3
+fi
+# 7. copy probes and tools
+cp Probe/EPadImportProbe.lean Probe/EPadImportProbeExt.lean Probe/EPadRoute.lean Probe/EPadAxioms.lean \
+   Probe/EPadCites.lean Probe/EPadForeignDefs.lean Probe/EPadKinds.lean Probe/EPadSimpDefs.lean \
+   Probe/EPadDupProbe.lean $E/probes/ 2>/dev/null
+for p in Probe/EPadDup*.lean; do [ -f "$p" ] && cp "$p" $E/probes/; done
+mkdir -p $E/tools; cp /workspace/bin/chkE.py /workspace/bin/epad_*.sh /workspace/bin/epad_*.py $E/tools/
+# 8. assemble
+STAGE=/workspace/epad-stage/$TAG
+rm -rf $STAGE; mkdir -p $STAGE/src/TCSlib/Complexity/SpaceComplexity $STAGE/patches
+cp /workspace/epad-REPORT.md $STAGE/REPORT.md
+git show $COMMIT:TCSlib/Complexity/SpaceComplexity/Padding.lean > $STAGE/src/TCSlib/Complexity/SpaceComplexity/Padding.lean
+git format-patch -q -o $STAGE/patches $BASE..$COMMIT
+git bundle create -q $STAGE/fill-epad.bundle $BASE..fill/epad
+git bundle verify $STAGE/fill-epad.bundle > $E/logs/bundle-verify-$TAG.log 2>&1; tail -1 $E/logs/bundle-verify-$TAG.log
+git bundle list-heads $STAGE/fill-epad.bundle >> $E/logs/bundle-verify-$TAG.log
+cp -r $E $STAGE/evidence
+rm -f $STAGE/evidence/logs/*.tmp
+(cd $STAGE && find . -type f ! -name SHA256SUMS | sort | xargs sha256sum > SHA256SUMS)
+mkdir -p /workspace/epad-zips
+rm -f /workspace/epad-zips/$ZIP
+(cd $STAGE && zip -q -r /workspace/epad-zips/$ZIP .)
+sha256sum /workspace/epad-zips/$ZIP
+ls -la /workspace/epad-zips/$ZIP

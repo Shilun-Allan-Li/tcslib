@@ -1,0 +1,202 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+open Lean Elab Command in
+elab "#epad_kind " id:ident : command => do
+  let env ← getEnv
+  let n := id.getId
+  let cands ← (do let r ← liftCoreM <| (Lean.resolveGlobalName n); pure (r.map (·.1)))
+  let cands := cands ++ (if (env.find? n).isSome then [n] else [])
+  let privN := mkPrivateName env n
+  let cands := cands ++ (if (env.find? (mkPrivateName env (`Complexity ++ n))).isSome then [mkPrivateName env (`Complexity ++ n)] else [])
+  let _ := privN
+  match cands.head? with
+  | none => logInfo m!"KIND\t{n}\tlocal (not a global constant)"
+  | some c =>
+    let kind := match env.find? c with
+      | some (.thmInfo _) => "theorem"
+      | some (.defnInfo _) => "definition"
+      | some (.ctorInfo _) => "constructor"
+      | some (.recInfo _) => "recursor"
+      | some (.inductInfo _) => "inductive"
+      | some (.axiomInfo _) => "axiom"
+      | some (.opaqueInfo _) => "opaque"
+      | some (.quotInfo _) => "quot"
+      | none => "?"
+    let mod := match env.getModuleIdxFor? c with
+      | some i => toString env.header.moduleNames[i.toNat]!
+      | none => "this file"
+    logInfo m!"KIND\t{n}\t{kind}\t{c}\t{mod}"
+namespace Complexity
+open Turing
+#epad_kind Bool.false_eq_true
+#epad_kind Fin.reduceEq
+#epad_kind FinTM.computesInSpace_iff
+#epad_kind FinTM.decidesInSpace_iff
+#epad_kind Function.update_apply
+#epad_kind Function.update_eq_self
+#epad_kind Function.update_idem
+#epad_kind Function.update_of_ne
+#epad_kind Function.update_self
+#epad_kind LOGSPACE_eq
+#epad_kind List.cons.injEq
+#epad_kind List.drop_length
+#epad_kind List.eq_replicate_iff
+#epad_kind List.getD_eq_default
+#epad_kind List.getD_eq_getElem?_getD
+#epad_kind List.getElem?_eq_getElem
+#epad_kind List.length_cons
+#epad_kind List.length_nil
+#epad_kind List.length_replicate
+#epad_kind LogProg.bitsVal_bits
+#epad_kind LogProg.indicator_eq_decide
+#epad_kind Nat.add_assoc
+#epad_kind Nat.add_comm
+#epad_kind Nat.add_sub_cancel
+#epad_kind Nat.add_zero
+#epad_kind Nat.mul_add
+#epad_kind Nat.mul_assoc
+#epad_kind Nat.mul_comm
+#epad_kind Nat.mul_one
+#epad_kind Nat.mul_succ
+#epad_kind Nat.one_mul
+#epad_kind Nat.succ_mul
+#epad_kind Nat.zero_add
+#epad_kind Nat.zero_bits
+#epad_kind Nat.zero_mul
+#epad_kind Option.getD_some
+#epad_kind Option.some.injEq
+#epad_kind Prod.mk.injEq
+#epad_kind and_true
+#epad_kind astep_call
+#epad_kind astep_clr
+#epad_kind astep_dec
+#epad_kind astep_half
+#epad_kind astep_inc
+#epad_kind astep_jeq
+#epad_kind astep_jz
+#epad_kind cond_true
+#epad_kind decide_false
+#epad_kind decide_true
+#epad_kind e
+#epad_kind e1
+#epad_kind eC
+#epad_kind eD
+#epad_kind epadBXAll
+#epad_kind epadS
+#epad_kind epadVLAll
+#epad_kind epadVirt
+#epad_kind epadVirt_of_not_valid
+#epad_kind epadVirt_of_valid
+#epad_kind epad_eq_replicate_iff
+#epad_kind epad_getD_four
+#epad_kind epad_mem_Q_iff
+#epad_kind epad_query_mem_iff
+#epad_kind eq
+#epad_kind eq_pairEncode_of_pairDecode
+#epad_kind h
+#epad_kind h''
+#epad_kind h'9
+#epad_kind h0
+#epad_kind h1
+#epad_kind h13
+#epad_kind h15
+#epad_kind h16
+#epad_kind h17
+#epad_kind h2
+#epad_kind h313
+#epad_kind h315
+#epad_kind h317
+#epad_kind h4
+#epad_kind h415
+#epad_kind h612
+#epad_kind hB
+#epad_kind ha
+#epad_kind ha'
+#epad_kind hans
+#epad_kind hb
+#epad_kind hd
+#epad_kind hdk.symm
+#epad_kind hdq.symm
+#epad_kind hdt.symm
+#epad_kind he
+#epad_kind hend
+#epad_kind hfr
+#epad_kind hfr'
+#epad_kind hfr''
+#epad_kind hfst
+#epad_kind hk
+#epad_kind hkp
+#epad_kind hkt.symm
+#epad_kind hl
+#epad_kind hlen
+#epad_kind hma
+#epad_kind hmem
+#epad_kind hnd
+#epad_kind hno
+#epad_kind hnp
+#epad_kind ho
+#epad_kind hout
+#epad_kind hp6
+#epad_kind hpad
+#epad_kind hpq.symm
+#epad_kind hq
+#epad_kind hs
+#epad_kind hs_def
+#epad_kind ht
+#epad_kind htp
+#epad_kind htq
+#epad_kind hv
+#epad_kind hv0
+#epad_kind hva
+#epad_kind hval
+#epad_kind hval2
+#epad_kind hv₀
+#epad_kind hv₁
+#epad_kind hv₂
+#epad_kind hv₃
+#epad_kind hv₃0
+#epad_kind hv₃1
+#epad_kind hv₃r
+#epad_kind hv₄
+#epad_kind hv₄2
+#epad_kind hv₄3
+#epad_kind hv₄r
+#epad_kind hv₅
+#epad_kind hv₅8
+#epad_kind hv₆
+#epad_kind hv₆r
+#epad_kind hv₇
+#epad_kind hv₇2
+#epad_kind hv₇3
+#epad_kind hv₇4
+#epad_kind hy
+#epad_kind hy'
+#epad_kind hz
+#epad_kind h₀
+#epad_kind h₀9
+#epad_kind h₁10
+#epad_kind h₁p
+#epad_kind h₁q
+#epad_kind h₁t
+#epad_kind h₂₂
+#epad_kind h₃
+#epad_kind h₆
+#epad_kind h₇
+#epad_kind if_false
+#epad_kind if_neg
+#epad_kind if_pos
+#epad_kind if_true
+#epad_kind indicator_eq_decide
+#epad_kind key
+#epad_kind length_pairEncode
+#epad_kind mem_SPACE_iff
+#epad_kind pairDecode_pairEncode
+#epad_kind pairEncode_getD
+#epad_kind pairEncode_getD_snd
+#epad_kind pairFstD_pairEncode
+#epad_kind pow_succ
+#epad_kind pow_succ'
+#epad_kind pow_zero
+#epad_kind show
+#epad_kind this
+#epad_kind vword_whole₁
+end Complexity

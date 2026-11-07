@@ -1,0 +1,287 @@
+/-
+E-PAD route probe (checkpoint 1): a copy of `SpaceComplexity/Padding.lean` with the chosen
+route assembled. The only `sorry`s are the two leaves `epad_V_mem` and `epad_Q_mem`.
+-/
+import TCSlib.Complexity.SpaceComplexity.Basic
+import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Complexity
+
+open Turing
+
+def padLang (L : Language Bool) (pad : ℕ → ℕ) : Language Bool :=
+  {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+
+theorem mem_padLang_iff {L : Language Bool} {pad : ℕ → ℕ} {y : List Bool} :
+    y ∈ padLang L pad ↔ ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true) :=
+  Iff.rfl
+
+/-! ### The padded words and the virtual input -/
+
+/-- **Padded words**: `y` is the pair of some `a` with `C (|a| + 1)^d` ones. -/
+private def epadValid (C d : ℕ) (y : List Bool) : Prop :=
+  ∃ a, y = pairEncode a (List.replicate (C * (a.length + 1) ^ d) true)
+
+/-- The language of padded words: the validator's language. -/
+private def epadV (C d : ℕ) : Language Bool := {y | epadValid C d y}
+
+open Classical in
+/-- **The virtual input** of the run phase: the first component of a padded word, and the
+empty word on every other input. -/
+private noncomputable def epadVirt (C d : ℕ) (y : List Bool) : List Bool :=
+  if epadValid C d y then pairFstD y else []
+
+/-- **The bank's languages.** On a query word `⟨y, w⟩` whose index word `w` is canonical
+(`w.getLastD true = true`) and no wider than `|y|` in binary, mode `false` asks whether `y`
+is padded and the index is below the first component's length, mode `true` whether `y` is
+padded and the first component's indexed bit is `1`. -/
+private def epadQ (C d : ℕ) (mode : Bool) : Language Bool :=
+  {z | ∃ y w, pairDecode z = some (y, w) ∧ w.getLastD true = true ∧
+    w.length ≤ (Nat.bits y.length).length ∧ epadValid C d y ∧
+    (if mode = true then (pairFstD y).getD (LogProg.bitsVal w) false = true
+      else LogProg.bitsVal w < (pairFstD y).length)}
+
+private lemma epadVirt_of_valid {C d : ℕ} {y : List Bool} (h : epadValid C d y) :
+    epadVirt C d y = pairFstD y := by
+  classical
+  rw [epadVirt, if_pos h]
+
+private lemma epadVirt_of_not_valid {C d : ℕ} {y : List Bool} (h : ¬ epadValid C d y) :
+    epadVirt C d y = [] := by
+  classical
+  rw [epadVirt, if_neg h]
+
+private lemma epadVirt_length_le (C d : ℕ) (y : List Bool) :
+    (epadVirt C d y).length ≤ y.length := by
+  by_cases h : epadValid C d y
+  · rw [epadVirt_of_valid h]; exact length_pairFstD_le y
+  · rw [epadVirt_of_not_valid h]; exact Nat.zero_le _
+
+/-- A genuine query `⟨y, bits i⟩` with `i ≤ |y|` is in the bank's language exactly when `y` is
+padded and the mode's question holds at `i`. -/
+private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
+    (hi : i ≤ y.length) :
+    pairEncode y (Nat.bits i) ∈ epadQ C d mode ↔ epadValid C d y ∧
+      (if mode = true then (pairFstD y).getD i false = true else i < (pairFstD y).length) := by
+  constructor
+  · rintro ⟨y', w, hd, -, -, hv, hq⟩
+    rw [pairDecode_pairEncode, Option.some.injEq, Prod.mk.injEq] at hd
+    obtain ⟨rfl, rfl⟩ := hd
+    rw [LogProg.bitsVal_bits] at hq
+    exact ⟨hv, hq⟩
+  · rintro ⟨hv, hq⟩
+    refine ⟨y, Nat.bits i, pairDecode_pairEncode y (Nat.bits i),
+      (LogProg.drop_canon (Nat.bits i)).mpr (LogProg.canon_bits i),
+      LogProg.length_bits_mono hi, hv, ?_⟩
+    rw [LogProg.bitsVal_bits]
+    exact hq
+
+/-! ### The leaves -/
+
+/-- **The validator** (checkpoint 2): the padded words are decided in logarithmic space. -/
+private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
+  sorry
+
+/-- **The bank** (checkpoint 3): both query languages are decided in logarithmic space. -/
+private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPACE := by
+  sorry
+
+/-! ### The run phase -/
+
+/-- **The run phase**: the oracle-input simulator runs `L`'s decider on the virtual input
+`epadVirt y`, answered by the bank, within `K · T |y|` work cells. -/
+private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+    (hST : ∀ n, S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) (hT : ∀ m, m + 1 ≤ T m) :
+    ∃ (K : ℕ) (O : FinTM Bool), O.ComputesInSpace
+      (fun y => [MultiTapeTM.indicator (L : Set (List Bool)) (epadVirt C d y)])
+      (fun n => K * T n) := by
+  classical
+  obtain ⟨c, M, hM⟩ := mem_SPACE_iff.mp hL
+  have hQ0 := epad_Q_mem C d false
+  have hQ1 := epad_Q_mem C d true
+  rw [LOGSPACE_eq, mem_SPACE_iff] at hQ0 hQ1
+  obtain ⟨c0, M0, h0⟩ := hQ0
+  obtain ⟨c1, M1, h1⟩ := hQ1
+  let Ms : Fin 2 → FinTM Bool := ![M0, M1]
+  let As : Fin 2 → Language Bool := ![epadQ C d false, epadQ C d true]
+  let sb : Fin 2 → ℕ → ℕ := ![fun n => c0 * logSpace n, fun n => c1 * logSpace n]
+  have hMs : ∀ j, (Ms j).DecidesInSpace (As j) (sb j) := by
+    intro j
+    refine Fin.cases ?_ (Fin.cases ?_ (fun i => Fin.elim0 i)) j
+    · show M0.DecidesInSpace (epadQ C d false) (fun n => c0 * logSpace n)
+      exact h0
+    · show M1.DecidesInSpace (epadQ C d true) (fun n => c1 * logSpace n)
+      exact h1
+  have hsb : ∀ j q, sb j q ≤ (c0 + c1) * (q + 1) := by
+    intro j q
+    refine Fin.cases ?_ (Fin.cases ?_ (fun i => Fin.elim0 i)) j
+    · show c0 * logSpace q ≤ (c0 + c1) * (q + 1)
+      exact Nat.mul_le_mul (Nat.le_add_right _ _) (logSpace_le_succ q)
+    · show c1 * logSpace q ≤ (c0 + c1) * (q + 1)
+      exact Nat.mul_le_mul (Nat.le_add_left _ _) (logSpace_le_succ q)
+  refine ⟨M.k * (2 * c * (S 0 + 1) + 1) + 4 + (LogProg.bankK Ms + LogProg.bankK Ms) * (8 * (c0 + c1) + 3),
+    LogProg.compileFinTM (LogProg.OIS.prog M) (LogProg.OIS.start M) (LogProg.bankTM Ms)
+      (LogProg.bankStart Ms), ?_⟩
+  rw [FinTM.computesInSpace_iff]
+  intro y
+  set v := epadVirt C d y with hv
+  obtain ⟨t, ht, hs⟩ := (FinTM.computesInSpace_iff _ _ _).mp ((FinTM.decidesInSpace_iff _ _ _).mp hM) v
+  have hvm : v.length ≤ y.length := epadVirt_length_le C d y
+  set B := (c0 + c1) * (3 * y.length + 4) + 1 with hB
+  have hbits : ∀ i ≤ v.length, (Nat.bits i).length ≤ y.length + 1 := by
+    intro i hi
+    have h1 := LogProg.length_bits_le_log i
+    have h2 := Nat.log_le_self 2 i
+    omega
+  have hBnd : ∀ j, ∀ i ≤ v.length,
+      max (sb j (pairEncode y (Nat.bits i)).length) 1 ≤ B := by
+    intro j i hi
+    have hq := hsb j (pairEncode y (Nat.bits i)).length
+    rw [length_pairEncode] at hq ⊢
+    have hb := hbits i hi
+    have hmono : (c0 + c1) * (2 * y.length + 2 + (Nat.bits i).length + 1) ≤
+        (c0 + c1) * (3 * y.length + 4) :=
+      Nat.mul_le_mul_left _ (by omega)
+    refine max_le ?_ (by omega)
+    omega
+  have hA0 : ∀ i ≤ v.length,
+      pairEncode y (Nat.bits i) ∈ As 0 ↔ i < v.length := by
+    intro i hi
+    show pairEncode y (Nat.bits i) ∈ epadQ C d false ↔ i < v.length
+    rw [epad_query_mem_iff C d false y i (hi.trans hvm)]
+    simp only [Bool.false_eq_true, if_false]
+    by_cases hval : epadValid C d y
+    · rw [hv, epadVirt_of_valid hval]
+      exact ⟨fun h => h.2, fun h => ⟨hval, h⟩⟩
+    · rw [hv, epadVirt_of_not_valid hval]
+      exact ⟨fun h => absurd h.1 hval, fun h => absurd h (Nat.not_lt_zero _)⟩
+  have hA1 : ∀ i < v.length,
+      pairEncode y (Nat.bits i) ∈ As 1 ↔ v.getD i false = true := by
+    intro i hi
+    show pairEncode y (Nat.bits i) ∈ epadQ C d true ↔ v.getD i false = true
+    rw [epad_query_mem_iff C d true y i (hi.le.trans hvm)]
+    simp only [if_true]
+    by_cases hval : epadValid C d y
+    · rw [hv, epadVirt_of_valid hval]
+      exact ⟨fun h => h.2, fun h => ⟨hval, h⟩⟩
+    · rw [hv, epadVirt_of_not_valid hval] at hi
+      exact absurd hi (Nat.not_lt_zero _)
+  obtain ⟨T', hT', hSp⟩ := LogProg.OIS.compile_decides M Ms As sb hMs y v
+    [MultiTapeTM.indicator (L : Set (List Bool)) v] hA0 hA1 t ht B hBnd
+  refine ⟨T', hT', hSp.trans ?_⟩
+  -- the space ledger
+  have hTm := hT y.length
+  have hS : S v.length ≤ (S 0 + 1) * T y.length := by
+    by_cases hval : epadValid C d y
+    · obtain ⟨a, ha⟩ := hval
+      have hva : v.length = a.length := by
+        rw [hv, epadVirt_of_valid ⟨a, ha⟩, ha, pairFstD_pairEncode]
+      have hma : y.length = 2 * a.length + 2 + C * (a.length + 1) ^ d := by
+        rw [ha, length_pairEncode, List.length_replicate]
+      rw [hva]
+      have h1 := hST a.length
+      rw [← hma] at h1
+      calc S a.length ≤ T y.length := h1
+        _ ≤ (S 0 + 1) * T y.length := Nat.le_mul_of_pos_left _ (Nat.succ_pos _)
+    · have hv0 : v.length = 0 := by rw [hv, epadVirt_of_not_valid hval]; rfl
+      rw [hv0]
+      calc S 0 ≤ S 0 * T y.length := Nat.le_mul_of_pos_right _ (by omega)
+        _ ≤ (S 0 + 1) * T y.length := Nat.mul_le_mul_right _ (Nat.le_succ _)
+  have hsp : M.tm.spaceUsed (M.tm.initCfg v) t ≤ c * ((S 0 + 1) * T y.length) :=
+    hs.trans (Nat.mul_le_mul_left c hS)
+  have hW : (Nat.bits (v.length + 1)).length + 2 ≤ 4 * T y.length := by
+    have h1 := LogProg.length_bits_le_log (v.length + 1)
+    have h2 := Nat.log_le_self 2 (v.length + 1)
+    omega
+  have h2B : 2 * B + 1 ≤ (8 * (c0 + c1) + 3) * T y.length := by
+    have h1 : (c0 + c1) * (3 * y.length + 4) ≤ (c0 + c1) * (4 * T y.length) :=
+      Nat.mul_le_mul_left _ (by omega)
+    have e : (8 * (c0 + c1) + 3) * T y.length = 2 * ((c0 + c1) * (4 * T y.length)) + 3 * T y.length := by ring
+    rw [e, hB]
+    omega
+  have hk1 : M.k * (2 * M.tm.spaceUsed (M.tm.initCfg v) t + 1) ≤
+      M.k * ((2 * c * (S 0 + 1) + 1) * T y.length) := by
+    apply Nat.mul_le_mul_left
+    have e : (2 * c * (S 0 + 1) + 1) * T y.length = 2 * (c * ((S 0 + 1) * T y.length)) + T y.length := by ring
+    rw [e]
+    omega
+  set kD := LogProg.bankK Ms + LogProg.bankK Ms with hkD
+  have hk2 : kD * (2 * B + 1) ≤ kD * ((8 * (c0 + c1) + 3) * T y.length) :=
+    Nat.mul_le_mul_left _ h2B
+  have e : (M.k * (2 * c * (S 0 + 1) + 1) + 4 + kD * (8 * (c0 + c1) + 3)) * T y.length =
+      M.k * ((2 * c * (S 0 + 1) + 1) * T y.length) + 4 * T y.length +
+        kD * ((8 * (c0 + c1) + 3) * T y.length) := by ring
+  rw [e]
+  omega
+
+/-! ### The target -/
+
+theorem mem_SPACE_padLang {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+    (hST : ∀ n, S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) (hT : ∀ m, m + 1 ≤ T m) :
+    padLang L (fun n => C * (n + 1) ^ d) ∈ SPACE T := by
+  classical
+  obtain ⟨K, O, hO⟩ := epad_run C d hL hST hT
+  have hV := epad_V_mem C d
+  rw [LOGSPACE_eq, mem_SPACE_iff] at hV
+  obtain ⟨cV, D, hD⟩ := hV
+  rw [FinTM.decidesInSpace_iff] at hD
+  obtain ⟨hDt, hDs⟩ := hD.computesFunInTime_and_forall_spaceUsed_le
+  obtain ⟨hOt, hOs⟩ := hO.computesFunInTime_and_forall_spaceUsed_le
+  obtain ⟨Mf, cf, hMf, hMfs⟩ := FinTM.computesFunInTime_const_spaceUsed [false]
+  obtain ⟨Mc, cc, hMc, hMcs⟩ := FinTM.computesFunInTime_cond_spaceUsed
+    (p := fun y => MultiTapeTM.indicator (epadV C d : Set (List Bool)) y)
+    (fun n => cV * logSpace n) (fun n => K * T n) (fun _ => cf) hDt hOt hMf hDs hOs hMfs
+  rw [mem_SPACE_iff]
+  refine ⟨cV + K + cf + cc, Mc, ?_⟩
+  rw [FinTM.decidesInSpace_iff, FinTM.computesInSpace_iff]
+  intro y
+  have hout : (if MultiTapeTM.indicator (epadV C d : Set (List Bool)) y = true then
+      [MultiTapeTM.indicator (L : Set (List Bool)) (epadVirt C d y)] else [false]) =
+      [MultiTapeTM.indicator (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) y] := by
+    rw [LogProg.indicator_eq_decide, LogProg.indicator_eq_decide, LogProg.indicator_eq_decide]
+    by_cases hval : epadValid C d y
+    · have hmem : y ∈ (epadV C d : Set (List Bool)) := hval
+      rw [epadVirt_of_valid hval]
+      obtain ⟨a, ha⟩ := hval
+      have hpad : y ∈ (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) ↔
+          pairFstD y ∈ (L : Set (List Bool)) := by
+        rw [ha, pairFstD_pairEncode]
+        constructor
+        · intro h
+          obtain ⟨x, hx, hxe⟩ := mem_padLang_iff.mp h
+          have := congrArg pairFstD hxe
+          rw [pairFstD_pairEncode, pairFstD_pairEncode] at this
+          rw [this]; exact hx
+        · intro h
+          exact mem_padLang_iff.mpr ⟨a, h, rfl⟩
+      simp only [hmem, decide_true, if_true, List.cons.injEq, and_true]
+      exact decide_eq_decide.mpr hpad.symm
+    · have hmem : y ∉ (epadV C d : Set (List Bool)) := hval
+      have hpad : y ∉ (padLang L (fun n => C * (n + 1) ^ d) : Set (List Bool)) := by
+        intro h
+        obtain ⟨x, -, hxe⟩ := mem_padLang_iff.mp h
+        exact hval ⟨x, hxe⟩
+      simp only [hmem, decide_false, Bool.false_eq_true, if_false, hpad]
+  have hc := (FinTM.computesFunInTime_iff _ _ _).mp hMc y
+  rw [hout] at hc
+  refine ⟨_, hc, (hMcs y _).trans ?_⟩
+  have hTy := hT y.length
+  have h1 : cV * logSpace y.length ≤ cV * T y.length :=
+    Nat.mul_le_mul_left _ ((logSpace_le_succ _).trans hTy)
+  have h2 : max (K * T y.length) cf ≤ K * T y.length + cf * T y.length :=
+    max_le (Nat.le_add_right _ _) (le_add_left (Nat.le_mul_of_pos_right _ (by omega)))
+  have h3 : cc ≤ cc * T y.length := Nat.le_mul_of_pos_right _ (by omega)
+  have e : (cV + K + cf + cc) * T y.length =
+      cV * T y.length + K * T y.length + cf * T y.length + cc * T y.length := by ring
+  rw [e]
+  omega
+
+end Complexity
+
+#print axioms Complexity.mem_SPACE_padLang

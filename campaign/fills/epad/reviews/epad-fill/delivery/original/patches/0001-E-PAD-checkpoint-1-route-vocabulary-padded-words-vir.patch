@@ -1,0 +1,97 @@
+From 07b50af56b0a9a7046a667fd9b6cf33c110f0700 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 02:32:26 +0000
+Subject: [PATCH 1/4] E-PAD checkpoint 1: route vocabulary (padded words,
+ virtual input, bank languages) and imports
+
+---
+ .../Complexity/SpaceComplexity/Padding.lean   | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Padding.lean b/TCSlib/Complexity/SpaceComplexity/Padding.lean
+index 39a59037..9d376865 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Padding.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Padding.lean
+@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.SpaceComplexity.Basic
++import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
++import TCSlib.Complexity.TuringMachine.Build.Catalog
++import TCSlib.Complexity.ClassNP.PolyTimePairing
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -58,6 +61,69 @@ theorem mem_padLang_iff {L : Language Bool} {pad : ℕ → ℕ} {y : List Bool}
+     y ∈ padLang L pad ↔ ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true) :=
+   Iff.rfl
+ 
++/-! ### The padded words, the virtual input and the bank's languages (E-PAD) -/
++
++/-- **Padded words**: `y` is the pair of some `a` with `C (|a| + 1)^d` ones. -/
++private def epadValid (C d : ℕ) (y : List Bool) : Prop :=
++  ∃ a, y = pairEncode a (List.replicate (C * (a.length + 1) ^ d) true)
++
++/-- The language of padded words: the validator's language. -/
++private def epadV (C d : ℕ) : Language Bool := {y | epadValid C d y}
++
++open Classical in
++/-- **The virtual input** of the run phase: the first component of a padded word, and the
++empty word on every other input. -/
++private noncomputable def epadVirt (C d : ℕ) (y : List Bool) : List Bool :=
++  if epadValid C d y then pairFstD y else []
++
++/-- **The bank's languages.** On a query word `⟨y, w⟩` whose index word `w` is canonical
++(`w.getLastD true = true`) and no wider than `|y|` in binary, mode `false` asks whether `y`
++is padded and the index is below the first component's length, mode `true` whether `y` is
++padded and the first component's indexed bit is `1`. -/
++private def epadQ (C d : ℕ) (mode : Bool) : Language Bool :=
++  {z | ∃ y w, pairDecode z = some (y, w) ∧ w.getLastD true = true ∧
++    w.length ≤ (Nat.bits y.length).length ∧ epadValid C d y ∧
++    (if mode = true then (pairFstD y).getD (LogProg.bitsVal w) false = true
++      else LogProg.bitsVal w < (pairFstD y).length)}
++
++/-- On a padded word the virtual input is its first component. -/
++private lemma epadVirt_of_valid {C d : ℕ} {y : List Bool} (h : epadValid C d y) :
++    epadVirt C d y = pairFstD y := by
++  classical
++  rw [epadVirt, if_pos h]
++
++/-- Off the padded words the virtual input is empty. -/
++private lemma epadVirt_of_not_valid {C d : ℕ} {y : List Bool} (h : ¬ epadValid C d y) :
++    epadVirt C d y = [] := by
++  classical
++  rw [epadVirt, if_neg h]
++
++/-- The virtual input is no longer than the input. -/
++private lemma epadVirt_length_le (C d : ℕ) (y : List Bool) :
++    (epadVirt C d y).length ≤ y.length := by
++  by_cases h : epadValid C d y
++  · rw [epadVirt_of_valid h]; exact length_pairFstD_le y
++  · rw [epadVirt_of_not_valid h]; exact Nat.zero_le _
++
++/-- **A genuine query** `⟨y, bits i⟩` with `i ≤ |y|` is in the bank's language exactly when `y`
++is padded and the mode's question holds at `i`. -/
++private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
++    (hi : i ≤ y.length) :
++    pairEncode y (Nat.bits i) ∈ epadQ C d mode ↔ epadValid C d y ∧
++      (if mode = true then (pairFstD y).getD i false = true else i < (pairFstD y).length) := by
++  constructor
++  · rintro ⟨y', w, hd, -, -, hv, hq⟩
++    rw [pairDecode_pairEncode, Option.some.injEq, Prod.mk.injEq] at hd
++    obtain ⟨rfl, rfl⟩ := hd
++    rw [LogProg.bitsVal_bits] at hq
++    exact ⟨hv, hq⟩
++  · rintro ⟨hv, hq⟩
++    refine ⟨y, Nat.bits i, pairDecode_pairEncode y (Nat.bits i),
++      (LogProg.drop_canon (Nat.bits i)).mpr (LogProg.canon_bits i),
++      LogProg.length_bits_mono hi, hv, ?_⟩
++    rw [LogProg.bitsVal_bits]
++    exact hq
++
+ /-- **Padding transfers space bounds down** ([AB09, Exercise 3.2], the padding argument in space
+ form): if `L ∈ SPACE S`, then the language of `L`'s members padded by `C · (|x| + 1)^d` ones lies
+ in `SPACE T` for every `T` with `m + 1 ≤ T m` (room to validate the padding and to copy the first
+-- 
+2.43.0
+

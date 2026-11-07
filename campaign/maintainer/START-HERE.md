@@ -28,8 +28,10 @@ maintainer work, this file and WORKFLOW.md take precedence.
   fetch).
 - **Elaborate only** with `devtools/seyoon/leanelab.sh <worktree> <olean tree> <file>`, or with
   `leanelab-o.sh <worktree> <tree> <file> <overlay>` to write an `.olean`.
-  - At most **two Lean processes** machine-wide. The scripts take the slot locks
-    `$TCSLIB_SCRATCH/locks/lean-slot-{1,2}`, and `scratch-api/slotrun.sh` wraps a replay in a slot.
+  - At most **five Lean processes** machine-wide (the user's 2026-11-06 update). The scripts take
+    `$TCSLIB_SCRATCH/locks/lean-slot-{1..5}`; `TCSLIB_LEAN_SLOTS` sets a smaller local budget.
+    Here it is **3**, reserving two for Pass–Shelat's separate locks. `slotrun.sh` wraps a replay
+    in one slot.
   - **An overlay must be a complete tree.** Lean resolves `TCSlib.*` from the first `LEAN_PATH`
     entry that holds a `TCSlib/` directory. So: `cp -al <snapshot> <overlay>` (hard links), and
     `rm -f` a module's `.olean/.ilean/.c/.trace` in the overlay before recompiling it, so the
@@ -59,9 +61,10 @@ maintainer work, this file and WORKFLOW.md take precedence.
 - **Status lines** in replies: **Ready to dispatch** (a staged gate, with its pasteable prompt),
   **Clear to merge** / **Not yet clear to merge** (PRs).
 
-## 3. The machine (cloud VM)
+## 3. The machine and snapshots
 
-HANDOFF §1 has the full setup. In short:
+HANDOFF §0–§1 has the current Mac state and the previous cloud setup. The Mac receipt is in
+`campaign/status/2026-11-06-mac-bootstrap/setup.md`. In short:
 - set `TCSLIB_SCRATCH` (about 15 GB free) and `TCSLIB_REPO`, and copy
   `devtools/seyoon/scratch-api/env.sh.example` to `$TCSLIB_SCRATCH/env.sh`;
 - `cp devtools/seyoon/scratch-api/* $TCSLIB_SCRATCH/api/`. The replay scripts call
@@ -75,9 +78,9 @@ HANDOFF §1 has the full setup. In short:
 If none exists, bootstrap one: `devtools/seyoon/bootstrap-snapshot.sh` (resumable with
 `--resume`).
 
-**Container restarts kill every process.** After one, check `$TCSLIB_SCRATCH/fills/replay/*.log`,
+**Container restarts kill every process.** After a restart or interrupted session, check `$TCSLIB_SCRATCH/fills/replay/*.log`,
 clear stale slot locks, and restart queues. **Disk is tight:** a snapshot copy is about 1.2 GB.
-Delete superseded snapshots and `stage/*/export` trees.
+Delete superseded snapshots and `stage/*/export` trees when space requires it.
 
 ## 4. The core loops
 
@@ -151,5 +154,6 @@ stated).
 
 ## 6. Gate numbering and the current state
 
-Gates are numbered upward; the latest are in `campaign/gates/`. Reserved: 106 (#215, SG-1) and 114
-(#222, NatBits). **The current state is HANDOFF §0.**
+Gates are numbered upward; the latest are in `campaign/gates/`. Gates 106 (#215, SG-1) and
+114 (#222, NatBits) are dispatched. Gate 115 (#228, E-PAD) is closed and merged; 116 is reserved
+for the Hierarchy consumer. Next free: **117**. **The current state is HANDOFF §0.**

@@ -1,0 +1,12 @@
+import TCSlib.Complexity.TuringMachine.NatBits
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let some target := env.getModuleIdx? `TCSlib.Complexity.TuringMachine.NatBits
+    | throwError "NatBits module is missing"
+  let names := env.constants.toList.filterMap fun (n, _) =>
+    if env.getModuleIdxFor? n == some target then some n else none
+  for n in names.toArray.qsort Name.lt do
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"MODULE_AXIOMS {n} {(axs.qsort Name.lt).toList}"

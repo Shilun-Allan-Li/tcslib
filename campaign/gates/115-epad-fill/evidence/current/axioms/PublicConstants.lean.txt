@@ -1,0 +1,16 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let some target := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Padding
+    | throwError "Padding is missing from the imported module table"
+  let names := env.constants.toList.filterMap fun (n, ci) =>
+    if env.getModuleIdxFor? n == some target && !isPrivateName n then some (n, ci) else none
+  for (n, ci) in names.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+      | .opaqueInfo _ => "opaque" | .axiomInfo _ => "axiom"
+      | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+      | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+    logInfo m!"PUBLIC_CONSTANT {n} kind={kind} internal={n.isInternalDetail}"

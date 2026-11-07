@@ -1,0 +1,31 @@
+== unsealed
+== Probe/EPadSealControlUnsealed start 02:37:21
+rfl closes: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+rfl closes: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+rfl closes: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+rfl closes: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+rfl closes: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+rfl closes: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+== Probe/EPadSealControlUnsealed end 02:37:23 rc=0 wall=1.4s maxrss=1845MiB
+== sealed (every #epad_seal_rfl must fail)
+== Probe/EPadSealControlSealed start 02:37:23
+Probe/EPadSealControlSealed.lean:37:0: error: rfl FAILS: Complexity.LogProg.Canon   [Complexity.LogProg.Canon.eq_1 : ∀ (w : List Bool),
+  Complexity.LogProg.Canon w = ∀ (h : w ≠ []), w.getLast h = true]
+Probe/EPadSealControlSealed.lean:38:0: error: rfl FAILS: Complexity.LogProg.bitsVal   [Complexity.LogProg.bitsVal.eq_1 : Complexity.LogProg.bitsVal [] = 0]
+Probe/EPadSealControlSealed.lean:39:0: error: rfl FAILS: Complexity.SPACE   [Complexity.SPACE.eq_1 : ∀ (s : ℕ → ℕ),
+  Complexity.SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}]
+Probe/EPadSealControlSealed.lean:40:0: error: rfl FAILS: Complexity.pairFstD   [Complexity.pairFstD.eq_1 : ∀ (z : List Bool),
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []]
+Probe/EPadSealControlSealed.lean:41:0: error: rfl FAILS: Turing.pairDecode   [Turing.pairDecode.eq_1 : ∀ (rest : List Bool),
+  Turing.pairDecode (false :: false :: rest) = Option.map (fun p => (false :: p.1, p.2)) (Turing.pairDecode rest)]
+Probe/EPadSealControlSealed.lean:42:0: error: rfl FAILS: Turing.pairEncode   [Turing.pairEncode.eq_1 : ∀ (x α : List Bool),
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α]
+FAIL(Probe/EPadSealControlSealed): lean exited with status 1
+FAIL(Probe/EPadSealControlSealed): error diagnostics reported
+FAIL(Probe/EPadSealControlSealed): no fresh .olean produced
+== Probe/EPadSealControlSealed end 02:37:24 rc=1 wall=1.1s maxrss=1833MiB

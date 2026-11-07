@@ -1,0 +1,75 @@
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:1905:11: error: Invalid `⟨...⟩` notation: The expected type
+  Segment (counterLoopTMVia e M a exit) {some CounterLoopState.done, some CounterLoopState.escape}
+    (fun p =>
+      p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + ↑w.length) ∧
+        ∃ r u,
+          (r < d ∧ u ≤ τ (roundOrbit M τ c r) ∨ r = d ∧ u = 0) ∧
+            ∀ (j : Fin k), p j.castSucc = (MultiTapeTM.runFrom (roundOrbit M τ c r) u).workTapePos j)
+    (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+    (counterLoopCfg (some CounterLoopState.done) (roundOrbit M τ c d)
+      (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some (e true) else ct q) cp)
+    (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1))
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:1906:4: error: No goals to be solved
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:1995:11: error: Invalid `⟨...⟩` notation: The expected type
+  Segment (counterLoopTMVia e M a (some ex)) {some CounterLoopState.done, some CounterLoopState.escape}
+    (fun p =>
+      p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + ↑w.length) ∧
+        ∃ r u,
+          (r ≤ r₀ ∧ u ≤ τ (roundOrbit M τ c r) ∨ r = r₀ + 1 ∧ u = 0) ∧
+            ∀ (j : Fin k), p j.castSucc = (MultiTapeTM.runFrom (roundOrbit M τ c r) u).workTapePos j)
+    (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+    (counterLoopCfg (some CounterLoopState.escape) (roundOrbit M τ c (r₀ + 1))
+      (fun q =>
+        if cp ≤ q ∧ q < cp + ↑w.length then FinTM.bufferTape (List.map (⇑e) (counterWord w (r₀ + 1))) (q - cp)
+        else ct q)
+      cp)
+    (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1))
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:1996:4: error: No goals to be solved
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:2266:9: error: Invalid projection: Expected a value whose type is a structure
+  hseg
+has type
+  Segment (counterLoopTMVia e M a exit) {none, some CounterLoopState.done, some CounterLoopState.escape}
+    (fun p_1 =>
+      p_1 (Fin.last k) ∈ Finset.Icc (d.workTapePos (Fin.last k) - 1) (d.workTapePos (Fin.last k) + ↑p.2.length) ∧
+        ∃ r u,
+          (r < counterValue p.2 ∧ u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) ∨
+              r = counterValue p.2 ∧ u = 0) ∧
+            ∀ (j : Fin k),
+              p_1 j.castSucc =
+                (MultiTapeTM.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j)
+    d
+    (counterLoopCfg (some CounterLoopState.done) (roundOrbit M (R.time p.1) (counterLoopBody a d) (counterValue p.2))
+      (fun q =>
+        if d.workTapePos (Fin.last k) ≤ q ∧ q < d.workTapePos (Fin.last k) + ↑p.2.length then some (e true)
+        else d.workTapes (Fin.last k) q)
+      (d.workTapePos (Fin.last k)))
+    (∑ r ∈ Finset.range (counterValue p.2), R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) +
+      counterOverhead p.2 (counterValue p.2 + 1))
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/probes/106/CounterLoop.lean:2293:9: error: Invalid projection: Expected a value whose type is a structure
+  hseg
+has type
+  Segment (counterLoopTMVia e M a (some ex)) {none, some CounterLoopState.done, some CounterLoopState.escape}
+    (fun p_1 =>
+      p_1 (Fin.last k) ∈ Finset.Icc (d.workTapePos (Fin.last k) - 1) (d.workTapePos (Fin.last k) + ↑p.2.1.length) ∧
+        ∃ r u,
+          (r ≤ p.2.2 ∧ u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) ∨ r = p.2.2 + 1 ∧ u = 0) ∧
+            ∀ (j : Fin k),
+              p_1 j.castSucc =
+                (MultiTapeTM.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j)
+    d
+    (counterLoopCfg (some CounterLoopState.escape) (roundOrbit M (R.time p.1) (counterLoopBody a d) (p.2.2 + 1))
+      (fun q =>
+        if d.workTapePos (Fin.last k) ≤ q ∧ q < d.workTapePos (Fin.last k) + ↑p.2.1.length then
+          FinTM.bufferTape (List.map (⇑e) (counterWord p.2.1 (p.2.2 + 1))) (q - d.workTapePos (Fin.last k))
+        else d.workTapes (Fin.last k) q)
+      (d.workTapePos (Fin.last k)))
+    (∑ r ∈ Finset.range (p.2.2 + 1), R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) +
+      counterOverhead p.2.1 (p.2.2 + 1))
+
+exit=1

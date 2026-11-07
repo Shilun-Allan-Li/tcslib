@@ -1,0 +1,194 @@
+TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean:598:  ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
+TCSlib/Complexity/CircuitComplexity/Lupanov.lean:228:      have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 h0.ne'
+TCSlib/Complexity/CircuitComplexity/Lupanov.lean:237:    · have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 (by
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:267:      · have := litV_le (n := n) (0 + (Nat.log 2 (j - n + 1) - 1)) ((j - n + 1) % 2 == 1)
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:289:      have hp' : 2 ^ Nat.log 2 t ≤ t := Nat.pow_log_le_self 2 ht
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:322:      have hl2 : 1 ≤ Nat.log 2 (j - n + 1) := Nat.log_pos (by norm_num) (by omega)
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:323:      have := litV_le (n := n) (0 + (Nat.log 2 (j - n + 1) - 1)) ((j - n + 1) % 2 == 1)
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:489:  · have hlog : Nat.log 2 q = Nat.log 2 (q / 2) + 1 :=
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:496:      show Nat.log 2 (q / 2) + 1 - 1 = Nat.log 2 (q / 2) by omega]
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:552:    have hL1 : 2 ^ L ≤ t := Nat.pow_log_le_self 2 ht0
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:38:* `O(log^d n)` is written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`; the `+ 1` keeps
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:180:private theorem three_pow_log_le (n : ℕ) : 3 ^ Nat.log 2 n ≤ (n + 1) ^ 2 := by
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:181:  have h2 : 2 ^ Nat.log 2 n ≤ n + 1 := by
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:184:    · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:199:  · have hd : (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) := by simpa using hb n
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:202:      _ ≤ 3 ^ (b * (Nat.log 2 n + 1)) := Nat.pow_le_pow_right (by norm_num) hd
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:270:  · have hK : Nat.clog 2 (C.circuit n).size + 1 ≤ (a + k + 1) * (Nat.log 2 n + 1) := by
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:274:      have e2 : (a + k + 1) * (Nat.log 2 n + 1)
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:275:          = a * (Nat.log 2 n + 1) + k * (Nat.log 2 n + 1) + (Nat.log 2 n + 1) := by ring
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:276:      have e1 : a ≤ a * (Nat.log 2 n + 1) := Nat.le_mul_of_pos_right a (by omega)
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:281:      _ ≤ ((a + k + 1) * (Nat.log 2 n + 1)) * (b * (Nat.log 2 n + 1) ^ d) :=
+TCSlib/Complexity/CircuitComplexity/NCAC.lean:283:      _ = b * (a + k + 1) * (Nat.log 2 n + 1) ^ (d + 1) := by ring
+TCSlib/Complexity/CircuitComplexity/Parity.lean:36:* **Constants.** `4 * (Nat.log 2 n + 1)` for depth and `32 * (n + 1) ^ 4` for size are what
+TCSlib/Complexity/CircuitComplexity/Parity.lean:342:theorem parityCircuit_depth_le : (parityCircuit n).depth ≤ 4 * (Nat.log 2 n + 1) := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:348:  have hc : Nat.clog 2 n ≤ Nat.log 2 n + 1 := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:357:  have hmono : (2 : ℕ) ^ ((parityCircuit n).depth + 1) ≤ 2 ^ (4 * (Nat.log 2 n + 1) + 1) :=
+TCSlib/Complexity/CircuitComplexity/Parity.lean:359:  have hlog : (2 : ℕ) ^ (Nat.log 2 n + 1) ≤ 2 * (n + 1) := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:363:  have hfin : (2 : ℕ) ^ (4 * (Nat.log 2 n + 1) + 1) ≤ 32 * (n + 1) ^ 4 := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:364:    calc (2 : ℕ) ^ (4 * (Nat.log 2 n + 1) + 1)
+TCSlib/Complexity/CircuitComplexity/Parity.lean:365:        = 2 * (2 ^ (Nat.log 2 n + 1)) ^ 4 := by
+TCSlib/Complexity/CircuitComplexity/Parity.lean:366:          rw [pow_succ, ← pow_mul, Nat.mul_comm 4 (Nat.log 2 n + 1)]
+TCSlib/Complexity/CircuitComplexity/Parity.lean:377:`4 * (Nat.log 2 n + 1)` is the constant `4` here and at `n = 0`, not `0`. -/
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:65:* **`O(log^d n)`.** Written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`, the shape
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:122:  ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:465:    Nat.clog 2 (a * (m + 1) ^ k) ≤ a + k * (Nat.log 2 m + 1) := by
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:468:      ≤ 2 ^ a * (2 ^ (Nat.log 2 m + 1)) ^ k :=
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:471:    _ = 2 ^ (a + k * (Nat.log 2 m + 1)) := by
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:472:        rw [← pow_mul, ← pow_add, Nat.mul_comm (Nat.log 2 m + 1) k]
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:499:    have hK : Nat.clog 2 (a * (n + 1) ^ k) + 1 ≤ (a + k + 1) * (Nat.log 2 n + 1) := by
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:501:      have e1 : a ≤ a * (Nat.log 2 n + 1) := Nat.le_mul_of_pos_right a (by omega)
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:502:      have e2 : (a + k + 1) * (Nat.log 2 n + 1)
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:503:          = a * (Nat.log 2 n + 1) + k * (Nat.log 2 n + 1) + (Nat.log 2 n + 1) := by ring
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:508:      _ ≤ (b * (Nat.log 2 n + 1) ^ d) * ((a + k + 1) * (Nat.log 2 n + 1)) :=
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:510:      _ = b * (a + k + 1) * (Nat.log 2 n + 1) ^ (d + 1) := by ring
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:242:    have := Nat.size_pos.mpr hP
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:257:        Nat.size_le_size (by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:340:        rw [Nat.size_le]
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:291:  have h1 := Nat.lt_size_self P
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:292:  have h2 : 0 < Nat.size P := Nat.size_pos.mpr hP
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:297:  have := Nat.size_le.mpr h3
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:365:        rw [Nat.size_le]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3746:    have h2 := Nat.pow_log_le_self 2 hn0
+TCSlib/Complexity/Randomized/BPLInP.lean:398:    rwa [← Nat.size_eq_bits_len] at this
+TCSlib/Complexity/Randomized/BPLInP.lean:440:      rwa [← Nat.size_eq_bits_len] at this
+TCSlib/Complexity/Randomized/BiasedCoinHalting.lean:337:  · have := Nat.pow_log_le_self 4 h.ne'
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:54:def quasiPolyBudget (n : ℕ) : ℕ := 2 ^ (Nat.log 2 n ^ 2 + 1)
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:75:    exact Nat.pow_le_pow_left (Nat.pow_log_le_self 2 hn.ne') _
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:259:  have hq : 2 ^ (Nat.log 2 x.length ^ 2) ≤ quasiPolyBudget x.length + 1 := by
+TCSlib/Complexity/Randomized/RandomWalkPad.lean:149:theorem le_padDegree (n : ℕ) : n ≤ padDegree n := (Nat.lt_size_self n).le
+TCSlib/Complexity/Randomized/RandomWalkPad.lean:154:  rw [← Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:243:  rw [ell, Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/UPathWalk.lean:117:  rw [← Nat.size_eq_bits_len, ← Nat.size_eq_bits_len, bits_eq_cons h, List.length_cons]
+TCSlib/Complexity/Randomized/UniformSample.lean:95:  refine ⟨by have := Nat.lt_size_self (N - 1); omega, ?_⟩
+TCSlib/Complexity/Randomized/UniformSample.lean:96:  rw [← Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/UniformSample.lean:263:    simp [BinArith.sub, bitsVal, Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Basic.lean:192:def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
+TCSlib/Complexity/SpaceComplexity/Basic.lean:194:/-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
+TCSlib/Complexity/SpaceComplexity/Basic.lean:195:theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+TCSlib/Complexity/SpaceComplexity/Basic.lean:209:(`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
+TCSlib/Complexity/SpaceComplexity/Basic.lean:214:  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+TCSlib/Complexity/SpaceComplexity/Basic.lean:215:    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:446:    have e2 : Nat.log 2 (x.length + 1) ≤ Nat.log 2 x.length + 1 := by
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:430:    · exact (Nat.pow_log_le_self 2 (by omega)).trans (Nat.le_succ n)
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:438:      rw [← Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:523:    2 ^ (C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1)) *
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:547:  have hW : Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1 ≤ E + 3 := by
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:563:  have hexp : C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1) + 2 * (E + 2) ≤
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:565:    have h1 : (Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1 ≤ (a + 4) * (Sn + 1) := by
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:568:    have h2 : C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1) ≤
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:573:  calc 2 ^ (C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1)) *
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:575:      ≤ 2 ^ (C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1)) *
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:577:    _ = 2 ^ (C * ((Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1) + logSpace n + 1) + 2 * (E + 2)) := by
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:604:    (fun n => Nat.log 2 (bigB N n (c₀ * S n) + 1) + 1) (fun n => 3 * kb N n (c₀ * S n + 1))
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:616:      have e2 : Nat.log 2 (c.1.2.1 r + 1) ≤ Nat.log 2 (bigB N x.length (c₀ * S x.length) + 1) :=
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:360:def hv (k : ℕ) : ℕ := if k = 0 then 0 else Nat.log 2 k + 1
+TCSlib/Complexity/SpaceComplexity/ExpTime.lean:92:  have hlog : 2 ^ Nat.log 2 n ≤ n + 1 := by
+TCSlib/Complexity/SpaceComplexity/ExpTime.lean:95:    · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:273:  have hpow : 2 ^ L ≤ n := Nat.pow_log_le_self 2 hn0
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:304:  set W := Nat.log 2 (F + 1) + 1 with hWdef
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:209:  rw [← Nat.size_eq_bits_len, logSpace_eq]
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:61:  rw [← Nat.size_eq_bits_len, ← Nat.size_eq_bits_len, ← Nat.div2_val, Nat.div2_bits_eq_tail,
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:63:  have : 0 < m.bits.length := by rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr (by omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:68:  (Nat.lt_size_self n).trans (Nat.pow_lt_pow_right (by norm_num) (by omega))
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:998:    rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:999:    exact Nat.size_pos.mpr (Nat.pos_of_ne_zero hn)
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2124:  have hdist : (4 * C + 8) * (Nat.log 2 y.length + 1) =
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2125:      4 * (C * (Nat.log 2 y.length + 1)) + 8 * (Nat.log 2 y.length + 1) := by ring
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:75:  rw [ell, Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:82:  · have h1 : m + 1 < 2 ^ Nat.size (m + 1) := Nat.lt_size_self _
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:83:    have h2 : 2 ^ Nat.log 2 m ≤ m := Nat.pow_log_le_self 2 (by omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:84:    have : Nat.log 2 m < Nat.size (m + 1) :=
+TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean:87:  have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (x.length + 1) ^ c₀ + 1) :=
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:149:lemma succ_le_two_pow_log (n : ℕ) : n + 1 ≤ 2 ^ (Nat.log 2 n + 1) :=
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:158:    ∃ K, ∀ n, Nat.log 2 (A * (n + 1) ^ c + B) + 1 ≤ K * (Nat.log 2 n + 1) := by
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:172:  have hlog : Nat.log 2 (A * (n + 1) ^ c + B) < A + B + c * (L + 1) + 1 := by
+TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:123:      have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (n + 1) ^ c₀ + 1) :=
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:259:  have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (x.length + 1) ^ c₀ + 1) :=
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:410:  rw [Nat.size_eq_bits_len] at h2 ⊢
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:580:def logOverhead (t : ℕ) : ℕ := (t + 1) * (Nat.log 2 (t + 1) + 1)
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:582:/-- The formula of `logOverhead`: `logOverhead t = (t + 1) * (Nat.log 2 (t + 1) + 1)`, by
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:584:theorem logOverhead_eq (t : ℕ) : logOverhead t = (t + 1) * (Nat.log 2 (t + 1) + 1) := rfl
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:589:def logDiagOverhead (t n : ℕ) : ℕ := (t + n + 1) * (Nat.log 2 (t + n + 1) + 1)
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:592:`logDiagOverhead t n = (t + n + 1) * (Nat.log 2 (t + n + 1) + 1)`, by definition. -/
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:594:    logDiagOverhead t n = (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) := rfl
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:600:  have h : t + n + 1 ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:612:  have hlog : Nat.log 2 (t + 1) ≤ Nat.log 2 (t + n + 1) := Nat.log_mono_right (by omega)
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:613:  have h1 : (t + 1) * (Nat.log 2 (t + 1) + 1) ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:615:  have h2 : t + n + 1 ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:628:    logOverhead (c₀ * T) ≤ (c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * logOverhead T := by
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:630:  set m := Nat.log 2 (c₀ + 1) + 1 with hm
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:631:  set l := Nat.log 2 (T + 1) with hl
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:637:  have hlog : Nat.log 2 (c₀ * T + 1) < m + (l + 1) := by
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:641:  have h3 : Nat.log 2 (c₀ * T + 1) + 1 ≤ (m + 1) * (l + 1) := by nlinarith
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:642:  calc (c₀ * T + 1) * (Nat.log 2 (c₀ * T + 1) + 1)
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:644:    _ = (c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * ((T + 1) * (l + 1)) := by rw [hm]; ring
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:658:  have hlog : Nat.log 2 (f + n + 1) ≤ Nat.log 2 f + 2 := by
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:659:    calc Nat.log 2 (f + n + 1) ≤ Nat.log 2 (f * 2 * 2) := Nat.log_mono_right h3
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:664:  have hB : Nat.log 2 (f + n + 1) + 1 ≤ 4 * Nat.log 2 f := by omega
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:665:  calc (f + n + 1) * (Nat.log 2 (f + n + 1) + 1) ≤ (3 * f) * (4 * Nat.log 2 f) :=
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:721:    refine ⟨code₂.encode N, c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2)), fun x => ?_⟩
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:725:    calc c₁ * ((c₀ * T x.length + 1) * (Nat.log 2 (c₀ * T x.length + 1) + 1))
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:727:      _ ≤ c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * logOverhead (T x.length)) :=
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:729:      _ ≤ c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2)) * (logOverhead (T x.length) + 1) := by
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:765:      A * ((f n + n + 1) * (Nat.log 2 (f n + n + 1) + 1)) ≤ g n) :
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4126:          (Complexity.LogProg.length_bits_mono hi).trans_eq (Nat.size_eq_bits_len x.length)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4167:      have hlen := Nat.size_eq_bits_len x.length
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:193:    simpa only [posWidth, Nat.size_eq_bits_len] using
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:194:      (Nat.size_pos.mpr (Nat.succ_pos x.length))
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4686:    simpa only [posWidth, Nat.size_eq_bits_len] using
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4687:      (Nat.size_pos.mpr (Nat.succ_pos x.length))
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:5910:      simpa [wb, Nat.size_eq_bits_len] using Nat.size_pos.mpr (Nat.succ_pos x.length)
+TCSlib/Complexity/TuringMachine/NatBits.lean:58:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/NatBits.lean:59:  exact Nat.size_le.mpr Nat.lt_two_pow_self
+TCSlib/Complexity/TuringMachine/NatBits.lean:67:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/NatBits.lean:68:  exact Nat.size_le.mpr h
+TCSlib/Complexity/TuringMachine/NatBits.lean:83:  rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
+TCSlib/Complexity/TuringMachine/NatBits.lean:87:**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
+TCSlib/Complexity/TuringMachine/NatBits.lean:90:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/NatBits.lean:91:  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
+TCSlib/Complexity/TuringMachine/NatBits.lean:93:    rw [← Nat.size_le]; omega
+TCSlib/Complexity/TuringMachine/NatBits.lean:110:  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
+TCSlib/Complexity/TuringMachine/NatBits.lean:113:lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+TCSlib/Complexity/TuringMachine/NatBits.lean:117:`|bits n| = Nat.log 2 n + 1`. (At `n = 0` the word is empty while the right side is `1`.)
+TCSlib/Complexity/TuringMachine/NatBits.lean:123:theorem length_bits_eq_log {n : ℕ} (hn : n ≠ 0) : (Nat.bits n).length = Nat.log 2 n + 1 := by
+TCSlib/Complexity/TuringMachine/NatBits.lean:125:  rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/NatBits.lean:126:  exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:102:        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:135:    have hb : t ≤ 1 * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := by
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:170:        (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1))))
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:176:        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:205:            (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:212:        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2306:    ∀ s < T, tt_idxR M x t s ≤ Nat.log 2 T + 1 := by
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2313:  have h4 : 2 ^ (Nat.log 2 T + 2) ≤ 2 ^ (tt_D M x (s + 1)).1 :=
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2328:`2 t₀ + k (A ((L + 2) t₀ + 2^L) + t₀)`; then `2^L ≤ 2 t₀` (`Nat.pow_log_le_self`) and
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2333:      (2 + M.k * (5 * A + 1)) * ((t₀ + 1) * (Nat.log 2 (t₀ + 1) + 1)) := by
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2334:  set L := Nat.log 2 t₀ + 1 with hL
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2393:    have := Nat.pow_log_le_self 2 (show t₀ ≠ 0 by omega)
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2395:  have hlog : Nat.log 2 t₀ ≤ Nat.log 2 (t₀ + 1) := Nat.log_mono_right (Nat.le_succ t₀)
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2396:  set lg := Nat.log 2 (t₀ + 1)
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2431:        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean:2455:      M'.ComputesFunInTime f fun n => c * ((T n + 1) * (Nat.log 2 (T n + 1) + 1)) := by
+TCSlib/Complexity/TuringMachine/UniversalTlogT.lean:60:        U.ComputesInTime (pairEncode α x) output (C * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
+TCSlib/Complexity/TuringMachine/UniversalTlogT.lean:74:    have hpos : 1 ≤ (t + 1) * (Nat.log 2 (t + 1) + 1) :=
+TCSlib/Complexity/TuringMachine/UniversalTlogT.lean:76:    calc C * (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1)) + 1)
+TCSlib/Complexity/TuringMachine/UniversalTlogT.lean:77:        ≤ C * ((c₁ + 1) * ((t + 1) * (Nat.log 2 (t + 1) + 1))) := by
+TCSlib/Complexity/TuringMachine/UniversalTlogT.lean:79:      _ = C * (c₁ + 1) * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := by ring
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:158:    Nat.log 2 b + 1 ≤ Nat.log 2 a := by
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:161:    Nat.pow_log_le_self 2 hbne
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:162:  have hpow : 2 ^ (Nat.log 2 b + 1) ≤ a := by
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:164:      2 ^ (Nat.log 2 b + 1)
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:239:        have hlogstep : Nat.log 2 V'.card + 1 ≤ Nat.log 2 V.card :=
+TCSlib/LearningTheory/MistakeBounds/Halving.lean:246:          _ = Nat.log 2 V'.card + 1 := by omega
+TCSlib/Programs/Light/Lib/Emod.lean:106:  rw [emodRounds, Nat.lt_size, Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
+TCSlib/Programs/Light/Lib/Emod.lean:109:theorem emodRounds_le {a M V : ℕ} (ha : a ≤ V) : emodRounds a M ≤ Nat.log 2 (V + 1) + 1 := by
+TCSlib/Programs/Light/Lib/Emod.lean:110:  rw [emodRounds, Nat.size_le]
+TCSlib/Programs/Light/Lib/Emod.lean:113:    _ < 2 ^ (Nat.log 2 (V + 1) + 1) := Nat.lt_pow_succ_log_self (by norm_num) _
+TCSlib/Programs/Light/Lib/Emod.lean:138:  free : fr + (Nat.log 2 (V + 1) + 2) ≤ lim.space
+TCSlib/Programs/Light/Lib/Emod.lean:153:  have hK : emodRounds a Mo ≤ Nat.log 2 (V + 1) + 1 := emodRounds_le haV
+TCSlib/Programs/Light/Lib/Emod.lean:193:  have hK : emodRounds a Mo ≤ Nat.log 2 (V + 1) + 1 := emodRounds_le haV
+TCSlib/Programs/Light/Lib/Logs.lean:78:@[simp] def log2Time (x : ℕ) : ℕ := 14 * Nat.log 2 x + 12
+TCSlib/Programs/Light/Lib/Logs.lean:84:  have hlt : x < 2 ^ (Nat.log 2 x + 1) := Nat.lt_pow_succ_log_self (by norm_num) x
+TCSlib/Programs/Light/Lib/Logs.lean:99:      (Nat.pow_le_pow_right (by norm_num) (by omega)).trans (Nat.pow_log_le_self 2 hx)
+TCSlib/Programs/Light/Lib/Logs.lean:109:    generalize 2 ^ (Nat.log 2 x + 1) = q at hlt

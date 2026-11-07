@@ -1,0 +1,85 @@
+== Probe/EPadImportProbe start 02:26:46
+padLang : Language Bool → (ℕ → ℕ) → Language Bool
+@mem_padLang_iff : ∀ {L : Language Bool} {pad : ℕ → ℕ} {y : List Bool},
+  y ∈ padLang L pad ↔ ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)
+@mem_SPACE_padLang : ∀ {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ),
+  L ∈ SPACE S →
+    (∀ (n : ℕ), S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) →
+      (∀ (m : ℕ), m + 1 ≤ T m) → (padLang L fun n => C * (n + 1) ^ d) ∈ SPACE T
+@mem_SPACE_iff : ∀ {s : ℕ → ℕ} {L : Language Bool}, L ∈ SPACE s ↔ ∃ c M, M.DecidesInSpace L fun n => c * s n
+@SPACE.mono : ∀ {s₁ s₂ : ℕ → ℕ}, (∀ (n : ℕ), s₁ n ≤ s₂ n) → SPACE s₁ ⊆ SPACE s₂
+@SPACE.mono_const : ∀ {s₁ s₂ : ℕ → ℕ} {a : ℕ}, (∀ (n : ℕ), s₁ n ≤ a * s₂ n) → SPACE s₁ ⊆ SPACE s₂
+FinTM.decidesInSpace_iff : ∀ (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ),
+  M.DecidesInSpace L s ↔ M.ComputesInSpace (fun x => [MultiTapeTM.indicator L x]) s
+length_pairEncode : ∀ (x y : List Bool), (pairEncode x y).length = 2 * x.length + 2 + y.length
+pairFstD_pairEncode : ∀ (a b : List Bool), pairFstD (pairEncode a b) = a
+LogProg.OIS.compile_decides : ∀ (M : FinTM Bool) (Ms : Fin 2 → FinTM Bool) (As : Fin 2 → Language Bool)
+  (sb : Fin 2 → ℕ → ℕ),
+  (∀ (j : Fin 2), (Ms j).DecidesInSpace (As j) (sb j)) →
+    ∀ (x v w : List Bool),
+      (∀ i ≤ v.length, pairEncode x i.bits ∈ As 0 ↔ i < v.length) →
+        (∀ i < v.length, pairEncode x i.bits ∈ As 1 ↔ v.getD i false = true) →
+          ∀ (t : ℕ),
+            M.ComputesInTime v w t →
+              ∀ (B : ℕ),
+                (∀ (j : Fin 2), ∀ i ≤ v.length, max (sb j (pairEncode x i.bits).length) 1 ≤ B) →
+                  ∃ T,
+                    (LogProg.compileFinTM (LogProg.OIS.prog M) (LogProg.OIS.start M) (LogProg.bankTM Ms)
+                            (LogProg.bankStart Ms)).ComputesInTime
+                        x w T ∧
+                      MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) T ≤
+                        M.k * (2 * MultiTapeTM.spaceUsed (MultiTapeTM.initCfg v) t + 1) +
+                            ((v.length + 1).bits.length + 2) +
+                          (LogProg.bankK Ms + LogProg.bankK Ms) * (2 * B + 1)
+@mem_LOGSPACE_preimage : ∀ {f : List Bool → List Bool},
+  ImplicitlyLogspaceComputable f → ∀ {C : Language Bool}, C ∈ LOGSPACE → {x | f x ∈ C} ∈ LOGSPACE
+@exists_rulerHostTM : ∀ {m : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM m Bool S),
+  ∃ Q x x H inj C,
+    0 < C ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length),
+        0 < ℓ →
+          List.drop ℓ z = y →
+            ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+              (∀ (p : ℤ), -1 ≤ p → p ≤ ↑ℓ → rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+                ∀ (c : Cfg m Bool S y) (b : Bool),
+                  (b = true ↔ ↑c.inputPos = 0) →
+                    ∀ (t : ℕ),
+                      have d := rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp;
+                      ∃ t',
+                        t ≤ t' ∧
+                          t' ≤ C * (ℓ + 1) * t ∧
+                            (∃ b',
+                                (b' = true ↔ ↑(MultiTapeTM.runFrom c t).inputPos = 0) ∧
+                                  MultiTapeTM.runFrom d t' =
+                                    rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom c t).state)
+                                      (MultiTapeTM.runFrom c t) rt rp) ∧
+                              ((∀ u < t, (MultiTapeTM.runFrom c u).state ≠ none) →
+                                  ∀ u < t', (MultiTapeTM.runFrom d u).state ≠ none) ∧
+                                (∀ u ≤ t',
+                                    ∃ v ≤ t,
+                                      (∀ (i : Fin m),
+                                          (MultiTapeTM.runFrom d u).workTapes i.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapes i ∧
+                                            (MultiTapeTM.runFrom d u).workTapePos i.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapePos i) ∧
+                                        (MultiTapeTM.runFrom d u).output = (MultiTapeTM.runFrom c v).output ∧
+                                          (MultiTapeTM.runFrom d u).workTapes (Fin.last m) = rt ∧
+                                            (MultiTapeTM.runFrom d u).workTapePos (Fin.last m) ∈
+                                              Finset.Icc (rp - 1) (rp + ↑ℓ)) ∧
+                                  (∀ (i : Fin m),
+                                      MultiTapeTM.visitedByTapeHead d t' i.castSucc =
+                                        MultiTapeTM.visitedByTapeHead c t i) ∧
+                                    MultiTapeTM.visitedByTapeHead d t' (Fin.last m) ⊆ Finset.Icc (rp - 1) (rp + ↑ℓ)
+@vhostEmitTM : {m : ℕ} → {S : Type u_1} → MultiTapeTM m Bool S → MultiTapeTM (1 + m) Bool (S × Bool)
+FinTM.exists_inputCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x : List Bool),
+          ∃ t ≤ c * (T x.length + x.length + (f x).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' → t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (f x))
+'Complexity.mem_SPACE_padLang' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+== Probe/EPadImportProbe end 02:26:47 rc=0 wall=1.2s maxrss=1866MiB

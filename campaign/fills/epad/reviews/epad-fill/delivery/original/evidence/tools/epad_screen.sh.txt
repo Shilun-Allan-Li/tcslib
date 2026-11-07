@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# E-PAD copy-text screens, before (base) and after (commit), on frozen worktrees.
+# Usage: epad_screen.sh <tag> <commit>
+set -u
+TAG="$1"; COMMIT=$(git -C /workspace/tcslib-fill rev-parse "$2")
+F=/workspace/tcslib-fill
+E=/workspace/epad-evidence
+BASE=72fcfbef3c1deb331aedc95d4a158a9ed4c56524
+export PATH=$HOME/.elan/bin:$PATH
+cd $F
+# population: Padding.lean plus every TCSlib module cited (constants of another TCSlib module
+# occurring in the module's declarations), from the citation walk at this commit's olean
+python3 /workspace/bin/chkE.py Probe/EPadCites > $E/logs/cites-$TAG.txt 2>&1
+{ echo TCSlib/Complexity/SpaceComplexity/Padding.lean
+  grep -P '^CITE\t' $E/logs/cites-$TAG.txt | awk -F'\t' '{print $4}' | sort -u | sed 's|\.|/|g; s|$|.lean|'; } > $E/screens/population-$TAG.txt
+mkdir -p /workspace/wt
+[ -d /workspace/wt/base ] || git worktree add -q --detach /workspace/wt/base $BASE
+WT=/workspace/wt/$TAG-${COMMIT:0:8}
+[ -d $WT ] || git worktree add -q --detach $WT $COMMIT
+for side in base after; do
+  if [ $side = base ]; then R=/workspace/wt/base; H=$BASE; else R=$WT; H=$COMMIT; fi
+  { echo "# copy-text-screen-v3 ($side) on frozen worktree $R at $H"
+    echo "# population: $(wc -l < $E/screens/population-$TAG.txt) files ($E/screens/population-$TAG.txt)"
+    echo "# command: nice -n 10 python3 -I scripts/copy-text-screen-v3.py <worktree> <population>"
+    s=$(date +%s)
+    nice -n 10 python3 -I $R/scripts/copy-text-screen-v3.py $R $(cat $E/screens/population-$TAG.txt)
+    echo "# exit=$? secs=$(( $(date +%s) - s ))"; } > $E/screens/screen-$side-$TAG.txt 2>&1
+done
+head -2 $E/screens/screen-base-$TAG.txt | tail -1; sed -n 4p $E/screens/screen-base-$TAG.txt
+sed -n 4p $E/screens/screen-after-$TAG.txt
+diff <(grep '^   .*  reproduces  ' $E/screens/screen-base-$TAG.txt | sed 's/^ *//' | sort) <(grep '^   .*  reproduces  ' $E/screens/screen-after-$TAG.txt | sed 's/^ *//' | sort) > $E/screens/screen-diff-$TAG.txt
+echo "pairs only after (new): $(grep -c '^>' $E/screens/screen-diff-$TAG.txt)  only before: $(grep -c '^<' $E/screens/screen-diff-$TAG.txt)"
+tail -3 $E/screens/screen-after-$TAG.txt
