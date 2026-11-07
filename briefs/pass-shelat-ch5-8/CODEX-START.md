@@ -22,3 +22,13 @@ Notes:
   needed roots, then a bootstrap.
 - **No exchange access.** If the new agent cannot push to the exchange branch, it can still prepare
   everything in the records and ask the user to relay.
+
+## The user's local layout (2026-11-07)
+
+`~/phd_experiments/tcslib_all_branches/` holds two checkouts:
+- `tcslib-pass-shelat-ch2-4/`, on the campaign and records branch `cryptography/pass-shelat-ch2-4`;
+- `tcslib-exchange/`, on the exchange branch `exchange/pass-shelat-ch5-8`.
+
+Work in `tcslib-pass-shelat-ch2-4/`: records, Lean worktrees for PR branches, builds. Stage gates and
+fills in `tcslib-exchange/`. Make PR branches as `git worktree`s of the campaign checkout, not as
+branch switches in it, so that the records checkout stays on its branch.
