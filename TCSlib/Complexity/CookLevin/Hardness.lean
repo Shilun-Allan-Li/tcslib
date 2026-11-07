@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
 import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
@@ -6832,8 +6833,9 @@ private lemma clA5Drop_native {s u : List Bool → List Bool}
 
 /-- Both decoded components are bounded by their complete source word, with empty
 defaults on malformed input.
-**Proof sketch.** Split the decode once. On success the public inverse identifies
-an encoded pair, whose published length bounds both components; failure gives empty words. -/
+**Proof sketch.** Split the decode once. On success, reconstruct the encoded pair
+and apply `length_pair_components_le` through the public projection equations;
+failure gives two empty words. -/
 private lemma clA5Pair_sizes (w : List Bool) :
     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
   change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
@@ -6844,8 +6846,10 @@ private lemma clA5Pair_sizes (w : List Bool) :
     exact ⟨Nat.zero_le _, Nat.zero_le _⟩
   | some p =>
     rcases p with ⟨a, b⟩
-    have hlen := congrArg List.length (eq_pairEncode_of_pairDecode w a b hd)
-    rw [length_pairEncode] at hlen
+    have heq := eq_pairEncode_of_pairDecode w a b hd
+    have hbound := length_pair_components_le w
+    have hab : 2 * a.length + b.length ≤ w.length := by
+      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
     simp only [Option.map_some, Option.getD_some]
     constructor <;> omega
 
