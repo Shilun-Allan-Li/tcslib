@@ -1,0 +1,9 @@
+import TCSlib.Cryptography.Asymptotic.Adversary
+set_option autoImplicit false
+namespace Gate06ApiAliasProbe
+/-- A probe function. -/
+def f (n : Nat) : Nat := n + 1
+/-- The probe equation. -/
+theorem f_eq := @f.eq_def
+#print f_eq
+end Gate06ApiAliasProbe
