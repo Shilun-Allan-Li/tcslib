@@ -46,10 +46,13 @@ This folder only carries files in transit. The maintainer's rules are in that br
 - Gate 115, E-PAD (#228): CLOSED, PASS 0/0/0/12. The user has merged #228. Its gate, fill brief,
   delivery and exact findings are archived after the records were committed. The user's matching
   top-level `inbox/epad-fill-findings.md` is preserved outside this subtree.
-- Gate 116, the Hierarchy padding consumer (#229): `outbox/gates/116-space-linear-ne-np-gate/`,
-  **Codex**, dispatched by the user; await attached findings Markdown in chat.
+- Gate116, the Hierarchy padding consumer (#229): CLOSED PASS0/0/0/12 and merged by Seyoon.
+  The issued packet is archived after findings/dispositions were committed; shared top-level
+  findings remain preserved.
+- Gate117, the23 approved reader/resource theorems (#230): `outbox/gates/117-reading-api-gate/`,
+  **Codex**, verified and ready for user dispatch. Actual394-module current replay passes.
 - MIG-1 overnight megafill: `outbox/fills/megafill-mig1/`, **Claude**, dispatched by the user;
-  checkpoint/final delivery to `inbox/fill-mig1-mega/`. Checkpoints cp01/cp02 received; the
+  checkpoint/final delivery to `inbox/fill-mig1-mega/`. Checkpoints cp01/cp02/cp03/cp05/cp07 received and reviewed as partial; the
   cumulative job continues and its issued packet stays in outbox.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
