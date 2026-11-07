@@ -1,0 +1,23 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+@@ -583,12 +583,14 @@
+       H.main.V.next x (pairEncode zB (H.answersRealB ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)))
+         ((List.ofFn r.2).take (H.main.V.coins.eval x.length))
+         (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+-          (H.main.rounds.eval x.length)).2 := by
+-  show (H.compose ρ).V.next x zB (List.ofFn r.2) (exec (H.compose ρ).P (H.compose ρ).V
+-    (H.compose ρ).verifierFirst x zA zB (List.ofFn r.1) (List.ofFn r.2)
+-    ((H.compose ρ).rounds.eval x.length)).2 = _
+-  rw [compose_exec_rounds]
+-  exact compose_V_next_main H ρ x zA zB _ _ fun _ => hM
++          (H.main.rounds.eval x.length)).2 :=
++  (Protocol.outV_eq (H.compose ρ) (H.compose ρ).P x zA zB r).trans
++    ((congrArg (fun t : List (List Bool) × List (List Bool) =>
++      (H.compose ρ).V.next x zB (List.ofFn r.2) t.2)
++      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
++        (H.compose_transcript ρ x zA zB r))).trans
++      (compose_V_next_main H ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
++        (m := H.main.rounds.eval x.length) (fun _ => hM)))
+ 
+ end Outputs
+ 

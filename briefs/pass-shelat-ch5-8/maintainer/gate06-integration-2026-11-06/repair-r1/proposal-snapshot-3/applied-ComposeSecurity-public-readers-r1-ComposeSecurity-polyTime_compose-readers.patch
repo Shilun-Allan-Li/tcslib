@@ -1,0 +1,16 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+@@ -307,7 +307,12 @@
+ lengths, since `main` runs on `ρ`'s outputs. -/
+ theorem polyTime_compose {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
+     F.PolyTime (H.compose ρ) :=
+-  ⟨H.composeP_efficient ρ hH hρ, H.composeV_efficient ρ hH hρ, H.compose_msg_bound ρ hH hρ⟩
++  (Functionality.polyTime_iff F (H.compose ρ)).mpr
++    ⟨Eq.mpr (congrArg Strategy.Efficient (H.compose_P ρ))
++        (H.composeP_efficient ρ hH hρ),
++      Eq.mpr (congrArg Strategy.Efficient (H.compose_V ρ))
++        (H.composeV_efficient ρ hH hρ),
++      H.compose_msg_bound ρ hH hρ⟩
+ 
+ end Efficiency
+ 

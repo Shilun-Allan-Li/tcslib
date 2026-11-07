@@ -1,0 +1,13 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+@@ -516,7 +516,9 @@
+           (H.slotFromA ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++ List.replicate H.lead [] ++
+           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+             (H.main.rounds.eval x.length)).2) :=
+-  H.compose_exec_rounds ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
++  ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).trans
++    (Protocol.transcriptWith_eq (H.compose ρ) (H.compose ρ).P x zA zB r)).trans
++    (H.compose_exec_rounds ρ x zA zB (List.ofFn r.1) (List.ofFn r.2))
+ 
+ /-- **Alice's view in `H.compose ρ`**: the common input, her input, her whole tape, and Bob's run
+ messages followed by `main`'s messages to her. -/

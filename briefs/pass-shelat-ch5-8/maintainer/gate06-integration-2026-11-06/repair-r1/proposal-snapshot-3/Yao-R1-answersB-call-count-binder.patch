@@ -1,0 +1,17 @@
+diff --git a/TCSlib/Cryptography/SecureComputation/Yao.lean b/TCSlib/Cryptography/SecureComputation/Yao.lean
+--- a/TCSlib/Cryptography/SecureComputation/Yao.lean
++++ b/TCSlib/Cryptography/SecureComputation/Yao.lean
+@@ -725,7 +725,12 @@
+       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2
+   have hj : i * n + t = (finProdFinEquiv (i, t) : ℕ) := by
+     rw [finProdFinEquiv_apply_val]; ring
+-  rw [HybridProtocol.answersB_eq, h, hj, getD_ofFn', otFunctionality_f_snd_apply,
++  rw [HybridProtocol.answersB_eq]
++  -- Normalize the owner-local hybrid call count in the list binder before using `h`.
++  change (List.ofFn (fun j : Fin (Y.inB.eval n * n) =>
++    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
++      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _
++  rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+     yaoHybrid_callA, yaoHybrid_callB, yaoCall_finProdFinEquiv]
+   cases ys.getD i false <;> rfl
+ 

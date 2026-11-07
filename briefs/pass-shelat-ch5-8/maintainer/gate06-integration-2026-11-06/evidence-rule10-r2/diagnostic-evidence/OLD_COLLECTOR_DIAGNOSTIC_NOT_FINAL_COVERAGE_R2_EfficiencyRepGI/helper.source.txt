@@ -1,0 +1,102 @@
+"""Prepare only: MODULE NEW_LABEL; old-collector seals are diagnostic, never final coverage."""
+from pathlib import Path
+import datetime, hashlib, importlib.util, json, re, subprocess, sys
+
+ROOT = Path("/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4")
+G06 = ROOT / ".lake/ps-maintainer/gate06"
+EVIDENCE = Path("/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-r2")
+FLAG = "OLD_COLLECTOR_DIAGNOSTIC_NOT_FINAL_COVERAGE"
+MANIFEST_SHA = "75b11d1cf5324eea8066b898e5c37a677de266513cdde4be697ef8bf8149ba73"
+TOOLS = {"build_seals.py": "fae07000e8c3fda22225632ded45208e2651bab827d827639f48d46e2005347a",
+         "repairs/prepare_rule10_harness_retry_v3.py": "ae79f1ec66e93c8bc7749a53e12e3d383feda020ad2978520a0cfa24b12eb5de",
+         "check_probe_v2.py": "5048912fda9ecd1eb6dd9a238d94bfd73d55a70e9e7d2c4a2df75bfda7e9d146"}
+
+def need(ok, message):
+    if not ok:
+        raise RuntimeError(message)
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+def encoded(value):
+    return (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode()
+
+def load(relative, name):
+    path = G06 / relative
+    need(path.is_file() and not path.is_symlink() and sha(path.read_bytes()) == TOOLS[relative], "tool changed: " + relative)
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+def snapshot():
+    head = subprocess.check_output(["git", "--no-optional-locks", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()
+    paths = sorted([ROOT / "TCSlib.lean", *(ROOT / "TCSlib").rglob("*.lean")])
+    need(all(p.is_file() and not p.is_symlink() and p.resolve().is_relative_to(ROOT) for p in paths), "nonordinary library source")
+    sources = [[p.relative_to(ROOT).as_posix(), sha(p.read_bytes())] for p in paths]
+    return {"git_head": head, "working_tree_may_be_dirty": True, "library_sources": sources,
+            "library_source_fingerprint_sha256": sha(encoded(sources)), "library_source_count": len(sources)}
+
+def write_new(path, raw):
+    with path.open("xb") as handle:
+        handle.write(raw)
+
+def main():
+    need(len(sys.argv) == 3, "usage: python3 -I prepare_current_diagnostic_seal.py MODULE NEW_LABEL")
+    module, suffix = sys.argv[1:]
+    need(re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,79}", suffix), "label must be a fresh ASCII identifier, at most 80 characters")
+    label = FLAG + "_" + suffix
+    manifest_raw = (EVIDENCE / "seal-manifest.json").read_bytes()
+    need(sha(manifest_raw) == MANIFEST_SHA, "initial frozen manifest changed")
+    manifest = json.loads(manifest_raw)
+    need(manifest["root"] == str(ROOT) and len(manifest["probes"]) == 51, "wrong initial manifest")
+    pins_raw = (EVIDENCE / "pins.json").read_bytes()
+    need(sha(pins_raw) == manifest["input_sha256"]["pins.json"], "initial pins changed")
+    matches = [p for p in manifest["probes"] if p["module"] == module]
+    need(len(matches) == 1, "module is not uniquely listed in the initial 51-module manifest")
+    initial = matches[0]; rows = initial["requested_names"]; count = initial["requested_count"]
+    need(len(rows) == count == len({r["spelling"] for r in rows}), "initial full-row identity/count mismatch")
+    source = ROOT / initial["source"]
+    need(initial["source"] == module.replace(".", "/") + ".lean", "unexpected source path")
+    before = snapshot(); raw = source.read_bytes()
+    need(sha(raw) == dict(before["library_sources"])[initial["source"]], "target changed during capture")
+    sys.dont_write_bytecode = True
+    bs = load("build_seals.py", "diagnostic_seal_builder")
+    v3 = load("repairs/prepare_rule10_harness_retry_v3.py", "diagnostic_seal_payload")
+    check = G06 / "check_probe_v2.py"
+    need(sha(check.read_bytes()) == TOOLS["check_probe_v2.py"], "generic checker changed")
+    original_seal = bs.seal_command
+    bs.seal_command = lambda lab, rs, *, end: v3.replace_request_build(original_seal(lab, rs, end=end), rs, metadata=False)
+    info = bs.header(raw)
+    probe, insertions, line_map = bs.instrument(raw, info, label, rows)
+    scratch = G06 / "rule10/diagnostics" / label
+    evidence = EVIDENCE / "diagnostic-evidence" / label
+    path = scratch / (label + ".lean"); probe_module = path.relative_to(ROOT).with_suffix("").as_posix()
+    need(not scratch.exists() and not evidence.exists(), "refusing existing diagnostic label/directory")
+    meta = {"status": FLAG, "prepared_only": True, "fresh_collector_required_for_gate": True,
+            "created_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "root": str(ROOT),
+            "module": module, "label": label, "source": initial["source"], "source_sha256": sha(raw),
+            "probe_path": str(path), "probe_module": probe_module, "probe_sha256": sha(probe),
+            "current_source_snapshot": before, "initial_collector_head": json.loads(pins_raw)["head"],
+            "initial_manifest_sha256": MANIFEST_SHA, "initial_source_sha256": initial["source_sha256"],
+            "initial_imports": initial["source_imports"], "current_imports": info["imports"],
+            "requested_count": count, "requested_names": rows, "additional_exclusions": [],
+            "tool_sha256": TOOLS, "helper_sha256": sha(Path(__file__).read_bytes()),
+            "insertions": insertions, "source_to_probe_lines": line_map,
+            "runtime_identity_and_installed_status_verified": False,
+            "runtime_required": {"all_actual_name_rows_and_installed_statuses": count, "active_plus_already_irreducible": count,
+                "install_marker_prefix": "G06-SEAL label=" + label + " requested=" + str(count),
+                "eof_marker": f"G06-SEAL-END label={label} requested={count} verified={count}"},
+            "native_cwd": str(ROOT), "native_command": [sys.executable, "-I", str(check), str(evidence / "native"), probe_module, label],
+            "warning": "Old rows can omit new term/dependency names. No final coverage or pass attestation; root must check runtime INSTALL/EOF and diagnostics."}
+    need(snapshot() == before and source.read_bytes() == raw, "current source tree changed during preparation")
+    for directory in (scratch, evidence):
+        directory.mkdir(parents=True, exist_ok=False)
+        for name, data in ((label + ".original.source.txt", raw), (label + ".source.txt", probe),
+                           ("metadata.json", encoded(meta)), ("helper.source.txt", Path(__file__).read_bytes())):
+            write_new(directory / name, data)
+    write_new(path, probe)
+    print(json.dumps({"status": FLAG, "metadata": str(evidence / "metadata.json"), "native_cwd": str(ROOT), "native_command": meta["native_command"]}), flush=True)
+
+if __name__ == "__main__":
+    main()

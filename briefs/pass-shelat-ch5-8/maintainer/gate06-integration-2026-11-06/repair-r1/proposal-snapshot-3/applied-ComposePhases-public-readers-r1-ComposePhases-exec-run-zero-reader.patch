@@ -1,0 +1,11 @@
+--- a/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
++++ b/TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+@@ -242,7 +242,7 @@
+       ((List.range q).map (H.slotFromB ρ x zA zB rA rB),
+         (List.range q).map (H.slotFromA ρ x zA zB rA rB)) := by
+   induction q with
+-  | zero => rfl
++  | zero => simp only [Nat.mul_zero, exec_zero, List.range_zero, List.map_nil]
+   | succ q ih =>
+     have hq' : q < H.calls.eval x.length * ρ.rounds.eval x.length := by omega
+     have hR : 0 < ρ.rounds.eval x.length := by
