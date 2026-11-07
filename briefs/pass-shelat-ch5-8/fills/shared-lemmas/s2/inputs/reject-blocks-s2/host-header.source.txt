@@ -1,0 +1,10 @@
+theorem polyTimeComputable_rejectBlocksL (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (E a)]
+    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x])
+    (hspec : ∀ w b : List Bool, acc (pairEncode w b) = decide (E (listToNat w) (listToNat b)))
+    {par kw bw tw c : List Bool → List Bool} (hpar : PolyTimeComputable par)
+    (hkw : PolyTimeComputable kw) (hbw : PolyTimeComputable bw) (htw : PolyTimeComputable tw)
+    (hc : PolyTimeComputable c) :
+    ∃ g : List Bool → List Bool, PolyTimeComputable g ∧ ∀ z,
+      (g z).tail.length ≤ (kw z).length ∧
+      rejectBlocksL (E (listToNat (par z))) (kw z).length (bw z).length (tw z).length (c z) =
+        if g z = [] then none else some (listToNat (g z).tail)

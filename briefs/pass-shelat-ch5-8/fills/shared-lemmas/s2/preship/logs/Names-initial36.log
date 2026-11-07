@@ -1,0 +1,147 @@
+START 2026-11-07T06:45:46.395606+00:00
+@Complexity.polyTimeComputable_iterateFind : ∀ {g : List Bool → List Bool},
+  Complexity.PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (Complexity.PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          Complexity.PolyTimeComputable out →
+            ∀ (R P : Complexity.PolyExpr),
+              (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+                Complexity.PolyTimeComputable fun x =>
+                  match List.find? (fun i => acc (g^[i] x)) (List.range (R.eval x.length + 1)) with
+                  | some i => out (g^[i] x)
+                  | none => []
+Complexity.polyTimeComputable_iterateFind.match_1 : (motive : Option ℕ → Sort u_1) →
+  (x : Option ℕ) → ((i : ℕ) → motive (some i)) → (Unit → motive none) → motive x
+Complexity.IterateFind.find?_range_and_lt : ∀ (p : ℕ → Bool) {N L : ℕ},
+  N ≤ L → List.find? (fun i => decide (i < N) && p i) (List.range L) = List.find? p (List.range N)
+@Complexity.PolyTimeComputable.comp' : ∀ {g f : List Bool → List Bool},
+  Complexity.PolyTimeComputable g → Complexity.PolyTimeComputable f → Complexity.PolyTimeComputable fun x => g (f x)
+@Complexity.PolyTimeComputable.congr : ∀ {f g : List Bool → List Bool},
+  Complexity.PolyTimeComputable f → (∀ (x : List Bool), f x = g x) → Complexity.PolyTimeComputable g
+Complexity.polyTimeComputable_tail : Complexity.PolyTimeComputable fun w => List.drop 1 w
+Complexity.polyTimeComputable_pairDropPoly : ∀ (p : Complexity.PolyExpr),
+  Complexity.PolyTimeComputable fun z => List.drop (p.eval (Complexity.pairFstD z).length) (Complexity.pairSndD z)
+Complexity.polyTimeComputable_pairTakePoly : ∀ (p : Complexity.PolyExpr),
+  Complexity.PolyTimeComputable fun z => List.take (p.eval (Complexity.pairFstD z).length) (Complexity.pairSndD z)
+Complexity.polyTimeComputable_isNil : Complexity.PolyTimeComputable fun w => [decide (w = [])]
+@Complexity.polyTimeComputable_not : ∀ {p : List Bool → Bool},
+  (Complexity.PolyTimeComputable fun x => [p x]) → Complexity.PolyTimeComputable fun x => [!p x]
+@Complexity.polyTimeComputable_and : ∀ {p q : List Bool → Bool},
+  (Complexity.PolyTimeComputable fun x => [p x]) →
+    (Complexity.PolyTimeComputable fun x => [q x]) → Complexity.PolyTimeComputable fun x => [p x && q x]
+Complexity.polyTimeComputable_prepend : ∀ (w : List Bool), Complexity.PolyTimeComputable fun x => w ++ x
+Complexity.polyTimeComputable_unaryPoly : ∀ (p : Complexity.PolyExpr),
+  Complexity.PolyTimeComputable fun x => List.replicate (p.eval x.length) true
+Complexity.StateLoop.length_pairFstD_add_pairSndD_le : ∀ (z : List Bool),
+  (Complexity.pairFstD z).length + (Complexity.pairSndD z).length ≤ z.length
+TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL : ∀ (E : ℕ → ℕ → Prop)
+  [inst : (a : ℕ) → DecidablePred (E a)] {acc : List Bool → Bool},
+  (Complexity.PolyTimeComputable fun x => [acc x]) →
+    (∀ (w b : List Bool),
+        acc (Turing.pairEncode w b) =
+          decide (E (TCSlib.Cryptography.NumberTheory.listToNat w) (TCSlib.Cryptography.NumberTheory.listToNat b))) →
+      ∀ {par kw bw tw c : List Bool → List Bool},
+        Complexity.PolyTimeComputable par →
+          Complexity.PolyTimeComputable kw →
+            Complexity.PolyTimeComputable bw →
+              Complexity.PolyTimeComputable tw →
+                Complexity.PolyTimeComputable c →
+                  ∃ g,
+                    Complexity.PolyTimeComputable g ∧
+                      ∀ (z : List Bool),
+                        (g z).tail.length ≤ (kw z).length ∧
+                          TCSlib.Cryptography.Candidates.rejectBlocksL
+                              (E (TCSlib.Cryptography.NumberTheory.listToNat (par z))) (kw z).length (bw z).length
+                              (tw z).length (c z) =
+                            if g z = [] then none else some (TCSlib.Cryptography.NumberTheory.listToNat (g z).tail)
+TCSlib.Cryptography.Candidates.rejectBlocksL_eq_find? : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ)
+  (r : List Bool),
+  TCSlib.Cryptography.Candidates.rejectBlocksL E k B T r =
+    Option.map (fun t => TCSlib.Cryptography.NumberTheory.listToNat (List.take k (List.drop (t * B) r)))
+      (List.find? (fun t => decide (E (TCSlib.Cryptography.NumberTheory.listToNat (List.take k (List.drop (t * B) r)))))
+        (List.range T))
+TCSlib.Cryptography.Candidates.rejectBlocksL_eq : ∀ (E : ℕ → Prop) [inst : DecidablePred E] (k B T : ℕ) (r : List Bool),
+  TCSlib.Cryptography.Candidates.rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (TCSlib.Cryptography.NumberTheory.listToNat (List.take k (List.drop (t * B) r))) then
+          some (TCSlib.Cryptography.NumberTheory.listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+TCSlib.Cryptography.Candidates.sampleBelowL_eq_rejectBlocksL : ∀ (m k B T : ℕ),
+  TCSlib.Cryptography.Candidates.sampleBelowL m k B T =
+    TCSlib.Cryptography.Candidates.rejectBlocksL (fun x => x < m) k B T
+TCSlib.Cryptography.Candidates.sampleUnitL_eq : ∀ (N k B T : ℕ) (r : List Bool),
+  TCSlib.Cryptography.Candidates.sampleUnitL N k B T r =
+    TCSlib.Cryptography.Candidates.rejectBlocksL (fun v => v < N ∧ v.Coprime N) k B T r
+TCSlib.Cryptography.Candidates.unitSampleStr_eq : ∀ (w : List Bool) (n : ℕ) (r : List Bool),
+  TCSlib.Cryptography.Candidates.unitSampleStr w n r =
+    TCSlib.Cryptography.Candidates.natToList w.length
+      ((TCSlib.Cryptography.Candidates.sampleUnitL (TCSlib.Cryptography.NumberTheory.listToNat w)
+            (TCSlib.Cryptography.NumberTheory.listToNat w).size (TCSlib.Cryptography.Candidates.rsaBlock.eval n)
+            (TCSlib.Cryptography.Candidates.rsaTrials.eval n) r).getD
+        (1 % TCSlib.Cryptography.NumberTheory.listToNat w))
+TCSlib.Cryptography.Candidates.natToList_zero_append_drop : ∀ (W : ℕ) (b : List Bool),
+  List.drop b.length (TCSlib.Cryptography.Candidates.natToList W 0 ++ b) =
+    TCSlib.Cryptography.Candidates.natToList W (TCSlib.Cryptography.NumberTheory.listToNat b)
+TCSlib.Cryptography.Candidates.natToList_mod_two_pow : ∀ (k N : ℕ),
+  TCSlib.Cryptography.Candidates.natToList k (N % 2 ^ k) = TCSlib.Cryptography.Candidates.natToList k N
+TCSlib.Cryptography.Candidates.listToNat_natToList_zero_append : ∀ (k : ℕ) (w : List Bool),
+  TCSlib.Cryptography.NumberTheory.listToNat (TCSlib.Cryptography.Candidates.natToList k 0 ++ w) =
+    TCSlib.Cryptography.NumberTheory.listToNat w
+TCSlib.Cryptography.NumberTheory.listToNat_nil : TCSlib.Cryptography.NumberTheory.listToNat [] = 0
+TCSlib.Cryptography.Candidates.ArithmeticFP.le_poly : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  ∀ {a b : List Bool → List Bool},
+    Complexity.PolyTimeComputable a →
+      Complexity.PolyTimeComputable b →
+        Complexity.PolyTimeComputable fun x =>
+          [decide (TCSlib.Cryptography.NumberTheory.listToNat (a x) ≤ TCSlib.Cryptography.NumberTheory.listToNat (b x))]
+TCSlib.Cryptography.Candidates.ArithmeticFP.prime_poly : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  ∀ {a : List Bool → List Bool},
+    Complexity.PolyTimeComputable a →
+      Complexity.PolyTimeComputable fun x => [decide (Nat.Prime (TCSlib.Cryptography.NumberTheory.listToNat (a x)))]
+TCSlib.Cryptography.Candidates.polyTimeComputable_expSampleRaw : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  Complexity.PolyTimeComputable TCSlib.Cryptography.Candidates.expSampleRaw
+TCSlib.Cryptography.Candidates.polyTimeComputable_egGenRaw : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  ∀ (G : TCSlib.Cryptography.Candidates.SafePrimeGen),
+    Complexity.PolyTimeComputable (TCSlib.Cryptography.Candidates.egGenRaw G)
+TCSlib.Cryptography.Candidates.polyTimeComputable_egEncRaw : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  Complexity.PolyTimeComputable TCSlib.Cryptography.Candidates.egEncRaw
+TCSlib.Cryptography.Candidates.polyTimeComputable_unitSampleStr : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  ∀ {f : List Bool → List Bool},
+    Complexity.PolyTimeComputable f →
+      Complexity.PolyTimeComputable fun z =>
+        TCSlib.Cryptography.Candidates.unitSampleStr (f z) (Complexity.NUPPT.inParam z).length
+          (Complexity.NUPPT.inCoins z)
+TCSlib.Cryptography.Candidates.polyTimeComputable_oddGenRaw : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  Complexity.PolyTimeComputable
+    (TCSlib.Cryptography.Candidates.rabinGenRaw (fun x => x ≠ 2) TCSlib.Cryptography.Candidates.oddDefault)
+TCSlib.Cryptography.Candidates.polyTimeComputable_blumGenRaw : TCSlib.Cryptography.Candidates.ArithmeticFP →
+  Complexity.PolyTimeComputable
+    (TCSlib.Cryptography.Candidates.rabinGenRaw (fun x => x % 4 = 3) TCSlib.Cryptography.Candidates.blumDefault)
+@Option.guard_apply : ∀ {α : Type u_1} {p : α → Bool} {x : α}, Option.guard p x = if p x = true then some x else none
+@Function.comp_apply : ∀ {β : Sort u_1} {δ : Sort u_2} {α : Sort u_3} {f : β → δ} {g : α → β} {x : α},
+  (f ∘ g) x = f (g x)
+@List.drop_drop : ∀ {α : Type u_1} {i j : ℕ} {l : List α}, List.drop i (List.drop j l) = List.drop (j + i) l
+@List.length_take_le : ∀ {α : Type u_1} (i : ℕ) (l : List α), (List.take i l).length ≤ i
+        4.59 real         1.15 user         1.15 sys
+          2320891904  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              136317  page reclaims
+               46830  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                3191  voluntary context switches
+               43440  involuntary context switches
+            32902688  instructions retired
+            18613488  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T06:45:50.996073+00:00 RC 0
