@@ -1,0 +1,24 @@
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+@@ -314,8 +314,18 @@
+     refine ptc_congr this fun u => ?_
+     simp only [Function.comp_apply]
+     rw [pairFstD_pairEncode, pairSndD_pairEncode]
+-    simp only [instanceVertexCount_eq, samplePerm_eq, decGraph_fst]
+-    all_goals rfl
++    let graphWord : List Bool := pairFstD (simX (pairSndD u))
++    let tape : List Bool :=
++      List.take (((simX (pairSndD u)).length + 1) ^ 2)
++        (List.drop 1 (coinBlock (blockLen V' (simX (pairSndD u)).length)
++          (pairFstD u).length (simR (pairSndD u))))
++    have hcount : (decGraph graphWord).1 = instanceVertexCount (simX (pairSndD u)) :=
++      (congrArg (fun d : Σ k, Graph k => d.1) (decGraph_eq graphWord)).trans
++        (instanceVertexCount_eq (simX (pairSndD u))).symm
++    exact
++      (congrArg (fun π : Equiv.Perm (Fin ((decGraph graphWord).1)) => encPerm π)
++        (samplePerm_eq ((decGraph graphWord).1) tape).symm).trans
++      (congrArg (fun k : ℕ => encPerm (samplePerm k tape)) hcount)
+   -- the guessed graph's word
+   have hGb : PolyTimeComputable fun u =>
+       if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD

@@ -1,0 +1,10 @@
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+@@ -315,6 +315,7 @@
+     simp only [Function.comp_apply]
+     rw [pairFstD_pairEncode, pairSndD_pairEncode]
+     simp only [instanceVertexCount_eq, samplePerm_eq, decGraph_fst]
++    rfl
+   -- the guessed graph's word
+   have hGb : PolyTimeComputable fun u =>
+       if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD

@@ -1,0 +1,516 @@
+{
+  "snapshot_head": "d370905303223ba2b31d26bc218d90ae2ee8a6ac",
+  "base": "e9d64158461bfe24ddc88ab885bc4017899b4c16",
+  "changed_modules": 33,
+  "public_header_changes": [
+    [
+      "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.Authentication.runAt_hsGen"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.Authentication.runAt_hsSign"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Composability/PublicKey.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.Composability.runAt_padEnc"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.SecureComputation.yaoHybrid_callA"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.SecureComputation.yaoHybrid_callB"
+      ]
+    ]
+  ],
+  "definition_body_changes": [
+    [
+      "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.Authentication.hashAndSign"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.Authentication.prfMAC"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.Composability.ccaScheme"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Composability/PRFScheme.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.Composability.prfFixedScheme"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/Composability/PublicKey.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.Composability.FixedLengthPKScheme.ofPadded"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.SecureComputation.specialScheme"
+      ]
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.SecureComputation.decodeMsgs"
+      ]
+    ]
+  ],
+  "new_declarations": [
+    [
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      [
+        "theorem",
+        "BoolCircuit.DAGCircuit.values_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      [
+        "theorem",
+        "BoolCircuit.DAGCircuit.eval_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      [
+        "theorem",
+        "BoolCircuit.DAGCircuit.size_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Complexity/Randomized/Classes.lean",
+      [
+        "theorem",
+        "Randomized.polyLen_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      [
+        "theorem",
+        "Randomized.polyTimeModel_eff_iff"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/Asymptotic/MultiMessage.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.prfScheme_gen"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/Asymptotic/MultiMessage.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.prfScheme_enc"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.Authentication.hsGen_coinLen"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Defs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.SecureComputation.otFunctionality_f_snd_apply"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.decGraph_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.decGraph_fst"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.instanceVertexCount_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.instanceG₀_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.instanceG₁_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.samplePerm_eq"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.gniVerifierRep_coins"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.gniVerifierRep_next"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.gniVerifierRep_next_run"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.giProverRep_coins"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.giProverRep_next"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.giProverRep_next_graph"
+      ],
+      false
+    ],
+    [
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.GI.giProverRep_next_reply"
+      ],
+      false
+    ]
+  ],
+  "deleted_declarations": [
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "def",
+        "TCSlib.Cryptography.SecureComputation.decodeMsgsFuel"
+      ],
+      true
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.SecureComputation.length_le_length_encodeMsgs"
+      ],
+      true
+    ],
+    [
+      "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      [
+        "theorem",
+        "TCSlib.Cryptography.SecureComputation.decodeMsgsFuel_encodeMsgs"
+      ],
+      true
+    ]
+  ],
+  "admissions": [
+    {
+      "source": "TCSlib/Complexity/CircuitComplexity/DAGCircuit.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Complexity/Randomized/Classes.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Complexity/Randomized/PolyTimeModel.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Asymptotic/MultiMessage.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/Lamport.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/NonMalleable.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PRFScheme.lean",
+      "count": 3,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/SequentialZK.lean",
+      "count": 5,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Randomness/BPPBridge.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Randomness/Learning.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Compose.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/ComposePhases.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean",
+      "count": 3,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Defs.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Garbling.lean",
+      "count": 1,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean",
+      "count": 2,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      "count": 3,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/Yao.lean",
+      "count": 3,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/YaoReal.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+      "count": 0,
+      "unchanged": true
+    },
+    {
+      "source": "TCSlib/LearningTheory/PAC/Prediction.lean",
+      "count": 0,
+      "unchanged": true
+    }
+  ],
+  "simulator_overlay": {
+    "source": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+    "old_sha256": "52814b1b7d7d0a1ce7e2e23965d02faadb019a2c7c65478e25c0695079281ea7",
+    "new_sha256": "0ad712e26071f91a0bcce913d287e9c3c26b66bf8be7650a15b22d63813d5ed4",
+    "diff": "--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean\n+++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean\n@@ -315,6 +315,7 @@\n     simp only [Function.comp_apply]\n     rw [pairFstD_pairEncode, pairSndD_pairEncode]\n     simp only [instanceVertexCount_eq, samplePerm_eq, decGraph_fst]\n+    all_goals rfl\n   -- the guessed graph's word\n   have hGb : PolyTimeComputable fun u =>\n       if (coinBlock (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD\n"
+  },
+  "current_sha_list": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/repairs/final-repair-source-review.current.sha256",
+  "current_sha_list_sha256": "4210415be64f6d1723ff3e04e00d1ed6225d0faa8229bcf940518a5ab3640cf8",
+  "current_source_count": 1108,
+  "other_sources_unchanged_since_snapshot": true,
+  "facade_unchanged_since_base": true,
+  "native_checked_by_reviewer": false,
+  "definition_region_parser_note": "The initial region comparison included the following declaration attribute in the prior decGraph region; exact owner-formula comparison confirms decGraph is unchanged.",
+  "unchanged_total_graph_decoder_formula": true,
+  "constructor_data_checks": [
+    {
+      "source": "TCSlib/Cryptography/Authentication/HashAndSign.lean",
+      "constructor": "hashAndSign",
+      "through_first_proof_field": "correct",
+      "header_and_data_prefix_byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Authentication/PRFMAC.lean",
+      "constructor": "prfMAC",
+      "through_first_proof_field": "correct",
+      "header_and_data_prefix_byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/CCA2Scheme.lean",
+      "constructor": "ccaScheme",
+      "through_first_proof_field": "correct",
+      "header_and_data_prefix_byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PRFScheme.lean",
+      "constructor": "prfFixedScheme",
+      "through_first_proof_field": "enc_length",
+      "header_and_data_prefix_byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/Composability/PublicKey.lean",
+      "constructor": "ofPadded",
+      "through_first_proof_field": "correct",
+      "header_and_data_prefix_byte_identical": true
+    },
+    {
+      "source": "TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean",
+      "constructor": "specialScheme",
+      "through_first_proof_field": "correct",
+      "header_and_data_prefix_byte_identical": true
+    }
+  ]
+}
