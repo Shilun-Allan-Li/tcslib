@@ -1,0 +1,1283 @@
+{
+  "ordinal": 54,
+  "label": "G06Seal_054_TCSlib_LearningTheory_PAC_Prediction",
+  "module": "TCSlib.LearningTheory.PAC.Prediction",
+  "source": "TCSlib/LearningTheory/PAC/Prediction.lean",
+  "source_sha256": "3b7381e8a55c0db86a3efc9bcd83ca4750f9e724bdfb50e9166b9ef7e6ff916a",
+  "probe_sha256": "51bd45bb01c020b5e10e3ebbc3142ac0cf86281561abbafce73c581f935f2015",
+  "probe_path": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_054_TCSlib_LearningTheory_PAC_Prediction.lean",
+  "probe_module": ".lake/ps-maintainer/gate06/rule10-final-r1/seals/G06Seal_054_TCSlib_LearningTheory_PAC_Prediction",
+  "saved_source": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4/briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/seals/G06Seal_054_TCSlib_LearningTheory_PAC_Prediction.source.txt",
+  "status": "PREPARED_NOT_RUN",
+  "original_bytes_preserved": true,
+  "insertions": [
+    {
+      "kind": "import_Lean",
+      "original_byte_offset": 135,
+      "probe_byte_offset": 135,
+      "byte_count": 12,
+      "sha256": "f9d646b1e1b6498ec413286e9310c564c992f6fd6479ae9cc9e9cdd29058ab78",
+      "newline_count": 1,
+      "probe_start_line": 5,
+      "probe_end_line": 5
+    },
+    {
+      "kind": "seal_preamble",
+      "original_byte_offset": 173,
+      "probe_byte_offset": 185,
+      "byte_count": 4260,
+      "sha256": "248ad58c897900052a882e2646fbd20f96b4afaece47ba43f9423f50f8dccc84",
+      "newline_count": 49,
+      "probe_start_line": 7,
+      "probe_end_line": 55
+    },
+    {
+      "kind": "seal_eof_verifier",
+      "original_byte_offset": 13767,
+      "probe_byte_offset": 18039,
+      "byte_count": 3615,
+      "sha256": "cb65c7213ea5a8c917ec826ef63233e123b106745d2b906811b2dbd0c1e9b92f",
+      "newline_count": 38,
+      "probe_start_line": 302,
+      "probe_end_line": 339
+    }
+  ],
+  "source_to_probe_lines": [
+    {
+      "source_line": 1,
+      "probe_line": 1
+    },
+    {
+      "source_line": 2,
+      "probe_line": 2
+    },
+    {
+      "source_line": 3,
+      "probe_line": 3
+    },
+    {
+      "source_line": 4,
+      "probe_line": 4
+    },
+    {
+      "source_line": 5,
+      "probe_line": 6
+    },
+    {
+      "source_line": 6,
+      "probe_line": 56
+    },
+    {
+      "source_line": 7,
+      "probe_line": 57
+    },
+    {
+      "source_line": 8,
+      "probe_line": 58
+    },
+    {
+      "source_line": 9,
+      "probe_line": 59
+    },
+    {
+      "source_line": 10,
+      "probe_line": 60
+    },
+    {
+      "source_line": 11,
+      "probe_line": 61
+    },
+    {
+      "source_line": 12,
+      "probe_line": 62
+    },
+    {
+      "source_line": 13,
+      "probe_line": 63
+    },
+    {
+      "source_line": 14,
+      "probe_line": 64
+    },
+    {
+      "source_line": 15,
+      "probe_line": 65
+    },
+    {
+      "source_line": 16,
+      "probe_line": 66
+    },
+    {
+      "source_line": 17,
+      "probe_line": 67
+    },
+    {
+      "source_line": 18,
+      "probe_line": 68
+    },
+    {
+      "source_line": 19,
+      "probe_line": 69
+    },
+    {
+      "source_line": 20,
+      "probe_line": 70
+    },
+    {
+      "source_line": 21,
+      "probe_line": 71
+    },
+    {
+      "source_line": 22,
+      "probe_line": 72
+    },
+    {
+      "source_line": 23,
+      "probe_line": 73
+    },
+    {
+      "source_line": 24,
+      "probe_line": 74
+    },
+    {
+      "source_line": 25,
+      "probe_line": 75
+    },
+    {
+      "source_line": 26,
+      "probe_line": 76
+    },
+    {
+      "source_line": 27,
+      "probe_line": 77
+    },
+    {
+      "source_line": 28,
+      "probe_line": 78
+    },
+    {
+      "source_line": 29,
+      "probe_line": 79
+    },
+    {
+      "source_line": 30,
+      "probe_line": 80
+    },
+    {
+      "source_line": 31,
+      "probe_line": 81
+    },
+    {
+      "source_line": 32,
+      "probe_line": 82
+    },
+    {
+      "source_line": 33,
+      "probe_line": 83
+    },
+    {
+      "source_line": 34,
+      "probe_line": 84
+    },
+    {
+      "source_line": 35,
+      "probe_line": 85
+    },
+    {
+      "source_line": 36,
+      "probe_line": 86
+    },
+    {
+      "source_line": 37,
+      "probe_line": 87
+    },
+    {
+      "source_line": 38,
+      "probe_line": 88
+    },
+    {
+      "source_line": 39,
+      "probe_line": 89
+    },
+    {
+      "source_line": 40,
+      "probe_line": 90
+    },
+    {
+      "source_line": 41,
+      "probe_line": 91
+    },
+    {
+      "source_line": 42,
+      "probe_line": 92
+    },
+    {
+      "source_line": 43,
+      "probe_line": 93
+    },
+    {
+      "source_line": 44,
+      "probe_line": 94
+    },
+    {
+      "source_line": 45,
+      "probe_line": 95
+    },
+    {
+      "source_line": 46,
+      "probe_line": 96
+    },
+    {
+      "source_line": 47,
+      "probe_line": 97
+    },
+    {
+      "source_line": 48,
+      "probe_line": 98
+    },
+    {
+      "source_line": 49,
+      "probe_line": 99
+    },
+    {
+      "source_line": 50,
+      "probe_line": 100
+    },
+    {
+      "source_line": 51,
+      "probe_line": 101
+    },
+    {
+      "source_line": 52,
+      "probe_line": 102
+    },
+    {
+      "source_line": 53,
+      "probe_line": 103
+    },
+    {
+      "source_line": 54,
+      "probe_line": 104
+    },
+    {
+      "source_line": 55,
+      "probe_line": 105
+    },
+    {
+      "source_line": 56,
+      "probe_line": 106
+    },
+    {
+      "source_line": 57,
+      "probe_line": 107
+    },
+    {
+      "source_line": 58,
+      "probe_line": 108
+    },
+    {
+      "source_line": 59,
+      "probe_line": 109
+    },
+    {
+      "source_line": 60,
+      "probe_line": 110
+    },
+    {
+      "source_line": 61,
+      "probe_line": 111
+    },
+    {
+      "source_line": 62,
+      "probe_line": 112
+    },
+    {
+      "source_line": 63,
+      "probe_line": 113
+    },
+    {
+      "source_line": 64,
+      "probe_line": 114
+    },
+    {
+      "source_line": 65,
+      "probe_line": 115
+    },
+    {
+      "source_line": 66,
+      "probe_line": 116
+    },
+    {
+      "source_line": 67,
+      "probe_line": 117
+    },
+    {
+      "source_line": 68,
+      "probe_line": 118
+    },
+    {
+      "source_line": 69,
+      "probe_line": 119
+    },
+    {
+      "source_line": 70,
+      "probe_line": 120
+    },
+    {
+      "source_line": 71,
+      "probe_line": 121
+    },
+    {
+      "source_line": 72,
+      "probe_line": 122
+    },
+    {
+      "source_line": 73,
+      "probe_line": 123
+    },
+    {
+      "source_line": 74,
+      "probe_line": 124
+    },
+    {
+      "source_line": 75,
+      "probe_line": 125
+    },
+    {
+      "source_line": 76,
+      "probe_line": 126
+    },
+    {
+      "source_line": 77,
+      "probe_line": 127
+    },
+    {
+      "source_line": 78,
+      "probe_line": 128
+    },
+    {
+      "source_line": 79,
+      "probe_line": 129
+    },
+    {
+      "source_line": 80,
+      "probe_line": 130
+    },
+    {
+      "source_line": 81,
+      "probe_line": 131
+    },
+    {
+      "source_line": 82,
+      "probe_line": 132
+    },
+    {
+      "source_line": 83,
+      "probe_line": 133
+    },
+    {
+      "source_line": 84,
+      "probe_line": 134
+    },
+    {
+      "source_line": 85,
+      "probe_line": 135
+    },
+    {
+      "source_line": 86,
+      "probe_line": 136
+    },
+    {
+      "source_line": 87,
+      "probe_line": 137
+    },
+    {
+      "source_line": 88,
+      "probe_line": 138
+    },
+    {
+      "source_line": 89,
+      "probe_line": 139
+    },
+    {
+      "source_line": 90,
+      "probe_line": 140
+    },
+    {
+      "source_line": 91,
+      "probe_line": 141
+    },
+    {
+      "source_line": 92,
+      "probe_line": 142
+    },
+    {
+      "source_line": 93,
+      "probe_line": 143
+    },
+    {
+      "source_line": 94,
+      "probe_line": 144
+    },
+    {
+      "source_line": 95,
+      "probe_line": 145
+    },
+    {
+      "source_line": 96,
+      "probe_line": 146
+    },
+    {
+      "source_line": 97,
+      "probe_line": 147
+    },
+    {
+      "source_line": 98,
+      "probe_line": 148
+    },
+    {
+      "source_line": 99,
+      "probe_line": 149
+    },
+    {
+      "source_line": 100,
+      "probe_line": 150
+    },
+    {
+      "source_line": 101,
+      "probe_line": 151
+    },
+    {
+      "source_line": 102,
+      "probe_line": 152
+    },
+    {
+      "source_line": 103,
+      "probe_line": 153
+    },
+    {
+      "source_line": 104,
+      "probe_line": 154
+    },
+    {
+      "source_line": 105,
+      "probe_line": 155
+    },
+    {
+      "source_line": 106,
+      "probe_line": 156
+    },
+    {
+      "source_line": 107,
+      "probe_line": 157
+    },
+    {
+      "source_line": 108,
+      "probe_line": 158
+    },
+    {
+      "source_line": 109,
+      "probe_line": 159
+    },
+    {
+      "source_line": 110,
+      "probe_line": 160
+    },
+    {
+      "source_line": 111,
+      "probe_line": 161
+    },
+    {
+      "source_line": 112,
+      "probe_line": 162
+    },
+    {
+      "source_line": 113,
+      "probe_line": 163
+    },
+    {
+      "source_line": 114,
+      "probe_line": 164
+    },
+    {
+      "source_line": 115,
+      "probe_line": 165
+    },
+    {
+      "source_line": 116,
+      "probe_line": 166
+    },
+    {
+      "source_line": 117,
+      "probe_line": 167
+    },
+    {
+      "source_line": 118,
+      "probe_line": 168
+    },
+    {
+      "source_line": 119,
+      "probe_line": 169
+    },
+    {
+      "source_line": 120,
+      "probe_line": 170
+    },
+    {
+      "source_line": 121,
+      "probe_line": 171
+    },
+    {
+      "source_line": 122,
+      "probe_line": 172
+    },
+    {
+      "source_line": 123,
+      "probe_line": 173
+    },
+    {
+      "source_line": 124,
+      "probe_line": 174
+    },
+    {
+      "source_line": 125,
+      "probe_line": 175
+    },
+    {
+      "source_line": 126,
+      "probe_line": 176
+    },
+    {
+      "source_line": 127,
+      "probe_line": 177
+    },
+    {
+      "source_line": 128,
+      "probe_line": 178
+    },
+    {
+      "source_line": 129,
+      "probe_line": 179
+    },
+    {
+      "source_line": 130,
+      "probe_line": 180
+    },
+    {
+      "source_line": 131,
+      "probe_line": 181
+    },
+    {
+      "source_line": 132,
+      "probe_line": 182
+    },
+    {
+      "source_line": 133,
+      "probe_line": 183
+    },
+    {
+      "source_line": 134,
+      "probe_line": 184
+    },
+    {
+      "source_line": 135,
+      "probe_line": 185
+    },
+    {
+      "source_line": 136,
+      "probe_line": 186
+    },
+    {
+      "source_line": 137,
+      "probe_line": 187
+    },
+    {
+      "source_line": 138,
+      "probe_line": 188
+    },
+    {
+      "source_line": 139,
+      "probe_line": 189
+    },
+    {
+      "source_line": 140,
+      "probe_line": 190
+    },
+    {
+      "source_line": 141,
+      "probe_line": 191
+    },
+    {
+      "source_line": 142,
+      "probe_line": 192
+    },
+    {
+      "source_line": 143,
+      "probe_line": 193
+    },
+    {
+      "source_line": 144,
+      "probe_line": 194
+    },
+    {
+      "source_line": 145,
+      "probe_line": 195
+    },
+    {
+      "source_line": 146,
+      "probe_line": 196
+    },
+    {
+      "source_line": 147,
+      "probe_line": 197
+    },
+    {
+      "source_line": 148,
+      "probe_line": 198
+    },
+    {
+      "source_line": 149,
+      "probe_line": 199
+    },
+    {
+      "source_line": 150,
+      "probe_line": 200
+    },
+    {
+      "source_line": 151,
+      "probe_line": 201
+    },
+    {
+      "source_line": 152,
+      "probe_line": 202
+    },
+    {
+      "source_line": 153,
+      "probe_line": 203
+    },
+    {
+      "source_line": 154,
+      "probe_line": 204
+    },
+    {
+      "source_line": 155,
+      "probe_line": 205
+    },
+    {
+      "source_line": 156,
+      "probe_line": 206
+    },
+    {
+      "source_line": 157,
+      "probe_line": 207
+    },
+    {
+      "source_line": 158,
+      "probe_line": 208
+    },
+    {
+      "source_line": 159,
+      "probe_line": 209
+    },
+    {
+      "source_line": 160,
+      "probe_line": 210
+    },
+    {
+      "source_line": 161,
+      "probe_line": 211
+    },
+    {
+      "source_line": 162,
+      "probe_line": 212
+    },
+    {
+      "source_line": 163,
+      "probe_line": 213
+    },
+    {
+      "source_line": 164,
+      "probe_line": 214
+    },
+    {
+      "source_line": 165,
+      "probe_line": 215
+    },
+    {
+      "source_line": 166,
+      "probe_line": 216
+    },
+    {
+      "source_line": 167,
+      "probe_line": 217
+    },
+    {
+      "source_line": 168,
+      "probe_line": 218
+    },
+    {
+      "source_line": 169,
+      "probe_line": 219
+    },
+    {
+      "source_line": 170,
+      "probe_line": 220
+    },
+    {
+      "source_line": 171,
+      "probe_line": 221
+    },
+    {
+      "source_line": 172,
+      "probe_line": 222
+    },
+    {
+      "source_line": 173,
+      "probe_line": 223
+    },
+    {
+      "source_line": 174,
+      "probe_line": 224
+    },
+    {
+      "source_line": 175,
+      "probe_line": 225
+    },
+    {
+      "source_line": 176,
+      "probe_line": 226
+    },
+    {
+      "source_line": 177,
+      "probe_line": 227
+    },
+    {
+      "source_line": 178,
+      "probe_line": 228
+    },
+    {
+      "source_line": 179,
+      "probe_line": 229
+    },
+    {
+      "source_line": 180,
+      "probe_line": 230
+    },
+    {
+      "source_line": 181,
+      "probe_line": 231
+    },
+    {
+      "source_line": 182,
+      "probe_line": 232
+    },
+    {
+      "source_line": 183,
+      "probe_line": 233
+    },
+    {
+      "source_line": 184,
+      "probe_line": 234
+    },
+    {
+      "source_line": 185,
+      "probe_line": 235
+    },
+    {
+      "source_line": 186,
+      "probe_line": 236
+    },
+    {
+      "source_line": 187,
+      "probe_line": 237
+    },
+    {
+      "source_line": 188,
+      "probe_line": 238
+    },
+    {
+      "source_line": 189,
+      "probe_line": 239
+    },
+    {
+      "source_line": 190,
+      "probe_line": 240
+    },
+    {
+      "source_line": 191,
+      "probe_line": 241
+    },
+    {
+      "source_line": 192,
+      "probe_line": 242
+    },
+    {
+      "source_line": 193,
+      "probe_line": 243
+    },
+    {
+      "source_line": 194,
+      "probe_line": 244
+    },
+    {
+      "source_line": 195,
+      "probe_line": 245
+    },
+    {
+      "source_line": 196,
+      "probe_line": 246
+    },
+    {
+      "source_line": 197,
+      "probe_line": 247
+    },
+    {
+      "source_line": 198,
+      "probe_line": 248
+    },
+    {
+      "source_line": 199,
+      "probe_line": 249
+    },
+    {
+      "source_line": 200,
+      "probe_line": 250
+    },
+    {
+      "source_line": 201,
+      "probe_line": 251
+    },
+    {
+      "source_line": 202,
+      "probe_line": 252
+    },
+    {
+      "source_line": 203,
+      "probe_line": 253
+    },
+    {
+      "source_line": 204,
+      "probe_line": 254
+    },
+    {
+      "source_line": 205,
+      "probe_line": 255
+    },
+    {
+      "source_line": 206,
+      "probe_line": 256
+    },
+    {
+      "source_line": 207,
+      "probe_line": 257
+    },
+    {
+      "source_line": 208,
+      "probe_line": 258
+    },
+    {
+      "source_line": 209,
+      "probe_line": 259
+    },
+    {
+      "source_line": 210,
+      "probe_line": 260
+    },
+    {
+      "source_line": 211,
+      "probe_line": 261
+    },
+    {
+      "source_line": 212,
+      "probe_line": 262
+    },
+    {
+      "source_line": 213,
+      "probe_line": 263
+    },
+    {
+      "source_line": 214,
+      "probe_line": 264
+    },
+    {
+      "source_line": 215,
+      "probe_line": 265
+    },
+    {
+      "source_line": 216,
+      "probe_line": 266
+    },
+    {
+      "source_line": 217,
+      "probe_line": 267
+    },
+    {
+      "source_line": 218,
+      "probe_line": 268
+    },
+    {
+      "source_line": 219,
+      "probe_line": 269
+    },
+    {
+      "source_line": 220,
+      "probe_line": 270
+    },
+    {
+      "source_line": 221,
+      "probe_line": 271
+    },
+    {
+      "source_line": 222,
+      "probe_line": 272
+    },
+    {
+      "source_line": 223,
+      "probe_line": 273
+    },
+    {
+      "source_line": 224,
+      "probe_line": 274
+    },
+    {
+      "source_line": 225,
+      "probe_line": 275
+    },
+    {
+      "source_line": 226,
+      "probe_line": 276
+    },
+    {
+      "source_line": 227,
+      "probe_line": 277
+    },
+    {
+      "source_line": 228,
+      "probe_line": 278
+    },
+    {
+      "source_line": 229,
+      "probe_line": 279
+    },
+    {
+      "source_line": 230,
+      "probe_line": 280
+    },
+    {
+      "source_line": 231,
+      "probe_line": 281
+    },
+    {
+      "source_line": 232,
+      "probe_line": 282
+    },
+    {
+      "source_line": 233,
+      "probe_line": 283
+    },
+    {
+      "source_line": 234,
+      "probe_line": 284
+    },
+    {
+      "source_line": 235,
+      "probe_line": 285
+    },
+    {
+      "source_line": 236,
+      "probe_line": 286
+    },
+    {
+      "source_line": 237,
+      "probe_line": 287
+    },
+    {
+      "source_line": 238,
+      "probe_line": 288
+    },
+    {
+      "source_line": 239,
+      "probe_line": 289
+    },
+    {
+      "source_line": 240,
+      "probe_line": 290
+    },
+    {
+      "source_line": 241,
+      "probe_line": 291
+    },
+    {
+      "source_line": 242,
+      "probe_line": 292
+    },
+    {
+      "source_line": 243,
+      "probe_line": 293
+    },
+    {
+      "source_line": 244,
+      "probe_line": 294
+    },
+    {
+      "source_line": 245,
+      "probe_line": 295
+    },
+    {
+      "source_line": 246,
+      "probe_line": 296
+    },
+    {
+      "source_line": 247,
+      "probe_line": 297
+    },
+    {
+      "source_line": 248,
+      "probe_line": 298
+    },
+    {
+      "source_line": 249,
+      "probe_line": 299
+    },
+    {
+      "source_line": 250,
+      "probe_line": 300
+    },
+    {
+      "source_line": 251,
+      "probe_line": 301
+    }
+  ],
+  "preamble_lines": {
+    "start": 7,
+    "end": 55
+  },
+  "eof_verifier_lines": {
+    "start": 302,
+    "end": 339
+  },
+  "request_literal_chunk_size": 128,
+  "source_imports": [
+    "TCSlib.LearningTheory.PAC.Defs"
+  ],
+  "import_closure": [
+    "TCSlib.InformationTheory.FinDist",
+    "TCSlib.InformationTheory.Samples",
+    "TCSlib.LearningTheory.PAC.Defs"
+  ],
+  "touched_source_names": [
+    {
+      "source_spelling": "trialDist",
+      "normalized_spelling": "trialDist",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "trialDist_eq",
+      "normalized_spelling": "trialDist_eq",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictSuccess",
+      "normalized_spelling": "predictSuccess",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictSuccess_eq",
+      "normalized_spelling": "predictSuccess_eq",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictAdv",
+      "normalized_spelling": "predictAdv",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictAdv_eq",
+      "normalized_spelling": "predictAdv_eq",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "expectedErr",
+      "normalized_spelling": "expectedErr",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "expectedErr_eq",
+      "normalized_spelling": "expectedErr_eq",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictSuccess_eq_one_sub_expectedErr",
+      "normalized_spelling": "predictSuccess_eq_one_sub_expectedErr",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "expectedErr_le_of_pacLearnsUnder",
+      "normalized_spelling": "expectedErr_le_of_pacLearnsUnder",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "one_sub_sub_le_predictSuccess",
+      "normalized_spelling": "one_sub_sub_le_predictSuccess",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "sub_le_predictAdv_of_weakLearnsUnder",
+      "normalized_spelling": "sub_le_predictAdv_of_weakLearnsUnder",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "not_weakLearnsUnder_of_predictAdv_le",
+      "normalized_spelling": "not_weakLearnsUnder_of_predictAdv_le",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "expect_err_coin",
+      "normalized_spelling": "expect_err_coin",
+      "removed_root_prefix": false
+    },
+    {
+      "source_spelling": "predictSuccess_coin",
+      "normalized_spelling": "predictSuccess_coin",
+      "removed_root_prefix": false
+    }
+  ],
+  "term_names": [
+    "TCSlib.InformationTheory.FinDist.expect",
+    "TCSlib.InformationTheory.FinDist.iid",
+    "TCSlib.InformationTheory.FinDist.probTrue",
+    "TCSlib.InformationTheory.FinDist.prod",
+    "TCSlib.InformationTheory.FinDist.uniform",
+    "TCSlib.LearningTheory.PAC.PACLearnsUnder",
+    "TCSlib.LearningTheory.PAC.WeakLearnsUnder",
+    "TCSlib.LearningTheory.PAC.accuracyProb",
+    "TCSlib.LearningTheory.PAC.err",
+    "TCSlib.LearningTheory.PAC.label"
+  ],
+  "requested_names": [
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.HasMinEntropy",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69567
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist._sizeOf_1",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69568
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.collision",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69569
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.expect",
+      "home": "TCSlib.InformationTheory.Samples",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69570
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.iid",
+      "home": "TCSlib.InformationTheory.Samples",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69571
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.map",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69572
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.mk._flat_ctor",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69573
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.probTrue",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69574
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.prod",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69575
+    },
+    {
+      "spelling": "TCSlib.InformationTheory.FinDist.uniform",
+      "home": "TCSlib.InformationTheory.FinDist",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69576
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.PACLearns",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69577
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.PACLearnsUnder",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69578
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.WeakLearns",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69579
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.WeakLearnsUnder",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69580
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.accuracyProb",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69581
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.err",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69582
+    },
+    {
+      "spelling": "TCSlib.LearningTheory.PAC.label",
+      "home": "TCSlib.LearningTheory.PAC.Defs",
+      "matcher": false,
+      "collector_reducibility": "semireducible",
+      "collector_log_line": 69583
+    }
+  ],
+  "requested_count": 17,
+  "term_subset_of_closure": true,
+  "collector_irreducible_count": 0,
+  "collector_active_candidate_count": 17,
+  "runtime_identity_and_installed_status_verified": false
+}

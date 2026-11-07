@@ -111,9 +111,10 @@ parameterized. The documented per-index-width/bounded-length version is not form
 
 A smaller proposed normalization route is now in `normalization-design.md`: run RSA at n+2
 and Blum Rabin at n+3, so their widths become exact polynomials. Existing machine-level
-parameter-change APIs are available, but collection construction, one-wayness transport,
-negligible-shift closure and candidate-home width readers are not yet proved. This is a
-source-level design, not a completed bridge or a new catalog tier.
+parameter-change APIs and the existing `Negligible.comp_of_le` closure theorem are available.
+Collection construction, one-wayness transport and candidate-home width readers remain missing;
+the general negligibility theorem needs relocation to Foundations for the lower-layer use.
+This is a source-level design, not a completed bridge or a new catalog tier.
 
 **Do not declare a candidate-level theorem by adding that impossible premise.** A future
 normalization or generalized padding construction must have a real public contract and proof.
