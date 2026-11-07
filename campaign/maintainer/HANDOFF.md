@@ -26,7 +26,7 @@ matches the passed NatBits replay plus its E-PAD catch-up; **oleans-mnb2** was a
 | PR | Change | Gate | Status |
 |---|---|---|---|
 | #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Original replay and E-PAD catch-up passed; fresh full current-campaign replay (`oleans-msg3`) is running. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
-| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, finalized for staging | Fresh 2-module post-NatBits replay passed (`oleans-mlin2`); current source/CI/seal/control/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
+| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, **Ready to dispatch** | Fresh 2-module post-NatBits replay passed (`oleans-mlin2`); current source/CI/seal/control/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
 
 Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
 identical Frag hunk. After #228, the original imported-source criterion held, but their older
@@ -56,7 +56,7 @@ and the 23-file screen passed. Issued gate/fill/delivery/findings are archived a
 2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
    `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
    screen and fresh two-module post-NatBits merged-tree replay pass; only F6 remains admitted. Gate **116**,
-   **Codex** selected (attachment + pasted findings), is finalized for staging and user dispatch.
+   **Codex** selected (attachment + pasted findings), is published, verified and **Ready to dispatch** (217 sections; exact pins in its dispatch record).
    The user merges only after it closes.
 3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is merged; keep each report verbatim, dispose every item,
    check the current merged tree and ask the user to merge only when clear.

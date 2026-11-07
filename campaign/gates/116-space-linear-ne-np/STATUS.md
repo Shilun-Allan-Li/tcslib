@@ -14,6 +14,8 @@ and `evidence/current-after-natbits/`. Current screen: 247 → 248 eligible bodi
 
 The earlier unpublished 135-section candidate was withdrawn before publication/dispatch after
 #222 merged. Its metadata is retained in `evidence/prepublication-candidate.json`; it is not an
-issued audit packet. The current pack is finalized for fresh verified staging.
+issued audit packet. The current pack is published and verified: **217 sections, zero problems**.
+`dispatch.json` and `prompt.md` pin the exact issued packet.
+**Ready to dispatch: gate 116**, Codex. Await the user's dispatch confirmation.
 
 **Not yet clear to merge: #229**; the external Codex gate must close. Next free gate **117**.
