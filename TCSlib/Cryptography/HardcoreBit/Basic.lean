@@ -37,6 +37,8 @@ independent and uniform, a subset XOR of uniform strings is uniform) are express
 * `pushesUniform_eval`, `pushesUniform_eval_pair`, `PushesUniform.prodMap`,
   `pushesUniform_of_surjective`: coordinates and pairs of coordinates of a uniform
   tuple, products, and surjective additive homomorphisms push uniform to uniform.
+* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
+  table.
 
 ## References
 
@@ -206,6 +208,30 @@ theorem pushesUniform_fst [Nonempty β] : PushesUniform (Prod.fst : α × β →
 /-- The second projection pushes uniform to uniform. -/
 theorem pushesUniform_snd [Nonempty α] : PushesUniform (Prod.snd : α × β → β) :=
   (pushesUniform_equiv (Equiv.prodComm α β)).comp pushesUniform_fst
+
+/-- **Restricting a uniform table along an injection gives a uniform table**: for an injective
+`r : J → I`, the map `R ↦ R ∘ r` pushes the uniform distribution on `I → O` to the uniform
+distribution on `J → O`.
+
+**Proof sketch.** Split `I` into the image of `r` and its complement (`Equiv.ofInjective`,
+`Equiv.Set.sumCompl`). A table is the pair of its two restrictions (`Equiv.sumArrowEquivProdArrow`),
+and `R ∘ r` is the first one (`pushesUniform_equiv`, `pushesUniform_fst`). -/
+theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+    [DecidableEq J] [Fintype O] [Nonempty O] {r : J → I} (hr : Function.Injective r) :
+    PushesUniform (fun R : I → O => fun j => R (r j)) := by
+  classical
+  let e₁ : J ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
+    (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
+      (Equiv.Set.sumCompl (Set.range r))
+  let e : (I → O) ≃ (J → O) × (((Set.range r)ᶜ : Set I) → O) :=
+    (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
+  have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
+    funext R j
+    have h1 : e₁ (Sum.inl j) = r j := rfl
+    show R (r j) = R (e₁ (Sum.inl j))
+    rw [h1]
+  rw [he]
+  exact (pushesUniform_equiv e).comp pushesUniform_fst
 
 /-- A product of maps pushing uniform to uniform pushes uniform to uniform: the
 coordinates of a uniform pair are independent.

@@ -550,6 +550,23 @@ theorem rejectBlocksL_eq (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r :
       else none :=
   rfl
 
+/-- **Block rejection sampling as a search followed by the value read**: `rejectBlocksL E k B T r`
+is the first trial `t < T` whose value `v_t = ⟦(r.drop (t B)).take k⟧` passes `E`, mapped to
+`v_t`:
+`rejectBlocksL E k B T r = ((List.range T).find? fun t => decide (E v_t)).map fun t => v_t`
+(core `List.findSome?_guard`, `List.map_findSome?`, `Option.guard_apply`). -/
+theorem rejectBlocksL_eq_find? (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List Bool) :
+    rejectBlocksL E k B T r =
+      ((List.range T).find? fun t => decide (E (listToNat ((r.drop (t * B)).take k)))).map
+        fun t => listToNat ((r.drop (t * B)).take k) := by
+  rw [rejectBlocksL_eq, ← List.findSome?_guard, List.map_findSome?]
+  congr 1
+  funext t
+  rw [Function.comp_apply, Option.guard_apply]
+  by_cases ht : E (listToNat ((r.drop (t * B)).take k))
+  · rw [if_pos ht, decide_eq_true ht, if_pos rfl, Option.map_some]
+  · rw [if_neg ht, decide_eq_false ht, if_neg Bool.false_ne_true, Option.map_none]
+
 /-- An accepted value satisfies the test and is below `2^k` (it is read from at most `k`
 bits, `listToNat_lt_two_pow`). -/
 theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r : List Bool} {v : ℕ}
@@ -562,26 +579,6 @@ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r
   subst ht
   refine ⟨hc, lt_of_lt_of_le (listToNat_lt_two_pow _) ?_⟩
   exact Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _)
-
-/-- Restricting a uniform coin table `I → Bool` along an injection `ι : α → I` gives a uniform
-table `α → Bool`: the restriction is the first projection of the splitting of `I` into the
-image of `ι` and its complement. -/
-private theorem dla_pushesUniform_restrict {α I : Type*} [Fintype α] [DecidableEq α] [Fintype I]
-    [DecidableEq I] {ι : α → I} (hι : Function.Injective ι) :
-    HardcoreBit.PushesUniform (fun R : I → Bool => fun a => R (ι a)) := by
-  classical
-  let e₁ : α ⊕ ((Set.range ι)ᶜ : Set I) ≃ I :=
-    (Equiv.sumCongr (Equiv.ofInjective ι hι) (Equiv.refl _)).trans
-      (Equiv.Set.sumCompl (Set.range ι))
-  let e : (I → Bool) ≃ (α → Bool) × (((Set.range ι)ᶜ : Set I) → Bool) :=
-    (Equiv.arrowCongr e₁.symm (Equiv.refl Bool)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
-  have he : (fun R : I → Bool => fun a => R (ι a)) = fun R => (e R).1 := by
-    funext R a
-    have h1 : e₁ (Sum.inl a) = ι a := rfl
-    show R (ι a) = R (e₁ (Sum.inl a))
-    rw [h1]
-  rw [he]
-  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
 
 /-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
 `t · B + j`. -/
@@ -655,7 +652,8 @@ theorem statClose_rejectBlocksL (E : ℕ → Prop) [DecidablePred E] (k B T : �
   let π : (Fin (T * B) → Bool) → Fin T → Fin (2 ^ k) :=
     fun r t => bitsEquiv k (fun j => r (dla_blockPos hkB (t, j)))
   have hπ : HardcoreBit.PushesUniform π := by
-    have h1 := dla_pushesUniform_restrict (dla_blockPos_injective (T := T) hkB)
+    have h1 :=
+      HardcoreBit.pushesUniform_restrict (O := Bool) (dla_blockPos_injective (T := T) hkB)
     have h2 := HardcoreBit.pushesUniform_equiv
       ((Equiv.curry (Fin T) (Fin k) Bool).trans (Equiv.piCongrRight fun _ : Fin T => bitsEquiv k))
     exact h1.comp h2
