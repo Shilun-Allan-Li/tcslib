@@ -459,14 +459,6 @@ theorem length_cfgWord_le (s : ℕ) (C : Cfg N.k Bool N.State x) :
   rw [e1, e2]
   omega
 
-/-- A word of `L` letters has value below `2 ^ L`. -/
-lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
-  induction w with
-  | nil => simp [bitsVal]
-  | cons b w ih =>
-    simp only [bitsVal, List.length_cons, pow_succ]
-    cases b <;> simp <;> omega
-
 /-- **The code is below `2 ^ (codeK N · (s + logSpace |x| + 1))`.** -/
 theorem cfgCode_lt (s : ℕ) (C : Cfg N.k Bool N.State x) :
     cfgCode s C < 2 ^ (codeK N * (s + logSpace x.length + 1)) :=

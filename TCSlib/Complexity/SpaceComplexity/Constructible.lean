@@ -75,12 +75,8 @@ theorem spaceConstructible_iff (S : ℕ → ℕ) :
 
 /-- Positive binary words have exactly the normalized logarithmic width. -/
 private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
-    n.bits.length = logSpace n := by
-  have lower := Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn)
-  have upper := LogProg.length_bits_le_log n
-  rw [← Nat.size_eq_bits_len] at lower
-  unfold logSpace
-  omega
+    n.bits.length = logSpace n :=
+  (LogProg.length_bits_eq_log hn).trans (logSpace_eq n).symm
 
 /-- The counter word with its first cell overwritten by `true`. -/
 private def b3a_word (n : ℕ) : List Bool := true :: n.bits.tail

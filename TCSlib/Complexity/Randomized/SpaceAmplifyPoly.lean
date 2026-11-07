@@ -238,16 +238,6 @@ theorem two_mul_pow_le {K n d : ℕ} (hK : 32 * (n + 1) ^ d ≤ K) :
 
 /-! ### Sizes -/
 
-/-- `2^{|bits n|} ≤ 2n + 1`. -/
-theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp
-  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
-
-/-- `n < 2^{|bits n|}`. -/
-theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
-  rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
-
 /-- `logSpace n ≤ ℓ`. -/
 theorem logSpace_le_ell (n : ℕ) : logSpace n ≤ ell n := by
   rw [ell, Nat.size_eq_bits_len]
@@ -269,7 +259,7 @@ theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n
 /-- `K ≤ 4^F (n + 1)^F`. -/
 theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
   have h : 2 ^ ell n ≤ 4 * (n + 1) := by
-    have := two_pow_bits_le n; simp only [ell, pow_succ]; omega
+    have := two_pow_bits_le_two_mul_add_one n; simp only [ell, pow_succ]; omega
   calc bigK F n = (2 ^ ell n) ^ F := by rw [bigK, ← pow_mul, Nat.mul_comm]
     _ ≤ (4 * (n + 1)) ^ F := Nat.pow_le_pow_left h F
     _ = 4 ^ F * (n + 1) ^ F := mul_pow _ _ _

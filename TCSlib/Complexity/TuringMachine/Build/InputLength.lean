@@ -414,10 +414,10 @@ private theorem inputLength_count {x : List Bool}
     have accounting := inputLength_charge n p v old next
     let ip : Fin (x.length + 2) := ⟨n + 1, by omega⟩
     let c := inputLengthCfg d n.bits n.bits.length .count ip 0
-    have oldwidth : n.bits.length ≤ x.length.bits.length := by
-      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (show n ≤ x.length by omega)
-    have newwidth : n.bits.length ≤ (n + 1).bits.length := by
-      simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ n)
+    have oldwidth : n.bits.length ≤ x.length.bits.length :=
+      Complexity.LogProg.length_bits_mono (show n ≤ x.length by omega)
+    have newwidth : n.bits.length ≤ (n + 1).bits.length :=
+      Complexity.LogProg.length_bits_mono (Nat.le_succ n)
     have field (a : ℤ) (ha : -1 ≤ a) (hb : a ≤ (n.bits.length : ℤ)) :
         c.workTapes 0 (c.workTapePos 0 + a) = FinTM.bufferTape n.bits a := by
       simpa only [c, inputLengthCfg, add_zero] using

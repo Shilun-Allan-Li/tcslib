@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Bits
-import Mathlib.Data.Nat.Size
+import TCSlib.Complexity.TuringMachine.NatBits
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 
@@ -72,7 +72,6 @@ self-delimiting pairing used by the universal machine.
 * `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
   the pairing, shared by the machine-side developments.
-* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
 * `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
@@ -285,11 +284,6 @@ lemma pairEncode_replicate_inj {n n' : ℕ} {u u' : List Bool}
   simp only [Prod.mk.injEq] at this
   obtain ⟨h1, h2⟩ := this
   exact ⟨by simpa using congrArg List.length h1, h2⟩
-
-/-- The binary expansion of `m` has at most `m` bits. -/
-lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
-  rw [Nat.size_eq_bits_len]
-  exact Nat.size_le.mpr Nat.lt_two_pow_self
 
 /-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
 prepends `j` low zero bits to its little-endian binary expansion,
