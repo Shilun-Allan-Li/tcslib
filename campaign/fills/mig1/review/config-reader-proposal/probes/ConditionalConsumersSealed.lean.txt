@@ -1,0 +1,85 @@
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+/-! Conditional pre-ship consumer only: each proposed field equation is an explicit
+hypothesis, not an assumed public API. The original definitions are sealed. -/
+set_option autoImplicit false
+attribute [local irreducible] Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.captureCfg
+namespace ConfigReaderProposal
+open Turing
+
+theorem leftCfg_consumer {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg k Bool S x)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ)
+    (hs : (FinTM.leftCfg f c tapes heads).state = c.state.map f)
+    (hi : (FinTM.leftCfg f c tapes heads).inputPos = c.inputPos)
+    (ht : ∀ i a, (FinTM.leftCfg f c tapes heads).workTapes i a =
+      Fin.addCases c.workTapes tapes i a)
+    (hp : ∀ i, (FinTM.leftCfg f c tapes heads).workTapePos i =
+      Fin.addCases c.workTapePos heads i)
+    (ho : (FinTM.leftCfg f c tapes heads).output = c.output) :
+    FinTM.leftCfg f c tapes heads =
+      ⟨c.state.map f, c.inputPos, Fin.addCases c.workTapes tapes, Fin.addCases c.workTapePos heads, c.output⟩ := by
+  refine Cfg.ext hs hi ?_ ?_ ho
+  · funext i a; exact ht i a
+  · funext i; exact hp i
+
+theorem rightCfg_consumer {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (hs : (FinTM.rightCfg f c tapes heads).state = c.state.map f)
+    (hi : (FinTM.rightCfg f c tapes heads).inputPos = c.inputPos)
+    (ht : ∀ i a, (FinTM.rightCfg f c tapes heads).workTapes i a =
+      Fin.addCases tapes c.workTapes i a)
+    (hp : ∀ i, (FinTM.rightCfg f c tapes heads).workTapePos i =
+      Fin.addCases heads c.workTapePos i)
+    (ho : (FinTM.rightCfg f c tapes heads).output = c.output) :
+    FinTM.rightCfg f c tapes heads =
+      ⟨c.state.map f, c.inputPos, Fin.addCases tapes c.workTapes, Fin.addCases heads c.workTapePos, c.output⟩ := by
+  refine Cfg.ext hs hi ?_ ?_ ho
+  · funext i a; exact ht i a
+  · funext i; exact hp i
+
+theorem captureCfg_consumer {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x)
+    (hs : (captureCfg emb ret pre out₀ c).state = some ((c.state.map emb).getD ret))
+    (hi : (captureCfg emb ret pre out₀ c).inputPos = c.inputPos)
+    (ht : ∀ i a, (captureCfg emb ret pre out₀ c).workTapes i a =
+      (if h : i.val < k then c.workTapes ⟨i.val, h⟩
+       else FinTM.bufferTape (pre ++ c.output)) a)
+    (hp : ∀ i, (captureCfg emb ret pre out₀ c).workTapePos i =
+      if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else ((pre ++ c.output).length : ℤ))
+    (ho : (captureCfg emb ret pre out₀ c).output = out₀) :
+    captureCfg emb ret pre out₀ c =
+      ⟨some ((c.state.map emb).getD ret), c.inputPos,
+        (fun i => if h : i.val < k then c.workTapes ⟨i.val, h⟩
+          else FinTM.bufferTape (pre ++ c.output)),
+        (fun i => if h : i.val < k then c.workTapePos ⟨i.val, h⟩
+          else ((pre ++ c.output).length : ℤ)), out₀⟩ := by
+  refine Cfg.ext hs hi ?_ ?_ ho
+  · funext i a; exact ht i a
+  · funext i; exact hp i
+
+/-- The output can be hidden behind a configuration equality; its published output
+reader still discharges the physical-output goal without reduction. -/
+theorem capture_output_implicit {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x)
+    (ho : (captureCfg emb ret pre out₀ c).output = out₀)
+    (d : Cfg (k + 1) Bool H x) (hd : d = captureCfg emb ret pre out₀ c) :
+    d.output = out₀ := by
+  rw [hd]
+  exact ho
+
+/-- The last capture head reads the source output's length, even though the host's
+physical output is the separate out₀ word. -/
+theorem capture_head_last {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x)
+    (hp : ∀ i, (captureCfg emb ret pre out₀ c).workTapePos i =
+      if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else ((pre ++ c.output).length : ℤ)) :
+    (captureCfg emb ret pre out₀ c).workTapePos (Fin.last k) = ((pre ++ c.output).length : ℤ) := by
+  simpa only [Fin.val_last, dif_neg (Nat.lt_irrefl k)] using hp (Fin.last k)
+
+end ConfigReaderProposal
+#print axioms ConfigReaderProposal.leftCfg_consumer
+#print axioms ConfigReaderProposal.rightCfg_consumer
+#print axioms ConfigReaderProposal.captureCfg_consumer
+#print axioms ConfigReaderProposal.capture_output_implicit
+#print axioms ConfigReaderProposal.capture_head_last

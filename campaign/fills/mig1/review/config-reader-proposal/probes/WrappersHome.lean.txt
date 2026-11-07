@@ -1,0 +1,50 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Composition
+
+/-! Same-home import-context probe. captureCfg is copied verbatim from Wrappers,
+with its original name. No campaign source or public API has been changed. -/
+set_option autoImplicit false
+namespace Turing
+variable {k : ℕ} {S H : Type*}
+
+def captureCfg {input : List Bool} (emb : S → H) (ret : H)
+    (pre out₀ : List Bool) (c : Cfg k Bool S input) :
+    Cfg (k + 1) Bool H input where
+  state := some ((c.state.map emb).getD ret)
+  inputPos := c.inputPos
+  workTapes := fun i =>
+    if h : (i : ℕ) < k then c.workTapes ⟨i, h⟩
+    else FinTM.bufferTape (pre ++ c.output)
+  workTapePos := fun i =>
+    if h : (i : ℕ) < k then c.workTapePos ⟨i, h⟩
+    else ((pre ++ c.output).length : ℤ)
+  output := out₀
+
+end Turing
+
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.captureCfg
+
+#check Turing.captureCfg_state
+#check Turing.captureCfg_inputPos
+#check Turing.captureCfg_workTapes
+#check Turing.captureCfg_workTapePos
+#check Turing.captureCfg_output
+
+#print axioms Turing.captureCfg_state
+#print axioms Turing.captureCfg_inputPos
+#print axioms Turing.captureCfg_workTapes
+#print axioms Turing.captureCfg_workTapePos
+#print axioms Turing.captureCfg_output
+
+run_cmd Lean.Elab.Command.liftCoreM do
+  let thms ← Lean.Meta.getSimpTheorems
+  let env ← Lean.getEnv
+  let names : List Lean.Name := [`Turing.captureCfg_state, `Turing.captureCfg_inputPos, `Turing.captureCfg_workTapes, `Turing.captureCfg_workTapePos, `Turing.captureCfg_output]
+  for n in names do
+    unless env.contains n do Lean.throwError "Missing generated declaration: {n}"
+    if Lean.isPrivateName n then Lean.throwError "Unexpected private declaration: {n}"
+    let tagged := [true, false].any fun post =>
+      [true, false].any fun inv => thms.isLemma (.decl n post inv)
+    if tagged then Lean.throwError "Unexpected simp attribute: {n}"
+    Lean.logInfo m!"PUBLIC_NON_SIMP {n}"

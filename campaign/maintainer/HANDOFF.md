@@ -16,13 +16,17 @@ snapshot has been adopted as **`oleans-mac1`** (formerly `oleans-mepad1`). Recei
 `campaign/status/2026-11-07-epad-merge/receipt.json`. No re-elaboration is claimed for this
 exact-tree adoption.
 
+The user also merged **#222** at `3555163f40d9c101a2ef4e81407c1bda58fe5ca4`. Its Lean tree exactly
+matches the passed NatBits replay plus its E-PAD catch-up; **oleans-mnb2** was adopted as
+**oleans-mac2**, the current campaign snapshot. Receipt:
+`campaign/status/2026-11-07-natbits-merge/receipt.json`. This adoption is not a new elaboration.
+
 **Open campaign PRs:**
 
 | PR | Change | Gate | Status |
 |---|---|---|---|
-| #215 | SG-1, all three consumers plus the shared Frag repair (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | 329-module replay plus the fresh 2-module E-PAD catch-up passed (`oleans-msg2`); audited blobs unchanged. Await findings. **Not yet clear to merge.** |
-| #222 | NatBits, 22 Lean files; 10 source theorems / 16 compiled constants (`lean/dedup-natbits`) | **114 CLOSED**, Codex PASS 0/0/0/8, all notes accepted | 344-module replay plus fresh 2-module E-PAD catch-up passed (`oleans-mnb2`), clean current merge, all audited blobs unchanged. **Clear to merge**; user merges. |
-| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, finalized for staging | 2-module current replay passed (`oleans-mlin1`); source/CI/seal/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
+| #215 | SG-1, all three consumers; identical Frag repair now common through #222 (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | Fresh full current-campaign replay passed (`oleans-msg3`): 329 modules, 0 failures/static mismatches. All four audited blobs unchanged; current diff is three Lean files. Await findings. **Not yet clear to merge.** |
+| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116 CLOSED**, Codex PASS0/0/0/12, all notes accepted | Current 2-module replay passed (`oleans-mlin2`); clean current merge preview equals that passed Lean tree. **Clear to merge**; user merges. |
 
 Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
 identical Frag hunk. After #228, the original imported-source criterion held, but their older
@@ -48,17 +52,26 @@ and the 23-file screen passed. Issued gate/fill/delivery/findings are archived a
    proofs). Eleven files owned; WordSize is documentation-only. No F6, paused record-table rows
    or Ladner fill is added. Inputs, independent brief review, passed pre-ship/screen and exact issued pins live in
    `campaign/fills/mig1/`. The verified 324-section packet is published and unchanged. Await
-   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`.
+   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`. cp01/cp02 are
+   reviewed as partial; config-field readers (user ruling pending) and branchTM contracts
+   remain unresolved. cp03 is reviewed as partial: five F-C specs are filled, but factoring,
+   captureCfg readers and one omitted seal region still need repair; three F-B targets remain.
+   The ten config, five capture and three branch readers are bounded/tested proposals awaiting
+   separate user rulings (`campaign/fills/mig1/review/API-PROPOSALS.md`); no API is added.
 2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
    `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
-   screen and two-module merged-tree replay pass; only F6 remains admitted. Gate **116**,
-   **Codex** selected (attachment + pasted findings), is finalized for staging and user dispatch.
+   screen and fresh two-module post-NatBits merged-tree replay pass; only F6 remains admitted. Gate **116**,
+   **Codex** selected (attachment + pasted findings), is published, verified and **dispatched by the user** (217 sections; exact pins in its dispatch record).
    The user merges only after it closes.
-3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is clear; keep each report verbatim, dispose every item,
+3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is merged; keep each report verbatim, dispose every item,
    check the current merged tree and ask the user to merge only when clear.
 4. **F6 (`space_universal`, Hierarchy)** follows the consumer merge. #221's harvest prerequisite
-   has merged. The startup route D-F6-3 is still a user decision after a route probe; gate 112's
-   carry requires `aRun`, `aCut`, `hloop` as hypotheses or F6's actual witnesses.
+   has merged. The user chose D-F6-3's **ruler-hosted suffix** route and **Claude** on
+   2026-11-07. The records-only draft and bounded probes are in `campaign/fills/f6/drafts/`.
+   The H5 halt/return composition passes without strengthening H5. A CodeTM bundle reader
+   is proposed, tested conditionally under seal and awaiting the user's API ruling. Full
+   concrete prefix/layout pre-ship remains. Do not dispatch before those prerequisites and
+   #229's merge. Gate 112's carry requires actual run/cut/loop-bound witnesses.
 5. **Ladner's statement phase**, before its fill: LD-1–LD-7 accepted; LD-8 pins the O(n³)
    computation but not Exercise 3.6's second-part wording. Follow `roadmap3/PLAN.md` §(f).
 
@@ -67,8 +80,9 @@ scheduled; RO-1 parked with its decisions answered; WS-1/RC/QF/WC/TC/D9 later. T
 megafill uses its existing approvals and gate 16; it does not grant new interface/import/debt
 choices. Ask the user for any new design or acknowledgment.
 
-**Gate numbers:** 106 dispatched; 114 closed; 115 closed and merged; **116 finalized for #229**.
-Next free: **117**. Ask the agent choice separately for each later audit/fill. These three
+**Gate numbers:** 106 dispatched; 114 closed and merged; 115 closed and merged; **116 dispatched for #229**.
+Gate **117** is reserved for the 23 approved reading/resource APIs, Codex selected; next free
+**118**. Ask the agent choice separately for each later audit/fill. These three
 selected audits are Codex; the newly requested MIG-1 fill is Claude. Claude may push only to its
 designated exchange inbox after pull/rebase; Codex returns files in chat.
 

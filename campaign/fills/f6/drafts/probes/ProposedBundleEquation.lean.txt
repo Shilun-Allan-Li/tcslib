@@ -1,0 +1,10 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+/-! Statement/home syntax probe only. This equation is proposed for Encoding,
+where toFinTM is defined. It is not an authorized public API addition. -/
+set_option autoImplicit false
+namespace F6DraftProposedReader
+open Turing
+example (M : CodeTM) :
+    M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := by
+  rfl
+end F6DraftProposedReader

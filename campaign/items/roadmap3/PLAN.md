@@ -440,7 +440,11 @@ LD-* decisions, then draft.
 ## (f) The user's rulings (2026-11-06)
 
 1. **D-F6-2:** the harvested rows go in a new `Build/` module, not in place in `UniversalK`. D-F6-1: the harvest comes first, before RO-1's `UniversalK` edits (option "RO-1 first" not taken).
-2. **D-F6-3:** open; decide after the harvest's consumer probe.
+2. **D-F6-3 (ruled 2026-11-07):** reuse the input view, the **ruler-hosted suffix** route.
+   The user chose **Claude** for F6, with checkpoint/final zips pushed to the designated
+   exchange inbox. F6 follows the `SPACE_linear_ne_NP` consumer merge. Gate 112's explicit
+   run/cut/loop-bound premise requirement remains binding; this route choice does not approve
+   a new public API or a strengthened statement.
 3. **D-F6-4:** E-PAD's continuation of `SPACE_linear_ne_NP` first, then F6's fill.
 4. **T31-1/T31-2:** after #211 merges, admission-free, with `time_hierarchy_book_of_pos`.
 5. **Ladner:** LD-1 to LD-7 as recommended; LD-8 is the maintainer's source check before docstrings.

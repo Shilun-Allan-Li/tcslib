@@ -1,0 +1,17 @@
+ScratchProbes/Seal_Composition.lean:772:70: error: Application type mismatch: The argument
+  hc.right
+has type
+  (rightCfg (fun q => Sum.inr (Sum.inr q)) (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t) tapes heads).output = w
+but is expected to have type
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = w
+in the application
+  ⟨?m.158, hc.right⟩
+ScratchProbes/Seal_Composition.lean:779:72: error: Application type mismatch: The argument
+  hb.right
+has type
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = w
+but is expected to have type
+  (rightCfg (fun q => Sum.inr (Sum.inr q)) (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t) tapes heads).output = w
+in the application
+  ⟨?m.213, hb.right⟩
+exit=1

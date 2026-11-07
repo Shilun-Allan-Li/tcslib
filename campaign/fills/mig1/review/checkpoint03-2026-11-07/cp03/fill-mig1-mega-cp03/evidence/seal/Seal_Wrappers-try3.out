@@ -1,0 +1,146 @@
+ScratchProbes/Seal_Wrappers.lean:840:4: error: Tactic `rfl` failed: The left-hand side
+  (D.timedReadyCfg M₁ M₂ c b).workTapePos
+is not definitionally equal to the right-hand side
+  D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0
+
+case inr.inr
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+hs : c.state = none
+ho : c.output = [b]
+hu : 2 ≤ 2
+⊢ (D.timedReadyCfg M₁ M₂ c b).workTapePos = D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0
+ScratchProbes/Seal_Wrappers.lean:888:4: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+    workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+    output := (D.timedReadyCfg M₁ M₂ c b).output }
+is not definitionally equal to the right-hand side
+  D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hh : ∃ t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none
+d : ℕ := Nat.find hh
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hd : d ≤ T
+hs : c.state = none
+hc : D.ComputesInTime x c.output d
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output } =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+ScratchProbes/Seal_Wrappers.lean:900:6: error: Tactic `rfl` failed: The left-hand side
+  D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (fun x => 0)
+    ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length
+is not definitionally equal to the right-hand side
+  D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos
+    ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length
+
+case pos.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hh : ∃ t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none
+d : ℕ := Nat.find hh
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hd : d ≤ T
+hs : c.state = none
+hc : D.ComputesInTime x c.output d
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+hstart :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (d + 2 + r) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+u : ℕ
+hu : u ≤ d
+⊢ D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos (fun x => 0)
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).output.length
+ScratchProbes/Seal_Wrappers.lean:907:6: error: Type mismatch
+  he
+has type
+  (MultiTapeTM.runFrom (D.timedControlCfg M₁ M₂ c) (u - d)).workTapePos =
+    D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) z
+but is expected to have type
+  (MultiTapeTM.runFrom (D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d)) (u - d)).workTapePos =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d).workTapePos
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos z
+ScratchProbes/Seal_Wrappers.lean:914:8: error: Tactic `rfl` failed: The left-hand side
+  (D.timedReadyCfg M₁ M₂ c b).workTapePos
+is not definitionally equal to the right-hand side
+  D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d).workTapePos
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos 0
+
+case pos
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hh : ∃ t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none
+d : ℕ := Nat.find hh
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d
+hd : d ≤ T
+hs : c.state = none
+hc : D.ComputesInTime x c.output d
+ho : c.output = [b]
+hcap :
+  ∀ u ≤ d,
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      D.timedControlCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u)
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+hrheads :
+  ∀ u ≤ r, (MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) u).workTapePos = (D.timedReadyCfg M₁ M₂ c b).workTapePos
+hstart :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (d + 2 + r) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b
+u : ℕ
+hu : ¬u ≤ d
+hread : ¬u ≤ d + 2
+hrew : u ≤ d + 2 + r
+⊢ (D.timedReadyCfg M₁ M₂ c b).workTapePos =
+    D.timedHeads M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) d).workTapePos
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0).workTapePos 0
+exit=1

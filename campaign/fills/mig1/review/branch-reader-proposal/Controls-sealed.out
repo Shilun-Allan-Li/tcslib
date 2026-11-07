@@ -1,0 +1,61 @@
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:11:48: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:13:67: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.runFrom c t = MultiTapeTM.step^[t] c
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:17:42: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (M₁.branchTM M₂ b).k = M₁.k + M₂.k
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:27:76: error: Type mismatch
+  rfl
+has type
+  ?m.80 = ?m.80
+but is expected to have type
+  M₁.branchTM M₂ b =
+    { k := M₁.k + M₂.k, State := M₁.State ⊕ M₂.State, fintypeState := instFintypeSum M₁.State M₂.State,
+      decEqState := fun a b => instDecidableEqSum a b,
+      tm :=
+        { q₀ := bif b then Sum.inl M₁.tm.q₀ else Sum.inr M₂.tm.q₀,
+          tr := fun q inp work =>
+            match q with
+            | Sum.inl q => leftAction M₂.k Sum.inl (M₁.tm.tr q inp fun i => work (Fin.castAdd M₂.k i))
+            | Sum.inr q => rightAction M₁.k Sum.inr (M₂.tm.tr q inp fun i => work (Fin.natAdd M₁.k i)) } }
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:32:56: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (rightCfg f c tapes heads).state = Option.map f c.state
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:38:81: error: Type mismatch
+  rfl
+has type
+  ?m.46 = ?m.46
+but is expected to have type
+  rightCfg f c tapes heads =
+    { state := Option.map f c.state, inputPos := c.inputPos,
+      workTapes := fun i => Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i,
+      workTapePos := fun i => Fin.addCases heads c.workTapePos i, output := c.output }
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:42:51: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (rightAction k f a).inputTape = a.inputTape
+/private/tmp/tcslib-branch-reader-11yn4b9i/Controls_sealed.lean:47:56: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  rightAction k f a =
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }

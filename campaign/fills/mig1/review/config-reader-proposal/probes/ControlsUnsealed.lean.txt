@@ -1,0 +1,39 @@
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+/-! Deliberate delta controls: these must close unsealed and fail sealed. -/
+set_option autoImplicit false
+namespace ConfigReaderControl
+open Turing
+
+theorem leftCfg_output {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg k Bool S x)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    (FinTM.leftCfg f c tapes heads).output = c.output := by rfl
+
+theorem leftCfg_heads {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg k Bool S x)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (i : Fin (k + l)) :
+    (FinTM.leftCfg f c tapes heads).workTapePos i = Fin.addCases c.workTapePos heads i := by rfl
+
+theorem rightCfg_output {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    (FinTM.rightCfg f c tapes heads).output = c.output := by rfl
+
+theorem rightCfg_heads {k l : ℕ} {S S' : Type} {x : List Bool}
+    (f : S → S') (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (i : Fin (k + l)) :
+    (FinTM.rightCfg f c tapes heads).workTapePos i = Fin.addCases heads c.workTapePos i := by rfl
+
+theorem capture_output_implicit {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x)
+    (d : Cfg (k + 1) Bool H x) (hd : d = captureCfg emb ret pre out₀ c) :
+    d.output = out₀ := by
+  rw [hd]
+  rfl
+
+theorem capture_heads {k : ℕ} {S H : Type*} {x : List Bool}
+    (emb : S → H) (ret : H) (pre out₀ : List Bool) (c : Cfg k Bool S x) (i : Fin (k + 1)) :
+    (captureCfg emb ret pre out₀ c).workTapePos i =
+      (if h : i.val < k then c.workTapePos ⟨i.val, h⟩ else ((pre ++ c.output).length : ℤ)) := by rfl
+
+end ConfigReaderControl

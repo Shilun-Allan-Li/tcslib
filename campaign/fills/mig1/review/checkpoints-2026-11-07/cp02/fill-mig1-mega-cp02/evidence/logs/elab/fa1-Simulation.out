@@ -1,0 +1,91 @@
+TCSlib/Complexity/TuringMachine/Simulation.lean:337:2: error: unsolved goals
+case refine_3.h.refine_1
+M₁ M₂ : FinTM Bool
+x : List Bool
+i : Fin (M₁.branchTM M₂ false).k
+j : Fin M₁.k
+⊢ (Cfg.init (M₁.branchTM M₂ false).tm.q₀ x).workTapes (Fin.castAdd M₂.k j) = fun x => none
+
+case refine_3.h.refine_2
+M₁ M₂ : FinTM Bool
+x : List Bool
+i : Fin (M₁.branchTM M₂ false).k
+j : Fin M₂.k
+⊢ (Cfg.init (M₁.branchTM M₂ false).tm.q₀ x).workTapes (Fin.natAdd M₁.k j) = (Cfg.init M₂.tm.q₀ x).workTapes j
+TCSlib/Complexity/TuringMachine/Simulation.lean:339:27: warning: This simp argument is unused:
+  Cfg.init_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Simulation.lean:357:2: error: unsolved goals
+case refine_3.h.refine_1
+M₁ M₂ : FinTM Bool
+x : List Bool
+i : Fin (M₁.branchTM M₂ true).k
+j : Fin M₁.k
+⊢ (Cfg.init (M₁.branchTM M₂ true).tm.q₀ x).workTapes (Fin.castAdd M₂.k j) = (Cfg.init M₁.tm.q₀ x).workTapes j
+
+case refine_3.h.refine_2
+M₁ M₂ : FinTM Bool
+x : List Bool
+i : Fin (M₁.branchTM M₂ true).k
+j : Fin M₂.k
+⊢ (Cfg.init (M₁.branchTM M₂ true).tm.q₀ x).workTapes (Fin.natAdd M₁.k j) = fun x => none
+TCSlib/Complexity/TuringMachine/Simulation.lean:359:26: warning: This simp argument is unused:
+  Cfg.init_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp only [leftCfg, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Simulation.lean:447:68: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ i, ?f i
+in the target expression
+  ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i =
+    if false = true then ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i + M₂.k
+    else MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₁.k
+
+case false
+M₁ M₂ : FinTM Bool
+x : List Bool
+t : ℕ
+hr :
+  ∀ (u : ℕ),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      rightCfg Sum.inr (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u) (fun x x_1 => none) fun x => 0
+hidle : ∀ (j : Fin M₁.k), MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.castAdd M₂.k j) = {0}
+hsel :
+  ∀ (j : Fin M₂.k),
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.natAdd M₁.k j) =
+      MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t j
+⊢ ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i =
+    if false = true then ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i + M₂.k
+    else MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₁.k
+TCSlib/Complexity/TuringMachine/Simulation.lean:471:68: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ i, ?f i
+in the target expression
+  ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i =
+    if true = true then ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i + M₂.k
+    else MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₁.k
+
+case true
+M₁ M₂ : FinTM Bool
+x : List Bool
+t : ℕ
+hr :
+  ∀ (u : ℕ),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u =
+      leftCfg Sum.inl (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u) (fun x x_1 => none) fun x => 0
+hsel :
+  ∀ (j : Fin M₁.k),
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.castAdd M₂.k j) =
+      MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t j
+hidle : ∀ (j : Fin M₂.k), MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t (Fin.natAdd M₁.k j) = {0}
+⊢ ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i =
+    if true = true then ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i + M₂.k
+    else MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₁.k
+FAIL(TCSlib/Complexity/TuringMachine/Simulation): lean exited with status 1
+FAIL(TCSlib/Complexity/TuringMachine/Simulation): error diagnostics reported
+FAIL(TCSlib/Complexity/TuringMachine/Simulation): no fresh .olean produced

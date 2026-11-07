@@ -1,0 +1,60 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+open scoped BigOperators
+
+attribute [local irreducible] Turing.FinTM.idTM Turing.FinTM.constTM
+  Turing.FinTM.prependTM Turing.FinTM.pairValidTM
+  Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.MultiTapeTM.initCfg
+
+-- idTM: k delta, then complete constructor equation.
+example : idTM.k = 0 := rfl
+example : idTM =
+    { k := 0, State := Unit,
+      tm := { q₀ := (), tr := fun _ inp _ => match inp with
+        | some b => ⟨SignType.pos, fun i => i.elim0, some b, some ()⟩
+        | none => ⟨SignType.zero, fun i => i.elim0, none, none⟩ } } := rfl
+
+-- constTM: k delta, then complete constructor equation.
+example (w : List Bool) : (constTM w).k = 0 := rfl
+example (w : List Bool) : constTM w =
+    { k := 0, State := Fin (w.length + 1),
+      tm := { q₀ := 0, tr := fun i _ _ => emitAction w id i } } := rfl
+
+-- prependTM: k delta, then complete constructor equation.
+example (w : List Bool) : (prependTM w).k = 0 := rfl
+example (w : List Bool) : prependTM w =
+    { k := 0, State := Fin (w.length + 1),
+      tm := { q₀ := 0, tr := fun q inp _ =>
+        if h : q.val < w.length then
+          ⟨0, fun i => i.elim0, some w[q.val], some ⟨q.val + 1, by omega⟩⟩
+        else match inp with
+          | some b => ⟨1, fun i => i.elim0, some b, some q⟩
+          | none => ⟨0, fun i => i.elim0, none, none⟩ } } := rfl
+
+-- pairValidTM: k delta, then complete constructor equation.
+example : pairValidTM.k = 0 := rfl
+example : pairValidTM =
+    { k := 0, State := Option Bool,
+      tm := { q₀ := none, tr := fun q inp _ => match q, inp with
+        | none, some b => ⟨.pos, fun j => j.elim0, none, some (some b)⟩
+        | some b, some c =>
+          if b = c then ⟨.pos, fun j => j.elim0, none, some none⟩
+          else ⟨.pos, fun j => j.elim0, some (!b && c), none⟩
+        | _, none => ⟨0, fun j => j.elim0, some false, none⟩ } } := rfl
+
+-- spaceUsed: pointwise and abstracted complete defining equation.
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S)
+    (c : Cfg k Bool S x) (t : ℕ) :
+    M.spaceUsed c t = ∑ i, M.spaceUsedByTape c t i := rfl
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) :
+    (fun (c : Cfg k Bool S x) (t : ℕ) => M.spaceUsed c t) =
+      (fun (c : Cfg k Bool S x) (t : ℕ) => ∑ i, M.spaceUsedByTape c t i) := rfl
+
+-- initCfg: state delta, then complete defining equation.
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    (M.initCfg x).state = some M.q₀ := rfl
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl

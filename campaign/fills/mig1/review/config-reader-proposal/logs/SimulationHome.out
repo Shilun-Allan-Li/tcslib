@@ -1,0 +1,66 @@
+Turing.FinTM.leftCfg_state {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg k Bool S x)
+  (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+  (Turing.FinTM.leftCfg f c tapes heads).state = Option.map f c.state
+Turing.FinTM.leftCfg_inputPos {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg k Bool S x)
+  (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) : (Turing.FinTM.leftCfg f c tapes heads).inputPos = c.inputPos
+Turing.FinTM.leftCfg_workTapes {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg k Bool S x)
+  (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (i : Fin (k + l)) (a✝ : ℤ) :
+  (Turing.FinTM.leftCfg f c tapes heads).workTapes i a✝ =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes tapes i a✝
+Turing.FinTM.leftCfg_workTapePos {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg k Bool S x)
+  (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (i : Fin (k + l)) :
+  (Turing.FinTM.leftCfg f c tapes heads).workTapePos i = Fin.addCases c.workTapePos heads i
+Turing.FinTM.leftCfg_output {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg k Bool S x)
+  (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) : (Turing.FinTM.leftCfg f c tapes heads).output = c.output
+Turing.FinTM.rightCfg_state {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg l Bool S x)
+  (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+  (Turing.FinTM.rightCfg f c tapes heads).state = Option.map f c.state
+Turing.FinTM.rightCfg_inputPos {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg l Bool S x)
+  (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) : (Turing.FinTM.rightCfg f c tapes heads).inputPos = c.inputPos
+Turing.FinTM.rightCfg_workTapes {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg l Bool S x)
+  (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (i : Fin (k + l)) (a✝ : ℤ) :
+  (Turing.FinTM.rightCfg f c tapes heads).workTapes i a✝ =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) tapes c.workTapes i a✝
+Turing.FinTM.rightCfg_workTapePos {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg l Bool S x)
+  (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (i : Fin (k + l)) :
+  (Turing.FinTM.rightCfg f c tapes heads).workTapePos i = Fin.addCases heads c.workTapePos i
+Turing.FinTM.rightCfg_output {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Turing.Cfg l Bool S x)
+  (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) : (Turing.FinTM.rightCfg f c tapes heads).output = c.output
+'Turing.FinTM.leftCfg_state' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.leftCfg_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.leftCfg_workTapes' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.leftCfg_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.leftCfg_output' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.rightCfg_state' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.rightCfg_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.rightCfg_workTapes' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.rightCfg_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.rightCfg_output' depends on axioms: [propext, Quot.sound]
+PUBLIC_NON_SIMP Turing.FinTM.leftCfg_state
+PUBLIC_NON_SIMP Turing.FinTM.leftCfg_inputPos
+PUBLIC_NON_SIMP Turing.FinTM.leftCfg_workTapes
+PUBLIC_NON_SIMP Turing.FinTM.leftCfg_workTapePos
+PUBLIC_NON_SIMP Turing.FinTM.leftCfg_output
+PUBLIC_NON_SIMP Turing.FinTM.rightCfg_state
+PUBLIC_NON_SIMP Turing.FinTM.rightCfg_inputPos
+PUBLIC_NON_SIMP Turing.FinTM.rightCfg_workTapes
+PUBLIC_NON_SIMP Turing.FinTM.rightCfg_workTapePos
+PUBLIC_NON_SIMP Turing.FinTM.rightCfg_output
+        2.93 real         0.81 user         0.74 sys
+          1439006720  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               96845  page reclaims
+               19615  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2773  voluntary context switches
+               14909  involuntary context switches
+            31032720  instructions retired
+            14997337  cycles elapsed
+             1622352  peak memory footprint

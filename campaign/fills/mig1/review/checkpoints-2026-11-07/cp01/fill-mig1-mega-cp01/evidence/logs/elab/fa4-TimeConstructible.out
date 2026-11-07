@@ -1,0 +1,54 @@
+TCSlib/Complexity/ClassP/TimeConstructible.lean:374:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Cfg.init ?q₀ ?input).workTapes ?x✝ ?x✝¹
+in the target expression
+  (Cfg.init FinTM.lengthBitsTM.tm.q₀ x).workTapes = (counterCfg x 0 ⟨0 + 1, ⋯⟩ 0 (Nat.bits 0) []).workTapes
+
+case zero.refine_1.workTapes
+x : List Bool
+hi : 0 ≤ x.length
+⊢ (Cfg.init FinTM.lengthBitsTM.tm.q₀ x).workTapes = (counterCfg x 0 ⟨0 + 1, ⋯⟩ 0 (Nat.bits 0) []).workTapes
+TCSlib/Complexity/ClassP/TimeConstructible.lean:377:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Cfg.init ?q₀ ?input).workTapePos ?x✝
+in the target expression
+  (Cfg.init FinTM.lengthBitsTM.tm.q₀ x).workTapePos = (counterCfg x 0 ⟨0 + 1, ⋯⟩ 0 (Nat.bits 0) []).workTapePos
+
+case zero.refine_1.workTapePos
+x : List Bool
+hi : 0 ≤ x.length
+⊢ (Cfg.init FinTM.lengthBitsTM.tm.q₀ x).workTapePos = (counterCfg x 0 ⟨0 + 1, ⋯⟩ 0 (Nat.bits 0) []).workTapePos
+TCSlib/Complexity/ClassP/TimeConstructible.lean:491:19: error(lean.unknownIdentifier): Unknown identifier `computesInTime_iff`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:492:2: error: No goals to be solved
+TCSlib/Complexity/ClassP/TimeConstructible.lean:506:10: error(lean.unknownIdentifier): Unknown identifier `computesFunInTime_iff`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:507:2: error: No goals to be solved
+TCSlib/Complexity/ClassP/TimeConstructible.lean:528:16: error(lean.unknownIdentifier): Unknown identifier `computesInTime_iff`
+TCSlib/Complexity/ClassP/TimeConstructible.lean:553:36: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ∑ i, ?f i
+in the target expression
+  ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i ≤ 5 * (x.length.size + 1)
+
+x : List Bool
+t t₀ : ℕ
+hc : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t₀ = counterCfg x 0 ⟨x.length + 1, ⋯⟩ 0 x.length.bits []
+hb :
+  ∀ u ≤ t₀,
+    ∀ (j : Fin 1),
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos j ∈
+        Finset.Icc (-(2 * (↑x.length.size + 1))) (2 * (↑x.length.size + 1))
+hstart : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (t₀ + 1) = counterCfg x 3 ⟨x.length + 1, ⋯⟩ 0 x.length.bits []
+hdone : FinTM.lengthBitsTM.ComputesInTime x x.length.bits (t₀ + 1 + (x.length.bits.length + 1))
+T : ℕ := t₀ + 1 + (x.length.bits.length + 1)
+hhalt : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none
+hpre :
+  ∀ v ≤ T,
+    ∀ (j : Fin 1),
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).workTapePos j ∈
+        Finset.Icc (-(2 * (↑x.length.size + 1))) (2 * (↑x.length.size + 1))
+hall :
+  ∀ (u : ℕ) (j : Fin 1),
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos j ∈
+      Finset.Icc (-(2 * (↑x.length.size + 1))) (2 * (↑x.length.size + 1))
+⊢ ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i ≤ 5 * (x.length.size + 1)
+TCSlib/Complexity/ClassP/TimeConstructible.lean:574:5: error(lean.unknownIdentifier): Unknown identifier `computesFunInTime_iff`
+FAIL(TCSlib/Complexity/ClassP/TimeConstructible): lean exited with status 1
+FAIL(TCSlib/Complexity/ClassP/TimeConstructible): error diagnostics reported
+FAIL(TCSlib/Complexity/ClassP/TimeConstructible): no fresh .olean produced

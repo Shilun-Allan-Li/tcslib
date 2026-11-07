@@ -1,0 +1,43 @@
+Turing.captureCfg_state.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H) (ret : H)
+  (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) :
+  (Turing.captureCfg emb ret pre out₀ c).state = some ((Option.map emb c.state).getD ret)
+Turing.captureCfg_inputPos.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H) (ret : H)
+  (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out₀ c).inputPos = c.inputPos
+Turing.captureCfg_workTapes.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H) (ret : H)
+  (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) (a✝ : ℤ) :
+  (Turing.captureCfg emb ret pre out₀ c).workTapes i a✝ =
+    (if h : ↑i < k then c.workTapes ⟨↑i, h⟩ else Turing.FinTM.bufferTape (pre ++ c.output)) a✝
+Turing.captureCfg_workTapePos.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H)
+  (ret : H) (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) :
+  (Turing.captureCfg emb ret pre out₀ c).workTapePos i =
+    if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length
+Turing.captureCfg_output.{u_1, u_2} {k : ℕ} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S → H) (ret : H)
+  (pre out₀ : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out₀ c).output = out₀
+'Turing.captureCfg_state' does not depend on any axioms
+'Turing.captureCfg_inputPos' does not depend on any axioms
+'Turing.captureCfg_workTapes' does not depend on any axioms
+'Turing.captureCfg_workTapePos' does not depend on any axioms
+'Turing.captureCfg_output' does not depend on any axioms
+PUBLIC_NON_SIMP Turing.captureCfg_state
+PUBLIC_NON_SIMP Turing.captureCfg_inputPos
+PUBLIC_NON_SIMP Turing.captureCfg_workTapes
+PUBLIC_NON_SIMP Turing.captureCfg_workTapePos
+PUBLIC_NON_SIMP Turing.captureCfg_output
+        1.38 real         0.76 user         0.64 sys
+          1441218560  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116373  page reclaims
+                 153  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  11  voluntary context switches
+                1716  involuntary context switches
+            30420463  instructions retired
+            14285048  cycles elapsed
+             1622352  peak memory footprint

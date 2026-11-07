@@ -2,8 +2,8 @@
 
 Audit [PR #229](https://github.com/Shilun-Allan-Li/tcslib/pull/229),
 `lean/space-linear-ne-np`. The user selected **Codex**. Published Lean head:
-`d143c091a8ef25cfd42cb0ed650dc3faa9b5a7c4`. The source base is `96daf38bc82ea21dab18da257fc517ca0bd59ff6`; the final bundle header pins the later records snapshot.
-The two-module current-campaign merged-tree replay passed on **oleans-mlin1**, zero failures
+`74494d669ad9f8f926844f9280812449f57263d6`. The source base is `3555163f40d9c101a2ef4e81407c1bda58fe5ca4` (the merged NatBits campaign); the final bundle header pins the later records snapshot.
+The two-module current-campaign merged-tree replay passed on **oleans-mlin2**, zero failures
 and zero static mismatches. The target is admission-free; F6's unchanged admission remains.
 All eleven screen-population blobs match the published PR exactly. The user dispatches this
 audit and merges only after it closes; this pack does not authorize a merge.
@@ -87,18 +87,21 @@ fidelity, hypotheses, semantic reuse, rule 10 and cumulative debt are the audite
 
 ## Evidence and limits
 
-Primary independent review and receipts are under `review/`. The complete source populations
-are in `review/screen/population-{base,head}.txt`; both contain the same eleven full files:
+Primary current-context review and receipts are under `review/current-after-natbits/`. Its
+`population-{base,head}.txt` name the complete current populations, the same eleven full files:
 Hierarchy, Padding, SpaceComplexity.Basic, ClassNP.NP, TuringMachine.Encoding, ClassNP.PClosure,
 SpaceComplexity.Constructible, Configuration, Deterministic, Nondeterministic and Finite. The
 additional model files provide the seal/default-simp context. Every file is supplied in full.
 
-`review/README.md` distinguishes the performed source, lint, axiom/census, seal and screen
-checks from the parent's completed replay/publication checks in `evidence/merged-tree/`. `review/source-freeze.json`, complete header files,
-the source diff and SHA-256 pins cover the actual fixed source. An `input := x` inside a binder
+`review/current-after-natbits/README.md` distinguishes the refreshed source, axiom/census, seal
+and screen checks from the parent's completed replay/publication checks in
+`evidence/current-after-natbits/`. Initial source/header freeze and lint conclusions remain
+applicable by exact Hierarchy source identity; no new lint run is claimed. Fresh complete
+source populations, source diff and SHA-256/Git-blob pins cover the current context, including
+the merged Encoding and Constructible changes. An `input := x` inside a binder
 is not treated as a proof delimiter; a parser control is retained.
 
-The primary `review/Inventory.lean.txt` inventories the target and all compiler auxiliaries
+The primary `review/current-after-natbits/Inventory.lean.txt` inventories the target and all compiler auxiliaries
 whose full names extend it. The target uses `[propext, Classical.choice, Quot.sound]`; its one
 auxiliary uses `[propext, Quot.sound]`. Both compiled census populations are unfiltered with
 respect to generated/internal constants, with full kind/module-owner information.
@@ -112,18 +115,20 @@ reducibility option is used. The earlier seal with defaults present is retained 
 
 The parent's inherited-comment `evidence/Metadata.lean.txt` is **preliminary**, not the primary
 inventory attestation: its old prose overdescribes the later target filter. The accurately
-documented `review/Inventory.lean.txt` and its raw output are the primary evidence.
+documented current `Inventory.lean.txt` and its raw output are the primary evidence.
 
 Campaign per-file lint remains **0 FAIL / 1 inherited size WARN**. The policy lint retains the
 same two findings (missing Main definitions heading and size); no new policy finding is added.
 The standing no-size-driver ruling applies. No blueprint file or public name binding changes;
 this packet does not claim a fresh strict global blueprint validation.
 
-The copy-text screen's raw outputs and pair delta are provided in `review/screen/`, with a
-semantic classification. A text screen enumerates candidates; it is not a proof of semantic
+The fresh copy-text screen's raw outputs and pair delta are in `review/current-after-natbits/`,
+with a semantic classification: **247 → 248 eligible bodies, 31 → 31 directional pairs,
+5,917 → 5,917 reproduced characters, zero new/removed pairs**. The earlier pre-NatBits screen
+(249 → 250 eligible bodies) and replay remain historical evidence. A text screen enumerates candidates; it is not a proof of semantic
 uniqueness. The existing duplication ledger remains the accounting baseline. Every execution
 receipt names its actual inputs and statuses. The completed replay, precheck, full order and
-static comparison are in `evidence/merged-tree/`. The source match receipt independently checks
+static comparison are in `evidence/current-after-natbits/`. The source match receipt independently checks
 all eleven published population blobs; earlier pending fields describe their original run time.
 
 ## Findings

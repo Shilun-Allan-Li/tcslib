@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Turing.FinTM.leftCfg_state",
+    "printed_header": "Turing.FinTM.leftCfg_state {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) :\n  (Turing.FinTM.leftCfg f c tapes heads).state = Option.map f c.state",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.leftCfg_inputPos",
+    "printed_header": "Turing.FinTM.leftCfg_inputPos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) : (Turing.FinTM.leftCfg f c tapes heads).inputPos = c.inputPos",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.leftCfg_workTapes",
+    "printed_header": "Turing.FinTM.leftCfg_workTapes {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) (i : Fin (k + l)) (a\u271d : \u2124) :\n  (Turing.FinTM.leftCfg f c tapes heads).workTapes i a\u271d =\n    Fin.addCases (motive := fun x => \u2124 \u2192 Option Bool) c.workTapes tapes i a\u271d",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.leftCfg_workTapePos",
+    "printed_header": "Turing.FinTM.leftCfg_workTapePos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) (i : Fin (k + l)) :\n  (Turing.FinTM.leftCfg f c tapes heads).workTapePos i = Fin.addCases c.workTapePos heads i",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.leftCfg_output",
+    "printed_header": "Turing.FinTM.leftCfg_output {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) : (Turing.FinTM.leftCfg f c tapes heads).output = c.output",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.rightCfg_state",
+    "printed_header": "Turing.FinTM.rightCfg_state {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) :\n  (Turing.FinTM.rightCfg f c tapes heads).state = Option.map f c.state",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.rightCfg_inputPos",
+    "printed_header": "Turing.FinTM.rightCfg_inputPos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) : (Turing.FinTM.rightCfg f c tapes heads).inputPos = c.inputPos",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.rightCfg_workTapes",
+    "printed_header": "Turing.FinTM.rightCfg_workTapes {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (i : Fin (k + l)) (a\u271d : \u2124) :\n  (Turing.FinTM.rightCfg f c tapes heads).workTapes i a\u271d =\n    Fin.addCases (motive := fun x => \u2124 \u2192 Option Bool) tapes c.workTapes i a\u271d",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.rightCfg_workTapePos",
+    "printed_header": "Turing.FinTM.rightCfg_workTapePos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (i : Fin (k + l)) :\n  (Turing.FinTM.rightCfg f c tapes heads).workTapePos i = Fin.addCases heads c.workTapePos i",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.FinTM.rightCfg_output",
+    "printed_header": "Turing.FinTM.rightCfg_output {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) : (Turing.FinTM.rightCfg f c tapes heads).output = c.output",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.captureCfg_state",
+    "printed_header": "Turing.captureCfg_state.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) :\n  (Turing.captureCfg emb ret pre out\u2080 c).state = some ((Option.map emb c.state).getD ret)",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.captureCfg_inputPos",
+    "printed_header": "Turing.captureCfg_inputPos.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out\u2080 c).inputPos = c.inputPos",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.captureCfg_workTapes",
+    "printed_header": "Turing.captureCfg_workTapes.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) (a\u271d : \u2124) :\n  (Turing.captureCfg emb ret pre out\u2080 c).workTapes i a\u271d =\n    (if h : \u2191i < k then c.workTapes \u27e8\u2191i, h\u27e9 else Turing.FinTM.bufferTape (pre ++ c.output)) a\u271d",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.captureCfg_workTapePos",
+    "printed_header": "Turing.captureCfg_workTapePos.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H)\n  (ret : H) (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) :\n  (Turing.captureCfg emb ret pre out\u2080 c).workTapePos i =\n    if h : \u2191i < k then c.workTapePos \u27e8\u2191i, h\u27e9 else \u2191(pre ++ c.output).length",
+    "public": true,
+    "simp_attribute": false
+  },
+  {
+    "name": "Turing.captureCfg_output",
+    "printed_header": "Turing.captureCfg_output.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out\u2080 c).output = out\u2080",
+    "public": true,
+    "simp_attribute": false
+  }
+]

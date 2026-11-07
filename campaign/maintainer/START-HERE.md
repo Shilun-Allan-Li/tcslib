@@ -154,6 +154,8 @@ stated).
 
 ## 6. Gate numbering and the current state
 
-Gates are numbered upward; the latest are in `campaign/gates/`. Gates 106 (#215, SG-1) and
-114 (#222, NatBits) are dispatched. Gate 115 (#228, E-PAD) is closed and merged; 116 is reserved
-for the Hierarchy consumer. Next free: **117**. **The current state is HANDOFF §0.**
+Gates are numbered upward; the latest are in `campaign/gates/`. Gate 106 (#215, SG-1) is
+dispatched. Gates 114 (#222, NatBits) and 115 (#228, E-PAD) are closed and merged. Gate 116
+(#229, the Hierarchy consumer) is dispatched to Codex. Gate **117** is reserved for the
+23 approved reading/resource APIs (Codex selected); next free: **118**.
+**The current state is HANDOFF §0.**

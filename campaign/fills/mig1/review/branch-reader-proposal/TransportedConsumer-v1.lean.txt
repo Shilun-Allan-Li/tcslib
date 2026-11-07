@@ -1,0 +1,83 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+
+/-! Proposed additions in Simulation's home, tested through an import.
+Only branchTM/AgreeOn and their same-home fields may reduce in these proofs.
+The other-file runFrom definition is sealed; its published agreement theorem is used.
+This is a proposal probe, not an actual library addition. -/
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open Turing Turing.FinTM
+
+namespace BranchReaderProposal
+
+section ProposedHome
+attribute [local irreducible] Turing.MultiTapeTM.runFrom
+
+theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).k = M₁.k + M₂.k := rfl
+
+theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).State = (M₁.State ⊕ M₂.State) := rfl
+
+/-! The run contract exposes its carrier conversion explicitly in its statement.
+The local view is notation inside this statement, not a new public definition. -/
+theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
+    {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    let view : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
+      fun tag => by
+        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
+        exact (branchTM M₁ M₂ tag).tm
+    (view b).runFrom c t = (view b').runFrom c t := by
+  exact Turing.MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)
+    (by
+      rw [Turing.MultiTapeTM.agreeOn_iff]
+      intro q _ inp work
+      rfl)
+    c t (fun _ _ q _ => Set.mem_univ q)
+
+end ProposedHome
+
+section SealedConsumer
+attribute [local irreducible] Turing.FinTM.branchTM Turing.MultiTapeTM.runFrom
+  Turing.FinTM.rightCfg Turing.FinTM.rightAction
+
+-- Probe-local presentation of the explicit transport in the proposed contract.
+private def branchView (M₁ M₂ : FinTM Bool) (b : Bool) :
+    MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) := by
+  rw [← branchTM_k M₁ M₂ b, ← branchTM_State M₁ M₂ b]
+  exact (branchTM M₁ M₂ b).tm
+
+theorem views_runFrom_eq (M₁ M₂ : FinTM Bool) (b b' : Bool) {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    (branchView M₁ M₂ b).runFrom c t = (branchView M₁ M₂ b').runFrom c t := by
+  exact branchTM_runFrom_independent M₁ M₂ b b' c t
+
+/-! Conditional consumer, matching the right-bank lockstep step of Composition.
+Only the actual host's agreement with its fixed false-tag table is a premise.
+The selected tag is bridged at run level, not by reducing a foreign table. -/
+theorem conditional_consumer (M₁ M₂ : FinTM Bool) (b : Bool)
+    {d : ℕ} {HState : Type} {x : List Bool}
+    (H : MultiTapeTM (d + (M₁.k + M₂.k)) Bool HState)
+    (emb : (M₁.State ⊕ M₂.State) → HState)
+    (htr : ∀ q inp work, H.tr (emb q) inp work =
+      rightAction d emb ((branchView M₁ M₂ false).tr q inp
+        (fun i => work (Fin.natAdd d i))))
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x)
+    (tapes : Fin d → ℤ → Option Bool) (heads : Fin d → ℤ) (t : ℕ) :
+    H.runFrom (rightCfg emb c tapes heads) t =
+      rightCfg emb ((branchView M₁ M₂ b).runFrom c t) tapes heads := by
+  have fixed := rightCfg_run (branchView M₁ M₂ false) H emb htr c tapes heads t
+  exact fixed.trans (congrArg (fun z => rightCfg emb z tapes heads)
+    (views_runFrom_eq M₁ M₂ false b c t))
+
+end SealedConsumer
+
+#print axioms branchTM_k
+#print axioms branchTM_State
+#print axioms branchTM_runFrom_independent
+#print axioms views_runFrom_eq
+#print axioms conditional_consumer
+
+end BranchReaderProposal

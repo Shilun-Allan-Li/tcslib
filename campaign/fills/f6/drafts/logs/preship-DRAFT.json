@@ -1,0 +1,147 @@
+{
+  "status": "DRAFT; not dispatched; route not fully pre-shipped",
+  "provisional_consumer_head": "74494d669ad9f8f926844f9280812449f57263d6",
+  "provisional_campaign_base": "3555163f40d9c101a2ef4e81407c1bda58fe5ca4",
+  "records_worktree_head_at_probe_preparation": "7e1c6bc86fdde19acd6e32b5e4c1d42204a6adc6",
+  "toolchain": "leanprover/lean4:v4.25.0",
+  "snapshot_name": "oleans-mlin2",
+  "snapshot_claim_scope": "Root reports completed two-module replay; this task does not rerun it. Conditional checks below read this existing snapshot.",
+  "historical_gate112_components": "Copied only four proved component lemmas; withdrawn route_space excluded. Names changed to F6DraftConditional.",
+  "historical_probe_sha256": "822d4a557cabd8fdd1b3504959aef63e835adbe2fc66c832f3cf978a396bf9b4",
+  "checks": [
+    {
+      "path": "campaign/fills/f6/drafts/probes/BundleSealedControl.lean.txt",
+      "sha256": "c4b1c44b15f0f27536247b83914d17e8fb6236d0aa6c068dbe2a6b51a0ecd85a",
+      "executed": true,
+      "start_utc": "2026-11-07T08:09:52.994224+00:00",
+      "end_utc": "2026-11-07T08:09:54.606897+00:00",
+      "exit_code": 1,
+      "log": "campaign/fills/f6/drafts/logs/BundleSealedControl.out",
+      "log_sha256": "6b70f8539d9702bc47ff17585164cbed88c2d9a8cfbcdf83f8ea54e035ff86f3",
+      "errors": 1,
+      "status": "EXPECTED CONTROL FAILURE: one type mismatch, direct bundle reduction unavailable when sealed",
+      "axiom_prints": []
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/BundleUnsealed.lean.txt",
+      "sha256": "9537583584919433dfedc0a6bca017671950645a8a871c624318bb82c7801256",
+      "executed": true,
+      "start_utc": "2026-11-07T08:09:51.406014+00:00",
+      "end_utc": "2026-11-07T08:09:52.993551+00:00",
+      "exit_code": 0,
+      "log": "campaign/fills/f6/drafts/logs/BundleUnsealed.out",
+      "log_sha256": "76de5219153aefcdfaa09176eb88a005ba377932379a9812e250d85a2d705179",
+      "errors": 0,
+      "status": "PASS",
+      "axiom_prints": []
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/ConditionalComponents.lean.txt",
+      "sha256": "7c94bed4ce20c745bf9c1698573272e08dafe1e74a3c052cce1d0887340d2c76",
+      "executed": true,
+      "start_utc": "2026-11-07T08:09:49.001474+00:00",
+      "end_utc": "2026-11-07T08:09:51.405140+00:00",
+      "exit_code": 0,
+      "log": "campaign/fills/f6/drafts/logs/ConditionalComponents.out",
+      "log_sha256": "adbd03ff6cbe1e78a3b2168864fa6aa93bc67ea04842fec7fdf257caefc16503",
+      "errors": 0,
+      "status": "PASS",
+      "axiom_prints": [
+        "'F6DraftConditional.two_scans' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "'F6DraftConditional.hosted_startup' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "'F6DraftConditional.final_seam' depends on axioms: [propext, Classical.choice, Quot.sound]",
+        "'F6DraftConditional.layout' depends on axioms: [propext, Quot.sound]"
+      ]
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/HaltedHostReturn-attempt1.lean.txt",
+      "sha256": "8033f7877d2f6792f830d18e6236d3c4e98f75e85a21eacb0611d5ba52dc1e7f",
+      "executed": true,
+      "start_utc": "2026-11-07T08:16:00.629594+00:00",
+      "end_utc": "2026-11-07T08:16:02.789616+00:00",
+      "exit_code": 1,
+      "log": "campaign/fills/f6/drafts/logs/HaltedHostReturn-attempt1.out",
+      "log_sha256": "f525c9812837a1ed111a39c5ecc5ec1465df4267a0b4927f1f3733063fc13d2a",
+      "errors": 2,
+      "status": "FAILED INTERMEDIATE ATTEMPT: retained verbatim; two local elaboration errors corrected, successful subsequent source/log separate",
+      "axiom_prints": [
+        "'F6DraftReturn.hosted_return' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]"
+      ]
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/ProposedBundleEquation.lean.txt",
+      "sha256": "e8500228e500b214910bf113c0639c3cfb7189e3f87bc463d9878c23f7010646",
+      "executed": true,
+      "start_utc": "2026-11-07T08:16:02.790778+00:00",
+      "end_utc": "2026-11-07T08:16:04.221571+00:00",
+      "exit_code": 0,
+      "log": "campaign/fills/f6/drafts/logs/ProposedBundleEquation.out",
+      "log_sha256": "bc81339f102b8e04d06243eb95f9b5be93a3e8d15d218c4b9c6e809bf84a2c03",
+      "errors": 0,
+      "status": "PASS",
+      "axiom_prints": []
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/BundleConditionalSealed.lean.txt",
+      "sha256": "8520e93c3277e2d46133bc0ace1f915293a97f85e2ee5c2311e1640cab1ba95b",
+      "executed": true,
+      "start_utc": "2026-11-07T08:16:04.222468+00:00",
+      "end_utc": "2026-11-07T08:16:05.678063+00:00",
+      "exit_code": 0,
+      "log": "campaign/fills/f6/drafts/logs/BundleConditionalSealed.out",
+      "log_sha256": "eba3aada58c7993a4de1d96b985332af9cb9d3f10d5e30269273b11e42e7a6bb",
+      "errors": 0,
+      "status": "PASS",
+      "axiom_prints": [
+        "'F6DraftProposedReader.conditional_bundle_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]"
+      ]
+    },
+    {
+      "path": "campaign/fills/f6/drafts/probes/HaltedHostReturn.lean.txt",
+      "sha256": "ee757d36926b25f97bf9915b32c0446f3d09565bf5e9556e58245cece309d520",
+      "executed": true,
+      "start_utc": "2026-11-07T08:16:53.624471+00:00",
+      "end_utc": "2026-11-07T08:16:56.133199+00:00",
+      "exit_code": 0,
+      "log": "campaign/fills/f6/drafts/logs/HaltedHostReturn.out",
+      "log_sha256": "2b45ed9d49f9c18578ae2b0163d47f75c4bcf6217d43973b91d1c51465f8be99",
+      "errors": 0,
+      "status": "PASS",
+      "axiom_prints": [
+        "'F6DraftReturn.hosted_return' depends on axioms: [propext, Classical.choice, Quot.sound]"
+      ]
+    }
+  ],
+  "not_completed": [
+    "concrete F6 prefix/first-return proof",
+    "approval/landing/gate/replay of proposed CodeTM.toFinTM_eq reader (sealed conditional consumption passed)",
+    "actual F6 target proof",
+    "fresh target freeze at final merge base",
+    "bootstrap/downstream/final order generation",
+    "cache roots generation",
+    "copy-text baseline screen and in-flight branch searches",
+    "final fill-proof seal with controls",
+    "delivery package or dispatch"
+  ],
+  "avoided_shared_api": "No H5 strengthening required: native startup is seamed to halt leaf, hosted, then returned through identity embedEmitRetTM. Full native assembly remains an OWN leaf; bounded H5/return composition checked below.",
+  "executed_summary": {
+    "conditional_historical_components": "PASS: four component proofs, 23 public signature checks; no withdrawn route_space",
+    "direct_bundle_control": "PASS unsealed; expected one type mismatch when toFinTM sealed",
+    "proposed_bundle_equation": "PASS: exact proposed whole-constructor equation, Encoding import only; no public source addition",
+    "conditional_sealed_bundle_consumer": "PASS: computation halting/output plus source-space conversion from proposed equation as explicit hypothesis; standard axioms",
+    "bounded_host_return": "PASS: H5 first-halting source followed by identity R1 returning embedding; standard axioms; first failed attempt retained",
+    "actual_F6_prefix_or_target": "NOT RUN / NOT PROVED"
+  },
+  "provisional_source_blobs": {
+    "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean": "7cb7b5fe256f732e6ad5568621749b9ecd2136e0",
+    "TCSlib/Complexity/TuringMachine/Encoding.lean": "c11a2803cdddde11b92b2cc2c74e4cd99eed07d3",
+    "TCSlib/Complexity/TuringMachine/Build/InputDevice.lean": "ae350de2e7ada6e6319933c9946a08b212b946b1",
+    "TCSlib/Complexity/TuringMachine/Build/Embed.lean": "5ceae723fb5bac0f51b187b55169b6e39633a87f",
+    "TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean": "dcd5d51988449537f5dfa22bfe9b346d209df669",
+    "TCSlib/Complexity/TuringMachine/SelfUniversal.lean": "d1f064d47c683f193b8c0f753a9e34e47dbc74c2"
+  },
+  "provisional_source_sha256": {
+    "TCSlib/Complexity/SpaceComplexity/Hierarchy.lean": "1d7e0c7d706521991a623dfe6963650f867edfebe34c2dae8316e2078dc8069f",
+    "TCSlib/Complexity/TuringMachine/Encoding.lean": "badfd3e8bdd8aa71582bfcccec995491f8d3438b8fc4d8b13fe5d5dcdfbd8677"
+  }
+}

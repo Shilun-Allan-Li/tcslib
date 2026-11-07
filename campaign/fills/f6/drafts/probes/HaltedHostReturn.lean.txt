@@ -1,0 +1,71 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+
+/-! Bounded conditional composition: a first-halting native source, H5, and R1'.
+This does not construct the F6 prefix or prove space_universal. In the intended
+consumer, the native source is the startup seamed to a one-step silent halt leaf. -/
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace F6DraftReturn
+open Turing
+
+/-- An H5-hosted first halt can be returned through R1' with a fresh strict
+live-return cut, retaining the same time and the exact visited sets. -/
+theorem hosted_return {m : ℕ} {P : Type} [Fintype P] [DecidableEq P]
+    (M : MultiTapeTM m Bool P) {y z : List Bool} (ℓ : ℕ)
+    (hz : z.length = ℓ + y.length) (hℓ : 0 < ℓ) (hdrop : z.drop ℓ = y)
+    (rt : ℤ → Option Bool) (rp : ℤ)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (c : Cfg m Bool P y) (b : Bool) (hb : b = true ↔ c.inputPos.val = 0)
+    (t : ℕ) (hc : c.state ≠ none)
+    (hlive : ∀ u < t, (M.runFrom c u).state ≠ none)
+    (hhalt : (M.runFrom c t).state = none) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q)
+      (H : MultiTapeTM (m + 1) Bool Q) (inj : P → Bool → Q) (C : ℕ),
+      0 < C ∧
+      ∃ t', t ≤ t' ∧ t' ≤ C * (ℓ + 1) * t ∧
+        let d := rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp
+        let ι := Function.Embedding.refl (Fin (m + 1))
+        let ec := embedEmitCfg ι (fun _ _ => none) (fun _ => 0) [] d
+        let A := embedEmitRetTM ι H
+        (A.runFrom (ec.mapState Sum.inl) t').state = some (Sum.inr ()) ∧
+        (A.runFrom (ec.mapState Sum.inl) t').output = (M.runFrom c t).output ∧
+        (∀ u < t', (A.runFrom (ec.mapState Sum.inl) u).state ≠ some (Sum.inr ())) ∧
+        (∀ j : Fin (m + 1),
+          A.visitedByTapeHead (ec.mapState Sum.inl) t' (ι j) =
+            H.visitedByTapeHead d t' j) ∧
+        (∀ j : Fin m, H.visitedByTapeHead d t' j.castSucc =
+          M.visitedByTapeHead c t j) ∧
+        H.visitedByTapeHead d t' (Fin.last m) ⊆ Finset.Icc (rp - 1) (rp + ℓ) := by
+  classical
+  obtain ⟨Q, fQ, dQ, H, inj, C, hC, hH⟩ := exists_rulerHostTM M
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  obtain ⟨t', hlo, hhi, ⟨b', _, hend⟩, hinner, _, hbank, hruler⟩ :=
+    hH ℓ hz hℓ hdrop rt rp hr c b hb t
+  let d := rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp
+  let ι := Function.Embedding.refl (Fin (m + 1))
+  let ec := embedEmitCfg ι (fun _ _ => none) (fun _ => 0) [] d
+  have hclive : d.state ≠ none := by
+    rw [rulerHostCfg_state]
+    intro h
+    exact hc (Option.map_eq_none_iff.mp h)
+  have hHlive : ∀ u < t', (H.runFrom d u).state ≠ none := hinner hlive
+  have hHhalt : (H.runFrom d t').state = none := by
+    rw [hend, rulerHostCfg_state, hhalt, Option.map_none]
+  obtain ⟨_, hreturn, hcut⟩ := embedEmitRetTM_run ι H (fun _ _ => none)
+    (fun _ => 0) [] d t' hclive hHlive hHhalt
+  refine ⟨Q, fQ, dQ, H, inj, C, hC, t', hlo, hhi, ?_, ?_, hcut, ?_, hbank, hruler⟩
+  · rw [hreturn]
+  · rw [hreturn, embedEmitCfg_output, List.nil_append, hend, rulerHostCfg_output]
+  · intro j
+    calc
+      _ = (embedEmitTM ι H).visitedByTapeHead ec t' (ι j) :=
+        embedEmitRetTM_visitedByTapeHead ι H (fun _ _ => none) (fun _ => 0) [] d t' (ι j)
+      _ = H.visitedByTapeHead d t' j :=
+        (embedEmitTM_visitedByTapeHead ι H (fun _ _ => none) (fun _ => 0) [] d t' j).1
+
+end F6DraftReturn
+#print axioms F6DraftReturn.hosted_return

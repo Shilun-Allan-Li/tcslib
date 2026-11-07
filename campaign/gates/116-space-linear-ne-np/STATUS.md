@@ -1,12 +1,12 @@
-# Gate 116: SPACE_linear_ne_NP consumer (#229)
+# Gate 116: CLOSED PASS; #229 clear to merge
 
-Codex selected by the user. The approved single-file proof and Padding import are published in
-**draft PR #229**. Four public / 43 private source declarations remain fixed; one internal proof
-auxiliary is added. Target/auxiliary axioms are standard. Four-definition seal, eight paired
-controls, full source/CI freeze, lint and eleven-file screen pass (zero new/removed pairs).
-The **two-module current-campaign merged-tree replay passes**, zero failures/static mismatches,
-leaving only the unrelated `space_universal` admission. Every reviewed population blob matches
-the published PR. The independent internal review has no required fix.
+Codex audit **PASS 0 blockers / 0 majors / 0 minors / 12 notes**. Verbatim findings and all
+12 dispositions are committed separately from the independent incoming review. No source fix
+or new design/debt ruling is required.
 
-The pack/evidence are finalized; verified bundle staging follows this records snapshot.
-**Not yet clear to merge: #229**; the external Codex gate must close. Next free gate **117**.
+The current-campaign merged-tree replay passed **2 modules, 0 failures/static mismatches** on
+**oleans-mlin2**. The audited/current head is unchanged; the current campaign's Lean tree equals
+the passed replay base, and a clean current merge preview has exactly the passed head's Lean.
+See `evidence/clearance-after-audit.json`. Only the independent F6 admission remains.
+
+**Clear to merge: #229.** Seyoon merges. Gate 117 is reserved for the approved reading APIs.

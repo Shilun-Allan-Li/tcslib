@@ -1014,7 +1014,8 @@ The refreshed scope's 21 sites plus Meyer ×2 are re-pointed. Its two later find
 inline lower bound and CfgRecord's width-one proof) are within the approved kinds. BL-2's already
 published lemma moves too; its retired copies do not return.
 
-The known scoped residuals of BL-1/NB-1/LS-3 are **retired on merge**, not before it. Seven
+The known scoped residuals of BL-1/NB-1/LS-3 are **retired by the user's #222 merge**
+(2026-11-07; gate 114 CLOSED PASS 0/0/0/8). Seven
 redundant private declarations disappear; the touched-file census is 2,366 → 2,360. Bin's five
 moved bounds leave its `bitsVal` bound beside its definition (11 source declarations remain).
 The current candidate enumeration covers the open campaign PRs, prepared landings and delivery
@@ -1025,7 +1026,8 @@ pair count is not a debt census; the new in-file near-pair is separately classif
 re-derived the 2n+1 bound and the reachable positive bound. Two inline bounds in the single
 `epad_run` declaration re-derived `length_bits_le_self`. These are two declaration members in
 the 53-declaration incoming file, not three. The helper is deleted; both inline steps cite the
-published lemma. They are **retired on merge**, with no new acknowledgment. The final source has
+published lemma. They are **retired by the user's #228 merge** (2026-11-07; gate 115
+CLOSED PASS 0/0/0/12), with no new acknowledgment. The final source has
 52 declarations and zero such re-derivations found by this review. The explicit use of the Codec
 copy is also re-pointed to Bin's canonical `LogProg.bitsVal_lt_two_pow`, so either PR merge order
 is supported at that use. The original delivery/report and the review remain verbatim in the

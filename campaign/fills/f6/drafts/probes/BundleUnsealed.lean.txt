@@ -1,0 +1,10 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option autoImplicit false
+open Turing
+namespace F6DraftBundleControl
+/-- Diagnostic control only: native halting read directly from the bundled source. -/
+theorem native_halt (M : CodeTM) (x output : List Bool) (t : ℕ)
+    (h : M.toFinTM.ComputesInTime x output t) :
+    (M.tm.runFrom (M.tm.initCfg x) t).state = none := by
+  exact ((FinTM.computesInTime_iff M.toFinTM x output t).mp h).1
+end F6DraftBundleControl
