@@ -11,13 +11,13 @@
 | Check | Result | Evidence |
 |---|---|---|
 | Replay: the 97 modules downstream of the 15 changed files, then `audits/pass-shelat/Checks` | 98/98 rc=0, **0 errors** | `replay.log`, `tools/order.txt` |
-| `sorry` census (code tokens, all of `TCSlib/`) | 507 → 508, **exactly +1**: the host in `Candidates/Concrete.lean` | `sorry-census-{base,head}.txt` |
+| `sorry` census (corrected lexical code tokens at the original pinned base/head) | 506 → 507, **exactly +1**: the host in `Candidates/Concrete.lean`; the old 507 → 508 included one diagnostic string | `../evidence-r2/sorry-census-{base,head}.txt`; G08-04 |
 | Statement diff (`decls2.py` against the base) | 25 ADDED (18 tier 1, 4 tier 2, 1 host, 2 visibility changes), 2 REMOVED, **0 CHANGED** | `statement-diff.txt` |
 | Axioms | All 146 touched declarations and all 25 new or visibility-changed ones use the standard axioms or fewer; only the host has `sorryAx`. `Checks` has the same 4 `sorryAx` records as the post-landing base (`decides_of_decidesWithAdviceInTime`, `lemma_64_3`, `theorem_63_1`, `exists_canonizerExp`) | `axioms-touched.tsv`, `axioms-new.log`, `checks-axioms-head.log` |
 | Rule 10 seal | 15 whole-file seals, collected from the elaborated terms. No touched declaration fails. The 6 failures are in untouched base declarations and fail the same way in the base control. Controls pass 13/13 | `seal/` |
 | Explicit-unfold scan | 0 `unfold`, `delta` or `.eq_N` added; no foreign definition used as a rewrite or simp rule | `seal/unfold-scan.txt` |
 | `style_lint.py` | Only the 6 size lines of the fill-owned files, as at the base; all 6 files shrink | `style-lint-{base,head}.log` |
-| `campaign_style_lint.py --check8b` | No FAIL or WARN change on `TCSlib/Cryptography` or `TCSlib/Complexity/Randomized`; only the INFO declaration counts move | `campaign-lint-*.log` |
+| `campaign_style_lint.py --check8b` | No FAIL/WARN category change on `TCSlib/Cryptography` or `TCSlib/Complexity/Randomized` after normalizing changing line/size counts; INFO declaration counts also move | `campaign-lint-*.log` |
 | Lines | +572 / −906 over 15 files (net −334, host contract included) | `line-counts.tsv` |
 
 ## 2. Per design group
@@ -72,7 +72,7 @@ No statement changed.
 
 - **Touched declarations** (`touched-*.txt`, `tools/touched.py`): every head declaration whose text contains an added line or a deletion point of `git diff -U0` against the base, over all 15 files. That is 146 declarations. It over-includes neighbours of deleted blocks, which only makes the seal stricter.
 - **Collection** (`Collect.lean`, `collect.log`, `tools/collect_body.lean`):
-  - Input: the elaborated types and values of the touched constants and their auxiliaries, plus the types of everything reached and the bodies of own-module definitions, transitively.
+  - **G08-N2 correction:** the original collector starts from elaborated types/values of the touched constants and auxiliaries, but traverses the types and definition bodies of subsequently reached constants only when they belong to the audited module. It did not traverse every referenced constant's type. The auditor's expanded traversal adds `(DiscreteLog, bitsToNat)` and `(RSA, primeStr)`, giving a 90-name union, without a new touched failure. The repair in #227 moves type traversal outside that own-module condition; fresh round-2 evidence records its actual output.
   - Kept: TCSlib definitions from other modules that are not instances; non-reducible ones, plus matchers whatever their status.
   - `PolyExpr.eval` and `glNeed` are left unsealed.
   - Result: 89 names in all (`names-*.txt`). The only foreign matcher reached is `polyTimeComputable_iterateFind.match_1` (DiscreteLog, ElGamal). IterateFind and Primality reach no foreign definition.

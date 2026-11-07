@@ -144,6 +144,9 @@ only where an item says so.
   `two_pow_size_le`/`two_pow_size_le_two_mul_succ` and re-point the other.
 - G10: the `castLE` triple as corollaries of `HardcoreBit.pushesUniform_restrict`; `dlb_cut`;
   `pushesUniform_comp_injective` (after #195).
+  **Gate 08 G10 interface note:** preserve the old nonempty-index theorem's extra
+  empty-codomain case when re-pointing to the new generic theorem, which assumes `Nonempty O`;
+  use a case split and retain the old statement. (This is the gate 08 findings' G10 note.)
 - G13 (with DL-9), G14, G22 (with DL-11), G23, G25, and optionally G12 (after #195), and G18
   (`uexp_le_of_statClose`, deferred by Q5).
 - The 764 untouched rule-10 rows recorded by #210 (`gates/07-eqlemmas/evidence-r2/r6c/cleanup-b*.tsv`),

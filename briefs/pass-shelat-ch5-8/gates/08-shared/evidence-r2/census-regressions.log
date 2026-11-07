@@ -1,0 +1,8 @@
+PASS 'sorry': 1
+PASS '"declaration uses \'sorry\'"': 0
+PASS '/- outer /- sorry -/ sorry -/ sorry': 1
+PASS '-- sorry\nsorry': 1
+PASS '"escaped \\" sorry" sorry': 1
+PASS 'r##"sorry \\" sorry"## sorry': 1
+PASS "«sorry» sorryAx sorry' A.sorry sorry": 1
+PASS 7 lexical regression cases

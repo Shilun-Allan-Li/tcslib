@@ -1,5 +1,14 @@
 # Gate 08 (Pass–shelat): shared lemmas for the landed fills (S1) and the rejection-loop host contract
 
+**Post-audit qualification, 2026-11-06 PST:** round 1 returned HOLD (0 blockers, 1 major,
+3 minors). See `resolutions-r1.md` and the verbatim findings. Public counterparts in design
+G6/G7/G10 are disclosed, user-approved staged cleanup debt (Q2 (A)); the no-copy check is for
+undisclosed copies, not a claim that those counterparts do not exist. The original census
+included one string literal; corrected lexical totals are 506 → 507 at the original pins.
+The original collector's type traversal was own-module-only. Frozen round-1 inputs remain
+available at their pinned records commit. Round 2 uses the selected Codex chat-return route.
+
+
 **What is audited:** PR [Shilun-Allan-Li/tcslib#227](https://github.com/Shilun-Allan-Li/tcslib/pull/227)
 at its head `c6affb3a92535d3f1de2e0a52c205a84c0cff551`, on base `8dcdc8a56382289b5739e13fd18c4d5bd9b67c47`
 (`cryptography/pass-shelat-ch2-4`; later base commits are records only). 14 commits, 15 Lean files,
