@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Padding
 import TCSlib.Complexity.TimeHierarchy.CodePrefix
 import TCSlib.Complexity.TimeHierarchy.Diagonal
 import TCSlib.Complexity.ClassNP.NP
@@ -2500,6 +2501,18 @@ preimage of `L'` under it, so `L ∈ NP` (`Complexity.preimage_mem_NP`), that is
 the padding map's polynomial-time computability, `preimage_mem_NP` and the strictness
 extraction. -/
 theorem SPACE_linear_ne_NP : SPACE (fun n => n + 1) ≠ NP := by
-  sorry
+  apply sph_linear_ne_NP_of_padding space_hierarchy
+  intro L hL
+  have h := mem_SPACE_padLang (T := fun n => n + 1) 1 2 hL
+    (fun n => by
+      have : n ^ 2 ≤ (n + 1) ^ 2 := Nat.pow_le_pow_left (Nat.le_succ n) 2
+      dsimp only
+      omega) (fun m => le_rfl)
+  have he : padLang L (fun n => 1 * (n + 1) ^ 2) =
+      {y | ∃ x ∈ L, y = pairEncode x (List.replicate (1 * (x.length + 1) ^ 2) true)} := by
+    apply Set.ext
+    intro y
+    exact mem_padLang_iff
+  rwa [he] at h
 
 end Complexity
