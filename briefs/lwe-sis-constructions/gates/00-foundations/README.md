@@ -2,7 +2,9 @@
 
 The review instructions are `audits/lwe-sis-phase0-pack.md`. Mathematical source is
 frozen at `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`, with per-path hashes in
-`evidence/source-freeze.json`. No external worker has been selected or dispatched.
+`evidence/source-freeze.json`. The user selected Codex; no external job has been
+dispatched. See `dispatch-codex.md` for the selected-worker kickoff. The shipped pack
+and ZIP retain their original preparation-time status and are not edited retroactively.
 
 ## Evidence
 

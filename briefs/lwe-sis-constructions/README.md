@@ -58,5 +58,10 @@ No external audit/fill job has been dispatched or exchange namespace selected. S
 PDFs were inspected through browsing; exact PDF archival, ingestion and proofmatch
 remain open and are disclosed in the review packet.
 
+The user selected Codex for the external phase-0 audit. The selected-worker kickoff is
+`gates/00-foundations/dispatch-codex.md`; the already delivered round-1 ZIP and pack remain
+unchanged. The user dispatches the audit and may publish only this own PR branch. No
+campaign branch push or merge is authorized by that publication.
+
 **Not yet clear to merge — the external foundation gate and source archival are pending;
 14 representation proof obligations remain admitted.**
