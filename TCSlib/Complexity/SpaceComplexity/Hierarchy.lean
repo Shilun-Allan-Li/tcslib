@@ -180,13 +180,12 @@ private theorem f6_native_halt (c : EffectiveMachineCode) :
     exact seamCompTM_run_ofCfg R exit leaf () hr' hd hcut (hleaf _ hs)
   refine ⟨?_, fun u hu => ?_⟩
   · rw [hfinal]
-    apply Cfg.ext
-    · rw [Cfg.mapState_state]
-      rfl
-    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
-    · funext i p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
-    · funext i; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output, Cfg.mapState_output]
+    refine Cfg.mapState_eq_of_fields _ _ _ rfl (Cfg.mapState_inputPos (fun _ : P => ()) d) ?_ ?_
+      (Cfg.mapState_output (fun _ : P => ()) d)
+    · funext i p
+      exact Cfg.mapState_workTapes (fun _ : P => ()) d i p
+    · funext i
+      exact Cfg.mapState_workTapePos (fun _ : P => ()) d i
   · by_cases hut : u ≤ T
     · rw [hinit, hrun, seamCompTM_runFrom_left R exit leaf () hcut u hut,
         Cfg.mapState_state]
@@ -319,12 +318,12 @@ private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S]
   obtain ⟨_, hret, hcut⟩ := embedEmitRetTM_run (Fin.castLEEmb (le_refl (K + 4))) H
     (fun _ _ => none) (fun _ => 0) [] d t' hdlive hHlive hHhalt
   have hhand : e₁.mapState (fun _ => inj M.q₀ false) = d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, rulerHostCfg_state, hc]; rfl
+    refine Cfg.mapState_eq_of_fields e₁ _ d ?_ ?_ ?_ ?_ ?_
+    · rw [rulerHostCfg_state, hc]; rfl
     · apply Fin.ext
-      rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ (M.initCfg y) _ 0).1, hci]
+      rw [(rulerHostCfg_fields ℓ hz _ (M.initCfg y) _ 0).1, hci]
     · funext j p
-      rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes]
+      rw [rulerHostCfg_workTapes]
       change Function.update (fun _ _ => none) (Fin.last (K + 3))
           (FinTM.bufferTape (List.replicate ℓ true)) j p =
         Fin.lastCases (motive := fun _ => ℤ → Option Bool)
@@ -334,11 +333,11 @@ private theorem f6_hosted {K : ℕ} {S : Type} [Fintype S] [DecidableEq S]
       · rw [Function.update_of_ne (Fin.castSucc_ne_last i), Fin.lastCases_castSucc,
           MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
     · funext j
-      rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos]
+      rw [rulerHostCfg_workTapePos]
       refine Fin.lastCases ?_ (fun i => ?_) j
       · rw [Fin.lastCases_last]
       · rw [Fin.lastCases_castSucc, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
-    · rw [Cfg.mapState_output, rulerHostCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
+    · rw [rulerHostCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
   have hstart : e₁.mapState (fun _ => Sum.inl (inj M.q₀ false)) =
       (embedEmitCfg (Fin.castLEEmb (le_refl (K + 4))) (fun _ _ => none) (fun _ => 0) []
         d).mapState (Sum.inl : Q → Q ⊕ Unit) := by
@@ -845,15 +844,14 @@ private theorem f6_last_ruler_layout (K n ℓ : ℕ) {P Q V : Type}
   have hbank : ec = bank.mapState (fun _ => entry) := by
     have h := embedEmitCfg_forwardLoop_init (k := 1) (K := K) finish entry M x
     simpa only [ec, bank, σ, h1, h2] using h
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, rulerHostCfg_state, hbank, Cfg.mapState_state]
+  refine Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_
+  · rw [rulerHostCfg_state, hbank, Cfg.mapState_state]
     all_goals rfl
   · apply Fin.ext
-    rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ ec _ 0).1,
-      hbank, Cfg.mapState_inputPos]
+    rw [(rulerHostCfg_fields ℓ hz _ ec _ 0).1, hbank, Cfg.mapState_inputPos]
     simp only [bank, Fin.val_one]
   · funext i p
-    rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes, hbank]
+    rw [rulerHostCfg_workTapes, hbank]
     change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
         (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i p =
       Fin.lastCases (motive := fun _ => ℤ → Option Bool)
@@ -862,11 +860,11 @@ private theorem f6_last_ruler_layout (K n ℓ : ℕ) {P Q V : Type}
     · simp only [Fin.lastCases_last]
     · simp only [Fin.lastCases_castSucc, Cfg.mapState_workTapes]
   · funext i
-    rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos, hbank]
+    rw [rulerHostCfg_workTapePos, hbank]
     refine Fin.lastCases ?_ (fun j => ?_) i
     · rw [Fin.lastCases_last]
     · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
-  · rw [Cfg.mapState_output, rulerHostCfg_output, hbank, Cfg.mapState_output]
+  · rw [rulerHostCfg_output, hbank, Cfg.mapState_output]
 
 /-- Equality induction transports an initialized run along a tape-count equation. -/
 private theorem f6_cast_init_run {P : Type} {m n : ℕ} (h : m = n)
