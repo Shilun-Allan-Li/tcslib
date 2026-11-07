@@ -7,7 +7,7 @@ coordination point F-4.
 - **Ruled:** a Claude fill on the GGM reduction machine's pattern (D-7, 2026-11-05); R-04-3
   (extend T0–T2 before issue; applied in `243598b7`).
 - **Before issue:**
-  - gate 04 round 2 closes and #195 merges into `cryptography/pass-shelat-ch2-4`; any statement
+  - gate 04 round 5 closes and #195 merges into `cryptography/pass-shelat-ch2-4`; any statement
     repair re-freezes the targets below, and their quotes are refreshed;
   - the **ch. 2–4 clean-up PR** lands with the two prerequisites (below), and this brief names
     their final lemma names;
@@ -200,10 +200,14 @@ The file's own definitions may be unfolded, but prefer their equation lemmas.
 
 ## Prerequisites (landed before issue)
 
-Rule 10 forbids reading another file's definition without a published lemma. Two such lemmas are
-missing at `243598b7`. They land in the **ch. 2–4 clean-up PR** (G3-5's clean-up, after #195),
-which merges into `cryptography/pass-shelat-ch2-4` before this brief is issued. The issued brief
-gives their exact names; the forms below are what that PR is asked for.
+Rule 10 forbids reading another file's definition without a published lemma. **Pre-issue refresh,
+2026-11-06 PST:** `NUPPT.coinLen_eq` is already public on the campaign base (verified at
+`3ee2c5b28266d986dfce46f25fd4989de861b96e`). #195 at
+`9ac1c4260adb8fbfe8c6f50df7786dbdd015656e` supplies
+`decodeOracleMove_pairEncode_false` and `decodeOracleMove_true_two`. The **ch. 2–4 clean-up
+PR** verifies these and supplies only the remaining decoder cases, including the default case;
+it merges before this brief is issued. Refresh all names and import/route probes at that issue
+base. This draft is not yet issued.
 
 | Prerequisite | Beside | Form | Used by |
 |---|---|---|---|

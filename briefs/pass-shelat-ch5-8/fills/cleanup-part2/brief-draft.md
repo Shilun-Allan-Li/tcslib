@@ -3,10 +3,13 @@
 **Status: draft, 2026-11-05.** Issued after gate 04 closes and #195 (S2b) merges into
 `cryptography/pass-shelat-ch2-4`. Part 1 is #203 (merged).
 
+**Pre-issue refresh, 2026-11-06 PST.** Gate 04 is at dispatched round 5, with zero seal
+exclusions. S1 (#227) and S2 precede this work under Q2 (A); this remains an unissued draft.
+
 **Before issue:**
-- the base is the branch head after #195's merge;
-- gate 04 round 4's **seal exclusions** (inherited ch. 2–4 proofs that read other files'
-  definitions, listed by the repair worker in `exclusions.md`) are copied into item J below;
+- the base is the branch head after #195, S1 (#227) and S2 have merged;
+- reconcile item J and item N's untouched-proof rows against that base: gate 04 round 5 has
+  **zero exclusions**, and work already done by #195, S1 or S2 is not commissioned again;
 - the line numbers below are refreshed at the base;
 - the brief is split if two workers run in parallel. The natural split is DL-17 (item B, about 23
   files) against the rest, on disjoint files;
@@ -63,6 +66,8 @@ delete the restatements and re-point their users (about 23 files in packs 03a, 0
 `cons_poly` is an alias without a duplicated proof; keep it.
 
 **C. Equation lemmas in `PPT.lean`:**
+These are already public at the Codex intake base `3ee2c5b28266d986dfce46f25fd4989de861b96e`.
+Verify and cite them at the issue base; do not add duplicate declarations:
 - `NUPPT.coinLen_eq : A.coinLen n = A.coins.eval n`;
 - `NUPPT.advInput_eq : A.advInput n y = pairEncode (List.replicate n true) y`;
 - `NUPPT.runAtL_eq` (its defining equation).
@@ -72,6 +77,9 @@ Then re-point `Closure.lean`'s `simp [runAtL, advInput, coinLen, …]` sites to 
 (`fills/efficiency/brief-draft.md`, "Prerequisites").
 
 **D. `decodeOracleMove`'s case lemmas** (`Asymptotic/PRF.lean`), public, beside the definition:
+Reuse #195's public `decodeOracleMove_pairEncode_false` and `decodeOracleMove_true_two`
+(verified at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e`). Add only forms still missing at
+the issue base, with coverage for all four cases below:
 - `⟨[false], x⟩` with `|x| = ℓ₁` decodes as `query x`;
 - `⟨[false], x⟩` with `x` of any other length decodes as `ret false`;
 - `[true, b]` decodes as `ret b`;
@@ -86,8 +94,12 @@ through the facade (03a #12).
 `GI/Efficiency.lean:141`, `GI/EfficiencyRep.lean:194, 388`, `GGMReductionEval.lean:534`. They go
 through `orbit_zero`.
 
-**J. Gate 04's seal exclusions** (`gates/04-s2b/evidence-r4/exclusions.md`: section A, 48 definitional reads; section B, 75 explicit unfolds; all in inherited ch. 2–4 declarations): re-prove the listed inherited ch. 2–4 proofs
-through published equation lemmas, adding missing equation lemmas beside their definitions.
+**J. Inherited rule-10 reads.** Gate 04 round 5 has no exclusions. Round 4's historical
+`gates/04-s2b/evidence-r4/exclusions.md` (48 definitional reads and 75 explicit unfolds) is an
+input to reconciliation, not an outstanding exclusion list. Use item N's 764 untouched-proof
+rows and the fill reviews as the current inventory; remove rows already repaired by #195,
+S1 or S2, and commission each remaining declaration once. Re-prove those consumers through
+published equation lemmas, adding missing equations beside their definitions.
 
 **K. Docstring (gate 03e round 3, minor 1).** In `ZeroKnowledge/Defs.lean`'s D8 deviation paragraph,
 replace "the rewinding simulators of the chapter are truncated and the theorems become statistical"
