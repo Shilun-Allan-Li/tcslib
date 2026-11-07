@@ -1,8 +1,13 @@
 # Gate 06: four external statement audits of ch. 5–8 (S4; internal draft)
 
-**Status: internal reconciliation draft (2026-11-07); not issued or staged.** The source
-reference reviewed here is `e9d64158461bfe24ddc88ab885bc4017899b4c16` on the local integration
-branch. This is a review reference, not a final audit pin or a readiness attestation.
+**Status: unissued DRAFT (2026-11-07); not staged or dispatched.** Frozen integration source:
+`3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. This is not an issued audit pin.
+The 467-module native union is source/object/prerequisite reconciled with zero stale records
+after 180 + 2 affected checks; `TCSlib.lean` was not elaborated. The fresh collector is active;
+fresh whole-file seals, controls and final axiom outcomes are not yet available. Historical
+prong heads are provenance only. Auditor: Codex; findings Markdown in the audit chat; the user
+dispatches the job. No readiness or final seal-pass attestation is made here.
 
 The user's 2026-11-04 gating ruling supersedes the original single-gate proposal: S2a and S2b
 have API gates, and **each prong has its own statement gate before that prong's fills**. Gate
@@ -35,6 +40,24 @@ provenance only; none is the source pin for these integrated audits.
 | 06C | Composability, ch. 7 | `Composability/{Defs,PRFScheme,CCA2Scheme,PublicKey,NonMalleable,SimNonMalleable,SequentialZK,ThreeColoring}` and facade | Defs 168.1, 171.5, 172.6, 173.7; Thm 168.2, Claim 169.a, Alg 169.3, Thm 170.4, Claim 172.a, Thm 174.8, optional Thm 175.9, Thm 175.1; the explicit sequential 3COL corollary |
 | 06D | Randomness, ch. 8 | `Randomness/{Extraction,Learning,BPPBridge,Derandomization}` and facade; `LearningTheory/PAC/{Defs,Prediction}`, `InformationTheory/Samples` and their dependencies as already-gated context | Def 179.a; Thms 179.1, 180.1, 183.6 |
 
+## Source bundle and common records (draft; not assembled)
+
+Each pack identifies its primary paths and already-gated context. Include their complete
+TCSlib import closure at the frozen source, plus `TCSlib.lean` for root-export context; every
+included path needs raw bytes, a hash and revision-qualified provenance. Shared owner-side
+interfaces are context rather than fresh prerequisite statement audits. The seven separately
+verified import/option-only files are `TCSlib.lean`, the four topic facades in the table above,
+`TCSlib/InformationTheory.lean` and `TCSlib/LearningTheory/PAC.lean`; they are outside theorem
+sealing, not foreign-definition/name exemptions. Root-export elaboration is not claimed.
+
+Common record paths are root `policy.md` and `PassShelatChapter5-8Plan.md`;
+`briefs/pass-shelat-ch5-8/{inventory-ch5-8.md,duplication-ledger.md}`; this directory's
+`PLAN.md`, `source-manifest.md` and the relevant `06A-pack.md`–`06D-pack.md`; and the final
+preparation evidence index with every cited acceptance artifact. Gate 06D also carries
+`gates/05-pac/{findings/gate05-pac-r3-findings.md,resolutions-r3.md}` under the campaign.
+These are path sets, not assembled or staged bundles. Third-party source delivery follows
+`source-manifest.md`, including link-only Goldreich access.
+
 ## Statement-phase findings retained for the auditor
 
 - Algorithm 99.1's `Dec` refuses malformed ciphertexts (#193); its omission made the CCA1 claim
@@ -51,7 +74,7 @@ provenance only; none is the source pin for these integrated audits.
 - Yao is audited first as an OT-hybrid protocol, with its real form a corollary of the separate
   honest-but-curious composition statement ([Gol04, §7.3], Q-5).
 
-## Integration changes present in the reviewed source
+## Integration changes present in the frozen source
 
 1. **Canonical OT.** `SamplerCanonical` is derived by `Collection.sample_eq_encD`. The local
    decoding specification used by correctness follows from the retained canonical-only `henc`
@@ -89,34 +112,81 @@ provenance only; none is the source pin for these integrated audits.
    interfaces are context, not fresh external audits here. For 06D, Gate 05's closing findings,
    repairs and the `main` transfer are also context. These integrations are present; the old
    holds for #195, Q-5, the honest-party efficiency ruling and #194 are stale.
-2. **Finish common source verification.** Complete Rule-10 collection/seals over elaborated
-   types and proof terms, including generated/private declarations and anonymous commands;
-   retain sensitivity controls and an explicit-unfold scan including continuation lists.
+2. **Finish common source verification.** Complete fresh, dynamically scoped Rule-10 collection
+   and full seals over stored types and values, including generated/private declarations and
+   anonymous commands via the complete import-closure supplement. Retain sensitivity controls
+   and an explicit-unfold scan including continuation lists; approved notation remains the only
+   name-level exception.
    Classify inherited failures against the actual PR base; do not turn them into a blanket
    exclusion. Resolve actual touched-source failures, then replay every affected module and
    downstream module and reconcile final source/object fingerprints.
 3. **Complete final attestations and attachment reconciliation.** Reconcile the `sorry` census,
    axiom records, declarations, style/API checks and recorded exceptions at the same final
    source. Use the verified primary-source URLs/hashes and version limits; do not redistribute the
-   Goldreich drafts. Then select the full final source commit
-   and records commit, build matching bundles/manifests and finish the four packs/prompts.
-   This step has not been done by this internal draft.
+   Goldreich drafts. Retain the frozen source commit unless new repairs require a new pin and
+   source-matched verification; select the final records commit, build matching bundles/manifests
+   and finish the four packs/prompts. This step has not been done by this unissued draft.
 4. **User dispatches 06A–D.** The four audits may run in parallel after steps 1–3. Each returns
    its named findings file; repair findings and repeat the relevant audit until it closes at
    0 blockers and 0 majors.
 5. **Fills follow their own prong's statement gate.** Preserve the user's per-prong rule.
-   The separate external S2 candidate-host fill is not silently included or accepted by this
-   integration reconciliation, and its priority before clean-up part 2 remains unchanged.
+   The S2 candidate-host fill retains its separate source pin and acceptance/landing record;
+   Gate 06 does not attest it. Bundle only source bytes present at the chosen Gate 06 head.
+   Clean-up part 2 still follows S2 merge under the standing order.
 
-## Evidence limits at this draft
+## Current verification and limits
 
-The initial union and API replays spanned staged source versions. The later 158-module reader
-and 25-module graph-sampler passes completed; `evidence-run/seal-ready-pinned.json` now
-reconciles all 467 module source/object hashes and direct TCSlib prerequisite freshness at
-the reviewed source. The root export file is outside this union and is verified import-only.
-This is a reconciliation of serial checks, not a second cold build. Whole-file Rule-10 seals,
-controls and final axiom dispositions remain pending. Source changes required by those checks
-must receive a new affected replay and reconciliation before the audit pin is frozen.
-No external gate is issued by this document.
+Evidence paths in this section are under
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/`.
 
-**Not yet clear to merge — final seals/controls, source access reconciliation and gate dispatch remain.**
+- **Native reconciliation:** `evidence-run/final-native-summary.json` and
+  `evidence-run/final-repair-seal-ready.json` record all 467 union modules with zero stale
+  source/object/direct-prerequisite records at the frozen head, after 180 + 2 affected checks.
+  Remaining objects match earlier successful same-chat checks. This is reconciliation of serial
+  checks, not a second cold 467-module build. `TCSlib.lean` was not elaborated.
+- **Source scope:** `evidence-rule10-final-r1/{pins.json,modules.json,source-fingerprints.json}`
+  pins 61 changed Lean files: 54 mathematical modules and seven separately verified
+  import/option-only facade/export files. Scope is derived from the checked base-to-head source
+  set, not fixed to the earlier 51-module survey. The fresh collector is active; prepared
+  metadata is not its completion, axiom outcome or a seal-pass record. Fresh full seals and
+  all eleven controls remain to be run and reconciled at this pin.
+- **Style/API checks:** `evidence-style-final-r2/comparison.json` compares all 61 changed files:
+  10 inherited style findings, zero new findings (repository style exit code 1). Each complete
+  prong directory's plain and `check8b` campaign runs returned 0. This is not an all-library
+  campaign-lint pass. Preserve the precise existing exceptions and final source/API scan limits.
+- **Lexical/header checks:** `evidence-static-final-r1/summary.json` records lexical `sorry`
+  511 → 544; zero `admit` and zero `axiom` commands on both sides; normalized public-header
+  parser rows 816 ADDED / 7 REMOVED / 13 CHANGED. These are source/parser counts, not actual
+  elaborated declaration identities or a standard-only transitive axiom claim.
+- **Historical seal evidence:** the e9 source survey retains 51 valid installation/EOF harnesses,
+  17 passing modules and 34 failing modules with 195 source diagnostics. Exact classification
+  was 120 diagnostics in unchanged declarations and 75 in new/changed declarations at that
+  historical comparison. Later ordinary checks and old-collector diagnostic seals are repair
+  evidence, not final coverage. Reconcile final inherited dispositions against the checked
+  ancestor/actual target; an unchanged inherited source failure remains failed evidence, not
+  a seal pass, exclusion or automatic waiver. Keep invalid harness attempts separately labelled.
+- **Base and source identity:** the checked comparison ancestor is the full base SHA above.
+  `evidence-static-final-r1/comparison-base-equivalence.json` records equality to a later
+  records-only target snapshot. Any further target advance requires a recorded source/root-export
+  equivalence check or a refreshed actual-base comparison; do not silently use a moving base.
+
+## Unfilled issue-time attestations
+
+These fields remain placeholders. No final collector result, seal/control outcome, records
+commit, issued bundle or manifest hash is inferred from the completed native/static checks.
+
+| Attestation | Issue-time value |
+|---|---|
+| Issued source (same as frozen head, or newly verified replacement) / actual-base disposition | `[ISSUE_SOURCE_COMMIT]` / `[ISSUE_BASE_DISPOSITION]` |
+| Records commit | `[ISSUE_RECORDS_COMMIT]` |
+| Final evidence index path / hash | `[ISSUE_FINAL_EVIDENCE_INDEX_PATH]` / `[ISSUE_FINAL_EVIDENCE_INDEX_SHA256]` |
+| Fresh collector, actual axiom identities/dispositions and outcomes | `[ISSUE_COLLECTOR_AXIOM_EVIDENCE]` / `[ISSUE_COLLECTOR_AXIOM_OUTCOMES]` |
+| Fresh full seals and eleven controls, including all source-failure dispositions | `[ISSUE_SEAL_CONTROL_EVIDENCE]` / `[ISSUE_SEAL_CONTROL_OUTCOMES]` |
+| Final explicit-unfold/source/API scans and precise style exceptions | `[ISSUE_SCAN_API_STYLE_EVIDENCE]` / `[ISSUE_SCAN_API_STYLE_DISPOSITIONS]` |
+| Each pack's exact bundle and manifest paths/hashes | `[ISSUE_06A_…]`, `[ISSUE_06B_…]`, `[ISSUE_06C_…]`, `[ISSUE_06D_…]` (expanded in each pack) |
+| Receiving-auditor source-access basis and exact version limits | `[ISSUE_SOURCE_ACCESS_DISCLOSURE]` |
+
+Any new source repair requires its affected/downstream replay and fresh source-matched
+verification before issue. No external gate is issued or staged by this document.
+
+**Not yet clear to merge — fresh verification outcomes, source-access disclosures, issue-time pins/bundles and user dispatch remain.**

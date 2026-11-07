@@ -1,9 +1,17 @@
 # Gate06 primary sources: internal manifest draft
 
-**Internal source-verification draft, 2026-11-07. Not a gate issue or acceptance record.**
-The files below were read as data with `pdftotext -layout` and `pdfinfo`. No Lean/cache/apps,
-Git mutations, source edits or external staging were performed. All PDF copies remain under
-the ignored integration-worktree directory `.lake/ps-maintainer/gate06/sources/`.
+**Status: unissued source-manifest DRAFT (2026-11-07); not staged or dispatched.** The
+associated frozen integration source is `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`,
+checked comparison ancestor `eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232.
+Current native/static/style verification and its limits are in `PLAN.md`. The fresh collector
+is active; fresh seals, controls and final axiom outcomes are not yet available. This manifest
+establishes source-copy identity/access limits, not a gate issue, audit pin or acceptance record.
+
+The source-recovery verification recorded below used `pdftotext -layout` and `pdfinfo` to read
+files as data. That source-recovery pass performed no Lean/cache/apps, Git mutations, source
+edits or external staging. All recovered third-party PDF copies remain under the ignored integration-worktree
+directory `.lake/ps-maintainer/gate06/sources/`. The present record refresh does not assert a
+new PDF-content or receiving-auditor access verification.
 
 This manifest supersedes the earlier draft README's missing-file statements for the named
 Goldreich and PSV sources. Recovery for personal reading does **not** make the Goldreich PDFs
@@ -30,6 +38,8 @@ Poppler.
 The existing PS10 copies remain identified by SHA-256
 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`
 (1,771,458 bytes). That is the separately recorded course PDF; its book/PDF offset is 12.
+The exact PS10 campaign copy is tracked as `Pass–Shelat.pdf` at the frozen source commit;
+retrieve it from that Git snapshot or its [raw file](https://raw.githubusercontent.com/Shilun-Allan-Li/tcslib/3f6db40e1688c4a0bb922c9575dd3bd2157a650b/Pass%E2%80%93Shelat.pdf) and verify the hash above. This identifies the delivered repository copy; it does not assert the receiving auditor has already accessed it.
 
 ## PSV06: cited definition is present
 
@@ -92,7 +102,7 @@ a verified published-edition page mapping.**
 | Gol04, §7.3.2, Construction 7.3.5 / Proposition 7.3.6 in this draft | 52–55 | 638–641 | OT from enhanced trapdoor permutations; the proof explicitly discusses the receiver's sampler coins. |
 | Gol04, Appendix C.1 / Definition C.1.1 | 2–3 | 759–760 | Enhanced inversion hardness even given domain-sampler coins. |
 
-Two citation-precision qualifications are needed in the packs:
+The packs retain the following two citation-precision qualifications; preserve them in the issued source/bundle:
 
 - Definition 4.3.1 is the strict-PPT aborting formulation. The liberal expected-time formulation
   is separately numbered 4.3.5 in this draft. Keep the formal retry/truncation bridge and the
@@ -126,10 +136,16 @@ locatable in primary author sources. Remaining source work is precise version/ac
 disclosure, not a claim that these copies match publisher editions. The full PSV proofs are
 still not recovered. KV94/SSBD14/Gar26 were not re-reviewed in this source task.
 
-Before issue, carry the two citation-precision qualifications and link-only Goldreich delivery
-into the reconciled packs; identify author versions in the source manifest, preserve the
-COPY/invalid-output distinction, and check that the receiving auditor has source access.
-This is not an additional mathematical ruling. Common Rule-10 seals, final replay/evidence
-reconciliation and the user's external dispatch remain separate prerequisites.
+The current 06B/06C drafts carry these citation qualifications. At issue preserve the author-
+version labels, COPY/invalid-output distinction and link-only Goldreich delivery. Record the
+receiving auditor's source-access basis or exact unavailable comparisons as
+`[ISSUE_SOURCE_ACCESS_DISCLOSURE]`; do not turn unavailable source comparisons into blanket
+source-fidelity approval. KV94/SSBD14/Gar26 remain previously gated/contextual source uses,
+not fresh access or verification claims here.
 
-**Not yet clear to merge — source-version/access disclosures and the existing verification/gate prerequisites remain.**
+The final records commit, bundle/manifest hashes, fresh collector/axiom dispositions and
+seal/control outcomes remain the explicit issue-time placeholders in `PLAN.md` and each pack.
+This is not an additional mathematical ruling. No external job is prepared or issued by this
+manifest; the user's dispatch and the already-required common verification remain separate.
+
+**Not yet clear to merge — receiving-auditor source-access disclosures, fresh verification outcomes and issue-time reconciliation remain.**

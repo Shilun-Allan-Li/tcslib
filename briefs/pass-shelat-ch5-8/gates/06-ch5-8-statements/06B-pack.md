@@ -1,11 +1,13 @@
 # Gate 06B (Pass–shelat §6.2, secure computation): external statement audit pack
 
-**Status: internal reconciliation draft (2026-11-07); not issued or staged.** Reviewed source
-reference: `e9d64158461bfe24ddc88ab885bc4017899b4c16` on the pushed integration branch. This is
-not an issued audit pin: Rule-10 seals remain pending. The current 467-module source/object
-manifest has zero stale records; any subsequent source repair requires an affected replay.
-Historical prong heads are provenance only. The recorded auditor choice is Codex (findings
-Markdown in chat); the user dispatches the job. No readiness attestation is made here.
+**Status: unissued DRAFT (2026-11-07); not staged or dispatched.** Frozen integration source:
+`3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. This is not an issued audit pin.
+The 467-module native union is source/object/prerequisite reconciled with zero stale records
+after 180 + 2 affected checks; `TCSlib.lean` was not elaborated. The fresh collector is active;
+fresh whole-file seals, controls and final axiom outcomes are not yet available. Historical
+prong heads are provenance only. Auditor: Codex; findings Markdown in the audit chat; the user
+dispatches the job. No readiness or final seal-pass attestation is made here.
 
 **What is audited:** [PS10] §6.2 as formalized in `TCSlib/Cryptography/SecureComputation/`:
 definitions, statements, docstrings and proof sketches, against the sources. Proofs are out of
@@ -13,7 +15,7 @@ scope, except the short ones that carry a definition's correctness (correctness 
 special encryption, of garbling and of Yao; the composition's phase lemmas). The deliverable is
 **`gate06B-findings.md`**.
 
-**Sources required at issue (availability is not yet attested):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
+**Sources required at issue (receiving-auditor access is not yet attested):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
 January 2010 (book page = PDF page − 12), §6.2, book pp. 154–164. [Gol04] O. Goldreich,
 *Foundations of Cryptography, Volume 2*, §7.3 (including Theorem 7.3.3) and Appendix C.1.
 Official author drafts are located and locally verified in `source-manifest.md`. Supply
@@ -52,8 +54,22 @@ All thirteen secure-computation modules and the topic facade are included. Publi
 cover real/ideal sampler equations, predicate characterizations, functionality/strategy/protocol
 fields, and simulator run/coin contracts. Composition and Yao read the shared interaction
 layer through public lemmas. Correctness/phase lemmas remain distinct from admitted security
-and efficiency statements. Rule-10 seals remain pending; the current native source/object
-manifest is reconciled, with affected rechecks required after further source repairs.
+and efficiency statements. Native source/object/prerequisite reconciliation is complete at
+the frozen head, with the root export not elaborated; the fresh collector is active and fresh
+seal/control outcomes remain pending. Any source repair requires affected rechecks.
+
+## Source bundle and context (draft; not assembled)
+
+Primary paths below use braces as set notation; each name has the `.lean` suffix:
+
+- `TCSlib/Cryptography/SecureComputation.lean`.
+- `TCSlib/Cryptography/SecureComputation/{Defs,ObliviousTransfer,SpecialEncryption,SpecialEncryptionSecurity,Garbling,GarblingSpecial,GarblingSecurity,Hybrid,Compose,ComposePhases,ComposeSecurity,Yao,YaoReal}.lean`.
+
+The bundle must contain these paths' complete final-head TCSlib import closure, plus
+`TCSlib.lean` for root-export context, with raw-byte hashes and revision-qualified provenance.
+Shared Games/Interaction/Machines/Collections/FinDist/complexity owners are context, not new
+prerequisite audits. Include the common record/evidence set specified in `PLAN.md` and retain
+source-version/access limits. Do not substitute historical prong or e9 dependency copies.
 
 ## Brief for the auditor
 
@@ -99,16 +115,30 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
 
 ## Pending issue-time attestations
 
-- Exact final source/records commits and matching source bundle/manifest, after the common
-  preparation in `PLAN.md`; the internal source reference above is not an issued pin.
-- Final source-matched affected replay/downstream checks, `sorry` census and axiom records.
-- Rule-10 elaborated-term/anonymous-command coverage, installed seals, sensitivity controls and
-  explicit-unfold scan; inherited failures classified against the actual PR base.
-- Style/API lint comparison and precise existing exceptions; source attachments with hashes.
-  Earlier union/API replay summaries concern staged sources. The later
-  `evidence-run/seal-ready-pinned.json` reconciles all 467 current source/object/prerequisite
-  records; seal-driven repairs must be checked again in their affected closure.
+These are explicit issue-time fields, not completed attestations. Common evidence and the
+current native/static/style limits are in `PLAN.md`.
 
+- Issued source: `[ISSUE_SOURCE_COMMIT]` (must match the frozen head above, or receive a new
+  source-matched verification); actual comparison/target disposition: `[ISSUE_BASE_DISPOSITION]`;
+  records: `[ISSUE_RECORDS_COMMIT]`.
+- Exact source bundle: `[ISSUE_06B_BUNDLE_PATH]`, `[ISSUE_06B_BUNDLE_SHA256]`;
+  matching manifest: `[ISSUE_06B_MANIFEST_PATH]`, `[ISSUE_06B_MANIFEST_SHA256]`.
+- Final source/native evidence: `[ISSUE_FINAL_EVIDENCE_INDEX_PATH]`,
+  `[ISSUE_FINAL_EVIDENCE_INDEX_SHA256]`; retain the root-export non-elaboration limit and all
+  affected/downstream rechecks required by any later repair.
+- Fresh collector, actual axiom identities and dispositions: `[ISSUE_COLLECTOR_AXIOM_EVIDENCE]`,
+  `[ISSUE_COLLECTOR_AXIOM_OUTCOMES]`. Current prepared scope is 54 mathematical modules and seven
+  separately verified import/option-only facade/export files; derive scope from pinned metadata.
+- Fresh full seals/controls: `[ISSUE_SEAL_CONTROL_EVIDENCE]`, `[ISSUE_SEAL_CONTROL_OUTCOMES]`.
+  Cover stored types/values/private/generated declarations and anonymous commands through the
+  full import-closure supplement, without name exclusions beyond approved notation. Classify
+  every source failure against the actual base; inherited failures remain failed observations,
+  not seal passes, exclusions or automatic waivers. Invalid harnesses remain separately labelled.
+- Final explicit-unfold/source/API scans and precise existing style exceptions:
+  `[ISSUE_SCAN_API_STYLE_EVIDENCE]`, `[ISSUE_SCAN_API_STYLE_DISPOSITIONS]`. Lexical census and
+  parser rows do not replace elaborated axiom/declaration identities.
+- Receiving auditor's source access and exact version/comparison limits:
+  `[ISSUE_SOURCE_ACCESS_DISCLOSURE]`; preserve `source-manifest.md`'s linked-source arrangement.
 
 ## Findings format (auditor fills)
 
@@ -124,4 +154,4 @@ Severity guide:
 
 The gate closes at **0 blockers and 0 majors**.
 
-**Not yet clear to merge — common verification, source attachments and user dispatch remain.**
+**Not yet clear to merge — fresh verification outcomes, source-access disclosures, issue-time pins/bundles and user dispatch remain.**

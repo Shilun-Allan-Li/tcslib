@@ -1,11 +1,13 @@
 # Gate 06C (Pass–shelat ch. 7, composability): external statement audit pack
 
-**Status: internal reconciliation draft (2026-11-07); not issued or staged.** Reviewed source
-reference: `e9d64158461bfe24ddc88ab885bc4017899b4c16` on the pushed integration branch. This is
-not an issued audit pin: Rule-10 seals remain pending. The current 467-module source/object
-manifest has zero stale records; any subsequent source repair requires an affected replay.
-Historical prong heads are provenance only. The recorded auditor choice is Codex (findings
-Markdown in chat); the user dispatches the job. No readiness attestation is made here.
+**Status: unissued DRAFT (2026-11-07); not staged or dispatched.** Frozen integration source:
+`3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. This is not an issued audit pin.
+The 467-module native union is source/object/prerequisite reconciled with zero stale records
+after 180 + 2 affected checks; `TCSlib.lean` was not elaborated. The fresh collector is active;
+fresh whole-file seals, controls and final axiom outcomes are not yet available. Historical
+prong heads are provenance only. Auditor: Codex; findings Markdown in the audit chat; the user
+dispatches the job. No readiness or final seal-pass attestation is made here.
 
 **What is audited:** the trusted surface of [PS10] ch. 7 as formalized in
 `TCSlib/Cryptography/Composability/`: definitions, statements, docstrings and proof sketches,
@@ -13,7 +15,7 @@ against the sources. Proofs are out of scope, except the short ones that carry a
 correctness (for example `correct` fields and the phase lemma of `seqRep`). The deliverable is
 **`gate06C-findings.md`**.
 
-**Sources required at issue (availability is not yet attested):**
+**Sources required at issue (receiving-auditor access is not yet attested):**
 - [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed., January 2010. Book page = PDF
   page − 12. §7.1–7.2, book pp. 167–176.
 - [PSV06] Pass, shelat, Vaikuntanathan, CRYPTO 2006, LNCS 4117, pp. 271–289 (Definition 3).
@@ -41,6 +43,10 @@ Primary author versions and draft/published-edition comparison limits are in
 | Def 173.7 (relation-based non-malleability) and Thm 174.8 | `SimNonMalleable.lean` | in [PSV07]'s form; both directions stated |
 | Thm 175.1 (sequential composition of ZK) | `SequentialZK.lean` | generic repetition statements admitted; phase and zero-error/abort corollaries proved from public interfaces |
 | Sequential 3COL corollary with explicit count | `ThreeColoring.lean` | `negligible_colSeqSound`, `colSeq_efficientProverProof_zk`; corollary uses admitted generic repetition statements |
+
+`CCA2Scheme.lean` constructs private-key encryption. `PublicKey.lean` defines public-key
+attack games and the conditional padded CPA bridge of Claim 172.a; no public-key CCA2
+construction is claimed.
 
 ## Prior findings (verify the repairs)
 
@@ -72,8 +78,22 @@ Primary author versions and draft/published-edition comparison limits are in
   `seqRep` schedule is not `colProtocolRep`.
 - Sequential ZK uses shared `coinBlock` from `Asymptotic/Adversary.lean`. CCA2's equal-length
   padding step uses `Collection.ofFn_padFin_of_le` in `CollectionsHelpers.lean` (DL-6/DL-7).
-  Public reading interfaces and topic/root exports are present; seals are pending. The current
-  native source/object manifest is reconciled; further source repairs require an affected replay.
+  Public reading interfaces and topic/root exports are present. Native reconciliation is complete
+  at the frozen head, with the root export not elaborated; the fresh collector is active and fresh
+  seal/control outcomes remain pending. Further source repairs require an affected replay.
+
+## Source bundle and context (draft; not assembled)
+
+Primary paths below use braces as set notation; each name has the `.lean` suffix:
+
+- `TCSlib/Cryptography/Composability.lean`.
+- `TCSlib/Cryptography/Composability/{Defs,PRFScheme,CCA2Scheme,PublicKey,NonMalleable,SimNonMalleable,SequentialZK,ThreeColoring}.lean`.
+
+The bundle must contain these paths' complete final-head TCSlib import closure, plus
+`TCSlib.lean` for root-export context, with raw-byte hashes and revision-qualified provenance.
+Shared Games/Interaction/Machines/Collections/FinDist/complexity owners are context, not new
+prerequisite audits. Include the common record/evidence set specified in `PLAN.md` and retain
+source-version/access limits. Do not substitute historical prong or e9 dependency copies.
 
 ## Brief for the auditor
 
@@ -121,16 +141,30 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
 
 ## Pending issue-time attestations
 
-- Exact final source/records commits and matching source bundle/manifest, after the common
-  preparation in `PLAN.md`; the internal source reference above is not an issued pin.
-- Final source-matched affected replay/downstream checks, `sorry` census and axiom records.
-- Rule-10 elaborated-term/anonymous-command coverage, installed seals, sensitivity controls and
-  explicit-unfold scan; inherited failures classified against the actual PR base.
-- Style/API lint comparison and precise existing exceptions; source attachments with hashes.
-  Earlier union/API replay summaries concern staged sources. The later
-  `evidence-run/seal-ready-pinned.json` reconciles all 467 current source/object/prerequisite
-  records; seal-driven repairs must be checked again in their affected closure.
+These are explicit issue-time fields, not completed attestations. Common evidence and the
+current native/static/style limits are in `PLAN.md`.
 
+- Issued source: `[ISSUE_SOURCE_COMMIT]` (must match the frozen head above, or receive a new
+  source-matched verification); actual comparison/target disposition: `[ISSUE_BASE_DISPOSITION]`;
+  records: `[ISSUE_RECORDS_COMMIT]`.
+- Exact source bundle: `[ISSUE_06C_BUNDLE_PATH]`, `[ISSUE_06C_BUNDLE_SHA256]`;
+  matching manifest: `[ISSUE_06C_MANIFEST_PATH]`, `[ISSUE_06C_MANIFEST_SHA256]`.
+- Final source/native evidence: `[ISSUE_FINAL_EVIDENCE_INDEX_PATH]`,
+  `[ISSUE_FINAL_EVIDENCE_INDEX_SHA256]`; retain the root-export non-elaboration limit and all
+  affected/downstream rechecks required by any later repair.
+- Fresh collector, actual axiom identities and dispositions: `[ISSUE_COLLECTOR_AXIOM_EVIDENCE]`,
+  `[ISSUE_COLLECTOR_AXIOM_OUTCOMES]`. Current prepared scope is 54 mathematical modules and seven
+  separately verified import/option-only facade/export files; derive scope from pinned metadata.
+- Fresh full seals/controls: `[ISSUE_SEAL_CONTROL_EVIDENCE]`, `[ISSUE_SEAL_CONTROL_OUTCOMES]`.
+  Cover stored types/values/private/generated declarations and anonymous commands through the
+  full import-closure supplement, without name exclusions beyond approved notation. Classify
+  every source failure against the actual base; inherited failures remain failed observations,
+  not seal passes, exclusions or automatic waivers. Invalid harnesses remain separately labelled.
+- Final explicit-unfold/source/API scans and precise existing style exceptions:
+  `[ISSUE_SCAN_API_STYLE_EVIDENCE]`, `[ISSUE_SCAN_API_STYLE_DISPOSITIONS]`. Lexical census and
+  parser rows do not replace elaborated axiom/declaration identities.
+- Receiving auditor's source access and exact version/comparison limits:
+  `[ISSUE_SOURCE_ACCESS_DISCLOSURE]`; preserve `source-manifest.md`'s linked-source arrangement.
 
 ## Findings format (auditor fills)
 
@@ -146,4 +180,4 @@ Severity guide:
 
 The gate closes at **0 blockers and 0 majors**.
 
-**Not yet clear to merge — common verification, source attachments and user dispatch remain.**
+**Not yet clear to merge — fresh verification outcomes, source-access disclosures, issue-time pins/bundles and user dispatch remain.**

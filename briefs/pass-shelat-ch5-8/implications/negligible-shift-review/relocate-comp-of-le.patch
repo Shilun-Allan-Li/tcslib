@@ -1,0 +1,65 @@
+--- a/TCSlib/Cryptography/Foundations/Negligible.lean
++++ b/TCSlib/Cryptography/Foundations/Negligible.lean
+@@ -33,6 +33,8 @@
+ 
+ * `Negligible.add`, `Negligible.mul`, `Negligible.const_mul`, `Negligible.mono`: closure.
+ * `Negligible.mul_pow`: a negligible function times a polynomial is negligible.
++* `Negligible.comp_of_le`: composing with a map pointwise at least the identity preserves
++  negligibility.
+ * `negligible_two_pow_neg`: `2^{-n}` is negligible; `negligible_zero`: so is the constant `0`.
+ * `Noticeable.not_negligible`: noticeable functions are not negligible.
+ * `not_negligible_sub`: a non-negligible function minus a negligible one is
+@@ -78,6 +80,23 @@
+   obtain ⟨n₁, h₁⟩ := hμ c
+   exact ⟨max n₀ n₁, fun n hn =>
+     (h₀ n (le_of_max_le_left hn)).trans_lt (h₁ n (le_of_max_le_right hn))⟩
++
++/-- Composing a negligible function with a natural-valued map pointwise at least the identity
++preserves negligibility. Technical glue for reparameterizing inverse-polynomial bounds.
++
++**Proof sketch.** For the requested exponent, take the original threshold and also require
++`N ≥ 1`. Then `φ N ≥ N` is past that threshold, and the inverse-power bound at `φ N` is at
++most the bound at `N`. No condition is imposed on the finite initial range. -/
++theorem Negligible.comp_of_le {μ : ℕ → ℝ} (hμ : Negligible μ) (φ : ℕ → ℕ) (hφ : ∀ N, N ≤ φ N) :
++    Negligible fun N => μ (φ N) := by
++  intro c
++  obtain ⟨n₀, h₀⟩ := hμ c
++  refine ⟨max n₀ 1, fun N hN => ?_⟩
++  have hN1 : 1 ≤ N := le_trans (le_max_right _ _) hN
++  have hφN : n₀ ≤ φ N := le_trans (le_trans (le_max_left _ _) hN) (hφ N)
++  refine lt_of_lt_of_le (h₀ (φ N) hφN) ?_
++  have hNpos : (0 : ℝ) < (N : ℝ) ^ c := pow_pos (by exact_mod_cast hN1) c
++  exact one_div_le_one_div_of_le hNpos (pow_le_pow_left₀ (by positivity) (by exact_mod_cast hφ N) c)
+ 
+ /-- The sum of two negligible functions is negligible. [Gar26, Exercise 1.1(1)–(2)].
+ 
+--- a/TCSlib/Cryptography/ZeroKnowledge/NP.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+@@ -280,21 +280,12 @@
+   rw [PolyExpr.eval_subst, ← h.length_eq x]
+   exact hB (f x) (w x y) r hist (h.witness x y hxy)
+ 
+-/-! ### Negligibility along polynomial reparametrization -/
+-
+-/-- A negligible function composed with a map `φ ≥ id` is negligible: for `N ≥ max n₀ 1`,
+-`φ N ≥ N ≥ n₀` so `|μ (φ N)| < 1 / (φ N)^c ≤ 1 / N^c` (the bookkeeping for the error bounds
+-`ε(|f x|) = ε(p(|x|))` of the pulled-back protocol, Claim-124.d). -/
+-theorem Negligible.comp_of_le {μ : ℕ → ℝ} (hμ : Negligible μ) (φ : ℕ → ℕ) (hφ : ∀ N, N ≤ φ N) :
+-    Negligible fun N => μ (φ N) := by
+-  intro c
+-  obtain ⟨n₀, h₀⟩ := hμ c
+-  refine ⟨max n₀ 1, fun N hN => ?_⟩
+-  have hN1 : 1 ≤ N := le_trans (le_max_right _ _) hN
+-  have hφN : n₀ ≤ φ N := le_trans (le_trans (le_max_left _ _) hN) (hφ N)
+-  refine lt_of_lt_of_le (h₀ (φ N) hφN) ?_
+-  have hNpos : (0 : ℝ) < (N : ℝ) ^ c := pow_pos (by exact_mod_cast hN1) c
+-  exact one_div_le_one_div_of_le hNpos (pow_le_pow_left₀ (by positivity) (by exact_mod_cast hφ N) c)
++/-! ### Negligibility along polynomial reparametrization
++
++The foundational `Negligible.comp_of_le` theorem supplies the error-bound bookkeeping for
++`ε(|f x|) = ε(p(|x|))` in Claim-124.d: `p.eval ≥ id` preserves negligibility. Its proof lives
++in `Foundations/Negligible.lean`, so lower-layer parameter transports can reuse it too.
++-/
+ 
+ /-! ### Executions of the pulled-back protocol -/
+ 
