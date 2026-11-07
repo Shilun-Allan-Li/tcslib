@@ -41,10 +41,9 @@ None — this file states bounds on Mathlib's `Nat.bits` only.
 
 ## Implementation notes
 
-The file has two namespace roots, `Turing` and `Complexity.LogProg`, against the one-root rule of
-`policy.md` §1: the declarations were moved here from `Encoding` and `Machines/Bin` (and
-`lt_two_pow_bits` from `Randomized/SpaceAmplifyPoly`) with their full names kept, so that no
-downstream reference is renamed (the NatBits dedup, decision D1; the user, 2026-11-06).
+The declarations retain their names in the `Turing` and `Complexity.LogProg` namespaces so
+that machine and register-program consumers keep their existing references. This module sits
+below both layers and gives them a shared home for binary-length bounds.
 
 ## References
 
