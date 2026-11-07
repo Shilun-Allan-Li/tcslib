@@ -1,6 +1,6 @@
 # Dispatch S2 to Claude
 
-**Ready for user dispatch; not dispatched.** Paste this into one Claude session:
+**Dispatched by the user to Claude (2026-11-06 PST).** The issued prompt follows:
 
 ```text
 You are an external Claude fill worker for unit reject-blocks-s2 of the Pass–shelat formalization in https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 + pinned Mathlib).
