@@ -7,6 +7,7 @@ import TCSlib.Complexity.SpaceComplexity.Basic
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.ClassNP.PolyTimePairing
+import TCSlib.Complexity.SpaceComplexity.Codec.Word
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -110,24 +111,38 @@ private lemma epadVirt_length_le (C d : ℕ) (y : List Bool) :
   · rw [epadVirt_of_valid h]; exact length_pairFstD_le y
   · rw [epadVirt_of_not_valid h]; exact Nat.zero_le _
 
+/-- Membership in the bank's language, for a decoded pair. -/
+private lemma epad_mem_Q_iff {C d : ℕ} {mode : Bool} {z y w : List Bool}
+    (hd : pairDecode z = some (y, w)) :
+    z ∈ (epadQ C d mode : Set (List Bool)) ↔ w.getLastD true = true ∧
+      w.length ≤ (Nat.bits y.length).length ∧ epadValid C d y ∧
+      (if mode = true then (pairFstD y).getD (LogProg.bitsVal w) false = true
+        else LogProg.bitsVal w < (pairFstD y).length) := by
+  constructor
+  · rintro ⟨y', w', hd', h⟩
+    rw [hd, Option.some.injEq, Prod.mk.injEq] at hd'
+    obtain ⟨rfl, rfl⟩ := hd'
+    exact h
+  · intro h
+    exact ⟨y, w, hd, h⟩
+
+/-- A word that is not a pair is not in the bank's language. -/
+private lemma epad_not_mem_Q {C d : ℕ} {mode : Bool} {z : List Bool} (hd : pairDecode z = none) :
+    z ∉ (epadQ C d mode : Set (List Bool)) := by
+  rintro ⟨y, w, hd', -⟩
+  rw [hd] at hd'
+  cases hd'
+
 /-- **A genuine query** `⟨y, bits i⟩` with `i ≤ |y|` is in the bank's language exactly when `y`
 is padded and the mode's question holds at `i`. -/
 private lemma epad_query_mem_iff (C d : ℕ) (mode : Bool) (y : List Bool) (i : ℕ)
     (hi : i ≤ y.length) :
     pairEncode y (Nat.bits i) ∈ epadQ C d mode ↔ epadValid C d y ∧
       (if mode = true then (pairFstD y).getD i false = true else i < (pairFstD y).length) := by
-  constructor
-  · rintro ⟨y', w, hd, -, -, hv, hq⟩
-    rw [pairDecode_pairEncode, Option.some.injEq, Prod.mk.injEq] at hd
-    obtain ⟨rfl, rfl⟩ := hd
-    rw [LogProg.bitsVal_bits] at hq
-    exact ⟨hv, hq⟩
-  · rintro ⟨hv, hq⟩
-    refine ⟨y, Nat.bits i, pairDecode_pairEncode y (Nat.bits i),
-      (LogProg.drop_canon (Nat.bits i)).mpr (LogProg.canon_bits i),
-      LogProg.length_bits_mono hi, hv, ?_⟩
-    rw [LogProg.bitsVal_bits]
-    exact hq
+  show pairEncode y (Nat.bits i) ∈ (epadQ C d mode : Set (List Bool)) ↔ _
+  rw [epad_mem_Q_iff (pairDecode_pairEncode y (Nat.bits i)), LogProg.bitsVal_bits]
+  exact ⟨fun h => h.2.2, fun h => ⟨(LogProg.drop_canon _).mpr (LogProg.canon_bits i),
+    LogProg.length_bits_mono hi, h⟩⟩
 
 /-! ### Register machines: syntactic preconditions, counting loops, the validity block and
 the validator (E-PAD checkpoint 2)
@@ -908,13 +923,15 @@ private lemma epadIn_mem (j : Fin 2) : epadIn j ∈ LOGSPACE := by
   · show inputLenLang ∈ LOGSPACE
     exact inputLenLang_mem
 
+/-- The oracle of the register machines: the input deciders' answers. -/
+private noncomputable def epadOr : Fin 2 → List Bool → Bool :=
+  fun j V => MultiTapeTM.indicator (epadIn j : Set (List Bool)) V
+
 /-- The input deciders' answers on a genuine query `⟨y, bits p⟩`: decider `0` reads letter `p`,
 decider `1` compares `p` with `|y|`. -/
 private lemma epadIn_answer (y : List Bool) (p : ℕ) :
-    MultiTapeTM.indicator (epadIn 0 : Set (List Bool)) (pairEncode y (Nat.bits p)) =
-        y.getD p false ∧
-      MultiTapeTM.indicator (epadIn 1 : Set (List Bool)) (pairEncode y (Nat.bits p)) =
-        decide (p < y.length) := by
+    epadOr 0 (pairEncode y (Nat.bits p)) = y.getD p false ∧
+      epadOr 1 (pairEncode y (Nat.bits p)) = decide (p < y.length) := by
   show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _ ∧
     MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
   exact ⟨indicator_inputBitLang y p, indicator_inputLenLang y p⟩
@@ -946,13 +963,11 @@ private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
   refine arm_decides_poly (epadVA C d) (.inr .lscan) epadIn epadIn_mem (C + d + 8) (d + 1)
     fun y => ?_
   have hB := epad_bound C d y.length
-  have hlen := inputLength_loop (epadVA C d)
-    (fun j V => MultiTapeTM.indicator (epadIn j : Set (List Bool)) V) y 1 1 (.inr .lscan)
+  have hlen := inputLength_loop (epadVA C d) epadOr y 1 1 (.inr .lscan)
     (.inr .linc) (.inl .scan) rfl rfl (fun n _ => (epadIn_answer y n).2)
     ((C + d + 8) * (y.length + 1) ^ (d + 1)) (by omega) (fun _ => 0)
     (fun _ => Nat.zero_le _) (Nat.zero_le _)
-  obtain ⟨v', -, hb, -, hr⟩ := epad_val_run (epadVA C d)
-    (fun j V => MultiTapeTM.indicator (epadIn j : Set (List Bool)) V) y y false C d Sum.inl
+  obtain ⟨v', -, hb, -, hr⟩ := epad_val_run (epadVA C d) epadOr y y false C d Sum.inl
     (.inr .yes) (.inr .no) (fun _ => rfl)
     (fun j _ => by rw [show epadS false * j = j from Nat.one_mul j]; exact (epadIn_answer y j).1)
     ((C + d + 8) * (y.length + 1) ^ (d + 1)) (by omega)
@@ -972,6 +987,693 @@ private theorem epad_V_mem (C d : ℕ) : epadV C d ∈ LOGSPACE := by
       rw [indicator_eq_decide]; exact decide_eq_false (fun h => hv (epad_mem_V.mp h))
     rw [if_neg hv, hy]
     exact AHalt.ret rfl ⟨epad_preS (show epadVA C d (.inr .no) = .ret false from rfl) trivial, hb⟩
+
+/-! ### The bank (E-PAD checkpoint 3)
+
+The bank answers the simulator's queries `⟨y, bits i⟩` about the virtual input `epadVirt y`.
+On an input `z` it counts `|z|`, parses `z = ⟨y, w⟩`, checks that the index word `w` is
+canonical and no wider than `|y|`, decodes `i = bitsVal w`, runs the validity block on `y` at
+stride `2` (`y`'s letters are `z`'s doubled first field), and then seeks `i` below `|a|` with
+stride `4` (letter `i` of `a` is letter `4i` of `z`): mode `false` answers whether it is found,
+mode `true` reads the letter found. Registers `9` … `17`: `|z|`, the pointer, the tail base,
+the cap, `i`, the decoder's scratch, and the seek's pointer, limit and index. -/
+
+/-- The bank's labels around the validity block. -/
+private inductive EPadBX where
+  | lscan | linc
+  | zscan | zfirst | ztest (b : Bool) | zread (b : Bool) | zadv (k : Fin 4)
+  | c1T | c1B | c2T | c2B | dd1 | dd2 | c3T | c3B | hcap
+  | ttest (b : Bool) | tcheck | tread | thalve (b : Bool) | tadv (b : Bool)
+  | c4T | c4B
+  | dtest | ddown | dread | dcopy (b : Bool) | dbump (b : Bool) | dclear (b : Bool)
+  | dscale (b : Bool) | dtake (b : Bool) | dinc (b : Bool) (second : Bool) | dadd (b : Bool)
+  | q1T | q1B | q1d | qsT | qsD | qsI (i : Fin 4)
+  | seek | probe | bump | sadv (i : Fin 4) | hit
+  | yes | no
+
+/-- Every bank label, listed. -/
+private def epadBXAll : List EPadBX :=
+  [.lscan, .linc, .zscan, .zfirst, .ztest false, .ztest true, .zread false, .zread true] ++
+  (List.finRange 4).map .zadv ++
+  [.c1T, .c1B, .c2T, .c2B, .dd1, .dd2, .c3T, .c3B, .hcap, .ttest false, .ttest true, .tcheck,
+    .tread, .thalve false, .thalve true, .tadv false, .tadv true, .c4T, .c4B, .dtest, .ddown,
+    .dread] ++
+  ([false, true].flatMap fun b => [.dcopy b, .dbump b, .dclear b, .dscale b, .dtake b,
+    .dinc b false, .dinc b true, .dadd b]) ++
+  [.q1T, .q1B, .q1d, .qsT, .qsD] ++ (List.finRange 4).map .qsI ++
+  [.seek, .probe, .bump] ++ (List.finRange 4).map .sadv ++ [.hit, .yes, .no]
+
+/-- The bank's labels form a finite type (a local instance of the proofs). -/
+private noncomputable def epadBXFintype : Fintype EPadBX := by
+  classical
+  refine Fintype.ofList epadBXAll (fun l => ?_)
+  cases l with
+  | dcopy b => cases b <;> simp [epadBXAll]
+  | dbump b => cases b <;> simp [epadBXAll]
+  | dclear b => cases b <;> simp [epadBXAll]
+  | dscale b => cases b <;> simp [epadBXAll]
+  | dtake b => cases b <;> simp [epadBXAll]
+  | dinc b c => cases b <;> cases c <;> simp [epadBXAll]
+  | dadd b => cases b <;> simp [epadBXAll]
+  | ztest b => cases b <;> simp [epadBXAll]
+  | zread b => cases b <;> simp [epadBXAll]
+  | ttest b => cases b <;> simp [epadBXAll]
+  | thalve b => cases b <;> simp [epadBXAll]
+  | tadv b => cases b <;> simp [epadBXAll]
+  | _ => simp [epadBXAll]
+
+/-- The targets of the outer pair scan's advances. -/
+private def epadZEnd (k : Fin 4) : EPadBX :=
+  if k = 0 then .ztest false else if k = 1 then .ztest true else if k = 2 then .zscan else .c1T
+
+/-- **The bank** in mode `mode`, as an abstract register machine. -/
+private def epadBA (C d : ℕ) (mode : Bool) : ARM 18 2 (EPadVL C d ⊕ EPadBX)
+  | .inl l => epadValCode true C d Sum.inl (.inr .q1T) (.inr .no) l
+  | .inr .lscan => .call 1 .whole [9] (.inr .linc) (.inr .zscan)
+  | .inr .linc => .inc 9 (.inr .lscan)
+  | .inr .zscan => .jeq 10 9 (.inr .no) (.inr .zfirst)
+  | .inr .zfirst => .call 0 .whole [10] (.inr (.zadv 1)) (.inr (.zadv 0))
+  | .inr (.ztest b) => .jeq 10 9 (.inr .no) (.inr (.zread b))
+  | .inr (.zread b) => .call 0 .whole [10] (if b then .inr (.zadv 2) else .inr (.zadv 3))
+      (if b then .inr .no else .inr (.zadv 2))
+  | .inr (.zadv k) => .inc 10 (.inr (epadZEnd k))
+  | .inr .c1T => .jeq 11 10 (.inr .c2T) (.inr .c1B)
+  | .inr .c1B => .inc 11 (.inr .c1T)
+  | .inr .c2T => .jeq 1 10 (.inr .dd1) (.inr .c2B)
+  | .inr .c2B => .inc 1 (.inr .c2T)
+  | .inr .dd1 => .dec 1 (.inr .dd2)
+  | .inr .dd2 => .dec 1 (.inr .c3T)
+  | .inr .c3T => .jeq 12 1 (.inr .hcap) (.inr .c3B)
+  | .inr .c3B => .inc 12 (.inr .c3T)
+  | .inr .hcap => .half 12 (.inr (.ttest true))
+  | .inr (.ttest b) => .jeq 10 9 (if b then .inr .c4T else .inr .no) (.inr .tcheck)
+  | .inr .tcheck => .jz 12 (.inr .no) (.inr .tread)
+  | .inr .tread => .call 0 .whole [10] (.inr (.thalve true)) (.inr (.thalve false))
+  | .inr (.thalve b) => .half 12 (.inr (.tadv b))
+  | .inr (.tadv b) => .inc 10 (.inr (.ttest b))
+  | .inr .c4T => .jeq 10 9 (.inr .dtest) (.inr .c4B)
+  | .inr .c4B => .inc 10 (.inr .c4T)
+  | .inr .dtest => .jeq 10 11 (.inl .scan) (.inr .ddown)
+  | .inr .ddown => .dec 10 (.inr .dread)
+  | .inr .dread => .call 0 .whole [10] (.inr (.dcopy true)) (.inr (.dcopy false))
+  | .inr (.dcopy b) => .jeq 14 13 (.inr (.dclear b)) (.inr (.dbump b))
+  | .inr (.dbump b) => .inc 14 (.inr (.dcopy b))
+  | .inr (.dclear b) => .clr 13 (.inr (.dscale b))
+  | .inr (.dscale b) => .jz 14 (.inr (.dadd b)) (.inr (.dtake b))
+  | .inr (.dtake b) => .dec 14 (.inr (.dinc b false))
+  | .inr (.dinc b false) => .inc 13 (.inr (.dinc b true))
+  | .inr (.dinc b true) => .inc 13 (.inr (.dscale b))
+  | .inr (.dadd b) => if b then .inc 13 (.inr .dtest) else .jz 14 (.inr .dtest) (.inr .dtest)
+  | .inr .q1T => .jeq 17 2 (.inr .q1d) (.inr .q1B)
+  | .inr .q1B => .inc 17 (.inr .q1T)
+  | .inr .q1d => .dec 17 (.inr .qsT)
+  | .inr .qsT => .jz 17 (.inr .seek) (.inr .qsD)
+  | .inr .qsD => .dec 17 (.inr (.qsI 0))
+  | .inr (.qsI i) => .inc 16 (if i = 3 then .inr .qsT else .inr (.qsI (i + 1)))
+  | .inr .seek => .jeq 15 16 (.inr .no) (.inr .probe)
+  | .inr .probe => .jeq 17 13 (.inr .hit) (.inr .bump)
+  | .inr .bump => .inc 17 (.inr (.sadv 0))
+  | .inr (.sadv i) => .inc 15 (if i = 3 then .inr .seek else .inr (.sadv (i + 1)))
+  | .inr .hit => if mode then .call 0 .whole [15] (.inr .yes) (.inr .no) else .ret true
+  | .inr .yes => .ret true
+  | .inr .no => .ret false
+
+/-- **The bank's last phase.** From `q1T`, with `na + 1` in register `2`, the index `i` in
+register `13` and the seek registers `15`, `16`, `17` clear, the bank answers: in mode `false`
+whether `i < na`; in mode `true` letter `4i` of the input if `i < na`, and `0` otherwise.
+
+**Proof sketch.** `registerCopy_loop` and one decrement load `na` into register `17`;
+`registerScale_loop` at factor `4` moves `4 na` into the seek limit `16`; `indexedSeek_loop` at
+stride `4` hits exactly when `i < na`, with its pointer at `4i`. -/
+private theorem epad_bank_post (C d : ℕ) (mode : Bool) (z : List Bool) (B na i : ℕ)
+    (v : Fin 18 → ℕ) (hv : ∀ r, v r ≤ B) (h2 : v 2 = na + 1) (h13 : v 13 = i)
+    (h15 : v 15 = 0) (h16 : v 16 = 0) (h17 : v 17 = 0) (hB : 4 * na + 1 ≤ B) :
+    AHalt (epadBA C d mode) epadOr z
+      (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B) (some (.inr .q1T), v, none)
+      (if i < na then (if mode then z.getD (4 * i) false else true) else false) := by
+  -- `17 := na + 1`, then `na`
+  have hc1 := registerCopy_loop (epadBA C d mode) epadOr z 17 2 (by decide) (.inr .q1T)
+    (.inr .q1B) (.inr .q1d) rfl rfl B v hv (by rw [h17]; exact Nat.zero_le _)
+  obtain ⟨v₁, hv₁⟩ : ∃ w, w = Function.update v 17 (v 2) := ⟨_, rfl⟩
+  rw [← hv₁] at hc1
+  have b₁ : ∀ r, v₁ r ≤ B := by rw [hv₁]; exact register_update_le v 17 B _ hv (hv 2)
+  obtain ⟨v₂, hv₂⟩ : ∃ w, w = Function.update v₁ 17 na := ⟨_, rfl⟩
+  have b₂ : ∀ r, v₂ r ≤ B := by rw [hv₂]; exact register_update_le v₁ 17 B _ b₁ (by omega)
+  have hd : AReach (epadBA C d mode) epadOr z
+      (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B) (some (.inr .q1d), v₁, none)
+      (some (.inr .qsT), v₂, none) := by
+    have hc : epadBA C d mode (.inr .q1d) = .dec 17 (.inr .qsT) := rfl
+    refine AReach.step ⟨epad_preS hc trivial, b₁⟩ ?_
+    rw [astep_dec hc, hv₂, hv₁, Function.update_self, h2, Nat.add_sub_cancel,
+      Function.update_idem]
+    exact AReach.refl _
+  -- `16 += 4 · 17`, `17 := 0`
+  have hsc := registerScale_loop (epadBA C d mode) epadOr z 17 16 (by decide) (.inr .qsT)
+    (.inr .qsD) (.inr .seek) (fun i => if h : i < 4 then .inr (.qsI ⟨i, h⟩) else .inr .qsT) 4
+    rfl rfl (fun i hi => by
+      obtain rfl | rfl | rfl | rfl : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by omega
+      all_goals rfl) rfl B v₂ b₂ (by
+        rw [hv₂, Function.update_self, Function.update_of_ne (by decide), hv₁,
+          Function.update_of_ne (by decide), h16]
+        omega)
+  obtain ⟨v₃, hv₃⟩ : ∃ w, w = Function.update (Function.update v₂ 17 0) 16
+      (v₂ 16 + 4 * v₂ 17) := ⟨_, rfl⟩
+  rw [← hv₃] at hsc
+  have h₃ : ∀ r, v₃ r = if r = 16 then 4 * na else if r = 17 then 0 else v r := by
+    intro r
+    rw [hv₃, hv₂, hv₁]
+    simp only [Function.update_apply, Fin.reduceEq, ↓reduceIte, h16]
+    split_ifs <;> subst_vars <;> simp_all
+  have b₃ : ∀ r, v₃ r ≤ B := by
+    intro r; rw [h₃]; split_ifs
+    · omega
+    · exact Nat.zero_le _
+    · exact hv r
+  -- the seek
+  have hseek := indexedSeek_loop (epadBA C d mode) epadOr z 15 16 17 13 (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (.inr .seek) (.inr .probe) (.inr .bump)
+    (.inr .hit) (.inr .no) (fun i => if h : i < 4 then .inr (.sadv ⟨i, h⟩) else .inr .seek) 4 B
+    (by omega) rfl rfl rfl (fun i hi => by
+      obtain rfl | rfl | rfl | rfl : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by omega
+      all_goals rfl) rfl na v₃ b₃
+    (by rw [h₃, h₃]; simp only [Fin.reduceEq, ↓reduceIte, h15]; omega)
+    (by rw [h₃]; simp only [Fin.reduceEq, ↓reduceIte]; omega)
+    (by rw [h₃]; simp only [Fin.reduceEq, ↓reduceIte]; exact Nat.zero_le _)
+  have h313 : v₃ 13 = i := by rw [h₃]; simp only [Fin.reduceEq, ↓reduceIte, h13]
+  have h317 : v₃ 17 = 0 := by rw [h₃]; simp only [Fin.reduceEq, ↓reduceIte]
+  have h315 : v₃ 15 = 0 := by rw [h₃]; simp only [Fin.reduceEq, ↓reduceIte, h15]
+  rw [h313, h317, Nat.zero_add] at hseek
+  refine hc1.halt (hd.halt (hsc.halt ?_))
+  by_cases hi : i < na
+  · rw [if_pos hi] at hseek ⊢
+    obtain ⟨v₄, hv₄⟩ : ∃ w, w = Function.update (Function.update v₃ 15 (v₃ 15 + 4 * (i - 0)))
+        17 i := ⟨_, rfl⟩
+    rw [← hv₄] at hseek
+    have b₄ : ∀ r, v₄ r ≤ B := by
+      rw [hv₄]
+      refine register_update_le _ 17 B _ (register_update_le _ 15 B _ b₃ ?_) (by omega)
+      rw [h315]; omega
+    have h415 : v₄ 15 = 4 * i := by
+      rw [hv₄, Function.update_of_ne (by decide), Function.update_self, h315]; omega
+    refine hseek.halt ?_
+    cases mode with
+    | false =>
+      exact AHalt.ret rfl ⟨epad_preS (show epadBA C d false (.inr .hit) = .ret true from rfl)
+        trivial, b₄⟩
+    | true =>
+      have hc : epadBA C d true (.inr .hit) = .call 0 .whole [15] (.inr .yes) (.inr .no) := rfl
+      refine AHalt.step ⟨epad_preS hc (List.nodup_singleton _), b₄⟩ ?_
+      rw [astep_call hc, vword_whole₁, h415]
+      have ho : epadOr 0 (pairEncode z (Nat.bits (4 * i))) = z.getD (4 * i) false :=
+        (epadIn_answer z (4 * i)).1
+      rw [ho]
+      cases hb : z.getD (4 * i) false
+      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .no) = .ret false from rfl)
+          trivial, b₄⟩
+      · exact AHalt.ret rfl ⟨epad_preS (show epadBA C d true (.inr .yes) = .ret true from rfl)
+          trivial, b₄⟩
+  · rw [if_neg hi] at hseek ⊢
+    obtain ⟨v₄, hv₄⟩ : ∃ w, w = Function.update (Function.update v₃ 15 (v₃ 16)) 17 na :=
+      ⟨_, rfl⟩
+    rw [← hv₄] at hseek
+    have b₄ : ∀ r, v₄ r ≤ B := by
+      rw [hv₄]
+      exact register_update_le _ 17 B _ (register_update_le _ 15 B _ b₃ (b₃ 16)) (by omega)
+    exact hseek.halt (AHalt.ret rfl ⟨epad_preS
+      (show epadBA C d mode (.inr .no) = .ret false from rfl) trivial, b₄⟩)
+
+/-- A number of `|bits n|` binary digits is below `2 n + 2`: `2 ^ |bits n| ≤ 2 n + 1`. -/
+private lemma epad_two_pow_bits (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [Nat.zero_bits]
+  · have h1 := length_bits_le_log n
+    have h2 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+    calc 2 ^ (Nat.bits n).length ≤ 2 ^ (Nat.log 2 n + 1) := Nat.pow_le_pow_right (by omega) h1
+      _ = 2 * 2 ^ Nat.log 2 n := by rw [pow_succ]; ring
+      _ ≤ 2 * n + 1 := by omega
+
+/-- **The bank's first phase.** From the start, the bank counts `|z|` and parses
+`z = ⟨y, w⟩`; it rejects a word that is not a pair, or whose index word `w` is not canonical
+or wider than `|y|`; otherwise it decodes `i = bitsVal w` into register `13` and enters the
+validity block with its pointer `0`, its limit `2 |y|` and its working registers clear, the
+seek registers `15`–`17` clear, all registers at most `B`.
+
+**Proof sketch.** `inputLength_loop`; `alignedPair_loop` at stride `1` on `z`; three
+`registerCopy_loop`s, two decrements and a halving set the tail base `2|y| + 2`, the block's
+limit `2|y|` and the cap `|y|`; `canonicalTail_loop` checks the index word; one more copy moves
+the pointer to the end, and `boundedDecode_loop` decodes the index (its values stay below
+`2 ^ |bits |y||` by `Codec.bitsVal_lt_two_pow`). -/
+private theorem epad_bank_pre (C d : ℕ) (mode : Bool) (z : List Bool) (B : ℕ)
+    (hB : 2 * z.length + 1 ≤ B) :
+    (pairDecode z = none → ∃ v, (∀ r, v r ≤ B) ∧
+      AReach (epadBA C d mode) epadOr z (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B)
+        (some (.inr .lscan), fun _ => 0, none) (some (.inr .no), v, none)) ∧
+    (∀ y w, pairDecode z = some (y, w) →
+      (¬ (w.getLastD true = true ∧ w.length ≤ (Nat.bits y.length).length) → ∃ v, (∀ r, v r ≤ B) ∧
+        AReach (epadBA C d mode) epadOr z
+          (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B)
+          (some (.inr .lscan), fun _ => 0, none) (some (.inr .no), v, none)) ∧
+      (w.getLastD true = true ∧ w.length ≤ (Nat.bits y.length).length → ∃ v, (∀ r, v r ≤ B) ∧
+        v 0 = 0 ∧ v 1 = 2 * y.length ∧ (∀ r : Fin 18, 2 ≤ r.val → r.val ≤ 8 → v r = 0) ∧
+        v 13 = LogProg.bitsVal w ∧ v 15 = 0 ∧ v 16 = 0 ∧ v 17 = 0 ∧
+        AReach (epadBA C d mode) epadOr z
+          (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B)
+          (some (.inr .lscan), fun _ => 0, none) (some (.inl .scan), v, none))) := by
+  -- the length
+  have hlen := inputLength_loop (epadBA C d mode) epadOr z 9 1 (.inr .lscan) (.inr .linc)
+    (.inr .zscan) rfl rfl (fun n _ => (epadIn_answer z n).2) B (by omega) (fun _ => 0)
+    (fun _ => Nat.zero_le _) (Nat.zero_le _)
+  obtain ⟨v₀, hv₀⟩ : ∃ w, w = Function.update (fun _ : Fin 18 => 0) 9 z.length := ⟨_, rfl⟩
+  rw [← hv₀] at hlen
+  have b₀ : ∀ r, v₀ r ≤ B := by
+    rw [hv₀]; exact register_update_le _ 9 B _ (fun _ => Nat.zero_le _) (by omega)
+  have h₀ : ∀ r : Fin 18, r ≠ 9 → v₀ r = 0 := fun r hr => by
+    rw [hv₀, Function.update_of_ne hr]
+  have h₀9 : v₀ 9 = z.length := by rw [hv₀, Function.update_self]
+  -- the outer pair scan
+  have hap := alignedPair_loop (epadBA C d mode) epadOr z 10 9 0 (.inr .zscan) (.inr .zfirst)
+    (fun b => .inr (.ztest b)) (fun b => .inr (.zread b)) (.inr .no) (.inr .c1T)
+    (fun k i => if i = 0 then .inr (.zadv k) else .inr (epadZEnd k)) 1 B (by omega) (by decide)
+    rfl rfl (fun _ => rfl) (fun _ => rfl)
+    (fun k i hi => by obtain rfl : i = 0 := by omega
+                      rfl)
+    ⟨rfl, rfl, rfl, rfl⟩ z v₀ b₀ (by rw [h₀9, h₀ 10 (by decide)]; omega)
+    (fun i _ => by rw [h₀ 10 (by decide), Nat.zero_add, Nat.one_mul]
+                   exact (epadIn_answer z i).1)
+  refine ⟨fun hd => ?_, fun y w hd => ?_⟩
+  · simp only [hd] at hap
+    obtain ⟨t, ht, hr⟩ := hap
+    exact ⟨_, register_update_le v₀ 10 B _ b₀ (by rw [h₀ 10 (by decide)]; omega), hlen.trans hr⟩
+  simp only [hd] at hap
+  have hz : z = pairEncode y w := eq_pairEncode_of_pairDecode z y w hd
+  have hzl : z.length = 2 * y.length + 2 + w.length := by rw [hz, length_pairEncode]
+  obtain ⟨v₁, hv₁⟩ : ∃ u, u = Function.update v₀ 10 (v₀ 10 + 1 * (2 * y.length + 2)) :=
+    ⟨_, rfl⟩
+  rw [← hv₁] at hap
+  have b₁ : ∀ r, v₁ r ≤ B := by
+    rw [hv₁]; exact register_update_le v₀ 10 B _ b₀ (by rw [h₀ 10 (by decide)]; omega)
+  have h₁10 : v₁ 10 = 2 * y.length + 2 := by
+    rw [hv₁, Function.update_self, h₀ 10 (by decide)]; omega
+  -- the tail base, the block's limit and the cap
+  have hc1 := registerCopy_loop (epadBA C d mode) epadOr z 11 10 (by decide) (.inr .c1T)
+    (.inr .c1B) (.inr .c2T) rfl rfl B v₁ b₁ (by
+      rw [hv₁, Function.update_of_ne (by decide), h₀ 11 (by decide)]; exact Nat.zero_le _)
+  obtain ⟨v₂, hv₂⟩ : ∃ u, u = Function.update v₁ 11 (v₁ 10) := ⟨_, rfl⟩
+  rw [← hv₂] at hc1
+  have b₂ : ∀ r, v₂ r ≤ B := by rw [hv₂]; exact register_update_le v₁ 11 B _ b₁ (b₁ 10)
+  have hc2 := registerCopy_loop (epadBA C d mode) epadOr z 1 10 (by decide) (.inr .c2T)
+    (.inr .c2B) (.inr .dd1) rfl rfl B v₂ b₂ (by
+      rw [hv₂, Function.update_of_ne (by decide), hv₁, Function.update_of_ne (by decide),
+        h₀ 1 (by decide)]
+      exact Nat.zero_le _)
+  obtain ⟨v₃, hv₃⟩ : ∃ u, u = Function.update v₂ 1 (v₂ 10) := ⟨_, rfl⟩
+  rw [← hv₃] at hc2
+  have b₃ : ∀ r, v₃ r ≤ B := by rw [hv₃]; exact register_update_le v₂ 1 B _ b₂ (b₂ 10)
+  have h₂10 : v₂ 10 = 2 * y.length + 2 := by
+    rw [hv₂, Function.update_of_ne (by decide), h₁10]
+  obtain ⟨v₄, hv₄⟩ : ∃ u, u = Function.update v₃ 1 (2 * y.length) := ⟨_, rfl⟩
+  have b₄ : ∀ r, v₄ r ≤ B := by rw [hv₄]; exact register_update_le v₃ 1 B _ b₃ (by omega)
+  have hdd : AReach (epadBA C d mode) epadOr z
+      (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B) (some (.inr .dd1), v₃, none)
+      (some (.inr .c3T), v₄, none) := by
+    have hc : epadBA C d mode (.inr .dd1) = .dec 1 (.inr .dd2) := rfl
+    have hc' : epadBA C d mode (.inr .dd2) = .dec 1 (.inr .c3T) := rfl
+    refine AReach.step ⟨epad_preS hc trivial, b₃⟩ ?_
+    rw [astep_dec hc]
+    refine AReach.step ⟨epad_preS hc' trivial,
+      register_update_le v₃ 1 B _ b₃ ((Nat.sub_le _ _).trans (b₃ 1))⟩ ?_
+    rw [astep_dec hc']
+    have e : Function.update (Function.update v₃ 1 (v₃ 1 - 1)) 1
+        (Function.update v₃ 1 (v₃ 1 - 1) 1 - 1) = v₄ := by
+      rw [hv₄, hv₃]
+      funext s
+      simp only [Function.update_apply]
+      split_ifs <;> simp_all
+    rw [e]
+    exact AReach.refl _
+  have hc3 := registerCopy_loop (epadBA C d mode) epadOr z 12 1 (by decide) (.inr .c3T)
+    (.inr .c3B) (.inr .hcap) rfl rfl B v₄ b₄ (by
+      rw [hv₄, Function.update_of_ne (by decide), hv₃, Function.update_of_ne (by decide), hv₂,
+        Function.update_of_ne (by decide), hv₁, Function.update_of_ne (by decide),
+        h₀ 12 (by decide)]
+      exact Nat.zero_le _)
+  obtain ⟨v₅, hv₅⟩ : ∃ u, u = Function.update v₄ 12 (v₄ 1) := ⟨_, rfl⟩
+  rw [← hv₅] at hc3
+  have b₅ : ∀ r, v₅ r ≤ B := by rw [hv₅]; exact register_update_le v₄ 12 B _ b₄ (b₄ 1)
+  obtain ⟨v₆, hv₆⟩ : ∃ u, u = Function.update v₅ 12 y.length := ⟨_, rfl⟩
+  have b₆ : ∀ r, v₆ r ≤ B := by rw [hv₆]; exact register_update_le v₅ 12 B _ b₅ (by omega)
+  have hhc : AReach (epadBA C d mode) epadOr z
+      (fun a => PreS (epadBA C d mode) z a ∧ ∀ r, a.2.1 r ≤ B) (some (.inr .hcap), v₅, none)
+      (some (.inr (.ttest true)), v₆, none) := by
+    have hc : epadBA C d mode (.inr .hcap) = .half 12 (.inr (.ttest true)) := rfl
+    refine AReach.step ⟨epad_preS hc trivial, b₅⟩ ?_
+    rw [astep_half hc]
+    have e : Function.update v₅ 12 (v₅ 12 / 2) = v₆ := by
+      rw [hv₆, hv₅]
+      funext s
+      simp only [Function.update_apply]
+      split_ifs <;> simp_all
+    rw [e]
+    exact AReach.refl _
+  -- the register file before the tail check
+  have h₆ : ∀ r : Fin 18, v₆ r = if r = 1 then 2 * y.length else if r = 9 then z.length
+      else if r = 10 then 2 * y.length + 2 else if r = 11 then 2 * y.length + 2
+      else if r = 12 then y.length else 0 := by
+    intro r
+    rw [hv₆, hv₅, hv₄, hv₃, hv₂, hv₁, hv₀]
+    simp only [Function.update_apply, Fin.reduceEq, ↓reduceIte]
+    split_ifs <;> simp_all
+  -- the tail check
+  have hct := canonicalTail_loop (epadBA C d mode) epadOr z 10 9 12 (by decide) (by decide)
+    (by decide) 0 (fun b => .inr (.ttest b)) (.inr .tcheck) (.inr .tread) (.inr .no) (.inr .c4T)
+    (fun b => .inr (.thalve b)) (fun b i => if i = 0 then .inr (.tadv b) else .inr (.ttest b))
+    1 B (by omega) (fun _ => rfl) rfl rfl (fun _ => rfl)
+    (fun b i hi => by obtain rfl : i = 0 := by omega
+                      rfl)
+    (fun _ => rfl) w true v₆ b₆ (by rw [h₆, h₆]; simp only [Fin.reduceEq, ↓reduceIte]; omega)
+    (fun i hi => by
+      rw [h₆]; simp only [Fin.reduceEq, ↓reduceIte, Nat.one_mul]
+      rw [(epadIn_answer z _).1, hz, pairEncode_getD_snd])
+  obtain ⟨v', b', hp', hfr', hct⟩ := hct
+  have h612 : v₆ 12 = y.length := by rw [h₆]; simp only [Fin.reduceEq, ↓reduceIte]
+  rw [h612] at hct
+  refine ⟨fun hbad => ?_, fun hok => ?_⟩
+  · have hno : (if w.length ≤ (Nat.bits y.length).length then
+        (if w.getLastD true = true then (Sum.inr EPadBX.c4T : EPadVL C d ⊕ EPadBX)
+          else .inr .no) else .inr .no) = .inr .no := by
+      split_ifs with h1 h2
+      · exact absurd ⟨h2, h1⟩ hbad
+      · rfl
+      · rfl
+    rw [hno] at hct
+    exact ⟨v', b', hlen.trans (hap.trans (hc1.trans (hc2.trans (hdd.trans (hc3.trans
+      (hhc.trans hct))))))⟩
+  rw [if_pos hok.2, if_pos hok.1] at hct
+  -- the pointer to the end, then the decoder
+  have h'9 : v' 9 = z.length := by
+    rw [hfr' 9 (by decide) (by decide), h₆]; simp only [Fin.reduceEq, ↓reduceIte]
+  have hc4 := registerCopy_loop (epadBA C d mode) epadOr z 10 9 (by decide) (.inr .c4T)
+    (.inr .c4B) (.inr .dtest) rfl rfl B v' b' (by
+      rw [h'9]; rw [h₆] at hp'; simp only [Fin.reduceEq, ↓reduceIte] at hp'; exact hp')
+  obtain ⟨v₇, hv₇⟩ : ∃ u, u = Function.update v' 10 (v' 9) := ⟨_, rfl⟩
+  rw [← hv₇] at hc4
+  have b₇ : ∀ r, v₇ r ≤ B := by rw [hv₇]; exact register_update_le v' 10 B _ b' (b' 9)
+  have h₇ : ∀ r : Fin 18, r ≠ 10 → r ≠ 12 → v₇ r = v₆ r := fun r h10 h12 => by
+    rw [hv₇, Function.update_of_ne h10, hfr' r h10 h12]
+  have hw : w.length ≤ (Nat.bits y.length).length := hok.2
+  have hval : ∀ i ≤ w.length, LogProg.bitsVal (w.drop i) ≤ B := by
+    intro i _
+    have h1 := Codec.bitsVal_lt_two_pow (w.drop i)
+    have h2 : 2 ^ (w.drop i).length ≤ 2 ^ (Nat.bits y.length).length :=
+      Nat.pow_le_pow_right (by omega) ((by simp : (w.drop i).length ≤ w.length).trans hw)
+    have h3 := epad_two_pow_bits y.length
+    omega
+  have hdec := boundedDecode_loop (epadBA C d mode) epadOr z 10 11 13 14 (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) 0 (.inr .dtest) (.inr .ddown)
+    (.inr .dread) (.inl .scan) (fun b => .inr (.dcopy b)) (fun b => .inr (.dbump b))
+    (fun b => .inr (.dclear b)) (fun b => .inr (.dscale b)) (fun b => .inr (.dtake b))
+    (fun b => .inr (.dadd b))
+    (fun b i => if i = 0 then .inr (.dinc b false) else if i = 1 then .inr (.dinc b true)
+      else .inr (.dscale b))
+    rfl rfl rfl (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) (fun _ => rfl)
+    (fun b i hi => by
+      obtain rfl | rfl : i = 0 ∨ i = 1 := by omega
+      all_goals rfl)
+    (fun _ => rfl) (fun b => by cases b <;> rfl) w B hval w.length le_rfl v₇ b₇
+    (by rw [hv₇, Function.update_self, h'9, Function.update_of_ne (by decide),
+          hfr' 11 (by decide) (by decide), h₆]
+        simp only [Fin.reduceEq, ↓reduceIte]; omega)
+    (by rw [h₇ 13 (by decide) (by decide), h₆, List.drop_length]
+        simp only [Fin.reduceEq, ↓reduceIte]
+        rw [← Nat.zero_bits, LogProg.bitsVal_bits])
+    (by rw [h₇ 14 (by decide) (by decide), h₆]; simp only [Fin.reduceEq, ↓reduceIte])
+    (fun i hi => by
+      rw [h₇ 11 (by decide) (by decide), h₆]; simp only [Fin.reduceEq, ↓reduceIte]
+      rw [(epadIn_answer z _).1, hz, pairEncode_getD_snd])
+  obtain ⟨v'', b'', -, h''13, -, hfr'', hdec⟩ := hdec
+  have h'' : ∀ r : Fin 18, r ≠ 10 → r ≠ 12 → r ≠ 13 → r ≠ 14 → v'' r = v₆ r :=
+    fun r h10 h12 h13 h14 => by rw [hfr'' r h10 h13 h14, h₇ r h10 h12]
+  refine ⟨v'', b'', ?_, ?_, fun r h2 h8 => ?_, h''13, ?_, ?_, ?_, hlen.trans (hap.trans
+    (hc1.trans (hc2.trans (hdd.trans (hc3.trans (hhc.trans (hct.trans (hc4.trans hdec))))))))⟩
+  · rw [h'' 0 (by decide) (by decide) (by decide) (by decide), h₆]
+    simp only [Fin.reduceEq, ↓reduceIte]
+  · rw [h'' 1 (by decide) (by decide) (by decide) (by decide), h₆]
+    simp only [↓reduceIte]
+  · have hne : ∀ k : Fin 18, 9 ≤ k.val → r ≠ k := fun k hk h => by rw [h] at h8; omega
+    have hne1 : r ≠ 1 := fun h => by rw [h] at h2; simp at h2
+    rw [h'' r (hne 10 (by decide)) (hne 12 (by decide)) (hne 13 (by decide))
+      (hne 14 (by decide)), h₆, if_neg hne1, if_neg (hne 9 (by decide)),
+      if_neg (hne 10 (by decide)), if_neg (hne 11 (by decide)), if_neg (hne 12 (by decide))]
+  · rw [h'' 15 (by decide) (by decide) (by decide) (by decide), h₆]
+    simp only [Fin.reduceEq, ↓reduceIte]
+  · rw [h'' 16 (by decide) (by decide) (by decide) (by decide), h₆]
+    simp only [Fin.reduceEq, ↓reduceIte]
+  · rw [h'' 17 (by decide) (by decide) (by decide) (by decide), h₆]
+    simp only [Fin.reduceEq, ↓reduceIte]
+
+/-- Letter `4i` of `⟨⟨a, b⟩, w⟩` is letter `i` of `a`, for `i < |a|`. -/
+private lemma epad_getD_four (a b w : List Bool) (i : ℕ) (hi : i < a.length) :
+    (pairEncode (pairEncode a b) w).getD (4 * i) false = a.getD i false := by
+  rw [pairEncode_getD, if_pos (by rw [length_pairEncode]; omega),
+    show 4 * i / 2 = 2 * i by omega, pairEncode_getD, if_pos (by omega),
+    show 2 * i / 2 = i by omega]
+
+/-- **The bank** (checkpoint 3): both query languages are decided in logarithmic space.
+
+**Proof sketch.** `arm_decides_poly` on `epadBA`: the first phase `epad_bank_pre` parses the
+query and decodes its index (rejecting malformed queries), the validity block `epad_val_run`
+runs at stride `2` on the first field (rejecting unpadded words), and `epad_bank_post` answers.
+Registers stay below `(C + d + 8)(|z| + 1)^{d + 1}`. -/
+private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPACE := by
+  classical
+  letI := epadVLFintype C d
+  letI := epadBXFintype
+  refine arm_decides_poly (epadBA C d mode) (.inr .lscan) epadIn epadIn_mem (C + d + 8) (d + 1)
+    fun z => ?_
+  have hB := epad_bound C d z.length
+  obtain ⟨hnone, hsome⟩ := epad_bank_pre C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+    (by omega)
+  have hno : ∀ v : Fin 18 → ℕ, (∀ r, v r ≤ (C + d + 8) * (z.length + 1) ^ (d + 1)) →
+      AHalt (epadBA C d mode) epadOr z (fun a => PreS (epadBA C d mode) z a ∧
+        ∀ r, a.2.1 r ≤ (C + d + 8) * (z.length + 1) ^ (d + 1)) (some (.inr .no), v, none)
+        false := fun v hv =>
+    AHalt.ret rfl ⟨epad_preS (show epadBA C d mode (.inr .no) = .ret false from rfl) trivial, hv⟩
+  cases hd : pairDecode z with
+  | none =>
+    obtain ⟨v, hv, hr⟩ := hnone hd
+    have hans : MultiTapeTM.indicator (epadQ C d mode : Set (List Bool)) z = false := by
+      rw [indicator_eq_decide]; exact decide_eq_false (epad_not_mem_Q hd)
+    rw [hans]
+    exact hr.halt (hno v hv)
+  | some yw =>
+    obtain ⟨y, w⟩ := yw
+    obtain ⟨hbad, hok⟩ := hsome y w hd
+    have hz : z = pairEncode y w := eq_pairEncode_of_pairDecode z y w hd
+    have hzl : z.length = 2 * y.length + 2 + w.length := by rw [hz, length_pairEncode]
+    by_cases hw : w.getLastD true = true ∧ w.length ≤ (Nat.bits y.length).length
+    · obtain ⟨v, hv, h0, h1, hzr, h13, h15, h16, h17, hr⟩ := hok hw
+      have hpowy : C * (y.length + 1) ^ d ≤ C * (z.length + 1) ^ d :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by omega) _)
+      obtain ⟨v', hfr, hb', hval2, hr'⟩ := epad_val_run (epadBA C d mode) epadOr z y true C d
+        Sum.inl (.inr .q1T) (.inr .no) (fun _ => rfl)
+        (fun j hj => by
+          rw [show epadS true * j = 2 * j from rfl, (epadIn_answer z _).1, hz, pairEncode_getD,
+            if_pos (by omega), show 2 * j / 2 = j by omega])
+        ((C + d + 8) * (z.length + 1) ^ (d + 1)) (by omega) v hv h0 h1 hzr
+      by_cases hvy : epadValid C d y
+      · rw [if_pos hvy] at hr'
+        obtain ⟨a, ha⟩ := hvy
+        have hfst : pairFstD y = a := by rw [ha, pairFstD_pairEncode]
+        have hya : y.length = 2 * a.length + 2 + C * (a.length + 1) ^ d := by
+          rw [ha, length_pairEncode, List.length_replicate]
+        have hpost := epad_bank_post C d mode z ((C + d + 8) * (z.length + 1) ^ (d + 1))
+          a.length (LogProg.bitsVal w) v' hb' (by rw [hval2 ⟨a, ha⟩, hfst])
+          (by rw [hfr 13 (by decide), h13]) (by rw [hfr 15 (by decide), h15])
+          (by rw [hfr 16 (by decide), h16]) (by rw [hfr 17 (by decide), h17]) (by omega)
+        have hans : MultiTapeTM.indicator (epadQ C d mode : Set (List Bool)) z =
+            (if LogProg.bitsVal w < a.length then
+              (if mode then z.getD (4 * LogProg.bitsVal w) false else true) else false) := by
+          rw [indicator_eq_decide]
+          have hm := epad_mem_Q_iff (C := C) (d := d) (mode := mode) hd
+          rw [hfst] at hm
+          by_cases hi : LogProg.bitsVal w < a.length
+          · rw [if_pos hi]
+            cases mode with
+            | false =>
+              exact decide_eq_true (hm.mpr ⟨hw.1, hw.2, ⟨a, ha⟩, by simpa using hi⟩)
+            | true =>
+              have h4 : z.getD (4 * LogProg.bitsVal w) false = a.getD (LogProg.bitsVal w) false :=
+                by rw [hz, ha, epad_getD_four a _ w _ hi]
+              rw [if_pos rfl, h4]
+              cases hb : a.getD (LogProg.bitsVal w) false
+              · refine decide_eq_false (fun h => ?_)
+                have h5 := (hm.mp h).2.2.2
+                rw [if_pos rfl, hb] at h5
+                exact Bool.false_ne_true h5
+              · exact decide_eq_true (hm.mpr ⟨hw.1, hw.2, ⟨a, ha⟩, by rw [if_pos rfl]; exact hb⟩)
+          · rw [if_neg hi]
+            refine decide_eq_false (fun h => ?_)
+            have h4 := (hm.mp h).2.2.2
+            cases mode with
+            | false => exact hi (by simpa using h4)
+            | true =>
+              simp only [if_true] at h4
+              rw [List.getD_eq_default _ _ (by omega)] at h4
+              exact Bool.false_ne_true h4
+        rw [hans]
+        exact hr.halt (hr'.halt hpost)
+      · rw [if_neg hvy] at hr'
+        have hans : MultiTapeTM.indicator (epadQ C d mode : Set (List Bool)) z = false := by
+          rw [indicator_eq_decide]
+          exact decide_eq_false (fun h => hvy ((epad_mem_Q_iff hd).mp h).2.2.1)
+        rw [hans]
+        exact hr.halt (hr'.halt (hno v' hb'))
+    · obtain ⟨v, hv, hr⟩ := hbad hw
+      have hans : MultiTapeTM.indicator (epadQ C d mode : Set (List Bool)) z = false := by
+        rw [indicator_eq_decide]
+        exact decide_eq_false (fun h => hw ⟨((epad_mem_Q_iff hd).mp h).1,
+          ((epad_mem_Q_iff hd).mp h).2.1⟩)
+      rw [hans]
+      exact hr.halt (hno v hv)
+
+/-! ### The run phase (E-PAD checkpoint 3) -/
+
+/-- **The run phase** (checkpoint 3): the oracle-input simulator runs `L`'s decider on the
+virtual input `epadVirt y`, answered by the bank, within `K · T |y|` work cells, on every input.
+
+**Proof sketch.** `LogProg.OIS.compile_decides` with `L`'s decider `M` (space `c · S`) and the
+bank `![M₀, M₁]` of `epadQ`'s deciders (space `c_j · logSpace`), whose laws on genuine queries
+are `epad_query_mem_iff`. With `m = |y|` and `v = epadVirt y`: on a padded `y = ⟨a, 1^{…}⟩`,
+`m = 2|a| + 2 + C (|a| + 1)^d`, so `S |v| ≤ T m` by `hST`; otherwise `v = []` and
+`S 0 ≤ S 0 · T m`. The index register costs `|bits (|v| + 1)| + 2 ≤ 4 T m` and the bank
+`k_D (2B + 1)` with `B = (c₀ + c₁)(3m + 4) + 1`, so `2B + 1 ≤ (8 (c₀ + c₁) + 3) T m`. -/
+private theorem epad_run {L : Language Bool} {S T : ℕ → ℕ} (C d : ℕ) (hL : L ∈ SPACE S)
+    (hST : ∀ n, S n ≤ T (2 * n + 2 + C * (n + 1) ^ d)) (hT : ∀ m, m + 1 ≤ T m) :
+    ∃ (K : ℕ) (O : FinTM Bool), O.ComputesInSpace
+      (fun y => [MultiTapeTM.indicator (L : Set (List Bool)) (epadVirt C d y)])
+      (fun n => K * T n) := by
+  classical
+  obtain ⟨c, M, hM⟩ := mem_SPACE_iff.mp hL
+  have hQ0 := epad_Q_mem C d false
+  have hQ1 := epad_Q_mem C d true
+  rw [LOGSPACE_eq, mem_SPACE_iff] at hQ0 hQ1
+  obtain ⟨c0, M0, h0⟩ := hQ0
+  obtain ⟨c1, M1, h1⟩ := hQ1
+  let Ms : Fin 2 → FinTM Bool := ![M0, M1]
+  let As : Fin 2 → Language Bool := ![epadQ C d false, epadQ C d true]
+  let sb : Fin 2 → ℕ → ℕ := ![fun n => c0 * logSpace n, fun n => c1 * logSpace n]
+  have hMs : ∀ j, (Ms j).DecidesInSpace (As j) (sb j) := by
+    intro j
+    refine Fin.cases ?_ (Fin.cases ?_ (fun i => Fin.elim0 i)) j
+    · show M0.DecidesInSpace (epadQ C d false) (fun n => c0 * logSpace n)
+      exact h0
+    · show M1.DecidesInSpace (epadQ C d true) (fun n => c1 * logSpace n)
+      exact h1
+  have hsb : ∀ j q, sb j q ≤ (c0 + c1) * (q + 1) := by
+    intro j q
+    refine Fin.cases ?_ (Fin.cases ?_ (fun i => Fin.elim0 i)) j
+    · show c0 * logSpace q ≤ (c0 + c1) * (q + 1)
+      exact Nat.mul_le_mul (Nat.le_add_right _ _) (logSpace_le_succ q)
+    · show c1 * logSpace q ≤ (c0 + c1) * (q + 1)
+      exact Nat.mul_le_mul (Nat.le_add_left _ _) (logSpace_le_succ q)
+  refine ⟨M.k * (2 * c * (S 0 + 1) + 1) + 4 +
+      (LogProg.bankK Ms + LogProg.bankK Ms) * (8 * (c0 + c1) + 3),
+    LogProg.compileFinTM (LogProg.OIS.prog M) (LogProg.OIS.start M) (LogProg.bankTM Ms)
+      (LogProg.bankStart Ms), ?_⟩
+  rw [FinTM.computesInSpace_iff]
+  intro y
+  set v := epadVirt C d y with hv
+  obtain ⟨t, ht, hs⟩ :=
+    (FinTM.computesInSpace_iff _ _ _).mp ((FinTM.decidesInSpace_iff _ _ _).mp hM) v
+  have hvm : v.length ≤ y.length := epadVirt_length_le C d y
+  set B := (c0 + c1) * (3 * y.length + 4) + 1 with hB
+  have hbits : ∀ i ≤ v.length, (Nat.bits i).length ≤ y.length + 1 := by
+    intro i hi
+    have h1 := LogProg.length_bits_le_log i
+    have h2 := Nat.log_le_self 2 i
+    omega
+  have hBnd : ∀ j, ∀ i ≤ v.length,
+      max (sb j (pairEncode y (Nat.bits i)).length) 1 ≤ B := by
+    intro j i hi
+    have hq := hsb j (pairEncode y (Nat.bits i)).length
+    rw [length_pairEncode] at hq ⊢
+    have hb := hbits i hi
+    have hmono : (c0 + c1) * (2 * y.length + 2 + (Nat.bits i).length + 1) ≤
+        (c0 + c1) * (3 * y.length + 4) :=
+      Nat.mul_le_mul_left _ (by omega)
+    refine max_le ?_ (by omega)
+    omega
+  have hA0 : ∀ i ≤ v.length,
+      pairEncode y (Nat.bits i) ∈ As 0 ↔ i < v.length := by
+    intro i hi
+    show pairEncode y (Nat.bits i) ∈ epadQ C d false ↔ i < v.length
+    rw [epad_query_mem_iff C d false y i (hi.trans hvm)]
+    simp only [Bool.false_eq_true, if_false]
+    by_cases hval : epadValid C d y
+    · rw [hv, epadVirt_of_valid hval]
+      exact ⟨fun h => h.2, fun h => ⟨hval, h⟩⟩
+    · rw [hv, epadVirt_of_not_valid hval]
+      exact ⟨fun h => absurd h.1 hval, fun h => absurd h (Nat.not_lt_zero _)⟩
+  have hA1 : ∀ i < v.length,
+      pairEncode y (Nat.bits i) ∈ As 1 ↔ v.getD i false = true := by
+    intro i hi
+    show pairEncode y (Nat.bits i) ∈ epadQ C d true ↔ v.getD i false = true
+    rw [epad_query_mem_iff C d true y i (hi.le.trans hvm)]
+    simp only [if_true]
+    by_cases hval : epadValid C d y
+    · rw [hv, epadVirt_of_valid hval]
+      exact ⟨fun h => h.2, fun h => ⟨hval, h⟩⟩
+    · rw [hv, epadVirt_of_not_valid hval] at hi
+      exact absurd hi (Nat.not_lt_zero _)
+  obtain ⟨T', hT', hSp⟩ := LogProg.OIS.compile_decides M Ms As sb hMs y v
+    [MultiTapeTM.indicator (L : Set (List Bool)) v] hA0 hA1 t ht B hBnd
+  refine ⟨T', hT', hSp.trans ?_⟩
+  -- the space ledger
+  have hTm := hT y.length
+  have hS : S v.length ≤ (S 0 + 1) * T y.length := by
+    by_cases hval : epadValid C d y
+    · obtain ⟨a, ha⟩ := hval
+      have hva : v.length = a.length := by
+        rw [hv, epadVirt_of_valid ⟨a, ha⟩, ha, pairFstD_pairEncode]
+      have hma : y.length = 2 * a.length + 2 + C * (a.length + 1) ^ d := by
+        rw [ha, length_pairEncode, List.length_replicate]
+      rw [hva]
+      have h1 := hST a.length
+      rw [← hma] at h1
+      calc S a.length ≤ T y.length := h1
+        _ ≤ (S 0 + 1) * T y.length := Nat.le_mul_of_pos_left _ (Nat.succ_pos _)
+    · have hv0 : v.length = 0 := by rw [hv, epadVirt_of_not_valid hval]; rfl
+      rw [hv0]
+      calc S 0 ≤ S 0 * T y.length := Nat.le_mul_of_pos_right _ (by omega)
+        _ ≤ (S 0 + 1) * T y.length := Nat.mul_le_mul_right _ (Nat.le_succ _)
+  have hsp : M.tm.spaceUsed (M.tm.initCfg v) t ≤ c * ((S 0 + 1) * T y.length) :=
+    hs.trans (Nat.mul_le_mul_left c hS)
+  have hW : (Nat.bits (v.length + 1)).length + 2 ≤ 4 * T y.length := by
+    have h1 := LogProg.length_bits_le_log (v.length + 1)
+    have h2 := Nat.log_le_self 2 (v.length + 1)
+    omega
+  have h2B : 2 * B + 1 ≤ (8 * (c0 + c1) + 3) * T y.length := by
+    have h1 : (c0 + c1) * (3 * y.length + 4) ≤ (c0 + c1) * (4 * T y.length) :=
+      Nat.mul_le_mul_left _ (by omega)
+    have e : (8 * (c0 + c1) + 3) * T y.length =
+        2 * ((c0 + c1) * (4 * T y.length)) + 3 * T y.length := by ring
+    rw [e, hB]
+    omega
+  have hk1 : M.k * (2 * M.tm.spaceUsed (M.tm.initCfg v) t + 1) ≤
+      M.k * ((2 * c * (S 0 + 1) + 1) * T y.length) := by
+    apply Nat.mul_le_mul_left
+    have e : (2 * c * (S 0 + 1) + 1) * T y.length =
+        2 * (c * ((S 0 + 1) * T y.length)) + T y.length := by ring
+    rw [e]
+    omega
+  set kD := LogProg.bankK Ms + LogProg.bankK Ms with hkD
+  have hk2 : kD * (2 * B + 1) ≤ kD * ((8 * (c0 + c1) + 3) * T y.length) :=
+    Nat.mul_le_mul_left _ h2B
+  have e : (M.k * (2 * c * (S 0 + 1) + 1) + 4 + kD * (8 * (c0 + c1) + 3)) * T y.length =
+      M.k * ((2 * c * (S 0 + 1) + 1) * T y.length) + 4 * T y.length +
+        kD * ((8 * (c0 + c1) + 3) * T y.length) := by ring
+  rw [e]
+  omega
 
 /-- **Padding transfers space bounds down** ([AB09, Exercise 3.2], the padding argument in space
 form): if `L ∈ SPACE S`, then the language of `L`'s members padded by `C · (|x| + 1)^d` ones lies
