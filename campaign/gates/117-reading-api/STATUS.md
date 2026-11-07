@@ -13,5 +13,5 @@ no auxiliary/private changes, all non-simp and standard axioms. Owner-scoped sea
 controls pass in their stated scopes; no global legacy seal or full condTM repair is claimed.
 Complete raw evidence is in evidence/ and review/.
 
-Codex selected (findings Markdown attached and pasted). Verified packet preparation remains;
-**no audit dispatched yet**. **Not yet clear to merge: #230.** Next free gate118.
+Codex selected (findings Markdown attached and pasted). The verified169-section packet is published; exact pins are in dispatch.json.
+**Ready to dispatch**, using prompt.md; **no audit dispatched yet**. **Not yet clear to merge: #230.** Gate118 is reserved for MIG-1 landing; next free119.

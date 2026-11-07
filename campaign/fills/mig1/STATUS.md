@@ -56,10 +56,10 @@ lean/mig1-mega-landing with Claude authorship preserved. See landing/integration
 
 The23 approved API theorems are implemented separately in draft #230, gate117 Codex pending,
 with a passed394-module current merged-tree replay. Maintainer audit repairs of already-filled
-proofs are in progress in disjoint files. The actual condTM transport bridge remains unresolved;
+proofs are in progress in disjoint files. The actual untimed condTM transport bridge passes a22-definition focused seal;
 Loop's omitted seal region and Primitives' decoder/model-interface reads require full checking.
 A shared absorbing-stop first-entry API and two additional canonical zero-space facts are
 bounded **unapproved proposals**, separate from the23 approved scope. No public statement is
 weakened and no factoring debt is silently accepted. Codex is selected for the eventual
-MIG-1 landing audit, distinct from gate117. The final worker delivery is still awaited; its
+MIG-1 landing audit, reserved as gate118, distinct from gate117. The final worker delivery is still awaited; its
 issued brief/outbox must remain unchanged and no fill is duplicated internally.

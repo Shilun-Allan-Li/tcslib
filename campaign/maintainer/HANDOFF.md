@@ -23,7 +23,7 @@ receipts remain in their dated status folders.
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Fresh round2 evidence/packet in preparation. **Not yet clear to merge.** |
-| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Packet in preparation; audit not dispatched. **Not yet clear to merge.** |
+| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -32,7 +32,7 @@ remain immutable. No PR is merged by the maintainer.
 
 **Immediate work, in order:**
 
-1. Finish and publish the two selected **Codex** audit packets: gate117 for #230 and
+1. Dispatch the ready **Codex gate117** packet for #230 (prompt.md/dispatch.json), and finish
 gate106 round2 for #215. Gate106 canonical round1 findings are verbatim; every item is
 answered in resolutions. Its two cut repairs are body-only, no new statement/import/API.
 Seyoon accepted, by kind across TCSlib, five clean/stop/padding/transducer/bridge families
@@ -61,13 +61,13 @@ admissions. Root owns Catalog/CertShell/CodeSimulator/documentation; subagents o
 Composition/Wrappers/Loop and Primitives. Do not commit/reset this worktree while they edit.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
-final landing. Actual conditional branch transport remains under investigation, despite the
-bounded published consumer passing. A shared absorbing-stop first-entry lemma is proposed,
+final landing. The actual untimed condTM bridge now passes a22-definition new-region seal using the
+approved branch readers; other regions and final combined-chain checks remain. A shared absorbing-stop first-entry lemma is proposed,
 not approved, for the assigned MIG24T2 twin proof. Two further constant-space rows may need
 canonical pairDiag/incFixed zero-space APIs, separately unapproved. Do not weaken public
 constant-space claims or silently acknowledge retained factoring debt. These leaves wait
 for Seyoon while other repairs continue. **Codex is already selected for the eventual MIG-1
-proof/migration audit**, distinct from gate117; reserve the next gate when preparing it.
+proof/migration audit**, distinct from gate117; gate118 is reserved for it.
 
 3. **F6 follows the merged consumer and the reading API prerequisite.** Seyoon chose
 D-F6-3's **ruler-hosted suffix** and **Claude**, checkpoint/final zip pushes to its designated
@@ -81,7 +81,7 @@ Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 computation but not Exercise3.6's second-part wording. Follow roadmap3 PLAN §(f).
 
 **Gate numbers:** 114/115/116 CLOSED and merged; 106 follow-up pending; 117 reserved/preparing.
-Next free **118**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
+Gate118 is reserved for the eventual MIG-1 landing audit (Codex selected). Next free **119**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
 choice. Codex returns attached Markdown plus pasted findings; Claude may push only to its
 exact exchange inbox, after pull/rebase, never to a campaign branch.
 
