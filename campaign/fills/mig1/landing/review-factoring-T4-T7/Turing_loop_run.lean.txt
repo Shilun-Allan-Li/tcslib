@@ -1,0 +1,51 @@
+/-- **The loop summation lemma** (the generic form of
+the enumerator's proved `enumLoop_run`, which is the harvest template;
+round-1 audit verdict: Pass, including `N = 0`).
+Given round configurations `cfg 0, …, cfg N` of one machine with empty
+outputs, such that each round `j < N` within budget `B` either halts with
+the verdict `[true]` (when `accept j`) or reaches `cfg (j+1)`, and the
+exhaustion round `cfg N` halts with `[false]` within `B`: the run from
+`cfg 0` halts within `(N + 1) · B` steps with the single verdict bit
+`(List.range N).any accept`.
+
+**Proof sketch.** Induction on the first accepting round (or `N` when none
+accepts), composing the advance segments with
+`Turing.MultiTapeTM.runFrom_add` and absorbing halted tails with
+`Turing.MultiTapeTM.runFrom_of_halt`; empty round outputs make the final
+output exactly the one emitted verdict. -/
+theorem loop_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hout : ∀ j ≤ N, (cfg j).output = [])
+    (hend : ∃ t ≤ B, (tm.runFrom (cfg N) t).state = none ∧
+      (tm.runFrom (cfg N) t).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ (N + 1) * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  induction N generalizing cfg accept with
+  | zero => simpa using hend
+  | succ N ih =>
+    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
+    have hany : (List.range (N + 1)).any accept =
+        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
+      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
+    by_cases hb : accept 0 = true
+    · simp only [hb, ↓reduceIte] at hc
+      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
+      · exact Nat.le_mul_of_pos_left B (by omega)
+      · simpa [hany, hb] using hc.2
+    · simp only [hb] at hc
+      -- Shift the round family by one, retaining the same terminal segment.
+      obtain ⟨s, hs, hhalt, hout'⟩ := ih
+        (fun j => cfg (j + 1)) (fun j => accept (j + 1))
+        (fun j hj => hout (j + 1) (by omega)) hend
+        (fun j hj => hround (j + 1) (by omega))
+      refine ⟨t + s, ?_, ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+      · rw [MultiTapeTM.runFrom_add, hc]
+        simpa [hany, hb] using hout'

@@ -1,0 +1,183 @@
+{
+  "applied": false,
+  "source_files": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "frozen_source_sha256": "eb55b3b7688f3949667df21151b8dc3036b99bd80ed467b20bf466bcedee213d",
+      "proposed_comment_source_sha256": "cfc4365531fade3b5f5e358f0285d4792b239412bc2f1ac662673fdc5f54fb73",
+      "noncomment_tokens_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "frozen_source_sha256": "11500dd5708e97d9f95a2de9066165fa0ff68ac7d23444993958f537ae4b20a8",
+      "proposed_comment_source_sha256": "c22446014ede4b24284170545ba42589afb96b8e6286b06e1b5ab3cd76b8462c",
+      "noncomment_tokens_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "frozen_source_sha256": "483ab96b55b400c3c1d4df9796b38cfec20b09f0360c68fe97a560212b1d0b80",
+      "proposed_comment_source_sha256": "29d84cd418072e50d0a5f5c106daa9eb2dbac5391036684cf6864243afab7db4",
+      "noncomment_tokens_identical": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "frozen_source_sha256": "956fe914732375be3aa2121922a8918d1f049f9b7c7f767c3bc2b409bcc7a736",
+      "proposed_comment_source_sha256": "0e2e7ed7b1bb07bcc15df9e99a6cf6033f2aad1b0cfd84ddf12e035add94c9d0",
+      "noncomment_tokens_identical": true
+    }
+  ],
+  "source_comment_changes": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "reason": "Remove obsolete byte-identity claim and describe current homes.",
+      "before": "The R3 increment of the machine-construction library\n(`machine-library-design.md` \u00a712): the remaining audited A-chain tape\nroutines promoted as public machines with exact time **and** space costs,\nplus the space retro-annotation of the existing catalog and control\nsurface. Per frozen decision 12.2 this lives in a **new** file \u2014 the new\nrows and the space lemmas for the old rows both \u2014 keeping\n`Build/Primitives.lean` byte-identical; the later refactor toward a\nper-theme layout is a recorded backlog item.",
+      "after": "This module collects tape routines with exact time **and** space costs,\nplus space annotations for the functional catalog and control surface.\nNamed function witnesses and their intrinsic specifications live in their\nconstruction modules, including `Build/Primitives.lean`; the corresponding\nexistential time-and-space rows are packaged here."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "reason": "Distinguish the public construction API from the three new private ledger helpers.",
+      "before": "assembled from these. Everything here is public \u2014 it is shared\naudited surface \u2014 and carries no finiteness assumptions beyond what each\ngadget needs.",
+      "after": "assembled from these. The constructions and their specification API are\npublic shared surface, with local proof helpers for their intrinsic bounds.\nEach gadget carries only the finiteness assumptions it needs."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Describe the current public-witness/convenience-row organization.",
+      "before": "`TCSlib.Complexity.TuringMachine.Composition`, the contracts are\nexistentially packaged; each fill implements a named private machine with\nits run invariants and closes the existential.",
+      "after": "`TCSlib.Complexity.TuringMachine.Composition`, the convenience rows package\npublic named witnesses with their run specifications. Private helpers establish\nthe local invariants used by those specifications."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Keep the module index about declarations.",
+      "before": "## Named witnesses and their specs (MIG-1)",
+      "after": "## Named witnesses and their specs"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Index all three new forwarding exports and their frozen coefficients.",
+      "before": "* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`).",
+      "after": "* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`);\n* `pairMapSndTM` (`pairMapSndTM_computes`, `pairMapSndTM_spaceUsed`), the forwarding\n  mapper with time coefficient `22` and coefficient one on the payload's space."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Retire the now-false three-admission status paragraph.",
+      "before": "`polyUnaryTM_spaceUsed`, `unaryTokenTM_computes` and `appendBitTM_computes` are sorried\nuntil the fill F-B; every other spec has a proof, and the ones that cite a spec sorried until\nits own fill depend on it (`polyBitsTM_computes`, `stripLastTM_computes` and the three\nsplit-search specs).",
+      "after": "Every named specification is proved. The polynomial-bit, stripping and split-search\nresults consume the corresponding named time and space specifications."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_block proof (>20 lines).",
+      "before": "/-- Doubled blocks append one bit to the first buffer. `01` starts suffix\nbuffering; `10` rejects before emitting. Both missing-bit cases are handled\nby the surrounding parser induction. -/",
+      "after": "/-- Doubled blocks append one bit to the first buffer. `01` starts suffix\nbuffering; `10` rejects before emitting. Both missing-bit cases are handled\nby the surrounding parser induction.\n\n**Proof sketch.** Apply the first aligned parser step, then inspect the second bit. Equal bits\nappend one bit to the first buffer; `01` begins suffix copying and `10` halts. The published\naction fields and buffer-append equation identify the complete configuration in each case. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_suffix proof (>20 lines).",
+      "before": "/-- After validation, the complete suffix is buffered silently. Its right\nblank is turned left exactly once, including when the suffix is empty. -/",
+      "after": "/-- After validation, the complete suffix is buffered silently. Its right\nblank is turned left exactly once, including when the suffix is empty.\n\n**Proof sketch.** Induct on the unread suffix. A present bit appends to the second buffer and\nadvances its head and the native input once; the empty suffix reads the right blank and starts\nits rewind. The first buffer and payload bank remain unchanged throughout. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_backB proof (>20 lines).",
+      "before": "/-- Rewind the second buffer to zero, preserving the first buffer and the\nblank payload bank. The left-blank step is present even at width zero. -/",
+      "after": "/-- Rewind the second buffer to zero, preserving the first buffer and the\nblank payload bank. The left-blank step is present even at width zero.\n\n**Proof sketch.** Induct on the remaining second-buffer head distance. Each nonblank position\nmakes one left move without changing a tape. At position `-1` the blank-reading transition moves\nright to zero and enters the first-buffer rewind phase. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_backA proof (>20 lines).",
+      "before": "/-- The corresponding first-buffer rewind, leaving virtual input at zero. -/",
+      "after": "/-- The corresponding first-buffer rewind, leaving virtual input at zero.\n\n**Proof sketch.** Induct on the remaining first-buffer head distance. Each nonblank position\nmakes one left move without changing a tape. At position `-1` the blank-reading transition moves\nright to zero and enters the first-buffer emission phase. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_finish proof (>20 lines).",
+      "before": "/-- Successful suffix buffering, two rewinds, and encoded-prefix emission\nreach the initialized payload seam within `3|a|+2|b|+5` transitions. -/",
+      "after": "/-- Successful suffix buffering, two rewinds, and encoded-prefix emission\nreach the initialized payload seam within `3|a|+2|b|+5` transitions.\n\n**Proof sketch.** Compose suffix copying, the two buffer rewinds, and emission of the first\ncomponent and delimiter. Their time sum is `3 * |a| + 2 * |b| + 5`. The initialization field\nequations identify the endpoint with the payload machine's virtual initial configuration on `b`. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_setup proof (>20 lines).",
+      "before": "/-- Starting with empty buffers gives a uniform linear setup budget on every\ninput, including malformed encodings. -/",
+      "after": "/-- Starting with empty buffers gives a uniform linear setup budget on every\ninput, including malformed encodings.\n\n**Proof sketch.** Specialize the parser theorem to the complete input with empty consumed prefix\nand empty buffers. The public initialization fields identify the machine's genuine start\nconfiguration with that parser configuration. Its successful virtual launch and unsuccessful\nsilent halt give the two decoder cases with the same linear budget. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMapVirtual_step proof (>20 lines).",
+      "before": "/-- One forwarded payload step has exactly the source work actions and\nemission. `virtualMove_correct` proves both boundary clamps and preserves\nits arrival tag, without a nonempty-input assumption. -/",
+      "after": "/-- One forwarded payload step has exactly the source work actions and\nemission. `virtualMove_correct` proves both boundary clamps and preserves\nits arrival tag, without a nonempty-input assumption.\n\n**Proof sketch.** A halted source remains fixed. For a live source, the virtual-move contract\nsupplies the next boundary tag and buffered input-head position. The action field equations then\nidentify the preserved first buffer, virtual input buffer, payload bank, fixed physical input\nhead, and forwarded output prefix. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMapSetup_head_step proof (>20 lines).",
+      "before": "/-- Every setup action leaves each payload work head fixed. -/",
+      "after": "/-- Every setup action leaves each payload work head fixed.\n\n**Proof sketch.** Inspect the setup controller's phases and the possible pending bit and read\nsymbol. Every setup action leaves the payload-bank heads stationary, including the absorbing\nsetup view of the run phase. The public step and action head equations transfer that table fact\nto the complete step. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_launch proof (>20 lines).",
+      "before": "/-- Choose the first payload entry, then transfer every prefix to the\noperational host. The stationary setup seam identifies this first entry\nwith the complete validating/buffering/emission endpoint, so no payload\nwork is hidden in the administrative time bound. -/",
+      "after": "/-- Choose the first payload entry, then transfer every prefix to the\noperational host. The stationary setup seam identifies this first entry\nwith the complete validating/buffering/emission endpoint, so no payload\nwork is hidden in the administrative time bound.\n\n**Proof sketch.** Choose the first time the absorbing setup view enters a virtual payload state.\nGuarded setup agreement identifies every real prefix through that time. Absorption identifies\nthis first-entry configuration with the already bounded final setup configuration, retaining the\nsame linear bound. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "reason": "Add the leading sketch for the fwdMap_reject proof (>20 lines).",
+      "before": "/-- A malformed encoding never reaches a payload state, since such a setup\nstate would remain live forever. Hence its entire operational trajectory\nagrees with setup, including the silent halt and every later time. -/",
+      "after": "/-- A malformed encoding never reaches a payload state, since such a setup\nstate would remain live forever. Hence its entire operational trajectory\nagrees with setup, including the silent halt and every later time.\n\n**Proof sketch.** The bounded setup run halts silently. A virtual payload state cannot occur\nbefore this halt, since that state is absorbing in the setup view, or afterward, since a halted\nrun remains fixed. The two controllers therefore agree for every prefix and have the same bounded\nsilent rejection. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "Replace historical unproved/proved checkpoint prose with the current mathematical construction.",
+      "before": "**Fill checkpoint (batch L).** `loop_run` is proved. The three finite-machine\nexports are derived from the single admitted private `loopHost_contracts`.\nThe concrete controller, source-body simulation, fixed-width counter,\ninput rewind, capture instances, payload replay, and both terminal summation\nlemmas are supplied below. Controller-level phase assembly and its uniform\nbudget remain the continuation frontier; this file is not an admission-free\ncompletion of the loop combinators.\n\n**Fill completion (batch L2).** The historical checkpoint above is now\nclosed: the actual fuel, startup, body-return, counter, and payload phases\nare proved and assembled in `loopHost_contracts`, with uniform coefficient\n`loopHost_bound = 10`. The canonical seams retain the completed fuel residue\nand fixed-width debit iterates. Underflow and its final emission are inside\nthe last rejecting segment; an accepting last candidate has an arbitrary\nunreachable rejection terminal. The entire file has no admissions, including\nthe capture helpers now that batch W's `capture_run` proof is integrated.",
+      "after": "The concrete controller assembles the completed fuel, startup, body-return,\ncounter and payload phases in `loopHost_contracts`, with uniform coefficient\n`loopHost_bound = 10`. Canonical seams retain the fuel residue and fixed-width\ndebit iterates. Underflow and its final emission belong to the last rejecting\nsegment; an accepting last candidate has an arbitrary unreachable rejection\nterminal. The capture helpers consume the proved `capture_run` contract."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "Describe the numeric ledger without an audit label.",
+      "before": "/-- The audit's single maximum: startup coefficient nine, body coefficient",
+      "after": "/-- The controller's uniform maximum: startup coefficient nine, body coefficient"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "Describe the completed controller ledger without an audit label.",
+      "before": "the audit's maximum\nledger.",
+      "after": "the controller's maximum\nledger."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "Remove the obsolete private-contract frontier status.",
+      "before": "**Continuation frontier: unproved.** The public corollaries below are conditional\non this one machine-construction obligation; this is not a closed batch.\n\n",
+      "after": ""
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "Make the proof sketch describe the completed assembly.",
+      "before": "ledger. The missing proof is precisely the controller-level lifting and\nassembly of these phase contracts, including startup and replay bounds.",
+      "after": "ledger. This assembles the controller-level phase contracts, including the\nstartup and replay bounds."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "reason": "The current proof sketch no longer needs a historical correction block.",
+      "before": "/- Batch L2 closure: the preceding continuation docstring is retained as\nhistorical evidence. Its listed obligations are discharged below by the phase\nlemmas and the canonical family; there is no remaining construction admission. -/\n",
+      "after": ""
+    }
+  ],
+  "ten_sketches": [
+    "fwdMap_block",
+    "fwdMap_suffix",
+    "fwdMap_backB",
+    "fwdMap_backA",
+    "fwdMap_finish",
+    "fwdMap_setup",
+    "fwdMapVirtual_step",
+    "fwdMapSetup_head_step",
+    "fwdMap_launch",
+    "fwdMap_reject"
+  ],
+  "postmerge_registry": {
+    "path": "machine-library-design.md",
+    "base_sha256": "cb321ef1f2508370a219b3820c4918d796babf1c6ec08134fb19435bc0967f59",
+    "proposed_sha256": "3879de409ec38931713734702fc259b77aac71aed9628a3cb9c8da045068e15d",
+    "pointer_changes": 2,
+    "apply_only_after_retirement_merge": true
+  },
+  "backlog_retirement_hit": "Historical answered conditional/ruling, intentionally retained. No merge/status claim is pre-written."
+}

@@ -1,0 +1,31 @@
+/-- **Composition.** If `f` is computable within `T₁` and `g` within a monotone `T₂`,
+then `g ∘ f` is computable within `c · (T₁ n + T₂ (T₁ n) + 1)`.
+
+The inner bound `T₂ (T₁ n)` is valid because the intermediate string is no longer than
+the time that produced it: `|f x| ≤ T₁ |x|` by `Turing.MultiTapeTM.output_length_le`.
+Monotonicity of `T₂` is genuinely needed to convert that length bound into a time
+bound.
+
+**Proof sketch.** Build `M` with `M₁.k + M₂.k + 1` work tapes over `Bool`. Phase one
+simulates `M₁` step for step on the true input, with `M₁`'s emissions written instead
+onto the dedicated intermediate tape (constant overhead per step; this is the
+append-only-output buffering discussed in the module docstring). Phase two rewinds the
+intermediate tape head (at most `T₁ n` steps) and simulates `M₂` step for step, with
+`M₂`'s input-head reads served from the intermediate tape and `M₂`'s emissions going to
+the real output tape. Phase two costs constant overhead per step of `M₂`, which halts
+within `T₂ |f x| ≤ T₂ (T₁ n)` steps. Bookkeeping (phase switching, boundary detection
+on the intermediate tape) is absorbed into `c`.
+
+**Implementation note (epoch 2).** The shared `bufferedCompTM` has
+`M₁.k + (1 + M₂.k)` tapes and uses one physical step per simulated step.
+The first halting time is at most `T₁ |x|`; rewind and dispatch take exactly
+`|f x| + 2` steps, including the unconditional first left move. Consequently
+`2 * T₁ |x| + T₂ (T₁ |x|) + 2` suffices, and the theorem uses `c = 2`: it is
+`Turing.FinTM.bufferedCompTM_computesFunInTime` at that witness. -/
+theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool}
+    {T₁ T₂ : ℕ → ℕ}
+    (h₁ : M₁.ComputesFunInTime f T₁) (h₂ : M₂.ComputesFunInTime g T₂)
+    (hT₂ : Monotone T₂) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) :=
+  ⟨bufferedCompTM M₁ M₂, 2, bufferedCompTM_computesFunInTime h₁ h₂ hT₂⟩

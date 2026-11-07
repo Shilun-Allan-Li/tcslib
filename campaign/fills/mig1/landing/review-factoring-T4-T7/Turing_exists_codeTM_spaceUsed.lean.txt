@@ -1,0 +1,25 @@
+/-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
+to a coded machine `M'` that halts with the same outputs at the same times
+(`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
+clause of the coding step named by `Complexity.space_hierarchy`'s sketch. [AB09, §1.4]
+
+**Proof sketch.** `State` carries `Fintype`/`DecidableEq` instances and is inhabited by `q₀`,
+so `Fintype.equivFinOfCardEq` gives an equivalence with `Fin (|Q| - 1 + 1)`. Relabel the states
+along it (`Turing.MultiTapeTM.relabelState`): by `Turing.MultiTapeTM.relabelState_runFrom_init`
+the relabelled run is the original run with renamed states, so halting and outputs correspond
+at every time, and the space clause is `Turing.MultiTapeTM.relabelState_spaceUsed`. The
+tape-count cast uses `hk : M.k = 1`, eliminated after destructuring the bundle. -/
+theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
+    ∃ M' : CodeTM,
+      (∀ (x output : List Bool) (t : ℕ),
+        M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
+          M.tm.spaceUsed (M.tm.initCfg x) t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  let M₀ : FinTM Bool := ⟨1, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin,
+    fun x t => MultiTapeTM.relabelState_spaceUsed tm M₀.stateEquivFin x t⟩

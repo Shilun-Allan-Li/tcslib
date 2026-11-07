@@ -154,9 +154,10 @@ stated).
 
 ## 6. Gate numbering and the current state
 
-Gates are numbered upward; the latest are in `campaign/gates/`. Gate 106 (#215, SG-1) is
-dispatched. Gates 114 (#222, NatBits) and 115 (#228, E-PAD) are closed and merged. Gate 116
+Gates are numbered upward; the latest are in `campaign/gates/`. Gate106 round1 (#215, SG-1)
+returned HOLD; its round2 packet is published and ready for user dispatch. Gates 114 (#222, NatBits) and 115 (#228, E-PAD) are closed and merged. Gate 116
 (#229, the Hierarchy consumer) is closed and merged. Gate **117** is reserved for the
 23 approved reading/resource APIs (Codex selected), ready for dispatch. Gate118 is reserved
-for MIG-1 landing (Codex selected); next free: **119**.
+for draft #233’s MIG-1 landing (Codex selected), with current replay/screens running and
+interface rulings pending; next free: **119**.
 **The current state is HANDOFF §0.**

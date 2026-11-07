@@ -1,0 +1,282 @@
+
+### Turing.FinTM.computesFunInTime_comp — TCSlib/Complexity/TuringMachine/Composition.lean:437
+/-- **Composition.** If `f` is computable within `T₁` and `g` within a monotone `T₂`,
+then `g ∘ f` is computable within `c · (T₁ n + T₂ (T₁ n) + 1)`.
+
+The inner bound `T₂ (T₁ n)` is valid because the intermediate string is no longer than
+the time that produced it: `|f x| ≤ T₁ |x|` by `Turing.MultiTapeTM.output_length_le`.
+Monotonicity of `T₂` is genuinely needed to convert that length bound into a time
+bound.
+
+**Proof sketch.** Build `M` with `M₁.k + M₂.k + 1` work tapes over `Bool`. Phase one
+simulates `M₁` step for step on the true input, with `M₁`'s emissions written instead
+onto the dedicated intermediate tape (constant overhead per step; this is the
+append-only-output buffering discussed in the module docstring). Phase two rewinds the
+intermediate tape head (at most `T₁ n` steps) and simulates `M₂` step for step, with
+`M₂`'s input-head reads served from the intermediate tape and `M₂`'s emissions going to
+the real output tape. Phase two costs constant overhead per step of `M₂`, which halts
+within `T₂ |f x| ≤ T₂ (T₁ n)` steps. Bookkeeping (phase switching, boundary detection
+on the intermediate tape) is absorbed into `c`.
+
+**Implementation note (epoch 2).** The shared `bufferedCompTM` has
+`M₁.k + (1 + M₂.k)` tapes and uses one physical step per simulated step.
+The first halting time is at most `T₁ |x|`; rewind and dispatch take exactly
+`|f x| + 2` steps, including the unconditional first left move. Consequently
+`2 * T₁ |x| + T₂ (T₁ |x|) + 2` suffices, and the theorem uses `c = 2`: it is
+`Turing.FinTM.bufferedCompTM_computesFunInTime` at that witness. -/
+theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool}
+    {T₁ T₂ : ℕ → ℕ}
+    (h₁ : M₁.ComputesFunInTime f T₁) (h₂ : M₂.ComputesFunInTime g T₂)
+    (hT₂ : Monotone T₂) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) :=
+  ⟨bufferedCompTM M₁ M₂, 2, bufferedCompTM_computesFunInTime h₁ h₂ hT₂⟩
+
+### Turing.FinTM.exists_comp_on_image — TCSlib/Complexity/TuringMachine/Composition.lean:485
+/-- **Composition with a second machine correct only on the image.** If `M` computes `f`
+within `T₁` and, for every input `x`, `U` maps `f x` to `g x` within `T₂ |x|` steps (the
+budget measured at the *original* input length), then some machine computes `g` within
+`2 T₁ n + T₂ n + 2`. Unlike `computesFunInTime_comp`, `U` need not be total, and no
+monotonicity is assumed.
+
+**Proof sketch.** `bufferedCompTM M U` runs both phases
+(`bufferedCompTM_computesInTime`); the intermediate output is no longer than `M`'s
+running time, so capture and rewind cost at most `T₁ n + 2` more steps
+(`Turing.FinTM.bufferedCompTM_computesFunInTime_on_image`). -/
+theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=
+  ⟨bufferedCompTM M U, bufferedCompTM_computesFunInTime_on_image M U f g T₁ T₂ hM hU⟩
+
+### Turing.FinTM.exists_comp_partial — TCSlib/Complexity/TuringMachine/Composition.lean:545
+/-- **Partial (guarded) sequential composition** — the phase-4 API obligation
+identified by the phase-3 audit (round 2, finding 10 and Argument F):
+`Turing.FinTM.computesFunInTime_comp` requires both components to compute *total*
+functions, so it cannot take a partially computing machine — such as the universal
+evaluator — as a component. This lemma composes two arbitrary machines at the level
+of their halting relations, with **no totality or time hypotheses**: `M` behaves on
+`x` exactly as `M₂` behaves on `M₁`'s completed output — halting, completed outputs,
+and divergence all correspond.
+
+Statement notes. The intermediate string `y` is existentially quantified, but by
+`Turing.FinTM.ComputesInTime.output_unique` at most one `y` satisfies the first
+conjunct, so the right-hand side reads "`M₁` halts on `x` (necessarily with a unique
+`y`), and then `M₂` halts on `y` with `w`". If `M₁` diverges on `x`, or halts but
+`M₂` diverges on its output, both sides are empty — `M` diverges. A time-bounded
+refinement is deliberately not stated; it will be added if and when a result needs
+it.
+
+**Proof sketch** (buffered intermediate output, per the audit's design). `M` carries
+`M₁`'s and `M₂`'s work tapes plus a fresh *buffer* tape. Phase one simulates `M₁` on
+the true input step for step, with each emission of `M₁` written to the buffer tape
+(write, move right) instead of the output tape; the append-only output discipline
+makes the buffer region a verbatim copy of `M₁`'s output, contiguous from the
+initial head cell. If `M₁` never halts, neither does `M`. On `M₁`'s halting
+transition, `M` rewinds the buffer head to the leftmost written cell — the head
+rests on the blank immediately *right* of the written word, so the rewind's first
+left move is unconditional (testing the current cell before moving would stop at the
+wrong end; phase-4 audit, finding 3), then left while reading a symbol, then one
+step right. Phase two simulates `M₂` with its *input-tape
+reads served from the buffer*: the buffer holds exactly `y` with blank cells on both
+sides, and `M` maintains `M₂`'s virtual input position on it, mirroring the clamped
+input-head semantics of `Turing.moveInputPos` at both boundaries — the same
+virtual-boundary emulation as the universal machine's sketch
+(`TCSlib.Complexity.TuringMachine.Universal`); a blank read identifies a boundary,
+and *which* boundary is determined by the direction of arrival, tracked in the
+state — for an empty intermediate word the simulation starts with the right-boundary
+tag already set, the left boundary one inward move away (phase-4 audit, finding 3).
+`M₂`'s work-tape actions go to its own fresh tapes and its emissions to the
+real output tape, untouched during phase one. `M` halts exactly when the simulated
+`M₂` halts; step-for-step run correspondence in each phase gives both directions of
+the iff.
+
+**Implementation note (epoch 2).** The buffer and virtual-input invariants are
+public in `Simulation.lean`. The arrival tag is constrained only at boundaries;
+stationary moves preserve it, including suppressed outward moves. Dispatch always
+sets it to true, which is already the right-boundary tag when the word is empty.
+A simulated phase-one halt remains live through the exact `|y| + 2` rewind.
+The equivalence at this witness is `Turing.FinTM.bufferedCompTM_computes_iff`. -/
+theorem exists_comp_partial (M₁ M₂ : FinTM Bool) :
+    ∃ M : FinTM Bool, ∀ x w : List Bool,
+      (∃ t, M.ComputesInTime x w t) ↔
+        ∃ y : List Bool,
+          (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t :=
+  ⟨bufferedCompTM M₁ M₂, bufferedCompTM_computes_iff M₁ M₂⟩
+
+### Turing.loop_run — TCSlib/Complexity/TuringMachine/Build/Loop.lean:135
+/-- **The loop summation lemma** (the generic form of
+the enumerator's proved `enumLoop_run`, which is the harvest template;
+round-1 audit verdict: Pass, including `N = 0`).
+Given round configurations `cfg 0, …, cfg N` of one machine with empty
+outputs, such that each round `j < N` within budget `B` either halts with
+the verdict `[true]` (when `accept j`) or reaches `cfg (j+1)`, and the
+exhaustion round `cfg N` halts with `[false]` within `B`: the run from
+`cfg 0` halts within `(N + 1) · B` steps with the single verdict bit
+`(List.range N).any accept`.
+
+**Proof sketch.** Induction on the first accepting round (or `N` when none
+accepts), composing the advance segments with
+`Turing.MultiTapeTM.runFrom_add` and absorbing halted tails with
+`Turing.MultiTapeTM.runFrom_of_halt`; empty round outputs make the final
+output exactly the one emitted verdict. -/
+theorem loop_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hout : ∀ j ≤ N, (cfg j).output = [])
+    (hend : ∃ t ≤ B, (tm.runFrom (cfg N) t).state = none ∧
+      (tm.runFrom (cfg N) t).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ (N + 1) * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  induction N generalizing cfg accept with
+  | zero => simpa using hend
+  | succ N ih =>
+    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
+    have hany : (List.range (N + 1)).any accept =
+        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
+      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
+    by_cases hb : accept 0 = true
+    · simp only [hb, ↓reduceIte] at hc
+      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
+      · exact Nat.le_mul_of_pos_left B (by omega)
+      · simpa [hany, hb] using hc.2
+    · simp only [hb] at hc
+      -- Shift the round family by one, retaining the same terminal segment.
+      obtain ⟨s, hs, hhalt, hout'⟩ := ih
+        (fun j => cfg (j + 1)) (fun j => accept (j + 1))
+        (fun j hj => hout (j + 1) (by omega)) hend
+        (fun j hj => hround (j + 1) (by omega))
+      refine ⟨t + s, ?_, ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+      · rw [MultiTapeTM.runFrom_add, hc]
+        simpa [hany, hb] using hout'
+
+### Turing.FinTM.loop_halted_run — TCSlib/Complexity/TuringMachine/Build/Loop.lean:2491
+/-- Summation with an already-halted exhaustion terminal. Unlike `loop_run`,
+this lemma requires no empty output at that terminal and charges no final
+extra segment.
+**Proof sketch.** Induct on the remaining candidates, as in `enumLoop_run`.
+An accepting round ends the run; a rejecting round composes with the
+shifted induction hypothesis. Zero candidates use the halted terminal at
+time zero, with its already-written false verdict. -/
+private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hend : (cfg N).state = none ∧ (cfg N).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  induction N generalizing cfg accept with
+  | zero => exact ⟨0, by simp, by simpa using hend⟩
+  | succ N ih =>
+    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
+    have hany : (List.range (N + 1)).any accept =
+        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
+      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
+    by_cases hb : accept 0 = true
+    · simp only [hb, ↓reduceIte] at hc
+      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
+      · exact Nat.le_mul_of_pos_left B (by omega)
+      · simpa [hany, hb] using hc.2
+    · simp only [hb] at hc
+      obtain ⟨s, hs, hhalt, hout⟩ := ih
+        (fun j => cfg (j + 1)) (fun j => accept (j + 1)) hend
+        (fun j hj => hround (j + 1) (by omega))
+      refine ⟨t + s, ?_, ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+      · rw [MultiTapeTM.runFrom_add, hc]
+        simpa [hany, hb] using hout
+
+### Turing.FinTM.toCodeTM_computesInTime_iff — TCSlib/Complexity/TuringMachine/Encoding.lean:759
+/-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
+form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
+
+**Proof sketch.** The relabelled machine's run is the image of `M`'s run under the state
+bijection (`Turing.MultiTapeTM.relabelState_runFrom_init`); halting and output are preserved. -/
+theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
+    (x output : List Bool) (t : ℕ) :
+    (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  exact FinTM.computesInTime_relabelState ⟨1, Q, tm⟩ _ x output t
+
+### Turing.exists_codeTM_spaceUsed — TCSlib/Complexity/TuringMachine/Encoding.lean:725
+/-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
+to a coded machine `M'` that halts with the same outputs at the same times
+(`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
+clause of the coding step named by `Complexity.space_hierarchy`'s sketch. [AB09, §1.4]
+
+**Proof sketch.** `State` carries `Fintype`/`DecidableEq` instances and is inhabited by `q₀`,
+so `Fintype.equivFinOfCardEq` gives an equivalence with `Fin (|Q| - 1 + 1)`. Relabel the states
+along it (`Turing.MultiTapeTM.relabelState`): by `Turing.MultiTapeTM.relabelState_runFrom_init`
+the relabelled run is the original run with renamed states, so halting and outputs correspond
+at every time, and the space clause is `Turing.MultiTapeTM.relabelState_spaceUsed`. The
+tape-count cast uses `hk : M.k = 1`, eliminated after destructuring the bundle. -/
+theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
+    ∃ M' : CodeTM,
+      (∀ (x output : List Bool) (t : ℕ),
+        M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
+          M.tm.spaceUsed (M.tm.initCfg x) t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  let M₀ : FinTM Bool := ⟨1, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin,
+    fun x t => MultiTapeTM.relabelState_spaceUsed tm M₀.stateEquivFin x t⟩
+
+### Turing.FinTM.bufferedSecondCfg_run — TCSlib/Complexity/TuringMachine/Simulation.lean:1066
+/-- Every second-phase run has a matching virtual run at the same time and a
+valid arrival tag. This preserves completed outputs and absorbing halting. -/
+lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) (t : ℕ) :
+    ∃ b', VirtualTag (M₂.tm.runFrom c t).inputPos b' ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
+  induction t with
+  | zero => exact ⟨b, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b', hb', he⟩ := ih
+    obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
+    refine ⟨b'', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+
+### Turing.vhostEmitTM_runFrom — TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean:271
+/-- The forwarding lockstep at every time: one host step per source step,
+with a valid arrival tag at the endpoint. Completed outputs are preserved
+and a halted source stays absorbed; `t = 0` and the empty buffered word
+are instances, not exceptions.
+
+**Proof sketch.** Induct on `t` and chain `vhostEmitTM_step`, exactly as
+`Turing.FinTM.bufferedSecondCfg_run` chains its step lemma. -/
+theorem vhostEmitTM_runFrom (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
+    (b : Bool) (hb : FinTM.VirtualTag c.inputPos b) (p : Fin (x.length + 2))
+    (pre : List Bool) (t : ℕ) :
+    ∃ b', FinTM.VirtualTag (M.runFrom c t).inputPos b' ∧
+      (vhostEmitTM M).runFrom (vhostCfg c b p pre) t =
+        vhostCfg (M.runFrom c t) b' p pre := by
+  induction t with
+  | zero => exact ⟨b, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b', hb', he⟩ := ih
+    obtain ⟨b'', hb'', he'⟩ := vhostEmitTM_step M _ b' hb' p pre
+    refine ⟨b'', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
