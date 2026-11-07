@@ -1,0 +1,16 @@
+START 2026-11-07T09:30:00.905753+00:00
+S2-SEAL active=1060 already=0
+Probe/S2SealedHeadRabin.lean:1245:2: error: 'show' tactic failed, pattern
+  pairFstD ((oddGen H).runAt n [] r) = ?m.14
+is not definitionally equal to target
+  (rabinCollection H).index n r = rabinIndexOf (max n 3) (rabinGenParams (fun x => x ≠ 2) oddDefault n (List.ofFn r))
+Probe/S2SealedHeadRabin.lean:2972:2: error: 'show' tactic failed, pattern
+  pairFstD ((blumGen H).runAt n [] r) = ?m.20
+is not definitionally equal to target
+  (rabinBlumTrapdoor H).index n r =
+    rabinIndexOf (max n 3) (rabinGenParams (fun x => x % 4 = 3) blumDefault n (List.ofFn r))
+FAIL(Probe/S2SealedHeadRabin): lean exited with status 1
+FAIL(Probe/S2SealedHeadRabin): error diagnostics reported
+FAIL(Probe/S2SealedHeadRabin): no fresh .olean produced
+
+END 2026-11-07T09:30:38.241893+00:00 RC 1 maxrss(child tree)=2952MiB

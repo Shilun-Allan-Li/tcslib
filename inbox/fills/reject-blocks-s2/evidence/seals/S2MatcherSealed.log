@@ -1,0 +1,17 @@
+START 2026-11-07T09:31:54.030742+00:00
+Probe/S2MatcherSealed.lean:7:52: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (match o with
+    | some i => a i
+    | none => b) =
+    match o with
+    | some i => a i
+    | none => b
+FAIL(Probe/S2MatcherSealed): lean exited with status 1
+FAIL(Probe/S2MatcherSealed): error diagnostics reported
+FAIL(Probe/S2MatcherSealed): no fresh .olean produced
+
+END 2026-11-07T09:31:55.986600+00:00 RC 1 maxrss(child tree)=2676MiB

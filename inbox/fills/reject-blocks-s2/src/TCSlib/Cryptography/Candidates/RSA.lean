@@ -683,8 +683,13 @@ private def rsa_unitAcc (x : List Bool) : Bool :=
     decide (listToNat [true] ≤
       listToNat (pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x)))))
 
-/-- The unit test is polynomial-time (`H.le`, `H.xgcd`; `ArithmeticFP.le_poly`, the tests
-combined by `polyTimeComputable_and` with the tests given explicitly). -/
+/-- The unit test is polynomial-time.
+
+**Proof sketch.** The gcd numeral is `H.xgcd` on `⟨b, w⟩` followed by `pairFstD`, in applied
+form (`PolyTimeComputable.comp'`). The three one-bit tests are `H.le` on `⟨w, b⟩` negated
+(`polyTimeComputable_not`) and two `H.le` tests of the gcd numeral against `[true]`
+(`ArithmeticFP.le_poly`); they are combined by `polyTimeComputable_and` with the tests given
+explicitly, so that no bundle string function is unfolded by unification. -/
 private theorem rsa_unitAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun x => [rsa_unitAcc x] := by
   have hg : PolyTimeComputable fun x => pairFstD (xgcdStr (pairEncode (pairSndD x) (pairFstD x))) :=
     PolyTimeComputable.comp' polyTimeComputable_pairFstD

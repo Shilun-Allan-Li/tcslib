@@ -1,0 +1,264 @@
+{
+ "head": "125a29633892daebde9fbad46a131d5b66febbb7",
+ "ancestor": "31348fcf7dee32f84db1fc8f929d80653137995e",
+ "candidate_pairs": 5445,
+ "elaborated_rows": {
+  "Concrete": 20,
+  "DiscreteLog": 35,
+  "ElGamal": 56,
+  "RSA": 51,
+  "Rabin": 55
+ },
+ "elaborated_reads_in_documented_exclusions": {
+  "Concrete": [
+   "Complexity.PolyExpr.eval"
+  ],
+  "DiscreteLog": [
+   "Complexity.PolyExpr.eval"
+  ],
+  "ElGamal": [
+   "Complexity.PolyExpr.eval"
+  ],
+  "RSA": [
+   "Complexity.PolyExpr.eval"
+  ],
+  "Rabin": [
+   "Complexity.PolyExpr.eval"
+  ]
+ },
+ "exclusions": [
+  "instances",
+  "reducible non-matchers",
+  "Complexity.PolyExpr.eval",
+  "TCSlib.Cryptography.glNeed"
+ ],
+ "seal_results": {
+  "Concrete/Head": {
+   "candidates": 830,
+   "active": 830,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 1,
+   "failing": [
+    {
+     "decl": "primesPairEquiv_apply_val",
+     "line": 370,
+     "decl_line": 367
+    }
+   ]
+  },
+  "Concrete/Anc": {
+   "candidates": 830,
+   "active": 830,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 1,
+   "failing": [
+    {
+     "decl": "primesPairEquiv_apply_val",
+     "line": 370,
+     "decl_line": 367
+    }
+   ]
+  },
+  "DiscreteLog/Head": {
+   "candidates": 1236,
+   "active": 1218,
+   "already_irreducible": 18,
+   "rc": 1,
+   "error_diagnostics": 3,
+   "failing": [
+    {
+     "decl": "ExpGroupGen.FullLength.exists_fullLengthExcept",
+     "line": 469,
+     "decl_line": 467
+    }
+   ]
+  },
+  "DiscreteLog/Anc": {
+   "candidates": 1236,
+   "active": 1218,
+   "already_irreducible": 18,
+   "rc": 1,
+   "error_diagnostics": 3,
+   "failing": [
+    {
+     "decl": "ExpGroupGen.FullLength.exists_fullLengthExcept",
+     "line": 469,
+     "decl_line": 467
+    }
+   ]
+  },
+  "ElGamal/Head": {
+   "candidates": 1335,
+   "active": 1317,
+   "already_irreducible": 18,
+   "rc": 0,
+   "error_diagnostics": 0,
+   "failing": []
+  },
+  "ElGamal/Anc": {
+   "candidates": 1335,
+   "active": 1317,
+   "already_irreducible": 18,
+   "rc": 0,
+   "error_diagnostics": 0,
+   "failing": []
+  },
+  "RSA/Head": {
+   "candidates": 984,
+   "active": 984,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 1,
+   "failing": [
+    {
+     "decl": "rsaTrapdoor_oneWay",
+     "line": 2056,
+     "decl_line": 2055
+    }
+   ]
+  },
+  "RSA/Anc": {
+   "candidates": 984,
+   "active": 984,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 1,
+   "failing": [
+    {
+     "decl": "rsaTrapdoor_oneWay",
+     "line": 2249,
+     "decl_line": 2248
+    }
+   ]
+  },
+  "Rabin/Head": {
+   "candidates": 1060,
+   "active": 1060,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 2,
+   "failing": [
+    {
+     "decl": "rabinCollection_index",
+     "line": 1245,
+     "decl_line": 1243
+    },
+    {
+     "decl": "rabinBlumTrapdoor_index",
+     "line": 2972,
+     "decl_line": 2969
+    }
+   ]
+  },
+  "Rabin/Anc": {
+   "candidates": 1060,
+   "active": 1060,
+   "already_irreducible": 0,
+   "rc": 1,
+   "error_diagnostics": 2,
+   "failing": [
+    {
+     "decl": "rabinCollection_index",
+     "line": 1370,
+     "decl_line": 1368
+    },
+    {
+     "decl": "rabinBlumTrapdoor_index",
+     "line": 3097,
+     "decl_line": 3094
+    }
+   ]
+  }
+ },
+ "classification": {
+  "Concrete": {
+   "head_failing": [
+    "primesPairEquiv_apply_val"
+   ],
+   "ancestor_failing": [
+    "primesPairEquiv_apply_val"
+   ],
+   "head_only": [],
+   "ancestor_only": [],
+   "touched_failing": [],
+   "untouched_failing_code_identical": [
+    "primesPairEquiv_apply_val"
+   ]
+  },
+  "DiscreteLog": {
+   "head_failing": [
+    "ExpGroupGen.FullLength.exists_fullLengthExcept"
+   ],
+   "ancestor_failing": [
+    "ExpGroupGen.FullLength.exists_fullLengthExcept"
+   ],
+   "head_only": [],
+   "ancestor_only": [],
+   "touched_failing": [],
+   "untouched_failing_code_identical": [
+    "ExpGroupGen.FullLength.exists_fullLengthExcept"
+   ]
+  },
+  "ElGamal": {
+   "head_failing": [],
+   "ancestor_failing": [],
+   "head_only": [],
+   "ancestor_only": [],
+   "touched_failing": [],
+   "untouched_failing_code_identical": []
+  },
+  "RSA": {
+   "head_failing": [
+    "rsaTrapdoor_oneWay"
+   ],
+   "ancestor_failing": [
+    "rsaTrapdoor_oneWay"
+   ],
+   "head_only": [],
+   "ancestor_only": [],
+   "touched_failing": [],
+   "untouched_failing_code_identical": [
+    "rsaTrapdoor_oneWay"
+   ]
+  },
+  "Rabin": {
+   "head_failing": [
+    "rabinBlumTrapdoor_index",
+    "rabinCollection_index"
+   ],
+   "ancestor_failing": [
+    "rabinBlumTrapdoor_index",
+    "rabinCollection_index"
+   ],
+   "head_only": [],
+   "ancestor_only": [],
+   "touched_failing": [],
+   "untouched_failing_code_identical": [
+    "rabinBlumTrapdoor_index",
+    "rabinCollection_index"
+   ]
+  }
+ },
+ "controls": {
+  "anonymous_unsealed_rc": 0,
+  "anonymous_sealed_rc": 1,
+  "anonymous_sealed_errors": [
+   "3:135"
+  ],
+  "anonymous_broad_unsealed_rc": 0,
+  "anonymous_broad_sealed_rc": 1,
+  "anonymous_broad_sealed_errors": [
+   "28:135"
+  ],
+  "primeStr_in_RSA_list": true,
+  "matcher_in_Concrete_list": true,
+  "matcher_unsealed_rc": 0,
+  "matcher_sealed_rc": 1,
+  "matcher_sealed_errors": [
+   "7:52"
+  ]
+ },
+ "base_seals_rerun": true
+}

@@ -1,9 +1,12 @@
 # Fill `reject-blocks-s2` — REPORT
 
-**Status: CHECKPOINT 4 (milestone 4 reached).** H15 is proved (milestone 2); all four consumers
-(dl-a `DiscreteLog.lean`, dl-c `ElGamal.lean`, the RSA unit sampler, the Rabin odd/Blum
-generators) consume it; every copied loop is deleted and all six public sketches are refreshed.
-The final checks (milestone 5) follow.
+**Status: FINAL (complete).** H15 `polyTimeComputable_rejectBlocksL` is proved with its frozen
+header; all four consumers (dl-a `DiscreteLog.lean`, dl-c `ElGamal.lean`, the RSA unit sampler,
+the Rabin odd/Blum generators) consume it; every copied loop is deleted (64 private declarations)
+and all six public sketches are refreshed. Owned `sorry` 1 → 0, `TCSlib/` 511 → 510; no new
+`admit`/`axiom`/`sorryAx`. All 422 Checks prerequisites and `audits/pass-shelat/Checks` pass on
+this host; the Checks axiom prints equal the base multiset; whole-file import-closure seals fail
+only at the five Gate 08 example declarations, identically at the ancestor. No escalation.
 
 ## Identity
 
@@ -13,7 +16,9 @@ The final checks (milestone 5) follow.
 | fill branch | local `fill/reject-blocks-s2`, never rebased, never pushed |
 | checkpoint 2 head | `144c99ea` — "S2 milestone 2: prove polyTimeComputable_rejectBlocksL (H15) via the repetition host" (exchange `ae2be1b7`) |
 | checkpoint 3 head | `5a6f8021` — "S2 milestone 3: dl-a and dl-c consume H15; retire dla_ss*/dlc_ss* loops; refresh three sketches" (exchange `6fc5aca0`) |
-| checkpoint 4 head | `538b932d` — "S2 milestone 4: RSA unit sampler and Rabin generators consume H15; retire rsa_us*/rabin_rb* loops; refresh three sketches" |
+| checkpoint 4 head | `538b932d` — "S2 milestone 4: RSA unit sampler and Rabin generators consume H15; retire rsa_us*/rabin_rb* loops; refresh three sketches" (exchange `9b27244a`) |
+| **final head** | `125a2963` — "S2 final: proof sketch for rsa_unitAcc_poly (style-lint finding)" (docstring only) |
+| patch series | 4 commits `144c99ea`, `5a6f8021`, `538b932d`, `125a2963` from the ancestor (`patches/`); `src/` = the five files at the final head |
 | exchange read | `exchange/pass-shelat-ch5-8` at `d14a685` (≥ `d38aea96`); pack `SHA256SUMS` verified (all OK) |
 | owned baseline | all five fingerprints and line counts equal `inputs/owned-baseline.json` (`evidence/logs/owned-baseline-check.log`) |
 | worker | one Claude session, no sub-agents |
@@ -160,8 +165,209 @@ unchanged (`census-ancestor.json`, `census-m2.json`).
   Concrete's H15 `sorry`. Axiom walk (`axioms-m4.log`): 1280 declarations of the five modules,
   none on `sorryAx`; H15 `[propext, Classical.choice, Quot.sound]`.
 
-## Still to do
+## Milestone 5: final checks
 
-Milestone 5 (328 remaining prerequisites, `audits/pass-shelat/Checks`, header diff, axiom
-comparison with the base, Rule-10 seals with the anonymous-read and repetition-matcher controls,
-lints, final sizes).
+### Prerequisites and Checks (`evidence/logs/prereq-build.log`, `prereq-build-2.log`)
+
+* The 328 Checks prerequisites outside `inputs/order.txt` were built in `inputs/checks-order.txt`
+  order, one `scripts/lean_check_tree.sh` invocation per module through `tools/chkS.py` (start/end,
+  rc, peak RSS of the child tree, fresh nonempty object required). None of them imports an owned
+  module (checked from the source imports), so they are independent of the fill.
+* Driver history (disclosed): the first driver (`tools/s2_prereq.sh`) built modules 1–51. I then
+  found the style-lint finding below and edited a docstring in `RSA.lean`; to keep the objects
+  consistent I stopped that driver's shell between modules (its in-flight module, `CookLevin/Hardness`,
+  ran to completion: rc 0, 319.9 s). The second driver (`tools/s2_prereq2.sh`) waited for that Lean
+  process to exit, skipped the 51 modules whose objects were newer than the first driver's start,
+  built the remaining 277, rechecked the eight owned/downstream modules of `inputs/order.txt`
+  against the edited RSA (all rc 0), then checked `audits/pass-shelat/Checks`.
+* Totals: 337 checks (328 prerequisites, 8 owned/downstream, Checks), every rc 0 with a fresh
+  object; peak RSS 3599 MiB (Checks); 4037 s summed wall time; slowest `ClassP/BinaryArith/DetMod`
+  1418 s. Never more than one Lean process; no check ran against a missing prerequisite.
+* **`audits/pass-shelat/Checks`: rc 0, 137.2 s, 3599 MiB, fresh object, no errors**
+  (`checks-final-Checks.full.log`).
+
+### Public surface (`tools/blocks.py`, `logs/blocks-final.json`)
+
+Declaration blocks of the five files at the ancestor and the final head, compared with comments
+and docstrings stripped:
+
+* **Public source-header diff: empty** over all five files (every retained public declaration has
+  the same modifiers and header text up to its `:=`); no public declaration added or deleted;
+  **no public non-theorem body changed**. The H15 header is byte-identical to
+  `inputs/host-header.source.txt` at both the ancestor and the head, followed by ` := by`.
+* No `@[simp]`, attribute, `irreducible`, `opaque`, `axiom`, `implemented_by`, `unsafe`,
+  `set_option`, `import`, `open`, `namespace`, `section` or `variable` line was added or removed
+  (scan of the diff).
+* Changed declarations (code, not only docstrings): public theorems
+  `polyTimeComputable_rejectBlocksL` (proof), `polyTimeComputable_expSampleRaw`,
+  `polyTimeComputable_oddGenRaw`, `polyTimeComputable_blumGenRaw` (proofs); private
+  `dlc_numPoly_sample`, `rsa_ptc_unitSampleStr` (proofs only, headers unchanged), and Rabin's
+  `rabin_spOut` (body), `rabin_spOut_eq`, `rabin_spOut_poly`, `rabin_genCore_poly` (headers and
+  proofs), `rabin_genCore_eq` (proof); old/new semantics in the milestone-4 section.
+  `rabin_gU_eq` moved above `rabin_genCore_poly` unchanged. Public theorems with docstring-only
+  changes: `polyTimeComputable_egGenRaw`, `polyTimeComputable_egEncRaw`,
+  `polyTimeComputable_unitSampleStr`.
+* Deleted: 64 private declarations (DiscreteLog 15, ElGamal 15, RSA 18, Rabin 16, listed in the
+  milestone sections and `logs/decl-diff-final.md`). Added: 23 private declarations (Concrete 15,
+  DiscreteLog 3, ElGamal 2, RSA 3).
+
+### Census (`tools/census.py`, `logs/census-final.json`)
+
+Ancestor `TCSlib/` 511 `sorry`, 0 `admit`, 0 `axiom`, 1 `sorryAx` token; final 510 / 0 / 0 / 1.
+The only per-file delta is `Concrete.lean` 1 → 0 (H15's `sorry`); owned files 0 in every
+category. The one `sorryAx` token is outside the owned files and unchanged.
+
+### Axioms
+
+* H15, every new private helper and every changed/re-pointed retained declaration, including
+  generated auxiliaries (`logs/axioms-touched.txt`, 57 records from `probes/S2Collect.lean`):
+  only subsets of `[propext, Classical.choice, Quot.sound]` (20 with all three, 20
+  `[propext, Quot.sound]`, 3 `[propext]`, 14 none). `polyTimeComputable_rejectBlocksL`,
+  `polyTimeComputable_expSampleRaw`, `polyTimeComputable_egGenRaw`, `polyTimeComputable_egEncRaw`,
+  `polyTimeComputable_unitSampleStr`, `polyTimeComputable_oddGenRaw`,
+  `polyTimeComputable_blumGenRaw`: `[propext, Classical.choice, Quot.sound]`.
+* Whole-module walk at checkpoint 4 (`logs/axioms-m4.log`): 1280 declarations of the five
+  modules, none on `sorryAx`.
+* **Aggregate comparison** (`tools/axcmp.py`, `logs/axioms-checks-compare.json`): final Checks
+  prints vs the base Checks log (the Gate 08 round-2 native log of S1 head `84f35910`, whose
+  library is identical to this ancestor per the pre-ship source identity; I did not rerun Checks
+  at the ancestor). Base: **367 records, 364 distinct names; 364 dependency-bearing records over
+  361 distinct names; 4 `sorryAx` records**. Final: identical counts, and the two 367-record
+  multisets are equal (duplicates included). The four `sorryAx` records
+  (`decides_of_decidesWithAdviceInTime`, `lemma_64_3`, `theorem_63_1`, `exists_canonizerExp`) are
+  unchanged base debt; H15 had no Checks-printed consumer at the base, so no Checks record changes.
+
+### Rule 10: seals and controls (`tools/s2_seal.py`, `logs/seal-summary.json`, `seals/`)
+
+* **Collection** (`probes/S2Collect.lean`, adapted from the Gate 08 round-2 `CollectExpanded` /
+  `CollectConservative` collectors, same exclusions: instances, reducible non-matchers,
+  `Complexity.PolyExpr.eval`, `TCSlib.Cryptography.glNeed`). Conservative import-closure lists
+  (closures from source imports, identical to Gate 08's): Concrete 830, DiscreteLog 1236,
+  ElGamal 1335, RSA 984, Rabin 1060 = **5445 pairs**. They differ from Gate 08's lists only by the
+  moved private helpers of imported owned modules (e.g. Concrete's `rbl_*` and the repetition
+  matcher's splitter now appear in the downstream lists; the deleted `dla_ss*`/`rsa_us*` are
+  gone). Elaborated reads (types and values of every constant of each module, private and
+  generated helpers and matchers included, transitively through the module's own definitions):
+  every foreign ordinary definition read lies in the conservative list, except
+  `Complexity.PolyExpr.eval`, a documented exclusion (read through its `eval_*` lemmas).
+* **Whole-file seals**, head and ancestor: a probe copy of each whole file with its list inserted
+  after its `namespace`/`open` lines by a `run_cmd` that resolves every printed name against the
+  environment (numerical/hygienic private names included), installs
+  `attribute [local irreducible]`, verifies the installed status, and counts already-irreducible
+  names separately; seal-command diagnostics are rejected as harness failures (none occurred; no
+  unsafe reducibility override). The ancestor copies are elaborated in the same imported
+  environment as the head copies (same public surface; the imported owned modules' private
+  helpers are not referable from another file), with the same lists. Results (active / already
+  irreducible / error diagnostics / failing declarations), **identical at head and ancestor**:
+
+  | file | active | already | errors | failing declarations |
+  |---|---|---|---|---|
+  | Concrete | 830 | 0 | 1 | `primesPairEquiv_apply_val` |
+  | DiscreteLog | 1218 | 18 | 3 | `ExpGroupGen.FullLength.exists_fullLengthExcept` |
+  | ElGamal | 1317 | 18 | 0 | — (rc 0) |
+  | RSA | 984 | 0 | 1 | `rsaTrapdoor_oneWay` |
+  | Rabin | 1060 | 0 | 2 | `rabinCollection_index`, `rabinBlumTrapdoor_index` |
+
+  These are exactly Gate 08's five-owned-file examples; all are untouched with code identical to
+  the ancestor; **no new or touched declaration fails** (H15 and its `rbl_*` helpers, including
+  `rbl_loop_poly` which reads the sealed repetition matcher only through `split`; the re-pointed
+  consumers). Base seals **were rerun** here (the `Anc` rows), against the issue ancestor.
+* **Controls.** Standalone anonymous-read control (an `example` whose only foreign read is
+  `primeStr` by `rfl`): unsealed rc 0; sealed rc 1, one error at the `rfl` (3:135); repeated under
+  the complete head RSA import-closure seal: unsealed rc 0, sealed rc 1, one error at the proof
+  (28:135). Repetition-matcher control (pre-ship `MatcherUnsealed`/`MatcherSealed` sources
+  verbatim): unsealed rc 0; sealed rc 1, one error at the proof (7:52). `primeStr` is in the RSA
+  list and `polyTimeComputable_iterateFind.match_1` in the Concrete list.
+* **Explicit unfold scan** (`tools/unfoldscan.py`, `logs/unfoldscan.json`,
+  `logs/unfoldscan-kinds.json`): all 92 `simp`/`simp only`/`simpa`/`dsimp`/`rw`/`rwa`/`erw`/
+  `unfold`/`delta`/... occurrences in the 37 new/touched declarations, bracketed lists read across
+  blank and comment-only continuation lines; the 121 distinct identifiers were resolved in each
+  file's namespace and `open` scope by the probe. Non-theorems among them: only own-file
+  definitions (`dlW`, `expSampleRaw` in DiscreteLog; `rabinGenRaw`, `rabinGenOut`,
+  `rabinGenParams`, `rabinIndexOf`, `samplePrimePL` in Rabin); the unresolved ones are local
+  hypotheses, `show … from` terms and own-file private names. **No foreign TCSlib definition
+  and no core/Mathlib definition is passed to `simp`/`rw`/`unfold`/`dsimp`/`delta`.** Core and
+  Mathlib definitions reduce only in `rfl`/`show`/`decide` steps or elaboration-time defeq.
+  Foreign definitions mentioned by the touched declarations' types/terms are listed in
+  `logs/touched-foreign-mentions.txt`; the seals show none is read definitionally.
+
+### Lints (`logs/style-lint-*.log`, `logs/campaign-lint*-*.log`)
+
+* `scripts/style_lint.py` on the five files: ancestor 4 findings, final 4 findings, the same four
+  pre-existing size findings (DiscreteLog, ElGamal, RSA, Rabin over 1000 lines; all four shrank).
+  At checkpoint 4 a fifth finding appeared (`rsa_unitAcc_poly`, 24-line proof without a
+  **Proof sketch.**); fixed at the final head by a docstring sketch. Exit 1 at both ancestor and
+  head because of the accepted size findings — not a clean exit.
+* `scripts/campaign_style_lint.py TCSlib/Cryptography/Candidates`, plain and `--check8b`: 0 FAIL,
+  12 WARN at both; the only differences are line and private-declaration counts. No new public
+  definition, so check 8b is unchanged and no E-API is needed.
+
+## Sizes
+
+| file | ancestor | final |
+|---|---|---|
+| Concrete | 751 | 935 (+184, under 1000) |
+| DiscreteLog | 1348 | 1194 (−154) |
+| ElGamal | 2269 | 2134 (−135) |
+| RSA | 2610 | 2417 (−193) |
+| Rabin | 3678 | 3553 (−125) |
+
+(`wc -l`; the lints count one more line where the file lacks a final newline.) Net 469
+insertions, 892 deletions. Size exceptions: the four files above 1000 lines were already above it
+at the ancestor (approved fill-owned size findings); this fill reduces each.
+
+## Six sketch dispositions
+
+| public theorem | disposition |
+|---|---|
+| `polyTimeComputable_expSampleRaw` | refreshed (H15 with `v < m`), proof re-pointed |
+| `polyTimeComputable_egGenRaw` | refreshed (H15 via `dlc_numPoly_sample`), proof unchanged |
+| `polyTimeComputable_egEncRaw` | refreshed (H15 via `dlc_numPoly_sample`), proof unchanged |
+| `polyTimeComputable_unitSampleStr` | refreshed (H15 with the unit test), proof via the re-pointed private `rsa_ptc_unitSampleStr` |
+| `polyTimeComputable_oddGenRaw` | refreshed (H15 in `rabin_spOut_poly`), proof re-pointed |
+| `polyTimeComputable_blumGenRaw` | refreshed (H15 in `rabin_spOut_poly`), proof re-pointed |
+
+Statement prose, formulas and citations are unchanged; only the loop description was replaced.
+
+## Harvest and payback
+
+H15's private loop (`rbl_*`) is the Rabin fill's private block loop (`rabin_rb*`,
+`rabin_rbFind_eq`), generalized with the parameter word in the header and the test applied to
+`⟨par, trial word⟩`; it is the only harvested code, and its source copy is deleted. Payback: four
+private loop families (64 declarations) are replaced by one host instance each; net −423 lines.
+The new consumer-side helpers are only the acceptance tests (`dla_belowAcc*`, `dlc_belowAcc*`,
+`rsa_unitAcc*`).
+
+## Interface gaps
+
+None needed (no E-API/E-FREEZE/E-TRUE/E-RES). Frictions handled locally: the tail primitive is
+stated with `List.drop 1` (transported by `List.drop_one` through `PolyTimeComputable.congr`, as
+the pre-ship route did); `PolyTimeComputable.comp'` needs the explicit outer function
+`(g := fun x => List.replicate (p.eval x.length) true)` for `polyTimeComputable_unaryPoly`
+(otherwise higher-order unification picks `List.cons true`).
+
+## Commands
+
+* Lean: `python3 -I tools/chkS.py <module>` → `bash scripts/lean_check_tree.sh <module>` with
+  `TCSLIB_OLEANS=/workspace/s2-oleans`, one module per invocation, one Lean process at a time.
+  The repository `AGENTS.md` advises the VS Code LeanInfoView instead of shell builds; the brief
+  explicitly authorizes this shell checking method for the campaign, and no LeanInfoView exists on
+  this host. No library-wide `lake build`, no unfiltered cache get.
+* Python tools in `evidence/tools/` (`census.py`, `blocks.py`, `decl_diff.py`, `unfoldscan.py`,
+  `axcmp.py`, `s2_seal.py`, drivers `s2_prereq.sh`, `s2_prereq2.sh`, delivery `s2_deliver.sh`);
+  Lean probes in `evidence/probes/` and `evidence/seals/*.source.txt`.
+
+## Honest limits
+
+* The base Checks print set is Gate 08's native log at S1 head `84f35910` (library-identical to the
+  ancestor), not a rerun at the ancestor on this host.
+* The ancestor seal copies were elaborated against the current objects of their imported owned
+  modules (public surface unchanged); the ancestor's own olean tree was not rebuilt.
+* The unfold scan is a text scanner over tactic lemma lists with Lean name resolution, not a full
+  Lean syntax analysis; seals do not detect explicit unfolds of owned definitions (allowed).
+* The bootstrap driver disclosure (milestone 1) and the stopped/resumed prerequisite driver
+  (above) are process facts; no check result depends on them.
+* Clear to merge only after delivery review and a user-approved PR.
+
+Patch reproduction: `git am` of the four `patches/` at the ancestor in a scratch worktree
+reproduces all five `src/` files byte-for-byte (5 files, 469 insertions, 892 deletions).

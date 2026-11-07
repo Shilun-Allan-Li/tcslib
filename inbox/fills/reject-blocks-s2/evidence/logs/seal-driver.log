@@ -1,0 +1,104 @@
+S2SealedHeadConcrete rc 1
+S2SealedAncConcrete rc 1
+S2SealedHeadDiscreteLog rc 1
+S2SealedAncDiscreteLog rc 1
+S2SealedHeadElGamal rc 0
+S2SealedAncElGamal rc 0
+S2SealedHeadRSA rc 1
+S2SealedAncRSA rc 1
+S2SealedHeadRabin rc 1
+S2SealedAncRabin rc 1
+S2AnonUnsealed rc 0
+S2AnonSealed rc 1
+S2AnonBroadUnsealed rc 0
+S2AnonBroadSealed rc 1
+S2MatcherUnsealed rc 0
+S2MatcherSealed rc 1
+{
+ "Concrete": {
+  "head_failing": [
+   "primesPairEquiv_apply_val"
+  ],
+  "ancestor_failing": [
+   "primesPairEquiv_apply_val"
+  ],
+  "head_only": [],
+  "ancestor_only": [],
+  "touched_failing": [],
+  "untouched_failing_code_identical": [
+   "primesPairEquiv_apply_val"
+  ]
+ },
+ "DiscreteLog": {
+  "head_failing": [
+   "ExpGroupGen.FullLength.exists_fullLengthExcept"
+  ],
+  "ancestor_failing": [
+   "ExpGroupGen.FullLength.exists_fullLengthExcept"
+  ],
+  "head_only": [],
+  "ancestor_only": [],
+  "touched_failing": [],
+  "untouched_failing_code_identical": [
+   "ExpGroupGen.FullLength.exists_fullLengthExcept"
+  ]
+ },
+ "ElGamal": {
+  "head_failing": [],
+  "ancestor_failing": [],
+  "head_only": [],
+  "ancestor_only": [],
+  "touched_failing": [],
+  "untouched_failing_code_identical": []
+ },
+ "RSA": {
+  "head_failing": [
+   "rsaTrapdoor_oneWay"
+  ],
+  "ancestor_failing": [
+   "rsaTrapdoor_oneWay"
+  ],
+  "head_only": [],
+  "ancestor_only": [],
+  "touched_failing": [],
+  "untouched_failing_code_identical": [
+   "rsaTrapdoor_oneWay"
+  ]
+ },
+ "Rabin": {
+  "head_failing": [
+   "rabinBlumTrapdoor_index",
+   "rabinCollection_index"
+  ],
+  "ancestor_failing": [
+   "rabinBlumTrapdoor_index",
+   "rabinCollection_index"
+  ],
+  "head_only": [],
+  "ancestor_only": [],
+  "touched_failing": [],
+  "untouched_failing_code_identical": [
+   "rabinBlumTrapdoor_index",
+   "rabinCollection_index"
+  ]
+ }
+}
+{
+ "anonymous_unsealed_rc": 0,
+ "anonymous_sealed_rc": 1,
+ "anonymous_sealed_errors": [
+  "3:135"
+ ],
+ "anonymous_broad_unsealed_rc": 0,
+ "anonymous_broad_sealed_rc": 1,
+ "anonymous_broad_sealed_errors": [
+  "28:135"
+ ],
+ "primeStr_in_RSA_list": true,
+ "matcher_in_Concrete_list": true,
+ "matcher_unsealed_rc": 0,
+ "matcher_sealed_rc": 1,
+ "matcher_sealed_errors": [
+  "7:52"
+ ]
+}

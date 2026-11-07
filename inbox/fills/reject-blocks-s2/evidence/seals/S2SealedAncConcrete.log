@@ -1,0 +1,13 @@
+START 2026-11-07T09:26:14.625249+00:00
+S2-SEAL active=830 already=0
+Probe/S2SealedAncConcrete.lean:370:59: error: unsolved goals
+n : ℕ
+z : { z // Nat.Prime (bitsToNat z.1) ∧ Nat.Prime (bitsToNat z.2) }
+⊢ ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).1 = bitsToNat (↑z).1 ∧
+    ↑(↑((((bitsEquiv n).prodCongr (bitsEquiv n)).subtypeEquiv ⋯) z)).2 = bitsToNat (↑z).2
+Probe/S2SealedAncConcrete.lean:660:8: warning: declaration uses 'sorry'
+FAIL(Probe/S2SealedAncConcrete): lean exited with status 1
+FAIL(Probe/S2SealedAncConcrete): error diagnostics reported
+FAIL(Probe/S2SealedAncConcrete): no fresh .olean produced
+
+END 2026-11-07T09:26:43.171544+00:00 RC 1 maxrss(child tree)=2758MiB

@@ -1,0 +1,6 @@
+import TCSlib.Cryptography.Candidates.ElGamal
+import TCSlib.Cryptography.Candidates.Rabin
+
+example (o : Option ℕ) (a : ℕ → List Bool) (b : List Bool) :
+    Complexity.polyTimeComputable_iterateFind.match_1 (fun _ => List Bool) o (fun i => a i) (fun _ => b) =
+      (match o with | some i => a i | none => b) := rfl
