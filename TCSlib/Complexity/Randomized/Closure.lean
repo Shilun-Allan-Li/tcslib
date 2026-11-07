@@ -69,6 +69,8 @@ Not in this file (they are FP-level facts the campaign uses directly): negation 
   gives `f ∘ advInput` as a polynomial-time function (coins hard-wired to `1^{coins n}`).
 * `Complexity.NUPPT.polyTimeComputable_layout` and the projection lemmas — the FP calculus of
   the layout.
+* `Complexity.PolyTimeComputable.comp'`, `Complexity.PolyTimeComputable.congr` — composition in
+  applied form, and transfer of polynomial time along a pointwise equality.
 
 ## References
 
@@ -83,6 +85,22 @@ Not in this file (they are FP-level facts the campaign uses directly): negation 
 namespace Complexity
 
 open Turing
+
+/-! ### Composition in applied form and transfer along pointwise equality -/
+
+/-- **Composition in applied form**: if `g` and `f` are polynomial-time, so is `x ↦ g (f x)`.
+This is `PolyTimeComputable.comp` stated without `Function.comp`, so that unification never has
+to unfold a composite against a lambda (such matches can unfold bundle string functions). -/
+theorem PolyTimeComputable.comp' {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
+  hg.comp hf
+
+/-- **Polynomial time transfers along pointwise equality**: if `f` is polynomial-time and
+`f x = g x` for every `x`, then `g` is polynomial-time (Mathlib's `Continuous.congr`
+orientation). -/
+theorem PolyTimeComputable.congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
+    (e : ∀ x, f x = g x) : PolyTimeComputable g :=
+  (funext e : f = g) ▸ h
 
 namespace NUPPT
 
