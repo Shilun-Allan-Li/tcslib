@@ -32,7 +32,7 @@ Proposed name: `exists_singleBitSecure_of_hardCoreTDP`.
 Draft proof: obtain `E` from `hHC.nonempty_predEvaluator`, then return
 `⟨T.tdpBitScheme E, T.tdpBitScheme_singleBitSecure E hT hHC⟩`.
 The construction's record includes uniform key generation/encryption, polynomial-time
- decryption and correctness. Source: `Asymptotic/PublicKey.lean:749` and `:911`;
+decryption and correctness. Source: `Asymptotic/PublicKey.lean:749` and `:911`;
 [PS10, Algorithm 104.3 and Theorem 104.4].
 
 ### PK-2: the same assumption gives message encryption
@@ -86,7 +86,7 @@ this a completed CPA implication. The wrapper itself needs no new reduction proo
 | Assumption | Existing endpoint | Extra premises | Missing work before a generic CPA-PKE existence theorem |
 |---|---|---|---|
 | `RSAAssumption` | `(rsaTrapdoor H).OneWay`, via `rsaCollection_oneWay` and `rsaTrapdoor_oneWay` (`Candidates/RSA.lean:2206`, `:2221`) | `H : ArithmeticFP` (`Candidates/Arithmetic.lean:314`) | Goldreich–Levin padding needs a genuine length bridge; exact CPA then needs the Gate 06C bridge. |
-| `FactoringAssumption` | `(rabinBlumTrapdoor H hD).OneWay` (`Candidates/Rabin.lean:3392`; verify exact argument application before implementing) | `ArithmeticFP`, `BlumDensity` remains a hypothesis | Same encoding-length issue and CPA bridge. The plain factoring collection is not itself a trapdoor-permutation conclusion. |
+| `FactoringAssumption` | `(rabinBlumTrapdoor H).OneWay` (`Candidates/Rabin.lean:3392`) | `ArithmeticFP`, `BlumDensity` remains a hypothesis | Same encoding-length issue and CPA bridge. The plain factoring collection is not itself a trapdoor-permutation conclusion. |
 | `DDHAssumption (egGroupGen H G)` | `(elGamal H G).Secure` in `GroupPKScheme` (`Candidates/ElGamal.lean:2211`) | `ArithmeticFP`, `G : SafePrimeGen`, negligible full-length-exception bound `hbig` | Preserve the group-message security/correctness model; a conversion to another PKE record/security game is separate work. |
 
 RSA's construction is `Candidates/RSA.lean:1493`; its concrete RSA root-extraction assumption
