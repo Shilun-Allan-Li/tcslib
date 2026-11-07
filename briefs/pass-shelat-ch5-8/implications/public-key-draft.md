@@ -3,15 +3,15 @@
 **Draft, 2026-11-07 PST.** Names below are proposals, not declarations claimed to exist.
 Proof snippets are source-level drafts and have not been elaborated as a new module.
 
-## Proposed first-class endpoints — selection awaiting user ruling
+## First-class endpoints — selected by the user, 2026-11-07 PST
 
 | Endpoint | Intended guarantee | Why include it |
 |---|---|---|
 | Multi-message IND-CPA public-key encryption | Correct efficient public-key encryption on a meaningful message space, indistinguishable under chosen-plaintext attack for polynomially many encryptions under one public key. State whether the theorem uses a batch or adaptive experiment. | The basic confidential-channel primitive; the first end-to-end target for RSA, factoring and DDH routes. |
 | Multi-message IND-CCA2 public-key encryption | Correct efficient public-key encryption with adaptive decryption access, excluding all challenge ciphertexts in a multi-challenge formulation. | The robust encryption endpoint when the adversary can submit ciphertexts for decryption. |
 
-This two-endpoint set is the maintainer's recommendation, **not an adopted ruling**. The user
-is also considering IND-CCA1 as a third catalog endpoint. Always write CCA1 or CCA2 explicitly;
+**User ruling:** adopt these two endpoints, with IND-CCA1 documented as an intermediate.
+Always write CCA1 or CCA2 explicitly;
 “CCA” alone does not choose a game. CCA1 permits decryption queries only before the challenge;
 CCA2 permits them afterwards subject to the challenge restriction. The taxonomy is reviewed
 in [Pass, Cornell CS 6830, lecture 13 (2009), §1](https://www.cs.cornell.edu/courses/cs6830/2009fa/scribes/lecture13.pdf).
