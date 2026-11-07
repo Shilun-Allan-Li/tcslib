@@ -82,7 +82,7 @@ The concrete-layer content of the reductions of [PS10, §2.3–§2.4, §2.7] (Th
 * `TCSlib.Cryptography.Candidates.rejectBlocksL_eq_find?` — block rejection sampling as a
   search followed by the value read.
 * `TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL` — block rejection sampling
-  is polynomial-time (host H15; statement only, its proof is an open fill).
+  is polynomial-time via the shared block-rejection host H15.
 
 ## References
 

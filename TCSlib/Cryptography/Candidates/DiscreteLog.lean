@@ -675,7 +675,7 @@ parameter word is the middle numeral `⟦m⟧` of the index, the width word `1^k
 `1^n` serves as both the block-length and the trial-count word. H15 returns a polynomial-time `g`
 whose output is `[]` when every trial is rejected and otherwise has a tail reading as the accepted
 value; so the tail of `g z` (`polyTimeComputable_tail`, `List.drop_one`) reads as the sampler's
-value with the fallback `0` (the empty tail reads `0`). The output is the last `|t|` bits of
+value with the fallback `0` (the empty tail reads `0`). The output is the last `|p|` bits of
 `⟦0⟧_{|p|} ++ t` for that tail `t`, with `⟦0⟧_{|p|} = ⟦p − p⟧_{|p|}` (`H.sub`,
 `polyTimeComputable_pairDropPoly`, `PolyTimeComputable.append`): the `|p|`-bit numeral of the
 value, also when it is `≥ 2^{|p|}` (`natToList_zero_append_drop`). -/
