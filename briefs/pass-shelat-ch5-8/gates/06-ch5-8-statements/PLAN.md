@@ -1,5 +1,13 @@
 # Gate 06: four external statement audits of ch. 5–8 (S4; round 1)
 
+**Current status, 2026-11-07 PST:** all four Codex audits were dispatched by the user.
+**06A CLOSED (0B/0M/2 minors), 06D CLOSED (0B/0M/4 minors)**; 06B/C findings remain pending.
+See `resolutions-06A-r1.md`, `resolutions-06D-r1.md` and `review-r1-ad/` for accepted scope/limits
+and the six-file unapplied comment patch. The preparation account below is the issued
+round-1 snapshot, preserved at records c81baa7712ab1b43357276ef5df138d02616c9d0. Current target
+includes merged S2/#231; the frozen source/common evidence does not. No combined-source
+verification or PR #232 merge clearance is inferred.
+
 **Round 1: common preparation complete; ready for staging (2026-11-07).**
 Audit source: `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
 `eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. Historical prong heads are provenance only.
