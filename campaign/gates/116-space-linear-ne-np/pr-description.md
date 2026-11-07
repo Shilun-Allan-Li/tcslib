@@ -15,5 +15,6 @@ mismatches** (`oleans-mlin2`),
 leaving only F6's existing admission. The complete eleven-file screen has 31→31 pairs, zero
 new or removed; every reviewed source blob matches the published PR.
 
-**Not yet clear to merge.** External Codex gate 116 must close. Seyoon merges after the gate closes. Evidence is under
+**Clear to merge.** External Codex gate 116 is CLOSED PASS 0/0/0/12; all notes accepted, with
+no source repair. The clean current merge preview matches the passed replay exactly. Seyoon merges. Evidence is under
 `campaign/gates/116-space-linear-ne-np/`.
