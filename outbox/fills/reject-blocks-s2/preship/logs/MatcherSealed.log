@@ -1,0 +1,35 @@
+START 2026-11-07T06:51:48.816379+00:00
+.lake/ps-maintainer/s2-preship/MatcherSealed.lean:7:52: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (match o with
+    | some i => a i
+    | none => b) =
+    match o with
+    | some i => a i
+    | none => b
+FAIL(.lake/ps-maintainer/s2-preship/MatcherSealed): lean exited with status 1
+FAIL(.lake/ps-maintainer/s2-preship/MatcherSealed): error diagnostics reported
+FAIL(.lake/ps-maintainer/s2-preship/MatcherSealed): no fresh .olean produced
+        1.77 real         1.05 user         0.68 sys
+          2314895360  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              182670  page reclaims
+                  15  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                  22  voluntary context switches
+                 892  involuntary context switches
+            32407442  instructions retired
+            16777318  cycles elapsed
+             1622352  peak memory footprint
+
+END 2026-11-07T06:51:50.596442+00:00 RC 1
