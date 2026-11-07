@@ -83,13 +83,13 @@ open Complexity Turing Finset
 
 /-- The query tree that asks the fixed tuple of queries `xs : Fin k → I` in order and then
 outputs `f` applied to the tuple of answers: `k` `query` nodes in a chain. -/
-def chainTree {I O α : Type*} : ∀ (k : ℕ), (Fin k → I) → ((Fin k → O) → α) → QueryTree I O α
+def chainTree {I O α : Type} : ∀ (k : ℕ), (Fin k → I) → ((Fin k → O) → α) → QueryTree I O α
   | 0, _, f => .ret (f Fin.elim0)
   | k + 1, xs, f => .query (xs 0) fun o => chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
 
 /-- Running a query chain against the oracle `g` outputs `f` of the tuple of answers
 `g (xs j)`. -/
-theorem eval_chainTree {I O α : Type*} (g : I → O) :
+theorem eval_chainTree {I O α : Type} (g : I → O) :
     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α),
       (chainTree k xs f).eval g = f fun j => g (xs j)
   | 0, xs, f => by
@@ -107,10 +107,14 @@ theorem eval_chainTree {I O α : Type*} (g : I → O) :
     · simp [Fin.tail]
 
 /-- A chain of `k` queries makes at most `k` queries. -/
-theorem boundedBy_chainTree {I O α : Type*} :
+theorem boundedBy_chainTree {I O α : Type} :
     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α), (chainTree k xs f).BoundedBy k
-  | 0, _, _ => trivial
-  | k + 1, xs, f => fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
+  | 0, _, _ => by
+    rw [chainTree]
+    exact QueryTree.boundedBy_ret _ _
+  | k + 1, xs, f => by
+    rw [chainTree, QueryTree.boundedBy_query_succ]
+    exact fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
 
 /-! ### The hybrids of [PS10, Theorem 99.2], concrete -/
 
@@ -144,11 +148,11 @@ def multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
   fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
 
 omit [Fintype ρ] in
-/-- `multiMsgAdv m D` makes exactly `q + 1` queries. -/
+/-- `multiMsgAdv m D` makes at most `q + 1` queries. -/
 theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     (multiMsgAdv m D).BoundedBy (q + 1) :=
-  fun c => boundedBy_chainTree (q + 1) c.1 _
+  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
 
 /-- Running `multiMsgAdv m D` with the oracle `F k` (for a uniform key `k`) accepts with the
 probability that `D` accepts the hybrid sampler `prfEncReal F m` (reassociation of the seed
@@ -157,11 +161,11 @@ theorem acceptProb_oracleDist_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n
     (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     acceptProb F (oracleDist (multiMsgAdv m D)) = acceptProb (prfEncReal F m) D := by
-  unfold acceptProb
+  rw [acceptProb_def, acceptProb_def]
   rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
   congr 1
   funext z
-  simp only [oracleDist, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
+  simp only [oracleDist_apply, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
   rfl
 
 /-- **Thm-99.2.1: the gap `H¹ → H²` is a PRF advantage.** The advantage of `D` between the real
@@ -173,7 +177,7 @@ theorem prfAdv_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n → Bool))
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     prfAdv F (multiMsgAdv m D) =
       distAdv (prfEncReal F m) (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D := by
-  rw [prfAdv, distAdv, distAdv, acceptProb_oracleDist_multiMsgAdv,
+  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdv,
     acceptProb_oracleDist_multiMsgAdv]
 
 /-- **The collision bound** ([PS10, Theorem 99.2, proof, "`∃ i, j` such that `r_i = r_j`, but this
@@ -234,10 +238,10 @@ theorem pushesUniform_comp_injective {I O : Type*} [Fintype I] [DecidableEq I] [
   classical
   rcases isEmpty_or_nonempty O with hO | hO
   · -- no tables and no tuples: both averages are over empty types
-    intro F
+    refine (HardcoreBit.pushesUniform_iff _).2 fun F => ?_
     haveI : IsEmpty (I → O) := ⟨fun R => hO.false (R (r 0))⟩
     haveI : IsEmpty (Fin (q + 1) → O) := ⟨fun f => hO.false (f 0)⟩
-    simp only [uexp, univ_eq_empty, sum_empty, zero_div]
+    simp only [uexp_def, univ_eq_empty, sum_empty, zero_div]
   · -- split `I` into the image of `r` and its complement: `R ↦ R ∘ r` is a projection
     let e₁ : Fin (q + 1) ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
       (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
@@ -278,12 +282,16 @@ theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
   let b : (Fin (q + 1) → Fin n → Bool) → ℝ := fun r =>
     uprob fun w : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + w.1 j)) w.2 = true
   have ha : acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D =
-      uexp a :=
-    (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+      uexp a := by
+    rw [acceptProb_def, show randomFunction (Fin n → Bool) (Fin n → Bool) = id from
+      funext fun f => randomFunction_apply _ _ f]
+    exact (uprob_comp_equiv ((Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
       ((Fin n → Bool) → (Fin n → Bool)) ρ).symm.trans
-        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans (by rw [uprob_prod]; rfl)
-  have hb : acceptProb (otpEnc m) D = uexp b :=
-    (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
+        ((Equiv.prodComm _ _).prodCongr (Equiv.refl ρ))) _).symm.trans
+      (by rw [uprob_prod]; rfl)
+  have hb : acceptProb (otpEnc m) D = uexp b := by
+    rw [acceptProb_def]
+    exact (uprob_comp_equiv (Equiv.prodAssoc (Fin (q + 1) → Fin n → Bool)
       (Fin (q + 1) → Fin n → Bool) ρ).symm _).symm.trans (by rw [uprob_prod]; rfl)
   -- at injective points the table values are fresh uniform pads
   have hab : ∀ r : Fin (q + 1) → Fin n → Bool, Function.Injective r → a r = b r := by
@@ -291,7 +299,7 @@ theorem distAdv_prfEncReal_random_otp_le (m : Fin (q + 1) → Fin n → Bool)
     exact ((pushesUniform_comp_injective (O := Fin n → Bool) hr).prodMap
       (HardcoreBit.pushesUniform_id (Ω := ρ))).uprob_eq
       (fun v : (Fin (q + 1) → Fin n → Bool) × ρ => D (fun j => (r j, m j + v.1 j)) v.2 = true)
-  rw [distAdv, ha, hb]
+  rw [distAdv_def, ha, hb]
   exact (MultiMsg.abs_uexp_sub_le_uprob a b (fun r => ¬ Function.Injective r)
     (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩) (fun r => ⟨uprob_nonneg _, uprob_le_one _⟩)
     (fun r hr => hab r (not_not.mp hr))).trans uprob_not_injective_le
@@ -351,7 +359,7 @@ theorem distAdv_prfEncReal_le (F : K → (Fin n → Bool) → (Fin n → Bool))
   have h23 := distAdv_prfEncReal_random_otp_le m D
   have h45 := distAdv_prfEncReal_random_otp_le m' D
   have h34 := acceptProb_otpEnc m m' D
-  simp only [distAdv] at h12 h56 h23 h45 ⊢
+  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
   rw [h12, h56, abs_sub_comm (acceptProb (prfEncReal F m') D)]
   rw [abs_sub_comm (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)]
     at h45
@@ -451,7 +459,7 @@ theorem runAt_prfEnc {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) coins).runAt n (pairEncode k w) r =
       pairEncode (List.ofFn r) (List.zipWith xor w (E (pairEncode k (List.ofFn r)))) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prfEncFun, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [prfEncFun, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The activation of the decryption machine on `⟨k, ⟨r, c⟩⟩` with `n`-bit `r` and `c` is
 `c ⊕ E(⟨k, r⟩)`. -/
@@ -462,10 +470,10 @@ theorem runAt_prfDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
         (pairEncode k (pairEncode r c)) r' =
       List.zipWith xor c (E (pairEncode k r)) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prfDecFun, prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc]
+  simp [prfDecFun, prfDecWF, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq, hr, hc]
 
-/-- On a ciphertext `w` that is not a pair of `n`-bit strings, the decryption machine outputs
-`⊥`: a string that decodes to no `n`-bit message. -/
+/-- On a ciphertext `w` whose two projections `pairFstD w` and `pairSndD w` are not both `n` bits
+long, the decryption machine outputs `⊥`: a string that decodes to no `n`-bit message. -/
 theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : PolyTimeComputable E)
     (coins : PolyExpr) (n : ℕ) (k w : List Bool)
     (hw : ¬ ((pairFstD w).length = n ∧ (pairSndD w).length = n))
@@ -475,11 +483,11 @@ theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : Pol
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
   have hf : prfDecWF (pairEncode (pairEncode (NUPPT.advInput n (pairEncode k w)) [])
       (List.ofFn r')) = false := by
-    simp only [prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, pairFstD_pairEncode,
+    simp only [prfDecWF, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
       pairSndD_pairEncode, List.length_replicate, Bool.and_eq_false_iff, decide_eq_false_iff_not]
     tauto
   rw [prfDecFun, hf]
-  simp [decodeFin, NUPPT.inParam, NUPPT.advInput]
+  simp [decodeFin_eq, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- Masking twice with the same pad (at least as long as the message) is the identity
 (private copy of the helper of `Asymptotic/Encryption.lean`). -/
@@ -513,8 +521,13 @@ noncomputable def prfScheme (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) �
   correct := by
     intro n m rg re rd
     rw [runAt_coinKey, runAt_prfEnc hE]
-    have h : E (pairEncode (List.ofFn rg) (List.ofFn re)) = List.ofFn (F n rg re) := hFE n rg re
-    rw [h, runAt_prfDec hE _ _ _ _ _ (by rw [List.length_ofFn]; rfl) (by simp), h,
+    have h : E (pairEncode (List.ofFn rg) (List.ofFn re)) =
+        List.ofFn (F n (NUPPT.coinsEquiv_ofPolyTimeUniform _ _ n rg)
+          (NUPPT.coinsEquiv_ofPolyTimeUniform _ _ n re)) := by
+      rw [← hFE, NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn, NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn]
+    have hre : (List.ofFn re).length = n := by
+      rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n re, List.length_ofFn, PolyExpr.eval_var]
+    rw [h, runAt_prfDec hE _ _ _ _ _ hre (by simp), h,
       zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
 
 /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
@@ -525,10 +538,10 @@ def encodeTuple {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool) × (Fin n → 
 /-- `encodeList l` is the concatenation of the self-delimited chunks `⟨c, []⟩`, `c ∈ l`. -/
 private theorem encodeList_eq_flatMap : ∀ l : List (List Bool),
     PrivateKeyScheme.encodeList l = l.flatMap fun c => pairEncode c []
-  | [] => rfl
+  | [] => by rw [PrivateKeyScheme.encodeList_nil, List.flatMap_nil]
   | c :: l => by
     rw [PrivateKeyScheme.encodeList_cons, List.flatMap_cons, encodeList_eq_flatMap l]
-    simp [pairEncode]
+    simp [pairEncode_eq]
 
 /-- The encoded ciphertext tuple is the concatenation of the chunks `⟨⟨r_j, c_j⟩, []⟩` (the
 form in which the next-query machine of `MultiMsg.exists_queryChain_nuppt` produces it). -/
@@ -538,15 +551,50 @@ theorem encodeTuple_eq_flatten {n q : ℕ} (v : Fin (q + 1) → (Fin n → Bool)
         pairEncode (pairEncode (List.ofFn (v j).1) (List.ofFn (v j).2)) []).flatten := by
   rw [encodeTuple, encodeList_eq_flatMap, MultiMsg.flatMap_ofFn]
 
+/-- **The coins of the multi-message experiment of Algorithm 99.1 are bit strings**: the key
+coins of `Gen` and the `q + 1` coin strings of `Enc` are `n`-bit strings,
+`gen.Coins n × (Fin (q + 1) → enc.Coins n) ≃ {0,1}^n × ({0,1}^n)^{q+1}` (the published coin
+identifications `NUPPT.coinsEquiv_ofPolyTimeUniform`; they keep every coin string). -/
+noncomputable def prfScheme_coinsEquiv (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
+    (n q : ℕ) :
+    (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n) ≃
+      (Fin n → Bool) × (Fin (q + 1) → Fin n → Bool) :=
+  (NUPPT.coinsEquiv_ofPolyTimeUniform polyTimeComputable_pairSndD .var n).prodCongr
+    (Equiv.piCongrRight fun _ =>
+      NUPPT.coinsEquiv_ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var n)
+
+/-- The coin equivalence of the multi-message experiment keeps every coin string: the key,
+`List.ofFn (prfScheme_coinsEquiv … r).1 = List.ofFn r.1`, and each point,
+`List.ofFn ((prfScheme_coinsEquiv … r).2 j) = List.ofFn (r.2 j)`. -/
+theorem prfScheme_coinsEquiv_ofFn (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
+    (E : List Bool → List Bool) (hE : PolyTimeComputable E)
+    (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
+    (n q : ℕ)
+    (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) :
+    List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 = List.ofFn r.1 ∧
+      ∀ j, List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) = List.ofFn (r.2 j) :=
+  ⟨NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n r.1,
+    fun j => NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn _ _ n (r.2 j)⟩
+
 /-- **The ciphertext tuple of Algorithm 99.1** is the encoding of the hybrid `H¹`: for the key
-`k = r.1` and the points `r.2 j`, `multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r)`. -/
+`k` and the points `r_j` read off the coins `r` (`prfScheme_coinsEquiv`),
+`multiEncDist n q m r = encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv … r))`.
+
+**Proof sketch.** `multiEncDist_apply` writes the left side as `encodeList` of the encryptions
+`Enc_k(m_j; r_j)`; the key machine outputs its coin string (`runAt_coinKey`) and the encryption
+machine outputs `⟨r_j, m_j ⊕ E(⟨k, r_j⟩)⟩` (`runAt_prfEnc`). The coin strings are those of
+`prfScheme_coinsEquiv … r` (`prfScheme_coinsEquiv_ofFn`), so `hFE` turns `E(⟨k, r_j⟩)` into
+`F n k r_j` and `zipWith_xor_ofFn_add` gives the `j`-th pair of `prfEncReal`. -/
 theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool))
     (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x))
     (n q : ℕ) (m : Fin (q + 1) → Fin n → Bool)
     (r : (prfScheme F E hE hFE).gen.Coins n × (Fin (q + 1) → (prfScheme F E hE hFE).enc.Coins n)) :
-    (prfScheme F E hE hFE).multiEncDist n q m r = encodeTuple (prfEncReal (F n) m r) := by
-  unfold PrivateKeyScheme.multiEncDist encodeTuple
+    (prfScheme F E hE hFE).multiEncDist n q m r =
+      encodeTuple (prfEncReal (F n) m (prfScheme_coinsEquiv F E hE hFE n q r)) := by
+  rw [PrivateKeyScheme.multiEncDist_apply, encodeTuple]
   congr 1
   congr 1
   funext j
@@ -554,9 +602,11 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
     (pairEncode ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var).runAt n [] r.1)
       (List.ofFn (m j))) (r.2 j) = _
   rw [runAt_coinKey, runAt_prfEnc hE]
-  have h : E (pairEncode (List.ofFn r.1) (List.ofFn (r.2 j))) = List.ofFn (F n r.1 (r.2 j)) :=
-    hFE n r.1 (r.2 j)
-  rw [h, zipWith_xor_ofFn_add]
+  have h1 : List.ofFn r.1 = List.ofFn (prfScheme_coinsEquiv F E hE hFE n q r).1 :=
+    (prfScheme_coinsEquiv_ofFn F E hE hFE n q r).1.symm
+  have h2 : List.ofFn (r.2 j) = List.ofFn ((prfScheme_coinsEquiv F E hE hFE n q r).2 j) :=
+    ((prfScheme_coinsEquiv_ofFn F E hE hFE n q r).2 j).symm
+  rw [h1, h2, hFE, zipWith_xor_ofFn_add]
   rfl
 
 /-- **[PS10, Theorem 99.2]: the scheme of Algorithm 99.1 is multi-message secure** when `F` is
@@ -598,7 +648,7 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
     (hF : PRF F) (E : List Bool → List Bool) (hE : PolyTimeComputable E)
     (hFE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) = List.ofFn (F n s x)) :
     (prfScheme F E hE hFE).MultiMessageSecure := by
-  intro D q
+  refine (PrivateKeyScheme.multiMessageSecure_iff _).2 fun D q => ?_
   -- the worst message pair at each parameter (hard-wired into the reductions)
   have hmax : ∀ n, ∃ p : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
       ∀ w : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool),
@@ -621,14 +671,15 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
       prfAdv (F n) (B₁.toOracleAdversary n n n (q.eval n + 1)) +
       2 * ((Nat.choose (q.eval n + 1) 2 : ℝ) / 2 ^ n), ?_, fun n m m' => ?_⟩
   · -- the asymptotic step: two PRF advantages and the collision term
-    exact ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
-      (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
-      ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
+    simpa only [PolyExpr.eval_add, PolyExpr.eval_const] using
+      ((hF.negligible_prfAdv B₀ (.add q (.const 1))).add
+        (hF.negligible_prfAdv B₁ (.add q (.const 1)))).add
+        ((MultiMsg.negligible_choose_div_two_pow q).const_mul 2)
   · refine (hμ n (m, m')).trans ?_
     -- the concrete step: the ciphertext tuples are `encodeTuple ∘ prfEncReal`
     have key : ∀ m₀ : Fin (q.eval n + 1) → Fin n → Bool,
         (prfScheme F E hE hFE).multiEncDist n (q.eval n) m₀ =
-          fun r => encodeTuple (prfEncReal (F n) m₀ r) :=
+          fun r => encodeTuple (prfEncReal (F n) m₀ (prfScheme_coinsEquiv F E hE hFE n (q.eval n) r)) :=
       fun m₀ => funext fun r => prfScheme_multiEncDist F E hE hFE n (q.eval n) m₀ r
     -- the machine step: the oracle adversaries of `B₀`, `B₁` are the `multiMsgAdv`
     have hadv : ∀ (B : NUPPT) (v : Fin (q.eval n + 1) → Fin n → Bool)
@@ -642,13 +693,18 @@ theorem prfScheme_multiMessageSecure (F : ∀ n, (Fin n → Bool) → (Fin n →
           prfAdv (F n) (multiMsgAdv v fun w c => D.distinguisherL n (encodeTuple w) c) := by
       intro B v φ hφ
       refine MultiMsg.prfAdv_congr_equiv (F n) _ _ φ fun g w => ?_
-      rw [hφ g w.1 w.2, multiMsgAdv, eval_chainTree, NUPPT.distinguisherL, encodeTuple_eq_flatten]
+      rw [hφ g w.1 w.2, multiMsgAdv, eval_chainTree, NUPPT.distinguisherL_eq, encodeTuple_eq_flatten]
     obtain ⟨φ₀, hφ₀⟩ := hB₀ n
     obtain ⟨φ₁, hφ₁⟩ := hB₁ n
     dsimp only
-    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key]
-    exact distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
-      (fun w c => D.distinguisherL n (encodeTuple w) c)
+    rw [hadv B₀ (μ n).1 φ₀ hφ₀, hadv B₁ (μ n).2 φ₁ hφ₁, key, key, distAdv_def,
+      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+        (fun s => encodeTuple (prfEncReal (F n) (μ n).1 s)),
+      acceptProb_comp_equiv (prfScheme_coinsEquiv F E hE hFE n (q.eval n))
+        (fun s => encodeTuple (prfEncReal (F n) (μ n).2 s)), ← distAdv_def]
+    exact (distAdv_comp encodeTuple (prfEncReal (F n) (μ n).1) (prfEncReal (F n) (μ n).2)
+      (D.distinguisherL n)).symm.trans_le (distAdv_prfEncReal_le (F n) (μ n).1 (μ n).2
+        (fun w c => D.distinguisherL n (encodeTuple w) c))
 
 /-- **Multi-message secure private-key encryption exists if a PRF exists** ([PS10, §3.9]):
 the scheme of Algorithm 99.1 with the evaluator of `PRF.easy`. -/

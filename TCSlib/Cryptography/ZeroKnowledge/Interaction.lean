@@ -142,7 +142,9 @@ def encodeMsgs (h : List (List Bool)) : List Bool := h.foldr pairEncode []
 /-- The first projection of an encoded history is its first message (`[]` when empty). -/
 theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h.headD [] := by
   cases h with
-  | nil => rfl
+  | nil =>
+    rw [encodeMsgs_nil, List.headD_nil]
+    exact List.eq_nil_of_length_eq_zero (Nat.le_zero.1 (length_pairFstD_le []))
   | cons m h => simp
 
 /-- The strategy computed by a machine `A`: one activation at parameter `|x|` on
@@ -299,6 +301,11 @@ theorem View.encode_mk (x z r : List Bool) (received : List (List Bool)) :
 function on the complete history. -/
 def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
 
+/-- The output on a view is the next-message function on the view's complete history:
+`S.out v = S.next v.x v.z v.r v.received`. -/
+theorem Strategy.out_eq (S : Strategy) (v : View) : S.out v = S.next v.x v.z v.r v.received :=
+  rfl
+
 /-! ### Protocols -/
 
 /-- A protocol [PS10, §4.4] (Def-114.b): a prover strategy, a verifier strategy, the number of
@@ -410,6 +417,12 @@ def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
     List (List Bool) × List (List Bool) :=
   π.transcriptWith π.P x y z r
 
+/-- The honest transcript is the transcript against the honest prover:
+`π.transcript x y z r = π.transcriptWith π.P x y z r`. -/
+theorem transcript_eq_transcriptWith (π : Protocol) (x y z : List Bool)
+    (r : π.ExecCoins π.P x) : π.transcript x y z r = π.transcriptWith π.P x y z r :=
+  rfl
+
 /-- The verifier's output in `P'_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `out_V`] (Def-115.d):
 `V.next` on the complete history.
 
@@ -426,10 +439,23 @@ theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.Exec
 def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=
   π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1
 
+/-- The honest prover's output is `P.next` on the messages it received:
+`π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1`. -/
+theorem outP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1 :=
+  rfl
+
 /-- The honest verifier's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_V`]
 (Def-115.b). -/
 def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+
+/-- The honest verifier's view consists of `x`, its auxiliary input `z`, its tape and the
+messages it received: `π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩`.
+-/
+theorem viewV_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩ :=
+  rfl
 
 /-- The view of the verifier `V'` in `π.withV V'`: the common input, `z`, `V'`'s tape and the
 messages `V'` received in the execution of `π.P` against `V'` (the analogue of `outV_withV`). -/
@@ -444,6 +470,13 @@ theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool)
 (Def-115.b). -/
 def viewP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩
+
+/-- The honest prover's view consists of `x`, its auxiliary input `y`, its tape and the
+messages it received: `π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩`.
+-/
+theorem viewP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩ :=
+  rfl
 
 /-- The execution `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` as the pair of views (the joint view)
 [PS10, §4.4] (Def-115.a). -/
@@ -509,7 +542,7 @@ theorem exists_proverCoins_le (π : Protocol) (P' : Strategy) (x y z : List Bool
   have hcard : (0 : ℝ) < Fintype.card (P'.Coins x.length) := by
     exact_mod_cast Fintype.card_pos
   have hsum : ∑ _a : P'.Coins x.length, uexp f ≤ ∑ a, f a := by
-    rw [sum_const, card_univ, nsmul_eq_mul, uexp, mul_div_cancel₀ _ hcard.ne']
+    rw [sum_const, card_univ, nsmul_eq_mul, uexp_def, mul_div_cancel₀ _ hcard.ne']
   obtain ⟨a, -, ha⟩ := exists_le_of_sum_le univ_nonempty hsum
   exact ⟨a, ha⟩
 

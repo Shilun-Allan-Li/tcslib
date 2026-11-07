@@ -66,8 +66,13 @@ variable {ι ι' ι₁ ι₂ : Type} {α β σ : Type}
 /-- An **implementation** of the oracles of `spec` by computations over `spec'`, with state `σ`:
 on oracle `i`, query `x` and state `s`, a computation returning the answer and the new state.
 [VCVio, SimSemantics] -/
-def QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
+abbrev QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
   ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)
+
+/-- An implementation is a function of the oracle, the query and the state:
+`QueryImpl spec σ spec' = ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)`. -/
+theorem queryImpl_def {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') :
+    QueryImpl spec σ spec' = ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ) := rfl
 
 /-- **Simulation:** run `c` from state `s`, answering each of its queries with `impl` and
 threading the state; return `c`'s result and the final state. [VCVio, SimSemantics] -/
@@ -98,13 +103,14 @@ monad's associativity lines up the continuations. -/
 theorem simulate_bind (c : OracleComp spec α) (f : α → OracleComp spec β) (s : σ) :
     simulate impl (c.bind f) s = (simulate impl c s).bind (fun p => simulate impl (f p.1) p.2) := by
   induction c generalizing s with
-  | pure a => rfl
+  | pure a => simp only [OracleComp.pure_bind, simulate_pure]
   | query i x k ih => simp only [OracleComp.query_bind, simulate_query, OracleComp.bind_assoc, ih]
 
 /-- Simulating a single call is running the implementation. -/
 theorem simulate_call (i : ι) (x : spec.dom i) (s : σ) :
     simulate impl (OracleComp.call i x) s = impl i x s := by
-  simp only [OracleComp.call, simulate_query, simulate_pure]
+  rw [← OracleComp.bind_pure (OracleComp.call i x), OracleComp.call_bind, simulate_query]
+  simp only [simulate_pure]
   exact OracleComp.bind_pure _
 
 end Simulate
@@ -116,9 +122,22 @@ def ofComp {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     (f : ∀ i, spec.dom i → OracleComp spec' (spec.rng i)) : QueryImpl spec σ spec' :=
   fun i x s => (f i x).bind (fun y => .pure (y, s))
 
+/-- A stateless implementation runs `f i x` and keeps the state:
+`ofComp f i x s = (f i x).bind (fun y => .pure (y, s))`. -/
+theorem ofComp_apply {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    (f : ∀ i, spec.dom i → OracleComp spec' (spec.rng i)) (i : ι) (x : spec.dom i) (s : σ) :
+    ofComp f i x s = (f i x).bind (fun y => .pure (y, s)) :=
+  rfl
+
 /-- **Forwarding:** every query is passed unchanged to the same oracle of the target. -/
 def passthrough {spec : OracleSpec ι} : QueryImpl spec σ spec :=
   ofComp (fun i x => OracleComp.call i x)
+
+/-- Forwarding asks the same oracle the same query and keeps the state:
+`passthrough i x s = .query i x (fun y => .pure (y, s))`. -/
+theorem passthrough_apply {spec : OracleSpec ι} (i : ι) (x : spec.dom i) (s : σ) :
+    passthrough (σ := σ) i x s = .query i x (fun y => .pure (y, s)) := by
+  rw [passthrough, ofComp_apply, OracleComp.call_bind]
 
 /-- Implement two oracle families **side by side**, sharing one state: `.inl i` is answered by
 `impl₁`, and `.inr j` by `impl₂`. -/
@@ -127,6 +146,20 @@ def sum {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec 
     QueryImpl (s₁.add s₂) σ spec'
   | .inl i => impl₁ i
   | .inr j => impl₂ j
+
+/-- Side by side, the oracle `.inl i` is answered by `impl₁`: `sum impl₁ impl₂ (.inl i) x s =
+impl₁ i x s`. -/
+theorem sum_inl {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
+    (impl₁ : QueryImpl s₁ σ spec') (impl₂ : QueryImpl s₂ σ spec') (i : ι₁) (x : s₁.dom i)
+    (s : σ) : sum impl₁ impl₂ (.inl i) x s = impl₁ i x s :=
+  rfl
+
+/-- Side by side, the oracle `.inr j` is answered by `impl₂`: `sum impl₁ impl₂ (.inr j) x s =
+impl₂ j x s`. -/
+theorem sum_inr {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
+    (impl₁ : QueryImpl s₁ σ spec') (impl₂ : QueryImpl s₂ σ spec') (j : ι₂) (x : s₂.dom j)
+    (s : σ) : sum impl₁ impl₂ (.inr j) x s = impl₂ j x s :=
+  rfl
 
 end QueryImpl
 
@@ -142,6 +175,16 @@ def QueryImpl.comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     (impl₁ : QueryImpl spec σ₁ spec') : QueryImpl spec (σ₁ × σ₂) spec'' :=
   fun i x s => (simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2)))
 
+/-- The composed implementation simulates `impl₁`'s answer with `impl₂` and regroups the states:
+`impl₂.comp impl₁ i x s =
+(simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2)))`. -/
+theorem QueryImpl.comp_apply {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    {spec'' : OracleSpec ι''} {σ₁ σ₂ : Type} (impl₂ : QueryImpl spec' σ₂ spec'')
+    (impl₁ : QueryImpl spec σ₁ spec') (i : ι) (x : spec.dom i) (s : σ₁ × σ₂) :
+    impl₂.comp impl₁ i x s =
+      (simulate impl₂ (impl₁ i x s.1) s.2).bind (fun p => .pure (p.1.1, (p.1.2, p.2))) :=
+  rfl
+
 /-- **Simulation composes:** simulating with `impl₂` a simulation by `impl₁` is simulating once
 with the composed implementation, up to regrouping the states.
 [VCVio, SimSemantics/QueryImpl/Compose (simulateQ_compose)]
@@ -155,7 +198,7 @@ theorem simulate_comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec �
     simulate impl₂ (simulate impl₁ c s₁) s₂ =
       (simulate (impl₂.comp impl₁) c (s₁, s₂)).bind (fun p => .pure ((p.1, p.2.1), p.2.2)) := by
   induction c generalizing s₁ s₂ with
-  | pure a => rfl
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
   | query i x k ih =>
     simp only [simulate_query, simulate_bind, QueryImpl.comp, OracleComp.bind_assoc,
       OracleComp.pure_bind]
@@ -176,6 +219,15 @@ def QueryImpl.withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     (impl : QueryImpl spec σ spec') : QueryImpl spec (σ × QueryLog spec) spec' :=
   fun i x s => (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩])))
 
+/-- The logged implementation answers as `impl` and appends the entry to the log:
+`impl.withLog i x s = (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩])))`.
+-/
+theorem QueryImpl.withLog_apply {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    (impl : QueryImpl spec σ spec') (i : ι) (x : spec.dom i) (s : σ × QueryLog spec) :
+    impl.withLog i x s =
+      (impl i x s.1).bind (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩]))) :=
+  rfl
+
 /-- **Logging is conservative:** forgetting the log of a logged simulation gives the plain
 simulation, whatever the initial log.
 
@@ -187,7 +239,7 @@ theorem simulate_withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     (simulate impl.withLog c (s, log)).bind (fun p => .pure (p.1, p.2.1)) =
       simulate impl c s := by
   induction c generalizing s log with
-  | pure a => rfl
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
   | query i x k ih =>
     simp only [simulate_query, QueryImpl.withLog, OracleComp.bind_assoc, OracleComp.pure_bind]
     congr 1
@@ -211,10 +263,14 @@ theorem simulate_costBoundedBy {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     {c : OracleComp spec α} {q : ℕ} (hc : OracleComp.CostBoundedBy b c q) (s : σ) :
     OracleComp.CostBoundedBy cost' (simulate impl c s) q := by
   induction c generalizing q s with
-  | pure a => trivial
+  | pure a =>
+    rw [simulate_pure]
+    exact OracleComp.costBoundedBy_pure cost' (a, s) q
   | query i x k ih =>
-    obtain ⟨hi, hk⟩ := hc
+    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query b i x k q).1 hc
     have h := OracleComp.CostBoundedBy.bind (himpl i x s) (fun ys => ih ys.1 (hk ys.1) ys.2)
-    rwa [Nat.add_sub_cancel' hi] at h
+    rw [Nat.add_sub_cancel' hi] at h
+    rw [simulate_query]
+    exact h
 
 end TCSlib.Cryptography.Games

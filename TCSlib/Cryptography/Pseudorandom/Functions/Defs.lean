@@ -50,13 +50,18 @@ belong to the asymptotic layer; here the only resource tracked is the query boun
 
 namespace TCSlib.Cryptography
 
-variable {K I O ρ σ σ' γ : Type*}
+variable {K ρ σ σ' γ : Type*} {I O : Type}
 
 /-- The sampler of a uniformly random function `I → O`: the seed is the function table
 itself, a uniform element of the finite type `I → O`. This is the random function
 ensemble `R_n` of [Gar26, Definition 3.7] at one value of the security parameter; its
 seed has `|I| · log |O|` bits, `n · 2^n` for `I = O = {0,1}^n`. -/
 def randomFunction (I O : Type*) : (I → O) → I → O := id
+
+/-- The random-function sampler returns its seed, the function table itself:
+`randomFunction I O f = f`. -/
+theorem randomFunction_apply (I O : Type*) (f : I → O) : randomFunction I O f = f :=
+  rfl
 
 /-- The PRF advantage of the oracle adversary `A` against the keyed function family
 `F : K → I → O` (a function ensemble [Gar26, Definitions 3.6 and 3.8], keys uniform in
@@ -68,18 +73,29 @@ noncomputable def prfAdv [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fi
     (F : K → I → O) (A : OracleAdversary ρ I O) : ℝ :=
   distAdv F (randomFunction I O) (oracleDist A)
 
+/-- The defining equation of `prfAdv`: the distinguishing advantage of `oracleDist A` between
+the keyed family and the random-function sampler,
+`prfAdv F A = distAdv F (randomFunction I O) (oracleDist A)`. -/
+theorem prfAdv_def [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
+    (F : K → I → O) (A : OracleAdversary ρ I O) :
+    prfAdv F A = distAdv F (randomFunction I O) (oracleDist A) :=
+  rfl
+
 /-- The PRF advantage written out: the difference between the probability that `A`
 accepts with oracle `F k` for uniform `k` and coins `r`, and the probability that it
 accepts with a uniform random function `R` as oracle. [Gar26, Definition 3.9]. -/
 theorem prfAdv_eq [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
     (F : K → I → O) (A : OracleAdversary ρ I O) :
     prfAdv F A = |uprob (fun z : K × ρ => (A z.2).eval (F z.1) = true) -
-      uprob (fun z : (I → O) × ρ => (A z.2).eval z.1 = true)| := rfl
+      uprob (fun z : (I → O) × ρ => (A z.2).eval z.1 = true)| := by
+  rw [prfAdv_def, distAdv_def, acceptProb_def, acceptProb_def]
+  simp only [oracleDist_apply, randomFunction_apply]
 
 /-- The PRF advantage is nonnegative. -/
 theorem prfAdv_nonneg [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
-    (F : K → I → O) (A : OracleAdversary ρ I O) : 0 ≤ prfAdv F A :=
-  abs_nonneg _
+    (F : K → I → O) (A : OracleAdversary ρ I O) : 0 ≤ prfAdv F A := by
+  rw [prfAdv_def, distAdv_def]
+  exact abs_nonneg _
 
 /-- Two samplers producing the same sample from every seed have the same acceptance
 probability. -/
