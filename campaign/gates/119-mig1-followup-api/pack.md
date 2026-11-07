@@ -351,9 +351,7 @@ End with `Verdict: PASS` or `Verdict: HOLD` and blocker/major/minor/note counts.
 auditor finding, not permission to merge or close unrelated gates. No source edit, push,
 campaign PR or exchange upload is requested of Codex.
 
-**Deliver your findings as a downloadable file named
-`gate119-mig1-followup-api-findings.md`** (the findings table and verdict line, no other
-wrapping), and also paste its content in your reply.
+
 
 ## Complete metadata-map representations
 
@@ -379,3 +377,7 @@ and14paired controls pass in the stated small imported context; nine additional 
 rewrites are source-only. Actual #233source is untouched. The maintainer applies scoped
 hunks only after #234gate/merge, then runs full owner/AX/seal/replay checks before gate118.
 No private copy is claimed retired by this API PR or permanently acknowledged by this plan.
+
+**Deliver your findings as a downloadable file named
+`gate119-mig1-followup-api-findings.md`** (the findings table and verdict line, no other
+wrapping), and also paste its content in your reply.
