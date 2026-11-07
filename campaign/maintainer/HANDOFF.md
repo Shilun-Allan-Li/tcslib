@@ -38,7 +38,8 @@ a container restart all of these die:** re-run the queue (`scratch-api/replay-qu
 a copy).
 
 **Next, in order:**
-1. **E-PAD fill:** brief `campaign/fills/epad/briefs/epad-fill.md`, base `72fcfbef`.
+1. **E-PAD fill: DISPATCHED 2026-11-07** (`campaign/fills/epad/STATUS.md`); the delivery arrives
+   by push in `exchange/…/arora-barak-ch3-4/inbox/fill-epad/`. Brief `campaign/fills/epad/briefs/epad-fill.md`, base `72fcfbef`.
    - When the import probe passes, record it in `campaign/fills/epad/logs/`.
    - Stage the brief in `exchange/…/arora-barak-ch3-4/outbox/fills/` and give the user a
      pasteable fill prompt (the user picks the agent).
