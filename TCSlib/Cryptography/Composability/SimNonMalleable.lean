@@ -237,7 +237,7 @@ theorem snmImpl_challenge (atk : Attack) (M : MsgSampler) (n : ℕ) (pk sk : Lis
 theorem snmImpl_dec_cpa (M : MsgSampler) (n : ℕ) (pk sk : List Bool) (ρ : M.samp.Coins n)
     (c : Fin (S.ctLen.eval n) → Bool) (s : S.SnmState M n) :
     S.snmImpl .cpa M n pk sk ρ 0 c s = .pure (zeroBits _, s) := by
-  simp [snmImpl, FixedLengthScheme.decOpen]
+  simp [snmImpl, FixedLengthScheme.decOpen_cpa]
 
 /-- The codec of the adversary: the two oracles, and a final output of `r` ciphertexts followed by
 an `sl`-bit `σ`. -/

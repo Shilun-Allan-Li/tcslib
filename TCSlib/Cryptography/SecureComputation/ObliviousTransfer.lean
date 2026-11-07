@@ -338,7 +338,8 @@ theorem otProtocol_outP (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool
     (r : (otProtocol T H).ExecCoins (otProtocol T H).P x) :
     (otProtocol T H).outP x (List.ofFn a) (List.ofFn b) r = [] := by
   obtain ⟨rA, rB⟩ := r
-  simp [Protocol.outP, Protocol.transcriptWith, otProtocol, exec, otSender, otReceiver]
+  simp [Protocol.outP_eq, Protocol.transcriptWith_eq, otProtocol, exec_succ, exec_zero,
+    otSender, otReceiver]
 
 end Correctness
 
@@ -458,8 +459,9 @@ with the supplied argument and tape and empty advice. -/
 theorem runAt_otSimA (n : ℕ) (y : List Bool) (r : (otSimA T).Coins n) :
     (otSimA T).runAt n y r =
       otSimAFun T (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) := by
-  rw [NUPPT.runAt_eq, otSimA, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq,
-    NUPPT.layout_eq]
+  rw [NUPPT.runAt_eq]
+  unfold otSimA
+  rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
 
 /-- `S_B`'s mask `z_b = h(x) ⊕ a_b`, with `x` its first sampled element and `[a_b]` the second
 part of its argument. -/
@@ -572,8 +574,9 @@ theorem runAt_otSimB {H : List Bool → List Bool} (hH : PolyTimeComputable H)
     (n : ℕ) (y : List Bool) (r : (otSimB T hH).Coins n) :
     (otSimB T hH).runAt n y r =
       otSimBFun T H (NUPPT.layout (List.replicate n true) y [] (List.ofFn r)) := by
-  rw [NUPPT.runAt_eq, otSimB, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq,
-    NUPPT.layout_eq]
+  rw [NUPPT.runAt_eq]
+  unfold otSimB
+  rw [NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, NUPPT.layout_eq]
 
 /-! ### Proposition 161.5 -/
 

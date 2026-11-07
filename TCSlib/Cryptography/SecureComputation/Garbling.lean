@@ -202,7 +202,8 @@ theorem gateOut_eq (g : DAGGate) (vals : List Bool) :
     intro l p; rw [List.all_map]; rfl
   have hany : ∀ (l : List ℕ) (p : ℕ → Bool), l.any p = (l.map p).any id := by
     intro l p; rw [List.any_map]; rfl
-  unfold gateOut DAGGate.eval
+  unfold gateOut
+  rw [DAGGate.eval_eq]
   cases g.kind <;> simp only [hall, hany, hA, hB]
 
 /-! ### The garbling -/

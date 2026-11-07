@@ -84,7 +84,7 @@ def isPadded (w : List Bool) : Bool :=
 component contains no false bit. -/
 theorem isPadded_eq (w : List Bool) :
     isPadded w =
-      decide (pairEncode (pairFstD w) (pairSndD w) = w) && !BinArith.hasFalse (pairSndD w) := rfl
+      (decide (pairEncode (pairFstD w) (pairSndD w) = w) && !BinArith.hasFalse (pairSndD w)) := rfl
 
 /-- A padding to `L ≥ 2|c| + 2` bits has `L` bits. -/
 theorem length_padCt {L : ℕ} {c : List Bool} (h : 2 * c.length + 2 ≤ L) :
@@ -127,7 +127,7 @@ theorem polyTimeComputable_isPadded : PolyTimeComputable (fun w => [isPadded w])
       ((polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD).pairEncode
         polyTimeComputable_id) using 1
     funext w
-    simp [Function.comp]
+    simp [Function.comp_apply]
   exact polyTimeComputable_and heq
     (polyTimeComputable_not (BinArith.polyTimeComputable_hasFalse.comp polyTimeComputable_pairSndD))
 
@@ -158,7 +158,7 @@ theorem polyTimeComputable_padEncFun (enc : NUPPT) (L : PolyExpr) :
       ((polyTimeComputable_unaryPoly L).comp NUPPT.polyTimeComputable_inParam)))
   convert h using 1
   funext z
-  simp [padEncFun, padCt, Function.comp, length_pairEncode]
+  simp [padEncFun, padCt, Function.comp_apply, length_pairEncode]
 
 /-- The padded decryptor's string function on `⟨sk, w⟩`: `Dec ⟨sk, c⟩` if `w` is the canonical
 padding of `c`, and `⊥` otherwise, here `true :: w`, one bit longer than the query. -/
@@ -193,7 +193,8 @@ theorem padEnc_coins (enc : NUPPT) (L : PolyExpr) : (padEnc enc L).coins = enc.c
 theorem runAt_padEnc {enc : NUPPT} (henc : enc.Uniform) (L : PolyExpr) (n : ℕ) (y : List Bool)
     (r : enc.Coins n) : (padEnc enc L).runAt n y r = padCt (L.eval n) (enc.runAt n y r) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, henc.runAt_eq]
-  simp [padEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.layout, NUPPT.advInput]
+  simp [padEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.layout_eq, NUPPT.advInput_eq]
 
 /-- The padded decryptor on a padding is `Dec`. -/
 theorem padDecFun_padCt (dec : List Bool → List Bool) (sk c : List Bool) (L : ℕ) :
@@ -561,13 +562,13 @@ theorem indImpl_challenge_repeat (atk : Attack) (b : Bool) (n : ℕ) (pk sk : Li
 theorem indImpl_dec_cpa (b : Bool) (n : ℕ) (pk sk : List Bool)
     (c : Fin (S.ctLen.eval n) → Bool) (s : Option (Fin (S.ctLen.eval n) → Bool)) :
     S.indImpl .cpa b n pk sk 0 c s = .pure (zeroBits _, s) := by
-  simp [indImpl, FixedLengthScheme.decOpen]
+  simp [indImpl, FixedLengthScheme.decOpen_cpa]
 
 /-- Under CCA2, `Dec` refuses the challenge. -/
 theorem indImpl_dec_cca2_challenge (b : Bool) (n : ℕ) (pk sk : List Bool)
     (c : Fin (S.ctLen.eval n) → Bool) :
     S.indImpl .cca2 b n pk sk 0 c (some c) = .pure (zeroBits _, some c) := by
-  simp [indImpl, FixedLengthScheme.decOpen]
+  simp [indImpl, FixedLengthScheme.decOpen_cca2]
 
 /-- The codec of the adversary: the two oracles, and a one-bit final output. -/
 def indCodec (n : ℕ) : MachineCodec (S.indSpec n) (Fin 1 → Bool) :=

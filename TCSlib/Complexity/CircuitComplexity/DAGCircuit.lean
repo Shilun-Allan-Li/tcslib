@@ -121,6 +121,14 @@ def eval (g : DAGGate) (vals : List Bool) : Bool :=
   | .or => g.args.any fun a => vals.getD a false
   | .not => !(g.args.all fun a => vals.getD a false)
 
+/-- A gate evaluates its argument values by conjunction, disjunction, or negated
+conjunction according to its kind. -/
+theorem eval_eq (g : DAGGate) (vals : List Bool) :
+    eval g vals = match g.kind with
+      | .and => g.args.all fun a => vals.getD a false
+      | .or => g.args.any fun a => vals.getD a false
+      | .not => !(g.args.all fun a => vals.getD a false) := rfl
+
 /-- The depth of a gate: one more than the deepest vertex it reads, vertex `v`'s depth
 being `ds.getD v 0`. -/
 def depth (g : DAGGate) (ds : List ℕ) : ℕ :=

@@ -101,11 +101,11 @@ noncomputable def prfMAC (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (
     have htag : (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfTagFun hE) (.const 0)).runAt n
         (pairEncode (List.ofFn rg) (List.ofFn m)) rt = List.ofFn (F n rg m) := by
       rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-      simp [prfTagFun, NUPPT.inArg, NUPPT.advInput, hFE]
+      simp [prfTagFun, NUPPT.inArg_eq, NUPPT.advInput_eq, hFE]
       rfl
     simp only [PolyExpr.eval_var] at m ⊢
     rw [htag, padFin_ofFn]
-    simp [prfVerFun, atParam, hFE]
+    simp [prfVerFun, atParam_eq, hFE]
     rfl
 
 attribute [simps (config := { isSimp := false }) msgLen tagLen gen tag ver] prfMAC

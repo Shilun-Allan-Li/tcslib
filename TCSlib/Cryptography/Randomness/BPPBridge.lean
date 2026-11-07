@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Complexity.Randomized.PolyTimeModel
+import TCSlib.Complexity.Randomized.PTMEquiv
 import TCSlib.Complexity.ClassNP.PClosure
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Cryptography.Foundations.Probability
@@ -81,7 +82,7 @@ theorem verifier_toNUPPT {M : List Bool → List Bool → Bool}
   obtain ⟨V₁, V₀, h₁, -, hV⟩ := hM
   have hM₁ : ∀ x r, M x r = true ↔ pairEncode x r ∈ V₁ := fun x r => by
     have := (hV x r).1
-    simpa [Randomized.boolVerifier] using this
+    simpa [Randomized.boolVerifier_apply] using this
   have hind := mem_P_iff_polyTimeComputable.mp h₁
   have hf₀ := hind.comp
     (NUPPT.polyTimeComputable_inAdvice.pairEncode NUPPT.polyTimeComputable_inArg)
@@ -93,20 +94,20 @@ theorem verifier_toNUPPT {M : List Bool → List Bool → Bool}
     simp only [Function.comp_apply]
   refine ⟨NUPPT.ofPolyTime hf (.const 0) p xs hxs, rfl, fun n y r => ?_⟩
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime]
-  simp only [NUPPT.inAdvice, NUPPT.inArg, NUPPT.advInput, pairFstD_pairEncode,
+  simp only [NUPPT.inAdvice_eq, NUPPT.inArg_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
     pairSndD_pairEncode, List.cons.injEq, and_true]
   by_cases h : M (xs n) y = true
   · have hm := (hM₁ _ _).mp h
-    simp [MultiTapeTM.indicator, hm, h]
+    simp only [(Randomized.indicator_eq_true_iff).2 hm, h]
   · have hm : pairEncode (xs n) y ∉ V₁ := fun hm => h ((hM₁ _ _).mpr hm)
     simp only [Bool.not_eq_true] at h
-    simp [MultiTapeTM.indicator, hm, h]
+    simp only [(Randomized.indicator_eq_false_iff).2 hm, h]
 
 /-- **The two probability notions agree** (the S3c bridge, lemma 2): `main`'s `randProb m A`, the
 counting ratio over `{0,1}^m`, is the ch. 2–4 layer's `uprob` over `Fin m → Bool`. -/
 theorem randProb_eq_uprob (m : ℕ) (A : List Bool → Prop) [DecidablePred A] :
     (Randomized.randProb m A : ℝ) = uprob (fun r : Fin m → Bool => A (List.ofFn r)) := by
-  rw [uprob_eq_card_filter, Randomized.randProb]
+  rw [uprob_eq_card_filter, Randomized.randProb_eq]
   push_cast
   congr 1
   simp [Fintype.card_bool, Fintype.card_fin]

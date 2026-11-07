@@ -76,6 +76,10 @@ theorem length_le_length_encodeList (l : List (List Bool)) :
 `pk`, remaining message `m`, remaining coins `r`. -/
 def blockState (u pk m r : List Bool) : List Bool := pairEncode u (pairEncode pk (pairEncode m r))
 
+/-- A block state is the nested pair encoding of its parameter, key, message and coins. -/
+theorem blockState_eq (u pk m r : List Bool) :
+    blockState u pk m r = pairEncode u (pairEncode pk (pairEncode m r)) := rfl
+
 /-- One step of the block encryptor: drop `L(|u|)` message bits and `B(|u|)` coins. -/
 def blockStep (L B : PolyExpr) (w : List Bool) : List Bool :=
   blockState (pairFstD w) (pairFstD (pairSndD w))
@@ -99,6 +103,11 @@ emissions along `|x| + 1` steps — the nested-pair tuple of the encryptions of 
 `L(|u|)`-bit blocks of `m` under `pk`, each with a fresh `B(|u|)`-coin segment of `r`. -/
 def blockEncFun (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) : List Bool :=
   (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)
+
+/-- The block encryptor concatenates the emissions of rounds `0, …, |x|` from `x`. -/
+theorem blockEncFun_eq (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) :
+    blockEncFun E L B x =
+      (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x) := rfl
 
 /-- The ideal list of block encryptions with fuel `k`: `[]` once the message is empty. -/
 def blockList (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) :

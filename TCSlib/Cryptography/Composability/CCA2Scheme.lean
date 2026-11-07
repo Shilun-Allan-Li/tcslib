@@ -119,14 +119,14 @@ def ccaDecOK (E : List Bool → List Bool) (z : List Bool) : Bool :=
 /-- The raw decryption guard conjoins the two parameter-length checks with equality of the
 computed and supplied tags [PS10, Algorithm 169.3]. -/
 theorem ccaDecOK_eq (E : List Bool → List Bool) (z : List Bool) :
-    ccaDecOK E z =
+    ccaDecOK E z = (
       decide ((pairFstD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length) &&
         decide ((pairFstD (pairSndD (pairSndD (NUPPT.inArg z)))).length =
           (NUPPT.inParam z).length) &&
         decide (E (pairEncode (pairSndD (pairFstD (NUPPT.inArg z)))
             (pairFstD (pairSndD (NUPPT.inArg z)) ++
               pairFstD (pairSndD (pairSndD (NUPPT.inArg z))))) =
-          pairSndD (pairSndD (pairSndD (NUPPT.inArg z)))) := rfl
+          pairSndD (pairSndD (pairSndD (NUPPT.inArg z))))) := rfl
 
 /-- `Dec′` on the layout `⟨⟨⟨1^n, ⟨⟨k₁, k₂⟩, ⟨r, ⟨c₁, t⟩⟩⟩⟩, α⟩, r'⟩`: `c₁ ⊕ E(⟨k₁, r⟩)` when
 the test passes, and otherwise `⊥`, here `1^{n+1}`, which decodes to no `n`-bit message. -/
@@ -154,7 +154,7 @@ theorem polyTimeComputable_ccaGenFun : PolyTimeComputable ccaGenFun := by
   convert ((polyTimeComputable_pairTakePoly .var).comp hp).pairEncode
     ((polyTimeComputable_pairDropPoly .var).comp hp) using 1
   funext z
-  simp [ccaGenFun, Function.comp]
+  simp [ccaGenFun, Function.comp_apply]
 
 /-- The mask `c₁` is polynomial-time when `E` is. -/
 theorem polyTimeComputable_ccaMaskFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
@@ -165,7 +165,7 @@ theorem polyTimeComputable_ccaMaskFun {E : List Bool → List Bool} (hE : PolyTi
         NUPPT.polyTimeComputable_inArg).pairEncode NUPPT.polyTimeComputable_inCoins)))
   convert h using 1
   funext z
-  simp [ccaMaskFun, Function.comp]
+  simp [ccaMaskFun, Function.comp_apply]
 
 /-- `Enc′` is polynomial-time when `E` is. -/
 theorem polyTimeComputable_ccaEncFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
@@ -192,7 +192,7 @@ theorem polyTimeComputable_ccaDecOK {E : List Bool → List Bool} (hE : PolyTime
     convert polyTimeComputable_lenEq.comp (hg.pairEncode NUPPT.polyTimeComputable_inParam)
       using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have hArg := NUPPT.polyTimeComputable_inArg
   have hc₁ : PolyTimeComputable fun z => pairFstD (pairSndD (pairSndD (NUPPT.inArg z))) :=
     ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).comp
@@ -211,7 +211,7 @@ theorem polyTimeComputable_ccaDecOK {E : List Bool → List Bool} (hE : PolyTime
       (((polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD).comp hArg).pairEncode
         (hr.append hc₁))).pairEncode hc₂) using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   exact polyTimeComputable_and (polyTimeComputable_and (hl _ hr) (hl _ hc₁)) htag
 
 /-- `Dec′` is polynomial-time when `E` is. -/
@@ -228,7 +228,7 @@ theorem polyTimeComputable_ccaDecFun {E : List Bool → List Bool} (hE : PolyTim
           hArg))))
   convert h using 1
   funext z
-  simp [Function.comp]
+  simp [Function.comp_apply]
 
 /-! ### The machines -/
 
@@ -252,7 +252,7 @@ noncomputable abbrev ccaDec : NUPPT :=
 theorem runAt_ccaGen (n : ℕ) (ρ : ccaGen.Coins n) :
     ccaGen.runAt n [] ρ = pairEncode ((List.ofFn ρ).take n) ((List.ofFn ρ).drop n) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [ccaGenFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.advInput]
+  simp [ccaGenFun, NUPPT.inCoins_eq, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- `Enc′` on `⟨⟨k₁, k₂⟩, m⟩` with coins `r` is `⟨r, ⟨c₁, E(⟨k₂, r ++ c₁⟩)⟩⟩`,
 `c₁ = m ⊕ E(⟨k₁, r⟩)`. -/
@@ -263,7 +263,7 @@ theorem runAt_ccaEnc (n : ℕ) (k₁ k₂ m : List Bool) (r : (ccaEnc hE).Coins 
           (E (pairEncode k₂
             (List.ofFn r ++ List.zipWith xor m (E (pairEncode k₁ (List.ofFn r))))))) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [ccaEncFun, ccaMaskFun, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [ccaEncFun, ccaMaskFun, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- `Dec′` on `⟨⟨k₁, k₂⟩, ⟨r, ⟨c₁, t⟩⟩⟩` with `n`-bit `r` and `c₁` and a valid tag is
 `c₁ ⊕ E(⟨k₁, r⟩)`. -/
@@ -272,7 +272,8 @@ theorem runAt_ccaDec (n : ℕ) (k₁ k₂ r c₁ t : List Bool) (hr : r.length =
     (ccaDec hE).runAt n (pairEncode (pairEncode k₁ k₂) (pairEncode r (pairEncode c₁ t))) r' =
       List.zipWith xor c₁ (E (pairEncode k₁ r)) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [ccaDecFun, ccaDecOK, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc₁, htag]
+  simp [ccaDecFun, ccaDecOK, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq,
+    hr, hc₁, htag]
 
 end Machines
 

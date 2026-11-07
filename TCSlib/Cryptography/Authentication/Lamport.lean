@@ -121,9 +121,9 @@ theorem blockEncFun_ofFn (G : List Bool → List Bool) (B : PolyExpr) (u pk : Li
       encodeList (List.ofFn fun i : Fin q =>
         G (NUPPT.layout u (pairEncode pk [m i]) [] (coinBlock (B.eval u.length) i r))) := by
   have hlen : (List.ofFn m).length ≤ (blockState u pk (List.ofFn m) r).length := by
-    simp only [blockState, length_pairEncode, List.length_ofFn]
+    simp only [blockState_eq, length_pairEncode, List.length_ofFn]
     omega
-  unfold blockEncFun
+  rw [blockEncFun_eq]
   rw [blockEncFun_spec G (.const 1) B u pk (blockState u pk (List.ofFn m) r).length
     (List.ofFn m) r (by simpa using hlen)]
   simp only [PolyExpr.eval_const]
@@ -136,7 +136,7 @@ theorem decListFun_pairSndD (l : List (List Bool)) :
     have := length_le_length_encodeList l
     simp only [length_pairEncode]
     omega
-  unfold decListFun
+  rw [decListFun_eq]
   rw [decListFun_spec pairSndD [] _ l hlen]
   simp
 
@@ -273,7 +273,7 @@ theorem polyTimeComputable_lamportPairEmit : PolyTimeComputable (lamportPairEmit
     (hE.comp (hu.pairEncode ((polyTimeComputable_pairDropPoly .var).comp hp)))
   convert h using 1
   funext v
-  simp [lamportPairEmit, Function.comp]
+  simp [lamportPairEmit, Function.comp_apply]
 
 /-- `Sign`'s emission is polynomial-time. -/
 theorem polyTimeComputable_lamportSelEmit : PolyTimeComputable lamportSelEmit := by
@@ -285,7 +285,7 @@ theorem polyTimeComputable_lamportSelEmit : PolyTimeComputable lamportSelEmit :=
     ((polyTimeComputable_pairTakePoly .var).comp hp)
   convert h using 1
   funext v
-  simp [lamportSelEmit, Function.comp]
+  simp [lamportSelEmit, Function.comp_apply]
 
 /-- `Ver`'s selection is polynomial-time. -/
 theorem polyTimeComputable_lamportPkEmit : PolyTimeComputable lamportPkEmit := by
@@ -340,14 +340,14 @@ theorem polyTimeComputable_lamportVerFun (L : PolyExpr) :
       [decide ((pairFstD (pairSndD (pairSndD w))).length = (pairFstD w).length)] := by
     convert polyTimeComputable_lenEq.comp (hm.pairEncode hu) using 1
     funext w
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have h₂ : PolyTimeComputable fun w =>
       [decide ((pairSndD (pairSndD (pairSndD w))).length =
         (pairFstD w).length * (pairFstD w).length)] := by
     convert polyTimeComputable_lenEq.comp
       (hσ.pairEncode ((polyTimeComputable_unaryPoly (.mul .var .var)).comp hu)) using 1
     funext w
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have hX := (blockEncFun_poly (polyTimeComputable_lamportEvalEmit hE) (.const 1) .var).comp
     (hu.pairEncode ((polyTimeComputable_const []).pairEncode (hm.pairEncode hσ)))
   have hY := (blockEncFun_poly polyTimeComputable_lamportPkEmit (.const 1)
@@ -362,7 +362,7 @@ theorem polyTimeComputable_lamportVerFun (L : PolyExpr) :
             (pairFstD (pairSndD w))))] := by
     convert polyTimeComputable_pairEq.comp (hX.pairEncode hY) using 1
     funext w
-    simp [blockState, Function.comp]
+    simp [blockState_eq, Function.comp_apply]
   exact polyTimeComputable_and (polyTimeComputable_and h₁ h₂) h₃
 
 /-! ### The machines -/
@@ -389,7 +389,8 @@ theorem runAt_lamportGen (n : ℕ) (ρ : (lamportGen hE).Coins n) :
   rw [NUPPT.runAt_eq]
   unfold lamportGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [lamportGenFun, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode,
+  simp only [lamportGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+    pairFstD_pairEncode,
     pairSndD_pairEncode, List.length_replicate]
   rw [show blockState (List.replicate n true) [] (List.replicate n true) (List.ofFn ρ) =
     blockState (List.replicate n true) [] (List.ofFn fun _ : Fin n => true) (List.ofFn ρ) by simp,
@@ -405,7 +406,8 @@ theorem runAt_lamportSign (n : ℕ) (sk : List Bool) (m : Fin n → Bool)
   rw [NUPPT.runAt_eq]
   unfold lamportSign
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [lamportSignFun, NUPPT.inParam, NUPPT.inArg, NUPPT.advInput, pairFstD_pairEncode,
+  simp only [lamportSignFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.advInput_eq,
+    pairFstD_pairEncode,
     pairSndD_pairEncode]
   rw [blockEncFun_ofFn, decListFun_pairSndD]
   congr 1
@@ -491,14 +493,14 @@ theorem lamportVerFun_sign (n : ℕ) (m : Fin n → Bool) (rg : (lamportGen hE).
     simp only [length_pairEncode, hy, lamportPkBlock, PolyExpr.eval_add, PolyExpr.eval_mul,
       PolyExpr.eval_const, List.length_nil]
     ring
-  simp only [lamportVerFun, atParam, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [lamportVerFun, atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, List.length_ofFn, hσ, decide_true, Bool.true_and, List.cons.injEq,
     and_true, decide_eq_true_eq]
   have hflat : ∀ g : Fin n → List Bool,
       encodeList (List.ofFn g) = (List.ofFn fun i => pairEncode (g i) []).flatten := by
     intro g
     rw [encodeList_eq_flatMap]
-    simp [List.flatMap, List.map_ofFn, Function.comp_def]
+    simp [List.flatMap_def, List.map_ofFn, Function.comp_def]
   rw [hflat, blockEncFun_ofFn, blockEncFun_ofFn]
   congr 1
   congr 1

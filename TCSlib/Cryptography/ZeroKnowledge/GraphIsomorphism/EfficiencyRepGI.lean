@@ -122,9 +122,9 @@ theorem giProverRep_efficient : giProverRep.Efficient := by
     inCoins_ilayout, argX_ilayout, argZ_ilayout, vcount_ilayout, giBlock_eval, decide_eq_true_eq,
     lastMsg_encodeMsgs]
   by_cases hev : hist.length % 2 = 0
-  · rw [if_pos hev, if_pos hev, relabelAt_replicate, sampleStr, decPerm_encPerm]
+  · rw [if_pos hev, if_pos hev, relabelAt_replicate, sampleStr_eq, decPerm_encPerm]
     rfl
-  · rw [if_neg hev, if_neg hev, sampleStr, mulInvStr_encPerm]
+  · rw [if_neg hev, if_neg hev, sampleStr_eq, mulInvStr_encPerm]
     split_ifs <;> rfl
 
 /-! ### The verifier of the `|x|`-fold graph isomorphism protocol -/

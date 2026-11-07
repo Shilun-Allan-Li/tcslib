@@ -122,7 +122,7 @@ theorem proverMoves_eq (vFirst : Bool) (k : ℕ) :
 /-- The mover pattern has period `2`. -/
 theorem moverIsV_two_mul_add (vFirst : Bool) (m t : ℕ) :
     moverIsV vFirst (2 * m + t) = moverIsV vFirst t := by
-  cases vFirst <;> simp [moverIsV]
+  cases vFirst <;> simp [moverIsV_true, moverIsV_false]
 
 /-- The number of verifier moves among the first `g` moves. -/
 theorem countP_moverIsV (vFirst : Bool) (g : ℕ) :
@@ -132,7 +132,7 @@ theorem countP_moverIsV (vFirst : Bool) (g : ℕ) :
   | zero => cases vFirst <;> simp
   | succ g ih =>
     rw [List.range_succ, List.countP_append, ih]
-    cases vFirst <;> simp [moverIsV] <;> split_ifs <;> omega
+    cases vFirst <;> simp [moverIsV_true, moverIsV_false] <;> split_ifs <;> omega
 
 /-- The number of prover moves among the first `g` moves. -/
 theorem countP_not_moverIsV (vFirst : Bool) (g : ℕ) :
@@ -142,7 +142,7 @@ theorem countP_not_moverIsV (vFirst : Bool) (g : ℕ) :
   | zero => cases vFirst <;> simp
   | succ g ih =>
     rw [List.range_succ, List.countP_append, ih]
-    cases vFirst <;> simp [moverIsV] <;> split_ifs <;> omega
+    cases vFirst <;> simp [moverIsV_true, moverIsV_false] <;> split_ifs <;> omega
 
 /-- After `g` moves the prover has received one message per verifier move. -/
 theorem exec_fst_length (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (g : ℕ) :
@@ -170,7 +170,7 @@ theorem proverMoveIndex_exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : L
     (g : ℕ) (hg : moverIsV vFirst g = false) :
     proverMoveIndex vFirst (exec P V vFirst x zP zV rP rV g).1.length = g := by
   rw [exec_fst_length, countP_moverIsV]
-  cases vFirst <;> simp [moverIsV, proverMoveIndex] at hg ⊢ <;> omega
+  cases vFirst <;> simp [moverIsV_true, moverIsV_false, proverMoveIndex] at hg ⊢ <;> omega
 
 /-- **The verifier knows the global move**: when it moves at move `g`, the number of messages
 it has received gives `g` back. -/
@@ -178,7 +178,7 @@ theorem verifierMoveIndex_exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV :
     (g : ℕ) (hg : moverIsV vFirst g = true) :
     verifierMoveIndex vFirst (exec P V vFirst x zP zV rP rV g).2.length = g := by
   rw [exec_snd_length, countP_not_moverIsV]
-  cases vFirst <;> simp [moverIsV, verifierMoveIndex] at hg ⊢ <;> omega
+  cases vFirst <;> simp [moverIsV_true, moverIsV_false, verifierMoveIndex] at hg ⊢ <;> omega
 
 end Composability
 
@@ -255,7 +255,7 @@ def seqRep (π : Protocol) (Q : PolyExpr) : Protocol where
 /-- The number of moves of the repetition. -/
 theorem seqRep_rounds_eval (π : Protocol) (Q : PolyExpr) (n : ℕ) :
     (π.seqRep Q).rounds.eval n = 2 * π.rounds.eval n * Q.eval n := by
-  simp [seqRep, PolyExpr.eval]
+  simp [seqRep, PolyExpr.eval_mul, PolyExpr.eval_const]
   ring
 
 /-- **Phase `j` of an honest execution of the repetition is an execution of `π`** with the coin

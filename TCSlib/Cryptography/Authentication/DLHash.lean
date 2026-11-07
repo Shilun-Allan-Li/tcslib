@@ -134,7 +134,7 @@ theorem polyTimeComputable_dlHashIdx (G : ExpGroupGen V) : PolyTimeComputable (d
     convert (polyTimeComputable_pairTakePoly G.gen.coins).comp
       (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins) using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   exact polyTimeComputable_pairFstD.comp ((expGenFun_poly G).comp
     (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam
       (polyTimeComputable_const []) (polyTimeComputable_const []) ht))
@@ -159,7 +159,7 @@ theorem polyTimeComputable_dlHashPow (H : ArithmeticFP) : PolyTimeComputable dlH
       (polyTimeComputable_pairFstD.pairEncode
         (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)) using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   have h := (polyTimeComputable_expEval H).comp (((polyTimeComputable_pairFstD.comp
     polyTimeComputable_pairFstD).comp polyTimeComputable_pairSndD).pairEncode ht)
   refine (congrArg PolyTimeComputable (?_ : dlHashPow = _)).mpr h

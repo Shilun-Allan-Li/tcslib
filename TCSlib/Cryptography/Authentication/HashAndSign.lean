@@ -251,8 +251,9 @@ theorem runAt_hsGen (S : SignatureScheme) (H : CRH) (n : ℕ) (ρ : (hsGen S H).
   obtain ⟨h₁, h₂⟩ := ofFn_coins_split (a := S.gen.coins.eval n) (b := H.gen.coins.eval n) ρ
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, S.gen_uniform.runAt_eq,
     H.gen_uniform.runAt_eq]
-  simp only [hsGenFun, hsSigKey, hsIdx, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput,
-    NUPPT.layout, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+  simp only [hsGenFun, hsSigKey, hsIdx, NUPPT.inParam_eq, NUPPT.inCoins_eq,
+    NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate]
   rw [h₁, h₂]
   rfl
 
@@ -262,8 +263,8 @@ theorem runAt_hsSign (S : SignatureScheme) (H : CRH) (n : ℕ) (sk i m : List Bo
     (hsSign S H).runAt n (pairEncode (pairEncode sk i) m) r =
       S.sign.runAt n (pairEncode sk (hsHashList H (List.replicate n true) i m)) r := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, S.sign_uniform.runAt_eq]
-  simp only [hsSignFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
-    NUPPT.layout, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [hsSignFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.advInput_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-! ### The scheme -/
 
@@ -285,7 +286,7 @@ noncomputable def hashAndSign (H : CRH) (S : SignatureScheme)
     rw [runAt_hsGen]
     simp only [pairFstD_pairEncode, pairSndD_pairEncode]
     rw [runAt_hsSign]
-    simp only [hsVerFun, atParam, pairFstD_pairEncode, pairSndD_pairEncode]
+    simp only [hsVerFun, atParam_eq, pairFstD_pairEncode, pairSndD_pairEncode]
     set rg₁ : S.gen.Coins n := fun j => rg (Fin.castAdd _ j)
     set w := H.eval (pairEncode (List.replicate n true)
       (pairEncode (H.gen.runAt n [] fun j => rg (Fin.natAdd _ j)) (List.ofFn m)))
@@ -297,7 +298,7 @@ noncomputable def hashAndSign (H : CRH) (S : SignatureScheme)
       rw [← List.ofFn_congr hl, ofFn_padFin_eq_padStr]
     simp only [hsHashList]
     rw [← hm₀]
-    simpa only [atParam] using S.correct n _ rg₁ rs
+    simpa only [atParam_eq] using S.correct n _ rg₁ rs
 
 /-- Hash-and-sign uses the hash family's domain length as its message length. -/
 theorem hashAndSign_msgLen (H : CRH) (S : SignatureScheme)

@@ -610,7 +610,7 @@ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
     argX_ilayout, vcount_ilayout, gniBlock_eval, decide_eq_true_eq]
   by_cases hlt : hist.length < x.length
-  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr, decPerm_encPerm, List.drop_one]
+  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr_eq, decPerm_encPerm, List.drop_one]
     split_ifs <;> rfl
   · rw [if_neg hlt, if_neg hlt, Bool.decide_and, Bool.decide_eq_true]
     congr 2

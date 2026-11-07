@@ -236,7 +236,7 @@ theorem runAt_spEnc {E : List Bool → List Bool} (hE : PolyTimeComputable E) (c
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_spEncFun hE) coins).runAt n (pairEncode k m) r =
       spEncStr E k m (List.ofFn r) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [spEncFun, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [spEncFun, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 /-- The activation of the decryption machine on `⟨k, c⟩` is `spDecStr` at `ℓ = n`, with `⊥` as
 `1^{n+1}`. -/
@@ -246,7 +246,7 @@ theorem runAt_spDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (c
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_spDecFun hE) coins).runAt n (pairEncode k c) r' =
       (spDecStr E n n k c).getD (true :: List.replicate n true) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [spDecFun, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput]
+  simp [spDecFun, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.advInput_eq]
 
 /-- The length of a special ciphertext: `2|r| + 2` for `r`, then `|r| + |m|` when the pad has at
 least `|r| + |m|` bits. -/
