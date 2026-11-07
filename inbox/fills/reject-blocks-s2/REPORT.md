@@ -1,8 +1,8 @@
 # Fill `reject-blocks-s2` — REPORT
 
-**Status: CHECKPOINT 2 (milestone 2 reached).** H15 `polyTimeComputable_rejectBlocksL` is proved;
-its axiom print is standard-only; all five owned files and their downstream modules compile.
-Consumer re-points (milestones 3–4) and the final checks (milestone 5) follow.
+**Status: CHECKPOINT 3 (milestone 3 reached).** H15 is proved (milestone 2); dl-a
+(`DiscreteLog.lean`) and dl-c (`ElGamal.lean`) consume it, their copied loops are deleted and
+their three sketches refreshed. RSA/Rabin (milestone 4) and the final checks (milestone 5) follow.
 
 ## Identity
 
@@ -10,7 +10,8 @@ Consumer re-points (milestones 3–4) and the final checks (milestone 5) follow.
 |---|---|
 | frozen source ancestor | `31348fcf7dee32f84db1fc8f929d80653137995e` (exact; `git rev-parse HEAD` after checkout) |
 | fill branch | local `fill/reject-blocks-s2`, never rebased, never pushed |
-| checkpoint 2 head | `144c99ea` — "S2 milestone 2: prove polyTimeComputable_rejectBlocksL (H15) via the repetition host" |
+| checkpoint 2 head | `144c99ea` — "S2 milestone 2: prove polyTimeComputable_rejectBlocksL (H15) via the repetition host" (exchange `ae2be1b7`) |
+| checkpoint 3 head | `5a6f8021` — "S2 milestone 3: dl-a and dl-c consume H15; retire dla_ss*/dlc_ss* loops; refresh three sketches" |
 | exchange read | `exchange/pass-shelat-ch5-8` at `d14a685` (≥ `d38aea96`); pack `SHA256SUMS` verified (all OK) |
 | owned baseline | all five fingerprints and line counts equal `inputs/owned-baseline.json` (`evidence/logs/owned-baseline-check.log`) |
 | worker | one Claude session, no sub-agents |
@@ -81,8 +82,35 @@ literals and «quoted» names): ancestor `TCSlib/` 511 `sorry` (Concrete 1); che
 owned 0. No `admit`/`axiom` tokens; the one `sorryAx` token is outside the owned files and
 unchanged (`census-ancestor.json`, `census-m2.json`).
 
+## Milestone 3: dl-a and dl-c
+
+* **DiscreteLog.** `polyTimeComputable_expSampleRaw` now applies H15 with `E a v := v < a`, the
+  parameter word `⟦m⟧ = pairFstD (pairSndD (inArg z))`, width word `sizeStr ⟦m⟧` (`H.size`;
+  `length_sizeStr`), block and trial words `inParam z`, coins `inCoins z`, read through
+  `sampleBelowL_eq_rejectBlocksL`. The payload's tail (`polyTimeComputable_tail` transported to
+  `List.tail` by `List.drop_one` through `.congr`) is width-normalized exactly as before
+  (`natToList_zero_append_drop`). Deleted (15): `dla_ssStart`, `dla_ssStep`, `dla_ssBlock`,
+  `dla_ssAcc`, `dla_ssOut`, `dla_ssStep_poly`, `dla_ssBlock_poly`, `dla_ssAcc_poly`,
+  `dla_ssOut_poly`, `dla_ssStep_iterate`, `dla_length_ssStep_le`, `dla_length_ssStep_ssStep_le`,
+  `dla_length_ssStep_iterate_le`, `dla_ssFind_eq`, `dla_ssStart_poly`. Added (3):
+  `dla_belowAcc` (the test on `⟨w, b⟩`), `dla_belowAcc_poly` (`H.le_poly`, negated),
+  `dla_belowAcc_spec` (`decide (⟦b⟧ < ⟦w⟧)`).
+* **ElGamal.** The only loop consumer, `dlc_numPoly_sample`, keeps its statement and is re-proved
+  through H15 (same instance shape, parameter word the numeral `m` with `⟦m⟧ = M`, block/trial word
+  `u`). Deleted (15): `dlc_ssStep`, `dlc_ssBlock`, `dlc_ssAcc`, `dlc_ssOut`, `dlc_ssLoop`,
+  `dlc_ssStep_poly`, `dlc_ssBlock_poly`, `dlc_ssAcc_poly`, `dlc_ssOut_poly`, `dlc_ssStep_iterate`,
+  `dlc_length_ssStep_le`, `dlc_length_ssStep_ssStep_le`, `dlc_length_ssStep_iterate_le`,
+  `dlc_ssLoop_poly`, `dlc_ssLoop_eq`. Added (2): `dlc_belowAcc`, `dlc_belowAcc_spec` (the
+  polynomial-time proof of the test is inlined at its one use). The section docstring of the
+  numeral calculus now names H15 instead of the loop.
+* **Sketches refreshed** (statement prose, formulas, citations unchanged): `polyTimeComputable_expSampleRaw`,
+  `polyTimeComputable_egGenRaw`, `polyTimeComputable_egEncRaw`: each now describes the H15
+  application (and its empty-on-failure payload) in place of the deleted trial loop.
+* Checks (`evidence/logs/checks-m3.log`): Concrete, Factoring, RSA, Rabin, DiscreteLog,
+  DiscreteLogHardcore, ElGamal, the facade: all exit 0, fresh objects.
+
 ## Still to do
 
-Milestones 3–4 (consumer re-points, loop retirements, the six sketch refreshes) and milestone 5
+Milestone 4 (RSA, Rabin; the remaining three sketches) and milestone 5
 (328 remaining prerequisites, `audits/pass-shelat/Checks`, header diff, census, axiom
 comparison, Rule-10 seals with the anonymous-read and repetition-matcher controls, lints).
