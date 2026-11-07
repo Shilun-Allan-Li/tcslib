@@ -42,7 +42,8 @@ relabelled as an adaptive multi-challenge game.
 ## Contents and status
 
 `public-key-draft.md` gives proposed statements, proof terms, existing source locations and
-blockers. `inventory-draft.md` surveys 13 primitive families and their exact endpoints, retained premises, admissions and missing bridges. The first source survey is against
+blockers. `normalization-design.md` records a constant-shift route to the concrete RSA/Rabin
+width bridge, with the missing transports explicit and no checked-proof claim. `inventory-draft.md` surveys 13 primitive families and their exact endpoints, retained premises, admissions and missing bridges. The first source survey is against
 campaign records/source `f3c7958506bd258863a0adf93e4cc0aa3183336e`; Gate 06-only declarations are identified separately and
 are not yet landed or externally statement-gated.
 
