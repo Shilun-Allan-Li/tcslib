@@ -1,0 +1,187 @@
+"""Read metadata as data; retain complete maps, exact-name deltas and source-name classes.
+
+Run only with python3 -I. No Lean, Git, cache, network or payload script execution.
+"""
+from pathlib import Path
+from collections import Counter, defaultdict
+import datetime
+import hashlib
+import json
+import re
+
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[4]
+LAND=OUT.parent
+STANDARD={'propext','Classical.choice','Quot.sound'}
+SPECS={
+    'baseline':('baseline-compiled','Metadata-baseline'),
+    'current1':('preflight-current1','Metadata-milestone2'),
+    'final2':('preflight-current2','Metadata-final'),
+}
+
+
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def write(name,data):
+    (OUT/name).write_text(json.dumps(data,indent=2,ensure_ascii=False,sort_keys=True)+'\n')
+
+
+def parse(path):
+    lines=path.read_text().splitlines();i=0
+    data=dict(census={},public_axioms={},all_axioms={},root_axioms={},cited=[],pending_absent=[])
+    seen_cited=set()
+    ax_tags={'PUBLICAX':'public_axioms','ALLAX':'all_axioms','ROOTAX':'root_axioms'}
+    while i<len(lines):
+        s=lines[i];line=i+1;i+=1
+        if s.startswith('CENSUS|'):
+            tag,owner,name,kind,pr,internal=s.split('|')
+            assert kind in {'theorem','def','axiom','opaque','constructor','recursor','inductive','quotient'}
+            assert pr in {'private=true','private=false'} and internal in {'internal=true','internal=false'}
+            assert name not in data['census'],('duplicate CENSUS',name)
+            data['census'][name]=dict(owner=owner,kind=kind,private=pr=='private=true',internal=internal=='internal=true',line=line)
+        elif any(s.startswith(t+'|') for t in ax_tags):
+            tag,name,ax=s.split('|',2)
+            while not ax.rstrip().endswith(']'):
+                assert i<len(lines) and '|' not in lines[i],('broken axiom continuation',line)
+                ax+=' '+lines[i].strip();i+=1
+            assert ax.startswith('[') and ax.endswith(']')
+            values=[v.strip() for v in ax[1:-1].split(',') if v.strip()]
+            assert len(values)==len(set(values)) and values==sorted(values)
+            key=ax_tags[tag];assert name not in data[key],(tag,name)
+            data[key][name]=dict(axioms=values,line=line)
+        elif s.startswith('CITED|'):
+            _,root,name,owner,kind=s.split('|');assert (root,name) not in seen_cited
+            seen_cited.add((root,name));data['cited'].append(dict(root=root,name=name,owner=owner,kind=kind,line=line))
+        elif s.startswith('PENDINGABSENT|'):
+            _,name=s.split('|');assert name not in data['pending_absent'];data['pending_absent'].append(name)
+        else:raise AssertionError(('unrecognized metadata line',line,s))
+    census=data['census'];public={n for n,c in census.items() if not c['private']}
+    assert set(data['public_axioms'])==public
+    assert set(data['root_axioms'])<=set(census)
+    assert all(c['root'] in data['root_axioms'] for c in data['cited'])
+    if data['all_axioms']:
+        assert set(data['all_axioms'])==set(census)
+        assert all(data['all_axioms'][n]['axioms']==a['axioms'] for n,a in data['public_axioms'].items())
+        assert all(data['all_axioms'][n]['axioms']==a['axioms'] for n,a in data['root_axioms'].items())
+    assert set(data['pending_absent'])=={'Turing.pairDiagTM_spaceUsed','Turing.FinTM.incFixedTM_spaceUsed','Turing.MultiTapeTM.exists_first_entry_of_fixed'}
+    return data
+
+
+inputs=[];snapshots={}
+for label,(folder,stem) in SPECS.items():
+    raw=LAND/folder/(stem+'.out');probe=LAND/folder/(stem+'.lean.txt');receipt=LAND/folder/(stem+'-run.json')
+    run=json.loads(receipt.read_text());assert run['exit']==0 and run['errors']==0
+    assert sha(raw)==run['output_sha256'] and sha(probe)==run['input_sha256']
+    for source,suffix in [(raw,'.out'),(probe,'.lean.txt'),(receipt,'-run.json')]:
+        (OUT/(label+suffix)).write_bytes(source.read_bytes())
+    inputs.append(dict(label=label,path=str(raw.relative_to(ROOT)),bytes=raw.stat().st_size,sha256=sha(raw),
+                       probe_sha256=sha(probe),receipt_sha256=sha(receipt),provided_run_pass=True,run=run))
+    d=parse(raw);snapshots[label]=d;write('map-'+label+'.json',d)
+
+# Named source declarations distinguish source exports from compiler nonprivate constants.
+# This is the trusted repository's already-reviewed lexical chunk helper, not an incoming script.
+helper=(ROOT/'devtools/seyoon/declfreeze.py').read_text();assert helper.count('a = chunks(')==1
+helper=helper.split('a = chunks(')[0]
+(OUT/'declfreeze-helpers.py.txt').write_text(helper)
+ns={};exec(compile(helper,'trusted-declfreeze-helper-functions','exec'),ns)
+source_names={};source_receipts=[]
+owners=sorted({v['owner'] for v in snapshots['final2']['census'].values()})
+assert len(owners)==11
+for label in ['baseline','final2']:
+    declarations={}
+    for owner in owners:
+        rel=owner.replace('.','/')+'.lean';stem=owner.split('.')[-1]
+        if label=='baseline':path=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-natbits')/rel
+        else:
+            folder='preflight-current2' if stem in {'Primitives','Catalog','CertShell','CodeSimulator','WordSize'} else 'preflight-current1'
+            path=LAND/folder/(stem+'.lean.txt')
+            run=json.loads((LAND/folder/(stem+'-run.json')).read_text())
+            assert sha(path)==run['source_sha256'],path
+        for name,private,text in ns['chunks'](path.read_text()):
+            assert name not in declarations,(label,name)
+            declarations[name]=dict(owner=owner,private=private)
+        source_receipts.append(dict(snapshot=label,owner=owner,path=str(path),sha256=sha(path),
+                                    limit='Baseline source read from supplied frozen API worktree; no Git/source-to-olean attestation newly run.' if label=='baseline' else 'Archived exact parent native compile input; source hash matched its receipt.'))
+    source_names[label]=declarations
+write('source-names.json',source_names);write('source-inputs.json',source_receipts)
+sa={n for n,v in source_names['baseline'].items() if not v['private']}
+sf={n for n,v in source_names['final2'].items() if not v['private']}
+source_add=sf-sa;source_remove=sa-sf
+assert source_add=={'Turing.FinTM.pairMapSndTM','Turing.FinTM.pairMapSndTM_computes','Turing.FinTM.pairMapSndTM_spaceUsed'}
+assert source_remove=={'Turing.'+n for n in ['transferTM_run','copyTM_run','clearTM_run','compareTM_run','incrementTM_run_succ','incrementTM_run_overflow']}
+
+
+def classify(n,c,label):
+    if c['private']:return 'private kernel name; exact-name bookkeeping only'
+    if n in source_names[label] and not source_names[label][n]['private']:return 'source-declared export'
+    if n in {'Turing.solveSplit.eq_def','Turing.solveSplitWith.eq_def'}:return 'generated foreign-home equation theorem'
+    if n=='Fin.castLEEmb.congr_simp':return 'generated foreign-home congruence theorem'
+    if n.startswith(('Turing.FinTM.instDecidableEqFwdMapState','Turing.FinTM.instDecidableEqA2_MapState')):return 'generated deriving-instance family'
+    if c['internal']:return 'generated proof/matcher/equation auxiliary'
+    return 'generated or synthesized nonprivate constant; no lexical source root'
+
+
+def dist(d):
+    rows=Counter((v['owner'],v['kind'],v['private'],v['internal']) for v in d.values())
+    return [dict(owner=o,kind=k,private=p,internal=i,count=n) for (o,k,p,i),n in sorted(rows.items())]
+
+
+def compare(a,b,la,lb):
+    A=a['census'];B=b['census'];shared=set(A)&set(B)
+    attrs=['owner','kind','private','internal']
+    changed={n:dict(before=A[n],after=B[n],changed=[x for x in attrs if A[n][x]!=B[n][x]])
+             for n in sorted(shared) if any(A[n][x]!=B[n][x] for x in attrs)}
+    added={n:dict(B[n],classification=classify(n,B[n],lb)) for n in sorted(set(B)-set(A))}
+    removed={n:dict(A[n],classification=classify(n,A[n],la)) for n in sorted(set(A)-set(B))}
+    axchanged={n:dict(before=a['public_axioms'][n]['axioms'],after=b['public_axioms'][n]['axioms'])
+               for n in sorted(set(a['public_axioms'])&set(b['public_axioms']))
+               if a['public_axioms'][n]['axioms']!=b['public_axioms'][n]['axioms']}
+    return dict(added=added,removed=removed,shared_names=sorted(shared),shared_attribute_changes=changed,
+                public_axiom_set_changes=axchanged,added_distribution=dist(added),removed_distribution=dist(removed),
+                correspondence_limit='Exact printed kernel names only. Shared name does not prove unchanged body; removed/added private names are not matched as declaration identities. No privacy/home inference across renames.')
+
+
+delta=compare(snapshots['baseline'],snapshots['final2'],'baseline','final2')
+delta12=compare(snapshots['current1'],snapshots['final2'],'baseline','final2')
+# current1 exact names that are removed are private; baseline source-name classification is unused for its nonprivate class.
+assert not delta['shared_attribute_changes'] and not delta12['shared_attribute_changes']
+write('delta-baseline-final2.json',delta);write('delta-current1-final2.json',delta12)
+
+summary={}
+for label,d in snapshots.items():
+    c=d['census'];p=sum(v['private'] for v in c.values())
+    summary[label]=dict(total=len(c),private=p,nonprivate=len(c)-p,by_kind=dict(Counter(v['kind'] for v in c.values())),
+                        by_owner={o:dict(total=sum(v['owner']==o for v in c.values()),
+                                         private=sum(v['owner']==o and v['private'] for v in c.values()),
+                                         nonprivate=sum(v['owner']==o and not v['private'] for v in c.values())) for o in owners},
+                        public_axiom_rows=len(d['public_axioms']),all_axiom_rows=len(d['all_axioms']),
+                        root_axiom_rows=len(d['root_axioms']),cited_edges=len(d['cited']),distribution=dist(c))
+assert [(summary[x]['total'],summary[x]['private'],summary[x]['nonprivate']) for x in ['baseline','current1','final2']]==[(5656,4400,1256),(4370,3163,1207),(4372,3163,1209)]
+
+f=snapshots['final2'];bad={n:dict(f['census'][n],axioms=ax['axioms']) for n,ax in f['all_axioms'].items() if not set(ax['axioms'])<=STANDARD}
+assert len(bad)==3 and all(x['owner']=='TCSlib.Complexity.RAMSimulation.WordSize' and 'sorryAx' in x['axioms'] for x in bad.values())
+assert len(f['root_axioms'])==93 and all(set(x['axioms'])<=STANDARD for x in f['root_axioms'].values())
+assert len(f['all_axioms'])==4372
+lostsorry={n:a for n,a in delta['public_axiom_set_changes'].items() if 'sorryAx' in a['before'] and 'sorryAx' not in a['after']}
+assert not any('sorryAx' not in a['before'] and 'sorryAx' in a['after'] for a in delta['public_axiom_set_changes'].values())
+
+classes={k:dict(Counter(v['classification'] for v in delta[k].values() if not v['private'])) for k in ['added','removed']}
+summary.update(source_exports=dict(before=len(sa),after=len(sf),added=sorted(source_add),removed=sorted(source_remove)),
+               exact_delta=dict(added=len(delta['added']),removed=len(delta['removed']),shared=len(delta['shared_names']),
+                                added_private=sum(x['private'] for x in delta['added'].values()),removed_private=sum(x['private'] for x in delta['removed'].values()),
+                                nonprivate_classes=classes,shared_attribute_changes=0,
+                                common_public_axiom_sets_changed=len(delta['public_axiom_set_changes']),common_public_names_losing_sorryAx=len(lostsorry)),
+               current1_to_final2=dict(added=len(delta12['added']),removed=len(delta12['removed']),shared=len(delta12['shared_names']),
+                                      nonprivate_added=[n for n,v in delta12['added'].items() if not v['private']],
+                                      nonprivate_removed=[n for n,v in delta12['removed'].items() if not v['private']]),
+               final2_nonstandard_axioms=bad,final2_selected_roots=93,three_pending_apis_absent=True,
+               private_identity_limit='No private IDs normalized or assumed stable; exact-name deltas cannot establish semantic moves/renames/privacy changes across different names.',
+               axiom_limit='Baseline/current1 provide PUBLICAX and selected ROOTAX only. ALLAX exists only in final2; no baseline-private axiom comparison is claimed.',
+               generated_reader_attention=dict(names=['Turing.solveSplit.eq_def','Turing.solveSplitWith.eq_def'],source_uses=['Primitives.lean:4013','Primitives.lean:5576'],
+                                               classification='Generated equation constants, not two new source exports. Explicit foreign generated-reader use is a separate source/rule-10 disposition; no approval inferred here.'))
+write('summary.json',summary)
+write('inputs.json',dict(created_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),inputs=inputs,
+                         helper_sha256=hashlib.sha256(helper.encode()).hexdigest(),executed_here='Only this parser and trusted lexical helper; no Lean or payload scripts.',
+                         scope='Eleven owner modules enumerated in supplied metadata probes; no imported whole-library census or merged-tree replay attestation.'))
+print(json.dumps({k:summary[k] for k in ['source_exports','exact_delta','current1_to_final2','final2_nonstandard_axioms']},indent=2))

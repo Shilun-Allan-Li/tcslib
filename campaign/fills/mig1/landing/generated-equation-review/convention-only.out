@@ -1,0 +1,94 @@
+/private/tmp/tcslib-generated-equation-qh1hbfin/convention-only.lean:27:11: error: Invalid field `qsort`: The environment does not contain `List.qsort`
+  @List.map (Prod Name ConstantInfo) Name (@Prod.fst Name ConstantInfo)
+    (@SMap.toList Name ConstantInfo Name.instBEq instHashableName env.constants)
+has type
+  List Name
+/private/tmp/tcslib-generated-equation-qh1hbfin/convention-only.lean:27:2: error: failed to construct 'ForIn' instance for collection
+  ?m.247
+and monad
+  ReaderT Command.Context (StateRefT' IO.RealWorld Command.State (EIO Exception))
+OPAQUE_BEFORE_EQUATION_REFERENCE|Turing.solveSplit|irreducible=true
+OPAQUE_BEFORE_EQUATION_REFERENCE|Turing.solveSplitWith|irreducible=true
+Turing.solveSplit.eq_def (C e n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+Turing.solveSplitWith.eq_def (f : Nat → Nat) (n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+/private/tmp/tcslib-generated-equation-qh1hbfin/convention-only.lean:52:0: error: equation was not realized
+'GeneratedEquationReview.solveSplit_read' depends on axioms: [propext]
+'GeneratedEquationReview.solveSplitWith_read' does not depend on any axioms
+Turing.solveSplit.eq_1 (C e n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+Turing.solveSplitWith.eq_1 (f : Nat → Nat) (n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+AFTER_EQ1|Turing.solveSplit.eq_1|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=true|simp=false|unfold=false|defeq=true
+ALTERNATIVE_TYPE|Turing.solveSplit.eq_1|∀ (C e n : Nat),
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+ALTERNATIVE_AXIOMS|Turing.solveSplit.eq_1|[propext]
+AFTER_EQ1|Turing.solveSplitWith.eq_1|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=true|simp=false|unfold=false|defeq=true
+ALTERNATIVE_TYPE|Turing.solveSplitWith.eq_1|∀ (f : Nat → Nat) (n : Nat),
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+ALTERNATIVE_AXIOMS|Turing.solveSplitWith.eq_1|[]
+ALTERNATIVE_CONSUMER_AXIOMS|GeneratedEquationReview.solveSplit_read_eq1|[propext]
+ALTERNATIVE_CONSUMER_AXIOMS|GeneratedEquationReview.solveSplitWith_read_eq1|[]
+OPAQUE_AFTER_CONSUMERS|Turing.solveSplit|irreducible=true
+OPAQUE_AFTER_CONSUMERS|Turing.solveSplitWith|irreducible=true

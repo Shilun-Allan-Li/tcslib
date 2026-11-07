@@ -1,0 +1,46 @@
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import Lean
+
+set_option autoImplicit false
+
+/-! These controls use each stored definition body as data, then ask ordinary
+metavariable refl to prove its pointwise and whole-function equation. Successful
+proofs are added as kernel-checked temporary theorem constants. They never use
+any generated equation lemma, simp, or an unsafe transparency override. -/
+open Lean Elab Command Meta in
+elab "#split_equation_controls" : command => do
+  let mut index := 0
+  for n in [`Turing.solveSplit, `Turing.solveSplitWith] do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            pure (some (goalType, ← instantiateMVars goal))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs _ => do
+            match ← solve (mkAppN head xs) ((mkAppN di.value xs).headBeta) with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"GeneratedEquationControl_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={declName}"
+
+#split_equation_controls
