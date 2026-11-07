@@ -1,0 +1,339 @@
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/mig1-probes/RouteProbe.lean:33:23: warning: 'change 4 * x.length + 5 ≤ 5 * (x.length + 1)' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+'MIG1PreShip.idRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.pairRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.appendRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.decidesRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.findsRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.emitRow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'MIG1PreShip.mapRows' depends on axioms: [propext, Classical.choice, Quot.sound]
+Turing.FinTM.idTM_computes (x : List Bool) : idTM.ComputesInTime x x (x.length + 1)
+Turing.FinTM.ifEqTM_computes (w₀ u v : List Bool) :
+  (ifEqTM w₀ u v).ComputesFunInTime (fun w => if w = w₀ then u else v) fun n =>
+    (w₀.length + max u.length v.length + 3) * (n + 1)
+Turing.FinTM.condTM_computes_iff (D M₁ M₂ : FinTM Bool) (p : List Bool → Bool) (hD : D.Computes fun x => [p x])
+  (x w : List Bool) : (∃ t, (D.condTM M₁ M₂).ComputesInTime x w t) ↔ ∃ t, (bif p x then M₁ else M₂).ComputesInTime x w t
+Turing.FinTM.branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t =
+    if b = true then MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₂.k
+    else MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + M₁.k
+Turing.FinTM.timedCondTM_computes {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool} {f₁ f₂ : List Bool → List Bool}
+  {T₀ T₁ T₂ : ℕ → ℕ} (hD : D.ComputesFunInTime (fun x => [p x]) T₀) (h₁ : M₁.ComputesFunInTime f₁ T₁)
+  (h₂ : M₂.ComputesFunInTime f₂ T₂) :
+  (D.timedCondTM M₁ M₂).ComputesFunInTime (fun x => if p x = true then f₁ x else f₂ x) fun n =>
+    5 * (T₀ n + max (T₁ n) (T₂ n) + 1)
+Turing.FinTM.timedCondTM_spaceUsed (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T t : ℕ)
+  (hD : D.ComputesInTime x [b] T) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) T + MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t + 2
+Turing.pairDiagTM_computes (x : List Bool) : pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5)
+Turing.FinTM.lengthBitsTM_computes : lengthBitsTM.ComputesFunInTime (fun x => x.length.bits) fun n => 5 * (n + 1)
+Turing.FinTM.lengthBitsTM_spaceUsed (x : List Bool) (t : ℕ) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ 5 * (x.length.size + 1)
+Turing.FinTM.loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool → List Bool → Prop)
+  (stepF : List Bool → List Bool → List Bool) (acceptF : List Bool → List Bool → Bool)
+  (out : List Bool → List Bool → List Bool) (findMode : Bool) (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+  (hF : F.ComputesFunInTime (fun x => (R x.length).bits) T) (hInv0 : ∀ (x : List Bool), Inv x (s0 x))
+  (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+  (hstart :
+    ∀ (x : List Bool),
+      ∃ t ≤ T x.length,
+        (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x)))
+  (hround :
+    ∀ (x s : List Bool),
+      Inv x s →
+        ∃ t,
+          0 < t ∧
+            t ≤ T x.length ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+                if acceptF x s = true then
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).state = none ∧
+                    (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).output = out x s
+                else
+                  MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                    Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+  (x : List Bool) :
+  ∃ cfg,
+    ∃ startup ≤ 10 * (T x.length + 1),
+      MultiTapeTM.runFrom (MultiTapeTM.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+          (cfg (R x.length + 1)).state = none ∧
+            ((cfg (R x.length + 1)).output = if findMode = true then [] else [false]) ∧
+              ∀ i ≤ R x.length,
+                ∃ t ≤ 10 * (T x.length + 1),
+                  if acceptF x ((stepF x)^[i] (s0 x)) = true then
+                    (MultiTapeTM.runFrom (cfg i) t).state = none ∧
+                      (MultiTapeTM.runFrom (cfg i) t).output =
+                        if findMode = true then out x ((stepF x)^[i] (s0 x)) else [true]
+                  else MultiTapeTM.runFrom (cfg i) t = cfg (i + 1)
+Turing.FinTM.loopHostTM_decides (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool → List Bool → Prop)
+  (stepF : List Bool → List Bool → List Bool) (acceptF : List Bool → List Bool → Bool) (s0 : List Bool → List Bool)
+  (R T : ℕ → ℕ) (hF : F.ComputesFunInTime (fun x => (R x.length).bits) T) (hInv0 : ∀ (x : List Bool), Inv x (s0 x))
+  (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+  (hstart :
+    ∀ (x : List Bool),
+      ∃ t ≤ T x.length,
+        (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x)))
+  (hround :
+    ∀ (x s : List Bool),
+      Inv x s →
+        ∃ t,
+          0 < t ∧
+            t ≤ T x.length ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+                if acceptF x s = true then
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).state = none ∧
+                    (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).output = [true]
+                else
+                  MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                    Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+  (body.loopHostTM F anchor false).ComputesFunInTime
+    (fun x => [(List.range (R x.length + 1)).any fun i => acceptF x ((stepF x)^[i] (s0 x))]) fun n =>
+    10 * (T n + 1) * (R n + 2)
+Turing.FinTM.loopHostTM_finds (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool → List Bool → Prop)
+  (stepF : List Bool → List Bool → List Bool) (acceptF : List Bool → List Bool → Bool)
+  (out : List Bool → List Bool → List Bool) (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+  (hF : F.ComputesFunInTime (fun x => (R x.length).bits) T) (hInv0 : ∀ (x : List Bool), Inv x (s0 x))
+  (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+  (hstart :
+    ∀ (x : List Bool),
+      ∃ t ≤ T x.length,
+        (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x)))
+  (hround :
+    ∀ (x s : List Bool),
+      Inv x s →
+        ∃ t,
+          0 < t ∧
+            t ≤ T x.length ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+                if acceptF x s = true then
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).state = none ∧
+                    (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).output = out x s
+                else
+                  MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                    Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+  (body.loopHostTM F anchor true).ComputesFunInTime
+    (fun x =>
+      match List.find? (fun i => acceptF x ((stepF x)^[i] (s0 x))) (List.range (R x.length + 1)) with
+      | some i => out x ((stepF x)^[i] (s0 x))
+      | none => [])
+    fun n => 10 * (T n + 1) * (R n + 2)
+Turing.FinTM.loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.State)
+  (Inv : List Bool → List Bool → Prop) (stepF : List Bool → List Bool → List Bool)
+  (acceptF : List Bool → List Bool → Bool) (out : List Bool → List Bool → List Bool) (findMode : Bool)
+  (s0 : List Bool → List Bool) (R T : ℕ → ℕ) (hF : F.ComputesFunInTime (fun x => (R x.length).bits) T)
+  (hInv0 : ∀ (x : List Bool), Inv x (s0 x)) (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+  (hstart :
+    ∀ (x : List Bool),
+      ∃ t ≤ T x.length,
+        (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x)))
+  (hround :
+    ∀ (x s : List Bool),
+      Inv x s →
+        ∃ t,
+          0 < t ∧
+            t ≤ T x.length ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+                if acceptF x s = true then
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).state = none ∧
+                    (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).output = out x s
+                else
+                  MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                    Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+  (x : List Bool) (t : ℕ) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ 23 * (body.loopHostTM F anchor findMode).k * (T x.length + 1)
+Turing.FinTM.emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State) (Inv : List Bool → List Bool → Prop)
+  (stepF emitF : List Bool → List Bool → List Bool) (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+  (hF : F.ComputesFunInTime (fun x => (R x.length).bits) T) (hInv0 : ∀ (x : List Bool), Inv x (s0 x))
+  (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+  (hstart :
+    ∀ (x : List Bool),
+      ∃ t ≤ T x.length,
+        (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x)))
+  (hround :
+    ∀ (x s : List Bool),
+      Inv x s →
+        ∃ t,
+          0 < t ∧
+            t ≤ T x.length ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                  have __src := Cfg.ofWords anchor (stateWord body.k (stepF x s));
+                  { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+                    workTapePos := __src.workTapePos, output := emitF x s }) :
+  (body.emitLoopTM F anchor).ComputesFunInTime
+    (fun x => List.flatMap (fun i => emitF x ((stepF x)^[i] (s0 x))) (List.range (R x.length + 1))) fun n =>
+    10 * (T n + 1) * (R n + 2)
+Turing.FinTM.polyUnaryTM_spaceUsed (C e : ℕ) (x : List Bool) (t : ℕ) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ 5 * e * (x.length + 1)
+Turing.FinTM.unaryTokenTM_computes :
+  unaryTokenTM.ComputesFunInTime (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2) fun n => 3 * (n + 1)
+Turing.FinTM.appendBitTM_computes (b : Bool) (x : List Bool) :
+  (appendBitTM b).ComputesInTime x (x ++ [b]) (x.length + 1)
+Turing.FinTM.bufferedCompTM_computesInTime (M₁ M₂ : FinTM Bool) {x y o : List Bool} {t₁ t₂ : ℕ}
+  (h₁ : M₁.ComputesInTime x y t₁) (h₂ : M₂.ComputesInTime y o t₂) :
+  (M₁.bufferedCompTM M₂).ComputesInTime x o (t₁ + y.length + 2 + t₂)
+Turing.FinTM.bufferedCompTM_computesFunInTime {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool} {T₁ T₂ : ℕ → ℕ}
+  (h₁ : M₁.ComputesFunInTime f T₁) (h₂ : M₂.ComputesFunInTime g T₂) (hT₂ : Monotone T₂) :
+  (M₁.bufferedCompTM M₂).ComputesFunInTime (g ∘ f) fun n => 2 * (T₁ n + T₂ (T₁ n) + 1)
+Turing.FinTM.bufferedCompTM_computesFunInTime_on_image (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ)
+  (hM : M.ComputesFunInTime f T₁) (hU : ∀ (x : List Bool), U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+  (M.bufferedCompTM U).ComputesFunInTime g fun n => 2 * T₁ n + T₂ n + 2
+Turing.FinTM.bufferedCompTM_computes_iff (M₁ M₂ : FinTM Bool) (x w : List Bool) :
+  (∃ t, (M₁.bufferedCompTM M₂).ComputesInTime x w t) ↔
+    ∃ y, (∃ t, M₁.ComputesInTime x y t) ∧ ∃ t, M₂.ComputesInTime y w t
+Turing.FinTM.branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :
+  (M₁.branchTM M₂ b).ComputesInTime x w t ↔ (bif b then M₁ else M₂).ComputesInTime x w t
+Turing.FinTM.redirectTM_runFrom (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+  ((MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state =
+      match (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state with
+      | some s => some (Sum.inl (s, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output.getLast?))
+      | none =>
+        if (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output.getLast? = some haltOn then none
+        else some (Sum.inr ())) ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).inputPos =
+        (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).inputPos ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).workTapes =
+          (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).workTapes ∧
+        (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).workTapePos =
+            (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).workTapePos ∧
+          (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = []
+Turing.FinTM.ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ} (h : M.ComputesInTime x y T)
+  (t : ℕ) : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ M.k * (T + 1)
+Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc.{u_1, u_2} {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  {input : List Symbol} (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) (u : ℕ) (j : Fin k) :
+  (MultiTapeTM.runFrom cfg u).workTapePos j ∈ Finset.Icc (cfg.workTapePos j - ↑u) (cfg.workTapePos j + ↑u)
+Turing.FinTM.timed_rewind {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (start scan : S)
+  (dest : Option S)
+  (hstart :
+    ∀ (inp : Option Bool) (work : Fin k → Option Bool), tm.tr start inp work = controlAction SignType.neg (some scan))
+  (hscan :
+    ∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr scan inp work =
+        match inp with
+        | some val => controlAction SignType.neg (some scan)
+        | none => controlAction SignType.pos dest)
+  (c : Cfg k Bool S x) (hs : c.state = some start) :
+  ∃ r ≤ ↑c.inputPos + 2,
+    MultiTapeTM.runFrom c r =
+      { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+Turing.FinTM.rewind_from_any {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (start scan : S)
+  (dest : Option S)
+  (hstart :
+    ∀ (inp : Option Bool) (work : Fin k → Option Bool), tm.tr start inp work = controlAction SignType.neg (some scan))
+  (hscan :
+    ∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr scan inp work =
+        match inp with
+        | some val => controlAction SignType.neg (some scan)
+        | none => controlAction SignType.pos dest)
+  (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
+  ∃ t,
+    MultiTapeTM.runFrom cfg t =
+      { state := dest, inputPos := 1, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos, output := cfg.output }
+Turing.FinTM.polyUnaryTM_computes (C e : ℕ) :
+  (polyUnaryTM C e).ComputesFunInTime (fun x => List.replicate (C * (x.length + 1) ^ e) true) fun n =>
+    (C + 5 * e + 4) * (n + 1) ^ e
+Turing.FinTM.polyBitsTM_computes (C e : ℕ) :
+  (polyBitsTM C e).ComputesFunInTime (fun x => (C * (x.length + 1) ^ e).bits) fun n =>
+    (7 * C + 5 * e + 11) * (n + 1) ^ e
+Turing.FinTM.splitSolveTM_computes (C e : ℕ) :
+  (splitSolveTM C e).ComputesFunInTime
+    (fun w =>
+      match solveSplit C e w.length with
+      | some i => pairEncode (List.take i w) (List.drop i w)
+      | none => [])
+    fun n => 20 * ((C + 1 + 5 * e) * 2 ^ e + 46) * (n + 1) ^ (e + 2)
+Turing.FinTM.splitSolveTM_spaceUsed (C e : ℕ) (x : List Bool) (t : ℕ) :
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤
+    23 * (splitSolveTM C e).k * ((C + 1 + 5 * e) * 2 ^ e + 46) * (x.length + 1) ^ (e + 1)
+Turing.FinTM.splitSolveWithTM_computes (f : ℕ → ℕ) (E : FinTM Bool) (TE : ℕ → ℕ) (hTE : Monotone TE)
+  (hE : E.ComputesFunInTime (fun s => (f s.length).bits) TE) :
+  E.splitSolveWithTM.ComputesFunInTime
+    (fun w =>
+      match solveSplitWith f w.length with
+      | some i => pairEncode (List.take i w) (List.drop i w)
+      | none => [])
+    fun n => 20 * (591 + 26 * E.k) * (n + 1) * (TE (n + 1) + n + 2)
+Turing.copyTM_run_ofCfg.{u_1} {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
+  (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+  (hw : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) :
+  MultiTapeTM.runFrom d (2 * w.length + 2) =
+      { state := some SweepPhase.done, inputPos := d.inputPos,
+        workTapes := fun j q =>
+          if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then bufferTape w (q - d.workTapePos j)
+          else d.workTapes j q,
+        workTapePos := d.workTapePos, output := d.output } ∧
+    (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+      ∀ (j : Fin k),
+        ∀ t ≤ 2 * w.length + 2,
+          if j = src ∨ j = dst then
+            (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+          else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+Turing.transferTM_run_ofCfg.{u_1} {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
+  (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+  (hw : ∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) :
+  MultiTapeTM.runFrom d (2 * w.length + 2) =
+      { state := some SweepPhase.done, inputPos := d.inputPos,
+        workTapes := fun j q =>
+          if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none
+          else
+            if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q,
+        workTapePos := d.workTapePos, output := d.output } ∧
+    (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+      ∀ (j : Fin k),
+        ∀ t ≤ 2 * w.length + 2,
+          if j = src ∨ j = dst then
+            (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+          else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+Turing.Cfg.ofWords_copy_endpoint.{u_1} {k : ℕ} {S : Type u_1} {x : List Bool} (q q' : S) (w : Fin k → List Bool)
+  (src dst : Fin k) (hdst : w dst = []) :
+  (have __src := Cfg.ofWords q w;
+    { state := some q', inputPos := __src.inputPos,
+      workTapes := fun j p =>
+        if j = dst ∧ (Cfg.ofWords q w).workTapePos j ≤ p ∧ p < (Cfg.ofWords q w).workTapePos j + ↑(w src).length then
+          bufferTape (w src) (p - (Cfg.ofWords q w).workTapePos j)
+        else (Cfg.ofWords q w).workTapes j p,
+      workTapePos := __src.workTapePos, output := __src.output }) =
+    Cfg.ofWords q' (Function.update w dst (w src))
+Turing.Cfg.ofWords_transfer_endpoint.{u_1} {k : ℕ} {S : Type u_1} {x : List Bool} (q q' : S) (w : Fin k → List Bool)
+  (src dst : Fin k) (hne : src ≠ dst) (hdst : w dst = []) :
+  (have __src := Cfg.ofWords q w;
+    { state := some q', inputPos := __src.inputPos,
+      workTapes := fun j p =>
+        if j = src ∧ (Cfg.ofWords q w).workTapePos j ≤ p ∧ p < (Cfg.ofWords q w).workTapePos j + ↑(w src).length then
+          none
+        else
+          if j = dst ∧ (Cfg.ofWords q w).workTapePos j ≤ p ∧ p < (Cfg.ofWords q w).workTapePos j + ↑(w src).length then
+            bufferTape (w src) (p - (Cfg.ofWords q w).workTapePos j)
+          else (Cfg.ofWords q w).workTapes j p,
+      workTapePos := __src.workTapePos, output := __src.output }) =
+    Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src))
+Turing.FinTM.callTM_run (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool) (T : ℕ)
+  (hM : M.ComputesInTime arg cap T) :
+  ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
+    0 < t ∧
+      (∀ j < t,
+          (MultiTapeTM.runFrom (Cfg.ofWords (M.callEntry emit) (stateWord (M.callTM emit).k arg)) j).state ≠
+            some (M.callExit emit)) ∧
+        MultiTapeTM.runFrom (Cfg.ofWords (M.callEntry emit) (stateWord (M.callTM emit).k arg)) t =
+          have __src := Cfg.ofWords (M.callExit emit) (stateWord (M.callTM emit).k (if emit = true then arg else cap));
+          { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+            workTapePos := __src.workTapePos, output := if emit = true then cap else [] }

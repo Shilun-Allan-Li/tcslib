@@ -9,3 +9,9 @@
   in the reply. The pack is finalized; bundle verification/publication is next. The gate
   has not been dispatched.
 - **Not yet clear to merge: #222**; the external gate remains open.
+
+- **Ready to dispatch:** the verified immutable bundle is published; `dispatch.json` and
+  `prompt.md` pin the exact package. Await the user's dispatch confirmation.
+
+- **Dispatched by the user** in this session. Await the findings attachment; the PR remains
+  **not yet clear to merge** until the external gate closes.

@@ -18,3 +18,6 @@
   The fresh current-campaign merge preview has the passed replay's exact Lean tree.
   **Clear to merge: #228**. After the user merges, prepare the small
   `SPACE_linear_ne_NP` consumer PR with its own gate (next free: 116).
+
+- **Merged by the user:** #228. The merge has exactly the passed replay's Lean tree;
+  `oleans-mac1` is adopted as the current campaign snapshot. The consumer gate is 116 (Codex).
