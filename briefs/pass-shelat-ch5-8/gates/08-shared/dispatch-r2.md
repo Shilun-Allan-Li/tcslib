@@ -1,6 +1,6 @@
-# Gate 08 round 2: ready for user dispatch
+# Gate 08 round 2: dispatched by the user
 
-Selected worker: **Codex**, by the user. This prompt is ready; no dispatch is claimed.
+Selected worker: **Codex**. **Dispatched by the user, 2026-11-06 PST.** The issued prompt is preserved below; findings return in chat.
 
 ```text
 You are an external Codex auditor for Gate 08 round 2 of the Pass–shelat formalization in https://github.com/Shilun-Allan-Li/tcslib (Lean 4.25.0 + pinned Mathlib).
@@ -14,4 +14,4 @@ Return gate08-shared-r2-findings.md as a Markdown file in this chat, with the ex
 
 Bundle SHA-256: `2e6b018933b65074cb41ca48d1986293b3b9cebffe5c766dfbaf8df4bed8b33e`; all 153 sections were verified against their pinned Git blobs.
 
-**Ready to dispatch — the Codex follow-up returns findings in chat; #227 remains on HOLD.**
+**Not yet clear to merge — the Codex follow-up is dispatched; #227 awaits its findings.**
