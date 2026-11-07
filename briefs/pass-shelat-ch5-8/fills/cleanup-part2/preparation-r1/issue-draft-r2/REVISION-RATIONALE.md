@@ -1,0 +1,17 @@
+# Cleanup issue candidate r2 — revision rationale
+
+The r1 candidate remains unchanged. This revision applies final-review-r1 findings1,2,4 and supplies the explicitly pending handoff section for finding3. It is internal preparation, not an issued worker brief, bootstrap result or mathematical scope expansion.
+
+1. **Import direction:** both documents state “SimulatorMachine must not import ColZKMachine.” Existing ColZKMachine→SimulatorMachine imports remain valid; the generic next theorem/old-header alias target is unchanged.
+2. **Gate06 reader overlap:** a needed ordinary reader for an existing1aa owner can be implemented/checked within its role even if PR232 has a counterpart. Prefer matching fullname/formula and record the counterpart for maintainer. Unmerged source/API reliance, prong-only statements, repair patches and new Gate06 dependencies remain excluded. No public algorithm/assumption exception was added.
+3. **Attachment paths:** every table sibling, order and roots filename now carries its explicit inputs/ prefix. A path-rule paragraph separates outbox attachments, checkout-root sources and assigned-inbox delivery paths. Runtime-tool paths are clearly pending rather than invented.
+4. **External products:** cite the independently prepared static external-bootstrap-r1 manifest70dd1a... and its31 PFR /0 LeanAPAP /30 direct Mathlib /14 extra /389 union counts as source inventory only. Keep the old375 local-import-root input unchanged; designate the separate389-root union for initial complete environment coverage. All operative commands/tool hashes/root-native result fields remain PENDING_ROOT and block issue until root fills/reviews them.
+5. **Strict wrapper boundary:** only31 PFR module checks may use the adapter PATH. Restore recorded ordinary PATH for every TCSlib/root/Checks check, import/owner/header probe, cache operation and other invocation. The brief supersedes the static README's earlier suggestion of using that wrapper for other local checks. No source alias, package-source edit/copy, locator workaround, toolchain change or LEAN_PATH join is authorized; only the guarded same-tree object-namespace alias is contemplated.
+
+The source ancestor, one-Claude/no-subagent delivery route,509-key scheduling data,221-path role boundary, all45 frozen input bytes, public helper/three-definition exceptions, existing admission freeze, mathematical headers and final root/Checks obligations are unchanged. All five displayed Lean header blocks in public-exceptions.md compare byte-identically with r1. The added external setup is not worker proof ownership. No maintainer cold full-root baseline is introduced.
+
+Read final-review-r1/review.md and review.json, both r1 documents in full, and the static supplement README/manifest/SUMMARY plus proposed adapter/configuration source as data. No supplied helper, Lean/cache/native/build/app command or Git mutation was executed. No package object, owner identity or native success is claimed.
+
+Remaining issue condition: root must supply and review the operative PFR tool/runbook/configuration command pins, strict PATH route and actual source/object/module-owner validation result, then finish external packet/checksum pins and user dispatch. Candidate r2 does not claim this is done.
+
+**Not yet clear to merge — unissued revised candidate; operative bootstrap fields, review, dispatch and verified fill remain.**

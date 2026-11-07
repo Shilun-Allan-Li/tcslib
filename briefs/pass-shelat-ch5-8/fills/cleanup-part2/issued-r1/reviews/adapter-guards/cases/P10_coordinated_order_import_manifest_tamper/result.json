@@ -1,0 +1,28 @@
+{
+  "case": "P10_coordinated_order_import_manifest_tamper",
+  "argv": [
+    "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+    "-I",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/external-tools-r1/prepare_pfr.py",
+    "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/cases/P10_coordinated_order_import_manifest_tamper/tree",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/cases/P10_coordinated_order_import_manifest_tamper/static-data",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/cases/P10_coordinated_order_import_manifest_tamper/runtime",
+    "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1/capture_only"
+  ],
+  "cwd": "/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1",
+  "rc": 1,
+  "expected_rc_zero": false,
+  "expected_guard_fragment": "Frozen PFR inventory manifest drift",
+  "expectation_met": true,
+  "capture_exists": false,
+  "config_sha256_before": null,
+  "config_sha256_after": null,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "f06ce931a13b46f3ef8f288a97f7352b2862e8f84fbac9c298551b1ea30c833f",
+  "portable_tool_sha256": {
+    "prepare_pfr.py": "650edf1d270d5e130a926a5840fead75ba9888e12684f2f38451af91ad769b8f",
+    "pfr_lean.py": "41fda9565be3f77462fe6f2f7b55b798c5bf34fbbc400a648f77e000eb36636d"
+  },
+  "notes": "Modified own metadata copies only; outer frozen-manifest integrity rejects before package processing."
+}

@@ -1,0 +1,9 @@
+#!/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 -I
+import json, os, sys
+from pathlib import Path
+p=Path(os.environ["PFR_GUARD_CAPTURE"]).resolve()
+assert p.is_relative_to(Path('/Users/seyoonr/.codex/worktrees/ps-gate06-integration/tcslib-pass-shelat-ch2-4/.lake/ps-maintainer/cleanup-part2-prep/adapter-guards-r1').resolve()) and p.suffix == ".json"
+with p.open("x") as f: json.dump({"argv":sys.argv,"cwd":os.getcwd(),"python":sys.executable},f,indent=2)
+print("ARGV_CAPTURE_ONLY_NO_LEAN_NO_OBJECT")
+
+# own drift simulation

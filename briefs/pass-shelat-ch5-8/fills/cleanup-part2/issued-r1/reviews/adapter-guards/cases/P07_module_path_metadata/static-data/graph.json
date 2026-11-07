@@ -1,0 +1,556 @@
+{
+  "roots": [
+    "PFR.Mathlib.Probability.UniformOn",
+    "PFR.Kullback",
+    "PFR.ForMathlib.Entropy.Basic"
+  ],
+  "compile_edges": {
+    "PFR.Mathlib.Data.Set.Basic": [
+      "Mathlib.Data.Set.Basic"
+    ],
+    "PFR.Mathlib.Data.Set.Insert": [
+      "Mathlib.Data.Set.Insert"
+    ],
+    "PFR.Mathlib.Data.Set.Card": [
+      "Mathlib.Data.Set.Card",
+      "PFR.Mathlib.Data.Set.Basic",
+      "PFR.Mathlib.Data.Set.Insert"
+    ],
+    "PFR.Mathlib.Probability.UniformOn": [
+      "Mathlib.Probability.UniformOn",
+      "PFR.Mathlib.Data.Set.Card"
+    ],
+    "PFR.Mathlib.Analysis.Convex.StdSimplex": [
+      "Mathlib.Analysis.Convex.StdSimplex"
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.ProbabilityMeasure": [
+      "Mathlib.MeasureTheory.Measure.ProbabilityMeasure"
+    ],
+    "PFR.ForMathlib.CompactProb": [
+      "PFR.Mathlib.Analysis.Convex.StdSimplex",
+      "PFR.Mathlib.MeasureTheory.Measure.ProbabilityMeasure"
+    ],
+    "PFR.Mathlib.MeasureTheory.Constructions.Pi": [
+      "Mathlib.MeasureTheory.Constructions.Pi"
+    ],
+    "PFR.Mathlib.Probability.Independence.Kernel": [
+      "Mathlib.Data.Finset.Pairwise",
+      "Mathlib.Probability.Independence.Kernel"
+    ],
+    "PFR.Mathlib.Probability.Independence.Basic": [
+      "Mathlib.MeasureTheory.Constructions.Pi",
+      "Mathlib.Probability.Independence.Basic",
+      "PFR.Mathlib.Probability.Independence.Kernel"
+    ],
+    "PFR.Mathlib.Probability.IdentDistrib": [
+      "Mathlib.Probability.IdentDistrib",
+      "PFR.Mathlib.MeasureTheory.Constructions.Pi",
+      "PFR.Mathlib.Probability.Independence.Basic"
+    ],
+    "PFR.ForMathlib.FiniteRange.Defs": [
+      "Mathlib.MeasureTheory.Measure.Map"
+    ],
+    "PFR.ForMathlib.FiniteRange.ConditionalProbability": [
+      "Mathlib.Probability.ConditionalProbability",
+      "PFR.ForMathlib.FiniteRange.Defs"
+    ],
+    "PFR.ForMathlib.Pair": [
+      "Mathlib.Util.Notation3",
+      "Mathlib.Tactic.Basic"
+    ],
+    "PFR.ForMathlib.ConditionalIndependence": [
+      "Mathlib.Tactic.Finiteness",
+      "PFR.Mathlib.Probability.IdentDistrib",
+      "PFR.ForMathlib.FiniteRange.ConditionalProbability",
+      "PFR.ForMathlib.Pair"
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Basic": [
+      "Mathlib.MeasureTheory.Integral.Lebesgue.Basic"
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Countable": [
+      "Mathlib.MeasureTheory.Integral.Lebesgue.Countable"
+    ],
+    "PFR.Mathlib.Probability.Kernel.Disintegration": [
+      "Mathlib.Probability.Independence.Basic",
+      "Mathlib.Probability.Kernel.Composition.Prod",
+      "Mathlib.Probability.Kernel.CondDistrib",
+      "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Basic",
+      "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Countable"
+    ],
+    "PFR.Mathlib.Probability.Kernel.Composition.Comp": [
+      "Mathlib.Probability.Kernel.Composition.Comp",
+      "PFR.Mathlib.Probability.Kernel.Disintegration"
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Dirac": [
+      "Mathlib.MeasureTheory.Measure.Dirac"
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Prod": [
+      "Mathlib.MeasureTheory.Measure.Prod"
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Real": [
+      "Mathlib.MeasureTheory.Measure.Real",
+      "PFR.Mathlib.MeasureTheory.Measure.Prod"
+    ],
+    "PFR.ForMathlib.Entropy.Measure": [
+      "Mathlib.Analysis.SpecialFunctions.Log.NegMulLog",
+      "Mathlib.MeasureTheory.Integral.Bochner.Basic",
+      "PFR.ForMathlib.FiniteRange.Defs",
+      "PFR.Mathlib.MeasureTheory.Measure.Dirac",
+      "PFR.Mathlib.MeasureTheory.Measure.Real",
+      "PFR.Mathlib.Probability.UniformOn"
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Bochner.Set": [
+      "Mathlib.MeasureTheory.Integral.Bochner.Set"
+    ],
+    "PFR.ForMathlib.Entropy.Kernel.Basic": [
+      "Mathlib.MeasureTheory.Integral.Prod",
+      "PFR.ForMathlib.Entropy.Measure",
+      "PFR.Mathlib.MeasureTheory.Integral.Bochner.Set",
+      "PFR.Mathlib.Probability.Kernel.Disintegration"
+    ],
+    "PFR.ForMathlib.Entropy.Kernel.MutualInfo": [
+      "PFR.Mathlib.Probability.Kernel.Composition.Comp",
+      "PFR.ForMathlib.Entropy.Kernel.Basic"
+    ],
+    "PFR.ForMathlib.Uniform": [
+      "Mathlib.MeasureTheory.Measure.Real",
+      "Mathlib.Probability.IdentDistrib",
+      "PFR.ForMathlib.FiniteRange.Defs",
+      "PFR.Mathlib.Probability.UniformOn"
+    ],
+    "PFR.Mathlib.Probability.ConditionalProbability": [
+      "Mathlib.Probability.ConditionalProbability"
+    ],
+    "PFR.ForMathlib.Entropy.Basic": [
+      "PFR.ForMathlib.ConditionalIndependence",
+      "PFR.ForMathlib.Entropy.Kernel.MutualInfo",
+      "PFR.ForMathlib.Uniform",
+      "PFR.Mathlib.Probability.ConditionalProbability"
+    ],
+    "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog": [
+      "Mathlib.Algebra.BigOperators.Field",
+      "Mathlib.Analysis.Convex.Jensen",
+      "Mathlib.Analysis.SpecialFunctions.Log.NegMulLog"
+    ],
+    "PFR.Kullback": [
+      "Mathlib.Probability.IdentDistrib",
+      "PFR.ForMathlib.CompactProb",
+      "PFR.ForMathlib.Entropy.Basic",
+      "PFR.ForMathlib.FiniteRange.Defs",
+      "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog"
+    ]
+  },
+  "source_import_sites": {
+    "Mathlib.Probability.UniformOn": [
+      {
+        "module": "PFR.Mathlib.Probability.UniformOn",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Data.Set.Card": [
+      {
+        "module": "PFR.Mathlib.Probability.UniformOn",
+        "line": 2
+      }
+    ],
+    "Mathlib.Data.Set.Card": [
+      {
+        "module": "PFR.Mathlib.Data.Set.Card",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Data.Set.Basic": [
+      {
+        "module": "PFR.Mathlib.Data.Set.Card",
+        "line": 2
+      }
+    ],
+    "Mathlib.Data.Set.Basic": [
+      {
+        "module": "PFR.Mathlib.Data.Set.Basic",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Data.Set.Insert": [
+      {
+        "module": "PFR.Mathlib.Data.Set.Card",
+        "line": 3
+      }
+    ],
+    "Mathlib.Data.Set.Insert": [
+      {
+        "module": "PFR.Mathlib.Data.Set.Insert",
+        "line": 1
+      }
+    ],
+    "Mathlib.Probability.IdentDistrib": [
+      {
+        "module": "PFR.Kullback",
+        "line": 1
+      },
+      {
+        "module": "PFR.Mathlib.Probability.IdentDistrib",
+        "line": 1
+      },
+      {
+        "module": "PFR.ForMathlib.Uniform",
+        "line": 2
+      }
+    ],
+    "PFR.ForMathlib.CompactProb": [
+      {
+        "module": "PFR.Kullback",
+        "line": 2
+      }
+    ],
+    "PFR.Mathlib.Analysis.Convex.StdSimplex": [
+      {
+        "module": "PFR.ForMathlib.CompactProb",
+        "line": 1
+      }
+    ],
+    "Mathlib.Analysis.Convex.StdSimplex": [
+      {
+        "module": "PFR.Mathlib.Analysis.Convex.StdSimplex",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.ProbabilityMeasure": [
+      {
+        "module": "PFR.ForMathlib.CompactProb",
+        "line": 2
+      }
+    ],
+    "Mathlib.MeasureTheory.Measure.ProbabilityMeasure": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Measure.ProbabilityMeasure",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.Entropy.Basic": [
+      {
+        "module": "PFR.Kullback",
+        "line": 3
+      }
+    ],
+    "PFR.ForMathlib.ConditionalIndependence": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Basic",
+        "line": 1
+      }
+    ],
+    "Mathlib.Tactic.Finiteness": [
+      {
+        "module": "PFR.ForMathlib.ConditionalIndependence",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Probability.IdentDistrib": [
+      {
+        "module": "PFR.ForMathlib.ConditionalIndependence",
+        "line": 2
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Constructions.Pi": [
+      {
+        "module": "PFR.Mathlib.Probability.IdentDistrib",
+        "line": 2
+      }
+    ],
+    "Mathlib.MeasureTheory.Constructions.Pi": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Constructions.Pi",
+        "line": 1
+      },
+      {
+        "module": "PFR.Mathlib.Probability.Independence.Basic",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Probability.Independence.Basic": [
+      {
+        "module": "PFR.Mathlib.Probability.IdentDistrib",
+        "line": 3
+      }
+    ],
+    "Mathlib.Probability.Independence.Basic": [
+      {
+        "module": "PFR.Mathlib.Probability.Independence.Basic",
+        "line": 2
+      },
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Disintegration",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Probability.Independence.Kernel": [
+      {
+        "module": "PFR.Mathlib.Probability.Independence.Basic",
+        "line": 3
+      }
+    ],
+    "Mathlib.Data.Finset.Pairwise": [
+      {
+        "module": "PFR.Mathlib.Probability.Independence.Kernel",
+        "line": 1
+      }
+    ],
+    "Mathlib.Probability.Independence.Kernel": [
+      {
+        "module": "PFR.Mathlib.Probability.Independence.Kernel",
+        "line": 2
+      }
+    ],
+    "PFR.ForMathlib.FiniteRange.ConditionalProbability": [
+      {
+        "module": "PFR.ForMathlib.ConditionalIndependence",
+        "line": 3
+      }
+    ],
+    "Mathlib.Probability.ConditionalProbability": [
+      {
+        "module": "PFR.ForMathlib.FiniteRange.ConditionalProbability",
+        "line": 1
+      },
+      {
+        "module": "PFR.Mathlib.Probability.ConditionalProbability",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.FiniteRange.Defs": [
+      {
+        "module": "PFR.ForMathlib.FiniteRange.ConditionalProbability",
+        "line": 2
+      },
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 3
+      },
+      {
+        "module": "PFR.ForMathlib.Uniform",
+        "line": 3
+      },
+      {
+        "module": "PFR.Kullback",
+        "line": 4
+      }
+    ],
+    "Mathlib.MeasureTheory.Measure.Map": [
+      {
+        "module": "PFR.ForMathlib.FiniteRange.Defs",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.Pair": [
+      {
+        "module": "PFR.ForMathlib.ConditionalIndependence",
+        "line": 4
+      }
+    ],
+    "Mathlib.Util.Notation3": [
+      {
+        "module": "PFR.ForMathlib.Pair",
+        "line": 1
+      }
+    ],
+    "Mathlib.Tactic.Basic": [
+      {
+        "module": "PFR.ForMathlib.Pair",
+        "line": 2
+      }
+    ],
+    "PFR.ForMathlib.Entropy.Kernel.MutualInfo": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Basic",
+        "line": 2
+      }
+    ],
+    "PFR.Mathlib.Probability.Kernel.Composition.Comp": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.MutualInfo",
+        "line": 1
+      }
+    ],
+    "Mathlib.Probability.Kernel.Composition.Comp": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Composition.Comp",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Probability.Kernel.Disintegration": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Composition.Comp",
+        "line": 2
+      },
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.Basic",
+        "line": 4
+      }
+    ],
+    "Mathlib.Probability.Kernel.Composition.Prod": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Disintegration",
+        "line": 2
+      }
+    ],
+    "Mathlib.Probability.Kernel.CondDistrib": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Disintegration",
+        "line": 3
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Basic": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Disintegration",
+        "line": 4
+      }
+    ],
+    "Mathlib.MeasureTheory.Integral.Lebesgue.Basic": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Basic",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Countable": [
+      {
+        "module": "PFR.Mathlib.Probability.Kernel.Disintegration",
+        "line": 5
+      }
+    ],
+    "Mathlib.MeasureTheory.Integral.Lebesgue.Countable": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Integral.Lebesgue.Countable",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.Entropy.Kernel.Basic": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.MutualInfo",
+        "line": 2
+      }
+    ],
+    "Mathlib.MeasureTheory.Integral.Prod": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.Basic",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.Entropy.Measure": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.Basic",
+        "line": 2
+      }
+    ],
+    "Mathlib.Analysis.SpecialFunctions.Log.NegMulLog": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 1
+      },
+      {
+        "module": "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog",
+        "line": 3
+      }
+    ],
+    "Mathlib.MeasureTheory.Integral.Bochner.Basic": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 2
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Dirac": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 4
+      }
+    ],
+    "Mathlib.MeasureTheory.Measure.Dirac": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Measure.Dirac",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Real": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 5
+      }
+    ],
+    "Mathlib.MeasureTheory.Measure.Real": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Measure.Real",
+        "line": 1
+      },
+      {
+        "module": "PFR.ForMathlib.Uniform",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Measure.Prod": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Measure.Real",
+        "line": 2
+      }
+    ],
+    "Mathlib.MeasureTheory.Measure.Prod": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Measure.Prod",
+        "line": 1
+      }
+    ],
+    "PFR.Mathlib.Probability.UniformOn": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Measure",
+        "line": 6
+      },
+      {
+        "module": "PFR.ForMathlib.Uniform",
+        "line": 4
+      }
+    ],
+    "PFR.Mathlib.MeasureTheory.Integral.Bochner.Set": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Kernel.Basic",
+        "line": 3
+      }
+    ],
+    "Mathlib.MeasureTheory.Integral.Bochner.Set": [
+      {
+        "module": "PFR.Mathlib.MeasureTheory.Integral.Bochner.Set",
+        "line": 1
+      }
+    ],
+    "PFR.ForMathlib.Uniform": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Basic",
+        "line": 3
+      }
+    ],
+    "PFR.Mathlib.Probability.ConditionalProbability": [
+      {
+        "module": "PFR.ForMathlib.Entropy.Basic",
+        "line": 4
+      }
+    ],
+    "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog": [
+      {
+        "module": "PFR.Kullback",
+        "line": 5
+      }
+    ],
+    "Mathlib.Algebra.BigOperators.Field": [
+      {
+        "module": "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog",
+        "line": 1
+      }
+    ],
+    "Mathlib.Analysis.Convex.Jensen": [
+      {
+        "module": "PFR.Mathlib.Analysis.SpecialFunctions.NegMulLog",
+        "line": 2
+      }
+    ]
+  },
+  "cycle_free": true,
+  "missing_imports": [],
+  "stop_policy": "Stop at Mathlib/core and other packages only when their exact imported module has a present nonempty installed olean. Always traverse PFR/LeanAPAP source modules. No boundary was excluded."
+}

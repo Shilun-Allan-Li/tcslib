@@ -1,3 +1,5 @@
+**Historical design draft — superseded by [issued r1](issued-r1/brief.md), prepared for one Claude session.**
+
 # Worker brief (DRAFT, not issued): gate 03 clean-up, part 2 (ch. 2–4)
 
 **Status: preparation draft, not issued; refreshed 2026-11-07 PST.** Part 1/#203, #195,
