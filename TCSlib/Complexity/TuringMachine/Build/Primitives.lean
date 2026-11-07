@@ -3292,23 +3292,34 @@ private lemma fwdMapVirtual_step (M : FinTM Bool) {x y : List Bool}
         exact List.append_assoc pre c.output act.output.toList
 
 /-- Payload forwarding preserves its entire source trajectory at all times,
-including the final halting action and the stationary halted tail. -/
+including the final halting action and the stationary halted tail.
+
+**Proof sketch.** Use `fwdMapVirtual_step` to show that times with a matching encoded source
+configuration and valid arrival tag are closed under successor. The general invariant iterator
+propagates the initial correspondence to every time. -/
 private lemma fwdMapVirtual_run (M : FinTM Bool) {x y : List Bool}
     (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
     (p : Fin (x.length + 2)) (a pre : List Bool) (t : ℕ) :
     ∃ tag', VirtualTag (M.tm.runFrom c t).inputPos tag' ∧
       (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) t =
         fwdMapVirtual M (M.tm.runFrom c t) tag' p a pre := by
-  induction t with
-  | zero =>
-    simp only [MultiTapeTM.runFrom_zero]
-    exact ⟨tag, hb, rfl⟩
-  | succ t ih =>
-    obtain ⟨b, hb, he⟩ := ih
-    obtain ⟨d, hd, hs⟩ := fwdMapVirtual_step M _ b hb p a pre
-    refine ⟨d, ?_, ?_⟩
-    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hd
-    · rw [MultiTapeTM.runFrom_succ_eq_step', he, hs, MultiTapeTM.runFrom_succ_eq_step']
+  let P : Set ℕ := {u | ∃ b, VirtualTag (M.tm.runFrom c u).inputPos b ∧
+    (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) u =
+      fwdMapVirtual M (M.tm.runFrom c u) b p a pre}
+  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
+    intro u hu
+    obtain ⟨b, hb, he⟩ := hu
+    obtain ⟨b', hb', he'⟩ := fwdMapVirtual_step M _ b hb p a pre
+    refine ⟨b', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb'
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+  have initial : 0 ∈ P := by
+    refine ⟨tag, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_zero] using hb
+    · simp only [MultiTapeTM.runFrom_zero]
+  have endpoint := preserve.iterate t initial
+  change t ∈ P
+  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint
 
 /-- A setup configuration is at the payload seam if its control is a
 payload state; this includes the source start state on empty virtual input. -/
