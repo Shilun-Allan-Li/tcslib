@@ -720,6 +720,302 @@ private theorem f6_prefix (c : EffectiveMachineCode) :
   omega
 
 
+/-- **The hosted forwarding loop and its per-tape ledger.** The forwarding round loop of
+`Turing.StepBlock.exists_forwardLoopTM` on the first three of `K + 3` bank tapes, hosted by the
+ruler device: for every one-tape coded machine `M`
+halting on `x` by `t`, started at the suffix presentation of the loop's initial encoding, the host
+halts with `M`'s output, and every tape visits at most `s + (2D + 1) + ℓ + 3` cells, `s` the
+source space and `D` a constant of `M`'s table ([AB09, Exercise 4.1]).
+
+**Proof sketch.** Take the first source halt `t₀ ≤ t` (`StepBlock.forwardLoop_forward`); the loop
+reaches the encoding of the halted source after `r` steps. The ruler host transports that run:
+halt and output by the host endpoint, the bank's visited sets exactly, the ruler's within
+`[-1, ℓ]`. Through the emitting embedding a selected tape has the loop's visited set: the
+mirrored tape's lies in the source's (at most `s` cells), the two auxiliaries' in `[-D, D]`; an
+unselected tape visits its initial cell only. -/
+private theorem f6_loop (K : ℕ) :
+    ∃ (Q V : Type) (_ : Fintype V) (_ : DecidableEq V) (H : MultiTapeTM (K + 4) Bool V)
+      (entry : Q) (inj : Q → Bool → V),
+      ∀ {n : ℕ} (M : MultiTapeTM 1 Bool (Fin (n + 1))), ∃ D : ℕ,
+        ∀ (x z : List Bool) (ℓ : ℕ) (hz : z.length = ℓ + x.length), 0 < ℓ → z.drop ℓ = x →
+        ∀ t : ℕ, (M.runFrom (M.initCfg x) t).state = none →
+          let ec := embedEmitCfg (Fin.castLEEmb (by omega : 3 ≤ K + 3)) (fun _ _ => none)
+            (fun _ => 0) [] (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+          let c := rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+            (FinTM.bufferTape (List.replicate ℓ true)) 0
+          ∃ t' : ℕ, (H.runFrom c t').state = none ∧
+            (H.runFrom c t').output = (M.runFrom (M.initCfg x) t).output ∧
+            ∀ i, H.spaceUsedByTape c t' i ≤
+              M.spaceUsed (M.initCfg x) t + (2 * D + 1) + ℓ + 3 := by
+  classical
+  obtain ⟨QL, fQL, dQL, L, entry, CL, hL⟩ := StepBlock.exists_forwardLoopTM 1
+  letI : Fintype QL := fQL
+  letI : DecidableEq QL := dQL
+  obtain ⟨V, fV, dV, H, inj, C, _, hH⟩ :=
+    exists_rulerHostTM (embedEmitTM (Fin.castLEEmb (by omega : 3 ≤ K + 3)) L)
+  refine ⟨QL, V, fV, dV, H, entry, inj, fun {n} M => ?_⟩
+  refine ⟨50 * ((tableBitsK M.tr).length + 1) + CL, ?_⟩
+  intro x z ℓ hz hℓ hdrop t hhalt ec c
+  obtain ⟨cost, hlock, hcost, hledger⟩ := hL (x := x) M
+  obtain ⟨t₀, ht₀, hfirst, _, hloop⟩ := StepBlock.forwardLoop_forward M L entry cost _ hlock
+    (fun c hc => (hcost c hc).2) t hhalt
+  obtain ⟨hmirror, haux⟩ := hledger (M.initCfg x) t₀ hfirst
+  have hec := embedEmitCfg_forwardLoop_init (k := 1) (K := K) () entry M x
+  have hecpos : ec.inputPos.val = 1 := by
+    change (embedEmitCfg (Fin.castLEEmb (by omega : 1 + 2 ≤ K + (1 + 2))) (fun _ _ => none)
+      (fun _ => 0) [] (StepBlock.forwardLoopCfg entry M (M.initCfg x))).inputPos.val = 1
+    rw [hec, Cfg.mapState_inputPos]
+    rfl
+  obtain ⟨t', _, _, ⟨b', _, hend⟩, _, _, hbank, hruler⟩ := hH ℓ hz hℓ hdrop
+    (FinTM.bufferTape (List.replicate ℓ true)) 0 (fun p _ _ => by rw [zero_add]) ec false
+    (by rw [hecpos]; exact ⟨fun h => Bool.noConfusion h, fun h => absurd h Nat.one_ne_zero⟩)
+    (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u))
+  have hL' : (embedEmitTM (Fin.castLEEmb (by omega : 3 ≤ K + 3)) L).runFrom ec
+      (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)) =
+      embedEmitCfg (Fin.castLEEmb (by omega : 3 ≤ K + 3)) (fun _ _ => none) (fun _ => 0) []
+        (StepBlock.forwardLoopCfg entry M (M.runFrom (M.initCfg x) t)) := by
+    rw [embedEmitTM_runFrom, hloop]
+  have hfl := StepBlock.forwardLoopCfg_halt_iff entry M (M.runFrom (M.initCfg x) t)
+  refine ⟨t', ?_, ?_, fun i => ?_⟩
+  · rw [hend, rulerHostCfg_state, hL', embedEmitCfg_state, hfl.1.mpr hhalt, Option.map_none]
+  · rw [hend, rulerHostCfg_output, hL', embedEmitCfg_output, List.nil_append, hfl.2]
+  · rw [MultiTapeTM.spaceUsedByTape_eq_card]
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · have h : (H.visitedByTapeHead c t' (Fin.last (K + 3))).card ≤
+          ((0 : ℤ) + ℓ + 1 - (0 - 1)).toNat := by
+        have h' := Finset.card_le_card hruler
+        rwa [Int.card_Icc] at h'
+      have he : ((0 : ℤ) + ℓ + 1 - (0 - 1)).toNat = ℓ + 2 := by omega
+      omega
+    · rw [hbank j]
+      by_cases hj : j ∈ Set.range (Fin.castLEEmb (by omega : 3 ≤ K + 3))
+      · obtain ⟨i', rfl⟩ := hj
+        rw [(embedEmitTM_visitedByTapeHead _ L _ _ [] _ _ i').1]
+        by_cases h0 : i'.val = 0
+        · have hi' : i' = Fin.castAdd 2 (0 : Fin 1) := Fin.ext h0
+          rw [hi']
+          have hmono : M.visitedByTapeHead (M.initCfg x) t₀ 0 ⊆
+              M.visitedByTapeHead (M.initCfg x) t 0 := by
+            intro p hp
+            rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp ⊢
+            obtain ⟨u, hu, hp⟩ := hp
+            exact ⟨u, hu.trans ht₀, hp⟩
+          have hb := M.spaceUsedByTape_le_spaceUsed (M.initCfg x) t 0
+          rw [MultiTapeTM.spaceUsedByTape_eq_card] at hb
+          have := (Finset.card_le_card ((hmirror 0).trans hmono)).trans hb
+          omega
+        · have h := Finset.card_le_card (haux i' (by omega))
+          rw [Int.card_Icc] at h
+          omega
+      · rw [(embedEmitTM_visitedByTapeHead_frame _ L _ _ [] _ _ j hj).1, Finset.card_singleton]
+        omega
+
+/-- The final loop configuration is the prefix endpoint relabelled at the host's entry: the
+loop's three tapes are the first three of the `K + 3` bank tapes and the common ruler is last
+([AB09, Exercise 4.1]).
+
+**Proof sketch.** The embedded initial loop encoding is the startup's installed bank relabelled
+(`Turing.embedEmitCfg_forwardLoop_init`); compare the ruler host's presentation of it field by
+field (`Turing.rulerHostCfg_fields`), splitting the tape index into the bank and the last tape. -/
+private theorem f6_last_ruler_layout (K n ℓ : ℕ) {P Q V : Type}
+    (finish : P) (entry : Q) (inj : Q → Bool → V)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x z : List Bool)
+    (hz : z.length = ℓ + x.length) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let ec := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    let bank : Cfg (K + 3) Bool P x :=
+      ⟨some finish, 1,
+        fun j => if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩
+    let physical : Cfg ((K + 3) + 1) Bool P z :=
+      ⟨some finish, ⟨ℓ + 1, by omega⟩,
+        Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes,
+        fun _ => 0, []⟩
+    physical.mapState (fun _ => inj entry false) =
+      rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+        (FinTM.bufferTape (List.replicate ℓ true)) 0 := by
+  intro σ ec bank physical
+  dsimp only [physical]
+  have h1 (j : Fin (K + 3)) : (j = 1) ↔ j.val = 1 := by
+    rw [Fin.ext_iff]
+    change j.val = 1 % (K + 3) ↔ j.val = 1
+    rw [Nat.mod_eq_of_lt (by omega : 1 < K + 3)]
+  have h2 (j : Fin (K + 3)) : (j = 2) ↔ j.val = 2 := by
+    rw [Fin.ext_iff]
+    change j.val = 2 % (K + 3) ↔ j.val = 2
+    rw [Nat.mod_eq_of_lt (by omega : 2 < K + 3)]
+  have hbank : ec = bank.mapState (fun _ => entry) := by
+    have h := embedEmitCfg_forwardLoop_init (k := 1) (K := K) finish entry M x
+    simpa only [ec, bank, σ, h1, h2] using h
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, rulerHostCfg_state, hbank, Cfg.mapState_state]
+    all_goals rfl
+  · apply Fin.ext
+    rw [Cfg.mapState_inputPos, (rulerHostCfg_fields ℓ hz _ ec _ 0).1,
+      hbank, Cfg.mapState_inputPos]
+    simp only [bank, Fin.val_one]
+  · funext i p
+    rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes, hbank]
+    change Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i p =
+      Fin.lastCases (motive := fun _ => ℤ → Option Bool)
+        (FinTM.bufferTape (List.replicate ℓ true)) (bank.mapState (fun _ => entry)).workTapes i p
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simp only [Fin.lastCases_last]
+    · simp only [Fin.lastCases_castSucc, Cfg.mapState_workTapes]
+  · funext i
+    rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos, hbank]
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · rw [Fin.lastCases_last]
+    · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, rulerHostCfg_output, hbank, Cfg.mapState_output]
+
+/-- Equality induction transports an initialized run along a tape-count equation. -/
+private theorem f6_cast_init_run {P : Type} {m n : ℕ} (h : m = n)
+    (A : MultiTapeTM m Bool P) (z : List Bool) (t : ℕ) :
+    (h ▸ A : MultiTapeTM n Bool P).runFrom
+      ((h ▸ A : MultiTapeTM n Bool P).initCfg z) t =
+        (h ▸ A.runFrom (A.initCfg z) t : Cfg n Bool P z) := by
+  cases h
+  rfl
+
+/-- Equality induction transports initialized space along a tape-count equation. -/
+private theorem f6_cast_init_space {P : Type} {m n : ℕ} (h : m = n)
+    (A : MultiTapeTM m Bool P) (z : List Bool) (t : ℕ) :
+    (h ▸ A : MultiTapeTM n Bool P).spaceUsed
+      ((h ▸ A : MultiTapeTM n Bool P).initCfg z) t =
+        A.spaceUsed (A.initCfg z) t := by
+  cases h
+  rfl
+
+/-- Equality induction preserves a configuration's control. -/
+private theorem f6_cast_cfg_state {P : Type} {m n : ℕ} (h : m = n) {z : List Bool}
+    (c : Cfg m Bool P z) : (h ▸ c : Cfg n Bool P z).state = c.state := by
+  cases h
+  rfl
+
+/-- Equality induction commutes with relabelling. -/
+private theorem f6_cast_cfg_mapState {P Q : Type} {m n : ℕ} (h : m = n) {z : List Bool}
+    (c : Cfg m Bool P z) (f : P → Q) :
+    (h ▸ c : Cfg n Bool P z).mapState f = (h ▸ c.mapState f : Cfg n Bool Q z) := by
+  cases h
+  rfl
+
+/-- A transported configuration is the full-bank embedding along `Fin.castLEEmb`. -/
+private theorem f6_cast_cfg_embedding {Q : Type} {m n : ℕ} (h : m = n) {z : List Bool}
+    (c : Cfg m Bool Q z) :
+    (h ▸ c : Cfg n Bool Q z) =
+      embedEmitCfg (Fin.castLEEmb (Nat.le_of_eq h)) (fun _ _ => none) (fun _ => 0) [] c := by
+  cases h
+  exact (f6_full_embed c).symm
+
+/-- Transporting back the full-bank embedding gives the original configuration. -/
+private theorem f6_cast_back_embedding {Q : Type} {m n : ℕ} (h : m = n) {z : List Bool}
+    (c : Cfg m Bool Q z) :
+    (h.symm ▸ embedEmitCfg (Fin.castLEEmb (Nat.le_of_eq h))
+      (fun _ _ => none) (fun _ => 0) [] c : Cfg m Bool Q z) = c := by
+  cases h
+  exact f6_full_embed c
+
+/-- **The startup–loop seam at the last-ruler endpoint.** For a prefix `A` reaching the
+installed last-ruler endpoint at a first return, the zero-outer startup–loop seam with the hosted
+loop `H` runs `H` from the loop's presentation after `T + 1` steps, and uses at most
+`B + (K + 4) · S` cells when the prefix uses at most `B` and each hosted tape at most `S`.
+
+**Proof sketch.** Reconstruct the endpoint's relabelling as the host presentation
+(`f6_last_ruler_layout`) and as its full-bank embedding; transport the prefix and endpoint along
+`K + 4 = 0 + ((K + 2) + 2)` by equality induction; apply `startupLoopTM_runFrom` and
+`startupLoopTM_spaceUsed_le`; transport back ([AB09, Exercise 4.1]). -/
+private theorem f6_final_seam (K n ℓ : ℕ) {P Q V : Type} [DecidableEq P]
+    (A : MultiTapeTM (K + 4) Bool P) (finish : P)
+    (H : MultiTapeTM (K + 4) Bool V) (entry : Q) (inj : Q → Bool → V)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x z : List Bool)
+    (hz : z.length = ℓ + x.length) :
+    let σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let ec := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    let bank : Cfg (K + 3) Bool P x :=
+      ⟨some finish, 1,
+        fun j => if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩
+    let d : Cfg (K + 4) Bool P z :=
+      ⟨some finish, ⟨ℓ + 1, by omega⟩,
+        Fin.lastCases (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes,
+        fun _ => 0, []⟩
+    let c := rulerHostCfg ℓ hz (ec.state.map fun q => inj q false) ec
+      (FinTM.bufferTape (List.replicate ℓ true)) 0
+    ∀ (T t B S : ℕ),
+      (A.runFrom (A.initCfg z) T = d) →
+      (∀ u < T, (A.runFrom (A.initCfg z) u).state ≠ some finish) →
+      (A.spaceUsed (A.initCfg z) T ≤ B) →
+      (1 ≤ S) →
+      (∀ i, H.spaceUsedByTape c t i ≤ S) →
+      let A0 : MultiTapeTM (0 + ((K + 2) + 2)) Bool P :=
+        (Nat.zero_add ((K + 2) + 2)).symm ▸ A
+      let U0 := startupLoopTM (k := K + 2) (K := 0) A0 finish H (inj entry false)
+      let U : MultiTapeTM (K + 4) Bool (P ⊕ V) :=
+        (Nat.zero_add ((K + 2) + 2)) ▸ U0
+      U.runFrom (U.initCfg z) (T + 1 + t) = (H.runFrom c t).mapState Sum.inr ∧
+        U.spaceUsed (U.initCfg z) (T + 1 + t) ≤ B + (K + 4) * S := by
+  intro σ ec bank d c T t B S aRun aCut hB hS hloop A0 U0 U
+  have hexit : d.state = some finish := rfl
+  have hphysical : d.mapState (fun _ => inj entry false) = c :=
+    f6_last_ruler_layout K n ℓ finish entry inj M x z hz
+  let e : (K + 4) = 0 + ((K + 2) + 2) := (Nat.zero_add ((K + 2) + 2)).symm
+  let d0 : Cfg (0 + ((K + 2) + 2)) Bool P z := e ▸ d
+  have aRun0 : A0.runFrom (A0.initCfg z) T = d0 := by
+    calc
+      _ = (e ▸ A.runFrom (A.initCfg z) T : Cfg (0 + ((K + 2) + 2)) Bool P z) :=
+        f6_cast_init_run e A z T
+      _ = d0 := congrArg (fun v : Cfg (K + 4) Bool P z =>
+        (e ▸ v : Cfg (0 + ((K + 2) + 2)) Bool P z)) aRun
+  have hexit0 : d0.state = some finish := (f6_cast_cfg_state e d).trans hexit
+  have aCut0 : ∀ u < T, (A0.runFrom (A0.initCfg z) u).state ≠ some finish := by
+    intro u hu
+    rw [show A0.runFrom (A0.initCfg z) u =
+      (e ▸ A.runFrom (A.initCfg z) u : Cfg (0 + ((K + 2) + 2)) Bool P z) from
+        f6_cast_init_run e A z u, f6_cast_cfg_state]
+    exact aCut u hu
+  have hcfg0 : d0.mapState (fun _ => inj entry false) =
+      embedEmitCfg (Fin.castLEEmb (by omega : (K + 2) + 2 ≤ 0 + ((K + 2) + 2)))
+        (fun _ _ => none) (fun _ => 0) [] c := by
+    calc
+      _ = (e ▸ d.mapState (fun _ => inj entry false) :
+          Cfg (0 + ((K + 2) + 2)) Bool V z) := f6_cast_cfg_mapState e d _
+      _ = (e ▸ c : Cfg (0 + ((K + 2) + 2)) Bool V z) :=
+        congrArg (fun v : Cfg (K + 4) Bool V z =>
+          (e ▸ v : Cfg (0 + ((K + 2) + 2)) Bool V z)) hphysical
+      _ = _ := f6_cast_cfg_embedding e c
+  have hB0 : A0.spaceUsed (A0.initCfg z) T ≤ B :=
+    (f6_cast_init_space e A z T).trans_le hB
+  have hr := startupLoopTM_runFrom (k := K + 2) (K := 0)
+    A0 finish H (inj entry false) c d0 T aRun0 hexit0 aCut0 hcfg0 t
+  have hs := startupLoopTM_spaceUsed_le (k := K + 2) (K := 0)
+    A0 finish H (inj entry false) c d0 T aRun0 hexit0 aCut0 hcfg0 t B S hB0 hS hloop
+  constructor
+  · calc
+      _ = (e.symm ▸ U0.runFrom (U0.initCfg z) (T + 1 + t) : Cfg (K + 4) Bool (P ⊕ V) z) :=
+        f6_cast_init_run e.symm U0 z (T + 1 + t)
+      _ = (e.symm ▸ (embedEmitCfg (Fin.castLEEmb (Nat.le_of_eq e))
+          (fun _ _ => none) (fun _ => 0) [] (H.runFrom c t)).mapState Sum.inr :
+            Cfg (K + 4) Bool (P ⊕ V) z) :=
+        congrArg (fun v : Cfg (0 + ((K + 2) + 2)) Bool (P ⊕ V) z =>
+          (e.symm ▸ v : Cfg (K + 4) Bool (P ⊕ V) z)) hr
+      _ = _ := by
+        rw [← f6_cast_cfg_mapState, f6_cast_back_embedding]
+        exact e
+  · calc
+      _ = U0.spaceUsed (U0.initCfg z) (T + 1 + t) :=
+        f6_cast_init_space e.symm U0 z (T + 1 + t)
+      _ ≤ B + (0 + ((K + 2) + 2)) * S := hs
+      _ = B + (K + 4) * S := by rw [Nat.zero_add]
+
+
 /-- **The space-bounded universal machine** ([AB09, Exercise 4.1], p. 93,
 forward clause; spec, fill pending — phase P4.3, restated forward-only
 2026-10-12 by design §16b item 3, RD-3 statement gate passed 2026-10-13;
