@@ -41,8 +41,8 @@ This folder only carries files in transit. The maintainer's rules are in that br
 ## Current outbound work
 
 - Gate106, SG-1 (#215): round1 HOLD recorded; immutable packet archived.
-  Round2 `outbox/gates/106-sg1-dedup-r2-gate/`, **Codex**, verified and ready for user dispatch;
-  actual329-module current replay and fresh complete nine-file screen pass.
+  Round2 Codex findings HOLD0/1/0/15 are committed; packet now archived.
+  Round3 Codex selected; mechanical polynomial-closure repairs/current validation underway.
 - Gate 114, NatBits (#222): CLOSED PASS 0/0/0/8 and merged by the user. The issued gate and
   exact findings copy are archived; the matching shared top-level inbox file is preserved.
 - Gate 115, E-PAD (#228): CLOSED, PASS 0/0/0/12. The user has merged #228. Its gate, fill brief,
@@ -51,8 +51,8 @@ This folder only carries files in transit. The maintainer's rules are in that br
 - Gate116, the Hierarchy padding consumer (#229): CLOSED PASS0/0/0/12 and merged by Seyoon.
   The issued packet is archived after findings/dispositions were committed; shared top-level
   findings remain preserved.
-- Gate117, the23 approved reader/resource theorems (#230): `outbox/gates/117-reading-api-gate/`,
-  **Codex**, verified and ready for user dispatch. Actual394-module current replay passes.
+- Gate117 (#230): CLOSED PASS0/0/0/14, allnotes accepted; merged bySeyoon.
+  Issued packet archived after verbatim findings/resolutions committed.
 - MIG-1 megafill: Claude final delivery received and committed to campaign records as
   **PARTIAL**. The immutable issued packet is in `archive/fills/megafill-mig1/`; all checkpoint/
   final ZIPs and report are in `archive/deliveries/fill-mig1-mega-2026-11-07/`. The source equals
@@ -61,6 +61,10 @@ This folder only carries files in transit. The maintainer's rules are in that br
   after campaign records and both independent reviews were committed. Its4028 payload hashes
   and864 supplied attempts reconcile; remaining strict seal gaps make it **PARTIAL/superseded**.
   No R2 source is adopted. Maintainer final checks/replay and pending interface rulings are separate.
+
+- F6: `outbox/fills/f6-space-universal/`, **Claude**, verified624-section packet
+  ready for user dispatch; exact merged #230 proofbase. Delivery ZIPs only to
+  `arora-barak-ch3-4/inbox/fill-f6/`; no fill dispatched by maintainer.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
