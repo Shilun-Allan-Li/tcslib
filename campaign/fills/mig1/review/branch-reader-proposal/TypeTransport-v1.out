@@ -1,0 +1,13 @@
+'BranchReaderProposal.branchTM_k' depends on axioms: [propext, Classical.choice, Quot.sound]
+'BranchReaderProposal.branchTM_State' depends on axioms: [propext, Classical.choice, Quot.sound]
+'BranchReaderProposal.branchTM_runFrom_independent' depends on axioms: [propext, Classical.choice, Quot.sound]
+/private/tmp/tcslib-branch-reader-b6k3kwxk/TypeTransport_v1.lean:71:2: error: Tactic `rfl` failed: The left-hand side
+  ⋯.mpr (⋯.mpr (⋯.mpr (⋯.mpr c)))
+is not definitionally equal to the right-hand side
+  c
+
+M₁ M₂ : FinTM Bool
+b : Bool
+x : List Bool
+c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x
+⊢ ⋯.mpr (⋯.mpr (⋯.mpr (⋯.mpr c))) = c

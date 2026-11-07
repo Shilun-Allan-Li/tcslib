@@ -1,0 +1,104 @@
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:11:60: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftCfg f c tapes heads).output
+is not definitionally equal to the right-hand side
+  c.output
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Cfg k Bool S x
+tapes : Fin l → ℤ → Option Bool
+heads : Fin l → ℤ
+⊢ (FinTM.leftCfg f c tapes heads).output = c.output
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:16:93: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftCfg f c tapes heads).workTapePos i
+is not definitionally equal to the right-hand side
+  Fin.addCases c.workTapePos heads i
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Cfg k Bool S x
+tapes : Fin l → ℤ → Option Bool
+heads : Fin l → ℤ
+i : Fin (k + l)
+⊢ (FinTM.leftCfg f c tapes heads).workTapePos i = Fin.addCases c.workTapePos heads i
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:21:61: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightCfg f c tapes heads).output
+is not definitionally equal to the right-hand side
+  c.output
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Cfg l Bool S x
+tapes : Fin k → ℤ → Option Bool
+heads : Fin k → ℤ
+⊢ (FinTM.rightCfg f c tapes heads).output = c.output
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:26:94: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightCfg f c tapes heads).workTapePos i
+is not definitionally equal to the right-hand side
+  Fin.addCases heads c.workTapePos i
+
+k l : ℕ
+S S' : Type
+x : List Bool
+f : S → S'
+c : Cfg l Bool S x
+tapes : Fin k → ℤ → Option Bool
+heads : Fin k → ℤ
+i : Fin (k + l)
+⊢ (FinTM.rightCfg f c tapes heads).workTapePos i = Fin.addCases heads c.workTapePos i
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:33:2: error: Tactic `rfl` failed: The left-hand side
+  (captureCfg emb ret pre out₀ c).output
+is not definitionally equal to the right-hand side
+  out₀
+
+k : ℕ
+S : Type u_1
+H : Type u_2
+x : List Bool
+emb : S → H
+ret : H
+pre out₀ : List Bool
+c : Cfg k Bool S x
+d : Cfg (k + 1) Bool H x
+hd : d = captureCfg emb ret pre out₀ c
+⊢ (captureCfg emb ret pre out₀ c).output = out₀
+/private/tmp/mig1-config-reader-proposal/ControlsSealed.lean:38:97: error: Tactic `rfl` failed: The left-hand side
+  (captureCfg emb ret pre out₀ c).workTapePos i
+is not definitionally equal to the right-hand side
+  if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length
+
+k : ℕ
+S : Type u_1
+H : Type u_2
+x : List Bool
+emb : S → H
+ret : H
+pre out₀ : List Bool
+c : Cfg k Bool S x
+i : Fin (k + 1)
+⊢ (captureCfg emb ret pre out₀ c).workTapePos i =
+    if h : ↑i < k then c.workTapePos ⟨↑i, h⟩ else ↑(pre ++ c.output).length
+        1.17 real         0.58 user         0.61 sys
+          1407762432  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              114060  page reclaims
+                  10  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   5  voluntary context switches
+                1172  involuntary context switches
+            30350728  instructions retired
+            13528384  cycles elapsed
+             1622352  peak memory footprint

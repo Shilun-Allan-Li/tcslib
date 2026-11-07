@@ -1,0 +1,69 @@
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Option
+import TCSlib.Complexity.TuringMachine.Finite
+
+/-! Same-home import-context probe. The two existing definitions below are copied
+verbatim from Simulation, with their original fully qualified names. This file
+imports Simulation's prerequisites, never Simulation itself. No source edit. -/
+set_option autoImplicit false
+namespace Turing.FinTM
+
+def leftCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    Cfg (k + l) Bool S' x where
+  state := c.state.map f
+  inputPos := c.inputPos
+  workTapes := Fin.addCases c.workTapes tapes
+  workTapePos := Fin.addCases c.workTapePos heads
+  output := c.output
+
+def rightCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    Cfg (k + l) Bool S' x where
+  state := c.state.map f
+  inputPos := c.inputPos
+  workTapes := Fin.addCases tapes c.workTapes
+  workTapePos := Fin.addCases heads c.workTapePos
+  output := c.output
+
+end Turing.FinTM
+
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.FinTM.leftCfg
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.FinTM.rightCfg
+
+#check Turing.FinTM.leftCfg_state
+#check Turing.FinTM.leftCfg_inputPos
+#check Turing.FinTM.leftCfg_workTapes
+#check Turing.FinTM.leftCfg_workTapePos
+#check Turing.FinTM.leftCfg_output
+#check Turing.FinTM.rightCfg_state
+#check Turing.FinTM.rightCfg_inputPos
+#check Turing.FinTM.rightCfg_workTapes
+#check Turing.FinTM.rightCfg_workTapePos
+#check Turing.FinTM.rightCfg_output
+
+#print axioms Turing.FinTM.leftCfg_state
+#print axioms Turing.FinTM.leftCfg_inputPos
+#print axioms Turing.FinTM.leftCfg_workTapes
+#print axioms Turing.FinTM.leftCfg_workTapePos
+#print axioms Turing.FinTM.leftCfg_output
+#print axioms Turing.FinTM.rightCfg_state
+#print axioms Turing.FinTM.rightCfg_inputPos
+#print axioms Turing.FinTM.rightCfg_workTapes
+#print axioms Turing.FinTM.rightCfg_workTapePos
+#print axioms Turing.FinTM.rightCfg_output
+
+run_cmd Lean.Elab.Command.liftCoreM do
+  let thms ← Lean.Meta.getSimpTheorems
+  let env ← Lean.getEnv
+  let names : List Lean.Name := [`Turing.FinTM.leftCfg_state, `Turing.FinTM.leftCfg_inputPos, `Turing.FinTM.leftCfg_workTapes, `Turing.FinTM.leftCfg_workTapePos, `Turing.FinTM.leftCfg_output, `Turing.FinTM.rightCfg_state, `Turing.FinTM.rightCfg_inputPos, `Turing.FinTM.rightCfg_workTapes, `Turing.FinTM.rightCfg_workTapePos, `Turing.FinTM.rightCfg_output]
+  for n in names do
+    unless env.contains n do Lean.throwError "Missing generated declaration: {n}"
+    if Lean.isPrivateName n then Lean.throwError "Unexpected private declaration: {n}"
+    let tagged := [true, false].any fun post =>
+      [true, false].any fun inv => thms.isLemma (.decl n post inv)
+    if tagged then Lean.throwError "Unexpected simp attribute: {n}"
+    Lean.logInfo m!"PUBLIC_NON_SIMP {n}"

@@ -1033,7 +1033,9 @@ is now **oleans-mac2**. Gate 114 is **CLOSED, PASS 0/0/0/8**; all notes disposit
 Draft #229 proves `SPACE_linear_ne_NP`; its fresh post-NatBits two-module replay and refreshed
 context checks passed (**oleans-mlin2**), gate 116 **dispatched to Codex** by the user. Next free gate
 117. The reviewed **Claude MIG-1 megafill is dispatched**, with checkpoint/final pushes to its
-exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`. F6 follows
+exact exchange inbox; immutable pins are in `campaign/fills/mig1/dispatch.json`. cp01–cp03
+are reviewed as partial, with 14 target source admissions filled and three F-B targets
+remaining; reader/contract rulings, seal coverage and factoring repairs remain. F6 follows
 #229's merge: the user chose the **ruler-hosted suffix** route and **Claude**; the route/brief
 assessment is records-only work in progress, and gate 112's explicit premises remain binding.
 Ladner needs its statement phase. Records stay direct; actual Lean changes still need PRs,

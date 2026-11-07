@@ -1,0 +1,11 @@
+# Process deviations (disclosed per addendum Part 3 item 7)
+D1 2026-11-07T07:29:19Z: one leanelab.sh elaboration of Composition.lean (2.6 s) ran while the base
+   bootstrap sweep was compiling Build/Catalog (sweep.sh called scripts/lean_check_tree.sh without
+   taking the leanelab slot lock, so the wrapper did not wait). Two Lean processes overlapped for
+   ~3 s. The bootstrap had compiled Composition from the unmodified base source before the edit;
+   Composition's public interface is unchanged by the edit. Remedy: sweep.sh now takes the same
+   slot lock (TCSLIB_LEAN_SLOTS=1) for each module, and no check is started while a sweep runs.
+D2 2026-11-07T07:39:41Z: a probe wrapped devtools/seyoon/leanelab.sh inside withslot.sh; with one slot both
+   waited for the same lock (self-deadlock, no Lean process ran) until the 5-minute shell timeout. Killed
+   both wrappers, removed the stale slot directory, re-ran leanelab.sh alone. Not an overlap of Lean
+   processes; recorded for completeness. leanelab.sh is never wrapped again.

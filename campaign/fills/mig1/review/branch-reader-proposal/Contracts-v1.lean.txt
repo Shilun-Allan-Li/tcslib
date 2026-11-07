@@ -1,0 +1,41 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+
+/-! Proposed additions in Simulation's home, tested through an import.
+Only branchTM/AgreeOn and their same-home fields may reduce in these proofs.
+The other-file runFrom definition is sealed; its published agreement theorem is used.
+This is a proposal probe, not an actual library addition. -/
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open Turing Turing.FinTM
+
+namespace BranchReaderProposal
+
+section ProposedHome
+attribute [local irreducible] Turing.MultiTapeTM.runFrom
+
+theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).k = M₁.k + M₂.k := rfl
+
+theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
+    (branchTM M₁ M₂ b).State = M₁.State ⊕ M₂.State := rfl
+
+theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
+    {x : List Bool}
+    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
+    (branchTM M₁ M₂ b).tm.runFrom c t =
+      (branchTM M₁ M₂ b').tm.runFrom c t := by
+  have agree : (branchTM M₁ M₂ b').tm.AgreeOn (branchTM M₁ M₂ b).tm Set.univ := by
+    rw [Turing.MultiTapeTM.agreeOn_iff]
+    intro q _ inp work
+    rfl
+  exact Turing.MultiTapeTM.runFrom_eq_of_agreeOn agree c t
+    (fun _ _ q _ => Set.mem_univ q)
+
+end ProposedHome
+
+#print axioms branchTM_k
+#print axioms branchTM_State
+#print axioms branchTM_runFrom_independent
+
+end BranchReaderProposal

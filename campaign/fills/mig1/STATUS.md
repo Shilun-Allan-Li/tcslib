@@ -29,7 +29,15 @@ already approved. These are partial results, not fresh maintainer elaborations o
 
 F-A still needs rule-10 repairs: proposed ten leftCfg/rightCfg field readers await the user's
 ruling; branchTM's shape and operational-independence exclusion is separately unresolved.
-A proposed run-contract route is under bounded pre-ship investigation. No new debt is accepted.
+A three-lemma run-contract proposal now has a passing bounded sealed consumer, with the
+actual condTM integration still untested. Fifteen non-simp configuration readers also pass
+same-home generation and conditional seals. The ten left/right, five capture and three
+branch-lemma scopes are separately **awaiting user rulings**; see `review/API-PROPOSALS.md`.
+No new debt is accepted.
 Claude can continue independent F-C/F-B; final census, screens and full sweep remain required.
-**cp03 has now arrived and is under separate review** in `review/checkpoint03-2026-11-07/`.
+**cp03 is received and reviewed as partial** in `review/checkpoint03-2026-11-07/`: all
+538 payload checksums, freeze and exact cumulative patches pass. Its five F-C target source
+admissions are filled; three F-B targets plus frozen RAM3 remain. F-C factoring T3/T2 is
+incomplete. New captureCfg readers and the omitted loopHost_input_rewind seal region need
+repair; current supplied seal coverage is 15 of 16 changed/new Loop declarations.
 The immutable issued packet and in-flight job are unchanged; do not duplicate the fill.

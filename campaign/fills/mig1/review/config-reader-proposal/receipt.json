@@ -1,0 +1,262 @@
+{
+  "status": "PROPOSAL ONLY; no source changes or approved API implied",
+  "snapshot": "oleans-mlin2",
+  "worktree_head": "74494d669ad9f8f926844f9280812449f57263d6",
+  "toolchain": "leanprover/lean4:v4.25.0",
+  "source_homes": {
+    "Turing.FinTM.leftCfg": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "Turing.FinTM.rightCfg": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "Turing.captureCfg": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean"
+  },
+  "runs": [
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/GeneratedReaders-attempt1.lean.txt",
+      "source_sha256": "2cc33833d0b3b573aaf282042d91a6c1d237c4e7dcd68c46554dcb6138969b3b",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/GeneratedReaders-attempt1.out",
+      "log_sha256": "13ebd82acdf08f08b7df1364411e2d30ce33a5c7c66b2cd1a4360de72dbb084b",
+      "start_utc": "2026-11-07T08:33:44.729170+00:00",
+      "end_utc": "2026-11-07T08:33:50.390982+00:00",
+      "exit_code": 1,
+      "errors": 36,
+      "warnings": 0,
+      "status": "FAILED diagnostic attempt: wrong left/right namespace, imported simps prohibited, CoreM lift missing; retained"
+    },
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/SimulationHome.lean.txt",
+      "source_sha256": "e2ba76229ce3a5d2a9c08f507fd016ed189bc251628963f903db4c191534daac",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/SimulationHome.out",
+      "log_sha256": "914b683aaf4edbb6b4bd8a1b184b43b4eb7f49cdba776949ae74a7f5fe772f18",
+      "start_utc": "2026-11-07T08:35:41.451414+00:00",
+      "end_utc": "2026-11-07T08:35:44.388179+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [
+        "'Turing.FinTM.leftCfg_state' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.leftCfg_inputPos' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.leftCfg_workTapes' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.leftCfg_workTapePos' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.leftCfg_output' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.rightCfg_state' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.rightCfg_inputPos' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.rightCfg_workTapes' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.rightCfg_workTapePos' depends on axioms: [propext, Quot.sound]",
+        "'Turing.FinTM.rightCfg_output' depends on axioms: [propext, Quot.sound]"
+      ],
+      "public_non_simp": [
+        "PUBLIC_NON_SIMP Turing.FinTM.leftCfg_state",
+        "PUBLIC_NON_SIMP Turing.FinTM.leftCfg_inputPos",
+        "PUBLIC_NON_SIMP Turing.FinTM.leftCfg_workTapes",
+        "PUBLIC_NON_SIMP Turing.FinTM.leftCfg_workTapePos",
+        "PUBLIC_NON_SIMP Turing.FinTM.leftCfg_output",
+        "PUBLIC_NON_SIMP Turing.FinTM.rightCfg_state",
+        "PUBLIC_NON_SIMP Turing.FinTM.rightCfg_inputPos",
+        "PUBLIC_NON_SIMP Turing.FinTM.rightCfg_workTapes",
+        "PUBLIC_NON_SIMP Turing.FinTM.rightCfg_workTapePos",
+        "PUBLIC_NON_SIMP Turing.FinTM.rightCfg_output"
+      ],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/WrappersHome.lean.txt",
+      "source_sha256": "b3d0123590afc00f9810c5c37b0b9111e45415ff7042bd8124c676949d0ef2e2",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/WrappersHome.out",
+      "log_sha256": "48546a73bee602a98f7354db37389e0c01126985a0a845b1e9c6bde18a9b66f5",
+      "start_utc": "2026-11-07T08:35:44.388662+00:00",
+      "end_utc": "2026-11-07T08:35:45.772526+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [
+        "'Turing.captureCfg_state' does not depend on any axioms",
+        "'Turing.captureCfg_inputPos' does not depend on any axioms",
+        "'Turing.captureCfg_workTapes' does not depend on any axioms",
+        "'Turing.captureCfg_workTapePos' does not depend on any axioms",
+        "'Turing.captureCfg_output' does not depend on any axioms"
+      ],
+      "public_non_simp": [
+        "PUBLIC_NON_SIMP Turing.captureCfg_state",
+        "PUBLIC_NON_SIMP Turing.captureCfg_inputPos",
+        "PUBLIC_NON_SIMP Turing.captureCfg_workTapes",
+        "PUBLIC_NON_SIMP Turing.captureCfg_workTapePos",
+        "PUBLIC_NON_SIMP Turing.captureCfg_output"
+      ],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/ConditionalConsumersSealed.lean.txt",
+      "source_sha256": "17052266002eef484073fd272fdfc74bba27461b8a155325338f0bf94c2c6e96",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/ConditionalConsumersSealed.out",
+      "log_sha256": "7f79c2e13df27695646665c96943930a1b281c926a9aa2c3b1d55ae098c30c1e",
+      "start_utc": "2026-11-07T08:37:37.672764+00:00",
+      "end_utc": "2026-11-07T08:37:39.672731+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [
+        "'ConfigReaderProposal.leftCfg_consumer' depends on axioms: [propext, Quot.sound]",
+        "'ConfigReaderProposal.rightCfg_consumer' depends on axioms: [propext, Quot.sound]",
+        "'ConfigReaderProposal.captureCfg_consumer' depends on axioms: [Quot.sound]",
+        "'ConfigReaderProposal.capture_output_implicit' does not depend on any axioms",
+        "'ConfigReaderProposal.capture_head_last' does not depend on any axioms"
+      ],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/ControlsUnsealed.lean.txt",
+      "source_sha256": "5d42339e50a297688c9ec39660f52da752cb7ffe6093c8c7a70a35dca3004a78",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/ControlsUnsealed.out",
+      "log_sha256": "5d4687d66f78a79bb500d90c4a91a3ad98c5eea181be0a2f1b1ea6fa441a66e1",
+      "start_utc": "2026-11-07T08:37:39.673225+00:00",
+      "end_utc": "2026-11-07T08:37:40.850430+00:00",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0,
+      "axiom_prints": [],
+      "status": "PASS"
+    },
+    {
+      "source": "campaign/fills/mig1/review/config-reader-proposal/probes/ControlsSealed.lean.txt",
+      "source_sha256": "3555a4a676910cc37881233de6d30e534ccdb56bde95af31135362c19ecb29b6",
+      "log": "campaign/fills/mig1/review/config-reader-proposal/logs/ControlsSealed.out",
+      "log_sha256": "d008d999085a4e285dbbc607f26a744d42fcc30f0d4c96aeb106a99ec85a6005",
+      "start_utc": "2026-11-07T08:37:40.851013+00:00",
+      "end_utc": "2026-11-07T08:37:42.029169+00:00",
+      "exit_code": 1,
+      "errors": 6,
+      "warnings": 0,
+      "axiom_prints": [],
+      "status": "EXPECTED CONTROL FAILURE: exactly six rfl failures, output and heads for all three definitions"
+    }
+  ],
+  "source_blob_pins": {
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean": "2daabe85f4349b0ef834621087a29e0a48114cf6",
+    "TCSlib/Complexity/TuringMachine/Simulation.lean": "40f509d9c4255fac5c86648743d356c916a018d5"
+  },
+  "same_home_definition_checks": [
+    {
+      "name": "leftCfg",
+      "definition_sha256": "db3a8081e45f105fea2cc1db1405ac8a9a7610b4a05a09be92a9df6a5ba83d46",
+      "verbatim_from_pinned_source": true
+    },
+    {
+      "name": "rightCfg",
+      "definition_sha256": "721eba08828a0db28e3c4bec3ae5907f610d19fa586311db05a009b4174b4148",
+      "verbatim_from_pinned_source": true
+    },
+    {
+      "name": "captureCfg",
+      "definition_sha256": "2d1ef575fd399122a94ef5d3c650db201c882830de1d8711cb73dc647fc17dd8",
+      "verbatim_from_pinned_source": true
+    }
+  ],
+  "generated_readers": [
+    {
+      "name": "Turing.FinTM.leftCfg_state",
+      "printed_header": "Turing.FinTM.leftCfg_state {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) :\n  (Turing.FinTM.leftCfg f c tapes heads).state = Option.map f c.state",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.leftCfg_inputPos",
+      "printed_header": "Turing.FinTM.leftCfg_inputPos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) : (Turing.FinTM.leftCfg f c tapes heads).inputPos = c.inputPos",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.leftCfg_workTapes",
+      "printed_header": "Turing.FinTM.leftCfg_workTapes {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) (i : Fin (k + l)) (a\u271d : \u2124) :\n  (Turing.FinTM.leftCfg f c tapes heads).workTapes i a\u271d =\n    Fin.addCases (motive := fun x => \u2124 \u2192 Option Bool) c.workTapes tapes i a\u271d",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.leftCfg_workTapePos",
+      "printed_header": "Turing.FinTM.leftCfg_workTapePos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) (i : Fin (k + l)) :\n  (Turing.FinTM.leftCfg f c tapes heads).workTapePos i = Fin.addCases c.workTapePos heads i",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.leftCfg_output",
+      "printed_header": "Turing.FinTM.leftCfg_output {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg k Bool S x)\n  (tapes : Fin l \u2192 \u2124 \u2192 Option Bool) (heads : Fin l \u2192 \u2124) : (Turing.FinTM.leftCfg f c tapes heads).output = c.output",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.rightCfg_state",
+      "printed_header": "Turing.FinTM.rightCfg_state {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) :\n  (Turing.FinTM.rightCfg f c tapes heads).state = Option.map f c.state",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.rightCfg_inputPos",
+      "printed_header": "Turing.FinTM.rightCfg_inputPos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) : (Turing.FinTM.rightCfg f c tapes heads).inputPos = c.inputPos",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.rightCfg_workTapes",
+      "printed_header": "Turing.FinTM.rightCfg_workTapes {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (i : Fin (k + l)) (a\u271d : \u2124) :\n  (Turing.FinTM.rightCfg f c tapes heads).workTapes i a\u271d =\n    Fin.addCases (motive := fun x => \u2124 \u2192 Option Bool) tapes c.workTapes i a\u271d",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.rightCfg_workTapePos",
+      "printed_header": "Turing.FinTM.rightCfg_workTapePos {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) (i : Fin (k + l)) :\n  (Turing.FinTM.rightCfg f c tapes heads).workTapePos i = Fin.addCases heads c.workTapePos i",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.FinTM.rightCfg_output",
+      "printed_header": "Turing.FinTM.rightCfg_output {k l : \u2115} {S S' : Type} {x : List Bool} (f : S \u2192 S') (c : Turing.Cfg l Bool S x)\n  (tapes : Fin k \u2192 \u2124 \u2192 Option Bool) (heads : Fin k \u2192 \u2124) : (Turing.FinTM.rightCfg f c tapes heads).output = c.output",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.captureCfg_state",
+      "printed_header": "Turing.captureCfg_state.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) :\n  (Turing.captureCfg emb ret pre out\u2080 c).state = some ((Option.map emb c.state).getD ret)",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.captureCfg_inputPos",
+      "printed_header": "Turing.captureCfg_inputPos.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out\u2080 c).inputPos = c.inputPos",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.captureCfg_workTapes",
+      "printed_header": "Turing.captureCfg_workTapes.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) (a\u271d : \u2124) :\n  (Turing.captureCfg emb ret pre out\u2080 c).workTapes i a\u271d =\n    (if h : \u2191i < k then c.workTapes \u27e8\u2191i, h\u27e9 else Turing.FinTM.bufferTape (pre ++ c.output)) a\u271d",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.captureCfg_workTapePos",
+      "printed_header": "Turing.captureCfg_workTapePos.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H)\n  (ret : H) (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) (i : Fin (k + 1)) :\n  (Turing.captureCfg emb ret pre out\u2080 c).workTapePos i =\n    if h : \u2191i < k then c.workTapePos \u27e8\u2191i, h\u27e9 else \u2191(pre ++ c.output).length",
+      "public": true,
+      "simp_attribute": false
+    },
+    {
+      "name": "Turing.captureCfg_output",
+      "printed_header": "Turing.captureCfg_output.{u_1, u_2} {k : \u2115} {S : Type u_1} {H : Type u_2} {input : List Bool} (emb : S \u2192 H) (ret : H)\n  (pre out\u2080 : List Bool) (c : Turing.Cfg k Bool S input) : (Turing.captureCfg emb ret pre out\u2080 c).output = out\u2080",
+      "public": true,
+      "simp_attribute": false
+    }
+  ],
+  "summary": {
+    "generated_public_non_simp_readers": 15,
+    "reader_axiom_prints": 15,
+    "reader_axioms": "left/right: propext, Quot.sound only; capture: none",
+    "sealed_conditional_consumers": "PASS: all 15 field hypotheses reconstruct the three configurations; capture implicit-output and last-head cases pass",
+    "delta_controls": "six pass unsealed; exactly six expected rfl failures when originals sealed",
+    "interpretation": "Same-home syntax and bounded conditional-consumption checks only, not approval, source implementation, full fill seal, replay or delivery review",
+    "pending_user_ruling": "ten left/right readers already asked by root; five captureCfg readers additionally proposed and unapproved",
+    "writes": "Only proposal evidence in this folder and temporary actual Lean probe copies; no source/Git/cache/snapshot/screen changes"
+  },
+  "not_run": [
+    "No full fill or checkpoint code execution",
+    "No actual API addition or declaration freeze",
+    "No full consumer or merged-tree replay",
+    "No production seal or copy-text screen",
+    "No dispatch or push"
+  ]
+}

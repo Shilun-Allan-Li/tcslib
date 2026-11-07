@@ -54,7 +54,10 @@ and the 23-file screen passed. Issued gate/fill/delivery/findings are archived a
    `campaign/fills/mig1/`. The verified 324-section packet is published and unchanged. Await
    checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`. cp01/cp02 are
    reviewed as partial; config-field readers (user ruling pending) and branchTM contracts
-   remain unresolved. cp03 arrived and is under separate review.
+   remain unresolved. cp03 is reviewed as partial: five F-C specs are filled, but factoring,
+   captureCfg readers and one omitted seal region still need repair; three F-B targets remain.
+   The ten config, five capture and three branch readers are bounded/tested proposals awaiting
+   separate user rulings (`campaign/fills/mig1/review/API-PROPOSALS.md`); no API is added.
 2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
    `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
    screen and fresh two-module post-NatBits merged-tree replay pass; only F6 remains admitted. Gate **116**,
@@ -77,7 +80,7 @@ scheduled; RO-1 parked with its decisions answered; WS-1/RC/QF/WC/TC/D9 later. T
 megafill uses its existing approvals and gate 16; it does not grant new interface/import/debt
 choices. Ask the user for any new design or acknowledgment.
 
-**Gate numbers:** 106 dispatched; 114 closed and merged; 115 closed and merged; **116 finalized for #229**.
+**Gate numbers:** 106 dispatched; 114 closed and merged; 115 closed and merged; **116 dispatched for #229**.
 Next free: **117**. Ask the agent choice separately for each later audit/fill. These three
 selected audits are Codex; the newly requested MIG-1 fill is Claude. Claude may push only to its
 designated exchange inbox after pull/rebase; Codex returns files in chat.
