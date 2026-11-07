@@ -14,3 +14,6 @@
 - #228 is ready for review. The fresh merge preview has the exact Lean tree of the passed
   replay; see `evidence/current/merged-tree/current-merge-check.json`. **Clear to merge: #228**.
   The user merges; then the maintainer prepares the small Hierarchy consumer PR (gate 116).
+
+- **Merged by the user:** #228. The merge has exactly the passed replay's Lean tree;
+  `oleans-mac1` is adopted as the current campaign snapshot. The consumer gate is 116 (Codex).

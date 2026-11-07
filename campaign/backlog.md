@@ -1025,15 +1025,15 @@ pair.
 
 ## 2. Campaign work queued or on hold
 
-**Arora–Barak ch. 3–4 maintainer continuation (2026-11-06 PST / 2026-11-07 UTC).** Codex's
-current state is `campaign/maintainer/HANDOFF.md` §0. The Mac baseline bootstrap passed all 894
-modules. Open campaign PRs: #215 (SG-1, gate 106), #222 (NatBits, gate 114), and #228
-(E-PAD, gate 115). All three independent replays and final evidence passed. Gates 106/114
-are finalized for staging and user dispatch to Codex. Gate 115 was dispatched and is now
-**CLOSED: PASS 0/0/0/12**, all notes dispositioned; #228 is clear to merge on the checked current
-merged Lean tree. The user merges it. The user confirmed that maintainer records
-continue by direct campaign push. Next free gate: 116. E-PAD's merge precedes the small
-`SPACE_linear_ne_NP` PR and then F6 in Hierarchy; no later fill has been dispatched.
+**Arora–Barak ch. 3–4 maintainer continuation (2026-11-07 UTC).** Current state is
+`campaign/maintainer/HANDOFF.md` §0. #228 is merged, gate 115 CLOSED (PASS 0/0/0/12), all notes
+resolved. Its exact passed replay tree is the campaign snapshot `oleans-mac1`. Gates 106 (#215,
+SG-1) and 114 (#222, NatBits) are **dispatched to Codex**; replays/evidence passed, findings
+pending, neither PR is clear to merge. Gate 116 is reserved for the small Hierarchy consumer,
+Codex selected; next free gate 117. The user requested an overnight megafill and selected
+**Claude**: preparing the approved MIG-1 F-A/F-C/F-B/F-D job with checkpoints, not yet staged.
+F6 follows the consumer merge; Ladner needs its statement phase. Records continue by direct
+campaign push; every actual Lean change still goes through a PR and the user's merge.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 
