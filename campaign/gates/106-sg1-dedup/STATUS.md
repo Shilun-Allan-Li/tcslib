@@ -8,5 +8,5 @@ calls; original packet remains immutable and the erratum is separate.
 
 Actual current329-module replay passes, static0. Complete fresh nine-file source/compiler/
 screen checks and both-definition guard seals/paired controls pass. Exact edge/census/debt
-limits are in pack-r2.md and review/round2-current/. Codex selected for follow-up; verified
-staging is next. **Not yet clear to merge: #215.** No gate closure is claimed.
+limits are in pack-r2.md and review/round2-current/. Codex follow-up packet is verified and published:334 sections, exact pins in dispatch-r2.json.
+**Ready to dispatch**, using prompt-r2.md; not yet dispatched. **Not yet clear to merge: #215.** No gate closure is claimed.

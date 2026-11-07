@@ -1,0 +1,47 @@
+Turing.vhostCfg_state.{u_1} {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) : (Turing.vhostCfg c b p pre).state = Option.map (fun q => (q, b)) c.state
+Turing.vhostCfg_inputPos.{u_1} {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) : (Turing.vhostCfg c b p pre).inputPos = p
+Turing.vhostCfg_workTapes.{u_1} {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)) (a✝ : ℤ) :
+  (Turing.vhostCfg c b p pre).workTapes i a✝ =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) (fun x => Turing.FinTM.bufferTape y) c.workTapes i a✝
+Turing.vhostCfg_workTapePos.{u_1} {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)) :
+  (Turing.vhostCfg c b p pre).workTapePos i = Fin.addCases (fun x => ↑↑c.inputPos - 1) c.workTapePos i
+Turing.vhostCfg_output.{u_1} {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) : (Turing.vhostCfg c b p pre).output = pre ++ c.output
+Turing.vhostBuffer_eq (m : ℕ) : Turing.vhostBuffer m = Fin.castAdd m 0
+Turing.vhostBank_eq {m : ℕ} (i : Fin m) : Turing.vhostBank i = Fin.natAdd 1 i
+Turing.vhostCap_eq (m : ℕ) : Turing.vhostCap m = Fin.natAdd (1 + m) 0
+Turing.seamCompTM : {k : ℕ} →
+  {S₁ : Type u_1} →
+    {S₂ : Type u_2} →
+      {Symbol : Type u_3} →
+        [DecidableEq S₁] →
+          Turing.MultiTapeTM k Symbol S₁ →
+            S₁ → Turing.MultiTapeTM k Symbol S₂ → S₂ → Turing.MultiTapeTM k Symbol (S₁ ⊕ S₂)
+Turing.transferTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → Fin k → Turing.MultiTapeTM k Symbol Turing.SweepPhase
+Turing.seamCompTM₂ : {k : ℕ} →
+  {S₁ : Type u_1} →
+    {S₂ : Type u_2} →
+      {Symbol : Type u_3} →
+        {S₀ : Type u_4} →
+          [DecidableEq S₀] →
+            [DecidableEq S₁] →
+              Turing.MultiTapeTM k Symbol S₀ →
+                S₀ →
+                  S₀ →
+                    Turing.MultiTapeTM k Symbol S₁ →
+                      S₁ → Turing.MultiTapeTM k Symbol S₂ → S₂ → Turing.MultiTapeTM k Symbol ((S₀ ⊕ S₁) ⊕ S₂)
+Turing.copyTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → Fin k → Turing.MultiTapeTM k Symbol Turing.SweepPhase
+Turing.embedSilentCfg : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} →
+      {x : List Symbol} →
+        (Fin m ↪ Fin k) →
+          Fin k →
+            (Fin k → ℤ → Option Symbol) →
+              (Fin k → ℤ) → List Symbol → List Symbol → Turing.Cfg m Symbol S x → Turing.Cfg k Symbol S x
+Turing.embedEmitTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → Turing.MultiTapeTM m Symbol S → Turing.MultiTapeTM k Symbol S

@@ -22,7 +22,7 @@ receipts remain in their dated status folders.
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
-| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Fresh round2 evidence complete; packet staging in progress. **Not yet clear to merge.** |
+| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
@@ -32,8 +32,8 @@ remain immutable. No PR is merged by the maintainer.
 
 **Immediate work, in order:**
 
-1. Dispatch the ready **Codex gate117** packet for #230 (prompt.md/dispatch.json), and finish
-gate106 round2 for #215. Gate106 canonical round1 findings are verbatim; every item is
+1. Dispatch the ready **Codex gate117** packet for #230 (prompt.md/dispatch.json), and dispatch
+ready **Codex gate106 round2** for #215 (prompt-r2.md/dispatch-r2.json). Gate106 canonical round1 findings are verbatim; every item is
 answered in resolutions. Its two cut repairs are body-only, no new statement/import/API.
 Seyoon accepted, by kind across TCSlib, five clean/stop/padding/transducer/bridge families
 and separately finite-family shared-bank dispatchers and companion proofs. Cleanup owner:
@@ -42,9 +42,9 @@ in those files**. The ledger distinguishes these from prior clPlacement, RO1 and
 watch records; no other acknowledgment is inferred. The accounting minor is six consumer
 declarations/twelve SingleTape calls. Gate106 round2 still must close.
 
-2. **The Claude MIG-1 megafill remains dispatched.** Its immutable 324-section issued packet
+2. **The Claude MIG-1 megafill delivered a partial final.** Its immutable 324-section issued packet
 and exact base/records/exchange pins are in `campaign/fills/mig1/dispatch.json`.
-Poll only `arora-barak-ch3-4/inbox/fill-mig1-mega/`, preserving the shared exchange's other work.
+Its committed packet and deliveries are now archived in our exchange subtree; preserve the other chat's work.
 cp01/cp02/cp03/cp05/cp07 are received and reviewed as **partial** deliveries, with all supplied
 checksums passing. cp07 fills all17 original source targets plus the two new already-gated
 forwarding proofs; only the three frozen RAM admissions remain. It deletes356 private Catalog
