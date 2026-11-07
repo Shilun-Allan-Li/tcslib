@@ -1,6 +1,8 @@
 # Gate 08 round 2: maintainer verification
 
-**Maintainer checks complete; external follow-up not dispatched.** This report records maintainer checks, not an external closing
+**Closing update: Gate 08 round 2 PASS, 0 blockers/0 majors/0 minors; see `../resolutions-r2.md`.**
+The frozen pre-dispatch report is at records `11daf06237ab298fbe8dfdc27b382bd7bd741c08`.
+The checks below are maintainer evidence; the external auditor did not rerun Lean. This report records maintainer checks, not an external closing
 verdict. Gate 08 remains on HOLD pending the selected Codex follow-up.
 
 ## Revisions and scope
@@ -44,7 +46,7 @@ classification. `source-sha256.txt`, `logs/bootstrap.log` and `logs/modules/` re
 return codes, timestamps and native maximum resident set size for each check.
 
 The replay took 2,414.782 seconds, with peak per-module RSS 3,150,184,448 bytes. All 364
-aggregate `Checks` axiom records agree with the original S1 head: no added, removed or changed
+distinct aggregate `Checks` constants (367 print records, including duplicates) agree with the original S1 head: no added, removed or changed
 sets, and the same four `sorryAx` records (`replay-summary.json`). The post-run native memory
 snapshot reported 63% free; the recorded final process had already exited, so that snapshot
 does not establish a live CPU/RSS value (`logs/final-resource-check.log`).

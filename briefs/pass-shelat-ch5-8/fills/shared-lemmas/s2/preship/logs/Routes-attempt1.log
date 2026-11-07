@@ -1,0 +1,60 @@
+START 2026-11-07T06:45:50.996564+00:00
+.lake/ps-maintainer/s2-preship/Routes.lean:8:30: error(lean.unknownIdentifier): Unknown constant `Complexity.pairEncode`
+.lake/ps-maintainer/s2-preship/Routes.lean:45:33: error: Application type mismatch: The argument
+  PolyTimeComputable.comp' polyTimeComputable_tail hg
+has type
+  PolyTimeComputable fun x => List.drop 1 (g x)
+but is expected to have type
+  PolyTimeComputable fun z => (g z).tail
+in the application
+  And.intro (PolyTimeComputable.comp' polyTimeComputable_tail hg)
+.lake/ps-maintainer/s2-preship/Routes.lean:48:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  g z
+in the target expression
+  none.getD 0 = listToNat ((fun z => (g z).tail) z)
+
+case pos
+H : ArithmeticFP
+par kw bw tw c : List Bool → List Bool
+hpar : PolyTimeComputable par
+hkw : PolyTimeComputable kw
+hbw : PolyTimeComputable bw
+htw : PolyTimeComputable tw
+hc : PolyTimeComputable c
+g : List Bool → List Bool
+hg : PolyTimeComputable g
+hs :
+  ∀ (z : List Bool),
+    (g z).tail.length ≤ (kw z).length ∧
+      sampleBelowL (listToNat (par z)) (kw z).length (bw z).length (tw z).length (c z) =
+        if g z = [] then none else some (listToNat (g z).tail)
+z : List Bool
+he : g z = []
+⊢ none.getD 0 = listToNat ((fun z => (g z).tail) z)
+'S2Preship.belowRoute' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'S2Preship.belowZeroDefault' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'S2Preship.unitRoute' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'S2Preship.noTrials' depends on axioms: [propext, Quot.sound]
+FAIL(.lake/ps-maintainer/s2-preship/Routes): lean exited with status 1
+FAIL(.lake/ps-maintainer/s2-preship/Routes): error diagnostics reported
+FAIL(.lake/ps-maintainer/s2-preship/Routes): no fresh .olean produced
+        1.96 real         1.27 user         0.77 sys
+          2344321024  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184203  page reclaims
+                 503  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  21  voluntary context switches
+                5917  involuntary context switches
+            32935221  instructions retired
+            17310384  cycles elapsed
+             1605968  peak memory footprint
+
+END 2026-11-07T06:45:52.965066+00:00 RC 1

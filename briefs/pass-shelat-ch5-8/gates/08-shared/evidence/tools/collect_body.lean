@@ -41,10 +41,9 @@ syntax (name := collectCmd) "#collect " ident "[" str,* "]" : command
     seen := seen.insert c
     cs := cs.insert c
     let some cc := env.find? c | continue
-    if env.getModuleIdxFor? c == some modIdx then
-      stack := stack ++ cc.type.getUsedConstants.toList
-      if cc.isDefinition then
-        stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
+    stack := stack ++ cc.type.getUsedConstants.toList
+    if env.getModuleIdxFor? c == some modIdx && cc.isDefinition then
+      stack := stack ++ (cc.value?.map (·.getUsedConstants.toList) |>.getD [])
   let mut rows : Array String := #[]
   let mut reds : Array String := #[]
   for c in cs.toList do

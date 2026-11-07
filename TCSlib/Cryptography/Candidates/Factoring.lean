@@ -181,20 +181,13 @@ theorem fmult_inv_factor {n p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpn : p < 
   exact fmultNat_eq_mul_prime hp hq
     (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h)
 
-/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
-private theorem fac_foldl_replicate_false (m : ℕ) :
-    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
-  induction m with
-  | zero => rfl
-  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
-
 /-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
 (`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
 private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
     natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
   have h := natToList_length_listToNat (List.replicate j false ++ w)
-  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
-    fac_foldl_replicate_false, ← listToNat_eq] at h
+  rw [List.length_append, List.length_replicate, listToNat_append, listToNat_replicate_false,
+    zero_mul, zero_add] at h
   exact h
 
 /-- The numeral of `1`: `natToList k 1 = (0^k ++ 1).drop 1` (`0^{k−1}1` for `k ≥ 1`, empty for
@@ -225,8 +218,7 @@ private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool �
     PolyTimeComputable fun z => [decide (listToNat (g z) ≤ 1) && decide (1 ≤ listToNat (g z))] := by
   have h1 := H.le.comp (hg.pairEncode (polyTimeComputable_const [true]))
   have h2 := H.le.comp ((polyTimeComputable_const [true]).pairEncode hg)
-  have hone : listToNat [true] = 1 := by rw [listToNat_eq]; rfl
-  simp only [Function.comp_def, leStr_pairEncode, hone] at h1 h2
+  simp only [Function.comp_def, leStr_pairEncode, listToNat_singleton_true] at h1 h2
   exact polyTimeComputable_and h1 h2
 
 /-- **`f_mult` is easy to compute** [PS10, Theorem 33.5, "clearly computable in polynomial
@@ -703,7 +695,7 @@ private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = O
 
 /-- The all-`false` string reads as `0`. -/
 private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by
-  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_eq, fac_foldl_replicate_false]
+  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_replicate_false]
 
 /-- Block `i` of `x` under `FunFamily.blocks` is the window `x (finProdFinEquiv (i, ·))`. -/
 private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) :
@@ -1082,14 +1074,6 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
 
-/-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
-(`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
-private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
-  have h := natToList_length_listToNat (natToList k N)
-  have hl : (natToList k N).length = k := by rw [natToList_eq, List.length_ofFn]
-  rw [listToNat_natToList_eq_mod, hl] at h
-  exact h.symm
-
 /-- **The fallback numeral of `SamplePrime`**: the `k`-bit numeral of `2` is `0^{k+2}` followed
 by `10`, with its first two bits dropped (`0^{k−2}10` for `k ≥ 2`, `0` for `k = 1`, empty for
 `k = 0`). -/
@@ -1097,7 +1081,7 @@ private theorem fac_natToList_two (k : ℕ) :
     natToList k 2 = (List.replicate k false ++ [true, false]).drop 2 := by
   rcases k with _ | _ | m
   · rw [natToList_zero]; rfl
-  · rw [fac_natToList_mod]
+  · rw [← natToList_mod_two_pow]
     have h := natToList_length_listToNat [false]
     rw [listToNat_eq] at h
     exact h
@@ -1109,7 +1093,7 @@ private theorem fac_natToList_two (k : ℕ) :
       | succ m => simp [List.replicate_succ]
     rw [hw]
     have h := natToList_length_listToNat (List.replicate m false ++ [true, false])
-    rw [listToNat_eq, List.foldl_append, fac_foldl_replicate_false] at h
+    rw [listToNat_append, listToNat_replicate_false, zero_mul, zero_add, listToNat_eq] at h
     simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil] at h
     exact h
 
@@ -1593,16 +1577,6 @@ theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
   rw [Collection.index_eq]
   exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
 
-/-- Bit strings of two equal lengths, identified (`finCongr`); it keeps the coin string
-(`fac_arrowCongr_ofFn`). -/
-private def fac_arrowCongr {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) :=
-  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
-
-/-- `List.ofFn (fac_arrowCongr h r) = List.ofFn r`. -/
-private theorem fac_arrowCongr_ofFn {a b : ℕ} (h : a = b) (r : Fin a → Bool) :
-    List.ofFn (fac_arrowCongr h r) = List.ofFn r :=
-  (List.ofFn_congr h r).symm
-
 /-- The decoded pair read from two numbers: the pair itself when they are distinct primes below
 `2^n`, the default pair otherwise. -/
 private noncomputable def fac_pairDec (n : ℕ) (hn : 2 ≤ n) (v : ℕ × ℕ) : Option (DistinctPrimes n) :=
@@ -1703,12 +1677,15 @@ theorem factoringCollection_sampleClose (H : ArithmeticFP) :
   rw [factoringCollection_sample]
   have h1 := (fac_statClose_decode i.length (max i.length 2) (le_max_right _ _)
     (max_eq_left hn)).map (Option.map (factoringCollection_domEquiv H i).symm)
-  have h2 := (h1.comp_equiv_left (fac_arrowCongr hc)).comp_equiv_right
-    (factoringCollection_domEquiv H i)
+  have h2 := (h1.comp_equiv_left
+    (Equiv.arrowCongr (finCongr hc) (Equiv.refl Bool))).comp_equiv_right
+      (factoringCollection_domEquiv H i)
+  have hofn : ∀ s, List.ofFn (Equiv.arrowCongr (finCongr hc) (Equiv.refl Bool) s) = List.ofFn s :=
+    fun s => (List.ofFn_congr hc s).symm
   simp only [Option.map_some, Equiv.symm_apply_apply] at h2
   convert h2 using 1
   · funext s
-    rw [factoringCollection_decD, factoringSampler_runAt, fac_arrowCongr_ofFn]
+    rw [factoringCollection_decD, factoringSampler_runAt, hofn]
 
 /-- **The reduction from the collection to factoring** [PS10, proof of Theorem 51.1, "the
 factoring assumption states that inverting `f_i` is hard"]: `A_fact(1^n, N) :=

@@ -16,8 +16,8 @@ set_option autoImplicit false
 
 Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean`, the proof of
 [PS10, Proposition 128.8]): reading disjoint fields of a uniform tape gives independent uniform
-fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
-function (`negligible_colZKErr`).
+fields (`pushesUniform_offsetTable`, through `HardcoreBit.pushesUniform_restrict` of
+`HardcoreBit/Basic.lean`), and the bookkeeping of the error function (`negligible_colZKErr`).
 
 ## Main definitions
 
@@ -25,8 +25,6 @@ function (`negligible_colZKErr`).
 
 ## Main results
 
-* `TCSlib.Cryptography.ColZK.pushesUniform_restrict` — restricting a uniform table along an
-  injective map gives a uniform table.
 * `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable`, `pushesUniform_blockFields` — disjoint
   fields of a uniform tape are independent and uniform.
 * `TCSlib.Cryptography.ColZK.exists_fixSeed`, `distAdv_seed_to_coins`,
@@ -46,30 +44,6 @@ namespace TCSlib.Cryptography.ColZK
 open Complexity Turing
 
 /-! ### Uniform fields of a uniform tape -/
-
-/-- **Restricting a uniform table along an injective map gives a uniform table**: for an
-injective `r : J → I`, `R ↦ R ∘ r` pushes the uniform distribution on `I → O` to the uniform
-distribution on `J → O`. Generic form (any finite `J`) of `pushesUniform_comp_injective` of
-`Asymptotic/MultiMessage.lean` (stated there for `J = Fin (q + 1)`; that file is not upstream of
-this one), with the same proof.
-
-**Proof sketch.** Split `I` into the image of `r` and its complement (`Equiv.ofInjective`,
-`Equiv.Set.sumCompl`): the table is the pair of its restrictions
-(`Equiv.sumArrowEquivProdArrow`), and `R ∘ r` is the first one (`pushesUniform_fst`). -/
-theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
-    [Fintype O] [Nonempty O] {r : J → I} (hr : Function.Injective r) :
-    HardcoreBit.PushesUniform (fun R : I → O => fun j => R (r j)) := by
-  classical
-  let e₁ : J ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
-    (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
-      (Equiv.Set.sumCompl (Set.range r))
-  let e : (I → O) ≃ (J → O) × (((Set.range r)ᶜ : Set I) → O) :=
-    (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
-  have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
-    funext R j
-    simp [e, e₁]
-  rw [he]
-  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
 
 /-- Entry `(i, j)` of an `n × k` table sits at position `i k + j < n k`. -/
 theorem table_index_lt {n k : ℕ} (i : Fin n) (j : Fin k) : (i : ℕ) * k + j < n * k := by
@@ -96,8 +70,8 @@ theorem table_index_inj {n k : ℕ} {i i' : Fin n} {j j' : Fin k}
 
 **Proof sketch.** The two fields read the tape along the injective map
 `Fin a ⊕ (Fin n × Fin k) → Fin L`, `inl i ↦ i`, `inr (i, j) ↦ a + i k + j` (`table_index_inj`),
-so `pushesUniform_restrict` applies; the pair of fields is that restriction followed by the
-bijection `Equiv.sumArrowEquivProdArrow` and `Equiv.curry`. -/
+so `HardcoreBit.pushesUniform_restrict` applies; the pair of fields is that restriction followed
+by the bijection `Equiv.sumArrowEquivProdArrow` and `Equiv.curry`. -/
 theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
     HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
       ((fun i : Fin a => t (Fin.castLE (by omega) i)),
@@ -119,7 +93,7 @@ theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
   let e : (Fin a ⊕ (Fin n × Fin k) → Bool) ≃ (Fin a → Bool) × (Fin n → Fin k → Bool) :=
     (Equiv.sumArrowEquivProdArrow _ _ _).trans
       (Equiv.prodCongr (Equiv.refl _) (Equiv.curry _ _ _))
-  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
 
 /-- **Four disjoint fields of a uniform tape are independent and uniform**: for offsets
 `a₁ ≤ o₂`, `o₂ + a₂ ≤ o₃`, `o₃ + n k ≤ o₄`, `o₄ + a₄ ≤ L`, the map sending a tape `t` of `L`
@@ -129,8 +103,8 @@ simulator, `colSimBlock`).
 
 **Proof sketch.** The fields read the tape along an injective map
 `((Fin a₁ ⊕ Fin a₂) ⊕ (Fin n × Fin k)) ⊕ Fin a₄ → Fin L` (disjoint ranges, `table_index_inj`), so
-`pushesUniform_restrict` applies, followed by the bijection `Equiv.sumArrowEquivProdArrow` (three
-times) and `Equiv.curry`. -/
+`HardcoreBit.pushesUniform_restrict` applies, followed by the bijection
+`Equiv.sumArrowEquivProdArrow` (three times) and `Equiv.curry`. -/
 theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h₁ : a₁ ≤ o₂)
     (h₂ : o₂ + a₂ ≤ o₃) (h₃ : o₃ + n * k ≤ o₄) (h₄ : o₄ + a₄ ≤ L) :
     HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
@@ -161,7 +135,7 @@ theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h
     (Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
       ((Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
         (Equiv.sumArrowEquivProdArrow _ _ _) (Equiv.curry _ _ _))) (Equiv.refl _))
-  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
 
 /-! ### Averaging over seeds -/
 

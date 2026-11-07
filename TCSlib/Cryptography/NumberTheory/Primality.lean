@@ -75,6 +75,8 @@ density as `1/n` (it is `1/(2n)`, Claim-33.1).
   `TCSlib.Cryptography.NumberTheory.uprob_samplePrime_none_le_exp`,
   `TCSlib.Cryptography.NumberTheory.statClose_samplePrime`,
   `TCSlib.Cryptography.NumberTheory.exists_samplePrime_nuppt` — [PS10, Lemma 51.17].
+* `TCSlib.Cryptography.NumberTheory.listToNat_nil`, `listToNat_cons`, `listToNat_append`,
+  `listToNat_singleton_true` — the equations of the binary reading `listToNat`.
 
 ## References
 
@@ -669,6 +671,26 @@ theorem listToNat_eq (w : List Bool) :
 
 /-- `bitsToNat` is `listToNat` of the list of bits. -/
 theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
+  rfl
+
+/-- The empty word reads as `0`: `listToNat [] = 0`. -/
+theorem listToNat_nil : listToNat [] = 0 := by
+  rw [listToNat_eq, List.foldl_nil]
+
+/-- **Prepending a bit** (most significant first): `⟦b :: l⟧ = [b] · 2^{|l|} + ⟦l⟧`, with
+`[b] = 1` if `b` and `0` otherwise. -/
+theorem listToNat_cons (b : Bool) (l : List Bool) :
+    listToNat (b :: l) = (if b then 1 else 0) * 2 ^ l.length + listToNat l := by
+  rw [listToNat_eq, listToNat_eq, List.foldl_cons, foldl_bits_eq, Nat.mul_zero, Nat.zero_add]
+
+/-- **Concatenation** (most significant first): `⟦a ++ b⟧ = ⟦a⟧ · 2^{|b|} + ⟦b⟧`. -/
+theorem listToNat_append (a b : List Bool) :
+    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, foldl_bits_eq]
+
+/-- The one-bit word `[true]` reads as `1`: `listToNat [true] = 1`. -/
+theorem listToNat_singleton_true : listToNat [true] = 1 := by
+  rw [listToNat_eq, List.foldl_cons, List.foldl_nil]
   rfl
 
 /-- The coin polynomial of `SamplePrime` at `T = 2n²` trials of `n` bits: `2n² · n`. -/

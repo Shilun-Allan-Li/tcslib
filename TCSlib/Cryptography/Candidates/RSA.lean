@@ -395,10 +395,11 @@ private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Copr
   rw [Nat.Coprime, ← Nat.gcd_rec]
   exact Nat.gcd_one_right N
 
-/-- The fallback of the unit sampler is a unit: for `N > 0`, the value
-`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
-the default, `rsa_one_mod_spec`). -/
-private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+/-- **The total unit sampler gives a unit**: for `0 < N`, the value
+`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N`:
+`(sampleUnitL N k B T r).getD (1 % N) < N ∧ gcd((sampleUnitL N k B T r).getD (1 % N), N) = 1`
+(`sampleUnitL_spec`, or the fallback `1 mod N`, which passes the unit test). -/
+theorem sampleUnitL_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
     (sampleUnitL N k B T r).getD (1 % N) < N ∧
       Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
   cases h : sampleUnitL N k B T r with
@@ -647,53 +648,6 @@ remaining coins). The family follows the pattern of the discrete-log fill's priv
 (`dla_ss*`, `DiscreteLog.lean`), with the stride `B` read from the header and the unit test in
 place of the comparison. -/
 
-/-- The number read from `[true]` is `1`. -/
-private theorem rsa_listToNat_one : listToNat [true] = 1 := by
-  rw [listToNat_eq]
-  rfl
-
-/-- The empty numeral reads as `0`. -/
-private theorem rsa_listToNat_nil : listToNat [] = 0 := by
-  rw [listToNat_eq]
-  rfl
-
-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
-private theorem rsa_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
-    (l : List α) :
-    l.findSome? (fun t => if p t then some (h t) else none) =
-      (l.find? fun t => decide (p t)).map h := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.findSome?_cons, List.find?_cons]
-    by_cases ha : p a
-    · rw [if_pos ha, decide_eq_true ha]
-      rfl
-    · rw [if_neg ha, decide_eq_false ha, ih]
-
-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for
-`N ≤ L`. -/
-private theorem rsa_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
-    intro l
-    induction l with
-    | nil => intro _; rfl
-    | cons a l ih =>
-      intro hl
-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
-      (fun i => decide (i < N) && p i) = none := by
-    rw [List.find?_eq_none]
-    intro x hx
-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
-    simp
-  rw [hnone, Option.or_none]
-
 /-- **The unit test by comparisons**: for `N = ⟦w⟧`, "`¬ (N ≤ v)`, and the `|w|`-bit numeral `g`
 of `gcd(v, N)` reads `≤ 1` and `≥ 1`" is the test `v < N ∧ gcd(v, N) = 1`.
 
@@ -705,7 +659,7 @@ private theorem rsa_unitTest_eq (v : ℕ) (w : List Bool) :
       decide (listToNat (natToList w.length (Nat.gcd v (listToNat w))) ≤ listToNat [true]) &&
       decide (listToNat [true] ≤ listToNat (natToList w.length (Nat.gcd v (listToNat w))))) =
       decide (v < listToNat w ∧ Nat.Coprime v (listToNat w)) := by
-  rw [rsa_listToNat_one]
+  rw [listToNat_singleton_true]
   by_cases h : v < listToNat w
   · have hg : Nat.gcd v (listToNat w) < 2 ^ w.length :=
       lt_of_le_of_lt (Nat.gcd_le_right _ (by omega)) (listToNat_lt_two_pow w)
@@ -756,12 +710,6 @@ private def rsa_usAcc (x : List Bool) : Bool :=
 /-- The payload: a `true` marker, then the accepted block. -/
 private def rsa_usOut (x : List Bool) : List Bool := [true] ++ rsa_usBlock x
 
-/-- Composition of polynomial-time functions in applied form, `x ↦ g (f x)` (so that the
-composite is stated up to `β` only, without `Function.comp`). -/
-private theorem rsa_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
-    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
-  hg.comp hf
-
 /-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
 private theorem rsa_usStep_poly : PolyTimeComputable rsa_usStep := by
   have h := polyTimeComputable_pairFstD.pairEncode
@@ -786,25 +734,12 @@ private theorem rsa_usBlock_poly : PolyTimeComputable rsa_usBlock := by
   simp only [rsa_usBlock, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
     PolyExpr.eval_var]
 
-/-- A comparison `[⟦a x⟧ ≤ ⟦b x⟧]` of two polynomial-time numerals is polynomial-time
-(`H.le`, read through `leStr_pairEncode`). -/
-private theorem rsa_le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
-    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
-    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
-  have h := H.le.comp (ha.pairEncode hb)
-  have e : (leStr ∘ fun x => pairEncode (a x) (b x)) =
-      fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
-    funext x
-    rw [Function.comp_apply, leStr_pairEncode]
-  rw [e] at h
-  exact h
-
 /-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, `H.le`, `H.xgcd`).
 
 **Proof sketch.** The gcd numeral is `H.xgcd` on `⟨block, w⟩` followed by `pairFstD`, stated in
-applied form (`rsa_comp`) and folded into `rsa_usGcd`; the four one-bit tests are
+applied form (`PolyTimeComputable.comp'`) and folded into `rsa_usGcd`; the four one-bit tests are
 `polyTimeComputable_isNil` (negated), `H.le` (negated) and two `H.le` against `[true]`
-(`rsa_le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
+(`ArithmeticFP.le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
 so that no bundle string function is unfolded by unification. -/
 private theorem rsa_usAcc_poly (H : ArithmeticFP) :
     PolyTimeComputable fun x => [rsa_usAcc x] := by
@@ -812,10 +747,10 @@ private theorem rsa_usAcc_poly (H : ArithmeticFP) :
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
   have hx : PolyTimeComputable fun x =>
       xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x)))) :=
-    rsa_comp H.xgcd (rsa_usBlock_poly.pairEncode hw)
+    PolyTimeComputable.comp' H.xgcd (rsa_usBlock_poly.pairEncode hw)
   have hg' : PolyTimeComputable fun x =>
       pairFstD (xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x))))) :=
-    rsa_comp polyTimeComputable_pairFstD hx
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD hx
   have e : (fun x => pairFstD (xgcdStr (pairEncode (rsa_usBlock x)
       (pairSndD (pairSndD (pairFstD x)))))) = rsa_usGcd := by
     funext x
@@ -826,20 +761,20 @@ private theorem rsa_usAcc_poly (H : ArithmeticFP) :
   have hc : PolyTimeComputable fun x => pairFstD (pairSndD x) :=
     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
   have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
-    rsa_comp polyTimeComputable_isNil hc
+    PolyTimeComputable.comp' polyTimeComputable_isNil hc
   have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
     polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
   have t2 : PolyTimeComputable fun x =>
       [decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
-    rsa_le_poly H hw rsa_usBlock_poly
+    H.le_poly hw rsa_usBlock_poly
   have t2' : PolyTimeComputable fun x =>
       [!decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
     polyTimeComputable_not
       (p := fun x => decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))) t2
   have t3 : PolyTimeComputable fun x => [decide (listToNat (rsa_usGcd x) ≤ listToNat [true])] :=
-    rsa_le_poly H hg (polyTimeComputable_const [true])
+    H.le_poly hg (polyTimeComputable_const [true])
   have t4 : PolyTimeComputable fun x => [decide (listToNat [true] ≤ listToNat (rsa_usGcd x))] :=
-    rsa_le_poly H (polyTimeComputable_const [true]) hg
+    H.le_poly (polyTimeComputable_const [true]) hg
   have t23 := polyTimeComputable_and
     (p := fun x => !decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x)))
     (q := fun x => decide (listToNat (rsa_usGcd x) ≤ listToNat [true])) t2' t3
@@ -927,9 +862,9 @@ is `true :: b`.
 **Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (i B)⟩⟩`
 (`rsa_usStep_iterate`), so trial `i` reads `(r.drop (i B)).take k` and the test is
 `i < T ∧ (v < N ∧ gcd(v, N) = 1)` (`rsa_unitTest_eq`, `xgcdStr_pairEncode`). The search over
-`[0, |x| + 1) ⊇ [0, T)` is then the search over `[0, T)` (`rsa_find?_range_lt`), and
+`[0, |x| + 1) ⊇ [0, T)` is then the search over `[0, T)` (`IterateFind.find?_range_and_lt`), and
 `sampleUnitL = rejectBlocksL` is that search followed by reading the block
-(`rejectBlocksL_eq`, `rsa_findSome?_ite`). -/
+(`rejectBlocksL_eq`, `rejectBlocksL_eq_find?`). -/
 private theorem rsa_usFind_eq (f : List Bool → List Bool) (z : List Bool) :
     sampleUnitL (listToNat (f z)) (Nat.size (listToNat (f z))) (rsaBlock.eval (NUPPT.inParam z).length)
         (rsaTrials.eval (NUPPT.inParam z).length) (NUPPT.inCoins z) =
@@ -970,9 +905,8 @@ private theorem rsa_usFind_eq (f : List Bool → List Bool) (z : List Bool) :
     rw [show (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) =
       fun i => decide (i < T) &&
         decide (val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w)) from funext hacc]
-    exact rsa_find?_range_lt _ hrange
-  rw [hfind, sampleUnitL_eq, rejectBlocksL_eq,
-    rsa_findSome?_ite (fun i => val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w)) val]
+    exact IterateFind.find?_range_and_lt _ hrange
+  rw [hfind, sampleUnitL_eq, rejectBlocksL_eq_find?]
   simp only [hblock]
   rfl
 
@@ -1001,11 +935,11 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
   -- the trial loop on the start state (the repetition host)
   have hL : PolyTimeComputable fun z => rsa_usLoop (rsa_usStart f z) :=
-    rsa_comp (rsa_usLoop_poly H) (rsa_usStart_poly H hf)
+    PolyTimeComputable.comp' (rsa_usLoop_poly H) (rsa_usStart_poly H hf)
   have hN : PolyTimeComputable fun z => [decide (rsa_usLoop (rsa_usStart f z) = [])] :=
-    rsa_comp polyTimeComputable_isNil hL
+    PolyTimeComputable.comp' polyTimeComputable_isNil hL
   have hT : PolyTimeComputable fun z => (rsa_usLoop (rsa_usStart f z)).drop 1 :=
-    rsa_comp polyTimeComputable_tail hL
+    PolyTimeComputable.comp' polyTimeComputable_tail hL
   -- the value block: the accepted block (marker dropped), or `[true]` (the fallback `1`)
   have hG : PolyTimeComputable fun z => if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
       else (rsa_usLoop (rsa_usStart f z)).drop 1 :=
@@ -1016,7 +950,7 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
   have hq : PolyTimeComputable fun z => pairSndD (divModStr (pairEncode
       (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
         else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z))) :=
-    rsa_comp polyTimeComputable_pairSndD (rsa_comp H.divMod (hG.pairEncode hf))
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hG.pairEncode hf))
   have e : (fun z => pairSndD (divModStr (pairEncode
       (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
         else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z)))) =
@@ -1025,7 +959,7 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
     rw [divModStr_pairEncode, pairSndD_pairEncode, unitSampleStr_eq, rsa_usFind_eq f z, rsa_usLoop]
     rcases hres : (List.range ((rsa_usStart f z).length + 1)).find?
         (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) with _ | i
-    · rw [Option.elim_none, Option.map_none, Option.getD_none, if_pos (by rfl), rsa_listToNat_one]
+    · rw [Option.elim_none, Option.map_none, Option.getD_none, if_pos (by rfl), listToNat_singleton_true]
     · have hE : listToNat (rsa_usBlock (rsa_usStep^[i] (rsa_usStart f z))) < listToNat (f z) := by
         have hs := rsa_usFind_eq f z
         rw [hres, Option.map_some] at hs
@@ -1043,16 +977,6 @@ On `y = ⟨1^M, r⟩` with `M = max n 2`: the two prime runs (S1), the validity 
 `H.sub`), the exponent (the unit sampler on a re-laid-out input), `d` (`H.xgcd`), and the
 `2M`-bit numerals as remainders modulo the all-ones word `1^{2M}` (`H.divMod`). -/
 
-/-- The all-ones numeral `1^k` reads as `2^k − 1`. -/
-private theorem rsa_listToNat_ones (k : ℕ) : listToNat (List.replicate k true) = 2 ^ k - 1 := by
-  induction k with
-  | zero => rw [List.replicate_zero, rsa_listToNat_nil]; rfl
-  | succ k ih =>
-    rw [List.replicate_succ', listToNat_eq, List.foldl_append, ← listToNat_eq, ih]
-    have := Nat.one_le_two_pow (n := k)
-    simp only [List.foldl_cons, List.foldl_nil, if_true, pow_succ]
-    omega
-
 /-- The numeral `[true, false]` reads as `2`. -/
 private theorem rsa_listToNat_two : listToNat [true, false] = 2 := by
   rw [listToNat_eq]
@@ -1063,25 +987,12 @@ private theorem rsa_listToNat_three : listToNat [true, true] = 3 := by
   rw [listToNat_eq]
   rfl
 
-/-- The product numeral reads as the product: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧`. -/
-private theorem rsa_listToNat_mulStr (a b : List Bool) :
-    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
-  rw [mulStr_pairEncode, listToNat_natToList]
-  rw [pow_add]
-  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b)
-
 /-- **Width normalization**: the remainder of `⟦x⟧` modulo the all-ones word `1^k` is the
 `k`-bit numeral of `⟦x⟧` when `⟦x⟧ < 2^k − 1`. -/
 private theorem rsa_norm (x : List Bool) (k : ℕ) (h : listToNat x < 2 ^ k - 1) :
     pairSndD (divModStr (pairEncode x (List.replicate k true))) = natToList k (listToNat x) := by
-  rw [divModStr_pairEncode, pairSndD_pairEncode, List.length_replicate, rsa_listToNat_ones,
+  rw [divModStr_pairEncode, pairSndD_pairEncode, List.length_replicate, listToNat_replicate_true,
     Nat.mod_eq_of_lt h]
-
-/-- A function equal pointwise to a polynomial-time one is polynomial-time. -/
-private theorem rsa_ptc_congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
-    (e : ∀ x, f x = g x) : PolyTimeComputable g := by
-  rw [show g = f from (funext e).symm]
-  exact h
 
 /-- The first prime run: `samplePrimeL M` on the first `L = 2M³` coins of `y = ⟨1^M, r⟩`. -/
 private def rsa_gP (y : List Bool) : List Bool :=
@@ -1136,7 +1047,7 @@ private theorem rsa_gP_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gP := by
   have hA : PolyTimeComputable fun y => pairEncode (pairFstD y)
       ((pairSndD y).take (samplePrimeCoins.eval (pairFstD y).length)) :=
     polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairTakePoly samplePrimeCoins)
-  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
+  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
   rw [pairFstD_pairEncode, pairSndD_pairEncode, rsa_gP]
 
 /-- The second prime run is polynomial-time (S1 on `⟨1^M, (r.drop L).take L⟩`). -/
@@ -1144,35 +1055,26 @@ private theorem rsa_gQ_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gQ := by
   have hD : PolyTimeComputable fun y => pairEncode (pairFstD y)
       ((pairSndD y).drop (samplePrimeCoins.eval (pairFstD y).length)) :=
     polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairDropPoly samplePrimeCoins)
-  have hT := rsa_comp (polyTimeComputable_pairTakePoly samplePrimeCoins) hD
+  have hT := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly samplePrimeCoins) hD
   have hA := polyTimeComputable_pairFstD.pairEncode hT
-  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
+  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
   rw [rsa_gQ]
 
-/-- A primality test `[⟦a x⟧ prime]` of a polynomial-time word is polynomial-time (`H.prime`,
-read through `primeStr_eq`). -/
-private theorem rsa_prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
-    (ha : PolyTimeComputable a) :
-    PolyTimeComputable fun x => [decide (listToNat (a x)).Prime] := by
-  have h := rsa_comp H.prime ha
-  rw [primeStr_eq] at h
-  exact h
-
 /-- The validity test is polynomial-time.
 
-**Proof sketch.** Two primality tests (`rsa_prime_poly`, `H.prime`), the negated conjunction of
-the comparisons `p ≤ q`, `q ≤ p`, and the comparisons of `p`, `q` with `⟦1^M⟧` (`rsa_le_poly`),
+**Proof sketch.** Two primality tests (`ArithmeticFP.prime_poly`, `H.prime`), the negated conjunction of
+the comparisons `p ≤ q`, `q ≤ p`, and the comparisons of `p`, `q` with `⟦1^M⟧` (`ArithmeticFP.le_poly`),
 combined by `polyTimeComputable_and` and `polyTimeComputable_not` with explicit tests. -/
 private theorem rsa_gValid_poly (H : ArithmeticFP) : PolyTimeComputable fun y => [rsa_gValid y] := by
   have hP := rsa_gP_poly H
   have hQ := rsa_gQ_poly H
-  have t1 := rsa_prime_poly H hP
-  have t2 := rsa_prime_poly H hQ
-  have t3 := rsa_le_poly H hP hQ
-  have t4 := rsa_le_poly H hQ hP
-  have t5 := rsa_le_poly H hP polyTimeComputable_pairFstD
-  have t6 := rsa_le_poly H hQ polyTimeComputable_pairFstD
+  have t1 := H.prime_poly hP
+  have t2 := H.prime_poly hQ
+  have t3 := H.le_poly hP hQ
+  have t4 := H.le_poly hQ hP
+  have t5 := H.le_poly hP polyTimeComputable_pairFstD
+  have t6 := H.le_poly hQ polyTimeComputable_pairFstD
   have t34 := polyTimeComputable_not (polyTimeComputable_and
     (p := fun y => decide (listToNat (rsa_gP y) ≤ listToNat (rsa_gQ y)))
     (q := fun y => decide (listToNat (rsa_gQ y) ≤ listToNat (rsa_gP y))) t3 t4)
@@ -1206,9 +1108,9 @@ private theorem rsa_gPw_poly (H : ArithmeticFP) :
 
 /-- The word of `Φ` is polynomial-time (`H.sub`, `H.mul`). -/
 private theorem rsa_gPhi_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gPhi := by
-  have h1 := rsa_comp H.sub ((rsa_gPw_poly H).1.pairEncode (polyTimeComputable_const [true]))
-  have h2 := rsa_comp H.sub ((rsa_gPw_poly H).2.pairEncode (polyTimeComputable_const [true]))
-  have h := rsa_comp H.mul (h1.pairEncode h2)
+  have h1 := PolyTimeComputable.comp' H.sub ((rsa_gPw_poly H).1.pairEncode (polyTimeComputable_const [true]))
+  have h2 := PolyTimeComputable.comp' H.sub ((rsa_gPw_poly H).2.pairEncode (polyTimeComputable_const [true]))
+  have h := PolyTimeComputable.comp' H.mul (h1.pairEncode h2)
   unfold rsa_gPhi
   exact h
 
@@ -1217,7 +1119,7 @@ private theorem rsa_gPhi_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gPhi :
 private theorem rsa_gE_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gE := by
   have hl := NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD (rsa_gPhi_poly H)
     (polyTimeComputable_const []) (polyTimeComputable_pairDropPoly (.mul (.const 2) samplePrimeCoins))
-  refine rsa_ptc_congr (rsa_comp (rsa_ptc_unitSampleStr H NUPPT.polyTimeComputable_inArg) hl)
+  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (rsa_ptc_unitSampleStr H NUPPT.polyTimeComputable_inArg) hl)
     fun y => ?_
   rw [NUPPT.inArg_layout, NUPPT.inParam_layout, NUPPT.inCoins_layout, rsa_gE]
 
@@ -1225,16 +1127,16 @@ private theorem rsa_gE_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gE := by
 `polyTimeComputable_unaryPoly`). -/
 private theorem rsa_gNorm_poly (H : ArithmeticFP) {x : List Bool → List Bool}
     (hx : PolyTimeComputable x) : PolyTimeComputable fun y => rsa_gNorm y (x y) := by
-  have ho := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) polyTimeComputable_pairFstD
-  have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.divMod (hx.pairEncode ho))
+  have ho := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) polyTimeComputable_pairFstD
+  have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hx.pairEncode ho))
   unfold rsa_gNorm
   exact h
 
 /-- The generator's string computation is polynomial-time. -/
 private theorem rsa_genCore_poly (H : ArithmeticFP) : PolyTimeComputable rsa_genCore := by
-  have hN := rsa_comp H.mul ((rsa_gPw_poly H).1.pairEncode (rsa_gPw_poly H).2)
-  have hD := rsa_comp polyTimeComputable_pairSndD
-    (rsa_comp H.xgcd ((rsa_gE_poly H).pairEncode (rsa_gPhi_poly H)))
+  have hN := PolyTimeComputable.comp' H.mul ((rsa_gPw_poly H).1.pairEncode (rsa_gPw_poly H).2)
+  have hD := PolyTimeComputable.comp' polyTimeComputable_pairSndD
+    (PolyTimeComputable.comp' H.xgcd ((rsa_gE_poly H).pairEncode (rsa_gPhi_poly H)))
   have h := ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H (rsa_gE_poly H))).pairEncode
     ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H hD))
   unfold rsa_genCore
@@ -1246,7 +1148,7 @@ private theorem rsa_genCore_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gen
 **Proof sketch.** With `M = max n 2` and `L = 2M³`, `rsa_gP`, `rsa_gQ` are the two prime runs
 of `rsaGenParams`, and the validity test is its condition (`⟦1^M⟧ = 2^M − 1`; two comparisons
 for `p ≠ q`), so the prime words read as the primes of the parameters (`default_p`,
-`default_q` on the fallback). Then `⟦N⟧ = pq` (`rsa_listToNat_mulStr`), `⟦Φ⟧ = (p−1)(q−1) =
+`default_q` on the fallback). Then `⟦N⟧ = pq` (`listToNat_mulStr`), `⟦Φ⟧ = (p−1)(q−1) =
 Φ(pq)` (`listToNat_subStr`, `DistinctPrimes.totient_mul`), the exponent word reads as
 `e = sampleUnitL … .getD 1` (`unitSampleStr_eq`, `1 % Φ = 1` as `Φ ≥ 2`), `d` is the inverse
 (`xgcdStr_pairEncode`), and each of `N, e, d < 2^{2M} − 1` is normalized to its `2M`-bit numeral
@@ -1265,7 +1167,7 @@ private theorem rsa_genCore_spec (n : ℕ) (r : List Bool) :
     rw [rsa_gQ, hy1, hy2, List.length_replicate]
   have hones : listToNat (pairFstD (pairEncode (List.replicate (max n 2) true) r)) =
       2 ^ max n 2 - 1 := by
-    rw [hy1, rsa_listToNat_ones]
+    rw [hy1, listToNat_replicate_true]
   have hvalid : rsa_gValid (pairEncode (List.replicate (max n 2) true) r) =
       decide ((listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2))))).Prime ∧
         (listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
@@ -1310,15 +1212,15 @@ private theorem rsa_genCore_spec (n : ℕ) (r : List Bool) :
   generalize hy : pairEncode (List.replicate (max n 2) true) r = y at hy1 hy2 hP hQ hones hvalid hzp
   -- the modulus, `Φ`, `e` and `d` read from the words
   have hN : listToNat (mulStr (pairEncode (rsa_gPw y) (rsa_gQw y))) = (rsaGenParams n r).N := by
-    rw [rsa_listToNat_mulStr, ← hzp.1, ← hzp.2]
+    rw [listToNat_mulStr, ← hzp.1, ← hzp.2]
     rfl
   have hPhi : listToNat (rsa_gPhi y) =
       Nat.totient ((rsaGenParams n r).z.p * (rsaGenParams n r).z.q) := by
-    rw [rsa_gPhi, rsa_listToNat_mulStr, listToNat_subStr, listToNat_subStr, rsa_listToNat_one,
+    rw [rsa_gPhi, listToNat_mulStr, listToNat_subStr, listToNat_subStr, listToNat_singleton_true,
       ← hzp.1, ← hzp.2, DistinctPrimes.totient_mul]
   have hΦ1 := (rsaGenParams n r).z.one_lt_totient
   have he : listToNat (rsa_gE y) = (rsaGenParams n r).e := by
-    have hv := rsa_getD_spec (N := listToNat (rsa_gPhi y)) (by omega) (Nat.size (listToNat (rsa_gPhi y)))
+    have hv := sampleUnitL_getD_spec (N := listToNat (rsa_gPhi y)) (by omega) (Nat.size (listToNat (rsa_gPhi y)))
       (rsaBlock.eval (pairFstD y).length) (rsaTrials.eval (pairFstD y).length)
       ((pairSndD y).drop ((PolyExpr.mul (.const 2) samplePrimeCoins).eval (pairFstD y).length))
     rw [rsa_gE, unitSampleStr_eq, listToNat_natToList (hv.1.trans (listToNat_lt_two_pow _)), hPhi,
@@ -1378,18 +1280,18 @@ remainder of `H.divMod` modulo the all-ones word `1^{2m}`; pair the numerals. -/
 theorem polyTimeComputable_rsaGenRaw (H : ArithmeticFP) : PolyTimeComputable rsaGenRaw := by
   -- `1^{max n 2}`: `1^n` unless `n ≤ 1` (`polyTimeComputable_lenLe` against `[true]`)
   have hle : PolyTimeComputable fun z => [decide ((NUPPT.inParam z).length ≤ 1)] := by
-    refine rsa_ptc_congr (rsa_comp polyTimeComputable_lenLe
+    refine PolyTimeComputable.congr (PolyTimeComputable.comp' polyTimeComputable_lenLe
       ((polyTimeComputable_const [true]).pairEncode NUPPT.polyTimeComputable_inParam)) fun z => ?_
     rw [pairFstD_pairEncode, pairSndD_pairEncode, List.length_singleton]
   have hun : PolyTimeComputable fun z => List.replicate (NUPPT.inParam z).length true := by
-    refine rsa_ptc_congr (rsa_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam)
+    refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam)
       fun z => ?_
     rw [PolyExpr.eval_var]
   have hu := polyTimeComputable_ite (p := fun z => decide ((NUPPT.inParam z).length ≤ 1))
     (f := fun _ => [true, true]) (g := fun z => List.replicate (NUPPT.inParam z).length true)
     hle (polyTimeComputable_const _) hun
-  have h := rsa_comp (rsa_genCore_poly H) (hu.pairEncode NUPPT.polyTimeComputable_inCoins)
-  refine rsa_ptc_congr h fun z => ?_
+  have h := PolyTimeComputable.comp' (rsa_genCore_poly H) (hu.pairEncode NUPPT.polyTimeComputable_inCoins)
+  refine PolyTimeComputable.congr h fun z => ?_
   have hm : (if decide ((NUPPT.inParam z).length ≤ 1) then [true, true]
       else List.replicate (NUPPT.inParam z).length true) =
       List.replicate (max (NUPPT.inParam z).length 2) true := by
@@ -1537,14 +1439,14 @@ private theorem rsa_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
 
 /-- At a generated index `⟨N, e⟩` the sampler's string decodes: `rsaDec` accepts
 `unitSampleStr` of the modulus numeral (it is the `2m`-bit numeral of a unit `v < N`,
-`rsa_getD_spec`). -/
+`sampleUnitL_getD_spec`). -/
 private theorem rsa_dec_unitSampleStr {m : ℕ} (P : RSAParams m) (n : ℕ) (r : List Bool) :
     ∃ x, rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n r) = some x := by
   have hw : pairFstD (rsaIndexOf m P) = natToList (2 * m) P.N := by
     rw [rsaIndexOf, pairFstD_pairEncode]
   have hN : listToNat (natToList (2 * m) P.N) = P.N := listToNat_natToList P.N_lt
   have hpos : 0 < P.N := NeZero.pos (P.z.p * P.z.q)
-  have hv := rsa_getD_spec hpos (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r
+  have hv := sampleUnitL_getD_spec hpos (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r
   set v := (sampleUnitL P.N (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r).getD (1 % P.N)
   have hval : listToNat (natToList (2 * m) v) = v := listToNat_natToList (hv.1.trans P.N_lt)
   have hM := rsaMod_indexOf m P
@@ -1564,7 +1466,7 @@ evaluator clause.
 **Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`, `rsaSampleRaw`,
 `unitSampleStr`, `rsaGen_runAt`), case on `sampleUnitL`; `rsaDec`'s test is discharged by
 `length_natToList`, `listToNat_natToList` (`v < N < 2^{2m}`), `sampleUnitL_spec` resp. the
-default `1 % N` (`rsa_getD_spec`, `rsa_dec_unitSampleStr`); the decoded unit `x` re-encodes to the
+default `1 % N` (`sampleUnitL_getD_spec`, `rsa_dec_unitSampleStr`); the decoded unit `x` re-encodes to the
 sampler's string (`rsaEnc_of_rsaDec`), so `rsaEval_spec` applies. -/
 theorem rsaSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
     (s : (rsaSampler H).Coins n) :
@@ -2385,60 +2287,6 @@ def rsaFromFactorRaw (A : NUPPT) (z : List Bool) : List Bool :=
 
 /-! ### `A'` as a string computation (helpers of `polyTimeComputable_rsaFromFactorRaw`) -/
 
-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). This is
-the fold identity of `listToNat` (the private `foldl_bits_eq` of `Asymptotic/Sampling.lean`,
-and the discrete-log fill's private `dla_listToNat_append`). -/
-private theorem rsa_listToNat_append (a b : List Bool) :
-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
-  have key : ∀ (l : List Bool) (acc : ℕ),
-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
-    intro l
-    induction l with
-    | nil => intro acc; simp
-    | cons c l ih =>
-      intro acc
-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
-      ring
-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
-
-/-- Leading zeros do not change the number read: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
-private theorem rsa_listToNat_zeros_append (k : ℕ) (w : List Bool) :
-    listToNat (natToList k 0 ++ w) = listToNat w := by
-  rw [rsa_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
-
-/-- **Width normalization by truncation**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`, the low `W` bits
-(the discrete-log fill's private `dla_drop_natToList_zero_append`, re-proved). -/
-private theorem rsa_drop_zeros_append (W : ℕ) (b : List Bool) :
-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
-  set w := natToList W 0 ++ b with hw
-  have hlen : (w.drop b.length).length = W := by
-    rw [List.length_drop, hw, List.length_append, length_natToList]
-    omega
-  have hval : listToNat w = listToNat b := rsa_listToNat_zeros_append W b
-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
-    conv_lhs => rw [← List.take_append_drop b.length w]
-    rw [rsa_listToNat_append, hlen]
-  have hlt := listToNat_lt_two_pow (w.drop b.length)
-  rw [hlen] at hlt
-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
-    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
-  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
-    have h := natToList_length_listToNat (natToList W N)
-    rw [length_natToList, listToNat_natToList_eq_mod] at h
-    exact h.symm
-  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
-
-/-- `subStr ⟨a, a⟩` is the `|a|`-bit numeral of `0`. -/
-private theorem rsa_subStr_self (a : List Bool) : subStr (pairEncode a a) = natToList a.length 0 := by
-  rw [subStr_pairEncode, Nat.sub_self]
-
-/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1`. -/
-private theorem rsa_val_inv_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
-  show (Int.sign (e : ℤ)).natAbs ≤ 1
-  rw [Int.natAbs_sign]
-  split_ifs <;> omega
-
 /-- The answer of `A` on `⟨1^n, N⟩` (coins and advice of the outer input). -/
 private def rsa_fS (A : NUPPT) (z : List Bool) : List Bool :=
   A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
@@ -2487,7 +2335,7 @@ private def rsa_fOut (A : NUPPT) (z : List Bool) : List Bool :=
 `H.mul`, `H.le`, `H.sub`, `H.xgcd`, `H.modExp`, `polyTimeComputable_pairDropPoly`).
 
 **Proof sketch.** Each word is one bundle field applied to pairs of earlier words, in applied
-form (`rsa_comp`) and folded into its definition: the answer of `A` on the re-laid-out input
+form (`PolyTimeComputable.comp'`) and folded into its definition: the answer of `A` on the re-laid-out input
 (`NUPPT.polyTimeComputable_layout`), the cofactor (`H.divMod`), the product (`H.mul`) and the
 test (two `H.le`, `polyTimeComputable_and`), `Φ` (`H.sub`, `H.mul`, a constant prefix), `d`
 (`H.xgcd`), `y^d mod N` (`H.modExp`, with the zero prefix `H.sub ⟨1y, 1y⟩`), and the `2n`-bit
@@ -2495,51 +2343,51 @@ truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDro
 `polyTimeComputable_ite` selects the output. -/
 private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rsa_fOut A) := by
   have hN : PolyTimeComputable fun z => pairFstD (NUPPT.inArg z) :=
-    rsa_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
   have he : PolyTimeComputable fun z => pairFstD (pairSndD (NUPPT.inArg z)) :=
-    rsa_comp polyTimeComputable_pairFstD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+    PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
   have hy : PolyTimeComputable fun z => pairSndD (pairSndD (NUPPT.inArg z)) :=
-    rsa_comp polyTimeComputable_pairSndD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
   have hS : PolyTimeComputable (rsa_fS A) := by
-    have h := rsa_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+    have h := PolyTimeComputable.comp' A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
       NUPPT.polyTimeComputable_inParam hN NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
     unfold rsa_fS
     exact h
   have hQ : PolyTimeComputable (rsa_fQ A) := by
-    have h := rsa_comp polyTimeComputable_pairFstD (rsa_comp H.divMod (hN.pairEncode hS))
+    have h := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' H.divMod (hN.pairEncode hS))
     unfold rsa_fQ
     exact h
-  have hM := rsa_comp H.mul (hS.pairEncode hQ)
+  have hM := PolyTimeComputable.comp' H.mul (hS.pairEncode hQ)
   have hT : PolyTimeComputable fun z => [rsa_fTest A z] := by
     have h := polyTimeComputable_and
       (p := fun z => decide (listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z))) ≤
         listToNat (pairFstD (NUPPT.inArg z))))
       (q := fun z => decide (listToNat (pairFstD (NUPPT.inArg z)) ≤
         listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z)))))
-      (rsa_le_poly H hM hN) (rsa_le_poly H hN hM)
+      (H.le_poly hM hN) (H.le_poly hN hM)
     unfold rsa_fTest
     exact h
   have hPhi : PolyTimeComputable (rsa_fPhi A) := by
-    have h1 := rsa_comp H.sub (hS.pairEncode (polyTimeComputable_const [true]))
-    have h2 := rsa_comp H.sub (hQ.pairEncode (polyTimeComputable_const [true]))
-    have h0 := rsa_comp H.sub ((polyTimeComputable_const [true]).pairEncode
+    have h1 := PolyTimeComputable.comp' H.sub (hS.pairEncode (polyTimeComputable_const [true]))
+    have h2 := PolyTimeComputable.comp' H.sub (hQ.pairEncode (polyTimeComputable_const [true]))
+    have h0 := PolyTimeComputable.comp' H.sub ((polyTimeComputable_const [true]).pairEncode
       (polyTimeComputable_const [true]))
-    have h := h0.append (rsa_comp H.mul (h1.pairEncode h2))
+    have h := h0.append (PolyTimeComputable.comp' H.mul (h1.pairEncode h2))
     unfold rsa_fPhi
     exact h
   have hD : PolyTimeComputable (rsa_fD A) := by
-    have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.xgcd (he.pairEncode hPhi))
+    have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.xgcd (he.pairEncode hPhi))
     unfold rsa_fD
     exact h
   have hV : PolyTimeComputable (rsa_fV A) := by
     have h1y := (polyTimeComputable_prepend [true]).comp hy
-    have hz := rsa_comp H.sub (h1y.pairEncode h1y)
-    have h := rsa_comp H.modExp (hy.pairEncode (hD.pairEncode (hz.append hN)))
+    have hz := PolyTimeComputable.comp' H.sub (h1y.pairEncode h1y)
+    have h := PolyTimeComputable.comp' H.modExp (hy.pairEncode (hD.pairEncode (hz.append hN)))
     unfold rsa_fV
     exact h
-  have hO := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) NUPPT.polyTimeComputable_inParam
-  have hZ := rsa_comp H.sub (hO.pairEncode hO)
-  have hW := rsa_comp (polyTimeComputable_pairDropPoly .var) (hV.pairEncode (hZ.append hV))
+  have hO := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) NUPPT.polyTimeComputable_inParam
+  have hZ := PolyTimeComputable.comp' H.sub (hO.pairEncode hO)
+  have hW := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var) (hV.pairEncode (hZ.append hV))
   have h := polyTimeComputable_ite (p := rsa_fTest A) hT hW (polyTimeComputable_const [])
   unfold rsa_fOut
   exact h
@@ -2548,12 +2396,12 @@ private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputabl
 
 **Proof sketch.** With `s = ⟦p'⟧`, `N`, `e`, `y` read from the input: the cofactor word reads as
 `N / s` (`divModStr_pairEncode`, `N / s ≤ N`), so the test is `s (N / s) = N`; the word of `Φ`
-reads as `Φ = (s − 1)(N / s − 1)` (leading zero, `listToNat_subStr`, `rsa_listToNat_mulStr`); the
+reads as `Φ = (s − 1)(N / s − 1)` (leading zero, `listToNat_subStr`, `listToNat_mulStr`); the
 word of `d` reads as `d = (e : Z_Φ)⁻¹.val` exactly (`xgcdStr_pairEncode`; `d < Φ` if `Φ ≠ 0`,
-and `d ≤ 1` in `Z_0 = ℤ`, `rsa_val_inv_zero_le`); `modExpStr` at the modulus word with
+and `d ≤ 1` in `Z_0 = ℤ`, `val_inv_natCast_zmod_zero_le`); `modExpStr` at the modulus word with
 `|y| + 1` leading zeros reads as `y^d mod N` exactly (`y^d mod N < N` if `N ≠ 0`; if `N = 0` then
 `Φ = 0`, `d ≤ 1` and `y^d < 2^{|y| + 1}`); and the truncation is the `2n`-bit numeral
-(`rsa_drop_zeros_append`). -/
+(`natToList_zero_append_drop`). -/
 private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFromFactorRaw A z := by
   unfold rsa_fOut rsa_fTest rsa_fV rsa_fD rsa_fPhi rsa_fQ rsaFromFactorRaw rsaFromFactorStep
   rw [show A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
@@ -2569,7 +2417,7 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
       listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow Nw))]
   have hprod : listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) =
       listToNat S * (listToNat Nw / listToNat S) := by
-    rw [rsa_listToNat_mulStr, hQ]
+    rw [listToNat_mulStr, hQ]
   have htest : (decide (listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) ≤
         listToNat Nw) && decide (listToNat Nw ≤
         listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))))) =
@@ -2591,13 +2439,13 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
       mulStr (pairEncode (subStr (pairEncode S [true]))
         (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true])))) =
       (listToNat S - 1) * (listToNat Nw / listToNat S - 1) := by
-    rw [rsa_subStr_self, rsa_listToNat_zeros_append, rsa_listToNat_mulStr, listToNat_subStr,
-      listToNat_subStr, rsa_listToNat_one, hQ]
+    rw [subStr_self, listToNat_natToList_zero_append, listToNat_mulStr, listToNat_subStr,
+      listToNat_subStr, listToNat_singleton_true, hQ]
   set Φw := subStr (pairEncode [true] [true]) ++
       mulStr (pairEncode (subStr (pairEncode S [true]))
         (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true]))) with hΦw
   have hΦlen : 1 ≤ Φw.length := by
-    rw [hΦw, List.length_append, rsa_subStr_self, length_natToList, List.length_singleton]
+    rw [hΦw, List.length_append, subStr_self, length_natToList, List.length_singleton]
     omega
   have hD : listToNat (pairSndD (xgcdStr (pairEncode ew Φw))) =
       ((listToNat ew : ZMod ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)))⁻¹).val := by
@@ -2605,26 +2453,26 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
     apply listToNat_natToList
     by_cases hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0
     · rw [hΦ]
-      calc _ ≤ 1 := rsa_val_inv_zero_le _
+      calc _ ≤ 1 := val_inv_natCast_zmod_zero_le _
         _ < 2 ^ Φw.length := Nat.one_lt_two_pow (by omega)
     · haveI : NeZero ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)) := ⟨hΦ⟩
       exact (ZMod.val_lt _).trans (hPhi ▸ listToNat_lt_two_pow Φw)
   have hNw : listToNat (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw) = listToNat Nw := by
-    rw [rsa_subStr_self, rsa_listToNat_zeros_append]
+    rw [subStr_self, listToNat_natToList_zero_append]
   have hV : listToNat (modExpStr (pairEncode yw (pairEncode (pairSndD (xgcdStr (pairEncode ew Φw)))
       (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw)))) =
       listToNat yw ^ ((listToNat ew : ZMod ((listToNat S - 1) *
         (listToNat Nw / listToNat S - 1)))⁻¹).val % listToNat Nw := by
     rw [modExpStr_pairEncode, hD, hNw]
     apply listToNat_natToList
-    rw [List.length_append, rsa_subStr_self, length_natToList, List.length_append,
+    rw [List.length_append, subStr_self, length_natToList, List.length_append,
       List.length_singleton]
     rcases Nat.eq_zero_or_pos (listToNat Nw) with h0 | h0
     · -- `N = 0`: then `Φ = 0`, `d ≤ 1` and `y^d ≤ max 1 y < 2^{|y| + 1}`
       have hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0 := by
         rw [h0, Nat.zero_div, Nat.zero_sub, mul_zero]
       rw [hΦ, h0, Nat.mod_zero]
-      have hd := rsa_val_inv_zero_le (listToNat ew)
+      have hd := val_inv_natCast_zmod_zero_le (listToNat ew)
       have hyl := listToNat_lt_two_pow yw
       have h2 : 2 ^ (1 + yw.length) ≤ 2 ^ (1 + yw.length + Nw.length) :=
         Nat.pow_le_pow_right (by norm_num) (by omega)
@@ -2639,8 +2487,8 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
         _ < 2 ^ Nw.length := listToNat_lt_two_pow Nw
         _ ≤ _ := Nat.pow_le_pow_right (by norm_num) (by omega)
   rw [pairSndD_pairEncode, pairFstD_pairEncode, PolyExpr.eval_var,
-    rsa_subStr_self (List.replicate _ true), List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
-    rsa_drop_zeros_append, hV]
+    subStr_self (List.replicate _ true), List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+    natToList_zero_append_drop, hV]
 
 /-- **`A'` is polynomial-time** [PS10, Theorem 55.2, "the running time of `A'` is essentially
 the running time of `A` plus `O(log³ n)`"] given the arithmetic bundle.
@@ -2658,7 +2506,7 @@ the degenerate inputs `Φ = 0` (where `d ≤ 1`) and `N = 0` (where `y^d mod N =
 (`H.sub ⟨1^{2n}, 1^{2n}⟩`, `polyTimeComputable_pairDropPoly var`), and `polyTimeComputable_ite`
 selects it or `[]` by the test. The word computation equals `rsaFromFactorRaw A`
 (`rsa_fOut_eq`: `divModStr_pairEncode`, `xgcdStr_pairEncode`, `modExpStr_pairEncode`,
-`listToNat_subStr`, `rsa_drop_zeros_append`). -/
+`listToNat_subStr`, `natToList_zero_append_drop`). -/
 theorem polyTimeComputable_rsaFromFactorRaw (H : ArithmeticFP) (A : NUPPT) :
     PolyTimeComputable (rsaFromFactorRaw A) := by
   have h := rsa_fOut_poly H A

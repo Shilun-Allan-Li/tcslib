@@ -1,6 +1,8 @@
 # Gate 08, round 2: H15 registration and S1 audit repairs
 
-**Preparation complete for the selected Codex follow-up; user dispatch is pending.**
+**Closing update, 2026-11-06 PST: Gate 08 CLOSED, round 2 PASS (0 blockers/0 majors/0 minors).**
+See `resolutions-r2.md`; the frozen issued pack is at records
+`11daf06237ab298fbe8dfdc27b382bd7bd741c08`. The scope below records the issued audit.
 
 **Selected worker: Codex (user).** Return **`gate08-shared-r2-findings.md` as a Markdown file
 in the audit chat**; a ZIP may be used for additional required evidence. Do not push to GitHub.

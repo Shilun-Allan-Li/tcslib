@@ -8,6 +8,7 @@ import TCSlib.Cryptography.OneWayFunctions.Basic
 import TCSlib.Cryptography.HardcoreBit.Basic
 import Mathlib.Data.List.FinRange
 import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Data.Nat.Size
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -84,6 +85,10 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
   conditioned on success, made total by a default, is close to uniform within its failure
   probability (C4 in abstract form).
 * `TCSlib.Cryptography.one_sub_inv_pow_le_half` — `(1 - 1/m)^m ≤ 1/2`.
+* `TCSlib.Cryptography.statClose_one`, `TCSlib.Cryptography.abs_uexp_sub_le`,
+  `TCSlib.Cryptography.foldl_bits_eq`, `TCSlib.Cryptography.two_pow_size_le_two_mul` — glue:
+  any two samplers are `1`-close, averages of pointwise close functions are close, the binary
+  fold with an accumulator, and `2^{size m} ≤ 2m`.
 
 ## References
 
@@ -200,11 +205,11 @@ theorem StatClose.comp_pushesUniform {Ω : Type*} [Fintype Ω] {X : σ → γ} {
   rw [hπ.uprob_eq (fun s => T (X s))]
   exact h T
 
-/-- Averages of pointwise `c`-close functions are `c`-close (`0 ≤ c` covers the empty type). -/
-private theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+/-- **Averages of pointwise `c`-close functions are `c`-close**: for `0 ≤ c` and
+`|f a − g a| ≤ c` for all `a`, `|uexp f − uexp g| ≤ c` (`0 ≤ c` covers the empty type). -/
+theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
     (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
-  rw [← HardcoreBit.uexp_sub]
-  unfold uexp
+  rw [← HardcoreBit.uexp_sub, uexp_def]
   rcases Nat.eq_zero_or_pos (Fintype.card α) with h0 | hpos
   · rw [h0]
     simpa using hc
@@ -213,6 +218,14 @@ private theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c 
     calc |∑ a, (f a - g a)| ≤ ∑ a, |f a - g a| := Finset.abs_sum_le_sum_abs _ _
       _ ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
       _ = c * Fintype.card α := by rw [sum_const, card_univ, nsmul_eq_mul, mul_comm]
+
+/-- **Any two samplers are `1`-close**: `StatClose X Y 1`, since both probabilities of every
+test lie in `[0, 1]` (`statClose_iff`, `uprob_nonneg`, `uprob_le_one`). -/
+theorem statClose_one (X : σ → γ) (Y : τ → γ) : StatClose X Y 1 :=
+  (statClose_iff X Y 1).2 fun T => by
+    rw [abs_le]
+    constructor <;> linarith [uprob_nonneg (fun s => T (X s)), uprob_le_one (fun s => T (X s)),
+      uprob_nonneg (fun t => T (Y t)), uprob_le_one (fun t => T (Y t))]
 
 /-- The statistical-switch lemma (C10 of the Chapter 2 inventory): replacing a sampler by a
 `δ`-close one changes the success probability of any experiment that also uses independent
@@ -314,8 +327,10 @@ theorem pushesUniform_of_card_fiber_le {Ω γ : Type*} [Fintype Ω] [Fintype γ]
 def bitsToNat {k : ℕ} (b : Fin k → Bool) : ℕ :=
   (List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0
 
-/-- The digit fold with an arbitrary accumulator `a` contributes `a · 2^{|l|}`. -/
-private theorem foldl_bits_eq (l : List Bool) (a : ℕ) :
+/-- **The binary fold with an accumulator**: the fold of `listToNat` started at `a` is
+`a · 2^{|l|}` plus the fold started at `0`,
+`foldl (a ↦ c ↦ 2a + [c]) a l = a · 2^{|l|} + foldl (a ↦ c ↦ 2a + [c]) 0 l`. -/
+theorem foldl_bits_eq (l : List Bool) (a : ℕ) :
     l.foldl (fun a c => 2 * a + (if c then 1 else 0)) a =
       a * 2 ^ l.length + l.foldl (fun a c => 2 * a + (if c then 1 else 0)) 0 := by
   induction l generalizing a with
@@ -386,6 +401,15 @@ theorem uprob_bitsToNat_lt {m k : ℕ} (hk : m ≤ 2 ^ k) :
     Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_fin]
   push_cast
   rfl
+
+/-- **A positive number is at least half the next power of two**: for `0 < m`,
+`2 ^ Nat.size m ≤ 2 m` (the top bit of `m` is bit `size m − 1`: `Nat.lt_size`, `Nat.size_pos`). -/
+theorem two_pow_size_le_two_mul {m : ℕ} (hm : 0 < m) : 2 ^ Nat.size m ≤ 2 * m := by
+  have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
+  have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
+  calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
+        rw [← pow_succ', Nat.sub_add_cancel hpos]
+    _ ≤ 2 * m := Nat.mul_le_mul_left 2 h1
 
 /-- One rejection trial: `k` bits read as a number, accepted iff below `m`. -/
 def uniformFromBits (m k : ℕ) (b : Fin k → Bool) : Option (Fin m) :=

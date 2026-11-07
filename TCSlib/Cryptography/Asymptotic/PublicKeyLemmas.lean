@@ -38,8 +38,9 @@ reductions encrypt the other positions of the tuple themselves under the public 
   `distAdv_multi_le_sum`), the samplers `singleDist`/`multiDist` and the single-machine hybrid
   bound `exists_hybridBound`;
 * glue: `acceptProb_distinguisherL_coins` (a machine's acceptance probability through a
-  bijection of its coins), `abs_uexp_sub_le` (averages of pointwise close functions) and the
-  averaging identities `uexp_half_add`/`uexp_half_sub` of the prediction lemma.
+  bijection of its coins) and the averaging identities `uexp_half_add`/`uexp_half_sub` of the
+  prediction lemma (averages of pointwise close functions are `abs_uexp_sub_le` of
+  `Asymptotic/Sampling.lean`).
 
 ## Main definitions
 
@@ -64,8 +65,8 @@ reductions encrypt the other positions of the tuple themselves under the public 
 * `TCSlib.Cryptography.exists_hybridMachine`, `exists_hybridBound` — the hybrid machine of the
   single ⇒ multi-message and bitwise theorems and the resulting bound `K(n) · ε`.
 * `TCSlib.Cryptography.tdpPredictor_runAtL`, `uprob_tdpPredictor` — the predictor machine.
-* `TCSlib.Cryptography.acceptProb_distinguisherL_coins`, `abs_uexp_sub_le`, `uexp_half_add`,
-  `uexp_half_sub`, `ofFn_fin_one` — glue.
+* `TCSlib.Cryptography.acceptProb_distinguisherL_coins`, `uexp_half_add`, `uexp_half_sub`,
+  `ofFn_fin_one` — glue.
 
 ## References
 
@@ -836,21 +837,5 @@ theorem uexp_half_sub {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ)
     funext r; ring
   rw [e, uexp_half_add]
   ring
-
-/-- Averages of pointwise `c`-close functions are `c`-close (`0 ≤ c` covers the empty type;
-copy of the private lemma of `TCSlib.Cryptography.Asymptotic.Sampling`). -/
-theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
-    (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
-  rw [← HardcoreBit.uexp_sub]
-  unfold uexp
-  rcases Nat.eq_zero_or_pos (Fintype.card α) with h0 | hpos
-  · rw [h0]
-    simpa using hc
-  · have hc' : (0 : ℝ) < Fintype.card α := by exact_mod_cast hpos
-    rw [abs_div, abs_of_pos hc', div_le_iff₀ hc']
-    calc |∑ a, (f a - g a)| ≤ ∑ a, |f a - g a| := Finset.abs_sum_le_sum_abs _ _
-      _ ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
-      _ = c * Fintype.card α := by
-        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
 
 end TCSlib.Cryptography
