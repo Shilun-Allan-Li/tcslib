@@ -12,6 +12,11 @@ for these resolutions. #195 is clear for the user to merge at that head.
 - Pinned pack records: `c39f0e118f1c0f89325cbc828401a5c024bb36d1`; staged bundle: 66 sections,
   SHA-256 `d5b1fc8ff952b05ee4086494970c537d250f42091af6979989c8bc63e21e550b`.
 - GitHub was checked live: #195 is open and its head equals the audited head.
+- Archived after the records push as `archive/findings/gate04-s2b-r5-findings.md`, exchange
+  commit `5fd7ecd68e4ab3a043f4899536127b1df00fda42`; its committed bytes match the filed findings. Only that archive
+  path was included in the exchange commit.
+- #195's description now records gate closure and links these findings/resolutions (verified
+  live after the local GitHub CLI update; the connector itself lacked write permission).
 
 | Finding | Resolution |
 |---|---|
