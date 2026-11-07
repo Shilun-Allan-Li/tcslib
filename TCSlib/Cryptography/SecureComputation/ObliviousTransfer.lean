@@ -279,9 +279,8 @@ theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool
     fun j => rB₀ (Fin.cast hB.symm j)
   have hAr : List.ofFn rA₀ = List.ofFn rA := List.ofFn_congr hA rA₀
   have hBr : List.ofFn rB₀ = List.ofFn rB := List.ofFn_congr hB rB₀
-  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, otProtocol, exec_succ, exec_zero,
-    otSender, otReceiver]
-  rw [hAr, hBr]
+  rw [Protocol.outV_eq, Protocol.transcriptWith_eq, hAr, hBr]
+  simp [otProtocol, exec_succ, exec_zero, otSender, otReceiver]
   have hg : T.gen.runAtL x.length [] (List.ofFn fun i => rA i) =
       T.gen.runAt x.length [] rA :=
     (T.gen.runAt_eq x.length [] rA).symm
@@ -653,8 +652,9 @@ permutations with an enhanced hard-core predicate evaluated on canonical encodin
 polynomial-time `H`. Sampler canonicity follows from the collection contract. -/
 theorem otProtocol_hbcSecure (hT : T.OneWay) (hEHC : EnhancedHardCore T h) :
     HBCSecure (otProtocol T H) otFunctionality :=
-  ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
-    otProtocol_simulators T H hH henc hT hEHC⟩
+  (hbcSecure_iff (otProtocol T H) otFunctionality).mpr
+    ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
+      otProtocol_simulators T H hH henc hT hEHC⟩
 
 end Security
 

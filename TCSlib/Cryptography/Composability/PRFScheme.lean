@@ -56,16 +56,24 @@ noncomputable def prfFixedScheme : FixedLengthScheme where
   toPrivateKeyScheme := prfScheme F E hE hFE
   ctLen := .add (.mul (.const 3) .var) (.const 2)
   enc_length := by
+    simp only [prfScheme_gen, prfScheme_enc]
     intro n rg m r
-    show ((NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) .var).runAt n
-      (pairEncode ((NUPPT.ofPolyTimeUniform polyTimeComputable_pairSndD .var).runAt n [] rg)
-        (List.ofFn m)) r).length = _
-    rw [runAt_coinKey, runAt_prfEnc hE]
-    have h : E (pairEncode (List.ofFn rg) (List.ofFn r)) = List.ofFn (F n rg r) := hFE n rg r
-    rw [h, length_pairEncode]
-    have hc : (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfEncFun hE) PolyExpr.var).coinLen n
-        = n := rfl
-    simp
+    have hlen : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f),
+        (NUPPT.ofPolyTimeUniform hf .var).coinLen n = n :=
+      fun {f} hf => (NUPPT.coinLen_eq (NUPPT.ofPolyTimeUniform hf .var) n).trans
+        ((congrArg (fun p : PolyExpr => p.eval n)
+          (NUPPT.coins_ofPolyTimeUniform hf .var)).trans (PolyExpr.eval_var n))
+    let k : Fin n → Bool := fun j =>
+      rg (Fin.cast (hlen polyTimeComputable_pairSndD).symm j)
+    let x : Fin n → Bool := fun j =>
+      r (Fin.cast (hlen (polyTimeComputable_prfEncFun hE)).symm j)
+    have hk : List.ofFn rg = List.ofFn k :=
+      List.ofFn_congr (hlen polyTimeComputable_pairSndD) rg
+    have hx : List.ofFn r = List.ofFn x :=
+      List.ofFn_congr (hlen (polyTimeComputable_prfEncFun hE)) r
+    rw [runAt_coinKey, runAt_prfEnc hE, hk, hx, hFE, length_pairEncode]
+    simp only [List.length_zipWith, List.length_ofFn, Nat.min_self, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
     omega
 
 attribute [simps (config := { isSimp := false }) toPrivateKeyScheme ctLen] prfFixedScheme
@@ -142,8 +150,10 @@ theorem prfFixedScheme_not_cca2 :
 to `1` at every positive `n` is not negligible (Claim 169.a). -/
 theorem not_prfFixedScheme_cca2 : ¬ (prfFixedScheme F E hE hFE).INDSecure .cca2 := by
   intro h
+  rw [FixedLengthScheme.INDSecure_iff] at h
   obtain ⟨A, q, hA⟩ := prfFixedScheme_not_cca2 F E hE hFE
   obtain ⟨ε, hε, hle⟩ := h A q
+  rw [negligible_iff] at hε
   obtain ⟨n₀, hn₀⟩ := hε 0
   have h1 := hn₀ (n₀ + 1) (by omega)
   have h2 := hle (n₀ + 1)

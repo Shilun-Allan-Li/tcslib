@@ -104,8 +104,8 @@ theorem lastBit_poly : PolyTimeComputable fun w =>
 half loop (`halfLoop_poly`), the coin block of the current iteration (`giSlice_poly`), the
 sampled permutation (`sampleStr_poly`), the graph message by `relabel_poly` and the reply by
 `mulInvStr_poly` or the identity according to the first bit of the last message
-(`lastMsg_poly`); the equation with `giProverRep.next` is `halfCount_encodeMsgs`,
-`halfRem_nil_iff` and `lastMsg_encodeMsgs`. -/
+(`lastMsg_poly`); the equation with `giProverRep.next` first reads `giProverRep_next`,
+then uses `halfCount_encodeMsgs`, `halfRem_nil_iff` and `lastMsg_encodeMsgs`. -/
 theorem giProverRep_efficient : giProverRep.Efficient := by
   have hπ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w))
       (coinBlock (giBlock.eval (NUPPT.inParam w).length) (halfCount (argM w)) (NUPPT.inCoins w)) :=
@@ -117,13 +117,12 @@ theorem giProverRep_efficient : giProverRep.Efficient := by
   have hodd := polyTimeComputable_ite lastBit_poly hmul hπ
   refine efficient_of_polyTime giProverRep (polyTimeComputable_ite even_poly heven hodd) ?_
   intro x z r hist
-  show (if hist.length % 2 = 0 then _ else _) = _
+  rw [giProverRep_next]
   simp only [argM_ilayout, halfCount_encodeMsgs, halfRem_nil_iff, inParam_ilayout, List.length_replicate,
     inCoins_ilayout, argX_ilayout, argZ_ilayout, vcount_ilayout, giBlock_eval, decide_eq_true_eq,
     lastMsg_encodeMsgs]
   by_cases hev : hist.length % 2 = 0
   · rw [if_pos hev, if_pos hev, relabelAt_replicate, sampleStr_eq, decPerm_encPerm]
-    rfl
   · rw [if_neg hev, if_neg hev, sampleStr_eq, mulInvStr_encPerm]
     split_ifs <;> rfl
 

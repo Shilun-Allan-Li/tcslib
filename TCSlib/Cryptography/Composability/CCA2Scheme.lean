@@ -317,9 +317,13 @@ noncomputable def ccaScheme : FixedLengthScheme where
   dec_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   correct := by
     intro n m rg re rd
-    have hρ : (List.ofFn rg).length = 3 * n := by simp; rfl
+    have hρ : (List.ofFn rg).length = 3 * n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
     have hk₁ : ((List.ofFn rg).take n).length = n := by simp [hρ]; omega
-    have hr : (List.ofFn re).length = n := by simp; rfl
+    have hr : (List.ofFn re).length = n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_var]
     have hp := length_eval_of_length F E hFE hk₁ hr
     have hc₁ : (List.zipWith xor (List.ofFn m) (E (pairEncode ((List.ofFn rg).take n)
         (List.ofFn re)))).length = n := by simp [hp]
@@ -329,10 +333,14 @@ noncomputable def ccaScheme : FixedLengthScheme where
   enc_length := by
     intro n rg m r
     show ((ccaEnc hE).runAt n (pairEncode (ccaGen.runAt n [] rg) (List.ofFn m)) r).length = _
-    have hρ : (List.ofFn rg).length = 3 * n := by simp; rfl
+    have hρ : (List.ofFn rg).length = 3 * n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
     have hk₁ : ((List.ofFn rg).take n).length = n := by simp [hρ]; omega
     have hk₂ : ((List.ofFn rg).drop n).length = 2 * n := by simp [hρ]; omega
-    have hr : (List.ofFn r).length = n := by simp; rfl
+    have hr : (List.ofFn r).length = n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_var]
     have hp := length_eval_of_length F E hFE hk₁ hr
     have hc₁ : (List.zipWith xor (List.ofFn m) (E (pairEncode ((List.ofFn rg).take n)
         (List.ofFn r)))).length = n := by simp [hp]

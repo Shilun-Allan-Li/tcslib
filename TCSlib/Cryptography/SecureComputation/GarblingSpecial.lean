@@ -90,6 +90,7 @@ inner ciphertext has length `4n + 2`; the second evaluator provides the pad of l
 `n + (4n + 2)` required by the outer layer. Remove the outer layer, then the inner layer, and
 decode the original plaintext. Longer key lists are excluded by the correctness contract. -/
 theorem nestedSpecial_decCorrect (n : ℕ) : (nestedSpecial E₁ E₂ n).DecCorrect := by
+  rw [MultiEnc.decCorrect_iff]
   intro ks hks o r
   have hlen : ∀ v : Fin n → Bool, (List.ofFn v).length = n := fun v => List.length_ofFn
   match ks, hks with

@@ -242,7 +242,7 @@ theorem compose_exec_run {q : ℕ} (hq : q ≤ H.calls.eval x.length * ρ.rounds
       ((List.range q).map (H.slotFromB ρ x zA zB rA rB),
         (List.range q).map (H.slotFromA ρ x zA zB rA rB)) := by
   induction q with
-  | zero => rfl
+  | zero => simp only [Nat.mul_zero, exec_zero, List.range_zero, List.map_nil]
   | succ q ih =>
     have hq' : q < H.calls.eval x.length * ρ.rounds.eval x.length := by omega
     have hR : 0 < ρ.rounds.eval x.length := by
@@ -516,7 +516,9 @@ theorem compose_transcript :
           (H.slotFromA ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++ List.replicate H.lead [] ++
           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
             (H.main.rounds.eval x.length)).2) :=
-  H.compose_exec_rounds ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+  ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).trans
+    (Protocol.transcriptWith_eq (H.compose ρ) (H.compose ρ).P x zA zB r)).trans
+    (H.compose_exec_rounds ρ x zA zB (List.ofFn r.1) (List.ofFn r.2))
 
 /-- **Alice's view in `H.compose ρ`**: the common input, her input, her whole tape, and Bob's run
 messages followed by `main`'s messages to her. -/
@@ -526,9 +528,12 @@ theorem compose_viewP :
         (List.range (H.calls.eval x.length * ρ.rounds.eval x.length)).map
           (H.slotFromB ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++
           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
-            (H.main.rounds.eval x.length)).1⟩ := by
-  show (⟨x, zA, List.ofFn r.1, ((H.compose ρ).transcript x zA zB r).1⟩ : View) = _
-  rw [compose_transcript]
+            (H.main.rounds.eval x.length)).1⟩ :=
+  (Protocol.viewP_eq (H.compose ρ) x zA zB r).trans
+    (congrArg (fun t : List (List Bool) × List (List Bool) =>
+      (⟨x, zA, List.ofFn r.1, t.1⟩ : View))
+      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
+        (H.compose_transcript ρ x zA zB r)))
 
 /-- **Bob's view in `H.compose ρ`**: the common input, his input, his whole tape, and Alice's run
 messages, the leading filler and `main`'s messages to him. -/
@@ -538,9 +543,12 @@ theorem compose_viewV :
         (List.range (H.calls.eval x.length * ρ.rounds.eval x.length)).map
           (H.slotFromA ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)) ++ List.replicate H.lead [] ++
           (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
-            (H.main.rounds.eval x.length)).2⟩ := by
-  show (⟨x, zB, List.ofFn r.2, ((H.compose ρ).transcript x zA zB r).2⟩ : View) = _
-  rw [compose_transcript]
+            (H.main.rounds.eval x.length)).2⟩ :=
+  (Protocol.viewV_eq (H.compose ρ) x zA zB r).trans
+    (congrArg (fun t : List (List Bool) × List (List Bool) =>
+      (⟨x, zB, List.ofFn r.2, t.2⟩ : View))
+      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
+        (H.compose_transcript ρ x zA zB r)))
 
 /-- **Phase lemma (c), Alice's output** in terms of `Protocol.outP`: when `main` has at least one
 move, Alice's output in `H.compose ρ` is her `main`-output on `⟨zA, her honest answers⟩`, her
@@ -554,12 +562,14 @@ theorem compose_outP (hM : 0 < H.main.rounds.eval x.length) :
       H.main.P.next x (pairEncode zA (H.answersRealA ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)))
         ((List.ofFn r.1).take (H.main.P.coins.eval x.length))
         (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
-          (H.main.rounds.eval x.length)).1 := by
-  show (H.compose ρ).P.next x zA (List.ofFn r.1) (exec (H.compose ρ).P (H.compose ρ).V
-    (H.compose ρ).verifierFirst x zA zB (List.ofFn r.1) (List.ofFn r.2)
-    ((H.compose ρ).rounds.eval x.length)).1 = _
-  rw [compose_exec_rounds]
-  exact compose_P_next_main H ρ x zA zB _ _ fun _ => hM
+          (H.main.rounds.eval x.length)).1 :=
+  (Protocol.outP_eq (H.compose ρ) x zA zB r).trans
+    ((congrArg (fun t : List (List Bool) × List (List Bool) =>
+      (H.compose ρ).P.next x zA (List.ofFn r.1) t.1)
+      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
+        (H.compose_transcript ρ x zA zB r))).trans
+      (compose_P_next_main H ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+        (m := H.main.rounds.eval x.length) (fun _ => hM)))
 
 /-- **Phase lemma (c), Bob's output** in terms of `Protocol.outV`: when `main` has at least one
 move, Bob's output in `H.compose ρ` is his `main`-output on `⟨zB, his honest answers⟩`, his
@@ -573,12 +583,14 @@ theorem compose_outV (hM : 0 < H.main.rounds.eval x.length) :
       H.main.V.next x (pairEncode zB (H.answersRealB ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)))
         ((List.ofFn r.2).take (H.main.V.coins.eval x.length))
         (H.mainExec ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
-          (H.main.rounds.eval x.length)).2 := by
-  show (H.compose ρ).V.next x zB (List.ofFn r.2) (exec (H.compose ρ).P (H.compose ρ).V
-    (H.compose ρ).verifierFirst x zA zB (List.ofFn r.1) (List.ofFn r.2)
-    ((H.compose ρ).rounds.eval x.length)).2 = _
-  rw [compose_exec_rounds]
-  exact compose_V_next_main H ρ x zA zB _ _ fun _ => hM
+          (H.main.rounds.eval x.length)).2 :=
+  (Protocol.outV_eq (H.compose ρ) (H.compose ρ).P x zA zB r).trans
+    ((congrArg (fun t : List (List Bool) × List (List Bool) =>
+      (H.compose ρ).V.next x zB (List.ofFn r.2) t.2)
+      ((Protocol.transcript_eq_transcriptWith (H.compose ρ) x zA zB r).symm.trans
+        (H.compose_transcript ρ x zA zB r))).trans
+      (compose_V_next_main H ρ x zA zB (List.ofFn r.1) (List.ofFn r.2)
+        (m := H.main.rounds.eval x.length) (fun _ => hM)))
 
 end Outputs
 

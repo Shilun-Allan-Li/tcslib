@@ -167,7 +167,7 @@ theorem expectedErr_le_of_pacLearnsUnder {C : I → X → Bool} {m : ℕ}
   have h1 := FinDist.expect_le_add_of_le_one (((FinDist.uniform X).iid m).prod
     (FinDist.uniform ρ)) (f := fun b => err (FinDist.uniform X) (L (label (C i) b.1) b.2) (C i))
     (fun b => err_le_one _ _ _) hε
-  have h2 := h i
+  have h2 := (pacLearnsUnder_iff (FinDist.uniform X) C m L ε δ).mp h i
   rw [accuracyProb_eq] at h2
   have h3 := FinDist.probTrue_not (((FinDist.uniform X).iid m).prod (FinDist.uniform ρ))
     (fun b => decide (err (FinDist.uniform X) (L (label (C i) b.1) b.2) (C i) ≤ ε))

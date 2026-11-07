@@ -85,10 +85,16 @@ noncomputable def specialScheme : PrivateKeyScheme where
   correct := by
     intro n m rg re rd
     rw [runAt_coinKey, runAt_spEnc hE, runAt_spDec hE]
-    have hk : (List.ofFn rg).length = n := by rw [List.length_ofFn]; rfl
-    have hr : (List.ofFn re).length = n := by rw [List.length_ofFn]; rfl
+    have hk : (List.ofFn rg).length = n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_var]
+    have hr : (List.ofFn re).length = n := by
+      rw [List.length_ofFn, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTimeUniform,
+        PolyExpr.eval_var]
     have hp : (E (pairEncode (List.ofFn rg) (List.ofFn re))).length = n + n := by
-      rw [hGE n rg re, List.length_ofFn]
+      have hrg := (List.length_ofFn (f := rg)).symm.trans hk
+      have hre := (List.length_ofFn (f := re)).symm.trans hr
+      rw [List.ofFn_congr hrg rg, List.ofFn_congr hre re, hGE, List.length_ofFn]
     rw [spDecStr_spEncStr E hk (by simp) hr hp, Option.getD_some]
     exact decodeFin_ofFn m
 

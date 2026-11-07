@@ -126,13 +126,13 @@ theorem exists_mainExec_eq_transcript {F : Functionality} (n : ℕ) (x : Fin (F.
     (by rw [length_answersRealB, List.length_replicate])
   obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := H.main.P.coinLen (List.replicate n true).length)
     (l := rA.take (H.main.P.coins.eval (List.replicate n true).length))
-    (by rw [List.length_take]; exact Nat.min_eq_left hrA)
+    (by rw [Strategy.coinLen_eq, List.length_take]; exact Nat.min_eq_left hrA)
   obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := H.main.V.coinLen (List.replicate n true).length)
     (l := rB.take (H.main.V.coins.eval (List.replicate n true).length))
-    (by rw [List.length_take]; exact Nat.min_eq_left hrB)
+    (by rw [Strategy.coinLen_eq, List.length_take]; exact Nat.min_eq_left hrB)
   refine ⟨aA, aB, (tA, tB), ?_⟩
   rw [mainExec_eq, ← haA, ← haB, ← htA, ← htB]
-  rfl
+  rw [Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq]
 
 /-- **Run `j` is an execution of `ρ` on inputs of `G`'s lengths**: on common input `1^n`, for
 `j < calls(n)` and composed tapes of the right lengths, the honest run `j` is the transcript of
@@ -162,13 +162,17 @@ theorem exists_runExec_eq_transcript (n : ℕ) (zA zB : List Bool) {rA rB : List
     (by rw [H.runInputB_of_lt _ _ _ hj, List.length_ofFn, List.length_replicate])
   obtain ⟨tA, htA⟩ := exists_ofFn_eq (c := ρ.P.coinLen (List.replicate n true).length)
     (l := runTape (H.main.P.coins.eval (List.replicate n true).length)
-      (ρ.P.coins.eval (List.replicate n true).length) j rA) (length_runTape hrA hj)
+      (ρ.P.coins.eval (List.replicate n true).length) j rA)
+    ((length_runTape hrA hj).trans
+      (Strategy.coinLen_eq ρ.P (List.replicate n true).length).symm)
   obtain ⟨tB, htB⟩ := exists_ofFn_eq (c := ρ.V.coinLen (List.replicate n true).length)
     (l := runTape (H.main.V.coins.eval (List.replicate n true).length)
-      (ρ.V.coins.eval (List.replicate n true).length) j rB) (length_runTape hrB hj)
+      (ρ.V.coins.eval (List.replicate n true).length) j rB)
+    ((length_runTape hrB hj).trans
+      (Strategy.coinLen_eq ρ.V (List.replicate n true).length).symm)
   refine ⟨xA, yB, (tA, tB), ?_⟩
   rw [runExec_eq, ← hxA, ← hyB, ← htA, ← htB]
-  rfl
+  rw [Protocol.transcript_eq_transcriptWith, Protocol.transcriptWith_eq]
 
 /-- `ρ`'s move `p < R` of the honest run `j` is a message of that run's transcript. -/
 theorem runMsg_mem (x zA zB rA rB : List Bool) (j : ℕ) {p : ℕ}
@@ -201,20 +205,20 @@ theorem compose_msg_bound {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyT
       ∀ msg ∈ ((H.compose ρ).transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
           ((H.compose ρ).transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
         msg.length ≤ B.eval n := by
-  obtain ⟨-, -, -, -, B₁, hB₁⟩ := hH
-  obtain ⟨-, -, B₂, hB₂⟩ := hρ
+  obtain ⟨-, -, -, -, B₁, hB₁⟩ := (HybridProtocol.polyTime_iff H F).mp hH
+  obtain ⟨-, -, B₂, hB₂⟩ := (Functionality.polyTime_iff G ρ).mp hρ
   refine ⟨.add B₁ B₂, fun n x y r msg hmsg => ?_⟩
   rw [PolyExpr.eval_add]
   have hrA : (List.ofFn r.1).length = H.main.P.coins.eval (List.replicate n true).length +
       H.calls.eval (List.replicate n true).length *
         ρ.P.coins.eval (List.replicate n true).length := by
-    rw [List.length_ofFn]
-    rfl
+    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
+      H.compose_P_coinLen ρ (List.replicate n true).length
   have hrB : (List.ofFn r.2).length = H.main.V.coins.eval (List.replicate n true).length +
       H.calls.eval (List.replicate n true).length *
         ρ.V.coins.eval (List.replicate n true).length := by
-    rw [List.length_ofFn]
-    rfl
+    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
+      H.compose_V_coinLen ρ (List.replicate n true).length
   -- a message of an honest run
   have hrun : ∀ j p, j < H.calls.eval (List.replicate n true).length →
       p < ρ.rounds.eval (List.replicate n true).length →
@@ -303,7 +307,12 @@ message bound uses that `H.PolyTime` bounds `main`'s messages for **any** answer
 lengths, since `main` runs on `ρ`'s outputs. -/
 theorem polyTime_compose {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyTime ρ) :
     F.PolyTime (H.compose ρ) :=
-  ⟨H.composeP_efficient ρ hH hρ, H.composeV_efficient ρ hH hρ, H.compose_msg_bound ρ hH hρ⟩
+  (Functionality.polyTime_iff F (H.compose ρ)).mpr
+    ⟨Eq.mpr (congrArg Strategy.Efficient (H.compose_P ρ))
+        (H.composeP_efficient ρ hH hρ),
+      Eq.mpr (congrArg Strategy.Efficient (H.compose_V ρ))
+        (H.composeV_efficient ρ hH hρ),
+      H.compose_msg_bound ρ hH hρ⟩
 
 end Efficiency
 

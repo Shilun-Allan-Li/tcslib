@@ -363,7 +363,8 @@ theorem garbledValues_getD (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : F
   have hlenA : (List.ofFn x).length = n := List.length_ofFn
   refine runWith_sim DAGGate.eval (fun v g vs => evalGate M (tableAt M Cc s) v g vs)
     (keyAt Cc s) false default Cc.gates (List.ofFn x) (inputKeys Cc s x)
-    (by simp [inputKeys]) ?_ ?_ ?_ v (by rw [hlenA]; exact hv)
+    (by simp [inputKeys]) ?_ ?_ ?_ v
+    (by simpa only [hlenA, DAGCircuit.size_eq] using hv)
   · intro w hw
     rw [hlenA] at hw
     have h1 : w < (inputKeys Cc s x).length := by simp [inputKeys, hw]
@@ -390,7 +391,10 @@ theorem garbledValues_getD (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : F
 key of `C(x)` on the output wire. -/
 theorem garbledOutput_eq (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : Fin n → Bool) :
     garbledOutput M Cc s x = keyAt Cc s Cc.output (Cc.eval x) :=
-  garbledValues_getD M Cc s hgood x Cc.output Cc.output_lt
+  (garbledOutput_eq_getD M Cc s x).trans
+    ((garbledValues_getD M Cc s hgood x Cc.output
+      ((DAGCircuit.size_eq Cc).symm ▸ Cc.output_lt)).trans
+      (congrArg (keyAt Cc s Cc.output) (DAGCircuit.eval_eq Cc x).symm))
 
 /-- **Claim 159.a, probabilistic part: a garbling is good with high probability** [PS10, §6.2.3,
 "all but one row will evaluate to `⊥`"]: for a fan-in-two circuit and a multi-key encryption

@@ -40,11 +40,16 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
 **Deviations** (beyond D8, declared once here).
 - **Filler moves**, as above: each phase is padded to `2k` moves; the honest parties' fillers
   are `[]` and are ignored.
-- **Strict or truncated simulators** (ruling G02-#4, D8): zero-knowledge composes to
-  zero-knowledge; statistical error `δ` composes to `Q · δ`; perfect zero-knowledge with abort
-  ([Gol01, Definition 4.3.1], with which the text's expected-polynomial-time simulators are
-  handled) composes to statistical zero-knowledge with error `Q(n) · 2^{-n}`, by retrying each phase's
-  simulator `n = |x|` times (any `ω(log n)` retries would do; `n` is the simplest).
+- **Strict-PPT simulators and bounded abort retries** (ruling G02-#4, D8): zero-knowledge
+  composes to zero-knowledge, and statistical error `δ` composes to `Q · δ`. The formal
+  `PerfectZKAbort` premise is [Gol01, Definition 4.3.1]'s strict-PPT aborting formulation:
+  abort probability at most `1/2`, and the exact real-view law conditioned on success.
+  `PerfectZKAbort.statZK` runs this simulator on `n = |x|` independent fresh coin blocks,
+  keeping the first non-aborting output. All retries abort with probability at most `2^{-n}`,
+  giving statistical error `2^{-n}`; composition gives `Q(n) · 2^{-n}`. Each retry is already
+  strict PPT. [PS10]'s expected-polynomial-time wording is a separate source convention;
+  this bounded-retry argument does not assert that arbitrary expected-time truncation
+  preserves an exact conditional output law.
 - **Bounded prover messages** (`Protocol.ProverBounded`). Under D8, `Strategy.Efficient` bounds
   a verifier's work per activation in the total length of its input, not in `|x|`. A cheating
   `V_Q` may then double its message length in every phase. If the honest prover echoes the
@@ -302,11 +307,11 @@ theorem seqRep_exec_phase (π : Protocol) (Q : PolyExpr) (x y z rP rV : List Boo
     intro _
     constructor
     · rw [List.drop_eq_nil_of_le]
-      · rfl
+      · exact (congrArg Prod.fst (exec_zero π.P π.V vF x y z sP sV)).symm
       · rw [exec_fst_length, countP_moverIsV]
         cases vF <;> simp <;> omega
     · rw [List.drop_eq_nil_of_le]
-      · rfl
+      · exact (congrArg Prod.snd (exec_zero π.P π.V vF x y z sP sV)).symm
       · rw [exec_snd_length, countP_not_moverIsV]
         cases vF <;> simp <;> omega
   | succ t ih =>
@@ -408,16 +413,21 @@ theorem PerfectZK.seqRep {B : PolyExpr} (h : PerfectZK π R) (hB : π.ProverBoun
   apply perfectZK_iff.mpr
   simpa only [mul_zero] using StatZK.seqRep h.statZK hB Q
 
-/-- **Theorem 175.1, perfect case with aborting simulators** [PS10, Theorem 175.1]
-[Gol01, Definition 4.3.1 and §4.3.4]: with the text's expected-polynomial-time simulators
-truncated per ruling G02-#4, the repetition is statistical zero-knowledge with error
-`Q(n) · 2^{-n}`.
+/-- **Theorem 175.1, strict-PPT aborting case** [PS10, Theorem 175.1]
+[Gol01, Definition 4.3.1 and §4.3.4]: the formal `PerfectZKAbort` premise gives statistical
+zero-knowledge of the repetition with error `Q(n) · 2^{-n}`.
 
-**Proof sketch.** First apply `PerfectZKAbort.statZK`: retry the aborting simulator on `n = |x|`
-fresh coin blocks and keep its first non-aborting output. The probability that all trials
-abort is at most `2^{-n}`, and on success the output has the real view's law. Then apply
-`StatZK.seqRep` [Gol01, §4.3.4], which bounds the statistical distance of the `Q(n)` phases by
-the sum of their errors, `Q(n) · 2^{-n}`. -/
+**Proof sketch.** The premise supplies a strict-PPT simulator that aborts with probability at
+most `1/2` and, conditioned on success, has exactly the real view's law. First apply the proved
+`PerfectZKAbort.statZK` bridge: run `n = |x|` independent retries on fresh coin blocks and keep
+the first non-aborting output. The probability that all retries abort is at most `2^{-n}`;
+conditioned on a retry succeeding, its output has the real view's law. This yields statistical
+error `2^{-n}`. Then `StatZK.seqRep` [Gol01, §4.3.4] bounds the distance of the `Q(n)` phases by
+the sum of their errors, `Q(n) · 2^{-n}`.
+
+**Source distinction.** [PS10] uses expected-polynomial-time wording. This result instead uses
+boundedly many executions of the strict-PPT aborting simulator in its formal premise; it does
+not infer an exact conditional law by truncating an arbitrary expected-time simulator. -/
 theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
     (hB : π.ProverBounded R B) (Q : PolyExpr) :
     StatZK (π.seqRep Q) R (fun n => Q.eval n * (1 / 2 : ℝ) ^ n) := by

@@ -219,4 +219,16 @@ theorem otFunctionality_f (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
 theorem otFunctionality_f_snd (n : ℕ) (a : Fin 2 → Bool) (b : Fin 1 → Bool) :
     ((otFunctionality.f n a b).2 : Fin 1 → Bool) = fun _ => a (if b 0 then 1 else 0) := rfl
 
+/-- Bob's OT output at any typed output index is Alice's input selected by Bob's typed choice
+bit. The input indices use the published identifications of OT's two-bit and one-bit domains. -/
+theorem otFunctionality_f_snd_apply (n : ℕ)
+    (a : Fin (otFunctionality.inA.eval n) → Bool)
+    (b : Fin (otFunctionality.inB.eval n) → Bool)
+    (j : Fin (otFunctionality.outB.eval n)) :
+    (otFunctionality.f n a b).2 j =
+      a (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inA).trans
+          (PolyExpr.eval_const 2 n)).symm
+        (if b (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inB).trans
+            (PolyExpr.eval_const 1 n)).symm (0 : Fin 1)) then (1 : Fin 2) else 0)) := rfl
+
 end TCSlib.Cryptography.SecureComputation

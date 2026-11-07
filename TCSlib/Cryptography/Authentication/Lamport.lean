@@ -305,7 +305,8 @@ theorem polyTimeComputable_lamportGenFun : PolyTimeComputable (lamportGenFun E) 
     ((polyTimeComputable_unary.comp hu).pairEncode NUPPT.polyTimeComputable_inCoins))
   have h := ((blockEncFun_poly (polyTimeComputable_lamportPairEmit hE) (.const 1)
     (.mul (.const 2) .var)).comp hst).pairEncode NUPPT.polyTimeComputable_inCoins
-  convert h using 1
+  refine h.congr fun z => ?_
+  simp only [lamportGenFun_eq, blockState_eq, Function.comp_apply]
 
 /-- `Sign` is polynomial-time. -/
 theorem polyTimeComputable_lamportSignFun : PolyTimeComputable lamportSignFun := by
@@ -317,7 +318,8 @@ theorem polyTimeComputable_lamportSignFun : PolyTimeComputable lamportSignFun :=
     ((polyTimeComputable_const []).pairEncode
       ((blockEncFun_poly polyTimeComputable_lamportSelEmit (.const 1)
         (.mul (.const 2) .var)).comp hst))
-  convert h using 1
+  refine h.congr fun z => ?_
+  simp only [lamportSignFun_eq, blockState_eq, Function.comp_apply]
 
 include hE in
 /-- `Ver` is polynomial-time: two length tests (`polyTimeComputable_lenEq`) and an equality of
@@ -360,9 +362,11 @@ theorem polyTimeComputable_lamportVerFun (L : PolyExpr) :
         blockEncFun lamportPkEmit (.const 1) (lamportPkBlock L)
           (blockState (pairFstD w) [] (pairFstD (pairSndD (pairSndD w)))
             (pairFstD (pairSndD w))))] := by
-    convert polyTimeComputable_pairEq.comp (hX.pairEncode hY) using 1
-    funext w
-    simp [blockState_eq, Function.comp_apply]
+    refine (polyTimeComputable_pairEq.comp (hX.pairEncode hY)).congr fun w => ?_
+    simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
+    apply congrArg (fun b : Bool => [b])
+    apply decide_eq_decide.mpr
+    simp only [blockState_eq]
   exact polyTimeComputable_and (polyTimeComputable_and h₁ h₂) h₃
 
 /-! ### The machines -/
@@ -466,8 +470,10 @@ theorem lamportVerFun_sign (n : ℕ) (m : Fin n → Bool) (rg : (lamportGen hE).
   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
   rw [runAt_lamportSign]
   have hρ : (List.ofFn rg).length = 2 * n * n := by
-    simp only [List.length_ofFn]
-    rfl
+    refine (List.length_ofFn (f := rg)).trans
+      (((lamportGen hE).coinLen_eq n).trans ?_)
+    simp only [lamportGen, NUPPT.coins_ofPolyTimeUniform,
+      PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   have hseg : ∀ i : Fin n, (coinBlock (2 * n) i (List.ofFn rg)).length = 2 * n := by
     intro i
     apply length_coinBlock

@@ -33,8 +33,15 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
 - The adversary chooses `m₀, m₁`, so the definition's closing "for all `m₀, m₁ ∈ {0,1}^n`" is
   dropped. At CPA this is [PSV06, Definition 3], by the source's authors (ruling of 2026-11-05):
   the adversary picks `m₀, m₁` after seeing `pk`, `D` sees only the decryptions, and a copy of
-  the challenge and an invalid ciphertext both decrypt to `⊥`. [PSV07, Definition 3] (IND-NME′)
-  is its many-message form.
+  the challenge and an invalid ciphertext both decrypt to `⊥`.
+- [PSV07, Definition 3] (IND-NME′) allows many challenges and distinguishes `COPY` from
+  an invalid ciphertext's `⊥`; it is not literally the many-message form of this encoding.
+  For the one-challenge security comparison, the complementary-pair copy-flag export argument
+  is in the maintainer's sketch of `FixedLengthPKScheme.simNMSecure_of_nmSecure_cpa`
+  (`SimNonMalleable.lean`). It separates `L = msgLen(n) = 0`, when the two experiments
+  coincide, from `L > 0`, when the complementary plaintexts differ and their encrypted pair
+  exports each copy flag. This is a security comparison of the one-challenge conventions;
+  no many-challenge bridge is claimed here.
 - Definition 173.7 and Theorem 174.8 follow [PSV07] (same ruling), in
   `Composability/SimNonMalleable.lean`.
 

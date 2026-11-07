@@ -189,12 +189,16 @@ noncomputable abbrev padEnc (enc : NUPPT) (L : PolyExpr) : NUPPT :=
 theorem padEnc_coins (enc : NUPPT) (L : PolyExpr) : (padEnc enc L).coins = enc.coins :=
   NUPPT.coins_ofPolyTimeUniform (polyTimeComputable_padEncFun enc L) enc.coins
 
-/-- The padded encryptor pads the ciphertext of the uniform `Enc` with the same coins. -/
+/-- The padded encryptor pads the ciphertext of the uniform `Enc` with the same coin string,
+read in `enc` through the public `padEnc_coins` identification. -/
 theorem runAt_padEnc {enc : NUPPT} (henc : enc.Uniform) (L : PolyExpr) (n : ℕ) (y : List Bool)
-    (r : enc.Coins n) : (padEnc enc L).runAt n y r = padCt (L.eval n) (enc.runAt n y r) := by
-  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, henc.runAt_eq]
-  simp [padEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
-    NUPPT.layout_eq, NUPPT.advInput_eq]
+    (r : (padEnc enc L).Coins n) : (padEnc enc L).runAt n y r =
+      padCt (L.eval n) (enc.runAt n y (NUPPT.coinsCongr (padEnc_coins enc L) n r)) := by
+  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, henc.runAt_eq,
+    NUPPT.coinsCongr_ofFn]
+  simp only [padEncFun_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.layout_eq, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate]
 
 /-- The padded decryptor on a padding is `Dec`. -/
 theorem padDecFun_padCt (dec : List Bool → List Bool) (sk c : List Bool) (L : ℕ) :
@@ -264,11 +268,11 @@ noncomputable def ofPadded (msgLen : PolyExpr) (gen enc : NUPPT) (dec : List Boo
   correct := by
     intro n m rg re
     rw [runAt_padEnc enc_uniform, padDecFun_padCt]
-    exact correct n m rg re
+    exact correct n m rg (NUPPT.coinsCongr (padEnc_coins enc L) n re)
   enc_length := by
     intro n rg m re
     rw [runAt_padEnc enc_uniform]
-    exact length_padCt (hL n rg m re)
+    exact length_padCt (hL n rg m (NUPPT.coinsCongr (padEnc_coins enc L) n re))
 
 section PaddedReaders
 

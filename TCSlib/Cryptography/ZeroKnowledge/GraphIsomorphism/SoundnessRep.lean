@@ -139,39 +139,25 @@ theorem gniProver_next_enc {n : ℕ} (G₀ G₁ : Graph n) (y r : List Bool) (hi
 /-- The `|x|`-fold verifier's graph of iteration `|hist|` on an encoded instance, while the
 protocol is not over: `σ(G_b)` for the bit `b` and the sampler coins of the coin block.
 
-**Proof sketch.** Unfold the strategy on the branch `|hist| < |x|`, read the two graph words
-off the encoded instance (`pairFstD_pairEncode`, `pairSndD_pairEncode`) and transport the vertex
-count `instanceVertexCount (encInstance G₀ G₁) = n` (`generalize`/`subst`, then
-`decGraphAt_encGraph`). -/
+**Proof sketch.** Read the repeated message as the single verifier's first message on the
+current coin block (`gniVerifierRep_next_run`), then apply its public encoded-instance
+message equation (`gniVerifier_next_nil`). -/
 theorem gniVerifierRep_next_lt {n : ℕ} (G₀ G₁ : Graph n) (z r : List Bool) (hist : List (List Bool))
     (h : hist.length < (encInstance G₀ G₁).length) :
     gniVerifierRep.next (encInstance G₀ G₁) z r hist =
       encGraph (permGraph
         (cond ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false) G₁ G₀)
-        (samplePerm n ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) := by
-  show (if hist.length < (encInstance G₀ G₁).length then _ else _) = _
-  rw [if_pos h]
-  show encGraph (permGraph
-    (if (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false then
-      decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairSndD (encInstance G₀ G₁)) else
-      decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
-    (samplePerm (instanceVertexCount (encInstance G₀ G₁))
-      ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) = _
-  rw [show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _,
-    show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
-  generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
-  rw [instanceVertexCount_encInstance] at hm
-  subst hm
-  simp only [decGraphAt_encGraph]
-  cases (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).headD false <;> rfl
+        (samplePerm n ((coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r).drop 1))) :=
+  (gniVerifierRep_next_run (encInstance G₀ G₁) z r hist h).trans
+    (gniVerifier_next_nil G₀ G₁ z
+      (coinBlock (1 + ((encInstance G₀ G₁).length + 1) ^ 2) hist.length r))
 
 /-- The `|x|`-fold verifier's verdict once `|x|` replies are in. -/
 theorem gniVerifierRep_next_ge (x z r : List Bool) (hist : List (List Bool)) (h : x.length ≤ hist.length) :
     gniVerifierRep.next x z r hist =
       [decide (wellFormedInstance x = true ∧ ∀ j : Fin x.length,
-        (hist.getD j []).headD false = (coinBlock (1 + (x.length + 1) ^ 2) j r).headD false)] := by
-  show (if hist.length < x.length then _ else _) = _
-  rw [if_neg (not_lt.2 h)]
+        (hist.getD j []).headD false = (coinBlock (1 + (x.length + 1) ^ 2) j r).headD false)] :=
+  (gniVerifierRep_next x z r hist).trans (if_neg (not_lt.2 h))
 
 /-- The verdict of the `|x|`-fold protocol against a prover `P'`: the verifier's next-message
 function on the `2|x|`-move execution. -/

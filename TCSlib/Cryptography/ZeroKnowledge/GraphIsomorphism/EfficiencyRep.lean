@@ -590,8 +590,8 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
 test `|hist| < |x|` (`ltLen_poly`), the coin block of the current iteration (`gniSlice_poly`)
 and the message `relabel_poly` of `G_b` by the sampled permutation on the one hand, the
 well-formedness test conjoined with the verdict scan (`gniScan_poly`) on the other; the
-equation with `gniVerifierRep.next` is `msgCount_encodeMsgs`, `gniBlock_eval` and
-`gni_verdict_iff`. -/
+equation with `gniVerifierRep.next` first reads `gniVerifierRep_next`, then uses
+`msgCount_encodeMsgs`, `gniBlock_eval` and `gni_verdict_iff`. -/
 theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   have hri := gniSlice_poly
   have hsel : PolyTimeComputable fun w =>
@@ -606,7 +606,7 @@ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   have hverdict := polyTimeComputable_and hwf gniScan_poly
   refine efficient_of_polyTime gniVerifierRep (polyTimeComputable_ite ltLen_poly hmsg hverdict) ?_
   intro x z r hist
-  show (if hist.length < x.length then _ else _) = _
+  rw [gniVerifierRep_next]
   simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
     argX_ilayout, vcount_ilayout, gniBlock_eval, decide_eq_true_eq]
   by_cases hlt : hist.length < x.length

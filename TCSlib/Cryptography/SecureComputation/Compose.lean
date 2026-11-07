@@ -114,7 +114,7 @@ theorem exec_eq_map (P V : Strategy) (vF : Bool) (x zP zV rP rV : List Bool) (k 
       (((List.range k).filter (moverIsV vF)).map (moveMsg P V vF x zP zV rP rV),
         ((List.range k).filter fun i => !moverIsV vF i).map (moveMsg P V vF x zP zV rP rV)) := by
   induction k with
-  | zero => rfl
+  | zero => simp only [exec_zero, List.range_zero, List.filter_nil, List.map_nil]
   | succ k ih =>
     rw [exec_succ, List.range_succ, List.filter_append, List.filter_append, List.map_append,
       List.map_append]
@@ -436,13 +436,45 @@ theorem compose_rounds_eval (n : ℕ) :
 /-- In `H.compose ρ` Alice (the prover) moves first. -/
 theorem compose_verifierFirst : (H.compose ρ).verifierFirst = false := rfl
 
-/-- Alice's tape in `H.compose ρ` has `main.P.coins(n) + calls(n) · ρ.P.coins(n)` bits. -/
-theorem compose_P_coinLen (n : ℕ) :
-    (H.compose ρ).P.coinLen n = H.main.P.coinLen n + H.calls.eval n * ρ.P.coinLen n := rfl
+/-- Alice's tape in `H.compose ρ` has `main.P.coins(n) + calls(n) · ρ.P.coins(n)` bits.
 
-/-- Bob's tape in `H.compose ρ` has `main.V.coins(n) + calls(n) · ρ.V.coins(n)` bits. -/
+**Proof sketch.** Read the strategy and its coin polynomial through their public equations,
+evaluate the sum and product, and re-express the two component lengths with `Strategy.coinLen_eq`. -/
+theorem compose_P_coinLen (n : ℕ) :
+    (H.compose ρ).P.coinLen n = H.main.P.coinLen n + H.calls.eval n * ρ.P.coinLen n :=
+  calc
+    (H.compose ρ).P.coinLen n = (H.composeP ρ).coins.eval n :=
+      (Strategy.coinLen_eq ((H.compose ρ).P) n).trans
+        (congrArg (fun S : Strategy => S.coins.eval n) (H.compose_P ρ))
+    _ = (PolyExpr.add H.main.P.coins (PolyExpr.mul H.calls ρ.P.coins)).eval n :=
+      congrArg (fun p : PolyExpr => p.eval n) (H.composeP_coins ρ)
+    _ = H.main.P.coins.eval n + H.calls.eval n * ρ.P.coins.eval n :=
+      (PolyExpr.eval_add H.main.P.coins (.mul H.calls ρ.P.coins) n).trans
+        (congrArg (fun c : ℕ => H.main.P.coins.eval n + c)
+          (PolyExpr.eval_mul H.calls ρ.P.coins n))
+    _ = H.main.P.coinLen n + H.calls.eval n * ρ.P.coinLen n :=
+      congrArg₂ (fun a b : ℕ => a + b) (Strategy.coinLen_eq H.main.P n).symm
+        (congrArg (fun c : ℕ => H.calls.eval n * c) (Strategy.coinLen_eq ρ.P n).symm)
+
+/-- Bob's tape in `H.compose ρ` has `main.V.coins(n) + calls(n) · ρ.V.coins(n)` bits.
+
+**Proof sketch.** Read the strategy and its coin polynomial through their public equations,
+evaluate the sum and product, and re-express the two component lengths with `Strategy.coinLen_eq`. -/
 theorem compose_V_coinLen (n : ℕ) :
-    (H.compose ρ).V.coinLen n = H.main.V.coinLen n + H.calls.eval n * ρ.V.coinLen n := rfl
+    (H.compose ρ).V.coinLen n = H.main.V.coinLen n + H.calls.eval n * ρ.V.coinLen n :=
+  calc
+    (H.compose ρ).V.coinLen n = (H.composeV ρ).coins.eval n :=
+      (Strategy.coinLen_eq ((H.compose ρ).V) n).trans
+        (congrArg (fun S : Strategy => S.coins.eval n) (H.compose_V ρ))
+    _ = (PolyExpr.add H.main.V.coins (PolyExpr.mul H.calls ρ.V.coins)).eval n :=
+      congrArg (fun p : PolyExpr => p.eval n) (H.composeV_coins ρ)
+    _ = H.main.V.coins.eval n + H.calls.eval n * ρ.V.coins.eval n :=
+      (PolyExpr.eval_add H.main.V.coins (.mul H.calls ρ.V.coins) n).trans
+        (congrArg (fun c : ℕ => H.main.V.coins.eval n + c)
+          (PolyExpr.eval_mul H.calls ρ.V.coins n))
+    _ = H.main.V.coinLen n + H.calls.eval n * ρ.V.coinLen n :=
+      congrArg₂ (fun a b : ℕ => a + b) (Strategy.coinLen_eq H.main.V n).symm
+        (congrArg (fun c : ℕ => H.calls.eval n * c) (Strategy.coinLen_eq ρ.V n).symm)
 
 end Construction
 
