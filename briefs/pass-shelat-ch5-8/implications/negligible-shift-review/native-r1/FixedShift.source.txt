@@ -1,0 +1,12 @@
+import TCSlib.Cryptography.ZeroKnowledge.NP
+
+namespace PassShelatImplicationsProbe
+
+/-- Fixed right shifts preserve negligibility, using the existing public API. -/
+theorem fixedShiftNegligible {μ : ℕ → ℝ}
+    (hμ : TCSlib.Cryptography.Negligible μ) (s : ℕ) :
+    TCSlib.Cryptography.Negligible (fun n => μ (n + s)) :=
+  hμ.comp_of_le (fun n => n + s) (fun n => Nat.le_add_right n s)
+
+#print axioms fixedShiftNegligible
+end PassShelatImplicationsProbe

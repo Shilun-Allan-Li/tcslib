@@ -1,19 +1,17 @@
 # Gate 06A (Pass–shelat ch. 5, authentication): external statement audit pack
 
-**Status: unissued DRAFT (2026-11-07); not staged or dispatched.** Frozen integration source:
-`3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
-`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. This is not an issued audit pin.
-The 467-module native union is source/object/prerequisite reconciled with zero stale records
-after 180 + 2 affected checks; `TCSlib.lean` was not elaborated. The fresh collector is active;
-fresh whole-file seals, controls and final axiom outcomes are not yet available. Historical
-prong heads are provenance only. Auditor: Codex; findings Markdown in the audit chat; the user
-dispatches the job. No readiness or final seal-pass attestation is made here.
+**Round 1: common preparation complete; ready for staging (2026-11-07).**
+Audit source: `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. Historical prong heads are provenance only.
+This document records neither staging/user dispatch nor external gate closure. Auditor: **Codex**;
+return findings Markdown in the audit chat, with no commit or push requested. The user dispatches
+all four audits after reviewed bundles and external pins are staged.
 
 **What is audited:** [PS10] ch. 5 as formalized in `TCSlib/Cryptography/Authentication/`: definitions, statements, docstrings and proof sketches, against the
 sources. Proofs are out of scope, except the short ones that carry a definition's correctness
 (`correct` fields, length lemmas). The deliverable is **`gate06A-findings.md`**.
 
-**Sources required at issue (receiving-auditor access is not yet attested):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
+**Sources for round 1 (receiving-auditor access must be verified):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
 January 2010 (book page = PDF page − 12), §5.1–5.6, book pp. 133–145.
 
 ## Scope
@@ -48,15 +46,15 @@ padding theorem is deleted in favor of `Collection.ofFn_padFin_of_le` from
 `Asymptotic/CollectionsHelpers.lean`, with the empty padding suffix simplified at equal
 length (DL-6/DL-7). These interface repairs do not fill the substantive security admissions.
 
-## Source bundle and context (draft; not assembled)
+## Source bundle and context
 
 Primary paths below use braces as set notation; each name has the `.lean` suffix:
 
 - `TCSlib/Cryptography/Authentication.lean`.
 - `TCSlib/Cryptography/Authentication/{Defs,PRFMAC,Lamport,DLHash,HashAndSign}.lean`.
 
-The bundle must contain these paths' complete final-head TCSlib import closure, plus
-`TCSlib.lean` for root-export context, with raw-byte hashes and revision-qualified provenance.
+The prepared source-only bundle contains these paths' complete final-head TCSlib import closure,
+plus `TCSlib.lean` for root-export context, with raw-byte hashes and revision-qualified provenance.
 Shared Games/Interaction/Machines/Collections/FinDist/complexity owners are context, not new
 prerequisite audits. Include the common record/evidence set specified in `PLAN.md` and retain
 source-version/access limits. Do not substitute historical prong or e9 dependency copies.
@@ -89,32 +87,56 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
    the source's conclusion?
 5. **Lamport.** Is the key layout (`lamportPkBlock`) and `Ver`'s length check faithful?
 
-## Pending issue-time attestations
+## Completed common preparation
 
-These are explicit issue-time fields, not completed attestations. Common evidence and the
-current native/static/style limits are in `PLAN.md`.
+The common evidence is reconciled at the source/base above. The final index is
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md` and its machine summary is
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/FINAL-SUMMARY.json`.
+The final index/common archive hashes and the records commit/bundle hashes are pinned externally
+in the exchange README and dispatch prompt, outside these pack bytes.
 
-- Issued source: `[ISSUE_SOURCE_COMMIT]` (must match the frozen head above, or receive a new
-  source-matched verification); actual comparison/target disposition: `[ISSUE_BASE_DISPOSITION]`;
-  records: `[ISSUE_RECORDS_COMMIT]`.
-- Exact source bundle: `[ISSUE_06A_BUNDLE_PATH]`, `[ISSUE_06A_BUNDLE_SHA256]`;
-  matching manifest: `[ISSUE_06A_MANIFEST_PATH]`, `[ISSUE_06A_MANIFEST_SHA256]`.
-- Final source/native evidence: `[ISSUE_FINAL_EVIDENCE_INDEX_PATH]`,
-  `[ISSUE_FINAL_EVIDENCE_INDEX_SHA256]`; retain the root-export non-elaboration limit and all
-  affected/downstream rechecks required by any later repair.
-- Fresh collector, actual axiom identities and dispositions: `[ISSUE_COLLECTOR_AXIOM_EVIDENCE]`,
-  `[ISSUE_COLLECTOR_AXIOM_OUTCOMES]`. Current prepared scope is 54 mathematical modules and seven
-  separately verified import/option-only facade/export files; derive scope from pinned metadata.
-- Fresh full seals/controls: `[ISSUE_SEAL_CONTROL_EVIDENCE]`, `[ISSUE_SEAL_CONTROL_OUTCOMES]`.
-  Cover stored types/values/private/generated declarations and anonymous commands through the
-  full import-closure supplement, without name exclusions beyond approved notation. Classify
-  every source failure against the actual base; inherited failures remain failed observations,
-  not seal passes, exclusions or automatic waivers. Invalid harnesses remain separately labelled.
-- Final explicit-unfold/source/API scans and precise existing style exceptions:
-  `[ISSUE_SCAN_API_STYLE_EVIDENCE]`, `[ISSUE_SCAN_API_STYLE_DISPOSITIONS]`. Lexical census and
-  parser rows do not replace elaborated axiom/declaration identities.
-- Receiving auditor's source access and exact version/comparison limits:
-  `[ISSUE_SOURCE_ACCESS_DISCLOSURE]`; preserve `source-manifest.md`'s linked-source arrangement.
+| Common check | Completed outcome and limit |
+|---|---|
+| Scope/native | 61 changed Lean paths: **54 math modules + 7 import/option-only facades**. All 1,108 library sources match the snapshot; 467 native source/object/prerequisite records are reconciled after 182 affected checks. `TCSlib.lean` was **not elaborated**. |
+| Full-source seals | All 54 harnesses valid: **37 source passes, 17 source failures, 138 diagnostics in 110 unchanged full header/proof blocks**. No new/touched failing block or home-induced read was identified. All failures remain failed observations. |
+| Failure/debt disposition | Exact historical-key normalization gives **62 historical / 48 additional observation keys**. Additional observations are retained inherited debt, not new source violations or failure exclusions. |
+| Sensitivity controls | All **11** verified: 5 unsealed negative passes, 5 sealed sole-proof failures, 1 sealed published-reader pass. |
+| Axioms/admissions | **2,881 actual identities**: 2,835 standard-only, **46 admitted-dependent** (33 direct statements + 13 derived dependencies), 0 unexpected axioms. The same 46 names/dependencies remain; substantive proof completion is not claimed. |
+| Source scans/C3 | **C1: 142 raw hits + 10 selected-open supplement observations; C2: 10 rows; C3: 3 retained legacy pairs**, not zero. The exhaustive TCS record has 134 inherited candidates: 131 debt + 3 exact recorded notation items. All 18 non-TCS raw hits are unchanged too. Composite new/touched review identifies **0 foreign-body violations / 0 unresolved items**. |
+| Style/API | 10 inherited style findings, 0 new; each complete prong's plain/check8b runs returned 0. This is not an all-library lint or Rule10-clean claim. |
+
+The completed C3 R2 census covers all owned types/values, including opaque/private/generated
+constants; its exact per-module root sets match all 2,881 identities. Both metadata controls
+pass. The private BlockEncryptor pair is an older eqn-term observation outside the 110 failed
+blocks; counts are not blindly added. Invalid R1 C3 and earlier harness attempts remain labelled
+invalid. No failure, notation reference or inherited read is filtered or waived.
+
+S2's separate candidate-host fill (PR #231) is **not incorporated or attested** by this Gate06
+source. Earlier closed S2a/S2b APIs remain context. Further source repairs require renewed
+source-matched affected/downstream checks and audit pins.
+
+## Round 1 source and delivery identities
+
+| Attachment identity | Exact value |
+|---|---|
+| Source bundle exchange path | `outbox/gates/06A-r1-gate/gate06A-source-bundle.md` |
+| Source bundle SHA-256 | `fdad5c0bdd23d421f6351c3e8d37587fc09fc8a0662ba84db31e47cea26be8a2` |
+| Source sections | 125 raw files: the 124-module primary TCSlib closure plus root-export context |
+| Source-only manifest in records | `briefs/pass-shelat-ch5-8/gates/06-ch5-8-statements/06A-source-manifest.json` |
+| Manifest exchange filename | `gate06A-source-manifest.json` |
+| Source-only manifest SHA-256 | `fca279c40d91758168efc9d7a729a49f2641ba84d2cb0609afcbb567c68aae7c` |
+
+The manifest contains raw source path/revision/byte/hash rows, primary modules/import closure,
+source-bundle filename/hash and source/base pins only. It contains no records commit or self-hash.
+`TCSlib.lean` is context, not a closure root or an elaborated export check. The exact source-only
+bundle is prepared and verified; staging is an external action. A later records snapshot and its
+records/common bundles are identified only by the exchange README and user dispatch prompt,
+which also pin the common archive and final index. This avoids a records/hash self-reference.
+
+Receiving auditor: verify access to the common provided exact tracked PS10 course PDF and the
+required official Goldreich/PSV URLs/version notes in `source-manifest.md`; list exact unavailable
+comparisons in the findings. Draft/publisher equivalence and deferred proof limits remain audit
+subjects. Do not redistribute third-party PDFs, extracted full text or rendered pages.
 
 ## Findings format (auditor fills)
 
@@ -130,4 +152,4 @@ Severity guide:
 
 The gate closes at **0 blockers and 0 majors**.
 
-**Not yet clear to merge — fresh verification outcomes, source-access disclosures, issue-time pins/bundles and user dispatch remain.**
+**Not yet clear to merge — external statement audits and their resolutions remain.**

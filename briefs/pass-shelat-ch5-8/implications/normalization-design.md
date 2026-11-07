@@ -65,9 +65,11 @@ found. The existing public `Negligible.comp_of_le` in `ZeroKnowledge/NP.lean:288
 supplies constant right-shift closure; the exact specialization is
 `hμ.comp_of_le (fun n => n + c) (fun n => Nat.le_add_right n c)`. This was found by an
 additional source/API review at `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; its application
-term is not yet natively probed as a separate wrapper. The theorem should be available from
-Foundations for the intended lower layer; an unchanged-name relocation is proposed, not
-implemented. The candidate encoding/index equations are available, but generated-domain
+term now passes the separate native probe `negligible-shift-review/native-r1/FixedShift`
+(rc0, no diagnostics; only propext/Classical.choice/Quot.sound), checked against that exact
+frozen source. This verifies the existing-API specialization, not the collection constructor
+or one-wayness transport. The theorem should be available from Foundations for the intended
+lower layer; an unchanged-name relocation is proposed, not implemented. The candidate encoding/index equations are available, but generated-domain
 width readers are still needed beside the candidate definitions.
 The evaluator is a polynomial-time function independent of the activation parameter; it can
 stay unchanged. The three parameterized NUPPT machines must shift together.

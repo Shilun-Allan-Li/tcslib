@@ -1,11 +1,12 @@
-# Gate06 primary sources: internal manifest draft
+# Gate06 primary sources: round-1 access and version manifest
 
-**Status: unissued source-manifest DRAFT (2026-11-07); not staged or dispatched.** The
-associated frozen integration source is `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`,
-checked comparison ancestor `eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232.
-Current native/static/style verification and its limits are in `PLAN.md`. The fresh collector
-is active; fresh seals, controls and final axiom outcomes are not yet available. This manifest
-establishes source-copy identity/access limits, not a gate issue, audit pin or acceptance record.
+**Round 1: common preparation complete; ready for staging (2026-11-07).**
+Audit source: `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. Common results are in `PLAN.md` and
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md`: 54 math modules plus seven facades; 37 source-seal passes and 17 failures
+(138 diagnostics/110 unchanged blocks), all 11 controls, 2,881 axiom identities with 46
+admitted-dependent names, and three retained legacy C3 pairs. No external gate closure,
+whole-source pass, receiving-auditor access or actual staging/dispatch is attested here.
 
 The source-recovery verification recorded below used `pdftotext -layout` and `pdfinfo` to read
 files as data. That source-recovery pass performed no Lean/cache/apps, Git mutations, source
@@ -129,23 +130,32 @@ copies without distribution. Accordingly:
   established here. Record these as author copies and supply their URLs; do not label them
   the historical publisher uploads or claim a license inferred from public availability.
 
-## Remaining limits and issue-time actions
+## Round 1 access responsibilities and remaining comparison limits
 
-All named Goldreich sections and PSV numbered statements requested in this review are now
-locatable in primary author sources. Remaining source work is precise version/access
-disclosure, not a claim that these copies match publisher editions. The full PSV proofs are
-still not recovered. KV94/SSBD14/Gar26 were not re-reviewed in this source task.
+All named Goldreich sections and PSV numbered statements requested in source recovery are
+locatable in the recorded primary author copies. The round-1 source metadata preserves their
+exact author-version labels, URLs, hashes and pagination limits. The PSV full-version proofs
+remain unavailable; author-copy/publisher-copy equivalence is not certified. KV94/SSBD14/Gar26
+remain earlier gated/contextual source uses and were not freshly re-reviewed in source recovery.
 
-The current 06B/06C drafts carry these citation qualifications. At issue preserve the author-
-version labels, COPY/invalid-output distinction and link-only Goldreich delivery. Record the
-receiving auditor's source-access basis or exact unavailable comparisons as
-`[ISSUE_SOURCE_ACCESS_DISCLOSURE]`; do not turn unavailable source comparisons into blanket
-source-fidelity approval. KV94/SSBD14/Gar26 remain previously gated/contextual source uses,
-not fresh access or verification claims here.
+The common PS10 reference is the provided exact tracked `Pass–Shelat.pdf` copy identified above;
+receiving auditors verify its bytes/access through that provided copy or the revision-qualified
+repository link. Use the official Goldreich/PSV URLs for legitimate personal retrieval, and
+verify access before the corresponding comparison. Each Codex auditor must report exact
+unavailable comparisons in the findings Markdown returned in its audit chat. Unavailable
+comparisons do not become blanket source-fidelity approval. No recovered third-party PDFs,
+full-text extractions or rendered pages are redistributed in the source/records/exchange packs.
 
-The final records commit, bundle/manifest hashes, fresh collector/axiom dispositions and
-seal/control outcomes remain the explicit issue-time placeholders in `PLAN.md` and each pack.
-This is not an additional mathematical ruling. No external job is prepared or issued by this
-manifest; the user's dispatch and the already-required common verification remain separate.
+The four round-1 packs preserve strict-PPT aborting versus expected-time simulation, draft
+versus published pagination, enhanced inversion versus the formal Boolean predicate, and the
+PSV06 copy-to-bottom versus PSV07 COPY convention. These are mathematical audit subjects,
+not additional rulings or conclusions certified by this access manifest.
 
-**Not yet clear to merge — receiving-auditor source-access disclosures, fresh verification outcomes and issue-time reconciliation remain.**
+Source-only bundle/manifests and completed common evidence are recorded in `PLAN.md` and
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md`. The final records commit, records/common archive hashes and final-index hash
+are pinned externally in the staged exchange READMEs and user dispatch prompts; no self-hash
+or future commit attestation is embedded here. The user dispatches all four Codex audits after
+reviewed staging; the audits may run in parallel, and each prong's fills follow its own gate
+closure. The S2 candidate-host fill is not incorporated or attested by this Gate06 source.
+
+**Not yet clear to merge — external statement audits, source comparisons and their resolutions remain.**

@@ -1,0 +1,354 @@
+{
+  "status": "BOUNDED_READ_ONLY_FINAL_COMMON_EVIDENCE_CONSISTENCY_REVIEW_NO_MATERIAL_FINDINGS",
+  "review_time_utc": "2026-11-07T14:48:22.838990+00:00",
+  "head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+  "checked_base": "eee107e92a7db11f1f8c98a5c2867304f57ddc54",
+  "severity_counts": {
+    "blocker": 0,
+    "major": 0,
+    "minor_material": 0
+  },
+  "findings": [],
+  "checks": [
+    {
+      "check": "source_and_comparison_pins",
+      "matched": true,
+      "details": {
+        "head": "3f6db40e1688c4a0bb922c9575dd3bd2157a650b",
+        "checked_base": "eee107e92a7db11f1f8c98a5c2867304f57ddc54"
+      }
+    },
+    {
+      "check": "sealed_source_results",
+      "matched": true,
+      "details": {
+        "valid_harnesses": 54,
+        "source_pass_modules": 37,
+        "source_failed_modules": 17,
+        "diagnostics": 138,
+        "native_summary_success": false
+      }
+    },
+    {
+      "check": "retained_failing_blocks",
+      "matched": true,
+      "details": {
+        "distinct_declarations": 110,
+        "diagnostics": 138,
+        "byte_identity_witnesses": 110,
+        "all_retained": true,
+        "pass_or_waiver_labels": 0,
+        "root_resolved_counts": {
+          "historical": 62,
+          "additional_observation_keys": 48
+        },
+        "immutable_proposal_counts": {
+          "historical": 61,
+          "no_exact_link": 49
+        }
+      }
+    },
+    {
+      "check": "manual_history_reconciliation",
+      "matched": true,
+      "details": {
+        "root_qualifier_normalization_explicit": true,
+        "historical_keys": 62,
+        "additional_keys": 48,
+        "frozen_764_inventory_not_amended": true
+      }
+    },
+    {
+      "check": "controls",
+      "matched": true,
+      "details": {
+        "verified": 11,
+        "unsealed_negative_passes": 5,
+        "sealed_negative_failures": 5,
+        "published_reader_positive_passes": 1
+      }
+    },
+    {
+      "check": "collector_identity_and_scope",
+      "matched": true,
+      "details": {
+        "owners": 54,
+        "unique_actual_module_name_pairs": 2881,
+        "collector_C3_seal_owner_sets_equal": true
+      }
+    },
+    {
+      "check": "collector_term_and_closure_pairs",
+      "matched": true,
+      "details": {
+        "term_pairs": 1039,
+        "closure_pairs": 55373,
+        "term_subset": true,
+        "retained_notation_exclusion_records": 40,
+        "excluded_name": "Complexity.PolyExpr.eval",
+        "note": "C3 root-set equality independently includes all2881 actual identities; no C3 notation filtering."
+      }
+    },
+    {
+      "check": "axiom_accounting",
+      "matched": true,
+      "details": {
+        "standard_only": 2835,
+        "sorry_dependent": 46,
+        "direct": 33,
+        "derived": 13,
+        "unexpected": 0,
+        "comparison": "unchanged admitted-dependent full sets versus initial e9 census, not fresh PR-base native census",
+        "initial_to_fresh_additions": 177,
+        "added_from_expanded_scope": 158,
+        "common_changed_standard_axiom_sets": 4
+      }
+    },
+    {
+      "check": "C3_extraction_and_homes",
+      "matched": true,
+      "details": {
+        "identities": 2881,
+        "retained_legacy_pairs": 3,
+        "metadata_controls": 2,
+        "reference_pairs": [
+          {
+            "module": "TCSlib.Complexity.ClassP.BinaryArith.Loops",
+            "owner": "Complexity.BinArith.polyTimeComputable_chunkW",
+            "reference": "Turing.pairDecode.eq_4",
+            "parent": "Turing.pairDecode",
+            "parent_home": "TCSlib.Complexity.TuringMachine.Encoding",
+            "reference_home": "TCSlib.Complexity.TuringMachine.Encoding",
+            "log_line": 237,
+            "reference_native_kind": "thm",
+            "parent_native_kind": "def"
+          },
+          {
+            "module": "TCSlib.Cryptography.Asymptotic.BlockEncryptor",
+            "owner": "_private.TCSlib.Cryptography.Asymptotic.BlockEncryptor.0.TCSlib.Cryptography.length_decListStep_le",
+            "reference": "Turing.pairDecode.eq_4",
+            "parent": "Turing.pairDecode",
+            "parent_home": "TCSlib.Complexity.TuringMachine.Encoding",
+            "reference_home": "TCSlib.Complexity.TuringMachine.Encoding",
+            "log_line": 522,
+            "reference_native_kind": "thm",
+            "parent_native_kind": "def"
+          },
+          {
+            "module": "TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK",
+            "owner": "TCSlib.Cryptography.gi_statZK",
+            "reference": "Complexity.NUPPT.coinLen.eq_1",
+            "parent": "Complexity.NUPPT.coinLen",
+            "parent_home": "TCSlib.Complexity.Randomized.PPT",
+            "reference_home": "TCSlib.Cryptography.Asymptotic.EnsemblesLemmas",
+            "log_line": 2705,
+            "reference_native_kind": "thm",
+            "parent_native_kind": "def"
+          }
+        ],
+        "parent_and_reference_homes_separate": true,
+        "first_attempt": "invalid parser/evaluation attempt retained; only R2 completed extraction",
+        "new_touched_zero_is_not_overall_zero": true
+      }
+    },
+    {
+      "check": "owner_home_classification",
+      "matched": true,
+      "details": {
+        "owner_local_items": 114,
+        "all_home_evidence_paths_match_use_file": true,
+        "criterion": "source-file home, not common namespace"
+      }
+    },
+    {
+      "check": "explicit_scan_reconciliation",
+      "matched": true,
+      "details": {
+        "raw_C1": 142,
+        "TCS_raw": 124,
+        "nonTCS_raw": 18,
+        "selected_open_supplement": 10,
+        "TCS_inventory": 134,
+        "debt": 131,
+        "notation_items_retained": 3,
+        "all_explicit_items": 4119,
+        "new_touched_items": 1555,
+        "new_touched_heads": 613,
+        "native_name_kind_home_rows": 378176,
+        "delta_only_zero": true
+      }
+    },
+    {
+      "check": "style_and_static",
+      "matched": true,
+      "details": {
+        "style_inherited": 10,
+        "style_new": 0,
+        "complete_prong_plain_check8b_runs": 8,
+        "all_prong_returncodes": 0,
+        "lexical_sorry_base_head": [
+          511,
+          544
+        ],
+        "parser_header_rows": {
+          "added": 816,
+          "removed": 7,
+          "changed": 13
+        },
+        "note": "Lexical/header census is not a proof-completion or kernel-fidelity claim."
+      }
+    },
+    {
+      "check": "source_only_bundle_counts",
+      "matched": true,
+      "details": {
+        "sections": {
+          "06A": 125,
+          "06B": 129,
+          "06C": 171,
+          "06D": 185
+        },
+        "all_sections": 610,
+        "distinct_paths": 273,
+        "library_sources": 1108,
+        "root_export": "source context only; not elaborated or recursed as closure root",
+        "bundles_status": "SOURCE_ONLY_UNISSUED_UNSTAGED"
+      }
+    },
+    {
+      "check": "clearance_and_baseline_limits",
+      "matched": true,
+      "details": {
+        "native_union": 467,
+        "affected_checks": 182,
+        "second_cold_full_build": false,
+        "base_native_seal_rerun": false,
+        "root_export_elaborated": false,
+        "S2_incorporated": false,
+        "external_gates_closed": false,
+        "merge_clearance": false
+      }
+    }
+  ],
+  "inputs": {
+    "FINAL-EVIDENCE.md": {
+      "sha256": "0e011edc90d469d1b3dd1156a74f6f7856f756e15e085343486a232ea24aa73b",
+      "bytes": 9335
+    },
+    "evidence-rule10-final-r1/FINAL-SUMMARY.json": {
+      "sha256": "2e7177bbf70e5a83419f24049cb35fc5c6dbbea72a5aaa04c4e6b4c92d57defe",
+      "bytes": 2362
+    },
+    "evidence-rule10-final-r1/native-seal-runs/summary.json": {
+      "sha256": "db6e32c1034056134b373cf9ad3867e8764725c0d5e207c53aab3be32c21ce5d",
+      "bytes": 236330
+    },
+    "evidence-rule10-final-r1/native-control-runs/summary.json": {
+      "sha256": "6c682c29e399fae4920eda3fd89c9ee4b113cbd8ee3879c1806e09f8281c9f6d",
+      "bytes": 24299
+    },
+    "evidence-rule10-final-r1/failure-disposition-r1/disposition.json": {
+      "sha256": "b59ae4702d4cc95d5a0e470db85651baccb25371494d6da7b551230c852fda54",
+      "bytes": 161223
+    },
+    "evidence-rule10-final-r1/seal-collector-inventory.json": {
+      "sha256": "ea5dd025196ddda8a63ed604b96808e893dd7566d1736d8730248bd044c3fcb3",
+      "bytes": 4453348
+    },
+    "evidence-rule10-final-r1/axioms-full.json": {
+      "sha256": "81441d20992a14945e7fc8815118e667f1ce7a8e70f6cc4044e2ecfe693dd13d",
+      "bytes": 844883
+    },
+    "evidence-rule10-final-r1/collect1.json": {
+      "sha256": "7e671fcd21f64a57e8f60fce2dbbf50365121c61e622bc63b4679c4a199fb508",
+      "bytes": 590
+    },
+    "evidence-rule10-final-r1/axiom-review/review.json": {
+      "sha256": "5897ad171a0ad1af2b7c8479de557e93766f053d0892d38d97452d72d79f8438",
+      "bytes": 139093
+    },
+    "evidence-rule10-final-r1/eqn-supplement-r2/extracted/summary.json": {
+      "sha256": "36ccda7663d371cf7177d8f6bfd04b92a8690b2c4107538fdb4c080fb307604f",
+      "bytes": 6596
+    },
+    "evidence-rule10-final-r1/eqn-supplement-r2/extracted/root-census.json": {
+      "sha256": "675db557cdd719b3e9098bdddda9f645bf2dd6c2d9d54efa755497662c3e3329",
+      "bytes": 820393
+    },
+    "evidence-rule10-final-r1/eqn-supplement-r2/extracted/all-refs.json": {
+      "sha256": "1582d0249c2b1b30eac20e464e1f2937879d95c486c7ac4758694d6451a32d63",
+      "bytes": 1347
+    },
+    "evidence-rule10-final-r1/eqn-supplement-r2/extracted/manifest.json": {
+      "sha256": "9a0704517faddb64ecf35c8bb246629e86dd8db8ed1e53809d0f9ff8c73d030a",
+      "bytes": 321187
+    },
+    "evidence-rule10-final-r1/explicit-scan-reconciliation-r1/reconciliation.json": {
+      "sha256": "44e87a1b5da87591aeed4ae31d7a01a00b4fd33679dd1a7fb6d9da62f2765880",
+      "bytes": 144576
+    },
+    "evidence-rule10-final-r1/explicit-source-review/final-explicit-classification.json": {
+      "sha256": "e6dde45608ec2ba3c7235f0f6a3c209fb7bbe65363f7f11d5d27f5da61152bc9",
+      "bytes": 2662913
+    },
+    "evidence-rule10-final-r1/explicit-catalog/derived/catalog-validation.json": {
+      "sha256": "6a4fd3b84d80bd39dc9f73cb069dd3c39a64d80d4cae0d884c8c87e6cf9c31e7",
+      "bytes": 911
+    },
+    "evidence-style-final-r2/comparison.json": {
+      "sha256": "e15a069ec125410e65c1b963b3a1c974e88855f35a20292c207d7d47f16ab906",
+      "bytes": 19743
+    },
+    "evidence-static-final-r1/summary.json": {
+      "sha256": "2dc0f952b9283c8c59149c265e0b0cf8d30cb6377932f9d973d15d0d7e4f98bd",
+      "bytes": 493
+    },
+    "evidence-run/final-native-summary.json": {
+      "sha256": "affcff4fbf826714f1affcdc69cde0bad79b47f7e19916d8d4e389e33f8277db",
+      "bytes": 480
+    },
+    "evidence-run/final-repair-seal-ready.json": {
+      "sha256": "6ac4dde18e5c441f69f76cbbf4eb6a9bf5d40beed67634ef2a95bb9719da7f93",
+      "bytes": 460782
+    },
+    "evidence-rule10-final-r1/source-reviews/source-bundles-final-r1-review.json": {
+      "sha256": "1de7cba11413b9e76e0ecec70e2e58f52a26262e4f18d06fb274cd91e93510cc",
+      "bytes": 16233
+    },
+    "source-bundle-preparation-r1/manifest.json": {
+      "sha256": "1c38ff9df781d4a61cf6318b2d38e7ffb97afd597679b6261cfe711a802a0faf",
+      "bytes": 283212
+    },
+    "evidence-rule10-final-r1/comparison-target-source-equivalence.json": {
+      "sha256": "9fc30a6d2346ac9ab5b0c528a2bcc40dd80c1ae852179ddc92c49100f436184d",
+      "bytes": 618
+    },
+    "evidence-rule10-final-r1/source-reviews/C3-disposition-review.json": {
+      "sha256": "6f9359dfbda842930a6352e372609494c81e6fa33affd84f1b730058fe0f2a1b",
+      "bytes": 26604
+    },
+    "evidence-rule10-final-r1/axiom-review/review.md": {
+      "sha256": "f15343d3aa6ce1381c32288cc418d79ed3dd8a29b79f8ecfe1994497617b3fd1",
+      "bytes": 4217
+    },
+    "evidence-rule10-final-r1/explicit-source-review/final-explicit-review.md": {
+      "sha256": "b2b2e94bbe9b2d1d5b4c78d0107326eed9642bb1861eb4a03d5f0731077d91b9",
+      "bytes": 10259
+    },
+    "evidence-rule10-final-r1/failure-disposition-r1/README.md": {
+      "sha256": "925abcdd4f10b0ce0a4e6b43a3b0827cc6748af5a6b9dbe0a7228bfcf0dd8cb9",
+      "bytes": 2175
+    },
+    "evidence-rule10-final-r1/source-reviews/C3-disposition-review.md": {
+      "sha256": "ccf73bd80dc663e3ec544f75c8421fb55efec58052cb8e4eafbb08e4df56273d",
+      "bytes": 3388
+    }
+  },
+  "limits": [
+    "Read-only source/JSON/text consistency review. No Lean/native/cache/apps or supplied helper execution occurred; no source, main-record, evidence or Git mutation occurred.",
+    "This bounded review aggregates completed artifacts and retained source-identity witnesses; it does not rerun native checks or independently repeat every full-block/operative-context proof review.",
+    "No whole-library Rule10 pass, fresh native comparison-base census/seal, mathematical statement audit, inherited-failure waiver, S2 attestation or merge clearance follows.",
+    "Spacing edits and final pack staging/hash manifests/dispatch remain root work; this review binds the exact primary-summary hashes above and does not inspect future issued bytes.",
+    "Four external statement audits and their resolutions remain pending."
+  ]
+}

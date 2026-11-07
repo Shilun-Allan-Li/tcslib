@@ -1,13 +1,11 @@
-# Gate 06: four external statement audits of ch. 5–8 (S4; internal draft)
+# Gate 06: four external statement audits of ch. 5–8 (S4; round 1)
 
-**Status: unissued DRAFT (2026-11-07); not staged or dispatched.** Frozen integration source:
-`3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
-`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. This is not an issued audit pin.
-The 467-module native union is source/object/prerequisite reconciled with zero stale records
-after 180 + 2 affected checks; `TCSlib.lean` was not elaborated. The fresh collector is active;
-fresh whole-file seals, controls and final axiom outcomes are not yet available. Historical
-prong heads are provenance only. Auditor: Codex; findings Markdown in the audit chat; the user
-dispatches the job. No readiness or final seal-pass attestation is made here.
+**Round 1: common preparation complete; ready for staging (2026-11-07).**
+Audit source: `3f6db40e1688c4a0bb922c9575dd3bd2157a650b`; checked comparison ancestor:
+`eee107e92a7db11f1f8c98a5c2867304f57ddc54`; draft PR #232. Historical prong heads are provenance only.
+This document records neither staging/user dispatch nor external gate closure. Auditor: **Codex**;
+return findings Markdown in the audit chat, with no commit or push requested. The user dispatches
+all four audits after reviewed bundles and external pins are staged.
 
 The user's 2026-11-04 gating ruling supersedes the original single-gate proposal: S2a and S2b
 have API gates, and **each prong has its own statement gate before that prong's fills**. Gate
@@ -40,11 +38,11 @@ provenance only; none is the source pin for these integrated audits.
 | 06C | Composability, ch. 7 | `Composability/{Defs,PRFScheme,CCA2Scheme,PublicKey,NonMalleable,SimNonMalleable,SequentialZK,ThreeColoring}` and facade | Defs 168.1, 171.5, 172.6, 173.7; Thm 168.2, Claim 169.a, Alg 169.3, Thm 170.4, Claim 172.a, Thm 174.8, optional Thm 175.9, Thm 175.1; the explicit sequential 3COL corollary |
 | 06D | Randomness, ch. 8 | `Randomness/{Extraction,Learning,BPPBridge,Derandomization}` and facade; `LearningTheory/PAC/{Defs,Prediction}`, `InformationTheory/Samples` and their dependencies as already-gated context | Def 179.a; Thms 179.1, 180.1, 183.6 |
 
-## Source bundle and common records (draft; not assembled)
+## Source bundles and common records
 
-Each pack identifies its primary paths and already-gated context. Include their complete
-TCSlib import closure at the frozen source, plus `TCSlib.lean` for root-export context; every
-included path needs raw bytes, a hash and revision-qualified provenance. Shared owner-side
+Each pack identifies its primary paths and already-gated context. Its prepared source-only
+bundle contains their complete TCSlib import closure at the frozen source, plus `TCSlib.lean`
+for root-export context, with raw bytes, hashes and revision-qualified provenance. Shared owner-side
 interfaces are context rather than fresh prerequisite statement audits. The seven separately
 verified import/option-only files are `TCSlib.lean`, the four topic facades in the table above,
 `TCSlib/InformationTheory.lean` and `TCSlib/LearningTheory/PAC.lean`; they are outside theorem
@@ -55,8 +53,11 @@ Common record paths are root `policy.md` and `PassShelatChapter5-8Plan.md`;
 `PLAN.md`, `source-manifest.md` and the relevant `06A-pack.md`–`06D-pack.md`; and the final
 preparation evidence index with every cited acceptance artifact. Gate 06D also carries
 `gates/05-pac/{findings/gate05-pac-r3-findings.md,resolutions-r3.md}` under the campaign.
-These are path sets, not assembled or staged bundles. Third-party source delivery follows
-`source-manifest.md`, including link-only Goldreich access.
+The four source-only bundles and source manifests are prepared and verified; records bundles
+and exchange staging follow the reviewed D0 records commit. The exchange READMEs and dispatch
+prompts pin that records commit, records/common archive hashes and the final index hash
+externally. No such self-referential pin is embedded in these records. Third-party source
+delivery follows `source-manifest.md`, including official-link Goldreich/PSV access.
 
 ## Statement-phase findings retained for the auditor
 
@@ -103,90 +104,116 @@ These are path sets, not assembled or staged bundles. Third-party source deliver
    `Asymptotic/Adversary.lean`; BlockEncryptor, Lamport, sequential ZK and both GI layers use it.
    Lamport's duplicate padding theorem is deleted. Lamport and CCA2 use
    `Collection.ofFn_padFin_of_le` from `Asymptotic/CollectionsHelpers.lean`, simplifying the
-   zero-length padding suffix in the equal-length case. Ledger draft rows record local
-   implementation, with final verification/landing still pending.
+   zero-length padding suffix in the equal-length case. These repairs are present in the frozen source and covered by the completed common
+   verification; landing remains subject to the external gates; cleanup retains its post-S2 order.
 
 ## Exact preparation and audit order
 
-1. **Use the closed prerequisite gates and merged interfaces.** S2a/S2b and the repaired ch. 2–4
-   interfaces are context, not fresh external audits here. For 06D, Gate 05's closing findings,
-   repairs and the `main` transfer are also context. These integrations are present; the old
-   holds for #195, Q-5, the honest-party efficiency ruling and #194 are stale.
-2. **Finish common source verification.** Complete fresh, dynamically scoped Rule-10 collection
-   and full seals over stored types and values, including generated/private declarations and
-   anonymous commands via the complete import-closure supplement. Retain sensitivity controls
-   and an explicit-unfold scan including continuation lists; approved notation remains the only
-   name-level exception.
-   Classify inherited failures against the actual PR base; do not turn them into a blanket
-   exclusion. Resolve actual touched-source failures, then replay every affected module and
-   downstream module and reconcile final source/object fingerprints.
-3. **Complete final attestations and attachment reconciliation.** Reconcile the `sorry` census,
-   axiom records, declarations, style/API checks and recorded exceptions at the same final
-   source. Use the verified primary-source URLs/hashes and version limits; do not redistribute the
-   Goldreich drafts. Retain the frozen source commit unless new repairs require a new pin and
-   source-matched verification; select the final records commit, build matching bundles/manifests
-   and finish the four packs/prompts. This step has not been done by this unissued draft.
-4. **User dispatches 06A–D.** The four audits may run in parallel after steps 1–3. Each returns
-   its named findings file; repair findings and repeat the relevant audit until it closes at
-   0 blockers and 0 majors.
-5. **Fills follow their own prong's statement gate.** Preserve the user's per-prong rule.
-   The S2 candidate-host fill retains its separate source pin and acceptance/landing record;
-   Gate 06 does not attest it. Bundle only source bytes present at the chosen Gate 06 head.
-   Clean-up part 2 still follows S2 merge under the standing order.
+1. **Closed prerequisite interfaces are context.** S2a/S2b and the repaired ch. 2–4 interfaces
+   are present. For 06D, Gate 05's closed findings/resolutions and repaired PAC transfer are
+   context. The old holds for #195, Q-5, honest-party efficiency and #194 are resolved.
+2. **Common verification is complete at the frozen pin.** The scope, native reconciliation,
+   seals, controls, axioms, source scans, style/API and source-only bundles are reconciled below
+   and in `briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md`. Retained inherited failures are failed evidence, not exclusions or
+   a whole-source pass. The separate S2 candidate-host fill is not incorporated.
+3. **Finish round-1 staging.** Review these six records and the four source-only manifests,
+   make the D0 records commit, build the matching records/common bundles, and stage all four
+   exchange packs. Pin the records commit, records/common archive and final-index hashes in
+   each exchange README and dispatch prompt, outside the pack/PLAN/manifest bytes. The source
+   bundle hashes and source-only manifests are stable because they contain only source data.
+   This document does not attest that staging or dispatch has happened.
+4. **The user dispatches all four Codex audits.** They may run **in parallel** after the common
+   preparation and reviewed staging. Each auditor returns its named findings Markdown in the
+   audit chat; no commit/push is requested. Receiving auditors verify access and report exact
+   unavailable source comparisons. Repair findings and repeat the affected audit until its
+   0-blocker/0-major closure; no external gate is closed by the common checks.
+5. **Each prong's fills follow its own statement-gate closure.** There is no A→B→C→D audit
+   dependency. S2 candidate-host acceptance/landing remains separately pinned, and cleanup
+   part 2/efficiency retain their standing post-S2 order. Bundle only the Gate06 source at the
+   declared head. Any later source or target advance needs source/root-export equivalence or
+   refreshed comparison and source-matched affected/downstream verification.
 
-## Current verification and limits
+## Completed common preparation
 
-Evidence paths in this section are under
-`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/`.
+The common evidence is reconciled at the source/base above. The final index is
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/FINAL-EVIDENCE.md` and its machine summary is
+`briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence-rule10-final-r1/FINAL-SUMMARY.json`.
+The final index/common archive hashes and the records commit/bundle hashes are pinned externally
+in the exchange README and dispatch prompt, outside these pack bytes.
 
-- **Native reconciliation:** `evidence-run/final-native-summary.json` and
-  `evidence-run/final-repair-seal-ready.json` record all 467 union modules with zero stale
-  source/object/direct-prerequisite records at the frozen head, after 180 + 2 affected checks.
-  Remaining objects match earlier successful same-chat checks. This is reconciliation of serial
-  checks, not a second cold 467-module build. `TCSlib.lean` was not elaborated.
-- **Source scope:** `evidence-rule10-final-r1/{pins.json,modules.json,source-fingerprints.json}`
-  pins 61 changed Lean files: 54 mathematical modules and seven separately verified
-  import/option-only facade/export files. Scope is derived from the checked base-to-head source
-  set, not fixed to the earlier 51-module survey. The fresh collector is active; prepared
-  metadata is not its completion, axiom outcome or a seal-pass record. Fresh full seals and
-  all eleven controls remain to be run and reconciled at this pin.
-- **Style/API checks:** `evidence-style-final-r2/comparison.json` compares all 61 changed files:
-  10 inherited style findings, zero new findings (repository style exit code 1). Each complete
-  prong directory's plain and `check8b` campaign runs returned 0. This is not an all-library
-  campaign-lint pass. Preserve the precise existing exceptions and final source/API scan limits.
-- **Lexical/header checks:** `evidence-static-final-r1/summary.json` records lexical `sorry`
-  511 → 544; zero `admit` and zero `axiom` commands on both sides; normalized public-header
-  parser rows 816 ADDED / 7 REMOVED / 13 CHANGED. These are source/parser counts, not actual
-  elaborated declaration identities or a standard-only transitive axiom claim.
-- **Historical seal evidence:** the e9 source survey retains 51 valid installation/EOF harnesses,
-  17 passing modules and 34 failing modules with 195 source diagnostics. Exact classification
-  was 120 diagnostics in unchanged declarations and 75 in new/changed declarations at that
-  historical comparison. Later ordinary checks and old-collector diagnostic seals are repair
-  evidence, not final coverage. Reconcile final inherited dispositions against the checked
-  ancestor/actual target; an unchanged inherited source failure remains failed evidence, not
-  a seal pass, exclusion or automatic waiver. Keep invalid harness attempts separately labelled.
-- **Base and source identity:** the checked comparison ancestor is the full base SHA above.
-  `evidence-static-final-r1/comparison-base-equivalence.json` records equality to a later
-  records-only target snapshot. Any further target advance requires a recorded source/root-export
-  equivalence check or a refreshed actual-base comparison; do not silently use a moving base.
-
-## Unfilled issue-time attestations
-
-These fields remain placeholders. No final collector result, seal/control outcome, records
-commit, issued bundle or manifest hash is inferred from the completed native/static checks.
-
-| Attestation | Issue-time value |
+| Common check | Completed outcome and limit |
 |---|---|
-| Issued source (same as frozen head, or newly verified replacement) / actual-base disposition | `[ISSUE_SOURCE_COMMIT]` / `[ISSUE_BASE_DISPOSITION]` |
-| Records commit | `[ISSUE_RECORDS_COMMIT]` |
-| Final evidence index path / hash | `[ISSUE_FINAL_EVIDENCE_INDEX_PATH]` / `[ISSUE_FINAL_EVIDENCE_INDEX_SHA256]` |
-| Fresh collector, actual axiom identities/dispositions and outcomes | `[ISSUE_COLLECTOR_AXIOM_EVIDENCE]` / `[ISSUE_COLLECTOR_AXIOM_OUTCOMES]` |
-| Fresh full seals and eleven controls, including all source-failure dispositions | `[ISSUE_SEAL_CONTROL_EVIDENCE]` / `[ISSUE_SEAL_CONTROL_OUTCOMES]` |
-| Final explicit-unfold/source/API scans and precise style exceptions | `[ISSUE_SCAN_API_STYLE_EVIDENCE]` / `[ISSUE_SCAN_API_STYLE_DISPOSITIONS]` |
-| Each pack's exact bundle and manifest paths/hashes | `[ISSUE_06A_…]`, `[ISSUE_06B_…]`, `[ISSUE_06C_…]`, `[ISSUE_06D_…]` (expanded in each pack) |
-| Receiving-auditor source-access basis and exact version limits | `[ISSUE_SOURCE_ACCESS_DISCLOSURE]` |
+| Scope/native | 61 changed Lean paths: **54 math modules + 7 import/option-only facades**. All 1,108 library sources match the snapshot; 467 native source/object/prerequisite records are reconciled after 182 affected checks. `TCSlib.lean` was **not elaborated**. |
+| Full-source seals | All 54 harnesses valid: **37 source passes, 17 source failures, 138 diagnostics in 110 unchanged full header/proof blocks**. No new/touched failing block or home-induced read was identified. All failures remain failed observations. |
+| Failure/debt disposition | Exact historical-key normalization gives **62 historical / 48 additional observation keys**. Additional observations are retained inherited debt, not new source violations or failure exclusions. |
+| Sensitivity controls | All **11** verified: 5 unsealed negative passes, 5 sealed sole-proof failures, 1 sealed published-reader pass. |
+| Axioms/admissions | **2,881 actual identities**: 2,835 standard-only, **46 admitted-dependent** (33 direct statements + 13 derived dependencies), 0 unexpected axioms. The same 46 names/dependencies remain; substantive proof completion is not claimed. |
+| Source scans/C3 | **C1: 142 raw hits + 10 selected-open supplement observations; C2: 10 rows; C3: 3 retained legacy pairs**, not zero. The exhaustive TCS record has 134 inherited candidates: 131 debt + 3 exact recorded notation items. All 18 non-TCS raw hits are unchanged too. Composite new/touched review identifies **0 foreign-body violations / 0 unresolved items**. |
+| Style/API | 10 inherited style findings, 0 new; each complete prong's plain/check8b runs returned 0. This is not an all-library lint or Rule10-clean claim. |
 
-Any new source repair requires its affected/downstream replay and fresh source-matched
-verification before issue. No external gate is issued or staged by this document.
+The completed C3 R2 census covers all owned types/values, including opaque/private/generated
+constants; its exact per-module root sets match all 2,881 identities. Both metadata controls
+pass. The private BlockEncryptor pair is an older eqn-term observation outside the 110 failed
+blocks; counts are not blindly added. Invalid R1 C3 and earlier harness attempts remain labelled
+invalid. No failure, notation reference or inherited read is filtered or waived.
 
-**Not yet clear to merge — fresh verification outcomes, source-access disclosures, issue-time pins/bundles and user dispatch remain.**
+S2's separate candidate-host fill (PR #231) is **not incorporated or attested** by this Gate06
+source. Earlier closed S2a/S2b APIs remain context. Further source repairs require renewed
+source-matched affected/downstream checks and audit pins.
+
+## Final verification detail and limits
+
+- Native reconciliation uses earlier successful same-chat objects plus **182 affected checks**;
+  it is not a second cold 467-module build. The root export and all seven facades are verified
+  as import/option-only context; `TCSlib.lean` was not elaborated.
+- The fresh collector has 1,039 term pairs within 55,373 complete-closure pairs. The 46
+  admitted-dependent names/axiom sets equal the initial e9 census. Lexical `sorry` is 511→544;
+  zero `admit`/`axiom` commands on both sides. Public-header parser rows are 816 added / 7
+  removed / 13 changed, not actual elaborated declaration counts or proof completion.
+- C1's 142 raw hits are 124 TCSlib + 18 non-TCS. Ten named-open uses selected by
+  `open PrivateKeyScheme (encodeList)` are separately retained, giving all 134 inherited TCSlib
+  candidates (131 debt + exactly 3 recorded `PolyExpr.eval` notation items). The scanner's
+  named-open limitation is disclosed; it does not produce a zero claim. All ten C2 rows are
+  retained unchanged failures. The three legacy C3 pairs include the private BlockEncryptor
+  proof at historical eqn-term row 713 outside the 110 failed blocks; all pairs/homes remain
+  recorded. Neither counts nor the 764-row historical inventory are blindly added together.
+- Exact normalization of historical `_root_.Complexity.NUPPT.computes_iff_uprob` yields
+  62 historical / 48 additional observation keys. The earlier conservative 61/49 proposal
+  remains immutable. Both Encoding keys are historical. No failing complete block or
+  home-induced read was newly introduced; no full native base environment/base seal rerun
+  is claimed. Every raw failure/observation is retained.
+- The first C3 final attempt is an invalid parser/synthetic-sorry refusal, not a census. R2
+  changes only Cache field layout; it completes and its exact 54-module/2,881-name extraction
+  retains three legacy pairs and zero new/touched pairs. Its two metadata controls supplement
+  the eleven seal controls. Earlier invalid BPPBridge attempts and the e9 51-file survey remain
+  historical, not substitute final coverage.
+- The final style comparison covers all 61 paths (10 inherited/0 new, style rc1); prong plain
+  and check8b runs each return 0. This is not an all-library campaign-lint pass. Existing exact
+  notation/style exceptions remain precise; no blanket abbreviation/body-reading waiver is
+  introduced. The checked base's documented source/root-export equivalence is retained in
+  `evidence-static-final-r1/comparison-base-equivalence.json`; a later target advance requires
+  a fresh documented equivalence check or actual-base comparison.
+
+## Round 1 source identities and external records pins
+
+| Pack | Exchange source bundle | SHA-256 | Source sections | Source-only manifest SHA-256 |
+|---|---|---|---:|---|
+| 06A | `outbox/gates/06A-r1-gate/gate06A-source-bundle.md` | `fdad5c0bdd23d421f6351c3e8d37587fc09fc8a0662ba84db31e47cea26be8a2` | 125 | `fca279c40d91758168efc9d7a729a49f2641ba84d2cb0609afcbb567c68aae7c` |
+| 06B | `outbox/gates/06B-r1-gate/gate06B-source-bundle.md` | `66f3ac9e11a1100a276f3336f54ee4a6f5b3a109e5c647523575b95e828ef9ff` | 129 | `e33f8aa437668a506a31a5f7c1c2e3d2632ff999023be5d2847e324cbcd83990` |
+| 06C | `outbox/gates/06C-r1-gate/gate06C-source-bundle.md` | `15dfbca8d2d255b5b31bd71393a8c87bd7b88946cd46c9a3a2ff32a65a34654b` | 171 | `f649a5fa5ff1dee8395586345f0dc1a22efab783e850f46185e7230fbfb1406b` |
+| 06D | `outbox/gates/06D-r1-gate/gate06D-source-bundle.md` | `3a167712e1748f7a121aa01455e060977a225bb98f5ea144071c087c568a64cd` | 185 | `8947c1090298d80034c616b1492792707f91016528759d0b8047478a4ef97f90` |
+
+The four `06A-source-manifest.json`–`06D-source-manifest.json` files in this gate directory
+contain source data only: head/base, primary modules, import-edge closures, raw revision/path/
+byte/hash rows and source-bundle filename/hash. Each pack embeds its own manifest hash. Records
+commits and records/common archive hashes are intentionally pinned only by exchange READMEs
+and user dispatch prompts. The final evidence index is cited by path above; its hash is an
+external staging pin, so later prose polish cannot create a self-reference.
+
+Primary sources are the common provided exact tracked PS10 course PDF and official author
+links/version limits in `source-manifest.md`. Receiving auditors must verify access and name
+unavailable comparisons in their Markdown findings. Goldreich/PSV PDFs, extracted full text and
+rendered pages are not redistributed. Draft-to-publisher equivalence and deferred proofs remain
+explicit audit subjects. S2 PR #231 is not part of this source or this attestation.
+
+**Not yet clear to merge — external statement audits and their resolutions remain.**

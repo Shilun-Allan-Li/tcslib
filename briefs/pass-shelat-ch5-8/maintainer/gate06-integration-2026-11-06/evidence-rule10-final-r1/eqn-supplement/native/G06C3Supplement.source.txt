@@ -1,0 +1,250 @@
+import Lean
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
+import TCSlib.Complexity.Randomized.Classes
+import TCSlib.Complexity.Randomized.PolyTimeModel
+import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.BlockEncryptor
+import TCSlib.Cryptography.Asymptotic.MultiMessage
+import TCSlib.Cryptography.Authentication.DLHash
+import TCSlib.Cryptography.Authentication.Defs
+import TCSlib.Cryptography.Authentication.HashAndSign
+import TCSlib.Cryptography.Authentication.Lamport
+import TCSlib.Cryptography.Authentication.PRFMAC
+import TCSlib.Cryptography.Composability.CCA2Scheme
+import TCSlib.Cryptography.Composability.Defs
+import TCSlib.Cryptography.Composability.NonMalleable
+import TCSlib.Cryptography.Composability.PRFScheme
+import TCSlib.Cryptography.Composability.PublicKey
+import TCSlib.Cryptography.Composability.SequentialZK
+import TCSlib.Cryptography.Composability.SimNonMalleable
+import TCSlib.Cryptography.Composability.ThreeColoring
+import TCSlib.Cryptography.Randomness.BPPBridge
+import TCSlib.Cryptography.Randomness.Derandomization
+import TCSlib.Cryptography.Randomness.Extraction
+import TCSlib.Cryptography.Randomness.Learning
+import TCSlib.Cryptography.SecureComputation.Compose
+import TCSlib.Cryptography.SecureComputation.ComposePhases
+import TCSlib.Cryptography.SecureComputation.ComposeSecurity
+import TCSlib.Cryptography.SecureComputation.Defs
+import TCSlib.Cryptography.SecureComputation.Garbling
+import TCSlib.Cryptography.SecureComputation.GarblingSecurity
+import TCSlib.Cryptography.SecureComputation.GarblingSpecial
+import TCSlib.Cryptography.SecureComputation.Hybrid
+import TCSlib.Cryptography.SecureComputation.ObliviousTransfer
+import TCSlib.Cryptography.SecureComputation.SpecialEncryption
+import TCSlib.Cryptography.SecureComputation.SpecialEncryptionSecurity
+import TCSlib.Cryptography.SecureComputation.Yao
+import TCSlib.Cryptography.SecureComputation.YaoReal
+import TCSlib.Cryptography.ZeroKnowledge.Defs
+import TCSlib.Cryptography.ZeroKnowledge.Encoding
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRep
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.EfficiencyRepGI
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRep
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.SoundnessRepGI
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Closeness
+import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator
+import TCSlib.InformationTheory.Extractors
+import TCSlib.InformationTheory.FinDist
+import TCSlib.InformationTheory.Samples
+import TCSlib.LearningTheory.PAC.Defs
+import TCSlib.LearningTheory.PAC.Prediction
+
+/- Preparation only. This is a C3 metadata supplement, not library source or a seal control. -/
+open Lean Meta Elab Command
+
+namespace G06C3
+
+def isTCS (m : Name) : Bool := (`TCSlib).isPrefixOf m
+
+def home? (env : Environment) (homes : Array Name) (n : Name) : Option Name := do
+  let i ← env.getModuleIdxFor? n
+  pure homes[i.toNat]!
+
+/-- Actual Name parents, including a private equation wrapper's public parent. -/
+def foreignEquation? (env : Environment) (homes : Array Name) (owner ref : Name) :
+    CoreM (Option (Name × Name × Name)) := do
+  let .str raw suffix := ref | return none
+  unless suffix == "eq_def" || suffix == "eq_unfold" ||
+      (suffix.startsWith "eq_" && (suffix.drop 3).length > 0 &&
+        (suffix.drop 3).all Char.isDigit) do return none
+  let user := (privateToUserName? raw).getD raw
+  for parent in (if raw == user then [raw] else [raw, user]) do
+    if let some (.defnInfo _) := env.find? parent then
+      let some parentHome := home? env homes parent
+        | throwError "C3 unresolved definition home: {parent} (reference {ref})"
+      -- Stop at the first actual definition parent; never reinterpret a local private parent.
+      unless isTCS parentHome && parentHome != owner do return none
+      let some (.thmInfo _) := env.find? ref
+        | throwError "C3 equation-style reference is not a theorem: {ref} (parent {parent})"
+      let some refHome := home? env homes ref
+        | throwError "C3 equation theorem has no imported module: {ref}"
+      return some (parent, parentHome, refHome)
+  return none
+
+structure Cache where
+  types : NameMap (Array Name) := {}
+  values : NameMap (Array Name) := {}
+  typeExtractions : Nat := 0
+  valueExtractions : Nat := 0
+
+/-- Cache extraction only; ownership-dependent traversal is decided by scanRoot. -/
+def refs (ci : ConstantInfo) (value : Bool) (cache : Cache) : Array Name × Cache :=
+  let table := if value then cache.values else cache.types
+  match table.find? ci.name with
+  | some names => (names, cache)
+  | none =>
+    let names := if value then
+        ((ci.value? (allowOpaque := true)).map (·.getUsedConstants)).getD #[]
+      else ci.type.getUsedConstants
+    if value then
+      (names, { cache with values := cache.values.insert ci.name names,
+        valueExtractions := cache.valueExtractions + 1 })
+    else
+      (names, { cache with types := cache.types.insert ci.name names,
+        typeExtractions := cache.typeExtractions + 1 })
+
+structure Scan where
+  hits : Array (Name × Name × Name × Name) := #[] -- reference, parent, parent home, reference home
+  rootTypeRefs : Nat := 0
+  rootValueRefs : Nat := 0
+  visited : Nat := 0
+  pruned : Nat := 0
+  unknownHomeTypes : Nat := 0
+
+/-- One visited set per root preserves every owned-constant/reference pair. -/
+def scanRoot (env : Environment) (homes : Array Name) (owner : Name)
+    (owned : NameSet) (root : Name) (initial : Cache) : CoreM (Scan × Cache) := do
+  let some ci := env.find? root | throwError "C3 missing owned constant: {root}"
+  let mut cache := initial
+  let mut result : Scan := {}
+  let mut work : Array Name := #[]
+  let (types, c1) := refs ci false cache
+  cache := c1
+  let (values, c2) := refs ci true cache
+  cache := c2
+  result := { result with rootTypeRefs := types.size, rootValueRefs := values.size }
+  for n in types do work := work.push n
+  for n in values do work := work.push n
+  let mut seen : NameSet := {}
+  while !work.isEmpty do
+    let n := work.back!
+    work := work.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    result := { result with visited := result.visited + 1 }
+    if let some (parent, parentHome, refHome) ← foreignEquation? env homes owner n then
+      result := { result with hits := result.hits.push (n, parent, parentHome, refHome) }
+    let some used := env.find? n | throwError "C3 missing reached constant: {n} (root {root})"
+    -- Safe only after the complete imported non-TCS dependency graph check below.
+    if let some m := home? env homes n then
+      if !isTCS m then
+        result := { result with pruned := result.pruned + 1 }
+        continue
+    else
+      result := { result with unknownHomeTypes := result.unknownHomeTypes + 1 }
+    let (nextTypes, c3) := refs used false cache
+    cache := c3
+    for child in nextTypes do work := work.push child
+    if owned.contains n && used.isDefinition then
+      let (nextValues, c4) := refs used true cache
+      cache := c4
+      for child in nextValues do work := work.push child
+  return (result, cache)
+
+/-- A complete direct-edge check proves that no non-TCS module transitively imports TCSlib. -/
+def checkPruning (env : Environment) (homes : Array Name) : CoreM (Nat × Nat) := do
+  unless homes.size == env.header.moduleData.size do
+    throwError "C3 module names/data size mismatch"
+  let imported : NameSet := NameSet.ofArray homes
+  let mut modules := 0
+  let mut edges := 0
+  for i in [:homes.size] do
+    let m := homes[i]!
+    unless isTCS m do
+      modules := modules + 1
+      for dependency in env.header.moduleData[i]!.imports do
+        unless imported.contains dependency.module do
+          throwError "C3 incomplete module graph: {m} imports {dependency.module}"
+        if isTCS dependency.module then
+          throwError "C3 pruning forbidden: non-TCS module {m} imports {dependency.module}"
+        edges := edges + 1
+  return (modules, edges)
+
+end G06C3
+
+-- Check actual imported controls before elaborating aliases: do not generate equation theorems.
+run_cmd do
+  let env ← getEnv
+  for n in #[`BoolCircuit.TreeCircuit.size.eq_def, `BoolCircuit.TreeCircuit.size_node] do
+    let some (.thmInfo _) := env.find? n | throwError "C3 missing imported control theorem: {n}"
+    unless (env.getModuleIdxFor? n).isSome do throwError "C3 control is not imported: {n}"
+  let some (.defnInfo _) := env.find? `BoolCircuit.TreeCircuit.size
+    | throwError "C3 control parent is not an imported definition"
+
+namespace G06C3
+-- Metadata sensitivity aliases only. The first must be detected; the published reader must not.
+def controlGenerated := @BoolCircuit.TreeCircuit.size.eq_def
+def controlReader := @BoolCircuit.TreeCircuit.size_node
+end G06C3
+
+set_option maxHeartbeats 0
+run_cmd do
+  let env ← getEnv
+  let homes := env.header.moduleNames
+  let (pruneModules, pruneEdges) ← liftCoreM <| G06C3.checkPruning env homes
+  logInfo m!"G06-C3-PRUNING nonTCS_modules={pruneModules} direct_edges={pruneEdges} checked=true"
+  let controlOwner := env.header.mainModule
+  let controls := #[`G06C3.controlGenerated, `G06C3.controlReader]
+  let controlSet := NameSet.ofArray controls
+  let some gc := env.find? controls[0]! | throwError "C3 missing generated control alias"
+  let some rc := env.find? controls[1]! | throwError "C3 missing reader control alias"
+  unless ((gc.value? (allowOpaque := true)).map (·.getUsedConstants) |>.getD #[]).contains
+      `BoolCircuit.TreeCircuit.size.eq_def do throwError "C3 generated alias lost its actual reference"
+  unless ((rc.value? (allowOpaque := true)).map (·.getUsedConstants) |>.getD #[]).contains
+      `BoolCircuit.TreeCircuit.size_node do throwError "C3 reader alias lost its published reference"
+  let (positive, cache) ← liftCoreM <| G06C3.scanRoot env homes controlOwner controlSet controls[0]! {}
+  unless positive.hits.size == 1 do throwError "C3 positive control expected one hit, got {positive.hits.size}"
+  let (ref, parent, parentHome, refHome) := positive.hits[0]!
+  unless ref == `BoolCircuit.TreeCircuit.size.eq_def && parent == `BoolCircuit.TreeCircuit.size do
+    throwError "C3 positive control detected the wrong equation/parent: {ref} / {parent}"
+  logInfo m!"G06-C3-CONTROL generated expected=1 actual=1 reference={ref} parent={parent} parent_home={parentHome} reference_home={refHome}"
+  let (negative, nextCache) ← liftCoreM <| G06C3.scanRoot env homes controlOwner controlSet controls[1]! cache
+  unless negative.hits.isEmpty do throwError "C3 published-reader control expected zero hits"
+  logInfo m!"G06-C3-CONTROL published_reader expected=0 actual=0 reference=BoolCircuit.TreeCircuit.size_node"
+  -- The source has exactly the 54 audited TCSlib direct imports; use their actual Names.
+  let targets := env.header.imports.filterMap fun dependency =>
+    if G06C3.isTCS dependency.module then some dependency.module else none
+  let targetSet := NameSet.ofArray targets
+  unless targets.size == 54 do throwError "C3 target count mismatch"
+  let mut groups : NameMap (Array Name) := {}
+  for (n, _) in env.constants.map₁.toList do
+    if let some m := G06C3.home? env homes n then
+      if targetSet.contains m then
+        groups := groups.insert m (((groups.find? m).getD #[]).push n)
+  let mut cache := nextCache
+  let mut rootCount := 0
+  let mut pairCount := 0
+  logInfo m!"G06-C3-BEGIN base=eee107e92a7db11f1f8c98a5c2867304f57ddc54 head=3f6db40e1688c4a0bb922c9575dd3bd2157a650b modules={targets.size}"
+  for m in targets do
+    unless (env.getModuleIdx? m).isSome do throwError "C3 target not imported: {m}"
+    let roots := ((groups.find? m).getD #[]).qsort Name.lt
+    unless !roots.isEmpty do throwError "C3 target has no stored constants: {m}"
+    let owned := NameSet.ofArray roots
+    let mut modulePairs := 0
+    logInfo m!"G06-C3-MODULE-BEGIN {m} | roots={roots.size}"
+    for n in roots do
+      let (result, updated) ← liftCoreM <| G06C3.scanRoot env homes m owned n cache
+      cache := updated
+      rootCount := rootCount + 1
+      pairCount := pairCount + result.hits.size
+      modulePairs := modulePairs + result.hits.size
+      logInfo m!"G06-C3-ROOT {m} | {n} | type_refs={result.rootTypeRefs} | value_refs={result.rootValueRefs} | visited={result.visited} | pruned={result.pruned} | unknown_home_types={result.unknownHomeTypes} | hits={result.hits.size}"
+      for (ref, parent, parentHome, refHome) in result.hits.qsort (fun a b => Name.lt a.1 b.1) do
+        logInfo m!"G06-C3-REF {m} | {n} | {ref} | {parent} | {parentHome} | {refHome}"
+    logInfo m!"G06-C3-MODULE-END {m} | roots={roots.size} | pairs={modulePairs}"
+  logInfo m!"G06-C3-END base=eee107e92a7db11f1f8c98a5c2867304f57ddc54 head=3f6db40e1688c4a0bb922c9575dd3bd2157a650b modules={targets.size} roots={rootCount} pairs={pairCount} type_extractions={cache.typeExtractions} value_extractions={cache.valueExtractions}"
