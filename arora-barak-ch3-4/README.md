@@ -62,9 +62,11 @@ This folder only carries files in transit. The maintainer's rules are in that br
   and864 supplied attempts reconcile; remaining strict seal gaps make it **PARTIAL/superseded**.
   No R2 source is adopted. Maintainer final checks/replay and pending interface rulings are separate.
 
+- Gate119 (#234): Codex packet Ready to dispatch in `outbox/gates/119-mig1-followup-api-gate/`;
+  complete640-section bundle;401-module replay passed. Not yet dispatched.
 - F6: `outbox/fills/f6-space-universal/`, **Claude**, verified624-section packet
-  ready for user dispatch; exact merged #230 proofbase. Delivery ZIPs only to
-  `arora-barak-ch3-4/inbox/fill-f6/`; no fill dispatched by maintainer.
+  dispatched by Seyoon; exact merged #230 proofbase. cp01/cp02 received, review queued.
+  Delivery ZIPs only to `arora-barak-ch3-4/inbox/fill-f6/`.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
