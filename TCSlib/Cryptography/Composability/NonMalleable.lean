@@ -122,7 +122,10 @@ theorem nmDecrypt_challenge {n : ℕ} (sk : List Bool) (c : Fin (S.ctLen.eval n)
    adversary runs `A`, then asks CCA2's `Dec` for each of `A`'s ciphertexts. `Dec` refuses the
    challenge with the same `⊥` that `NM` assigns to its copies (`indImpl_dec_cca2_challenge`,
    `nmDecrypt_challenge`), so the answers are exactly `NM_b`'s output. It runs `D` on them and
-   outputs `D`'s verdict. Same advantage, with budget `q + ℓ`; `D` is run by T1's handler.
+   outputs `D`'s verdict. T2 (`Games.exists_interactiveHandlerMachine`) supplies
+   `advIn = pk`, forwards decryption queries, and uses `finCall = ℓ` in finalization before
+   running `D`, for total budget `q + ℓ`. Advice is carried through `z` and the public
+   `exists_withAdvice`/`exists_comp` closure lemmas. The advantage is unchanged.
 2. (⇐) Given an IND adversary `A` with guess `g`, the NM adversary runs `A` and outputs fresh
    encryptions of `g^{msgLen}` and `(¬g)^{msgLen}` (it holds `pk`). The two plaintexts differ, so
    by correctness at most one of the two ciphertexts is the challenge. The distinguisher reads

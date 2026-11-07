@@ -297,7 +297,11 @@ function family.
 **Proof sketch** (the source's, made explicit).
 1. Replace `f_{k₂}` by a random function `RF` on `2n` bits: by PRF security at parameter `2n`,
    the advantage changes by a negligible amount. The reduction samples `k₁` itself and answers
-   `Enc′` and `Dec′` with its oracle in place of `f_{k₂}`; it is a machine by T1.
+   `Enc′` and `Dec′` with its oracle in place of `f_{k₂}`. T2
+   (`Games.exists_interactiveHandlerMachine`) implements the forwarding handler with `k₁`
+   in its seed, the input-free companion supplies its machine input, and T4
+   (`Games.exists_toOracleAdversary_of_bitCodec`) provides the oracle adversary at length
+   `2n`.
 2. In the resulting game, call a `Dec′` query `(r, c₁, t)` *fresh* if `(r, c₁)` is not the
    ciphertext part of an earlier `Enc′` or challenge answer. A fresh query has a valid tag with
    probability `2^{-2n}` (a fresh value of `RF`), so by the union bound all fresh queries are

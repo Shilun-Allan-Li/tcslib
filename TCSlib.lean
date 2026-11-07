@@ -59,6 +59,10 @@ import TCSlib.Cryptography.NumberTheory
 import TCSlib.Cryptography.ZeroKnowledge
 import TCSlib.Cryptography.Games
 import TCSlib.Cryptography.Games.Bridges
+import TCSlib.Cryptography.Authentication
+import TCSlib.Cryptography.SecureComputation
+import TCSlib.Cryptography.Composability
+import TCSlib.Cryptography.Randomness
 
 import TCSlib.InformationTheory
 

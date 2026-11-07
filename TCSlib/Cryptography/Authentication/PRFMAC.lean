@@ -108,8 +108,12 @@ function family, the PRF MAC is secure.
    `2^{-n}` (the collision bound `prob_mem_le`, or a direct count).
 5. So `D`'s PRF advantage is at least `ε(n) − 2^{-n}`. Since `F` is a PRF it is negligible, so
    `ε` is negligible.
-6. `D` is a machine by the efficiency result T1 (`Games.exists_handlerMachine`, the handler
-   forwarding queries), and its budget is `q + 1`.
+6. First use the input-free companion `Games.exists_toCompOn_of_toComp` for the forger.
+   The forwarding reduction is a machine by T2 (`Games.exists_interactiveHandlerMachine`):
+   its finalization makes one query at the output message, checks freshness from the state,
+   and returns one bit (`finCall = 1`, `outLen = 1`), with budget `q + 1`. T4
+   (`Games.exists_toOracleAdversary_of_bitCodec`) then supplies `OracleEnsemble.Indist`'s
+   oracle adversary.
 
 The PRF advantage is read through `OracleEnsemble.Indist`, in framework form after the F-1
 restatement. -/

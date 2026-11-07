@@ -264,12 +264,14 @@ family is collision resistant on its full domain and the signature scheme is one
    runs `A` on `⟨pk, i⟩` answering its query with `Sign_sk(h_i(m))`, and outputs `(m, m′)`
    (aborting if `A` made no query). Since `m′ ≠ m` and both lie in `D_i` (`hdom`), this is a
    collision. `B` answers `A`'s queries itself, so it is a machine by T1
-   (`Games.exists_handlerMachine`; the seed holds the coins of `Gen` and `Sign`).
+   (`Games.exists_handlerMachine`), with `advIn` supplying `⟨pk, i⟩`, `out` returning `(m, m′)`,
+   and the seed holding the coins of `Gen` and `Sign`.
 3. *Case `A` made no query or `h_i(m′) ≠ h_i(m)`.* The forger `C^{Sign_sk}(1^n, pk)` samples
    `i ← Gen_CRH(1^n)`, runs `A` on `⟨pk, i⟩` forwarding its query `m` as `h_i(m)`, and outputs
    `(h_i(m′), σ′)`. That is a one-time forgery against `S`: `C` makes at most one query, and
-   `h_i(m′)` was not queried. `C`'s handler asks its own oracle, so it needs the interactive form
-   of T1 (the efficiency fill's T2), or a direct construction for this one query.
+   `h_i(m′)` was not queried. T2 (`Games.exists_interactiveHandlerMachine`) uses
+   `advIn = ⟨pk, i⟩`, forwards each query as `h_i(m)` (`perCall = 1`), and finishes without
+   another oracle query (`finCall = 0`).
 4. `A`'s success probability is at most `B`'s plus `C`'s, both negligible. -/
 theorem hashAndSign_oneTimeSecure (H : CRH) (S : SignatureScheme)
     (hlen : ∀ n, H.rangeLen.eval n = S.msgLen.eval n) (hdom : ∀ n i x, H.inDom n i x = true)

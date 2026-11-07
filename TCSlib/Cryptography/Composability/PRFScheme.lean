@@ -73,7 +73,10 @@ CPA-secure.
 **Proof sketch** (the source's).
 1. Replace `f_k` by a random function: by PRF security, the advantage changes by a negligible
    amount (the reduction answers `Enc` and the challenge by querying its own oracle at the fresh
-   `r`; efficiency by T1).
+   `r`). T2 (`Games.exists_interactiveHandlerMachine`) implements this forwarding handler,
+   with the challenge bit in the seed and a finalization that compares the guess with that
+   bit; the input-free companion and T4 (`Games.exists_toOracleAdversary_of_bitCodec`)
+   supply the oracle adversary used by `OracleEnsemble.Indist`.
 2. With a random function, the challenge's pad `RF(r*)` is uniform and independent of everything
    else unless `r*` collides with the `r` of some `Enc` answer. A collision has probability at most
    `q(n) / 2^n` (the collision bound `prob_mem_le`, one fresh draw against at most `q` earlier

@@ -461,7 +461,8 @@ noncomputable def lamport : SignatureScheme where
    differs from the query in some position, which is `i` with probability at least `1/n`.
    Altogether `B` inverts with probability at least `ε(n)/(2n)`.
 5. `f` is one-way, so `ε(n)/(2n)` is negligible, and so is `ε`. `B` is a machine by T1
-   (`Games.exists_handlerMachine`), its handler answering the one query.
+   (`Games.exists_handlerMachine`): `advIn` builds the public key from `y = z` and the seed,
+   the handler answers or aborts, and `out` returns the planted signature component `σ′_i`.
 
 If `A` makes no query, the abort never happens and the bound improves to `ε(n)/(2n)` as well. -/
 theorem lamport_oneTimeSecure (hf : (lamportOWF L f).StrongOneWay) :

@@ -414,8 +414,9 @@ end FixedLengthPKScheme
    `m₀ = m₁`.
 3. Conditioning on `A`'s choice, `A`'s CPA advantage is at most `D`'s single-bit advantage
    between `⟨pk, Enc_pk(0)⟩` and `⟨pk, Enc_pk(1)⟩`, which is negligible
-   (`BitPublicKeyScheme.singleBitSecure_iff`). `D` is a machine by T1, the handler answering the
-   one challenge query. -/
+   (`BitPublicKeyScheme.singleBitSecure_iff`). T1 (`Games.exists_handlerMachine`) makes
+   `D` a machine: `advIn` extracts `pk` from `z = ⟨pk, c⟩`, the handler answers the challenge
+   with `padCt L c`, and `out` flips or zeroes the result bit as described above. -/
 theorem _root_.TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.padded_cpa
     {S : BitPublicKeyScheme} (h : S.SingleBitSecure) (L : PolyExpr)
     (hL : ∀ n (rg : S.gen.Coins n) (b : Bool) (re : S.enc.Coins n),
