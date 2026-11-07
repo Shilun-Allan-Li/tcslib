@@ -1,0 +1,46 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+namespace F6IssuedFirstHalt
+open Turing
+
+/-- Conditional source interface only: preserve the complete final configuration and arbitrary
+output at the first source halt. This does not build any F6 prefix or loop. -/
+theorem source_first_halt (M : CodeTM) (x output : List Bool) (t : ℕ)
+    (hcompute : M.toFinTM.ComputesInTime x output t) :
+    ∃ u ≤ t,
+      (∀ v < u, (M.tm.runFrom (M.tm.initCfg x) v).state ≠ none) ∧
+      M.tm.runFrom (M.tm.initCfg x) u = M.tm.runFrom (M.tm.initCfg x) t ∧
+      (M.tm.runFrom (M.tm.initCfg x) u).state = none ∧
+      (M.tm.runFrom (M.tm.initCfg x) u).output = output := by
+  rw [CodeTM.toFinTM_eq] at hcompute
+  have ht := (FinTM.computesInTime_iff _ _ _ _).mp hcompute
+  obtain ⟨u, hu, hcut, he⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) ht.1
+  refine ⟨u, hu, hcut, he, ?_, ?_⟩
+  · rw [he]; exact ht.1
+  · rw [he]; exact ht.2
+
+end F6IssuedFirstHalt
+#print axioms F6IssuedFirstHalt.source_first_halt
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let root := ``F6IssuedFirstHalt.source_first_halt
+  for (n, ci) in env.constants.toList do
+    if !root.isPrefixOf n then continue
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AX|{n}|{(ax.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for d in used do
+      if seen.contains d then continue
+      seen := seen.push d
+      match env.getModuleIdxFor? d, env.find? d with
+      | some i, some (.defnInfo di) =>
+        let home := env.header.moduleNames[i.toNat]!
+        if (`TCSlib).isPrefixOf home then
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{d}|{home}|{hint}"
+      | _, _ => pure ()
