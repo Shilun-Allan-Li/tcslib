@@ -1,0 +1,80 @@
+{
+  "base": "1c6c020d02ce218cba155ce1a9bb7ca7f583741f",
+  "public_explicit_source_theorems_added": 8,
+  "public_generated_field_theorems_added": 15,
+  "total": 23,
+  "source_files": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "base_sha256": "badfd3e8bdd8aa71582bfcccec995491f8d3438b8fc4d8b13fe5d5dcdfbd8677",
+      "head_sha256": "7b67bbcb06ff8acf1c8f6c97b1a468898000747136120dd6420d881115661fe7",
+      "exact_base_recovered_by_removing_approved_additions": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "base_sha256": "944c712eb8bc7600f2e45da39d8bb5ca2e9779791a87647605f3a9ab16186318",
+      "head_sha256": "65838dad21814fef438998ec5cfe2f18765e6643776a93d914f58f2d07a1b3c3",
+      "exact_base_recovered_by_removing_approved_additions": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "base_sha256": "5e3f02dbb40c1b89a62b1d84ee0e008543b1b34ec06e9040f04d6305e3f722b7",
+      "head_sha256": "6b1efdb7bb8916ef403a80830247283057aeb384eaf3c4ea6ee576385eba0941",
+      "exact_base_recovered_by_removing_approved_additions": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "base_sha256": "e591f8d2c787d6fa3687505dc35cb6a9f82f9a91afbb1049526c0d36f2812526",
+      "head_sha256": "64bf3d4a8c7e0ee4e748b1fb9cdee939d30c500b518894a82f5be9a3dbd3b14f",
+      "exact_base_recovered_by_removing_approved_additions": true
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "base_sha256": "b39310d496f4835754c51ae1db5677efa0f1496aed27ca13c684dec4aa70516f",
+      "head_sha256": "7355f9634c35fbea36156620405efada8e38abfc54a7c8f7425bf7d3e764468f",
+      "exact_base_recovered_by_removing_approved_additions": true
+    }
+  ],
+  "insertions": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "inserted_text": "/-- A coded machine's bundled form has one work tape, its canonical finite state type,\nand the same underlying machine. -/\ntheorem CodeTM.toFinTM_eq (M : CodeTM) :\n    M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := rfl\n\n",
+      "before_marker": "/-- The bundled form of a coded machine has exactly one work tape. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "inserted_text": "-- Field equations for the two configuration embeddings.\nattribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.FinTM.leftCfg\nattribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.FinTM.rightCfg\n\n",
+      "before_marker": "/-- Extending an action commutes with the left configuration embedding. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "inserted_text": "/-- A branch union has the sum of the two component tape counts. -/\ntheorem branchTM_k (M\u2081 M\u2082 : FinTM Bool) (b : Bool) :\n    (branchTM M\u2081 M\u2082 b).k = M\u2081.k + M\u2082.k := rfl\n\n/-- A branch union's state type is the disjoint union of the component state types. -/\ntheorem branchTM_State (M\u2081 M\u2082 : FinTM Bool) (b : Bool) :\n    (branchTM M\u2081 M\u2082 b).State = (M\u2081.State \u2295 M\u2082.State) := rfl\n\n/-- From a fixed configuration, a branch union has the same run for either Boolean\ninitial-state choice. Both machines are explicitly transported to their common tape\ncount and state type before comparing configurations. -/\ntheorem branchTM_runFrom_independent (M\u2081 M\u2082 : FinTM Bool) (b b' : Bool)\n    {x : List Bool}\n    (c : Cfg (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) x) (t : \u2115) :\n    let view : Bool \u2192 MultiTapeTM (M\u2081.k + M\u2082.k) Bool (M\u2081.State \u2295 M\u2082.State) :=\n      fun tag => by\n        rw [\u2190 branchTM_k M\u2081 M\u2082 tag, \u2190 branchTM_State M\u2081 M\u2082 tag]\n        exact (branchTM M\u2081 M\u2082 tag).tm\n    (view b).runFrom c t = (view b').runFrom c t := by\n  exact MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)\n    (by\n      rw [MultiTapeTM.agreeOn_iff]\n      intro q _ inp work\n      rfl)\n    c t (fun _ _ q _ => Set.mem_univ q)\n\n",
+      "before_marker": "/-- Each selected branch has exactly its original time and completed output."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "inserted_text": "-- Field equations for the captured source configuration.\nattribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n  Turing.captureCfg\n\n",
+      "before_marker": "/-- Applying a captured action preserves the source fields and appends its"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "inserted_text": "/-- The copy machine visits no work-tape cells, on every input and at every time. -/\ntheorem idTM_spaceUsed (x : List Bool) (t : \u2115) :\n    idTM.tm.spaceUsed (idTM.tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n\n",
+      "before_marker": "/-- Run invariant of the copy machine: after `t \u2264 n` steps it is live, its input head"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "inserted_text": "/-- A fixed-word constant machine visits no work-tape cells, on every input and at every time. -/\ntheorem constTM_spaceUsed (w x : List Bool) (t : \u2115) :\n    (constTM w).tm.spaceUsed ((constTM w).tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n\n",
+      "before_marker": "/-- **The constant machine's time**. On every input the constant machine halts within `|w| + 1`"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "inserted_text": "/-- A fixed-word prepending machine visits no work-tape cells, on every input and at every time. -/\ntheorem prependTM_spaceUsed (w x : List Bool) (t : \u2115) :\n    (prependTM w).tm.spaceUsed ((prependTM w).tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n\n",
+      "before_marker": "/-- A prefixing-machine configuration with the vacuous work fields suppressed. -/"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "inserted_text": "/-- The pairing validator visits no work-tape cells, on every input and at every time. -/\ntheorem pairValidTM_spaceUsed (x : List Bool) (t : \u2115) :\n    pairValidTM.tm.spaceUsed (pairValidTM.tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n\n",
+      "before_marker": "/-- One aligned block either continues silently or halts with its verdict. -/"
+    }
+  ]
+}

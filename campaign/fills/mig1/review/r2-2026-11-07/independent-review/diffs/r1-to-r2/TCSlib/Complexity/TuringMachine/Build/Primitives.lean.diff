@@ -1,0 +1,182 @@
+--- r1/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ r2/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -1771,35 +1771,6 @@
+         simp [lenCfg, pairDecode]
+       · exact False.elim (h rfl)
+ 
+-/-- Quantitative input rewind, adapted from the wrapper controller's proved
+-`timed_rewind` pattern using the public `rewind_scan` interface.
+-**Proof sketch.** One mandatory left move is followed by exactly the new
+-position plus one scan steps. Work tapes and output are preserved. -/
+-private lemma catalogRewind {k : ℕ} {S : Type} {x : List Bool}
+-    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+-    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+-    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+-      | some _ => controlAction .neg (some scan)
+-      | none => controlAction .pos dest)
+-    (c : Cfg k Bool S x) (hs : c.state = some start) :
+-    ∃ r ≤ c.inputPos.val + 2,
+-      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+-  have hstep : tm.step c =
+-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+-    unfold MultiTapeTM.step
+-    rw [hs]
+-    dsimp only
+-    rw [hstart, controlAction_apply]
+-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+-    rw [moveInputPos_neg_val]
+-    have := c.inputPos.isLt
+-    omega
+-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+-  · rw [moveInputPos_neg_val]; omega
+-  · rw [MultiTapeTM.runFrom_add]
+-    change tm.runFrom (tm.step c) _ = _
+-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+-
+ /-- A completed generator is captured without physical output, then its
+ last cell and the first physical input cell are exposed for comparison.
+ **Proof sketch.** Use the least source halting time to discharge `capture_run`'s
+@@ -1846,7 +1817,7 @@
+         simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+           sub_eq_add_neg]
+     · rfl
+-  obtain ⟨r, hrle, hr⟩ := catalogRewind (pairCountTM M).tm
++  obtain ⟨r, hrle, hr⟩ := timed_rewind (pairCountTM M).tm
+     (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
+     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
+   refine ⟨t + 1 + r, ?_, c, ho, ?_⟩
+@@ -2378,6 +2349,7 @@
+       polyHeads (x.length + 1) (M.runFrom c u).state (M.runFrom c u).workTapePos := by
+     induction u with
+     | zero =>
++      rw [MultiTapeTM.runFrom_zero]
+       refine ⟨rfl, ?_⟩
+       simp [c, catalogPolyCfg, polyHeads]
+       omega
+@@ -2756,7 +2728,8 @@
+       (fwdMapCfg M x q p a b ha hb out) =
+       fwdMapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)
+         (out ++ emit.toList) := by
+-  refine Cfg.ext rfl rfl ?_ ?_ rfl
++  refine Cfg.ext (Action.apply_state _ _) (Action.apply_inputPos _ _) ?_ ?_
++    (Action.apply_output _ _)
+   · funext i
+     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+     · simp [fwdMapAct, fwdMapCfg, Action.apply]
+@@ -2803,7 +2776,8 @@
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
+       else fwdMapCfg M x (some .copyB)
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
+-  change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++    MultiTapeTM.runFrom_zero]
+   rw [fwdMap_first M x pre (c :: rest) a b hx]
+   unfold MultiTapeTM.step
+   change ((fwdMapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
+@@ -2978,7 +2952,9 @@
+         (fwdMapCfg M x (some .emitA) p pre b pre.length 0 out) = _
+       rw [fwdMap_move]
+       simp [fwdMapCfg]
+-    change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++    rw [show 2 * ([] : List Bool).length + 2 = 0 + 1 + 1 from rfl,
++      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++      MultiTapeTM.runFrom_zero]
+     rw [hs]
+     change (fwdMapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
+     rw [fwdMap_move]
+@@ -2989,7 +2965,8 @@
+     have hs : (fwdMapTM M false).tm.runFrom
+         (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
+         fwdMapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
+-      change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++    MultiTapeTM.runFrom_zero]
+       have hfirst : (fwdMapTM M false).tm.step
+           (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) =
+           fwdMapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
+@@ -3031,7 +3008,7 @@
+   refine Cfg.ext rfl rfl rfl ?_ ?_
+   · funext i
+     simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init]
+-  · simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init, pairEncode]
++  · simp [fwdMapCfg, fwdMapVirtual, pairEncode_eq]
+ 
+ /-- The validating setup either halts silently on malformed input or reaches
+ exactly the required payload seam with the encoded first component emitted.
+@@ -3119,17 +3096,18 @@
+   obtain ⟨t, ht, he⟩ := fwdMap_parse M x x [] [] rfl
+   have hi : (fwdMapTM M false).tm.initCfg x =
+       fwdMapCfg M x (some (.parse none)) ⟨1, by omega⟩ [] [] 0 0 [] := by
+-    refine Cfg.ext rfl rfl ?_ ?_ rfl
++    rw [MultiTapeTM.initCfg_eq]
++    refine Cfg.ext (Cfg.init_state _ _) (Cfg.init_inputPos _ _) ?_ ?_ (Cfg.init_output _ _)
++    · funext i z
++      rw [Cfg.init_workTapes]
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
+     · funext i
++      rw [Cfg.init_workTapePos]
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-    · funext i
+-      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
+   refine ⟨t, by simp only [List.length_nil, mul_zero, add_zero] at ht; omega, ?_⟩
+   rw [hi]
+   simpa only [List.nil_append, List.length_nil, Nat.cast_zero] using he
+@@ -3193,7 +3171,11 @@
+       (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) t =
+         fwdMapVirtual M (M.tm.runFrom c t) tag' p a pre := by
+   induction t with
+-  | zero => exact ⟨tag, hb, rfl⟩
++  | zero =>
++    refine ⟨tag, ?_, ?_⟩
++    · rw [MultiTapeTM.runFrom_zero]
++      exact hb
++    · rw [MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_zero]
+   | succ t ih =>
+     obtain ⟨b, hb, he⟩ := ih
+     obtain ⟨d, hd, hs⟩ := fwdMapVirtual_step M _ b hb p a pre
+@@ -3471,7 +3453,7 @@
+         change pairEncode a [] ++
+           (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+         rw [ho]
+-        simp [pairEncode, List.append_assoc]
++        rw [pairEncode_eq, pairEncode_eq, List.append_nil]
+     have hT := hTg hlen
+     exact ht.mono (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+ 
+@@ -4147,7 +4129,7 @@
+   have hlen : s.length ≤ (splitStep w s).length := by
+     unfold splitStep
+     split <;> simp
+-  obtain ⟨r, hr, he⟩ := catalogRewind (splitRestoreTM k).tm (2, false) (3, false)
++  obtain ⟨r, hr, he⟩ := timed_rewind (splitRestoreTM k).tm (2, false) (3, false)
+     (some (4, false)) (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+     (splitRestoreClean k w (splitStep w s) (2, false) (splitPos w s.length) 0) rfl
+   have hp : (splitPos w s.length).val ≤ w.length + 1 := by simp [splitPos] <;> omega
+@@ -4768,7 +4750,7 @@
+       (splitBodyTM M start).tm.runFrom (c.mapState (SplitBodyState.rewind ok)) t =
+         ({c with state := some (2 : Fin 3), inputPos := 1}).mapState (SplitBodyState.rewind ok) ∧
+       splitSafe (splitBodyTM M start).tm .anchor (c.mapState (SplitBodyState.rewind ok)) t := by
+-  obtain ⟨T, hT, he⟩ := catalogRewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
++  obtain ⟨T, hT, he⟩ := timed_rewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
+     (fun _ _ => rfl) (fun _ _ => rfl) c hc
+   obtain ⟨t, ht, hend, hsafe⟩ := splitEmbed_cut (splitRewindTM M.k).tm
+     (splitBodyTM M start).tm (SplitBodyState.rewind ok) .anchor (fun q => q = (2 : Fin 3))
+@@ -6176,7 +6158,7 @@
+       funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
+     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+     exact emitterP2_prepare_rewind_suffix w s v over p v.length (le_refl _)
+-  obtain ⟨r, hr, h5⟩ := catalogRewind tm ((6 : Fin 9), over) ((7 : Fin 9), over)
++  obtain ⟨r, hr, h5⟩ := timed_rewind tm ((6 : Fin 9), over) ((7 : Fin 9), over)
+     (some ((8 : Fin 9), over)) (fun _ _ => rfl) (fun _ _ => rfl)
+     (emitterP2PrepareCfg w s s v 6 over p 0 0) rfl
+   have hr' : r ≤ w.length + 3 := by simpa only [emitterP2PrepareCfg, hp] using hr

@@ -1,0 +1,26 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+open Turing
+section Control0
+-- C01 step (pointwise / abstracted)
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step {c with state := none} = {c with state := none} := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step {c with state := none}) = fun _ c => {c with state := none} := by rfl
+
+end Control0
+section Control1
+-- C02 runFrom
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.runFrom c 1 = tm.step c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.runFrom c 1) = fun tm c => tm.step c := by rfl
+
+end Control1
+section Control2
+-- C21 VirtualTag
+example {n : ℕ} (p : Fin (n + 2)) (b : Bool) : FinTM.VirtualTag p b =
+    ((p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)) := by rfl
+example {n : ℕ} : (fun (p : Fin (n + 2)) (b : Bool) => FinTM.VirtualTag p b) =
+    fun p b => ((p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)) := by rfl
+
+end Control2

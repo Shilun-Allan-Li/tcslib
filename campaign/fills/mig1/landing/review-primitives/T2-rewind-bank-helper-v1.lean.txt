@@ -1,0 +1,73 @@
+/-- Rewind either the aligned candidate bank or the suffix bank, preserving the inactive bank.
+
+**Proof sketch.** One induction on the active word's head distance handles both control phases.
+A nonblank active cell moves its selected heads left; at the left blank the positive move
+restores those heads to zero and advances control. Public action equations preserve all words,
+physical input and output. [AB09, §1.2] -/
+private lemma emitterP2_prepare_rewind_bank (candidate : Bool) (w s v : List Bool)
+    (over : Bool) (p : Fin (w.length + 2)) (other : ℤ) :
+    ∀ j, j ≤ (if candidate then s else v).length →
+      emitterP2PrepareTM.tm.runFrom
+        (emitterP2PrepareCfg w s s v (if candidate then 3 else 5) over p
+          (if candidate then (j : ℤ) - 1 else other)
+          (if candidate then other else (j : ℤ) - 1)) (j + 1) =
+        emitterP2PrepareCfg w s s v (if candidate then 4 else 6) over p
+          (if candidate then 0 else other) (if candidate then other else 0) := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some rfl]
+    cases candidate <;>
+      simp only [↓reduceIte, Bool.false_eq_true, Nat.cast_zero, zero_sub,
+        emitterP2PrepareCfg, emitterP2PrepareTM, Cfg.workTapeSymbols_eq,
+        Fin.reduceEq, bufferTape_left]
+    all_goals
+      refine Cfg.ext (by rw [Action.apply_state]; rfl)
+        (by rw [Action.apply_inputPos]; exact moveInputPos_zero _) ?_ ?_
+        (by rw [Action.apply_output]; rfl)
+    all_goals first
+      | (funext i
+         simp only [Action.apply_workTapes, Option.getD_none,
+           Cfg.workTapeSymbols_eq, Function.update_eq_self, emitterP2PrepareCfg]
+         done)
+      | (funext i; fin_cases i <;>
+         simp [Action.apply_workTapePos, emitterP2PrepareCfg, SignType.pos_eq_one])
+  | succ j ih =>
+    intro hj
+    have hread : bufferTape (if candidate then s else v) (j : ℤ) ≠ none := by
+      rw [bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < (if candidate then s else v).length)]
+      exact Option.some_ne_none _
+    have hs : emitterP2PrepareTM.tm.step
+        (emitterP2PrepareCfg w s s v (if candidate then 3 else 5) over p
+          (if candidate then ((j + 1 : ℕ) : ℤ) - 1 else other)
+          (if candidate then other else ((j + 1 : ℕ) : ℤ) - 1)) =
+        emitterP2PrepareCfg w s s v (if candidate then 3 else 5) over p
+          (if candidate then (j : ℤ) - 1 else other)
+          (if candidate then other else (j : ℤ) - 1) := by
+      rw [show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
+        MultiTapeTM.step_of_some rfl]
+      cases hcell : bufferTape (if candidate then s else v) (j : ℤ) with
+      | none => exact (hread hcell).elim
+      | some bit =>
+        cases candidate <;> simp only [↓reduceIte, Bool.false_eq_true] at hcell ⊢
+        all_goals
+          simp only [emitterP2PrepareCfg, emitterP2PrepareTM, Cfg.workTapeSymbols_eq,
+            Fin.reduceEq, ↓reduceIte, hcell]
+        all_goals
+          refine Cfg.ext (by rw [Action.apply_state]; rfl)
+            (by rw [Action.apply_inputPos]; exact moveInputPos_zero _) ?_ ?_
+            (by rw [Action.apply_output]; rfl)
+        all_goals first
+          | (funext i
+             simp only [Action.apply_workTapes, Option.getD_none,
+               Cfg.workTapeSymbols_eq, Function.update_eq_self, emitterP2PrepareCfg]
+             done)
+          | (funext i; fin_cases i <;>
+             simp [Action.apply_workTapePos, emitterP2PrepareCfg,
+               SignType.neg_eq_neg_one, sub_eq_add_neg])
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+

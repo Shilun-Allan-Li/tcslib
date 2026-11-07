@@ -1,0 +1,42 @@
+{
+  "scope": "Exact approved new theorem, full source inspection; proof-local equality arguments are permitted.",
+  "explicit_rewrite_lists": [
+    [
+      "hT"
+    ],
+    [
+      "hT"
+    ],
+    [
+      "runFrom_succ_eq_step",
+      "hfixed"
+    ],
+    [
+      "Nat.add_sub_of_le ht",
+      "hT",
+      "hconst"
+    ]
+  ],
+  "published_equation_or_fact_arguments": [
+    "Turing.MultiTapeTM.runFrom_zero",
+    "Turing.MultiTapeTM.runFrom_succ_eq_step",
+    "Nat.add_sub_of_le"
+  ],
+  "proof_local_equalities": [
+    "hT",
+    "hfixed",
+    "hconst"
+  ],
+  "other_explicit_operations": "Nat.find chooses a witness; Nat.find_min, Nat.find_min' and Nat.find_spec are public facts; tm.runFrom_add composes the run. No named foreign definition is passed as a simp/rw/unfold argument.",
+  "no_simp_dsimp_unfold_change_delta_transparency_escape_in_new_proof": true,
+  "body_and_header_guarded_before_doc": true,
+  "ordinary_foreign_defs": [
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom"
+  ],
+  "default_simp_rules_removed": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ]
+}

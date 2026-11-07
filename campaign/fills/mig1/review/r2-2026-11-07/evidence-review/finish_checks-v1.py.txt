@@ -1,0 +1,53 @@
+from pathlib import Path
+import json,re,hashlib,sys,importlib.util,datetime
+sys.dont_write_bytecode=True
+out=Path(__file__).resolve().parent;root=out.parents[5];incoming=out.parent;delivery=incoming/'extracted/fill-mig1-mega-r2';ev=delivery/'evidence';H=lambda b:hashlib.sha256(b.encode() if isinstance(b,str) else b).hexdigest();pm={r['local_path']:r for r in json.loads((incoming/'payload-manifest.json').read_text())};verified=json.loads((out/'verified-payload-evidence-hashes.json').read_text())
+def read(p):
+ b=p.read_bytes();key=str(p.relative_to(incoming/'extracted'));assert H(b)==pm[key]['sha256'] and len(b)==pm[key]['bytes'];verified[key]={'sha256':H(b),'bytes':len(b)};return b
+# Independent diagnostic spelling coverage, in addition to the producer's grep-style error: count.
+for name in ['final-sweep-2','final-sweep-3-downstream-of-Primitives']:
+ p=out/(name+'-module-map.json');rows=json.loads(p.read_text())
+ for row in rows:
+  s=read(delivery/row['raw_path']).decode();coded=len(re.findall(r'(?m)^.*?:\d+:\d+: error(?:\([^)]*\))?:|^error(?:\([^)]*\))?:',s));fatal=len(re.findall(r'(?mi)^(?:PANIC|uncaught exception|fatal error|Segmentation fault|.*command not found)',s));assert coded==fatal==0;row['independent_Lean_diagnostic_errors_including_codes']=coded;row['fatal_process_markers']=fatal
+ p.write_text(json.dumps(rows,indent=2)+'\n')
+# Map all17 latest Primitives seal failures to exact inert source owners; preserve strict gaps.
+spec=importlib.util.spec_from_file_location('P',root/'campaign/fills/mig1/review/checkpoint07-2026-11-07/compare-source.py');P=importlib.util.module_from_spec(spec);spec.loader.exec_module(P);seals=json.loads((out/'supplied-seal-outcomes.json').read_text());mapped=[];guardsets={}
+for leaf in ['PrimitivesR3','LoopR2','CatalogStrict','CertShellStrictR2','CodeSimulatorStrictR2']:
+ source=read(ev/'seal'/('Seal_'+leaf+'.lean.txt')).decode();ds=P.decls(source);r=next(x for x in seals if x['path'].endswith('/Seal_'+leaf+'.out'));guards=set()
+ for line in source.splitlines():
+  if line.startswith('attribute [local irreducible] '):guards.update(line.removeprefix('attribute [local irreducible] ').split())
+ guardsets[leaf]=sorted(guards)
+ for err in r['diagnostics']:
+  owners=[d for d in ds if d['start']<=err['line']<=d['end']];mapped.append({'probe':leaf,'line':err['line'],'col':err['col'],'message':err['message'],'owners':[d['name'] for d in owners],'source_hash':H(source)})
+(out/'latest-seal-diagnostic-owners.json').write_text(json.dumps(mapped,indent=2)+'\n')
+# Reconcile the supplied38control goals ourselves, without running delivered ctlcheck code.
+cs=read(ev/'seal/controls/ControlsSealed.lean.txt').decode();cu=read(ev/'seal/controls/ControlsUnsealed.lean.txt').decode();so=read(ev/'seal/controls/ControlsSealed.out').decode();uo=read(ev/'seal/controls/ControlsUnsealed.out').decode();defs=re.search(r'^attribute \[local irreducible\] (.*)$',cs,re.M)[1].split();assert len(defs)==19
+starts=[];pair=None;form=0
+for i,l in enumerate(cs.splitlines(),1):
+ m=re.match(r'-- (C\d\d)\b',l)
+ if m:pair=m[1];form=0
+ if l.startswith('example'):
+  form+=1;starts.append({'pair':pair,'form':form,'line':i})
+assert len(starts)==38 and len({x['pair'] for x in starts})==19;ends=[x['line'] for x in starts[1:]]+[len(cs.splitlines())+1]
+def diagnostics(s):return [{'line':int(m[1]),'col':int(m[2]),'message':m[3]} for m in re.finditer(r'^.*?:(\d+):(\d+): error(?:\([^)]*\))?: (.*)$',s,re.M)]
+def check(ds):
+ assert len(ds)==38;result=[]
+ for start,end in zip(starts,ends):
+  owned=[d for d in ds if start['line']<=d['line']<end];assert len(owned)==1 and 'rfl' in owned[0]['message'];result.append(dict(start,diagnostic=owned[0]))
+ return result
+assert not diagnostics(uo) and re.search(r'(?m)^exit=0(?:\s|$)',uo);assert re.search(r'(?m)^exit=1(?:\s|$)',so);ds=diagnostics(so);controls=check(ds)
+try:check([ds[0],ds[0]]+ds[2:])
+except AssertionError:negative=True
+else:raise AssertionError('duplicate/drop accepted')
+newguard=sorted(set(guardsets['PrimitivesR3'])-set(defs));assert newguard==['Turing.pairEncode']
+(out/'seal-control-scope.json').write_text(json.dumps({'19_controlled_definitions':defs,'38_supplied_goals_verified_per_goal':controls,'unsealed_error_count':0,'sealed_rfl_error_count':38,'own_synthetic_same_total_duplicate_drop_rejected':negative,'latest_Primitives_guard_count':len(guardsets['PrimitivesR3']),'latest_Primitives_guard_not_calibrated_by_supplied_controls':newguard,'guardsets':guardsets,'scope_limit':'No controls or seals executed by reviewer. Supplied38controls calibrate original19 definitions; pairEncode is the added20th guard without a supplied additional control. Broader foreign definition coverage is not established.'},indent=2)+'\n')
+# Report per-file screen counts from parsed pairs and check supplied count table.
+screen=json.loads((out/'screen-crosscheck.json').read_text());table=read(ev/'screens/per-file-pairs-final.txt').decode();count_rows=[]
+for line in table.splitlines():
+ if not line.strip():continue
+ m=re.fullmatch(r'(\S+)\s+(\d+)\s*[-→>]+\s*(\d+)',line)
+ if not m:
+  count_rows.append({'unparsed_supplied_row':line});continue
+ n,a,b=m.groups();paths=[p for p in screen['population16'] if Path(p).stem==n or Path(p).name==n];assert len(paths)==1,(n,paths);p=paths[0];assert int(a)==screen['per_file_involvement_counts']['base'].get(p,0) and int(b)==screen['per_file_involvement_counts']['head'].get(p,0);count_rows.append({'path':p,'base':int(a),'head':int(b),'matches':True})
+(out/'per-file-screen-reconciliation.json').write_text(json.dumps({'supplied_table_rows':count_rows,'manual_table_format_retained_if_not_regex_matched':True},indent=2)+'\n')
+(out/'verified-payload-evidence-hashes.json').write_text(json.dumps(verified,indent=2)+'\n');sweep=json.loads((out/'sweep-summary.json').read_text());meta=json.loads((out/'metadata-summary.json').read_text());assert not sweep['raw_and_summary_discrepancies'] and not meta['AX_expected_coverage_missing'] and not meta['AX_expected_coverage_extra'];result={'completed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'Offline producer evidence reconciles; partial/superseded delivery, not source acceptance or maintainer replay','delivery_head':json.loads((incoming/'verified-lineage.json').read_text())['verified_head'],'full_sweep2_modules':641,'head_sweep3_modules':223,'raw_time_attempts_checked':864,'errors_and_nonzero_exits':0,'static_raw_admissions_full':149,'static_raw_admissions_rerun':61,'carried_module_source_closures_verified':418,'import_order_violations':0,'60_AXIOM_requests_source_coverage_exact':True,'60_AXIOM_sets_standard':True,'compiled_nonprivate_counts':[1234,1205],'compiled_delta_added_removed':[130,159],'producer_screen_scope_files':16,'screen_base':[1279,1589,636810],'screen_head':[1003,623,208120],'screen_pair_delta_new_gone':[93,1059],'latest_Primitives_seal_errors':17,'latest_Loop_seal_errors':0,'Catalog_strict_errors':7,'CertShell_strict_latest_errors':1,'CodeSimulator_strict_latest_errors':3,'supplied_controls_scope':[19,38],'added_pairEncode_guard_has_no_additional_supplied_control':True,'payload_evidence_files_hash_checked':len(verified),'discrepancies_in_numeric_provenance_claims':[],'remaining_scope_limits':['17reportedPrimitives seal errors;7Catalog strict errors;1CertShell and3CodeSimulator strict errors remain','38controls calibrate19 original defs, not the added pairEncode guard','Nonprivate compiled census does not supply private/allconstant census','16file producer screen and offline index/ratio accounting are not a fresh25file maintainer tiling or semantic debt clearance','Raw logs/receipts are supplied producer assertions; matching Git/source/closure evidence does not independently authenticate execution or captured olean artifacts'],'actual_reviewer_Lean_or_delivered_script_execution':False,'source_integration':False};(out/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

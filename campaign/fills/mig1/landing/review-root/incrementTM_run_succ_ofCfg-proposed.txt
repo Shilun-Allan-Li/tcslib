@@ -1,0 +1,31 @@
+theorem incrementTM_run_succ_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
+    (w v : List Bool) (hv : incFixed w = some v) (d : Cfg k Bool FlagPhase x)
+    (hstate : d.state = some FlagPhase.run)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (incrementTM k i).runFrom d (2 * (w.takeWhile id).length + 2) =
+        { d with
+          state := some (FlagPhase.done true)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape v (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * (w.takeWhile id).length + 2, ∀ b : Bool,
+        ((incrementTM k i).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * (w.takeWhile id).length + 2 →
+        if j = i then
+          ((incrementTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1)
+              (d.workTapePos j + ((w.takeWhile id).length : ℤ))
+        else ((incrementTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  obtain ⟨p, tail, hsplit⟩ := catalog_increment_split w
+  rw [hsplit, catalog_increment_value] at hv
+  cases tail with
+  | none => simp at hv
+  | some tail =>
+    have hv' : v = List.replicate p false ++ true :: tail := by simpa using hv.symm
+    have hp : (w.takeWhile id).length = p := by
+      simp [hsplit, List.takeWhile_append, List.takeWhile_replicate]
+    rw [hp]
+    simpa only [Option.isSome_some, Option.elim_some, hv'] using
+      catalog_increment_framed i w d hstate hw p (some tail) hsplit

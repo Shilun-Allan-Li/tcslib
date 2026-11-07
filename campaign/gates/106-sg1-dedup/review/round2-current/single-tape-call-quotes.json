@@ -1,0 +1,38 @@
+[
+  {
+    "name": "dg_init",
+    "line": 1372,
+    "calls": 3,
+    "source_tail": "(dgSpan_iff_segment ..).2 (((hgen.trans hturn).trans hback).trans hlast)\n  simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h"
+  },
+  {
+    "name": "dg_collect",
+    "line": 1488,
+    "calls": 1,
+    "source_tail": "(dgSpan_iff_segment ..).2\n    (((dgSpan_iff_segment ..).1 first).trans ((dgSpan_iff_segment ..).1 scan))"
+  },
+  {
+    "name": "dg_turn_with_growth",
+    "line": 1626,
+    "calls": 2,
+    "source_tail": "(dgSpan_iff_segment ..).2 ((h\u2081.trans h\u2082).trans h\u2083)\n  simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h"
+  },
+  {
+    "name": "dg_end_with_growth",
+    "line": 1718,
+    "calls": 2,
+    "source_tail": "(dgSpan_iff_segment ..).2 ((h\u2081.trans h\u2082).trans h\u2083)\n  simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h"
+  },
+  {
+    "name": "dg_step",
+    "line": 1891,
+    "calls": 3,
+    "source_tail": "(dgSpan_iff_segment ..).2\n    (((hcollect.trans hdispatch).trans hwrite).trans hfinish)\n  simpa only [dgCost, MultiTapeTM.step, hs, act] using h"
+  },
+  {
+    "name": "dg_simulate",
+    "line": 2108,
+    "calls": 1,
+    "source_tail": "(dgSpan_iff_segment ..).2 (((dgSpan_iff_segment ..).1\n        (dgSpan_mono hspan hlower hupper)).trans ((dgSpan_iff_segment ..).1 hcycle))"
+  }
+]

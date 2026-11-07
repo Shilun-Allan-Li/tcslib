@@ -1,0 +1,15 @@
+theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
+    (x : List Bool) (t : ℕ) (i : Fin M.k) :
+    (redirectTM M haltOn).tm.spaceUsedByTape
+        ((redirectTM M haltOn).tm.initCfg x) t i
+      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+  unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+  congr 1
+  apply Finset.image_congr
+  intro u _
+  dsimp only
+  rw [catalog_redirect_run]
+  rfl
+
+/-- Pad the decider with the fresh branch tapes. The added tapes are idle,
+so the public left-block simulation supplies its complete run invariant. -/

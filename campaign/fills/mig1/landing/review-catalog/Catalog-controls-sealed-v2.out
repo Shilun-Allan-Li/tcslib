@@ -1,0 +1,615 @@
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:10:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:12:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:20:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:22:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:29:95: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:31:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:38:80: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  []
+
+x : List Bool
+⊢ (Cfg.init () x).output = []
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:39:96: error: Tactic `rfl` failed: The left-hand side
+  fun x => (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  fun x => []
+
+⊢ (fun x => (Cfg.init () x).output) = fun x => []
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:47:38: error: Tactic `rfl` failed: The left-hand side
+  (a.apply c).state
+is not definitionally equal to the right-hand side
+  a.state
+
+a : Action 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ (a.apply c).state = a.state
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:49:29: error: Tactic `rfl` failed: The left-hand side
+  fun a c => (a.apply c).state
+is not definitionally equal to the right-hand side
+  fun a x => a.state
+
+⊢ (fun a c => (a.apply c).state) = fun a x => a.state
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:57:83: error: Tactic `rfl` failed: The left-hand side
+  { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+q : Option Unit
+w : Fin 1 → ℤ → Option Bool
+h : Fin 1 → ℤ
+⊢ { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:59:97: error: Tactic `rfl` failed: The left-hand side
+  fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => none
+
+⊢ (fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol) =
+    fun x x_1 x_2 => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:67:64: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+c : Cfg 1 Bool Unit []
+i : Fin 1
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:69:53: error: Tactic `rfl` failed: The left-hand side
+  fun c i => c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  fun c i => c.workTapes i (c.workTapePos i)
+
+⊢ (fun c i => c.workTapeSymbols i) = fun c i => c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:76:51: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 SignType.zero
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 SignType.zero = 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:80:64: error: Tactic `rfl` failed: The left-hand side
+  fun pos m => moveInputPos pos m
+is not definitionally equal to the right-hand side
+  fun pos m =>
+    let p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+
+n : ℕ
+⊢ (fun pos m => moveInputPos pos m) = fun pos m =>
+    let p := (↑↑pos + ↑m).toNat;
+    if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, ⋯⟩
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:88:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:90:66: error: Tactic `rfl` failed: The left-hand side
+  fun M x y t => M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+⊢ (fun M x y t => M.ComputesInTime x y t) = fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:98:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:100:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:108:64: error: Tactic `rfl` failed: The left-hand side
+  M.Computes f
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+M : FinTM Bool
+f : List Bool → List Bool
+⊢ M.Computes f = ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:110:60: error: Tactic `rfl` failed: The left-hand side
+  fun M f => M.Computes f
+is not definitionally equal to the right-hand side
+  fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+⊢ (fun M f => M.Computes f) = fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:118:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:120:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:128:71: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.visitedByTapeHead c t i).card
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:130:103: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+
+⊢ (fun tm c t i => MultiTapeTM.spaceUsedByTape c t i) = fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:138:108: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:141:95: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+⊢ (fun tm c t i => MultiTapeTM.visitedByTapeHead c t i) = fun tm c t i =>
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:149:92: error: Tactic `rfl` failed: The left-hand side
+  FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+m : SignType
+q : Option Unit
+⊢ FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:151:54: error: Tactic `rfl` failed: The left-hand side
+  fun m q => FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  fun m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ (fun m q => FinTM.controlAction m q) = fun m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:158:91: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.leftAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:159:107: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:166:92: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.rightAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:167:108: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:174:95: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.emitAction [] id 0).output
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (FinTM.emitAction [] id 0).output = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:176:24: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.emitAction [] e 0).output
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun e => (FinTM.emitAction [] e 0).output) = fun x => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:183:66: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] (-1)
+is not definitionally equal to the right-hand side
+  none
+
+⊢ FinTM.bufferTape [true] (-1) = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:184:79: error: Tactic `rfl` failed: The left-hand side
+  fun w => FinTM.bufferTape w (-1)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun w => FinTM.bufferTape w (-1)) = fun x => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:192:71: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  some q
+
+q : Unit
+w : Fin 1 → List Bool
+⊢ (Cfg.ofWords q w).state = some q
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:194:83: error: Tactic `rfl` failed: The left-hand side
+  fun q w => (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  fun q x => some q
+
+⊢ (fun q w => (Cfg.ofWords q w).state) = fun q x => some q
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:202:43: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.mapState f c).output
+is not definitionally equal to the right-hand side
+  c.output
+
+f : Unit → Unit
+c : Cfg 1 Bool Unit []
+⊢ (Cfg.mapState f c).output = c.output
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:204:55: error: Tactic `rfl` failed: The left-hand side
+  fun f c => (Cfg.mapState f c).output
+is not definitionally equal to the right-hand side
+  fun x c => c.output
+
+⊢ (fun f c => (Cfg.mapState f c).output) = fun x c => c.output
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:210:35: error: Tactic `rfl` failed: The left-hand side
+  incFixed []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ incFixed [] = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:211:62: error: Tactic `rfl` failed: The left-hand side
+  fun x => incFixed []
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun x => incFixed []) = fun x => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:219:60: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x y
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+x y : List Bool
+⊢ pairEncode x y = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:221:71: error: Tactic `rfl` failed: The left-hand side
+  fun x y => pairEncode x y
+is not definitionally equal to the right-hand side
+  fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+⊢ (fun x y => pairEncode x y) = fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:228:51: error: Tactic `rfl` failed: The left-hand side
+  pairDecode []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ pairDecode [] = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:230:59: error: Tactic `rfl` failed: The left-hand side
+  fun r => pairDecode (true :: false :: r)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun r => pairDecode (true :: false :: r)) = fun x => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:236:42: error: Tactic `rfl` failed: The left-hand side
+  splitAtLastTrue []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ splitAtLastTrue [] = none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:237:69: error: Tactic `rfl` failed: The left-hand side
+  fun x => splitAtLastTrue []
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun x => splitAtLastTrue []) = fun x => none
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:244:73: error: Tactic `rfl` failed: The left-hand side
+  solveSplit C e n
+is not definitionally equal to the right-hand side
+  List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+C e n : ℕ
+⊢ solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:246:73: error: Tactic `rfl` failed: The left-hand side
+  fun C e n => solveSplit C e n
+is not definitionally equal to the right-hand side
+  fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+⊢ (fun C e n => solveSplit C e n) = fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:253:98: error: Tactic `rfl` failed: The left-hand side
+  stateWord k w i
+is not definitionally equal to the right-hand side
+  if ↑i = 0 then w else []
+
+k : ℕ
+w : List Bool
+i : Fin k
+⊢ stateWord k w i = if ↑i = 0 then w else []
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:255:51: error: Tactic `rfl` failed: The left-hand side
+  fun k w i => stateWord k w i
+is not definitionally equal to the right-hand side
+  fun x w i => if ↑i = 0 then w else []
+
+⊢ (fun k w i => stateWord k w i) = fun x w i => if ↑i = 0 then w else []
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:262:33: error: Tactic `rfl` failed: The left-hand side
+  pairDiagTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ pairDiagTM.k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:263:60: error: Tactic `rfl` failed: The left-hand side
+  fun x => pairDiagTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => pairDiagTM.k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:269:33: error: Tactic `rfl` failed: The left-hand side
+  FinTM.idTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ FinTM.idTM.k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:270:60: error: Tactic `rfl` failed: The left-hand side
+  fun x => FinTM.idTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => FinTM.idTM.k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:277:56: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  0
+
+w : List Bool
+⊢ (FinTM.constTM w).k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:278:72: error: Tactic `rfl` failed: The left-hand side
+  fun w => (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun w => (FinTM.constTM w).k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:284:58: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.prependTM w).k
+is not definitionally equal to the right-hand side
+  0
+
+w : List Bool
+⊢ (FinTM.prependTM w).k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:285:74: error: Tactic `rfl` failed: The left-hand side
+  fun w => (FinTM.prependTM w).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun w => (FinTM.prependTM w).k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:291:41: error: Tactic `rfl` failed: The left-hand side
+  FinTM.lengthBitsTM.k
+is not definitionally equal to the right-hand side
+  1
+
+⊢ FinTM.lengthBitsTM.k = 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:292:68: error: Tactic `rfl` failed: The left-hand side
+  fun x => FinTM.lengthBitsTM.k
+is not definitionally equal to the right-hand side
+  fun x => 1
+
+⊢ (fun x => FinTM.lengthBitsTM.k) = fun x => 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:298:54: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.polyUnaryTM C 0).k
+is not definitionally equal to the right-hand side
+  0
+
+C : ℕ
+⊢ (FinTM.polyUnaryTM C 0).k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:299:70: error: Tactic `rfl` failed: The left-hand side
+  fun C => (FinTM.polyUnaryTM C 0).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun C => (FinTM.polyUnaryTM C 0).k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:305:53: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.polyBitsTM 0 e).k
+is not definitionally equal to the right-hand side
+  0
+
+e : ℕ
+⊢ (FinTM.polyBitsTM 0 e).k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:306:69: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.polyBitsTM 0 e).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun e => (FinTM.polyBitsTM 0 e).k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:312:61: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.pairExtractTM a b).k
+is not definitionally equal to the right-hand side
+  1
+
+a b : Bool
+⊢ (FinTM.pairExtractTM a b).k = 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:313:79: error: Tactic `rfl` failed: The left-hand side
+  fun a b => (FinTM.pairExtractTM a b).k
+is not definitionally equal to the right-hand side
+  fun x x_1 => 1
+
+⊢ (fun a b => (FinTM.pairExtractTM a b).k) = fun x x_1 => 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:319:40: error: Tactic `rfl` failed: The left-hand side
+  FinTM.pairValidTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ FinTM.pairValidTM.k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:320:67: error: Tactic `rfl` failed: The left-hand side
+  fun x => FinTM.pairValidTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => FinTM.pairValidTM.k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:326:57: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.pairLenCheckTM C 0).k
+is not definitionally equal to the right-hand side
+  3
+
+C : ℕ
+⊢ (FinTM.pairLenCheckTM C 0).k = 3
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:327:73: error: Tactic `rfl` failed: The left-hand side
+  fun C => (FinTM.pairLenCheckTM C 0).k
+is not definitionally equal to the right-hand side
+  fun x => 3
+
+⊢ (fun C => (FinTM.pairLenCheckTM C 0).k) = fun x => 3
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:333:40: error: Tactic `rfl` failed: The left-hand side
+  FinTM.stripLastTM.k
+is not definitionally equal to the right-hand side
+  4
+
+⊢ FinTM.stripLastTM.k = 4
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:334:67: error: Tactic `rfl` failed: The left-hand side
+  fun x => FinTM.stripLastTM.k
+is not definitionally equal to the right-hand side
+  fun x => 4
+
+⊢ (fun x => FinTM.stripLastTM.k) = fun x => 4
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:340:39: error: Tactic `rfl` failed: The left-hand side
+  FinTM.incFixedTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ FinTM.incFixedTM.k = 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:341:66: error: Tactic `rfl` failed: The left-hand side
+  fun x => FinTM.incFixedTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => FinTM.incFixedTM.k) = fun x => 0
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:347:74: error: Tactic `rfl` failed: The left-hand side
+  M.pairMapSndTM.k
+is not definitionally equal to the right-hand side
+  1 + (1 + M.k)
+
+M : FinTM Bool
+⊢ M.pairMapSndTM.k = 1 + (1 + M.k)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:348:90: error: Tactic `rfl` failed: The left-hand side
+  fun M => M.pairMapSndTM.k
+is not definitionally equal to the right-hand side
+  fun M => 1 + (1 + M.k)
+
+⊢ (fun M => M.pairMapSndTM.k) = fun M => 1 + (1 + M.k)
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:354:55: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.splitSolveTM C 0).k
+is not definitionally equal to the right-hand side
+  5
+
+C : ℕ
+⊢ (FinTM.splitSolveTM C 0).k = 5
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:355:71: error: Tactic `rfl` failed: The left-hand side
+  fun C => (FinTM.splitSolveTM C 0).k
+is not definitionally equal to the right-hand side
+  fun x => 5
+
+⊢ (fun C => (FinTM.splitSolveTM C 0).k) = fun x => 5
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:361:75: error: Tactic `rfl` failed: The left-hand side
+  (M.redirectTM b).k
+is not definitionally equal to the right-hand side
+  M.k
+
+M : FinTM Bool
+b : Bool
+⊢ (M.redirectTM b).k = M.k
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:362:95: error: Tactic `rfl` failed: The left-hand side
+  fun M b => (M.redirectTM b).k
+is not definitionally equal to the right-hand side
+  fun M x => M.k
+
+⊢ (fun M b => (M.redirectTM b).k) = fun M x => M.k
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:368:91: error: Tactic `rfl` failed: The left-hand side
+  (D.timedCondTM M N).k
+is not definitionally equal to the right-hand side
+  D.k + (M.k + N.k) + 1
+
+D M N : FinTM Bool
+⊢ (D.timedCondTM M N).k = D.k + (M.k + N.k) + 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:369:111: error: Tactic `rfl` failed: The left-hand side
+  fun D M N => (D.timedCondTM M N).k
+is not definitionally equal to the right-hand side
+  fun D M N => D.k + (M.k + N.k) + 1
+
+⊢ (fun D M N => (D.timedCondTM M N).k) = fun D M N => D.k + (M.k + N.k) + 1
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:375:83: error: Tactic `rfl` failed: The left-hand side
+  (M.branchTM N b).k
+is not definitionally equal to the right-hand side
+  M.k + N.k
+
+M N : FinTM Bool
+b : Bool
+⊢ (M.branchTM N b).k = M.k + N.k
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:376:105: error: Tactic `rfl` failed: The left-hand side
+  fun M N b => (M.branchTM N b).k
+is not definitionally equal to the right-hand side
+  fun M N x => M.k + N.k
+
+⊢ (fun M N b => (M.branchTM N b).k) = fun M N x => M.k + N.k
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:384:5: error(lean.unknownIdentifier): Unknown constant `Turing.FinTM.loopHostM`
+/private/tmp/tcslib-catalog-review-i_q319jy/Catalog_controls_sealed_v2.lean:386:5: error(lean.unknownIdentifier): Unknown constant `Turing.FinTM.loopHostM`

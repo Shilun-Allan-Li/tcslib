@@ -1,0 +1,38 @@
+From 246d81d2ce247d9e76dcc0ffbfc5080fd1d8fde5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 12:26:46 +0000
+Subject: [PATCH 8/8] MIG-1 follow-up: read pairEncode through pairEncode_eq in
+ the forwarding map
+
+pairMapSndTM_computes and the moved fwdMap_finish no longer pass Encoding's
+pairEncode (nor initCfg/Cfg.init) to simp; they rewrite with the published
+Turing.pairEncode_eq.
+---
+ TCSlib/Complexity/TuringMachine/Build/Primitives.lean | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+index 38a5b4c2..6a3452ec 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -3008,7 +3008,7 @@ private lemma fwdMap_finish (M : FinTM Bool) (x pre a b : List Bool)
+   refine Cfg.ext rfl rfl rfl ?_ ?_
+   · funext i
+     simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init]
+-  · simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init, pairEncode]
++  · simp [fwdMapCfg, fwdMapVirtual, pairEncode_eq]
+ 
+ /-- The validating setup either halts silently on malformed input or reaches
+ exactly the required payload seam with the encoded first component emitted.
+@@ -3453,7 +3453,7 @@ theorem pairMapSndTM_computes {Mg : FinTM Bool} {g : List Bool → List Bool} {T
+         change pairEncode a [] ++
+           (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+         rw [ho]
+-        simp [pairEncode, List.append_assoc]
++        rw [pairEncode_eq, pairEncode_eq, List.append_nil]
+     have hT := hTg hlen
+     exact ht.mono (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+ 
+-- 
+2.43.0
+

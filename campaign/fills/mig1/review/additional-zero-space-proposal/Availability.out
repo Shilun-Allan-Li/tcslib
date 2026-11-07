@@ -1,0 +1,84 @@
+Turing.pairDiagTM : Turing.FinTM Bool
+Turing.FinTM.incFixedTM_computes._proof_1_11 : ∀ (x : List Bool), ∀ j < x.length, ¬j + 1 ≤ x.length → False
+Turing.FinTM.incFixedTM_computes._proof_1_7 : ∀ (x : List Bool), ∀ j < x.length, ¬j < x.length + 2 → False
+Turing.FinTM.incFixedTM.eq_1 : Turing.FinTM.incFixedTM =
+  { k := 0, State := Fin 4, fintypeState := Fin.fintype 4, decEqState := instDecidableEqFin 4,
+    tm :=
+      { q₀ := 0,
+        tr := fun q inp x =>
+          match ↑q with
+          | 0 =>
+            match inp with
+            | some true => { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some 0 }
+            | some false => Turing.FinTM.controlAction SignType.neg (some 1)
+            | none => Turing.FinTM.controlAction 0 none
+          | 1 =>
+            match inp with
+            | some val => Turing.FinTM.controlAction SignType.neg (some 1)
+            | none => Turing.FinTM.controlAction SignType.pos (some 2)
+          | 2 =>
+            match inp with
+            | some true =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some false, state := some 2 }
+            | some false =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some true, state := some 3 }
+            | none => Turing.FinTM.controlAction 0 none
+          | x =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some b, state := some 3 }
+            | none => { inputTape := 0, workTapes := fun j => j.elim0, output := none, state := none } } }
+Turing.pairDiagTM_computes : ∀ (x : List Bool),
+  Turing.pairDiagTM.ComputesInTime x (Turing.pairEncode x x) (4 * x.length + 5)
+Turing.pairDiagTM.match_1 : (motive : Option Bool → Sort u_1) →
+  (inp : Option Bool) → ((b : Bool) → motive (some b)) → (Unit → motive none) → motive inp
+Turing.FinTM.incFixedTM_computes._simp_1_10 : ∀ {n : ℕ} {a b : Fin n}, (a = b) = (↑a = ↑b)
+Turing.FinTM.incFixedTM_computes : ∀ (x : List Bool),
+  Turing.FinTM.incFixedTM.ComputesInTime x ((Turing.incFixed x).getD []) (3 * (x.length + 1))
+Turing.FinTM.incFixedTM_computes._proof_1_9 : ∀ (x : List Bool), ∀ j < x.length, ¬j + 1 < x.length + 2 → False
+Turing.pairDiagTM.match_3 : (motive : Fin 6 → Sort u_1) →
+  (q : Fin 6) →
+    (Unit → motive 0) →
+      (Unit → motive 1) →
+        (Unit → motive 2) → (Unit → motive 3) → (Unit → motive 4) → ((x : Fin 6) → motive x) → motive q
+Turing.pairDiagTM.eq_1 : Turing.pairDiagTM =
+  { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+    tm :=
+      { q₀ := 0,
+        tr := fun q inp x =>
+          match q with
+          | 0 =>
+            match inp with
+            | some b => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+            | none =>
+              { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+          | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+          | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+          | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+          | 4 =>
+            match inp with
+            | some val => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+          | x =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+Turing.FinTM.incFixedTM.match_1 : (motive : Option Bool → Sort u_1) →
+  (inp : Option Bool) → (Unit → motive (some true)) → (Unit → motive (some false)) → (Unit → motive none) → motive inp
+Turing.FinTM.incFixedTM_computes._proof_1_14 : ∀ (x : List Bool) (j : ℕ) (rest : List Bool),
+  ¬j + (rest.length + 1) = j + 1 + rest.length → False
+Turing.FinTM.incFixedTM_computes._proof_1_8 : ∀ (x : List Bool), ∀ j < x.length, ¬j ≤ x.length → False
+Turing.FinTM.incFixedTM_computes._proof_1_12 : ∀ (x : List Bool), ∀ j < x.length, j = x.length → False
+Turing.FinTM.incFixedTM_computes._proof_1_15 : ∀ (x : List Bool) (j : ℕ) (rest : List Bool),
+  j < x.length →
+    x.length = j + 1 + rest.length → ¬j + 1 + (j + 1) + (j + 1 + (rest.length + 1)) ≤ 3 * (x.length + 1) → False
+Turing.FinTM.incFixedTM._proof_1 : NeZero (3 + 1)
+Turing.FinTM.incFixedTM : Turing.FinTM Bool
+Turing.FinTM.incFixedTM_computes._proof_1_6 : ∀ (x : List Bool), ¬x.length + 1 ≤ 3 * (x.length + 1) → False
+Turing.FinTM.incFixedTM.match_3 : (motive : ℕ → Sort u_1) →
+  (x : ℕ) → (Unit → motive 0) → (Unit → motive 1) → (Unit → motive 2) → ((x : ℕ) → motive x) → motive x
+Turing.pairDiagTM._proof_1 : NeZero (5 + 1)
+REQUESTED Turing.pairDiagTM_spaceUsed: ABSENT
+REQUESTED Turing.FinTM.incFixedTM_spaceUsed: ABSENT
+Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2}
+  {input : List Symbol} {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (t : ℕ)
+  (h_zero : k = 0) : Turing.MultiTapeTM.spaceUsed cfg t = 0

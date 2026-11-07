@@ -1,0 +1,57 @@
+/-- Rewind either forwarding buffer, preserving the inactive buffer head and both words.
+
+**Proof sketch.** Induct once on the active head's distance from its left blank. Every occupied
+cell moves that head left and retains the rewind phase. At the blank one right move restores
+zero and enters the next phase. The selector only chooses the relevant buffer and action. -/
+private lemma fwdMap_back (second : Bool) (M : FinTM Bool) (x a b : List Bool)
+    (p : Fin (x.length + 2)) (other : ℤ) :
+    ∀ j, j ≤ (if second then b else a).length →
+    (fwdMapTM M false).tm.runFrom
+      (fwdMapCfg M x (some (if second then .backB else .backA)) p a b
+        (if second then other else (j : ℤ) - 1)
+        (if second then (j : ℤ) - 1 else other) []) (j + 1) =
+      fwdMapCfg M x (some (if second then .backA else .emitA)) p a b
+        (if second then other else 0) (if second then 0 else other) [] := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some rfl]
+    cases second <;>
+      simp only [↓reduceIte, Bool.false_eq_true, fwdMapTM, fwdMapCfg,
+        Cfg.workTapeSymbols_eq, tapeBlocks_left, tapeBlocks_buffer,
+        Nat.cast_zero, zero_sub, bufferTape_left]
+    all_goals
+      change (fwdMapAct M 0 (none, _) (none, _) none _).apply
+        (fwdMapCfg M x _ p a b _ _ []) = _
+      rw [fwdMap_move]
+      simp [fwdMapCfg]
+  | succ j ih =>
+    intro hj
+    have hr : bufferTape (if second then b else a) (j : ℤ) ≠ none := by
+      rw [bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < (if second then b else a).length)]
+      exact Option.some_ne_none _
+    have hs : (fwdMapTM M false).tm.step
+        (fwdMapCfg M x (some (if second then .backB else .backA)) p a b
+          (if second then other else ((j + 1 : ℕ) : ℤ) - 1)
+          (if second then ((j + 1 : ℕ) : ℤ) - 1 else other) []) =
+        fwdMapCfg M x (some (if second then .backB else .backA)) p a b
+          (if second then other else (j : ℤ) - 1)
+          (if second then (j : ℤ) - 1 else other) [] := by
+      rw [show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
+        MultiTapeTM.step_of_some rfl]
+      cases hcell : bufferTape (if second then b else a) (j : ℤ) with
+      | none => exact (hr hcell).elim
+      | some bit =>
+        cases second <;> simp only [↓reduceIte, Bool.false_eq_true] at hcell ⊢
+        all_goals
+          simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq,
+            tapeBlocks_left, tapeBlocks_buffer, hcell]
+          change (fwdMapAct M 0 (none, _) (none, _) none _).apply
+            (fwdMapCfg M x _ p a b _ _ []) = _
+          rw [fwdMap_move]
+          simp [fwdMapCfg, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)

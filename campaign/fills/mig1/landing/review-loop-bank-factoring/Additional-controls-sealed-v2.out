@@ -1,0 +1,21 @@
+CONTROL|Turing.FinTM.tapeBlocks|point|FAIL
+/private/tmp/tcslib-loop-bank-_tfz41xd/Additional_controls_sealed_v2.lean:64:0: error: RFL_CONTROL|Turing.FinTM.tapeBlocks|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.tapeBlocks left buffer right a✝
+is not definitionally equal to rhs
+  Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) a✝
+
+α : Type
+k l : ℕ
+left : Fin k → α
+buffer : α
+right : Fin l → α
+a✝ : Fin (k + (1 + l))
+⊢ Turing.FinTM.tapeBlocks left buffer right a✝ = Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) a✝
+CONTROL|Turing.FinTM.tapeBlocks|abstract|FAIL
+/private/tmp/tcslib-loop-bank-_tfz41xd/Additional_controls_sealed_v2.lean:64:0: error: RFL_CONTROL|Turing.FinTM.tapeBlocks|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.tapeBlocks
+is not definitionally equal to rhs
+  fun {α} {k l} left buffer right i => Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) i
+
+⊢ @Turing.FinTM.tapeBlocks = fun {α} {k l} left buffer right i =>
+    Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) i

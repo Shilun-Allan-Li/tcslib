@@ -1,0 +1,42 @@
+{
+  "new_helper_and_two_consumers_only": true,
+  "ordinary_foreign_definition_arguments": [],
+  "forbidden_named_Core_Mathlib_def_arguments": [],
+  "allowed_same_home_definition_arguments": [
+    "fwdMapTM",
+    "fwdMapCfg"
+  ],
+  "equation_readers": [
+    "MultiTapeTM.runFrom_succ_eq_step",
+    "MultiTapeTM.runFrom_zero",
+    "MultiTapeTM.step_of_some",
+    "Cfg.workTapeSymbols_eq",
+    "tapeBlocks_left",
+    "tapeBlocks_buffer",
+    "bufferTape_left",
+    "bufferTape_nat",
+    "fwdMap_move"
+  ],
+  "math_or_simplifier_theorems": [
+    "Bool.false_eq_true",
+    "\u2193reduceIte",
+    "Nat.cast_zero",
+    "zero_sub",
+    "List.getElem?_eq_getElem",
+    "sub_eq_add_neg"
+  ],
+  "reviewed_head_lines": [
+    "rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,",
+    "simp only [\u2193reduceIte, Bool.false_eq_true, fwdMapTM, fwdMapCfg,",
+    "rw [fwdMap_move]",
+    "simp [fwdMapCfg]",
+    "rw [bufferTape_nat,",
+    "rw [show ((j + 1 : \u2115) : \u2124) - 1 = (j : \u2124) by omega,",
+    "cases second <;> simp only [\u2193reduceIte, Bool.false_eq_true] at hcell \u22a2",
+    "simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq,",
+    "rw [fwdMap_move]",
+    "simp [fwdMapCfg, sub_eq_add_neg]",
+    "rw [MultiTapeTM.runFrom_succ_eq_step, hs]"
+  ],
+  "scope": "Manual inspection of all complete bracket lists in helper and two consumer bodies; no argument-name inference from grep alone."
+}

@@ -1,0 +1,37 @@
+/-- Either complete call bank restores its canonical host seam.
+
+**Proof sketch.** Use the same selected-tape and ambient-frame contract for either bank.
+A three-block index split separates the candidate, left bank, and right bank. In the active
+bank the selected-tape equation applies; every other block is exactly the supplied ambient
+frame. The direction changes only which bank is active. [AB09, §1.2] -/
+private lemma emitterP2_bank_frame {S H : Type} (right : Bool) (k l : ℕ)
+    (emb : S → H) (w s u v : List Bool) (q : S) :
+    let index : Fin (if right then l else k) ↪ Fin (k + l + 1) :=
+      match right with
+      | false => emitterP2LeftIndex k l
+      | true => emitterP2RightIndex k l
+    (embedEmitCfg index
+      (fun i => bufferTape (emitterP2Words k l s
+        (if right then u else []) (if right then [] else v) i)) (fun _ => 0) []
+      (Cfg.ofWords (input := w) q
+        (stateWord (if right then l else k) (if right then v else u)))).mapState emb =
+          Cfg.ofWords (emb q) (emitterP2Words k l s u v) := by
+  cases right <;> dsimp only
+  all_goals
+    apply emitterP2_frame q
+    · simp only [Cfg.ofWords_state, Option.map_some]
+    · simp only [Cfg.ofWords_inputPos]
+    · simp only [Cfg.ofWords_output]
+    · intro i
+      simp [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, emitterP2LeftIndex,
+        emitterP2RightIndex, emitterP2Words]
+    · intro j hj
+      refine Fin.cases ?_ (fun a => ?_) j hj
+      · intro _
+        simp [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, emitterP2Words]
+      · refine Fin.addCases (fun i => ?_) (fun i => ?_) a
+        all_goals intro h
+        all_goals first
+          | exact False.elim (h ⟨i, rfl⟩)
+          | simp [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, emitterP2Words]
+

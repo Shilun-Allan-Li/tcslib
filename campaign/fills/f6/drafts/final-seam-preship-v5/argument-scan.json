@@ -1,0 +1,102 @@
+{
+  "source": "Final-sealed.lean.txt",
+  "all_matching_lines": [
+    {
+      "line": 6,
+      "text": "attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg"
+    },
+    {
+      "line": 35,
+      "text": "  dsimp only [physical]"
+    },
+    {
+      "line": 37,
+      "text": "    rw [Fin.ext_iff]"
+    },
+    {
+      "line": 38,
+      "text": "    change j.val = 1 % (K + 3) \u2194 j.val = 1"
+    },
+    {
+      "line": 39,
+      "text": "    rw [Nat.mod_eq_of_lt (by omega : 1 < K + 3)]"
+    },
+    {
+      "line": 41,
+      "text": "    rw [Fin.ext_iff]"
+    },
+    {
+      "line": 42,
+      "text": "    change j.val = 2 % (K + 3) \u2194 j.val = 2"
+    },
+    {
+      "line": 43,
+      "text": "    rw [Nat.mod_eq_of_lt (by omega : 2 < K + 3)]"
+    },
+    {
+      "line": 46,
+      "text": "    simpa only [ec, bank, \u03c3, h1, h2] using h"
+    },
+    {
+      "line": 48,
+      "text": "  \u00b7 rw [Cfg.mapState_state, rulerHostCfg_state, hbank, Cfg.mapState_state]"
+    },
+    {
+      "line": 51,
+      "text": "    rw [Cfg.mapState_inputPos, (rulerHostCfg_fields \u2113 hz _ ec _ 0).1,"
+    },
+    {
+      "line": 53,
+      "text": "    simp only [bank, Fin.val_one]"
+    },
+    {
+      "line": 55,
+      "text": "    rw [Cfg.mapState_workTapes, rulerHostCfg_workTapes, hbank]"
+    },
+    {
+      "line": 56,
+      "text": "    change Fin.lastCases (motive := fun _ => \u2124 \u2192 Option Bool) (FinTM.bufferTape (List.replicate \u2113 true)) bank.workTapes i p ="
+    },
+    {
+      "line": 60,
+      "text": "    \u00b7 simp only [Fin.lastCases_last]"
+    },
+    {
+      "line": 61,
+      "text": "    \u00b7 simp only [Fin.lastCases_castSucc, Cfg.mapState_workTapes]"
+    },
+    {
+      "line": 63,
+      "text": "    rw [Cfg.mapState_workTapePos, rulerHostCfg_workTapePos, hbank]"
+    },
+    {
+      "line": 65,
+      "text": "    \u00b7 rw [Fin.lastCases_last]"
+    },
+    {
+      "line": 66,
+      "text": "    \u00b7 rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]"
+    },
+    {
+      "line": 67,
+      "text": "  \u00b7 rw [Cfg.mapState_output, rulerHostCfg_output, hbank, Cfg.mapState_output]"
+    },
+    {
+      "line": 184,
+      "text": "    rw [show A0.runFrom (A0.initCfg z) u ="
+    },
+    {
+      "line": 214,
+      "text": "        rw [\u2190 cast_cfg_mapState, cast_back_embedding]"
+    },
+    {
+      "line": 220,
+      "text": "      _ = B + (K + 4) * S := by rw [Nat.zero_add]"
+    },
+    {
+      "line": 235,
+      "text": "  rw [CodeTM.toFinTM_eq] at hcomp hspace"
+    }
+  ],
+  "coverage": "Complete line-level enumeration; multiline continuations must be inspected in full retained source. Human review in README."
+}

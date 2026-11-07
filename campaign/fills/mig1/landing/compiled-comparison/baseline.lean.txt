@@ -1,0 +1,58 @@
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.RAMSimulation.WordSize
+import Lean
+set_option maxHeartbeats 0
+open Lean Elab Command
+private def evidenceKind : ConstantInfo → String
+  | .thmInfo _ => "theorem"
+  | .defnInfo _ => "def"
+  | .axiomInfo _ => "axiom"
+  | .opaqueInfo _ => "opaque"
+  | .ctorInfo _ => "constructor"
+  | .recInfo _ => "recursor"
+  | .inductInfo _ => "inductive"
+  | .quotInfo _ => "quotient"
+run_cmd do
+  let env ← getEnv
+  let owners : List String := ["TCSlib.Complexity.TuringMachine.Simulation", "TCSlib.Complexity.TuringMachine.Composition", "TCSlib.Complexity.TuringMachine.Encoding", "TCSlib.Complexity.ClassP.TimeConstructible", "TCSlib.Complexity.TuringMachine.Build.Wrappers", "TCSlib.Complexity.TuringMachine.Build.Loop", "TCSlib.Complexity.TuringMachine.Build.Primitives", "TCSlib.Complexity.TuringMachine.Build.Catalog", "TCSlib.Complexity.TuringMachine.Build.CertShell", "TCSlib.Complexity.TuringMachine.CodeSimulator", "TCSlib.Complexity.RAMSimulation.WordSize"]
+  let requested : List String := []
+  let privateTails := [".pairExtract_space_row", ".catalog_buffer_clip", ".catalog_increment_framed",
+    ".canonPreserveInstall", ".cert_prepare_exists"]
+  let mut found : List String := []
+  for (n, ci) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if !owners.contains owner.toString then continue
+    logInfo m!"CENSUS|{owner}|{n}|{evidenceKind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    if !isPrivateName n then
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"PUBLICAX|{n}|{(axs.qsort Name.lt).toList}"
+    if requested.contains n.toString || privateTails.any n.toString.endsWith then
+      found := n.toString :: found
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"ROOTAX|{n}|{(axs.qsort Name.lt).toList}"
+      let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      let mut seen : Array Name := #[]
+      for c in used do
+        if seen.contains c then continue
+        seen := seen.push c
+        let some j := env.getModuleIdxFor? c | continue
+        let mod := env.header.moduleNames[j.toNat]!
+        if !(`TCSlib).isPrefixOf mod then continue
+        let some cinfo := env.find? c | continue
+        logInfo m!"CITED|{n}|{c}|{mod}|{evidenceKind cinfo}"
+  for n in requested do
+    if !found.contains n then throwError "missing requested compiled root {n}"
+  for n in [`Turing.pairDiagTM_spaceUsed, `Turing.FinTM.incFixedTM_spaceUsed,
+    `Turing.MultiTapeTM.exists_first_entry_of_fixed] do
+    if env.contains n then throwError "unapproved API unexpectedly present: {n}"
+    logInfo m!"PENDINGABSENT|{n}"

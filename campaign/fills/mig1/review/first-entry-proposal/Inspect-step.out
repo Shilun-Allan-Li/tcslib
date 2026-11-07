@@ -1,0 +1,15 @@
+def Turing.MultiTapeTM.step.{u_1, u_2} : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : Turing.MultiTapeTM k Symbol State} → Turing.Cfg k Symbol State input → Turing.Cfg k Symbol State input :=
+fun {k} {State} {Symbol} {input} {tm} cfg =>
+  match cfg.state with
+  | none => cfg
+  | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+Turing.MultiTapeTM.step_of_some.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} {q : State}
+  (h : cfg.state = some q) : Turing.MultiTapeTM.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+Turing.MultiTapeTM.runFrom_zero.{u_1, u_2} {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} :
+  Turing.MultiTapeTM.runFrom cfg 0 = cfg

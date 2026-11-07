@@ -1,0 +1,18 @@
+
+  let P : Set ℕ := {u | ∃ tag, FinTM.VirtualTag (M.runFrom c u).inputPos tag ∧
+    (vhostEmitTM M).runFrom (vhostCfg c b p pre) u =
+      vhostCfg (M.runFrom c u) tag p pre}
+  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
+    intro u hu
+    obtain ⟨tag, htag, he⟩ := hu
+    obtain ⟨tag', htag', he'⟩ := vhostEmitTM_step M _ tag htag p pre
+    refine ⟨tag', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+  have initial : 0 ∈ P := by
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_zero] using hb
+    · simp only [MultiTapeTM.runFrom_zero]
+  have endpoint := preserve.iterate t initial
+  change t ∈ P
+  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint

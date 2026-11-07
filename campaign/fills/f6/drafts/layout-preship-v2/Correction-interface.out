@@ -1,0 +1,22 @@
+Turing.skipTM_run_ofCfg.{u_1} {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Turing.Cfg k Symbol Turing.SeekPhase x) (hstate : d.state = some Turing.SeekPhase.run)
+  (hw : ∀ (p : ℤ), 0 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = Turing.FinTM.bufferTape w p) :
+  Turing.MultiTapeTM.runFrom d (w.length + 1) =
+      { state := some Turing.SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+        workTapePos := Function.update d.workTapePos i (d.workTapePos i + ↑w.length + 1), output := d.output } ∧
+    (∀ t < w.length + 1, (Turing.MultiTapeTM.runFrom d t).state ≠ some Turing.SeekPhase.done) ∧
+      ∀ (j : Fin k),
+        ∀ t ≤ w.length + 1,
+          if j = i then
+            (Turing.MultiTapeTM.runFrom d t).workTapePos j ∈
+              Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑w.length + 1)
+          else (Turing.MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+Turing.step_of_tapeAction_move.{u_1, u_2} {Symbol : Type u_1} {State : Type u_2} {k : ℕ} {x : List Symbol}
+  (M : Turing.MultiTapeTM k Symbol State) (c : Turing.Cfg k Symbol State x) {q q' : State} (i : Fin k)
+  (inp m : SignType) (hq : c.state = some q)
+  (htr : M.tr q c.inputSymbol c.workTapeSymbols = Turing.tapeAction i inp none m q') :
+  Turing.MultiTapeTM.step c =
+    { state := some q', inputPos := Turing.moveInputPos c.inputPos inp, workTapes := c.workTapes,
+      workTapePos := Function.update c.workTapePos i (c.workTapePos i + ↑m), output := c.output }
+Turing.tapeAction.{u_1, u_2} {k : ℕ} {Symbol : Type u_1} {State : Type u_2} (i : Fin k) (inp : SignType)
+  (wr : Option (Option Symbol)) (m : SignType) (q : State) : Turing.Action k Symbol State

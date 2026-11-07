@@ -1,0 +1,96 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6LayoutPreship
+open Turing
+
+/-- Bounded component from the actual published startup: one fixed startup is
+seamed to an elementary silent halt leaf, and first halts at Tα+2 on every suffix.
+No header/device prefix or universal-space statement is built here. -/
+theorem native_startup_first_halt (c : EffectiveMachineCode) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (A : MultiTapeTM (K + 3) Bool (P ⊕ Unit)),
+      ∀ α : List Bool, ∃ T : ℕ, ∀ w : List Bool,
+        A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =
+          ⟨none, 1,
+            fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+              else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+              else fun _ => none,
+            fun _ => 0, []⟩ ∧
+        (∀ u < T + 2, (A.runFrom (A.initCfg (pairEncode α w)) u).state ≠ none) ∧
+        (∀ u ≤ T + 2, (A.runFrom (A.initCfg (pairEncode α w)) u).output = []) := by
+  classical
+  obtain ⟨K, P, fP, dP, R, exit, hR⟩ := exists_selfStartupTM c
+  letI : Fintype P := fP
+  letI : DecidableEq P := dP
+  let leaf : MultiTapeTM (K + 3) Bool Unit :=
+    ⟨(), fun _ _ _ => FinTM.controlAction 0 none⟩
+  let A : MultiTapeTM (K + 3) Bool (P ⊕ Unit) :=
+    {seamCompTM R exit leaf () with q₀ := Sum.inl R.q₀}
+  have hinit (y : List Bool) : A.initCfg y = (R.initCfg y).mapState Sum.inl :=
+    MultiTapeTM.initCfg_eq_mapState R A Sum.inl rfl y
+  have hrun {y : List Bool} (d : Cfg (K + 3) Bool (P ⊕ Unit) y) (t : ℕ) :
+      A.runFrom d t = (seamCompTM R exit leaf ()).runFrom d t :=
+    MultiTapeTM.runFrom_with_q₀ _ _ _ _
+  have hleaf {y : List Bool} (d : Cfg (K + 3) Bool Unit y) (hs : d.state = some ()) :
+      leaf.runFrom d 1 = {d with state := none} := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some hs]
+    change (FinTM.controlAction 0 none).apply d = _
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+  refine ⟨K, P, fP, dP, A, fun α => ?_⟩
+  obtain ⟨T, _B, hα⟩ := hR α
+  refine ⟨T, fun w => ?_⟩
+  obtain ⟨hr, hcut, _hout, _hspace⟩ := hα w
+  let d : Cfg (K + 3) Bool P (pairEncode α w) :=
+    ⟨some exit, 1,
+      fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+        else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+        else fun _ => none,
+      fun _ => 0, []⟩
+  have hd : d.state = some exit := rfl
+  have hs : (d.mapState (fun _ => ())).state = some () := by
+    rw [Cfg.mapState_state, hd, Option.map_some]
+  have hr' : R.runFrom (R.initCfg (pairEncode α w)) T = d := hr
+  have hfinal : A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =
+      ({d.mapState (fun _ => ()) with state := none}).mapState Sum.inr := by
+    rw [hinit, hrun]
+    exact seamCompTM_run_ofCfg R exit leaf () hr' hd hcut (hleaf _ hs)
+  have halive : ∀ u < T + 2, (A.runFrom (A.initCfg (pairEncode α w)) u).state ≠ none := by
+    intro u hu
+    by_cases hut : u ≤ T
+    · rw [hinit, hrun, seamCompTM_runFrom_left R exit leaf () hcut u hut,
+        Cfg.mapState_state]
+      intro h
+      apply MultiTapeTM.runFrom_state_ne_none_of_le R (R.initCfg (pairEncode α w)) T
+        (by rw [hr', hd]; exact Option.some_ne_none _) u hut
+      exact Option.map_eq_none_iff.mp h
+    · have he : u = T + 1 := by omega
+      subst u
+      have hdispatch := seamCompTM_runFrom_right R exit leaf () hr' hd hcut 0
+      have hdispatch' : (seamCompTM R exit leaf ()).runFrom
+          ((R.initCfg (pairEncode α w)).mapState Sum.inl) (T + 1) =
+          (d.mapState (fun _ => ())).mapState Sum.inr := by
+        simpa only [Nat.add_zero, MultiTapeTM.runFrom_zero] using hdispatch
+      rw [hinit, hrun, hdispatch', Cfg.mapState_state, hs, Option.map_some]
+      exact Option.some_ne_none _
+  have endpoint : A.runFrom (A.initCfg (pairEncode α w)) (T + 2) =
+      (⟨none, 1, d.workTapes, fun _ => 0, []⟩ : Cfg (K + 3) Bool (P ⊕ Unit) (pairEncode α w)) := by
+    rw [hfinal]
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext i p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext i; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output]
+  refine ⟨endpoint, halive, fun u hu => ?_⟩
+  have hp := (A.output_prefix (A.initCfg (pairEncode α w)) hu).length_le
+  rw [endpoint, List.length_nil] at hp
+  exact List.length_eq_zero_iff.mp (Nat.eq_zero_of_le_zero hp)
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.native_startup_first_halt

@@ -1,0 +1,377 @@
+{
+  "dispatch": {
+    "state": "dispatched by user",
+    "agent": "Codex",
+    "pr": 215,
+    "lean": "ccdc033f402781ecb4bb5b097e4018b8d9da1b90",
+    "records": "d857c6c8a195b388079a8796e789f9852c047815",
+    "exchange": "eb81ef18f755d54fe1d577e8985bdffced919045",
+    "bundle_path": "arora-barak-ch3-4/outbox/gates/106-sg1-dedup-gate/106-sg1-dedup-bundle.md",
+    "sha256": "761c734d37963fb19966cadb48488350f84d9709a16b62fe780aef1e28f7368c",
+    "sections": 166,
+    "bytes": 5288598,
+    "findings": "sg1-dedup-findings.md",
+    "published_blob_verified": true
+  },
+  "bundle_sections": 166,
+  "audit_sha256": "f6263c500ec7496a8867b7652bd44a1dbc423bd2711d5c6268a40347332b058c",
+  "source_counts": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": 270,
+    "TCSlib/Complexity/ClassNP/Tautology.lean": 93,
+    "TCSlib/Complexity/CookLevin/Hardness.lean": 545,
+    "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean": 15,
+    "TCSlib/Complexity/TuringMachine/Build/Catalog.lean": 505,
+    "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": 93,
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": 79,
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": 285,
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": 100
+  },
+  "source_details": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": [
+      {
+        "name": "Complexity.sat_guard_add",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 4076,
+        "span_start": 4074,
+        "span_end": 4087,
+        "span_lines": 14,
+        "header": "private lemma sat_guard_add {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : \u2115) (ha : \u2200 v < a, (tm.runFrom c v).state \u2260 some anchor) (he : tm.runFrom c a = d) (hb : \u2200 v < b, (tm.runFrom d v).state \u2260 some anchor) : \u2200 v < a + b, (tm.runFrom c v).state \u2260 some anchor",
+        "code": "private lemma sat_guard_add {k : \u2115} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : \u2115)\n    (ha : \u2200 v < a, (tm.runFrom c v).state \u2260 some anchor)\n    (he : tm.runFrom c a = d)\n    (hb : \u2200 v < b, (tm.runFrom d v).state \u2260 some anchor) :\n    \u2200 v < a + b, (tm.runFrom c v).state \u2260 some anchor := by\n  intro v hv\n  by_cases h : v < a\n  \u00b7 exact ha v h\n  \u00b7 have hva : a \u2264 v := by omega\n    rw [\u2190 Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]\n    exact hb (v - a) (by omega)"
+      },
+      {
+        "name": "Complexity.SatClean",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 4091,
+        "span_start": 4089,
+        "span_end": 4095,
+        "span_lines": 7,
+        "header": "private def SatClean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop",
+        "code": "private def SatClean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop :=\n  0 < M.k \u2227 \u2200 x arg : List Bool, \u2203 t, 0 < t \u2227 t \u2264 B arg.length \u2227\n    (\u2200 v < t, \u00ac(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q\u2080 (stateWord M.k arg)) v).Halted) \u2227\n    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q\u2080 (stateWord M.k arg)) t =\n      {Cfg.ofWords M.tm.q\u2080 (stateWord M.k (result arg)) with state := none, output := emit arg}"
+      },
+      {
+        "name": "Complexity.satStopTM",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 3908,
+        "span_start": 3906,
+        "span_end": 3914,
+        "span_lines": 9,
+        "header": "private def satStopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool",
+        "code": "private def satStopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where\n  k := C.k\n  State := Bool \u00d7 C.State\n  tm := { q\u2080 := (false, entry)\n          tr := fun q inp work =>\n            if q.1 = true \u2227 q.2 = exit then FinTM.controlAction 0 none\n            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, \u00b7)} }"
+      },
+      {
+        "name": "Complexity.satPadCfg",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 3856,
+        "span_start": 3855,
+        "span_end": 3860,
+        "span_lines": 6,
+        "header": "private def satPadCfg {k K : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : Cfg K Bool S x",
+        "code": "private def satPadCfg {k K : \u2115} {S : Type} {x : List Bool}\n    (c : Cfg k Bool S x) : Cfg K Bool S x :=\n  \u27e8c.state, c.inputPos,\n    fun i => if h : i.val < k then c.workTapes \u27e8i.val, h\u27e9 else fun _ => none,\n    fun i => if h : i.val < k then c.workTapePos \u27e8i.val, h\u27e9 else 0, c.output\u27e9"
+      },
+      {
+        "name": "Complexity.satMapTM",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 2776,
+        "span_start": 2774,
+        "span_end": 2785,
+        "span_lines": 12,
+        "header": "private def satMapTM {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : FinTM Bool",
+        "code": "private def satMapTM {S : Type} [Fintype S] [DecidableEq S]\n    (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool)\n    (finish : S \u2192 Option Bool) (start : S) : FinTM Bool where\n  k := 0\n  State := S\n  tm := {\n    q\u2080 := start\n    tr := fun q inp _ => match inp with\n      | some b => \u27e8.pos, Fin.elim0, emit q b, some (next q b)\u27e9\n      | none => \u27e80, Fin.elim0, finish q, none\u27e9 }"
+      },
+      {
+        "name": "Complexity.satPadAction",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 3843,
+        "span_start": 3842,
+        "span_end": 3845,
+        "span_lines": 4,
+        "header": "private def satPadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S",
+        "code": "private def satPadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S :=\n  \u27e8a.inputTape, fun i => if h : i.val < k then a.workTapes \u27e8i.val, h\u27e9 else (none, 0),\n    a.output, a.state\u27e9"
+      },
+      {
+        "name": "Complexity.satStopCfg",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 3917,
+        "span_start": 3916,
+        "span_end": 3919,
+        "span_lines": 4,
+        "header": "private def satStopCfg {k : \u2115} {S : Type} {x : List Bool} (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x",
+        "code": "private def satStopCfg {k : \u2115} {S : Type} {x : List Bool}\n    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x :=\n  \u27e8c.state.map (b, \u00b7), c.inputPos, c.workTapes, c.workTapePos, c.output\u27e9"
+      },
+      {
+        "name": "Complexity.sat_bridge_bound",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 4120,
+        "span_start": 4117,
+        "span_end": 4136,
+        "span_lines": 20,
+        "header": "private lemma sat_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) : c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264 (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1)",
+        "code": "private lemma sat_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) :\n    c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264\n      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by\n  have hd := Nat.mul_le_mul_left A\n    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d \u2264 d + 1 by omega))\n  simp only [Nat.succ_eq_add_one] at hd\n  have hn : n + 1 \u2264 (n + 1) ^ (d + 1) := by\n    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 \u2264 d + 1 by omega)\n  have h1 : 1 \u2264 (n + 1) ^ (d + 1) := by omega\n  calc\n    _ \u2264 c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by\n      apply Nat.add_le_add_right\n      apply Nat.mul_le_mul_left\n      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]\n      omega\n    _ \u2264 c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _\n    _ = _ := by ring"
+      }
+    ],
+    "TCSlib/Complexity/CookLevin/Hardness.lean": [
+      {
+        "name": "Complexity.clA5_guard_add",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 6414,
+        "span_start": 6412,
+        "span_end": 6425,
+        "span_lines": 14,
+        "header": "private lemma clA5_guard_add {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : \u2115) (ha : \u2200 v < a, (tm.runFrom c v).state \u2260 some anchor) (he : tm.runFrom c a = d) (hb : \u2200 v < b, (tm.runFrom d v).state \u2260 some anchor) : \u2200 v < a + b, (tm.runFrom c v).state \u2260 some anchor",
+        "code": "private lemma clA5_guard_add {k : \u2115} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (anchor : S) (c d : Cfg k Bool S x) (a b : \u2115)\n    (ha : \u2200 v < a, (tm.runFrom c v).state \u2260 some anchor)\n    (he : tm.runFrom c a = d)\n    (hb : \u2200 v < b, (tm.runFrom d v).state \u2260 some anchor) :\n    \u2200 v < a + b, (tm.runFrom c v).state \u2260 some anchor := by\n  intro v hv\n  by_cases h : v < a\n  \u00b7 exact ha v h\n  \u00b7 have hva : a \u2264 v := by omega\n    rw [\u2190 Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]\n    exact hb (v - a) (by omega)"
+      },
+      {
+        "name": "Complexity.CLA5Clean",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6429,
+        "span_start": 6427,
+        "span_end": 6433,
+        "span_lines": 7,
+        "header": "private def CLA5Clean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop",
+        "code": "private def CLA5Clean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop :=\n  0 < M.k \u2227 \u2200 x arg : List Bool, \u2203 t, 0 < t \u2227 t \u2264 B arg.length \u2227\n    (\u2200 v < t, \u00ac(M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q\u2080 (stateWord M.k arg)) v).Halted) \u2227\n    M.tm.runFrom (Cfg.ofWords (input := x) M.tm.q\u2080 (stateWord M.k arg)) t =\n      {Cfg.ofWords M.tm.q\u2080 (stateWord M.k (result arg)) with state := none, output := emit arg}"
+      },
+      {
+        "name": "Complexity.clA5StopTM",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6247,
+        "span_start": 6245,
+        "span_end": 6253,
+        "span_lines": 9,
+        "header": "private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool",
+        "code": "private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool where\n  k := C.k\n  State := Bool \u00d7 C.State\n  tm := { q\u2080 := (false, entry)\n          tr := fun q inp work =>\n            if q.1 = true \u2227 q.2 = exit then FinTM.controlAction 0 none\n            else {C.tm.tr q.2 inp work with state := (C.tm.tr q.2 inp work).state.map (true, \u00b7)} }"
+      },
+      {
+        "name": "Complexity.clA5PadCfg",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6195,
+        "span_start": 6194,
+        "span_end": 6199,
+        "span_lines": 6,
+        "header": "private def clA5PadCfg {k K : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : Cfg K Bool S x",
+        "code": "private def clA5PadCfg {k K : \u2115} {S : Type} {x : List Bool}\n    (c : Cfg k Bool S x) : Cfg K Bool S x :=\n  \u27e8c.state, c.inputPos,\n    fun i => if h : i.val < k then c.workTapes \u27e8i.val, h\u27e9 else fun _ => none,\n    fun i => if h : i.val < k then c.workTapePos \u27e8i.val, h\u27e9 else 0, c.output\u27e9"
+      },
+      {
+        "name": "Complexity.clA5MapTM",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6721,
+        "span_start": 6719,
+        "span_end": 6730,
+        "span_lines": 12,
+        "header": "private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : FinTM Bool",
+        "code": "private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S]\n    (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool)\n    (finish : S \u2192 Option Bool) (start : S) : FinTM Bool where\n  k := 0\n  State := S\n  tm := {\n    q\u2080 := start\n    tr := fun q inp _ => match inp with\n      | some b => \u27e8.pos, Fin.elim0, emit q b, some (next q b)\u27e9\n      | none => \u27e80, Fin.elim0, finish q, none\u27e9 }"
+      },
+      {
+        "name": "Complexity.clA5PadAction",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6182,
+        "span_start": 6181,
+        "span_end": 6184,
+        "span_lines": 4,
+        "header": "private def clA5PadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S",
+        "code": "private def clA5PadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S :=\n  \u27e8a.inputTape, fun i => if h : i.val < k then a.workTapes \u27e8i.val, h\u27e9 else (none, 0),\n    a.output, a.state\u27e9"
+      },
+      {
+        "name": "Complexity.clA5StopCfg",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 6256,
+        "span_start": 6255,
+        "span_end": 6258,
+        "span_lines": 4,
+        "header": "private def clA5StopCfg {k : \u2115} {S : Type} {x : List Bool} (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x",
+        "code": "private def clA5StopCfg {k : \u2115} {S : Type} {x : List Bool}\n    (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x :=\n  \u27e8c.state.map (b, \u00b7), c.inputPos, c.workTapes, c.workTapePos, c.output\u27e9"
+      },
+      {
+        "name": "Complexity.clA5_bridge_bound",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 6458,
+        "span_start": 6455,
+        "span_end": 6474,
+        "span_lines": 20,
+        "header": "private lemma clA5_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) : c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264 (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1)",
+        "code": "private lemma clA5_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) :\n    c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264\n      (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1) := by\n  have hd := Nat.mul_le_mul_left A\n    (Nat.pow_le_pow_right (Nat.succ_pos n) (show d \u2264 d + 1 by omega))\n  simp only [Nat.succ_eq_add_one] at hd\n  have hn : n + 1 \u2264 (n + 1) ^ (d + 1) := by\n    simpa using Nat.pow_le_pow_right (Nat.succ_pos n) (show 1 \u2264 d + 1 by omega)\n  have h1 : 1 \u2264 (n + 1) ^ (d + 1) := by omega\n  calc\n    _ \u2264 c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + 1 := by\n      apply Nat.add_le_add_right\n      apply Nat.mul_le_mul_left\n      simp only [Nat.add_mul, Nat.one_mul, Nat.mul_assoc, two_mul]\n      omega\n    _ \u2264 c * ((2 * A + 1) * (n + 1) ^ (d + 1)) + (n + 1) ^ (d + 1) := Nat.add_le_add_left h1 _\n    _ = _ := by ring"
+      }
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean": [
+      {
+        "name": "Turing.Segment.trans",
+        "kind": "theorem",
+        "private": false,
+        "declaration_line": 464,
+        "span_start": 459,
+        "span_end": 478,
+        "span_lines": 20,
+        "header": "theorem trans {a b c : Cfg k \u0393 S x} {t v : \u2115} (h : Segment M F P a b t) (g : Segment M F P b c v) : Segment M F P a c (t + v)",
+        "code": "theorem trans {a b c : Cfg k \u0393 S x} {t v : \u2115} (h : Segment M F P a b t)\n    (g : Segment M F P b c v) : Segment M F P a c (t + v) := by\n  refine \u27e8by rw [MultiTapeTM.runFrom_add, h.1, g.1], ?_, ?_\u27e9\n  \u00b7 intro u hu\n    by_cases hut : u < t\n    \u00b7 exact h.2.1 u hut\n    \u00b7 have he : u = t + (u - t) := by omega\n      rw [he, MultiTapeTM.runFrom_add, h.1]\n      exact g.2.1 _ (by omega)\n  \u00b7 intro u hu\n    by_cases hut : u \u2264 t\n    \u00b7 exact h.2.2 u hut\n    \u00b7 have he : u = t + (u - t) := by omega\n      rw [he, MultiTapeTM.runFrom_add, h.1]\n      exact g.2.2 _ (by omega)"
+      },
+      {
+        "name": "Turing.Segment.zero",
+        "kind": "theorem",
+        "private": false,
+        "declaration_line": 444,
+        "span_start": 443,
+        "span_end": 447,
+        "span_lines": 5,
+        "header": "theorem zero {a : Cfg k \u0393 S x} (h : P a.workTapePos) : Segment M F P a a 0",
+        "code": "theorem zero {a : Cfg k \u0393 S x} (h : P a.workTapePos) : Segment M F P a a 0 :=\n  \u27e8rfl, fun _ hu => absurd hu (Nat.not_lt_zero _), fun u hu => by\n    obtain rfl : u = 0 := Nat.le_zero.mp hu\n    exact h\u27e9"
+      },
+      {
+        "name": "Turing.Segment.mono",
+        "kind": "theorem",
+        "private": false,
+        "declaration_line": 498,
+        "span_start": 497,
+        "span_end": 500,
+        "span_lines": 4,
+        "header": "theorem mono {F' : Set (Option S)} {P' : (Fin k \u2192 \u2124) \u2192 Prop} {a b : Cfg k \u0393 S x} {t : \u2115} (h : Segment M F P a b t) (hF : F' \u2286 F) (hP : \u2200 p, P p \u2192 P' p) : Segment M F' P' a b t",
+        "code": "theorem mono {F' : Set (Option S)} {P' : (Fin k \u2192 \u2124) \u2192 Prop} {a b : Cfg k \u0393 S x} {t : \u2115}\n    (h : Segment M F P a b t) (hF : F' \u2286 F) (hP : \u2200 p, P p \u2192 P' p) : Segment M F' P' a b t :=\n  \u27e8h.1, fun u hu hm => h.2.1 u hu (hF hm), fun u hu => hP _ (h.2.2 u hu)\u27e9"
+      },
+      {
+        "name": "Turing.segment_iff",
+        "kind": "theorem",
+        "private": false,
+        "declaration_line": 432,
+        "span_start": 429,
+        "span_end": 436,
+        "span_lines": 8,
+        "header": "theorem segment_iff {S : Type} {x : List \u0393} (M : MultiTapeTM k \u0393 S) (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Cfg k \u0393 S x) (t : \u2115) : Segment M F P a b t \u2194 M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227 \u2200 u \u2264 t, P (M.runFrom a u).workTapePos",
+        "code": "theorem segment_iff {S : Type} {x : List \u0393} (M : MultiTapeTM k \u0393 S) (F : Set (Option S))\n    (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Cfg k \u0393 S x) (t : \u2115) :\n    Segment M F P a b t \u2194 M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos :=\n  Iff.rfl"
+      },
+      {
+        "name": "Turing.Segment",
+        "kind": "def",
+        "private": false,
+        "declaration_line": 424,
+        "span_start": 421,
+        "span_end": 427,
+        "span_lines": 7,
+        "header": "def Segment {S : Type} {x : List \u0393} (M : MultiTapeTM k \u0393 S) (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Cfg k \u0393 S x) (t : \u2115) : Prop",
+        "code": "def Segment {S : Type} {x : List \u0393} (M : MultiTapeTM k \u0393 S) (F : Set (Option S))\n    (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Cfg k \u0393 S x) (t : \u2115) : Prop :=\n  M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n    \u2200 u \u2264 t, P (M.runFrom a u).workTapePos"
+      }
+    ],
+    "TCSlib/Complexity/ClassNP/Tautology.lean": [
+      {
+        "name": "Complexity.tautDualSegment",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 1283,
+        "span_start": 1281,
+        "span_end": 1286,
+        "span_lines": 6,
+        "header": "private def tautDualSegment {x : List Bool} (c d : Cfg 0 Bool TautDualControl x) (t : \u2115) : Prop",
+        "code": "private def tautDualSegment {x : List Bool}\n    (c d : Cfg 0 Bool TautDualControl x) (t : \u2115) : Prop :=\n  tautDualTM.tm.runFrom c t = d \u2227\n    \u2200 j < t, (tautDualTM.tm.runFrom c j).state \u2260 some .anchor"
+      },
+      {
+        "name": "Complexity.tautDualSegment_iff_segment",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 1292,
+        "span_start": 1288,
+        "span_end": 1296,
+        "span_lines": 9,
+        "header": "private lemma tautDualSegment_iff_segment {x : List Bool} (c d : Cfg 0 Bool TautDualControl x) (t : \u2115) : tautDualSegment c d t \u2194 Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t",
+        "code": "private lemma tautDualSegment_iff_segment {x : List Bool}\n    (c d : Cfg 0 Bool TautDualControl x) (t : \u2115) :\n    tautDualSegment c d t \u2194 Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by\n  rw [Turing.segment_iff]\n  exact \u27e8fun h => \u27e8h.1, h.2, fun _ _ => trivial\u27e9, fun h => \u27e8h.1, h.2.1\u27e9\u27e9"
+      }
+    ],
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": [
+      {
+        "name": "Turing.counterSpan",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 820,
+        "span_start": 818,
+        "span_end": 828,
+        "span_lines": 11,
+        "header": "private def counterSpan {k : \u2115} {\u0393 S : Type} {x : List \u0393} (H : MultiTapeTM (k + 1) \u0393 (CounterLoopState S)) (z : Cfg (k + 1) \u0393 (CounterLoopState S) x) (t : \u2115) (cp : \u2124) (width : \u2115) (R : (Fin k \u2192 \u2124) \u2192 Prop) : Prop",
+        "code": "private def counterSpan {k : \u2115} {\u0393 S : Type} {x : List \u0393}\n    (H : MultiTapeTM (k + 1) \u0393 (CounterLoopState S))\n    (z : Cfg (k + 1) \u0393 (CounterLoopState S) x) (t : \u2115) (cp : \u2124) (width : \u2115)\n    (R : (Fin k \u2192 \u2124) \u2192 Prop) : Prop :=\n  (\u2200 u < t, (H.runFrom z u).state \u2260 some .done \u2227\n    (H.runFrom z u).state \u2260 some .escape) \u2227\n  (\u2200 u \u2264 t, (H.runFrom z u).workTapePos (Fin.last k) \u2208\n    Finset.Icc (cp - 1) (cp + (width : \u2124))) \u2227\n  (\u2200 u \u2264 t, R (fun j => (H.runFrom z u).workTapePos j.castSucc))"
+      },
+      {
+        "name": "Turing.counterSpan_iff_segment",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 834,
+        "span_start": 830,
+        "span_end": 848,
+        "span_lines": 19,
+        "header": "private lemma counterSpan_iff_segment {k : \u2115} {\u0393 S : Type} {x : List \u0393} (H : MultiTapeTM (k + 1) \u0393 (CounterLoopState S)) (z : Cfg (k + 1) \u0393 (CounterLoopState S) x) (t : \u2115) (cp : \u2124) (width : \u2115) (R : (Fin k \u2192 \u2124) \u2192 Prop) : counterSpan H z t cp width R \u2194 Segment H {some .done, some .escape} (fun p => p (Fin.last k) \u2208 Finset.Icc (cp - 1) (cp + (width : \u2124)) \u2227 R fun j => p j.castSucc) z (H.runFrom z t) t",
+        "code": "private lemma counterSpan_iff_segment {k : \u2115} {\u0393 S : Type} {x : List \u0393}\n    (H : MultiTapeTM (k + 1) \u0393 (CounterLoopState S))\n    (z : Cfg (k + 1) \u0393 (CounterLoopState S) x) (t : \u2115) (cp : \u2124) (width : \u2115)\n    (R : (Fin k \u2192 \u2124) \u2192 Prop) :\n    counterSpan H z t cp width R \u2194\n      Segment H {some .done, some .escape}\n        (fun p => p (Fin.last k) \u2208 Finset.Icc (cp - 1) (cp + (width : \u2124)) \u2227\n          R fun j => p j.castSucc)\n        z (H.runFrom z t) t := by\n  rw [Turing.segment_iff]\n  exact \u27e8fun \u27e8hc, hh, hr\u27e9 => \u27e8rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,\n      fun u hu => \u27e8hh u hu, hr u hu\u27e9\u27e9,\n    fun \u27e8_, hc, hp\u27e9 =>\n      \u27e8fun u hu => \u27e8fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)\u27e9,\n        fun u hu => (hp u hu).1, fun u hu => (hp u hu).2\u27e9\u27e9"
+      }
+    ],
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": [
+      {
+        "name": "Turing.FinTM.DGSpan",
+        "kind": "def",
+        "private": true,
+        "declaration_line": 1183,
+        "span_start": 1181,
+        "span_end": 1186,
+        "span_lines": 6,
+        "header": "private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q) (c d : Cfg 1 A Q x) (t : \u2115) (lo hi : \u2124) : Prop",
+        "code": "private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)\n    (c d : Cfg 1 A Q x) (t : \u2115) (lo hi : \u2124) : Prop :=\n  tm.runFrom c t = d \u2227 \u2200 u \u2264 t,\n    lo \u2264 (tm.runFrom c u).workTapePos 0 \u2227 (tm.runFrom c u).workTapePos 0 \u2264 hi"
+      },
+      {
+        "name": "Turing.FinTM.dgSpan_iff_segment",
+        "kind": "lemma",
+        "private": true,
+        "declaration_line": 1192,
+        "span_start": 1188,
+        "span_end": 1196,
+        "span_lines": 9,
+        "header": "private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q) (c d : Cfg 1 A Q x) (t : \u2115) (lo hi : \u2124) : DGSpan tm c d t lo hi \u2194 Segment tm \u2205 (fun p => lo \u2264 p 0 \u2227 p 0 \u2264 hi) c d t",
+        "code": "private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)\n    (c d : Cfg 1 A Q x) (t : \u2115) (lo hi : \u2124) :\n    DGSpan tm c d t lo hi \u2194 Segment tm \u2205 (fun p => lo \u2264 p 0 \u2227 p 0 \u2264 hi) c d t := by\n  rw [Turing.segment_iff]\n  exact \u27e8fun h => \u27e8h.1, fun _ _ hm => hm, h.2\u27e9, fun h => \u27e8h.1, h.2.2\u27e9\u27e9"
+      }
+    ]
+  },
+  "audited_current_blob_checks": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "git_blob_sha1": "44e3f879ced36807d3b82bd75996ea8ad7ceafed",
+      "sha256": "0b85b289abd864b1f63a9dcdc7f47fdb9b68c0544e57e4de63f0d35dbc09c8a5"
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+      "git_blob_sha1": "ef8863adb3120d5053d2ccdef4a35a2f6ec3fee0",
+      "sha256": "9581dc1484a25607b8f793ee3ff6fe5d0bd0b78fdd8350b6d2b8e2c9a82771a7"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "git_blob_sha1": "b2beab0b25899e955adc0117b87abf4fe9fe8f85",
+      "sha256": "e6fecd8feb2eeb2ad8271630ed5c259e7f1f25b4cf8b3d6fd4437be18a10e2f0"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "git_blob_sha1": "560e6cb050ee97872beafd80c417a98eb296f600",
+      "sha256": "f04ab0e27eaa31f7e8ad7003f0429e4e7e5e32c926099fa4c4f77b728086c328"
+    }
+  ],
+  "msg3": {
+    "modules": 329,
+    "failed": 0,
+    "static_mismatches": 0,
+    "static_admissions": 67,
+    "all_receipt_artifact_hashes_match": true,
+    "artifacts": [
+      "down-msg3.txt",
+      "precheck-msg3.sh",
+      "replay-msg3.sh",
+      "replay-msg3.log",
+      "replay-msg3-static.txt"
+    ]
+  },
+  "limitation": "Hashes and supplied evidence parsed independently; no Git object read, replay, Lean, seal, screen, or payload script execution."
+}

@@ -1,0 +1,540 @@
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:659:33: warning: This simp argument is unused:
+  loopHostTM
+
+Hint: Omit it from the simp argument list.
+  simp [Cfg.ofWords, captureCfg, l̵o̵o̵p̵H̵o̵s̵t̵T̵M̵,̵ ̵loopHostM, loopFuelSource]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:2286:4: error: Tactic `rfl` failed: The left-hand side
+  (candidate i).output
+is not definitionally equal to the right-hand side
+  []
+
+case refine_3
+body F : FinTM Bool
+anchor : body.State
+Inv : List Bool → List Bool → Prop
+stepF : List Bool → List Bool → List Bool
+acceptF : List Bool → List Bool → Bool
+out : List Bool → List Bool → List Bool
+findMode : Bool
+s0 : List Bool → List Bool
+R T : ℕ → ℕ
+hF : F.ComputesFunInTime (fun x => (R x.length).bits) T
+hInv0 : ∀ (x : List Bool), Inv x (s0 x)
+hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s)
+hstart :
+  ∀ (x : List Bool),
+    ∃ t ≤ T x.length,
+      (∀ t' < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor) ∧
+        MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord body.k (s0 x))
+hround :
+  ∀ (x s : List Bool),
+    Inv x s →
+      ∃ t,
+        0 < t ∧
+          t ≤ T x.length ∧
+            (∀ (t' : ℕ),
+                0 < t' →
+                  t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t').state ≠ some anchor) ∧
+              if acceptF x s = true then
+                (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).state = none ∧
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t).output = out x s
+              else
+                MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord body.k s)) t =
+                  Cfg.ofWords anchor (stateWord body.k (stepF x s))
+x : List Bool
+fuel : Cfg F.k Bool F.State x
+ftime : ℕ
+hfh : fuel.state = none
+hfo : fuel.output = (R x.length).bits
+hft : ftime ≤ 5 * T x.length + 7
+hprepare : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) ftime = body.loopReady F fuel
+hfuel : ∀ (i : Fin F.k), -↑(T x.length) ≤ fuel.workTapePos i ∧ fuel.workTapePos i ≤ ↑(T x.length)
+btime : ℕ
+hbt : btime ≤ T x.length
+hbguard : ∀ t' < btime, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t').state ≠ some anchor
+hbend : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) btime = Cfg.ofWords anchor (stateWord body.k (s0 x))
+words : ℕ → List Bool := fun i => (fun w => (loopDebit w).1)^[i] (R x.length).bits
+orbit : ℕ → List Bool := fun i => (stepF x)^[i] (s0 x)
+candidate : ℕ → Cfg (body.k + 1 + (1 + F.k) + 1) Bool (body.LoopHostState F) x :=
+  fun i => body.loopCall F anchor false (Cfg.ofWords anchor (stateWord body.k (orbit i))) true none (words i) fuel
+hheads :
+  ∀ (i : ℕ) (j : Fin (body.k + 1 + (1 + F.k) + 1)),
+    -↑(T x.length) ≤ (candidate i).workTapePos j ∧ (candidate i).workTapePos j ≤ ↑(T x.length)
+hwidth : ∀ (i : ℕ), (words i).length ≤ T x.length
+hsuccess : ∀ i ≤ R x.length, (loopDebit (words i)).2 = true ↔ i < R x.length
+hlocal :
+  ∀ i ≤ R x.length,
+    ∃ t ≤ loopHost_bound * (T x.length + 1),
+      if acceptF x (orbit i) = true then
+        (MultiTapeTM.runFrom (candidate i) t).state = none ∧
+          (MultiTapeTM.runFrom (candidate i) t).output = if findMode = true then out x (orbit i) else [true]
+      else
+        if i < R x.length then MultiTapeTM.runFrom (candidate i) t = candidate (i + 1)
+        else
+          (MultiTapeTM.runFrom (candidate i) t).state = none ∧
+            (MultiTapeTM.runFrom (candidate i) t).output = if findMode = true then [] else [false]
+time : ℕ → ℕ := fun i => if hi : i ≤ R x.length then ⋯.choose else 0
+htime :
+  ∀ i ≤ R x.length,
+    time i ≤ loopHost_bound * (T x.length + 1) ∧
+      if acceptF x (orbit i) = true then
+        (MultiTapeTM.runFrom (candidate i) (time i)).state = none ∧
+          (MultiTapeTM.runFrom (candidate i) (time i)).output = if findMode = true then out x (orbit i) else [true]
+      else
+        if i < R x.length then MultiTapeTM.runFrom (candidate i) (time i) = candidate (i + 1)
+        else
+          (MultiTapeTM.runFrom (candidate i) (time i)).state = none ∧
+            (MultiTapeTM.runFrom (candidate i) (time i)).output = if findMode = true then [] else [false]
+hlast :
+  time (R x.length) ≤ loopHost_bound * (T x.length + 1) ∧
+    if acceptF x (orbit (R x.length)) = true then
+      (MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length))).state = none ∧
+        (MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length))).output =
+          if findMode = true then out x (orbit (R x.length)) else [true]
+    else
+      if R x.length < R x.length then
+        MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length)) = candidate (R x.length + 1)
+      else
+        (MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length))).state = none ∧
+          (MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length))).output =
+            if findMode = true then [] else [false]
+terminal : Cfg (body.loopHostTM F anchor findMode).k Bool (body.loopHostTM F anchor findMode).State x :=
+  if acceptF x (orbit (R x.length)) = true then
+    let __src := candidate (R x.length + 1);
+    { state := none, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := if findMode = true then [] else [false] }
+  else MultiTapeTM.runFrom (candidate (R x.length)) (time (R x.length))
+hterminal : terminal.state = none ∧ terminal.output = if findMode = true then [] else [false]
+hterminalheads :
+  ∀ (j : Fin (body.loopHostTM F anchor findMode).k),
+    -↑(T x.length + loopHost_bound * (T x.length + 1)) ≤ terminal.workTapePos j ∧
+      terminal.workTapePos j ≤ ↑(T x.length + loopHost_bound * (T x.length + 1))
+cfg : ℕ → Cfg (body.k + 1 + (1 + F.k) + 1) Bool (body.LoopHostState F) x :=
+  fun i => if i ≤ R x.length then candidate i else terminal
+hcfg : ∀ i ≤ R x.length, cfg i = candidate i
+i : ℕ
+hi : i ≤ R x.length
+⊢ (candidate i).output = []
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3244:8: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3244:22: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3244:35: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3286:27: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3286:41: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM,
+  ̵  ̵ ̵ ̵ ̵ ̵Cfg.workTapeSymbols, Fin.val_zero,
+  ̲ F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵  ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark,
+  ̵  ̵ ̵ ̵ ̵ ̵reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3286:54: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3333:8: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3333:22: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3333:35: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3365:6: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3365:20: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3365:33: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3394:22: warning: This simp argument is unused:
+  min_le_right
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, m̵i̵n̵_̵l̵e̵_̵r̵i̵g̵h̵t̵,̵ ̵le_max_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3394:36: warning: This simp argument is unused:
+  le_max_right
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, min_le_right,̵ ̵l̵e̵_̵m̵a̵x̵_̵r̵i̵g̵h̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3582:24: warning: This simp argument is unused:
+  hspan
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, h̵s̵p̵a̵n̵,̵ ̵bufferTape, hn, List.getElem?_eq_none hlen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3583:24: warning: This simp argument is unused:
+  hspan
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, h̵s̵p̵a̵n̵,̵ ̵bufferTape, hn]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3891:27: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:3891:27: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4074:19: warning: This simp argument is unused:
+  show (1 : Fin 2) ≠ 0 by decide
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols, Fin.isValue,
+  ̲  ̲ ̲ ̲ ̲ ̲s̵h̵o̵w̵ ̵(̵1̵ ̵:̵ ̵F̵i̵n̵ ̵2̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, hblank]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4076:50: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4091:21: warning: This simp argument is unused:
+  show (1 : Fin 2) ≠ 0 by decide
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+          Fin.isValue, s̵h̵o̵w̵ ̵(̵1̵ ̵:̵ ̵F̵i̵n̵ ̵2̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, hread]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4094:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallF̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵e̵m̵C̵a̵l̵l̵_erase_last]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4095:54: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4123:50: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4123:67: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4134:52: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4167:26: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4183:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵bufferTape_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4185:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4185:47: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4186:43: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4186:60: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4210:65: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4210:82: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4221:54: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallF̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵e̵m̵C̵a̵l̵l̵_erase_last]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4223:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4282:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4282:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4319:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4319:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4441:47: warning: This simp argument is unused:
+  Fin.addCases_right
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallSlots, Fin.addCases_left,̵ ̵F̵i̵n̵.̵a̵d̵d̵C̵a̵s̵e̵s̵_̵r̵i̵g̵h̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4455:28: warning: This simp argument is unused:
+  Fin.addCases_left
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallSlots, Fin.addCases_l̵e̵f̵t̵,̵ ̵F̵i̵n̵.̵a̵d̵d̵C̵a̵s̵e̵s̵_̵right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4462:67: warning: This simp argument is unused:
+  emCallSlots
+
+Hint: Omit it from the simp argument list.
+  simp [emCallLayout, emCallPairIndex, tapeBlocks, e̵m̵C̵a̵l̵l̵S̵l̵o̵t̵s̵,̵
+  ̵ ̵ ̵ ̵ ̵Fin.addCases, bufferedCompTM,
+  ̲  ̲ ̲ ̲emCallIdleTM, emCallRightTM, emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4472:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4473:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4472:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4473:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4486:4: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4487:4: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4486:14: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4487:14: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4918:8: warning: This simp argument is unused:
+  bufferedCompTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, b̵u̵f̵f̵e̵r̵e̵d̵C̵o̵m̵p̵T̵M̵,̵ ̵emCallIdleTM, emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4918:24: warning: This simp argument is unused:
+  emCallIdleTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, e̵m̵C̵a̵l̵l̵I̵d̵l̵e̵T̵M̵,̵ ̵emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4918:38: warning: This simp argument is unused:
+  emCallRightTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4918:53: warning: This simp argument is unused:
+  emCallTrackTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵e̵m̵C̵a̵l̵l̵T̵r̵a̵c̵k̵T̵M̵]̵e̲m̲C̲a̲l̲l̲R̲i̲g̲h̲t̲T̲M̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4941:8: warning: This simp argument is unused:
+  bufferedCompTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, b̵u̵f̵f̵e̵r̵e̵d̵C̵o̵m̵p̵T̵M̵,̵ ̵emCallIdleTM, emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4941:24: warning: This simp argument is unused:
+  emCallIdleTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, e̵m̵C̵a̵l̵l̵I̵d̵l̵e̵T̵M̵,̵ ̵emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4941:38: warning: This simp argument is unused:
+  emCallRightTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:4941:53: warning: This simp argument is unused:
+  emCallTrackTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵e̵m̵C̵a̵l̵l̵T̵r̵a̵c̵k̵T̵M̵]̵e̲m̲C̲a̲l̲l̲R̲i̲g̲h̲t̲T̲M̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:5216:33: warning: This simp argument is unused:
+  Function.comp_def
+
+Hint: Omit it from the simp argument list.
+  simp [List.append_assoc,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵d̵e̵f̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-9yzm0ott/loop-new-seal-v2.lean:5299:16: error: Type mismatch
+  rfl
+has type
+  ?m.553 = ?m.553
+but is expected to have type
+  (candidate x✝¹).output = []

@@ -1,0 +1,167 @@
+CONTEXT|main=_stdin|primitivesImported=false
+TCSLIB_IMPORT|TCSlib.Complexity.TuringMachine.Configuration
+TCSLIB_IMPORT|TCSlib.Complexity.TuringMachine.Deterministic
+TCSLIB_IMPORT|TCSlib.Complexity.TuringMachine.Finite
+TCSLIB_IMPORT|TCSlib.Complexity.TuringMachine.Simulation
+TCSLIB_IMPORT|TCSlib.Complexity.TuringMachine.Build.Convention
+BEFORE|Turing.solveSplit|containsDefault=true|containsRealizations=true|containsOnBranch=true|find=true|reserved=false|simp=false|unfold=false
+BEFORE|Turing.solveSplit.eq_def|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+BEFORE|Turing.solveSplit.eq_1|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+BEFORE|Turing.solveSplit.eq_unfold|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+BEFORE|Turing.solveSplitWith|containsDefault=true|containsRealizations=true|containsOnBranch=true|find=true|reserved=false|simp=false|unfold=false
+BEFORE|Turing.solveSplitWith.eq_def|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+BEFORE|Turing.solveSplitWith.eq_1|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+BEFORE|Turing.solveSplitWith.eq_unfold|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true|simp=false|unfold=false
+CONVENTION_CENSUS|Turing.incFixed|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_eq_none_iff_replicate|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_false_cons|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_length|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_nil|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_replicate_true_append|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed_true_cons|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.initCfg_ofWords|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.solveSplit|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.solveSplitWith|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.splitAtLastTrue|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.unaryTokenSplit|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords|definition|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords_inputPos|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords_output|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords_state|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords_workTapePos|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords_workTapes|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed._sunfold|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.incFixed._unsafe_rec|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.incFixed.eq_1|theorem|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.incFixed.eq_2|theorem|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.incFixed.eq_3|theorem|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.incFixed.eq_def|theorem|private=false|internal=false|simp=false
+CONVENTION_CENSUS|Turing.incFixed.match_1|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.splitAtLastTrue.match_1|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.unaryTokenSplit._sunfold|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.unaryTokenSplit._unsafe_rec|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.unaryTokenSplit.match_1|definition|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords._proof_1|theorem|private=false|internal=true|simp=false
+CONVENTION_CENSUS|Turing.Cfg.ofWords.eq_1|theorem|private=false|internal=true|simp=false
+CONVENTION_CENSUS|_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.eq_1|theorem|private=true|internal=true|simp=false
+CONVENTION_CENSUS|_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.eq_2|theorem|private=true|internal=true|simp=false
+CONVENTION_CENSUS|_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.eq_3|theorem|private=true|internal=true|simp=false
+CONVENTION_CENSUS|_private.TCSlib.Complexity.TuringMachine.Build.Convention.0.Turing.incFixed.match_1.splitter|definition|private=true|internal=true|simp=false
+OPAQUE_BEFORE_EQUATION_REFERENCE|Turing.solveSplit|irreducible=true
+OPAQUE_BEFORE_EQUATION_REFERENCE|Turing.solveSplitWith|irreducible=true
+Turing.solveSplit.eq_def (C e n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+Turing.solveSplitWith.eq_def (f : Nat → Nat) (n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+AFTER_CHECK_ONLY|Turing.solveSplit.eq_def|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true
+AFTER_CHECK_ONLY|Turing.solveSplitWith.eq_def|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true
+'GeneratedEquationReview.solveSplit_read' depends on axioms: [propext]
+'GeneratedEquationReview.solveSplitWith_read' does not depend on any axioms
+AFTER_EQDEF|Turing.solveSplit.eq_def|kind=theorem|containsDefault=false|containsRealizations=true|containsOnBranch=false|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=false|simp=false|unfold=false|defeq=true
+EQUATION_TYPE|Turing.solveSplit.eq_def|∀ (C e n : Nat),
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+EQUATION_VALUE|Turing.solveSplit.eq_def|fun C e n => @Eq.refl (Option Nat) (Turing.solveSplit C e n)
+EQUATION_AXIOMS|Turing.solveSplit.eq_def|[propext]
+AFTER_EQDEF|Turing.solveSplitWith.eq_def|kind=theorem|containsDefault=false|containsRealizations=true|containsOnBranch=false|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=false|simp=false|unfold=false|defeq=true
+EQUATION_TYPE|Turing.solveSplitWith.eq_def|∀ (f : Nat → Nat) (n : Nat),
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+EQUATION_VALUE|Turing.solveSplitWith.eq_def|fun f n => @Eq.refl (Option Nat) (Turing.solveSplitWith f n)
+EQUATION_AXIOMS|Turing.solveSplitWith.eq_def|[]
+BEFORE_EQ1|Turing.solveSplit.eq_1|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true
+BEFORE_EQ1|Turing.solveSplitWith.eq_1|containsDefault=false|containsRealizations=false|containsOnBranch=false|find=false|reserved=true
+Turing.solveSplit.eq_1 (C e n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+Turing.solveSplitWith.eq_1 (f : Nat → Nat) (n : Nat) :
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+AFTER_EQ1|Turing.solveSplit.eq_1|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=true|simp=false|unfold=false|defeq=true
+ALTERNATIVE_TYPE|Turing.solveSplit.eq_1|∀ (C e n : Nat),
+  @Eq (Option Nat) (Turing.solveSplit C e n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+            (@HMul.hMul Nat Nat Nat (@instHMul Nat instMulNat) C
+              (@HPow.hPow Nat Nat Nat (@instHPow Nat Nat (@Monoid.toNatPow Nat Nat.instMonoid))
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))
+                e)))
+          n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+ALTERNATIVE_AXIOMS|Turing.solveSplit.eq_1|[propext]
+AFTER_EQ1|Turing.solveSplitWith.eq_1|moduleIdxOwner=none|currentMain=_stdin|private=false|internal=true|simp=false|unfold=false|defeq=true
+ALTERNATIVE_TYPE|Turing.solveSplitWith.eq_1|∀ (f : Nat → Nat) (n : Nat),
+  @Eq (Option Nat) (Turing.solveSplitWith f n)
+    (@List.find? Nat
+      (fun i =>
+        @BEq.beq Nat (@instBEqOfDecidableEq Nat instDecidableEqNat)
+          (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) i (f i)) n)
+      (List.range
+        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) n
+          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+ALTERNATIVE_AXIOMS|Turing.solveSplitWith.eq_1|[]
+ALTERNATIVE_CONSUMER_AXIOMS|GeneratedEquationReview.solveSplit_read_eq1|[propext]
+ALTERNATIVE_CONSUMER_AXIOMS|GeneratedEquationReview.solveSplitWith_read_eq1|[]
+OPAQUE_AFTER_CONSUMERS|Turing.solveSplit|irreducible=true
+OPAQUE_AFTER_CONSUMERS|Turing.solveSplitWith|irreducible=true

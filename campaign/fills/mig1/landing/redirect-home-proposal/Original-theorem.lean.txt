@@ -1,0 +1,19 @@
+/-- **W2 space row** (design §12 R3, decision 12.3;
+annotates `Turing.FinTM.redirectTM` beside its
+`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
+no space, per tape and exactly: the redirected machine's tape actions are
+the source's verbatim, before and after the source halt.
+
+**Proof sketch.** `redirect_run`'s configuration correspondence preserves
+work tapes and heads at every time (the live loop is stationary and the
+simulation phase copies the source's tape actions), so the two head
+trajectories coincide pointwise and the visited images agree. -/
+theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
+    (x : List Bool) (t : ℕ) (i : Fin M.k) :
+    (redirectTM M haltOn).tm.spaceUsedByTape
+        ((redirectTM M haltOn).tm.initCfg x) t i
+      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+  congr 1
+  ext p
+  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]

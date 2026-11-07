@@ -1,0 +1,134 @@
+[
+  {
+    "key": "532df18cc31e2ae20ab2ffea43b7170cd9563dabebe47b7034171bcc5fb85be8",
+    "name": "f2_catalogFirstEntry",
+    "private": true,
+    "header": "private lemma f2_catalogFirstEntry {k : \u2115} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : \u2115)\n    (hfix : \u2200 z : Cfg k Bool S w, z.state = some q \u2192 tm.step z = z)\n    (hd : d.state = some q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, (\u2200 j < t, (tm.runFrom c j).state \u2260 some q) \u2227 tm.runFrom c t = d ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean"
+    ],
+    "blob": "00dd563c036a5d18885330881b7976f54931091d",
+    "line": 8864
+  },
+  {
+    "key": "880f3c28f407abd1e45da9ac3b26fee7cb02233ce5363e5b0958482c6f781748",
+    "name": "f2_splitRestore_first",
+    "private": true,
+    "header": "private lemma f2_splitRestore_first (k : \u2115) (w s : List Bool) :\n    \u2203 t, 0 < t \u2227 t \u2264 2 * s.length + w.length + 5 \u2227\n      (\u2200 j < t, ((f2_splitRestoreTM k).tm.runFrom (f2_splitRestoreScan k w s 0) j).state\n        \u2260 some (4, false)) \u2227\n      (f2_splitRestoreTM k).tm.runFrom (f2_splitRestoreScan k w s 0) t =\n        Cfg.ofWords (4, false) (stateWord (k + 1) (f2_splitStep w s)) ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean"
+    ],
+    "blob": "00dd563c036a5d18885330881b7976f54931091d",
+    "line": 8883
+  },
+  {
+    "key": "48406435ccf2c3481ed44c8e4b8889517172ef78e9f260fd3b9a884fdfb2ce4b",
+    "name": "f2_splitEmbed_cut",
+    "private": true,
+    "header": "private lemma f2_splitEmbed_cut {k : \u2115} {S H : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)\n    (emb : S \u2192 H) (anchor : H) (stop : S \u2192 Prop) [DecidablePred stop]\n    (haway : \u2200 q, emb q \u2260 anchor)\n    (hfix : \u2200 c : Cfg k Bool S w, (\u2203 q, c.state = some q \u2227 stop q) \u2192 tm.step c = c)\n    (hagree : \u2200 q, \u00acstop q \u2192 \u2200 inp work,\n      host.tr (emb q) inp work = (tm.tr q inp work).mapState emb)\n    (c d : Cfg k Bool S w) (T : \u2115)\n    (hd : \u2203 q, d.state = some q \u2227 stop q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, host.runFrom (c.mapState emb) t = d.mapState emb \u2227\n      f2_splitSafe host anchor (c.mapState emb) t ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Catalog.lean"
+    ],
+    "blob": "00dd563c036a5d18885330881b7976f54931091d",
+    "line": 9113
+  },
+  {
+    "key": "d508189d98e26e9be7fa03552946b94d7fd7a2dc9c7cec9c00ecbbe9704ea422",
+    "name": "clFirst",
+    "private": true,
+    "header": "private lemma clFirst {k : \u2115} {S : Type} [DecidableEq S] {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : \u2115)\n    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)\n    (hstart : start.state \u2260 some ret)\n    (hidle : \u2200 c : Cfg k Bool S x, c.state = some ret \u2192 tm.step c = c) :\n    \u2203 t \u2264 B, 0 < t \u2227 (\u2200 j < t, (tm.runFrom start j).state \u2260 some ret) \u2227\n      tm.runFrom start t = finish ",
+    "paths": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean"
+    ],
+    "blob": "0998d738c6edf27a53c70f4d412decc2c8dc5dbe",
+    "line": 3311
+  },
+  {
+    "key": "ac3f4966ba788a0c19703bb0d0e60600db4f0a64088c883b614daa288cd1fd54",
+    "name": "xr_firstArrival",
+    "private": true,
+    "header": "private theorem xr_firstArrival {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (a : S) (hstat : \u2200 d : Cfg k Bool S x, d.state = some a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') (hc' : c'.state = some a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227 \u2200 u < T', (tm.runFrom c u).state \u2260 some a ",
+    "paths": [
+      "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean"
+    ],
+    "blob": "0d09053ee9ea7d7387279c1229531feab7f6a8af",
+    "line": 298
+  },
+  {
+    "key": "feb5593c8d9e71d56c7bf35d07b55ee39aa793b6a15f12671e2f245e7b2ecd21",
+    "name": "xr_firstArrival'",
+    "private": true,
+    "header": "private theorem xr_firstArrival' {k : \u2115} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)\n    (A : S \u2192 Prop)\n    (hstat : \u2200 d : Cfg k Bool S x, \u2200 a, d.state = some a \u2192 A a \u2192 tm.step d = d)\n    {c c' : Cfg k Bool S x} {T : \u2115} (h : tm.runFrom c T = c') {a : S} (hc' : c'.state = some a)\n    (ha : A a) :\n    \u2203 T' \u2264 T, tm.runFrom c T' = c' \u2227\n      \u2200 u < T', \u2200 a', (tm.runFrom c u).state = some a' \u2192 \u00ac A a' ",
+    "paths": [
+      "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean"
+    ],
+    "blob": "0d09053ee9ea7d7387279c1229531feab7f6a8af",
+    "line": 1600
+  },
+  {
+    "key": "18419984a65e4cf0823b471c2564e5426016850befee7fb09a32293cdbcdb54a",
+    "name": "FinNDTM.exists_exhaustiveDecider",
+    "private": false,
+    "header": "theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :\n    \u2203 (E : FinTM Bool) (C : \u2115), \u2200 (z : List Bool) (T : \u2115), N.tm.HaltsWithin z T \u2192\n      (N.AcceptsWithin z T \u2192 E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) \u2227\n      (\u00acN.AcceptsWithin z T \u2192 E.ComputesInTime z [false] (C * 2 ^ (C * (T + 1)))) ",
+    "paths": [
+      "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean"
+    ],
+    "blob": "0d09053ee9ea7d7387279c1229531feab7f6a8af",
+    "line": 3161
+  },
+  {
+    "key": "ade52685208abbb9b92b212ee4590c3aadfd0912cf751f8c12f98d79417d8303",
+    "name": "emCall_first_entry",
+    "private": true,
+    "header": "private lemma emCall_first_entry {k : \u2115} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (stop : S \u2192 Prop) [DecidablePred stop]\n    (c d : Cfg k Bool S w) (T : \u2115)\n    (hfix : \u2200 z : Cfg k Bool S w, (\u2203 q, z.state = some q \u2227 stop q) \u2192 tm.step z = z)\n    (hd : \u2203 q, d.state = some q \u2227 stop q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, (\u2200 j < t, \u00ac\u2203 q, (tm.runFrom c j).state = some q \u2227 stop q) \u2227\n      tm.runFrom c t = d ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Loop.lean"
+    ],
+    "blob": "1d92b234ad4677a2cb9792318dc8a9e65986dc6e",
+    "line": 3415
+  },
+  {
+    "key": "7927564dbdb8f12732e52e3a6dbaa4fccf4f2715c1c6909cedd7c84131d12935",
+    "name": "catalogFirstEntry",
+    "private": true,
+    "header": "private lemma catalogFirstEntry {k : \u2115} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : \u2115)\n    (hfix : \u2200 z : Cfg k Bool S w, z.state = some q \u2192 tm.step z = z)\n    (hd : d.state = some q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, (\u2200 j < t, (tm.runFrom c j).state \u2260 some q) \u2227 tm.runFrom c t = d ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean"
+    ],
+    "blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878",
+    "line": 3746
+  },
+  {
+    "key": "63aecbe14bb33fe85c7b5fc9d850db1a137d90017fa8169627de555adc78d170",
+    "name": "splitRestore_first",
+    "private": true,
+    "header": "private lemma splitRestore_first (k : \u2115) (w s : List Bool) :\n    \u2203 t, 0 < t \u2227 t \u2264 2 * s.length + w.length + 5 \u2227\n      (\u2200 j < t, ((splitRestoreTM k).tm.runFrom (splitRestoreScan k w s 0) j).state\n        \u2260 some (4, false)) \u2227\n      (splitRestoreTM k).tm.runFrom (splitRestoreScan k w s 0) t =\n        Cfg.ofWords (4, false) (stateWord (k + 1) (splitStep w s)) ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean"
+    ],
+    "blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878",
+    "line": 3765
+  },
+  {
+    "key": "14a106c573a5f830204403a532fa2a461c0c819df3eb8a5650468dba621f824b",
+    "name": "splitEmbed_cut",
+    "private": true,
+    "header": "private lemma splitEmbed_cut {k : \u2115} {S H : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)\n    (emb : S \u2192 H) (anchor : H) (stop : S \u2192 Prop) [DecidablePred stop]\n    (haway : \u2200 q, emb q \u2260 anchor)\n    (hfix : \u2200 c : Cfg k Bool S w, (\u2203 q, c.state = some q \u2227 stop q) \u2192 tm.step c = c)\n    (hagree : \u2200 q, \u00acstop q \u2192 \u2200 inp work,\n      host.tr (emb q) inp work = (tm.tr q inp work).mapState emb)\n    (c d : Cfg k Bool S w) (T : \u2115)\n    (hd : \u2203 q, d.state = some q \u2227 stop q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, host.runFrom (c.mapState emb) t = d.mapState emb \u2227\n      splitSafe host anchor (c.mapState emb) t ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean"
+    ],
+    "blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878",
+    "line": 3953
+  },
+  {
+    "key": "9a16b9e01a7a8dea559c1a8b07a05bbf52776c1e02526169dc0c1aae02ad8c30",
+    "name": "emitter_first_entry",
+    "private": true,
+    "header": "private lemma emitter_first_entry {k : \u2115} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (stop : S \u2192 Prop) [DecidablePred stop]\n    (c d : Cfg k Bool S w) (T : \u2115)\n    (hfix : \u2200 z : Cfg k Bool S w, (\u2203 q, z.state = some q \u2227 stop q) \u2192 tm.step z = z)\n    (hd : \u2203 q, d.state = some q \u2227 stop q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, (\u2200 j < t, \u00ac\u2203 q, (tm.runFrom c j).state = some q \u2227 stop q) \u2227\n      tm.runFrom c t = d ",
+    "paths": [
+      "TCSlib/Complexity/TuringMachine/Build/Primitives.lean"
+    ],
+    "blob": "37165dcf8dcfff4140a786e36aa8c827aa0d5878",
+    "line": 5161
+  }
+]

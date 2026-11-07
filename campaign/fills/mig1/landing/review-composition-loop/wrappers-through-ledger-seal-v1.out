@@ -1,0 +1,75 @@
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:836:4: error: unsolved goals
+case h.refine_1.refine_1
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+i : Fin (D.timedCondTM M₁ M₂).k
+j✝ : Fin (D.k + (M₁.k + M₂.k))
+j : Fin D.k
+⊢ (rightCfg (fun s => Sum.inr (Sum.inr (Sum.inr s))) (MultiTapeTM.initCfg x) c.workTapes c.workTapePos).workTapePos
+      (Fin.castAdd (M₁.k + M₂.k) j) =
+    c.workTapePos j
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:838:4: error: unsolved goals
+case h.refine_1.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+i : Fin (D.timedCondTM M₁ M₂).k
+j✝ : Fin (D.k + (M₁.k + M₂.k))
+j : Fin (M₁.k + M₂.k)
+⊢ (rightCfg (fun s => Sum.inr (Sum.inr (Sum.inr s))) (Cfg.init (M₁.branchTM M₂ b).tm.q₀ x) c.workTapes
+          c.workTapePos).workTapePos
+      (Fin.natAdd D.k j) =
+    0
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:836:69: warning: This simp argument is unused:
+  rightCfg_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [timedReadyCfg, timedBranchCfg, leftCfg_workTapePos, r̵i̵g̵h̵t̵C̵f̵g̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵timedHeads, Fin.addCases_left]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:838:69: warning: This simp argument is unused:
+  rightCfg_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [timedReadyCfg, timedBranchCfg, leftCfg_workTapePos, r̵i̵g̵h̵t̵C̵f̵g̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵MultiTapeTM.initCfg_eq,
+        Cfg.init_workTapePos, timedHeads, Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:839:32: warning: This simp argument is unused:
+  Cfg.init_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [timedReadyCfg, timedBranchCfg, leftCfg_workTapePos, rightCfg_workTapePos,
+         ̵ ̵MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵t̵imedHeads,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵Fin.addCases_left, Fin.addCases_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:857:31: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.66 = ?m.66
+but is expected to have type
+  { state := some (Sum.inr (Sum.inr (Sum.inr (⋯.mpr (⋯.mpr (M₁.branchTM M₂ b).tm)).q₀))), inputPos := 1,
+        workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+        output := (D.timedReadyCfg M₁ M₂ c b).output }.output =
+    (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).output
+in the application
+  Cfg.ext ?m.57 ?m.58 ?m.61 ?m.64 rfl
+/private/tmp/tcslib-mig1-comp-loop-1u27zcnr/wrappers-through-ledger-seal-v1.lean:984:10: error: Type mismatch: After simplification, term
+  timed_branch_run D M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b (u - (d + 2 + r))
+ has type
+  MultiTapeTM.runFrom
+      (D.timedBranchCfg M₁ M₂ (@MultiTapeTM.initCfg (M₁.k + M₂.k) (M₁.State ⊕ M₂.State) Bool V x) c.workTapes
+        c.workTapePos b)
+      (u - (d + 2 + r)) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (u - (d + 2 + r))) c.workTapes c.workTapePos b
+but is expected to have type
+  MultiTapeTM.runFrom
+      (D.timedBranchCfg M₁ M₂
+        (@MultiTapeTM.initCfg (M₁.k + M₂.k) (M₁.State ⊕ M₂.State) Bool (⋯.mpr (⋯.mpr (M₁.branchTM M₂ b).tm)) x)
+        c.workTapes c.workTapePos b)
+      (u - (d + 2 + r)) =
+    D.timedBranchCfg M₁ M₂ (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (u - (d + 2 + r))) c.workTapes c.workTapePos b

@@ -1,0 +1,285 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -16,14 +16,11 @@
+ /-!
+ # Machine-construction library: catalog promotions and space annotations (R3)
+ 
+-The R3 increment of the machine-construction library
+-(`machine-library-design.md` §12): the remaining audited A-chain tape
+-routines promoted as public machines with exact time **and** space costs,
+-plus the space retro-annotation of the existing catalog and control
+-surface. Per frozen decision 12.2 this lives in a **new** file — the new
+-rows and the space lemmas for the old rows both — keeping
+-`Build/Primitives.lean` byte-identical; the later refactor toward a
+-per-theme layout is a recorded backlog item.
++This module collects tape routines with exact time **and** space costs,
++plus space annotations for the functional catalog and control surface.
++Named function witnesses and their intrinsic specifications live in their
++construction modules, including `Build/Primitives.lean`; the corresponding
++existential time-and-space rows are packaged here.
+ 
+ **Status: proved.** The five routine machines and their two phase
+ alphabets are real definitions (TM1-style labelled control, the catalog's
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -20,9 +20,9 @@
+ `TCSlib.Complexity.TuringMachine.Composition` at the epoch-1/epoch-2 boundary
+ (epoch-1 audit, findings 5 and 11, and the policy file-size standard): the
+ machines of the composition file, and the heavier constructions of later
+-epochs, are assembled from these. Everything here is public — it is shared
+-audited surface — and carries no finiteness assumptions beyond what each
+-gadget needs.
++epochs, are assembled from these. The constructions and their specification API are
++public shared surface, with local proof helpers for their intrinsic bounds.
++Each gadget carries only the finiteness assumptions it needs.
+ 
+ ## Contents
+ 
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -34,9 +34,9 @@
+ harvests — their fills adapted already-proved private constructions from
+ the Chapter-2 epoch-2 batches (named per entry) — and the rest are new
+ small machines. Following the house idiom of
+-`TCSlib.Complexity.TuringMachine.Composition`, the contracts are
+-existentially packaged; each fill implements a named private machine with
+-its run invariants and closes the existential. Multi-argument interfaces
++`TCSlib.Complexity.TuringMachine.Composition`, the convenience rows package
++public named witnesses with their run specifications. Private helpers establish
++the local invariants used by those specifications. Multi-argument interfaces
+ go through `Turing.pairEncode`, whose self-delimiting grammar lets a
+ pipeline stage **thread the original input through its output** — the
+ `pairLenCheck` and `stripLast` contracts below are deliberately stated in
+@@ -58,7 +58,7 @@
+ P10's narrowing is recorded, and result-bearing search is now
+ `Turing.FinTM.exists_loopFindTM` (`machine-library-design.md` §9b).
+ 
+-## Named witnesses and their specs (MIG-1)
++## Named witnesses and their specs
+ 
+ The rows' witnesses are public, each with its spec theorem:
+ * `Turing.FinTM.prependTM` (`prependTM_computes`), `incFixedTM` (`incFixedTM_computes`),
+@@ -70,12 +70,12 @@
+   (`stripLastTM_computes`);
+ * `splitSolveTM` (`splitSolveTM_computes`, `splitSolveTM_spaceUsed`), `splitSolveWithTM`
+   (`splitSolveWithTM_computes`);
+-* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`).
+-
+-`polyUnaryTM_spaceUsed`, `unaryTokenTM_computes` and `appendBitTM_computes` are sorried
+-until the fill F-B; every other spec has a proof, and the ones that cite a spec sorried until
+-its own fill depend on it (`polyBitsTM_computes`, `stripLastTM_computes` and the three
+-split-search specs).
++* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`);
++* `pairMapSndTM` (`pairMapSndTM_computes`, `pairMapSndTM_spaceUsed`), the forwarding
++  mapper with time coefficient `22` and coefficient one on the payload's space.
++
++Every named specification is proved. The polynomial-bit, stripping and split-search
++results consume the corresponding named time and space specifications.
+ 
+ ## References
+ 
+@@ -2817,7 +2817,11 @@
+ 
+ /-- Doubled blocks append one bit to the first buffer. `01` starts suffix
+ buffering; `10` rejects before emitting. Both missing-bit cases are handled
+-by the surrounding parser induction. -/
++by the surrounding parser induction.
++
++**Proof sketch.** Apply the first aligned parser step, then inspect the second bit. Equal bits
++append one bit to the first buffer; `01` begins suffix copying and `10` halts. The published
++action fields and buffer-append equation identify the complete configuration in each case. -/
+ private lemma fwdMap_block (M : FinTM Bool) (x pre rest a : List Bool) (b c : Bool)
+     (hx : x = pre ++ b :: c :: rest) :
+     (fwdMapTM M false).tm.runFrom
+@@ -2857,7 +2861,11 @@
+            simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none])
+ 
+ /-- After validation, the complete suffix is buffered silently. Its right
+-blank is turned left exactly once, including when the suffix is empty. -/
++blank is turned left exactly once, including when the suffix is empty.
++
++**Proof sketch.** Induct on the unread suffix. A present bit appends to the second buffer and
++advances its head and the native input once; the empty suffix reads the right blank and starts
++its rewind. The first buffer and payload bank remain unchanged throughout. -/
+ private lemma fwdMap_suffix (M : FinTM Bool) (x rest a : List Bool) :
+     ∀ pre b (hx : x = pre ++ rest),
+     (fwdMapTM M false).tm.runFrom
+@@ -2912,7 +2920,11 @@
+       ih (pre ++ [d]) (b ++ [d]) (by simpa [List.append_assoc] using hx)
+ 
+ /-- Rewind the second buffer to zero, preserving the first buffer and the
+-blank payload bank. The left-blank step is present even at width zero. -/
++blank payload bank. The left-blank step is present even at width zero.
++
++**Proof sketch.** Induct on the remaining second-buffer head distance. Each nonblank position
++makes one left move without changing a tape. At position `-1` the blank-reading transition moves
++right to zero and enters the first-buffer rewind phase. -/
+ private lemma fwdMap_backB (M : FinTM Bool) (x a b : List Bool)
+     (p : Fin (x.length + 2)) : ∀ j, j ≤ b.length →
+     (fwdMapTM M false).tm.runFrom
+@@ -2947,7 +2959,11 @@
+     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+     exact ih (by omega)
+ 
+-/-- The corresponding first-buffer rewind, leaving virtual input at zero. -/
++/-- The corresponding first-buffer rewind, leaving virtual input at zero.
++
++**Proof sketch.** Induct on the remaining first-buffer head distance. Each nonblank position
++makes one left move without changing a tape. At position `-1` the blank-reading transition moves
++right to zero and enters the first-buffer emission phase. -/
+ private lemma fwdMap_backA (M : FinTM Bool) (x a b : List Bool)
+     (p : Fin (x.length + 2)) : ∀ j, j ≤ a.length →
+     (fwdMapTM M false).tm.runFrom
+@@ -3041,7 +3057,11 @@
+       ih (pre ++ [d]) (out ++ [d, d]) (by simpa [List.append_assoc] using he)
+ 
+ /-- Successful suffix buffering, two rewinds, and encoded-prefix emission
+-reach the initialized payload seam within `3|a|+2|b|+5` transitions. -/
++reach the initialized payload seam within `3|a|+2|b|+5` transitions.
++
++**Proof sketch.** Compose suffix copying, the two buffer rewinds, and emission of the first
++component and delimiter. Their time sum is `3 * |a| + 2 * |b| + 5`. The initialization field
++equations identify the endpoint with the payload machine's virtual initial configuration on `b`. -/
+ private lemma fwdMap_finish (M : FinTM Bool) (x pre a b : List Bool)
+     (hx : x = pre ++ b) :
+     (fwdMapTM M false).tm.runFrom
+@@ -3168,7 +3188,12 @@
+           List.append_assoc, List.singleton_append, Nat.add_assoc] using he
+ 
+ /-- Starting with empty buffers gives a uniform linear setup budget on every
+-input, including malformed encodings. -/
++input, including malformed encodings.
++
++**Proof sketch.** Specialize the parser theorem to the complete input with empty consumed prefix
++and empty buffers. The public initialization fields identify the machine's genuine start
++configuration with that parser configuration. Its successful virtual launch and unsuccessful
++silent halt give the two decoder cases with the same linear budget. -/
+ private lemma fwdMap_setup (M : FinTM Bool) (x : List Bool) :
+     ∃ t ≤ 5 * (x.length + 1),
+       match pairDecode x with
+@@ -3203,7 +3228,12 @@
+ 
+ /-- One forwarded payload step has exactly the source work actions and
+ emission. `virtualMove_correct` proves both boundary clamps and preserves
+-its arrival tag, without a nonempty-input assumption. -/
++its arrival tag, without a nonempty-input assumption.
++
++**Proof sketch.** A halted source remains fixed. For a live source, the virtual-move contract
++supplies the next boundary tag and buffered input-head position. The action field equations then
++identify the preserved first buffer, virtual input buffer, payload bank, fixed physical input
++head, and forwarded output prefix. -/
+ private lemma fwdMapVirtual_step (M : FinTM Bool) {x y : List Bool}
+     (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
+     (p : Fin (x.length + 2)) (a pre : List Bool) :
+@@ -3321,7 +3351,12 @@
+     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun u hu => h u (by omega)),
+       fwdMapSetup_step M _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+ 
+-/-- Every setup action leaves each payload work head fixed. -/
++/-- Every setup action leaves each payload work head fixed.
++
++**Proof sketch.** Inspect the setup controller's phases and the possible pending bit and read
++symbol. Every setup action leaves the payload-bank heads stationary, including the absorbing
++setup view of the run phase. The public step and action head equations transfer that table fact
++to the complete step. -/
+ private lemma fwdMapSetup_head_step (M : FinTM Bool) {x : List Bool}
+     (c : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x) (i : Fin M.k) :
+     ((fwdMapTM M false).tm.step c).workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+@@ -3378,7 +3413,12 @@
+ /-- Choose the first payload entry, then transfer every prefix to the
+ operational host. The stationary setup seam identifies this first entry
+ with the complete validating/buffering/emission endpoint, so no payload
+-work is hidden in the administrative time bound. -/
++work is hidden in the administrative time bound.
++
++**Proof sketch.** Choose the first time the absorbing setup view enters a virtual payload state.
++Guarded setup agreement identifies every real prefix through that time. Absorption identifies
++this first-entry configuration with the already bounded final setup configuration, retaining the
++same linear bound. -/
+ private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
+     (hd : pairDecode x = some (a, b)) :
+     ∃ u ≤ 5 * (x.length + 1),
+@@ -3415,7 +3455,12 @@
+ 
+ /-- A malformed encoding never reaches a payload state, since such a setup
+ state would remain live forever. Hence its entire operational trajectory
+-agrees with setup, including the silent halt and every later time. -/
++agrees with setup, including the silent halt and every later time.
++
++**Proof sketch.** The bounded setup run halts silently. A virtual payload state cannot occur
++before this halt, since that state is absorbing in the setup view, or afterward, since a halted
++run remains fixed. The two controllers therefore agree for every prefix and have the same bounded
++silent rejection. -/
+ private lemma fwdMap_reject (M : FinTM Bool) (x : List Bool)
+     (hd : pairDecode x = none) :
+     ∃ u ≤ 5 * (x.length + 1),
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -110,22 +110,12 @@
+   the folklore engine of the enumeration and diagonalization arguments,
+   §2.1 / §3.1–3.2.)
+ 
+-**Fill checkpoint (batch L).** `loop_run` is proved. The three finite-machine
+-exports are derived from the single admitted private `loopHost_contracts`.
+-The concrete controller, source-body simulation, fixed-width counter,
+-input rewind, capture instances, payload replay, and both terminal summation
+-lemmas are supplied below. Controller-level phase assembly and its uniform
+-budget remain the continuation frontier; this file is not an admission-free
+-completion of the loop combinators.
+-
+-**Fill completion (batch L2).** The historical checkpoint above is now
+-closed: the actual fuel, startup, body-return, counter, and payload phases
+-are proved and assembled in `loopHost_contracts`, with uniform coefficient
+-`loopHost_bound = 10`. The canonical seams retain the completed fuel residue
+-and fixed-width debit iterates. Underflow and its final emission are inside
+-the last rejecting segment; an accepting last candidate has an arbitrary
+-unreachable rejection terminal. The entire file has no admissions, including
+-the capture helpers now that batch W's `capture_run` proof is integrated.
++The concrete controller assembles the completed fuel, startup, body-return,
++counter and payload phases in `loopHost_contracts`, with uniform coefficient
++`loopHost_bound = 10`. Canonical seams retain the fuel residue and fixed-width
++debit iterates. Underflow and its final emission belong to the last rejecting
++segment; an accepting last candidate has an arbitrary unreachable rejection
++terminal. The capture helpers consume the proved `capture_run` contract.
+ -/
+ 
+ namespace Turing
+@@ -2071,14 +2061,11 @@
+         omega
+       · simpa only [Fin.addCases_right] using hf j
+ 
+-/-- The audit's single maximum: startup coefficient nine, body coefficient
++/-- The controller's uniform maximum: startup coefficient nine, body coefficient
+ three, counter coefficient two, and dispatch allowance five. -/
+ private def loopHost_bound : ℕ := max 1 (max 9 (3 + 2 + 5))
+ 
+ /-- Configuration contracts for the concrete controller in both output modes.
+-**Continuation frontier: unproved.** The public corollaries below are conditional
+-on this one machine-construction obligation; this is not a closed batch.
+-
+ **Proof sketch.** Run the relocated fuel source to its first halt using
+ `loopHost_fuel_capture`. Phases 0--5 copy and retain its binary fuel, clear
+ the capture tape, and rewind the two work heads and the input head. Run
+@@ -2091,9 +2078,9 @@
+ borrow. The host performs the counter borrow and rewind
+ in phases 8--10. Final zero underflow and phase 11 belong to the
+ last rejecting segment. If the last candidate accepts, choose any halted
+-false/empty terminal. Sum the phase constants with the audit's maximum
+-ledger. The missing proof is precisely the controller-level lifting and
+-assembly of these phase contracts, including startup and replay bounds.
++false/empty terminal. Sum the phase constants with the controller's maximum
++ledger. This assembles the controller-level phase contracts, including the
++startup and replay bounds.
+ 
+ The coefficient is explicit, `10 = loopHost_bound`, and two head clauses are
+ included: every candidate seam `cfg i`, `i ≤ R |x|`, has its work heads within
+@@ -2102,9 +2089,6 @@
+ `T |x| + 10·(T |x| + 1)`: either the halted copy of the next seam, after an
+ accepting last candidate, or the last segment's endpoint, at most
+ `10·(T |x| + 1)` steps from a seam. The space budget uses both. -/
+-/- Batch L2 closure: the preceding continuation docstring is retained as
+-historical evidence. Its listed obligations are discharged below by the phase
+-lemmas and the canonical family; there is no remaining construction admission. -/
+ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
+     (Inv : List Bool → List Bool → Prop)
+     (stepF : List Bool → List Bool → List Bool)

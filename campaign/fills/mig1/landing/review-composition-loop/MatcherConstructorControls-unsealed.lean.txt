@@ -1,0 +1,52 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+
+/-! Specialize the generated public-contract matcher at every Bool-option constructor.
+Point equations are closed under all parameters; equation controls compare the complete
+specialized functions. Successful controls are kernel checked, failures are never admitted. -/
+open Lean Elab Command Meta in
+elab "#mig1_matcher_constructor_controls" : command => do
+  let n := `Turing.FinTM.rewind_scan.match_1
+  let env ← getEnv
+  let some (.defnInfo di) := env.find? n | throwError "matcher definition missing"
+  let hint := match di.hints with
+    | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+  logInfo m!"MATCHERMETA|{n}|status={(getReducibilityStatusCore env n).toAttrString}|isMatcher={isMatcherCore env n}|hints={hint}"
+  logInfo m!"MATCHERTYPE|{di.type}"
+  let bool := mkConst ``Bool
+  let cases : List (String × Expr) := [
+    ("none", mkApp (mkConst ``Option.none [Level.zero]) bool),
+    ("some_false", mkApp2 (mkConst ``Option.some [Level.zero]) bool (mkConst ``Bool.false)),
+    ("some_true", mkApp2 (mkConst ``Option.some [Level.zero]) bool (mkConst ``Bool.true))]
+  let mut index := 0
+  for (tag, discriminator) in cases do
+    for mode in ["point", "equation"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        forallTelescope di.type fun xs _ => do
+          if xs.size != 4 then throwError "unexpected matcher telescope"
+          let args := xs.set! 1 discriminator
+          let lhs := mkAppN (mkConst n (di.levelParams.map Level.param)) args
+          let rhs := (mkAppN di.value args).headBeta
+          let lhs ← if mode == "equation" then mkLambdaFVars xs lhs else pure lhs
+          let rhs ← if mode == "equation" then mkLambdaFVars xs rhs else pure rhs
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            let proof ← instantiateMVars goal
+            let type ← if mode == "point" then mkForallFVars xs goalType else pure goalType
+            let proof ← if mode == "point" then mkLambdaFVars xs proof else pure proof
+            pure (some (type, proof))
+          catch ex =>
+            logInfo m!"MATCHERCONTROL|{tag}|{mode}|FAIL"
+            logError m!"MATCHER_RFL|{tag}|{mode}|{ex.toMessageData}"
+            pure none
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"MIG1MatcherConstructorControl_{index}_{tag}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"MATCHERCONTROL|{tag}|{mode}|PASS|kernelChecked={declName}"
+
+#mig1_matcher_constructor_controls

@@ -632,7 +632,7 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 **The window (2026-11-06):** #215 prepares `CounterLoop`'s retirement (`57939a97`: a private bridge
 `counterSpan_iff_segment`; `counter_span_append` deleted; its three uses through `Segment.trans`
 and `Segment.mono`). The scope search found a **third member**, `Robustness/SingleTape`'s private
-`DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (7 uses). `Tautology`'s and
+`DGSpan` (`Segment tm ∅ (lo ≤ p 0 ≤ hi) c d t`) with `dgSpan_add` (six consumer declarations, twelve calls). `Tautology`'s and
 `SingleTape`'s members need a new import of `Build/Contract/Basic` (cycle-free; it adds that one
 module to each closure). **The user approved both imports (HANDOFF §0); #215 now covers all three
 members.** Gate 106 records the complete diff and source checks. None is retired on the campaign
@@ -659,6 +659,46 @@ WS-1 member remains). CounterLoop's historical cumulative total 4/79 becomes 3/7
 unchanged IW-1 and R8.0b E1 members. No newly affected file reaches one fifth. The full nine-file
 base/head screen and its classifications are in gate 106; historical cumulative debt in its
 Primitives/Catalog/SAT/Hardness population remains governed by the existing entries.
+
+**SAT/Hardness adapter debt (gate106 F2; ACKNOWLEDGED by kind by Seyoon, 2026-11-07).**
+The acknowledgment covers every re-derivation of the following generic kinds anywhere in
+TCSlib, including matching correctness/frame proofs, not merely the currently found sites:
+
+1. **Clean-module contract and its install/emit/stop lifting:** a positive bounded first halt
+   from canonical argument tapes, uniform in untouched native input, with prescribed result
+   word and emitted output. Canonical current formula is SatClean/CLA5Clean.
+2. **Positive-release stop adapter:** add a Boolean release flag so a designated exit becomes
+   a halt only after the first source step; preserve physical configuration fields. Includes
+   the machine/configuration, step and clean-contract lemmas.
+3. **Bank-padding adapter:** embed a k-tape action/configuration/machine into K≥k tapes with
+   unused tapes blank, heads0 and stationary actions; includes apply/run/seam commutation.
+4. **Finite one-way word transducer:** zero work tapes, parametric finite next/emit/finish/start,
+   at most one emission per input plus optional final emission. Includes pure word semantics,
+   configuration, run, polynomial-time and head/tail projection proofs.
+5. **Polynomial bridge overhead:** len≤A(n+1)^d implies
+   c*(A(n+1)^d+n+len+1)+1≤(c*(2*A+1)+1)*(n+1)^(d+1).
+
+Independent full-header/code comparison found22 exact prefix-renaming pairs,298 declaration
+span lines in each file: clean4, padding6, release-stop4, transducer7, bridge1. These extend
+the auditor's seven-pair lower bound; they are not raw screen-edge counts.
+
+**Finite-family shared-bank dispatcher debt (separate user acknowledgment, 2026-11-07).**
+Every re-derivation of a dispatcher over a finite family of callable modules sharing a padded
+K-tape bank, with parameterized module count and routing, is covered by kind. Its state shape
+is Unit⊕Σi.State; scope includes entry/return helpers and seam/call/frame/clean lifting proofs.
+Six non-abbrev declarations plus HostState notation per current file correspond after prefix,
+module-count and routing-parameter substitution. Concrete client HostNext tables are data and
+excluded. The older clPlacement/selector item13 is distinct and grants no acknowledgment here.
+
+**Cleanup owner/window for both acknowledgments:** the maintainer (Codex), next12.2c
+SAT/Hardness consolidation after activeMIG1 and before further fills in those two files. Shared
+interfaces will be designed/gated there; this ruling authorizes retained debt, not a new API.
+Named post-F1-repair union: SAT34/270 and Hardness32/544, including notation and prior named
+FH1/PL1/RO1/live-prefix acknowledgment/watch records. These are lower bounds; old watch status
+is not upgraded to acknowledgment. Basic's Segment.trans source is counted once if F1 remains.
+F1's cut-only implementations are being repointed in #215 and retire on its merge. All86
+supplied SAT/Hardness directional candidates are classified separately in gate106's incoming
+review; widerRO1 and statement-specific candidates keep their existing separate dispositions.
 
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
@@ -1525,3 +1565,29 @@ have published characterizations (`acceptChk_iff`, `initChk_iff`). **Resolution:
 consumers to them in the dedup window (mechanical, Hydroxyi's files, FYI); the seal then adds the
 two predicates.
 
+
+
+## MIG-1 proof factoring proposed in #233 (2026-11-07)
+
+**Proposed, not retired on the campaign branch; gate118 open.** The partial fill and subsequent
+maintainer review identify the following kinds, with canonical reuse implemented in draft#233:
+input/work-buffer rewind variants; selected/unselected bank and phase frames; buffer replay;
+split-orbit/erase/embedding variants; startup-plus-halted-segment computation certificates;
+clean-bank boundary reconstruction; canonical tape-update/clipping and framed increment
+endpoints; projection-space corollaries; and unrestricted equal-time tagged-step propagation.
+The last uses Mathlib's existing invariant iterator, with no new public host/API/import.
+
+Canonical statements, exact remaining scope and references to each tested implementation are
+in `campaign/fills/mig1/landing/factoring-dispositions-final.md`. Full source-inclusive screens
+retain every new and weighted-existing candidate, including data matches and let-header parser
+limits. This is bounded candidate enumeration plus inspection, not a global optimality claim.
+The two superseded private selector helpers are removed once the whole bank reconstruction
+uses its existing shared equation. Short constructor/field-reader packages already call the
+canonical API; their remaining source similarity is disclosed rather than converted into a
+new blanket exception.
+
+**Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
+the approved shared absorbing-stop API, now being implemented/gated separately as gate119. The two constant-space reader gaps and
+redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
+and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
+retirement accounting is updated only after the gated PR merges.

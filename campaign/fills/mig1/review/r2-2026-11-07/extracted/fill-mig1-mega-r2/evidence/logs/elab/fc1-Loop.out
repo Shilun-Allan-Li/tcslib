@@ -1,0 +1,455 @@
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:653:33: warning: This simp argument is unused:
+  loopHostTM
+
+Hint: Omit it from the simp argument list.
+  simp [Cfg.ofWords, captureCfg, l̵o̵o̵p̵H̵o̵s̵t̵T̵M̵,̵ ̵loopHostM, loopFuelSource]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:1271:4: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  l ≥ 0
+  j ≥ 0
+  g ≥ 0
+  g - l ≥ -1
+  f ≥ 0
+  e ≥ 0
+  e - f ≥ -2
+  e - g ≤ 1
+  d ≥ 0
+  d - j ≥ 0
+  d + n ≤ -1
+  b ≥ 1
+  b - d ≤ 0
+  b - l ≥ -1
+  b - m ≥ 0
+  b + m ≥ 0
+  a ≥ 0
+where
+ a := ↑space
+ b := ↑u
+ d := ↑(T x.length)
+ e := ↑↑prepared.inputPos
+ f := ↑v
+ g := ↑x.length
+ j := ↑c.output.length
+ l := ↑↑c.inputPos
+ m := (MultiTapeTM.runFrom (Cfg.init F.tm.q₀ x) u).workTapePos i
+ n := (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).workTapePos i
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3149:8: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3149:22: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3149:35: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallClearCfg, MultiTapeTM.step, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3191:27: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3191:41: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM,
+  ̵  ̵ ̵ ̵ ̵ ̵Cfg.workTapeSymbols, Fin.val_zero,
+  ̲ F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵  ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hmark,
+  ̵  ̵ ̵ ̵ ̵ ̵reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3191:54: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hmark, reduceCtorEq, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3238:8: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3238:22: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3238:35: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, hblank, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3270:6: warning: This simp argument is unused:
+  Fin.val_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, F̵i̵n̵.̵v̵a̵l̵_̵z̵e̵r̵o̵,̵ ̵Fin.val_one,
+  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, ↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3270:20: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵,̵ ̵Nat.one_ne_zero, ↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3270:33: warning: This simp argument is unused:
+  Nat.one_ne_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallClearCfg, emCallClearTM, Cfg.workTapeSymbols, Fin.val_zero,
+  ̲  ̲ ̲ ̲ ̲ ̲Fin.val_one, N̵a̵t̵.̵o̵n̵e̵_̵n̵e̵_̵z̵e̵r̵o̵,̵ ̵↓reduceIte, ↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3299:22: warning: This simp argument is unused:
+  min_le_right
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, m̵i̵n̵_̵l̵e̵_̵r̵i̵g̵h̵t̵,̵ ̵le_max_right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3299:36: warning: This simp argument is unused:
+  le_max_right
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, min_le_right,̵ ̵l̵e̵_̵m̵a̵x̵_̵r̵i̵g̵h̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3487:24: warning: This simp argument is unused:
+  hspan
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, h̵s̵p̵a̵n̵,̵ ̵bufferTape, hn, List.getElem?_eq_none hlen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3488:24: warning: This simp argument is unused:
+  hspan
+
+Hint: Omit it from the simp argument list.
+  simp [emCallSpan, h̵s̵p̵a̵n̵,̵ ̵bufferTape, hn]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3796:27: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3796:27: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3979:19: warning: This simp argument is unused:
+  show (1 : Fin 2) ≠ 0 by decide
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols, Fin.isValue,
+  ̲  ̲ ̲ ̲ ̲ ̲s̵h̵o̵w̵ ̵(̵1̵ ̵:̵ ̵F̵i̵n̵ ̵2̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, hblank]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3981:50: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3996:21: warning: This simp argument is unused:
+  show (1 : Fin 2) ≠ 0 by decide
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, emCallFinishCfg, emCallFinishTM, Cfg.workTapeSymbols,
+          Fin.isValue, s̵h̵o̵w̵ ̵(̵1̵ ̵:̵ ̵F̵i̵n̵ ̵2̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, hread]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:3999:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallF̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵e̵m̵C̵a̵l̵l̵_erase_last]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4000:54: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4028:50: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4028:67: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4039:52: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4072:26: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4088:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵bufferTape_append]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4090:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4090:47: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4091:43: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4091:60: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4115:65: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4115:82: warning: This simp argument is unused:
+  sub_eq_add_neg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallFinishCfg,̵ ̵s̵u̵b̵_̵e̵q̵_̵a̵d̵d̵_̵n̵e̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4126:54: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, emCallF̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵e̵m̵C̵a̵l̵l̵_erase_last]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4128:30: warning: This simp argument is unused:
+  emCallFinishCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵C̵a̵l̵l̵F̵i̵n̵i̵s̵h̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4187:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4187:33: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4224:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4224:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4346:47: warning: This simp argument is unused:
+  Fin.addCases_right
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallSlots, Fin.addCases_left,̵ ̵F̵i̵n̵.̵a̵d̵d̵C̵a̵s̵e̵s̵_̵r̵i̵g̵h̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4360:28: warning: This simp argument is unused:
+  Fin.addCases_left
+
+Hint: Omit it from the simp argument list.
+  simp only [emCallSlots, Fin.addCases_l̵e̵f̵t̵,̵ ̵F̵i̵n̵.̵a̵d̵d̵C̵a̵s̵e̵s̵_̵right]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4367:67: warning: This simp argument is unused:
+  emCallSlots
+
+Hint: Omit it from the simp argument list.
+  simp [emCallLayout, emCallPairIndex, tapeBlocks, e̵m̵C̵a̵l̵l̵S̵l̵o̵t̵s̵,̵
+  ̵ ̵ ̵ ̵ ̵Fin.addCases, bufferedCompTM,
+  ̲  ̲ ̲ ̲emCallIdleTM, emCallRightTM, emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4377:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4378:2: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4377:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4378:12: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4391:4: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4392:4: warning: 'all_goals
+  repeat
+    first
+    | rfl
+    | omega
+    | split' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4391:14: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4392:14: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4823:8: warning: This simp argument is unused:
+  bufferedCompTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, b̵u̵f̵f̵e̵r̵e̵d̵C̵o̵m̵p̵T̵M̵,̵ ̵emCallIdleTM, emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4823:24: warning: This simp argument is unused:
+  emCallIdleTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, e̵m̵C̵a̵l̵l̵I̵d̵l̵e̵T̵M̵,̵ ̵emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4823:38: warning: This simp argument is unused:
+  emCallRightTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4823:53: warning: This simp argument is unused:
+  emCallTrackTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵e̵m̵C̵a̵l̵l̵T̵r̵a̵c̵k̵T̵M̵]̵e̲m̲C̲a̲l̲l̲R̲i̲g̲h̲t̲T̲M̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4846:8: warning: This simp argument is unused:
+  bufferedCompTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, b̵u̵f̵f̵e̵r̵e̵d̵C̵o̵m̵p̵T̵M̵,̵ ̵emCallIdleTM, emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4846:24: warning: This simp argument is unused:
+  emCallIdleTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, e̵m̵C̵a̵l̵l̵I̵d̵l̵e̵T̵M̵,̵ ̵emCallRightTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4846:38: warning: This simp argument is unused:
+  emCallRightTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵emCallTrackTM]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:4846:53: warning: This simp argument is unused:
+  emCallTrackTM
+
+Hint: Omit it from the simp argument list.
+  simp [emCallFinishCfg, Cfg.ofWords, stateWord, emCallPairIndex, bufferedCompTM, emCallIdleTM,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲e̵m̵C̵a̵l̵l̵R̵i̵g̵h̵t̵T̵M̵,̵ ̵e̵m̵C̵a̵l̵l̵T̵r̵a̵c̵k̵T̵M̵]̵e̲m̲C̲a̲l̲l̲R̲i̲g̲h̲t̲T̲M̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Loop.lean:5121:33: warning: This simp argument is unused:
+  Function.comp_def
+
+Hint: Omit it from the simp argument list.
+  simp [List.append_assoc,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵d̵e̵f̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Complexity/TuringMachine/Build/Loop): lean exited with status 1
+FAIL(TCSlib/Complexity/TuringMachine/Build/Loop): error diagnostics reported
+FAIL(TCSlib/Complexity/TuringMachine/Build/Loop): no fresh .olean produced

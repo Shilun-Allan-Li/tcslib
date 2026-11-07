@@ -1,0 +1,140 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction Turing.headerRulerTM Turing.headerScanTM Turing.headerScanCfg Turing.skipTM Turing.rewindTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6PhaseInterfaces
+open Turing
+/-- The second scan extends an already nonblank ruler; its physical start presentation is an
+explicit prefix OWN interface, not a supplied proof that the entire prefix reaches it.
+
+**Proof sketch.** Apply the public scan contract and ruler-extension reader at the existing
+nonblank length. Public field equations and integer arithmetic identify the common ruler origin
+and the two endpoint heads; their update equations preserve every other bank field. -/
+theorem second_scan {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (ell1 : ℕ)
+    (hp : d.inputPos.val = 1 + ell1) (hq : d.state = some 0)
+    (hh : d.workTapePos i = (ell1 : ℤ))
+    (hw : ∀ a, d.workTapes i a = FinTM.bufferTape (List.replicate ell1 true) a)
+    (u v : List Bool) (hz : z.drop ell1 = pairEncode u v) :
+    let ell2 := 2 * u.length + 2
+    let ht : d.inputPos.val + ell2 < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      dsimp only [ell2]
+      omega
+    let c := headerScanCfg i d 3 ell2 ht
+    (headerScanTM i).runFrom d ell2 = c ∧
+      (∀ t < ell2, ((headerScanTM i).runFrom d t).state ≠ some 3) ∧
+      c.inputPos.val = 1 + (ell1 + ell2) ∧
+      c.workTapePos i = ((ell1 + ell2 : ℕ) : ℤ) ∧
+      (∀ a, c.workTapes i a = FinTM.bufferTape (List.replicate (ell1 + ell2) true) a) ∧
+      (∀ j, j ≠ i → c.workTapes j = d.workTapes j ∧ c.workTapePos j = d.workTapePos j) ∧
+      (∀ t ≤ ell2, ((headerScanTM i).runFrom d t).output = d.output) := by
+  intro ell2 ht c
+  obtain ⟨run, cut, silent⟩ := headerScanTM_run i d ell1 hp hq u v hz
+  refine ⟨run, cut, ?_, ?_, ?_, ?_, silent⟩
+  · rw [headerScanCfg_inputPos]
+    change d.inputPos.val + ell2 = 1 + (ell1 + ell2)
+    omega
+  · rw [headerScanCfg_workTapePos]
+    change Function.update d.workTapePos i (d.workTapePos i + ell2) i = _
+    rw [Function.update_self, hh, Nat.cast_add]
+    dsimp only [ell2]
+    omega
+  · intro a
+    have hpre (b : ℤ) : d.workTapes i (d.workTapePos i - (ell1 : ℤ) + b) =
+        FinTM.bufferTape (List.replicate ell1 true) b := by
+      simpa only [hh, sub_self, zero_add] using hw b
+    have h := headerScanCfg_ruler i d 3 ell2 ht ell1 hpre a
+    simpa only [hh, sub_self, zero_add] using h
+  · intro j hj
+    constructor
+    · funext a
+      rw [headerScanCfg_workTapes, Function.update_of_ne hj]
+    · rw [headerScanCfg_workTapePos]
+      exact Function.update_of_ne hj _ _
+
+/-- The actual skip ends one past the first ruler. Its start presentation is a named prefix
+OWN interface. The published framed row preserves every field except control and this head. -/
+theorem skip_endpoint {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool SeekPhase z) (ell1 : ℕ)
+    (hq : d.state = some .run) (hh : d.workTapePos i = 0)
+    (hw : ∀ a, d.workTapes i a = FinTM.bufferTape (List.replicate ell1 true) a) :
+    (skipTM k i).runFrom d (ell1 + 1) =
+      { d with
+        state := some .done
+        workTapePos := Function.update d.workTapePos i ((ell1 : ℤ) + 1)} ∧
+      (∀ t < ell1 + 1, ((skipTM k i).runFrom d t).state ≠ some .done) := by
+  obtain ⟨run, cut, _⟩ := skipTM_run_ofCfg i (List.replicate ell1 true) d hq
+    (fun p _ _ => by simpa only [hh, zero_add] using hw p)
+  simpa only [List.length_replicate, hh, zero_add] using And.intro run cut
+
+/-- A scanned ruler of total length N supplies the exact framed-rewind window, including its
+left blank. The row itself consumes N+2 steps and preserves all unselected heads. -/
+theorem final_rewind {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool RewindPhase z) (N : ℕ)
+    (hq : d.state = some .start) (hh : d.workTapePos i = (N : ℤ))
+    (hw : ∀ a, d.workTapes i a = FinTM.bufferTape (List.replicate N true) a) :
+    (rewindTM k i).runFrom d (N + 2) =
+      {d with state := some .done, workTapePos := Function.update d.workTapePos i 0} ∧
+      (∀ t < N + 2, ((rewindTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ N + 2 → j ≠ i →
+        ((rewindTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  obtain ⟨run, cut, frame⟩ := rewindTM_run_ofCfg i (List.replicate N true) N
+    (by rw [List.length_replicate]) d hq
+    (fun p _ _ => by simpa only [hh, sub_self, zero_add] using hw p)
+  refine ⟨?_, cut, fun j t ht hj => ?_⟩
+  · simpa only [hh, sub_self] using run
+  · simpa only [if_neg hj] using frame j t ht
+
+/-- Relabelling an actual second-scan endpoint supplies all final rewind entry fields, while
+keeping its arbitrary installed bank and physical input/output unchanged. -/
+theorem to_rewind {k : ℕ} {z : List Bool} (i : Fin k)
+    (c : Cfg k Bool (Fin 4) z) (N : ℕ)
+    (hq : c.state = some 3) (hh : c.workTapePos i = (N : ℤ))
+    (hw : ∀ a, c.workTapes i a = FinTM.bufferTape (List.replicate N true) a) :
+    let r := c.mapState (fun _ => RewindPhase.start)
+    r.state = some .start ∧ r.workTapePos i = (N : ℤ) ∧
+      (∀ a, r.workTapes i a = FinTM.bufferTape (List.replicate N true) a) ∧
+      r.inputPos = c.inputPos ∧ r.output = c.output := by
+  intro r
+  refine ⟨?_, ?_, fun a => ?_, ?_, ?_⟩
+  · rw [Cfg.mapState_state, hq, Option.map_some]
+  · rw [Cfg.mapState_workTapePos]; exact hh
+  · rw [Cfg.mapState_workTapes]; exact hw a
+  · rw [Cfg.mapState_inputPos]
+  · rw [Cfg.mapState_output]
+
+/-- Installed-bank fields follow from the actual public H2-F embedding contract. The source
+one-tape model uses bank indices 0/1/2; arbitrary extra K tapes remain blank and stationary. -/
+theorem installed_bank (K n : ℕ) {Q : Type} (entry : Q)
+    (M : MultiTapeTM 1 Bool (Fin (n + 1))) (x : List Bool) :
+    let sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb (by omega)
+    let e := embedEmitCfg sigma (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+    e.state = some entry ∧ e.inputPos.val = 1 ∧
+      (∀ j, e.workTapePos j = 0) ∧ e.output = [] ∧
+      (∀ (j : Fin (K + 3)) (a : ℤ), e.workTapes j a =
+        if j.val = 1 then FinTM.bufferTape (tableBitsK M.tr) a
+        else if j.val = 2 then FinTM.bufferTape (unaryFin M.q₀) (a - 2)
+        else none) := by
+  intro sigma e
+  have h := embedEmitCfg_forwardLoop_init (k := 1) (K := K) () entry M x
+  dsimp only [e, sigma] at *
+  refine ⟨?_, ?_, fun j => ?_, ?_, fun j a => ?_⟩
+  · rw [h, Cfg.mapState_state]; rfl
+  · rw [h, Cfg.mapState_inputPos]; rfl
+  · rw [h, Cfg.mapState_workTapePos]
+  · rw [h, Cfg.mapState_output]
+  · rw [h, Cfg.mapState_workTapes]
+    rfl
+
+end F6PhaseInterfaces
+#print axioms F6PhaseInterfaces.second_scan
+#print axioms F6PhaseInterfaces.skip_endpoint
+#print axioms F6PhaseInterfaces.final_rewind
+#print axioms F6PhaseInterfaces.to_rewind
+#print axioms F6PhaseInterfaces.installed_bank

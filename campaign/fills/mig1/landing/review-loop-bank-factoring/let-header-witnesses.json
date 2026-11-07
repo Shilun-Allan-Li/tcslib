@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Turing.FinTM.emCall_bank_initial",
+    "header": "/-- Embedding one cleaner at the current bank reproduces the full bank frame.\nEvery other bank and both administrative tapes are retained exactly.\n**Proof sketch.** Extensionality reduces the claim to individual tape slots.\nThe active triple uses the relocation inverse law; every other triple, the\nargument, and the capture use the disjointness laws and are unchanged. -/\nprivate lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)\n    (x arg cap : List Bool) (T : \u2115) (i : Fin M.k) :\n    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))\n    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q)))\n      frame.workTapes frame.workTapePos\n      (emCallClearCfg x 1 0 ((M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)\n        (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])\n        ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame ",
+    "header_sha256": "8094b047c508038b31274db52d878528d4227428e730d0058a6c68117b566b74",
+    "marker_verified_independently": true,
+    "full_let_statement_literal_equal": true
+  },
+  {
+    "name": "Turing.FinTM.emCall_bank_final",
+    "header": "/-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix\nby exactly one, while retaining every inactive tape and head.\n**Proof sketch.** Separate the completed bank from every other tape slot.\nIts three tapes and heads equal the cleaner's blank endpoint. Arithmetic on\nthe bank indices identifies this update with increasing the cleaned prefix. -/\nprivate lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)\n    (x arg cap : List Bool) (T : \u2115) (i : Fin M.k) :\n    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))\n    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q)))\n      frame.workTapes frame.workTapePos\n      (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =\n      emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) ",
+    "header_sha256": "14bbc5413860dd942ed76d0f01ee3e6eb559f5933d22b4f4e3c6ef30545cd4c4",
+    "marker_verified_independently": true,
+    "full_let_statement_literal_equal": true
+  }
+]

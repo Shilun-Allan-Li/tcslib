@@ -1,0 +1,366 @@
+'_private._stdin.0.F6FirstHeaderPreship.first_header_component' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:118:4: error: No goals to be solved
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:119:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  ?as ++ (?bs ++ ?cs)
+in the target expression
+  List.drop (2 * u.length + 2) (dbl u ++ [false, true] ++ v) = v
+
+u v : List Bool
+hlen : (dbl u ++ [false, true]).length = 2 * u.length + 2
+⊢ List.drop (2 * u.length + 2) (dbl u ++ [false, true] ++ v) = v
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:156:4: error: unsolved goals
+case refine_1.inputPos.h
+K : ℕ
+S Q : Type
+M : MultiTapeTM (K + 3) Bool S
+inj : S → Bool → Q
+A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase)
+hA0 : A.q₀ = Sum.inl 0
+hA :
+  ∀ (u v : List Bool),
+    let z := pairEncode u v;
+    let ℓ := 2 * u.length + 2;
+    have i := Fin.last (K + 3);
+    have hlen := ⋯;
+    have e :=
+      { state := some (Sum.inr RewindPhase.done), inputPos := ⟨ℓ + 1, hlen⟩,
+        workTapes := Function.update (fun x x_1 => none) i (FinTM.bufferTape (List.replicate ℓ true)),
+        workTapePos := fun x => 0, output := [] };
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3) = e ∧
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).inputPos = ℓ + 1 ∧
+        (∀ (a : ℤ),
+            (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes i a =
+              FinTM.bufferTape (List.replicate ℓ true) a) ∧
+          (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos i = 0 ∧
+            (∀ (j : Fin (K + 4)),
+                j ≠ i →
+                  (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes j =
+                      (MultiTapeTM.initCfg z).workTapes j ∧
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos j =
+                      (MultiTapeTM.initCfg z).workTapePos j) ∧
+              (∀ t ≤ 2 * ℓ + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).output = []) ∧
+                (∀ t < 2 * ℓ + 3,
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).state ≠ some (Sum.inr RewindPhase.done)) ∧
+                  ∀ t ≤ 2 * ℓ + 3, MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) t ≤ (K + 4) * (2 * ℓ + 4)
+u v : List Bool
+z : List Bool := pairEncode u v
+ℓ : ℕ := 2 * u.length + 2
+hz : z.length = ℓ + v.length := (pair_header_geometry u v).left
+rt : ℤ → Option Bool := FinTM.bufferTape (List.replicate ℓ true)
+he :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3) =
+    { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+      workTapes :=
+        Function.update (fun x x_1 => none) (Fin.last (K + 3))
+          (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+      workTapePos := fun x => 0, output := [] }
+left✝⁴ :
+  ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).inputPos =
+    2 * u.length + 2 + 1
+left✝³ :
+  ∀ (a : ℤ),
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes
+        (Fin.last (K + 3)) a =
+      FinTM.bufferTape (List.replicate (2 * u.length + 2) true) a
+left✝² :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos
+      (Fin.last (K + 3)) =
+    0
+left✝¹ :
+  ∀ (j : Fin (K + 4)),
+    j ≠ Fin.last (K + 3) →
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapes j ∧
+        (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapePos j
+left✝ : ∀ t ≤ 2 * (2 * u.length + 2) + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).output = []
+hcut :
+  ∀ t < 2 * (2 * u.length + 2) + 3,
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).state ≠ some (Sum.inr RewindPhase.done)
+right✝ :
+  ∀ t ≤ 2 * (2 * u.length + 2) + 3,
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode u v)) t ≤ (K + 4) * (2 * (2 * u.length + 2) + 4)
+⊢ 2 * u.length + 2 + 1 = ℓ + 1
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:162:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Function.update ?f ?a ?v ?a
+in the target expression
+  { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+          workTapes :=
+            Function.update (fun x x_1 => none) (Fin.last (K + 3))
+              (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+          workTapePos := fun x => 0, output := [] }.workTapes
+      (Fin.last (K + 3)) p =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt (MultiTapeTM.initCfg v).workTapes (Fin.last (K + 3)) p
+
+case refine_1.workTapes.h.h.refine_1
+K : ℕ
+S Q : Type
+M : MultiTapeTM (K + 3) Bool S
+inj : S → Bool → Q
+A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase)
+hA0 : A.q₀ = Sum.inl 0
+hA :
+  ∀ (u v : List Bool),
+    let z := pairEncode u v;
+    let ℓ := 2 * u.length + 2;
+    have i := Fin.last (K + 3);
+    have hlen := ⋯;
+    have e :=
+      { state := some (Sum.inr RewindPhase.done), inputPos := ⟨ℓ + 1, hlen⟩,
+        workTapes := Function.update (fun x x_1 => none) i (FinTM.bufferTape (List.replicate ℓ true)),
+        workTapePos := fun x => 0, output := [] };
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3) = e ∧
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).inputPos = ℓ + 1 ∧
+        (∀ (a : ℤ),
+            (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes i a =
+              FinTM.bufferTape (List.replicate ℓ true) a) ∧
+          (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos i = 0 ∧
+            (∀ (j : Fin (K + 4)),
+                j ≠ i →
+                  (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes j =
+                      (MultiTapeTM.initCfg z).workTapes j ∧
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos j =
+                      (MultiTapeTM.initCfg z).workTapePos j) ∧
+              (∀ t ≤ 2 * ℓ + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).output = []) ∧
+                (∀ t < 2 * ℓ + 3,
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).state ≠ some (Sum.inr RewindPhase.done)) ∧
+                  ∀ t ≤ 2 * ℓ + 3, MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) t ≤ (K + 4) * (2 * ℓ + 4)
+u v : List Bool
+z : List Bool := pairEncode u v
+ℓ : ℕ := 2 * u.length + 2
+hz : z.length = ℓ + v.length := (pair_header_geometry u v).left
+rt : ℤ → Option Bool := FinTM.bufferTape (List.replicate ℓ true)
+he :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3) =
+    { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+      workTapes :=
+        Function.update (fun x x_1 => none) (Fin.last (K + 3))
+          (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+      workTapePos := fun x => 0, output := [] }
+left✝⁴ :
+  ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).inputPos =
+    2 * u.length + 2 + 1
+left✝³ :
+  ∀ (a : ℤ),
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes
+        (Fin.last (K + 3)) a =
+      FinTM.bufferTape (List.replicate (2 * u.length + 2) true) a
+left✝² :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos
+      (Fin.last (K + 3)) =
+    0
+left✝¹ :
+  ∀ (j : Fin (K + 4)),
+    j ≠ Fin.last (K + 3) →
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapes j ∧
+        (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapePos j
+left✝ : ∀ t ≤ 2 * (2 * u.length + 2) + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).output = []
+hcut :
+  ∀ t < 2 * (2 * u.length + 2) + 3,
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).state ≠ some (Sum.inr RewindPhase.done)
+right✝ :
+  ∀ t ≤ 2 * (2 * u.length + 2) + 3,
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode u v)) t ≤ (K + 4) * (2 * (2 * u.length + 2) + 4)
+j : Fin (K + 4)
+p : ℤ
+⊢ { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+          workTapes :=
+            Function.update (fun x x_1 => none) (Fin.last (K + 3))
+              (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+          workTapePos := fun x => 0, output := [] }.workTapes
+      (Fin.last (K + 3)) p =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt (MultiTapeTM.initCfg v).workTapes (Fin.last (K + 3)) p
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:163:12: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Function.update ?f (Fin.last (K + 3)) ?v i.castSucc
+in the target expression
+  { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+          workTapes :=
+            Function.update (fun x x_1 => none) (Fin.last (K + 3))
+              (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+          workTapePos := fun x => 0, output := [] }.workTapes
+      i.castSucc p =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt (MultiTapeTM.initCfg v).workTapes i.castSucc p
+
+case refine_1.workTapes.h.h.refine_2
+K : ℕ
+S Q : Type
+M : MultiTapeTM (K + 3) Bool S
+inj : S → Bool → Q
+A : MultiTapeTM (K + 4) Bool (Fin 4 ⊕ RewindPhase)
+hA0 : A.q₀ = Sum.inl 0
+hA :
+  ∀ (u v : List Bool),
+    let z := pairEncode u v;
+    let ℓ := 2 * u.length + 2;
+    have i := Fin.last (K + 3);
+    have hlen := ⋯;
+    have e :=
+      { state := some (Sum.inr RewindPhase.done), inputPos := ⟨ℓ + 1, hlen⟩,
+        workTapes := Function.update (fun x x_1 => none) i (FinTM.bufferTape (List.replicate ℓ true)),
+        workTapePos := fun x => 0, output := [] };
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3) = e ∧
+      ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).inputPos = ℓ + 1 ∧
+        (∀ (a : ℤ),
+            (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes i a =
+              FinTM.bufferTape (List.replicate ℓ true) a) ∧
+          (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos i = 0 ∧
+            (∀ (j : Fin (K + 4)),
+                j ≠ i →
+                  (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapes j =
+                      (MultiTapeTM.initCfg z).workTapes j ∧
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (2 * ℓ + 3)).workTapePos j =
+                      (MultiTapeTM.initCfg z).workTapePos j) ∧
+              (∀ t ≤ 2 * ℓ + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).output = []) ∧
+                (∀ t < 2 * ℓ + 3,
+                    (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) t).state ≠ some (Sum.inr RewindPhase.done)) ∧
+                  ∀ t ≤ 2 * ℓ + 3, MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) t ≤ (K + 4) * (2 * ℓ + 4)
+u v : List Bool
+z : List Bool := pairEncode u v
+ℓ : ℕ := 2 * u.length + 2
+hz : z.length = ℓ + v.length := (pair_header_geometry u v).left
+rt : ℤ → Option Bool := FinTM.bufferTape (List.replicate ℓ true)
+he :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3) =
+    { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+      workTapes :=
+        Function.update (fun x x_1 => none) (Fin.last (K + 3))
+          (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+      workTapePos := fun x => 0, output := [] }
+left✝⁴ :
+  ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).inputPos =
+    2 * u.length + 2 + 1
+left✝³ :
+  ∀ (a : ℤ),
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes
+        (Fin.last (K + 3)) a =
+      FinTM.bufferTape (List.replicate (2 * u.length + 2) true) a
+left✝² :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos
+      (Fin.last (K + 3)) =
+    0
+left✝¹ :
+  ∀ (j : Fin (K + 4)),
+    j ≠ Fin.last (K + 3) →
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapes j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapes j ∧
+        (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) (2 * (2 * u.length + 2) + 3)).workTapePos j =
+          (MultiTapeTM.initCfg (pairEncode u v)).workTapePos j
+left✝ : ∀ t ≤ 2 * (2 * u.length + 2) + 3, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).output = []
+hcut :
+  ∀ t < 2 * (2 * u.length + 2) + 3,
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode u v)) t).state ≠ some (Sum.inr RewindPhase.done)
+right✝ :
+  ∀ t ≤ 2 * (2 * u.length + 2) + 3,
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode u v)) t ≤ (K + 4) * (2 * (2 * u.length + 2) + 4)
+j : Fin (K + 4)
+p : ℤ
+i : Fin (K + 3)
+⊢ { state := some (Sum.inr RewindPhase.done), inputPos := ⟨2 * u.length + 2 + 1, ⋯⟩,
+          workTapes :=
+            Function.update (fun x x_1 => none) (Fin.last (K + 3))
+              (FinTM.bufferTape (List.replicate (2 * u.length + 2) true)),
+          workTapePos := fun x => 0, output := [] }.workTapes
+      i.castSucc p =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt (MultiTapeTM.initCfg v).workTapes i.castSucc p
+/private/tmp/tcslib-f6-handoff-bilvkt00/Handoff_sealed_v1.lean:221:2: error: Type mismatch: After simplification, term
+  whole
+ has type
+  ∃ t',
+    t ≤ t' ∧
+      t' ≤ C * (ℓ + 1) * t ∧
+        (∃ b',
+            (b' = true ↔ ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t).inputPos = 0) ∧
+              MultiTapeTM.runFrom
+                  (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                    (MultiTapeTM.initCfg v) rt 0)
+                  t' =
+                rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t).state)
+                  (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t) rt 0) ∧
+          ((∀ u < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) u).state ≠ none) →
+              ∀ u < t',
+                (MultiTapeTM.runFrom
+                      (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                        (MultiTapeTM.initCfg v) rt 0)
+                      u).state ≠
+                  none) ∧
+            (∀ u ≤ t',
+                ∃ v_1 ≤ t,
+                  (∀ (i : Fin (K + 3)),
+                      (MultiTapeTM.runFrom
+                                (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                                  (MultiTapeTM.initCfg v) rt 0)
+                                u).workTapes
+                            i.castSucc =
+                          (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) v_1).workTapes i ∧
+                        (MultiTapeTM.runFrom
+                                (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                                  (MultiTapeTM.initCfg v) rt 0)
+                                u).workTapePos
+                            i.castSucc =
+                          (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) v_1).workTapePos i) ∧
+                    (MultiTapeTM.runFrom
+                            (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                              (MultiTapeTM.initCfg v) rt 0)
+                            u).output =
+                        (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) v_1).output ∧
+                      (MultiTapeTM.runFrom
+                                (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                                  (MultiTapeTM.initCfg v) rt 0)
+                                u).workTapes
+                            (Fin.last (K + 3)) =
+                          rt ∧
+                        (MultiTapeTM.runFrom
+                                (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                                  (MultiTapeTM.initCfg v) rt 0)
+                                u).workTapePos
+                            (Fin.last (K + 3)) ∈
+                          Finset.Icc (-1) ↑ℓ) ∧
+              (∀ (i : Fin (K + 3)),
+                  MultiTapeTM.visitedByTapeHead
+                      (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                        (MultiTapeTM.initCfg v) rt 0)
+                      t' i.castSucc =
+                    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg v) t i) ∧
+                MultiTapeTM.visitedByTapeHead
+                    (rulerHostCfg ℓ hz (Option.map (fun q => inj q false) (MultiTapeTM.initCfg v).state)
+                      (MultiTapeTM.initCfg v) rt 0)
+                    t' (Fin.last (K + 3)) ⊆
+                  Finset.Icc (-1) ↑ℓ
+but is expected to have type
+  ∃ t',
+    t ≤ t' ∧
+      t' ≤ C * (ℓ + 1) * t ∧
+        (∃ b',
+            (b' = true ↔ ↑(MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t).inputPos = 0) ∧
+              MultiTapeTM.runFrom d t' =
+                rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t).state)
+                  (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) t) rt 0) ∧
+          ((∀ s < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) s).state ≠ none) →
+              ∀ s < t', (MultiTapeTM.runFrom d s).state ≠ none) ∧
+            (∀ s ≤ t',
+                ∃ r ≤ t,
+                  (∀ (i : Fin (K + 3)),
+                      (MultiTapeTM.runFrom d s).workTapes i.castSucc =
+                          (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) r).workTapes i ∧
+                        (MultiTapeTM.runFrom d s).workTapePos i.castSucc =
+                          (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) r).workTapePos i) ∧
+                    (MultiTapeTM.runFrom d s).output = (MultiTapeTM.runFrom (MultiTapeTM.initCfg v) r).output ∧
+                      (MultiTapeTM.runFrom d s).workTapes (Fin.last (K + 3)) = rt ∧
+                        (MultiTapeTM.runFrom d s).workTapePos (Fin.last (K + 3)) ∈ Finset.Icc (-1) ↑ℓ) ∧
+              (∀ (i : Fin (K + 3)),
+                  MultiTapeTM.visitedByTapeHead d t' i.castSucc =
+                    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg v) t i) ∧
+                MultiTapeTM.visitedByTapeHead d t' (Fin.last (K + 3)) ⊆ Finset.Icc (-1) ↑ℓ
+'_private._stdin.0.F6HeaderHostHandoff.pair_header_geometry' depends on axioms: [propext, sorryAx, Quot.sound]
+'_private._stdin.0.F6HeaderHostHandoff.header_handoff' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+'_private._stdin.0.F6HeaderHostHandoff.host_after_header' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]

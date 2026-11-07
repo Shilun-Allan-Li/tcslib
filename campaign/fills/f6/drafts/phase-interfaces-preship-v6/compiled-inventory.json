@@ -1,0 +1,986 @@
+{
+  "proofs": [
+    {
+      "variant": "Phases-v4",
+      "roots": 7,
+      "root_plus_descendant_axiom_closures": 13,
+      "all_standard": true,
+      "ordinary_foreign_def_count": 18,
+      "ordinary_foreign_defs": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.mapState",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.StepBlock.forwardLoopCfg",
+        "Turing.embedEmitCfg",
+        "Turing.headerScanCfg",
+        "Turing.headerScanTM",
+        "Turing.moveInputPos",
+        "Turing.pairEncode",
+        "Turing.rewindTM",
+        "Turing.skipTM",
+        "Turing.tableBitsK",
+        "Turing.tapeAction",
+        "Turing.unaryFin"
+      ]
+    },
+    {
+      "variant": "Phases-native-v4",
+      "roots": 7,
+      "root_plus_descendant_axiom_closures": 13,
+      "all_standard": true,
+      "ordinary_foreign_def_count": 18,
+      "ordinary_foreign_defs": [
+        "Turing.Cfg.inputSymbol",
+        "Turing.Cfg.mapState",
+        "Turing.Cfg.workTapeSymbols",
+        "Turing.FinTM.bufferTape",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.step",
+        "Turing.StepBlock.forwardLoopCfg",
+        "Turing.embedEmitCfg",
+        "Turing.headerScanCfg",
+        "Turing.headerScanTM",
+        "Turing.moveInputPos",
+        "Turing.pairEncode",
+        "Turing.rewindTM",
+        "Turing.skipTM",
+        "Turing.tableBitsK",
+        "Turing.tapeAction",
+        "Turing.unaryFin"
+      ]
+    }
+  ],
+  "foreign_entries": [
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.rewindTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Rewind",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.embedEmitCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.StepBlock.forwardLoopCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.StepBlockForward",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.initCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.tableBitsK",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.tr",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.unaryFin",
+      "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.tapeAction",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.step",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.moveInputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.tr",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.inputSymbol",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapeSymbols",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.pairEncode",
+      "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.headerScanCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.UniversalParts",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.headerScanTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.UniversalParts",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.skipTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.skipTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction._proof_1_2",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_1",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_1",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_2",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_2",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.rewindTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Rewind",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.final_rewind",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.embedEmitCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.StepBlock.forwardLoopCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.StepBlockForward",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.initCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.tableBitsK",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.tr",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.unaryFin",
+      "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.installed_bank",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.tapeAction",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.step",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.moveInputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.MultiTapeTM.tr",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.inputSymbol",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction",
+      "name": "Turing.Cfg.workTapeSymbols",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.pairEncode",
+      "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.headerScanCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.UniversalParts",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.headerScanTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.UniversalParts",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.MultiTapeTM.q\u2080",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.skipTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_correction_connection",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.skipTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.skip_endpoint",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.state",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.workTapes",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "hints": "regular"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.to_rewind",
+      "name": "Turing.Cfg.output",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.last_ruler_correction._proof_1_2",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_1",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_1",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_2",
+      "name": "Turing.Cfg.inputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    },
+    {
+      "proof": "F6PhaseInterfaces.second_scan._proof_1_2",
+      "name": "Turing.Cfg.workTapePos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "hints": "abbrev"
+    }
+  ],
+  "no_uncovered_ordinary_foreign_definition": true,
+  "scope": "Actual type/value direct references for all7scratchroots and6descendants; imported theorem proof bodies remain opaque."
+}

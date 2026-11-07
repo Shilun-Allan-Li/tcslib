@@ -1,0 +1,48 @@
+/-- A carry sweep has one framed endpoint, first-return cut and head interval for
+both a successful increment and overflow, parametrized by the suffix after the carry.
+
+**Proof sketch.** Read the existing carry trace at the final time and at each earlier
+time. Its forward and rewind phases avoid both result anchors, and their head offsets
+stay between minus one and the carry length. The optional suffix determines the verdict
+and final word; replacing its leading bit preserves the delimited word length. -/
+private theorem catalog_increment_framed {k : ℕ} {x : List Bool} (i : Fin k)
+    (w : List Bool) (d : Cfg k Bool FlagPhase x)
+    (hstate : d.state = some FlagPhase.run)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p)
+    (p : ℕ) (tail : Option (List Bool))
+    (hsplit : w = List.replicate p true ++ tail.elim [] (false :: ·)) :
+    (incrementTM k i).runFrom d (2 * p + 2) =
+        { d with
+          state := some (FlagPhase.done tail.isSome)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape (List.replicate p false ++ tail.elim [] (true :: ·))
+                (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * p + 2, ∀ b : Bool,
+        ((incrementTM k i).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * p + 2 →
+        if j = i then
+          ((incrementTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (p : ℤ))
+        else ((incrementTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  have hlen : (List.replicate p false ++ tail.elim [] (true :: ·)).length = w.length := by
+    rw [hsplit]
+    cases tail <;> simp
+  constructor
+  · rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+    simp only [catalogTrace, show ¬2 * p + 2 ≤ p by omega,
+      show ¬2 * p + 2 ≤ 2 * p + 1 by omega, ite_false]
+    apply Cfg.ext <;> simp [catalogIncR]
+    funext j q
+    by_cases hj : j = i <;> simp [hj, catalogTape, hlen]
+  · constructor
+    · intro t ht b
+      rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+      simp only [catalogTrace]
+      split_ifs <;> (simp_all [catalogIncF, catalogIncR]; omega)
+    · intro j t ht
+      rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+      simp only [catalogTrace]
+      split_ifs <;> simp_all [catalogIncF, catalogIncR, Finset.mem_Icc] <;> omega

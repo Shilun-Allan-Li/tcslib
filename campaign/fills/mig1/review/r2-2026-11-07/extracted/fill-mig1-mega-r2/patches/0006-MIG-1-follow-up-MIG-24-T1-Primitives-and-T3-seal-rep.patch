@@ -1,0 +1,416 @@
+From 16d61dcd203d0190290d34359c824c684539013f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 10:39:45 +0000
+Subject: [PATCH 6/8] MIG-1 follow-up: MIG-24 T1 (Primitives) and T3, seal
+ repairs
+
+T1, Primitives part: the private catalogRewind was statement-identical to
+the public Turing.FinTM.timed_rewind; it is retired and its four call
+sites use timed_rewind. T3: the twelve frame-exactness side proofs of
+emCall_bank_initial / emCall_bank_final now cite two private lemmas,
+emCall_pair_not_mem and emCall_triple_not_mem. CertShell and
+CodeSimulator read the canonical seam's state through Cfg.ofWords_state
+instead of rfl. Primitives: several moved forwarding-map and poly-space
+steps read runFrom 0 / runFrom 2, initCfg and Action.apply through the
+published equations.
+---
+ .../TuringMachine/Build/CertShell.lean        |  8 +-
+ .../Complexity/TuringMachine/Build/Loop.lean  | 90 +++++++------------
+ .../TuringMachine/Build/Primitives.lean       | 74 ++++++---------
+ .../TuringMachine/CodeSimulator.lean          |  2 +-
+ 4 files changed, 63 insertions(+), 111 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CertShell.lean b/TCSlib/Complexity/TuringMachine/Build/CertShell.lean
+index f22cf9a0..424e0509 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CertShell.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CertShell.lean
+@@ -571,7 +571,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
+         omega
+     simp [w₃, w₂, w₀, hn.1, hn.2.1, hn.2.2]
+   -- The copy, read from the framed contract at the canonical seam.
+-  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) rfl
++  have hk₀ := copyTM_run_ofCfg (x := y) v vf hvf (w₀ v) (Cfg.ofWords .sweep w₀) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₀ := hk₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w₀ v vf (by simp [w₀, hvf.symm]))
+   have hc₀ := hk₀.2.1
+@@ -589,7 +589,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
+       have hn : i ≠ vf := fun he => hi ⟨⟨0, hkF⟩, he.symm⟩
+       simp [w₁, w₂, hn]) hr₁ hc₁
+   have h2 : w₂ vf = x := Function.update_self _ _ _
+-  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) rfl
++  have hk₂ := transferTM_run_ofCfg (x := y) vf vx hfx (w₂ vf) (Cfg.ofWords .sweep w₂) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₂ := hk₂.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₂ vf vx hfx
+     (by simp [w₂, w₀, hfx.symm, hvx.symm]))
+@@ -598,7 +598,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
+   set t₂ := 2 * x.length + 2 with ht₂def
+   have ht₂ : t₂ ≤ 3 * x.length + 3 := by omega
+   have h3 : w₃ v = pair := by simp [w₃, w₂, w₀, hvx, hvf]
+-  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) rfl
++  have hk₃ := transferTM_run_ofCfg (x := y) v vs hvs (w₃ v) (Cfg.ofWords .sweep w₃) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₃ := hk₃.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₃ v vs hvs
+     (by simp [w₃, w₂, w₀, hxs.symm, hfs.symm, hvs.symm]))
+@@ -616,7 +616,7 @@ private theorem cert_prepare_exists (P : FinTM Bool) (j : Fin P.k) (m : ℕ) (hm
+       have hn : i ≠ vs := fun he => hi ⟨⟨0, hkS⟩, he.symm⟩
+       simp [w₄, w₅, hn]) hr₄ hc₄
+   have h5 : w₅ vs = u := Function.update_self _ _ _
+-  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) rfl
++  have hk₅ := transferTM_run_ofCfg (x := y) vs vu hsu (w₅ vs) (Cfg.ofWords .sweep w₅) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have hr₅ := hk₅.1.trans (Cfg.ofWords_transfer_endpoint _ _ w₅ vs vu hsu
+     (by simp [w₅, w₃, w₂, w₀, hsu.symm, hvu.symm, hxu.symm, hfu.symm]))
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 58e94338..414e999b 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -4428,6 +4428,24 @@ private def emCallBankFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Boo
+     (fun i => if i.val < j then fun _ => none else bufferTape [true])
+     (fun i => if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
+ 
++/-- The argument and capture tapes lie outside every cleaner bank. -/
++private lemma emCall_pair_not_mem (M : FinTM Bool) (i : Fin M.k) (r : Fin 2) :
++    emCallPairIndex M r ∉ Set.range (emCallTripleEmbedding M i) := by
++  rintro ⟨r', hr⟩
++  have h := congrArg (emCallTripleSelect M i) hr
++  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
++  simp only [emCall_triple_inverse, emCall_triple_pair] at h
++  cases h
++
++/-- Another source bank's slots lie outside the cleaner bank of `i`. -/
++private lemma emCall_triple_not_mem (M : FinTM Bool) {i l : Fin M.k} (he : l ≠ i) (r : Fin 3) :
++    emCallTripleIndex M l r ∉ Set.range (emCallTripleEmbedding M i) := by
++  rintro ⟨r', hr⟩
++  have h := congrArg (emCallTripleSelect M i) hr
++  change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
++  simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
++  cases h
++
+ /-- Embedding one cleaner at the current bank reproduces the full bank frame.
+ Every other bank and both administrative tapes are retained exactly.
+ **Proof sketch.** Extensionality reduces the claim to individual tape slots.
+@@ -4449,20 +4467,12 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++          (emCall_pair_not_mem M i 0)).1
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++          (emCall_pair_not_mem M i 1)).1
+       · rfl
+     · subst j
+       by_cases he : l = i
+@@ -4473,11 +4483,7 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+         · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).1
++            (emCall_triple_not_mem M he r)).1
+         · rfl
+   · funext j
+     simp only [emCallEmbeddedCfg, Cfg.mapState]
+@@ -4485,20 +4491,12 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++          (emCall_pair_not_mem M i 0)).2
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++          (emCall_pair_not_mem M i 1)).2
+       · rfl
+     · subst j
+       by_cases he : l = i
+@@ -4509,11 +4507,7 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+         · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).2
++            (emCall_triple_not_mem M he r)).2
+         · rfl
+ 
+ /-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
+@@ -4536,20 +4530,12 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++          (emCall_pair_not_mem M i 0)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).1
++          (emCall_pair_not_mem M i 1)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       by_cases he : l = i
+@@ -4560,11 +4546,7 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+         · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).1
++            (emCall_triple_not_mem M he r)).1
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+@@ -4574,20 +4556,12 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++          (emCall_pair_not_mem M i 0)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+       · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
+-          (by rintro ⟨r', hr⟩
+-              have h := congrArg (emCallTripleSelect M i) hr
+-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
+-              cases h)).2
++          (emCall_pair_not_mem M i 1)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       by_cases he : l = i
+@@ -4598,11 +4572,7 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+         · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
+-            (by rintro ⟨r', hr⟩
+-                have h := congrArg (emCallTripleSelect M i) hr
+-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
+-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
+-                cases h)).2
++            (emCall_triple_not_mem M he r)).2
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+           simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+index 9548ce38..38a5b4c2 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -1771,35 +1771,6 @@ private lemma lenParse_run (M : FinTM Bool) {x : List Bool}
+         simp [lenCfg, pairDecode]
+       · exact False.elim (h rfl)
+ 
+-/-- Quantitative input rewind, adapted from the wrapper controller's proved
+-`timed_rewind` pattern using the public `rewind_scan` interface.
+-**Proof sketch.** One mandatory left move is followed by exactly the new
+-position plus one scan steps. Work tapes and output are preserved. -/
+-private lemma catalogRewind {k : ℕ} {S : Type} {x : List Bool}
+-    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+-    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+-    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+-      | some _ => controlAction .neg (some scan)
+-      | none => controlAction .pos dest)
+-    (c : Cfg k Bool S x) (hs : c.state = some start) :
+-    ∃ r ≤ c.inputPos.val + 2,
+-      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+-  have hstep : tm.step c =
+-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+-    unfold MultiTapeTM.step
+-    rw [hs]
+-    dsimp only
+-    rw [hstart, controlAction_apply]
+-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+-    rw [moveInputPos_neg_val]
+-    have := c.inputPos.isLt
+-    omega
+-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+-  · rw [moveInputPos_neg_val]; omega
+-  · rw [MultiTapeTM.runFrom_add]
+-    change tm.runFrom (tm.step c) _ = _
+-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+-
+ /-- A completed generator is captured without physical output, then its
+ last cell and the first physical input cell are exposed for comparison.
+ **Proof sketch.** Use the least source halting time to discharge `capture_run`'s
+@@ -1846,7 +1817,7 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
+         simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+           sub_eq_add_neg]
+     · rfl
+-  obtain ⟨r, hrle, hr⟩ := catalogRewind (pairCountTM M).tm
++  obtain ⟨r, hrle, hr⟩ := timed_rewind (pairCountTM M).tm
+     (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
+     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
+   refine ⟨t + 1 + r, ?_, c, ho, ?_⟩
+@@ -2378,6 +2349,7 @@ private lemma poly_space (d C : ℕ) (x : List Bool) (t : ℕ) :
+       polyHeads (x.length + 1) (M.runFrom c u).state (M.runFrom c u).workTapePos := by
+     induction u with
+     | zero =>
++      rw [MultiTapeTM.runFrom_zero]
+       refine ⟨rfl, ?_⟩
+       simp [c, catalogPolyCfg, polyHeads]
+       omega
+@@ -2756,7 +2728,8 @@ private lemma fwdMap_move (M : FinTM Bool) (x : List Bool)
+       (fwdMapCfg M x q p a b ha hb out) =
+       fwdMapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)
+         (out ++ emit.toList) := by
+-  refine Cfg.ext rfl rfl ?_ ?_ rfl
++  refine Cfg.ext (Action.apply_state _ _) (Action.apply_inputPos _ _) ?_ ?_
++    (Action.apply_output _ _)
+   · funext i
+     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+     · simp [fwdMapAct, fwdMapCfg, Action.apply]
+@@ -2803,7 +2776,8 @@ private lemma fwdMap_block (M : FinTM Bool) (x pre rest a : List Bool) (b c : Bo
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
+       else fwdMapCfg M x (some .copyB)
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
+-  change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++    MultiTapeTM.runFrom_zero]
+   rw [fwdMap_first M x pre (c :: rest) a b hx]
+   unfold MultiTapeTM.step
+   change ((fwdMapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
+@@ -2978,7 +2952,9 @@ private lemma fwdMap_emit (M : FinTM Bool) (x a b rest : List Bool)
+         (fwdMapCfg M x (some .emitA) p pre b pre.length 0 out) = _
+       rw [fwdMap_move]
+       simp [fwdMapCfg]
+-    change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++    rw [show 2 * ([] : List Bool).length + 2 = 0 + 1 + 1 from rfl,
++      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++      MultiTapeTM.runFrom_zero]
+     rw [hs]
+     change (fwdMapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
+     rw [fwdMap_move]
+@@ -2989,7 +2965,8 @@ private lemma fwdMap_emit (M : FinTM Bool) (x a b rest : List Bool)
+     have hs : (fwdMapTM M false).tm.runFrom
+         (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
+         fwdMapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
+-      change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
++    MultiTapeTM.runFrom_zero]
+       have hfirst : (fwdMapTM M false).tm.step
+           (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) =
+           fwdMapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
+@@ -3119,17 +3096,18 @@ private lemma fwdMap_setup (M : FinTM Bool) (x : List Bool) :
+   obtain ⟨t, ht, he⟩ := fwdMap_parse M x x [] [] rfl
+   have hi : (fwdMapTM M false).tm.initCfg x =
+       fwdMapCfg M x (some (.parse none)) ⟨1, by omega⟩ [] [] 0 0 [] := by
+-    refine Cfg.ext rfl rfl ?_ ?_ rfl
+-    · funext i
++    rw [MultiTapeTM.initCfg_eq]
++    refine Cfg.ext (Cfg.init_state _ _) (Cfg.init_inputPos _ _) ?_ ?_ (Cfg.init_output _ _)
++    · funext i z
++      rw [Cfg.init_workTapes]
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
+     · funext i
++      rw [Cfg.init_workTapePos]
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
+   refine ⟨t, by simp only [List.length_nil, mul_zero, add_zero] at ht; omega, ?_⟩
+   rw [hi]
+   simpa only [List.nil_append, List.length_nil, Nat.cast_zero] using he
+@@ -3193,7 +3171,11 @@ private lemma fwdMapVirtual_run (M : FinTM Bool) {x y : List Bool}
+       (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) t =
+         fwdMapVirtual M (M.tm.runFrom c t) tag' p a pre := by
+   induction t with
+-  | zero => exact ⟨tag, hb, rfl⟩
++  | zero =>
++    refine ⟨tag, ?_, ?_⟩
++    · rw [MultiTapeTM.runFrom_zero]
++      exact hb
++    · rw [MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_zero]
+   | succ t ih =>
+     obtain ⟨b, hb, he⟩ := ih
+     obtain ⟨d, hd, hs⟩ := fwdMapVirtual_step M _ b hb p a pre
+@@ -4147,7 +4129,7 @@ private lemma splitRestore_run (k : ℕ) (w s : List Bool) :
+   have hlen : s.length ≤ (splitStep w s).length := by
+     unfold splitStep
+     split <;> simp
+-  obtain ⟨r, hr, he⟩ := catalogRewind (splitRestoreTM k).tm (2, false) (3, false)
++  obtain ⟨r, hr, he⟩ := timed_rewind (splitRestoreTM k).tm (2, false) (3, false)
+     (some (4, false)) (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+     (splitRestoreClean k w (splitStep w s) (2, false) (splitPos w s.length) 0) rfl
+   have hp : (splitPos w s.length).val ≤ w.length + 1 := by simp [splitPos] <;> omega
+@@ -4768,7 +4750,7 @@ private lemma splitBody_rewind (M : FinTM Bool) (start : M.State) (w : List Bool
+       (splitBodyTM M start).tm.runFrom (c.mapState (SplitBodyState.rewind ok)) t =
+         ({c with state := some (2 : Fin 3), inputPos := 1}).mapState (SplitBodyState.rewind ok) ∧
+       splitSafe (splitBodyTM M start).tm .anchor (c.mapState (SplitBodyState.rewind ok)) t := by
+-  obtain ⟨T, hT, he⟩ := catalogRewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
++  obtain ⟨T, hT, he⟩ := timed_rewind (splitRewindTM M.k).tm (0 : Fin 3) (1 : Fin 3) (some (2 : Fin 3))
+     (fun _ _ => rfl) (fun _ _ => rfl) c hc
+   obtain ⟨t, ht, hend, hsafe⟩ := splitEmbed_cut (splitRewindTM M.k).tm
+     (splitBodyTM M start).tm (SplitBodyState.rewind ok) .anchor (fun q => q = (2 : Fin 3))
+@@ -6176,7 +6158,7 @@ private lemma emitterP2_prepare_run (w s : List Bool) :
+       funext i; fin_cases i <;> simp [Action.apply, sub_eq_add_neg]
+     rw [Nat.add_comm 1 _, MultiTapeTM.runFrom_succ_eq_step, hstep]
+     exact emitterP2_prepare_rewind_suffix w s v over p v.length (le_refl _)
+-  obtain ⟨r, hr, h5⟩ := catalogRewind tm ((6 : Fin 9), over) ((7 : Fin 9), over)
++  obtain ⟨r, hr, h5⟩ := timed_rewind tm ((6 : Fin 9), over) ((7 : Fin 9), over)
+     (some ((8 : Fin 9), over)) (fun _ _ => rfl) (fun _ _ => rfl)
+     (emitterP2PrepareCfg w s s v 6 over p 0 0) rfl
+   have hr' : r ≤ w.length + 3 := by simpa only [emitterP2PrepareCfg, hp] using hr
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index a86ee512..3d018055 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1276,7 +1276,7 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
+     have ne : j ≠ dst := fun eq => hj ⟨zero, eq.symm⟩
+     simp only [copied, result, Function.update_of_ne ne]
+   -- The copy, read from the framed contract at the canonical seam.
+-  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) rfl
++  have framed₀ := copyTM_run_ofCfg (x := x) 0 dst distinct (w 0) (Cfg.ofWords .sweep w) (Cfg.ofWords_state _ _)
+     (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+   have run₀ := framed₀.1.trans (Cfg.ofWords_copy_endpoint _ _ w 0 dst fresh)
+   have cut₀ := framed₀.2.1
+-- 
+2.43.0
+

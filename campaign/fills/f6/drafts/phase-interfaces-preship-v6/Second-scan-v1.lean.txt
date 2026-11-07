@@ -1,0 +1,59 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction Turing.headerRulerTM Turing.headerScanTM Turing.headerScanCfg Turing.skipTM Turing.rewindTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+namespace F6PhaseInterfaces
+open Turing
+/-- The second scan extends an already nonblank ruler; its physical start presentation is an
+explicit prefix OWN interface, not a supplied proof that the entire prefix reaches it.
+
+**Proof sketch.** Apply the public scan contract and ruler-extension reader at the existing
+nonblank length. Public field equations and integer arithmetic identify the common ruler origin
+and the two endpoint heads; their update equations preserve every other bank field. -/
+theorem second_scan {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (ell1 : ℕ)
+    (hp : d.inputPos.val = 1 + ell1) (hq : d.state = some 0)
+    (hh : d.workTapePos i = (ell1 : ℤ))
+    (hw : ∀ a, d.workTapes i a = FinTM.bufferTape (List.replicate ell1 true) a)
+    (u v : List Bool) (hz : z.drop ell1 = pairEncode u v) :
+    let ell2 := 2 * u.length + 2
+    let ht : d.inputPos.val + ell2 < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      dsimp only [ell2]
+      omega
+    let c := headerScanCfg i d 3 ell2 ht
+    (headerScanTM i).runFrom d ell2 = c ∧
+      (∀ t < ell2, ((headerScanTM i).runFrom d t).state ≠ some 3) ∧
+      c.inputPos.val = 1 + (ell1 + ell2) ∧
+      c.workTapePos i = ((ell1 + ell2 : ℕ) : ℤ) ∧
+      (∀ a, c.workTapes i a = FinTM.bufferTape (List.replicate (ell1 + ell2) true) a) ∧
+      (∀ j, j ≠ i → c.workTapes j = d.workTapes j ∧ c.workTapePos j = d.workTapePos j) ∧
+      (∀ t ≤ ell2, ((headerScanTM i).runFrom d t).output = d.output) := by
+  intro ell2 ht c
+  obtain ⟨run, cut, silent⟩ := headerScanTM_run i d ell1 hp hq u v hz
+  refine ⟨run, cut, ?_, ?_, ?_, ?_, silent⟩
+  · rw [headerScanCfg_inputPos]
+    change d.inputPos.val + ell2 = 1 + (ell1 + ell2)
+    omega
+  · rw [headerScanCfg_workTapePos]
+    change Function.update d.workTapePos i (d.workTapePos i + ell2) i = _
+    rw [Function.update_self, hh, Nat.cast_add]
+  · intro a
+    have hpre (b : ℤ) : d.workTapes i (d.workTapePos i - (ell1 : ℤ) + b) =
+        FinTM.bufferTape (List.replicate ell1 true) b := by
+      simpa only [hh, sub_self, zero_add] using hw b
+    have h := headerScanCfg_ruler i d 3 ell2 ht ell1 hpre a
+    simpa only [hh, sub_self, zero_add] using h
+  · intro j hj
+    constructor
+    · funext a
+      rw [headerScanCfg_workTapes, Function.update_of_ne hj]
+    · rw [headerScanCfg_workTapePos]
+      exact Function.update_of_ne hj _ _
+
+end F6PhaseInterfaces
+#print axioms F6PhaseInterfaces.second_scan

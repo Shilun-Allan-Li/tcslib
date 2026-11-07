@@ -1,0 +1,30 @@
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! Unfiltered owner-module constant inventory: internal/private names are retained. -/
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let wanted : List Name := [`TCSlib.Complexity.TuringMachine.Encoding,
+    `TCSlib.Complexity.TuringMachine.Simulation,
+    `TCSlib.Complexity.TuringMachine.Composition,
+    `TCSlib.Complexity.TuringMachine.Build.Wrappers,
+    `TCSlib.Complexity.TuringMachine.Build.Primitives]
+  for mod in wanted do
+    unless (env.getModuleIdx? mod).isSome do throwError "missing imported module {mod}"
+  let entries := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let mod := env.header.moduleNames[i.toNat]!
+      if wanted.contains mod then some (n, ci, mod) else none
+    | none => none
+  for (n, ci, mod) in entries.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+      | .opaqueInfo _ => "opaque" | .axiomInfo _ => "axiom"
+      | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+      | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+    logInfo m!"CONSTANT|{n}|{mod}|{kind}|{n.isInternalDetail}|{isPrivateName n}"

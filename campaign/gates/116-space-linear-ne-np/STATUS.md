@@ -1,12 +1,9 @@
-# Gate 116: CLOSED PASS; #229 clear to merge
+# Gate 116: CLOSED PASS; #229 merged by Seyoon
 
-Codex audit **PASS 0 blockers / 0 majors / 0 minors / 12 notes**. Verbatim findings and all
-12 dispositions are committed separately from the independent incoming review. No source fix
-or new design/debt ruling is required.
+Codex PASS **0 blockers /0 majors /0 minors /12 notes**, all accepted; no source repair or
+new design/debt ruling. Verbatim findings and independent incoming review remain unchanged.
 
-The current-campaign merged-tree replay passed **2 modules, 0 failures/static mismatches** on
-**oleans-mlin2**. The audited/current head is unchanged; the current campaign's Lean tree equals
-the passed replay base, and a clean current merge preview has exactly the passed head's Lean.
-See `evidence/clearance-after-audit.json`. Only the independent F6 admission remains.
-
-**Clear to merge: #229.** Seyoon merges. Gate 117 is reserved for the approved reading APIs.
+Seyoon merged #229 at `e3adffac67377a8b6e23bed74bfdbb44a123dd86`. Its Lean tree exactly equals the passed current two-module
+**oleans-mlin2** replay. That complete snapshot was renamed **oleans-mac3**; this is adoption,
+not another elaboration. Receipt: `campaign/status/2026-11-07-linear-merge/receipt.json`.
+Only the independent F6 admission remains in Hierarchy. Gate117 audits the approved prerequisites.

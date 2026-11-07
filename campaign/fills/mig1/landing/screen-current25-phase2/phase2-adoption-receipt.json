@@ -1,0 +1,76 @@
+{
+  "utc": "2026-11-07T13:48:31.615056+00:00",
+  "base_passed_source": "0d6b6f842a48be813dcde7fdfd2a1a161fab2383",
+  "base_replay": "mmig1 PASS394/0/static0",
+  "patches": [
+    {
+      "path": "review-tagged-lockstep-route/proposed-invariant-consumers.patch",
+      "sha256": "0e0f736789ca9560db084713622347a421fc46a6aed4efd8afca8a778445a9a2"
+    },
+    {
+      "path": "review-loop-bank-factoring/Loop-cumulative-v2.patch",
+      "sha256": "79831bdee8f0e7c48fbe24fa41fc8dcc7854b3aa82f67cbaec3143e10e5b7cc4"
+    },
+    {
+      "path": "review-forward-rewind-factoring/proposed-factoring.patch",
+      "sha256": "223a010bf0f95ceed5a82864c5c3917b2f55bfc930fbe8b01f44a2ad5e2860b3"
+    },
+    {
+      "path": "review-endpoint-packaging-factoring/proposal-v2.diff",
+      "sha256": "05385ba0d22edf2775fc85dcd286aa3adc1c74b622c8c89efc093e979fae1c1d"
+    }
+  ],
+  "source_paths": [
+    "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "TCSlib/Complexity/RAMSimulation/WordSize.lean"
+  ],
+  "scope_extension": "VirtualInput only: existing-API body repoint under WORKFLOW\u00a73 mechanical all-member cleanup; original public statement and imports preserved.",
+  "private_selector_retirements": [
+    "emCall_pair_not_mem",
+    "emCall_triple_not_mem"
+  ],
+  "root_comment_updates": [
+    "Simulation tagged-invariant sketch",
+    "VirtualInput tagged-invariant sketch",
+    "WordSize Catalog line reference"
+  ],
+  "WordSize_pointer": 2033,
+  "no_unapproved_design_proposal_applied": true,
+  "source_blobs": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "before_sha256": "c22446014ede4b24284170545ba42589afb96b8e6286b06e1b5ab3cd76b8462c",
+      "after_sha256": "fed2edd6274d95adc6d6cecc036c8ab234bb578387e10531a05714a11cca2b12"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean",
+      "before_sha256": "d754d30f35ffe8e3ab715b3c06da616e405739d15c21193bd40de126c018cbb3",
+      "after_sha256": "8cf6b4469661b82a828a721e7504794b4240bbb338817a95fac8ca43eacee2aa"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "before_sha256": "0e2e7ed7b1bb07bcc15df9e99a6cf6033f2aad1b0cfd84ddf12e035add94c9d0",
+      "after_sha256": "82f86dcb80ad1f25cf06f164f0b16edbbdf548773dfe8841162d3cfbdee2dd22"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "before_sha256": "29d84cd418072e50d0a5f5c106daa9eb2dbac5391036684cf6864243afab7db4",
+      "after_sha256": "8602e6909919356834430969423a7b9d65b1ebb339cf5529f8a992df8469debe"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "before_sha256": "cfc4365531fade3b5f5e358f0285d4792b239412bc2f1ac662673fdc5f54fb73",
+      "after_sha256": "a55066f71a5c94f27c8767e0cdada2baabcb65ee7c3c59a14e8bc58ffaceacba"
+    },
+    {
+      "path": "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+      "before_sha256": "ca26fb0638082f23ebcaf490ef052890bbc4d5196ff8d50424178d61a35b36d2",
+      "after_sha256": "d2cae4833ec8645c0f935206d2ccdb478ec0a8ae65929db07dd171e806722d4e"
+    }
+  ],
+  "status": "Actual source adopted; combined compile, independent full freeze, final census/screens/replay still required."
+}

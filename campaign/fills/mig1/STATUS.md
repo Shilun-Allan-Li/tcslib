@@ -42,3 +42,37 @@ admissions are filled; three F-B targets plus frozen RAM3 remain. F-C factoring 
 incomplete. New captureCfg readers and the omitted loopHost_input_rewind seal region need
 repair; current supplied seal coverage is 15 of 16 changed/new Loop declarations.
 The immutable issued packet and in-flight job are unchanged; do not duplicate the fill.
+
+
+## Current landing state after cp05/cp07 (2026-11-07)
+
+cp05 and cp07 are reviewed **partial** deliveries; original ZIPs/reports and all636/738 payload
+checksums are retained and pass. cp07 fills all17 original source admissions and two additional
+already-gated forwarding proofs; only the three frozen RAM admissions remain. It deletes356
+private Catalog copies /8202 lines and retires six public rows. Its final full641-module sweep,
+metadata/seals/screens were unfinished at packaging; these source facts are not acceptance.
+The five safely verified producer commits are imported into the unpushed/no-PR branch
+lean/mig1-mega-landing with Claude authorship preserved. See landing/integration.json.
+
+The23 approved API theorems are implemented separately in draft #230, gate117 Codex pending,
+with a passed394-module current merged-tree replay. Maintainer audit repairs of already-filled
+proofs are in progress in disjoint files. The actual untimed condTM transport bridge passes a22-definition focused seal;
+Loop's omitted seal region and Primitives' decoder/model-interface reads require full checking.
+A shared absorbing-stop first-entry API and two additional canonical zero-space facts are
+bounded **unapproved proposals**, separate from the23 approved scope. No public statement is
+weakened and no factoring debt is silently accepted. Codex is selected for the eventual
+MIG-1 landing audit, reserved as gate118, distinct from gate117. The final worker delivery is still awaited; its
+issued brief/outbox must remain unchanged and no fill is duplicated internally.
+
+
+## Final delivery received — partial, source identical to cp07
+
+`review/final-2026-11-07/` retains the2852090-byte final ZIP (SHA256
+4315dcfd348b9cce1e7dbf02de0b75b7e2596a177039fee823061f5d706962b6), both reports,2152 verified
+payload checksums, complete inert extraction, independent source/freeze/MIG24 review and root's
+641-module supplied-log/axiom/census reconciliation. Final source equals cp07 exactly; no new
+producer commits need importing. The producer has finished and explicitly reports PARTIAL.
+Remaining seals/interface reads and assigned factoring are maintainer landing repairs; only
+RAM3 remains admitted. The passed producer641 sweep is not our current-campaign replay.
+Current ownership: root Catalog/CodeSimulator; subagents CertShell, Composition/Wrappers/Loop,
+and Primitives. Do not mutate Git/source ownership while those disjoint repairs are active.

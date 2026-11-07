@@ -1,0 +1,2129 @@
+{
+  "surviving_declarations": 303,
+  "public_declarations": 54,
+  "exact_raw_header_bytes_equal": true,
+  "let_statement_note": "For proof declarations, scan to a top-level := by rather than stopping at earlier top-level let assignments; binder depth and strings/comments respected.",
+  "rows": [
+    {
+      "name": "Turing.FinTM.CatalogPolyControl",
+      "kind": "inductive",
+      "private": true,
+      "literal_header_sha256": "4e18dc46851230cf587bff56467b46d1d69ac7f85230343f9a15c7534025e46d",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.EmitterP2State",
+      "kind": "inductive",
+      "private": true,
+      "literal_header_sha256": "6ec1b4ed1006b7db5f5969939cb4a3d797677a8a62c97469ee20c7109b2fc61d",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.FwdMapState",
+      "kind": "inductive",
+      "private": true,
+      "literal_header_sha256": "6ddb897d5cff817ba6a482d878947fd0d49bbdf2e80d16019ee9f5eecfeb0085",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.SplitBodyState",
+      "kind": "inductive",
+      "private": true,
+      "literal_header_sha256": "813e4b40fb0bfce6c5d237877459d95081be133770d441e5e4caef195aebdc32",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.anyTrueTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "31b263b867daf64a5ee098a49f78c2e158cb2f67cbdd11f262faafb063de058e",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.anyTrue_computes",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4d1408d2ca7911fe54f64e2d869a7a8767252453462d2039a4522baca82adc55",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.anyTrue_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "825d00428084a73bd2ae2dcebaec613fe785fcf301cb5112900864f7f9e9f7dc",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.appendBitTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "89eb0c3f5cf14d1de72a949ac7329a1ea68636446d4407a2806a004fc68cffa6",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.appendBitTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "30832725173b012fcdf9c6cb54f329e4f25875db882fdc83c850e442ba7940e0",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogBuffer_erase",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "5c63957bc1ac06fa8717167cea523d3cacf904183925587dfc7183518c1f0b30",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogFind_congr",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4ceaeb6e2020e26e481f4f589a3a10fb2fa9693a52c6bd9328403a9e1494dcdc",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogFirstEntry",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "01ca65315c24600a7b7ec08bc813544fdff955a1b4386efc4e6b003631b6cebd",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogMarker_cases",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8d535974af5374e82a47e6d89168a184deccf84913daa2ddcfb8a0f93acedb2b",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPayload_length",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9e29ee915fcc6c8610ab6f4ade5d493f785407e81c9823576ca6f2847c132c68",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d1e089d4886aae2eb4225b0cf63d872ce3bd666d01eac7843c49f84d6646cc8b",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyControlDecidableEq",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "c583b98e850fca77213e692b9697a0af7a4b040fe38fdfa25e224405fa8922ee",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyControlFintype",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "7cdb371293714c449f78d00a52aa7e55eaa6e163fbbd5a27d15c00fb5c13f620",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyCopyCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "b49c2c888fe97e6e69380f1ba62c958df7788045a13521d2393a39b540f967cc",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyCost",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "6e47ae87ac0316f4c2da98cd8a0dd165bde4e796cf5cc6a582625456a195916d",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyCost_le",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "70833530823b61a0de217306df4dcae45ee70cc703bd16b1ec0db8ba566d010a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyMove",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "9e7c90dd111d919a7dfa23805397755ccded5a0aabaa95f59333e098e5f880f3",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyMove_apply",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "b93cb299b049a253f220e79f30705cbf7a0efd22dd4e13983710734d63ff33e0",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyTape",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "88dcd16569c293fe1d8eef0b48a7145d467b8db3fa439b4e167968b8985e93b2",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyTape_write",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "562b50d2087bbe04e29b59c05be3b2997c3d17ed6e25db34555896cea556895f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPolyUnaryTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "167b78b27f9da88e85af866959d2c8d46b937534af07898946184cbf86035272",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_advance",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "000e50adbf2237e002c609d6548b77b1b04d32c46cdf927a2c40a4a0b51aa1ed",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_copy",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8a6fbe64f6de404e6c66271f15eeb61f39a8480bb5f675943caf2034cd504f16",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_emit",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a5f3acbeb94c6765d0b67bbb8e74a43304eb3fc48b31ce2ec12707787e87e28f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_loop",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "dfd418b572641b1dc52cbb4a8c8b68fcd7ba39b4eef00c2d57ebf2f744ea9ded",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "3f7022783df19cb47db8ebbcb780d5acd535d13e8a713fca5ca8a17ee49f41b6",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_setup",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "548f0e20fcc228e86dd23df312bcc3ab5cb379494a5dbd24ffaf9a776df71a7f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_start",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "d2b187565daf7615ae03598af4f63a0c9911d2d7801be055da48465065cec4a7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPoly_unary_computes",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "625e670d38032d89f7c51fed68d1203284ef96ae927562ef92c530b47a513933",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPrefixCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "df0e0bdb5b22988ed73d1cfac0e2977a7692349fad1af84af2f74a3398db4900",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.catalogPrefixTM_copy",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a1ba667df55457edacd6f76875950dd8541b6307ce5cb69500acbb57a7541651",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.catalogPrefixTM_emit",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9345cbfe0af07de3df351bde8c2d70ae8e81b275d5d65e63e952c506d8580e1e",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_appendBit",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "745f45cc7a02d9072f475f8f5e722fffdce582a50204c05e8646edcbf9daafd6",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_incFixed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "b7d4e17de325839577f401bdf8c60995eddfa03fd0f0b22cce6d0939b0a60893",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_lengthBits",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "4e270b0276462218d4f218332fa06c442476ff5609eba048cfb73d3aca88db69",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairConcat",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "8a77f82850c7348f3cb3248613851a56d92e69509b185196778a54afa275bd89",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairDup",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "8563fa69d66f41ba5c9b71575e6ee1bfe767de4af859d71a7c3b3c80e4ea5d6a",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairEncodeFixed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "37c6b642976abed2167030999d72c67c5a07da1343584d46d2354e8966a6f1a7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairFst",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "c39b85050543505227e1046f698039b7cae8a33132753de6b8c21c28bb3853b3",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairLenCheck",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "50a3ba0cf8ef7b2760ee047fa1cde730c8b203ee530b959261a1e218576a06e4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairMapSnd",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "2c750e62ec0e5bd857b7e8c380e79ec780d67d7355c3eac2ee3dda7f03906e5d",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairSnd",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "102894abfb2f3f736e21339eccfa7e0f2b8e748e0e10ee80dd52c5190c193877",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairValid",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "57096378a730079e9e196a5df79f136d0aab4240af60565dc035e6ab3c9681c1",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_polyBits",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "4e208ad6ee0afefbae6aa35e8ada6c0d3bb51d5b969f386835afeee6b32892c0",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_polyUnary",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "dbc852bb3b682cd7392f3e5bb86290f9eb44087ca2cde4eeb61c871c772fd6a4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_prepend",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "68f0469a728b80d65b3fa6188e90c439874baa4a85922ae38377a37be598c3e9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_splitSolve",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "4f26734cbf2892aef13b8db725c04718145652e667131baeaa5d41056b29d824",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_splitSolveWith",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "808521f0357a4c46144d0225dec9c4953b56f0b58fef860ae8f97a95be4c69b3",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_stripLast",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "65c94d90758a52d8e40b948877696fe62d9b61756b9a8feb2792c9b506ae3fb8",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_unaryToken",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "d11bb683b267303121e915d076d52844a463a9839e940090ed3495a63b1c9aca",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterAppend_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "7416a1ce04e5b088f12d75c1941619f99c6aaa74e69f9197818be8ee27adae42",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterCompareCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "74c9e11e26dd95cae613bc0309d1c4abd9ad301e2ac079ae71f4381db4497086",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterCompareTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "43355846194d6eeb37e569bd876fb77a399f7f4a7a6ea6c361b87c4f5d68e8b3",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2BodyTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "7e02b0cb50eaa0a1fb19ca0b0dbd9c40148195f5bc5119ee7063474a98aa947c",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2EraseCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "cd4311c82770a28b198d6df2e095081f3db8a3ba484871a68055403043ae390f",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2EraseTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "57c71b9e084cd2ac2bd5b20e217bfa267b3b7b62f28c73f903f37c701027af34",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2LeftIndex",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "e9e0f32f815bbb475df929f4c48af5c399a0574c909a9f49d6943c6511933dd3",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2OneIndex",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "12e164b99161cf14bfda54a563dd6a10e2ae36c569073827f8656493b2e7ffd7",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2PairIndex",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "8a5325eae6fc99a41ad1288dca6d1c620670e166391cf200f815d2f40c44d09a",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2PrepareCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d937b9ca2884fd760769d09ff515d10f0614011d5aab8bf3fa180c6fe680b26d",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2PrepareTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "9cf59f3edf1ca965f93888f13b30807e234f5b8efc51bd6d4490436bcef461b1",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2RightIndex",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "c01656bdd753bd099f752a34fcb141c5e8cd7c61650951c054ee803353ae6a6e",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2SmallIndex",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "7802eaba3862fdef02ccc9818e4e71918230a4ec3feb48a32d91ffe0e865d551",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2StateDecidableEq",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "c84d91742e9c23de9d08dee2a3e42b0e9c0510bac0d2b94e84c7c132975caac3",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2StateFintype",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "fd869502a8e402d12e65d156cd89de1e6d63254b990eb1aed21783986dc0ebdd",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2Words",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "79683cb5e50152143a97bcd894c2c91139987b1eb33b64f8229cc9c56441ab45",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_advance_initial",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "5ed5e3892904682ba7b08748c9110cf059c843de13061a010c7fd23327a565c4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_after",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "735a6f8fd4106ccfa99e6dd1ec0626623aee6466344ad866524ed227f2c82b22",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_advance",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "defc311c4273f3a2f3f9dc4e624aa87a10d70621bb90ea611974e24588e84e28",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_compare",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "11d7d86baf707ee44fcd9fd6a372273d3243ab28c8b259e9180c5be3a6c9430c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_emit",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "893e14a40977bb6ce5496020b2036983c0ec3e4b9e04581a5a1c8fbc9ffa8e9c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_erase_left",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2b897d43927a3988642f609a01946f915b98d1bdf2cf89b781a794fc311cc8ce",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_erase_right",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cba05878d587e70546dd0dcf84d8f07570bb0f3c3ffa52a25fee0121c70f4394",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "0d89ae77623d46568b12dc2aa0264914a42c6f6d0e81a45663c6b1371c9193ef",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_length",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6ec351e6627b94d796bdea2ecdf8716f45773132b38056485e53aa50fa8ce4be",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_prepare",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "47503f43574bb6d79d3012c7b101ad983a228cbce9c16f7a4ddefb31a4a20cf8",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_round",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "f702f5352f3fcf36919119d64b44fd6a4065c6b88bf6ea7c2e99137e436eb670",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_start",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e4b6a3d6d1f518f8936f22a0bd155bce6b02e88c6a5ab211d0272bf9b48f974a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_test",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a1db03692d57675a3376d087850d940a7e0b41308e5b6bddf17827b04b2a613b",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_width",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "99ddf3f14abae016dd55f84809142e066a2f6a75b849b66da40627c5658b3a69",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_call_phase",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6035e32a80c1a4110770aeea7547d2b5f7c49879a9155128576662b06daa64b1",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_closed",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "519c65eb1bc07b720ef28edc5dbfe59832892788096db47925f8863885435460",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_control",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "b8c5a1908398bb3802a98999ddeca03da9fd66f44d34ae5a30e08f711625d84a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_emit_initial",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cd4c38781f54384c6be7b0c7946d50d3ef7fd1900d0eb2ca49ec4f3fb0ba3b91",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_erase_back",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6632eb99b56cbc60ce0777e6659dd28b65c1265ea5ee4ce884620223c27056fd",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_erase_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "54c70651fd77b1af815c7e7acc90ca1d948ce8a67fa2dc9ecf52e5f60e1c691d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_erase_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "05d28da56a7ff8ab2ba93d6156fcf0dec4733d8a1a5569c471e0890c62f22a25",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_erase_scan",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6b6193b8e77964c5d419141b9cc40503d112c89dc29da34bfa70dd2420b6bf18",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "5c6587868458e13014aa990b297bece4b912dff850bfff09aa9f01727c20a241",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_join",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c3ff1495210f7a8b13f9db6c196acfa7d425567b0a51fd4f7d3130dcc818a25e",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_left_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "fa6e214bf28a90a721ce8b7b7a5590aa1375796cbe7495f05f452f1cd0cbd1db",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_one_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "5b8e531b1396329f86b7e030ac4e9b8fa1b7bc3bcdce2e292fe66d7abb6cd0be",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_pair_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "21a3e1a80be267f33ce734cfd3a9c07a01cd74b335a55c73badae6f37aad4d3a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_phase",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "20340e506da75a8711270a18984ebd984308f1554d1b1099954d140d76b7d4c9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_candidate",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "b79a619625f2a598e7ca8f44a4ff2a37be5bb093cce588918440e5afd2d7ad00",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e87dccfeb5a841a9a853b28cbcc193bf69b64ea0029367986299dac0f06c749e",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_candidate",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9dc8241af34c836da05bb6275c5b0629f7ffc61a06da0035e6e5ed4c4e3d34d2",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e2ef1fa7e0d30a9ed8a071fa84298492437a69498e4bd0f729bf582a4bb7a357",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c940110472fc872b40d3eb1d38600a47579172a29f07b18d2569544450edcce7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "812eaf68a7b9921552ec9b49b5a18ae08679507497774ce40dd2e55d31268387",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_right_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e7ddad6bd922bbe4433b07becd59052077b378a32efd1ee453ea0ff1bcc10d84",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_small_frame",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2666c701895a2d31ad0d84279ed3eb66ef80e4d3c6ef5ad8ee530940333ac68f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_stateWord_one",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "ff871b78251b7d46e64a1902eadcaaa79266bca6614c170c342ebb9d61a7ef77",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_strict_join",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "64479b84eef3f29a65da3da9b9031c6b02888f71c9e42fa6f6b82a01d750a9c4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_update_candidate",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "936c8fdaf802fd2235e649ee4570e6ef4b78f6e343ac569fd00f5ac7518f4eb7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_update_left",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a948890a08fb5e410afbea3025653ba872c8847d284a0dcfd055c4f10214f9ec",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_update_right",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "95be9def5eaee9a5bdecb7f06ca555e7f62bd2f730cd60202e75b561c399a400",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_words_clean",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c3679b4fbacc0cc12ad43ed10c8883fd6d500534ab5ab74441c07681454448b7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplitAccept",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "5a69d6f7189d29afefba5d14169b6dfc648f6649f24d1328a3e0c4854829620a",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplit_find",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e26a45c028ce8663aad1cdb86a09bc84b8dbdba86163be1d8c6e9d9f137d1b35",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplit_loop_bound",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c754ed5f42cb0e87a90f7c41a29eeed187b3c216c098848db6635f9939ccce3f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplit_of_body",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9be5c96d61657d49de4e735e1d3f4468fc120159586ebc5bb6df4a1ef7758626",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplit_result",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "79abbc217f340469a5650f7e5a8ad064599ac03738cb33adf5ae3eb51348ad23",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterToken_double",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "41e34b279a4efbd064a635b3c8dc8e2b4a8188e017e10c5d0c3229826d4b2765",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterToken_length",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "1c9aac71fbc70094669b9df8c2da4a4f44224bdf403eb262d30d933befd803de",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterToken_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "7c407f5a1d05283c11f02194bf38170a16aefe3b6ea79bc23513e21df283b5ce",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitterToken_separator",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c553cc9b37a493923d89897fce899bee688f52b50bb253d1317d54b0859a1206",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_binary_check",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "7645afa1cf50987e1bded45ebc204697d2fff75210bf72831d3fa26f34f67be6",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_bits_injective",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2093dbffe2d20b30c57bdca9c68f2fced0974d77a39a1f6e7051def7b86a996b",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_compare_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e1afad29a319eb2f6ed9022a58a1e726cbd82adeb32d068c8d15f09d13fc8a3f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_compare_nonblank",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cddc6d68912c5f8ac69475333fea31a30409fb23c32994f25709867b86e6dcc5",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_compare_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "11845e8f5e7f3e613a87bb5f587b5dff8dfdc52b691075e6e1aeb3ed46bca78c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_compare_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "67ad1a62d1673c3e9bd8a111df941cea92addaea5c26119bfb20808e4fcec5f9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_compare_scan",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "11d3ef76724d454659ddac8dccd5036068e5bb08477fb81e7f52d772f8bc25cf",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_first_entry",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "195a77d6e7551897be10a0d37ae6dff76fce3f48f360648d6f70ddb88c1ce0b5",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_take_succ_eq",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9c849b6eaf6a5154d26888b18993be1557dcc8f7b89803bd265b7a2ea551f91f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.emitter_width_budget",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9042a9c1dc0d5844a6c85fa6550fc69375fcb0ba660a0e650aef4de39000fb60",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extractCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "0b5c604ccef5e4376cb09082149ab7647f6a4c32494912a8956603ae893cd42e",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.extractCfg_congr",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "da17c158a38cb3bd106de2a1e608be474b205ae3b8a5d9c04afc6a16d5471141",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extractCfg_read",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "75a7c81383686bad2ee9496a3ea4acbf2c69906798b977abdb74ad9648554ce7",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.extract_block",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "3c43d0dbb945116239399e2cdcc83d049bdc78910bcb7155d13f92aa05acfe58",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "89acef8a4c3970a0c670e99868a0e92b98f8d00c70d2de705d16fa054dd23f43",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "063f147bfdacb6b84618e2292daa4c07a5f80514ea31356617d7b1d22df897fe",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_replay",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6dc4532c748ef3151d7280a1776b89598c7f20867ed7fbdbdb3e9a76c3015633",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_replay_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "0acdde93633ea1c110d0fef44e116c1bd8d00335c68bd048cf0d86d82b5658a5",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "eb75e6cf28f8c7e8d06043afcf89210b3e1946ab5e12906f725dfc112db98793",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c44b5209693ef90b45b961a495e783b972e3297cf64cc3bf3244fb6a01e5f5a3",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.extract_scan",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e2dd962a00e41dbc337276a54e3de7fbe06bec14417d2c8fef82f6b08e3b9215",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.extract_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "484c0ba56d33c3f4fd6ea348de1c47d68991602e481f86d0df0563827ed2fe27",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapAct",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "55411b7c519cb6175c26eb1fc034c0d0fd7e1ef7847510bbe45e7ac9256ec594",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "47ae6c15b68c1fa202838a44ba09ba5cc4eb7632fe5c889a0c4de465fd7e3f57",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapCfg_read",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "15919c5f771763c3be15f3c344a81c85d3cae4875124df69a80389adbe700aec",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapEntered",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "8ca6daff0a9ba21452cceb334e50dde078dca2ebb28f4ab22481307d6907cb04",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_head_step",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "bbdd7b694411c60776f522c729bd8493f929c21b475ec960cf8d478bd7e95a8a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_heads",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c81c759ac5a44299402a4c3b312bbfa18d35ee8e61dc92c8bc097d46a029d347",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2be26f17414167ac5b56471597177a54a7c905ec756fdb1c21cc23d6592722d6",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_stationary",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "df8433a79b99a7311f3c4b6298d84433aad671c6eb50acecafc47f524c04b75d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_step",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "085ec580eb6536d01f1117e39464f904020d42d35f5e61f7baed2d8092a91b05",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapStateFintype",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "89e7ccd28b237099d00d9d5ad86d232139082a834cf252f99c2022872582430c",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "3de6dc0f7e8d86b7ea0a044749a7a892a656a99da11c21c9eeb24b7ba13c4552",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "39fe439b63b781811b8cd66904124b2f780a2c24e8b2d3b1998d5d28241f3758",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cfae9aab71675fbc59575161e097bb74c7fb3cacf54a8d62034f52fc21fc4f98",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual_step",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "d0557cc38b224e58caad7c07d3b5c1f2b96750ff6e241ae0f1ccacbb243ed582",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backA",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6434ab64c2fe7db0e4bd8ac22570ce1da00094975e19703e1ad75bec541c3566",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backB",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "99a28c40232b4088816e36f0370eb6c6aaec3c9d30d377a242dedd3d6a4af8ce",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_block",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "1f209fffa880e3a8abff0eb21b8ad6296de28461931ac68712cc4981594a8f1a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_emit",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e0c3e6ba6fcf771f5ac6950813973926d0eaa0b152a599134ad8cc61a769a9ba",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "d34e87824a6f22bfbbe50a603172066959416f6358b5ec887badaab90db905ef",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "ef37895dde362486d8500c427730feec56e5e16d4d7b96202615a8452341c195",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_launch",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4d640c6c672f8e75883586506a1a3217d9f6010237db4bda6d71e3ec10900110",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_move",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "f2d79253833b3b16525690ee6dc21849365c737fb62dfaa1419f033d9028adef",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_parse",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e215cd28e68946e43671c8a9f38bf3bc78648a51c5e85b4f31003ea7999a26f5",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_reject",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "7bb4a2d82aff46e50bbfe3cc9fdca015c03c1b6fcc993058bb8885d4d9c96f2d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_setup",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a7b079ceff8cfc2911437f4bd2c3c0a150be3c48b603c401298c1c216e8f65c6",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_space",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "935ca4c24bc3f03c4ae0ae2c9813b5f3a455876a7c60160b938d4f3233462704",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "f1b5de9ce26e5b09abac8e36423b474caf1df2ed3488cef063f7fc348440a85f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.incFixedTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "6b898049797770f878337588a48f1e8369da742a11142198731e7ca0dace284d",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.incFixedTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "4d5b6375830ea33ea04c733019c35aa6eefe8eb6cd171aeee0555b07c091ad77",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.incFixed_cases",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "302dc5d9d08a3e64fc8a12f7a0367c88a3462db0457ab68a535d508fcf4d78a4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenAction",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "1ecc7dc3e1625b08b2690c7121152aa83789cf62fef0566171ff42bcf2d5856e",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.lenAction_apply",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "3605408f27aa61c96d68846efd408cc651185f2d56b40dd08efdad810c61d3f1",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "99c2cb13aa0c8313290551b906b1649aa034177bb463f8465048f208efa94eb9",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.lenCfg_read",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "110a5905d86a9ccd4215895eb6b95ea471042adfa78d18113c58f2428aafbcc7",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.lenParse_block",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c68e5fe0855e39dc702cfcbf21adeb9d5edc774411977cbaad3e8c40c2e23178",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenParse_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "63356f2ae8cd5ab95adad0596bc6127d01c320de4131282154acbefb47932b57",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenParse_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "519d7921254a4733bb68506243823222fef4d2e9d47614d245b6442a3dbb4a7a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenStart",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "5987ef5f445f535f72403e734630f1542024fabe4df8aab02a14b7bde4b775bf",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.lenSuffix_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "c37b6f23bf588671b11152f642d8c33fdea8a566f7f98c5729231a06b7895ec8",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairCountTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "23a2b5cdfdf59e32ec6b6693bf17ad8c5ee88050543b7a198a16dcb82c225c84",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.pairCount_computes",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "ebee4509d355ca9f659de8960367f33972984e65bd57df466904b3d1d480de9e",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "b9e5e0dc4a47ae2265df2781c8bdfc18a8aa0ee2e0df5fc627be642a9ad5a9cb",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "082804ce651208b718f5f460b9d26f4e7f6b5aac91bc2268e9b119dbcdefd35a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_concat",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "da5cf3724b2cd6edaedfe2629238d6a7b99114e8569ffeb84c1a4e60b1d3ae58",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_fst",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "ba74986d69199bcb714bb3d64920c65276f4451484ebeef8559d720cc2a93ffd",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_fst_run",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "9da09b8e934bb76f621b1ff3017d0a19b1d076657a1408db7a813135feac12e7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_fst_run_budget",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "eb13a9a8831ebd0edc4176618ad60faf489450207e20a7ac2c18368e7a4fbd85",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairExtractTM_snd",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "14f9c03dfd20d7dc043fa37f9bbab8b5b376a2710eab6186f3f6eb243fbb0802",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairLenCheckTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "69bf4b87f1f17c9943962e59f0e79dcca125e4e60e8595086f367868b0ae021b",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.pairLenCheckTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "e968503ffbd68457a727a75c50adb61685dc005628a748675417e7df33a7ff2b",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "e97cb1c3084014b00b28be39ebfe500074c287412e7e5f7a52a0dd89f0d9f65e",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "40304d396c7b399711dbbf4aee9e082c05eb6cc3aad6a433483aa665b2393195",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "1c7d0374732a18d7a76d526c4972751e9eda2433732704faedb3d7258d78ba7a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairValidTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "3cd35b19be57dbe4ac31328f39e7512f9365cd014a9aa702aa12743a70557a2c",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.pairValidTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "6cd1379088b32d379d698a5deefd2c04699efadea7374d9b1e7bbe70c59a078f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairValidTM_spaceUsed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "f1068fee2f1f0371298dc0cbf6dc007fcaf0a4583b85a0e1b6a79910d58f4fef",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairValid_block",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "aedd1ac96e09ea52699eb0a1e7a04a2e1e77ad0b6a0643782e5e0686f8d7861c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.pairValid_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8c07c6132f2d1d4b5d926d52e80a6bee42ef424ebdefc4d84bcfb6ac457b48f3",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.polyBitsTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "9552d9e4552cdcd056cb325549d090c11c5b73d16f19ef9c48f2010c8210aeec",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.polyBitsTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "f5d4dc85c461b2afa87ee882e4f9cf4b923ac4ecfc9d5c1c3950922f4edb8b42",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.polyHeads",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "71bb024881b53c2c7df53ad2dd586a06bd724dfa1eec4e3c7894f5b9758aa46a",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.polyHeads_bounds",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "852b2da03e0417ea031b472dd361e6330435cad581d309355175a283b48666cf",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.polyUnaryTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "0b7d260ab297550f1611f7bbff62e41271bd4d78777585613a5eb634ec63b199",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.polyUnaryTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "6c340bbb25a567710ca87f26df7ef73b70275c25644fe1279d34e662e655f7a3",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.polyUnaryTM_spaceUsed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "79376d6e1a344ecac9a5e9bcae76f789d115d872b7de78d9dd39e2f3321eb605",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.poly_space",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9a2c26343c99016d4e7021fa1a8af5001cd9ee90b79ab97a2eeb495a23ddf60c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.poly_step",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "86d985d159e9a0f026031550b531d4bcfb91b5f1132f72488d6976f4980642ed",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.prependTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "7d6fe352a1579b0c8477567290c9a9965b45348aec389c5d92a455be97366037",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.prependTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "056e376b8df54df0a42c76ef1513ccdc0355d13023c639d78b33eaaefc277032",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.prependTM_spaceUsed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "4c591d505eb1c9a52ce746c1f6448fb7efc1206a572158fbb76625ff7498084c",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStripTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "e5018b5a83e8a8e3da84af8a72b1be4985960ff128f4f226c5b8937b6cf0b27b",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_computes",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "1240fbda26a221ef17d8e4312cb50cdd870412f2bc80320080c7301caf4c722a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_copy",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "3b2c6d9a0f7e9d6939bdb04b7823f85017ed9920eeddb22e1cb07cc0c9969256",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_erase",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "fcd0e8e53dec5d9fd99f61c7e233ec59a4d0cda03ea163c7a6d349fde4295998",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "f707b1e9a703802af18a56cb3744288075651c9ed06083bd25891f30160e443d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_replay",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "291841db70cdf07f21bc99484fbfaffd8291bcbe1366fc172f443778d262be03",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "92f38da1a7029ce10fbb5111e5de65d33ef888b484eb8623d59be95f7a8f99d8",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_trim",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9729471788397d54b92f2f287ffa385d1823f23a12217f75a43835a32367d008",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "b7dcf15ad67de7fbfb6758f8159f648323ce2ea96af0fb9192ea94adc9190dcb",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.scanCfg_read",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "d04feef9727d9bf60a8bdf05cff96b30593049e281488250d8ea0bda0b7bc459",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanCopy_finish",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "97bd6580dcb1a24e5e29f9587514ef84f5e261f295ebc893ce38c05873ba2816",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanCopy_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "48536fbe86fb3eee4cd4dd7ff47b1d084c04b0010d1e8c0c14631b99c50a373f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanCopy_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "02a9c8a809ab0493b0c3729b3d7bf9a994effb2a0296ce0a7155ce62dd758ede",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanStep_right",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "108f374ac99f5418d3e19b236adfb60284e1d869d5ae6b540debfcca90e00aeb",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.scanTrues_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4608fad4158cb88e81caefc512ba960a06929c1932834a0f428ec4b660f20c64",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitAccept",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "051998d50cf5f01d2fee52ed67563da6f413294e5e7475ba985f29088f2976ac",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitBank",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "0491f764c20ffb134fa0c7be96dea45a1a33ca4bd7253beedd88703e0724717b",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitBodyStateDecidableEq",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "af75aea7429ccd1a1155e42748afba2fa45ea14978726c169b25d5e971dd6421",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBodyStateFintype",
+      "kind": "instance",
+      "private": true,
+      "literal_header_sha256": "c72867dcf8fbb3a91285259a20c30fef8c173bc74a9bfd738e96fee5828963b8",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitBodyTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "5e7be3dc3feec668f472c1d2166299bbf847ff7b5e5c09d66b740f4279b92a80",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_count",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4c5f7c13664dde6ef6e4bd21c62515cdea473be08ede16c90e0965aa99d19254",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_envelope",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8c857b3053fc130090010f1d532d81919468fff5816d2d0603a946ca101cf908",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_prepare",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "59a95b28df3d1c05e90a41d725608221030590200ca34089b889d61b406ef99b",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_restore",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "3f8ea8115f5b29ee7f74c0344efa16e0d78af3053fc8d239e15127f269301b92",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e28b71de1b47b8b53970f22dca1efb41c60abd90ff7a745f2a31a215aaf74d39",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_round",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "54c9d9b0326de59d8289532d87bf7d9cbc32955f2ddb14273f738791971e97aa",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitBody_start",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "25b9cd18d5ef19694c6314004ea53d9cb745e6a536f15a5f7c9efe240c001821",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitCountAction",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "9962664e8ab387e922b43d3e4e6914cf8babc495c3c6c2d16dc10d1bb7add5e2",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitCountCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "2abd83ab9a3f72bdd61a93937a8a9385d81a64e92401bd1ad6505531639cd5ac",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitCount_accept",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e6836278254e7d0abf798067445d37cff0ea66e71f90d1a0db743e4a0466e851",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitCount_apply",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4562491ade9951e14f31fe270d3d8836b97bbcb9da9b2688cde5c6e2dff87e13",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitCount_over",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "621d861d237c3bee84f138b996731bda604cd784b10c3d989487f8740927581f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitCount_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e4fc1bd36f1b489c71605f2161f9846c677a82ffbe073ec011dfb276657e6031",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitEmbed_cut",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "15e0b9eea62b0415af5c1f38e477a3e33a166416d44e36bd524763203003caee",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitEmitCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d200dd6f34591fe561271d7be93ba398733ab1c5b900337b3ec64f8064b500d0",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitEmitTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "6edfab62120bd10fea38f222610b14557b894fb119709c8233b58898dfeeec5d",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.splitEmit_double",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "bcad10c1be6e2808eea4b1ddecc9d08e80e0b1f54b4a832c8d4c9a8fbff1e5f0",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitEmit_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2e04bf1a1cbad9fd8b975895578de0120766d9b1d52e0d2a499d6bab3873cf22",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitEmit_separator",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "46af4f9db84fbac5d5f2fcf840d1f613771351086e2620cac14120c5d54fd4ad",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitEmit_suffix",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8cfeaeac877b21c041b4f57113613035a33a72d6b5e32a37662c39a87a6e0993",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitFind_eq",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "860d4f2ff485c8b5594212672b79b6ebdcb4b346f892151dea06e5689a186dab",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitLoop_bound",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "4fc96b63d46580e2c7b69a2da606f455c92a792c4618a2b48e569b5876a5b338",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitLoop_result",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cdfe237a3540ae806eecc144545ddf2fd356cc47bc87c85759b8b4db654b9bfd",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPoly_loop_end",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "de18669d18c4ebc414795c139cd86400964e8302c331f862323540131eca3ef7",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPos",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "8a1737920c60735043df521776e8b76a4e72974647f7d19020a56ff1ecbe5399",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitPos_read",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "35f5b4c767c16f9e63e65143b053f1d463108d7ef9bf9529194d61e44b08046e",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPos_succ",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "bb8f49a7e977cfbdd614199c0539515624d2e12a57b597d812e340cf1224a777",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepareReady",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "29c5ee02eff0aaa1b48009d77861beca11006ec5ad7cd47c3e6d8e639a6fcd21",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepareScan",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "edc4cbd61fa07e24d6c14221288ab215319023312f425cd92e9bcd4a99fb736f",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepareTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "57a9aa373863a15408cec66978160cfcc9cdc1dd855a8cde1f009d17669f6a20",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepare_extra",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "60441ad02d858a874e79955ae6015398a6567b739bf8495cb06272406e44ec03",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepare_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8b119213d24cfaf06332d154fb7254360242ac766003b64c336262927edb712d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepare_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "8635a038358c9bb0e9838073173e233939ae138a8d354b6635ea9af3a9cd88f9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitPrepare_scan",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "7d444e45b24b51b6df743c87ab5eb30914a7813581fb2ea1d968637969f964ac",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRestoreClean",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d26a9dd179493aa18428ade1f526ca037734a37d3579a292ce7e31de123ce75a",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitRestoreScan",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "cc315c1bc58af83ac533d115834857defd9b14b78ce1b1c946ee485a414afe23",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitRestoreTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "0e35d795fc845f94490dda511989f1827a272b8b7da2dc063bd75dfc610b7da4",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.splitRestore_append",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e3de8935456442cb2fbab96e85ac458890b63db8bebd7124e5bb1424598297d4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRestore_first",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cf313781857f94a03921d376c389c91d30c7aef67618a34e069dded8aad333e9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRestore_rewind",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "ce161f3c0aff889473c429b146487f52e395a92d590b5266a9163cf57009330d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRestore_run",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "dfbde45369b13924f053e09521321135c4b4d9f20cf9e6ef34edeb545e063ba4",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRestore_scan",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "cb51b1e45da1670d29c70d1a430e75f27772f05df9601f3058ca7c6fc83a1fe6",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitRewindTM",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d028cacd8950d1b237a9378df3872e2614221709b94dc6b736b3a8dac4a98242",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.splitSafe",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "f377b09861b230c91d708546b5dad49c9db4147c7955cdb9e5e25abf10aa1d0f",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitSafe_add",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e23c7671966f7c0471132263975260290f2a1c5a55060b04cb6d4769016fff43",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSafe_join",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2d1cd594fb328db53e49f049f8ad9c19c28d71053f034535178442d0716b5dfb",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSafe_one",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "52acfba2f83a062b7f422cc266293486c6a768fb7122fd6247fd3c0f54fa0009",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitScratch",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "d9ed5876523d66b25d9212a72d906f8becfcc72839499c994b8aaeb03302adaa",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitScratch_erase",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "2135176af1d9af42de030731480fce4015845877703717fb43efcafffff03431",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolveTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "990ac55456797d7248dd28fc38421b54945c5eca01161b277b2dc9b970efff1d",
+      "cut_method": "constructors"
+    },
+    {
+      "name": "Turing.FinTM.splitSolveTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "7698af0c8406ed605058c77efb7a49743ddb52c3fa66c0d0c4715408f8100677",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolveTM_spaceUsed",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "c379224385b458d763b1043704db369e413257bf138527e2b7d47d1ec2318cc9",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolveWithTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "ab769878b648e611a84f342363b8bb9806b41b6bbc6a79bc8c0c34abc1e3f603",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitSolveWithTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "8b0989c13cab3b58f0538fd26b301735911e902ade631290b354e6cb1dd50390",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolve_closed",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "23a61be582a76c10f1fce6b85a8b551075a4c05074b89f7aa6820593730ffa6d",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolve_of_body",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "a2a5f9054f75eda979005953cbcafa5eb92bc078b2d999423fbb143bb76e1926",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSolve_source",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "e4c467fc2e993b24da5d92745bd93fac567e92861b03da817a2244534763ad33",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSource_constant",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "938c8f62fe2b84dbc5b9351ae48384d383a3485c5e5d637828f6d5096103c535",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitSource_poly",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "9d3ad68776170356b446569426a3995eb7e143aac0e6b36107765b7335ff356f",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitStep",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "22c5acaeba478e5e7d20413c3d0dc7e9d9af0e2eb07c613b061b1eb4d6760777",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.splitStep_inv",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "80d9baab7bcb209a8774f08ee54759d8adc06a9023fdf06a1ed6dc7924b1ed94",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.splitStep_orbit",
+      "kind": "lemma",
+      "private": true,
+      "literal_header_sha256": "6cd89def2f1114ff600763105008dea881749e10281cb482bb190b9b8896a1d6",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.split_fuel",
+      "kind": "theorem",
+      "private": true,
+      "literal_header_sha256": "2a4a0d0955a45714ac27db481065c6475ee70310275b0d57ca1a888f22050441",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.split_hyps",
+      "kind": "theorem",
+      "private": true,
+      "literal_header_sha256": "ffeaeca4c862126c1e5a335083864c71cd0473ab15fe4bc436784666dfd02061",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.split_sources",
+      "kind": "theorem",
+      "private": true,
+      "literal_header_sha256": "9fa02f751a276b8c99a972e4affa54f3c9194f82be403bf624098b5ae0c79c6a",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.stripCfg",
+      "kind": "def",
+      "private": true,
+      "literal_header_sha256": "36609dba615bf7c5e334942dce0738da986ce0cf560b1cfaed81bd45e149f6a7",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.stripLastTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "2e84977445ed0f640543433878961844ccb6b49f2ea75e1e4311acae69d24dc8",
+      "cut_method": "term-or-full-fallback"
+    },
+    {
+      "name": "Turing.FinTM.stripLastTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "890849135c258b5a1446782aee54dec6476c34cf45687a21f66ad0f32c7cb833",
+      "cut_method": "outer-by"
+    },
+    {
+      "name": "Turing.FinTM.unaryTokenTM",
+      "kind": "def",
+      "private": false,
+      "literal_header_sha256": "f1ce2095872c2dc9fde40560d8a4754ae56af8185c41710a04c78836d32e1ac2",
+      "cut_method": "where"
+    },
+    {
+      "name": "Turing.FinTM.unaryTokenTM_computes",
+      "kind": "theorem",
+      "private": false,
+      "literal_header_sha256": "602903b6aac25308a59604a42f732e3f5714095dbe7640e6db88a4892d0268af",
+      "cut_method": "outer-by"
+    }
+  ]
+}

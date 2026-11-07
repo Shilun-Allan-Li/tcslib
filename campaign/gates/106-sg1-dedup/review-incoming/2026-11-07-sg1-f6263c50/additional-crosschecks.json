@@ -1,0 +1,456 @@
+{
+  "four_file_freeze": {
+    "TCSlib/Complexity/ClassNP/Tautology.lean": {
+      "public_counts": [
+        5,
+        5
+      ],
+      "private_counts": [
+        88,
+        88
+      ],
+      "public_added": [],
+      "public_removed": [],
+      "visibility_changes": [],
+      "public_order_unchanged": true,
+      "public_header_changes": [],
+      "public_definition_changes": [],
+      "public_proof_changes": [],
+      "private_added": [
+        "Complexity.tautDualSegment_iff_segment"
+      ],
+      "private_removed": [
+        "Complexity.tautDual_segment_add"
+      ],
+      "private_changed": [
+        {
+          "name": "Complexity.tautDual_segment_zero",
+          "line": 1299,
+          "end": 1304
+        },
+        {
+          "name": "Complexity.tautDual_segment_one",
+          "line": 1305,
+          "end": 1319
+        },
+        {
+          "name": "Complexity.tautDual_scan",
+          "line": 1320,
+          "end": 1360
+        },
+        {
+          "name": "Complexity.tautDual_copy",
+          "line": 1361,
+          "end": 1404
+        },
+        {
+          "name": "Complexity.tautDual_rewind",
+          "line": 1405,
+          "end": 1443
+        },
+        {
+          "name": "Complexity.tautDual_valid",
+          "line": 1461,
+          "end": 1493
+        },
+        {
+          "name": "Complexity.tautDual_invalid",
+          "line": 1494,
+          "end": 1524
+        }
+      ],
+      "imports_before": [
+        "import TCSlib.Complexity.Formulas.DNF",
+        "import TCSlib.Complexity.Formulas.CNFEncoding",
+        "import TCSlib.Complexity.ClassNP.CoNP",
+        "import TCSlib.Complexity.ClassNP.Reductions",
+        "import TCSlib.Complexity.CookLevin.Hardness",
+        "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "import Mathlib.Data.Sigma.Basic"
+      ],
+      "imports_after": [
+        "import TCSlib.Complexity.Formulas.DNF",
+        "import TCSlib.Complexity.Formulas.CNFEncoding",
+        "import TCSlib.Complexity.ClassNP.CoNP",
+        "import TCSlib.Complexity.ClassNP.Reductions",
+        "import TCSlib.Complexity.CookLevin.Hardness",
+        "import TCSlib.Complexity.TuringMachine.Build.Primitives",
+        "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "import Mathlib.Data.Sigma.Basic"
+      ],
+      "admissions": []
+    },
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean": {
+      "public_counts": [
+        59,
+        59
+      ],
+      "private_counts": [
+        20,
+        20
+      ],
+      "public_added": [],
+      "public_removed": [],
+      "visibility_changes": [],
+      "public_order_unchanged": true,
+      "public_header_changes": [],
+      "public_definition_changes": [],
+      "public_proof_changes": [
+        {
+          "name": "Turing.counterLoopTMVia_run_done",
+          "line": 1324,
+          "end": 1414
+        },
+        {
+          "name": "Turing.counterLoopTMVia_done_witness",
+          "line": 1836,
+          "end": 1884
+        },
+        {
+          "name": "Turing.counterLoopTMVia_escape_witness",
+          "line": 1925,
+          "end": 1973
+        },
+        {
+          "name": "Turing.RoundContract.counterLoopDone_traj",
+          "line": 2211,
+          "end": 2241
+        },
+        {
+          "name": "Turing.RoundContract.counterLoopEscape_traj",
+          "line": 2242,
+          "end": 2264
+        }
+      ],
+      "private_added": [
+        "Turing.counterSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.counter_span_append"
+      ],
+      "private_changed": [
+        {
+          "name": "Turing.counter_rounds",
+          "line": 1215,
+          "end": 1323
+        }
+      ],
+      "imports_before": [
+        "import Mathlib.Data.Nat.Digits.Defs",
+        "import Mathlib.Logic.Equiv.Bool",
+        "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "import TCSlib.Complexity.TuringMachine.Build.Scan",
+        "import TCSlib.Complexity.TuringMachine.SymbolLift",
+        "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "import TCSlib.Complexity.TuringMachine.CodeParser"
+      ],
+      "imports_after": [
+        "import Mathlib.Data.Nat.Digits.Defs",
+        "import Mathlib.Logic.Equiv.Bool",
+        "import TCSlib.Complexity.TuringMachine.Build.Catalog",
+        "import TCSlib.Complexity.TuringMachine.Build.Scan",
+        "import TCSlib.Complexity.TuringMachine.SymbolLift",
+        "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+        "import TCSlib.Complexity.TuringMachine.CodeParser"
+      ],
+      "admissions": []
+    },
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean": {
+      "public_counts": [
+        4,
+        4
+      ],
+      "private_counts": [
+        96,
+        96
+      ],
+      "public_added": [],
+      "public_removed": [],
+      "visibility_changes": [],
+      "public_order_unchanged": true,
+      "public_header_changes": [],
+      "public_definition_changes": [],
+      "public_proof_changes": [],
+      "private_added": [
+        "Turing.FinTM.dgSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.FinTM.dgSpan_add"
+      ],
+      "private_changed": [
+        {
+          "name": "Turing.FinTM.dgSpan_one",
+          "line": 1199,
+          "end": 1211
+        },
+        {
+          "name": "Turing.FinTM.dgSpan_mono",
+          "line": 1279,
+          "end": 1290
+        },
+        {
+          "name": "Turing.FinTM.dg_init",
+          "line": 1291,
+          "end": 1375
+        },
+        {
+          "name": "Turing.FinTM.dg_collect",
+          "line": 1437,
+          "end": 1495
+        },
+        {
+          "name": "Turing.FinTM.dg_turn_with_growth",
+          "line": 1581,
+          "end": 1630
+        },
+        {
+          "name": "Turing.FinTM.dg_end_with_growth",
+          "line": 1672,
+          "end": 1724
+        },
+        {
+          "name": "Turing.FinTM.dg_step",
+          "line": 1755,
+          "end": 1897
+        },
+        {
+          "name": "Turing.FinTM.dg_simulate",
+          "line": 2057,
+          "end": 2117
+        }
+      ],
+      "imports_before": [
+        "import Mathlib.Tactic.Ring",
+        "import Mathlib.Tactic.DeriveFintype",
+        "import Mathlib.Data.Fintype.Option",
+        "import Mathlib.Data.Fintype.Pi",
+        "import Mathlib.Data.Fintype.Prod",
+        "import Mathlib.Data.List.FinRange",
+        "import Mathlib.Data.Sigma.Basic",
+        "import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+        "import TCSlib.Complexity.TuringMachine.Sweep",
+        "import TCSlib.Complexity.TuringMachine.StateRenaming"
+      ],
+      "imports_after": [
+        "import Mathlib.Tactic.Ring",
+        "import Mathlib.Tactic.DeriveFintype",
+        "import Mathlib.Data.Fintype.Option",
+        "import Mathlib.Data.Fintype.Pi",
+        "import Mathlib.Data.Fintype.Prod",
+        "import Mathlib.Data.List.FinRange",
+        "import Mathlib.Data.Sigma.Basic",
+        "import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+        "import TCSlib.Complexity.TuringMachine.Sweep",
+        "import TCSlib.Complexity.TuringMachine.StateRenaming",
+        "import TCSlib.Complexity.TuringMachine.Build.Contract.Basic"
+      ],
+      "admissions": []
+    },
+    "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean": {
+      "public_counts": [
+        15,
+        15
+      ],
+      "private_counts": [
+        0,
+        0
+      ],
+      "public_added": [],
+      "public_removed": [],
+      "visibility_changes": [],
+      "public_order_unchanged": true,
+      "public_header_changes": [],
+      "public_definition_changes": [],
+      "public_proof_changes": [
+        {
+          "name": "Complexity.LogProg.halfL_run",
+          "line": 78,
+          "end": 171
+        }
+      ],
+      "private_added": [],
+      "private_removed": [],
+      "private_changed": [],
+      "imports_before": [
+        "import TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+      ],
+      "imports_after": [
+        "import TCSlib.Complexity.SpaceComplexity.Machines.FragDec"
+      ],
+      "admissions": []
+    }
+  },
+  "composition_calls": {
+    "Tautology": {
+      "old_consumers": {
+        "Complexity.tautDual_scan": 1,
+        "Complexity.tautDual_copy": 1,
+        "Complexity.tautDual_rewind": 1,
+        "Complexity.tautDual_valid": 5,
+        "Complexity.tautDual_invalid": 2
+      },
+      "consumer_declarations": 5,
+      "old_calls": 10,
+      "manually_verified_Segment_trans_calls": 10,
+      "composition_call_lines": [
+        1353,
+        1396,
+        1440,
+        1488,
+        1518
+      ],
+      "retired_helper_absent": true
+    },
+    "CounterLoop": {
+      "old_consumers": {
+        "Turing.counter_rounds": 2,
+        "Turing.counterLoopTMVia_run_done": 1
+      },
+      "consumer_declarations": 2,
+      "old_calls": 3,
+      "manually_verified_Segment_trans_calls": 3,
+      "composition_call_lines": [
+        1294,
+        1310,
+        1403
+      ],
+      "retired_helper_absent": true
+    },
+    "SingleTape": {
+      "old_consumers": {
+        "Turing.FinTM.dg_init": 3,
+        "Turing.FinTM.dg_collect": 1,
+        "Turing.FinTM.dg_turn_with_growth": 2,
+        "Turing.FinTM.dg_end_with_growth": 2,
+        "Turing.FinTM.dg_step": 3,
+        "Turing.FinTM.dg_simulate": 1
+      },
+      "consumer_declarations": 6,
+      "old_calls": 12,
+      "manually_verified_Segment_trans_calls": 12,
+      "composition_call_lines": [
+        1372,
+        1489,
+        1626,
+        1718,
+        1892,
+        2109
+      ],
+      "retired_helper_absent": true
+    }
+  },
+  "sealed_copies": {
+    "Tautology": {
+      "original_source_unchanged": true,
+      "insertions": [
+        {
+          "tag": "insert",
+          "old_lines": [
+            14,
+            13
+          ],
+          "new_lines": [
+            14,
+            47
+          ],
+          "inserted": "\n-- Both delta controls close before the seal.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  rfl\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  rfl\nend\n\nattribute [local irreducible] Turing.Segment\n-- The identical rfl attempts fail after the seal; the public equation closes them.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  fail_if_success rfl\n  exact Turing.segment_iff M F P a b t\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  fail_if_success rfl\n  exact propext (Turing.segment_iff M F P a b t)\nend\n"
+        }
+      ],
+      "supplied_output_bytes": 8,
+      "supplied_errors": 0
+    },
+    "CounterLoop": {
+      "original_source_unchanged": true,
+      "insertions": [
+        {
+          "tag": "insert",
+          "old_lines": [
+            13,
+            12
+          ],
+          "new_lines": [
+            13,
+            46
+          ],
+          "inserted": "\n-- Both delta controls close before the seal.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  rfl\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  rfl\nend\n\nattribute [local irreducible] Turing.Segment\n-- The identical rfl attempts fail after the seal; the public equation closes them.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  fail_if_success rfl\n  exact Turing.segment_iff M F P a b t\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  fail_if_success rfl\n  exact propext (Turing.segment_iff M F P a b t)\nend\n"
+        }
+      ],
+      "supplied_output_bytes": 8,
+      "supplied_errors": 0
+    },
+    "SingleTape": {
+      "original_source_unchanged": true,
+      "insertions": [
+        {
+          "tag": "insert",
+          "old_lines": [
+            17,
+            16
+          ],
+          "new_lines": [
+            17,
+            50
+          ],
+          "inserted": "\n-- Both delta controls close before the seal.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  rfl\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  rfl\nend\n\nattribute [local irreducible] Turing.Segment\n-- The identical rfl attempts fail after the seal; the public equation closes them.\n\nsection\nvariable {k : \u2115} {\u0393 S : Type} {x : List \u0393} (M : Turing.MultiTapeTM k \u0393 S)\n  (F : Set (Option S)) (P : (Fin k \u2192 \u2124) \u2192 Prop) (a b : Turing.Cfg k \u0393 S x) (t : \u2115)\nexample : Turing.Segment M F P a b t \u2194\n    M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos := by\n  fail_if_success rfl\n  exact Turing.segment_iff M F P a b t\nexample : Turing.Segment M F P a b t =\n    (M.runFrom a t = b \u2227 (\u2200 u < t, (M.runFrom a u).state \u2209 F) \u2227\n      \u2200 u \u2264 t, P (M.runFrom a u).workTapePos) := by\n  fail_if_success rfl\n  exact propext (Turing.segment_iff M F P a b t)\nend\n"
+        }
+      ],
+      "supplied_output_bytes": 607,
+      "supplied_errors": 0
+    }
+  },
+  "screen_data": {
+    "base_header": "declarations screened: 1561; copy pairs (target reproduces >= half of source): 1583; reproduced text: 492,990 chars",
+    "head_header": "declarations screened: 1563; copy pairs (target reproduces >= half of source): 1583; reproduced text: 494,011 chars",
+    "added": [
+      [
+        "SingleTape.lean::dg_turn_with_growth",
+        "SingleTape.lean::dg_end_with_growth"
+      ]
+    ],
+    "removed": [
+      [
+        "Basic.lean::Turing.Segment.trans",
+        "Tautology.lean::tautDual_segment_add"
+      ]
+    ]
+  },
+  "sat_hardness_candidates": {
+    "directed": 86,
+    "sat_endpoints": 37,
+    "hardness_endpoints": 41
+  },
+  "compiled_census": {
+    "base": 293,
+    "head": 293,
+    "all_name_owner_kind_internal_rows_equal": true
+  },
+  "axioms": {
+    "names": [
+      "Complexity.LogProg.halfL_run",
+      "Turing.RoundContract.counterLoopDone_traj",
+      "Turing.RoundContract.counterLoopEscape_traj",
+      "Turing.counterLoopTMVia_done_witness",
+      "Turing.counterLoopTMVia_escape_witness",
+      "Turing.counterLoopTMVia_run_done"
+    ],
+    "all_six_changed_public_proofs_covered": true,
+    "only_standard_axioms_in_supplied_output": true
+  },
+  "Segment_availability_paths": {
+    "TCSlib/Complexity/ClassNP/SAT.lean": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "TCSlib/Complexity/ClassNP/NP.lean",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean"
+    ],
+    "TCSlib/Complexity/CookLevin/Hardness.lean": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "TCSlib/Complexity/ClassNP/TMSAT.lean",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean"
+    ]
+  },
+  "limitation": "Static source and supplied-log checks only. No compiler, screen, Git, or delivered tool executed. Import paths use pinned9-file overrides and unchanged local dependency import headers."
+}

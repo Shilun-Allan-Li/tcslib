@@ -1,0 +1,79 @@
+{
+  "completed_utc": "2026-11-07T13:17:39.383271+00:00",
+  "scope": "Bounded independent research and isolated consumer probes, not a branch implementation or T7 gate/debt disposition.",
+  "source_inputs": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "source_sha256": "c22446014ede4b24284170545ba42589afb96b8e6286b06e1b5ab3cd76b8462c",
+      "name": "bufferedSecondCfg_run",
+      "line": 1068,
+      "header_sha256": "85d51ebc6d7ce559a525dbcb9b5629a6caebe690ad09a73b6cc4278e29d606ee",
+      "body_sha256": "ce65104d9b1343b54d59a6683183dd21d8a43eb0e2d9a41c50ca43d633b42aa3"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean",
+      "source_sha256": "d754d30f35ffe8e3ab715b3c06da616e405739d15c21193bd40de126c018cbb3",
+      "name": "vhostEmitTM_runFrom",
+      "line": 278,
+      "header_sha256": "028846ccaa325585a7fef83a485e78d94840004ea50153c9b43612695aca8e83",
+      "body_sha256": "edfa6adc20f57384430cc19c8ab31a5d2b0f551b543eae5498838e11bc619854"
+    }
+  ],
+  "source_still_unchanged": true,
+  "context": "Read-only complete oleans-mig1-preflight-current2",
+  "existing_published_scaffold": [
+    "Set.MapsTo.iterate",
+    "add_right_iterate",
+    "MultiTapeTM.runFrom_zero",
+    "MultiTapeTM.runFrom_succ_eq_step'"
+  ],
+  "new_public_API": false,
+  "new_imports": false,
+  "new_production_source": false,
+  "consumer_probes": [
+    {
+      "command": [
+        "bash",
+        "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+        "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad",
+        "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig1-preflight-current2",
+        "/private/tmp/tcslib-tagged-route-0jahl3rn/Simulation_invariant_sealed_v1.lean"
+      ],
+      "start_utc": "2026-11-07T13:11:57.654774+00:00",
+      "seconds": 2.3895559310913086,
+      "input_sha256": "78c71e1c06b5455fd546ef6c836a01f987b9c6926a91ea0f8df641d8872bacca",
+      "output_sha256": "97cd220f248ec5df56a1ec77b2554ed97d656537c68078ab1c2f650d255280fb",
+      "exit": 0,
+      "errors": 0,
+      "snapshot": "Read-only complete oleans-mig1-preflight-current2; isolated probe only, no replay/source change claim.",
+      "temporary_input": "/private/tmp/tcslib-tagged-route-0jahl3rn/Simulation_invariant_sealed_v1.lean"
+    },
+    {
+      "command": [
+        "bash",
+        "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/devtools/seyoon/leanelab.sh",
+        "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad",
+        "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig1-preflight-current2",
+        "/private/tmp/tcslib-tagged-route-o9edpw0b/VirtualInput_invariant_sealed_v1.lean"
+      ],
+      "start_utc": "2026-11-07T13:12:00.079544+00:00",
+      "seconds": 1.5506398677825928,
+      "input_sha256": "227e122fe71aa694b1973354c144a80ebeefd4e777af71bc0ac306d9386fd40e",
+      "output_sha256": "533bdedf9ed747f0ec54beba3d04b359cacaff5e47a479e4921c5e2db18b84e3",
+      "exit": 0,
+      "errors": 0,
+      "snapshot": "Read-only complete oleans-mig1-preflight-current2; isolated probe only, no replay/source change claim.",
+      "temporary_input": "/private/tmp/tcslib-tagged-route-o9edpw0b/VirtualInput_invariant_sealed_v1.lean"
+    }
+  ],
+  "controls": "3 effective single-definition pairs,6 goals; coverage and adversarial corruption checked.",
+  "zero_reader_note": "Original zero case reads runFrom_zero implicitly in both valid-tag and configuration-equality fields. Independent zero-only proposal is not separately elaborated; both subgoals are actually checked in the passing invariant probes.",
+  "limits": [
+    "Only exact target bodies are sealed; unchanged helper proofs above and following legacy declarations remain outside those guards.",
+    "Mathlib/Core definitions are consumed through named published theorems; no runFrom.eq_def or foreign definition unfolding.",
+    "No generic product/runFrom bridge impossibility is claimed. The time-indexed invariant avoids needing such a bridge.",
+    "The two one-step closure instantiations still have routine witness/equality glue. Parent/auditor decides whether this existing generic invariant reuse closes the semantic factoring finding.",
+    "Any production application would also touch VirtualInput beyond the original11 delivery files; parent must account for the revised source/gate/replay scope.",
+    "No source, Git, cache, shared snapshot, screen, commit or push mutation; no new fill execution."
+  ]
+}

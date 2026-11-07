@@ -1,0 +1,15 @@
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+#check Turing.vhostCfg_state
+#check Turing.vhostCfg_inputPos
+#check Turing.vhostCfg_workTapes
+#check Turing.vhostCfg_workTapePos
+#check Turing.vhostCfg_output
+#check Turing.vhostBuffer_eq
+#check Turing.vhostBank_eq
+#check Turing.vhostCap_eq
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  for (n, ci) in env.constants.toList do
+    if ["Turing.copyTM", "Turing.transferTM", "Turing.seamCompTM", "Turing.embedEmitTM", "Turing.embedSilentCfg"].any (fun root => n.toString.startsWith root) && !n.toString.contains '_' then
+      logInfo m!"{n} : {ci.type}"

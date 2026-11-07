@@ -1,0 +1,7 @@
+The first manifest-only script incorrectly assumed TimeConstructible.lean was in the TuringMachine folder. It failed before producing compiled-inputs-final.json. Raw exception:
+
+Traceback (most recent call last):
+  File "<stdin>", line 20, in <module>
+AssertionError: /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/oleans-mig1-comp-loop-20261107/TCSlib/Complexity/TuringMachine/TimeConstructible.olean
+
+The corrected manifest derives each module path from its actual checked source receipt.

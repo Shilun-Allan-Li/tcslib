@@ -1,0 +1,656 @@
+{
+  "base": {
+    "declarations": 1279,
+    "pairs": 1589,
+    "characters": 636810
+  },
+  "head": {
+    "declarations": 1002,
+    "pairs": 627,
+    "characters": 210586
+  },
+  "head_only": 95,
+  "base_only": 1057,
+  "moved_labels_consistent": 50,
+  "new_labels_consistent": 45,
+  "population": [
+    "TCSlib/Complexity/TuringMachine/Composition.lean",
+    "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "TCSlib/Complexity/TuringMachine/Build/CertShell.lean",
+    "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+    "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+    "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Embed.lean"
+  ],
+  "raw_headers_and_edge_sums_consistent": true,
+  "raw_inputs_not_reexecuted": true,
+  "moved": [
+    {
+      "target": "Primitives.lean::fwdMap_block",
+      "source": "Primitives.lean::fwdMap_move",
+      "baseline_target": "Catalog.lean::a2_map_block",
+      "baseline_source": "Catalog.lean::a2_map_move"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_suffix",
+      "source": "Primitives.lean::fwdMap_move",
+      "baseline_target": "Catalog.lean::a2_map_suffix",
+      "baseline_source": "Catalog.lean::a2_map_move"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_backB",
+      "source": "Primitives.lean::fwdMap_backA",
+      "baseline_target": "Catalog.lean::a2_map_backB",
+      "baseline_source": "Catalog.lean::a2_map_backA"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_backA",
+      "source": "Primitives.lean::fwdMap_backB",
+      "baseline_target": "Catalog.lean::a2_map_backA",
+      "baseline_source": "Catalog.lean::a2_map_backB"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_stationary",
+      "source": "Primitives.lean::emitterP2_control",
+      "baseline_target": "Catalog.lean::a2_mapSetup_stationary",
+      "baseline_source": "Primitives.lean::emitterP2_control"
+    },
+    {
+      "target": "Simulation.lean::bufferedFirstCfg_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Simulation.lean::bufferedFirstCfg_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Composition.lean::controlCfg_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Composition.lean::controlCfg_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_run",
+      "source": "Composition.lean::controlCfg_run",
+      "baseline_target": "Catalog.lean::a2_mapSetup_run",
+      "baseline_source": "Composition.lean::controlCfg_run"
+    },
+    {
+      "target": "Loop.lean::emCall_right_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Loop.lean::emCall_right_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Wrappers.lean::emit_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Wrappers.lean::emit_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Wrappers.lean::capture_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Wrappers.lean::capture_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Primitives.lean::splitCount_run",
+      "source": "Primitives.lean::fwdMapSetup_run",
+      "baseline_target": "Primitives.lean::splitCount_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_run"
+    },
+    {
+      "target": "Wrappers.lean::redirect_loop",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Wrappers.lean::redirect_loop",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Simulation.lean::bufferedFirstCfg_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Simulation.lean::bufferedFirstCfg_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Catalog.lean::a2_mapSetup_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Loop.lean::emCall_right_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Loop.lean::emCall_right_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Composition.lean::controlCfg_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Composition.lean::controlCfg_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Simulation.lean::bufferedSecondCfg_run",
+      "source": "Primitives.lean::fwdMapVirtual_run",
+      "baseline_target": "Simulation.lean::bufferedSecondCfg_run",
+      "baseline_source": "Catalog.lean::a2_mapVirtual_run"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_run",
+      "source": "Loop.lean::emCall_right_run",
+      "baseline_target": "Catalog.lean::a2_mapSetup_run",
+      "baseline_source": "Loop.lean::emCall_right_run"
+    },
+    {
+      "target": "Wrappers.lean::emit_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Wrappers.lean::emit_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Wrappers.lean::capture_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Wrappers.lean::capture_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Primitives.lean::splitCount_run",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Primitives.lean::splitCount_run",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_stationary",
+      "source": "Primitives.lean::fwdMapSetup_heads",
+      "baseline_target": "Catalog.lean::a2_mapSetup_stationary",
+      "baseline_source": "Catalog.lean::a2_mapSetup_heads"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_setup",
+      "source": "Primitives.lean::fwdMap_move",
+      "baseline_target": "Catalog.lean::a2_map_setup",
+      "baseline_source": "Catalog.lean::a2_map_move"
+    },
+    {
+      "target": "Primitives.lean::fwdMapVirtual",
+      "source": "Primitives.lean::fwdMapCfg",
+      "baseline_target": "Catalog.lean::a2_mapVirtual",
+      "baseline_source": "Catalog.lean::a2_mapCfg"
+    },
+    {
+      "target": "Primitives.lean::fwdMapVirtual_run",
+      "source": "Simulation.lean::bufferedSecondCfg_run",
+      "baseline_target": "Catalog.lean::a2_mapVirtual_run",
+      "baseline_source": "Simulation.lean::bufferedSecondCfg_run"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_suffix",
+      "source": "Primitives.lean::fwdMap_first",
+      "baseline_target": "Catalog.lean::a2_map_suffix",
+      "baseline_source": "Catalog.lean::a2_map_first"
+    },
+    {
+      "target": "Wrappers.lean::timed_read",
+      "source": "Wrappers.lean::timed_control_heads",
+      "baseline_target": "Wrappers.lean::timed_read",
+      "baseline_source": "Catalog.lean::f2_control_heads"
+    },
+    {
+      "target": "Simulation.lean::bufferedSecondCfg",
+      "source": "Primitives.lean::fwdMapVirtual",
+      "baseline_target": "Simulation.lean::bufferedSecondCfg",
+      "baseline_source": "Catalog.lean::a2_mapVirtual"
+    },
+    {
+      "target": "Primitives.lean::fwdMapVirtual_step",
+      "source": "Primitives.lean::fwdMap_move",
+      "baseline_target": "Catalog.lean::a2_mapVirtual_step",
+      "baseline_source": "Catalog.lean::a2_map_move"
+    },
+    {
+      "target": "Wrappers.lean::timed_read_heads",
+      "source": "Wrappers.lean::timed_control_heads",
+      "baseline_target": "Catalog.lean::f2_read_heads",
+      "baseline_source": "Catalog.lean::f2_control_heads"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_suffix",
+      "source": "Primitives.lean::fwdMap_block",
+      "baseline_target": "Catalog.lean::a2_map_suffix",
+      "baseline_source": "Catalog.lean::a2_map_block"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_run",
+      "source": "Simulation.lean::bufferedFirstCfg_run",
+      "baseline_target": "Catalog.lean::a2_mapSetup_run",
+      "baseline_source": "Simulation.lean::bufferedFirstCfg_run"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_parse",
+      "source": "Primitives.lean::extract_run",
+      "baseline_target": "Catalog.lean::a2_map_parse",
+      "baseline_source": "Primitives.lean::extract_run"
+    },
+    {
+      "target": "Primitives.lean::extract_run",
+      "source": "Primitives.lean::fwdMap_parse",
+      "baseline_target": "Primitives.lean::extract_run",
+      "baseline_source": "Catalog.lean::a2_map_parse"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_block",
+      "source": "Primitives.lean::extract_block",
+      "baseline_target": "Catalog.lean::a2_map_block",
+      "baseline_source": "Primitives.lean::extract_block"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_run",
+      "source": "Wrappers.lean::redirect_loop",
+      "baseline_target": "Catalog.lean::a2_mapSetup_run",
+      "baseline_source": "Wrappers.lean::redirect_loop"
+    },
+    {
+      "target": "Primitives.lean::fwdMapVirtual",
+      "source": "Simulation.lean::bufferedSecondCfg",
+      "baseline_target": "Catalog.lean::a2_mapVirtual",
+      "baseline_source": "Simulation.lean::bufferedSecondCfg"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_setup",
+      "source": "Loop.lean::loopFuel_init",
+      "baseline_target": "Catalog.lean::a2_map_setup",
+      "baseline_source": "Loop.lean::loopFuel_init"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_stationary",
+      "source": "Wrappers.lean::redirect_loop",
+      "baseline_target": "Catalog.lean::a2_mapSetup_stationary",
+      "baseline_source": "Wrappers.lean::redirect_loop"
+    },
+    {
+      "target": "Primitives.lean::fwdMapSetup_heads",
+      "source": "Wrappers.lean::redirect_loop",
+      "baseline_target": "Catalog.lean::a2_mapSetup_heads",
+      "baseline_source": "Wrappers.lean::redirect_loop"
+    },
+    {
+      "target": "Simulation.lean::bufferedScanCfg",
+      "source": "Primitives.lean::fwdMapCfg",
+      "baseline_target": "Simulation.lean::bufferedScanCfg",
+      "baseline_source": "Catalog.lean::a2_mapCfg"
+    },
+    {
+      "target": "Primitives.lean::poly_step",
+      "source": "Primitives.lean::fwdMapSetup_step",
+      "baseline_target": "Catalog.lean::f2_poly_step",
+      "baseline_source": "Catalog.lean::a2_mapSetup_step"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_move",
+      "source": "Simulation.lean::leftCfg_apply",
+      "baseline_target": "Catalog.lean::a2_map_move",
+      "baseline_source": "Simulation.lean::leftCfg_apply"
+    },
+    {
+      "target": "Primitives.lean::fwdMapVirtual_step",
+      "source": "Simulation.lean::bufferedSecondCfg_step",
+      "baseline_target": "Catalog.lean::a2_mapVirtual_step",
+      "baseline_source": "Simulation.lean::bufferedSecondCfg_step"
+    },
+    {
+      "target": "Simulation.lean::bufferedSecondCfg_step",
+      "source": "Primitives.lean::fwdMapVirtual_step",
+      "baseline_target": "Simulation.lean::bufferedSecondCfg_step",
+      "baseline_source": "Catalog.lean::a2_mapVirtual_step"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_move",
+      "source": "Simulation.lean::rightCfg_apply",
+      "baseline_target": "Catalog.lean::a2_map_move",
+      "baseline_source": "Simulation.lean::rightCfg_apply"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_reject",
+      "source": "Primitives.lean::fwdMap_launch",
+      "baseline_target": "Catalog.lean::a2_map_reject",
+      "baseline_source": "Catalog.lean::a2_map_launch"
+    },
+    {
+      "target": "Primitives.lean::fwdMapCfg",
+      "source": "Simulation.lean::bufferedScanCfg",
+      "baseline_target": "Catalog.lean::a2_mapCfg",
+      "baseline_source": "Simulation.lean::bufferedScanCfg"
+    },
+    {
+      "target": "Primitives.lean::fwdMap_suffix",
+      "source": "Primitives.lean::scanCopy_suffix",
+      "baseline_target": "Catalog.lean::a2_map_suffix",
+      "baseline_source": "Primitives.lean::scanCopy_suffix"
+    }
+  ],
+  "fresh": [
+    {
+      "target": "Loop.lean::loopHostTM_finds",
+      "source": "Loop.lean::loopHostTM_decides",
+      "common": 823,
+      "source_length": 882,
+      "percent": 93
+    },
+    {
+      "target": "Loop.lean::loopHostTM_decides",
+      "source": "Loop.lean::loopHostTM_finds",
+      "common": 823,
+      "source_length": 948,
+      "percent": 87
+    },
+    {
+      "target": "Loop.lean::emitLoopTM_computes",
+      "source": "Loop.lean::loopHostTM_finds",
+      "common": 545,
+      "source_length": 948,
+      "percent": 57
+    },
+    {
+      "target": "Loop.lean::emitLoopTM_computes",
+      "source": "Loop.lean::loopHostTM_decides",
+      "common": 542,
+      "source_length": 882,
+      "percent": 61
+    },
+    {
+      "target": "Simulation.lean::branchTM_initCfg_false",
+      "source": "Simulation.lean::branchTM_initCfg_true",
+      "common": 418,
+      "source_length": 454,
+      "percent": 92
+    },
+    {
+      "target": "Simulation.lean::branchTM_initCfg_true",
+      "source": "Simulation.lean::branchTM_initCfg_false",
+      "common": 418,
+      "source_length": 459,
+      "percent": 91
+    },
+    {
+      "target": "Wrappers.lean::timed_ledger",
+      "source": "Wrappers.lean::timedReadyCfg_workTapePos",
+      "common": 180,
+      "source_length": 239,
+      "percent": 75
+    },
+    {
+      "target": "Simulation.lean::rewind_heads",
+      "source": "Simulation.lean::rewind_from_any",
+      "common": 155,
+      "source_length": 183,
+      "percent": 85
+    },
+    {
+      "target": "Loop.lean::loopHostTM_decides",
+      "source": "Loop.lean::exists_loopCfgTM",
+      "common": 155,
+      "source_length": 269,
+      "percent": 58
+    },
+    {
+      "target": "Loop.lean::exists_loopCfgTM",
+      "source": "Loop.lean::loopHostTM_contracts",
+      "common": 154,
+      "source_length": 198,
+      "percent": 78
+    },
+    {
+      "target": "Loop.lean::loopHostTM_contracts",
+      "source": "Loop.lean::exists_loopCfgTM",
+      "common": 154,
+      "source_length": 269,
+      "percent": 57
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_prepend_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "common": 119,
+      "source_length": 189,
+      "percent": 63
+    },
+    {
+      "target": "Loop.lean::loopHostTM_spaceUsed_le_budget",
+      "source": "Loop.lean::loopHostTM_contracts",
+      "common": 118,
+      "source_length": 198,
+      "percent": 60
+    },
+    {
+      "target": "Wrappers.lean::timedCondTM_spaceUsed",
+      "source": "Catalog.lean::redirectTM_spaceUsedByTape",
+      "common": 114,
+      "source_length": 172,
+      "percent": 66
+    },
+    {
+      "target": "Simulation.lean::branchTM_spaceUsed",
+      "source": "Catalog.lean::redirectTM_spaceUsedByTape",
+      "common": 111,
+      "source_length": 172,
+      "percent": 65
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 109,
+      "source_length": 150,
+      "percent": 73
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 109,
+      "source_length": 156,
+      "percent": 70
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_prepend_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 106,
+      "source_length": 156,
+      "percent": 68
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 106,
+      "source_length": 156,
+      "percent": 68
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "common": 106,
+      "source_length": 189,
+      "percent": 56
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 105,
+      "source_length": 156,
+      "percent": 67
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "common": 105,
+      "source_length": 189,
+      "percent": 56
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_prepend_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 104,
+      "source_length": 150,
+      "percent": 69
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 104,
+      "source_length": 150,
+      "percent": 69
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "common": 104,
+      "source_length": 189,
+      "percent": 55
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 103,
+      "source_length": 150,
+      "percent": 69
+    },
+    {
+      "target": "Loop.lean::loopHostTM_finds",
+      "source": "Loop.lean::loopHostTM_contracts",
+      "common": 100,
+      "source_length": 198,
+      "percent": 51
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_incFixed_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 97,
+      "source_length": 150,
+      "percent": 65
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_incFixed_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 97,
+      "source_length": 156,
+      "percent": 62
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_incFixed_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_const_spaceUsed",
+      "common": 97,
+      "source_length": 189,
+      "percent": 51
+    },
+    {
+      "target": "Loop.lean::exists_loopCfgTM",
+      "source": "Loop.lean::exists_loopTM",
+      "common": 89,
+      "source_length": 107,
+      "percent": 83
+    },
+    {
+      "target": "Loop.lean::loopHostTM_finds",
+      "source": "Loop.lean::exists_loopFindTM",
+      "common": 86,
+      "source_length": 107,
+      "percent": 80
+    },
+    {
+      "target": "Loop.lean::loopHostTM_decides",
+      "source": "Loop.lean::exists_loopTM",
+      "common": 84,
+      "source_length": 107,
+      "percent": 79
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_polyBits_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "common": 83,
+      "source_length": 152,
+      "percent": 55
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_polyBits_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_id_spaceUsed",
+      "common": 83,
+      "source_length": 156,
+      "percent": 53
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_polyBits_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_pairValid_spaceUsed",
+      "common": 82,
+      "source_length": 150,
+      "percent": 55
+    },
+    {
+      "target": "Wrappers.lean::timed_control_init",
+      "source": "Wrappers.lean::timed_control_heads",
+      "common": 82,
+      "source_length": 159,
+      "percent": 52
+    },
+    {
+      "target": "Encoding.lean::computesFunInTime_pairEncode_diag",
+      "source": "Primitives.lean::computesFunInTime_pairDup",
+      "common": 79,
+      "source_length": 93,
+      "percent": 85
+    },
+    {
+      "target": "Primitives.lean::computesFunInTime_pairDup",
+      "source": "Encoding.lean::computesFunInTime_pairEncode_diag",
+      "common": 79,
+      "source_length": 124,
+      "percent": 64
+    },
+    {
+      "target": "Primitives.lean::catalogRewind",
+      "source": "Simulation.lean::rewind_first_step",
+      "common": 77,
+      "source_length": 122,
+      "percent": 63
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_polyBits_spaceUsed",
+      "source": "Catalog.lean::computesFunInTime_incFixed_spaceUsed",
+      "common": 76,
+      "source_length": 129,
+      "percent": 59
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "source": "Primitives.lean::computesFunInTime_pairDup",
+      "common": 71,
+      "source_length": 93,
+      "percent": 76
+    },
+    {
+      "target": "Catalog.lean::computesFunInTime_pairDup_spaceUsed",
+      "source": "Encoding.lean::computesFunInTime_pairEncode_diag",
+      "common": 71,
+      "source_length": 124,
+      "percent": 57
+    },
+    {
+      "target": "Loop.lean::loopHostTM_spaceUsed_le_budget",
+      "source": "Loop.lean::exists_loopFindTM",
+      "common": 61,
+      "source_length": 107,
+      "percent": 57
+    },
+    {
+      "target": "Loop.lean::loopHostTM_contracts",
+      "source": "Loop.lean::exists_loopFindTM",
+      "common": 61,
+      "source_length": 107,
+      "percent": 57
+    }
+  ],
+  "limitation": "Moved-label membership and numeric consistency are checked here. Semantic review and residual factoring obligations are in REVIEW.md; short text length is not an exemption."
+}

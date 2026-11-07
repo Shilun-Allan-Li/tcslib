@@ -1,0 +1,300 @@
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2751:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2751:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2749:72: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2795:9: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2795:9: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2787:60: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2787:60: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2771:72: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2774:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2776:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2778:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2788:36: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2830:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2830:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2809:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2828:67: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2840:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2869:15: warning: This simp argument is unused:
+  List.length_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵n̵i̵l̵,̵ ̵Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2904:15: warning: This simp argument is unused:
+  List.length_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵n̵i̵l̵,̵ ̵Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2956:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  MultiTapeTM.runFrom ?m.184 0
+in the target expression
+  MultiTapeTM.step
+      (MultiTapeTM.step
+        (MultiTapeTM.runFrom (M.fwdMapCfg x (some FwdMapState.emitA) p pre b (↑pre.length) 0 out) (2 * [].length))) =
+    M.fwdMapCfg x (some (FwdMapState.run M.tm.q₀ true)) p pre b (↑pre.length) 0
+      (out ++ List.flatMap (fun d => [d, d]) [] ++ [false, true])
+
+case nil
+M : FinTM Bool
+x b : List Bool
+p : Fin (x.length + 2)
+pre out : List Bool
+hs :
+  MultiTapeTM.step (M.fwdMapCfg x (some FwdMapState.emitA) p pre b (↑pre.length) 0 out) =
+    M.fwdMapCfg x (some FwdMapState.separator) p pre b (↑pre.length) 0 (out ++ [false])
+⊢ MultiTapeTM.step
+      (MultiTapeTM.step
+        (MultiTapeTM.runFrom (M.fwdMapCfg x (some FwdMapState.emitA) p pre b (↑pre.length) 0 out) (2 * [].length))) =
+    M.fwdMapCfg x (some (FwdMapState.run M.tm.q₀ true)) p pre b (↑pre.length) 0
+      (out ++ List.flatMap (fun d => [d, d]) [] ++ [false, true])
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2992:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3052:72: warning: This simp argument is unused:
+  pairDecode
+
+Hint: Omit it from the simp argument list.
+  simp [hx, fwdMapTM, fwdMapAct, Action.apply, fwdMapCfg,̵ ̵p̵a̵i̵r̵D̵e̵c̵o̵d̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3061:17: warning: This simp argument is unused:
+  if_pos rfl
+
+Hint: Omit it from the simp argument list.
+  simp only [̵i̵f̵_̵p̵o̵s̵ ̵r̵f̵l̵]̵ ̵at hr
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3021:76: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3027:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3030:78: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3864:25: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3864:25: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3956:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4104:34: warning: This simp argument is unused:
+  splitRestoreScan
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵s̵p̵l̵i̵t̵R̵e̵s̵t̵o̵r̵e̵S̵c̵a̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4134:79: warning: 'omega' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4134:79: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4197:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4242:52: warning: This simp argument is unused:
+  Nat.cast_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵,̵ ̵Fin.ext_iff, Fin.val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4242:66: warning: This simp argument is unused:
+  Fin.ext_iff
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.e̵x̵t̵_̵i̵f̵f̵,̵ ̵F̵i̵n̵.̵val_one] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4242:79: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.ext_iff,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵] at h₁
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4282:20: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4282:38: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4282:72: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4283:10: warning: This simp argument is unused:
+  MultiTapeTM.step
+
+Hint: Omit it from the simp argument list.
+  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4283:28: warning: This simp argument is unused:
+  catalogPolyUnaryTM
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4283:62: warning: This simp argument is unused:
+  catalogPolyCfg
+
+Hint: Omit it from the simp argument list.
+  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4330:23: warning: This simp argument is unused:
+  Prod.mk.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [ht0, MultiTapeTM.runFrom_zero, splitRestoreScan, Cfg.ofWords,
+      Option.some.injEq,̵ ̵P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵] at hstate
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5994:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵hwrite]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:5995:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6030:37: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6050:50: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6061:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6080:50: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6091:52: warning: This simp argument is unused:
+  emitterP2PrepareCfg
+
+Hint: Omit it from the simp argument list.
+  simp [Action.apply, e̵m̵i̵t̵t̵e̵r̵P̵2̵P̵r̵e̵p̵a̵r̵e̵C̵f̵g̵,̵ ̵sub_eq_add_neg]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6441:67: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6491:74: warning: This simp argument is unused:
+  emitterP2RightIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2LeftIndex,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵R̵i̵g̵h̵t̵I̵n̵d̵e̵x̵] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6505:54: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:6512:56: warning: This simp argument is unused:
+  emitterP2LeftIndex
+
+Hint: Omit it from the simp argument list.
+  simp [emitterP2L̵e̵f̵t̵I̵n̵d̵e̵x̵,̵ ̵e̵m̵i̵t̵t̵e̵r̵P̵2̵RightIndex] at hv
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7373:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7373:6: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7376:6: warning: 'simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7376:6: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:7427:61: warning: This simp argument is unused:
+  List.append_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [unaryTokenTM, Action.apply, scanCfg, pairEncode, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵hlen]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+FAIL(TCSlib/Complexity/TuringMachine/Build/Primitives): lean exited with status 1
+FAIL(TCSlib/Complexity/TuringMachine/Build/Primitives): error diagnostics reported
+FAIL(TCSlib/Complexity/TuringMachine/Build/Primitives): no fresh .olean produced

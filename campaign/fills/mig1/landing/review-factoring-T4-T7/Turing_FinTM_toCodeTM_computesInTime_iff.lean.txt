@@ -1,0 +1,12 @@
+/-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
+form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
+
+**Proof sketch.** The relabelled machine's run is the image of `M`'s run under the state
+bijection (`Turing.MultiTapeTM.relabelState_runFrom_init`); halting and output are preserved. -/
+theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
+    (x output : List Bool) (t : ℕ) :
+    (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  exact FinTM.computesInTime_relabelState ⟨1, Q, tm⟩ _ x output t

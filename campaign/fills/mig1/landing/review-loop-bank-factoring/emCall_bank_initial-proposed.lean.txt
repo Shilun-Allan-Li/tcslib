@@ -1,0 +1,17 @@
+/-- Embedding one cleaner at the current bank reproduces the full bank frame.
+Every other bank and both administrative tapes are retained exactly.
+**Proof sketch.** Extensionality reduces the claim to individual tape slots.
+The active triple uses the relocation inverse law; every other triple, the
+argument, and the capture use the disjointness laws and are unchanged. -/
+private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) :
+    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q)))
+      frame.workTapes frame.workTapePos
+      (emCallClearCfg x 1 0 ((M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
+        (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])
+        ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame := by
+  dsimp only
+  simpa only [Nat.lt_irrefl, ↓reduceIte] using
+    emCall_bank_embed M emit x arg cap T i i.val 0 (fun _ _ => Iff.rfl)
+

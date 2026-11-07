@@ -1,0 +1,28 @@
+theorem incrementTM_run_overflow_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
+    (w : List Bool) (hv : incFixed w = none) (d : Cfg k Bool FlagPhase x)
+    (hstate : d.state = some FlagPhase.run)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (incrementTM k i).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some (FlagPhase.done false)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape (List.replicate w.length false) (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2, ∀ b : Bool,
+        ((incrementTM k i).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = i then
+          ((incrementTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((incrementTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  obtain ⟨p, tail, hsplit⟩ := catalog_increment_split w
+  rw [hsplit, catalog_increment_value] at hv
+  cases tail with
+  | some tail => simp at hv
+  | none =>
+    have hp : w.length = p := by simp [hsplit]
+    rw [hp]
+    simpa only [Option.isSome_none, Option.elim_none, List.append_nil] using
+      catalog_increment_framed i w d hstate hw p none hsplit

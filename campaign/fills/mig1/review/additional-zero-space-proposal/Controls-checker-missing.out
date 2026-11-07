@@ -1,0 +1,142 @@
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:26:8: error: Tactic `rfl` failed: The left-hand side
+  pairDiagTM
+is not definitionally equal to the right-hand side
+  { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+    tm :=
+      { q₀ := 0,
+        tr := fun q inp x =>
+          match q with
+          | 0 =>
+            match inp with
+            | some b => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+            | none =>
+              { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+          | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+          | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+          | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+          | 4 =>
+            match inp with
+            | some val => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+          | x =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+
+⊢ pairDiagTM =
+    { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            match q with
+            | 0 =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+              | none =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+            | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+            | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+            | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | 4 =>
+              match inp with
+              | some val =>
+                { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+              | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+            | x =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+              | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:27:33: error: Tactic `rfl` failed: The left-hand side
+  incFixedTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ incFixedTM.k = 0
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:48:8: error: Tactic `rfl` failed: The left-hand side
+  incFixedTM
+is not definitionally equal to the right-hand side
+  { k := 0, State := Fin 4, fintypeState := Fin.fintype 4, decEqState := instDecidableEqFin 4,
+    tm :=
+      { q₀ := 0,
+        tr := fun q inp x =>
+          match ↑q with
+          | 0 =>
+            match inp with
+            | some true => { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some 0 }
+            | some false => controlAction SignType.neg (some 1)
+            | none => controlAction 0 none
+          | 1 =>
+            match inp with
+            | some val => controlAction SignType.neg (some 1)
+            | none => controlAction SignType.pos (some 2)
+          | 2 =>
+            match inp with
+            | some true =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some false, state := some 2 }
+            | some false =>
+              { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some true, state := some 3 }
+            | none => controlAction 0 none
+          | x =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some b, state := some 3 }
+            | none => { inputTape := 0, workTapes := fun j => j.elim0, output := none, state := none } } }
+
+⊢ incFixedTM =
+    { k := 0, State := Fin 4, fintypeState := Fin.fintype 4, decEqState := instDecidableEqFin 4,
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            match ↑q with
+            | 0 =>
+              match inp with
+              | some true =>
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := none, state := some 0 }
+              | some false => controlAction SignType.neg (some 1)
+              | none => controlAction 0 none
+            | 1 =>
+              match inp with
+              | some val => controlAction SignType.neg (some 1)
+              | none => controlAction SignType.pos (some 2)
+            | 2 =>
+              match inp with
+              | some true =>
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some false, state := some 2 }
+              | some false =>
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some true, state := some 3 }
+              | none => controlAction 0 none
+            | x =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.pos, workTapes := fun j => j.elim0, output := some b, state := some 3 }
+              | none => { inputTape := 0, workTapes := fun j => j.elim0, output := none, state := none } } }
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:50:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:52:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:54:42: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+/private/tmp/tcslib-additional-zero-xnksn06c/Controls_sealed.lean:56:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x

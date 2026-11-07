@@ -1,0 +1,70 @@
+private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) :
+    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q)))
+      frame.workTapes frame.workTapePos
+      (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =
+      emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) := by
+  dsimp only
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_state, embedEmitCfg_state,
+      emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_inputPos, embedEmitCfg_inputPos,
+      emCallClearCfg, emCallBankFrame, emCallFrame]
+  · funext j
+    simp only [emCallEmbeddedCfg]
+    conv_lhs =>
+      ext z
+      rw [Cfg.mapState_workTapes]
+    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+    · subst j
+      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).1
+      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst j
+      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).1
+      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst j
+      by_cases he : l = i
+      · subst l
+        change (embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _
+        rw [embedEmitCfg_selected_tape]
+        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+        fin_cases r <;> simp
+      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).1
+        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+  · funext j
+    simp only [emCallEmbeddedCfg, Cfg.mapState_workTapePos]
+    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+    · subst j
+      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 0) (emCall_pair_not_mem M i 0)).2
+      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst j
+      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallPairIndex M 1) (emCall_pair_not_mem M i 1)).2
+      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst j
+      by_cases he : l = i
+      · subst l
+        change (embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _
+        rw [embedEmitCfg_selected_pos]
+        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+        fin_cases r <;> simp
+      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _
+            (emCallTripleIndex M l r) (emCall_triple_not_mem M i l r he)).2
+        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+  · simp only [emCallEmbeddedCfg, Cfg.mapState_output, embedEmitCfg_output,
+      emCallClearCfg, emCallBankFrame, emCallFrame, List.nil_append]

@@ -1,0 +1,27 @@
+/private/tmp/tcslib-certshell-probe-bvm9ei3t/CertShell_strict_v1.lean:184:4: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+/private/tmp/tcslib-certshell-probe-bvm9ei3t/CertShell_strict_v1.lean:641:54: error: Application type mismatch: The argument
+  h05.right
+has type
+  ∀ t < t₀ + 1 + t₁ + 1 + t₂ + 1 + t₃ + 1 + t₄ + 1 + t₅,
+    (MultiTapeTM.runFrom (Cfg.ofWords (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl SweepPhase.sweep))))) w₀) t).state ≠
+      some (Sum.inr SweepPhase.done)
+but is expected to have type
+  ∀ s < t₀ + 1 + t₁ + 1 + t₂ + 1 + t₃ + 1 + t₄ + 1 + t₅,
+    (MultiTapeTM.runFrom (Cfg.ofWords D.tm.q₀ (Function.update (fun x => []) (ρ ⟨0, hm⟩) (pairEncode x u))) s).state ≠
+      some (Sum.inr SweepPhase.done)
+in the application
+  And.intro h05.right
+/private/tmp/tcslib-certshell-probe-bvm9ei3t/CertShell_strict_v1.lean:655:4: error: Type mismatch
+  Eq.trans h05.left ?m.2331
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl SweepPhase.sweep))))) w₀)
+      (t₀ + 1 + t₁ + 1 + t₂ + 1 + t₃ + 1 + t₄ + 1 + t₅) =
+    ?m.2330
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.ofWords D.tm.q₀ (Function.update (fun x => []) (ρ ⟨0, hm⟩) (pairEncode x u)))
+      (t₀ + 1 + t₁ + 1 + t₂ + 1 + t₃ + 1 + t₄ + 1 + t₅) =
+    Cfg.mapState (fun x => Sum.inr SweepPhase.done)
+      (embedSilentCfg ι cap (fun i => FinTM.bufferTape (w₆ i)) (fun x => 0) [] []
+        (vhostCfg (Cfg.ofWords P.tm.q₀ (Function.update (fun x => []) j u)) true 1 []))

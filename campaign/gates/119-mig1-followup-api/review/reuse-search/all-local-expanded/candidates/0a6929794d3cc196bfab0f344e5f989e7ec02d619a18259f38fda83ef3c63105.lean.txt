@@ -1,0 +1,7 @@
+lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg k Symbol State input) (t : ℕ) (h_zero : k = 0) :
+    tm.spaceUsed cfg t = 0 := by
+  unfold spaceUsed
+  subst h_zero
+  simp
+
+/-- Each tape's space usage is bounded by the total space used. -/

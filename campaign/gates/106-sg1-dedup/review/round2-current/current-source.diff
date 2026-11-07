@@ -1,0 +1,461 @@
+--- base/TCSlib/Complexity/ClassNP/SAT.lean
++++ head/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -4079,12 +4079,16 @@
+     (he : tm.runFrom c a = d)
+     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
+     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
+-  intro v hv
+-  by_cases h : v < a
+-  · exact ha v h
+-  · have hva : a ≤ v := by omega
+-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+-    exact hb (v - a) (by omega)
++  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
++      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
++      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
++    (a + b)).mp (Turing.Segment.trans h₁ h₂)
++  intro v hv hm
++  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+ 
+ /-- Uniform clean-module contract: a first halt with a prescribed replacement
+ word and emitted chunk, over every untouched native input. -/
+--- base/TCSlib/Complexity/ClassNP/Tautology.lean
++++ head/TCSlib/Complexity/ClassNP/Tautology.lean
+@@ -9,6 +9,7 @@
+ import TCSlib.Complexity.ClassNP.Reductions
+ import TCSlib.Complexity.CookLevin.Hardness
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ import Mathlib.Data.Sigma.Basic
+ 
+ set_option maxHeartbeats 0
+@@ -1284,33 +1285,31 @@
+   tautDualTM.tm.runFrom c t = d ∧
+     ∀ j < t, (tautDualTM.tm.runFrom c j).state ≠ some .anchor
+ 
++/-- `tautDualSegment` is the segment layer at the transducer's parameters: the segment
++(`Turing.Segment`) of `tautDualTM.tm` with the anchor forbidden and no head relation.
++Consecutive segments compose, without hiding an earlier anchor visit, by
++`Turing.Segment.trans` through this bridge. -/
++private lemma tautDualSegment_iff_segment {x : List Bool}
++    (c d : Cfg 0 Bool TautDualControl x) (t : ℕ) :
++    tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
++
+ /-- A zero-length segment has no strict prefix. -/
+ private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
+     tautDualSegment c c 0 := by
+-  exact ⟨rfl, by intro j hj; omega⟩
++  rw [tautDualSegment_iff_segment]
++  exact Segment.zero trivial
+ 
+ /-- A single non-anchor transition is a first-return segment. -/
+ private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
+     (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
+     tautDualSegment c d 1 := by
+-  refine ⟨h, ?_⟩
+-  intro j hj
+-  have : j = 0 := by omega
+-  subst j
+-  exact hq
+-
+-/-- Consecutive exact segments compose without hiding an earlier anchor visit. -/
+-private lemma tautDual_segment_add {x : List Bool}
+-    {c d e : Cfg 0 Bool TautDualControl x} {a b : ℕ}
+-    (h : tautDualSegment c d a) (h' : tautDualSegment d e b) :
+-    tautDualSegment c e (a+b) := by
+-  refine ⟨by rw [MultiTapeTM.runFrom_add, h.1, h'.1], ?_⟩
+-  intro j hj
+-  by_cases ha : j < a
+-  · exact h.2 j ha
+-  · have he : j = a + (j-a) := by omega
+-    rw [he, MultiTapeTM.runFrom_add, h.1]
+-    exact h'.2 (j-a) (by omega)
++  rw [tautDualSegment_iff_segment]
++  have hseg := Segment.one (M := tautDualTM.tm) (F := {some .anchor})
++    (P := fun _ => True) (a := c)
++    (by simpa only [Set.mem_singleton_iff] using hq) trivial trivial
++  simpa only [h] using hseg
+ 
+ /-- A silent syntax pass consumes exactly the suffix length and preserves
+ physical output. Its endpoint records the complete inherited scanner state.
+@@ -1348,9 +1347,11 @@
+       simpa using moveInputPos_pos_of_ne_right
+         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+         (by simp [hx])
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
+     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm] using
+-      tautDual_segment_add h1 (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')))
+ 
+ /-- The emitting pass copies one native bit per transition, using exactly
+ `tautDualScan`; the arbitrary output prefix is preserved in chronological order.
+@@ -1388,11 +1389,12 @@
+       simpa using moveInputPos_pos_of_ne_right
+         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+         (by simp [hx])
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
+     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm, tautDualScan,
+       List.append_assoc, List.singleton_append] using
+-      tautDual_segment_add h1
+-        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')))
+ 
+ /-- A left scan starts inside the native input, reaches the actual left blank,
+ and returns to position one. It stays silent and never returns early.
+@@ -1432,8 +1434,11 @@
+       congr 1
+       simpa using moveInputPos_neg_of_ne_left
+         (⟨p+1, by omega⟩ : Fin (x.length+2)) (by simp)
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+-    simpa only [Nat.add_comm] using tautDual_segment_add h1 (ih (by omega))
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
++    simpa only [Nat.add_comm] using
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih (by omega))))
+ 
+ /-- The post-copy right-blank transition begins a silent final rewind. -/
+ private lemma tautDual_copy_end (x out : List Bool) (q : TautSyntax) :
+@@ -1479,8 +1484,8 @@
+   have hclose := tautDual_copy_end x (tautDualScan .formula x)
+     (x.foldl tautSyntaxStep .formula)
+   have hreturn := tautDual_rewind x (tautDualScan .formula x) true x.length (by omega)
+-  have h := tautDual_segment_add (tautDual_segment_add (tautDual_segment_add
+-    (tautDual_segment_add (tautDual_segment_add hscan hend) hback) hcopy) hclose) hreturn
++  rw [tautDualSegment_iff_segment] at hscan hend hback hcopy hclose hreturn ⊢
++  have h := ((((hscan.trans hend).trans hback).trans hcopy).trans hclose).trans hreturn
+   convert h using 1
+   omega
+ 
+@@ -1509,7 +1514,8 @@
+         (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
+     · simp [tautDualCfg]
+   have hreturn := tautDual_rewind x [false] true x.length (by omega)
+-  have h := tautDual_segment_add (tautDual_segment_add hscan hend) hreturn
++  rw [tautDualSegment_iff_segment] at hscan hend hreturn ⊢
++  have h := (hscan.trans hend).trans hreturn
+   convert h using 1
+   omega
+ 
+--- base/TCSlib/Complexity/CookLevin/Hardness.lean
++++ head/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -6398,12 +6398,16 @@
+     (he : tm.runFrom c a = d)
+     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
+     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
+-  intro v hv
+-  by_cases h : v < a
+-  · exact ha v h
+-  · have hva : a ≤ v := by omega
+-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+-    exact hb (v - a) (by omega)
++  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
++      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
++      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
++    (a + b)).mp (Turing.Segment.trans h₁ h₂)
++  intro v hv hm
++  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+ 
+ /-- Uniform clean-module contract: a first halt with a prescribed replacement
+ word and emitted chunk, over every untouched native input. -/
+--- base/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++++ head/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+@@ -827,34 +827,25 @@
+     Finset.Icc (cp - 1) (cp + (width : ℤ))) ∧
+   (∀ u ≤ t, R (fun j => (H.runFrom z u).workTapePos j.castSucc))
+ 
+-/-- Adjacent segments concatenate their cuts and trajectory bounds.
+-**Proof sketch.** Split a queried time at the first segment's length and
+-use run addition on the suffix. The two head-vector relations imply the
+-requested relation separately. -/
+-private lemma counter_span_append {k : ℕ} {Γ S : Type} {x : List Γ}
++/-- `counterSpan` is the segment layer at the counter loop's parameters: the segment
++(`Turing.Segment`) from `z` to its run endpoint over both exits, whose head relation puts the
++counter head in its interval and the body heads in `R`. Concatenation and weakening are
++`Turing.Segment.trans` and `Turing.Segment.mono` through this bridge. -/
++private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
+     (H : MultiTapeTM (k + 1) Γ (CounterLoopState S))
+-    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (s t : ℕ) (cp : ℤ) (width : ℕ)
+-    (R₁ R₂ R : (Fin k → ℤ) → Prop)
+-    (h₁ : counterSpan H z s cp width R₁)
+-    (h₂ : counterSpan H (H.runFrom z s) t cp width R₂)
+-    (hr₁ : ∀ p, R₁ p → R p) (hr₂ : ∀ p, R₂ p → R p) :
+-    counterSpan H z (s + t) cp width R := by
+-  have suffix (u : ℕ) (hu : s ≤ u) :
+-      H.runFrom z u = H.runFrom (H.runFrom z s) (u - s) := by
+-    rw [← H.runFrom_add, Nat.add_sub_of_le hu]
+-  refine ⟨?_, ?_, ?_⟩
+-  · intro u hu
+-    by_cases hs : u < s
+-    · exact h₁.1 u hs
+-    · rw [suffix u (by omega)]; exact h₂.1 (u - s) (by omega)
+-  · intro u hu
+-    by_cases hs : u ≤ s
+-    · exact h₁.2.1 u hs
+-    · rw [suffix u (by omega)]; exact h₂.2.1 (u - s) (by omega)
+-  · intro u hu
+-    by_cases hs : u ≤ s
+-    · exact hr₁ _ (h₁.2.2 u hs)
+-    · rw [suffix u (by omega)]; exact hr₂ _ (h₂.2.2 (u - s) (by omega))
++    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (t : ℕ) (cp : ℤ) (width : ℕ)
++    (R : (Fin k → ℤ) → Prop) :
++    counterSpan H z t cp width R ↔
++      Segment H {some .done, some .escape}
++        (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (width : ℤ)) ∧
++          R fun j => p j.castSucc)
++        z (H.runFrom z t) t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun ⟨hc, hh, hr⟩ => ⟨rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,
++      fun u hu => ⟨hh u hu, hr u hu⟩⟩,
++    fun ⟨_, hc, hp⟩ =>
++      ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
++        fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
+ 
+ /-- A width-preserving overwrite of just the counter word interval. -/
+ private def counterPatch {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (w : List Γ) : ℤ → Option Γ :=
+@@ -1293,10 +1284,15 @@
+     have rs : counterSpan (counterLoopTMVia e M a exit)
+         (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) cp w.length
+         (fun p => ∃ u ≤ τ cn, ∀ j, p j = (M.runFrom cn u).workTapePos j) := by
+-      apply counter_span_append _ _ cost (τ cn) cp w.length _ _ _
+-        (by simpa only [List.length_map, wn, counterWord_length] using ds) (by rw [debit]; exact bs)
+-      · intro p hp; exact ⟨0, Nat.zero_le _, by simpa using hp⟩
+-      · exact fun _ h => h
++      have h₁ : counterSpan (counterLoopTMVia e M a exit)
++          (counterLoopCfg (some (.dec .run)) cn pn cp) cost cp w.length
++          (fun p => ∀ j, p j = cn.workTapePos j) := by
++        simpa only [List.length_map, wn, counterWord_length] using ds
++      have s₁ := (counterSpan_iff_segment ..).1 h₁
++      rw [debit] at s₁
++      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, debit]
++      refine (s₁.mono subset_rfl ?_).trans ((counterSpan_iff_segment ..).1 bs)
++      exact fun p hp => ⟨hp.1, 0, Nat.zero_le _, by simpa using hp.2⟩
+     have time : (∑ r ∈ Finset.range (n + 1), τ (counterLoopOrbit M τ c r)) +
+         counterOverhead w (n + 1) =
+         ((∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r)) + counterOverhead w n) +
+@@ -1308,17 +1304,18 @@
+     refine ⟨?_, ?_⟩
+     · rw [MultiTapeTM.runFrom_add, before, round]
+       rfl
+-    · apply counter_span_append _ _ _ (cost + τ cn) cp w.length _ _ _ span
+-        (by rw [before]; exact rs)
+-      · intro p hp
+-        obtain ⟨r, u, hr, heads⟩ := hp
+-        refine ⟨r, u, Or.inl ?_, heads⟩
++    · have s₁ := (counterSpan_iff_segment ..).1 span
++      rw [before] at s₁
++      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, before]
++      refine (s₁.mono subset_rfl ?_).trans
++        (((counterSpan_iff_segment ..).1 rs).mono subset_rfl ?_)
++      · rintro p ⟨hc, r, u, hr, heads⟩
++        refine ⟨hc, r, u, Or.inl ?_, heads⟩
+         rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+         · exact ⟨by omega, hu⟩
+         · exact ⟨by omega, Nat.zero_le _⟩
+-      · intro p hp
+-        obtain ⟨u, hu, heads⟩ := hp
+-        exact ⟨n, u, Or.inl ⟨by omega, hu⟩, heads⟩
++      · rintro p ⟨hc, u, hu, heads⟩
++        exact ⟨hc, n, u, Or.inl ⟨by omega, hu⟩, heads⟩
+ 
+ /-- The rich-alphabet counter host returns after all rounds
+ (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
+@@ -1402,9 +1399,14 @@
+   rw [time]
+   refine ⟨?_, ?_⟩
+   · rw [MultiTapeTM.runFrom_add, before, debit]
+-  · exact counter_span_append _ _ _ _ cp w.length _ _ _ span
+-      (by rw [before]; simpa only [width] using ds) (fun _ h => h)
+-      (fun p hp => ⟨d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp⟩)
++  · rw [width, ← before] at ds
++    have s := ((counterSpan_iff_segment ..).1 span).trans
++      (((counterSpan_iff_segment ..).1 ds).mono subset_rfl fun p hp =>
++        ⟨hp.1, d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp.2⟩)
++    rw [← MultiTapeTM.runFrom_add] at s
++    exact (counterSpan_iff_segment (R := fun p => ∃ r u,
++      ((r < d ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧
++        ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) ..).2 s
+ 
+ /-- The rich-alphabet counter host takes an early body exit
+ (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
+@@ -1866,6 +1868,7 @@
+       (counterLoopCfg (some .done) (roundOrbit M τ c d)
+         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp)
+       (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1)) := by
++    rw [Turing.segment_iff]
+     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
+     rcases hm with hm | hm
+     · exact (hcut t ht).1 hm
+@@ -1956,6 +1959,7 @@
+         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
+           then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q) cp)
+       (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1)) := by
++    rw [Turing.segment_iff]
+     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
+     rcases hm with hm | hm
+     · exact (hcut t ht).1 hm
+@@ -2227,6 +2231,7 @@
+           (hpre r hr)]
+         exact (hp.2 r hr).2⟩)
+   rw [← hd, counterLoopCfg_body] at hseg
++  rw [Turing.segment_iff] at hseg
+   exact (hseg.2.2 u hu).2
+ 
+ /-- **The escaping counter loop's contract keeps the shared witness**: as
+@@ -2254,6 +2259,7 @@
+     (counterLoopBody a d) p.2.1 (d.workTapes (Fin.last k)) (d.workTapePos (Fin.last k)) hw
+     p.2.2 hr₀ (fun r hr => R.orbit_round p.1 _ hc _ hpre hret r (by omega)) hexit
+   rw [← hd, counterLoopCfg_body] at hseg
++  rw [Turing.segment_iff] at hseg
+   exact (hseg.2.2 u hu).2
+ 
+ end Turing
+--- base/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
++++ head/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+@@ -13,6 +13,7 @@
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Sweep
+ import TCSlib.Complexity.TuringMachine.StateRenaming
++import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -1184,20 +1185,15 @@
+   tm.runFrom c t = d ∧ ∀ u ≤ t,
+     lo ≤ (tm.runFrom c u).workTapePos 0 ∧ (tm.runFrom c u).workTapePos 0 ≤ hi
+ 
+-/-- Concatenating contained runs preserves containment at every physical time.
+-**Proof sketch.** A prefix ends either in the first run or at a uniquely
+-specified offset in the second; the equality at the join handles the latter. -/
+-private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+-    {c d e : Cfg 1 A Q x} {s t : ℕ} {lo hi : ℤ}
+-    (h₁ : DGSpan tm c d s lo hi) (h₂ : DGSpan tm d e t lo hi) :
+-    DGSpan tm c e (s + t) lo hi := by
+-  refine ⟨by rw [MultiTapeTM.runFrom_add, h₁.1, h₂.1], ?_⟩
+-  intro u hu
+-  by_cases h : u ≤ s
+-  · exact h₁.2 u h
+-  · have he : u = s + (u - s) := by omega
+-    rw [he, MultiTapeTM.runFrom_add, h₁.1]
+-    exact h₂.2 (u - s) (by omega)
++/-- `DGSpan` is the segment layer with nothing forbidden: the segment (`Turing.Segment`) of
++`tm` whose head relation keeps the one work head in `[lo, hi]`. Concatenating contained runs,
++which preserves containment at every physical time, is `Turing.Segment.trans` through this
++bridge. -/
++private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
++    (c d : Cfg 1 A Q x) (t : ℕ) (lo hi : ℤ) :
++    DGSpan tm c d t lo hi ↔ Segment tm ∅ (fun p => lo ≤ p 0 ∧ p 0 ≤ hi) c d t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun h => ⟨h.1, fun _ _ hm => hm, h.2⟩, fun h => ⟨h.1, h.2.2⟩⟩
+ 
+ /-- A single transition has only its two endpoints as prefixes. -/
+ private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+@@ -1205,14 +1201,11 @@
+     (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)
+     (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :
+     DGSpan tm c d 1 lo hi := by
+-  have hr : tm.runFrom c 1 = d := by simpa using h
+-  refine ⟨hr, ?_⟩
+-  intro u hu
+-  have he : u = 0 ∨ u = 1 := by omega
+-  rcases he with rfl | rfl
+-  · simpa using hc
+-  · rw [hr]
+-    exact hd
++  rw [dgSpan_iff_segment]
++  have hseg := Segment.one (M := tm) (F := ∅)
++    (P := fun p => lo ≤ p 0 ∧ p 0 ≤ hi) (a := c)
++    (fun hmem => hmem) hc (by rw [h]; exact hd)
++  simpa only [h] using hseg
+ 
+ /-- The canonical boundary configuration uses the received interleaved zone,
+ with the source read position interpreted on the native, unretracted input. -/
+@@ -1286,8 +1279,9 @@
+ private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+     {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}
+     (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :
+-    DGSpan tm c d t lo' hi' :=
+-  ⟨h.1, fun u hu => ⟨hl.trans (h.2 u hu).1, (h.2 u hu).2.trans hr⟩⟩
++    DGSpan tm c d t lo' hi' := by
++  rw [dgSpan_iff_segment] at h ⊢
++  exact h.mono subset_rfl fun p hp => ⟨hl.trans hp.1, hp.2.trans hr⟩
+ 
+ /-- Initialization on every native input stays in the origin block and its
+ two boundary cells. It uses the generic writer and reverse-sweep APIs.
+@@ -1374,7 +1368,8 @@
+     (show (-1 : ℤ) ≤ (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ∧
+       (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ≤ M.k by
+         dsimp [dgStart, sweepRevCfg]; omega)
+-  have h := dgSpan_add (dgSpan_add (dgSpan_add hgen hturn) hback) hlast
++  rw [dgSpan_iff_segment] at hgen hturn hback hlast
++  have h := (dgSpan_iff_segment ..).2 (((hgen.trans hturn).trans hback).trans hlast)
+   simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h
+ 
+ /-- The delegated right-row writer has the exact generic prefix ledger. -/
+@@ -1490,7 +1485,8 @@
+     rw [h]
+     have hu' : (u : ℤ) ≤ (n : ℤ) * M.k := by exact_mod_cast hu
+     constructor <;> omega
+-  exact dgSpan_add first scan
++  exact (dgSpan_iff_segment ..).2
++    (((dgSpan_iff_segment ..).1 first).trans ((dgSpan_iff_segment ..).1 scan))
+ 
+ /-- The delegated right-boundary turn performs precisely one native source
+ input/output action. Retraction is used for the scanned symbol only.
+@@ -1626,7 +1622,8 @@
+   have h₃ := dgSpan_one ht
+     (show z - 1 ≤ z + (M.k : ℤ) ∧ z + (M.k : ℤ) ≤ z + M.k by omega)
+     (show z - 1 ≤ z + (M.k : ℤ) - 1 ∧ z + (M.k : ℤ) - 1 ≤ z + M.k by omega)
+-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  rw [dgSpan_iff_segment] at h₁ h₂ h₃
++  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
+   simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h
+ 
+ /-- The received stationary write identity also permits a halted successor.
+@@ -1717,7 +1714,8 @@
+   have h₃ := dgSpan_one last
+     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  rw [dgSpan_iff_segment] at h₁ h₂ h₃
++  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
+   simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h
+ 
+ /-- The demand-grown left row is precisely the next source row. Its payloads
+@@ -1889,7 +1887,9 @@
+       simpa only [written, dgStart, Bool.toNat_true, Nat.one_mul, Int.natCast_one,
+         one_mul, tapeZone, show a - 1 + 1 = a by omega, List.map_append,
+         List.append_assoc, V, put, act, show 1 + (M.k + 1) = M.k + 2 by omega] using h
+-  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
++  rw [dgSpan_iff_segment] at hcollect hdispatch hwrite hfinish
++  have h := (dgSpan_iff_segment ..).2
++    (((hcollect.trans hdispatch).trans hwrite).trans hfinish)
+   simpa only [dgCost, MultiTapeTM.step, hs, act] using h
+ 
+ /-- The represented coordinate interval contains the source heads and support,
+@@ -2105,7 +2105,8 @@
+     refine ⟨a - left.toNat, n + right.toNat + left.toNat,
+       u + dgCost M.k n left right, w', ?_, ?_⟩
+     · exact Nat.add_le_add htime (dgCost_le M.k t n hk w.size left right)
+-    · exact dgSpan_add (dgSpan_mono hspan hlower hupper) hcycle
++    · exact (dgSpan_iff_segment ..).2 (((dgSpan_iff_segment ..).1
++        (dgSpan_mono hspan hlower hupper)).trans ((dgSpan_iff_segment ..).1 hcycle))
+ 
+ /-- The demand-grown witness computes on every native word after finite-control
+ retraction, with both resource bounds at that word's unchanged length.

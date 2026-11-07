@@ -1,0 +1,134 @@
+From 0b88b8e35aff030ec962078316554dc7484adf82 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 10:44:48 +0000
+Subject: [PATCH 7/8] MIG-1 follow-up: read unselected embedded tapes through
+ embedEmitCfg_unselected
+
+The T3-factored bank lemmas emCall_bank_initial / emCall_bank_final cite the
+published Turing.embedEmitCfg_unselected instead of the time-0 instance of
+embedEmitTM_frame (which read runFrom 0 definitionally). CodeSimulator's
+seam composition reads the copied seam's state through Cfg.ofWords_state.
+---
+ .../Complexity/TuringMachine/Build/Loop.lean  | 24 +++++++++----------
+ .../TuringMachine/CodeSimulator.lean          |  4 ++--
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 414e999b..65330386 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -4466,12 +4466,12 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
+           (emCall_pair_not_mem M i 0)).1
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
+           (emCall_pair_not_mem M i 1)).1
+       · rfl
+     · subst j
+@@ -4482,7 +4482,7 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
+             (emCall_triple_not_mem M he r)).1
+         · rfl
+   · funext j
+@@ -4490,12 +4490,12 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
+           (emCall_pair_not_mem M i 0)).2
+       · rfl
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
+           (emCall_pair_not_mem M i 1)).2
+       · rfl
+     · subst j
+@@ -4506,7 +4506,7 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
+             (emCall_triple_not_mem M he r)).2
+         · rfl
+ 
+@@ -4529,12 +4529,12 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
+           (emCall_pair_not_mem M i 0)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
+           (emCall_pair_not_mem M i 1)).1
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+@@ -4545,7 +4545,7 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
+             (emCall_triple_not_mem M he r)).1
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+@@ -4555,12 +4555,12 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+     rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 0)
+           (emCall_pair_not_mem M i 0)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+       trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
+-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
++      · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallPairIndex M 1)
+           (emCall_pair_not_mem M i 1)).2
+       · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
+     · subst j
+@@ -4571,7 +4571,7 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
+         simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
+         fin_cases r <;> simp
+       · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
+-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
++        · exact (embedEmitCfg_unselected (emCallTripleEmbedding M i) _ _ [] _ (emCallTripleIndex M l r)
+             (emCall_triple_not_mem M he r)).2
+         · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
+           have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index 3d018055..4d77c3bd 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1305,9 +1305,9 @@ private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool
+   have cut' (u : ℕ) (hu : u < t₁) :
+       (E.runFrom ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState
+         fun _ => enter) u).state ≠ some leave := secondCut u hu
+-  have whole := seamCompTM_run_ofCfg P .done E enter run₀ rfl cut₀ second'
++  have whole := seamCompTM_run_ofCfg P .done E enter run₀ (Cfg.ofWords_state _ _) cut₀ second'
+   have first := seamCompTM_firstReturn_ofCfg P .done E enter leave
+-    run₀ rfl cut₀ second' rfl cut'
++    run₀ (Cfg.ofWords_state _ _) cut₀ second' rfl cut'
+   refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
+   · calc
+       t₀ + 1 + t₁ ≤ 3 * arg.length + 4 +
+-- 
+2.43.0
+

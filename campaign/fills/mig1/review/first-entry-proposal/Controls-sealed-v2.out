@@ -1,0 +1,86 @@
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:9:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:11:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:17:75: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step c
+is not definitionally equal to the right-hand side
+  match c.state with
+  | none => c
+  | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+
+S : Type
+tm : MultiTapeTM 1 Bool S
+c : Cfg 1 Bool S []
+⊢ MultiTapeTM.step c =
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:21:75: error: Tactic `rfl` failed: The left-hand side
+  fun S tm c => MultiTapeTM.step c
+is not definitionally equal to the right-hand side
+  fun S tm c =>
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+
+⊢ (fun S tm c => MultiTapeTM.step c) = fun S tm c =>
+    match c.state with
+    | none => c
+    | some q => (tm.tr q c.inputSymbol c.workTapeSymbols).apply c
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:25:29: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 0
+is not definitionally equal to the right-hand side
+  c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 0 = c
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:27:41: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 0
+is not definitionally equal to the right-hand side
+  fun x c => c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 0) = fun x c => c
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:31:43: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c n
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step^[n] c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+n : ℕ
+⊢ MultiTapeTM.runFrom c n = MultiTapeTM.step^[n] c
+/private/tmp/tcslib-first-entry-ikgpzpvz/Controls_sealed_v2.lean:33:69: error: Tactic `rfl` failed: The left-hand side
+  fun tm c n => MultiTapeTM.runFrom c n
+is not definitionally equal to the right-hand side
+  fun tm c n => MultiTapeTM.step^[n] c
+
+⊢ (fun tm c n => MultiTapeTM.runFrom c n) = fun tm c n => MultiTapeTM.step^[n] c

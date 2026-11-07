@@ -1,0 +1,186 @@
+[
+  {
+    "sat": "SatClean",
+    "hardness": "CLA5Clean",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def CLA5Clean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop",
+    "hardness_header": "private def CLA5Clean (M : FinTM Bool) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) : Prop"
+  },
+  {
+    "sat": "satClean_install",
+    "hardness": "clA5Clean_install",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Clean_install {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) : \u2203 M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d)",
+    "hardness_header": "private lemma clA5Clean_install {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) : \u2203 M A d, CLA5Clean M f (fun _ => []) (fun n => A * (n + 1) ^ d)"
+  },
+  {
+    "sat": "satClean_emit",
+    "hardness": "clA5Clean_emit",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Clean_emit {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) : \u2203 M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d)",
+    "hardness_header": "private lemma clA5Clean_emit {f : List Bool \u2192 List Bool} (hf : PolyTimeComputable f) : \u2203 M A d, CLA5Clean M id f (fun n => A * (n + 1) ^ d)"
+  },
+  {
+    "sat": "satClean_stop",
+    "hardness": "clA5Clean_stop",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Clean_stop (C : FinTM Bool) (entry exit : C.State) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) (hk : 0 < C.k) (h : \u2200 x arg : List Bool, \u2203 t \u2264 B arg.length, 0 < t \u2227 (\u2200 v, 0 < v \u2192 v < t \u2192 (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state \u2260 some exit) \u2227 C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t = {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) : CLA5Clean (clA5StopTM C entry exit) result emit (fun n => B n + 1)",
+    "hardness_header": "private lemma clA5Clean_stop (C : FinTM Bool) (entry exit : C.State) (result emit : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) (hk : 0 < C.k) (h : \u2200 x arg : List Bool, \u2203 t \u2264 B arg.length, 0 < t \u2227 (\u2200 v, 0 < v \u2192 v < t \u2192 (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state \u2260 some exit) \u2227 C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t = {Cfg.ofWords exit (stateWord C.k (result arg)) with output := emit arg}) : CLA5Clean (clA5StopTM C entry exit) result emit (fun n => B n + 1)"
+  },
+  {
+    "sat": "satPadAction",
+    "hardness": "clA5PadAction",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5PadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S",
+    "hardness_header": "private def clA5PadAction {k K : \u2115} {S : Type} (a : Action k Bool S) : Action K Bool S"
+  },
+  {
+    "sat": "satPadCfg",
+    "hardness": "clA5PadCfg",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5PadCfg {k K : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : Cfg K Bool S x",
+    "hardness_header": "private def clA5PadCfg {k K : \u2115} {S : Type} {x : List Bool} (c : Cfg k Bool S x) : Cfg K Bool S x"
+  },
+  {
+    "sat": "satPadTM",
+    "hardness": "clA5PadTM",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5PadTM (M : FinTM Bool) (K : \u2115) (hk : M.k \u2264 K) : FinTM Bool",
+    "hardness_header": "private def clA5PadTM (M : FinTM Bool) (K : \u2115) (hk : M.k \u2264 K) : FinTM Bool"
+  },
+  {
+    "sat": "satPad_apply",
+    "hardness": "clA5Pad_apply",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Pad_apply {k K : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) : (clA5PadAction (K := K) a).apply (clA5PadCfg c) = clA5PadCfg (a.apply c)",
+    "hardness_header": "private lemma clA5Pad_apply {k K : \u2115} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) : (clA5PadAction (K := K) a).apply (clA5PadCfg c) = clA5PadCfg (a.apply c)"
+  },
+  {
+    "sat": "satPad_run",
+    "hardness": "clA5Pad_run",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Pad_run (M : FinTM Bool) (K : \u2115) (hk : M.k \u2264 K) {x : List Bool} (c : Cfg M.k Bool M.State x) (t : \u2115) : (clA5PadTM M K hk).tm.runFrom (clA5PadCfg c) t = clA5PadCfg (M.tm.runFrom c t)",
+    "hardness_header": "private lemma clA5Pad_run (M : FinTM Bool) (K : \u2115) (hk : M.k \u2264 K) {x : List Bool} (c : Cfg M.k Bool M.State x) (t : \u2115) : (clA5PadTM M K hk).tm.runFrom (clA5PadCfg c) t = clA5PadCfg (M.tm.runFrom c t)"
+  },
+  {
+    "sat": "satPad_seam",
+    "hardness": "clA5Pad_seam",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Pad_seam {k K : \u2115} {S : Type} {x : List Bool} (hk : 0 < k) (q : S) (w out : List Bool) : clA5PadCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) = {Cfg.ofWords (input := x) q (stateWord K w) with output := out}",
+    "hardness_header": "private lemma clA5Pad_seam {k K : \u2115} {S : Type} {x : List Bool} (hk : 0 < k) (q : S) (w out : List Bool) : clA5PadCfg (K := K) ({Cfg.ofWords (input := x) q (stateWord k w) with output := out}) = {Cfg.ofWords (input := x) q (stateWord K w) with output := out}"
+  },
+  {
+    "sat": "satStopTM",
+    "hardness": "clA5StopTM",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool",
+    "hardness_header": "private def clA5StopTM (C : FinTM Bool) (entry exit : C.State) : FinTM Bool"
+  },
+  {
+    "sat": "satStopCfg",
+    "hardness": "clA5StopCfg",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5StopCfg {k : \u2115} {S : Type} {x : List Bool} (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x",
+    "hardness_header": "private def clA5StopCfg {k : \u2115} {S : Type} {x : List Bool} (b : Bool) (c : Cfg k Bool S x) : Cfg k Bool (Bool \u00d7 S) x"
+  },
+  {
+    "sat": "satStop_step",
+    "hardness": "clA5Stop_step",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State) {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x) (hlive : c.state \u2260 none) (hg : b = true \u2192 c.state \u2260 some exit) : (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c)",
+    "hardness_header": "private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State) {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x) (hlive : c.state \u2260 none) (hg : b = true \u2192 c.state \u2260 some exit) : (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c)"
+  },
+  {
+    "sat": "satStop_clean",
+    "hardness": "clA5Stop_clean",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Stop_clean (C : FinTM Bool) (entry exit : C.State) (x arg result out : List Bool) (t : \u2115) (ht : 0 < t) (hg : \u2200 v, 0 < v \u2192 v < t \u2192 (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state \u2260 some exit) (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t = {Cfg.ofWords exit (stateWord C.k result) with output := out}) : (clA5StopTM C entry exit).tm.runFrom (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) = {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out}",
+    "hardness_header": "private lemma clA5Stop_clean (C : FinTM Bool) (entry exit : C.State) (x arg result out : List Bool) (t : \u2115) (ht : 0 < t) (hg : \u2200 v, 0 < v \u2192 v < t \u2192 (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).state \u2260 some exit) (he : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t = {Cfg.ofWords exit (stateWord C.k result) with output := out}) : (clA5StopTM C entry exit).tm.runFrom (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1) = {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out}"
+  },
+  {
+    "sat": "satMapTM",
+    "hardness": "clA5MapTM",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : FinTM Bool",
+    "hardness_header": "private def clA5MapTM {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : FinTM Bool"
+  },
+  {
+    "sat": "satMapWord",
+    "hardness": "clA5MapWord",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private def clA5MapWord {S : Type} (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) : S \u2192 List Bool \u2192 List Bool",
+    "hardness_header": "private def clA5MapWord {S : Type} (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) : S \u2192 List Bool \u2192 List Bool"
+  },
+  {
+    "sat": "satMap_run",
+    "hardness": "clA5Map_run",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Map_run {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) (x rest : List Bool) : \u2200 pre (hx : x = pre ++ rest) q out, ((clA5MapTM next emit finish start).tm.runFrom (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none \u2227 ((clA5MapTM next emit finish start).tm.runFrom (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output = out ++ clA5MapWord next emit finish q rest",
+    "hardness_header": "private lemma clA5Map_run {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) (x rest : List Bool) : \u2200 pre (hx : x = pre ++ rest) q out, ((clA5MapTM next emit finish start).tm.runFrom (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).state = none \u2227 ((clA5MapTM next emit finish start).tm.runFrom (clA5MapCfg x q pre.length (by simp [hx]) out) (rest.length + 1)).output = out ++ clA5MapWord next emit finish q rest"
+  },
+  {
+    "sat": "satMap_poly",
+    "hardness": "clA5Map_poly",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : PolyTimeComputable (clA5MapWord next emit finish start)",
+    "hardness_header": "private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S] (next : S \u2192 Bool \u2192 S) (emit : S \u2192 Bool \u2192 Option Bool) (finish : S \u2192 Option Bool) (start : S) : PolyTimeComputable (clA5MapWord next emit finish start)"
+  },
+  {
+    "sat": "satHostTM",
+    "hardness": "clA5HostTM",
+    "header_equal_after_prefix_map": false,
+    "code_equal_after_prefix_map": false,
+    "sat_header": "private def clA5HostTM (M : Fin 6 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) : FinTM Bool",
+    "hardness_header": "private def clA5HostTM (M : Fin 5 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) : FinTM Bool"
+  },
+  {
+    "sat": "satHost_seam",
+    "hardness": "clA5Host_seam",
+    "header_equal_after_prefix_map": false,
+    "code_equal_after_prefix_map": false,
+    "sat_header": "private lemma clA5Host_seam (M : Fin 6 \u2192 FinTM Bool) (K : \u2115) (i : Fin 6) (hp : 0 < (M i).k) (x w pre out : List Bool) (q : (M i).State) (state : Option (M i).State) : emitCfg (fun s => (Sum.inr \u27e8i, s\u27e9 : CLA5HostState M)) (clA5HostRet M i) pre (clA5PadCfg (K := K) {Cfg.ofWords (input := x) q (stateWord (M i).k w) with state := state, output := out}) = {Cfg.ofWords (((state.map (fun s => (Sum.inr \u27e8i, s\u27e9 : CLA5HostState M))).getD (clA5HostRet M i))) (stateWord K w) with output := pre ++ out}",
+    "hardness_header": "private lemma clA5Host_seam (M : Fin 5 \u2192 FinTM Bool) (K : \u2115) (i : Fin 5) (hp : 0 < (M i).k) (x w pre out : List Bool) (q : (M i).State) (state : Option (M i).State) : emitCfg (fun s => (Sum.inr \u27e8i, s\u27e9 : CLA5HostState M)) (clA5HostRet M i) pre (clA5PadCfg (K := K) {Cfg.ofWords (input := x) q (stateWord (M i).k w) with state := state, output := out}) = {Cfg.ofWords (((state.map (fun s => (Sum.inr \u27e8i, s\u27e9 : CLA5HostState M))).getD (clA5HostRet M i))) (stateWord K w) with output := pre ++ out}"
+  },
+  {
+    "sat": "satHost_call",
+    "hardness": "clA5Host_call",
+    "header_equal_after_prefix_map": false,
+    "code_equal_after_prefix_map": false,
+    "sat_header": "private lemma clA5Host_call (M : Fin 6 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) (i : Fin 6) (hp : 0 < (M i).k) (x arg result out pre : List Bool) (q : (M i).State) (t : \u2115) (hg : \u2200 v < t, \u00ac((M i).tm.runFrom (Cfg.ofWords (input := x) (M i).tm.q\u2080 (stateWord (M i).k arg)) v).Halted) (he : (M i).tm.runFrom (Cfg.ofWords (input := x) (M i).tm.q\u2080 (stateWord (M i).k arg)) t = {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) : (\u2200 v < t, ((clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v).state \u2260 some (.inl ())) \u2227 (clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} t = {Cfg.ofWords (clA5HostRet M i) (stateWord K result) with output := pre ++ out}",
+    "hardness_header": "private lemma clA5Host_call (M : Fin 5 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) (i : Fin 5) (hp : 0 < (M i).k) (x arg result out pre : List Bool) (q : (M i).State) (t : \u2115) (hg : \u2200 v < t, \u00ac((M i).tm.runFrom (Cfg.ofWords (input := x) (M i).tm.q\u2080 (stateWord (M i).k arg)) v).Halted) (he : (M i).tm.runFrom (Cfg.ofWords (input := x) (M i).tm.q\u2080 (stateWord (M i).k arg)) t = {Cfg.ofWords q (stateWord (M i).k result) with state := none, output := out}) : (\u2200 v < t, ((clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v).state \u2260 some (.inl ())) \u2227 (clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} t = {Cfg.ofWords (clA5HostRet M i) (stateWord K result) with output := pre ++ out}"
+  },
+  {
+    "sat": "satHost_clean",
+    "hardness": "clA5Host_clean",
+    "header_equal_after_prefix_map": false,
+    "code_equal_after_prefix_map": false,
+    "sat_header": "private lemma clA5Host_clean (M : Fin 6 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) (i : Fin 6) (f g : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) (h : CLA5Clean (M i) f g B) (x arg pre : List Bool) : \u2203 t, 0 < t \u2227 t \u2264 B arg.length \u2227 (\u2200 v < t, ((clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v).state \u2260 some (.inl ())) \u2227 (clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} t = {Cfg.ofWords (clA5HostRet M i) (stateWord K (f arg)) with output := pre ++ g arg}",
+    "hardness_header": "private lemma clA5Host_clean (M : Fin 5 \u2192 FinTM Bool) (K : \u2115) (hk : \u2200 i, (M i).k \u2264 K) (i : Fin 5) (f g : List Bool \u2192 List Bool) (B : \u2115 \u2192 \u2115) (h : CLA5Clean (M i) f g B) (x arg pre : List Bool) : \u2203 t, 0 < t \u2227 t \u2264 B arg.length \u2227 (\u2200 v < t, ((clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} v).state \u2260 some (.inl ())) \u2227 (clA5HostTM M K hk).tm.runFrom {Cfg.ofWords (input := x) (clA5HostEntry M i) (stateWord K arg) with output := pre} t = {Cfg.ofWords (clA5HostRet M i) (stateWord K (f arg)) with output := pre ++ g arg}"
+  },
+  {
+    "sat": "sat_bridge_bound",
+    "hardness": "clA5_bridge_bound",
+    "header_equal_after_prefix_map": true,
+    "code_equal_after_prefix_map": true,
+    "sat_header": "private lemma clA5_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) : c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264 (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1)",
+    "hardness_header": "private lemma clA5_bridge_bound (c A d n len : \u2115) (hlen : len \u2264 A * (n + 1) ^ d) : c * (A * (n + 1) ^ d + n + len + 1) + 1 \u2264 (c * (2 * A + 1) + 1) * (n + 1) ^ (d + 1)"
+  }
+]

@@ -1,0 +1,73 @@
+'Turing.MultiTapeTM.exists_first_entry_of_fixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+ROOT|Turing.MultiTapeTM.exists_first_entry_of_fixed|owner=TCSlib.Complexity.TuringMachine.Finite|kind=theorem|private=false|internal=false|simp=false|unfold=false
+TYPE|Turing.MultiTapeTM.exists_first_entry_of_fixed|∀ {k : ℕ} {Symbol : Type u_3} {State : Type u_4}
+  {input : List Symbol} (tm : Turing.MultiTapeTM k Symbol State) (stop : State → Prop)
+  (c d : Turing.Cfg k Symbol State input) (T : ℕ),
+  (∀ (z : Turing.Cfg k Symbol State input), (∃ q, z.state = some q ∧ stop q) → Turing.MultiTapeTM.step z = z) →
+    (∃ q, d.state = some q ∧ stop q) →
+      Turing.MultiTapeTM.runFrom c T = d →
+        ∃ t ≤ T,
+          (∀ j < t, ¬∃ q, (Turing.MultiTapeTM.runFrom c j).state = some q ∧ stop q) ∧ Turing.MultiTapeTM.runFrom c t = d
+OWNERCI|_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.eq_1|kind=theorem|private=true|internal=true
+OWNERCI|Turing.FinTM.computesFunInTime_iff|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.mk.injEq|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc._proof_1_2|kind=theorem|private=false|internal=true
+OWNERCI|Turing.FinTM.ComputesInTime.eq_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.runFrom_output_prepend|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.step_output_prepend|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.fintypeState|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.mk.inj|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.computesFunInTimeVia_iff|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.mk|kind=constructor|private=false|internal=false
+OWNERCI|Turing.FinTM.ctorIdx|kind=definition|private=false|internal=false
+OWNERCI|_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.eq_2|kind=theorem|private=true|internal=true
+OWNERCI|Turing.FinTM.ComputesFunInTimeVia|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.computesInTime_iff|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.mk.noConfusion|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.mk._flat_ctor|kind=definition|private=false|internal=true
+OWNERCI|Turing.FinTM.Computes|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.tm|kind=definition|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc._simp_1_2|kind=theorem|private=false|internal=true
+OWNERCI|Turing.FinTM.State|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.ComputesInTime|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.noConfusion|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM._sizeOf_1|kind=definition|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.spaceUsed_le_of_abs_le|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.output_prefix|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.mk.sizeOf_spec|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.k|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.ComputesFunInTime.computes|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc._simp_1_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.spaceUsed_le_of_abs_le._proof_1_2|kind=theorem|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.runFrom_state_ne_none_of_le|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.initCfg_with_q₀|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.decEqState|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.recOn|kind=definition|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.output_length_le|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.not_computesInTime_zero|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc|kind=theorem|private=false|internal=false
+OWNERCI|_private.TCSlib.Complexity.TuringMachine.Finite.0.Turing.Action.apply.match_1.splitter|kind=definition|private=true|internal=true
+OWNERCI|Turing.FinTM.casesOn|kind=definition|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.spaceUsed_le_of_abs_le._proof_1_3|kind=theorem|private=false|internal=true
+OWNERCI|Turing.FinTM.rec|kind=recursor|private=false|internal=false
+OWNERCI|Turing.FinTM.ComputesInTime.output_unique|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.computes_iff|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM.ComputesInTime.mono|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.spaceUsed_le_of_abs_le._proof_1_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.spaceUsed_le_mul_succ|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.ComputesInTimeAndSpace.eq_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.FinTM._sizeOf_inst|kind=definition|private=false|internal=true
+OWNERCI|Turing.FinTM.Computes.exists_computesInTime_iff|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.exists_first_entry_of_fixed|kind=theorem|private=false|internal=false
+AX|Turing.MultiTapeTM.exists_first_entry_of_fixed|kind=theorem|[propext, Classical.choice, Quot.sound]
+DEF|Turing.MultiTapeTM.exists_first_entry_of_fixed|Turing.Cfg.state|TCSlib.Complexity.TuringMachine.Configuration|hints=abbrev
+DEF|Turing.MultiTapeTM.exists_first_entry_of_fixed|Turing.MultiTapeTM.step|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+DEF|Turing.MultiTapeTM.exists_first_entry_of_fixed|Turing.MultiTapeTM.runFrom|TCSlib.Complexity.TuringMachine.Deterministic|hints=regular
+OWNERCI|Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc._proof_1_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.MultiTapeTM.runFrom_with_q₀|kind=theorem|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.output_length_le._proof_1_1|kind=theorem|private=false|internal=true
+OWNERCI|Turing.FinTM.ComputesFunInTime|kind=definition|private=false|internal=false
+OWNERCI|Turing.FinTM.noConfusionType|kind=definition|private=false|internal=false
+OWNERCI|Turing.MultiTapeTM.exists_first_halt|kind=theorem|private=false|internal=false
+OWNERCI|Turing.FinTM|kind=inductive|private=false|internal=false
