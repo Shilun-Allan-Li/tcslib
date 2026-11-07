@@ -1,0 +1,192 @@
+From 5e2c3609e5db40bdeb79e7252180dd4e385ed8aa Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 02:05:13 +0000
+Subject: [PATCH 08/14] S1: DiscreteLog re-points its G2/G3/G4/G7/G8 copies to
+ the shared lemmas
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/Candidates/DiscreteLog.lean  | 120 ++----------------
+ 1 file changed, 11 insertions(+), 109 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 2b96a128..5beedf81 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -613,12 +613,7 @@ theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+   have hkn : Nat.size m ≤ n := Nat.size_le.2 hmn
+   have hmk : m < 2 ^ Nat.size m := Nat.lt_size_self m
+   -- `2^k ≤ 2m`: the top bit of `m` is bit `k − 1`
+-  have hk2 : 2 ^ Nat.size m ≤ 2 * m := by
+-    have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
+-    have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
+-    calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
+-          rw [← pow_succ', Nat.sub_add_cancel hpos]
+-      _ ≤ 2 * m := Nat.mul_le_mul_left 2 h1
++  have hk2 : 2 ^ Nat.size m ≤ 2 * m := two_pow_size_le_two_mul hm
+   -- the block sampler with the test `v < m` and the default `0`
+   have h := statClose_rejectBlocksL (· < m) (Nat.size m) n n hkn (d := 0) hm
+     (Nat.pow_pos two_pos)
+@@ -652,86 +647,6 @@ def expSampleRaw (z : List Bool) : List Bool :=
+ 
+ /-! ### The domain sampler as a trial loop (helpers of `polyTimeComputable_expSampleRaw`) -/
+ 
+-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). -/
+-private theorem dla_listToNat_append (a b : List Bool) :
+-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+-  have key : ∀ (l : List Bool) (acc : ℕ),
+-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+-    intro l
+-    induction l with
+-    | nil => intro acc; simp
+-    | cons c l ih =>
+-      intro acc
+-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+-      ring
+-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+-
+-/-- The empty numeral reads as `0`. -/
+-private theorem dla_listToNat_nil : listToNat [] = 0 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- **Width normalization**: prefixing the `W`-bit numeral of `0` and keeping the last `W`
+-bits gives the `W`-bit numeral of the number read from `b`:
+-`(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`. -/
+-private theorem dla_drop_natToList_zero_append (W : ℕ) (b : List Bool) :
+-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+-  set w := natToList W 0 ++ b with hw
+-  have hlen : (w.drop b.length).length = W := by
+-    rw [List.length_drop, hw, List.length_append, length_natToList]
+-    omega
+-  have hval : listToNat w = listToNat b := by
+-    rw [hw, dla_listToNat_append, listToNat_natToList (Nat.two_pow_pos W), zero_mul, zero_add]
+-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+-    conv_lhs => rw [← List.take_append_drop b.length w]
+-    rw [dla_listToNat_append, hlen]
+-  have hlt := listToNat_lt_two_pow (w.drop b.length)
+-  rw [hlen] at hlt
+-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+-    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+-  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+-    have h := natToList_length_listToNat (natToList W N)
+-    rw [length_natToList, listToNat_natToList_eq_mod] at h
+-    exact h.symm
+-  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+-
+-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
+-private theorem dla_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
+-    (l : List α) :
+-    l.findSome? (fun t => if p t then some (h t) else none) = (l.find? fun t => decide (p t)).map h := by
+-  induction l with
+-  | nil => rfl
+-  | cons a l ih =>
+-    rw [List.findSome?_cons, List.find?_cons]
+-    by_cases ha : p a
+-    · rw [if_pos ha, decide_eq_true ha]
+-      rfl
+-    · rw [if_neg ha, decide_eq_false ha, ih]
+-
+-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for
+-`N ≤ L`. -/
+-private theorem dla_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
+-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
+-    intro l
+-    induction l with
+-    | nil => intro _; rfl
+-    | cons a l ih =>
+-      intro hl
+-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
+-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
+-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
+-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+-      (fun i => decide (i < N) && p i) = none := by
+-    rw [List.find?_eq_none]
+-    intro x hx
+-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+-    simp
+-  rw [hnone, Option.or_none]
+-
+ /-- The start state of the trial loop on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`:
+ `⟨⟨1^n, ⟨1^k, ⟦m⟧⟩⟩, ⟨1^n, r⟩⟩` with `⟦m⟧` the middle numeral of `i` and `1^k = sizeStr ⟦m⟧`
+ its bit length (the header, then the trial counter and the remaining coins). -/
+@@ -846,10 +761,11 @@ read from the loop's payload (marker dropped) is `sampleBelowL m k n n r` with t
+ **Proof sketch.** After `i` steps the header is unchanged, the counter `1^n` has lost `i` bits
+ and the coins have lost `i` blocks of `n` bits (`dla_ssStep_iterate`): the trial value is the
+ `k`-bit prefix of block `i`, and the test accepts iff `i < n` and that value is below `m`. The search over the
+-first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)` (`dla_find?_range_lt`),
+-which is `sampleBelowL`'s `findSome?` read as a `find?` followed by the value
+-(`dla_findSome?_ite`). In the `some i` case the payload with its marker dropped is the prefix of
+-block `i`; in the `none` case both sides read `0` (`dla_listToNat_nil`). -/
++first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)`
++(`IterateFind.find?_range_and_lt`), which is `sampleBelowL` read as a `find?` followed by the
++value (`sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq_find?`). In the `some i` case the
++payload with its marker dropped is the prefix of block `i`; in the `none` case both sides read `0`
++(`listToNat_nil`). -/
+ private theorem dla_ssFind_eq (z : List Bool) :
+     listToNat ((match (List.range ((dla_ssStart z).length + 1)).find?
+         (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) with
+@@ -890,15 +806,13 @@ private theorem dla_ssFind_eq (z : List Bool) :
+       (List.range u.length).find? (fun i => decide (val i < listToNat ms)) := by
+     rw [show (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) =
+       fun i => decide (i < u.length) && decide (val i < listToNat ms) from funext hacc]
+-    exact dla_find?_range_lt _ hrange
++    exact IterateFind.find?_range_and_lt _ hrange
+   have hsample : sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z))) u.length u.length c =
+       ((List.range u.length).find? (fun i => decide (val i < listToNat ms))).map val := by
+-    rw [hm]
+-    unfold sampleBelowL
+-    exact dla_findSome?_ite (fun i => val i < listToNat ms) val _
++    rw [hm, sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq_find?]
+   rw [hfind, hsample]
+   rcases hf : (List.range u.length).find? (fun i => decide (val i < listToNat ms)) with _ | i
+-  · exact dla_listToNat_nil
++  · exact listToNat_nil
+   · show listToNat ((dla_ssOut (dla_ssStep^[i] (dla_ssStart z))).drop 1) = val i
+     rw [dla_ssOut, List.singleton_append, List.drop_one, List.tail_cons, hblock]
+ 
+@@ -945,7 +859,7 @@ theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hq
+   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var,
+     subStr_pairEncode, Nat.sub_self]
+-  rw [dla_drop_natToList_zero_append]
++  rw [natToList_zero_append_drop]
+   unfold expSampleRaw dlW
+   congr 1
+   have hF := dla_ssFind_eq z
+@@ -1135,18 +1049,6 @@ theorem expCollection_D {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGrou
+     (hV : ∀ i, V i → ExpValid i) (i : List Bool) :
+     (expCollection H G hV).D i = ZMod (expOrd i) := rfl
+ 
+-/-- Any two samplers are `1`-close (probabilities lie in `[0, 1]`). -/
+-private theorem dla_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) :
+-    StatClose X Y 1 := by
+-  rw [statClose_iff]
+-  intro T
+-  have h1 := uprob_nonneg (fun s => T (X s))
+-  have h2 := uprob_le_one (fun s => T (X s))
+-  have h3 := uprob_nonneg (fun t => T (Y t))
+-  have h4 := uprob_le_one (fun t => T (Y t))
+-  rw [abs_le]
+-  constructor <;> linarith
+-
+ /-- **The decoded domain sampler is `(1/2)^n`-close to uniform on `Z_m`** at a valid index of
+ width `n`: `statClose_sampleBelowL` on the sampler's `n · n` coins (read through
+ `NUPPT.coinsEquivPoly`), mapped through the decoder, which reads the numeral back exactly.
+@@ -1227,7 +1129,7 @@ theorem expCollection_sampleClose {V : List Bool → Prop} (H : ArithmeticFP) (G
+     intro n r
+     by_cases hn : n < G.n₀
+     · rw [if_pos hn]
+-      exact dla_statClose_one _ _
++      exact statClose_one _ _
+     rw [if_neg hn]
+     have hn' : G.n₀ ≤ n := not_lt.1 hn
+     -- the generated index is valid and of width `n`
+-- 
+2.43.0
+

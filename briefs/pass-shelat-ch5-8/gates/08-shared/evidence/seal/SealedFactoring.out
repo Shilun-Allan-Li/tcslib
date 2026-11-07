@@ -1,0 +1,16 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/SealedFactoring.lean:795:4: error: Type mismatch
+  Eq.symm (List.ofFn_congr (OneWay.YaoMachine.ρP_eval D n) ?m.232)
+has type
+  (@List.ofFn ?m.229 (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) fun i => ?m.232 (Fin.cast ⋯ i)) =
+    List.ofFn ?m.232
+but is expected to have type
+  @List.ofFn Bool (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n))
+      (((finCongr ⋯).arrowCongr (Equiv.refl Bool))
+        ((NUPPT.coinsEquiv_ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+            (OneWay.YaoMachine.adv D) ⋯ n)
+          r)) =
+    List.ofFn
+      ((NUPPT.coinsEquiv_ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D) (OneWay.YaoMachine.adv D)
+          ⋯ n)
+        r)
+[rc=1 time=6s]

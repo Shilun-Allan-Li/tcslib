@@ -1,0 +1,55 @@
+From 021bd2bc398028e35f30d616bbb28145a2dcc79a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 01:55:16 +0000
+Subject: [PATCH 02/14] S1 (G2): IterateFind.find?_range_and_lt
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Randomized/Build/IterateFind.lean         | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFind.lean b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+index 82acba88..45597594 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFind.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+@@ -78,6 +78,8 @@ assembly through `Turing.FinTM.exists_loopFindTM`.
+   polynomial-time computable.
+ * `Complexity.IterateFind.find?_congr_of_mem` — `List.find?` depends only on the predicate's
+   values on the list (used to identify the guarded orbit with `g^[i] x`).
++* `Complexity.IterateFind.find?_range_and_lt` — a search over `[0, L)` whose test also demands
++  `i < N` is the search over `[0, N)`, for `N ≤ L`.
+ 
+ ## References
+ 
+@@ -234,6 +236,27 @@ theorem find?_congr_of_mem {α : Type*} {p q : α → Bool} :
+     · rw [List.find?_cons_of_neg (by rw [ha]; exact hq), List.find?_cons_of_neg hq]
+       exact find?_congr_of_mem l (fun b hb => h b (List.mem_cons_of_mem a hb))
+ 
++/-- **A bounded search is a search over a shorter range**: for `N ≤ L`, searching `[0, L)` for
++the first `i` with `i < N` and `p i` is searching `[0, N)` for the first `i` with `p i`:
++`(List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p`.
++
++**Proof sketch.** Write `L = N + d` (`List.range_add`, `List.find?_append`). On `[0, N)` the guard
++`i < N` holds, so the two predicates agree (`find?_congr_of_mem`). On the shifted tail `N + [0, d)`
++it fails, so that search is `none` (`List.find?_eq_none`), and `o <|> none = o`. -/
++theorem find?_range_and_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
++    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
++  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
++  rw [List.range_add, List.find?_append,
++    find?_congr_of_mem _ (fun i hi => by rw [decide_eq_true (List.mem_range.1 hi), Bool.true_and])]
++  have hnone : (List.map (fun x => N + x) (List.range d)).find?
++      (fun i => decide (i < N) && p i) = none := by
++    rw [List.find?_eq_none]
++    intro x hx
++    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
++    rw [decide_eq_false (by omega), Bool.false_and]
++    exact Bool.false_ne_true
++  rw [hnone, Option.or_none]
++
+ /-- The final budget arithmetic: the loop combinator's bound `c (T n + 1)(R n + 2)` with
+ `T n = A (2n + 2 + P n + 5)^D` is in the normal form `C (n + 1)^e` once `P` and `R` are
+ majorised by `CP (n+1)^cP` and `CR (n+1)^cR`.
+-- 
+2.43.0
+
