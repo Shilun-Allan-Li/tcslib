@@ -22,9 +22,9 @@ receipts remain in their dated status folders.
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
-| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
-| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
-| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Additional API/home rulings pending; no unapproved proposal applied. **Not yet clear to merge.** |
+| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Round2 Codex HOLD0/1/0/15 received; F1/F3 accepted, F2 generic polynomial-closure repairs underway under WORKFLOW§3. Round3 Codex selected. **Not yet clear to merge.** |
+| #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, ready | 117 CLOSED PASS0/0/0/14 | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Gate117 CLOSED PASS0/0/0/14; all notes accepted after independent review. Exact source unchanged; current394/0/static0/77 replay remains valid. PR non-draft and mergeable/clean. **Clear to merge.** |
+| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, clean pushed head `b1f553b315f31b949076e91119473ce4070e7d53`, draft | 118 reserved, Codex selected | Final12-module native chain PASS; source freeze/4413-constant accounting/144 roots+224 descendants standard/25-file screen1696→622 complete. Fresh final **mmig2 PASS394/0, static0/60** from mac3; earlier mmig1 PASS394/0 at0d remains separately pinned. Follow-up API/home changes approved; gate119 implementation/validation underway, not yet merged into landing. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -33,8 +33,8 @@ remain immutable. No PR is merged by the maintainer.
 
 **Immediate work, in order:**
 
-1. Dispatch the ready **Codex gate117** packet for #230 (prompt.md/dispatch.json), and dispatch
-ready **Codex gate106 round2** for #215 (prompt-r2.md/dispatch-r2.json). Gate106 canonical round1 findings are verbatim; every item is
+1. Seyoon has dispatched **Codex gate117** for #230 (prompt.md/dispatch.json) and
+**Codex gate106 round2** for #215 (prompt-r2.md/dispatch-r2.json). Gate117 returned PASS0/0/0/14 and is CLOSED; #230 is clear to merge. Gate106 round2 returned HOLD0/1/0/15; its additional generic closure family is being mechanically repaired, round3 Codex selected. Issued packets/pins remain unchanged. Gate106 canonical round1 findings are verbatim; every item is
 answered in resolutions. Its two cut repairs are body-only, no new statement/import/API.
 Seyoon accepted, by kind across TCSlib, five clean/stop/padding/transducer/bridge families
 and separately finite-family shared-bank dispatchers and companion proofs. Cleanup owner:
@@ -89,12 +89,14 @@ terminal/bank/rewind/endpoint factoring and all three existing-Mathlib invariant
 the final12-module chain/source/census/screen checks and fresh394-module replay (static0/60). These generations
 are separately pinned rather than relabeled as one replay. The generated rewind matcher has no effective
 negative control, explicitly disclosed; no global legacy seal is claimed.
-A shared absorbing-stop first-entry lemma and canonical pairDiag/incFixed exact zero-space
-facts are proposed but unapproved. The two Catalog constant-space rows remain HOLDs.
+Seyoon approved the shared absorbing-stop first-entry lemma, pairDiag/incFixed exact
+zero-space facts and exact redirect-space home move. A separate gate119 prerequisite
+branch is implementing/validating them, Codex selected. They are not yet merged into
+landing; the two Catalog constant-space rows remain implementation HOLDs.
 A third Catalog HOLD is the redirect-space theorem's hidden tape-count header read;
 its exact move beside redirectTM in Wrappers passes isolated full-module/owner/consumer
-checks, but Seyoon's public-home/order exception remains pending. The separate additional-API
-audit's agent choice is also pending. All three core T7 tagged-run drivers now cite existing Mathlib iterator contracts; six
+checks, and Seyoon approved its exact public-home/order exception. Gate119 must still close
+and merge; no new implementation or gate closure follows solely from the ruling. All three core T7 tagged-run drivers now cite existing Mathlib iterator contracts; six
 directed concrete-instance scaffolding matches remain disclosed for gate assessment. No new
 debt acknowledgment or blanket factoring closure is inferred.
 Do not weaken claims or guards. These leaves wait while independent validation continues. **Codex is already selected for the eventual MIG-1
@@ -125,8 +127,8 @@ Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)
 computation but not Exercise3.6's second-part wording. Follow roadmap3 PLAN §(f).
 
-**Gate numbers:** 114/115/116 CLOSED and merged; 106 follow-up pending; 117 reserved/preparing.
-Gate118 is reserved for draft #233’s MIG-1 landing audit (Codex selected), not ready. Next free **119**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
+**Gate numbers:** 114/115/116 CLOSED and merged; 106 round2 HOLD0/1/0/15 (round3 Codex selected);117 CLOSED PASS0/0/0/14.
+Gate118 is reserved for draft #233’s MIG-1 landing audit (Codex selected), not ready. Gate119 is reserved for the approved three-fact/theorem-home follow-up (Codex); next free **120**. Ask Codex/Claude separately for each new audit/fill; do not infer a standing
 choice. Codex returns attached Markdown plus pasted findings; Claude may push only to its
 exact exchange inbox, after pull/rebase, never to a campaign branch.
 

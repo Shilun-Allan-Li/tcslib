@@ -2,7 +2,7 @@
 
 **Not yet clear to merge: #233.** Clean pushed draft `lean/mig1-mega-landing` at
 `b1f553b315f31b949076e91119473ce4070e7d53`, targeting the campaign. It includes unmerged prerequisite #230;
-gate117 is ready for user dispatch, not closed. Seyoon merges. No pending API/home proposal is applied.
+gate117 is now CLOSED PASS0/0/0/14 and #230 is clear to merge. Seyoon merges. No pending API/home proposal is applied.
 
 ## Final source and executed checks
 
@@ -53,13 +53,12 @@ recommends no source adoption: useful repairs are covered by current maintainer 
 strict seal gaps persist. It remains PARTIAL/superseded. Supplied logs are producer evidence,
 not our native replay. Raw R2/report/reviews live in `../review/r2-2026-11-07/`.
 
-## Pending human leaves
+## Approved follow-up, implementation/gate pending
 
-- Two non-simp exact zero-space APIs for pairDiagTM/incFixedTM. Their two Catalog rows remain HOLDs.
-- One shared absorbing-stop first-entry theorem in Finite; unchanged twins remain pending.
-- Codex/Claude choice for that separate additional-API audit.
-- Exact redirect-space theorem move from Catalog to Wrappers; public-home/order exception
-  pending. Its current hidden tape-count header read is a third Catalog HOLD.
+- Approved non-simp zero-space APIs for pairDiagTM/incFixedTM; gate119 implementation/validation underway. Their Catalog repairs are not yet applied.
+- Approved shared first-entry theorem in Finite; unchanged landing twins await the gated prerequisite and consumer repoints.
+- Codex selected for the separate gate119 prerequisite audit.
+- Approved exact redirect-space home move; gate119 implementation/validation underway. Landing has not yet adopted it, so its old header remains an implementation HOLD.
 
 The generated rewind matcher's opacity attribute lacks an effective negative control and
 is disclosed. Completed repair scopes have their own effective seals and paired controls;
@@ -67,7 +66,7 @@ there is no blanket legacy seal or accepted new debt. `factoring-dispositions-fi
 records T1–T7 and retained watches.
 
 Gate118 is reserved for Codex and **not ready to dispatch**. Next free119.
-**Not yet clear to merge: #230** (gate117 pending).
+**Clear to merge: #230** (gate117 CLOSED, current replay valid; Seyoon merges).
 **Not yet clear to merge: #215** (gate106 round2 pending).
-Their immutable packets are ready for user dispatch. F6 remains an unissued Claude draft,
+Their immutable packets are preserved; #215 round2 is HOLD and round3 Codex was selected. F6 remains an unissued Claude draft,
 with separate bounded component/interface checks and #230 gate/merge prerequisite.

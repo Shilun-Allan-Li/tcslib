@@ -1587,7 +1587,7 @@ canonical API; their remaining source similarity is disclosed rather than conver
 new blanket exception.
 
 **Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
-Seyoon's proposed shared absorbing-stop API ruling. The two constant-space reader gaps and
+the approved shared absorbing-stop API, now being implemented/gated separately as gate119. The two constant-space reader gaps and
 redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
 and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
 retirement accounting is updated only after the gated PR merges.

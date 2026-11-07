@@ -1,12 +1,12 @@
-# Gate106: round1 HOLD; round2 evidence complete, staging
+# Gate106 — round2 HOLD0/1/0/15; round3 Codex selected
 
-Original Codex HOLD0/2/1/9 is preserved verbatim. Both cut-helper repairs use published
-Segment composition, and Seyoon accepted the five adapter kinds plus the separate finite-family
-dispatcher kind with companion proofs, maintainer ownership and the next12.2c window after
-activeMIG1/before furtherSAT/Hardness fills. SingleTape accounting is six declarations/twelve
-calls; original packet remains immutable and the erratum is separate.
+**Not yet clear to merge: #215.** Round2 findings are preserved verbatim. F1's
+Segment cut repair and F3's six-declaration/twelve-call accounting are accepted.
+F2 remains one major: generic polynomial-closure reproofs lie outside the six
+acknowledged adapter/dispatcher kinds. Existing public closure/equation APIs
+support mechanical repairs; no further debt acknowledgment is requested.
 
-Actual current329-module replay passes, static0. Complete fresh nine-file source/compiler/
-screen checks and both-definition guard seals/paired controls pass. Exact edge/census/debt
-limits are in pack-r2.md and review/round2-current/. Codex follow-up packet is verified and published:334 sections, exact pins in dispatch-r2.json.
-**Ready to dispatch**, using prompt-r2.md; not yet dispatched. **Not yet clear to merge: #215.** No gate closure is claimed.
+Seyoon selected Codex for round3. Root is checking every same-kind member, with
+fresh owner/consumer seals, complete source populations and current replay to
+follow. No new packet or source validation is claimed yet. Round2 pins/results
+remain immutable; earlier329/0 replay is source-specific, not a future repair pass.

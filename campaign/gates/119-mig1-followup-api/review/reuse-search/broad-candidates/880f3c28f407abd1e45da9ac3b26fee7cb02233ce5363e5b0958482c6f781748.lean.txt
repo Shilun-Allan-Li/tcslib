@@ -1,0 +1,28 @@
+private lemma f2_splitRestore_first (k : ℕ) (w s : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ 2 * s.length + w.length + 5 ∧
+      (∀ j < t, ((f2_splitRestoreTM k).tm.runFrom (f2_splitRestoreScan k w s 0) j).state
+        ≠ some (4, false)) ∧
+      (f2_splitRestoreTM k).tm.runFrom (f2_splitRestoreScan k w s 0) t =
+        Cfg.ofWords (4, false) (stateWord (k + 1) (f2_splitStep w s)) := by
+  obtain ⟨T, hTle, hT⟩ := f2_splitRestore_run k w s
+  have hfix (z : Cfg (k + 1) Bool (f2_splitRestoreTM k).State w)
+      (hz : z.state = some (4, false)) : (f2_splitRestoreTM k).tm.step z = z := by
+    unfold MultiTapeTM.step
+    rw [hz]
+    change (controlAction 0 (some (4, false))).apply z = z
+    rw [controlAction_apply, moveInputPos_zero]
+    cases z
+    simp_all
+  obtain ⟨t, ht, hi, he⟩ := f2_catalogFirstEntry (f2_splitRestoreTM k).tm (4, false)
+    (f2_splitRestoreScan k w s 0) _ T hfix rfl hT
+  refine ⟨t, ?_, ht.trans hTle, hi, he⟩
+  by_contra h
+  have ht0 : t = 0 := by omega
+  have hstate := congrArg Cfg.state he
+  simp only [ht0, MultiTapeTM.runFrom_zero, f2_splitRestoreScan, Cfg.ofWords,
+    Option.some.injEq, Prod.mk.injEq] at hstate
+  have hf := congrArg (fun q : (f2_splitRestoreTM k).State => q.1.val) hstate
+  norm_num at hf
+
+/-- Native countdown acceptance is exactly equality of the consumed length
+and the original input length; overflow and short counts both reject. -/

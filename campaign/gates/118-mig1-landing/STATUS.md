@@ -30,8 +30,8 @@ The later Claude R2 partial delivery is preserved and independently reviewed off
 payload checksums,864 supplied attempts and418 carried source closures reconcile. Strict
 seal gaps remain; no source is adopted, and supplied runs do not replace native evidence.
 
-Human-dependent leaves: pairDiag/incFixed zero-space APIs, shared first-entry API, separate
-audit-agent choice, and exact redirect-space public-home/order exception. The two constant
+Seyoon approved the pairDiag/incFixed zero-space APIs, shared first-entry API and exact
+redirect-space home exception; Codex gate119 implementation/validation is underway. The two constant
 rows and redirect header remain three Catalog HOLDs. Effective seals cover completed scopes;
 the generated rewind matcher's ineffective attribute is disclosed. No new debt acceptance
-or broad global seal is inferred. Gate117 audit/merge of #230 precedes landing.
+or broad global seal is inferred. Gate117 is CLOSED and #230 is clear to merge; its merge and gate119 still precede landing.

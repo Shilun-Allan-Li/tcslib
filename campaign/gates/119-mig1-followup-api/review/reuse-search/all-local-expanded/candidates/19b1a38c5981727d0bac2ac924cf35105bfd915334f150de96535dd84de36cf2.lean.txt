@@ -1,0 +1,21 @@
+theorem computesFunInTime_pairConcat_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun z => match pairDecode z with
+          | some (a, b) => a ++ b
+          | none => [])
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (x.length + 1) :=
+  ⟨pairExtractTM true true, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    ((computesFunInTime_iff _ _ _).mp pairExtractTM_concat x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (ComputesInTime.spaceUsed_le ((computesFunInTime_iff _ _ _).mp pairExtractTM_concat x) t).trans
+      (by change 1 * (5 * (x.length + 1) + 1) ≤ 6 * (x.length + 1); omega)⟩
+
+/-- **P14 space row, pair duplication** (design §12
+R3; annotates `Turing.FinTM.computesFunInTime_pairDup`). The duplication
+encoder runs in constant work-tape space: both passes re-read the input
+tape, nothing is buffered.
+
+**Proof sketch.** The witness `Turing.pairDiagTM` (time `Turing.pairDiagTM_computes`) has no work tapes
+(`k = 0`), so `spaceUsed` is identically `0`. -/

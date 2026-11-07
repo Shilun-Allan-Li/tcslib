@@ -1,0 +1,20 @@
+theorem computesFunInTime_pairDup_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => pairEncode x x)
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (pairDiagTM_computes x).mono (by omega), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+
+/-- **P8 space row, threaded length check** (design
+§12 R3; annotates `Turing.FinTM.computesFunInTime_pairLenCheck`). The
+threaded length checker's space is dominated by the unary polynomial
+bank `C·(|a|+1)^e` it counts down against, plus the linear parse
+buffers.
+
+**Proof sketch.** Head-movement count per stage: the extractor buffers at
+most `n` cells, the unary generator's bank holds `C·(|a|+1)^e ≤
+C·(n+1)^e` cells, and the countdown walks that bank in place; boundary
+cells and the stage count go into `c`. -/
