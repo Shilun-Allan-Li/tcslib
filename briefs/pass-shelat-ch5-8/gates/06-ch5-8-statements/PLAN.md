@@ -96,7 +96,8 @@ provenance only; none is the source pin for these integrated audits.
    downstream module and reconcile final source/object fingerprints.
 3. **Complete final attestations and attachment reconciliation.** Reconcile the `sorry` census,
    axiom records, declarations, style/API checks and recorded exceptions at the same final
-   source. Locate/hash the required PDFs/excerpts, then select the full final source commit
+   source. Use the verified primary-source URLs/hashes and version limits; do not redistribute the
+   Goldreich drafts. Then select the full final source commit
    and records commit, build matching bundles/manifests and finish the four packs/prompts.
    This step has not been done by this internal draft.
 4. **User dispatches 06A–D.** The four audits may run in parallel after steps 1–3. Each returns

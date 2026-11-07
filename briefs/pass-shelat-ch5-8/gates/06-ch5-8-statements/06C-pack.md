@@ -25,6 +25,9 @@ correctness (for example `correct` fields and the phase lemma of `seqRep`). The 
   (book pp. 124–129). Its negligibility source tag [Gar26, §1.2] and existing probability API
   are context; source-attachment status is recorded separately, not implied here.
 
+Primary author versions and draft/published-edition comparison limits are in
+`source-manifest.md`; Goldreich access is through official links, not redistributed copies.
+
 ## Scope
 
 | Item | Where | State |
@@ -59,8 +62,9 @@ correctness (for example `correct` fields and the phase lemma of `seqRep`). The 
   `ZeroKnowledge/Interaction.lean`; efficient-prover proof structures expose `boundedP`.
 - `PerfectZK.seqRep` is `StatZK.seqRep` at zero error, via public `perfectZK_iff`.
   `PerfectZKAbort.seqRep` uses `PerfectZKAbort.statZK` and concludes **statistical** ZK at
-  error `Q(n)·2^{-n}`. Expected-time aborting simulation is truncated; the result does not
-  assert exact perfect ZK. Source tags are `[Gol01]`.
+  error `Q(n)·2^{-n}`. The formal premise uses strict-PPT aborting simulation; bounded independent retries yield
+  the error. PS10's expected-time wording is a distinct source convention; arbitrary expected-
+  time truncation is not asserted to preserve an exact conditional law. Source tags are `[Gol01]`.
 - The 3COL module fixes `Q(N)=2(N+1)^2`, proves negligibility of
   `(1 - 1/N + 2^{-N})^Q(N)`, and obtains its efficient-prover/computational-ZK corollary
   from `col_efficientProverProofErr`, `col_zk` and generic repetition statements. The count
@@ -106,7 +110,8 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
 5. **Thm 174.8.** Is "under CPA, plus SIM ⇒ IND for every attack" the strongest true reading,
    given [PSV07, Theorems 3 and 4, Corollary 1]? [PSV07] defers both proofs; **check the
    maintainer's two sketches** (`nmSecure_of_simNMSecure`, `simNMSecure_of_nmSecure_cpa`) as
-   arguments.
+   arguments. Distinguish PSV06's copy-to-bottom convention from PSV07's COPY marker;
+   check the complementary-pair copy-flag export and the L=0 case in the one-challenge model.
 6. **Thm 175.1.** Is `seqRep` the source's `Q(n)`-phase repetition, with fresh coins per phase?
    Is canonical `ProverBounded` faithful and supplied by the efficient-prover interfaces?
    Check the abort conclusion `StatZK` at error `Q(n)·2^{-n}`. For 3COL, check the repeated

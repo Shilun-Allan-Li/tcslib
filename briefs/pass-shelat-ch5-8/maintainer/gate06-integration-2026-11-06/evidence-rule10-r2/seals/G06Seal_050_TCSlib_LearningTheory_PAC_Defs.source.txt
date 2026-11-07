@@ -1,0 +1,428 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+import Lean
+import TCSlib.InformationTheory.Samples
+/- G06-HARNESS INSTALL G06Seal_050_TCSlib_LearningTheory_PAC_Defs -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "G06Seal_050_TCSlib_LearningTheory_PAC_Defs"
+  let mut requests : Array (String × String) := #[]
+  requests := requests ++ #[
+    ("TCSlib.InformationTheory.FinDist.HasMinEntropy", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist._sizeOf_1", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.collision", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.expect", "TCSlib.InformationTheory.Samples"),
+    ("TCSlib.InformationTheory.FinDist.iid", "TCSlib.InformationTheory.Samples"),
+    ("TCSlib.InformationTheory.FinDist.map", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.mk._flat_ctor", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.probTrue", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.prod", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.uniform", "TCSlib.InformationTheory.FinDist")
+  ]
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  let mut active : Nat := 0
+  let mut already : Nat := 0
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let before ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    if before == .irreducible then
+      already := already + 1
+    else
+      let id := Lean.mkIdent n
+      Lean.Elab.Command.elabCommand (← `(command| attribute [local irreducible] $id:ident))
+      active := active + 1
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed for {spelling}"
+    verified := verified + 1
+    Lean.logInfo m!"G06-NAME label={label} spelling={spelling} actual={n.toString} home={home} before={repr before} installed={repr installed}"
+  unless active + already == requests.size do throwError "G06-HARNESS {label}: installation count mismatch"
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-SEAL label={label} requested={requests.size} active={active} already_irreducible={already} verified={verified}"
+
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# PAC learning over a finite domain
+
+Probably approximately correct (PAC) learning in the realizable setting, information-theoretic
+(learners are arbitrary functions, with finite random coins): a concept class `C : I → X → Bool`
+over a finite domain `X`, the error of a hypothesis under a distribution, labelled samples of `m`
+independent examples, and PAC, weak and fixed-distribution learning.
+
+**Conventions.**
+- A concept is a function `X → Bool`, and the class is indexed, `C : I → X → Bool`, as in
+  [PS10, §8.1] (`{C_i}_{i ∈ I}`).
+- A learner with `m` examples and coins `ρ` is a function
+  `L : (Fin m → X × Bool) → ρ → (X → Bool)`; its coins are uniform on the finite type `ρ`.
+- Distributions are `InformationTheory.FinDist`: real-valued, on a finite type.
+
+**Deviations from [KV94, §1.2.1] and [SSBD14, Def 3.1].**
+- **Learners at fixed parameters, not learnability of a class.** `PACLearns C m L ε δ` is the
+  condition the sources place on one learner `L` at one sample size `m`, accuracy `ε` and
+  confidence `δ`. Their learnability asks for one algorithm that meets it for every
+  `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) on `m ≥ m_H(ε, δ)` examples, for some function `m_H`;
+  [KV94] also bounds the running time, and so `m`, by a polynomial in `1/ε`, `1/δ` and the
+  instance size. That class-level notion is not defined here: over a finite `X` every class has
+  it, since a learner that outputs a concept of the class consistent with its sample succeeds
+  once `m ≥ (|X| ln 2 + ln (1/δ)) / ε`. Impossibility is therefore stated per learner, at that
+  learner's `m`, `ε`, `δ` (`Prediction.lean`; for efficient learners, layer 2 and
+  [PS10, Thm 179.1]). This is faithful: a source learner run on `m ≥ m_H(ε, δ)` examples is
+  such an `L`.
+- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals. For
+  PAC learning the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`). The weak learner of
+  [KV94, §4.1, p. 74] has the edge `1/p(n, size(c))` and succeeds with probability
+  `1/q(n, size(c))`, which is the confidence `δ = 1 − 1/q(n, size(c))` here. The docstrings of
+  the predicates list the degenerate cases.
+- **Improper hypotheses.** A learner may output any `X → Bool` (representation-independent
+  learning). [KV94, §1.2.1] requires `h ∈ C`; [SSBD14, Def 3.1] does not. A refutation is
+  stronger without the restriction.
+- **Coins.** A learner's coins are uniform on a finite type. This models every fair-coin
+  algorithm with bounded running time ([KV94]), and [SSBD14]'s deterministic learners are the
+  case `ρ = Unit`. A learner that needs an irrational mixing probability is not of this form. At
+  a fixed `D` and an exactly tight `δ` this can matter, so a statement `¬ ∃ ρ L, …` rules out
+  fair-coin learners, not every randomized learner.
+- **Finite domains.** `X` is a finite type, so the "instance size" of [KV94] is not modelled.
+  With `X` empty there is no distribution on `X`, so every PAC statement holds vacuously.
+
+## Main definitions
+
+* `PAC.err D h c`: the error `Pr_{x ← D}[h x ≠ c x]` of `h` against the target `c`.
+* `PAC.label c s`: the sample `s` labelled by `c`.
+* `PAC.accuracyProb D c m L ε`: the probability, over `m` examples from `D` and the coins, that
+  the learner's hypothesis has error at most `ε`.
+* `PAC.PACLearnsUnder D C m L ε δ`, `PAC.PACLearns C m L ε δ`: the learner `L` PAC-learns `C`
+  under a fixed distribution and under every distribution, at fixed `m`, `ε`, `δ`.
+* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: the accuracy/confidence condition at accuracy
+  `½ − γ` (edge `γ`) and confidence `δ`, at fixed `m`, `γ`, `δ`; their docstrings compare it with
+  weak learning in [KV94, §4.1].
+
+## Main results
+
+* `PAC.err_nonneg`, `PAC.err_le_one`, `PAC.err_self`, `PAC.err_not`: basic properties; `err_not`
+  says the complementary hypothesis has the complementary error.
+* `PAC.pacLearns_const`: the constant learner PAC-learns a class with one concept from no
+  examples, at every `ε, δ ≥ 0` (non-vacuity).
+* `PAC.not_pacLearnsUnder_of_neg`: no learner reaches a negative accuracy with confidence
+  `δ < 1` (a witness outside the sources' range).
+* `PAC.not_pacLearnsUnder_const_pair`: with no examples, no learner learns the two constant
+  concepts on a one-point domain at accuracy `ε < 1` and confidence `δ < ½` (a witness inside
+  the sources' range).
+
+## References
+
+* [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
+  1994, §1.2 (PAC learning), §4.1 (weak learning, p. 74) and §4.2 (confidence amplification,
+  pp. 76–77).
+* [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
+  Algorithms*, Cambridge University Press, 2014, ch. 3 (Definition 3.1).
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §8.1 (book p. 179).
+-/
+
+namespace TCSlib.LearningTheory.PAC
+
+open TCSlib.InformationTheory Finset
+
+variable {X I ρ : Type*} [Fintype X]
+
+/-! ### Error and samples -/
+
+/-- The **error** of the hypothesis `h` against the target concept `c` under `D`:
+`err_D(h, c) = Pr_{x ← D}[h x ≠ c x]` [KV94, §1.2]. -/
+noncomputable def err (D : FinDist X) (h c : X → Bool) : ℝ := D.probTrue fun x => h x != c x
+
+/-- The error is the probability of disagreement: `err_D(h, c) = Pr_{x ← D}[h x ≠ c x]`. -/
+theorem err_eq (D : FinDist X) (h c : X → Bool) :
+    err D h c = D.probTrue (fun x => h x != c x) := rfl
+
+/-- The error is nonnegative. -/
+theorem err_nonneg (D : FinDist X) (h c : X → Bool) : 0 ≤ err D h c := by
+  rw [err_eq, FinDist.probTrue_eq]
+  exact Finset.sum_nonneg fun x _ => D.nonneg x
+
+/-- The error is at most `1`. -/
+theorem err_le_one (D : FinDist X) (h c : X → Bool) : err D h c ≤ 1 := by
+  rw [err_eq, FinDist.probTrue_eq, ← D.sum_prob]
+  exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+    fun x _ _ => D.nonneg x
+
+/-- The target has error `0` against itself. -/
+theorem err_self (D : FinDist X) (c : X → Bool) : err D c c = 0 := by
+  rw [err_eq, FinDist.probTrue_eq]
+  simp
+
+/-- The complementary hypothesis has the complementary error:
+`err_D(¬h, c) = 1 − err_D(h, c)`. -/
+theorem err_not (D : FinDist X) (h c : X → Bool) :
+    err D (fun x => !h x) c = 1 - err D h c := by
+  rw [err_eq, err_eq, ← FinDist.probTrue_not]
+  congr 1
+  funext x
+  cases h x <;> cases c x <;> rfl
+
+/-- The **labelled sample** `((x_j, c(x_j)))_j` of the examples `s` under the target `c`. -/
+def label (c : X → Bool) {m : ℕ} (s : Fin m → X) : Fin m → X × Bool := fun j => (s j, c (s j))
+
+omit [Fintype X] in
+/-- The `j`-th labelled example is `(s j, c (s j))`. -/
+theorem label_apply (c : X → Bool) {m : ℕ} (s : Fin m → X) (j : Fin m) :
+    label c s j = (s j, c (s j)) := rfl
+
+/-! ### PAC learning -/
+
+variable [Fintype ρ] [Nonempty ρ]
+
+/-- The **accuracy probability** of the learner `L` with `m` examples: over `m` independent
+examples from `D`, labelled by the target `c`, and uniform coins, the probability that the
+hypothesis has error at most `ε`. -/
+noncomputable def accuracyProb (D : FinDist X) (c : X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (ε : ℝ) : ℝ :=
+  ((D.iid m).prod (FinDist.uniform ρ)).probTrue
+    fun sr => decide (err D (L (label c sr.1) sr.2) c ≤ ε)
+
+/-- The accuracy probability is the probability, over examples `s ← D^m` and uniform coins
+`r ← ρ`, of the event `err_D(L(s labelled by c, r), c) ≤ ε`. -/
+theorem accuracyProb_eq (D : FinDist X) (c : X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (ε : ℝ) :
+    accuracyProb D c m L ε = ((D.iid m).prod (FinDist.uniform ρ)).probTrue
+      (fun sr => decide (err D (L (label c sr.1) sr.2) c ≤ ε)) := rfl
+
+/-- **PAC learning under the distribution `D`** (fixed-distribution learning), by the learner `L`
+at fixed `m`, `ε`, `δ`: for every concept `C i` of the class, with probability at least `1 − δ`
+over `m` examples from `D` labelled by `C i` and the learner's coins, the hypothesis has error at
+most `ε` under `D`. This is the fixed-distribution variant of [KV94, §1.2.1] /
+[SSBD14, Def 3.1] (the case [PS10, §8.1] needs); it is weaker than distribution-free learning.
+
+The parameters are unrestricted reals; the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`).
+Outside that range the predicate is degenerate: every learner satisfies it when `δ ≥ 1`, when
+`ε ≥ 1` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it when `I` is nonempty and
+either `δ < 0`, or `ε < 0` and `δ < 1`. -/
+def PACLearnsUnder (D : FinDist X) (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) : Prop :=
+  ∀ i, 1 - δ ≤ accuracyProb D (C i) m L ε
+
+/-- `PACLearnsUnder D C m L ε δ` holds iff `1 − δ ≤ accuracyProb D (C i) m L ε` for every
+index `i`. -/
+theorem pacLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) :
+    PACLearnsUnder D C m L ε δ ↔ ∀ i, 1 - δ ≤ accuracyProb D (C i) m L ε := Iff.rfl
+
+/-- **A PAC learner at fixed parameters** [KV94, §1.2.1], [SSBD14, Def 3.1]: for every
+distribution `D` on `X` and every concept `C i`, with probability at least `1 − δ` over `m`
+examples from `D` labelled by `C i` and the learner's coins, the hypothesis has error at most `ε`
+under `D`. The sources require this of one algorithm for every `ε, δ` and every large enough `m`.
+Here `m`, `ε`, `δ` are fixed, `ε` and `δ` are unrestricted reals, the hypothesis may be any
+`X → Bool`, and the coins are uniform on the finite type `ρ` (module deviations).
+
+Outside the sources' range `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) the predicate is degenerate: every
+learner satisfies it when `δ ≥ 1`, when `ε ≥ 1` and `δ ≥ 0`, or when `I` or `X` is empty; no
+learner satisfies it when `I` and `X` are nonempty and either `δ < 0`, or `ε < 0` and `δ < 1`. -/
+def PACLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) :
+    Prop :=
+  ∀ D : FinDist X, PACLearnsUnder D C m L ε δ
+
+/-- `PACLearns C m L ε δ` holds iff `PACLearnsUnder D C m L ε δ` holds for every distribution
+`D` on `X`. -/
+theorem pacLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
+    (ε δ : ℝ) : PACLearns C m L ε δ ↔ ∀ D, PACLearnsUnder D C m L ε δ := Iff.rfl
+
+/-- **The weak-learning condition under `D`**, for the learner `L` at fixed `m`, `γ`, `δ`: for
+every concept `C i`, with probability at least `1 − δ` over `m` examples from `D` labelled by
+`C i` and the learner's coins,
+the hypothesis has error at most `½ − γ` under `D`, so it beats a fair coin by the edge `γ`. This
+is `PACLearnsUnder` at accuracy `½ − γ`, an accuracy/confidence condition at fixed parameters.
+
+**Comparison with [KV94, §4.1, p. 74].** There a weak learner must, under every distribution,
+output with probability at least `1/q(n, size(c))` a hypothesis of error at most
+`½ − 1/p(n, size(c))`, for polynomials `p` and `q`. On a slice of the class where the instance
+dimension `n` and the target size are fixed (so one sample count `m`, edge and confidence serve
+every concept `C i` of the slice), such a learner run on a sufficient `m` satisfies this predicate
+at the edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`; fixing `D` only
+weakens that requirement. Across target sizes, common values must first be obtained (e.g. from
+a bound on the size). It need not satisfy the
+predicate at a smaller `δ`: for the same learner, a smaller `δ` is a stronger requirement, not a
+relaxation. Asking a weak learner for every `δ` is the confidence-amplified convention, not
+[KV94, §4.1]'s definition: confidence amplification ([KV94, §4.2, pp. 76–77]) builds a different
+learner, with its own sample count, running time and edge.
+
+Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it
+when `I` is nonempty and either `δ < 0`, or `γ > ½` and `δ < 1`. -/
+def WeakLearnsUnder (D : FinDist X) (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) : Prop :=
+  PACLearnsUnder D C m L (1 / 2 - γ) δ
+
+/-- `WeakLearnsUnder D C m L γ δ` holds iff `PACLearnsUnder D C m L (½ − γ) δ`: PAC learning
+under `D` at accuracy `½ − γ`. -/
+theorem weakLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
+    (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
+    WeakLearnsUnder D C m L γ δ ↔ PACLearnsUnder D C m L (1 / 2 - γ) δ := Iff.rfl
+
+/-- **The weak-learning condition**, for the learner `L` at fixed `m`, `γ`, `δ`: for every
+concept `C i` and under every distribution `D` on `X`, with probability at least `1 − δ` the
+hypothesis has error at most
+`½ − γ` (`WeakLearnsUnder`), an accuracy/confidence condition at fixed parameters. A weak
+learner of [KV94, §4.1, p. 74], which outputs with probability at least `1/q(n, size(c))` a
+hypothesis of error at most `½ − 1/p(n, size(c))`, satisfies it on a sufficient sample count `m`
+at its certified edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`. It need
+not satisfy it at a smaller `δ`. Asking for every `δ` is the confidence-amplified convention, which
+concerns a different learner, built by confidence amplification ([KV94, §4.2, pp. 76–77]; see
+`WeakLearnsUnder`, including the uniformity over the concepts `C i`).
+
+Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` or `X` is empty; no learner
+satisfies it when `I` and `X` are nonempty and either `δ < 0`, or `γ > ½` and `δ < 1`. -/
+def WeakLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
+    Prop :=
+  ∀ D : FinDist X, WeakLearnsUnder D C m L γ δ
+
+/-- `WeakLearns C m L γ δ` holds iff `WeakLearnsUnder D C m L γ δ` holds for every distribution
+`D` on `X`. -/
+theorem weakLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
+    (γ δ : ℝ) : WeakLearns C m L γ δ ↔ ∀ D, WeakLearnsUnder D C m L γ δ := Iff.rfl
+
+/-! ### Non-vacuity -/
+
+/-- **The constant learner PAC-learns a class with one concept from no examples** (non-vacuity
+of `PACLearns`): if every `C i` is `c₀`, the learner that outputs `c₀` has error `0`, so it learns
+at every accuracy `ε ≥ 0` and confidence `δ ≥ 0`. -/
+theorem pacLearns_const {C : I → X → Bool} {c₀ : X → Bool} (hC : ∀ i, C i = c₀) {ε δ : ℝ}
+    (hε : 0 ≤ ε) (hδ : 0 ≤ δ) :
+    PACLearns C 0 (fun (_ : Fin 0 → X × Bool) (_ : ρ) => c₀) ε δ := by
+  intro D i
+  rw [accuracyProb_eq, hC i]
+  have h : (fun sr : (Fin 0 → X) × ρ =>
+      decide (err D ((fun (_ : Fin 0 → X × Bool) (_ : ρ) => c₀) (label c₀ sr.1) sr.2) c₀ ≤ ε)) =
+      fun _ => true := by
+    funext sr
+    simp only [err_self, hε, decide_true]
+  rw [h, FinDist.probTrue_true]
+  linarith
+
+/-- **No learner reaches a negative accuracy with confidence `δ < 1`**: the error is
+nonnegative, so the accuracy event is empty and its probability `0 < 1 − δ`. So
+`PACLearnsUnder` fails at every negative accuracy (a witness outside the sources' range). -/
+theorem not_pacLearnsUnder_of_neg (D : FinDist X) {C : I → X → Bool} [Nonempty I] {m : ℕ}
+    (L : (Fin m → X × Bool) → ρ → X → Bool) {ε δ : ℝ} (hε : ε < 0) (hδ : δ < 1) :
+    ¬ PACLearnsUnder D C m L ε δ := by
+  intro h
+  obtain ⟨i⟩ := ‹Nonempty I›
+  have h1 := h i
+  rw [accuracyProb_eq] at h1
+  have h0 : (fun sr : (Fin m → X) × ρ => decide (err D (L (label (C i) sr.1) sr.2) (C i) ≤ ε)) =
+      fun _ => false := by
+    funext sr
+    have := err_nonneg D (L (label (C i) sr.1) sr.2) (C i)
+    simp only [decide_eq_false_iff_not, not_le]
+    linarith
+  rw [h0, FinDist.probTrue_eq] at h1
+  simp at h1
+  linarith
+
+/-- **With no examples, no learner tells two concepts apart** (non-vacuity in the sources'
+range): on a one-point domain with the two constant concepts, every learner with `m = 0` fails to
+PAC-learn them under the distribution `D`, at every accuracy `ε < 1` and confidence `δ < ½`.
+
+**Proof sketch.** With no examples the labelled sample is the same for both targets, so the
+hypothesis depends on the coins only. Its error against the constant `b` is `0` when it outputs
+`b` and `1` otherwise, so on every draw it is accurate (error at most `ε < 1`) for at most one of
+the two targets. The two accuracy probabilities therefore sum to at most `1`, while learning
+would make each at least `1 − δ > ½`. -/
+theorem not_pacLearnsUnder_const_pair (D : FinDist Unit)
+    (L : (Fin 0 → Unit × Bool) → ρ → Unit → Bool) {ε δ : ℝ} (hε : ε < 1) (hδ : δ < 1 / 2) :
+    ¬ PACLearnsUnder D (fun (b : Bool) (_ : Unit) => b) 0 L ε δ := by
+  intro h
+  -- an accurate hypothesis agrees with the target at the single point
+  have hagree : ∀ h' c : Unit → Bool, err D h' c ≤ ε → h' () = c () := by
+    intro h' c hle
+    by_contra hne
+    have hall : (fun x => h' x != c x) = fun _ => true := by
+      funext x
+      cases x
+      simpa using hne
+    rw [err_eq, hall, FinDist.probTrue_true] at hle
+    linarith
+  -- with no examples, the labelled sample does not depend on the target
+  have hlab : ∀ (c : Unit → Bool) (s : Fin 0 → Unit), label c s = label (fun _ => true) s :=
+    fun _ _ => Subsingleton.elim _ _
+  -- on every draw, at most one of the two targets is learned accurately
+  have hsum :
+      accuracyProb D (fun _ => true) 0 L ε + accuracyProb D (fun _ => false) 0 L ε ≤ 1 := by
+    rw [accuracyProb_eq, accuracyProb_eq, FinDist.probTrue_eq_expect,
+      FinDist.probTrue_eq_expect, ← FinDist.expect_add]
+    calc _ ≤ ((D.iid 0).prod (FinDist.uniform ρ)).expect (fun _ => 1) :=
+          FinDist.expect_le_expect _ fun sr => ?_
+      _ = 1 := FinDist.expect_const _ _
+    dsimp only
+    rw [hlab (fun _ => false)]
+    generalize L (label (fun _ => true) sr.1) sr.2 = g
+    by_cases ht : err D g (fun _ => true) ≤ ε
+    · have hf : ¬ err D g (fun _ => false) ≤ ε := fun hf => by
+        have := (hagree _ _ ht).symm.trans (hagree _ _ hf)
+        simp at this
+      simp [ht, hf]
+    · by_cases hf : err D g (fun _ => false) ≤ ε <;> simp [ht, hf]
+  have h1 : 1 - δ ≤ accuracyProb D (fun _ => true) 0 L ε := h true
+  have h0 : 1 - δ ≤ accuracyProb D (fun _ => false) 0 L ε := h false
+  linarith
+
+end TCSlib.LearningTheory.PAC
+/- G06-HARNESS EOF-VERIFY G06Seal_050_TCSlib_LearningTheory_PAC_Defs -/
+set_option maxHeartbeats 0
+run_cmd do
+  let label : String := "G06Seal_050_TCSlib_LearningTheory_PAC_Defs"
+  let mut requests : Array (String × String) := #[]
+  requests := requests ++ #[
+    ("TCSlib.InformationTheory.FinDist.HasMinEntropy", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist._sizeOf_1", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.collision", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.expect", "TCSlib.InformationTheory.Samples"),
+    ("TCSlib.InformationTheory.FinDist.iid", "TCSlib.InformationTheory.Samples"),
+    ("TCSlib.InformationTheory.FinDist.map", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.mk._flat_ctor", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.probTrue", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.prod", "TCSlib.InformationTheory.FinDist"),
+    ("TCSlib.InformationTheory.FinDist.uniform", "TCSlib.InformationTheory.FinDist")
+  ]
+  let env ← Lean.getEnv
+  let mut catalog : Std.HashMap String (Array Lean.Name) := {}
+  let mut verified : Nat := 0
+  for (n, _) in env.constants.map₁.toList do
+    let some mi := env.getModuleIdxFor? n | continue
+    unless (`TCSlib).isPrefixOf env.header.moduleNames[mi.toNat]! do continue
+    let ns := (catalog[n.toString]?).getD #[]
+    catalog := catalog.insert n.toString (ns.push n)
+  for (spelling, expectedHome) in requests do
+    let ns := (catalog[spelling]?).getD #[]
+    unless ns.size == 1 do throwError "G06-HARNESS {label}: absent/ambiguous imported name {spelling}; candidates={ns.size}"
+    let n := ns[0]!
+    let some mi := env.getModuleIdxFor? n | throwError "G06-HARNESS {label}: no home for {spelling}"
+    let home := env.header.moduleNames[mi.toNat]!
+    unless home.toString == expectedHome do throwError "G06-HARNESS {label}: home differs for {spelling}: {home}"
+    let some ci := env.find? n | throwError "G06-HARNESS {label}: no constant for {spelling}"
+    unless ci.isDefinition do throwError "G06-HARNESS {label}: requested nondefinition {spelling}"
+    let installed ← Lean.Elab.Command.liftCoreM <| Lean.getReducibilityStatus n
+    unless installed == .irreducible do throwError "G06-HARNESS {label}: seal not installed at EOF for {spelling}"
+    verified := verified + 1
+  unless verified == requests.size do throwError "G06-HARNESS {label}: verification count mismatch"
+  Lean.logInfo m!"G06-SEAL-END label={label} requested={requests.size} verified={verified}"
+

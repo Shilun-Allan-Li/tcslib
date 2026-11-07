@@ -16,8 +16,9 @@ special encryption, of garbling and of Yao; the composition's phase lemmas). The
 **Sources required at issue (availability is not yet attested):** [PS10] R. Pass, a. shelat, *A Course in Cryptography*, 3rd ed.,
 January 2010 (book page = PDF page − 12), §6.2, book pp. 154–164. [Gol04] O. Goldreich,
 *Foundations of Cryptography, Volume 2*, §7.3 (including Theorem 7.3.3) and Appendix C.1.
-Locate and supply the source/excerpts for these comparisons; this draft does not replace
-access to the cited source with standard knowledge.
+Official author drafts are located and locally verified in `source-manifest.md`. Supply
+their official URLs/access notes, not redistributed Goldreich PDF copies or book excerpts.
+The author versions and published-edition comparison limits must be disclosed.
 
 ## Scope
 
@@ -79,7 +80,9 @@ at least **three adversarial instantiations**. Do not give a blanket approval.
    collection-derived canonicity and the canonical-only `henc` interface correct? Does
    `Collection.apply_of_decD` supply the specification correctness uses? Are the retained
    `hH` and **enhanced** hard-core hypothesis (`EnhancedHardCore`, with sampler coins visible)
-   correctly propagated to `yaoProtocol_hbcSecure`? Compare with [Gol04, App. C.1].
+   correctly propagated to `yaoProtocol_hbcSecure`? Appendix C.1.1 defines enhanced inversion;
+   compare the predicate motivation with §7.3.2's OT argument (draft pp. 639–641), rather than
+   treating the formal Boolean predicate as a literal definition from Appendix C.1.
 3. **Garbling (Alg 157.2, Constr 158.a, Claims 157.a, 159.a).** Is `nestedSpecial` Alg 157.2
    applied in layers? Is `Good` the right notion? Is the bound of `garbling_good_whp` stated over
    the right distribution?
