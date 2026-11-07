@@ -1,0 +1,58 @@
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:129:4: error: Type mismatch: After simplification, term
+  aRun
+ has type
+  MultiTapeTM.runFrom (@MultiTapeTM.initCfg (K + 4) P Bool A z) T = d
+but is expected to have type
+  MultiTapeTM.runFrom (@MultiTapeTM.initCfg (0 + (K + 2 + 2)) P Bool (⋯.mpr A) z) T = ⋯.mpr d
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:131:4: error: Type mismatch: After simplification, term
+  hexit
+ has type
+  d.state = some finish
+but is expected to have type
+  (⋯.mpr d).state = some finish
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:133:4: error: Type mismatch: After simplification, term
+  aCut
+ has type
+  ∀ u < T, (MultiTapeTM.runFrom (@MultiTapeTM.initCfg (K + 4) P Bool A z) u).state ≠ some finish
+but is expected to have type
+  ∀ u < T, (MultiTapeTM.runFrom (@MultiTapeTM.initCfg (0 + (K + 2 + 2)) P Bool (⋯.mpr A) z) u).state ≠ some finish
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:137:4: error: Type mismatch: After simplification, term
+  hcfg
+ has type
+  Cfg.mapState (fun x => inj entry false) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c
+but is expected to have type
+  Cfg.mapState (fun x => inj entry false) (⋯.mpr d) =
+    embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:139:4: error: Type mismatch: After simplification, term
+  hB
+ has type
+  MultiTapeTM.spaceUsed (@MultiTapeTM.initCfg (K + 4) P Bool A z) T ≤ B
+but is expected to have type
+  MultiTapeTM.spaceUsed (@MultiTapeTM.initCfg (0 + (K + 2 + 2)) P Bool (⋯.mpr A) z) T ≤ B
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:145:4: error: Type mismatch: After simplification, term
+  hr
+ has type
+  MultiTapeTM.runFrom
+      (@MultiTapeTM.initCfg (0 + (K + 2 + 2)) (P ⊕ V) Bool (startupLoopTM (⋯.mpr A) finish H (inj entry false)) z)
+      (T + 1 + t) =
+    Cfg.mapState Sum.inr (embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] (MultiTapeTM.runFrom c t))
+but is expected to have type
+  MultiTapeTM.runFrom
+      (@MultiTapeTM.initCfg (K + 4) (P ⊕ V) Bool (⋯.mp (startupLoopTM (⋯.mpr A) finish H (inj entry false))) z)
+      (T + 1 + t) =
+    Cfg.mapState Sum.inr (MultiTapeTM.runFrom c t)
+/private/tmp/tcslib-f6-final-seam-n2czqzxr/Seam_sealed_v1.lean:146:4: error: Type mismatch: After simplification, term
+  hs
+ has type
+  MultiTapeTM.spaceUsed
+      (@MultiTapeTM.initCfg (0 + (K + 2 + 2)) (P ⊕ V) Bool (startupLoopTM (⋯.mpr A) finish H (inj entry false)) z)
+      (T + 1 + t) ≤
+    B + (K + 2 + 2) * S
+but is expected to have type
+  MultiTapeTM.spaceUsed
+      (@MultiTapeTM.initCfg (K + 4) (P ⊕ V) Bool (⋯.mp (startupLoopTM (⋯.mpr A) finish H (inj entry false))) z)
+      (T + 1 + t) ≤
+    B + (K + 4) * S
+'F6SeamPreship.last_ruler_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.full_bank_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.conditional_final_seam' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

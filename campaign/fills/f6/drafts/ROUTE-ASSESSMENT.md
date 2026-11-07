@@ -42,8 +42,10 @@ No final packet or F6 fill is issued by this clarification.
 - Provisional consumer head: `74494d669ad9f8f926844f9280812449f57263d6` (#229).
 - Provisional campaign base: `3555163f40d9c101a2ef4e81407c1bda58fe5ca4`.
 - Existing snapshot used for the small component checks: `oleans-mlin2`, at the
-  provisional consumer head. The root maintainer's replay log records two successful
-  modules and Hierarchy's one unchanged admission. This drafting task did not rerun it.
+  provisional consumer head, for the historical initial probes only. The root
+  maintainer’s replay log records two successful modules and Hierarchy’s one
+  unchanged admission. The newer v2–v7 bounded probes use the approved-reader
+  API1160 / complete mra2 context, not that historical snapshot.
 - **Final base, source blobs, gate number, order lists, cache roots, screen population,
   bundle and checksum remain unissued.** Recompute on the merged prerequisite tree.
 - Gate 112 is closed. Its four proved component probes remain useful; its admitted
@@ -100,7 +102,7 @@ authorization to edit their homes or to unfold their definitions in Hierarchy.
 | Idle extra bank | `embedEmitTM_runFrom`, `embedEmitTM_visitedByTapeHead`, `_frame`, `embedEmitCfg_eq` / `_mapState_eq` | An unused bank head visits its singleton starting cell. Avoid re-deriving a generic embedding/frame ledger. |
 | Loop under H5 | `exists_rulerHostTM`, generated `rulerHostCfg_*` fields | Instantiate the length/drop relation at `ℓ`, now on `x`. Halting/output and visited-set clauses suffice here; no live-anchor transfer out of this final host is needed. |
 | Final seam + space | `startupLoopTM_runFrom`, `startupLoopTM_spaceUsed_le` | Actual `aRun`, `hexit`, `aCut`, layout equality `hcfg`, prefix bound `hB`, `S≥1`, and hosted per-tape bounds `hloop`. These must be hypotheses in a conditional probe, or proved for the actual F6 witnesses. |
-| Source-bundle conversion | `FinTM.computesInTime_iff`, `CodeTM.toFinTM_k`; possibly `EffectiveMachineCode.toK_toFinTM` / `_machine` | The raw/source bundle bridge still needs a Rule-10-safe reader or a verified alternate public route; see diagnostic below. |
+| Source-bundle conversion | Actual `CodeTM.toFinTM_eq`, `FinTM.computesInTime_iff`, `CodeTM.one_le_spaceUsed` | Approved reader implemented in #230; actual computation/arbitrary-output/space conversion passes under opacity in v2/v5/v7. Gate117/merge remains pending; no further reader decision is requested. |
 | Addend-free absorption | `CodeTM.one_le_spaceUsed`, `length_bits_le_self`, `MultiTapeTM.spaceUsed_le_mul_succ`, space/visited monotonicity and card lemmas | Obtain `1≤s` before dividing or absorbing constants. The final `C_α` is independent of payload, time, output and budget. |
 
 ## Direct live-anchor gap avoided by existing returning embedding
@@ -149,7 +151,13 @@ the returning-embedding route replaces that proposal. The final brief must name
 this actual composition rather than commission either a false cut or unnecessary
 new public API.
 
-## Rule-10 diagnostic: coded bundle to raw source
+## Historical Rule-10 diagnostic: coded bundle to raw source
+
+**Superseded technical diagnostic.** The following records the initial reader
+gap/proposal before approval. Seyoon approved `CodeTM.toFinTM_eq`; #230 implements
+it and the later v2/v5/v7 probes consume the actual theorem under opacity.
+The historical request below is not a new pending API choice. Only its gate/merge
+remains before issue; do not use the hypothetical-reader probe as final evidence.
 
 The frozen target supplies `(c.decode α).toFinTM` computations and space, while
 `exists_selfStartupTM` installs the raw `(c.decode α).tm`. `CodeTM.toFinTM` currently
@@ -196,8 +204,9 @@ leave the other `K` bank tapes idle, then apply H5 to that entire bank. The star
 host and final loop host both have `N` tapes and the same last ruler. Use the generic
 `startupLoopTM` seam with zero outer frame (`k:=K+2`, outer `K:=0`) and an explicit
 endpoint equality. The ready-made `suffixRulerCfg_embed` is then comparison evidence,
-not the literal layout lemma for this assembly. Alternatively relocate/permutate
-the hosted startup with the existing emitting embedding and prove its frame.
+not the literal layout lemma for this assembly. The active unissued brief uses
+the last-ruler full-bank assembly above. The earlier alternative of relocating
+the startup is not a prescribed second route or an authorized new host.
 
 The last-ruler assembly above must have its actual component/layout types and
 conditional seam applications checked before dispatch. Its concrete prefix `aRun`,

@@ -1,0 +1,7 @@
+An inline read-only evidence checker failed to parse before executing any statements.
+Retained diagnostic:
+  File "<stdin>", line 19
+    assert set(counts)==set(n for n,_in decls) if False else True
+                                        ^^^^^
+SyntaxError: 'in' expected after for-loop variables
+Corrected checker is verify.py. This was not a Lean run.
