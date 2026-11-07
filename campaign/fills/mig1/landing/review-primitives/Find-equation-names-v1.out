@@ -1,0 +1,8 @@
+Turing.solveSplit.eq_def (C e n : ℕ) :
+  Turing.solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+Turing.solveSplit.eq_1 (C e n : ℕ) :
+  Turing.solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+Turing.solveSplitWith.eq_def (f : ℕ → ℕ) (n : ℕ) :
+  Turing.solveSplitWith f n = List.find? (fun i => i + f i == n) (List.range (n + 1))
+Turing.solveSplitWith.eq_1 (f : ℕ → ℕ) (n : ℕ) :
+  Turing.solveSplitWith f n = List.find? (fun i => i + f i == n) (List.range (n + 1))

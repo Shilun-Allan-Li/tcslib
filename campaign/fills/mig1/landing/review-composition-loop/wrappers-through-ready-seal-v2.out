@@ -1,0 +1,21 @@
+/private/tmp/tcslib-mig1-comp-loop-f3zow3xi/wrappers-through-ready-seal-v2.lean:837:32: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (Cfg.init ?q₀ ?input).workTapePos ?x✝
+in the target expression
+  (Cfg.init V.q₀ x).workTapePos = fun x => 0
+
+D M₁ M₂ : FinTM Bool
+x : List Bool
+c : Cfg D.k Bool D.State x
+b : Bool
+V : MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) := ⋯.mpr (⋯.mpr (M₁.branchTM M₂ b).tm)
+⊢ (Cfg.init V.q₀ x).workTapePos = fun x => 0
+/private/tmp/tcslib-mig1-comp-loop-f3zow3xi/wrappers-through-ready-seal-v2.lean:841:2: error: Type mismatch: After simplification, term
+  h
+ has type
+  (D.timedBranchCfg M₁ M₂ (@MultiTapeTM.initCfg (M₁.k + M₂.k) (M₁.State ⊕ M₂.State) Bool V x) c.workTapes c.workTapePos
+        b).workTapePos =
+    D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0
+but is expected to have type
+  (D.timedBranchCfg M₁ M₂ (@MultiTapeTM.initCfg (M₁.k + M₂.k) (M₁.State ⊕ M₂.State) Bool (M₁.branchTM M₂ b).tm x)
+        c.workTapes c.workTapePos b).workTapePos =
+    D.timedHeads M₁ M₂ c.workTapePos (fun x => 0) 0

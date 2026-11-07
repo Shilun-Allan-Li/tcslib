@@ -1,0 +1,20 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+
+/-! Expected reducibility refusals for the complete direct foreign-abbreviation inventory.
+No unsafe reducibility option is enabled. These are excluded from the operational seal. -/
+
+attribute [local irreducible] Turing.Action.output
+attribute [local irreducible] Turing.Action.state
+attribute [local irreducible] Turing.Action.workTapes
+attribute [local irreducible] Turing.Cfg.Halted
+attribute [local irreducible] Turing.Cfg.inputPos
+attribute [local irreducible] Turing.Cfg.output
+attribute [local irreducible] Turing.Cfg.state
+attribute [local irreducible] Turing.Cfg.workTapePos
+attribute [local irreducible] Turing.Cfg.workTapes
+attribute [local irreducible] Turing.FinTM.State
+attribute [local irreducible] Turing.FinTM.k
+attribute [local irreducible] Turing.FinTM.rewind_scan.match_1
+attribute [local irreducible] Turing.FinTM.tm
+attribute [local irreducible] Turing.MultiTapeTM.q₀
+attribute [local irreducible] Turing.MultiTapeTM.tr

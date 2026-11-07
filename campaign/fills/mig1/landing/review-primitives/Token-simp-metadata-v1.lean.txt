@@ -1,0 +1,8 @@
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let st ← liftTermElabM getSimpTheorems
+  for (n, _) in env.constants.toList do
+    if (`Turing.unaryTokenSplit).isPrefixOf n then
+      logInfo m!"TOKEN_SIMP|{n}|lemma={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"

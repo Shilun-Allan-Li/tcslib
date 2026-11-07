@@ -1,0 +1,403 @@
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:10:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:12:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:15:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:17:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:19:95: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:21:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:23:80: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  []
+
+x : List Bool
+⊢ (Cfg.init () x).output = []
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:24:96: error: Tactic `rfl` failed: The left-hand side
+  fun x => (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  fun x => []
+
+⊢ (fun x => (Cfg.init () x).output) = fun x => []
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:27:38: error: Tactic `rfl` failed: The left-hand side
+  (a.apply c).state
+is not definitionally equal to the right-hand side
+  a.state
+
+a : Action 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ (a.apply c).state = a.state
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:29:29: error: Tactic `rfl` failed: The left-hand side
+  fun a c => (a.apply c).state
+is not definitionally equal to the right-hand side
+  fun a x => a.state
+
+⊢ (fun a c => (a.apply c).state) = fun a x => a.state
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:32:83: error: Tactic `rfl` failed: The left-hand side
+  { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+q : Option Unit
+w : Fin 1 → ℤ → Option Bool
+h : Fin 1 → ℤ
+⊢ { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol = none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:34:97: error: Tactic `rfl` failed: The left-hand side
+  fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => none
+
+⊢ (fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol) =
+    fun x x_1 x_2 => none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:37:64: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+c : Cfg 1 Bool Unit []
+i : Fin 1
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:39:53: error: Tactic `rfl` failed: The left-hand side
+  fun c i => c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  fun c i => c.workTapes i (c.workTapePos i)
+
+⊢ (fun c i => c.workTapeSymbols i) = fun c i => c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:41:51: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 SignType.zero
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 SignType.zero = 1
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:42:101: error: Tactic `rfl` failed: The left-hand side
+  (fun (m : SignType) => moveInputPos 1 m) SignType.zero
+is not definitionally equal to the right-hand side
+  (fun (x : Unit) => 1) ()
+
+⊢ (fun m => moveInputPos 1 m) SignType.zero = (fun x => 1) ()
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:45:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:47:66: error: Tactic `rfl` failed: The left-hand side
+  fun M x y t => M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+⊢ (fun M x y t => M.ComputesInTime x y t) = fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:50:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:52:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:55:64: error: Tactic `rfl` failed: The left-hand side
+  M.Computes f
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+M : FinTM Bool
+f : List Bool → List Bool
+⊢ M.Computes f = ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:57:60: error: Tactic `rfl` failed: The left-hand side
+  fun M f => M.Computes f
+is not definitionally equal to the right-hand side
+  fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+⊢ (fun M f => M.Computes f) = fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:60:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:62:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:65:71: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.visitedByTapeHead c t i).card
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:67:103: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+
+⊢ (fun tm c t i => MultiTapeTM.spaceUsedByTape c t i) = fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:70:108: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:73:95: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+⊢ (fun tm c t i => MultiTapeTM.visitedByTapeHead c t i) = fun tm c t i =>
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:76:92: error: Tactic `rfl` failed: The left-hand side
+  FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+m : SignType
+q : Option Unit
+⊢ FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:78:54: error: Tactic `rfl` failed: The left-hand side
+  fun m q => FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  fun m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ (fun m q => FinTM.controlAction m q) = fun m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:80:91: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.leftAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:81:107: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:83:92: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.rightAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:84:108: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:86:95: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.emitAction [] id 0).output
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (FinTM.emitAction [] id 0).output = none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:88:24: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.emitAction [] e 0).output
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun e => (FinTM.emitAction [] e 0).output) = fun x => none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:90:66: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] (-1)
+is not definitionally equal to the right-hand side
+  none
+
+⊢ FinTM.bufferTape [true] (-1) = none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:91:79: error: Tactic `rfl` failed: The left-hand side
+  fun w => FinTM.bufferTape w (-1)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun w => FinTM.bufferTape w (-1)) = fun x => none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:95:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  true
+
+⊢ FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0)) = true
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:97:71: error: Tactic `rfl` failed: The left-hand side
+  fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  fun x x_1 b => b
+
+⊢ (fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))) = fun x x_1 b => b
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:100:65: error: Tactic `rfl` failed: The left-hand side
+  FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+p : Fin (n + 2)
+b : Bool
+⊢ FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:102:76: error: Tactic `rfl` failed: The left-hand side
+  fun p b => FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+⊢ (fun p b => FinTM.VirtualTag p b) = fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:104:71: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  SignType.pos
+
+b : Bool
+⊢ FinTM.virtualMove b (some true) SignType.pos = SignType.pos
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:105:95: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  fun x => SignType.pos
+
+⊢ (fun b => FinTM.virtualMove b (some true) SignType.pos) = fun x => SignType.pos
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:107:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  b
+
+b : Bool
+⊢ FinTM.virtualNextTag b SignType.zero = b
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:108:76: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  fun b => b
+
+⊢ (fun b => FinTM.virtualNextTag b SignType.zero) = fun b => b
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:111:60: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x y
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+x y : List Bool
+⊢ pairEncode x y = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:113:71: error: Tactic `rfl` failed: The left-hand side
+  fun x y => pairEncode x y
+is not definitionally equal to the right-hand side
+  fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+⊢ (fun x y => pairEncode x y) = fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:115:51: error: Tactic `rfl` failed: The left-hand side
+  pairDecode []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ pairDecode [] = none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:117:59: error: Tactic `rfl` failed: The left-hand side
+  fun r => pairDecode (true :: false :: r)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun r => pairDecode (true :: false :: r)) = fun x => none
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:119:68: error: Tactic `rfl` failed: The left-hand side
+  dbl w
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) w
+
+w : List Bool
+⊢ dbl w = List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:120:84: error: Tactic `rfl` failed: The left-hand side
+  fun w => dbl w
+is not definitionally equal to the right-hand side
+  fun w => List.flatMap (fun b => [b, b]) w
+
+⊢ (fun w => dbl w) = fun w => List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:122:56: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  0
+
+w : List Bool
+⊢ (FinTM.constTM w).k = 0
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:123:72: error: Tactic `rfl` failed: The left-hand side
+  fun w => (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun w => (FinTM.constTM w).k) = fun x => 0
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:125:33: error: Tactic `rfl` failed: The left-hand side
+  pairDiagTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ pairDiagTM.k = 0
+/private/tmp/tcslib-mig1-primitives-0cxnlfqf/Controls_sealed_v1.lean:126:60: error: Tactic `rfl` failed: The left-hand side
+  fun x => pairDiagTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => pairDiagTM.k) = fun x => 0

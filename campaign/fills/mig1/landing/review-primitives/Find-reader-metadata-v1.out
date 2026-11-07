@@ -1,0 +1,8 @@
+@[defeq] theorem Turing.solveSplit.eq_def : ∀ (C e n : ℕ),
+  Turing.solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1)) :=
+fun C e n => Eq.refl (Turing.solveSplit C e n)
+@[defeq] theorem Turing.solveSplitWith.eq_def : ∀ (f : ℕ → ℕ) (n : ℕ),
+  Turing.solveSplitWith f n = List.find? (fun i => i + f i == n) (List.range (n + 1)) :=
+fun f n => Eq.refl (Turing.solveSplitWith f n)
+'Turing.solveSplit.eq_def' depends on axioms: [propext]
+'Turing.solveSplitWith.eq_def' does not depend on any axioms

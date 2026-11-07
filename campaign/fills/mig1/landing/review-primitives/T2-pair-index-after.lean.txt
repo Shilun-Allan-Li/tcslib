@@ -1,0 +1,9 @@
+/-- Inject the 2 administrative tapes into their distinct physical slots. -/
+private def emitterP2PairIndex (k l : ℕ) (hk : 0 < k) (hl : 0 < l) :
+    Fin 2 ↪ Fin (k + l + 1) where
+  toFun i := if i = 0 then emitterP2LeftIndex k l ⟨0, hk⟩
+    else emitterP2RightIndex k l ⟨0, hl⟩
+  inj' := by
+    simpa only [Bool.false_eq_true, ↓reduceIte, Fin.ext_iff, Fin.val_zero] using
+      emitterP2_index_injective false k l hk hl
+

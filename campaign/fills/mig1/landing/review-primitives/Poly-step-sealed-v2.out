@@ -1,0 +1,372 @@
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2288:12: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  g ≥ 0
+  f ≥ 0
+  f - g ≤ 0
+  b ≥ 0
+  b + e ≤ -2
+  a ≥ 1
+  a - b ≥ 0
+where
+ a := ↑q
+ b := c.workTapePos i
+ e := ↑SignType.neg
+ f := ↑↑i
+ g := ↑d
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2302:10: error: Type mismatch: After simplification, term
+  congrFun hw j
+ has type
+  c.workTapes j = catalogPolyTape q
+but is expected to have type
+  Function.update (c.workTapes j) (c.workTapePos j)
+      (((if c.workTapes i (c.workTapePos i) = none then catalogPolyMove i (-1) (CatalogPolyControl.rewind i)
+                else
+                  { inputTape := 0, workTapes := fun x => (none, 0), output := none,
+                    state :=
+                      some
+                        (if i = 0 then CatalogPolyControl.emit ⟨C, ⋯⟩
+                        else CatalogPolyControl.loop ⟨↑i - 1, ⋯⟩) }).workTapes
+              j).1.getD
+        (c.workTapes j (c.workTapePos j))) =
+    catalogPolyTape q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2306:12: error: Type mismatch
+  hall
+has type
+  ∀ (j : Fin (d + 1)), 0 ≤ c.workTapePos j ∧ c.workTapePos j < ↑q
+but is expected to have type
+  ∀ (j : Fin (d + 1)),
+    0 ≤
+        ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+                  state := some (CatalogPolyControl.emit ⟨C, ⋯⟩) }.apply
+              c).workTapePos
+          j ∧
+      ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+                  state := some (CatalogPolyControl.emit ⟨C, ⋯⟩) }.apply
+              c).workTapePos
+          j <
+        ↑q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2309:19: error: Application type mismatch: The argument
+  this.left
+has type
+  0 ≤ c.workTapePos j
+but is expected to have type
+  0 ≤
+    ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+              state := some (CatalogPolyControl.loop ⟨↑i - 1, ⋯⟩) }.apply
+          c).workTapePos
+      j
+in the application
+  And.intro this.left
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2309:36: error: Application type mismatch: The argument
+  this.right
+has type
+  c.workTapePos j < ↑q
+but is expected to have type
+  ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+              state := some (CatalogPolyControl.loop ⟨↑i - 1, ⋯⟩) }.apply
+          c).workTapePos
+      j <
+    ↑q
+in the application
+  le_of_lt this.right
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2309:53: error: Type mismatch
+  this.right
+has type
+  c.workTapePos j < ↑q
+but is expected to have type
+  ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+              state := some (CatalogPolyControl.loop ⟨↑i - 1, ⋯⟩) }.apply
+          c).workTapePos
+      j <
+    ↑q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2331:12: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  e - f ≤ 0
+  b ≤ 0
+  a ≥ 1
+  a ≥ 0
+where
+ a := ↑q
+ b := ↑SignType.pos
+ e := ↑↑i
+ f := ↑d
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2339:10: error: Type mismatch: After simplification, term
+  congrFun hw j
+ has type
+  c.workTapes j = catalogPolyTape q
+but is expected to have type
+  Function.update (c.workTapes j) (c.workTapePos j)
+      (((if c.workTapes i (c.workTapePos i) = none then
+                  { inputTape := 0, workTapes := fun j => (none, if j = i then 1 else 0), output := none,
+                    state := some (CatalogPolyControl.advance ⟨↑i + 1, ⋯⟩) }
+                else
+                  { inputTape := 0, workTapes := fun j => (none, if j = i then -1 else 0), output := none,
+                    state := some (CatalogPolyControl.rewind i) }).workTapes
+              j).1.getD
+        (c.workTapes j (c.workTapePos j))) =
+    catalogPolyTape q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2348:12: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  g ≥ 0
+  f ≥ 0
+  f - g ≤ 0
+  b ≥ 0
+  b + e ≤ -2
+  a ≥ 1
+  a - b ≥ 1
+where
+ a := ↑q
+ b := c.workTapePos i
+ e := ↑SignType.neg
+ f := ↑↑i
+ g := ↑d
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2365:12: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  g ≥ 0
+  g + h ≤ -1
+  f ≥ 0
+  e ≥ 0
+  b ≥ 0
+  b - e ≥ 0
+  b - f ≥ 0
+  a ≥ 1
+  a - g ≥ 1
+where
+ a := ↑q
+ b := ↑d
+ e := ↑↑i
+ f := ↑↑⟨↑i, hi⟩
+ g := c.workTapePos ⟨↑i, hi⟩
+ h := ↑SignType.pos
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2381:18: error: Type mismatch: After simplification, term
+  hp
+ has type
+  ∀ (j : Fin (d + 1)), 0 ≤ c.workTapePos j ∧ c.workTapePos j < ↑q
+but is expected to have type
+  ∀ (j : Fin (d + 1)),
+    0 ≤
+        ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+                  state := some (CatalogPolyControl.advance 0) }.apply
+              c).workTapePos
+          j ∧
+      ({ inputTape := 0, workTapes := fun x => (none, 0), output := none,
+                  state := some (CatalogPolyControl.advance 0) }.apply
+              c).workTapePos
+          j <
+        ↑q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2381:18: error: Type mismatch: After simplification, term
+  hp
+ has type
+  ∀ (j : Fin (d + 1)), 0 ≤ c.workTapePos j ∧ c.workTapePos j < ↑q
+but is expected to have type
+  ∀ (j_1 : Fin (d + 1)),
+    0 ≤
+        ({ inputTape := 0, workTapes := fun x => (none, 0), output := some true,
+                  state := some (CatalogPolyControl.emit ⟨↑j - 1, ⋯⟩) }.apply
+              c).workTapePos
+          j_1 ∧
+      ({ inputTape := 0, workTapes := fun x => (none, 0), output := some true,
+                  state := some (CatalogPolyControl.emit ⟨↑j - 1, ⋯⟩) }.apply
+              c).workTapePos
+          j_1 <
+        ↑q
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2287:35: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2287:54: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2287:72: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2289:58: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2289:76: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2304:32: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hblank, ↓reduceIte, A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵s̵t̵a̵t̵e̵,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]̵A̲c̲t̲i̲o̲n̲.̲a̲p̲p̲l̲y̲_̲s̲t̲a̲t̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2305:42: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2305:61: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2305:79: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2305:101: warning: This simp argument is unused:
+  add_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [polyHeads, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one,̵ ̵a̵d̵d̵_̵z̵e̵r̵o̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2330:35: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2330:54: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2330:72: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2332:58: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2332:76: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2347:35: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2347:54: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2347:72: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2349:58: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2349:76: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2363:39: warning: This simp argument is unused:
+  SignType.coe_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.coe_one, SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2363:58: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2363:76: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one,̵ ̵S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2366:58: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2366:76: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2372:88: warning: This simp argument is unused:
+  SignType.coe_one
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, ↓reduceDIte, Action.apply_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_workTapePos, polyHeads, SignType.coe_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵SignType.coe_neg_one, add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2372:106: warning: This simp argument is unused:
+  SignType.coe_neg_one
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, hi, ↓reduceDIte, Action.apply_state,
+  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲Action.apply_workTapePos, polyHeads, SignType.coe_zero, SignType.coe_one, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵add_zero]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/tcslib-mig1-primitives-upj4lcid/Poly_step_sealed_v2.lean:2380:59: warning: This simp argument is unused:
+  Action.apply_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [catalogPolyUnaryTM, Action.apply_state,̵ ̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

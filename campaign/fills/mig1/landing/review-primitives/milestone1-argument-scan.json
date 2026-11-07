@@ -1,0 +1,3214 @@
+{
+  "bracket_argument_lists": 302,
+  "forbidden_foreign_definition_rule_heads": [],
+  "opaque_value_arguments": [
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "entry": "fwdMap_block M x pre (pairEncode d b) a bit bit hx'",
+      "operation_argument": "pairEncode",
+      "disposition": "Opaque operation supplied as a parameter to a public/local theorem application, not passed as a rewrite/unfold rule."
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "entry": "fwdMap_block M x pre (dbl w ++ tail) a bit bit hx'",
+      "operation_argument": "dbl",
+      "disposition": "Opaque operation supplied as a parameter to a public/local theorem application, not passed as a rewrite/unfold rule."
+    }
+  ],
+  "known_definition_names_checked": [
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.moveInputPos",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.Computes",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.spaceUsedByTape",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.FinTM.controlAction",
+    "Turing.FinTM.leftAction",
+    "Turing.FinTM.rightAction",
+    "Turing.FinTM.emitAction",
+    "Turing.FinTM.bufferTape",
+    "Turing.FinTM.tapeBlocks",
+    "Turing.FinTM.VirtualTag",
+    "Turing.FinTM.virtualMove",
+    "Turing.FinTM.virtualNextTag",
+    "Turing.pairEncode",
+    "Turing.pairDecode",
+    "Turing.dbl",
+    "Turing.FinTM.constTM",
+    "Turing.pairDiagTM",
+    "SignType.cast"
+  ],
+  "all_scanned_argument_lists": [
+    {
+      "declaration": "Turing.FinTM.polyHeads_bounds",
+      "line": 2244,
+      "tactic": "simp only",
+      "entries": [
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2262,
+      "tactic": "simp only",
+      "entries": [
+        "Cfg.workTapeSymbols_eq",
+        "hw",
+        "catalogPolyTape"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2266,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.step_of_some hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2267,
+      "tactic": "simp only",
+      "entries": [
+        "hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2272,
+      "tactic": "dsimp only",
+      "entries": [
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2276,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "catalogPolyMove",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2279,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "\u2193reduceIte",
+        "catalogPolyMove",
+        "Action.apply_state",
+        "Action.apply_workTapePos",
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2285,
+      "tactic": "simp only",
+      "entries": [
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2287,
+      "tactic": "simp only",
+      "entries": [
+        "he",
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2291,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2300,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2302,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "\u2193reduceIte",
+        "Action.apply_state",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2304,
+      "tactic": "simp only",
+      "entries": [
+        "polyHeads",
+        "Action.apply_workTapePos",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2310,
+      "tactic": "dsimp only",
+      "entries": [
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2315,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2321,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "catalogPolyMove",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2324,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "\u2193reduceIte",
+        "catalogPolyMove",
+        "Action.apply_state",
+        "Action.apply_workTapePos",
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2330,
+      "tactic": "simp only",
+      "entries": [
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2332,
+      "tactic": "simp only",
+      "entries": [
+        "he",
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2335,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2339,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "catalogPolyMove",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2342,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hblank",
+        "\u2193reduceIte",
+        "catalogPolyMove",
+        "Action.apply_state",
+        "Action.apply_workTapePos",
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2348,
+      "tactic": "simp only",
+      "entries": [
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2350,
+      "tactic": "simp only",
+      "entries": [
+        "he",
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2353,
+      "tactic": "dsimp only",
+      "entries": [
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2357,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hi",
+        "catalogPolyMove",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2360,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hi",
+        "\u2193reduceDIte",
+        "catalogPolyMove",
+        "Action.apply_state",
+        "Action.apply_workTapePos",
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2365,
+      "tactic": "simp only",
+      "entries": [
+        "he",
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2366,
+      "tactic": "simp only",
+      "entries": [
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2368,
+      "tactic": "simp only",
+      "entries": [
+        "he",
+        "\u2193reduceIte",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2372,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hi",
+        "Action.apply_workTapes",
+        "\u2193reduceIte",
+        "\u2193reduceDIte",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2374,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "hi",
+        "\u2193reduceDIte",
+        "Action.apply_state",
+        "Action.apply_workTapePos",
+        "polyHeads",
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2381,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_step",
+      "line": 2383,
+      "tactic": "simp only",
+      "entries": [
+        "catalogPolyUnaryTM",
+        "Action.apply_state",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2404,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2406,
+      "tactic": "simp",
+      "entries": [
+        "c",
+        "catalogPolyCfg",
+        "polyHeads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2409,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2417,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2418,
+      "tactic": "rw",
+      "entries": [
+        "h0"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2420,
+      "tactic": "rw",
+      "entries": [
+        "show u = 2 * (x.length + 1) + (u - 2 * (x.length + 1)) by omega",
+        "MultiTapeTM.runFrom_add",
+        "catalogPoly_start"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2423,
+      "tactic": "dsimp only",
+      "entries": [
+        "c",
+        "M"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.poly_space",
+      "line": 2430,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.spaceUsed_eq_sum"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.polyUnaryTM_spaceUsed",
+      "line": 2466,
+      "tactic": "simp only",
+      "entries": [
+        "polyUnaryTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.polyUnaryTM_spaceUsed",
+      "line": 2467,
+      "tactic": "rw",
+      "entries": [
+        "constTM_spaceUsed"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.unaryTokenTM_computes",
+      "line": 7587,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.unaryTokenTM_computes",
+      "line": 7589,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.unaryTokenTM_computes",
+      "line": 7591,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_inputPos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.unaryTokenTM_computes",
+      "line": 7593,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_output"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.unaryTokenTM_computes",
+      "line": 7595,
+      "tactic": "rw",
+      "entries": [
+        "hinit"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.appendBitTM_computes",
+      "line": 7664,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "emitterAppend_run b x x.length (by omega)",
+        "MultiTapeTM.step_of_some rfl",
+        "scanCfg_read",
+        "List.getElem?_eq_none (le_refl _)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.appendBitTM_computes",
+      "line": 7667,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.appendBitTM_computes",
+      "line": 7669,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_output",
+        "List.take_length"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2785,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2787,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_inputPos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2790,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_workTapes",
+        "Cfg.workTapeSymbols_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2792,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2794,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2796,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2798,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2800,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_move",
+      "line": 2801,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_output"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2809,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2811,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2813,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2814,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ pre.length (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2814,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2815,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2816,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2818,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2819,
+      "tactic": "simp only",
+      "entries": [
+        "SignType.pos_eq_one",
+        "SignType.neg_eq_neg_one",
+        "SignType.coe_zero",
+        "SignType.coe_one",
+        "SignType.coe_neg_one",
+        "add_zero",
+        "Option.toList_none",
+        "List.append_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_first",
+      "line": 2822,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2830,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2833,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2835,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2837,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2838,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2839,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_first M x pre (c :: rest) a b hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2840,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2841,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2841,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2842,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2843,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2844,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2845,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2846,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2847,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "Bool.false_eq_true",
+        "Bool.true_eq_false",
+        "\u2193reduceIte"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2850,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2851,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_inputPos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2852,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_output"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2858,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2861,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none",
+        "sub_eq_add_neg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_block",
+      "line": 2863,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2870,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2877,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.zero_add",
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2878,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2880,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ pre.length (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2880,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2881,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2882,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2884,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2885,
+      "tactic": "simp",
+      "entries": [
+        "hx",
+        "sub_eq_add_neg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2889,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2891,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2893,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2895,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ pre.length (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2895,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2896,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2897,
+      "tactic": "rw",
+      "entries": [
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2898,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2899,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_output"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2902,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2902,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2905,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2909,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2912,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2914,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "fwdMapCfg",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Cfg.workTapeSymbols_eq",
+        "Option.getD_some",
+        "Option.getD_none"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2915,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_cons"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_suffix",
+      "line": 2916,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2931,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.zero_add",
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2932,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2933,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_buffer",
+        "Nat.cast_zero",
+        "zero_sub",
+        "bufferTape_left"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2937,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2938,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2942,
+      "tactic": "rw",
+      "entries": [
+        "show (((j + 1 : \u2115) : \u2124) - 1) = (j : \u2124) by omega",
+        "bufferTape_nat",
+        "List.getElem?_eq_getElem (by omega)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2947,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2948,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_buffer",
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2951,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2952,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "sub_eq_add_neg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backB",
+      "line": 2953,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2966,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.zero_add",
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2967,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2968,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_left",
+        "Nat.cast_zero",
+        "zero_sub",
+        "bufferTape_left"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2972,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2973,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2977,
+      "tactic": "rw",
+      "entries": [
+        "show (((j + 1 : \u2115) : \u2124) - 1) = (j : \u2124) by omega",
+        "bufferTape_nat",
+        "List.getElem?_eq_getElem (by omega)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2982,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2983,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_left",
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2986,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2987,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "sub_eq_add_neg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_backA",
+      "line": 2988,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step",
+        "hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3005,
+      "tactic": "simp only",
+      "entries": [
+        "List.append_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3010,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3011,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_left",
+        "bufferTape_nat",
+        "List.getElem?_length"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3015,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3016,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3017,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.mul_zero",
+        "zero_add",
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3019,
+      "tactic": "rw",
+      "entries": [
+        "hs",
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3021,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3022,
+      "tactic": "simp",
+      "entries": [
+        "List.append_assoc"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3025,
+      "tactic": "simp",
+      "entries": [
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3029,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.mul_zero",
+        "zero_add",
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3034,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3035,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapCfg",
+        "Cfg.workTapeSymbols_eq",
+        "tapeBlocks_left",
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3038,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3039,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3040,
+      "tactic": "rw",
+      "entries": [
+        "hfirst",
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3042,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_move"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3043,
+      "tactic": "simp",
+      "entries": [
+        "List.append_assoc"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_emit",
+      "line": 3044,
+      "tactic": "rw",
+      "entries": [
+        "show 2 * (d :: rest).length + 2 = 2 + (2 * rest.length + 2) by simp; omega",
+        "MultiTapeTM.runFrom_add",
+        "hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3054,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3057,
+      "tactic": "rw",
+      "entries": [
+        "show 3 * a.length + 2 * b.length + 5 =\n      ((b.length + 1) + (b.length + 1) + (a.length + 1)) + (2 * a.length + 2) by omega",
+        "MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1) + (a.length + 1)) (b := 2 * a.length + 2)",
+        "MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1)) (b := a.length + 1)",
+        "MultiTapeTM.runFrom_add (a := b.length + 1) (b := b.length + 1)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3063,
+      "tactic": "simp only",
+      "entries": [
+        "List.nil_append",
+        "List.length_nil",
+        "Nat.cast_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3064,
+      "tactic": "rw",
+      "entries": [
+        "hcopy"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3065,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_backB M x a b _ _ (le_refl _)",
+        "fwdMap_backA M x a b _ _ (le_refl _)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3067,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "Nat.cast_zero",
+        "List.nil_append"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3068,
+      "tactic": "rw",
+      "entries": [
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3069,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3071,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual",
+        "Cfg.init_state",
+        "Option.map_some"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3074,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3076,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual",
+        "Cfg.init_workTapes"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3079,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3081,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual",
+        "Cfg.init_inputPos",
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_finish",
+      "line": 3082,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg",
+        "fwdMapVirtual",
+        "Cfg.init_output",
+        "pairEncode_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3093,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3099,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3102,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3117,
+      "tactic": "simp only",
+      "entries": [
+        "length_pairEncode",
+        "List.length_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3119,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_add",
+        "fwdMap_block M x pre b a false true hx'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3120,
+      "tactic": "simp only",
+      "entries": [
+        "Bool.false_eq_true",
+        "\u2193reduceIte",
+        "List.append_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3130,
+      "tactic": "simp only",
+      "entries": [
+        "length_pairEncode",
+        "List.length_append",
+        "List.length_cons",
+        "List.length_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3133,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_add",
+        "fwdMap_block M x pre (pairEncode d b) a bit bit hx'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3134,
+      "tactic": "simp only",
+      "entries": [
+        "if_pos rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3143,
+      "tactic": "simp only",
+      "entries": [
+        "dbl_nil",
+        "List.nil_append"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3146,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "mul_zero",
+        "zero_add"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3147,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3148,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3149,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ pre.length (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3149,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3150,
+      "tactic": "simp",
+      "entries": [
+        "hx",
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_state",
+        "Action.apply_output",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3152,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_cons",
+        "List.length_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3153,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3154,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_first M x pre [] a bit hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3155,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3156,
+      "tactic": "rw",
+      "entries": [
+        "fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3156,
+      "tactic": "simp",
+      "entries": [
+        "hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3158,
+      "tactic": "simp",
+      "entries": [
+        "hx",
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_state",
+        "Action.apply_output",
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3160,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_cons"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3161,
+      "tactic": "rw",
+      "entries": [
+        "fwdMap_block M x pre r a true false hx"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3162,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3169,
+      "tactic": "simp only",
+      "entries": [
+        "dbl_cons",
+        "List.length_append",
+        "List.length_cons",
+        "List.length_nil"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3171,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_add",
+        "fwdMap_block M x pre (dbl w ++ tail) a bit bit hx'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_parse",
+      "line": 3172,
+      "tactic": "simp only",
+      "entries": [
+        "if_pos rfl"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3188,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3190,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_state"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3192,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_inputPos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3195,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_workTapes"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3197,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3198,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3200,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3202,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3203,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapCfg"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3204,
+      "tactic": "rw",
+      "entries": [
+        "Cfg.init_output"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3206,
+      "tactic": "simp only",
+      "entries": [
+        "List.length_nil",
+        "mul_zero",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_setup",
+      "line": 3207,
+      "tactic": "rw",
+      "entries": [
+        "hi"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3223,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_halt hq",
+        "MultiTapeTM.step_of_halt"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3224,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "hq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3234,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "hq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3237,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Cfg.workTapeSymbols_eq",
+        "bufferTape_inputSymbol"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3241,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Cfg.workTapeSymbols_eq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3242,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some hs",
+        "hc"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3243,
+      "tactic": "dsimp only",
+      "entries": [
+        "fwdMapTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3244,
+      "tactic": "rw",
+      "entries": [
+        "hv",
+        "hr"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3247,
+      "tactic": "simp only",
+      "entries": [
+        "Action.apply_state",
+        "fwdMapVirtual",
+        "\u2193reduceIte",
+        "act",
+        "mv"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3248,
+      "tactic": "rw",
+      "entries": [
+        "Action.apply_inputPos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3252,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Action.apply_inputPos",
+        "Cfg.workTapeSymbols_eq",
+        "act"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3254,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Action.apply_inputPos",
+        "Cfg.workTapeSymbols_eq",
+        "act"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3257,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Action.apply_inputPos",
+        "Cfg.workTapeSymbols_eq",
+        "act"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3260,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapVirtual",
+        "Action.apply_workTapes",
+        "Action.apply_workTapePos",
+        "Action.apply_inputPos",
+        "Cfg.workTapeSymbols_eq",
+        "act"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_step",
+      "line": 3261,
+      "tactic": "simp only",
+      "entries": [
+        "Action.apply_output",
+        "fwdMapVirtual"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_run",
+      "line": 3274,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapVirtual_run",
+      "line": 3281,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "he",
+        "hs",
+        "MultiTapeTM.runFrom_succ_eq_step'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_stationary",
+      "line": 3295,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_stationary",
+      "line": 3296,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "Bool.false_eq_true",
+        "\u2193reduceIte",
+        "controlAction_apply",
+        "moveInputPos_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_stationary",
+      "line": 3301,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_stationary",
+      "line": 3302,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "ih",
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_step",
+      "line": 3311,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.step_of_halt hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_step",
+      "line": 3315,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.step_of_some hs",
+        "fwdMapTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_step",
+      "line": 3316,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.step_of_some hs",
+        "fwdMapTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_run",
+      "line": 3325,
+      "tactic": "simp only",
+      "entries": [
+        "MultiTapeTM.runFrom_zero",
+        "MultiTapeTM.initCfg_eq",
+        "fwdMapTM"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_run",
+      "line": 3327,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "ih (fun u hu => h u (by omega))",
+        "fwdMapSetup_step M _ (h t (by omega))",
+        "MultiTapeTM.runFrom_succ_eq_step'"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3343,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3346,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3349,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "he",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3350,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "he",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3351,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3354,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "h",
+        "fwdMapAct",
+        "Action.apply_workTapePos",
+        "tapeBlocks_right",
+        "SignType.coe_zero",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3358,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "h",
+        "fwdMapAct",
+        "Action.apply_workTapePos",
+        "tapeBlocks_right",
+        "SignType.coe_zero",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3362,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "h",
+        "fwdMapAct",
+        "Action.apply_workTapePos",
+        "tapeBlocks_right",
+        "SignType.coe_zero",
+        "add_zero"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3364,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3365,
+      "tactic": "simp",
+      "entries": [
+        "fwdMapTM",
+        "fwdMapAct",
+        "Action.apply_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3367,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapTM",
+        "Bool.false_eq_true",
+        "\u2193reduceIte",
+        "controlAction_apply"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3369,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_halt hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_head_step",
+      "line": 3371,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.step_of_some hs"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_heads",
+      "line": 3381,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_zero",
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMapSetup_heads",
+      "line": 3382,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_succ_eq_step'",
+        "fwdMapSetup_head_step",
+        "ih"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3397,
+      "tactic": "simp only",
+      "entries": [
+        "hd"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3401,
+      "tactic": "rw",
+      "entries": [
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3402,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapVirtual",
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_state",
+        "Option.map_some"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3405,
+      "tactic": "rw",
+      "entries": [
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3407,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapVirtual",
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_state",
+        "Option.map_some"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3414,
+      "tactic": "rw",
+      "entries": [
+        "hprefix u (le_refl _)"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3418,
+      "tactic": "rw",
+      "entries": [
+        "show t = u + (t - u) by omega",
+        "MultiTapeTM.runFrom_add"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_launch",
+      "line": 3420,
+      "tactic": "rw",
+      "entries": [
+        "\u2190 hh",
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3433,
+      "tactic": "simp only",
+      "entries": [
+        "hd"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3441,
+      "tactic": "rw",
+      "entries": [
+        "show u = v + (u - v) by omega",
+        "MultiTapeTM.runFrom_add"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3444,
+      "tactic": "rw",
+      "entries": [
+        "hrun",
+        "hq"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3448,
+      "tactic": "rw",
+      "entries": [
+        "show v = u + (v - u) by omega",
+        "MultiTapeTM.runFrom_add",
+        "MultiTapeTM.runFrom_of_halt _ he.1"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3450,
+      "tactic": "rw",
+      "entries": [
+        "hh",
+        "he.1"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_reject",
+      "line": 3453,
+      "tactic": "rw",
+      "entries": [
+        "heq u"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3489,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.spaceUsed_eq_sum"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3491,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.spaceUsedByTape_eq_card",
+        "MultiTapeTM.spaceUsedByTape_eq_card"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3493,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.spaceUsed_eq_sum"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3496,
+      "tactic": "rw",
+      "entries": [
+        "Fin.sum_univ_add",
+        "Fin.sum_univ_add"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3497,
+      "tactic": "simp only",
+      "entries": [
+        "Fintype.sum_unique"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.fwdMap_space",
+      "line": 3498,
+      "tactic": "simp only",
+      "entries": [
+        "show (default : Fin 1) = 0 from Subsingleton.elim _ _"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3539,
+      "tactic": "rw",
+      "entries": [
+        "length_pairEncode"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3543,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_inputPos",
+        "Fin.val_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3551,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_add",
+        "hinit"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3555,
+      "tactic": "rw",
+      "entries": [
+        "hrun"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3558,
+      "tactic": "rw",
+      "entries": [
+        "hh"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3560,
+      "tactic": "rw",
+      "entries": [
+        "hrun"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3563,
+      "tactic": "rw",
+      "entries": [
+        "ho"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_computes",
+      "line": 3564,
+      "tactic": "simp",
+      "entries": [
+        "pairEncode_eq",
+        "List.append_assoc"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3586,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3591,
+      "tactic": "rw",
+      "entries": [
+        "h0",
+        "zero_sub",
+        "zero_add"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3597,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_zero",
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_workTapePos"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3606,
+      "tactic": "rw",
+      "entries": [
+        "show v = u + (v - u) by omega",
+        "MultiTapeTM.runFrom_add",
+        "MultiTapeTM.runFrom_of_halt _ hh"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3614,
+      "tactic": "rw",
+      "entries": [
+        "heq v",
+        "fwdMapSetup_heads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3618,
+      "tactic": "dsimp only",
+      "entries": [
+        "D"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3625,
+      "tactic": "rw",
+      "entries": [
+        "length_pairEncode"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3629,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.initCfg_eq",
+        "Cfg.init_inputPos",
+        "Fin.val_one"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3638,
+      "tactic": "rw",
+      "entries": [
+        "MultiTapeTM.runFrom_add",
+        "hinit"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3646,
+      "tactic": "rw",
+      "entries": [
+        "show v = u + (v - u) by omega",
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3647,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapVirtual",
+        "tapeBlocks_left"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3648,
+      "tactic": "dsimp only",
+      "entries": [
+        "D"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3658,
+      "tactic": "rw",
+      "entries": [
+        "show v = u + (v - u) by omega",
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3659,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapVirtual",
+        "tapeBlocks_buffer"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3661,
+      "tactic": "dsimp only",
+      "entries": [
+        "D"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3671,
+      "tactic": "rw",
+      "entries": [
+        "hprefix v hvu",
+        "fwdMapSetup_heads"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3674,
+      "tactic": "rw",
+      "entries": [
+        "show v = u + (v - u) by omega",
+        "he"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3675,
+      "tactic": "simp only",
+      "entries": [
+        "fwdMapVirtual",
+        "tapeBlocks_right"
+      ],
+      "foreign_definition_rule_heads": []
+    },
+    {
+      "declaration": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "line": 3679,
+      "tactic": "dsimp only",
+      "entries": [
+        "D"
+      ],
+      "foreign_definition_rule_heads": []
+    }
+  ],
+  "manual_scope": "Arguments were reviewed as theorem applications versus actual simp/rw/unfold rules. Core/Mathlib names are published equations/lemmas; SignType.cast has been removed from the changed polynomial proof. This is not an exhaustive compiled-kind inventory."
+}

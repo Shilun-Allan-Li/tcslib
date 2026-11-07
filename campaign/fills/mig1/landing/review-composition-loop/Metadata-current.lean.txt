@@ -1,0 +1,76 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+
+/-! Unfiltered compiled module census, plus axiom/direct-definition inventory for the forty
+explicitly covered declaration roots and every compiled descendant. Private spellings are
+resolved dynamically; no generated/internal constant is dropped from the census. -/
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let modules : List Name := [`TCSlib.Complexity.TuringMachine.Composition,
+    `TCSlib.Complexity.TuringMachine.Build.Wrappers,
+    `TCSlib.Complexity.TuringMachine.Build.Loop]
+  let wanted : List String := ["idTM_computes", "computesFunInTime_id", "ifEqTM_computes", "computesFunInTime_ifEq", "computesFunInTime_comp", "exists_comp_on_image", "exists_comp_partial", "condTM_branch_run", "condTM_computes_iff", "exists_cond", "timedCondTM_computes", "timedHeads", "timed_control_heads", "timed_branch_heads", "timedReadyCfg_workTapePos", "timedReady_dispatch", "timed_read_heads", "timed_ledger", "timedCondTM_spaceUsed", "computesFunInTime_cond", "loop_first_halt", "loopHost_input_rewind", "loopHost_prepare", "loopCall_heads", "loopHost_contracts", "segment_heads", "seamed_space", "loopHostTM_contracts", "exists_loopCfgTM", "loopHostTM_decides", "exists_loopTM", "loopHostTM_finds", "loopHostTM_spaceUsed_le_budget", "exists_loopFindTM", "emCall_pair_not_mem", "emCall_triple_not_mem", "emCall_bank_initial", "emCall_bank_final", "emitLoopTM_computes", "exists_emitLoopTM"]
+  let st ← liftTermElabM getSimpTheorems
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .axiomInfo _ => "axiom" | .defnInfo _ => "definition" | .thmInfo _ => "theorem"
+    | .opaqueInfo _ => "opaque" | .quotInfo _ => "quotient" | .inductInfo _ => "inductive"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+  let mut roots : Array Name := #[]
+  for (n, ci) in env.constants.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let owner := env.header.moduleNames[i.toNat]!
+    if !modules.contains owner then continue
+    logInfo m!"CENSUS|{n}|{owner}|kind={kind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    match n with
+    | .str _ base => if wanted.contains base then roots := roots.push n
+    | _ => pure ()
+  if roots.size != wanted.length then
+    throwError "Root count mismatch: {roots.size} compiled roots for {wanted.length} source roots"
+  for n in roots.qsort Name.lt do
+    let some ci := env.find? n | throwError "root missing {n}"
+    let some i := env.getModuleIdxFor? n | throwError "root owner missing {n}"
+    logInfo m!"TARGET|{n}|{env.header.moduleNames[i.toNat]!}|private={isPrivateName n}|internal={n.isInternalDetail}|simp={st.isLemma (.decl n)}|unfold={st.toUnfold.contains n}"
+    logInfo m!"TYPE|{n}|{ci.type}"
+  let mut inventory : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if roots.any (fun r => r.isPrefixOf n) then inventory := inventory.push n
+  for n in inventory.qsort Name.lt do
+    let some ci := env.find? n | throwError "inventory missing {n}"
+    let some i := env.getModuleIdxFor? n | throwError "inventory owner missing {n}"
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"AXIOMS|{n}|{(axs.qsort Name.lt).toList}"
+    if !roots.contains n then
+      logInfo m!"AUXILIARY|{n}|{env.header.moduleNames[i.toNat]!}|kind={kind ci}|private={isPrivateName n}|internal={n.isInternalDetail}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut defs : Array Name := #[]
+    for c in used do
+      if defs.contains c then continue
+      match env.getModuleIdxFor? c, env.find? c with
+      | some j, some (.defnInfo di) =>
+        let owner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          defs := defs.push c
+          let hint := match di.hints with
+            | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+          logInfo m!"DEF|{n}|{c}|{owner}|sameOwner={i == j}|hints={hint}"
+      | _, _ => pure ()
+  let mut simpDefs : Array Name := #[]
+  for n in st.toUnfold.toList do
+    match env.getModuleIdxFor? n, env.find? n with
+    | some i, some (.defnInfo _) =>
+      if (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && !simpDefs.contains n then
+        simpDefs := simpDefs.push n
+    | _, _ => pure ()
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str p tail =>
+      if !(tail.startsWith "eq_") || !st.isLemma (.decl n) then continue
+      match env.getModuleIdxFor? p, env.find? p with
+      | some i, some (.defnInfo _) =>
+        if (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && !simpDefs.contains p then
+          simpDefs := simpDefs.push p
+      | _, _ => pure ()
+    | _ => pure ()
+  for n in simpDefs.qsort Name.lt do
+    let some i := env.getModuleIdxFor? n | throwError "simp owner missing {n}"
+    logInfo m!"SIMPDEF|{n}|{env.header.moduleNames[i.toNat]!}|direct={st.toUnfold.contains n}"

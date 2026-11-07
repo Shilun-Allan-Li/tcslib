@@ -1,0 +1,1 @@
+Initial runner preparation stopped before Lean on an occurrence-count assertion (expected4 filename occurrences, actual3). Corrected after inspection; no source, snapshot or proof execution occurred in that attempt.

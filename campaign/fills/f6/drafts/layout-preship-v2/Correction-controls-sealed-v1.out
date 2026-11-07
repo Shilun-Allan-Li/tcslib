@@ -1,0 +1,16 @@
+/private/tmp/tcslib-f6-preship-a9456huq/Correction_controls_sealed_v1.lean:9:50: error: Tactic `rfl` failed: The left-hand side
+  (tapeAction i inp wr m q).output
+is not definitionally equal to the right-hand side
+  none
+
+i : Fin 2
+inp m : SignType
+wr : Option (Option Bool)
+q : Bool
+⊢ (tapeAction i inp wr m q).output = none
+/private/tmp/tcslib-f6-preship-a9456huq/Correction_controls_sealed_v1.lean:11:68: error: Tactic `rfl` failed: The left-hand side
+  fun i inp m wr q => (tapeAction i inp wr m q).output
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 x_3 x_4 => none
+
+⊢ (fun i inp m wr q => (tapeAction i inp wr m q).output) = fun x x_1 x_2 x_3 x_4 => none

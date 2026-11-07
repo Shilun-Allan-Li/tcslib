@@ -1,0 +1,102 @@
+{
+  "source": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-epad/TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+  "copy": "campaign/fills/mig1/landing/review-primitives/milestone2-source.lean.txt",
+  "bytes": 410249,
+  "sha256": "2e3fab6f6a992653fe9b3f01aa789f08204f4e02a975a30b4fc2410df4dbe45e",
+  "scope": "Stable second source checkpoint; root is compiling this actual source in a fresh six-dependency combined chain. No further source edits until root releases pause.",
+  "new_private_proof_helpers": [
+    "Turing.FinTM.bufferReplay_run",
+    "Turing.FinTM.emitterP2_index_injective",
+    "Turing.FinTM.emitterP2_prepare_rewind_bank"
+  ],
+  "removed_private_proof": "Turing.FinTM.catalogRewind",
+  "all_surviving_headers_unchanged": true,
+  "executable_chunks_byte_identical_except_authorized_proof_fields": true,
+  "proof_field_changes": [
+    {
+      "name": "Turing.FinTM.emitterP2SmallIndex",
+      "raw_before_sha256": "40d50cc25104b6cabd51037fd76871e8d5040cc26e3ea650a2d7203f7cd170b7",
+      "raw_after_sha256": "e97bdfe021e7ed1959c1eafb424c63cafd0d61e8bdcc6ba95b40f9d510b8c5f4",
+      "authorized_exact_field": "inj' := by \u2026 (final structure field)",
+      "masked_chunks_equal": true,
+      "masked_sha256": "82d724b2ca5bcfb843c0cdba0fe8f5a18908e1c30c12b9a302cfde34b0dee626"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2PairIndex",
+      "raw_before_sha256": "f89077e64bbe63c328018c58af99bbe945ffb0f9cf8cbe2219693e37e8c308f0",
+      "raw_after_sha256": "f77971edc448d360f367347314e933e9096af46d5812f6f3bbe61738ec61d877",
+      "authorized_exact_field": "inj' := by \u2026 (final structure field)",
+      "masked_chunks_equal": true,
+      "masked_sha256": "2c6f1decd1c1ab3b78a12dc557179a59de76bbafa18b376d642c4b5e372b0b1c"
+    }
+  ],
+  "emitter_first_entry_byte_identical": true,
+  "checks": [
+    {
+      "label": "T1-source-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "48e533ad3eb7b77434452a30d2925f7eb8f92ed758bb5232a42cb90bf0e9f6e4"
+    },
+    {
+      "label": "T2b-buffer-replay-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "401326561c47376ed3c5b418b0777415c5004ca744c7aa6366f2484ee0176c67"
+    },
+    {
+      "label": "T2b-extract-replay-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "3670034f15545f794ed9a70cbc592480b44e579c65b2752a5b779f63c7a37ae6"
+    },
+    {
+      "label": "T2b-rawstrip-replay-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "6624fc42e6f129d6fd9ec9044e07f8c70b1702fe6549a4986e72f641e0fa5255"
+    },
+    {
+      "label": "T2-rewind-bank-sealed-v2",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "879878476575971486334bbe979313b75db71ea59f9dc5d26a41536b85d598cd"
+    },
+    {
+      "label": "T2-rewind-candidate-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "a8a6023ba6f1220b2322286e61c29658fb99a8f88ab78333bc5dfd0e8d67b354"
+    },
+    {
+      "label": "T2-rewind-suffix-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "e05f6332578915cd5b98e812e2c92d9e271f93519fc2c363c41dfd1a6a51857e"
+    },
+    {
+      "label": "T2-index-injective-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "14c53f158faac467b94e6374a5fac4d1f7cafec6faac79fa21fdbaa98229d309"
+    },
+    {
+      "label": "T2-small-index-sealed-v2",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "d1be1f18ce51688bce55cce20e362e132650a06f79e19bfd9e786dd85ce0de22"
+    },
+    {
+      "label": "T2-pair-index-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "input_sha256": "a24e1033200f00cd2176a462ae030f4c2c7bf6dfa0d8a322d4573be31ae4c9f9"
+    }
+  ],
+  "limitations": [
+    "No whole-current-source check by this agent yet; T1 whole source passed before later individually checked proof factoring. Root combined-chain compilation pending.",
+    "T1 four caller regions not yet covered by expanded strong seals.",
+    "Remaining frame/erase and split-finder T2 work pending; cross-file first-entry waits for separate API ruling.",
+    "No Git/source commit, screen, final combined replay, axiom census or gate acceptance claim."
+  ]
+}

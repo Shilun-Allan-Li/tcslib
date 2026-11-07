@@ -1,0 +1,51 @@
+/-- Replay a one-tape buffer from a fixed native input position, optionally emitting its bits.
+
+**Proof sketch.** Induct on the consumed prefix. The published buffer-read equation supplies
+its next symbol, the transition premise selects a stationary-input/no-write right move,
+and the public action-field equations preserve the buffer while extending the emitted prefix.
+[AB09, §1.2] -/
+private lemma bufferReplay_run {S : Type} {x : List Bool}
+    (tm : MultiTapeTM 1 Bool S) (q : S) (emit : Bool)
+    (htr : ∀ (inp : Option Bool) (bit : Bool), tm.tr q inp (fun _ => some bit) =
+      ⟨0, fun _ => (none, .pos), if emit then some bit else none, some q⟩)
+    (p : Fin (x.length + 2)) (a : List Bool) : ∀ j (_hj : j ≤ a.length),
+    tm.runFrom (⟨some q, p, fun _ => bufferTape a, fun _ => 0, []⟩ : Cfg 1 Bool S x) j =
+      (⟨some q, p, fun _ => bufferTape a, fun _ => (j : ℤ),
+        if emit then a.take j else []⟩ : Cfg 1 Bool S x) := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_zero]
+    cases emit <;> rfl
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    let c : Cfg 1 Bool S x :=
+      ⟨some q, p, fun _ => bufferTape a, fun _ => (j : ℤ), if emit then a.take j else []⟩
+    change tm.step c = _
+    have hr : c.workTapeSymbols = fun _ => some (a[j]'(by omega)) := by
+      funext i
+      rw [Cfg.workTapeSymbols_eq]
+      change bufferTape a (j : ℤ) = _
+      rw [bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    rw [MultiTapeTM.step_of_some (cfg := c) rfl, hr, htr]
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · simp only [Action.apply_state]
+    · simp only [Action.apply_inputPos, moveInputPos_zero, c]
+    · funext i
+      simp only [Action.apply_workTapes, Option.getD_none,
+        Cfg.workTapeSymbols_eq, Function.update_eq_self, c]
+    · funext i
+      simp only [Action.apply_workTapePos, c, SignType.pos_eq_one, SignType.coe_one,
+        Nat.cast_add, Nat.cast_one]
+    · rw [Action.apply_output]
+      change (if emit then a.take j else []) ++
+        (if emit then some (a[j]'(by omega)) else none).toList =
+          if emit then a.take (j + 1) else []
+      cases emit with
+      | false => rfl
+      | true =>
+        simp only [↓reduceIte, List.take_succ,
+          List.getElem?_eq_getElem (by omega : j < a.length), Option.toList_some]
+

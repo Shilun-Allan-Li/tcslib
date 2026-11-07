@@ -1,0 +1,82 @@
+/private/tmp/tcslib-f6-preship-d7agkhoo/Native_startup_v2.lean:85:4: error: unsolved goals
+case state
+c : EffectiveMachineCode
+K : ℕ
+P : Type
+fP : Fintype P
+dP : DecidableEq P
+R : MultiTapeTM (K + 3) Bool P
+exit : P
+hR :
+  ∀ (α : List Bool),
+    ∃ T B,
+      ∀ (w : List Bool),
+        MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+            { state := some exit, inputPos := 1,
+              workTapes := fun j =>
+                if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+                else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+              workTapePos := fun x => 0, output := [] } ∧
+          (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+            (∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []) ∧
+              MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ B
+this✝ : Fintype P := fP
+this : DecidableEq P := dP
+leaf : MultiTapeTM (K + 3) Bool Unit := { q₀ := (), tr := fun x x_1 x_2 => FinTM.controlAction 0 none }
+A : MultiTapeTM (K + 3) Bool (P ⊕ Unit) :=
+  let __src := seamCompTM R exit leaf ();
+  { q₀ := Sum.inl R.q₀, tr := __src.tr }
+hinit : ∀ (y : List Bool), MultiTapeTM.initCfg y = Cfg.mapState Sum.inl (MultiTapeTM.initCfg y)
+hrun : ∀ {y : List Bool} (d : Cfg (K + 3) Bool (P ⊕ Unit) y) (t : ℕ), MultiTapeTM.runFrom d t = MultiTapeTM.runFrom d t
+hleaf :
+  ∀ {y : List Bool} (d : Cfg (K + 3) Bool Unit y),
+    d.state = some () →
+      MultiTapeTM.runFrom d 1 =
+        { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+          output := d.output }
+α : List Bool
+T _B : ℕ
+hα :
+  ∀ (w : List Bool),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+        { state := some exit, inputPos := 1,
+          workTapes := fun j =>
+            if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+            else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+          workTapePos := fun x => 0, output := [] } ∧
+      (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+        (∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []) ∧
+          MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ _B
+w : List Bool
+hr :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+    { state := some exit, inputPos := 1,
+      workTapes := fun j =>
+        if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+        else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+      workTapePos := fun x => 0, output := [] }
+hcut : ∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit
+_hout : ∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []
+_hspace : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ _B
+d : Cfg (K + 3) Bool P (pairEncode α w) :=
+  { state := some exit, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+hd : d.state = some exit
+hs : (Cfg.mapState (fun x => ()) d).state = some ()
+hr' : MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T = d
+hfinal :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) (T + 2) =
+    Cfg.mapState Sum.inr
+      (let __src := Cfg.mapState (fun x => ()) d;
+      { state := none, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+        output := __src.output })
+halive : ∀ u < T + 2, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ none
+⊢ Option.map Sum.inr
+      (let __src := Cfg.mapState (fun x => ()) d;
+        { state := none, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+          output := __src.output }).state =
+    { state := none, inputPos := 1, workTapes := d.workTapes, workTapePos := fun x => 0, output := [] }.state
+'F6LayoutPreship.native_startup_first_halt' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

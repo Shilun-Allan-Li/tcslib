@@ -1,0 +1,556 @@
+{
+  "source_sha256": "483ab96b55b400c3c1d4df9796b38cfec20b09f0360c68fe97a560212b1d0b80",
+  "sealed_input_sha256": "9824e70a6d426f9c6c0829402e88d7dda5ffbdfe60efadad15d94d364fc900c5",
+  "definitions": [
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.Cfg.init",
+    "Turing.Action.apply",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.moveInputPos",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.Computes",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.spaceUsedByTape",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.FinTM.controlAction",
+    "Turing.FinTM.leftAction",
+    "Turing.FinTM.rightAction",
+    "Turing.FinTM.emitAction",
+    "Turing.FinTM.bufferTape",
+    "Turing.FinTM.tapeBlocks",
+    "Turing.FinTM.VirtualTag",
+    "Turing.FinTM.virtualMove",
+    "Turing.FinTM.virtualNextTag",
+    "Turing.pairEncode",
+    "Turing.pairDecode",
+    "Turing.dbl",
+    "Turing.FinTM.constTM",
+    "Turing.pairDiagTM",
+    "Turing.Cfg.ofWords",
+    "Turing.stateWord",
+    "Turing.Cfg.mapState",
+    "Turing.embedEmitCfg",
+    "Turing.embedEmitTM",
+    "Turing.solveSplit",
+    "Turing.solveSplitWith",
+    "Turing.Action.mapState"
+  ],
+  "sections": 63,
+  "restores_exact_source": true,
+  "four_T1_caller_legacy_bodies_not_strong_sealed": [
+    "Turing.FinTM.lenStart",
+    "Turing.FinTM.splitRestore_run",
+    "Turing.FinTM.splitBody_rewind",
+    "Turing.FinTM.emitterP2_prepare_run"
+  ],
+  "regions": [
+    {
+      "name": "Turing.FinTM.FwdMapState",
+      "start": 135354,
+      "end": 135710,
+      "header": "section PrimitivesFinalSeal0\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal0\n",
+      "source_chunk_sha256": "75a1140f85fe2d1b6221083fe879a4aacab0107e1c7ab86800f8d5ff861d745a"
+    },
+    {
+      "name": "Turing.FinTM.appendBitTM_computes",
+      "start": 407856,
+      "end": 408565,
+      "header": "section PrimitivesFinalSeal1\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal1\n",
+      "source_chunk_sha256": "492f5c33b8115cf4778988aa84bfd58fd181ce473fedfc32122b59bcb5c8a122"
+    },
+    {
+      "name": "Turing.FinTM.bufferReplay_run",
+      "start": 36060,
+      "end": 38406,
+      "header": "section PrimitivesFinalSeal2\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal2\n",
+      "source_chunk_sha256": "88c93a3cfae433f78391bc1d5077c37b233644622d58feee94c0755a17f7c793"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_appendBit",
+      "start": 408565,
+      "end": 409315,
+      "header": "section PrimitivesFinalSeal3\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal3\n",
+      "source_chunk_sha256": "8f122eb8fe697154d14fad5d07b0391fc52566cda7b6404e4615987fbe7a459b"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairDup",
+      "start": 134512,
+      "end": 135354,
+      "header": "section PrimitivesFinalSeal4\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal4\n",
+      "source_chunk_sha256": "af9e2223023d9aa5d0cc261ccd4d79a8151d24eb7231fa2b37c6e78d298680c2"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_pairMapSnd",
+      "start": 188116,
+      "end": 189410,
+      "header": "section PrimitivesFinalSeal5\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal5\n",
+      "source_chunk_sha256": "07c82ac834def8299dc2aed23c12a2403337c2c0eec651921ec3ea31eada33ea"
+    },
+    {
+      "name": "Turing.FinTM.computesFunInTime_unaryToken",
+      "start": 405505,
+      "end": 406336,
+      "header": "section PrimitivesFinalSeal6\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal6\n",
+      "source_chunk_sha256": "e23e622800ebc2026b3496ba49ca979f5ebaaebca7fc8127704b0c1c9cc91ac4"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2PairIndex",
+      "start": 343491,
+      "end": 343913,
+      "header": "section PrimitivesFinalSeal7\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal7\n",
+      "source_chunk_sha256": "c37e808111f299687e1c823fadefa9a51e87489199b2c14d724e5b5642520f74"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2SmallIndex",
+      "start": 341826,
+      "end": 342262,
+      "header": "section PrimitivesFinalSeal8\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal8\n",
+      "source_chunk_sha256": "056c0b7124877f7a78f01a20a67fe3e5a2fead60880b7aaa811527d33d4a6cf4"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_admin_frame",
+      "start": 338843,
+      "end": 341826,
+      "header": "section PrimitivesFinalSeal9\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal9\n",
+      "source_chunk_sha256": "70b4cb53cad4daccf3ff0da215e4eedd140a87d8fb4828cf3b79489fd1d732cf"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_bank_frame",
+      "start": 333470,
+      "end": 335234,
+      "header": "section PrimitivesFinalSeal10\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal10\n",
+      "source_chunk_sha256": "27cdfb4757970d1de70480ac7bcb6e52eaa092f55684547e3dd78b9cb9660719"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_erase",
+      "start": 360603,
+      "end": 363733,
+      "header": "section PrimitivesFinalSeal11\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal11\n",
+      "source_chunk_sha256": "de402453426ef1d58f504f942cbcaf8c7a300072e197b432181a9945455b822b"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_erase_left",
+      "start": 363733,
+      "end": 364756,
+      "header": "section PrimitivesFinalSeal12\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal12\n",
+      "source_chunk_sha256": "9bd7d7a30b8dc50d566cfaaf204c7c4a827d344c8fa5279fb6323f52d8ea45f5"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_body_erase_right",
+      "start": 364756,
+      "end": 365734,
+      "header": "section PrimitivesFinalSeal13\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal13\n",
+      "source_chunk_sha256": "18c028c432ff10eb209398fa9d5cf4612fc0c39e1d67c933a5ccf8d42219f274"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_index_injective",
+      "start": 337830,
+      "end": 338843,
+      "header": "section PrimitivesFinalSeal14\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal14\n",
+      "source_chunk_sha256": "283059bec627bc6716c66b6afb461a5253b63006ca2be81b2a08cb4a1f4df1f6"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_left_frame",
+      "start": 335234,
+      "end": 335891,
+      "header": "section PrimitivesFinalSeal15\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal15\n",
+      "source_chunk_sha256": "bddc226b62730cac6869c6af2e78890a3145186e652457e41761a63feb66bc7a"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_pair_frame",
+      "start": 343913,
+      "end": 345124,
+      "header": "section PrimitivesFinalSeal16\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal16\n",
+      "source_chunk_sha256": "2e8aaab8f57e8e1b779928a85477fee980251f84dae2131954d2e35304cd3523"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_bank",
+      "start": 315601,
+      "end": 319334,
+      "header": "section PrimitivesFinalSeal17\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal17\n",
+      "source_chunk_sha256": "ec7edc9f428887464e87c1f693a06611ff961587ed6ddaa84a3e0ec693f4863c"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_candidate",
+      "start": 319334,
+      "end": 320034,
+      "header": "section PrimitivesFinalSeal18\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal18\n",
+      "source_chunk_sha256": "ec0eaa2e0c7d3d9dc6e1143e8b1bf5cc7a0c7fb3353cf9902829361167841849"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_prepare_rewind_suffix",
+      "start": 320034,
+      "end": 320621,
+      "header": "section PrimitivesFinalSeal19\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal19\n",
+      "source_chunk_sha256": "da1befa310774940e46cbf85cb1127f5f1e2862cd4d7bd6dbe39975821435794"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_right_frame",
+      "start": 335891,
+      "end": 336526,
+      "header": "section PrimitivesFinalSeal20\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal20\n",
+      "source_chunk_sha256": "64e5426d3d2ce3f147fc569f9a3621c7856b30348657b2d3baeff880550bee50"
+    },
+    {
+      "name": "Turing.FinTM.emitterP2_small_frame",
+      "start": 342262,
+      "end": 343491,
+      "header": "section PrimitivesFinalSeal21\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal21\n",
+      "source_chunk_sha256": "64a1fe13e7efd0f07a94ee571d39858ccdbe3aed57485ae82113aa7938fbeaf6"
+    },
+    {
+      "name": "Turing.FinTM.emitterSplit_find",
+      "start": 286307,
+      "end": 286806,
+      "header": "section PrimitivesFinalSeal22\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal22\n",
+      "source_chunk_sha256": "59df9cf271660b25ea6ba5b190ff03a38e9637f14ee218b138563516c2e57216"
+    },
+    {
+      "name": "Turing.FinTM.extract_replay",
+      "start": 38406,
+      "end": 39190,
+      "header": "section PrimitivesFinalSeal23\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal23\n",
+      "source_chunk_sha256": "29df2e54af3501ef92b7e96638819993adce4ff3cc53d348642ed48e47287757"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapAct",
+      "start": 135819,
+      "end": 136188,
+      "header": "section PrimitivesFinalSeal24\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal24\n",
+      "source_chunk_sha256": "2827c4138c79353d26dae3a1b9d20763224d8fb89cc2431d25bd94aa285b1315"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapCfg",
+      "start": 138671,
+      "end": 139217,
+      "header": "section PrimitivesFinalSeal25\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal25\n",
+      "source_chunk_sha256": "88eafbf862fc00ea521623b9793170017049e82bcc5f565f46423ffb18e5ef9e"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapCfg_read",
+      "start": 139847,
+      "end": 140204,
+      "header": "section PrimitivesFinalSeal26\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal26\n",
+      "source_chunk_sha256": "9c1a2909f1ad82b639606913e603e89caef1f6c2e9667ce17daef953b61fb339"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapEntered",
+      "start": 167163,
+      "end": 167479,
+      "header": "section PrimitivesFinalSeal27\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal27\n",
+      "source_chunk_sha256": "9d95b42edd058249c74697739adeb19f957118e5f367685f9a57d1f4294f3de5"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_head_step",
+      "start": 169485,
+      "end": 171652,
+      "header": "section PrimitivesFinalSeal28\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal28\n",
+      "source_chunk_sha256": "293ac730ec35ed300e475f86c9b9b2f707880a268d394b58f9cb95066be4c492"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_heads",
+      "start": 171652,
+      "end": 172209,
+      "header": "section PrimitivesFinalSeal29\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal29\n",
+      "source_chunk_sha256": "e999ad9d1ca32f24043dd89ce147a6c19fc062e0a75eb53775820d9d04f8147e"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_run",
+      "start": 168807,
+      "end": 169485,
+      "header": "section PrimitivesFinalSeal30\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal30\n",
+      "source_chunk_sha256": "42bbd0a2a082a10b99c6fc6162baa732c334ccfaaa97df0f81c121c3e5396892"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_stationary",
+      "start": 167479,
+      "end": 168130,
+      "header": "section PrimitivesFinalSeal31\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal31\n",
+      "source_chunk_sha256": "15d10baeda20b2e8e4b3afed82773f010013e8be1d59d0038bc5e1883edcff81"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapSetup_step",
+      "start": 168130,
+      "end": 168807,
+      "header": "section PrimitivesFinalSeal32\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal32\n",
+      "source_chunk_sha256": "690b94809ae2cabe271b9a9db525a894b545db0aa1179748fa65029078710361"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapStateFintype",
+      "start": 135710,
+      "end": 135819,
+      "header": "section PrimitivesFinalSeal33\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal33\n",
+      "source_chunk_sha256": "0f8f2ea5dc12398ad0a5c3ae2c8dd281f8673d122525f18370fc5b53bca04382"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapTM",
+      "start": 136188,
+      "end": 138671,
+      "header": "section PrimitivesFinalSeal34\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal34\n",
+      "source_chunk_sha256": "e478e71da940bff4b276406e715eaa74b86bdd2f9dcb757c7abb8dc5494c9f02"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual",
+      "start": 139217,
+      "end": 139847,
+      "header": "section PrimitivesFinalSeal35\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal35\n",
+      "source_chunk_sha256": "760c282f3af2ab52ee3c476243bfb350c71afd34ba34a81f818f5a51c01bbdf9"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual_run",
+      "start": 166242,
+      "end": 167163,
+      "header": "section PrimitivesFinalSeal36\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal36\n",
+      "source_chunk_sha256": "d58e26df4b46bb80c5c4db2f32603ba90a464652b9b860e042e4fc4686fae448"
+    },
+    {
+      "name": "Turing.FinTM.fwdMapVirtual_step",
+      "start": 163085,
+      "end": 166242,
+      "header": "section PrimitivesFinalSeal37\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal37\n",
+      "source_chunk_sha256": "ae9bca409cb4a3b31ecbe73cc068928f0675891d46f825ef91e7d3035993bbd2"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backA",
+      "start": 150034,
+      "end": 151668,
+      "header": "section PrimitivesFinalSeal38\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal38\n",
+      "source_chunk_sha256": "6628ee0df9f77d75a94e9eef43f8ec17fe1bbca260952bffb56a1f0cb3aa8087"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_backB",
+      "start": 148247,
+      "end": 150034,
+      "header": "section PrimitivesFinalSeal39\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal39\n",
+      "source_chunk_sha256": "89e9c38ebee4723569fcb8e878ec87c49f141ca48bce3af3f13561cffd5375f9"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_block",
+      "start": 142387,
+      "end": 144920,
+      "header": "section PrimitivesFinalSeal40\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal40\n",
+      "source_chunk_sha256": "f3720a6a2f457c4ae55994684a4f2248e9730ca693883001a8cdbb22f7192db0"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_emit",
+      "start": 151668,
+      "end": 154754,
+      "header": "section PrimitivesFinalSeal41\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal41\n",
+      "source_chunk_sha256": "6c490ec8f5865063139b6f021575ae6b4dd59e2d683a78af8ad673e8b57d089a"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_finish",
+      "start": 154754,
+      "end": 156718,
+      "header": "section PrimitivesFinalSeal42\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal42\n",
+      "source_chunk_sha256": "f26a6557e0b213f12bc13d4ad52bfe2e37427a5e5a1c51683cce172a04a64bc5"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_first",
+      "start": 141400,
+      "end": 142387,
+      "header": "section PrimitivesFinalSeal43\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal43\n",
+      "source_chunk_sha256": "56a57284c96c3e74b08bbecefd17a49e70cecf409f91d46e58b130c1387557bd"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_launch",
+      "start": 172209,
+      "end": 174091,
+      "header": "section PrimitivesFinalSeal44\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal44\n",
+      "source_chunk_sha256": "7138cb15e727858993ee4af3df14f01b18c586ae705ef38728933c161f784481"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_move",
+      "start": 140204,
+      "end": 141400,
+      "header": "section PrimitivesFinalSeal45\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal45\n",
+      "source_chunk_sha256": "bac41e44660dd95de10294b60d0fb5933eac37502d894cb5627cb63712ce2abc"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_parse",
+      "start": 156718,
+      "end": 161536,
+      "header": "section PrimitivesFinalSeal46\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal46\n",
+      "source_chunk_sha256": "888f4979b36d228ccb996057fe46830e5c0f99b94576d13753f7f040eff1e834"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_reject",
+      "start": 174091,
+      "end": 175834,
+      "header": "section PrimitivesFinalSeal47\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal47\n",
+      "source_chunk_sha256": "debc0cad958745dcd32b869fa6159e6df3f7bf7a2af75c5333ee2cfa1e6318d0"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_setup",
+      "start": 161536,
+      "end": 163085,
+      "header": "section PrimitivesFinalSeal48\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal48\n",
+      "source_chunk_sha256": "cf350278a2ec798df1c8bc3e9c90464b90862701a598133b7ba50710a169e755"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_space",
+      "start": 175834,
+      "end": 178488,
+      "header": "section PrimitivesFinalSeal49\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal49\n",
+      "source_chunk_sha256": "226645b953f9fb43e79516a3c511744c90920fbfc1ee1725f2199de300001b64"
+    },
+    {
+      "name": "Turing.FinTM.fwdMap_suffix",
+      "start": 144920,
+      "end": 148247,
+      "header": "section PrimitivesFinalSeal50\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal50\n",
+      "source_chunk_sha256": "68a2884f9c103044351e9cf43e936683e120b87252395f8ff8291afaa7eb1c09"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM",
+      "start": 178488,
+      "end": 179088,
+      "header": "section PrimitivesFinalSeal51\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal51\n",
+      "source_chunk_sha256": "5cf6a3c7dde273fcb7dbf7a5d7bf48e582ba61c2c6e117f7db0d393fc930493e"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM_computes",
+      "start": 179088,
+      "end": 182077,
+      "header": "section PrimitivesFinalSeal52\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal52\n",
+      "source_chunk_sha256": "01a14e7b8c552d16a6a196714702c3caf6965dc1db409d1d66257b44dd950b95"
+    },
+    {
+      "name": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "start": 182077,
+      "end": 188116,
+      "header": "section PrimitivesFinalSeal53\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal53\n",
+      "source_chunk_sha256": "2f8db98bfc6fb34d1c06e229fd5448dc730ac7e2a6c2768d625d7f1963876f46"
+    },
+    {
+      "name": "Turing.FinTM.polyHeads",
+      "start": 112220,
+      "end": 112835,
+      "header": "section PrimitivesFinalSeal54\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal54\n",
+      "source_chunk_sha256": "cae8e0c90ff30c03a660b500ab2010ba08b5e7f59d6b2c445dbf76e0d4c34069"
+    },
+    {
+      "name": "Turing.FinTM.polyHeads_bounds",
+      "start": 112835,
+      "end": 113248,
+      "header": "section PrimitivesFinalSeal55\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal55\n",
+      "source_chunk_sha256": "48584f4de26153fa8fdd3a57e37f3bcf4206c1ac67d711892e31876394226de3"
+    },
+    {
+      "name": "Turing.FinTM.polyUnaryTM_spaceUsed",
+      "start": 124155,
+      "end": 125009,
+      "header": "section PrimitivesFinalSeal56\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal56\n",
+      "source_chunk_sha256": "338ab976d15d6bee62aaa2889834ce06a31b3c5c9022939df1bb4a4b41efb217"
+    },
+    {
+      "name": "Turing.FinTM.poly_space",
+      "start": 120782,
+      "end": 123220,
+      "header": "section PrimitivesFinalSeal57\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal57\n",
+      "source_chunk_sha256": "e55dfc436aa1bf9ef864e47096ca9bf9b374cf5ab8fbdd64e431bd47ae1bc2ec"
+    },
+    {
+      "name": "Turing.FinTM.poly_step",
+      "start": 113248,
+      "end": 120782,
+      "header": "section PrimitivesFinalSeal58\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal58\n",
+      "source_chunk_sha256": "7b8be59ee7380cb04b67044ad0d14c1f0a7986ced894f0785c9592df3d5f8071"
+    },
+    {
+      "name": "Turing.FinTM.rawStrip_replay",
+      "start": 101212,
+      "end": 101792,
+      "header": "section PrimitivesFinalSeal59\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal59\n",
+      "source_chunk_sha256": "878640a5cb528e18a72ae11111e4a69d9045dc13cb2af30a45eb99ce3ab52bc1"
+    },
+    {
+      "name": "Turing.FinTM.splitFind_eq",
+      "start": 203888,
+      "end": 204376,
+      "header": "section PrimitivesFinalSeal60\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal60\n",
+      "source_chunk_sha256": "dc2db5dfbed58de7265e05a2638a0071517ba6fb8edddb9cda591c92722177d4"
+    },
+    {
+      "name": "Turing.FinTM.splitOrbit_find",
+      "start": 203064,
+      "end": 203888,
+      "header": "section PrimitivesFinalSeal61\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal61\n",
+      "source_chunk_sha256": "e3a04b0c909b0312eb7918adce7bad1f99165f2b14115e5efda967de64367ef4"
+    },
+    {
+      "name": "Turing.FinTM.unaryTokenTM_computes",
+      "start": 404107,
+      "end": 405505,
+      "header": "section PrimitivesFinalSeal62\nattribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.tapeBlocks Turing.FinTM.VirtualTag Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.pairEncode Turing.pairDecode Turing.dbl Turing.FinTM.constTM Turing.pairDiagTM Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.solveSplit Turing.solveSplitWith Turing.Action.mapState\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+      "footer": "\nend PrimitivesFinalSeal62\n",
+      "source_chunk_sha256": "188e811fa8f85745e4c5d33c9d4e8faf2de27ff5113d561f752d978a9a14df96"
+    }
+  ]
+}

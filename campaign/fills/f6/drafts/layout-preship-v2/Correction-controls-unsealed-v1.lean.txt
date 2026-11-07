@@ -1,0 +1,8 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option autoImplicit false
+open Turing
+-- C30 tapeAction, pointwise and abstracted
+example (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) :
+    (tapeAction i inp wr m q).output = none := by rfl
+example : (fun (i : Fin 2) (inp m : SignType) (wr : Option (Option Bool)) (q : Bool) =>
+    (tapeAction i inp wr m q).output) = fun _ _ _ _ _ => none := by rfl

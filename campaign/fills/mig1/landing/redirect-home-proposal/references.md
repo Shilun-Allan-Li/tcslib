@@ -1,0 +1,11 @@
+# Source and registry effects
+
+Actual current Lean-source search finds exactly two occurrences of `redirectTM_spaceUsedByTape`: Catalog's module index at line 125 and its declaration at 2412. There is no actual proof caller to rewrite. A search of the blueprint, webpage, scripts and maintainer tools found no declaration-specific reference. `actual-source-callers.json` retains the current source hits.
+
+`machine-library-design.md` §5 puts W2 in Wrappers; §12's R3 placement and answered decision 12.2 put the later space rows in Catalog. `campaign/items/mig1/MIG1-design.md` §3's redirect row (line 106), §4's Catalog corollary row (175), and §5's retained-region description (180) reflect that earlier placement. The issued gate deletion tables likewise classify this as an in-place Catalog row. Those are historical/issued inputs, not authorization for a silent move. After a ruling, record a dated home/order-freeze exception and make the new gate's source ownership explicit; do not rewrite issued gate inputs or old reports.
+
+The recommended patch changes the per-file public order by exactly one relocation: add the same theorem immediately after `redirectTM_runFrom` in Wrappers and remove its Catalog declaration. The global public name multiset is unchanged; no compatibility alias or second declaration is added. Catalog already imports Wrappers through Loop, so imports of Catalog continue to expose the same name. The complete proposed Catalog module and an importing metadata consumer were actually checked.
+
+No import is added. `import-check.json` records the existing path Catalog → Loop → Wrappers and the absence of a path Wrappers → Catalog. The optional documentation follow-up after approval can list the intrinsic space fact beside the run correspondence in Wrappers and identify it as a re-export in Catalog's index. It does not require another theorem or a copy of the proof.
+
+The compiled API inventory records an internal generated `redirectTM.eq_1`; it is not treated as an approved hand-authored shape reader or unfolded by any proposal proof. No published source `redirectTM_k`, `redirectTM_State` or `redirectTM_eq` exists in the checked import closure. The separate k-reader alternative is explicitly unapproved and is not in the recommended patch.

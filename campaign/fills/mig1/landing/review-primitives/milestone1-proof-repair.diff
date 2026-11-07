@@ -1,0 +1,785 @@
+--- af3273f75/Primitives.lean
++++ milestone1/Primitives.lean
+@@ -2259,10 +2259,11 @@
+         ((catalogPolyUnaryTM d C).tm.step c).workTapePos := by
+   have hr (i : Fin (d + 1)) : c.workTapeSymbols i =
+       if 0 ≤ c.workTapePos i ∧ c.workTapePos i < q then some true else none := by
+-    simp only [Cfg.workTapeSymbols, hw, catalogPolyTape]
++    simp only [Cfg.workTapeSymbols_eq, hw, catalogPolyTape]
+   cases hs : c.state with
+-  | none => simpa only [MultiTapeTM.step, hs] using And.intro hw hp
++  | none => simpa only [MultiTapeTM.step_of_halt hs] using And.intro hw hp
+   | some s =>
++    simp only [MultiTapeTM.step_of_some hs]
+     simp only [hs] at hp
+     cases s with
+     | copy => exact False.elim hp
+@@ -2271,17 +2272,19 @@
+       dsimp only [polyHeads] at hp
+       by_cases hblank : c.workTapeSymbols i = none
+       · constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            catalogPolyMove, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            ↓reduceIte, catalogPolyMove, Action.apply, polyHeads]
++        · funext j
++          simp only [catalogPolyUnaryTM, hblank,
++            catalogPolyMove, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hblank,
++            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+           intro j
+           have hj := hp j
+           by_cases he : j = i
+           · subst j
+-            simp only [↓reduceIte, SignType.cast]
++            simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+             omega
+-          · simp only [he, ↓reduceIte, SignType.cast]
++          · simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+             have := hj.2.2 he
+             omega
+       · have hi : c.workTapePos i < q := by
+@@ -2293,10 +2296,12 @@
+           · simpa [he] using And.intro (hp i).1 hi
+           · exact ⟨hj.1, hj.2.2 he⟩
+         constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank, ↓reduceIte,
+-            Action.apply]
+-          split <;> simp only [polyHeads, SignType.cast, add_zero]
++        · funext j
++          simp only [catalogPolyUnaryTM, hblank, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hblank, ↓reduceIte,
++            Action.apply_state, Action.apply_workTapePos]
++          split <;> simp only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+           · exact hall
+           · intro j
+             have := hall j
+@@ -2312,63 +2317,71 @@
+             simpa only [ite_eq_right_iff, Option.some_ne_none, imp_false] using hblank
+           omega
+         constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            catalogPolyMove, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            ↓reduceIte, catalogPolyMove, Action.apply, polyHeads]
++        · funext j
++          simp only [catalogPolyUnaryTM, hblank,
++            catalogPolyMove, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hblank,
++            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+           intro j
+           have hj := hp j
+           by_cases he : j = i
+           · subst j
+-            simp only [↓reduceIte, SignType.cast]
++            simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+             omega
+-          · simp only [he, ↓reduceIte, SignType.cast, add_zero]
++          · simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+             exact ⟨hj.2.2 he, hj.2.1⟩
+       · have hi : 0 ≤ c.workTapePos i := by
+           rw [hr] at hblank
+           split at hblank <;> simp_all
+         constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            catalogPolyMove, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hblank,
+-            ↓reduceIte, catalogPolyMove, Action.apply, polyHeads]
++        · funext j
++          simp only [catalogPolyUnaryTM, hblank,
++            catalogPolyMove, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hblank,
++            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+           intro j
+           have hj := hp j
+           by_cases he : j = i
+           · subst j
+-            simp only [↓reduceIte, SignType.cast]
++            simp only [↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+             omega
+-          · simp only [he, ↓reduceIte, SignType.cast, add_zero]
++          · simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+             exact hj
+     | advance i =>
+       dsimp only [polyHeads] at hp
+       by_cases hi : i.val < d + 1
+       · constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hi,
+-            catalogPolyMove, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hi,
+-            ↓reduceDIte, catalogPolyMove, Action.apply, polyHeads]
++        · funext j
++          simp only [catalogPolyUnaryTM, hi,
++            catalogPolyMove, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hi,
++            ↓reduceDIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+           intro j
+           have hj := hp j
+           by_cases he : j = ⟨i.val, hi⟩
+-          · simp only [he, ↓reduceIte, SignType.cast]
++          · simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+             simp only [he] at hj
+             omega
+-          · simp only [he, ↓reduceIte, SignType.cast, add_zero]
++          · simp only [he, ↓reduceIte, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+             exact ⟨hj.1, le_of_lt hj.2, fun _ => hj.2⟩
+       · constructor
+-        · simpa [MultiTapeTM.step, hs, catalogPolyUnaryTM, hi, Action.apply] using hw
+-        · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, hi, ↓reduceDIte,
+-            Action.apply, polyHeads, SignType.cast, add_zero]
++        · funext j
++          simp only [catalogPolyUnaryTM, hi, Action.apply_workTapes, ↓reduceIte, ↓reduceDIte, Option.getD_none]
++          simpa only [Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j
++        · simp only [catalogPolyUnaryTM, hi, ↓reduceDIte,
++            Action.apply_state, Action.apply_workTapePos, polyHeads, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+           intro j
+           have := hp j
+           omega
+     | emit j =>
+       constructor
+-      · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM]
+-        split <;> simpa only [Action.apply] using hw
+-      · simp only [MultiTapeTM.step, hs, catalogPolyUnaryTM, Action.apply]
+-        split <;> simpa only [polyHeads, SignType.cast, add_zero] using hp
++      · simp only [catalogPolyUnaryTM]
++        split <;> (funext j; simpa only [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j)
++      · simp only [catalogPolyUnaryTM, Action.apply_state, Action.apply_workTapePos]
++        split <;> simpa only [polyHeads, Action.apply_workTapePos, SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero] using hp
+ 
+ /-- The generator's all-time work space is linear in the input length.
+ **Proof sketch.** Startup lasts `2(n+1)` steps from the origin, so its entire
+@@ -2388,6 +2401,7 @@
+       polyHeads (x.length + 1) (M.runFrom c u).state (M.runFrom c u).workTapePos := by
+     induction u with
+     | zero =>
++      rw [MultiTapeTM.runFrom_zero]
+       refine ⟨rfl, ?_⟩
+       simp [c, catalogPolyCfg, polyHeads]
+       omega
+@@ -2449,7 +2463,8 @@
+       5 * e * (x.length + 1) := by
+   cases e with
+   | zero =>
+-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
++    simp only [polyUnaryTM]
++    rw [constTM_spaceUsed]
+     exact Nat.zero_le _
+   | succ d =>
+     simpa only [polyUnaryTM, Nat.mul_assoc] using poly_space d C x t
+@@ -2766,17 +2781,25 @@
+       (fwdMapCfg M x q p a b ha hb out) =
+       fwdMapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)
+         (out ++ emit.toList) := by
+-  refine Cfg.ext rfl rfl ?_ ?_ rfl
++  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++  · rw [Action.apply_state]
++    rfl
++  · rw [Action.apply_inputPos]
++    rfl
+   · funext i
++    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-    · simp [fwdMapAct, fwdMapCfg, Action.apply]
++    · simp [fwdMapAct, fwdMapCfg]
+     · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-        simp [fwdMapAct, fwdMapCfg, Action.apply]
++        simp [fwdMapAct, fwdMapCfg]
+   · funext i
++    rw [Action.apply_workTapePos]
+     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-    · simp [fwdMapAct, fwdMapCfg, Action.apply]
++    · simp [fwdMapAct, fwdMapCfg]
+     · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-        simp [fwdMapAct, fwdMapCfg, Action.apply]
++        simp [fwdMapAct, fwdMapCfg]
++  · rw [Action.apply_output]
++    rfl
+ 
+ /-- Reading the first half of an aligned block changes only finite control
+ and the native input head. No physical output is emitted. -/
+@@ -2787,14 +2810,13 @@
+         a [] a.length 0 []) =
+       fwdMapCfg M x (some (.parse (some b))) ⟨pre.length + 2, by simp [hx] <;> omega⟩
+         a [] a.length 0 [] := by
+-  unfold MultiTapeTM.step
+-  change ((fwdMapTM M false).tm.tr (.parse none) _ _).apply _ = _
++  rw [MultiTapeTM.step_of_some rfl]
+   rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+   have hr : x[pre.length]? = some b := by simp [hx]
+   rw [hr]
+   change (fwdMapAct M .pos (none, 0) (none, 0) none _).apply _ = _
+   rw [fwdMap_move]
+-  simp only [SignType.cast, add_zero, Option.toList_none,
++  simp only [SignType.pos_eq_one, SignType.neg_eq_neg_one, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero, Option.toList_none,
+     List.append_nil]
+   congr 1
+   exact moveInputPos_pos_of_ne_right _ (by simp [hx])
+@@ -2813,10 +2835,9 @@
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
+       else fwdMapCfg M x (some .copyB)
+         ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
+-  change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++  simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+   rw [fwdMap_first M x pre (c :: rest) a b hx]
+-  unfold MultiTapeTM.step
+-  change ((fwdMapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
++  rw [MultiTapeTM.step_of_some rfl]
+   rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+   have hr : x[pre.length + 1]? = some c := by simp [hx]
+   rw [hr]
+@@ -2824,18 +2845,22 @@
+       ⟨pre.length + 3, by simp [hx] <;> omega⟩ :=
+     moveInputPos_pos_of_ne_right _ (by simp [hx])
+   cases b <;> cases c <;> simp only [fwdMapTM, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+-  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
++  all_goals
++    refine Cfg.ext
++      (by rw [Action.apply_state]; rfl)
++      (by rw [Action.apply_inputPos]; exact hm) ?_ ?_
++      (by rw [Action.apply_output]; rfl)
+   all_goals first
+     | (funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-       · simpa only [fwdMapAct, fwdMapCfg, Action.apply, tapeBlocks_left] using (bufferTape_append a _).symm
++       · simpa only [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none, tapeBlocks_left] using (bufferTape_append a _).symm
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-           simp [fwdMapAct, fwdMapCfg, Action.apply])
++           simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none])
+     | (funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-       · simp [fwdMapAct, fwdMapCfg, Action.apply, sub_eq_add_neg]
++       · simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none, sub_eq_add_neg]
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-           simp [fwdMapAct, fwdMapCfg, Action.apply])
++           simp [fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none])
+ 
+ /-- After validation, the complete suffix is buffered silently. Its right
+ blank is turned left exactly once, including when the suffix is empty. -/
+@@ -2850,7 +2875,7 @@
+   | nil =>
+     intro pre b hx
+     simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    unfold MultiTapeTM.step
++    rw [MultiTapeTM.step_of_some rfl]
+     change ((fwdMapTM M false).tm.tr .copyB _ _).apply _ = _
+     rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+     have hr : x[pre.length]? = none := by simp [hx]
+@@ -2865,27 +2890,28 @@
+           a b (a.length - 1) b.length []) =
+         fwdMapCfg M x (some .copyB) ⟨(pre ++ [d]).length + 1, by simp [hx] <;> omega⟩
+           a (b ++ [d]) (a.length - 1) (b ++ [d]).length [] := by
+-      unfold MultiTapeTM.step
++      rw [MultiTapeTM.step_of_some rfl]
+       change ((fwdMapTM M false).tm.tr .copyB _ _).apply _ = _
+       rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+       have hr : x[pre.length]? = some d := by simp [hx]
+       rw [hr]
+-      refine Cfg.ext rfl ?_ ?_ ?_ rfl
+-      · simpa only [List.length_append, List.length_singleton] using
++      refine Cfg.ext (by rw [Action.apply_state]; rfl) ?_ ?_ ?_
++        (by rw [Action.apply_output]; rfl)
++      · simpa only [Action.apply_inputPos, List.length_append, List.length_singleton] using
+           moveInputPos_pos_of_ne_right
+             (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx])
+       · funext i
+         refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-        · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply]
++        · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none]
+         · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+-          · simpa only [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply, tapeBlocks_buffer] using
++          · simpa only [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none, tapeBlocks_buffer] using
+               (bufferTape_append b d).symm
+-          · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply]
++          · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none]
+       · funext i
+         refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-        · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply]
++        · simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none]
+         · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-            simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply]
++            simp [fwdMapTM, fwdMapAct, fwdMapCfg, Action.apply_workTapes, Action.apply_workTapePos, Cfg.workTapeSymbols_eq, Option.getD_some, Option.getD_none]
+     simp only [List.length_cons]
+     rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+     simpa only [List.append_assoc, List.singleton_append] using
+@@ -2903,8 +2929,8 @@
+   | zero =>
+     intro hj
+     simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    unfold MultiTapeTM.step
+-    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer,
++    rw [MultiTapeTM.step_of_some rfl]
++    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_buffer,
+       Nat.cast_zero, zero_sub, bufferTape_left]
+     change (fwdMapAct M 0 (none, 0) (none, .pos) none _).apply
+       (fwdMapCfg M x (some .backB) p a b (a.length - 1) (-1) []) = _
+@@ -2918,8 +2944,8 @@
+     have hs : (fwdMapTM M false).tm.step
+         (fwdMapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) =
+         fwdMapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) [] := by
+-      unfold MultiTapeTM.step
+-      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer, hr]
++      rw [MultiTapeTM.step_of_some rfl]
++      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_buffer, hr]
+       change (fwdMapAct M 0 (none, 0) (none, .neg) none _).apply
+         (fwdMapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) = _
+       rw [fwdMap_move]
+@@ -2938,8 +2964,8 @@
+   | zero =>
+     intro hj
+     simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    unfold MultiTapeTM.step
+-    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
++    rw [MultiTapeTM.step_of_some rfl]
++    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left,
+       Nat.cast_zero, zero_sub, bufferTape_left]
+     change (fwdMapAct M 0 (none, .pos) (none, 0) none _).apply
+       (fwdMapCfg M x (some .backA) p a b (-1) 0 []) = _
+@@ -2953,8 +2979,8 @@
+     have hs : (fwdMapTM M false).tm.step
+         (fwdMapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
+         fwdMapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 [] := by
+-      unfold MultiTapeTM.step
+-      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
++      rw [MultiTapeTM.step_of_some rfl]
++      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left, hr]
+       change (fwdMapAct M 0 (none, .neg) (none, 0) none _).apply
+         (fwdMapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) = _
+       rw [fwdMap_move]
+@@ -2981,15 +3007,16 @@
+     have hs : (fwdMapTM M false).tm.step
+         (fwdMapCfg M x (some .emitA) p pre b pre.length 0 out) =
+         fwdMapCfg M x (some .separator) p pre b pre.length 0 (out ++ [false]) := by
+-      unfold MultiTapeTM.step
+-      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
++      rw [MultiTapeTM.step_of_some rfl]
++      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left,
+         bufferTape_nat, List.getElem?_length]
+       change (fwdMapAct M 0 (none, 0) (none, 0) (some false) _).apply
+         (fwdMapCfg M x (some .emitA) p pre b pre.length 0 out) = _
+       rw [fwdMap_move]
+       simp [fwdMapCfg]
+-    change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
+-    rw [hs]
++    simp only [List.length_nil, Nat.mul_zero, zero_add,
++      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++    rw [hs, MultiTapeTM.step_of_some rfl]
+     change (fwdMapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
+     rw [fwdMap_move]
+     simp [List.append_assoc]
+@@ -2999,17 +3026,18 @@
+     have hs : (fwdMapTM M false).tm.runFrom
+         (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
+         fwdMapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
+-      change (fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _) = _
++      simp only [List.length_nil, Nat.mul_zero, zero_add,
++        MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+       have hfirst : (fwdMapTM M false).tm.step
+           (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) =
+           fwdMapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
+-        unfold MultiTapeTM.step
+-        simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
++        rw [MultiTapeTM.step_of_some rfl]
++        simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left, hr]
+         change (fwdMapAct M 0 (none, 0) (none, 0) (some d) _).apply
+           (fwdMapCfg M x (some .emitA) p a b pre.length 0 out) = _
+         rw [fwdMap_move]
+         simp [fwdMapCfg]
+-      rw [hfirst]
++      rw [hfirst, MultiTapeTM.step_of_some rfl]
+       change (fwdMapAct M 0 (none, .pos) (none, 0) (some d) _).apply _ = _
+       rw [fwdMap_move]
+       simp [List.append_assoc]
+@@ -3038,10 +3066,20 @@
+   have he := fwdMap_emit M x a b a (⟨x.length + 1, by omega⟩) [] [] (by simp)
+   simp only [List.length_nil, Nat.cast_zero, List.nil_append] at he
+   rw [he]
+-  refine Cfg.ext rfl rfl rfl ?_ ?_
++  rw [MultiTapeTM.initCfg_eq]
++  refine Cfg.ext ?_ rfl ?_ ?_ ?_
++  · simp only [fwdMapCfg, fwdMapVirtual, Cfg.init_state, Option.map_some]
++  · funext i z
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++    · simp [fwdMapCfg, fwdMapVirtual]
++    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++        simp [fwdMapCfg, fwdMapVirtual, Cfg.init_workTapes]
+   · funext i
+-    simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init]
+-  · simp [fwdMapCfg, fwdMapVirtual, MultiTapeTM.initCfg, Cfg.init, pairEncode]
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++    · simp [fwdMapCfg, fwdMapVirtual]
++    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++        simp [fwdMapCfg, fwdMapVirtual, Cfg.init_inputPos, Cfg.init_workTapePos]
++  · simp [fwdMapCfg, fwdMapVirtual, Cfg.init_output, pairEncode_eq]
+ 
+ /-- The validating setup either halts silently on malformed input or reaches
+ exactly the required payload seam with the encoded first component emitted.
+@@ -3063,59 +3101,77 @@
+           ((fwdMapTM M false).tm.runFrom
+             (fwdMapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+               a [] a.length 0 []) t).output = [] := by
+-  induction rest using List.twoStepInduction with
+-  | nil =>
+-    intro pre a hx
+-    refine ⟨1, by simp, ?_⟩
+-    simp only [pairDecode, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    unfold MultiTapeTM.step
+-    change (((fwdMapTM M false).tm.tr (.parse none) _ _).apply _).state = none ∧ _
+-    rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
+-    simp [hx, fwdMapTM, fwdMapAct, Action.apply, fwdMapCfg]
+-  | singleton b =>
+-    intro pre a hx
+-    refine ⟨2, by simp, ?_⟩
+-    have hd : pairDecode [b] = none := by cases b <;> rfl
+-    rw [hd]
+-    change ((fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _)).state = none ∧
+-      ((fwdMapTM M false).tm.step ((fwdMapTM M false).tm.step _)).output = []
+-    rw [fwdMap_first M x pre [] a b hx]
+-    unfold MultiTapeTM.step
+-    change (((fwdMapTM M false).tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
+-    rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+-    cases b <;> simp [hx, fwdMapTM, fwdMapAct, Action.apply, fwdMapCfg, pairDecode]
+-  | cons_cons b c rest ih _ =>
+-    intro pre a hx
+-    by_cases h : b = c
+-    · subst c
+-      obtain ⟨t, ht, he⟩ := ih (pre ++ [b, b]) (a ++ [b])
+-        (by simpa [List.append_assoc] using hx)
+-      refine ⟨2 + t, by simp only [List.length_append, List.length_cons, List.length_nil] at *; omega, ?_⟩
+-      have hr := fwdMap_block M x pre rest a b b hx
+-      simp only [if_pos rfl] at hr
+-      simp only [List.length_append, List.length_cons, List.length_nil] at he
+-      cases b <;> cases hd : pairDecode rest with
+-      | none =>
+-        simp only [pairDecode, hd] at he ⊢
+-        rw [MultiTapeTM.runFrom_add, hr]
+-        simpa [List.append_assoc, Nat.add_assoc] using he
+-      | some p =>
+-        rcases p with ⟨d, v⟩
+-        simp only [pairDecode, hd] at he ⊢
+-        rw [MultiTapeTM.runFrom_add, hr]
+-        simpa [List.append_assoc, Nat.add_assoc] using he
+-    · cases b <;> cases c
+-      · exact False.elim (h rfl)
+-      · refine ⟨2 + (3 * a.length + 2 * rest.length + 5), by simp only [List.length_cons]; omega, ?_⟩
+-        simp only [pairDecode, List.append_nil]
+-        rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre rest a false true hx]
+-        simp only [Bool.false_eq_true, ↓reduceIte]
++  intro pre a hx
++  cases hd : pairDecode rest with
++  | some db =>
++    rcases db with ⟨d, b⟩
++    have hrest := eq_pairEncode_of_pairDecode rest d b hd
++    subst rest
++    clear hd
++    induction d generalizing pre a with
++    | nil =>
++      have hx' : x = pre ++ false :: true :: b := by
++        simpa only [pairEncode_eq_dbl, dbl_nil, List.nil_append,
++          List.cons_append] using hx
++      refine ⟨2 + (3 * a.length + 2 * b.length + 5), ?_, ?_⟩
++      · simp only [length_pairEncode, List.length_nil]
++        omega
++      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre b a false true hx']
++        simp only [Bool.false_eq_true, ↓reduceIte, List.append_nil]
+         simpa only [List.length_append, List.length_cons, List.length_nil] using
+-          fwdMap_finish M x (pre ++ [false, true]) a rest (by simpa [List.append_assoc] using hx)
+-      · refine ⟨2, by simp, ?_⟩
+-        rw [fwdMap_block M x pre rest a true false hx]
+-        simp [fwdMapCfg, pairDecode]
+-      · exact False.elim (h rfl)
++          fwdMap_finish M x (pre ++ [false, true]) a b
++            (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
++    | cons bit d ih =>
++      have hx' : x = pre ++ bit :: bit :: pairEncode d b := by
++        simpa only [pairEncode_eq_dbl, dbl_cons, List.cons_append] using hx
++      obtain ⟨t, ht, he⟩ := ih (pre ++ [bit, bit]) (a ++ [bit])
++        (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
++      refine ⟨2 + t, ?_, ?_⟩
++      · simp only [length_pairEncode, List.length_append, List.length_cons,
++          List.length_nil] at ht ⊢
++        omega
++      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre (pairEncode d b) a bit bit hx']
++        simp only [if_pos rfl]
++        simpa only [List.length_append, List.length_cons, List.length_nil,
++          List.append_assoc, List.singleton_append, Nat.add_assoc] using he
++  | none =>
++    obtain ⟨w, tail, hrest, htail⟩ := pairDecode_eq_none rest hd
++    subst rest
++    clear hd
++    induction w generalizing pre a with
++    | nil =>
++      simp only [dbl_nil, List.nil_append] at hx ⊢
++      rcases htail with he | ⟨bit, he⟩ | ⟨r, he⟩
++      · subst tail
++        refine ⟨1, by simp only [List.length_nil, mul_zero, zero_add]; omega, ?_⟩
++        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++        rw [MultiTapeTM.step_of_some rfl]
++        rw [fwdMapCfg_read M x _ pre.length (by simp [hx])]
++        simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, Action.apply_output, fwdMapCfg]
++      · subst tail
++        refine ⟨2, by simp only [List.length_cons, List.length_nil]; omega, ?_⟩
++        simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
++        rw [fwdMap_first M x pre [] a bit hx]
++        rw [MultiTapeTM.step_of_some rfl]
++        rw [fwdMapCfg_read M x _ (pre.length + 1) (by simp [hx])]
++        cases bit <;>
++          simp [hx, fwdMapTM, fwdMapAct, Action.apply_state, Action.apply_output, fwdMapCfg]
++      · subst tail
++        refine ⟨2, by simp only [List.length_cons]; omega, ?_⟩
++        rw [fwdMap_block M x pre r a true false hx]
++        simp [fwdMapCfg]
++    | cons bit w ih =>
++      have hx' : x = pre ++ bit :: bit :: (dbl w ++ tail) := by
++        simpa only [dbl_cons, List.cons_append] using hx
++      obtain ⟨t, ht, he⟩ := ih (pre ++ [bit, bit]) (a ++ [bit])
++        (by simpa only [List.append_assoc, List.cons_append, List.nil_append] using hx')
++      refine ⟨2 + t, ?_, ?_⟩
++      · simp only [dbl_cons, List.length_append, List.length_cons, List.length_nil] at ht ⊢
++        omega
++      · rw [MultiTapeTM.runFrom_add, fwdMap_block M x pre (dbl w ++ tail) a bit bit hx']
++        simp only [if_pos rfl]
++        simpa only [List.length_append, List.length_cons, List.length_nil,
++          List.append_assoc, List.singleton_append, Nat.add_assoc] using he
+ 
+ /-- Starting with empty buffers gives a uniform linear setup budget on every
+ input, including malformed encodings. -/
+@@ -3129,17 +3185,24 @@
+   obtain ⟨t, ht, he⟩ := fwdMap_parse M x x [] [] rfl
+   have hi : (fwdMapTM M false).tm.initCfg x =
+       fwdMapCfg M x (some (.parse none)) ⟨1, by omega⟩ [] [] 0 0 [] := by
+-    refine Cfg.ext rfl rfl ?_ ?_ rfl
++    rw [MultiTapeTM.initCfg_eq]
++    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++    · rw [Cfg.init_state]
++      rfl
++    · rw [Cfg.init_inputPos]
++      rfl
++    · funext i z
++      rw [Cfg.init_workTapes]
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
+     · funext i
++      rw [Cfg.init_workTapePos]
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-    · funext i
+-      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-      · simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
+-      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-          simp [fwdMapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · simp [fwdMapCfg]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;> simp [fwdMapCfg]
++    · rw [Cfg.init_output]
++      rfl
+   refine ⟨t, by simp only [List.length_nil, mul_zero, add_zero] at ht; omega, ?_⟩
+   rw [hi]
+   simpa only [List.nil_append, List.length_nil, Nat.cast_zero] using he
+@@ -3163,36 +3226,40 @@
+     let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
+     let mv := virtualMove tag c.inputSymbol act.inputTape
+     have hm := virtualMove_correct c tag hb act.inputTape
+-    have hc : M.tm.step c = act.apply c := by simp only [MultiTapeTM.step, hq, act]
++    have hc : M.tm.step c = act.apply c := by
++      exact MultiTapeTM.step_of_some hq
+     refine ⟨virtualNextTag tag mv, ?_, ?_⟩
+-    · simpa only [hc, Action.apply] using hm.2
++    · simpa only [hc, Action.apply_inputPos] using hm.2
+     · have hs : (fwdMapVirtual M c tag p a pre).state = some (.run q tag) := by
+         simp [fwdMapVirtual, hq]
+       have hv : (fwdMapVirtual M c tag p a pre).workTapeSymbols
+           (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) = c.inputSymbol := by
+-        simp [fwdMapVirtual, Cfg.workTapeSymbols, bufferTape_inputSymbol]
++        simp [fwdMapVirtual, Cfg.workTapeSymbols_eq, bufferTape_inputSymbol]
+       have hr : (fun i => (fwdMapVirtual M c tag p a pre).workTapeSymbols
+           (Fin.natAdd 1 (Fin.natAdd 1 i))) = c.workTapeSymbols := by
+         funext i
+-        simp [fwdMapVirtual, Cfg.workTapeSymbols]
+-      unfold MultiTapeTM.step
+-      rw [hs]
++        simp [fwdMapVirtual, Cfg.workTapeSymbols_eq]
++      rw [MultiTapeTM.step_of_some hs, hc]
+       dsimp only [fwdMapTM]
+-      rw [hv, hr, hq]
++      rw [hv, hr]
+       change (Action.apply _ _) = fwdMapVirtual M (act.apply c) _ p a pre
+-      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
++      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++      · simp only [Action.apply_state, fwdMapVirtual, ↓reduceIte, act, mv]
++      · rw [Action.apply_inputPos]
++        exact moveInputPos_zero _
+       · funext i
+         refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-        · simp [fwdMapVirtual, Action.apply, act]
++        · simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, Cfg.workTapeSymbols_eq, act]
+         · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+-            simp [fwdMapVirtual, Action.apply, act]
++            simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, Cfg.workTapeSymbols_eq, act]
+       · funext i
+         refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+-        · simp [fwdMapVirtual, Action.apply, act]
++        · simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, Cfg.workTapeSymbols_eq, act]
+         · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+-          · simpa only [fwdMapVirtual, Action.apply, tapeBlocks_buffer, ↓reduceIte] using hm.1
+-          · simp [fwdMapVirtual, Action.apply, act]
+-      · exact List.append_assoc pre c.output act.output.toList
++          · simpa only [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, Cfg.workTapeSymbols_eq, tapeBlocks_buffer, ↓reduceIte] using hm.1
++          · simp [fwdMapVirtual, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, Cfg.workTapeSymbols_eq, act]
++      · simp only [Action.apply_output, fwdMapVirtual]
++        exact List.append_assoc pre c.output act.output.toList
+ 
+ /-- Payload forwarding preserves its entire source trajectory at all times,
+ including the final halting action and the stationary halted tail. -/
+@@ -3203,7 +3270,9 @@
+       (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) t =
+         fwdMapVirtual M (M.tm.runFrom c t) tag' p a pre := by
+   induction t with
+-  | zero => exact ⟨tag, hb, rfl⟩
++  | zero =>
++    simp only [MultiTapeTM.runFrom_zero]
++    exact ⟨tag, hb, rfl⟩
+   | succ t ih =>
+     obtain ⟨b, hb, he⟩ := ih
+     obtain ⟨d, hd, hs⟩ := fwdMapVirtual_step M _ b hb p a pre
+@@ -3223,12 +3292,13 @@
+     (h : fwdMapEntered M c) (t : ℕ) : (fwdMapTM M false).tm.runFrom c t = c := by
+   obtain ⟨q, tag, hs⟩ := h
+   have he : (fwdMapTM M false).tm.step c = c := by
+-    simp only [MultiTapeTM.step, hs, fwdMapTM, Bool.false_eq_true, ↓reduceIte,
++    rw [MultiTapeTM.step_of_some hs]
++    simp only [fwdMapTM, Bool.false_eq_true, ↓reduceIte,
+       controlAction_apply, moveInputPos_zero]
+     cases c
+     simp_all
+   induction t with
+-  | zero => rfl
++  | zero => rw [MultiTapeTM.runFrom_zero]
+   | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]
+ 
+ /-- Before the payload seam the operational and setup transition tables
+@@ -3238,12 +3308,12 @@
+     (h : ¬fwdMapEntered M c) :
+     (fwdMapTM M true).tm.step c = (fwdMapTM M false).tm.step c := by
+   cases hs : c.state with
+-  | none => simp only [MultiTapeTM.step, hs]
++  | none => simp only [MultiTapeTM.step_of_halt hs]
+   | some q =>
+     cases q with
+     | run q tag => exact (h ⟨q, tag, hs⟩).elim
+-    | parse pending => cases pending <;> simp only [MultiTapeTM.step, hs, fwdMapTM]
+-    | _ => simp only [MultiTapeTM.step, hs, fwdMapTM]
++    | parse pending => cases pending <;> simp only [MultiTapeTM.step_of_some hs, fwdMapTM]
++    | _ => simp only [MultiTapeTM.step_of_some hs, fwdMapTM]
+ 
+ /-- Transfer an entire setup prefix through the final entry action. -/
+ private lemma fwdMapSetup_run (M : FinTM Bool) (x : List Bool) (t : ℕ)
+@@ -3252,7 +3322,7 @@
+     (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) t =
+       (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) t := by
+   induction t with
+-  | zero => rfl
++  | zero => simp only [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, fwdMapTM]
+   | succ t ih =>
+     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun u hu => h u (by omega)),
+       fwdMapSetup_step M _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+@@ -3264,36 +3334,42 @@
+       c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
+   have ha (q : FwdMapState M.State) (inp : Option Bool)
+       (work : Fin (1 + (1 + M.k)) → Option Bool) :
+-      ((fwdMapTM M false).tm.tr q inp work).workTapes (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+-        (none, 0) := by
++      (((fwdMapTM M false).tm.tr q inp work).apply c).workTapePos
++          (Fin.natAdd 1 (Fin.natAdd 1 i)) =
++        c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
+     cases q with
+     | parse pending =>
+       cases pending with
+-      | none => cases inp <;> simp [fwdMapTM, fwdMapAct]
++      | none => cases inp <;> simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+       | some b =>
+         cases inp with
+-        | none => simp [fwdMapTM, fwdMapAct]
++        | none => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+         | some d =>
+           by_cases he : b = d
+-          · simp [fwdMapTM, he, fwdMapAct]
+-          · cases b <;> simp [fwdMapTM, he, fwdMapAct]
+-    | copyB => cases inp <;> simp [fwdMapTM, fwdMapAct]
++          · simp [fwdMapTM, he, fwdMapAct, Action.apply_workTapePos]
++          · cases b <;> simp [fwdMapTM, he, fwdMapAct, Action.apply_workTapePos]
++    | copyB => cases inp <;> simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+     | backB =>
+       cases h : work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) <;>
+-        simp only [fwdMapTM, h, fwdMapAct, tapeBlocks_right]
++        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
++          tapeBlocks_right, SignType.coe_zero, add_zero]
+     | backA =>
+       cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+-        simp only [fwdMapTM, h, fwdMapAct, tapeBlocks_right]
++        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
++          tapeBlocks_right, SignType.coe_zero, add_zero]
+     | emitA =>
+       cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+-        simp only [fwdMapTM, h, fwdMapAct, tapeBlocks_right]
+-    | emitAgain b => simp [fwdMapTM, fwdMapAct]
+-    | separator => simp [fwdMapTM, fwdMapAct]
+-    | run q tag => rfl
+-  unfold MultiTapeTM.step
++        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
++          tapeBlocks_right, SignType.coe_zero, add_zero]
++    | emitAgain b => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
++    | separator => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
++    | run q tag =>
++      simp only [fwdMapTM, Bool.false_eq_true, ↓reduceIte, controlAction_apply]
+   cases hs : c.state with
+-  | none => rfl
+-  | some q => simp only [Action.apply, ha]; simp
++  | none => rw [MultiTapeTM.step_of_halt hs]
++  | some q =>
++    rw [MultiTapeTM.step_of_some hs]
++    exact ha q _ _
+ 
+ /-- The payload bank stays at its initial origin throughout setup, with no
+ condition on grammar validity, buffer widths, or elapsed time. -/
+@@ -3301,7 +3377,8 @@
+     ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) t).workTapePos
+       (Fin.natAdd 1 (Fin.natAdd 1 i)) = 0 := by
+   induction t with
+-  | zero => rfl
++  | zero =>
++    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+   | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', fwdMapSetup_head_step, ih]
+ 
+ /-- Choose the first payload entry, then transfer every prefix to the
+@@ -3322,9 +3399,12 @@
+       ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u) := by
+     refine ⟨t, M.tm.q₀, true, ?_⟩
+     rw [he]
+-    rfl
++    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+   let u := Nat.find hex
+-  have hu : u ≤ t := Nat.find_min' hex (by rw [he]; exact ⟨M.tm.q₀, true, rfl⟩)
++  have hu : u ≤ t := Nat.find_min' hex (by
++    rw [he]
++    refine ⟨M.tm.q₀, true, ?_⟩
++    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some])
+   have hg : ∀ v < u, ¬fwdMapEntered M
+       ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) :=
+     fun v hv => Nat.find_min hex hv
+@@ -3481,7 +3561,7 @@
+         change pairEncode a [] ++
+           (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+         rw [ho]
+-        simp [pairEncode, List.append_assoc]
++        simp [pairEncode_eq, List.append_assoc]
+     have hT := hTg hlen
+     exact ht.mono (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+ 

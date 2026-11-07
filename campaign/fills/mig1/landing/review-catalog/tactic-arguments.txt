@@ -1,0 +1,328 @@
+Catalog-current.lean.txt:1409 Turing.catalog_buffer_clip
+  · rw [if_pos h]
+arguments: if_pos h
+
+Catalog-current.lean.txt:1410 Turing.catalog_buffer_clip
+  · rw [if_neg h]
+arguments: if_neg h
+
+Catalog-current.lean.txt:1412 Turing.catalog_buffer_clip
+    rw [FinTM.bufferTape_eq]
+arguments: FinTM.bufferTape_eq
+
+Catalog-current.lean.txt:1440 Turing.Cfg.ofWords_transfer_endpoint
+  · simp only [Cfg.ofWords_state]
+arguments: Cfg.ofWords_state
+
+Catalog-current.lean.txt:1441 Turing.Cfg.ofWords_transfer_endpoint
+  · simp only [Cfg.ofWords_inputPos]
+arguments: Cfg.ofWords_inputPos
+
+Catalog-current.lean.txt:1444 Turing.Cfg.ofWords_transfer_endpoint
+    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+arguments: Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero
+
+Catalog-current.lean.txt:1447 Turing.Cfg.ofWords_transfer_endpoint
+      simp only [Function.update_of_ne hne, Function.update_self,
+arguments: Function.update_of_ne hne, Function.update_self,
+        FinTM.bufferTape_nil, hne, false_and, ite_false, true_and
+
+Catalog-current.lean.txt:1452 Turing.Cfg.ofWords_transfer_endpoint
+        rw [if_neg hp] at hc
+arguments: if_neg hp
+
+Catalog-current.lean.txt:1456 Turing.Cfg.ofWords_transfer_endpoint
+        simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
+arguments: Function.update_self, hdst, FinTM.bufferTape_nil,
+          hs, false_and, ite_false, true_and
+
+Catalog-current.lean.txt:1459 Turing.Cfg.ofWords_transfer_endpoint
+      · simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,
+arguments: hs, hd, false_and, ite_false, Function.update_of_ne hd,
+          Function.update_of_ne hs
+
+Catalog-current.lean.txt:1462 Turing.Cfg.ofWords_transfer_endpoint
+    simp only [Cfg.ofWords_workTapePos]
+arguments: Cfg.ofWords_workTapePos
+
+Catalog-current.lean.txt:1463 Turing.Cfg.ofWords_transfer_endpoint
+  · simp only [Cfg.ofWords_output]
+arguments: Cfg.ofWords_output
+
+Catalog-current.lean.txt:1519 Turing.Cfg.ofWords_copy_endpoint
+  · simp only [Cfg.ofWords_state]
+arguments: Cfg.ofWords_state
+
+Catalog-current.lean.txt:1520 Turing.Cfg.ofWords_copy_endpoint
+  · simp only [Cfg.ofWords_inputPos]
+arguments: Cfg.ofWords_inputPos
+
+Catalog-current.lean.txt:1523 Turing.Cfg.ofWords_copy_endpoint
+    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+arguments: Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero
+
+Catalog-current.lean.txt:1526 Turing.Cfg.ofWords_copy_endpoint
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
+arguments: Function.update_self, hdst, FinTM.bufferTape_nil, true_and
+
+Catalog-current.lean.txt:1528 Turing.Cfg.ofWords_copy_endpoint
+    · simp only [hj, false_and, ite_false, Function.update_of_ne hj]
+arguments: hj, false_and, ite_false, Function.update_of_ne hj
+
+Catalog-current.lean.txt:1530 Turing.Cfg.ofWords_copy_endpoint
+    simp only [Cfg.ofWords_workTapePos]
+arguments: Cfg.ofWords_workTapePos
+
+Catalog-current.lean.txt:1531 Turing.Cfg.ofWords_copy_endpoint
+  · simp only [Cfg.ofWords_output]
+arguments: Cfg.ofWords_output
+
+Catalog-current.lean.txt:1600 Turing.catalog_increment_framed
+    rw [hsplit]
+arguments: hsplit
+
+Catalog-current.lean.txt:1601 Turing.catalog_increment_framed
+    cases tail <;> simp
+arguments: None
+
+Catalog-current.lean.txt:1603 Turing.catalog_increment_framed
+  · rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+arguments: catalog_increment_trace i w d hstate hw p tail hsplit
+
+Catalog-current.lean.txt:1604 Turing.catalog_increment_framed
+    simp only [catalogTrace, show ¬2 * p + 2 ≤ p by omega,
+arguments: catalogTrace, show ¬2 * p + 2 ≤ p by omega,
+      show ¬2 * p + 2 ≤ 2 * p + 1 by omega, ite_false
+
+Catalog-current.lean.txt:1606 Turing.catalog_increment_framed
+    apply Cfg.ext <;> simp [catalogIncR]
+arguments: catalogIncR
+
+Catalog-current.lean.txt:1608 Turing.catalog_increment_framed
+    by_cases hj : j = i <;> simp [hj, catalogTape, hlen]
+arguments: hj, catalogTape, hlen
+
+Catalog-current.lean.txt:1611 Turing.catalog_increment_framed
+      rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+arguments: catalog_increment_trace i w d hstate hw p tail hsplit
+
+Catalog-current.lean.txt:1612 Turing.catalog_increment_framed
+      simp only [catalogTrace]
+arguments: catalogTrace
+
+Catalog-current.lean.txt:1613 Turing.catalog_increment_framed
+      split_ifs <;> simp_all [catalogIncF, catalogIncR] <;> omega
+arguments: catalogIncF, catalogIncR
+
+Catalog-current.lean.txt:1615 Turing.catalog_increment_framed
+      rw [catalog_increment_trace i w d hstate hw p tail hsplit]
+arguments: catalog_increment_trace i w d hstate hw p tail hsplit
+
+Catalog-current.lean.txt:1616 Turing.catalog_increment_framed
+      simp only [catalogTrace]
+arguments: catalogTrace
+
+Catalog-current.lean.txt:1617 Turing.catalog_increment_framed
+      split_ifs <;> simp_all [catalogIncF, catalogIncR, Finset.mem_Icc] <;> omega
+arguments: catalogIncF, catalogIncR, Finset.mem_Icc
+
+Catalog-current.lean.txt:1653 Turing.incrementTM_run_succ_ofCfg
+  rw [hsplit, catalog_increment_value] at hv
+arguments: hsplit, catalog_increment_value
+
+Catalog-current.lean.txt:1655 Turing.incrementTM_run_succ_ofCfg
+  | none => simp at hv
+arguments: None
+
+Catalog-current.lean.txt:1657 Turing.incrementTM_run_succ_ofCfg
+    have hv' : v = List.replicate p false ++ true :: tail := by simpa using hv.symm
+arguments: None
+
+Catalog-current.lean.txt:1659 Turing.incrementTM_run_succ_ofCfg
+      simp [hsplit]
+arguments: hsplit
+
+Catalog-current.lean.txt:1660 Turing.incrementTM_run_succ_ofCfg
+    rw [hp]
+arguments: hp
+
+Catalog-current.lean.txt:1661 Turing.incrementTM_run_succ_ofCfg
+    simpa only [Option.isSome_some, Option.elim_some, hv'] using
+arguments: Option.isSome_some, Option.elim_some, hv'
+
+Catalog-current.lean.txt:1696 Turing.incrementTM_run_overflow_ofCfg
+  rw [hsplit, catalog_increment_value] at hv
+arguments: hsplit, catalog_increment_value
+
+Catalog-current.lean.txt:1698 Turing.incrementTM_run_overflow_ofCfg
+  | some tail => simp at hv
+arguments: None
+
+Catalog-current.lean.txt:1700 Turing.incrementTM_run_overflow_ofCfg
+    have hp : w.length = p := by simp [hsplit]
+arguments: hsplit
+
+Catalog-current.lean.txt:1701 Turing.incrementTM_run_overflow_ofCfg
+    rw [hp]
+arguments: hp
+
+Catalog-current.lean.txt:1702 Turing.incrementTM_run_overflow_ofCfg
+    simpa only [hp, Option.isSome_none, Option.elim_none, List.append_nil] using
+arguments: hp, Option.isSome_none, Option.elim_none, List.append_nil
+
+Catalog-current.lean.txt:1978 Turing.FinTM.computesFunInTime_id_spaceUsed
+    rw [idTM_spaceUsed x t]; omega⟩
+arguments: idTM_spaceUsed x t
+
+Catalog-current.lean.txt:1993 Turing.FinTM.computesFunInTime_const_spaceUsed
+    rw [constTM_spaceUsed w x t]; omega⟩
+arguments: constTM_spaceUsed w x t
+
+Catalog-current.lean.txt:2011 Turing.FinTM.computesFunInTime_prepend_spaceUsed
+      simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one]; omega), fun x t => by
+arguments: Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one
+
+Catalog-current.lean.txt:2012 Turing.FinTM.computesFunInTime_prepend_spaceUsed
+    rw [prependTM_spaceUsed w x t]; omega⟩
+arguments: prependTM_spaceUsed w x t
+
+Catalog-current.lean.txt:2075 Turing.FinTM.computesFunInTime_polyBits_spaceUsed
+      simpa only [Nat.zero_mul, Nat.zero_bits] using
+arguments: Nat.zero_mul, Nat.zero_bits
+
+Catalog-current.lean.txt:2079 Turing.FinTM.computesFunInTime_polyBits_spaceUsed
+      simpa only [Nat.zero_mul, Nat.zero_add, Nat.mul_one] using hspace x t
+arguments: Nat.zero_mul, Nat.zero_add, Nat.mul_one
+
+Catalog-current.lean.txt:2087 Turing.FinTM.computesFunInTime_polyBits_spaceUsed
+    dsimp only
+arguments: None
+
+Catalog-current.lean.txt:2118 Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed
+  simpa only [pairEncode_eq] using
+arguments: pairEncode_eq
+
+Catalog-current.lean.txt:2194 Turing.FinTM.computesFunInTime_pairValid_spaceUsed
+    simpa using pairValidTM_computes x, fun x t => by
+arguments: None
+
+Catalog-current.lean.txt:2195 Turing.FinTM.computesFunInTime_pairValid_spaceUsed
+    rw [pairValidTM_spaceUsed x t]; omega⟩
+arguments: pairValidTM_spaceUsed x t
+
+Catalog-current.lean.txt:2231 Turing.FinTM.computesFunInTime_pairDup_spaceUsed
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+arguments: MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+Catalog-current.lean.txt:2267 Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed
+    dsimp only
+arguments: None
+
+Catalog-current.lean.txt:2331 Turing.FinTM.computesFunInTime_incFixed_spaceUsed
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+arguments: MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
+Catalog-current.lean.txt:2399 Turing.FinTM.computesFunInTime_splitSolve_spaceUsed
+  rw [Nat.add_mul (20 : ℕ) (23 * (splitSolveTM C e).k), Nat.mul_assoc 23]
+arguments: Nat.add_mul (20 : ℕ) (23 * (splitSolveTM C e).k), Nat.mul_assoc 23
+
+Catalog-current.lean.txt:2417 Turing.FinTM.redirectTM_spaceUsedByTape
+  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+arguments: MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card
+
+Catalog-current.lean.txt:2420 Turing.FinTM.redirectTM_spaceUsedByTape
+  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]
+arguments: MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1
+
+Catalog-current.lean.txt:2458 Turing.FinTM.computesFunInTime_cond_spaceUsed
+    rw [branchTM_spaceUsed] at h
+arguments: branchTM_spaceUsed
+
+Catalog-current.lean.txt:2546 Turing.FinTM.exists_loopTM_spaceUsed
+  rw [Nat.add_mul 10]
+arguments: Nat.add_mul 10
+
+CodeSimulator-repaired.lean.txt:1255 Turing.MachineFormat.canonPreserveInstall
+    · rw [Cfg.ofWords_state, Cfg.ofWords_state, Option.map_some]
+arguments: Cfg.ofWords_state, Cfg.ofWords_state, Option.map_some
+
+CodeSimulator-repaired.lean.txt:1256 Turing.MachineFormat.canonPreserveInstall
+    · rw [Cfg.ofWords_inputPos, Cfg.ofWords_inputPos]
+arguments: Cfg.ofWords_inputPos, Cfg.ofWords_inputPos
+
+CodeSimulator-repaired.lean.txt:1258 Turing.MachineFormat.canonPreserveInstall
+      rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapes]
+arguments: Cfg.ofWords_workTapes, Cfg.ofWords_workTapes
+
+CodeSimulator-repaired.lean.txt:1260 Turing.MachineFormat.canonPreserveInstall
+      rw [Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos]
+arguments: Cfg.ofWords_workTapePos, Cfg.ofWords_workTapePos
+
+CodeSimulator-repaired.lean.txt:1261 Turing.MachineFormat.canonPreserveInstall
+    · rw [Cfg.ofWords_output, Cfg.ofWords_output]
+arguments: Cfg.ofWords_output, Cfg.ofWords_output
+
+CodeSimulator-repaired.lean.txt:1277 Turing.MachineFormat.canonPreserveInstall
+  have source : w 0 = arg := by simp [w, stateWord_eq]
+arguments: w, stateWord_eq
+
+CodeSimulator-repaired.lean.txt:1278 Turing.MachineFormat.canonPreserveInstall
+  have fresh : w dst = [] := by simp [w, stateWord_eq, dst]
+arguments: w, stateWord_eq, dst
+
+CodeSimulator-repaired.lean.txt:1282 Turing.MachineFormat.canonPreserveInstall
+    simp [dst] at this
+arguments: dst
+
+CodeSimulator-repaired.lean.txt:1285 Turing.MachineFormat.canonPreserveInstall
+    simp [w, stateWord_eq, dst, bank, zero, Function.update_apply, Fin.ext_iff]
+arguments: w, stateWord_eq, dst, bank, zero, Function.update_apply, Fin.ext_iff
+
+CodeSimulator-repaired.lean.txt:1288 Turing.MachineFormat.canonPreserveInstall
+    simp only [copied, result, Function.update_of_ne ne]
+arguments: copied, result, Function.update_of_ne ne
+
+CodeSimulator-repaired.lean.txt:1291 Turing.MachineFormat.canonPreserveInstall
+    (fun p _ _ => by rw [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add])
+arguments: Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add
+
+CodeSimulator-repaired.lean.txt:1294 Turing.MachineFormat.canonPreserveInstall
+  rw [source] at run₀ cut₀
+arguments: source
+
+CodeSimulator-repaired.lean.txt:1301 Turing.MachineFormat.canonPreserveInstall
+    rw [← canonEmbedWords I.tm bank enter (stateWord I.k arg) copied copied
+arguments: ← canonEmbedWords I.tm bank enter (stateWord I.k arg) copied copied
+      (onBank arg) (fun _ _ => rfl)
+
+CodeSimulator-repaired.lean.txt:1306 Turing.MachineFormat.canonPreserveInstall
+    rw [lift, run₁]
+arguments: lift, run₁
+
+CodeSimulator-repaired.lean.txt:1311 Turing.MachineFormat.canonPreserveInstall
+    rw [lift]
+arguments: lift
+
+CodeSimulator-repaired.lean.txt:1312 Turing.MachineFormat.canonPreserveInstall
+    simpa only [embedEmitCfg_state] using cut₁ u hu
+arguments: embedEmitCfg_state
+
+CodeSimulator-repaired.lean.txt:1315 Turing.MachineFormat.canonPreserveInstall
+      Cfg.ofWords leave result := by simpa only [canonical_map] using second
+arguments: canonical_map
+
+CodeSimulator-repaired.lean.txt:1318 Turing.MachineFormat.canonPreserveInstall
+        fun _ => enter) u).state ≠ some leave := by simpa only [canonical_map] using secondCut u hu
+arguments: canonical_map
+
+CodeSimulator-repaired.lean.txt:1327 Turing.MachineFormat.canonPreserveInstall
+        rw [Nat.add_mul]
+arguments: Nat.add_mul
+
+CodeSimulator-repaired.lean.txt:1329 Turing.MachineFormat.canonPreserveInstall
+  · simpa only [C, MultiTapeTM.runFrom_with_q₀, canonical_map] using first
+arguments: C, MultiTapeTM.runFrom_with_q₀, canonical_map
+
+CodeSimulator-repaired.lean.txt:1330 Turing.MachineFormat.canonPreserveInstall
+  · simpa only [C, result, w, MultiTapeTM.runFrom_with_q₀, canonical_map] using whole
+arguments: C, result, w, MultiTapeTM.runFrom_with_q₀, canonical_map

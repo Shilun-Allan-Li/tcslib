@@ -1,0 +1,343 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+set_option autoImplicit false
+open Turing
+
+section IsolatedControl01
+-- ID01 Turing.MultiTapeTM.step
+-- C01 step (pointwise / abstracted)
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.step {c with state := none} = {c with state := none} := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.step {c with state := none}) = fun _ c => {c with state := none} := by rfl
+end IsolatedControl01
+
+section IsolatedControl02
+-- ID02 Turing.MultiTapeTM.runFrom
+-- C02 runFrom
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    tm.runFrom c 1 = tm.step c := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    tm.runFrom c 1) = fun tm c => tm.step c := by rfl
+end IsolatedControl02
+
+section IsolatedControl03
+-- ID03 Turing.MultiTapeTM.initCfg
+-- C03 initCfg
+example (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) : tm.initCfg x = Cfg.init tm.q₀ x := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (x : List Bool) => tm.initCfg x) =
+    fun tm x => Cfg.init tm.q₀ x := by rfl
+end IsolatedControl03
+
+section IsolatedControl04
+-- ID04 Turing.Cfg.init
+-- C04 Cfg.init
+example (x : List Bool) : (Cfg.init () x : Cfg 1 Bool Unit x).output = [] := by rfl
+example : (fun x : List Bool => (Cfg.init () x : Cfg 1 Bool Unit x).output) = fun _ => [] := by rfl
+end IsolatedControl04
+
+section IsolatedControl05
+-- ID05 Turing.Action.apply
+-- C05 Action.apply
+example (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (a.apply c).state = a.state := by rfl
+example : (fun (a : Action 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) => (a.apply c).state) =
+    fun a _ => a.state := by rfl
+end IsolatedControl05
+
+section IsolatedControl06
+-- ID06 Turing.Cfg.inputSymbol
+-- C06 Cfg.inputSymbol
+example (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) :
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol = none := by rfl
+example : (fun (q : Option Unit) (w : Fin 1 → ℤ → Option Bool) (h : Fin 1 → ℤ) =>
+    (⟨q, 0, w, h, []⟩ : Cfg 1 Bool Unit ([] : List Bool)).inputSymbol) = fun _ _ _ => none := by rfl
+end IsolatedControl06
+
+section IsolatedControl07
+-- ID07 Turing.Cfg.workTapeSymbols
+-- C07 Cfg.workTapeSymbols
+example (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := by rfl
+example : (fun (c : Cfg 1 Bool Unit ([] : List Bool)) (i : Fin 1) => c.workTapeSymbols i) =
+    fun c i => c.workTapes i (c.workTapePos i) := by rfl
+end IsolatedControl07
+
+section IsolatedControl08
+-- ID08 Turing.moveInputPos
+-- C08 moveInputPos
+example : moveInputPos (1 : Fin 3) .zero = 1 := by rfl
+example (n : ℕ) : (fun (pos : Fin (n + 2)) (m : SignType) => moveInputPos pos m) =
+    fun pos m =>
+      let p := ((pos.val : ℤ) + (m.cast : ℤ)).toNat
+      if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, by omega⟩ := by rfl
+end IsolatedControl08
+
+section IsolatedControl09
+-- ID09 Turing.FinTM.ComputesInTime
+-- C09 ComputesInTime
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+example : (fun (M : FinTM Bool) (x y : List Bool) (t : ℕ) => M.ComputesInTime x y t) =
+    fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s := by rfl
+end IsolatedControl09
+
+section IsolatedControl10
+-- ID10 Turing.FinTM.ComputesFunInTime
+-- C10 ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = (∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) => M.ComputesFunInTime f T) =
+    (fun M f T => ∀ x, M.ComputesInTime x (f x) (T x.length)) := by rfl
+end IsolatedControl10
+
+section IsolatedControl11
+-- ID11 Turing.FinTM.Computes
+-- C11 Computes
+example (M : FinTM Bool) (f : List Bool → List Bool) :
+    M.Computes f = (∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+example : (fun (M : FinTM Bool) (f : List Bool → List Bool) => M.Computes f) =
+    (fun M f => ∀ x, ∃ t, M.ComputesInTime x (f x) t) := by rfl
+end IsolatedControl11
+
+section IsolatedControl12
+-- ID12 Turing.MultiTapeTM.spaceUsed
+-- C12 spaceUsed
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) :
+    tm.spaceUsed c t = ∑ i, tm.spaceUsedByTape c t i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) =>
+    tm.spaceUsed c t) = fun tm c t => ∑ i, tm.spaceUsedByTape c t i := by rfl
+end IsolatedControl12
+
+section IsolatedControl13
+-- ID13 Turing.MultiTapeTM.spaceUsedByTape
+-- C13 spaceUsedByTape
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.spaceUsedByTape c t i = (tm.visitedByTapeHead c t i).card := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.spaceUsedByTape c t i) = fun tm c t i => (tm.visitedByTapeHead c t i).card := by rfl
+end IsolatedControl13
+
+section IsolatedControl14
+-- ID14 Turing.MultiTapeTM.visitedByTapeHead
+-- C14 visitedByTapeHead
+example (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ) (i : Fin 1) :
+    tm.visitedByTapeHead c t i = (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+example : (fun (tm : MultiTapeTM 1 Bool Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) (t : ℕ)
+    (i : Fin 1) => tm.visitedByTapeHead c t i) =
+    fun tm c t i => (Finset.range (t + 1)).image fun u => (tm.runFrom c u).workTapePos i := by rfl
+end IsolatedControl14
+
+section IsolatedControl15
+-- ID15 Turing.FinTM.controlAction
+-- C15 controlAction
+example (m : SignType) (q : Option Unit) :
+    (FinTM.controlAction m q : Action 1 Bool Unit) = ⟨m, fun _ => (none, 0), none, q⟩ := by rfl
+example : (fun (m : SignType) (q : Option Unit) => (FinTM.controlAction m q : Action 1 Bool Unit)) =
+    fun m q => ⟨m, fun _ => (none, 0), none, q⟩ := by rfl
+end IsolatedControl15
+
+section IsolatedControl16
+-- ID16 Turing.FinTM.leftAction
+-- C16 leftAction
+example (a : Action 1 Bool Unit) : (FinTM.leftAction 1 id a).inputTape = a.inputTape := by rfl
+example : (fun a : Action 1 Bool Unit => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape := by rfl
+end IsolatedControl16
+
+section IsolatedControl17
+-- ID17 Turing.FinTM.rightAction
+-- C17 rightAction
+example (a : Action 1 Bool Unit) : (FinTM.rightAction 1 id a).inputTape = a.inputTape := by rfl
+example : (fun a : Action 1 Bool Unit => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape := by rfl
+end IsolatedControl17
+
+section IsolatedControl18
+-- ID18 Turing.FinTM.emitAction
+-- C18 emitAction
+example : (FinTM.emitAction ([] : List Bool) id 0 : Action 1 Bool (Fin 1)).output = none := by rfl
+example : (fun e : Fin 1 → Fin 1 => (FinTM.emitAction ([] : List Bool) e 0 : Action 1 Bool (Fin 1)).output) =
+    fun _ => none := by rfl
+end IsolatedControl18
+
+section IsolatedControl19
+-- ID19 Turing.FinTM.bufferTape
+-- C19 bufferTape
+example : FinTM.bufferTape ([true] : List Bool) (-1) = none := by rfl
+example : (fun w : List Bool => FinTM.bufferTape w (-1)) = fun _ => none := by rfl
+end IsolatedControl19
+
+section IsolatedControl20
+-- ID20 Turing.Cfg.ofWords
+-- C29 Cfg.ofWords
+example (q : Unit) (w : Fin 1 → List Bool) :
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state = some q := by rfl
+example : (fun (q : Unit) (w : Fin 1 → List Bool) =>
+    (Cfg.ofWords (input := ([] : List Bool)) q w).state) = fun q _ => some q := by rfl
+end IsolatedControl20
+
+section IsolatedControl21
+-- ID21 Turing.Cfg.mapState
+-- C30 Cfg.mapState
+example (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    (c.mapState f).output = c.output := by rfl
+example : (fun (f : Unit → Unit) (c : Cfg 1 Bool Unit ([] : List Bool)) =>
+    (c.mapState f).output) = fun _ c => c.output := by rfl
+end IsolatedControl21
+
+section IsolatedControl22
+-- ID22 Turing.incFixed
+example : incFixed [] = none := by rfl
+example : (fun _ : Unit => incFixed []) = fun _ => none := by rfl
+end IsolatedControl22
+
+section IsolatedControl23
+-- ID23 Turing.pairEncode
+-- C24 pairEncode
+example (x y : List Bool) : pairEncode x y =
+    x.flatMap (fun b => [b, b]) ++ [false, true] ++ y := by rfl
+example : (fun x y : List Bool => pairEncode x y) =
+    fun x y => x.flatMap (fun b => [b, b]) ++ [false, true] ++ y := by rfl
+end IsolatedControl23
+
+section IsolatedControl24
+-- ID24 Turing.pairDecode
+-- C25 pairDecode
+example : pairDecode ([] : List Bool) = none := by rfl
+example : (fun r : List Bool => pairDecode (true :: false :: r)) =
+    fun _ => (none : Option (List Bool × List Bool)) := by rfl
+end IsolatedControl24
+
+section IsolatedControl25
+-- ID25 Turing.splitAtLastTrue
+example : splitAtLastTrue [] = none := by rfl
+example : (fun _ : Unit => splitAtLastTrue []) = fun _ => none := by rfl
+end IsolatedControl25
+
+section IsolatedControl26
+-- ID26 Turing.solveSplit
+example (C e n : ℕ) : solveSplit C e n =
+    (List.range (n + 1)).find? (fun i => i + C * (i + 1) ^ e == n) := by rfl
+example : (fun C e n : ℕ => solveSplit C e n) = fun C e n =>
+    (List.range (n + 1)).find? (fun i => i + C * (i + 1) ^ e == n) := by rfl
+end IsolatedControl26
+
+section IsolatedControl27
+-- ID27 Turing.stateWord
+-- C41 stateWord
+example (k : ℕ) (w : List Bool) (i : Fin k) : stateWord k w i = if i.val = 0 then w else [] := by rfl
+example : (fun (k : ℕ) (w : List Bool) (i : Fin k) => stateWord k w i) =
+    fun _ w i => if i.val = 0 then w else [] := by rfl
+end IsolatedControl27
+
+section IsolatedControl28
+-- ID28 Turing.pairDiagTM
+-- C28 pairDiagTM
+example : pairDiagTM.k = 0 := by rfl
+example : (fun _ : Unit => pairDiagTM.k) = fun _ => 0 := by rfl
+end IsolatedControl28
+
+section IsolatedControl29
+-- ID29 Turing.FinTM.idTM
+example : FinTM.idTM.k = 0 := by rfl
+example : (fun _ : Unit => FinTM.idTM.k) = fun _ => 0 := by rfl
+end IsolatedControl29
+
+section IsolatedControl30
+-- ID30 Turing.FinTM.constTM
+-- C27 constTM
+example (w : List Bool) : (FinTM.constTM w).k = 0 := by rfl
+example : (fun w : List Bool => (FinTM.constTM w).k) = fun _ => 0 := by rfl
+end IsolatedControl30
+
+section IsolatedControl31
+-- ID31 Turing.FinTM.prependTM
+example (w : List Bool) : (FinTM.prependTM w).k = 0 := by rfl
+example : (fun w : List Bool => (FinTM.prependTM w).k) = fun _ => 0 := by rfl
+end IsolatedControl31
+
+section IsolatedControl32
+-- ID32 Turing.FinTM.lengthBitsTM
+example : FinTM.lengthBitsTM.k = 1 := by rfl
+example : (fun _ : Unit => FinTM.lengthBitsTM.k) = fun _ => 1 := by rfl
+end IsolatedControl32
+
+section IsolatedControl33
+-- ID33 Turing.FinTM.polyUnaryTM
+example (C : ℕ) : (FinTM.polyUnaryTM C 0).k = 0 := by rfl
+example : (fun C : ℕ => (FinTM.polyUnaryTM C 0).k) = fun _ => 0 := by rfl
+end IsolatedControl33
+
+section IsolatedControl34
+-- ID34 Turing.FinTM.polyBitsTM
+example (e : ℕ) : (FinTM.polyBitsTM 0 e).k = 0 := by rfl
+example : (fun e : ℕ => (FinTM.polyBitsTM 0 e).k) = fun _ => 0 := by rfl
+end IsolatedControl34
+
+section IsolatedControl35
+-- ID35 Turing.FinTM.pairExtractTM
+example (a b : Bool) : (FinTM.pairExtractTM a b).k = 1 := by rfl
+example : (fun a b : Bool => (FinTM.pairExtractTM a b).k) = fun _ _ => 1 := by rfl
+end IsolatedControl35
+
+section IsolatedControl36
+-- ID36 Turing.FinTM.pairValidTM
+example : FinTM.pairValidTM.k = 0 := by rfl
+example : (fun _ : Unit => FinTM.pairValidTM.k) = fun _ => 0 := by rfl
+end IsolatedControl36
+
+section IsolatedControl37
+-- ID37 Turing.FinTM.pairLenCheckTM
+example (C : ℕ) : (FinTM.pairLenCheckTM C 0).k = 3 := by rfl
+example : (fun C : ℕ => (FinTM.pairLenCheckTM C 0).k) = fun _ => 3 := by rfl
+end IsolatedControl37
+
+section IsolatedControl38
+-- ID38 Turing.FinTM.stripLastTM
+example : FinTM.stripLastTM.k = 4 := by rfl
+example : (fun _ : Unit => FinTM.stripLastTM.k) = fun _ => 4 := by rfl
+end IsolatedControl38
+
+section IsolatedControl39
+-- ID39 Turing.FinTM.incFixedTM
+example : FinTM.incFixedTM.k = 0 := by rfl
+example : (fun _ : Unit => FinTM.incFixedTM.k) = fun _ => 0 := by rfl
+end IsolatedControl39
+
+section IsolatedControl40
+-- ID40 Turing.FinTM.pairMapSndTM
+example (M : FinTM Bool) : (FinTM.pairMapSndTM M).k = 1 + (1 + M.k) := by rfl
+example : (fun M : FinTM Bool => (FinTM.pairMapSndTM M).k) = fun M => 1 + (1 + M.k) := by rfl
+end IsolatedControl40
+
+section IsolatedControl41
+-- ID41 Turing.FinTM.splitSolveTM
+example (C : ℕ) : (FinTM.splitSolveTM C 0).k = 5 := by rfl
+example : (fun C : ℕ => (FinTM.splitSolveTM C 0).k) = fun _ => 5 := by rfl
+end IsolatedControl41
+
+section IsolatedControl42
+-- ID42 Turing.FinTM.redirectTM
+example (M : FinTM Bool) (b : Bool) : (FinTM.redirectTM M b).k = M.k := by rfl
+example : (fun (M : FinTM Bool) (b : Bool) => (FinTM.redirectTM M b).k) = fun M _ => M.k := by rfl
+end IsolatedControl42
+
+section IsolatedControl43
+-- ID43 Turing.FinTM.timedCondTM
+example (D M N : FinTM Bool) : (FinTM.timedCondTM D M N).k = (D.k + (M.k + N.k)) + 1 := by rfl
+example : (fun D M N : FinTM Bool => (FinTM.timedCondTM D M N).k) = fun D M N => (D.k + (M.k + N.k)) + 1 := by rfl
+end IsolatedControl43
+
+section IsolatedControl44
+-- ID44 Turing.FinTM.branchTM
+example (M N : FinTM Bool) (b : Bool) : (FinTM.branchTM M N b).k = M.k + N.k := by rfl
+example : (fun (M N : FinTM Bool) (b : Bool) => (FinTM.branchTM M N b).k) = fun M N _ => M.k + N.k := by rfl
+end IsolatedControl44
+
+section IsolatedControl45
+open private Turing.FinTM.loopHostM from TCSlib.Complexity.TuringMachine.Build.Loop
+-- ID45 Turing.FinTM.loopHostM (private ordinary implementation)
+example (body F : FinTM Bool) (a : body.State) (forward findMode : Bool) :
+    (FinTM.loopHostM body F a forward findMode).k = body.k + 1 + (1 + F.k) + 1 := by rfl
+example : (fun (body F : FinTM Bool) (a : body.State) (forward findMode : Bool) =>
+    (FinTM.loopHostM body F a forward findMode).k) = fun body F _ _ _ =>
+      body.k + 1 + (1 + F.k) + 1 := by rfl
+end IsolatedControl45

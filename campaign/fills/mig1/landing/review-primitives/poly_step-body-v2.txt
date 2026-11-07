@@ -1,0 +1,127 @@
+private lemma poly_step {d C q : ℕ} {x : List Bool} (hq : 0 < q)
+    (c : Cfg (d + 1) Bool (CatalogPolyControl d C) x)
+    (hw : c.workTapes = fun _ => catalogPolyTape q)
+    (hp : polyHeads q c.state c.workTapePos) :
+    ((catalogPolyUnaryTM d C).tm.step c).workTapes =
+        (fun _ => catalogPolyTape q) ∧
+      polyHeads q ((catalogPolyUnaryTM d C).tm.step c).state
+        ((catalogPolyUnaryTM d C).tm.step c).workTapePos := by
+  have hr (i : Fin (d + 1)) : c.workTapeSymbols i =
+      if 0 ≤ c.workTapePos i ∧ c.workTapePos i < q then some true else none := by
+    simp only [Cfg.workTapeSymbols_eq, hw, catalogPolyTape]
+  cases hs : c.state with
+  | none => simpa only [MultiTapeTM.step_of_halt hs] using And.intro hw hp
+  | some s =>
+    simp only [MultiTapeTM.step_of_some hs]
+    simp only [hs] at hp
+    cases s with
+    | copy => exact False.elim hp
+    | setup => exact False.elim hp
+    | loop i =>
+      dsimp only [polyHeads] at hp
+      by_cases hblank : c.workTapeSymbols i = none
+      · constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hblank,
+            catalogPolyMove, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hblank,
+            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+          intro j
+          have hj := hp j
+          by_cases he : j = i
+          · subst j
+            simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+            omega
+          · simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+            have := hj.2.2 he
+            omega
+      · have hi : c.workTapePos i < q := by
+          rw [hr] at hblank
+          split at hblank <;> simp_all
+        have hall (j : Fin (d + 1)) : 0 ≤ c.workTapePos j ∧ c.workTapePos j < q := by
+          have hj := hp j
+          by_cases he : j = i
+          · simpa [he] using And.intro (hp i).1 hi
+          · exact ⟨hj.1, hj.2.2 he⟩
+        constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hblank, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hblank, ↓reduceIte,
+            Action.apply_state, Action.apply_workTapePos]
+          split <;> simp only [polyHeads, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+          · exact hall
+          · intro j
+            have := hall j
+            exact ⟨this.1, le_of_lt this.2, fun _ => this.2⟩
+    | rewind i =>
+      dsimp only [polyHeads] at hp
+      by_cases hblank : c.workTapeSymbols i = none
+      · have hi : c.workTapePos i = -1 := by
+          have hlo := (hp i).1
+          have hhi := (hp i).2.1
+          rw [hr] at hblank
+          have hn : ¬(0 ≤ c.workTapePos i ∧ c.workTapePos i < q) := by
+            simpa only [ite_eq_right_iff, Option.some_ne_none, imp_false] using hblank
+          omega
+        constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hblank,
+            catalogPolyMove, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hblank,
+            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+          intro j
+          have hj := hp j
+          by_cases he : j = i
+          · subst j
+            simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+            omega
+          · simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+            exact ⟨hj.2.2 he, hj.2.1⟩
+      · have hi : 0 ≤ c.workTapePos i := by
+          rw [hr] at hblank
+          split at hblank <;> simp_all
+        constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hblank,
+            catalogPolyMove, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hblank,
+            ↓reduceIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+          intro j
+          have hj := hp j
+          by_cases he : j = i
+          · subst j
+            simp only [↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+            omega
+          · simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+            exact hj
+    | advance i =>
+      dsimp only [polyHeads] at hp
+      by_cases hi : i.val < d + 1
+      · constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hi,
+            catalogPolyMove, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hi,
+            ↓reduceDIte, catalogPolyMove, Action.apply_state, Action.apply_workTapePos, polyHeads]
+          intro j
+          have hj := hp j
+          by_cases he : j = ⟨i.val, hi⟩
+          · simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one]
+            simp only [he] at hj
+            omega
+          · simp only [he, ↓reduceIte, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+            exact ⟨hj.1, le_of_lt hj.2, fun _ => hj.2⟩
+      · constructor
+        · funext j
+          simpa [catalogPolyUnaryTM, hi, Action.apply_workTapes, Cfg.workTapeSymbols_eq] using congrFun hw j
+        · simp only [catalogPolyUnaryTM, hi, ↓reduceDIte,
+            Action.apply_state, Action.apply_workTapePos, polyHeads, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero]
+          intro j
+          have := hp j
+          omega
+    | emit j =>
+      constructor
+      · simp only [catalogPolyUnaryTM]
+        split <;> (funext j; simpa only [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self] using congrFun hw j)
+      · simp only [catalogPolyUnaryTM, Action.apply_state, Action.apply_workTapePos]
+        split <;> simpa only [polyHeads, SignType.coe_zero, SignType.coe_one, SignType.coe_neg_one, add_zero] using hp

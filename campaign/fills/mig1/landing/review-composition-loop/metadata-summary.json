@@ -1,0 +1,149 @@
+{
+  "census_constants": 809,
+  "roots": 40,
+  "compiler_descendants": 56,
+  "axiom_walks": 96,
+  "axiom_classes": {
+    "propext Classical.choice Quot.sound": 62,
+    "propext Quot.sound": 30,
+    "propext": 4
+  },
+  "no_sorry_or_nonstandard_axioms": true,
+  "all_roots_non_simp": true,
+  "census_by_module": {
+    "TCSlib.Complexity.TuringMachine.Composition": {
+      "theorem": 73,
+      "definition": 11
+    },
+    "TCSlib.Complexity.TuringMachine.Build.Wrappers": {
+      "theorem": 82,
+      "definition": 25
+    },
+    "TCSlib.Complexity.TuringMachine.Build.Loop": {
+      "theorem": 511,
+      "definition": 107
+    }
+  },
+  "private_constants": 684,
+  "internal_constants": 747,
+  "direct_foreign_regular_definitions": 24,
+  "direct_foreign_regular_by_owner": {
+    "TCSlib.Complexity.TuringMachine.Composition": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.branchTM",
+      "Turing.FinTM.bufferedCompTM",
+      "Turing.FinTM.rightAction",
+      "Turing.FinTM.rightCfg",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.step"
+    ],
+    "TCSlib.Complexity.TuringMachine.Build.Wrappers": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.branchTM",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.leftCfg",
+      "Turing.FinTM.rightCfg",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead"
+    ],
+    "TCSlib.Complexity.TuringMachine.Build.Loop": [
+      "Turing.Cfg.init",
+      "Turing.Cfg.mapState",
+      "Turing.Cfg.ofWords",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.leftCfg",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.captureCfg",
+      "Turing.embedEmitCfg"
+    ]
+  },
+  "all_direct_foreign_regular_definitions_controlled_in_their_owner_scope": true,
+  "effective_control_definitions": 30,
+  "confirmed_reducible_exclusions": [
+    "Turing.Action.output",
+    "Turing.Action.state",
+    "Turing.Action.workTapes",
+    "Turing.Cfg.Halted",
+    "Turing.Cfg.inputPos",
+    "Turing.Cfg.output",
+    "Turing.Cfg.state",
+    "Turing.Cfg.workTapePos",
+    "Turing.Cfg.workTapes",
+    "Turing.FinTM.State",
+    "Turing.FinTM.k",
+    "Turing.FinTM.tm",
+    "Turing.MultiTapeTM.q\u2080",
+    "Turing.MultiTapeTM.tr"
+  ],
+  "ineffective_matcher_attribute": {
+    "name": "Turing.FinTM.rewind_scan.match_1",
+    "constructor_controls": {
+      "unsealed": {
+        "cases": 6,
+        "all_kernel_checked": true,
+        "metadata": "MATCHERMETA|Turing.FinTM.rewind_scan.match_1|status=[semireducible]|isMatcher=true|hints=abbrev"
+      },
+      "sealed": {
+        "cases": 6,
+        "all_kernel_checked": true,
+        "metadata": "MATCHERMETA|Turing.FinTM.rewind_scan.match_1|status=[irreducible]|isMatcher=true|hints=abbrev"
+      }
+    },
+    "raw_delta_controls_fail_already_unsealed": true,
+    "covered_usage": [
+      "MATCHERUSE|_private.TCSlib.Complexity.TuringMachine.Build.Wrappers.0.Turing.FinTM.timed_ledger|inType=false|inValue=true|root=true|auxiliary=false",
+      "MATCHERUSE|_private.TCSlib.Complexity.TuringMachine.Build.Loop.0.Turing.FinTM.loopHost_input_rewind|inType=false|inValue=true|root=true|auxiliary=false"
+    ]
+  },
+  "actual_default_simp_definitions": [
+    {
+      "name": "Turing.Action.apply",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "direct": "true"
+    },
+    {
+      "name": "Turing.Cfg.init",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "direct": "true"
+    },
+    {
+      "name": "Turing.MultiTapeTM.initCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "direct": "true"
+    }
+  ],
+  "direct_foreign_source_homes": [
+    "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Embed.lean",
+    "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "TCSlib/Complexity/TuringMachine/Simulation.lean",
+    "TCSlib/Complexity/TuringMachine/StateRenaming.lean"
+  ],
+  "lexical_command_inventory": 244,
+  "bare_foreign_definition_arguments_found": 0,
+  "command_scanner_limitation": "Lexical aide; manual reading and actual strong source-region elaborations govern proof semantics."
+}

@@ -1,0 +1,59 @@
+/-- Either administrative bank is erased by the same guarded source phase.
+
+**Proof sketch.** Relocate the existing contiguous-word eraser onto the chosen bank's first
+tape. Its first return supplies the strict phase guard. The singleton-frame contract turns
+the return into the matching word update, preserving the other bank and the verdict.
+The direction affects only the slot, control embedding, and word-update equation.
+[AB09, §1.2] -/
+private lemma emitterP2_body_erase (right : Bool) (C D : FinTM Bool)
+    (hk : 0 < C.k) (hl : 0 < D.k)
+    (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (ok : Bool) :
+    let B := emitterP2BodyTM C D hk hl ce cx de dx
+    let tag : Fin 3 → EmitterP2State C.State D.State :=
+      if right then .eraseRight ok else .eraseLeft ok
+    ∃ t ≤ 2 * ((if right then v else u).length + 1),
+      B.tm.runFrom (Cfg.ofWords (input := w) (tag 0)
+        (emitterP2Words C.k D.k s u v)) t =
+        Cfg.ofWords (tag 2) (emitterP2Words C.k D.k s
+          (if right then u else []) (if right then [] else v)) ∧
+      splitSafe B.tm .anchor (Cfg.ofWords (input := w) (tag 0)
+        (emitterP2Words C.k D.k s u v)) t := by
+  dsimp only
+  let slot := if right then emitterP2RightIndex C.k D.k ⟨0, hl⟩
+    else emitterP2LeftIndex C.k D.k ⟨0, hk⟩
+  let emb : Fin 3 ↪ EmitterP2State C.State D.State :=
+    ⟨if right then .eraseRight ok else .eraseLeft ok, by
+      cases right <;> intro a b h
+      · exact (EmitterP2State.eraseLeft.inj h).2
+      · exact (EmitterP2State.eraseRight.inj h).2⟩
+  let words (a : List Bool) :=
+    if right then emitterP2Words C.k D.k s u a else emitterP2Words C.k D.k s a v
+  let tapes := fun i => bufferTape (words [] i)
+  have hc (q : Fin 3) (a : List Bool) :
+      emitterP2EraseCfg w a q 0 = Cfg.ofWords (input := w) q (fun _ : Fin 1 => a) := by
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.ofWords_state]; rfl
+    · rw [Cfg.ofWords_inputPos]; rfl
+    · funext i; rw [Cfg.ofWords_workTapes]; rfl
+    · funext i; rw [Cfg.ofWords_workTapePos]; rfl
+    · rw [Cfg.ofWords_output]; rfl
+  have hframe (q : Fin 3) (a : List Bool) :
+      (embedEmitCfg (emitterP2OneIndex slot) tapes (fun _ => 0) []
+        (emitterP2EraseCfg w a q 0)).mapState emb = Cfg.ofWords (emb q) (words a) := by
+    rw [hc, emitterP2_one_frame]
+    apply congrArg (Cfg.ofWords (input := w) (emb q))
+    cases right
+    · exact emitterP2_update_left C.k D.k hk s [] v a
+    · exact emitterP2_update_right C.k D.k hl s u [] a
+  obtain ⟨t, _, ht, hf, hr⟩ := emitterP2_erase_first w (if right then v else u)
+  have h := emitterP2_phase emitterP2EraseTM.tm (emitterP2BodyTM C D hk hl ce cx de dx).tm
+    (emitterP2OneIndex slot) emb .anchor
+    (by intro q; cases right <;> simp [emb]) (fun q : Fin 3 => q ≠ 2)
+    (by intro q hq inp work; cases right <;> simp [emb, slot, emitterP2BodyTM, hq])
+    tapes (fun _ => 0) (emitterP2EraseCfg w (if right then v else u) 0 0)
+    (emitterP2EraseCfg w [] 2 0) t
+    (by intro j hj q hq he; subst q; exact hf j hj hq) hr
+  erw [hframe, hframe] at h
+  refine ⟨t, ht, ?_⟩
+  cases right <;> simpa only [words, emb, Bool.false_eq_true, ↓reduceIte] using h
+

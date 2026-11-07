@@ -1,0 +1,29 @@
+/-- Quantitative input rewind, adapted from the wrapper controller's proved
+`timed_rewind` pattern using the public `rewind_scan` interface.
+**Proof sketch.** One mandatory left move is followed by exactly the new
+position plus one scan steps. Work tapes and output are preserved. -/
+private lemma catalogRewind {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+

@@ -1,0 +1,29 @@
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing Turing.FinTM
+
+namespace TimedCondTransportProbe
+attribute [local irreducible] Turing.FinTM.branchTM Turing.FinTM.rightAction
+  Turing.FinTM.leftAction Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step Turing.Action.apply
+attribute [-simp] Turing.Action.apply
+
+private def view (M₁ M₂ : FinTM Bool) (b : Bool) :
+    MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) := by
+  rw [← branchTM_k M₁ M₂ b, ← branchTM_State M₁ M₂ b]
+  exact (branchTM M₁ M₂ b).tm
+
+theorem fixed_false_htr (D M₁ M₂ : FinTM Bool)
+    (q : M₁.State ⊕ M₂.State) (inp : Option Bool)
+    (work : Fin ((D.k + (M₁.k + M₂.k)) + 1) → Option Bool) :
+    (timedCondTM D M₁ M₂).tm.tr (.inr (.inr (.inr q))) inp work =
+      leftAction 1 id
+        (rightAction D.k (fun s => .inr (.inr (.inr s)))
+          ((view M₁ M₂ false).tr q inp
+            (fun i => work (Fin.natAdd D.k i).castSucc))) := by
+  unfold timedCondTM view
+  simp only [branchTM_k, branchTM_State]
+  rfl
+
+#print axioms fixed_false_htr
+end TimedCondTransportProbe
