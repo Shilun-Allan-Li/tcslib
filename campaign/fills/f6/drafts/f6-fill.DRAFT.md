@@ -24,7 +24,9 @@ and also waits for the approved reader’s gate/merge and concrete interface pre
   **approved by Seyoon on 2026-11-07, implemented in #230, gate117 pending**. No H5 strengthening is required: use R2 → H5 → R1' below.
 - `inputs/bootstrap-order.txt`, `downstream-order.txt`, `final-order.txt`,
   `mathlib-roots.txt`, `owned-files.txt`, `target-admissions.json`, source/gate
-  receipts, baseline screen and exact scope record: **not yet generated**.
+  receipts, baseline screen and exact scope record: **UNISSUED**. Provisional
+  source/order/freeze/census inputs exist in `packet-preparation/`; refresh them
+  against the actual merged prerequisite before issue.
 
 Keep the extracted packet outside the proof checkout. Its newly issued records
 may postdate the pinned proof base. Verify its bundle checksum and every section
@@ -90,12 +92,14 @@ at the actual last-ruler bank. It will not claim a completed physical prefix or
 none is a fact about arbitrary machines or an admission hidden in the consumer.
 The route, target, API/import freeze and gate/merge prerequisite are unchanged.
 
-**Current check state:** actual first header and first-header→H5 presentation are
-checked in `first-header-preship-v3/` and `header-host-handoff-v4/`; actual
-zero-outer run/space consumer, remaining phase interfaces and conditional ledger
-arithmetic are being checked. Do not dispatch until their results and limits
-are incorporated and the final packet is pinned. Older component probes do not
-become those newer checks.
+**Current check state:** the first header, H5 presentation, actual zero-outer
+run/space consumer, phase interfaces and conditional ledger/coefficient contracts
+pass their recorded bounded native/sealed checks in v3–v7. `PRESHIP-INDEX.md`
+records authoritative inputs and limits. No actual full prefix or hosted-loop
+ledger is supplied. The21-file provisional TCSlib baseline passed (1037 declarations,636 directed
+candidates); final merged-base pins/packet remain unissued and gate117/#230 must
+still close/merge.
+Older component checks are not relabeled as newer executions.
 
 1. Obtain the fixed one-tape startup from `exists_selfStartupTM`. On native
    `pairEncode α x`, its startup time and bank-space bound depend on `α` only.
@@ -153,6 +157,14 @@ The named external proof obligations are:
 - **OWN-3 — arithmetic and target:** derive `1≤s`, choose positive `C_α` in the
   frozen quantifier order, supply all proved OWN inputs to the checked run/space
   contracts and close the exact target with the actual arbitrary output.
+
+The checked arithmetic uses N=K+4, ℓ=2|bits s|+2|α|+4, and per-code OWN
+constants pα,qα,Dα with B≤pα+qα*ℓ and both auxiliary intervals in [-Dα,Dα].
+For S=s+(2Dα+1)+ℓ+3, Aα=2|α|+6, Eα=2Dα+4, choose
+Cα=pα+qα*Aα+(K+4)*(1+Eα+Aα)+1. The conditional proof gives positivity
+and B+(K+4)*S≤Cα*s after deriving s≥1. Proving the **actual** prefix bound
+and four physical tape cases remains OWN work; no unconstructed prefix bound
+is asserted. All per-code constants precede s,x,output,t.
 
 These are consumer-specific private work, including the stationary silent halt
 leaf and layout glue. A one-step ruler correction is

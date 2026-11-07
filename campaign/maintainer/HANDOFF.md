@@ -108,11 +108,18 @@ The six bounded components in `campaign/fills/f6/drafts/layout-preship-v2/` pass
 elaboration and paired opacity controls without strengthening H5: startup, hosted return,
 last-ruler layout, actual bundle-reader consumer, zero-outer typing and one-cell correction.
 All32 attempts and limits are retained. The actual first-header component now also passes native/sealed/paired controls in
-`first-header-preship-v3/`. The read-only `readiness-review/` identifies PLAN(f)/Gate112
-permission for explicit conditional OWN run/cut/loop inputs, distinct from our unissued draft
-promise of a supplied full prefix. That draft promise is being explicitly reconciled; actual
-zero-outer run/space seam and phase-interface checks remain in progress. Full physical prefix,
-actual run/cut/space/loop-ledger/target proofs remain external Claude OWN work. This is not an F6 fill.
+`first-header-preship-v3/`. The read-only `readiness-review/` identifies PLAN(f)/Gate112 permission for explicit
+conditional OWN run/cut/loop inputs, distinct from our earlier unissued supplied-prefix
+promise. That overstatement is explicitly corrected in both drafts, without changing the
+route or mathematical obligations. H5 presentation(v4), typed zero-outer run/space(v5),
+phase interfaces(v6) and conditional ledger/coefficient(v7) pass, with raw native/sealed/
+control evidence. `drafts/PRESHIP-INDEX.md` records limits. Full actual prefix, run/cut/
+space/loop-ledger/target proofs remain external Claude OWN work. Provisional packet orders
+132/2/229 and65 Mathlib roots independently reproduce; all229 source blobs match. The21-file
+TCSlib provisional baseline passed (1037 declarations,636 candidates,171071 reproduced
+characters), with full raw inputs/output/index and no semantic debt acceptance. After gate117/#230 closes and merges, refresh/verify final
+pins/source/census/orders/cache roots/population/baseline and checksum packet. F6 remains
+unissued; no target was filled internally or new API gap found in these bounded scopes.
 Gate112's withdrawn arbitrary-machine route_space must never be commissioned.
 
 4. **Ladner** still needs its statement phase. LD1–LD7 accepted; LD8 pins the O(n³)

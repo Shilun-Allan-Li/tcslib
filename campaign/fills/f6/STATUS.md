@@ -18,8 +18,19 @@ applications must be pre-shipped. Full actual prefix/run/cut/space, final hosted
 ledger and target proofs remain Claude OWN-1–OWN-3. No premise is silently waived
 or asserted for arbitrary machines; no new design or API is approved.
 
-**Not ready to dispatch.** The actual zero-outer last-ruler run/space consumer,
-remaining phase interfaces and conditional ledger arithmetic are being checked.
-Final source pins/freeze/admission census/orders/cache roots/citation population/
-baseline screen/checksum packet must then be generated on the merged prerequisite
-base. No historical gate112 or component-only pass substitutes for these checks.
+The actual final zero-outer run/space consumer(v5), phase interfaces(v6) and
+conditional ledger/coefficient contracts(v7) now pass native/sealed checks with
+exact controls. `drafts/PRESHIP-INDEX.md` records immutable inputs and OWN limits;
+no full physical prefix or hosted ledger is supplied. Independent review verifies
+provisional132-bootstrap/2-downstream/229-final orders,65 direct Mathlib roots,
+source blobs and target header. The static229-module token census finds22
+admitted declarations including the owned target; it is not an axiom audit.
+
+**Not ready to dispatch.** The21-file provisional TCSlib baseline passed:
+1037 declarations,636 directed candidates,171071 reproduced characters; all
+raw counts/labels/ratios/denominators and source hashes checked. This is not a
+head comparison, semantic debt disposition or whole-target proof.
+Gate117/#230 must close and merge; then verify/recompute exact merged-base
+pins/freeze/admission inventory/orders/cache roots/source population/baseline and
+checksum-pinned Claude packet. Provisional inputs are not issued pins. No new
+user design choice was found in the completed bounded interface checks.

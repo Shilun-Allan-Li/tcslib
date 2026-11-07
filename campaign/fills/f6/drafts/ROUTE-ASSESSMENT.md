@@ -5,11 +5,12 @@ Prepared 2026-11-07 for the user's selected **Claude** fill. The user selected t
 The earlier roadmap/retriage descriptions of an open choice, Codex, buffered
 canonization, or F6 before that consumer are historical and superseded by those rulings.
 
-This is a records-only assessment. No F6 proof was attempted, no shared API was changed,
-and no fill was dispatched. The proposed fill is **not pre-shipped**. A direct
-live-anchor use of the ruler-host contract needs a cut that it does not expose, but
-the existing return embedding avoids that gap; the separate coded-bundle reader
-and the full concrete route still need resolution/checking before issue.
+This is a records-only assessment; no F6 target or full physical prefix was
+implemented and no fill was dispatched. The original diagnostics below are
+historical. Later bounded component/interface checks pass using the approved
+reader implemented in #230; its gate/merge and final packet work remain pending.
+The existing returning embedding supplies the required live return cut; no
+strengthened H5 contract or new route is commissioned.
 
 ## 2026-11-07 clarification of the unissued ownership boundary
 
@@ -31,11 +32,12 @@ conditional input may be represented as a proved execution fact.
 The consumer #229 is merged. The CodeTM reader is approved and implemented in
 #230, with its actual sealed consumption checked in `layout-preship-v2/`; the
 old missing-reader diagnostic below is historical, not an outstanding design
-question. Gate117/merge remains required. The actual first-header run and its
-H5 presentation pass in `first-header-preship-v3/` and
-`header-host-handoff-v4/`. The final zero-outer run/space application, other phase
-interfaces and conditional ledger arithmetic are still being checked separately.
-No final packet or F6 fill is issued by this clarification.
+question. Gate117/merge remains required. The first-header/H5 presentation(v3/v4), typed final zero-outer run/space
+consumer(v5), phase interfaces(v6) and conditional ledger/coefficient contracts(v7)
+pass in their exact recorded scopes. `PRESHIP-INDEX.md` distinguishes those from
+external actual-prefix/ledger/target work. The provisional21-file TCSlib baseline
+passed (1037 declarations,636 candidates); final merged-base pins/packet remain unissued. No final packet or
+F6 fill is issued by this clarification.
 
 ## Pins and evidence boundaries
 
@@ -103,7 +105,7 @@ authorization to edit their homes or to unfold their definitions in Hierarchy.
 | Loop under H5 | `exists_rulerHostTM`, generated `rulerHostCfg_*` fields | Instantiate the length/drop relation at `ℓ`, now on `x`. Halting/output and visited-set clauses suffice here; no live-anchor transfer out of this final host is needed. |
 | Final seam + space | `startupLoopTM_runFrom`, `startupLoopTM_spaceUsed_le` | Actual `aRun`, `hexit`, `aCut`, layout equality `hcfg`, prefix bound `hB`, `S≥1`, and hosted per-tape bounds `hloop`. These must be hypotheses in a conditional probe, or proved for the actual F6 witnesses. |
 | Source-bundle conversion | Actual `CodeTM.toFinTM_eq`, `FinTM.computesInTime_iff`, `CodeTM.one_le_spaceUsed` | Approved reader implemented in #230; actual computation/arbitrary-output/space conversion passes under opacity in v2/v5/v7. Gate117/merge remains pending; no further reader decision is requested. |
-| Addend-free absorption | `CodeTM.one_le_spaceUsed`, `length_bits_le_self`, `MultiTapeTM.spaceUsed_le_mul_succ`, space/visited monotonicity and card lemmas | Obtain `1≤s` before dividing or absorbing constants. The final `C_α` is independent of payload, time, output and budget. |
+| Addend-free absorption | `CodeTM.one_le_spaceUsed`, `length_bits_le_self`, `MultiTapeTM.spaceUsed_le_mul_succ`, `mem_visitedByTapeHead_iff`, `spaceUsedByTape_eq_card`, `spaceUsedByTape_le_spaceUsed`, `spaceUsedByTape_le_card_Icc`, `Finset.card_le_card` | Obtain `1≤s` before dividing or absorbing constants. The final `C_α` is independent of payload, time, output and budget. |
 
 ## Direct live-anchor gap avoided by existing returning embedding
 
