@@ -45,7 +45,9 @@ end-to-end witness or composes a useful chain. All names below are relative to
 
 ## First implementation slice
 
-1. Public-key generic wrappers PK-1–PK-4, checked against their exact public APIs and full axioms.
+1. Index the existing generic public-key chain. Add the minimum useful existential entry point
+   (optionally the final multi-message result), checked against exact APIs and full axioms.
+   PK-1–PK-4 describe the existing levels; they are not four required new proof tasks.
 2. OWP → PRF and OWP → multi-message private-key encryption, composed from existing proved
    existential results; document/re-export existing endpoints rather than duplicating them.
 3. Add the admitted Gate 06 families only as their statement gates/fills close. A small wrapper

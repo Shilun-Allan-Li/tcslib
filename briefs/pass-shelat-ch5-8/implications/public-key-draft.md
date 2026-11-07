@@ -15,9 +15,12 @@ Proof snippets are source-level drafts and have not been elaborated as a new mod
 
 The index must distinguish these conclusions. A proof for one does not acquire another label.
 
-## Closed generic routes: implement first
+## Existing proved generic chain: index first
 
-All these wrappers belong above `Asymptotic/PublicKey` and use existing public theorems.
+The mathematical hard-core-TDP → single-bit → message → multi-message implication is
+already proved by the existing theorems below. This pilot adds discoverability and, only where
+useful, named existential composition entry points. It does not commission a new encryption
+construction or security proof. PK-1–PK-4 are optional names, not four required new layers.
 
 ### PK-1: hard-core trapdoor permutations give single-bit PKE
 
@@ -67,6 +70,21 @@ Use `hT.exists_glPad_singleBitSecure m henc`, then bitwise encryption for the se
 Source: `Asymptotic/HardCoreCollection.lean:92`, `:489`, `:498` and
 `Asymptotic/PublicKey.lean:1059`; [PS10, Theorems 87.3 and 104.4].
 This generic fixed-width result is useful on its stated domain. It is not an RSA instantiation.
+
+## Minimal optional entry point for the existing full chain
+
+If one new theorem is useful, expose the final multi-message existential directly, with the
+same T, h, hT and hHC premises as PK-1:
+
+```lean
+  obtain ⟨E⟩ := hHC.nonempty_predEvaluator
+  exact ⟨(T.tdpBitScheme E).bitwise,
+    (T.tdpBitScheme_singleBitSecure E hT hHC).bitwise.multiMessageSecure⟩
+```
+
+This is a draft proof term, not yet checked in a new module. The component proofs already
+exist. The intermediate levels can be documented/imported without duplicating their theorems.
+The fixed-width GL route and the candidate instantiation gaps keep their existing premises.
 
 ## Exact CPA route: waiting on Gate 06C
 

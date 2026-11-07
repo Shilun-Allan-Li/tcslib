@@ -38,7 +38,8 @@ Likewise, ElGamal's GroupPKScheme security is not silently a theorem about the o
 ## Execution
 
 1. Complete and review this draft inventory while Gate 06 integration/checking continues.
-2. Implement the closed generic public-key composition wrappers on an isolated PR branch;
+2. Index the already-proved public-key composition chain; add only useful missing existential
+   entry points on an isolated PR branch;
    check headers, source fidelity, axioms, seals and exports. The user approves/merges Lean.
 3. Add the exact CPA wrappers once their Gate 06 dependencies are gated and filled. Keep
    declared proof-dependency status visible in the index until then.
