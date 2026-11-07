@@ -1,0 +1,32 @@
+theorem Cfg.ofWords_transfer_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hne : src ≠ dst) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = src ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then none
+          else if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src)) := by
+  apply Cfg.ext <;> simp only [Cfg.ofWords_state, Cfg.ofWords_inputPos,
+    Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, Cfg.ofWords_output, zero_add, sub_zero]
+  funext j p
+  by_cases hs : j = src
+  · subst j
+    simp only [Function.update_of_ne hne, Function.update_self,
+      FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+    split_ifs with hp
+    · rfl
+    · have hc := catalog_buffer_clip (w src) p
+      rw [if_neg hp] at hc
+      exact hc.symm
+  · by_cases hd : j = dst
+    · subst j
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
+        hs, false_and, ite_false, true_and]
+      exact catalog_buffer_clip (w src) p
+    · simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,
+        Function.update_of_ne hs]

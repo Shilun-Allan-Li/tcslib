@@ -22,7 +22,7 @@ receipts remain in their dated status folders.
 
 | PR | Change | Gate | Current status |
 | --- | --- | --- | --- |
-| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Fresh round2 evidence/packet in preparation. **Not yet clear to merge.** |
+| #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Fresh round2 evidence complete; packet staging in progress. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
@@ -49,7 +49,12 @@ cp01/cp02/cp03/cp05/cp07 are received and reviewed as **partial** deliveries, wi
 checksums passing. cp07 fills all17 original source targets plus the two new already-gated
 forwarding proofs; only the three frozen RAM admissions remain. It deletes356 private Catalog
 copies /8202 lines and retires six public rows. These are source facts, not final maintainer
-elaboration/gate closure. The worker's final full-sweep/screen evidence was still running.
+elaboration/gate closure. The final2852090-byte ZIP has now arrived, SHA256
+4315dcfd348b9cce1e7dbf02de0b75b7e2596a177039fee823061f5d706962b6. All2152 payload
+checksums pass; source equals cp07 exactly, so no additional producer commits are imported.
+The producer labels the delivery PARTIAL. Independent source/screen and supplied641-module
+log/axiom/census checks are preserved in review/final-2026-11-07/. Its sweep passed, but the
+remaining seals/factoring are real and no current maintainer replay is claimed.
 
    The five cp07 commits were safely imported, preserving Claude authorship and Codex
 committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, integrated head
@@ -57,7 +62,7 @@ committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, inte
 Two mechanical merge conflicts preserve both approved readers and delivered helpers, and
 Catalog equals the delivered cp07 bytes at that integration commit. Three independent
 maintainer tasks repair rule10 interface findings in distinct files; they implement no fill
-admissions. Root owns Catalog/CertShell/CodeSimulator/documentation; subagents own
+admissions. Root owns Catalog/CodeSimulator/documentation; subagents own CertShell,
 Composition/Wrappers/Loop and Primitives. Do not commit/reset this worktree while they edit.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in

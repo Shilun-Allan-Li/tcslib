@@ -1,0 +1,9 @@
+/private/tmp/tcslib-mig1-root-1_hc5ggg/Catalog_polybits_pairfixed_sealed_v1.lean:63:32: error(lean.unknownIdentifier): Unknown constant `Nat.bits_zero`
+/private/tmp/tcslib-mig1-root-1_hc5ggg/Catalog_polybits_pairfixed_sealed_v1.lean:63:6: error: Type mismatch: After simplification, term
+  ComputesInTime.mono (ht x) (Nat.mul_le_mul_left c (Nat.le_self_pow (Nat.succ_ne_zero e) (x.length + 1)))
+ has type
+  M.ComputesInTime x [] (c * (x.length + 1) ^ e.succ)
+but is expected to have type
+  M.ComputesInTime x (Nat.bits 0) (c * (x.length + 1) ^ (e + 1))
+'Turing.FinTM.computesFunInTime_polyBits_spaceUsed' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -27,6 +27,6 @@ and older named acknowledgment/watch records. These are explicitly lower bounds,
 exhaustive cleared census. All86 supplied directed candidates are classified; raw edges or
 endpoint counts are not debt counts. Old live-prefix watch and broaderRO1 records stay separate.
 
-**Not yet clear to merge: #215.** Await fresh repaired-source evidence,
-and gate106 round2 (Codex, attachment plus pasted Markdown). No new acknowledgment beyond the
+**Not yet clear to merge: #215.** Fresh repaired-source evidence, complete current screens and supplementary direct-definition
+seals are finished; await gate106 round2 (Codex, attachment plus pasted Markdown). No new acknowledgment beyond the
 six user-approved generic kinds is inferred.

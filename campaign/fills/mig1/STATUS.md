@@ -63,3 +63,16 @@ bounded **unapproved proposals**, separate from the23 approved scope. No public 
 weakened and no factoring debt is silently accepted. Codex is selected for the eventual
 MIG-1 landing audit, reserved as gate118, distinct from gate117. The final worker delivery is still awaited; its
 issued brief/outbox must remain unchanged and no fill is duplicated internally.
+
+
+## Final delivery received — partial, source identical to cp07
+
+`review/final-2026-11-07/` retains the2852090-byte final ZIP (SHA256
+4315dcfd348b9cce1e7dbf02de0b75b7e2596a177039fee823061f5d706962b6), both reports,2152 verified
+payload checksums, complete inert extraction, independent source/freeze/MIG24 review and root's
+641-module supplied-log/axiom/census reconciliation. Final source equals cp07 exactly; no new
+producer commits need importing. The producer has finished and explicitly reports PARTIAL.
+Remaining seals/interface reads and assigned factoring are maintainer landing repairs; only
+RAM3 remains admitted. The passed producer641 sweep is not our current-campaign replay.
+Current ownership: root Catalog/CodeSimulator; subagents CertShell, Composition/Wrappers/Loop,
+and Primitives. Do not mutate Git/source ownership while those disjoint repairs are active.
