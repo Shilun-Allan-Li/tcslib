@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Option
@@ -47,8 +48,8 @@ gadget needs.
   top.
 * **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
   machines in disjoint tape and state blocks; the Boolean chooses only the
-  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed` (MIG-1; sorried until
-  the fill F-A): the selected machine's space plus one origin cell per idle tape.
+  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed`: the selected machine's
+  space plus one origin cell per idle tape.
 * **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
   that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
 * **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
@@ -336,31 +337,53 @@ theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
 theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
     (branchTM M₁ M₂ b).State = (M₁.State ⊕ M₂.State) := rfl
 
+/-- The branch union selecting the second machine starts as that machine's initial
+configuration in the right bank, with the first bank blank at the origin. -/
+private lemma branchTM_initCfg_false (M₁ M₂ : FinTM Bool) (x : List Bool) :
+    (branchTM M₁ M₂ false).tm.initCfg x =
+      rightCfg Sum.inr (M₂.tm.initCfg x) (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
+  rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [rightCfg, Cfg.init_state, Option.map_some]
+    rfl
+  · simp only [rightCfg, Cfg.init_inputPos]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;> funext z <;>
+      simp only [rightCfg, Cfg.init_workTapes, Fin.addCases_left, Fin.addCases_right]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
+      simp only [rightCfg, Cfg.init_workTapePos, Fin.addCases_left, Fin.addCases_right]
+  · simp only [rightCfg, Cfg.init_output]
+
+/-- The branch union selecting the first machine starts as that machine's initial
+configuration in the left bank, with the second bank blank at the origin. -/
+private lemma branchTM_initCfg_true (M₁ M₂ : FinTM Bool) (x : List Bool) :
+    (branchTM M₁ M₂ true).tm.initCfg x =
+      leftCfg Sum.inl (M₁.tm.initCfg x) (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
+  rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · simp only [leftCfg, Cfg.init_state, Option.map_some]
+    rfl
+  · simp only [leftCfg, Cfg.init_inputPos]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;> funext z <;>
+      simp only [leftCfg, Cfg.init_workTapes, Fin.addCases_left, Fin.addCases_right]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
+      simp only [leftCfg, Cfg.init_workTapePos, Fin.addCases_left, Fin.addCases_right]
+  · simp only [leftCfg, Cfg.init_output]
+
 /-- Each selected branch has exactly its original time and completed output.
 The proof embeds its initial blank configuration, then uses lockstep. -/
 lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :
     (branchTM M₁ M₂ b).ComputesInTime x w t ↔ (cond b M₁ M₂).ComputesInTime x w t := by
   cases b with
   | false =>
-    have hi : (branchTM M₁ M₂ false).tm.initCfg x =
-        rightCfg Sum.inr (M₂.tm.initCfg x) (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
-      refine Cfg.ext rfl rfl ?_ ?_ rfl
-      · funext i
-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
-      · funext i
-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
-    rw [computesInTime_iff, computesInTime_iff, hi,
+    rw [computesInTime_iff, computesInTime_iff, branchTM_initCfg_false,
       rightCfg_run M₂.tm (branchTM M₁ M₂ false).tm Sum.inr (fun _ _ _ => rfl)]
     simp only [rightCfg, Option.map_eq_none_iff]
   | true =>
-    have hi : (branchTM M₁ M₂ true).tm.initCfg x =
-        leftCfg Sum.inl (M₁.tm.initCfg x) (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
-      refine Cfg.ext rfl rfl ?_ ?_ rfl
-      · funext i
-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
-      · funext i
-        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
-    rw [computesInTime_iff, computesInTime_iff, hi,
+    rw [computesInTime_iff, computesInTime_iff, branchTM_initCfg_true,
       leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl)]
     simp only [leftCfg, Option.map_eq_none_iff]
 
@@ -401,15 +424,68 @@ theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}
 /-- **The branch union's space**. The branch union selecting `b` uses exactly the selected machine's
 space plus one origin cell for each tape of the idle bank.
 
-**Proof sketch.** Catalog's `f2_branch_space`: the branch union runs the selected machine on its
-own bank (`leftCfg_run`, `rightCfg_run`) and never moves the other bank's heads, whose visited
-sets stay the origin singletons; split the sum over the two banks with `Fin.sum_univ_add`, which
-replaces the copied `f2_sum_add`. -/
+**Proof sketch.** The branch union runs the selected machine on its own bank (`leftCfg_run`,
+`rightCfg_run`) and never moves the other bank's heads, whose visited sets stay the origin
+singletons, while each selected tape visits exactly the cells of the corresponding tape of the
+selected machine. Split the sum over the two banks with `Fin.sum_univ_add`. -/
 theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
     (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t =
       if b then M₁.tm.spaceUsed (M₁.tm.initCfg x) t + M₂.k
       else M₂.tm.spaceUsed (M₂.tm.initCfg x) t + M₁.k := by
-  sorry
+  cases b with
+  | false =>
+    have hr (u : ℕ) : (branchTM M₁ M₂ false).tm.runFrom
+        ((branchTM M₁ M₂ false).tm.initCfg x) u =
+        rightCfg Sum.inr (M₂.tm.runFrom (M₂.tm.initCfg x) u)
+          (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
+      rw [branchTM_initCfg_false]
+      exact rightCfg_run M₂.tm (branchTM M₁ M₂ false).tm Sum.inr (fun _ _ _ => rfl) _ _ _ u
+    -- The idle bank's heads never leave the origin.
+    have hidle (j : Fin M₁.k) : (branchTM M₁ M₂ false).tm.visitedByTapeHead
+        ((branchTM M₁ M₂ false).tm.initCfg x) t (Fin.castAdd M₂.k j) = {0} := by
+      ext z
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff, Finset.mem_singleton]
+      simp only [hr, rightCfg, Fin.addCases_left]
+      exact ⟨fun ⟨_, _, h⟩ => h.symm, fun h => ⟨0, Nat.zero_le _, h.symm⟩⟩
+    -- The selected bank visits exactly the selected machine's cells.
+    have hsel (j : Fin M₂.k) : (branchTM M₁ M₂ false).tm.visitedByTapeHead
+        ((branchTM M₁ M₂ false).tm.initCfg x) t (Fin.natAdd M₁.k j) =
+        M₂.tm.visitedByTapeHead (M₂.tm.initCfg x) t j := by
+      ext z
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff, MultiTapeTM.mem_visitedByTapeHead_iff]
+      simp only [hr, rightCfg, Fin.addCases_right]
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
+    change (∑ i : Fin (M₁.k + M₂.k), _) = _
+    rw [Fin.sum_univ_add]
+    simp only [MultiTapeTM.spaceUsedByTape_eq_card, hidle, hsel, Finset.card_singleton,
+      Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
+    exact Nat.add_comm _ _
+  | true =>
+    have hr (u : ℕ) : (branchTM M₁ M₂ true).tm.runFrom
+        ((branchTM M₁ M₂ true).tm.initCfg x) u =
+        leftCfg Sum.inl (M₁.tm.runFrom (M₁.tm.initCfg x) u)
+          (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
+      rw [branchTM_initCfg_true]
+      exact leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl) _ _ _ u
+    have hsel (j : Fin M₁.k) : (branchTM M₁ M₂ true).tm.visitedByTapeHead
+        ((branchTM M₁ M₂ true).tm.initCfg x) t (Fin.castAdd M₂.k j) =
+        M₁.tm.visitedByTapeHead (M₁.tm.initCfg x) t j := by
+      ext z
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff, MultiTapeTM.mem_visitedByTapeHead_iff]
+      simp only [hr, leftCfg, Fin.addCases_left]
+    have hidle (j : Fin M₂.k) : (branchTM M₁ M₂ true).tm.visitedByTapeHead
+        ((branchTM M₁ M₂ true).tm.initCfg x) t (Fin.natAdd M₁.k j) = {0} := by
+      ext z
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff, Finset.mem_singleton]
+      simp only [hr, leftCfg, Fin.addCases_right]
+      exact ⟨fun ⟨_, _, h⟩ => h.symm, fun h => ⟨0, Nat.zero_le _, h.symm⟩⟩
+    simp only [↓reduceIte]
+    rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
+    change (∑ i : Fin (M₁.k + M₂.k), _) = _
+    rw [Fin.sum_univ_add]
+    simp only [MultiTapeTM.spaceUsedByTape_eq_card, hidle, hsel, Finset.card_singleton,
+      Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
 
 /-- A control action leaves all work tapes, work heads, and output unchanged. -/
 lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
@@ -486,6 +562,19 @@ lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
   intro cfg hs hp
   exact aux cfg.inputPos.val cfg hs rfl hp
 
+/-- The rewind's mandatory first step: a left move into the scan state, which leaves the head
+at most at the last input symbol, so that `rewind_scan` applies. -/
+private lemma rewind_first_step {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    tm.step c = {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} ∧
+      (moveInputPos c.inputPos .neg).val ≤ x.length := by
+  refine ⟨by rw [MultiTapeTM.step_of_some hs, hstart, controlAction_apply], ?_⟩
+  rw [moveInputPos_neg_val]
+  have := c.inputPos.isLt
+  omega
+
 /-- From any valid input position, take the mandatory first left move and then
 scan left. This returns to position `1`, even for an empty input or a start at a
 boundary. No work tape or output is changed. -/
@@ -498,23 +587,9 @@ lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}
       | none => controlAction .pos dest)
     (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
     ∃ t, tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
-  have hstep : tm.step cfg =
-      {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
-    unfold MultiTapeTM.step
-    rw [hs]
-    dsimp only
-    rw [hstart, controlAction_apply]
-  let c := tm.step cfg
-  have hc : c.state = some scan := by simp only [c, hstep]
-  have hp : c.inputPos.val ≤ x.length := by
-    simp only [c, hstep, moveInputPos_neg_val]
-    have := cfg.inputPos.isLt
-    omega
-  refine ⟨1 + (c.inputPos.val + 1), ?_⟩
-  rw [MultiTapeTM.runFrom_add]
-  have hfirst : tm.runFrom cfg 1 = c := rfl
-  rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
-  simp only [c, hstep]
+  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart cfg hs
+  refine ⟨(moveInputPos cfg.inputPos .neg).val + 1 + 1, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
 
 /-- A quantitative refinement of `rewind_from_any`: its construction takes
 at most the current input position plus two steps, preserving all work and output.
@@ -529,21 +604,10 @@ lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
     (c : Cfg k Bool S x) (hs : c.state = some start) :
     ∃ r ≤ c.inputPos.val + 2,
       tm.runFrom c r = {c with state := dest, inputPos := 1} := by
-  have hstep : tm.step c =
-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
-    unfold MultiTapeTM.step
-    rw [hs]
-    dsimp only
-    rw [hstart, controlAction_apply]
-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
-    rw [moveInputPos_neg_val]
-    have := c.inputPos.isLt
-    omega
-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart c hs
+  refine ⟨(moveInputPos c.inputPos .neg).val + 1 + 1, ?_, ?_⟩
   · rw [moveInputPos_neg_val]; omega
-  · rw [MultiTapeTM.runFrom_add]
-    change tm.runFrom (tm.step c) _ = _
-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+  · rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
 
 /-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
 every prefix, including its dispatch step.
@@ -598,21 +662,13 @@ theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
     ∃ r ≤ c.inputPos.val + 2,
       tm.runFrom c r = {c with state := dest, inputPos := 1} ∧
       ∀ u ≤ r, (tm.runFrom c u).workTapePos = c.workTapePos := by
-  have hstep : tm.step c =
-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
-    simp only [MultiTapeTM.step, hs, hstart, controlAction_apply]
-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
-    rw [moveInputPos_neg_val]
-    have := c.inputPos.isLt
-    omega
-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_, ?_⟩
+  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart c hs
+  refine ⟨(moveInputPos c.inputPos .neg).val + 1 + 1, ?_, ?_, ?_⟩
   · rw [moveInputPos_neg_val]; omega
-  · rw [MultiTapeTM.runFrom_add]
-    change tm.runFrom (tm.step c) _ = _
-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+  · rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]
   · intro u hu
     cases u with
-    | zero => rfl
+    | zero => rw [MultiTapeTM.runFrom_zero]
     | succ u =>
       rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
       exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u
