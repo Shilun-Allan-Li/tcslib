@@ -79,12 +79,17 @@ The concrete-layer content of the reductions of [PS10, §2.3–§2.4, §2.7] (Th
 * `TCSlib.Cryptography.Candidates.rejectBlocksL_spec`,
   `TCSlib.Cryptography.Candidates.statClose_rejectBlocksL` — accepted values satisfy the
   test; the total sampler is within `(1 − Pr[E])^T` of uniform on `E`.
+* `TCSlib.Cryptography.Candidates.rejectBlocksL_eq_find?` — block rejection sampling as a
+  search followed by the value read.
+* `TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL` — block rejection sampling
+  is polynomial-time (host H15; statement only, its proof is an open fill).
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§2.3.1–§2.3.2, Theorem 33.5, Algorithm 33.6; §2.4.2, Claim 36.2, Theorem 36.3,
-  Algorithm 37.4; §2.7, Theorem 51.1.)
+  Algorithm 37.4; §2.7, Theorem 51.1; Theorems 52.3, 53.2, 61.7 and 63.10, the samplers of
+  block rejection sampling.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, §2.3 (Theorem 2.1 and Figure 2.2: planting at a uniform
   position).
@@ -579,6 +584,63 @@ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r
   subst ht
   refine ⟨hc, lt_of_lt_of_le (listToNat_lt_two_pow _) ?_⟩
   exact Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _)
+
+/-- **Block rejection sampling is polynomial-time** (host H15) [PS10, Theorems 52.3, 53.2, 61.7
+and 63.10: "the domain is easy to sample"]. Let `E a v` be a test on a parameter `a` and a value
+`v`, decided on words by a polynomial-time bit `acc`, so that `acc ⟨w, b⟩ = [E ⟦w⟧ ⟦b⟧]`. Take
+polynomial-time words `par z` (the parameter), `kw z`, `bw z` and `tw z`, whose lengths are the
+trial width `k`, the block length `B` and the trial count `T`, and `c z` (the coins). Then some
+polynomial-time `g` computes the sampler `rejectBlocksL (E ⟦par z⟧) k B T (c z)`:
+- `g z = []` when every trial is rejected;
+- otherwise `g z = true :: b`, where `b` reads as the accepted value and has at most `k` bits.
+
+That is, `(g z).tail.length ≤ k` and
+`rejectBlocksL (E ⟦par z⟧) k B T (c z) = if g z = [] then none else some ⟦(g z).tail⟧`.
+In particular `(rejectBlocksL …).getD 0 = ⟦(g z).tail⟧`, since `[].tail = []` reads as `0`
+(`listToNat_nil`). The statement is existential: the trial loop that realizes it is internal,
+and no consumer reads it.
+
+**Deviation:** [PS10] samples these domains exactly, in expected polynomial time; here the
+sampler is truncated to `T` trials (deviations register #15, `statClose_rejectBlocksL` carries
+the statistical term), and the host states only the polynomial-time computability of that
+truncated sampler on strings.
+
+**Proof sketch.**
+- **The loop.** The state is `⟨⟨⟨1^B, 1^k⟩, w⟩, ⟨1^T, r⟩⟩`, with `w = par z` and `r = c z`. One
+  step keeps the header `⟨⟨1^B, 1^k⟩, w⟩`, drops one bit of the counter `1^T` and one block of
+  `B` coins (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). The trial word is
+  the first `k` coins (`polyTimeComputable_pairTakePoly`). The test accepts iff the counter is
+  nonempty and `acc ⟨w, trial word⟩` holds (`polyTimeComputable_isNil`, `polyTimeComputable_not`,
+  `polyTimeComputable_and`, with the tests given explicitly). The payload is `true` followed by
+  the trial word (`polyTimeComputable_prepend`). The start state is assembled from the given
+  words (`polyTimeComputable_unaryPoly`, or `List.replicate` of the lengths, and
+  `PolyTimeComputable.pairEncode`), and `g` is the loop on it, in applied form
+  (`PolyTimeComputable.comp'`).
+- **Polynomial time.** One step at most doubles the length (`|step x| ≤ 2|x| + 4`), and from the
+  second step on the state is a well-formed pair that only shrinks
+  (`StateLoop.length_pairFstD_add_pairSndD_le`), so every orbit point has length at most
+  `2|x| + 4`. The repetition host `Complexity.polyTimeComputable_iterateFind`, with `R = var` and
+  orbit bound `2n + 4`, therefore makes the loop polynomial-time. Its `match` on the search
+  result is split by `split` (its equation lemmas), never matched by definitional unfolding.
+- **Correctness.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (i B)⟩⟩` (induction on
+  `i`, `List.drop_drop`), so trial `i` reads the `k`-bit prefix `v_i = ⟦(r.drop (i B)).take k⟧`
+  of block `i`, and the test at step `i` is `i < T ∧ E ⟦w⟧ v_i` (`hspec`). The search over the
+  first `|start| + 1 ≥ T` rounds is therefore the search over `[0, T)`
+  (`IterateFind.find?_range_and_lt`), which is `rejectBlocksL` read as a search followed by its
+  value (`rejectBlocksL_eq_find?`). If the search fails, `g z = []`; otherwise
+  `g z = true :: trial word`, whose tail has at most `k` bits (`List.length_take_le`) and reads
+  as the accepted value. -/
+theorem polyTimeComputable_rejectBlocksL (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (E a)]
+    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x])
+    (hspec : ∀ w b : List Bool, acc (pairEncode w b) = decide (E (listToNat w) (listToNat b)))
+    {par kw bw tw c : List Bool → List Bool} (hpar : PolyTimeComputable par)
+    (hkw : PolyTimeComputable kw) (hbw : PolyTimeComputable bw) (htw : PolyTimeComputable tw)
+    (hc : PolyTimeComputable c) :
+    ∃ g : List Bool → List Bool, PolyTimeComputable g ∧ ∀ z,
+      (g z).tail.length ≤ (kw z).length ∧
+      rejectBlocksL (E (listToNat (par z))) (kw z).length (bw z).length (tw z).length (c z) =
+        if g z = [] then none else some (listToNat (g z).tail) := by
+  sorry
 
 /-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
 `t · B + j`. -/
