@@ -1,0 +1,6 @@
+Read-only preview failure, corrected before inventory verification:
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+KeyError: slice(None, 2, None)
+
+Cause: diagnostic attempted json.loads(snapshot-inventory.json)[:2], although the inventory is a dictionary keyed by relative path. Subsequent checks use dictionary equality and exact key sets.

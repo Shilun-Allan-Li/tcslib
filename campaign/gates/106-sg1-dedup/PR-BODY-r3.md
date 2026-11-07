@@ -1,0 +1,7 @@
+Replaces local Segment composition proofs in Tautology, CounterLoop and SingleTape with the shared contracts, including the two SAT/Hardness cut-only repairs found during landing. Sixteen additional SAT/Hardness reconstruction proofs now cite existing polynomial-time and encoding interfaces; the only new import in this revision is Seyoon's approved `ClassNP.PolyTimePrefix` import in Hardness. Public contracts and machine definitions remain frozen.
+
+The six acknowledged adapter/dispatcher debt kinds retain their existing cleanup owner/window: maintainer, next12.2c consolidation after activeMIG1 and before further SAT/Hardness fills. General polynomial closures receive mechanical repairs; no broader acknowledgment is inferred. Source-inclusive family accounting and the remaining on-image/iteration candidates are disclosed in gate106 records.
+
+Validation: the actual final SAT→Hardness compile passes in one complete overlay; all16 repaired roots and7 generated descendants have standard axioms. Scoped opacity checks and fresh controls pass. Current head `d0c4a292e781b55617e05b33fdd423bb059fd735` includes the campaign's merged#230 APIs. Fresh329-module msg5 replay from mac4 and expanded source-inclusive screen/current compiled comparison are running or being prepared. Earlier source-specific passes remain separately pinned.
+
+Gate106 round2 returned HOLD0/1/0/15; Codex is selected for round3 after validation. **Not yet clear to merge.** Base: `complexity/arora-barak-ch3-4`; Seyoon merges after gate closure and current replay.

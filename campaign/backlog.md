@@ -4334,10 +4334,13 @@ bounded sweep identifies at least9distinct canonical source statements out of26
 in PolyTimePairing, crossing onefifth on the pre-fix source-inclusive accounting.
 This is a review item, not an accepted debt family or an exhaustive count.
 
-**Disposition in progress:** mechanical all-member citations under WORKFLOW§3,
-with13 checked source repoints and two further already-imported candidates under
-validation. Existing total-match pairMapSnd.eq_1 works under opacity, so no new
-API/import is needed for those fixes. Source imports/headers/data stay frozen.
-No retention acknowledgment is requested; closure awaits complete source/ledger
-accounting, current replay and Codex round3. Separate on-image/iteration/prefix
-candidates retain their exact checked/missing-interface boundaries.
+**Implemented; validation/gate pending:**16 same-PR citations under WORKFLOW§3
+at `6d3903f7ba3dbdee3ad233c8d908427f3324be2f`. Thirteen generic closures, decoder-based field bounds,
+unary comparison and prefix removal now use public contracts/equations. Seyoon
+approved the single Hardness PolyTimePrefix import; public headers/data remain
+frozen. Final SAT→Hardness compile and16roots+7descendants standardAX pass.
+Fresh329-module mac4 replay, full source-inclusive accounting/screens and Codex
+round3 remain. The source-inclusive PolyTimePairing union now includes lenLe:
+at least10/26(38.5%) pre-repair, not retained/acknowledged general-closure debt.
+Separate on-image/iteration candidates keep their bounded interface assessments;
+the fixed-bit transducer's3 members fit the already accepted transducer kind.

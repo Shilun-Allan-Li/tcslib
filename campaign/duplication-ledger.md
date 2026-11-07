@@ -700,6 +700,37 @@ F1's cut-only implementations are being repointed in #215 and retire on its merg
 supplied SAT/Hardness directional candidates are classified separately in gate106's incoming
 review; widerRO1 and statement-specific candidates keep their existing separate dispositions.
 
+**Gate106 round2/R3 generic closure repairs (2026-11-07; retirement on #215 merge).**
+The six adapter/dispatcher acknowledgments above do not cover general polynomial-time
+closure reconstructions. Mechanical repair commit `6d3903f7ba3dbdee3ad233c8d908427f3324be2f` handles16 private
+source declarations, retaining their headers/names as citations:
+
+- SAT5: sat_pt_pair_input, sat_pt_mapSnd, sat_pt_pair, sat_pt_append, sat_pt_unaryLength.
+- Hardness11: clNative_linear, clNative_map, clNative_pair, clNative_append,
+  clNative_unary, clA5_pt_const, clA5_pt_cond, clA5_pt_and, clA5Pair_sizes,
+  clA5Le_native, clA5Drop_native.
+
+The14 closure/comparison members use10 distinct public PolyTimePairing source statements:
+of_linear, const, pairMapSnd, pairEncode, append, unary, polyUnary, ite, and, lenLe.
+The pre-repair source-inclusive union is therefore at least10/26(38.5%), crossing
+onefifth; it is a bounded lower bound, not an exhaustive count or accepted retention.
+The remaining two repairs use Encoding's public inverse/length facts and PolyTimePrefix's
+published prefix remover. Existing serialized pairMapSnd.eq_1/drop.eq_1 suffice.
+Seyoon approved only the latter's single new import; no new API or debt extension.
+Actual final native/scoped-seal evidence is in gate106/review; current replay and Codex
+round3 remain pending. These implementations retire only when #215 merges.
+
+The older retained named unions34/270(SAT),32/544(Hardness) did not include this general
+closure family; do not subtract16 from them. Separately, the inspected fixed-bit
+clFillTM/clFill_run/clNative_fill trio is an exact Unit-state constant-emission instance
+of the already acknowledged one-way transducer kind. Accounting it once raises the
+Hardness retained named lower bound to35/544; SAT remains34/270. Original correspondence
+sets and all candidate rows remain preserved. Image-only composition and actual-orbit
+iteration have separate bounded interface assessments, with no new acknowledgment,
+API-necessity claim or global clearance. Historical widerRO1/live-prefix/watch statuses
+are unchanged. Source counts, canonical originals, raw screen edges and compiler auxiliaries
+remain different measurements.
+
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
 `m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:

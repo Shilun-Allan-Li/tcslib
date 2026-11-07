@@ -1,0 +1,60 @@
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.Tautology
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.Machines.Frag
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let wantedOwners : List Name := [`TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.Tautology, `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.SpaceComplexity.Machines.Frag, `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.Contract.Basic, `TCSlib.Complexity.TuringMachine.Build.CounterLoop, `TCSlib.Complexity.TuringMachine.Build.Primitives, `TCSlib.Complexity.TuringMachine.Robustness.SingleTape]
+  let wantedRoots : List (String × Name) := [("sat_pt_mapSnd", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_append", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_pair_input", `TCSlib.Complexity.ClassNP.SAT), ("sat_pt_unaryLength", `TCSlib.Complexity.ClassNP.SAT), ("clNative_map", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_pair", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_append", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_unary", `TCSlib.Complexity.CookLevin.Hardness), ("clNative_linear", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_const", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_cond", `TCSlib.Complexity.CookLevin.Hardness), ("clA5_pt_and", `TCSlib.Complexity.CookLevin.Hardness), ("clA5Pair_sizes", `TCSlib.Complexity.CookLevin.Hardness), ("clA5Le_native", `TCSlib.Complexity.CookLevin.Hardness), ("clA5Drop_native", `TCSlib.Complexity.CookLevin.Hardness)]
+  for mod in wantedOwners do
+    unless (env.getModuleIdx? mod).isSome do throwError "missing imported module {mod}"
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+    | .opaqueInfo _ => "opaque" | .axiomInfo _ => "axiom"
+    | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  let owned := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let owner := env.header.moduleNames[i.toNat]!
+      if wantedOwners.contains owner then some (n, ci, owner) else none
+    | none => none
+  let mut roots : Array Name := #[]
+  for (n, ci, owner) in owned do
+    match n with
+    | .str _ base =>
+      if wantedRoots.contains (base, owner) then
+        if !isPrivateName n then throwError "unexpected nonprivate repair root {n}"
+        roots := roots.push n
+    | _ => pure ()
+  if roots.size != wantedRoots.length then throwError "Root count mismatch {roots.size}/{wantedRoots.length}"
+  for n in roots.qsort Name.lt do logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  for (n, ci, owner) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    logInfo m!"CONSTANT {n} module={owner} kind={kind ci} private={isPrivateName n} internal={n.isInternalDetail}"
+    if !(roots.any (fun r => r.isPrefixOf n)) then continue
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for c in used do
+      if seen.contains c then continue
+      seen := seen.push c
+      match env.getModuleIdxFor? c, kenv.find? c with
+      | some j, some info =>
+        let foreignOwner := env.header.moduleNames[j.toNat]!
+        if (`TCSlib).isPrefixOf foreignOwner then
+          logInfo m!"CITED|{n}|{c}|{foreignOwner}|kind={kind info}|private={isPrivateName c}"
+          if let .defnInfo di := info then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            logInfo m!"FOREIGNDEF|{n}|{c}|{foreignOwner}|hints={hint}"
+      | _, _ => pure ()
