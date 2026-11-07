@@ -1868,6 +1868,7 @@ theorem counterLoopTMVia_done_witness {S : Type} [DecidableEq S] [DecidableEq Γ
       (counterLoopCfg (some .done) (roundOrbit M τ c d)
         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp)
       (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1)) := by
+    rw [Turing.segment_iff]
     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
     rcases hm with hm | hm
     · exact (hcut t ht).1 hm
@@ -1958,6 +1959,7 @@ theorem counterLoopTMVia_escape_witness {S : Type} [DecidableEq S] [DecidableEq 
         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
           then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q) cp)
       (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1)) := by
+    rw [Turing.segment_iff]
     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
     rcases hm with hm | hm
     · exact (hcut t ht).1 hm
@@ -2229,6 +2231,7 @@ theorem RoundContract.counterLoopDone_traj {S : Type} [DecidableEq S] [Decidable
           (hpre r hr)]
         exact (hp.2 r hr).2⟩)
   rw [← hd, counterLoopCfg_body] at hseg
+  rw [Turing.segment_iff] at hseg
   exact (hseg.2.2 u hu).2
 
 /-- **The escaping counter loop's contract keeps the shared witness**: as
@@ -2256,6 +2259,7 @@ theorem RoundContract.counterLoopEscape_traj {S : Type} [DecidableEq S] [Decidab
     (counterLoopBody a d) p.2.1 (d.workTapes (Fin.last k)) (d.workTapePos (Fin.last k)) hw
     p.2.2 hr₀ (fun r hr => R.orbit_round p.1 _ hc _ hpre hret r (by omega)) hexit
   rw [← hd, counterLoopCfg_body] at hseg
+  rw [Turing.segment_iff] at hseg
   exact (hseg.2.2 u hu).2
 
 end Turing
