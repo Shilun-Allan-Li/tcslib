@@ -227,12 +227,18 @@ theorem length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : (encInstance G₀ G
 /-- The vertex count read from a common input: `Nat.sqrt` of the length of the first
 component (the `n` of `decGraph`). -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
+/-- The instance vertex count is the square root of the first graph word's length. -/
+theorem instanceVertexCount_eq (x : List Bool) : instanceVertexCount x = Nat.sqrt (pairFstD x).length := rfl
 
 /-- The first graph of a common input, on the decoded vertex set. -/
 def instanceG₀ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairFstD x)
+/-- The first instance graph decodes its first word on the common vertex set. -/
+theorem instanceG₀_eq (x : List Bool) : instanceG₀ x = decGraphAt (instanceVertexCount x) (pairFstD x) := rfl
 
 /-- The second graph of a common input, on the vertex set of the first. -/
 def instanceG₁ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairSndD x)
+/-- The second instance graph decodes its second word on the common vertex set. -/
+theorem instanceG₁_eq (x : List Bool) : instanceG₁ x = decGraphAt (instanceVertexCount x) (pairSndD x) := rfl
 
 /-- A common input is well formed when it is a pair whose two components are adjacency
 matrices of the same size `n²` (the "same number of vertices" of [PS10, §4.5]). -/
@@ -350,6 +356,10 @@ trials per position), read from the tape by `coinTable`; the identity on failure
 (the run-2 file used `Nat.size n` bits and `n²` trials locally). -/
 noncomputable def samplePerm (n : ℕ) (r : List Bool) : Equiv.Perm (Fin n) :=
   (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1
+/-- Permutation sampling uses the campaign trial table and returns the identity on failure. -/
+theorem samplePerm_eq (n : ℕ) (r : List Bool) :
+    samplePerm n r = (permFromCoins n (permBits n) (permTrials n)
+      (coinTable n (permTrials n) (permBits n) r)).getD 1 := rfl
 
 /-- The number of tape bits consumed by `samplePerm n`: `n · permTrials n · permBits n`
 (`= 2n³ · Nat.size n`).

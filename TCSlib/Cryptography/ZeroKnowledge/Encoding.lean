@@ -131,6 +131,14 @@ entries are read with default `false`. -/
 def decGraph (w : List Bool) : Σ n, Graph n :=
   ⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩
 
+/-- Total graph decoding returns the square-root vertex count and default-false entries. -/
+theorem decGraph_eq (w : List Bool) :
+    decGraph w = ⟨Nat.sqrt w.length,
+      fun u v => w.getD (finProdFinEquiv (u, v)) false⟩ := rfl
+
+/-- The vertex count returned by total graph decoding is the square root of the word length. -/
+theorem decGraph_fst (w : List Bool) : (decGraph w).1 = Nat.sqrt w.length := rfl
+
 /-- An encoded graph on `n` vertices has `n²` bits. -/
 @[simp] theorem length_encGraph {n : ℕ} (G : Graph n) : (encGraph G).length = n * n := by
   simp [encGraph]

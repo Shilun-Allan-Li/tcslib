@@ -325,78 +325,39 @@ theorem keyAt_yaoSeed (Y : YaoCircuit) (n : ℕ) (r : List Bool) {v : ℕ}
 
 /-! ### Message lists -/
 
-/-- Decoding with fuel: at most `k` components, stopping at the empty string. -/
-private def decodeMsgsFuel : ℕ → List Bool → List (List Bool)
-  | 0, _ => []
-  | k + 1, w => if w = [] then [] else pairFstD w :: decodeMsgsFuel k (pairSndD w)
-
 /-- **Decoding a message list**, the inverse of `Strategy.encodeMsgs`: the first component of the
-string, then the decoding of the second, until the empty string (at most `|w|` components). -/
-def decodeMsgs (w : List Bool) : List (List Bool) := decodeMsgsFuel w.length w
+string, then the decoding of the second, until the empty string (at most `|w|` components).
+Delegates to the public word-list decoder, including on malformed words. -/
+def decodeMsgs (w : List Bool) : List (List Bool) := BinArith.decWords w
 
 /-- Decoding any word gives `[]` when the word is empty, and otherwise its first pair
 component followed by the decoding of its second component, including on malformed words.
 
-**Proof sketch.** The second projection of a nonempty word is strictly shorter, by the
-public pairing-length lemma. Induct on the fuel to compare the local decoder with the
-existing word-list decoder whenever the fuel is at least the word length. The defining fuel
-is therefore sufficient. The public empty and nonempty equations of the word-list decoder
-give the asserted step without exposing the private fuel function. -/
+**Proof sketch.** Apply the public empty or nonempty equation of `BinArith.decWords`, according
+to whether the input word is empty. -/
 theorem decodeMsgs_eq (w : List Bool) :
-    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) := by
-  have hFuel : ∀ (k : ℕ) (v : List Bool), v.length ≤ k →
-      decodeMsgsFuel k v = BinArith.decWords v := by
-    intro k
-    induction k with
-    | zero =>
-      intro v hv
-      have hvnil : v = [] := List.eq_nil_of_length_eq_zero (Nat.eq_zero_of_le_zero hv)
-      subst v
-      rw [decodeMsgsFuel, BinArith.decWords_nil]
-    | succ k ih =>
-      intro v hv
-      by_cases hvnil : v = []
-      · subst v
-        rw [decodeMsgsFuel, if_pos rfl, BinArith.decWords_nil]
-      · rw [decodeMsgsFuel, if_neg hvnil, BinArith.decWords_of_ne hvnil]
-        exact congrArg (List.cons (pairFstD v))
-          (ih (pairSndD v)
-            (Nat.le_of_lt_succ ((BinArith.length_pairSndD_lt hvnil).trans_le hv)))
-  have hdecode : ∀ v : List Bool, decodeMsgs v = BinArith.decWords v :=
-    fun v => hFuel v.length v (Nat.le_refl v.length)
-  by_cases hw : w = []
-  · subst w
-    rw [if_pos rfl, hdecode [], BinArith.decWords_nil]
-  · rw [if_neg hw, hdecode w, BinArith.decWords_of_ne hw, hdecode (pairSndD w)]
+    decodeMsgs w = if w = [] then [] else pairFstD w :: decodeMsgs (pairSndD w) :=
+  if hw : w = [] then
+    (congrArg decodeMsgs hw).trans (BinArith.decWords_nil.trans (if_pos hw).symm)
+  else
+    (BinArith.decWords_of_ne hw).trans (if_neg hw).symm
 
-/-- An encoded list of `k` messages has at least `k` bits. -/
-private theorem length_le_length_encodeMsgs :
-    ∀ l : List (List Bool), l.length ≤ (Strategy.encodeMsgs l).length
-  | [] => le_refl _
-  | m :: l => by
-    rw [Strategy.encodeMsgs_cons, length_pairEncode, List.length_cons]
-    have := length_le_length_encodeMsgs l
-    omega
+/-- **Decoding inverts the message-list encoding**: `decodeMsgs (encodeMsgs l) = l`.
 
-/-- With enough fuel, decoding an encoded list gives the list back. -/
-private theorem decodeMsgsFuel_encodeMsgs :
-    ∀ (l : List (List Bool)) (k : ℕ), l.length ≤ k →
-      decodeMsgsFuel k (Strategy.encodeMsgs l) = l
-  | [], 0, _ => rfl
-  | [], _ + 1, _ => by simp [decodeMsgsFuel]
-  | _ :: _, 0, h => absurd h (by simp)
-  | m :: l, k + 1, h => by
-    rw [Strategy.encodeMsgs_cons, decodeMsgsFuel, if_neg (pairEncode_ne_nil _ _),
-      pairFstD_pairEncode, pairSndD_pairEncode,
-      decodeMsgsFuel_encodeMsgs l k (by simpa using h)]
-
-/-- **Decoding inverts the message-list encoding**: `decodeMsgs (encodeMsgs l) = l`. -/
+**Proof sketch.** The public nil and cons equations identify `Strategy.encodeMsgs` with
+`BinArith.encWords` by list recursion. Apply `BinArith.decWords_encWords`. -/
 theorem decodeMsgs_encodeMsgs (l : List (List Bool)) :
-    decodeMsgs (Strategy.encodeMsgs l) = l :=
-  decodeMsgsFuel_encodeMsgs l _ (length_le_length_encodeMsgs l)
+    decodeMsgs (Strategy.encodeMsgs l) = l := by
+  have henc : ∀ ms : List (List Bool), Strategy.encodeMsgs ms = BinArith.encWords ms :=
+    List.rec (motive := fun ms : List (List Bool) =>
+      Strategy.encodeMsgs ms = BinArith.encWords ms)
+      (Strategy.encodeMsgs_nil.trans BinArith.encWords_nil.symm)
+      (fun m ms ih => (Strategy.encodeMsgs_cons m ms).trans
+        ((congrArg (pairEncode m) ih).trans (BinArith.encWords_cons m ms).symm))
+  exact (congrArg BinArith.decWords (henc l)).trans (BinArith.decWords_encWords l)
 
 /-- The empty string decodes to the empty list. -/
-theorem decodeMsgs_nil : decodeMsgs [] = [] := rfl
+theorem decodeMsgs_nil : decodeMsgs [] = [] := BinArith.decWords_nil
 
 /-! ### Alice's message -/
 
@@ -584,14 +545,20 @@ theorem yaoMain_outV (w zA zB : List Bool)
     (r : (yaoMain Y E₁ E₂).ExecCoins (yaoMain Y E₁ E₂).P w) :
     (yaoMain Y E₁ E₂).outV (yaoMain Y E₁ E₂).P w zA zB r =
       yaoBobOut Y E₁ E₂ w.length (yaoMsg Y E₁ E₂ w.length (pairFstD zA) (List.ofFn r.1))
-        (pairSndD zB) := rfl
+        (pairSndD zB) := by
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, yaoMain_P, yaoMain_V,
+    yaoMain_rounds, yaoMain_verifierFirst, PolyExpr.eval_const, exec_succ, exec_zero,
+    moverIsV_false, yaoAlice_next_nil, yaoBob_next]
 
 /-- **Alice's output in the message phase**: the message Bob sent, his result. -/
 theorem yaoMain_outP (w zA zB : List Bool)
     (r : (yaoMain Y E₁ E₂).ExecCoins (yaoMain Y E₁ E₂).P w) :
     (yaoMain Y E₁ E₂).outP w zA zB r =
       yaoBobOut Y E₁ E₂ w.length (yaoMsg Y E₁ E₂ w.length (pairFstD zA) (List.ofFn r.1))
-        (pairSndD zB) := rfl
+        (pairSndD zB) := by
+  simp [Protocol.outP_eq, Protocol.transcriptWith_eq, yaoMain_P, yaoMain_V,
+    yaoMain_rounds, yaoMain_verifierFirst, PolyExpr.eval_const, exec_succ, exec_zero,
+    moverIsV_false, yaoAlice_next_nil, yaoAlice_next_cons, yaoBob_next]
 
 /-- **The OT call index**: call `j < inB(n) · n` transfers bit `t` of the keys of Bob's wire
 `inA + i`, for `(i, t) = finProdFinEquiv⁻¹ j`, that is `j = i · n + t`. -/
@@ -625,13 +592,17 @@ attribute [simps (config := { isSimp := false }) main calls] yaoHybrid
 
 /-- Alice's input to call `j = (i, t)` is `c ↦ k_{inA + i}^{c = 1}[t]`. -/
 theorem yaoHybrid_callA (n : ℕ) (xs r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 2) :
-    (yaoHybrid Y E₁ E₂).callA n xs r j c =
+    (yaoHybrid Y E₁ E₂).callA n xs r j
+        (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inA).trans
+          (PolyExpr.eval_const 2 n)).symm c) =
       keyAt (Y.circ n) (yaoSeed Y n r) (Y.inA.eval n + (yaoCall Y n j).1) (decide ((c : ℕ) = 1))
         (yaoCall Y n j).2 := rfl
 
 /-- Bob's input to call `j = (i, t)` is his bit `y_i`. -/
 theorem yaoHybrid_callB (n : ℕ) (ys r : List Bool) (j : Fin (Y.inB.eval n * n)) (c : Fin 1) :
-    (yaoHybrid Y E₁ E₂).callB n ys r j c = ys.getD (yaoCall Y n j).1 false := rfl
+    (yaoHybrid Y E₁ E₂).callB n ys r j
+        (Fin.cast ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_inB).trans
+          (PolyExpr.eval_const 1 n)).symm c) = ys.getD (yaoCall Y n j).1 false := rfl
 
 /-! ### Correctness -/
 
@@ -747,21 +718,20 @@ theorem yaoHybrid_answersB_getD (n : ℕ) (xs ys rA rB : List Bool) (i : Fin (Y.
     (t : Fin n) :
     ((yaoHybrid Y E₁ E₂).answersB n xs ys rA rB).getD (i * n + t) false =
       keyAt (Y.circ n) (yaoSeed Y n rA) (Y.inA.eval n + i) (ys.getD i false) t := by
-  have h := flatten_ofFn_one (k := Y.inB.eval n * n) (l := otFunctionality.outB.eval n) rfl
+  have h := flatten_ofFn_one (k := Y.inB.eval n * n) (l := otFunctionality.outB.eval n)
+    ((congrArg (fun p : PolyExpr => p.eval n) otFunctionality_outB).trans
+      (PolyExpr.eval_const 1 n))
     fun j => (otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
       ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2
   have hj : i * n + t = (finProdFinEquiv (i, t) : ℕ) := by
     rw [finProdFinEquiv_apply_val]; ring
-  -- `answersB` through its body (requested shared lemma `HybridProtocol.answersB_eq`)
-  show (List.ofFn fun j : Fin (Y.inB.eval n * n) => List.ofFn (otFunctionality.f n
-      ((yaoHybrid Y E₁ E₂).callA n xs rA j) ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2).flatten.getD
-      (i * n + t) false = _
-  rw [h, hj, getD_ofFn', otFunctionality_f_snd]
-  show keyAt (Y.circ n) (yaoSeed Y n rA)
-    (Y.inA.eval n + (yaoCall Y n (finProdFinEquiv (i, t))).1)
-    (decide (((if ys.getD (yaoCall Y n (finProdFinEquiv (i, t))).1 false then 1 else 0 :
-      Fin 2) : ℕ) = 1)) (yaoCall Y n (finProdFinEquiv (i, t))).2 = _
-  rw [yaoCall_finProdFinEquiv]
+  rw [HybridProtocol.answersB_eq]
+  -- Normalize the owner-local hybrid call count in the list binder before using `h`.
+  change (List.ofFn (fun j : Fin (Y.inB.eval n * n) =>
+    List.ofFn ((otFunctionality.f n ((yaoHybrid Y E₁ E₂).callA n xs rA j)
+      ((yaoHybrid Y E₁ E₂).callB n ys rB j)).2))).flatten.getD (i * n + t) false = _
+  rw [h, hj, getD_ofFn', otFunctionality_f_snd_apply,
+    yaoHybrid_callA, yaoHybrid_callB, yaoCall_finProdFinEquiv]
   cases ys.getD i false <;> rfl
 
 /-- `yaoBobOut_yaoMsg` at a parameter `L` equal to `n` (for the common input `1^n`, whose length
@@ -972,8 +942,9 @@ theorem yaoHybrid_hbcSecure (hE₁ : PolyTimeComputable E₁) (hE₂ : PolyTimeC
     (hG₁₂ : PRFOut (.add (.add .var .var) (.add .var innerLen))
       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x))) :
     (yaoHybrid Y E₁ E₂).HBCSecure (yaoFunctionality Y) :=
-  ⟨yaoHybrid_polyTime Y E₁ E₂ hE₁ hE₂,
-    yaoHybrid_simulators Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂⟩
+  (HybridProtocol.hbcSecure_iff (yaoHybrid Y E₁ E₂) (yaoFunctionality Y)).mpr
+    ⟨yaoHybrid_polyTime Y E₁ E₂ hE₁ hE₂,
+      yaoHybrid_simulators Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂⟩
 
 end Security
 

@@ -211,14 +211,20 @@ theorem compose_msg_bound {F : Functionality} (hH : H.PolyTime F) (hρ : G.PolyT
   rw [PolyExpr.eval_add]
   have hrA : (List.ofFn r.1).length = H.main.P.coins.eval (List.replicate n true).length +
       H.calls.eval (List.replicate n true).length *
-        ρ.P.coins.eval (List.replicate n true).length := by
-    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
-      H.compose_P_coinLen ρ (List.replicate n true).length
+        ρ.P.coins.eval (List.replicate n true).length :=
+    (List.length_ofFn (f := r.1)).trans
+      ((H.compose_P_coinLen ρ (List.replicate n true).length).trans
+        (congrArg₂ (fun a b : ℕ => a + H.calls.eval (List.replicate n true).length * b)
+          (Strategy.coinLen_eq H.main.P (List.replicate n true).length)
+          (Strategy.coinLen_eq ρ.P (List.replicate n true).length)))
   have hrB : (List.ofFn r.2).length = H.main.V.coins.eval (List.replicate n true).length +
       H.calls.eval (List.replicate n true).length *
-        ρ.V.coins.eval (List.replicate n true).length := by
-    simpa only [List.length_ofFn, Strategy.coinLen_eq] using
-      H.compose_V_coinLen ρ (List.replicate n true).length
+        ρ.V.coins.eval (List.replicate n true).length :=
+    (List.length_ofFn (f := r.2)).trans
+      ((H.compose_V_coinLen ρ (List.replicate n true).length).trans
+        (congrArg₂ (fun a b : ℕ => a + H.calls.eval (List.replicate n true).length * b)
+          (Strategy.coinLen_eq H.main.V (List.replicate n true).length)
+          (Strategy.coinLen_eq ρ.V (List.replicate n true).length)))
   -- a message of an honest run
   have hrun : ∀ j p, j < H.calls.eval (List.replicate n true).length →
       p < ρ.rounds.eval (List.replicate n true).length →

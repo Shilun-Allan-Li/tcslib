@@ -469,6 +469,10 @@ variable {n : ℕ} (C : DAGCircuit n)
 def values (x : Fin n → Bool) : List Bool :=
   runWith DAGGate.eval C.gates (List.ofFn x)
 
+/-- The vertex-value equation [AB09, Def 6.1]: `C.values x` runs the gates from `List.ofFn x`. -/
+theorem values_eq (x : Fin n → Bool) :
+    C.values x = runWith DAGGate.eval C.gates (List.ofFn x) := rfl
+
 /-- The circuit's output on input `x`. -/
 def eval (x : Fin n → Bool) : Bool :=
   (C.values x).getD C.output false

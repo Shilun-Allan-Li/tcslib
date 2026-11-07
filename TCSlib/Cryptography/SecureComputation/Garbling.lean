@@ -361,6 +361,7 @@ theorem garbledValues_getD (s : GarbleSeed Cc K ρ) (hgood : Good M Cc s) (x : F
       keyAt Cc s v ((Cc.values x).getD v false) := by
   intro v hv
   have hlenA : (List.ofFn x).length = n := List.length_ofFn
+  rw [garbledValues_eq, DAGCircuit.values_eq]
   refine runWith_sim DAGGate.eval (fun v g vs => evalGate M (tableAt M Cc s) v g vs)
     (keyAt Cc s) false default Cc.gates (List.ofFn x) (inputKeys Cc s x)
     (by simp [inputKeys]) ?_ ?_ ?_ v
