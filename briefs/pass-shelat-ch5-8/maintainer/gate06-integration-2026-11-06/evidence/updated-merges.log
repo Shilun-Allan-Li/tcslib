@@ -1,0 +1,219 @@
+PRONG a 2d7b5441f5597633fc583579db54213269679f24
+Merge made by the 'ort' strategy.
+ TCSlib/Cryptography/Authentication/DLHash.lean     | 199 +++++++++
+ TCSlib/Cryptography/Authentication/Defs.lean       | 296 +++++++++++++
+ .../Cryptography/Authentication/HashAndSign.lean   | 295 +++++++++++++
+ TCSlib/Cryptography/Authentication/Lamport.lean    | 471 +++++++++++++++++++++
+ TCSlib/Cryptography/Authentication/PRFMAC.lean     | 123 ++++++
+ 5 files changed, 1384 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Authentication/DLHash.lean
+ create mode 100644 TCSlib/Cryptography/Authentication/Defs.lean
+ create mode 100644 TCSlib/Cryptography/Authentication/HashAndSign.lean
+ create mode 100644 TCSlib/Cryptography/Authentication/Lamport.lean
+ create mode 100644 TCSlib/Cryptography/Authentication/PRFMAC.lean
+
+PRONG b 587843c76f95f10056c9ddc9174da9dc8fba8b54
+Merge made by the 'ort' strategy.
+ TCSlib/Cryptography/SecureComputation/Compose.lean | 451 ++++++++++
+ .../SecureComputation/ComposePhases.lean           | 587 +++++++++++++
+ .../SecureComputation/ComposeSecurity.lean         | 367 ++++++++
+ TCSlib/Cryptography/SecureComputation/Defs.lean    | 154 ++++
+ .../Cryptography/SecureComputation/Garbling.lean   | 309 +++++++
+ .../SecureComputation/GarblingSecurity.lean        |  81 ++
+ .../SecureComputation/GarblingSpecial.lean         | 117 +++
+ TCSlib/Cryptography/SecureComputation/Hybrid.lean  | 188 ++++
+ .../SecureComputation/ObliviousTransfer.lean       | 459 ++++++++++
+ .../SecureComputation/SpecialEncryption.lean       | 219 +++++
+ .../SpecialEncryptionSecurity.lean                 | 148 ++++
+ TCSlib/Cryptography/SecureComputation/Yao.lean     | 963 +++++++++++++++++++++
+ TCSlib/Cryptography/SecureComputation/YaoReal.lean |  96 ++
+ 13 files changed, 4139 insertions(+)
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Compose.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposePhases.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ComposeSecurity.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Defs.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Garbling.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/GarblingSecurity.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/GarblingSpecial.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Hybrid.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/ObliviousTransfer.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/SpecialEncryption.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/SpecialEncryptionSecurity.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/Yao.lean
+ create mode 100644 TCSlib/Cryptography/SecureComputation/YaoReal.lean
+
+PRONG c 9e6f08bb28b2fcebfa845d47a9fd6e1ed281f951
+Auto-merging TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+CONFLICT (content): Merge conflict in TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+Automatic merge failed; fix conflicts and then commit the result.
+
+Prong C conflict resolution: keep current #195 MultiMessage byte-for-byte; its guarded Dec and repaired public-equation proofs already implement the old mirrored change.
+SHA256 3ed16c59e1b352fb631b13e1c6d4526f414c4b473a493de3ba57ed5671ce6b96
+Merge fd0d72754bfb6c8cf79069d65901726ca888ea48
+PRONG d
+Merge made by the 'ort' strategy.
+ TCSlib/Cryptography/Randomness/BPPBridge.lean      | 110 +++++++++++++++++++
+ .../Cryptography/Randomness/Derandomization.lean   |  86 +++++++++++++++
+ TCSlib/Cryptography/Randomness/Extraction.lean     |  99 +++++++++++++++++
+ TCSlib/Cryptography/Randomness/Learning.lean       | 120 +++++++++++++++++++++
+ 4 files changed, 415 insertions(+)
+ create mode 100644 TCSlib/Cryptography/Randomness/BPPBridge.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Derandomization.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Extraction.lean
+ create mode 100644 TCSlib/Cryptography/Randomness/Learning.lean
+
+Merge current campaign records/source 9e51bf9cd4ee35ff0dd373155f6c9c7bd573c170
+Merge made by the 'ort' strategy.
+ PassShelatChapter5-8Plan.md                        |    4 +
+ .../Complexity/Randomized/Build/IterateFind.lean   |   23 +
+ TCSlib/Complexity/Randomized/Closure.lean          |   18 +
+ .../Cryptography/Asymptotic/PublicKeyLemmas.lean   |   25 +-
+ TCSlib/Cryptography/Asymptotic/Sampling.lean       |   36 +-
+ TCSlib/Cryptography/Candidates/Arithmetic.lean     |   97 ++
+ TCSlib/Cryptography/Candidates/Concrete.lean       |  102 +-
+ TCSlib/Cryptography/Candidates/DiscreteLog.lean    |  120 +-
+ .../Candidates/DiscreteLogHardcore.lean            |  133 +-
+ TCSlib/Cryptography/Candidates/ElGamal.lean        |  164 +-
+ TCSlib/Cryptography/Candidates/Factoring.lean      |   47 +-
+ TCSlib/Cryptography/Candidates/RSA.lean            |  328 +---
+ TCSlib/Cryptography/Candidates/Rabin.lean          |  295 +---
+ TCSlib/Cryptography/HardcoreBit/Basic.lean         |   26 +
+ TCSlib/Cryptography/NumberTheory/Primality.lean    |   22 +
+ .../ZeroKnowledge/ThreeColoring/ColZKLemmas.lean   |   42 +-
+ briefs/pass-shelat-ch5-8/MAINTAINER-HANDOFF.md     |    6 +-
+ .../fills/shared-lemmas/s2/brief-draft.md          |  257 +++
+ .../fills/shared-lemmas/s2/brief-issued.md         |  257 +++
+ .../fills/shared-lemmas/s2/dispatch.md             |   16 +
+ .../s2/inputs/reject-blocks-s2/ANCESTOR.txt        |    1 +
+ .../s2/inputs/reject-blocks-s2/base-sorries.txt    |   11 +
+ .../reject-blocks-s2/checks-base-sorries.txt       |   14 +
+ .../s2/inputs/reject-blocks-s2/checks-closure.json |   11 +
+ .../s2/inputs/reject-blocks-s2/checks-order.txt    |  422 +++++
+ .../s2/inputs/reject-blocks-s2/checks-roots.txt    |  144 ++
+ .../inputs/reject-blocks-s2/host-header.source.txt |   10 +
+ .../s2/inputs/reject-blocks-s2/order.txt           |   94 ++
+ .../s2/inputs/reject-blocks-s2/owned-baseline.json |   39 +
+ .../s2/inputs/reject-blocks-s2/owned-files.txt     |    5 +
+ .../s2/inputs/reject-blocks-s2/roots.txt           |   75 +
+ .../fills/shared-lemmas/s2/overnight-scope.md      |   16 +
+ .../shared-lemmas/s2/preship/CacheProbe.source.txt |    1 +
+ .../s2/preship/MatcherSealed.source.txt            |    7 +
+ .../s2/preship/MatcherUnsealed.source.txt          |    6 +
+ .../s2/preship/Names-initial36.source.txt          |   39 +
+ .../shared-lemmas/s2/preship/Names.source.txt      |   41 +
+ .../fills/shared-lemmas/s2/preship/REPORT.md       |   47 +
+ .../s2/preship/Routes-attempt1.source.txt          |   78 +
+ .../shared-lemmas/s2/preship/Routes.source.txt     |   79 +
+ .../shared-lemmas/s2/preship/checks-summary.json   |   28 +
+ .../shared-lemmas/s2/preship/copied-tree.json      | 1777 ++++++++++++++++++++
+ .../shared-lemmas/s2/preship/logs/CacheProbe.log   |   21 +
+ .../s2/preship/logs/MatcherSealed.log              |   35 +
+ .../s2/preship/logs/MatcherUnsealed.log            |   21 +
+ .../s2/preship/logs/Names-initial36.log            |  147 ++
+ .../fills/shared-lemmas/s2/preship/logs/Names.log  |  149 ++
+ .../s2/preship/logs/Routes-attempt1.log            |   60 +
+ .../fills/shared-lemmas/s2/preship/logs/Routes.log |   25 +
+ .../shared-lemmas/s2/preship/logs/cache-reuse.log  |    1 +
+ .../fills/shared-lemmas/s2/preship/logs/checks.pid |    1 +
+ .../s2/preship/logs/copy-verify-Arithmetic.log     |   21 +
+ .../s2/preship/logs/copy-verify-Closure.log        |   21 +
+ .../s2/preship/logs/copy-verify-Concrete.log       |   22 +
+ .../shared-lemmas/s2/preship/logs/packages.log     |   16 +
+ .../shared-lemmas/s2/preship/logs/preflight.log    |   33 +
+ .../shared-lemmas/s2/preship/logs/verify-copy.pid  |    1 +
+ .../shared-lemmas/s2/preship/logs/zero-oleans.log  |    1 +
+ .../fills/shared-lemmas/s2/preship/named-api.txt   |   38 +
+ .../fills/shared-lemmas/s2/preship/route-seal.txt  |   11 +
+ .../shared-lemmas/s2/preship/source-identity.log   |    3 +
+ .../fills/shared-lemmas/s2/preship/summary.json    |   39 +
+ .../fills/shared-lemmas/s2/review-staging.md       |   10 +
+ .../fills/shared-lemmas/s2/review-technical.md     |   18 +
+ .../fills/shared-lemmas/s2/review-workflow-r1.md   |   25 +
+ .../fills/shared-lemmas/s2/review-workflow-r2.md   |   10 +
+ .../fills/shared-lemmas/s2/review.md               |   43 +
+ .../fills/shared-lemmas/s2/staging-receipt.json    |   13 +
+ .../gates/08-shared/evidence-r2/REPORT.md          |    6 +-
+ .../aggregate-axioms-reconciliation.json           |   15 +
+ .../08-shared/evidence/tools/collect_body.lean     |    7 +-
+ .../findings/gate08-shared-r2-findings.md          |   94 ++
+ .../findings/gate08-shared-r2-findings.md.sha256   |    1 +
+ .../pass-shelat-ch5-8/gates/08-shared/pack-r2.md   |    4 +-
+ .../gates/08-shared/resolutions-r1.md              |    2 +
+ .../gates/08-shared/resolutions-r2.md              |   60 +
+ .../gate06-integration-2026-11-06/README.md        |   21 +
+ .../evidence/MERGED-UNION.txt                      |    1 +
+ .../evidence/initial-order.txt                     |  462 +++++
+ .../evidence/initial-targets.txt                   |   37 +
+ .../evidence/integration-inputs.json               |   10 +
+ .../evidence/logs/cache-store.log                  |    6 +
+ .../evidence/logs/packages.log                     |   16 +
+ .../evidence/logs/preflight.log                    |   42 +
+ .../evidence/mathlib-roots.txt                     |  145 ++
+ .../evidence/merges.log                            |   63 +
+ machine-library-design.md                          |    2 +-
+ 87 files changed, 5825 insertions(+), 917 deletions(-)
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/brief-draft.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/brief-issued.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/dispatch.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/ANCESTOR.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/base-sorries.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/checks-base-sorries.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/checks-closure.json
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/checks-order.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/checks-roots.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/host-header.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/order.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/owned-baseline.json
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/owned-files.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/inputs/reject-blocks-s2/roots.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/overnight-scope.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/CacheProbe.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/MatcherSealed.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/MatcherUnsealed.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/Names-initial36.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/Names.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/REPORT.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/Routes-attempt1.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/Routes.source.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/checks-summary.json
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/copied-tree.json
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/CacheProbe.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/MatcherSealed.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/MatcherUnsealed.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/Names-initial36.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/Names.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/Routes-attempt1.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/Routes.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/cache-reuse.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/checks.pid
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/copy-verify-Arithmetic.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/copy-verify-Closure.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/copy-verify-Concrete.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/packages.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/preflight.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/verify-copy.pid
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/logs/zero-oleans.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/named-api.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/route-seal.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/source-identity.log
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/preship/summary.json
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/review-staging.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/review-technical.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/review-workflow-r1.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/review-workflow-r2.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/review.md
+ create mode 100644 briefs/pass-shelat-ch5-8/fills/shared-lemmas/s2/staging-receipt.json
+ create mode 100644 briefs/pass-shelat-ch5-8/gates/08-shared/evidence-r2/aggregate-axioms-reconciliation.json
+ create mode 100644 briefs/pass-shelat-ch5-8/gates/08-shared/findings/gate08-shared-r2-findings.md
+ create mode 100644 briefs/pass-shelat-ch5-8/gates/08-shared/findings/gate08-shared-r2-findings.md.sha256
+ create mode 100644 briefs/pass-shelat-ch5-8/gates/08-shared/resolutions-r2.md
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/README.md
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/MERGED-UNION.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/initial-order.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/initial-targets.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/integration-inputs.json
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/logs/cache-store.log
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/logs/packages.log
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/logs/preflight.log
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/mathlib-roots.txt
+ create mode 100644 briefs/pass-shelat-ch5-8/maintainer/gate06-integration-2026-11-06/evidence/merges.log
