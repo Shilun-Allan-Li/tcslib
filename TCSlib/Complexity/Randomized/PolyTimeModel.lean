@@ -81,6 +81,15 @@ noncomputable def polyTimeModel : VerifierModel where
     ∀ x u v : List Bool,
       (N x u v = true ↔ Turing.pairEncode (Turing.pairEncode x u) v ∈ V)
 
+/-- A verifier is efficient in the polynomial-time model exactly when its `some true` and
+`some false` sets, on encoded input/random-string pairs, are languages in `P`. -/
+theorem polyTimeModel_eff_iff (M : List Bool → List Bool → Option Bool) :
+    polyTimeModel.Eff M ↔
+      ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧
+        ∀ x r : List Bool,
+          (M x r = some true ↔ Turing.pairEncode x r ∈ V₁) ∧
+          (M x r = some false ↔ Turing.pairEncode x r ∈ V₀) := Iff.rfl
+
 /-- Keep the input `x` and the first `polyLen a k |x|` bits of the random
 string: the pair-level reindexing behind the race and shifted constructions.
 On `Turing.pairEncode x r` it returns `Turing.pairEncode x (r.take (polyLen a k |x|))`. -/

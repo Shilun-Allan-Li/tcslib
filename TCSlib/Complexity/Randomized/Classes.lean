@@ -253,6 +253,9 @@ strings — a concrete, computable stand-in for [AB09, Def 7.3]'s "polynomial
 decide undecidable languages). -/
 def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
 
+/-- The canonical polynomial length schedule at `n` is `a * (n + 1) ^ k`. -/
+theorem polyLen_eq (a k n : ℕ) : polyLen a k n = a * (n + 1) ^ k := rfl
+
 /-- An abstract *efficiency notion* for verifiers, standing in for
 "polynomial-time Turing machine" in [AB09, Def 7.3] (see the module
 docstring's **Deviations**).  `Eff M` reads "`M` is an efficient verifier";

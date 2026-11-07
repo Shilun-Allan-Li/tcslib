@@ -473,6 +473,10 @@ def values (x : Fin n → Bool) : List Bool :=
 def eval (x : Fin n → Bool) : Bool :=
   (C.values x).getD C.output false
 
+/-- The output equation [AB09, Def 6.1]: `C.eval x = (C.values x).getD C.output false`. -/
+theorem eval_eq (x : Fin n → Bool) :
+    C.eval x = (C.values x).getD C.output false := rfl
+
 /-- The depths of all vertices: `0` at the inputs, one more than the deepest input at a
 gate. -/
 def depths : List ℕ :=
@@ -487,6 +491,9 @@ def depth : ℕ := C.depthAt C.output
 
 /-- The size of the circuit: its number of vertices, inputs included.  [AB09, Def 6.1] -/
 def size : ℕ := n + C.gates.length
+
+/-- The size equation [AB09, Def 6.1]: `C.size = n + C.gates.length`. -/
+theorem size_eq : C.size = n + C.gates.length := rfl
 
 /-- `¬` gates have exactly one input, and no gate reads a vertex twice. -/
 def IsWellFormed : Prop :=

@@ -62,7 +62,9 @@ theorem polyLenExpr_eq (a k : ℕ) :
 
 /-- The syntactic polynomial evaluates to `main`'s schedule. -/
 @[simp] theorem eval_polyLenExpr (a k n : ℕ) :
-    (polyLenExpr a k).eval n = Randomized.polyLen a k n := rfl
+    (polyLenExpr a k).eval n = Randomized.polyLen a k n := by
+  simp only [polyLenExpr_eq, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_add, PolyExpr.eval_var, Randomized.polyLen_eq]
 
 /-- **A verifier of `main`'s polynomial-time model, with hard-wired inputs, is a non-uniform
 machine** (the S3c bridge, lemma 1). Let `M` be an efficient Boolean verifier
@@ -79,7 +81,8 @@ theorem verifier_toNUPPT {M : List Bool → List Bool → Bool}
     (xs : ℕ → List Bool) (p : PolyExpr) (hxs : ∀ n, (xs n).length ≤ p.eval n) :
     ∃ D : NUPPT, D.advice = xs ∧
       ∀ n (y : List Bool) (r : D.Coins n), D.runAt n y r = [M (xs n) y] := by
-  obtain ⟨V₁, V₀, h₁, -, hV⟩ := hM
+  obtain ⟨V₁, V₀, h₁, -, hV⟩ :=
+    (Randomized.polyTimeModel_eff_iff (Randomized.boolVerifier M)).mp hM
   have hM₁ : ∀ x r, M x r = true ↔ pairEncode x r ∈ V₁ := fun x r => by
     have := (hV x r).1
     simpa [Randomized.boolVerifier_apply] using this
@@ -92,7 +95,8 @@ theorem verifier_toNUPPT {M : List Bool → List Bool → Bool}
       [MultiTapeTM.indicator V₁ (pairEncode (NUPPT.inAdvice z) (NUPPT.inArg z))]) = _)).mpr hf₀
     funext z
     simp only [Function.comp_apply]
-  refine ⟨NUPPT.ofPolyTime hf (.const 0) p xs hxs, rfl, fun n y r => ?_⟩
+  refine ⟨NUPPT.ofPolyTime hf (.const 0) p xs hxs,
+    NUPPT.advice_ofPolyTime hf (.const 0) p xs hxs, fun n y r => ?_⟩
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime]
   simp only [NUPPT.inAdvice_eq, NUPPT.inArg_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
     pairSndD_pairEncode, List.cons.injEq, and_true]
