@@ -1,0 +1,120 @@
+{
+  "source_sha256": "3ea69f4bf1ad933c4b3dc33debc4611d187dcae244b7938ae7f7f7c10e8472b8",
+  "sealed_input_sha256": "5058a62ce883c6b9f73ec9ef0a932b9fea07ee766d7d5b1a8b0920e9332b1405",
+  "sealed_definitions": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.MultiTapeTM.step",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.Cfg.inputSymbol",
+    "Turing.Cfg.workTapeSymbols",
+    "Turing.moveInputPos",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.Computes",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.spaceUsedByTape",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.FinTM.leftCfg",
+    "Turing.FinTM.rightCfg",
+    "Turing.FinTM.leftAction",
+    "Turing.FinTM.rightAction",
+    "Turing.FinTM.controlAction",
+    "Turing.FinTM.emitAction",
+    "Turing.FinTM.bufferTape",
+    "Turing.FinTM.branchTM",
+    "Turing.captureCfg",
+    "Turing.captureAction",
+    "Turing.emitCfg",
+    "Turing.Cfg.ofWords",
+    "Turing.Cfg.mapState",
+    "Turing.embedEmitCfg",
+    "Turing.embedEmitTM",
+    "Turing.FinTM.bufferedCompTM"
+  ],
+  "default_simp_removed": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "regions": [
+    {
+      "name": "loop_computes_of_startup",
+      "start": 136784,
+      "end": 137907,
+      "first_line": 2531,
+      "last_line": 2551,
+      "source_sha256": "05d6c37b84cd74284f691d10ecb878bfdc8064064ac405999a823712dea93676"
+    },
+    {
+      "name": "loopHostTM_decides",
+      "start": 137907,
+      "end": 140706,
+      "first_line": 2552,
+      "last_line": 2605,
+      "source_sha256": "cf1578123db37cb54aabbd1cd7b50b51cb7807836e4eaafe34cbb3ee73523ee8"
+    },
+    {
+      "name": "loopHostTM_finds",
+      "start": 146876,
+      "end": 149753,
+      "first_line": 2725,
+      "last_line": 2781,
+      "source_sha256": "41f3dabbc7d90618b104b5a058aca8f5a2c6485585c755c64ffbc64833afe85f"
+    },
+    {
+      "name": "emCall_bank_embed",
+      "start": 236769,
+      "end": 239011,
+      "first_line": 4433,
+      "last_line": 4476,
+      "source_sha256": "16c5ada97a853f6a86cf96a03f44f71749cde096bba3768df19de7b6df80d614"
+    },
+    {
+      "name": "emCall_bank_initial",
+      "start": 239011,
+      "end": 240087,
+      "first_line": 4477,
+      "last_line": 4493,
+      "source_sha256": "f9a510b3762f74f9214bab1dffc7b14243c167669ee73e87f14f358ba2a75112"
+    },
+    {
+      "name": "emCall_bank_final",
+      "start": 240087,
+      "end": 241167,
+      "first_line": 4494,
+      "last_line": 4512,
+      "source_sha256": "c41330414215c1a5b90d6e6dc7a27330005a5d640475d7102bc79273fa19d0d4"
+    },
+    {
+      "name": "emitLoopTM_computes",
+      "start": 269301,
+      "end": 273975,
+      "first_line": 5035,
+      "last_line": 5121,
+      "source_sha256": "08b2aaff53cc3c0401983b940dcaa531e1cb22f89b71d336c0b336c5c7361c78"
+    }
+  ],
+  "guard_before_docstring_and_header": true,
+  "instrumentation": [
+    "section LoopBankSeal6\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal6\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal5\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal5\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal4\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal4\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal3\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal3\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal2\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal2\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal1\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal1\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n",
+    "section LoopBankSeal0\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.leftCfg Turing.FinTM.rightCfg Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.controlAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.FinTM.branchTM Turing.captureCfg Turing.captureAction Turing.emitCfg Turing.Cfg.ofWords Turing.Cfg.mapState Turing.embedEmitCfg Turing.embedEmitTM Turing.FinTM.bufferedCompTM\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n",
+    "end LoopBankSeal0\nattribute [simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\n\n"
+  ],
+  "appendix": "\n#print axioms Turing.FinTM.loop_computes_of_startup\n#print axioms Turing.FinTM.loopHostTM_decides\n#print axioms Turing.FinTM.loopHostTM_finds\n#print axioms Turing.FinTM.emitLoopTM_computes\n#print axioms Turing.FinTM.emCall_bank_embed\n#print axioms Turing.FinTM.emCall_bank_initial\n#print axioms Turing.FinTM.emCall_bank_final\n\n/-! Read-only compiled inventory of the seven proposed proof roots and their descendants.\nImported theorem proof values are not traversed. Existing same-home legacy helpers remain\noutside the changed proof scope. Root types and compiled values are both inspected. -/\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let wanted : List String := [\"loop_computes_of_startup\", \"loopHostTM_decides\",\n    \"loopHostTM_finds\", \"emitLoopTM_computes\", \"emCall_bank_embed\",\n    \"emCall_bank_initial\", \"emCall_bank_final\"]\n  let kind := fun (ci : ConstantInfo) => match ci with\n    | .axiomInfo _ => \"axiom\" | .defnInfo _ => \"definition\" | .thmInfo _ => \"theorem\"\n    | .opaqueInfo _ => \"opaque\" | .quotInfo _ => \"quotient\" | .inductInfo _ => \"inductive\"\n    | .ctorInfo _ => \"constructor\" | .recInfo _ => \"recursor\"\n  let mut roots : Array Name := #[]\n  for (n, _) in env.constants.toList do\n    match n with\n    | .str _ base => if wanted.contains base then roots := roots.push n\n    | _ => pure ()\n  if roots.size != wanted.length then\n    throwError \"Root count mismatch: {roots.size} for {wanted.length} source roots\"\n  for root in roots.qsort Name.lt do\n    logInfo m!\"ROOT|{root}|private={isPrivateName root}\"\n  let mut selected : Array Name := #[]\n  for (n, _) in env.constants.toList do\n    if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n\n  for n in selected.qsort Name.lt do\n    let some ci := env.find? n | throwError \"selected constant missing {n}\"\n    let axs \u2190 liftCoreM <| Lean.collectAxioms n\n    logInfo m!\"PROOFAX|{n}|kind={kind ci}|{(axs.qsort Name.lt).toList}\"\n    let used := ci.type.getUsedConstants ++ (ci.value?.map (\u00b7.getUsedConstants)).getD #[]\n    let mut seen : Array Name := #[]\n    for c in used do\n      if seen.contains c then continue\n      seen := seen.push c\n      match env.getModuleIdxFor? c, env.find? c with\n      | some j, some (.defnInfo di) =>\n        let owner := env.header.moduleNames[j.toNat]!\n        if (`TCSlib).isPrefixOf owner then\n          let hint := match di.hints with\n            | .abbrev => \"abbrev\" | .opaque => \"opaque\" | .regular _ => \"regular\"\n          logInfo m!\"FOREIGNDEF|{n}|{c}|{owner}|hints={hint}\"\n      | none, some (.defnInfo _) =>\n        logInfo m!\"HOMEDEF|{n}|{c}\"\n      | _, _ => pure ()\n",
+  "removing_instrumentation_and_appendix_restores_source_bytes": true,
+  "unchanged_legacy_helpers_outside_guards": true,
+  "unrelated_matcher_not_claimed_sealed": "Turing.FinTM.rewind_scan.match_1"
+}

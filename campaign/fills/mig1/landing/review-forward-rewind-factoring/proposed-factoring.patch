@@ -1,0 +1,155 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -2919,84 +2919,90 @@
+     simpa only [List.append_assoc, List.singleton_append] using
+       ih (pre ++ [d]) (b ++ [d]) (by simpa [List.append_assoc] using hx)
+ 
++/-- Rewind either forwarding buffer, preserving the inactive buffer head and both words.
++
++**Proof sketch.** Induct once on the active head's distance from its left blank. Every occupied
++cell moves that head left and retains the rewind phase. At the blank one right move restores
++zero and enters the next phase. The selector only chooses the relevant buffer and action. -/
++private lemma fwdMap_back (second : Bool) (M : FinTM Bool) (x a b : List Bool)
++    (p : Fin (x.length + 2)) (other : ℤ) :
++    ∀ j, j ≤ (if second then b else a).length →
++    (fwdMapTM M false).tm.runFrom
++      (fwdMapCfg M x (some (if second then .backB else .backA)) p a b
++        (if second then other else (j : ℤ) - 1)
++        (if second then (j : ℤ) - 1 else other) []) (j + 1) =
++      fwdMapCfg M x (some (if second then .backA else .emitA)) p a b
++        (if second then other else 0) (if second then 0 else other) [] := by
++  intro j
++  induction j with
++  | zero =>
++    intro hj
++    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
++      MultiTapeTM.step_of_some rfl]
++    cases second <;>
++      simp only [↓reduceIte, Bool.false_eq_true, fwdMapTM, fwdMapCfg,
++        Cfg.workTapeSymbols_eq, tapeBlocks_left, tapeBlocks_buffer,
++        Nat.cast_zero, zero_sub, bufferTape_left]
++    all_goals
++      change (fwdMapAct M 0 (none, _) (none, _) none _).apply
++        (fwdMapCfg M x _ p a b _ _ []) = _
++      rw [fwdMap_move]
++      simp [fwdMapCfg]
++  | succ j ih =>
++    intro hj
++    have hr : bufferTape (if second then b else a) (j : ℤ) ≠ none := by
++      rw [bufferTape_nat,
++        List.getElem?_eq_getElem (by omega : j < (if second then b else a).length)]
++      exact Option.some_ne_none _
++    have hs : (fwdMapTM M false).tm.step
++        (fwdMapCfg M x (some (if second then .backB else .backA)) p a b
++          (if second then other else ((j + 1 : ℕ) : ℤ) - 1)
++          (if second then ((j + 1 : ℕ) : ℤ) - 1 else other) []) =
++        fwdMapCfg M x (some (if second then .backB else .backA)) p a b
++          (if second then other else (j : ℤ) - 1)
++          (if second then (j : ℤ) - 1 else other) [] := by
++      rw [show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
++        MultiTapeTM.step_of_some rfl]
++      cases hcell : bufferTape (if second then b else a) (j : ℤ) with
++      | none => exact (hr hcell).elim
++      | some bit =>
++        cases second <;> simp only [↓reduceIte, Bool.false_eq_true] at hcell ⊢
++        all_goals
++          simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq,
++            tapeBlocks_left, tapeBlocks_buffer, hcell]
++          change (fwdMapAct M 0 (none, _) (none, _) none _).apply
++            (fwdMapCfg M x _ p a b _ _ []) = _
++          rw [fwdMap_move]
++          simp [fwdMapCfg, sub_eq_add_neg]
++    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
++    exact ih (by omega)
++
+ /-- Rewind the second buffer to zero, preserving the first buffer and the
+ blank payload bank. The left-blank step is present even at width zero.
+ 
+-**Proof sketch.** Induct on the remaining second-buffer head distance. Each nonblank position
+-makes one left move without changing a tape. At position `-1` the blank-reading transition moves
+-right to zero and enters the first-buffer rewind phase. -/
++**Proof sketch.** Specialize the shared buffer-rewind induction to the second buffer. The
++inactive first-buffer head stays at `|a|-1`, and the final blank transition enters its rewind
++phase with the second-buffer head restored to zero. -/
+ private lemma fwdMap_backB (M : FinTM Bool) (x a b : List Bool)
+     (p : Fin (x.length + 2)) : ∀ j, j ≤ b.length →
+     (fwdMapTM M false).tm.runFrom
+       (fwdMapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) []) (j + 1) =
+       fwdMapCfg M x (some .backA) p a b (a.length - 1) 0 [] := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some rfl]
+-    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_buffer,
+-      Nat.cast_zero, zero_sub, bufferTape_left]
+-    change (fwdMapAct M 0 (none, 0) (none, .pos) none _).apply
+-      (fwdMapCfg M x (some .backB) p a b (a.length - 1) (-1) []) = _
+-    rw [fwdMap_move]
+-    simp [fwdMapCfg]
+-  | succ j ih =>
+-    intro hj
+-    have hr : bufferTape b (((j + 1 : ℕ) : ℤ) - 1) = some b[j] := by
+-      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
+-        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+-    have hs : (fwdMapTM M false).tm.step
+-        (fwdMapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) =
+-        fwdMapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) [] := by
+-      rw [MultiTapeTM.step_of_some rfl]
+-      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_buffer, hr]
+-      change (fwdMapAct M 0 (none, 0) (none, .neg) none _).apply
+-        (fwdMapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) = _
+-      rw [fwdMap_move]
+-      simp [fwdMapCfg, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++  simpa only [Bool.false_eq_true, ↓reduceIte] using
++    fwdMap_back true M x a b p (a.length - 1)
+ 
+ /-- The corresponding first-buffer rewind, leaving virtual input at zero.
+ 
+-**Proof sketch.** Induct on the remaining first-buffer head distance. Each nonblank position
+-makes one left move without changing a tape. At position `-1` the blank-reading transition moves
+-right to zero and enters the first-buffer emission phase. -/
++**Proof sketch.** Specialize the shared buffer-rewind induction to the first buffer. The
++inactive second-buffer head stays at zero, and the final blank transition enters emission
++with both buffer heads at zero. -/
+ private lemma fwdMap_backA (M : FinTM Bool) (x a b : List Bool)
+     (p : Fin (x.length + 2)) : ∀ j, j ≤ a.length →
+     (fwdMapTM M false).tm.runFrom
+       (fwdMapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 []) (j + 1) =
+       fwdMapCfg M x (some .emitA) p a b 0 0 [] := by
+-  intro j
+-  induction j with
+-  | zero =>
+-    intro hj
+-    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+-    rw [MultiTapeTM.step_of_some rfl]
+-    simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left,
+-      Nat.cast_zero, zero_sub, bufferTape_left]
+-    change (fwdMapAct M 0 (none, .pos) (none, 0) none _).apply
+-      (fwdMapCfg M x (some .backA) p a b (-1) 0 []) = _
+-    rw [fwdMap_move]
+-    simp [fwdMapCfg]
+-  | succ j ih =>
+-    intro hj
+-    have hr : bufferTape a (((j + 1 : ℕ) : ℤ) - 1) = some a[j] := by
+-      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
+-        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+-    have hs : (fwdMapTM M false).tm.step
+-        (fwdMapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
+-        fwdMapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 [] := by
+-      rw [MultiTapeTM.step_of_some rfl]
+-      simp only [fwdMapTM, fwdMapCfg, Cfg.workTapeSymbols_eq, tapeBlocks_left, hr]
+-      change (fwdMapAct M 0 (none, .neg) (none, 0) none _).apply
+-        (fwdMapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) = _
+-      rw [fwdMap_move]
+-      simp [fwdMapCfg, sub_eq_add_neg]
+-    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+-    exact ih (by omega)
++  simpa only [Bool.false_eq_true, ↓reduceIte] using
++    fwdMap_back false M x a b p 0
+ 
+ /-- Emit each retained first-component bit twice, then `01`, and enter the
+ payload seam. The second buffer and payload bank are unchanged.

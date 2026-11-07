@@ -20,9 +20,12 @@ Convention-only opacity probes and the precise policy assessment boundary are re
 Completed repair scopes pass effective seals/paired controls, with three Catalog HOLDs
 excluded and the generated rewind matcher's ineffective attribute explicit.
 
-The full current394-module merged-tree replay mmig1 is RUNNING from complete mac3;
-no success is claimed. Expanded25-file screens are RUNNING with immutable base/head inputs.
-Final comment cleanup preserves all non-comment code tokens against the native inputs.
+The complete394-module merged-tree replay mmig1 PASSED at the pushed head, static0/60,
+from complete mac3. Expanded25-file screens passed1696→628; all60new candidates have bounded
+source dispositions. Their additional tested terminal/bank/rewind/endpoint/invariant repairs
+are now adopted in six uncommitted source files. The actual12-module fresh chain passes;
+full-header/source and compiler reviews plus a refreshed headscreen are underway. No pending
+API/home proposal is applied, and the older replay is not relabeled for these newer blobs.
 
 Human-dependent leaves: two exact zero-space facts and the shared first-entry lemma
 (unapproved additional APIs; separate audit-agent choice pending); the exact redirect-space

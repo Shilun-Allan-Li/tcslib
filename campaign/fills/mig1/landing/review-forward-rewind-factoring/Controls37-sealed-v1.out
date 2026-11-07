@@ -1,0 +1,533 @@
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:13:66: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.step
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+is not definitionally equal to the right-hand side
+  { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:15:78: error: Tactic `rfl` failed: The left-hand side
+  fun tm c =>
+    MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }
+is not definitionally equal to the right-hand side
+  fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+
+⊢ (fun tm c =>
+      MultiTapeTM.step
+        { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+          output := c.output }) =
+    fun x c =>
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:18:37: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  MultiTapeTM.step c
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:20:50: error: Tactic `rfl` failed: The left-hand side
+  fun tm c => MultiTapeTM.runFrom c 1
+is not definitionally equal to the right-hand side
+  fun tm c => MultiTapeTM.step c
+
+⊢ (fun tm c => MultiTapeTM.runFrom c 1) = fun tm c => MultiTapeTM.step c
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:22:95: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  Cfg.init tm.q₀ x
+
+tm : MultiTapeTM 1 Bool Unit
+x : List Bool
+⊢ MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:24:39: error: Tactic `rfl` failed: The left-hand side
+  fun tm x => MultiTapeTM.initCfg x
+is not definitionally equal to the right-hand side
+  fun tm x => Cfg.init tm.q₀ x
+
+⊢ (fun tm x => MultiTapeTM.initCfg x) = fun tm x => Cfg.init tm.q₀ x
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:26:80: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  []
+
+x : List Bool
+⊢ (Cfg.init () x).output = []
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:27:96: error: Tactic `rfl` failed: The left-hand side
+  fun x => (Cfg.init () x).output
+is not definitionally equal to the right-hand side
+  fun x => []
+
+⊢ (fun x => (Cfg.init () x).output) = fun x => []
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:30:38: error: Tactic `rfl` failed: The left-hand side
+  (a.apply c).state
+is not definitionally equal to the right-hand side
+  a.state
+
+a : Action 1 Bool Unit
+c : Cfg 1 Bool Unit []
+⊢ (a.apply c).state = a.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:32:29: error: Tactic `rfl` failed: The left-hand side
+  fun a c => (a.apply c).state
+is not definitionally equal to the right-hand side
+  fun a x => a.state
+
+⊢ (fun a c => (a.apply c).state) = fun a x => a.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:35:83: error: Tactic `rfl` failed: The left-hand side
+  { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  none
+
+q : Option Unit
+w : Fin 1 → ℤ → Option Bool
+h : Fin 1 → ℤ
+⊢ { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol = none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:37:97: error: Tactic `rfl` failed: The left-hand side
+  fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 => none
+
+⊢ (fun q w h => { state := q, inputPos := 0, workTapes := w, workTapePos := h, output := [] }.inputSymbol) =
+    fun x x_1 x_2 => none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:40:64: error: Tactic `rfl` failed: The left-hand side
+  c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  c.workTapes i (c.workTapePos i)
+
+c : Cfg 1 Bool Unit []
+i : Fin 1
+⊢ c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:42:53: error: Tactic `rfl` failed: The left-hand side
+  fun c i => c.workTapeSymbols i
+is not definitionally equal to the right-hand side
+  fun c i => c.workTapes i (c.workTapePos i)
+
+⊢ (fun c i => c.workTapeSymbols i) = fun c i => c.workTapes i (c.workTapePos i)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:44:51: error: Tactic `rfl` failed: The left-hand side
+  moveInputPos 1 SignType.zero
+is not definitionally equal to the right-hand side
+  1
+
+⊢ moveInputPos 1 SignType.zero = 1
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:45:101: error: Tactic `rfl` failed: The left-hand side
+  (fun (m : SignType) => moveInputPos 1 m) SignType.zero
+is not definitionally equal to the right-hand side
+  (fun (x : Unit) => 1) ()
+
+⊢ (fun m => moveInputPos 1 m) SignType.zero = (fun x => 1) ()
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:48:76: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:50:66: error: Tactic `rfl` failed: The left-hand side
+  fun M x y t => M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+⊢ (fun M x y t => M.ComputesInTime x y t) = fun M x y t => ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:53:81: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+M : FinTM Bool
+f : List Bool → List Bool
+T : ℕ → ℕ
+⊢ M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:55:68: error: Tactic `rfl` failed: The left-hand side
+  fun M f T => M.ComputesFunInTime f T
+is not definitionally equal to the right-hand side
+  fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+
+⊢ (fun M f T => M.ComputesFunInTime f T) = fun M f T => ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:58:64: error: Tactic `rfl` failed: The left-hand side
+  M.Computes f
+is not definitionally equal to the right-hand side
+  ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+M : FinTM Bool
+f : List Bool → List Bool
+⊢ M.Computes f = ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:60:60: error: Tactic `rfl` failed: The left-hand side
+  fun M f => M.Computes f
+is not definitionally equal to the right-hand side
+  fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+
+⊢ (fun M f => M.Computes f) = fun M f => ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:63:59: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+⊢ MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:65:74: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t => MultiTapeTM.spaceUsed c t
+is not definitionally equal to the right-hand side
+  fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+
+⊢ (fun tm c t => MultiTapeTM.spaceUsed c t) = fun tm c t => ∑ i, MultiTapeTM.spaceUsedByTape c t i
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:68:71: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  (MultiTapeTM.visitedByTapeHead c t i).card
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:70:103: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.spaceUsedByTape c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+
+⊢ (fun tm c t i => MultiTapeTM.spaceUsedByTape c t i) = fun tm c t i => (MultiTapeTM.visitedByTapeHead c t i).card
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:73:108: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+tm : MultiTapeTM 1 Bool Unit
+c : Cfg 1 Bool Unit []
+t : ℕ
+i : Fin 1
+⊢ MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:76:95: error: Tactic `rfl` failed: The left-hand side
+  fun tm c t i => MultiTapeTM.visitedByTapeHead c t i
+is not definitionally equal to the right-hand side
+  fun tm c t i => Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+
+⊢ (fun tm c t i => MultiTapeTM.visitedByTapeHead c t i) = fun tm c t i =>
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:79:92: error: Tactic `rfl` failed: The left-hand side
+  FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+m : SignType
+q : Option Unit
+⊢ FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:81:54: error: Tactic `rfl` failed: The left-hand side
+  fun m q => FinTM.controlAction m q
+is not definitionally equal to the right-hand side
+  fun m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ (fun m q => FinTM.controlAction m q) = fun m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:83:91: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.leftAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:84:107: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.leftAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.leftAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:86:92: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  a.inputTape
+
+a : Action 1 Bool Unit
+⊢ (FinTM.rightAction 1 id a).inputTape = a.inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:87:108: error: Tactic `rfl` failed: The left-hand side
+  fun a => (FinTM.rightAction 1 id a).inputTape
+is not definitionally equal to the right-hand side
+  fun a => a.inputTape
+
+⊢ (fun a => (FinTM.rightAction 1 id a).inputTape) = fun a => a.inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:89:95: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.emitAction [] id 0).output
+is not definitionally equal to the right-hand side
+  none
+
+⊢ (FinTM.emitAction [] id 0).output = none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:91:24: error: Tactic `rfl` failed: The left-hand side
+  fun e => (FinTM.emitAction [] e 0).output
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun e => (FinTM.emitAction [] e 0).output) = fun x => none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:93:66: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] (-1)
+is not definitionally equal to the right-hand side
+  none
+
+⊢ FinTM.bufferTape [true] (-1) = none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:94:79: error: Tactic `rfl` failed: The left-hand side
+  fun w => FinTM.bufferTape w (-1)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun w => FinTM.bufferTape w (-1)) = fun x => none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:98:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  true
+
+⊢ FinTM.tapeBlocks (fun x => false) true (fun x => false) (Fin.natAdd 1 (Fin.castAdd 1 0)) = true
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:100:71: error: Tactic `rfl` failed: The left-hand side
+  fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))
+is not definitionally equal to the right-hand side
+  fun x x_1 b => b
+
+⊢ (fun l r b => FinTM.tapeBlocks l b r (Fin.natAdd 1 (Fin.castAdd 1 0))) = fun x x_1 b => b
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:103:65: error: Tactic `rfl` failed: The left-hand side
+  FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+p : Fin (n + 2)
+b : Bool
+⊢ FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:105:76: error: Tactic `rfl` failed: The left-hand side
+  fun p b => FinTM.VirtualTag p b
+is not definitionally equal to the right-hand side
+  fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+
+n : ℕ
+⊢ (fun p b => FinTM.VirtualTag p b) = fun p b => (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:107:71: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  SignType.pos
+
+b : Bool
+⊢ FinTM.virtualMove b (some true) SignType.pos = SignType.pos
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:108:95: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualMove b (some true) SignType.pos
+is not definitionally equal to the right-hand side
+  fun x => SignType.pos
+
+⊢ (fun b => FinTM.virtualMove b (some true) SignType.pos) = fun x => SignType.pos
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:110:60: error: Tactic `rfl` failed: The left-hand side
+  FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  b
+
+b : Bool
+⊢ FinTM.virtualNextTag b SignType.zero = b
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:111:76: error: Tactic `rfl` failed: The left-hand side
+  fun b => FinTM.virtualNextTag b SignType.zero
+is not definitionally equal to the right-hand side
+  fun b => b
+
+⊢ (fun b => FinTM.virtualNextTag b SignType.zero) = fun b => b
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:114:60: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x y
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+x y : List Bool
+⊢ pairEncode x y = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:116:71: error: Tactic `rfl` failed: The left-hand side
+  fun x y => pairEncode x y
+is not definitionally equal to the right-hand side
+  fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+⊢ (fun x y => pairEncode x y) = fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:118:51: error: Tactic `rfl` failed: The left-hand side
+  pairDecode []
+is not definitionally equal to the right-hand side
+  none
+
+⊢ pairDecode [] = none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:120:59: error: Tactic `rfl` failed: The left-hand side
+  fun r => pairDecode (true :: false :: r)
+is not definitionally equal to the right-hand side
+  fun x => none
+
+⊢ (fun r => pairDecode (true :: false :: r)) = fun x => none
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:122:68: error: Tactic `rfl` failed: The left-hand side
+  dbl w
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) w
+
+w : List Bool
+⊢ dbl w = List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:123:84: error: Tactic `rfl` failed: The left-hand side
+  fun w => dbl w
+is not definitionally equal to the right-hand side
+  fun w => List.flatMap (fun b => [b, b]) w
+
+⊢ (fun w => dbl w) = fun w => List.flatMap (fun b => [b, b]) w
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:125:56: error: Tactic `rfl` failed: The left-hand side
+  (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  0
+
+w : List Bool
+⊢ (FinTM.constTM w).k = 0
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:126:72: error: Tactic `rfl` failed: The left-hand side
+  fun w => (FinTM.constTM w).k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun w => (FinTM.constTM w).k) = fun x => 0
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:128:33: error: Tactic `rfl` failed: The left-hand side
+  pairDiagTM.k
+is not definitionally equal to the right-hand side
+  0
+
+⊢ pairDiagTM.k = 0
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:129:60: error: Tactic `rfl` failed: The left-hand side
+  fun x => pairDiagTM.k
+is not definitionally equal to the right-hand side
+  fun x => 0
+
+⊢ (fun x => pairDiagTM.k) = fun x => 0
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:133:71: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  some q
+
+q : Unit
+w : Fin 1 → List Bool
+⊢ (Cfg.ofWords q w).state = some q
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:135:83: error: Tactic `rfl` failed: The left-hand side
+  fun q w => (Cfg.ofWords q w).state
+is not definitionally equal to the right-hand side
+  fun q x => some q
+
+⊢ (fun q w => (Cfg.ofWords q w).state) = fun q x => some q
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:137:52: error: Tactic `rfl` failed: The left-hand side
+  stateWord 1 s 0
+is not definitionally equal to the right-hand side
+  s
+
+s : List Bool
+⊢ stateWord 1 s 0 = s
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:138:68: error: Tactic `rfl` failed: The left-hand side
+  fun s => stateWord 1 s 0
+is not definitionally equal to the right-hand side
+  fun s => s
+
+⊢ (fun s => stateWord 1 s 0) = fun s => s
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:141:47: error: Tactic `rfl` failed: The left-hand side
+  (Cfg.mapState f c).state
+is not definitionally equal to the right-hand side
+  Option.map f c.state
+
+f : Unit → Unit
+c : Cfg 1 Bool Unit []
+⊢ (Cfg.mapState f c).state = Option.map f c.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:143:59: error: Tactic `rfl` failed: The left-hand side
+  fun f c => (Cfg.mapState f c).state
+is not definitionally equal to the right-hand side
+  fun f c => Option.map f c.state
+
+⊢ (fun f c => (Cfg.mapState f c).state) = fun f c => Option.map f c.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:147:56: error: Tactic `rfl` failed: The left-hand side
+  (embedEmitCfg ix ts hs pre c).state
+is not definitionally equal to the right-hand side
+  c.state
+
+ix : Fin 1 ↪ Fin 2
+ts : Fin 2 → ℤ → Option Bool
+hs : Fin 2 → ℤ
+pre : List Bool
+c : Cfg 1 Bool Unit []
+⊢ (embedEmitCfg ix ts hs pre c).state = c.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:150:74: error: Tactic `rfl` failed: The left-hand side
+  fun ix ts hs pre c => (embedEmitCfg ix ts hs pre c).state
+is not definitionally equal to the right-hand side
+  fun x x_1 x_2 x_3 c => c.state
+
+⊢ (fun ix ts hs pre c => (embedEmitCfg ix ts hs pre c).state) = fun x x_1 x_2 x_3 c => c.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:155:57: error: Tactic `rfl` failed: The left-hand side
+  ((embedEmitTM ix tm).tr q inp work).inputTape
+is not definitionally equal to the right-hand side
+  (tm.tr q inp fun i => work (ix i)).inputTape
+
+ix : Fin 1 ↪ Fin 2
+tm : MultiTapeTM 1 Bool Unit
+q : Unit
+inp : Option Bool
+work : Fin 2 → Option Bool
+⊢ ((embedEmitTM ix tm).tr q inp work).inputTape = (tm.tr q inp fun i => work (ix i)).inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:159:79: error: Tactic `rfl` failed: The left-hand side
+  fun ix tm q inp work => ((embedEmitTM ix tm).tr q inp work).inputTape
+is not definitionally equal to the right-hand side
+  fun ix tm q inp work => (tm.tr q inp fun i => work (ix i)).inputTape
+
+⊢ (fun ix tm q inp work => ((embedEmitTM ix tm).tr q inp work).inputTape) = fun ix tm q inp work =>
+    (tm.tr q inp fun i => work (ix i)).inputTape
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:162:73: error: Tactic `rfl` failed: The left-hand side
+  solveSplit C e n
+is not definitionally equal to the right-hand side
+  List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+C e n : ℕ
+⊢ solveSplit C e n = List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:164:73: error: Tactic `rfl` failed: The left-hand side
+  fun C e n => solveSplit C e n
+is not definitionally equal to the right-hand side
+  fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+
+⊢ (fun C e n => solveSplit C e n) = fun C e n => List.find? (fun i => i + C * (i + 1) ^ e == n) (List.range (n + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:167:61: error: Tactic `rfl` failed: The left-hand side
+  solveSplitWith f n
+is not definitionally equal to the right-hand side
+  List.find? (fun i => i + f i == n) (List.range (n + 1))
+
+f : ℕ → ℕ
+n : ℕ
+⊢ solveSplitWith f n = List.find? (fun i => i + f i == n) (List.range (n + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:169:61: error: Tactic `rfl` failed: The left-hand side
+  fun f n => solveSplitWith f n
+is not definitionally equal to the right-hand side
+  fun f n => List.find? (fun i => i + f i == n) (List.range (n + 1))
+
+⊢ (fun f n => solveSplitWith f n) = fun f n => List.find? (fun i => i + f i == n) (List.range (n + 1))
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:173:47: error: Tactic `rfl` failed: The left-hand side
+  (Action.mapState f a).state
+is not definitionally equal to the right-hand side
+  Option.map f a.state
+
+f : Unit → Unit
+a : Action 1 Bool Unit
+⊢ (Action.mapState f a).state = Option.map f a.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:175:59: error: Tactic `rfl` failed: The left-hand side
+  fun f a => (Action.mapState f a).state
+is not definitionally equal to the right-hand side
+  fun f a => Option.map f a.state
+
+⊢ (fun f a => (Action.mapState f a).state) = fun f a => Option.map f a.state
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:178:85: error: Tactic `rfl` failed: The left-hand side
+  unaryTokenSplit (false :: rest)
+is not definitionally equal to the right-hand side
+  ([false], rest)
+
+rest : List Bool
+⊢ unaryTokenSplit (false :: rest) = ([false], rest)
+/private/tmp/tcslib-fwd-rewind-egl_prwp/Controls37_sealed_v1.lean:180:38: error: Tactic `rfl` failed: The left-hand side
+  fun rest => unaryTokenSplit (false :: rest)
+is not definitionally equal to the right-hand side
+  fun rest => ([false], rest)
+
+⊢ (fun rest => unaryTokenSplit (false :: rest)) = fun rest => ([false], rest)

@@ -25,9 +25,14 @@ The reviewed final comments preserve every non-comment code token against the na
 Campaign lint is0FAIL both sides; stricter policy diagnostics112→63 are classified rather
 than claimed clean (`lint-current/`).
 
-Full current394-module merged-tree replay **mmig1 RUNNING** from complete mac3. No result
-is claimed. Expanded25-file screens have finished their raw runs; complete candidate review
-is underway, with an exact post-comment parser/body linkage. No screen/gate clearance yet.
+The pushed generation’s complete394-module replay **mmig1 PASS394/0**, static0/60, is
+archived in `replay-current/`. Its immutable expanded25-file screen is1696→628,60new pairs
+fully classified. Tested follow-up repairs are now adopted as six uncommitted source files:
+shared terminal/bank/rewind/canonical-field proofs and existing-invariant tagged-run repoints.
+Two now-unused private selector helpers are retired. Actual12-module current3 chain PASS;
+full-header review, all-constant compiler checks and a refreshed headscreen are underway.
+The source’s public export delta stays+3/-6; no API/home proposal is applied. The older replay
+and its140-root metadata remain separately pinned; new evidence will not overwrite them.
 
 Awaiting Seyoon's decisions:
 

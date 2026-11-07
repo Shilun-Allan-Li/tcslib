@@ -24,7 +24,7 @@ receipts remain in their dated status folders.
 | --- | --- | --- | --- |
 | #215 | SG-1 plus the two mechanical SAT/Hardness cut-helper repairs; `lean/dedup-sg1`, head `478cd3a8dfb46094b9d8b971662f2ddadb1eccdb` | 106 round1 HOLD0/2/1/9; round2 Codex selected | Fresh current merged-tree replay **msg4 PASS329/0**, static0. Both cut helpers now consume Segment's public API. The six generic adapter/dispatcher kinds have Seyoon's explicit scheduled-debt acknowledgments; SingleTape accounting corrected. Verified334-section round2 packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
 | #230 | 23 approved non-simp reading/resource theorems; `lean/ab34-reading-api`, head `1160c18f03fd318f0dec25738790935fa61379d4`, draft | 117, Codex selected | Five full owner-module preflights and **mra2 PASS394/0**, static0. Independent source freeze/search/lint/screen and compiled census/axioms/owner seals/paired controls completed. Verified169-section packet published, ready for user dispatch; audit not yet dispatched. **Not yet clear to merge.** |
-| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, head `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, draft | 118 reserved, Codex selected | Claude partial final plus reviewed maintainer repairs and comment cleanup are pushed. Native11-module dependency-chain preflight passes; all4,372 owned axiom walks standard except frozen RAM3; all140 changed proof roots plus228 descendants standard. Full current394-module replay **mmig1 RUNNING**, no result yet. Expanded25-file screens running. First-entry/zero-space/home rulings and T7 candidate review remain open. **Not yet clear to merge.** |
+| #233 | MIG-1 foundation proof/migration landing; `lean/mig1-mega-landing`, pushed head `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, draft | 118 reserved, Codex selected | **mmig1 PASS394/0**, static0/60 at the pushed head, complete from mac3. Expanded25-file baseline/head screen passed1696→628 with all60new candidates classified; tested extra factoring is now adopted as six uncommitted files, including mechanical VirtualInput scope extension. Actual12-module combined preflight PASS; source freeze/census/refreshed headscreen underway. API/home rulings remain pending. **Not yet clear to merge.** |
 
 The replays above were executed separately from complete **oleans-mac3** copies on the current
 merged Lean tree. Their complete logs/orders/scripts/static outputs and pin receipts are in
@@ -63,17 +63,22 @@ committer attribution, into **lean/mig1-mega-landing**, reused **wt-epad**, inte
 Catalog equals cp07 at that integration commit. Reviewed interface/factoring repairs are now
 committed as Codex, plus comment-only cleanup and a current-records merge. **Draft PR #233**
 is pushed at `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, base campaign, including the still-unmerged prerequisite #230.
-The source is frozen for its current394-module replay; agents now perform read-only research
-and screen review. No actual source/index/branch mutation until that replay finishes.
+The pushed generation has passed its complete394-module replay (static0/60). Screen-driven
+body-only factoring proposals are now adopted in six uncommitted files, extending mechanical
+cleanup to VirtualInput under WORKFLOW§3. The actual12-module combined native chain passes.
+The source is frozen for its independent full-header/root review and refreshed head screen;
+metadata census/axioms are running. The first replay and all inert proposal generations remain
+separately pinned. No target proof, new public API or import is added by these repairs.
 No target admission is filled internally. `campaign/fills/mig1/landing/` contains the exact
 source reviews, owner seals/paired controls, compiler comparison and proposal evidence.
 
    The23 approved APIs are implemented separately in #230; its audit/merge precedes use in
 final landing. The actual untimed condTM bridge and completed owner scopes now pass their recorded
 strong seals. Primitives finishes the local T1/T2/T2b factoring; Loop's T3 and Catalog's
-T5/T6 helpers are checked. The exact eleven-module native chain passes, and the final
-comments preserve all non-comment code tokens against those inputs. These are separate
-from the running full downstream replay. The generated rewind matcher has no effective
+T5/T6 helpers are checked. The initial eleven-module chain and its full394-module replay pass. Later same-home
+terminal/bank/rewind/endpoint factoring and existing-Mathlib invariant repoints now pass
+a fresh12-module actual chain; final source/census/screen review remains. These generations
+are separately pinned rather than relabeled as one replay. The generated rewind matcher has no effective
 negative control, explicitly disclosed; no global legacy seal is claimed.
 A shared absorbing-stop first-entry lemma and canonical pairDiag/incFixed exact zero-space
 facts are proposed but unapproved. The two Catalog constant-space rows remain HOLDs.
