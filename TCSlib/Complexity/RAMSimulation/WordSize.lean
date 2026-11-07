@@ -72,7 +72,7 @@ its first cell to `true` gives a word of length `logSpace |x|` at every length, 
 included. This is the route of `Complexity.spaceConstructible_logSpace`
 (`SpaceComplexity/Constructible.lean:485`), whose private machine `b3a_log_machine` (`:329`)
 bounds the space but states no time, so the fill states its time or re-derives it from
-`Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` (`Build/Catalog.lean:2021`). A counter pass
+`Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` (`Build/Catalog.lean:2033`). A counter pass
 over that word writes its length in binary, a carry pass multiplies it by `c`, and the result is
 emitted. Time `O(|x| + 1)`; space `O(logSpace |x|)`, since `logSpace n ≥ 1`. -/
 theorem wordSizeComputable_logSpace (c : ℕ) :

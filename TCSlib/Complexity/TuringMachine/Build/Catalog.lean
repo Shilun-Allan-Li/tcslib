@@ -1412,6 +1412,30 @@ private theorem catalog_buffer_clip (w : List Bool) (p : ℤ) :
       omega
     · rfl
 
+/-- A canonical seam with a new state and pointwise canonical work tapes is the
+canonical seam for those words. The input head, work heads and output keep their
+canonical values.
+
+**Proof sketch.** Apply configuration extensionality once. The tape hypothesis
+identifies the work tapes; the published seam field equations identify the other
+four fields. -/
+private theorem catalog_ofWords_with_tapes {k : ℕ} {S : Type*} {x : List Bool}
+    (q q' : S) (w w' : Fin k → List Bool)
+    (tapes : Fin k → ℤ → Option Bool)
+    (htapes : ∀ j p, tapes j p = FinTM.bufferTape (w' j) p) :
+    ({ Cfg.ofWords (input := x) q w with
+        state := some q'
+        workTapes := tapes } : Cfg k Bool S x) = Cfg.ofWords q' w' := by
+  apply Cfg.ext
+  · simp only [Cfg.ofWords_state]
+  · simp only [Cfg.ofWords_inputPos]
+  · funext j p
+    rw [Cfg.ofWords_workTapes]
+    exact htapes j p
+  · funext j
+    simp only [Cfg.ofWords_workTapePos]
+  · simp only [Cfg.ofWords_output]
+
 /-- **The transfer endpoint from a canonical seam**. If `src ≠ dst` and the destination word of the
 seam `Cfg.ofWords q w` is empty, then the framed transfer endpoint of `Turing.transferTM_run_ofCfg`
 started there (state `q'`, the source interval blanked, the destination interval overwritten with
@@ -1433,31 +1457,25 @@ theorem Cfg.ofWords_transfer_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q
             then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
           else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
       Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src)) := by
-  apply Cfg.ext
-  · simp only [Cfg.ofWords_state]
-  · simp only [Cfg.ofWords_inputPos]
-  ·
-    funext j p
-    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
-    by_cases hs : j = src
+  apply catalog_ofWords_with_tapes
+  intro j p
+  simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+  by_cases hs : j = src
+  · subst j
+    simp only [Function.update_of_ne hne, Function.update_self,
+      FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+    split_ifs with hp
+    · rfl
+    · have hc := catalog_buffer_clip (w src) p
+      rw [if_neg hp] at hc
+      exact hc.symm
+  · by_cases hd : j = dst
     · subst j
-      simp only [Function.update_of_ne hne, Function.update_self,
-        FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
-      split_ifs with hp
-      · rfl
-      · have hc := catalog_buffer_clip (w src) p
-        rw [if_neg hp] at hc
-        exact hc.symm
-    · by_cases hd : j = dst
-      · subst j
-        simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
-          hs, false_and, ite_false, true_and]
-        exact catalog_buffer_clip (w src) p
-      · simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,
-          Function.update_of_ne hs]
-  · funext j
-    simp only [Cfg.ofWords_workTapePos]
-  · simp only [Cfg.ofWords_output]
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
+        hs, false_and, ite_false, true_and]
+      exact catalog_buffer_clip (w src) p
+    · simp only [hs, hd, false_and, ite_false, Function.update_of_ne hd,
+        Function.update_of_ne hs]
 
 
 /-- **Copy, framed** (design §12.6). As
@@ -1512,20 +1530,14 @@ theorem Cfg.ofWords_copy_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : 
             then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
           else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
       Cfg.ofWords q' (Function.update w dst (w src)) := by
-  apply Cfg.ext
-  · simp only [Cfg.ofWords_state]
-  · simp only [Cfg.ofWords_inputPos]
-  ·
-    funext j p
-    simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
-    by_cases hj : j = dst
-    · subst j
-      simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
-      exact catalog_buffer_clip (w src) p
-    · simp only [hj, false_and, ite_false, Function.update_of_ne hj]
-  · funext j
-    simp only [Cfg.ofWords_workTapePos]
-  · simp only [Cfg.ofWords_output]
+  apply catalog_ofWords_with_tapes
+  intro j p
+  simp only [Cfg.ofWords_workTapes, Cfg.ofWords_workTapePos, zero_add, sub_zero]
+  by_cases hj : j = dst
+  · subst j
+    simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
+    exact catalog_buffer_clip (w src) p
+  · simp only [hj, false_and, ite_false, Function.update_of_ne hj]
 
 
 /-- **Clear, framed** (design §12.6). From any

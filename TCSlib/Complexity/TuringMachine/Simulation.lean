@@ -1064,7 +1064,11 @@ lemma bufferedSecondCfg_step (M₁ M₂ : FinTM Bool) {x y : List Bool}
           · intro j; simp [bufferedSecondCfg, Action.apply, a]
 
 /-- Every second-phase run has a matching virtual run at the same time and a
-valid arrival tag. This preserves completed outputs and absorbing halting. -/
+valid arrival tag. This preserves completed outputs and absorbing halting.
+
+**Proof sketch.** The one-step correspondence preserves the set of times with a
+valid arrival tag and matching configurations. The general invariant iterator
+propagates the initial correspondence to every time. -/
 lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
     (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
     (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
@@ -1072,14 +1076,23 @@ lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
     ∃ b', VirtualTag (M₂.tm.runFrom c t).inputPos b' ∧
       (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
         bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
-  induction t with
-  | zero => exact ⟨b, hb, rfl⟩
-  | succ t ih =>
-    obtain ⟨b', hb', he⟩ := ih
-    obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
-    refine ⟨b'', ?_, ?_⟩
-    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+  let P : Set ℕ := {u | ∃ tag, VirtualTag (M₂.tm.runFrom c u).inputPos tag ∧
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) u =
+      bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c u) tag p tapes heads}
+  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
+    intro u hu
+    obtain ⟨tag, htag, he⟩ := hu
+    obtain ⟨tag', htag', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ tag htag p tapes heads
+    refine ⟨tag', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'
     · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+  have initial : 0 ∈ P := by
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_zero] using hb
+    · simp only [MultiTapeTM.runFrom_zero]
+  have endpoint := preserve.iterate t initial
+  change t ∈ P
+  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint
 
 /-- The rewind scan configuration, with buffer head at `j - 1` and all second
 machine tapes still blank. The scan state is always live, including at `j = 0`. -/
