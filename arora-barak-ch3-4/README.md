@@ -40,7 +40,9 @@ This folder only carries files in transit. The maintainer's rules are in that br
 
 ## Current outbound work
 
-- Gate 106, SG-1 (#215): `outbox/gates/106-sg1-dedup-gate/`, Codex, dispatched by the user.
+- Gate106, SG-1 (#215): round1 HOLD recorded; immutable packet archived.
+  Round2 `outbox/gates/106-sg1-dedup-r2-gate/`, **Codex**, verified and ready for user dispatch;
+  actual329-module current replay and fresh complete nine-file screen pass.
 - Gate 114, NatBits (#222): CLOSED PASS 0/0/0/8 and merged by the user. The issued gate and
   exact findings copy are archived; the matching shared top-level inbox file is preserved.
 - Gate 115, E-PAD (#228): CLOSED, PASS 0/0/0/12. The user has merged #228. Its gate, fill brief,
@@ -51,9 +53,10 @@ This folder only carries files in transit. The maintainer's rules are in that br
   findings remain preserved.
 - Gate117, the23 approved reader/resource theorems (#230): `outbox/gates/117-reading-api-gate/`,
   **Codex**, verified and ready for user dispatch. Actual394-module current replay passes.
-- MIG-1 overnight megafill: `outbox/fills/megafill-mig1/`, **Claude**, dispatched by the user;
-  checkpoint/final delivery to `inbox/fill-mig1-mega/`. Checkpoints cp01/cp02/cp03/cp05/cp07 received and reviewed as partial; the
-  cumulative job continues and its issued packet stays in outbox.
+- MIG-1 megafill: Claude final delivery received and committed to campaign records as
+  **PARTIAL**. The immutable issued packet is in `archive/fills/megafill-mig1/`; all checkpoint/
+  final ZIPs and report are in `archive/deliveries/fill-mig1-mega-2026-11-07/`. The source equals
+  reviewed cp07; maintainer interface/factoring repairs and gate118 remain, no acceptance or merge.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
