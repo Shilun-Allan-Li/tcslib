@@ -47,9 +47,10 @@ This folder only carries files in transit. The maintainer's rules are in that br
   delivery and exact findings are archived after the records were committed. The user's matching
   top-level `inbox/epad-fill-findings.md` is preserved outside this subtree.
 - Gate 116, the Hierarchy padding consumer (#229): `outbox/gates/116-space-linear-ne-np-gate/`,
-  **Codex**, verified and ready for user dispatch; return attached Markdown in chat.
+  **Codex**, dispatched by the user; await attached findings Markdown in chat.
 - MIG-1 overnight megafill: `outbox/fills/megafill-mig1/`, **Claude**, dispatched by the user;
-  checkpoint/final delivery to `inbox/fill-mig1-mega/`.
+  checkpoint/final delivery to `inbox/fill-mig1-mega/`. Checkpoints cp01/cp02 received; the
+  cumulative job continues and its issued packet stays in outbox.
 
 The Mac-wide Lean limit is five, with three slots budgeted to this campaign and two to the other
 chat. All shared-checkout changes remain confined to this subtree.
