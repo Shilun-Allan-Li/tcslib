@@ -1,0 +1,33 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+
+/-! E-PAD seal support: the foreign TCSlib definitions read by the declarations of
+`SpaceComplexity/Padding.lean`. For each declaration of the module (private ones and
+compiler-generated auxiliaries included), the constants of its type and value that are
+definitions (not theorems) of another TCSlib module, one line per declaration. -/
+open Lean Elab Command in
+elab "#epad_foreign" : command => do
+  let env ← getEnv
+  let some modIdx := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Hierarchy
+    | logInfo "no module"
+  let isTCSOther : Name → Bool := fun c =>
+    match env.getModuleIdxFor? c with
+    | some i => (`TCSlib).isPrefixOf (env.header.moduleNames[i.toNat]!) && i != modIdx
+    | none => false
+  let mut lines : Array String := #[]
+  for (n, ci) in env.constants.toList do
+    if env.getModuleIdxFor? n != some modIdx then continue
+    if !(n == `Complexity.SPACE_linear_ne_NP || (`Complexity.SPACE_linear_ne_NP).isPrefixOf n) then continue
+    let cs := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut fs : Array Name := #[]
+    for c in cs do
+      if isTCSOther c then
+        match env.find? c with
+        | some (.defnInfo _) => if !fs.contains c then fs := fs.push c
+        | _ => pure ()
+    if !fs.isEmpty then
+      lines := lines.push s!"{n}\t{fs.toList}"
+  logInfo (String.intercalate "\n" (lines.qsort (· < ·)).toList)
+
+#epad_foreign
+
+#print axioms Complexity.SPACE_linear_ne_NP

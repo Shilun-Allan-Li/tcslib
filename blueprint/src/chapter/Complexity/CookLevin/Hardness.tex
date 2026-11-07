@@ -737,14 +737,6 @@ For a source machine, the host is a machine that runs the four-state binary incr
 For every source configuration, tag bit, and counter value $n$, there is a strictly positive time $t$, at most twice the binary length of $n$ plus two, such that the counter-beside-reference host first reaches its return control exactly at $t$, at which point the counter tape holds the binary representation of $n+1$ with its head restored to zero, while the source configuration, tag, and every bank tape and head are untouched, and the represented source clock has not advanced.
 \end{lemma}
 
-\begin{lemma}[Binary width bound]
-\lean{Complexity.clCount_width}
-\label{Complexity.clCount_width}
-\leanok
-\difficulty{4}
-For all naturals $n$ and $w$ with $n < 2^w$, the binary representation of $n$ has at most $w$ bits, so one administrative increment is charged by two $w$-bit scans plus two transitions, with no unary representation of positions.
-\end{lemma}
-
 \begin{definition}[Component action of the counter bank]
 \lean{Complexity.clBankPart}
 \label{Complexity.clBankPart}
@@ -1227,7 +1219,7 @@ For counter words of length at most $W$ and every count $j$, the stored row pref
 \lean{Complexity.clElapsed_width}
 \label{Complexity.clElapsed_width}
 \leanok
-\uses{Complexity.clCount_width}
+\uses{Turing.length_bits_le_self}
 \difficulty{1}
 For all naturals $n \le t$, the binary representation of $n$ has at most $t$ bits. The bound coarsely charges native scans; all stored movement counts remain in canonical binary form.
 \end{lemma}

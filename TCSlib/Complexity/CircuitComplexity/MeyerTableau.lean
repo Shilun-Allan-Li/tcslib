@@ -433,8 +433,7 @@ theorem ctrVal_append_zeros (l : List Bool) (k : ℕ) :
 width-`w` word of `j`. -/
 theorem bits_pad (w j : ℕ) (hj : j < 2 ^ w) :
     Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false = enumWord w j := by
-  have hlen : (Nat.bits j).length ≤ w := by
-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
+  have hlen : (Nat.bits j).length ≤ w := Complexity.LogProg.length_bits_le hj
   have h := enumWord_ctrVal (Nat.bits j ++ List.replicate (w - (Nat.bits j).length) false)
   rw [ctrVal_append_zeros, ctrVal_bits] at h
   simp only [List.length_append, List.length_replicate] at h

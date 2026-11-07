@@ -13,4 +13,7 @@ six changed-consumer axiom checks use only standard axioms. Seven boundary probe
 cell-step seal pass. Full 22-file screen, freeze, lint and blueprint checks are under
 `campaign/gates/114-natbits-dedup/evidence/current/`. D9 families remain record-only as ruled.
 
-**Not yet clear to merge:** external Codex gate 114 remains open. Seyoon merges after it closes.
+**Clear to merge.** External gate 114 is closed: PASS, 0 blockers/majors/minors, 8 notes, all
+accepted. A two-module E-PAD catch-up replay on the current merged tree also passed, with all
+22 audited file blobs unchanged. `oleans-mnb2` is the complete resulting snapshot; the current
+merge preview has that exact Lean tree. Seyoon merges.

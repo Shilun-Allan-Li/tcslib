@@ -1,0 +1,53 @@
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:10:82: error: Tactic `rfl` failed: The left-hand side
+  SPACE s
+is not definitionally equal to the right-hand side
+  {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}
+
+s : ℕ → ℕ
+⊢ SPACE s = {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:12:100: error: Tactic `rfl` failed: The left-hand side
+  NP
+is not definitionally equal to the right-hand side
+  {L | ∃ C c, ∃ V ∈ P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+⊢ NP = {L | ∃ C c, ∃ V ∈ P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:14:79: error: Tactic `rfl` failed: The left-hand side
+  padLang L pad
+is not definitionally equal to the right-hand side
+  {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+
+L : Language Bool
+pad : ℕ → ℕ
+⊢ padLang L pad = {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:16:58: error: Tactic `rfl` failed: The left-hand side
+  pairEncode x y
+is not definitionally equal to the right-hand side
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+x y : List Bool
+⊢ pairEncode x y = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:21:50: error: Tactic `rfl` failed: The left-hand side
+  SPACE
+is not definitionally equal to the right-hand side
+  fun s => {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}
+
+⊢ SPACE = fun s => {L | ∃ c M, M.DecidesInSpace L fun n => c * s n}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:23:101: error: Tactic `rfl` failed: The left-hand side
+  fun x => NP
+is not definitionally equal to the right-hand side
+  fun x => {L | ∃ C c, ∃ V ∈ P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+⊢ (fun x => NP) = fun x =>
+    {L | ∃ C c, ∃ V ∈ P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:25:80: error: Tactic `rfl` failed: The left-hand side
+  padLang
+is not definitionally equal to the right-hand side
+  fun L pad => {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+
+⊢ padLang = fun L pad => {y | ∃ x ∈ L, y = pairEncode x (List.replicate (pad x.length) true)}
+/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/linear-consumer-validation/Controls-sealed.lean:27:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode
+is not definitionally equal to the right-hand side
+  fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y
+
+⊢ pairEncode = fun x y => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ y

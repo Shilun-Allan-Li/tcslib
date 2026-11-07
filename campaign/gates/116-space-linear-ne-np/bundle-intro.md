@@ -1,0 +1,1 @@
+Independent Codex audit of #229: SPACE_linear_ne_NP through the published padding API. Read campaign/gates/116-space-linear-ne-np/pack.md first. All eleven source population files, base comparisons, standards and actual source/CI/seal/screen/replay receipts are included. The internal review is not the external gate.
