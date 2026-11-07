@@ -1,0 +1,94 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:56:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:58:93: error: Type mismatch
+  rfl
+has type
+  ?m.45 = ?m.45
+but is expected to have type
+  listToNat w = List.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 w
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:63:19: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  rejectBlocksL E k B T r =
+    List.findSome?
+      (fun t =>
+        if E (listToNat (List.take k (List.drop (t * B) r))) then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:67:2: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.25 ↔ ?m.25
+but is expected to have type
+  StatClose X Y δ ↔ ∀ (T : ℕ → Prop), |(uprob fun s => T (X s)) - uprob fun t => T (Y t)| ≤ δ
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:69:72: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  uexp f = (∑ a, f a) / ↑(Fintype.card (Fin 3))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:72:87: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.17 ↔ ?m.17
+but is expected to have type
+  HardcoreBit.PushesUniform π ↔ ∀ (F : Fin 2 → ℝ), (uexp fun ω => F (π ω)) = uexp F
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:75:84: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.24 ↔ ?m.24
+but is expected to have type
+  PolyTimeComputable f ↔ ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:78:88: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  sampleUnitL N k B T r = rejectBlocksL (fun v => v < N ∧ v.Coprime N) k B T r
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:81:87: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  subStr z = natToList (pairFstD z).length (listToNat (pairFstD z) - listToNat (pairSndD z))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:85:52: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  (match o with
+    | some i => a i
+    | none => b) =
+    match o with
+    | some i => a i
+    | none => b
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:89:17: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  sampleBelowL m k B T r =
+    List.findSome?
+      (fun t =>
+        if listToNat (List.take k (List.drop (t * B) r)) < m then some (listToNat (List.take k (List.drop (t * B) r)))
+        else none)
+      (List.range T)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:92:85: error: Type mismatch
+  rfl
+has type
+  ?m.50 = ?m.50
+but is expected to have type
+  bitsToNat b = List.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 (List.ofFn b)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/Controls.lean:95:57: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  mulStr z = natToList ((pairFstD z).length + (pairSndD z).length) (listToNat (pairFstD z) * listToNat (pairSndD z))
+[rc=1 time=2s]

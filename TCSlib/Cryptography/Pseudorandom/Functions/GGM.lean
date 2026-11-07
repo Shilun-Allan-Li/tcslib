@@ -67,11 +67,19 @@ open Function QueryTree
 
 attribute [local irreducible] uprob acceptProb
 
-variable {S ρ : Type*} {n : ℕ}
+variable {S : Type} {ρ : Type*} {n : ℕ}
 
 /-- Select the half `G_b` of a generator output: the first component for `b = false`
 (the bit `0`) and the second for `b = true`. [Gar26, Construction 3.3]. -/
 def pairSel (b : Bool) (v : S × S) : S := if b then v.2 else v.1
+
+/-- Selecting with the bit `false` takes the first half: `pairSel false v = v.1`. -/
+theorem pairSel_false (v : S × S) : pairSel false v = v.1 :=
+  rfl
+
+/-- Selecting with the bit `true` takes the second half: `pairSel true v = v.2`. -/
+theorem pairSel_true (v : S × S) : pairSel true v = v.2 :=
+  rfl
 
 /-- The label of the leaf `x` below a node of level `i` with label `y`:
 `G_{x_n}(⋯ G_{x_{i+1}}(y) ⋯)`, where the bits are `x 0, …, x (n-1)` (0-indexed).
@@ -95,10 +103,19 @@ theorem ggmFrom_of_le (G : S → S × S) (x : Fin n → Bool) {i : ℕ} (h : n �
 `x = x₁ … x_n`, `F_K(x) = G_{x_n}(G_{x_{n-1}}(⋯ G_{x₁}(K) ⋯))`. -/
 def ggm (G : S → S × S) : S → (Fin n → Bool) → S := fun K x => ggmFrom G x 0 K
 
+/-- The defining equation of `ggm`: the walk from the root, `ggm G K x = ggmFrom G x 0 K`. -/
+theorem ggm_apply (G : S → S × S) (K : S) (x : Fin n → Bool) : ggm G K x = ggmFrom G x 0 K :=
+  rfl
+
 /-- The first `i` bits of `x`, as an `i`-bit string (bits beyond `n` read as `false`;
 only `i ≤ n` is used). -/
 def prefixAt (x : Fin n → Bool) (i : ℕ) : Fin i → Bool :=
   fun k => if h : k.val < n then x ⟨k, h⟩ else false
+
+/-- Bit `k` of the prefix: `prefixAt x i k = x k` for `k < n`, and `false` beyond `n`. -/
+theorem prefixAt_apply (x : Fin n → Bool) (i : ℕ) (k : Fin i) :
+    prefixAt x i k = if h : k.val < n then x ⟨k, h⟩ else false :=
+  rfl
 
 /-- The oracle of the hybrid `H_i` [Gar26, proof of Theorem 3.3]: with `R` a function
 from `i`-bit prefixes to labels (the random function `K_i`), the input `x` is answered by
@@ -129,7 +146,7 @@ theorem hybridProb_top [Fintype S] [Fintype ρ] (G : S → S × S)
     hybridProb G A n = acceptProb (randomFunction (Fin n → Bool) S) (oracleDist A) := by
   have hp : ∀ x : Fin n → Bool, prefixAt x n = x := fun x => funext fun k => dif_pos k.isLt
   exact acceptProb_congr (fun R => funext fun x => by
-    rw [hybridOracle, ggmFrom_of_le G x le_rfl, hp]; rfl) _
+    rw [hybridOracle, ggmFrom_of_le G x le_rfl, hp, randomFunction_apply]) _
 
 /-- The adversary on level-`i` tables that simulates `A`: a query `x` of `A` becomes the
 query `x₁ … x_i` to a table of pairs of labels, and the answer pair `v` is turned into
@@ -145,9 +162,9 @@ theorem hybridProb_eq_level_prg [Fintype S] [Fintype ρ] (G : S → S × S)
     (A : OracleAdversary ρ (Fin n → Bool) S) (i : Fin n) :
     hybridProb G A i =
       acceptProb (fun R : (Fin i → Bool) → S => G ∘ R) (oracleDist (levelAdv G i A)) := by
-  rw [hybridProb, acceptProb, acceptProb]
+  rw [hybridProb, acceptProb_def, acceptProb_def]
   refine uprob_congr fun z => iff_of_eq ?_
-  simp only [oracleDist, levelAdv, eval_simulate, comp_apply]
+  simp only [oracleDist_apply, levelAdv, eval_simulate, comp_apply]
   congr 2
   funext x
   rw [hybridOracle, ggmFrom_of_lt G x i.isLt]
@@ -177,9 +194,9 @@ theorem hybridProb_eq_level_random [Fintype S] [Fintype ρ] (G : S → S × S)
     fun x => dif_pos i.isLt
   have hinit : ∀ x : Fin n → Bool, Fin.init (prefixAt x ((i : ℕ) + 1)) = prefixAt x i :=
     fun x => rfl
-  rw [hybridProb, ← acceptProb_comp_equiv e, acceptProb, acceptProb]
+  rw [hybridProb, ← acceptProb_comp_equiv e, acceptProb_def, acceptProb_def]
   refine uprob_congr fun z => iff_of_eq ?_
-  simp only [oracleDist, levelAdv, eval_simulate, comp_apply, randomFunction, id, e,
+  simp only [oracleDist_apply, levelAdv, eval_simulate, comp_apply, randomFunction_apply, e,
     Equiv.coe_fn_mk]
   congr 2
   funext x
@@ -191,7 +208,8 @@ the `j`-th distinct prefix (0-indexed, in order of first appearance) by
 `G_{x_n}(⋯ G_{x_{i+2}}(z_{x_{i+1}}) ⋯)`, earlier prefixes as in `H_{i+1}` and later
 prefixes as in `H_i`, and outputs what `A` outputs.
 
-*Cost.* One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
+*Cost*, for `A` bounded by `q` queries (`OracleAdversary.BoundedBy`; the definition itself
+runs any `A`). One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
 `q` fresh pairs of seeds as coins together with `A`'s coins, which is lazy sampling of
 `R_i` and `R_{i+1}` [Gar26, footnote 9]: no exponential table is sampled; maintaining the
 list of at most `q` distinct prefixes. The indices `i, j` are non-uniform advice
@@ -213,7 +231,8 @@ theorem hybridProb_level [Fintype S] [Nonempty S] [Fintype ρ] (G : S → S × S
     |hybridProb G A i - hybridProb G A ((i : ℕ) + 1)| ≤
       ∑ j : Fin q, distAdv G (id : S × S → S × S) (ggmDist G A q i j) := by
   rw [hybridProb_eq_level_prg, hybridProb_eq_level_random]
-  exact table_hybrid G (levelAdv G i A) (fun r => (hA r).simulate _ _)
+  exact table_hybrid G (levelAdv G i A) ((OracleAdversary.boundedBy_iff _ _).2 fun r =>
+    ((OracleAdversary.boundedBy_iff A q).1 hA r).simulate _ _)
 
 /-- **GGM security** [Gar26, Theorem 3.3], concrete form: for every oracle adversary `A`
 making at most `q` queries, the PRF advantage of `A` against the GGM family is at most
@@ -232,7 +251,7 @@ theorem ggm_prfAdv_le [Fintype S] [Nonempty S] [Fintype ρ] (G : S → S × S)
     (A : OracleAdversary ρ (Fin n → Bool) S) {q : ℕ} (hA : A.BoundedBy q) :
     prfAdv (ggm G) A ≤
       ∑ i : Fin n, ∑ j : Fin q, distAdv G (id : S × S → S × S) (ggmDist G A q i j) := by
-  rw [prfAdv, distAdv, ← hybridProb_zero, ← hybridProb_top]
+  rw [prfAdv_def, distAdv_def, ← hybridProb_zero, ← hybridProb_top]
   refine (abs_sub_le_sum_hybrids (fun i => hybridProb G A i) n).trans ?_
   rw [Finset.sum_range (fun i => |hybridProb G A i - hybridProb G A (i + 1)|)]
   exact Finset.sum_le_sum fun i _ => hybridProb_level G A hA i
@@ -283,12 +302,30 @@ def splitHalves : (Fin (2 * n) → Bool) ≃ (Fin n → Bool) × (Fin n → Bool
     rw [dif_neg (by simp)]
     exact congrArg w.2 (Fin.ext (by simp))
 
+/-- The first half of `splitHalves z` is the first `n` bits of `z`:
+`(splitHalves z).1 k = z k` (`k < n`). -/
+theorem splitHalves_apply_fst (z : Fin (2 * n) → Bool) (k : Fin n) :
+    (splitHalves z).1 k = z ⟨k, by omega⟩ :=
+  rfl
+
+/-- The second half of `splitHalves z` is the last `n` bits of `z`:
+`(splitHalves z).2 k = z (n + k)`. -/
+theorem splitHalves_apply_snd (z : Fin (2 * n) → Bool) (k : Fin n) :
+    (splitHalves z).2 k = z ⟨n + k, by omega⟩ :=
+  rfl
+
 /-- The GGM construction on bit strings [Gar26, Construction 3.3]: from a length-doubling
 `G : {0,1}^n → {0,1}^{2n}`, the keyed family `F_K(x) = G_{x_n}(⋯ G_{x₁}(K) ⋯)` on
 `n`-bit keys, inputs and outputs, with `G₀, G₁` the first and last `n` bits of `G`. -/
 def ggmBits (G : (Fin n → Bool) → Fin (2 * n) → Bool) :
     (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool :=
   ggm (splitHalves ∘ G)
+
+/-- The defining equation of `ggmBits`: the GGM family of the halves of `G`,
+`ggmBits G = ggm (splitHalves ∘ G)`. -/
+theorem ggmBits_def (G : (Fin n → Bool) → Fin (2 * n) → Bool) :
+    ggmBits G = ggm (splitHalves ∘ G) :=
+  rfl
 
 /-- The PRG distinguisher `B_{i,j}` for a length-doubling `G` on bit strings: split the
 `2n`-bit challenge into halves and run `ggmDist`. Same cost as `ggmDist`. -/
@@ -308,11 +345,11 @@ theorem distAdv_ggmBitsDist [Fintype ρ] (G : (Fin n → Bool) → Fin (2 * n) �
       acceptProb (id : (Fin n → Bool) × (Fin n → Bool) → _)
         (ggmDist (splitHalves ∘ G) A q i j) := by
     refine Eq.trans ?_ (acceptProb_comp_equiv splitHalves id _)
-    rw [acceptProb, acceptProb]; rfl
+    rw [acceptProb_def, acceptProb_def]; rfl
   have h' : acceptProb G (ggmBitsDist G A q i j) =
       acceptProb (splitHalves ∘ G) (ggmDist (splitHalves ∘ G) A q i j) := by
-    rw [acceptProb, acceptProb]; rfl
-  rw [distAdv, distAdv, h, h']
+    rw [acceptProb_def, acceptProb_def]; rfl
+  rw [distAdv_def, distAdv_def, h, h']
 
 /-- **GGM security for bit strings** [Gar26, Theorem 3.3], concrete form: for a
 length-doubling `G : {0,1}^n → {0,1}^{2n}` and every oracle adversary making at most `q`

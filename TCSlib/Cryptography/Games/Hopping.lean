@@ -27,7 +27,8 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 
 ## Main definitions
 
-* `Games.OracleComp.AllOutputs P c`: every possible output of `c` satisfies `P`.
+* `Games.OracleComp.AllOutputs P c` (in `TCSlib.Cryptography.Games.OracleComp`): every possible
+  output of `c` satisfies `P`.
 
 ## Main results
 
@@ -65,28 +66,6 @@ open Finset
 
 variable {ι : Type} {α β σ : Type}
 
-/-- **Every possible output** of `c` satisfies `P`: a return satisfies it, and every
-continuation of a query does, whatever the answer. -/
-def OracleComp.AllOutputs {spec : OracleSpec ι} (P : α → Prop) : OracleComp spec α → Prop
-  | .pure a => P a
-  | .query _ _ k => ∀ y, AllOutputs P (k y)
-
-/-- `AllOutputs` is monotone in the predicate. -/
-theorem OracleComp.AllOutputs.mono {spec : OracleSpec ι} {P Q : α → Prop} (hPQ : ∀ a, P a → Q a)
-    {c : OracleComp spec α} (h : c.AllOutputs P) : c.AllOutputs Q := by
-  induction c with
-  | pure a => exact hPQ a h
-  | query i x k ih => exact fun y => ih y (h y)
-
-/-- Every possible output of `c` followed by `f` satisfies `Q` when every possible output `a`
-of `c` satisfies `P` and every possible output of `f a` with `P a` satisfies `Q`. -/
-theorem OracleComp.AllOutputs.bind {spec : OracleSpec ι} {P : α → Prop} {Q : β → Prop}
-    {c : OracleComp spec α} {f : α → OracleComp spec β} (hc : c.AllOutputs P)
-    (hf : ∀ a, P a → (f a).AllOutputs Q) : (c.bind f).AllOutputs Q := by
-  induction c with
-  | pure a => exact hf a hc
-  | query i x k ih => exact fun y => ih y (hc y)
-
 namespace ProbComp
 
 /-- An event splits by a second event: `Pr[A] = Pr[A ∧ ¬F] + Pr[A ∧ F]`. -/
@@ -103,10 +82,13 @@ then the expectation of `f` over `c` is at most that of `g`. -/
 theorem expect_mono_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
     {f g : α → ℝ} (h : ∀ a, P a → f a ≤ g a) : expect c f ≤ expect c g := by
   induction c with
-  | pure a => exact h a hc
+  | pure a =>
+    rw [expect_pure, expect_pure]
+    exact h a (OracleComp.allOutputs_pure.1 hc)
   | query m x k ih =>
     simp only [expect_query]
-    exact mul_le_mul_of_nonneg_left (sum_le_sum fun j _ => ih j (hc j)) (by positivity)
+    exact mul_le_mul_of_nonneg_left
+      (sum_le_sum fun j _ => ih j (OracleComp.allOutputs_query.1 hc j)) (by positivity)
 
 /-- An event holding at every possible output has probability one. -/
 theorem prob_eq_one_of_allOutputs {c : ProbComp α} {p : α → Prop} (hc : c.AllOutputs p) :
@@ -186,7 +168,9 @@ theorem simulate_allOutputs_bad {spec : OracleSpec ι} {impl : QueryImpl spec σ
     (c : OracleComp spec α) {s : σ} (hs : bad s) :
     (simulate impl c s).AllOutputs fun r => bad r.2 := by
   induction c generalizing s with
-  | pure a => exact hs
+  | pure a =>
+    rw [simulate_pure, OracleComp.allOutputs_pure]
+    exact hs
   | query i x k ih =>
     rw [simulate_query]
     exact OracleComp.AllOutputs.bind (hstick i x s hs) fun ys hys => ih ys.1 hys
@@ -231,7 +215,7 @@ theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl sp
       ProbComp.prob (simulate impl₀ c s) (fun r => bad r.2) =
         ProbComp.prob (simulate impl₁ c s) (fun r => bad r.2) := by
   induction c generalizing s with
-  | pure a => exact ⟨rfl, rfl⟩
+  | pure a => simp only [simulate_pure, and_self]
   | query i x k ih =>
     simp only [simulate_query, ProbComp.prob_bind]
     constructor

@@ -103,6 +103,21 @@ def ExecOutcome.swap {α β : Type} : ExecOutcome α β → ExecOutcome β α
   | .outOfFuel => .outOfFuel
   | .sentAfterEnd => .sentAfterEnd
 
+/-- Exchanging the roles exchanges the outputs: `(done a b).swap = done b a`. -/
+theorem ExecOutcome.swap_done {α β : Type} (a : α) (b : β) :
+    (ExecOutcome.done a b).swap = .done b a :=
+  rfl
+
+/-- A spent budget stays a spent budget: `outOfFuel.swap = outOfFuel`. -/
+theorem ExecOutcome.swap_outOfFuel {α β : Type} :
+    (ExecOutcome.outOfFuel : ExecOutcome α β).swap = .outOfFuel :=
+  rfl
+
+/-- A send after the end stays one: `sentAfterEnd.swap = sentAfterEnd`. -/
+theorem ExecOutcome.swap_sentAfterEnd {α β : Type} :
+    (ExecOutcome.sentAfterEnd : ExecOutcome α β).swap = .sentAfterEnd :=
+  rfl
+
 namespace Party
 
 variable {Out In α β : Type}
@@ -114,6 +129,24 @@ def step : Party Out In α → ProbComp (α ⊕ (Out × (Option In → Party Out
   | .query (.inl ()) m k => .pure (.inr (m, k))
   | .query (.inr j) x k => .query j x (fun y => step (k y))
 
+/-- A returned party is done: `step (pure a) = pure (inl a)`. -/
+theorem step_pure (a : α) : step (OracleComp.pure a : Party Out In α) = .pure (.inl a) :=
+  rfl
+
+/-- A party sending `m` stops there, with `m` and its continuation on the reply:
+`step (query (inl ()) m k) = pure (inr (m, k))`. -/
+theorem step_send (m : Out) (k : Option In → Party Out In α) :
+    step (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inl ()) m k) =
+      .pure (.inr (m, k)) :=
+  rfl
+
+/-- A coin draw of a party is passed through:
+`step (query (inr j) x k) = query j x (fun y => step (k y))`. -/
+theorem step_coin (j : ℕ) (x : Unit) (k : Fin (j + 1) → Party Out In α) :
+    step (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inr j) x k) =
+      .query j x (fun y => step (k y)) :=
+  rfl
+
 /-- **Close** a party whose counterpart has returned (its pending send already answered `none`):
 it may still draw coins, and returns `some` of its output, or `none` if it sends a message. -/
 def close : Party Out In α → ProbComp (Option α)
@@ -121,11 +154,36 @@ def close : Party Out In α → ProbComp (Option α)
   | .query (.inl ()) _ _ => .pure none
   | .query (.inr j) x k => .query j x (fun y => close (k y))
 
+/-- Closing a returned party gives its output: `close (pure a) = pure (some a)`. -/
+theorem close_pure (a : α) : close (OracleComp.pure a : Party Out In α) = .pure (some a) :=
+  rfl
+
+/-- Closing a party that sends gives `none`: `close (query (inl ()) m k) = pure none`. -/
+theorem close_send (m : Out) (k : Option In → Party Out In α) :
+    close (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inl ()) m k) =
+      .pure none :=
+  rfl
+
+/-- Closing passes a coin draw through:
+`close (query (inr j) x k) = query j x (fun y => close (k y))`. -/
+theorem close_coin (j : ℕ) (x : Unit) (k : Fin (j + 1) → Party Out In α) :
+    close (OracleComp.query (spec := (exchangeSpec Out In).add unifSpec) (.inr j) x k) =
+      .query j x (fun y => close (k y)) :=
+  rfl
+
 /-- The end of an execution in which the active party returned `a`: the waiting party `B` is
 activated once more, with `none`, and closed. -/
 def endWith {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
     ProbComp (ExecOutcome α β) :=
   (close (B none)).bind fun ob => .pure (Option.elim ob .sentAfterEnd (ExecOutcome.done a))
+
+/-- The end of an execution closes the waiting party on `none`, and reports `done a b` if it
+returns `b` and `sentAfterEnd` if it sends:
+`endWith a B = (close (B none)).bind fun ob => pure (ob.elim sentAfterEnd (done a))`. -/
+theorem endWith_eq {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
+    endWith a B =
+      (close (B none)).bind fun ob => .pure (Option.elim ob .sentAfterEnd (ExecOutcome.done a)) :=
+  rfl
 
 /-- **Execution** of a two-party protocol with at most `fuel` messages. `A` moves first, and `B`
 waits for `A`'s first message. After each message the roles swap. A return costs no fuel; when the
@@ -171,15 +229,21 @@ theorem exec_succ {M₁ M₂ : Type} (fuel : ℕ) (A : Party M₁ M₂ α)
 /-! ### Sanity checks: fuel counts messages; a send after the end is reported -/
 
 example (a b : Bool) :
-    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := rfl
+    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := by
+  simp only [exec_zero, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_pure,
+    Option.elim_some]
 
 example (m : Unit) (a b : Bool) :
     exec 1 (M₂ := Unit) (.query (.inl ()) m fun _ => .pure a) (fun _ => .pure b) =
-      .pure (.done a b) := rfl
+      .pure (.done a b) := by
+  simp only [exec_succ, step_send, OracleComp.pure_bind, Sum.elim_inr, exec_zero, step_pure,
+    Sum.elim_inl, endWith_eq, close_pure, Option.elim_some, ExecOutcome.swap_done]
 
 example (m : Unit) (a b : Bool) :
     exec 1 (M₁ := Unit) (.pure a) (fun _ => .query (.inl ()) m fun _ => .pure b) =
-      .pure .sentAfterEnd := rfl
+      .pure .sentAfterEnd := by
+  simp only [exec_succ, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_send,
+    Option.elim_none]
 
 /-! ### The traced execution -/
 
@@ -230,13 +294,60 @@ def execT : ℕ → ∀ {M₁ M₂ α β : Type},
         .pure (r.1.swap, ⟨r.2.2.received, p.2 ++ r.2.2.coins⟩,
           ⟨mk.1 :: r.2.1.received, r.2.1.coins⟩)) p.1
 
+/-- An ended execution never reports a spent budget: the outcome of `endWithT` is `done` or
+`sentAfterEnd`. -/
+theorem endWithT_ne_outOfFuel {M₁ M₂ : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
+    (endWithT a B).AllOutputs fun q => q.1 ≠ .outOfFuel := by
+  refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+  rcases p with ⟨_ | b, cs⟩ <;>
+    simp only [OracleComp.allOutputs_pure, Option.elim_none, Option.elim_some, ne_eq,
+      reduceCtorEq, not_false_eq_true]
+
+/-- **Trace invariants** (gate 02 round 2, note 5): on every possible run of
+`execT fuel A B`, write `M_A` and `M_B` for the messages delivered to the first and the second
+mover. Then `|M_A| + |M_B| ≤ fuel`; the second mover has received as many messages as the first
+or one more (it receives first); and a spent budget means exactly `fuel` messages were delivered.
+
+**Proof sketch.** Induction on `fuel`, generalizing the parties and their types. A return or a
+blocked send delivers nothing (both lists are empty), and `endWithT` never reports a spent budget.
+A delivered message adds one message to the receiver, and the recursive run, with the roles
+exchanged, satisfies the invariants with `fuel − 1`; exchanging back keeps them, since its first
+mover is the original second mover. -/
+theorem execT_trace : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M₁ M₂ α)
+    (B : Option M₁ → Party M₂ M₁ β),
+    (execT fuel A B).AllOutputs fun r =>
+      r.2.1.received.length + r.2.2.received.length ≤ fuel ∧
+      (r.2.2.received.length = r.2.1.received.length ∨
+        r.2.2.received.length = r.2.1.received.length + 1) ∧
+      (r.1 = .outOfFuel → r.2.1.received.length + r.2.2.received.length = fuel)
+  | 0, _, _, _, _, A, B => by
+    refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+    rcases p with ⟨a | mk, cs⟩
+    · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+        OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun h => absurd h hq⟩
+    · exact OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun _ => by simp⟩
+  | fuel + 1, _, _, _, _, A, B => by
+    refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+    rcases p with ⟨a | mk, cs⟩
+    · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+        OracleComp.allOutputs_pure.2 ⟨by simp, by simp, fun h => absurd h hq⟩
+    · refine OracleComp.AllOutputs.bind (execT_trace fuel (B (some mk.1)) mk.2) fun r hr => ?_
+      obtain ⟨h1, h2, h3⟩ := hr
+      refine OracleComp.allOutputs_pure.2 ⟨?_, ?_, fun h => ?_⟩
+      · simp only [List.length_cons]; omega
+      · simp only [List.length_cons]; omega
+      · have : r.1 = .outOfFuel := by
+          cases hr1 : r.1 <;> simp_all [ExecOutcome.swap]
+        have := h3 this
+        simp only [List.length_cons]; omega
+
 /-- `stepT` projects to `step`. -/
 theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = step A := by
   induction A with
-  | pure a => rfl
+  | pure a => simp only [stepT, step, OracleComp.pure_bind]
   | query i x k ih =>
     cases i with
-    | inl u => cases u; rfl
+    | inl u => cases u; simp only [stepT, step, OracleComp.pure_bind]
     | inr j =>
       simp only [stepT, step, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
       congr 1
@@ -246,10 +357,10 @@ theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = 
 /-- `closeT` projects to `close`. -/
 theorem closeT_fst (A : Party Out In α) : (closeT A).bind (fun p => .pure p.1) = close A := by
   induction A with
-  | pure a => rfl
+  | pure a => simp only [closeT, close, OracleComp.pure_bind]
   | query i x k ih =>
     cases i with
-    | inl u => cases u; rfl
+    | inl u => cases u; simp only [closeT, close, OracleComp.pure_bind]
     | inr j =>
       simp only [closeT, close, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
       congr 1
@@ -281,7 +392,7 @@ theorem execT_outcome : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M�
     rcases p with ⟨_ | _, c⟩
     · simp only [Sum.elim_inl, OracleComp.bind_assoc, OracleComp.pure_bind]
       rw [← endWithT_fst]
-    · rfl
+    · simp only [Sum.elim_inr, OracleComp.pure_bind]
   | fuel + 1, _, _, _, _, A, B => by
     simp only [execT, exec, OracleComp.bind_assoc]
     rw [← stepT_fst A, OracleComp.bind_assoc]

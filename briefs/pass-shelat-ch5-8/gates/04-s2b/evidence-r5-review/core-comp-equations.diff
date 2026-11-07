@@ -1,0 +1,40 @@
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+@@ -417,7 +417,7 @@
+           NUPPT.polyTimeComputable_inCoins))))
+   convert h using 1
+   funext z
+-  simp [prfEncFun, Function.comp]
++  simp [prfEncFun, Function.comp_apply]
+ 
+ /-- The well-formedness test of `Dec` is polynomial-time: two length comparisons
+ (`Complexity.polyTimeComputable_lenEq`). -/
+@@ -428,7 +428,7 @@
+     convert polyTimeComputable_lenEq.comp (hg.pairEncode NUPPT.polyTimeComputable_inParam)
+       using 1
+     funext z
+-    simp [Function.comp]
++    simp [Function.comp_apply]
+   exact polyTimeComputable_and
+     (hl _ ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).comp
+       NUPPT.polyTimeComputable_inArg))
+@@ -449,7 +449,7 @@
+           NUPPT.polyTimeComputable_inArg))))
+   convert h using 1
+   funext z
+-  simp [prfDecFun, Function.comp]
++  simp [prfDecFun, Function.comp_apply]
+ 
+ /-- The activation of the encryption machine on `⟨k, w⟩` with coins `r` is
+ `⟨r, w ⊕ E(⟨k, r⟩)⟩`. -/
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
+@@ -435,7 +435,7 @@
+       (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))
+   convert h using 1
+   funext y
+-  simp [preFun, Function.comp]
++  simp [preFun, Function.comp_apply]
+ 
+ /-- The history slot of the post-processor's argument `⟨⟨⟨H, ρ⟩, ⟨M, u⟩⟩, a⟩`. -/
+ def postHist (z : List Bool) : List Bool := pairFstD (pairFstD (pairFstD (NUPPT.inArg z)))

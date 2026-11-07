@@ -62,9 +62,19 @@ open Finset ProbComp
 /-- The probability that the game `G` outputs `true`. -/
 noncomputable def accept (G : ProbComp Bool) : ℝ := prob G (· = true)
 
+/-- The acceptance probability is the probability of the output `true`:
+`accept G = prob G (· = true)`. -/
+theorem accept_eq (G : ProbComp Bool) : accept G = prob G (· = true) :=
+  rfl
+
 /-- The **distinguishing advantage** between two games: `|Pr[G₀ = 1] − Pr[G₁ = 1]|`.
 [PS10, §3.1] -/
 noncomputable def advantage (G₀ G₁ : ProbComp Bool) : ℝ := |accept G₀ - accept G₁|
+
+/-- The distinguishing advantage is the absolute gap of the acceptance probabilities:
+`advantage G₀ G₁ = |accept G₀ - accept G₁|`. -/
+theorem advantage_eq (G₀ G₁ : ProbComp Bool) : advantage G₀ G₁ = |accept G₀ - accept G₁| :=
+  rfl
 
 /-- An acceptance probability is nonnegative. -/
 theorem accept_nonneg (G : ProbComp Bool) : 0 ≤ accept G := prob_nonneg G _
@@ -120,6 +130,12 @@ is `b`: the prediction experiment `b ← {0,1}; t ← X^b : A(t) = b` of [PS10, 
 `G b` the whole game for challenge bit `b`. -/
 noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
   (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))
+
+/-- The guess-the-bit game samples `b`, runs `G b` and outputs whether it returned `b`:
+`guessGame G = (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))`. -/
+theorem guessGame_eq (G : Bool → ProbComp Bool) :
+    guessGame G = (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b)) :=
+  rfl
 
 /-- The **guess-the-bit advantage**: how far the winning probability is from `½`. -/
 noncomputable def guessAdv (G : Bool → ProbComp Bool) : ℝ := |accept (guessGame G) - 1 / 2|

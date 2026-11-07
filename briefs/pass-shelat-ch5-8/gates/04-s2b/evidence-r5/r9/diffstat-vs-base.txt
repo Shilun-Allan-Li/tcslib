@@ -1,0 +1,27 @@
+ TCSlib.lean                                        |   1 +
+ TCSlib/Cryptography/Asymptotic/MultiMessage.lean   | 144 +++--
+ .../Asymptotic/MultiMessageLemmas.lean             |  88 ++--
+ TCSlib/Cryptography/Asymptotic/PRF.lean            | 233 ++++++---
+ TCSlib/Cryptography/Asymptotic/PRFLemmas.lean      |  96 ++--
+ TCSlib/Cryptography/Foundations/Experiments.lean   |   4 +-
+ TCSlib/Cryptography/Games/Advantage.lean           |  16 +
+ TCSlib/Cryptography/Games/BitCodec.lean            | 308 +++++++++++
+ TCSlib/Cryptography/Games/Bridges.lean             |  38 ++
+ TCSlib/Cryptography/Games/Bridges/Experiments.lean | 136 +++++
+ TCSlib/Cryptography/Games/Bridges/Machines.lean    | 157 ++++++
+ TCSlib/Cryptography/Games/Bridges/QueryTree.lean   | 150 ++++++
+ TCSlib/Cryptography/Games/Bridges/Strategies.lean  | 226 ++++++++
+ TCSlib/Cryptography/Games/Efficiency.lean          | 577 +++++++++++++++++++++
+ TCSlib/Cryptography/Games/Hopping.lean             |  38 +-
+ TCSlib/Cryptography/Games/Machines.lean            | 216 ++++++++
+ TCSlib/Cryptography/Games/OracleComp.lean          |  74 ++-
+ TCSlib/Cryptography/Games/Probability.lean         |  13 +-
+ TCSlib/Cryptography/Games/Protocols.lean           | 127 ++++-
+ TCSlib/Cryptography/Games/Simulate.lean            |  72 ++-
+ .../Cryptography/Pseudorandom/Functions/Defs.lean  |  24 +-
+ .../Cryptography/Pseudorandom/Functions/GGM.lean   |  61 ++-
+ .../Pseudorandom/Functions/LazySampling.lean       |  34 +-
+ .../Pseudorandom/Functions/OracleAdversary.lean    |  97 +++-
+ .../Pseudorandom/Functions/SubHybrids.lean         |  43 +-
+ TCSlib/Cryptography/ZeroKnowledge/Interaction.lean |  37 +-
+ 26 files changed, 2723 insertions(+), 287 deletions(-)

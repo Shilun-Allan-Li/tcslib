@@ -58,6 +58,7 @@ import TCSlib.Cryptography.Candidates
 import TCSlib.Cryptography.NumberTheory
 import TCSlib.Cryptography.ZeroKnowledge
 import TCSlib.Cryptography.Games
+import TCSlib.Cryptography.Games.Bridges
 
 import TCSlib.InformationTheory
 

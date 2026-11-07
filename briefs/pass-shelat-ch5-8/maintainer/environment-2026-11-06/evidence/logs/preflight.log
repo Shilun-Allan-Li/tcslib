@@ -1,0 +1,48 @@
+UTC 2026-11-07T03:49:18.732246+00:00
+platform macOS-26.5.2-arm64-arm-64bit-Mach-O
+logical_cpu_count 12
+disk /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4 {'total': 994662584320, 'used': 496952332288, 'free': 497710252032}
+disk /private/tmp {'total': 994662584320, 'used': 496952332288, 'free': 497710252032}
+COMMAND ['sysctl', '-n', 'hw.memsize'] EXIT 0
+19327352832
+
+COMMAND ['vm_stat'] EXIT 0
+Mach Virtual Memory Statistics: (page size of 16384 bytes)
+Pages free:                                    36645.
+Pages active:                                 345041.
+Pages inactive:                               339781.
+Pages speculative:                              4232.
+Pages throttled:                                   0.
+Pages wired down:                             215951.
+Pages purgeable:                               11747.
+"Translation faults":                    12815048805.
+Pages copy-on-write:                       344484755.
+Pages zero filled:                       10955952978.
+Pages reactivated:                         469431605.
+Pages purged:                               77096421.
+File-backed pages:                            254174.
+Anonymous pages:                              434880.
+Pages stored in compressor:                   835630.
+Pages occupied by compressor:                 182242.
+Decompressions:                            240619220.
+Compressions:                              373495879.
+Pageins:                                   284820551.
+Pageouts:                                    1619220.
+Swapins:                                       69370.
+Swapouts:                                     178516.
+
+COMMAND ['memory_pressure', '-Q'] EXIT 0
+The system has 19327352832 (1179648 pages with a page size of 16384).
+System-wide memory free percentage: 64%
+
+COMMAND ['df', '-k', '/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-pass-shelat-ch2-4', '/private/tmp'] EXIT 0
+Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on
+/dev/disk3s5   971350180 457630356 486045168    49% 5788259 4860451680    0%   /System/Volumes/Data
+/dev/disk3s5   971350180 457630356 486045168    49% 5788259 4860451680    0%   /System/Volumes/Data
+
+COMMAND ['mount'] EXIT 0
+/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)
+Native macOS preflight: Linux nproc/cgroup/proc interfaces are unavailable; cpu_count, sysctl, vm_stat, memory_pressure and APFS disk figures are recorded above.
+Native reclaimable-page estimate: free + inactive + speculative = [36645, 339781, 4232]; 6236700672 bytes (5.808 GiB). This is the macOS proxy for the Linux MemAvailable check, alongside memory_pressure's 64% free report.
+Disk floor 12 GiB: PASS. Memory floor 4 GiB: PASS under the native proxy.

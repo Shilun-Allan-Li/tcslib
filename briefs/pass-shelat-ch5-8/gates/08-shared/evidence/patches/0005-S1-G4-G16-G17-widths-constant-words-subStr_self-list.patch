@@ -1,0 +1,159 @@
+From b7b335679711c3c785195c5d1b535011c92ba91f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 02:00:36 +0000
+Subject: [PATCH 05/14] S1 (G4, G16, G17): widths, constant words, subStr_self,
+ listToNat_mulStr, val_inv_natCast_zmod_zero_le,
+ ArithmeticFP.le_poly/prime_poly in Arithmetic
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/Candidates/Arithmetic.lean   | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Candidates/Arithmetic.lean b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+index 8c9f7e47..d635c8f2 100644
+--- a/TCSlib/Cryptography/Candidates/Arithmetic.lean
++++ b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+@@ -63,6 +63,18 @@ computability on strings is a hypothesis, discharged by a future machine-buildin
+   `TCSlib.Cryptography.Candidates.listToNat_subStr` — addition and truncated subtraction of
+   numerals are lossless at the widths of the bundle.
+ * `TCSlib.Cryptography.Candidates.val_units_pow` — `(x^e).val = x.val^e mod M` in `Z_M^*`.
++* `TCSlib.Cryptography.Candidates.natToList_mod_two_pow`,
++  `TCSlib.Cryptography.Candidates.listToNat_natToList_zero_append`,
++  `TCSlib.Cryptography.Candidates.natToList_zero_append_drop`,
++  `TCSlib.Cryptography.Candidates.listToNat_replicate_true`,
++  `TCSlib.Cryptography.Candidates.listToNat_replicate_false` — widths, leading zeros and the
++  constant words.
++* `TCSlib.Cryptography.Candidates.subStr_self`,
++  `TCSlib.Cryptography.Candidates.listToNat_mulStr`,
++  `TCSlib.Cryptography.Candidates.val_inv_natCast_zmod_zero_le` — readings of the bundle's words.
++* `TCSlib.Cryptography.Candidates.ArithmeticFP.le_poly`,
++  `TCSlib.Cryptography.Candidates.ArithmeticFP.prime_poly` — comparisons and primality tests of
++  polynomial-time words are polynomial-time.
+ 
+ ## References
+ 
+@@ -169,6 +181,58 @@ theorem natToList_val_natCast {k M : ℕ} {w : List Bool} (hk : w.length = k)
+     (hM : listToNat w < M) : natToList k ((listToNat w : ZMod M).val) = w := by
+   rw [ZMod.val_cast_of_lt hM, ← hk, natToList_length_listToNat]
+ 
++/-- **A numeral keeps the low bits**: `⟦N mod 2^k⟧_k = ⟦N⟧_k`. -/
++theorem natToList_mod_two_pow (k N : ℕ) : natToList k (N % 2 ^ k) = natToList k N := by
++  have h := natToList_length_listToNat (natToList k N)
++  rw [length_natToList, listToNat_natToList_eq_mod] at h
++  exact h
++
++/-- **Leading zeros do not change the value**: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
++theorem listToNat_natToList_zero_append (k : ℕ) (w : List Bool) :
++    listToNat (natToList k 0 ++ w) = listToNat w := by
++  rw [listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
++
++/-- **Width normalization by truncation**: the last `|b|` bits of `⟦0⟧_W ++ b` are the
++`W`-bit numeral of `⟦b⟧`, `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W` (the low `W` bits, also when
++`⟦b⟧ ≥ 2^W`).
++
++**Proof sketch.** The word `w = ⟦0⟧_W ++ b` reads as `⟦b⟧` (leading zeros), and splitting it after
++its first `|b|` bits gives `⟦w⟧ = ⟦w.take |b|⟧ · 2^W + ⟦w.drop |b|⟧` (`listToNat_append`), where the
++second summand is below `2^W`. So `⟦w.drop |b|⟧ = ⟦b⟧ mod 2^W`, and a word of length `W` is the
++numeral of its value (`natToList_length_listToNat`, `natToList_mod_two_pow`). -/
++theorem natToList_zero_append_drop (W : ℕ) (b : List Bool) :
++    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
++  set w := natToList W 0 ++ b with hw
++  have hlen : (w.drop b.length).length = W := by
++    rw [List.length_drop, hw, List.length_append, length_natToList]
++    omega
++  have hval : listToNat w = listToNat b := listToNat_natToList_zero_append W b
++  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
++    conv_lhs => rw [← List.take_append_drop b.length w]
++    rw [listToNat_append, hlen]
++  have hlt := listToNat_lt_two_pow (w.drop b.length)
++  rw [hlen] at hlt
++  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
++    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
++  rw [← natToList_mod_two_pow, hmod, ← hlen, natToList_length_listToNat]
++
++/-- **The all-ones word** `1^k` reads as `2^k − 1`: `listToNat (1^k) = 2^k − 1`. -/
++theorem listToNat_replicate_true (k : ℕ) : listToNat (List.replicate k true) = 2 ^ k - 1 := by
++  induction k with
++  | zero => rw [List.replicate_zero, listToNat_nil, pow_zero, Nat.sub_self]
++  | succ k ih =>
++    rw [List.replicate_succ', listToNat_append, ih, listToNat_singleton_true,
++      List.length_singleton, pow_succ]
++    have := Nat.one_le_two_pow (n := k)
++    omega
++
++/-- **The all-zeros word** `0^k` reads as `0`: `listToNat (0^k) = 0`. -/
++theorem listToNat_replicate_false (k : ℕ) : listToNat (List.replicate k false) = 0 := by
++  induction k with
++  | zero => rw [List.replicate_zero, listToNat_nil]
++  | succ k ih =>
++    rw [List.replicate_succ, listToNat_cons, ih, if_neg Bool.false_ne_true, zero_mul, add_zero]
++
+ /-! ## The string functions of the bundle -/
+ 
+ /-- Binary multiplication: `⟨a, b⟩ ↦ a · b` as an `(|a| + |b|)`-bit numeral (lossless: the
+@@ -282,6 +346,14 @@ theorem mulStr_natToList (k l M N : ℕ) (hM : M < 2 ^ k) (hN : N < 2 ^ l) :
+   rw [mulStr_pairEncode, length_natToList, length_natToList, listToNat_natToList hM,
+     listToNat_natToList hN]
+ 
++/-- **The product word reads back exactly**: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧` (the product fits in
++`|a| + |b|` bits). -/
++theorem listToNat_mulStr (a b : List Bool) :
++    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
++  rw [mulStr_pairEncode, listToNat_natToList]
++  rw [pow_add]
++  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b)
++
+ /-- `addStr` on an encoded pair. -/
+ @[simp] theorem addStr_pairEncode (a b : List Bool) :
+     addStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a + listToNat b) := by
+@@ -341,6 +413,11 @@ theorem listToNat_subStr (a b : List Bool) :
+   rw [subStr_pairEncode]
+   exact listToNat_natToList (lt_of_le_of_lt (Nat.sub_le _ _) (listToNat_lt_two_pow a))
+ 
++/-- **Subtracting a word from itself** gives the zero numeral of its width:
++`subStr ⟨a, a⟩ = ⟦0⟧_{|a|}`. -/
++theorem subStr_self (a : List Bool) : subStr (pairEncode a a) = natToList a.length 0 := by
++  rw [subStr_pairEncode, Nat.sub_self]
++
+ /-- `divModStr` on an encoded pair: `divModStr ⟨a, b⟩ = ⟨⟦a / b⟧_{|a|}, ⟦a mod b⟧_{|b|}⟩`, the
+ quotient as an `|a|`-bit and the remainder as a `|b|`-bit numeral (`a / 0 = 0`, `a mod 0 = a`). -/
+ theorem divModStr_pairEncode (a b : List Bool) :
+@@ -356,6 +433,13 @@ theorem xgcdStr_pairEncode (a b : List Bool) :
+   unfold xgcdStr
+   rw [pairFstD_pairEncode, pairSndD_pairEncode]
+ 
++/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1`:
++`((e : Z_0)⁻¹).val ≤ 1` (the `N = 0` case of `xgcdStr_pairEncode`'s inverse). -/
++theorem val_inv_natCast_zmod_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
++  show (Int.sign (e : ℤ)).natAbs ≤ 1
++  rw [Int.natAbs_sign]
++  split_ifs <;> omega
++
+ /-- `leStr` on an encoded pair. -/
+ @[simp] theorem leStr_pairEncode (a b : List Bool) :
+     leStr (pairEncode a b) = [decide (listToNat a ≤ listToNat b)] := by
+@@ -370,6 +454,19 @@ theorem xgcdStr_pairEncode (a b : List Bool) :
+ /-- `primeStr` is the primality test of `exists_samplePrime_nuppt`. -/
+ theorem primeStr_eq : primeStr = fun w : List Bool => [decide (listToNat w).Prime] := rfl
+ 
++/-- **Comparisons are polynomial-time tests**: for polynomial-time words `a`, `b`, the bit
++`[⟦a x⟧ ≤ ⟦b x⟧]` is polynomial-time (`H.le`, read through `leStr_pairEncode`). -/
++theorem ArithmeticFP.le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
++    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
++    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] :=
++  (PolyTimeComputable.comp' H.le (ha.pairEncode hb)).congr fun x => leStr_pairEncode (a x) (b x)
++
++/-- **Primality of a polynomial-time word is a polynomial-time test**: for a polynomial-time
++word `a`, the bit `[⟦a x⟧ is prime]` is polynomial-time (`H.prime`, `primeStr_eq`). -/
++theorem ArithmeticFP.prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
++    (ha : PolyTimeComputable a) : PolyTimeComputable fun x => [decide (listToNat (a x)).Prime] :=
++  (PolyTimeComputable.comp' H.prime ha).congr fun x => congrFun primeStr_eq (a x)
++
+ /-- The residue of `x^e` is `x.val^e mod M` for a unit `x` of `Z_M` (any modulus `M ≠ 0`): the
+ form in which the evaluators `modExpStr` compute the permutations `x ↦ x^e` and `x ↦ x²`
+ (moved from `RSA.lean`, run-3 audit P7-6). -/
+-- 
+2.43.0
+

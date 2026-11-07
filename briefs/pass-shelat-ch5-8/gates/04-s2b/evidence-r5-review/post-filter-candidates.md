@@ -1,0 +1,29 @@
+| Seal target | Active pairs | Already irreducible | Notation rows dropped |
+|---|---:|---:|---:|
+| `TCSlib/Cryptography/Asymptotic/MultiMessage.lean` | 33 | 0 | 1 |
+| `TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean` | 27 | 0 | 1 |
+| `TCSlib/Cryptography/Asymptotic/PRF.lean` | 41 | 0 | 1 |
+| `TCSlib/Cryptography/Asymptotic/PRFLemmas.lean` | 31 | 1 | 1 |
+| `TCSlib/Cryptography/Foundations/Experiments.lean` | 5 | 0 | 0 |
+| `TCSlib/Cryptography/Foundations/Probability.lean` | 0 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Advantage.lean` | 4 | 0 | 0 |
+| `TCSlib/Cryptography/Games/BitCodec.lean` | 4 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Bridges.lean` | 0 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Bridges/Experiments.lean` | 11 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Bridges/Machines.lean` | 10 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Bridges/QueryTree.lean` | 9 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Bridges/Strategies.lean` | 12 | 0 | 1 |
+| `TCSlib/Cryptography/Games/Efficiency.lean` | 18 | 0 | 1 |
+| `TCSlib/Cryptography/Games/Hopping.lean` | 6 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Machines.lean` | 4 | 0 | 0 |
+| `TCSlib/Cryptography/Games/OracleComp.lean` | 0 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Probability.lean` | 1 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Protocols.lean` | 2 | 0 | 0 |
+| `TCSlib/Cryptography/Games/Simulate.lean` | 3 | 0 | 0 |
+| `TCSlib/Cryptography/Pseudorandom/Functions/Defs.lean` | 5 | 0 | 0 |
+| `TCSlib/Cryptography/Pseudorandom/Functions/GGM.lean` | 11 | 0 | 0 |
+| `TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean` | 6 | 0 | 0 |
+| `TCSlib/Cryptography/Pseudorandom/Functions/OracleAdversary.lean` | 0 | 0 | 0 |
+| `TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean` | 11 | 0 | 0 |
+| `TCSlib/Cryptography/ZeroKnowledge/Interaction.lean` | 6 | 0 | 1 |
+| **Total** | **260** | **1** | **7** |

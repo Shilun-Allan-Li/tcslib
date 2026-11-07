@@ -1,0 +1,55 @@
+From 096f5e83b188d9247066cefbff15c394f9c3bf93 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 7 Nov 2026 01:59:04 +0000
+Subject: [PATCH 04/14] S1 (G3): listToNat_nil, _cons, _append, _singleton_true
+ beside listToNat_eq
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ .../Cryptography/NumberTheory/Primality.lean  | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/TCSlib/Cryptography/NumberTheory/Primality.lean b/TCSlib/Cryptography/NumberTheory/Primality.lean
+index 0897aded..4e32f7d0 100644
+--- a/TCSlib/Cryptography/NumberTheory/Primality.lean
++++ b/TCSlib/Cryptography/NumberTheory/Primality.lean
+@@ -75,6 +75,8 @@ density as `1/n` (it is `1/(2n)`, Claim-33.1).
+   `TCSlib.Cryptography.NumberTheory.uprob_samplePrime_none_le_exp`,
+   `TCSlib.Cryptography.NumberTheory.statClose_samplePrime`,
+   `TCSlib.Cryptography.NumberTheory.exists_samplePrime_nuppt` — [PS10, Lemma 51.17].
++* `TCSlib.Cryptography.NumberTheory.listToNat_nil`, `listToNat_cons`, `listToNat_append`,
++  `listToNat_singleton_true` — the equations of the binary reading `listToNat`.
+ 
+ ## References
+ 
+@@ -671,6 +673,26 @@ theorem listToNat_eq (w : List Bool) :
+ theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
+   rfl
+ 
++/-- The empty word reads as `0`: `listToNat [] = 0`. -/
++theorem listToNat_nil : listToNat [] = 0 := by
++  rw [listToNat_eq, List.foldl_nil]
++
++/-- **Prepending a bit** (most significant first): `⟦b :: l⟧ = [b] · 2^{|l|} + ⟦l⟧`, with
++`[b] = 1` if `b` and `0` otherwise. -/
++theorem listToNat_cons (b : Bool) (l : List Bool) :
++    listToNat (b :: l) = (if b then 1 else 0) * 2 ^ l.length + listToNat l := by
++  rw [listToNat_eq, listToNat_eq, List.foldl_cons, foldl_bits_eq, Nat.mul_zero, Nat.zero_add]
++
++/-- **Concatenation** (most significant first): `⟦a ++ b⟧ = ⟦a⟧ · 2^{|b|} + ⟦b⟧`. -/
++theorem listToNat_append (a b : List Bool) :
++    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
++  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, foldl_bits_eq]
++
++/-- The one-bit word `[true]` reads as `1`: `listToNat [true] = 1`. -/
++theorem listToNat_singleton_true : listToNat [true] = 1 := by
++  rw [listToNat_eq, List.foldl_cons, List.foldl_nil]
++  rfl
++
+ /-- The coin polynomial of `SamplePrime` at `T = 2n²` trials of `n` bits: `2n² · n`. -/
+ def samplePrimeCoins : PolyExpr :=
+   PolyExpr.mul (PolyExpr.mul (PolyExpr.const 2) (PolyExpr.pow PolyExpr.var 2)) PolyExpr.var
+-- 
+2.43.0
+

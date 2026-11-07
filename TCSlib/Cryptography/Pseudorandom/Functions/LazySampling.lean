@@ -119,7 +119,7 @@ end Helpers
 
 namespace QueryTree
 
-variable {I : Type*} {O : Type*} {α : Type*} [DecidableEq I]
+variable {I O α : Type} [DecidableEq I]
 
 /-- The list of distinct queries after the query `x`, given the list `L` of distinct
 queries so far: `x` is appended if it is new. -/
@@ -166,7 +166,7 @@ seen, only reads the answer stream below `L.length + m`. -/
 theorem evalLazy_congr {a b : ℕ → O} {t : QueryTree I O α} {m : ℕ} (ht : t.BoundedBy m)
     (L : List I) (hab : ∀ k < L.length + m, a k = b k) :
     evalLazy a t L = evalLazy b t L := by
-  induction t generalizing m L with
+  induction t using QueryTree.induct generalizing m L with
   | ret y => rfl
   | query x k ih =>
     cases m with
@@ -175,16 +175,18 @@ theorem evalLazy_congr {a b : ℕ → O} {t : QueryTree I O α} {m : ℕ} (ht : 
       have h1 := idxOf_noteQuery_lt L x
       have h2 := length_noteQuery_le L x
       rw [evalLazy_query, evalLazy_query, hab _ (by omega)]
-      exact ih _ (ht _) _ fun j hj => hab j (by omega)
+      exact ih _ ((boundedBy_query_succ x k m).1 ht _) _ fun j hj => hab j (by omega)
 
 /-- Post-processing every lazy answer by `g` is the same as running the tree whose
 answers are post-processed by `g`. -/
-theorem evalLazy_comp {O' : Type*} (g : O' → O) (a : ℕ → O') (t : QueryTree I O α)
+theorem evalLazy_comp {O' : Type} (g : O' → O) (a : ℕ → O') (t : QueryTree I O α)
     (L : List I) :
     evalLazy (g ∘ a) t L = evalLazy a (t.simulate id (fun _ => g)) L := by
-  induction t generalizing L with
-  | ret y => rfl
-  | query x k ih => exact ih _ _
+  induction t using QueryTree.induct generalizing L with
+  | ret y => rw [simulate_ret, evalLazy_ret, evalLazy_ret]
+  | query x k ih =>
+    rw [simulate_query, evalLazy_query, evalLazy_query]
+    exact ih _ _
 
 end QueryTree
 
@@ -295,6 +297,12 @@ private theorem mergeTable_update (L : List I) (a : ℕ → O) (R : I → O) {x 
 
 end Streams
 
+end QueryTree
+
+namespace QueryTree
+
+variable {I O α : Type} [DecidableEq I]
+
 /-- The generalized lazy-sampling invariant: started with `L` already recorded, with
 answers `W₀` on `L`, the lazy run with fresh values beyond `L` and the run against a
 random function agreeing with `W₀` on `L` have the same output distribution.
@@ -309,8 +317,11 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
     t.BoundedBy m → L.length + m ≤ q →
     uprob (fun W : Fin q → O => φ (evalLazy (extendStream (combine L.length W₀ W)) t L)) =
       uprob (fun R : I → O => φ (t.eval (mergeTable L (extendStream W₀) R))) := by
-  induction t with
-  | ret y => intro _ _ _ _ _; exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
+  induction t using QueryTree.induct with
+  | ret y =>
+    intro _ _ _ _ _
+    simp only [evalLazy_ret, eval_ret]
+    exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
   | query x k ih =>
     intro m L W₀ ht hm
     cases m with
@@ -328,7 +339,7 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
           (k (extendStream W₀ (L.idxOf x))).eval (mergeTable L (extendStream W₀) R) := by
         intro R; simp [mergeTable, hx]
       simp only [hl, hr]
-      exact ih _ m L W₀ (ht _) (by omega)
+      exact ih _ m L W₀ ((boundedBy_query_succ x k m).1 ht _) (by omega)
     · -- a new query: split off the fresh value on both sides
       have hℓ : L.length < q := by omega
       have hidx : (L ++ [x]).idxOf x = L.length := by
@@ -356,7 +367,8 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
           simp only [h, mergeTable_update _ _ _ (List.mem_append_right L
             (List.mem_singleton_self x))])]
       exact congrArg uexp (funext fun v =>
-        ih v m (L ++ [x]) (update W₀ j v) (ht v) (by rw [hlen]; omega))
+        ih v m (L ++ [x]) (update W₀ j v) ((boundedBy_query_succ x k m).1 ht v)
+          (by rw [hlen]; omega))
 
 /-- **Lazy sampling.** For a query tree making at most `q` queries, answering the `k`-th
 distinct query by the `k`-th of `q` independent uniform values gives the same output

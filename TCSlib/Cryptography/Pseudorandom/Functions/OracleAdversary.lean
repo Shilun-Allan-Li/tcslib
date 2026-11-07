@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Foundations.Experiments
+import TCSlib.Cryptography.Games.OracleComp
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -29,10 +30,22 @@ Answering the queries of one adversary by a computation that itself asks queries
 second oracle (`simulate`) is the basic reduction step: the simulated tree makes the same
 number of queries.
 
+**One notion of oracle computation** (ruling of 2026-11-05, item F-1). A query tree *is* a
+computation of the `Games` framework with one oracle: `QueryTree I O α` abbreviates
+`Games.OracleComp (Games.singleSpec I O) α`, and `ret` and `query` are its two constructors (the
+oracle index is the unit). Definitions by cases on `ret`/`query` are unchanged; proofs by
+induction use `QueryTree.induct`. The links of `eval`, `BoundedBy` and `simulate` to the
+framework's evaluation, query costs and simulation are in
+`TCSlib.Cryptography.Games.Bridges.QueryTree`.
+
+**Deviation:** query, answer and output types are in `Type` (universe 0), as the framework's are;
+every use in [Gar26] and [PS10] is at `Type`.
+
 ## Main definitions
 
 * `QueryTree I O α`: adaptive query trees with queries in `I`, answers in `O` and outputs
-  in `α`.
+  in `α`: the one-oracle computations of the `Games` framework.
+* `QueryTree.induct`: induction on query trees by their two constructors.
 * `QueryTree.eval f t`: the output of `t` run against the oracle `f`.
 * `QueryTree.BoundedBy t q`: every path of `t` makes at most `q` queries.
 * `QueryTree.simulate π ans t`: answer each query `x` of `t` by asking `π x` to a new oracle
@@ -51,25 +64,55 @@ number of queries.
 
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, Definition 3.9 (oracle adversaries).
+* [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
+  Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
+  (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle computations as a
+  free monad over an indexed oracle specification (`VCVio/OracleComp/OracleComp.lean`), here
+  through `TCSlib.Cryptography.Games.OracleComp`.
 -/
 
 namespace TCSlib.Cryptography
 
-universe u v w u' v'
 
 /-- An adaptive oracle algorithm with queries in `I`, answers in `O` and output in `α`,
 as a decision tree: `ret a` stops and outputs `a`, and `query x k` asks the oracle at `x`
 and continues with the subtree `k o` for the answer `o`. This is the concrete form of an
-oracle adversary with fixed coins [Gar26, Definition 3.9]. -/
-inductive QueryTree (I : Type u) (O : Type v) (α : Type w) : Type (max u v w)
-  /-- Stop and output `a`. -/
-  | ret : α → QueryTree I O α
-  /-- Ask the oracle at `x` and continue with `k` applied to the answer. -/
-  | query : I → (O → QueryTree I O α) → QueryTree I O α
+oracle adversary with fixed coins [Gar26, Definition 3.9]: the one-oracle computation of the
+`Games` framework. [VCVio, OracleComp/OracleComp] -/
+abbrev QueryTree (I O α : Type) : Type := Games.OracleComp (Games.singleSpec I O) α
 
 namespace QueryTree
 
-variable {I : Type u} {O : Type v} {α : Type w} {I' : Type u'} {O' : Type v'}
+variable {I O α I' O' : Type}
+
+/-- Stop and output `a`. -/
+@[match_pattern] abbrev ret (a : α) : QueryTree I O α := Games.OracleComp.pure a
+
+/-- Ask the oracle at `x` and continue with `k` applied to the answer. -/
+@[match_pattern] abbrev query (x : I) (k : O → QueryTree I O α) : QueryTree I O α :=
+  Games.OracleComp.query () x k
+
+/-- **Induction on query trees** by their two constructors: a property of leaves, and the step
+from all the subtrees of a query to the query. Use it as `induction t using QueryTree.induct`. -/
+@[elab_as_elim] def induct {motive : QueryTree I O α → Sort _} (ret : ∀ a, motive (ret a))
+    (query : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) : ∀ t, motive t
+  | Games.OracleComp.pure a => ret a
+  | Games.OracleComp.query () x k => query x k fun o => induct ret query (k o)
+
+/-- `induct` computes on a leaf by its leaf case: `induct hret hquery (ret a) = hret a`. -/
+theorem induct_ret {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
+    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (a : α) :
+    induct (motive := motive) hret hquery (ret a) = hret a :=
+  rfl
+
+/-- `induct` computes on a query node by its query case, applied to the inductions on the
+subtrees: `induct hret hquery (query x k) = hquery x k (fun o => induct hret hquery (k o))`. -/
+theorem induct_query {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
+    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (x : I)
+    (k : O → QueryTree I O α) :
+    induct (motive := motive) hret hquery (query x k) =
+      hquery x k fun o => induct (motive := motive) hret hquery (k o) :=
+  rfl
 
 /-- The output of the query tree `t` when every query `x` is answered by `f x`. -/
 def eval (f : I → O) : QueryTree I O α → α
@@ -107,7 +150,7 @@ def BoundedBy : QueryTree I O α → ℕ → Prop
 /-- A tree making at most `q` queries makes at most `q'` queries for every `q' ≥ q`. -/
 theorem BoundedBy.mono {t : QueryTree I O α} {q q' : ℕ} (h : t.BoundedBy q)
     (hq : q ≤ q') : t.BoundedBy q' := by
-  induction t generalizing q q' with
+  induction t using QueryTree.induct generalizing q q' with
   | ret a => trivial
   | query x k ih =>
     cases q with
@@ -123,19 +166,31 @@ def simulate (π : I → I') (ans : I → O' → O) : QueryTree I O α → Query
   | ret a => ret a
   | query x k => query (π x) (fun o' => simulate π ans (k (ans x o')))
 
+/-- Simulating a leaf leaves it unchanged: `(ret a).simulate π ans = ret a`. -/
+theorem simulate_ret (π : I → I') (ans : I → O' → O) (a : α) :
+    (ret a : QueryTree I O α).simulate π ans = ret a :=
+  rfl
+
+/-- Simulating a query node asks `π x` and continues, on the answer `o'`, with the simulation of
+the subtree for `ans x o'`:
+`(query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans)`. -/
+theorem simulate_query (π : I → I') (ans : I → O' → O) (x : I) (k : O → QueryTree I O α) :
+    (query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans) :=
+  rfl
+
 /-- Running the simulated tree against `g` is running the original tree against the
 oracle that answers `x` by `ans x (g (π x))`. -/
 @[simp] theorem eval_simulate (π : I → I') (ans : I → O' → O) (g : I' → O')
     (t : QueryTree I O α) :
     (t.simulate π ans).eval g = t.eval (fun x => ans x (g (π x))) := by
-  induction t with
+  induction t using QueryTree.induct with
   | ret a => rfl
   | query x k ih => exact ih _
 
 /-- Simulation does not increase the number of queries. -/
 theorem BoundedBy.simulate {t : QueryTree I O α} {q : ℕ} (h : t.BoundedBy q)
     (π : I → I') (ans : I → O' → O) : (t.simulate π ans).BoundedBy q := by
-  induction t generalizing q with
+  induction t using QueryTree.induct generalizing q with
   | ret a => trivial
   | query x k ih =>
     cases q with
@@ -148,20 +203,32 @@ end QueryTree
 tree with queries in `I`, answers in `O` and a one-bit output. [Gar26, Definition 3.9]
 at one value of the security parameter; the input `1^n` is implicit in the fixed types,
 and the coins are uniform over the finite type `ρ`. -/
-abbrev OracleAdversary (ρ : Type*) (I : Type u) (O : Type v) := ρ → QueryTree I O Bool
+abbrev OracleAdversary (ρ : Type*) (I O : Type) := ρ → QueryTree I O Bool
 
 /-- The randomized oracle adversary `A` makes at most `q` queries on every coin string and
 every path. -/
-def OracleAdversary.BoundedBy {ρ : Type*} {I : Type u} {O : Type v}
+def OracleAdversary.BoundedBy {ρ : Type*} {I O : Type}
     (A : OracleAdversary ρ I O) (q : ℕ) : Prop :=
   ∀ r, (A r).BoundedBy q
+
+/-- `A` makes at most `q` queries iff the tree of every coin string does:
+`A.BoundedBy q ↔ ∀ r, (A r).BoundedBy q`. -/
+theorem OracleAdversary.boundedBy_iff {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O)
+    (q : ℕ) : A.BoundedBy q ↔ ∀ r, (A r).BoundedBy q :=
+  Iff.rfl
 
 /-- The oracle adversary `A` as a distinguisher for oracles: on the oracle `f` and coins
 `r` it outputs the result of running `A r` against `f`. With a sampler for the oracle,
 `acceptProb` of this distinguisher is the probability `Pr[A^f = 1]` of
 [Gar26, Definition 3.9]. -/
-def oracleDist {ρ : Type*} {I : Type u} {O : Type v} (A : OracleAdversary ρ I O) :
+def oracleDist {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) :
     (I → O) → ρ → Bool :=
   fun f r => (A r).eval f
+
+/-- The distinguisher of `A` on the oracle `f` and coins `r` is the run of `A r` against `f`:
+`oracleDist A f r = (A r).eval f`. -/
+theorem oracleDist_apply {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) (f : I → O)
+    (r : ρ) : oracleDist A f r = (A r).eval f :=
+  rfl
 
 end TCSlib.Cryptography

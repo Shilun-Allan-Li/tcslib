@@ -1,0 +1,10 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/SealedRabin.lean:1345:2: error: 'show' tactic failed, pattern
+  pairFstD ((oddGen H).runAt n [] r) = ?m.14
+is not definitionally equal to target
+  (rabinCollection H).index n r = rabinIndexOf (max n 3) (rabinGenParams (fun x => x ≠ 2) oddDefault n (List.ofFn r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/shared-s1/seal/SealedRabin.lean:3072:2: error: 'show' tactic failed, pattern
+  pairFstD ((blumGen H).runAt n [] r) = ?m.20
+is not definitionally equal to target
+  (rabinBlumTrapdoor H).index n r =
+    rabinIndexOf (max n 3) (rabinGenParams (fun x => x % 4 = 3) blumDefault n (List.ofFn r))
+[rc=1 time=12s]

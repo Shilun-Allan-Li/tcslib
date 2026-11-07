@@ -36,7 +36,8 @@ one (Cor-97.a, "without loss of generality") and the efficiency clause of the GG
 
 ## Main definitions
 
-* `Complexity.NUPPT.preComp` — parameter-aware polynomial-time pre-processing of an `NUPPT`.
+* `Complexity.NUPPT.preComp` — parameter-aware polynomial-time pre-processing of an `NUPPT`;
+  `Complexity.NUPPT.preComp_coinsEquiv` — it runs on the coins of the original machine.
 * `TCSlib.Cryptography.selHalf`, `TCSlib.Cryptography.walk`, `TCSlib.Cryptography.ggmStep`,
   `TCSlib.Cryptography.ggmEval` — half selection, the tree walk and the GGM evaluator.
 
@@ -44,7 +45,8 @@ one (Cor-97.a, "without loss of generality") and the efficiency clause of the GG
 
 * `TCSlib.Cryptography.take_ofFn_castLE`, `drop_take_ofFn_blocks`, `ofFn_prefixAt`,
   `take_ofFn_splitHalves`, `drop_ofFn_splitHalves`, `selHalf_ofFn` — the bit-string identities.
-* `Complexity.NUPPT.runAt_preComp` — the activation of the pre-processed machine.
+* `Complexity.NUPPT.runAt_preComp` — the activation of the pre-processed machine, on the coins
+  carried over by `preComp_coinsEquiv`.
 * `TCSlib.Cryptography.acceptProb_castLE` — a prefix of a uniform string is uniform.
 * `TCSlib.Cryptography.PRG.Secure.truncateTo_easy`,
   `TCSlib.Cryptography.PRG.Secure.truncateTo_negligible` — truncation of a secure generator.
@@ -74,6 +76,13 @@ theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
   simp only [List.getElem_take, List.getElem_ofFn]
   rfl
 
+/-- Every bit of a `q·ℓ`-bit string is a bit of one of its blocks:
+`w k = FunFamily.blocks q ℓ w k.divNat k.modNat` (read off `FunFamily.blocks_symm_apply`). -/
+theorem eq_blocks_divNat_modNat {q ℓ : ℕ} (w : Fin (q * ℓ) → Bool) (k : Fin (q * ℓ)) :
+    w k = FunFamily.blocks q ℓ w k.divNat k.modNat :=
+  calc w k = (FunFamily.blocks q ℓ).symm (FunFamily.blocks q ℓ w) k := by rw [Equiv.symm_apply_apply]
+    _ = FunFamily.blocks q ℓ w k.divNat k.modNat := FunFamily.blocks_symm_apply q ℓ _ k
+
 /-- Block `k` of the encoding of a `q`-tuple of `ℓ`-bit strings (positions `ℓk, …, ℓk + ℓ − 1`)
 is the encoding of the `k`-th component, read through `FunFamily.blocks`. -/
 theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : ℕ} (hk : k < q) :
@@ -86,11 +95,11 @@ theorem drop_take_ofFn_blocks (q ℓ : ℕ) (w : Fin (q * ℓ) → Bool) {k : �
     omega
   · simp only [List.length_take, List.length_drop, List.length_ofFn] at hj₁
     simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-    show w _ = w (finProdFinEquiv (⟨k, hk⟩, ⟨j, by omega⟩))
-    congr 1
-    ext
-    simp only [finProdFinEquiv, Equiv.coe_fn_mk]
-    omega
+    have hℓ : 0 < ℓ := by omega
+    rw [eq_blocks_divNat_modNat w]
+    refine congrArg₂ _ (Fin.ext ?_) (Fin.ext ?_)
+    · rw [Fin.coe_divNat, Nat.mul_add_div hℓ, Nat.div_eq_of_lt (by omega), Nat.add_zero]
+    · rw [Fin.coe_modNat, Nat.mul_add_mod, Nat.mod_eq_of_lt (by omega)]
 
 /-- The encoding of the `i`-bit prefix `prefixAt x i` (`i ≤ n`) is the first `i` bits of the
 encoding of `x`. -/
@@ -100,15 +109,15 @@ theorem ofFn_prefixAt {n : ℕ} (x : Fin n → Bool) {i : ℕ} (hi : i ≤ n) :
   congr 1
   funext k
   have hk : (k : ℕ) < n := lt_of_lt_of_le k.isLt hi
-  simp only [prefixAt, hk, dite_true]
+  simp only [prefixAt_apply, hk, dite_true]
   rfl
 
 /-- The first `n` bits of the encoding of a `2n`-bit string encode the first component of
 `splitHalves`. -/
 theorem take_ofFn_splitHalves {n : ℕ} (z : Fin (2 * n) → Bool) :
     (List.ofFn z).take n = List.ofFn (splitHalves z).1 := by
-  rw [take_ofFn_castLE (by omega)]
-  rfl
+  refine (take_ofFn_castLE (by omega) z).trans ?_
+  exact congrArg List.ofFn (funext fun k => (splitHalves_apply_fst z k).symm)
 
 /-- The last `n` bits of the encoding of a `2n`-bit string encode the second component of
 `splitHalves`. -/
@@ -116,7 +125,7 @@ theorem drop_ofFn_splitHalves {n : ℕ} (z : Fin (2 * n) → Bool) :
     (List.ofFn z).drop n = List.ofFn (splitHalves z).2 := by
   refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
   simp only [List.getElem_drop, List.getElem_ofFn]
-  rfl
+  rw [splitHalves_apply_snd]
 
 /-- **Half selection on strings:** the first (`b = false`) or the last (`b = true`) `|u|` bits
 of the word `v` — `g_b(x)` of [PS10, Theorem 97.3] read off the string `g(x) = g₀(x) ‖ g₁(x)`
@@ -130,8 +139,8 @@ theorem selHalf_ofFn {n : ℕ} (b : Bool) {u : List Bool} (hu : u.length = n)
     (z : Fin (2 * n) → Bool) :
     selHalf b u (List.ofFn z) = List.ofFn (pairSel b (splitHalves z)) := by
   cases b
-  · simp only [selHalf, pairSel, Bool.false_eq_true, if_false, hu, take_ofFn_splitHalves]
-  · simp only [selHalf, pairSel, if_true, hu, drop_ofFn_splitHalves]
+  · simp only [selHalf, pairSel_false, Bool.false_eq_true, if_false, hu, take_ofFn_splitHalves]
+  · simp only [selHalf, pairSel_true, if_true, hu, drop_ofFn_splitHalves]
     exact List.take_of_length_le (le_of_eq List.length_ofFn)
 
 /-- Half selection is at most as long as the reference word. -/
@@ -176,7 +185,22 @@ noncomputable def preComp (A : NUPPT) {pre : List Bool → List Bool}
 
 /-- The coin polynomial of the pre-processed machine is `A`'s. -/
 @[simp] theorem coins_preComp (A : NUPPT) {pre : List Bool → List Bool}
-    (hpre : PolyTimeComputable pre) : (A.preComp hpre).coins = A.coins := rfl
+    (hpre : PolyTimeComputable pre) : (A.preComp hpre).coins = A.coins := by
+  unfold preComp
+  exact coins_ofPolyTime _ _ _ _ _
+
+/-- **The pre-processed machine runs on the coins of `A`**: the published equivalence
+`(A.preComp hpre).Coins n ≃ A.Coins n` (`NUPPT.coinsCongr` along `coins_preComp`). -/
+noncomputable def preComp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (n : ℕ) : (A.preComp hpre).Coins n ≃ A.Coins n :=
+  coinsCongr (coins_preComp A hpre) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (A.preComp_coinsEquiv hpre n r) = List.ofFn r`. -/
+theorem preComp_coinsEquiv_ofFn (A : NUPPT) {pre : List Bool → List Bool}
+    (hpre : PolyTimeComputable pre) (n : ℕ) (r : (A.preComp hpre).Coins n) :
+    List.ofFn (A.preComp_coinsEquiv hpre n r) = List.ofFn r :=
+  coinsCongr_ofFn (coins_preComp A hpre) n r
 
 /-- The untyped activation of the pre-processed machine. -/
 theorem runAtL_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre)
@@ -184,13 +208,15 @@ theorem runAtL_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyT
     (A.preComp hpre).runAtL n y r = A.runAtL n (pre (pairEncode (List.replicate n true) y)) r := by
   unfold preComp
   rw [runAtL_ofPolyTime]
-  simp [preFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [preFun, runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
 
-/-- The typed activation of the pre-processed machine (its coin type is `A.Coins n`). -/
+/-- The typed activation of the pre-processed machine, on the coins of `A` carried over by
+`preComp_coinsEquiv`. -/
 theorem runAt_preComp (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre)
     (n : ℕ) (y : List Bool) (r : (A.preComp hpre).Coins n) :
-    (A.preComp hpre).runAt n y r = A.runAt n (pre (pairEncode (List.replicate n true) y)) r :=
-  runAtL_preComp A hpre n y (List.ofFn r)
+    (A.preComp hpre).runAt n y r =
+      A.runAt n (pre (pairEncode (List.replicate n true) y)) (A.preComp_coinsEquiv hpre n r) := by
+  rw [runAt_eq, runAtL_preComp, runAt_eq, preComp_coinsEquiv_ofFn]
 
 end Complexity.NUPPT
 
@@ -227,7 +253,7 @@ theorem PRG.Secure.truncateTo_easy {P : PRG} (hP : P.Secure) (m : PolyExpr)
     ∃ E' : List Bool → List Bool, PolyTimeComputable E' ∧
       ∀ n (s : Fin n → Bool),
         E' (List.ofFn s) = List.ofFn fun i : Fin (m.eval n) => P.G n s (Fin.castLE (hm n) i) := by
-  obtain ⟨E, hE, hEs⟩ := hP.1
+  obtain ⟨E, hE, hEs⟩ := (PRG.easy_iff P).1 ((PRG.secure_iff P).1 hP).1
   refine ⟨fun w => (E w).take (m.eval w.length), ?_, fun n s => ?_⟩
   · convert (polyTimeComputable_pairTakePoly m).comp (polyTimeComputable_id.pairEncode hE) using 1
     funext w
@@ -252,22 +278,20 @@ theorem PRG.Secure.truncateTo_negligible {P : PRG} (hP : P.Secure) (m : PolyExpr
         (D.distinguisher n (m.eval n)) := by
   have hpre : PolyTimeComputable fun w => (pairSndD w).take (m.eval (pairFstD w).length) :=
     polyTimeComputable_pairTakePoly m
-  have hneg := hP.2 (D.preComp hpre)
+  have hneg := ((PRG.secure_iff P).1 hP).2 (D.preComp hpre)
   refine hneg.mono ⟨0, fun n _ => le_of_eq ?_⟩
   congr 1
-  have hfun : (D.preComp hpre).distinguisher n (P.stretch.eval n) =
-      fun t r => D.distinguisher n (m.eval n) (fun i => t (Fin.castLE (hm n) i)) r := by
-    funext t r
-    unfold NUPPT.distinguisher
-    rw [NUPPT.runAt_preComp]
+  have hfun : ∀ t r, D.distinguisher n (m.eval n) (fun i => t (Fin.castLE (hm n) i))
+      (D.preComp_coinsEquiv hpre n r) = (D.preComp hpre).distinguisher n (P.stretch.eval n) t r := by
+    intro t r
+    rw [NUPPT.distinguisher_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+      NUPPT.distinguisherL_eq, NUPPT.runAt_preComp]
     simp only [pairSndD_pairEncode, pairFstD_pairEncode, List.length_replicate]
     rw [take_ofFn_castLE (hm n)]
-  show prgAdv (fun s : Fin n → Bool => fun i : Fin (m.eval n) => P.G n s (Fin.castLE (hm n) i))
-      (D.distinguisher n (m.eval n)) =
-    prgAdv (P.G n) ((D.preComp hpre).distinguisher n (P.stretch.eval n))
-  rw [hfun, prgAdv, prgAdv,
+  rw [← prgAdv_coins_equiv (P.G n) _ _ (D.preComp_coinsEquiv hpre n) hfun, prgAdv_eq, prgAdv_eq,
     distAdv_comp (fun t : Fin (P.stretch.eval n) → Bool => fun i : Fin (m.eval n) =>
-      t (Fin.castLE (hm n) i)) (P.G n) id (D.distinguisher n (m.eval n)), distAdv, distAdv]
+      t (Fin.castLE (hm n) i)) (P.G n) id (D.distinguisher n (m.eval n)), distAdv_def,
+    distAdv_def]
   congr 2
   exact (acceptProb_castLE (hm n) _).symm
 
@@ -284,12 +308,12 @@ def ggmStep (E : List Bool → List Bool) (w : List Bool) : List Bool :=
 
 /-- The walk down the tree from the label `y` along the bits `bs`:
 `walk G' y [b₁, …, b_k] = G'_{b_k}(⋯ G'_{b₁}(y) ⋯)`. -/
-def walk {S : Type*} (G' : S → S × S) (y : S) (bs : List Bool) : S :=
+def walk {S : Type} (G' : S → S × S) (y : S) (bs : List Bool) : S :=
   bs.foldl (fun y b => pairSel b (G' y)) y
 
 /-- `ggmFrom G' x i y` is the walk from `y` along the bits of `x` from position `i` on
 (strong induction on `n − i`, `ggmFrom_of_lt`, `ggmFrom_of_le`). -/
-theorem ggmFrom_eq_walk {S : Type*} (G' : S → S × S) {n : ℕ} (x : Fin n → Bool) :
+theorem ggmFrom_eq_walk {S : Type} (G' : S → S × S) {n : ℕ} (x : Fin n → Bool) :
     ∀ (i : ℕ) (y : S), ggmFrom G' x i y = walk G' y ((List.ofFn x).drop i)
   | i, y => by
     by_cases h : i < n
@@ -309,7 +333,7 @@ theorem length_ggmStep_le (E : List Bool → List Bool) (w : List Bool) :
   · exact le_rfl
   · obtain ⟨a, b, hw⟩ : ∃ a b, w = pairEncode a b := by
       cases hd : pairDecode w with
-      | none => exact absurd (by simp [pairSndD, hd]) h
+      | none => exact absurd (pairSndD_of_pairDecode_eq_none hd) h
       | some ab => exact ⟨ab.1, ab.2, eq_pairEncode_of_pairDecode w ab.1 ab.2 hd⟩
     subst hw
     simp only [pairFstD_pairEncode, pairSndD_pairEncode] at h ⊢
@@ -382,7 +406,8 @@ def ggmEval (E : List Bool → List Bool) (w : List Bool) : List Bool :=
 theorem ggmEval_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     PolyTimeComputable (ggmEval E) := by
   have h := polyTimeComputable_iterate (ggmStep_poly hE) .var .var
-    (fun x i _ => length_ggmStep_iterate_le E x i)
+    (fun x i _ => by rw [PolyExpr.eval_var]; exact length_ggmStep_iterate_le E x i)
+  simp only [PolyExpr.eval_var] at h
   exact polyTimeComputable_pairFstD.comp h
 
 /-- The GGM evaluator on `⟨s, bs⟩` with an `n`-bit label `s` and an arbitrary bit list `bs`
@@ -407,7 +432,6 @@ theorem ggmEval_ofFn {n : ℕ} {G : (Fin n → Bool) → Fin (2 * n) → Bool}
   rw [ggmStep_iterate hG, pairFstD_pairEncode]
   congr 1
   rw [List.take_of_length_le (by rw [length_pairEncode]; simp)]
-  show walk _ s (List.ofFn x) = ggmFrom (splitHalves ∘ G) x 0 s
-  rw [ggmFrom_eq_walk, List.drop_zero]
+  rw [ggmBits_def, ggm_apply, ggmFrom_eq_walk, List.drop_zero]
 
 end TCSlib.Cryptography

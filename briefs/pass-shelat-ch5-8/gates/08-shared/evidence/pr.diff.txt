@@ -1,0 +1,2945 @@
+diff --git a/TCSlib/Complexity/Randomized/Build/IterateFind.lean b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+index 82acba88..45597594 100644
+--- a/TCSlib/Complexity/Randomized/Build/IterateFind.lean
++++ b/TCSlib/Complexity/Randomized/Build/IterateFind.lean
+@@ -78,6 +78,8 @@ assembly through `Turing.FinTM.exists_loopFindTM`.
+   polynomial-time computable.
+ * `Complexity.IterateFind.find?_congr_of_mem` — `List.find?` depends only on the predicate's
+   values on the list (used to identify the guarded orbit with `g^[i] x`).
++* `Complexity.IterateFind.find?_range_and_lt` — a search over `[0, L)` whose test also demands
++  `i < N` is the search over `[0, N)`, for `N ≤ L`.
+ 
+ ## References
+ 
+@@ -234,6 +236,27 @@ theorem find?_congr_of_mem {α : Type*} {p q : α → Bool} :
+     · rw [List.find?_cons_of_neg (by rw [ha]; exact hq), List.find?_cons_of_neg hq]
+       exact find?_congr_of_mem l (fun b hb => h b (List.mem_cons_of_mem a hb))
+ 
++/-- **A bounded search is a search over a shorter range**: for `N ≤ L`, searching `[0, L)` for
++the first `i` with `i < N` and `p i` is searching `[0, N)` for the first `i` with `p i`:
++`(List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p`.
++
++**Proof sketch.** Write `L = N + d` (`List.range_add`, `List.find?_append`). On `[0, N)` the guard
++`i < N` holds, so the two predicates agree (`find?_congr_of_mem`). On the shifted tail `N + [0, d)`
++it fails, so that search is `none` (`List.find?_eq_none`), and `o <|> none = o`. -/
++theorem find?_range_and_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
++    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
++  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
++  rw [List.range_add, List.find?_append,
++    find?_congr_of_mem _ (fun i hi => by rw [decide_eq_true (List.mem_range.1 hi), Bool.true_and])]
++  have hnone : (List.map (fun x => N + x) (List.range d)).find?
++      (fun i => decide (i < N) && p i) = none := by
++    rw [List.find?_eq_none]
++    intro x hx
++    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
++    rw [decide_eq_false (by omega), Bool.false_and]
++    exact Bool.false_ne_true
++  rw [hnone, Option.or_none]
++
+ /-- The final budget arithmetic: the loop combinator's bound `c (T n + 1)(R n + 2)` with
+ `T n = A (2n + 2 + P n + 5)^D` is in the normal form `C (n + 1)^e` once `P` and `R` are
+ majorised by `CP (n+1)^cP` and `CR (n+1)^cR`.
+diff --git a/TCSlib/Complexity/Randomized/Closure.lean b/TCSlib/Complexity/Randomized/Closure.lean
+index 79f76687..3a893b30 100644
+--- a/TCSlib/Complexity/Randomized/Closure.lean
++++ b/TCSlib/Complexity/Randomized/Closure.lean
+@@ -69,6 +69,8 @@ Not in this file (they are FP-level facts the campaign uses directly): negation
+   gives `f ∘ advInput` as a polynomial-time function (coins hard-wired to `1^{coins n}`).
+ * `Complexity.NUPPT.polyTimeComputable_layout` and the projection lemmas — the FP calculus of
+   the layout.
++* `Complexity.PolyTimeComputable.comp'`, `Complexity.PolyTimeComputable.congr` — composition in
++  applied form, and transfer of polynomial time along a pointwise equality.
+ 
+ ## References
+ 
+@@ -84,6 +86,22 @@ namespace Complexity
+ 
+ open Turing
+ 
++/-! ### Composition in applied form and transfer along pointwise equality -/
++
++/-- **Composition in applied form**: if `g` and `f` are polynomial-time, so is `x ↦ g (f x)`.
++This is `PolyTimeComputable.comp` stated without `Function.comp`, so that unification never has
++to unfold a composite against a lambda (such matches can unfold bundle string functions). -/
++theorem PolyTimeComputable.comp' {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
++    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
++  hg.comp hf
++
++/-- **Polynomial time transfers along pointwise equality**: if `f` is polynomial-time and
++`f x = g x` for every `x`, then `g` is polynomial-time (Mathlib's `Continuous.congr`
++orientation). -/
++theorem PolyTimeComputable.congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
++    (e : ∀ x, f x = g x) : PolyTimeComputable g :=
++  (funext e : f = g) ▸ h
++
+ namespace NUPPT
+ 
+ /-! ### The raw input layout and its projections -/
+diff --git a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean b/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
+index 58a4a989..3874e1d8 100644
+--- a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
+@@ -38,8 +38,9 @@ reductions encrypt the other positions of the tuple themselves under the public
+   `distAdv_multi_le_sum`), the samplers `singleDist`/`multiDist` and the single-machine hybrid
+   bound `exists_hybridBound`;
+ * glue: `acceptProb_distinguisherL_coins` (a machine's acceptance probability through a
+-  bijection of its coins), `abs_uexp_sub_le` (averages of pointwise close functions) and the
+-  averaging identities `uexp_half_add`/`uexp_half_sub` of the prediction lemma.
++  bijection of its coins) and the averaging identities `uexp_half_add`/`uexp_half_sub` of the
++  prediction lemma (averages of pointwise close functions are `abs_uexp_sub_le` of
++  `Asymptotic/Sampling.lean`).
+ 
+ ## Main definitions
+ 
+@@ -64,8 +65,8 @@ reductions encrypt the other positions of the tuple themselves under the public
+ * `TCSlib.Cryptography.exists_hybridMachine`, `exists_hybridBound` — the hybrid machine of the
+   single ⇒ multi-message and bitwise theorems and the resulting bound `K(n) · ε`.
+ * `TCSlib.Cryptography.tdpPredictor_runAtL`, `uprob_tdpPredictor` — the predictor machine.
+-* `TCSlib.Cryptography.acceptProb_distinguisherL_coins`, `abs_uexp_sub_le`, `uexp_half_add`,
+-  `uexp_half_sub`, `ofFn_fin_one` — glue.
++* `TCSlib.Cryptography.acceptProb_distinguisherL_coins`, `uexp_half_add`, `uexp_half_sub`,
++  `ofFn_fin_one` — glue.
+ 
+ ## References
+ 
+@@ -837,20 +838,4 @@ theorem uexp_half_sub {κ : Type*} [Fintype κ] [Nonempty κ] (a b : κ → ℝ)
+   rw [e, uexp_half_add]
+   ring
+ 
+-/-- Averages of pointwise `c`-close functions are `c`-close (`0 ≤ c` covers the empty type;
+-copy of the private lemma of `TCSlib.Cryptography.Asymptotic.Sampling`). -/
+-theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+-    (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
+-  rw [← HardcoreBit.uexp_sub]
+-  unfold uexp
+-  rcases Nat.eq_zero_or_pos (Fintype.card α) with h0 | hpos
+-  · rw [h0]
+-    simpa using hc
+-  · have hc' : (0 : ℝ) < Fintype.card α := by exact_mod_cast hpos
+-    rw [abs_div, abs_of_pos hc', div_le_iff₀ hc']
+-    calc |∑ a, (f a - g a)| ≤ ∑ a, |f a - g a| := Finset.abs_sum_le_sum_abs _ _
+-      _ ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
+-      _ = c * Fintype.card α := by
+-        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm]
+-
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Asymptotic/Sampling.lean b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+index 211981f0..55fa8f50 100644
+--- a/TCSlib/Cryptography/Asymptotic/Sampling.lean
++++ b/TCSlib/Cryptography/Asymptotic/Sampling.lean
+@@ -8,6 +8,7 @@ import TCSlib.Cryptography.OneWayFunctions.Basic
+ import TCSlib.Cryptography.HardcoreBit.Basic
+ import Mathlib.Data.List.FinRange
+ import Mathlib.Logic.Equiv.Fin.Basic
++import Mathlib.Data.Nat.Size
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -84,6 +85,10 @@ added for the permutation sampler, whose section moved to `Asymptotic/Permutatio
+   conditioned on success, made total by a default, is close to uniform within its failure
+   probability (C4 in abstract form).
+ * `TCSlib.Cryptography.one_sub_inv_pow_le_half` — `(1 - 1/m)^m ≤ 1/2`.
++* `TCSlib.Cryptography.statClose_one`, `TCSlib.Cryptography.abs_uexp_sub_le`,
++  `TCSlib.Cryptography.foldl_bits_eq`, `TCSlib.Cryptography.two_pow_size_le_two_mul` — glue:
++  any two samplers are `1`-close, averages of pointwise close functions are close, the binary
++  fold with an accumulator, and `2^{size m} ≤ 2m`.
+ 
+ ## References
+ 
+@@ -200,11 +205,11 @@ theorem StatClose.comp_pushesUniform {Ω : Type*} [Fintype Ω] {X : σ → γ} {
+   rw [hπ.uprob_eq (fun s => T (X s))]
+   exact h T
+ 
+-/-- Averages of pointwise `c`-close functions are `c`-close (`0 ≤ c` covers the empty type). -/
+-private theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
++/-- **Averages of pointwise `c`-close functions are `c`-close**: for `0 ≤ c` and
++`|f a − g a| ≤ c` for all `a`, `|uexp f − uexp g| ≤ c` (`0 ≤ c` covers the empty type). -/
++theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c : ℝ} (hc : 0 ≤ c)
+     (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
+-  rw [← HardcoreBit.uexp_sub]
+-  unfold uexp
++  rw [← HardcoreBit.uexp_sub, uexp_def]
+   rcases Nat.eq_zero_or_pos (Fintype.card α) with h0 | hpos
+   · rw [h0]
+     simpa using hc
+@@ -214,6 +219,14 @@ private theorem abs_uexp_sub_le {α : Type*} [Fintype α] {f g : α → ℝ} {c
+       _ ≤ ∑ _a : α, c := Finset.sum_le_sum fun a _ => h a
+       _ = c * Fintype.card α := by rw [sum_const, card_univ, nsmul_eq_mul, mul_comm]
+ 
++/-- **Any two samplers are `1`-close**: `StatClose X Y 1`, since both probabilities of every
++test lie in `[0, 1]` (`statClose_iff`, `uprob_nonneg`, `uprob_le_one`). -/
++theorem statClose_one (X : σ → γ) (Y : τ → γ) : StatClose X Y 1 :=
++  (statClose_iff X Y 1).2 fun T => by
++    rw [abs_le]
++    constructor <;> linarith [uprob_nonneg (fun s => T (X s)), uprob_le_one (fun s => T (X s)),
++      uprob_nonneg (fun t => T (Y t)), uprob_le_one (fun t => T (Y t))]
++
+ /-- The statistical-switch lemma (C10 of the Chapter 2 inventory): replacing a sampler by a
+ `δ`-close one changes the success probability of any experiment that also uses independent
+ auxiliary coins `r : ρ` by at most `δ`. [Gar26, Lemma 3.1] in the sup-over-test-sets form.
+@@ -314,8 +327,10 @@ theorem pushesUniform_of_card_fiber_le {Ω γ : Type*} [Fintype Ω] [Fintype γ]
+ def bitsToNat {k : ℕ} (b : Fin k → Bool) : ℕ :=
+   (List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0
+ 
+-/-- The digit fold with an arbitrary accumulator `a` contributes `a · 2^{|l|}`. -/
+-private theorem foldl_bits_eq (l : List Bool) (a : ℕ) :
++/-- **The binary fold with an accumulator**: the fold of `listToNat` started at `a` is
++`a · 2^{|l|}` plus the fold started at `0`,
++`foldl (a ↦ c ↦ 2a + [c]) a l = a · 2^{|l|} + foldl (a ↦ c ↦ 2a + [c]) 0 l`. -/
++theorem foldl_bits_eq (l : List Bool) (a : ℕ) :
+     l.foldl (fun a c => 2 * a + (if c then 1 else 0)) a =
+       a * 2 ^ l.length + l.foldl (fun a c => 2 * a + (if c then 1 else 0)) 0 := by
+   induction l generalizing a with
+@@ -387,6 +402,15 @@ theorem uprob_bitsToNat_lt {m k : ℕ} (hk : m ≤ 2 ^ k) :
+   push_cast
+   rfl
+ 
++/-- **A positive number is at least half the next power of two**: for `0 < m`,
++`2 ^ Nat.size m ≤ 2 m` (the top bit of `m` is bit `size m − 1`: `Nat.lt_size`, `Nat.size_pos`). -/
++theorem two_pow_size_le_two_mul {m : ℕ} (hm : 0 < m) : 2 ^ Nat.size m ≤ 2 * m := by
++  have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
++  have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
++  calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
++        rw [← pow_succ', Nat.sub_add_cancel hpos]
++    _ ≤ 2 * m := Nat.mul_le_mul_left 2 h1
++
+ /-- One rejection trial: `k` bits read as a number, accepted iff below `m`. -/
+ def uniformFromBits (m k : ℕ) (b : Fin k → Bool) : Option (Fin m) :=
+   if h : bitsToNat b < m then some ⟨_, h⟩ else none
+diff --git a/TCSlib/Cryptography/Candidates/Arithmetic.lean b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+index 8c9f7e47..d635c8f2 100644
+--- a/TCSlib/Cryptography/Candidates/Arithmetic.lean
++++ b/TCSlib/Cryptography/Candidates/Arithmetic.lean
+@@ -63,6 +63,18 @@ computability on strings is a hypothesis, discharged by a future machine-buildin
+   `TCSlib.Cryptography.Candidates.listToNat_subStr` — addition and truncated subtraction of
+   numerals are lossless at the widths of the bundle.
+ * `TCSlib.Cryptography.Candidates.val_units_pow` — `(x^e).val = x.val^e mod M` in `Z_M^*`.
++* `TCSlib.Cryptography.Candidates.natToList_mod_two_pow`,
++  `TCSlib.Cryptography.Candidates.listToNat_natToList_zero_append`,
++  `TCSlib.Cryptography.Candidates.natToList_zero_append_drop`,
++  `TCSlib.Cryptography.Candidates.listToNat_replicate_true`,
++  `TCSlib.Cryptography.Candidates.listToNat_replicate_false` — widths, leading zeros and the
++  constant words.
++* `TCSlib.Cryptography.Candidates.subStr_self`,
++  `TCSlib.Cryptography.Candidates.listToNat_mulStr`,
++  `TCSlib.Cryptography.Candidates.val_inv_natCast_zmod_zero_le` — readings of the bundle's words.
++* `TCSlib.Cryptography.Candidates.ArithmeticFP.le_poly`,
++  `TCSlib.Cryptography.Candidates.ArithmeticFP.prime_poly` — comparisons and primality tests of
++  polynomial-time words are polynomial-time.
+ 
+ ## References
+ 
+@@ -169,6 +181,58 @@ theorem natToList_val_natCast {k M : ℕ} {w : List Bool} (hk : w.length = k)
+     (hM : listToNat w < M) : natToList k ((listToNat w : ZMod M).val) = w := by
+   rw [ZMod.val_cast_of_lt hM, ← hk, natToList_length_listToNat]
+ 
++/-- **A numeral keeps the low bits**: `⟦N mod 2^k⟧_k = ⟦N⟧_k`. -/
++theorem natToList_mod_two_pow (k N : ℕ) : natToList k (N % 2 ^ k) = natToList k N := by
++  have h := natToList_length_listToNat (natToList k N)
++  rw [length_natToList, listToNat_natToList_eq_mod] at h
++  exact h
++
++/-- **Leading zeros do not change the value**: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
++theorem listToNat_natToList_zero_append (k : ℕ) (w : List Bool) :
++    listToNat (natToList k 0 ++ w) = listToNat w := by
++  rw [listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
++
++/-- **Width normalization by truncation**: the last `|b|` bits of `⟦0⟧_W ++ b` are the
++`W`-bit numeral of `⟦b⟧`, `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W` (the low `W` bits, also when
++`⟦b⟧ ≥ 2^W`).
++
++**Proof sketch.** The word `w = ⟦0⟧_W ++ b` reads as `⟦b⟧` (leading zeros), and splitting it after
++its first `|b|` bits gives `⟦w⟧ = ⟦w.take |b|⟧ · 2^W + ⟦w.drop |b|⟧` (`listToNat_append`), where the
++second summand is below `2^W`. So `⟦w.drop |b|⟧ = ⟦b⟧ mod 2^W`, and a word of length `W` is the
++numeral of its value (`natToList_length_listToNat`, `natToList_mod_two_pow`). -/
++theorem natToList_zero_append_drop (W : ℕ) (b : List Bool) :
++    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
++  set w := natToList W 0 ++ b with hw
++  have hlen : (w.drop b.length).length = W := by
++    rw [List.length_drop, hw, List.length_append, length_natToList]
++    omega
++  have hval : listToNat w = listToNat b := listToNat_natToList_zero_append W b
++  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
++    conv_lhs => rw [← List.take_append_drop b.length w]
++    rw [listToNat_append, hlen]
++  have hlt := listToNat_lt_two_pow (w.drop b.length)
++  rw [hlen] at hlt
++  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
++    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
++  rw [← natToList_mod_two_pow, hmod, ← hlen, natToList_length_listToNat]
++
++/-- **The all-ones word** `1^k` reads as `2^k − 1`: `listToNat (1^k) = 2^k − 1`. -/
++theorem listToNat_replicate_true (k : ℕ) : listToNat (List.replicate k true) = 2 ^ k - 1 := by
++  induction k with
++  | zero => rw [List.replicate_zero, listToNat_nil, pow_zero, Nat.sub_self]
++  | succ k ih =>
++    rw [List.replicate_succ', listToNat_append, ih, listToNat_singleton_true,
++      List.length_singleton, pow_succ]
++    have := Nat.one_le_two_pow (n := k)
++    omega
++
++/-- **The all-zeros word** `0^k` reads as `0`: `listToNat (0^k) = 0`. -/
++theorem listToNat_replicate_false (k : ℕ) : listToNat (List.replicate k false) = 0 := by
++  induction k with
++  | zero => rw [List.replicate_zero, listToNat_nil]
++  | succ k ih =>
++    rw [List.replicate_succ, listToNat_cons, ih, if_neg Bool.false_ne_true, zero_mul, add_zero]
++
+ /-! ## The string functions of the bundle -/
+ 
+ /-- Binary multiplication: `⟨a, b⟩ ↦ a · b` as an `(|a| + |b|)`-bit numeral (lossless: the
+@@ -282,6 +346,14 @@ theorem mulStr_natToList (k l M N : ℕ) (hM : M < 2 ^ k) (hN : N < 2 ^ l) :
+   rw [mulStr_pairEncode, length_natToList, length_natToList, listToNat_natToList hM,
+     listToNat_natToList hN]
+ 
++/-- **The product word reads back exactly**: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧` (the product fits in
++`|a| + |b|` bits). -/
++theorem listToNat_mulStr (a b : List Bool) :
++    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
++  rw [mulStr_pairEncode, listToNat_natToList]
++  rw [pow_add]
++  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b)
++
+ /-- `addStr` on an encoded pair. -/
+ @[simp] theorem addStr_pairEncode (a b : List Bool) :
+     addStr (pairEncode a b) = natToList (a.length + b.length) (listToNat a + listToNat b) := by
+@@ -341,6 +413,11 @@ theorem listToNat_subStr (a b : List Bool) :
+   rw [subStr_pairEncode]
+   exact listToNat_natToList (lt_of_le_of_lt (Nat.sub_le _ _) (listToNat_lt_two_pow a))
+ 
++/-- **Subtracting a word from itself** gives the zero numeral of its width:
++`subStr ⟨a, a⟩ = ⟦0⟧_{|a|}`. -/
++theorem subStr_self (a : List Bool) : subStr (pairEncode a a) = natToList a.length 0 := by
++  rw [subStr_pairEncode, Nat.sub_self]
++
+ /-- `divModStr` on an encoded pair: `divModStr ⟨a, b⟩ = ⟨⟦a / b⟧_{|a|}, ⟦a mod b⟧_{|b|}⟩`, the
+ quotient as an `|a|`-bit and the remainder as a `|b|`-bit numeral (`a / 0 = 0`, `a mod 0 = a`). -/
+ theorem divModStr_pairEncode (a b : List Bool) :
+@@ -356,6 +433,13 @@ theorem xgcdStr_pairEncode (a b : List Bool) :
+   unfold xgcdStr
+   rw [pairFstD_pairEncode, pairSndD_pairEncode]
+ 
++/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1`:
++`((e : Z_0)⁻¹).val ≤ 1` (the `N = 0` case of `xgcdStr_pairEncode`'s inverse). -/
++theorem val_inv_natCast_zmod_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
++  show (Int.sign (e : ℤ)).natAbs ≤ 1
++  rw [Int.natAbs_sign]
++  split_ifs <;> omega
++
+ /-- `leStr` on an encoded pair. -/
+ @[simp] theorem leStr_pairEncode (a b : List Bool) :
+     leStr (pairEncode a b) = [decide (listToNat a ≤ listToNat b)] := by
+@@ -370,6 +454,19 @@ theorem xgcdStr_pairEncode (a b : List Bool) :
+ /-- `primeStr` is the primality test of `exists_samplePrime_nuppt`. -/
+ theorem primeStr_eq : primeStr = fun w : List Bool => [decide (listToNat w).Prime] := rfl
+ 
++/-- **Comparisons are polynomial-time tests**: for polynomial-time words `a`, `b`, the bit
++`[⟦a x⟧ ≤ ⟦b x⟧]` is polynomial-time (`H.le`, read through `leStr_pairEncode`). -/
++theorem ArithmeticFP.le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
++    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
++    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] :=
++  (PolyTimeComputable.comp' H.le (ha.pairEncode hb)).congr fun x => leStr_pairEncode (a x) (b x)
++
++/-- **Primality of a polynomial-time word is a polynomial-time test**: for a polynomial-time
++word `a`, the bit `[⟦a x⟧ is prime]` is polynomial-time (`H.prime`, `primeStr_eq`). -/
++theorem ArithmeticFP.prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
++    (ha : PolyTimeComputable a) : PolyTimeComputable fun x => [decide (listToNat (a x)).Prime] :=
++  (PolyTimeComputable.comp' H.prime ha).congr fun x => congrFun primeStr_eq (a x)
++
+ /-- The residue of `x^e` is `x.val^e mod M` for a unit `x` of `Z_M` (any modulus `M ≠ 0`): the
+ form in which the evaluators `modExpStr` compute the permutations `x ↦ x^e` and `x ↦ x²`
+ (moved from `RSA.lean`, run-3 audit P7-6). -/
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index 8dc40a9a..5578b755 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -79,12 +79,17 @@ The concrete-layer content of the reductions of [PS10, §2.3–§2.4, §2.7] (Th
+ * `TCSlib.Cryptography.Candidates.rejectBlocksL_spec`,
+   `TCSlib.Cryptography.Candidates.statClose_rejectBlocksL` — accepted values satisfy the
+   test; the total sampler is within `(1 − Pr[E])^T` of uniform on `E`.
++* `TCSlib.Cryptography.Candidates.rejectBlocksL_eq_find?` — block rejection sampling as a
++  search followed by the value read.
++* `TCSlib.Cryptography.Candidates.polyTimeComputable_rejectBlocksL` — block rejection sampling
++  is polynomial-time (host H15; statement only, its proof is an open fill).
+ 
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§2.3.1–§2.3.2, Theorem 33.5, Algorithm 33.6; §2.4.2, Claim 36.2, Theorem 36.3,
+-  Algorithm 37.4; §2.7, Theorem 51.1.)
++  Algorithm 37.4; §2.7, Theorem 51.1; Theorems 52.3, 53.2, 61.7 and 63.10, the samplers of
++  block rejection sampling.)
+ * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+   draft of 22 January 2026, §2.3 (Theorem 2.1 and Figure 2.2: planting at a uniform
+   position).
+@@ -550,6 +555,23 @@ theorem rejectBlocksL_eq (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r :
+       else none :=
+   rfl
+ 
++/-- **Block rejection sampling as a search followed by the value read**: `rejectBlocksL E k B T r`
++is the first trial `t < T` whose value `v_t = ⟦(r.drop (t B)).take k⟧` passes `E`, mapped to
++`v_t`:
++`rejectBlocksL E k B T r = ((List.range T).find? fun t => decide (E v_t)).map fun t => v_t`
++(core `List.findSome?_guard`, `List.map_findSome?`, `Option.guard_apply`). -/
++theorem rejectBlocksL_eq_find? (E : ℕ → Prop) [DecidablePred E] (k B T : ℕ) (r : List Bool) :
++    rejectBlocksL E k B T r =
++      ((List.range T).find? fun t => decide (E (listToNat ((r.drop (t * B)).take k)))).map
++        fun t => listToNat ((r.drop (t * B)).take k) := by
++  rw [rejectBlocksL_eq, ← List.findSome?_guard, List.map_findSome?]
++  congr 1
++  funext t
++  rw [Function.comp_apply, Option.guard_apply]
++  by_cases ht : E (listToNat ((r.drop (t * B)).take k))
++  · rw [if_pos ht, decide_eq_true ht, if_pos rfl, Option.map_some]
++  · rw [if_neg ht, decide_eq_false ht, if_neg Bool.false_ne_true, Option.map_none]
++
+ /-- An accepted value satisfies the test and is below `2^k` (it is read from at most `k`
+ bits, `listToNat_lt_two_pow`). -/
+ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r : List Bool} {v : ℕ}
+@@ -563,25 +585,62 @@ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r
+   refine ⟨hc, lt_of_lt_of_le (listToNat_lt_two_pow _) ?_⟩
+   exact Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _)
+ 
+-/-- Restricting a uniform coin table `I → Bool` along an injection `ι : α → I` gives a uniform
+-table `α → Bool`: the restriction is the first projection of the splitting of `I` into the
+-image of `ι` and its complement. -/
+-private theorem dla_pushesUniform_restrict {α I : Type*} [Fintype α] [DecidableEq α] [Fintype I]
+-    [DecidableEq I] {ι : α → I} (hι : Function.Injective ι) :
+-    HardcoreBit.PushesUniform (fun R : I → Bool => fun a => R (ι a)) := by
+-  classical
+-  let e₁ : α ⊕ ((Set.range ι)ᶜ : Set I) ≃ I :=
+-    (Equiv.sumCongr (Equiv.ofInjective ι hι) (Equiv.refl _)).trans
+-      (Equiv.Set.sumCompl (Set.range ι))
+-  let e : (I → Bool) ≃ (α → Bool) × (((Set.range ι)ᶜ : Set I) → Bool) :=
+-    (Equiv.arrowCongr e₁.symm (Equiv.refl Bool)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
+-  have he : (fun R : I → Bool => fun a => R (ι a)) = fun R => (e R).1 := by
+-    funext R a
+-    have h1 : e₁ (Sum.inl a) = ι a := rfl
+-    show R (ι a) = R (e₁ (Sum.inl a))
+-    rw [h1]
+-  rw [he]
+-  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
++/-- **Block rejection sampling is polynomial-time** (host H15) [PS10, Theorems 52.3, 53.2, 61.7
++and 63.10: "the domain is easy to sample"]. Let `E a v` be a test on a parameter `a` and a value
++`v`, decided on words by a polynomial-time bit `acc`, so that `acc ⟨w, b⟩ = [E ⟦w⟧ ⟦b⟧]`. Take
++polynomial-time words `par z` (the parameter), `kw z`, `bw z` and `tw z`, whose lengths are the
++trial width `k`, the block length `B` and the trial count `T`, and `c z` (the coins). Then some
++polynomial-time `g` computes the sampler `rejectBlocksL (E ⟦par z⟧) k B T (c z)`:
++- `g z = []` when every trial is rejected;
++- otherwise `g z = true :: b`, where `b` reads as the accepted value and has at most `k` bits.
++
++That is, `(g z).tail.length ≤ k` and
++`rejectBlocksL (E ⟦par z⟧) k B T (c z) = if g z = [] then none else some ⟦(g z).tail⟧`.
++In particular `(rejectBlocksL …).getD 0 = ⟦(g z).tail⟧`, since `[].tail = []` reads as `0`
++(`listToNat_nil`). The statement is existential: the trial loop that realizes it is internal,
++and no consumer reads it.
++
++**Deviation:** [PS10] samples these domains exactly, in expected polynomial time; here the
++sampler is truncated to `T` trials (deviations register #15, `statClose_rejectBlocksL` carries
++the statistical term), and the host states only the polynomial-time computability of that
++truncated sampler on strings.
++
++**Proof sketch.**
++- **The loop.** The state is `⟨⟨⟨1^B, 1^k⟩, w⟩, ⟨1^T, r⟩⟩`, with `w = par z` and `r = c z`. One
++  step keeps the header `⟨⟨1^B, 1^k⟩, w⟩`, drops one bit of the counter `1^T` and one block of
++  `B` coins (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). The trial word is
++  the first `k` coins (`polyTimeComputable_pairTakePoly`). The test accepts iff the counter is
++  nonempty and `acc ⟨w, trial word⟩` holds (`polyTimeComputable_isNil`, `polyTimeComputable_not`,
++  `polyTimeComputable_and`, with the tests given explicitly). The payload is `true` followed by
++  the trial word (`polyTimeComputable_prepend`). The start state is assembled from the given
++  words (`polyTimeComputable_unaryPoly`, or `List.replicate` of the lengths, and
++  `PolyTimeComputable.pairEncode`), and `g` is the loop on it, in applied form
++  (`PolyTimeComputable.comp'`).
++- **Polynomial time.** One step at most doubles the length (`|step x| ≤ 2|x| + 4`), and from the
++  second step on the state is a well-formed pair that only shrinks
++  (`StateLoop.length_pairFstD_add_pairSndD_le`), so every orbit point has length at most
++  `2|x| + 4`. The repetition host `Complexity.polyTimeComputable_iterateFind`, with `R = var` and
++  orbit bound `2n + 4`, therefore makes the loop polynomial-time. Its `match` on the search
++  result is split by `split` (its equation lemmas), never matched by definitional unfolding.
++- **Correctness.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (i B)⟩⟩` (induction on
++  `i`, `List.drop_drop`), so trial `i` reads the `k`-bit prefix `v_i = ⟦(r.drop (i B)).take k⟧`
++  of block `i`, and the test at step `i` is `i < T ∧ E ⟦w⟧ v_i` (`hspec`). The search over the
++  first `|start| + 1 ≥ T` rounds is therefore the search over `[0, T)`
++  (`IterateFind.find?_range_and_lt`), which is `rejectBlocksL` read as a search followed by its
++  value (`rejectBlocksL_eq_find?`). If the search fails, `g z = []`; otherwise
++  `g z = true :: trial word`, whose tail has at most `k` bits (`List.length_take_le`) and reads
++  as the accepted value. -/
++theorem polyTimeComputable_rejectBlocksL (E : ℕ → ℕ → Prop) [∀ a, DecidablePred (E a)]
++    {acc : List Bool → Bool} (hacc : PolyTimeComputable fun x => [acc x])
++    (hspec : ∀ w b : List Bool, acc (pairEncode w b) = decide (E (listToNat w) (listToNat b)))
++    {par kw bw tw c : List Bool → List Bool} (hpar : PolyTimeComputable par)
++    (hkw : PolyTimeComputable kw) (hbw : PolyTimeComputable bw) (htw : PolyTimeComputable tw)
++    (hc : PolyTimeComputable c) :
++    ∃ g : List Bool → List Bool, PolyTimeComputable g ∧ ∀ z,
++      (g z).tail.length ≤ (kw z).length ∧
++      rejectBlocksL (E (listToNat (par z))) (kw z).length (bw z).length (tw z).length (c z) =
++        if g z = [] then none else some (listToNat (g z).tail) := by
++  sorry
+ 
+ /-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
+ `t · B + j`. -/
+@@ -655,7 +714,8 @@ theorem statClose_rejectBlocksL (E : ℕ → Prop) [DecidablePred E] (k B T : 
+   let π : (Fin (T * B) → Bool) → Fin T → Fin (2 ^ k) :=
+     fun r t => bitsEquiv k (fun j => r (dla_blockPos hkB (t, j)))
+   have hπ : HardcoreBit.PushesUniform π := by
+-    have h1 := dla_pushesUniform_restrict (dla_blockPos_injective (T := T) hkB)
++    have h1 :=
++      HardcoreBit.pushesUniform_restrict (O := Bool) (dla_blockPos_injective (T := T) hkB)
+     have h2 := HardcoreBit.pushesUniform_equiv
+       ((Equiv.curry (Fin T) (Fin k) Bool).trans (Equiv.piCongrRight fun _ : Fin T => bitsEquiv k))
+     exact h1.comp h2
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLog.lean b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+index 2b96a128..5beedf81 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLog.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLog.lean
+@@ -613,12 +613,7 @@ theorem statClose_sampleBelowL {m n : ℕ} (hm : 0 < m) (hmn : m < 2 ^ n) :
+   have hkn : Nat.size m ≤ n := Nat.size_le.2 hmn
+   have hmk : m < 2 ^ Nat.size m := Nat.lt_size_self m
+   -- `2^k ≤ 2m`: the top bit of `m` is bit `k − 1`
+-  have hk2 : 2 ^ Nat.size m ≤ 2 * m := by
+-    have hpos : 0 < Nat.size m := Nat.size_pos.2 hm
+-    have h1 : 2 ^ (Nat.size m - 1) ≤ m := Nat.lt_size.1 (Nat.sub_lt hpos one_pos)
+-    calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
+-          rw [← pow_succ', Nat.sub_add_cancel hpos]
+-      _ ≤ 2 * m := Nat.mul_le_mul_left 2 h1
++  have hk2 : 2 ^ Nat.size m ≤ 2 * m := two_pow_size_le_two_mul hm
+   -- the block sampler with the test `v < m` and the default `0`
+   have h := statClose_rejectBlocksL (· < m) (Nat.size m) n n hkn (d := 0) hm
+     (Nat.pow_pos two_pos)
+@@ -652,86 +647,6 @@ def expSampleRaw (z : List Bool) : List Bool :=
+ 
+ /-! ### The domain sampler as a trial loop (helpers of `polyTimeComputable_expSampleRaw`) -/
+ 
+-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). -/
+-private theorem dla_listToNat_append (a b : List Bool) :
+-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+-  have key : ∀ (l : List Bool) (acc : ℕ),
+-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+-    intro l
+-    induction l with
+-    | nil => intro acc; simp
+-    | cons c l ih =>
+-      intro acc
+-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+-      ring
+-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+-
+-/-- The empty numeral reads as `0`. -/
+-private theorem dla_listToNat_nil : listToNat [] = 0 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- **Width normalization**: prefixing the `W`-bit numeral of `0` and keeping the last `W`
+-bits gives the `W`-bit numeral of the number read from `b`:
+-`(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`. -/
+-private theorem dla_drop_natToList_zero_append (W : ℕ) (b : List Bool) :
+-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+-  set w := natToList W 0 ++ b with hw
+-  have hlen : (w.drop b.length).length = W := by
+-    rw [List.length_drop, hw, List.length_append, length_natToList]
+-    omega
+-  have hval : listToNat w = listToNat b := by
+-    rw [hw, dla_listToNat_append, listToNat_natToList (Nat.two_pow_pos W), zero_mul, zero_add]
+-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+-    conv_lhs => rw [← List.take_append_drop b.length w]
+-    rw [dla_listToNat_append, hlen]
+-  have hlt := listToNat_lt_two_pow (w.drop b.length)
+-  rw [hlen] at hlt
+-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+-    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+-  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+-    have h := natToList_length_listToNat (natToList W N)
+-    rw [length_natToList, listToNat_natToList_eq_mod] at h
+-    exact h.symm
+-  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+-
+-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
+-private theorem dla_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
+-    (l : List α) :
+-    l.findSome? (fun t => if p t then some (h t) else none) = (l.find? fun t => decide (p t)).map h := by
+-  induction l with
+-  | nil => rfl
+-  | cons a l ih =>
+-    rw [List.findSome?_cons, List.find?_cons]
+-    by_cases ha : p a
+-    · rw [if_pos ha, decide_eq_true ha]
+-      rfl
+-    · rw [if_neg ha, decide_eq_false ha, ih]
+-
+-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for
+-`N ≤ L`. -/
+-private theorem dla_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
+-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
+-    intro l
+-    induction l with
+-    | nil => intro _; rfl
+-    | cons a l ih =>
+-      intro hl
+-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
+-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
+-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
+-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+-      (fun i => decide (i < N) && p i) = none := by
+-    rw [List.find?_eq_none]
+-    intro x hx
+-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+-    simp
+-  rw [hnone, Option.or_none]
+-
+ /-- The start state of the trial loop on the raw layout `⟨⟨⟨1^n, i⟩, α⟩, r⟩`:
+ `⟨⟨1^n, ⟨1^k, ⟦m⟧⟩⟩, ⟨1^n, r⟩⟩` with `⟦m⟧` the middle numeral of `i` and `1^k = sizeStr ⟦m⟧`
+ its bit length (the header, then the trial counter and the remaining coins). -/
+@@ -846,10 +761,11 @@ read from the loop's payload (marker dropped) is `sampleBelowL m k n n r` with t
+ **Proof sketch.** After `i` steps the header is unchanged, the counter `1^n` has lost `i` bits
+ and the coins have lost `i` blocks of `n` bits (`dla_ssStep_iterate`): the trial value is the
+ `k`-bit prefix of block `i`, and the test accepts iff `i < n` and that value is below `m`. The search over the
+-first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)` (`dla_find?_range_lt`),
+-which is `sampleBelowL`'s `findSome?` read as a `find?` followed by the value
+-(`dla_findSome?_ite`). In the `some i` case the payload with its marker dropped is the prefix of
+-block `i`; in the `none` case both sides read `0` (`dla_listToNat_nil`). -/
++first `|start| + 1 ≥ n` rounds is therefore the search over `[0, n)`
++(`IterateFind.find?_range_and_lt`), which is `sampleBelowL` read as a `find?` followed by the
++value (`sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq_find?`). In the `some i` case the
++payload with its marker dropped is the prefix of block `i`; in the `none` case both sides read `0`
++(`listToNat_nil`). -/
+ private theorem dla_ssFind_eq (z : List Bool) :
+     listToNat ((match (List.range ((dla_ssStart z).length + 1)).find?
+         (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) with
+@@ -890,15 +806,13 @@ private theorem dla_ssFind_eq (z : List Bool) :
+       (List.range u.length).find? (fun i => decide (val i < listToNat ms)) := by
+     rw [show (fun i => dla_ssAcc (dla_ssStep^[i] (dla_ssStart z))) =
+       fun i => decide (i < u.length) && decide (val i < listToNat ms) from funext hacc]
+-    exact dla_find?_range_lt _ hrange
++    exact IterateFind.find?_range_and_lt _ hrange
+   have hsample : sampleBelowL (dlM (NUPPT.inArg z)) (Nat.size (dlM (NUPPT.inArg z))) u.length u.length c =
+       ((List.range u.length).find? (fun i => decide (val i < listToNat ms))).map val := by
+-    rw [hm]
+-    unfold sampleBelowL
+-    exact dla_findSome?_ite (fun i => val i < listToNat ms) val _
++    rw [hm, sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq_find?]
+   rw [hfind, hsample]
+   rcases hf : (List.range u.length).find? (fun i => decide (val i < listToNat ms)) with _ | i
+-  · exact dla_listToNat_nil
++  · exact listToNat_nil
+   · show listToNat ((dla_ssOut (dla_ssStep^[i] (dla_ssStart z))).drop 1) = val i
+     rw [dla_ssOut, List.singleton_append, List.drop_one, List.tail_cons, hblock]
+ 
+@@ -945,7 +859,7 @@ theorem polyTimeComputable_expSampleRaw (H : ArithmeticFP) : PolyTimeComputable
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hq
+   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var,
+     subStr_pairEncode, Nat.sub_self]
+-  rw [dla_drop_natToList_zero_append]
++  rw [natToList_zero_append_drop]
+   unfold expSampleRaw dlW
+   congr 1
+   have hF := dla_ssFind_eq z
+@@ -1135,18 +1049,6 @@ theorem expCollection_D {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGrou
+     (hV : ∀ i, V i → ExpValid i) (i : List Bool) :
+     (expCollection H G hV).D i = ZMod (expOrd i) := rfl
+ 
+-/-- Any two samplers are `1`-close (probabilities lie in `[0, 1]`). -/
+-private theorem dla_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) :
+-    StatClose X Y 1 := by
+-  rw [statClose_iff]
+-  intro T
+-  have h1 := uprob_nonneg (fun s => T (X s))
+-  have h2 := uprob_le_one (fun s => T (X s))
+-  have h3 := uprob_nonneg (fun t => T (Y t))
+-  have h4 := uprob_le_one (fun t => T (Y t))
+-  rw [abs_le]
+-  constructor <;> linarith
+-
+ /-- **The decoded domain sampler is `(1/2)^n`-close to uniform on `Z_m`** at a valid index of
+ width `n`: `statClose_sampleBelowL` on the sampler's `n · n` coins (read through
+ `NUPPT.coinsEquivPoly`), mapped through the decoder, which reads the numeral back exactly.
+@@ -1227,7 +1129,7 @@ theorem expCollection_sampleClose {V : List Bool → Prop} (H : ArithmeticFP) (G
+     intro n r
+     by_cases hn : n < G.n₀
+     · rw [if_pos hn]
+-      exact dla_statClose_one _ _
++      exact statClose_one _ _
+     rw [if_neg hn]
+     have hn' : G.n₀ ≤ n := not_lt.1 hn
+     -- the generated index is valid and of width `n`
+diff --git a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+index 2c0e56f5..9a705a4c 100644
+--- a/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
++++ b/TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean
+@@ -990,11 +990,6 @@ its success at one good instance by `invProb_dlInverter_ge` minus the sampling l
+ 
+ /-! ### Numeral arithmetic of the inverter machine -/
+ 
+-/-- Composition of polynomial-time maps in applied form. -/
+-private theorem dlb_ptc {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+-    (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z) :=
+-  hg.comp hf
+-
+ /-- The numeral `⟦1⟧_1`. -/
+ private def dlb_one : List Bool := natToList 1 1
+ /-- The numeral `⟦2⟧_2`. -/
+@@ -1027,23 +1022,23 @@ variable {fa fb fc : List Bool → List Bool}
+ 
+ private theorem dlb_mulMod_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb)
+     (hc : PolyTimeComputable fc) : PolyTimeComputable fun z => dlb_mulMod (fa z) (fb z) (fc z) :=
+-  dlb_ptc polyTimeComputable_pairSndD (dlb_ptc H.divMod ((dlb_ptc H.mul (ha.pairEncode hb)).pairEncode hc))
++  PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod ((PolyTimeComputable.comp' H.mul (ha.pairEncode hb)).pairEncode hc))
+ 
+ private theorem dlb_powMod_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb)
+     (hc : PolyTimeComputable fc) : PolyTimeComputable fun z => dlb_powMod (fa z) (fb z) (fc z) :=
+-  dlb_ptc H.modExp (ha.pairEncode (hb.pairEncode hc))
++  PolyTimeComputable.comp' H.modExp (ha.pairEncode (hb.pairEncode hc))
+ 
+ private theorem dlb_invMod_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb) :
+     PolyTimeComputable fun z => dlb_invMod (fa z) (fb z) :=
+-  dlb_ptc polyTimeComputable_pairSndD (dlb_ptc H.xgcd (ha.pairEncode hb))
++  PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.xgcd (ha.pairEncode hb))
+ 
+ private theorem dlb_quot_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb) :
+     PolyTimeComputable fun z => dlb_quot (fa z) (fb z) :=
+-  dlb_ptc polyTimeComputable_pairFstD (dlb_ptc H.divMod (ha.pairEncode hb))
++  PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' H.divMod (ha.pairEncode hb))
+ 
+ private theorem dlb_rem_poly (H : ArithmeticFP) (ha : PolyTimeComputable fa) (hb : PolyTimeComputable fb) :
+     PolyTimeComputable fun z => dlb_rem (fa z) (fb z) :=
+-  dlb_ptc polyTimeComputable_pairSndD (dlb_ptc H.divMod (ha.pairEncode hb))
++  PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (ha.pairEncode hb))
+ 
+ end Poly
+ 
+@@ -1087,20 +1082,20 @@ end Sem
+ 
+ private theorem dlb_take_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+     (hb : PolyTimeComputable fb) : PolyTimeComputable fun z => (fb z).take (fa z).length := by
+-  have h := dlb_ptc (polyTimeComputable_pairTakePoly .var) (ha.pairEncode hb)
++  have h := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly .var) (ha.pairEncode hb)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+ 
+ private theorem dlb_drop_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+     (hb : PolyTimeComputable fb) : PolyTimeComputable fun z => (fb z).drop (fa z).length := by
+-  have h := dlb_ptc (polyTimeComputable_pairDropPoly .var) (ha.pairEncode hb)
++  have h := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var) (ha.pairEncode hb)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+ 
+ /-- A one-bit equality test of two polynomial-time maps (`polyTimeComputable_pairEq`). -/
+ private theorem dlb_eq_poly {fa fb : List Bool → List Bool} (ha : PolyTimeComputable fa)
+     (hb : PolyTimeComputable fb) : PolyTimeComputable fun z => [decide (fa z = fb z)] := by
+-  have h := dlb_ptc polyTimeComputable_pairEq (ha.pairEncode hb)
++  have h := PolyTimeComputable.comp' polyTimeComputable_pairEq (ha.pairEncode hb)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+ 
+@@ -1123,7 +1118,7 @@ private theorem dlb_stateIterate_poly {start step : List Bool → List Bool}
+   have hF := polyTimeComputable_iterate (StateLoop.gstep_poly hstep B) .var (StateLoop.gstepBound B)
+     (fun w i _ => StateLoop.length_gstep_iterate_le step B w i)
+   refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp
+-    (dlb_ptc polyTimeComputable_pairSndD (dlb_ptc hF (polyTimeComputable_id.pairEncode hstart)))
++    (PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' hF (polyTimeComputable_id.pairEncode hstart)))
+   simp only [PolyExpr.eval_var, id_eq]
+ 
+ /-! ### The fixed data of the inverter's loops -/
+@@ -1208,19 +1203,19 @@ private theorem dlb_vote_poly (H : ArithmeticFP) {ff fr fs fa : List Bool → Li
+     (hf : PolyTimeComputable ff) (hr : PolyTimeComputable fr) (hs : PolyTimeComputable fs)
+     (ha : PolyTimeComputable fa) :
+     PolyTimeComputable fun z => [dlb_vote S A (ff z) (fr z) (fs z) (fa z)] := by
+-  have hu := dlb_ptc dlb_fu_poly hf
+-  have hi := dlb_ptc dlb_fi_poly hf
++  have hu := PolyTimeComputable.comp' dlb_fu_poly hf
++  have hi := PolyTimeComputable.comp' dlb_fi_poly hf
+   have hw : PolyTimeComputable fun z => dlb_wS S (ff z) (fs z) :=
+-    dlb_ptc S.polyTimeComputable_output
++    PolyTimeComputable.comp' S.polyTimeComputable_output
+       (NUPPT.polyTimeComputable_layout hu hi (polyTimeComputable_const []) hs)
+   have hzz : PolyTimeComputable fun z => dlb_zz S (ff z) (fr z) (fs z) :=
+-    dlb_mulMod_poly H hr (dlb_powMod_poly H (dlb_ptc dlb_fg_poly hf) hw (dlb_ptc dlb_fp_poly hf))
+-      (dlb_ptc dlb_fp_poly hf)
+-  have hout := dlb_ptc A.polyTimeComputable_output
+-    (NUPPT.polyTimeComputable_layout hu (hi.pairEncode hzz) (dlb_ptc dlb_fα_poly hf) ha)
++    dlb_mulMod_poly H hr (dlb_powMod_poly H (PolyTimeComputable.comp' dlb_fg_poly hf) hw (PolyTimeComputable.comp' dlb_fp_poly hf))
++      (PolyTimeComputable.comp' dlb_fp_poly hf)
++  have hout := PolyTimeComputable.comp' A.polyTimeComputable_output
++    (NUPPT.polyTimeComputable_layout hu (hi.pairEncode hzz) (PolyTimeComputable.comp' dlb_fα_poly hf) ha)
+   have hab : PolyTimeComputable fun z => [dlb_aBit S A (ff z) (fr z) (fs z) (fa z)] :=
+     dlb_eq_poly hout (polyTimeComputable_const [true])
+-  have hh := dlb_ptc (polyTimeComputable_halfStr H) (hi.pairEncode hw)
++  have hh := PolyTimeComputable.comp' (polyTimeComputable_halfStr H) (hi.pairEncode hw)
+   exact dlb_eq_poly hab hh
+ 
+ end Trial
+@@ -1273,17 +1268,17 @@ private theorem dlb_iStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_iSte
+     polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+   have hV : PolyTimeComputable dlb_iVotes :=
+     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+-  have hS : PolyTimeComputable dlb_iSB := dlb_take_poly (dlb_ptc dlb_fuS_poly hF) hCs
+-  have hCs1 : PolyTimeComputable dlb_iCs1 := dlb_drop_poly (dlb_ptc dlb_fuS_poly hF) hCs
+-  have hA : PolyTimeComputable dlb_iAB := dlb_take_poly (dlb_ptc dlb_fuA_poly hF) hCs1
+-  have hRest : PolyTimeComputable dlb_iRest := dlb_drop_poly (dlb_ptc dlb_fuA_poly hF) hCs1
++  have hS : PolyTimeComputable dlb_iSB := dlb_take_poly (PolyTimeComputable.comp' dlb_fuS_poly hF) hCs
++  have hCs1 : PolyTimeComputable dlb_iCs1 := dlb_drop_poly (PolyTimeComputable.comp' dlb_fuS_poly hF) hCs
++  have hA : PolyTimeComputable dlb_iAB := dlb_take_poly (PolyTimeComputable.comp' dlb_fuA_poly hF) hCs1
++  have hRest : PolyTimeComputable dlb_iRest := dlb_drop_poly (PolyTimeComputable.comp' dlb_fuA_poly hF) hCs1
+   have hvote := dlb_vote_poly S A H hF hR hS hA
+-  have hnil := dlb_ptc polyTimeComputable_isNil hC
+-  have hnew := (dlb_ptc StateLoop.tail_poly hC).pairEncode (hRest.pairEncode (hvote.append hV))
++  have hnil := PolyTimeComputable.comp' polyTimeComputable_isNil hC
++  have hnew := (PolyTimeComputable.comp' StateLoop.tail_poly hC).pairEncode (hRest.pairEncode (hvote.append hV))
+   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
+ 
+ private theorem dlb_iStart_poly : PolyTimeComputable dlb_iStart :=
+-  (dlb_ptc dlb_fuL_poly (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)).pairEncode
++  (PolyTimeComputable.comp' dlb_fuL_poly (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)).pairEncode
+     (polyTimeComputable_pairSndD.pairEncode (polyTimeComputable_const []))
+ 
+ private theorem dlb_inner_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_inner S A) :=
+@@ -1357,46 +1352,46 @@ private theorem dlb_oCs_poly : PolyTimeComputable dlb_oCs := polyTimeComputable_
+ 
+ private theorem dlb_oQr_poly (H : ArithmeticFP) : PolyTimeComputable fun W => [dlb_oQr W] := by
+   have hE : PolyTimeComputable dlb_oEul :=
+-    dlb_powMod_poly H dlb_oY_poly (dlb_ptc dlb_feH_poly dlb_oF_poly) (dlb_ptc dlb_fp_poly dlb_oF_poly)
+-  have hq1 := dlb_ptc polyTimeComputable_headD
+-    (dlb_ptc H.le (hE.pairEncode (polyTimeComputable_const dlb_one)))
+-  have hq2 := dlb_ptc polyTimeComputable_headD
+-    (dlb_ptc H.le ((polyTimeComputable_const dlb_one).pairEncode hE))
++    dlb_powMod_poly H dlb_oY_poly (PolyTimeComputable.comp' dlb_feH_poly dlb_oF_poly) (PolyTimeComputable.comp' dlb_fp_poly dlb_oF_poly)
++  have hq1 := PolyTimeComputable.comp' polyTimeComputable_headD
++    (PolyTimeComputable.comp' H.le (hE.pairEncode (polyTimeComputable_const dlb_one)))
++  have hq2 := PolyTimeComputable.comp' polyTimeComputable_headD
++    (PolyTimeComputable.comp' H.le ((polyTimeComputable_const dlb_one).pairEncode hE))
+   exact polyTimeComputable_and hq1 hq2
+ 
+ private theorem dlb_oRoot_poly (H : ArithmeticFP) : PolyTimeComputable dlb_oRoot := by
+-  have hp := dlb_ptc dlb_fp_poly dlb_oF_poly
++  have hp := PolyTimeComputable.comp' dlb_fp_poly dlb_oF_poly
+   have hQ : PolyTimeComputable fun W => [decide (dlb_oQr W = true)] := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp (dlb_oQr_poly H)
+     simp only [Bool.decide_eq_true]
+   have hBase : PolyTimeComputable dlb_oBase :=
+     dlb_ite_poly (c := fun W => dlb_oQr W = true) hQ dlb_oY_poly
+-      (dlb_mulMod_poly H dlb_oY_poly (dlb_ptc dlb_fgI_poly dlb_oF_poly) hp)
+-  exact dlb_powMod_poly H hBase (dlb_ptc dlb_feR_poly dlb_oF_poly) hp
++      (dlb_mulMod_poly H dlb_oY_poly (PolyTimeComputable.comp' dlb_fgI_poly dlb_oF_poly) hp)
++  exact dlb_powMod_poly H hBase (PolyTimeComputable.comp' dlb_feR_poly dlb_oF_poly) hp
+ 
+ private theorem dlb_oFin_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oFin S A) := by
+-  have h := dlb_ptc (dlb_inner_poly S A H) ((dlb_oF_poly.pairEncode (dlb_oRoot_poly H)).pairEncode
++  have h := PolyTimeComputable.comp' (dlb_inner_poly S A H) ((dlb_oF_poly.pairEncode (dlb_oRoot_poly H)).pairEncode
+     dlb_oCs_poly)
+   unfold dlb_oFin
+   exact h
+ 
+ private theorem dlb_oNext_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oNext S A) := by
+   have hV : PolyTimeComputable fun W => pairSndD (pairSndD (dlb_oFin S A W)) :=
+-    dlb_ptc polyTimeComputable_pairSndD (dlb_ptc polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
+-  have hB := dlb_ptc polyTimeComputable_majority hV
++    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
++  have hB := PolyTimeComputable.comp' polyTimeComputable_majority hV
+   have hB' : PolyTimeComputable fun W => [decide (dlb_oB S A W = true)] := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hB
+     simp only [dlb_oB, dlb_oVotes, Bool.decide_eq_true]
+   exact dlb_ite_poly (c := fun W => dlb_oB S A W = true) hB' (dlb_oRoot_poly H)
+-    (dlb_ptc H.sub ((dlb_ptc dlb_fp_poly dlb_oF_poly).pairEncode (dlb_oRoot_poly H)))
++    (PolyTimeComputable.comp' H.sub ((PolyTimeComputable.comp' dlb_fp_poly dlb_oF_poly).pairEncode (dlb_oRoot_poly H)))
+ 
+ private theorem dlb_oStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oStep S A) := by
+-  have hnil := dlb_ptc polyTimeComputable_isNil dlb_oCnt_poly
++  have hnil := PolyTimeComputable.comp' polyTimeComputable_isNil dlb_oCnt_poly
+   have hnq := polyTimeComputable_not (dlb_oQr_poly H)
+-  have hcs := dlb_ptc polyTimeComputable_pairFstD
+-    (dlb_ptc polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
++  have hcs := PolyTimeComputable.comp' polyTimeComputable_pairFstD
++    (PolyTimeComputable.comp' polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
+   have hnew := (dlb_oNext_poly S A H).pairEncode ((hnq.append dlb_oAcc_poly).pairEncode
+-    ((dlb_ptc StateLoop.tail_poly dlb_oCnt_poly).pairEncode hcs))
++    ((PolyTimeComputable.comp' StateLoop.tail_poly dlb_oCnt_poly).pairEncode hcs))
+   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
+ 
+ private theorem dlb_outer_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_outer S A) :=
+@@ -1477,11 +1472,11 @@ private theorem dlb_zfix_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_zfix
+   have hu := NUPPT.polyTimeComputable_inParam
+   have hun : ∀ P : PolyExpr,
+       PolyTimeComputable fun z => List.replicate (P.eval (NUPPT.inParam z).length) true :=
+-    fun P => dlb_ptc (polyTimeComputable_unaryPoly P) hu
++    fun P => PolyTimeComputable.comp' (polyTimeComputable_unaryPoly P) hu
+   have h := (hu.pairEncode (dlb_zi_poly.pairEncode dlb_zα_poly)).pairEncode
+     (((dlb_invMod_poly H dlb_zg_poly dlb_zp_poly).pairEncode
+       ((dlb_quot_poly H (dlb_zpm1_poly H) (polyTimeComputable_const dlb_two)).pairEncode
+-        (dlb_ptc H.add ((dlb_quot_poly H dlb_zp_poly (polyTimeComputable_const dlb_four)).pairEncode
++        (PolyTimeComputable.comp' H.add ((dlb_quot_poly H dlb_zp_poly (polyTimeComputable_const dlb_four)).pairEncode
+           (polyTimeComputable_const dlb_one))))).pairEncode
+       ((hun S.coins).pairEncode ((hun A.coins).pairEncode (hun ℓP))))
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+@@ -1495,13 +1490,13 @@ private theorem dlb_zs0_poly (H : ArithmeticFP) : PolyTimeComputable dlb_zs0 :=
+   simp only [dlb_zs0]
+ 
+ private theorem dlb_zacc_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_zacc S A ℓP) := by
+-  have h := dlb_ptc polyTimeComputable_pairFstD (dlb_ptc polyTimeComputable_pairSndD
+-    (dlb_ptc (dlb_outer_poly S A H) ((dlb_zfix_poly S A ℓP H).pairEncode (dlb_zs0_poly H))))
++  have h := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' polyTimeComputable_pairSndD
++    (PolyTimeComputable.comp' (dlb_outer_poly S A H) ((dlb_zfix_poly S A ℓP H).pairEncode (dlb_zs0_poly H))))
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   simp only [dlb_zacc]
+ 
+ private theorem dlb_raw_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_raw S A ℓP) := by
+-  have h := dlb_rem_poly H (dlb_ptc H.add ((dlb_zacc_poly S A ℓP H).pairEncode (dlb_zts_poly H)))
++  have h := dlb_rem_poly H (PolyTimeComputable.comp' H.add ((dlb_zacc_poly S A ℓP H).pairEncode (dlb_zts_poly H)))
+     (dlb_zpm1_poly H)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   simp only [dlb_raw]
+@@ -1947,22 +1942,6 @@ end RoundSem
+ 
+ /-! ### Bits and counts -/
+ 
+-private theorem dlb_foldl_bits (l : List Bool) (a : ℕ) :
+-    l.foldl (fun a c => 2 * a + if c then 1 else 0) a =
+-      a * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c then 1 else 0) 0 := by
+-  induction l generalizing a with
+-  | nil => simp
+-  | cons b l ih =>
+-    simp only [List.foldl_cons, List.length_cons]
+-    rw [ih, ih (2 * 0 + _)]
+-    ring
+-
+-/-- Prepending a bit to a numeral (most significant first): `⟦b :: l⟧ = b·2^{|l|} + ⟦l⟧`. -/
+-private theorem dlb_listToNat_cons (b : Bool) (l : List Bool) :
+-    listToNat (b :: l) = (if b then 1 else 0) * 2 ^ l.length + listToNat l := by
+-  rw [listToNat_eq, listToNat_eq, List.foldl_cons, dlb_foldl_bits]
+-  simp
+-
+ /-- The number of `true`s in `List.ofFn v` is the number of indices where `v` is `true`. -/
+ private theorem dlb_count_ofFn {M : ℕ} (v : Fin M → Bool) :
+     (List.ofFn v).count true = #(univ.filter fun j : Fin M => v j = true) := by
+@@ -2168,13 +2147,13 @@ private theorem dlb_roundsL_succ {S A : NUPPT} {n ℓ k : ℕ} (c : Fin (k + 1)
+ 
+ /-- **The machine's rounds are the rounds of `dlLoop`**: after `k` rounds on `k` round blocks
+ whose sampler blocks all decode, the bits read `dlLoop g (majOracle g A_i ℓ) k y c·2^{|acc|} + ⟦acc⟧`
+-(induction on `k`, `dlb_oStep_round`, `dlLoop_succ`, `dlb_listToNat_cons`).
++(induction on `k`, `dlb_oStep_round`, `dlLoop_succ`, `listToNat_cons`).
+ 
+ **Proof sketch.** Induction on `k`; nothing runs at `k = 0`. At `k + 1` the round
+ coins are the first round's blocks followed by the others (`dlb_roundsL_succ`); one round
+ (`dlb_oStep_round`) moves to `±dlRoot g y` as `majOracle` decides and prepends the parity bit
+ `[y ∉ QR_p]` to `acc`. The induction hypothesis on the other `k` rounds, `dlLoop_succ` and
+-`⟦b :: acc⟧ = b · 2^{|acc|} + ⟦acc⟧` (`dlb_listToNat_cons`) give the claim. -/
++`⟦b :: acc⟧ = b · 2^{|acc|} + ⟦acc⟧` (`listToNat_cons`) give the claim. -/
+ private theorem dlb_loop_sem (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 2 = 1)
+     (hfu : dlb_fu f = List.replicate n true) (hfi : dlb_fi f = i) (hfα : dlb_fα f = A.advice n)
+     (hiP : pairFstD i = natToList n p) (hiG : pairSndD (pairSndD i) = natToList n gN)
+@@ -2199,7 +2178,7 @@ private theorem dlb_loop_sem (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 2 =
+     obtain ⟨yv, acc', h1, h2⟩ := dlb_loop_sem hp2 hpn hodd hfu hfi hfα hiP hiG hW hg hS hA hL hfeH hfeR
+       hfgI s0 rest k _ ((!decide (y ∈ QR p)) :: acc) (fun j => c j.succ) (fun j => hdec j.succ)
+     refine ⟨yv, acc', h1, ?_⟩
+-    rw [h2, dlLoop_succ, dlb_listToNat_cons, List.length_cons, pow_succ]
++    rw [h2, dlLoop_succ, listToNat_cons, List.length_cons, pow_succ]
+     by_cases hq : y ∈ QR p
+     · simp only [hq, decide_true, Bool.not_true, Bool.false_eq_true, if_false, if_true]
+       ring
+@@ -2713,18 +2692,6 @@ end Instance
+ 
+ /-! ### Parameters for large `n` -/
+ 
+-/-- `2^{Nat.size m} ≤ 2m` for `m ≥ 1`. -/
+-private theorem dlb_two_pow_size_le {m : ℕ} (hm : 0 < m) : 2 ^ Nat.size m ≤ 2 * m := by
+-  have h := Nat.size_pos.2 hm
+-  have h1 : 2 ^ (Nat.size m - 1) ≤ m := by
+-    by_contra hlt
+-    push_neg at hlt
+-    have := Nat.size_le.2 hlt
+-    omega
+-  calc 2 ^ Nat.size m = 2 * 2 ^ (Nat.size m - 1) := by
+-        rw [← pow_succ']; congr 1; omega
+-    _ ≤ 2 * m := by omega
+-
+ /-- **The window parameters** of the reduction: for `P = p − 1 ≥ 16 n^c`, `s = ⌊P/(8n^c)⌋` and
+ `T = 2^{Nat.size (16 n^c)} > 16 n^c` satisfy `s ≥ 1`, `4s ≤ P/(2n^c)` and `P ≤ T s`. -/
+ private theorem dlb_window_params (c n P : ℕ) (hn : 0 < n) (h2D : 16 * n ^ c ≤ P) :
+@@ -2835,7 +2802,7 @@ success to `G.gen`'s coins (`fullDLCollection_index`, `fullDLCollection_coinsEqu
+ `good_instances` (with `2ε'`) and `hbig` (`ExpGroupGen.fullLengthExcept_iff`, `uprob_or_le`) the
+ coins with success `≥ 1/2 + ε'` and `p ≥ 2^{n−1}` have probability `≥ ε'/2`. On each of them
+ `16n^c ≤ p − 1`, so `dlb_window_params` gives the window, and `dlb_instance` with
+-`dlb_arith_success` (`2^κ ≤ 32n^c`, `dlb_two_pow_size_le`) bounds `B`'s success below by
++`dlb_arith_success` (`2^κ ≤ 32n^c`, `two_pow_size_le_two_mul`) bounds `B`'s success below by
+ `3/(128n^c) − n·ℓ·δ_S(n)`. `HardcoreBit.uprob_mul_le_uexp` averages over the good set, and
+ `dlb_arith_loss` with `dlb_arith_final` give `3/(1024 n^{2c})` (`ExpGroupGen.dlProb_eq`). -/
+ private theorem dlb_reduction (H : ArithmeticFP) (G : FullGroupGen)
+@@ -2962,7 +2929,7 @@ private theorem dlb_reduction (H : ArithmeticFP) (G : FullGroupGen)
+     refine le_trans ?_ h
+     have hT0 : (0 : ℝ) < ((2 ^ Nat.size (16 * n ^ c) : ℕ) : ℝ) := by positivity
+     have hT32 : ((2 ^ Nat.size (16 * n ^ c) : ℕ) : ℝ) ≤ 32 * X := by
+-      have := dlb_two_pow_size_le (by omega : 0 < 16 * n ^ c)
++      have := two_pow_size_le_two_mul (by omega : 0 < 16 * n ^ c)
+       have h' : ((2 ^ Nat.size (16 * n ^ c) : ℕ) : ℝ) ≤ ((2 * (16 * n ^ c) : ℕ) : ℝ) := by exact_mod_cast this
+       push_cast at h' ⊢; rw [hXdef]; linarith
+     have := dlb_arith_success hX1 (by linarith : (1 : ℝ) ≤ n) hℓR hT0 hT32
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index e4fec92d..e796aea8 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -596,62 +596,6 @@ operations (lossless at the widths used here), under a polynomial-time `if`, and
+ rejection sampler `sampleBelowL` (a trial loop, `Complexity.polyTimeComputable_iterateFind`);
+ `dlc_poly_natToList` writes such a number as a numeral of a given width. -/
+ 
+-/-- The empty numeral reads as `0`. -/
+-private theorem dlc_listToNat_nil : listToNat [] = 0 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). -/
+-private theorem dlc_listToNat_append (a b : List Bool) :
+-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+-  have key : ∀ (l : List Bool) (acc : ℕ),
+-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+-    intro l
+-    induction l with
+-    | nil => intro acc; simp
+-    | cons c l ih =>
+-      intro acc
+-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+-      ring
+-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+-
+-/-- The one-bit numeral `1` reads as `1`. -/
+-private theorem dlc_listToNat_true : listToNat [true] = 1 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- The `k`-bit numeral keeps the `k` low-order bits: `⟦N mod 2^k⟧_k = ⟦N⟧_k`. -/
+-private theorem dlc_natToList_mod (k N : ℕ) : natToList k (N % 2 ^ k) = natToList k N := by
+-  have h := natToList_length_listToNat (natToList k N)
+-  rw [length_natToList, listToNat_natToList_eq_mod] at h
+-  exact h
+-
+-/-- Leading zeros do not change the number read. -/
+-private theorem dlc_listToNat_zeros_append (k : ℕ) (b : List Bool) :
+-    listToNat (natToList k 0 ++ b) = listToNat b := by
+-  rw [dlc_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+-
+-/-- **Width normalization**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`. -/
+-private theorem dlc_drop_natToList_zero_append (W : ℕ) (b : List Bool) :
+-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+-  set w := natToList W 0 ++ b with hw
+-  have hlen : (w.drop b.length).length = W := by
+-    rw [List.length_drop, hw, List.length_append, length_natToList]
+-    omega
+-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+-    conv_lhs => rw [← List.take_append_drop b.length w]
+-    rw [dlc_listToNat_append, hlen]
+-  have hlt := listToNat_lt_two_pow (w.drop b.length)
+-  rw [hlen] at hlt
+-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+-    rw [← dlc_listToNat_zeros_append W b, ← hw, hsplit, Nat.mul_add_mod_of_lt hlt]
+-  rw [← dlc_natToList_mod, hmod, ← hlen, natToList_length_listToNat]
+-
+-/-- The zero numeral of the width of `w`: `subStr ⟨w, w⟩ = ⟦0⟧_{|w|}`. -/
+-private theorem dlc_subStr_self (w : List Bool) : subStr (pairEncode w w) = natToList w.length 0 := by
+-  rw [subStr_pairEncode, Nat.sub_self]
+-
+ /-- `F z` is the number read from a polynomial-time string function of `z`. -/
+ private def dlc_NumPoly (F : List Bool → ℕ) : Prop :=
+   ∃ g : List Bool → List Bool, PolyTimeComputable g ∧ ∀ z, listToNat (g z) = F z
+@@ -695,9 +639,7 @@ private theorem dlc_numPoly_mul (H : ArithmeticFP) {F G : List Bool → ℕ} (hF
+   obtain ⟨g, hg, hgG⟩ := hG
+   refine ⟨fun z => mulStr (pairEncode (f z) (g z)), H.mul.comp (hf.pairEncode hg), fun z => ?_⟩
+   simp only
+-  rw [mulStr_pairEncode, listToNat_natToList, hfF, hgG]
+-  rw [pow_add]
+-  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow _) (listToNat_lt_two_pow _)
++  rw [listToNat_mulStr, hfF, hgG]
+ 
+ /-- Remainders (`H.divMod` on the modulus padded by `|a|` leading zeros, so that the
+ remainder is lossless also for the modulus `0`). -/
+@@ -709,7 +651,7 @@ private theorem dlc_numPoly_mod (H : ArithmeticFP) {F G : List Bool → ℕ} (hF
+     polyTimeComputable_pairSndD.comp (H.divMod.comp (hf.pairEncode ((H.sub.comp (hf.pairEncode hf)).append hg))),
+     fun z => ?_⟩
+   simp only
+-  rw [divModStr_pairEncode, pairSndD_pairEncode, dlc_subStr_self, dlc_listToNat_zeros_append,
++  rw [divModStr_pairEncode, pairSndD_pairEncode, subStr_self, listToNat_natToList_zero_append,
+     listToNat_natToList, hfF, hgG]
+   rw [List.length_append, length_natToList, pow_add]
+   calc listToNat (f z) % listToNat (g z) ≤ listToNat (f z) := Nat.mod_le _ _
+@@ -737,7 +679,7 @@ private theorem dlc_numPoly_two_pow (H : ArithmeticFP) {u : List Bool → List B
+   refine ⟨fun z => [true] ++ subStr (pairEncode (u z) (u z)),
+     (polyTimeComputable_prepend [true]).comp (H.sub.comp (hu.pairEncode hu)), fun z => ?_⟩
+   simp only
+-  rw [dlc_subStr_self, dlc_listToNat_append, dlc_listToNat_true, length_natToList,
++  rw [subStr_self, listToNat_append, listToNat_singleton_true, length_natToList,
+     listToNat_natToList (Nat.two_pow_pos _), one_mul, add_zero]
+ 
+ /-- Comparisons are polynomial-time tests (`H.le`). -/
+@@ -781,7 +723,7 @@ private theorem dlc_poly_natToList (H : ArithmeticFP) {u : List Bool → List Bo
+     (hb.pairEncode ((H.sub.comp (hu.pairEncode hu)).append hb))
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hq
+   simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+-  rw [dlc_subStr_self, dlc_drop_natToList_zero_append, hbF]
++  rw [subStr_self, natToList_zero_append_drop, hbF]
+ 
+ /-- The safe modulus: `M`, or `2^n` in place of the modulus `0`. -/
+ private def dlc_safeMod (n M : ℕ) : ℕ := if M = 0 then 2 ^ n else M
+@@ -799,7 +741,7 @@ private theorem dlc_natToList_mod_safeMod (n V M : ℕ) :
+     natToList n (V % M) = natToList n (V % dlc_safeMod n M) := by
+   unfold dlc_safeMod
+   split_ifs with h
+-  · rw [h, Nat.mod_zero, dlc_natToList_mod]
++  · rw [h, Nat.mod_zero, natToList_mod_two_pow]
+   · rfl
+ 
+ /-- The safe modulus of a polynomial-time number at the width of `u`. -/
+@@ -916,53 +858,19 @@ private theorem dlc_ssLoop_poly (H : ArithmeticFP) : PolyTimeComputable dlc_ssLo
+   next i hi => rw [hi]
+   next hn => rw [hn]
+ 
+-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
+-private theorem dlc_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
+-    (l : List α) :
+-    l.findSome? (fun t => if p t then some (h t) else none) = (l.find? fun t => decide (p t)).map h := by
+-  induction l with
+-  | nil => rfl
+-  | cons a l ih =>
+-    rw [List.findSome?_cons, List.find?_cons]
+-    by_cases ha : p a
+-    · rw [if_pos ha, decide_eq_true ha]
+-      rfl
+-    · rw [if_neg ha, decide_eq_false ha, ih]
+-
+-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`. -/
+-private theorem dlc_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
+-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
+-    intro l
+-    induction l with
+-    | nil => intro _; rfl
+-    | cons a l ih =>
+-      intro hl
+-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
+-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
+-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
+-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+-      (fun i => decide (i < N) && p i) = none := by
+-    rw [List.find?_eq_none]
+-    intro x hx
+-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+-    simp
+-  rw [hnone, Option.or_none]
+-
+ /-- **The trial loop computes the rejection sampler**: from `⟨⟨u, ⟨1^k, m⟩⟩, ⟨u, c⟩⟩` with
+ `k = Nat.size ⟦m⟧`, the number read from the payload (marker dropped) is
+ `sampleBelowL ⟦m⟧ k |u| |u| c` with the fallback `0` (read through
+-`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq`).
++`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq_find?`).
+ 
+ **Proof sketch.** After `i` steps the header is unchanged, the counter `u` has lost `i` bits and the
+ coins `i` blocks of `|u|` bits (`dlc_ssStep_iterate`), so the trial value is the `Nat.size ⟦m⟧`-bit
+ prefix of block `i`, and the test accepts iff `i < |u|` and that value is below `⟦m⟧`. The search
+-over the first `|x| + 1 ≥ |u|` rounds is the search over `[0, |u|)` (`dlc_find?_range_lt`), which is
+-the search of `sampleBelowL` read through `sampleBelowL_eq_rejectBlocksL`, `rejectBlocksL_eq` and
+-`dlc_findSome?_ite`. In the `some i` case the payload without its marker is the prefix of block `i`;
+-in the `none` case both sides read `0` (`dlc_listToNat_nil`). -/
++over the first `|x| + 1 ≥ |u|` rounds is the search over `[0, |u|)`
++(`IterateFind.find?_range_and_lt`), which is the search of `sampleBelowL` read through
++`sampleBelowL_eq_rejectBlocksL` and `rejectBlocksL_eq_find?`. In the `some i` case the payload
++without its marker is the prefix of block `i`; in the `none` case both sides read `0`
++(`listToNat_nil`). -/
+ private theorem dlc_ssLoop_eq (u ks ms c : List Bool) (hk : ks.length = Nat.size (listToNat ms)) :
+     listToNat ((dlc_ssLoop (pairEncode (pairEncode u (pairEncode ks ms)) (pairEncode u c))).drop 1) =
+       (sampleBelowL (listToNat ms) (Nat.size (listToNat ms)) u.length u.length c).getD 0 := by
+@@ -991,16 +899,15 @@ private theorem dlc_ssLoop_eq (u ks ms c : List Bool) (hk : ks.length = Nat.size
+       (List.range u.length).find? (fun i => decide (val i < listToNat ms)) := by
+     rw [show (fun i => dlc_ssAcc (dlc_ssStep^[i] x0)) =
+       fun i => decide (i < u.length) && decide (val i < listToNat ms) from funext hacc]
+-    exact dlc_find?_range_lt _ hrange
++    exact IterateFind.find?_range_and_lt _ hrange
+   have hsample : sampleBelowL (listToNat ms) (Nat.size (listToNat ms)) u.length u.length c =
+       ((List.range u.length).find? (fun i => decide (val i < listToNat ms))).map val := by
+-    rw [sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq]
+-    exact dlc_findSome?_ite (fun i => val i < listToNat ms) val _
++    rw [sampleBelowL_eq_rejectBlocksL, rejectBlocksL_eq_find?]
+   rw [hsample]
+   unfold dlc_ssLoop
+   rw [hfind]
+   rcases hf : (List.range u.length).find? (fun i => decide (val i < listToNat ms)) with _ | i
+-  · exact dlc_listToNat_nil
++  · exact listToNat_nil
+   · show listToNat ((dlc_ssOut (dlc_ssStep^[i] x0)).drop 1) = val i
+     rw [dlc_ssOut, List.singleton_append, List.drop_one, List.tail_cons, hblock]
+ 
+@@ -1263,17 +1170,10 @@ def egDecStr (z : List Bool) : List Bool :=
+         (pairFstD (pairFstD (pairFstD z))))))))
+     (pairFstD (pairFstD (pairFstD z)))))
+ 
+-/-- Transport of polynomial-time computability along a pointwise equation (used to avoid
+-the unifier unfolding the arithmetic string functions when matching a composition chain
+-against a definition; integration note, run 2). -/
+-private theorem polyTimeComputable_of_forall_eq {f g : List Bool → List Bool}
+-    (hf : PolyTimeComputable f) (h : ∀ x, f x = g x) : PolyTimeComputable g :=
+-  (funext h : f = g) ▸ hf
+-
+ /-- **`Dec` is polynomial-time** given the arithmetic bundle (a composition of its functions).
+ 
+ The chain is assembled in composition form and transported to `egDecStr` pointwise
+-(`polyTimeComputable_of_forall_eq` with `Function.comp_apply`): matching the composition
++(`PolyTimeComputable.congr` with `Function.comp_apply`): matching the composition
+ directly against the unfolded definition makes the unifier unfold `xgcdStr`/`modExpStr`
+ and does not terminate in practice. -/
+ theorem polyTimeComputable_egDecStr (H : ArithmeticFP) : PolyTimeComputable egDecStr := by
+@@ -1284,7 +1184,7 @@ theorem polyTimeComputable_egDecStr (H : ArithmeticFP) : PolyTimeComputable egDe
+   have hexp := H.modExp.comp (hc₁.pairEncode (ha.pairEncode hp))
+   have hinv := polyTimeComputable_pairSndD.comp (H.xgcd.comp (hexp.pairEncode hp))
+   have hmul := H.mul.comp (hc₂.pairEncode hinv)
+-  refine polyTimeComputable_of_forall_eq
++  refine PolyTimeComputable.congr
+     (polyTimeComputable_pairSndD.comp (H.divMod.comp (hmul.pairEncode hp))) (fun z => ?_)
+   simp only [Function.comp_apply, egDecStr]
+ 
+@@ -1616,21 +1516,11 @@ noncomputable def egGroupGen (H : ArithmeticFP) (G : SafePrimeGen) : SafePrimeGe
+ 
+ /-! ### Helpers of `elGamal_secure` (unit dl-c) -/
+ 
+-/-- A coin string read along a length cast. -/
+-private def dlc_castEquiv {a L : ℕ} (h : a = L) : (Fin a → Bool) ≃ (Fin L → Bool) :=
+-  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+-
+-/-- The cast keeps the coin string. -/
+-private theorem dlc_castEquiv_ofFn {a L : ℕ} (h : a = L) (u : Fin a → Bool) :
+-    List.ofFn (dlc_castEquiv h u) = List.ofFn u := by
+-  subst h
+-  rfl
+-
+ /-- Splitting a coin string `Fin L → Bool` with `L = a + b` into its two segments: the length
+ cast, then `TCSlib.Cryptography.splitCoins`. -/
+ private def dlc_splitEquiv {L a b : ℕ} (h : L = a + b) :
+     (Fin L → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
+-  (dlc_castEquiv h).trans (splitCoins a b)
++  (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)).trans (splitCoins a b)
+ 
+ /-- The coin string of two joined segments is the concatenation of their coin strings
+ (`ofFn_splitCoins_symm`). -/
+@@ -1892,18 +1782,6 @@ private theorem dlc_uprob_shift {p q : ℕ} [NeZero q] {h c k : ℕ}
+     rwa [Nat.mod_mod, Nat.mod_mod] at this
+   rw [hval]
+ 
+-/-- Averages of pointwise `c`-close functions are `c`-close. -/
+-private theorem dlc_abs_uexp_sub_le {α : Type*} [Fintype α] [Nonempty α] {f g : α → ℝ} {c : ℝ}
+-    (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
+-  rw [← HardcoreBit.uexp_sub, abs_le]
+-  constructor
+-  · have := HardcoreBit.uexp_mono (f := fun _ : α => -c) (g := fun a => f a - g a)
+-      fun a => (abs_le.1 (h a)).1
+-    rwa [HardcoreBit.uexp_const] at this
+-  · have := HardcoreBit.uexp_mono (f := fun a => f a - g a) (g := fun _ : α => c)
+-      fun a => (abs_le.1 (h a)).2
+-    rwa [HardcoreBit.uexp_const] at this
+-
+ /-- The coin count of El Gamal's `Gen`: `G`'s coins, then `n · n` for `g` and `n · n` for `a`. -/
+ private theorem dlc_egGen_coinLen (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
+     (egGen H G).coinLen n = G.gen.coinLen n + (n * n + n * n) := by
+@@ -1939,7 +1817,7 @@ private theorem dlc_genEquiv_ofFn (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ
+ 
+ /-- The coins of `Enc` from one segment of `n · n` coins. -/
+ private noncomputable def dlc_encEquiv (H : ArithmeticFP) (n : ℕ) : (Fin (n * n) → Bool) ≃ (egEnc H).Coins n :=
+-  dlc_castEquiv (dlc_egEnc_coinLen H n).symm
++  Equiv.arrowCongr (finCongr (dlc_egEnc_coinLen H n).symm) (Equiv.refl Bool)
+ 
+ /-- The coins of the derived generator from `G`'s coins and the segment of `g`. -/
+ private noncomputable def dlc_grpEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
+@@ -1949,7 +1827,7 @@ private noncomputable def dlc_grpEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n
+ /-- The coin string of `Enc` read from its segment. -/
+ private theorem dlc_encEquiv_ofFn (H : ArithmeticFP) (n : ℕ) (u : Fin (n * n) → Bool) :
+     List.ofFn (dlc_encEquiv H n u) = List.ofFn u :=
+-  dlc_castEquiv_ofFn _ _
++  (List.ofFn_congr (dlc_egEnc_coinLen H n).symm u).symm
+ 
+ /-- **The challenge on split coins**: the keys are `egGenParts` on `G`'s output and the segments of
+ `g` and `a`, the ciphertext is `egEncParts` on the segment of `b` (`egGen_runAt`, `egEnc_runAt`).
+@@ -2258,7 +2136,7 @@ probabilities within `2 · (1/2)^n` (average of `dlc_hyb3_point` over the other
+ 
+ **Proof sketch.** Relabel the seeds and the coins of `D_b` so that the coins `u₃` of `z` come last
+ (`acceptProb_def`, `uprob_comp_equiv` with `E e_b`), split them off (`uprob_prod`), and bound the
+-gap of the averages by the pointwise gap (`dlc_abs_uexp_sub_le`, `dlc_hyb3_point`). -/
++gap of the averages by the pointwise gap (`abs_uexp_sub_le`, `dlc_hyb3_point`). -/
+ private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁ : NUPPT) {n : ℕ}
+     (hn : G.n₀ ≤ n) (e₀ : M.Coins n × D.Coins n ≃ Db₀.Coins n)
+     (he₀ : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
+@@ -2279,7 +2157,7 @@ private theorem dlc_hyb3 (H : ArithmeticFP) (G : SafePrimeGen) (M D Db₀ Db₁
+       right_inv := fun s => by simp }
+   rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (E e₀), ← uprob_comp_equiv (E e₁),
+     uprob_prod, uprob_prod]
+-  refine dlc_abs_uexp_sub_le fun ρ => ?_
++  refine abs_uexp_sub_le (by positivity) fun ρ => ?_
+   obtain ⟨⟨r, u₁, u₂⟩, rM, rD⟩ := ρ
+   exact dlc_hyb3_point H G M D Db₀ Db₁ hn e₀ he₀ e₁ he₁ r u₁ u₂ rM rD
+ 
+diff --git a/TCSlib/Cryptography/Candidates/Factoring.lean b/TCSlib/Cryptography/Candidates/Factoring.lean
+index b79e1c46..345fba19 100644
+--- a/TCSlib/Cryptography/Candidates/Factoring.lean
++++ b/TCSlib/Cryptography/Candidates/Factoring.lean
+@@ -181,20 +181,13 @@ theorem fmult_inv_factor {n p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpn : p <
+   exact fmultNat_eq_mul_prime hp hq
+     (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h)
+ 
+-/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
+-private theorem fac_foldl_replicate_false (m : ℕ) :
+-    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
+-  induction m with
+-  | zero => rfl
+-  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
+-
+ /-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
+ (`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
+ private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
+     natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
+   have h := natToList_length_listToNat (List.replicate j false ++ w)
+-  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
+-    fac_foldl_replicate_false, ← listToNat_eq] at h
++  rw [List.length_append, List.length_replicate, listToNat_append, listToNat_replicate_false,
++    zero_mul, zero_add] at h
+   exact h
+ 
+ /-- The numeral of `1`: `natToList k 1 = (0^k ++ 1).drop 1` (`0^{k−1}1` for `k ≥ 1`, empty for
+@@ -225,8 +218,7 @@ private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool 
+     PolyTimeComputable fun z => [decide (listToNat (g z) ≤ 1) && decide (1 ≤ listToNat (g z))] := by
+   have h1 := H.le.comp (hg.pairEncode (polyTimeComputable_const [true]))
+   have h2 := H.le.comp ((polyTimeComputable_const [true]).pairEncode hg)
+-  have hone : listToNat [true] = 1 := by rw [listToNat_eq]; rfl
+-  simp only [Function.comp_def, leStr_pairEncode, hone] at h1 h2
++  simp only [Function.comp_def, leStr_pairEncode, listToNat_singleton_true] at h1 h2
+   exact polyTimeComputable_and h1 h2
+ 
+ /-- **`f_mult` is easy to compute** [PS10, Theorem 33.5, "clearly computable in polynomial
+@@ -703,7 +695,7 @@ private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = O
+ 
+ /-- The all-`false` string reads as `0`. -/
+ private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by
+-  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_eq, fac_foldl_replicate_false]
++  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_replicate_false]
+ 
+ /-- Block `i` of `x` under `FunFamily.blocks` is the window `x (finProdFinEquiv (i, ·))`. -/
+ private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+@@ -1082,14 +1074,6 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
+   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
+     (natToBits n 2))
+ 
+-/-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
+-(`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
+-private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
+-  have h := natToList_length_listToNat (natToList k N)
+-  have hl : (natToList k N).length = k := by rw [natToList_eq, List.length_ofFn]
+-  rw [listToNat_natToList_eq_mod, hl] at h
+-  exact h.symm
+-
+ /-- **The fallback numeral of `SamplePrime`**: the `k`-bit numeral of `2` is `0^{k+2}` followed
+ by `10`, with its first two bits dropped (`0^{k−2}10` for `k ≥ 2`, `0` for `k = 1`, empty for
+ `k = 0`). -/
+@@ -1097,7 +1081,7 @@ private theorem fac_natToList_two (k : ℕ) :
+     natToList k 2 = (List.replicate k false ++ [true, false]).drop 2 := by
+   rcases k with _ | _ | m
+   · rw [natToList_zero]; rfl
+-  · rw [fac_natToList_mod]
++  · rw [← natToList_mod_two_pow]
+     have h := natToList_length_listToNat [false]
+     rw [listToNat_eq] at h
+     exact h
+@@ -1109,7 +1093,7 @@ private theorem fac_natToList_two (k : ℕ) :
+       | succ m => simp [List.replicate_succ]
+     rw [hw]
+     have h := natToList_length_listToNat (List.replicate m false ++ [true, false])
+-    rw [listToNat_eq, List.foldl_append, fac_foldl_replicate_false] at h
++    rw [listToNat_append, listToNat_replicate_false, zero_mul, zero_add, listToNat_eq] at h
+     simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil] at h
+     exact h
+ 
+@@ -1593,16 +1577,6 @@ theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
+   rw [Collection.index_eq]
+   exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
+ 
+-/-- Bit strings of two equal lengths, identified (`finCongr`); it keeps the coin string
+-(`fac_arrowCongr_ofFn`). -/
+-private def fac_arrowCongr {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) :=
+-  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+-
+-/-- `List.ofFn (fac_arrowCongr h r) = List.ofFn r`. -/
+-private theorem fac_arrowCongr_ofFn {a b : ℕ} (h : a = b) (r : Fin a → Bool) :
+-    List.ofFn (fac_arrowCongr h r) = List.ofFn r :=
+-  (List.ofFn_congr h r).symm
+-
+ /-- The decoded pair read from two numbers: the pair itself when they are distinct primes below
+ `2^n`, the default pair otherwise. -/
+ private noncomputable def fac_pairDec (n : ℕ) (hn : 2 ≤ n) (v : ℕ × ℕ) : Option (DistinctPrimes n) :=
+@@ -1703,12 +1677,15 @@ theorem factoringCollection_sampleClose (H : ArithmeticFP) :
+   rw [factoringCollection_sample]
+   have h1 := (fac_statClose_decode i.length (max i.length 2) (le_max_right _ _)
+     (max_eq_left hn)).map (Option.map (factoringCollection_domEquiv H i).symm)
+-  have h2 := (h1.comp_equiv_left (fac_arrowCongr hc)).comp_equiv_right
+-    (factoringCollection_domEquiv H i)
++  have h2 := (h1.comp_equiv_left
++    (Equiv.arrowCongr (finCongr hc) (Equiv.refl Bool))).comp_equiv_right
++      (factoringCollection_domEquiv H i)
++  have hofn : ∀ s, List.ofFn (Equiv.arrowCongr (finCongr hc) (Equiv.refl Bool) s) = List.ofFn s :=
++    fun s => (List.ofFn_congr hc s).symm
+   simp only [Option.map_some, Equiv.symm_apply_apply] at h2
+   convert h2 using 1
+   · funext s
+-    rw [factoringCollection_decD, factoringSampler_runAt, fac_arrowCongr_ofFn]
++    rw [factoringCollection_decD, factoringSampler_runAt, hofn]
+ 
+ /-- **The reduction from the collection to factoring** [PS10, proof of Theorem 51.1, "the
+ factoring assumption states that inverting `f_i` is hard"]: `A_fact(1^n, N) :=
+diff --git a/TCSlib/Cryptography/Candidates/RSA.lean b/TCSlib/Cryptography/Candidates/RSA.lean
+index 7d14fd88..5689ef48 100644
+--- a/TCSlib/Cryptography/Candidates/RSA.lean
++++ b/TCSlib/Cryptography/Candidates/RSA.lean
+@@ -395,10 +395,11 @@ private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Copr
+   rw [Nat.Coprime, ← Nat.gcd_rec]
+   exact Nat.gcd_one_right N
+ 
+-/-- The fallback of the unit sampler is a unit: for `N > 0`, the value
+-`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
+-the default, `rsa_one_mod_spec`). -/
+-private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
++/-- **The total unit sampler gives a unit**: for `0 < N`, the value
++`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N`:
++`(sampleUnitL N k B T r).getD (1 % N) < N ∧ gcd((sampleUnitL N k B T r).getD (1 % N), N) = 1`
++(`sampleUnitL_spec`, or the fallback `1 mod N`, which passes the unit test). -/
++theorem sampleUnitL_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+     (sampleUnitL N k B T r).getD (1 % N) < N ∧
+       Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
+   cases h : sampleUnitL N k B T r with
+@@ -647,53 +648,6 @@ remaining coins). The family follows the pattern of the discrete-log fill's priv
+ (`dla_ss*`, `DiscreteLog.lean`), with the stride `B` read from the header and the unit test in
+ place of the comparison. -/
+ 
+-/-- The number read from `[true]` is `1`. -/
+-private theorem rsa_listToNat_one : listToNat [true] = 1 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- The empty numeral reads as `0`. -/
+-private theorem rsa_listToNat_nil : listToNat [] = 0 := by
+-  rw [listToNat_eq]
+-  rfl
+-
+-/-- `List.findSome?` of a filter-and-map is `List.find?` followed by the map. -/
+-private theorem rsa_findSome?_ite {α β : Type*} (p : α → Prop) [DecidablePred p] (h : α → β)
+-    (l : List α) :
+-    l.findSome? (fun t => if p t then some (h t) else none) =
+-      (l.find? fun t => decide (p t)).map h := by
+-  induction l with
+-  | nil => rfl
+-  | cons a l ih =>
+-    rw [List.findSome?_cons, List.find?_cons]
+-    by_cases ha : p a
+-    · rw [if_pos ha, decide_eq_true ha]
+-      rfl
+-    · rw [if_neg ha, decide_eq_false ha, ih]
+-
+-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for
+-`N ≤ L`. -/
+-private theorem rsa_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
+-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
+-    intro l
+-    induction l with
+-    | nil => intro _; rfl
+-    | cons a l ih =>
+-      intro hl
+-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
+-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
+-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
+-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+-      (fun i => decide (i < N) && p i) = none := by
+-    rw [List.find?_eq_none]
+-    intro x hx
+-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+-    simp
+-  rw [hnone, Option.or_none]
+-
+ /-- **The unit test by comparisons**: for `N = ⟦w⟧`, "`¬ (N ≤ v)`, and the `|w|`-bit numeral `g`
+ of `gcd(v, N)` reads `≤ 1` and `≥ 1`" is the test `v < N ∧ gcd(v, N) = 1`.
+ 
+@@ -705,7 +659,7 @@ private theorem rsa_unitTest_eq (v : ℕ) (w : List Bool) :
+       decide (listToNat (natToList w.length (Nat.gcd v (listToNat w))) ≤ listToNat [true]) &&
+       decide (listToNat [true] ≤ listToNat (natToList w.length (Nat.gcd v (listToNat w))))) =
+       decide (v < listToNat w ∧ Nat.Coprime v (listToNat w)) := by
+-  rw [rsa_listToNat_one]
++  rw [listToNat_singleton_true]
+   by_cases h : v < listToNat w
+   · have hg : Nat.gcd v (listToNat w) < 2 ^ w.length :=
+       lt_of_le_of_lt (Nat.gcd_le_right _ (by omega)) (listToNat_lt_two_pow w)
+@@ -756,12 +710,6 @@ private def rsa_usAcc (x : List Bool) : Bool :=
+ /-- The payload: a `true` marker, then the accepted block. -/
+ private def rsa_usOut (x : List Bool) : List Bool := [true] ++ rsa_usBlock x
+ 
+-/-- Composition of polynomial-time functions in applied form, `x ↦ g (f x)` (so that the
+-composite is stated up to `β` only, without `Function.comp`). -/
+-private theorem rsa_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+-    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
+-  hg.comp hf
+-
+ /-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
+ private theorem rsa_usStep_poly : PolyTimeComputable rsa_usStep := by
+   have h := polyTimeComputable_pairFstD.pairEncode
+@@ -786,25 +734,12 @@ private theorem rsa_usBlock_poly : PolyTimeComputable rsa_usBlock := by
+   simp only [rsa_usBlock, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+     PolyExpr.eval_var]
+ 
+-/-- A comparison `[⟦a x⟧ ≤ ⟦b x⟧]` of two polynomial-time numerals is polynomial-time
+-(`H.le`, read through `leStr_pairEncode`). -/
+-private theorem rsa_le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
+-    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
+-    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
+-  have h := H.le.comp (ha.pairEncode hb)
+-  have e : (leStr ∘ fun x => pairEncode (a x) (b x)) =
+-      fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
+-    funext x
+-    rw [Function.comp_apply, leStr_pairEncode]
+-  rw [e] at h
+-  exact h
+-
+ /-- The acceptance test is polynomial-time (`polyTimeComputable_isNil`, `H.le`, `H.xgcd`).
+ 
+ **Proof sketch.** The gcd numeral is `H.xgcd` on `⟨block, w⟩` followed by `pairFstD`, stated in
+-applied form (`rsa_comp`) and folded into `rsa_usGcd`; the four one-bit tests are
++applied form (`PolyTimeComputable.comp'`) and folded into `rsa_usGcd`; the four one-bit tests are
+ `polyTimeComputable_isNil` (negated), `H.le` (negated) and two `H.le` against `[true]`
+-(`rsa_le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
++(`ArithmeticFP.le_poly`); they are combined by `polyTimeComputable_and` with the tests given explicitly,
+ so that no bundle string function is unfolded by unification. -/
+ private theorem rsa_usAcc_poly (H : ArithmeticFP) :
+     PolyTimeComputable fun x => [rsa_usAcc x] := by
+@@ -812,10 +747,10 @@ private theorem rsa_usAcc_poly (H : ArithmeticFP) :
+     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD)
+   have hx : PolyTimeComputable fun x =>
+       xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x)))) :=
+-    rsa_comp H.xgcd (rsa_usBlock_poly.pairEncode hw)
++    PolyTimeComputable.comp' H.xgcd (rsa_usBlock_poly.pairEncode hw)
+   have hg' : PolyTimeComputable fun x =>
+       pairFstD (xgcdStr (pairEncode (rsa_usBlock x) (pairSndD (pairSndD (pairFstD x))))) :=
+-    rsa_comp polyTimeComputable_pairFstD hx
++    PolyTimeComputable.comp' polyTimeComputable_pairFstD hx
+   have e : (fun x => pairFstD (xgcdStr (pairEncode (rsa_usBlock x)
+       (pairSndD (pairSndD (pairFstD x)))))) = rsa_usGcd := by
+     funext x
+@@ -826,20 +761,20 @@ private theorem rsa_usAcc_poly (H : ArithmeticFP) :
+   have hc : PolyTimeComputable fun x => pairFstD (pairSndD x) :=
+     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+   have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
+-    rsa_comp polyTimeComputable_isNil hc
++    PolyTimeComputable.comp' polyTimeComputable_isNil hc
+   have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
+     polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
+   have t2 : PolyTimeComputable fun x =>
+       [decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
+-    rsa_le_poly H hw rsa_usBlock_poly
++    H.le_poly hw rsa_usBlock_poly
+   have t2' : PolyTimeComputable fun x =>
+       [!decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))] :=
+     polyTimeComputable_not
+       (p := fun x => decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x))) t2
+   have t3 : PolyTimeComputable fun x => [decide (listToNat (rsa_usGcd x) ≤ listToNat [true])] :=
+-    rsa_le_poly H hg (polyTimeComputable_const [true])
++    H.le_poly hg (polyTimeComputable_const [true])
+   have t4 : PolyTimeComputable fun x => [decide (listToNat [true] ≤ listToNat (rsa_usGcd x))] :=
+-    rsa_le_poly H (polyTimeComputable_const [true]) hg
++    H.le_poly (polyTimeComputable_const [true]) hg
+   have t23 := polyTimeComputable_and
+     (p := fun x => !decide (listToNat (pairSndD (pairSndD (pairFstD x))) ≤ listToNat (rsa_usBlock x)))
+     (q := fun x => decide (listToNat (rsa_usGcd x) ≤ listToNat [true])) t2' t3
+@@ -927,9 +862,9 @@ is `true :: b`.
+ **Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (i B)⟩⟩`
+ (`rsa_usStep_iterate`), so trial `i` reads `(r.drop (i B)).take k` and the test is
+ `i < T ∧ (v < N ∧ gcd(v, N) = 1)` (`rsa_unitTest_eq`, `xgcdStr_pairEncode`). The search over
+-`[0, |x| + 1) ⊇ [0, T)` is then the search over `[0, T)` (`rsa_find?_range_lt`), and
++`[0, |x| + 1) ⊇ [0, T)` is then the search over `[0, T)` (`IterateFind.find?_range_and_lt`), and
+ `sampleUnitL = rejectBlocksL` is that search followed by reading the block
+-(`rejectBlocksL_eq`, `rsa_findSome?_ite`). -/
++(`rejectBlocksL_eq`, `rejectBlocksL_eq_find?`). -/
+ private theorem rsa_usFind_eq (f : List Bool → List Bool) (z : List Bool) :
+     sampleUnitL (listToNat (f z)) (Nat.size (listToNat (f z))) (rsaBlock.eval (NUPPT.inParam z).length)
+         (rsaTrials.eval (NUPPT.inParam z).length) (NUPPT.inCoins z) =
+@@ -970,9 +905,8 @@ private theorem rsa_usFind_eq (f : List Bool → List Bool) (z : List Bool) :
+     rw [show (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) =
+       fun i => decide (i < T) &&
+         decide (val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w)) from funext hacc]
+-    exact rsa_find?_range_lt _ hrange
+-  rw [hfind, sampleUnitL_eq, rejectBlocksL_eq,
+-    rsa_findSome?_ite (fun i => val i < listToNat w ∧ Nat.Coprime (val i) (listToNat w)) val]
++    exact IterateFind.find?_range_and_lt _ hrange
++  rw [hfind, sampleUnitL_eq, rejectBlocksL_eq_find?]
+   simp only [hblock]
+   rfl
+ 
+@@ -1001,11 +935,11 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
+     PolyTimeComputable fun z => unitSampleStr (f z) (NUPPT.inParam z).length (NUPPT.inCoins z) := by
+   -- the trial loop on the start state (the repetition host)
+   have hL : PolyTimeComputable fun z => rsa_usLoop (rsa_usStart f z) :=
+-    rsa_comp (rsa_usLoop_poly H) (rsa_usStart_poly H hf)
++    PolyTimeComputable.comp' (rsa_usLoop_poly H) (rsa_usStart_poly H hf)
+   have hN : PolyTimeComputable fun z => [decide (rsa_usLoop (rsa_usStart f z) = [])] :=
+-    rsa_comp polyTimeComputable_isNil hL
++    PolyTimeComputable.comp' polyTimeComputable_isNil hL
+   have hT : PolyTimeComputable fun z => (rsa_usLoop (rsa_usStart f z)).drop 1 :=
+-    rsa_comp polyTimeComputable_tail hL
++    PolyTimeComputable.comp' polyTimeComputable_tail hL
+   -- the value block: the accepted block (marker dropped), or `[true]` (the fallback `1`)
+   have hG : PolyTimeComputable fun z => if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
+       else (rsa_usLoop (rsa_usStart f z)).drop 1 :=
+@@ -1016,7 +950,7 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
+   have hq : PolyTimeComputable fun z => pairSndD (divModStr (pairEncode
+       (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
+         else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z))) :=
+-    rsa_comp polyTimeComputable_pairSndD (rsa_comp H.divMod (hG.pairEncode hf))
++    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hG.pairEncode hf))
+   have e : (fun z => pairSndD (divModStr (pairEncode
+       (if decide (rsa_usLoop (rsa_usStart f z) = []) then [true]
+         else (rsa_usLoop (rsa_usStart f z)).drop 1) (f z)))) =
+@@ -1025,7 +959,7 @@ private theorem rsa_ptc_unitSampleStr (H : ArithmeticFP) {f : List Bool → List
+     rw [divModStr_pairEncode, pairSndD_pairEncode, unitSampleStr_eq, rsa_usFind_eq f z, rsa_usLoop]
+     rcases hres : (List.range ((rsa_usStart f z).length + 1)).find?
+         (fun i => rsa_usAcc (rsa_usStep^[i] (rsa_usStart f z))) with _ | i
+-    · rw [Option.elim_none, Option.map_none, Option.getD_none, if_pos (by rfl), rsa_listToNat_one]
++    · rw [Option.elim_none, Option.map_none, Option.getD_none, if_pos (by rfl), listToNat_singleton_true]
+     · have hE : listToNat (rsa_usBlock (rsa_usStep^[i] (rsa_usStart f z))) < listToNat (f z) := by
+         have hs := rsa_usFind_eq f z
+         rw [hres, Option.map_some] at hs
+@@ -1043,16 +977,6 @@ On `y = ⟨1^M, r⟩` with `M = max n 2`: the two prime runs (S1), the validity
+ `H.sub`), the exponent (the unit sampler on a re-laid-out input), `d` (`H.xgcd`), and the
+ `2M`-bit numerals as remainders modulo the all-ones word `1^{2M}` (`H.divMod`). -/
+ 
+-/-- The all-ones numeral `1^k` reads as `2^k − 1`. -/
+-private theorem rsa_listToNat_ones (k : ℕ) : listToNat (List.replicate k true) = 2 ^ k - 1 := by
+-  induction k with
+-  | zero => rw [List.replicate_zero, rsa_listToNat_nil]; rfl
+-  | succ k ih =>
+-    rw [List.replicate_succ', listToNat_eq, List.foldl_append, ← listToNat_eq, ih]
+-    have := Nat.one_le_two_pow (n := k)
+-    simp only [List.foldl_cons, List.foldl_nil, if_true, pow_succ]
+-    omega
+-
+ /-- The numeral `[true, false]` reads as `2`. -/
+ private theorem rsa_listToNat_two : listToNat [true, false] = 2 := by
+   rw [listToNat_eq]
+@@ -1063,26 +987,13 @@ private theorem rsa_listToNat_three : listToNat [true, true] = 3 := by
+   rw [listToNat_eq]
+   rfl
+ 
+-/-- The product numeral reads as the product: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧`. -/
+-private theorem rsa_listToNat_mulStr (a b : List Bool) :
+-    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
+-  rw [mulStr_pairEncode, listToNat_natToList]
+-  rw [pow_add]
+-  exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b)
+-
+ /-- **Width normalization**: the remainder of `⟦x⟧` modulo the all-ones word `1^k` is the
+ `k`-bit numeral of `⟦x⟧` when `⟦x⟧ < 2^k − 1`. -/
+ private theorem rsa_norm (x : List Bool) (k : ℕ) (h : listToNat x < 2 ^ k - 1) :
+     pairSndD (divModStr (pairEncode x (List.replicate k true))) = natToList k (listToNat x) := by
+-  rw [divModStr_pairEncode, pairSndD_pairEncode, List.length_replicate, rsa_listToNat_ones,
++  rw [divModStr_pairEncode, pairSndD_pairEncode, List.length_replicate, listToNat_replicate_true,
+     Nat.mod_eq_of_lt h]
+ 
+-/-- A function equal pointwise to a polynomial-time one is polynomial-time. -/
+-private theorem rsa_ptc_congr {f g : List Bool → List Bool} (h : PolyTimeComputable f)
+-    (e : ∀ x, f x = g x) : PolyTimeComputable g := by
+-  rw [show g = f from (funext e).symm]
+-  exact h
+-
+ /-- The first prime run: `samplePrimeL M` on the first `L = 2M³` coins of `y = ⟨1^M, r⟩`. -/
+ private def rsa_gP (y : List Bool) : List Bool :=
+   samplePrimeL (pairFstD y).length ((pairSndD y).take (samplePrimeCoins.eval (pairFstD y).length))
+@@ -1136,7 +1047,7 @@ private theorem rsa_gP_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gP := by
+   have hA : PolyTimeComputable fun y => pairEncode (pairFstD y)
+       ((pairSndD y).take (samplePrimeCoins.eval (pairFstD y).length)) :=
+     polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairTakePoly samplePrimeCoins)
+-  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
++  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
+   rw [pairFstD_pairEncode, pairSndD_pairEncode, rsa_gP]
+ 
+ /-- The second prime run is polynomial-time (S1 on `⟨1^M, (r.drop L).take L⟩`). -/
+@@ -1144,35 +1055,26 @@ private theorem rsa_gQ_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gQ := by
+   have hD : PolyTimeComputable fun y => pairEncode (pairFstD y)
+       ((pairSndD y).drop (samplePrimeCoins.eval (pairFstD y).length)) :=
+     polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairDropPoly samplePrimeCoins)
+-  have hT := rsa_comp (polyTimeComputable_pairTakePoly samplePrimeCoins) hD
++  have hT := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly samplePrimeCoins) hD
+   have hA := polyTimeComputable_pairFstD.pairEncode hT
+-  refine rsa_ptc_congr (rsa_comp (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
++  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_samplePrimeL H.prime) hA) fun y => ?_
+   simp only [pairFstD_pairEncode, pairSndD_pairEncode]
+   rw [rsa_gQ]
+ 
+-/-- A primality test `[⟦a x⟧ prime]` of a polynomial-time word is polynomial-time (`H.prime`,
+-read through `primeStr_eq`). -/
+-private theorem rsa_prime_poly (H : ArithmeticFP) {a : List Bool → List Bool}
+-    (ha : PolyTimeComputable a) :
+-    PolyTimeComputable fun x => [decide (listToNat (a x)).Prime] := by
+-  have h := rsa_comp H.prime ha
+-  rw [primeStr_eq] at h
+-  exact h
+-
+ /-- The validity test is polynomial-time.
+ 
+-**Proof sketch.** Two primality tests (`rsa_prime_poly`, `H.prime`), the negated conjunction of
+-the comparisons `p ≤ q`, `q ≤ p`, and the comparisons of `p`, `q` with `⟦1^M⟧` (`rsa_le_poly`),
++**Proof sketch.** Two primality tests (`ArithmeticFP.prime_poly`, `H.prime`), the negated conjunction of
++the comparisons `p ≤ q`, `q ≤ p`, and the comparisons of `p`, `q` with `⟦1^M⟧` (`ArithmeticFP.le_poly`),
+ combined by `polyTimeComputable_and` and `polyTimeComputable_not` with explicit tests. -/
+ private theorem rsa_gValid_poly (H : ArithmeticFP) : PolyTimeComputable fun y => [rsa_gValid y] := by
+   have hP := rsa_gP_poly H
+   have hQ := rsa_gQ_poly H
+-  have t1 := rsa_prime_poly H hP
+-  have t2 := rsa_prime_poly H hQ
+-  have t3 := rsa_le_poly H hP hQ
+-  have t4 := rsa_le_poly H hQ hP
+-  have t5 := rsa_le_poly H hP polyTimeComputable_pairFstD
+-  have t6 := rsa_le_poly H hQ polyTimeComputable_pairFstD
++  have t1 := H.prime_poly hP
++  have t2 := H.prime_poly hQ
++  have t3 := H.le_poly hP hQ
++  have t4 := H.le_poly hQ hP
++  have t5 := H.le_poly hP polyTimeComputable_pairFstD
++  have t6 := H.le_poly hQ polyTimeComputable_pairFstD
+   have t34 := polyTimeComputable_not (polyTimeComputable_and
+     (p := fun y => decide (listToNat (rsa_gP y) ≤ listToNat (rsa_gQ y)))
+     (q := fun y => decide (listToNat (rsa_gQ y) ≤ listToNat (rsa_gP y))) t3 t4)
+@@ -1206,9 +1108,9 @@ private theorem rsa_gPw_poly (H : ArithmeticFP) :
+ 
+ /-- The word of `Φ` is polynomial-time (`H.sub`, `H.mul`). -/
+ private theorem rsa_gPhi_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gPhi := by
+-  have h1 := rsa_comp H.sub ((rsa_gPw_poly H).1.pairEncode (polyTimeComputable_const [true]))
+-  have h2 := rsa_comp H.sub ((rsa_gPw_poly H).2.pairEncode (polyTimeComputable_const [true]))
+-  have h := rsa_comp H.mul (h1.pairEncode h2)
++  have h1 := PolyTimeComputable.comp' H.sub ((rsa_gPw_poly H).1.pairEncode (polyTimeComputable_const [true]))
++  have h2 := PolyTimeComputable.comp' H.sub ((rsa_gPw_poly H).2.pairEncode (polyTimeComputable_const [true]))
++  have h := PolyTimeComputable.comp' H.mul (h1.pairEncode h2)
+   unfold rsa_gPhi
+   exact h
+ 
+@@ -1217,7 +1119,7 @@ private theorem rsa_gPhi_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gPhi :
+ private theorem rsa_gE_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gE := by
+   have hl := NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD (rsa_gPhi_poly H)
+     (polyTimeComputable_const []) (polyTimeComputable_pairDropPoly (.mul (.const 2) samplePrimeCoins))
+-  refine rsa_ptc_congr (rsa_comp (rsa_ptc_unitSampleStr H NUPPT.polyTimeComputable_inArg) hl)
++  refine PolyTimeComputable.congr (PolyTimeComputable.comp' (rsa_ptc_unitSampleStr H NUPPT.polyTimeComputable_inArg) hl)
+     fun y => ?_
+   rw [NUPPT.inArg_layout, NUPPT.inParam_layout, NUPPT.inCoins_layout, rsa_gE]
+ 
+@@ -1225,16 +1127,16 @@ private theorem rsa_gE_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gE := by
+ `polyTimeComputable_unaryPoly`). -/
+ private theorem rsa_gNorm_poly (H : ArithmeticFP) {x : List Bool → List Bool}
+     (hx : PolyTimeComputable x) : PolyTimeComputable fun y => rsa_gNorm y (x y) := by
+-  have ho := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) polyTimeComputable_pairFstD
+-  have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.divMod (hx.pairEncode ho))
++  have ho := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) polyTimeComputable_pairFstD
++  have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hx.pairEncode ho))
+   unfold rsa_gNorm
+   exact h
+ 
+ /-- The generator's string computation is polynomial-time. -/
+ private theorem rsa_genCore_poly (H : ArithmeticFP) : PolyTimeComputable rsa_genCore := by
+-  have hN := rsa_comp H.mul ((rsa_gPw_poly H).1.pairEncode (rsa_gPw_poly H).2)
+-  have hD := rsa_comp polyTimeComputable_pairSndD
+-    (rsa_comp H.xgcd ((rsa_gE_poly H).pairEncode (rsa_gPhi_poly H)))
++  have hN := PolyTimeComputable.comp' H.mul ((rsa_gPw_poly H).1.pairEncode (rsa_gPw_poly H).2)
++  have hD := PolyTimeComputable.comp' polyTimeComputable_pairSndD
++    (PolyTimeComputable.comp' H.xgcd ((rsa_gE_poly H).pairEncode (rsa_gPhi_poly H)))
+   have h := ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H (rsa_gE_poly H))).pairEncode
+     ((rsa_gNorm_poly H hN).pairEncode (rsa_gNorm_poly H hD))
+   unfold rsa_genCore
+@@ -1246,7 +1148,7 @@ private theorem rsa_genCore_poly (H : ArithmeticFP) : PolyTimeComputable rsa_gen
+ **Proof sketch.** With `M = max n 2` and `L = 2M³`, `rsa_gP`, `rsa_gQ` are the two prime runs
+ of `rsaGenParams`, and the validity test is its condition (`⟦1^M⟧ = 2^M − 1`; two comparisons
+ for `p ≠ q`), so the prime words read as the primes of the parameters (`default_p`,
+-`default_q` on the fallback). Then `⟦N⟧ = pq` (`rsa_listToNat_mulStr`), `⟦Φ⟧ = (p−1)(q−1) =
++`default_q` on the fallback). Then `⟦N⟧ = pq` (`listToNat_mulStr`), `⟦Φ⟧ = (p−1)(q−1) =
+ Φ(pq)` (`listToNat_subStr`, `DistinctPrimes.totient_mul`), the exponent word reads as
+ `e = sampleUnitL … .getD 1` (`unitSampleStr_eq`, `1 % Φ = 1` as `Φ ≥ 2`), `d` is the inverse
+ (`xgcdStr_pairEncode`), and each of `N, e, d < 2^{2M} − 1` is normalized to its `2M`-bit numeral
+@@ -1265,7 +1167,7 @@ private theorem rsa_genCore_spec (n : ℕ) (r : List Bool) :
+     rw [rsa_gQ, hy1, hy2, List.length_replicate]
+   have hones : listToNat (pairFstD (pairEncode (List.replicate (max n 2) true) r)) =
+       2 ^ max n 2 - 1 := by
+-    rw [hy1, rsa_listToNat_ones]
++    rw [hy1, listToNat_replicate_true]
+   have hvalid : rsa_gValid (pairEncode (List.replicate (max n 2) true) r) =
+       decide ((listToNat (samplePrimeL (max n 2) (r.take (samplePrimeCoins.eval (max n 2))))).Prime ∧
+         (listToNat (samplePrimeL (max n 2) ((r.drop (samplePrimeCoins.eval (max n 2))).take
+@@ -1310,15 +1212,15 @@ private theorem rsa_genCore_spec (n : ℕ) (r : List Bool) :
+   generalize hy : pairEncode (List.replicate (max n 2) true) r = y at hy1 hy2 hP hQ hones hvalid hzp
+   -- the modulus, `Φ`, `e` and `d` read from the words
+   have hN : listToNat (mulStr (pairEncode (rsa_gPw y) (rsa_gQw y))) = (rsaGenParams n r).N := by
+-    rw [rsa_listToNat_mulStr, ← hzp.1, ← hzp.2]
++    rw [listToNat_mulStr, ← hzp.1, ← hzp.2]
+     rfl
+   have hPhi : listToNat (rsa_gPhi y) =
+       Nat.totient ((rsaGenParams n r).z.p * (rsaGenParams n r).z.q) := by
+-    rw [rsa_gPhi, rsa_listToNat_mulStr, listToNat_subStr, listToNat_subStr, rsa_listToNat_one,
++    rw [rsa_gPhi, listToNat_mulStr, listToNat_subStr, listToNat_subStr, listToNat_singleton_true,
+       ← hzp.1, ← hzp.2, DistinctPrimes.totient_mul]
+   have hΦ1 := (rsaGenParams n r).z.one_lt_totient
+   have he : listToNat (rsa_gE y) = (rsaGenParams n r).e := by
+-    have hv := rsa_getD_spec (N := listToNat (rsa_gPhi y)) (by omega) (Nat.size (listToNat (rsa_gPhi y)))
++    have hv := sampleUnitL_getD_spec (N := listToNat (rsa_gPhi y)) (by omega) (Nat.size (listToNat (rsa_gPhi y)))
+       (rsaBlock.eval (pairFstD y).length) (rsaTrials.eval (pairFstD y).length)
+       ((pairSndD y).drop ((PolyExpr.mul (.const 2) samplePrimeCoins).eval (pairFstD y).length))
+     rw [rsa_gE, unitSampleStr_eq, listToNat_natToList (hv.1.trans (listToNat_lt_two_pow _)), hPhi,
+@@ -1378,18 +1280,18 @@ remainder of `H.divMod` modulo the all-ones word `1^{2m}`; pair the numerals. -/
+ theorem polyTimeComputable_rsaGenRaw (H : ArithmeticFP) : PolyTimeComputable rsaGenRaw := by
+   -- `1^{max n 2}`: `1^n` unless `n ≤ 1` (`polyTimeComputable_lenLe` against `[true]`)
+   have hle : PolyTimeComputable fun z => [decide ((NUPPT.inParam z).length ≤ 1)] := by
+-    refine rsa_ptc_congr (rsa_comp polyTimeComputable_lenLe
++    refine PolyTimeComputable.congr (PolyTimeComputable.comp' polyTimeComputable_lenLe
+       ((polyTimeComputable_const [true]).pairEncode NUPPT.polyTimeComputable_inParam)) fun z => ?_
+     rw [pairFstD_pairEncode, pairSndD_pairEncode, List.length_singleton]
+   have hun : PolyTimeComputable fun z => List.replicate (NUPPT.inParam z).length true := by
+-    refine rsa_ptc_congr (rsa_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam)
++    refine PolyTimeComputable.congr (PolyTimeComputable.comp' (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam)
+       fun z => ?_
+     rw [PolyExpr.eval_var]
+   have hu := polyTimeComputable_ite (p := fun z => decide ((NUPPT.inParam z).length ≤ 1))
+     (f := fun _ => [true, true]) (g := fun z => List.replicate (NUPPT.inParam z).length true)
+     hle (polyTimeComputable_const _) hun
+-  have h := rsa_comp (rsa_genCore_poly H) (hu.pairEncode NUPPT.polyTimeComputable_inCoins)
+-  refine rsa_ptc_congr h fun z => ?_
++  have h := PolyTimeComputable.comp' (rsa_genCore_poly H) (hu.pairEncode NUPPT.polyTimeComputable_inCoins)
++  refine PolyTimeComputable.congr h fun z => ?_
+   have hm : (if decide ((NUPPT.inParam z).length ≤ 1) then [true, true]
+       else List.replicate (NUPPT.inParam z).length true) =
+       List.replicate (max (NUPPT.inParam z).length 2) true := by
+@@ -1537,14 +1439,14 @@ private theorem rsa_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+ 
+ /-- At a generated index `⟨N, e⟩` the sampler's string decodes: `rsaDec` accepts
+ `unitSampleStr` of the modulus numeral (it is the `2m`-bit numeral of a unit `v < N`,
+-`rsa_getD_spec`). -/
++`sampleUnitL_getD_spec`). -/
+ private theorem rsa_dec_unitSampleStr {m : ℕ} (P : RSAParams m) (n : ℕ) (r : List Bool) :
+     ∃ x, rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n r) = some x := by
+   have hw : pairFstD (rsaIndexOf m P) = natToList (2 * m) P.N := by
+     rw [rsaIndexOf, pairFstD_pairEncode]
+   have hN : listToNat (natToList (2 * m) P.N) = P.N := listToNat_natToList P.N_lt
+   have hpos : 0 < P.N := NeZero.pos (P.z.p * P.z.q)
+-  have hv := rsa_getD_spec hpos (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r
++  have hv := sampleUnitL_getD_spec hpos (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r
+   set v := (sampleUnitL P.N (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r).getD (1 % P.N)
+   have hval : listToNat (natToList (2 * m) v) = v := listToNat_natToList (hv.1.trans P.N_lt)
+   have hM := rsaMod_indexOf m P
+@@ -1564,7 +1466,7 @@ evaluator clause.
+ **Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`, `rsaSampleRaw`,
+ `unitSampleStr`, `rsaGen_runAt`), case on `sampleUnitL`; `rsaDec`'s test is discharged by
+ `length_natToList`, `listToNat_natToList` (`v < N < 2^{2m}`), `sampleUnitL_spec` resp. the
+-default `1 % N` (`rsa_getD_spec`, `rsa_dec_unitSampleStr`); the decoded unit `x` re-encodes to the
++default `1 % N` (`sampleUnitL_getD_spec`, `rsa_dec_unitSampleStr`); the decoded unit `x` re-encodes to the
+ sampler's string (`rsaEnc_of_rsaDec`), so `rsaEval_spec` applies. -/
+ theorem rsaSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
+     (s : (rsaSampler H).Coins n) :
+@@ -2385,60 +2287,6 @@ def rsaFromFactorRaw (A : NUPPT) (z : List Bool) : List Bool :=
+ 
+ /-! ### `A'` as a string computation (helpers of `polyTimeComputable_rsaFromFactorRaw`) -/
+ 
+-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). This is
+-the fold identity of `listToNat` (the private `foldl_bits_eq` of `Asymptotic/Sampling.lean`,
+-and the discrete-log fill's private `dla_listToNat_append`). -/
+-private theorem rsa_listToNat_append (a b : List Bool) :
+-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+-  have key : ∀ (l : List Bool) (acc : ℕ),
+-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+-    intro l
+-    induction l with
+-    | nil => intro acc; simp
+-    | cons c l ih =>
+-      intro acc
+-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+-      ring
+-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+-
+-/-- Leading zeros do not change the number read: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
+-private theorem rsa_listToNat_zeros_append (k : ℕ) (w : List Bool) :
+-    listToNat (natToList k 0 ++ w) = listToNat w := by
+-  rw [rsa_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+-
+-/-- **Width normalization by truncation**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`, the low `W` bits
+-(the discrete-log fill's private `dla_drop_natToList_zero_append`, re-proved). -/
+-private theorem rsa_drop_zeros_append (W : ℕ) (b : List Bool) :
+-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+-  set w := natToList W 0 ++ b with hw
+-  have hlen : (w.drop b.length).length = W := by
+-    rw [List.length_drop, hw, List.length_append, length_natToList]
+-    omega
+-  have hval : listToNat w = listToNat b := rsa_listToNat_zeros_append W b
+-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+-    conv_lhs => rw [← List.take_append_drop b.length w]
+-    rw [rsa_listToNat_append, hlen]
+-  have hlt := listToNat_lt_two_pow (w.drop b.length)
+-  rw [hlen] at hlt
+-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+-    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+-  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+-    have h := natToList_length_listToNat (natToList W N)
+-    rw [length_natToList, listToNat_natToList_eq_mod] at h
+-    exact h.symm
+-  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+-
+-/-- `subStr ⟨a, a⟩` is the `|a|`-bit numeral of `0`. -/
+-private theorem rsa_subStr_self (a : List Bool) : subStr (pairEncode a a) = natToList a.length 0 := by
+-  rw [subStr_pairEncode, Nat.sub_self]
+-
+-/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1`. -/
+-private theorem rsa_val_inv_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
+-  show (Int.sign (e : ℤ)).natAbs ≤ 1
+-  rw [Int.natAbs_sign]
+-  split_ifs <;> omega
+-
+ /-- The answer of `A` on `⟨1^n, N⟩` (coins and advice of the outer input). -/
+ private def rsa_fS (A : NUPPT) (z : List Bool) : List Bool :=
+   A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
+@@ -2487,7 +2335,7 @@ private def rsa_fOut (A : NUPPT) (z : List Bool) : List Bool :=
+ `H.mul`, `H.le`, `H.sub`, `H.xgcd`, `H.modExp`, `polyTimeComputable_pairDropPoly`).
+ 
+ **Proof sketch.** Each word is one bundle field applied to pairs of earlier words, in applied
+-form (`rsa_comp`) and folded into its definition: the answer of `A` on the re-laid-out input
++form (`PolyTimeComputable.comp'`) and folded into its definition: the answer of `A` on the re-laid-out input
+ (`NUPPT.polyTimeComputable_layout`), the cofactor (`H.divMod`), the product (`H.mul`) and the
+ test (two `H.le`, `polyTimeComputable_and`), `Φ` (`H.sub`, `H.mul`, a constant prefix), `d`
+ (`H.xgcd`), `y^d mod N` (`H.modExp`, with the zero prefix `H.sub ⟨1y, 1y⟩`), and the `2n`-bit
+@@ -2495,51 +2343,51 @@ truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDro
+ `polyTimeComputable_ite` selects the output. -/
+ private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rsa_fOut A) := by
+   have hN : PolyTimeComputable fun z => pairFstD (NUPPT.inArg z) :=
+-    rsa_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
++    PolyTimeComputable.comp' polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
+   have he : PolyTimeComputable fun z => pairFstD (pairSndD (NUPPT.inArg z)) :=
+-    rsa_comp polyTimeComputable_pairFstD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
++    PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+   have hy : PolyTimeComputable fun z => pairSndD (pairSndD (NUPPT.inArg z)) :=
+-    rsa_comp polyTimeComputable_pairSndD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
++    PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+   have hS : PolyTimeComputable (rsa_fS A) := by
+-    have h := rsa_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
++    have h := PolyTimeComputable.comp' A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+       NUPPT.polyTimeComputable_inParam hN NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
+     unfold rsa_fS
+     exact h
+   have hQ : PolyTimeComputable (rsa_fQ A) := by
+-    have h := rsa_comp polyTimeComputable_pairFstD (rsa_comp H.divMod (hN.pairEncode hS))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' H.divMod (hN.pairEncode hS))
+     unfold rsa_fQ
+     exact h
+-  have hM := rsa_comp H.mul (hS.pairEncode hQ)
++  have hM := PolyTimeComputable.comp' H.mul (hS.pairEncode hQ)
+   have hT : PolyTimeComputable fun z => [rsa_fTest A z] := by
+     have h := polyTimeComputable_and
+       (p := fun z => decide (listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z))) ≤
+         listToNat (pairFstD (NUPPT.inArg z))))
+       (q := fun z => decide (listToNat (pairFstD (NUPPT.inArg z)) ≤
+         listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z)))))
+-      (rsa_le_poly H hM hN) (rsa_le_poly H hN hM)
++      (H.le_poly hM hN) (H.le_poly hN hM)
+     unfold rsa_fTest
+     exact h
+   have hPhi : PolyTimeComputable (rsa_fPhi A) := by
+-    have h1 := rsa_comp H.sub (hS.pairEncode (polyTimeComputable_const [true]))
+-    have h2 := rsa_comp H.sub (hQ.pairEncode (polyTimeComputable_const [true]))
+-    have h0 := rsa_comp H.sub ((polyTimeComputable_const [true]).pairEncode
++    have h1 := PolyTimeComputable.comp' H.sub (hS.pairEncode (polyTimeComputable_const [true]))
++    have h2 := PolyTimeComputable.comp' H.sub (hQ.pairEncode (polyTimeComputable_const [true]))
++    have h0 := PolyTimeComputable.comp' H.sub ((polyTimeComputable_const [true]).pairEncode
+       (polyTimeComputable_const [true]))
+-    have h := h0.append (rsa_comp H.mul (h1.pairEncode h2))
++    have h := h0.append (PolyTimeComputable.comp' H.mul (h1.pairEncode h2))
+     unfold rsa_fPhi
+     exact h
+   have hD : PolyTimeComputable (rsa_fD A) := by
+-    have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.xgcd (he.pairEncode hPhi))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.xgcd (he.pairEncode hPhi))
+     unfold rsa_fD
+     exact h
+   have hV : PolyTimeComputable (rsa_fV A) := by
+     have h1y := (polyTimeComputable_prepend [true]).comp hy
+-    have hz := rsa_comp H.sub (h1y.pairEncode h1y)
+-    have h := rsa_comp H.modExp (hy.pairEncode (hD.pairEncode (hz.append hN)))
++    have hz := PolyTimeComputable.comp' H.sub (h1y.pairEncode h1y)
++    have h := PolyTimeComputable.comp' H.modExp (hy.pairEncode (hD.pairEncode (hz.append hN)))
+     unfold rsa_fV
+     exact h
+-  have hO := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) NUPPT.polyTimeComputable_inParam
+-  have hZ := rsa_comp H.sub (hO.pairEncode hO)
+-  have hW := rsa_comp (polyTimeComputable_pairDropPoly .var) (hV.pairEncode (hZ.append hV))
++  have hO := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) NUPPT.polyTimeComputable_inParam
++  have hZ := PolyTimeComputable.comp' H.sub (hO.pairEncode hO)
++  have hW := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var) (hV.pairEncode (hZ.append hV))
+   have h := polyTimeComputable_ite (p := rsa_fTest A) hT hW (polyTimeComputable_const [])
+   unfold rsa_fOut
+   exact h
+@@ -2548,12 +2396,12 @@ private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputabl
+ 
+ **Proof sketch.** With `s = ⟦p'⟧`, `N`, `e`, `y` read from the input: the cofactor word reads as
+ `N / s` (`divModStr_pairEncode`, `N / s ≤ N`), so the test is `s (N / s) = N`; the word of `Φ`
+-reads as `Φ = (s − 1)(N / s − 1)` (leading zero, `listToNat_subStr`, `rsa_listToNat_mulStr`); the
++reads as `Φ = (s − 1)(N / s − 1)` (leading zero, `listToNat_subStr`, `listToNat_mulStr`); the
+ word of `d` reads as `d = (e : Z_Φ)⁻¹.val` exactly (`xgcdStr_pairEncode`; `d < Φ` if `Φ ≠ 0`,
+-and `d ≤ 1` in `Z_0 = ℤ`, `rsa_val_inv_zero_le`); `modExpStr` at the modulus word with
++and `d ≤ 1` in `Z_0 = ℤ`, `val_inv_natCast_zmod_zero_le`); `modExpStr` at the modulus word with
+ `|y| + 1` leading zeros reads as `y^d mod N` exactly (`y^d mod N < N` if `N ≠ 0`; if `N = 0` then
+ `Φ = 0`, `d ≤ 1` and `y^d < 2^{|y| + 1}`); and the truncation is the `2n`-bit numeral
+-(`rsa_drop_zeros_append`). -/
++(`natToList_zero_append_drop`). -/
+ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFromFactorRaw A z := by
+   unfold rsa_fOut rsa_fTest rsa_fV rsa_fD rsa_fPhi rsa_fQ rsaFromFactorRaw rsaFromFactorStep
+   rw [show A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
+@@ -2569,7 +2417,7 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
+       listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow Nw))]
+   have hprod : listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) =
+       listToNat S * (listToNat Nw / listToNat S) := by
+-    rw [rsa_listToNat_mulStr, hQ]
++    rw [listToNat_mulStr, hQ]
+   have htest : (decide (listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) ≤
+         listToNat Nw) && decide (listToNat Nw ≤
+         listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))))) =
+@@ -2591,13 +2439,13 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
+       mulStr (pairEncode (subStr (pairEncode S [true]))
+         (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true])))) =
+       (listToNat S - 1) * (listToNat Nw / listToNat S - 1) := by
+-    rw [rsa_subStr_self, rsa_listToNat_zeros_append, rsa_listToNat_mulStr, listToNat_subStr,
+-      listToNat_subStr, rsa_listToNat_one, hQ]
++    rw [subStr_self, listToNat_natToList_zero_append, listToNat_mulStr, listToNat_subStr,
++      listToNat_subStr, listToNat_singleton_true, hQ]
+   set Φw := subStr (pairEncode [true] [true]) ++
+       mulStr (pairEncode (subStr (pairEncode S [true]))
+         (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true]))) with hΦw
+   have hΦlen : 1 ≤ Φw.length := by
+-    rw [hΦw, List.length_append, rsa_subStr_self, length_natToList, List.length_singleton]
++    rw [hΦw, List.length_append, subStr_self, length_natToList, List.length_singleton]
+     omega
+   have hD : listToNat (pairSndD (xgcdStr (pairEncode ew Φw))) =
+       ((listToNat ew : ZMod ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)))⁻¹).val := by
+@@ -2605,26 +2453,26 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
+     apply listToNat_natToList
+     by_cases hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0
+     · rw [hΦ]
+-      calc _ ≤ 1 := rsa_val_inv_zero_le _
++      calc _ ≤ 1 := val_inv_natCast_zmod_zero_le _
+         _ < 2 ^ Φw.length := Nat.one_lt_two_pow (by omega)
+     · haveI : NeZero ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)) := ⟨hΦ⟩
+       exact (ZMod.val_lt _).trans (hPhi ▸ listToNat_lt_two_pow Φw)
+   have hNw : listToNat (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw) = listToNat Nw := by
+-    rw [rsa_subStr_self, rsa_listToNat_zeros_append]
++    rw [subStr_self, listToNat_natToList_zero_append]
+   have hV : listToNat (modExpStr (pairEncode yw (pairEncode (pairSndD (xgcdStr (pairEncode ew Φw)))
+       (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw)))) =
+       listToNat yw ^ ((listToNat ew : ZMod ((listToNat S - 1) *
+         (listToNat Nw / listToNat S - 1)))⁻¹).val % listToNat Nw := by
+     rw [modExpStr_pairEncode, hD, hNw]
+     apply listToNat_natToList
+-    rw [List.length_append, rsa_subStr_self, length_natToList, List.length_append,
++    rw [List.length_append, subStr_self, length_natToList, List.length_append,
+       List.length_singleton]
+     rcases Nat.eq_zero_or_pos (listToNat Nw) with h0 | h0
+     · -- `N = 0`: then `Φ = 0`, `d ≤ 1` and `y^d ≤ max 1 y < 2^{|y| + 1}`
+       have hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0 := by
+         rw [h0, Nat.zero_div, Nat.zero_sub, mul_zero]
+       rw [hΦ, h0, Nat.mod_zero]
+-      have hd := rsa_val_inv_zero_le (listToNat ew)
++      have hd := val_inv_natCast_zmod_zero_le (listToNat ew)
+       have hyl := listToNat_lt_two_pow yw
+       have h2 : 2 ^ (1 + yw.length) ≤ 2 ^ (1 + yw.length + Nw.length) :=
+         Nat.pow_le_pow_right (by norm_num) (by omega)
+@@ -2639,8 +2487,8 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
+         _ < 2 ^ Nw.length := listToNat_lt_two_pow Nw
+         _ ≤ _ := Nat.pow_le_pow_right (by norm_num) (by omega)
+   rw [pairSndD_pairEncode, pairFstD_pairEncode, PolyExpr.eval_var,
+-    rsa_subStr_self (List.replicate _ true), List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+-    rsa_drop_zeros_append, hV]
++    subStr_self (List.replicate _ true), List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
++    natToList_zero_append_drop, hV]
+ 
+ /-- **`A'` is polynomial-time** [PS10, Theorem 55.2, "the running time of `A'` is essentially
+ the running time of `A` plus `O(log³ n)`"] given the arithmetic bundle.
+@@ -2658,7 +2506,7 @@ the degenerate inputs `Φ = 0` (where `d ≤ 1`) and `N = 0` (where `y^d mod N =
+ (`H.sub ⟨1^{2n}, 1^{2n}⟩`, `polyTimeComputable_pairDropPoly var`), and `polyTimeComputable_ite`
+ selects it or `[]` by the test. The word computation equals `rsaFromFactorRaw A`
+ (`rsa_fOut_eq`: `divModStr_pairEncode`, `xgcdStr_pairEncode`, `modExpStr_pairEncode`,
+-`listToNat_subStr`, `rsa_drop_zeros_append`). -/
++`listToNat_subStr`, `natToList_zero_append_drop`). -/
+ theorem polyTimeComputable_rsaFromFactorRaw (H : ArithmeticFP) (A : NUPPT) :
+     PolyTimeComputable (rsaFromFactorRaw A) := by
+   have h := rsa_fOut_poly H A
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index bad0995f..108f0af4 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -546,33 +546,6 @@ def rabinGenRaw (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams
+     (z : List Bool) : List Bool :=
+   rabinGenOut P dflt (NUPPT.inParam z).length (NUPPT.inCoins z)
+ 
+-/-- Composition of polynomial-time functions in applied form, `x ↦ g (f x)` (fill notes, item 7: composites are stated applied, never as `∘` matched against a lambda). -/
+-private theorem rabin_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
+-    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
+-  hg.comp hf
+-
+-/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for `N ≤ L`. -/
+-private theorem rabin_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
+-    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
+-  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
+-      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
+-    intro l
+-    induction l with
+-    | nil => intro _; rfl
+-    | cons a l ih =>
+-      intro hl
+-      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
+-        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
+-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
+-  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
+-  have hnone : (List.map (fun x => N + x) (List.range d)).find?
+-      (fun i => decide (i < N) && p i) = none := by
+-    rw [List.find?_eq_none]
+-    intro x hx
+-    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
+-    simp
+-  rw [hnone, Option.or_none]
+-
+ /-- One trial of the block loop on the state `⟨⟨1^B, 1^k⟩, ⟨counter, coins⟩⟩`: keep the header, decrement the counter, drop one block of `B` coins. -/
+ private def rabin_rbStep (x : List Bool) : List Bool :=
+   pairEncode (pairFstD x)
+@@ -625,11 +598,11 @@ private theorem rabin_rbAcc_poly {acc0 : List Bool → Bool}
+   have hc : PolyTimeComputable fun x => pairFstD (pairSndD x) :=
+     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+   have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
+-    rabin_comp polyTimeComputable_isNil hc
++    PolyTimeComputable.comp' polyTimeComputable_isNil hc
+   have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
+     polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
+   have t2 : PolyTimeComputable fun x => [acc0 (rabin_rbBlock x)] :=
+-    rabin_comp hacc0 rabin_rbBlock_poly
++    PolyTimeComputable.comp' hacc0 rabin_rbBlock_poly
+   exact polyTimeComputable_and (p := fun x => !decide (pairFstD (pairSndD x) = []))
+     (q := fun x => acc0 (rabin_rbBlock x)) t1' t2
+ 
+@@ -691,7 +664,7 @@ private theorem rabin_rbLoop_poly {acc0 : List Bool → Bool}
+ 
+ /-- **The block loop computes `rejectBlocksL`**: on the start state `⟨⟨1^B, 1^k⟩, ⟨1^T, r⟩⟩`, the host's search finds trial `i` exactly as `rejectBlocksL E k B T r` does, and the accepted value is the number read from the trial word.
+ 
+-**Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (iB)⟩⟩` (`rabin_rbStep_iterate`), so trial `i` reads `(r.drop (iB)).take k` and the test is `i < T ∧ E v` (`hspec`). The search over `[0, |x| + 1) ⊇ [0, T)` is the search over `[0, T)` (`rabin_find?_range_lt`), and `rejectBlocksL` is that search followed by reading the word (`rejectBlocksL_eq`, `List.findSome?_guard`, `List.map_findSome?`). -/
++**Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (iB)⟩⟩` (`rabin_rbStep_iterate`), so trial `i` reads `(r.drop (iB)).take k` and the test is `i < T ∧ E v` (`hspec`). The search over `[0, |x| + 1) ⊇ [0, T)` is the search over `[0, T)` (`IterateFind.find?_range_and_lt`), and `rejectBlocksL` is that search followed by reading the word (`rejectBlocksL_eq_find?`). -/
+ private theorem rabin_rbFind_eq (E : ℕ → Prop) [DecidablePred E] {acc0 : List Bool → Bool}
+     (hspec : ∀ w, acc0 w = decide (E (listToNat w))) (hB hk r : List Bool) (T : ℕ) :
+     rejectBlocksL E hk.length hB.length T r =
+@@ -717,16 +690,8 @@ private theorem rabin_rbFind_eq (E : ℕ → Prop) [DecidablePred E] {acc0 : Lis
+     simp only [x0, length_pairEncode, List.length_replicate]
+     omega
+   rw [show (fun i => rabin_rbAcc acc0 (rabin_rbStep^[i] x0)) = _ from funext hacc,
+-    rabin_find?_range_lt _ hrange, rejectBlocksL_eq, ← List.findSome?_guard, List.map_findSome?]
++    IterateFind.find?_range_and_lt _ hrange, rejectBlocksL_eq_find?]
+   simp only [hblock]
+-  congr 1
+-  funext t
+-  simp only [Function.comp_apply, Option.guard]
+-  split_ifs with h1 h2 h2 <;> simp_all
+-
+-/-- `[true]` reads as `1`. -/
+-private theorem rabin_listToNat_one : listToNat [true] = 1 := by
+-  rw [listToNat_eq]; rfl
+ 
+ /-- Zero-padding of a word `b` to the width of `u`: `⟦0⟧_{|u| − |b|}` (`subStr ⟨d, d⟩`, `d = u.drop |b|`) added to `b` (`addStr`). -/
+ private def rabin_pad (u b : List Bool) : List Bool :=
+@@ -742,14 +707,14 @@ private theorem rabin_pad_eq {u b : List Bool} (h : b.length ≤ u.length) :
+ private theorem rabin_pad_poly (H : ArithmeticFP) {fu fb : List Bool → List Bool}
+     (hu : PolyTimeComputable fu) (hb : PolyTimeComputable fb) :
+     PolyTimeComputable fun z => rabin_pad (fu z) (fb z) := by
+-  have hD' := rabin_comp (polyTimeComputable_pairDropPoly .var) (hb.pairEncode hu)
++  have hD' := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var) (hb.pairEncode hu)
+   have hD : PolyTimeComputable fun z => (fu z).drop (fb z).length := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hD'
+     simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+   have hS : PolyTimeComputable fun z =>
+       subStr (pairEncode ((fu z).drop (fb z).length) ((fu z).drop (fb z).length)) :=
+-    rabin_comp H.sub (hD.pairEncode hD)
+-  exact rabin_comp H.add (hS.pairEncode hb)
++    PolyTimeComputable.comp' H.sub (hD.pairEncode hD)
++  exact PolyTimeComputable.comp' H.add (hS.pairEncode hb)
+ 
+ /-- The start state `⟨⟨U, U⟩, ⟨1^{4m²}, c⟩⟩` of the restricted prime loop, `m = |U|`. -/
+ private def rabin_spStart (U c : List Bool) : List Bool :=
+@@ -787,13 +752,13 @@ private theorem rabin_spOut_poly (H : ArithmeticFP) {acc0 : List Bool → Bool}
+     (hU : PolyTimeComputable fU) (hds : PolyTimeComputable fds) (hc : PolyTimeComputable fc) :
+     PolyTimeComputable fun z => rabin_spOut acc0 (fU z) (fds z) (fc z) := by
+   have hS : PolyTimeComputable fun z => rabin_spStart (fU z) (fc z) :=
+-    (hU.pairEncode hU).pairEncode ((rabin_comp (polyTimeComputable_unaryPoly rabinTrials) hU).pairEncode hc)
++    (hU.pairEncode hU).pairEncode ((PolyTimeComputable.comp' (polyTimeComputable_unaryPoly rabinTrials) hU).pairEncode hc)
+   have hL : PolyTimeComputable fun z => rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) :=
+-    rabin_comp (rabin_rbLoop_poly hacc0) hS
++    PolyTimeComputable.comp' (rabin_rbLoop_poly hacc0) hS
+   have hN : PolyTimeComputable fun z => [decide (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) = [])] :=
+-    rabin_comp polyTimeComputable_isNil hL
++    PolyTimeComputable.comp' polyTimeComputable_isNil hL
+   have hT : PolyTimeComputable fun z => (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z))).drop 1 :=
+-    rabin_comp polyTimeComputable_tail hL
++    PolyTimeComputable.comp' polyTimeComputable_tail hL
+   exact polyTimeComputable_ite (p := fun z => decide (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) = []))
+     (f := fun z => rabin_pad (fU z) (fds z))
+     (g := fun z => rabin_pad (fU z) ((rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z))).drop 1)) hN
+@@ -811,26 +776,11 @@ private theorem rabin_listToNat_three : listToNat [true, true] = 3 := by
+ private theorem rabin_listToNat_four : listToNat [true, false, false] = 4 := by
+   rw [listToNat_eq]; rfl
+ 
+-/-- A comparison `[⟦a x⟧ ≤ ⟦b x⟧]` of two polynomial-time numerals is polynomial-time (`H.le`, `leStr_pairEncode`). -/
+-private theorem rabin_le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
+-    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
+-    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
+-  have h := rabin_comp H.le (ha.pairEncode hb)
+-  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp h
+-  rw [leStr_pairEncode]
+-
+-/-- The primality test `[decide (⟦w⟧ prime)]` is polynomial-time (`H.prime`, `primeStr_eq`). -/
+-private theorem rabin_prime_poly (H : ArithmeticFP) :
+-    PolyTimeComputable fun w => [decide (listToNat w).Prime] := by
+-  have h := H.prime
+-  rw [primeStr_eq] at h
+-  exact h
+-
+ /-- The residue `⟦w⟧ mod ⟦b⟧` as a numeral of the width of `b` is polynomial-time (`H.divMod`). -/
+ private theorem rabin_mod_poly (H : ArithmeticFP) (b : List Bool) :
+     PolyTimeComputable fun w => pairSndD (divModStr (pairEncode w b)) :=
+-  rabin_comp polyTimeComputable_pairSndD
+-    (rabin_comp H.divMod (polyTimeComputable_id.pairEncode (polyTimeComputable_const b)))
++  PolyTimeComputable.comp' polyTimeComputable_pairSndD
++    (PolyTimeComputable.comp' H.divMod (polyTimeComputable_id.pairEncode (polyTimeComputable_const b)))
+ 
+ /-- The acceptance test of the odd generator: prime, and the residue modulo `2` reads `≥ 1`. -/
+ private def rabin_oddAcc (w : List Bool) : Bool :=
+@@ -846,20 +796,20 @@ private def rabin_blumAcc (w : List Bool) : Bool :=
+ private theorem rabin_oddAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun w => [rabin_oddAcc w] :=
+   polyTimeComputable_and (p := fun w => decide (listToNat w).Prime)
+     (q := fun w => decide (listToNat [true] ≤ listToNat (pairSndD (divModStr (pairEncode w [true, false])))))
+-    (rabin_prime_poly H) (rabin_le_poly H (polyTimeComputable_const [true]) (rabin_mod_poly H _))
++    (H.prime_poly polyTimeComputable_id) (H.le_poly (polyTimeComputable_const [true]) (rabin_mod_poly H _))
+ 
+ /-- The Blum test is polynomial-time (`H.prime`, `H.divMod`, `H.le`). -/
+ private theorem rabin_blumAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun w => [rabin_blumAcc w] :=
+   polyTimeComputable_and (p := fun w => decide (listToNat w).Prime)
+     (q := fun w => decide (listToNat [true, true] ≤
+       listToNat (pairSndD (divModStr (pairEncode w [true, false, false])))))
+-    (rabin_prime_poly H) (rabin_le_poly H (polyTimeComputable_const [true, true]) (rabin_mod_poly H _))
++    (H.prime_poly polyTimeComputable_id) (H.le_poly (polyTimeComputable_const [true, true]) (rabin_mod_poly H _))
+ 
+ /-- The odd test decides "prime and `≠ 2`" on every word (a prime is `2` or odd, `Nat.Prime.eq_two_or_odd`; `divModStr_pairEncode`). -/
+ private theorem rabin_oddAcc_spec (w : List Bool) :
+     rabin_oddAcc w = decide ((listToNat w).Prime ∧ listToNat w ≠ 2) := by
+   rw [rabin_oddAcc, divModStr_pairEncode, pairSndD_pairEncode, rabin_listToNat_two,
+-    listToNat_natToList (by simp; omega), rabin_listToNat_one]
++    listToNat_natToList (by simp; omega), listToNat_singleton_true]
+   by_cases hp : (listToNat w).Prime
+   · have h := hp.eq_two_or_odd
+     by_cases h2 : listToNat w = 2
+@@ -920,12 +870,12 @@ private def rabin_genCore (acc0 : List Bool → Bool) (ds1 ds2 : List Bool) (z :
+ 
+ /-- `1^{max n 3}` is polynomial-time (`polyTimeComputable_lenLe`, `_unaryPoly`, `_ite`). -/
+ private theorem rabin_gU_poly : PolyTimeComputable rabin_gU := by
+-  have hL' := rabin_comp polyTimeComputable_lenLe
++  have hL' := PolyTimeComputable.comp' polyTimeComputable_lenLe
+     ((polyTimeComputable_const [true, true]).pairEncode NUPPT.polyTimeComputable_inParam)
+   have hL : PolyTimeComputable fun z => [decide ((NUPPT.inParam z).length ≤ 2)] := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hL'
+     simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_cons, List.length_nil]
+-  have hR' := rabin_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
++  have hR' := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
+   have hR : PolyTimeComputable fun z => List.replicate (NUPPT.inParam z).length true := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hR'
+     rw [PolyExpr.eval_var]
+@@ -935,16 +885,16 @@ private theorem rabin_gU_poly : PolyTimeComputable rabin_gU := by
+ 
+ /-- The first coin segment is polynomial-time (`polyTimeComputable_pairTakePoly rabinPrimeCoins`). -/
+ private theorem rabin_gC1_poly : PolyTimeComputable rabin_gC1 := by
+-  have h := rabin_comp (polyTimeComputable_pairTakePoly rabinPrimeCoins)
++  have h := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly rabinPrimeCoins)
+     (rabin_gU_poly.pairEncode NUPPT.polyTimeComputable_inCoins)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_gC1]
+ 
+ /-- The second coin segment is polynomial-time (`_pairDropPoly`, `_pairTakePoly rabinPrimeCoins`). -/
+ private theorem rabin_gC2_poly : PolyTimeComputable rabin_gC2 := by
+-  have hD := rabin_comp (polyTimeComputable_pairDropPoly rabinPrimeCoins)
++  have hD := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly rabinPrimeCoins)
+     (rabin_gU_poly.pairEncode NUPPT.polyTimeComputable_inCoins)
+-  have h := rabin_comp (polyTimeComputable_pairTakePoly rabinPrimeCoins) (rabin_gU_poly.pairEncode hD)
++  have h := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly rabinPrimeCoins) (rabin_gU_poly.pairEncode hD)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   rw [pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, rabin_gC2]
+ 
+@@ -962,7 +912,7 @@ private theorem rabin_genCore_poly (H : ArithmeticFP) {acc0 : List Bool → Bool
+     rabin_spOut_poly H hacc0 rabin_gU_poly (polyTimeComputable_const ds1) rabin_gC1_poly
+   have hQ : PolyTimeComputable (rabin_gQ acc0 ds2) :=
+     rabin_spOut_poly H hacc0 rabin_gU_poly (polyTimeComputable_const ds2) rabin_gC2_poly
+-  have hE' := rabin_comp polyTimeComputable_pairEq (hP.pairEncode hQ)
++  have hE' := PolyTimeComputable.comp' polyTimeComputable_pairEq (hP.pairEncode hQ)
+   have hE : PolyTimeComputable fun z => [decide (rabin_gP acc0 ds1 z = rabin_gQ acc0 ds2 z)] := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hE'
+     rw [pairFstD_pairEncode, pairSndD_pairEncode]
+@@ -976,7 +926,7 @@ private theorem rabin_genCore_poly (H : ArithmeticFP) {acc0 : List Bool → Bool
+     polyTimeComputable_ite (p := rabin_gValid acc0 ds1 ds2) (f := rabin_gQ acc0 ds2)
+       (g := fun z => rabin_pad (rabin_gU z) ds2) hV hQ
+       (rabin_pad_poly H rabin_gU_poly (polyTimeComputable_const ds2))
+-  exact (rabin_comp H.mul (hA.pairEncode hB)).pairEncode (hA.pairEncode hB)
++  exact (PolyTimeComputable.comp' H.mul (hA.pairEncode hB)).pairEncode (hA.pairEncode hB)
+ 
+ /-- `rabin_gU z` is `1^{max n 3}`. -/
+ private theorem rabin_gU_eq (z : List Bool) :
+@@ -1239,23 +1189,6 @@ noncomputable def rabinSampler (H : ArithmeticFP) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
+     rsaSampleCoins
+ 
+-/-- The fallback `1 % N` of the unit sampler is a unit below `N` (for `N = 1` it is `0`, coprime
+-to `1`). -/
+-private theorem rabin_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
+-  refine ⟨Nat.mod_lt _ hN, ?_⟩
+-  rcases Nat.lt_or_ge 1 N with h | h
+-  · rw [Nat.mod_eq_of_lt h]; exact Nat.coprime_one_left _
+-  · obtain rfl : N = 1 := by omega
+-    simp
+-
+-/-- The total unit sampler's value is a unit below `N` (`sampleUnitL_spec`, or the fallback). -/
+-private theorem rabin_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+-    (sampleUnitL N k B T r).getD (1 % N) < N ∧
+-      Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
+-  rcases h : sampleUnitL N k B T r with _ | v
+-  · exact rabin_one_mod_spec hN
+-  · exact sampleUnitL_spec h
+-
+ /-- The activation of the Rabin sampler: `unitSampleStr` on the index numeral
+ (`NUPPT.runAtL_ofPolyTimeUniform` and the layout equations). -/
+ private theorem rabin_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+@@ -1299,7 +1232,7 @@ width, `v < N`, `gcd(v, N) = 1`). -/
+ private theorem rabin_dec_unitSampleStr {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) (n : ℕ)
+     (r : List Bool) :
+     ∃ x, rabinDec (rabinIndexOf m R) (unitSampleStr (rabinIndexOf m R) n r) = some x := by
+-  have hv := rabin_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
++  have hv := sampleUnitL_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+     (rsaTrials.eval n) r
+   have hval := listToNat_natToList (hv.1.trans R.z.mul_lt)
+   have hM := rabin_rabinMod_indexOf m R
+@@ -1442,19 +1375,6 @@ private theorem rabin_coins_sampler (H : ArithmeticFP) : (rabinSampler H).coins
+   unfold rabinSampler
+   exact NUPPT.coins_ofPolyTimeUniform _ _
+ 
+-/-- Any two samplers are `1`-close (`statClose_iff`; both probabilities lie in `[0, 1]`): the
+-`δ n := 1` branch of the closeness targets. -/
+-private theorem rabin_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) :
+-    StatClose X Y 1 := by
+-  rw [statClose_iff]
+-  intro T
+-  have h1 := uprob_nonneg (fun s => T (X s))
+-  have h2 := uprob_le_one (fun s => T (X s))
+-  have h3 := uprob_nonneg (fun t => T (Y t))
+-  have h4 := uprob_le_one (fun t => T (Y t))
+-  rw [abs_le]
+-  constructor <;> linarith
+-
+ /-- A generated modulus fits the unit sampler's blocks for `n ≥ 1`:
+ `Nat.size (pq) ≤ 2·max(n, 3) ≤ 2(n + 2) = B(n)` (`Nat.size_le`, `eval_rsaBlock`). -/
+ private theorem rabin_size_le {P : ℕ → Prop} {n : ℕ} (hn : 1 ≤ n) (R : RabinParams P (max n 3)) :
+@@ -1529,7 +1449,7 @@ theorem rabinCollection_sampleClose (H : ArithmeticFP) :
+   intro n r
+   by_cases hn : n < 3
+   · rw [if_pos hn]
+-    exact rabin_statClose_one _ _
++    exact statClose_one _ _
+   rw [if_neg hn, rabinCollection_index, rabinCollection_sample]
+   simp only [rabinCollection_decD, rabin_sampler_runAt]
+   have h1 := ((rabin_statClose_dec _ (rabinGenParams (· ≠ 2) oddDefault n (List.ofFn r)) n
+@@ -1564,47 +1484,6 @@ def rabinFactorRaw (A : NUPPT) (z : List Bool) : List Bool :=
+           listToNat (NUPPT.inArg z))))
+       (NUPPT.inAdvice z) ((NUPPT.inCoins z).drop (rsaSampleCoins.eval (NUPPT.inParam z).length))))
+ 
+-/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (the fold identity of `listToNat`; a re-proof of the private `foldl_bits_eq` of `Asymptotic/Sampling.lean`, also re-proved privately by the dl-a and rsa fills). -/
+-private theorem rabin_listToNat_append (a b : List Bool) :
+-    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+-  have key : ∀ (l : List Bool) (acc : ℕ),
+-      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+-        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+-    intro l
+-    induction l with
+-    | nil => intro acc; simp
+-    | cons c l ih =>
+-      intro acc
+-      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+-      ring
+-  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+-
+-/-- Leading zeros do not change the number read: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
+-private theorem rabin_listToNat_zeros_append (k : ℕ) (w : List Bool) :
+-    listToNat (natToList k 0 ++ w) = listToNat w := by
+-  rw [rabin_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+-
+-/-- **Width normalization by truncation**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`, the low `W` bits (copy of the rsa fill's private `rsa_drop_zeros_append`, itself dl-a's `dla_drop_natToList_zero_append`). -/
+-private theorem rabin_drop_zeros_append (W : ℕ) (b : List Bool) :
+-    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+-  set w := natToList W 0 ++ b with hw
+-  have hlen : (w.drop b.length).length = W := by
+-    rw [List.length_drop, hw, List.length_append, length_natToList]
+-    omega
+-  have hval : listToNat w = listToNat b := rabin_listToNat_zeros_append W b
+-  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+-    conv_lhs => rw [← List.take_append_drop b.length w]
+-    rw [rabin_listToNat_append, hlen]
+-  have hlt := listToNat_lt_two_pow (w.drop b.length)
+-  rw [hlen] at hlt
+-  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+-    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+-  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+-    have h := natToList_length_listToNat (natToList W N)
+-    rw [length_natToList, listToNat_natToList_eq_mod] at h
+-    exact h.symm
+-  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+-
+ /-- The first `T(n)B(n)` coins (for the unit `x`). -/
+ private def rabin_fC1 (z : List Bool) : List Bool :=
+   (NUPPT.inCoins z).take (rsaSampleCoins.eval (NUPPT.inParam z).length)
+@@ -1663,32 +1542,32 @@ private def rabin_fOut (A : NUPPT) (z : List Bool) : List Bool :=
+ 
+ /-- The string computation of `A'` is polynomial-time.
+ 
+-**Proof sketch.** Each word is a bundle field on pairs of earlier words, in applied form (`rabin_comp`), folded into its definition by `unfold`: the coin segments (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rsaSampleCoins`), `x` (`polyTimeComputable_unitSampleStr` on the re-laid-out input, `NUPPT.polyTimeComputable_layout`), `y` (`H.modExp`), `z` (`A.polyTimeComputable_output`), the padded modulus (`PolyTimeComputable.append`, `H.sub`), the test (`H.modExp`, two `H.le`), `d` and the gcd (`H.add`, `H.sub`, `H.divMod`, `H.xgcd`), and the truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDropPoly var`); `polyTimeComputable_ite` selects the output. -/
++**Proof sketch.** Each word is a bundle field on pairs of earlier words, in applied form (`PolyTimeComputable.comp'`), folded into its definition by `unfold`: the coin segments (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rsaSampleCoins`), `x` (`polyTimeComputable_unitSampleStr` on the re-laid-out input, `NUPPT.polyTimeComputable_layout`), `y` (`H.modExp`), `z` (`A.polyTimeComputable_output`), the padded modulus (`PolyTimeComputable.append`, `H.sub`), the test (`H.modExp`, two `H.le`), `d` and the gcd (`H.add`, `H.sub`, `H.divMod`, `H.xgcd`), and the truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDropPoly var`); `polyTimeComputable_ite` selects the output. -/
+ private theorem rabin_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rabin_fOut A) := by
+   have hw := NUPPT.polyTimeComputable_inArg
+   have hC1 : PolyTimeComputable rabin_fC1 := by
+-    have h := rabin_comp (polyTimeComputable_pairTakePoly rsaSampleCoins)
++    have h := PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly rsaSampleCoins)
+       (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+     rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_fC1]
+   have hC2 : PolyTimeComputable rabin_fC2 := by
+-    have h := rabin_comp (polyTimeComputable_pairDropPoly rsaSampleCoins)
++    have h := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly rsaSampleCoins)
+       (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+     rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_fC2]
+   have hX : PolyTimeComputable rabin_fX := by
+-    have h := rabin_comp (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
++    have h := PolyTimeComputable.comp' (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
+       (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam hw
+         NUPPT.polyTimeComputable_inAdvice hC1)
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+     simp only [rabin_fX, NUPPT.layout_eq, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.inCoins_eq,
+       NUPPT.inAdvice_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+   have hY : PolyTimeComputable rabin_fY := by
+-    have h := rabin_comp H.modExp (hX.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hw))
++    have h := PolyTimeComputable.comp' H.modExp (hX.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hw))
+     unfold rabin_fY
+     exact h
+   have hZ : PolyTimeComputable (rabin_fZ A) := by
+-    have h := rabin_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
++    have h := PolyTimeComputable.comp' A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+       NUPPT.polyTimeComputable_inParam (hw.pairEncode hY) NUPPT.polyTimeComputable_inAdvice hC2)
+     unfold rabin_fZ
+     exact h
+@@ -1697,35 +1576,35 @@ private theorem rabin_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputa
+     unfold rabin_fK
+     exact h
+   have hW : PolyTimeComputable (rabin_fW A) := by
+-    have h := (rabin_comp H.sub (hK.pairEncode hK)).append hw
++    have h := (PolyTimeComputable.comp' H.sub (hK.pairEncode hK)).append hw
+     unfold rabin_fW
+     exact h
+   have hSq : ∀ {v : List Bool → List Bool}, PolyTimeComputable v →
+       PolyTimeComputable fun z => rabin_fSq A z (v z) := by
+     intro v hv
+-    have h := rabin_comp H.modExp (hv.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hW))
++    have h := PolyTimeComputable.comp' H.modExp (hv.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hW))
+     unfold rabin_fSq
+     exact h
+   have hT : PolyTimeComputable fun z => [rabin_fTest A z] := by
+     have h := polyTimeComputable_and
+       (p := fun z => decide (listToNat (rabin_fSq A z (rabin_fZ A z)) ≤ listToNat (rabin_fSq A z (rabin_fX z))))
+       (q := fun z => decide (listToNat (rabin_fSq A z (rabin_fX z)) ≤ listToNat (rabin_fSq A z (rabin_fZ A z))))
+-      (rabin_le_poly H (hSq hZ) (hSq hX)) (rabin_le_poly H (hSq hX) (hSq hZ))
++      (H.le_poly (hSq hZ) (hSq hX)) (H.le_poly (hSq hX) (hSq hZ))
+     unfold rabin_fTest
+     exact h
+-  have hR := rabin_comp polyTimeComputable_pairSndD (rabin_comp H.divMod (hZ.pairEncode hW))
+-  have hS := rabin_comp H.sub ((rabin_comp H.add (hX.pairEncode hw)).pairEncode hR)
++  have hR := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hZ.pairEncode hW))
++  have hS := PolyTimeComputable.comp' H.sub ((PolyTimeComputable.comp' H.add (hX.pairEncode hw)).pairEncode hR)
+   have hD : PolyTimeComputable (rabin_fD A) := by
+-    have h := rabin_comp polyTimeComputable_pairSndD (rabin_comp H.divMod (hS.pairEncode hW))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod (hS.pairEncode hW))
+     unfold rabin_fD
+     exact h
+   have hG : PolyTimeComputable (rabin_fG A) := by
+-    have h := rabin_comp polyTimeComputable_pairFstD (rabin_comp H.xgcd (hD.pairEncode hW))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' H.xgcd (hD.pairEncode hW))
+     unfold rabin_fG
+     exact h
+-  have hO := rabin_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
+-  have hZr := rabin_comp H.sub (hO.pairEncode hO)
+-  have hTr' := rabin_comp (polyTimeComputable_pairDropPoly .var) (hG.pairEncode (hZr.append hG))
++  have hO := PolyTimeComputable.comp' (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
++  have hZr := PolyTimeComputable.comp' H.sub (hO.pairEncode hO)
++  have hTr' := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var) (hG.pairEncode (hZr.append hG))
+   have hTr : PolyTimeComputable fun z =>
+       (subStr (pairEncode (List.replicate (NUPPT.inParam z).length true)
+         (List.replicate (NUPPT.inParam z).length true)) ++ rabin_fG A z).drop (rabin_fG A z).length := by
+@@ -1743,7 +1622,7 @@ private theorem rabin_mod_lt_two_pow {v N W : ℕ} (hv : v < 2 ^ W) (hN : N < 2
+ 
+ /-- **The string computation is `A'`**: `rabin_fOut A = rabinFactorRaw A`.
+ 
+-**Proof sketch.** The padded modulus word reads as `N` and is longer than `2|z|`, `2|x|`, `|x| + |N|` (`rabin_listToNat_zeros_append`), so `modExpStr`, `divModStr`, `addStr`, `subStr` and `xgcdStr` read back exactly (`listToNat_natToList`, also for `N = 0`, where `v mod 0 = v`). The test is `z² mod N = x² mod N`; the gcd word reads as `gcd(d, N)` with `d = ((x + N) ∸ (z mod N)) mod N`, which is `((x : Z_N) − z).val` (`Nat.cast_sub`, `ZMod.val_natCast`; for `N = 0` the test forces `z = x` and both are `0`); the truncation is the `n`-bit numeral (`rabin_drop_zeros_append`). -/
++**Proof sketch.** The padded modulus word reads as `N` and is longer than `2|z|`, `2|x|`, `|x| + |N|` (`listToNat_natToList_zero_append`), so `modExpStr`, `divModStr`, `addStr`, `subStr` and `xgcdStr` read back exactly (`listToNat_natToList`, also for `N = 0`, where `v mod 0 = v`). The test is `z² mod N = x² mod N`; the gcd word reads as `gcd(d, N)` with `d = ((x + N) ∸ (z mod N)) mod N`, which is `((x : Z_N) − z).val` (`Nat.cast_sub`, `ZMod.val_natCast`; for `N = 0` the test forces `z = x` and both are `0`); the truncation is the `n`-bit numeral (`natToList_zero_append_drop`). -/
+ private theorem rabin_fOut_eq (A : NUPPT) (z : List Bool) : rabin_fOut A z = rabinFactorRaw A z := by
+   have hYv : rabin_fY z = natToList (NUPPT.inArg z).length
+       (listToNat (rabin_fX z) ^ 2 % listToNat (NUPPT.inArg z)) := by
+@@ -1762,7 +1641,7 @@ private theorem rabin_fOut_eq (A : NUPPT) (z : List Bool) : rabin_fOut A z = rab
+     simp only [hK, List.length_append, List.length_cons, List.length_nil]; omega
+   set Wp := subStr (pairEncode K K) ++ w with hWp
+   have hWv : listToNat Wp = listToNat w := by
+-    rw [hWp, subStr_pairEncode, Nat.sub_self, rabin_listToNat_zeros_append]
++    rw [hWp, subStr_pairEncode, Nat.sub_self, listToNat_natToList_zero_append]
+   have hWl : Wp.length = K.length + w.length := by
+     rw [hWp, List.length_append, subStr_pairEncode, length_natToList]
+   have hNW : listToNat w < 2 ^ Wp.length :=
+@@ -1817,7 +1696,7 @@ private theorem rabin_fOut_eq (A : NUPPT) (z : List Bool) : rabin_fOut A z = rab
+     · exact (Nat.gcd_le_left _ hpos).trans_lt hdlt
+   have hz0 : subStr (pairEncode (List.replicate n true) (List.replicate n true)) = natToList n 0 := by
+     rw [subStr_pairEncode, List.length_replicate, Nat.sub_self]
+-  rw [hz0, rabin_drop_zeros_append, hG]
++  rw [hz0, natToList_zero_append_drop, hG]
+   -- the residue of `x − z` is `d`
+   have hval : ((listToNat xs : ZMod (listToNat w)) - (listToNat zs : ZMod (listToNat w))).val = d := by
+     rcases Nat.eq_zero_or_pos (listToNat w) with h0 | hpos
+@@ -2013,7 +1892,7 @@ private theorem rabin_core (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (z : Distinc
+     have hmb : List.ofFn (modulusBits n z) = i := by rw [modulusBits_eq, ← natToList_eq]
+     have hiN : listToNat i = z.p * z.q := listToNat_natToList hNlt
+     have hil : i.length = 2 * n := length_natToList _ _
+-    have hv := rabin_getD_spec hNpos (Nat.size (z.p * z.q)) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)
++    have hv := sampleUnitL_getD_spec hNpos (Nat.size (z.p * z.q)) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)
+     simp only [NUPPT.inverter_eq_some_iff, hmb, rabinFactorer_runAt, rabin_fCoinsEquiv_ofFn,
+       List.take_left' (List.length_ofFn (f := s)), List.drop_left' (List.length_ofFn (f := s)),
+       ← NUPPT.runAt_eq, hiN, hil, unitSampleStr_eq, listToNat_natToList (hv.1.trans hNlt), Succ]
+@@ -2697,26 +2576,12 @@ def blumInvRaw (z : List Bool) : List Bool :=
+     (blumInvNat (listToNat (pairFstD (pairFstD (NUPPT.inArg z))))
+       (listToNat (pairSndD (pairFstD (NUPPT.inArg z)))) (listToNat (pairSndD (NUPPT.inArg z))))
+ 
+-/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1` (copy of the rsa fill's private `rsa_val_inv_zero_le`). -/
+-private theorem rabin_val_inv_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
+-  show (Int.sign (e : ℤ)).natAbs ≤ 1
+-  rw [Int.natAbs_sign]
+-  split_ifs <;> omega
+-
+-/-- `mulStr` reads back exactly: `⟦mulStr ⟨a, b⟩⟧ = ⟦a⟧ · ⟦b⟧` (`mulStr_pairEncode`). -/
+-private theorem rabin_listToNat_mulStr (a b : List Bool) :
+-    listToNat (mulStr (pairEncode a b)) = listToNat a * listToNat b := by
+-  rw [mulStr_pairEncode]
+-  exact listToNat_natToList (by
+-    rw [pow_add]
+-    exact Nat.mul_lt_mul'' (listToNat_lt_two_pow a) (listToNat_lt_two_pow b))
+-
+ /-- `|u|` leading zeros before `v` (`subStr ⟨u, u⟩ ++ v`). -/
+ private def rabin_zpad (u v : List Bool) : List Bool := subStr (pairEncode u u) ++ v
+ 
+ /-- Leading zeros do not change the value. -/
+ private theorem rabin_listToNat_zpad (u v : List Bool) : listToNat (rabin_zpad u v) = listToNat v := by
+-  rw [rabin_zpad, subStr_pairEncode, Nat.sub_self, rabin_listToNat_zeros_append]
++  rw [rabin_zpad, subStr_pairEncode, Nat.sub_self, listToNat_natToList_zero_append]
+ 
+ /-- The padded word has length `|u| + |v|`. -/
+ private theorem rabin_length_zpad (u v : List Bool) : (rabin_zpad u v).length = u.length + v.length := by
+@@ -2726,7 +2591,7 @@ private theorem rabin_length_zpad (u v : List Bool) : (rabin_zpad u v).length =
+ private theorem rabin_zpad_poly (H : ArithmeticFP) {fu fv : List Bool → List Bool}
+     (hu : PolyTimeComputable fu) (hv : PolyTimeComputable fv) :
+     PolyTimeComputable fun z => rabin_zpad (fu z) (fv z) := by
+-  have h := (rabin_comp H.sub (hu.pairEncode hu)).append hv
++  have h := (PolyTimeComputable.comp' H.sub (hu.pairEncode hu)).append hv
+   unfold rabin_zpad
+   exact h
+ 
+@@ -2758,7 +2623,7 @@ private def rabin_crtW (pw qw yw : List Bool) : List Bool :=
+ /-- The exponent word reads as `p/4 + 1`. -/
+ private theorem rabin_listToNat_cE (pw : List Bool) : listToNat (rabin_cE pw) = listToNat pw / 4 + 1 := by
+   rw [rabin_cE, listToNat_addStr, divModStr_pairEncode, pairFstD_pairEncode, rabin_listToNat_four,
+-    rabin_listToNat_one,
++    listToNat_singleton_true,
+     listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow pw))]
+ 
+ /-- The power word reads as `y^{p/4+1} mod p`. -/
+@@ -2777,13 +2642,13 @@ private theorem rabin_listToNat_cPow (pw yw : List Bool) :
+ private theorem rabin_listToNat_cInv (pw qw : List Bool) :
+     listToNat (rabin_cInv pw qw) = ((listToNat qw : ZMod (listToNat pw))⁻¹).val := by
+   have hz : listToNat ([false] ++ pw) = listToNat pw := by
+-    rw [rabin_listToNat_append, show listToNat [false] = 0 by rw [listToNat_eq]; rfl, zero_mul, zero_add]
++    rw [listToNat_append, show listToNat [false] = 0 by rw [listToNat_eq]; rfl, zero_mul, zero_add]
+   rw [rabin_cInv, xgcdStr_pairEncode, pairSndD_pairEncode, hz]
+   apply listToNat_natToList
+   rw [List.length_append, List.length_singleton]
+   rcases Nat.eq_zero_or_pos (listToNat pw) with h0 | hpos
+   · rw [h0]
+-    exact (rabin_val_inv_zero_le _).trans_lt (Nat.one_lt_two_pow (by omega))
++    exact (val_inv_natCast_zmod_zero_le _).trans_lt (Nat.one_lt_two_pow (by omega))
+   · haveI : NeZero (listToNat pw) := ⟨hpos.ne'⟩
+     exact (ZMod.val_lt _).trans ((listToNat_lt_two_pow pw).trans_le
+       (Nat.pow_le_pow_right (by norm_num) (by omega)))
+@@ -2792,7 +2657,7 @@ private theorem rabin_listToNat_cInv (pw qw : List Bool) :
+ private theorem rabin_listToNat_cTerm (pw qw yw : List Bool) :
+     listToNat (rabin_cTerm pw qw yw) = listToNat yw ^ (listToNat pw / 4 + 1) % listToNat pw *
+       (listToNat qw * ((listToNat qw : ZMod (listToNat pw))⁻¹).val) := by
+-  rw [rabin_cTerm, rabin_listToNat_mulStr, rabin_listToNat_mulStr, rabin_listToNat_cPow,
++  rw [rabin_cTerm, listToNat_mulStr, listToNat_mulStr, rabin_listToNat_cPow,
+     rabin_listToNat_cInv]
+ 
+ /-- **The CRT word reads as `blumInvNat p q y`** (every intermediate word is exact: the padded widths cover the degenerate moduli `0`). -/
+@@ -2804,19 +2669,19 @@ private theorem rabin_listToNat_crtW (pw qw yw : List Bool) :
+       (listToNat pw * ((listToNat pw : ZMod (listToNat qw))⁻¹).val) := by
+     rw [rabin_cSum, listToNat_addStr, rabin_listToNat_cTerm, rabin_listToNat_cTerm]
+   rw [rabin_crtW, divModStr_pairEncode, pairSndD_pairEncode, rabin_listToNat_zpad,
+-    rabin_listToNat_mulStr, listToNat_natToList, blumInvNat, hS]
++    listToNat_mulStr, listToNat_natToList, blumInvNat, hS]
+   rw [rabin_length_zpad, hS]
+   rcases Nat.eq_zero_or_pos (listToNat pw * listToNat qw) with h0 | hpos
+   · rw [h0, Nat.mod_zero, ← hS]
+     exact (listToNat_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+   · refine (Nat.mod_lt _ hpos).trans ?_
+-    rw [← rabin_listToNat_mulStr]
++    rw [← listToNat_mulStr]
+     exact (listToNat_lt_two_pow _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+ 
+ /-- The CRT word is polynomial-time.
+ 
+ **Proof sketch.** Each word is one bundle field on pairs of earlier words, in applied form
+-(`rabin_comp`) and folded into its definition by `unfold`: the exponent (`H.divMod`, `H.add`),
++(`PolyTimeComputable.comp'`) and folded into its definition by `unfold`: the exponent (`H.divMod`, `H.add`),
+ the power (`H.modExp`, with the zero padding `rabin_zpad_poly`), the inverse (`H.xgcd` behind
+ `polyTimeComputable_prepend [false]`), the summands and `N` (`H.mul`), the sum (`H.add`) and
+ the final residue (`H.divMod`). -/
+@@ -2826,52 +2691,52 @@ private theorem rabin_crtW_poly (H : ArithmeticFP) {fp fq fy : List Bool → Lis
+   have hE : ∀ {f : List Bool → List Bool}, PolyTimeComputable f →
+       PolyTimeComputable fun z => rabin_cE (f z) := by
+     intro f hf
+-    have h := rabin_comp H.add ((rabin_comp polyTimeComputable_pairFstD
+-      (rabin_comp H.divMod (hf.pairEncode (polyTimeComputable_const [true, false, false])))).pairEncode
++    have h := PolyTimeComputable.comp' H.add ((PolyTimeComputable.comp' polyTimeComputable_pairFstD
++      (PolyTimeComputable.comp' H.divMod (hf.pairEncode (polyTimeComputable_const [true, false, false])))).pairEncode
+       (polyTimeComputable_const [true]))
+     unfold rabin_cE
+     exact h
+   have hPow : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
+       PolyTimeComputable fun z => rabin_cPow (f z) (g z) := by
+     intro f g hf hg
+-    have h := rabin_comp H.modExp (hg.pairEncode ((hE hf).pairEncode (rabin_zpad_poly H hg hf)))
++    have h := PolyTimeComputable.comp' H.modExp (hg.pairEncode ((hE hf).pairEncode (rabin_zpad_poly H hg hf)))
+     unfold rabin_cPow
+     exact h
+   have hInv : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
+       PolyTimeComputable fun z => rabin_cInv (f z) (g z) := by
+     intro f g hf hg
+-    have h := rabin_comp polyTimeComputable_pairSndD
+-      (rabin_comp H.xgcd (hg.pairEncode ((polyTimeComputable_prepend [false]).comp hf)))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD
++      (PolyTimeComputable.comp' H.xgcd (hg.pairEncode ((polyTimeComputable_prepend [false]).comp hf)))
+     unfold rabin_cInv
+     exact h
+   have hTerm : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → PolyTimeComputable g →
+       PolyTimeComputable fun z => rabin_cTerm (f z) (g z) (fy z) := by
+     intro f g hf hg
+-    have h := rabin_comp H.mul ((hPow hf hy).pairEncode (rabin_comp H.mul (hg.pairEncode (hInv hf hg))))
++    have h := PolyTimeComputable.comp' H.mul ((hPow hf hy).pairEncode (PolyTimeComputable.comp' H.mul (hg.pairEncode (hInv hf hg))))
+     unfold rabin_cTerm
+     exact h
+   have hSum : PolyTimeComputable fun z => rabin_cSum (fp z) (fq z) (fy z) := by
+-    have h := rabin_comp H.add ((hTerm hp hq).pairEncode (hTerm hq hp))
++    have h := PolyTimeComputable.comp' H.add ((hTerm hp hq).pairEncode (hTerm hq hp))
+     unfold rabin_cSum
+     exact h
+-  have h := rabin_comp polyTimeComputable_pairSndD (rabin_comp H.divMod
+-    (hSum.pairEncode (rabin_zpad_poly H hSum (rabin_comp H.mul (hp.pairEncode hq)))))
++  have h := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' H.divMod
++    (hSum.pairEncode (rabin_zpad_poly H hSum (PolyTimeComputable.comp' H.mul (hp.pairEncode hq)))))
+   unfold rabin_crtW
+   exact h
+ 
+ /-- The truncation of a word `v` to the width of `y`: `(⟦0⟧_{|y|} ++ v).drop |v|`. -/
+ private def rabin_trunc (y v : List Bool) : List Bool := (subStr (pairEncode y y) ++ v).drop v.length
+ 
+-/-- The truncation is the numeral of the word's value at the width of `y` (`rabin_drop_zeros_append`). -/
++/-- The truncation is the numeral of the word's value at the width of `y` (`natToList_zero_append_drop`). -/
+ private theorem rabin_trunc_eq (y v : List Bool) : rabin_trunc y v = natToList y.length (listToNat v) := by
+-  rw [rabin_trunc, subStr_pairEncode, Nat.sub_self, rabin_drop_zeros_append]
++  rw [rabin_trunc, subStr_pairEncode, Nat.sub_self, natToList_zero_append_drop]
+ 
+ /-- The truncation is polynomial-time (`H.sub`, `PolyTimeComputable.append`, `polyTimeComputable_pairDropPoly var`). -/
+ private theorem rabin_trunc_poly (H : ArithmeticFP) {fy fv : List Bool → List Bool}
+     (hy : PolyTimeComputable fy) (hv : PolyTimeComputable fv) :
+     PolyTimeComputable fun z => rabin_trunc (fy z) (fv z) := by
+-  have h' := rabin_comp (polyTimeComputable_pairDropPoly .var)
+-    (hv.pairEncode ((rabin_comp H.sub (hy.pairEncode hy)).append hv))
++  have h' := PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly .var)
++    (hv.pairEncode ((PolyTimeComputable.comp' H.sub (hy.pairEncode hy)).append hv))
+   have h : PolyTimeComputable fun z => (subStr (pairEncode (fy z) (fy z)) ++ fv z).drop (fv z).length := by
+     refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h'
+     simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+@@ -2892,9 +2757,9 @@ field in applied form (`rabin_crtW_poly`), and the truncation is `H.sub` on `⟨
+ `PolyTimeComputable.append` and `polyTimeComputable_pairDropPoly var` (`rabin_trunc_poly`). -/
+ theorem polyTimeComputable_blumInvRaw (H : ArithmeticFP) : PolyTimeComputable blumInvRaw := by
+   have hw := NUPPT.polyTimeComputable_inArg
+-  have hp := rabin_comp polyTimeComputable_pairFstD (rabin_comp polyTimeComputable_pairFstD hw)
+-  have hq := rabin_comp polyTimeComputable_pairSndD (rabin_comp polyTimeComputable_pairFstD hw)
+-  have hy := rabin_comp polyTimeComputable_pairSndD hw
++  have hp := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' polyTimeComputable_pairFstD hw)
++  have hq := PolyTimeComputable.comp' polyTimeComputable_pairSndD (PolyTimeComputable.comp' polyTimeComputable_pairFstD hw)
++  have hy := PolyTimeComputable.comp' polyTimeComputable_pairSndD hw
+   have h := rabin_trunc_poly H hy (rabin_crtW_poly H hp hq hy)
+   refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+   rw [rabin_trunc_eq, rabin_listToNat_crtW, blumInvRaw]
+@@ -3076,7 +2941,7 @@ theorem blumSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
+   generalize rabinGenParams (· % 4 = 3) blumDefault n (List.ofFn r) = R
+   have hV := rabin_blumValid_indexOf _ R
+   have hM := rabin_blumMod_indexOf _ R
+-  have hv := rabin_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
++  have hv := sampleUnitL_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+     (rsaTrials.eval n) (List.ofFn s)
+   set v := (sampleUnitL (R.z.p * R.z.q) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+     (rsaTrials.eval n) (List.ofFn s)).getD (1 % (R.z.p * R.z.q)) with hvdef
+@@ -3245,7 +3110,7 @@ private theorem rabin_statClose_blumDec (m : ℕ) (R : RabinParams (· % 4 = 3)
+           (listToNat (unitSampleStr (rabinIndexOf m R) n (List.ofFn s)) ^ 2 % listToNat (rabinIndexOf m R))) := by
+     funext s
+     rw [unitSampleStr_eq, listToNat_rabinIndexOf, hlen,
+-      listToNat_natToList ((rabin_getD_spec (rabin_N_pos R) _ _ _ _).1.trans R.z.mul_lt)]
++      listToNat_natToList ((sampleUnitL_getD_spec (rabin_N_pos R) _ _ _ _).1.trans R.z.mul_lt)]
+     congr 4
+     rw [hM]
+   have eY : (fun x : (ZMod (blumMod (rabinIndexOf m R)))ˣ => blumDec (rabinIndexOf m R)
+@@ -3284,7 +3149,7 @@ theorem rabinBlumTrapdoor_sampleClose (H : ArithmeticFP) :
+   intro n r
+   by_cases hn : n < 3
+   · rw [if_pos hn]
+-    exact rabin_statClose_one _ _
++    exact statClose_one _ _
+   rw [if_neg hn, rabinBlumTrapdoor_index, rabinBlumTrapdoor_sample]
+   simp only [rabinBlumTrapdoor_decD, rabin_blumSampler_runAt]
+   have h1 := ((rabin_statClose_blumDec _ (rabinGenParams (· % 4 = 3) blumDefault n (List.ofFn r)) n
+@@ -3580,7 +3445,7 @@ private theorem rabin_rOut_eq (A : NUPPT) (z : List Bool) : rabin_rOut A z = rab
+       listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow _))]
+   have hT : rabin_rTest A z = decide (listToNat (rabin_rS A z) *
+       (listToNat (pairFstD (NUPPT.inArg z)) / listToNat (rabin_rS A z)) = listToNat (pairFstD (NUPPT.inArg z))) := by
+-    rw [rabin_rTest, rabin_listToNat_mulStr, hQ, Bool.eq_iff_iff]
++    rw [rabin_rTest, listToNat_mulStr, hQ, Bool.eq_iff_iff]
+     simp only [Bool.and_eq_true, decide_eq_true_eq]
+     omega
+   rw [rabin_rOut, hT, rabinRootRaw, rabinRootStep, ← rabin_rS]
+@@ -3597,25 +3462,25 @@ test (two `H.le`, `polyTimeComputable_and`), the truncated CRT word (`rabin_crtW
+ `rabin_trunc_poly`), selected by `polyTimeComputable_ite`; each folded by `unfold`. -/
+ private theorem rabin_rOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rabin_rOut A) := by
+   have hw := NUPPT.polyTimeComputable_inArg
+-  have hN := rabin_comp polyTimeComputable_pairFstD hw
+-  have hy := rabin_comp polyTimeComputable_pairSndD hw
++  have hN := PolyTimeComputable.comp' polyTimeComputable_pairFstD hw
++  have hy := PolyTimeComputable.comp' polyTimeComputable_pairSndD hw
+   have hS : PolyTimeComputable (rabin_rS A) := by
+-    have h := rabin_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
++    have h := PolyTimeComputable.comp' A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+       NUPPT.polyTimeComputable_inParam hN NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
+     unfold rabin_rS
+     exact h
+   have hQ : PolyTimeComputable (rabin_rQ A) := by
+-    have h := rabin_comp polyTimeComputable_pairFstD (rabin_comp H.divMod (hN.pairEncode hS))
++    have h := PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' H.divMod (hN.pairEncode hS))
+     unfold rabin_rQ
+     exact h
+-  have hM := rabin_comp H.mul (hS.pairEncode hQ)
++  have hM := PolyTimeComputable.comp' H.mul (hS.pairEncode hQ)
+   have hT : PolyTimeComputable fun z => [rabin_rTest A z] := by
+     have h := polyTimeComputable_and
+       (p := fun z => decide (listToNat (mulStr (pairEncode (rabin_rS A z) (rabin_rQ A z))) ≤
+         listToNat (pairFstD (NUPPT.inArg z))))
+       (q := fun z => decide (listToNat (pairFstD (NUPPT.inArg z)) ≤
+         listToNat (mulStr (pairEncode (rabin_rS A z) (rabin_rQ A z)))))
+-      (rabin_le_poly H hM hN) (rabin_le_poly H hN hM)
++      (H.le_poly hM hN) (H.le_poly hN hM)
+     unfold rabin_rTest
+     exact h
+   have h := polyTimeComputable_ite (p := rabin_rTest A) hT
+diff --git a/TCSlib/Cryptography/HardcoreBit/Basic.lean b/TCSlib/Cryptography/HardcoreBit/Basic.lean
+index a039599a..39ff2cfa 100644
+--- a/TCSlib/Cryptography/HardcoreBit/Basic.lean
++++ b/TCSlib/Cryptography/HardcoreBit/Basic.lean
+@@ -37,6 +37,8 @@ independent and uniform, a subset XOR of uniform strings is uniform) are express
+ * `pushesUniform_eval`, `pushesUniform_eval_pair`, `PushesUniform.prodMap`,
+   `pushesUniform_of_surjective`: coordinates and pairs of coordinates of a uniform
+   tuple, products, and surjective additive homomorphisms push uniform to uniform.
++* `pushesUniform_restrict`: restricting a uniform table along an injection gives a uniform
++  table.
+ 
+ ## References
+ 
+@@ -207,6 +209,30 @@ theorem pushesUniform_fst [Nonempty β] : PushesUniform (Prod.fst : α × β →
+ theorem pushesUniform_snd [Nonempty α] : PushesUniform (Prod.snd : α × β → β) :=
+   (pushesUniform_equiv (Equiv.prodComm α β)).comp pushesUniform_fst
+ 
++/-- **Restricting a uniform table along an injection gives a uniform table**: for an injective
++`r : J → I`, the map `R ↦ R ∘ r` pushes the uniform distribution on `I → O` to the uniform
++distribution on `J → O`.
++
++**Proof sketch.** Split `I` into the image of `r` and its complement (`Equiv.ofInjective`,
++`Equiv.Set.sumCompl`). A table is the pair of its two restrictions (`Equiv.sumArrowEquivProdArrow`),
++and `R ∘ r` is the first one (`pushesUniform_equiv`, `pushesUniform_fst`). -/
++theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J]
++    [DecidableEq J] [Fintype O] [Nonempty O] {r : J → I} (hr : Function.Injective r) :
++    PushesUniform (fun R : I → O => fun j => R (r j)) := by
++  classical
++  let e₁ : J ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
++    (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
++      (Equiv.Set.sumCompl (Set.range r))
++  let e : (I → O) ≃ (J → O) × (((Set.range r)ᶜ : Set I) → O) :=
++    (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
++  have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
++    funext R j
++    have h1 : e₁ (Sum.inl j) = r j := rfl
++    show R (r j) = R (e₁ (Sum.inl j))
++    rw [h1]
++  rw [he]
++  exact (pushesUniform_equiv e).comp pushesUniform_fst
++
+ /-- A product of maps pushing uniform to uniform pushes uniform to uniform: the
+ coordinates of a uniform pair are independent.
+ 
+diff --git a/TCSlib/Cryptography/NumberTheory/Primality.lean b/TCSlib/Cryptography/NumberTheory/Primality.lean
+index 0897aded..4e32f7d0 100644
+--- a/TCSlib/Cryptography/NumberTheory/Primality.lean
++++ b/TCSlib/Cryptography/NumberTheory/Primality.lean
+@@ -75,6 +75,8 @@ density as `1/n` (it is `1/(2n)`, Claim-33.1).
+   `TCSlib.Cryptography.NumberTheory.uprob_samplePrime_none_le_exp`,
+   `TCSlib.Cryptography.NumberTheory.statClose_samplePrime`,
+   `TCSlib.Cryptography.NumberTheory.exists_samplePrime_nuppt` — [PS10, Lemma 51.17].
++* `TCSlib.Cryptography.NumberTheory.listToNat_nil`, `listToNat_cons`, `listToNat_append`,
++  `listToNat_singleton_true` — the equations of the binary reading `listToNat`.
+ 
+ ## References
+ 
+@@ -671,6 +673,26 @@ theorem listToNat_eq (w : List Bool) :
+ theorem bitsToNat_eq_listToNat {n : ℕ} (b : Fin n → Bool) : bitsToNat b = listToNat (List.ofFn b) :=
+   rfl
+ 
++/-- The empty word reads as `0`: `listToNat [] = 0`. -/
++theorem listToNat_nil : listToNat [] = 0 := by
++  rw [listToNat_eq, List.foldl_nil]
++
++/-- **Prepending a bit** (most significant first): `⟦b :: l⟧ = [b] · 2^{|l|} + ⟦l⟧`, with
++`[b] = 1` if `b` and `0` otherwise. -/
++theorem listToNat_cons (b : Bool) (l : List Bool) :
++    listToNat (b :: l) = (if b then 1 else 0) * 2 ^ l.length + listToNat l := by
++  rw [listToNat_eq, listToNat_eq, List.foldl_cons, foldl_bits_eq, Nat.mul_zero, Nat.zero_add]
++
++/-- **Concatenation** (most significant first): `⟦a ++ b⟧ = ⟦a⟧ · 2^{|b|} + ⟦b⟧`. -/
++theorem listToNat_append (a b : List Bool) :
++    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
++  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, foldl_bits_eq]
++
++/-- The one-bit word `[true]` reads as `1`: `listToNat [true] = 1`. -/
++theorem listToNat_singleton_true : listToNat [true] = 1 := by
++  rw [listToNat_eq, List.foldl_cons, List.foldl_nil]
++  rfl
++
+ /-- The coin polynomial of `SamplePrime` at `T = 2n²` trials of `n` bits: `2n² · n`. -/
+ def samplePrimeCoins : PolyExpr :=
+   PolyExpr.mul (PolyExpr.mul (PolyExpr.const 2) (PolyExpr.pow PolyExpr.var 2)) PolyExpr.var
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+index 45d6fef9..c1fbe98d 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ColZKLemmas.lean
+@@ -16,8 +16,8 @@ set_option autoImplicit false
+ 
+ Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean`, the proof of
+ [PS10, Proposition 128.8]): reading disjoint fields of a uniform tape gives independent uniform
+-fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
+-function (`negligible_colZKErr`).
++fields (`pushesUniform_offsetTable`, through `HardcoreBit.pushesUniform_restrict` of
++`HardcoreBit/Basic.lean`), and the bookkeeping of the error function (`negligible_colZKErr`).
+ 
+ ## Main definitions
+ 
+@@ -25,8 +25,6 @@ function (`negligible_colZKErr`).
+ 
+ ## Main results
+ 
+-* `TCSlib.Cryptography.ColZK.pushesUniform_restrict` — restricting a uniform table along an
+-  injective map gives a uniform table.
+ * `TCSlib.Cryptography.ColZK.pushesUniform_offsetTable`, `pushesUniform_blockFields` — disjoint
+   fields of a uniform tape are independent and uniform.
+ * `TCSlib.Cryptography.ColZK.exists_fixSeed`, `distAdv_seed_to_coins`,
+@@ -47,30 +45,6 @@ open Complexity Turing
+ 
+ /-! ### Uniform fields of a uniform tape -/
+ 
+-/-- **Restricting a uniform table along an injective map gives a uniform table**: for an
+-injective `r : J → I`, `R ↦ R ∘ r` pushes the uniform distribution on `I → O` to the uniform
+-distribution on `J → O`. Generic form (any finite `J`) of `pushesUniform_comp_injective` of
+-`Asymptotic/MultiMessage.lean` (stated there for `J = Fin (q + 1)`; that file is not upstream of
+-this one), with the same proof.
+-
+-**Proof sketch.** Split `I` into the image of `r` and its complement (`Equiv.ofInjective`,
+-`Equiv.Set.sumCompl`): the table is the pair of its restrictions
+-(`Equiv.sumArrowEquivProdArrow`), and `R ∘ r` is the first one (`pushesUniform_fst`). -/
+-theorem pushesUniform_restrict {I J O : Type*} [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+-    [Fintype O] [Nonempty O] {r : J → I} (hr : Function.Injective r) :
+-    HardcoreBit.PushesUniform (fun R : I → O => fun j => R (r j)) := by
+-  classical
+-  let e₁ : J ⊕ ((Set.range r)ᶜ : Set I) ≃ I :=
+-    (Equiv.sumCongr (Equiv.ofInjective r hr) (Equiv.refl _)).trans
+-      (Equiv.Set.sumCompl (Set.range r))
+-  let e : (I → O) ≃ (J → O) × (((Set.range r)ᶜ : Set I) → O) :=
+-    (Equiv.arrowCongr e₁.symm (Equiv.refl O)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
+-  have he : (fun R : I → O => fun j => R (r j)) = fun R => (e R).1 := by
+-    funext R j
+-    simp [e, e₁]
+-  rw [he]
+-  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
+-
+ /-- Entry `(i, j)` of an `n × k` table sits at position `i k + j < n k`. -/
+ theorem table_index_lt {n k : ℕ} (i : Fin n) (j : Fin k) : (i : ℕ) * k + j < n * k := by
+   have h1 := i.isLt
+@@ -96,8 +70,8 @@ theorem table_index_inj {n k : ℕ} {i i' : Fin n} {j j' : Fin k}
+ 
+ **Proof sketch.** The two fields read the tape along the injective map
+ `Fin a ⊕ (Fin n × Fin k) → Fin L`, `inl i ↦ i`, `inr (i, j) ↦ a + i k + j` (`table_index_inj`),
+-so `pushesUniform_restrict` applies; the pair of fields is that restriction followed by the
+-bijection `Equiv.sumArrowEquivProdArrow` and `Equiv.curry`. -/
++so `HardcoreBit.pushesUniform_restrict` applies; the pair of fields is that restriction followed
++by the bijection `Equiv.sumArrowEquivProdArrow` and `Equiv.curry`. -/
+ theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
+     HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
+       ((fun i : Fin a => t (Fin.castLE (by omega) i)),
+@@ -119,7 +93,7 @@ theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
+   let e : (Fin a ⊕ (Fin n × Fin k) → Bool) ≃ (Fin a → Bool) × (Fin n → Fin k → Bool) :=
+     (Equiv.sumArrowEquivProdArrow _ _ _).trans
+       (Equiv.prodCongr (Equiv.refl _) (Equiv.curry _ _ _))
+-  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
++  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+ 
+ /-- **Four disjoint fields of a uniform tape are independent and uniform**: for offsets
+ `a₁ ≤ o₂`, `o₂ + a₂ ≤ o₃`, `o₃ + n k ≤ o₄`, `o₄ + a₄ ≤ L`, the map sending a tape `t` of `L`
+@@ -129,8 +103,8 @@ simulator, `colSimBlock`).
+ 
+ **Proof sketch.** The fields read the tape along an injective map
+ `((Fin a₁ ⊕ Fin a₂) ⊕ (Fin n × Fin k)) ⊕ Fin a₄ → Fin L` (disjoint ranges, `table_index_inj`), so
+-`pushesUniform_restrict` applies, followed by the bijection `Equiv.sumArrowEquivProdArrow` (three
+-times) and `Equiv.curry`. -/
++`HardcoreBit.pushesUniform_restrict` applies, followed by the bijection
++`Equiv.sumArrowEquivProdArrow` (three times) and `Equiv.curry`. -/
+ theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h₁ : a₁ ≤ o₂)
+     (h₂ : o₂ + a₂ ≤ o₃) (h₃ : o₃ + n * k ≤ o₄) (h₄ : o₄ + a₄ ≤ L) :
+     HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
+@@ -161,7 +135,7 @@ theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h
+     (Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
+       ((Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
+         (Equiv.sumArrowEquivProdArrow _ _ _) (Equiv.curry _ _ _))) (Equiv.refl _))
+-  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
++  exact (HardcoreBit.pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+ 
+ /-! ### Averaging over seeds -/
+ 

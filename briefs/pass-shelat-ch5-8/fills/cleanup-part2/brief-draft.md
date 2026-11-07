@@ -3,10 +3,13 @@
 **Status: draft, 2026-11-05.** Issued after gate 04 closes and #195 (S2b) merges into
 `cryptography/pass-shelat-ch2-4`. Part 1 is #203 (merged).
 
+**Pre-issue refresh, 2026-11-06 PST.** Gate 04 is at dispatched round 5, with zero seal
+exclusions. S1 (#227) and S2 precede this work under Q2 (A); this remains an unissued draft.
+
 **Before issue:**
-- the base is the branch head after #195's merge;
-- gate 04 round 4's **seal exclusions** (inherited ch. 2–4 proofs that read other files'
-  definitions, listed by the repair worker in `exclusions.md`) are copied into item J below;
+- the base is the branch head after #195, S1 (#227) and S2 have merged;
+- reconcile item J and item N's untouched-proof rows against that base: gate 04 round 5 has
+  **zero exclusions**, and work already done by #195, S1 or S2 is not commissioned again;
 - the line numbers below are refreshed at the base;
 - the brief is split if two workers run in parallel. The natural split is DL-17 (item B, about 23
   files) against the rest, on disjoint files;
@@ -27,12 +30,18 @@
   This changes **statements** of packs 03h, 03i and 03k: list each old → new.
 - **DL-10 `ptc_comp`:** one public form in `Randomized/Closure.lean`; the six copies (`Closure` and
   `Repetition` helpers, `Universal*`, `ThreeColoring/Machines`, …) deleted.
+  **Update 2026-11-07 (shared-lemma rulings Q2 (A)):** the shared-lemma PR S1 publishes
+  `PolyTimeComputable.comp'`/`.congr` in `Closure.lean`. This item reduces to deleting `Closure`'s
+  private `ptc_comp`, re-pointing its 27 uses, and re-pointing the other G6 copies
+  (`fills/shared-lemmas/design.md` §5.4). Base `ptc_congr`s take the reversed hypothesis
+  (`fun w => (h w).symm`).
 - **DL-11, second half:** re-point the `stateFind` copies (`GI.stateFind`,
   `EncodingMachines.polyTimeComputable_stateFind`, `GGMRed.stateLoopFun`, the variant
   `stateIterate`) to `Complexity.polyTimeComputable_stateFind` and delete them. Remove their
   "private" docstrings (`EncodingMachines.lean:468`, `GI/Efficiency.lean:47, 83–84`,
   `GGMReduction.lean:258`). Un-qualify `ThreeColoring/Machines.lean:126`.
-- **DL-12 `abs_uexp_sub_le`, DL-14 `forall_of_uprob_eq_one`:** one public copy each.
+- **DL-12 `abs_uexp_sub_le`:** done by the shared-lemma PR S1 (dropped here). **DL-14
+  `forall_of_uprob_eq_one`:** one public copy.
 - **DL-13:** delete `ZeroKnowledge/Defs.lean`'s `negligible_const_zero` (2 uses) in favour of
   `negligible_zero`.
 - **DL-15:** one public `decodeFin_eq_some_iff` in `Asymptotic/Adversary.lean`, avoiding the
@@ -57,6 +66,8 @@ delete the restatements and re-point their users (about 23 files in packs 03a, 0
 `cons_poly` is an alias without a duplicated proof; keep it.
 
 **C. Equation lemmas in `PPT.lean`:**
+These are already public at the Codex intake base `3ee2c5b28266d986dfce46f25fd4989de861b96e`.
+Verify and cite them at the issue base; do not add duplicate declarations:
 - `NUPPT.coinLen_eq : A.coinLen n = A.coins.eval n`;
 - `NUPPT.advInput_eq : A.advInput n y = pairEncode (List.replicate n true) y`;
 - `NUPPT.runAtL_eq` (its defining equation).
@@ -66,6 +77,9 @@ Then re-point `Closure.lean`'s `simp [runAtL, advInput, coinLen, …]` sites to 
 (`fills/efficiency/brief-draft.md`, "Prerequisites").
 
 **D. `decodeOracleMove`'s case lemmas** (`Asymptotic/PRF.lean`), public, beside the definition:
+Reuse #195's public `decodeOracleMove_pairEncode_false` and `decodeOracleMove_true_two`
+(verified at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e`). Add only forms still missing at
+the issue base, with coverage for all four cases below:
 - `⟨[false], x⟩` with `|x| = ℓ₁` decodes as `query x`;
 - `⟨[false], x⟩` with `x` of any other length decodes as `ret false`;
 - `[true, b]` decodes as `ret b`;
@@ -80,8 +94,20 @@ through the facade (03a #12).
 `GI/Efficiency.lean:141`, `GI/EfficiencyRep.lean:194, 388`, `GGMReductionEval.lean:534`. They go
 through `orbit_zero`.
 
-**J. Gate 04's seal exclusions** (`gates/04-s2b/evidence-r4/exclusions.md`: section A, 48 definitional reads; section B, 75 explicit unfolds; all in inherited ch. 2–4 declarations): re-prove the listed inherited ch. 2–4 proofs
-through published equation lemmas, adding missing equation lemmas beside their definitions.
+**J. Inherited rule-10 reads.** Gate 04 round 5 has no exclusions. Round 4's historical
+`gates/04-s2b/evidence-r4/exclusions.md` (48 definitional reads and 75 explicit unfolds) is an
+input to reconciliation, not an outstanding exclusion list. Use item N's 764 untouched-proof
+rows and the fill reviews as the current inventory; remove rows already repaired by #195,
+S1 or S2, and commission each remaining declaration once. Re-prove those consumers through
+published equation lemmas, adding missing equations beside their definitions.
+
+**Gate 04 round 5, inherited core unfolds:** replace the four explicit `Function.comp`
+arguments in `Asymptotic/MultiMessage.lean` and `MultiMessageLemmas.lean` by the published
+equation `Function.comp_apply` (or a verified equivalent lemma-based proof). These are outside
+the TCSlib-only scanner. Locations and a proposed, **not yet Lean-checked** patch are in
+`gates/04-s2b/evidence-r5-review/{inherited-core-unfolds.tsv,core-comp-equations.diff}`.
+Check the four proofs at the issue/landing tree; do not mistake the prepared patch for a repair
+already on #195.
 
 **K. Docstring (gate 03e round 3, minor 1).** In `ZeroKnowledge/Defs.lean`'s D8 deviation paragraph,
 replace "the rewinding simulators of the chapter are truncated and the theorems become statistical"
@@ -96,6 +122,12 @@ statistical ZK, while 3COL remains computational ZK with statistical sampling an
   "The contract gives nothing sharper" with: this theorem deliberately publishes the coarse
   time-derived bound and exposes no module-specific envelope (the contract implies the factor-two
   bound `⌊B/2⌋`, since the head starts and ends at 0).
+- **Gate 04 round 5, R5-03:** restore the complete formula docstrings of
+  `Protocol.transcriptWith_eq` and `Protocol.outV_eq` in `ZeroKnowledge/Interaction.lean`,
+  naming all inputs, tapes, the verifier-first flag and round count where present in the
+  statement. Prepared docstring-only patch:
+  `gates/04-s2b/evidence-r5-review/interaction-docstrings.diff`. Statements and proofs stay
+  byte-identical; this patch is queued, not landed.
 
 **M. Mathlib replacements (DL-21; user direction 2026-11-06).** The DUP and WRAP rows of
 `mathlib-overlap-nt.md` in `NumberTheory/*` and in files no fill owns: replace by the Mathlib
@@ -105,6 +137,20 @@ definition becomes a Mathlib alias: list each old → new.
 
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
 only where an item says so.
+
+**N. Base re-points of the shared-lemma design's deferred groups (added 2026-11-07;
+`fills/shared-lemmas/design.md` §5.4):**
+- G7: `Language.lean`'s `h2`; `two_pow_permBits_le` as a corollary; keep one of
+  `two_pow_size_le`/`two_pow_size_le_two_mul_succ` and re-point the other.
+- G10: the `castLE` triple as corollaries of `HardcoreBit.pushesUniform_restrict`; `dlb_cut`;
+  `pushesUniform_comp_injective` (after #195).
+- G13 (with DL-9), G14, G22 (with DL-11), G23, G25, and optionally G12 (after #195), and G18
+  (`uexp_le_of_statClose`, deferred by Q5).
+- The 764 untouched rule-10 rows recorded by #210 (`gates/07-eqlemmas/evidence-r2/r6c/cleanup-b*.tsv`),
+  and the base reads the fill reviews named: `primesPairEquiv_apply_val`, `exists_fullLengthExcept`,
+  `rabinCollection_index`, `rabinBlumTrapdoor_index`.
+- **Item M (DL-21)** runs after S2's landing, so that the two do not edit the same `Candidates`
+  proofs.
 
 ## Checks (as part 1)
 
