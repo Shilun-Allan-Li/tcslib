@@ -774,7 +774,8 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
   have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
     le_mul_of_one_le_of_le (by omega : 1 ≤ codeK N + 1) (by omega)
   have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
-  have hn : x.length < 2 ^ dpW N sp x := Nat.size_le.mp (by rw [← Nat.size_eq_bits_len]; omega)
+  have hn : x.length < 2 ^ dpW N sp x :=
+    (lt_two_pow_bits _).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
   set B := 2 ^ (dpW N sp x * dpW N sp x) with hB
   have hnB : x.length ≤ B := by omega

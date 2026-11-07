@@ -1124,25 +1124,6 @@ private lemma clCountTape_eq (w : List Bool) : clCountTape w = FinTM.bufferTape 
   funext z
   by_cases hz : z < 0 <;> simp [clCountTape, FinTM.bufferTape, hz, show 0 ≤ z ↔ ¬z < 0 by omega]
 
-/-- A counter below `2^w` occupies at most `w` bits. Together with the
-counter runtime bound, this charges one administrative increment by two
-binary scans plus two transitions, with no unary-position representation. -/
-private lemma clCount_width (n w : ℕ) (hn : n < 2 ^ w) : n.bits.length ≤ w := by
-  induction n using Nat.binaryRec' generalizing w with
-  | zero => simp
-  | bit b n hb ih =>
-    cases w with
-    | zero =>
-      have hz : Nat.bit b n = 0 := by simpa using hn
-      cases b <;> simp [Nat.bit_val] at hz
-      have h := hb (by omega)
-      contradiction
-    | succ w =>
-      rw [Nat.bits_append_bit n b hb, List.length_cons]
-      apply Nat.succ_le_succ
-      apply ih
-      cases b <;> simp [Nat.bit_val, Nat.pow_succ] at hn <;> omega
-
 /-- One simultaneous counter action. A stopped component is stationary.
 The product construction is locally adapted from the audited
 `emitterBank*` construction in `Build/Primitives.lean`; the component here
@@ -2253,7 +2234,7 @@ private lemma clRowPrefix_length {l : ℕ} (w : Fin l → List Bool) (W : ℕ)
 width theorem. This is a coarse bound for native scans, not an alternative
 representation: all stored movement counts remain canonical binary. -/
 private lemma clElapsed_width (n t : ℕ) (hn : n ≤ t) : n.bits.length ≤ t :=
-  clCount_width n t (lt_of_le_of_lt hn (Nat.lt_two_pow_self (n := t)))
+  (Turing.length_bits_le_self n).trans hn
 
 /-- A deterministic valid virtual-input tag, used only in the pure record
 specification. At an interior cell either tag gives the same displacement. -/

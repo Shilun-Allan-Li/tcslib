@@ -20,14 +20,16 @@ exact-tree adoption.
 
 | PR | Change | Gate | Status |
 |---|---|---|---|
-| #215 | SG-1, all three consumers plus the shared Frag repair (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | 329-module independent replay passed; full seals, census and screen passed. Await findings attachment. **Not yet clear to merge.** |
-| #222 | NatBits, 22 Lean files; 10 source theorems / 16 compiled constants in the new module (`lean/dedup-natbits`) | **114**, Codex, **dispatched by the user** | 344-module independent replay passed; all 16 module axiom checks, census, boundary probes and screen passed. Await findings attachment. **Not yet clear to merge.** |
+| #215 | SG-1, all three consumers plus the shared Frag repair (`lean/dedup-sg1`) | **106**, Codex, **dispatched by the user** | 329-module replay plus the fresh 2-module E-PAD catch-up passed (`oleans-msg2`); audited blobs unchanged. Await findings. **Not yet clear to merge.** |
+| #222 | NatBits, 22 Lean files; 10 source theorems / 16 compiled constants (`lean/dedup-natbits`) | **114 CLOSED**, Codex PASS 0/0/0/8, all notes accepted | 344-module replay plus fresh 2-module E-PAD catch-up passed (`oleans-mnb2`), clean current merge, all audited blobs unchanged. **Clear to merge**; user merges. |
+| #229 | The approved Padding consumer, `SPACE_linear_ne_NP` (`lean/space-linear-ne-np`, draft) | **116**, Codex, finalized for staging | 2-module current replay passed (`oleans-mlin1`); source/CI/seal/screen checks complete. **Not yet clear to merge**, awaiting external gate. |
 
-Their immutable bundle/source/records pins are in each gate's `dispatch.json`, with the prompt
-in `prompt.md`. #215 and #222 carry the identical Frag hunk. Neither changed module set imports
-the Padding module changed by #228, so their original independent replays remain valid after
-that merge; the adoption receipt records the graph check. After another merge, reassess again;
-never compose independent snapshots.
+Their immutable issued packet pins remain in each gate's `dispatch.json`. #215/#222 carry the
+identical Frag hunk. After #228, the original imported-source criterion held, but their older
+replays contained the Padding stub. Both now have an actual **two-module catch-up replay** of
+the newly proved Padding file and its facade, chained separately from their original validated
+snapshots. All audited changed blobs are unchanged. No independent snapshots were spliced.
+After any further Lean merge, reassess/replay before clearing another PR.
 
 **E-PAD is merged.** Gate **115 CLOSED**, Codex **PASS 0 blockers / 0 majors / 0 minors / 12 notes**.
 All 12 notes are dispositioned, with no required code repair. Original findings: 13,569 bytes,
@@ -40,19 +42,19 @@ all 506 walked constants use only the standard axioms. Two-module replay, 72 pai
 and the 23-file screen passed. Issued gate/fill/delivery/findings are archived after recording.
 
 **Immediate work:**
-1. **Overnight MIG-1 megafill**, requested by the user, **Claude** selected. Preparing one pinned
+1. **Overnight MIG-1 megafill**, requested by the user, **dispatched to Claude**. One pinned
    cumulative job for the approved F-A → F-C → F-B → F-D migration and assigned MIG-24 factoring:
    17 existing spec admissions and three already-gated forwarding-map exports (two additional
    proofs). Eleven files owned; WordSize is documentation-only. No F6, paused record-table rows
-   or Ladner fill is added. Inputs and pre-ship checks live in `campaign/fills/mig1/`; stage only
-   after the full baseline screen and packet verification finish. Delivery will be by checkpoint
-   zip push to `arora-barak-ch3-4/inbox/fill-mig1-mega/`. The user dispatches it.
+   or Ladner fill is added. Inputs, independent brief review, passed pre-ship/screen and exact issued pins live in
+   `campaign/fills/mig1/`. The verified 324-section packet is published and unchanged. Await
+   checkpoint/final zip pushes to `arora-barak-ch3-4/inbox/fill-mig1-mega/`.
 2. **The small `SPACE_linear_ne_NP` consumer PR**, authorized by the user, branch
-   `lean/space-linear-ne-np`, reusing the former E-PAD worktree. The approved Padding import and
-   gate 110's exact derivation are implemented; Hierarchy preflight passes with only F6's existing
-   admission. Its gate is **116**, **Codex** selected (attachment + pasted findings). Finish
-   validation, PR/replay and staging. The user merges only after that gate closes.
-3. Review gates 106/114 as their findings arrive; keep each report verbatim, dispose every item,
+   `lean/space-linear-ne-np`, reusing the former E-PAD worktree. PR **#229** publishes the approved import and derivation. All checks, the eleven-file
+   screen and two-module merged-tree replay pass; only F6 remains admitted. Gate **116**,
+   **Codex** selected (attachment + pasted findings), is finalized for staging and user dispatch.
+   The user merges only after it closes.
+3. Review gate 106 as its findings arrive; gate 114 is closed and #222 is clear; keep each report verbatim, dispose every item,
    check the current merged tree and ask the user to merge only when clear.
 4. **F6 (`space_universal`, Hierarchy)** follows the consumer merge. #221's harvest prerequisite
    has merged. The startup route D-F6-3 is still a user decision after a route probe; gate 112's
@@ -65,7 +67,7 @@ scheduled; RO-1 parked with its decisions answered; WS-1/RC/QF/WC/TC/D9 later. T
 megafill uses its existing approvals and gate 16; it does not grant new interface/import/debt
 choices. Ask the user for any new design or acknowledgment.
 
-**Gate numbers:** 106/114 dispatched; 115 closed and merged; **116 reserved for the consumer**.
+**Gate numbers:** 106 dispatched; 114 closed; 115 closed and merged; **116 finalized for #229**.
 Next free: **117**. Ask the agent choice separately for each later audit/fill. These three
 selected audits are Codex; the newly requested MIG-1 fill is Claude. Claude may push only to its
 designated exchange inbox after pull/rebase; Codex returns files in chat.

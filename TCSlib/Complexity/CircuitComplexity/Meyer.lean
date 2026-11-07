@@ -185,8 +185,7 @@ theorem lenAll_inst (M : FinTM Bool) (Cw cw : ℕ) (x U : List Bool) {t a j : �
     evalAtom Cw cw M .lenAll (vin x U (enumWord (wd Cw cw x.length) t) (enumWord (wd Cw cw x.length) a)
       (List.replicate j true)
       (List.replicate (wd Cw cw x.length - (Nat.bits j).length) false)) = true := by
-  have hb : (Nat.bits j).length ≤ wd Cw cw x.length := by
-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hjW
+  have hb : (Nat.bits j).length ≤ wd Cw cw x.length := Complexity.LogProg.length_bits_le hjW
   simp only [evalAtom, vt_vin, va_vin, vj_vin, vx_vin, bjw, vp_vin, length_enumWord,
     List.length_replicate, List.length_append, decide_eq_true_eq]
   refine ⟨trivial, trivial, hj, by omega⟩

@@ -2758,8 +2758,8 @@ private theorem rt_exists_boundTM :
       · simp [FinTM.bufferTape, show 0 ≤ p by omega,
           List.getElem?_eq_none (show x.length.bits.length ≤ p.toNat by omega)]
   obtain ⟨u, ub, ucut, uheads, urun⟩ := rt_succ_run (0 : Fin (K + 1)) x.length.bits c rfl framed
-  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length := by
-    simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
+  have monotone : x.length.bits.length ≤ (x.length + 1).bits.length :=
+    Complexity.LogProg.length_bits_mono (Nat.le_succ x.length)
   have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
   let B : ℤ := ((C + 20) * ((x.length + 1).bits.length + 1) : ℕ)
   have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤

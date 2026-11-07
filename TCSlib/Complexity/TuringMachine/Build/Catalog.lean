@@ -4121,8 +4121,9 @@ private lemma f2_counter_count_space (x : List Bool) : ∀ i (hi : i ≤ x.lengt
         have hp := f2_head_steps f2_counterTM.tm
           (f2_counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits []) (u - t) j
         have hcarry := (f2_counterInc_length i.bits).2
-        rw [f2_counterInc_bits, Nat.size_eq_bits_len] at hcarry
-        have hwidth := Nat.size_le_size hi
+        rw [f2_counterInc_bits] at hcarry
+        have hwidth :=
+          (Complexity.LogProg.length_bits_mono hi).trans_eq (Nat.size_eq_bits_len x.length)
         change 0 - ((u - t : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((u - t : ℕ) : ℤ) at hp
         constructor <;> omega
 

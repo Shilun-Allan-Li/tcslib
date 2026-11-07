@@ -15,3 +15,7 @@
 
 - **Dispatched by the user** in this session. Await the findings attachment; the PR remains
   **not yet clear to merge** until the external gate closes.
+
+- **Gate CLOSED:** external PASS 0/0/0/8, all notes accepted without code changes.
+  A current two-module E-PAD catch-up replay passed on `oleans-mnb2`; the clean merge preview
+  has its exact Lean tree and all 22 audited blobs are unchanged. **Clear to merge: #222**.

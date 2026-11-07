@@ -1,0 +1,115 @@
+{
+  "bundle_sections_verified_against_git": 211,
+  "source_census": {
+    "base": {
+      "public": 448,
+      "private": 1918,
+      "total": 2366
+    },
+    "head": {
+      "public": 449,
+      "private": 1911,
+      "total": 2360
+    }
+  },
+  "changed_public_bodies": [
+    "Complexity.Meyer.lenAll_inst",
+    "Complexity.Meyer.bits_pad",
+    "Randomized.PolyAmp.bigK_le",
+    "Randomized.le_two_pow_size_pred",
+    "Complexity.LogProg.halfL_run",
+    "Turing.record_pos_lt"
+  ],
+  "removed_private": [
+    "Complexity.clCount_width",
+    "Turing.NTimeDiag.qy_two_pow_bits_le",
+    "Turing.NTimeDiag.qy_log_bits",
+    "Turing.NTimeDiag.qy_bits_len_mono",
+    "Turing.NTimeDiag.qy_lt_two_pow_bits",
+    "Turing.NTimeDiag.dz_word_lt",
+    "Randomized.length_bits_eq"
+  ],
+  "six_preserved_name_moves": {
+    "Complexity.LogProg.length_bits_succ_le": [
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ],
+    "Complexity.LogProg.length_bits_le": [
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ],
+    "Complexity.LogProg.two_pow_bits_le": [
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ],
+    "Turing.length_bits_le_self": [
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ],
+    "Complexity.LogProg.length_bits_mono": [
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ],
+    "Complexity.LogProg.length_bits_le_log": [
+      "TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean",
+      "TCSlib/Complexity/TuringMachine/NatBits.lean"
+    ]
+  },
+  "nonprivate_constant_delta_reproduced": true,
+  "natbits_compiled_constants": 16,
+  "natbits_internal_auxiliaries": 6,
+  "all_16_recorded_axiom_sets_standard": true,
+  "natbits_imports": [
+    "Mathlib.Data.Nat.Size",
+    "Mathlib.Data.Nat.Log",
+    "Mathlib.Data.Nat.Digits.Defs"
+  ],
+  "no_lean_or_screen_run_by_reviewer": true,
+  "final_probe_input_hashes_verified": [
+    "axioms/ModuleAxioms-run.json",
+    "axioms/Axioms-run.json",
+    "Sanity-run.json",
+    "seal/FragCell-run.json",
+    "axioms/ModuleCensus-head-run.json",
+    "axioms/ModuleCensus-base-run.json"
+  ],
+  "screen_raw_pair_sets_reproduced": {
+    "base": 926,
+    "head": 923,
+    "persistent": 922,
+    "added": [
+      [
+        "NTimeDiagonalizer.lean::qy_rnd_tests",
+        "NTimeDiagonalizer.lean::dz_budget_le"
+      ]
+    ],
+    "removed": [
+      [
+        "ExhaustiveReplay.lean::xr_val_lt",
+        "NTimeDiagonalizer.lean::dz_word_lt"
+      ],
+      [
+        "NTimeDiagonalizer.lean::dz_word_lt",
+        "ExhaustiveReplay.lean::xr_val_lt"
+      ],
+      [
+        "NTimeDiagonalizer.lean::qy_two_pow_bits_le",
+        "NTimeDiagonalizer.lean::qy_log_bits"
+      ],
+      [
+        "Word.lean::eq_bits_append_replicate",
+        "Word.lean::bitsVal_lt_two_pow"
+      ]
+    ]
+  },
+  "screen_raw_summaries": {
+    "base": "declarations screened: 1809; copy pairs (target reproduces >= half of source): 926; reproduced text: 226,704 chars",
+    "head": "declarations screened: 1800; copy pairs (target reproduces >= half of source): 923; reproduced text: 226,336 chars"
+  },
+  "replay_rows_checked": 344,
+  "replay_failures": 0,
+  "replay_diagnostic_errors": 0,
+  "replay_sorry_declarations": 68,
+  "boundary_probe_examples": 7,
+  "dependency_closure_independently_reproduced": 344
+}

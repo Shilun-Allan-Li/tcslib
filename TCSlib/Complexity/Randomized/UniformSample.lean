@@ -93,11 +93,10 @@ theorem lt_of_uniformSample_eq_some {N k : ℕ} {r : List Bool} {i : ℕ}
 theorem le_two_pow_size_pred {N : ℕ} (hN : 1 ≤ N) :
     N ≤ 2 ^ Nat.size (N - 1) ∧ 2 ^ Nat.size (N - 1) < 2 * N := by
   refine ⟨by have := Nat.lt_size_self (N - 1); omega, ?_⟩
-  rcases Nat.eq_zero_or_pos (Nat.size (N - 1)) with h | h
-  · rw [h]; omega
-  · have h2 : 2 ^ (Nat.size (N - 1) - 1) ≤ N - 1 := Nat.lt_size.mp (by omega)
-    have : 2 ^ Nat.size (N - 1) = 2 * 2 ^ (Nat.size (N - 1) - 1) := by
-      rw [← pow_succ']; congr 1; omega
+  rw [← Nat.size_eq_bits_len]
+  rcases Nat.eq_or_lt_of_le hN with rfl | hN2
+  · simp
+  · have := Complexity.LogProg.two_pow_bits_le (N - 1) (by omega)
     omega
 
 /-! ### The output distribution -/

@@ -13,3 +13,7 @@ are resolved. The fresh 104-ref/76-tree name/shape search and candidate inspecti
 Bundle verification/publication follows this records snapshot.
 **Not yet dispatched.** The user dispatches the verified published packet; the maintainer later
 reviews delivery and builds the Lean PR(s), external gate(s) and current merged-tree replay(s).
+
+**Dispatched by the user** after the verified 324-section packet was published. Immutable
+source/records/exchange pins are in `dispatch.json`; the issued bundle is unchanged. Await
+Claude checkpoint/final pushes to the designated inbox; do not duplicate the fill internally.

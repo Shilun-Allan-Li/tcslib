@@ -1,0 +1,43 @@
+{
+  "campaign": "7df0d047d501a1d08982d17d20208faf49d39131",
+  "audited_head": "ccdc033f402781ecb4bb5b097e4018b8d9da1b90",
+  "merged_pr_head": "09cb73d8a8fbe5db75fcf6f347b120f012f5da4f",
+  "previous_snapshot": "oleans-msg1",
+  "snapshot": "oleans-msg2",
+  "audited_changed_blobs_unchanged": true,
+  "audited_scope_files": [
+    "TCSlib/Complexity/ClassNP/Tautology.lean",
+    "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+  ],
+  "only_changed_lean_since_previous_snapshot": [
+    "TCSlib/Complexity/SpaceComplexity/Padding.lean"
+  ],
+  "modules": [
+    "TCSlib/Complexity/SpaceComplexity/Padding",
+    "TCSlib/Complexity/SpaceComplexity"
+  ],
+  "base_replay_modules": 329,
+  "checked_at_utc": "2026-11-07T07:17:40.322100+00:00",
+  "module_runs": [
+    {
+      "module": "TCSlib/Complexity/SpaceComplexity/Padding",
+      "exit": 0,
+      "errors": 0,
+      "sorry": 0,
+      "source_sha256": "48201d0d665eccd64eed64d0b918c6f2b0ff2e6e80f3db84053827d4e516d41f"
+    },
+    {
+      "module": "TCSlib/Complexity/SpaceComplexity",
+      "exit": 0,
+      "errors": 0,
+      "sorry": 0,
+      "source_sha256": "41cdf52466f4d1e42b2657c6d03c08283dcc24e0baff6cce82b920312d4a5f9a"
+    }
+  ],
+  "failed": 0,
+  "static_mismatches": 0,
+  "explanation": "A new two-module replay chained from the validated PR snapshot. All other Lean sources are identical to that snapshot. No independent snapshots were composed.",
+  "receipt_finalization_note": "Both Lean runs and staticsorry exited successfully. The initial driver then asserted the wrong textual order for the static summary (0 mismatches instead of mismatches 0). Corrected the parser and finalized from the unchanged complete raw logs; no Lean rerun or elapsed-time claim."
+}

@@ -187,22 +187,17 @@ private lemma dropIdx_suffix_address (w b b' tail : List Bool) (j : ℕ) (hj : j
 /-- Passing a binary-width check bounds the decoded value by twice the cap, including a
 zero cap. This also bounds every partial value in a most-significant-bit-first decoder.
 
-**Proof sketch.** The value is below `2 ^ size n`. For positive `n`, its top binary place
-is at most `n`, hence `2 ^ size n ≤ 2*n`; at zero both canonical representations are empty. -/
+**Proof sketch.** The value is below `2 ^ |bits r| ≤ 2 ^ |bits n|`. For positive `n`,
+`2 ^ |bits n| ≤ 2*n`; at zero both canonical representations are empty. -/
 private lemma query_index_bound (r n : ℕ)
     (hwidth : (Nat.bits r).length ≤ (Nat.bits n).length) : r ≤ 2 * n := by
-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len] at hwidth
-  have hr := Nat.size_le.mp hwidth
+  have hr : r < 2 ^ (Nat.bits n).length :=
+    (LogProg.lt_two_pow_bits r).trans_le (Nat.pow_le_pow_right (by norm_num) hwidth)
   by_cases hn : n = 0
   · subst n
-    simp only [Nat.size_zero, pow_zero] at hr
+    simp only [Nat.zero_bits, List.length_nil, pow_zero] at hr
     omega
-  · have hs : 0 < n.size := Nat.size_pos.mpr (Nat.pos_of_ne_zero hn)
-    have htop : 2 ^ (n.size - 1) ≤ n := Nat.lt_size.mp (by omega)
-    have hpow : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
-      conv_lhs => rw [show n.size = (n.size - 1) + 1 by omega, pow_succ]
-      omega
-    rw [hpow] at hr
+  · have := LogProg.two_pow_bits_le n (by omega)
     omega
 
 /-- Discarding low-order digits cannot increase a binary word's value. -/
