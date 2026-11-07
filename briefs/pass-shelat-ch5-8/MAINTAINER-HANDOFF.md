@@ -89,6 +89,9 @@ in this folder (identical).
 | Duplication ledger (copies to consolidate) | `duplication-ledger.md`: DL-21…DL-29 are this campaign's recent rows |
 | Open questions / user queue | `OPEN-QUESTIONS.md`, `QUEUE.md` (historical; §6 here is current) |
 | Gates | `gates/<NN>-<slug>/`: packs, `findings/`, `resolutions-*.md`, evidence |
+| **Post-landing check** | Passed (`fills/landing/postland/SUMMARY.md`): `sorry` in `TCSlib/Cryptography` 65 → 2, every fill headline standard-axiom-only. |
+| **#195 / gate 04 round 5** | #195 pushed at `9ac1c4260adb8fbfe8c6f50df7786dbdd015656e` (merged the landed base; zero exclusions). Gate 04 round 5 staged on the exchange (`outbox/gates/04-s2b-r5-gate/`, exchange `7868fba2`, records `c39f0e11`); prompt given to the user. On findings: file, resolve, then #195 clear to merge. |
+| **Shared-lemma work** | Design `fills/shared-lemmas/design.md`; rulings Q1–Q8 recorded (log, 2026-11-07): one gate round **08** for S1's statements and S2's host contract; S1 and S2 are their own PRs, ahead of clean-up part 2; the host lives in `Concrete.lean`; **S2's proof is an external fill**. S1 (with the host sorried) was being implemented at hand-off on local branch `wip/shared-s1` (evidence `$SP/shared-s1/`); next: PR, gate 08 pack, then the S2 fill brief. |
 | Fills | `fills/<group>/`: `brief.md`, `brief-issued.md`, `review.md`, `inputs/<unit>/`, `delivery-review-<unit>.md`, `review-*-evidence/`; `fills/NOTES-2026-11-07.md` (issue notes); `fills/fill-environment-addendum.md` (external host set-up) |
 | Landing branches (backup) | `fills/landing/{dl,3col,fac}/`: patch series, `BASE.txt`, `HEAD.txt`, evidence |
 | Maintainer tools | `maintainer/tools/` (§5); gate 04's seal tools in `gates/04-s2b/evidence-r5/tools/`; the proof-seal tools in `gates/07-eqlemmas/evidence-r2/r6c/proofseal-tools/` |
