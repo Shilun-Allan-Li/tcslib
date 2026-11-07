@@ -1526,7 +1526,8 @@ private theorem epad_Q_mem (C d : ℕ) (mode : Bool) : epadQ C d mode ∈ LOGSPA
             | false => exact hi (by simpa using h4)
             | true =>
               simp only [if_true] at h4
-              rw [List.getD_eq_default _ _ (by omega)] at h4
+              rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (by omega),
+                Option.getD_none] at h4
               exact Bool.false_ne_true h4
         rw [hans]
         exact hr.halt (hr'.halt hpost)
