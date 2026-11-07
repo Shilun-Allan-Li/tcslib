@@ -8,6 +8,10 @@ Target: `Complexity.mem_SPACE_padLang` in `TCSlib/Complexity/SpaceComplexity/Pad
 > in a new `SpaceComplexity/Padding` module, for later reuse; `Hierarchy` will import it; the
 > maintainer then closes `SPACE_linear_ne_NP` in a small PR. Dispatched by pasted prompt; the
 > agent is the user's choice.
+> **Pre-ship** on the campaign snapshot after #214 and #223: the import probe
+> (`campaign/fills/epad/inputs/EPadImportProbe.lean.txt`) elaborates with exit 0, and every host
+> named below prints its type. The target's only admission is its own `sorry`
+> (`campaign/fills/epad/logs/epad-preship-importprobe.out`).
 
 > **A single fill**, under addendum v2.6 Parts 1 and 2. Deliver a checkpoint zip after each
 > checkpoint, because the session may end at any time.

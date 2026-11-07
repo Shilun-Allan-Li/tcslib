@@ -7,63 +7,73 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-06, evening; read this first; START-HERE.md is the entry point)
+## 0. Current state (2026-11-07; read this first; START-HERE.md is the entry point)
 
-**Merged on 2026-11-06** (the user):
+The Claude maintainer session ended here; the next maintainer (Codex) picks up from this section.
+The campaign tip is `95390090` (the merge of #221).
+
+**Merged on 2026-11-06/07** (the user):
 - #208 (Savitch through deepening), #212 (ZP-1), #213 (CE-1), #216 (RP-1);
 - #217 (NZ-1), #211 (G5: `two_work_tapes_run`, so `universal_TlogT` is admission-free);
 - #218 (H: `space_hierarchy`, `LOGSPACE_ssubset_PSPACE`), #219 (the E-PAD statements,
   `SpaceComplexity/Padding`);
-- #214 (AS-1), #223 (the book-form Thm 3.1: `time_hierarchy_book`, `_of_pos`, `_log`).
+- #214 (AS-1), #223 (the book-form Thm 3.1: `time_hierarchy_book`, `_of_pos`, `_log`);
+- #220 (CL-1, the codec languages), #221 (the U2 harvest API, `Build/UniversalParts`).
 
-**Open PRs and their next step:**
+**Open PRs:**
 
 | PR | What | Gate | Next |
 |---|---|---|---|
-| #220 | CL-1, codec languages (`lean/dedup-cl1`) | 111 **CLOSED** (PASS 0/0/3; minors fixed `86979df1`, CK-1 recorded) | `replay-lcl3` on `oleans-lcamp7`, then **clear to merge** |
-| #221 | U2 harvest API, `Build/UniversalParts` (`lean/u2-harvest-api`) | 112 **dispatched** | findings → dispositions; `replay-lhv3` on `oleans-lcamp7` |
-| #215 | SG-1, `CounterLoop`/`Tautology`/`SingleTape` + `Frag`'s pinned step (`lean/dedup-sg1`) | 106: pack not yet written (reserved number) | `replay-lsg7`, then gate 106 pack and stage |
-| #222 | NatBits (BL-1, NB-1, LS-3), new `TuringMachine/NatBits` (`lean/dedup-natbits`) | 114: not yet written (reserved) | `replay-lnb4` (about 343 modules), then gate 114 pack and stage |
+| #215 | SG-1: `CounterLoop`'s `counterSpan` through `Segment`; `Tautology` and `SingleTape` import `Build/Contract/Basic` (ruled); `Frag`'s pinned `hrd` step (`4801588a`, needed because that import changes simp sets downstream) (`lean/dedup-sg1`) | **106**: pack not yet written (the number is reserved). The old draft is in the Claude VM's scratch and is lost; write it fresh, modelled on 107/108 | a merged-tree replay on the campaign at `95390090` (about 330 modules, including `TwoTapes`, `Hierarchy` and the AS-1 files), then gate 106 |
+| #222 | NatBits (BL-1, NB-1, LS-3): new `TuringMachine/NatBits` below `Encoding` and `Bin`; 21 sites + Meyer ×2; the same `Frag` cherry-pick as #215 (`lean/dedup-natbits`) | **114**: not yet written (reserved) | a merged-tree replay on `95390090` (about 345 modules), then gate 114 (scope: `campaign/items/dedup/natbits-SCOPE.md`; plan: `natbits-PLAN.md`) |
 
-**Snapshots** (`$TCSLIB_SCRATCH`):
-- `oleans-lcamp6`: the campaign after #218 and #219.
-- `oleans-lcamp7`: being built by `replay-lcamp7` (120 modules, the campaign after #214 and #223,
-  Lean `72fcfbef`). It becomes the campaign snapshot when it passes. Then delete `lcamp6`.
+Both replays were running on the pre-#220/#221 snapshot and were **stopped as stale**. #215 and
+#222 both carry the `Frag` hunk, so whichever merges second merges it cleanly (identical hunk).
 
-**Running at the time of writing:** `fills/replay/queue12.sh`. It runs lcamp7, then prepares and
-runs `lcl3`, `lhv3` and `lsg7` (one chain) and `lnb4` (the other). A watcher then runs the E-PAD
-import probe (`campaign/fills/epad/inputs/EPadImportProbe.lean.txt`) against `oleans-lcamp7`. **After
-a container restart all of these die:** re-run the queue (`scratch-api/replay-queue.example.sh` is
-a copy).
+**Fill in flight: E-PAD** (`campaign/fills/epad/STATUS.md`). It was dispatched 2026-11-07 and
+proves `mem_SPACE_padLang`. **Delivery arrives by push** in `exchange/pass-shelat-ch5-8` under
+`arora-barak-ch3-4/inbox/fill-epad/`: checkpoint zips and the final `fill-epad.zip` with
+`REPORT.md`. Then:
+1. review the delivery and run the library sweep;
+2. land it in a PR against the campaign, with a merged-tree replay and a fill gate;
+3. then the maintainer closes `SPACE_linear_ne_NP` in `Hierarchy` in a small PR with its own gate.
+   It imports `Padding` (allowed by the user), and its body is
+   `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`,
+   going through `mem_padLang_iff` with `Set.ext`. Gate 110's consumer probe
+   (`campaign/gates/110-epad-statements/evidence/probe/`) has the exact derivation.
 
-**Next, in order:**
-1. **E-PAD fill:** brief `campaign/fills/epad/briefs/epad-fill.md`, base `72fcfbef`.
-   - When the import probe passes, record it in `campaign/fills/epad/logs/`.
-   - Stage the brief in `exchange/…/arora-barak-ch3-4/outbox/fills/` and give the user a
-     pasteable fill prompt (the user picks the agent).
-   - After delivery: review, sweep, landing PR, fill gate. Then the maintainer closes
-     `SPACE_linear_ne_NP` in `Hierarchy` (import `Padding`; body
-     `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`
-     through `mem_padLang_iff`), in a small PR with its own gate.
-2. **Gates 106 (#215) and 114 (#222):** packs after their replays, modelled on 107/108.
-3. **F6 (`space_universal`):** after #221 merges, and after E-PAD lands in `Hierarchy` (the user
-   ruled E-PAD first). Write F6's fill brief on the harvest's rows; the startup route D-F6-3 is
-   still to decide after the consumer probe (`campaign/items/u2harvest/Probe.lean.txt`).
-4. **Ladner's statement phase:** LD-1 to LD-7 accepted as recommended, and LD-8 partly pinned
-   (`campaign/items/roadmap3/PLAN.md` §Ladner, §(f)). Write the statement file and its gate.
+**Snapshots.** The Claude VM's `oleans-*` trees do not travel. A new machine bootstraps one
+(§1, item 4) at the campaign tip. The last campaign snapshot here was `oleans-lcamp7`, at `72fcfbef`,
+before #220 and #221.
+
+**Next, in order** (the roadmap is `campaign/items/roadmap3/PLAN.md`, with the user's rulings in §(f)):
+1. **E-PAD:** land the delivery, then close `SPACE_linear_ne_NP` (above).
+2. **Gates 106 (#215) and 114 (#222):** replay, pack, stage, then the user dispatches.
+3. **F6 (`space_universal`, `Hierarchy`):** its prerequisite #221 has merged, and the user ruled
+   E-PAD first in `Hierarchy`.
+   - Write F6's fill brief on `Build/UniversalParts`' rows.
+   - The startup route D-F6-3 is still to decide after a route probe.
+   - Gate 112 minor 1: state the route conditionally (`aRun`, `aCut`, `hloop` as hypotheses).
+4. **Ladner's statement phase:** LD-1 to LD-7 are accepted as recommended. LD-8 is partly pinned:
+   Exercise 3.6's first part is "H computable in O(n³)". Write the statement file and its
+   statement gate.
 5. **The dedup window** (`campaign/duplication-ledger.md`):
-   - **unblocked now:** WL-1 (move `walkLe_succ_iff` to `PathWalk`) and CQ-1 (query `def` +
-     `_iff` in `Codec/Langs`);
-   - **acknowledged and scheduled:** AS-2 (an `astep` irreducibility census, then re-points),
-     MT-1 (per-label instruction equations in each machine file), CK-1 (`acceptChk_iff` /
-     `initChk_iff` re-points), and DT-1 (`mem_DTIME_iff`, `FinTM.decidesInTime_iff`; large
-     replay);
-   - RS-1's remaining sites now cite `Turing.MultiTapeTM.initCfg_eq_mapState` (from #221);
-   - **parked:** RO-1 (`lean/dedup-ro1`; after the harvest);
-   - also WS-1, RC-1–4, QF-1, WC-1.
+   - **unblocked:** WL-1 (move `walkLe_succ_iff` to `PathWalk`), CQ-1 (a query `def` + `_iff`
+     in `Codec/Langs`; delete `ISGen.InitM`/`AccM`), and RS-1's remaining sites (cite
+     `Turing.MultiTapeTM.initCfg_eq_mapState`, published by #221);
+   - **acknowledged, scheduled:**
+     - AS-2: an `astep` irreducibility census, then re-points;
+     - MT-1: per-label instruction equations in each machine file;
+     - CK-1: re-point `AcceptChk`/`InitChk` reads to `acceptChk_iff`/`initChk_iff`;
+     - DT-1: `mem_DTIME_iff` and `FinTM.decidesInTime_iff` (a large replay);
+   - **parked:** RO-1 (`lean/dedup-ro1`; after the harvest, which is now merged; its two
+     questions in the ledger are answered by the 2026-11-06 rulings);
+   - **later:** WS-1, RC-1–4, QF-1, WC-1, TC-1 and the D9 families from the NatBits plan.
 
-**Rulings in force from 2026-11-06** are in §3's notes, the ledger entries and WORKFLOW §5. Fills
-go by pasted prompt while the user is awake; never by sub-agent unless the user says so.
+**Gate numbers:** 106 and 114 are reserved; the next free number is **115**.
+
+**Standing rulings from 2026-11-06/07** are recorded in WORKFLOW §3 and §5 (fills by pasted prompt;
+delivery by push allowed), in the ledger entries, and in the roadmap plan's §(f).
 
 ## 1. Starting a session on a new machine
 
