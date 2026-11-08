@@ -44,4 +44,36 @@ Efficiency and the remaining Gate03 restaging retain their explicit cleanup
 prerequisites. Do not treat a token-saving pause as permission to bypass them or
 to merge the partial cleanup. The partial PR remains a durable restart point.
 
+## Follow-up: overlap with deferred cleanup
+
+The user asked whether proof progress could conflict with seal cleanup. The earlier
+static independence check concerned Games/Efficiency and Composability, not every
+cleanup dependency. Direct comparison of Gate06 source
+`3f6db40e1688c4a0bb922c9575dd3bd2157a650b` with the delivered cleanup candidate
+`32b827c017bc321ea40577bc8f27131df2c35e1a` (diff from issued source
+`1aa5506f58f77c215e56d24311ec33bd931cacf1`) finds:
+
+- Neither proposed target file exists at the cleanup issue ancestor or is edited
+  by its current122-path source delta. Both are Gate06 additions.
+- Garbling.lean and its full3-module local import closure have zero paths changed
+  by that cleanup delta. This is the lower-overlap candidate.
+- Extraction.lean has14 changed dependencies in its30-module closure: ClassNP
+  PolyTime/PolyTimePairing; Randomized PPT/PolyExpr; TM Convention/Wrappers/
+  Deterministic/Encoding/Simulation; Asymptotic Adversary; InformationTheory
+  Extractors/FinDist/LeftoverHash/StatisticalDistance. Its independence from T1/T2
+  does not imply independence from cleanup integration.
+
+These are pinned current-payload observations, not a promise about every future
+cleanup change or a proof of complete Rule10 cleanliness. Keep further proof edits
+on a separate branch and within the selected theorem's scope, consume published
+owner lemmas, and verify new/touched proofs under the required seals/explicit-read
+checks. Retain all inherited failures. Do not silently change shared providers or
+add new foreign-body reads to the deferred debt. If the chosen proof needs a shared
+interface repair, stop that dependent step and record the prerequisite. Repeat the
+source-matched affected/seal checks when the lines of work are combined.
+
+Garbling's finite failure bound is the preferred contained proof candidate if the
+user elects further fills. Extraction remains possible with more integration risk.
+No fill is prepared or commissioned by this comparison.
+
 **Not yet clear to merge — independent narrow work is available; cleanup acceptance and Gate06 landing remain open.**
