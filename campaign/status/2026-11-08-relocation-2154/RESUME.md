@@ -1,6 +1,6 @@
 # Relocation checkpoint — 2026-11-08T21:57:48.001396+00:00
 
-All root-owned Lean/screen jobs and subagents are stopped. No source worktree has uncommitted changes; all three reader source PRs are pushed. No new gate prompt issued.
+All root-owned Lean/screen jobs and subagents are stopped. All three active reader source worktrees are clean and their PR branches pushed; the intentionally dirty held RO1 worktree remains untouched. No new gate prompt issued.
 
 - #251/gate129 HEAD0f926: actual full HEAD50 completed,6NEW/3GONE/4scores. Two complete private repairs (Catalog inputMove via tapeMove+k0, Primitives extractor hlast) pass native/full seals/types/AX/24controls; not adopted. Walk proof stays unchanged because its arbitrary head set differs from donor premises. Resume with combined-two-proof-repairs.patch in /private/tmp/ab34-gate129-screen-repair-c1kdvluh/source/. Then actual final provider refresh/4-owner compatibility and complete current screen, pack/publish. Old0201/394 and0f/3 certificates remain historical exact pins; no future-head reuse presumed.
 - #252/gate130 HEAD04b0: full335 PASS/static0 mismatches/59 inherited admissions/whole895; exactly3objects changed, input unchanged. ActualBASE53 copy screen PASS (SHA92bf296d8a1738564dccb9d8d6832386e9122610d8fed858d1064cdfa3db8b78); HEAD53 interrupted and must restart. Preserve successfulBASE; no need repeat it. Native5 producer checks/census are canonical already. Finish HEAD screen/dispositions and pack/publish.
