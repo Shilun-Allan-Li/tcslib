@@ -149,7 +149,7 @@ theorem PolyTimeComputable.pairEncode {f g : List Bool → List Bool}
 private lemma splitAtLastTrue_replicate_succ (n : ℕ) :
     splitAtLastTrue (List.replicate (n + 1) true) = some (List.replicate n true) := by
   rw [splitAtLastTrue_of_dropWhile_eq_true_cons (rest := List.replicate n true)
-    (by simp [List.reverse_replicate, List.replicate_succ]), List.reverse_replicate]
+    (by rw [List.reverse_replicate, List.replicate_succ]; rfl), List.reverse_replicate]
 
 /-- **The unary length map is polynomial-time**: `x ↦ 1^|x|` is polynomial-time
 computable. (This is how the input `1ⁿ` of a uniformity machine [AB09, Def 6.12] is
