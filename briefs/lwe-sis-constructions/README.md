@@ -5,11 +5,24 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
+Publication and user dispatch are now verified. Draft PR
+[#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237) is published at
+`1b148307150a0b0a08dd80d68c54ba2db95de13c`; both it and #236 target the central
+LWE/SIS branch. The Codex statement-audit input is exchange
+`90d652e19508262b3bd81234260d0585aaf8e0a0`, with the unchanged 400-section
+bundle and source/records pins. The gate's `dispatch-receipt.json` records the
+verification. The audit is running; its Lean surface remains frozen.
+
+Independent records-only source and machine-adapter preparation is under
+`continuation/`. Raw local PDF extraction is complete, but validation/matching
+and the proposed two-tag registry change remain unexecuted. No additional
+external job or proof fill was launched.
+
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
 The active draft is `cryptography/lwe-sis-phase1-statements` in the separate
-`tcslib-lwe-sis-phase1` worktree. It depends on audited PR #236, whose retarget to
-the central branch is included in the client publication command.
+`tcslib-lwe-sis-phase1` worktree. It depends on audited PR #236; both PRs' central
+targets are remotely verified.
 
 The construction-core statement draft contains eight new mathematical modules,
 62 source declarations and 31 direct admissions: sample schedules, modular
@@ -85,8 +98,8 @@ input is published at exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`.
 Draft PR [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) is published
 from `cryptography/lwe-sis-encoding-proofs`, with audit-intake head
 `0769cba3e44c56700349f954190fc99d9e622270`. The user has selected the central
-branch as its new target; the connector retarget attempt returned HTTP 403, so
-the prepared client command performs it. The observed central ref is
+branch as its target, and client retargeting is now verified. The connector's
+earlier HTTP 403 remains a historical preparation record. The observed central ref is
 `2c37f3f486822a52f4a9e337c6b742e995ebb118`. Client publication resolved the earlier
 connector/DNS block; historical preparation records remain unchanged. Source PDF
 acquisition is now complete for Pei16/Wu24, with exact hashes and version checks;

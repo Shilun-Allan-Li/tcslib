@@ -46,8 +46,11 @@ The active draft was initially created from the remote-verified campaign context
 the audited foundation. When the user selected a central LWE/SIS integration branch,
 its two unpublished code/export commits were replayed onto the audited dependency,
 removing unrelated campaign-record ancestry. Every checked Lean/pin byte was unchanged.
-PR #236 is to be retargeted to the central branch; connector mutation returned HTTP
-403, so the prepared client publication command performs that metadata update.
+Client publication has now retargeted PR #236 to the central branch and opened
+draft PR #237 there. The published new draft head is
+`1b148307150a0b0a08dd80d68c54ba2db95de13c`. Its dispatched statement-audit input
+is exchange `90d652e19508262b3bd81234260d0585aaf8e0a0`; source and records pins
+are unchanged. The eight mathematical modules remain frozen while review runs.
 
 ## Current construction statement phase
 
@@ -67,8 +70,10 @@ completed encryption/hash security or machine efficiency.
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
 under `briefs/lwe-sis-constructions/gates/02-construction-core/evidence/`.
-Reference ingestion and approved source matching remain open; no pipeline or paid
-external job was launched. Historical issued source-status records are unchanged.
+Reference ingestion and approved source matching remain open; no source-ingestion
+pipeline or paid cleanup/matching job was launched. Historical issued source-status
+records are unchanged. Independent raw extraction and machine-adapter preparation
+are recorded under `briefs/lwe-sis-constructions/continuation/`.
 
 Do not edit the maintainer's campaign checkout or any Pass--Shelat records. Frozen
 Gate06 source `3f6db40e1688c4a0bb922c9575dd3bd2157a650b` and PR #232 belong to their
@@ -325,8 +330,8 @@ evidence is unchanged; the proof fill has its own source freeze and evidence.
 Shell fetch/push remains blocked by DNS, and connector PR creation previously returned
 HTTP 403. The user completed client publication: draft
 [PR #236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) was initially opened
-against the campaign base from `cryptography/lwe-sis-encoding-proofs`; its new
-requested target is the central LWE/SIS branch. Codex reviewed the exchange
+against the campaign base from `cryptography/lwe-sis-encoding-proofs`; its
+retarget to the central LWE/SIS branch is now remotely verified. Codex reviewed the exchange
 input at `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. The returned representation-proof
 audit passes with 0 blockers, 0 majors, 0 minors and 3 continuing notes. Its report
 is preserved verbatim under `audits/lwe-sis-encoding-proofs-findings.md`; the separate
@@ -364,3 +369,5 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | Replay the two unpublished phase-1 code/export commits onto the audited LWE/SIS dependency, removing campaign-record ancestry. The 68 checked Lean files and pins remain byte-identical. Bring planning records into the active draft; the old planning worktree is no longer used. | Own draft history adjusted; central/campaign refs unchanged |
 | 2026-11-07 (Pacific) | Eight construction-core modules elaborate as statement skeletons: 62 source declarations, 31 direct admissions. Fresh serial 68-module sweep passes, with 17 inherited warnings. | Statement review pending; no proof-fill or construction-completion claim |
 | 2026-11-07 (Pacific) | Retrieve exact Pei16 and Wu24 primary PDF bytes over HTTPS through the Node runtime; independently verify SHA-256 and source-version headers. No reference registry or dataset pipeline changed. | PDF acquisition complete for this slice; ingestion/source matching open |
+| 2026-11-07 (Pacific) | User dispatches the construction-core Codex audit. PR #237 head `1b148307150a0b0a08dd80d68c54ba2db95de13c` and both PRs' central targets verified; exact exchange input `90d652e19508262b3bd81234260d0585aaf8e0a0`. All 76 frozen source files and seven payload hashes match. | Audit running; Lean freeze retained |
+| 2026-11-07 (Pacific) | Deterministic local raw extraction covers the 90-page Pei16 and 106-page Wu24 sources, using the existing proofmatch formatter/diagnostics with installed pdftotext. Prepare an unapplied two-tag registry diff and a consumer machine-adapter map; no model job, shared-file edit or Lean change. | Independent preparation; source validation/matching still open |

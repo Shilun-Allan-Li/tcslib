@@ -1,0 +1,58 @@
+{
+  "extraction_helper_sha256": "b703075054528f3fccc207d83af97dfb6ec0c43369e2d5e5cadc8c15cf5adaf8",
+  "pdfminer_cli_available": false,
+  "registry_changed": false,
+  "source_policy_closed": false,
+  "sources": [
+    {
+      "source_pdf": ".lake/primary-sources/peikert2016-lattice-survey.pdf",
+      "source_sha256": "1a9802b66031a2b863fd498a5de4a71cdb1bd46ac1d47dc1f4a67ae341357488",
+      "extractor": "pdftotext version 26.10.0",
+      "method": "pdftotext -layout plus existing proofmatch format_raw_markdown/split_pages/diagnose_page",
+      "page_count": 90,
+      "raw_path": ".lake/primary-sources/peikert2016-lattice-survey.raw.md",
+      "raw_bytes": 313935,
+      "raw_sha256": "f34120e30a8bcbbbd248ac7a3be9b93da97a43c50ad20c0d2a13d19b787262db",
+      "suspect_pages": [],
+      "model_called": false,
+      "validated_markdown": false,
+      "proofmatch_approved": false
+    },
+    {
+      "source_pdf": ".lake/primary-sources/wu2024-topics-cryptography.pdf",
+      "source_sha256": "c0f87bf2e871180d62b2b27d38b916bce1a7b2228dbb68de72341597341d6d87",
+      "extractor": "pdftotext version 26.10.0",
+      "method": "pdftotext -layout plus existing proofmatch format_raw_markdown/split_pages/diagnose_page",
+      "page_count": 106,
+      "raw_path": ".lake/primary-sources/wu2024-topics-cryptography.raw.md",
+      "raw_bytes": 340753,
+      "raw_sha256": "345aad6425678069c5f1afbc328457c4c21c61e2019507a241e5e71376cf7814",
+      "suspect_pages": [
+        {
+          "pdf_page": 39,
+          "confidence": 0.8,
+          "reasons": [
+            "fragmented-lines"
+          ]
+        },
+        {
+          "pdf_page": 65,
+          "confidence": 0.8,
+          "reasons": [
+            "detached-math-symbols"
+          ]
+        },
+        {
+          "pdf_page": 91,
+          "confidence": 0.8,
+          "reasons": [
+            "detached-math-symbols"
+          ]
+        }
+      ],
+      "model_called": false,
+      "validated_markdown": false,
+      "proofmatch_approved": false
+    }
+  ]
+}

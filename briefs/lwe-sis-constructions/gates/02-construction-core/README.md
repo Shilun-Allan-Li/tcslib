@@ -1,5 +1,13 @@
 # Construction-core statement gate
 
+Current status: the user dispatched Codex. PR #237 is published at
+`1b148307150a0b0a08dd80d68c54ba2db95de13c`; both it and #236 target the central
+LWE/SIS branch. The exact input is exchange
+`90d652e19508262b3bd81234260d0585aaf8e0a0`. See `dispatch-receipt.json` for
+verification. The source remains frozen; findings are pending. The publication
+instructions below document the completed handoff and should not be taken as
+a request to redispatch the running review.
+
 The eight mathematical modules are frozen at
 `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`, on top of audited dependency
 `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
@@ -51,5 +59,5 @@ reviewer kickoff. Auditors read GitHub directly and return
 The external pack remains vendor-neutral and frozen; the selected reviewer is
 recorded by the explicit client flag/kickoff, not inferred from an older job.
 
-**Ready to run — statements and verification are prepared; publication and reviewer
-selection/dispatch remain user-controlled. No merge clearance is claimed.**
+**Not yet clear to merge — the Codex statement audit is dispatched and findings
+are pending. The audited Lean surface remains frozen.**
