@@ -1,0 +1,651 @@
+[
+  {
+    "source_identity": [
+      "TCSlib/Complexity/ClassNP/EXP.lean",
+      "Complexity.enumCont_first_halt",
+      1
+    ],
+    "root_id": 9,
+    "name": "enumCont_first_halt",
+    "BASE": {
+      "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "enumCont_first_halt",
+      "qualified_name": "Complexity.enumCont_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 38524,
+      "raw_v3_span_end": 39237,
+      "source_start_line": 812,
+      "normalized_body": "byclassicalhavehex:\u2203t,(tm.runFromc\u2080t).state=none:=\u27e8T,hh\u27e9lett:=Nat.findhexhaveht:t\u2264T:=Nat.find_min'hexhhrefine\u27e8t,ht,funjhj=>Nat.find_minhexhj,?_\u27e9obtain\u27e8r,hr\u27e9:=Nat.exists_eq_add_of_lehtrw[hr,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_(Nat.find_spechex)]",
+      "normalized_chars": 260,
+      "normalized_body_sha256": "f1660a15b2eb5c9f9d3cc01874efc8cdd81fe6b4659c9c6f6272997b2f4660d3",
+      "complete_source_sha256": "9ff744f0748a96b95c6a475f3c2c2fff2ddcd4062c40988bd6ce08012afd3b17",
+      "label": "EXP.lean::enumCont_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "Complexity.enumCont_first_halt",
+        1
+      ]
+    },
+    "HEAD": null,
+    "filtered_out_at_HEAD": true,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "Complexity.b2_unary_first",
+      1
+    ],
+    "root_id": 16,
+    "name": "b2_unary_first",
+    "BASE": {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "b2_unary_first",
+      "qualified_name": "Complexity.b2_unary_first",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 73553,
+      "raw_v3_span_end": 75003,
+      "source_start_line": 1428,
+      "normalized_body": "byclassicalhavehex(n:\u2115):\u2203t,(M.tm.runFrom(M.tm.initCfg(List.replicatentrue))t).state=none:=\u27e8Tn,((computesInTime_iff____).mp(hMn)).1\u27e9refine\u27e8funn=>Nat.find(hexn),funx=>?_\u27e9havehh:=Nat.find_spec(hexx.length)haveht:=Nat.find_min'(hexx.length)((computesInTime_iff____).mp(hMx.length)).1haveho:=M.tm.runFrom_output_eq_of_halt(M.tm.initCfg(List.replicatex.lengthtrue))hthhhavehc:M.ComputesInTime(List.replicatex.lengthtrue)(fx.length)(Nat.find(hexx.length)):=(computesInTime_iff____).mpr\u27e8hh,ho.symm.trans((computesInTime_iff____).mp(hMx.length)).2\u27e9refine\u27e8ht,b2_unary_computesMx__hc,funshshh'=>?_\u27e9havehr:=congrArgCfg.state(b2_unary_runM((b2UnaryTMM).tm.initCfgx)s)rw[b2_unary_initial]athrexactNat.find_min(hexx.length)hs(hr.symm.transhh')",
+      "normalized_chars": 728,
+      "normalized_body_sha256": "82ef3cd1470777f64ec64d7ea7b0f220706182a0432da44de7a0afbccd72a01e",
+      "complete_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "label": "Nondeterminism.lean::b2_unary_first",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "Complexity.b2_unary_first",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "b2_unary_first",
+      "qualified_name": "Complexity.b2_unary_first",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 73553,
+      "raw_v3_span_end": 75002,
+      "source_start_line": 1428,
+      "normalized_body": "byclassicalchoose\u03c4h\u03c4leh\u03c4liveh\u03c4equsingfunn:\u2115=>MultiTapeTM.exists_first_haltM.tm(M.tm.initCfg(List.replicatentrue))(((computesInTime_iff____).mp(hMn)).1)refine\u27e8\u03c4,funx=>?_\u27e9havehh:(M.tm.runFrom(M.tm.initCfg(List.replicatex.lengthtrue))(\u03c4x.length)).state=none:=(congrArgCfg.state(h\u03c4eqx.length)).trans((computesInTime_iff____).mp(hMx.length)).1haveho:=congrArgCfg.output(h\u03c4eqx.length)havehc:M.ComputesInTime(List.replicatex.lengthtrue)(fx.length)(\u03c4x.length):=(computesInTime_iff____).mpr\u27e8hh,ho.trans((computesInTime_iff____).mp(hMx.length)).2\u27e9refine\u27e8h\u03c4lex.length,b2_unary_computesMx__hc,funshshh'=>?_\u27e9havehr:=congrArgCfg.state(b2_unary_runM((b2UnaryTMM).tm.initCfgx)s)rw[b2_unary_initial]athrexacth\u03c4livex.lengthshs(hr.symm.transhh')",
+      "normalized_chars": 726,
+      "normalized_body_sha256": "1b1438a27520c03a55d1aeef88b3e7f2940093227108ab2718f0d06fcf4ebd70",
+      "complete_source_sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727",
+      "label": "Nondeterminism.lean::b2_unary_first",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "Complexity.b2_unary_first",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "Complexity.b2_verify_timed",
+      1
+    ],
+    "root_id": 17,
+    "name": "b2_verify_timed",
+    "BASE": {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "b2_verify_timed",
+      "qualified_name": "Complexity.b2_verify_timed",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 106372,
+      "raw_v3_span_end": 108459,
+      "source_start_line": 2077,
+      "normalized_body": "(b2HostSV).tm.runWithw(b2VerifyCfgSV(V.tm.initCfgy)trueptapesheads)out.state=none\u2227out.output=[b]:=byclassicalhavehex:\u2203t,(V.tm.runFrom(V.tm.initCfgy)t).state=none:=\u27e8T,((computesInTime_iff____).mphV).1\u27e9lett:=Nat.findhexletc:=V.tm.runFrom(V.tm.initCfgy)thaveht:t\u2264T:=Nat.find_min'hex((computesInTime_iff____).mphV).1havehc:c.state=none:=Nat.find_spechexhavehcomp:V.ComputesInTimeyc.outputt:=(computesInTime_iff____).mpr\u27e8hc,rfl\u27e9haveho:c.output=[b]:=hcomp.output_uniquehVhavehp:(w.taket).length=t:=List.length_take_of_le(byomega)obtain\u27e8tag,_,hr\u27e9:=b2_verify_runSV(V.tm.initCfgy)true(bysimp[VirtualTag,MultiTapeTM.initCfg,Cfg.init])ptapesheads(w.taket)(funshs=>Nat.find_minhex(shows<tfromhp\u25b8hs))rw[hp]athrhavehlen:0<(w.dropt).length:=byrw[List.length_drop];omegacaseshd:w.droptwith|nil=>simp[hd]athlen|consbitrest=>havehf:=b2_verify_finishSVchctagptapesheadsbithavehout:((b2HostSV).tm.stepWithbit(b2VerifyCfgSVctagptapesheads)).output=[b]:=byrw[hf.2,ho]casesb<;>simphavehsplit:w=w.taket++bit::rest:=byrw[\u2190hd,List.take_append_drop]dsimponlyrw[hsplit,NDTM.runWith_append,hr,NDTM.runWith_cons,NDTM.runWith_of_halt_hf.1]exact\u27e8hf.1,hout\u27e9",
+      "normalized_chars": 1124,
+      "normalized_body_sha256": "7d2c8d79d5bfb436648f0c1e7d98a8ff51cbb9d58bbda7030968e01a70560168",
+      "complete_source_sha256": "3b4d6b3ba395d2288ef3066d4599b84fb4231b64df24755d2538c2c3c0e44274",
+      "label": "Nondeterminism.lean::b2_verify_timed",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "Complexity.b2_verify_timed",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "b2_verify_timed",
+      "qualified_name": "Complexity.b2_verify_timed",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 106371,
+      "raw_v3_span_end": 108432,
+      "source_start_line": 2077,
+      "normalized_body": "(b2HostSV).tm.runWithw(b2VerifyCfgSV(V.tm.initCfgy)trueptapesheads)out.state=none\u2227out.output=[b]:=byclassicalobtain\u27e8t,ht,hlive,heq\u27e9:=MultiTapeTM.exists_first_haltV.tm(V.tm.initCfgy)(((computesInTime_iff____).mphV).1)letc:=V.tm.runFrom(V.tm.initCfgy)thavehc:c.state=none:=(congrArgCfg.stateheq).trans((computesInTime_iff____).mphV).1havehcomp:V.ComputesInTimeyc.outputt:=(computesInTime_iff____).mpr\u27e8hc,rfl\u27e9haveho:c.output=[b]:=hcomp.output_uniquehVhavehp:(w.taket).length=t:=List.length_take_of_le(byomega)obtain\u27e8tag,_,hr\u27e9:=b2_verify_runSV(V.tm.initCfgy)true(bysimp[VirtualTag_iff,MultiTapeTM.initCfg_eq,Cfg.init_inputPos])ptapesheads(w.taket)(funshs=>hlives(shows<tfromhp\u25b8hs))rw[hp]athrhavehlen:0<(w.dropt).length:=byrw[List.length_drop];omegacaseshd:w.droptwith|nil=>simp[hd]athlen|consbitrest=>havehf:=b2_verify_finishSVchctagptapesheadsbithavehout:((b2HostSV).tm.stepWithbit(b2VerifyCfgSVctagptapesheads)).output=[b]:=byrw[hf.2,ho]casesb<;>simphavehsplit:w=w.taket++bit::rest:=byrw[\u2190hd,List.take_append_drop]dsimponlyrw[hsplit,NDTM.runWith_append,hr,NDTM.runWith_cons,NDTM.runWith_of_halt_hf.1]exact\u27e8hf.1,hout\u27e9",
+      "normalized_chars": 1114,
+      "normalized_body_sha256": "0bd120ee2ae16f082dd594454a27479143e7bd5f28fe2cdfe92719c8cd330681",
+      "complete_source_sha256": "c0cf45408248fce1c1113084b5fb1cff6d9abd3bc2a9bb887cb3fd3abc674727",
+      "label": "Nondeterminism.lean::b2_verify_timed",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+        "Complexity.b2_verify_timed",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "Complexity.sat_call_first_halt",
+      1
+    ],
+    "root_id": 19,
+    "name": "sat_call_first_halt",
+    "BASE": {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "sat_call_first_halt",
+      "qualified_name": "Complexity.sat_call_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 196371,
+      "raw_v3_span_end": 197433,
+      "source_start_line": 3752,
+      "normalized_body": "byclassicalleth:\u2203u,(tm.runFromcfgu).state=none:=\u27e8t,hhalt\u27e9havehu:=Nat.find_spechhavehle:=Nat.find_min'hhhaltrefine\u27e8Nat.findh,?_,hle,funvhv=>Nat.find_minhhv,?_\u27e9\u00b7by_contrahnhavehz:Nat.findh=0:=byomegarw[hz,MultiTapeTM.runFrom_zero]athuexacthstarthu\u00b7symmrw[\u2190Nat.add_sub_of_lehle,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hu]",
+      "normalized_chars": 330,
+      "normalized_body_sha256": "4f8802dc7820b38c1f0593d7ad7cb99df78b12aaf4561fcf38c58e3bbf242b38",
+      "complete_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "label": "SAT.lean::sat_call_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_call_first_halt",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "sat_call_first_halt",
+      "qualified_name": "Complexity.sat_call_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 196080,
+      "raw_v3_span_end": 196995,
+      "source_start_line": 3748,
+      "normalized_body": "byobtain\u27e8u,hu,hg,he\u27e9:=MultiTapeTM.exists_first_halttmcfghhalthavehp:0<u:=byby_contrahnhavehz:u=0:=byomegahavehs:=congrArgCfg.stateherw[hz,MultiTapeTM.runFrom_zero,hhalt]athsexacthstarthsexact\u27e8u,hp,hu,hg,he\u27e9",
+      "normalized_chars": 206,
+      "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8",
+      "complete_source_sha256": "6f49dc6bfa51cb2e48a33aa44348fd353017fba59db2128685815628c6663b23",
+      "label": "SAT.lean::sat_call_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_call_first_halt",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/ClassNP/SAT.lean",
+      "Complexity.sat_first_halt",
+      1
+    ],
+    "root_id": 18,
+    "name": "sat_first_halt",
+    "BASE": {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "sat_first_halt",
+      "qualified_name": "Complexity.sat_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 34976,
+      "raw_v3_span_end": 36065,
+      "source_start_line": 685,
+      "normalized_body": "byclassicalhavehh:=(FinTM.computesInTime_iff____).mphhavehex:\u2203t,(M.tm.runFrom(M.tm.initCfgx)t).state=none:=\u27e8T,hh.1\u27e9lett:=Nat.findhexhaveht:t\u2264T:=Nat.find_min'hexhh.1havehs:(M.tm.runFrom(M.tm.initCfgx)t).state=none:=Nat.find_spechexhavehe:=M.tm.runFrom_add(M.tm.initCfgx)t(T-t)rw[Nat.add_sub_of_leht,MultiTapeTM.runFrom_of_halt_hs]atheexact\u27e8t,ht,funrhr=>Nat.find_minhexhr,hs,byrw[\u2190he];exacthh.2\u27e9",
+      "normalized_chars": 393,
+      "normalized_body_sha256": "e2686e4257f3ee472bb8e3a9983e06c4a64fb22d91e504b703880d0c2c90b35b",
+      "complete_source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "label": "SAT.lean::sat_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_first_halt",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "sat_first_halt",
+      "qualified_name": "Complexity.sat_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 34976,
+      "raw_v3_span_end": 35785,
+      "source_start_line": 685,
+      "normalized_body": "byhavehh:=(FinTM.computesInTime_iff____).mphobtain\u27e8t,ht,hg,he\u27e9:=MultiTapeTM.exists_first_haltM.tm(M.tm.initCfgx)hh.1refine\u27e8t,ht,hg,?_,?_\u27e9\u00b7rw[he];exacthh.1\u00b7rw[he];exacthh.2",
+      "normalized_chars": 171,
+      "normalized_body_sha256": "2062fbd6f1b42f10c1af43ef28c3b57a77355a7a3fe9b168b0f3b8d335e65791",
+      "complete_source_sha256": "6f49dc6bfa51cb2e48a33aa44348fd353017fba59db2128685815628c6663b23",
+      "label": "SAT.lean::sat_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_first_halt",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "Complexity.clA5_call_first_halt",
+      1
+    ],
+    "root_id": 33,
+    "name": "clA5_call_first_halt",
+    "BASE": {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "clA5_call_first_halt",
+      "qualified_name": "Complexity.clA5_call_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 320153,
+      "raw_v3_span_end": 320985,
+      "source_start_line": 6117,
+      "normalized_body": "byclassicalleth:\u2203u,(tm.runFromcfgu).state=none:=\u27e8t,hhalt\u27e9havehu:=Nat.find_spechhavehle:=Nat.find_min'hhhaltrefine\u27e8Nat.findh,?_,hle,funvhv=>Nat.find_minhhv,?_\u27e9\u00b7by_contrahnhavehz:Nat.findh=0:=byomegarw[hz,MultiTapeTM.runFrom_zero]athuexacthstarthu\u00b7symmrw[\u2190Nat.add_sub_of_lehle,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hu]",
+      "normalized_chars": 330,
+      "normalized_body_sha256": "4f8802dc7820b38c1f0593d7ad7cb99df78b12aaf4561fcf38c58e3bbf242b38",
+      "complete_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "label": "Hardness.lean::clA5_call_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "Complexity.clA5_call_first_halt",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "clA5_call_first_halt",
+      "qualified_name": "Complexity.clA5_call_first_halt",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 320142,
+      "raw_v3_span_end": 320827,
+      "source_start_line": 6117,
+      "normalized_body": "byobtain\u27e8u,hu,hg,he\u27e9:=MultiTapeTM.exists_first_halttmcfghhalthavehp:0<u:=byby_contrahnhavehz:u=0:=byomegahavehs:=congrArgCfg.stateherw[hz,MultiTapeTM.runFrom_zero,hhalt]athsexacthstarthsexact\u27e8u,hp,hu,hg,he\u27e9",
+      "normalized_chars": 206,
+      "normalized_body_sha256": "3115b5e213a3f00d87e5b8a9d2230f12f8b73e0f2930d3a16a4c81a886d1cac8",
+      "complete_source_sha256": "ec60986b807df5c079a105158cbbd80c26ced0df13f01c736a97330e6ba8c466",
+      "label": "Hardness.lean::clA5_call_first_halt",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "Complexity.clA5_call_first_halt",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      1
+    ],
+    "root_id": 47,
+    "name": "ComputesInTime.of_spaceUsed_le",
+    "BASE": {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "ComputesInTime.of_spaceUsed_le",
+      "qualified_name": "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 16353,
+      "raw_v3_span_end": 19612,
+      "source_start_line": 362,
+      "normalized_body": "byclassicalrw[computesInTime_iff]ath\u22a2obtain\u27e8hhalt,hout\u27e9:=hhavehex:\u2203T,(M.tm.runFrom(M.tm.initCfgx)T).state=none:=\u27e8t,hhalt\u27e9setT:=Nat.findhexwithhTdefhavehT:(M.tm.runFrom(M.tm.initCfgx)T).state=none:=Nat.find_spechexhavehTt:T\u2264t:=Nat.find_min'hexhhalthavehmin:\u2200t'<T,(M.tm.runFrom(M.tm.initCfgx)t').state\u2260none:=funt'ht'=>Nat.find_minhexht'havehbound:\u2200t'\u2264t,\u2200i,|(M.tm.runFrom(M.tm.initCfgx)t').workTapePosi|\u2264s\u2227\u2200z,(M.tm.runFrom(M.tm.initCfgx)t').workTapesiz\u2260none\u2192|z|\u2264s:=byintrot'ht'ihavehcard:(M.tm.visitedByTapeHead(M.tm.initCfgx)ti).card\u2264s:=(M.tm.spaceUsedByTape_le_spaceUsed_ti).transhshavehmem:\u2200z\u2208M.tm.visitedByTapeHead(M.tm.initCfgx)ti,|z|\u2264s:=funzhz=>((M.tm.abs_pos_lt_card_visitedxtihz).trans_le(byexact_mod_casthcard)).lerefine\u27e8hmem_?_,funzhz=>hmemz?_\u27e9\u00b7simponly[visitedByTapeHead,Finset.mem_image,Finset.mem_range]exact\u27e8t',byomega,rfl\u27e9\u00b7exactM.tm.visitedByTapeHead_mono_ht'i(M.tm.mem_visited_of_ne_nonext'izhz)havehinj:Set.InjOn(funt'=>coreCodes(M.tm.runFrom(M.tm.initCfgx)t'))(Finset.rangeT:Set\u2115):=byintroahabhbhabsimponly[Finset.coe_range,Set.mem_Iio]athahbhavehc:=coreCode_injs(hbounda(byomega))(hboundb(byomega))habby_contrahnercasesNat.lt_or_gt_of_nehnewithh'|h'\u00b7exactcore_injOnM.tm_ThThminh'hbhc\u00b7exactcore_injOnM.tm_ThThminh'hahc.symmhavehcardT:T\u2264M.configBoundx.lengths:=byhave:=Finset.card_le_card_of_injOn_(funa_=>Finset.mem_univ_)hinjsimponly[Finset.card_range,Finset.card_univ,Fintype.card_prod,Fintype.card_option,Fintype.card_fin,Fintype.card_pi,Finset.prod_const,Fintype.card_bool]atthisrw[\u2190pow_mul,Nat.mul_comm(2*s+1)M.k]atthisrefinethis.trans(le_of_eq?_)simponly[configBound]ringhavehfin:M.tm.runFrom(M.tm.initCfgx)(M.configBoundx.lengths)=M.tm.runFrom(M.tm.initCfgx)T:=byrw[showM.configBoundx.lengths=T+(M.configBoundx.lengths-T)byomega,runFrom_add,runFrom_of_halt_hT]havehfin':M.tm.runFrom(M.tm.initCfgx)t=M.tm.runFrom(M.tm.initCfgx)T:=byrw[showt=T+(t-T)byomega,runFrom_add,runFrom_of_halt_hT]rw[hfin]exact\u27e8hT,byrw[\u2190hfin'];exacthout\u27e9",
+      "normalized_chars": 1948,
+      "normalized_body_sha256": "5d3f3a7a97ede3439276c87594e6afd321ffc5404682e47fe49698a4c3accf6b",
+      "complete_source_sha256": "b852e62030fd8cf4b6c607a908da378370590d1d526632788c7824530eac04ed",
+      "label": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "ComputesInTime.of_spaceUsed_le",
+      "qualified_name": "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 16353,
+      "raw_v3_span_end": 19432,
+      "source_start_line": 362,
+      "normalized_body": "byclassicalrw[computesInTime_iff]ath\u22a2obtain\u27e8hhalt,hout\u27e9:=hobtain\u27e8T,hTt,hmin,heq\u27e9:=MultiTapeTM.exists_first_haltM.tm(M.tm.initCfgx)hhalthavehT:(M.tm.runFrom(M.tm.initCfgx)T).state=none:=(congrArgCfg.stateheq).transhhalthavehbound:\u2200t'\u2264t,\u2200i,|(M.tm.runFrom(M.tm.initCfgx)t').workTapePosi|\u2264s\u2227\u2200z,(M.tm.runFrom(M.tm.initCfgx)t').workTapesiz\u2260none\u2192|z|\u2264s:=byintrot'ht'ihavehcard:(M.tm.visitedByTapeHead(M.tm.initCfgx)ti).card\u2264s:=bysimpaonly[MultiTapeTM.spaceUsedByTape_eq_card]using(M.tm.spaceUsedByTape_le_spaceUsed_ti).transhshavehmem:\u2200z\u2208M.tm.visitedByTapeHead(M.tm.initCfgx)ti,|z|\u2264s:=funzhz=>((M.tm.abs_pos_lt_card_visitedxtihz).trans_le(byexact_mod_casthcard)).lerefine\u27e8hmem_?_,funzhz=>hmemz?_\u27e9\u00b7exact(MultiTapeTM.mem_visitedByTapeHead_iff____).mpr\u27e8t',ht',rfl\u27e9\u00b7exactM.tm.visitedByTapeHead_mono_ht'i(M.tm.mem_visited_of_ne_nonext'izhz)havehinj:Set.InjOn(funt'=>coreCodes(M.tm.runFrom(M.tm.initCfgx)t'))(Finset.rangeT:Set\u2115):=byintroahabhbhabsimponly[Finset.coe_range,Set.mem_Iio]athahbhavehc:=coreCode_injs(hbounda(byomega))(hboundb(byomega))habby_contrahnercasesNat.lt_or_gt_of_nehnewithh'|h'\u00b7exactcore_injOnM.tm_ThThminh'hbhc\u00b7exactcore_injOnM.tm_ThThminh'hahc.symmhavehcardT:T\u2264M.configBoundx.lengths:=byhave:=Finset.card_le_card_of_injOn_(funa_=>Finset.mem_univ_)hinjsimponly[Finset.card_range,Finset.card_univ,Fintype.card_prod,Fintype.card_option,Fintype.card_fin,Fintype.card_pi,Finset.prod_const,Fintype.card_bool]atthisrw[\u2190pow_mul,Nat.mul_comm(2*s+1)M.k]atthisrefinethis.trans(le_of_eq?_)simponly[configBound]ringhavehfin:M.tm.runFrom(M.tm.initCfgx)(M.configBoundx.lengths)=M.tm.runFrom(M.tm.initCfgx)T:=byrw[showM.configBoundx.lengths=T+(M.configBoundx.lengths-T)byomega,runFrom_add,runFrom_of_halt_hT]havehfin':M.tm.runFrom(M.tm.initCfgx)t=M.tm.runFrom(M.tm.initCfgx)T:=heq.symmrw[hfin]exact\u27e8hT,byrw[\u2190hfin'];exacthout\u27e9",
+      "normalized_chars": 1818,
+      "normalized_body_sha256": "0c9052516b71c37ef4e0fb47d00c1bdebea61a662d3dbb599a5603160a02e450",
+      "complete_source_sha256": "a83dce1294535be5d79d1fcd5ff31cd8b4f9490995febb20384350b7827a956d",
+      "label": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "Complexity.TimeHierarchy.clockTM_setup",
+      1
+    ],
+    "root_id": 54,
+    "name": "clockTM_setup",
+    "BASE": {
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "clockTM_setup",
+      "qualified_name": "Complexity.TimeHierarchy.clockTM_setup",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 22275,
+      "raw_v3_span_end": 23846,
+      "source_start_line": 509,
+      "normalized_body": "byclassicalhavehh:\u2203t,(K.tm.runFrom(K.tm.initCfgx)t).state=none:=\u27e8tK,((computesInTime_iffKxstK).mphK).1\u27e9lett:=Nat.findhhletc:=K.tm.runFrom(K.tm.initCfgx)thavehs:c.state=none:=Nat.find_spechhhaveht:t\u2264tK:=Nat.find_min'hh((computesInTime_iffKxstK).mphK).1havehc:K.ComputesInTimexc.outputt:=(computesInTime_iff____).mpr\u27e8hs,rfl\u27e9haveho:c.output=s:=hc.output_uniquehKletstart:=ctrCfgKW(some.iStart)\u27e8none,c.inputPos,fun__=>none,fun_=>0,[]\u27e9(bufferTapec.output)0c.workTapesc.workTapePos[]obtain\u27e8r,hr,hrun\u27e9:=timed_rewind(clockTMKW).tmClockState.iStartClockState.iScan(some(.decW.tm.q\u2080.empty))(fun__=>rfl)(funinp_=>bycasesinp<;>rfl)startrflrefine\u27e8t+(c.output.length+2)+r,c.workTapes,c.workTapePos,?_,?_\u27e9\u00b7havehp:start.inputPos.val\u2264x.length+1:=byhave:=start.inputPos.isLtomegarw[ho]at*omega\u00b7rw[MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_add,kCfg_init,kCfg_runKW_t(funshs=>Nat.find_minhhhs),kCfg_rewindKWchs,hrun,\u2190ho]rflendComplexity.TimeHierarchy",
+      "normalized_chars": 932,
+      "normalized_body_sha256": "f7cc27e49c63c13ba8c785f0de14f07d7f0f540adb441f4836f64fb99df72cf0",
+      "complete_source_sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2",
+      "label": "ClockMachine.lean::clockTM_setup",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+        "Complexity.TimeHierarchy.clockTM_setup",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "clockTM_setup",
+      "qualified_name": "Complexity.TimeHierarchy.clockTM_setup",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 22275,
+      "raw_v3_span_end": 24218,
+      "source_start_line": 509,
+      "normalized_body": "byclassicalobtain\u27e8t,ht,hlive,hcut\u27e9:=MultiTapeTM.exists_first_haltK.tm(K.tm.initCfgx)(((computesInTime_iffKxstK).mphK).1)letc:=K.tm.runFrom(K.tm.initCfgx)thavehs:c.state=none:=(congrArgCfg.statehcut).trans((computesInTime_iffKxstK).mphK).1havehc:K.ComputesInTimexc.outputt:=(computesInTime_iff____).mpr\u27e8hs,rfl\u27e9haveho:c.output=s:=hc.output_uniquehKletstart:=ctrCfgKW(some.iStart)\u27e8none,c.inputPos,fun__=>none,fun_=>0,[]\u27e9(bufferTapec.output)0c.workTapesc.workTapePos[]obtain\u27e8r,hr,hrun\u27e9:=timed_rewind(clockTMKW).tmClockState.iStartClockState.iScan(some(.decW.tm.q\u2080.empty))(fun__=>rfl)(funinp_=>bycasesinp<;>rfl)startrflrefine\u27e8t+(c.output.length+2)+r,c.workTapes,c.workTapePos,?_,?_\u27e9\u00b7havehp:start.inputPos.val\u2264x.length+1:=byhave:=start.inputPos.isLtomegarw[ho]at*omega\u00b7rw[MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_add,kCfg_init,kCfg_runKW_thlive,kCfg_rewindKWchs,hrun,\u2190ho]havehi:(W.tm.initCfgx).inputPos=1:=byrw[MultiTapeTM.initCfg_eq,Cfg.init_inputPos]havehw:(W.tm.initCfgx).workTapes=(fun__=>none):=byfunextizrw[MultiTapeTM.initCfg_eq,Cfg.init_workTapes]havehp:(W.tm.initCfgx).workTapePos=(fun_=>0):=byfunextirw[MultiTapeTM.initCfg_eq,Cfg.init_workTapePos]applyCfg.ext<;>simponly[ctrCfg,start,hi,hw,hp]endComplexity.TimeHierarchy",
+      "normalized_chars": 1227,
+      "normalized_body_sha256": "9f09572a7044ade1d17a3362252f43d657e79d3d7d776590021906f79cc98bf1",
+      "complete_source_sha256": "037a1815badd92da00c3b67266e0bce3968506ce763bfd0e501b338e7d9cb37c",
+      "label": "ClockMachine.lean::clockTM_setup",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+        "Complexity.TimeHierarchy.clockTM_setup",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCapture_start",
+      1
+    ],
+    "root_id": 85,
+    "name": "timedCapture_start",
+    "BASE": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "timedCapture_start",
+      "qualified_name": "Turing.timedCapture_start",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 136449,
+      "raw_v3_span_end": 137500,
+      "source_start_line": 2513,
+      "normalized_body": "byclassicalhavehh:\u2203t,(M.tm.runFrom(M.tm.initCfgx)t).state=none:=\u27e8T,h\u27e9lett:=Nat.findhhhaveht:t\u2264T:=Nat.find_min'hhhhavehs:(M.tm.runFrom(M.tm.initCfgx)t).state=none:=Nat.find_spechhhavehe:M.tm.runFrom(M.tm.initCfgx)T=M.tm.runFrom(M.tm.initCfgx)t:=byobtain\u27e8d,hd\u27e9:=Nat.exists_eq_add_of_lehtrw[hd,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hs]refine\u27e8t+1,byomega,?_\u27e9rw[MultiTapeTM.runFrom_succ_eq_step',timedCapture_init,timedCapture_runMclock_t(funshs=>Nat.find_minhhhs),timedCapture_transferMclock_hs,he]",
+      "normalized_chars": 508,
+      "normalized_body_sha256": "3c21378892683a9f1c25f4ffa813f3533fee236b59c001acb58fb850aa17a77f",
+      "complete_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "label": "Universal.lean::timedCapture_start",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "timedCapture_start",
+      "qualified_name": "Turing.timedCapture_start",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 136363,
+      "raw_v3_span_end": 137245,
+      "source_start_line": 2508,
+      "normalized_body": "byclassicalobtain\u27e8t,ht,hlive,hcut\u27e9:=MultiTapeTM.exists_first_haltM.tm(M.tm.initCfgx)hhavehs:(M.tm.runFrom(M.tm.initCfgx)t).state=none:=(congrArgCfg.statehcut).transhhavehe:M.tm.runFrom(M.tm.initCfgx)T=M.tm.runFrom(M.tm.initCfgx)t:=hcut.symmrefine\u27e8t+1,byomega,?_\u27e9rw[MultiTapeTM.runFrom_succ_eq_step',timedCapture_init,timedCapture_runMclock_thlive,timedCapture_transferMclock_hs,he]",
+      "normalized_chars": 381,
+      "normalized_body_sha256": "de41c7b2b50782c51a116eb53d041dc2683852d3889c7109905a36d0cb1ac522",
+      "complete_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e",
+      "label": "Universal.lean::timedCapture_start",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedCut_live_before",
+      1
+    ],
+    "root_id": "BLIVE1",
+    "name": "timedCut_live_before",
+    "BASE": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "timedCut_live_before",
+      "qualified_name": "Turing.timedCut_live_before",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 94275,
+      "raw_v3_span_end": 94738,
+      "source_start_line": 1731,
+      "normalized_body": "byintrohsobtain\u27e8d,rfl\u27e9:=Nat.exists_eq_add_of_lehstrw[MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hs]athtexacthths",
+      "normalized_chars": 121,
+      "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e",
+      "complete_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "label": "Universal.lean::timedCut_live_before",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCut_live_before",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "timedCut_live_before",
+      "qualified_name": "Turing.timedCut_live_before",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 94275,
+      "raw_v3_span_end": 94676,
+      "source_start_line": 1731,
+      "normalized_body": "byexactMultiTapeTM.runFrom_state_ne_none_of_letimedCutInterpretercfgthtshst",
+      "normalized_chars": 75,
+      "normalized_body_sha256": "ed796f163c5f7a88a85fbdf6c9d5e3b4edcc5bd8ffedd8025a951b45814ae4ef",
+      "complete_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e",
+      "label": "Universal.lean::timedCut_live_before",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCut_live_before",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "Turing.timedPrefix_live",
+      1
+    ],
+    "root_id": "BLIVE2",
+    "name": "timedPrefix_live",
+    "BASE": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "timedPrefix_live",
+      "qualified_name": "Turing.timedPrefix_live",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 121598,
+      "raw_v3_span_end": 122129,
+      "source_start_line": 2230,
+      "normalized_body": "byintrohobtain\u27e8d,hd\u27e9:=Nat.exists_eq_add_of_le(shows\u22644*bs.length+2*\u03b1.length+5byomega)havehp:=timedPrefix_penultimatebs\u03b1xrw[hd,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_h]athpexacthph",
+      "normalized_chars": 191,
+      "normalized_body_sha256": "73b3598c5604783595224a5dcec0331b437102a28e96221c60cb86651bbef8be",
+      "complete_source_sha256": "ce7d66f32b08b70c549d329a784696a8d87461df3724799e1b18837312563871",
+      "label": "Universal.lean::timedPrefix_live",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedPrefix_live",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "timedPrefix_live",
+      "qualified_name": "Turing.timedPrefix_live",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 121536,
+      "raw_v3_span_end": 122043,
+      "source_start_line": 2227,
+      "normalized_body": "byexactMultiTapeTM.runFrom_state_ne_none_of_letimedPrefixTM.tm(timedPrefixTM.tm.initCfg(pairEncode(pairEncodebs\u03b1)x))(4*bs.length+2*\u03b1.length+5)(timedPrefix_penultimatebs\u03b1x)s(byomega)",
+      "normalized_chars": 181,
+      "normalized_body_sha256": "1dcd957dd2c229e098dc441eab2e373151d3fa43ffa33d0f012f8a349aacd54b",
+      "complete_source_sha256": "326cc50818e5547b17dcc3dcfdfb97663e79fdff18d5d8281b4623c5ef83244e",
+      "label": "Universal.lean::timedPrefix_live",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedPrefix_live",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universalCapture_start",
+      1
+    ],
+    "root_id": 86,
+    "name": "universalCapture_start",
+    "BASE": {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "universalCapture_start",
+      "qualified_name": "Turing.universalCapture_start",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 29123,
+      "raw_v3_span_end": 30706,
+      "source_start_line": 591,
+      "normalized_body": "byclassicalhavehh:\u2203t,(M.tm.runFrom(M.tm.initCfgx)t).state=none:=\u27e8T,h\u27e9lett:=Nat.findhhhaveht:t\u2264T:=Nat.find_min'hhhhavehs:(M.tm.runFrom(M.tm.initCfgx)t).state=none:=Nat.find_spechhhavehe:M.tm.runFrom(M.tm.initCfgx)T=M.tm.runFrom(M.tm.initCfgx)t:=byobtain\u27e8d,hd\u27e9:=Nat.exists_eq_add_of_lehtrw[hd,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hs]refine\u27e8t+1,byomega,?_\u27e9rw[MultiTapeTM.runFrom_succ_eq_step',universalCapture_init,universalCapture_runMD_t(funshs=>Nat.find_minhhhs),universalCapture_transferMD_hs,he]",
+      "normalized_chars": 512,
+      "normalized_body_sha256": "d8d06f9d7063776990f399c392966ec03ee788717726b5e7e9b6ea503634a891",
+      "complete_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "label": "UniversalStartup.lean::universalCapture_start",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ]
+    },
+    "HEAD": {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "source_commit": "f3c8c050ef98375bc237c72bde74f83d33833374",
+      "short_name": "universalCapture_start",
+      "qualified_name": "Turing.universalCapture_start",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 29044,
+      "raw_v3_span_end": 30458,
+      "source_start_line": 588,
+      "normalized_body": "byclassicalobtain\u27e8t,ht,hlive,hcut\u27e9:=MultiTapeTM.exists_first_haltM.tm(M.tm.initCfgx)hhavehs:(M.tm.runFrom(M.tm.initCfgx)t).state=none:=(congrArgCfg.statehcut).transhhavehe:M.tm.runFrom(M.tm.initCfgx)T=M.tm.runFrom(M.tm.initCfgx)t:=hcut.symmrefine\u27e8t+1,byomega,?_\u27e9rw[MultiTapeTM.runFrom_succ_eq_step',universalCapture_init,universalCapture_runMD_thlive,universalCapture_transferMD_hs,he]",
+      "normalized_chars": 385,
+      "normalized_body_sha256": "d21d75a46cc9d6a28f9de296c654457ecaaab4707acc68b1a571d27f54e6d753",
+      "complete_source_sha256": "59a9f0adda2a1984485c47c740d78143e8f5d81b39d27c63f584820769ed4e81",
+      "label": "UniversalStartup.lean::universalCapture_start",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ]
+    },
+    "filtered_out_at_HEAD": false,
+    "declaration_still_exists_in_source": true
+  },
+  {
+    "source_identity": [
+      "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "Turing.universal_live_before",
+      1
+    ],
+    "root_id": "BLIVE3",
+    "name": "universal_live_before",
+    "BASE": {
+      "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+      "source_commit": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+      "short_name": "universal_live_before",
+      "qualified_name": "Turing.universal_live_before",
+      "occurrence_all_declarations": 1,
+      "kind": "proof",
+      "raw_decl_start": 11079,
+      "raw_v3_span_end": 11539,
+      "source_start_line": 232,
+      "normalized_body": "byintrohsobtain\u27e8d,rfl\u27e9:=Nat.exists_eq_add_of_lehstrw[MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hs]athtexacthths",
+      "normalized_chars": 121,
+      "normalized_body_sha256": "9fbdc942a235a0645e9036d41dd2c2e0d5e957361ccfeec3c807f8fe2cbb391e",
+      "complete_source_sha256": "64f15dda7eae32e43c803d4ca91efac19f6767b07f484c4d33d869069fc4f491",
+      "label": "UniversalStartup.lean::universal_live_before",
+      "canonical_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universal_live_before",
+        1
+      ]
+    },
+    "HEAD": null,
+    "filtered_out_at_HEAD": true,
+    "declaration_still_exists_in_source": true
+  }
+]

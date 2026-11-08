@@ -1,0 +1,3 @@
+∀ {M : Turing.FinTM Bool} {x w : List Bool} {t s : ℕ},
+  M.ComputesInTime x w t →
+    Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ s → M.ComputesInTime x w (M.configBound x.length s)

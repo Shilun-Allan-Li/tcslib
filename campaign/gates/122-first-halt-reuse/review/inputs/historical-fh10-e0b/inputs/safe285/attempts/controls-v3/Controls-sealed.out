@@ -1,0 +1,190 @@
+CONTROL|1|Turing.FinTM.ComputesInTime|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|1|Turing.FinTM.ComputesInTime|point|Tactic `rfl` failed: equality lhs
+  M.ComputesInTime input output t
+is not definitionally equal to rhs
+  ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+
+Symbol : Type
+M : Turing.FinTM Symbol
+input output : List Symbol
+t : ℕ
+⊢ M.ComputesInTime input output t = ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+CONTROL|2|Turing.FinTM.ComputesInTime|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|2|Turing.FinTM.ComputesInTime|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.ComputesInTime
+is not definitionally equal to rhs
+  fun {Symbol} M input output t => ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+
+⊢ @Turing.FinTM.ComputesInTime = fun {Symbol} M input output t => ∃ s, M.tm.ComputesInTimeAndSpace input output t s
+CONTROL|3|Turing.FinTM.bufferTape|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|3|Turing.FinTM.bufferTape|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.bufferTape w z
+is not definitionally equal to rhs
+  if 0 ≤ z then w[z.toNat]? else none
+
+Symbol : Type u_1
+w : List Symbol
+z : ℤ
+⊢ Turing.FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none
+CONTROL|4|Turing.FinTM.bufferTape|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|4|Turing.FinTM.bufferTape|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.bufferTape
+is not definitionally equal to rhs
+  fun {Symbol} w z => if 0 ≤ z then w[z.toNat]? else none
+
+⊢ @Turing.FinTM.bufferTape = fun {Symbol} w z => if 0 ≤ z then w[z.toNat]? else none
+CONTROL|5|Turing.FinTM.controlAction|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|5|Turing.FinTM.controlAction|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.controlAction m q
+is not definitionally equal to rhs
+  { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+k : ℕ
+S : Type
+m : SignType
+q : Option S
+⊢ Turing.FinTM.controlAction m q = { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+CONTROL|6|Turing.FinTM.controlAction|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|6|Turing.FinTM.controlAction|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.controlAction
+is not definitionally equal to rhs
+  fun {k} {S} m q => { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+
+⊢ @Turing.FinTM.controlAction = fun {k} {S} m q =>
+    { inputTape := m, workTapes := fun x => (none, 0), output := none, state := q }
+CONTROL|7|Turing.FinTM.rightAction|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|7|Turing.FinTM.rightAction|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.rightAction k f a
+is not definitionally equal to rhs
+  { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i, output := a.output,
+    state := Option.map f a.state }
+
+l : ℕ
+S S' : Type
+k : ℕ
+f : S → S'
+a : Turing.Action l Bool S
+⊢ Turing.FinTM.rightAction k f a =
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }
+CONTROL|8|Turing.FinTM.rightAction|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|8|Turing.FinTM.rightAction|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.rightAction
+is not definitionally equal to rhs
+  fun {l} {S S'} k f a =>
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }
+
+⊢ @Turing.FinTM.rightAction = fun {l} {S S'} k f a =>
+    { inputTape := a.inputTape, workTapes := fun i => Fin.addCases (fun x => (none, 0)) a.workTapes i,
+      output := a.output, state := Option.map f a.state }
+CONTROL|9|Turing.FinTM.tapeBlocks|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|9|Turing.FinTM.tapeBlocks|point|Tactic `rfl` failed: equality lhs
+  Turing.FinTM.tapeBlocks left buffer right a✝
+is not definitionally equal to rhs
+  Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) a✝
+
+α : Type
+k l : ℕ
+left : Fin k → α
+buffer : α
+right : Fin l → α
+a✝ : Fin (k + (1 + l))
+⊢ Turing.FinTM.tapeBlocks left buffer right a✝ = Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) a✝
+CONTROL|10|Turing.FinTM.tapeBlocks|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|10|Turing.FinTM.tapeBlocks|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.FinTM.tapeBlocks
+is not definitionally equal to rhs
+  fun {α} {k l} left buffer right i => Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) i
+
+⊢ @Turing.FinTM.tapeBlocks = fun {α} {k l} left buffer right i =>
+    Fin.addCases left (fun i => Fin.addCases (fun x => buffer) right i) i
+CONTROL|11|Turing.MultiTapeTM.initCfg|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|11|Turing.MultiTapeTM.initCfg|point|Tactic `rfl` failed: equality lhs
+  Turing.MultiTapeTM.initCfg input
+is not definitionally equal to rhs
+  Turing.Cfg.init tm.q₀ input
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+tm : Turing.MultiTapeTM k Symbol State
+input : List Symbol
+⊢ Turing.MultiTapeTM.initCfg input = Turing.Cfg.init tm.q₀ input
+CONTROL|12|Turing.MultiTapeTM.initCfg|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|12|Turing.MultiTapeTM.initCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.initCfg
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+
+⊢ @Turing.MultiTapeTM.initCfg = fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+CONTROL|13|Turing.MultiTapeTM.runFrom|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|13|Turing.MultiTapeTM.runFrom|point|Tactic `rfl` failed: equality lhs
+  Turing.MultiTapeTM.runFrom cfg t
+is not definitionally equal to rhs
+  Turing.MultiTapeTM.step^[t] cfg
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+t : ℕ
+⊢ Turing.MultiTapeTM.runFrom cfg t = Turing.MultiTapeTM.step^[t] cfg
+CONTROL|14|Turing.MultiTapeTM.runFrom|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|14|Turing.MultiTapeTM.runFrom|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.runFrom
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+
+⊢ @Turing.MultiTapeTM.runFrom = fun {k} {State} {Symbol} {input} {tm} cfg t => Turing.MultiTapeTM.step^[t] cfg
+CONTROL|15|Turing.MultiTapeTM.step|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|15|Turing.MultiTapeTM.step|point|Tactic `rfl` failed: equality lhs
+  Turing.MultiTapeTM.step cfg
+is not definitionally equal to rhs
+  match cfg.state with
+  | none => cfg
+  | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+⊢ Turing.MultiTapeTM.step cfg =
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+CONTROL|16|Turing.MultiTapeTM.step|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|16|Turing.MultiTapeTM.step|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.step
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+⊢ @Turing.MultiTapeTM.step = fun {k} {State} {Symbol} {input} {tm} cfg =>
+    match cfg.state with
+    | none => cfg
+    | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+CONTROL|17|Turing.instDecidableEqUniversalControl|point|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|17|Turing.instDecidableEqUniversalControl|point|Tactic `rfl` failed: equality lhs
+  Turing.instDecidableEqUniversalControl a b
+is not definitionally equal to rhs
+  Turing.instDecidableEqUniversalControl.decEq a b
+
+a b : Turing.UniversalControl
+⊢ Turing.instDecidableEqUniversalControl a b = Turing.instDecidableEqUniversalControl.decEq a b
+CONTROL|18|Turing.instDecidableEqUniversalControl|abstract|FAIL
+Controls.lean:14:0: error: CONTROL_RFL|18|Turing.instDecidableEqUniversalControl|abstract|Tactic `rfl` failed: equality lhs
+  Turing.instDecidableEqUniversalControl
+is not definitionally equal to rhs
+  Turing.instDecidableEqUniversalControl.decEq
+
+⊢ Turing.instDecidableEqUniversalControl = Turing.instDecidableEqUniversalControl.decEq
+Controls.lean:14:0: error: maximum recursion depth has been reached
+use `set_option maxRecDepth <num>` to increase limit
+use `set_option diagnostics true` to get diagnostic information

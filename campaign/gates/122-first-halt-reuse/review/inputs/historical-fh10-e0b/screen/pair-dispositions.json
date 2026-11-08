@@ -1,0 +1,511 @@
+{
+  "scope": "Exact full43-file e0b generation; all13 BASE-only and4 persistent score changes inspected, no new pairs. Every row retained.",
+  "source_HEAD": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+  "new_pair_count": 0,
+  "BASE_only_count": 13,
+  "persistent_score_changed_count": 4,
+  "all_delta_rows_reviewed": true,
+  "rows": [
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+        "source": "Deterministic.lean::mem_visitedByTapeHead_iff",
+        "matched_chars": 60,
+        "source_chars": 79,
+        "percent": 76
+      },
+      "changed_reader_ids": [
+        47
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "Turing.MultiTapeTM.mem_visitedByTapeHead_iff",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The changed space-bound proof now reads visited membership through mem_visitedByTapeHead_iff and spaceUsedByTape_eq_card, plus the canonical first halt. The former explicit visitedByTapeHead/image/range expansion no longer matches this source helper at threshold. Both source helpers remain unchanged context; their implementations are not declared globally cleaned.",
+      "row": 1
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "UniversalStartup.lean::universalCapture_start",
+        "source": "UniversalStartup.lean::universal_live_before",
+        "matched_chars": 82,
+        "source_chars": 121,
+        "percent": 68
+      },
+      "changed_reader_ids": [
+        86
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universal_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 2
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "UniversalStartup.lean::universalCapture_start",
+        "source": "Universal.lean::timedCut_live_before",
+        "matched_chars": 82,
+        "source_chars": 121,
+        "percent": 68
+      },
+      "changed_reader_ids": [
+        86
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCut_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 3
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "Universal.lean::timedCapture_start",
+        "source": "UniversalStartup.lean::universal_live_before",
+        "matched_chars": 82,
+        "source_chars": 121,
+        "percent": 68
+      },
+      "changed_reader_ids": [
+        85
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universal_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 4
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "Universal.lean::timedCapture_start",
+        "source": "Universal.lean::timedCut_live_before",
+        "matched_chars": 82,
+        "source_chars": 121,
+        "percent": 68
+      },
+      "changed_reader_ids": [
+        85
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCut_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 5
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "EXP.lean::enumCont_first_halt",
+        "source": "UniversalStartup.lean::universal_live_before",
+        "matched_chars": 79,
+        "source_chars": 121,
+        "percent": 65
+      },
+      "changed_reader_ids": [
+        9
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "Complexity.enumCont_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universal_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "enumCont_first_halt becomes the exact published exists_first_halt invocation and its normalized body falls below60 characters. The private declaration and full header remain. The earlier edge disappears because the local minimum/absorption implementation is removed from screening; this is not declaration deletion or semantic absence. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 6
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "EXP.lean::enumCont_first_halt",
+        "source": "Universal.lean::timedCut_live_before",
+        "matched_chars": 79,
+        "source_chars": 121,
+        "percent": 65
+      },
+      "changed_reader_ids": [
+        9
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "Complexity.enumCont_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCut_live_before",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "enumCont_first_halt becomes the exact published exists_first_halt invocation and its normalized body falls below60 characters. The private declaration and full header remain. The earlier edge disappears because the local minimum/absorption implementation is removed from screening; this is not declaration deletion or semantic absence. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 7
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "SAT.lean::sat_call_first_halt",
+        "source": "Finite.lean::exists_first_halt",
+        "matched_chars": 140,
+        "source_chars": 244,
+        "percent": 57
+      },
+      "changed_reader_ids": [
+        19
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_call_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "Turing.MultiTapeTM.exists_first_halt",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge.",
+      "row": 8
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "Hardness.lean::clA5_call_first_halt",
+        "source": "Finite.lean::exists_first_halt",
+        "matched_chars": 140,
+        "source_chars": 244,
+        "percent": 57
+      },
+      "changed_reader_ids": [
+        33
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "Complexity.clA5_call_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Finite.lean",
+        "Turing.MultiTapeTM.exists_first_halt",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge.",
+      "row": 9
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "EXP.lean::enumCont_first_anchor",
+        "source": "EXP.lean::enumCont_first_halt",
+        "matched_chars": 141,
+        "source_chars": 260,
+        "percent": 54
+      },
+      "changed_reader_ids": [
+        9
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "Complexity.enumCont_first_anchor",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/ClassNP/EXP.lean",
+        "Complexity.enumCont_first_halt",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "enumCont_first_halt becomes the exact published exists_first_halt invocation and its normalized body falls below60 characters. The private declaration and full header remain. The earlier edge disappears because the local minimum/absorption implementation is removed from screening; this is not declaration deletion or semantic absence. enumCont_first_anchor itself is unchanged in this FH branch and belongs to the separate FE cleanup; no FE retirement follows.",
+      "row": 10
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "ConfigCount.lean::ComputesInTime.of_spaceUsed_le",
+        "source": "ConfigCount.lean::visitedByTapeHead_mono",
+        "matched_chars": 61,
+        "source_chars": 114,
+        "percent": 54
+      },
+      "changed_reader_ids": [
+        47
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "Turing.FinTM.ComputesInTime.of_spaceUsed_le",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+        "Turing.MultiTapeTM.visitedByTapeHead_mono",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The changed space-bound proof now reads visited membership through mem_visitedByTapeHead_iff and spaceUsedByTape_eq_card, plus the canonical first halt. The former explicit visitedByTapeHead/image/range expansion no longer matches this source helper at threshold. Both source helpers remain unchanged context; their implementations are not declared globally cleaned.",
+      "row": 11
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "UniversalStartup.lean::universalCapture_start",
+        "source": "Universal.lean::timedPrefix_live",
+        "matched_chars": 96,
+        "source_chars": 191,
+        "percent": 50
+      },
+      "changed_reader_ids": [
+        86
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedPrefix_live",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 12
+    },
+    {
+      "status": "BASE_ONLY",
+      "pair": {
+        "target": "Universal.lean::timedCapture_start",
+        "source": "Universal.lean::timedPrefix_live",
+        "matched_chars": 96,
+        "source_chars": 191,
+        "percent": 50
+      },
+      "changed_reader_ids": [
+        85
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedPrefix_live",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The capture proof replaces the local Nat.find and runFrom_add/runFrom_of_halt endpoint derivation with the existing first-halt full-configuration equality. This removes the matching absorption pattern. The live-before/prefix source helper itself is unchanged and is not retired by this vanished edge. Source inspection identifies the unchanged BLIVE reproofs for mandatory same-PR mechanical companion repair; the current e0b generation is historical pending that repair.",
+      "row": 13
+    },
+    {
+      "status": "PERSISTENT_SCORE_CHANGED",
+      "pair": {
+        "BASE": {
+          "target": "SAT.lean::sat_call_first_halt",
+          "source": "Hardness.lean::clA5_call_first_halt",
+          "matched_chars": 330,
+          "source_chars": 330,
+          "percent": 100
+        },
+        "HEAD": {
+          "target": "SAT.lean::sat_call_first_halt",
+          "source": "Hardness.lean::clA5_call_first_halt",
+          "matched_chars": 206,
+          "source_chars": 206,
+          "percent": 100
+        }
+      },
+      "changed_reader_ids": [
+        19,
+        33
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_call_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "Complexity.clA5_call_first_halt",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The same two positive-time adapters persist at100%. Each normalized body shrinks330\u2192206 characters because Nat.find/minimality/absorption is delegated to exists_first_halt. Only the existing live-start\u21d2positive-time packaging remains. Source declarations stay; this is not two new copies or a unique-copy count.",
+      "row": 14
+    },
+    {
+      "status": "PERSISTENT_SCORE_CHANGED",
+      "pair": {
+        "BASE": {
+          "target": "Hardness.lean::clA5_call_first_halt",
+          "source": "SAT.lean::sat_call_first_halt",
+          "matched_chars": 330,
+          "source_chars": 330,
+          "percent": 100
+        },
+        "HEAD": {
+          "target": "Hardness.lean::clA5_call_first_halt",
+          "source": "SAT.lean::sat_call_first_halt",
+          "matched_chars": 206,
+          "source_chars": 206,
+          "percent": 100
+        }
+      },
+      "changed_reader_ids": [
+        19,
+        33
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "Complexity.clA5_call_first_halt",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/ClassNP/SAT.lean",
+        "Complexity.sat_call_first_halt",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The same two positive-time adapters persist at100%. Each normalized body shrinks330\u2192206 characters because Nat.find/minimality/absorption is delegated to exists_first_halt. Only the existing live-start\u21d2positive-time packaging remains. Source declarations stay; this is not two new copies or a unique-copy count.",
+      "row": 15
+    },
+    {
+      "status": "PERSISTENT_SCORE_CHANGED",
+      "pair": {
+        "BASE": {
+          "target": "UniversalStartup.lean::universalCapture_start",
+          "source": "Universal.lean::timedCapture_start",
+          "matched_chars": 434,
+          "source_chars": 508,
+          "percent": 85
+        },
+        "HEAD": {
+          "target": "UniversalStartup.lean::universalCapture_start",
+          "source": "Universal.lean::timedCapture_start",
+          "matched_chars": 299,
+          "source_chars": 381,
+          "percent": 78
+        }
+      },
+      "changed_reader_ids": [
+        85,
+        86
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The analogous capture adapters retain their existing capture-init/run/transfer packaging. Replacing local Nat.find and post-halt equality derivation with the canonical cut lowers shared text434\u2192299 and the ratio85%\u219278%. No new directed identity or global capture-debt retirement is inferred.",
+      "row": 16
+    },
+    {
+      "status": "PERSISTENT_SCORE_CHANGED",
+      "pair": {
+        "BASE": {
+          "target": "Universal.lean::timedCapture_start",
+          "source": "UniversalStartup.lean::universalCapture_start",
+          "matched_chars": 434,
+          "source_chars": 512,
+          "percent": 85
+        },
+        "HEAD": {
+          "target": "Universal.lean::timedCapture_start",
+          "source": "UniversalStartup.lean::universalCapture_start",
+          "matched_chars": 299,
+          "source_chars": 385,
+          "percent": 78
+        }
+      },
+      "changed_reader_ids": [
+        85,
+        86
+      ],
+      "target_source_identity": [
+        "TCSlib/Complexity/TuringMachine/Universal.lean",
+        "Turing.timedCapture_start",
+        1
+      ],
+      "source_source_identity": [
+        "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+        "Turing.universalCapture_start",
+        1
+      ],
+      "review_status": "REVIEWED against complete BASE/HEAD source spans and exact ten-body patch",
+      "no_global_absence_or_debt_retirement_inferred": true,
+      "disposition": "The analogous capture adapters retain their existing capture-init/run/transfer packaging. Replacing local Nat.find and post-halt equality derivation with the canonical cut lowers shared text434\u2192299 and the ratio85%\u219278%. No new directed identity or global capture-debt retirement is inferred.",
+      "row": 17
+    }
+  ],
+  "screen_counts_are_not_source_interface_or_unique_copy_counts": true,
+  "three_BLIVE_companions_mandatory_and_not_resolved_by_e0b": true
+}

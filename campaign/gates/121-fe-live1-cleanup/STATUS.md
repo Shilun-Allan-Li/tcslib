@@ -1,7 +1,9 @@
 # Gate121
 
-Earlier816-section prompt **VOID**; final replacement in preparation.
+Seyoon confirmed dispatch of the current Codex prompt; findings pending.
 
-**Not yet clear to merge: #241 — external audit pending.**
+**Not yet clear to merge: #241 — external gate open.**
 
-Source and validation are unchanged. Fifty rawQA data copies are now explicitly tracked; the original encoded QA archives already preserved their exact content. Final replacement binds all retained files to the new records pin.
+The exact immutable source/records/exchange/bundle binding is in publication.json
+and prompt.md. The exchange README's not-yet-dispatched line records publication
+time; this status is current. No gate closure or merge clearance is inferred.

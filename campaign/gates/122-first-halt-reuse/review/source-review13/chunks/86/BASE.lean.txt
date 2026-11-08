@@ -1,0 +1,26 @@
+/-- Every completed source computation reaches the interpreter with the table
+captured in at most one extra transition.
+
+**Proof sketch.** Choose the first source halting time. Lockstep capture holds
+through that transition; one live administrative transition enters the interpreter.
+Absorbing source halting identifies this first halted configuration with the one
+at the supplied time bound, so all its fields (including parked input position)
+are retained, not merely its completed output. -/
+lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]
+    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) (x : List Bool) (T : ℕ)
+    (h : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+    ∃ t, t ≤ T + 1 ∧
+      (universalCaptureTM M D).tm.runFrom ((universalCaptureTM M D).tm.initCfg x) t =
+        universalCapturedCfg M D (M.tm.runFrom (M.tm.initCfg x) T) := by
+  classical
+  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, h⟩
+  let t := Nat.find hh
+  have ht : t ≤ T := Nat.find_min' hh h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
+  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := by
+    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
+    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', universalCapture_init,
+    universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),
+    universalCapture_transfer M D _ hs, he]

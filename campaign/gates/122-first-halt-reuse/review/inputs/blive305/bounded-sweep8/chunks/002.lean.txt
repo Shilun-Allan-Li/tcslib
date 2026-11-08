@@ -1,0 +1,26 @@
+/-- A host with the redirected transition table simulates a source through
+its first halt and returns the exact completed configuration.
+**Proof sketch.** One redirected action commutes with the configuration map.
+Induct through live source steps; a halting action selects the live return
+state while preserving its final writes and output. -/
+private lemma enumCont_return_run {k : ℕ} {S H : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S → H) (ret : H)
+    (htr : ∀ q inp work, host.tr (emb q) inp work =
+      enumCont_returnAction emb ret (tm.tr q inp work))
+    (c₀ : Cfg k Bool S x) (t : ℕ)
+    (hlive : ∀ j < t, ¬(tm.runFrom c₀ j).Halted) :
+    host.runFrom (enumCont_returnCfg emb ret c₀) t =
+      enumCont_returnCfg emb ret (tm.runFrom c₀ t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hlive j (by omega)),
+      MultiTapeTM.runFrom_succ_eq_step']
+    have hs : (tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
+    cases hq : (tm.runFrom c₀ t).state with
+    | none => exact False.elim (hs hq)
+    | some q =>
+      simp only [MultiTapeTM.step, enumCont_returnCfg, hq, Option.map_some, Option.getD_some]
+      rw [htr]
+      rfl

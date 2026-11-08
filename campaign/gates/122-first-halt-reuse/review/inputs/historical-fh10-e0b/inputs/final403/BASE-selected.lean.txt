@@ -1,0 +1,25 @@
+import Lean
+import TCSlib.Complexity.ClassNP.EXP
+import TCSlib.Complexity.ClassNP.Nondeterminism
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.SpaceComplexity.ConfigCount
+import TCSlib.Complexity.TimeHierarchy.ClockMachine
+import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let targets : List String := ["_private.TCSlib.Complexity.ClassNP.EXP.0.Complexity.enumCont_first_halt", "_private.TCSlib.Complexity.ClassNP.Nondeterminism.0.Complexity.b2_unary_first", "_private.TCSlib.Complexity.ClassNP.Nondeterminism.0.Complexity.b2_verify_timed", "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_first_halt", "_private.TCSlib.Complexity.ClassNP.SAT.0.Complexity.sat_call_first_halt", "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5_call_first_halt", "Turing.FinTM.ComputesInTime.of_spaceUsed_le", "Complexity.TimeHierarchy.clockTM_setup", "_private.TCSlib.Complexity.TuringMachine.Universal.0.Turing.timedCapture_start", "Turing.universalCapture_start"]
+  for s in targets do
+    let selectedMatches := env.constants.toList.filter fun (n, _) => n.toString == s
+    unless selectedMatches.length == 1 do throwError "target selectedMatches {s}: {selectedMatches.length}"
+    let (n, ci) := selectedMatches.head!
+    let some moduleIdx := env.getModuleIdxFor? n | throwError "not imported {n}"
+    let home := env.header.moduleNames[moduleIdx.toNat]!
+    let axs ← liftCoreM <| Lean.collectAxioms n
+    let ty ← liftTermElabM <| ppExpr ci.type
+    let kind := match ci with | .thmInfo _ => "theorem" | _ => "other"
+    logInfo m!"SELECTED|{(Json.mkObj [("root",toJson n.toString),("owner",toJson home.toString),("kind",toJson kind),("type_Expr",toJson (reprStr ci.type)),("type_pretty",toJson ty.pretty),("universe_params",toJson (ci.levelParams.map Name.toString)),("axioms",toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+  logInfo m!"SELECTED_COMPLETE|{targets.length}"

@@ -1,0 +1,8 @@
+/-- Any known halted endpoint is reached at the first halting time, with a
+live source at every earlier time. The bound is never increased. -/
+private lemma enumCont_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c₀ : Cfg k Bool S x) (T : ℕ)
+    (hh : (tm.runFrom c₀ T).state = none) :
+    ∃ t ≤ T, (∀ j < t, ¬(tm.runFrom c₀ j).Halted) ∧
+      tm.runFrom c₀ t = tm.runFrom c₀ T := by
+  exact MultiTapeTM.exists_first_halt tm c₀ hh

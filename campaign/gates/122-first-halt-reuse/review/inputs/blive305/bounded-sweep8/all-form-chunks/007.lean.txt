@@ -1,0 +1,24 @@
+/-- The host follows the standalone emission mask until the actual first
+scheduler halt. The preserved original input is a prefix of the assembly
+buffer, and every other bank remains isolated.
+**Proof sketch.** Induct on the physical choice word. The strict liveness
+guard permits one guessing step, including the final source-halting step;
+shift the guard by one for the remaining choices. -/
+private lemma b2_guess_run (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (u w : List Bool)
+    (hlive : ∀ s < w.length, ((b2UnaryTM S).tm.runFrom c s).state ≠ none) :
+    (b2Host S V).tm.runWith w (b2GuessCfg S V c u) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.runFrom c w.length)
+        (u ++ contSelect (contEmissionMask (b2UnaryTM S) c w.length) w) := by
+  induction w generalizing c u with
+  | nil => simp [contEmissionMask, contSelect]
+  | cons bit w ih =>
+    have hc : c.state ≠ none := hlive 0 (by simp)
+    have ht : ∀ s < w.length,
+        ((b2UnaryTM S).tm.runFrom ((b2UnaryTM S).tm.step c) s).state ≠ none := by
+      intro s hs
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (s + 1) (by simpa using hs)
+    rw [NDTM.runWith_cons, b2_guess_step S V c hc, ih _ _ ht]
+    simp only [List.length_cons, contEmissionMask, contSelect,
+      MultiTapeTM.runFrom_succ_eq_step, List.append_assoc]

@@ -1072,29 +1072,26 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 adoptions and scoped implementation retirements are recorded. Wider retained debt keeps its
 existing next12.2c owner/window, before further SAT/Hardness fills.
 
-Eight separate draft source PRs are now open: #241–#247 for mechanical families and #249 for
-the approved Ladner statement skeleton (6 mathematical holes retained). Gates121–128 are
-reserved; nextfree129. Six Codex audits121/123/124/125/126/127 are published with full prompts;
-none is confirmed dispatched. All8PRs remain **Not yet clear to merge**. The mandatory #242
-companions are source-bound and its complete222→153 lineage passes. Final prospective chains
-NJ1→NJ2→NJ4 (seven heads) and NJ1→NJ2→NJ3→NJ5 (eight heads) pass without snapshot composition.
-Ladner49 comparison/777-payload packet and publication peer are complete; final128 publication
-and FH13 HEAD44/packet122 remain. Any source repair needs its own current tail. Use HANDOFF§0,
-queue.json and DISPATCH.md for exact pins/current status.
+Eight separate draft source PRs are open: #241–#247 for mechanical proof families and
+#249 for the approved Ladner17-declaration skeleton with6 mathematical holes. Gates121–128
+are reserved; nextfree129. All individual and final prospective integration replays and
+source comparisons pass. Seven current Codex prompts are confirmed dispatched; the final
+first-halt packet/peer is complete and its publication binding is finishing. Every PR is
+**Not yet clear to merge** until external gate closure and current-tree validation.
+Use HANDOFF§0, queue.json and DISPATCH.md for current exact bindings/status; data-only
+record repairs do not alter Lean source or execution evidence.
 
-A bounded continuation triage under
-`campaign/items/dedup/overnight-2026-11-08/review/continuation-triage/` records42 grouped
-dispositions and25 source bindings at the final-eight prospective tree. No further complete
-independent mechanical implementation was identified within that inspected controls/harvest
-set. Exact matches are already in these PRs; held cases retain concrete reader/decision/fill
-obstructions. This is not a whole-library absence or debt-completion claim.
+The overnight mandate retained mathematical holes for external fills and paused new
+design decisions on their own fronts. SAT's BlockLoop import, the exact sharp SAT verifier
+reader and RO1's same-name home revision remain pending. Neither unapproved revision is
+adopted. Quantitative simulator, memo and SAT-search bounds remain fill obligations.
 
-Seyoon sleeps; keep approved mechanical/statement work moving and mathematical holes for
-external fills. No self-dispatched fill. New API/header/name/import/home/route/debt questions
-pause their own fronts. Current paused decisions are SAT's BlockLoop import, the exact sharp
-SAT verifier reader, and RO1's same-name home revision to Deterministic after the CfgFacts
-cycle/8 held imports were demonstrated. RO1's generic API/all-sites scope was already ruled;
-neither unapproved home revision/import set is adopted. Details/proposals are in HANDOFF§0.
+The bounded continuation triage under campaign/items/dedup/overnight-2026-11-08/review/
+continuation-triage/ records42 dispositions and25 source bindings at the final-eight tree.
+No additional complete independent mechanical implementation was identified within that
+inspected set. This is not a whole-library absence or debt-completion claim. Wider accepted
+debt keeps its exact kinds/owner/window before further SAT/Hardness fills.
+
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

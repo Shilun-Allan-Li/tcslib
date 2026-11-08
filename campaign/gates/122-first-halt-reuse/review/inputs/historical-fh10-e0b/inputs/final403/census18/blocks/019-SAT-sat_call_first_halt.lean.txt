@@ -1,0 +1,16 @@
+private lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
+    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
+    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  classical
+  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
+  have hu := Nat.find_spec h
+  have hle := Nat.find_min' h hhalt
+  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩
+  · by_contra hn
+    have hz : Nat.find h = 0 := by omega
+    rw [hz, MultiTapeTM.runFrom_zero] at hu
+    exact hstart hu
+  · symm
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]

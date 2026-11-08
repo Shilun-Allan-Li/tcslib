@@ -1,0 +1,15 @@
+/-- The clean subroutine's first phase is the public captured simulation of
+the logged source. Halting emissions are retained on the capture tape. -/
+private lemma enumCont_clean_capture (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    (enumCont_cleanTM M).tm.runFrom
+      (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) t =
+      captureCfg Sum.inl (.inr (.inl 0)) [] []
+        (enumCont_logCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t)) := by
+  rw [capture_run (enumCont_logTM M).tm (enumCont_cleanTM M).tm Sum.inl (.inr (.inl 0))
+    (fun _ _ _ => rfl) [] [] (enumCont_logCfg c₀ []) t]
+  · rw [enumCont_log_run]
+  · intro j hj
+    rw [enumCont_log_run]
+    exact hlive j hj

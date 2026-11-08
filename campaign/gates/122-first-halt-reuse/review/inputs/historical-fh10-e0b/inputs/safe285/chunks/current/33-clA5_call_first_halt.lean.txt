@@ -1,0 +1,13 @@
+private lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
+    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
+    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  obtain ⟨u, hu, hg, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
+  have hp : 0 < u := by
+    by_contra hn
+    have hz : u = 0 := by omega
+    have hs := congrArg Cfg.state he
+    rw [hz, MultiTapeTM.runFrom_zero, hhalt] at hs
+    exact hstart hs
+  exact ⟨u, hp, hu, hg, he⟩

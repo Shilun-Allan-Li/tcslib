@@ -1,0 +1,119 @@
+[
+  {
+    "id": 9,
+    "name": "enumCont_first_halt",
+    "path": "TCSlib/Complexity/ClassNP/EXP.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/9/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "48030653532bd5778784d254694ab481586afc50cf4c8ff17cfabe75e46bdf37",
+    "peer_explicit_argument_review": "No explicit simp/rw/unfold arguments; exact published exists_first_halt.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 16,
+    "name": "b2_unary_first",
+    "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/16/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "d5db5cffe4691d2d41febfaf6a47e0ad3c0081f7c12f49ab0ed22781e9c2ce92",
+    "peer_explicit_argument_review": "rw names own b2_unary_initial; computesInTime_iff is public theorem; all unary simulation/length packaging retained.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 17,
+    "name": "b2_verify_timed",
+    "path": "TCSlib/Complexity/ClassNP/Nondeterminism.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/17/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "5e4d003e8511fab016a874953846d7ed4bb24adc569cf0d77d1d69c2c14b3797",
+    "peer_explicit_argument_review": "Public VirtualTag_iff, initCfg_eq, Cfg.init_inputPos replace foreign definitions. List and NDTM arguments are equations; hd/hp/hsplit/hlive are local facts; dsimp only has no definition argument.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 18,
+    "name": "sat_first_halt",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/18/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "d257b82e839413ea915abbf0d2bd9e7729dc2e124c8ca2f38feb2f8dd38ba096",
+    "peer_explicit_argument_review": "FinTM.computesInTime_iff and he endpoint rewriting are theorem/local readers.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 19,
+    "name": "sat_call_first_halt",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/19/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "f89c4f8bf15a6e9a93dce8c67ee681821aeff6a68103c796c84a1701479966e0",
+    "peer_explicit_argument_review": "Canonical exists_first_halt; positivity uses local hz/hhalt and published runFrom_zero.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 33,
+    "name": "clA5_call_first_halt",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/33/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "2ea2f0e970063fbc8e168b0eb41617f8630a6fb4564fa855d0a6e747843367f0",
+    "peer_explicit_argument_review": "Canonical exists_first_halt; positivity uses local hz/hhalt and published runFrom_zero.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 47,
+    "name": "ComputesInTime.of_spaceUsed_le",
+    "path": "TCSlib/Complexity/SpaceComplexity/ConfigCount.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/47/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "50b42e46e44db8e45b6b9028646060cf1fa372645bbf538214122cbd5df8b238",
+    "peer_explicit_argument_review": "Foreign spaceUsedByTape_eq_card and mem_visitedByTapeHead_iff are published readers; configBound is own definition. Remaining explicit Finset/Set/Fintype/Nat arguments are theorem readers; unchanged core-code/cardinality proof remains in full scope.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 54,
+    "name": "clockTM_setup",
+    "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/54/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "37ddca2987f31652c4db0bdd2c0a18cc86f7c479b3f5c0a9035eff22252aeab7",
+    "peer_explicit_argument_review": "Foreign initCfg_eq and Cfg.init field readers; ctrCfg is own definition and start/hi/hw/hp are local. Cfg.ext and rewind/run helper assembly are retained under full source seal.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 85,
+    "name": "timedCapture_start",
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/85/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "b39af459b53572f4a11b583068594d10cb412d8daa2653dfc8558f08639f3676",
+    "peer_explicit_argument_review": "Published runFrom_succ_eq_step plus own timedCapture init/run/transfer equations; he is local.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": 86,
+    "name": "universalCapture_start",
+    "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/86/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "8d80081fd0a12957fc7746be785ca142a478e69d648c6b07490dd2a14a4593a3",
+    "peer_explicit_argument_review": "Published runFrom_succ_eq_step plus own universalCapture init/run/transfer equations; he is local.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": "BLIVE1",
+    "name": "timedCut_live_before",
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/BLIVE1/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "84d412aea4dbdef75a50892a94be6ac4de26387e0fdf21f1ea0625194ff8b917",
+    "peer_explicit_argument_review": "Exact public backwards-live reader, no explicit reduction arguments.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": "BLIVE2",
+    "name": "timedPrefix_live",
+    "path": "TCSlib/Complexity/TuringMachine/Universal.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/BLIVE2/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "559edee9376b060ea9a8c5505fb89f23d5f9f5a19f3f0afb13ff9145805b4bee",
+    "peer_explicit_argument_review": "Exact public backwards-live reader plus own existing timedPrefix_penultimate; omega supplies strict-to-predecessor arithmetic; no explicit reduction arguments.",
+    "no_new_foreign_definition_argument_found": true
+  },
+  {
+    "id": "BLIVE3",
+    "name": "universal_live_before",
+    "path": "TCSlib/Complexity/TuringMachine/UniversalStartup.lean",
+    "complete_HEAD_chunk": "source-review13/chunks/BLIVE3/HEAD.lean.txt",
+    "complete_HEAD_chunk_sha256": "59c4aa143280aa66898bcad59c215e742d9f90e190efb1d914585dec55cc3257",
+    "peer_explicit_argument_review": "Exact public backwards-live reader, no explicit reduction arguments.",
+    "no_new_foreign_definition_argument_found": true
+  }
+]

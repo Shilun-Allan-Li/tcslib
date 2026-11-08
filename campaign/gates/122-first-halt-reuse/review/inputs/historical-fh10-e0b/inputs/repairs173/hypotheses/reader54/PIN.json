@@ -1,0 +1,94 @@
+{
+  "utc": "2026-11-08T12:15:07.460294+00:00",
+  "HEAD": "70abd9b3b2d559afded28a413be4676a2dd047d4",
+  "parent": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+  "MAC8_source": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "tracked_clean": true,
+  "source_worktree": "/Users/seyoonr/.codex/worktrees/ab34-epad/tcslib-arora-barak-ch3-4",
+  "all14_owner_bytes_exact_frozen_previous_final": true,
+  "prewrite_readonly_check_passed": true,
+  "roots": [
+    {
+      "original_inspection": {
+        "id": 54,
+        "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+        "name": "clockTM_setup",
+        "kind": "lemma",
+        "private": false,
+        "line": 509,
+        "end_line": 539,
+        "hits": [
+          {
+            "kind": "Nat.find",
+            "line": 517,
+            "text": "let t := Nat.find hh"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 519,
+            "text": "have hs : c.state = none := Nat.find_spec hh"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 520,
+            "text": "have ht : t \u2264 tK := Nat.find_min' hh ((computesInTime_iff K x s tK).mp hK).1"
+          },
+          {
+            "kind": "Nat.find",
+            "line": 536,
+            "text": "kCfg_run K W _ t (fun s hs => Nat.find_min hh hs), kCfg_rewind K W c hs, hrun, \u2190 ho]"
+          }
+        ],
+        "chunk_sha256": "facd3f2d07332b9ba743d3bea6bc71cf3e1b05580350709934a1998b2c2873dc",
+        "block": "blocks/054-ClockMachine-clockTM_setup.lean.txt",
+        "canonical_replacement": null,
+        "needs_statement_name_import_API_home_or_design_change": false,
+        "new_debt_acknowledgment_required": false,
+        "no_global_absence_claim": true,
+        "disposition": "outside FE-LIVE-1: first None halt",
+        "reason": "The selected configuration has state=none rather than a live P-stop. Existing canonical alternative is MultiTapeTM.exists_first_halt, with any caller-specific positive-time/output packaging kept separate. SAT/Hardness first-None cleanup is separately root-owned; no overlapping patch here.",
+        "other_existing_contract": "Turing.MultiTapeTM.exists_first_halt",
+        "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+        "route_status": "same existing public API; source-inspected route, not a new elaborated draft",
+        "route": "Apply to K.tm at K.tm.initCfg x and deadline tK from hK. Keep buffer/rewind setup and output_unique. Mechanical edit authority for colleague-owned ClockMachine remains a separate ownership check, not an API issue.",
+        "existing_import_chain_to_Finite": [
+          "TCSlib.Complexity.TimeHierarchy.ClockMachine",
+          "TCSlib.Complexity.TuringMachine.Simulation",
+          "TCSlib.Complexity.TuringMachine.Finite"
+        ],
+        "new_import_needed": false,
+        "new_statement_name_API_home_or_design_needed_for_selector": false,
+        "current_F1_source_head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+        "complete_chunk_literal_unchanged_in_current_F1": true,
+        "current_line": 509,
+        "current_owner_source_sha256": "34784dfb2f72dc9299c46ec6d6ef99849e30422237c4b67f90339ff0fc0177f2",
+        "chunk_bytes": 1625,
+        "new_Lean_probe_or_patch": false
+      },
+      "id": 54,
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "name": "clockTM_setup",
+      "canonical_API": "Turing.MultiTapeTM.exists_first_halt",
+      "route": "Apply to K.tm at K.tm.initCfg x and deadline tK from hK. Keep buffer/rewind setup and output_unique. Mechanical edit authority for colleague-owned ClockMachine remains a separate ownership check, not an API issue.",
+      "old_complete_chunk": "source-census/blocks/054-ClockMachine-clockTM_setup.lean.txt",
+      "status": "new13 re-point; actual per-step owner pass",
+      "native_run": "attempts/007-54/native-run.json",
+      "final_complete_chunk": "/private/tmp/ab34-first-halt-full-boundary/hypotheses/reader54/new-chunk.lean.txt",
+      "final_chunk_sha256": "909de63ee38dc6c66c3668876f2eb67a28645d711e6ee919b736ceb28c772523",
+      "final_owner_sha256": "5528cc47ea8abe9563e3ecc54c1c04efffe8afe3f8c763fed2e43afba116bfdd",
+      "final_line": 509,
+      "literal_old_new_header_exact": true,
+      "complete_literal_header": "lemma clockTM_setup (x s : List Bool) (tK : \u2115) (hK : K.ComputesInTime x s tK) :\n    \u2203 (a : \u2115) (kt : Fin K.k \u2192 \u2124 \u2192 Option Bool) (kh : Fin K.k \u2192 \u2124),\n      a \u2264 tK + s.length + x.length + 5 \u2227\n      (clockTM K W).tm.runFrom ((clockTM K W).tm.initCfg x) a =\n        ctrCfg K W (some (.dec W.tm.q\u2080 .empty)) (W.tm.initCfg x) (bufferTape s) 0 kt kh [] ",
+      "final_source_is_uncommitted_delta_over": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+      "new_import_or_API_or_statement_or_home_or_debt_permission": false
+    }
+  ],
+  "source_files": [
+    {
+      "path": "TCSlib/Complexity/TimeHierarchy/ClockMachine.lean",
+      "source_sha256": "037a1815badd92da00c3b67266e0bce3968506ce763bfd0e501b338e7d9cb37c"
+    }
+  ],
+  "scope": "Private hypotheses/probes only; full ordinary foreign head footprints with imported theorem types, not their proof values; local ordinary definition values followed. No actual source/Git/canonical writes.",
+  "private_hypothesis": true
+}

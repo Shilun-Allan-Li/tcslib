@@ -1,0 +1,11 @@
+/-- Lockstep capture through the first halting transition. -/
+private lemma timedCapture_run (M : FinTM Bool) (clock : Fin M.k) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) (t : ℕ)
+    (h : ∀ s, s < t → (M.tm.runFrom cfg s).state ≠ none) :
+    (timedCaptureTM M clock).tm.runFrom (timedCaptureCfg M clock cfg) t =
+      timedCaptureCfg M clock (M.tm.runFrom cfg t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
+      timedCapture_step M clock _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']

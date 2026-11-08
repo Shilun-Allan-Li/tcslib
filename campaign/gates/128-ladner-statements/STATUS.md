@@ -1,9 +1,9 @@
 # Gate128
 
-Final publication binding in progress; no external audit dispatched.
+Seyoon confirmed dispatch of the current Codex prompt; findings pending.
 
-**Not yet clear to merge: #249 — external audit pending.**
+**Not yet clear to merge: #249 — external gate open.**
 
-Source `1096e50b4e105392737ec52939b1db0cdbd9316d`; actual2PASS/static0/6. Full current source comparison and all
-changed-pair dispositions are complete in the frozen review inputs. Six Ladner mathematical
-proof holes remain when applicable; no new mathematical fill is commissioned here.
+The exact immutable source/records/exchange/bundle binding is in publication.json
+and prompt.md. The exchange README's not-yet-dispatched line records publication
+time; this status is current. No gate closure or merge clearance is inferred.

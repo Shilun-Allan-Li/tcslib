@@ -1,0 +1,14 @@
+/-- Any known halted endpoint is reached at the first halting time, with a
+live source at every earlier time. The bound is never increased. -/
+private lemma enumCont_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c₀ : Cfg k Bool S x) (T : ℕ)
+    (hh : (tm.runFrom c₀ T).state = none) :
+    ∃ t ≤ T, (∀ j < t, ¬(tm.runFrom c₀ j).Halted) ∧
+      tm.runFrom c₀ t = tm.runFrom c₀ T := by
+  classical
+  have hex : ∃ t, (tm.runFrom c₀ t).state = none := ⟨T, hh⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hh
+  refine ⟨t, ht, fun j hj => Nat.find_min hex hj, ?_⟩
+  obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]

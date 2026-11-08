@@ -1,0 +1,8 @@
+lemma visitedByTapeHead_mono (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) {t t' : ℕ}
+    (h : t ≤ t') (i : Fin k) : tm.visitedByTapeHead c t i ⊆ tm.visitedByTapeHead c t' i := by
+  intro z hz
+  simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hz ⊢
+  obtain ⟨j, hj, h'⟩ := hz
+  exact ⟨j, by omega, h'⟩
+
+/-- Space used grows with time. -/

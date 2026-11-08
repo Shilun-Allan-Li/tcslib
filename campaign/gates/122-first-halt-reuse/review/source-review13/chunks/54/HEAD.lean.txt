@@ -1,0 +1,46 @@
+/-- **Setup.** If `K` halts on `x` with output `s` within `tK` steps, the runner
+reaches the loop entry — state `dec q₀ empty`, counter word `s` with its head on cell
+`0`, and `W`'s initial configuration in the right block — within
+`tK + |s| + |x| + 5` steps.
+
+**Proof sketch.** Run the budget phase to `K`'s first halting time (lockstep,
+`kCfg_run`), identify the counter word with `s` by determinism, rewind the counter in
+`|s| + 2` steps (`kCfg_rewind`), and rewind the input in at most `|x| + 3` steps
+(`Turing.FinTM.timed_rewind`, whose end configuration is the loop entry since the
+right block was never touched). -/
+lemma clockTM_setup (x s : List Bool) (tK : ℕ) (hK : K.ComputesInTime x s tK) :
+    ∃ (a : ℕ) (kt : Fin K.k → ℤ → Option Bool) (kh : Fin K.k → ℤ),
+      a ≤ tK + s.length + x.length + 5 ∧
+      (clockTM K W).tm.runFrom ((clockTM K W).tm.initCfg x) a =
+        ctrCfg K W (some (.dec W.tm.q₀ .empty)) (W.tm.initCfg x) (bufferTape s) 0 kt kh [] := by
+  classical
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt K.tm (K.tm.initCfg x)
+    (((computesInTime_iff K x s tK).mp hK).1)
+  let c := K.tm.runFrom (K.tm.initCfg x) t
+  have hs : c.state = none :=
+    (congrArg Cfg.state hcut).trans ((computesInTime_iff K x s tK).mp hK).1
+  have hc : K.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  have ho : c.output = s := hc.output_unique hK
+  -- the input rewind
+  let start := ctrCfg K W (some .iStart) ⟨none, c.inputPos, fun _ _ => none, fun _ => 0, []⟩
+    (bufferTape c.output) 0 c.workTapes c.workTapePos []
+  obtain ⟨r, hr, hrun⟩ := timed_rewind (clockTM K W).tm ClockState.iStart ClockState.iScan
+    (some (.dec W.tm.q₀ .empty)) (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    start rfl
+  refine ⟨t + (c.output.length + 2) + r, c.workTapes, c.workTapePos, ?_, ?_⟩
+  · have hp : start.inputPos.val ≤ x.length + 1 := by
+      have := start.inputPos.isLt
+      omega
+    rw [ho] at *
+    omega
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, kCfg_init,
+      kCfg_run K W _ t hlive, kCfg_rewind K W c hs, hrun, ← ho]
+    have hi : (W.tm.initCfg x).inputPos = 1 := by
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+    have hw : (W.tm.initCfg x).workTapes = (fun _ _ => none) := by
+      funext i z
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
+    have hp : (W.tm.initCfg x).workTapePos = (fun _ => 0) := by
+      funext i
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    apply Cfg.ext <;> simp only [ctrCfg, start, hi, hw, hp]

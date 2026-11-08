@@ -1,0 +1,41 @@
+/-- A logged live source prefix can be completely undone in `2t+1` steps.
+The theorem restores the full original work tapes and heads, with blank
+history, while preserving any supplied native input position.
+**Proof sketch.** Peel the last source action. Two proved transitions first
+reverse its moves and erase its history, then restore its overwritten cells.
+Induction undoes the shorter prefix; the empty prefix takes one final step. -/
+private lemma enumCont_undo_run (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    (enumCont_undoTM M.k).tm.runFrom
+      (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p) (2 * t + 1) =
+      enumCont_undoResult c₀ p := by
+  induction t with
+  | zero =>
+    simpa only [Nat.mul_zero, Nat.zero_add, MultiTapeTM.runFrom_zero,
+      enumCont_history, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+      using enumCont_undo_empty c₀ p
+  | succ t ih =>
+    have hs : (M.tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
+    cases hq : (M.tm.runFrom c₀ t).state with
+    | none => exact False.elim (hs hq)
+    | some q =>
+      have he : 2 * (t + 1) + 1 = 2 + (2 * t + 1) := by omega
+      let c := M.tm.runFrom c₀ t
+      let a := M.tm.tr q c.inputSymbol c.workTapeSymbols
+      have hsrun : M.tm.runFrom c₀ (t + 1) = a.apply c := by
+        rw [MultiTapeTM.runFrom_succ_eq_step']
+        simp only [MultiTapeTM.step, hq]
+        rfl
+      have hhist : enumCont_history M.tm c₀ (t + 1) =
+          enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)] := by
+        simp only [enumCont_history, hq]
+        rfl
+      have htwo : (enumCont_undoTM M.k).tm.runFrom
+          (enumCont_undoCfg (a.apply c)
+            (enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p) 2 =
+          enumCont_undoCfg c (enumCont_history M.tm c₀ t) p := by
+        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+          MultiTapeTM.runFrom_zero, enumCont_undo_back, enumCont_undo_write]
+      rw [hsrun, hhist, he, MultiTapeTM.runFrom_add, htwo]
+      exact ih (fun j hj => hlive j (by omega))
