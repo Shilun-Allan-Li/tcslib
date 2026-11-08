@@ -1,6 +1,6 @@
 # Cleanup part 2
 
-The single Claude job is active. The issued [prompt](dispatch.md) is retained for provenance; [CP0](checkpoints/cp0/README.md) and [CP1](checkpoints/cp1/README.md) are received. [Independent CP1 review](checkpoints/cp1/review-r1/README.md) records four unique majors and one minor; the [isolated API repair](checkpoints/cp1/api01-native-r1/README.md) passed a fresh101-module native closure and six selected actual-axiom checks. It is committed locally only; three workflow majors and the ledger minor remain. The [complete provisional index](checkpoints/cp1/dispositions-r1/README.md) retains all509 keys/764 rows without closing any. The user requested30-minute checks for the next partial delivery.
+Claude has delivered a [final-PARTIAL snapshot](checkpoints/partial-r1/README.md); independent review is underway. The issued [prompt](dispatch.md) is retained for provenance; [CP0](checkpoints/cp0/README.md) and [CP1](checkpoints/cp1/README.md) are received. [Independent CP1 review](checkpoints/cp1/review-r1/README.md) records four unique majors and one minor; the [isolated API repair](checkpoints/cp1/api01-native-r1/README.md) passed a fresh101-module native closure and six selected actual-axiom checks. It is committed locally only; three workflow majors and the ledger minor remain. The [complete provisional index](checkpoints/cp1/dispositions-r1/README.md) retains all509 keys/764 rows without closing any. The user-requested 30-minute watch detected that delivery at 10:56:08 UTC; the maintainer is now reviewing it.
 The immutable [issued brief](issued-r1/brief.md) and public exceptions bind source
 `1aa5506f58f77c215e56d24311ec33bd931cacf1`. The complete payload is staged at
 `outbox/fills/cleanup-part2/` on exchange/pass-shelat-ch5-8.
@@ -24,4 +24,4 @@ The worker pushes only complete checkpoints/final to inbox/fills/cleanup-part2/.
 The user dispatches and later approves/merges the maintainer's Lean PR. Gate06C
 remains pending independently; efficiency waits for these cleanup interfaces.
 
-**Not yet clear to merge — CP1 is intermediate; review, inherited-read repair and final evidence remain.**
+**Not yet clear to merge — the final-PARTIAL delivery is under review and inherited-read work remains.**
