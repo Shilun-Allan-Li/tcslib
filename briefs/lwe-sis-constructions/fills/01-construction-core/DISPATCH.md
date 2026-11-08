@@ -1,7 +1,12 @@
-# Construction-core proof audit: prepared for user selection
+# Construction-core proof audit: user dispatched
 
-No reviewer has been selected and no job has been dispatched for this new gate.
-The earlier Codex choice applied to the completed statement audit only.
+The user reports this proof audit dispatched. GitHub verifies the published
+draft and gate metadata at exchange
+`aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. See `dispatch-receipt.json` for
+the distinction between remote metadata and prior complete local verification.
+Reviewer identity was not specified in this status message and is not inferred.
+No new selection or redispatch is requested. The instructions below preserve
+the completed handoff as history.
 
 | Item | Prepared identity |
 |---|---|
@@ -14,10 +19,11 @@ The earlier Codex choice applied to the completed statement audit only.
 
 All 593 sections were extracted, hashed and byte-compared with their exact Git
 revision/path objects. Both ordered indexes and all five gate checksums pass.
-The local exchange commit is not a remote publication pin. Code and inputs
-still require client publication before a reviewer can read them on GitHub.
+The same exchange commit is now remotely retrievable. Published code head is
+`d4db3f832f5a4b98e8ecfde79f7fcb04977b956e`; source and records pins are unchanged.
 
-Select **Codex or Claude** for this proof audit. Run `publish_review.py` with the
+The completed handoff used explicit **Codex or Claude** selection. The script
+`publish_review.py` runs with the
 matching `--worker codex` or `--worker claude` flag, using the command in README.
 It checks the clean own checkout and all payload/source hashes, pushes only our
 existing draft branch, updates draft PR #237, then rebases the private sparse
@@ -29,5 +35,5 @@ The user pastes that printed kickoff into the freshly selected auditor chat.
 The auditor reads GitHub directly and returns
 `lwe-sis-core-proofs-findings.md` as Markdown in chat. No ZIP is required.
 
-**Not yet clear to merge — publication, proof audit, source-policy work, relevant
+**Not yet clear to merge — proof-audit findings, source-policy work, relevant
 landing checks and user approval remain outstanding.**

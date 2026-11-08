@@ -14,13 +14,15 @@ The fresh serial 68-module sweep passes with zero owned admissions and the same
 17 inherited warnings. All 263 owned constants use only standard axioms, with
 no sorryAx; seven compiler auxiliaries are explicitly inventoried. Freeze and
 style checks pass. `fills/01-construction-core/` contains the evidence, report
-and prepared proof-audit handoff. A new Codex/Claude selection and user dispatch
-are still required; no external proof verdict or publication is claimed yet.
+and proof-audit handoff. The user has dispatched that audit; GitHub verifies
+the published draft and immutable exchange input. Findings are pending.
 
 Independent source and machine-adapter preparation is under `continuation/`.
 Raw local PDF extraction is complete, but validation/matching and the proposed
 two-tag registry change remain unexecuted. Source-policy and machine/primitive
-bridge obligations remain open. No new external job is dispatched.
+bridge obligations remain open. The new `continuation/proof-audit/` records
+a nine-page visual source comparison, concrete arithmetic/sampling reuse, and
+PKE preflight. No additional external job is dispatched by that preparation.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.

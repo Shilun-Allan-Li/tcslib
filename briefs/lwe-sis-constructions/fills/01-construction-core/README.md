@@ -20,6 +20,11 @@ new `.lake/core-fill-final-oleans` tree. Checks ran one module at a time through
 
 ## Proof review
 
+Current status: the user dispatched the proof audit. GitHub verifies the code
+head/central target and gate metadata at exchange
+`aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. See `dispatch-receipt.json`.
+The frozen Lean/root and packet are unchanged. Do not redispatch this running job.
+
 The vendor-neutral pack is `audits/lwe-sis-core-proofs-pack.md`. The prepared
 GitHub input belongs under the owned orphan-exchange namespace
 `lwe-sis-constructions/outbox/gates/03-construction-core-proofs-r1/`.
@@ -40,7 +45,7 @@ updates draft PR #237, rebases the private sparse publisher before pushing only
 the owned namespace, and prints the exact GitHub kickoff. It never merges or
 pushes to a central/campaign branch, and never uses the shared exchange checkout.
 Auditors read GitHub directly and return `lwe-sis-core-proofs-findings.md` as
-Markdown in chat. No ZIP is required. No reviewer is selected or dispatched yet.
+Markdown in chat. No ZIP is required. The command above documents the completed handoff, not a redispatch request.
 
 **Not yet clear to merge — the proof audit, source-policy work, relevant landing
 checks and user approval remain open.**

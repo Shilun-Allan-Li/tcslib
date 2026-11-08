@@ -30,7 +30,8 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 | Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
-| Phase-1 frozen Lean/root | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
+| Phase-1 statement freeze | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
+| Construction-core proof freeze | `690217cc1aaefe411158808a8b0797fd887a8abc` |
 | Upstream campaign context | `cryptography/pass-shelat-ch2-4` at `74b02c1d5c1dcea241c95d625586a7a324925cc9` |
 | Original kickoff baseline | `9db11986edfce462d91958856a763577ee15457f` |
 | Implementation baseline | `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49` |
@@ -46,26 +47,36 @@ The active draft was initially created from the remote-verified campaign context
 the audited foundation. When the user selected a central LWE/SIS integration branch,
 its two unpublished code/export commits were replayed onto the audited dependency,
 removing unrelated campaign-record ancestry. Every checked Lean/pin byte was unchanged.
-Client publication has now retargeted PR #236 to the central branch and opened
-draft PR #237 there. The published new draft head is
-`1b148307150a0b0a08dd80d68c54ba2db95de13c`. Its dispatched statement-audit input
-is exchange `90d652e19508262b3bd81234260d0585aaf8e0a0`; source and records pins
-are unchanged. The eight mathematical modules remain frozen while review runs.
+Client publication retargeted PR #236 and opened draft PR #237 against the central
+branch. Its currently published head is
+`d4db3f832f5a4b98e8ecfde79f7fcb04977b956e`. The statement audit passed 0/0/0/3.
+The user has now dispatched the proof audit at exchange
+`aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`, source
+`690217cc1aaefe411158808a8b0797fd887a8abc`, bundled records
+`42a400a1b88eecf9172a91ba287894450c72f9b0`. GitHub verifies the publication
+metadata. The Lean/root and issued input packet remain frozen while findings are pending.
 
-## Current construction statement phase
+## Current construction-core proof phase
 
 The separate phase-1 draft contains eight mathematical modules: explicit polynomial
 sample replacement, canonical modular parsing, bounded-error bit decoding, direct
 Regev symmetric encryption and its concrete two-DLWE bound, and SIS binary hashing
-with a collision bound and dyadic profile. It has 62 source declarations, including
-31 explicitly admitted theorem obligations. No nontrivial proof fill has started.
+with a collision bound and dyadic profile. All 31 audited obligations are filled,
+with the same 62 source declarations and unchanged definitions/signatures.
 
-The fresh serial scoped sweep covers 68 modules and retains 17 inherited warnings.
+The fresh serial scoped sweep covers 68 modules with zero new admissions and
+17 inherited warnings. All 263 owned constants have only standard axioms.
 It is not a whole-library root build. The new facade/root exports are isolated in
 commit `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`; the construction-core commit is
 `56cabe7f3` (full history and hashes are in the phase-1 records). Existing owner
-APIs and pins are unchanged. The next gate is a statement review, not a claim of
-completed encryption/hash security or machine efficiency.
+APIs and pins are unchanged. The current proof-review evidence is under
+`briefs/lwe-sis-constructions/fills/01-construction-core/`. No completed
+machine/primitive-security endpoint is claimed.
+
+Independent records-only source/adapter/PKE preflight lives under
+`briefs/lwe-sis-constructions/continuation/proof-audit/`. Its exact proposed
+shared probability-reader patch is unapplied and needs user coordination before
+implementation. No new Lean phase starts while the proof gate remains open.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -78,7 +89,8 @@ are recorded under `briefs/lwe-sis-constructions/continuation/`.
 Do not edit the maintainer's campaign checkout or any Pass--Shelat records. Frozen
 Gate06 source `3f6db40e1688c4a0bb922c9575dd3bd2157a650b` and PR #232 belong to their
 maintainer. Do not merge that branch as a shortcut to its APIs. Do not access or mutate
-the Arora--Barak campaign checkout or exchange namespace. No external job is dispatched.
+the Arora--Barak campaign checkout or exchange namespace. The user alone dispatches
+external jobs; this continuation launches none.
 
 ## Organization
 
@@ -374,3 +386,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 
 | 2026-11-07 | Codex construction-core statement audit PASS 0/0/0/3 at `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`; report preserved verbatim and intake checks reconciled. No statement repair. Fill the 31 theorem bodies on existing PR #237; keep definitions/signatures fixed. | Scoped statement gate closed; proof gate and N01–N03 remain open |
 | 2026-11-07 | Filled all 31 audited construction-core proofs at `690217cc1aaefe411158808a8b0797fd887a8abc` on existing PR #237; 62 declarations/definitions/signatures fixed. Fresh 68-module sweep, 263-constant axiom probe, freeze and scoped style checks pass; no shared API/export/pin edit. | Proof audit not yet selected; N01–N03 and user integration remain open |
+| 2026-11-07 | User reports construction-core proof audit dispatched; GitHub metadata verifies code head `d4db3f832f5a4b98e8ecfde79f7fcb04977b956e` and exchange `aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. Independent records compare nine primary PDF pages, identify existing dyadic sampling/width-normalization hosts, and prepare an unapplied two-reader proposal plus quantitative PKE preflight. | Proof input frozen; no new Lean/API/native/external job or merge |
