@@ -25,8 +25,8 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 
 | Item | Identity |
 |---|---|
-| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-phase1` |
-| Active draft PR branch | `cryptography/lwe-sis-phase1-statements` |
+| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters` |
+| Active draft PR branch | `cryptography/lwe-sis-adapter-statements` |
 | Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
@@ -58,7 +58,7 @@ metadata. The returned construction-core proof audit now passes 0/0/0/3; the
 pasted report and separate gate resolutions are preserved under `audits/`. No
 proof repair was needed, and the issued input packet remains unchanged.
 
-## Current construction-core proof phase
+## Current construction-core proof phase (passed)
 
 The separate phase-1 draft contains eight mathematical modules: explicit polynomial
 sample replacement, canonical modular parsing, bounded-error bit decoding, direct
@@ -80,6 +80,15 @@ Independent records-only source/adapter/PKE preflight lives under
 shared probability-reader patch is unapplied and needs user coordination before
 implementation. The next owned adapter statement phase may now proceed after
 this scoped proof gate; source-policy and user integration remain open.
+
+The next isolated encoding-adapter statement slice is checked at
+`6eec97be8f54d9990340900a5595dab32fb477f5`, on top of full audited stack baseline
+`ff8345b1d2ac2f605d81cdf6c23216aadb918abb`. It has 3 definitions, 17 theorems,
+3 closed defining equations and 14 explicit admissions. A fresh 93-module sweep,
+283-constant inventory and nine public machine-contract axiom checks pass.
+The only prior-file Lean overlap is a separate Encoding facade export commit.
+No shared-owner API or pin is changed. Its external statement gate is prepared
+but not dispatched; no nontrivial fill starts before that gate closes.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -319,7 +328,7 @@ whole-library root elaboration or merge clearance. Each PR discloses this overla
 ## Verification and current execution limits
 
 Use only this branch's `.lake/packages/` and fresh
-`TCSLIB_OLEANS=<worktree>/.lake/phase1-final-oleans`. Do not use another chat's
+`TCSLIB_OLEANS=<worktree>/.lake/adapter-final-2-oleans`. Do not use another chat's
 TCSlib scratch objects. The installed Lean 4.25.0 executable has been checked. Disk
 space exceeds 400 GiB. Process inspection via `ps` is denied by the execution sandbox.
 The user subsequently increased the coordination budget by two and authorized up to
@@ -391,3 +400,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 | Filled all 31 audited construction-core proofs at `690217cc1aaefe411158808a8b0797fd887a8abc` on existing PR #237; 62 declarations/definitions/signatures fixed. Fresh 68-module sweep, 263-constant axiom probe, freeze and scoped style checks pass; no shared API/export/pin edit. | Proof audit not yet selected; N01–N03 and user integration remain open |
 | 2026-11-07 | User reports construction-core proof audit dispatched; GitHub metadata verifies code head `d4db3f832f5a4b98e8ecfde79f7fcb04977b956e` and exchange `aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. Independent records compare nine primary PDF pages, identify existing dyadic sampling/width-normalization hosts, and prepare an unapplied two-reader proposal plus quantitative PKE preflight. | Proof input frozen; no new Lean/API/native/external job or merge |
 | 2026-11-07 | User supplies construction-core proof report as Markdown paste: PASS 0/0/0/3. Preserved the entire report body, verified 76 source files and all 174/106/86/82/5 nested evidence entries, and closed only this proof gate. No Lean repair, native rerun or merge. | Next owned adapter statement draft authorized by gate; N01–N03 and user integration remain open |
+| 2026-11-07 | Created isolated adapter draft from central base `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited stack `ff8345b1d2ac2f605d81cdf6c23216aadb918abb`; 20 statements/14 admissions, 93 fresh modules, 9 consumed FP contracts axiom-clean. One required Mathlib cache root added without changing pins. | Statement gate prepared, user selection/dispatch pending; no merge |
