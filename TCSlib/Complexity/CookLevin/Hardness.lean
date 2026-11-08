@@ -7178,10 +7178,9 @@ private def clA5CompareTM : FinTM Bool where
 /-- Loading, comparing and returning one arithmetic bit is a native linear
 computation on the complete encoded four-word argument.
 **Proof sketch.** Consume the banked comparator and native loader, then cut
-at the first completed verdict. The public fixed-stop first-entry theorem,
-with both verdicts in its predicate, supplies the wider guard at the same
-complete endpoint. The replay wrapper follows every preceding source
-transition and emits exactly one bit on its halting step. -/
+at the first completed verdict. Absorption of either completed source verdict
+rules out an earlier different verdict. The replay wrapper follows every
+preceding source transition and emits exactly one bit on its halting step. -/
 private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
     let arg := clFields (List.ofFn w) ++ []
     clA5CompareTM.ComputesInTime arg
@@ -7213,25 +7212,16 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
   obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)
     (a + (2 * clCmpSize w + 2)) hend rfl (by simp [A, clPreparedTM, seamCompTM, ret]) (idle b)
   have guard : ∀ j < t, ∀ v, (A.tm.runFrom (A.tm.initCfg arg) j).state ≠ some (ret v) := by
-    have resultState : result.state = some (ret b) := by
-      dsimp only [result, clPreparedCfg]
-      rw [clPlacedCfg_eq]
-      rfl
-    obtain ⟨u, hu, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
-      A.tm (fun q => ∃ v : Bool, q = ret v) (A.tm.initCfg arg) result t
-      (by
-        rintro cfg ⟨q, hq, v, rfl⟩
-        exact idle v cfg hq)
-      ⟨ret b, resultState, b, rfl⟩ hr
-    have hut : u = t := by
-      apply Nat.le_antisymm hu
-      by_contra hn
-      have hult : u < t := by omega
-      apply hf u hult
-      exact (congrArg Cfg.state he).trans resultState
-    subst u
     intro j hj v hv
-    exact hcut j hj ⟨ret v, hv, v, rfl⟩
+    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
+    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) =
+      A.tm.runFrom (A.tm.initCfg arg) j at stay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
+    have hstate := congrArg Cfg.state stay
+    change some (ret b) = _ at hstate
+    rw [hv] at hstate
+    have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
+    exact hf j hj (by rw [hb]; exact hv)
   have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
     delta Action.mapState
     simp only [Option.map_id]
@@ -7259,23 +7249,8 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
   have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := rfl
   rw [hi] at run
   have finish : clA5CompareTM.tm.step result = {result with state := none, output := [b]} := by
-    have fields : result.state = some (ret b) ∧ result.output = [] := by
-      dsimp only [result, clPreparedCfg]
-      rw [clPlacedCfg_eq]
-      exact ⟨rfl, rfl⟩
-    rw [MultiTapeTM.step_of_some fields.1]
     change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _
-    apply Cfg.ext
-    · rw [Action.apply_state]
-    · rw [Action.apply_inputPos, moveInputPos_zero]
-    · funext i
-      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
-    · funext i
-      rw [Action.apply_workTapePos]
-      change result.workTapePos i + (0 : ℤ) = result.workTapePos i
-      exact add_zero _
-    · rw [Action.apply_output, fields.2]
-      rfl
+    simp [Action.apply, show result.output = [] from rfl]
   have hb : b = decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) := by
     apply Bool.eq_iff_iff.mpr
     simpa using clCmpVerdict_spec w

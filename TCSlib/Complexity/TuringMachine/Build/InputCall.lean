@@ -173,9 +173,10 @@ private theorem inputSeekRewind_run {x : List Bool} (d : Cfg 2 Bool InputSeekRw 
     change (FinTM.controlAction SignType.neg (some InputSeekRw.done)).apply
       ({ d with state := some .left, inputPos := 1 } : Cfg 2 Bool InputSeekRw x) = _
     rw [FinTM.controlAction_apply]
-    apply Cfg.ext rfl _ rfl rfl rfl
+    refine Cfg.ext rfl ?_ rfl rfl rfl
     apply Fin.ext
     rw [FinTM.moveInputPos_neg_val]
+    rfl
   obtain ⟨u, hu, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed
     inputSeekRewind (fun q => q = .done) d {d with state := some .done, inputPos := 0} (r + 1)
     (by
