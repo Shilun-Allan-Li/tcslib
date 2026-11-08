@@ -65,6 +65,8 @@ The complete canonical file and all33 named source files appear in both
 
 ## Validation and explicit limits
 
+Frozen `review/scope.json` retains preparatory lint comparison hashes. The fresh current QA is `review/qa/comparison.json`, with `review/qa/BASE-QA-receipt.json`, `review/qa/HEAD-QA-receipt.json` and their matching raw stdout.
+
 - Complete private preflight owner source is byte identical to this actual HEAD.
   Its native check on whole MAC8 passes with zero errors/sorry warnings and the
   same six inherited warning messages. The instrumented source adds diagnostic

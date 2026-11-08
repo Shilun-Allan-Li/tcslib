@@ -1,0 +1,69 @@
+CONTROL|Nat.bit|point|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Nat.bit|point|Tactic `rfl` failed: equality lhs
+  Nat.bit b n
+is not definitionally equal to rhs
+  bif b then 2 * n + 1 else 2 * n
+
+b : Bool
+n : ℕ
+⊢ Nat.bit b n = bif b then 2 * n + 1 else 2 * n
+CONTROL|Nat.bit|abstract|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Nat.bit|abstract|Tactic `rfl` failed: equality lhs
+  Nat.bit
+is not definitionally equal to rhs
+  fun b n => bif b then 2 * n + 1 else 2 * n
+
+⊢ Nat.bit = fun b n => bif b then 2 * n + 1 else 2 * n
+CONTROL|Turing.codeBitsNat|point|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.codeBitsNat|point|Tactic `rfl` failed: equality lhs
+  Turing.codeBitsNat xs
+is not definitionally equal to rhs
+  List.foldr Nat.bit 0 xs
+
+xs : List Bool
+⊢ Turing.codeBitsNat xs = List.foldr Nat.bit 0 xs
+CONTROL|Turing.codeBitsNat|abstract|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.codeBitsNat|abstract|Tactic `rfl` failed: equality lhs
+  Turing.codeBitsNat
+is not definitionally equal to rhs
+  fun xs => List.foldr Nat.bit 0 xs
+
+⊢ Turing.codeBitsNat = fun xs => List.foldr Nat.bit 0 xs
+CONTROL|Turing.incFixed|point|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.incFixed|point|Tactic `rfl` failed: equality lhs
+  Turing.incFixed a✝
+is not definitionally equal to rhs
+  List.brecOn a✝ fun x f =>
+    (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+      | [] => fun x => none
+      | false :: rest => fun x => some (true :: rest)
+      | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+      f
+
+a✝ : List Bool
+⊢ Turing.incFixed a✝ =
+    List.brecOn a✝ fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f
+CONTROL|Turing.incFixed|abstract|FAIL
+ControlsSealed.lean:19:0: error: RFL_CONTROL|Turing.incFixed|abstract|Tactic `rfl` failed: equality lhs
+  Turing.incFixed
+is not definitionally equal to rhs
+  fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f
+
+⊢ Turing.incFixed = fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f

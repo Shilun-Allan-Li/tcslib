@@ -1,0 +1,42 @@
+CONTROL|Nat.bit|point|PASS|kernelChecked=NatClosureRfl_1_point
+CONTROL|Nat.bit|abstract|PASS|kernelChecked=NatClosureRfl_2_abstract
+CONTROL|Turing.codeBitsNat|point|PASS|kernelChecked=NatClosureRfl_3_point
+CONTROL|Turing.codeBitsNat|abstract|PASS|kernelChecked=NatClosureRfl_4_abstract
+CONTROL|Turing.incFixed|point|FAIL
+ControlsNative.lean:18:0: error: RFL_CONTROL|Turing.incFixed|point|Tactic `rfl` failed: equality lhs
+  Turing.incFixed a✝
+is not definitionally equal to rhs
+  List.brecOn a✝ fun x f =>
+    (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+      | [] => fun x => none
+      | false :: rest => fun x => some (true :: rest)
+      | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+      f
+
+a✝ : List Bool
+⊢ Turing.incFixed a✝ =
+    List.brecOn a✝ fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f
+CONTROL|Turing.incFixed|abstract|FAIL
+ControlsNative.lean:18:0: error: RFL_CONTROL|Turing.incFixed|abstract|Tactic `rfl` failed: equality lhs
+  Turing.incFixed
+is not definitionally equal to rhs
+  fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f
+
+⊢ Turing.incFixed = fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool)) x with
+        | [] => fun x => none
+        | false :: rest => fun x => some (true :: rest)
+        | true :: rest => fun x => Option.map (fun x => false :: x) x.1)
+        f

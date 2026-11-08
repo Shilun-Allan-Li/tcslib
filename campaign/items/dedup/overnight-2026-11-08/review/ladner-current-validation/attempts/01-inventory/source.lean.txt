@@ -1,0 +1,306 @@
+import Lean
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Codex
+-/
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.ClassNP.PClosure
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import Mathlib.Data.Nat.Log
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Delayed diagonalization and intermediate languages
+
+## Main definitions
+
+* `Complexity.padSAT` is SAT padded by a variable exponent after a final separator.
+* `Complexity.ladnerMachine` is the uniformly timed enumeration used in the delayed diagonal.
+* `Complexity.ladnerH` is the least currently successful index, capped by a double logarithm.
+* `Complexity.SAT_H` is the language padded by that index function.
+
+## Main results
+
+* `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.
+* `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.
+* `Complexity.ladner` states the existence of an NP-intermediate language.
+
+## Conventions
+
+The bounded test uses acceptance equivalence at the indexed deadline, rather than
+requiring a Boolean output within that deadline. At the empty input the deadline
+is zero, so acceptance and padded-language membership are both false. The enumeration
+uses the existing uniform binary code scheme. The inherited SAT decoder is total and
+maps malformed words to a satisfiable formula. The general padding theorem below uses
+the weaker NP-hardness premise, strengthening the NP-complete version.
+
+## References
+
+* [AB09] S. Arora, B. Barak, Computational Complexity: A Modern Approach,
+  Cambridge University Press, 2009. Theorem 3.3 and its proof.
+-/
+
+namespace Complexity
+
+open Turing
+open scoped Classical
+
+/-- `padSAT h` consists of a satisfiable word followed by a false separator and
+`|ψ| ^ h |ψ|` true bits. [AB09, Theorem 3.3 and its proof] -/
+def padSAT (h : ℕ → ℕ) : Language Bool :=
+  {y | ∃ ψ ∈ SAT, y = ψ ++ false :: List.replicate (ψ.length ^ h ψ.length) true}
+
+/-- A word belongs to `padSAT h` exactly when it has the indicated satisfiable prefix
+and the prescribed separator and unary suffix. -/
+theorem mem_padSAT_iff {h : ℕ → ℕ} {y : List Bool} :
+    y ∈ padSAT h ↔
+      ∃ ψ ∈ SAT, y = ψ ++ false :: List.replicate (ψ.length ^ h ψ.length) true :=
+  Iff.rfl
+
+/-- Padding-language membership at a word depends only on exponent values at shorter
+prefix lengths.
+
+**Proof sketch.** A padding witness is shorter than the whole word because the separator
+contributes one position. Substitute equality of the exponent functions at that length. -/
+theorem padSAT_congr {h g : ℕ → ℕ} {y : List Bool}
+    (hfg : ∀ m < y.length, h m = g m) :
+    y ∈ padSAT h ↔ y ∈ padSAT g := by
+  constructor
+  · intro hy
+    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+    have hshort : ψ.length < y.length := by
+      rw [he, List.length_append, List.length_cons, List.length_replicate]
+      omega
+    apply mem_padSAT_iff.mpr
+    refine ⟨ψ, hψ, ?_⟩
+    rw [← hfg ψ.length hshort]
+    exact he
+  · intro hy
+    obtain ⟨ψ, hψ, he⟩ := mem_padSAT_iff.mp hy
+    have hshort : ψ.length < y.length := by
+      rw [he, List.length_append, List.length_cons, List.length_replicate]
+      omega
+    apply mem_padSAT_iff.mpr
+    refine ⟨ψ, hψ, ?_⟩
+    rw [hfg ψ.length hshort]
+    exact he
+
+/-- The index `i` denotes the machine obtained by decoding its binary digits in the
+uniformly timed code scheme. [AB09, Theorem 3.3 and its proof] -/
+noncomputable def ladnerMachine (i : ℕ) : FinTM Bool :=
+  (expCode.decode (Nat.bits i)).toFinTM
+
+/-- The enumeration uses `expCode` on the binary digits of its index. -/
+theorem ladnerMachine_eq (i : ℕ) :
+    ladnerMachine i = (expCode.decode (Nat.bits i)).toFinTM :=
+  rfl
+
+/-- The delayed index at `n` is the least index below the double logarithm that correctly
+recognizes the padded language on words of length at most the logarithm, within its indexed
+polynomial deadline. If no such index exists, it is the double logarithm. Values used in a
+short padded word depend only on smaller arguments, so strong recursion defines the index.
+[AB09, Theorem 3.3 and its proof] -/
+noncomputable def ladnerH (n : ℕ) : ℕ :=
+  Nat.strongRecOn (motive := fun _ => ℕ) n fun n prev =>
+    let h : ℕ → ℕ := fun m => if hm : m < n then prev m hm else 0
+    let good : ℕ → Prop := fun i => ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT h)
+    if hex : ∃ i, i < Nat.log 2 (Nat.log 2 n) ∧ good i then Nat.find hex
+    else Nat.log 2 (Nat.log 2 n)
+
+/-- The delayed index satisfies its minimum-index equation, with the global padded
+language in the bounded acceptance test.
+
+**Proof sketch.** Read the strong-recursion equation and use `padSAT_congr` to identify
+local and global exponents on every queried word. Handle zero before using logarithmic decrease. -/
+theorem ladnerH_eq (n : ℕ) :
+    ladnerH n =
+      if hex : ∃ i, i < Nat.log 2 (Nat.log 2 n) ∧
+          ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+            ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+              x ∈ padSAT ladnerH) then
+        Nat.find hex
+      else Nat.log 2 (Nat.log 2 n) := by
+  conv_lhs => rw [ladnerH]
+  change (Nat.lt_wfRel.wf.fix (C := fun _ : ℕ => ℕ) _ n) = _
+  rw [WellFounded.fix_eq]
+  dsimp only
+  let previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+  let localTest : ℕ → Prop := fun i => i < Nat.log 2 (Nat.log 2 n) ∧
+    ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT previous)
+  let globalTest : ℕ → Prop := fun i => i < Nat.log 2 (Nat.log 2 n) ∧
+    ∀ x : List Bool, x.length ≤ Nat.log 2 n →
+      ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+        x ∈ padSAT ladnerH)
+  have hpad (hn : n ≠ 0) (x : List Bool) (hx : x.length ≤ Nat.log 2 n) :
+      x ∈ padSAT previous ↔ x ∈ padSAT ladnerH := by
+    apply padSAT_congr
+    intro m hm
+    have hmn : m < n := (hm.trans_le hx).trans (Nat.log_lt_self 2 hn)
+    exact dif_pos hmn
+  have hnonzero (i : ℕ) (hi : i < Nat.log 2 (Nat.log 2 n)) : n ≠ 0 := by
+    intro hz
+    subst n
+    simp at hi
+  have htests : localTest = globalTest := by
+    funext i
+    apply propext
+    constructor
+    · rintro ⟨hi, hgood⟩
+      refine ⟨hi, fun x hx => ?_⟩
+      exact (hgood x hx).trans (hpad (hnonzero i hi) x hx)
+    · rintro ⟨hi, hgood⟩
+      refine ⟨hi, fun x hx => ?_⟩
+      exact (hgood x hx).trans (hpad (hnonzero i hi) x hx).symm
+  have hexists : (∃ i, localTest i) ↔ ∃ i, globalTest i :=
+    exists_congr fun i => Iff.of_eq (congrFun htests i)
+  split_ifs with hlocal hglobal
+  · exact Nat.find_congr' fun {i} => Iff.of_eq (congrFun htests i)
+  · exact False.elim (hglobal (hexists.mp hlocal))
+  · rename_i hglobal
+    exact False.elim (hlocal (hexists.mpr hglobal))
+  · rfl
+
+/-- The delayed index never exceeds its double-logarithmic cap.
+
+**Proof sketch.** In the successful case, read the strict index bound of the least witness;
+in the fallback case, the index equals the cap. -/
+theorem ladnerH_le (n : ℕ) : ladnerH n ≤ Nat.log 2 (Nat.log 2 n) := by
+  rw [ladnerH_eq]
+  split_ifs with h
+  · exact (Nat.find_spec h).1.le
+  · exact le_rfl
+
+/-- `SAT_H` is the language obtained by padding SAT with the delayed index function.
+[AB09, Theorem 3.3 and its proof] -/
+noncomputable def SAT_H : Language Bool := padSAT ladnerH
+
+/-- The witness language is `padSAT ladnerH`. -/
+theorem SAT_H_eq : SAT_H = padSAT ladnerH :=
+  rfl
+
+/-- The binary digits of the delayed index at an input's length are polynomial-time
+computable. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Maintain previously computed index values, simulate only the short
+inputs through the uniformly timed acceptance simulator, and test SAT on short words.
+Polynomially bounded iteration supplies the memo-table driver; the short-SAT search,
+poly-bounded simulator invocation and state-size ledger are separate route obligations. -/
+theorem ladnerH_polyTime :
+    PolyTimeComputable (fun x => Nat.bits (ladnerH x.length)) :=
+  sorry
+
+/-- The padded SAT witness is in NP. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Guess the satisfiable prefix and its SAT certificate. Compute the
+index at that prefix length and check the separator and exactly prescribed unary suffix. -/
+theorem SAT_H_mem_NP : SAT_H ∈ NP :=
+  sorry
+
+/-- A polynomial-time decider for the padded language forces its delayed index to be
+bounded. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Choose a padded code of the decider whose enumeration index dominates
+its polynomial time degree. That index eventually passes every short acceptance test;
+absorb the finitely many earlier index values into one bound. -/
+theorem ladnerH_bounded_of_mem_P :
+    SAT_H ∈ P → ∃ C, ∀ n, ladnerH n ≤ C :=
+  sorry
+
+/-- If the padded language is outside P, the delayed index eventually exceeds every
+constant. [AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** Each fixed machine has a failing finite test, since a machine that passed
+all its indexed polynomial tests would decide the language in polynomial time. Once all
+failing tests below a fixed cap are visible, none of those indices is selected. -/
+theorem ladnerH_unbounded_of_not_mem_P :
+    SAT_H ∉ P → ∀ C, ∃ N, ∀ n ≥ N, C ≤ ladnerH n :=
+  sorry
+
+/-- Polynomial-time computable, diverging padding cannot be NP-hard unless SAT belongs
+to P. The hypothesis uses NP-hardness, rather than NP-completeness.
+[AB09, Theorem 3.3 and its proof]
+
+**Proof sketch.** A polynomial reduction into the padded language eventually maps an
+instance to a satisfiable-prefix candidate at most the square root of its length.
+Repeatedly shrink, with the finite small cases tabulated, to obtain a polynomial SAT decider. -/
+theorem SAT_mem_P_of_padSAT_NPHard {h : ℕ → ℕ}
+    (hp : PolyTimeComputable (fun x => Nat.bits (h x.length)))
+    (hu : ∀ C, ∃ N, ∀ n ≥ N, C ≤ h n) (hH : NPHard (padSAT h)) : SAT ∈ P :=
+  sorry
+
+/-- If P differs from NP, the explicit padded SAT language is in NP, outside P and
+not NP-complete. [AB09, Theorem 3.3]
+
+**Proof sketch.** A P decider would bound the delayed index and make bounded padding a
+polynomial reduction from SAT. NP-hardness would instead combine divergence of the
+index with the shrinking reduction. Each case would put SAT in P and collapse P and NP. -/
+theorem SAT_H_intermediate (h : P ≠ NP) :
+    SAT_H ∈ NP ∧ SAT_H ∉ P ∧ ¬ NPComplete SAT_H :=
+  sorry
+
+/-- If P differs from NP, an NP-intermediate language exists. [AB09, Theorem 3.3] -/
+theorem ladner (h : P ≠ NP) : ∃ L ∈ NP, L ∉ P ∧ ¬ NPComplete L :=
+  ⟨SAT_H, SAT_H_intermediate h⟩
+
+end Complexity
+
+open Lean Elab Command Meta
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let sourceNames : List String := ["Complexity.padSAT", "Complexity.mem_padSAT_iff", "Complexity.padSAT_congr", "Complexity.ladnerMachine", "Complexity.ladnerMachine_eq", "Complexity.ladnerH", "Complexity.ladnerH_eq", "Complexity.ladnerH_le", "Complexity.SAT_H", "Complexity.SAT_H_eq", "Complexity.ladnerH_polyTime", "Complexity.SAT_H_mem_NP", "Complexity.ladnerH_bounded_of_mem_P", "Complexity.ladnerH_unbounded_of_not_mem_P", "Complexity.SAT_mem_P_of_padSAT_NPHard", "Complexity.SAT_H_intermediate", "Complexity.ladner"]
+  let mut guards : Array Name := #[]
+  let mut simpDefs : Array Name := #[]
+  let mut rowCount := 0
+  for sourceName in sourceNames do
+    let hits := env.constants.toList.filter fun (n, _) => n.toString == sourceName
+    unless hits.length == 1 do throwError "root mismatch {sourceName}: {hits.length}"
+    let (root, ci) := hits.head!
+    let axs ← liftCoreM <| Lean.collectAxioms root
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+      | .axiomInfo _ => "axiom" | .opaqueInfo _ => "opaque" | _ => "other"
+    let owner := (env.getModuleIdxFor? root).map fun i => env.header.moduleNames[i.toNat]!.toString
+    logInfo m!"ABI|{(Json.mkObj [("source_name", toJson sourceName), ("kernel_name", toJson root.toString), ("expected_source_owner", toJson "TCSlib.Complexity.Diagonalization.Ladner"), ("import_module_owner", toJson owner), ("private", toJson (isPrivateName root)), ("kind", toJson kind), ("universe_parameters", toJson (ci.levelParams.map Name.toString)), ("full_type_Expr_repr", toJson (reprStr ci.type)), ("type_Expr_without_mdata_repr", toJson (reprStr ci.type.consumeMData)), ("type_constants", toJson ((ci.type.getUsedConstants.qsort Name.lt).toList.map Name.toString)), ("simp_lemma", toJson (simp.isLemma (.decl root))), ("simp_unfold", toJson (simp.toUnfold.contains root)), ("axioms", toJson ((axs.qsort Name.lt).toList.map Name.toString))]).compress}"
+    let mut pending := ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[])
+    let mut visited : Array Name := #[]
+    let mut index := 0
+    while index < pending.size do
+      let n := pending[index]!
+      index := index + 1
+      if visited.contains n then continue
+      visited := visited.push n
+      let home := (env.getModuleIdxFor? n).map fun i => env.header.moduleNames[i.toNat]!
+      let foreign := home.any fun h => (`TCSlib).isPrefixOf h
+      let localDecl := home.isNone
+      unless foreign || localDecl do continue
+      let some info := env.find? n | continue
+      match info with
+      | .defnInfo d =>
+        let projection := (env.getProjectionFnInfo? n).isSome
+        let abbrevDecl := match d.hints with | .abbrev => true | _ => false
+        let ordinary := foreign && !projection && !abbrevDecl
+        let isSimp := simp.isLemma (.decl n) || simp.toUnfold.contains n
+        if ordinary && !guards.contains n then guards := guards.push n
+        if foreign && isSimp && !simpDefs.contains n then simpDefs := simpDefs.push n
+        rowCount := rowCount + 1
+        logInfo m!"DEF|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("owner", toJson (home.map Name.toString)), ("foreign", toJson foreign), ("current_module", toJson localDecl), ("projection", toJson projection), ("kernel_abbrev", toJson abbrevDecl), ("ordinary_guard", toJson ordinary), ("default_simp_definition", toJson isSimp), ("reducibility", toJson (reprStr (getReducibilityStatusCore env n)))]).compress}"
+        pending := pending ++ d.type.getUsedConstants ++ d.value.getUsedConstants
+      | .thmInfo d =>
+        logInfo m!"THEOREM_BOUNDARY|{(Json.mkObj [("root", toJson sourceName), ("name", toJson n.toString), ("owner", toJson (home.map Name.toString)), ("proof_value_traversed", toJson localDecl)]).compress}"
+        pending := pending ++ d.type.getUsedConstants
+        if localDecl then pending := pending ++ d.value.getUsedConstants
+      | _ => pure ()
+    logInfo m!"ROOT-COMPLETE|{sourceName}|{visited.size}"
+  logInfo m!"GUARDS|{(toJson ((guards.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"SIMPDEFS|{(toJson ((simpDefs.qsort Name.lt).toList.map Name.toString)).compress}"
+  logInfo m!"SIMP-EXTRA|{(Json.mkObj [("name", toJson "Turing.CodeTM.toFinTM_k"), ("is_simp", toJson (simp.isLemma (.decl ``Turing.CodeTM.toFinTM_k)))]).compress}"
+  logInfo m!"COMPLETE|{sourceNames.length}|{guards.size}|{rowCount}"

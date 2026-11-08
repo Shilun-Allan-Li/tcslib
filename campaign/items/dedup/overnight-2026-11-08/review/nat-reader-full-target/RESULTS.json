@@ -1,0 +1,130 @@
+{
+  "status": "FROZEN_PRIVATE_EXISTING_API_REPAIR_PREFLIGHT_PASS_ROOT_ADOPTION_PENDING",
+  "checks": [
+    {
+      "check": "OwnerNative",
+      "receipt": "OwnerNative-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "OwnerInventory",
+      "receipt": "OwnerInventory-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ScopeGuardNative",
+      "receipt": "ScopeGuardNative-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ScopeSealed",
+      "receipt": "ScopeSealed-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ControlsNative",
+      "receipt": "ControlsNative-attempt2.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "ControlsSealed",
+      "receipt": "ControlsSealed-attempt2.json",
+      "exit": 1,
+      "errors": 6,
+      "warnings": 0,
+      "sorry_warnings": 0
+    },
+    {
+      "check": "IncFixedStatus",
+      "receipt": "IncFixedStatus-attempt1.json",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "sorry_warnings": 0
+    }
+  ],
+  "full_target_complete_doc_header_body_native_and_sealed": true,
+  "ordinary_TCS_heads": 2,
+  "focused_Mathlib_heads": 1,
+  "guard_union_count": 3,
+  "default_simp_definitions_removed": 0,
+  "positive_kernel_checked_controls": 6,
+  "negative_matching_identity_controls": 6,
+  "all_control_pairs": [
+    {
+      "definition": "Nat.bit",
+      "mode": "point",
+      "kernel_name": "NatClosureRfl_1_point",
+      "positive_kernel_name": "NatClosureRfl_1_point",
+      "positive": true,
+      "negative": true
+    },
+    {
+      "definition": "Nat.bit",
+      "mode": "abstract",
+      "kernel_name": "NatClosureRfl_2_abstract",
+      "positive_kernel_name": "NatClosureRfl_2_abstract",
+      "positive": true,
+      "negative": true
+    },
+    {
+      "definition": "Turing.codeBitsNat",
+      "mode": "point",
+      "kernel_name": "NatClosureRfl_3_point",
+      "positive_kernel_name": "NatClosureRfl_3_point",
+      "positive": true,
+      "negative": true
+    },
+    {
+      "definition": "Turing.codeBitsNat",
+      "mode": "abstract",
+      "kernel_name": "NatClosureRfl_4_abstract",
+      "positive_kernel_name": "NatClosureRfl_4_abstract",
+      "positive": true,
+      "negative": true
+    },
+    {
+      "definition": "Turing.incFixed",
+      "mode": "nil_equation",
+      "kernel_name": "NatClosureIncFixed_nil",
+      "exact_control": "theorem NatClosureIncFixed_nil : Turing.incFixed [] = none := rfl",
+      "positive_kernel_name": "NatClosureIncFixed_nil",
+      "positive": true,
+      "negative": true
+    },
+    {
+      "definition": "Turing.incFixed",
+      "mode": "false_cons_equation",
+      "kernel_name": "NatClosureIncFixed_false_cons",
+      "exact_control": "theorem NatClosureIncFixed_false_cons (w : List Bool) :\n    Turing.incFixed (false :: w) = some (true :: w) := rfl",
+      "positive_kernel_name": "NatClosureIncFixed_false_cons",
+      "positive": true,
+      "negative": true
+    }
+  ],
+  "full_target_AX_standard_only": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "source_owner_sha256": "8f1b19cf6893b7129e6d98ced5572633f6ed04a1b2fcd5767d04e136e7cef9c8",
+  "no_new_actual_PR_head_full23_replay_metadata_or_33screen_claim": true,
+  "old_d725_full23_screen_packet_is_historical": true,
+  "no_source_Git_canonical_snapshot_or_external_mutation": true,
+  "all_native_jobs_closed": true
+}

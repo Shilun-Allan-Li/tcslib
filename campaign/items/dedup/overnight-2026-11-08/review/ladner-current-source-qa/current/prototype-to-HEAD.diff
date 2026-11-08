@@ -1,0 +1,18 @@
+--- PROTOTYPE56c
++++ HEAD63eb
+@@ -28,6 +28,15 @@
+ * `Complexity.ladnerH_polyTime` states that the delayed index is polynomial-time computable.
+ * `Complexity.SAT_H_intermediate` gives an intermediate language when P differs from NP.
+ * `Complexity.ladner` states the existence of an NP-intermediate language.
++
++## Conventions
++
++The bounded test uses acceptance equivalence at the indexed deadline, rather than
++requiring a Boolean output within that deadline. At the empty input the deadline
++is zero, so acceptance and padded-language membership are both false. The enumeration
++uses the existing uniform binary code scheme. The inherited SAT decoder is total and
++maps malformed words to a satisfiable formula. The general padding theorem below uses
++the weaker NP-hardness premise, strengthening the NP-complete version.
+ 
+ ## References
+ 
