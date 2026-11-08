@@ -1694,7 +1694,7 @@ C1E-1(g) already scheduled `xr_firstArrival'` promotion when a second consumer i
 that prior schedule remains relevant but did not acknowledge this wider kind. The seven
 SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scopes.
 
-## IMG-COMP-1 — raw on-image composition reconstruction (proposed retirement in #215)
+## IMG-COMP-1 — raw on-image composition reconstruction (retired in merged #215)
 
 Canonical contract: `Turing.FinTM.exists_comp_on_image` in Composition, composing one
 finite machine with a second contract only on its actual image and original-input budgets,
@@ -1729,7 +1729,7 @@ seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Both enumera
 or a generic duplication exception; inherited source candidates retain their own dispositions.
 
 
-## BLIVE-REUSE-1 — backward liveness (proposed retirement in #215)
+## BLIVE-REUSE-1 — backward liveness (retired in merged #215)
 
 Canonical contract: Turing.MultiTapeTM.runFrom_state_ne_none_of_le (Finite), any alphabet/state,
 arbitrary start and live endpoint at t imply liveness at every u≤t. Gate106R3F4 confirmed
@@ -1758,3 +1758,21 @@ merged at this checkpoint: their candidate implementation retirements remain pro
 The seven SG1 kinds and wider FE-LIVE-1 stay scheduled for next12.2c after activeMIG-1 and
 before further SAT/Hardness fills. The actual combined394-module replay is running;
 its result and merge readiness are root-owned, not supplied by either passing report.
+
+
+## Actual SG1 merge checkpoint — #215
+
+Seyoon merged#215 at `47f067d9ef616ba36a6e9dfb68ed0761d29616d7`; exact source/whole895-object
+MSG9→MAC7 adoption is in status/2026-11-08-sg1-merge/. This retires the three enumerated
+Segment concatenation implementations, the four scoped zero/one/monotonicity reproofs,
+the two F1 cut-only implementations, the sixteen polynomial/encoding reproofs, Tautology's
+one raw on-image reconstruction and the two BLIVE-REUSE-1 implementations. Source names
+retained as citations remain declared. These are scoped implementation retirements, not
+whole-library absence or a new count of unique family members.
+
+Seven accepted SG1 retention kinds and wider FE-LIVE-1 keep their exact next12.2c owner/window,
+after activeMIG-1 and before further SAT/Hardness fills. The mixed Hardness54/544 affected-name
+lower bound is not54 retained copies; do not subtract19 or directed screen edges. Catalog's
+backward-liveness watch and proposed MIG conversions await #233's actual merge. Its gate118
+is closed, but combined394 replay is still running and no result is assumed here. Earlier
+future-tense #215 passages are dated premerge history, superseded by this actual checkpoint.

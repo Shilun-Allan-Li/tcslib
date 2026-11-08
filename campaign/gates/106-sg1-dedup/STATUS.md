@@ -1,7 +1,7 @@
-# Gate106 round4 — CLOSED PASS0/0/0/27
+# Gate106 round4 — CLOSED PASS0/0/0/27; #215 MERGED
 
-All27 returned notes are accepted after root and independent review; no source change or new ruling is required. Verbatim report, receipt, per-finding resolutions and full independent review are retained. Issued packet and actual MSG8→MSG9 pins are unchanged.
+Seyoon merged #215 at `47f067d9ef616ba36a6e9dfb68ed0761d29616d7`. All1003 Lean path/blob pairs equal the auditedb129 and passedMSG9 source. The complete895-objectMSG9 output was verified and renamed MAC7; no new elaboration or snapshot splicing. Receipt: campaign/status/2026-11-08-sg1-merge/.
 
-**Clear to merge: #215 first — Seyoon merges.** Current campaign remains Lean-identical to MAC6; the prospective merge is clean and has exactly auditedb129 Lean. Actual MSG8full329→MSG9tail2 remains valid for this first merge. PR215 is verified open/non-draft atb129 and its description is updated.
+All27 notes remain accepted within their exact scopes. Candidate implementation retirements are recorded separately from the seven retained SG1 kinds and wider FE-LIVE-1 schedules. The immutable report, input/prompt, resolutions and full independent review remain intact.
 
-**Not yet clear to merge: #233 — separate combined394 interaction replay running.** Its gate118 is closed, but this SG1 clearance does not assume that run passes. Seven SG1 retention kinds and all separate debt/watch limits retain their existing scopes and cleanup schedule.
+**Not yet clear to merge: #233 — combined394 replay still running.** Gate118 is closed; SG1's merge does not imply that run passed.

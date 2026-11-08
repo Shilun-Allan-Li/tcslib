@@ -1068,25 +1068,23 @@ SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scop
 ## 2. Campaign work queued or on hold
 
 **Arora–Barak ch. 3–4 maintainer continuation (2026-11-08 UTC).** Current state is
-`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230/#234/#235 are merged; complete
-MAC6 is current. Gate106round4 for #215 is CLOSED PASS0/0/0/27; gate118 for #233 is
-CLOSED PASS0/0/0/18. Root and independent return reviews accept every note within scope,
-with no new source repair or decision. Both source heads remain audited b129/55df.
+`campaign/maintainer/HANDOFF.md` §0. #228/#222/#229/#230/#234/#235/#215 are merged;
+completeMAC7 is current, adopted wholeMSG9 by exact1003-source/895-object equality after
+Seyoon's #215 merge `47f067d9ef616ba36a6e9dfb68ed0761d29616d7`. Gate106R4 CLOSED PASS0/0/0/27;
+gate118 CLOSED PASS0/0/0/18. All notes accepted with no new repair/ruling.
 
-The separate replay chains remain valid at their actual pins. Their import contexts interact,
-so a fresh actual combined394-module replay from wholeMAC6 is running at local prospective
-source11b09440347ca8274562d58b5f90a11cfce56e29. No combined result is claimed yet.
-**Clear to merge: #215 first — Seyoon merges.** The current clean prospective merge and actualMSG8→MSG9 remain valid; PR215 is open/non-draft at the audited head.
-**Not yet clear to merge: #233 — combined replay pending.** Recommended order is #215 then
-#233 after readiness; Seyoon merges. Full audit closures, independent dependency paths and
-actual replay preparation/maps are in status/2026-11-08-audit-closures/.
+#233 now contains mergedSG1 at `50abeae65163f5449d2a2781a94c993284842320`, preserving all12 audited
+MIG source files and exactly matching the running combined source across1003 Lean paths.
+**Not yet clear to merge: #233 — actual combined394 replay running**, from the entireMAC6
+snapshot, with no result yet. Final20-owner AX check/readiness remains. Full review/plan/maps:
+status/2026-11-08-audit-closures/; integration: fills/mig1/landing/post-sg1-source-merge/.
 
-The F6 proof is merged and no F6 fill remains running. After active MIG-1 lands, the next12.2c
-consolidation must address the seven retained SG1 kinds and wider FE-LIVE-1 before further
-SAT/Hardness fills, preserving each ruling's limits and shared-host design/gating needs.
-Ladner still needs its statement phase. Records remain direct; every Lean change requires
-PR, gate/replay and Seyoon's merge. No new dispatch/ruling is needed for these returns.
-Next free gate121.
+The F6 proof is merged and no F6 fill runs. After activeMIG-1 lands, next12.2c consolidation
+must address seven retained SG1 kinds and wider FE-LIVE-1 before further SAT/Hardness fills,
+preserving each exact owner/window and shared-host design/gating needs. SG1's scoped repaired
+implementations are now retired; affected-name unions are not retained-copy counts and are
+not reduced by the number of repaired declarations. Ladner still needs its statement phase.
+Records remain direct; Lean byPR/gate/replay and Seyoon's merge. Nextfree121.
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
 

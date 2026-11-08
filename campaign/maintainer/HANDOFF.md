@@ -9,17 +9,17 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
-**LATEST — BOTH RETURNED AUDITS CLOSED; combined interaction replay RUNNING.**
+**LATEST — #215 MERGED; MAC7 current; #233 combined validation RUNNING.**
 
-Gate106round4 returned PASS0/0/0/27 and gate118 PASS0/0/0/18. Verbatim local-inbox reports/receipts and all27/18 scoped resolutions are retained; root and two independent return reviews found no source fix or new ruling. Complete review manifests are root-verified. Current source heads remain SG1b129 and MIG55df; both merge cleanly into records8f14 with exact audited Lean trees. #235 remains merged/MAC6 current.
+Seyoon merged#215 at `47f067d9ef616ba36a6e9dfb68ed0761d29616d7`. Exact all1003 Lean path/blob equality with auditedb129 and passedMSG9 was verified; all895 output hashes match, so the wholeMSG9 snapshot was renamed MAC7. No new elaboration/splicing. MAIN and records fast-forwarded safely; user untracked3sumexample hash unchanged. Receipt: status/2026-11-08-sg1-merge/.
 
-The independent all1003-source merge-order review found real import-context interaction: four MIG owners newly reach Contract.Basic after SG1, so existing separate MSG9/MMIG4 runs cannot automatically clear their combination. Root started actual **mjoint1 full394** at local validation-only combined source11b09440347ca8274562d58b5f90a11cfce56e29 from a whole895-objectMAC6 clone. It holds one shared slot, j4/nice10; session2021. No final result yet. Evidence/preparation and complete source/objects maps: campaign/status/2026-11-08-audit-closures/. Do not relabel old329/394/two-module executions.
+Gate106R4 CLOSED PASS0/0/0/27 and gate118 CLOSED PASS0/0/0/18 after root and complete independent return reviews. All notes accepted; no new repair/ruling. Verbatim reports/receipts and issued input/prompt pins stay immutable. SG1's scoped implementation copies are retired on actual merge, while seven retention kinds/wider FE-LIVE-1 keep their exact next12.2c owner/window.
 
-**Clear to merge: #215 first — Seyoon merges.** Gate106R4 closed; current clean prospective merge and MSG8→MSG9 remain valid. PR open/non-draft, exactb129 head and updated readiness description verified.
-**Not yet clear to merge: #233 — combined replay pending.**
+Maintainer merged current campaign47f into existing MIG branch; pushed current#233 head `50abeae65163f5449d2a2781a94c993284842320`. All12 audited MIG owner files are byte-exact to issued55df; all1003 Lean path/blob pairs equal running local combined source `11b09440347ca8274562d58b5f90a11cfce56e29`. Receipt: fills/mig1/landing/post-sg1-source-merge/. No authored Lean edit, new API/import/header change or new gate dispatch.
 
-Recommended order after readiness: #215 then #233; Seyoon alone merges. Do not retire candidate implementations before actual merge. Seven SG1 retention kinds and wider FE-LIVE-1 keep their exact existing next12.2c owner/window, after activeMIG-1 and before further SAT/Hardness fills. No new audit/fill dispatch or user decision is needed for these passing returns. Nextfree121. Older relocation/open-gate checkpoints below are historical.
+**Not yet clear to merge: #233 — actual combined394 replay still running.** It began from whole895-objectMAC6 before #215 merged; preserve MAC6 unchanged for its final hash check. Current campaignMAC7 is a separate wholeMSG9 adoption, never spliced into the running tree. Runtime session2021, one sharedslot/j4/nice10. After root observes exit0, run the prepared finalizer and then the prepared20-owner AX scan, reconcile its8078 comparison-only old-map expectation including the one generated-owner collision, recheck current merge/head/source equality, mark PR ready and push final records. Oldfull329/394 and two-module tails retain actual pins. Complete plan, independent source graph/reviews and prepared input maps are in status/2026-11-08-audit-closures/; private runners are /private/tmp/ab34-finalize-mjoint1.py and ab34-run-joint-axioms.py, AX workfolder /private/tmp/ab34-joint-axioms/.
 
+Seyoon alone merges#233. After activeMIG-1 lands, next12.2c consolidation remains required before further SAT/Hardness fills. No new user decision or audit dispatch is needed now. Nextfree121. Older checkpoints below are historical.
 
 **RELOCATION CHECKPOINT — Seyoon confirmed dispatch of BOTH Codex audits and is closing this chat. Resume only when he returns.**
 
