@@ -69,7 +69,7 @@ this PR HEAD. This complements declfreeze and the selected compiled ABI.
 `review/PAYLOAD-INDEX.json` enumerates all exact copied frozen evidence inputs and hashes.
 `review/replay/` contains the actual matching RESULT/request, all module logs, complete
 object/source maps and every compiled replay module source as `.lean.txt`;
-`compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
+`review/replay/compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
 These committed bytes independently match the actual replay input SHA map.
 This extra context does not enlarge the named 33-file screen population.
 Frozen source/native/seal/control reports are data, not authority to close a gate.

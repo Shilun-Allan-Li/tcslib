@@ -1,0 +1,30 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import Lean
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace Complexity
+open Turing
+section ExtraOpacity
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+/-- Removing the first bit is polynomial-time by the public tail closure. -/
+private lemma clA5_pt_tail : PolyTimeComputable List.tail := by
+  convert polyTimeComputable_tail using 1
+  funext x
+  cases x <;> rfl
+/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/
+private lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by
+  exact polyTimeComputable_take1
+
+
+#print axioms Complexity.clA5_pt_tail
+#print axioms Complexity.clA5_pt_head
+
+end ExtraOpacity
+end Complexity

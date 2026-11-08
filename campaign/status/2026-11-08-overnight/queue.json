@@ -1,5 +1,5 @@
 {
-  "utc": "2026-11-08T13:06:24.139984+00:00",
+  "utc": "2026-11-08T13:47:24.140007+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "8e5f2266b6ababbd0784f717e65a4903a0e3a0f0",
   "auditors": "Codex, selected by Seyoon for morning batch",
@@ -19,9 +19,9 @@
       "pr": 242,
       "slug": "first-halt-reuse",
       "branch": "codex/ab34-first-halt-reuse",
-      "head": "70abd9b3b2d559afded28a413be4676a2dd047d4",
-      "status": "Published17 candidate; full70-head boundary review leaves7currentlyeligible and10held/repair candidates; no finalreplay; sourcechangespendingreview",
-      "note": "Four source readers published;13 more in11 source owners pass native checks, uncommitted while final review freezes. Earlier0387 full50 replay is historical, not the17-consumer final replay."
+      "head": "e0b7fd50ca81d9b8f3dd486f120292da1b4fb880",
+      "status": "Final10/8owners pushed; full boundaries/44pairs passed; actual222 replay and fresh43file screen queued/running",
+      "note": "Seven held candidates restored to baseline in6whole files; old3/4/17 source evidence retained separately. ClockMachine mechanical FYI is Seyoon-owned."
     },
     {
       "slug": "ch7-run",
@@ -33,7 +33,7 @@
       "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
       "pr": 243,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/243",
-      "status": "Ready to dispatch; published; external audit not dispatched; not yet clear to merge"
+      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "safe-run",
@@ -49,7 +49,7 @@
       "head": "cfa6a3ee327b03e601b25fd5f0535e85fd18f897",
       "pr": 244,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/244",
-      "status": "Privatebridgeadoptedcfa; public3unchanged/newprivate1; current80nsafe2running; old535c80/33screenhistorical"
+      "status": "Current cfa private bridge/public3 full80 replay PASSED; fresh33 screen queued; external audit pending"
     },
     {
       "slug": "word-leaves",
@@ -65,7 +65,7 @@
       "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
       "pr": 245,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/245",
-      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "restart-reader",
@@ -77,7 +77,7 @@
       "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
       "pr": 246,
       "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/246",
-      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+      "status": "Packet source and replay checks passed; final publication paths/binding preparing; external audit not dispatched; not yet clear to merge"
     },
     {
       "slug": "nat-reader",
@@ -97,22 +97,23 @@
     }
   ],
   "held_decisions": [
-    "SAT BlockLoop import; exactproposalpushed/questionpending; unapplied",
-    "RO1 CfgFacts cycle and eight heldimports; alternate Deterministic home preflight in progress; approvedgenericAPI/allsite scope unchanged",
-    "Ladner sharp linear SAT verifier owner-reader proposal; fullownerpreflight passes, no public API approved/applied"
+    "SAT BlockLoop import: exact proposal pushed, user ruling pending, unapplied",
+    "RO1 home revision to Deterministic: two complete proposals pushed, user ruling pending, unapplied",
+    "SAT_exists_linear_verifier public owner-reader: exact proposed owner and consumers pass, user ruling pending, unapplied"
   ],
   "replays": {
-    "FE121": "actual163/0/static0/49 from wholeMAC8; passeda93 snapshot; fullproof boundary followup in progress",
-    "ch7_123": "actual80/0; completionreceipt retained",
-    "FH122_historical": "actual50/0/static0/21 at original3-root0387 only; finalscope expansion pending",
-    "remaining": "safe80 thenword26/restart18/nat23 queued sequentially"
+    "FE121": "Current d64 full157 PASS/static0/35; original11-root a93 full163/static49 historical",
+    "FH122": "Current e0b ten-root full222 running from wholeMAC8; old3-root full50 historical",
+    "ch7_123": "Exact7c4 full80 PASS/static0/31",
+    "safe_124": "Exactcfa full80 PASS/static0/31",
+    "word_125": "Exactb8b full26 PASS/static0/0",
+    "restart_126": "Exact48d full18 PASS/static0/0",
+    "nat_127": "Exactd725 full23 PASS/static0/0",
+    "joint7": "Local50998b prospective7-way/13owners full257 running; source not pushed/campaign not merged"
   },
   "QA": "33-file full before/after screens running oneatatime; six source freezes/lints materialized; all captures remain data",
-  "ready_gates": [
-    123,
-    125
-  ],
-  "live_note": "six settled-scope replays passed; FE current9/157/static35; FH17 full-boundary review active; SafeRun bridge hypothesis may replace current535c head; screens continue",
+  "ready_gates": [],
+  "live_note": "All7source scopes settled; final10FH complete boundaries/44pairs and sourcefreeze pass; two wholeMAC8 replays active; finalscreens serialized.",
   "passed_replay_receipt": "six-replay-adoption-check.json",
   "worktree_aliases": {
     "wt-camp": "/Users/seyoonr/.codex/worktrees/ab34-campaign-current/tcslib-arora-barak-ch3-4",
@@ -134,9 +135,10 @@
   "void_issued_prompts": [
     123
   ],
-  "gate123_note": "Replacement373-section/SHA607f published; old359/SHA7fa void; newpromptready",
+  "gate123_note": "Original359-section prompt VOID; unissued373/SHA607f publication superseded for path qualification; replacement being built.",
   "pending_current_prompt_issue": [
     123,
-    125
+    125,
+    126
   ]
 }

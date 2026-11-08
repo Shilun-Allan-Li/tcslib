@@ -1,7 +1,7 @@
-# Gate125
+# Gate 125
 
-**Ready to dispatch: Codex gate125 for #245.**
+Prepared for Codex; final publication binding is supplied by the exchange README and issued prompt. No external audit dispatched.
 
-**Not yet clear to merge: #245 — external audit not dispatched/closed.**
+**Not yet clear to merge: #245 — external audit pending.**
 
-Verified published291-section bundle; full immutable pins/SHA/bytes are publication.json andprompt.md.
+Source `b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`. Existing source/replay validation is unchanged by packet path qualification.

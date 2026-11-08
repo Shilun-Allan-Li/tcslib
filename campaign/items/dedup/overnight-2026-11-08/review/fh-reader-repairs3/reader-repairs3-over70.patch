@@ -1,0 +1,49 @@
+--- a/TCSlib/Complexity/ClassNP/Nondeterminism.lean
++++ b/TCSlib/Complexity/ClassNP/Nondeterminism.lean
+@@ -2092,7 +2092,7 @@
+   have ho : c.output = [b] := hcomp.output_unique hV
+   have hp : (w.take t).length = t := List.length_take_of_le (by omega)
+   obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
+-    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (w.take t)
++    (by simp [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]) p tapes heads (w.take t)
+     (fun s hs => hlive s (show s < t from hp ▸ hs))
+   rw [hp] at hr
+   have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega
+--- a/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ConfigCount.lean
+@@ -373,13 +373,13 @@
+   have hbound : ∀ t' ≤ t, ∀ i, |(M.tm.runFrom (M.tm.initCfg x) t').workTapePos i| ≤ s ∧
+       ∀ z, (M.tm.runFrom (M.tm.initCfg x) t').workTapes i z ≠ none → |z| ≤ s := by
+     intro t' ht' i
+-    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s :=
+-      (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
++    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s := by
++      simpa only [MultiTapeTM.spaceUsedByTape_eq_card] using
++        (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
+     have hmem : ∀ z ∈ M.tm.visitedByTapeHead (M.tm.initCfg x) t i, |z| ≤ s := fun z hz =>
+       ((M.tm.abs_pos_lt_card_visited x t i hz).trans_le (by exact_mod_cast hcard)).le
+     refine ⟨hmem _ ?_, fun z hz => hmem z ?_⟩
+-    · simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+-      exact ⟨t', by omega, rfl⟩
++    · exact (MultiTapeTM.mem_visitedByTapeHead_iff _ _ _ _).mpr ⟨t', ht', rfl⟩
+     · exact M.tm.visitedByTapeHead_mono _ ht' i (M.tm.mem_visited_of_ne_none x t' i z hz)
+   -- injectivity of the code map on times before `T`
+   have hinj : Set.InjOn (fun t' => coreCode s (M.tm.runFrom (M.tm.initCfg x) t'))
+--- a/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
++++ b/TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
+@@ -533,6 +533,14 @@
+     omega
+   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, kCfg_init,
+       kCfg_run K W _ t hlive, kCfg_rewind K W c hs, hrun, ← ho]
+-    rfl
++    have hi : (W.tm.initCfg x).inputPos = 1 := by
++      rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
++    have hw : (W.tm.initCfg x).workTapes = (fun _ _ => none) := by
++      funext i z
++      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
++    have hp : (W.tm.initCfg x).workTapePos = (fun _ => 0) := by
++      funext i
++      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
++    apply Cfg.ext <;> simp only [ctrCfg, start, hi, hw, hp]
+ 
+ end Complexity.TimeHierarchy

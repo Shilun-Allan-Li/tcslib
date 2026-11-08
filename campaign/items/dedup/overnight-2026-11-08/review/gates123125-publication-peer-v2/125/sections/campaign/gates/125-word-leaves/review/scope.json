@@ -1,0 +1,85 @@
+{
+  "slug": "word-leaves",
+  "wt": "ab34-word-leaves",
+  "branch": "codex/ab34-word-leaves",
+  "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+  "include": [
+    "TCSlib/Complexity/CookLevin/Hardness.lean"
+  ],
+  "title": "Reuse public polynomial-time head and tail closures",
+  "detail": "The two existing private clA5 head/tail proofs cite the public take1/tail closures already in the import context. List.tail agrees with drop1 by Core reduction. No machine, literal statement, import or public declaration changes.",
+  "gate": 125,
+  "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
+  "pr": 245,
+  "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/245",
+  "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+  "records_capture": "a65af49cbd8e720f267b6a16b6b4812d31be0904",
+  "owner": "TCSlib/Complexity/CookLevin/Hardness.lean",
+  "roots": [
+    "Complexity.clA5_pt_tail",
+    "Complexity.clA5_pt_head"
+  ],
+  "evidence_inputs": [
+    "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/items/dedup/overnight-2026-11-08/review/sg-extras"
+  ],
+  "replay_candidates": [
+    "nword2",
+    "nword1"
+  ],
+  "source_freeze": {
+    "base": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
+    "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
+    "gate": 125,
+    "pr": 245,
+    "rows": [
+      {
+        "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+        "BASE_blob": "433d0ce6e17ed264f0d7f650a8692d4da4744b4f",
+        "HEAD_blob": "fbefdf84f456f96fdef04753ecc253f92f0661da",
+        "BASE_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+        "HEAD_sha256": "422042d604d9bee9fb5e8c12827cb1ae046eb48a3a448bc47f38418dd7017cbc",
+        "changed_chunks": [
+          "Complexity.clA5_pt_tail",
+          "Complexity.clA5_pt_head"
+        ],
+        "imports_exact": true,
+        "declaration_names_privacy_and_parser_headers_exact": true,
+        "full_chunk_freeze_scope": "declfreeze parser; exact full-header recovery and compiled evidence separately supplied"
+      }
+    ],
+    "allowed_targets": [
+      "clA5_pt_head",
+      "clA5_pt_tail"
+    ]
+  },
+  "QA_export": "/private/tmp/ab34-overnight-qa/exports/125",
+  "lint_comparison": [
+    {
+      "kind": "style-lint.txt",
+      "BASE_bytes": 1963,
+      "HEAD_bytes": 1963,
+      "BASE_sha256": "36362b7fb4de0852f5995daa383c5ed5adf90a124b712906dc7966c17efc9394",
+      "HEAD_sha256": "430e72244e63175f8623c2d70153eeed5f3efc815272ab7de718b9f1f1f7ed54",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "campaign-lint.txt",
+      "BASE_bytes": 134274,
+      "HEAD_bytes": 134274,
+      "BASE_sha256": "aeaccf18b0d6e0888462fbc593de30fbfb5ff44c8ea20e0e4165d3c6d0728762",
+      "HEAD_sha256": "3c4eac73a4ec7b77afa25bb4da816fbb96443cca9d9b65ee0a7cf33e243fbd93",
+      "stdout_or_JSON_bytes_exact": false
+    },
+    {
+      "kind": "sizes.json",
+      "BASE_bytes": 56,
+      "HEAD_bytes": 56,
+      "BASE_sha256": "a2896bcd4609ba2279222ae5f840d091e0e8034b7c44ee8e41a9a5ad8e316d48",
+      "HEAD_sha256": "5df9c717b9ac826e90dfa5c06637c7ef4afa56ef59d270f4573c66c028923604",
+      "stdout_or_JSON_bytes_exact": false
+    }
+  ],
+  "status": "PREPARING; not ready to dispatch; root final binding required",
+  "screen_population_count": 33,
+  "no_source_Git_records_or_snapshot_writes": true
+}
