@@ -1,0 +1,140 @@
+{
+  "kind": "internal_received_final_PARTIAL_workflow_review",
+  "verdict": "PARTIAL_ONLY_NO_ACCEPTANCE",
+  "counts": {
+    "blockers": 0,
+    "majors": 4,
+    "minors": 2
+  },
+  "delivery": "0c4d4f60203021f3a3b93f88eaf7c9085c6ab885",
+  "report_sha256": "dca5f8e5961b83b402a6255ff4afd4273a555e3d04a9f1fb391fa15acdb8b57e",
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "source_head": "03ead73ab38e74621800367c072f6fd3f0f70991",
+  "findings": [
+    {
+      "id": "P1",
+      "severity": "major",
+      "title": "Two extra notation-helper omissions persist",
+      "evidence": [
+        "REPORT.md:169-188",
+        "evidence/tools/chain_delta.sh:12",
+        "evidence/tools/mkseal.py:13-23"
+      ],
+      "resolution": "Retain the delivered standard label only as worker terminology. Restore eval.match_1 and eval._sunfold for an approved exact-notation comparator;154 requests are omitted in77 probes per helper. Strict evidence remains a valid separately labeled stronger comparison."
+    },
+    {
+      "id": "P2",
+      "severity": "major",
+      "title": "Full changed-provider seal coverage is missing",
+      "evidence": [
+        "REPORT.md:20",
+        "REPORT.md:169-170",
+        "issued-r1/brief.md:170"
+      ],
+      "resolution": "26 providers changed; onlyClassNP/PolyTime is sealed.25 changed providers are absent. Current required owner union is123, not98. Mark milestone4 evidence incomplete; collect/seal missing providers without altering frozen proofs, and retain/report any resulting frontier."
+    },
+    {
+      "id": "P3",
+      "severity": "major",
+      "title": "The complete-map claim remains truncated",
+      "evidence": [
+        "REPORT.md:54-74",
+        "evidence/tools/surface_diff.py:91-113",
+        "evidence/tools/surface_map.py:15-27"
+      ],
+      "resolution": "Final source pin is now current, but unchanged tooling still omits theorem bodies and truncates definition bodies400/header displays300 or600. NUPPT.ofPolyTime is cut. Publish full untruncated contract/body/context/name/home mappings; call the existing map a normalized surface summary."
+    },
+    {
+      "id": "P4",
+      "severity": "major",
+      "title": "Failure/attempt log preservation remains incomplete",
+      "evidence": [
+        "REPORT.md:361-363",
+        "evidence/tools/chk.py:70",
+        "log-preservation.json"
+      ],
+      "resolution": "No exact originals for30 CP1 failed attempts were located among3528 received logs. Four ea37 seal FAIL logs were overwritten by final logs; source/status/diagnostic-head metadata remains. Keep explicit received-payload limits and permit later pinned original supplements. Use fresh attempt paths/hashes for all future runs; do not claim global unrecoverability."
+    },
+    {
+      "id": "P5",
+      "severity": "minor",
+      "title": "Baseline source line maps are wrong but recoverable",
+      "evidence": [
+        "evidence/logs/seal-baseline.json",
+        "corrected-line-maps.json"
+      ],
+      "resolution": "All688 baseline diagnostic entries use incorrect decl_line_in_source and omit error_line_in_source. Recover source positions from exact archived probes and actual block offset; companion file supplies corrected positions. Current head maps are correct; independently corrected strict comparison still501\u2192348/153removed/0new."
+    },
+    {
+      "id": "P6",
+      "severity": "minor",
+      "title": "Several report qualifications need correction",
+      "evidence": [
+        "REPORT.md:4-6",
+        "REPORT.md:202-205",
+        "REPORT.md:285-288",
+        "REPORT.md:357-360"
+      ],
+      "resolution": "Say Checks axiom multisets equal and census has same29 admitted identities plus5 standard-set changes. First N4 probes both failed with No-goals, not passed both ways.52 extra blocks are49 consumers+3providers. Instance filtering is inherited implementation behavior, not a blanket policy notation rule or demonstrated attribute limitation."
+    }
+  ],
+  "CP1_status": {
+    "W1_extra_helpers": "persists",
+    "W2_logs": "no exact originals found in received payload; four later overwrites added",
+    "W3_map": "final pin fixed; truncation persists",
+    "W4_ledger": "resolved for delivered measured variant"
+  },
+  "native_received_not_local": true,
+  "inherited_instance_filter": {
+    "semireducible_pairs": 4741,
+    "distinct_semireducible_definitions": 118,
+    "affected_audits": 96,
+    "reducible_pairs": 274,
+    "note": "Inherited reviewed implementation filter, not a newly introduced CP1/partial deviation; does include data-valued semireducible defs"
+  },
+  "provider_scope": {
+    "changed_providers": 26,
+    "sealed_changed_providers": [
+      "TCSlib/Complexity/ClassNP/PolyTime.lean"
+    ],
+    "missing_changed_providers": [
+      "TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+      "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+      "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "TCSlib/Complexity/ClassNP/Reductions.lean",
+      "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+      "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+      "TCSlib/Complexity/ClassP/P.lean",
+      "TCSlib/Complexity/Randomized/Adleman.lean",
+      "TCSlib/Complexity/Randomized/Classes.lean",
+      "TCSlib/Complexity/Randomized/SipserGacs.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+      "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+      "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean",
+      "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean",
+      "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean",
+      "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean",
+      "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+      "TCSlib/InformationTheory/FinDist.lean",
+      "TCSlib/InformationTheory/LeftoverHash.lean"
+    ],
+    "required_owner_union": 123
+  },
+  "validation_sha256": "096124deb9a05414934537c997c46b9f33b715847f3799a4e7c8bf32f3a286ca",
+  "validator_sha256": "6e47e5fb4c71829b0f9054560987419fe7bfa86de3137a0f116abdc4dd4cc264",
+  "review_md_sha256": "c1557d44149aa8ec24d9c5c1053515b523a87605fc8729e289b7ab0a8ff3411c",
+  "corrected_line_maps_sha256": "20b5f572c022c173b2a11b312e10a3a1a20dbc1a8978798ce77fd58fef7fb10a",
+  "log_preservation_sha256": "8e45e4576e7b1e8de1d2beb26aaf05cca4e5d408c54f708930145279475fbb52",
+  "limits": [
+    "No incoming script imported/executed",
+    "No Lean/cache/build/apps/Git/source mutation",
+    "All native/object results reconciled as received data, not independently reproduced",
+    "No source-freeze mathematical permission clearance"
+  ]
+}

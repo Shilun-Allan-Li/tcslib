@@ -20,7 +20,7 @@ without an outside-owned snapshot. Executable-mode files are retained as data.
   further failing declarations, E-API and E-FREEZE. These counts and all native,
   seal/control/census/disposition claims require independent review.
 
-Independent source/freeze, workflow/evidence and API/frontier reviews are underway,
+Independent source/freeze, workflow/evidence and API/frontier reviews are archived in [review-r1](review-r1/README.md),
 using the snapshot rather than mutable exchange files. No incoming program has
 been executed, no source applied, no new external job dispatched, and no ruling
 or merge clearance is granted by intake. The CP1 local API follow-up remains a

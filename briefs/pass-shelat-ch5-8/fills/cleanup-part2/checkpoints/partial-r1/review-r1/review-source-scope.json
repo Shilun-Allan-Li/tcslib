@@ -1,0 +1,124 @@
+{
+  "status": "INTERNAL_SOURCE_SCOPE_REVIEW_FINAL_PARTIAL_NOT_ACCEPTANCE",
+  "delivery_commit": "0c4d4f60203021f3a3b93f88eaf7c9085c6ab885",
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "reported_source": "03ead73ab38e74621800367c072f6fd3f0f70991",
+  "verdict": {
+    "blockers": 0,
+    "majors": 1,
+    "minors": 0
+  },
+  "findings": [
+    {
+      "id": "PARTIAL-SRC-01",
+      "severity": "MAJOR",
+      "status": "PRESENT_IN_INCOMING_LOCAL_API_01_EXCLUDED",
+      "path": "TCSlib/Complexity/Randomized/PPT.lean",
+      "lines": [
+        404,
+        406
+      ],
+      "canonical": "Complexity.NUPPT.ofPolyTimeUniform_def",
+      "call_sites": [
+        {
+          "path": "TCSlib/Cryptography/Asymptotic/HardCore.lean",
+          "line": 266
+        },
+        {
+          "path": "TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean",
+          "line": 176
+        },
+        {
+          "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+          "line": 1023
+        }
+      ],
+      "issue": "Raw equality for whole NUPPT; issued machine interface requires operational/coin/field readers."
+    }
+  ],
+  "source_summary": {
+    "changed_files": 122,
+    "changed_by_role": {
+      "PROVIDER_ONLY": 26,
+      "CONSUMER": 96
+    },
+    "declaration_diff_flags": {
+      "ADDED": 219,
+      "BODY_CHANGED": 669,
+      "MOVED": 9,
+      "REMOVED": 23,
+      "HEADER_CHANGED": 3
+    },
+    "old_declarations": 8433,
+    "new_declarations": 8629,
+    "baseline_owned_lexical_counts": {
+      "sorry": 20
+    },
+    "head_owned_lexical_counts": {
+      "sorry": 20
+    },
+    "per_declaration_admission_multisets_equal": true
+  },
+  "graph": {
+    "modules": 1071,
+    "cycles": [],
+    "missing": []
+  },
+  "reader_summary": {
+    "count": 219,
+    "proof_shapes": {
+      "rfl": 185,
+      "Iff.rfl": 21,
+      "OTHER_TERM_OR_TACTIC": 13
+    },
+    "roles": {
+      "PROVIDER_ONLY": 63,
+      "CONSUMER": 156
+    },
+    "retained_CP1_added_declarations_raw_identical": 161,
+    "post_CP1_readers": 58,
+    "new_def_abbrev_instance_host_module": 0,
+    "removed_since_CP1_but_not_at_issue_ancestor": [
+      {
+        "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+        "canonical": "Turing.MultiTapeTM.step_def",
+        "kind": "theorem",
+        "private": false,
+        "start": 200,
+        "end": 203,
+        "raw_sha256": "99808eee05db582cb9521415e1484edda138bc197e3d1e073f569d14008d95aa"
+      }
+    ],
+    "machine_body_reader_findings": [
+      {
+        "path": "TCSlib/Complexity/Randomized/PPT.lean",
+        "canonical": "Complexity.NUPPT.ofPolyTimeUniform_def",
+        "kind": "theorem",
+        "private": false,
+        "start": 404,
+        "end": 406,
+        "raw_sha256": "3506334dbd8626164d814226f0321a12c448881ba3e2b491fa6567674a550524"
+      }
+    ],
+    "execution_permission_limit": "One-proof-block-per-worker-invocation cannot be authenticated from format patches; no execution-history attestation.",
+    "limits": "Source permission/shape review, not a proof-validity or Rule10-closure claim."
+  },
+  "baseline_owned_admitted_declarations": 20,
+  "baseline_admitted_complete_raw_blocks_identical": true,
+  "global_lexical_counts": {
+    "BASE": {
+      "sorry": 510,
+      "sorryAx": 1
+    },
+    "HEAD": {
+      "sorry": 510,
+      "sorryAx": 1
+    }
+  },
+  "native_acceptance": "NOT_ASSESSED",
+  "incoming_programs_executed": false,
+  "later_local_API_01_commit_excluded": "8c047b8bcd3a2793795a02afd6d2d955c80e1806",
+  "merge_clearance": false,
+  "existing_proof_permission_blocks": 660,
+  "existing_proof_permission_unmatched": []
+}

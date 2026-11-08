@@ -1,0 +1,154 @@
+{
+  "review": "Partial-r1 bounded API/frontier review",
+  "snapshot_exchange_commit": "0c4d4f60203021f3a3b93f88eaf7c9085c6ab885",
+  "reported_worker_head": "03ead73ab38e74621800367c072f6fd3f0f70991",
+  "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+  "REPORT_sha256": "dca5f8e5961b83b402a6255ff4afd4273a555e3d04a9f1fb391fa15acdb8b57e",
+  "REPORT_entirely_read": {
+    "lines": 721,
+    "bytes": 50978
+  },
+  "severity_counts": {
+    "blockers": 0,
+    "majors": 1,
+    "minors": 1
+  },
+  "findings": [
+    {
+      "id": "API-01-CARRIED",
+      "severity": "major",
+      "status": "PRESENT_IN_IMMUTABLE_PARTIAL_SNAPSHOT; ROOT_REPORTS_SEPARATE_LOCAL_REPAIR",
+      "summary": "The whole-NUPPT alias and all three consumer uses persist in received source. Same reader substitutions remain uniquely applicable, although two old full patch contexts drifted.",
+      "refs": [
+        {
+          "path": "src/TCSlib/Complexity/Randomized/PPT.lean",
+          "line": 404
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCore.lean",
+          "line": 266
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+          "line": 1023
+        },
+        {
+          "path": "src/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean",
+          "line": 176
+        }
+      ],
+      "permission": "Routine existing output_ofPolyTimeUniform substitution and removal of the newly added unused alias; no new mathematical/public-header exception.",
+      "native_status": "Not tested by reviewer; separate root-local result not attested here."
+    },
+    {
+      "id": "FRONTIER-01",
+      "severity": "minor",
+      "status": "FRONTIER_CLASSIFICATION_OVERSTATED",
+      "summary": "REPORT 299-321 claims only two routes and treats the inline unary-multiplication consumers as permission-blocked. Existing published BinArith mulU/length contracts and the unary length map offer a route without the anonymous provider contract, new helper, header change, generated equation or foreign body.",
+      "refs": [
+        {
+          "path": "REPORT.md",
+          "lines": [
+            292,
+            321
+          ]
+        },
+        {
+          "path": "src/TCSlib/Complexity/ClassP/BinaryArith/Loops.lean",
+          "lines": [
+            430,
+            459
+          ]
+        }
+      ],
+      "replacement_wording": "The current direct bridge to inline provider contracts is unresolved. Four unary-multiplication consumers have a concrete permitted alternative through BinArith.polyTimeComputable_mulU, BinArith.length_mulU and the unary length map; the one EncodingMachines proposal is uncompiled. Other inline-match sites still need focused reader/contract analysis. Do not infer that they require a new general theorem solely from the current diagnostic.",
+      "needs_user_ruling_for_unary_route": false
+    }
+  ],
+  "permitted_unary_routes": [
+    {
+      "declaration": "TCSlib.Cryptography.EncodingMachines.unaryMul_poly",
+      "path": "src/TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+      "line": 88,
+      "route": "pair hf/hg unary words; mulU; unary length; length_mulU and length_replicate",
+      "proposal": "01-encodingmachines-unaryMul.patch"
+    },
+    {
+      "declaration": "TCSlib.Cryptography.OneWay.polyTimeComputable_unaryMulPair",
+      "path": "src/TCSlib/Cryptography/Asymptotic/OneWayLemmas.lean",
+      "line": 325,
+      "route": "pair the two total projections for every input; mulU; unary length; length_mulU. Malformed projections remain empty.",
+      "proposal": null
+    },
+    {
+      "declaration": "TCSlib.Cryptography.GGMRed.unaryMul_poly",
+      "path": "src/TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+      "line": 915,
+      "route": "pair hf/hg arbitrary words; mulU; unary length; length_mulU",
+      "proposal": null
+    },
+    {
+      "declaration": "TCSlib.Cryptography.GI.unaryMul_poly",
+      "path": "src/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean",
+      "line": 349,
+      "route": "same total-projection construction; use congr and public projection equations to identify the existing OWN inline-match header, preserving its malformed branch. No foreign provider matcher is used.",
+      "proposal": null
+    }
+  ],
+  "other_inline_frontiers": [
+    {
+      "sites": [
+        "Complexity.polyTimeComputable_unary",
+        "Complexity.polyTimeComputable_lenLe"
+      ],
+      "contracts": [
+        "Turing.FinTM.computesFunInTime_stripLast",
+        "Turing.FinTM.computesFunInTime_pairLenCheck"
+      ],
+      "status": "UNRESOLVED_NOT_PROVED_PERMISSION_BLOCKED",
+      "owner_reader_frontier": "Build/Primitives already has public stripLastTM with stripLastTM_computes (3176, budget150*(n+1)) and pairLenCheckTM with pairLenCheckTM_computes (3054, exact existing budget). X12 permits ordinary machine run/case contracts for existing owners. A focused same-machine/same-budget complete case-reader proposal should be assessed under that permission before treating every reformulation as a non-reader general theorem. No such proof is proposed or verified here."
+    },
+    {
+      "sites": [
+        "Complexity.PolyTimeComputable.pairMapSnd"
+      ],
+      "status": "UNRESOLVED_NOT_PROVED_PERMISSION_BLOCKED",
+      "owner_reader_frontier": "The private existing pairMapTM/pairMap_computes and payload catalog contract are at the same provider owner. Assess whether ordinary run readers suffice without promoting/altering the machine or adding a generic FP theorem. No verified route or permission expansion asserted."
+    },
+    {
+      "sites": [
+        "TCSlib.Cryptography.GGMRed.stateLoopFun_poly",
+        "TCSlib.Cryptography.GGMRed.lookup_poly",
+        "TCSlib.Cryptography.OneWay.YaoMachine.yaoRaw_poly",
+        "Complexity.IterateFind.polyTimeComputable_find"
+      ],
+      "status": "UNRESOLVED_NOT_PROVED_PERMISSION_BLOCKED",
+      "owner_reader_frontier": "polyTimeComputable_iterateFind and lower find have anonymous match functions. New named iterateFind data/general host or a second general polynomial-time theorem is not automatically an ordinary reader. Keep original headers/algorithms; request the smallest exact API exception only after examining an existing named-machine contract/reader route. IterateFind also has independent machine-state/predicate diagnostics; a first inline fix would not certify the whole proof."
+    }
+  ],
+  "provider_trio": {
+    "status": "GENUINE_PROVIDER_PROOF_PERMISSION_BOUNDARY; UNCHANGED_INHERITED_DEBT",
+    "source": "src/TCSlib/Complexity/ClassNP/PolyTime.lean",
+    "names": [
+      "Complexity.polyTimeComputable_id",
+      "Complexity.PolyTimeComputable.output_length_le",
+      "Complexity.PolyTimeComputable.comp"
+    ],
+    "original_headers_and_proofs_byte_identical_to_ancestor": true,
+    "permission": "PROVIDER_ONLY; X12 permits new ordinary readers, expressly forbids changing these existing proofs. Existing computesFunInTime_iff suffices mathematically but confers no proof-edit permission.",
+    "scope_disposition": "Keep the three original failures visible. They are reported as extra provider declarations, not among the 509 consumer keys. Do not commission them implicitly or block independent authorized consumer repairs. If actual proof edits are requested, an explicit role/scope exception is required."
+  },
+  "N4_rule": "Do not count automatic reduction of a sealed foreign matcher on a constructor discriminant as a repair. Do not use foreign matcher/equation names. The proposed unary route never calls that anonymous contract; cases for GI may analyze its OWN header using public projection equations.",
+  "proposal_sha256": "246512efe882b390d7f466bc821f4e07dcc659f602b77a291e55c1b770eb2b42",
+  "proposal_json_sha256": "b4dae745fcfb7987455521e1100ca291fdf58d88c87528dc2b09d7c9ef506447",
+  "validation_sha256": "4bc1f81cde7c9da545edbd60be854b02ac7cccd615ee8fa6306f36112cd0ad78",
+  "limits": [
+    "No received program execution, native/cache/build/app command, source edit or Git mutation.",
+    "One uncompiled/unapplied proof proposal only: EncodingMachines.unaryMul_poly.",
+    "No proof of impossibility for the still-unresolved inline-match sites; no blanket E-API ruling.",
+    "Source review does not validate the full worker seal/native/census claims or finalize the job.",
+    "No final completion/merge/gate ruling; 173 open worker keys and 52 further declarations remain attributed worker evidence, not independently rechecked here.",
+    "No proof that remaining inline-match sites are impossible under the issued permissions; no new blanket API or provider-proof permission invented.",
+    "This review does not validate all worker final native/seal/census/control claims."
+  ]
+}
