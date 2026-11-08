@@ -5,6 +5,20 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
+The central integration branch is `cryptography/lwe-sis-constructions`. Audited
+Lean changes go through PRs into that branch for the user's approval and merge.
+The active draft is `cryptography/lwe-sis-phase1-statements` in the separate
+`tcslib-lwe-sis-phase1` worktree. It depends on audited PR #236, whose retarget to
+the central branch is included in the client publication command.
+
+The construction-core statement draft contains eight new mathematical modules,
+62 source declarations and 31 direct admissions: sample schedules, modular
+parsers, bit decoding, direct Regev symmetric encryption and its concrete
+security bound, and SIS hashing/collision bounds with a dyadic profile. A fresh
+68-module sweep passes. These are statement skeletons awaiting their own gate;
+the proofs, efficient machines and existing primitive bridges remain future work.
+See `gates/02-construction-core/` for scope, evidence and publication instructions.
+
 The phase-0 statement audit passed with 0 blockers, 0 majors, 0 minors and 3 notes.
 The report is retained verbatim under `audits/lwe-sis-phase0-findings.md`, with its
 dispositions in `audits/lwe-sis-phase0-resolutions.md`.
@@ -45,16 +59,19 @@ they do not execute Lean or prove security.
 
 ## Ownership and publication
 
-Worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-crypto-parallel-kickoff`.
-Current PR branch: `cryptography/lwe-sis-encoding-proofs`.
-Earlier published topic snapshot: `cryptography/lwe-sis-constructions` (left unchanged).
-Baseline: `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49`.
-PR target: `cryptography/pass-shelat-ch2-4`.
+Active worktree: `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-phase1`.
+Draft branch: `cryptography/lwe-sis-phase1-statements`.
+Central PR target: `cryptography/lwe-sis-constructions`.
+Audited dependency: `0769cba3e44c56700349f954190fc99d9e622270` (PR #236).
+Phase-1 Lean/root freeze: `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`.
+The original campaign context and older source/audit identities remain historical.
 
-All Lean updates go through a user-approved PR. The only existing shared-file overlap
-is still three root imports, isolated in export commit
-`4364d0e0fe9accd649b6acb4751e8684aa93ad1e`. This fill adds no root edit. Existing
-owner APIs, pins, other campaigns' records and other maintainers' checkouts are unchanged.
+All Lean updates go through a user-approved PR. The foundation's three root imports
+remain isolated in export commit `4364d0e0fe9accd649b6acb4751e8684aa93ad1e`.
+The next phase adds two root imports and small Encoding/LWE facade additions in
+its separate export commit. Those are the only existing-file Lean changes relative
+to the audited dependency. Existing owner APIs, pins, other campaigns' records and
+other maintainers' checkouts are unchanged.
 Builds use only the own pinned packages and scratch objects; root native/cache jobs are serial.
 
 The user selected and dispatched Codex for proof review. Inputs were published under
@@ -66,13 +83,16 @@ exchange checkout, index and original inbox reports alone. The previous statemen
 input is published at exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`.
 
 Draft PR [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) is published
-from `cryptography/lwe-sis-encoding-proofs` to the campaign target; its head before
-this records-only intake is `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`.
-The earlier `cryptography/lwe-sis-constructions` ref remains unchanged at
+from `cryptography/lwe-sis-encoding-proofs`, with audit-intake head
+`0769cba3e44c56700349f954190fc99d9e622270`. The user has selected the central
+branch as its new target; the connector retarget attempt returned HTTP 403, so
+the prepared client command performs it. The observed central ref is
 `2c37f3f486822a52f4a9e337c6b742e995ebb118`. Client publication resolved the earlier
 connector/DNS block; historical preparation records remain unchanged. Source PDF
-archival/ingestion, landing checks and future sampler/profile/machine obligations
-remain open under N01–N03. Live source checks do not close archival provenance.
+acquisition is now complete for Pei16/Wu24, with exact hashes and version checks;
+ingestion/source matching, landing checks and future sampler/profile/machine
+obligations remain open under N01–N03.
 
-**Not yet clear to merge — statement and representation-proof gates pass; source
-archival and relevant integration checks remain open. The user approves merges.**
+**Not yet clear to merge — the foundation gates pass; the construction-core
+statement gate, source ingestion/matching and relevant integration checks remain
+open. The user approves and merges PRs into the central LWE/SIS branch.**

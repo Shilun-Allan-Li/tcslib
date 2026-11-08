@@ -4,6 +4,14 @@ This is internal planning, dated 2026-11-08. It introduces no Lean declaration,
 external gate, worker dispatch or security theorem. The detailed contracts and
 proof obligations are in [phase1-contracts.md](phase1-contracts.md).
 
+Current continuation (2026-11-07 Pacific): these records have been brought into
+`cryptography/lwe-sis-phase1-statements`; the separate planning worktree is retired
+from active use. The central integration/PR target is now
+`cryptography/lwe-sis-constructions`, as selected by the user. The table below
+preserves the original planning checkpoint. The implemented statement skeletons
+and their verification live under `../gates/02-construction-core/`; no nontrivial
+proof has been filled before that statement gate.
+
 | Item | Identity |
 |---|---|
 | Records worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-next-phase-plan` |

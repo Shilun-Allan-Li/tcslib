@@ -18,14 +18,20 @@ strongly unforgeable one-time signatures are required by the selected CCA2 route
 Any LWE-only hashing used to make those signatures compact is supporting CCA2 work;
 the selected standalone CRH target remains the SIS construction.
 
-All work belongs to this PR branch:
+Audited changes are integrated through PRs into the campaign's own central branch,
+`cryptography/lwe-sis-constructions`. The user approves and merges Lean changes.
+The Pass–Shelat campaign branch remains upstream context, rather than the target of
+new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 
 | Item | Identity |
 |---|---|
-| Worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-crypto-parallel-kickoff` |
-| Current PR branch | `cryptography/lwe-sis-encoding-proofs` |
-| Earlier published topic snapshot | `cryptography/lwe-sis-constructions` (left unchanged) |
-| Target | `cryptography/pass-shelat-ch2-4` |
+| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-phase1` |
+| Active draft PR branch | `cryptography/lwe-sis-phase1-statements` |
+| Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
+| Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
+| Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
+| Phase-1 frozen Lean/root | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
+| Upstream campaign context | `cryptography/pass-shelat-ch2-4` at `74b02c1d5c1dcea241c95d625586a7a324925cc9` |
 | Original kickoff baseline | `9db11986edfce462d91958856a763577ee15457f` |
 | Implementation baseline | `869c0d55bb1c4132ba8ccf4d636ea2184ef8bd49` |
 | Lean | `leanprover/lean4:v4.25.0` |
@@ -35,6 +41,34 @@ Both baselines were read with `git rev-parse`. The implementation baseline was c
 through the GitHub connector and fast-forwarded in this worktree only. Its Lean sources,
 root exports, toolchain and manifest match the original baseline. Shell GitHub fetch is
 blocked by DNS restrictions; no successful shell fetch is claimed.
+
+The active draft was initially created from the remote-verified campaign context and
+the audited foundation. When the user selected a central LWE/SIS integration branch,
+its two unpublished code/export commits were replayed onto the audited dependency,
+removing unrelated campaign-record ancestry. Every checked Lean/pin byte was unchanged.
+PR #236 is to be retargeted to the central branch; connector mutation returned HTTP
+403, so the prepared client publication command performs that metadata update.
+
+## Current construction statement phase
+
+The separate phase-1 draft contains eight mathematical modules: explicit polynomial
+sample replacement, canonical modular parsing, bounded-error bit decoding, direct
+Regev symmetric encryption and its concrete two-DLWE bound, and SIS binary hashing
+with a collision bound and dyadic profile. It has 62 source declarations, including
+31 explicitly admitted theorem obligations. No nontrivial proof fill has started.
+
+The fresh serial scoped sweep covers 68 modules and retains 17 inherited warnings.
+It is not a whole-library root build. The new facade/root exports are isolated in
+commit `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`; the construction-core commit is
+`56cabe7f3` (full history and hashes are in the phase-1 records). Existing owner
+APIs and pins are unchanged. The next gate is a statement review, not a claim of
+completed encryption/hash security or machine efficiency.
+
+The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
+hashed and text-extracted in this worktree's source archive. Their provenance is
+under `briefs/lwe-sis-constructions/gates/02-construction-core/evidence/`.
+Reference ingestion and approved source matching remain open; no pipeline or paid
+external job was launched. Historical issued source-status records are unchanged.
 
 Do not edit the maintainer's campaign checkout or any Pass--Shelat records. Frozen
 Gate06 source `3f6db40e1688c4a0bb922c9575dd3bd2157a650b` and PR #232 belong to their
@@ -73,14 +107,14 @@ must avoid creating a competing owner for PR #232's ordinary signature API.
 | PW10 | C. Peikert and B. Waters, *Lossy Trapdoor Functions and Their Applications*, author version dated 2010-06-04; sections 3.1--3.2, 4.3 and 6.2--6.5 | https://sites.cc.gatech.edu/fac/cpeikert/pubs/lossy_tdf.pdf |
 | Wu24 | D. Wu, CS395T *Topics in Cryptography* lecture notes, Spring 2024 compilation last updated 2024-04-30; Definition 20.5 and Lecture 21 for direct symmetric Regev encryption | https://www.cs.utexas.edu/~dwu4/courses/sp24/static/notes.pdf |
 
-The browsing service exposed these author/instructor versions. Direct shell retrieval of source
-PDF bytes is currently blocked by DNS restrictions. No PDF checksum, byte identity,
-reference ingestion, proofmatch, or bibliography registry update is claimed. The foundation
-review packet identifies this limitation and asks the auditor to check the primary links;
-it must not attest a byte-frozen source archive. Source archival and the normal reference
-ingestion remain open before source-fidelity closure. Changes to shared source registries
-need a separate, reviewable diff. Purely implementation-oriented sampler records cite
-their deviations.
+The original foundation packet used live primary-source views because shell downloads
+failed DNS. During phase 1, the Node runtime retrieved exact Pei16 and Wu24 PDF bytes;
+local hashing and text extraction independently checked the hashes and version headers.
+Their precise URLs, sizes, SHA-256 values and page anchors are in the phase-1 provenance
+record. The remaining future-phase sources have no byte-archive attestation yet.
+Reference ingestion, approved proofmatch and bibliography registry changes remain open.
+The historical foundation packet is unchanged and does not retroactively acquire a
+source archive. Shared registry changes need their own reviewable diff.
 
 The direct symmetric scheme is the elementary noisy-inner-product encryption obtained
 from the LWE distribution: add the encoded bit to a fresh sample's last coordinate.
@@ -254,23 +288,27 @@ import TCSlib.Cryptography.LWE
 import TCSlib.Cryptography.SIS
 ```
 
-These three imports are the branch's only existing shared-file overlap. The three new
-facades and their complete transitive TCSlib dependencies have native checks. This is
-not a claim of whole-library root elaboration or merge clearance.
-Other primitive facades are added as their checked phases become available. Every PR
-calls out root/facade overlap explicitly.
+Those were phase 0's only existing shared-file changes. Relative to the audited
+dependency, phase 1 adds only `Cryptography.Encryption` and `Cryptography.Hashing`
+at the root and the new children in the Encoding/LWE facades. Its export commit
+is separate from the eight mathematical modules. No existing owner definition,
+theorem or machine interface is changed. The five scoped facade roots and their
+complete transitive TCSlib dependencies have native checks; this is not a
+whole-library root elaboration or merge clearance. Each PR discloses this overlap.
 
 ## Verification and current execution limits
 
 Use only this branch's `.lake/packages/` and fresh
-`TCSLIB_OLEANS=<worktree>/.lake/crypto-parallel-oleans`. Do not use another chat's
+`TCSLIB_OLEANS=<worktree>/.lake/phase1-final-oleans`. Do not use another chat's
 TCSlib scratch objects. The installed Lean 4.25.0 executable has been checked. Disk
 space exceeds 400 GiB. Process inspection via `ps` is denied by the execution sandbox.
 The user subsequently increased the coordination budget by two and authorized up to
 two sub-agents. This resolves the earlier scheduling hold. Root performs cache/native
 work serially; sub-agents receive no native/cache slot unless explicitly allocated.
-Current cache setup independently hashes the pinned sources and extracts only selected
-official archives into this worktree. Other chats' TCSlib build objects are not reused.
+Phase 0 independently hashed pinned sources and selected official package archives.
+Phase 1 makes an isolated APFS clone copy of that same chat-owned package setup;
+it copies no TCSlib objects and fetches no new cache root. Its TCSlib objects are
+freshly compiled here. Other chats' packages and scratch objects are not reused.
 
 Check one module at a time through `scripts/lean_check_tree.sh`. No `lake build`, no
 unfiltered cache download, no package changes in another checkout, no borrowed scratch
@@ -286,13 +324,15 @@ evidence is unchanged; the proof fill has its own source freeze and evidence.
 
 Shell fetch/push remains blocked by DNS, and connector PR creation previously returned
 HTTP 403. The user completed client publication: draft
-[PR #236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) targets the campaign
-base from `cryptography/lwe-sis-encoding-proofs`, and Codex reviewed the exchange
+[PR #236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) was initially opened
+against the campaign base from `cryptography/lwe-sis-encoding-proofs`; its new
+requested target is the central LWE/SIS branch. Codex reviewed the exchange
 input at `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. The returned representation-proof
 audit passes with 0 blockers, 0 majors, 0 minors and 3 continuing notes. Its report
 is preserved verbatim under `audits/lwe-sis-encoding-proofs-findings.md`; the separate
-resolutions close only this proof gate. Source archival and relevant integration
-checks remain open. The earlier published topic ref and all issued snapshots are unchanged.
+resolutions close only this proof gate. Reference ingestion/source matching and
+relevant integration checks remain open. The central ref and issued snapshots have
+not been changed by preparing phase 1; the user controls approval and merging.
 
 ## Decision log
 
@@ -319,3 +359,8 @@ checks remain open. The earlier published topic ref and all issued snapshots are
 | 2026-11-07 | To enforce user-approved Lean updates, continue the verified proof fill on fresh PR branch `cryptography/lwe-sis-encoding-proofs`, from source commit `893e921bf2afeca293be9da9d495613bb1486796`, targeting the original campaign base. Leave the published `cryptography/lwe-sis-constructions` ref unchanged. Only the own checkout is switched. | Active PR route |
 | 2026-11-08 | Client publication remotely verified: draft PR #236 at `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`, targeting the campaign base. User dispatched Codex against exchange `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. | Supersedes earlier publication/dispatch pending status |
 | 2026-11-08 | Representation-proof report received verbatim, SHA-256 `21783a113298e880cfb7cc272607c787b0bf908cbaac9e23a646236e8bfb4857`. PASS 0 blockers / 0 majors / 0 minors / 3 continuing notes. Intake reverified all 63 frozen source files, 86 current evidence hashes, 82 historical hashes and 5 exchange-gate hashes; no Lean or pin change. | Proof gate closed; N01–N03 retained; no merge approval |
+| 2026-11-07 (Pacific) | User publishes the audit records; remote PR #236 head `0769cba3e44c56700349f954190fc99d9e622270` verified. | Published; unmerged |
+| 2026-11-07 (Pacific) | User selects `cryptography/lwe-sis-constructions` as the central integration branch for audited changes; separate draft branches/PRs remain permitted. PR #236 and subsequent PRs target it. | Supersedes earlier campaign-target routing; user still approves and merges Lean changes |
+| 2026-11-07 (Pacific) | Replay the two unpublished phase-1 code/export commits onto the audited LWE/SIS dependency, removing campaign-record ancestry. The 68 checked Lean files and pins remain byte-identical. Bring planning records into the active draft; the old planning worktree is no longer used. | Own draft history adjusted; central/campaign refs unchanged |
+| 2026-11-07 (Pacific) | Eight construction-core modules elaborate as statement skeletons: 62 source declarations, 31 direct admissions. Fresh serial 68-module sweep passes, with 17 inherited warnings. | Statement review pending; no proof-fill or construction-completion claim |
+| 2026-11-07 (Pacific) | Retrieve exact Pei16 and Wu24 primary PDF bytes over HTTPS through the Node runtime; independently verify SHA-256 and source-version headers. No reference registry or dataset pipeline changed. | PDF acquisition complete for this slice; ingestion/source matching open |
