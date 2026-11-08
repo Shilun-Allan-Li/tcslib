@@ -20,7 +20,7 @@ set_option autoImplicit false
 * `Noise`: finite-seed scalar integer noise, with an explicit support-bound predicate.
 * `Basic`: numeric parameters and the common-secret sample map.
 * `Experiments`: the concrete decisional distinguishing experiment.
-* `Encoding`: canonical fixed-width challenges and admitted length/injectivity statements.
+* `Encoding`: canonical fixed-width challenges with proved length and injectivity.
 * `Assumption`: polynomial representation budgets and fixed-sample hardness against `NUPPT`.
 
 ## References

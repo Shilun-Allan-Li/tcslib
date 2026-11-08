@@ -21,7 +21,7 @@ set_option autoImplicit false
 ## Main results
 
 * `encodeVector_eq`, `encodeMatrix_eq` expose the two concatenations.
-* The length and injectivity statements specify their representation obligations.
+* The length and injectivity theorems establish their representation guarantees.
 
 ## References
 
@@ -39,8 +39,8 @@ supply the width bound before using faithfulness. The LWE and SIS asymptotic fam
 carry that bound. No polynomial-time machine implementation is asserted here.
 
 The vector length is `length * width` and the matrix length is `rows * columns * width`.
-Length and injectivity are statement-gate obligations below; their proofs are admitted
-pending that gate. The defining equations are the only proved readers in this module.
+The length and injectivity theorems below prove this accounting and losslessness under
+the width bound. They assert no efficient machine implementation or hardness property.
 -/
 
 namespace TCSlib.Cryptography.Encoding.Modular
@@ -79,7 +79,8 @@ lemma. Sum these equal lengths over the `length` coordinate blocks. -/
 theorem encodeVector_length {q length : ℕ} [NeZero q] (width : ℕ)
     (v : Fin length → ZMod q) :
     (encodeVector width v).length = length * width := by
-  sorry
+  rw [encodeVector_eq, List.length_flatten, ← List.ofFn_comp']
+  simp only [Candidates.length_natToList, List.ofFn_const, List.sum_replicate_nat]
 
 /-- A matrix encoding has exactly `rows * columns * width` bits.
 
@@ -88,7 +89,8 @@ theorem encodeVector_length {q length : ℕ} [NeZero q] (width : ℕ)
 theorem encodeMatrix_length {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (A : Matrix (Fin rows) (Fin columns) (ZMod q)) :
     (encodeMatrix width A).length = rows * columns * width := by
-  sorry
+  rw [encodeMatrix_eq, List.length_flatten, ← List.ofFn_comp']
+  simp only [encodeVector_length, List.ofFn_const, List.sum_replicate_nat, Nat.mul_assoc]
 
 /-- Fixed-width vector encoding is injective when every residue fits in that width.
 
@@ -99,7 +101,22 @@ The zero-coordinate and modulus-one/zero-width cases are included. -/
 theorem encodeVector_injective {q length : ℕ} [NeZero q] (width : ℕ)
     (hwidth : q ≤ 2 ^ width) :
     Function.Injective (encodeVector (q := q) (length := length) width) := by
-  sorry
+  intro v w h
+  have hblocks :
+      List.ofFn (fun i => Candidates.natToList width (v i).val) =
+        List.ofFn (fun i => Candidates.natToList width (w i).val) := by
+    apply List.eq_iff_flatten_eq.mpr
+    refine ⟨?_, ?_⟩
+    · simpa only [encodeVector_eq] using h
+    · rw [← List.ofFn_comp', ← List.ofFn_comp']
+      simp only [Candidates.length_natToList]
+  have hcoordinate := List.ofFn_injective hblocks
+  funext i
+  apply ZMod.val_injective q
+  exact Candidates.natToList_injOn
+    (lt_of_lt_of_le (ZMod.val_lt (v i)) hwidth)
+    (lt_of_lt_of_le (ZMod.val_lt (w i)) hwidth)
+    (congrFun hcoordinate i)
 
 /-- Fixed-width row-major matrix encoding is injective when every residue fits.
 
@@ -109,6 +126,17 @@ column sets represent the unique matrix on an empty index product. -/
 theorem encodeMatrix_injective {q rows columns : ℕ} [NeZero q] (width : ℕ)
     (hwidth : q ≤ 2 ^ width) :
     Function.Injective (encodeMatrix (q := q) (rows := rows) (columns := columns) width) := by
-  sorry
+  intro A B h
+  have hrows :
+      List.ofFn (fun i => encodeVector width (A i)) =
+        List.ofFn (fun i => encodeVector width (B i)) := by
+    apply List.eq_iff_flatten_eq.mpr
+    refine ⟨?_, ?_⟩
+    · simpa only [encodeMatrix_eq] using h
+    · rw [← List.ofFn_comp', ← List.ofFn_comp']
+      simp only [encodeVector_length]
+  have hcoordinate := List.ofFn_injective hrows
+  funext i
+  exact encodeVector_injective width hwidth (congrFun hcoordinate i)
 
 end TCSlib.Cryptography.Encoding.Modular

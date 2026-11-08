@@ -105,7 +105,10 @@ theorem encodeChallenge_length_le (F : Family) (κ : ℕ)
       (Fin (F.parameters κ).samples → ZMod (F.parameters κ).modulus)) :
     (encodeChallenge (F.parameters κ) (F.residueBits.eval κ) x).length ≤
       F.inputBitsBound.eval κ := by
-  sorry
+  rw [encodeChallenge_length, inputBitsBound_eq, PolyExpr.eval_mul, PolyExpr.eval_mul,
+    PolyExpr.eval_add, PolyExpr.eval_const]
+  exact Nat.mul_le_mul_right _
+    (Nat.mul_le_mul (F.samples_le κ) (Nat.add_le_add_right (F.dimension_le κ) 1))
 
 /-- The decision advantage of a non-uniform PPT machine at security parameter `κ`
 on the canonical encoding of `(A,A s+e)` versus uniform `(A,u)`

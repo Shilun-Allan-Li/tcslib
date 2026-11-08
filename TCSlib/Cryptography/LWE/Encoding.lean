@@ -30,7 +30,7 @@ set_option autoImplicit false
 security parameter; no delimiters are needed within a challenge. The width must satisfy
 `P.modulus <= 2^width` for the encoding to retain all residues. The LWE asymptotic family
 carries this bound. The challenge has `P.samples * (P.dimension + 1) * width` bits.
-Faithfulness and length are explicit admitted statements below; this module asserts no
+Faithfulness and length are proved below; this module asserts no
 efficiency of sampling the mathematical LWE distribution.
 -/
 
@@ -61,7 +61,9 @@ theorem encodeChallenge_length (P : Parameters) (width : ℕ)
     (x : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       (Fin P.samples → ZMod P.modulus)) :
     (encodeChallenge P width x).length = P.samples * (P.dimension + 1) * width := by
-  sorry
+  rw [encodeChallenge_eq, List.length_append, Encoding.Modular.encodeMatrix_length,
+    Encoding.Modular.encodeVector_length]
+  simp only [Nat.mul_add, Nat.mul_one, Nat.add_mul]
 
 /-- Encoding an LWE challenge is injective if the modulus fits in the residue width.
 
@@ -70,6 +72,11 @@ matrix and vector injectivity statements to the two respective segments. -/
 theorem encodeChallenge_injective (P : Parameters) (width : ℕ)
     (hwidth : P.modulus ≤ 2 ^ width) :
     Function.Injective (encodeChallenge P width) := by
-  sorry
+  intro x y h
+  simp only [encodeChallenge_eq] at h
+  have hparts := List.append_inj h (by simp only [Encoding.Modular.encodeMatrix_length])
+  exact Prod.ext
+    (Encoding.Modular.encodeMatrix_injective width hwidth hparts.1)
+    (Encoding.Modular.encodeVector_injective width hwidth hparts.2)
 
 end TCSlib.Cryptography.LWE

@@ -40,8 +40,9 @@ uses one sign bit and `magnitudeBits` bits per integer coordinate, with malforme
 lengths rejected. The family requires
 `sqNormBound < 2^magnitudeBits`, a conservative sufficient numeric condition that covers
 the magnitude of every vector satisfying the norm bound. This prevents the output format
-from silently excluding otherwise valid solutions. No solution-completeness theorem is
-assumed here; its encoding proof is a separate statement-gate obligation.
+from silently excluding otherwise valid solutions. Coverage follows from the encoding
+module's proved `decodeSolution_encodeSolution_of_isSolution`, rather than an additional
+correctness hypothesis in this family.
 
 These are mathematical finite-distribution experiments. Efficient parameter generation,
 matrix sampling and implementation of encoders/decoders remain separate construction
@@ -113,7 +114,8 @@ theorem encodeChallenge_length_le (F : Family) (κ : ℕ)
       (ZMod (F.parameters κ).modulus)) :
     (encodeChallenge (F.parameters κ) (F.residueBits.eval κ) A).length ≤
       F.inputBitsBound.eval κ := by
-  sorry
+  rw [encodeChallenge_length, inputBitsBound_eq, PolyExpr.eval_mul, PolyExpr.eval_mul]
+  exact Nat.mul_le_mul_right _ (Nat.mul_le_mul (F.dimension_le κ) (F.columns_le κ))
 
 /-- The signed encoding of every candidate fits the prescribed polynomial output budget.
 
@@ -123,7 +125,9 @@ theorem encodeSolution_length_le (F : Family) (κ : ℕ)
     (z : Fin (F.parameters κ).columns → ℤ) :
     (encodeSolution (F.parameters κ) (F.magnitudeBits.eval κ) z).length ≤
       F.outputBitsBound.eval κ := by
-  sorry
+  rw [encodeSolution_length, outputBitsBound_eq, PolyExpr.eval_mul, PolyExpr.eval_add,
+    PolyExpr.eval_const]
+  exact Nat.mul_le_mul_right _ (F.columns_le κ)
 
 /-- The SIS success probability of an `NUPPT` at parameter `κ`
 [Pei16, Definition 4.1.1; PS10, Definition 26.8]. The machine receives the canonical
