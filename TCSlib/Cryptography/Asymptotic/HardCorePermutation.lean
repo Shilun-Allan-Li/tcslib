@@ -467,8 +467,8 @@ at parameter `⌊n/2⌋`).
 `n^c ≤ 3^c m^c ≤ m^{c+1}` and `|ν m| < 1/m^{c+1} ≤ 1/n^c`. -/
 theorem Negligible.comp_div_two {ν : ℕ → ℝ} (hν : Negligible ν) :
     Negligible fun n => ν (n / 2) := by
-  intro c
-  obtain ⟨n₀, hn₀⟩ := hν (c + 1)
+  refine (negligible_iff _).2 fun c => ?_
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff ν).1 hν (c + 1)
   refine ⟨2 * (n₀ + 3 ^ c + 1), fun n hn => ?_⟩
   have hd : 0 < 3 ^ c := by positivity
   obtain ⟨hm, h3, hpos⟩ : n₀ ≤ n / 2 ∧ 3 ^ c ≤ n / 2 ∧ 0 < n / 2 := by
@@ -529,18 +529,23 @@ theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
     P.glHalf.toFunFamily.Easy := by
   have huh : PolyTimeComputable fun w => unaryHalf (pairFstD w) :=
     PolyTimeComputable.comp' unaryHalf_poly polyTimeComputable_pairFstD
-  refine ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
+  refine (FunFamily.easy_iff _).2 ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
       ((pairSndD w).take (unaryHalf (pairFstD w)).length)) ++
       (pairSndD w).drop (unaryHalf (pairFstD w)).length,
     (PolyTimeComputable.comp' hF
         (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
       (dropLen_poly huh polyTimeComputable_pairSndD), fun n z => ?_⟩
   have hFx' : ∀ n (x : Fin n → Bool),
-      F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := hFx
+      F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := fun n x => by
+    rw [← NUPPT.advInput_eq]
+    exact hFx n x
   simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf_def,
     List.length_replicate]
-  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx', PermFamily.toFunFamily_f]
-  exact (P.ofFn_glHalf_f n z).symm
+  rw [← P.glHalf.toFunFamily_codEquiv_ofFn n (P.glHalf.toFunFamily.f n z),
+    P.glHalf.toFunFamily_f_domEquiv, ← P.glHalf.toFunFamily_domEquiv_ofFn n z]
+  generalize P.glHalf.toFunFamily_domEquiv n z = x
+  rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx']
+  exact (P.ofFn_glHalf_f n x).symm
 
 /-- **The hard-core bit of the balanced permutation is easy to compute**: on `⟨1^n, z⟩` halve
 the parameter, cut the two blocks of `⌊n/2⌋` bits and apply the inner-product evaluator

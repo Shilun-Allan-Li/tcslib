@@ -113,7 +113,7 @@ probability `1/(2p(n))`" is this two-step chain (`abs_sub_le`, `Negligible.const
 theorem ZeroKnowledge.singleMessageSecure {S : PrivateKeyScheme} (h : S.ZeroKnowledge) :
     S.SingleMessageSecure := by
   obtain ⟨Sim, -, hSim⟩ := h
-  intro D
+  refine (PrivateKeyScheme.singleMessageSecure_iff S).2 fun D => ?_
   obtain ⟨ε, hε, hD⟩ := hSim D
   refine ⟨fun n => 2 * ε n, hε.const_mul 2, fun n m₀ m₁ => ?_⟩
   have h₀ := hD n m₀
@@ -281,7 +281,7 @@ projections `polyTimeComputable_inParam`/`_inCoins`, `polyTimeComputable_pairTak
 theorem SingleMessageSecure.zeroKnowledge {S : PrivateKeyScheme} (h : S.SingleMessageSecure) :
     S.ZeroKnowledge := by
   refine ⟨zkSim S, NUPPT.ofPolyTimeUniform_uniform _ _, fun D => ?_⟩
-  obtain ⟨ε, hε, hD⟩ := h D
+  obtain ⟨ε, hε, hD⟩ := (PrivateKeyScheme.singleMessageSecure_iff S).1 h D
   refine ⟨ε, hε, fun n m => ?_⟩
   have := hD n m (fun _ => false)
   simp only [distAdv_def] at this ⊢

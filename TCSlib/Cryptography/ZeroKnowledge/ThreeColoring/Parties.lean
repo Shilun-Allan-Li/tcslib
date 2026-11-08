@@ -72,8 +72,9 @@ theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length :=
   (Nat.le_add_left _ _).trans (length_pair_components_le z)
 
 /-- The common input of a layout is no longer than the layout. -/
-theorem length_argX_le (w : List Bool) : (argX w).length ≤ w.length :=
-  (length_pairFstD_le _).trans ((length_pairFstD_le _).trans ((length_pairSndD_le _).trans
+theorem length_argX_le (w : List Bool) : (argX w).length ≤ w.length := by
+  rw [argX_eq, NUPPT.inArg_eq]
+  exact (length_pairFstD_le _).trans ((length_pairFstD_le _).trans ((length_pairSndD_le _).trans
     ((length_pairFstD_le _).trans (length_pairFstD_le _))))
 
 section Parties
@@ -533,7 +534,7 @@ variable (x y z r : List Bool) (hist : List (List Bool))
 theorem nOf_ilayout : nOf (ilayout x z hist r) = (decGraph x).1 := by
   show Nat.sqrt (argX (ilayout x z hist r)).length = _
   rw [argX_ilayout]
-  rfl
+  exact (decGraph_fst x).symm
 
 /-- The edge count read off a layout. -/
 theorem mOf_ilayout : mOf (ilayout x z hist r) = edgeCount (decGraph x).2 := by

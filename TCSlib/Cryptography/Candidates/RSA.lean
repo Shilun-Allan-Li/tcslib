@@ -2003,7 +2003,7 @@ of trapdoor permutations: clauses (1)–(4) and (6) are the data of `rsaTrapdoor
 (`rsaPermAt` [Theorem 54.3], `rsaGen`, `rsaSampler`, `rsaEval`, `rsaInv_spec`), and the
 hardness clause (5) is `rsaCollection_oneWay`. -/
 theorem rsaTrapdoor_oneWay (H : ArithmeticFP) (hR : RSAAssumption) : (rsaTrapdoor H).OneWay :=
-  rsaCollection_oneWay H hR
+  (TrapdoorCollection.oneWay_iff _).2 (rsaCollection_oneWay H hR)
 
 /-! ## RSA implies factoring [PS10, Theorem 55.2, Algorithm 55.3] -/
 

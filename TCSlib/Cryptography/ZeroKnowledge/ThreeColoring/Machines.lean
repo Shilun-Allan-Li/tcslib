@@ -239,11 +239,14 @@ theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool}
   (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
     (NUPPT.coins_ofPolyTimeUniform hF S.coins).symm,
     fun x z r hist => by
-      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform]
-      rfl⟩
+      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, ilayout_def, NUPPT.layout_eq,
+        NUPPT.advInput_eq]⟩
 
 /-- The common-input slot of the interactive layout. -/
 def argX (w : List Bool) : List Bool := pairFstD (pairFstD (NUPPT.inArg w))
+
+/-- The defining equation of `argX`. -/
+theorem argX_eq (w : List Bool) : argX w = pairFstD (pairFstD (NUPPT.inArg w)) := rfl
 
 /-- The auxiliary-input slot of the interactive layout. -/
 def argZ (w : List Bool) : List Bool := pairSndD (pairFstD (NUPPT.inArg w))
@@ -663,7 +666,9 @@ theorem natOfBits_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
       List.replicate (natOfBits (s z) (b z) i) true := by
     intro z i
     induction i with
-    | zero => rfl
+    | zero =>
+      rw [loopState_zero]
+      rfl
     | succ i ih =>
       rw [loopState_succ, ih]
       simp only [upd, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
@@ -945,7 +950,7 @@ theorem encodeMsgs_eq_nil_iff (hist : List (List Bool)) :
 theorem length_le_length_encodeMsgs (hist : List (List Bool)) :
     hist.length ≤ (Strategy.encodeMsgs hist).length := by
   induction hist with
-  | nil => exact le_rfl
+  | nil => exact Nat.zero_le _
   | cons m h ih =>
     rw [Strategy.encodeMsgs_cons, length_pairEncode, List.length_cons]
     omega
@@ -997,7 +1002,6 @@ theorem encodeMsgs_ofFn_eq_flatMap {n : ℕ} (f : Fin n → List Bool) (F : ℕ 
 theorem edgeAt_eq_some_of_pos {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (e : ℕ) :
     edgeAt G e = some (edgeOf G ⟨e % edgeCount G, Nat.mod_lt _ hm⟩) := by
   simp only [edgeAt_def]
-  rw [List.getElem?_eq_getElem (Nat.mod_lt _ hm)]
-  rfl
+  rw [List.getElem?_eq_getElem (Nat.mod_lt _ hm), edgeOf_eq, List.get_eq_getElem]
 
 end TCSlib.Cryptography.ColMachines

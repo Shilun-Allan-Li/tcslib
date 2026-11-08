@@ -320,7 +320,7 @@ theorem glColl_negligible (F : Collection) (mP : PolyExpr) (L : ∀ n, F.gen.Coi
   set K := glKcBound mP c with hK
   set B := glCollMachine A mP K (glKc mP c) (two_pow_glKc_le mP c) with hB
   obtain ⟨C, d, hCd⟩ := K.eval_le
-  obtain ⟨n₀, hn₀⟩ := hhard B (2 * c + d + 1)
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (hhard B) (2 * c + d + 1)
   obtain ⟨n, hn, hgap⟩ := hc (max n₀ (max 1 (16 * C * 2 ^ d)))
   have hn1 : 1 ≤ n := le_of_max_le_left (le_of_max_le_right hn)
   have hnC : 16 * C * 2 ^ d ≤ n := le_of_max_le_right (le_of_max_le_right hn)
@@ -364,7 +364,7 @@ theorem glColl_negligible (F : Collection) (mP : PolyExpr) (L : ∀ n, F.gen.Coi
       obtain ⟨⟨x, ρ⟩, cc⟩ := z
       simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, ofFn_finCastEquiv]
       rw [ip_cast' (hL n r) (padFin (L n r) (F.encD (F.index n r) x)) ρ]
-      exact Iff.rfl
+      simp only [padFin_def, coe_finCastEquiv, Fin.coe_cast]
     have hGL := HardcoreBit.invProb_guessInverter_enc_pad
       (fun x : F.D (F.index n r) => padFin (mP.eval n) (F.encD (F.index n r) x)) (F.f (F.index n r))
       (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (cc : A.Coins n) =>

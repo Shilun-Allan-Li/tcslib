@@ -437,7 +437,7 @@ theorem ExpGroupGen.FullLength.fullLengthExcept {V : List Bool → Prop} {G : Ex
 `∃ δ, Negligible δ ∧ G.FullLengthExcept δ` of the headline theorems (with `δ = 0`). -/
 theorem ExpGroupGen.FullLength.exists_fullLengthExcept {V : List Bool → Prop} {G : ExpGroupGen V}
     (h : G.FullLength) : ∃ δ : ℕ → ℝ, Negligible δ ∧ G.FullLengthExcept δ := by
-  refine ⟨fun _ => 0, fun c => ⟨1, fun n hn => ?_⟩, h.fullLengthExcept⟩
+  refine ⟨fun _ => 0, (negligible_iff _).2 fun c => ⟨1, fun n hn => ?_⟩, h.fullLengthExcept⟩
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   simp only [abs_zero]
   positivity

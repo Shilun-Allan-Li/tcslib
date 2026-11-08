@@ -85,7 +85,7 @@ theorem prgAdv_comp_equiv [Fintype γ] [Fintype δ] (e : γ ≃ δ) (G : σ → 
   unfold prgAdv
   simp only [distAdv_def]
   rw [← acceptProb_comp_equiv e (id : δ → δ) D]
-  rfl
+  simp only [acceptProb_def, id_eq]
 
 /-! ### Stretch extension -/
 

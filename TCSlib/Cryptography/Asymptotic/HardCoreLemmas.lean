@@ -98,6 +98,17 @@ def finCastEquiv {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool)
   left_inv _ := rfl
   right_inv _ := rfl
 
+/-- The forward reader of `finCastEquiv`: bit `j` of the transported string is bit
+`Fin.cast h.symm j` of `f`. -/
+theorem finCastEquiv_apply {a b : ℕ} (h : a = b) (f : Fin a → Bool) (j : Fin b) :
+    finCastEquiv h f j = f (Fin.cast h.symm j) :=
+  rfl
+
+/-- The function of `finCastEquiv h`: `f ↦ (j ↦ f (Fin.cast h.symm j))`. -/
+theorem coe_finCastEquiv {a b : ℕ} (h : a = b) :
+    ⇑(finCastEquiv h) = fun f j => f (Fin.cast h.symm j) :=
+  rfl
+
 /-- Transport along an equality of lengths does not change the encoding. -/
 theorem ofFn_finCastEquiv {a b : ℕ} (h : a = b) (f : Fin a → Bool) :
     List.ofFn (finCastEquiv h f) = List.ofFn f :=
